@@ -1039,6 +1039,9 @@ DOS_API char *dos_to_local_file(const char* fileUrl);
 
 DOS_API char *dos_from_local_file(const char* filePath);
 
+DOS_API bool dos_app_is_active(DosQQmlApplicationEngine* vptr);
+DOS_API void dos_app_make_it_active(DosQQmlApplicationEngine* vptr);
+
 #ifdef __cplusplus
 }
 #endif
