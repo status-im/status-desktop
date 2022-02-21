@@ -34,10 +34,11 @@ public:
     QHash<int, QByteArray> roleNames() const override;
     int rowCount(const QModelIndex&) const override;
     QVariant data(const QModelIndex& index, int role) const override;
-    void setItems(QVector<Item>& items);
+    void setItems(const QVector<Item*>& items);
+    Item* getItemByIndex(int index) const;
 
 private:
-    QVector<Item> m_items;
+    QVector<Item*> m_items;
 };
 } // namespace Modules::Main::Wallet::Accounts
 

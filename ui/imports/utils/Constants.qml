@@ -213,4 +213,6 @@ QtObject {
         //% "Continuing will require a transaction to connect the username with your current chat key."
         "connected-different-key": qsTrId("ens-username-connected-with-different-key"),
     }
+
+    readonly property bool isCppApp: cppApp ? cppApp : false
 }

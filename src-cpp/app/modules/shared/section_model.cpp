@@ -55,26 +55,25 @@ QVariant SectionModel::data(const QModelIndex& index, int role) const
 
     switch(role)
     {
-    case Id: return QVariant(item->getId());
-    case SectionType: return QVariant(item->getSectionType());
-    case Name: return QVariant(item->getName());
-    case AmISectionAdmin: return QVariant(item->getAmISectionAdmin());
-    case Description: return QVariant(item->getDescription());
-    case Image: return QVariant(item->getImage());
-    case Icon: return QVariant(item->getIcon());
-    case Color: return QVariant(item->getColor());
-    case HasNotification: return QVariant(item->getHasNotification());
-    case NotificationsCount: return QVariant(item->getNotificationsCount());
-    case Active: return QVariant(item->getIsActive());
-    case Enabled: return QVariant(item->getIsEnabled());
-    case Joined: return QVariant(item->getHasJoined());
-    case IsMember: return QVariant(item->getIsMember());
-    case CanJoin: return QVariant(item->getCanJoin());
-    case CanManageUsers: return QVariant(item->getCanManageUsers());
-    case CanRequestAccess: return QVariant(item->getCanRequestAccess());
-    case Access: return QVariant(item->getAccess());
-    case EnsOnly:
-        return QVariant(item->getIsEnsOnly());
+    case Id: return item->getId();
+    case SectionType: return item->getSectionType();
+    case Name: return item->getName();
+    case AmISectionAdmin: return item->getAmISectionAdmin();
+    case Description: return item->getDescription();
+    case Image: return item->getImage();
+    case Icon: return item->getIcon();
+    case Color: return item->getColor();
+    case HasNotification: return item->getHasNotification();
+    case NotificationsCount: return item->getNotificationsCount();
+    case Active: return item->getIsActive();
+    case Enabled: return item->getIsEnabled();
+    case Joined: return item->getHasJoined();
+    case IsMember: return item->getIsMember();
+    case CanJoin: return item->getCanJoin();
+    case CanManageUsers: return item->getCanManageUsers();
+    case CanRequestAccess: return item->getCanRequestAccess();
+    case Access: return item->getAccess();
+    case EnsOnly: return item->getIsEnsOnly();
         // To Do
     case MembersModel: return QVariant();
     case PendingRequestsToJoinModel: return QVariant();

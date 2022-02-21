@@ -8,7 +8,8 @@ namespace Shared::Models
 {
 enum SectionType
 {
-    Chat = 0,
+    Unkown = -1,
+    Chat,
     Community,
     Wallet,
     Browser,
@@ -39,15 +40,16 @@ class SectionItem : public QObject
     Q_PROPERTY(bool ensOnly READ getIsEnsOnly)
 
 public:
-    SectionItem(const QString &id,
-                SectionType sectionType,
-                const QString& name,
-                const QString& description,
-                const QString& image,
-                const QString& icon,
-                const QString& color,
+    SectionItem(QObject* parent = nullptr,
+                const QString& id = "",
+                SectionType sectionType = SectionType::Unkown,
+                const QString& name = "",
+                const QString& description = "",
+                const QString& image = "",
+                const QString& icon = "",
+                const QString& color = "",
                 bool active = false,
-                bool enabled = true,
+                bool enabled = false,
                 bool amISectionAdmin = false,
                 bool hasNotification = false,
                 int notificationsCount = 0,
@@ -57,8 +59,7 @@ public:
                 bool canManageUsers = false,
                 bool canRequestAccess = false,
                 int access = 0,
-                bool ensOnly = false,
-                QObject* parent = nullptr);
+                bool ensOnly = false);
     ~SectionItem() = default;
 
     // Getters

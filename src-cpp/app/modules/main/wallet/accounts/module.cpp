@@ -10,7 +10,7 @@ Module::Module(std::shared_ptr<Wallets::ServiceInterface> walletsService, QObjec
     : QObject(parent)
 {
     m_controllerPtr = new Controller(walletsService, this);
-    m_viewPtr = new View(this);
+    m_viewPtr = new View(m_controllerPtr, this);
 
     m_moduleLoaded = false;
 
@@ -36,29 +36,8 @@ bool Module::isLoaded()
 
 void Module::viewDidLoad()
 {
-    refreshWalletAccounts();
     m_moduleLoaded = true;
     emit loaded();
 }
 
-void Module::refreshWalletAccounts()
-{
-    auto walletAccounts = m_controllerPtr->getWalletAccounts();
-
-    if(walletAccounts.size() > 0)
-    {
-        QVector<Item> items;
-        foreach(const auto& acc, walletAccounts)
-        {
-            items << Item(
-                acc.name, acc.address, acc.path, acc.color, acc.publicKey, acc.walletType, acc.isWallet, acc.isChat, 0);
-        }
-
-        m_viewPtr->setModelItems(items);
-    }
-    else
-    {
-        qWarning() << "No accounts found!";
-    }
-}
 } // namespace Modules::Main::Wallet::Accounts

@@ -2,9 +2,11 @@ pragma Singleton
 
 import QtQuick 2.13
 
+import utils 1.0
+
 QtObject {
     id: root
-    property var currentAccount: walletSectionCurrent
+    property var currentAccount: Constants.isCppApp ? walletSectionAccounts.currentAccount: walletSectionCurrent
     property var accounts: walletSectionAccounts.model
     property var appSettings: localAppSettings
     property var accountSensitiveSettings: localAccountSensitiveSettings
@@ -97,7 +99,10 @@ QtObject {
     }
 
     function switchAccount(newIndex) {
-        walletSection.switchAccount(newIndex)
+        if(Constants.isCppApp)
+            walletSectionAccounts.switchAccount(newIndex)
+        else
+            walletSection.switchAccount(newIndex)
     }
 
     function generateNewAccount(password, accountName, color) {

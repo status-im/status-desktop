@@ -2,16 +2,18 @@
 
 namespace Modules::Main::Wallet::Accounts
 {
-Item::Item(QString name,
-           QString address,
-           QString path,
-           QString color,
-           QString publicKey,
-           QString walletType,
+Item::Item(QObject* parent,
+           const QString& name,
+           const QString& address,
+           const QString& path,
+           const QString& color,
+           const QString& publicKey,
+           const QString& walletType,
            bool isWallet,
            bool isChat,
            float currencyBalance)
-    : m_name(name)
+    : QObject(parent)
+    , m_name(name)
     , m_address(address)
     , m_path(path)
     , m_color(color)
@@ -66,5 +68,31 @@ float Item::getCurrencyBalance() const
 {
     return m_currencyBalance;
 }
+
+void Item::setData(Item* item)
+{
+    if(item)
+    {
+        m_name = item->getName();
+        emit nameChanged();
+        m_address = item->getAddress();
+        emit addressChanged();
+        m_path = item->getPath();
+        emit pathChanged();
+        m_color = item->getColor();
+        emit colorChanged();
+        m_publicKey = item->getPublicKey();
+        emit publicKeyChanged();
+        m_walletType = item->getWalletType();
+        emit walletTypeChanged();
+        m_isWallet = item->getIsWallet();
+        emit isWalletChanged();
+        m_isChat = item->getIsChat();
+        emit isChatChanged();
+        m_currencyBalance = item->getCurrencyBalance();
+        emit currencyBalanceChanged();
+    }
+}
+
 
 } // namespace Modules::Main::Wallet::Accounts

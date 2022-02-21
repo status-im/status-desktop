@@ -17,16 +17,6 @@ class Module : public QObject, virtual public IModuleAccess
     Q_OBJECT
     Q_INTERFACES(Modules::Main::IModuleAccess)
 
-private:
-    bool m_moduleLoaded;
-
-    View* m_viewPtr;
-    Controller* m_controllerPtr;
-    Modules::Main::IModuleAccess* m_walletModulePtr;
-
-    void connect();
-    void checkIfModuleDidLoad();
-
 public:
     explicit Module(std::shared_ptr<Wallets::ServiceInterface> walletService, QObject* parent = nullptr);
     ~Module() = default;
@@ -40,6 +30,17 @@ public slots:
 
 signals:
     void loaded() override;
+
+private:
+    void connect();
+    void checkIfModuleDidLoad();
+
+private:
+    View* m_viewPtr;
+    Controller* m_controllerPtr;
+    Modules::Main::IModuleAccess* m_walletModulePtr;
+    bool m_moduleLoaded;
+
 };
 } // namespace Modules::Main
 

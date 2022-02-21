@@ -1,12 +1,15 @@
+#include <QDebug>
+#include <QQmlContext>
+
 #include "app_controller.h"
-#include "accounts/service.h"
-#include "app_service.h"
 #include "modules/main/module.h"
 #include "modules/startup/module.h"
-#include <QDebug>
+#include "singleton.h"
 
 AppController::AppController()
 {
+    // To-do remove when transition to c++ is complete
+    Global::Singleton::instance()->engine()->rootContext()->setContextProperty("cppApp", true);
     // result.statusFoundation = statusFoundation
 
     // # Global
