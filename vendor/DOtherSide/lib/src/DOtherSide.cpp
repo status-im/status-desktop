@@ -1505,3 +1505,41 @@ char* dos_from_local_file(const char* filePath)
 {
     return convert_to_cstring(QUrl::fromLocalFile(QString::fromUtf8(filePath)).toString());
 }
+
+bool dos_app_is_active(::DosQQmlApplicationEngine* vptr)
+{
+    auto engine = static_cast<QQmlApplicationEngine*>(vptr);
+    if(!engine)
+        return false;
+
+    QObject* topLevelObj = engine->rootObjects().value(0);
+    if(topLevelObj && topLevelObj->objectName() == "mainWindow")
+    {
+        QQuickWindow* window = qobject_cast<QQuickWindow *>(topLevelObj);
+        if(window)
+        {
+            return window->isActive();
+        }
+    }
+
+    return false;
+}
+
+void dos_app_make_it_active(::DosQQmlApplicationEngine* vptr) 
+{
+    auto engine = static_cast<QQmlApplicationEngine*>(vptr);
+    if(!engine)
+        return;
+
+    QObject* topLevelObj = engine->rootObjects().value(0);
+    if(topLevelObj && topLevelObj->objectName() == "mainWindow")
+    {
+        QQuickWindow* window = qobject_cast<QQuickWindow *>(topLevelObj);
+        if(window)
+        {
+            window->show();
+            window->raise();
+            window->requestActivate();
+        }
+    }
+}
