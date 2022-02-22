@@ -745,13 +745,14 @@ method addChatIfDontExist*(self: Module,
     gifService: gif_service.Service,
     mailserversService: mailservers_service.Service,
     setChatAsActive: bool = true) =
-  
-    if(belongsToCommunity and self.controller.getMySectionId() != chat.communityId or
-      not belongsToCommunity and self.controller.getMySectionId() != conf.CHAT_SECTION_ID):
-      return
 
-    if self.doesChatExist(chat.id):
-      return
+  let sectionId = self.controller.getMySectionId()
+  if(belongsToCommunity and sectionId != chat.communityId or
+    not belongsToCommunity and sectionId != conf.CHAT_SECTION_ID):
+    return
+
+  if self.doesChatExist(chat.id):
+    return
       
-    self.addNewChat(chat, belongsToCommunity, events, settingsService, contactService, chatService,
-      communityService, messageService, gifService, mailserversService, setChatAsActive)
+  self.addNewChat(chat, belongsToCommunity, events, settingsService, contactService, chatService,
+    communityService, messageService, gifService, mailserversService, setChatAsActive)
