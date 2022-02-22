@@ -24,6 +24,9 @@ StatusModal {
     property Menu searchOptionsPopupMenu: Menu { }
     property var searchResults: [ ]
     property var searchSelectionButton
+    // This function is called to know if the popup accepts clicks in the title
+    // If it does not, the clicks on the titles mousearea will be propagated to the main body instead
+    property var acceptsTitleClick: function(titleId) {return true}
 
     signal resultItemClicked(string itemId)
     signal resultItemTitleClicked(string titleId)
@@ -275,8 +278,11 @@ StatusModal {
                             root.resultItemClicked(itemId)
                         }
 
+                        propagateTitleClicks: !root.acceptsTitleClick(titleId)
                         onTitleClicked: {
-                            root.resultItemTitleClicked(titleId)
+                            if (root.acceptsTitleClick(titleId)) {
+                                root.resultItemTitleClicked(titleId)
+                            }
                         }
                     }
                     section.property: "sectionName"

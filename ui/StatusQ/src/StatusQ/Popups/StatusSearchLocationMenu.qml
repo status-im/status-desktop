@@ -10,6 +10,7 @@ StatusPopupMenu {
 
     property var searchPopup
     property var locationModel
+    readonly property int numDefaultItems: 2
 
     signal itemClicked(string firstLevelItemValue, string secondLevelItemValue)
 
@@ -43,7 +44,7 @@ StatusPopupMenu {
                                     color: model.iconColor,
                                     isLetterIdenticon: !model.imageSource && !model.iconName
                                    });
-                    root.insertMenu(index+2, item);
+                    root.insertMenu(index + numDefaultItems, item);
                 } else {
                     item.value = model.value
                     item.text = model.title;
@@ -52,7 +53,7 @@ StatusPopupMenu {
                     item.iconSettings.isLetterIdenticon = !model.imageSource && !model.iconName
                     item.image.source = model.imageSource;
                     item.image.isIdenticon = model.isIdenticon;
-                    root.insertItem(index+2, item);
+                    root.insertItem(index + numDefaultItems, item);
                 }
             }
         }

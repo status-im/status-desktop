@@ -20,6 +20,7 @@ Rectangle {
     property real rightPadding: 16
     property bool enabled: true
     property bool highlighted: false
+    property bool propagateTitleClicks: true 
     property int type: StatusListItem.Type.Primary
     property list<Item> components
 
@@ -175,7 +176,7 @@ Rectangle {
                     anchors.fill: parent
                     cursorShape: containsMouse? Qt.PointingHandCursor : Qt.ArrowCursor
                     hoverEnabled: true
-                    propagateComposedEvents: true
+                    propagateComposedEvents: statusListItem.propagateTitleClicks
                     onClicked: {
                         statusListItem.titleClicked(statusListItem.titleId)
                         mouse.accepted = false
