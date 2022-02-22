@@ -21,23 +21,12 @@ Item {
     width: loadingImageLoader.active ? loadingImageLoader.width : imageMessage.width
     height: loadingImageLoader.active ? loadingImageLoader.height : imageMessage.paintedHeight
 
-    Connections {
-        target: Global.applicationWindow
-        onActiveChanged: {
-            if (Global.applicationWindow.active === false) {
-                imageMessage.playing = false
-            } else {
-                imageMessage.playing = Qt.binding(function () {return imageContainer.playing})
-            }
-        }
-    }
-
     AnimatedImage {
         id: imageMessage
         width: sourceSize.width > imageWidth ? imageWidth : sourceSize.width
         fillMode: Image.PreserveAspectFit
         source: imageContainer.source
-        playing: isAnimated
+        playing: imageContainer.isAnimated && imageContainer.playing
 
         layer.enabled: true
         layer.effect: OpacityMask {
@@ -77,12 +66,6 @@ Item {
             acceptedButtons: Qt.LeftButton | Qt.RightButton
             anchors.fill: parent
             onClicked: {
-                if (imageContainer.isAnimated) {
-                    // FIXME the ListView completely removes Items that scroll out of view
-                    // so when we scroll backto the image, it gets reloaded and playing is reset
-                    imageContainer.playing = !imageContainer.playing
-                    return
-                }
                 imageContainer.clicked(imageMessage, mouse)
             }
         }

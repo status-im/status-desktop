@@ -80,6 +80,7 @@ Rectangle {
         chatHorizontalPadding: 0
         container: root.container
         visible: root.contentType === Constants.messageContentType.imageType
+        playing: false
     }
 
     StatusSticker {

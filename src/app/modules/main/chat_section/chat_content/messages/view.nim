@@ -56,6 +56,12 @@ QtObject:
       return ""
     return $jsonObj
 
+  proc getSectionId*(self: View): string {.slot.} =
+    return self.delegate.getSectionId()
+
+  proc getChatId*(self: View): string {.slot.} =
+    return self.delegate.getChatId()
+    
   proc getChatType*(self: View): int {.slot.} =
     return self.delegate.getChatType()
 

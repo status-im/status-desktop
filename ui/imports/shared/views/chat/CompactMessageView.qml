@@ -512,6 +512,7 @@ Item {
                 z: 51
                 sourceComponent: Component {
                     StatusChatImage {
+                        playing: root.messageStore.playAnimation
                         imageSource: messageImage
                         imageWidth: 200
                         onClicked: {

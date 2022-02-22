@@ -152,6 +152,8 @@ Popup {
         }
 
         Loader {
+            id: gifsLoader
+            active: popup.opened
             Layout.fillWidth: true
             Layout.rightMargin: Style.current.smallPadding / 2
             Layout.leftMargin: Style.current.smallPadding / 2
