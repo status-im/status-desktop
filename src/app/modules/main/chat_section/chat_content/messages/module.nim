@@ -342,6 +342,12 @@ method onPinMessage*(self: Module, messageId: string, actionInitiatedBy: string)
 method onUnpinMessage*(self: Module, messageId: string) =
   self.view.model().pinUnpinMessage(messageId, false, "")
 
+method getSectionId*(self: Module): string =
+  return self.controller.getMySectionId()
+
+method getChatId*(self: Module): string =
+  return self.controller.getMyChatId()
+
 method getChatType*(self: Module): int =
   let chatDto = self.controller.getChatDetails()
   return chatDto.chatType.int

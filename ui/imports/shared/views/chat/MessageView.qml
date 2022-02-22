@@ -316,6 +316,7 @@ Column {
     Component {
         id: statusUpdateComponent
         StatusUpdateView {
+            messageStore: root.messageStore
             statusAgeEpoch: root.statusAgeEpoch
             container: root
             // Not Refactored Yet
@@ -348,6 +349,7 @@ Column {
         id: compactMessageComponent
 
         CompactMessageView {
+            container: root
             store: root.store
             messageStore: root.messageStore
             usersStore: root.usersStore

@@ -131,6 +131,7 @@ Loader {
                 chatHorizontalPadding: 0
                 container: root.container
                 allCornersRounded: true
+                playing: false
             }
 
             Loader {

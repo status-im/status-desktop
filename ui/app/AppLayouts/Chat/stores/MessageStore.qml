@@ -6,6 +6,9 @@ QtObject {
 
     property var messageModule
     property var messagesModel
+    property var chatSectionModule
+
+    property var loadingHistoryMessagesInProgress: root.chatSectionModule? root.chatSectionModule.loadingHistoryMessagesInProgress : false
 
     onMessageModuleChanged: {
         if(!messageModule)
@@ -17,7 +20,8 @@ QtObject {
         if(!messageModule)
             return
 
-        if(!messageModule.initialMessagesLoaded || chatCommunitySectionModule.loadingHistoryMessagesInProgress)
+        if(!messageModule.initialMessagesLoaded ||
+            root.loadingHistoryMessagesInProgress? root.loadingHistoryMessagesInProgress : false)
             return
 
         messageModule.loadMoreMessages()
@@ -57,6 +61,20 @@ QtObject {
         }
 
         return obj
+    }
+
+    function getSectionId () {
+        if(!messageModule)
+            return ""
+
+        return messageModule.getSectionId()
+    }
+
+    function getChatId () {
+        if(!messageModule)
+            return ""
+
+        return messageModule.getChatId()
     }
 
     function getChatType () {
@@ -223,5 +241,24 @@ QtObject {
          if(!messageModule)
             return true
         return messageModule.didIJoinedChat();
+    }
+
+    property bool playAnimation: {
+        if(!Global.applicationWindow.active)
+            return false
+
+        if(root.getSectionId() !== mainModule.activeSection.id)
+            return false
+
+        if(!root.chatSectionModule)
+            return false
+
+        if(root.chatSectionModule.activeItem.isSubItemActive &&
+                root.getChatId() !== root.chatSectionModule.activeItem.activeSubItem.id ||
+                !root.chatSectionModule.activeItem.isSubItemActive &&
+                root.getChatId() !== root.chatSectionModule.activeItem.id)
+            return false
+
+        return true
     }
 }
