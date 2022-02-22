@@ -1,5 +1,4 @@
-#ifndef IMODULEACCESS_H
-#define IMODULEACCESS_H
+#pragma once
 
 #include <QObject>
 
@@ -10,11 +9,11 @@ class IModuleAccess
 public:
     virtual void load() = 0;
     virtual bool isLoaded() = 0;
+
+    virtual ~IModuleAccess() = default;
+
+    // FIXME: signals shouldn't be used in a class that is not QObject
 signals:
     virtual void loaded() = 0;
 };
 } // namespace Modules::Main
-
-Q_DECLARE_INTERFACE(Modules::Main::IModuleAccess, "Modules::Main::IModuleAccess");
-
-#endif // IMODULEACCESS_H

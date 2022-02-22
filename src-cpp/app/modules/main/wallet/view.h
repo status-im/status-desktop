@@ -1,5 +1,4 @@
-#ifndef WALLET_VIEW_H
-#define WALLET_VIEW_H
+#pragma once
 
 #include <QObject>
 
@@ -11,7 +10,6 @@ class View : public QObject
 
 public:
     explicit View(QObject* parent = nullptr);
-    ~View() = default;
 
     void load();
 
@@ -19,5 +17,3 @@ signals:
     void viewLoaded();
 };
 } // namespace Modules::Main::Wallet
-
-#endif // WALLET_VIEW_H

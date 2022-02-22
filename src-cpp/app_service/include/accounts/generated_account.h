@@ -36,12 +36,12 @@ public:
     QString alias;
     QString identicon;
 
-    bool isValid();
+    bool isValid() const;
 };
 
-DerivedAccountDetails toDerivedAccountDetails(const QJsonValue jsonObj, QString derivationPath);
+DerivedAccountDetails toDerivedAccountDetails(const QJsonValue& jsonObj, const QString& derivationPath);
 
-DerivedAccounts toDerivedAccounts(const QJsonObject jsonObj);
+DerivedAccounts toDerivedAccounts(const QJsonObject& jsonObj);
 
-GeneratedAccountDto toGeneratedAccountDto(const QJsonValue jsonObj);
+GeneratedAccountDto toGeneratedAccountDto(const QJsonValue& jsonObj);
 } // namespace Accounts

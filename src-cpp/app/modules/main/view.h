@@ -1,5 +1,4 @@
-#ifndef VIEW_H
-#define VIEW_H
+#pragma once
 
 #include <QObject>
 #include <memory>
@@ -15,14 +14,12 @@ class View : public QObject
     Q_PROPERTY(Shared::Models::SectionItem* activeSection READ getActiveSection NOTIFY activeSectionChanged)
 
 public:
-    explicit View(QObject* parent = nullptr);
-    ~View() = default;
+    using QObject::QObject;
+
     void load();
 
     void addItem(Shared::Models::SectionItem* item);
 
-    Shared::Models::SectionModel* getSectionsModel() const;
-    Shared::Models::SectionItem* getActiveSection() const;
     void setActiveSection(const QString& Id);
 
 signals:
@@ -31,8 +28,9 @@ signals:
     void activeSectionChanged();
 
 private:
-    Shared::Models::SectionModel* m_sectionModelPtr;
+    Shared::Models::SectionModel* getSectionsModel();
+    Shared::Models::SectionItem* getActiveSection() const;
+
+    Shared::Models::SectionModel m_sectionModel;
 };
 } // namespace Modules::Main
-
-#endif // VIEW_H

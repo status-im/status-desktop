@@ -1,5 +1,4 @@
-#ifndef WALLET_ACCOUNT_CONTROLLER_H
-#define WALLET_ACCOUNT_CONTROLLER_H
+#pragma once
 
 #include <QObject>
 
@@ -16,20 +15,23 @@ class Controller : public QObject, public IController
 
 public:
     explicit Controller(std::shared_ptr<Wallets::ServiceInterface> walletService, QObject* parent = nullptr);
-    ~Controller() = default;
 
     void init() override;
 
     QList<Wallets::WalletAccountDto> getWalletAccounts();
     QString generateNewAccount(const QString& password, const QString& accountName, const QString& color);
-    QString addAccountsFromPrivateKey(const QString& privateKey, const QString& password, const QString& accountName, const QString& color);
-    QString addAccountsFromSeed(const QString& seedPhrase, const QString& password, const QString& accountName, const QString& color);
-    QString addWatchOnlyAccount(const QString& address, const QString& accountName , const QString& color);
+    QString addAccountsFromPrivateKey(const QString& privateKey,
+                                      const QString& password,
+                                      const QString& accountName,
+                                      const QString& color);
+    QString addAccountsFromSeed(const QString& seedPhrase,
+                                const QString& password,
+                                const QString& accountName,
+                                const QString& color);
+    QString addWatchOnlyAccount(const QString& address, const QString& accountName, const QString& color);
     void deleteAccount(const QString& address);
 
 private:
     std::shared_ptr<Wallets::ServiceInterface> m_walletServicePtr;
 };
 } // namespace Modules::Main::Wallet::Accounts
-
-#endif // WALLET_ACCOUNT_CONTROLLER_H

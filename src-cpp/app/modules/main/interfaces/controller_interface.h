@@ -1,5 +1,4 @@
-#ifndef ICONTROLLER_H
-#define ICONTROLLER_H
+#pragma once
 
 namespace Modules::Main
 {
@@ -8,7 +7,6 @@ class IController
 {
 public:
     virtual void init() = 0;
+    virtual ~IController() = default;
 };
 } // namespace Modules::Main
-
-#endif // ICONTROLLER_H

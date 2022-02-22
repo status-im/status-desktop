@@ -28,10 +28,10 @@ public:
     QString keyUid;
     QVector<Image> images;
 
-    bool isValid();
+    bool isValid() const;
 };
 
-Image toImage(const QJsonValue jsonObj);
+Image toImage(const QJsonValue& jsonObj);
 
-AccountDto toAccountDto(const QJsonValue jsonObj);
+AccountDto toAccountDto(const QJsonValue& jsonObj);
 } // namespace Accounts

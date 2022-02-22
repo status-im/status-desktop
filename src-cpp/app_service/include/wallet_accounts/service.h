@@ -1,17 +1,16 @@
-#ifndef WALLETACCOUNTSSERVICE_H
-#define WALLETACCOUNTSSERVICE_H
+#pragma once
 
 #include <QString>
 #include <QMap>
 #include <QObject>
 
-#include "wallet_account.h"
 #include "service_interface.h"
+#include "wallet_account.h"
 
 namespace Wallets
 {
 
-class Service : public ServiceInterface, public QObject
+class Service : public QObject, public ServiceInterface 
 {
 private:
     void fetchAccounts();
@@ -20,9 +19,6 @@ private:
     QMap<QString, WalletAccountDto> m_walletAccounts;
 
 public:
-    Service();
-    ~Service() = default;
-
     void init() override;
 
     QList<WalletAccountDto> getWalletAccounts() override;
@@ -34,5 +30,3 @@ public:
 
 };
 } // namespace Wallets
-
-#endif // WALLETACCOUNTSERVICE_H

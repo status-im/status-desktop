@@ -1,5 +1,4 @@
-#ifndef APPSECTION_CONFIG_H
-#define APPSECTION_CONFIG_H
+#pragma once
 
 // To Do: Currently this gets added to eahc file that its imported into need to create as enums in calss when some works on this potentially
 #include <QString>
@@ -23,5 +22,3 @@ const QString NODEMANAGEMENT_SECTION_ICON = "node";
 const QString SETTINGS_SECTION_ID = "profileSettings";
 const QString SETTINGS_SECTION_NAME = "Settings";
 const QString SETTINGS_SECTION_ICON = "settings";
-
-#endif // APPSECTION_CONFIG_H

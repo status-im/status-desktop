@@ -2,6 +2,7 @@
 #include "backend/types.h"
 #include "backend/utils.h"
 #include "libstatus.h"
+
 #include <QDebug>
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -9,19 +10,22 @@
 #include <QString>
 #include <QVector>
 
-const int NUMBER_OF_ADDRESSES_TO_GENERATE = 5;
-const int MNEMONIC_PHRASE_LENGTH = 12;
+namespace
+{
+constexpr auto NumberOfAddressesToGenerate = 5;
+constexpr auto MnemonicPhraseLength = 12;
+} // namespace
 
 Backend::RpcResponse<QJsonArray> Backend::Accounts::generateAddresses(QVector<QString> paths)
 {
-    QJsonObject payload{{"n", NUMBER_OF_ADDRESSES_TO_GENERATE},
-                        {"mnemonicPhraseLength", MNEMONIC_PHRASE_LENGTH},
+    QJsonObject payload{{"n", NumberOfAddressesToGenerate},
+                        {"mnemonicPhraseLength", MnemonicPhraseLength},
                         {"bip32Passphrase", ""},
                         {"paths", Utils::toJsonArray(paths)}
 
     };
     const char* result = MultiAccountGenerateAndDeriveAddresses(Utils::jsonToStr(payload).toUtf8().data());
-    return Backend::RpcResponse<QJsonArray>(result, QJsonDocument::fromJson(result).array());
+    return {result, QJsonDocument::fromJson(result).array()};
 }
 
 Backend::RpcResponse<QString> Backend::Accounts::generateIdenticon(QString publicKey)
@@ -29,12 +33,10 @@ Backend::RpcResponse<QString> Backend::Accounts::generateIdenticon(QString publi
     if(!publicKey.isEmpty())
     {
         auto identicon = QString(Identicon(publicKey.toUtf8().data()));
-        return Backend::RpcResponse<QString>(identicon, identicon);
+        return {identicon, identicon};
     }
-    else
-    {
-        throw Backend::RpcException("publicKey can't be empty1");
-    }
+
+    throw Backend::RpcException("publicKey can't be empty1");
 }
 
 Backend::RpcResponse<QString> Backend::Accounts::generateAlias(QString publicKey)
@@ -42,12 +44,10 @@ Backend::RpcResponse<QString> Backend::Accounts::generateAlias(QString publicKey
     if(!publicKey.isEmpty())
     {
         auto alias = QString(GenerateAlias(publicKey.toUtf8().data()));
-        return Backend::RpcResponse<QString>(alias, alias);
+        return {alias, alias};
     }
-    else
-    {
-        throw Backend::RpcException("publicKey can't be empty2");
-    }
+
+    throw Backend::RpcException("publicKey can't be empty2");
 }
 
 Backend::RpcResponse<QJsonObject>
@@ -57,7 +57,8 @@ Backend::Accounts::storeDerivedAccounts(QString id, QString hashedPassword, QVec
     auto result = MultiAccountStoreDerivedAccounts(Utils::jsonToStr(payload).toUtf8().data());
     auto obj = QJsonDocument::fromJson(result).object();
     Backend::Utils::throwOnError(obj);
-    return Backend::RpcResponse<QJsonObject>(result, obj);
+
+    return {result, obj};
 }
 
 Backend::RpcResponse<QJsonObject> Backend::Accounts::saveAccountAndLogin(
@@ -70,7 +71,8 @@ Backend::RpcResponse<QJsonObject> Backend::Accounts::saveAccountAndLogin(
                                       Utils::jsonToStr(subaccounts).toUtf8().data());
     auto obj = QJsonDocument::fromJson(result).object();
     Backend::Utils::throwOnError(obj);
-    return Backend::RpcResponse<QJsonObject>(result, obj);
+
+    return {result, obj};
 }
 
 Backend::RpcResponse<QJsonArray> Backend::Accounts::openAccounts(QString path)
@@ -93,5 +95,6 @@ Backend::RpcResponse<QJsonObject> Backend::Accounts::login(
     auto result = Login(Utils::jsonToStr(payload).toUtf8().data(), hashedPassword.toUtf8().data());
     auto obj = QJsonDocument::fromJson(result).object();
     Backend::Utils::throwOnError(obj);
-    return Backend::RpcResponse<QJsonObject>(result, obj);
+
+    return {result, obj};
 }

@@ -1,5 +1,4 @@
-#ifndef WALLET_ACCOUNT_MODEL_H
-#define WALLET_ACCOUNT_MODEL_H
+#pragma once
 
 #include <QAbstractListModel>
 #include <QHash>
@@ -29,7 +28,6 @@ public:
     };
 
     explicit Model(QObject* parent = nullptr);
-    ~Model() = default;
 
     QHash<int, QByteArray> roleNames() const override;
     int rowCount(const QModelIndex&) const override;
@@ -41,5 +39,3 @@ private:
     QVector<Item*> m_items;
 };
 } // namespace Modules::Main::Wallet::Accounts
-
-#endif // WALLET_ACCOUNT_MODEL_H

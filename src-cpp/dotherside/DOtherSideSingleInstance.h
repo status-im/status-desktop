@@ -1,5 +1,4 @@
-#ifndef SINGLEINSTANCE_H
-#define SINGLEINSTANCE_H
+#pragma once
 
 #include <QObject>
 
@@ -27,5 +26,3 @@ private slots:
 private:
     QLocalServer* m_localServer;
 };
-
-#endif // SINGLEINSTANCE_H

@@ -3,21 +3,14 @@
 
 namespace Global
 {
-Singleton* Singleton::theInstance;
-
 Singleton* Singleton::instance()
 {
-    if(theInstance == 0) theInstance = new Singleton();
-    return theInstance;
-}
-
-Singleton::Singleton()
-{
-    m_engine = new QQmlApplicationEngine();
+    static auto singleton = new Singleton();
+    return singleton;
 }
 
 QQmlApplicationEngine* Singleton::engine()
 {
-    return m_engine;
+    return &m_engine;
 }
 } // namespace Global

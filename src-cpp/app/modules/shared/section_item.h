@@ -1,5 +1,4 @@
-#ifndef SECTION_ITEM_H
-#define SECTION_ITEM_H
+#pragma once
 
 #include <QObject>
 #include <QString>
@@ -16,11 +15,12 @@ enum SectionType
     ProfileSettings,
     NodeManagement
 };
+
 class SectionItem : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString id READ getId)
-    Q_PROPERTY(int sectionType READ getSectionType)
+    Q_PROPERTY(int sectionType READ getSectionType) // FIXME: use enum instead of int
     Q_PROPERTY(QString name READ getName)
     Q_PROPERTY(bool amISectionAdmin READ getAmISectionAdmin)
     Q_PROPERTY(QString description READ getDescription)
@@ -40,6 +40,9 @@ class SectionItem : public QObject
     Q_PROPERTY(bool ensOnly READ getIsEnsOnly)
 
 public:
+    // FIXME: very long constructor, consider only list of necessary parameters (id, parent)?
+    //       others could be altered by setters
+    // FIXME: Qt's convention is to put parent at the end of parameters list
     SectionItem(QObject* parent = nullptr,
                 const QString& id = "",
                 SectionType sectionType = SectionType::Unkown,
@@ -113,5 +116,3 @@ private:
     //    pendingRequestsToJoinModel: PendingRequestModel
 };
 } // namespace Shared::Models
-
-#endif // SECTION_ITEM_H
