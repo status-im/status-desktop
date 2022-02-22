@@ -9,12 +9,10 @@
 namespace Signals
 {
 
-Manager* Manager::theInstance;
-
 Manager* Manager::instance()
 {
-    if(theInstance == 0) theInstance = new Manager();
-    return theInstance;
+    static auto manager = new Manager();
+    return manager;
 }
 
 std::map<QString, SignalType> Manager::signalMap;

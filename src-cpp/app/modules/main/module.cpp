@@ -8,14 +8,14 @@
 
 namespace Modules::Main
 {
-Module::Module(std::shared_ptr<Wallets::ServiceInterface> walletsService, QObject* parent)
+Module::Module(std::shared_ptr<Wallets::ServiceInterface> walletService, QObject* parent)
     : QObject(parent)
 {
     m_controllerPtr = new Controller(this);
     m_viewPtr = new View(this);
 
     // Submodules
-    m_walletModulePtr = new Modules::Main::Wallet::Module(walletsService, this);
+    m_walletModulePtr = new Modules::Main::Wallet::Module(walletService, this);
 
     m_moduleLoaded = false;
     connect();
@@ -24,6 +24,7 @@ Module::Module(std::shared_ptr<Wallets::ServiceInterface> walletsService, QObjec
 void Module::connect()
 {
     QObject::connect(m_viewPtr, &View::viewLoaded, this, &Module::viewDidLoad);
+    // FIXME: use PointerToMember approach
     QObject::connect(dynamic_cast<QObject*>(m_walletModulePtr), SIGNAL(loaded()), this, SLOT(walletDidLoad()));
 }
 

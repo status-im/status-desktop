@@ -26,6 +26,8 @@ AppController::AppController()
     // result.osNotificationService = os_notification_service.newService(statusFoundation.status.events)
     // result.keychainService = keychain_service.newService(statusFoundation.status.events)
     // result.ethService = eth_service.newService()
+
+    // FIXME: it should be done in constructor member initializer list
     m_accountsService = new Accounts::Service();
     m_walletServicePtr = std::make_shared<Wallets::Service>();
     // result.networkService = network_service.newService()
@@ -68,6 +70,8 @@ AppController::AppController()
     // result.settingsService, result.nodeConfigurationService, statusFoundation.fleetConfiguration)
 
     // # Modules
+
+    // FIXME: it should be done in constructor member initializer list
     m_startupModule = new Modules::Startup::Module(this, /*keychainService,*/ m_accountsService);
 
     m_mainModulePtr = new Modules::Main::Module(m_walletServicePtr, this);
@@ -104,6 +108,7 @@ AppController::AppController()
 
 AppController::~AppController()
 {
+    // FIXME: `delete` should never be used, use RAII
     delete m_startupModule;
     delete m_accountsService;
 }
@@ -113,6 +118,8 @@ void AppController::connect()
     // self.statusFoundation.status.events.once("nodeStopped") do(a: Args):
     // TODO: remove this once accounts are not tracked in the AccountsModel
     // self.statusFoundation.status.reset()
+
+    // FIXME: use PointerToMember approach
     QObject::connect(dynamic_cast<QObject*>(m_mainModulePtr), SIGNAL(loaded()), this, SLOT(mainDidLoad()));
 }
 

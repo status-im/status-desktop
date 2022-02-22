@@ -31,8 +31,8 @@ const QString DefaultNetworkName = "mainnet_rpc";
 const QString DataDir = "/data";
 const QString Keystore = "/data/keystore";
 
-QString applicationPath(QString path = "");
-QString tmpPath(QString path = "");
-QString cachePath(QString path = "");
+QString applicationPath(const QString& path = "");
+QString tmpPath(const QString& path = "");
+QString cachePath(const QString& path = "");
 
 } // namespace Constants

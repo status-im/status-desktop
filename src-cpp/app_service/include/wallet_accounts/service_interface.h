@@ -1,16 +1,15 @@
-#ifndef WALLETACCOUNTSSERVICEINTERFACE_H
-#define WALLETACCOUNTSSERVICEINTERFACE_H
-
-#include <QJsonValue>
-#include <QList>
-#include <memory>
+#pragma once
 
 #include "../app_service.h"
 #include "wallet_account.h"
 
+#include <memory>
+
+#include <QJsonValue>
+#include <QList>
+
 namespace Wallets
 {
-
 class ServiceInterface : public AppService
 {
 public:
@@ -23,5 +22,3 @@ public:
 };
 
 } // namespace Wallets
-
-#endif // WALLETACCOUNTSSERVICEINTERFACE_H

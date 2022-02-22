@@ -3,12 +3,6 @@
 
 namespace Modules::Main
 {
-View::View(QObject* parent)
-    : QObject(parent)
-{
-    m_sectionModelPtr = new Shared::Models::SectionModel(this);
-}
-
 void View::load()
 {
     // Add Wallet Section to Sections model
@@ -30,25 +24,25 @@ void View::load()
 
 void View::addItem(Shared::Models::SectionItem* item)
 {
-    m_sectionModelPtr->addItem(item);
-    emit sectionsModelChanged();
+    m_sectionModel.addItem(item);
+    // emit sectionsModelChanged(); // FIXME: that's wrong, sectionModel* property didn't change
 }
 
-Shared::Models::SectionModel* View::getSectionsModel() const
+Shared::Models::SectionModel* View::getSectionsModel()
 {
-    return m_sectionModelPtr;
+    return &m_sectionModel;
 }
 
 Shared::Models::SectionItem* View::getActiveSection() const
 {
-    return m_sectionModelPtr->getActiveItem();
+    return m_sectionModel.getActiveItem();
 }
 
 void View::setActiveSection(const QString& Id)
 {
-    if(m_sectionModelPtr->getActiveItem().isNull() || (m_sectionModelPtr->getActiveItem()->getId() != Id))
+    if(m_sectionModel.getActiveItem().isNull() || (m_sectionModel.getActiveItem()->getId() != Id))
     {
-        m_sectionModelPtr->setActiveSection(Id);
+        m_sectionModel.setActiveSection(Id);
         activeSectionChanged();
     }
 }

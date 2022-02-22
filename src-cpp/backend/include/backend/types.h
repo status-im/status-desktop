@@ -2,16 +2,9 @@
 
 #include <QString>
 #include <iostream>
-using namespace std;
 
 namespace Backend
 {
-
-const QString GENERATED = "generated";
-const QString SEED = "seed";
-const QString KEY = "key";
-const QString WATCH = "watch";
-
 struct RpcException : public std::exception
 {
 private:
@@ -19,18 +12,22 @@ private:
 
 public:
     explicit RpcException(const std::string& message);
-    const char* what() const throw();
+    const char* what() const noexcept override;
 };
 
 class RpcError
 {
 public:
-    double m_code;
+    double m_code{};
     QString m_message;
 
-    friend ostream& operator<<(ostream& os, Backend::RpcError& r);
     RpcError() = default;
-    RpcError(double code, QString message);
+    RpcError(double code, const QString& message)
+        : m_code(code)
+        , m_message(message)
+    { }
+
+    friend std::ostream& operator<<(std::ostream& os, Backend::RpcError& r);
 };
 
 template <typename T>
@@ -40,20 +37,18 @@ class RpcResponse
 public:
     QString m_jsonrpc;
     T m_result;
-    int m_id;
+    int m_id{};
     RpcError m_error;
 
-public:
-    RpcResponse(QString jsonrpc, T result)
-		: m_jsonrpc(jsonrpc)
+    RpcResponse(const QString& jsonrpc, T result)
+        : m_jsonrpc(jsonrpc)
         , m_result(result)
-	{ }
+    { }
 
-    RpcResponse(QString jsonrpc, T result, RpcError error)
+    RpcResponse(const QString& jsonrpc, T result, const RpcError& error)
         : m_jsonrpc(jsonrpc)
         , m_result(result)
         , m_error(error)
     { }
 };
-
 } // namespace Backend

@@ -5,6 +5,7 @@
 #include "logs.h"
 #include "signals.h"
 #include "singleton.h"
+
 #include <QGuiApplication>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -25,11 +26,14 @@ int main(int argc, char* argv[])
 #endif
 
     QGuiApplication app(argc, argv);
-    app.setOrganizationName("Status");
-    app.setOrganizationDomain("status.im");
-    app.setApplicationName("Status Desktop");
+    QGuiApplication::setOrganizationName("Status");
+    QGuiApplication::setOrganizationDomain("status.im");
+    QGuiApplication::setApplicationName("Status Desktop");
 
-    if(!Constants::ensureDirectories()) return 1;
+    if(!Constants::ensureDirectories())
+    {
+        return 1;
+    }
 
     // Init keystore
     const char* initKeystoreResult = InitKeystore(Constants::applicationPath(Constants::Keystore).toUtf8().data());
@@ -66,12 +70,16 @@ int main(int argc, char* argv[])
         &QQmlApplicationEngine::objectCreated,
         &app,
         [url](QObject* obj, const QUrl& objUrl) {
-            if(!obj && url == objUrl) QCoreApplication::exit(-1);
+            if(!obj && url == objUrl)
+            {
+                QCoreApplication::exit(-1);
+            }
         },
         Qt::QueuedConnection);
 
     Global::Singleton::instance()->engine()->load(url);
 
     qInfo("starting application...");
-    return app.exec();
+
+    return QGuiApplication::exec();
 }

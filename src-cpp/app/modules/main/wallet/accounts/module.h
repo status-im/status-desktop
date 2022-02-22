@@ -1,5 +1,4 @@
-#ifndef WALLET_ACCOUNT_MODULE_H
-#define WALLET_ACCOUNT_MODULE_H
+#pragma once
 
 #include <QObject>
 
@@ -13,10 +12,8 @@ namespace Modules::Main::Wallet::Accounts
 class Module : public QObject, virtual public IModuleAccess
 {
     Q_OBJECT
-    Q_INTERFACES(Modules::Main::IModuleAccess)
 public:
-    explicit Module(std::shared_ptr<Wallets::ServiceInterface> walletsService, QObject* parent);
-    ~Module() = default;
+    explicit Module(std::shared_ptr<Wallets::ServiceInterface> walletsService, QObject* parent = nullptr);
 
     void load() override;
     bool isLoaded() override;
@@ -30,12 +27,9 @@ signals:
 private:
     void connect();
 
-private:
     View* m_viewPtr;
     Controller* m_controllerPtr;
 
     bool m_moduleLoaded;
 };
 } // namespace Modules::Main::Wallet::Accounts
-
-#endif // WALLET_ACCOUNT_MODULE_H

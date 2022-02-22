@@ -1,5 +1,4 @@
-#ifndef WALLETTOKENDTO_H
-#define WALLETTOKENDTO_H
+#pragma once
 
 #include <QJsonValue>
 #include <QString>
@@ -22,5 +21,3 @@ public:
 };
 
 } // namespace Wallets
-
-#endif // WALLETTOKENDTO_H

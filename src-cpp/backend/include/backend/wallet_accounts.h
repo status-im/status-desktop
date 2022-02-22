@@ -1,5 +1,4 @@
-#ifndef WALLETACCOUNT_BACKEND_H
-#define WALLETACCOUNT_BACKEND_H
+#pragma once
 
 #include <QJsonArray>
 
@@ -14,5 +13,3 @@ Backend::RpcResponse<QString> addAccountsFromSeed(const QString& seedPhrase, con
 Backend::RpcResponse<QString> addWatchOnlyAccount(const QString& address, const QString& accountName , const QString& color);
 Backend::RpcResponse<QString> deleteAccount(const QString& address);
 } // namespace Backend::Wallet::Accounts
-
-#endif // WALLETACCOUNT_BACKEND_H

@@ -1,12 +1,11 @@
-#ifndef WALLET_ACCOUNT_VIEW_H
-#define WALLET_ACCOUNT_VIEW_H
+#pragma once
 
 #include <QObject>
 #include <memory>
 
-#include "model.h"
 #include "controller.h"
 #include "item.h"
+#include "model.h"
 
 namespace Modules::Main::Wallet::Accounts
 {
@@ -18,7 +17,6 @@ class View : public QObject
 
 public:
     explicit View(Controller* controller, QObject* parent = nullptr);
-    ~View() = default;
 
     void load();
     void setModelItems(const QVector<Item*>& accounts);
@@ -26,11 +24,17 @@ public:
     Item* getCurrentAccount() const;
 
     Q_INVOKABLE QString generateNewAccount(const QString& password, const QString& accountName, const QString& color);
-    Q_INVOKABLE QString addAccountsFromPrivateKey(const QString& privateKey, const QString& password, const QString& accountName, const QString& color);
-    Q_INVOKABLE QString addAccountsFromSeed(const QString& seedPhrase, const QString& password, const QString& accountName, const QString& color);
-    Q_INVOKABLE QString addWatchOnlyAccount(const QString& address, const QString& accountName , const QString& color);
+    Q_INVOKABLE QString addAccountsFromPrivateKey(const QString& privateKey,
+                                                  const QString& password,
+                                                  const QString& accountName,
+                                                  const QString& color);
+    Q_INVOKABLE QString addAccountsFromSeed(const QString& seedPhrase,
+                                            const QString& password,
+                                            const QString& accountName,
+                                            const QString& color);
+    Q_INVOKABLE QString addWatchOnlyAccount(const QString& address, const QString& accountName, const QString& color);
     Q_INVOKABLE void deleteAccount(const QString& address);
-    Q_INVOKABLE void switchAccount(int index);   
+    Q_INVOKABLE void switchAccount(int index);
 
 signals:
     void viewLoaded();
@@ -40,11 +44,8 @@ signals:
 private:
     void refreshWalletAccounts();
 
-private:
     Model* m_modelPtr;
     Controller* m_controllerPtr;
     Item* m_currentAccountPtr;
 };
 } // namespace Modules::Main::Wallet::Accounts
-
-#endif // WALLET_ACCOUNT_VIEW_H

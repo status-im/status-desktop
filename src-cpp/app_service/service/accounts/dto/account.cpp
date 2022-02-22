@@ -5,12 +5,12 @@
 #include <QJsonValue>
 #include <QStringList>
 
-bool Accounts::AccountDto::isValid()
+bool Accounts::AccountDto::isValid() const
 {
     return name.length() > 0 && keyUid.length() > 0;
 }
 
-Accounts::Image Accounts::toImage(const QJsonValue jsonObj)
+Accounts::Image Accounts::toImage(const QJsonValue& jsonObj)
 {
     auto result = Accounts::Image();
 
@@ -25,7 +25,7 @@ Accounts::Image Accounts::toImage(const QJsonValue jsonObj)
     return result;
 }
 
-Accounts::AccountDto Accounts::toAccountDto(const QJsonValue jsonObj)
+Accounts::AccountDto Accounts::toAccountDto(const QJsonValue& jsonObj)
 {
     auto result = Accounts::AccountDto();
 

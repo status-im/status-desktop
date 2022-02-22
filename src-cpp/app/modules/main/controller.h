@@ -1,5 +1,4 @@
-#ifndef CONTROLLER_H
-#define CONTROLLER_H
+#pragma once
 
 #include <QObject>
 
@@ -12,12 +11,9 @@ namespace Modules::Main
 class Controller : public QObject, public IController
 {
 public:
-    explicit Controller(QObject* parent = nullptr);
-    ~Controller() = default;
+    using QObject::QObject;
 
     void init() override;
 };
 
 } // namespace Modules::Main
-
-#endif // CONTROLLER_H

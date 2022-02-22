@@ -6,12 +6,6 @@
 
 namespace Wallets
 {
-
-Service::Service()
-{
-    // do nothing
-}
-
 void Service::init()
 {
     fetchAccounts();
@@ -27,7 +21,10 @@ void Service::fetchAccounts()
         foreach(const QJsonValue& value, response.m_result)
         {
             auto account = toWalletAccountDto(value);
-            if(!account.isChat) m_walletAccounts[account.address] = account;
+            if(!account.isChat)
+            {
+                m_walletAccounts[account.address] = account;
+            }
         }
     }
     catch(Backend::RpcException& e)

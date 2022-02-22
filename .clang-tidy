@@ -16,5 +16,9 @@ AnalyzeTemporaryDtors: false
 FormatStyle:     none
 CheckOptions:
   - key:             cppcoreguidelines-non-private-member-variables-in-classes.IgnoreClassesWithAllMemberVariablesBeingPublic
-    value:           'true'
+    value:           true
+  - key:             modernize-pass-by-value.ValuesOnly
+    value:           true
+  - key:             readability-implicit-bool-conversion.AllowPointerConditions
+    value:           true
 ...

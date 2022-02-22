@@ -1,5 +1,4 @@
-#ifndef WALLET_CONTROLLER_H
-#define WALLET_CONTROLLER_H
+#pragma once
 
 #include <QObject>
 
@@ -15,12 +14,9 @@ class Controller : public QObject, public IController
 
 public:
     explicit Controller(std::shared_ptr<Wallets::ServiceInterface> walletService, QObject* parent = nullptr);
-    ~Controller() = default;
     void init() override;
 
 private:
     std::shared_ptr<Wallets::ServiceInterface> m_walletService;
 };
 } // namespace Modules::Main::Wallet
-
-#endif // WALLET_CONTROLLER_H

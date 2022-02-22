@@ -4,12 +4,11 @@
 
 namespace Constants
 {
-const QString DataDir = "/data";
-const QString Keystore = "/data/keystore";
+inline constexpr auto DataDir = "/data";
+inline constexpr auto Keystore = "/data/keystore";
 
-QString applicationPath(QString path = "");
-QString tmpPath(QString path = "");
-QString cachePath(QString path = "");
+QString applicationPath(const QString& path = "");
+QString tmpPath(const QString& path = "");
+QString cachePath(const QString& path = "");
 bool ensureDirectories();
-
 } // namespace Constants

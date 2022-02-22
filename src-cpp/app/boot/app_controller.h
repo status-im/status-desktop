@@ -1,5 +1,4 @@
-#ifndef APP_CONTROLLER_H
-#define APP_CONTROLLER_H
+#pragma once
 
 #include <QObject>
 
@@ -23,6 +22,7 @@ class AppController : public QObject, AppControllerDelegate
     //globalUtilsVariant: QVariant
 
     // Services
+    // FIXME: don't use raw pointers
     Accounts::Service* m_accountsService;
     std::shared_ptr<Wallets::Service> m_walletServicePtr;
 
@@ -33,8 +33,9 @@ class AppController : public QObject, AppControllerDelegate
 
 public:
     AppController();
-    ~AppController();
+    ~AppController() override;
     void start();
+
 public slots:
     void mainDidLoad();
 
@@ -46,5 +47,3 @@ private:
     void buildAndRegisterLocalAccountSensitiveSettings();
     void buildAndRegisterUserProfile();
 };
-
-#endif // APP_CONTROLLER_H

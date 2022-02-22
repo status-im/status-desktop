@@ -1,5 +1,4 @@
-#ifndef MODULE_H
-#define MODULE_H
+#pragma once
 
 #include <QObject>
 #include <QPointer>
@@ -12,14 +11,12 @@
 
 namespace Modules::Main
 {
-class Module : public QObject, virtual public IModuleAccess
+class Module : public QObject, public IModuleAccess
 {
     Q_OBJECT
-    Q_INTERFACES(Modules::Main::IModuleAccess)
 
 public:
     explicit Module(std::shared_ptr<Wallets::ServiceInterface> walletService, QObject* parent = nullptr);
-    ~Module() = default;
 
     void load() override;
     bool isLoaded() override;
@@ -35,13 +32,11 @@ private:
     void connect();
     void checkIfModuleDidLoad();
 
-private:
+    // FIXME: don't use raw pointers
+    // (should be either plain member, reference or smart pointer, depending on ownerhip)
     View* m_viewPtr;
     Controller* m_controllerPtr;
     Modules::Main::IModuleAccess* m_walletModulePtr;
     bool m_moduleLoaded;
-
 };
 } // namespace Modules::Main
-
-#endif // MODULE_H

@@ -48,7 +48,6 @@ signals:
     void nodeCrashed(NodeSignal signal);
 
 private:
-    static Manager* theInstance;
     explicit Manager(QObject* parent = nullptr);
     static std::map<QString, SignalType> signalMap;
     static void signalCallback(const char* data);

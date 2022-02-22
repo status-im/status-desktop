@@ -1,12 +1,11 @@
-#ifndef WALLET_ACCOUNT_ITEM_H
-#define WALLET_ACCOUNT_ITEM_H
+#pragma once
 
 #include <QObject>
 #include <QString>
 
 namespace Modules::Main::Wallet::Accounts
 {
-class Item: public QObject
+class Item : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString name READ getName NOTIFY nameChanged);
@@ -30,7 +29,6 @@ public:
          bool isWallet = false,
          bool isChat = false,
          float currencyBalance = 0);
-    ~Item() = default;
 
     const QString& getName() const;
     const QString& getAddress() const;
@@ -41,7 +39,7 @@ public:
     bool getIsWallet() const;
     bool getIsChat() const;
     float getCurrencyBalance() const;
-    void setData(Item *item);
+    void setData(Item* item);
 
 signals:
     void nameChanged();
@@ -64,8 +62,5 @@ private:
     bool m_isWallet;
     bool m_isChat;
     float m_currencyBalance;
-
 };
 } // namespace Modules::Main::Wallet::Accounts
-
-#endif // WALLET_ACCOUNT_ITEM_H

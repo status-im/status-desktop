@@ -1,4 +1,5 @@
 #include "accounts/service.h"
+
 #include "accounts/account.h"
 #include "accounts/generated_account.h"
 #include "accounts/service_interface.h"
@@ -7,28 +8,142 @@
 #include "backend/utils.h"
 #include "constants.h"
 #include "signing-phrases.h"
+
 #include <QDebug>
 #include <QFile>
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QRandomGenerator>
+#include <QStringList>
 #include <QUuid>
+
+namespace
+{
+
+const QVector<QString> Paths{Backend::Accounts::PathWalletRoot,
+                             Backend::Accounts::PathEIP1581,
+                             Backend::Accounts::PathWhisper,
+                             Backend::Accounts::PathDefaultWallet};
+
+QString generateSigningPhrase(int count)
+{
+    QStringList words;
+    for(int i = 0; i < count; i++)
+    {
+        words.append(phrases[QRandomGenerator::global()->bounded(static_cast<int>(phrases.size()))]);
+    }
+    return words.join(" ");
+}
+
+QJsonObject prepareAccountJsonObject(const Accounts::GeneratedAccountDto& account)
+{
+    return {{"name", account.alias},
+            {"address", account.address},
+            {"photo-path", account.identicon},
+            {"identicon", account.identicon},
+            {"key-uid", account.keyUid},
+            {"keycard-pairing", QJsonValue()}};
+}
+
+QJsonArray prepareSubaccountJsonObject(Accounts::GeneratedAccountDto account)
+{
+    return {QJsonObject{{"public-key", account.derivedAccounts.defaultWallet.publicKey},
+                        {"address", account.derivedAccounts.defaultWallet.address},
+                        {"color", "#4360df"},
+                        {"wallet", true},
+                        {"path", Backend::Accounts::PathDefaultWallet},
+                        {"name", "Status account"}},
+            QJsonObject{{"public-key", account.derivedAccounts.whisper.publicKey},
+                        {"address", account.derivedAccounts.whisper.address},
+                        {"path", Backend::Accounts::PathWhisper},
+                        {"name", account.alias},
+                        {"identicon", account.identicon},
+                        {"chat", true}}};
+}
+
+QJsonObject prepareAccountSettingsJsonObject(const Accounts::GeneratedAccountDto& account, QString installationId)
+{
+    auto defaultNetworks = QFile{":/resources/default-networks.json"};
+    defaultNetworks.open(QIODevice::ReadOnly);
+
+    QString defaultNetworksContent = defaultNetworks.readAll().replace("%INFURA_KEY%", INFURA_KEY);
+    QJsonArray defaultNetworksJson = QJsonDocument::fromJson(defaultNetworksContent.toUtf8()).array();
+
+    return {{"key-uid", account.keyUid},
+            {"mnemonic", account.mnemonic},
+            {"public-key", account.derivedAccounts.whisper.publicKey},
+            {"name", account.alias},
+            {"address", account.address},
+            {"eip1581-address", account.derivedAccounts.eip1581.address},
+            {"dapps-address", account.derivedAccounts.defaultWallet.address},
+            {"wallet-root-address", account.derivedAccounts.walletRoot.address},
+            {"preview-privacy?", true},
+            {"signing-phrase", generateSigningPhrase(3)},
+            {"log-level", "INFO"},
+            {"latest-derived-path", 0},
+            {"networks/networks", defaultNetworksJson},
+            {"currency", "usd"},
+            {"identicon", account.identicon},
+            {"waku-enabled", true},
+            {"wallet/visible-tokens", {{Constants::DefaultNetworkName, QJsonArray{"SNT"}}}},
+            {"appearance", 0},
+            {"networks/current-network", Constants::DefaultNetworkName},
+            {"installation-id", installationId}};
+}
+
+QJsonArray getNodes(const QJsonObject& fleet, const QString& nodeType)
+{
+    auto nodes = fleet[nodeType].toObject();
+    QJsonArray result;
+    for(const auto& node : nodes)
+    {
+        result << node;
+    }
+    return result;
+}
+
+QJsonObject getDefaultNodeConfig(const QString& installationId)
+{
+    auto nodeConfig = QFile{":/resources/node-config.json"};
+    nodeConfig.open(QIODevice::ReadOnly);
+
+    QString nodeConfigContent = nodeConfig.readAll();
+
+    nodeConfigContent = nodeConfigContent.replace("%INSTALLATIONID%", installationId);
+    nodeConfigContent = nodeConfigContent.replace("%INFURA_KEY%", INFURA_KEY);
+
+    QJsonObject nodeConfigJson = QJsonDocument::fromJson(nodeConfigContent.toUtf8()).object();
+
+    auto fleets = QFile{":/resources/fleets.json"};
+    fleets.open(QIODevice::ReadOnly);
+    QJsonObject fleetsJson = QJsonDocument::fromJson(fleets.readAll()).object()["fleets"].toObject();
+
+    auto fleet = fleetsJson[Constants::Fleet::Prod].toObject();
+
+    QJsonObject clusterConfig = nodeConfigJson["ClusterConfig"].toObject();
+
+    clusterConfig["Fleet"] = Constants::Fleet::Prod;
+    clusterConfig["BootNodes"] = getNodes(fleet, Constants::FleetNodes::Bootnodes);
+    clusterConfig["TrustedMailServers"] = getNodes(fleet, Constants::FleetNodes::Mailservers);
+    clusterConfig["StaticNodes"] = getNodes(fleet, Constants::FleetNodes::Whisper);
+    clusterConfig["RendezvousNodes"] = getNodes(fleet, Constants::FleetNodes::Rendezvous);
+    clusterConfig["RelayNodes"] = getNodes(fleet, Constants::FleetNodes::Waku);
+    clusterConfig["StoreNodes"] = getNodes(fleet, Constants::FleetNodes::Waku);
+    clusterConfig["FilterNodes"] = getNodes(fleet, Constants::FleetNodes::Waku);
+    clusterConfig["LightpushNodes"] = getNodes(fleet, Constants::FleetNodes::Waku);
+
+    nodeConfigJson["ClusterConfig"] = clusterConfig;
+
+    return nodeConfigJson;
+}
+} // namespace
 
 namespace Accounts
 {
 
-Service::Service()
-    : m_isFirstTimeAccountLogin(false)
-{ }
-
-const QVector<QString> PATHS{Backend::Accounts::PATH_WALLET_ROOT,
-                             Backend::Accounts::PATH_EIP_1581,
-                             Backend::Accounts::PATH_WHISPER,
-                             Backend::Accounts::PATH_DEFAULT_WALLET};
-
 void Service::init()
 {
-    auto response = Backend::Accounts::generateAddresses(Accounts::PATHS);
+    auto response = Backend::Accounts::generateAddresses(Paths);
     foreach(QJsonValue generatedAddressJson, response.m_result)
     {
         auto gAcc = toGeneratedAccountDto(generatedAddressJson);
@@ -56,7 +171,7 @@ QVector<AccountDto> Service::openedAccounts()
     catch(Backend::RpcException& e)
     {
         qWarning() << "error: methodName=openedAccounts, errDescription=" << e.what();
-        return QVector<AccountDto>();
+        return {};
     }
 }
 
@@ -64,34 +179,34 @@ QVector<GeneratedAccountDto> Service::generatedAccounts()
 {
     if(m_generatedAccounts.length() == 0)
     {
-        qWarning("There was some issue initiating account service");
-        return QVector<GeneratedAccountDto>();
+        qWarning() << "There was some issue initiating account service";
+        return {};
     }
 
     return m_generatedAccounts;
 }
 
-bool Service::setupAccount(QString accountId, QString password)
+bool Service::setupAccount(const QString& accountId, const QString& password)
 {
     // TODO: would it make sense to use std::expected or std::optional or boost outcome https://www.boost.org/doc/libs/1_75_0/libs/outcome/doc/html/index.html
     try
     {
-        QString installationId(QUuid::createUuid().toString(QUuid::WithoutBraces));
-        QJsonObject accountData(Service::getAccountDataForAccountId(accountId));
-        QJsonArray subAccountData(Service::getSubaccountDataForAccountId(accountId));
-        QJsonObject settings(Service::getAccountSettings(accountId, installationId));
-        QJsonObject nodeConfig(Service::getDefaultNodeConfig(installationId));
+        const QString installationId(QUuid::createUuid().toString(QUuid::WithoutBraces));
+        const QJsonObject accountData(Service::getAccountDataForAccountId(accountId));
+        const QJsonArray subAccountData(Service::getSubaccountDataForAccountId(accountId));
+        const QJsonObject settings(Service::getAccountSettings(accountId, installationId));
+        const QJsonObject nodeConfig(getDefaultNodeConfig(installationId));
 
-        QString hashedPassword(Backend::Utils::hashString(password));
+        const QString hashedPassword(Backend::Utils::hashString(password));
 
-        Service::storeDerivedAccounts(accountId, hashedPassword, PATHS);
+        Service::storeDerivedAccounts(accountId, hashedPassword, Paths);
 
         m_loggedInAccount =
             Service::saveAccountAndLogin(hashedPassword, accountData, subAccountData, settings, nodeConfig);
 
         return Service::getLoggedInAccount().isValid();
     }
-    catch(exception& e)
+    catch(std::exception& e)
     {
         qWarning() << "error: methodName=setupAccount, errDescription=" << e.what();
         return false;
@@ -113,19 +228,19 @@ bool Service::isFirstTimeAccountLogin()
     return m_isFirstTimeAccountLogin;
 }
 
-QString Service::validateMnemonic(QString mnemonic)
+QString Service::validateMnemonic(const QString& mnemonic)
 {
     // TODO:
     return "";
 }
 
-bool Service::importMnemonic(QString mnemonic)
+bool Service::importMnemonic(const QString& mnemonic)
 {
     // TODO:
     return false;
 }
 
-QString Service::login(AccountDto account, QString password)
+QString Service::login(const AccountDto& account, const QString& password)
 {
     // TODO: would it make sense to use std::expected or std::optional or boost outcome https://www.boost.org/doc/libs/1_75_0/libs/outcome/doc/html/index.html
     try
@@ -157,7 +272,7 @@ QString Service::login(AccountDto account, QString password)
 
         return "";
     }
-    catch(exception& e)
+    catch(std::exception& e)
     {
         qWarning() << "error: methodName=login, errDescription=" << e.what();
         return e.what();
@@ -172,23 +287,24 @@ void Service::clear()
     m_isFirstTimeAccountLogin = false;
 }
 
-QString Service::generateAlias(QString publicKey)
+QString Service::generateAlias(const QString& publicKey)
 {
     return Backend::Accounts::generateAlias(publicKey).m_result;
 }
 
-QString Service::generateIdenticon(QString publicKey)
+QString Service::generateIdenticon(const QString& publicKey)
 {
     return Backend::Accounts::generateIdenticon(publicKey).m_result;
 }
 
-bool Service::verifyAccountPassword(QString account, QString password)
+bool Service::verifyAccountPassword(const QString& account, const QString& password)
 {
     // TODO:
     return false;
 }
 
-DerivedAccounts Service::storeDerivedAccounts(QString accountId, QString hashedPassword, QVector<QString> paths)
+DerivedAccounts
+Service::storeDerivedAccounts(const QString& accountId, const QString& hashedPassword, const QVector<QString>& paths)
 {
     try
     {
@@ -198,12 +314,15 @@ DerivedAccounts Service::storeDerivedAccounts(QString accountId, QString hashedP
     catch(Backend::RpcException& e)
     {
         qWarning() << e.what();
-        return DerivedAccounts(); // TODO: should it return empty?
+        return {}; // TODO: should it return empty?
     }
 }
 
-Accounts::AccountDto Service::saveAccountAndLogin(
-    QString hashedPassword, QJsonObject account, QJsonArray subaccounts, QJsonObject settings, QJsonObject config)
+Accounts::AccountDto Service::saveAccountAndLogin(const QString& hashedPassword,
+                                                  const QJsonObject& account,
+                                                  const QJsonArray& subaccounts,
+                                                  const QJsonObject& settings,
+                                                  const QJsonObject& config)
 {
     // TODO: would it make sense to use std::expected or std::optional or boost outcome https://www.boost.org/doc/libs/1_75_0/libs/outcome/doc/html/index.html
     try
@@ -213,31 +332,21 @@ Accounts::AccountDto Service::saveAccountAndLogin(
         m_isFirstTimeAccountLogin = true;
         return toAccountDto(account);
     }
-    catch(exception& e)
+    catch(std::exception& e)
     {
         qWarning() << "error: methodName=saveAccountAndLogin, errDescription=" << e.what();
-        return Accounts::AccountDto();
+        return {};
     }
 }
 
-QJsonObject Service::prepareAccountJsonObject(const GeneratedAccountDto account)
-{
-    return QJsonObject{{"name", account.alias},
-                       {"address", account.address},
-                       {"photo-path", account.identicon},
-                       {"identicon", account.identicon},
-                       {"key-uid", account.keyUid},
-                       {"keycard-pairing", QJsonValue()}};
-}
-
-QJsonObject Service::getAccountDataForAccountId(QString accountId)
+QJsonObject Service::getAccountDataForAccountId(const QString& accountId)
 {
 
     foreach(const GeneratedAccountDto& acc, m_generatedAccounts)
     {
         if(acc.id == accountId)
         {
-            return Service::prepareAccountJsonObject(acc);
+            return prepareAccountJsonObject(acc);
         }
     }
 
@@ -245,7 +354,7 @@ QJsonObject Service::getAccountDataForAccountId(QString accountId)
     {
         if(m_importedAccount.id == accountId)
         {
-            return Service::prepareAccountJsonObject(m_importedAccount);
+            return prepareAccountJsonObject(m_importedAccount);
         }
     }
 
@@ -253,23 +362,7 @@ QJsonObject Service::getAccountDataForAccountId(QString accountId)
     throw std::runtime_error("account not found");
 }
 
-QJsonArray Service::prepareSubaccountJsonObject(GeneratedAccountDto account)
-{
-    return QJsonArray{QJsonObject{{"public-key", account.derivedAccounts.defaultWallet.publicKey},
-                                  {"address", account.derivedAccounts.defaultWallet.address},
-                                  {"color", "#4360df"},
-                                  {"wallet", true},
-                                  {"path", Backend::Accounts::PATH_DEFAULT_WALLET},
-                                  {"name", "Status account"}},
-                      QJsonObject{{"public-key", account.derivedAccounts.whisper.publicKey},
-                                  {"address", account.derivedAccounts.whisper.address},
-                                  {"path", Backend::Accounts::PATH_WHISPER},
-                                  {"name", account.alias},
-                                  {"identicon", account.identicon},
-                                  {"chat", true}}};
-}
-
-QJsonArray Service::getSubaccountDataForAccountId(QString accountId)
+QJsonArray Service::getSubaccountDataForAccountId(const QString& accountId)
 {
     foreach(const GeneratedAccountDto& acc, m_generatedAccounts)
     {
@@ -290,60 +383,20 @@ QJsonArray Service::getSubaccountDataForAccountId(QString accountId)
     throw std::runtime_error("account not found");
 }
 
-QString generateSigningPhrase(int count)
-{
-    QStringList words;
-    for(int i = 0; i < count; i++)
-    {
-        words.append(phrases[QRandomGenerator::global()->bounded(static_cast<int>(phrases.size()))]);
-    }
-    return words.join(" ");
-}
-
-QJsonObject Service::prepareAccountSettingsJsonObject(const GeneratedAccountDto account, QString installationId)
-{
-    QFile defaultNetworks(":/resources/default-networks.json");
-    defaultNetworks.open(QIODevice::ReadOnly);
-
-    QString defaultNetworksContent = defaultNetworks.readAll().replace("%INFURA_KEY%", INFURA_KEY);
-    QJsonArray defaultNetworksJson = QJsonDocument::fromJson(defaultNetworksContent.toUtf8()).array();
-
-    return QJsonObject{{"key-uid", account.keyUid},
-                       {"mnemonic", account.mnemonic},
-                       {"public-key", account.derivedAccounts.whisper.publicKey},
-                       {"name", account.alias},
-                       {"address", account.address},
-                       {"eip1581-address", account.derivedAccounts.eip1581.address},
-                       {"dapps-address", account.derivedAccounts.defaultWallet.address},
-                       {"wallet-root-address", account.derivedAccounts.walletRoot.address},
-                       {"preview-privacy?", true},
-                       {"signing-phrase", generateSigningPhrase(3)},
-                       {"log-level", "INFO"},
-                       {"latest-derived-path", 0},
-                       {"networks/networks", defaultNetworksJson},
-                       {"currency", "usd"},
-                       {"identicon", account.identicon},
-                       {"waku-enabled", true},
-                       {"wallet/visible-tokens", {{Constants::DefaultNetworkName, QJsonArray{"SNT"}}}},
-                       {"appearance", 0},
-                       {"networks/current-network", Constants::DefaultNetworkName},
-                       {"installation-id", installationId}};
-}
-
-QJsonObject Service::getAccountSettings(QString accountId, QString installationId)
+QJsonObject Service::getAccountSettings(const QString& accountId, const QString& installationId)
 {
     foreach(const GeneratedAccountDto& acc, m_generatedAccounts)
 
         if(acc.id == accountId)
         {
-            return Service::prepareAccountSettingsJsonObject(acc, installationId);
+            return prepareAccountSettingsJsonObject(acc, installationId);
         }
 
     if(m_importedAccount.isValid())
     {
         if(m_importedAccount.id == accountId)
         {
-            return Service::prepareAccountSettingsJsonObject(m_importedAccount, installationId);
+            return prepareAccountSettingsJsonObject(m_importedAccount, installationId);
         }
     }
 
@@ -351,47 +404,4 @@ QJsonObject Service::getAccountSettings(QString accountId, QString installationI
     throw std::runtime_error("account not found");
 }
 
-QJsonArray getNodes(const QJsonObject fleet, QString nodeType)
-{
-    auto nodes = fleet[nodeType].toObject();
-    QJsonArray result;
-    for(auto it = nodes.begin(); it != nodes.end(); ++it)
-        result << *it;
-    return result;
-}
-
-QJsonObject Service::getDefaultNodeConfig(QString installationId)
-{
-    QFile nodeConfig(":/resources/node-config.json");
-    nodeConfig.open(QIODevice::ReadOnly);
-
-    QString nodeConfigContent = nodeConfig.readAll();
-
-    nodeConfigContent = nodeConfigContent.replace("%INSTALLATIONID%", installationId);
-    nodeConfigContent = nodeConfigContent.replace("%INFURA_KEY%", INFURA_KEY);
-
-    QJsonObject nodeConfigJson = QJsonDocument::fromJson(nodeConfigContent.toUtf8()).object();
-
-    QFile fleets(":/resources/fleets.json");
-    fleets.open(QIODevice::ReadOnly);
-    QJsonObject fleetsJson = QJsonDocument::fromJson(fleets.readAll()).object()["fleets"].toObject();
-
-    auto fleet = fleetsJson[Constants::Fleet::Prod].toObject();
-
-    QJsonObject clusterConfig = nodeConfigJson["ClusterConfig"].toObject();
-
-    clusterConfig["Fleet"] = Constants::Fleet::Prod;
-    clusterConfig["BootNodes"] = getNodes(fleet, Constants::FleetNodes::Bootnodes);
-    clusterConfig["TrustedMailServers"] = getNodes(fleet, Constants::FleetNodes::Mailservers);
-    clusterConfig["StaticNodes"] = getNodes(fleet, Constants::FleetNodes::Whisper);
-    clusterConfig["RendezvousNodes"] = getNodes(fleet, Constants::FleetNodes::Rendezvous);
-    clusterConfig["RelayNodes"] = getNodes(fleet, Constants::FleetNodes::Waku);
-    clusterConfig["StoreNodes"] = getNodes(fleet, Constants::FleetNodes::Waku);
-    clusterConfig["FilterNodes"] = getNodes(fleet, Constants::FleetNodes::Waku);
-    clusterConfig["LightpushNodes"] = getNodes(fleet, Constants::FleetNodes::Waku);
-
-    nodeConfigJson["ClusterConfig"] = clusterConfig;
-
-    return nodeConfigJson;
-}
 } // namespace Accounts

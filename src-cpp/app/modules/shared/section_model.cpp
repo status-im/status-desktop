@@ -73,7 +73,8 @@ QVariant SectionModel::data(const QModelIndex& index, int role) const
     case CanManageUsers: return item->getCanManageUsers();
     case CanRequestAccess: return item->getCanRequestAccess();
     case Access: return item->getAccess();
-    case EnsOnly: return item->getIsEnsOnly();
+    case EnsOnly:
+        return item->getIsEnsOnly();
         // To Do
     case MembersModel: return QVariant();
     case PendingRequestsToJoinModel: return QVariant();
@@ -108,7 +109,7 @@ void SectionModel::setActiveSection(const QString& Id)
     }
 }
 
-QPointer<SectionItem> SectionModel::getActiveItem()
+QPointer<SectionItem> SectionModel::getActiveItem() const
 {
     SectionItem* activeItem = nullptr;
     for(auto item : m_items)

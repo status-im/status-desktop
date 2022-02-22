@@ -1,5 +1,4 @@
-#ifndef SECTION_MODEL_H
-#define SECTION_MODEL_H
+#pragma once
 
 #include <QAbstractListModel>
 #include <QHash>
@@ -50,7 +49,7 @@ public:
 
     void addItem(SectionItem* item);
     void setActiveSection(const QString& Id);
-    QPointer<SectionItem> getActiveItem();
+    QPointer<SectionItem> getActiveItem() const;
 
     // To add other api's later as needed
 
@@ -59,5 +58,3 @@ private:
 };
 
 } // namespace Shared::Models
-
-#endif // SECTION_MODEL_H

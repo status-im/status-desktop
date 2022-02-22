@@ -8,13 +8,14 @@ namespace Global
 class Singleton
 {
 public:
+    // FIXME: should return reference
     QQmlApplicationEngine* engine();
+    // FIXME: should return reference
     static Singleton* instance();
 
 private:
-    static Singleton* theInstance;
-    explicit Singleton();
-    QQmlApplicationEngine* m_engine;
+    Singleton() = default;
+    QQmlApplicationEngine m_engine;
 };
 
 } // namespace Global
