@@ -16,6 +16,8 @@ import ../../../backend/utils as status_utils
 
 export contacts_dto, status_update_dto, contact_details
 
+const PK_LENGTH_0X_INCLUDED = 132
+
 include async_tasks
 
 logScope:
@@ -211,6 +213,16 @@ QtObject:
 
     result = self.fetchContact(id)
     if result.id.len == 0:
+      if(not id.startsWith("0x")):
+        debug "id is not in a hex format"
+        return
+      
+      var num64: int64
+      let parsedChars = parseHex(id, num64)
+      if(parsedChars != PK_LENGTH_0X_INCLUDED):
+        debug "id doesn't have expected lenght"
+        return 
+
       let alias = self.generateAlias(id)
       let identicon = self.generateIdenticonURL(id)
       result = ContactsDto(
