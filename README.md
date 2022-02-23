@@ -12,7 +12,7 @@ Dev Docs: [https://hackmd.io/@status-desktop/B1naRjxh_/https%3A%2F%2Fhackmd.io%2
 
 # CPP App
 
-### Setup:
+### Setup `Linux`:
 1. conancenter
 Execute `conan remote list`. It should return this line among the results. 
 ```
@@ -28,10 +28,39 @@ Execute this to update the profile:
 conan profile update settings.compiler.libcxx=libstdc++11 default
 ```
 
-### Buid & test & run:
+3. Install dependencies:
+
 ```
 cd build
 conan install .. -s build_type=Release --build=missing
+```
+
+### Setup `OS X`:
+
+1. Create `conan` profile `~/.conan/profiles/clang`:
+```
+[settings]
+compiler=apple-clang
+compiler.version=12.0
+compiler.libcxx=libc++
+arch=x86_64
+os=Macos
+build_type=Release
+
+[env]
+CC=/usr/bin/clang
+CXX=/usr/bin/clang++
+```
+
+2. Install dependecies:
+
+```
+cd build
+conan install .. --profile=clang --build=missing
+```
+
+### Buid & test & run:
+```
 conan build ..
 ctest -VV -C Release
 ./status-desktop
