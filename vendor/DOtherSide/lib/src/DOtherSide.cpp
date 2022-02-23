@@ -122,6 +122,13 @@ void dos_add_self_signed_certificate(const char* pemCertificateContent) {
     for (const QSslCertificate &cert : certs) {
         certList += cert;
     }
+    // According to the docs, caCertificates() should have returned
+    // the system certificates (https://doc.qt.io/archives/qt-5.14/qsslconfiguration.html#systemCaCertificates)
+    // but looks like there's a bug in QT, because caCertificates() 
+    // returns an empty list. Without this, we end up not being
+    // able to load stickers or gifs
+    certList.append(defaultConfig.systemCaCertificates());
+
     defaultConfig.setCaCertificates(certList);
     QSslConfiguration::setDefaultConfiguration(defaultConfig);
 }
