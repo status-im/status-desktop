@@ -39,6 +39,9 @@ type
   ChatArgs* = ref object of Args
     chatId*: string
 
+  ChatExtArgs* = ref object of ChatArgs
+    ensName*: string
+
   MessageSendingSuccess* = ref object of Args
     chat*: ChatDto
     message*: MessageDto
@@ -67,8 +70,8 @@ type
 
 
 # Signals which may be emitted by this service:
-const SIGNAL_CHAT_UPDATE* = "chatUpdate_new"
-const SIGNAL_CHAT_LEFT* = "channelLeft_new"
+const SIGNAL_CHAT_UPDATE* = "chatUpdate"
+const SIGNAL_CHAT_LEFT* = "channelLeft"
 const SIGNAL_SENDING_FAILED* = "messageSendingFailed"
 const SIGNAL_SENDING_SUCCESS* = "messageSendingSuccess"
 const SIGNAL_MESSAGE_DELETED* = "messageDeleted"
@@ -79,6 +82,7 @@ const SIGNAL_CHAT_RENAMED* = "chatRenamed"
 const SIGNAL_CHAT_MEMBERS_ADDED* = "chatMemberAdded"
 const SIGNAL_CHAT_MEMBER_REMOVED* = "chatMemberRemoved"
 const SIGNAL_CHAT_MEMBER_UPDATED* = "chatMemberUpdated"
+const SIGNAL_CHAT_SWITCH_TO_OR_CREATE_1_1_CHAT* = "switchToOrCreateOneToOneChat"
 
 QtObject:
   type Service* = ref object of QObject
@@ -237,6 +241,9 @@ QtObject:
       let errDesription = e.msg
       error "error: ", errDesription
       return
+
+  proc switchToOrCreateOneToOneChat*(self: Service, chatId: string, ensName: string) =
+    self.events.emit(SIGNAL_CHAT_SWITCH_TO_OR_CREATE_1_1_CHAT, ChatExtArgs(chatId: chatId, ensName: ensName))
 
   proc leaveChat*(self: Service, chatId: string) =
     try:

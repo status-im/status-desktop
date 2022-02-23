@@ -527,7 +527,8 @@ method onCommunityChannelEdited*(self: Module, chat: ChatDto) =
 
 method createOneToOneChat*(self: Module, chatId: string, ensName: string) =
   if(self.controller.isCommunity()):
-    debug "creating an one to one chat is not allowed for community, most likely it's an error in qml", methodName="createOneToOneChat"
+    # initiate chat creation in the `Chat` seciton module.
+    self.controller.switchToOrCreateOneToOneChat(chatId, ensName)
     return
 
   if(self.chatContentModules.hasKey(chatId)):
