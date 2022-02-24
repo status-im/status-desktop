@@ -64,23 +64,12 @@ ModalPopup {
                         stack.uuid)
         }
 
-        if(!success){
-            //% "Invalid transaction parameters"
-            sendingError.text = qsTrId("invalid-transaction-parameters")
-            sendingError.open()
-        } else {
-            // TODO remove this else once the thread and connection are back
-            stack.currentGroup.isPending = false
-            //% "Transaction pending..."
-            Global.toastMessage.title = qsTrId("ens-transaction-pending")
-            Global.toastMessage.source = Style.svg("loading")
-            Global.toastMessage.iconColor = Style.current.primary
-            Global.toastMessage.iconRotates = true
-            // Refactor this
-            // Global.toastMessage.link = `${walletModel.utilsView.etherscanLink}/${response.result}`
-            Global.toastMessage.open()
-            root.close()
-        }
+        // Till the method is moved to thread this is handled by a signal to which connection is made in the end of the file
+//        if(!success){
+//            //% "Invalid transaction parameters"
+//            sendingError.text = qsTrId("invalid-transaction-parameters")
+//            sendingError.open()
+//        }
     }
 
     TransactionStackView {
@@ -302,39 +291,38 @@ ModalPopup {
         }
 
         // Not Refactored Yet
-//        Connections {
-//            target: RootStore.walletModelInst.transactionsView
-//            onTransactionWasSent: {
-//                try {
-//                    let response = JSON.parse(txResult)
+        Connections {
+            target: root.store.walletSectionTransactionsInst
+            onTransactionSent: {
+                try {
+                    let response = JSON.parse(txResult)
+                    if (response.uuid !== stack.uuid) return
 
-//                    if (response.uuid !== stack.uuid) return
+                    stack.currentGroup.isPending = false
 
-//                    stack.currentGroup.isPending = false
+                    if (!response.success) {
+                        if (Utils.isInvalidPasswordMessage(response.result)){
+                            //% "Wrong password"
+                            transactionSigner.validationError = qsTrId("wrong-password")
+                            return
+                        }
+                        sendingError.text = response.result
+                        return sendingError.open()
+                    }
 
-//                    if (!response.success) {
-//                        if (Utils.isInvalidPasswordMessage(response.result)){
-//                            //% "Wrong password"
-//                            transactionSigner.validationError = qsTrId("wrong-password")
-//                            return
-//                        }
-//                        sendingError.text = response.result
-//                        return sendingError.open()
-//                    }
-
-
-                    //% "Transaction pending..."
-//                    Global.toastMessage.title = qsTrId("ens-transaction-pending")
-//                    Global.toastMessage.source = Style.svg("loading")
-//                    Global.toastMessage.iconColor = Style.current.primary
-//                    Global.toastMessage.iconRotates = true
+                    // % "Transaction pending..."
+                    Global.toastMessage.title = qsTrId("ens-transaction-pending")
+                    Global.toastMessage.source = Style.svg("loading")
+                    Global.toastMessage.iconColor = Style.current.primary
+                    Global.toastMessage.iconRotates = true
+                    // Refactor this
 //                    Global.toastMessage.link = `${walletModel.utilsView.etherscanLink}/${response.result}`
-//                    Global.toastMessage.open()
-//                    root.close()
-//                } catch (e) {
-//                    console.error('Error parsing the response', e)
-//                }
-//            }
+                    Global.toastMessage.open()
+                    root.close()
+                } catch (e) {
+                    console.error('Error parsing the response', e)
+                }
+            }
 //            onTransactionCompleted: {
 //                if (success) {
 //                    //% "Transaction completed"
@@ -350,7 +338,7 @@ ModalPopup {
 //                Global.toastMessage.link = `${walletModel.utilsView.etherscanLink}/${txHash}`
 //                Global.toastMessage.open()
 //            }
-//        }
+        }
     }
 }
 

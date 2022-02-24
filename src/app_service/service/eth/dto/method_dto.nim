@@ -93,7 +93,8 @@ proc send*(self: MethodDto, tx: var TransactionDataDto, methodDescriptor: object
   tx.data = self.encodeAbi(methodDescriptor)
   # this call should not be part of this file, we need to move it to appropriate place, or this should not be a DTO class.
   let response = status_eth.sendTransaction($(%tx), password)
-  return response.result.getStr
+  success = response.error.isNil
+  return $response
 
 proc call[T](self: MethodDto, tx: var TransactionDataDto, methodDescriptor: object, success: var bool): T =
   success = true

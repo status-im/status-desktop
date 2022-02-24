@@ -30,6 +30,7 @@ StatusModal {
     property var selectedFiatAmount
     property var selectedType: RecipientSelector.Type.Address
     property bool outgoing: true
+    property bool isARequest: false
     property string msgId: ""
     property string trxData: ""
 
@@ -63,23 +64,12 @@ StatusModal {
                         stack.uuid)
         }
 
-        if(!success){
-            //% "Invalid transaction parameters"
-            sendingError.text = qsTrId("invalid-transaction-parameters")
-            sendingError.open()
-        } else {
-            // TODO remove this else once the thread and connection are back
-            stack.currentGroup.isPending = false
-            //% "Transaction pending..."
-            Global.toastMessage.title = qsTrId("ens-transaction-pending")
-            Global.toastMessage.source = Style.svg("loading")
-            Global.toastMessage.iconColor = Style.current.primary
-            Global.toastMessage.iconRotates = true
-            // Refactor this
-            // Global.toastMessage.link = `${walletModel.utilsView.etherscanLink}/${response.result}`
-            Global.toastMessage.open()
-            root.close()
-        }
+        // TODO remove this else once the thread and connection are back
+//        if(!success){
+//            //% "Invalid transaction parameters"
+//            sendingError.text = qsTrId("invalid-transaction-parameters")
+//            sendingError.open()
+//        }
     }
 
     property MessageDialog sendingError: MessageDialog {
@@ -354,6 +344,8 @@ StatusModal {
                 if (response.uuid !== stack.uuid)
                     return
 
+                stack.currentGroup.isPending = false
+
                 let transactionId = response.result
 
                 if (!response.success) {
@@ -365,7 +357,19 @@ StatusModal {
                     sendingError.text = transactionId
                     return sendingError.open()
                 }
-                root.store.acceptRequestTransaction(transactionId, msgId, root.store.getPubkey() + transactionId.substr(2))
+
+                if(isARequest)
+                    root.store.acceptRequestTransaction(transactionId, msgId, root.store.getPubkey() + transactionId.substr(2))
+
+                //% "Transaction pending..."
+                Global.toastMessage.title = qsTrId("ens-transaction-pending")
+                Global.toastMessage.source = Style.svg("loading")
+                Global.toastMessage.iconColor = Style.current.primary
+                Global.toastMessage.iconRotates = true
+                // Refactor this
+                // Global.toastMessage.link = `${walletModel.utilsView.etherscanLink}/${response.result}`
+                Global.toastMessage.open()
+
                 root.close()
             } catch (e) {
                 console.error('Error parsing the response', e)

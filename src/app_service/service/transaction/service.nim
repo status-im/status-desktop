@@ -277,13 +277,14 @@ QtObject:
 
       let json: JsonNode = %tx
       let response = eth.sendTransaction($json, password)
-      if response.error != nil:
-        raise newException(Exception, response.error.message)
+      # only till it is moved to another thred
+      # if response.error != nil:
+      #   raise newException(Exception, response.error.message)
 
-      let output = %* { "result": %response.result.getStr,  "success": %(response.error == nil), "uuid": %uuid }
+      let output = %* { "result": %($response),  "success": %(response.error.isNil), "uuid": %uuid }
       self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(result: $output))
 
-      self.trackPendingTransaction(response.result.getStr, from_addr, to_addr,
+      self.trackPendingTransaction($response, from_addr, to_addr,
         $PendingTransactionTypeDto.WalletTransfer, data = "")
     except Exception as e:
       error "Error sending eth transfer transaction", msg = e.msg
