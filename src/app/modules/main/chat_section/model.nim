@@ -304,8 +304,8 @@ QtObject:
       result.notificationsCount = result.notificationsCount + self.items[i].BaseItem.notificationsCount
 
 
-  proc reorder*(self: Model, chatId, categoryId: string, position: int) =
-    let index = self.getItemIdxById(chatId)
+  proc reorder*(self: Model, chatOrCategoryId: string, position: int) =
+    let index = self.getItemIdxById(chatOrCategoryId)
     if(index == -1):
       return
 

@@ -215,15 +215,25 @@ QtObject:
         return true
     return false
 
+  proc getItemIdxById*(self: SubModel, id: string): int =
+    var idx = 0
+    for it in self.items:
+      if(it.id == id):
+        return idx
+      idx.inc
+    return -1
+
   proc removeItemById*(self: SubModel, id: string) =
-    for i in 0 ..< self.items.len:
-      if(self.items[i].id == id):
-        let parentModelIndex = newQModelIndex()
-        defer: parentModelIndex.delete
-        self.beginRemoveRows(parentModelIndex, i, i)
-        self.items.delete(i)
-        self.endRemoveRows()
-        self.countChanged()
+    let idx = self.getItemIdxById(id)
+    if idx == -1:
+      return
+
+    let parentModelIndex = newQModelIndex()
+    defer: parentModelIndex.delete
+    self.beginRemoveRows(parentModelIndex, idx, idx)
+    self.items.delete(idx)
+    self.endRemoveRows()
+    self.countChanged()
 
   proc updateNotificationsForItemById*(self: SubModel, id: string, hasUnreadMessages: bool,
     notificationsCount: int): bool =

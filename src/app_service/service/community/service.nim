@@ -77,7 +77,9 @@ const SIGNAL_COMMUNITY_CHANNEL_REORDERED* = "communityChannelReordered"
 const SIGNAL_COMMUNITY_CHANNEL_DELETED* = "communityChannelDeleted"
 const SIGNAL_COMMUNITY_CATEGORY_CREATED* = "communityCategoryCreated"
 const SIGNAL_COMMUNITY_CATEGORY_EDITED* = "communityCategoryEdited"
+const SIGNAL_COMMUNITY_CATEGORY_NAME_EDITED* = "communityCategoryNameEdited"
 const SIGNAL_COMMUNITY_CATEGORY_DELETED* = "communityCategoryDeleted"
+const SIGNAL_COMMUNITY_CATEGORY_REORDERED* = "communityCategoryReordered"
 const SIGNAL_COMMUNITY_MEMBER_APPROVED* = "communityMemberApproved"
 const SIGNAL_NEW_REQUEST_TO_JOIN_COMMUNITY* = "newRequestToJoinCommunity"
 
@@ -174,6 +176,14 @@ QtObject:
         return idx
     return -1
 
+  proc findIndexById(id: string, categories: seq[Category]): int =
+    var idx = -1
+    for category in categories:
+      inc idx
+      if(category.id == id):
+        return idx
+    return -1
+
   proc saveUpdatedJoinedCommunity(self: Service, community: var CommunityDto) =
     # Community data we get from the signals and responses don't contgain the pending requests
     # therefore, we must keep the old one
@@ -181,6 +191,15 @@ QtObject:
 
     # Update the joinded community list with the new data
     self.joinedCommunities[community.id] = community
+
+  proc getChatsInCategory(self: Service, community: var CommunityDto, categoryId: string): seq[ChatDto] =
+    result = @[]
+    for chat in community.chats:
+      if (chat.categoryId == categoryId):
+        let fullChatId = community.id & chat.id
+        var chatDetails = self.chatService.getChatById(fullChatId)
+        chatDetails.updateMissingFields(chat)
+        result.add(chatDetails)
 
   proc handleCommunityUpdates(self: Service, communities: seq[CommunityDto], updatedChats: seq[ChatDto]) =
     var community = communities[0]
@@ -195,7 +214,39 @@ QtObject:
 
     let prev_community = self.joinedCommunities[community.id]
 
-    self.saveUpdatedJoinedCommunity(community)
+    # category was added
+    if(community.categories.len > prev_community.categories.len):
+      for category in community.categories:
+        if findIndexById(category.id, prev_community.categories) == -1:
+          let chats = self.getChatsInCategory(community, category.id)
+
+          self.events.emit(SIGNAL_COMMUNITY_CATEGORY_CREATED,
+            CommunityCategoryArgs(communityId: community.id, category: category, chats: chats))
+
+    # category was removed
+    elif(community.categories.len < prev_community.categories.len):
+      for prv_category in prev_community.categories:
+        if findIndexById(prv_category.id, community.categories) == -1:
+          self.events.emit(SIGNAL_COMMUNITY_CATEGORY_DELETED,
+            CommunityCategoryArgs(communityId: community.id, category: Category(id: prv_category.id)))
+
+    # some property has changed
+    else:
+      for category in community.categories:
+        # id is present
+        if findIndexById(category.id, prev_community.categories) == -1:
+          continue
+        # but something is different
+        for prev_category in prev_community.categories:
+          if(category.id == prev_category.id and category.position != prev_category.position):
+            self.events.emit(SIGNAL_COMMUNITY_CATEGORY_REORDERED,
+              CommunityChatOrderArgs(
+                communityId: community.id,
+                categoryId: category.id,
+                position: category.position))
+          if(category.id == prev_category.id and category.name != prev_category.name):
+            self.events.emit(SIGNAL_COMMUNITY_CATEGORY_NAME_EDITED,
+              CommunityCategoryArgs(communityId: community.id, category: category))
 
     # channel was added
     if(community.chats.len > prev_community.chats.len):
@@ -223,10 +274,6 @@ QtObject:
           continue
         # but something is different
         for prev_chat in prev_community.chats:
-
-          # Category changes not handled yet
-          #if(chat.id == prev_chat.id and chat.categoryId != prev_chat.categoryId):
-
           # Handle position changes
           if(chat.id == prev_chat.id and chat.position != prev_chat.position):
             self.events.emit(SIGNAL_COMMUNITY_CHANNEL_REORDERED, CommunityChatOrderArgs(communityId: community.id,
@@ -242,6 +289,7 @@ QtObject:
             let data = CommunityChatArgs(chat: updatedChat)
             self.events.emit(SIGNAL_COMMUNITY_CHANNEL_EDITED, data)
 
+    self.saveUpdatedJoinedCommunity(community)
     self.events.emit(SIGNAL_COMMUNITIES_UPDATE, CommunitiesArgs(communities: @[community]))
 
   proc init*(self: Service) =
@@ -542,6 +590,15 @@ QtObject:
       if response.result.isNil or response.result.kind == JNull:
         error "response is invalid", methodName="createCommunityChannel"
 
+      var chatsJArr: JsonNode
+      if(not response.result.getProp("chats", chatsJArr)):
+        raise newException(RpcException, fmt"createCommunityChannel; there is no `chats` key in the response for community id: {communityId}")
+
+      for chatObj in chatsJArr:
+        var chatDto = chatObj.toChatDto()
+        self.chatService.updateOrAddChat(chatDto)
+        let data = CommunityChatArgs(chat: chatDto)
+        self.events.emit(SIGNAL_COMMUNITY_CHANNEL_CREATED, data)
     except Exception as e:
       error "Error creating community channel", msg = e.msg, communityId, name, description, methodName="createCommunityChannel"
 

@@ -11,7 +11,10 @@ method addNewChat*(self: AccessInterface, chatDto: ChatDto, belongsToCommunity: 
   mailserversService: mailservers_service.Service, setChatAsActive: bool = true) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method doesChatExist*(self: AccessInterface, chatId: string): bool {.base.} =
+method doesCatOrChatExist*(self: AccessInterface, chatId: string): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method doesTopLevelChatExist*(self: AccessInterface, chatId: string): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method addChatIfDontExist*(self: AccessInterface,
@@ -65,7 +68,7 @@ method onChatRenamed*(self: AccessInterface, chatId: string, newName: string) {.
 method onCommunityChannelEdited*(self: AccessInterface, chat: ChatDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method reorderChannels*(self: AccessInterface, chatId, categoryId: string, position: int) {.base.} =
+method onReorderChatOrCategory*(self: AccessInterface, chatOrCatId: string, position: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onCommunityCategoryCreated*(self: AccessInterface, category: Category, chats: seq[ChatDto]) {.base.} =
@@ -75,6 +78,9 @@ method onCommunityCategoryDeleted*(self: AccessInterface, category: Category) {.
   raise newException(ValueError, "No implementation available")
 
 method onCommunityCategoryEdited*(self: AccessInterface, category: Category, chats: seq[ChatDto]) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onCategoryNameChanged*(self: AccessInterface, category: Category) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method setLoadingHistoryMessagesInProgress*(self: AccessInterface, isLoading: bool) {.base.} =

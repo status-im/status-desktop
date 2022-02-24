@@ -421,7 +421,6 @@ method addNewChat*(
                       communityService, messageService, gifService, mailserversService)
     self.chatContentModules[chatDto.id].load()
     self.view.chatsModel().appendItem(item)
-    # make new added chat active one
     if setChatAsActive:
       self.setActiveItemSubItem(item.id, "")
   else:
@@ -437,9 +436,14 @@ method addNewChat*(
                       communityService, messageService, gifService, mailserversService)
     self.chatContentModules[chatDto.id].load()
     categoryItem.appendSubItem(channelItem)
-    self.setActiveItemSubItem(categoryItem.id, channelItem.id)
+    if setChatAsActive:
+      self.setActiveItemSubItem(categoryItem.id, channelItem.id)
 
-method doesChatExist*(self: Module, chatId: string): bool =
+method doesCatOrChatExist*(self: Module, id: string): bool =
+  return self.view.chatsModel().isItemWithIdAdded(id) or
+    not self.view.chatsModel().getSubItemById(id).isNil
+
+method doesTopLevelChatExist*(self: Module, chatId: string): bool =
   return self.view.chatsModel().isItemWithIdAdded(chatId)
 
 method removeCommunityChat*(self: Module, chatId: string) =
@@ -449,6 +453,8 @@ method removeCommunityChat*(self: Module, chatId: string) =
   self.controller.removeCommunityChat(chatId)
 
 method onCommunityCategoryCreated*(self: Module, cat: Category, chats: seq[ChatDto]) =
+  if (self.doesCatOrChatExist(cat.id)):
+    return
   var categoryItem = initItem(cat.id, cat.name, "", false, "", "", ChatType.Unknown.int, false,
       false, 0, muted=false, blocked=false, active=false, cat.position, cat.id)
   var categoryChannels: seq[SubItem]
@@ -460,7 +466,7 @@ method onCommunityCategoryCreated*(self: Module, cat: Category, chats: seq[ChatD
         blocked=false, active=false, chatDto.position)
 
     # Important:
-    # Since we're just adding an already added community channel to a certain commuinity, there is no need to call
+    # Since we're just adding an already added community channel to a certain community, there is no need to call
     # `self.addSubmodule` here, since submodule (chat content module and modules beneath) were already added, so we're
     # just updating the view from here, via model.
     self.view.chatsModel().removeItemById(chatDto.id)
@@ -472,6 +478,8 @@ method onCommunityCategoryCreated*(self: Module, cat: Category, chats: seq[ChatD
 method onCommunityCategoryDeleted*(self: Module, cat: Category) =
   let chats = self.controller.getChats(self.controller.getMySectionId(), cat.id)
   for c in chats:
+    if (c.categoryId != cat.id or self.doesTopLevelChatExist(self.controller.getMySectionId() & c.id)):
+      continue
     let chatDto = self.controller.getChatDetails(self.controller.getMySectionId(), c.id)
     let hasNotification = chatDto.unviewedMessagesCount > 0 or chatDto.unviewedMentionsCount > 0
     let notificationsCount = chatDto.unviewedMentionsCount
@@ -482,6 +490,12 @@ method onCommunityCategoryDeleted*(self: Module, cat: Category) =
     self.view.chatsModel().appendItem(channelItem)
 
   self.view.chatsModel().removeItemById(cat.id)
+
+method onReorderChatOrCategory*(self: Module, chatOrCatId: string, position: int) =
+  self.view.chatsModel().reorder(chatOrCatId, position)
+
+method onCategoryNameChanged*(self: Module, category: Category) =
+  self.view.chatsModel().renameItem(category.id, category.name)
 
 method onCommunityCategoryEdited*(self: Module, cat: Category, chats: seq[ChatDto]) =
   var categoryItem = self.view.chatsModel().getItemById(cat.id)
@@ -664,9 +678,6 @@ method joinGroupChatFromInvitation*(self: Module, groupName: string, chatId: str
 method onChatRenamed*(self: Module, chatId: string, newName: string) =
   self.view.chatsModel().renameItem(chatId, newName)
 
-method reorderChannels*(self: Module, chatId, categoryId: string, position: int) =
-  self.view.chatsModel().reorder(chatId, categoryId, position)
-
 method acceptRequestToJoinCommunity*(self: Module, requestId: string) =
   self.controller.acceptRequestToJoinCommunity(requestId)
 
@@ -751,8 +762,8 @@ method addChatIfDontExist*(self: Module,
     not belongsToCommunity and sectionId != conf.CHAT_SECTION_ID):
     return
 
-  if self.doesChatExist(chat.id):
+  if self.doesCatOrChatExist(chat.id):
     return
-      
+
   self.addNewChat(chat, belongsToCommunity, events, settingsService, contactService, chatService,
     communityService, messageService, gifService, mailserversService, setChatAsActive)
