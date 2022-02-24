@@ -111,7 +111,9 @@ Item {
 
             Component {
                 id: storeToKeychainSelectionModal
-                StoreToKeychainSelectionModal {}
+                StoreToKeychainSelectionModal {
+                    privacyStore: root.privacyStore
+                }
             }
         }
 

@@ -39,7 +39,6 @@ Item {
         if(localAccountSettings.storeToKeychainValue === Constants.storeToKeychainValueStore)
         {
             connection.enabled = true
-            txtPassword.visible = false
         }
         else
         {

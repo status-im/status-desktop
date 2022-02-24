@@ -75,3 +75,6 @@ method getMessagesFromContactsOnly*(self: Module): bool =
 method setMessagesFromContactsOnly*(self: Module, value: bool) =
   if(not self.controller.setMessagesFromContactsOnly(value)):
     error "an error occurred while saving messages from contacts only flag"
+
+method validatePassword*(self: Module, password: string): bool =
+  self.controller.validatePassword(password)

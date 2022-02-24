@@ -12,6 +12,8 @@ import "../../Onboarding/shared" as OnboardingComponents
 ModalPopup {
     id: popup
 
+    property var privacyStore
+
     title: qsTr("Store pass to Keychain")
 
     onClosed: {
@@ -95,6 +97,7 @@ ModalPopup {
         Component {
             id: storePasswordModal
             OnboardingComponents.CreatePasswordModal {
+                privacyStore: popup.privacyStore
                 storingPasswordModal: true
                 height: 350
             }
