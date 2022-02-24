@@ -43,28 +43,21 @@ QtObject:
 
   proc getInputAreaModule(self: View): QVariant {.slot.} =
     return self.delegate.getInputAreaModule()
-
   QtProperty[QVariant] inputAreaModule:
     read = getInputAreaModule
 
-
   proc getMessagesModule(self: View): QVariant {.slot.} =
     return self.delegate.getMessagesModule()
-
   QtProperty[QVariant] messagesModule:
     read = getMessagesModule
 
-
   proc getUsersModule(self: View): QVariant {.slot.} =
     return self.delegate.getUsersModule()
-
   QtProperty[QVariant] usersModule:
     read = getUsersModule
 
-
   proc getPinnedMessagesModel(self: View): QVariant {.slot.} =
     return self.pinnedMessagesModelVariant
-
   QtProperty[QVariant] pinnedMessagesModel:
     read = getPinnedMessagesModel
 
@@ -82,6 +75,9 @@ QtObject:
 
   proc unmuteChat*(self: View) {.slot.} =
     self.delegate.unmuteChat()
+
+  proc unblockChat*(self: View): string {.slot.} =
+    self.delegate.unblockChat()
 
   proc markAllMessagesRead*(self: View) {.slot.} =
     self.delegate.markAllMessagesRead()

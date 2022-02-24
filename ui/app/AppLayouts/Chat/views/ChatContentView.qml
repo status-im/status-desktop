@@ -353,6 +353,7 @@ ColumnLayout {
             messageStore: messageStore
             usersStore: chatContentRoot.usersStore
             stickersLoaded: chatContentRoot.stickersLoaded
+            isChatBlocked: chatContentRoot.isBlocked
             onShowReplyArea: {
                 let obj = messageStore.getMessageByIdAsJson(messageId)
                 if (!obj) {
@@ -462,6 +463,10 @@ ColumnLayout {
                         chatInput.textInput.textFormat = TextEdit.PlainText;
                         chatInput.textInput.textFormat = TextEdit.RichText;
                     }
+                }
+
+                onUnblockChat: {
+                    chatContentModule.unblockChat()
                 }
             }
         }

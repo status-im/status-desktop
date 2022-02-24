@@ -238,6 +238,9 @@ method muteChat*(self: Module) =
 method unmuteChat*(self: Module) =
   self.controller.unmuteChat()
 
+method unblockChat*(self: Module) =
+  self.controller.unblockChat()
+
 method markAllMessagesRead*(self: Module) =
   self.controller.markAllMessagesRead()
 

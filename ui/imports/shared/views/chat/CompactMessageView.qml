@@ -22,6 +22,7 @@ Item {
     property var messageContextMenu
     property var container
     property int contentType
+    property bool isChatBlocked: false
 
     property int chatHorizontalPadding: Style.current.halfPadding
     property int chatVerticalPadding: 7
@@ -78,7 +79,7 @@ Item {
     }
 
     MessageMouseArea {
-        enabled: !placeholderMessage && !isImage
+        enabled: !root.isChatBlocked && !placeholderMessage && !isImage
         anchors.fill: messageContainer
         acceptedButtons: activityCenterMessage ? Qt.LeftButton : Qt.RightButton
         messageContextMenu: root.messageContextMenu
@@ -95,6 +96,7 @@ Item {
     ChatButtonsPanel {
         contentType: messageContentType
         parentIsHovered: !editModeOn && isHovered
+        isChatBlocked: root.isChatBlocked
         onHoverChanged: {
             hovered && setHovered(messageId, hovered)
         }
@@ -569,6 +571,7 @@ Item {
                 id: messageMouseArea
                 anchors.fill: stickerLoader.active ? stickerLoader : chatText
                 z: activityCenterMessage ? chatText.z + 1 : chatText.z -1
+                enabled: !root.isChatBlocked && !placeholderMessage
                 messageContextMenu: root.messageContextMenu
                 messageContextMenuParent: root
                 isHovered: root.isHovered
@@ -710,6 +713,8 @@ Item {
                 isMessageActive: isMessageActive
                 isCurrentUser: root.amISender
                 onAddEmojiClicked: {
+                    if(root.isChatBlocked)
+                        return
                     root.addEmoji(false, false, false, null, true, false);
                     // Set parent, X & Y positions for the messageContextMenu
                     root.messageContextMenu.parent = emojiReactionLoader
@@ -718,6 +723,9 @@ Item {
                 }
 
                 onToggleReaction: {
+                    if(root.isChatBlocked)
+                        return
+
                     if(!root.messageStore)
                     {
                         console.error("reaction cannot be toggled, message store is not valid")

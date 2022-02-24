@@ -27,6 +27,9 @@ method muteChat*(self: AccessInterface) {.base.} =
 method unmuteChat*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method unblockChat*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method markAllMessagesRead*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
