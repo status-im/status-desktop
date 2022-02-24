@@ -136,10 +136,20 @@ method init*(self: Controller) =
       if (args.communityId == self.sectionId):
         self.delegate.onCommunityCategoryEdited(args.category, args.chats)
 
+    self.events.on(SIGNAL_COMMUNITY_CATEGORY_REORDERED) do(e:Args):
+      let args = CommunityChatOrderArgs(e)
+      if (args.communityId == self.sectionId):
+        self.delegate.onReorderChatOrCategory(args.categoryId, args.position)
+
+    self.events.on(SIGNAL_COMMUNITY_CATEGORY_NAME_EDITED) do(e:Args):
+      let args = CommunityCategoryArgs(e)
+      if (args.communityId == self.sectionId):
+        self.delegate.onCategoryNameChanged(args.category)
+
     self.events.on(SIGNAL_COMMUNITY_CHANNEL_REORDERED) do(e:Args):
       let args = CommunityChatOrderArgs(e)
       if (args.communityId == self.sectionId):
-        self.delegate.reorderChannels(args.chatId, args.categoryId, args.position)
+        self.delegate.onReorderChatOrCategory(args.chatId, args.position)
 
   self.events.on(SIGNAL_CONTACT_NICKNAME_CHANGED) do(e: Args):
     var args = ContactArgs(e)

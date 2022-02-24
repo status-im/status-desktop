@@ -100,6 +100,8 @@ proc toChatDto*(jsonObj: JsonNode): ChatDto =
   discard jsonObj.getProp("alias", result.alias)
   discard jsonObj.getProp("identicon", result.identicon)
   discard jsonObj.getProp("muted", result.muted)
+  discard jsonObj.getProp("categoryId", result.categoryId)
+  discard jsonObj.getProp("position", result.position)
   discard jsonObj.getProp("communityId", result.communityId)
   discard jsonObj.getProp("profile", result.profile)
   discard jsonObj.getProp("joined", result.joined)
