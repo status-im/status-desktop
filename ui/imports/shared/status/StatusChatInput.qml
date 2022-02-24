@@ -122,18 +122,17 @@ Rectangle {
 
     function insertMention(aliasName, lastAtPosition, lastCursorPosition) {
         const hasEmoji = Emoji.hasEmoji(messageInputField.text)
-        const spanPlusAlias = `${Constants.mentionSpanTag}@${aliasName}</a></span> `
+        const spanPlusAlias = `${Constants.mentionSpanTag}@${aliasName}</a></span> `;
 
         let rightIndex = hasEmoji ? lastCursorPosition + 2 : lastCursorPosition
         messageInputField.remove(lastAtPosition, rightIndex)
         messageInputField.insert(lastAtPosition, spanPlusAlias)
         messageInputField.cursorPosition = lastAtPosition + aliasName.length + 2;
-        mentionsPos.push({"leftIndex":lastAtPosition, "rightIndex": (messageInputField.cursorPosition-1)});
-
         if (messageInputField.cursorPosition === 0) {
             // It reset to 0 for some reason, go back to the end
             messageInputField.cursorPosition = messageInputField.length
         }
+        mentionsPos.push({"name": aliasName,"leftIndex": lastAtPosition, "rightIndex": (lastAtPosition+aliasName.length+1)});
     }
 
     property var interpretMessage: function (msg) {
@@ -216,8 +215,21 @@ Rectangle {
             }
         }
 
+        if ((event.key === Qt.Key_C) && (event.modifiers & Qt.ControlModifier)) {
+            if (messageInputField.selectedText !== "") {
+                copiedTextPlain = messageInputField.getText(messageInputField.selectionStart, messageInputField.selectionEnd);
+                copiedTextFormatted = messageInputField.getFormattedText(messageInputField.selectionStart, messageInputField.selectionEnd);
+            }
+        }
+
         if ((event.key === Qt.Key_V) && (event.modifiers & Qt.ControlModifier)) {
-            paste = true;
+            if (copiedTextPlain === QClipboardProxy.text) {
+                copyTextStart = messageInputField.cursorPosition;
+                paste = true;
+            } else {
+                copiedTextPlain = "";
+                copiedTextFormatted = "";
+            }
         }
 
         // ⌘⇧U
@@ -247,21 +259,6 @@ Rectangle {
                 messageInputField.remove(lastAtPosition, lastCursorPosition);
                 messageInputField.insert(lastAtPosition, plainTextToReplace);
                 suggestionsBox.hide();
-            }
-        }
-
-        if (mentionsPos.length > 0) {
-            for (var i = 0; i < mentionsPos.length; i++) {
-                if ((messageInputField.cursorPosition === mentionsPos[i].leftIndex) && (event.key === Qt.Key_Right)) {
-                    messageInputField.cursorPosition = mentionsPos[i].rightIndex;
-                } else if ((messageInputField.cursorPosition === mentionsPos[i].rightIndex)) {
-                    if ((event.key === Qt.Key_Backspace || event.key === Qt.Key_Delete)) {
-                        messageInputField.remove(mentionsPos[i].rightIndex, mentionsPos[i].leftIndex);
-                        mentionsPos.pop(i);
-                    } else if (event.key === Qt.Key_Left) {
-                        messageInputField.cursorPosition = mentionsPos[i].leftIndex;
-                    }
-                }
             }
         }
     }
@@ -383,17 +380,42 @@ Rectangle {
         }
     }
 
+    //mentions helper properties
+    property int copyTextStart: 0
+    property string copiedTextPlain: ""
+    property string copiedTextFormatted: ""
+    ListView {
+        id: dummyContactList
+        model: control.usersStore.usersModel
+        delegate: Item {
+            property string contactName: model.name
+        }
+    }
+
     function onRelease(event) {
         if (event.key === Qt.Key_Backspace && textFormatMenu.opened) {
             textFormatMenu.close()
         }
         // the text doesn't get registered to the textarea fast enough
         // we can only get it in the `released` event
+
         if (paste) {
+            if (copiedTextPlain.includes("@")) {
+                copiedTextFormatted = copiedTextFormatted.replace(/underline/g, "none").replace(/span style="/g, "span style=\" text-decoration:none;");
+                for (var j = 0; j < dummyContactList.count; j++) {
+                    var name = dummyContactList.itemAtIndex(j).contactName;
+                    if (copiedTextPlain.indexOf(name) > -1) {
+                        var subStr = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                        var regex = new RegExp(subStr, 'gi'), result, indices = [];
+                        while ((result = regex.exec(copiedTextPlain))) {
+                            mentionsPos.push({"name": name, "leftIndex": (result.index + copyTextStart - 1), "rightIndex": (result.index + copyTextStart + name.length)});
+                        }
+                    }
+                }
+            }
+            messageInputField.remove(copyTextStart, (copyTextStart + copiedTextPlain.length));
+            insertInTextInput(copyTextStart, copiedTextFormatted);
             paste = false;
-            const plainText = messageInputField.getFormattedText(0, messageInputField.length);
-            messageInputField.remove(0, messageInputField.length);
-            insertInTextInput(0, plainText);
         }
 
         if (event.key !== Qt.Key_Escape) {
@@ -930,12 +952,52 @@ Rectangle {
                 color: isEdit ? Theme.palette.directColor1 : Style.current.textColor
                 topPadding: control.isStatusUpdateInput ? 18 : Style.current.smallPadding
                 bottomPadding: control.isStatusUpdateInput ? 14 : 12
-                Keys.onPressed: onKeyPress(event)
+                Keys.onPressed: {
+                    keyEvent = event;
+                    onKeyPress(event)
+                }
                 Keys.onReleased: onRelease(event) // gives much more up to date cursorPosition
                 Keys.onShortcutOverride: event.accepted = isUploadFilePressed(event)
                 leftPadding: 0
                 selectionColor: Style.current.primarySelectionColor
                 persistentSelection: true
+                property var keyEvent
+                onCursorPositionChanged: {
+                    if (mentionsPos.length > 0) {
+                        for (var i = 0; i < mentionsPos.length; i++) {
+                            if ((messageInputField.cursorPosition === (mentionsPos[i].leftIndex + 1)) && (keyEvent.key === Qt.Key_Right)) {
+                                messageInputField.cursorPosition = mentionsPos[i].rightIndex;
+                            } else if (messageInputField.cursorPosition === (mentionsPos[i].rightIndex - 1)) {
+                                if (keyEvent.key === Qt.Key_Left) {
+                                    messageInputField.cursorPosition = mentionsPos[i].leftIndex;
+                                } else if ((keyEvent.key === Qt.Key_Backspace) || (keyEvent.key === Qt.Key_Delete)) {
+                                    messageInputField.remove(mentionsPos[i].rightIndex, mentionsPos[i].leftIndex);
+                                    mentionsPos.pop(i);
+                                }
+                            }
+                            if ((keyEvent.key === Qt.Key_Up) || (keyEvent.key === Qt.Key_Down)) {
+                                if (messageInputField.cursorPosition >= mentionsPos[i].leftIndex &&
+                                    messageInputField.cursorPosition <= (((mentionsPos[i].leftIndex + mentionsPos[i].rightIndex)/2))) {
+                                    messageInputField.cursorPosition = mentionsPos[i].leftIndex;
+                                } else if (messageInputField.cursorPosition <= mentionsPos[i].rightIndex &&
+                                           messageInputField.cursorPosition > (((mentionsPos[i].leftIndex + mentionsPos[i].rightIndex)/2))) {
+                                    messageInputField.cursorPosition = mentionsPos[i].rightIndex;
+                                }
+                            }
+                        }
+                    }
+                    if ((mentionsPos.length > 0) && (cursorPosition < length) && getText(cursorPosition, length).includes("@")
+                         && (keyEvent.key !== Qt.Key_Right) && (keyEvent.key !== Qt.Key_Left) && (keyEvent.key !== Qt.Key_Up)
+                         && (keyEvent.key !== Qt.Key_Down)) {
+                        var unformattedText = getText(cursorPosition, length);
+                        for (var k = 0; k < mentionsPos.length; k++) {
+                            if ((unformattedText.indexOf(mentionsPos[k].name) !== -1) && (unformattedText.indexOf(mentionsPos[k].name) !== mentionsPos[k].leftIndex)) {
+                                mentionsPos[k].leftIndex = (cursorPosition + unformattedText.indexOf(mentionsPos[k].name) - 1);
+                                mentionsPos[k].rightIndex = (cursorPosition + unformattedText.indexOf(mentionsPos[k].name) + mentionsPos[k].name.length);
+                            }
+                        }
+                    }
+                }
                 onTextChanged: {
                     var symbols = ":='xX><0O;*dB8-D#%\\";
                     if ((length > 1) && (symbols.indexOf(getText((cursorPosition - 2), (cursorPosition - 1))) !== -1)
@@ -947,6 +1009,9 @@ Rectangle {
                                 replaceWithEmoji("", getText(cursorPosition - (has2Chars ? 2 : 3), cursorPosition), emoji.unicode);
                             }
                         })
+                    }
+                    if (text === "") {
+                        mentionsPos = [];
                     }
                 }
 
