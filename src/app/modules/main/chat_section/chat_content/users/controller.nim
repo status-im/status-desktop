@@ -47,6 +47,20 @@ proc newController*(
 method delete*(self: Controller) =
   discard
 
+method handleCommunityOnlyConnections(self: Controller) =
+  self.events.on(SIGNAL_COMMUNITY_MEMBER_APPROVED) do(e: Args):
+    let args = CommunityMemberArgs(e)
+    if (args.communityId == self.sectionId):
+      self.delegate.onChatMembersAdded(@[args.pubKey])
+
+  self.events.on(SIGNAL_COMMUNITIES_UPDATE) do(e:Args):
+    let args = CommunitiesArgs(e)
+    for community in args.communities:
+      if (community.id != self.sectionId):
+        continue
+      let membersPubKeys = community.members.map(x => x.id)
+      self.delegate.onChatMembersAdded(membersPubKeys)
+
 method init*(self: Controller) =
   # TODO call this function again if isUsersListAvailable changes
   if(self.isUsersListAvailable):
@@ -88,10 +102,7 @@ method init*(self: Controller) =
         self.delegate.onChatMemberUpdated(args.id, args.admin, args.joined)
 
     if (self.belongsToCommunity):
-      self.events.on(SIGNAL_COMMUNITY_MEMBER_APPROVED) do(e: Args):
-        let args = CommunityMemberArgs(e)
-        if (args.communityId == self.sectionId):
-          self.delegate.onChatMembersAdded(@[args.pubKey])
+      self.handleCommunityOnlyConnections()
 
 method getChat*(self: Controller): ChatDto =
   return self.chatService.getChatById(self.chatId)
