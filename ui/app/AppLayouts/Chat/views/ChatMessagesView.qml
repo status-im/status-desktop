@@ -249,6 +249,7 @@ Item {
             messageContextMenu: messageContextMenuInst
 
             messageId: model.id
+            communityId: model.communityId
             responseToMessageWithId: model.responseToMessageWithId
             senderId: model.senderId
             senderDisplayName: model.senderDisplayName

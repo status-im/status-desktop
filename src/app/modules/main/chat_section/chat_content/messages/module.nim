@@ -73,6 +73,7 @@ proc createFetchMoreMessagesItem(self: Module): Item =
   let isIdenticon = false
   result = initItem(
     FETCH_MORE_MESSAGES_MESSAGE_ID,
+    communityId = "",
     responseToMessageWithId = "",
     senderId = chatDto.id,
     senderDisplayName = "",
@@ -104,6 +105,7 @@ proc createChatIdentifierItem(self: Module): Item =
 
   result = initItem(
     CHAT_IDENTIFIER_MESSAGE_ID,
+    communityId = "",
     responseToMessageWithId = "",
     senderId = chatDto.id,
     senderDisplayName = chatName,
@@ -165,6 +167,7 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
           isCurrentUser = self.currentUserWalletContainsAddress(m.transactionParameters.fromAddress)
       var item = initItem(
         m.id,
+        m.communityId,
         m.responseTo,
         m.`from`,
         sender.displayName,
@@ -246,6 +249,7 @@ method messageAdded*(self: Module, message: MessageDto) =
     self.view.model().removeItem(message.replace)
   var item = initItem(
     message.id,
+    message.communityId,
     message.responseTo,
     message.`from`,
     sender.displayName,

@@ -74,6 +74,7 @@ method convertToItems*[T](
         let contactDetails = self.controller.getContactDetails(n.message.`from`)
         messageItem = message_item_qobject.newMessageItem(initItem(
           n.message.id,
+          n.message.communityId,
           n.message.responseTo,
           n.message.`from`,
           contactDetails.displayName,

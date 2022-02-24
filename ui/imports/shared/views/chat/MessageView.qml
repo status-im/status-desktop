@@ -28,6 +28,7 @@ Column {
     property bool isChatBlocked: false
 
     property string messageId: ""
+    property string communityId: ""
     property string responseToMessageWithId: ""
     property string senderId: ""
     property string senderDisplayName: ""
@@ -365,6 +366,7 @@ Column {
             contentType: root.messageContentType
             isChatBlocked: root.isChatBlocked
 
+            communityId: root.communityId
             stickersLoaded: root.stickersLoaded
             sticker: root.sticker
             stickerPack: root.stickerPack
