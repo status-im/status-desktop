@@ -23,6 +23,10 @@ Column {
     property var contactsStore
     property var messageContextMenu
 
+    // Once we redo qml we will know all section/chat related details in each message form the parent components
+    // without an explicit need to fetch those details via message store/module.
+    property bool isChatBlocked: false
+
     property string messageId: ""
     property string responseToMessageWithId: ""
     property string senderId: ""
@@ -359,6 +363,7 @@ Column {
             contactsStore: root.contactsStore
             messageContextMenu: root.messageContextMenu
             contentType: root.messageContentType
+            isChatBlocked: root.isChatBlocked
 
             stickersLoaded: root.stickersLoaded
             sticker: root.sticker

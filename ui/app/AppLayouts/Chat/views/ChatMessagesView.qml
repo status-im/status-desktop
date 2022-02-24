@@ -28,6 +28,7 @@ Item {
 
     property bool stickersLoaded: false
     property alias chatLogView: chatLogView
+    property bool isChatBlocked: false
 
     property var messageContextMenuInst
 
@@ -244,6 +245,7 @@ Item {
             usersStore: root.usersStore
             contactsStore: root.contactsStore
 
+            isChatBlocked: root.isChatBlocked
             messageContextMenu: messageContextMenuInst
 
             messageId: model.id

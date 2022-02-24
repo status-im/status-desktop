@@ -8,6 +8,7 @@ import utils 1.0
 Rectangle {
     id: buttonsContainer
     property bool parentIsHovered: false
+    property bool isChatBlocked: false
     property int containerMargin: 2
     property int contentType: 2
     property bool isCurrentUser: false
@@ -24,7 +25,8 @@ Rectangle {
     signal setMessageActive(string messageId, bool active)
     signal clickMessage(bool isProfileClick, bool isSticker, bool isImage, var image, bool emojiOnly, bool hideEmojiPicker)
 
-    visible: !buttonsContainer.placeholderMsg && !buttonsContainer.activityCenterMsg &&
+    visible: !buttonsContainer.isChatBlocked &&
+             !buttonsContainer.placeholderMsg && !buttonsContainer.activityCenterMsg &&
              (buttonsContainer.parentIsHovered || isMessageActive)
              && contentType !== Constants.messageContentType.transactionType
     width: buttonRow.width + buttonsContainer.containerMargin * 2

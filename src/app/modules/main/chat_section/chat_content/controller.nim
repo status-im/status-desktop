@@ -160,6 +160,9 @@ method muteChat*(self: Controller) =
 method unmuteChat*(self: Controller) =
   self.chatService.unmuteChat(self.chatId)
 
+method unblockChat*(self: Controller) =
+  self.contactService.unblockContact(self.chatId)
+
 method markAllMessagesRead*(self: Controller) =
   self.messageService.markAllMessagesRead(self.chatId)
 

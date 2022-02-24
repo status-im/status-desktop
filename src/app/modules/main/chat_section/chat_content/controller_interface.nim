@@ -50,6 +50,9 @@ method muteChat*(self: AccessInterface) {.base.} =
 method unmuteChat*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method unblockChat*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method markAllMessagesRead*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -77,5 +80,5 @@ method decodeContentHash*(self: AccessInterface, hash: string): string {.base.} 
 method getTransactionDetails*(self: AccessInterface, message: MessageDto): (string,string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getWalletAccounts*(self: AccessInterface): seq[WalletAccountDto] =
+method getWalletAccounts*(self: AccessInterface): seq[WalletAccountDto] {.base.} =
   raise newException(ValueError, "No implementation available")

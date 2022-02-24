@@ -27,6 +27,7 @@ Rectangle {
     signal receiveTransactionCommandButtonClicked()
     signal stickerSelected(string hashId, string packId)
     signal sendMessage(var event)
+    signal unblockChat()
 
     property var usersStore
 
@@ -1159,8 +1160,7 @@ Rectangle {
         text: qsTr("Unblock")
         type: StatusQ.StatusBaseButton.Type.Danger
         onClicked: function (event) {
-        // Not Refactored Yet
-//            RootStore.contactsModuleInst.unblockContact(RootStore.chatsModelInst.channelView.activeChannel.id)
+            control.unblockChat()
         }
     }
 }
