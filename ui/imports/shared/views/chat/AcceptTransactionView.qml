@@ -104,6 +104,7 @@ Item {
             store: root.store
             contactsStore: root.contactsStore
             msgId: messageId
+            isARequest: true
             onOpened: root.store.fetchGasPrice()
             onClosed: destroy()
             onOpenGasEstimateErrorPopup: {
