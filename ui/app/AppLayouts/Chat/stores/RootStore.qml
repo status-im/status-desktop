@@ -174,6 +174,10 @@ QtObject {
         chatCommunitySectionModule.leaveCommunity();
     }
 
+    function removeUserFromCommunity(pubKey) {
+        chatCommunitySectionModule.removeUserFromCommunity(pubKey);
+    }
+
     function createCommunityChannel(channelName, channelDescription, categoryId) {
         chatCommunitySectionModule.createCommunityChannel(channelName, channelDescription, categoryId);
     }

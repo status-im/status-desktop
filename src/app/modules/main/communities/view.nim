@@ -80,9 +80,6 @@ QtObject:
   proc reorderCommunityChannel*(self: View, communityId: string, categoryId: string, chatId: string, position: int): string {.slot} =
     self.delegate.reorderCommunityChannel(communityId, categoryId, chatId, position)
 
-  proc removeUserFromCommunity*(self: View, communityId: string, pubKey: string) {.slot.} =
-    self.delegate.removeUserFromCommunity(communityId, pubKey)
-
   proc banUserFromCommunity*(self: View, pubKey: string, communityId: string) {.slot.} =
     self.delegate.banUserFromCommunity(communityId, pubKey)
 

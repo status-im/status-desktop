@@ -157,13 +157,6 @@ method reorderCommunityCategories*(self: Module, communityId: string, categoryId
 #   self.controller.reorderCommunityCategories(communityId, categoryId, position)
   discard
 
-method removeUserFromCommunity*(self: Module, communityId: string, categoryId: string, chatId: string, position: int) =
-  # self.controller.reorderCommunityChannel(communityId, categoryId, chatId, position)
-  discard
-
-method removeUserFromCommunity*(self: Module, communityId: string, pubKey: string) =
-  self.controller.removeUserFromCommunity(communityId, pubKey)
-
 method banUserFromCommunity*(self: Module, pubKey: string, communityId: string) =
   self.controller.banUserFromCommunity(communityId, pubkey)
 

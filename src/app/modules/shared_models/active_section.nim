@@ -15,8 +15,13 @@ QtObject:
     new(result, delete)
     result.setup
 
+  proc membersChanged*(self: ActiveSection) {.signal.}
+  proc pendingRequestsToJoinChanged*(self: ActiveSection) {.signal.}
+
   proc setActiveSectionData*(self: ActiveSection, item: SectionItem) =
     self.item = item
+    self.membersChanged()
+    self.pendingRequestsToJoinChanged()
 
   proc getId*(self: ActiveSection): string {.slot.} =
     return self.item.id
@@ -128,6 +133,7 @@ QtObject:
 
   QtProperty[QVariant] members:
     read = members
+    notify = membersChanged
 
   proc hasMember(self: ActiveSection, pubkey: string): bool {.slot.} =
     return self.item.hasMember(pubkey)
@@ -151,3 +157,4 @@ QtObject:
 
   QtProperty[QVariant] pendingRequestsToJoin:
     read = pendingRequestsToJoin
+    notify = pendingRequestsToJoinChanged

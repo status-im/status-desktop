@@ -229,6 +229,9 @@ QtObject:
 
   proc leaveCommunity*(self: View) {.slot.} =
     self.delegate.leaveCommunity()
+  
+  proc removeUserFromCommunity*(self: View, pubKey: string) {.slot.} =
+    self.delegate.removeUserFromCommunity(pubKey)
 
   proc editCommunity*(self: View, name: string, description: string, access: int, ensOnly: bool, color: string, imagePath: string, aX: int, aY: int, bX: int, bY: int) {.slot.} =
     self.delegate.editCommunity(name, description, access, ensOnly, color, imagePath, aX, aY, bX, bY)

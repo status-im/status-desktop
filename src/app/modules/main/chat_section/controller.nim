@@ -347,6 +347,9 @@ method deleteCommunityCategory*(self: Controller, categoryId: string) =
 method leaveCommunity*(self: Controller) =
   self.communityService.leaveCommunity(self.sectionId)
 
+method removeUserFromCommunity*(self: Controller, pubKey: string) =
+  self.communityService.removeUserFromCommunity(self.sectionId, pubKey)
+
 method editCommunity*(
     self: Controller,
     name: string,
