@@ -7,6 +7,7 @@ import message_reaction_model, message_reaction_item, message_transaction_parame
 type
   Item* = ref object
     id: string
+    communityId: string
     responseToMessageWithId: string
     senderId: string
     senderDisplayName: string
@@ -36,6 +37,7 @@ type
 
 proc initItem*(
     id,
+    communityId,
     responseToMessageWithId,
     senderId,
     senderDisplayName,
@@ -58,6 +60,7 @@ proc initItem*(
     ): Item =
   result = Item()
   result.id = id
+  result.communityId = communityId
   result.responseToMessageWithId = responseToMessageWithId
   result.senderId = senderId
   result.senderDisplayName = senderDisplayName
@@ -85,6 +88,7 @@ proc initItem*(
 proc `$`*(self: Item): string =
   result = fmt"""Item(
     id: {$self.id},
+    communityId: {$self.communityId},
     responseToMessageWithId: {self.responseToMessageWithId},
     senderId: {self.senderId},
     senderDisplayName: {$self.senderDisplayName},
@@ -109,6 +113,9 @@ proc `$`*(self: Item): string =
 
 proc id*(self: Item): string {.inline.} =
   self.id
+
+proc communityId*(self: Item): string {.inline.} =
+  self.communityId
 
 proc responseToMessageWithId*(self: Item): string {.inline.} =
   self.responseToMessageWithId
@@ -219,6 +226,7 @@ proc transactionParameters*(self: Item): TransactionParametersItem {.inline.} =
 proc toJsonNode*(self: Item): JsonNode =
   result = %* {
     "id": self.id,
+    "communityId": self.communityId,
     "responseToMessageWithId": self.responseToMessageWithId,
     "senderId": self.senderId,
     "senderDisplayName": self.senderDisplayName,

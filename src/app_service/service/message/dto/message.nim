@@ -48,6 +48,7 @@ type TransactionParameters* = object
 
 type MessageDto* = object
   id*: string
+  communityId*: string
   whisperTimestamp*: int64
   `from`*: string
   alias*: string
@@ -120,6 +121,7 @@ proc toTransactionParameters*(jsonObj: JsonNode): TransactionParameters =
 proc toMessageDto*(jsonObj: JsonNode): MessageDto =
   result = MessageDto()
   discard jsonObj.getProp("id", result.id)
+  discard jsonObj.getProp("communityId", result.communityId)
   discard jsonObj.getProp("whisperTimestamp", result.whisperTimestamp)
   discard jsonObj.getProp("from", result.from)
   discard jsonObj.getProp("alias", result.alias)

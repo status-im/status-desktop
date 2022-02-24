@@ -157,6 +157,7 @@ proc buildPinnedMessageItem(self: Module, messageId: string, actionInitiatedBy: 
       isCurrentUser = self.currentUserWalletContainsAddress(m.transactionParameters.fromAddress)
   item = pinned_msg_item.initItem(
     m.id,
+    m.communityId,
     m.responseTo,
     m.`from`,
     contactDetails.displayName,

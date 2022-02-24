@@ -66,6 +66,7 @@ const SIGNAL_COMMUNITY_JOINED* = "communityJoined"
 const SIGNAL_COMMUNITY_MY_REQUEST_ADDED* = "communityMyRequestAdded"
 const SIGNAL_COMMUNITY_LEFT* = "communityLeft"
 const SIGNAL_COMMUNITY_CREATED* = "communityCreated"
+const SIGNAL_COMMUNITY_ADDED* = "communityAdded"
 const SIGNAL_COMMUNITY_IMPORTED* = "communityImported"
 const SIGNAL_COMMUNITY_DATA_IMPORTED* = "communityDataImported" # This one is when just loading the data with requestCommunityInfo
 const SIGNAL_COMMUNITY_EDITED* = "communityEdited"
@@ -183,6 +184,12 @@ QtObject:
 
   proc handleCommunityUpdates(self: Service, communities: seq[CommunityDto], updatedChats: seq[ChatDto]) =
     var community = communities[0]
+
+    if(not self.allCommunities.hasKey(community.id)):
+      self.events.emit(SIGNAL_COMMUNITY_ADDED, CommunityArgs(community: community))
+    # add or update community
+    self.allCommunities[community.id] = community
+
     if(not self.joinedCommunities.hasKey(community.id)):
       return
 

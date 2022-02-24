@@ -40,6 +40,10 @@ method init*(self: Controller) =
     let args = CommunityArgs(e)
     self.delegate.communityAdded(args.community)
 
+  self.events.on(SIGNAL_COMMUNITY_ADDED) do(e:Args):
+    let args = CommunityArgs(e)
+    self.delegate.communityAdded(args.community)
+
   self.events.on(SIGNAL_COMMUNITY_IMPORTED) do(e:Args):
     let args = CommunityArgs(e)
     if(args.error.len > 0):

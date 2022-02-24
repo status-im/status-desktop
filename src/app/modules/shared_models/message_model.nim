@@ -5,6 +5,7 @@ import message_item, message_reaction_item, message_transaction_parameters_item
 type
   ModelRole {.pure.} = enum
     Id = UserRole + 1
+    CommunityId
     ResponseToMessageWithId
     SenderId
     SenderDisplayName
@@ -75,6 +76,7 @@ QtObject:
   method roleNames(self: Model): Table[int, string] =
     {
       ModelRole.Id.int:"id",
+      ModelRole.CommunityId.int:"communityId",
       ModelRole.ResponseToMessageWithId.int:"responseToMessageWithId",
       ModelRole.SenderId.int:"senderId",
       ModelRole.SenderDisplayName.int:"senderDisplayName",
@@ -116,6 +118,8 @@ QtObject:
     case enumRole:
     of ModelRole.Id:
       result = newQVariant(item.id)
+    of ModelRole.CommunityId:
+      result = newQVariant(item.communityId)
     of ModelRole.ResponseToMessageWithId:
       result = newQVariant(item.responseToMessageWithId)
     of ModelRole.SenderId:

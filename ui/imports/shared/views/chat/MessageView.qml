@@ -24,6 +24,7 @@ Column {
     property var messageContextMenu
 
     property string messageId: ""
+    property string communityId: ""
     property string responseToMessageWithId: ""
     property string senderId: ""
     property string senderDisplayName: ""
@@ -360,6 +361,7 @@ Column {
             messageContextMenu: root.messageContextMenu
             contentType: root.messageContentType
 
+            communityId: root.communityId
             stickersLoaded: root.stickersLoaded
             sticker: root.sticker
             stickerPack: root.stickerPack

@@ -34,6 +34,7 @@ Item {
     property bool amISender: false
     property bool isHovered: false
     property bool isInPinnedPopup: false
+    property string communityId
     property bool showMoreButton: {
         if(!root.messageStore)
             return false
@@ -640,9 +641,8 @@ Item {
                 sourceComponent: Component {
                     id: invitationBubble
                     InvitationBubbleView {
-                        // Not Refactored Yet
-//                        store: rootStore
-                        communityId: root.container.communityId
+                        store: root.store
+                        communityId: root.communityId
                     }
                 }
             }
