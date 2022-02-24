@@ -57,3 +57,6 @@ method getMessagesFromContactsOnly*(self: Controller): bool =
 
 method setMessagesFromContactsOnly*(self: Controller, value: bool): bool =
   return self.settingsService.saveMessagesFromContactsOnly(value)
+
+method validatePassword*(self: Controller, password: string): bool =
+  return self.privacyService.validatePassword(password)

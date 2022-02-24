@@ -130,3 +130,21 @@ QtObject:
       return
 
     return mnemonics[index]
+
+  proc validatePassword*(self: Service, password: string): bool =
+    try:
+      let defaultAccount = self.getDefaultAccount()
+
+      if(defaultAccount.len == 0):
+        error "error: ", methodName="validatePassword", errDesription = "default eth account is empty"
+        return false
+
+      let isPasswordOk = self.accountsService.verifyAccountPassword(defaultAccount, password)
+      if not isPasswordOk:
+        error "error: ", methodName="validatePassword", errDesription = "password cannnot be verified"
+        return false
+
+      return true
+    except Exception as e:
+      error "error: ", methodName="validatePassword", errName = e.name, errDesription = e.msg
+      return false

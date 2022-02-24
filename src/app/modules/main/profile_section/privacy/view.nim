@@ -57,3 +57,6 @@ QtObject:
     read = getMessagesFromContactsOnly
     write = setMessagesFromContactsOnly
     notify = messagesFromContactsOnlyChanged
+
+  proc validatePassword*(self: View, password: string): bool {.slot.} =
+    self.delegate.validatePassword(password)

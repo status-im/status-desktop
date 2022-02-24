@@ -31,3 +31,6 @@ method getMessagesFromContactsOnly*(self: AccessInterface): bool {.base.} =
 
 method setMessagesFromContactsOnly*(self: AccessInterface, value: bool): bool {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method validatePassword*(self: AccessInterface, password: string): bool {.base.} =
+  raise newException(ValueError, "No implementation available")

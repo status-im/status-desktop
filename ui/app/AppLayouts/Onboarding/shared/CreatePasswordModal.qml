@@ -12,6 +12,7 @@ import shared.controls 1.0
 
 // TODO: replace with StatusModal
 ModalPopup {
+    property var privacyStore
     property bool loading: false
     property bool firstPasswordFieldValid: false
     property bool repeatPasswordFieldValid: false
@@ -45,6 +46,8 @@ ModalPopup {
         onTextChanged: {
             [firstPasswordFieldValid, passwordValidationError] =
                 Utils.validatePasswords("first", firstPasswordField, repeatPasswordField);
+            [repeatPasswordFieldValid, repeatPasswordValidationError] =
+                Utils.validatePasswords("repeat", firstPasswordField, repeatPasswordField);
         }
     }
 
@@ -159,8 +162,16 @@ ModalPopup {
             onClicked: {
                 if (storingPasswordModal)
                 {
-                    Global.applicationWindow.prepareForStoring(repeatPasswordField.text, true)
-                    popup.close()
+                    // validate the entered password
+                    var validatePassword = privacyStore.validatePassword(repeatPasswordField.text)
+                    if(!validatePassword) {
+                        firstPasswordFieldValid = false
+                        passwordValidationError = qsTr("Incorrect password")
+                    }
+                    else {
+                        Global.applicationWindow.prepareForStoring(repeatPasswordField.text, true)
+                        popup.close()
+                    }
                 }
                 else
                 {
