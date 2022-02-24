@@ -178,12 +178,17 @@ QtObject {
         chatCommunitySectionModule.createCommunityChannel(channelName, channelDescription, categoryId);
     }
 
-    function editCommunityChannel(communityId, channelId, channelName, channelDescription, channelCategoryId, popupPosition) {
+    function editCommunityChannel(chatId, newName, newDescription, newCategory, channelPosition) {
         // TODO: pass the private value when private channels
         // are implemented
         //privateSwitch.checked)
-        // Not Refactored Yet
-//        chatsModelInst.editCommunityChannel(communityId, channelId, channelName, channelDescription, channelCategoryId, popupPosition);
+        chatCommunitySectionModule.editCommunityChannel(
+                    chatId,
+                    newName,
+                    newDescription,
+                    newCategory,
+                    channelPosition
+                )
     }
 
     function acceptRequestToJoinCommunity(requestId) {

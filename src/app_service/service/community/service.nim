@@ -626,6 +626,18 @@ QtObject:
       if response.result.isNil or response.result.kind == JNull:
         error "response is invalid", methodName="editCommunityChannel"
 
+      var chatsJArr: JsonNode
+      if(not response.result.getProp("chats", chatsJArr)):
+        raise newException(RpcException, fmt"editCommunityChannel; there is no `chats` key in the response for community id: {communityId}")
+
+      for chatObj in chatsJArr:
+        var chatDto = chatObj.toChatDto()
+
+        self.chatService.updateOrAddChat(chatDto) # we have to update chats stored in the chat service.
+
+        let data = CommunityChatArgs(chat: chatDto)
+        self.events.emit(SIGNAL_COMMUNITY_CHANNEL_EDITED, data)
+
     except Exception as e:
       error "Error editing community channel", msg = e.msg, communityId, channelId, methodName="editCommunityChannel"
 
