@@ -79,6 +79,7 @@ const SIGNAL_COMMUNITY_CATEGORY_CREATED* = "communityCategoryCreated"
 const SIGNAL_COMMUNITY_CATEGORY_EDITED* = "communityCategoryEdited"
 const SIGNAL_COMMUNITY_CATEGORY_DELETED* = "communityCategoryDeleted"
 const SIGNAL_COMMUNITY_MEMBER_APPROVED* = "communityMemberApproved"
+const SIGNAL_COMMUNITY_MEMBER_REMOVED* = "communityMemberRemoved"
 const SIGNAL_NEW_REQUEST_TO_JOIN_COMMUNITY* = "newRequestToJoinCommunity"
 
 QtObject:
@@ -858,9 +859,12 @@ QtObject:
       error "Error inviting to community", msg = e.msg
       result = "Error exporting community: " & e.msg
 
-  proc removeUserFromCommunity*(self: Service, communityId: string, pubKeys: string)  =
+  proc removeUserFromCommunity*(self: Service, communityId: string, pubKey: string)  =
     try:
-      discard status_go.removeUserFromCommunity(communityId, pubKeys)
+      discard status_go.removeUserFromCommunity(communityId, pubKey)
+
+      self.events.emit(SIGNAL_COMMUNITY_MEMBER_REMOVED,
+        CommunityMemberArgs(communityId: communityId, pubKey: pubKey))
     except Exception as e:
       error "Error removing user from community", msg = e.msg
 

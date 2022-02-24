@@ -184,8 +184,7 @@ Item {
                                     iconRotation: 180
                                     type: StatusMenuItem.Type.Danger
                                     enabled: root.community.amISectionAdmin
-                                    // Not Refactored Yet
-//                                    onTriggered: chatsModel.communities.removeUserFromCommunity(model.pubKey)
+                                    onTriggered: root.store.removeUserFromCommunity(model.id)
                                 }
 
                                 StatusMenuItem {

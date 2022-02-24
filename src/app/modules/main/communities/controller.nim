@@ -113,9 +113,6 @@ method requestCommunityInfo*(self: Controller, communityId: string) =
 method importCommunity*(self: Controller, communityKey: string) =
   self.communityService.importCommunity(communityKey)
 
-method removeUserFromCommunity*(self: Controller, communityId: string, pubKeys: string) =
-  self.communityService.removeUserFromCommunity(communityId, pubKeys)
-
 method banUserFromCommunity*(self: Controller, communityId: string, pubKey: string) =
   self.communityService.removeUserFromCommunity(communityId, pubKey)
 

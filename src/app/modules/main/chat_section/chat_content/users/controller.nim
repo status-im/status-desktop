@@ -93,6 +93,11 @@ method init*(self: Controller) =
         if (args.communityId == self.sectionId):
           self.delegate.onChatMembersAdded(@[args.pubKey])
 
+      self.events.on(SIGNAL_COMMUNITY_MEMBER_REMOVED) do(e: Args):
+        let args = CommunityMemberArgs(e)
+        if (args.communityId == self.sectionId):
+          self.delegate.onChatMemberRemoved(args.pubKey)
+
 method getChat*(self: Controller): ChatDto =
   return self.chatService.getChatById(self.chatId)
 
