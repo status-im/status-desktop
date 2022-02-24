@@ -15,7 +15,7 @@ method doesChatExist*(self: AccessInterface, chatId: string): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method addChatIfDontExist*(self: AccessInterface,
-    chats: seq[ChatDto],
+    chat: ChatDto,
     belongsToCommunity: bool,
     events: EventEmitter,
     settingsService: settings_service.ServiceInterface,

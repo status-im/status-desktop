@@ -97,26 +97,19 @@ method init*(self: Controller) =
 
   self.events.on(SIGNAL_CHAT_UPDATE) do(e: Args):
     var args = ChatUpdateArgsNew(e)
-    self.delegate.addChatIfDontExist(args.chats, false, self.events, self.settingsService, self.contactService, self.chatService,
-        self.communityService, self.messageService, self.gifService, self.mailserversService, setChatAsActive = false)
-
+    for chat in args.chats:
+      let belongsToCommunity = chat.communityId.len > 0
+      self.delegate.addChatIfDontExist(chat, belongsToCommunity, self.events, self.settingsService, 
+        self.contactService, self.chatService, self.communityService, self.messageService, self.gifService, 
+        self.mailserversService, setChatAsActive = false)
 
   if (self.isCommunitySection):
     self.events.on(SIGNAL_COMMUNITY_CHANNEL_CREATED) do(e:Args):
       let args = CommunityChatArgs(e)
-      if (args.chat.communityId == self.sectionId):
-        self.delegate.addNewChat(
-          args.chat,
-          true,
-          self.events,
-          self.settingsService,
-          self.contactService,
-          self.chatService,
-          self.communityService,
-          self.messageService,
-          self.gifService,
-          self.mailserversService
-        )
+      let belongsToCommunity = args.chat.communityId.len > 0
+      self.delegate.addChatIfDontExist(args.chat, belongsToCommunity, self.events, self.settingsService, 
+        self.contactService, self.chatService, self.communityService, self.messageService, self.gifService, 
+        self.mailserversService, setChatAsActive = true)
 
     self.events.on(SIGNAL_COMMUNITY_CHANNEL_DELETED) do(e:Args):
       let args = CommunityChatIdArgs(e)

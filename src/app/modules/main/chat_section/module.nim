@@ -413,7 +413,7 @@ method addNewChat*(
   else:
     amIChatAdmin = self.amIMarkedAsAdminUser(chatDto.members)
 
-  if chatDto.categoryId == "":
+  if chatDto.categoryId.len == 0:
     let item = initItem(chatDto.id, chatName, chatImage, isIdenticon, chatDto.color, chatDto.description,
                         chatDto.chatType.int, amIChatAdmin, hasNotification, notificationsCount, chatDto.muted,
                         blocked=false, active=false, position = 0, chatDto.categoryId, chatDto.highlight)
@@ -426,6 +426,10 @@ method addNewChat*(
       self.setActiveItemSubItem(item.id, "")
   else:
     let categoryItem = self.view.chatsModel().getItemById(chatDto.categoryId)
+    if(categoryItem.isNil):
+      error "A category you're trying to add channel to doesn't exist", categoryId=chatDto.categoryId
+      return
+
     let channelItem = initSubItem(chatDto.id, chatDto.categoryId, chatDto.name, chatDto.identicon, false, chatDto.color,
         chatDto.description, chatDto.chatType.int, amIChatAdmin, hasNotification, notificationsCount, chatDto.muted,
         blocked=false, active=false, chatDto.position)
@@ -730,7 +734,7 @@ method setLoadingHistoryMessagesInProgress*(self: Module, isLoading: bool) =
   self.view.setLoadingHistoryMessagesInProgress(isLoading)
 
 method addChatIfDontExist*(self: Module,
-    chats: seq[ChatDto],
+    chat: ChatDto,
     belongsToCommunity: bool,
     events: EventEmitter,
     settingsService: settings_service.ServiceInterface,
@@ -741,7 +745,13 @@ method addChatIfDontExist*(self: Module,
     gifService: gif_service.Service,
     mailserversService: mailservers_service.Service,
     setChatAsActive: bool = true) =
-  for chatDto in chats:
-    if not self.doesChatExist(chatDto.id):
-      self.addNewChat(chatDto, belongsToCommunity, events, settingsService, contactService, chatService,
-        communityService, messageService, gifService, mailserversService, setChatAsActive)
+  
+    if(belongsToCommunity and self.controller.getMySectionId() != chat.communityId or
+      not belongsToCommunity and self.controller.getMySectionId() != conf.CHAT_SECTION_ID):
+      return
+
+    if self.doesChatExist(chat.id):
+      return
+      
+    self.addNewChat(chat, belongsToCommunity, events, settingsService, contactService, chatService,
+      communityService, messageService, gifService, mailserversService, setChatAsActive)
