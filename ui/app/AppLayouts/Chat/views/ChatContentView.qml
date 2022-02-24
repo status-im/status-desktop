@@ -290,6 +290,7 @@ ColumnLayout {
     MessageStore {
         id: messageStore
         messageModule: chatContentModule? chatContentModule.messagesModule : null
+        chatSectionModule: chatContentRoot.rootStore.chatCommunitySectionModule
     }
 
     MessageContextMenuView {

@@ -351,6 +351,8 @@ method getPinnedMailserver*(self: Service, fleet: Fleet): string =
     return self.settings.pinnedMailserver.wakuv2Test
   elif (fleet == Fleet.GoWakuTest):
     return self.settings.pinnedMailserver.goWakuTest
+  elif (fleet == Fleet.StatusTest):
+      return self.settings.pinnedMailserver.statusTest
   return ""
 
 method pinMailserver*(self: Service, address: string, fleet: Fleet): bool =
@@ -369,6 +371,8 @@ method pinMailserver*(self: Service, address: string, fleet: Fleet): bool =
       self.settings.pinnedMailserver.wakuv2Test = address
     elif (fleet == Fleet.GoWakuTest):
       self.settings.pinnedMailserver.goWakuTest = address
+    elif (fleet == Fleet.StatusTest):
+      self.settings.pinnedMailserver.statusTest = address
     return true
   return false
 

@@ -197,7 +197,7 @@ Item {
         store: rootStore
     }
 
-    AppSearch{
+    AppSearch {
         id: appSearch
         store: appMain.rootStore.appSearchStore
     }
@@ -695,10 +695,22 @@ Item {
         Action {
             shortcut: "Ctrl+K"
             onTriggered: {
+                // FIXME the focus is no longer on the AppMain when the popup is opened, so this does not work to close
                 if (channelPicker.opened) {
                     channelPicker.close()
                 } else {
                     channelPicker.open()
+                }
+            }
+        }
+        Action {
+            shortcut: "Ctrl+F"
+            onTriggered: {
+                // FIXME the focus is no longer on the AppMain when the popup is opened, so this does not work to close
+                if (appSearch.opened) {
+                    appSearch.closeSearchPopup()
+                } else {
+                    appSearch.openSearchPopup()
                 }
             }
         }

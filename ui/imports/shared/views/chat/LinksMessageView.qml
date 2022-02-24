@@ -222,7 +222,8 @@ Column {
                 source: linkData.thumbnailUrl
                 imageWidth: 300
                 isCurrentUser: root.isCurrentUser
-                onClicked: imageClick(linkImage.imageAlias)
+                onClicked: imageClicked(linkImage.imageAlias)
+                playing: root.messageStore.playAnimation
             }
         }
     }
@@ -253,6 +254,7 @@ Column {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: parent.top
                 anchors.topMargin: 1
+                playing: root.messageStore.playAnimation
             }
             StatusBaseText {
                 id: linkTitle

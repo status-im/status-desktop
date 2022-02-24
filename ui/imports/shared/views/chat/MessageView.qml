@@ -80,8 +80,11 @@ Column {
     property string outgoingStatus: messageOutgoingStatus
     property string authorCurrentMsg: senderId
     property string authorPrevMsg: {
-        if(!prevMessageAsJsonObj)
+        if(!prevMessageAsJsonObj ||
+            // The system message for private groups appear as created by the group host, but it shouldn't
+            prevMessageAsJsonObj.contentType === Constants.messageContentType.systemMessagePrivateGroupType) {
             return ""
+        }  
 
         return prevMessageAsJsonObj.senderId
     }
@@ -316,6 +319,7 @@ Column {
     Component {
         id: statusUpdateComponent
         StatusUpdateView {
+            messageStore: root.messageStore
             statusAgeEpoch: root.statusAgeEpoch
             container: root
             // Not Refactored Yet
@@ -348,6 +352,7 @@ Column {
         id: compactMessageComponent
 
         CompactMessageView {
+            container: root
             store: root.store
             messageStore: root.messageStore
             usersStore: root.usersStore

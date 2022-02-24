@@ -56,6 +56,9 @@ method createPublicChat*(self: AccessInterface, chatId: string) {.base.} =
 method createOneToOneChat*(self: AccessInterface, chatId: string, ensName: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method switchToOrCreateOneToOneChat*(self: AccessInterface, chatId: string, ensName: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method leaveChat*(self: AccessInterface, chatId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 

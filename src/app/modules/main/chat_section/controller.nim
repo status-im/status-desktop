@@ -166,6 +166,12 @@ method init*(self: Controller) =
       return
     self.delegate.makeChatWithIdActive(args.chatId)
 
+  self.events.on(SIGNAL_CHAT_SWITCH_TO_OR_CREATE_1_1_CHAT) do(e:Args):
+    let args = ChatExtArgs(e)
+    if (self.isCommunitySection):
+      return
+    self.delegate.createOneToOneChat(args.chatId, args.ensName)
+
   self.events.on(SignalType.HistoryRequestStarted.event) do(e: Args):
     self.delegate.setLoadingHistoryMessagesInProgress(true)
 
@@ -234,6 +240,9 @@ method createOneToOneChat*(self: Controller, chatId: string, ensName: string) =
   if(response.success):
     self.delegate.addNewChat(response.chatDto, false, self.events, self.settingsService, self.contactService, self.chatService,
     self.communityService, self.messageService, self.gifService, self.mailserversService)
+
+method switchToOrCreateOneToOneChat*(self: Controller, chatId: string, ensName: string) =
+  self.chatService.switchToOrCreateOneToOneChat(chatId, ensName)
 
 method leaveChat*(self: Controller, chatId: string) =
   self.chatService.leaveChat(chatId)

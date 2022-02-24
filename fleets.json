@@ -111,6 +111,25 @@
                 "node-01.gc-us-central1-a.go-waku.test": "/dns4/node-01.gc-us-central1-a.go-waku.test.statusim.net/tcp/443/wss/p2p/16Uiu2HAmPz63Xc6AuVkDeujz7YeZta18rcdau3Y1BzaxKAfDrBqz"
             }
         },
+        "status.test": {
+            "tcp/p2p/waku": {
+                "node-01.ac-cn-hongkong-c.status.test": "/ip4/47.242.233.36/tcp/30303/p2p/16Uiu2HAm2BjXxCp1sYFJQKpLLbPbwd5juxbsYofu3TsS3auvT9Yi",
+                "node-01.do-ams3.status.test": "/ip4/64.225.81.237/tcp/30303/p2p/16Uiu2HAkukebeXjTQ9QDBeNDWuGfbaSg79wkkhK4vPocLgR6QFDf",
+                "node-01.gc-us-central1-a.status.test": "/ip4/34.122.252.118/tcp/30303/p2p/16Uiu2HAmGDX3iAFox93PupVYaHa88kULGqMpJ7AEHGwj3jbMtt76"
+            }
+        },
+        "waku.connect": {
+            "tcp/p2p/waku": {
+                "nim-01.ac-cn-hongkong-c.waku.connect": "/ip4/47.242.185.35/tcp/30303/p2p/16Uiu2HAm75XUMGev2Ti74G3wUzhyxCtbaDKVWzNwbq3tn5WfzRd4",
+                "nim-01.do-ams3.waku.connect": "/ip4/206.189.242.0/tcp/30303/p2p/16Uiu2HAm9VLETt1xBwDAwfKxj2XvAZDw73Bn4HQf11U26JGDxqZD",
+                "nim-01.gc-us-central1-a.waku.connect": "/ip4/35.193.87.35/tcp/30303/p2p/16Uiu2HAmMi8xaj9W22a67shGg5wtw1nZDNtfrTPHkgKA5Uhvnvbn"
+            },
+            "wss/p2p/waku": {
+                "nim-01.ac-cn-hongkong-c.waku.connect": "/dns4/nim-01.ac-cn-hongkong-c.waku.connect.statusim.net/tcp/443/wss/p2p/16Uiu2HAm75XUMGev2Ti74G3wUzhyxCtbaDKVWzNwbq3tn5WfzRd4",
+                "nim-01.do-ams3.waku.connect": "/dns4/nim-01.do-ams3.waku.connect.statusim.net/tcp/443/wss/p2p/16Uiu2HAm9VLETt1xBwDAwfKxj2XvAZDw73Bn4HQf11U26JGDxqZD",
+                "nim-01.gc-us-central1-a.waku.connect": "/dns4/nim-01.gc-us-central1-a.waku.connect.statusim.net/tcp/443/wss/p2p/16Uiu2HAmMi8xaj9W22a67shGg5wtw1nZDNtfrTPHkgKA5Uhvnvbn"
+            }
+        },
         "wakuv2.prod": {
             "waku": {
                 "node-01.ac-cn-hongkong-c.wakuv2.prod": "/ip4/8.210.222.231/tcp/30303/p2p/16Uiu2HAm4v86W3bmT1BiH6oSPzcsSr24iDQpSN5Qa992BCjjwgrD",
@@ -138,6 +157,7 @@
     },
     "meta": {
         "hostname": "node-01.do-ams3.sites.misc",
-        "timestamp": "2021-10-19T00:00:15.465044"
+        "timestamp": "2022-02-21T14:40:19.809193",
+        "warning": "This data should only be used at build time."
     }
 }

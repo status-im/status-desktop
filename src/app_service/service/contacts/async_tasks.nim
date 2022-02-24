@@ -8,8 +8,6 @@ include ../../../app/core/tasks/common
 # Async lookup ENS contact
 #################################################
 
-const PK_LENGTH_0X_INCLUDED = 132
-
 type
   LookupContactTaskArg = ref object of QObjectTaskArg
     value: string

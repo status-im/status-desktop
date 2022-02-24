@@ -68,7 +68,7 @@ method changeFleetTo*(self: Controller, fleet: string) =
     return
 
   var wakuVersion = WAKU_VERSION_1
-  if (fleet == $Fleet.WakuV2Prod or fleet == $Fleet.WakuV2Test):
+  if (fleet == $Fleet.WakuV2Prod or fleet == $Fleet.WakuV2Test or fleet == $Fleet.StatusTest):
     wakuVersion = WAKU_VERSION_2
 
   if (not self.nodeConfigurationService.setWakuVersion(wakuVersion)):

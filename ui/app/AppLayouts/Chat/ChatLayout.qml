@@ -28,12 +28,9 @@ StatusAppThreePanelLayout {
     property var contactsStore
     property bool hasAddedContacts: root.contactsStore.myContactsModel.count > 0
 
-    // Not Refactored
-   property var messageStore
-
-   property RootStore rootStore: RootStore {
-      contactsStore: root.contactsStore
-   }
+    property RootStore rootStore: RootStore {
+        contactsStore: root.contactsStore
+    }
 
     property Component pinnedMessagesListPopupComponent
     property bool stickersLoaded: false
@@ -90,13 +87,16 @@ StatusAppThreePanelLayout {
         return chatContentModule.chatDetails.isUsersListAvailable
     }
 
-    rightPanel: localAccountSensitiveSettings.communitiesEnabled && root.rootStore.chatCommunitySectionModule.isCommunity()?
-                    communityUserListComponent :
-                    userListComponent
+    rightPanel: userListComponent
 
     Component {
-        id: communityUserListComponent
-        CommunityUserListPanel {
+        id: userListComponent
+        UserListPanel {
+            label: localAccountSensitiveSettings.communitiesEnabled &&
+                root.rootStore.chatCommunitySectionModule.isCommunity() ?
+                //% "Members"
+                qsTrId("members-label") :
+                qsTr("Last seen")
             messageContextMenu: quickActionMessageOptionsMenu
             usersModule: {
                 let chatContentModule = root.rootStore.currentChatContentModule()
@@ -104,17 +104,6 @@ StatusAppThreePanelLayout {
                     // New communities have no chats, so no chatContentModule
                     return {}
                 }
-                return chatContentModule.usersModule
-            }
-        }
-    }
-
-    Component {
-        id: userListComponent
-        UserListPanel {
-            messageContextMenu: quickActionMessageOptionsMenu
-            usersModule: {
-                let chatContentModule = root.rootStore.currentChatContentModule()
                 return chatContentModule.usersModule
             }
         }

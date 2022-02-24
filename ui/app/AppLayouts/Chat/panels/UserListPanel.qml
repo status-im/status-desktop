@@ -4,9 +4,12 @@ import shared 1.0
 import shared.panels 1.0
 import shared.status 1.0
 
+import utils 1.0
+
 import "../controls"
 
-import utils 1.0
+import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
 
 Item {
     id: root
@@ -17,8 +20,9 @@ Item {
     // usersModule on the backend contains everything needed for this component
     property var usersModule
     property var messageContextMenu
+    property string label
 
-    StyledText {
+    StatusBaseText {
         id: titleText
         anchors.top: parent.top
         anchors.topMargin: Style.current.padding
@@ -27,8 +31,9 @@ Item {
         opacity: (root.width > 58) ? 1.0 : 0.0
         visible: (opacity > 0.1)
         font.pixelSize: Style.current.primaryTextFontSize
-        //% "Members"
-        text: qsTr("Last seen")
+        font.weight: Font.Medium
+        color: Theme.palette.directColor1
+        text: root.label
     }
 
     ListView {
@@ -54,6 +59,31 @@ Item {
             isIdenticon: model.isIdenticon
             userStatus: model.onlineStatus
             messageContextMenu: root.messageContextMenu
+        }
+        section.property: "onlineStatus"
+        section.delegate: (root.width > 58) ? sectionDelegateComponent : null
+    }
+
+    Component {
+        id: sectionDelegateComponent
+        Item {
+            width: parent.width
+            height: 24
+            StyledText {
+                anchors.fill: parent
+                anchors.leftMargin: Style.current.padding
+                verticalAlignment: Text.AlignVCenter
+                font.pixelSize: Style.current.additionalTextSize
+                color: Theme.palette.baseColor1
+                text: {
+                    switch(parseInt(section)) {
+                        case Constants.userStatus.offline: return qsTr("Offline")
+                        case Constants.userStatus.online: return qsTr("Online")
+                        case Constants.userStatus.doNotDisturb: return qsTr("Do not disturb")
+                        case Constants.userStatus.idle: return qsTr("Idle")
+                    }
+                }
+            }
         }
     }
 }

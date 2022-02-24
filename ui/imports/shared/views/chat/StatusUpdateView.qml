@@ -14,6 +14,7 @@ import StatusQ.Controls 0.1
 MouseArea {
     id: root
 //    property var store
+    property var messageStore
     property bool hovered: containsMouse
     property var container
     property int statusAgeEpoch: 0
@@ -125,6 +126,7 @@ MouseArea {
 
             sourceComponent: Component {
                 StatusChatImage {
+                    playing: root.messageStore.playAnimation
                     imageSource: image
                     imageWidth: 200
                     container: root.container
