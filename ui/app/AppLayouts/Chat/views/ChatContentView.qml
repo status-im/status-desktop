@@ -172,6 +172,7 @@ ColumnLayout {
                 chatDescription = chatContentModule.chatDetails.description
                 chatType = chatContentModule.chatDetails.type
                 chatMuted = chatContentModule.chatDetails.muted
+                channelPosition = chatContentModule.chatDetails.position
             }
 
             onMuteChat: {
@@ -233,6 +234,16 @@ ColumnLayout {
                                      chatContentModule: chatContentModule,
                                      chatDetails: chatContentModule.chatDetails
                                  })
+            }
+
+            onEditCommunityChannel: {
+                root.rootStore.editCommunityChannel(
+                    chatId,
+                    newName,
+                    newDescription,
+                    newCategory,
+                    channelPosition // TODO change this to the signal once it is modifiable
+                )
             }
         }
     }
