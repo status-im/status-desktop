@@ -47,3 +47,9 @@ method osNotificationClicked*(self: AccessInterface, details: NotificationDetail
 method newCommunityMembershipRequestReceived*(self: AccessInterface, membershipRequest: CommunityMembershipRequestDto) 
   {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method onNetworkConnected*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onNetworkDisconnected*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")

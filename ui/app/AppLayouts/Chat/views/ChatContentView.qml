@@ -268,27 +268,26 @@ ColumnLayout {
                       qsTrId("disconnected")
         }
 
-        // Not Refactored Yet
-        //        Connections {
-        //            target: chatContentRoot.rootStore.chatsModelInst
-        //            onOnlineStatusChanged: {
-        //                if (connected == isConnected) return;
-        //                isConnected = connected;
-        //                if(isConnected){
-        //                    timer.setTimeout(function(){
-        //                        connectedStatusRect.visible = false;
-        //                    }, 5000);
-        //                } else {
-        //                    connectedStatusRect.visible = true;
-        //                }
-        //            }
-        //        }
-        //        Component.onCompleted: {
-        //            isConnected = chatContentRoot.rootStore.chatsModelInst.isOnline
-        //            if(!isConnected){
-        //                connectedStatusRect.visible = true
-        //            }
-        //        }
+        Connections {
+            target: mainModule
+            onOnlineStatusChanged: {
+                if (connected == isConnected) return;
+                isConnected = connected;
+                if(isConnected){
+                    timer.setTimeout(function(){
+                        connectedStatusRect.visible = false;
+                    }, 5000);
+                } else {
+                    connectedStatusRect.visible = true;
+                }
+            }
+        }
+        Component.onCompleted: {
+            isConnected = mainModule.isOnline
+            if(!isConnected){
+                connectedStatusRect.visible = true
+            }
+        }
     }
 
     StatusBanner {

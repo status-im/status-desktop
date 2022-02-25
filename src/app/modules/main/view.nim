@@ -165,3 +165,15 @@ QtObject:
   proc openCommunityMembershipRequestsPopup*(self: View, sectionId: string) {.signal.}
   proc emitOpenCommunityMembershipRequestsPopupSignal*(self: View, sectionId: string) =
     self.openCommunityMembershipRequestsPopup(sectionId)
+
+  proc onlineStatusChanged(self: View, connected: bool) {.signal.}
+
+  proc isConnected*(self: View): bool {.slot.} =
+    result = self.delegate.isConnected()
+
+  proc setConnected*(self: View, connected: bool) = # Not a slot
+    self.onlineStatusChanged(connected)
+
+  QtProperty[bool] isOnline:
+    read = isConnected
+    notify = onlineStatusChanged

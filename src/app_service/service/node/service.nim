@@ -96,3 +96,5 @@ QtObject:
         self.peers = peers
 
     proc peerCount*(self: Service): int = self.peers.len
+
+    proc isConnected*(self: Service): bool = self.connected
