@@ -84,6 +84,8 @@ proc initItem*(
   result.isEdited = false
   result.links = links
   result.transactionParameters = transactionParameters
+  result.gapFrom = 0
+  result.gapTo = 0
 
 proc `$`*(self: Item): string =
   result = fmt"""Item(
@@ -265,4 +267,15 @@ proc isEdited*(self: Item): bool {.inline.} =
 proc `isEdited=`*(self: Item, value: bool) {.inline.} =
   self.isEdited = value
 
+proc gapFrom*(self: Item): int64 {.inline.} =
+  self.gapFrom
+
+proc `gapFrom=`*(self: Item, value: int64) {.inline.} =
+  self.gapFrom = value
+
+proc gapTo*(self: Item): int64 {.inline.} =
+  self.gapTo
+
+proc `gapTo=`*(self: Item, value: int64) {.inline.} =
+  self.gapTo = value
 

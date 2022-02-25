@@ -272,6 +272,9 @@ Item {
             linkUrls: model.links
             transactionParams: model.transactionParameters
 
+            gapFrom: model.gapFrom
+            gapTo: model.gapTo
+
             // This is possible since we have all data loaded before we load qml.
             // When we fetch messages to fulfill a gap we have to set them at once.
             // Also one important thing here is that messages are set in descending order

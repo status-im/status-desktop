@@ -215,6 +215,10 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
       if m.editedAt != 0:
         item.isEdited = true
 
+      if(m.contentType.ContentType == ContentType.Gap):
+        item.gapFrom = m.gapParameters.`from`
+        item.gapTo = m.gapParameters.to
+
       # messages are sorted from the most recent to the least recent one
       viewItems.add(item)
 
