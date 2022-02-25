@@ -24,10 +24,10 @@ Column {
     Repeater {
         id: mainMenuItems
         delegate: StatusNavigationListItem {
-            itemId: model.menu_id
+            itemId: model.subsection
             title: model.text
             icon.name: model.icon
-            selected: Global.currentMenuTab === model.menu_id
+            selected: Global.settingsSubsection === model.subsection
             onClicked: root.menuItemClicked(model)
         }
     }
@@ -41,10 +41,10 @@ Column {
         id: appsMenuItems
         delegate: StatusNavigationListItem {
             id: appsMenuDelegate
-            itemId: model.menu_id
+            itemId: model.subsection
             title: model.text
             icon.name: model.icon
-            selected: Global.currentMenuTab === model.menu_id
+            selected: Global.settingsSubsection === model.subsection
             onClicked: root.menuItemClicked(model)
             visible: root.appsMenuItemsEnabled
         }
@@ -56,12 +56,12 @@ Column {
         id: settingsMenuItems
         delegate: StatusNavigationListItem {
             id: settingsMenuDelegate
-            itemId: model.menu_id
+            itemId: model.subsection
             title: model.text
             icon.name: model.icon
-            selected: Global.currentMenuTab === model.menu_id
+            selected: Global.settingsSubsection === model.subsection
             onClicked: root.menuItemClicked(model)
-            visible: model.ifEnabled !== "browser" || root.browserMenuItemEnabled
+            visible: model.subsection !== Constants.settingsSubsection.browserSettings || root.browserMenuItemEnabled
             badge.value: !root.privacyStore.mnemonicBackedUp && settingsMenuDelegate.title === qsTr("Privacy and security")
         }
     }
@@ -75,11 +75,11 @@ Column {
     Repeater {
         id: extraMenuItems
         delegate: StatusNavigationListItem {
-            itemId: model.menu_id
+            itemId: model.subsection
             title: model.text
             icon.name: model.icon
-            selected: Global.currentMenuTab === model.menu_id
-            visible: model.ifEnabled !== "browser" || root.browserMenuItemEnabled
+            selected: Global.settingsSubsection === model.subsection
+            visible: model.subsection !== Constants.settingsSubsection.browserSettings || root.browserMenuItemEnabled
             onClicked: root.menuItemClicked(model)
         }
     }

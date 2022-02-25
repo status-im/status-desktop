@@ -27,6 +27,25 @@ QtObject {
         readonly property int node: 4
     }
 
+    readonly property QtObject settingsSubsection: QtObject {
+        property int profile: 0
+        property int contacts: 1
+        property int ensUsernames: 2
+        property int wallet: 3
+        property int privacyAndSecurity: 4
+        property int appearance: 5
+        property int sound: 6
+        property int language: 7
+        property int notifications: 8
+        property int syncSettings: 9
+        property int devicesSettings: 10
+        property int browserSettings: 11
+        property int advanced: 12
+        property int needHelp: 13
+        property int about: 14
+        property int signout: 15
+    }
+
     readonly property QtObject userStatus: QtObject{
         readonly property int offline: 0
         readonly property int online: 1

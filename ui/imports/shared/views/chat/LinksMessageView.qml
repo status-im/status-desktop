@@ -373,9 +373,7 @@ Column {
                 //% "Enable in Settings"
                 text: qsTrId("enable-in-settings")
                 onClicked: {
-                    // TODO: replace with shared store constant
-                    // Profile/RootStore.privacy_and_security_id
-                    Global.changeAppSectionBySectionType(Constants.appSection.profile, 3);
+                    Global.changeAppSectionBySectionType(Constants.appSection.profile, Constants.settingsSubsection.privacyAndSecurity);
                 }
                 width: parent.width
                 anchors.top: sep1.bottom

@@ -8,7 +8,7 @@ QtObject {
 
     property var applicationWindow
     property bool popupOpened: false
-    property int currentMenuTab: 0
+    property int settingsSubsection: Constants.settingsSubsection.profile
     property var errorSound
 
     property var mainModuleInst
@@ -41,13 +41,13 @@ QtObject {
         openDownloadModalRequested();
     }
 
-    function changeAppSectionBySectionType(sectionType, profileSectionId = -1) {
+    function changeAppSectionBySectionType(sectionType, subsection = 0) {
         if(!root.mainModuleInst)
             return
 
         mainModuleInst.setActiveSectionBySectionType(sectionType)
-        if (profileSectionId > -1) {
-            currentMenuTab = profileSectionId;
+        if (sectionType === Constants.appSection.profile) {
+            settingsSubsection = subsection;
         }
     }
 

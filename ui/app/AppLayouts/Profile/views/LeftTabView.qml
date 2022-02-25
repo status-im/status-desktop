@@ -42,10 +42,10 @@ Item {
             appsMenuItemsEnabled: store.appsMenuItemsEnabled
             
             onMenuItemClicked: {
-                if (!!menu_item.function_name && menu_item.function_name === "exit") {
+                if (menu_item.subsection === Constants.settingsSubsection.signout) {
                     return confirmDialog.open()
                 }
-                Global.currentMenuTab = menu_item.menu_id
+                Global.settingsSubsection = menu_item.subsection
             }
         }
     }

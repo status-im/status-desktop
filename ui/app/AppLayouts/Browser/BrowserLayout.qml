@@ -474,9 +474,7 @@ Rectangle {
             }
         }
         onLaunchBrowserSettings: {
-            // TODO: replace with shared store constant
-            // Profile/RootStore.browser_settings_id
-            Global.changeAppSectionBySectionType(Constants.appSection.profile, 10);
+            Global.changeAppSectionBySectionType(Constants.appSection.profile, Constants.settingsSubsection.browserSettings);
         }
     }
 

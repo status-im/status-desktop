@@ -36,7 +36,7 @@ StatusAppTwoPanelLayout {
 
         anchors.fill: parent
 
-        currentIndex: Global.currentMenuTab
+        currentIndex: Global.settingsSubsection
 
         onCurrentIndexChanged: {
             if(visibleChildren[0] === ensContainer){
