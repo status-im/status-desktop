@@ -40,12 +40,25 @@ QtObject:
     events: EventEmitter
     osNotification: StatusOSNotification
     soundManager: StatusSoundManager
+    notificationSetUp: bool
 
   proc processNotification(self: NotificationsManager, title: string, message: string, details: NotificationDetails)
 
   proc setup(self: NotificationsManager, events: EventEmitter) =
     self.QObject.setup
     self.events = events
+
+  proc delete*(self: NotificationsManager) =
+    if self.notificationSetUp:
+      self.osNotification.delete
+      self.soundManager.delete
+    self.QObject.delete
+
+  proc newNotificationsManager*(events: EventEmitter): NotificationsManager =
+    new(result, delete)
+    result.setup(events)
+
+  proc init*(self: NotificationsManager) =
     self.osNotification = newStatusOSNotification()
     self.soundManager = newStatusSoundManager()
 
@@ -62,14 +75,7 @@ QtObject:
       self, "onMyRequestToJoinCommunityHasBeenAcccepted(QString, QString, QString)", 2)
     signalConnect(singletonInstance.globalEvents, "myRequestToJoinCommunityHasBeenRejected(QString, QString, QString)", 
       self, "onMyRequestToJoinCommunityHasBeenRejected(QString, QString, QString)", 2)
-
-  proc delete*(self: NotificationsManager) =
-    self.osNotification.delete
-    self.QObject.delete
-
-  proc newNotificationsManager*(events: EventEmitter): NotificationsManager =
-    new(result, delete)
-    result.setup(events)
+    self.notificationSetUp = true
 
   proc showOSNotification(self: NotificationsManager, title: string, message: string, identifier: string) =
     ## This method will add new notification to the OS Notification center. Param
