@@ -78,9 +78,7 @@ Popup {
         }
         onPreferencesClicked: {
             activityCenter.close()
-            // TODO: replace with shared store constant
-            // Profile/RootStore.notifications_id
-            Global.changeAppSection(Constants.profile, 7);
+            Global.changeAppSection(Constants.profile, Constants.settingsSubsection.notifications);
         }
         onMarkAllReadClicked: {
             errorText = activityCenter.store.activityCenterModuleInst.markAllActivityCenterNotificationsRead()
