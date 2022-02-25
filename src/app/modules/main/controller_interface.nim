@@ -62,3 +62,6 @@ method switchTo*(self: AccessInterface, sectionId, chatId, messageId: string) {.
 
 method getCommunityById*(self: AccessInterface, communityId: string): CommunityDto {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method isConnected*(self: AccessInterface): bool {.base.} =
+  raise newException(ValueError, "No implementation available")

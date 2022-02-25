@@ -34,3 +34,6 @@ method rebuildChatSearchModel*(self: AccessInterface) {.base.} =
 
 method switchTo*(self: AccessInterface, sectionId, chatId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method isConnected*(self: AccessInterface): bool {.base.} =
+  raise newException(ValueError, "No implementation available")

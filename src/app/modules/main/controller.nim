@@ -15,6 +15,7 @@ import ../../../app_service/service/message/service as message_service
 import ../../../app_service/service/gif/service as gif_service
 import ../../../app_service/service/mailservers/service as mailservers_service
 import ../../../app_service/service/privacy/service as privacy_service
+import ../../../app_service/service/node/service as node_service
 
 export controller_interface
 
@@ -35,6 +36,7 @@ type
     gifService: gif_service.Service
     privacyService: privacy_service.Service
     mailserversService: mailservers_service.Service
+    nodeService: node_service.Service
     activeSectionId: string
 
 proc newController*(delegate: io_interface.AccessInterface,
@@ -48,7 +50,8 @@ proc newController*(delegate: io_interface.AccessInterface,
   messageService: message_service.Service,
   gifService: gif_service.Service,
   privacyService: privacy_service.Service,
-  mailserversService: mailservers_service.Service
+  mailserversService: mailservers_service.Service,
+  nodeService: node_service.Service
 ):
   Controller =
   result = Controller()
@@ -63,7 +66,7 @@ proc newController*(delegate: io_interface.AccessInterface,
   result.messageService = messageService
   result.gifService = gifService
   result.privacyService = privacyService
-  result.mailserversService = mailserversService
+  result.nodeService = nodeService
 
 method delete*(self: Controller) =
   discard
@@ -177,6 +180,15 @@ method init*(self: Controller) =
   self.events.on(SIGNAL_NEW_REQUEST_TO_JOIN_COMMUNITY) do(e: Args):
     var args = CommunityRequestArgs(e)
     self.delegate.newCommunityMembershipRequestReceived(args.communityRequest)  
+
+  self.events.on(SIGNAL_NETWORK_CONNECTED) do(e: Args):
+    self.delegate.onNetworkConnected()  
+
+  self.events.on(SIGNAL_NETWORK_DISCONNECTED) do(e: Args):
+    self.delegate.onNetworkDisconnected()  
+
+method isConnected*(self: Controller): bool =
+  return self.nodeService.isConnected()
 
 method getJoinedCommunities*(self: Controller): seq[CommunityDto] =
   return self.communityService.getJoinedCommunities()

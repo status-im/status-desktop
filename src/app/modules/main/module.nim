@@ -125,7 +125,8 @@ proc newModule*[T](
     messageService,
     gifService,
     privacyService,
-    mailserversService
+    mailserversService,
+    nodeService
   )
   result.moduleLoaded = false
 
@@ -549,6 +550,15 @@ method onActiveChatChange*[T](self: Module[T], sectionId: string, chatId: string
 method onNotificationsUpdated[T](self: Module[T], sectionId: string, sectionHasUnreadMessages: bool,
   sectionNotificationCount: int) =
   self.view.model().udpateNotifications(sectionId, sectionHasUnreadMessages, sectionNotificationCount)
+
+method onNetworkConnected[T](self: Module[T]) =
+  self.view.setConnected(true)
+
+method onNetworkDisconnected[T](self: Module[T]) =
+  self.view.setConnected(false)
+
+method isConnected[T](self: Module[T]): bool =
+  self.controller.isConnected()
 
 method getAppSearchModule*[T](self: Module[T]): QVariant =
   self.appSearchModule.getModuleAsVariant()

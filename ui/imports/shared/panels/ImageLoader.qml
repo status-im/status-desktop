@@ -52,17 +52,17 @@ Rectangle {
         }
     ]
 
-//    Connections {
-//        target: RootStore.chatsModelInst
-//        onOnlineStatusChanged: {
-//            if (connected && root.state !== "ready" &&
-//                root.visible &&
-//                root.source &&
-//                root.source.startsWith("http")) {
-//                root.reload()
-//            }
-//        }
-//    }
+    Connections {
+        target: mainModule
+        onOnlineStatusChanged: {
+            if (connected && root.state !== "ready" &&
+                root.visible &&
+                root.source &&
+                root.source.startsWith("http")) {
+                root.reload()
+            }
+        }
+    }
 
     function reload() {
         // From the documentation (https://doc.qt.io/qt-5/qml-qtquick-image.html#sourceSize-prop)
