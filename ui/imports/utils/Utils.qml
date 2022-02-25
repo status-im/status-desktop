@@ -50,7 +50,7 @@ QtObject {
 
     function getMessageWithStyle(msg, isCurrentUser, hoveredLink = "") {
         return `<style type="text/css">` +
-                    `p, img, a, del, code, blockquote { margin: 0; padding: 0; }` +
+                    `img, a, del, code, blockquote { margin: 0; padding: 0; }` +
                     `code {` +
                         `font-family: ${Style.current.fontCodeRegular.name};` +
                         `font-weight: 400;` +
