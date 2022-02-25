@@ -24,8 +24,8 @@ type
     MessageType
     Sticker
     StickerPack
-    # GapFrom
-    # GapTo
+    GapFrom
+    GapTo
     Pinned
     PinnedBy
     Reactions
@@ -94,8 +94,8 @@ QtObject:
       ModelRole.MessageType.int:"messageType",
       ModelRole.Sticker.int:"sticker",
       ModelRole.StickerPack.int:"stickerPack",
-      # ModelRole.GapFrom.int:"gapFrom",
-      # ModelRole.GapTo.int:"gapTo",
+      ModelRole.GapFrom.int:"gapFrom",
+      ModelRole.GapTo.int:"gapTo",
       ModelRole.Pinned.int:"pinned",
       ModelRole.PinnedBy.int:"pinnedBy",
       ModelRole.Reactions.int:"reactions",
@@ -154,10 +154,10 @@ QtObject:
       result = newQVariant(item.sticker)
     of ModelRole.StickerPack:
       result = newQVariant(item.stickerPack)
-    # of ModelRole.GapFrom:
-    #   result = newQVariant(item.gapFrom)
-    # of ModelRole.GapTo:
-    #   result = newQVariant(item.gapTo)
+    of ModelRole.GapFrom:
+      result = newQVariant(item.gapFrom)
+    of ModelRole.GapTo:
+      result = newQVariant(item.gapTo)
     of ModelRole.Pinned:
       result = newQVariant(item.pinned)
     of ModelRole.PinnedBy:

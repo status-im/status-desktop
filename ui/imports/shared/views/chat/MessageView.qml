@@ -48,6 +48,9 @@ Column {
     property bool isInPinnedPopup: false // The pinned popup limits the number of buttons shown
     property var transactionParams
 
+    property int gapFrom: 0
+    property int gapTo: 0
+
     property int prevMessageIndex: -1
     property var prevMessageAsJsonObj
     property int nextMessageIndex: -1
@@ -118,8 +121,6 @@ Column {
     property bool activityCenterMessage: false
     property bool read: true
     property bool forceHoverHandler: false // Used to force the HoverHandler to be active (useful for messages in popups)
-    property int gapFrom: 0
-    property int gapTo: 0
     property string replaces: ""
     property bool isEdited: false
     property bool stickersLoaded: false
@@ -255,6 +256,8 @@ Column {
     Component {
         id: gapComponent
         GapComponent {
+            gapFrom: root.gapFrom
+            gapTo: root.gapTo
             onClicked: {
                 messageStore.fillGaps(messageId)
                 root.visible = false;
