@@ -636,10 +636,9 @@ method onContactDetailsUpdated*(self: Module, publicKey: string) =
 
 method onNewMessagesReceived*(self: Module, chatId: string, unviewedMessagesCount: int, unviewedMentionsCount: int,
   messages: seq[MessageDto]) =
-  if(self.controller.getMySectionId() == self.delegate.getActiveSectionId() and
-    self.controller.getActiveChatId() == chatId):
-    return
-  self.updateBadgeNotifications(chatId, unviewedMessagesCount, unviewedMentionsCount)
+  if(self.controller.getMySectionId() != self.delegate.getActiveSectionId() or
+    self.controller.getActiveChatId() != chatId):
+    self.updateBadgeNotifications(chatId, unviewedMessagesCount, unviewedMentionsCount)
 
   # Prepare bubble notification
   let myPK = singletonInstance.userProfile.getPubKey()

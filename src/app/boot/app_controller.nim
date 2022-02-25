@@ -33,6 +33,7 @@ import ../../app_service/service/ens/service as ens_service
 
 import ../modules/startup/module as startup_module
 import ../modules/main/module as main_module
+import ../core/notifications/notifications_manager
 
 import ../global/global_singleton
 
@@ -41,6 +42,7 @@ import ../core/[main]
 type
   AppController* = ref object of RootObj
     statusFoundation: StatusFoundation
+    notificationsManager*: NotificationsManager
 
     # Global
     localAppSettingsVariant: QVariant
@@ -108,6 +110,7 @@ proc connect(self: AppController) =
 proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result = AppController()
   result.statusFoundation = statusFoundation
+  result.notificationsManager = newNotificationsManager(statusFoundation.events)
 
   # Global
   result.localAppSettingsVariant = newQVariant(singletonInstance.localAppSettings)
@@ -222,6 +225,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
 
 proc delete*(self: AppController) =
   singletonInstance.delete
+  self.notificationsManager.delete
   self.keychainService.delete
   self.contactsService.delete
   self.bookmarkService.delete
@@ -287,6 +291,8 @@ proc start*(self: AppController) =
   self.startupModule.load()
 
 proc load(self: AppController) =
+  self.notificationsManager.init()
+
   self.settingsService.init()
   self.nodeConfigurationService.init()
   self.contactsService.init()
