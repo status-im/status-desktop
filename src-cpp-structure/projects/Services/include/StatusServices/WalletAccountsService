@@ -1,0 +1,4 @@
+#pragma once
+
+#include "WalletAccounts/WalletAccountDto.h"
+#include "WalletAccounts/ServiceInterface.h"
