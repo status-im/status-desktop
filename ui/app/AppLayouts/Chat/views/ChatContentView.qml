@@ -31,6 +31,7 @@ ColumnLayout {
     property var chatContentModule
     property var rootStore
     property var contactsStore
+    property bool isActiveChannel: false
     property UsersStore usersStore: UsersStore {}
 
     onChatContentModuleChanged: {
@@ -417,6 +418,7 @@ ColumnLayout {
                 }
                 messageContextMenu: contextmenu
                 isContactBlocked: chatContentRoot.isBlocked
+                isActiveChannel: chatContentRoot.isActiveChannel
                 chatInputPlaceholder: chatContentRoot.isBlocked ?
                                           //% "This user has been blocked."
                                           qsTrId("this-user-has-been-blocked-") :

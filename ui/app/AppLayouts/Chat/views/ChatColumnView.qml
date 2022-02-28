@@ -42,6 +42,7 @@ Item {
     property bool isExtendedInput: isReply || isImage
     property bool isConnected: false
     property string contactToRemove: ""
+    property bool isSectionActive: mainModule.activeSection.id === parentModule.getMySectionId()
     property string activeChatId: parentModule && parentModule.activeItem.id
     property string activeSubItemId: parentModule && parentModule.activeItem.activeSubItem.id
     property string activeChatType: parentModule && parentModule.activeItem.type
@@ -148,18 +149,7 @@ Item {
                     delegate: ChatContentView {
                         width: parent.width
                         clip: true
-                        height: {
-                            // dynamically calculate the height of the view, if the active one is the current one
-                            // then set the height to parent otherwise set it to 0
-                            if(!chatContentModule)
-                                return 0
-
-                            let myChatId = chatContentModule.getMyChatId()
-                            if(myChatId === root.activeChatId || myChatId === root.activeSubItemId)
-                                return parent.height
-
-                            return 0
-                        }
+                        height: isActiveChannel ? parent.height : 0
                         rootStore: root.rootStore
                         contactsStore: root.contactsStore
                         sendTransactionNoEnsModal: cmpSendTransactionNoEns
@@ -167,6 +157,18 @@ Item {
                         sendTransactionWithEnsModal: cmpSendTransactionWithEns
                         stickersLoaded: root.stickersLoaded
                         isBlocked: model.blocked
+                        isActiveChannel: {
+                            // dynamically calculate the height of the view, if the active one is the current one
+                            // then set the height to parent otherwise set it to 0
+                            if(!chatContentModule || !isSectionActive)
+                                return false
+
+                            let myChatId = chatContentModule.getMyChatId()
+                            if(myChatId === root.activeChatId || myChatId === root.activeSubItemId)
+                                return true
+
+                            return false
+                        }
                         Component.onCompleted: {
                             parentModule.prepareChatContentModuleForChatId(model.itemId)
                             chatContentModule = parentModule.getChatContentModule()
@@ -178,18 +180,7 @@ Item {
                 delegate: ChatContentView {
                     width: parent.width
                     clip: true
-                    height: {
-                        // dynamically calculate the height of the view, if the active one is the current one
-                        // then set the height to parent otherwise set it to 0
-                        if(!chatContentModule)
-                            return 0
-
-                        let myChatId = chatContentModule.getMyChatId()
-                        if(myChatId === root.activeChatId || myChatId === root.activeSubItemId)
-                            return parent.height
-
-                        return 0
-                    }
+                    height: isActiveChannel ? parent.height : 0
                     rootStore: root.rootStore
                     contactsStore: root.contactsStore
                     sendTransactionNoEnsModal: cmpSendTransactionNoEns
@@ -197,6 +188,18 @@ Item {
                     sendTransactionWithEnsModal: cmpSendTransactionWithEns
                     stickersLoaded: root.stickersLoaded
                     isBlocked: model.blocked
+                    isActiveChannel: {
+                        // dynamically calculate the height of the view, if the active one is the current one
+                        // then set the height to parent otherwise set it to 0
+                        if(!chatContentModule || !isSectionActive)
+                            return false
+
+                        let myChatId = chatContentModule.getMyChatId()
+                        if(myChatId === root.activeChatId || myChatId === root.activeSubItemId)
+                            return true
+
+                        return false
+                    }
                     Component.onCompleted: {
                         parentModule.prepareChatContentModuleForChatId(itemId)
                         chatContentModule = parentModule.getChatContentModule()

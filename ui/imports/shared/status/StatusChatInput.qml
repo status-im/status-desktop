@@ -40,6 +40,7 @@ Rectangle {
     property bool isImage: false
     property bool isEdit: false
     property bool isContactBlocked: false
+    property bool isActiveChannel: false
 
     property var recentStickers
     property var stickerPackList
@@ -591,7 +592,8 @@ Rectangle {
     }
 
     Connections {
-        target: Global.applicationWindow.dragAndDrop
+        enabled: control.isActiveChannel
+        target: Global.appMain.dragAndDrop
         onDroppedOnValidScreen: (drop) => {
                                     let validImages = validateImages(drop.urls)
                                     if (validImages.length > 0) {
