@@ -21,7 +21,6 @@ import "./app"
 
 StatusWindow {
     property bool hasAccounts: startupModule.appState !== Constants.appState.onboarding
-    property alias dragAndDrop: dragTarget
     property bool displayBeforeGetStartedModal: !hasAccounts
     property bool appIsReady: false
 
@@ -412,92 +411,6 @@ StatusWindow {
     Loader {
         id: loader
         anchors.fill: parent
-    }
-
-    DropArea {
-        id: dragTarget
-
-        signal droppedOnValidScreen(var drop)
-        property alias droppedUrls: rptDraggedPreviews.model
-        property bool enabled: !drag.source && !!loader.item && !!loader.item.appLayout
-
-        // Not Refactored Yet
-//                               && (
-//                                   // in chat view
-//                                   (loader.item.appLayout.appView.currentIndex === Constants.appViewStackIndex.chat &&
-//                                    (
-//                                        // in a one-to-one chat
-//                                        chatsModel.channelView.activeChannel.chatType === Constants.chatType.oneToOne ||
-//                                        // in a private group chat
-//                                        chatsModel.channelView.activeChannel.chatType === Constants.chatType.privateGroupChat
-//                                        )
-//                                    ) ||
-//                                   // In community section
-//                                   chatsModel.communities.activeCommunity.active
-//                                   )
-
-        width: applicationWindow.width
-        height: applicationWindow.height
-
-        function cleanup() {
-            rptDraggedPreviews.model = []
-        }
-
-        onDropped: (drop) => {
-                       if (enabled) {
-                           droppedOnValidScreen(drop)
-                       } else {
-                           drop.accepted = false
-                       }
-                       cleanup()
-                   }
-        onEntered: {
-            if (!enabled || !!drag.source) {
-                drag.accepted = false
-                return
-            }
-
-            // needed because drag.urls is not a normal js array
-            rptDraggedPreviews.model = drag.urls.filter(img => Utils.hasDragNDropImageExtension(img))
-        }
-        onPositionChanged: {
-            rptDraggedPreviews.x = drag.x
-            rptDraggedPreviews.y = drag.y
-        }
-        onExited: cleanup()
-        Rectangle {
-            id: dropRectangle
-
-            width: parent.width
-            height: parent.height
-            color: Style.current.transparent
-            opacity: 0.8
-
-            states: [
-                State {
-                    when: dragTarget.enabled && dragTarget.containsDrag
-                    PropertyChanges {
-                        target: dropRectangle
-                        color: Style.current.background
-                    }
-                }
-            ]
-        }
-        Repeater {
-            id: rptDraggedPreviews
-
-            Image {
-                source: modelData
-                width: 80
-                height: 80
-                sourceSize.width: 160
-                sourceSize.height: 160
-                fillMode: Image.PreserveAspectFit
-                x: index * 10 + rptDraggedPreviews.x
-                y: index * 10 + rptDraggedPreviews.y
-                z: 1
-            }
-        }
     }
 
     Component {

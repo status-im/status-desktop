@@ -7,6 +7,7 @@ QtObject {
     id: root
 
     property var applicationWindow
+    property var appMain
     property bool popupOpened: false
     property int settingsSubsection: Constants.settingsSubsection.profile
     property var errorSound

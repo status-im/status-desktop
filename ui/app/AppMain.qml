@@ -32,6 +32,7 @@ Item {
     anchors.fill: parent
 
     property alias appLayout: appLayout
+    property alias dragAndDrop: dragTarget
     property RootStore rootStore: RootStore { }
     // set from main.qml
     property var sysPalette
@@ -645,6 +646,93 @@ Item {
             }
         }
 
+        
+        DropArea {
+            id: dragTarget
+
+            signal droppedOnValidScreen(var drop)
+            property alias droppedUrls: rptDraggedPreviews.model
+            property var chatCommunitySectionModule: chatLayoutContainer.rootStore.chatCommunitySectionModule
+            property int activeChatType: chatCommunitySectionModule && chatCommunitySectionModule.activeItem.type
+            property bool enabled: !drag.source && !!loader.item && !!loader.item.appLayout
+                                && (
+                                    // in chat view
+                                    (mainModule.activeSection.sectionType === Constants.appSection.chat &&
+                                    (
+                                        // in a one-to-one chat
+                                        activeChatType === Constants.chatType.oneToOne ||
+                                        // in a private group chat
+                                        activeChatType === Constants.chatType.privateGroupChat
+                                        )
+                                    ) ||
+                                    // In community section
+                                    mainModule.activeSection.sectionType === Constants.appSection.community
+                                    )
+
+            width: appMain.width
+            height: appMain.height
+
+            function cleanup() {
+                rptDraggedPreviews.model = []
+            }
+
+            onDropped: (drop) => {
+                        if (enabled) {
+                            droppedOnValidScreen(drop)
+                        } else {
+                            drop.accepted = false
+                        }
+                        cleanup()
+                    }
+            onEntered: {
+                if (!enabled || !!drag.source) {
+                    drag.accepted = false
+                    return
+                }
+
+                // needed because drag.urls is not a normal js array
+                rptDraggedPreviews.model = drag.urls.filter(img => Utils.hasDragNDropImageExtension(img))
+            }
+            onPositionChanged: {
+                rptDraggedPreviews.x = drag.x
+                rptDraggedPreviews.y = drag.y
+            }
+            onExited: cleanup()
+            Rectangle {
+                id: dropRectangle
+
+                width: parent.width
+                height: parent.height
+                color: Style.current.transparent
+                opacity: 0.8
+
+                states: [
+                    State {
+                        when: dragTarget.enabled && dragTarget.containsDrag
+                        PropertyChanges {
+                            target: dropRectangle
+                            color: Style.current.background
+                        }
+                    }
+                ]
+            }
+            Repeater {
+                id: rptDraggedPreviews
+
+                Image {
+                    source: modelData
+                    width: 80
+                    height: 80
+                    sourceSize.width: 160
+                    sourceSize.height: 160
+                    fillMode: Image.PreserveAspectFit
+                    x: index * 10 + rptDraggedPreviews.x
+                    y: index * 10 + rptDraggedPreviews.y
+                    z: 1
+                }
+            }
+        }
+
         // Add SendModal here as it is used by the Wallet as well as the Browser
         Loader {
             id: sendModal
@@ -759,6 +847,7 @@ Item {
     }
 
     Component.onCompleted: {
+        Global.appMain = this;
         const whitelist = appMain.rootStore.privacyStore.getLinkPreviewWhitelist()
         try {
             const whiteListedSites = JSON.parse(whitelist)
