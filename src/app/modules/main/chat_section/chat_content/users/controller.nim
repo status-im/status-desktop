@@ -62,13 +62,17 @@ method handleCommunityOnlyConnections(self: Controller) =
       self.delegate.onChatMembersAdded(membersPubKeys)
 
 method init*(self: Controller) =
-  # TODO call this function again if isUsersListAvailable changes
   if(self.isUsersListAvailable):
     self.events.on(SIGNAL_MESSAGES_LOADED) do(e:Args):
       let args = MessagesLoadedArgs(e)
       if(self.chatId != args.chatId):
         return
+      self.delegate.newMessagesLoaded(args.messages)
 
+    self.events.on(SIGNAL_NEW_MESSAGE_RECEIVED) do(e:Args):
+      let args = MessagesArgs(e)
+      if(self.chatId != args.chatId):
+        return
       self.delegate.newMessagesLoaded(args.messages)
 
     self.events.on(SIGNAL_CONTACT_NICKNAME_CHANGED) do(e: Args):

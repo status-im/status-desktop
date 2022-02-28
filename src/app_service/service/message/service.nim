@@ -167,7 +167,8 @@ QtObject:
     for msgId in messagesOneRepliedTo:
       removeMessageWithId(messages, msgId)
 
-    let data = MessagesArgs(chatId: chatId,
+    let data = MessagesArgs(
+      chatId: chatId,
       chatType: chatType,
       unviewedMessagesCount: unviewedMessagesCount,
       unviewedMentionsCount: unviewedMentionsCount,
