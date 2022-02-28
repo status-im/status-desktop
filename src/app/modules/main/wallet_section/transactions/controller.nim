@@ -93,6 +93,14 @@ method transferEth*(self: Controller, from_addr: string, to_addr: string, value:
 
 method transferTokens*(self: Controller, from_addr: string, to_addr: string, contractAddress: string,
     value: string, gas: string, gasPrice: string, maxPriorityFeePerGas: string,maxFeePerGas: string,
-    password: string, uuid: string): bool =
+    password: string, uuid: string
+): bool =
   result = self.transactionService.transferTokens(from_addr, to_addr, contractAddress, value, gas,
     gasPrice, maxPriorityFeePerGas, maxFeePerGas, password, uuid)
+
+method baseFeePerGas*(self: Controller): string = 
+  return self.transactionService.baseFeePerGas()
+
+method suggestedFees*(self: Controller): string = 
+  let suggestedFees = self.transactionService.suggestedFees()
+  return suggestedFees.toJson()

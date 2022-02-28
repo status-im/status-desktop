@@ -156,7 +156,7 @@ QtObject:
       )
 
   proc buy*(self: Service, packId: int, address: string, price: string, gas: string, gasPrice: string, maxPriorityFeePerGas: string, maxFeePerGas: string, password: string): tuple[response: string, success: bool] =
-    let eip1559Enabled = self.settingsService.isEIP1559Enabled()
+    let eip1559Enabled = self.networkService.isEIP1559Enabled()
 
     try:
       status_utils.validateTransactionInput(address, address, "", price, gas, gasPrice, "", eip1559Enabled, maxPriorityFeePerGas, maxFeePerGas, "ok")

@@ -48,6 +48,9 @@ method transactionsModuleDidLoad*(self: AccessInterface) {.base.} =
 method savedAddressesModuleDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method isEIP1559Enabled*(self: AccessInterface): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 type
   ## Abstract class (concept) which must be implemented by object/s used in this
   ## module.

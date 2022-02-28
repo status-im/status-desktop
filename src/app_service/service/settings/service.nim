@@ -393,23 +393,6 @@ method saveWalletVisibleTokens*(self: Service, visibleTokens: Table[int, seq[str
   
   return false
 
-method isEIP1559Enabled*(self: Service, blockNumber: int): bool =
-  let networkId = self.getCurrentNetworkDetails().config.NetworkId
-  let activationBlock = case networkId:
-    of 3: 10499401 # Ropsten
-    of 4: 8897988 # Rinkeby
-    of 5: 5062605 # Goerli
-    of 1: 12965000 # Mainnet
-    else: -1
-  if activationBlock > -1 and blockNumber >= activationBlock:
-    result = true
-  else:
-    result = false
-  self.eip1559Enabled = result
-
-method isEIP1559Enabled*(self: Service): bool =
-  result = self.eip1559Enabled
-
 method getRecentStickers*(self: Service): seq[string] =
   result = self.settings.recentStickerHashes
 

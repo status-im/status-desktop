@@ -52,7 +52,7 @@ ModalPopup {
     function sendTransaction() {
         let responseStr = onSendTransaction(selectFromAccount.selectedAccount.address,
                                          gasSelector.selectedGasLimit,
-                                         gasSelector.eip1599Enabled ? "" : gasSelector.selectedGasPrice,
+                                         gasSelector.isEIP1559Enabled ? "" : gasSelector.selectedGasPrice,
                                          gasSelector.selectedTipLimit,
                                          gasSelector.selectedOverallLimit,
                                          transactionSigner.enteredPassword);
@@ -127,6 +127,9 @@ ModalPopup {
                 getGasEthValue: root.store.getGasEthValue
                 getFiatValue: root.store.getFiatValue
                 defaultCurrency: root.store.getCurrentCurrency()
+                isEIP1559Enabled: root.store.isEIP1559Enabled()
+                latestBaseFeePerGas: root.store.latestBaseFeePerGas()
+                suggestedFees: root.store.suggestedFees()
                 width: stack.width
 
                 property var estimateGas: Backpressure.debounce(gasSelector, 600, function() {
@@ -228,16 +231,16 @@ ModalPopup {
                         return root.sendTransaction()
                     }
 
-                    if(gasSelector.eip1599Enabled && stack.currentGroup === group2 && gasSelector.advancedMode){
+                    if(gasSelector.isEIP1559Enabled && stack.currentGroup === group2 && gasSelector.advancedMode){
                         if(gasSelector.showPriceLimitWarning || gasSelector.showTipLimitWarning){
                             Global.openPopup(transactionSettingsConfirmationPopupComponent, {
-                                currentBaseFee: gasSelector.latestBaseFeeGwei,
+                                currentBaseFee: gasSelector.latestBaseFeePerGasGwei,
                                 currentMinimumTip: gasSelector.perGasTipLimitFloor,
                                 currentAverageTip: gasSelector.perGasTipLimitAverage,
                                 tipLimit: gasSelector.selectedTipLimit,
                                 suggestedTipLimit: gasSelector.perGasTipLimitFloor, // TODO:
                                 priceLimit: gasSelector.selectedOverallLimit,
-                                suggestedPriceLimit: gasSelector.latestBaseFeeGwei + gasSelector.perGasTipLimitFloor,
+                                suggestedPriceLimit: gasSelector.latestBaseFeePerGasGwei + gasSelector.perGasTipLimitFloor,
                                 showPriceLimitWarning: gasSelector.showPriceLimitWarning,
                                 showTipLimitWarning: gasSelector.showTipLimitWarning,
                                 onConfirm: function(){

@@ -22,4 +22,8 @@ QtObject {
 //        walletModel.gasView.getGasPrice()
     }
 
+    function isEIP1559Enabled() {
+        return walletSection.isEIP1559Enabled()
+    }
+
 }

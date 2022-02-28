@@ -227,12 +227,6 @@ method getWalletVisibleTokens*(self: ServiceInterface): Table[int, seq[string]] 
 method saveWalletVisibleTokens*(self: ServiceInterface, tokens: Table[int, seq[string]]): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method isEIP1559Enabled*(self: ServiceInterface, blockNumber: int): bool {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method isEIP1559Enabled*(self: ServiceInterface): bool {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method getRecentStickers*(self: ServiceInterface): seq[string] {.base.} =
   raise newException(ValueError, "No implementation available")
 

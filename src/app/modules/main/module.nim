@@ -136,7 +136,7 @@ proc newModule*[T](
   result.walletSectionModule = wallet_section_module.newModule[Module[T]](
     result, events, tokenService,
     transactionService, collectible_service, walletAccountService,
-    settingsService, savedAddressService
+    settingsService, savedAddressService, networkService,
   )
   result.browserSectionModule = browser_section_module.newModule(result, bookmarkService, settingsService,
   dappPermissionsService, providerService)

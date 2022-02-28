@@ -1,10 +1,11 @@
-import NimQml, chronicles, sequtils, sugar, stint, strutils, json, strformat
+import NimQml, chronicles, sequtils, sugar, stint, strutils, json, strformat, algorithm, math
 import ../../../backend/transactions as transactions
 import ../../../backend/wallet as status_wallet
 import ../../../backend/eth
 
 import ../ens/utils as ens_utils
 from ../../common/account_constants import ZERO_ADDRESS
+import ../../common/conversion as common_conversion
 
 import ../../../app/core/[main]
 import ../../../app/core/signals/types
@@ -48,6 +49,19 @@ type
   TransactionSentArgs* = ref object of Args
     result*: string
 
+type SuggestedFees = object
+  gasPrice: string
+  baseFee: float
+  maxPriorityFeePerGas: float
+  maxFeePerGasL: float 
+  maxFeePerGasM: float
+  maxFeePerGasH: float
+
+proc cmpUint256(x, y: Uint256): int =
+  if x > y: 1
+  elif x == y: 0
+  else: -1
+
 QtObject:
   type Service* = ref object of QObject
     events: EventEmitter
@@ -56,6 +70,8 @@ QtObject:
     ethService: eth_service.ServiceInterface
     networkService: network_service.ServiceInterface
     settingsService: settings_service.ServiceInterface
+
+    baseFeePerGas: string
 
   # Forward declaration
   proc checkPendingTransactions*(self: Service)
@@ -71,7 +87,7 @@ QtObject:
       ethService: eth_service.ServiceInterface,
       networkService: network_service.ServiceInterface,
       settingsService: settings_service.ServiceInterface
-      ): Service =
+  ): Service =
     new(result, delete)
     result.QObject.setup
     result.events = events
@@ -81,20 +97,25 @@ QtObject:
     result.networkService = networkService
     result.settingsService = settingsService
 
+  proc baseFeePerGas*(self: Service): string = 
+    return self.baseFeePerGas
+
+  proc setLatestBaseFeePerGas*(self: Service) = 
+    let response = eth.getBlockByNumber("latest")
+    self.baseFeePerGas = $fromHex(Stuint[256], response.result{"baseFeePerGas"}.getStr)
+
   proc doConnect*(self: Service) =
     self.events.on(SignalType.Wallet.event) do(e:Args):
       var data = WalletSignal(e)
       if(data.eventType == "newblock"):
+        self.setLatestBaseFeePerGas()
+
         for acc in data.accounts:
           self.checkPendingTransactions(acc)
-          # TODO check if these need to be added back
-          # self.status.wallet.updateAccount(acc)
-          # discard self.status.wallet.isEIP1559Enabled(data.blockNumber)
-          # self.status.wallet.setLatestBaseFee(data.baseFeePerGas)
-          # self.view.updateView()
 
   proc init*(self: Service) =
     self.doConnect()
+    self.setLatestBaseFeePerGas()
 
   proc checkRecentHistory*(self: Service) =
     try:
@@ -266,7 +287,7 @@ QtObject:
       uuid: string
     ): bool {.slot.} =
     try:
-      let eip1559Enabled = self.settingsService.isEIP1559Enabled()
+      let eip1559Enabled = self.networkService.isEIP1559Enabled()
       eth_utils.validateTransactionInput(from_addr, to_addr, assetAddress = "", value, gas,
         gasPrice, data = "", eip1559Enabled, maxPriorityFeePerGas, maxFeePerGas, uuid)
 
@@ -277,6 +298,7 @@ QtObject:
 
       let json: JsonNode = %tx
       let response = eth.sendTransaction($json, password)
+
       # only till it is moved to another thred
       # if response.error != nil:
       #   raise newException(Exception, response.error.message)
@@ -305,7 +327,7 @@ QtObject:
       uuid: string
       ): bool =
     try:
-      let eip1559Enabled = self.settingsService.isEIP1559Enabled()
+      let eip1559Enabled = self.networkService.isEIP1559Enabled()
       eth_utils.validateTransactionInput(from_addr, to_addr, assetAddress, value, gas,
         gasPrice, data = "", eip1559Enabled, maxPriorityFeePerGas, maxFeePerGas, uuid)
 
@@ -332,3 +354,56 @@ QtObject:
       error "Error sending token transfer transaction", msg = e.msg
       return false
     return true
+
+  proc maxPriorityFeePerGas(self: Service): Uint256 =
+    let response = eth.maxPriorityFeePerGas()
+    return fromHex(Stuint[256], response.result.getStr)
+
+  proc getGasPrice(self: Service): Uint256 =
+    let response = eth.getGasPrice()
+    return fromHex(Stuint[256], response.result.getStr)
+
+  proc feeHistory(self: Service, n:int): seq[Uint256] =
+    let response = eth.feeHistory(101)
+    for it in response.result["baseFeePerGas"]:
+      result.add(fromHex(Stuint[256], it.getStr))
+
+    result.sort(cmpUint256)    
+
+  proc suggestedFees*(self: Service): SuggestedFees =
+    #[
+      0. priority tip always same, the value returned by eth_maxPriorityFeePerGas
+      1. slow fee 10th percentile base fee (last 100 blocks) + eth_maxPriorityFeePerGas 
+      2. normal fee. 
+        if 20th_percentile <= current_base_fee <= 80th_percentile then fee = current_base_fee + eth_maxPriorityFeePerGas. 
+        if current_base_fee < 20th_percentile then fee = 20th_percentile + eth_maxPriorityFeePerGas
+        if current_base_fee > 80th_percentile then fee = 80th_percentile + eth_maxPriorityFeePerGas
+        The idea is to avoid setting too low base fee when price is in a dip and also to avoid overpaying on peak.
+        Specific percentiles can be revisit later, it doesn't need to be symmetric because we are mostly interested in not getting stuck and overpaying might not be a huge issue here.
+      3. fast fee: current_base_fee + eth_maxPriorityFeePerGas
+    ]#
+
+    let maxPriorityFeePerGas = self.maxPriorityFeePerGas()
+    let feeHistory = self.feeHistory(101)
+    let baseFee = self.baseFeePerGas.u256
+    let gasPrice = self.getGasPrice()
+
+    let perc10 = feeHistory[ceil(10/100 * feeHistory.len.float).int - 1]
+    let perc20 = feeHistory[ceil(20/100 * feeHistory.len.float).int - 1]
+    let perc80 = feeHistory[ceil(80/100 * feeHistory.len.float).int - 1]
+
+    let maxFeePerGasM = if baseFee >= perc20 and baseFee <= perc80:
+      baseFee + maxPriorityFeePerGas
+    elif baseFee < perc20:
+      perc20 + maxPriorityFeePerGas
+    else:
+      perc80 + maxPriorityFeePerGas
+
+    return SuggestedFees(
+      gasPrice: $gasPrice,
+      baseFee: parseFloat(common_conversion.wei2gwei($baseFee)),
+      maxPriorityFeePerGas: parseFloat(common_conversion.wei2gwei($maxPriorityFeePerGas)),
+      maxFeePerGasL: parseFloat(common_conversion.wei2gwei($(perc10 + maxPriorityFeePerGas))),
+      maxFeePerGasM: parseFloat(common_conversion.wei2gwei($(maxFeePerGasM))),
+      maxFeePerGasH: parseFloat(common_conversion.wei2gwei($(baseFee + maxPriorityFeePerGas)))
+    ) 
