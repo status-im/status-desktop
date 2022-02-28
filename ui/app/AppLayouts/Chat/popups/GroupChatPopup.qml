@@ -22,7 +22,7 @@ ModalPopup {
     property var store
     property bool selectChatMembers: true
     property int memberCount: 1
-    readonly property int maxMembers: 10
+    readonly property int maxMembers: 20
     property string channelNameValidationError: ""
 
     onOpened: {
@@ -89,8 +89,7 @@ ModalPopup {
 
       StyledText {
           anchors.top: lblNewGroup.bottom
-          //% "%1 / 10 members"
-          text: qsTrId("%1-/-10-members").arg(memberCount)
+          text: qsTr("%1/%2 members").arg(popup.memberCount).arg(popup.maxMembers)
           color: Style.current.secondaryText
           font.pixelSize: 15
       }
