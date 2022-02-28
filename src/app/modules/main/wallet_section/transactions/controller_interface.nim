@@ -43,7 +43,14 @@ method transferEth*(self: AccessInterface, from_addr: string, to_addr: string, v
 method transferTokens*(self: AccessInterface, from_addr: string, to_addr: string,
     contractAddress: string, value: string, gas: string, gasPrice: string,
     maxPriorityFeePerGas: string, maxFeePerGas: string, password: string,
-    uuid: string): bool {.base.} =
+    uuid: string
+): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method baseFeePerGas*(self: AccessInterface): string {.base.} = 
+  raise newException(ValueError, "No implementation available")
+
+method suggestedFees*(self: AccessInterface): string {.base.} = 
   raise newException(ValueError, "No implementation available")
 
 type

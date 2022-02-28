@@ -32,3 +32,6 @@ method getNetwork*(self: ServiceInterface, chainId: int): NetworkDto {.base.} =
 
 method toggleNetwork*(self: ServiceInterface, chainId: int) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method isEIP1559Enabled*(self: ServiceInterface): bool {.base.} =
+  raise newException(ValueError, "No implementation available")

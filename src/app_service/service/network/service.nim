@@ -85,3 +85,14 @@ method toggleNetwork*(self: Service, chainId: int) =
 
   network.enabled = not network.enabled
   self.upsertNetwork(network)
+
+method isEIP1559Enabled*(self: Service): bool =
+  # TODO: Assume multi network is not enabled
+  # TODO: add block number chain for other chains
+  let network = self.getEnabledNetworks()[0]
+  case network.chainId:
+    of 3: return true
+    of 4: return true
+    of 5: return true
+    of 1: return true
+    else: return false

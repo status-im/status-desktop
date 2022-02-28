@@ -1,6 +1,7 @@
 import ./controller_interface
 import ../../../../app_service/service/settings/service_interface as settings_service
 import ../../../../app_service/service/wallet_account/service as wallet_account_service
+import ../../../../app_service/service/network/service as network_service
 
 export controller_interface
 
@@ -9,16 +10,19 @@ type
     delegate: T
     settingsService: settings_service.ServiceInterface
     walletAccountService: wallet_account_service.ServiceInterface
-
+    networkService: network_service.ServiceInterface
+ 
 proc newController*[T](
   delegate: T,
   settingsService: settings_service.ServiceInterface,
   walletAccountService: wallet_account_service.ServiceInterface,
+  networkService: network_service.ServiceInterface,
 ): Controller[T] =
   result = Controller[T]()
   result.delegate = delegate
   result.settingsService = settingsService
   result.walletAccountService = walletAccountService
+  result.networkService = networkService
 
 method delete*[T](self: Controller[T]) =
   discard
@@ -40,3 +44,6 @@ method getCurrencyBalance*[T](self: Controller[T]): float64 =
 
 method updateCurrency*[T](self: Controller[T], currency: string) =
   self.walletAccountService.updateCurrency(currency)
+
+method isEIP1559Enabled*[T](self: Controller[T]): bool =
+  return self.networkService.isEIP1559Enabled()

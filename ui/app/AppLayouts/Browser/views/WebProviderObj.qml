@@ -65,7 +65,7 @@ QtObject {
                 // TODO: use bignumber instead of floats
                 trx.value = RootStore.getEth2Hex(parseFloat(value))
                 trx.gas = "0x" + parseInt(selectedGasLimit, 10).toString(16)
-                if (walletModel.transactionsView.isEIP1559Enabled) {
+                if (WalletStore.isEIP1559Enabled()) {
                     trx.maxPriorityFeePerGas = RootStore.getGwei2Hex(parseFloat(selectedTipLimit))
                     trx.maxFeePerGas = RootStore.getGwei2Hex(parseFloat(selectedOverallLimit))
                 } else {

@@ -19,6 +19,7 @@ import ../../../../app_service/service/collectible/service as collectible_servic
 import ../../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../../app_service/service/settings/service_interface as settings_service
 import ../../../../app_service/service/saved_address/service_interface as saved_address_service
+import ../../../../app_service/service/network/service_interface as network_service
 
 import io_interface
 export io_interface
@@ -48,12 +49,13 @@ proc newModule*[T](
   walletAccountService: wallet_account_service.ServiceInterface,
   settingsService: settings_service.ServiceInterface,
   savedAddressService: saved_address_service.ServiceInterface,
+  networkService: network_service.ServiceInterface,
 ): Module[T] =
   result = Module[T]()
   result.delegate = delegate
   result.events = events
   result.moduleLoaded = false
-  result.controller = newController(result, settingsService, walletAccountService)
+  result.controller = newController(result, settingsService, walletAccountService, networkService)
   result.view = newView(result)
 
   result.accountTokensModule = account_tokens_module.newModule(result, events, walletAccountService)
@@ -86,6 +88,9 @@ method switchAccount*[T](self: Module[T], accountIndex: int) =
 
 method setTotalCurrencyBalance*[T](self: Module[T]) =
   self.view.setTotalCurrencyBalance(self.controller.getCurrencyBalance())
+
+method isEIP1559Enabled*[T](self: Module[T]): bool =
+  return self.controller.isEIP1559Enabled()
 
 method load*[T](self: Module[T]) =
   singletonInstance.engine.setRootContextProperty("walletSection", newQVariant(self.view))

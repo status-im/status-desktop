@@ -91,4 +91,16 @@ QtObject {
        return walletSectionTransactions.transferTokens(from, to, address, amount, gasLimit,
         gasPrice, tipLimit, overallLimit, password, uuid);
     }
+
+    function isEIP1559Enabled() {
+        return walletSection.isEIP1559Enabled()
+    }
+
+    function latestBaseFeePerGas() {
+        return walletSectionTransactions.latestBaseFeePerGas()
+    }
+
+    function suggestedFees() {
+        return JSON.parse(walletSectionTransactions.suggestedFees())
+    }
 }

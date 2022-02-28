@@ -296,7 +296,7 @@ QtObject:
     try:
       let
         chainId = self.settingsService.getCurrentNetworkId()
-        eip1559Enabled = self.settingsService.isEIP1559Enabled()
+        eip1559Enabled = self.networkService.isEIP1559Enabled()
         txData = ens_utils.buildTransaction(parseAddress(address), 0.u256, gas, gasPrice,
           eip1559Enabled, maxPriorityFeePerGas, maxFeePerGas)
 
@@ -385,7 +385,7 @@ QtObject:
         networkType = self.settingsService.getCurrentNetwork().toNetworkType()
         network = self.networkService.getNetwork(networkType)
         chainId = network.chainId
-        eip1559Enabled = self.settingsService.isEIP1559Enabled()
+        eip1559Enabled = self.networkService.isEIP1559Enabled()
         txData = ens_utils.buildTransaction(parseAddress(address), 0.u256, gas, gasPrice,
           eip1559Enabled, maxPriorityFeePerGas, maxFeePerGas)
 

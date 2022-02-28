@@ -17,14 +17,16 @@ Item {
     property double gasPrice: 0
 
 
-    // Not Refactored Yet
-    property bool eip1599Enabled: false //walletModel.transactionsView.isEIP1559Enabled
-    property var suggestedFees: "" //JSON.parse(walletModel.gasView.suggestedFees)
-    property var latestBaseFee: "" //JSON.parse(walletModel.transactionsView.latestBaseFee)
+    property bool isEIP1559Enabled: true
+    property var latestBaseFeePerGas: ""
 
-    property double latestBaseFeeGwei: {
-        if (!eip1599Enabled) return 0;
-        return parseFloat(latestBaseFee.gwei)
+    // Not Refactored Yet
+    property var suggestedFees: ""
+
+    property double latestBaseFeePerGasGwei: {
+        if (!isEIP1559Enabled) return 0;
+
+        return parseFloat(latestBaseFeePerGas)
     }
 
     property var getGasGweiValue: function () {}
@@ -83,7 +85,7 @@ Item {
 
 
     function checkLimits(){
-        if(!eip1599Enabled) return;
+        if(!isEIP1559Enabled) return;
 
         let inputTipLimit = parseFloat(inputPerGasTipLimit.text || "0.00")
         let inputOverallLimit = parseFloat(inputGasPrice.text || "0.00")
@@ -110,15 +112,15 @@ Item {
         }
 
         // Per-gas overall limit rules
-        if(inputOverallLimit < latestBaseFeeGwei){
-            errorMsg = appendError(errorMsg, qsTr("The limit is below the current base fee of %1 %2").arg(latestBaseFeeGwei).arg("Gwei"))
+        if(inputOverallLimit < latestBaseFeePerGasGwei){
+            errorMsg = appendError(errorMsg, qsTr("The limit is below the current base fee of %1 %2").arg(latestBaseFeePerGasGwei).arg("Gwei"))
             showPriceLimitWarning = true
         }
 
         /* TODO: change these values false once EIP1559 suggestions are revised
-         else if((inputOverallLimit - inputTipLimit) < latestBaseFeeGwei){
+         else if((inputOverallLimit - inputTipLimit) < latestBaseFeePerGasGwei){
             errorMsg = appendError(errorMsg, qsTr("The limit should be at least %1 Gwei above the base fee").arg(perGasTipLimitFloor))
-        } else if((inputOverallLimit - perGasTipLimitAverage) < latestBaseFeeGwei) {
+        } else if((inputOverallLimit - perGasTipLimitAverage) < latestBaseFeePerGasGwei) {
             errorMsg = appendError(errorMsg, qsTr("The maximum miner tip after the current base fee will be %1 Gwei, the minimum miner tip is currently %2 Gwei").arg(inputOverallLimit).arg(perGasTipLimitFloor), true)
             showTipLimitWarning = true
         }*/
@@ -201,11 +203,11 @@ Item {
 
     StyledText {
         id: baseFeeText
-        visible: eip1599Enabled && advancedMode
+        visible: isEIP1559Enabled && advancedMode
         anchors.top: parent.top
         anchors.left: prioritytext.right
         anchors.leftMargin: Style.current.smallPadding
-        text: qsTr("Current base fee: %1 %2").arg(latestBaseFeeGwei).arg("Gwei")
+        text: qsTr("Current base fee: %1 %2").arg(latestBaseFeePerGasGwei).arg("Gwei")
         font.weight: Font.Medium
         font.pixelSize: 13
         color: Style.current.secondaryText
@@ -241,7 +243,7 @@ Item {
             buttonGroup: gasGroup
             text: qsTr("Low")
             price: {
-                if (!eip1599Enabled) return gasPrice;
+                if (!isEIP1559Enabled) return gasPrice;
                 return formatDec(suggestedFees.maxFeePerGasL, 6)
             }
             gasLimit: inputGasLimit ? inputGasLimit.text : ""
@@ -249,7 +251,7 @@ Item {
             getFiatValue: root.getFiatValue
             defaultCurrency: root.defaultCurrency
             onChecked: {
-                if (eip1599Enabled){
+                if (isEIP1559Enabled){
                     inputPerGasTipLimit.text = formatDec(suggestedFees.maxPriorityFeePerGas, 2);
                     inputGasPrice.text = formatDec(suggestedFees.maxFeePerGasL, 2);
                 } else {
@@ -266,7 +268,7 @@ Item {
             //% "Optimal"
             text: qsTrId("optimal")
             price: {
-                if (!eip1599Enabled) {
+                if (!isEIP1559Enabled) {
                     // Setting the gas price field here because the binding didn't work
                     inputGasPrice.text = root.gasPrice
                     return root.gasPrice
@@ -279,7 +281,7 @@ Item {
             getFiatValue: root.getFiatValue
             defaultCurrency: root.defaultCurrency
             onChecked: {
-                if (eip1599Enabled){
+                if (isEIP1559Enabled){
                     inputPerGasTipLimit.text = formatDec(suggestedFees.maxPriorityFeePerGas, 2);
                     inputGasPrice.text = formatDec(suggestedFees.maxFeePerGasM, 2);
                 } else {
@@ -294,7 +296,7 @@ Item {
             buttonGroup: gasGroup
             text: qsTr("High")
             price: {
-                if (!eip1599Enabled) return gasPrice;
+                if (!isEIP1559Enabled) return gasPrice;
                 return formatDec(suggestedFees.maxFeePerGasH,6);
             }
             gasLimit: inputGasLimit ? inputGasLimit.text : ""
@@ -302,7 +304,7 @@ Item {
             getFiatValue: root.getFiatValue
             defaultCurrency: root.defaultCurrency
             onChecked: {
-                if (eip1599Enabled){
+                if (isEIP1559Enabled){
                     inputPerGasTipLimit.text = formatDec(suggestedFees.maxPriorityFeePerGas, 2);
                     inputGasPrice.text = formatDec(suggestedFees.maxFeePerGasH, 2);
                 } else {
@@ -331,7 +333,7 @@ Item {
             customHeight: 56
             anchors.top: parent.top
             anchors.left: parent.left
-            anchors.right: eip1599Enabled ? inputPerGasTipLimit.left : inputGasPrice.left
+            anchors.right: isEIP1559Enabled ? inputPerGasTipLimit.left : inputGasPrice.left
             anchors.rightMargin: Style.current.padding
             placeholderText: "21000"
             validator: IntValidator{
@@ -355,7 +357,7 @@ Item {
             anchors.right: inputGasPrice.left
             anchors.rightMargin: Style.current.padding
             anchors.left: undefined
-            visible: eip1599Enabled
+            visible: isEIP1559Enabled
             width: 125
             customHeight: 56
             text: formatDec(suggestedFees.maxPriorityFeePerGas, 2);
@@ -372,7 +374,7 @@ Item {
             color: Style.current.secondaryText
             //% "Gwei"
             text: qsTrId("gwei")
-            visible: eip1599Enabled
+            visible: isEIP1559Enabled
             anchors.top: parent.top
             anchors.topMargin: 42
             anchors.right: inputPerGasTipLimit.right
