@@ -6,6 +6,9 @@ import "../shared"
 
 Item {
     property var onClosed: function () {}
+
+    signal showCreatePasswordView()
+
     id: genKeyView
     anchors.fill: parent
 
@@ -19,19 +22,12 @@ Item {
         onNextClick: function (selectedIndex, displayName) {
             wentNext = true
             OnboardingStore.setCurrentAccountAndDisplayName(selectedIndex, displayName)
-            createPasswordModal.open()
+            showCreatePasswordView()
         }
         onClosed: function () {
             if (!wentNext) {
                 genKeyView.onClosed()
             }
-        }
-    }
-
-    CreatePasswordModal {
-        id: createPasswordModal
-        onClosed: function () {
-            genKeyView.onClosed()
         }
     }
 }

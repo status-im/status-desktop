@@ -9,6 +9,9 @@ import "../shared"
 
 Item {
     property var onClosed: function () {}
+
+    signal showCreatePasswordView()
+
     id: existingKeyView
     anchors.fill: parent
 
@@ -38,19 +41,12 @@ Item {
         onButtonClicked: {
             recoverySuccessModal.wentNext = true
             recoverySuccessModal.close()
-            createPasswordModal.open()
+            showCreatePasswordView()
         }
         onClosed: function () {
             if (!recoverySuccessModal.wentNext) {
                 existingKeyView.onClosed()
             }
-        }
-    }
-
-    CreatePasswordModal {
-        id: createPasswordModal
-        onClosed: function () {
-            existingKeyView.onClosed()
         }
     }
 }
