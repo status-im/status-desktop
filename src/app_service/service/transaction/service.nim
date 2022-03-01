@@ -17,6 +17,7 @@ import ../settings/service as settings_service
 import ../eth/dto/transaction as transaction_data_dto
 import ../eth/dto/[contract, method_dto]
 import ./dto as transaction_dto
+import ./cryptoRampDto
 import ../eth/utils as eth_utils
 import ../../common/conversion
 
@@ -407,3 +408,15 @@ QtObject:
       maxFeePerGasM: parseFloat(common_conversion.wei2gwei($(maxFeePerGasM))),
       maxFeePerGasH: parseFloat(common_conversion.wei2gwei($(baseFee + maxPriorityFeePerGas)))
     ) 
+
+  proc fetchCryptoServices*(self: Service): seq[CryptoRampDto] =
+    try:
+      let response = transactions.fetchCryptoServices()
+
+      if not response.error.isNil:
+        raise newException(ValueError, "Error fetching crypto services" & response.error.message)
+
+      return response.result.getElems().map(x => x.toCryptoRampDto())
+    except Exception as e:
+      error "Error fetching crypto services", message = e.msg
+      return @[]

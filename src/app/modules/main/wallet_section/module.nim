@@ -10,6 +10,7 @@ import ./collectibles/module as collectibles_module
 import ./current_account/module as current_account_module
 import ./transactions/module as transactions_module
 import ./saved_addresses/module as saved_addresses_module
+import ./buy_sell_crypto/module as buy_sell_crypto_module
 
 import ../../../global/global_singleton
 import ../../../core/eventemitter
@@ -39,6 +40,7 @@ type
     currentAccountModule: current_account_module.AccessInterface
     transactionsModule: transactions_module.AccessInterface
     savedAddressesModule: saved_addresses_module.AccessInterface
+    buySellCryptoModule: buy_sell_crypto_module.AccessInterface
 
 proc newModule*[T](
   delegate: T,
@@ -65,6 +67,7 @@ proc newModule*[T](
   result.currentAccountModule = current_account_module.newModule(result, events, walletAccountService)
   result.transactionsModule = transactions_module.newModule(result, events, transactionService, walletAccountService)
   result.savedAddressesModule = saved_addresses_module.newModule(result, events, savedAddressService)
+  result.buySellCryptoModule = buy_sell_crypto_module.newModule(result, events, transactionService)
 
 method delete*[T](self: Module[T]) =
   self.accountTokensModule.delete
@@ -74,6 +77,7 @@ method delete*[T](self: Module[T]) =
   self.currentAccountModule.delete
   self.transactionsModule.delete
   self.savedAddressesModule.delete
+  self.buySellCryptoModule.delete
   self.controller.delete
   self.view.delete
 
@@ -115,6 +119,7 @@ method load*[T](self: Module[T]) =
   self.currentAccountModule.load()
   self.transactionsModule.load()
   self.savedAddressesModule.load()
+  self.buySellCryptoModule.load()
 
 method isLoaded*[T](self: Module[T]): bool =
   return self.moduleLoaded
@@ -139,6 +144,9 @@ proc checkIfModuleDidLoad[T](self: Module[T]) =
     return
 
   if(not self.savedAddressesModule.isLoaded()):
+    return
+
+  if(not self.buySellCryptoModule.isLoaded()):
     return
 
   self.switchAccount(0)
@@ -173,4 +181,7 @@ method transactionsModuleDidLoad*[T](self: Module[T]) =
   self.checkIfModuleDidLoad()
 
 method savedAddressesModuleDidLoad*[T](self: Module[T]) =
+  self.checkIfModuleDidLoad()
+
+method buySellCryptoModuleDidLoad*[T](self: Module[T]) =
   self.checkIfModuleDidLoad()
