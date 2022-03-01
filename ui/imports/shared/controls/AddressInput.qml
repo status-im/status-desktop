@@ -20,6 +20,7 @@ Item {
     property alias isPending: contactFieldAndList.loading
     property bool isResolvedAddress: false
     property int parentWidth
+    property bool addContactEnabled: true
 
     height: contactFieldAndList.chatKey.height
 
@@ -52,6 +53,7 @@ Item {
         anchors.bottom: parent.bottom
         width: parent.width
         showContactList: false
+        addContactEnabled: root.addContactEnabled
 
         contactsStore: root.contactsStore
 

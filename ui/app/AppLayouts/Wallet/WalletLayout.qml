@@ -17,6 +17,7 @@ Item {
 
     property bool hideSignPhraseModal: false
     property var store
+    property var contactsStore
 
     function showSigningPhrasePopup(){
         if(!hideSignPhraseModal && !RootStore.hideSignPhraseModal){
@@ -34,6 +35,24 @@ Item {
         id: seedPhraseWarning
         width: parent.width
         anchors.top: parent.top
+    }
+
+    Component {
+        id: cmpSavedAddresses
+        SavedAddressesView {
+            anchors.top: parent ? parent.top: undefined
+            anchors.left: parent ? parent.left: undefined
+            anchors.right: parent ? parent.right: undefined
+            contactsStore: walletView.contactsStore
+        }
+    }
+
+    Component {
+        id: walletContainer
+        RightTabView {
+            changeSelectedAccount: leftTab.changeSelectedAccount
+            store: walletView.store
+        }
     }
 
 
@@ -67,15 +86,26 @@ Item {
                 }
                 selectedAccountIndex = newIndex
                 RootStore.switchAccount(newIndex)
-                walletContainer.currentTabIndex = 0;
+
+            }
+            showSavedAddresses: function(showSavedAddresses) {
+                if(showSavedAddresses)
+                    rightPanelStackView.replace(cmpSavedAddresses)
+                else
+                    rightPanelStackView.replace(walletContainer)
             }
         }
 
-        rightPanel: RightTabView {
-            id: walletContainer
+        rightPanel: StackView {
+            id: rightPanelStackView
             anchors.fill: parent
-            changeSelectedAccount: leftTab.changeSelectedAccount
-            store: walletView.store
+            initialItem: walletContainer
+            replaceEnter: Transition {
+                NumberAnimation { property: "opacity"; from: 0; to: 1; duration: 400; easing.type: Easing.OutCubic }
+            }
+            replaceExit: Transition {
+                NumberAnimation { property: "opacity"; from: 1; to: 0; duration: 400; easing.type: Easing.OutCubic }
+            }
         }
     }
 }

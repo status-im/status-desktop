@@ -31,8 +31,8 @@ method init*(self: Controller) =
 method getSavedAddresses*(self: Controller): seq[saved_address_service.SavedAddressDto] =
   return self.savedAddressService.getSavedAddresses()
 
-method createOrUpdateSavedAddress*(self: Controller, name, address: string) =
-  self.savedAddressService.createOrUpdateSavedAddress(name, address)
+method createOrUpdateSavedAddress*(self: Controller, name, address: string): string =
+  return self.savedAddressService.createOrUpdateSavedAddress(name, address)
 
-method deleteSavedAddress*(self: Controller, address: string) =
-  self.savedAddressService.deleteSavedAddress(address)
+method deleteSavedAddress*(self: Controller, address: string): string =
+  return self.savedAddressService.deleteSavedAddress(address)

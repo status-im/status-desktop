@@ -37,8 +37,8 @@ QtObject:
   proc setItems*(self: View, items: seq[Item]) =
     self.model.setItems(items)
 
-  proc createOrUpdateSavedAddress*(self: View, name: string, address: string) {.slot.} =
-    self.delegate.createOrUpdateSavedAddress(name, address)
+  proc createOrUpdateSavedAddress*(self: View, name: string, address: string): string {.slot.} =
+    return self.delegate.createOrUpdateSavedAddress(name, address)
 
-  proc deleteSavedAddress*(self: View, address: string) {.slot.} =
-    self.delegate.deleteSavedAddress(address)
+  proc deleteSavedAddress*(self: View, address: string): string {.slot.} =
+    return self.delegate.deleteSavedAddress(address)

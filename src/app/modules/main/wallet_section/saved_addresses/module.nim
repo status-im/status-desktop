@@ -53,8 +53,8 @@ method viewDidLoad*(self: Module) =
   self.moduleLoaded = true
   self.delegate.savedAddressesModuleDidLoad()
 
-method createOrUpdateSavedAddress*(self: Module, name: string, address: string) =
-  self.controller.createOrUpdateSavedAddress(name, address)
+method createOrUpdateSavedAddress*(self: Module, name: string, address: string): string =
+  return self.controller.createOrUpdateSavedAddress(name, address)
 
-method deleteSavedAddress*(self: Module, address: string) =
-  self.controller.deleteSavedAddress(address)
+method deleteSavedAddress*(self: Module, address: string): string =
+  return self.controller.deleteSavedAddress(address)

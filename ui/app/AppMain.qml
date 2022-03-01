@@ -486,6 +486,7 @@ Item {
                     Layout.alignment: Qt.AlignLeft | Qt.AlignTop
                     Layout.fillHeight: true
                     store: appMain.rootStore
+                    contactsStore: appMain.rootStore.profileSectionStore.contactsStore
                 }
 
                 Component {
