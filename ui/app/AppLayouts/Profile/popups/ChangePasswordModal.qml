@@ -10,6 +10,9 @@ import shared.controls 1.0
 
 import StatusQ.Popups 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Core.Theme 0.1
+
+import "../views"
 
 StatusModal {
     id: root
@@ -17,33 +20,15 @@ StatusModal {
     property var privacyStore
     signal passwordChanged()
 
-    width: 480
-    height: 510
-    closePolicy: Popup.NoAutoClose
-    header.title: qsTr("Change password")
-
-    onOpened: root.reset()
-
-    function lengthValidator(text) {
-        return text.length >= 6 ? "" : qsTr("At least 6 characters")
-    }
-
-    function reset() {
-        currentPasswordInput.state = "init"
-        passwordInput.state = "init"
-        confirmPasswordInput.state = "init"
-        currentPasswordInput.forceActiveFocus(Qt.MouseFocusReason)
-    }
-
     function onChangePasswordResponse(success) {
         if (success) {
             passwordChanged()
-            submitBtn.enabled = false;
+            submitBtn.enabled = false
         } else {
-            currentPasswordInput.state = "incorrect"
-            currentPasswordInput.forceActiveFocus(Qt.MouseFocusReason)
+            view.reset()
+            console.warn("TODO: Display error message when change password action failure! ")
         }
-        submitBtn.loading = false;
+        submitBtn.loading = false
     }
 
     Connections {
@@ -51,152 +36,50 @@ StatusModal {
         onPasswordChanged: onChangePasswordResponse(success)
     }
 
-    contentItem: ColumnLayout {
-        id: contentItem
-        anchors.fill: parent
-        anchors {
-            topMargin: Style.current.xlPadding + root.topPadding
-            leftMargin: Style.current.xlPadding
-            rightMargin: Style.current.xlPadding
-            bottomMargin: Style.current.xlPadding + root.bottomPadding
-        }
-        spacing: Style.current.padding
+    width: 480
+    height: 546
+    closePolicy: Popup.NoAutoClose
+    header.title: qsTr("Change password")
 
-        // TODO replace with StatusInput as soon as it supports password
-        Input {
-            id: currentPasswordInput
+    onOpened: view.reset()
 
-            readonly property bool ready: state == "typing" && validationError == ""
-
-            anchors.left: undefined
-            anchors.right: undefined
-            Layout.fillWidth: true
-            label: qsTr("Current password")
-
-            textField.echoMode: TextInput.Password
-            keepHeight: true
-            placeholderText: ""
-            state: "init"
-
-            onTextChanged: if (text != "" && state != "typing") state = "typing"
-            onStateChanged: if (state == "init") resetInternal()
-
-            states: [
-                State {
-                    name: "init"
-                },
-                State {
-                    name: "typing"
-                    PropertyChanges { target: currentPasswordInput; validationError: root.lengthValidator(text) }
-                },
-                State {
-                    name: "incorrect"
-                    PropertyChanges { target: currentPasswordInput; validationError: qsTr("Incorrect password") }
-                }
-            ]
-        }
-
-        // TODO replace with StatusInput as soon as it supports password
-        Input {
-            id: passwordInput
-
-            readonly property bool ready: state == "typing" && validationError == ""
-
-            anchors.left: undefined
-            anchors.right: undefined
-            Layout.fillWidth: true
-            label: qsTr("New password")
-
-            textField.echoMode: TextInput.Password
-            keepHeight: true
-            placeholderText: ""
-            state: "init"
-
-            onTextChanged: if (text != "" && state != "typing") state = "typing"
-            onStateChanged: if (state == "init") resetInternal()
-
-            states: [
-                State {
-                    name: "init"
-                },
-                State {
-                    name: "typing"
-                    PropertyChanges { target: passwordInput; validationError: root.lengthValidator(text) }
-                }
-            ]
-        }
-
-        // TODO replace with StatusInput as soon as it supports password
-        Input {
-            id: confirmPasswordInput
-
-            readonly property bool ready: state == "typing" && validationError == ""
-
-            anchors.left: undefined
-            anchors.right: undefined
-            Layout.fillWidth: true
-            label: qsTr("Confirm new password")
-
-            textField.echoMode: TextInput.Password
-            keepHeight: true
-            placeholderText: ""
-            state: "init"
-
-            onTextChanged: if (text != "" && state != "typing") state = "typing"
-            onStateChanged: if (state == "init") resetInternal()
-
-            states: [
-                State {
-                    name: "init"
-                },
-                State {
-                    name: "typing"
-                    PropertyChanges {
-                        target: confirmPasswordInput;
-                        validationError: confirmPasswordInput.text != passwordInput.text ? qsTr("Password does not match") : ""
-                    }
-                }
-            ]
-        }
-
-        Item {
-            Layout.fillHeight: true
-        }
-
-        StyledText {
-            text: qsTr("Your password protects your keys. You need it to unlock Status and transact.")
-            wrapMode: Text.WordWrap
-            Layout.preferredWidth: 340
-            Layout.alignment: Qt.AlignHCenter
-            horizontalAlignment: Text.AlignHCenter
-            color: Style.current.secondaryText
-            font.pixelSize: Style.current.tertiaryTextFontSize
-        }
+    PasswordView {
+        id: view
+        anchors.topMargin: Style.current.padding
+        anchors.centerIn: parent
+        titleVisible: false
+        introText: qsTr("Change password used to unlock Status on this device & sign transactions.")
+        createNewPsw: false
     }
 
     rightButtons: [
         StatusButton {
             id: submitBtn
-
-            text: qsTr("Change password")
-            enabled: !submitBtn.loading && currentPasswordInput.ready &&
-                     passwordInput.ready && confirmPasswordInput.ready
+            text: qsTr("Change Password")
+            enabled: !submitBtn.loading && view.ready
 
             property Timer sim: Timer {
                 id: pause
                 interval: 20
                 onTriggered: {
-                    root.privacyStore.changePassword(currentPasswordInput.text, passwordInput.text)
+                    // Change current password call action to the backend
+                    root.privacyStore.changePassword(view.currentPswText, view.newPswText)
                 }
             }
 
             onClicked: {
                 submitBtn.loading = true;
-                //changePassword operation blocks the UI so loading = true; will never
-                //have any affect until changePassword is done. Getting around it with a
-                //small pause (timer) in order to get the desired behavior
+                // ChangePassword operation blocks the UI so loading = true; will never have any affect until changePassword/createPassword is done.
+                // Getting around it with a small pause (timer) in order to get the desired behavior
                 pause.start();
             }
         }
     ]
+
+    // By clicking anywhere outside password entries fields or focusable element in the view, it is needed to check if passwords entered matches
+    MouseArea {
+        anchors.fill: parent
+        z: view.zBehind // Behind focusable components in the view
+        onClicked: { view.checkPasswordMatches() }
+    }
 }

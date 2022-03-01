@@ -65,6 +65,28 @@ QtObject {
             }
 
             DSM.State {
+                id: createPasswordState
+                onEntered: loader.sourceComponent = createPassword
+
+                DSM.SignalTransition {
+                    targetState: appState
+                    signal: startupModule.appStateChanged
+                    guard: state === Constants.appState.main
+                }
+            }
+
+            DSM.State {
+                id: confirmPasswordState
+                onEntered: loader.sourceComponent = confirmPassword
+
+                DSM.SignalTransition {
+                    targetState: appState
+                    signal: startupModule.appStateChanged
+                    guard: state === Constants.appState.main
+                }
+            }
+
+            DSM.State {
                 id: stateLogin
                 onEntered: { onBoardingStepChanged(login, ""); }
 
@@ -103,6 +125,18 @@ QtObject {
                 targetState: keycardState
                 signal: Global.applicationWindow.navigateTo
                 guard: path === "KeycardFlowSelection"
+            }
+
+            DSM.SignalTransition {
+                targetState: createPasswordState
+                signal: applicationWindow.navigateTo
+                guard: path === "CreatePassword"
+            }
+
+            DSM.SignalTransition {
+                targetState: confirmPasswordState
+                signal: applicationWindow.navigateTo
+                guard: path === "ConfirmPassword"
             }
 
             DSM.FinalState {
@@ -154,6 +188,7 @@ QtObject {
     property var existingKeyComponent: Component {
         id: existingKey
         ExistingKeyView {
+            onShowCreatePasswordView: { Global.applicationWindow.navigateTo("CreatePassword") }
             onClosed: function () {
                 if (root.hasAccounts) {
                     Global.applicationWindow.navigateTo("InitialState")
@@ -167,6 +202,7 @@ QtObject {
     property var genKeyComponent: Component {
         id: genKey
         GenKeyView {
+            onShowCreatePasswordView: { Global.applicationWindow.navigateTo("CreatePassword") }
             onClosed: function () {
                 if (root.hasAccounts) {
                     Global.applicationWindow.navigateTo("InitialState")
@@ -199,6 +235,40 @@ QtObject {
             onExistingKeyClicked: function () {
                 Global.applicationWindow.navigateTo("ExistingKey")
             }
+        }
+    }
+
+    property var d: QtObject {
+        property string newPassword
+        property string confirmationPassword
+    }
+
+    property var createPasswordComponent: Component {
+        id: createPassword
+        CreatePasswordView {
+            newPassword: d.newPassword
+            confirmationPassword: d.confirmationPassword
+
+            onPasswordCreated: {
+                d.newPassword = newPassword
+                d.confirmationPassword = confirmationPassword
+                applicationWindow.navigateTo("ConfirmPassword")
+            }
+            onBackClicked: {
+                d.newPassword = ""
+                d.confirmationPassword = ""
+                applicationWindow.navigateTo("InitialState");
+                console.warn("TODO: Integration with onboarding flow!")
+            }
+        }
+    }
+
+     property var confirmPasswordComponent: Component {
+        id: confirmPassword
+        ConfirmPasswordView {
+            password: d.newPassword
+
+            onBackClicked: { applicationWindow.navigateTo("CreatePassword") }
         }
     }
 }
