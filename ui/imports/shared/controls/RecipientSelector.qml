@@ -19,6 +19,8 @@ Item {
     property int inputWidth: 272
     property int sourceSelectWidth: 136
     property alias label: txtLabel.text
+    property alias labelFont: txtLabel.font
+    property alias input: inpAddress.input
     // If supplied, additional info will be displayed top-right in danger colour (red)
     property alias additionalInfo: txtAddlInfo.text
     property var selectedRecipient
@@ -27,6 +29,8 @@ Item {
     //% "Invalid ethereum address"
     readonly property string addressValidationError: qsTrId("invalid-ethereum-address")
     property bool isValid: false
+    property bool isSelectorVisible: true
+    property bool addContactEnabled: true
     property bool isPending: {
         if (!selAddressSource.selectedSource) {
             return false
@@ -159,6 +163,7 @@ Item {
             Layout.fillWidth: true
             validationError: root.addressValidationError
             parentWidth: parent.width
+            addContactEnabled: root.addContactEnabled
             onSelectedAddressChanged: {
                 if (!selAddressSource.selectedSource || (selAddressSource.selectedSource && selAddressSource.selectedSource.value !== RecipientSelector.Type.Address)) {
                     return
@@ -210,7 +215,7 @@ Item {
         }
         AddressSourceSelector {
             id: selAddressSource
-            visible: !root.readOnly
+            visible: isSelectorVisible && !root.readOnly
             sources: root.sources.filter(source => source.visible)
             width: sourceSelectWidth
             Layout.preferredWidth: root.sourceSelectWidth

@@ -191,11 +191,11 @@ QtObject {
     }
 
     function createOrUpdateSavedAddress(name, address) {
-        walletSectionSavedAddresses.createOrUpdateSavedAddress(name, address)
+        return walletSectionSavedAddresses.createOrUpdateSavedAddress(name, address)
     }
 
     function deleteSavedAddress(address) {
-        walletSectionSavedAddresses.deleteSavedAddress(address)
+        return walletSectionSavedAddresses.deleteSavedAddress(address)
     }
 
     function toggleNetwork(chainId) {

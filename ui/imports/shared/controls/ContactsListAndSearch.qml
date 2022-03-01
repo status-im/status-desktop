@@ -138,7 +138,7 @@ Item {
             anchors.rightMargin: Style.current.padding
             anchors.verticalCenter: parent.verticalCenter
             icon.name: "clear"
-            visible: chatKey.text !== ""
+            visible: chatKey.text !== "" && !chatKey.readOnly
             icon.width: 20
             icon.height: 20
             type: StatusFlatRoundButton.Type.Tertiary

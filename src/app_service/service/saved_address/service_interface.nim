@@ -15,8 +15,8 @@ method init*(self: ServiceInterface) {.base.} =
 method getSavedAddresses*(self: ServiceInterface): seq[SavedAddressDto] {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method createOrUpdateSavedAddress*(self: ServiceInterface, name: string, address: string) {.base.} =
+method createOrUpdateSavedAddress*(self: ServiceInterface, name: string, address: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method deleteSavedAddress*(self: ServiceInterface, address: string) {.base.} =
+method deleteSavedAddress*(self: ServiceInterface, address: string): string {.base.} =
   raise newException(ValueError, "No implementation available")

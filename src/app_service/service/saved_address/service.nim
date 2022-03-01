@@ -40,9 +40,13 @@ method init*(self: Service) =
 method getSavedAddresses(self: Service): seq[SavedAddressDto] =
   return self.savedAddresses
 
-method createOrUpdateSavedAddress(self: Service, name, address: string) =
+method createOrUpdateSavedAddress(self: Service, name, address: string): string =
   try:
-    discard backend.addSavedAddress(name, address)
+    let response = backend.addSavedAddress(name, address)
+
+    if not response.error.isNil:
+      raise newException(Exception, response.error.message)
+
     var found = false
     for savedAddress in self.savedAddresses:
       if savedAddress.address == address:
@@ -54,14 +58,18 @@ method createOrUpdateSavedAddress(self: Service, name, address: string) =
       self.savedAddresses.add(newSavedAddressDto(name, address))
 
     self.events.emit(SIGNAL_SAVED_ADDRESS_CHANGED, Args())
+    return ""
   except Exception as e:
     let errDesription = e.msg
     error "error: ", errDesription
-    return
+    return errDesription
 
-method deleteSavedAddress(self: Service, address: string) =
+method deleteSavedAddress(self: Service, address: string): string =
   try:
-    discard backend.deleteSavedAddress(address)
+    let response = backend.deleteSavedAddress(address)
+
+    if not response.error.isNil:
+      raise newException(Exception, response.error.message)
 
     for i in 0..<self.savedAddresses.len:
       if self.savedAddresses[i].address == address:
@@ -69,5 +77,7 @@ method deleteSavedAddress(self: Service, address: string) =
         break
 
     self.events.emit(SIGNAL_SAVED_ADDRESS_CHANGED, Args())
+    return ""
   except Exception as e:
     let errDesription = e.msg
+    return errDesription

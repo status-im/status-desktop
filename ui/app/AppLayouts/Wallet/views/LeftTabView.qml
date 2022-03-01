@@ -8,6 +8,8 @@ import shared 1.0
 import shared.panels 1.0
 import shared.controls 1.0
 
+import StatusQ.Components 0.1
+
 import "../controls"
 import "../popups"
 import "../stores"
@@ -17,6 +19,7 @@ Rectangle {
 
     property int selectedAccountIndex: 0
     property var changeSelectedAccount: function(){}
+    property var showSavedAddresses: function(showSavedAddresses){}
 
     function onAfterAddAccount () {
         walletInfoContainer.changeSelectedAccount(RootStore.accounts.rowCount() - 1)
@@ -128,21 +131,24 @@ Rectangle {
 
     ScrollView {
         anchors.bottom: parent.bottom
+        anchors.bottomMargin: btnSavedAddresses.height + Style.current.padding
         anchors.top: walletValueTextContainer.bottom
         anchors.topMargin: Style.current.padding
         anchors.right: parent.right
         anchors.left: parent.left
-        Layout.fillWidth: true
-        Layout.fillHeight: true
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
         ScrollBar.vertical.policy: listView.contentHeight > listView.height ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
+        clip: true
 
         ListView {
             id: listView
 
             spacing: 5
-            anchors.fill: parent
+            anchors.top: parent.top
+            width: parent.width
+            height: parent.height
             boundsBehavior: Flickable.StopAtBounds
+            clip: true
 
             delegate: WalletDelegate {
                 currency: RootStore.currentCurrency
@@ -150,11 +156,29 @@ Rectangle {
                 selectedAccountIndex: walletInfoContainer.selectedAccountIndex
                 onClicked: {
                     changeSelectedAccount(index)
+                    showSavedAddresses(false)
                 }
             }
 
             model: RootStore.accounts
 //            model: RootStore.exampleWalletModel
+        }
+    }
+
+    StatusNavigationListItem {
+        id: btnSavedAddresses
+
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: Style.current.halfPadding
+        anchors.left: parent.left
+        anchors.leftMargin: Style.current.smallPadding
+        anchors.right: parent.right
+        anchors.rightMargin: Style.current.smallPadding
+
+        title: qsTr("Saved addresses")
+        icon.name: "address"
+        onClicked: {
+            showSavedAddresses(true)
         }
     }
 }

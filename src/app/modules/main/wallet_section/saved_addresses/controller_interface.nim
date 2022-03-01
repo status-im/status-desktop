@@ -13,10 +13,10 @@ method init*(self: AccessInterface) {.base.} =
 method getSavedAddresses*(self: AccessInterface): seq[saved_address_service.SavedAddressDto] {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method createOrUpdateSavedAddress*(self: AccessInterface, name, address: string) {.base.} =
+method createOrUpdateSavedAddress*(self: AccessInterface, name, address: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method deleteSavedAddress*(self: AccessInterface, address: string) {.base.} =
+method deleteSavedAddress*(self: AccessInterface, address: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
 type
