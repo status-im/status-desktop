@@ -38,4 +38,7 @@ proc deletePendingTransaction*(transactionHash: string): RpcResponse[JsonNode] {
 proc getPendingOutboundTransactionsByAddress*(address: string): RpcResponse[JsonNode] {.raises: [Exception].} =    
   let payload = %* [address]
   result = callPrivateRPC("wallet_getPendingOutboundTransactionsByAddress", payload)
+
+proc fetchCryptoServices*(): RpcResponse[JsonNode] {.raises: [Exception].} =
+  result = core.callPrivateRPC("wallet_getCryptoOnRamps", %* [])
   

@@ -123,15 +123,23 @@ Item {
         }
     }
 
-    Item {
-        property int btnOuterMargin: Style.current.bigPadding
+
+    Component {
+        id: buySellModal
+        CryptoServicesModal {
+            onClosed: destroy()
+        }
+    }
+
+    RowLayout {
         id: walletMenu
-        width: sendBtn.width + receiveBtn.width + settingsBtn.width
-               + walletMenu.btnOuterMargin * 2
+
         anchors.top: parent.top
         anchors.topMargin: 16
         anchors.right: parent.right
         anchors.rightMargin: 16
+
+        spacing:  Style.current.bigPadding
 
         HeaderButton {
             id: sendBtn
@@ -152,8 +160,17 @@ Item {
             onClicked: function () {
                 Global.openPopup(receiveModalComponent);
             }
-            anchors.left: sendBtn.right
-            anchors.leftMargin: walletMenu.btnOuterMargin
+        }
+
+        HeaderButton {
+            id: buySellBtn
+            imageSource: Style.svg("crypto-icon")
+            flipImage: true
+            //% "Buy / Sell"
+            text: qsTrId("Buy / Sell")
+            onClicked: function () {
+                Global.openPopup(buySellModal);
+            }
         }
 
         HeaderButton {
@@ -169,8 +186,6 @@ Item {
                     newSettingsMenu.popup(x, settingsBtn.height)
                 }
             }
-            anchors.left: receiveBtn.right
-            anchors.leftMargin: walletMenu.btnOuterMargin
 
             // TODO: replace with StatusPopupMenu
             PopupMenu {
