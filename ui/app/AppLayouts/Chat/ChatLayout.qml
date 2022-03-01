@@ -23,8 +23,6 @@ import "stores"
 StatusAppThreePanelLayout {
     id: root
 
-    handle: SplitViewHandle { implicitWidth: 5 }
-
     property var contactsStore
     property bool hasAddedContacts: root.contactsStore.myContactsModel.count > 0
 
