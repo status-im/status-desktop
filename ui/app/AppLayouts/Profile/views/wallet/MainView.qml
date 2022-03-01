@@ -7,6 +7,8 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Core 0.1
 
 import "../../stores"
+import "../../controls"
+
 
 Column {
     id: root
@@ -93,15 +95,36 @@ Column {
         bottomPadding: Style.current.padding
     }
 
+    Repeater {
+        model: walletStore.generatedAccounts
+        delegate: WalletAccountDelegate {
+            account: model
+        }
+    }
+
     StatusSectionHeadline {
         text: qsTr("Imported")
         topPadding: Style.current.bigPadding
         bottomPadding: Style.current.padding
     }
 
+    Repeater {
+        model: walletStore.importedAccounts
+        delegate: WalletAccountDelegate {
+            account: model
+        }
+    }
+
     StatusSectionHeadline {
         text: qsTr("Watch-Only")
         topPadding: Style.current.bigPadding
         bottomPadding: Style.current.padding
+    }
+
+    Repeater {
+        model: walletStore.watchOnlyAccounts
+        delegate: WalletAccountDelegate {
+            account: model
+        }
     }
 }

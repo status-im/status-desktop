@@ -4,17 +4,32 @@ import ./model
 import ./item
 import ./io_interface
 
+const WATCH = "watch"
+const GENERATED = "generated"
+
 QtObject:
   type
     View* = ref object of QObject
       delegate: io_interface.AccessInterface
       model: Model
+      generated: Model
+      watchOnly: Model
+      imported: Model
       modelVariant: QVariant
+      generatedVariant: QVariant
+      importedVariant: QVariant
+      watchOnlyVariant: QVariant
       tmpAddress: string
 
   proc delete*(self: View) =
     self.model.delete
     self.modelVariant.delete
+    self.imported.delete
+    self.importedVariant.delete
+    self.generated.delete
+    self.generatedVariant.delete
+    self.watchOnly.delete
+    self.watchOnlyVariant.delete
     self.QObject.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =
@@ -23,6 +38,12 @@ QtObject:
     result.delegate = delegate
     result.model = newModel()
     result.modelVariant = newQVariant(result.model)
+    result.imported = newModel()
+    result.importedVariant = newQVariant(result.imported)
+    result.generated = newModel()
+    result.generatedVariant = newQVariant(result.generated)
+    result.watchOnly = newModel()
+    result.watchOnlyVariant = newQVariant(result.watchOnly)
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
@@ -36,8 +57,51 @@ QtObject:
     read = getModel
     notify = modelChanged
 
+  proc watchOnlyChanged*(self: View) {.signal.}
+
+  proc getWatchOnly(self: View): QVariant {.slot.} =
+    return self.watchOnlyVariant
+
+  QtProperty[QVariant] watchOnly:
+    read = getWatchOnly
+    notify = watchOnlyChanged
+  
+  proc importedChanged*(self: View) {.signal.}
+
+  proc getImported(self: View): QVariant {.slot.} =
+    return self.importedVariant
+
+  QtProperty[QVariant] imported:
+    read = getImported
+    notify = importedChanged
+
+  proc generatedChanged*(self: View) {.signal.}
+
+  proc getGenereated(self: View): QVariant {.slot.} =
+    return self.generatedVariant
+
+  QtProperty[QVariant] generated:
+    read = getGenereated
+    notify = generatedChanged
+
   proc setItems*(self: View, items: seq[Item]) =
     self.model.setItems(items)
+    
+    var watchOnly: seq[Item] = @[]
+    var imported: seq[Item] = @[]
+    var generated: seq[Item] = @[]
+
+    for item in items:
+      if item.getWalletType() == "" or item.getWalletType() == GENERATED:
+        generated.add(item)
+      elif item.getWalletType() == WATCH:
+        watchOnly.add(item)
+      else:
+        imported.add(item)
+      
+    self.watchOnly.setItems(watchOnly)
+    self.imported.setItems(imported)
+    self.generated.setItems(generated)
 
   proc generateNewAccount*(self: View, password: string, accountName: string, color: string): string {.slot.} =
     return self.delegate.generateNewAccount(password, accountName, color)
