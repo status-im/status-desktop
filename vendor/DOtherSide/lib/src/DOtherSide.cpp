@@ -69,6 +69,7 @@
 #include "DOtherSide/Status/OSNotification.h"
 #include "DOtherSide/Status/KeychainManager.h"
 #include "DOtherSide/Status/SoundManager.h"
+#include "DOtherSide/Status/QClipboardProxy.h"
 #include "DOtherSide/DosSpellchecker.h"
 
 namespace {
@@ -79,6 +80,8 @@ void register_meta_types()
     qmlRegisterType<StatusWindow>("DotherSide", 0 , 1, "StatusWindow");
     qmlRegisterType<StatusSyntaxHighlighterHelper>("DotherSide", 0 , 1, "StatusSyntaxHighlighter");
     qmlRegisterType<SpellChecker>("DotherSide", 0, 1, "SpellChecker");
+    qmlRegisterSingletonType<QClipboardProxy>("DotherSide", 0 , 1, "QClipboardProxy", &QClipboardProxy::qmlInstance);
+
 }
 
 }
