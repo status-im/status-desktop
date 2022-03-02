@@ -8,7 +8,7 @@ import StatusQ.Core 0.1
 
 import "../../stores"
 import "../../controls"
-
+import "../../popups"
 
 Column {
     id: root
@@ -34,7 +34,18 @@ Column {
     StatusSettingsLineButton {
         text: qsTr("Manage Assets & List")
         height: 64
-        onClicked: goToNetworksView()
+        onClicked: Global.openPopup(tokenSettingsModalComponent)
+    }
+
+
+    Component {
+        id: tokenSettingsModalComponent
+        TokenSettingsModal {
+            walletStore: root.walletStore
+            onClosed: {
+                destroy();
+            }
+        }
     }
 
     Separator {
