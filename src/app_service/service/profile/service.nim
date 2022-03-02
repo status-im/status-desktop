@@ -40,3 +40,11 @@ method deleteIdentityImage*(self: Service, address: string) =
 
   except Exception as e:
     error "error: ", methodName="deleteIdentityImage", errName = e.name, errDesription = e.msg
+
+method setDisplayName*(self: Service, displayName: string): bool =
+  try:
+    discard status_accounts.setDisplayName(displayName)
+    return true
+  except Exception as e:
+    error "error: ", methodName="setDisplayName", errName = e.name, errDesription = e.msg
+    return false

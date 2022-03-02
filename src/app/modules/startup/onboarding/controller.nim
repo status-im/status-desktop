@@ -19,6 +19,7 @@ type
     events: EventEmitter
     accountsService: accounts_service.ServiceInterface
     selectedAccountId: string
+    displayName: string
 
 proc newController*(delegate: io_interface.AccessInterface,
   events: EventEmitter,
@@ -48,8 +49,11 @@ method setSelectedAccountByIndex*(self: Controller, index: int) =
   let accounts = self.getGeneratedAccounts()
   self.selectedAccountId = accounts[index].id
 
+method setDisplayName*(self: Controller, displayName: string) =
+  self.displayName = displayName
+
 method storeSelectedAccountAndLogin*(self: Controller, password: string) =
-  if(not self.accountsService.setupAccount(self.selectedAccountId, password)):
+  if(not self.accountsService.setupAccount(self.selectedAccountId, password, self.displayName)):
     self.delegate.setupAccountError()
 
 method validateMnemonic*(self: Controller, mnemonic: string): string =

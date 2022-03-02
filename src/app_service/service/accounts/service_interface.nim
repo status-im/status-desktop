@@ -20,7 +20,7 @@ method openedAccounts*(self: ServiceInterface): seq[AccountDto] {.base.} =
 method generatedAccounts*(self: ServiceInterface): seq[GeneratedAccountDto] {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method setupAccount*(self: ServiceInterface, accountId, password: string): bool {.base.} =
+method setupAccount*(self: ServiceInterface, accountId, password, displayName: string): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getLoggedInAccount*(self: ServiceInterface): AccountDto {.base.} =
@@ -45,6 +45,9 @@ method clear*(self: ServiceInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method generateAlias*(self: ServiceInterface, publicKey: string): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method isAlias*(self: ServiceInterface, value: string): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method verifyAccountPassword*(self: ServiceInterface, account: string, password: string): bool {.base.} =

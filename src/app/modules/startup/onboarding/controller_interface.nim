@@ -16,6 +16,9 @@ method getGeneratedAccounts*(self: AccessInterface): seq[GeneratedAccountDto] {.
 method setSelectedAccountByIndex*(self: AccessInterface, index: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method setDisplayName*(self: AccessInterface, displayName: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method storeSelectedAccountAndLogin*(self: AccessInterface, password: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 

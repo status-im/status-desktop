@@ -109,6 +109,9 @@ method savePreferredName*(self: Service, value: string): bool =
 method getPreferredName*(self: Service): string =
   return self.settings.preferredName
 
+method getDisplayName*(self: Service): string =
+  return self.settings.displayName
+
 method saveNewEnsUsername*(self: Service, username: string): bool =
   var newEnsUsernames = self.settings.ensUsernames
   newEnsUsernames.add(username)

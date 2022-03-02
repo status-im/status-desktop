@@ -5,10 +5,14 @@ import QtGraphicalEffects 1.13
 import StatusQ.Controls 0.1
 
 import utils 1.0
-
 import shared 1.0
+import shared.panels 1.0
 import shared.popups 1.0
-import "../panels"
+import shared.controls 1.0
+import StatusQ.Controls 0.1
+import StatusQ.Popups 0.1
+
+import "../panels"1
 import "../stores"
 
 // TODO: replace with StatusModal
@@ -21,9 +25,40 @@ ModalPopup {
     title: qsTrId("intro-wizard-title2")
     height: 504
 
+    property string displayNameValidationError: ""
+
+    Input {
+        id: displayNameInput
+        placeholderText: "DisplayName"
+        validationError: displayNameValidationError
+        onTextChanged: {
+            if(displayNameInput.text === ""){
+                displayNameValidationError = qsTr("Display name is required")
+            } else if (!displayNameInput.text.match(/^[a-zA-Z0-9\- ]+$/)){
+                displayNameValidationError = qsTr("Only letters, numbers, underscores and hyphens allowed")
+            } else if (displayNameInput.text.length > 24) {
+                displayNameValidationError = qsTr("24 character username limit")
+            } else if (displayNameInput.text.length < 5) {
+                displayNameValidationError = qsTr("Username must be at least 5 characters")
+            } else if (displayNameInput.text.endsWith(".eth")) {
+                displayNameValidationError = qsTr(`Usernames ending with ".eth" are not allowed`)
+            } else if (displayNameInput.text.endsWith("-eth")) {
+                displayNameValidationError = qsTr(`Usernames ending with "-eth" are not allowed`)
+            } else if (displayNameInput.text.endsWith("_eth")) {
+                displayNameValidationError = qsTr(`Usernames ending with "_eth" are not allowed`)
+            } else if (globalUtils.isAlias(displayNameInput.text)){
+                displayNameValidationError = qsTr("Sorry, the name you have chosen is not allowed, try picking another username")
+            }
+        }
+    }
+
     AccountListPanel {
         id: accountList
-        anchors.fill: parent
+        anchors.top: displayNameInput.bottom
+        anchors.topMargin: 100
+        anchors.bottom: parent.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
         interactive: false
 
         model: OnboardingStore.onBoardingModul.accountsModel
@@ -34,9 +69,11 @@ ModalPopup {
             selectedIndex = index
         }
     }
+
     footer: StatusRoundButton {
         objectName: "submitButton"
         id: submitBtn
+        enabled: displayNameInput.text !== ""
         anchors.bottom: parent.bottom
         anchors.topMargin: Style.current.padding
         anchors.right: parent.right
@@ -44,7 +81,7 @@ ModalPopup {
         icon.width: 20
         icon.height: 16
         onClicked : {
-            onNextClick(selectedIndex);
+            onNextClick(selectedIndex, displayNameInput.text);
             popup.close()
         }
     }

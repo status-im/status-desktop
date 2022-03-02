@@ -27,3 +27,6 @@ method storeIdentityImage*(self: Controller, address: string, image: string, aX:
 
 method deleteIdentityImage*(self: Controller, address: string) =
   self.profileService.deleteIdentityImage(address)
+
+method setDisplayName*(self: Controller, displayName: string): bool =
+  self.profileService.setDisplayName(displayName)

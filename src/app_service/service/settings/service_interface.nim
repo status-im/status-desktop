@@ -65,6 +65,9 @@ method savePreferredName*(self: ServiceInterface, value: string): bool {.base.} 
 method getPreferredName*(self: ServiceInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method getDisplayName*(self: ServiceInterface): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method saveNewEnsUsername*(self: ServiceInterface, username: string): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 

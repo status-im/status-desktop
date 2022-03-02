@@ -60,6 +60,9 @@ QtObject:
     read = getImportedAccountAddress
     notify = importedAccountChanged
 
+  proc setDisplayName*(self: View, displayName: string) {.slot.} =
+    self.delegate.setDisplayName(displayName)
+
   proc setSelectedAccountByIndex*(self: View, index: int) {.slot.} =
     self.delegate.setSelectedAccountByIndex(index)
 

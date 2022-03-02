@@ -9,7 +9,8 @@ QtObject {
         onBoardingModul.importMnemonic(mnemonic)
     }
 
-    function setCurrentAccount(selectedAccountIdx) {
+    function setCurrentAccountAndDisplayName(selectedAccountIdx, displayName) {
+        onBoardingModul.setDisplayName(displayName)
         onBoardingModul.setSelectedAccountByIndex(selectedAccountIdx)
     }
 

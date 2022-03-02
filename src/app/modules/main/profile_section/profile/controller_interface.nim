@@ -16,3 +16,6 @@ method storeIdentityImage*(self: AccessInterface, address: string, image: string
 
 method deleteIdentityImage*(self: AccessInterface, address: string) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method setDisplayName*(self: AccessInterface, displayName: string): bool {.base.} =
+  raise newException(ValueError, "No implementation available")

@@ -19,3 +19,6 @@ method validateMnemonic*(self: AccessInterface, mnemonic: string):
 
 method importMnemonic*(self: AccessInterface, mnemonic: string) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method setDisplayName*(self: AccessInterface, displayName: string) {.base.} =
+  raise newException(ValueError, "No implementation available")

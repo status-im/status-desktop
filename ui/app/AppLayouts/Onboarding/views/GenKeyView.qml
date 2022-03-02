@@ -16,9 +16,9 @@ Item {
     GenKeyModal {
         property bool wentNext: false
         id: genKeyModal
-        onNextClick: function (selectedIndex) {
+        onNextClick: function (selectedIndex, displayName) {
             wentNext = true
-            OnboardingStore.setCurrentAccount(selectedIndex)
+            OnboardingStore.setCurrentAccountAndDisplayName(selectedIndex, displayName)
             createPasswordModal.open()
         }
         onClosed: function () {

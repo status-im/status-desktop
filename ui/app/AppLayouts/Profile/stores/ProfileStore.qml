@@ -9,6 +9,7 @@ QtObject {
     property string pubkey: userProfile.pubKey
     property string name: userProfile.name // in case of ens returns pretty ens form
     property string username: userProfile.username
+    property string displayName: userProfile.displayName
     property string ensName: userProfile.preferredName || userProfile.firstEnsName || userProfile.ensName
     property string profileLargeImage: userProfile.largeImage
     property string icon: userProfile.icon
@@ -29,5 +30,9 @@ QtObject {
 
     function copyToClipboard(value) {
         globalUtils.copyToClipboard(value)
+    }
+
+    function setDisplayName(displayName) {
+        root.profileModule.setDisplayName(displayName)
     }
 }

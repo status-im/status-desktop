@@ -53,6 +53,9 @@ method viewDidLoad*(self: Module) =
 method setSelectedAccountByIndex*(self: Module, index: int) =
   self.controller.setSelectedAccountByIndex(index)
 
+method setDisplayName*(self: Module, displayName: string) =
+  self.controller.setDisplayName(displayName)
+
 method storeSelectedAccountAndLogin*(self: Module, password: string) =
   self.controller.storeSelectedAccountAndLogin(password)
 
