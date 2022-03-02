@@ -12,10 +12,6 @@ import "../../controls"
 
 Column {
     id: root
-    anchors.top: parent.top
-    anchors.topMargin: 64
-    anchors.left: parent.left
-    anchors.right: parent.right
 
     property WalletStore walletStore
 

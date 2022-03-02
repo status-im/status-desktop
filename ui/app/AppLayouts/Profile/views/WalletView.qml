@@ -18,10 +18,7 @@ import "./wallet"
 ScrollView {
     id: root
 
-    property int profileContentWidth
-
-    height: parent.height
-    width: parent.width
+    anchors.fill: parent
     contentHeight: advancedContainer.height + 100
     clip: true
 
@@ -29,15 +26,14 @@ ScrollView {
 
     Item {
         id: advancedContainer
-        width: profileContentWidth
-        anchors.horizontalCenter: parent.horizontalCenter
-        height: stackContainer.height
-        
+        anchors.top: parent.top
+        anchors.left: parent.left
+
+
         StackLayout {
             id: stackContainer
 
             anchors.fill: parent
-
             currentIndex: 0
 
             onCurrentIndexChanged: {
@@ -48,6 +44,12 @@ ScrollView {
 
             MainView {
                 walletStore: root.walletStore
+                anchors.topMargin: 64
+                anchors.top: parent.top
+                anchors.leftMargin: 64
+                anchors.left: parent.left
+                width: 560
+
                 onGoToNetworksView: {
                     stackContainer.currentIndex = 1
                 }
