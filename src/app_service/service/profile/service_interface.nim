@@ -18,3 +18,6 @@ method storeIdentityImage*(self: ServiceInterface, address: string, image: strin
 
 method deleteIdentityImage*(self: ServiceInterface, address: string) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method setDisplayName*(self: ServiceInterface, displayName: string): bool {.base.} =
+  raise newException(ValueError, "No implementation available")

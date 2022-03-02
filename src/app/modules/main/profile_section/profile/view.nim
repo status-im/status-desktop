@@ -27,6 +27,8 @@ QtObject:
 
     self.delegate.storeIdentityImage(imageUrl, aX, aY, bX, bY)
 
-
   proc remove*(self: View): string {.slot.} =
     self.delegate.deleteIdentityImage()
+
+  proc setDisplayName(self: View, displayName: string) {.slot.} =
+    self.delegate.setDisplayName(displayName)

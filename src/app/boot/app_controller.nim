@@ -271,6 +271,7 @@ proc delete*(self: AppController) =
 proc startupDidLoad*(self: AppController) =
   singletonInstance.engine.setRootContextProperty("localAppSettings", self.localAppSettingsVariant)
   singletonInstance.engine.setRootContextProperty("localAccountSettings", self.localAccountSettingsVariant)
+  singletonInstance.engine.setRootContextProperty("globalUtils", self.globalUtilsVariant)
   singletonInstance.engine.load(newQUrl("qrc:///main.qml"))
 
   # We need to init a language service once qml is loaded
@@ -314,6 +315,10 @@ proc load(self: AppController) =
   self.gifService.init()
 
   singletonInstance.engine.setRootContextProperty("globalUtils", self.globalUtilsVariant)
+  
+  let pubKey = self.settingsService.getPublicKey()
+  singletonInstance.localAccountSensitiveSettings.setFileName(pubKey)
+  singletonInstance.engine.setRootContextProperty("localAccountSensitiveSettings", self.localAccountSensitiveSettingsVariant)
 
   self.buildAndRegisterLocalAccountSensitiveSettings()
   self.buildAndRegisterUserProfile()
@@ -352,6 +357,7 @@ proc buildAndRegisterLocalAccountSensitiveSettings(self: AppController) =
 proc buildAndRegisterUserProfile(self: AppController) =
   let pubKey = self.settingsService.getPublicKey()
   let preferredName = self.settingsService.getPreferredName()
+  let displayName = self.settingsService.getDisplayName()
   let ensUsernames = self.settingsService.getEnsUsernames()
   let firstEnsName = if (ensUsernames.len > 0): ensUsernames[0] else: ""
   let sendUserStatus = self.settingsService.getSendStatusUpdates()
@@ -370,6 +376,7 @@ proc buildAndRegisterUserProfile(self: AppController) =
 
   singletonInstance.userProfile.setFixedData(loggedInAccount.name, loggedInAccount.keyUid, loggedInAccount.identicon,
   pubKey)
+  singletonInstance.userProfile.setDisplayName(displayName)
   singletonInstance.userProfile.setPreferredName(preferredName)
   singletonInstance.userProfile.setEnsName(meAsContact.name)
   singletonInstance.userProfile.setFirstEnsName(firstEnsName)

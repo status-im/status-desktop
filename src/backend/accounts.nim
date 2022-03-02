@@ -9,7 +9,7 @@ export response_type
 logScope:
   topics = "rpc-accounts"
 
-const NUMBER_OF_ADDRESSES_TO_GENERATE = 5
+const NUMBER_OF_ADDRESSES_TO_GENERATE = 1
 const MNEMONIC_PHRASE_LENGTH = 12
 
 const GENERATED* = "generated"
@@ -60,6 +60,11 @@ proc generateAlias*(publicKey: string): RpcResponse[JsonNode] {.raises: [Excepti
   except RpcException as e:
     error "error doing rpc request", methodName = "generateAlias", exception=e.msg
     raise newException(RpcException, e.msg)
+
+proc isAlias*(value: string): bool =
+  let response = status_go.isAlias(value)
+  let r = Json.decode(response, JsonNode)
+  return r["result"].getBool()
 
 proc generateIdenticon*(publicKey: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   try:
@@ -255,3 +260,7 @@ proc storeIdentityImage*(keyUID: string, imagePath: string, aX, aY, bX, bY: int)
 proc deleteIdentityImage*(keyUID: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [keyUID]
   result = core.callPrivateRPC("multiaccounts_deleteIdentityImage", payload)
+
+proc setDisplayName*(displayName: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [displayName]
+  result = core.callPrivateRPC("setDisplayName".prefix, payload)

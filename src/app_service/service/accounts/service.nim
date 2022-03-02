@@ -49,6 +49,9 @@ proc generateAliasFromPk*(publicKey: string): string =
 proc generateIdenticonFromPk*(publicKey: string): string =
   return status_account.generateIdenticon(publicKey).result.getStr
 
+proc isAlias*(value: string): bool =
+  return status_account.isAlias(value)
+
 method init*(self: Service) =
   try:
     let response = status_account.generateAddresses(PATHS)
@@ -179,12 +182,13 @@ proc getSubaccountDataForAccountId(self: Service, accountId: string): JsonNode =
       return self.prepareSubaccountJsonObject(self.importedAccount)
 
 proc prepareAccountSettingsJsonObject(self: Service, account: GeneratedAccountDto,
-  installationId: string): JsonNode =
+  installationId: string, displayName: string): JsonNode =
   result = %* {
     "key-uid": account.keyUid,
     "mnemonic": account.mnemonic,
     "public-key": account.derivedAccounts.whisper.publicKey,
     "name": account.alias,
+    "display-name": displayName,
     "address": account.address,
     "eip1581-address": account.derivedAccounts.eip1581.address,
     "dapps-address": account.derivedAccounts.defaultWallet.address,
@@ -206,14 +210,15 @@ proc prepareAccountSettingsJsonObject(self: Service, account: GeneratedAccountDt
   }
 
 proc getAccountSettings(self: Service, accountId: string,
-  installationId: string): JsonNode =
+  installationId: string,
+  displayName: string): JsonNode =
   for acc in self.generatedAccounts:
     if(acc.id == accountId):
-      return self.prepareAccountSettingsJsonObject(acc, installationId)
+      return self.prepareAccountSettingsJsonObject(acc, installationId, displayName)
 
   if(self.importedAccount.isValid()):
     if(self.importedAccount.id == accountId):
-      return self.prepareAccountSettingsJsonObject(self.importedAccount, installationId)
+      return self.prepareAccountSettingsJsonObject(self.importedAccount, installationId, displayName)
 
 proc getDefaultNodeConfig*(self: Service, installationId: string): JsonNode =
   let networkConfig = getNetworkConfig(DEFAULT_NETWORK_NAME)
@@ -244,12 +249,12 @@ proc getDefaultNodeConfig*(self: Service, installationId: string): JsonNode =
   # TODO: commented since it's not necessary (we do the connections thru C bindings). Enable it thru an option once status-nodes are able to be configured in desktop
   # result["ListenAddr"] = if existsEnv("STATUS_PORT"): newJString("0.0.0.0:" & $getEnv("STATUS_PORT")) else: newJString("0.0.0.0:30305")
 
-method setupAccount*(self: Service, accountId, password: string): bool =
+method setupAccount*(self: Service, accountId, password, displayName: string): bool =
   try:
     let installationId = $genUUID()
     let accountDataJson = self.getAccountDataForAccountId(accountId)
     let subaccountDataJson = self.getSubaccountDataForAccountId(accountId)
-    let settingsJson = self.getAccountSettings(accountId, installationId)
+    let settingsJson = self.getAccountSettings(accountId, installationId, displayName)
     let nodeConfigJson = self.getDefaultNodeConfig(installationId)
 
     if(accountDataJson.isNil or subaccountDataJson.isNil or settingsJson.isNil or

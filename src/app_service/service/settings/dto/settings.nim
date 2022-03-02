@@ -44,6 +44,7 @@ const KEY_AUTO_MESSAGE_ENABLED* = "auto-message-enabled?"
 const KEY_GIF_FAVORITES* = "gifs/favorite-gifs"
 const KEY_GIF_RECENTS* = "gifs/recent-gifs"
 const KEY_GIF_API_KEY* = "gifs/api-key"
+const KEY_DISPLAY_NAME = "display-name"
 
 const PROFILE_PICTURES_VISIBILITY_CONTACTS_ONLY* = 1
 const PROFILE_PICTURES_VISIBILITY_EVERYONE* = 2
@@ -88,6 +89,7 @@ type
     dappsAddress*: string
     eip1581Address*: string
     installationId*: string
+    displayName*: string
     preferredName*: string
     ensUsernames*: seq[string]
     keyUid*: string
@@ -183,6 +185,7 @@ proc toSettingsDto*(jsonObj: JsonNode): SettingsDto =
   discard jsonObj.getProp(KEY_EIP1581_ADDRESS, result.eip1581Address)
   discard jsonObj.getProp(KEY_INSTALLATION_ID, result.installationId)
   discard jsonObj.getProp(KEY_PREFERRED_NAME, result.preferredName)
+  discard jsonObj.getProp(KEY_DISPLAY_NAME, result.displayName)
   discard jsonObj.getProp(KEY_KEY_UID, result.keyUid)
   discard jsonObj.getProp(KEY_LATEST_DERIVED_PATH, result.latestDerivedPath)
   discard jsonObj.getProp(KEY_LINK_PREVIEW_REQUEST_ENABLED, result.linkPreviewRequestEnabled)

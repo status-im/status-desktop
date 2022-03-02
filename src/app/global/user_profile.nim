@@ -12,6 +12,7 @@ QtObject:
     # fields which may change during runtime
     isIdenticon: bool
     ensName: string
+    displayName: string
     firstEnsName: string
     preferredName: string
     thumbnailImage: string
@@ -48,7 +49,6 @@ QtObject:
 
   QtProperty[string] pubKey:
     read = getPubKey
-
 
   proc nameChanged*(self: UserProfile) {.signal.}
 
@@ -118,6 +118,16 @@ QtObject:
     read = getPrettyPreferredName
     notify = nameChanged
 
+  proc setDisplayName*(self: UserProfile, displayName: string) = # Not a slot
+    self.displayName = displayName
+    self.nameChanged()
+
+  proc getDisplayName*(self: UserProfile): string {.slot.} =
+    self.displayName
+
+  QtProperty[string] displayName:
+    read = getDisplayName
+    notify = nameChanged
 
   proc getName*(self: UserProfile): string {.slot.} =
     if(self.preferredName.len > 0):
@@ -126,12 +136,13 @@ QtObject:
       return self.getPrettyFirstEnsName()
     elif(self.ensName.len > 0):
       return self.getPrettyEnsName()
+    elif(self.displayName.len > 0):
+      return self.getDisplayName()
     return self.username
 
   QtProperty[string] name:
     read = getName
     notify = nameChanged
-
 
   proc imageChanged*(self: UserProfile) {.signal.}
 

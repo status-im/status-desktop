@@ -85,6 +85,26 @@ Item {
             color: Theme.palette.directColor1
         }
 
+        Component {
+            id: displayNamePopupComponent
+            DisplayNamePopup {
+                profileStore: root.profileStore
+                onClosed: {
+                    destroy()
+                }
+            }
+        }
+
+        StatusButton {
+            id: "editDisplayName"
+            text: "Edit"
+            anchors.left: profileName.right
+            anchors.leftMargin: Style.current.halfPadding
+            onClicked: {
+                Global.openPopup(displayNamePopupComponent);
+            }
+        }
+
         Address {
             id: pubkeyText
             text: root.profileStore.ensName !== "" ? root.profileStore.username : root.profileStore.pubkey

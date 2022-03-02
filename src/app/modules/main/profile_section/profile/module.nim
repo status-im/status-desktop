@@ -66,3 +66,9 @@ method deleteIdentityImage*(self: Module) =
   self.controller.deleteIdentityImage(address)
   singletonInstance.userProfile.setLargeImage("")
   singletonInstance.userProfile.setThumbnailImage("")
+
+method setDisplayName*(self: Module, displayName: string) =
+  if self.controller.setDisplayName(displayName):
+    singletonInstance.userProfile.setDisplayName(displayName)
+  else:
+    error "could not set display name"

@@ -26,6 +26,9 @@ QtObject:
       # Windows doesn't work with paths starting with a slash
       result.removePrefix('/')
 
+  proc isAlias*(self: Utils, value: string): bool {.slot.} =
+    result = procs_from_accounts.isAlias(value)
+
   proc urlFromUserInput*(self: Utils, input: string): string {.slot.} =
     result = url_fromUserInput(input)
 

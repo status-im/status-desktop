@@ -22,6 +22,9 @@ method storeIdentityImage*(self: AccessInterface, imageUrl: string, aX: int, aY:
 method deleteIdentityImage*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method setDisplayName*(self: AccessInterface, displayName: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 # View Delegate Interface
 # Delegate for the view must be declared here due to use of QtObject and multi
 # inheritance, which is not well supported in Nim.
