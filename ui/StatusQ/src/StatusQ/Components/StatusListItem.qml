@@ -145,7 +145,7 @@ Rectangle {
 
             anchors.left: iconOrImage.active ? iconOrImage.right : parent.left
             anchors.right: statusListItemLabel.visible ? statusListItemLabel.left : statusListItemComponentsSlot.left
-            anchors.leftMargin: statusListItem.leftPadding
+            anchors.leftMargin: iconOrImage.active ? 16 : statusListItem.leftPadding
             anchors.rightMargin: statusListItem.rightPadding
             anchors.verticalCenter: parent.verticalCenter
             height: childrenRect.height
