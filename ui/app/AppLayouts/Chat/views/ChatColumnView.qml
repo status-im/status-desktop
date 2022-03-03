@@ -131,8 +131,20 @@ Item {
     // This is kind of a solution for applying backend refactored changes with the minimal qml changes.
     // The best would be if we made qml to follow the struct we have on the backend side.
     Repeater {
+        id: chatRepeater
         model: parentModule && parentModule.model
         delegate: delegateChooser
+
+        function isChatActive(chatContentModule, activeChatId, activeSubItemId, isSectionActive) {
+            if(!chatContentModule || !isSectionActive)
+                return false
+
+            let myChatId = chatContentModule.getMyChatId()
+            if(myChatId === activeChatId || myChatId === activeSubItemId)
+                return true
+
+            return false
+        }
 
         DelegateChooser {
             id: delegateChooser
@@ -149,6 +161,8 @@ Item {
                     delegate: ChatContentView {
                         width: parent.width
                         clip: true
+                        // dynamically calculate the height of the view, if the active one is the current one
+                        // then set the height to parent otherwise set it to 0
                         height: isActiveChannel ? parent.height : 0
                         rootStore: root.rootStore
                         contactsStore: root.contactsStore
@@ -157,18 +171,7 @@ Item {
                         sendTransactionWithEnsModal: cmpSendTransactionWithEns
                         stickersLoaded: root.stickersLoaded
                         isBlocked: model.blocked
-                        isActiveChannel: {
-                            // dynamically calculate the height of the view, if the active one is the current one
-                            // then set the height to parent otherwise set it to 0
-                            if(!chatContentModule || !isSectionActive)
-                                return false
-
-                            let myChatId = chatContentModule.getMyChatId()
-                            if(myChatId === root.activeChatId || myChatId === root.activeSubItemId)
-                                return true
-
-                            return false
-                        }
+                        isActiveChannel: chatRepeater.isChatActive(chatContentModule, root.activeChatId, root.activeSubItemId, root.isSectionActive)
                         Component.onCompleted: {
                             parentModule.prepareChatContentModuleForChatId(model.itemId)
                             chatContentModule = parentModule.getChatContentModule()
@@ -188,18 +191,7 @@ Item {
                     sendTransactionWithEnsModal: cmpSendTransactionWithEns
                     stickersLoaded: root.stickersLoaded
                     isBlocked: model.blocked
-                    isActiveChannel: {
-                        // dynamically calculate the height of the view, if the active one is the current one
-                        // then set the height to parent otherwise set it to 0
-                        if(!chatContentModule || !isSectionActive)
-                            return false
-
-                        let myChatId = chatContentModule.getMyChatId()
-                        if(myChatId === root.activeChatId || myChatId === root.activeSubItemId)
-                            return true
-
-                        return false
-                    }
+                    isActiveChannel: chatRepeater.isChatActive(chatContentModule, root.activeChatId, root.activeSubItemId, root.isSectionActive)
                     Component.onCompleted: {
                         parentModule.prepareChatContentModuleForChatId(itemId)
                         chatContentModule = parentModule.getChatContentModule()
