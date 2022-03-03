@@ -63,6 +63,7 @@ int main(int argc, char* argv[])
 
     Global::Singleton::instance()->engine()->addImportPath("qrc:/./StatusQ/src");
     Global::Singleton::instance()->engine()->addImportPath("qrc:/./imports");
+    Global::Singleton::instance()->engine()->addImportPath("qrc:/./app");
 
     const QUrl url(QStringLiteral("qrc:/main.qml"));
     QObject::connect(

@@ -6,7 +6,7 @@ import utils 1.0
 import shared.status 1.0
 import shared.stores 1.0
 // TODO move Contact into shared to get rid of that import
-import "../../../app/AppLayouts/Chat/controls"
+import applayouts.Chat.controls 1.0
 
 Item {
     id: root

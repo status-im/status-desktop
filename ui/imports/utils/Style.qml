@@ -52,4 +52,7 @@ QtObject {
     function emoji(name) {
         return assetPath + "twemoji/" +name + ".png";
     }
+    function lottie(name) {
+        return assetPath + "lottie/" +name + ".json";
+    }
 }

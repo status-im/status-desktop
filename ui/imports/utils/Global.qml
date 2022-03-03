@@ -1,7 +1,7 @@
 pragma Singleton
 
 import QtQuick 2.13
-import "../../app/AppLayouts/Chat/popups"
+import applayouts.Chat.popups 1.0
 
 QtObject {
     id: root
