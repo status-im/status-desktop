@@ -66,11 +66,7 @@ Column {
         }
     }
 
-    Item {
-        id: invisibleSeparator
-        height: 16
-        width: parent.width
-    }
+    StatusListSectionHeadline { text: qsTr("About & Help") }
 
     Repeater {
         id: extraMenuItems

@@ -59,7 +59,7 @@ QtObject {
     property ListModel mainMenuItems: ListModel {
         Component.onCompleted: {
             append({subsection: Constants.settingsSubsection.profile,
-                       text: qsTr("My Profile"),
+                       text: qsTr("Profile"),
                        icon: "profile"})
             append({subsection: Constants.settingsSubsection.contacts,
                        text: qsTr("Contacts"),
@@ -75,6 +75,9 @@ QtObject {
             append({subsection: Constants.settingsSubsection.wallet,
                        text: qsTr("Wallet"),
                        icon: "wallet"})
+            append({subsection: Constants.settingsSubsection.browserSettings,
+                       text: qsTr("Browser"),
+                       icon: "browser"})
         }
     }
 
@@ -101,9 +104,6 @@ QtObject {
             append({subsection: Constants.settingsSubsection.devicesSettings,
                        text: qsTr("Devices settings"),
                        icon: "mobile"})
-            append({subsection: Constants.settingsSubsection.browserSettings,
-                       text: qsTr("Browser settings"),
-                       icon: "browser"})
             append({subsection: Constants.settingsSubsection.advanced,
                        text: qsTr("Advanced"),
                        icon: "settings"})
@@ -113,7 +113,7 @@ QtObject {
     property ListModel extraMenuItems: ListModel {
         Component.onCompleted: {
             append({subsection: Constants.settingsSubsection.needHelp,
-                       text: qsTr("Need help?"),
+                       text: qsTr("Help & Glossary"),
                        icon: "help"})
             append({subsection: Constants.settingsSubsection.about,
                        text: qsTr("About"),
