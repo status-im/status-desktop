@@ -43,21 +43,14 @@ Item {
     property RootStore rootStore: RootStore { }
     // set from main.qml
     property var sysPalette
-    property var newVersionJSON: {
-        try {
-            return JSON.parse(rootStore.aboutModuleInst.newVersion)
-        } catch (e) {
-            console.error("Error parsing version data", e)
-            return {}
-        }
-    }
 
     signal openContactsPopup()
 
     Connections {
         target: rootStore.aboutModuleInst
         onAppVersionFetched: {
-            if (!newVersionJSON.available) {
+            rootStore.setLatestVersionInfo(available, version, url);
+            if (!available) {
                 versionUpToDate.show()
             } else {
                 versionWarning.show()
@@ -81,10 +74,10 @@ Item {
         onOpenDownloadModalRequested: {
             const downloadPage = downloadPageComponent.createObject(appMain,
                 {
-                    newVersionAvailable: newVersionJSON.available,
-                    downloadURL: newVersionJSON.url,
+                    newVersionAvailable: available,
+                    downloadURL: url,
                     currentVersion: rootStore.profileSectionStore.getCurrentVersion(),
-                    newVersion: newVersionJSON.version
+                    newVersion: version
                 })
             return downloadPage
         }
@@ -414,13 +407,16 @@ Item {
                 id: versionWarning
                 width: parent.width
                 height: 32
-                visible: !!newVersionJSON.available
+                visible: appMain.rootStore.newVersionAvailable
                 color: Style.current.green
                 btnWidth: 100
-                text: qsTr("A new version of Status (%1) is available").arg(newVersionJSON.version)
+                text: qsTr("A new version of Status (%1) is available").arg(appMain.rootStore.latestVersion)
                 btnText: qsTr("Download")
                 onClick: function(){
-                    Global.openDownloadModal()
+                    Global.openDownloadModal(appMain.rootStore.newVersionAvailable, appMain.rootStore.latestVersion, appMain.rootStore.downloadURL)
+                }
+                onClosed: {
+                    appMain.rootStore.resetLastVersion();
                 }
 
                 function show() {
