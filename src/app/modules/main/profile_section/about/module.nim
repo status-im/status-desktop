@@ -55,5 +55,5 @@ method getNodeVersion*(self: Module): string =
 method checkForUpdates*(self: Module) =
   self.controller.checkForUpdates()
 
-method versionFetched*(self: Module, version: string) =
-  self.view.versionFetched(version)
+method versionFetched*(self: Module, available: bool, version: string, url: string) =
+  self.view.versionFetched(available, version, url)

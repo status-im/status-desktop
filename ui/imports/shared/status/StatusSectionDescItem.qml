@@ -15,6 +15,9 @@ Item {
     property alias tooltipUnder: copyToClipboardBtn.tooltipUnder
     property var store
 
+    property alias textFont: name.font
+    property alias textColor: name.color
+
     id: root
     width: parent.width
     height: name.height

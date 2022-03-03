@@ -10,16 +10,21 @@ import "./"
 Rectangle {
     id: root
     height: visible ? 32 : 0
+    implicitHeight: height
     color: Style.current.red
 
     property string text: ""
     property string btnText: ""
     property int btnWidth: 58
+    property bool closing: false
 
     property var onClick: function() {}
 
+    signal closed()
+
     function close() {
         closeBtn.clicked(null)
+        closed();
     }
 
     Row {
@@ -87,9 +92,21 @@ Rectangle {
         id: closeBtn
         anchors.fill: closeImg
         cursorShape: Qt.PointingHandCursor
-        onClicked: ParallelAnimation {
-            PropertyAnimation { target: root; property: "visible"; to: false; }
-            PropertyAnimation { target: root; property: "y"; to: -1 * root.height }
+        onClicked: {
+            closing = true
+        }
+    }
+
+    ParallelAnimation {
+        running: closing
+        PropertyAnimation { target: root; property: "visible"; to: false; }
+        PropertyAnimation { target: root; property: "y"; to: -1 * root.height }
+        onRunningChanged: {
+            if(!running){
+                closing = false;
+                root.y = 0;
+                root.closed();
+            }
         }
     }
 }

@@ -92,6 +92,7 @@ QtObject:
       of SignalType.HistoryArchivesSeeding: HistoryArchivesSignal.historyArchivesSeedingFromEvent(jsonSignal)
       of SignalType.HistoryArchivesUnseeded: HistoryArchivesSignal.historyArchivesUnseededFromEvent(jsonSignal)
       of SignalType.HistoryArchiveDownloaded: HistoryArchivesSignal.historyArchiveDownloadedFromEvent(jsonSignal)
+      of SignalType.UpdateAvailable: UpdateAvailableSignal.fromEvent(jsonSignal)
       else: Signal()
 
     result.signalType = signalType

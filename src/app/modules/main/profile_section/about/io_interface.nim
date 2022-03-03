@@ -17,7 +17,7 @@ method getAppVersion*(self: AccessInterface): string {.base.} =
 method getNodeVersion*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method versionFetched*(self: AccessInterface, version: string) {.base.} =
+method versionFetched*(self: AccessInterface, available: bool, version: string, url: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method checkForUpdates*(self: AccessInterface) {.base.} =
