@@ -16,6 +16,7 @@ Rectangle {
     property string chatId: ""
     property string categoryId: ""
     property string name: ""
+    property string emoji: ""
     property alias badge: statusBadge
     property bool hasUnreadMessages: false
     property int notificationsCount: 0
@@ -28,7 +29,7 @@ Rectangle {
         width: 24
         height: 24
         color: Theme.palette.miscColor5
-        letterSize: 15
+        letterSize: emoji ? 14 : 15
     }
     property int type: StatusChatListItem.Type.PublicChat
     property bool highlighted: false
@@ -85,6 +86,7 @@ Rectangle {
             image: statusChatListItem.image
             icon: statusChatListItem.icon
             name: statusChatListItem.name
+            emoji: statusChatListItem.emoji
         }
 
         StatusIcon {

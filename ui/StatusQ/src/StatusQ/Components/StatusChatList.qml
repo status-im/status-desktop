@@ -97,11 +97,12 @@ Column {
                     chatId: model.itemId
                     categoryId: model.parentItemId? model.parentItemId : ""
                     name: model.name
+                    emoji: model.emoji
                     type: !!model.type ? model.type : StatusChatListItem.Type.CommunityChat
                     muted: model.muted
                     hasUnreadMessages: model.hasUnreadMessages
                     notificationsCount: model.notificationsCount
-                    highlightWhenCreated: model.highlight
+                    highlightWhenCreated: !!model.highlight
                     selected: model.active
                     icon.color: model.color
                     image.isIdenticon: model.isIdenticon
