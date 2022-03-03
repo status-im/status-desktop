@@ -3,22 +3,22 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtMultimedia 5.13
 import Qt.labs.qmlmodels 1.0
+import Qt.labs.platform 1.1
+import Qt.labs.settings 1.0
+
+import applayouts.Wallet 1.0
+import applayouts.Node 1.0
+import applayouts.Browser 1.0
+import applayouts.Chat 1.0
+import applayouts.Chat.popups 1.0
+import applayouts.Profile 1.0
+import applayouts.Profile.popups 1.0
 
 import utils 1.0
 import shared 1.0
 import shared.panels 1.0
 import shared.popups 1.0
 import shared.status 1.0
-import "./AppLayouts"
-import "./AppLayouts/Wallet"
-import "./AppLayouts/Chat/popups"
-import "./AppLayouts/Chat/popups/community"
-import "./AppLayouts/Profile/popups"
-import "./AppLayouts/stores"
-import "./AppLayouts/Browser/stores" as BrowserStores
-
-import Qt.labs.platform 1.1
-import Qt.labs.settings 1.0
 
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
@@ -26,6 +26,8 @@ import StatusQ.Controls 0.1
 import StatusQ.Layout 0.1
 import StatusQ.Popups 0.1
 import StatusQ.Core 0.1
+
+import applayouts.stores 1.0
 
 Item {
     id: appMain

@@ -10,8 +10,6 @@ import StatusQ.Controls 0.1
 import "../"
 import "../status"
 import "../panels"
-// TODO move Contact into shared to get rid of that import
-import "../../../app/AppLayouts/Chat/controls"
 import "./"
 
 import StatusQ.Components 0.1

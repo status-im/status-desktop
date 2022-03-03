@@ -104,6 +104,7 @@ proc mainProc() =
 
   singletonInstance.engine.addImportPath("qrc:/./StatusQ/src")
   singletonInstance.engine.addImportPath("qrc:/./imports")
+  singletonInstance.engine.addImportPath("qrc:/./app");
   singletonInstance.engine.setNetworkAccessManagerFactory(networkAccessFactory)
   singletonInstance.engine.setRootContextProperty("uiScaleFilePath", newQVariant(uiScaleFilePath))
   singletonInstance.engine.setRootContextProperty("singleInstance", newQVariant(singleInstance))

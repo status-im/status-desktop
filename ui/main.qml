@@ -2,7 +2,6 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import Qt.labs.platform 1.1
-import QtQml.StateMachine 1.14 as DSM
 import Qt.labs.settings 1.0
 import QtQuick.Window 2.12
 import QtQml 2.13
@@ -16,8 +15,8 @@ import shared 1.0
 import shared.panels 1.0
 import shared.popups 1.0
 
-import "./app/AppLayouts/Onboarding/views"
-import "./app"
+import mainui 1.0
+import applayouts.Onboarding 1.0
 
 StatusWindow {
     property bool hasAccounts: startupModule.appState !== Constants.appState.onboarding
@@ -298,119 +297,13 @@ StatusWindow {
         }
     }
 
-    DSM.StateMachine {
-        id: stateMachine
-        initialState: onboardingState
-        running: true
-
-        DSM.State {
-            id: onboardingState
-            initialState: hasAccounts ? stateLogin : keysMainState
-
-            DSM.State {
-                id: keysMainState
-                onEntered: loader.sourceComponent = keysMain
-
-                DSM.SignalTransition {
-                    targetState: genKeyState
-                    signal: applicationWindow.navigateTo
-                    guard: path === "GenKey"
-                }
-            }
-
-            DSM.State {
-                id: existingKeyState
-                onEntered: loader.sourceComponent = existingKey
-
-                DSM.SignalTransition {
-                    targetState: appState
-                    signal: startupModule.appStateChanged
-                    guard: state == Constants.appState.main
-                }
-            }
-
-            DSM.State {
-                id: genKeyState
-                onEntered: loader.sourceComponent = genKey
-
-                DSM.SignalTransition {
-                    targetState: appState
-                    signal: startupModule.appStateChanged
-                    guard: state == Constants.appState.main
-                }
-            }
-
-            DSM.State {
-                id: keycardState
-                onEntered: loader.sourceComponent = keycardFlowSelection
-
-                DSM.SignalTransition {
-                    targetState: appState
-                    signal: startupModule.appStateChanged
-                    guard: state == Constants.appState.main
-                }
-            }
-
-            DSM.State {
-                id: stateLogin
-                onEntered: loader.sourceComponent = login
-
-                DSM.SignalTransition {
-                    targetState: appState
-                    signal: startupModule.appStateChanged
-                    guard: state == Constants.appState.main
-                }
-
-                DSM.SignalTransition {
-                    targetState: genKeyState
-                    signal: applicationWindow.navigateTo
-                    guard: path === "GenKey"
-                }
-            }
-
-            DSM.SignalTransition {
-                targetState: hasAccounts ? stateLogin : keysMainState
-                signal: applicationWindow.navigateTo
-                guard: path === "InitialState"
-            }
-
-            DSM.SignalTransition {
-                targetState: existingKeyState
-                signal: applicationWindow.navigateTo
-                guard: path === "ExistingKey"
-            }
-
-            DSM.SignalTransition {
-                targetState: keysMainState
-                signal: applicationWindow.navigateTo
-                guard: path === "KeysMain"
-            }
-
-            DSM.SignalTransition {
-                targetState: keycardState
-                signal: applicationWindow.navigateTo
-                guard: path === "KeycardFlowSelection"
-            }
-
-            DSM.FinalState {
-                id: onboardingDoneState
-            }
-        }
-
-        DSM.State {
-            id: appState
-            onEntered: loader.sourceComponent = app
-
-            DSM.SignalTransition {
-                targetState: stateLogin
-                signal: startupModule.logOut
-            }
-        }
-    }
-
     Loader {
         id: loader
         anchors.fill: parent
+        opacity: active ? 1.0 : 0.0
+        visible: (opacity > 0.0001)
+        Behavior on opacity { NumberAnimation { duration: 120 }}
+        active: !splashScreen.visible
     }
 
     Component {
@@ -420,63 +313,14 @@ StatusWindow {
         }
     }
 
-    Component {
-        id: keysMain
-        KeysMainView {
-            btnGenKey.onClicked: applicationWindow.navigateTo("GenKey")
-            btnExistingKey.onClicked: applicationWindow.navigateTo("ExistingKey")
-            btnKeycard.onClicked: applicationWindow.navigateTo("KeycardFlowSelection")
+    OnboardingLayout {
+        hasAccounts: applicationWindow.hasAccounts
+        onLoadApp: {
+            loader.sourceComponent = app;
         }
-    }
 
-    Component {
-        id: existingKey
-        ExistingKeyView {
-            onClosed: function () {
-                if (hasAccounts) {
-                    applicationWindow.navigateTo("InitialState")
-                } else {
-                    applicationWindow.navigateTo("KeysMain")
-                }
-            }
-        }
-    }
-
-    Component {
-        id: genKey
-        GenKeyView {
-            onClosed: function () {
-                if (hasAccounts) {
-                    applicationWindow.navigateTo("InitialState")
-                } else {
-                    applicationWindow.navigateTo("KeysMain")
-                }
-            }
-        }
-    }
-
-    Component {
-        id: keycardFlowSelection
-        KeycardFlowSelectionView {
-            onClosed: function () {
-                if (hasAccounts) {
-                    applicationWindow.navigateTo("InitialState")
-                } else {
-                    applicationWindow.navigateTo("KeysMain")
-                }
-            }
-        }
-    }
-
-    Component {
-        id: login
-        LoginView {
-            onGenKeyClicked: function () {
-                applicationWindow.navigateTo("GenKey")
-            }
-            onExistingKeyClicked: function () {
-                applicationWindow.navigateTo("ExistingKey")
-            }
+        onOnBoardingStepChanged: {
+            loader.sourceComponent = view;
         }
     }
 
@@ -512,6 +356,10 @@ StatusWindow {
         onMaximized: {
             applicationWindow.toggleFullScreen()
         }
+    }
+
+    SplashScreen {
+        id: splashScreen
     }
 }
 
