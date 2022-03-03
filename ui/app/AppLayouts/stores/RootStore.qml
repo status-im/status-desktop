@@ -9,6 +9,20 @@ QtObject {
     property var communitiesModuleInst: communitiesModule
     property var observedCommunity: communitiesModuleInst.observedCommunity
 
+    property bool newVersionAvailable: false
+    property string latestVersion
+    property string downloadURL
+
+    function setLatestVersionInfo(newVersionAvailable, latestVersion, downloadURL) {
+        root.newVersionAvailable = newVersionAvailable;
+        root.latestVersion = latestVersion;
+        root.downloadURL = downloadURL;
+    }
+
+    function resetLastVersion(){
+        root.newVersionAvailable = false
+    }
+
     property AppSearchStore appSearchStore: AppSearchStore {
         appSearchModule: root.mainModuleInst.appSearchModule
     }

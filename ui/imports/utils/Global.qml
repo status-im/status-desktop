@@ -23,7 +23,8 @@ QtObject {
     signal openImagePopup(var image, var contextMenu)
     signal openLinkInBrowser(string link)
     signal openChooseBrowserPopup(string link)
-    signal openDownloadModalRequested()
+    signal openPopupRequested(var popupComponent, var params)
+    signal openDownloadModalRequested(bool available, string version, string url)
     signal settingsLoaded()
     signal openBackUpSeedPopup()
     signal openCreateChatView()
@@ -46,8 +47,8 @@ QtObject {
         return popup;
     }
 
-    function openDownloadModal(){
-        openDownloadModalRequested();
+    function openDownloadModal(available, version, url){
+        openDownloadModalRequested(available, version, url);
     }
 
     function changeAppSectionBySectionType(sectionType, subsection = 0) {

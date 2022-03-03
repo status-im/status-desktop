@@ -24,7 +24,7 @@ proc delete*(self: Controller) =
 proc init*(self: Controller) =
   self.events.on(SIGNAL_VERSION_FETCHED) do(e: Args):
     let args = VersionArgs(e)
-    self.delegate.versionFetched(args.version)
+    self.delegate.versionFetched(args.available, args.version, args.url)
 
 proc getAppVersion*(self: Controller): string =
   return self.aboutService.getAppVersion()
