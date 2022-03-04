@@ -34,7 +34,7 @@ Column {
 
     StatusListSectionHeadline { 
         text: qsTr("Apps")
-        visible: root.appsMenuItemsEnabled
+        visible: root.appsMenuItemsEnabled || root.browserMenuItemEnabled
     }
     
     Repeater {
@@ -46,7 +46,10 @@ Column {
             icon.name: model.icon
             selected: Global.settingsSubsection === model.subsection
             onClicked: root.menuItemClicked(model)
-            visible: root.appsMenuItemsEnabled
+            visible: {
+                (model.subsection === Constants.settingsSubsection.browserSettings && root.browserMenuItemEnabled) ||
+                (model.subsection === Constants.settingsSubsection.wallet && root.appsMenuItemsEnabled)
+            }
         }
     }
 
