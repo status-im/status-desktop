@@ -18,7 +18,18 @@ Item {
     property string publicKey: ""
     property string name: ""
     property string icon: ""
+    property string identicon: ""
     property bool isIdenticon: true
+    property bool isAdded: false
+    property string iconToShow: {
+        if (isIdenticon || (!isAdded &&
+            Global.privacyModuleInst.profilePicturesVisibility !==
+            Constants.profilePicturesVisibility.everyone)) {
+            return identicon
+        }
+
+        return icon
+    }
     property int userStatus: Constants.userStatus.offline
     property var messageContextMenu
     property bool enableMouseArea: true
@@ -45,7 +56,7 @@ Item {
             image: StatusImageSettings {
                 width: 28
                 height: 28
-                source: wrapper.icon
+                source: wrapper.iconToShow
                 isIdenticon: wrapper.isIdenticon
             }
             icon: StatusIconSettings {
@@ -118,7 +129,7 @@ Item {
                     messageContextMenu.myPublicKey = userProfile.pubKey
                     messageContextMenu.selectedUserPublicKey = wrapper.publicKey
                     messageContextMenu.selectedUserDisplayName = wrapper.name
-                    messageContextMenu.selectedUserIcon = wrapper.icon
+                    messageContextMenu.selectedUserIcon = wrapper.iconToShow
                     messageContextMenu.isSelectedUserIconIdenticon = wrapper.isIdenticon
                     messageContextMenu.popup()
                 }

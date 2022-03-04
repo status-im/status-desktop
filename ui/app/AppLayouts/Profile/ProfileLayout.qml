@@ -18,6 +18,10 @@ StatusAppTwoPanelLayout {
     property var globalStore
     property var systemPalette
 
+    Component.onCompleted: {
+        Global.privacyModuleInst = store.privacyStore.privacyModule
+    }
+
     QtObject {
         id: _internal
         readonly property int contentMaxWidth: 624

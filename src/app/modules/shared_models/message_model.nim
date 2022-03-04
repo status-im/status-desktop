@@ -11,8 +11,10 @@ type
     SenderDisplayName
     SenderLocalName
     SenderIcon
+    SenderIdenticon
     IsSenderIconIdenticon
     AmISender
+    SenderIsAdded
     Seen
     OutgoingStatus
     MessageText
@@ -82,8 +84,10 @@ QtObject:
       ModelRole.SenderDisplayName.int:"senderDisplayName",
       ModelRole.SenderLocalName.int:"senderLocalName",
       ModelRole.SenderIcon.int:"senderIcon",
+      ModelRole.SenderIdenticon.int:"senderIdenticon",
       ModelRole.IsSenderIconIdenticon.int:"isSenderIconIdenticon",
       ModelRole.AmISender.int:"amISender",
+      ModelRole.SenderIsAdded.int:"senderIsAdded",
       ModelRole.Seen.int:"seen",
       ModelRole.OutgoingStatus.int:"outgoingStatus",
       ModelRole.MessageText.int:"messageText",
@@ -130,10 +134,14 @@ QtObject:
       result = newQVariant(item.senderLocalName)
     of ModelRole.SenderIcon:
       result = newQVariant(item.senderIcon)
+    of ModelRole.SenderIdenticon:
+      result = newQVariant(item.senderIdenticon)
     of ModelRole.IsSenderIconIdenticon:
       result = newQVariant(item.isSenderIconIdenticon)
     of ModelRole.AmISender:
       result = newQVariant(item.amISender)
+    of ModelRole.SenderIsAdded:
+      result = newQVariant(item.senderIsAdded)
     of ModelRole.Seen:
       result = newQVariant(item.seen)
     of ModelRole.OutgoingStatus:
@@ -336,7 +344,7 @@ QtObject:
       var roles: seq[int]
       if(self.items[i].senderId == contactId):
         roles = @[ModelRole.SenderDisplayName.int, ModelRole.SenderLocalName.int, ModelRole.SenderIcon.int,
-        ModelRole.IsSenderIconIdenticon.int]
+        ModelRole.IsSenderIconIdenticon.int, ModelRole.SenderIsAdded.int]
       if(self.items[i].pinnedBy == contactId):
         roles.add(ModelRole.PinnedBy.int)
       if(self.items[i].messageContainsMentions):

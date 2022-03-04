@@ -13,6 +13,7 @@ QtObject {
     property var errorSound
 
     property var mainModuleInst
+    property var privacyModuleInst
     property var toastMessage
     property bool profilePopupOpened: false
     property string currentNetworkId: ""
@@ -58,7 +59,9 @@ QtObject {
         }
 
         let contactDetails = Utils.getContactDetailsAsJson(pubkey)
-        if (localAccountSensitiveSettings.onlyShowContactsProfilePics && !contactDetails.isContact) {
+        
+        if (root.privacyModuleInst.profilePicturesVisibility !==
+            Constants.profilePicturesVisibility.everyone && !contactDetails.isContact) {
             return;
         }
 

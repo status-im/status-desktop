@@ -118,6 +118,18 @@ method init*(self: Controller) =
     var args = ContactArgs(e)
     self.delegate.updateContactDetails(args.contactId)
 
+  self.events.on(SIGNAL_CONTACT_ADDED) do(e: Args):
+    var args = ContactArgs(e)
+    self.delegate.updateContactDetails(args.contactId)
+
+  self.events.on(SIGNAL_CONTACT_REMOVED) do(e: Args):
+    var args = ContactArgs(e)
+    self.delegate.updateContactDetails(args.contactId)
+
+  self.events.on(SIGNAL_CONTACT_BLOCKED) do(e: Args):
+    var args = ContactArgs(e)
+    self.delegate.updateContactDetails(args.contactId)
+
   self.events.on(SIGNAL_LOGGEDIN_USER_IMAGE_CHANGED) do(e: Args):
     self.delegate.updateContactDetails(singletonInstance.userProfile.getPubKey())
 

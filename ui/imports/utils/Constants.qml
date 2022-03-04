@@ -79,6 +79,12 @@ QtObject {
         readonly property int editType: 11
     }
 
+    readonly property QtObject profilePicturesVisibility: QtObject {
+        readonly property int contactsOnly: 1
+        readonly property int everyone: 2
+        readonly property int noOne: 3
+    }
+
     readonly property int communityImported: 0
     readonly property int communityImportingInProgress: 1
     readonly property int communityImportingError: 2

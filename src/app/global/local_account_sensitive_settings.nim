@@ -56,8 +56,6 @@ const LSS_KEY_FONT_SIZE* = "fontSize"
 const DEFAULT_FONT_SIZE = 2 #fontSizeM from qml
 const LSS_KEY_HIDE_SIGN_PHRASE_MODAL* = "hideSignPhraseModal"
 const DEFAULT_HIDE_SIGN_PHRASE_MODAL = false
-const LSS_KEY_ONLY_SHOW_CONTACTS_PICS* = "onlyShowContactsProfilePics"
-const DEFAULT_ONLY_SHOW_CONTACTS_PICS = true
 const LSS_KEY_QUITE_ON_CLOSE* = "quitOnClose"
 const DEFAULT_QUITE_ON_CLOSE = false
 const LSS_KEY_SKIN_COLOR* = "skinColor"
@@ -522,19 +520,6 @@ QtObject:
     notify = hideSignPhraseModalChanged
 
 
-  proc onlyShowContactsProfilePicsChanged*(self: LocalAccountSensitiveSettings) {.signal.}
-  proc getOnlyShowContactsProfilePics*(self: LocalAccountSensitiveSettings): bool {.slot.} =
-    getSettingsProp[bool](self, LSS_KEY_ONLY_SHOW_CONTACTS_PICS, newQVariant(DEFAULT_ONLY_SHOW_CONTACTS_PICS))
-  proc setOnlyShowContactsProfilePics*(self: LocalAccountSensitiveSettings, value: bool) {.slot.} =
-    setSettingsProp(self, LSS_KEY_ONLY_SHOW_CONTACTS_PICS, newQVariant(value)):
-      self.onlyShowContactsProfilePicsChanged()
-
-  QtProperty[bool] onlyShowContactsProfilePics:
-    read = getOnlyShowContactsProfilePics
-    write = setOnlyShowContactsProfilePics
-    notify = onlyShowContactsProfilePicsChanged
-
-
   proc quitOnCloseChanged*(self: LocalAccountSensitiveSettings) {.signal.}
   proc getQuitOnClose*(self: LocalAccountSensitiveSettings): bool {.slot.} =
     getSettingsProp[bool](self, LSS_KEY_QUITE_ON_CLOSE, newQVariant(DEFAULT_QUITE_ON_CLOSE))
@@ -856,7 +841,6 @@ QtObject:
       of LSS_KEY_HIDE_CHANNEL_SUGGESTIONS: self.hideChannelSuggestionsChanged()
       of LSS_KEY_FONT_SIZE: self.fontSizeChanged()
       of LSS_KEY_HIDE_SIGN_PHRASE_MODAL: self.hideSignPhraseModalChanged()
-      of LSS_KEY_ONLY_SHOW_CONTACTS_PICS: self.onlyShowContactsProfilePicsChanged()
       of LSS_KEY_QUITE_ON_CLOSE: self.quitOnCloseChanged()
       of LSS_KEY_SKIN_COLOR: self.skinColorChanged()
       of LSS_KEY_SHOW_DELETE_MESSAGE_WARNING: self.showDeleteMessageWarningChanged()

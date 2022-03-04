@@ -13,7 +13,9 @@ type
     senderDisplayName: string
     senderLocalName: string
     amISender: bool
+    senderIsAdded: bool
     senderIcon: string
+    senderIdenticon: string
     isSenderIconIdenticon: bool
     seen: bool
     outgoingStatus: string
@@ -42,9 +44,11 @@ proc initItem*(
     senderId,
     senderDisplayName,
     senderLocalName,
-    senderIcon: string,
+    senderIcon,
+    senderIdenticon: string,
     isSenderIconIdenticon,
     amISender: bool,
+    senderIsAdded: bool,
     outgoingStatus,
     text,
     image: string,
@@ -66,7 +70,9 @@ proc initItem*(
   result.senderDisplayName = senderDisplayName
   result.senderLocalName = senderLocalName
   result.amISender = amISender
+  result.senderIsAdded = senderIsAdded
   result.senderIcon = senderIcon
+  result.senderIdenticon = senderIdenticon
   result.isSenderIconIdenticon = isSenderIconIdenticon
   result.seen = seen
   result.outgoingStatus = outgoingStatus
@@ -96,6 +102,7 @@ proc `$`*(self: Item): string =
     senderDisplayName: {$self.senderDisplayName},
     senderLocalName: {self.senderLocalName},
     amISender: {$self.amISender},
+    senderIsAdded: {$self.senderIsAdded},
     isSenderIconIdenticon: {$self.isSenderIconIdenticon},
     seen: {$self.seen},
     outgoingStatus:{$self.outgoingStatus},
@@ -143,6 +150,9 @@ proc senderIcon*(self: Item): string {.inline.} =
 proc `senderIcon=`*(self: Item, value: string) {.inline.} =
   self.senderIcon = value
 
+proc senderIdenticon*(self: Item): string {.inline.} =
+  self.senderIdenticon
+
 proc isSenderIconIdenticon*(self: Item): bool {.inline.} =
   self.isSenderIconIdenticon
 
@@ -151,6 +161,12 @@ proc `isSenderIconIdenticon=`*(self: Item, value: bool) {.inline.} =
 
 proc amISender*(self: Item): bool {.inline.} =
   self.amISender
+
+proc senderIsAdded*(self: Item): bool {.inline.} =
+  self.senderIsAdded
+
+proc `senderIsAdded=`*(self: Item, value: bool) {.inline.} =
+  self.senderIsAdded = value
 
 proc outgoingStatus*(self: Item): string {.inline.} =
   self.outgoingStatus
@@ -234,7 +250,9 @@ proc toJsonNode*(self: Item): JsonNode =
     "senderDisplayName": self.senderDisplayName,
     "senderLocalName": self.senderLocalName,
     "amISender": self.amISender,
+    "senderIsAdded": self.senderIsAdded,
     "senderIcon": self.senderIcon,
+    "senderIdenticon": self.senderIdenticon,
     "isSenderIconIdenticon": self.isSenderIconIdenticon,
     "seen": self.seen,
     "outgoingStatus": self.outgoingStatus,

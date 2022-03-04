@@ -148,6 +148,7 @@ Item {
             bottomPadding: Style.current.halfPadding
         }
 
+        // TODO change this component from a switch to a chooser between, everyone, contacts and no one
         StatusListItem {
             anchors.left: parent.left
             anchors.leftMargin: -Style.current.padding
@@ -159,10 +160,19 @@ Item {
             components: [
                 StatusQControls.StatusSwitch {
                     id: switch1
-                    checked: !localAccountSensitiveSettings.onlyShowContactsProfilePics
+                    checked: root.privacyStore.profilePicturesVisibility ===
+                        Constants.profilePicturesVisibility.everyone
                     onCheckedChanged: {
-                        if (localAccountSensitiveSettings.onlyShowContactsProfilePics === checked) {
-                            localAccountSensitiveSettings.onlyShowContactsProfilePics = !checked
+                        if (checked && root.privacyStore.profilePicturesVisibility !==
+                            Constants.profilePicturesVisibility.everyone) {
+                            root.privacyStore.setProfilePicturesVisibility(
+                                Constants.profilePicturesVisibility.everyone
+                            )
+                        } else if (!checked && root.privacyStore.profilePicturesVisibility ===
+                            Constants.profilePicturesVisibility.everyone) {
+                            root.privacyStore.setProfilePicturesVisibility(
+                                Constants.profilePicturesVisibility.contacts
+                            )
                         }
                     }
                 }

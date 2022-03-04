@@ -56,7 +56,9 @@ Item {
             publicKey: model.id
             name: model.name
             icon: model.icon
+            identicon: model.identicon
             isIdenticon: model.isIdenticon
+            isAdded: model.isAdded
             userStatus: model.onlineStatus
             messageContextMenu: root.messageContextMenu
         }

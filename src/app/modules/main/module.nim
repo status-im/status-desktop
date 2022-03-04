@@ -208,7 +208,9 @@ proc createCommunityItem[T](self: Module[T], c: CommunityDto): SectionItem =
         contactDetails.details.alias,
         OnlineStatus.Offline,
         contactDetails.icon,
+        contactDetails.details.identicon,
         contactDetails.isidenticon,
+        contactDetails.details.added
         )),
     c.pendingRequestsToJoin.map(x => pending_request_item.initItem(
       x.id,

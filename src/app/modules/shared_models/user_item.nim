@@ -18,7 +18,9 @@ type
     alias: string
     onlineStatus: OnlineStatus
     icon: string
+    identicon: string
     isIdenticon: bool
+    isAdded: bool
     isAdmin: bool
     joined: bool
 
@@ -30,7 +32,9 @@ proc initItem*(
   alias: string,
   onlineStatus: OnlineStatus,
   icon: string,
+  identicon: string,
   isidenticon: bool,
+  isAdded: bool = false,
   isAdmin: bool = false,
   joined: bool = false,
 ): Item =
@@ -42,7 +46,9 @@ proc initItem*(
   result.alias = alias
   result.onlineStatus = onlineStatus
   result.icon = icon
+  result.identicon = identicon
   result.isIdenticon = isidenticon
+  result.isAdded = isAdded
   result.isAdmin = isAdmin
   result.joined = joined
 
@@ -54,7 +60,9 @@ proc `$`*(self: Item): string =
     alias: {self.alias},
     onlineStatus: {$self.onlineStatus.int},
     icon: {self.icon},
+    identicon: {self.identicon},
     isIdenticon: {$self.isIdenticon}
+    isAdded: {$self.isAdded}
     isAdmin: {$self.isAdmin}
     joined: {$self.joined}
     ]"""
@@ -98,6 +106,9 @@ proc icon*(self: Item): string {.inline.} =
 proc `icon=`*(self: Item, value: string) {.inline.} =
   self.icon = value
 
+proc identicon*(self: Item): string {.inline.} =
+  self.identicon
+
 proc isIdenticon*(self: Item): bool {.inline.} =
   self.isIdenticon
 
@@ -109,6 +120,12 @@ proc isAdmin*(self: Item): bool {.inline.} =
 
 proc `isAdmin=`*(self: Item, value: bool) {.inline.} =
   self.isAdmin = value
+
+proc isAdded*(self: Item): bool {.inline.} =
+  self.isAdded
+
+proc `isAdded=`*(self: Item, value: bool) {.inline.} =
+  self.isAdded = value
 
 proc joined*(self: Item): bool {.inline.} =
   self.joined
