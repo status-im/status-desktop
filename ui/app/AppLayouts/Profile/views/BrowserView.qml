@@ -22,10 +22,6 @@ Item {
     property var store
     property int profileContentWidth
 
-    property Component dappListPopup: DappList {
-        store: root.store
-        onClosed: destroy()
-    }
     property Component homePagePopup: HomepageModal {}
     property Component searchEngineModal: SearchEngineModal {}
     property Component ethereumExplorerModal: EthereumExplorerModal {}
@@ -126,16 +122,6 @@ Item {
                 text: qsTrId("privacy")
                 topPadding: Style.current.bigPadding
                 bottomPadding: Style.current.padding
-            }
-
-            // TODO: Replace with StatusQ StatusListItem component
-            StatusSettingsLineButton {
-                //% "Set DApp access permissions"
-                text: qsTrId("set-dapp-access-permissions")
-                isSwitch: false
-                onClicked: {
-                    dappListPopup.createObject(root).open()
-                }
             }
         }
     }

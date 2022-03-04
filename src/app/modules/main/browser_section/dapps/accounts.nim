@@ -1,54 +1,55 @@
-import NimQml, Tables, strutils, strformat, json
-import ./item
+import NimQml, Tables, strutils, strformat
+import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 
 type
   ModelRole {.pure.} = enum
     Name = UserRole + 1
-    Accounts
+    Address
+    Color
 
 QtObject:
   type
-    DappsModel* = ref object of QAbstractListModel
-      items: seq[Item]
+    AccountsModel* = ref object of QAbstractListModel
+      items: seq[WalletAccountDto]
 
-  proc delete(self: DappsModel) =
+  proc delete(self: AccountsModel) =
     self.items = @[]
     self.QAbstractListModel.delete
 
-  proc setup(self: DappsModel) =
+  proc setup(self: AccountsModel) =
     self.QAbstractListModel.setup
 
-  proc newDappsModel*(): DappsModel =
+  proc newAccountsModel*(): AccountsModel =
     new(result, delete)
     result.setup
 
-  proc `$`*(self: DappsModel): string =
+  proc `$`*(self: AccountsModel): string =
     for i in 0 ..< self.items.len:
       result &= fmt"""
-      [{i}]:({$self.items[i]})
+      [{i}]:({$self.items[i].name})
       """
 
-  proc modelChanged(self: DappsModel) {.signal.}
+  proc modelChanged(self: AccountsModel) {.signal.}
+  proc countChanged(self: AccountsModel) {.signal.}
 
-  proc countChanged(self: DappsModel) {.signal.}
-
-  proc getCount(self: DappsModel): int {.slot.} =
+  proc getCount(self: AccountsModel): int {.slot.} =
     self.items.len
 
   QtProperty[int] count:
     read = getCount
     notify = countChanged
 
-  method rowCount(self: DappsModel, index: QModelIndex = nil): int =
+  method rowCount(self: AccountsModel, index: QModelIndex = nil): int =
     return self.items.len
 
-  method roleNames(self: DappsModel): Table[int, string] =
+  method roleNames(self: AccountsModel): Table[int, string] =
     {
       ModelRole.Name.int:"name",
-      ModelRole.Accounts.int:"accounts"
+      ModelRole.Address.int:"address",
+      ModelRole.Color.int:"color",
     }.toTable
 
-  method data(self: DappsModel, index: QModelIndex, role: int): QVariant =
+  method data(self: AccountsModel, index: QModelIndex, role: int): QVariant =
     if (not index.isValid):
       return
 
@@ -57,23 +58,18 @@ QtObject:
 
     let item = self.items[index.row]
     let enumRole = role.ModelRole
+
     case enumRole:
     of ModelRole.Name:
       result = newQVariant(item.name)
-    of ModelRole.Accounts:
-      result = newQVariant(item.accounts)
+    of ModelRole.Address:
+      result = newQVariant(item.address)
+    of ModelRole.Color:
+      result = newQVariant(item.color)
 
-  proc rowData*(self: DappsModel, index: int, column: string): string {.slot.} =
-    if (index > self.items.len - 1):
-      return
-    let item = self.items[index]
-    case column:
-      of "name": result = item.name
-
-  proc addItem*(self: DappsModel, item: Item) =
+  proc addItem*(self: AccountsModel, item: WalletAccountDto) =
     let parentModelIndex = newQModelIndex()
     defer: parentModelIndex.delete
-
     for i in self.items:
       if i == item:
         return
@@ -84,7 +80,7 @@ QtObject:
     self.modelChanged()
     self.countChanged()
 
-  proc clear*(self: DappsModel) =
+  proc clear*(self: AccountsModel) {.slot.} =
     self.beginResetModel()
     self.items = @[]
     self.endResetModel()

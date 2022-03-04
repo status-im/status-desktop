@@ -39,4 +39,18 @@ QtObject {
     function deleteAccount(address) {
         return walletSectionAccounts.deleteAccount(address)
     }
+
+    property var dappList: dappPermissionsModule.dapps
+
+    function disconnect(dappName) {
+        dappPermissionsModule.disconnect(dappName)
+    }
+
+    function accountsForDapp(dappName) {
+        return dappPermissionsModule.accountsForDapp(dappName)   
+    }
+
+    function disconnectAddress(dappName, address) {
+        return dappPermissionsModule.disconnectAddress(dappName, address)
+    }
 }

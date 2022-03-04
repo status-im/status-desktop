@@ -35,6 +35,7 @@ QtObject {
             console.error("Error parsing the message data", e)
             return;
         }
+        request.address = WalletStore.dappBrowserAccount.address
 
         var ensAddr = Web3ProviderStore.urlENSDictionary[request.hostname];
         if (ensAddr) {
@@ -45,7 +46,7 @@ QtObject {
             RootStore.currentTabConnected = true
             web3Response(JSON.stringify({type: Constants.web3DisconnectAccount}));
         } else if (requestType === Constants.api_request) {
-            if (!Web3ProviderStore.web3ProviderInst.hasPermission(request.hostname, request.permission)) {
+            if (!Web3ProviderStore.hasPermission(request.hostname, request.address, request.permission)) {
                 RootStore.currentTabConnected = false
                 var dialog = createAccessDialogComponent()
                 dialog.request = request;
