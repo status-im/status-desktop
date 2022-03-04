@@ -34,6 +34,8 @@ Item {
     property int stickerPack
     property bool isMessageActive: false
     property bool amISender: false
+    property string senderIcon: ""
+    property bool isSenderIconIdenticon: true
     property bool isHovered: false
     property bool isInPinnedPopup: false
     property string communityId
@@ -317,8 +319,8 @@ Item {
             anchors.top: chatReply.active ? chatReply.bottom :
                                             pinnedRectangleLoader.active ? pinnedRectangleLoader.bottom : parent.top
             anchors.topMargin: chatReply.active || pinnedRectangleLoader.active ? 4 : Style.current.smallPadding
-            icon: senderIcon
-            isIdenticon: isSenderIconIdenticon
+            icon: root.senderIcon
+            isIdenticon: root.isSenderIconIdenticon
             onClickMessage: {
                 root.clickMessage(isProfileClick, isSticker, isImage, image, emojiOnly, hideEmojiPicker, isReply, false, "")
             }

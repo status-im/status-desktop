@@ -11,7 +11,9 @@ type
     Alias
     OnlineStatus
     Icon
+    Identicon
     IsIdenticon
+    IsAdded
     IsAdmin
     Joined
 
@@ -62,7 +64,9 @@ QtObject:
       ModelRole.Alias.int:"alias",
       ModelRole.OnlineStatus.int:"onlineStatus",
       ModelRole.Icon.int:"icon",
+      ModelRole.Identicon.int:"identicon",
       ModelRole.IsIdenticon.int:"isIdenticon",
+      ModelRole.IsAdded.int:"isAdded",
       ModelRole.IsAdmin.int:"isAdmin",
       ModelRole.Joined.int:"joined",
     }.toTable
@@ -92,8 +96,12 @@ QtObject:
       result = newQVariant(item.onlineStatus.int)
     of ModelRole.Icon:
       result = newQVariant(item.icon)
+    of ModelRole.Identicon:
+      result = newQVariant(item.identicon)
     of ModelRole.IsIdenticon:
       result = newQVariant(item.isIdenticon)
+    of ModelRole.IsAdded:
+      result = newQVariant(item.isAdded)
     of ModelRole.IsAdmin:
       result = newQVariant(item.isAdmin)
     of ModelRole.Joined:
@@ -175,6 +183,7 @@ QtObject:
       alias: string,
       icon: string,
       isIdenticon: bool,
+      isAdded: bool = false,
       isAdmin: bool = false,
       joined: bool = false
       ) =
@@ -188,6 +197,7 @@ QtObject:
     self.items[ind].alias = alias
     self.items[ind].icon = icon
     self.items[ind].isIdenticon = isIdenticon
+    self.items[ind].isAdded = isAdded
     self.items[ind].isAdmin = isAdmin
     self.items[ind].joined = joined
 
@@ -198,7 +208,8 @@ QtObject:
       ModelRole.Nickname.int,
       ModelRole.Alias.int,
       ModelRole.Icon.int,
-      ModelRole.IsIdenticon.int,
+      ModelRole.Identicon.int,
+      ModelRole.IsAdded.int,
       ModelRole.IsAdmin.int,
       ModelRole.Joined.int,
     ])

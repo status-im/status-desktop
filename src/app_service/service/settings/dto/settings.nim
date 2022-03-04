@@ -45,6 +45,10 @@ const KEY_GIF_FAVORITES* = "gifs/favorite-gifs"
 const KEY_GIF_RECENTS* = "gifs/recent-gifs"
 const KEY_GIF_API_KEY* = "gifs/api-key"
 
+const PROFILE_PICTURES_VISIBILITY_CONTACTS_ONLY* = 1
+const PROFILE_PICTURES_VISIBILITY_EVERYONE* = 2
+const PROFILE_PICTURES_VISIBILITY_NO_ONE* = 3
+
 type UpstreamConfig* = object
   Enabled*: bool
   URL*: string

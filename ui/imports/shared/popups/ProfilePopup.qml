@@ -55,7 +55,13 @@ StatusModal {
         userName = contactDetails.alias
         userNickname = contactDetails.localNickname
         userEnsName = contactDetails.name
-        userIcon = contactDetails.displayIcon
+        if (contactDetails.isDisplayIconIdenticon || (!contactDetails.isContact &&
+            Global.privacyModuleInst.profilePicturesVisibility !==
+            Constants.profilePicturesVisibility.everyone)) {
+            userIcon = contactDetails.identicon
+        } else {
+            userIcon = contactDetails.displayIcon
+        }
         userIsEnsVerified = contactDetails.ensVerified
         userIsBlocked = contactDetails.isBlocked
         isAddedContact = contactDetails.isContact

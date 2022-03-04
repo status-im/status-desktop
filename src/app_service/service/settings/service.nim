@@ -6,6 +6,7 @@ import service_interface, ./dto/settings
 import ../../../backend/settings as status_settings
 
 export service_interface
+export settings
 
 logScope:
   topics = "settings-service"

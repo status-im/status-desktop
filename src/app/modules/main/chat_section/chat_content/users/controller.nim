@@ -87,6 +87,18 @@ method init*(self: Controller) =
       let args = ContactArgs(e)
       self.delegate.contactUpdated(args.contactId)
 
+    self.events.on(SIGNAL_CONTACT_ADDED) do(e: Args):
+      let args = ContactArgs(e)
+      self.delegate.contactUpdated(args.contactId)
+
+    self.events.on(SIGNAL_CONTACT_REMOVED) do(e: Args):
+      let args = ContactArgs(e)
+      self.delegate.contactUpdated(args.contactId)
+
+    self.events.on(SIGNAL_CONTACT_BLOCKED) do(e: Args):
+      let args = ContactArgs(e)
+      self.delegate.contactUpdated(args.contactId)
+
     self.events.on(SIGNAL_LOGGEDIN_USER_IMAGE_CHANGED) do(e: Args):
       self.delegate.loggedInUserImageChanged()
 

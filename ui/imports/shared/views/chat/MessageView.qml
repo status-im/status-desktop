@@ -34,8 +34,18 @@ Column {
     property string senderDisplayName: ""
     property string senderLocalName: ""
     property string senderIcon: ""
+    property string senderIdenticon: ""
     property bool isSenderIconIdenticon: true
     property bool amISender: false
+    property bool senderIsAdded: false
+    property string senderIconToShow: {
+        if (isSenderIconIdenticon || (!senderIsAdded &&
+            Global.privacyModuleInst.profilePicturesVisibility !==
+            Constants.profilePicturesVisibility.everyone)) {
+            return senderIdenticon
+        }
+        return senderIcon
+    }
     property string message: ""
     property string messageImage: ""
     property string messageTimestamp: ""
@@ -170,7 +180,7 @@ Column {
 
         messageContextMenu.selectedUserPublicKey = root.senderId
         messageContextMenu.selectedUserDisplayName = root.senderDisplayName
-        messageContextMenu.selectedUserIcon = root.senderIcon
+        messageContextMenu.selectedUserIcon = root.senderIconToShow
         messageContextMenu.isSelectedUserIconIdenticon = root.isSenderIconIdenticon
 
         messageContextMenu.imageSource = imageSource
@@ -374,6 +384,8 @@ Column {
             sticker: root.sticker
             stickerPack: root.stickerPack
             isMessageActive: root.isMessageActive
+            isSenderIconIdenticon: root.isSenderIconIdenticon
+            senderIcon: root.senderIconToShow
             amISender: root.amISender
             isHovered: root.isHovered
             editModeOn: root.editModeOn

@@ -34,3 +34,15 @@ method setMessagesFromContactsOnly*(self: AccessInterface, value: bool): bool {.
 
 method validatePassword*(self: AccessInterface, password: string): bool {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method getProfilePicturesShowTo*(self: AccessInterface): int {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method setProfilePicturesShowTo*(self: AccessInterface, value: int): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getProfilePicturesVisibility*(self: AccessInterface): int {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method setProfilePicturesVisibility*(self: AccessInterface, value: int): bool {.base.} =
+  raise newException(ValueError, "No implementation available")

@@ -200,6 +200,7 @@ QtObject:
         identicon: singletonInstance.userProfile.getIdenticon(),
         alias: singletonInstance.userProfile.getUsername(),
         ensVerified: singletonInstance.userProfile.getEnsName().len > 0,
+        added: true,
         image: Images(
           thumbnail: singletonInstance.userProfile.getThumbnailImage(),
           large: singletonInstance.userProfile.getLargeImage()

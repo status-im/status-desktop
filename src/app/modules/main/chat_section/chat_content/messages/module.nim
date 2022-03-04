@@ -70,7 +70,6 @@ method getModuleAsVariant*(self: Module): QVariant =
 
 proc createFetchMoreMessagesItem(self: Module): Item =
   let chatDto = self.controller.getChatDetails()
-  let isIdenticon = false
   result = initItem(
     FETCH_MORE_MESSAGES_MESSAGE_ID,
     communityId = "",
@@ -79,8 +78,10 @@ proc createFetchMoreMessagesItem(self: Module): Item =
     senderDisplayName = "",
     senderLocalName = "",
     senderIcon = "",
-    isIdenticon,
+    senderIdenticon = "",
+    isSenderIconIdenticon = false,
     amISender = false,
+    senderIsAdded = false,
     outgoingStatus = "",
     text = "",
     image = "",
@@ -100,7 +101,10 @@ proc createChatIdentifierItem(self: Module): Item =
   var chatName = chatDto.name
   var chatIcon = chatDto.identicon
   var isIdenticon = false
+  var senderIsAdded = false
   if(chatDto.chatType == ChatType.OneToOne):
+    let sender = self.controller.getContactDetails(chatDto.id)
+    senderIsAdded = sender.details.added
     (chatName, chatIcon, isIdenticon) = self.controller.getOneToOneChatNameAndImage()
 
   result = initItem(
@@ -111,8 +115,10 @@ proc createChatIdentifierItem(self: Module): Item =
     senderDisplayName = chatName,
     senderLocalName = "",
     senderIcon = chatIcon,
+    chatDto.identicon,
     isIdenticon,
     amISender = false,
+    senderIsAdded,
     outgoingStatus = "",
     text = "",
     image = "",
@@ -173,8 +179,10 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
         sender.displayName,
         sender.details.localNickname,
         sender.icon,
+        sender.details.identicon,
         sender.isIdenticon,
         isCurrentUser,
+        sender.details.added,
         m.outgoingStatus,
         renderedMessageText,
         m.image,
@@ -259,8 +267,10 @@ method messageAdded*(self: Module, message: MessageDto) =
     sender.displayName,
     sender.details.localNickname,
     sender.icon,
+    sender.details.identicon,
     sender.isIdenticon,
     isCurrentUser,
+    sender.details.added,
     message.outgoingStatus,
     renderedMessageText,
     message.image,
@@ -386,6 +396,7 @@ method updateContactDetails*(self: Module, contactId: string) =
       item.senderLocalName = updatedContact.details.localNickname
       item.senderIcon = updatedContact.icon
       item.isSenderIconIdenticon = updatedContact.isIdenticon
+      item.senderIsAdded = updatedContact.details.added
     if(item.messageContainsMentions):
       let (m, _, err) = self.controller.getMessageDetails(item.id)
       if(err.len == 0):

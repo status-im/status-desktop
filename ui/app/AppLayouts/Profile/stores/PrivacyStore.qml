@@ -8,6 +8,7 @@ QtObject {
 
     // Module Properties
     property bool mnemonicBackedUp: privacyModule.mnemonicBackedUp
+    property int profilePicturesVisibility: privacyModule.profilePicturesVisibility
 
     function getLinkPreviewWhitelist() {
         return root.privacyModule.getLinkPreviewWhitelist()
@@ -31,5 +32,9 @@ QtObject {
 
     function validatePassword(password) {
         return root.privacyModule.validatePassword(password)
+    }
+
+    function setProfilePicturesVisibility(value) {
+        return root.privacyModule.setProfilePicturesVisibility(value)
     }
 }

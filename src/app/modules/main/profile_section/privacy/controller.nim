@@ -60,3 +60,15 @@ method setMessagesFromContactsOnly*(self: Controller, value: bool): bool =
 
 method validatePassword*(self: Controller, password: string): bool =
   return self.privacyService.validatePassword(password)
+
+method getProfilePicturesShowTo*(self: Controller): int =
+  self.settingsService.getProfilePicturesShowTo()
+
+method setProfilePicturesShowTo*(self: Controller, value: int): bool =
+  self.settingsService.saveProfilePicturesShowTo(value)
+
+method getProfilePicturesVisibility*(self: Controller): int =
+  self.settingsService.getProfilePicturesVisibility()
+
+method setProfilePicturesVisibility*(self: Controller, value: int): bool =
+  self.settingsService.saveProfilePicturesVisibility(value)
