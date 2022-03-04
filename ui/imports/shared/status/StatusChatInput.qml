@@ -976,12 +976,16 @@ Rectangle {
                                     messageInputField.remove(mentionsPos[i].rightIndex, mentionsPos[i].leftIndex);
                                     mentionsPos.pop(i);
                                 }
-                            }
-                            if ((keyEvent.key === Qt.Key_Up) || (keyEvent.key === Qt.Key_Down)) {
+                            } else if (((messageInputField.cursorPosition > mentionsPos[i].leftIndex) &&
+                                        (messageInputField.cursorPosition  < mentionsPos[i].rightIndex)) &&
+                                       ((keyEvent.key === Qt.Key_Left) && ((keyEvent.modifiers & Qt.AltModifier) ||
+                                                                           (keyEvent.modifiers & Qt.ControlModifier)))) {
+                                messageInputField.cursorPosition = mentionsPos[i].leftIndex;
+                            } else if ((keyEvent.key === Qt.Key_Up) || (keyEvent.key === Qt.Key_Down)) {
                                 if (messageInputField.cursorPosition >= mentionsPos[i].leftIndex &&
                                     messageInputField.cursorPosition <= (((mentionsPos[i].leftIndex + mentionsPos[i].rightIndex)/2))) {
                                     messageInputField.cursorPosition = mentionsPos[i].leftIndex;
-                                } else if (messageInputField.cursorPosition <= mentionsPos[i].rightIndex &&
+                                  } else if (messageInputField.cursorPosition <= mentionsPos[i].rightIndex &&
                                            messageInputField.cursorPosition > (((mentionsPos[i].leftIndex + mentionsPos[i].rightIndex)/2))) {
                                     messageInputField.cursorPosition = mentionsPos[i].rightIndex;
                                 }
