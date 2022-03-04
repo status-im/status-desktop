@@ -56,14 +56,8 @@ QtObject:
   proc getHost*(self: View, url: string): string {.slot.} =
     result = url_host(url)
 
-  proc disconnect*(self: View) {.slot.} =
-    self.delegate.disconnect()
-
   proc postMessage*(self: View, requestType: string, message: string): string {.slot.} =
     return self.delegate.postMessage(requestType, message)
-
-  proc hasPermission(self: View, hostname: string, permission: string): bool {.slot.} =
-    return self.delegate.hasPermission(hostname, permission)
 
   proc ensResourceURL*(self: View, ens: string, url: string): string {.slot.} =
     let (url, base, http_scheme, path_prefix, hasContentHash) = self.delegate.ensResourceURL(ens, url)

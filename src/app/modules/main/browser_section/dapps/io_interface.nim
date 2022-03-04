@@ -1,4 +1,4 @@
-import ../../../../../app_service/service/dapp_permissions/service_interface as dapp_permissions_service
+import ../../../../../app_service/service/dapp_permissions/service as dapp_permissions_service
 
 # Defines how parent module accesses this module
 include ./private_interfaces/module_base_interface

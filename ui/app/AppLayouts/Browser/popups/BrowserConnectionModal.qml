@@ -17,7 +17,7 @@ StatusModal {
     id: browserConnectionModal
 
     property var currentTab
-    property var request: ({"hostname": "", "title": "", "permission": ""})
+    property var request: ({"hostname": "", "address": "", "title": "", "permission": ""})
     property string currentAddress: ""
     property bool interactedWith: false
     property var web3Response: function(){}
@@ -30,10 +30,11 @@ StatusModal {
     bottomPadding: 0
 
     function postMessage(isAllowed){
+        console.log(isAllowed)
         interactedWith = true
         RootStore.currentTabConnected = isAllowed
         if(isAllowed){
-            Web3ProviderStore.addPermission(request.hostname, request.permission)
+            Web3ProviderStore.addPermission(request.hostname, request.address, request.permission)
         }
         browserConnectionModal.web3Response(Web3ProviderStore.web3ProviderInst.postMessage(Constants.api_request, JSON.stringify(request)))
     }
@@ -127,7 +128,6 @@ StatusModal {
 
                     browserConnectionModal.currentAddress = selectedAccount.address
                     Web3ProviderStore.web3ProviderInst.dappsAddress = selectedAccount.address;
-                    Web3ProviderStore.revokeAllPermissions()
 
                     if (selectedAccount.address) {
                         Web3ProviderStore.web3ProviderInst.dappsAddress = selectedAccount.address;

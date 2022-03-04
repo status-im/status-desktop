@@ -50,8 +50,6 @@ QtObject {
     property WalletStore walletStore: WalletStore {
     }
 
-    property var dappList: dappPermissionsModule.dapps
-    property var permissionList: dappPermissionsModule.permissions
 
     property bool browserMenuItemEnabled: localAccountSensitiveSettings.isBrowserEnabled
     property bool appsMenuItemsEnabled: localAccountSensitiveSettings.isWalletEnabled
@@ -122,22 +120,6 @@ QtObject {
                        text: qsTr("Sign out & Quit"),
                        icon: "logout"})
         }
-    }
-
-    function initPermissionList(name) {
-        dappPermissionsModule.fetchPermissions(name)
-    }
-
-    function revokePermission(dapp, name) {
-        dappPermissionsModule.revokePermission(dapp, name)
-    }
-
-    function clearPermissions(dapp) {
-        dappPermissionsModule.clearPermissions(dapp)
-    }
-
-    function initDappList() {
-        dappPermissionsModule.fetchDapps()
     }
 
     function getCurrentVersion() {

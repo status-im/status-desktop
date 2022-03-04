@@ -1,4 +1,6 @@
-import ../../../../../app_service/service/dapp_permissions/service_interface as dapp_permissions_service
+import ../../../../../app_service/service/dapp_permissions/service as dapp_permissions_service
+import ../../../../../app_service/service/wallet_account/service as wallet_account_service
+
 import options
 
 type
@@ -14,20 +16,23 @@ method init*(self: AccessInterface) {.base.} =
 method getDapps*(self: AccessInterface): seq[dapp_permissions_service.Dapp] {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getDapp*(self: AccessInterface, dapp: string): Option[dapp_permissions_service.Dapp] {.base.} =
+method getDapp*(self: AccessInterface, dapp: string, address: string): Option[dapp_permissions_service.Dapp] {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method addPermission*(self: AccessInterface, dapp: string, permission: dapp_permissions_service.Permission) {.base.} =
+method addPermission*(self: AccessInterface, dapp: string, address: string, permission: dapp_permissions_service.Permission) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method hasPermission*(self: AccessInterface, dapp: string, permission: dapp_permissions_service.Permission):bool {.base.} =
+method hasPermission*(self: AccessInterface, dapp: string, address: string, permission: dapp_permissions_service.Permission):bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method clearPermissions*(self: AccessInterface, dapp: string) {.base.} =
+method disconnectAddress*(self: AccessInterface, dapp: string, address: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method revokePermission*(self: AccessInterface, dapp: string, name: string) {.base.} =
+method disconnect*(self: AccessInterface, dapp: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method revokeAllPermisions*(self: AccessInterface) {.base.} =
+method removePermission*(self: AccessInterface, dapp: string, address: string, permission: dapp_permissions_service.Permission) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getAccountForAddress*(self: AccessInterface, address: string): WalletAccountDto {.base.} = 
   raise newException(ValueError, "No implementation available")

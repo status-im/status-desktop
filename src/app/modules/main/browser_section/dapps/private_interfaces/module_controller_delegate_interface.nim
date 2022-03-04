@@ -1,17 +1,17 @@
-method hasPermission*(self: AccessInterface, hostname: string, permission: string): bool =
+method hasPermission*(self: AccessInterface, hostname: string, address: string, permission: string): bool =
   raise newException(ValueError, "No implementation available")
 
-method clearPermissions*(self: AccessInterface, dapp: string) =
+method disconnectAddress*(self: AccessInterface, dapp: string, address: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method revokePermission*(self: AccessInterface, dapp: string, name: string) =
+method removePermission*(self: AccessInterface, dapp: string, address: string, permission: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method revokeAllPermissions*(self: AccessInterface) =
+method disconnect*(self: AccessInterface, dapp: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method fetchDapps*(self: AccessInterface) =
   raise newException(ValueError, "No implementation available")
 
-method fetchPermissions*(self: AccessInterface, dapp: string) =
+method fetchPermissions*(self: AccessInterface, dapp: string, address: string) =
   raise newException(ValueError, "No implementation available")

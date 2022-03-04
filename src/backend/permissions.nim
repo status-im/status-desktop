@@ -8,13 +8,14 @@ proc getDappPermissions*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* []
   result = callPrivateRPC("permissions_getDappPermissions", payload)
 
-proc addDappPermissions*(dapp: string, permissions: seq[string]): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc addDappPermissions*(dapp: string, address: string, permissions: seq[string]): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %*[{
     "dapp": dapp,
+    "address": address,
     "permissions": permissions
   }]
   result = callPrivateRPC("permissions_addDappPermissions", payload)
 
-proc deleteDappPermissions*(dapp: string): RpcResponse[JsonNode] {.raises: [Exception].} =
-  let payload = %* [dapp]
-  result = callPrivateRPC("permissions_deleteDappPermissions", payload)
+proc deleteDappPermissions*(dapp: string, address: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [dapp, address]
+  result = callPrivateRPC("permissions_deleteDappPermissionsByNameAndAddress", payload)

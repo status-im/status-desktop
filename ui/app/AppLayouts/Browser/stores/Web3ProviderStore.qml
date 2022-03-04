@@ -10,12 +10,16 @@ QtObject {
 
     property int networkId: providerModule.networkId
 
-    function revokeAllPermissions(){
-        dappPermissionsModule.revokeAllPermissions()
+    function disconnectAddress(dappName, address){
+        dappPermissionsModule.disconnectAddress(address)
     }
 
-    function addPermission(permission, hostName  ){
-        dappPermissionsModule.addPermission(permission, hostName)
+    function addPermission(hostname, address, permission){
+        dappPermissionsModule.addPermission(hostname, address, permission)
+    }
+
+    function hasPermission(hostname, address, permission){
+        return dappPermissionsModule.hasPermission(hostname, address, permission)
     }
 
     function determineRealURL(text){

@@ -52,6 +52,10 @@ ScrollView {
                     root.walletStore.switchAccountByAddress(address)
                     stackContainer.currentIndex = 2
                 }
+
+                onGoToDappPermissionsView: {
+                    stackContainer.currentIndex = 3
+                }
             }
 
             NetworksView {
@@ -63,7 +67,14 @@ ScrollView {
             }
 
             AccountView {
-                id: accountView
+                walletStore: root.walletStore
+                anchors.fill: parent
+                onGoBack: {
+                    stackContainer.currentIndex = 0
+                }
+            }
+
+            DappPermissionsView {
                 walletStore: root.walletStore
                 anchors.fill: parent
                 onGoBack: {

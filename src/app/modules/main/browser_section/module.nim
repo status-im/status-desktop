@@ -10,6 +10,8 @@ import ../../../../app_service/service/bookmarks/service as bookmark_service
 import ../../../../app_service/service/settings/service as settings_service
 import ../../../../app_service/service/dapp_permissions/service as dapp_permissions_service
 import ../../../../app_service/service/provider/service as provider_service
+import ../../../../app_service/service/wallet_account/service as wallet_account_service
+
 export io_interface
 
 type
@@ -25,16 +27,17 @@ type
 proc newModule*(delegate: delegate_interface.AccessInterface,
     bookmarkService: bookmark_service.ServiceInterface,
     settingsService: settings_service.ServiceInterface,
-    dappPermissionsService: dapp_permissions_service.ServiceInterface,
-    providerService: provider_service.ServiceInterface): Module =
+    dappPermissionsService: dapp_permissions_service.Service,
+    providerService: provider_service.ServiceInterface,
+    walletAccountService: wallet_account_service.Service): Module =
   result = Module()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
   result.moduleLoaded = false
-  result.providerModule = provider_module.newModule(result, settingsService, dappPermissionsService, providerService)
+  result.providerModule = provider_module.newModule(result, settingsService, providerService)
   result.bookmarkModule = bookmark_module.newModule(result, bookmarkService)
-  result.dappsModule = dapps_module.newModule(result, dappPermissionsService)
+  result.dappsModule = dapps_module.newModule(result, dappPermissionsService, walletAccountService)
 
 method delete*(self: Module) =
   self.view.delete

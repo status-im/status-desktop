@@ -94,7 +94,7 @@ proc newModule*[T](
   settingsService: settings_service.ServiceInterface,
   contactsService: contacts_service.Service,
   aboutService: about_service.Service,
-  dappPermissionsService: dapp_permissions_service.ServiceInterface,
+  dappPermissionsService: dapp_permissions_service.Service,
   languageService: language_service.ServiceInterface,
   privacyService: privacy_service.Service,
   providerService: provider_service.ServiceInterface,
@@ -140,7 +140,7 @@ proc newModule*[T](
     settingsService, savedAddressService, networkService,
   )
   result.browserSectionModule = browser_section_module.newModule(result, bookmarkService, settingsService,
-  dappPermissionsService, providerService)
+  dappPermissionsService, providerService, walletAccountService)
   result.profileSectionModule = profile_section_module.newModule(
     result, events, accountsService, settingsService, stickersService,
     profileService, contactsService, aboutService, languageService, privacyService, nodeConfigurationService,

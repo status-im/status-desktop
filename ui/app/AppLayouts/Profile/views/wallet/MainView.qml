@@ -17,6 +17,7 @@ Column {
 
     signal goToNetworksView()
     signal goToAccountView(address: string)
+    signal goToDappPermissionsView()
 
     StatusBaseText {
         id: titleText
@@ -57,9 +58,12 @@ Column {
     }
 
     StatusSettingsLineButton {
-        text: qsTr("DApp Permission")
+        text: qsTr("DApp Permissions")
+        currentValue: {
+            return qsTr("%1 DApps connected").arg(root.walletStore.dappList.count)
+        }
         height: 64
-        onClicked: goToNetworksView()
+        onClicked: goToDappPermissionsView()
     }
 
     Separator {
