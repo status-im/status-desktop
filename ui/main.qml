@@ -321,6 +321,7 @@ StatusWindow {
 
         onOnBoardingStepChanged: {
             loader.sourceComponent = view;
+            loader.item.state = state;
         }
     }
 

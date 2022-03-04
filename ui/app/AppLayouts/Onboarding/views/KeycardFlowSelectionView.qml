@@ -13,7 +13,7 @@ Item {
 
     property var onClosed: function () {}
     property bool connected: false
-    property int flow: OnboardingFlow.Recover
+    property int flow: KeycardFlowSelectionView.OnboardingFlow.Recover
 
     id: keycardView
     Component.onCompleted: {
