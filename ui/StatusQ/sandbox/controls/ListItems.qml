@@ -328,6 +328,17 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
         badge.icon.isLetterIdenticon: true
     }
 
+    StatusListItem {
+        title: "List Item with Tags"
+        icon.isLetterIdenticon: true
+        tags: [
+            StatusListItemTag {
+                title: qsTr("Tag 1")
+                icon.isLetterIdenticon: true
+            }
+        ]
+    }
+
     StatusDescriptionListItem {
         title: "Title"
         subTitle: "Subtitle"

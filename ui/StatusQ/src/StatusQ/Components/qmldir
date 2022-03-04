@@ -23,6 +23,7 @@ StatusRoundIcon 0.1 StatusRoundIcon.qml
 StatusRoundedImage 0.1 StatusRoundedImage.qml
 StatusMacWindowButtons 0.1 StatusMacWindowButtons.qml
 StatusListItemBadge 0.1 StatusListItemBadge.qml
+StatusListItemTag 0.1 StatusListItemTag.qml
 StatusExpandableItem 0.1 StatusExpandableItem.qml
 StatusSmartIdenticon 0.1 StatusSmartIdenticon.qml
 StatusMessage 0.1 StatusMessage.qml
