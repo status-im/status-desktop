@@ -135,12 +135,11 @@ Item {
         model: parentModule && parentModule.model
         delegate: delegateChooser
 
-        function isChatActive(chatContentModule, activeChatId, activeSubItemId, isSectionActive) {
-            if(!chatContentModule || !isSectionActive)
+        function isChatActive(myChatId) {
+            if(!myChatId || !root.isSectionActive)
                 return false
 
-            let myChatId = chatContentModule.getMyChatId()
-            if(myChatId === activeChatId || myChatId === activeSubItemId)
+            if(myChatId === root.activeChatId || myChatId === root.activeSubItemId)
                 return true
 
             return false
@@ -158,12 +157,73 @@ Item {
                         }
                         return subItems
                     }
-                    delegate: ChatContentView {
+                    delegate: Loader {
+                        property bool isActiveChannel: chatRepeater.isChatActive(model.itemId)
+
+                        id: categoryChatLoader
+                        // Channels are not loaded by default and only load when first put active
+                        active: false
                         width: parent.width
-                        clip: true
-                        // dynamically calculate the height of the view, if the active one is the current one
-                        // then set the height to parent otherwise set it to 0
                         height: isActiveChannel ? parent.height : 0
+
+                        Connections {
+                            id: loaderConnections
+                            target: categoryChatLoader
+                            // First time this channel turns active, activate the Loader
+                            onIsActiveChannelChanged: {
+                                if (chatLoader.isActiveChannel) {
+                                    categoryChatLoader.active = true
+                                    loaderConnections.enabled = false
+                                }
+                            }
+                        }
+
+                        sourceComponent: ChatContentView {
+                            width: parent.width
+                            height: parent.height
+                            clip: true
+                            rootStore: root.rootStore
+                            contactsStore: root.contactsStore
+                            sendTransactionNoEnsModal: cmpSendTransactionNoEns
+                            receiveTransactionModal: cmpReceiveTransaction
+                            sendTransactionWithEnsModal: cmpSendTransactionWithEns
+                            stickersLoaded: root.stickersLoaded
+                            isBlocked: model.blocked
+                            isActiveChannel: categoryChatLoader.isActiveChannel
+                            Component.onCompleted: {
+                                parentModule.prepareChatContentModuleForChatId(model.itemId)
+                                chatContentModule = parentModule.getChatContentModule()
+                            }
+                        }
+                    }
+                }
+            }
+            DelegateChoice { // In all other cases
+                delegate: Loader {
+                    property bool isActiveChannel: chatRepeater.isChatActive(model.itemId)
+
+                    id: chatLoader
+                    // Channels are not loaded by default and only load when first put active
+                    active: false
+                    width: parent.width
+                    height: isActiveChannel ? parent.height : 0
+
+                    Connections {
+                        id: loaderConnections
+                        target: chatLoader
+                        // First time this channel turns active, activate the Loader
+                        onIsActiveChannelChanged: {
+                            if (chatLoader.isActiveChannel) {
+                                chatLoader.active = true
+                                loaderConnections.enabled = false
+                            }
+                        }
+                    }
+
+                    sourceComponent: ChatContentView {
+                        width: parent.width
+                        height: parent.height
+                        clip: true
                         rootStore: root.rootStore
                         contactsStore: root.contactsStore
                         sendTransactionNoEnsModal: cmpSendTransactionNoEns
@@ -171,30 +231,11 @@ Item {
                         sendTransactionWithEnsModal: cmpSendTransactionWithEns
                         stickersLoaded: root.stickersLoaded
                         isBlocked: model.blocked
-                        isActiveChannel: chatRepeater.isChatActive(chatContentModule, root.activeChatId, root.activeSubItemId, root.isSectionActive)
+                        isActiveChannel: chatLoader.isActiveChannel
                         Component.onCompleted: {
                             parentModule.prepareChatContentModuleForChatId(model.itemId)
                             chatContentModule = parentModule.getChatContentModule()
                         }
-                    }
-                }
-            }
-            DelegateChoice { // In all other cases
-                delegate: ChatContentView {
-                    width: parent.width
-                    clip: true
-                    height: isActiveChannel ? parent.height : 0
-                    rootStore: root.rootStore
-                    contactsStore: root.contactsStore
-                    sendTransactionNoEnsModal: cmpSendTransactionNoEns
-                    receiveTransactionModal: cmpReceiveTransaction
-                    sendTransactionWithEnsModal: cmpSendTransactionWithEns
-                    stickersLoaded: root.stickersLoaded
-                    isBlocked: model.blocked
-                    isActiveChannel: chatRepeater.isChatActive(chatContentModule, root.activeChatId, root.activeSubItemId, root.isSectionActive)
-                    Component.onCompleted: {
-                        parentModule.prepareChatContentModuleForChatId(itemId)
-                        chatContentModule = parentModule.getChatContentModule()
                     }
                 }
             }
