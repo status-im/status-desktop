@@ -13,7 +13,6 @@ StatusModal {
     id: popup
 
     anchors.centerIn: parent
-    //% "Before you get started..."
     header.title: qsTrId("before-you-get-started---")
     hasCloseButton: false
     closePolicy: Popup.NoAutoClose
@@ -34,7 +33,6 @@ StatusModal {
                 id: acknowledge
                 objectName: "acknowledgeCheckBox"
                 width: parent.width
-                //% "I acknowledge that Status Desktop is in Beta and by using it, I take the full responsibility for all risks concerning my data and funds."
                 text: qsTrId("i-acknowledge-that-status-desktop-is-in-beta-and-by-using-it--i-take-the-full-responsibility-for-all-risks-concerning-my-data-and-funds-")
             }
 
@@ -47,16 +45,14 @@ StatusModal {
                     leftPadding: termsOfUse.indicator.width + termsOfUse.spacing
 
                     StatusBaseText {
-                        //% "I accept"
-                        text: qsTrId("i-accept")
+                        text: qsTr("I accept Status")
                         color: Theme.palette.directColor1
                     }
 
                     StatusBaseText {
-                        //% "Terms of Use"
+                        objectName: "termsOfUseLink"
                         text: qsTrId("terms-of-service")
                         color: Theme.palette.primaryColor1
-                        objectName: "termsOfUseLink"
 
                         MouseArea {
                             anchors.fill: parent
@@ -73,6 +69,32 @@ StatusModal {
                             }
                         }
                     }
+
+                    StatusBaseText {
+                        text: " & "
+                        color: Theme.palette.directColor1
+                    }
+
+                    StatusBaseText {
+                        objectName: "privacyPolicyLink"
+                        text: qsTr("Privacy Policy")
+                        color: Theme.palette.primaryColor1
+
+                        MouseArea {
+                            anchors.fill: parent
+                            cursorShape: Qt.PointingHandCursor
+                            hoverEnabled: true
+                            onEntered: {
+                                parent.font.underline = true
+                            }
+                            onExited: {
+                                parent.font.underline = false
+                            }
+                            onClicked: {
+                                Qt.openUrlExternally("https://status.im/privacy-policy/")
+                            }
+                        }
+                    }
                 }
             }
 
@@ -80,39 +102,11 @@ StatusModal {
         }
     }
 
-    leftButtons: [
-        StatusBaseText {
-            id: ppText
-            //% "Privacy Policy"
-            objectName: "privacyPolicyLink"
-            text: qsTrId("privacy-policy")
-            color: Theme.palette.primaryColor1
-            anchors.verticalCenter: parent.verticalCenter
-
-            MouseArea {
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-                hoverEnabled: true
-                onEntered: {
-                    parent.font.underline = true
-                }
-                onExited: {
-                    parent.font.underline = false
-                }
-                onClicked: {
-                    Qt.openUrlExternally("https://status.im/privacy-policy/")
-                }
-            }
-        }
-
-    ]
-
     rightButtons: [
         StatusButton {
             id: getStartedButton
             objectName: "getStartedStatusButton"
             enabled: acknowledge.checked && termsOfUse.checked
-            //% "Get Started"
             text: qsTrId("get-started")
             onClicked: {
                 popup.close()

@@ -9,7 +9,7 @@ QtObject {
     id: root
     property bool hasAccounts
     signal loadApp()
-    signal onBoardingStepChanged(var view)
+    signal onBoardingStepChanged(var view, string state)
 
     property var stateMachine: DSM.StateMachine {
         id: stateMachine
@@ -22,7 +22,7 @@ QtObject {
 
             DSM.State {
                 id: keysMainState
-                onEntered: { onBoardingStepChanged(keysMain); }
+                onEntered: { onBoardingStepChanged(welcomeMain, ""); }
 
                 DSM.SignalTransition {
                     targetState: genKeyState
@@ -33,7 +33,7 @@ QtObject {
 
             DSM.State {
                 id: existingKeyState
-                onEntered: { onBoardingStepChanged(existingKey); }
+                onEntered: { onBoardingStepChanged(existingKey, ""); }
 
                 DSM.SignalTransition {
                     targetState: appState
@@ -44,7 +44,7 @@ QtObject {
 
             DSM.State {
                 id: genKeyState
-                onEntered: { onBoardingStepChanged(genKey); }
+                onEntered: { onBoardingStepChanged(genKey, ""); }
 
                 DSM.SignalTransition {
                     targetState: appState
@@ -55,7 +55,7 @@ QtObject {
 
             DSM.State {
                 id: keycardState
-                onEntered: { onBoardingStepChanged(keycardFlowSelection); }
+                onEntered: { onBoardingStepChanged(keycardFlowSelection, ""); }
 
                 DSM.SignalTransition {
                     targetState: appState
@@ -66,7 +66,7 @@ QtObject {
 
             DSM.State {
                 id: stateLogin
-                onEntered: { onBoardingStepChanged(login); }
+                onEntered: { onBoardingStepChanged(login, ""); }
 
                 DSM.SignalTransition {
                     targetState: appState
@@ -121,12 +121,33 @@ QtObject {
         }
     }
 
+    property var welcomeComponent: Component {
+        id: welcomeMain
+        WelcomeView {
+            onBtnNewUserClicked: {
+                onBoardingStepChanged(keysMain, "getkeys");
+            }
+            onBtnExistingUserClicked: {
+                onBoardingStepChanged(keysMain, "connectkeys");
+            }
+        }
+    }
+
     property var keysMainComponent: Component {
         id: keysMain
         KeysMainView {
-            btnGenKey.onClicked: Global.applicationWindow.navigateTo("GenKey")
-            btnExistingKey.onClicked: Global.applicationWindow.navigateTo("ExistingKey")
-            btnKeycard.onClicked: Global.applicationWindow.navigateTo("KeycardFlowSelection")
+            onButtonClicked: {
+                Global.applicationWindow.navigateTo("GenKey");
+            }
+            onKeycardLinkClicked: {
+                Global.applicationWindow.navigateTo("KeycardFlowSelection");
+            }
+            onSeedLinkClicked: {
+                Global.applicationWindow.navigateTo("ExistingKey");
+            }
+            onBackClicked: {
+                onBoardingStepChanged(welcomeMain, "");
+            }
         }
     }
 
