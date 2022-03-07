@@ -1,4 +1,4 @@
-import QtQuick 2.3
+import QtQuick 2.13
 import QtGraphicalEffects 1.13
 
 import StatusQ.Components 0.1
@@ -53,7 +53,8 @@ Rectangle {
     ]
 
     Connections {
-        target: mainModule
+        enabled: !!mainModule
+        target: enabled ? mainModule : undefined
         onOnlineStatusChanged: {
             if (connected && root.state !== "ready" &&
                 root.visible &&

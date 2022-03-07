@@ -41,7 +41,7 @@ method load*(self: Module) =
   let generatedAccounts = self.controller.getGeneratedAccounts()
   var accounts: seq[Item]
   for acc in generatedAccounts:
-    accounts.add(initItem(acc.id, acc.alias, acc.identicon, acc.address, acc.keyUid))
+    accounts.add(initItem(acc.id, acc.alias, acc.identicon, acc.address, acc.publicKey, acc.keyUid))
 
   self.view.setAccountList(accounts)
 

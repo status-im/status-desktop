@@ -58,7 +58,9 @@ ModalPopup {
             checked: localAccountSettings.storeToKeychainValue === Constants.storeToKeychainValueStore
             onCheckedChanged: {
                 if (checked && localAccountSettings.storeToKeychainValue !== Constants.storeToKeychainValueStore) {
-                    // TODO: REFACTOR TO NEW PASWORD VIEW
+                    // TODO: REFACTOR TO NEW PASWORD VIEW AND
+                    // DELETE StoreToKeychainSelectionModal.qml
+                    // AND CreatePasswordModal.qml IF NOT NEEDED
                     var storePassPopup = Global.openPopup(storePasswordModal)
                     if(storePassPopup)
                     {

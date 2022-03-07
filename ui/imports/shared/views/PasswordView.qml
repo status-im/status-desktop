@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.12
 
 import shared.panels 1.0
 import shared.controls 1.0
+import shared.stores 1.0
 import utils 1.0
 
 import StatusQ.Controls 0.1
@@ -13,7 +14,6 @@ import StatusQ.Components 0.1
 Column {
     id: root
 
-    property var store
     property bool ready: newPswInput.text.length >= root.minPswLen && newPswInput.text === confirmPswInput.text && errorTxt.text === ""
     property int minPswLen: 6
     property bool createNewPsw: true
@@ -22,6 +22,7 @@ Column {
     property string introText: qsTr("Create a password to unlock Status on this device & sign transactions.")
     property string recoverText: qsTr("You will not be able to recover this password if it is lost.")
     property string strengthenText: qsTr("Minimum 6 characers. To strengthen your password consider including:")
+    property bool onboarding: false
 
     readonly property int zBehind: 1
     readonly property int zFront: 100
@@ -208,7 +209,7 @@ Column {
                 d.containsSymbols = d.symbolsValidator(text)
 
                 // Update strength indicator:
-                strengthInditactor.strength = d.convertStrength(root.store.getPasswordStrengthScore(newPswInput.text))
+                strengthInditactor.strength = d.convertStrength(RootStore.getPasswordStrengthScore(newPswInput.text, root.onboarding))
             }
 
             StatusFlatRoundButton {

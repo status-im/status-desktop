@@ -43,7 +43,7 @@ ModalPopup {
         anchors.top: info.bottom
         anchors.topMargin: Style.current.bigPadding
         anchors.horizontalCenter: parent.horizontalCenter
-        image.source: OnboardingStore.onBoardingModul.importedAccountIdenticon
+        image.source: OnboardingStore.onboardingModuleInst.importedAccountIdenticon
         image.width: 60
         image.height: 60
     }
@@ -53,7 +53,7 @@ ModalPopup {
         anchors.top: identicon.bottom
         anchors.topMargin: Style.current.padding
         anchors.horizontalCenter: identicon.horizontalCenter
-        text: OnboardingStore.onBoardingModul.importedAccountAlias
+        text: OnboardingStore.onboardingModuleInst.importedAccountAlias
         font.weight: Font.Bold
         font.pixelSize: 15
     }
@@ -62,7 +62,7 @@ ModalPopup {
         anchors.top: username.bottom
         anchors.topMargin: Style.current.halfPadding
         anchors.horizontalCenter: username.horizontalCenter
-        text: OnboardingStore.onBoardingModul.importedAccountAddress
+        text: OnboardingStore.onboardingModuleInst.importedAccountAddress
         width: 120
     }
 

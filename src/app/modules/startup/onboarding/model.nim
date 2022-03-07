@@ -8,6 +8,7 @@ type
     Alias
     Identicon
     Address
+    PubKey
     KeyUid
 
 QtObject:
@@ -35,6 +36,7 @@ QtObject:
       ModelRole.Alias.int:"username",
       ModelRole.Identicon.int:"identicon",
       ModelRole.Address.int:"address",
+      ModelRole.PubKey.int:"pubKey",
       ModelRole.KeyUid.int:"keyUid"
     }.toTable
 
@@ -57,6 +59,8 @@ QtObject:
       result = newQVariant(item.getIdenticon())
     of ModelRole.Address:
       result = newQVariant(item.getAddress())
+    of ModelRole.PubKey:
+      result = newQVariant(item.getPubKey())
     of ModelRole.KeyUid:
       result = newQVariant(item.getKeyUid())
 
