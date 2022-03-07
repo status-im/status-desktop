@@ -317,14 +317,16 @@ method createCommunityChannel*(
     self: Controller,
     name: string,
     description: string,
+    emoji: string,
     categoryId: string) =
-  self.communityService.createCommunityChannel(self.sectionId, name, description, categoryId)
+  self.communityService.createCommunityChannel(self.sectionId, name, description, emoji, categoryId)
 
 method editCommunityChannel*(
     self: Controller,
     channelId: string,
     name: string,
     description: string,
+    emoji: string,
     categoryId: string,
     position: int) =
   self.communityService.editCommunityChannel(
@@ -332,6 +334,7 @@ method editCommunityChannel*(
     channelId,
     name,
     description,
+    emoji,
     categoryId,
     position)
 

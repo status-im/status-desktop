@@ -15,9 +15,9 @@ import shared.stores 1.0
 
 //TODO remove this dependency
 import AppLayouts.Chat.panels 1.0
-import "./emojiList.js" as EmojiJSON
 
 import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Utils 0.1 as StatusQUtils
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1 as StatusQ
 
@@ -30,6 +30,10 @@ Rectangle {
     signal unblockChat()
 
     property var usersStore
+
+    property var emojiPopup: null
+    // Use this to only enable the Connections only when this Input opens the Emoji popup
+    property bool emojiPopupOpened: false
 
     property bool emojiEvent: false;
     property bool paste: false;
@@ -119,10 +123,25 @@ Rectangle {
         }
     }
 
+    Connections {
+        enabled: control.emojiPopupOpened
+        target: emojiPopup
+
+        onEmojiSelected: function (text, atCursor) {
+            insertInTextInput(atCursor ? messageInputField.cursorPosition : messageInputField.length, text)
+            emojiBtn.highlighted = false
+            messageInputField.forceActiveFocus();
+        }
+        onClosed: {
+            emojiBtn.highlighted = false
+            control.emojiPopupOpened = false
+        }
+    }
+
     property var mentionsPos: []
 
     function insertMention(aliasName, lastAtPosition, lastCursorPosition) {
-        const hasEmoji = Emoji.hasEmoji(messageInputField.text)
+        const hasEmoji = StatusQUtils.Emoji.hasEmoji(messageInputField.text)
         const spanPlusAlias = `${Constants.mentionSpanTag}@${aliasName}</a></span> `;
 
         let rightIndex = hasEmoji ? lastCursorPosition + 2 : lastCursorPosition
@@ -202,7 +221,7 @@ Rectangle {
                     newMessage1 = message.data + "\n> ";
                 }
                 messageInputField.remove(0, messageInputField.cursorPosition);
-                insertInTextInput(0, Emoji.parse(newMessage1));
+                insertInTextInput(0, StatusQUtils.Emoji.parse(newMessage1));
             }
             event.accepted = true
         }
@@ -211,7 +230,7 @@ Rectangle {
             if(message.data.startsWith(">") && message.data.endsWith("\n\n")) {
                 const newMessage = message.data.substr(0, message.data.lastIndexOf("\n")) + "> ";
                 messageInputField.remove(0, messageInputField.cursorPosition);
-                insertInTextInput(0, Emoji.parse(newMessage));
+                insertInTextInput(0, StatusQUtils.Emoji.parse(newMessage));
                 event.accepted = true
             }
         }
@@ -307,7 +326,7 @@ Rectangle {
     function getPlainText() {
         const textWithoutMention = messageInputField.text.replace(/<span style="[ :#0-9a-z;\-\.,\(\)]+">(@([a-z\.]+(\ ?[a-z]+\ ?[a-z]+)?))<\/span>/ig, "\[\[mention\]\]$1\[\[mention\]\]")
 
-        const deparsedEmoji = Emoji.deparse(textWithoutMention);
+        const deparsedEmoji = StatusQUtils.Emoji.deparse(textWithoutMention);
 
         return globalUtils.plainText(deparsedEmoji)
     }
@@ -359,7 +378,7 @@ Rectangle {
 
                 const lengthDifference = truncatedInputText.length - truncatedPlainText.length
 
-                nbEmojis = Emoji.nbEmojis(truncatedInputText)
+                nbEmojis = StatusQUtils.Emoji.nbEmojis(truncatedInputText)
 
 
                 match[1] += (nbEmojis * -2)
@@ -433,7 +452,7 @@ Rectangle {
         // we need only the message part to be html
         const text = getPlainText()
         const completelyPlainText = removeMentions(text)
-        const plainText = Emoji.parse(text);
+        const plainText = StatusQUtils.Emoji.parse(text);
 
         var bracketEvent = false;
         var almostMention = false;
@@ -469,7 +488,7 @@ Rectangle {
             }
         }
 
-        let textBeforeCursor = Emoji.deparseFromParse(plainText.substr(0, i));
+        let textBeforeCursor = StatusQUtils.Emoji.deparseFromParse(plainText.substr(0, i));
 
         return {
             cursor: countEmojiLengths(plainText.substr(0, i)) + messageInputField.cursorPosition + text.length - completelyPlainText.length,
@@ -488,7 +507,7 @@ Rectangle {
             const index = message.data.lastIndexOf(':', message.cursor - 2);
             if (index >= 0 && message.cursor > 0) {
                 const shortname = message.data.substr(index, message.cursor);
-                const codePoint = Emoji.getEmojiUnicode(shortname);
+                const codePoint = StatusQUtils.Emoji.getEmojiUnicode(shortname);
                 if (codePoint !== undefined) {
                     replaceWithEmoji(message, shortname, codePoint);
                 }
@@ -518,12 +537,12 @@ Rectangle {
     }
 
     function countEmojiLengths(value) {
-        const match = Emoji.getEmojis(value);
+        const match = StatusQUtils.Emoji.getEmojis(value);
         var length = 0;
 
         if (match && match.length > 0) {
             for (var i = 0; i < match.length; i++) {
-                length += Emoji.deparseFromParse(match[i]).length;
+                length += StatusQUtils.Emoji.deparseFromParse(match[i]).length;
             }
             length = length - match.length;
         }
@@ -531,9 +550,9 @@ Rectangle {
     }
 
     function replaceWithEmoji(message, shortname, codePoint) {
-        const encodedCodePoint = Emoji.getEmojiCodepoint(codePoint)
+        const encodedCodePoint = StatusQUtils.Emoji.getEmojiCodepoint(codePoint)
         messageInputField.remove(messageInputField.cursorPosition - shortname.length, messageInputField.cursorPosition);
-        insertInTextInput(messageInputField.cursorPosition, Emoji.parse(encodedCodePoint) + " ");
+        insertInTextInput(messageInputField.cursorPosition, StatusQUtils.Emoji.parse(encodedCodePoint) + " ");
         emojiSuggestions.close()
         emojiEvent = false
     }
@@ -730,22 +749,6 @@ Rectangle {
         }
         onClosed: {
             gifBtn.highlighted = false
-        }
-    }
-
-    StatusEmojiPopup {
-        id: emojiPopup
-        width: 360
-        height: 440
-        x: parent.width - width - Style.current.halfPadding
-        y: -height
-        emojiSelected: function (text, atCursor) {
-            insertInTextInput(atCursor ? messageInputField.cursorPosition : messageInputField.length, text)
-            emojiBtn.highlighted = false
-            messageInputField.forceActiveFocus();
-        }
-        onClosed: {
-            emojiBtn.highlighted = false
         }
     }
 
@@ -1193,7 +1196,7 @@ Rectangle {
                 anchors.rightMargin: Style.current.halfPadding
                 anchors.verticalCenter: parent.verticalCenter
                 visible: imageBtn2.visible
-                enabled: (globalUtils.plainText(Emoji.deparse(messageInputField.text)).length > 0 || isImage) && messageInputField.length < messageLimit
+                enabled: (globalUtils.plainText(StatusQUtils.Emoji.deparse(messageInputField.text)).length > 0 || isImage) && messageInputField.length < messageLimit
                 onClicked: function (event) {
                     control.sendMessage(event)
                     control.hideExtendedArea();
@@ -1202,6 +1205,7 @@ Rectangle {
 
             StatusQ.StatusFlatRoundButton {
                 id: emojiBtn
+                enabled: !control.emojiPopupOpened
                 implicitHeight: 32
                 implicitWidth: 32
                 anchors.left: parent.left
@@ -1210,7 +1214,12 @@ Rectangle {
                 icon.name: "emojis"
                 type: StatusQ.StatusFlatRoundButton.Type.Tertiary
                 color: "transparent"
-                onClicked: togglePopup(emojiPopup, emojiBtn)
+                onClicked: {
+                    control.emojiPopupOpened = true
+                    togglePopup(emojiPopup, emojiBtn)
+                    emojiPopup.x = Global.applicationWindow.width - emojiPopup.width - Style.current.halfPadding
+                    emojiPopup.y = Global.applicationWindow.height - emojiPopup.height - control.height
+                }
             }
 
             StatusQ.StatusFlatRoundButton {

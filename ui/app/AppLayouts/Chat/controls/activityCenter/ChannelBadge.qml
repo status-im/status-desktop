@@ -9,6 +9,7 @@ import shared.panels 1.0
 
 import StatusQ.Components 0.1
 import StatusQ.Core 0.1
+import StatusQ.Core.Utils 0.1 as StatusQUtils
 
 Item {
     id: channelBadge
@@ -52,7 +53,7 @@ Item {
     StyledText {
         id: contactInfo
         text: realChatType !== Constants.chatType.publicChat ?
-                  Emoji.parse(Utils.removeStatusEns(Utils.filterXSS(name))) :
+                  StatusQUtils.Emoji.parse(Utils.removeStatusEns(Utils.filterXSS(name))) :
                   "#" + Utils.filterXSS(name)
         anchors.left: contactImage.right
         anchors.leftMargin: 4

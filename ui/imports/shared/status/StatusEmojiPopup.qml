@@ -4,24 +4,23 @@ import QtQuick.Layouts 1.3
 import QtGraphicalEffects 1.0
 
 import StatusQ.Controls 0.1
+import StatusQ.Core.Utils 0.1 as StatusQUtils
 
 import utils 1.0
 
 import shared.panels 1.0
 import shared.controls 1.0
 
-import "./emojiList.js" as EmojiJSON
-
 Popup {
     id: popup
-    property var emojiSelected: function () {}
     property var categories: []
     property alias searchString: searchBox.text
     property var skinColors: ["1f3fb", "1f3fc", "1f3fd", "1f3fe", "1f3ff"]
 
+    signal emojiSelected(string emoji, bool atCu)
+
     modal: false
     width: 360
-    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
     background: Rectangle {
         radius: Style.current.radius
         color: Style.current.background
@@ -75,7 +74,7 @@ Popup {
         emojiSectionsRepeater.itemAt(0).allEmojis = recentEmojis
         localAccountSensitiveSettings.recentEmojis = recentEmojis
 
-        popup.emojiSelected(Emoji.parse(encodedIcon) + ' ', true) // Adding a space because otherwise, some emojis would fuse since emoji is just a string
+        popup.emojiSelected(StatusQUtils.Emoji.parse(encodedIcon) + ' ', true) // Adding a space because otherwise, some emojis would fuse since emoji is just a string
         popup.close()
     }
 

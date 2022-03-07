@@ -50,7 +50,7 @@ QtObject {
         return assetPath + "icons/" +name + ".svg";
     }
     function emoji(name) {
-        return assetPath + "twemoji/" +name + ".png";
+        return "qrc:/StatusQ/src/assets/twemoji/" +name + ".png";
     }
     function lottie(name) {
         return assetPath + "lottie/" +name + ".json";

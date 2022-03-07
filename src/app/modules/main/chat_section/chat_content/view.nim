@@ -31,10 +31,10 @@ QtObject:
     result.chatDetailsVariant = newQVariant(result.chatDetails)
 
   proc load*(self: View, id: string, `type`: int, belongsToCommunity, isUsersListAvailable: bool,
-      name, icon: string, isIdenticon: bool, color, description: string, hasUnreadMessages: bool,
-      notificationsCount: int, muted: bool, position: int) =
+      name, icon: string, isIdenticon: bool, color, description, emoji: string,
+      hasUnreadMessages: bool, notificationsCount: int, muted: bool, position: int) =
     self.chatDetails.setChatDetails(id, `type`, belongsToCommunity, isUsersListAvailable, name, icon,
-      isIdenticon, color, description, hasUnreadMessages, notificationsCount, muted, position)
+      isIdenticon, color, description, emoji, hasUnreadMessages, notificationsCount, muted, position)
     self.delegate.viewDidLoad()
     self.chatDetailsChanged()
 
@@ -111,9 +111,10 @@ QtObject:
   proc amIChatAdmin*(self: View): bool {.slot.} =
     return self.delegate.amIChatAdmin()
 
-  proc updateChatDetails*(self: View, name, description: string) =
+  proc updateChatDetails*(self: View, name, description, emoji: string) =
     self.chatDetails.setName(name)
     self.chatDetails.setDescription(description)
+    self.chatDetails.setEmoji(emoji)
     self.chatDetailsChanged()
 
   proc updateChatDetailsName*(self: View, name: string) =

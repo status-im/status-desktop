@@ -31,6 +31,7 @@ StatusAppThreePanelLayout {
     }
 
     property Component pinnedMessagesListPopupComponent
+    property var emojiPopup
     property bool stickersLoaded: false
     signal profileButtonClicked()
     signal openAppSearch()
@@ -63,6 +64,7 @@ StatusAppThreePanelLayout {
         chatSectionModule: root.rootStore.chatCommunitySectionModule
         pinnedMessagesPopupComponent: root.pinnedMessagesListPopupComponent
         stickersLoaded: root.stickersLoaded
+        emojiPopup: root.emojiPopup
         //chatGroupsListViewCount: contactColumnLoader.item.chatGroupsListViewCount
         onOpenStickerPackPopup: {
             Global.openPopup(statusStickerPackClickPopup, {packId: stickerPackId} )
@@ -113,6 +115,7 @@ StatusAppThreePanelLayout {
             chatSectionModule: root.rootStore.chatCommunitySectionModule
             store: root.rootStore
             contactsStore: root.contactsStore
+            emojiPopup: root.emojiPopup
             onOpenProfileClicked: {
                 root.profileButtonClicked();
             }
@@ -128,6 +131,7 @@ StatusAppThreePanelLayout {
         CommunityColumnView {
             communitySectionModule: root.rootStore.chatCommunitySectionModule
             store: root.rootStore
+            emojiPopup: root.emojiPopup
             hasAddedContacts: root.hasAddedContacts
             pinnedMessagesPopupComponent: root.pinnedMessagesListPopupComponent
         }

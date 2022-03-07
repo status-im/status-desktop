@@ -5,6 +5,7 @@ import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.0
 
 import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Utils 0.1 as StatusQUtils
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 
@@ -32,6 +33,7 @@ ColumnLayout {
     property var rootStore
     property var contactsStore
     property bool isActiveChannel: false
+    property var emojiPopup
     property UsersStore usersStore: UsersStore {}
 
     onChatContentModuleChanged: {
@@ -160,6 +162,7 @@ ColumnLayout {
         onNotificationButtonClicked: activityCenter.open()
 
         popupMenu: ChatContextMenuView {
+            emojiPopup: chatContentRoot.emojiPopup
             openHandler: function () {
                 if(!chatContentModule) {
                     console.debug("error on open chat context menu handler - chat content module is not set")
@@ -171,6 +174,7 @@ ColumnLayout {
                 chatId = chatContentModule.chatDetails.id
                 chatName = chatContentModule.chatDetails.name
                 chatDescription = chatContentModule.chatDetails.description
+                chatEmoji = chatContentModule.chatDetails.emoji
                 chatType = chatContentModule.chatDetails.type
                 chatMuted = chatContentModule.chatDetails.muted
                 channelPosition = chatContentModule.chatDetails.position
@@ -242,6 +246,7 @@ ColumnLayout {
                     chatId,
                     newName,
                     newDescription,
+                    newEmoji,
                     newCategory,
                     channelPosition // TODO change this to the signal once it is modifiable
                 )
@@ -416,6 +421,7 @@ ColumnLayout {
                     //                        chatContentRoot.rootStore.chatsModelInst.channelView.activeChannel.canPost
                 }
                 messageContextMenu: contextmenu
+                emojiPopup: chatContentRoot.emojiPopup
                 isContactBlocked: chatContentRoot.isBlocked
                 isActiveChannel: chatContentRoot.isActiveChannel
                 chatInputPlaceholder: chatContentRoot.isBlocked ?
@@ -457,7 +463,7 @@ ColumnLayout {
                     if (chatInput.fileUrls.length > 0){
                         chatContentModule.inputAreaModule.sendImages(JSON.stringify(fileUrls));
                     }
-                    let msg = globalUtils.plainText(Emoji.deparse(chatInput.textInput.text))
+                    let msg = globalUtils.plainText(StatusQUtils.Emoji.deparse(chatInput.textInput.text))
                     if (msg.length > 0) {
                         msg = chatInput.interpretMessage(msg)
 

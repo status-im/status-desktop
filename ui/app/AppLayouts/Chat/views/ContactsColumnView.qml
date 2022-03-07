@@ -28,6 +28,7 @@ Item {
 
     property var store
     property var contactsStore
+    property var emojiPopup
 
     // Not Refactored Yet
     //property int chatGroupsListViewCount: channelList.model.count
@@ -237,6 +238,7 @@ Item {
 
             popupMenu: ChatContextMenuView {
                 id: chatContextMenuView
+                emojiPopup: root.emojiPopup
 
                 openHandler: function (id) {
                     let jsonObj = root.chatSectionModule.getItemAsJson(id)
@@ -253,6 +255,7 @@ Item {
                     chatId = obj.itemId
                     chatName = obj.name
                     chatDescription = obj.description
+                    chatEmoji = obj.emoji
                     chatType = obj.type
                     chatMuted = obj.muted
                 }

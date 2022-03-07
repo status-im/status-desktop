@@ -432,7 +432,7 @@ QtObject:
       for k, chat in updatedCommunity.chats:
         let fullChatId = communityId & chat.id
         let currentChat =  self.chatService.getChatById(fullChatId, showWarning = false)
-        echo currentChat
+
         if (currentChat.id != ""):
           # The chat service already knows that about that chat
           continue
@@ -580,9 +580,10 @@ QtObject:
       communityId: string,
       name: string,
       description: string,
+      emoji: string,
       categoryId: string) =
     try:
-      let response = status_go.createCommunityChannel(communityId, name, description, categoryId)
+      let response = status_go.createCommunityChannel(communityId, name, description, emoji, categoryId)
 
       if not response.error.isNil:
         let error = Json.decode($response.error, RpcError)
@@ -609,6 +610,7 @@ QtObject:
       channelId: string,
       name: string,
       description: string,
+      emoji: string,
       categoryId: string,
       position: int) =
     try:
@@ -617,6 +619,7 @@ QtObject:
         channelId,
         name,
         description,
+        emoji,
         categoryId,
         position)
 

@@ -6,6 +6,8 @@ import utils 1.0
 import shared 1.0
 import shared.panels 1.0
 
+import StatusQ.Core.Utils 0.1 as StatusQUtils
+
 Rectangle {
     id: root
     height: (root.contentType === Constants.messageContentType.imageType) ?
@@ -60,7 +62,7 @@ Rectangle {
 
         StyledText {
             id: replyText
-            text: Utils.getMessageWithStyle(Utils.linkifyAndXSS(Emoji.parse(message)), false)
+            text: Utils.getMessageWithStyle(Utils.linkifyAndXSS(StatusQUtils.Emoji.parse(message)), false)
             anchors.fill: parent
             elide: Text.ElideRight
             font.pixelSize: 13

@@ -1,6 +1,8 @@
 import QtQuick 2.13
 import utils 1.0
 
+import StatusQ.Core.Utils 0.1 as StatusQUtils
+
 QtObject {
     id: root
 
@@ -165,7 +167,7 @@ QtObject {
 
         //% " reacted with "
         tooltip += qsTrId("-reacted-with-");
-        let emojiHtml = Emoji.getEmojiFromId(emojiId);
+        let emojiHtml = StatusQUtils.Emoji.getEmojiFromId(emojiId);
         if (emojiHtml) {
             tooltip += emojiHtml;
         }

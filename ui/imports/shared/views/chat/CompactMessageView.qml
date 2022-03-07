@@ -10,6 +10,7 @@ import shared.views.chat 1.0
 import shared.controls.chat 1.0
 
 import StatusQ.Controls 0.1 as StatusQControls
+import StatusQ.Core.Utils 0.1 as StatusQUtils
 
 Item {
     id: root
@@ -443,7 +444,7 @@ Item {
                     text: qsTrId("browsing-cancel")
                     onClicked: {
                         messageStore.setEditModeOff(messageId)
-                        editTextInput.textInput.text = Emoji.parse(message)
+                        editTextInput.textInput.text = StatusQUtils.Emoji.parse(message)
                         ensureMessageFullyVisibleTimer.start()
                     }
                 }
@@ -457,7 +458,7 @@ Item {
                     text: qsTrId("save")
                     enabled: editTextInput.textInput.text.trim().length > 0
                     onClicked: {
-                        let msg = rootStore.plainText(Emoji.deparse(editTextInput.textInput.text))
+                        let msg = rootStore.plainText(StatusQUtils.Emoji.deparse(editTextInput.textInput.text))
                         if (msg.length > 0){
                             msg = messageStore.interpretMessage(msg)
                             messageStore.setEditModeOff(messageId)

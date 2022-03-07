@@ -7,11 +7,12 @@ type
   SubItem* = ref object of BaseItem
     parentId: string
 
-proc initSubItem*(id, parentId, name, icon: string, isIdenticon: bool, color, description: string, `type`: int,
-  amIChatAdmin: bool, hasUnreadMessages: bool, notificationsCount: int, muted, blocked, active: bool, position: int): SubItem =
+proc initSubItem*(id, parentId, name, icon: string, isIdenticon: bool, color, emoji, description: string,
+  `type`: int, amIChatAdmin: bool, hasUnreadMessages: bool, notificationsCount: int, muted, blocked,
+  active: bool, position: int): SubItem =
   result = SubItem()
-  result.setup(id, name, icon, isIdenticon, color, description, `type`, amIChatAdmin, hasUnreadMessages,
-  notificationsCount, muted, blocked, active, position)
+  result.setup(id, name, icon, isIdenticon, color, emoji, description, `type`, amIChatAdmin,
+    hasUnreadMessages, notificationsCount, muted, blocked, active, position)
   result.parentId = parentId
 
 proc delete*(self: SubItem) =
@@ -29,6 +30,7 @@ proc `$`*(self: SubItem): string =
     icon: {self.icon},
     isIdenticon: {self.isIdenticon},
     color: {self.color},
+    emoji: {self.emoji},
     description: {self.description},
     type: {self.`type`},
     hasUnreadMessages: {self.hasUnreadMessages},
@@ -47,6 +49,7 @@ proc toJsonNode*(self: SubItem): JsonNode =
     "icon": self.icon,
     "isIdenticon": self.isIdenticon,
     "color": self.color,
+    "emoji": self.emoji,
     "description": self.description,
     "type": self.`type`,
     "hasUnreadMessages": self.hasUnreadMessages,

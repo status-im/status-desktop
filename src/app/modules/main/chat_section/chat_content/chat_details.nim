@@ -13,6 +13,7 @@ QtObject:
     isIdenticon: bool
     color: string
     description: string
+    emoji: string
     hasUnreadMessages: bool
     notificationsCount: int
     muted: bool
@@ -25,9 +26,9 @@ QtObject:
     new(result, delete)
     result.QObject.setup
 
-  proc setChatDetails*(self: ChatDetails, id: string, `type`: int, belongsToCommunity, isUsersListAvailable: bool,
-      name, icon: string, isIdenticon: bool, color, description: string, hasUnreadMessages: bool,
-      notificationsCount: int, muted: bool, position: int) =
+  proc setChatDetails*(self: ChatDetails, id: string, `type`: int, belongsToCommunity,
+    isUsersListAvailable: bool, name, icon: string, isIdenticon: bool, color, description,
+    emoji: string, hasUnreadMessages: bool, notificationsCount: int, muted: bool, position: int) =
     self.id = id
     self.`type` = `type`
     self.belongsToCommunity = belongsToCommunity
@@ -36,6 +37,7 @@ QtObject:
     self.icon = icon
     self.isIdenticon = isIdenticon
     self.color = color
+    self.emoji = emoji
     self.description = description
     self.hasUnreadMessages = hasUnreadMessages
     self.notificationsCount = notificationsCount
@@ -101,6 +103,17 @@ QtObject:
   proc setColor*(self: ChatDetails, value: string) = # this is not a slot
     self.color = value
     self.colorChanged()
+
+  proc emojiChanged(self: ChatDetails) {.signal.}
+  proc getEmoji(self: ChatDetails): string {.slot.} =
+    return self.emoji
+  QtProperty[string] emoji:
+    read = getEmoji
+    notify = emojiChanged
+
+  proc setEmoji*(self: ChatDetails, value: string) = # this is not a slot
+    self.emoji = value
+    self.emojiChanged()
 
   proc descriptionChanged(self: ChatDetails) {.signal.}
   proc getDescription(self: ChatDetails): string {.slot.} =

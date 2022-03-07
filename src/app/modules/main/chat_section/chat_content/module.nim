@@ -81,7 +81,7 @@ method load*(self: Module) =
 
   self.view.load(chatDto.id, chatDto.chatType.int, self.controller.belongsToCommunity(),
     self.controller.isUsersListAvailable(), chatName, chatImage, isIdenticon,
-    chatDto.color, chatDto.description, hasNotification, notificationsCount,
+    chatDto.color, chatDto.description, chatDto.emoji, hasNotification, notificationsCount,
     chatDto.muted, chatDto.position)
 
   self.inputAreaModule.load()
@@ -326,7 +326,7 @@ method onNotificationsUpdated*(self: Module, hasUnreadMessages: bool, notificati
   self.view.updateChatDetailsNotifications(hasUnreadMessages, notificationCount)
 
 method onChatEdited*(self: Module, chatDto: ChatDto) =
-  self.view.updateChatDetails(chatDto.name, chatDto.description)
+  self.view.updateChatDetails(chatDto.name, chatDto.description, chatDto.emoji)
   self.messagesModule.updateChatIdentifier()
 
 method onChatRenamed*(self: Module, newName: string) =

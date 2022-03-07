@@ -205,6 +205,12 @@ Item {
         store: appMain.rootStore.appSearchStore
     }
 
+    StatusEmojiPopup {
+        id: statusEmojiPopup
+        width: 360
+        height: 440
+    }
+
     StatusAppLayout {
         id: appLayout
 
@@ -466,6 +472,7 @@ Item {
                     Layout.fillHeight: true
 
                     pinnedMessagesListPopupComponent: pinnedMessagesPopupComponent
+                    emojiPopup: statusEmojiPopup
 
                     contactsStore: appMain.rootStore.contactStore
                     rootStore.emojiReactionsModel: appMain.rootStore.emojiReactionsModel
@@ -552,6 +559,7 @@ Item {
                                 Layout.fillHeight: true
 
                                 pinnedMessagesListPopupComponent: pinnedMessagesPopupComponent
+                                emojiPopup: statusEmojiPopup
 
                                 contactsStore: appMain.rootStore.contactStore
                                 rootStore.emojiReactionsModel: appMain.rootStore.emojiReactionsModel
