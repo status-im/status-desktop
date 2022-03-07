@@ -110,9 +110,12 @@ QtObject:
 
       # Handling chat updates
       if (receivedData.chats.len > 0):
+        var chats: seq[ChatDto] = @[]
         for chatDto in receivedData.chats:
-          self.updateOrAddChat(chatDto)
-        self.events.emit(SIGNAL_CHAT_UPDATE, ChatUpdateArgsNew(messages: receivedData.messages, chats: receivedData.chats))
+          if (chatDto.active):
+            chats.add(chatDto)
+            self.updateOrAddChat(chatDto)
+        self.events.emit(SIGNAL_CHAT_UPDATE, ChatUpdateArgsNew(messages: receivedData.messages, chats: chats))
   
   proc init*(self: Service) =  
     self.doConnect()

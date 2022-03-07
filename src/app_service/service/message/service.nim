@@ -138,6 +138,9 @@ QtObject:
       error "error: received `chats` array for handling messages update is empty"
       return
 
+    if (not chats[0].active):
+      return
+
     let chatId = chats[0].id
     let chatType = chats[0].chatType
     let unviewedMessagesCount = chats[0].unviewedMessagesCount
