@@ -860,7 +860,7 @@ Item {
 
     Component.onCompleted: {
         Global.appMain = this;
-        const whitelist = appMain.rootStore.privacyStore.getLinkPreviewWhitelist()
+        const whitelist = appMain.rootStore.messagingStore.getLinkPreviewWhitelist()
         try {
             const whiteListedSites = JSON.parse(whitelist)
             let settingsUpdated = false
