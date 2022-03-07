@@ -50,3 +50,6 @@ method toggleTokenVisible*(self: ServiceInterface, chainId: int, symbol: string)
 
 method getPrice*(self: ServiceInterface, crypto: string, fiat: string): float64 {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method getIndex*(self: ServiceInterface, address: string): int {.base.} =
+  raise newException(ValueError, "No implementation available")

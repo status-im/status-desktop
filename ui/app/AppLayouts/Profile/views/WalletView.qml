@@ -36,12 +36,6 @@ ScrollView {
             anchors.fill: parent
             currentIndex: 0
 
-            onCurrentIndexChanged: {
-                if(visibleChildren[0] === ensContainer){
-                    ensContainer.goToStart();
-                }
-            }
-
             MainView {
                 walletStore: root.walletStore
                 anchors.topMargin: 64
@@ -53,9 +47,23 @@ ScrollView {
                 onGoToNetworksView: {
                     stackContainer.currentIndex = 1
                 }
+
+                onGoToAccountView: {
+                    root.walletStore.switchAccountByAddress(address)
+                    stackContainer.currentIndex = 2
+                }
             }
 
             NetworksView {
+                walletStore: root.walletStore
+                anchors.fill: parent
+                onGoBack: {
+                    stackContainer.currentIndex = 0
+                }
+            }
+
+            AccountView {
+                id: accountView
                 walletStore: root.walletStore
                 anchors.fill: parent
                 onGoBack: {

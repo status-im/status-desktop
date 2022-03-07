@@ -47,3 +47,6 @@ method updateCurrency*[T](self: Controller[T], currency: string) =
 
 method isEIP1559Enabled*[T](self: Controller[T]): bool =
   return self.networkService.isEIP1559Enabled()
+
+method getIndex*[T](self: Controller[T], address: string): int =
+  return self.walletAccountService.getIndex(address)

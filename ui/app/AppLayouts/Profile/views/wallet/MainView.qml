@@ -16,7 +16,7 @@ Column {
     property WalletStore walletStore
 
     signal goToNetworksView()
-
+    signal goToAccountView(address: string)
 
     StatusBaseText {
         id: titleText
@@ -106,6 +106,9 @@ Column {
         model: walletStore.generatedAccounts
         delegate: WalletAccountDelegate {
             account: model
+            onGoToAccountView: {
+                root.goToAccountView(model.address)
+            }
         }
     }
 
@@ -119,6 +122,9 @@ Column {
         model: walletStore.importedAccounts
         delegate: WalletAccountDelegate {
             account: model
+            onGoToAccountView: {
+                root.goToAccountView(model.address)
+            }
         }
     }
 
@@ -132,6 +138,9 @@ Column {
         model: walletStore.watchOnlyAccounts
         delegate: WalletAccountDelegate {
             account: model
+            onGoToAccountView: {
+                root.goToAccountView(model.address)
+            }
         }
     }
 }

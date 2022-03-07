@@ -220,6 +220,12 @@ method getWalletAccount*(self: Service, accountIndex: int): WalletAccountDto =
     return
   return self.getWalletAccounts()[accountIndex]
 
+method getIndex*(self: Service, address: string): int =
+  let accounts = self.getWalletAccounts()
+  for i in 0..accounts.len:
+    if(accounts[i].address == address):
+      return i
+  
 method getCurrencyBalance*(self: Service): float64 =
   return self.getWalletAccounts().map(a => a.getCurrencyBalance()).foldl(a + b, 0.0)
 

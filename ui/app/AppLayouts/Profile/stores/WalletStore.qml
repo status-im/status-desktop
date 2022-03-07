@@ -26,4 +26,14 @@ QtObject {
     function removeCustomToken(chainId, address) {
         walletSectionAllTokens.removeCustomToken(chainId, address)
     }
+
+    property var currentAccount: walletSectionCurrent
+
+    function switchAccountByAddress(address) {
+        walletSection.switchAccountByAddress(address)
+    }
+
+    function deleteAccount(address) {
+        return walletSectionAccounts.deleteAccount(address)
+    }
 }
