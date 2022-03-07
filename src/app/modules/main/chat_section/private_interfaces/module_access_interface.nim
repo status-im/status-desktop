@@ -36,3 +36,6 @@ method onActiveSectionChange*(self: AccessInterface, sectionId: string) {.base.}
 
 method chatsModel*(self: AccessInterface): chats_model.Model {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method setFirstChannelAsActive*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")

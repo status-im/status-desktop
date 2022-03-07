@@ -309,20 +309,15 @@ QtObject:
       result.hasNotifications = result.hasNotifications or self.items[i].BaseItem.hasUnreadMessages
       result.notificationsCount = result.notificationsCount + self.items[i].BaseItem.notificationsCount
 
-
   proc reorder*(self: Model, chatOrCategoryId: string, position: int) =
     let index = self.getItemIdxById(chatOrCategoryId)
     if(index == -1):
       return
 
-    let idx = self.createIndex(index, 0, nil)
     self.items[index].BaseItem.position = position
-    self.dataChanged(idx, idx, @[ModelRole.Position.int])
 
-    let tempItem = self.items[position]
     self.beginResetModel()
-    self.items[position] = self.items[index]
-    self.items[index] = tempItem
+    self.items.sort(sortChats)
     self.endResetModel()
 
   proc clearItems*(self: Model) =

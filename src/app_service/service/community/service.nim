@@ -693,6 +693,13 @@ QtObject:
       if response.result.isNil or response.result.kind == JNull:
         error "response is invalid", methodName="deleteCommunityChat"
 
+      var shortChatId = chatId.replace(communityId, "")
+      let idx = findIndexById(shortChatId, self.joinedCommunities[communityId].chats)
+      if (idx != -1):
+        self.joinedCommunities[communityId].chats.delete(idx)
+
+      self.events.emit(SIGNAL_COMMUNITY_CHANNEL_DELETED, CommunityChatIdArgs(
+        communityId: communityId, chatId: chatId))
     except Exception as e:
       error "Error deleting community channel", msg = e.msg, communityId, chatId, methodName="deleteCommunityChat"
 

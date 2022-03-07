@@ -498,8 +498,19 @@ method onCommunityCategoryDeleted*(self: Module, cat: Category) =
 
   self.view.chatsModel().removeItemById(cat.id)
 
+method setFirstChannelAsActive*(self: Module) =
+  if(self.view.chatsModel().getCount() == 0):
+    return
+  let item = self.view.chatsModel().getItemAtIndex(0)
+  if(item.subItems.getCount() == 0):
+    self.setActiveItemSubItem(item.id, "")
+  else:
+    let subItem = item.subItems.getItemAtIndex(0)
+    self.setActiveItemSubItem(item.id, subItem.id)
+
 method onReorderChatOrCategory*(self: Module, chatOrCatId: string, position: int) =
   self.view.chatsModel().reorder(chatOrCatId, position)
+  self.setFirstChannelAsActive()
 
 method onCategoryNameChanged*(self: Module, category: Category) =
   self.view.chatsModel().renameItem(category.id, category.name)
@@ -536,16 +547,7 @@ method onCommunityChannelDeletedOrChatLeft*(self: Module, chatId: string) =
   self.view.chatsModel().removeItemById(chatId)
   self.removeSubmodule(chatId)
 
-  if(self.view.chatsModel().getCount() == 0):
-    return
-
-  # set first channel as the active one in model
-  let item = self.view.chatsModel().getItemAtIndex(0)
-  if(item.subItems.getCount() == 0):
-    self.setActiveItemSubItem(item.id, "")
-  else:
-    let subItem = item.subItems.getItemAtIndex(0)
-    self.setActiveItemSubItem(item.id, subItem.id)
+  self.setFirstChannelAsActive()
 
 method onCommunityChannelEdited*(self: Module, chat: ChatDto) =
   if(not self.chatContentModules.contains(chat.id)):
