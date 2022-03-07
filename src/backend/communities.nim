@@ -84,6 +84,7 @@ proc createCommunityChannel*(
     communityId: string,
     name: string,
     description: string,
+    emoji: string,
     categoryId: string
     ): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = callPrivateRPC("createCommunityChat".prefix, %*[
@@ -94,16 +95,9 @@ proc createCommunityChannel*(
       },
       "identity": {
         "display_name": name,
-        "description": description#,
-        # "color": color#,
-        # TODO add images once it is supported by Status-Go
-        # "images": [
-        #   {
-        #     "payload": image,
-        #     # TODO get that from an enum
-        #     "image_type": 1 # 1 is a raw payload
-        #   }
-        # ]
+        "description": description,
+        "emoji": emoji#,
+        # "color": color#
       },
       "category_id": categoryId
     }])
@@ -113,6 +107,7 @@ proc editCommunityChannel*(
     channelId: string,
     name: string,
     description: string,
+    emoji: string,
     categoryId: string,
     position: int
     ): RpcResponse[JsonNode] {.raises: [Exception].} =
@@ -125,16 +120,9 @@ proc editCommunityChannel*(
       },
       "identity": {
         "display_name": name,
-        "description": description#,
-        # "color": color#,
-        # TODO add images once it is supported by Status-Go
-        # "images": [
-        #   {
-        #     "payload": image,
-        #     # TODO get that from an enum
-        #     "image_type": 1 # 1 is a raw payload
-        #   }
-        # ]
+        "description": description,
+        "emoji": emoji#,
+        # "color": color
       },
       "category_id": categoryId,
       "position": position

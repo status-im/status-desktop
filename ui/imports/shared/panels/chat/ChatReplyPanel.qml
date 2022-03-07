@@ -9,6 +9,8 @@ import shared.panels 1.0
 import shared.status 1.0
 import shared.controls.chat 1.0
 
+import StatusQ.Core.Utils 0.1 as StatusQUtils
+
 Loader {
     id: root
     property bool amISenderOfTheRepliedMessage
@@ -163,9 +165,9 @@ Loader {
                 text: {
                     if (repliedMessageIsEdited){
                         let index = repliedMessageContent.length - 4
-                        return Utils.getReplyMessageStyle(Emoji.parse(Utils.linkifyAndXSS(repliedMessageContent.slice(0, index) + Constants.editLabel + repliedMessageContent.slice(index)), Emoji.size.small), amISenderOfTheRepliedMessage)
+                        return Utils.getReplyMessageStyle(StatusQUtils.Emoji.parse(Utils.linkifyAndXSS(repliedMessageContent.slice(0, index) + Constants.editLabel + repliedMessageContent.slice(index)), StatusQUtils.Emoji.size.small), amISenderOfTheRepliedMessage)
                     } else {
-                        return Utils.getReplyMessageStyle(Emoji.parse(Utils.linkifyAndXSS(repliedMessageContent), Emoji.size.small), amISenderOfTheRepliedMessage)
+                        return Utils.getReplyMessageStyle(StatusQUtils.Emoji.parse(Utils.linkifyAndXSS(repliedMessageContent), StatusQUtils.Emoji.size.small), amISenderOfTheRepliedMessage)
                     }
                 }
                 textFormat: Text.RichText

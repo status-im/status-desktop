@@ -11,6 +11,7 @@ type
     Icon
     IsIdenticon
     Color
+    Emoji
     Description
     Type
     HasUnreadMessages
@@ -69,6 +70,7 @@ QtObject:
       ModelRole.Icon.int:"icon",
       ModelRole.IsIdenticon.int:"isIdenticon",
       ModelRole.Color.int:"color",
+      ModelRole.Emoji.int:"emoji",
       ModelRole.Description.int:"description",
       ModelRole.Type.int:"type",
       ModelRole.HasUnreadMessages.int:"hasUnreadMessages",
@@ -104,6 +106,8 @@ QtObject:
       result = newQVariant(item.isIdenticon)
     of ModelRole.Color:
       result = newQVariant(item.color)
+    of ModelRole.Emoji:
+      result = newQVariant(item.emoji)
     of ModelRole.Description:
       result = newQVariant(item.description)
     of ModelRole.Type:

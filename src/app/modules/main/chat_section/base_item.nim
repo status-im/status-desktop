@@ -7,6 +7,7 @@ type
     icon: string
     isIdenticon: bool
     color: string
+    emoji: string
     description: string
     hasUnreadMessages: bool
     notificationsCount: int
@@ -17,7 +18,7 @@ type
     categoryId: string
     highlight: bool
 
-proc setup*(self: BaseItem, id, name, icon: string, isIdenticon: bool, color, description: string,
+proc setup*(self: BaseItem, id, name, icon: string, isIdenticon: bool, color, emoji, description: string,
   `type`: int, amIChatAdmin: bool, hasUnreadMessages: bool, notificationsCount: int, muted, blocked, active: bool,
     position: int, categoryId: string = "", highlight: bool = false) =
   self.id = id
@@ -26,6 +27,7 @@ proc setup*(self: BaseItem, id, name, icon: string, isIdenticon: bool, color, de
   self.icon = icon
   self.isIdenticon = isIdenticon
   self.color = color
+  self.emoji = emoji
   self.description = description
   self.`type` = `type`
   self.hasUnreadMessages = hasUnreadMessages
@@ -37,12 +39,12 @@ proc setup*(self: BaseItem, id, name, icon: string, isIdenticon: bool, color, de
   self.categoryId = categoryId
   self.highlight = highlight
 
-proc initBaseItem*(id, name, icon: string, isIdenticon: bool, color, description: string, `type`: int,
+proc initBaseItem*(id, name, icon: string, isIdenticon: bool, color, emoji, description: string, `type`: int,
     amIChatAdmin: bool, hasUnreadMessages: bool, notificationsCount: int, muted, blocked, active: bool,
     position: int, categoryId: string = "", highlight: bool = false): BaseItem =
   result = BaseItem()
-  result.setup(id, name, icon, isIdenticon, color, description, `type`, amIChatAdmin, hasUnreadMessages,
-  notificationsCount, muted, blocked, active, position, categoryId, highlight)
+  result.setup(id, name, icon, isIdenticon, color, emoji, description, `type`, amIChatAdmin,
+  hasUnreadMessages, notificationsCount, muted, blocked, active, position, categoryId, highlight)
 
 proc delete*(self: BaseItem) =
   discard
@@ -73,6 +75,12 @@ method `isIdenticon=`*(self: var BaseItem, value: bool) {.inline base.} =
 
 method color*(self: BaseItem): string {.inline base.} =
   self.color
+
+method emoji*(self: BaseItem): string {.inline base.} =
+  self.emoji
+
+method `emoji=`*(self: var BaseItem, value: string) {.inline base.} =
+  self.emoji = value
 
 method description*(self: BaseItem): string {.inline base.} =
   self.description

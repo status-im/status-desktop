@@ -33,6 +33,7 @@ Item {
     property var rootStore
     property var contactsStore
     property var chatSectionModule
+    property var emojiPopup
 
     property Component pinnedMessagesPopupComponent
     // Not Refactored Yet
@@ -226,6 +227,7 @@ Item {
                         clip: true
                         rootStore: root.rootStore
                         contactsStore: root.contactsStore
+                        emojiPopup: root.emojiPopup
                         sendTransactionNoEnsModal: cmpSendTransactionNoEns
                         receiveTransactionModal: cmpReceiveTransaction
                         sendTransactionWithEnsModal: cmpSendTransactionWithEns

@@ -24,6 +24,7 @@ Item {
     // We're here in case of CommunitySection
     // This module is set from `ChatLayout` (each `ChatLayout` has its own communitySectionModule)
     property var communitySectionModule
+    property var emojiPopup
 
     property var store
     property bool hasAddedContacts: false
@@ -89,7 +90,7 @@ Item {
     Loader {
         id: membershipRequests
 
-        property int nbRequests: root.communityData.pendingRequestsToJoin.count
+        property int nbRequests: root.communityData.pendingRequestsToJoin.count || 0
 
         anchors.top: communityHeader.bottom
         anchors.topMargin: active ? 8 : 0
@@ -257,6 +258,7 @@ Item {
 
             chatListPopupMenu: ChatContextMenuView {
                 id: chatContextMenuView
+                emojiPopup: root.emojiPopup
 
                 openHandler: function (id) {
                     let jsonObj = root.communitySectionModule.getItemAsJson(id)
@@ -273,6 +275,8 @@ Item {
                     chatId = obj.itemId
                     chatName = obj.name
                     chatDescription = obj.description
+
+                    chatEmoji = obj.emoji
                     chatType = obj.type
                     chatMuted = obj.muted
                     channelPosition = obj.position
@@ -327,6 +331,7 @@ Item {
                         chatId,
                         newName,
                         newDescription,
+                        newEmoji,
                         newCategory,
                         channelPosition // TODO change this to the signal once it is modifiable
                     )
@@ -399,8 +404,9 @@ Item {
         id: createChannelPopup
         CreateChannelPopup {
             anchors.centerIn: parent
-            onCreateCommunityChannel: function (chName, chDescription, chCategoryId) {
-                root.store.createCommunityChannel(chName, chDescription, chCategoryId)
+            emojiPopup: root.emojiPopup
+            onCreateCommunityChannel: function (chName, chDescription, chEmoji, chCategoryId) {
+                root.store.createCommunityChannel(chName, chDescription, chEmoji, chCategoryId)
             }
             onClosed: {
                 destroy()

@@ -24,7 +24,7 @@ type ChatDto* = object
   name*: string
   description*: string
   color*: string
-  emoji*: string # not sure why do we receive this at all?
+  emoji*: string
   active*: bool # indicates whether the chat has been soft deleted
   chatType*: ChatType
   timestamp*: int64 # indicates the last time this chat has received/sent a message

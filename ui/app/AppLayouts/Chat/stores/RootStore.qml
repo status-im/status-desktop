@@ -178,11 +178,11 @@ QtObject {
         chatCommunitySectionModule.removeUserFromCommunity(pubKey);
     }
 
-    function createCommunityChannel(channelName, channelDescription, categoryId) {
-        chatCommunitySectionModule.createCommunityChannel(channelName, channelDescription, categoryId);
+    function createCommunityChannel(channelName, channelDescription, channelEmoji, categoryId) {
+        chatCommunitySectionModule.createCommunityChannel(channelName, channelDescription, channelEmoji, categoryId);
     }
 
-    function editCommunityChannel(chatId, newName, newDescription, newCategory, channelPosition) {
+    function editCommunityChannel(chatId, newName, newDescription, newEmoji, newCategory, channelPosition) {
         // TODO: pass the private value when private channels
         // are implemented
         //privateSwitch.checked)
@@ -190,6 +190,7 @@ QtObject {
                     chatId,
                     newName,
                     newDescription,
+                    newEmoji,
                     newCategory,
                     channelPosition
                 )

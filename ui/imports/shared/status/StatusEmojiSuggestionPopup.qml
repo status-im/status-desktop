@@ -19,7 +19,7 @@ StatusInputListPopup {
     }
 
     getImageSource: function (modelData) {
-        return `../../assets/twemoji/72x72/${modelData.unicode}.png`
+        return `qrc:/StatusQ/src/assets/twemoji/72x72/${modelData.unicode}.png`
     }
     getText: function (modelData) {
         return modelData.shortname

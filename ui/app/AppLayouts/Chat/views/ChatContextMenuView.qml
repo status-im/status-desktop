@@ -19,11 +19,13 @@ StatusPopupMenu {
     property string chatId: ""
     property string chatName: ""
     property string chatDescription: ""
+    property string chatEmoji: ""
     property string chatIcon: ""
     property int chatType: -1
     property bool chatMuted: false
     property int channelPosition: -1
     property string chatCategoryId: ""
+    property var emojiPopup
 
     signal displayProfilePopup(string publicKey)
     signal displayGroupInfoPopup(string chatId)
@@ -36,8 +38,8 @@ StatusPopupMenu {
     signal deleteCommunityChat(string chatId)
     signal leaveChat(string chatId)
 
-    signal createCommunityChannel(string chatId, string newName, string newDescription)
-    signal editCommunityChannel(string chatId, string newName, string newDescription, string newCategory)
+    signal createCommunityChannel(string chatId, string newName, string newDescription, string newEmoji)
+    signal editCommunityChannel(string chatId, string newName, string newDescription, string newEmoji, string newCategory)
 
     StatusMenuItem {
         id: viewProfileMenuItem
@@ -127,6 +129,7 @@ StatusPopupMenu {
                 isEdit: true,
                 channelName: root.chatName,
                 channelDescription: root.chatDescription,
+                channelEmoji: root.chatEmoji,
                 categoryId: root.chatCategoryId
             });
         }
@@ -137,11 +140,12 @@ StatusPopupMenu {
         CreateChannelPopup {
             anchors.centerIn: parent
             isEdit: true
+            emojiPopup: root.emojiPopup
             onCreateCommunityChannel: {
-                root.createCommunityChannel(root.chatId, chName, chDescription);
+                root.createCommunityChannel(root.chatId, chName, chDescription, chEmoji);
             }
             onEditCommunityChannel: {
-                root.editCommunityChannel(root.chatId, chName, chDescription, chCategoryId);
+                root.editCommunityChannel(root.chatId, chName, chDescription, chEmoji, chCategoryId);
             }
             onClosed: {
                 destroy()

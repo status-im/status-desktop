@@ -5,10 +5,11 @@ type
   Item* = ref object of BaseItem
     subItems: SubModel
 
-proc initItem*(id, name, icon: string, isIdenticon: bool, color, description: string, `type`: int, amIChatAdmin: bool,
-  hasUnreadMessages: bool, notificationsCount: int, muted, blocked, active: bool, position: int, categoryId: string, highlight: bool = false): Item =
+proc initItem*(id, name, icon: string, isIdenticon: bool, color, emoji, description: string,
+    `type`: int, amIChatAdmin: bool, hasUnreadMessages: bool, notificationsCount: int, muted,
+    blocked, active: bool, position: int, categoryId: string, highlight: bool = false): Item =
   result = Item()
-  result.setup(id, name, icon, isIdenticon, color, description, `type`, amIChatAdmin, hasUnreadMessages,
+  result.setup(id, name, icon, isIdenticon, color, emoji, description, `type`, amIChatAdmin, hasUnreadMessages,
   notificationsCount, muted, blocked, active, position, categoryId, highlight)
   result.subItems = newSubModel()
 
@@ -27,6 +28,7 @@ proc `$`*(self: Item): string =
     icon: {self.icon},
     isIdenticon: {self.isIdenticon},
     color: {self.color},
+    emoji: {self.emoji},
     description: {self.description},
     type: {self.`type`},
     hasUnreadMessages: {self.hasUnreadMessages},
@@ -49,6 +51,7 @@ proc toJsonNode*(self: Item): JsonNode =
     "icon": self.icon,
     "isIdenticon": self.isIdenticon,
     "color": self.color,
+    "emoji": self.emoji,
     "description": self.description,
     "type": self.`type`,
     "hasUnreadMessages": self.hasUnreadMessages,

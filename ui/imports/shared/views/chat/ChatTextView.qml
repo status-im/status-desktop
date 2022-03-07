@@ -6,6 +6,8 @@ import shared.panels 1.0
 import shared.controls 1.0
 import utils 1.0
 
+import StatusQ.Core.Utils 0.1 as StatusQUtils
+
 Item {
     id: root
 
@@ -113,13 +115,13 @@ Item {
             if(contentType === Constants.messageContentType.stickerType) return "";
             let msg = Utils.linkifyAndXSS(message);
             if(isEmoji) {
-                return Emoji.parse(msg, Emoji.size.middle);
+                return StatusQUtils.Emoji.parse(msg, StatusQUtils.Emoji.size.middle);
             } else {
                 if(isEdited){
                     let index = msg.endsWith("code>") ? msg.length : msg.length - 4
-                    return Utils.getMessageWithStyle(Emoji.parse(msg.slice(0, index) + Constants.editLabel + msg.slice(index)), isCurrentUser, hoveredLink)
+                    return Utils.getMessageWithStyle(StatusQUtils.Emoji.parse(msg.slice(0, index) + Constants.editLabel + msg.slice(index)), isCurrentUser, hoveredLink)
                 }
-                return Utils.getMessageWithStyle(Emoji.parse(msg), isCurrentUser, hoveredLink)
+                return Utils.getMessageWithStyle(StatusQUtils.Emoji.parse(msg), isCurrentUser, hoveredLink)
             }
         }
     }

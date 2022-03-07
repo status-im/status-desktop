@@ -10,6 +10,7 @@ type
     Icon
     IsIdenticon
     Color
+    Emoji
     Description
     Type
     HasUnreadMessages
@@ -76,6 +77,7 @@ QtObject:
       ModelRole.Icon.int:"icon",
       ModelRole.IsIdenticon.int:"isIdenticon",
       ModelRole.Color.int:"color",
+      ModelRole.Emoji.int:"emoji",
       ModelRole.Description.int:"description",
       ModelRole.Type.int:"type",
       ModelRole.HasUnreadMessages.int:"hasUnreadMessages",
@@ -113,6 +115,8 @@ QtObject:
       result = newQVariant(item.isIdenticon)
     of ModelRole.Color:
       result = newQVariant(item.color)
+    of ModelRole.Emoji:
+      result = newQVariant(item.emoji)
     of ModelRole.Description:
       result = newQVariant(item.description)
     of ModelRole.Type:
@@ -268,14 +272,16 @@ QtObject:
         self.dataChanged(index, index, @[ModelRole.Name.int])
         return
 
-  proc updateItemDetails*(self: Model, id, name, description: string) =
+  proc updateItemDetails*(self: Model, id, name, description, emoji: string) =
     ## This updates only first level items, it doesn't update subitems, since subitems cannot have custom icon.
     for i in 0 ..< self.items.len:
       if(self.items[i].id == id):
         self.items[i].BaseItem.name = name
         self.items[i].BaseItem.description = description
+        self.items[i].BaseItem.emoji = emoji
         let index = self.createIndex(i, 0, nil)
-        self.dataChanged(index, index, @[ModelRole.Name.int, ModelRole.Description.int])
+        self.dataChanged(index, index,
+          @[ModelRole.Name.int, ModelRole.Description.int, ModelRole.Emoji.int])
         return
 
   proc updateNotificationsForItemOrSubItemById*(self: Model, id: string, hasUnreadMessages: bool,
