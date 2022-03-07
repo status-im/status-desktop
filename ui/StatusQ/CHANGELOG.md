@@ -1,4 +1,33 @@
 <a name=""></a>
+##  0.25.0 (2022-03-07)
+
+
+#### Bug Fixes
+
+* **@StatusListItem:**  fix left padding ([f574e390](f574e390))
+* **StatusListItem:**  add propagateTitleClicks property to StatusListItem ([8495fae8](8495fae8))
+* **StatusQ.Popups:**  removed overlay setting (#557) ([665141f8](665141f8))
+* **StatusTagSelector:**  Updates and fixes in the component ([07a5dc09](07a5dc09))
+* **build:**  fix linux build ([9d06aae1](9d06aae1), closes [#413](413))
+* **sandbox:**  Fix results popup component position ([cdf51fef](cdf51fef))
+
+#### Features
+
+* **@StatusListItem:**  add option for tags ([381150a7](381150a7))
+* **StatusChatList:**  Highlight chat item at creation time ([9e6fbe95](9e6fbe95))
+* **StatusChatListItem:**  enable assigning emoji to chat item ([5fac8774](5fac8774))
+* **StatusContactVerificationIcons:**  Create new row control that includes mutual connect and trust indicator icons (#559) ([c0f825c6](c0f825c6), closes [#542](542))
+* **StatusQ:**  Moving docs outside sandbox ([825999b1](825999b1))
+* **StatusQ.Core:**  add new arrow-left icon ([e9f20be1](e9f20be1))
+* **StatusSmartIdenticon:**  Add support for color rings in StatusSmartIdenticon (#553) ([3b86d13a](3b86d13a), closes [#517](517))
+
+#### Breaking Changes
+
+* **StatusContactVerificationIcons:**  Create new row control that includes mutual connect and trust indicator icons (#559) ([c0f825c6](c0f825c6), closes [#542](542))
+
+
+
+<a name=""></a>
 ##  0.24.0 (2022-02-14)
 
 
