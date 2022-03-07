@@ -7,6 +7,7 @@ import StatusQ.Controls 0.1
 import shared 1.0
 import shared.panels 1.0
 import "../popups"
+import "../stores"
 
 import utils 1.0
 
@@ -21,14 +22,16 @@ Page {
     }
 
     Component.onCompleted: {
-        if(displayBeforeGetStartedModal) {
-            displayBeforeGetStartedModal = false
-            beforeGetStartedModal.open()
+        if (OnboardingStore.showBeforeGetStartedPopup) {
+            beforeGetStartedModal.open();
         }
     }
 
     BeforeGetStartedModal {
         id: beforeGetStartedModal
+        onClosed: {
+            OnboardingStore.showBeforeGetStartedPopup = false;
+        }
     }
 
     Item {
@@ -52,7 +55,7 @@ Page {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: parent.top
             fillMode: Image.PreserveAspectFit
-            source: Style.png("welcome")
+            source: Style.png("onboarding/welcome")
             width: 256
             height: 256
             mipmap: true

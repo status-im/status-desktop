@@ -5,6 +5,7 @@ import QtQuick.Layouts 1.12
 
 import utils 1.0
 import shared 1.0
+import shared.views 1.0
 import shared.panels 1.0
 import shared.controls 1.0
 
@@ -45,7 +46,6 @@ StatusModal {
 
     PasswordView {
         id: view
-        store: root.privacyStore
         anchors.topMargin: Style.current.padding
         anchors.centerIn: parent
         titleVisible: false

@@ -23,3 +23,4 @@ StyledTextEdit 1.0 StyledTextEdit.qml
 StyledTextField 1.0 StyledTextField.qml
 Timer 1.0 Timer.qml
 TransactionFormGroup 1.0 TransactionFormGroup.qml
+EmojiHash 1.0 EmojiHash.qml

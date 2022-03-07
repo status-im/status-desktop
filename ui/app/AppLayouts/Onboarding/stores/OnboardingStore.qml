@@ -1,22 +1,69 @@
 pragma Singleton
 
 import QtQuick 2.13
+import utils 1.0
 
 QtObject {
-    property var onBoardingModul: onboardingModule
+    id: root
+    property var profileSectionModuleInst: profileSectionModule
+    property var profileModule:  profileSectionModuleInst.profileModule
+    property var onboardingModuleInst: onboardingModule
+    property var mainModuleInst: !!mainModule ? mainModule : undefined
+    property var accountSettings: localAccountSettings
+    property var privacyModule: profileSectionModuleInst.privacyModule
+    property string displayName: userProfile !== undefined ? userProfile.displayName : ""
+
+    property url profImgUrl: ""
+    property real profImgAX: 0.0
+    property real profImgAY: 0.0
+    property real profImgBX: 0.0
+    property real profImgBY: 0.0
+    property bool accountCreated: false
+
+    property bool showBeforeGetStartedPopup: true
 
     function importMnemonic(mnemonic) {
-        onBoardingModul.importMnemonic(mnemonic)
+        onboardingModuleInst.importMnemonic(mnemonic)
     }
 
     function setCurrentAccountAndDisplayName(selectedAccountIdx, displayName) {
-        onBoardingModul.setDisplayName(displayName)
-        onBoardingModul.setSelectedAccountByIndex(selectedAccountIdx)
+        onboardingModuleInst.setDisplayName(displayName)
+        onboardingModuleInst.setSelectedAccountByIndex(selectedAccountIdx)
     }
 
-    function getPasswordStrengthScore(password) {
-        let userName = onBoardingModul.importedAccountAlias
-        return onBoardingModul.getPasswordStrengthScore(password, userName)
+    function updatedDisplayName(displayName) {
+        if (displayName !== root.displayName) {
+            print(displayName, root.displayName)
+            root.profileModule.setDisplayName(displayName);
+        }
+    }
+
+    function saveImage() {
+        root.profileModule.upload(root.profImgUrl, root.profImgAX, root.profImgAY, root.profImgBX, root.profImgBY);
+    }
+
+    function uploadImage(source, aX, aY, bX, bY) {
+        root.profImgUrl = source;
+        root.profImgAX = aX;
+        root.profImgAY = aY;
+        root.profImgBX = bX;
+        root.profImgBY = bY;
+    }
+
+    function removeImage() {
+        return root.profileModule.remove();
+    }
+
+    function finishCreatingAccount(pass) {
+        root.onboardingModuleInst.storeSelectedAccountAndLogin(pass);
+    }
+
+    function storeToKeyChain(pass) {
+        mainModule.storePassword(pass);
+    }
+
+    function changePassword(password, newPassword) {
+        root.privacyModule.changePassword(password, newPassword)
     }
 
     property ListModel accountsSampleData: ListModel {

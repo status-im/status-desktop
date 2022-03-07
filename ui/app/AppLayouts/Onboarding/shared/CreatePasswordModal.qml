@@ -10,6 +10,8 @@ import shared.panels 1.0
 import shared.popups 1.0
 import shared.controls 1.0
 
+import "../stores"
+
 // TODO: replace with StatusModal
 ModalPopup {
     property var privacyStore
@@ -153,7 +155,7 @@ ModalPopup {
             }
 
             Connections {
-                target: onboardingModule
+                target: OnboardingStore.onboardingModuleInst
                 onAccountSetupError: {
                     importLoginError.open()
                 }
@@ -169,15 +171,15 @@ ModalPopup {
                         passwordValidationError = qsTr("Incorrect password")
                     }
                     else {
-                        Global.applicationWindow.prepareForStoring(repeatPasswordField.text, true)
+                        //Global.applicationWindow.prepareForStoring(repeatPasswordField.text, true)
                         popup.close()
                     }
                 }
                 else
                 {
                     loading = true
-                    onboardingModule.storeSelectedAccountAndLogin(repeatPasswordField.text);
-                    Global.applicationWindow.prepareForStoring(repeatPasswordField.text, false)
+                    OnboardingStore.onboardingModuleInst.storeSelectedAccountAndLogin(repeatPasswordField.text);
+                    //Global.applicationWindow.prepareForStoring(repeatPasswordField.text, false)
                 }
             }
         }

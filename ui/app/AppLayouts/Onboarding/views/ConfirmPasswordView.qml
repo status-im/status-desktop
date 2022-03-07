@@ -12,18 +12,15 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 
 import "../stores"
+import "../controls"
 
-Page {
+OnboardingBasePage {
     id: root
 
     property string password
-
-    signal backClicked()
-
-    anchors.fill: parent
-    background: null
-
-    Component.onCompleted: confPswInput.forceActiveFocus(Qt.MouseFocusReason)
+    property string tmpPass
+    property string displayName
+    function forcePswInputFocus() { confPswInput.forceActiveFocus(Qt.MouseFocusReason)}
 
     Column {
         id: view
@@ -73,9 +70,7 @@ Page {
 
             width: parent.width
             enabled: !submitBtn.loading
-            placeholderText: submitBtn.loading ?
-                             qsTr("Connecting...") :
-                             qsTr("Confirm you password (again)")
+            placeholderText: qsTr("Confirm you password (again)")
             textField.echoMode: showPassword ? TextInput.Normal : TextInput.Password
             textField.validator: RegExpValidator { regExp: /^[!-~]{0,64}$/ } // That incudes NOT extended ASCII printable characters less space and a maximum of 64 characters allowed
             keepHeight: true
@@ -106,24 +101,34 @@ Page {
             id: submitBtn
             anchors.horizontalCenter: parent.horizontalCenter
             text: qsTr("Finalize Status Password Creation")
-            enabled: !submitBtn.loading && confPswInput.text === root.password
+            enabled:!submitBtn.loading && confPswInput.text === root.password
 
             property Timer sim: Timer {
                 id: pause
                 interval: 20
                 onTriggered: {
-                    // Create new password call action to the backend
-                    OnboardingStore.onBoardingModul.storeSelectedAccountAndLogin(root.password)
-                    Global.applicationWindow.prepareForStoring(root.password, false)
+                    // Create account operation blocks the UI so loading = true; will never have any affect until it is done.
+                    // Getting around it with a small pause (timer) in order to get the desired behavior
+                    OnboardingStore.finishCreatingAccount(root.password)
                 }
             }
 
             onClicked: {
-                confPswInput.text = ""
-                submitBtn.loading = true
-                // Create password operation blocks the UI so loading = true; will never have any affect until changePassword/createPassword is done.
-                // Getting around it with a small pause (timer) in order to get the desired behavior
-                pause.start()
+                //confPswInput.text = ""
+                if (OnboardingStore.accountCreated) {
+                    if (root.password !== root.tmpPass) {
+                        OnboardingStore.changePassword(root.tmpPass, root.password);
+                        root.tmpPass = root.password;
+                    } else {
+                        submitBtn.loading = false
+                        root.finished();
+                    }
+                } else {
+                    root.tmpPass = root.password;
+                    submitBtn.loading = true
+                    OnboardingStore.setCurrentAccountAndDisplayName(0, root.displayName);
+                    pause.start();
+                }
             }
         }
     }
@@ -137,5 +142,29 @@ Page {
         anchors.bottomMargin: Style.current.padding
         icon.name: "arrow-left"
         onClicked: { root.backClicked() }
+    }
+
+    Connections {
+        target: startupModule
+        onAppStateChanged: {
+            if (state === Constants.appState.main) {
+                if (!!OnboardingStore.profImgUrl) {
+                    OnboardingStore.saveImage()
+                    OnboardingStore.accountCreated = true;
+                }
+                submitBtn.loading = false
+                root.finished()
+            }
+        }
+    }
+
+    Connections {
+        target: OnboardingStore.privacyModule
+        onPasswordChanged: {
+            if (success) {
+                submitBtn.loading = false
+                root.finished();
+            }
+        }
     }
 }

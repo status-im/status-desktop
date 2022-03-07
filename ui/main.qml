@@ -20,7 +20,6 @@ import AppLayouts.Onboarding 1.0
 
 StatusWindow {
     property bool hasAccounts: startupModule.appState !== Constants.appState.onboarding
-    property bool displayBeforeGetStartedModal: !hasAccounts
     property bool appIsReady: false
 
     Universal.theme: Universal.System
@@ -109,9 +108,6 @@ StatusWindow {
                 // We set main module to the Global singleton once user is logged in and we move to the main app.
                 Global.mainModuleInst = mainModule
 
-                mainModule.openStoreToKeychainPopup.connect(function(){
-                    storeToKeychainConfirmationPopup.open()
-                })
                 if(localAccountSensitiveSettings.recentEmojis === "") {
                     localAccountSensitiveSettings.recentEmojis = [];
                 }
@@ -253,50 +249,6 @@ StatusWindow {
         }
     }
 
-    function prepareForStoring(password, runStoreToKeychainPopup) {
-        if(Qt.platform.os == "osx")
-        {
-            storeToKeychainConfirmationPopup.password = password
-
-            if(runStoreToKeychainPopup)
-                storeToKeychainConfirmationPopup.open()
-        }
-    }
-
-    ConfirmationDialog {
-        id: storeToKeychainConfirmationPopup
-        property string password: ""
-        height: 200
-        confirmationText: qsTr("Would you like to store password to the Keychain?")
-        showRejectButton: true
-        showCancelButton: true
-        confirmButtonLabel: qsTr("Store")
-        rejectButtonLabel: qsTr("Not now")
-        cancelButtonLabel: qsTr("Never")
-
-        function finish()
-        {
-            password = ""
-            storeToKeychainConfirmationPopup.close()
-        }
-
-        onConfirmButtonClicked: {
-            localAccountSettings.storeToKeychainValue = Constants.storeToKeychainValueStore
-            mainModule.storePassword(password)
-            finish()
-        }
-
-        onRejectButtonClicked: {
-            localAccountSettings.storeToKeychainValue = Constants.storeToKeychainValueNotNow
-            finish()
-        }
-
-        onCancelButtonClicked: {
-            localAccountSettings.storeToKeychainValue = Constants.storeToKeychainValueNever
-            finish()
-        }
-    }
-
     Loader {
         id: loader
         anchors.fill: parent
@@ -321,7 +273,9 @@ StatusWindow {
 
         onOnBoardingStepChanged: {
             loader.sourceComponent = view;
-            loader.item.state = state;
+            if (!!state) {
+                loader.item.state = state;
+            }
         }
     }
 

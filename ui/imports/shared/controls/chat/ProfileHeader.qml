@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.14
 
 import utils 1.0
 import shared.panels 1.0
+import shared.controls 1.0
 
 import StatusQ.Components 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
@@ -88,33 +89,14 @@ Item {
             color: Style.current.secondaryText
         }
 
-        Text {
+        EmojiHash {
             id: emojihash
-
-            readonly property size finalSize: supersampling ? Qt.size(emojiSize.width * 2, emojiSize.height * 2) : emojiSize
-            property string size: `${finalSize.width}x${finalSize.height}`
-
             Layout.fillWidth: true
-            renderType: Text.NativeRendering
-            scale: supersampling ? 0.5 : 1
-
-            text: {
-                const emojiHash = Utils.getEmojiHashAsJson(root.pubkey)
-                var emojiHashFirstLine = ""
-                var emojiHashSecondLine = ""
-                for (var i = 0; i < 7; i++) {
-                    emojiHashFirstLine += emojiHash[i]
-                }
-                for (var i = 7; i < emojiHash.length; i++) {
-                    emojiHashSecondLine += emojiHash[i]
-                }
-
-                return StatusQUtils.Emoji.parse(emojiHashFirstLine, size) + "<br>" +
-                       StatusQUtils.Emoji.parse(emojiHashSecondLine, size)
-            }
-
             horizontalAlignment: Text.AlignHCenter
-            font.pointSize: 1 // make sure there is no padding for emojis due to 'style: "vertical-align: top"'
+            publicKey: root.pubkey
+            readonly property size finalSize: supersampling ? Qt.size(emojiSize.width * 2, emojiSize.height * 2) : emojiSize
+            size: `${finalSize.width}x${finalSize.height}`
+            scale: supersampling ? 0.5 : 1
         }
     }
 }

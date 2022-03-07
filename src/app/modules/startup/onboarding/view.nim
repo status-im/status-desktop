@@ -60,6 +60,13 @@ QtObject:
     read = getImportedAccountAddress
     notify = importedAccountChanged
 
+  proc getImportedAccountPubKey*(self: View): string {.slot.} =
+    return self.delegate.getImportedAccount().publicKey
+
+  QtProperty[string] importedAccountPubKey:
+    read = getImportedAccountPubKey
+    notify = importedAccountChanged
+
   proc setDisplayName*(self: View, displayName: string) {.slot.} =
     self.delegate.setDisplayName(displayName)
 

@@ -10,31 +10,16 @@ import StatusQ.Core.Theme 0.1
 import shared 1.0
 import shared.panels 1.0
 import "../popups"
+import "../controls"
 
 import utils 1.0
 
-Page {
+OnboardingBasePage {
     id: root
 
     signal buttonClicked()
     signal keycardLinkClicked()
     signal seedLinkClicked()
-    signal backClicked()
-
-    background: Rectangle {
-        color: Style.current.background
-    }
-
-    Component.onCompleted: {
-        if(displayBeforeGetStartedModal) {
-            displayBeforeGetStartedModal = false
-            beforeGetStartedModal.open()
-        }
-    }
-
-    BeforeGetStartedModal {
-        id: beforeGetStartedModal
-    }
 
     Item {
         id: container
@@ -141,17 +126,6 @@ Page {
         }
     }
 
-    StatusRoundButton {
-        anchors.left: parent.left
-        anchors.leftMargin: Style.current.padding
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: Style.current.padding
-        icon.name: "arrow-left"
-        onClicked: {
-            root.backClicked();
-        }
-    }
-
     states: [
         State {
             name: "connectkeys"
@@ -168,6 +142,7 @@ Page {
             PropertyChanges {
                 target: button
                 text: qsTr("Scan sync code")
+                enabled: false
 
             }
             PropertyChanges {
