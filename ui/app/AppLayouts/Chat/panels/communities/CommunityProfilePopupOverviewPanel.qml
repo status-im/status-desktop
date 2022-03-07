@@ -50,7 +50,6 @@ Column {
         //% "Share community"
         title: qsTrId("share-community")
         subTitle: `${Constants.communityLinkPrefix}${root.community.id.substring(0, 4)}...${root.community.id.substring(root.community.id.length -2)}`
-        //% "Copy to clipboard"
         tooltip.text: qsTr("Copied!")
         icon.name: "copy"
         iconButton.onClicked: {
