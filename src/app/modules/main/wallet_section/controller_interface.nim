@@ -26,6 +26,9 @@ method updateCurrency*(self: AccessInterface, currency: string) {.base.} =
 method isEIP1559Enabled*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method getIndex*(self: AccessInterface, address: string): int {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 type
   ## Abstract class (concept) which must be implemented by object/s used in this
   ## module.

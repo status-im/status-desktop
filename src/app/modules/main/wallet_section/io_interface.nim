@@ -14,6 +14,9 @@ method isLoaded*(self: AccessInterface): bool {.base.} =
 method switchAccount*(self: AccessInterface, accountIndex: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method switchAccountByAddress*(self: AccessInterface, address: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method updateCurrency*(self: AccessInterface, currency: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 

@@ -63,6 +63,9 @@ QtObject:
   proc switchAccount(self: View, accountIndex: int) {.slot.} =
     self.delegate.switchAccount(accountIndex)
 
+  proc switchAccountByAddress(self: View, address: string) {.slot.} =
+    self.delegate.switchAccountByAddress(address)
+
   proc setTotalCurrencyBalance*(self: View, totalCurrencyBalance: float64) =
     self.totalCurrencyBalance = totalCurrencyBalance
     self.totalCurrencyBalanceChanged()

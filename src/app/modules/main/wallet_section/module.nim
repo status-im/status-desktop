@@ -90,6 +90,10 @@ method switchAccount*[T](self: Module[T], accountIndex: int) =
   self.accountTokensModule.switchAccount(accountIndex)
   self.transactionsModule.switchAccount(accountIndex)
 
+method switchAccountByAddress*[T](self: Module[T], address: string) =
+  let accountIndex = self.controller.getIndex(address)
+  self.switchAccount(accountIndex)
+
 method setTotalCurrencyBalance*[T](self: Module[T]) =
   self.view.setTotalCurrencyBalance(self.controller.getCurrencyBalance())
 
