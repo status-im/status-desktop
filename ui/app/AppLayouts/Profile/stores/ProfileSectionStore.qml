@@ -16,12 +16,13 @@ QtObject {
         advancedModule: profileSectionModuleInst.advancedModule
     }
 
-    property DevicesStore devicesStore: DevicesStore {
-        devicesModule: profileSectionModuleInst.devicesModule
+    property MessagingStore messagingStore: MessagingStore {
+        privacyModule: profileSectionModuleInst.privacyModule
+        syncModule: profileSectionModuleInst.syncModule
     }
 
-    property SyncStore syncStore: SyncStore {
-        syncModule: profileSectionModuleInst.syncModule
+    property DevicesStore devicesStore: DevicesStore {
+        devicesModule: profileSectionModuleInst.devicesModule
     }
 
     property NotificationsStore notificationsStore: NotificationsStore {
@@ -52,16 +53,13 @@ QtObject {
 
 
     property bool browserMenuItemEnabled: localAccountSensitiveSettings.isBrowserEnabled
-    property bool appsMenuItemsEnabled: localAccountSensitiveSettings.isWalletEnabled
+    property bool walletMenuItemEnabled: localAccountSensitiveSettings.isWalletEnabled
 
     property ListModel mainMenuItems: ListModel {
         Component.onCompleted: {
             append({subsection: Constants.settingsSubsection.profile,
                        text: qsTr("Profile"),
                        icon: "profile"})
-            append({subsection: Constants.settingsSubsection.contacts,
-                       text: qsTr("Contacts"),
-                       icon: "contact"})
             append({subsection: Constants.settingsSubsection.ensUsernames,
                        text: qsTr("ENS usernames"),
                        icon: "username"})
@@ -70,6 +68,9 @@ QtObject {
 
     property ListModel appsMenuItems: ListModel {
         Component.onCompleted: {
+            append({subsection: Constants.settingsSubsection.messaging,
+                       text: qsTr("Messaging"),
+                       icon: "chat"})
             append({subsection: Constants.settingsSubsection.wallet,
                        text: qsTr("Wallet"),
                        icon: "wallet"})
@@ -96,9 +97,6 @@ QtObject {
             append({subsection: Constants.settingsSubsection.notifications,
                        text: qsTr("Notifications"),
                        icon: "notification"})
-            append({subsection: Constants.settingsSubsection.syncSettings,
-                       text: qsTr("Sync settings"),
-                       icon: "mobile"})
             append({subsection: Constants.settingsSubsection.devicesSettings,
                        text: qsTr("Devices settings"),
                        icon: "mobile"})

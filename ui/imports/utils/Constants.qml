@@ -31,13 +31,13 @@ QtObject {
         property int profile: 0
         property int contacts: 1
         property int ensUsernames: 2
-        property int wallet: 3
-        property int privacyAndSecurity: 4
-        property int appearance: 5
-        property int sound: 6
-        property int language: 7
-        property int notifications: 8
-        property int syncSettings: 9
+        property int messaging: 3
+        property int wallet: 4
+        property int privacyAndSecurity: 5
+        property int appearance: 6
+        property int sound: 7
+        property int language: 8
+        property int notifications: 9
         property int devicesSettings: 10
         property int browserSettings: 11
         property int advanced: 12
@@ -80,6 +80,12 @@ QtObject {
     }
 
     readonly property QtObject profilePicturesVisibility: QtObject {
+        readonly property int contactsOnly: 1
+        readonly property int everyone: 2
+        readonly property int noOne: 3
+    }
+
+    readonly property QtObject profilePicturesShowTo: QtObject {
         readonly property int contactsOnly: 1
         readonly property int everyone: 2
         readonly property int noOne: 3

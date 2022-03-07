@@ -373,7 +373,7 @@ Column {
                 //% "Enable in Settings"
                 text: qsTrId("enable-in-settings")
                 onClicked: {
-                    Global.changeAppSectionBySectionType(Constants.appSection.profile, Constants.settingsSubsection.privacyAndSecurity);
+                    Global.changeAppSectionBySectionType(Constants.appSection.profile, Constants.settingsSubsection.messaging);
                 }
                 width: parent.width
                 anchors.top: sep1.bottom

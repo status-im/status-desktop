@@ -69,6 +69,12 @@ StatusAppTwoPanelLayout {
             profileContentWidth: _internal.profileContentWidth
         }
 
+        MessagingView {
+            id: messagingView
+            messagingStore: profileView.store.messagingStore
+            profileContentWidth: _internal.profileContentWidth
+        }
+
         WalletView {
             id: walletView
             walletStore: profileView.store.walletStore
@@ -97,11 +103,6 @@ StatusAppTwoPanelLayout {
 
         NotificationsView {
             notificationsStore: profileView.store.notificationsStore
-            profileContentWidth: _internal.profileContentWidth
-        }
-
-        SyncView {
-            syncStore: profileView.store.syncStore
             profileContentWidth: _internal.profileContentWidth
         }
 

@@ -34,12 +34,13 @@ Item {
         MenuPanel {
             id: profileMenu
             privacyStore: store.privacyStore
+            messagingStore: store.messagingStore
             mainMenuItems: store.mainMenuItems
             settingsMenuItems: store.settingsMenuItems
             extraMenuItems: store.extraMenuItems
             appsMenuItems: store.appsMenuItems
             browserMenuItemEnabled: store.browserMenuItemEnabled
-            appsMenuItemsEnabled: store.appsMenuItemsEnabled
+            walletMenuItemEnabled: store.walletMenuItemEnabled
             
             onMenuItemClicked: {
                 if (menu_item.subsection === Constants.settingsSubsection.signout) {

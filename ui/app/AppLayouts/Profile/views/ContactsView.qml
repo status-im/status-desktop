@@ -8,6 +8,7 @@ import StatusQ.Core.Theme 0.1
 
 import utils 1.0
 
+import StatusQ.Core 0.1
 import shared.views 1.0
 import shared.panels 1.0
 import shared.popups 1.0
@@ -30,16 +31,39 @@ Item {
     clip: true
 
     Item {
-        anchors.top: parent.top
-        anchors.topMargin: 32
-        anchors.bottom: parent.bottom
+        height: parent.height
         width: profileContentWidth
 
         anchors.horizontalCenter: parent.horizontalCenter
 
+        StatusFlatButton {
+            icon.name: "arrow-left"
+            icon.width: 20
+            icon.height: 20
+            text: qsTr("Messaging")
+            size: StatusBaseButton.Size.Large
+            anchors.top: parent.top
+            anchors.topMargin: 8
+            anchors.left: parent.left
+            anchors.leftMargin: -40
+            onClicked: Global.changeAppSectionBySectionType(Constants.appSection.profile,
+                Constants.settingsSubsection.messaging)
+        }
+
+        StatusBaseText {
+            id: titleText
+            text: qsTr("Contacts")
+            font.weight: Font.Bold
+            font.pixelSize: 28
+            color: Theme.palette.directColor1
+            anchors.top: parent.top
+            anchors.topMargin: 56
+        }
+
         SearchBox {
             id: searchBox
-            anchors.top: parent.top
+            anchors.top: titleText.bottom
+            anchors.topMargin: 32
             fontPixelSize: 15
         }
 

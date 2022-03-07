@@ -11,13 +11,14 @@ Column {
     spacing: 4
 
     property var privacyStore
+    property var messagingStore
     property alias mainMenuItems: mainMenuItems.model
     property alias settingsMenuItems: settingsMenuItems.model
     property alias extraMenuItems: extraMenuItems.model
     property alias appsMenuItems: appsMenuItems.model
 
     property bool browserMenuItemEnabled: false
-    property bool appsMenuItemsEnabled: false
+    property bool walletMenuItemEnabled: false
 
     signal menuItemClicked(var menu_item)
 
@@ -34,7 +35,6 @@ Column {
 
     StatusListSectionHeadline { 
         text: qsTr("Apps")
-        visible: root.appsMenuItemsEnabled || root.browserMenuItemEnabled
     }
     
     Repeater {
@@ -47,8 +47,9 @@ Column {
             selected: Global.settingsSubsection === model.subsection
             onClicked: root.menuItemClicked(model)
             visible: {
+                (model.subsection !== Constants.settingsSubsection.browserSettings && model.subsection !== Constants.settingsSubsection.wallet) ||
                 (model.subsection === Constants.settingsSubsection.browserSettings && root.browserMenuItemEnabled) ||
-                (model.subsection === Constants.settingsSubsection.wallet && root.appsMenuItemsEnabled)
+                (model.subsection === Constants.settingsSubsection.wallet && root.walletMenuItemEnabled)
             }
         }
     }
@@ -65,7 +66,15 @@ Column {
             selected: Global.settingsSubsection === model.subsection
             onClicked: root.menuItemClicked(model)
             visible: model.subsection !== Constants.settingsSubsection.browserSettings || root.browserMenuItemEnabled
-            badge.value: !root.privacyStore.mnemonicBackedUp && settingsMenuDelegate.title === qsTr("Privacy and security")
+            badge.value: {
+                switch (model.subsection) {
+                    case Constants.settingsSubsection.privacyAndSecurity:
+                        return !root.privacyStore.mnemonicBackedUp
+                    case Constants.settingsSubsection.messaging:
+                        return root.messagingStore.contactRequestsModel.count
+                    default: return ""
+                }
+            }
         }
     }
 
