@@ -14,7 +14,7 @@ import shared.popups 1.0
 import shared.stores 1.0
 
 //TODO remove this dependency
-import applayouts.Chat.panels 1.0
+import AppLayouts.Chat.panels 1.0
 import "./emojiList.js" as EmojiJSON
 
 import StatusQ.Core.Theme 0.1

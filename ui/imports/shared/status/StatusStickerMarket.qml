@@ -9,7 +9,7 @@ import shared.panels 1.0
 import shared.popups 1.0
 import shared.status 1.0
 //TODO remove this dependency!
-import applayouts.Chat.stores 1.0
+import AppLayouts.Chat.stores 1.0
 
 Item {
     id: root

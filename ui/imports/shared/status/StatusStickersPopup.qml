@@ -9,7 +9,7 @@ import shared.panels 1.0
 import StatusQ.Controls 0.1 as StatusQControls
 import StatusQ.Components 0.1
 //TODO improve this!
-import applayouts.Chat.stores 1.0
+import AppLayouts.Chat.stores 1.0
 
 Popup {
     id: root

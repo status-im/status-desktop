@@ -12,7 +12,7 @@ import StatusQ.Controls 0.1
 import shared.views 1.0
 import shared.panels 1.0
 import shared.popups 1.0
-import applayouts.Wallet 1.0
+import AppLayouts.Wallet 1.0
 
 StatusModal {
     id: root
