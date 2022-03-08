@@ -257,7 +257,7 @@ StatusModal {
             nickname: popup.userNickname
             header.subTitle: popup.header.subTitle
             header.subTitleElide: popup.header.subTitleElide
-            onDoneClicked: {
+            onEditDone: {
                 if(popup.userNickname !== newNickname)
                 {
                     popup.userNickname = newNickname;

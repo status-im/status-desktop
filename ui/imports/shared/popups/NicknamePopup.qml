@@ -23,7 +23,7 @@ StatusModal {
     property int nicknameLength: nicknameInput.textField.text.length
     readonly property int maxNicknameLength: 32
     property bool nicknameTooLong: nicknameLength > maxNicknameLength
-    signal doneClicked(string newNickname)
+    signal editDone(string newNickname)
 
     onOpened: {
         nicknameInput.forceActiveFocus(Qt.MouseFocusReason);
@@ -59,7 +59,7 @@ StatusModal {
                 validationError: popup.nicknameTooLong ? qsTrId("your-nickname-is-too-long") : ""
                 Keys.onReleased: {
                     if (event.key === Qt.Key_Return) {
-                        doneBtn.onClicked();
+                        editDone()
                     }
                 }
 
@@ -82,9 +82,7 @@ StatusModal {
             //% "Done"
             text: qsTrId("done")
             enabled: !popup.nicknameTooLong
-            onClicked: {
-                doneClicked(nicknameInput.textField.text)
-            }
+            onClicked: editDone(nicknameInput.textField.text)
         }
     ]
 }
