@@ -246,5 +246,5 @@ QtObject {
         "connected-different-key": qsTrId("ens-username-connected-with-different-key"),
     }
 
-    readonly property bool isCppApp: cppApp ? cppApp : false
+    readonly property bool isCppApp: typeof cppApp !== "undefined" ? cppApp : false
 }
