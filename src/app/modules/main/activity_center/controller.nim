@@ -8,6 +8,7 @@ import ../../../../app_service/service/activity_center/service as activity_cente
 import ../../../../app_service/service/contacts/service as contacts_service
 import ../../../../app_service/service/message/service as message_service
 import ../../../../app_service/service/eth/utils as eth_utils
+import ../../../../app_service/service/chat/service as chat_service
 
 export controller_interface
 
@@ -18,13 +19,15 @@ type
     activityCenterService: activity_center_service.Service
     contactsService: contacts_service.Service
     messageService: message_service.Service
+    chatService: chat_service.Service
 
 proc newController*[T](
     delegate: io_interface.AccessInterface,
     events: EventEmitter,
     activityCenterService: activity_center_service.Service,
     contactsService: contacts_service.Service,
-    messageService: message_service.Service
+    messageService: message_service.Service,
+    chatService: chat_service.Service
     ): Controller[T] =
   result = Controller[T]()
   result.delegate = delegate
@@ -32,6 +35,7 @@ proc newController*[T](
   result.activityCenterService = activityCenterService
   result.contactsService = contactsService
   result.messageService = messageService
+  result.chatService = chatService
 
 method delete*[T](self: Controller[T]) =
   discard
@@ -107,3 +111,6 @@ method decodeContentHash*[T](self: Controller[T], hash: string): string =
 method switchTo*[T](self: Controller[T], sectionId, chatId, messageId: string) =
   let data = ActiveSectionChatArgs(sectionId: sectionId, chatId: chatId, messageId: messageId)
   self.events.emit(SIGNAL_MAKE_SECTION_CHAT_ACTIVE, data)
+
+method getChatDetails*[T](self: Controller[T], chatId: string): ChatDto =
+  return self.chatService.getChatById(chatId)

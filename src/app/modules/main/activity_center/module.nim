@@ -2,14 +2,17 @@ import NimQml, Tables, stint, sugar, sequtils
 
 import ./io_interface, ./view, ./controller
 import ./item as notification_item
-import ../../shared_models/message_item as message_item
-import ../../shared_models/message_item_qobject as message_item_qobject
+import ../../shared_models/message_item as msg_item
+import ../../shared_models/message_item_qobject as msg_item_qobj
 import ../../shared_models/message_transaction_parameters_item
 import ../../../global/global_singleton
 import ../../../core/eventemitter
 import ../../../../app_service/service/activity_center/service as activity_center_service
 import ../../../../app_service/service/contacts/service as contacts_service
 import ../../../../app_service/service/message/service as message_service
+import ../../../../app_service/service/chat/service as chat_service
+
+import ../../../global/app_sections_config as conf
 
 export io_interface
 
@@ -26,7 +29,8 @@ proc newModule*[T](
     events: EventEmitter,
     activityCenterService: activity_center_service.Service,
     contactsService: contacts_service.Service,
-    messageService: message_service.Service
+    messageService: message_service.Service,
+    chatService: chat_service.Service
     ): Module[T] =
   result = Module[T]()
   result.delegate = delegate
@@ -37,7 +41,8 @@ proc newModule*[T](
     events,
     activityCenterService,
     contactsService,
-    messageService
+    messageService,
+    chatService
   )
   result.moduleLoaded = false
 
@@ -67,14 +72,19 @@ method convertToItems*[T](
   activityCenterNotifications: seq[ActivityCenterNotificationDto]
   ): seq[notification_item.Item] =
   result = activityCenterNotifications.map(
-    proc(n: ActivityCenterNotificationDto): Item =
-      var messageItem = MessageItem()
+    proc(n: ActivityCenterNotificationDto): notification_item.Item =
+      var messageItem =  msg_item_qobj.newMessageItem(nil)
+
+      let chatDetails = self.controller.getChatDetails(n.chatId)
+      # default section id is `Chat` section
+      let sectionId = if(chatDetails.communityId.len > 0): chatDetails.communityId else: conf.CHAT_SECTION_ID
+
       if (n.message.id != ""):
         # If there is a message in the Notification, transfer it to a MessageItem (QObject)
         let contactDetails = self.controller.getContactDetails(n.message.`from`)
-        messageItem = message_item_qobject.newMessageItem(initItem(
+        messageItem = msg_item_qobj.newMessageItem(msg_item.initItem(
           n.message.id,
-          n.message.communityId,
+          chatDetails.communityId, # we don't received community id via `activityCenterNotifications` api call
           n.message.responseTo,
           n.message.`from`,
           contactDetails.displayName,
@@ -95,12 +105,13 @@ method convertToItems*[T](
           self.controller.decodeContentHash(n.message.sticker.hash),
           n.message.sticker.pack,
           n.message.links,
-          initTransactionParametersItem("","","","","","",-1,""),
+          newTransactionParametersItem("","","","","","",-1,""),
         ))
 
       return notification_item.initItem(
         n.id,
         n.chatId,
+        sectionId,
         n.name,
         n.author,
         n.notificationType.int,

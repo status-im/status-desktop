@@ -13,8 +13,8 @@ QtObject:
 
   proc newMessageItem*(message: message_item.Item): MessageItem =
     new(result, delete)
-    result.messageItem = message
     result.setup
+    result.messageItem = message
 
   proc `$`*(self: MessageItem): string =
     result = $self.messageItem
@@ -121,3 +121,12 @@ QtObject:
   proc isEdited*(self: MessageItem): bool {.slot.} = result = ?.self.messageItem.isEdited
   QtProperty[int] bool:
     read = bool
+
+  # this is not the greatest approach, but aligns with the rest of the code
+  proc communityId*(self: MessageItem): string {.slot.} = result = ?.self.messageItem.communityId
+  QtProperty[string] communityId:
+    read = communityId
+
+  proc reactionsModel*(self: MessageItem): QVariant {.slot.} = result = newQVariant(?.self.messageItem.reactionsModel)
+  QtProperty[QVariant] reactionsModel:
+    read = reactionsModel

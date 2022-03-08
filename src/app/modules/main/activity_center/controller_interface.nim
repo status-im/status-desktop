@@ -1,6 +1,7 @@
 import ../../../../app_service/service/contacts/service as contacts_service
 import ../../../../app_service/service/activity_center/service as activity_center_service
 import ../../../../app_service/service/message/dto/[message]
+import ../../../../app_service/service/chat/dto/[chat]
 
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -46,6 +47,9 @@ method decodeContentHash*(self: AccessInterface, hash: string): string {.base.} 
   raise newException(ValueError, "No implementation available")
 
 method switchTo*(self: AccessInterface, sectionId, chatId, messageId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getChatDetails*(self: AccessInterface, chatId: string): ChatDto {.base.} =
   raise newException(ValueError, "No implementation available")
 
 

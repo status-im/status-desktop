@@ -178,7 +178,7 @@ proc buildPinnedMessageItem(self: Module, messageId: string, actionInitiatedBy: 
     self.controller.decodeContentHash(m.sticker.hash),
     m.sticker.pack,
     m.links,
-    initTransactionParametersItem(m.transactionParameters.id,
+    newTransactionParametersItem(m.transactionParameters.id,
       m.transactionParameters.fromAddress,
       m.transactionParameters.address,
       transactionContract,
