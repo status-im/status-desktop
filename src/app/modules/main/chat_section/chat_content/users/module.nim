@@ -51,7 +51,7 @@ method isLoaded*(self: Module): bool =
 method viewDidLoad*(self: Module) =
   # add me as the first user to the list
   let (admin, joined) = self.controller.getChatMemberInfo(singletonInstance.userProfile.getPubKey())
-  let loggedInUserDisplayName = singletonInstance.userProfile.getName() & "(You)"
+  let loggedInUserDisplayName = singletonInstance.userProfile.getName() & " (You)"
   self.view.model().addItem(initItem(
     singletonInstance.userProfile.getPubKey(),
     loggedInUserDisplayName,

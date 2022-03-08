@@ -142,6 +142,11 @@ Rectangle {
     property var mentionsPos: []
 
     function insertMention(aliasName, lastAtPosition, lastCursorPosition) {
+        let startInd = aliasName.indexOf("(");
+        if (startInd > 0){
+            aliasName = aliasName.substring(0, startInd-1)
+        }
+
         const hasEmoji = StatusQUtils.Emoji.hasEmoji(messageInputField.text)
         const spanPlusAlias = `${Constants.mentionSpanTag}@${aliasName}</a></span> `;
 
