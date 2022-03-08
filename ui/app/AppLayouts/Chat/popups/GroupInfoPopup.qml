@@ -36,7 +36,7 @@ StatusModal {
 
     property var chatContentModule
 
-    readonly property int maxMembers: 10
+    readonly property int maxMembers: 20
 
     function resetSelectedMembers() {
         contactList.selectedPubKeys = []
@@ -58,8 +58,7 @@ StatusModal {
     header.title: addMembers ? qsTrId("add-members") : (popup.chatDetails ? popup.chatDetails.name : "")
     header.subTitle:  {
         if (addMembers) {
-            //% "%1 / 10 members"
-            return qsTrId("%1-/-10-members").arg(memberCount)
+            return qsTr("%1/%2 members").arg(memberCount).arg(maxMembers)
         } else {
             //% "%1 members"
             if (currMemberCount > 1) {
@@ -134,7 +133,7 @@ StatusModal {
             Layout.alignment: Qt.AlignVCenter
             Layout.bottomMargin: childrenRect.height
 
-            visible: chatSectionModule.listOfMyContacts.rowCount() === 0
+            visible: chatSectionModule.listOfMyContacts.count === 0
             //% "All your contacts are already in the group"
             text: qsTrId("group-chat-all-contacts-invited")
             textColor: Style.current.textColor
@@ -146,12 +145,12 @@ StatusModal {
             Layout.fillHeight: true
             Layout.fillWidth: true
 
-            visible: popup.addMembers && chatSectionModule.listOfMyContacts.rowCount() > 0
+            visible: popup.addMembers && chatSectionModule.listOfMyContacts.count > 0
             model: chatSectionModule.listOfMyContacts
             selectMode: memberCount < maxMembers
             searchString: searchBox.text.toLowerCase()
             onSelectedPubKeysChanged: {
-                memberCount = popup.chatContentModule.usersModule.model.rowCount() + selectedPubKeys.length;
+                memberCount = popup.chatContentModule.usersModule.model.count + selectedPubKeys.length;
                 btnSelectMembers.enabled = selectedPubKeys.length > 0
             }
         }
