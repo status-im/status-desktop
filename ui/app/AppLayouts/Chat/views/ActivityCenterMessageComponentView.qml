@@ -140,11 +140,7 @@ Item {
                 }
 
                 activityCenter.close()
-                var sectionId = "chat"
-                if (model.message.communityId) {
-                    sectionId = model.message.communityId
-                }
-                root.store.activityCenterModuleInst.switchTo(sectionId, model.chatId, model.id)
+                root.store.activityCenterModuleInst.switchTo(model.sectionId, model.chatId, model.id)
             }
             prevMessageIndex: root.previousNotificationIndex
             prevMsgTimestamp: root.previousNotificationTimestamp

@@ -4,15 +4,16 @@ import ./item
 type
   NotifRoles {.pure.} = enum
     Id = UserRole + 1
-    ChatId = UserRole + 2
-    Name = UserRole + 3
-    NotificationType = UserRole + 4
-    Message = UserRole + 5
-    Timestamp = UserRole + 6
-    Read = UserRole + 7
-    Dismissed = UserRole + 8
-    Accepted = UserRole + 9
-    Author = UserRole + 10
+    ChatId
+    SectionId
+    Name
+    NotificationType
+    Message
+    Timestamp
+    Read
+    Dismissed
+    Accepted
+    Author
 
 QtObject:
   type
@@ -70,6 +71,7 @@ QtObject:
     case communityItemRole:
       of NotifRoles.Id: result = newQVariant(acitivityNotificationItem.id)
       of NotifRoles.ChatId: result = newQVariant(acitivityNotificationItem.chatId)
+      of NotifRoles.SectionId: result = newQVariant(acitivityNotificationItem.sectionId)
       of NotifRoles.Name: result = newQVariant(acitivityNotificationItem.name)
       of NotifRoles.Author: result = newQVariant(acitivityNotificationItem.author)
       of NotifRoles.NotificationType: result = newQVariant(acitivityNotificationItem.notificationType.int)
@@ -86,6 +88,7 @@ QtObject:
     case data:
     of "id": result = notif.id
     of "chatId": result = notif.chatId
+    of "sectionId": result = notif.sectionId
     of "name": result = notif.name
     of "author": result = notif.author
     of "notificationType": result = $(notif.notificationType.int)
@@ -99,6 +102,7 @@ QtObject:
     {
       NotifRoles.Id.int:"id",
       NotifRoles.ChatId.int:"chatId",
+      NotifRoles.SectionId.int: "sectionId",
       NotifRoles.Name.int: "name",
       NotifRoles.Author.int: "author",
       NotifRoles.NotificationType.int: "notificationType",

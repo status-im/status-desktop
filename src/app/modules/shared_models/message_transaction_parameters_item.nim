@@ -12,7 +12,13 @@ QtObject:
       commandState: int
       signature: string
 
-  proc initTransactionParametersItem*(
+  proc setup(self: TransactionParametersItem) =
+    self.QObject.setup
+
+  proc delete*(self: TransactionParametersItem) =
+    self.QObject.delete
+
+  proc newTransactionParametersItem*(
       id: string,
       fromAddress: string,
       address: string,
@@ -22,7 +28,8 @@ QtObject:
       commandState: int,
       signature: string,
       ): TransactionParametersItem =
-    result = TransactionParametersItem()
+    new(result, delete)
+    result.setup
     result.id = id
     result.fromAddress = fromAddress
     result.address = address

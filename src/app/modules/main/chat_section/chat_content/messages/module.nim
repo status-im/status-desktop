@@ -92,7 +92,7 @@ proc createFetchMoreMessagesItem(self: Module): Item =
     sticker = "",
     stickerPack = -1,
     @[],
-    initTransactionParametersItem("","","","","","",-1,""),
+    newTransactionParametersItem("","","","","","",-1,""),
   )
 
 proc createChatIdentifierItem(self: Module): Item =
@@ -124,7 +124,7 @@ proc createChatIdentifierItem(self: Module): Item =
     sticker = "",
     stickerPack = -1,
     @[],
-    initTransactionParametersItem("","","","","","",-1,""),
+    newTransactionParametersItem("","","","","","",-1,""),
   )
 
 proc checkIfMessageLoadedAndScrollToItIfItIs(self: Module): bool =
@@ -186,7 +186,7 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
         sticker = self.controller.decodeContentHash(m.sticker.hash),
         m.sticker.pack,
         m.links,
-        initTransactionParametersItem(m.transactionParameters.id,
+        newTransactionParametersItem(m.transactionParameters.id,
           m.transactionParameters.fromAddress,
           m.transactionParameters.address,
           transactionContract,
@@ -272,7 +272,7 @@ method messageAdded*(self: Module, message: MessageDto) =
     sticker = self.controller.decodeContentHash(message.sticker.hash),
     message.sticker.pack,
     message.links,
-    initTransactionParametersItem(message.transactionParameters.id,
+    newTransactionParametersItem(message.transactionParameters.id,
                     message.transactionParameters.fromAddress,
                     message.transactionParameters.address,
                     transactionContract,
