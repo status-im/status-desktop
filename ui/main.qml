@@ -16,7 +16,7 @@ import shared.panels 1.0
 import shared.popups 1.0
 
 import mainui 1.0
-import applayouts.Onboarding 1.0
+import AppLayouts.Onboarding 1.0
 
 StatusWindow {
     property bool hasAccounts: startupModule.appState !== Constants.appState.onboarding

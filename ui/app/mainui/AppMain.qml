@@ -6,13 +6,13 @@ import Qt.labs.qmlmodels 1.0
 import Qt.labs.platform 1.1
 import Qt.labs.settings 1.0
 
-import applayouts.Wallet 1.0
-import applayouts.Node 1.0
-import applayouts.Browser 1.0
-import applayouts.Chat 1.0
-import applayouts.Chat.popups 1.0
-import applayouts.Profile 1.0
-import applayouts.Profile.popups 1.0
+import AppLayouts.Wallet 1.0
+import AppLayouts.Node 1.0
+import AppLayouts.Browser 1.0
+import AppLayouts.Chat 1.0
+import AppLayouts.Chat.popups 1.0
+import AppLayouts.Profile 1.0
+import AppLayouts.Profile.popups 1.0
 
 import utils 1.0
 import shared 1.0
@@ -27,7 +27,7 @@ import StatusQ.Layout 0.1
 import StatusQ.Popups 0.1
 import StatusQ.Core 0.1
 
-import applayouts.stores 1.0
+import AppLayouts.stores 1.0
 
 Item {
     id: appMain
