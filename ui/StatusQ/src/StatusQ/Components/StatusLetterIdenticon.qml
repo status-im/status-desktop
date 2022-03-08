@@ -10,6 +10,7 @@ Rectangle {
     property string name
     property string emoji
     property int letterSize: 21
+    property int charCount: 1
 
     color: Theme.palette.miscColor5
     width: 40
@@ -22,9 +23,10 @@ Rectangle {
             if (emoji) {
                 return Emoji.parse(emoji)
             }
-            return ((statusLetterIdenticon.name.charAt(0) === "#")
+            return (((statusLetterIdenticon.name.charAt(0) === "#")
                 || (statusLetterIdenticon.name.charAt(0) === "@") ?
                 statusLetterIdenticon.name.charAt(1) : statusLetterIdenticon.name.charAt(0)).toUpperCase()
+                + ((charCount === 2) ? statusLetterIdenticon.name.charAt(1) : ""))
         }
         font.weight: Font.Bold
         font.pixelSize: statusLetterIdenticon.letterSize

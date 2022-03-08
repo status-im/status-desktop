@@ -7,6 +7,7 @@ Loader {
     id: statusSmartIdenticon
 
     property string name: ""
+    property int charCount: 1
     property string emoji: ""
     property int dZ: 100
 
@@ -86,6 +87,7 @@ Loader {
             name: statusSmartIdenticon.name
             emoji: statusSmartIdenticon.emoji
             letterSize: statusSmartIdenticon.icon.letterSize
+            charCount: statusSmartIdenticon.charCount
         }
     }
 
