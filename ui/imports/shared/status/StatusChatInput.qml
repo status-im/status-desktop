@@ -1046,7 +1046,7 @@ Rectangle {
                     anchors.fill: parent
                     acceptedButtons: Qt.NoButton
                     enabled: parent.hoveredLink
-                    cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
+                    cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.IBeamCursor
                 }
                 StatusTextFormatMenu {
                     id: textFormatMenu
