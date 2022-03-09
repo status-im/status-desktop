@@ -54,7 +54,7 @@ QtObject {
     property var permissionList: dappPermissionsModule.permissions
 
     property bool browserMenuItemEnabled: localAccountSensitiveSettings.isBrowserEnabled
-    property bool appsMenuItemsEnabled: localAccountSensitiveSettings.isMultiNetworkEnabled
+    property bool appsMenuItemsEnabled: localAccountSensitiveSettings.isWalletEnabled
 
     property ListModel mainMenuItems: ListModel {
         Component.onCompleted: {
