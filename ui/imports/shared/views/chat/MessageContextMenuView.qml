@@ -222,7 +222,8 @@ StatusPopupMenu {
             root.close()
         }
         icon.name: "chat"
-        enabled: root.isProfile && !root.isMyMessage ||
+        enabled: (root.myPublicKey !== root.selectedUserPublicKey) &&
+                 root.isProfile && !root.isMyMessage ||
                  (!root.hideEmojiPicker &&
                   !root.emojiOnly &&
                   !root.isProfile &&
