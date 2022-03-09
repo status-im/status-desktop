@@ -57,6 +57,33 @@ Column {
         input.clearable: true
     }
 
+    Item {
+        implicitWidth: 480
+        implicitHeight: 102
+        z: 100000
+        StatusSeedPhraseInput {
+            id: statusSeedInput
+            anchors.left: parent.left
+            anchors.right: parent.right
+            textEdit.input.anchors.leftMargin: 16
+            textEdit.input.anchors.rightMargin: 16
+            textEdit.input.anchors.topMargin: 11
+            textEdit.label: "Input with drop down selection list"
+            leftComponentText: "1"
+            inputList: ListModel {
+                ListElement {
+                    seedWord: "panda"
+                }
+                ListElement {
+                    seedWord: "posible"
+                }
+                ListElement {
+                    seedWord: "wing"
+                }
+            }
+        }
+    }
+
     StatusInput {
         label: "Label"
         charLimit: 30

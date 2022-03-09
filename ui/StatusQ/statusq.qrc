@@ -329,5 +329,6 @@
         <file>src/StatusQ/Controls/StatusPinInput.qml</file>
         <file>src/StatusQ/Controls/Validators/StatusRegularExpressionValidator.qml</file>
         <file>src/StatusQ/Controls/Validators/StatusIntValidator.qml</file>
+        <file>src/StatusQ/Controls/StatusSeedPhraseInput.qml</file>
     </qresource>
 </RCC>

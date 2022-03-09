@@ -66,6 +66,7 @@ Item {
         }
     }
 
+    property Item leftComponent
     property Item component
 
     signal iconClicked()
@@ -76,6 +77,12 @@ Item {
             clearButtonLoader.parent = statusBaseInputComponentSlot
         } else {
             clearButtonLoader.active = false
+        }
+    }
+
+    onLeftComponentChanged: {
+        if (!!leftComponent) {
+            leftComponent.parent = statusBaseInputLeftComponentSlot;
         }
     }
 
@@ -158,19 +165,38 @@ Item {
                 visible: !!statusBaseInput.icon.name && !statusBaseInput.isIconSelectable
             }
 
+            Item {
+                id: statusBaseInputLeftComponentSlot
+                anchors.left: parent.left
+                anchors.leftMargin: 12
+                width: childrenRect.width
+                height: childrenRect.height
+                anchors.verticalCenter: parent.verticalCenter
+            }
+
             Flickable {
                 id: flick
                 anchors.top: parent.top
                 anchors.bottom: parent.bottom
-                anchors.left: (statusIcon.visible && statusBaseInput.leftIcon) ?
-                              statusIcon.right : emoji.visible ? emoji.right: parent.left
+                anchors.left: {
+                    if (statusIcon.visible && statusBaseInput.leftIcon) {
+                        return statusIcon.right;
+                    } else if (emoji.visible) {
+                        return emoji.right;
+                    } else if (!!statusBaseInput.leftComponent) {
+                        return statusBaseInputLeftComponentSlot.right;
+                    } else {
+                        return parent.left;
+                    }
+                }
                 anchors.right: {
                     if (!!statusBaseInput.component) {
                         return statusBaseInputComponentSlot.left
                     }
                     return statusIcon.visible && !statusBaseInput.leftIcon ? statusIcon.left : parent.right
                 }
-                anchors.leftMargin: statusIcon.visible && statusBaseInput.leftIcon ? 8
+                anchors.leftMargin: (statusIcon.visible && statusBaseInput.leftIcon)
+                                    || !!statusBaseInput.leftComponent ? 8
                                     : statusBaseInput.leftPadding
                 anchors.rightMargin: {
                     return clearable ? clearButtonLoader.width + 12 : 
@@ -194,6 +220,7 @@ Item {
                 TextEdit {
                     id: edit
                     property string previousText: text
+                    property var keyEvent
                     width: flick.width
                     height: flick.height
                     verticalAlignment: Text.AlignVCenter
@@ -210,6 +237,10 @@ Item {
                         if (statusBaseInput.pristine) {
                             statusBaseInput.pristine = false
                         }
+                    }
+
+                    Keys.onPressed: {
+                        edit.keyEvent = event.key;
                     }
 
                     Keys.onReturnPressed: {
