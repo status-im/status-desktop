@@ -15,16 +15,21 @@ StatusProgressBar {
     property string labelGreat: "Great"
 
     enum Strength {
-        VeryWeak, // 0
-        Weak, // 1
-        SoSo, // 2
-        Good, // 3
-        Great // 4
+        None, // 0
+        VeryWeak, // 1
+        Weak, // 2
+        SoSo, // 3
+        Good, // 4
+        Great // 5
     }
 
     // Behavior:
     states: [
         // Strength states definition:
+        State {
+            when: control.strength === StatusPasswordStrengthIndicator.Strength.None
+            PropertyChanges { target: control; text: ""}
+        },
         State {
             when: control.strength === StatusPasswordStrengthIndicator.Strength.VeryWeak
             PropertyChanges { target: control; fillColor : Theme.palette.dangerColor1}
