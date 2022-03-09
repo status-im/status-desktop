@@ -1,5 +1,6 @@
 import ../../../../app_service/service/community/service as community_service
 import ../../../../app_service/service/contacts/service as contacts_service
+import ../../../../app_service/service/visual_identity/service as visual_identity_service
 
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -61,6 +62,12 @@ method getContactNameAndImage*(self: AccessInterface, contactId: string):
   raise newException(ValueError, "No implementation available")
 
 method getContactDetails*(self: AccessInterface, contactId: string): ContactDetails {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getEmojiHash*(self: AccessInterface, pubkey: string): EmojiHashDto {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getColorHash*(self: AccessInterface, pubkey: string): ColorHashDto {.base.} =
   raise newException(ValueError, "No implementation available")
 
 type

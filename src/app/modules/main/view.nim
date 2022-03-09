@@ -151,6 +151,14 @@ QtObject:
   proc getContactDetailsAsJson(self: View, publicKey: string): string {.slot.} =
     return self.delegate.getContactDetailsAsJson(publicKey)
 
+  # serialized return - nimqml does not allow QVariant return type in slots
+  proc getEmojiHashAsJson(self: View, publicKey: string): string {.slot.} =
+    return self.delegate.getEmojiHashAsJson(publicKey)
+
+  # serialized return - nimqml does not allow QVariant return type in slots
+  proc getColorHashAsJson(self: View, publicKey: string): string {.slot.} =
+    return self.delegate.getColorHashAsJson(publicKey)
+
   proc resolveENS*(self: View, ensName: string, uuid: string) {.slot.} =
     self.delegate.resolveENS(ensName, uuid)
 

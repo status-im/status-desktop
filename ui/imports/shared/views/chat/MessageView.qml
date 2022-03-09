@@ -103,7 +103,7 @@ Column {
             // The system message for private groups appear as created by the group host, but it shouldn't
             prevMessageAsJsonObj.contentType === Constants.messageContentType.systemMessagePrivateGroupType) {
             return ""
-        }  
+        }
 
         return prevMessageAsJsonObj.senderId
     }
@@ -149,7 +149,6 @@ Column {
                              || contentType === Constants.messageContentType.communityInviteType || contentType === Constants.messageContentType.transactionType
 
     property bool isExpired: (outgoingStatus === "sending" && (Math.floor(timestamp) + 180000) < Date.now())
-    property bool isStatusUpdate: false
     property int statusAgeEpoch: 0
 
     signal imageClicked(var image)
@@ -196,8 +195,8 @@ Column {
             if(!obj)
                 return
 
-            messageContextMenu.messageSenderId = obj.id
-            messageContextMenu.selectedUserPublicKey = obj.id
+            messageContextMenu.messageSenderId = obj.senderId
+            messageContextMenu.selectedUserPublicKey = obj.senderId
             messageContextMenu.selectedUserDisplayName = obj.senderDisplayName
             messageContextMenu.selectedUserIcon = obj.senderIcon
             messageContextMenu.isSelectedUserIconIdenticon = obj.isSenderIconIdenticon
@@ -258,7 +257,7 @@ Column {
                 case Constants.messageContentType.gapType:
                     return gapComponent
                 default:
-                    return isStatusUpdate ? statusUpdateComponent : compactMessageComponent
+                    return compactMessageComponent
 
             }
         }
@@ -332,38 +331,6 @@ Column {
             anchors.horizontalCenter: parent.horizontalCenter
             textFormat: Text.RichText
             topPadding: root.prevMessageIndex === 1 ? Style.current.bigPadding : 0
-        }
-    }
-
-    Component {
-        id: statusUpdateComponent
-        StatusUpdateView {
-            messageStore: root.messageStore
-            statusAgeEpoch: root.statusAgeEpoch
-            container: root
-            // Not Refactored Yet
-//            store: root.rootStore
-            messageContextMenu: root.messageContextMenu
-            onAddEmoji: {
-                root.clickMessage(isProfileClick, isSticker, isImage , image, emojiOnly, hideEmojiPicker);
-            }
-            onChatImageClicked: root.imageClicked(image)
-
-            onUserNameClicked: {
-                // Not Refactored Yet - Should do it via messageStore
-//                root.parent.clickMessage(isProfileClick);
-            }
-            onEmojiBtnClicked: {
-                // Not Refactored Yet - Should do it via messageStore
-//                root.parent.clickMessage(isProfileClick, isSticker, isImage, image, emojiOnly);
-            }
-            onClickMessage: {
-                // Not Refactored Yet - Should do it via messageStore
-//                root.parent.clickMessage(isProfileClick, isSticker, isImage, image, emojiOnly, hideEmojiPicker, isReply);
-            }
-            onSetMessageActive: {
-                root.setMessageActive(messageId, active);
-            }
         }
     }
 

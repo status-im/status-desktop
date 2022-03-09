@@ -116,53 +116,19 @@ StatusPopupMenu {
         }
     }
 
-    Item {
-        id: profileHeader
-        visible: root.isProfile
+    ProfileHeader {
         width: parent.width
-        height: visible ? profileImage.height + username.height + Style.current.padding : 0
-        Rectangle {
-            anchors.fill: parent
-            visible: mouseArea.containsMouse
-            color: Style.current.backgroundHover
-        }
+        visible: root.isProfile
 
-        StatusSmartIdenticon {
-            id: profileImage
-            anchors.top: parent.top
-            anchors.topMargin: 4
-            anchors.horizontalCenter: parent.horizontalCenter
-            image.source: root.selectedUserIcon
-            image.isIdenticon: root.isSelectedUserIconIdenticon
-        }
+        displayName: root.selectedUserDisplayName
+        pubkey: root.selectedUserPublicKey
+        icon: root.selectedUserIcon
+        isIdenticon: root.isSelectedUserIconIdenticon
+    }
 
-        StyledText {
-            id: username
-            text: selectedUserDisplayName
-            elide: Text.ElideRight
-            maximumLineCount: 3
-            horizontalAlignment: Text.AlignHCenter
-            wrapMode: Text.Wrap
-            anchors.top: profileImage.bottom
-            anchors.topMargin: 4
-            anchors.left: parent.left
-            anchors.leftMargin: Style.current.smallPadding
-            anchors.right: parent.right
-            anchors.rightMargin: Style.current.smallPadding
-            font.weight: Font.Medium
-            font.pixelSize: 15
-        }
-
-        MouseArea {
-            id: mouseArea
-            anchors.fill: parent
-            hoverEnabled: true
-            cursorShape: Qt.PointingHandCursor
-            onClicked: {
-                root.openProfileClicked(root.selectedUserPublicKey)
-                root.close()
-            }
-        }
+    Item {
+        visible: root.isProfile
+        height: root.topPadding
     }
 
     Separator {

@@ -134,6 +134,14 @@ QtObject {
         globalUtilsInst.downloadImage(content, path)
     }
 
+    function isCurrentUser(pubkey) {
+        return userProfileInst.pubKey === pubkey
+    }
+
+    function displayName(name, pubkey) {
+        return isCurrentUser(pubkey) ? qsTr("You") : name
+    }
+
     function getCommunity(communityId) {
         // Not Refactored Yet
 //        try {

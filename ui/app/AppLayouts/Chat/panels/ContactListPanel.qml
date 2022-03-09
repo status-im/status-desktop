@@ -27,17 +27,21 @@ ScrollView {
         clip: true
         delegate: StatusListItem {
             id: contactDelegate
+
             property bool isChecked: selectedPubKeys.indexOf(model.pubKey) !== -1
-            title: !model.name.endsWith(".eth") && !!model.localNickname ?
-                       model.localNickname : Utils.removeStatusEns(model.name)
-            image.source: Global.getProfileImage(model.pubKey) || model.identicon
-            image.isIdenticon: !!model.identicon
+
             visible: {
                 if (selectMode) {
                     return !searchString || model.name.toLowerCase().includes(searchString)
                 }
                 return checkbox.checked
             }
+
+            title: !model.name.endsWith(".eth") && !!model.localNickname ?
+                       model.localNickname : Utils.removeStatusEns(model.name)
+            image.source: Global.getProfileImage(model.pubKey) || model.identicon
+            image.isIdenticon: !!model.identicon
+            ringSettings.ringSpecModel: Utils.getColorHashAsJson(model.pubKey)
 
             height: visible ? implicitHeight : 0
 

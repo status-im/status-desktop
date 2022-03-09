@@ -30,6 +30,7 @@ import ../../app_service/service/devices/service as devices_service
 import ../../app_service/service/mailservers/service as mailservers_service
 import ../../app_service/service/gif/service as gif_service
 import ../../app_service/service/ens/service as ens_service
+import ../../app_service/service/visual_identity/service as visual_identity_service
 
 import ../modules/startup/module as startup_module
 import ../modules/main/module as main_module
@@ -83,6 +84,7 @@ type
     nodeService: node_service.Service
     gifService: gif_service.Service
     ensService: ens_service.Service
+    visualIdentityService: visual_identity_service.Service
 
     # Modules
     startupModule: startup_module.AccessInterface
@@ -146,7 +148,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   )
   result.messageService = message_service.newService(statusFoundation.events, statusFoundation.threadpool,
     result.contactsService, result.ethService, result.tokenService, result.walletAccountService)
-  result.transactionService = transaction_service.newService(statusFoundation.events, statusFoundation.threadpool, 
+  result.transactionService = transaction_service.newService(statusFoundation.events, statusFoundation.threadpool,
   result.walletAccountService, result.ethService, result.networkService, result.settingsService)
   result.bookmarkService = bookmark_service.newService()
   result.profileService = profile_service.newService()
@@ -175,10 +177,11 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.nodeService = node_service.newService(statusFoundation.events, statusFoundation.threadpool,
   result.settingsService)
   result.gifService = gif_service.newService(result.settingsService)
-  result.ensService = ens_service.newService(statusFoundation.events, statusFoundation.threadpool, 
-    result.settingsService, result.walletAccountService, result.transactionService, result.ethService, 
+  result.ensService = ens_service.newService(statusFoundation.events, statusFoundation.threadpool,
+    result.settingsService, result.walletAccountService, result.transactionService, result.ethService,
     result.networkService, result.tokenService)
   result.providerService = provider_service.newService(result.ensService)
+  result.visualIdentityService = visual_identity_service.newService()
 
   # Modules
   result.startupModule = startup_module.newModule[AppController](
@@ -219,6 +222,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     result.gifService,
     result.ensService,
     result.networkService,
+    result.visualIdentityService
   )
 
   # Do connections
@@ -267,6 +271,7 @@ proc delete*(self: AppController) =
   self.generalService.delete
   self.ensService.delete
   self.gifService.delete
+  self.visualIdentityService.delete
 
 proc startupDidLoad*(self: AppController) =
   singletonInstance.engine.setRootContextProperty("localAppSettings", self.localAppSettingsVariant)
@@ -336,7 +341,8 @@ proc load(self: AppController) =
     self.communityService,
     self.messageService,
     self.gifService,
-    self.mailserversService
+    self.mailserversService,
+    self.visualIdentityService,
   )
 
 proc userLoggedIn*(self: AppController) =

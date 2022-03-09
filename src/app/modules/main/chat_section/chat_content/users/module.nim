@@ -9,6 +9,7 @@ import ../../../../../../app_service/service/contacts/service as contact_service
 import ../../../../../../app_service/service/chat/service as chat_service
 import ../../../../../../app_service/service/community/service as community_service
 import ../../../../../../app_service/service/message/service as message_service
+import ../../../../../../app_service/service/visual_identity/service as visual_identity_service
 
 export io_interface
 
@@ -24,7 +25,7 @@ proc newModule*(
   delegate: delegate_interface.AccessInterface, events: EventEmitter, sectionId: string, chatId: string,
   belongsToCommunity: bool, isUsersListAvailable: bool, contactService: contact_service.Service,
   chatService: chat_service.Service, communityService: community_service.Service,
-  messageService: message_service.Service,
+  messageService: message_service.Service, visualIdentityService: visual_identity_service.Service
 ): Module =
   result = Module()
   result.delegate = delegate
@@ -32,7 +33,7 @@ proc newModule*(
   result.viewVariant = newQVariant(result.view)
   result.controller = controller.newController(
     result, events, sectionId, chatId, belongsToCommunity, isUsersListAvailable,
-    contactService, chatService, communityService, messageService,
+    contactService, chatService, communityService, messageService, visualIdentityService
   )
   result.moduleLoaded = false
 
@@ -62,6 +63,8 @@ method viewDidLoad*(self: Module) =
     singletonInstance.userProfile.getIcon(),
     singletonInstance.userProfile.getIdenticon(),
     singletonInstance.userProfile.getIsIdenticon(),
+    self.controller.getEmojiHash(singletonInstance.userProfile.getPubKey()),
+    self.controller.getColorHash(singletonInstance.userProfile.getPubKey()),
     isAdded = true,
     admin,
     joined,
@@ -87,8 +90,10 @@ method viewDidLoad*(self: Module) =
       contactDetails.icon,
       contactDetails.details.identicon,
       contactDetails.isidenticon,
+      self.controller.getEmojiHash(publicKey),
+      self.controller.getColorHash(publicKey),
       contactDetails.details.added,
-      admin, 
+      admin,
       joined
       ))
 
@@ -120,6 +125,8 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto]) =
       contactDetails.icon,
       contactDetails.details.identicon,
       contactDetails.isidenticon,
+      self.controller.getEmojiHash(m.`from`),
+      self.controller.getColorHash(m.`from`),
       contactDetails.details.added,
       ))
 
@@ -173,8 +180,10 @@ method onChatMembersAdded*(self: Module,  ids: seq[string]) =
       contactDetails.icon,
       contactDetails.details.identicon,
       contactDetails.isidenticon,
+      self.controller.getEmojiHash(id),
+      self.controller.getColorHash(id),
       contactDetails.details.added,
-      admin, 
+      admin,
       joined
       ))
 

@@ -6,7 +6,7 @@ import ../../../../../../app_service/service/contacts/service as contact_service
 import ../../../../../../app_service/service/community/service as community_service
 import ../../../../../../app_service/service/message/service as message_service
 import ../../../../../../app_service/service/chat/service as chat_service
-
+import ../../../../../../app_service/service/visual_identity/service as visual_identity_service
 
 import ../../../../../core/eventemitter
 
@@ -24,12 +24,13 @@ type
     chatService: chat_service.Service
     communityService: community_service.Service
     messageService: message_service.Service
+    visualIdentityService: visual_identity_service.Service
 
 proc newController*(
   delegate: io_interface.AccessInterface, events: EventEmitter, sectionId: string, chatId: string,
   belongsToCommunity: bool, isUsersListAvailable: bool, contactService: contact_service.Service,
   chatService: chat_service.Service, communityService: community_service.Service,
-  messageService: message_service.Service
+  messageService: message_service.Service, visualIdentityService: visual_identity_service.Service
 ): Controller =
   result = Controller()
   result.delegate = delegate
@@ -43,6 +44,7 @@ proc newController*(
   result.communityService = communityService
   result.messageService = messageService
   result.chatService = chatService
+  result.visualIdentityService = visualIdentityService
 
 method delete*(self: Controller) =
   discard
@@ -153,3 +155,9 @@ method getContactDetails*(self: Controller, contactId: string): ContactDetails =
 
 method getStatusForContact*(self: Controller, contactId: string): StatusUpdateDto =
   return self.contactService.getStatusForContactWithId(contactId)
+
+method getEmojiHash*(self: Controller, pubkey: string): EmojiHashDto =
+  return self.visual_identity_service.emojiHashOf(pubkey)
+
+method getColorHash*(self: Controller, pubkey: string): ColorHashDto =
+  return self.visual_identity_service.colorHashOf(pubkey)
