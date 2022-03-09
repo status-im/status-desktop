@@ -8,7 +8,7 @@ Rectangle {
     id: root
     width: titleText.contentWidth + 60
     height: 30
-    color: Theme.palette.primaryColor2
+    color: Theme.palette.primaryColor3
     radius: 15
 
     property string title: ""
@@ -62,7 +62,7 @@ Rectangle {
         anchors.leftMargin: 5
         anchors.verticalCenter: parent.verticalCenter
         color: Theme.palette.primaryColor1
-        icon: "close"
+        icon: "close-circle"
     }
     
     MouseArea {

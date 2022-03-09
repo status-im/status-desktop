@@ -23,7 +23,8 @@ Rectangle {
     property bool propagateTitleClicks: true 
     property int type: StatusListItem.Type.Primary
     property list<Item> components
-    property list<StatusListItemTag> tags
+    property var bottomModel: []
+    property Component bottomDelegate
 
     property StatusIconSettings icon: StatusIconSettings {
         height: isLetterIdenticon ? 40 : 20
@@ -81,7 +82,7 @@ Rectangle {
 
     implicitWidth: 448
     implicitHeight: {
-        if (tags.length === 0) {
+        if (bottomModel.length === 0) {
             return Math.max(64, statusListItemTitleArea.height + 16)
         }
         return Math.max(64, statusListItemTitleArea.height + 90)
@@ -105,14 +106,6 @@ Rectangle {
         if (components.length) {
             for (let idx in components) {
                 components[idx].parent = statusListItemComponentsSlot
-            }
-        }
-    }
-
-    onTagsChanged: {
-        if (tags.length) {
-            for (let idx in tags) {
-                tags[idx].parent = statusListItemTagsSlot
             }
         }
     }
@@ -162,7 +155,7 @@ Rectangle {
             anchors.right: statusListItemLabel.visible ? statusListItemLabel.left : statusListItemComponentsSlot.left
             anchors.leftMargin: iconOrImage.active ? 16 : statusListItem.leftPadding
             anchors.rightMargin: statusListItem.rightPadding
-            anchors.verticalCenter:  tags.length === 0 ? parent.verticalCenter : undefined
+            anchors.verticalCenter:  bottomModel.length === 0 ? parent.verticalCenter : undefined
 
             height: childrenRect.height
 
@@ -174,8 +167,8 @@ Rectangle {
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                 anchors.left: parent.left
                 anchors.right: !statusListItem.titleAsideText && !titleIconsRow.sourceComponent ? parent.right : undefined
-                anchors.top: tags.length === 0 ? undefined:  parent.top
-                anchors.topMargin: tags.length === 0 ? undefined : 20
+                anchors.top: bottomModel.length === 0 ? undefined:  parent.top
+                anchors.topMargin: bottomModel.length === 0 ? undefined : 20
                 color: {
                   if (!statusListItem.enabled) {
                     return Theme.palette.baseColor1
@@ -208,8 +201,8 @@ Rectangle {
                 anchors.left: statusListItemTitle.right
                 anchors.leftMargin: 4
                 anchors.verticalCenter: statusListItemTitle.verticalCenter
-                anchors.top: tags.length === 0 ? undefined:  parent.top
-                anchors.topMargin: tags.length === 0 ? undefined : 20
+                anchors.top: bottomModel.length === 0 ? undefined:  parent.top
+                anchors.topMargin: bottomModel.length === 0 ? undefined : 20
                 text: statusListItem.titleAsideText
                 font.pixelSize: 10
                 color: Theme.palette.baseColor1
@@ -265,13 +258,18 @@ Rectangle {
             width: contentItem.width
             spacing: 10
             anchors.verticalCenter: parent.verticalCenter
+
+            Repeater {
+                model: bottomModel
+                delegate: bottomDelegate
+            }
         }
 
         StatusBaseText {
             id: statusListItemLabel
-            anchors.verticalCenter: tags.length === 0 ? parent.verticalCenter : undefined
-            anchors.top: tags.length === 0 ? undefined:  parent.top
-            anchors.topMargin: tags.length === 0 ? undefined : 16
+            anchors.verticalCenter: bottomModel.length === 0 ? parent.verticalCenter : undefined
+            anchors.top: bottomModel.length === 0 ? undefined:  parent.top
+            anchors.topMargin: bottomModel.length === 0 ? undefined : 16
             anchors.right: statusListItemComponentsSlot.left
             anchors.rightMargin: statusListItemComponentsSlot.width > 0 ? 10 : 0
 
@@ -285,9 +283,9 @@ Rectangle {
             id: statusListItemComponentsSlot
             anchors.right: parent.right
             anchors.rightMargin: statusListItem.rightPadding
-            anchors.verticalCenter: tags.length === 0 ? parent.verticalCenter : undefined
-            anchors.top: tags.length === 0 ? undefined:  parent.top
-            anchors.topMargin: tags.length === 0 ? undefined : 12
+            anchors.verticalCenter: bottomModel.length === 0 ? parent.verticalCenter : undefined
+            anchors.top: bottomModel.length === 0 ? undefined:  parent.top
+            anchors.topMargin: bottomModel.length === 0 ? undefined : 12
             spacing: 10
         }
     }

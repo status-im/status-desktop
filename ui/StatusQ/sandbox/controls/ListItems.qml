@@ -331,12 +331,11 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
     StatusListItem {
         title: "List Item with Tags"
         icon.isLetterIdenticon: true
-        tags: [
-            StatusListItemTag {
-                title: qsTr("Tag 1")
-                icon.isLetterIdenticon: true
-            }
-        ]
+        bottomModel: 3
+        bottomDelegate: StatusListItemTag {
+            title: "tag"
+            icon.isLetterIdenticon: true
+        }
     }
 
     StatusDescriptionListItem {
