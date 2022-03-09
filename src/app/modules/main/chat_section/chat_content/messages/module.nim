@@ -421,6 +421,13 @@ method onMessageEdited*(self: Module, message: MessageDto) =
     message.links
     )
 
+  let messagesIds = self.view.model().findIdsOfTheMessagesWhichRespondedToMessageWithId(message.id)
+  for msgId in messagesIds:
+    # refreshing an item calling `self.view.model().refreshItemWithId(msgId)` doesn't work from some very weird reason
+    # and that would be the correct way of updating item instead sending this signal. We should check this once we refactor
+    # qml part.
+    self.view.emitRefreshAMessageUserRespondedToSignal(msgId)
+
 method onHistoryCleared*(self: Module) =
   self.view.model().clear()
 

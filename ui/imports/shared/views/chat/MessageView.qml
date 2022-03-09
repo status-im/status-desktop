@@ -27,6 +27,7 @@ Column {
     // without an explicit need to fetch those details via message store/module.
     property bool isChatBlocked: false
 
+    property int itemIndex: -1
     property string messageId: ""
     property string communityId: ""
     property string responseToMessageWithId: ""

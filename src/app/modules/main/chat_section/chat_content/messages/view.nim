@@ -162,3 +162,7 @@ QtObject:
 
   proc didIJoinedChat(self: View): bool {.slot.} =
     return self.delegate.didIJoinedChat()
+
+  proc refreshAMessageUserRespondedTo(self: View, msgId: string) {.signal.}
+  proc emitRefreshAMessageUserRespondedToSignal*(self: View, msgId: string) =
+    self.refreshAMessageUserRespondedTo(msgId)

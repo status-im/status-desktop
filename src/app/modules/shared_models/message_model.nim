@@ -196,6 +196,11 @@ QtObject:
         return i
     return -1
 
+  proc findIdsOfTheMessagesWhichRespondedToMessageWithId*(self: Model, messageId: string): seq[string] =
+    for i in 0 ..< self.items.len:
+      if(self.items[i].responseToMessageWithId == messageId):
+        result.add(self.items[i].id)
+
   proc findIndexBasedOnTimestampToInsertTo(self: Model, timestamp: int64): int =
     for i in 0 ..< self.items.len:
       if(timestamp > self.items[i].timestamp):
