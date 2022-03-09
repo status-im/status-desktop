@@ -73,6 +73,7 @@ Column {
     StatusSettingsLineButton {
         text: qsTr("Networks")
         height: 64
+        visible: root.walletStore.isMultiNetworkEnabled
         onClicked: goToNetworksView()
     }
 
@@ -82,6 +83,7 @@ Column {
         anchors.leftMargin: -Style.current.padding
         anchors.right: parent.right
         anchors.rightMargin: -Style.current.padding
+        visible: root.walletStore.isMultiNetworkEnabled
     }
 
     Item {
