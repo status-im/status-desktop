@@ -20,11 +20,6 @@ proc saveMailserver*(id: string, name: string, enode: string, fleet: string):
 proc getMailservers*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = core.callPrivateRPC("mailservers_getMailservers")
 
-proc requestAllHistoricMessages*(): RpcResponse[JsonNode] {.raises: [Exception].} =
-  let payload = %* []
-  result = core.callPrivateRPC("requestAllHistoricMessages".prefix, payload)
-  info "requestAllHistoricMessages", topics="mailserver-interaction", rpc_method="mailservers_requestAllHistoricMessages"
-
 proc syncChatFromSyncedFrom*(chatId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %*[chatId]
   result = core.callPrivateRPC("syncChatFromSyncedFrom".prefix, payload)
