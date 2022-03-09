@@ -18,8 +18,6 @@ type
 
   MailserverAvailableArgs* = ref object of Args
 
-  RequestMessagesTaskArg = ref object of QObjectTaskArg
-
   RequestMoreMessagesTaskArg = ref object of QObjectTaskArg
     chatId*: string
 
@@ -30,15 +28,6 @@ type
 # Signals which may be emitted by this service:
 const SIGNAL_ACTIVE_MAILSERVER_CHANGED* = "activeMailserverChanged"
 const SIGNAL_MAILSERVER_AVAILABLE* = "mailserverAvailable"
-
-const requestMessagesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
-  let arg = decode[RequestMessagesTaskArg](argEncoded)
-  try:
-    info "Requesting message history"
-    discard status_mailservers.requestAllHistoricMessages()
-  except Exception as e:
-    warn "Disconnecting active mailserver due to error", errDescription=e.msg
-    discard status_mailservers.disconnectActiveMailserver()
 
 const requestMoreMessagesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[RequestMoreMessagesTaskArg](argEncoded)
@@ -92,13 +81,6 @@ QtObject:
     self.initMailservers()
     self.fetchMailservers()
 
-  proc requestMessages(self: Service) =
-    let arg = RequestMessagesTaskArg(
-      tptr: cast[ByteAddress](requestMessagesTask),
-      vptr: cast[ByteAddress](self.vptr)
-    )
-    self.threadpool.start(arg)
-
   proc requestMoreMessages*(self: Service, chatId: string) =
     let arg = RequestMoreMessagesTaskArg(
       tptr: cast[ByteAddress](requestMoreMessagesTask),
@@ -126,7 +108,6 @@ QtObject:
 
     self.events.on(SignalType.MailserverAvailable.event) do(e: Args):
       info "mailserver available"
-      self.requestMessages()
       let data = MailserverAvailableArgs()
       self.events.emit(SIGNAL_MAILSERVER_AVAILABLE, data)
 
