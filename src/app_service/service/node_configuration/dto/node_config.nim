@@ -87,7 +87,6 @@ type
 
   ShhextConfig* = object
     PFSEnabled*: bool
-    EnableMailserverCycle*: bool
     BackupDisabledDataDir*: string
     InstallationID*: string
     MailServerConfirmations*: bool
@@ -332,7 +331,6 @@ proc toWakuConfig*(jsonObj: JsonNode): WakuConfig =
 
 proc toShhextConfig*(jsonObj: JsonNode): ShhextConfig =
   discard jsonObj.getProp("PFSEnabled", result.PFSEnabled)
-  discard jsonObj.getProp("EnableMailserverCycle", result.EnableMailserverCycle)
   discard jsonObj.getProp("BackupDisabledDataDir", result.BackupDisabledDataDir)
   discard jsonObj.getProp("InstallationID", result.InstallationID)
   discard jsonObj.getProp("MailServerConfirmations", result.MailServerConfirmations)
