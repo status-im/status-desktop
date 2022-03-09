@@ -1,7 +1,6 @@
 ChannelIdentifierView 1.0 ChannelIdentifierView.qml
 ChatTextView 1.0 ChatTextView.qml
 MessageView 1.0 MessageView.qml
-StatusUpdateView 1.0 StatusUpdateView.qml
 TransactionBubbleView 1.0 TransactionBubbleView.qml
 LinksMessageView 1.0 LinksMessageView.qml
 InvitationBubbleView 1.0 InvitationBubbleView.qml

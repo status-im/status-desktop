@@ -1,4 +1,6 @@
-import strformat
+import strformat, sequtils, sugar
+
+import ./emojis_model, ./color_hash_model, ./color_hash_item
 
 type
   OnlineStatus* {.pure.} = enum
@@ -7,6 +9,9 @@ type
     DoNotDisturb
     Idle
     Invisible
+
+type
+  ColorHashSegment* = tuple[len, colorIdx: int]
 
 # TODO add role when it is needed
 type
@@ -20,6 +25,8 @@ type
     icon: string
     identicon: string
     isIdenticon: bool
+    emojiHashModel: emojis_model.Model
+    colorHashModel: color_hash_model.Model
     isAdded: bool
     isAdmin: bool
     joined: bool
@@ -34,6 +41,8 @@ proc initItem*(
   icon: string,
   identicon: string,
   isidenticon: bool,
+  emojiHash: seq[string],
+  colorHash: seq[ColorHashSegment],
   isAdded: bool = false,
   isAdmin: bool = false,
   joined: bool = false,
@@ -48,6 +57,10 @@ proc initItem*(
   result.icon = icon
   result.identicon = identicon
   result.isIdenticon = isidenticon
+  result.emojiHashModel = emojis_model.newModel()
+  result.emojiHashModel.setItems(emojiHash)
+  result.colorHashModel = color_hash_model.newModel()
+  result.colorHashModel.setItems(map(colorHash, x => color_hash_item.initItem(x.len, x.colorIdx)))
   result.isAdded = isAdded
   result.isAdmin = isAdmin
   result.joined = joined
@@ -61,10 +74,10 @@ proc `$`*(self: Item): string =
     onlineStatus: {$self.onlineStatus.int},
     icon: {self.icon},
     identicon: {self.identicon},
-    isIdenticon: {$self.isIdenticon}
-    isAdded: {$self.isAdded}
-    isAdmin: {$self.isAdmin}
-    joined: {$self.joined}
+    isIdenticon: {$self.isIdenticon},
+    isAdded: {$self.isAdded},
+    isAdmin: {$self.isAdmin},
+    joined: {$self.joined},
     ]"""
 
 proc id*(self: Item): string {.inline.} =
@@ -132,3 +145,9 @@ proc joined*(self: Item): bool {.inline.} =
 
 proc `joined=`*(self: Item, value: bool) {.inline.} =
   self.joined = value
+
+proc emojiHashModel*(self: Item): emojis_model.Model {.inline.} =
+  self.emojiHashModel
+
+proc colorHashModel*(self: Item): color_hash_model.Model {.inline.} =
+  self.colorHashModel

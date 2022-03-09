@@ -12,3 +12,4 @@ StateBubble 1.0 StateBubble.qml
 GasSelectorButton 1.0 GasSelectorButton.qml
 MessageBorder 1.0 MessageBorder.qml
 EmojiReaction 1.0 EmojiReaction.qml
+ProfileHeader 1.0 ProfileHeader.qml

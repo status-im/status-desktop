@@ -11,6 +11,7 @@ import shared.controls.chat 1.0
 
 import StatusQ.Controls 0.1 as StatusQControls
 import StatusQ.Core.Utils 0.1 as StatusQUtils
+import StatusQ.Components 0.1
 
 Item {
     id: root
@@ -306,6 +307,8 @@ Item {
                 // TODO: not sure about is edited at the moment
                 repliedMessageIsEdited = false
                 repliedMessageSender = obj.senderDisplayName
+                repliedMessageSenderPubkey = obj.senderId
+                repliedMessageSenderIsAdded = obj.senderIsAdded
                 repliedMessageContent = obj.messageText
                 repliedMessageImage = obj.messageImage
             }
@@ -327,17 +330,22 @@ Item {
 
         UserImage {
             id: chatImage
+
             active: isMessage && headerRepeatCondition
+
             anchors.left: parent.left
             anchors.leftMargin: Style.current.padding
             anchors.top: chatReply.active ? chatReply.bottom :
                                             pinnedRectangleLoader.active ? pinnedRectangleLoader.bottom : parent.top
             anchors.topMargin: chatReply.active || pinnedRectangleLoader.active ? 4 : Style.current.smallPadding
+
             icon: root.senderIcon
             isIdenticon: root.isSenderIconIdenticon
-            onClickMessage: {
-                root.clickMessage(isProfileClick, isSticker, isImage, image, emojiOnly, hideEmojiPicker, isReply, false, "")
-            }
+            pubkey: senderId
+            name: senderDisplayName
+            showRing: !(root.amISender || senderIsAdded)
+
+            onClicked: root.clickMessage(true, false, false, null, false, false, false, false, "")
         }
 
         UsernameLabel {

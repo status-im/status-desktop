@@ -604,7 +604,21 @@ QtObject {
         }
     }
 
+    function getEmojiHashAsJson(publicKey) {
+        if (publicKey === "") {
+            return ""
+        }
+        let jsonObj = mainModule.getEmojiHashAsJson(publicKey)
+        return JSON.parse(jsonObj)
+    }
 
+    function getColorHashAsJson(publicKey) {
+        if (publicKey === "") {
+            return ""
+        }
+        let jsonObj = mainModule.getColorHashAsJson(publicKey)
+        return JSON.parse(jsonObj)
+    }
 
     // Leave this function at the bottom of the file as QT Creator messes up the code color after this
     function isPunct(c) {

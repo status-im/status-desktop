@@ -1,9 +1,11 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import shared 1.0
-import shared.panels 1.0
+import QtQuick 2.14
+import QtQuick.Controls 2.14
 
 import utils 1.0
+
+import shared 1.0
+import shared.panels 1.0
+import shared.controls.chat 1.0
 
 import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
@@ -20,6 +22,7 @@ Item {
     property string icon: ""
     property string identicon: ""
     property bool isIdenticon: true
+    property bool isCurrentUser: false
     property bool isAdded: false
     property string iconToShow: {
         if (isIdenticon || (!isAdded &&
@@ -48,23 +51,19 @@ Item {
         radius: 8
         color: wrapper.color
 
-        StatusSmartIdenticon {
+        UserImage {
             id: contactImage
             anchors.left: parent.left
             anchors.leftMargin: Style.current.padding
             anchors.verticalCenter: parent.verticalCenter
-            image: StatusImageSettings {
-                width: 28
-                height: 28
-                source: wrapper.iconToShow
-                isIdenticon: wrapper.isIdenticon
-            }
-            icon: StatusIconSettings {
-                width: 28
-                height: 28
-                letterSize: 15
-            }
+
+            imageWidth: 28
+            imageHeight: 28
             name: wrapper.name
+            pubkey: wrapper.publicKey
+            icon: wrapper.iconToShow
+            isIdenticon: wrapper.isIdenticon
+            showRing: !(wrapper.isCurrentUser || wrapper.isAdded)
         }
 
         StyledText {

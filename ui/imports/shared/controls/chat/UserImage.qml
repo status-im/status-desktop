@@ -4,46 +4,56 @@ import shared.panels 1.0
 
 import utils 1.0
 
+import StatusQ.Components 0.1
+
 Loader {
     id: root
-    height: active ? item.height : 0
+
     property int imageHeight: 36
     property int imageWidth: 36
+
+    property string name
+    property string pubkey
     property string icon: ""
     property bool isIdenticon: false
+    property bool showRing: false
 
-    signal clickMessage(bool isProfileClick, bool isSticker, bool isImage, var image, bool emojiOnly, bool hideEmojiPicker, bool isReply)
+    property bool interactive: true
 
-    sourceComponent: Component {
-        Item {
-            id: chatImage
-            width: identiconImage.width
-            height: identiconImage.height
+    signal clicked()
 
-            RoundedImage {
-                id: identiconImage
-                width: root.imageWidth
-                height: root.imageHeight
-                border.width: root.isIdenticon ? 1 : 0
-                border.color: Style.current.border
-                source: root.icon
-                smooth: false
-                antialiasing: true
+    height: active ? item.height : 0
 
-                MouseArea {
-                    cursorShape: Qt.PointingHandCursor
-                    acceptedButtons: Qt.LeftButton | Qt.RightButton
-                    anchors.fill: parent
-                    onClicked: {
-                        if (!!messageContextMenu) {
-                            // Set parent, X & Y positions for the messageContextMenu
-                            messageContextMenu.parent = root
-                            messageContextMenu.setXPosition = function() { return root.width + 4}
-                            messageContextMenu.setYPosition = function() { return root.height/2 + 4}
-                        }
-                        root.clickMessage(true, false, false, null, false, false, isReplyImage)
-                    }
-                }
+    sourceComponent: StatusSmartIdenticon {
+        name: root.name
+        image {
+            width: root.imageWidth
+            height: root.imageHeight
+            source: root.isIdenticon ? "" : root.icon
+            isIdenticon: false
+        }
+        icon {
+            width: root.imageWidth
+            height: root.imageHeight
+            color: Style.current.background
+            textColor: Style.current.secondaryText
+            letterSize: Math.max(4, root.imageWidth / 2.4)
+            charactersLen: 2
+        }
+        ringSettings {
+            ringSpecModel: root.showRing ? Utils.getColorHashAsJson(root.pubkey) : undefined
+            ringPxSize: Math.max(root.imageWidth / 24.0)
+        }
+
+        Loader {
+            anchors.fill: parent
+
+            active: root.interactive
+
+            sourceComponent: MouseArea {
+                cursorShape: Qt.PointingHandCursor
+                hoverEnabled: true
+                onClicked: root.clicked()
             }
         }
     }

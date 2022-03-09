@@ -98,6 +98,7 @@ StatusAppThreePanelLayout {
     Component {
         id: userListComponent
         UserListPanel {
+            rootStore: root.rootStore
             label: localAccountSensitiveSettings.communitiesEnabled &&
                 root.rootStore.chatCommunitySectionModule.isCommunity() ?
                 //% "Members"

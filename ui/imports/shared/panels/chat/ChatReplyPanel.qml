@@ -13,12 +13,15 @@ import StatusQ.Core.Utils 0.1 as StatusQUtils
 
 Loader {
     id: root
+
     property bool amISenderOfTheRepliedMessage
     property int repliedMessageContentType
     property string repliedMessageSenderIcon
     property bool repliedMessageSenderIconIsIdenticon
     property bool repliedMessageIsEdited
     property string repliedMessageSender
+    property string repliedMessageSenderPubkey
+    property bool repliedMessageSenderIsAdded
     property string repliedMessageContent
     property string repliedMessageImage
     property bool isCurrentUser: false
@@ -97,16 +100,20 @@ Loader {
 
             UserImage {
                 id: userImage
+                anchors.left: replyCorner.right
+                anchors.leftMargin: Style.current.halfPadding
+
                 imageHeight: 20
                 imageWidth: 20
                 active: true
-                anchors.left: replyCorner.right
-                anchors.leftMargin: Style.current.halfPadding
+
+                name: repliedMessageSender
+                pubkey: repliedMessageSenderPubkey
                 icon: repliedMessageSenderIcon
                 isIdenticon: repliedMessageSenderIconIsIdenticon
-                onClickMessage: {
-                    root.clickMessage(true, false, false, null, false, false, true)
-                }
+                showRing: !(amISenderOfTheRepliedMessage || repliedMessageSenderIsAdded)
+
+                onClicked: root.clickMessage(true, false, false, null, false, false, true)
             }
 
             StyledTextEdit {

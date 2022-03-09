@@ -22,6 +22,8 @@ Item {
     property var messageContextMenu
     property string label
 
+    property var rootStore
+
     StatusBaseText {
         id: titleText
         anchors.top: parent.top
@@ -61,6 +63,7 @@ Item {
             isAdded: model.isAdded
             userStatus: model.onlineStatus
             messageContextMenu: root.messageContextMenu
+            isCurrentUser: rootStore.isCurrentUser(model.id)
         }
         section.property: "onlineStatus"
         section.delegate: (root.width > 58) ? sectionDelegateComponent : null

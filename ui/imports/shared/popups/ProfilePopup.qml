@@ -3,12 +3,13 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
 
-
 import utils 1.0
 import shared 1.0
 import shared.popups 1.0
 import shared.stores 1.0
+import shared.controls.chat 1.0
 
+import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
@@ -29,8 +30,8 @@ StatusModal {
     property string userNickname: ""
     property string userEnsName: ""
     property string userIcon: ""
+    property bool isUserIconIdenticon: true
     property string text: ""
-
 
     readonly property int innerMargin: 20
 
@@ -62,6 +63,7 @@ StatusModal {
         } else {
             userIcon = contactDetails.displayIcon
         }
+        isUserIconIdenticon = contactDetails.isDisplayIconIdenticon
         userIsEnsVerified = contactDetails.ensVerified
         userIsBlocked = contactDetails.isBlocked
         isAddedContact = contactDetails.isContact
@@ -72,17 +74,9 @@ StatusModal {
         popup.open()
     }
 
-    onHeaderImageClicked: {
-        Global.openChangeProfilePicPopup()
-    }
-
     header.title: userDisplayName
     header.subTitle: userIsEnsVerified ? userName : userPublicKey
     header.subTitleElide: Text.ElideMiddle
-    // In the following line we need to use `icon` property as that's the easiest way
-    // to update image on change (in case of logged in user)
-    header.image.source: isCurrentUser? popup.profileStore.icon : userIcon
-    header.headerImageEditable: isCurrentUser
 
     headerActionButton: StatusFlatRoundButton {
         type: StatusFlatRoundButton.Type.Secondary
@@ -108,6 +102,50 @@ StatusModal {
             id: modalContent
             anchors.top: parent.top
             width: parent.width
+
+            Item {
+                height: 16
+                width: parent.width
+            }
+
+            ProfileHeader {
+                width: parent.width
+
+                displayName: popup.userDisplayName
+                pubkey: popup.userPublicKey
+                icon: popup.isCurrentUser ? popup.profileStore.icon : popup.userIcon
+                isIdenticon: popup.isCurrentUser ? popup.profileStore.isIdenticon : popup.isUserIconIdenticon
+
+                displayNameVisible: false
+                pubkeyVisible: false
+
+                emojiSize: "20x20"
+                imageWidth: 80
+                imageHeight: 80
+
+                imageOverlay: Item {
+                    visible: popup.isCurrentUser
+
+                    StatusFlatRoundButton {
+                        width: 24
+                        height: 24
+
+                        anchors {
+                            right: parent.right
+                            bottom: parent.bottom
+                            rightMargin: -8
+                        }
+
+                        type: StatusFlatRoundButton.Type.Secondary
+                        icon.name: "pencil"
+                        icon.color: Theme.palette.directColor1
+                        icon.width: 12.5
+                        icon.height: 12.5
+
+                        onClicked: Global.openChangeProfilePicPopup()
+                    }
+                }
+            }
 
             StatusBanner {
                 width: parent.width

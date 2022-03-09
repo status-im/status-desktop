@@ -19,6 +19,7 @@ import ../../../../app_service/service/community/service as community_service
 import ../../../../app_service/service/message/service as message_service
 import ../../../../app_service/service/mailservers/service as mailservers_service
 import ../../../../app_service/service/gif/service as gif_service
+import ../../../../app_service/service/visual_identity/service as visual_identity_service
 
 export io_interface
 
@@ -85,10 +86,11 @@ proc addSubmodule(self: Module, chatId: string, belongToCommunity: bool, isUsers
   communityService: community_service.Service,
   messageService: message_service.Service,
   gifService: gif_service.Service,
-  mailserversService: mailservers_service.Service) =
+  mailserversService: mailservers_service.Service,
+  visualIdentityService: visual_identity_service.Service) =
   self.chatContentModules[chatId] = chat_content_module.newModule(self, events, self.controller.getMySectionId(), chatId,
     belongToCommunity, isUsersListAvailable, settingsService, contactService, chatService, communityService,
-    messageService, gifService, mailserversService)
+    messageService, gifService, mailserversService, visualIdentityService)
 
 proc removeSubmodule(self: Module, chatId: string) =
   if(not self.chatContentModules.contains(chatId)):
@@ -102,7 +104,8 @@ proc buildChatUI(self: Module, events: EventEmitter,
   communityService: community_service.Service,
   messageService: message_service.Service,
   gifService: gif_service.Service,
-  mailserversService: mailservers_service.Service) =
+  mailserversService: mailservers_service.Service,
+  visualIdentityService: visual_identity_service.Service) =
   let types = @[ChatType.OneToOne, ChatType.Public, ChatType.PrivateGroupChat]
   let chats = self.controller.getChatDetailsForChatTypes(types)
 
@@ -130,7 +133,7 @@ proc buildChatUI(self: Module, events: EventEmitter,
       active=false, c.position, c.categoryId)
     self.view.chatsModel().appendItem(item)
     self.addSubmodule(c.id, false, isUsersListAvailable, events, settingsService, contactService, chatService,
-    communityService, messageService, gifService, mailserversService)
+    communityService, messageService, gifService, mailserversService, visualIdentityService)
 
     # make the first Public chat active when load the app
     if(selectedItemId.len == 0 and c.chatType == ChatType.Public):
@@ -145,7 +148,8 @@ proc buildCommunityUI(self: Module, events: EventEmitter,
   communityService: community_service.Service,
   messageService: message_service.Service,
   gifService: gif_service.Service,
-  mailserversService: mailservers_service.Service) =
+  mailserversService: mailservers_service.Service,
+  visualIdentityService: visual_identity_service.Service) =
   var selectedItemId = ""
   var selectedSubItemId = ""
   let communities = self.controller.getJoinedCommunities()
@@ -166,7 +170,7 @@ proc buildCommunityUI(self: Module, events: EventEmitter,
         notificationsCount, chatDto.muted, blocked=false, active = false, c.position, c.categoryId)
       self.view.chatsModel().appendItem(channelItem)
       self.addSubmodule(chatDto.id, true, true, events, settingsService, contactService, chatService, communityService,
-      messageService, gifService, mailserversService)
+      messageService, gifService, mailserversService, visualIdentityService)
 
       # make the first channel which doesn't belong to any category active when load the app
       if(selectedItemId.len == 0):
@@ -197,7 +201,7 @@ proc buildCommunityUI(self: Module, events: EventEmitter,
           active=false, c.position)
         categoryChannels.add(channelItem)
         self.addSubmodule(chatDto.id, true, true, events, settingsService, contactService, chatService, communityService,
-        messageService, gifService, mailserversService)
+        messageService, gifService, mailserversService, visualIdentityService)
 
         # in case there is no channels beyond categories,
         # make the first channel of the first category active when load the app
@@ -262,14 +266,15 @@ method load*(self: Module, events: EventEmitter,
   communityService: community_service.Service,
   messageService: message_service.Service,
   gifService: gif_service.Service,
-  mailserversService: mailservers_service.Service) =
+  mailserversService: mailservers_service.Service,
+  visualIdentityService: visual_identity_service.Service) =
   self.controller.init()
   self.view.load()
 
   if(self.controller.isCommunity()):
-    self.buildCommunityUI(events, settingsService, contactService, chatService, communityService, messageService, gifService, mailserversService)
+    self.buildCommunityUI(events, settingsService, contactService, chatService, communityService, messageService, gifService, mailserversService, visualIdentityService)
   else:
-    self.buildChatUI(events, settingsService, contactService, chatService, communityService, messageService, gifService, mailserversService)
+    self.buildChatUI(events, settingsService, contactService, chatService, communityService, messageService, gifService, mailserversService, visualIdentityService)
     self.initContactRequestsModel() # we do this only in case of chat section (not in case of communities)
 
   for cModule in self.chatContentModules.values:
@@ -400,6 +405,7 @@ method addNewChat*(
     messageService: message_service.Service,
     gifService: gif_service.Service,
     mailserversService: mailservers_service.Service,
+    visualIdentityService: visual_identity_service.Service,
     setChatAsActive: bool = true) =
   let hasNotification = chatDto.unviewedMessagesCount > 0 or chatDto.unviewedMentionsCount > 0
   let notificationsCount = chatDto.unviewedMentionsCount
@@ -421,7 +427,7 @@ method addNewChat*(
       chatDto.description, chatDto.chatType.int, amIChatAdmin, hasNotification, notificationsCount,
       chatDto.muted, blocked=false, active=false, position = 0, chatDto.categoryId, chatDto.highlight)
     self.addSubmodule(chatDto.id, belongsToCommunity, isUsersListAvailable, events, settingsService, contactService, chatService,
-                      communityService, messageService, gifService, mailserversService)
+                      communityService, messageService, gifService, mailserversService, visualIdentityService)
     self.chatContentModules[chatDto.id].load()
     self.view.chatsModel().appendItem(item)
     if setChatAsActive:
@@ -437,7 +443,7 @@ method addNewChat*(
       amIChatAdmin, hasNotification, notificationsCount, chatDto.muted, blocked=false, active=false,
       chatDto.position)
     self.addSubmodule(chatDto.id, belongsToCommunity, isUsersListAvailable, events, settingsService, contactService, chatService,
-                      communityService, messageService, gifService, mailserversService)
+                      communityService, messageService, gifService, mailserversService, visualIdentityService)
     self.chatContentModules[chatDto.id].load()
     categoryItem.appendSubItem(channelItem)
     if setChatAsActive:
@@ -638,8 +644,8 @@ method onContactDetailsUpdated*(self: Module, publicKey: string) =
       let item = self.createItemFromPublicKey(publicKey)
       self.view.contactRequestsModel().addItem(item)
       self.updateParentBadgeNotifications()
-      singletonInstance.globalEvents.showNewContactRequestNotification("New Contact Request", 
-      fmt "{contactDetails.displayName} added you as contact", conf.CHAT_SECTION_ID) 
+      singletonInstance.globalEvents.showNewContactRequestNotification("New Contact Request",
+      fmt "{contactDetails.displayName} added you as contact", conf.CHAT_SECTION_ID)
 
   let chatName = contactDetails.displayName
   let chatImage = contactDetails.icon
@@ -659,10 +665,10 @@ method onNewMessagesReceived*(self: Module, chatId: string, unviewedMessagesCoun
     let renderedMessageText = self.controller.getRenderedText(m.parsedText)
     let plainText = singletonInstance.utils.plainText(renderedMessageText)
     if(m.isUserWithPkMentioned(myPK)):
-      singletonInstance.globalEvents.showMentionMessageNotification(contactDetails.displayName, plainText, 
+      singletonInstance.globalEvents.showMentionMessageNotification(contactDetails.displayName, plainText,
       self.controller.getMySectionId(), chatId, m.id)
     else:
-      singletonInstance.globalEvents.showNormalMessageNotification(contactDetails.displayName, plainText, 
+      singletonInstance.globalEvents.showNormalMessageNotification(contactDetails.displayName, plainText,
       self.controller.getMySectionId(), chatId, m.id)
 
 method addGroupMembers*(self: Module, communityID: string, chatId: string, pubKeys: string) =
@@ -757,7 +763,7 @@ method reorderCommunityCategories*(self: Module, categoryId: string, position: i
 
 method reorderCommunityChat*(self: Module, categoryId: string, chatId: string, position: int): string =
   self.controller.reorderCommunityChat(categoryId, chatId, position)
-  
+
 method setLoadingHistoryMessagesInProgress*(self: Module, isLoading: bool) =
   self.view.setLoadingHistoryMessagesInProgress(isLoading)
 

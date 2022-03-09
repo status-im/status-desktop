@@ -289,10 +289,9 @@ Item {
 
                 icon: root.ensUsernamesStore.icon
                 isIdenticon: root.ensUsernamesStore.isIdenticon
+                showRing: true
 
-                onClickMessage: {
-                    root.parent.clickMessage(isProfileClick, isSticker, isImage, image, emojiOnly, hideEmojiPicker, isReply);
-                }
+                onClicked: root.parent.clickMessage(true, false, false, null, false, false, false)
             }
 
             UsernameLabel {

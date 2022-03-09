@@ -16,6 +16,7 @@ import ../../../app_service/service/gif/service as gif_service
 import ../../../app_service/service/mailservers/service as mailservers_service
 import ../../../app_service/service/privacy/service as privacy_service
 import ../../../app_service/service/node/service as node_service
+import ../../../app_service/service/visual_identity/service as visual_identity_service
 
 export controller_interface
 
@@ -37,6 +38,7 @@ type
     privacyService: privacy_service.Service
     mailserversService: mailservers_service.Service
     nodeService: node_service.Service
+    visualIdentityService: visual_identity_service.Service
     activeSectionId: string
 
 proc newController*(delegate: io_interface.AccessInterface,
@@ -51,7 +53,8 @@ proc newController*(delegate: io_interface.AccessInterface,
   gifService: gif_service.Service,
   privacyService: privacy_service.Service,
   mailserversService: mailservers_service.Service,
-  nodeService: node_service.Service
+  nodeService: node_service.Service,
+  visualIdentityService: visual_identity_service.Service
 ):
   Controller =
   result = Controller()
@@ -67,6 +70,7 @@ proc newController*(delegate: io_interface.AccessInterface,
   result.gifService = gifService
   result.privacyService = privacyService
   result.nodeService = nodeService
+  result.visualIdentityService = visualIdentityService
 
 method delete*(self: Controller) =
   discard
@@ -103,7 +107,8 @@ method init*(self: Controller) =
       self.communityService,
       self.messageService,
       self.gifService,
-      self.mailserversService
+      self.mailserversService,
+      self.visualIdentityService
     )
 
   self.events.on(TOGGLE_SECTION) do(e:Args):
@@ -121,7 +126,8 @@ method init*(self: Controller) =
       self.communityService,
       self.messageService,
       self.gifService,
-      self.mailserversService
+      self.mailserversService,
+      self.visualIdentityService
     )
 
   self.events.on(SIGNAL_COMMUNITY_IMPORTED) do(e:Args):
@@ -137,7 +143,8 @@ method init*(self: Controller) =
       self.communityService,
       self.messageService,
       self.gifService,
-      self.mailserversService
+      self.mailserversService,
+      self.visualIdentityService
     )
 
   self.events.on(SIGNAL_COMMUNITY_LEFT) do(e:Args):
@@ -172,20 +179,20 @@ method init*(self: Controller) =
     var args = ActiveSectionChatArgs(e)
     let sectionType = if args.sectionId == conf.CHAT_SECTION_ID: SectionType.Chat else: SectionType.Community
     self.setActiveSection(args.sectionId, sectionType)
-  
+
   self.events.on(SIGNAL_OS_NOTIFICATION_CLICKED) do(e: Args):
     var args = ClickedNotificationArgs(e)
     self.delegate.osNotificationClicked(args.details)
 
   self.events.on(SIGNAL_NEW_REQUEST_TO_JOIN_COMMUNITY) do(e: Args):
     var args = CommunityRequestArgs(e)
-    self.delegate.newCommunityMembershipRequestReceived(args.communityRequest)  
+    self.delegate.newCommunityMembershipRequestReceived(args.communityRequest)
 
   self.events.on(SIGNAL_NETWORK_CONNECTED) do(e: Args):
-    self.delegate.onNetworkConnected()  
+    self.delegate.onNetworkConnected()
 
   self.events.on(SIGNAL_NETWORK_DISCONNECTED) do(e: Args):
-    self.delegate.onNetworkDisconnected()  
+    self.delegate.onNetworkDisconnected()
 
 method isConnected*(self: Controller): bool =
   return self.nodeService.isConnected()
@@ -286,3 +293,9 @@ method switchTo*(self: Controller, sectionId, chatId, messageId: string) =
 
 method getCommunityById*(self: Controller, communityId: string): CommunityDto =
   return self.communityService.getCommunityById(communityId)
+
+method getEmojiHash*(self: Controller, pubkey: string): EmojiHashDto =
+  return self.visualIdentityService.emojiHashOf(pubkey)
+
+method getColorHash*(self: Controller, pubkey: string): ColorHashDto =
+  return self.visualIdentityService.colorHashOf(pubkey)
