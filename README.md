@@ -71,3 +71,13 @@ Instead of `conan build ..` CMake may be used:
 cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake
 cmake --build . --config Release
 ```
+
+### Setup for `iPadOs`:
+
+run `status-tablets.pro` from Qt Creator.
+
+### Setup for `Android`:
+
+1. Install android SDK and NDK(`21.0.6113669`):
+2. run `status-tablets.pro` from Qt Creator
+3. Add to `Build environment variables` variable `ANDROID_SDK` with path/to/android/sdk

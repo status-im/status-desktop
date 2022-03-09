@@ -5,14 +5,33 @@
 
 #include "../modules/main/interfaces/module_access_interface.h"
 #include "../modules/startup/module_access_interface.h"
-#include "accounts/service.h"
+#include "accounts/service_accounts.h"
 #include "app_controller_delegate.h"
 #include "app_service.h"
-#include "wallet_accounts/service.h"
+#include "wallet_accounts/service_wallet.h"
 
-class AppController : public QObject, AppControllerDelegate
+class AppController : public QObject, public AppControllerDelegate
 {
     Q_OBJECT
+public:
+    AppController();
+    ~AppController();
+
+    void start();
+
+    void startupDidLoad() override;
+    void userLoggedIn() override;
+
+public slots:
+    void mainDidLoad();
+
+private:
+    void doConnect();
+    void load();
+    void buildAndRegisterLocalAccountSensitiveSettings();
+    void buildAndRegisterUserProfile();
+
+private:
     //statusFoundation: StatusFoundation
 
     // Global
@@ -30,21 +49,6 @@ class AppController : public QObject, AppControllerDelegate
     // To-Do make this a shared pointer and remove circular dependency.
     Modules::Startup::ModuleAccessInterface* m_startupModule;
     Modules::Main::IModuleAccess* m_mainModulePtr;
-
-public:
-    AppController();
-    ~AppController();
-    void start();
-public slots:
-    void mainDidLoad();
-
-private:
-    void connect();
-    void startupDidLoad() override;
-    void load();
-    void userLoggedIn() override;
-    void buildAndRegisterLocalAccountSensitiveSettings();
-    void buildAndRegisterUserProfile();
 };
 
 #endif // APP_CONTROLLER_H

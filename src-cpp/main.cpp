@@ -50,7 +50,7 @@ int main(int argc, char* argv[])
     qRegisterMetaType<Signals::NodeSignal>("NodeSignal");
 
     qInfo("starting application controller...");
-    AppController appController = AppController();
+    AppController appController;
     appController.start();
 
     QResource::registerResource("../resources.rcc");

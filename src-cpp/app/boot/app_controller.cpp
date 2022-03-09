@@ -1,8 +1,8 @@
 #include "app_controller.h"
-#include "accounts/service.h"
+#include "accounts/service_accounts.h"
 #include "app_service.h"
-#include "modules/main/module.h"
-#include "modules/startup/module.h"
+#include "modules/main/module_main.h"
+#include "modules/startup/module_startup.h"
 #include <QDebug>
 
 AppController::AppController()
@@ -96,7 +96,7 @@ AppController::AppController()
     // result.mailserversService
 
     // # Do connections
-    connect();
+    doConnect();
 }
 
 AppController::~AppController()
@@ -105,7 +105,7 @@ AppController::~AppController()
     delete m_accountsService;
 }
 
-void AppController::connect()
+void AppController::doConnect()
 {
     // self.statusFoundation.status.events.once("nodeStopped") do(a: Args):
     // TODO: remove this once accounts are not tracked in the AccountsModel
