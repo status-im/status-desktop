@@ -74,6 +74,15 @@ Item {
     height: messageContainer.height + messageContainer.anchors.topMargin
             + (dateGroupLbl.visible ? dateGroupLbl.height + dateGroupLbl.anchors.topMargin : 0)
 
+    Connections {
+        target: root.messageStore.messageModule
+        enabled: responseTo !== ""
+        onRefreshAMessageUserRespondedTo: {
+            if(msgId === messageId)
+                chatReply.resetOriginalMessage()
+        }
+    }
+
     Timer {
         id: ensureMessageFullyVisibleTimer
         interval: 1
@@ -283,7 +292,7 @@ Item {
 //            stickerData: !!rootStore ? rootStore.chatsModelInst.messageView.messageList.getMessageData(replyMessageIndex, "sticker") : null
             active: responseTo !== "" && !activityCenterMessage
 
-            Component.onCompleted: {
+            function resetOriginalMessage() {
                 if(!root.messageStore)
                     return
                 let obj = root.messageStore.getMessageByIdAsJson(responseTo)
@@ -300,6 +309,11 @@ Item {
                 repliedMessageContent = obj.messageText
                 repliedMessageImage = obj.messageImage
             }
+
+            Component.onCompleted: {
+                resetOriginalMessage()
+            }
+
             onScrollToBottom: {
                 // Not Refactored Yet
 //                messageStore.scrollToBottom(isit, root.container);

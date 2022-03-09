@@ -248,6 +248,7 @@ Item {
             isChatBlocked: root.isChatBlocked
             messageContextMenu: messageContextMenuInst
 
+            itemIndex: index
             messageId: model.id
             communityId: model.communityId
             responseToMessageWithId: model.responseToMessageWithId
