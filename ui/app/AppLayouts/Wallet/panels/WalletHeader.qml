@@ -107,15 +107,6 @@ Item {
     }
 
     Component {
-        id: tokenSettingsModalComponent
-        TokenSettingsModal {
-            onClosed: {
-                destroy();
-            }
-        }
-    }
-
-    Component {
         id: accountSettingsModalComponent
         AccountSettingsModal {
             onClosed: destroy()
@@ -199,16 +190,6 @@ Item {
                     icon.width: 16
                     icon.height: 16
                     onTriggered: Global.openPopup(accountSettingsModalComponent)
-                }
-                Action {
-                    //% "Manage Assets"
-                    text: qsTrId("manage-assets")
-                    icon.source: Style.svg("add_remove_token")
-                    icon.width: 16
-                    icon.height: 16
-                    onTriggered: {
-                        Global.openPopup(tokenSettingsModalComponent)
-                    }
                 }
                 Action {
                     //% "Set Currency"
