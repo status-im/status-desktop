@@ -301,7 +301,6 @@ proc load(self: AppController) =
   self.messageService.init()
   self.communityService.init()
   self.bookmarkService.init()
-  self.tokenService.init()
   self.dappPermissionsService.init()
   self.providerService.init()
   self.transactionService.init()
@@ -314,17 +313,14 @@ proc load(self: AppController) =
   self.ensService.init()
   self.gifService.init()
 
-  let pubKey = self.settingsService.getPublicKey()
-  singletonInstance.localAccountSensitiveSettings.setFileName(pubKey)
-  singletonInstance.engine.setRootContextProperty("localAccountSensitiveSettings", self.localAccountSensitiveSettingsVariant)
   singletonInstance.engine.setRootContextProperty("globalUtils", self.globalUtilsVariant)
 
-  self.networkService.init()
-  self.walletAccountService.init()
-
-  # other global instances
   self.buildAndRegisterLocalAccountSensitiveSettings()
   self.buildAndRegisterUserProfile()
+  
+  self.networkService.init()
+  self.tokenService.init()
+  self.walletAccountService.init()
 
   # load main module
   self.mainModule.load(
