@@ -53,7 +53,7 @@ RUN GOLANG_SHA256="d2c095c95f63c2a3ef961000e0ecb9d81d5c68b6ece176e2a8a2db82dc029
 # Re-install Qt with QtWebEngine by adjusting QT_CI_PACKAGES
 # The http_proxy=invalid is a fix for getting stuck on 'Welcome Page'
 RUN sudo sed /tmp/build/install-qt.sh -i \
-      -e 's/^QT_CI_PACKAGES=.*/export QT_CI_PACKAGES=qt.qt5.5140.gcc_64,qt.qt5.5140.qtwebengine,qt.qt5/' \
+      -e 's/^QT_CI_PACKAGES=.*/export QT_CI_PACKAGES=qt.qt5.5140.gcc_64,qt.qt5.5140.qtwebengine,qt.qt5,qt.qt5.5140.qtlottie/' \
       -e '\#^/tmp/build/bin/extract-qt-installer.*#i export http_proxy=invalid' \
  && sudo -E /tmp/build/install-qt.sh
 
