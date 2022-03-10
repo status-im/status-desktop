@@ -20,8 +20,6 @@ QtObject {
     property string mnemonicBackedUp: walletSection.isMnemonicBackedUp
 
     property var walletTokensModule: walletSectionAllTokens
-    property var defaultTokenList: walletSectionAllTokens.default
-    property var customTokenList: walletSectionAllTokens.custom
     property var tokens: walletSectionAllTokens.all
 
     property var assets: walletSectionAccountTokens.model
@@ -133,18 +131,6 @@ QtObject {
 
     function updateCurrency(newCurrency) {
         walletSection.updateCurrency(newCurrency)
-    }
-
-    function addCustomToken(chainId, address, name, symbol, decimals) {
-        return walletSectionAllTokens.addCustomToken(chainId, address, name, symbol, decimals)
-    }
-
-    function toggleVisible(chainId, symbol) {
-        walletSectionAllTokens.toggleVisible(chainId, symbol)
-    }
-
-    function removeCustomToken(chainId, address) {
-        walletSectionAllTokens.removeCustomToken(chainId, address)
     }
 
     function getQrCode(address) {
