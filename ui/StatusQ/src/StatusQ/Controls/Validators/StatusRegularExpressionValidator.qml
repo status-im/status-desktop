@@ -50,7 +50,7 @@ StatusValidator {
     property var regularExpression
 
     name: "regex"
-    errorMessage: "Please enter a valid regular expression."
+    errorMessage: `Must match regex(${validatorObj.regularExpression.toString()})`
     validatorObj: RegularExpressionValidator { regularExpression: root.regularExpression }
 
     validate: function (value) {

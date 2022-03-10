@@ -44,7 +44,8 @@ Item {
 
     enum ValidationMode {
         OnlyWhenDirty, // validates input only after it has become dirty
-        Always // validates input even before it has become dirty
+        Always, // validates input even before it has become dirty
+        IgnoreInvalidInput // ignore the new content if it doesn't match
     }
 
     property var errors: ({})
@@ -57,7 +58,9 @@ Item {
         root.errorMessage = ""
     }
 
+    property string _previousText: text
     function validate() {
+
         if (!statusBaseInput.dirty && validationMode === StatusInput.ValidationMode.OnlyWhenDirty) {
             return
         }
@@ -87,11 +90,23 @@ Item {
             if (errors){
                 let errs = Object.values(errors)
                 if (errs && errs[0]) {
+                    if(validationMode === StatusInput.ValidationMode.IgnoreInvalidInput
+                            && text.length > _previousText.length) {
+                        // Undo the last input
+                        const cursor = statusBaseInput.cursorPosition;
+                        statusBaseInput.text = _previousText;
+                        if (statusBaseInput.cursor > statusBaseInput.text.length) {
+                            statusBaseInput.cursorPosition = statusBaseInput.text.length;
+                        } else {
+                            statusBaseInput.cursorPosition = cursor-1;
+                        }
+                    }
                     errorMessage.text = errs[0].errorMessage || root.errorMessage;
                 } else {
                     errorMessage.text = ""
                 }
             }
+            _previousText = text
         }
 
         if (asyncValidators.length && !Object.values(errors).length) {

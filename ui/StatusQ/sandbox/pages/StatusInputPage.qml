@@ -103,6 +103,20 @@ Column {
     }
 
     StatusInput {
+        label: "Input with <i>StatusRegularExpressionValidator</i>"
+        charLimit: 30
+        input.placeholderText: `Must match regex(${validators[0].regularExpression.toString()}) and <= 30 chars`
+        validationMode: StatusInput.ValidationMode.IgnoreInvalidInput
+
+        validators: [
+            StatusRegularExpressionValidator {
+                regularExpression: /^[0-9A-Za-z_\$-\s]*$/
+                errorMessage: "Bad input!"
+            }
+        ]
+    }
+
+    StatusInput {
         label: "Label"
         input.placeholderText: "Input width component (right side)"
         input.component: StatusIcon {
