@@ -697,6 +697,20 @@ QtObject {
         return qsTr("now")
     }
 
+    function elideIfTooLong(str, maxLength) {
+        return (str.length > maxLength) ? str.substr(0, maxLength-4) + '...' : str;
+    }
+
+    function escapeHtml(unsafeStr)
+    {
+        return unsafeStr
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
     // Leave this function at the bottom of the file as QT Creator messes up the code color after this
     function isPunct(c) {
         return /(!|\@|#|\$|%|\^|&|\*|\(|\)|_|\+|\||-|=|\\|{|}|[|]|"|;|'|<|>|\?|,|\.|\/)/.test(c)
