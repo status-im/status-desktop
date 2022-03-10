@@ -65,5 +65,5 @@ method switchAccount*(self: Module, accountIndex: int) =
   let walletAccount = self.controller.getWalletAccount(accountIndex)
   self.view.setData(walletAccount)
 
-method update*(self: Module, address: string, accountName: string, color: string) =
-  self.controller.update(address, accountName, color)
+method update*(self: Module, address: string, accountName: string, color: string, emoji: string) =
+  self.controller.update(address, accountName, color, emoji)

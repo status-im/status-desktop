@@ -18,6 +18,7 @@ QtObject:
       isChat: bool
       currencyBalance: float64
       assets: account_tokens.Model
+      emoji: string
 
   proc setup(self: View) =
     self.QObject.setup
@@ -114,8 +115,17 @@ QtObject:
     read = getAssets
     notify = assetsChanged
 
-  proc update(self: View, address: string, accountName: string, color: string) {.slot.} =
-    self.delegate.update(address, accountName, color)
+  proc getEmoji(self: View): QVariant {.slot.} =
+    return newQVariant(self.emoji)
+
+  proc emojiChanged(self: View) {.signal.}
+
+  QtProperty[QVariant] emoji:
+    read = getEmoji
+    notify = emojiChanged
+
+  proc update(self: View, address: string, accountName: string, color: string, emoji: string) {.slot.} =
+    self.delegate.update(address, accountName, color, emoji)
 
 proc setData*(self: View, dto: wallet_account_service.WalletAccountDto) =
     self.name = dto.name
@@ -134,6 +144,8 @@ proc setData*(self: View, dto: wallet_account_service.WalletAccountDto) =
     self.isChatChanged()
     self.currencyBalance = dto.getCurrencyBalance()
     self.currencyBalanceChanged()
+    self.emoji = dto.emoji
+    self.emojiChanged()
 
     let assets = account_tokens.newModel()
 

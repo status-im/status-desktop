@@ -7,22 +7,21 @@ import utils 1.0
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Popups 0.1
+import StatusQ.Controls.Validators 0.1
+import StatusQ.Core.Utils 0.1 as StatusQUtils
 
-import shared.popups 1.0
 import shared.controls 1.0
 
 import "../stores"
 
-// TODO: replace with StatusModal
-ModalPopup {
+StatusModal {
     id: popup
-    height: 615
 
-    property int marginBetweenInputs: 38
     property string passwordValidationError: ""
     property string seedValidationError: ""
-    property string accountNameValidationError: ""
     property bool loading: false
+    property var emojiPopup: null
 
     signal afterAddAccount()
 
@@ -43,13 +42,6 @@ ModalPopup {
             passwordValidationError = ""
         }
 
-        if (accountNameInput.text === "") {
-            //% "You need to enter an account name"
-            accountNameValidationError = qsTrId("you-need-to-enter-an-account-name")
-        } else {
-            accountNameValidationError = ""
-        }
-
         if (seedPhraseTextArea.textArea.text === "") {
             //% "You need to enter a seed phrase"
             seedValidationError = qsTrId("you-need-to-enter-a-seed-phrase")
@@ -60,102 +52,144 @@ ModalPopup {
             seedValidationError = ""
         }
 
-        return passwordValidationError === "" && seedValidationError === "" && accountNameValidationError === ""
-    }
-
-    onOpened: {
-        seedPhraseTextArea.textArea.text = "";
-        passwordInput.text = "";
-        accountNameInput.text = "";
-        passwordValidationError = "";
-        seedValidationError = "";
-        accountNameValidationError = "";
-        accountColorInput.selectedColor = Theme.palette.accountColors[Math.floor(Math.random() * Theme.palette.accountColors.length)]
-        passwordInput.forceActiveFocus(Qt.MouseFocusReason)
+        return passwordValidationError === "" && seedValidationError === "" && accountNameInput.valid
     }
 
     //% "Add account with a seed phrase"
-    title: qsTrId("add-seed-account")
+    header.title: qsTrId("add-seed-account")
 
-    Input {
-        id: passwordInput
-        //% "Enter your password…"
-        placeholderText: qsTrId("enter-your-password…")
-        //% "Password"
-        label: qsTrId("password")
-        textField.echoMode: TextInput.Password
-        validationError: popup.passwordValidationError
+    onOpened: {
+        seedPhraseTextArea.textArea.text = ""
+        passwordInput.text = ""
+        accountNameInput.text = ""
+        accountNameInput.reset()
+        accountNameInput.input.icon.emoji = StatusQUtils.Emoji.getRandomEmoji()
+        passwordValidationError = ""
+        seedValidationError = ""
+        accountColorInput.selectedColorIndex = Math.floor(Math.random() * accountColorInput.model.length)
+        passwordInput.forceActiveFocus(Qt.MouseFocusReason)
     }
 
-    SeedPhraseTextArea {
-        id: seedPhraseTextArea
-        anchors.top: passwordInput.bottom
-        anchors.topMargin: marginBetweenInputs
-        width: parent.width
+    Connections {
+        enabled: popup.opened
+        target: emojiPopup
+        onEmojiSelected: function (emojiText, atCursor) {
+            popup.contentItem.accountNameInput.input.icon.emoji = emojiText
+        }
     }
 
-    Input {
-        id: accountNameInput
-        anchors.top: seedPhraseTextArea.bottom
-        anchors.topMargin: marginBetweenInputs
-        //% "Enter an account name..."
-        placeholderText: qsTrId("enter-an-account-name...")
-        //% "Account name"
-        label: qsTrId("account-name")
-        validationError: popup.accountNameValidationError
-    }
+    contentItem: Column {
+        property alias accountNameInput: accountNameInput
 
-    StatusWalletColorSelect {
-        id: accountColorInput
-        anchors.top: accountNameInput.bottom
-        anchors.topMargin: marginBetweenInputs
-        anchors.left: parent.left
-        anchors.right: parent.right
-        model: Theme.palette.accountColors
-    }
+        width: popup.width
+        spacing: 8
+        topPadding: 20
 
-    footer: StatusButton {
-        anchors.top: parent.top
-        anchors.right: parent.right
-        text: loading ?
-        //% "Loading..."
-        qsTrId("loading") :
-        //% "Add account"
-        qsTrId("add-account")
+        Column {
+            width: parent.width
+            spacing: Style.current.xlPadding
+            // To-Do Password hidden option not supported in StatusQ StatusBaseInput
+            Input {
+                id: passwordInput
+                anchors.leftMargin: Style.current.padding
+                anchors.rightMargin: Style.current.padding
+                width: parent.width
 
-        enabled: !loading && passwordInput.text !== "" && accountNameInput.text !== "" && seedPhraseTextArea.correctWordCount
-
-        MessageDialog {
-            id: accountError
-            title: "Adding the account failed"
-            icon: StandardIcon.Critical
-            standardButtons: StandardButton.Ok
+                //% "Enter your password…"
+                placeholderText: qsTrId("enter-your-password…")
+                //% "Password"
+                label: qsTrId("password")
+                textField.echoMode: TextInput.Password
+                validationError: popup.passwordValidationError
+                inputLabel.font.pixelSize: 15
+                inputLabel.font.weight: Font.Normal
+            }
+            // To-Do use StatusInput
+            SeedPhraseTextArea {
+                id: seedPhraseTextArea
+                anchors.left: parent.left
+                anchors.leftMargin: Style.current.padding
+                width: parent.width - 2*Style.current.padding
+            }
         }
 
-        onClicked : {
-            // TODO the loading doesn't work because the function freezes the view. Might need to use threads
-            loading = true
-            if (!validate() || !seedPhraseTextArea.validateSeed()) {
-                Global.playErrorSound();
-                return loading = false
+        StatusInput {
+            id: accountNameInput
+            //% "Enter an account name..."
+            input.placeholderText: qsTrId("enter-an-account-name...")
+            //% "Account name"
+            label: qsTrId("account-name")
+            input.isIconSelectable: true
+            input.icon.color: accountColorInput.selectedColor ? accountColorInput.selectedColor : Theme.palette.directColor1
+            onIconClicked: {
+                popup.emojiPopup.open()
+                popup.emojiPopup.x = Global.applicationWindow.width/2 - popup.emojiPopup.width/2 + popup.width/2
+                popup.emojiPopup.y = Global.applicationWindow.height/2 - popup.emojiPopup.height/2
             }
-
-            const errMessage = RootStore.addAccountsFromSeed(seedPhraseTextArea.textArea.text, passwordInput.text, accountNameInput.text, accountColorInput.selectedColor)
-            loading = false
-            if (errMessage) {
-                Global.playErrorSound();
-                if (Utils.isInvalidPasswordMessage(errMessage)) {
-                    //% "Wrong password"
-                    popup.passwordValidationError = qsTrId("wrong-password")
-                } else {
-                    accountError.text = errMessage
-                    accountError.open()
+            validators: [
+                StatusMinLengthValidator {
+                    //% "You need to enter an account name"
+                    errorMessage: qsTrId("you-need-to-enter-an-account-name")
+                    minLength: 1
                 }
-                return
-            }
-            popup.afterAddAccount()
-            popup.reset()
-            popup.close();
+            ]
+        }
+
+        StatusColorSelectorGrid {
+            id: accountColorInput
+            anchors.horizontalCenter: parent.horizontalCenter
+            //% "color"
+            titleText: qsTr("color").toUpperCase()
+        }
+
+        Item {
+            width: parent.width
+            height: 8
         }
     }
+
+    rightButtons: [
+        StatusButton {
+            text: loading ?
+                      //% "Loading..."
+                      qsTrId("loading") :
+                      //% "Add account"
+                      qsTrId("add-account")
+
+            enabled: !loading && passwordInput.text !== "" && accountNameInput.text !== "" && seedPhraseTextArea.correctWordCount
+
+            MessageDialog {
+                id: accountError
+                title: "Adding the account failed"
+                icon: StandardIcon.Critical
+                standardButtons: StandardButton.Ok
+            }
+
+            onClicked : {
+                // TODO the loading doesn't work because the function freezes the view. Might need to use threads
+                loading = true
+                if (!validate() || !seedPhraseTextArea.validateSeed()) {
+                    Global.playErrorSound();
+                    return loading = false
+                }
+
+                const errMessage = RootStore.addAccountsFromSeed(seedPhraseTextArea.textArea.text, passwordInput.text, accountNameInput.text, accountColorInput.selectedColor, accountNameInput.input.icon.emoji)
+                loading = false
+                if (errMessage) {
+                    Global.playErrorSound();
+                    if (Utils.isInvalidPasswordMessage(errMessage)) {
+                        //% "Wrong password"
+                        popup.passwordValidationError = qsTrId("wrong-password")
+                    } else {
+                        accountError.text = errMessage
+                        accountError.open()
+                    }
+                    return
+                }
+                popup.afterAddAccount()
+                popup.reset()
+                popup.close();
+            }
+        }
+    ]
 }

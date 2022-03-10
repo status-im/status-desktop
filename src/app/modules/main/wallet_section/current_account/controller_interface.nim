@@ -13,7 +13,7 @@ method init*(self: AccessInterface) {.base.} =
 method getWalletAccount*(self: AccessInterface, accountIndex: int): wallet_account_service.WalletAccountDto {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method update*(self: AccessInterface, address: string, accountName: string, color: string) {.base.} =
+method update*(self: AccessInterface, address: string, accountName: string, color: string, emoji: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 type

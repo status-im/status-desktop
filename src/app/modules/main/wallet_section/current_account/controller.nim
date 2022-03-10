@@ -26,5 +26,5 @@ method init*(self: Controller) =
 method getWalletAccount*(self: Controller, accountIndex: int): wallet_account_service.WalletAccountDto =
   return self.walletAccountService.getWalletAccount(accountIndex)
 
-method update*(self: Controller, address: string, accountName: string, color: string) =
-  self.walletAccountService.updateWalletAccount(address, accountName, color)
+method update*(self: Controller, address: string, accountName: string, color: string, emoji: string) =
+  self.walletAccountService.updateWalletAccount(address, accountName, color, emoji)

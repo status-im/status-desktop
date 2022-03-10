@@ -7,25 +7,23 @@ import utils 1.0
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Popups 0.1
+import StatusQ.Controls.Validators 0.1
+import StatusQ.Core.Utils 0.1 as StatusQUtils
 
 import shared.panels 1.0
-import shared.popups 1.0
 import shared.controls 1.0
 
 import "../stores"
 
-// TODO: replace with StatusModal
-ModalPopup {
+StatusModal {
     id: popup
-    //% "Add account from private key"
-    title: qsTrId("add-private-key-account")
-    height: 600
 
     property int marginBetweenInputs: 38
     property string passwordValidationError: ""
     property string privateKeyValidationError: ""
-    property string accountNameValidationError: ""
     property bool loading: false
+    property var emojiPopup: null
 
     signal afterAddAccount()
 
@@ -40,13 +38,6 @@ ModalPopup {
             passwordValidationError = ""
         }
 
-        if (accountNameInput.text === "") {
-            //% "You need to enter an account name"
-            accountNameValidationError = qsTrId("you-need-to-enter-an-account-name")
-        } else {
-            accountNameValidationError = ""
-        }
-
         if (accountPKeyInput.text === "") {
             //% "You need to enter a private key"
             privateKeyValidationError = qsTrId("you-need-to-enter-a-private-key")
@@ -57,119 +48,159 @@ ModalPopup {
             privateKeyValidationError = ""
         }
 
-        return passwordValidationError === "" && privateKeyValidationError === "" && accountNameValidationError === ""
+        return passwordValidationError === "" && privateKeyValidationError === "" && accountNameInput.valid
     }
+
+    //% "Add account from private key"
+    header.title: qsTrId("add-private-key-account")
 
     onOpened: {
         passwordInput.text = ""
         accountPKeyInput.text = ""
+        accountNameInput.reset()
         accountNameInput.text = ""
+        accountNameInput.input.icon.emoji = StatusQUtils.Emoji.getRandomEmoji()
         passwordValidationError = ""
         privateKeyValidationError = ""
-        accountNameValidationError = ""
-        accountColorInput.selectedColor = Style.current.accountColors[Math.floor(Math.random() * Style.current.accountColors.length)]
+        accountColorInput.selectedColorIndex = Math.floor(Math.random() * accountColorInput.model.length)
         passwordInput.forceActiveFocus(Qt.MouseFocusReason)
     }
 
-    Input {
-        id: passwordInput
-        //% "Enter your password…"
-        placeholderText: qsTrId("enter-your-password…")
-        //% "Password"
-        label: qsTrId("password")
-        textField.echoMode: TextInput.Password
-        validationError: popup.passwordValidationError
+    Connections {
+        enabled: popup.opened
+        target: emojiPopup
+        onEmojiSelected: function (emojiText, atCursor) {
+            popup.contentItem.accountNameInput.input.icon.emoji = emojiText
+        }
     }
 
-    StyledTextArea {
-        id: accountPKeyInput
-        customHeight: 88
-        anchors.top: passwordInput.bottom
-        anchors.topMargin: marginBetweenInputs
-        anchors.left: parent.left
-        anchors.right: parent.right
-        validationError: popup.privateKeyValidationError
-        //% "Private key"
-        label: qsTrId("private-key")
-        textField.wrapMode: Text.WordWrap
-        textField.horizontalAlignment: TextEdit.AlignHCenter
-        textField.verticalAlignment: TextEdit.AlignVCenter
-        textField.font.weight: Font.DemiBold
-        //% "Paste the contents of your private key"
-        placeholderText: qsTrId("paste-the-contents-of-your-private-key")
-        textField.placeholderTextColor: Style.current.secondaryText
-        textField.selectByKeyboard: true
-        textField.selectionColor: Style.current.secondaryBackground
-        textField.selectedTextColor: Style.current.secondaryText
-    }
+    contentItem: Column {
+        property alias accountNameInput: accountNameInput
 
-    Input {
-        id: accountNameInput
-        anchors.top: accountPKeyInput.bottom
-        anchors.topMargin: marginBetweenInputs
-        //% "Enter an account name..."
-        placeholderText: qsTrId("enter-an-account-name...")
-        //% "Account name"
-        label: qsTrId("account-name")
-        validationError: popup.accountNameValidationError
-    }
+        width: popup.width
+        spacing: 8
+        topPadding: 20
 
-    StatusWalletColorSelect {
-        id: accountColorInput
-        anchors.top: accountNameInput.bottom
-        anchors.topMargin: marginBetweenInputs
-        anchors.left: parent.left
-        anchors.right: parent.right
-        model: Theme.palette.accountColors
-    }
+        Column {
+            width: parent.width
+            spacing: Style.current.xlPadding
+            // To-Do Password hidden option not supported in StatusQ StatusBaseInput
+            Input {
+                id: passwordInput
+                anchors.leftMargin: Style.current.padding
+                anchors.rightMargin: Style.current.padding
+                width: parent.width
 
-    footer: StatusButton {
-        anchors.top: parent.top
-        anchors.right: parent.right
-        text: loading ?
-        //% "Loading..."
-        qsTrId("loading") :
-        //% "Add account"
-        qsTrId("add-account")
+                //% "Enter your password…"
+                placeholderText: qsTrId("enter-your-password…")
+                //% "Password"
+                label: qsTrId("password")
+                textField.echoMode: TextInput.Password
+                validationError: popup.passwordValidationError
+                inputLabel.font.pixelSize: 15
+                inputLabel.font.weight: Font.Normal
+            }
+            // To-Do use StatusInput
+            StyledTextArea {
+                id: accountPKeyInput
+                customHeight: 88
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: Style.current.padding
+                anchors.rightMargin: Style.current.padding
 
-        enabled: !loading && passwordInput.text !== "" && accountNameInput.text !== "" && accountPKeyInput.text !== ""
-
-        MessageDialog {
-            id: accountError
-            title: "Adding the account failed"
-            icon: StandardIcon.Critical
-            standardButtons: StandardButton.Ok
+                validationError: popup.privateKeyValidationError
+                //% "Private key"
+                label: qsTrId("private-key")
+                textField.wrapMode: Text.WordWrap
+                textField.horizontalAlignment: TextEdit.AlignHCenter
+                textField.verticalAlignment: TextEdit.AlignVCenter
+                textField.font.weight: Font.DemiBold
+                //% "Paste the contents of your private key"
+                placeholderText: qsTrId("paste-the-contents-of-your-private-key")
+                textField.placeholderTextColor: Style.current.secondaryText
+                textField.selectByKeyboard: true
+                textField.selectionColor: Style.current.secondaryBackground
+                textField.selectedTextColor: Style.current.secondaryText
+            }
         }
 
-        onClicked : {
-            // TODO the loaidng doesn't work because the function freezes th eview. Might need to use threads
-            loading = true
-            if (!validate()) {
-                return loading = false
+        StatusInput {
+            id: accountNameInput
+            //% "Enter an account name..."
+            input.placeholderText: qsTrId("enter-an-account-name...")
+            //% "Account name"
+            label: qsTrId("account-name")
+            input.isIconSelectable: true
+            input.icon.color: accountColorInput.selectedColor ? accountColorInput.selectedColor : Theme.palette.directColor1
+            onIconClicked: {
+                popup.emojiPopup.open()
+                popup.emojiPopup.x = Global.applicationWindow.width/2 - popup.emojiPopup.width/2 + popup.width/2
+                popup.emojiPopup.y = Global.applicationWindow.height/2 - popup.emojiPopup.height/2
             }
-
-            const errMessage = RootStore.addAccountsFromPrivateKey(accountPKeyInput.text, passwordInput.text, accountNameInput.text, accountColorInput.selectedColor)
-
-            loading = false
-            if (errMessage) {
-                Global.playErrorSound();
-                if (Utils.isInvalidPasswordMessage(errMessage)) {
-                    //% "Wrong password"
-                    popup.passwordValidationError = qsTrId("wrong-password")
-                } else {
-                    accountError.text = errMessage
-                    accountError.open()
+            validators: [
+                StatusMinLengthValidator {
+                    //% "You need to enter an account name"
+                    errorMessage: qsTrId("you-need-to-enter-an-account-name")
+                    minLength: 1
                 }
-                return
-            }
-            popup.afterAddAccount()
-            popup.close();
+            ]
+        }
+
+        StatusColorSelectorGrid {
+            id: accountColorInput
+            anchors.horizontalCenter: parent.horizontalCenter
+            //% "color"
+            titleText: qsTr("color").toUpperCase()
+        }
+
+        Item {
+            width: parent.width
+            height: 8
         }
     }
-}
 
-/*##^##
-Designer {
-    D{i:0;formeditorColor:"#ffffff";height:500;width:400}
+    rightButtons: [
+        StatusButton {
+            text: loading ?
+                      //% "Loading..."
+                      qsTrId("loading") :
+                      //% "Add account"
+                      qsTrId("add-account")
+
+            enabled: !loading && passwordInput.text !== "" && accountNameInput.text !== "" && accountPKeyInput.text !== ""
+
+            MessageDialog {
+                id: accountError
+                title: "Adding the account failed"
+                icon: StandardIcon.Critical
+                standardButtons: StandardButton.Ok
+            }
+
+            onClicked : {
+                // TODO the loaidng doesn't work because the function freezes th eview. Might need to use threads
+                loading = true
+                if (!validate()) {
+                    return loading = false
+                }
+
+                const errMessage = RootStore.addAccountsFromPrivateKey(accountPKeyInput.text, passwordInput.text, accountNameInput.text, accountColorInput.selectedColor, accountNameInput.input.icon.emoji)
+
+                loading = false
+                if (errMessage) {
+                    Global.playErrorSound();
+                    if (Utils.isInvalidPasswordMessage(errMessage)) {
+                        //% "Wrong password"
+                        popup.passwordValidationError = qsTrId("wrong-password")
+                    } else {
+                        accountError.text = errMessage
+                        accountError.open()
+                    }
+                    return
+                }
+                popup.afterAddAccount()
+                popup.close();
+            }
+        }
+    ]
 }
-##^##*/

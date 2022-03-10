@@ -21,6 +21,7 @@ Item {
     property var changeSelectedAccount
     property var store
     property var walletStore
+    property var emojiPopup
 
     height: walletAddress.y + walletAddress.height
     anchors.right: parent.right
@@ -109,8 +110,10 @@ Item {
     Component {
         id: accountSettingsModalComponent
         AccountSettingsModal {
+            anchors.centerIn: parent
             onClosed: destroy()
             changeSelectedAccount: walletHeader.changeSelectedAccount
+            emojiPopup: walletHeader.emojiPopup
         }
     }
 

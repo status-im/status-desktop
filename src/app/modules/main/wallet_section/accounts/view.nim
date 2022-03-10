@@ -103,17 +103,17 @@ QtObject:
     self.imported.setItems(imported)
     self.generated.setItems(generated)
 
-  proc generateNewAccount*(self: View, password: string, accountName: string, color: string): string {.slot.} =
-    return self.delegate.generateNewAccount(password, accountName, color)
+  proc generateNewAccount*(self: View, password: string, accountName: string, color: string, emoji: string): string {.slot.} =
+    return self.delegate.generateNewAccount(password, accountName, color, emoji)
 
-  proc addAccountsFromPrivateKey*(self: View, privateKey: string, password: string, accountName: string, color: string): string {.slot.} =
-    return self.delegate.addAccountsFromPrivateKey(privateKey, password, accountName, color)
+  proc addAccountsFromPrivateKey*(self: View, privateKey: string, password: string, accountName: string, color: string, emoji: string): string {.slot.} =
+    return self.delegate.addAccountsFromPrivateKey(privateKey, password, accountName, color, emoji)
 
-  proc addAccountsFromSeed*(self: View, seedPhrase: string, password: string, accountName: string, color: string): string {.slot.} =
-    return self.delegate.addAccountsFromSeed(seedPhrase, password, accountName, color)
+  proc addAccountsFromSeed*(self: View, seedPhrase: string, password: string, accountName: string, color: string, emoji: string): string {.slot.} =
+    return self.delegate.addAccountsFromSeed(seedPhrase, password, accountName, color, emoji)
 
-  proc addWatchOnlyAccount*(self: View, address: string, accountName: string, color: string): string {.slot.} =
-    return self.delegate.addWatchOnlyAccount(address, accountName, color)
+  proc addWatchOnlyAccount*(self: View, address: string, accountName: string, color: string, emoji: string): string {.slot.} =
+    return self.delegate.addWatchOnlyAccount(address, accountName, color, emoji)
 
   proc deleteAccount*(self: View, address: string) {.slot.} =
     self.delegate.deleteAccount(address)

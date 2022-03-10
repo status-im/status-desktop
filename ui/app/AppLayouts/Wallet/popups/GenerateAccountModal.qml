@@ -6,25 +6,27 @@ import utils 1.0
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Utils 0.1 as StatusQUtils
 import StatusQ.Controls 0.1
+import StatusQ.Controls.Validators 0.1
+import StatusQ.Popups 0.1
 
-import shared.popups 1.0
 import shared.controls 1.0
 
 import "../stores"
 
-// TODO: replace with StatusModal
-ModalPopup {
+StatusModal {
     id: popup
-    //% "Generate an account"
-    title: qsTrId("generate-a-new-account")
 
     property int marginBetweenInputs: 38
     property string passwordValidationError: ""
-    property string accountNameValidationError: ""
     property bool loading: false
+    property var emojiPopup: null
 
     signal afterAddAccount()
+
+    //% "Generate an account"
+    header.title: qsTrId("generate-a-new-account")
 
     function validate() {
         if (passwordInput.text === "") {
@@ -36,98 +38,131 @@ ModalPopup {
         } else {
             passwordValidationError = ""
         }
-
-        if (accountNameInput.text === "") {
-            //% "You need to enter an account name"
-            accountNameValidationError = qsTrId("you-need-to-enter-an-account-name")
-        } else {
-            accountNameValidationError = ""
+            return passwordValidationError === "" && accountNameInput.valid
         }
-
-        return passwordValidationError === "" && accountNameValidationError === ""
-    }
 
     onOpened: {
         passwordValidationError = "";
-        accountNameValidationError = "";
         passwordInput.text = "";
+        accountNameInput.reset()
         accountNameInput.text = "";
-        accountColorInput.selectedColor = Style.current.accountColors[Math.floor(Math.random() * Style.current.accountColors.length)]
+        accountNameInput.input.icon.emoji = StatusQUtils.Emoji.getRandomEmoji()
+        colorSelectionGrid.selectedColorIndex = Math.floor(Math.random() * colorSelectionGrid.model.length)
         passwordInput.forceActiveFocus(Qt.MouseFocusReason)
     }
 
-    Input {
-        id: passwordInput
-        //% "Enter your password…"
-        placeholderText: qsTrId("enter-your-password…")
-        //% "Password"
-        label: qsTrId("password")
-        textField.echoMode: TextInput.Password
-        validationError: popup.passwordValidationError
+    Connections {
+        enabled: popup.opened
+        target: emojiPopup
+        onEmojiSelected: function (emojiText, atCursor) {
+            popup.contentItem.accountNameInput.input.icon.emoji = emojiText
+        }
     }
 
-    Input {
-        id: accountNameInput
-        anchors.top: passwordInput.bottom
-        anchors.topMargin: marginBetweenInputs
-        //% "Enter an account name..."
-        placeholderText: qsTrId("enter-an-account-name...")
-        //% "Account name"
-        label: qsTrId("account-name")
-        validationError: popup.accountNameValidationError
-    }
+    contentItem: Column {
+        property alias accountNameInput: accountNameInput
+        width: popup.width
+        spacing: 8
+        topPadding: 20
 
-    StatusWalletColorSelect {
-        id: accountColorInput
-        selectedColor: Theme.palette.accountColors[0]
-        anchors.top: accountNameInput.bottom
-        anchors.topMargin: marginBetweenInputs
-        width: parent.width
-        model: Theme.palette.accountColors
-    }
+        // To-Do Password hidden option not supported in StatusQ StatusBaseInput
+        Item {
+            width: parent.width
+            height: passwordInput.height
+            Input {
+                id: passwordInput
+                anchors.fill: parent
+                anchors.leftMargin: Style.current.padding
+                anchors.rightMargin: Style.current.padding
 
-    footer: StatusButton {
-        anchors.top: parent.top
-        anchors.right: parent.right
-        text: loading ?
-        //% "Loading..."
-        qsTrId("loading") :
-        //% "Add account"
-        qsTrId("add-account")
-
-        enabled: !loading && passwordInput.text !== "" && accountNameInput.text !== ""
-
-        MessageDialog {
-            id: accountError
-            title: "Adding the account failed"
-            icon: StandardIcon.Critical
-            standardButtons: StandardButton.Ok
+                //% "Enter your password…"
+                placeholderText: qsTrId("enter-your-password…")
+                //% "Password"
+                label: qsTrId("password")
+                textField.echoMode: TextInput.Password
+                validationError: popup.passwordValidationError
+                inputLabel.font.pixelSize: 15
+                inputLabel.font.weight: Font.Normal
+            }
         }
 
-        onClicked : {
-            // TODO the loaidng doesn't work because the function freezes th eview. Might need to use threads
-            loading = true
-            if (!validate()) {
-                Global.playErrorSound();
-                return loading = false
+        StatusInput {
+            id: accountNameInput
+            //% "Enter an account name..."
+            input.placeholderText: qsTrId("enter-an-account-name...")
+            //% "Account name"
+            label: qsTrId("account-name")
+            input.isIconSelectable: true
+            input.icon.color: colorSelectionGrid.selectedColor ? colorSelectionGrid.selectedColor : Theme.palette.directColor1
+            onIconClicked: {
+                popup.emojiPopup.open()
+                popup.emojiPopup.x = Global.applicationWindow.width/2 - popup.emojiPopup.width/2 + popup.width/2
+                popup.emojiPopup.y = Global.applicationWindow.height/2 - popup.emojiPopup.height/2
             }
-
-            const errMessage = RootStore.generateNewAccount(passwordInput.text, accountNameInput.text, accountColorInput.selectedColor)
-            console.log(errMessage)
-            loading = false
-            if (errMessage) {
-                Global.playErrorSound();
-                if (Utils.isInvalidPasswordMessage(errMessage)) {
-                    //% "Wrong password"
-                    popup.passwordValidationError = qsTrId("wrong-password")
-                } else {
-                    accountError.text = errMessage;
-                    accountError.open();
+            validators: [
+                StatusMinLengthValidator {
+                    //% "You need to enter an account name"
+                    errorMessage: qsTrId("you-need-to-enter-an-account-name")
+                    minLength: 1
                 }
-                return
-            }
-            popup.afterAddAccount();
-            popup.close();
+            ]
+        }
+
+        StatusColorSelectorGrid {
+            id: colorSelectionGrid
+            anchors.horizontalCenter: parent.horizontalCenter
+            //% "color"
+            titleText: qsTr("color").toUpperCase()
+        }
+
+        Item {
+            width: parent.width
+            height: 8
         }
     }
+
+    rightButtons: [
+        StatusButton {
+            text: loading ?
+                      //% "Loading..."
+                      qsTrId("loading") :
+                      //% "Add account"
+                      qsTrId("add-account")
+
+            enabled: !loading && passwordInput.text !== "" && accountNameInput.text !== ""
+
+            MessageDialog {
+                id: accountError
+                title: "Adding the account failed"
+                icon: StandardIcon.Critical
+                standardButtons: StandardButton.Ok
+            }
+
+            onClicked : {
+                // TODO the loaidng doesn't work because the function freezes th eview. Might need to use threads
+                loading = true
+                if (!validate()) {
+                    Global.playErrorSound();
+                    return loading = false
+                }
+
+                const errMessage = RootStore.generateNewAccount(passwordInput.text, accountNameInput.text, colorSelectionGrid.selectedColor, accountNameInput.input.icon.emoji)
+                console.log(errMessage)
+                loading = false
+                if (errMessage) {
+                    Global.playErrorSound();
+                    if (Utils.isInvalidPasswordMessage(errMessage)) {
+                        //% "Wrong password"
+                        popup.passwordValidationError = qsTrId("wrong-password")
+                    } else {
+                        accountError.text = errMessage;
+                        accountError.open();
+                    }
+                    return
+                }
+                popup.afterAddAccount();
+                popup.close();
+            }
+        }
+    ]
 }

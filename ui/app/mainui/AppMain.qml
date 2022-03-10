@@ -497,6 +497,7 @@ Item {
                     Layout.fillHeight: true
                     store: appMain.rootStore
                     contactsStore: appMain.rootStore.profileSectionStore.contactsStore
+                    emojiPopup: statusEmojiPopup
                 }
 
                 Component {

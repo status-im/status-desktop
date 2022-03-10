@@ -23,9 +23,10 @@ proc getAccounts*(): RpcResponse[JsonNode] {.raises: [Exception].} =
 proc deleteAccount*(address: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   return core.callPrivateRPC("accounts_deleteAccount", %* [address])
 
-proc updateAccount*(name, address, publicKey, walletType, color: string) {.raises: [Exception].} =
+proc updateAccount*(name, address, publicKey, walletType, color, emoji: string) {.raises: [Exception].} =
   discard core.callPrivateRPC("accounts_saveAccounts", %* [
     [{
+      "emoji": emoji,
       "color": color,
       "name": name,
       "address": address,

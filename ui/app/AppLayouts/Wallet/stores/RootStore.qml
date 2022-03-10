@@ -105,28 +105,28 @@ QtObject {
             walletSection.switchAccount(newIndex)
     }
 
-    function generateNewAccount(password, accountName, color) {
-        return walletSectionAccounts.generateNewAccount(password, accountName, color)
+    function generateNewAccount(password, accountName, color, emoji) {
+        return walletSectionAccounts.generateNewAccount(password, accountName, color, emoji)
     }
 
-    function addAccountsFromPrivateKey(privateKey, password, accountName, color) {
-        return walletSectionAccounts.addAccountsFromPrivateKey(privateKey, password, accountName, color)
+    function addAccountsFromPrivateKey(privateKey, password, accountName, color, emoji) {
+        return walletSectionAccounts.addAccountsFromPrivateKey(privateKey, password, accountName, color, emoji)
     }
 
-    function addAccountsFromSeed(seedPhrase, password, accountName, color) {
-        return walletSectionAccounts.addAccountsFromSeed(seedPhrase, password, accountName, color)
+    function addAccountsFromSeed(seedPhrase, password, accountName, color, emoji) {
+        return walletSectionAccounts.addAccountsFromSeed(seedPhrase, password, accountName, color, emoji)
     }
 
-    function addWatchOnlyAccount(address, accountName, color) {
-        return walletSectionAccounts.addWatchOnlyAccount(address, accountName, color)
+    function addWatchOnlyAccount(address, accountName,color, emoji) {
+        return walletSectionAccounts.addWatchOnlyAccount(address, accountName, color, emoji)
     }
 
     function deleteAccount(address) {
         return walletSectionAccounts.deleteAccount(address)
     }
 
-    function updateCurrentAccount(address, accountName, color) {
-        return walletSectionCurrent.update(address, accountName, color)
+    function updateCurrentAccount(address, accountName, color, emoji) {
+        return walletSectionCurrent.update(address, accountName, color, emoji)
     }
 
     function updateCurrency(newCurrency) {

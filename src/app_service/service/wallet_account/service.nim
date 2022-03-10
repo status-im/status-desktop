@@ -244,49 +244,53 @@ method addNewAccountToLocalStore(self: Service) =
   self.accounts[newAccount.address] = newAccount
   self.events.emit(SIGNAL_WALLET_ACCOUNT_SAVED, AccountSaved(account: newAccount))
 
-method generateNewAccount*(self: Service, password: string, accountName: string, color: string): string =
+method generateNewAccount*(self: Service, password: string, accountName: string, color: string, emoji: string): string =
   try:
     discard status_go_wallet.generateAccount(
       password,
       accountName,
-      color)
+      color,
+      emoji)
   except Exception as e:
     return fmt"Error generating new account: {e.msg}"
 
   self.addNewAccountToLocalStore()
 
-method addAccountsFromPrivateKey*(self: Service, privateKey: string, password: string, accountName: string, color: string): string =
+method addAccountsFromPrivateKey*(self: Service, privateKey: string, password: string, accountName: string, color: string, emoji: string): string =
   try:
     discard status_go_wallet.addAccountWithPrivateKey(
       privateKey,
       password,
       accountName,
       color,
+      emoji
     )
   except Exception as e:
     return fmt"Error adding account with private key: {e.msg}"
 
   self.addNewAccountToLocalStore()
 
-method addAccountsFromSeed*(self: Service, mnemonic: string, password: string, accountName: string, color: string): string =
+method addAccountsFromSeed*(self: Service, mnemonic: string, password: string, accountName: string, color: string, emoji: string): string =
   try:
     discard status_go_wallet.addAccountWithMnemonic(
       mnemonic,
       password,
       accountName,
       color,
+      emoji
     )
   except Exception as e:
     return fmt"Error adding account with mnemonic: {e.msg}"
 
   self.addNewAccountToLocalStore()
 
-method addWatchOnlyAccount*(self: Service, address: string, accountName: string, color: string): string =
+method addWatchOnlyAccount*(self: Service, address: string, accountName: string, color: string, emoji: string): string =
   try:
     discard status_go_wallet.addAccountWatch(
       address,
       accountName,
       color,
+      emoji
     )
   except Exception as e:
     return fmt"Error adding account with mnemonic: {e.msg}"
@@ -316,16 +320,18 @@ method toggleNetworkEnabled*(self: Service, chainId: int) =
   self.refreshBalances()
   self.events.emit(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED, NetwordkEnabledToggled())
 
-method updateWalletAccount*(self: Service, address: string, accountName: string, color: string) =
+method updateWalletAccount*(self: Service, address: string, accountName: string, color: string, emoji: string) =
   let account = self.accounts[address]
   status_go_accounts.updateAccount(
     accountName,
     account.address,
     account.publicKey,
     account.walletType,
-    color
+    color,
+    emoji
   )
   account.name = accountName
   account.color = color
+  account.emoji = emoji
 
   self.events.emit(SIGNAL_WALLET_ACCOUNT_UPDATED, WalletAccountUpdated(account: account))

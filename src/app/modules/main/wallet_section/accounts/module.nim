@@ -62,7 +62,8 @@ method refreshWalletAccounts*(self: Module) =
       w.isWallet,
       w.isChat,
       w.getCurrencyBalance(),
-      assets
+      assets,
+      w.emoji
     ))
 
   self.view.setItems(items)
@@ -100,17 +101,17 @@ method viewDidLoad*(self: Module) =
   self.moduleLoaded = true
   self.delegate.accountsModuleDidLoad()
 
-method generateNewAccount*(self: Module, password: string, accountName: string, color: string): string =
-  return self.controller.generateNewAccount(password, accountName, color)
+method generateNewAccount*(self: Module, password: string, accountName: string, color: string, emoji: string): string =
+  return self.controller.generateNewAccount(password, accountName, color, emoji)
 
-method addAccountsFromPrivateKey*(self: Module, privateKey: string, password: string, accountName: string, color: string): string =
-  return self.controller.addAccountsFromPrivateKey(privateKey, password, accountName, color)
+method addAccountsFromPrivateKey*(self: Module, privateKey: string, password: string, accountName: string, color: string, emoji: string): string =
+  return self.controller.addAccountsFromPrivateKey(privateKey, password, accountName, color, emoji)
 
-method addAccountsFromSeed*(self: Module, seedPhrase: string, password: string, accountName: string, color: string): string =
-  return self.controller.addAccountsFromSeed(seedPhrase, password, accountName, color)
+method addAccountsFromSeed*(self: Module, seedPhrase: string, password: string, accountName: string, color: string, emoji: string): string =
+  return self.controller.addAccountsFromSeed(seedPhrase, password, accountName, color, emoji)
 
-method addWatchOnlyAccount*(self: Module, address: string, accountName: string, color: string): string =
-  return self.controller.addWatchOnlyAccount(address, accountName, color)
+method addWatchOnlyAccount*(self: Module, address: string, accountName: string, color: string, emoji: string): string =
+  return self.controller.addWatchOnlyAccount(address, accountName, color, emoji)
 
 method deleteAccount*(self: Module, address: string) =
   self.controller.deleteAccount(address)

@@ -25,6 +25,7 @@ type
     isWallet*: bool
     isChat*: bool
     tokens*: seq[WalletTokenDto]
+    emoji*: string
 
 proc newDto*(
   name: string,
@@ -34,7 +35,8 @@ proc newDto*(
   publicKey: string,
   walletType: string,
   isWallet: bool,
-  isChat: bool
+  isChat: bool,
+  emoji: string
 ): WalletAccountDto =
   return WalletAccountDto(
     name: name,
@@ -44,7 +46,8 @@ proc newDto*(
     publicKey: publicKey,
     walletType: walletType,
     isWallet: isWallet,
-    isChat: isChat
+    isChat: isChat,
+    emoji: emoji
   )
 
 proc toWalletAccountDto*(jsonObj: JsonNode): WalletAccountDto =
@@ -57,6 +60,7 @@ proc toWalletAccountDto*(jsonObj: JsonNode): WalletAccountDto =
   discard jsonObj.getProp("chat", result.isChat)
   discard jsonObj.getProp("public-key", result.publicKey)
   discard jsonObj.getProp("type", result.walletType)
+  discard jsonObj.getProp("emoji", result.emoji)
 
 proc getCurrencyBalance*(self: WalletAccountDto): float64 =
   return self.tokens.map(t => t.currencyBalance).foldl(a + b, 0.0)
