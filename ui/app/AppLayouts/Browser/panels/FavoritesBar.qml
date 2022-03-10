@@ -32,7 +32,9 @@ RowLayout {
             icon.source: imageUrl
             icon.width: 24
             icon.height: 24
-            text: name
+            // Limit long named tabs. StatusFlatButton is not well-behaved control
+            //  implicitWidth doesn't work. Also avoid breaking visualization by escaping HTML
+            text: Utils.escapeHtml(Utils.elideIfTooLong(name, 40))
 
             MouseArea {
                 anchors.fill: parent
