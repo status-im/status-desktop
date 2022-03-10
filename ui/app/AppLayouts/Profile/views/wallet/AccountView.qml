@@ -10,12 +10,14 @@ import utils 1.0
 
 import "../../stores"
 import "../../controls"
+import "../../popups"
 
 Item {
     id: root
     signal goBack
 
     property WalletStore walletStore
+    property var emojiPopup
 
     StatusFlatButton {
         id: backButton
@@ -40,48 +42,52 @@ Item {
         anchors.left: root.left
         width: 560
 
-        Item {
+        Row {
             id: header
-            height: 60
-            width: parent.width
+            spacing: Style.current.smallPadding
             StatusSmartIdenticon {
                 id: accountImage
-                anchors.left: parent.left
-                anchors.topMargin: Style.current.halfPadding
-                anchors.top: parent.top
-                image.isIdenticon: true
+                anchors.verticalCenter: parent.verticalCenter
                 icon: StatusIconSettings {
-                    width: 40
-                    height: 40
-                    letterSize: 21
+                    width: isLetterIdenticon ? 40 : 20
+                    height: isLetterIdenticon ? 40 : 20
                     color: walletStore.currentAccount.color
+                    emoji: walletStore.currentAccount.emoji
+                    name: !walletStore.currentAccount.emoji ? "filled-account": ""
+                    letterSize: 14
+                    isLetterIdenticon: !!walletStore.currentAccount.emoji
+                    background: StatusIconBackgroundSettings {
+                        width: 40
+                        height: 40
+                        color: Theme.palette.primaryColor3
+                    }
                 }
-                name: walletStore.currentAccount.name
-            } 
-
-
-            Item {
-                id: accountNameAndAddress
-                anchors.left: accountImage.right
-                anchors.leftMargin: Style.current.padding
-                anchors.top: parent.top
-
-                StatusBaseText {
-                    id: accountName
-                    text: walletStore.currentAccount.name
-                    font.weight: Font.Bold
-                    font.pixelSize: 28
-                    color: Theme.palette.directColor1
-                    anchors.left: parent.left
+            }
+            Column {
+                spacing: Style.current.halfPadding
+                Row {
+                    spacing: Style.current.halfPadding
+                    StatusBaseText {
+                        id: accountName
+                        text: walletStore.currentAccount.name
+                        font.weight: Font.Bold
+                        font.pixelSize: 28
+                        color: Theme.palette.directColor1
+                    }
+                    StatusFlatRoundButton {
+                        width: 28
+                        height: 28
+                        anchors.verticalCenter: accountName.verticalCenter
+                        type: StatusFlatRoundButton.Type.Tertiary
+                        color: "transparent"
+                        icon.name: "pencil"
+                        onClicked: Global.openPopup(renameAccountModalComponent)
+                    }
                 }
-
                 StatusAddress {
                     text: walletStore.currentAccount.address
-                    anchors.top: accountName.bottom
-                    anchors.topMargin: Style.current.halfPadding
-                    anchors.left: parent.left
+                    font.pixelSize: 15
                 }
-
             }
         }
 
@@ -222,6 +228,16 @@ Item {
             onClicked : {
                 confirmationPopup.open()
             }
+        }
+    }
+
+    Component {
+        id: renameAccountModalComponent
+        RenameAccontModal {
+            anchors.centerIn: parent
+            onClosed: destroy()
+            walletStore: root.walletStore
+            emojiPopup: root.emojiPopup
         }
     }
 }

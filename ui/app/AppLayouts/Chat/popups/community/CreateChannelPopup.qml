@@ -40,13 +40,18 @@ StatusModal {
 
     onOpened: {
         contentItem.channelName.input.text = ""
+        contentItem.channelName.input.icon.emoji = ""
         contentItem.channelName.input.forceActiveFocus(Qt.MouseFocusReason)
         if (isEdit) {
             //% "Edit #%1"
             header.title = qsTrId("edit---1").arg(popup.channelName);
             contentItem.channelName.input.text = popup.channelName
             contentItem.channelDescription.input.text = popup.channelDescription
-            contentItem.channelEmoji.text = StatusQUtils.Emoji.parse(popup.channelEmoji)
+            contentItem.channelName.input.icon.emoji  = popup.channelEmoji
+            scrollView.channelColorDialog.color = popup.channelColor
+        }
+        else {
+            contentItem.channelName.input.icon.emoji = StatusQUtils.Emoji.getRandomEmoji()
         }
     }
 
@@ -57,7 +62,7 @@ StatusModal {
         target: emojiPopup
 
         onEmojiSelected: function (emojiText, atCursor) {
-            scrollView.channelEmoji.text = emojiText
+            scrollView.channelName.input.icon.emoji  = emojiText
         }
         onClosed: {
             popup.emojiPopupOpened = false
@@ -80,7 +85,6 @@ StatusModal {
         property alias channelName: nameInput
         property alias channelDescription: descriptionTextArea
         property alias channelColorDialog: colorDialog
-        property alias channelEmoji: emojiText
 
         contentHeight: content.height
         height: Math.min(content.height, 432)
@@ -95,7 +99,7 @@ StatusModal {
 
         Column {
             id: content
-            width: popup.width
+            width: popup.width           
 
             StatusInput {
                 id: nameInput
@@ -105,6 +109,14 @@ StatusModal {
                 input.onTextChanged: {
                     input.text = Utils.convertSpacesToDashesAndUpperToLowerCase(input.text);
                     input.cursorPosition = input.text.length
+                }
+                input.isIconSelectable: true
+                input.icon.color: colorDialog.color.toString()
+                onIconClicked: {
+                    popup.emojiPopupOpened = true
+                    popup.emojiPopup.open()
+                    popup.emojiPopup.x = popup.x + Style.current.padding
+                    popup.emojiPopup.y = popup.y + nameInput.height + 2*Style.current.xlPadding
                 }
                 validationMode: StatusInput.ValidationMode.Always
                 validators: [StatusMinLengthValidator {
@@ -187,46 +199,6 @@ StatusModal {
                 }]
             }
 
-            // TODO replace this with the new emoji + name + color input when it is implemented in StatusQ
-            Item {
-                width: parent.width
-                height: childrenRect.height + 8
-
-                StatusButton {
-                    id: emojiBtn
-                    text: qsTr("Choose emoji")
-                    anchors.top: parent.top
-                    anchors.topMargin: 8
-                    anchors.left: parent.left
-                    anchors.leftMargin: 16
-                    onClicked: {
-                        popup.emojiPopupOpened = true
-                        popup.emojiPopup.open()
-                        popup.emojiPopup.x = Global.applicationWindow.width/2 - popup.emojiPopup.width/2 + popup.width/2
-                        popup.emojiPopup.y = Global.applicationWindow.height/2 - popup.emojiPopup.height/2
-                    }
-                }
-                StatusBaseText {
-                    id: emojiText
-                    font.pixelSize: 15
-                    anchors.verticalCenter: emojiBtn.verticalCenter
-                    anchors.left: emojiBtn.right
-                    anchors.leftMargin: 8
-                }
-                StatusButton {
-                    id: removeEmojiBtn
-                    visible: !!emojiText.text
-                    text: qsTr("Remove emoji")
-                    anchors.top: parent.top
-                    anchors.topMargin: 8
-                    anchors.left: emojiText.right
-                    anchors.leftMargin: 8
-                    onClicked: {
-                        emojiText.text = ""
-                    }
-                }
-            }
-
             /* TODO: use the code below to enable private channels and message limit */
             /* StatusListItem { */
             /*     width: parent.width */
@@ -302,22 +274,17 @@ StatusModal {
                     return
                 }
                 let error = "";
-                let emoji = ""
-                const found = RegExp(emojiRegexStr, 'g').exec(popup.contentItem.channelEmoji.text);
-                if (found) {
-                    emoji = found[1]
-                }
                 if (!isEdit) {
                     //popup.contentItem.communityColor.color.toString().toUpperCase()
                     popup.createCommunityChannel(Utils.filterXSS(popup.contentItem.channelName.input.text),
                                                  Utils.filterXSS(popup.contentItem.channelDescription.input.text),
-                                                 emoji,
+                                                 popup.contentItem.channelName.input.icon.emoji,
                                                  popup.contentItem.channelColorDialog.color.toString().toUpperCase(),
                                                  popup.categoryId)
                 } else {
                     popup.editCommunityChannel(Utils.filterXSS(popup.contentItem.channelName.input.text),
                                                  Utils.filterXSS(popup.contentItem.channelDescription.input.text),
-                                                 emoji,
+                                                 popup.contentItem.channelName.input.icon.emoji,
                                                  popup.contentItem.channelColorDialog.color.toString().toUpperCase(),
                                                  popup.categoryId)
                 }

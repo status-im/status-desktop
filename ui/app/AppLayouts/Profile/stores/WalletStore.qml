@@ -40,6 +40,10 @@ QtObject {
         return walletSectionAccounts.deleteAccount(address)
     }
 
+    function updateCurrentAccount(address, accountName, color, emoji) {
+        return walletSectionCurrent.update(address, accountName, color, emoji)
+    }
+
     property var dappList: dappPermissionsModule.dapps
 
     function disconnect(dappName) {
