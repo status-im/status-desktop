@@ -78,7 +78,10 @@ QtObject:
 
     proc fetchPeers*(self: Service): seq[string] =
         var fleet = self.settingsService.getFleet()
-        let isWakuV2 = if fleet == WakuV2Prod or fleet == WakuV2Test or fleet == StatusTest: true else: false
+        let isWakuV2 = if fleet == WakuV2Prod or fleet == WakuV2Test or fleet == StatusTest or fleet == StatusProd:
+            true 
+        else:
+            false
         if isWakuV2:
             return wakuV2Peers()
         else:

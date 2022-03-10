@@ -18,9 +18,10 @@ QtObject {
 
     property var customNetworksModel: advancedModule? advancedModule.customNetworksModel : []
 
-    property bool isWakuV2: root.fleet === Constants.waku_prod ||
-                            root.fleet === Constants.waku_test ||
-                            root.fleet === Constants.status_test
+    property bool isWakuV2: root.fleet === Constants.waku_prod   ||
+                            root.fleet === Constants.waku_test   ||
+                            root.fleet === Constants.status_test ||
+                            root.fleet === Constants.status_prod
 
     readonly property QtObject experimentalFeatures: QtObject {
         readonly property string wallet: "wallet"
