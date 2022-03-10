@@ -272,16 +272,17 @@ QtObject:
         self.dataChanged(index, index, @[ModelRole.Name.int])
         return
 
-  proc updateItemDetails*(self: Model, id, name, description, emoji: string) =
+  proc updateItemDetails*(self: Model, id, name, description, emoji, color: string) =
     ## This updates only first level items, it doesn't update subitems, since subitems cannot have custom icon.
     for i in 0 ..< self.items.len:
       if(self.items[i].id == id):
         self.items[i].BaseItem.name = name
         self.items[i].BaseItem.description = description
         self.items[i].BaseItem.emoji = emoji
+        self.items[i].BaseItem.color = color
         let index = self.createIndex(i, 0, nil)
         self.dataChanged(index, index,
-          @[ModelRole.Name.int, ModelRole.Description.int, ModelRole.Emoji.int])
+          @[ModelRole.Name.int, ModelRole.Description.int, ModelRole.Emoji.int, ModelRole.Color.int])
         return
 
   proc updateNotificationsForItemOrSubItemById*(self: Model, id: string, hasUnreadMessages: bool,

@@ -177,6 +177,7 @@ ColumnLayout {
                 chatName = chatContentModule.chatDetails.name
                 chatDescription = chatContentModule.chatDetails.description
                 chatEmoji = chatContentModule.chatDetails.emoji
+                chatColor = chatContentModule.chatDetails.color
                 chatType = chatContentModule.chatDetails.type
                 chatMuted = chatContentModule.chatDetails.muted
                 channelPosition = chatContentModule.chatDetails.position
@@ -249,6 +250,7 @@ ColumnLayout {
                     newName,
                     newDescription,
                     newEmoji,
+                    newColor,
                     newCategory,
                     channelPosition // TODO change this to the signal once it is modifiable
                 )

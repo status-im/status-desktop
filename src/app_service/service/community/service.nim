@@ -581,9 +581,11 @@ QtObject:
       name: string,
       description: string,
       emoji: string,
+      color: string,
       categoryId: string) =
     try:
-      let response = status_go.createCommunityChannel(communityId, name, description, emoji, categoryId)
+      let response = status_go.createCommunityChannel(communityId, name, description, emoji, color,
+        categoryId)
 
       if not response.error.isNil:
         let error = Json.decode($response.error, RpcError)
@@ -611,6 +613,7 @@ QtObject:
       name: string,
       description: string,
       emoji: string,
+      color: string,
       categoryId: string,
       position: int) =
     try:
@@ -620,6 +623,7 @@ QtObject:
         name,
         description,
         emoji,
+        color,
         categoryId,
         position)
 

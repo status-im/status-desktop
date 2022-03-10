@@ -85,6 +85,7 @@ proc createCommunityChannel*(
     name: string,
     description: string,
     emoji: string,
+    color: string,
     categoryId: string
     ): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = callPrivateRPC("createCommunityChat".prefix, %*[
@@ -96,8 +97,8 @@ proc createCommunityChannel*(
       "identity": {
         "display_name": name,
         "description": description,
-        "emoji": emoji#,
-        # "color": color#
+        "emoji": emoji,
+        "color": color
       },
       "category_id": categoryId
     }])
@@ -108,6 +109,7 @@ proc editCommunityChannel*(
     name: string,
     description: string,
     emoji: string,
+    color: string,
     categoryId: string,
     position: int
     ): RpcResponse[JsonNode] {.raises: [Exception].} =
@@ -121,8 +123,8 @@ proc editCommunityChannel*(
       "identity": {
         "display_name": name,
         "description": description,
-        "emoji": emoji#,
-        # "color": color
+        "emoji": emoji,
+        "color": color
       },
       "category_id": categoryId,
       "position": position

@@ -213,9 +213,10 @@ QtObject:
       name: string,
       description: string,
       emoji: string,
+      color: string,
       categoryId: string
       ) {.slot.} =
-    self.delegate.createCommunityChannel(name, description, emoji, categoryId)
+    self.delegate.createCommunityChannel(name, description, emoji, color, categoryId)
 
   proc editCommunityChannel*(
       self: View,
@@ -223,6 +224,7 @@ QtObject:
       name: string,
       description: string,
       emoji: string,
+      color: string,
       categoryId: string,
       position: int
     ) {.slot.} =
@@ -231,6 +233,7 @@ QtObject:
       name,
       description,
       emoji,
+      color,
       categoryId,
       position
     )

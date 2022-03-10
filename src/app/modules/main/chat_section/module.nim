@@ -552,7 +552,8 @@ method onCommunityChannelDeletedOrChatLeft*(self: Module, chatId: string) =
 method onCommunityChannelEdited*(self: Module, chat: ChatDto) =
   if(not self.chatContentModules.contains(chat.id)):
     return
-  self.view.chatsModel().updateItemDetails(chat.id, chat.name, chat.description, chat.emoji)
+  self.view.chatsModel().updateItemDetails(chat.id, chat.name, chat.description, chat.emoji, 
+    chat.color)
 
 method createOneToOneChat*(self: Module, communityID: string, chatId: string, ensName: string) =
   if(self.controller.isCommunity()):
@@ -694,12 +695,13 @@ method acceptRequestToJoinCommunity*(self: Module, requestId: string) =
 method declineRequestToJoinCommunity*(self: Module, requestId: string) =
   self.controller.declineRequestToJoinCommunity(requestId)
 
-method createCommunityChannel*(self: Module, name, description, emoji, categoryId: string) =
-  self.controller.createCommunityChannel(name, description, emoji, categoryId)
+method createCommunityChannel*(self: Module, name, description, emoji, color, categoryId: string) =
+  self.controller.createCommunityChannel(name, description, emoji, color, categoryId)
 
-method editCommunityChannel*(self: Module, channelId, name, description, emoji, categoryId: string,
-    position: int) =
-  self.controller.editCommunityChannel(channelId, name, description, emoji, categoryId, position)
+method editCommunityChannel*(self: Module, channelId, name, description, emoji, color,
+    categoryId: string, position: int) =
+  self.controller.editCommunityChannel(channelId, name, description, emoji, color, categoryId,
+    position)
 
 method createCommunityCategory*(self: Module, name: string, channels: seq[string]) =
   self.controller.createCommunityCategory(name, channels)

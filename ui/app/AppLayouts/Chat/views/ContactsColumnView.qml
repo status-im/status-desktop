@@ -184,6 +184,7 @@ Item {
                     chatName = obj.name
                     chatDescription = obj.description
                     chatEmoji = obj.emoji
+                    chatColor = obj.color
                     chatType = obj.type
                     chatMuted = obj.muted
                 }
