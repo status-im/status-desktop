@@ -9,6 +9,7 @@ import shared.controls 1.0
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Controls.Validators 0.1
 import StatusQ.Popups 0.1
 
 StatusModal {
@@ -16,11 +17,11 @@ StatusModal {
 
     id: popup
     width: 400
-    height: 390
+    height: 340
     header.title: qsTr("Nickname")
 
     property string nickname: ""
-    property int nicknameLength: nicknameInput.textField.text.length
+    property int nicknameLength: nicknameInput.text.length
     readonly property int maxNicknameLength: 32
     property bool nicknameTooLong: nicknameLength > maxNicknameLength
     signal editDone(string newNickname)
@@ -50,27 +51,25 @@ StatusModal {
                 width: parent.width
             }
 
-            Input {
+            StatusInput {
                 id: nicknameInput
                 //% "Nickname"
-                placeholderText: qsTrId("nickname")
+                input.placeholderText: qsTrId("nickname")
                 text: nickname
-                //% "Your nickname is too long"
-                validationError: popup.nicknameTooLong ? qsTrId("your-nickname-is-too-long") : ""
+
+                width: parent.width
+
+                charLimit: maxNicknameLength
+                validationMode: StatusInput.ValidationMode.IgnoreInvalidInput
+                validators: [
+                    StatusRegularExpressionValidator {
+                        regularExpression: /^[0-9A-Za-z_-]*$/
+                    }
+                ]
                 Keys.onReleased: {
                     if (event.key === Qt.Key_Return) {
-                        editDone()
+                        editDone(nicknameInput.text)
                     }
-                }
-
-                StatusBaseText {
-                    id: lengthLimitText
-                    text: popup.nicknameLength + "/" + popup.maxNicknameLength
-                    font.pixelSize: 15
-                    anchors.top: parent.bottom
-                    anchors.topMargin: 12
-                    anchors.right: parent.right
-                    color: popup.nicknameTooLong ? Theme.palette.dangerColro1 : Theme.palette.baseColor1
                 }
             }
         }
@@ -82,7 +81,7 @@ StatusModal {
             //% "Done"
             text: qsTrId("done")
             enabled: !popup.nicknameTooLong
-            onClicked: editDone(nicknameInput.textField.text)
+            onClicked: editDone(nicknameInput.text)
         }
     ]
 }
