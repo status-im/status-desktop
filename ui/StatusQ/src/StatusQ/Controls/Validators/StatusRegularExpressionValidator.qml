@@ -53,8 +53,8 @@ StatusValidator {
     errorMessage: "Please enter a valid regular expression."
     validatorObj: RegularExpressionValidator { regularExpression: root.regularExpression }
 
-    validate: function (t) {
+    validate: function (value) {
         // Basic validation management
-        return root.validatorObj.validate() === RegularExpressionValidator.Acceptable
+        return root.validatorObj.regularExpression.test(value)
     }
 }
