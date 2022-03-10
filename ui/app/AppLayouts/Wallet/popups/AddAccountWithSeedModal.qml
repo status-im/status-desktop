@@ -123,8 +123,8 @@ StatusModal {
             input.icon.color: accountColorInput.selectedColor ? accountColorInput.selectedColor : Theme.palette.directColor1
             onIconClicked: {
                 popup.emojiPopup.open()
-                popup.emojiPopup.x = Global.applicationWindow.width/2 - popup.emojiPopup.width/2 + popup.width/2
-                popup.emojiPopup.y = Global.applicationWindow.height/2 - popup.emojiPopup.height/2
+                popup.emojiPopup.x = popup.x + Style.current.padding
+                popup.emojiPopup.y = popup.y + contentItem.y + accountNameInput.y + accountNameInput.height +  Style.current.halfPadding
             }
             validators: [
                 StatusMinLengthValidator {

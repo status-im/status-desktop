@@ -536,6 +536,7 @@ Item {
                     store: appMain.rootStore.profileSectionStore
                     globalStore: appMain.rootStore
                     systemPalette: appMain.sysPalette
+                    emojiPopup: statusEmojiPopup
                 }
 
                 NodeLayout {

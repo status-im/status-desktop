@@ -10,11 +10,13 @@ StatusListItem {
     
     title: account.name
     subTitle: account.address
-    icon.isLetterIdenticon: true
     icon.color: account.color
+    icon.emoji: account.emoji
+    icon.name: !account.emoji ? "filled-account": ""
+    icon.letterSize: 14
+    icon.isLetterIdenticon: !!account.emoji
+    icon.background.color: Theme.palette.indirectColor1
     width: parent.width
-    leftPadding: 0
-    rightPadding: 0
     components: [
         StatusIcon {
             icon: "chevron-down"

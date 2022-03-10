@@ -17,6 +17,7 @@ StatusAppTwoPanelLayout {
     property ProfileSectionStore store
     property var globalStore
     property var systemPalette
+    property var emojiPopup
 
     Component.onCompleted: {
         Global.privacyModuleInst = store.privacyStore.privacyModule
@@ -68,6 +69,7 @@ StatusAppTwoPanelLayout {
         WalletView {
             id: walletView
             walletStore: profileView.store.walletStore
+            emojiPopup: profileView.emojiPopup
         }
 
         PrivacyView {

@@ -18,6 +18,8 @@ import "./wallet"
 ScrollView {
     id: root
 
+    property var emojiPopup
+
     anchors.fill: parent
     contentHeight: advancedContainer.height + 100
     clip: true
@@ -68,6 +70,7 @@ ScrollView {
 
             AccountView {
                 walletStore: root.walletStore
+                emojiPopup: root.emojiPopup
                 anchors.fill: parent
                 onGoBack: {
                     stackContainer.currentIndex = 0
