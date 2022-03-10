@@ -211,6 +211,9 @@ QtObject:
     self.allCommunities[community.id] = community
 
     if(not self.joinedCommunities.hasKey(community.id)):
+      if (community.joined and community.isMember):
+        self.joinedCommunities[community.id] = community
+        self.events.emit(SIGNAL_COMMUNITY_JOINED, CommunityArgs(community: community))
       return
 
     let prev_community = self.joinedCommunities[community.id]
