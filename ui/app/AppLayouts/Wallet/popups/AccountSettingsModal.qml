@@ -6,126 +6,151 @@ import QtQuick.Dialogs 1.3
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Popups 0.1
+import StatusQ.Controls.Validators 0.1
 
 import utils 1.0
 
-import shared.panels 1.0
 import shared.popups 1.0
+import shared.panels 1.0
 import shared.controls 1.0
 
 import "../stores"
 
-// TODO: replace with StatusModal
-ModalPopup {
+StatusModal {
     id: popup
 
     property var currentAccount: RootStore.currentAccount
     property var changeSelectedAccount
+    property var emojiPopup
 
-    // TODO add icon when we have that feature
     //% "Status account settings"
-    title: qsTrId("status-account-settings")
+    header.title: qsTrId("status-account-settings")
     height: 675
 
-    property int marginBetweenInputs: 35
-    property string accountNameValidationError: ""
-
-    function validate() {
-        if (accountNameInput.text === "") {
-            //% "You need to enter an account name"
-            accountNameValidationError = qsTrId("you-need-to-enter-an-account-name")
-        } else {
-            accountNameValidationError = ""
-        }
-
-        return accountNameValidationError === ""
-    }
+    property int marginBetweenInputs: 30
 
     onOpened: {
         accountNameInput.forceActiveFocus(Qt.MouseFocusReason)
     }
 
-    Input {
-        id: accountNameInput
-        //% "Enter an account name..."
-        placeholderText: qsTrId("enter-an-account-name...")
-        //% "Account name"
-        label: qsTrId("account-name")
-        text: currentAccount.name
-        validationError: popup.accountNameValidationError
-    }
-
-    StatusWalletColorSelect {
-        id: accountColorInput
-        selectedColor: currentAccount.iconColor.toUpperCase()
-        model: Theme.palette.accountColors
-        anchors.top: accountNameInput.bottom
-        anchors.topMargin: marginBetweenInputs
-        anchors.left: parent.left
-        anchors.right: parent.right
-    }
-
-    TextWithLabel {
-        id: typeText
-        //% "Type"
-        label: qsTrId("type")
-        text: {
-            var result = ""
-            switch (currentAccount.walletType) {
-                //% "Watch-only"
-                case Constants.watchWalletType: result = qsTrId("watch-only"); break;
-                case Constants.keyWalletType:
-                //% "Off Status tree"
-                case Constants.seedWalletType: result = qsTrId("off-status-tree"); break;
-                //% "On Status tree"
-                default: result = qsTrId("on-status-tree")
-            }
-            return result
+    Connections {
+        enabled: popup.opened
+        target: emojiPopup
+        onEmojiSelected: function (emojiText, atCursor) {
+            popup.contentItem.accountNameInput.input.icon.emoji = emojiText
         }
-        anchors.top: accountColorInput.bottom
-        anchors.topMargin: marginBetweenInputs
     }
 
-    TextWithLabel {
-        id: addressText
-        //% "Wallet address"
-        label: qsTrId("wallet-address")
-        text: currentAccount.address
-        fontFamily: Style.current.fontHexRegular.name
-        anchors.top: typeText.bottom
-        anchors.topMargin: marginBetweenInputs
+
+    contentItem: Column {
+        property alias accountNameInput: accountNameInput
+
+        width: popup.width
+        spacing: marginBetweenInputs
+        topPadding: Style.current.padding
+
+        StatusInput {
+            id: accountNameInput
+            //% "Enter an account name..."
+            input.placeholderText: qsTrId("enter-an-account-name...")
+            input.text: currentAccount.name
+            //% "Account name"
+            label: qsTrId("account-name")
+            input.isIconSelectable: true
+            input.icon.emoji: currentAccount.emoji
+            input.icon.color: currentAccount.color
+            input.icon.name: !currentAccount.emoji ? "filled-account": ""
+            onIconClicked: {
+                popup.emojiPopup.open()
+                popup.emojiPopup.x = Global.applicationWindow.width/2 - popup.emojiPopup.width/2 + popup.width/2
+                popup.emojiPopup.y = Global.applicationWindow.height/2 - popup.emojiPopup.height/2
+            }
+            validators: [
+                StatusMinLengthValidator {
+                    //% "You need to enter an account name"
+                    errorMessage: qsTrId("you-need-to-enter-an-account-name")
+                    minLength: 1
+                }
+            ]
+        }
+
+        StatusColorSelectorGrid {
+            id: accountColorInput
+            anchors.top: selectedColor.bottom
+            anchors.topMargin: 10
+            anchors.horizontalCenter: parent.horizontalCenter
+            //% "color"
+            titleText: qsTr("color").toUpperCase()
+            selectedColor: currentAccount.color
+            selectedColorIndex: {
+                for (let i = 0; i < model.length; i++) {
+                    if(model[i] === currentAccount.color)
+                        return i
+                }
+            }
+            onSelectedColorChanged: {
+                if(selectedColor !== currentAccount.color) {
+                    accountNameInput.input.icon.color = selectedColor
+                }
+
+            }
+        }
+
+        Column {
+            width: parent.width
+            leftPadding: Style.current.padding
+            spacing: Style.current.padding
+
+            TextWithLabel {
+                id: typeText
+                //% "Type"
+                label: qsTrId("type")
+                text: {
+                    var result = ""
+                    switch (currentAccount.walletType) {
+                        //% "Watch-only"
+                    case Constants.watchWalletType: result = qsTrId("watch-only"); break;
+                    case Constants.keyWalletType:
+                        //% "Off Status tree"
+                    case Constants.seedWalletType: result = qsTrId("off-status-tree"); break;
+                        //% "On Status tree"
+                    default: result = qsTrId("on-status-tree")
+                    }
+                    return result
+                }
+            }
+
+            TextWithLabel {
+                id: addressText
+                //% "Wallet address"
+                label: qsTrId("wallet-address")
+                text: currentAccount.address
+                fontFamily: Style.current.fontHexRegular.name
+            }
+
+            TextWithLabel {
+                id: pathText
+                visible: currentAccount.walletType !== Constants.watchWalletType && currentAccount.walletType !== Constants.keyWalletType
+                //% "Derivation path"
+                label: qsTrId("derivation-path")
+                text: currentAccount.path
+            }
+
+            TextWithLabel {
+                id: storageText
+                visible: currentAccount.walletType !== Constants.watchWalletType
+                //% "Storage"
+                label: qsTrId("storage")
+                //% "This device"
+                text: qsTrId("this-device")
+            }
+        }
     }
 
-    TextWithLabel {
-        id: pathText
-        visible: currentAccount.walletType !== Constants.watchWalletType && currentAccount.walletType !== Constants.keyWalletType
-        //% "Derivation path"
-        label: qsTrId("derivation-path")
-        text: currentAccount.path
-        anchors.top: addressText.bottom
-        anchors.topMargin: marginBetweenInputs
-    }
-
-    TextWithLabel {
-        id: storageText
-        visible: currentAccount.walletType !== Constants.watchWalletType
-        //% "Storage"
-        label: qsTrId("storage")
-        //% "This device"
-        text: qsTrId("this-device")
-        anchors.top: pathText.bottom
-        anchors.topMargin: marginBetweenInputs
-    }
-
-    footer: Item {
-        width: parent.width
-        height: saveBtn.height
-
+    rightButtons: [
         StatusButton {
             visible:  currentAccount.walletType === Constants.watchWalletType
-            anchors.top: parent.top
-            anchors.right: saveBtn.left
-            anchors.rightMargin: Style.current.padding
             //% "Delete account"
             text: qsTrId("delete-account")
             type: StatusBaseButton.Type.Danger
@@ -157,12 +182,9 @@ ModalPopup {
             onClicked : {
                 confirmationDialog.open()
             }
-        }
+        },
         StatusButton {
             id: saveBtn
-            anchors.top: parent.top
-            anchors.right: parent.right
-            anchors.rightMargin: Style.current.padding
             //% "Save changes"
             text: qsTrId("save-changes")
 
@@ -175,12 +197,12 @@ ModalPopup {
                 standardButtons: StandardButton.Ok
             }
 
-            onClicked : {
-                if (!validate()) {
-                    return
-                }
+            onClicked : {                
+                if (!accountNameInput.valid) {
+                     return
+                 }
 
-                const error = RootStore.updateCurrentAccount(currentAccount.address, accountNameInput.text, accountColorInput.selectedColor);
+                const error = RootStore.updateCurrentAccount(currentAccount.address, accountNameInput.text, accountColorInput.selectedColor, accountNameInput.input.icon.emoji);
 
                 if (error) {
                     Global.playErrorSound();
@@ -191,5 +213,5 @@ ModalPopup {
                 popup.close();
             }
         }
-    }
+    ]
 }

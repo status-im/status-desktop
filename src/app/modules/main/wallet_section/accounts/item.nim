@@ -13,6 +13,7 @@ type
     isChat: bool
     currencyBalance: float64
     assets: account_tokens.Model
+    emoji: string
 
 proc initItem*(
   name: string,
@@ -24,7 +25,8 @@ proc initItem*(
   isWallet: bool,
   isChat: bool,
   currencyBalance: float64,
-  assets: account_tokens.Model
+  assets: account_tokens.Model,
+  emoji: string
 ): Item =
   result.name = name
   result.address = address
@@ -36,6 +38,7 @@ proc initItem*(
   result.isChat = isChat
   result.currencyBalance = currencyBalance
   result.assets = assets
+  result.emoji = emoji
 
 proc `$`*(self: Item): string =
   result = fmt"""WalletAccountItem(
@@ -49,6 +52,7 @@ proc `$`*(self: Item): string =
     isChat: {self.isChat},
     currencyBalance: {self.currencyBalance},
     assets.len: {self.assets.getCount()},
+    emoji: {self.emoji}
     ]"""
 
 proc getName*(self: Item): string =
@@ -59,6 +63,9 @@ proc getAddress*(self: Item): string =
 
 proc getPath*(self: Item): string =
   return self.path
+
+proc getEmoji*(self: Item): string =
+  return self.emoji
 
 proc getColor*(self: Item): string =
   return self.color

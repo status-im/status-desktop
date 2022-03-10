@@ -26,17 +26,17 @@ method init*(self: Controller) =
 method getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAccountDto] =
   return self.walletAccountService.getWalletAccounts()
 
-method generateNewAccount*(self: Controller, password: string, accountName: string, color: string): string =
-  return self.walletAccountService.generateNewAccount(password, accountName, color)
+method generateNewAccount*(self: Controller, password: string, accountName: string, color: string, emoji: string): string =
+  return self.walletAccountService.generateNewAccount(password, accountName, color, emoji)
 
-method addAccountsFromPrivateKey*(self: Controller, privateKey: string, password: string, accountName: string, color: string): string =
-  return self.walletAccountService.addAccountsFromPrivateKey(privateKey, password, accountName, color)
+method addAccountsFromPrivateKey*(self: Controller, privateKey: string, password: string, accountName: string, color: string, emoji: string): string =
+  return self.walletAccountService.addAccountsFromPrivateKey(privateKey, password, accountName, color, emoji)
 
-method addAccountsFromSeed*(self: Controller, seedPhrase: string, password: string, accountName: string, color: string): string =
-  return self.walletAccountService.addAccountsFromSeed(seedPhrase, password, accountName, color)
+method addAccountsFromSeed*(self: Controller, seedPhrase: string, password: string, accountName: string, color: string, emoji: string): string =
+  return self.walletAccountService.addAccountsFromSeed(seedPhrase, password, accountName, color, emoji)
 
-method addWatchOnlyAccount*(self: Controller, address: string, accountName: string, color: string): string =
-  return self.walletAccountService.addWatchOnlyAccount(address, accountName, color)
+method addWatchOnlyAccount*(self: Controller, address: string, accountName: string, color: string, emoji: string): string =
+  return self.walletAccountService.addWatchOnlyAccount(address, accountName, color, emoji)
 
 method deleteAccount*(self: Controller, address: string) =
   self.walletAccountService.deleteAccount(address)

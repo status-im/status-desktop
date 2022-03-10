@@ -9,6 +9,7 @@ import shared.panels 1.0
 import shared.controls 1.0
 
 import StatusQ.Components 0.1
+import StatusQ.Core.Theme 0.1
 
 import "../controls"
 import "../popups"
@@ -20,6 +21,7 @@ Rectangle {
     property int selectedAccountIndex: 0
     property var changeSelectedAccount: function(){}
     property var showSavedAddresses: function(showSavedAddresses){}
+    property var emojiPopup: null
 
     function onAfterAddAccount () {
         walletInfoContainer.changeSelectedAccount(RootStore.accounts.rowCount() - 1)
@@ -111,22 +113,30 @@ Rectangle {
 
     GenerateAccountModal {
         id: generateAccountModal
+        anchors.centerIn: parent
         onAfterAddAccount: walletInfoContainer.onAfterAddAccount()
+        emojiPopup: walletInfoContainer.emojiPopup
     }
 
     AddAccountWithSeedModal {
         id: addAccountWithSeedModal
+        anchors.centerIn: parent
         onAfterAddAccount: walletInfoContainer.onAfterAddAccount()
+        emojiPopup: walletInfoContainer.emojiPopup
     }
 
     AddAccountWithPrivateKeyModal {
         id: addAccountWithPrivateKeydModal
+        anchors.centerIn: parent
         onAfterAddAccount: walletInfoContainer.onAfterAddAccount()
+        emojiPopup: walletInfoContainer.emojiPopup
     }
 
     AddWatchOnlyAccountModal {
         id: addWatchOnlyAccountModal
+        anchors.centerIn: parent
         onAfterAddAccount: walletInfoContainer.onAfterAddAccount()
+        emojiPopup: walletInfoContainer.emojiPopup
     }
 
     ScrollView {
@@ -134,8 +144,8 @@ Rectangle {
         anchors.bottomMargin: btnSavedAddresses.height + Style.current.padding
         anchors.top: walletValueTextContainer.bottom
         anchors.topMargin: Style.current.padding
-        anchors.right: parent.right
-        anchors.left: parent.left
+        anchors.horizontalCenter: parent.horizontalCenter
+        width: 272
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
         ScrollBar.vertical.policy: listView.contentHeight > listView.height ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
         clip: true
@@ -150,10 +160,17 @@ Rectangle {
             boundsBehavior: Flickable.StopAtBounds
             clip: true
 
-            delegate: WalletDelegate {
-                currency: RootStore.currentCurrency
-                locale: RootStore.locale
-                selectedAccountIndex: walletInfoContainer.selectedAccountIndex
+            delegate: StatusListItem {
+                width: parent.width
+                highlighted: index === selectedAccountIndex
+                title: model.name
+                subTitle: Utils.toLocaleString(model.currencyBalance.toFixed(2), RootStore.locale, {"model.currency": true}) + " " + RootStore.currentCurrency.toUpperCase()
+                icon.emoji: !!model.emoji ? model.emoji: ""
+                icon.color: model.color
+                icon.name: !model.emoji ? "filled-account": ""
+                icon.letterSize: 14
+                icon.isLetterIdenticon: !!model.emoji ? true : false
+                icon.background.color: Theme.palette.indirectColor1
                 onClicked: {
                     changeSelectedAccount(index)
                     showSavedAddresses(false)

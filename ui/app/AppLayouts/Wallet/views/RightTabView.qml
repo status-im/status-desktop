@@ -19,6 +19,7 @@ Item {
     property var changeSelectedAccount
     property alias currentTabIndex: walletTabBar.currentIndex
     property var store
+    property var emojiPopup
 
     WalletHeader {
         id: walletHeader
@@ -28,6 +29,7 @@ Item {
         changeSelectedAccount: walletContainer.changeSelectedAccount
         store: walletContainer.store
         walletStore: RootStore
+        emojiPopup: walletContainer.emojiPopup
     }
 
     RowLayout {

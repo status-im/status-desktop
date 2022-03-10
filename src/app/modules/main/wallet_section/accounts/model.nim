@@ -13,7 +13,8 @@ type
     IsWallet,
     IsChat,
     CurrencyBalance,
-    Assets
+    Assets,
+    Emoji
 
 QtObject:
   type
@@ -58,7 +59,8 @@ QtObject:
       ModelRole.IsWallet.int:"isWallet",
       ModelRole.IsChat.int:"isChat",
       ModelRole.Assets.int:"assets",
-      ModelRole.CurrencyBalance.int:"currencyBalance"
+      ModelRole.CurrencyBalance.int:"currencyBalance",
+      ModelRole.Emoji.int: "emoji"
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -92,6 +94,8 @@ QtObject:
       result = newQVariant(item.getCurrencyBalance())
     of ModelRole.Assets:
       result = newQVariant(item.getAssets())
+    of ModelRole.Emoji:
+      result = newQVariant(item.getEmoji())
 
   proc setItems*(self: Model, items: seq[Item]) =
     self.beginResetModel()
