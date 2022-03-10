@@ -93,7 +93,10 @@ method fetchBitsSet*(self: Controller) =
 
 method getWakuVersion*(self: Controller): int =
     var fleet = self.settingsService.getFleet()
-    let isWakuV2 = if fleet == WakuV2Prod or fleet == WakuV2Test or fleet == StatusTest: true else: false
+    let isWakuV2 = if fleet == WakuV2Prod or fleet == WakuV2Test or fleet == StatusTest or fleet == StatusProd: 
+      true 
+    else:
+      false
     if isWakuV2: return 2
     return 1
 

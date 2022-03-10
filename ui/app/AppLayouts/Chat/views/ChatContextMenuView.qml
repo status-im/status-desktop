@@ -85,9 +85,10 @@ StatusPopupMenu {
     }
 
     Action {
-        enabled: root.currentFleet == Constants.waku_prod ||
-                 root.currentFleet === Constants.waku_test || 
-                 root.currentFleet === Constants.status_test
+        enabled: root.currentFleet === Constants.waku_prod   ||
+                 root.currentFleet === Constants.waku_test   || 
+                 root.currentFleet === Constants.status_test ||
+                 root.currentFleet === Constants.status_prod
 
         //% "Test WakuV2 - requestAllHistoricMessages"
         text: qsTrId("test-wakuv2---requestallhistoricmessages")

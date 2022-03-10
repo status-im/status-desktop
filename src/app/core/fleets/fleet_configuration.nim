@@ -9,6 +9,7 @@ type
     WakuV2Test = "wakuv2.test"
     GoWakuTest = "go-waku.test"
     StatusTest = "status.test"
+    StatusProd = "status.prod"
 
   FleetNodes* {.pure.} = enum
     Bootnodes = "boot",
