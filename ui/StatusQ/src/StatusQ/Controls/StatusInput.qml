@@ -6,6 +6,30 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Controls.Validators 0.1
 
+/*!
+   \qmltype StatusInput
+   \inherits Item
+   \inqmlmodule StatusQ.Controls
+   \since StatusQ.Controls 0.1
+   \brief The StatusInput control provides a generic user text input
+
+
+
+   Example of how to use it:
+
+   \qml
+        StatusInput {
+            label: "Label"
+            charLimit: 30
+            errorMessage: "Input doesn't match validator"
+
+            input.clearable: true
+            input.placeholderText: "Placeholder text"
+        }
+   \endqml
+
+   For a list of components available see StatusQ.
+*/
 Item {
     id: root
     implicitWidth: 480
@@ -35,6 +59,28 @@ Item {
     property real rightPadding: 16
     property list<StatusValidator> validators
     property list<StatusAsyncValidator> asyncValidators
+    /*!
+       \qmlproperty int (enumeration ValidationMode)
+        This property describes the validation mode
+
+        Note that this property should be always strictly compared with one of ValidationMode's value
+
+        Default value: StatusInput.ValidationMode.OnlyWhenDirty
+
+        Examples of usage
+
+        > To ignore invalid input
+        \qml
+        StatusInput {
+            validationMode: StatusInput.ValidationMode.IgnoreInvalidInput
+            validators: [
+                StatusMinLengthValidator {
+                    minLength: 15
+                }
+            ]
+        }
+        \endqml
+    */
     property int validationMode: StatusInput.ValidationMode.OnlyWhenDirty
     property string validatedValue
 
@@ -42,6 +88,23 @@ Item {
 
     signal iconClicked()
 
+    /*!
+       \qmltype ValidationMode
+       \brief Available validation modes supported by StatusInput
+
+        Values:
+
+        - OnlyWhenDirty validates input only after it has become dirty
+        - Always validates input even before it has become dirty
+        - IgnoreInvalidInput ignore the new content if it doesn't match validators
+
+       Has no effect without at least a validator
+
+       \note that it represents a QML enumeration and can't be used as a property type, we use int instead
+
+       \see validationMode for a usage example
+       \see validators
+    */
     enum ValidationMode {
         OnlyWhenDirty, // validates input only after it has become dirty
         Always, // validates input even before it has become dirty

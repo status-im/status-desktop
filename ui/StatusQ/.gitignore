@@ -15,3 +15,4 @@ Makefile
 sandbox/qmlcache_loader.cpp
 doc/html
 CMakeLists.txt.user
+.vscode
