@@ -277,6 +277,7 @@ Item {
                     chatDescription = obj.description
 
                     chatEmoji = obj.emoji
+                    chatColor = obj.color
                     chatType = obj.type
                     chatMuted = obj.muted
                     channelPosition = obj.position
@@ -332,6 +333,7 @@ Item {
                         newName,
                         newDescription,
                         newEmoji,
+                        newColor,
                         newCategory,
                         channelPosition // TODO change this to the signal once it is modifiable
                     )
@@ -405,8 +407,10 @@ Item {
         CreateChannelPopup {
             anchors.centerIn: parent
             emojiPopup: root.emojiPopup
-            onCreateCommunityChannel: function (chName, chDescription, chEmoji, chCategoryId) {
-                root.store.createCommunityChannel(chName, chDescription, chEmoji, chCategoryId)
+            onCreateCommunityChannel: function (chName, chDescription, chEmoji, chColor,
+                    chCategoryId) {
+                root.store.createCommunityChannel(chName, chDescription, chEmoji, chColor,
+                    chCategoryId)
             }
             onClosed: {
                 destroy()

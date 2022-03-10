@@ -20,15 +20,20 @@ StatusModal {
     property string channelName: ""
     property string channelDescription: ""
     property string channelEmoji: ""
+    property string channelColor: ""
     property bool emojiPopupOpened: false
     property var emojiPopup: null
     readonly property string emojiRegexStr: 'alt="(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])"'
+    readonly property var communityColorValidator: Utils.Validate.NoEmpty
+                                                   | Utils.Validate.TextHexColor
 
     readonly property int maxChannelNameLength: 30
     readonly property int maxChannelDescLength: 140
 
-    signal createCommunityChannel(string chName, string chDescription, string chEmoji, string chCategoryId)
-    signal editCommunityChannel(string chName, string chDescription, string chEmoji, string chCategoryId)
+    signal createCommunityChannel(string chName, string chDescription, string chEmoji,
+        string chColor, string chCategoryId)
+    signal editCommunityChannel(string chName, string chDescription, string chEmoji, string chColor,
+        string chCategoryId)
 
     //% "New channel"
     header.title: qsTrId("create-channel-title")
@@ -61,7 +66,9 @@ StatusModal {
 
     function isFormValid() {
         return (scrollView.channelName.valid &&
-               scrollView.channelDescription.valid)
+                scrollView.channelDescription.valid) &&
+                Utils.validateAndReturnError(scrollView.channelColorDialog.color.toString().toUpperCase(),
+                                        communityColorValidator) === ""
     }
 
     contentItem: ScrollView {
@@ -72,6 +79,7 @@ StatusModal {
 
         property alias channelName: nameInput
         property alias channelDescription: descriptionTextArea
+        property alias channelColorDialog: colorDialog
         property alias channelEmoji: emojiText
 
         contentHeight: content.height
@@ -91,8 +99,9 @@ StatusModal {
 
             StatusInput {
                 id: nameInput
+                label: qsTr("Channel name")
                 charLimit: popup.maxChannelNameLength
-                input.placeholderText: qsTr("Channel name")
+                input.placeholderText: qsTr("Name the channel")
                 input.onTextChanged: {
                     input.text = Utils.convertSpacesToDashesAndUpperToLowerCase(input.text);
                     input.cursorPosition = input.text.length
@@ -104,9 +113,63 @@ StatusModal {
                 }]
             }
 
-            StatusModalDivider {
-                topPadding: 8
-                bottomPadding: 8
+            Item {
+                id: spacer1
+                height: 16
+                width: parent.width
+            }
+
+            StatusBaseText {
+                text: qsTr("Channel  colour")
+                font.pixelSize: 15
+                color: Theme.palette.directColor1
+                anchors.left: parent.left
+                anchors.leftMargin: 16
+            }
+
+            Item {
+                anchors.horizontalCenter: parent.horizontalCenter
+                height: colorSelectorButton.height + 16
+                width: parent.width - 32
+
+                StatusPickerButton {
+                    id: colorSelectorButton
+
+                    property string validationError: ""
+
+                    bgColor: colorDialog.colorSelected ?
+                        colorDialog.color : Theme.palette.baseColor2
+                    // TODO adjust text color depending on the background color to make it readable
+                    // contentColor: colorDialog.colorSelected ? Theme.palette.indirectColor1 : Theme.palette.baseColor1
+                    text: colorDialog.colorSelected ?
+                        colorDialog.color.toString().toUpperCase() :
+                        //% "Pick a color"
+                        qsTrId("pick-a-color")
+
+                    onClicked: colorDialog.open();
+                    onTextChanged: {
+                        if (colorDialog.colorSelected) {
+                            validationError = Utils.validateAndReturnError(text, communityColorValidator)
+                        }
+                    }
+
+                    ColorDialog {
+                        id: colorDialog
+                        property bool colorSelected: popup.isEdit && popup.channelColor
+                        color: popup.isEdit && popup.channelColor ? popup.channelColor :
+                            Theme.palette.primaryColor1
+                        onAccepted: colorSelected = true
+                    }
+                }
+
+                StatusBaseText {
+                    text: colorSelectorButton.validationError
+                    visible: !!text
+                    color: Theme.palette.dangerColor1
+                    anchors.top: colorSelectorButton.bottom
+                    anchors.topMargin: 4
+                    anchors.right: colorSelectorButton.right
+                }
             }
 
             StatusInput {
@@ -245,14 +308,17 @@ StatusModal {
                     emoji = found[1]
                 }
                 if (!isEdit) {
+                    //popup.contentItem.communityColor.color.toString().toUpperCase()
                     popup.createCommunityChannel(Utils.filterXSS(popup.contentItem.channelName.input.text),
                                                  Utils.filterXSS(popup.contentItem.channelDescription.input.text),
                                                  emoji,
+                                                 popup.contentItem.channelColorDialog.color.toString().toUpperCase(),
                                                  popup.categoryId)
                 } else {
                     popup.editCommunityChannel(Utils.filterXSS(popup.contentItem.channelName.input.text),
                                                  Utils.filterXSS(popup.contentItem.channelDescription.input.text),
                                                  emoji,
+                                                 popup.contentItem.channelColorDialog.color.toString().toUpperCase(),
                                                  popup.categoryId)
                 }
 

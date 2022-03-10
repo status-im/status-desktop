@@ -20,6 +20,7 @@ StatusPopupMenu {
     property string chatName: ""
     property string chatDescription: ""
     property string chatEmoji: ""
+    property string chatColor: ""
     property string chatIcon: ""
     property int chatType: -1
     property bool chatMuted: false
@@ -39,8 +40,8 @@ StatusPopupMenu {
     signal leaveChat(string chatId)
     signal leaveGroup(string chatId)
 
-    signal createCommunityChannel(string chatId, string newName, string newDescription, string newEmoji)
-    signal editCommunityChannel(string chatId, string newName, string newDescription, string newEmoji, string newCategory)
+    signal createCommunityChannel(string chatId, string newName, string newDescription, string newEmoji, string newColor)
+    signal editCommunityChannel(string chatId, string newName, string newDescription, string newEmoji, string newColor, string newCategory)
     signal fetchMoreMessages(int timeFrame)
     signal addRemoveGroupMember()
 
@@ -190,6 +191,7 @@ StatusPopupMenu {
                 channelName: root.chatName,
                 channelDescription: root.chatDescription,
                 channelEmoji: root.chatEmoji,
+                channelColor: root.chatColor,
                 categoryId: root.chatCategoryId
             });
         }
@@ -202,10 +204,11 @@ StatusPopupMenu {
             isEdit: true
             emojiPopup: root.emojiPopup
             onCreateCommunityChannel: {
-                root.createCommunityChannel(root.chatId, chName, chDescription, chEmoji);
+                root.createCommunityChannel(root.chatId, chName, chDescription, chEmoji, chColor);
             }
             onEditCommunityChannel: {
-                root.editCommunityChannel(root.chatId, chName, chDescription, chEmoji, chCategoryId);
+                root.editCommunityChannel(root.chatId, chName, chDescription, chEmoji, chColor,
+                    chCategoryId);
             }
             onClosed: {
                 destroy()

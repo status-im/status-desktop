@@ -119,10 +119,12 @@ method acceptRequestToJoinCommunity*(self: AccessInterface, requestId: string) {
 method declineRequestToJoinCommunity*(self: AccessInterface, requestId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method createCommunityChannel*(self: AccessInterface, name: string, description: string, emoji: string, categoryId: string) {.base.} =
+method createCommunityChannel*(self: AccessInterface, name: string, description: string,
+    emoji: string, color: string, categoryId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method editCommunityChannel*(self: AccessInterface, channelId: string, name: string, description: string, emoji: string, categoryId: string, position: int) {.base.} =
+method editCommunityChannel*(self: AccessInterface, channelId: string, name: string,
+    description: string, emoji: string, color: string, categoryId: string, position: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method createCommunityCategory*(self: AccessInterface, name: string, channels: seq[string]) {.base.} =

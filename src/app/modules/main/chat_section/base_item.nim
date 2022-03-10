@@ -76,6 +76,9 @@ method `isIdenticon=`*(self: var BaseItem, value: bool) {.inline base.} =
 method color*(self: BaseItem): string {.inline base.} =
   self.color
 
+method `color=`*(self: var BaseItem, value: string) {.inline base.} =
+  self.color = value
+
 method emoji*(self: BaseItem): string {.inline base.} =
   self.emoji
 

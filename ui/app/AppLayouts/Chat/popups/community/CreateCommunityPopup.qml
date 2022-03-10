@@ -21,8 +21,7 @@ StatusModal {
     property var store
     property var communitySectionModule
     property bool isEdit: false
-    // Not Refactored Yet
-    property QtObject community: null //popup.store.chatsModelInst.communities.activeCommunity
+    property QtObject community: null
     property var onSave: () => {}
     readonly property int maxCommunityNameLength: 30
     readonly property int maxCommunityDescLength: 140

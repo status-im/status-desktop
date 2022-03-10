@@ -328,7 +328,7 @@ method onNotificationsUpdated*(self: Module, hasUnreadMessages: bool, notificati
   self.view.updateChatDetailsNotifications(hasUnreadMessages, notificationCount)
 
 method onChatEdited*(self: Module, chatDto: ChatDto) =
-  self.view.updateChatDetails(chatDto.name, chatDto.description, chatDto.emoji)
+  self.view.updateChatDetails(chatDto.name, chatDto.description, chatDto.emoji, chatDto.color)
   self.messagesModule.updateChatIdentifier()
 
 method onChatRenamed*(self: Module, newName: string) =
