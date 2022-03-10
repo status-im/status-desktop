@@ -256,7 +256,7 @@ Rectangle {
             anchors.top: iconOrImage.bottom
             anchors.left: parent.left
             anchors.leftMargin: 16
-            width: contentItem.width
+            width: statusListItemBadge.width
             spacing: 10
             anchors.verticalCenter: parent.verticalCenter
 

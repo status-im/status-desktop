@@ -15,7 +15,7 @@ Column {
     width: 288
 
     property string categoryId: ""
-    property var model: []
+    property var model: null
     property bool draggableItems: false
 
     property alias statusChatListItems: statusChatListItems
