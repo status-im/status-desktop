@@ -141,7 +141,7 @@ ColumnLayout {
         }
 
         membersButton.visible: {
-            if(!chatContentModule)
+            if(!chatContentModule || chatContentModule.chatDetails.type === Constants.chatType.publicChat)
                 return false
 
             return localAccountSensitiveSettings.showOnlineUsers &&

@@ -190,29 +190,6 @@ ScrollView {
 
             // TODO: replace with StatusQ component
             StatusSettingsLineButton {
-                id: onlineUsers
-                //% "Online users"
-                text: qsTrId("online-users")
-                isSwitch: true
-                switchChecked: localAccountSensitiveSettings.showOnlineUsers
-                onClicked: {
-                    root.advancedStore.toggleExperimentalFeature(root.advancedStore.experimentalFeatures.onlineUsers)
-                }
-            }
-
-            // TODO: replace with StatusQ component
-            StatusSettingsLineButton {
-                //% "GIF Widget"
-                text: qsTrId("gif-widget")
-                isSwitch: true
-                switchChecked: localAccountSensitiveSettings.isGifWidgetEnabled
-                onClicked: {
-                    root.advancedStore.toggleExperimentalFeature(root.advancedStore.experimentalFeatures.gifWidget)
-                }
-            }
-
-            // TODO: replace with StatusQ component
-            StatusSettingsLineButton {
                 text: qsTr("Multi network")
                 isSwitch: true
                 switchChecked: localAccountSensitiveSettings.isMultiNetworkEnabled
