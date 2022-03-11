@@ -4,6 +4,7 @@ import io_interface, view, controller
 import ../../../shared_models/contacts_item
 import ../../../shared_models/contacts_model
 import ../io_interface as delegate_interface
+import ../../../../global/global_singleton
 
 import ../../../../core/eventemitter
 import ../../../../../app_service/service/contacts/service as contacts_service
@@ -48,7 +49,7 @@ proc initModels(self: Module) =
   let contacts =  self.controller.getContacts()
   for c in contacts:
     let item = self.createItemFromPublicKey(c.id)
-    if(item.isContact()):
+    if(item.isContact() and c.id != singletonInstance.userProfile.getPubKey()):
       myContacts.add(item)
     if(item.isBlocked()):
       blockedContacts.add(item)
