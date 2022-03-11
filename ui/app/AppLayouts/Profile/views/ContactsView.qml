@@ -135,6 +135,7 @@ Item {
             ContactsListPanel {
                 anchors.top: parent.top
                 anchors.bottom: parent.bottom
+                clip: true
                 contactsModel: root.contactsStore.blockedContactsModel
 
                 onOpenProfilePopup: {
@@ -256,6 +257,7 @@ Item {
             anchors.topMargin: Style.current.bigPadding
             anchors.bottom: parent.bottom
             contactsModel: root.contactsStore.myContactsModel
+            clip: true
             hideBlocked: true
             searchString: searchBox.text
 
