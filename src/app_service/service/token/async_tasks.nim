@@ -23,7 +23,7 @@ const getTokenDetailsTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} 
         "address": arg.address,
         "name": tkn.tokenName(),
         "symbol": tkn.tokenSymbol(),
-        "decimals": (if decimals == 0: "" else: $decimals)
+        "decimals": $decimals
       }
     arg.finish(output)
   except Exception as e:
