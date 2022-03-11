@@ -171,7 +171,7 @@ Item {
                             target: categoryChatLoader
                             // First time this channel turns active, activate the Loader
                             onIsActiveChannelChanged: {
-                                if (chatLoader.isActiveChannel) {
+                                if (categoryChatLoader.isActiveChannel) {
                                     categoryChatLoader.active = true
                                     loaderConnections.enabled = false
                                 }
