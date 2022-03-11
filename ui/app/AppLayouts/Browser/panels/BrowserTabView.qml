@@ -1,6 +1,8 @@
 import QtQuick 2.13
 import QtQuick.Controls 1.0 as QQC1
 
+import utils 1.0
+
 import "../controls/styles"
 
 QQC1.TabView {
@@ -19,16 +21,20 @@ QQC1.TabView {
         tab.active = true;
         createAsStartPage = createAsStartPage || tabs.count === 1
         tab.title = Qt.binding(function() {
+            var tabTitle = ""
             if (tab.item.title) {
-                return tab.item.title
+                tabTitle = tab.item.title
+            }
+            else if (createAsStartPage) {
+                //% "Start Page"
+                tabTitle = qsTrId("start-page")
+            }
+            else {
+                //% "New Tab"
+                tabTitle = qsTrId("new-tab")
             }
 
-            if (createAsStartPage) {
-                //% "Start Page"
-                return qsTrId("start-page")
-            }
-            //% "New Tab"
-            return qsTrId("new-tab")
+            return Utils.escapeHtml(tabTitle);
         })
 
         if (createAsStartPage) {
