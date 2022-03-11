@@ -72,3 +72,6 @@ method getProfilePicturesVisibility*(self: Controller): int =
 
 method setProfilePicturesVisibility*(self: Controller, value: int): bool =
   self.settingsService.saveProfilePicturesVisibility(value)
+
+method getPasswordStrengthScore*(self: Controller, password: string): int = 
+  return self.privacyService.getPasswordStrengthScore(password)

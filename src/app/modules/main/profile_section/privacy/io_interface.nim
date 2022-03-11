@@ -67,3 +67,6 @@ method getProfilePicturesVisibility*(self: AccessInterface): int {.base.} =
 
 method setProfilePicturesVisibility*(self: AccessInterface, value: int) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method getPasswordStrengthScore*(self: AccessInterface, password: string): int {.base.} =
+  raise newException(ValueError, "No implementation available")

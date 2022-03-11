@@ -28,4 +28,8 @@ QtObject {
     function validatePassword(password) {
         return root.privacyModule.validatePassword(password)
     }
+
+    function getPasswordStrengthScore(password) {
+        return root.privacyModule.getPasswordStrengthScore(password)
+    }
 }

@@ -92,3 +92,6 @@ method getProfilePicturesVisibility*(self: Module): int =
 method setProfilePicturesVisibility*(self: Module, value: int) =
   if (self.controller.setProfilePicturesVisibility(value)):
     self.view.profilePicturesVisibilityChanged()
+
+method getPasswordStrengthScore*(self: Module, password: string): int =
+  return self.controller.getPasswordStrengthScore(password)
