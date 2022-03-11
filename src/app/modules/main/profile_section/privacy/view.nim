@@ -80,3 +80,6 @@ QtObject:
 
   proc setProfilePicturesVisibility*(self: View, value: int) {.slot.} =
     self.delegate.setProfilePicturesVisibility(value)
+
+  proc getPasswordStrengthScore*(self: View, password: string): int {.slot.} =
+    return self.delegate.getPasswordStrengthScore(password)
