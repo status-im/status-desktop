@@ -84,9 +84,12 @@ StatusAppThreePanelLayout {
         if (!localAccountSensitiveSettings.showOnlineUsers || !localAccountSensitiveSettings.expandUsersList) {
             return false
         }
+
         let chatContentModule = root.rootStore.currentChatContentModule()
-        if (!chatContentModule) {
-            // New communities have no chats, so no chatContentModule
+        if (!chatContentModule
+            || chatContentModule.chatDetails.type === Constants.chatType.publicChat)
+        {
+            // New communities have no chats, so no chatContentModule or it is a public chat
             return false
         }
         // Check if user list is available as an option for particular chat content module
