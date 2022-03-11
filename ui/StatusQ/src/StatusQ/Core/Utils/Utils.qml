@@ -70,6 +70,10 @@ QtObject {
         }
         return strNumber.replace(/(\.[0-9]*[1-9])0+$|\.0*$/,'$1')
     }
+
+    function isHtml(text) {
+        return (/<\/?[a-z][\s\S]*>/i.test(text))
+    }
 }
 
 

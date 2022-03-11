@@ -67,7 +67,7 @@ GridLayout {
     StatusChatListItem {
         name: "community-channel-emoji"
         type: StatusChatListItem.Type.CommunityChat
-        emoji: "😁"
+        icon.emoji: "😁"
     }
 
     StatusChatListItem {
@@ -336,6 +336,15 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             title: "tag"
             icon.isLetterIdenticon: true
         }
+    }
+
+    StatusListItem {
+        title: "List Item with Emoji"
+        subTitle: "Emoji"
+        icon.emoji: "😁"
+        icon.color: "yellow"
+        icon.letterSize: 14
+        icon.isLetterIdenticon: true
     }
 
     StatusDescriptionListItem {

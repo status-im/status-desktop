@@ -4,6 +4,7 @@ import QtQuick 2.13
 
 //import shared.status 1.0
 import "../../../assets/twemoji/twemoji.js" as Twemoji
+import "./emojiList.js" as EmojiJSON
 
 QtObject {
     readonly property var size: {
@@ -93,5 +94,25 @@ QtObject {
             return Emoji.fromCodePoint(emojiUnicode)
         }
         return undefined
+    }
+
+    function getRandomEmoji() {
+        var randomEmoji = EmojiJSON.emoji_json[Math.floor(Math.random() * EmojiJSON.emoji_json.length)]
+
+        const extenstionIndex = randomEmoji.unicode.lastIndexOf('.');
+        let iconCodePoint = randomEmoji.unicode
+        if (extenstionIndex > -1) {
+            iconCodePoint = iconCodePoint.substring(0, extenstionIndex)
+        }
+
+        // Split the unicode to get all the parts and then encode them from hex to utf8
+        const splitCodePoint = iconCodePoint.split('-')
+        let codePointParts = []
+        splitCodePoint.forEach(function (codePoint) {
+            codePointParts.push(`0x${codePoint}`)
+        })
+        const encodedIcon = String.fromCodePoint(...codePointParts);
+
+        return Emoji.parse(encodedIcon) + ' '
     }
 }

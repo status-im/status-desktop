@@ -2,6 +2,7 @@ import QtQuick 2.14
 
 import QtQuick.Controls 2.14 as QC
 
+import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -49,15 +50,25 @@ Item {
     property bool dirty: false
     property bool pending: false
     property bool leftIcon: true
+    property bool isIconSelectable: false
 
     property StatusIconSettings icon: StatusIconSettings {
         width: 24
         height: 24
         name: ""
         color: Theme.palette.baseColor1
+        emoji: ""
+        letterSize: 14
+        background: StatusIconBackgroundSettings {
+            width: 30
+            height: 30
+            color: Theme.palette.indirectColor1
+        }
     }
 
     property Item component
+
+    signal iconClicked()
 
     onClearableChanged: {
         if (clearable && !component) {
@@ -109,6 +120,29 @@ Item {
                 edit.forceActiveFocus()
             }
 
+            StatusSmartIdenticon {
+                id: emoji
+                anchors.left: parent.left
+                anchors.leftMargin: 10
+                anchors.verticalCenter: parent.verticalCenter
+                icon.width: !statusBaseInput.icon.emoji ? 20 : 30
+                icon.height: !statusBaseInput.icon.emoji ? 20 : 30
+                icon.background: statusBaseInput.icon.background
+                icon.color: statusBaseInput.icon.color
+                icon.letterSize: statusBaseInput.icon.letterSize
+                icon.emoji: statusBaseInput.icon.emoji
+                icon.name: !statusBaseInput.icon.emoji ? statusBaseInput.icon.name : ""
+                visible: (!!statusBaseInput.icon.emoji || !!statusBaseInput.icon.name) && statusBaseInput.isIconSelectable
+                MouseArea {
+                    cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
+                    acceptedButtons: Qt.LeftButton | Qt.RightButton
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    enabled: emoji.visible
+                    onClicked: statusBaseInput.iconClicked()
+                }
+            }
+
             StatusIcon {
                 id: statusIcon
                 anchors.topMargin: 10
@@ -121,7 +155,7 @@ Item {
                 width: statusBaseInput.icon.width
                 height: statusBaseInput.icon.height
                 color: statusBaseInput.icon.color
-                visible: !!statusBaseInput.icon.name
+                visible: !!statusBaseInput.icon.name && !statusBaseInput.isIconSelectable
             }
 
             Flickable {
@@ -129,7 +163,7 @@ Item {
                 anchors.top: parent.top
                 anchors.bottom: parent.bottom
                 anchors.left: (statusIcon.visible && statusBaseInput.leftIcon) ?
-                              statusIcon.right : parent.left
+                              statusIcon.right : emoji.visible ? emoji.right: parent.left
                 anchors.right: {
                     if (!!statusBaseInput.component) {
                         return statusBaseInputComponentSlot.left

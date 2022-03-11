@@ -293,6 +293,11 @@ StatusWindow {
                             selected: viewLoader.source.toString().includes(title)
                             onClicked: mainPageView.page(title);
                         }
+                        StatusNavigationListItem {
+                            title: "StatusColorSelectorGrid"
+                            selected: viewLoader.source.toString().includes(title)
+                            onClicked: mainPageView.page(title);
+                        }
                     }
                 }
             }

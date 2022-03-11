@@ -21,7 +21,10 @@ Rectangle {
         id: identiconText
         text: {
             if (emoji) {
-                return Emoji.parse(emoji)
+                if(Utils.isHtml(emoji))
+                    return emoji
+                else
+                    return Emoji.parse(emoji)
             }
             return (((statusLetterIdenticon.name.charAt(0) === "#")
                 || (statusLetterIdenticon.name.charAt(0) === "@") ?
@@ -31,6 +34,9 @@ Rectangle {
         font.weight: Font.Bold
         font.pixelSize: statusLetterIdenticon.letterSize
         color: Qt.rgba(255, 255, 255, 0.7)
+        horizontalAlignment: Text.AlignHCenter
+        verticalAlignment: Text.AlignVCenter
+        anchors.alignWhenCentered: false
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
     }

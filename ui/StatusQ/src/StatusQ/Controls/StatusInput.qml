@@ -40,6 +40,8 @@ Item {
 
     property var pendingValidators: []
 
+    signal iconClicked()
+
     enum ValidationMode {
         OnlyWhenDirty, // validates input only after it has become dirty
         Always // validates input even before it has become dirty
@@ -49,7 +51,7 @@ Item {
     property var asyncErrors: ({})
 
     function reset() {
-        statusBaseInput.valid = false
+        statusBaseInput.valid = true
         statusBaseInput.pristine = true
         statusBaseInput.text = ""
         root.errorMessage = ""
@@ -189,6 +191,7 @@ Item {
         onTextChanged: root.validate()
 
         Keys.forwardTo: [root]
+        onIconClicked: root.iconClicked()
     }
 
     StatusBaseText {
