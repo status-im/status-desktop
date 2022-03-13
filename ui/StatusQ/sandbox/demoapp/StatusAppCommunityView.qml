@@ -268,7 +268,6 @@ StatusAppThreePanelLayout {
                 isOnline: model.isOnline
                 ringSettings.ringSpecModel: model.ringSpecModel
                 ringSettings.distinctiveColors: Theme.palette.identiconRingColors
-                ringSettings.totalRingUnits: model.totalRingUnits
             }
         }
     }

@@ -22,7 +22,6 @@ import StatusQ.Core 0.1
         StatusIdenticonRing {
             anchors.fill: parent
             settings: StatusIdenticonRingSettings {
-                totalRingUnits: 25
                 initalAngleRad: 0
                 ringPxSize: 1.5
                 ringSpecModel: [ ListElement {colorId: 0; segmentLength: 1},
@@ -52,55 +51,80 @@ import StatusQ.Core 0.1
    For a list of components available see StatusQ.
 */
 Item {
-    id: identiconRing
+    id: root
 
     /*!
        \qmlproperty StatusIdenticonRingSettings StatusIdenticonRing::settings
        This property holds a set of settings for building the ring.
     */
     property StatusIdenticonRingSettings settings: StatusIdenticonRingSettings {
-        totalRingUnits: 1
         initalAngleRad: 0
         ringPxSize: 1.5
     }
 
-    /*!
-       \qmlproperty real StatusIdenticonRing::segmentRadLen
-       This property holds the total ring line length in radians. It depends on totalRingUnits value of settings object.
-    */
-    readonly property real segmentRadLen: 2 * Math.PI / settings.totalRingUnits
-
     visible: settings.ringSpecModel !== undefined
 
-    Canvas {
-        function printArcSegment(context, xPos, yPos, radius, color, startAngle, arcAngleLen, lineWidth) {
-            context.beginPath()
-            context.arc(xPos, yPos, radius, startAngle, startAngle + arcAngleLen, false/*anticlockwise*/)
-            context.strokeStyle = color
-            context.lineWidth = lineWidth
-            context.stroke()
-        }
-
+    Loader {
         anchors.fill: parent
-        onPaint: {
-            const context = getContext("2d")
-            const radius = (height  - settings.ringPxSize) / 2
-            const xPos = width / 2
-            const yPos = height / 2
-            let arcPos = settings.initalAngleRad
-            context.reset()
-            if(settings.ringSpecModel) {
-                for (let i=0; i<settings.ringSpecModel.count; i++) {
-                    const segment = settings.ringSpecModel.get(i)
-                    printArcSegment(context,
-                                    xPos,
-                                    yPos,
-                                    radius,
-                                    settings.distinctiveColors[segment.colorId],
-                                    arcPos,
-                                    segment.segmentLength * identiconRing.segmentRadLen,
-                                    settings.ringPxSize)
-                    arcPos += segment.segmentLength * identiconRing.segmentRadLen
+
+        active: root.visible
+
+        sourceComponent: Canvas {
+            function printArcSegment(context, xPos, yPos, radius, color, startAngle, arcAngleLen, lineWidth) {
+                context.beginPath()
+                context.arc(xPos, yPos, radius, startAngle, startAngle + arcAngleLen, false/*anticlockwise*/)
+                context.strokeStyle = color
+                context.lineWidth = lineWidth
+                context.stroke()
+            }
+
+            function getSegmentsCount() {
+                if (typeof settings.ringSpecModel.count !== "undefined") {
+                    return settings.ringSpecModel.count
+                }
+                return settings.ringSpecModel.length
+            }
+
+            function getSegment(i) {
+                if (typeof settings.ringSpecModel.count !== "undefined") {
+                    return settings.ringSpecModel.get(i)
+                }
+                return settings.ringSpecModel[i]
+            }
+
+            function totalRingUnits() {
+                var units = 0
+                for (let i=0; i < getSegmentsCount(); i++) {
+                    const segment = getSegment(i)
+                    units += segment.segmentLength
+                }
+                return Math.max(1, units)
+            }
+
+
+            onPaint: {
+                const context = getContext("2d")
+                const radius = (height  - settings.ringPxSize) / 2
+                const xPos = width / 2
+                const yPos = height / 2
+                const unitRadLen = 2 * Math.PI / totalRingUnits()
+                const segmentsCount = getSegmentsCount()
+                let arcPos = settings.initalAngleRad
+                context.reset()
+
+                if(settings.ringSpecModel) {
+                    for (let i=0; i < segmentsCount; i++) {
+                        const segment = getSegment(i)
+                        printArcSegment(context,
+                                        xPos,
+                                        yPos,
+                                        radius,
+                                        settings.distinctiveColors[segment.colorId],
+                                        arcPos,
+                                        segment.segmentLength * unitRadLen,
+                                        settings.ringPxSize)
+                        arcPos += segment.segmentLength * unitRadLen
+                    }
                 }
             }
         }

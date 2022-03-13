@@ -393,7 +393,6 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
                 ListElement {colorId: 28; segmentLength: 3}
             }
         ringSettings.distinctiveColors: Theme.palette.identiconRingColors
-        ringSettings.totalRingUnits: 25
     }
 
     StatusMemberListItem {

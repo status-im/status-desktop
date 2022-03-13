@@ -30,6 +30,7 @@ Rectangle {
         color: Theme.palette.miscColor5
         letterSize: emoji ? 14 : 15
         emoji: ""
+        charactersLen: 1
     }
     property int type: StatusChatListItem.Type.PublicChat
     property bool highlighted: false

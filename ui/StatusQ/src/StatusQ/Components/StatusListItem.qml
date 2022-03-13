@@ -32,6 +32,7 @@ Rectangle {
         rotation: 0
         isLetterIdenticon: false
         letterSize: 21
+        charactersLen: 1
         color: isLetterIdenticon ? background.color : type === StatusListItem.Type.Danger ?
             Theme.palette.dangerColor1 : Theme.palette.primaryColor1
         background: StatusIconBackgroundSettings {
@@ -54,9 +55,9 @@ Rectangle {
         isIdenticon: false
     }
     property StatusIdenticonRingSettings ringSettings: StatusIdenticonRingSettings {
-        totalRingUnits: 1
         initalAngleRad: 0
         ringPxSize: 1.5
+        distinctiveColors: Theme.palette.identiconRingColors
     }
 
     property alias sensor: sensor

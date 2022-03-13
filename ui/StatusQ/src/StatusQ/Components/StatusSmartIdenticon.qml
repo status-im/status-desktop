@@ -7,7 +7,6 @@ Loader {
     id: statusSmartIdenticon
 
     property string name: ""
-    property int charCount: 1
     property int dZ: 100
 
     // Badge color properties must be set if badgeItem.visible = true
@@ -16,6 +15,7 @@ Loader {
     property StatusIconSettings icon: StatusIconSettings {
         width: 40
         height: 40
+        charactersLen: 1
     }
 
     property StatusImageSettings image: StatusImageSettings {
@@ -24,9 +24,9 @@ Loader {
     }
 
     property StatusIdenticonRingSettings ringSettings: StatusIdenticonRingSettings {
-        totalRingUnits: 1
         initalAngleRad: 0
         ringPxSize: 1.5
+        distinctiveColors: Theme.palette.identiconRingColors
     }
 
     sourceComponent: statusSmartIdenticon.icon.isLetterIdenticon ? letterIdenticon :
@@ -86,7 +86,8 @@ Loader {
             name: statusSmartIdenticon.name
             emoji: statusSmartIdenticon.icon.emoji
             letterSize: statusSmartIdenticon.icon.letterSize
-            charCount: statusSmartIdenticon.charCount
+            identiconText.color: statusSmartIdenticon.icon.textColor
+            charactersLen: statusSmartIdenticon.icon.charactersLen
         }
     }
 
