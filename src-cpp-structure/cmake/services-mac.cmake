@@ -5,7 +5,7 @@ find_library(CORE_SERVICES_FRAMEWORK CoreServices)
 find_library(LOCAL_AUTHENTICATION_FRAMEWORK LocalAuthentication)
 
 target_link_libraries(
-    ${PROJECT_NAME}
+    ${PROJECT_NAME} PRIVATE
     Qt5::Core
     ${FOUNDATION_FRAMEWORK}
     ${IO_KIT_FRAMEWORK}
