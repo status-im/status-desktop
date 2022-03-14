@@ -1041,9 +1041,9 @@ Rectangle {
                     lastClick = now
                 }
 
-//                StatusSyntaxHighlighter {
-//                   quickTextDocument: messageInputField.textDocument
-//                }
+                StatusSyntaxHighlighter {
+                   quickTextDocument: messageInputField.textDocument
+                }
                 MouseArea {
                     anchors.fill: parent
                     acceptedButtons: Qt.NoButton
