@@ -17,6 +17,8 @@ elseif(UNIX)
     include("${CMAKE_SOURCE_DIR}/cmake/services-linux.cmake")
 endif ()
 
+add_dependencies(${PROJECT_NAME} Status.Backend)
+
 target_sources(${PROJECT_NAME} PRIVATE ${SOURCES})
 
 target_include_directories(${PROJECT_NAME} PUBLIC include)
