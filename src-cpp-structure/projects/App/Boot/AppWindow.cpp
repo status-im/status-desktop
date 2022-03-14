@@ -35,6 +35,13 @@ bool AppWindow::isFullScreen() const
     return m_isFullScreen;
 }
 
+void AppWindow::makeTheAppActive()
+{
+    show();
+    raise();
+    requestActivate();
+}
+
 void AppWindow::removeTitleBar()
 {
 #ifdef Q_OS_MACOS

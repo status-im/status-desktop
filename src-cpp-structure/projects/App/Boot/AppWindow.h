@@ -21,6 +21,7 @@ namespace Status
         Q_INVOKABLE void toggleFullScreen();
 
         bool isFullScreen() const;
+        void makeTheAppActive();
 
         Q_INVOKABLE void updatePosition() {
             auto point = QPoint(screen()->geometry().center().x() - geometry().width() / 2,

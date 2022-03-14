@@ -3,6 +3,7 @@
 #include "DI.h"
 #include "../Core/Engine.h"
 #include "../Core/StatusSyntaxHighlighter.h"
+#include "../Core/SingleInstance.h"
 #include "../Common/Utils.h"
 #include "../Global/LocalAppSettings.h"
 #include "../Global/LocalAccountSettings.h"
@@ -30,6 +31,14 @@ AppController::AppController()
     Utils::ensureDirectories();
 }
 
+void registerTypes()
+{
+    //  Once we fully move to c++ we should include the following line instead the line below it (it's here just to align with the current qml files).
+    //  qmlRegisterType<AppWindow>("AppWindow", 0 , 1, "AppWindow");
+    qmlRegisterType<AppWindow>("DotherSide", 0 , 1, "StatusWindow");
+    qmlRegisterType<StatusSyntaxHighlighterHelper>("DotherSide", 0, 1, "StatusSyntaxHighlighter");
+}
+
 void registerResources()
 {
     Engine::instance()->addImportPath("qrc:/./StatusQ/src");
@@ -51,10 +60,7 @@ int AppController::exec(int& argc, char** argv)
 {
     int code;
 
-//  Once we fully move to c++ we should include the following line instead the line below it (it's here just to align with the current qml files).
-//  qmlRegisterType<AppWindow>("AppWindow", 0 , 1, "AppWindow");
-    qmlRegisterType<AppWindow>("DotherSide", 0 , 1, "StatusWindow");
-    qmlRegisterType<StatusSyntaxHighlighterHelper>("DotherSide", 0, 1, "StatusSyntaxHighlighter");
+    registerTypes();
 
     try
     {
@@ -69,21 +75,49 @@ int AppController::exec(int& argc, char** argv)
         //        app.installTranslator(&translator);
         //    }
 
+        auto md5DataDir = QString(QCryptographicHash::hash(Utils::defaultDataDir().toLatin1(), QCryptographicHash::Md5).toHex());
+        auto openUri = ""; // CLI uri should be used here ("status-im:// URI to open a chat or other")
+        auto singleInstance = std::make_unique<SingleInstance>(md5DataDir, openUri);
+
+        if (!singleInstance->isFirstInstance())
+        {
+            auto err = "Terminating the app as the second instance";
+            throw std::runtime_error(err);
+        }
+
         auto rootModule = Injector.create<Modules::ModuleBuilder>()();
         rootModule->load();
 
         registerResources();
 
+        AppWindow* appWindow = nullptr;
         QString qmlFile = QStringLiteral("qrc:/main.qml");
-        Engine::create(qmlFile);
-        QObject::connect(Engine::instance(), &Engine::objectCreated, &app,
-                         [url = qmlFile](QObject* obj, const QUrl& objUrl) {
-            if(!obj && url == objUrl.toString())
+
+        auto handleAppWinCreation = [url = qmlFile, &appWindow, &singleInstance](QObject* obj, const QUrl& objUrl) {
+            if(url == objUrl.toString())
             {
-                auto err = "Failed to create: " + url;
-                throw std::runtime_error(err.toStdString());
+                if(obj)
+                {
+                    AppWindow* appWindow = qobject_cast<AppWindow*>(obj);
+                    QObject::connect(singleInstance.get(), &SingleInstance::secondInstanceDetected, [appWindow](){
+                        appWindow->makeTheAppActive();
+                    });
+
+                    QObject::connect(singleInstance.get(), &SingleInstance::eventReceived, [](const QString& eventStr){
+                        qInfo() << "Received event: " << eventStr;
+                        // We need to handle it here.
+                    });
+                }
+                else
+                {
+                    auto err = "Failed to create: " + url;
+                    throw std::runtime_error(err.toStdString());
+                }
             }
-        });
+        };
+
+        Engine::create(qmlFile);
+        QObject::connect(Engine::instance(), &Engine::objectCreated, &app, handleAppWinCreation);
 
         code = app.exec();
     }
