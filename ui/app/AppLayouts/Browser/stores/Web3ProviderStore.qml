@@ -2,6 +2,8 @@ pragma Singleton
 
 import QtQuick 2.13
 
+import utils 1.0
+
 QtObject {
     id: root
 
@@ -9,9 +11,14 @@ QtObject {
     property var urlENSDictionary: ({})
 
     property int networkId: providerModule.networkId
+    property string currentNetwork: providerModule.currentNetwork
 
     function disconnectAddress(dappName, address){
-        dappPermissionsModule.disconnectAddress(address)
+        dappPermissionsModule.disconnectAddress(dappName, address)
+    }
+
+    function disconnect(hostname) {
+        dappPermissionsModule.disconnect(hostname)
     }
 
     function addPermission(hostname, address, permission){
@@ -20,6 +27,10 @@ QtObject {
 
     function hasPermission(hostname, address, permission){
         return dappPermissionsModule.hasPermission(hostname, address, permission)
+    }
+
+    function hasWalletConnected(hostname) {
+        return hasPermission(hostname, WalletStore.dappBrowserAccount.address, "web3")
     }
 
     function determineRealURL(text){

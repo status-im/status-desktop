@@ -43,7 +43,7 @@ QtObject {
         }
 
         if (requestType === Constants.web3DisconnectAccount) {
-            RootStore.currentTabConnected = true
+            RootStore.currentTabConnected = false
             web3Response(JSON.stringify({type: Constants.web3DisconnectAccount}));
         } else if (requestType === Constants.api_request) {
             if (!Web3ProviderStore.hasPermission(request.hostname, request.address, request.permission)) {

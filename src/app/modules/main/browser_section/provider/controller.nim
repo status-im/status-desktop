@@ -37,6 +37,9 @@ method setDappsAddress*(self: Controller, address: string) =
 method getCurrentNetworkId*(self: Controller): int =
   return self.settingsService.getCurrentNetworkId()
 
+method getCurrentNetwork*(self: Controller): string =
+  return self.settingsService.getCurrentNetwork()
+
 method postMessage*(self: Controller, requestType: string, message: string): string =
   return self.providerService.postMessage(requestType, message)
 

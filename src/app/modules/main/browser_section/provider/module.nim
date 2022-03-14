@@ -35,6 +35,7 @@ method load*(self: Module) =
   singletonInstance.engine.setRootContextProperty("providerModule", self.viewVariant)
   self.view.dappsAddress = self.controller.getDappsAddress()
   self.view.networkId = self.controller.getCurrentNetworkId()
+  self.view.currentNetwork = self.controller.getCurrentNetwork()
   self.view.load()
 
 method isLoaded*(self: Module): bool =

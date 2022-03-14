@@ -492,8 +492,9 @@ Rectangle {
             }
         }
         onDisconnect: {
-            Web3ProviderStore.web3ProviderInst.disconnect()
+            Web3ProviderStore.disconnect(Utils.getHostname(_internal.currentWebView.url))
             provider.postMessage("web3-disconnect-account", "{}");
+            _internal.currentWebView.reload()
             close()
         }
     }
@@ -601,6 +602,7 @@ Rectangle {
         target: _internal.currentWebView
         onUrlChanged: {
             browserHeader.addressBar.text = Web3ProviderStore.obtainAddress(_internal.currentWebView.url)
+            RootStore.currentTabConnected = Web3ProviderStore.hasWalletConnected(Utils.getHostname(_internal.currentWebView.url))
         }
     }
 

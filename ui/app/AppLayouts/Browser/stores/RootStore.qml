@@ -10,9 +10,6 @@ QtObject {
     // Not Refactored Yet
 //    property string activeChannelName: chatsModel.channelView.activeChannel.name
 
-    // Not Refactored Yet
-//    property var currentNetwork: profileModel.network.current
-
     property bool currentTabConnected: false
 
     function getUrlFromUserInput(input) {
