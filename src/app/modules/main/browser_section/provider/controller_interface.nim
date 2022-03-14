@@ -17,6 +17,9 @@ method setDappsAddress*(self: AccessInterface, address: string) {.base.} =
 method getCurrentNetworkId*(self: AccessInterface): int {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method getCurrentNetwork*(self: AccessInterface): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method postMessage*(self: AccessInterface, requestType: string, message: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 

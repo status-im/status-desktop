@@ -8,6 +8,7 @@ QtObject:
       delegate: io_interface.AccessInterface
       dappsAddress: string
       networkId: int
+      currentNetwork: string
 
   proc delete*(self: View) =
     self.QObject.delete
@@ -49,6 +50,19 @@ QtObject:
   QtProperty[int] networkId:
     read = networkId
     notify = networkIdChanged
+
+  proc currentNetworkChanged(self: View) {.signal.}
+
+  proc `currentNetwork=`*(self: View, value: string) =
+    self.currentNetwork = value
+    self.currentNetworkChanged()
+
+  proc currentNetwork*(self: View): string {.slot.} =
+    result = self.currentNetwork
+
+  QtProperty[string] currentNetwork:
+    read = currentNetwork
+    notify = currentNetworkChanged
 
   proc replaceHostByENS*(self: View, url: string, ens: string): string {.slot.} =
     result = url_replaceHostAndAddPath(url, ens)

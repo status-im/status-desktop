@@ -59,7 +59,7 @@ Popup {
             height: 8
             radius: width / 2
             color: {
-                switch (RootStore.currentNetwork) {
+                switch (Web3ProviderStore.currentNetwork) {
                 case Constants.networkMainnet: return Style.current.green;
                 case Constants.networkRopsten: return Style.current.turquoise;
                 default: return Style.current.red
@@ -71,7 +71,7 @@ Popup {
         StatusBaseText {
             id: networkText
             text: {
-                switch (RootStore.currentNetwork) {
+                switch (Web3ProviderStore.currentNetwork) {
                 //% "Mainnet"
                 case Constants.networkMainnet: return qsTrId("mainnet");
                 //% "Ropsten"
@@ -94,6 +94,7 @@ Popup {
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
             color: Style.current.danger
+            visible: RootStore.currentTabConnected
 
             MouseArea {
                 cursorShape: Qt.PointingHandCursor
