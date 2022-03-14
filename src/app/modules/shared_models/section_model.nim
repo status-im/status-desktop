@@ -141,25 +141,34 @@ QtObject:
     of ModelRole.PendingRequestsToJoinModel:
       result = newQVariant(item.pendingRequestsToJoin)
 
+  proc isItemExist(self: SectionModel, id: string): bool =
+    for it in self.items:
+      if(it.id == id):
+        return true
+    return false
+
+
   proc addItem*(self: SectionModel, item: SectionItem) =
     let parentModelIndex = newQModelIndex()
     defer: parentModelIndex.delete
 
-    self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
-    self.items.add(item)
-    self.endInsertRows()
+    if not self.isItemExist(item.id):
+      self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
+      self.items.add(item)
+      self.endInsertRows()
 
-    self.countChanged()
+      self.countChanged()
 
   proc addItem*(self: SectionModel, item: SectionItem, index: int) =
     let parentModelIndex = newQModelIndex()
     defer: parentModelIndex.delete
 
-    self.beginInsertRows(parentModelIndex, index, index)
-    self.items.insert(item, index)
-    self.endInsertRows()
+    if not self.isItemExist(item.id):
+      self.beginInsertRows(parentModelIndex, index, index)
+      self.items.insert(item, index)
+      self.endInsertRows()
 
-    self.countChanged()
+      self.countChanged()
 
   proc getItemIndex*(self: SectionModel, id: string): int =
     var i = 0
