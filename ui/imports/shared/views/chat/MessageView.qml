@@ -22,6 +22,7 @@ Column {
     property var usersStore
     property var contactsStore
     property var messageContextMenu
+    property string channelEmoji
 
     // Once we redo qml we will know all section/chat related details in each message form the parent components
     // without an explicit need to fetch those details via message store/module.
@@ -293,6 +294,7 @@ Column {
             chatName: root.senderDisplayName
             chatType: root.messageStore.getChatType()
             chatColor: root.messageStore.getChatColor()
+            chatEmoji: root.channelEmoji
             amIChatAdmin: root.messageStore.amIChatAdmin()
             chatIcon: root.senderIcon
             chatIconIsIdenticon: root.isSenderIconIdenticon

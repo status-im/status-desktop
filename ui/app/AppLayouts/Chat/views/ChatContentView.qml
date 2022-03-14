@@ -95,6 +95,8 @@ ColumnLayout {
         chatInfoButton.image.source: chatContentModule? chatContentModule.chatDetails.icon : ""
         chatInfoButton.image.isIdenticon: chatContentModule? chatContentModule.chatDetails.isIdenticon : false
         chatInfoButton.icon.color: chatContentModule? chatContentModule.chatDetails.color : ""
+        chatInfoButton.icon.emoji: chatContentModule? chatContentModule.chatDetails.emoji : ""
+        chatInfoButton.icon.emojiSize: "24x24"
         chatInfoButton.type: chatContentModule? chatContentModule.chatDetails.type : Constants.chatType.unknown
         chatInfoButton.pinnedMessagesCount: chatContentModule? chatContentModule.pinnedMessagesModel.count : 0
         chatInfoButton.muted: chatContentModule? chatContentModule.chatDetails.muted : false
@@ -384,6 +386,7 @@ ColumnLayout {
             usersStore: chatContentRoot.usersStore
             stickersLoaded: chatContentRoot.stickersLoaded
             isChatBlocked: chatContentRoot.isBlocked
+            channelEmoji: chatContentModule.chatDetails.emoji || ""
             onShowReplyArea: {
                 let obj = messageStore.getMessageByIdAsJson(messageId)
                 if (!obj) {

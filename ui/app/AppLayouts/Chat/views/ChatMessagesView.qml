@@ -25,6 +25,7 @@ Item {
     property var messageStore
     property var usersStore
     property var contactsStore
+    property string channelEmoji
 
     property bool stickersLoaded: false
     property alias chatLogView: chatLogView
@@ -244,6 +245,7 @@ Item {
             messageStore: root.messageStore
             usersStore: root.usersStore
             contactsStore: root.contactsStore
+            channelEmoji: root.channelEmoji
 
             isChatBlocked: root.isChatBlocked
             messageContextMenu: messageContextMenuInst

@@ -89,6 +89,8 @@ QtObject {
     property string currentCurrency: walletSection.currentCurrency
     property string signingPhrase: walletSection.signingPhrase
 
+    property string channelEmoji: chatCommunitySectionModule && chatCommunitySectionModule.emoji
+
     property string gasPrice: profileSectionModule.ensUsernamesModule.gasPrice
 
     property ListModel addToGroupContacts: ListModel {}
