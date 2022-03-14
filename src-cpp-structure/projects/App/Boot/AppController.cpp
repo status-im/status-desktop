@@ -2,6 +2,7 @@
 
 #include "DI.h"
 #include "../Core/Engine.h"
+#include "../Core/StatusSyntaxHighlighter.h"
 #include "../Common/Utils.h"
 #include "../Global/LocalAppSettings.h"
 #include "../Global/LocalAccountSettings.h"
@@ -53,6 +54,7 @@ int AppController::exec(int& argc, char** argv)
 //  Once we fully move to c++ we should include the following line instead the line below it (it's here just to align with the current qml files).
 //  qmlRegisterType<AppWindow>("AppWindow", 0 , 1, "AppWindow");
     qmlRegisterType<AppWindow>("DotherSide", 0 , 1, "StatusWindow");
+    qmlRegisterType<StatusSyntaxHighlighterHelper>("DotherSide", 0, 1, "StatusSyntaxHighlighter");
 
     try
     {
