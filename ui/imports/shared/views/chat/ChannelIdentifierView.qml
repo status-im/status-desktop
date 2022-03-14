@@ -2,6 +2,7 @@ import QtQuick 2.14
 import shared 1.0
 import shared.panels 1.0
 
+import StatusQ.Core.Utils 0.1 as StatusQUtils
 import utils 1.0
 
 Column {
@@ -15,6 +16,7 @@ Column {
     property string chatName: ""
     property int chatType: -1
     property string chatColor: ""
+    property string chatEmoji: ""
     property string chatIcon: ""
     property bool chatIconIsIdenticon: true
     property bool didIJoinedChat: true
@@ -45,8 +47,10 @@ Column {
 
         StyledText {
             visible: root.chatType !== Constants.chatType.oneToOne
-            text: root.chatName.charAt(0).toUpperCase()
-            opacity: 0.7
+            text: root.chatEmoji ?
+                StatusQUtils.Emoji.parse(root.chatEmoji, StatusQUtils.Emoji.size.veryBig) :
+                root.chatName.charAt(0).toUpperCase()
+            opacity: root.chatEmoji ? 1 : 0.7
             font.weight: Font.Bold
             font.pixelSize: 51
             color: Style.current.white
