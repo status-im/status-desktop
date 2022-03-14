@@ -8,6 +8,8 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 add_library(${PROJECT_NAME} SHARED)
 
+add_dependencies(${PROJECT_NAME} ${STATUS_GO_LIB})
+
 file(
   GLOB_RECURSE SOURCES
   "*.h"

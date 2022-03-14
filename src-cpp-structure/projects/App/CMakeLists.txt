@@ -34,4 +34,7 @@ endif ()
 
 check_translations()
 
+add_dependencies(${PROJECT_NAME} ${STATUS_GO_LIB})
+add_dependencies(${PROJECT_NAME} Status.Services)
+
 target_sources(${PROJECT_NAME} PRIVATE ${SOURCES})
