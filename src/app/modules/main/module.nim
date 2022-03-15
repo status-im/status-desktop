@@ -155,7 +155,7 @@ proc newModule*[T](
   result.appSearchModule = app_search_module.newModule(result, events, contactsService, chatService, communityService,
   messageService)
   result.nodeSectionModule = node_section_module.newModule(result, events, settingsService, nodeService, nodeConfigurationService)
-  result.networksModule = networks_module.newModule(result, events, networkService, walletAccountService)
+  result.networksModule = networks_module.newModule(result, events, networkService, walletAccountService, settingsService)
 
 method delete*[T](self: Module[T]) =
   self.chatSectionModule.delete

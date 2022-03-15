@@ -323,6 +323,12 @@ proc toggleNetworkEnabled*(self: Service, chainId: int) =
   self.refreshBalances()
   self.events.emit(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED, NetwordkEnabledToggled())
 
+method toggleTestNetworksEnabled*(self: Service) = 
+  discard self.settings_service.toggleTestNetworksEnabled()
+  self.tokenService.init()
+  self.refreshBalances()
+  self.events.emit(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED, NetwordkEnabledToggled())
+
 proc updateWalletAccount*(self: Service, address: string, accountName: string, color: string, emoji: string) =
   let account = self.accounts[address]
   status_go_accounts.updateAccount(

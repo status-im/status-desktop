@@ -451,4 +451,14 @@ proc autoMessageEnabled*(self: Service): bool =
 proc getWakuBloomFilterMode*(self: Service): bool =
   return self.settings.wakuBloomFilterMode
 
+method areTestNetworksEnabled*(self: Service): bool =
+  return self.settings.testNetworksEnabled
+
+method toggleTestNetworksEnabled*(self: Service): bool =
+  let newValue = not self.settings.testNetworksEnabled
+  if(self.saveSetting(KEY_TEST_NETWORKS_ENABLED, newValue)):
+    self.settings.testNetworksEnabled = newValue
+    return true
+  return false
+
 

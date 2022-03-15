@@ -32,7 +32,7 @@ proc newService*(events: EventEmitter, settingsService: settings_service.Service
 proc init*(self: Service) =
   discard
 
-proc getNetworks*(self: Service, useCached: bool = true): seq[NetworkDto] =
+proc fetchNetworks*(self: Service, useCached: bool = true): seq[NetworkDto] =
   let cacheIsDirty = not self.networksInited or self.dirty.load
   if useCached and not cacheIsDirty:
     result = self.networks
@@ -40,16 +40,26 @@ proc getNetworks*(self: Service, useCached: bool = true): seq[NetworkDto] =
     let response = backend.getEthereumChains(false)
     if not response.error.isNil:
       raise newException(Exception, "Error getting networks: " & response.error.message)
-    result =  if response.result.isNil or response.result.kind == JNull: @[]
+    result = if response.result.isNil or response.result.kind == JNull: @[]
               else: Json.decode($response.result, seq[NetworkDto])
     self.dirty.store(false)
     self.networks = result
     self.networksInited = true
 
+proc getNetworks*(self: Service): seq[NetworkDto] = 
+  let testNetworksEnabled = self.settingsService.areTestNetworksEnabled()
+    
+  for network in self.fetchNetworks():
+    if testNetworksEnabled and network.isTest:
+      result.add(network)
+      
+    if not testNetworksEnabled and not network.isTest:
+      result.add(network)
+
 proc getEnabledNetworks*(self: Service): seq[NetworkDto] =
   if not singletonInstance.localAccountSensitiveSettings.getIsMultiNetworkEnabled():
     let currentNetworkType = self.settingsService.getCurrentNetwork().toNetworkType()
-    for network in self.getNetworks():
+    for network in self.fetchNetworks():
       if currentNetworkType.toChainId() == network.chainId:
         return @[network]
 
@@ -67,12 +77,12 @@ proc deleteNetwork*(self: Service, network: NetworkDto) =
   self.dirty.store(true)
 
 proc getNetwork*(self: Service, chainId: int): NetworkDto =
-  for network in self.getNetworks():
+  for network in self.fetchNetworks():
     if chainId == network.chainId:
       return network
 
 proc getNetwork*(self: Service, networkType: NetworkType): NetworkDto =
-  for network in self.getNetworks():
+  for network in self.fetchNetworks():
     if networkType.toChainId() == network.chainId:
       return network
 

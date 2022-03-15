@@ -24,3 +24,6 @@ method toggleNetwork*(self: AccessInterface, chainId: int) {.base.} =
 
 method refreshNetworks*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method toggleTestNetworksEnabled*(self: AccessInterface) {.base.} = 
+  raise newException(ValueError, "No implementation available")

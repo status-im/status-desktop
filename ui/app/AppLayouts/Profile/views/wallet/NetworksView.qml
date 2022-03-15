@@ -39,7 +39,7 @@ Item {
         width: 560
 
         Row {
-            spacing: 250
+            spacing: 200
             StatusBaseText {
                 id: titleText
                 text: qsTr("Networks")
@@ -48,14 +48,12 @@ Item {
                 color: Theme.palette.directColor1
             }
 
-            StatusButton {
-                id: addCustomNetworkButton
-                type: StatusFlatRoundButton.Type.Primary
-                text: qsTr("Add Custom Network")
-                onClicked: {
-                    root.goBack()
-                }
+            StatusSwitch {
+                text: qsTr("Testnet Mode")
+                checked: walletStore.areTestNetworksEnabled
+                onClicked: walletStore.toggleTestNetworksEnabled()
             }
+
         }
         
 
@@ -86,17 +84,21 @@ Item {
             }
         }
 
-        StatusSectionHeadline {
-            text: qsTr("Testnets")
-            topPadding: Style.current.bigPadding
-            bottomPadding: Style.current.padding
+        Item {
+            height: Style.current.bigPadding
+            width: parent.width
         }
 
-        Repeater {
-            id: testList
-            model: walletStore.testNetworks
-            delegate: WalletNetworkDelegate {
-                network: model
+        StatusButton {
+            // Disable for now
+            visible: false
+            anchors.right: parent.right
+            anchors.rightMargin: Style.current.bigPadding
+            id: addCustomNetworkButton
+            type: StatusFlatRoundButton.Type.Primary
+            text: qsTr("Add Custom Network")
+            onClicked: {
+                root.goBack()
             }
         }
     }
