@@ -48,7 +48,7 @@ StatusModal {
     signal contactBlocked(publicKey: string)
     signal contactAdded(publicKey: string)
 
-    function openPopup(publicKey) {
+    function openPopup(publicKey, openNicknamePopup) {
         // All this should be improved more, but for now we leave it like this.
         let contactDetails = Utils.getContactDetailsAsJson(publicKey)
         userPublicKey = publicKey
@@ -72,6 +72,10 @@ StatusModal {
         isCurrentUser = popup.profileStore.pubkey === publicKey
         showFooter = !isCurrentUser
         popup.open()
+
+        if (openNicknamePopup) {
+            nicknamePopup.open()
+        }
     }
 
     header.title: userDisplayName

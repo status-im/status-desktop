@@ -79,7 +79,7 @@ Item {
             if (parentPopup){
                 popup.parentPopup = parentPopup;
             }
-            popup.openPopup(publicKey);
+            popup.openPopup(publicKey, openNicknamePopup);
             Global.profilePopupOpened = true;
         }
         onOpenChangeProfilePicPopup: {
