@@ -21,7 +21,8 @@ var qrcExtensions = map[string]bool{
 	".otf":  true,
 	".ttf":  true,
 	".webm": true,
-	".qm":   true,
+        ".qm":   true,
+        ".txt":  true,
 }
 
 func main() {

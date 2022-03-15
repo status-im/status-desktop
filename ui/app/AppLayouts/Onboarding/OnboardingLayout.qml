@@ -44,32 +44,21 @@ QtObject {
                 }
 
                 DSM.SignalTransition {
-                    targetState: welcomeMainState
+                    targetState: importSeedState
                     signal: Global.applicationWindow.navigateTo
-                    guard: path === "Welcome"
-                }
-            }
-
-            DSM.State {
-                id: existingKeyState
-                onEntered: { onBoardingStepChanged(existingKey, ""); }
-
-                DSM.SignalTransition {
-                    targetState: genKeyState
-                    signal: Global.applicationWindow.navigateTo
-                    guard: path === "GenKey"
-                }
-
-                DSM.SignalTransition {
-                    targetState: appState
-                    signal: startupModule.appStateChanged
-                    guard: state === Constants.appState.main
+                    guard: path === "ImportSeed"
                 }
 
                 DSM.SignalTransition {
                     targetState: welcomeMainState
                     signal: Global.applicationWindow.navigateTo
                     guard: path === "Welcome"
+                }
+
+                DSM.SignalTransition {
+                    targetState: stateLogin
+                    signal: Global.applicationWindow.navigateTo
+                    guard: path === "LogIn"
                 }
             }
 
@@ -96,30 +85,26 @@ QtObject {
             }
 
             DSM.State {
+                id: importSeedState
+                property string seedInputState: "existingUser"
+                onEntered: { onBoardingStepChanged(seedPhrase, seedInputState); }
+
+                DSM.SignalTransition {
+                    targetState: keysMainState
+                    signal: Global.applicationWindow.navigateTo
+                    guard: path === "KeyMain"
+                }
+
+                DSM.SignalTransition {
+                    targetState: genKeyState
+                    signal: Global.applicationWindow.navigateTo
+                    guard: path === "GenKey"
+                }
+            }
+
+            DSM.State {
                 id: keycardState
                 onEntered: { onBoardingStepChanged(keycardFlowSelection, ""); }
-
-                DSM.SignalTransition {
-                    targetState: appState
-                    signal: startupModule.appStateChanged
-                    guard: state === Constants.appState.main
-                }
-            }
-
-            DSM.State {
-                id: createPasswordState
-                onEntered: loader.sourceComponent = createPassword
-
-                DSM.SignalTransition {
-                    targetState: appState
-                    signal: startupModule.appStateChanged
-                    guard: state === Constants.appState.main
-                }
-            }
-
-            DSM.State {
-                id: confirmPasswordState
-                onEntered: loader.sourceComponent = confirmPassword
 
                 DSM.SignalTransition {
                     targetState: appState
@@ -155,12 +140,6 @@ QtObject {
                 targetState: keysMainState
                 signal: Global.applicationWindow.navigateTo
                 guard: path === "KeysMain"
-            }
-
-            DSM.SignalTransition {
-                targetState: existingKeyState
-                signal: Global.applicationWindow.navigateTo
-                guard: path === "ExistingKey"
             }
 
             DSM.SignalTransition {
@@ -203,35 +182,43 @@ QtObject {
         id: keysMain
         KeysMainView {
             onButtonClicked: {
-                OnboardingStore.accountImported = false
-                Global.applicationWindow.navigateTo("GenKey");
+                if (state === "importseed") {
+                    importSeedState.seedInputState = "newUser";
+                    Global.applicationWindow.navigateTo("ImportSeed");
+                } else {
+                    Global.applicationWindow.navigateTo("GenKey");
+                }
             }
             onKeycardLinkClicked: {
-                OnboardingStore.accountImported = false
                 Global.applicationWindow.navigateTo("KeycardFlowSelection");
             }
             onSeedLinkClicked: {
-                Global.applicationWindow.navigateTo("ExistingKey");
+                importSeedState.seedInputState = "existingUser";
+                Global.applicationWindow.navigateTo("ImportSeed");
             }
             onBackClicked: {
-                OnboardingStore.accountImported = false
-                Global.applicationWindow.navigateTo("Welcome");
+                if (root.keysMainSetState === "connectkeys" && LoginStore.currentAccount.username !== "") {
+                    Global.applicationWindow.navigateTo("LogIn");
+                } else {
+                    Global.applicationWindow.navigateTo("Welcome");
+                }
             }
         }
     }
 
-    property var existingKeyComponent: Component {
-        id: existingKey
-        ExistingKeyView {
-            onShowCreatePasswordView: {
-                Global.applicationWindow.navigateTo("GenKey");
-            }
-            onClosed: function () {
-                if (root.hasAccounts) {
-                    Global.applicationWindow.navigateTo("InitialState")
+    property var seedPhraseInputComponent: Component {
+        id: seedPhrase
+        SeedPhraseInputView {
+            onExit: {
+                if (root.keysMainSetState === "connectkeys") {
+                    Global.applicationWindow.navigateTo("KeyMain");
                 } else {
-                    Global.applicationWindow.navigateTo("KeysMain")
+                    root.keysMainSetState = "importseed";
+                    Global.applicationWindow.navigateTo("KeyMain");
                 }
+            }
+            onSeedValidated: {
+                Global.applicationWindow.navigateTo("GenKey");
             }
         }
     }
@@ -239,7 +226,7 @@ QtObject {
     property var genKeyComponent: Component {
         id: genKey
         GenKeyView {
-            onFinished: {
+            onExit: {
                 if (LoginStore.currentAccount.username !== "") {
                     Global.applicationWindow.navigateTo("LogIn");
                 } else {
@@ -268,11 +255,12 @@ QtObject {
     property var loginComponent: Component {
         id: login
         LoginView {
-            onGenKeyClicked: function () {
-                Global.applicationWindow.navigateTo("GenKey")
+            onGenKeyClicked: {
+                Global.applicationWindow.navigateTo("GenKey");
             }
-            onExistingKeyClicked: function () {
-                Global.applicationWindow.navigateTo("ExistingKey")
+            onAddExistingKeyClicked: {
+                root.keysMainSetState = "connectkeys";
+                Global.applicationWindow.navigateTo("KeysMain");
             }
         }
     }

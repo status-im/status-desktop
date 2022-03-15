@@ -61,7 +61,7 @@ OnboardingBasePage {
             newPassword: d.newPassword
             confirmationPassword: d.confirmationPassword
 
-            onFinished: {
+            onExit: {
                 d.newPassword = newPassword
                 d.confirmationPassword = confirmationPassword
                 gotoKeysStack(GenKeyView.KeysStack.CONFRIM_PWD)
@@ -76,7 +76,7 @@ OnboardingBasePage {
             id: confirmPswView
             password: d.newPassword
             displayName: userDetailsPanel.displayName
-            onFinished: {
+            onExit: {
                 if (Qt.platform.os == "osx") {
                     gotoKeysStack(GenKeyView.KeysStack.TOUCH_ID);
                 } else {
@@ -96,7 +96,7 @@ OnboardingBasePage {
         if (userDetailsPanel.state === "chatkey") {
             userDetailsPanel.state = "username";
         } else {
-            root.finished();
+            root.exit();
         }
     }
 }

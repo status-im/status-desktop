@@ -10,11 +10,11 @@ import shared.popups 1.0
 
 // TODO: replace with StatusModal
 ModalPopup {
-    property var onOpenModalClick: function () {}
     id: popup
     //% "Enter seed phrase"
     title: qsTrId("enter-seed-phrase")
     height: 200
+    signal openModalClicked()
 
     StyledText {
         text: "Do you want to add another existing key?"
@@ -30,7 +30,7 @@ ModalPopup {
         text: "Add another existing key"
 
         onClicked : {
-            onOpenModalClick()
+            openModalClicked()
             popup.close()
         }
     }

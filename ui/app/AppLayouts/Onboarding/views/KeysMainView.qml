@@ -84,25 +84,25 @@ OnboardingBasePage {
                 }
             }
 
-            StatusBaseText {
-                id: keycardLink
-                Layout.alignment: Qt.AlignHCenter
-                color: Theme.palette.primaryColor1
-                MouseArea {
-                    anchors.fill: parent
-                    cursorShape: Qt.PointingHandCursor
-                    hoverEnabled: true
-                    onEntered: {
-                        parent.font.underline = true
-                    }
-                    onExited: {
-                        parent.font.underline = false
-                    }
-                    onClicked: {
-                        root.keycardLinkClicked();
-                    }
-                }
-            }
+//            StatusBaseText {
+//                id: keycardLink
+//                Layout.alignment: Qt.AlignHCenter
+//                color: Theme.palette.primaryColor1
+//                MouseArea {
+//                    anchors.fill: parent
+//                    cursorShape: Qt.PointingHandCursor
+//                    hoverEnabled: true
+//                    onEntered: {
+//                        parent.font.underline = true
+//                    }
+//                    onExited: {
+//                        parent.font.underline = false
+//                    }
+//                    onClicked: {
+//                        root.keycardLinkClicked();
+//                    }
+//                }
+//            }
 
             StatusBaseText {
                 id: seedLink
@@ -119,7 +119,11 @@ OnboardingBasePage {
                         parent.font.underline = false
                     }
                     onClicked: {
-                        root.seedLinkClicked();
+                        if (root.state === "getkeys") {
+                            root.state = "importseed";
+                        } else {
+                            root.seedLinkClicked();
+                        }
                     }
                 }
             }
@@ -141,15 +145,15 @@ OnboardingBasePage {
             }
             PropertyChanges {
                 target: button
-                text: qsTr("Scan sync code")
-                enabled: false
-
+                visible: false
+                //text: qsTr("Scan sync code")
             }
-            PropertyChanges {
-                target: keycardLink
-                text: qsTr("Login with Keycard")
 
-            }
+//            PropertyChanges {
+//                target: keycardLink
+//                text: qsTr("Login with Keycard")
+
+//            }
             PropertyChanges {
                 target: seedLink
                 text: qsTr("Enter a seed phrase")
@@ -173,11 +177,11 @@ OnboardingBasePage {
                 text: qsTr("Generate new keys")
 
             }
-            PropertyChanges {
-                target: keycardLink
-                text: qsTr("Generate keys for a new Keycard")
+//            PropertyChanges {
+//                target: keycardLink
+//                text: qsTr("Generate keys for a new Keycard")
 
-            }
+//            }
             PropertyChanges {
                 target: seedLink
                 text: qsTr("Import a seed phrase")
@@ -202,11 +206,11 @@ Only use this option if you already have a seed phrase.")
                 text: qsTr("Import a seed phrase")
 
             }
-            PropertyChanges {
-                target: keycardLink
-                text: qsTr("Import a seed phrase into a new Keycard")
+//            PropertyChanges {
+//                target: keycardLink
+//                text: qsTr("Import a seed phrase into a new Keycard")
 
-            }
+//            }
             PropertyChanges {
                 target: seedLink
                 text: ""

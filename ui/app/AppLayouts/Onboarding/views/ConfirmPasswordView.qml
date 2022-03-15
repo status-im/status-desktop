@@ -121,17 +121,12 @@ OnboardingBasePage {
                         root.tmpPass = root.password;
                     } else {
                         submitBtn.loading = false
-                        root.finished();
+                        root.exit();
                     }
                 } else {
                     root.tmpPass = root.password;
                     submitBtn.loading = true
-                    if (OnboardingStore.accountImported) {
-                        OnboardingStore.importAccountAndDisplayName(root.displayName);
-                    } else {
-                        OnboardingStore.setCurrentAccountAndDisplayName(0, root.displayName);
-                    }
-                    
+                    OnboardingStore.setCurrentAccountAndDisplayName(root.displayName);
                     pause.start();
                 }
             }
@@ -183,11 +178,11 @@ OnboardingBasePage {
         onAppStateChanged: {
             if (state === Constants.appState.main) {
                 if (!!OnboardingStore.profImgUrl) {
-                    OnboardingStore.saveImage()
+                    OnboardingStore.saveImage();
                     OnboardingStore.accountCreated = true;
                 }
                 submitBtn.loading = false
-                root.finished()
+                root.exit()
             }
         }
     }
@@ -197,7 +192,7 @@ OnboardingBasePage {
         onPasswordChanged: {
             if (success) {
                 submitBtn.loading = false
-                root.finished();
+                root.exit();
             }
         }
     }

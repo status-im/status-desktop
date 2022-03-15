@@ -23,22 +23,21 @@ Item {
     state: "username"
 
     Component.onCompleted: {
-        if (OnboardingStore.accountImported) {
+        if (!!OnboardingStore.onboardingModuleInst.importedAccountPubKey) {
+            root.address = OnboardingStore.onboardingModuleInst.importedAccountAddress ;
             root.pubKey = OnboardingStore.onboardingModuleInst.importedAccountPubKey;
-            root.address = OnboardingStore.onboardingModuleInst.importedAccountAddress;
         }
     }
 
     Loader {
-        active: !OnboardingStore.accountImported
+        active: !OnboardingStore.onboardingModuleInst.importedAccountPubKey
         sourceComponent: ListView {
-            id: accountsList
             model: OnboardingStore.onboardingModuleInst.accountsModel
             delegate: Item {
                 Component.onCompleted: {
                     if (index === 0) {
-                        root.pubKey = model.pubKey;
                         root.address = model.address;
+                        root.pubKey = model.pubKey;
                     }
                 }
             }
@@ -164,6 +163,7 @@ Item {
                     if (OnboardingStore.accountCreated) {
                         OnboardingStore.updatedDisplayName(nameInput.text);
                     }
+                    OnboardingStore.displayName = nameInput.text
                     root.displayName = nameInput.text;
                     root.state = "chatkey";
                 } else {

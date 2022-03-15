@@ -18,9 +18,9 @@ import StatusQ.Components 0.1
 import utils 1.0
 
 Item {
-    property var onGenKeyClicked: function () {}
-    property var onExistingKeyClicked: function () {}
     property bool loading: false
+    signal genKeyClicked()
+    signal addExistingKeyClicked()
 
     id: loginView
     anchors.fill: parent
@@ -107,19 +107,19 @@ Item {
 
         ConfirmAddExistingKeyModal {
             id: confirmAddExstingKeyModal
-            onOpenModalClick: function () {
-                onExistingKeyClicked()
+            onOpenModalClicked: {
+                addExistingKeyClicked()
             }
         }
 
         SelectAnotherAccountModal {
             id: selectAnotherAccountModal
-            onAccountSelect: function (index) {
+            onAccountSelected: {
                 LoginStore.setCurrentAccount(index)
                 resetLogin()
             }
-            onOpenModalClick: function () {
-                onExistingKeyClicked()
+            onOpenModalClicked: {
+                addExistingKeyClicked()
             }
         }
 
@@ -248,8 +248,7 @@ Item {
             anchors.topMargin: 16
             anchors.horizontalCenter: parent.horizontalCenter
             onClicked: {
-                OnboardingStore.accountImported = false
-                onGenKeyClicked()
+                genKeyClicked();
             }
         }
 
