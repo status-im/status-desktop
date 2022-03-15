@@ -199,7 +199,7 @@ Rectangle {
             toastMessage.source = Style.svg("loading")
             toastMessage.iconColor = Style.current.primary
             toastMessage.iconRotates = true
-            toastMessage.link = `${WalletStore.etherscanLink}/${result}`
+            toastMessage.link = `${WalletStore.getEtherscanLink()}/${result}`
             toastMessage.open()
         }
     }

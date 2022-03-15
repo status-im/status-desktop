@@ -1,4 +1,4 @@
-import NimQml
+import NimQml, strutils
 
 import ./io_interface
 
@@ -61,4 +61,11 @@ QtObject:
 
   proc ensResourceURL*(self: View, ens: string, url: string): string {.slot.} =
     let (url, base, http_scheme, path_prefix, hasContentHash) = self.delegate.ensResourceURL(ens, url)
-    result = url_replaceHostAndAddPath(url, (if hasContentHash: base else: url_host(base)), http_scheme, path_prefix)
+    var newHost = url_host(base)
+    if hasContentHash:
+      if strutils.endsWith(base, "/"):
+        newHost = base[.. ^2]
+      else:
+        newHost = base
+
+    result = url_replaceHostAndAddPath(url, newHost, http_scheme, "")
