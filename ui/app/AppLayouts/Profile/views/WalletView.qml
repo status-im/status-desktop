@@ -19,70 +19,56 @@ ScrollView {
     id: root
 
     property var emojiPopup
-
-    anchors.fill: parent
-    contentHeight: advancedContainer.height + 100
-    clip: true
-
     property WalletStore walletStore
 
-    Item {
-        id: advancedContainer
-        anchors.top: parent.top
-        anchors.left: parent.left
+    clip: true
 
+    StackLayout {
+        id: stackContainer
 
-        StackLayout {
-            id: stackContainer
+        anchors.fill: parent
+        currentIndex: 0
 
-            anchors.fill: parent
-            currentIndex: 0
+        MainView {
+            id: main
+            Layout.preferredWidth: 560
+            leftPadding: 64
+            topPadding: 64
+            walletStore: root.walletStore
 
-            MainView {
-                walletStore: root.walletStore
-                anchors.topMargin: 64
-                anchors.top: parent.top
-                anchors.leftMargin: 64
-                anchors.left: parent.left
-                width: 560
-
-                onGoToNetworksView: {
-                    stackContainer.currentIndex = 1
-                }
-
-                onGoToAccountView: {
-                    root.walletStore.switchAccountByAddress(address)
-                    stackContainer.currentIndex = 2
-                }
-
-                onGoToDappPermissionsView: {
-                    stackContainer.currentIndex = 3
-                }
+            onGoToNetworksView: {
+                stackContainer.currentIndex = 1
             }
 
-            NetworksView {
-                walletStore: root.walletStore
-                anchors.fill: parent
-                onGoBack: {
-                    stackContainer.currentIndex = 0
-                }
+            onGoToAccountView: {
+                root.walletStore.switchAccountByAddress(address)
+                stackContainer.currentIndex = 2
             }
 
-            AccountView {
-                walletStore: root.walletStore
-                emojiPopup: root.emojiPopup
-                anchors.fill: parent
-                onGoBack: {
-                    stackContainer.currentIndex = 0
-                }
+            onGoToDappPermissionsView: {
+                stackContainer.currentIndex = 3
             }
+        }
 
-            DappPermissionsView {
-                walletStore: root.walletStore
-                anchors.fill: parent
-                onGoBack: {
-                    stackContainer.currentIndex = 0
-                }
+        NetworksView {
+            walletStore: root.walletStore
+            onGoBack: {
+                stackContainer.currentIndex = 0
+            }
+        }
+
+        AccountView {
+            walletStore: root.walletStore
+            emojiPopup: root.emojiPopup
+            onGoBack: {
+                stackContainer.currentIndex = 0
+            }
+        }
+
+        DappPermissionsView {
+            walletStore: root.walletStore
+            onGoBack: {
+                stackContainer.currentIndex = 0
             }
         }
     }
