@@ -13,6 +13,11 @@ QtObject {
     property var myContactsModel: contactsModule.myContactsModel
     property var blockedContactsModel: contactsModule.blockedContactsModel
 
+    // TODO move contact requests back to the contacts module since we need them in the Profile 
+    // also, having them in the chat section creates some waste, since no community has it
+    property var chatSectionModule: mainModule.getChatSectionModule()
+    property var contactRequestsModel: chatSectionModule.contactRequestsModel
+
     function resolveENS(value) {
         root.mainModuleInst.resolveENS(value, "")
     }
@@ -45,5 +50,21 @@ QtObject {
 
     function changeContactNickname(pubKey, nickname) {
         root.contactsModule.changeContactNickname(pubKey, nickname)
+    }
+    
+    function acceptContactRequest(pubKey) {
+        chatSectionModule.acceptContactRequest(pubKey)
+    }
+
+    function acceptAllContactRequests() {
+        chatSectionModule.acceptAllContactRequests()
+    }
+
+    function rejectContactRequest(pubKey) {
+        chatSectionModule.rejectContactRequest(pubKey)
+    }
+
+    function rejectAllContactRequests() {
+        chatSectionModule.rejectAllContactRequests()
     }
 }

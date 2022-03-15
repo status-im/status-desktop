@@ -18,13 +18,12 @@ ListView {
     property string lowerCaseSearchString: searchString.toLowerCase()
     property string contactToRemove: ""
     property bool hideBlocked: false
+    property bool showSendMessageButton
 
     signal contactClicked(var contact)
     signal openProfilePopup(var contact)
     signal sendMessageActionTriggered(var contact)
-    signal unblockContactActionTriggered(var contact)
-    signal blockContactActionTriggered(var contact)
-    signal removeContactActionTriggered(var contact)
+    signal openChangeNicknamePopup(var contact)
 
     width: parent.width
 
@@ -38,13 +37,12 @@ ListView {
         isIdenticon: model.isIdenticon
         isContact: model.isContact
         isBlocked: model.isBlocked
+        showSendMessageButton: contactList.showSendMessageButton
 
         onClicked: contactList.contactClicked(model)
         onOpenProfilePopup: contactList.openProfilePopup(model)
         onSendMessageActionTriggered: contactList.sendMessageActionTriggered(model)
-        onUnblockContactActionTriggered: contactList.unblockContactActionTriggered(model)
-        onBlockContactActionTriggered: contactList.blockContactActionTriggered(model)
-        onRemoveContactActionTriggered: contactList.removeContactActionTriggered(model)
+        onOpenChangeNicknamePopup: contactList.openChangeNicknamePopup(model)
 
         visible: {
           if (hideBlocked && model.isBlocked) {

@@ -2,18 +2,22 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 
+import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
 
 import utils 1.0
+import shared 1.0
+import shared.panels 1.0
+import shared.status 1.0
+import shared.views 1.0
+import shared.controls.chat 1.0
 
 StatusListItem {
     id: container
-    anchors.right: parent.right
-    anchors.left: parent.left
-    anchors.leftMargin: -Style.current.padding
-    anchors.rightMargin: -Style.current.padding
+    width: parent.width
     visible: container.isContact && (searchStr == "" || container.name.includes(searchStr))
     height: visible ? implicitHeight : 0
     title: container.name
@@ -28,13 +32,22 @@ StatusListItem {
     property bool isBlocked: false
     property string searchStr: ""
 
+    property bool showSendMessageButton: false
+
     signal openProfilePopup(string publicKey)
+    signal openChangeNicknamePopup(string publicKey)
     signal sendMessageActionTriggered(string publicKey)
-    signal unblockContactActionTriggered(string publicKey)
-    signal blockContactActionTriggered(string publicKey)
-    signal removeContactActionTriggered(string publicKey)
 
     components: [
+        StatusFlatRoundButton {
+            visible: showSendMessageButton
+            id: sendMessageBtn
+            width: visible ? 32 : 0
+            height: visible ? 32 : 0
+            icon.name: "chat"
+            type: StatusFlatRoundButton.Type.Secondary
+            onClicked: container.sendMessageActionTriggered(container.publicKey)
+        },
         StatusFlatRoundButton {
             id: menuButton
             width: 32
@@ -53,9 +66,26 @@ StatusListItem {
                     menuButton.highlighted = false
                 }
 
+                ProfileHeader {
+                    width: parent.width
+
+                    displayName: container.name
+                    pubkey: container.publicKey
+                    icon: container.icon
+                    isIdenticon: container.isIdenticon
+                }
+
+                Item {
+                    height: 8
+                }
+
+                Separator {}
+
                 StatusMenuItem {
                     text: qsTr("View Profile")
                     icon.name: "profile"
+                    icon.width: 16
+                    icon.height: 16
                     onTriggered: {
                         container.openProfilePopup(container.publicKey)
                         menuButton.highlighted = false
@@ -65,6 +95,8 @@ StatusListItem {
                 StatusMenuItem {
                     text: qsTr("Send message")
                     icon.name: "chat"
+                    icon.width: 16
+                    icon.height: 16
                     onTriggered: {
                         container.sendMessageActionTriggered(container.publicKey)
                         menuButton.highlighted = false
@@ -73,37 +105,15 @@ StatusListItem {
                 }
 
                 StatusMenuItem {
-                    text: qsTr("Block User")
-                    icon.name: "cancel"
+                    text: qsTr("Rename")
+                    icon.name: "edit_pencil"
+                    icon.width: 16
+                    icon.height: 16
+                    onTriggered: {
+                        container.openChangeNicknamePopup(container.publicKey)
+                        menuButton.highlighted = false
+                    }
                     enabled: !container.isBlocked
-                    type: StatusMenuItem.Type.Danger
-                    onTriggered: {
-                        container.blockContactActionTriggered(container.publicKey)
-                        menuButton.highlighted = false
-                    }
-                }
-
-                StatusMenuItem {
-                    text: qsTr("Remove contact")
-                    icon.name: "remove-contact"
-                    enabled: container.isContact
-                    type: StatusMenuItem.Type.Danger
-                    onTriggered: {
-                        container.removeContactActionTriggered(container.publicKey)
-                        menuButton.highlighted = false
-                    }
-                }
-
-                StatusMenuItem {
-                    text: qsTr("Unblock user")
-                    icon.name: "cancel"
-                    enabled: container.isBlocked
-                    type: StatusMenuItem.Type.Danger
-                    onTriggered: {
-                        container.unblockContactActionTriggered(container.publicKey)
-                        menuButton.highlighted = false
-                        contactContextMenu.close()
-                    }
                 }
             }
         }

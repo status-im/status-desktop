@@ -7,3 +7,4 @@ InvitationBubbleView 1.0 InvitationBubbleView.qml
 NormalMessageView 1.0 NormalMessageView.qml
 CompactMessageView 1.0 CompactMessageView.qml
 MessageContextMenuView 1.0 MessageContextMenuView.qml
+ProfileHeaderContextMenuView 1.0 ProfileHeaderContextMenuView.qml
