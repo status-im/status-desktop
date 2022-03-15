@@ -81,6 +81,7 @@ Item {
         anchors.left: control.right
         anchors.leftMargin: Style.current.smallPadding
         anchors.verticalCenter: parent.verticalCenter
+        color: Style.current.transparent
         textToCopy: root.address
         store: root.store
         MouseArea {
