@@ -12,8 +12,8 @@ import "../stores"
 
 // TODO: replace with StatusModal
 ModalPopup {
-    property var onAccountSelect: function () {}
-    property var onOpenModalClick: function () {}
+    signal accountSelected(int index)
+    signal openModalClicked()
     id: popup
     //% "Your keys"
     title: qsTrId("your-keys")
@@ -28,7 +28,7 @@ ModalPopup {
         }
 
         onAccountSelect: function(index) {
-            popup.onAccountSelect(index)
+            popup.accountSelected(index)
             popup.close()
         }
     }
@@ -41,7 +41,7 @@ ModalPopup {
         text: qsTrId("add-another-existing-key")
 
         onClicked : {
-           onOpenModalClick()
+           openModalClicked()
            popup.close()
         }
     }

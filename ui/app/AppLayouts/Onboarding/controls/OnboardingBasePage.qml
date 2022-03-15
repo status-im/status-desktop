@@ -7,8 +7,8 @@ import utils 1.0
 
 Page {
     id: root
+    signal exit()
     signal backClicked()
-    signal finished()
 
     background: Rectangle {
         color: Style.current.background

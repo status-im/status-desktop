@@ -19,7 +19,6 @@ QtObject {
     property real profImgBX: 0.0
     property real profImgBY: 0.0
     property bool accountCreated: false
-    property bool accountImported: false
 
     property bool showBeforeGetStartedPopup: true
 
@@ -27,13 +26,11 @@ QtObject {
         onboardingModuleInst.importMnemonic(mnemonic)
     }
 
-    function setCurrentAccountAndDisplayName(selectedAccountIdx, displayName) {
-        onboardingModuleInst.setDisplayName(displayName)
-        onboardingModuleInst.setSelectedAccountByIndex(selectedAccountIdx)
-    }
-
-    function importAccountAndDisplayName(displayName) {
-        onboardingModuleInst.setDisplayName(displayName)
+    function setCurrentAccountAndDisplayName(displayName) {
+        onboardingModuleInst.setDisplayName(displayName);
+        if (!onboardingModuleInst.importedAccountPubKey) {
+            onboardingModuleInst.setSelectedAccountByIndex(0);
+        }
     }
 
     function updatedDisplayName(displayName) {
@@ -68,7 +65,11 @@ QtObject {
     }
 
     function changePassword(password, newPassword) {
-        root.privacyModule.changePassword(password, newPassword)
+        root.privacyModule.changePassword(password, newPassword);
+    }
+
+    function validateMnemonic(text) {
+        root.onboardingModuleInst.validateMnemonic(text);
     }
 
     property ListModel accountsSampleData: ListModel {

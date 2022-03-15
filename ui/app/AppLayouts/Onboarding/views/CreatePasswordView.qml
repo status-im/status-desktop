@@ -41,7 +41,7 @@ OnboardingBasePage {
             onClicked: {
                 root.newPassword = view.newPswText
                 root.confirmationPassword = view.confirmationPswText
-                root.finished()
+                root.exit()
             }
         }
     }
