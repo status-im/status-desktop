@@ -10,7 +10,11 @@ QtObject {
     property string defaultCurrency: walletSection.currentCurrency
     property string signingPhrase: walletSection.signingPhrase
     // Not Refactored Yet
-    property string etherscanString: ""// walletModel.utilsView.etherscanLink
+    
+    function getEtherscanLink() {
+        return profileSectionModule.ensUsernamesModule.getEtherscanLink()
+    }
+
 
     function setDappBrowserAddress() {
         // Not Refactored Yet
