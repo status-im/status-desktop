@@ -5,6 +5,7 @@ import ../../../global/global_singleton
 import ../../../core/eventemitter
 import ../../../../app_service/service/network/service as network_service
 import ../../../../app_service/service/wallet_account/service as wallet_account_service
+import ../../../../app_service/service/settings/service as settings_service
 
 export io_interface
 
@@ -21,12 +22,13 @@ proc newModule*(
   events: EventEmitter,
   networkService: networkService.Service,
   walletAccountService: wallet_account_service.Service,
+  settingsService: settings_service.Service,
 ): Module =
   result = Module()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, networkService, walletAccountService)
+  result.controller = controller.newController(result, events, networkService, walletAccountService, settingsService)
   result.moduleLoaded = false
 
   singletonInstance.engine.setRootContextProperty("networksModule", result.viewVariant)
@@ -42,6 +44,7 @@ method refreshNetworks*(self: Module) =
 
 method load*(self: Module) =
   self.controller.init()
+  self.view.setAreTestNetworksEnabled(self.controller.areTestNetworksEnabled())
   self.refreshNetworks()
 
 method isLoaded*(self: Module): bool =
@@ -56,3 +59,10 @@ method viewDidLoad*(self: Module) =
 
 method toggleNetwork*(self: Module, chainId: int) =
   self.controller.toggleNetwork(chainId)
+
+method areTestNetworksEnabled*(self: Module): bool = 
+  return self.controller.areTestNetworksEnabled()
+
+method toggleTestNetworksEnabled*(self: Module) = 
+  self.controller.toggleTestNetworksEnabled()
+  self.refreshNetworks()

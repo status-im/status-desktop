@@ -12,7 +12,7 @@ QtObject:
       enabled: Model
       layer1: Model
       layer2: Model
-      test: Model
+      areTestNetworksEnabled: bool
 
   proc setup(self: View) =
     self.QObject.setup
@@ -25,9 +25,21 @@ QtObject:
     result.delegate = delegate
     result.layer1 = newModel()
     result.layer2 = newModel()
-    result.test = newModel()
     result.enabled = newModel()
     result.setup()
+
+  proc areTestNetworksEnabledChanged*(self: View) {.signal.}
+
+  proc getAreTestNetworksEnabled(self: View): QVariant {.slot.} =
+    return newQVariant(self.areTestNetworksEnabled)
+
+  QtProperty[QVariant] areTestNetworksEnabled:
+    read = getAreTestNetworksEnabled
+    notify = areTestNetworksEnabledChanged
+
+  proc setAreTestNetworksEnabled*(self: View, areTestNetworksEnabled: bool) =
+    self.areTestNetworksEnabled = areTestNetworksEnabled
+    self.areTestNetworksEnabledChanged()
 
   proc layer1Changed*(self: View) {.signal.}
 
@@ -46,15 +58,6 @@ QtObject:
   QtProperty[QVariant] layer2:
     read = getLayer2
     notify = layer2Changed
-
-  proc testChanged*(self: View) {.signal.}
-
-  proc getTest(self: View): QVariant {.slot.} =
-    return newQVariant(self.test)
-
-  QtProperty[QVariant] test:
-    read = getTest
-    notify = testChanged
 
   proc enabledChanged*(self: View) {.signal.}
 
@@ -78,16 +81,20 @@ QtObject:
       n.isTest,
       n.enabled,
     ))
-    self.layer1.setItems(items.filter(i => i.getLayer() == 1 and not i.getIsTest()))
-    self.layer2.setItems(items.filter(i => i.getLayer() == 2 and not i.getIsTest()))
-    self.test.setItems(items.filter(i => i.getIsTest()))
+    self.layer1.setItems(items.filter(i => i.getLayer() == 1))
+    self.layer2.setItems(items.filter(i => i.getLayer() == 2))
     self.enabled.setItems(items.filter(i => i.getIsEnabled()))
 
     self.layer1Changed()
     self.layer2Changed()
-    self.testChanged()
+    self.enabledChanged()
 
     self.delegate.viewDidLoad()
 
   proc toggleNetwork*(self: View, chainId: int) {.slot.} =
     self.delegate.toggleNetwork(chainId)
+
+  proc toggleTestNetworksEnabled*(self: View) {.slot.} = 
+    self.delegate.toggleTestNetworksEnabled()
+    self.areTestNetworksEnabled = not self.areTestNetworksEnabled
+    self.areTestNetworksEnabledChanged()

@@ -45,6 +45,7 @@ const KEY_GIF_FAVORITES* = "gifs/favorite-gifs"
 const KEY_GIF_RECENTS* = "gifs/recent-gifs"
 const KEY_GIF_API_KEY* = "gifs/api-key"
 const KEY_DISPLAY_NAME = "display-name"
+const KEY_TEST_NETWORKS_ENABLED* = "test-networks-enabled?"
 
 const PROFILE_PICTURES_VISIBILITY_CONTACTS_ONLY* = 1
 const PROFILE_PICTURES_VISIBILITY_EVERYONE* = 2
@@ -120,6 +121,7 @@ type
     autoMessageEnabled*: bool
     gifRecents*: JsonNode
     gifFavorites*: JsonNode
+    testNetworksEnabled*: bool
 
 proc toUpstreamConfig*(jsonObj: JsonNode): UpstreamConfig =
   discard jsonObj.getProp("Enabled", result.Enabled)
@@ -209,6 +211,7 @@ proc toSettingsDto*(jsonObj: JsonNode): SettingsDto =
   discard jsonObj.getProp(KEY_AUTO_MESSAGE_ENABLED, result.autoMessageEnabled)
   discard jsonObj.getProp(KEY_GIF_RECENTS, result.gifRecents)
   discard jsonObj.getProp(KEY_GIF_FAVORITES, result.gifFavorites)
+  discard jsonObj.getProp(KEY_TEST_NETWORKS_ENABLED, result.testNetworksEnabled)
 
   var pinnedMailserverObj: JsonNode
   if(jsonObj.getProp(KEY_PINNED_MAILSERVERS, pinnedMailserverObj)):
