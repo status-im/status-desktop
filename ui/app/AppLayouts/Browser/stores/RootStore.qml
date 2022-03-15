@@ -78,4 +78,8 @@ QtObject {
         }
         return tempUrl
     }
+
+    function copyToClipboard(text) {
+        globalUtils.copyToClipboard(text)
+    }
 }

@@ -95,6 +95,7 @@ Item {
                 destroy();
             }
             selectedAccount: walletHeader.walletStore.currentAccount
+            anchors.centerIn: parent
         }
     }
 

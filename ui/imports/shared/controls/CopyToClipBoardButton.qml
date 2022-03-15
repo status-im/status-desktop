@@ -1,79 +1,42 @@
 import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtGraphicalEffects 1.13
 
-import StatusQ.Controls 0.1 as StatusQ
-import utils 1.0
+import StatusQ.Controls 0.1
+
 import shared.stores 1.0
 
-import "./"
-import "../"
+import utils 1.0
 
-// TODO: Replace with StatusQ components
-Rectangle {
+StatusRoundButton {
     id: copyToClipboardButton
-    height: 32
-    width: 32
-    radius: 8
-    color: Style.current.transparent
+
     property var onClick: function() {}
     property string textToCopy: ""
     property bool tooltipUnder: false
     property var store
 
-    Image {
-        width: 20
-        height: 20
-        sourceSize.width: width
-        sourceSize.height: height
-        source: Style.svg("copy-to-clipboard-icon")
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.verticalCenter: parent.verticalCenter
+    icon.name: "copy"
 
-        ColorOverlay {
-            anchors.fill: parent
-            antialiasing: true
-            source: parent
-            color: Style.current.primary
+    onPressed: {
+        if (!toolTip.visible) {
+            toolTip.visible = true
         }
     }
-
-    MouseArea {
-        cursorShape: Qt.PointingHandCursor
-        anchors.fill: parent
-        hoverEnabled: true
-        onExited: {
-            parent.color = Style.current.transparent
+    onClicked: {
+        if (textToCopy) {
+            store.copyToClipboard(textToCopy)
         }
-        onEntered:{
-            parent.color = Style.current.backgroundHover
-        }
-        onPressed: {
-            parent.color = Style.current.backgroundHover
-            if (!toolTip.visible) {
-                toolTip.visible = true
-            }
-        }
-        onReleased: {
-            parent.color = Style.current.backgroundHover
-        }
-        onClicked: {
-            if (textToCopy) {
-                copyToClipboardButton.store.copyToClipboard(textToCopy)
-            }
-            onClick()
-        }
+        onClick()
     }
 
-    StatusQ.StatusToolTip {
+    StatusToolTip {
         id: toolTip
         //% "Copied!"
         text: qsTrId("copied-")
-        orientation: tooltipUnder ? StatusQ.StatusToolTip.Orientation.Bottom: StatusQ.StatusToolTip.Orientation.Top
+        orientation: tooltipUnder ? StatusToolTip.Orientation.Bottom: StatusToolTip.Orientation.Top
     }
 
     Timer {
-        id:hideTimer
+        id: hideTimer
         interval: 2000
         running: toolTip.visible
         onTriggered: {

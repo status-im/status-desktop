@@ -187,4 +187,8 @@ QtObject {
     function toggleNetwork(chainId) {
         networksModule.toggleNetwork(chainId)
     }
+
+    function copyToClipboard(text) {
+        globalUtils.copyToClipboard(text)
+    }
 }

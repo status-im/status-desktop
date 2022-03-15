@@ -146,7 +146,9 @@ Popup {
             anchors.rightMargin: Style.current.padding
             anchors.top: parent.top
             anchors.topMargin: Style.current.padding
+            color: Style.current.transparent
             textToCopy: accountSelector.selectedAccount.address
+            store: RootStore
         }
 
         StatusFlatRoundButton {

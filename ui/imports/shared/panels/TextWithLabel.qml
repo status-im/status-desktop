@@ -53,6 +53,7 @@ Item {
     Component {
         id: copyComponent
         CopyToClipBoardButton {
+            color: Style.current.transparent
             textToCopy: infoText.textToCopy
         }
     }
