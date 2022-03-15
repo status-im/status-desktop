@@ -5,6 +5,7 @@ import shared.status 1.0
 import shared.panels 1.0
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core 0.1
+import StatusQ.Components 0.1
 
 import "../../stores"
 import "../../controls"
@@ -32,12 +33,19 @@ Column {
         width: parent.width
     }
 
-    StatusSettingsLineButton {
-        text: qsTr("Manage Assets & List")
+    StatusListItem {
+        title: qsTr("Manage Assets & List")
         height: 64
+        width: parent.width
         onClicked: Global.openPopup(tokenSettingsModalComponent)
+        components: [
+            StatusIcon {
+                icon: "chevron-down"
+                rotation: 270
+                color: Theme.palette.baseColor1
+            }
+        ]
     }
-
 
     Component {
         id: tokenSettingsModalComponent
@@ -51,61 +59,55 @@ Column {
 
     Separator {
         height: 17
-        anchors.left: parent.left
-        anchors.leftMargin: -Style.current.padding
-        anchors.right: parent.right
-        anchors.rightMargin: -Style.current.padding
     }
 
-    StatusSettingsLineButton {
-        text: qsTr("DApp Permissions")
-        currentValue: {
-            return qsTr("%1 DApps connected").arg(root.walletStore.dappList.count)
-        }
+    StatusListItem {
+        title: qsTr("DApp Permissions")
         height: 64
-        onClicked: goToDappPermissionsView()
-    }
-
-    Separator {
-        height: 17
-        anchors.left: parent.left
-        anchors.leftMargin: -Style.current.padding
-        anchors.right: parent.right
-        anchors.rightMargin: -Style.current.padding
-    }
-
-    StatusSettingsLineButton {
-        text: qsTr("Networks")
-        height: 64
-        visible: root.walletStore.isMultiNetworkEnabled
-        onClicked: goToNetworksView()
-    }
-
-    Separator {
-        height: 17
-        anchors.left: parent.left
-        anchors.leftMargin: -Style.current.padding
-        anchors.right: parent.right
-        anchors.rightMargin: -Style.current.padding
-        visible: root.walletStore.isMultiNetworkEnabled
-    }
-
-    Item {
-        height: Style.current.bigPadding
         width: parent.width
+        onClicked: goToDappPermissionsView()
+        components: [
+            StatusIcon {
+                icon: "chevron-down"
+                rotation: 270
+                color: Theme.palette.baseColor1
+            }
+        ]
     }
 
-    StatusBaseText {
-        id: accountsText
-        text: qsTr("Accounts")
-        font.pixelSize: 15
-        color: Theme.palette.directColor1
+    Separator {
+        height: 17
+    }
+
+    StatusListItem {
+        title: qsTr("Networks")
+        height: 64
+        width: parent.width
+        onClicked: goToNetworksView()
+        components: [
+            StatusIcon {
+                icon: "chevron-down"
+                rotation: 270
+                color: Theme.palette.baseColor1
+            }
+        ]
+    }
+
+    Separator {
+        height: 17
+        visible: root.walletStore.isMultiNetworkEnabled
+    }
+
+    StatusDescriptionListItem {
+        height: 64
+        subTitle: qsTr("Accounts")
     }
 
     StatusSectionHeadline {
         text: qsTr("Generated from Your Seed Phrase")
-        topPadding: Style.current.bigPadding
-        bottomPadding: Style.current.padding
+        leftPadding: Style.current.padding
+        topPadding: Style.current.halfPadding
+        bottomPadding: Style.current.halfPadding/2
     }
 
     Repeater {
@@ -120,8 +122,9 @@ Column {
 
     StatusSectionHeadline {
         text: qsTr("Imported")
-        topPadding: Style.current.bigPadding
-        bottomPadding: Style.current.padding
+        leftPadding: Style.current.padding
+        topPadding: Style.current.halfPadding
+        bottomPadding: Style.current.halfPadding/2
     }
 
     Repeater {
@@ -136,8 +139,9 @@ Column {
 
     StatusSectionHeadline {
         text: qsTr("Watch-Only")
-        topPadding: Style.current.bigPadding
-        bottomPadding: Style.current.padding
+        leftPadding: Style.current.padding
+        topPadding: Style.current.halfPadding
+        bottomPadding: Style.current.halfPadding/2
     }
 
     Repeater {
@@ -148,5 +152,10 @@ Column {
                 root.goToAccountView(model.address)
             }
         }
+    }
+
+    Item {
+        height: Style.current.bigPadding
+        width: parent.width
     }
 }
