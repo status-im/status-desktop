@@ -50,6 +50,9 @@ StatusAppTwoPanelLayout {
         }
 
         MyProfileView {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+
             profileStore: profileView.store.profileStore
             profileContentWidth: _internal.profileContentWidth
         }
