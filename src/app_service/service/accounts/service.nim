@@ -133,25 +133,25 @@ proc saveAccountAndLogin(self: Service, hashedPassword: string, account,
   except Exception as e:
     error "error: ", methodName="saveAccountAndLogin", errName = e.name, errDesription = e.msg
 
-proc prepareAccountJsonObject(self: Service, account: GeneratedAccountDto): JsonNode =
+proc prepareAccountJsonObject(self: Service, account: GeneratedAccountDto, displayName: string): JsonNode =
   result = %* {
-    "name": account.alias,
+    "name": if displayName == "": account.alias else: displayName,
     "address": account.address,
     "identicon": account.identicon,
     "key-uid": account.keyUid,
     "keycard-pairing": nil
   }
 
-proc getAccountDataForAccountId(self: Service, accountId: string): JsonNode =
+proc getAccountDataForAccountId(self: Service, accountId: string, displayName: string): JsonNode =
   for acc in self.generatedAccounts:
     if(acc.id == accountId):
-      return self.prepareAccountJsonObject(acc)
+      return self.prepareAccountJsonObject(acc, displayName)
 
   if(self.importedAccount.isValid()):
     if(self.importedAccount.id == accountId):
-      return self.prepareAccountJsonObject(self.importedAccount)
+      return self.prepareAccountJsonObject(self.importedAccount, displayName)
 
-proc prepareSubaccountJsonObject(self: Service, account: GeneratedAccountDto):
+proc prepareSubaccountJsonObject(self: Service, account: GeneratedAccountDto, displayName: string):
   JsonNode =
   result = %* [
     {
@@ -165,21 +165,21 @@ proc prepareSubaccountJsonObject(self: Service, account: GeneratedAccountDto):
     {
       "public-key": account.derivedAccounts.whisper.publicKey,
       "address": account.derivedAccounts.whisper.address,
-      "name": account.alias,
+      "name": if displayName == "": account.alias else: displayName,
       "identicon": account.identicon,
       "path": PATH_WHISPER,
       "chat": true
     }
   ]
 
-proc getSubaccountDataForAccountId(self: Service, accountId: string): JsonNode =
+proc getSubaccountDataForAccountId(self: Service, accountId: string, displayName: string): JsonNode =
   for acc in self.generatedAccounts:
     if(acc.id == accountId):
-      return self.prepareSubaccountJsonObject(acc)
+      return self.prepareSubaccountJsonObject(acc, displayName)
 
   if(self.importedAccount.isValid()):
     if(self.importedAccount.id == accountId):
-      return self.prepareSubaccountJsonObject(self.importedAccount)
+      return self.prepareSubaccountJsonObject(self.importedAccount, displayName)
 
 proc prepareAccountSettingsJsonObject(self: Service, account: GeneratedAccountDto,
   installationId: string, displayName: string): JsonNode =
@@ -252,8 +252,8 @@ proc getDefaultNodeConfig*(self: Service, installationId: string): JsonNode =
 method setupAccount*(self: Service, accountId, password, displayName: string): bool =
   try:
     let installationId = $genUUID()
-    let accountDataJson = self.getAccountDataForAccountId(accountId)
-    let subaccountDataJson = self.getSubaccountDataForAccountId(accountId)
+    let accountDataJson = self.getAccountDataForAccountId(accountId, displayName)
+    let subaccountDataJson = self.getSubaccountDataForAccountId(accountId, displayName)
     let settingsJson = self.getAccountSettings(accountId, installationId, displayName)
     let nodeConfigJson = self.getDefaultNodeConfig(installationId)
 
