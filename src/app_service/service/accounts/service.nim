@@ -311,6 +311,9 @@ proc login*(self: Service, account: AccountDto, password: string): string =
     # While this is fixed, you can add here any missing attribute on the node config, and it will be merged with whatever
     # the account has in the db
     var nodeCfg = %* {
+      "ShhextConfig": %* {
+        "BandwidthStatsEnabled": true
+      },
       "Web3ProviderConfig": %* {
         "Enabled": true
       },
