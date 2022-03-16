@@ -6,6 +6,7 @@ import ../../../global/global_singleton
 import provider/module as provider_module
 import bookmark/module as bookmark_module
 import dapps/module as dapps_module
+import current_account/module as current_account_module
 import ../../../../app_service/service/bookmarks/service as bookmark_service
 import ../../../../app_service/service/settings/service as settings_service
 import ../../../../app_service/service/dapp_permissions/service as dapp_permissions_service
@@ -23,6 +24,7 @@ type
     providerModule: provider_module.AccessInterface
     bookmarkModule: bookmark_module.AccessInterface
     dappsModule: dapps_module.AccessInterface
+    currentAccountModule: current_account_module.AccessInterface
 
 proc newModule*(delegate: delegate_interface.AccessInterface,
     bookmarkService: bookmark_service.ServiceInterface,
@@ -38,6 +40,7 @@ proc newModule*(delegate: delegate_interface.AccessInterface,
   result.providerModule = provider_module.newModule(result, settingsService, providerService)
   result.bookmarkModule = bookmark_module.newModule(result, bookmarkService)
   result.dappsModule = dapps_module.newModule(result, dappPermissionsService, walletAccountService)
+  result.currentAccountModule = current_account_module.newModule(result, walletAccountService)
 
 method delete*(self: Module) =
   self.view.delete
@@ -45,9 +48,11 @@ method delete*(self: Module) =
   self.providerModule.delete
   self.bookmarkModule.delete
   self.dappsModule.delete
+  self.currentAccountModule.delete
 
 method load*(self: Module) =
   singletonInstance.engine.setRootContextProperty("browserSection", self.viewVariant)
+  self.currentAccountModule.load()
   self.providerModule.load()
   self.bookmarkModule.load()
   self.dappsModule.load()
@@ -64,6 +69,9 @@ proc checkIfModuleDidLoad(self: Module) =
     return
 
   if(not self.dappsModule.isLoaded()):
+    return
+
+  if(not self.currentAccountModule.isLoaded()):
     return
 
   self.moduleLoaded = true

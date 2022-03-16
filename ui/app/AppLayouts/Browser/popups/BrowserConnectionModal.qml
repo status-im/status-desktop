@@ -131,7 +131,7 @@ StatusModal {
 
                     if (selectedAccount.address) {
                         Web3ProviderStore.web3ProviderInst.dappsAddress = selectedAccount.address;
-                        WalletStore.setDappBrowserAddress()
+                        WalletStore.switchAccountByAddress(selectedAccount.address)
                     }
                 }
             }
