@@ -154,6 +154,7 @@ Column {
         }
     }
 
+    // Adding padding to the end so that when the view is scrolled to the end there is some gap left
     Item {
         height: Style.current.bigPadding
         width: parent.width
