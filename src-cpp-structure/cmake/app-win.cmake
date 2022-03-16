@@ -13,7 +13,6 @@ target_link_libraries(
     Qt5::Multimedia
     Qt5::Concurrent
     Status.Services
-    ${STATUS_GO_LIB}
     )
 
 file(GLOB_RECURSE SOURCES

@@ -3,7 +3,7 @@
 #include "GlobalEvents.h"
 #include <QtConcurrent>
 
-#include "libstatus.h"
+//#include "libstatus.h"
 
 using namespace Status;
 
@@ -18,7 +18,7 @@ SignalsManager* SignalsManager::instance()
 SignalsManager::SignalsManager()
     : QObject(nullptr)
 {
-    SetSignalEventCallback((void*)&SignalsManager::signalCallback);
+    //SetSignalEventCallback((void*)&SignalsManager::signalCallback);
 
     signalMap = {
         {"node.ready", SignalType::NodeReady},

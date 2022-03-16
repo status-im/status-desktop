@@ -5,7 +5,7 @@
 
 namespace Status::Constants
 {
-    const std::array SigningPhrases {
+    static const std::array SigningPhrases {
         "area", "army", "atom", "aunt", "babe", "baby", "back", "bail", "bait", "bake", "ball", "band", "bank", "barn",
         "base", "bass", "bath", "bead", "beak", "beam", "bean", "bear", "beat", "beef", "beer", "beet", "bell", "belt",
         "bend", "bike", "bill", "bird", "bite", "blow", "blue", "boar", "boat", "body", "bolt", "bomb", "bone", "book",

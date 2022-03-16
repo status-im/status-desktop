@@ -1,7 +1,7 @@
 #include "StatusBackend/Accounts.h"
 
 #include "StatusBackend/Utils.h"
-#include "libstatus.h"
+//#include "libstatus.h"
 
 const int NUMBER_OF_ADDRESSES_TO_GENERATE = 5;
 const int MNEMONIC_PHRASE_LENGTH = 12;
@@ -19,7 +19,7 @@ RpcResponse<QJsonArray> Accounts::generateAddresses(const QVector<QString>& path
 
     try
     {
-        auto result = MultiAccountGenerateAndDeriveAddresses(Utils::jsonToByteArray(std::move(payload)).data());
+        auto result = ""; //MultiAccountGenerateAndDeriveAddresses(Utils::jsonToByteArray(std::move(payload)).data());
         QJsonArray jsonResult;
         if(!Utils::checkReceivedResponse(result, jsonResult))
         {
@@ -50,7 +50,7 @@ RpcResponse<QString> Accounts::generateIdenticon(const QString& publicKey)
         QString identicon;
         if(!publicKey.isEmpty())
         {
-            identicon = Identicon(publicKey.toUtf8().data());
+            identicon = ""; //Identicon(publicKey.toUtf8().data());
         }
         return Utils::buildJsonRpcResponse(identicon);
     }
@@ -69,7 +69,8 @@ RpcResponse<QString> Accounts::generateAlias(const QString& publicKey)
         QString alias;
         if(!publicKey.isEmpty())
         {
-            alias = GenerateAlias(publicKey.toUtf8().data());
+            alias = "";
+            //GenerateAlias(publicKey.toUtf8().data());
         }
 
         return Utils::buildJsonRpcResponse(alias);
@@ -93,7 +94,8 @@ RpcResponse<QJsonObject> Accounts::storeDerivedAccounts(const QString& id, const
 
     try
     {
-        auto result = MultiAccountStoreDerivedAccounts(Utils::jsonToByteArray(std::move(payload)).data());
+        auto result = "";
+        //MultiAccountStoreDerivedAccounts(Utils::jsonToByteArray(std::move(payload)).data());
         QJsonObject jsonResult;
         if(!Utils::checkReceivedResponse(result, jsonResult))
         {
@@ -123,11 +125,8 @@ RpcResponse<QJsonObject> Accounts::saveAccountAndLogin(const QString& hashedPass
 {
     try
     {
-        auto result = SaveAccountAndLogin(Utils::jsonToByteArray(std::move(account)).data(),
-                                          hashedPassword.toUtf8().data(),
-                                          Utils::jsonToByteArray(std::move(settings)).data(),
-                                          Utils::jsonToByteArray(std::move(nodeConfig)).data(),
-                                          Utils::jsonToByteArray(std::move(subaccounts)).data());
+        auto result = "";
+        //
         QJsonObject jsonResult;
         if(!Utils::checkReceivedResponse(result, jsonResult))
         {
@@ -155,7 +154,8 @@ Backend::RpcResponse<QJsonArray> Backend::Accounts::openAccounts(const QString& 
 {
     try
     {
-        auto result = OpenAccounts(path.toUtf8().data());
+        auto result = "";
+        //OpenAccounts(path.toUtf8().data());
         QJsonArray jsonResult;
         if(!Utils::checkReceivedResponse(result, jsonResult))
         {
@@ -196,7 +196,8 @@ RpcResponse<QJsonObject> Accounts::login(const QString& name, const QString& key
 
     try
     {
-        auto result = Login(Utils::jsonToByteArray(std::move(payload)).data(), hashedPassword.toUtf8().data());
+        auto result = "";
+        //Login(Utils::jsonToByteArray(std::move(payload)).data(), hashedPassword.toUtf8().data());
         QJsonObject jsonResult;
         if(!Utils::checkReceivedResponse(result, jsonResult))
         {

@@ -2,6 +2,10 @@ cmake_minimum_required(VERSION 3.18 FATAL_ERROR)
 
 project(Status DESCRIPTION "Status project" LANGUAGES CXX)
 
+message("STATUS-APP-CMAKE_CXX_COMPILER_ID " ${CMAKE_CXX_COMPILER_ID})
+message("STATUS-APP-CMAKE_CXX_COMPILER " ${CMAKE_CXX_COMPILER})
+
+
 include("${CMAKE_SOURCE_DIR}/cmake/project-config.cmake")
 include("${CMAKE_SOURCE_DIR}/cmake/conan.cmake")
 

@@ -93,7 +93,7 @@ namespace Backend
         {
             try
             {
-                auto result = CallPrivateRPC(const_cast<QByteArray&>(payload).data());
+                auto result = ""; //CallPrivateRPC(const_cast<QByteArray&>(payload).data());
                 T jsonResult;
                 if(!Utils::checkReceivedResponse(result, jsonResult))
                 {
