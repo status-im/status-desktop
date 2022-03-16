@@ -10,6 +10,7 @@ import ../../../../app_service/service/community/service as community_service
 import ../../../../app_service/service/message/service as message_service
 import ../../../../app_service/service/gif/service as gif_service
 import ../../../../app_service/service/mailservers/service as mailservers_service
+import ../../../../app_service/service/visual_identity/service as visual_identity_service
 
 import ../../../core/signals/types
 import ../../../global/app_signals
@@ -32,12 +33,14 @@ type
     messageService: message_service.Service
     gifService: gif_service.Service
     mailserversService: mailservers_service.Service
+    visualIdentityService: visual_identity_service.Service
 
 proc newController*(delegate: io_interface.AccessInterface, sectionId: string, isCommunity: bool, events: EventEmitter,
   settingsService: settings_service.ServiceInterface, contactService: contact_service.Service,
   chatService: chat_service.Service, communityService: community_service.Service,
   messageService: message_service.Service, gifService: gif_service.Service,
-  mailserversService: mailservers_service.Service): Controller =
+  mailserversService: mailservers_service.Service,
+  visualIdentityService: visual_identity_service.Service): Controller =
   result = Controller()
   result.delegate = delegate
   result.sectionId = sectionId
@@ -50,6 +53,7 @@ proc newController*(delegate: io_interface.AccessInterface, sectionId: string, i
   result.messageService = messageService
   result.gifService = gifService
   result.mailserversService = mailserversService
+  result.visualIdentityService = visualIdentityService
 
 method delete*(self: Controller) =
   discard
@@ -101,7 +105,7 @@ method init*(self: Controller) =
       let belongsToCommunity = chat.communityId.len > 0
       self.delegate.addChatIfDontExist(chat, belongsToCommunity, self.events, self.settingsService, 
         self.contactService, self.chatService, self.communityService, self.messageService, self.gifService, 
-        self.mailserversService, setChatAsActive = false)
+        self.mailserversService, self.visualIdentityService, setChatAsActive = false)
 
   if (self.isCommunitySection):
     self.events.on(SIGNAL_COMMUNITY_CHANNEL_CREATED) do(e:Args):
@@ -109,7 +113,7 @@ method init*(self: Controller) =
       let belongsToCommunity = args.chat.communityId.len > 0
       self.delegate.addChatIfDontExist(args.chat, belongsToCommunity, self.events, self.settingsService, 
         self.contactService, self.chatService, self.communityService, self.messageService, self.gifService, 
-        self.mailserversService, setChatAsActive = true)
+        self.mailserversService, self.visualIdentityService, setChatAsActive = true)
 
     self.events.on(SIGNAL_COMMUNITY_CHANNEL_DELETED) do(e:Args):
       let args = CommunityChatIdArgs(e)
@@ -235,14 +239,16 @@ method getOneToOneChatNameAndImage*(self: Controller, chatId: string):
 method createPublicChat*(self: Controller, chatId: string) =
   let response = self.chatService.createPublicChat(chatId)
   if(response.success):
-    self.delegate.addNewChat(response.chatDto, false, self.events, self.settingsService, self.contactService, self.chatService,
-    self.communityService, self.messageService, self.gifService, self.mailserversService)
+    self.delegate.addNewChat(response.chatDto, false, self.events, self.settingsService,
+      self.contactService, self.chatService, self.communityService, self.messageService,
+      self.gifService, self.mailserversService, self.visualIdentityService)   
 
 method createOneToOneChat*(self: Controller, communityID: string, chatId: string, ensName: string) =
   let response = self.chatService.createOneToOneChat(communityID, chatId, ensName)
   if(response.success):
-    self.delegate.addNewChat(response.chatDto, false, self.events, self.settingsService, self.contactService, self.chatService,
-    self.communityService, self.messageService, self.gifService, self.mailserversService)
+    self.delegate.addNewChat(response.chatDto, false, self.events, self.settingsService,
+      self.contactService, self.chatService, self.communityService, self.messageService,
+      self.gifService, self.mailserversService, self.visualIdentityService)
 
 method switchToOrCreateOneToOneChat*(self: Controller, chatId: string, ensName: string) =
   self.chatService.switchToOrCreateOneToOneChat(chatId, ensName)
@@ -295,8 +301,9 @@ method makeAdmin*(self: Controller, communityID: string, chatId: string, pubKey:
 method createGroupChat*(self: Controller, communityID: string, groupName: string, pubKeys: seq[string]) =
   let response = self.chatService.createGroupChat(communityID, groupName, pubKeys)
   if(response.success):
-    self.delegate.addNewChat(response.chatDto, false, self.events, self.settingsService, self.contactService, self.chatService,
-    self.communityService, self.messageService, self.gifService, self.mailserversService)
+    self.delegate.addNewChat(response.chatDto, false, self.events, self.settingsService,
+      self.contactService, self.chatService, self.communityService, self.messageService,
+      self.gifService, self.mailserversService, self.visualIdentityService)
 
 method confirmJoiningGroup*(self: Controller, communityID: string, chatID: string) =
   self.chatService.confirmJoiningGroup(communityID, self.getActiveChatId())
@@ -304,8 +311,9 @@ method confirmJoiningGroup*(self: Controller, communityID: string, chatID: strin
 method joinGroupChatFromInvitation*(self: Controller, groupName: string, chatId: string, adminPK: string) =
   let response = self.chatService.createGroupChatFromInvitation(groupName, chatId, adminPK)
   if(response.success):
-    self.delegate.addNewChat(response.chatDto, false, self.events, self.settingsService, self.contactService, self.chatService,
-    self.communityService, self.messageService, self.gifService, self.mailserversService)
+    self.delegate.addNewChat(response.chatDto, false, self.events, self.settingsService,
+      self.contactService, self.chatService, self.communityService, self.messageService,
+      self.gifService, self.mailserversService, self.visualIdentityService)
 
 method acceptRequestToJoinCommunity*(self: Controller, requestId: string) =
   self.communityService.acceptRequestToJoinCommunity(self.sectionId, requestId)

@@ -47,12 +47,13 @@ proc newModule*(
     communityService: community_service.Service,
     messageService: message_service.Service,
     gifService: gif_service.Service,
-    mailserversService: mailservers_service.Service
+    mailserversService: mailservers_service.Service,
+    visualIdentityService: visual_identity_service.Service
   ): Module =
   result = Module()
   result.delegate = delegate
   result.controller = controller.newController(result, sectionId, isCommunity, events, settingsService, contactService,
-  chatService, communityService, messageService, gifService, mailserversService)
+  chatService, communityService, messageService, gifService, mailserversService, visualIdentityService)
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
   result.moduleLoaded = false
@@ -778,6 +779,7 @@ method addChatIfDontExist*(self: Module,
     messageService: message_service.Service,
     gifService: gif_service.Service,
     mailserversService: mailservers_service.Service,
+    visualIdentityService: visual_identity_service.Service,
     setChatAsActive: bool = true) =
 
   let sectionId = self.controller.getMySectionId()
@@ -789,4 +791,5 @@ method addChatIfDontExist*(self: Module,
     return
 
   self.addNewChat(chat, belongsToCommunity, events, settingsService, contactService, chatService,
-    communityService, messageService, gifService, mailserversService, setChatAsActive)
+    communityService, messageService, gifService, mailserversService, visualIdentityService,
+    setChatAsActive)

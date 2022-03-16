@@ -135,7 +135,7 @@ proc newModule*[T](
 
   # Submodules
   result.chatSectionModule = chat_section_module.newModule(result, events, conf.CHAT_SECTION_ID, false, settingsService,
-  contactsService, chatService, communityService, messageService, gifService, mailserversService)
+  contactsService, chatService, communityService, messageService, gifService, mailserversService, visualIdentityService)
   result.communitySectionsModule = initOrderedTable[string, chat_section_module.AccessInterface]()
   result.walletSectionModule = wallet_section_module.newModule[Module[T]](
     result, events, tokenService,
@@ -258,7 +258,8 @@ method load*[T](
       communityService,
       messageService,
       gifService,
-      mailserversService
+      mailserversService,
+      visualIdentityService
     )
 
   var activeSection: SectionItem
@@ -598,7 +599,8 @@ method communityJoined*[T](
       communityService,
       messageService,
       gifService,
-      mailserversService
+      mailserversService,
+      visualIdentityService
     )
   self.communitySectionsModule[community.id].load(events, settingsService, contactsService, chatService, communityService, messageService, gifService, mailserversService, visualIdentityService)
 
