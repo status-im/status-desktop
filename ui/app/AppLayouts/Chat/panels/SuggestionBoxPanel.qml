@@ -29,6 +29,7 @@ import StatusQ.Components 0.1
 
 import shared 1.0
 import shared.panels 1.0
+import shared.controls.chat 1.0
 
 Rectangle {
     id: container
@@ -200,15 +201,20 @@ Rectangle {
                 height: 42
                 radius: Style.current.radius
 
-                StatusSmartIdenticon {
+                UserImage {
                     id: accountImage
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.left: parent.left
                     anchors.leftMargin: Style.current.smallPadding
-                    image.width: 32
-                    image.height: 32
-                    image.source: model.icon
-                    image.isIdenticon: model.isIdenticon
+                    imageWidth: 32
+                    imageHeight: 32
+
+                    name: model.name
+                    pubkey: model.publicKey
+                    icon: model.icon
+                    isIdenticon: model.isIdenticon
+                    showRing: !model.isAdded
+                    interactive: false
                 }
 
                 StyledText {
