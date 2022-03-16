@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"runtime"
 )
 
 var qrcExtensions = map[string]bool{
@@ -32,6 +33,8 @@ func main() {
 		flag.Usage()
 		return
 	}
+	
+	isWindowsOS := runtime.GOOS == "windows"
 
 	qrcFile, err := os.Create(*qrcFileName)
 	if err != nil {
@@ -58,8 +61,14 @@ func main() {
 				base := filepath.Base(path)
 				if qrcExtensions[ext] || base == "qmldir" {
 					counter++
-					fixedPath := strings.ReplaceAll(path, "\\", "/")
-					fixedPath = "./" + strings.TrimPrefix(fixedPath, *sourceDirName)
+					var fixedPath string
+					if isWindowsOS {
+						fixedPath = "./" + strings.TrimPrefix(path, *sourceDirName)
+						fixedPath = strings.ReplaceAll(fixedPath, "\\", "/")
+					} else {
+						fixedPath = strings.ReplaceAll(path, "\\", "/")
+						fixedPath = "./" + strings.TrimPrefix(fixedPath, *sourceDirName)
+					}
 					qrcFile.WriteString("      <file>" + fixedPath + "</file>\n")
 				}
 			}

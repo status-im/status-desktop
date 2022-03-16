@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QtCore>
+#include <array>
 
 namespace Status::Constants
 {

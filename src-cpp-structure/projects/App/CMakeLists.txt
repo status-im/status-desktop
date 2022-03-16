@@ -17,7 +17,7 @@ add_custom_command(
     COMMAND ${CMAKE_COMMAND} -E rm -f ${STATUS_RCC}
     COMMAND ${CMAKE_COMMAND} -E rm -f ${STATUS_QRC}
     COMMAND go run ${CMAKE_SOURCE_DIR}/../ui/generate-rcc.go -source=${STATUS_QRC_SOURCE} -output=${STATUS_QRC}
-    COMMAND rcc -binary --no-compress ${STATUS_QRC} ${STATUS_RESOURCES_QRC} -o ${STATUS_RCC}
+    COMMAND $ENV{QTDIR}/bin/rcc -binary --no-compress ${STATUS_QRC} ${STATUS_RESOURCES_QRC} -o ${STATUS_RCC}
     VERBATIM
     USES_TERMINAL
     PRE_BUILD

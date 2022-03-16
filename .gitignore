@@ -89,6 +89,8 @@ _deps
 
 # Cpp App
 *build-src-cpp-structure*
+src-cpp-structure/.vs
+src-cpp-structure/build/*
 src-cpp-structure/projects/App/translations.qrc
 src-cpp-structure/projects/App/i18n/*
 src-cpp-structure/projects/App/translations/*
