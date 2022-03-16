@@ -147,7 +147,8 @@ var NODE_CONFIG* = %* {
     "VerifyENSContractAddress": "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e",
     "VerifyENSURL": "https://mainnet.infura.io/v3/" & INFURA_TOKEN_RESOLVED,
     "VerifyTransactionChainID": 1,
-    "VerifyTransactionURL": "https://mainnet.infura.io/v3/" & INFURA_TOKEN_RESOLVED
+    "VerifyTransactionURL": "https://mainnet.infura.io/v3/" & INFURA_TOKEN_RESOLVED,
+    "BandwidthStatsEnabled": true
   },
   "Web3ProviderConfig": {
     "Enabled": true
@@ -162,7 +163,7 @@ var NODE_CONFIG* = %* {
     "Enabled": true,
     "URL": "https://mainnet.infura.io/v3/" & INFURA_TOKEN_RESOLVED
   },
-   "WakuConfig": {
+  "WakuConfig": {
     "BloomFilterMode": true,
     "Enabled": true,
     "LightClient": true,

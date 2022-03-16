@@ -38,7 +38,8 @@
     "VerifyENSContractAddress": "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e",
     "VerifyENSURL": "https://mainnet.infura.io/v3/%INFURA_KEY%",
     "VerifyTransactionChainID": 1,
-    "VerifyTransactionURL": "https://mainnet.infura.io/v3/%INFURA_KEY%"
+    "VerifyTransactionURL": "https://mainnet.infura.io/v3/%INFURA_KEY%",
+    "BandwidthStatsEnabled": true
   },
   "StatusAccountsConfig": {
     "Enabled": true
