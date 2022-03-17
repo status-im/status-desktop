@@ -102,7 +102,7 @@ typedef void DosPixmap;
 typedef void DosSingleInstance;
 
 /// A pointer to a event object which is actualy a QObject
-typedef void DosEvent;
+typedef DosQObject DosEvent;
 
 /// A pointer to a os notification object which is actualy a QObject
 typedef DosQObject DosOSNotification;
