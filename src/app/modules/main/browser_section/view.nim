@@ -19,3 +19,7 @@ QtObject:
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
+
+  proc openUrl*(self: View, url: string) {.signal.}
+  proc sendOpenUrlSignal*(self: View, url: string) =
+    self.openUrl(url)

@@ -3,7 +3,6 @@
 // To Do: Currently this gets added to eahc file that its imported into need to create as enums in calss when some works on this potentially
 #include <QString>
 
-const QString CHAT_SECTION_ID = "chat";
 const QString CHAT_SECTION_NAME = "Chat";
 const QString CHAT_SECTION_ICON = "chat";
 

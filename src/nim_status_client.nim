@@ -107,6 +107,9 @@ proc mainProc() =
   # Register events objects
   let dockShowAppEvent = newStatusDockShowAppEventObject(singletonInstance.engine)
   let osThemeEvent = newStatusOSThemeEventObject(singletonInstance.engine)
+  let urlSchemeEvent = newStatusUrlSchemeEventObject()
+
+  statusFoundation.initUrlSchemeManager(urlSchemeEvent)
 
   if not defined(macosx):
     app.icon(app.applicationDirPath & statusAppIconPath)
@@ -125,6 +128,7 @@ proc mainProc() =
 
   app.installEventFilter(dockShowAppEvent)
   app.installEventFilter(osThemeEvent)
+  app.installEventFilter(urlSchemeEvent)
 
   defer:
     info "shutting down..."
