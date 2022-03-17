@@ -85,6 +85,24 @@ type
     DiscoveryLimit*: int
     Rendezvous*: bool
 
+  Waku2Config = object
+    Enabled*: bool
+    Rendezvous*: bool
+    Host*: string
+    Port*: int
+    KeepAliveInterval*: int
+    LightClient*: bool
+    FullNode*: bool
+    DiscoveryLimit*: int
+    PersistPeers*: bool
+    DataDir*: string
+    MaxMessageSize*: int
+    EnableConfirmations*: bool
+    PeerExchange*: bool
+    EnableDiscV5*: bool
+    UDPPort*: int
+    AutoUpdate*: bool
+
   ShhextConfig* = object
     PFSEnabled*: bool
     BackupDisabledDataDir*: string
@@ -189,7 +207,7 @@ type
     ClusterConfig*: ClusterConfig
     LightEthConfig*: LightEthConfig
     WakuConfig*: WakuConfig
-    WakuV2Config*: WakuConfig
+    WakuV2Config*: Waku2Config
     BridgeConfig*: BridgeConfig
     ShhextConfig*: ShhextConfig
     WalletConfig*: WalletConfig
@@ -295,6 +313,24 @@ proc toDatabaseConfig*(jsonObj: JsonNode): DatabaseConfig =
   var pgConfigObj: JsonNode
   if(jsonObj.getProp("PGConfig", pgConfigObj)):
     result.PGConfig = toPGConfig(pgConfigObj)
+
+proc toWaku2Config*(jsonObj: JsonNode): Waku2Config =
+  discard jsonObj.getProp("Enabled", result.Enabled)
+  discard jsonObj.getProp("Rendezvous", result.Rendezvous)
+  discard jsonObj.getProp("Host", result.Host)
+  discard jsonObj.getProp("Port", result.Port)
+  discard jsonObj.getProp("KeepAliveInterval", result.KeepAliveInterval)
+  discard jsonObj.getProp("LightClient", result.LightClient)
+  discard jsonObj.getProp("FullNode", result.FullNode)
+  discard jsonObj.getProp("DiscoveryLimit", result.DiscoveryLimit)
+  discard jsonObj.getProp("PersistPeers", result.PersistPeers)
+  discard jsonObj.getProp("DataDir", result.DataDir)
+  discard jsonObj.getProp("MaxMessageSize", result.MaxMessageSize)
+  discard jsonObj.getProp("EnableConfirmations", result.EnableConfirmations)
+  discard jsonObj.getProp("PeerExchange", result.PeerExchange)
+  discard jsonObj.getProp("EnableDiscV5", result.EnableDiscV5)
+  discard jsonObj.getProp("UDPPort", result.UDPPort)
+  discard jsonObj.getProp("AutoUpdate", result.AutoUpdate)
 
 proc toWakuConfig*(jsonObj: JsonNode): WakuConfig =
   discard jsonObj.getProp("Enabled", result.Enabled)
@@ -469,7 +505,7 @@ proc toNodeConfigDto*(jsonObj: JsonNode): NodeConfigDto =
 
   var wakuV2ConfigObj: JsonNode
   if(jsonObj.getProp("WakuV2Config", wakuV2ConfigObj)):
-    result.WakuV2Config = toWakuConfig(wakuV2ConfigObj)
+    result.WakuV2Config = toWaku2Config(wakuV2ConfigObj)
 
   var shhextConfigObj: JsonNode
   if(jsonObj.getProp("ShhextConfig", shhextConfigObj)):
