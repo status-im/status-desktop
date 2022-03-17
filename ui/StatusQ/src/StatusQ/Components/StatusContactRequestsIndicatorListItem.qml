@@ -14,6 +14,7 @@ StatusListItem {
 
     components: [
         StatusBadge {
+            visible:  statusContactRequestsListItem.requestsCount > 0
             value: statusContactRequestsListItem.requestsCount
             anchors.verticalCenter: parent.verticalCenter
             border.width: 4
