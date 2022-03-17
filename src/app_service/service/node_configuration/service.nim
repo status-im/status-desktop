@@ -159,7 +159,7 @@ proc setFleet*(self: Service, fleet: string): bool =
   if(not self.settingsService.saveFleet(fleet)):
     error "error saving fleet ", procName="setFleet"
     return false
-
+  
   let fleetType = parseEnum[Fleet](fleet)
   var newConfiguration = self.configuration
   newConfiguration.ClusterConfig.Fleet = fleet
@@ -189,7 +189,13 @@ proc setFleet*(self: Service, fleet: string): bool =
 
   # Disabling go-waku rendezvous
   # newConfiguration.ClusterConfig.WakuRendezvousNodes = self.fleetConfiguration.getNodes(Fleet.GoWakuTest, FleetNodes.LibP2P)
-  return self.saveConfiguration(newConfiguration)
+
+  try:
+    discard status_node_config.switchFleet(fleet, newConfiguration.toJsonNode())
+    return true
+  except:
+    error "Could not switch fleet"
+    return false
 
 proc getV2LightMode*(self: Service): bool =
   return self.configuration.WakuV2Config.LightClient

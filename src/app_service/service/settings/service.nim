@@ -305,11 +305,9 @@ proc saveTelemetryServerUrl*(self: Service, value: string): bool =
 proc getTelemetryServerUrl*(self: Service): string =
   return self.settings.telemetryServerUrl
 
-proc saveFleet*(self: Service, value: string): bool =
-  if(self.saveSetting(KEY_FLEET, value)):
-    self.settings.fleet = value
-    return true
-  return false
+method saveFleet*(self: Service, value: string): bool =
+  self.settings.fleet = value
+  return true
 
 proc getFleetAsString*(self: Service): string =
   if(self.settings.fleet.len == 0):

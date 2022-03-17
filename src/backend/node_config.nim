@@ -17,3 +17,12 @@ proc getNodeConfig*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   except RpcException as e:
     error "error doing rpc request", methodName = "getNodeConfig", exception=e.msg
     raise newException(RpcException, e.msg)
+
+proc switchFleet*(fleet: string, nodeConfig: JsonNode): RpcResponse[JsonNode] {.raises: [Exception].} =
+  try:
+    info "switching fleet", fleet
+    let response = status_go.switchFleet(fleet, $nodeConfig)
+    result.result = Json.decode(response, JsonNode)
+  except RpcException as e:
+    error "error doing rpc request", methodName = "saveAccountAndLogin", exception=e.msg
+    raise newException(RpcException, e.msg)
