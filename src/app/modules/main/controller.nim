@@ -38,7 +38,7 @@ type
     activeSectionId: string
 
 # Forward declaration
-proc setActiveSection*(self: Controller, sectionId: string, sectionType: SectionType)
+proc setActiveSection*(self: Controller, sectionId: string)
 
 proc newController*(delegate: io_interface.AccessInterface,
   events: EventEmitter,
@@ -163,7 +163,7 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_ENS_RESOLVED) do(e: Args):
     var args = ResolvedContactArgs(e)
-    self.delegate.resolvedENS(args.pubkey, args.address, args.uuid)
+    self.delegate.resolvedENS(args.pubkey, args.address, args.uuid, args.reason)
 
   self.events.on(SIGNAL_CONTACT_UPDATED) do(e: Args):
     var args = ContactArgs(e)
@@ -178,11 +178,12 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_MAKE_SECTION_CHAT_ACTIVE) do(e: Args):
     var args = ActiveSectionChatArgs(e)
-    let sectionType = if args.sectionId == singletonInstance.userProfile.getPubKey():
-        SectionType.Chat
-      else:
-        SectionType.Community
-    self.setActiveSection(args.sectionId, sectionType)
+    self.setActiveSection(args.sectionId)
+
+  self.events.on(SIGNAL_STATUS_URL_REQUESTED) do(e: Args):
+    var args = StatusUrlArgs(e)
+    self.delegate.onStatusUrlRequested(args.action, args.communityId, args.chatId, args.url, args.userId, 
+      args.groupName, args.listOfUserIds)
 
   self.events.on(SIGNAL_OS_NOTIFICATION_CLICKED) do(e: Args):
     var args = ClickedNotificationArgs(e)
@@ -236,16 +237,9 @@ proc storePassword*(self: Controller, password: string) =
 proc getActiveSectionId*(self: Controller): string =
   result = self.activeSectionId
 
-proc setActiveSection*(self: Controller, sectionId: string, sectionType: SectionType) =
-  if sectionType == SectionType.Community and
-      not singletonInstance.localAccountSensitiveSettings.getCommunitiesEnabled():
-    # Communities are not supposed to be shown
-    return
-
+proc setActiveSection*(self: Controller, sectionId: string) =
   self.activeSectionId = sectionId
-
   singletonInstance.localAccountSensitiveSettings.setActiveSection(self.activeSectionId)
-
   self.delegate.activeSectionSet(self.activeSectionId)
 
 proc getNumOfNotificaitonsForChat*(self: Controller): tuple[unviewed:int, mentions:int] =
@@ -289,8 +283,8 @@ proc getContactNameAndImage*(self: Controller, contactId: string):
 proc getContactDetails*(self: Controller, contactId: string): ContactDetails =
   return self.contactsService.getContactDetails(contactId)
 
-proc resolveENS*(self: Controller, ensName: string, uuid: string = "") =
-  self.contactsService.resolveENS(ensName, uuid)
+proc resolveENS*(self: Controller, ensName: string, uuid: string = "", reason: string = "") =
+  self.contactsService.resolveENS(ensName, uuid, reason)
 
 proc isMnemonicBackedUp*(self: Controller): bool =
   result = self.privacyService.isMnemonicBackedUp()

@@ -154,6 +154,9 @@ method getMySectionId*(self: AccessInterface): string {.base.} =
 method createPublicChat*(self: AccessInterface, chatId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method switchToOrCreateOneToOneChat*(self: AccessInterface, chatId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method createOneToOneChat*(self: AccessInterface, communityID: string, chatId: string, ensName: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -209,6 +212,9 @@ method makeAdmin*(self: AccessInterface, communityID: string, chatId: string, pu
   raise newException(ValueError, "No implementation available")
 
 method createGroupChat*(self: AccessInterface, communityID: string, groupName: string, pubKeys: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method createGroupChat*(self: AccessInterface, groupName: string, pubKeys: seq[string]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method joinGroupChatFromInvitation*(self: AccessInterface, groupName: string, chatId: string, adminPK: string) {.base.} =

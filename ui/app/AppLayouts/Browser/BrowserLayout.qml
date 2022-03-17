@@ -612,4 +612,11 @@ Rectangle {
             browserHeader.currentFavorite = Qt.binding(function () {return BookmarksStore.getCurrentFavorite(_internal.currentWebView.url)})
         }
     }
+
+    Connections {
+        target: browserSection
+        onOpenUrl: {
+            browserWindow.openUrlInNewTab(url);
+        }
+    }
 }

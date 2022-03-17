@@ -38,7 +38,7 @@ type
     # deletedMessages*: seq[RemovedMessage]
 
   ChatArgs* = ref object of Args
-    communityId*: string
+    communityId*: string # This param should be renamed to `sectionId`, that will avoid some confusions one may have.
     chatId*: string
 
   ChatExtArgs* = ref object of ChatArgs
