@@ -58,6 +58,7 @@ Item {
         anchors.topMargin: Style.current.halfPadding
         maximumLineCount: 2
         elide: Text.ElideRight
+        textFormat: Text.PlainText
     }
 
     MouseArea {
