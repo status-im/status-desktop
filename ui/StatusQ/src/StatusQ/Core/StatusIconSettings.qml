@@ -14,7 +14,7 @@ QtObject {
     property int rotation
     property bool isLetterIdenticon
     property int letterSize
-    property int charactersLen
+    property int charactersLen: 1
     property string emoji
     property string emojiSize
     property StatusIconBackgroundSettings background: StatusIconBackgroundSettings {}
