@@ -1,15 +1,12 @@
-import json, chronicles, core
+import json, json_serialization
 import response_type
+
+import status_go
 
 export response_type
 
-logScope:
-  topics = "rpc-visual-identity"
+proc emojiHashOf*(pubkey: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+    result = Json.decode(status_go.emojiHash(pubkey), RpcResponse[JsonNode])
 
-proc emojiHashOf*(key: string): RpcResponse[JsonNode] {.raises: [Exception].} =
-  let payload = %* [key]
-  result = core.callPrivateRPC("visualIdentity_emojiHashOf", payload)
-
-proc colorHashOf*(key: string): RpcResponse[JsonNode] {.raises: [Exception].} =
-  let payload = %* [key]
-  result = core.callPrivateRPC("visualIdentity_colorHashOf", payload)
+proc colorHashOf*(pubkey: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+    result = Json.decode(status_go.colorHash(pubkey), RpcResponse[JsonNode])
