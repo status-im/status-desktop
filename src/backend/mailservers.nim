@@ -29,8 +29,3 @@ proc fillGaps*(chatId: string, messageIds: seq[string]): RpcResponse[JsonNode] {
   let payload = %*[chatId, messageIds]
   result = core.callPrivateRPC("fillGaps".prefix, payload)
   info "fillGaps", topics="mailserver-interaction", rpc_method="wakuext_fillGaps", chatId, messageIds, result
-
-proc disconnectActiveMailserver*(): RpcResponse[JsonNode] {.raises: [Exception].} =
-  let payload = %* []
-  result = core.callPrivateRPC("disconnectActiveMailserver".prefix, payload)
-  info "delete", topics="mailserver-interaction", rpc_method="wakuext_disconnectActiveMailserver", result
