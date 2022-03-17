@@ -57,6 +57,8 @@ Control {
                 visible: root.icon.isLetterIdenticon
                 color: root.icon.color
                 name: root.primaryText
+                emoji: root.icon.emoji
+                emojiSize: root.icon.emojiSize
             }
             StatusBaseText {
                 font.weight: Font.Medium

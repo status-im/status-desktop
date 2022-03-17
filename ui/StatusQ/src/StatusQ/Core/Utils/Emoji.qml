@@ -8,9 +8,11 @@ import "./emojiList.js" as EmojiJSON
 
 QtObject {
     readonly property var size: {
+        "veryBig": "86x86",
         "big": "72x72",
         "middle": "32x32",
-        "small": "18x18"
+        "small": "18x18",
+        "verySmall": "16x16"
     }
     property string base: Qt.resolvedUrl("../../../assets/twemoji/")
     function parse(text, renderSize = size.small) {

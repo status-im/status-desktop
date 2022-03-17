@@ -28,8 +28,9 @@ Rectangle {
         width: 24
         height: 24
         color: Theme.palette.miscColor5
-        letterSize: emoji ? 14 : 15
+        letterSize: emoji ? 10 : 15
         emoji: ""
+        emojiSize: Emoji.size.verySmall
         charactersLen: 1
     }
     property int type: StatusChatListItem.Type.PublicChat

@@ -9,6 +9,7 @@ Rectangle {
     property alias identiconText: identiconText
     property string name
     property string emoji
+    property string emojiSize
     property int letterSize: 21
     property int charactersLen: 1
 
@@ -35,7 +36,7 @@ Rectangle {
                 if(Utils.isHtml(emoji))
                     return emoji
                 else
-                    return Emoji.parse(emoji)
+                    return Emoji.parse(emoji, emojiSize || undefined)
             }
 
             const shift = (root.name.charAt(0) === "#") ||

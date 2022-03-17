@@ -16,5 +16,6 @@ QtObject {
     property int letterSize
     property int charactersLen
     property string emoji
+    property string emojiSize
     property StatusIconBackgroundSettings background: StatusIconBackgroundSettings {}
 }
