@@ -13,8 +13,6 @@ type
     Icon
     Identicon
     IsIdenticon
-    EmojiHashModel
-    ColorHashModel
     IsAdded
     IsAdmin
     Joined
@@ -68,8 +66,6 @@ QtObject:
       ModelRole.Icon.int:"icon",
       ModelRole.Identicon.int:"identicon",
       ModelRole.IsIdenticon.int:"isIdenticon",
-      ModelRole.EmojiHashModel.int:"emojiHashModel",
-      ModelRole.ColorHashModel.int:"colorHashModel",
       ModelRole.IsAdded.int:"isAdded",
       ModelRole.IsAdmin.int:"isAdmin",
       ModelRole.Joined.int:"joined",
@@ -104,10 +100,6 @@ QtObject:
       result = newQVariant(item.identicon)
     of ModelRole.IsIdenticon:
       result = newQVariant(item.isIdenticon)
-    of ModelRole.EmojiHashModel:
-      result = newQVariant(item.emojiHashModel)
-    of ModelRole.ColorHashModel:
-      result = newQVariant(item.colorHashModel)
     of ModelRole.IsAdded:
       result = newQVariant(item.isAdded)
     of ModelRole.IsAdmin:

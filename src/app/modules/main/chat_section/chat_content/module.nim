@@ -20,7 +20,6 @@ import ../../../../../app_service/service/community/service as community_service
 import ../../../../../app_service/service/gif/service as gif_service
 import ../../../../../app_service/service/message/service as message_service
 import ../../../../../app_service/service/mailservers/service as mailservers_service
-import ../../../../../app_service/service/visual_identity/service as visual_identity_service
 
 export io_interface
 
@@ -42,7 +41,7 @@ proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitt
   belongsToCommunity: bool, isUsersListAvailable: bool, settingsService: settings_service.ServiceInterface,
   contactService: contact_service.Service, chatService: chat_service.Service,
   communityService: community_service.Service, messageService: message_service.Service, gifService: gif_service.Service,
-  mailserversService: mailservers_service.Service, visualIdentityService: visual_identity_service.Service):
+  mailserversService: mailservers_service.Service):
   Module =
   result = Module()
   result.delegate = delegate
@@ -57,7 +56,7 @@ proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitt
   contactService, communityService, chatService, messageService, mailserversService)
   result.usersModule = users_module.newModule(
     result, events, sectionId, chatId, belongsToCommunity, isUsersListAvailable,
-    contactService, chat_service, communityService, messageService, visualIdentityService
+    contactService, chat_service, communityService, messageService
   )
 
 method delete*(self: Module) =

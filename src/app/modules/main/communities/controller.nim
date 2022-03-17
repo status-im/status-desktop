@@ -6,7 +6,6 @@ import ../../../core/signals/types
 import ../../../core/eventemitter
 import ../../../../app_service/service/community/service as community_service
 import ../../../../app_service/service/contacts/service as contacts_service
-import ../../../../app_service/service/visual_identity/service as visual_identity_service
 
 export controller_interface
 
@@ -16,21 +15,18 @@ type
     events: EventEmitter
     communityService: community_service.Service
     contactsService: contacts_service.Service
-    visualIdentityService: visual_identity_service.Service
 
 proc newController*(
     delegate: io_interface.AccessInterface,
     events: EventEmitter,
     communityService: community_service.Service,
     contactsService: contacts_service.Service,
-    visualIdentityService: visual_identity_service.Service
     ): Controller =
   result = Controller()
   result.delegate = delegate
   result.events = events
   result.communityService = communityService
   result.contactsService = contactsService
-  result.visualIdentityService = visualIdentityService
 
 method delete*(self: Controller) =
   discard
@@ -138,9 +134,3 @@ method userCanJoin*(self: Controller, communityId: string): bool =
 
 method isCommunityRequestPending*(self: Controller, communityId: string): bool =
   return self.communityService.isCommunityRequestPending(communityId)
-
-method getEmojiHash*(self: Controller, pubkey: string): EmojiHashDto =
-  return self.visualIdentityService.emojiHashOf(pubkey)
-
-method getColorHash*(self: Controller, pubkey: string): ColorHashDto =
-  return self.visualIdentityService.colorHashOf(pubkey)

@@ -9,7 +9,6 @@ import ../../../global/global_singleton
 import ../../../core/eventemitter
 import ../../../../app_service/service/community/service as community_service
 import ../../../../app_service/service/contacts/service as contacts_service
-import ../../../../app_service/service/visual_identity/service as visual_identity_service
 
 export io_interface
 
@@ -34,9 +33,7 @@ proc newModule*(
     delegate: delegate_interface.AccessInterface,
     events: EventEmitter,
     communityService: community_service.Service,
-    contactsService: contacts_service.Service,
-    visualIdentityService: visual_identity_service.Service
-    ): Module =
+    contactsService: contacts_service.Service): Module =
   result = Module()
   result.delegate = delegate
   result.view = newView(result)
@@ -46,7 +43,6 @@ proc newModule*(
     events,
     communityService,
     contactsService,
-    visualIdentityService
   )
   result.moduleLoaded = false
 
@@ -103,8 +99,6 @@ method getCommunityItem(self: Module, c: CommunityDto): SectionItem =
           contactDetails.icon,
           contactDetails.details.identicon,
           contactDetails.isidenticon,
-          self.controller.getEmojiHash(member.id),
-          self.controller.getColorHash(member.id),
           contactDetails.details.added,
           ))
     )

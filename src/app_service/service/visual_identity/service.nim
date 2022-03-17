@@ -1,21 +1,11 @@
-import chronicles
+import chronicles, marshal, json
 
 import ./dto as dto
-import ./service_interface
 import ../../../backend/visual_identity as status_visual_identity
 
 export dto
 
-type
-  Service* = ref object of service_interface.ServiceInterface
-
-proc newService*(): Service =
-  result = Service()
-
-method delete*(self: Service) =
-  discard
-
-proc emojiHashOf*(self: Service, pubkey: string): EmojiHashDto =
+proc emojiHashOf*(pubkey: string): EmojiHashDto =
   try:
     let response = status_visual_identity.emojiHashOf(pubkey)
 
@@ -28,7 +18,7 @@ proc emojiHashOf*(self: Service, pubkey: string): EmojiHashDto =
     error "error: ", methodName = "emojiHashOf", errName = e.name,
         errDesription = e.msg
 
-proc colorHashOf*(self: Service, pubkey: string): ColorHashDto =
+proc colorHashOf*(pubkey: string): ColorHashDto =
   try:
     let response = status_visual_identity.colorHashOf(pubkey)
 
@@ -40,3 +30,13 @@ proc colorHashOf*(self: Service, pubkey: string): ColorHashDto =
   except Exception as e:
     error "error: ", methodName = "colorHashOf", errName = e.name,
         errDesription = e.msg
+
+proc getEmojiHashAsJson*(publicKey: string): string =
+  return $$emojiHashOf(publicKey)
+
+proc getColorHashAsJson*(publicKey: string): string =
+  let colorHash =  colorHashOf(publicKey)
+  let json = newJArray()
+  for segment in colorHash:
+    json.add(%* {"segmentLength": segment.len, "colorId": segment.colorIdx})
+  return $json

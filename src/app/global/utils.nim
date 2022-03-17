@@ -5,6 +5,7 @@ import ./utils/qrcodegen
 # Services as instances shouldn't be used in this class, just some general/global procs
 import ../../app_service/common/conversion
 import ../../app_service/service/accounts/service as procs_from_accounts
+import ../../app_service/service/visual_identity/service as procs_from_visual_identity_service
 
 
 QtObject:
@@ -128,3 +129,9 @@ QtObject:
 
   proc plainText*(self: Utils, text: string): string {.slot.} =
     result = plain_text(text)
+
+  proc getEmojiHashAsJson*(self: Utils, publicKey: string): string {.slot.} =
+    procs_from_visual_identity_service.getEmojiHashAsJson(publicKey)
+
+  proc getColorHashAsJson*(self: Utils, publicKey: string): string {.slot.} =
+    procs_from_visual_identity_service.getColorHashAsJson(publicKey)
