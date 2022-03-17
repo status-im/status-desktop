@@ -492,7 +492,7 @@ Rectangle {
             }
         }
         onDisconnect: {
-            Web3ProviderStore.disconnect(Utils.getHostname(_internal.currentWebView.url))
+            Web3ProviderStore.disconnect(Utils.getHostname(browserHeader.addressBar.text))
             provider.postMessage("web3-disconnect-account", "{}");
             _internal.currentWebView.reload()
             close()
