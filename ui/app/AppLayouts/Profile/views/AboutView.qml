@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.13
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Controls 0.1
 
 import utils 1.0
 import shared 1.0
@@ -45,26 +46,14 @@ Item {
             store: root.globalStore
         }
 
-        StatusBaseText {
+        StatusFlatButton {
             //% "Check for updates"
             text: qsTrId("check-for-updates")
-            font.pixelSize: 15
-            color: Theme.palette.primaryColor1
-
-            MouseArea {
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-                hoverEnabled: true
-                onEntered: {
-                    parent.font.underline = true
-                }
-                onExited: {
-                    parent.font.underline = false
-                }
-                onClicked: {
-                    root.store.checkForUpdates();
-                }
-            }
+            loading: root.store.fetchingUpdate
+            onClicked: root.store.checkForUpdates()
+            icon.width: 0
+            anchors.left: parent.left
+            anchors.leftMargin: -leftPadding
         }
 
         StatusBaseText {

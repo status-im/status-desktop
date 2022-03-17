@@ -8,6 +8,8 @@ QtObject {
 
     property var profileSectionModuleInst: profileSectionModule
 
+    property bool fetchingUpdate: aboutModule.fetching
+
     property ContactsStore contactsStore: ContactsStore {
         contactsModule: profileSectionModuleInst.contactsModule
     }

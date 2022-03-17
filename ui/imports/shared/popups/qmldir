@@ -2,6 +2,7 @@ ChatCommandsPopup 1.0 ChatCommandsPopup.qml
 BlockContactConfirmationDialog 1.0 BlockContactConfirmationDialog.qml
 ConfirmationDialog 1.0 ConfirmationDialog.qml
 DownloadModal 1.0 DownloadModal.qml
+DownloadPage 1.0 DownloadPage.qml
 ImageCropperModal 1.0 ImageCropperModal.qml
 InviteFriendsPopup 1.0 InviteFriendsPopup.qml
 ModalPopup 1.0 ModalPopup.qml
