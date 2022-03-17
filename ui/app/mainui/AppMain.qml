@@ -16,6 +16,7 @@ import AppLayouts.Profile.popups 1.0
 
 import utils 1.0
 import shared 1.0
+import shared.controls 1.0
 import shared.panels 1.0
 import shared.popups 1.0
 import shared.status 1.0
@@ -52,7 +53,11 @@ Item {
     Connections {
         target: rootStore.aboutModuleInst
         onAppVersionFetched: {
-            Global.openDownloadModal()
+            if (!newVersionJSON.available) {
+                versionUpToDate.show()
+            } else {
+                versionWarning.show()
+            }
         }
     }
 
@@ -70,9 +75,14 @@ Item {
             return popup;
         }
         onOpenDownloadModalRequested: {
-            const popup = downloadModalComponent.createObject(appMain, {newVersionAvailable: newVersionJSON.available, downloadURL: newVersionJSON.url})
-            popup.open()
-            return popup
+            const downloadPage = downloadPageComponent.createObject(appMain,
+                {
+                    newVersionAvailable: newVersionJSON.available,
+                    downloadURL: newVersionJSON.url,
+                    currentVersion: rootStore.profileSectionStore.getCurrentVersion(),
+                    newVersion: newVersionJSON.version
+                })
+            return downloadPage
         }
         onOpenProfilePopupRequested: {
             var popup = profilePopupComponent.createObject(appMain);
@@ -134,8 +144,8 @@ Item {
     }
 
     Component {
-        id: downloadModalComponent
-        DownloadModal {
+        id: downloadPageComponent
+        DownloadPage {
             onClosed: {
                 destroy();
             }
@@ -390,6 +400,7 @@ Item {
             ModuleWarning {
                 id: versionWarning
                 width: parent.width
+                height: 32
                 visible: !!newVersionJSON.available
                 color: Style.current.green
                 btnWidth: 100
@@ -397,6 +408,35 @@ Item {
                 btnText: qsTr("Download")
                 onClick: function(){
                     Global.openDownloadModal()
+                }
+
+                function show() {
+                    versionWarning.visible = true
+                }
+            }
+
+            ModuleWarning {
+                id: versionUpToDate
+                width: parent.width
+                height: 32
+                visible: false
+                color: Style.current.green
+                btnWidth: 100
+                text: qsTr("Your version is up to date")
+                btnText: qsTr("Close")
+
+                Timer {
+                    id: timer
+                }
+                function show() {
+                    versionUpToDate.visible = true
+                    timer.setTimeout(function() {
+                        versionUpToDate.close()
+                    }, 4000);
+                }
+
+                onClick: function(){
+                    versionUpToDate.close()
                 }
             }
 

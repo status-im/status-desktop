@@ -18,6 +18,10 @@ Rectangle {
 
     property var onClick: function() {}
 
+    function close() {
+        closeBtn.clicked(null)
+    }
+
     Row {
         spacing: Style.current.halfPadding
         anchors.horizontalCenter: parent.horizontalCenter
@@ -80,6 +84,7 @@ Rectangle {
         opacity: 0.7
     }
     MouseArea {
+        id: closeBtn
         anchors.fill: closeImg
         cursorShape: Qt.PointingHandCursor
         onClicked: ParallelAnimation {
