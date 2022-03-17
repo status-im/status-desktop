@@ -608,7 +608,7 @@ QtObject {
         if (publicKey === "") {
             return ""
         }
-        let jsonObj = mainModule.getEmojiHashAsJson(publicKey)
+        let jsonObj = globalUtils.getEmojiHashAsJson(publicKey)
         return JSON.parse(jsonObj)
     }
 
@@ -616,7 +616,7 @@ QtObject {
         if (publicKey === "") {
             return ""
         }
-        let jsonObj = mainModule.getColorHashAsJson(publicKey)
+        let jsonObj = globalUtils.getColorHashAsJson(publicKey)
         return JSON.parse(jsonObj)
     }
 

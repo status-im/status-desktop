@@ -19,7 +19,6 @@ import ../../../../app_service/service/community/service as community_service
 import ../../../../app_service/service/message/service as message_service
 import ../../../../app_service/service/mailservers/service as mailservers_service
 import ../../../../app_service/service/gif/service as gif_service
-import ../../../../app_service/service/visual_identity/service as visual_identity_service
 
 export io_interface
 
@@ -86,11 +85,10 @@ proc addSubmodule(self: Module, chatId: string, belongToCommunity: bool, isUsers
   communityService: community_service.Service,
   messageService: message_service.Service,
   gifService: gif_service.Service,
-  mailserversService: mailservers_service.Service,
-  visualIdentityService: visual_identity_service.Service) =
+  mailserversService: mailservers_service.Service) =
   self.chatContentModules[chatId] = chat_content_module.newModule(self, events, self.controller.getMySectionId(), chatId,
     belongToCommunity, isUsersListAvailable, settingsService, contactService, chatService, communityService,
-    messageService, gifService, mailserversService, visualIdentityService)
+    messageService, gifService, mailserversService)
 
 proc removeSubmodule(self: Module, chatId: string) =
   if(not self.chatContentModules.contains(chatId)):
@@ -104,8 +102,7 @@ proc buildChatUI(self: Module, events: EventEmitter,
   communityService: community_service.Service,
   messageService: message_service.Service,
   gifService: gif_service.Service,
-  mailserversService: mailservers_service.Service,
-  visualIdentityService: visual_identity_service.Service) =
+  mailserversService: mailservers_service.Service) =
   let types = @[ChatType.OneToOne, ChatType.Public, ChatType.PrivateGroupChat]
   let chats = self.controller.getChatDetailsForChatTypes(types)
 
@@ -133,7 +130,7 @@ proc buildChatUI(self: Module, events: EventEmitter,
       active=false, c.position, c.categoryId)
     self.view.chatsModel().appendItem(item)
     self.addSubmodule(c.id, false, isUsersListAvailable, events, settingsService, contactService, chatService,
-    communityService, messageService, gifService, mailserversService, visualIdentityService)
+    communityService, messageService, gifService, mailserversService)
 
     # make the first Public chat active when load the app
     if(selectedItemId.len == 0 and c.chatType == ChatType.Public):
@@ -148,8 +145,7 @@ proc buildCommunityUI(self: Module, events: EventEmitter,
   communityService: community_service.Service,
   messageService: message_service.Service,
   gifService: gif_service.Service,
-  mailserversService: mailservers_service.Service,
-  visualIdentityService: visual_identity_service.Service) =
+  mailserversService: mailservers_service.Service) =
   var selectedItemId = ""
   var selectedSubItemId = ""
   let communities = self.controller.getJoinedCommunities()
@@ -170,7 +166,7 @@ proc buildCommunityUI(self: Module, events: EventEmitter,
         notificationsCount, chatDto.muted, blocked=false, active = false, c.position, c.categoryId)
       self.view.chatsModel().appendItem(channelItem)
       self.addSubmodule(chatDto.id, true, true, events, settingsService, contactService, chatService, communityService,
-      messageService, gifService, mailserversService, visualIdentityService)
+      messageService, gifService, mailserversService)
 
       # make the first channel which doesn't belong to any category active when load the app
       if(selectedItemId.len == 0):
@@ -201,7 +197,7 @@ proc buildCommunityUI(self: Module, events: EventEmitter,
           active=false, c.position)
         categoryChannels.add(channelItem)
         self.addSubmodule(chatDto.id, true, true, events, settingsService, contactService, chatService, communityService,
-        messageService, gifService, mailserversService, visualIdentityService)
+        messageService, gifService, mailserversService)
 
         # in case there is no channels beyond categories,
         # make the first channel of the first category active when load the app
@@ -266,15 +262,14 @@ method load*(self: Module, events: EventEmitter,
   communityService: community_service.Service,
   messageService: message_service.Service,
   gifService: gif_service.Service,
-  mailserversService: mailservers_service.Service,
-  visualIdentityService: visual_identity_service.Service) =
+  mailserversService: mailservers_service.Service) =
   self.controller.init()
   self.view.load()
 
   if(self.controller.isCommunity()):
-    self.buildCommunityUI(events, settingsService, contactService, chatService, communityService, messageService, gifService, mailserversService, visualIdentityService)
+    self.buildCommunityUI(events, settingsService, contactService, chatService, communityService, messageService, gifService, mailserversService)
   else:
-    self.buildChatUI(events, settingsService, contactService, chatService, communityService, messageService, gifService, mailserversService, visualIdentityService)
+    self.buildChatUI(events, settingsService, contactService, chatService, communityService, messageService, gifService, mailserversService)
     self.initContactRequestsModel() # we do this only in case of chat section (not in case of communities)
 
   for cModule in self.chatContentModules.values:
@@ -405,7 +400,6 @@ method addNewChat*(
     messageService: message_service.Service,
     gifService: gif_service.Service,
     mailserversService: mailservers_service.Service,
-    visualIdentityService: visual_identity_service.Service,
     setChatAsActive: bool = true) =
   let hasNotification = chatDto.unviewedMessagesCount > 0 or chatDto.unviewedMentionsCount > 0
   let notificationsCount = chatDto.unviewedMentionsCount
@@ -427,7 +421,7 @@ method addNewChat*(
       chatDto.description, chatDto.chatType.int, amIChatAdmin, hasNotification, notificationsCount,
       chatDto.muted, blocked=false, active=false, position = 0, chatDto.categoryId, chatDto.highlight)
     self.addSubmodule(chatDto.id, belongsToCommunity, isUsersListAvailable, events, settingsService, contactService, chatService,
-                      communityService, messageService, gifService, mailserversService, visualIdentityService)
+                      communityService, messageService, gifService, mailserversService)
     self.chatContentModules[chatDto.id].load()
     self.view.chatsModel().appendItem(item)
     if setChatAsActive:
@@ -443,7 +437,7 @@ method addNewChat*(
       amIChatAdmin, hasNotification, notificationsCount, chatDto.muted, blocked=false, active=false,
       chatDto.position)
     self.addSubmodule(chatDto.id, belongsToCommunity, isUsersListAvailable, events, settingsService, contactService, chatService,
-                      communityService, messageService, gifService, mailserversService, visualIdentityService)
+                      communityService, messageService, gifService, mailserversService)
     self.chatContentModules[chatDto.id].load()
     categoryItem.appendSubItem(channelItem)
     if setChatAsActive:
@@ -558,7 +552,7 @@ method onCommunityChannelDeletedOrChatLeft*(self: Module, chatId: string) =
 method onCommunityChannelEdited*(self: Module, chat: ChatDto) =
   if(not self.chatContentModules.contains(chat.id)):
     return
-  self.view.chatsModel().updateItemDetails(chat.id, chat.name, chat.description, chat.emoji, 
+  self.view.chatsModel().updateItemDetails(chat.id, chat.name, chat.description, chat.emoji,
     chat.color)
 
 method createOneToOneChat*(self: Module, communityID: string, chatId: string, ensName: string) =

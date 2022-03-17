@@ -30,7 +30,6 @@ import ../../app_service/service/devices/service as devices_service
 import ../../app_service/service/mailservers/service as mailservers_service
 import ../../app_service/service/gif/service as gif_service
 import ../../app_service/service/ens/service as ens_service
-import ../../app_service/service/visual_identity/service as visual_identity_service
 
 import ../modules/startup/module as startup_module
 import ../modules/main/module as main_module
@@ -84,7 +83,6 @@ type
     nodeService: node_service.Service
     gifService: gif_service.Service
     ensService: ens_service.Service
-    visualIdentityService: visual_identity_service.Service
 
     # Modules
     startupModule: startup_module.AccessInterface
@@ -181,7 +179,6 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     result.settingsService, result.walletAccountService, result.transactionService, result.ethService,
     result.networkService, result.tokenService)
   result.providerService = provider_service.newService(result.ensService)
-  result.visualIdentityService = visual_identity_service.newService()
 
   # Modules
   result.startupModule = startup_module.newModule[AppController](
@@ -222,7 +219,6 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     result.gifService,
     result.ensService,
     result.networkService,
-    result.visualIdentityService
   )
 
   # Do connections
@@ -271,7 +267,6 @@ proc delete*(self: AppController) =
   self.generalService.delete
   self.ensService.delete
   self.gifService.delete
-  self.visualIdentityService.delete
 
 proc startupDidLoad*(self: AppController) =
   singletonInstance.engine.setRootContextProperty("localAppSettings", self.localAppSettingsVariant)
@@ -320,14 +315,14 @@ proc load(self: AppController) =
   self.gifService.init()
 
   singletonInstance.engine.setRootContextProperty("globalUtils", self.globalUtilsVariant)
-  
+
   let pubKey = self.settingsService.getPublicKey()
   singletonInstance.localAccountSensitiveSettings.setFileName(pubKey)
   singletonInstance.engine.setRootContextProperty("localAccountSensitiveSettings", self.localAccountSensitiveSettingsVariant)
 
   self.buildAndRegisterLocalAccountSensitiveSettings()
   self.buildAndRegisterUserProfile()
-  
+
   self.networkService.init()
   self.tokenService.init()
   self.walletAccountService.init()
@@ -342,7 +337,6 @@ proc load(self: AppController) =
     self.messageService,
     self.gifService,
     self.mailserversService,
-    self.visualIdentityService,
   )
 
 proc userLoggedIn*(self: AppController) =

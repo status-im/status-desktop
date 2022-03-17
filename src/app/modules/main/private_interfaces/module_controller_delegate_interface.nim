@@ -23,8 +23,7 @@ method communityJoined*(self: AccessInterface, community: CommunityDto, events: 
   communityService: community_service.Service,
   messageService: message_service.Service,
   gifService: gif_service.Service,
-  mailserversService: mailservers_service.Service,
-  visualIdentityService: visual_identity_service.Service) {.base.} =
+  mailserversService: mailservers_service.Service) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method communityEdited*(self: AccessInterface, community: CommunityDto) {.base.} =

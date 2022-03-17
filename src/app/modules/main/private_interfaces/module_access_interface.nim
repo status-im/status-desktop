@@ -5,7 +5,6 @@ import ../../../../app_service/service/community/service as community_service
 import ../../../../app_service/service/message/service as message_service
 import ../../../../app_service/service/gif/service as gif_service
 import ../../../../app_service/service/mailservers/service as mailservers_service
-import ../../../../app_service/service/visual_identity/service as visual_identity_service
 
 import ../../../core/eventemitter
 
@@ -21,9 +20,7 @@ method load*(
   communityService: community_service.Service,
   messageService: message_service.Service,
   gifService: gif_service.Service,
-  mailserversService: mailservers_service.Service,
-  visualIdentityService: visual_identity_service.Service
-  )
+  mailserversService: mailservers_service.Service)
   {.base.} =
   raise newException(ValueError, "No implementation available")
 

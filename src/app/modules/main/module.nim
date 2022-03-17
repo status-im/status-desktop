@@ -49,7 +49,6 @@ import ../../../app_service/service/mailservers/service as mailservers_service
 import ../../../app_service/service/gif/service as gif_service
 import ../../../app_service/service/ens/service as ens_service
 import ../../../app_service/service/network/service as network_service
-import ../../../app_service/service/visual_identity/service as visual_identity_service
 
 import ../../core/notifications/details
 import ../../core/eventemitter
@@ -109,7 +108,6 @@ proc newModule*[T](
   gifService: gif_service.Service,
   ensService: ens_service.Service,
   networkService: network_service.Service,
-  visualIdentityService: visual_identity_service.Service
 ): Module[T] =
   result = Module[T]()
   result.delegate = delegate
@@ -129,7 +127,6 @@ proc newModule*[T](
     privacyService,
     mailserversService,
     nodeService,
-    visualIdentityService
   )
   result.moduleLoaded = false
 
@@ -152,7 +149,7 @@ proc newModule*[T](
   result.stickersModule = stickers_module.newModule(result, events, stickersService, settingsService, walletAccountService)
   result.activityCenterModule = activity_center_module.newModule(result, events, activityCenterService, contactsService,
   messageService, chatService)
-  result.communitiesModule = communities_module.newModule(result, events, communityService, contactsService, visualIdentityService)
+  result.communitiesModule = communities_module.newModule(result, events, communityService, contactsService)
   result.appSearchModule = app_search_module.newModule(result, events, contactsService, chatService, communityService,
   messageService)
   result.nodeSectionModule = node_section_module.newModule(result, events, settingsService, nodeService, nodeConfigurationService)
@@ -213,8 +210,6 @@ proc createCommunityItem[T](self: Module[T], c: CommunityDto): SectionItem =
         contactDetails.icon,
         contactDetails.details.identicon,
         contactDetails.isidenticon,
-        self.controller.getEmojiHash(member.id),
-        self.controller.getColorHash(member.id),
         contactDetails.details.added
         )),
     c.pendingRequestsToJoin.map(x => pending_request_item.initItem(
@@ -237,7 +232,6 @@ method load*[T](
   messageService: message_service.Service,
   gifService: gif_service.Service,
   mailserversService: mailservers_service.Service,
-  visualIdentityService: visual_identity_service.Service
 ) =
   singletonInstance.engine.setRootContextProperty("mainModule", self.viewVariant)
   self.controller.init()
@@ -353,9 +347,9 @@ method load*[T](
     activeSection = profileSettingsSectionItem
 
   # Load all sections
-  self.chatSectionModule.load(events, settingsService, contactsService, chatService, communityService, messageService, gifService, mailserversService, visualIdentityService)
+  self.chatSectionModule.load(events, settingsService, contactsService, chatService, communityService, messageService, gifService, mailserversService)
   for cModule in self.communitySectionsModule.values:
-    cModule.load(events, settingsService, contactsService, chatService, communityService, messageService, gifService, mailserversService, visualIdentityService)
+    cModule.load(events, settingsService, contactsService, chatService, communityService, messageService, gifService, mailserversService)
 
   self.browserSectionModule.load()
   # self.nodeManagementSectionModule.load()
@@ -582,7 +576,6 @@ method communityJoined*[T](
   messageService: message_service.Service,
   gifService: gif_service.Service,
   mailserversService: mailservers_service.Service,
-  visualIdentityService: visual_identity_service.Service
 ) =
   var firstCommunityJoined = false
   if (self.communitySectionsModule.len == 0):
@@ -600,7 +593,7 @@ method communityJoined*[T](
       gifService,
       mailserversService
     )
-  self.communitySectionsModule[community.id].load(events, settingsService, contactsService, chatService, communityService, messageService, gifService, mailserversService, visualIdentityService)
+  self.communitySectionsModule[community.id].load(events, settingsService, contactsService, chatService, communityService, messageService, gifService, mailserversService)
 
   let communitySectionItem = self.createCommunityItem(community)
   if (firstCommunityJoined):
@@ -652,17 +645,6 @@ method getContactDetailsAsJson*[T](self: Module[T], publicKey: string): string =
     "removed":contact.removed
   }
   return $jsonObj
-
-method getEmojiHashAsJson*[T](self: Module[T], publicKey: string): string =
-  let emojiHash =  self.controller.getEmojiHash(publicKey)
-  return $$emojiHash
-
-method getColorHashAsJson*[T](self: Module[T], publicKey: string): string =
-  let colorHash =  self.controller.getColorHash(publicKey)
-  let json = newJArray()
-  for segment in colorHash:
-    json.add(%* {"segmentLength": segment.len, "colorId": segment.colorIdx})
-  return $json
 
 method resolveENS*[T](self: Module[T], ensName: string, uuid: string) =
   if ensName.len == 0:

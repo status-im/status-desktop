@@ -1,6 +1,5 @@
 import ../../../../../../app_service/service/contacts/service as contacts_service
 import ../../../../../../app_service/service/chat/service as chat_service
-import ../../../../../../app_service/service/visual_identity/service
 
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -32,10 +31,4 @@ method getChat*(self: AccessInterface): ChatDto {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getChatMemberInfo*(self: AccessInterface, id: string): (bool, bool) =
-  raise newException(ValueError, "No implementation available")
-
-method getEmojiHash*(self: AccessInterface, pubkey: string): EmojiHashDto {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method getColorHash*(self: AccessInterface, pubkey: string): ColorHashDto {.base.} =
   raise newException(ValueError, "No implementation available")
