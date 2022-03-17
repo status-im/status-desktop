@@ -14,6 +14,7 @@ type
     value: string
     uuid: string
     chainId: int
+    reason: string
 
 const lookupContactTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[LookupContactTaskArg](argEncoded)
@@ -35,7 +36,8 @@ const lookupContactTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let output = %*{
     "id": pubkey,
     "address": address,
-    "uuid": arg.uuid
+    "uuid": arg.uuid,
+    "reason": arg.reason
   }
   arg.finish(output)
 

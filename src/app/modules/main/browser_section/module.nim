@@ -92,3 +92,6 @@ method dappsDidLoad*(self: Module) =
 
 method viewDidLoad*(self: Module) =
   self.checkIfModuleDidLoad()
+
+method openUrl*(self: Module, url: string) =
+  self.view.sendOpenUrlSignal(url)

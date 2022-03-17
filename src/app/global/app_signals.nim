@@ -22,3 +22,27 @@ const SIGNAL_MAKE_SECTION_CHAT_ACTIVE* = "makeSectionChatActive"
 ## Emmiting this signal will switch the app to passed `sectionId`, after that if `chatId` is set
 ## it will make that chat an active one and at the end if `messageId` is set it will point to
 ## that message.
+ 
+
+type
+  StatusUrlAction* {.pure.} = enum
+    OpenLinkInBrowser = 0
+    DisplayUserProfile,
+    OpenOrCreatePrivateChat,
+    OpenOrJoinPublicChat,
+    OpenOrCreateGroupChat,
+    RequestToJoinCommunity,
+    OpenCommunity,
+    OpenCommunityChannel
+
+type 
+  StatusUrlArgs* = ref object of Args
+    action*: StatusUrlAction
+    communityId*:string
+    chatId*: string
+    url*: string
+    userId*: string # can be public key or ens name
+    groupName*: string
+    listOfUserIds*: seq[string] # used for creating group chat
+
+const SIGNAL_STATUS_URL_REQUESTED* = "statusUrlRequested"

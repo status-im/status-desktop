@@ -21,3 +21,6 @@ method providerDidLoad*(self: AccessInterface) {.base.} =
 
 method viewDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method openUrl*(self: AccessInterface, url: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
