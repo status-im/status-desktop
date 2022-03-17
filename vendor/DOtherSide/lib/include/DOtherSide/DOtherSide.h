@@ -994,6 +994,7 @@ DOS_API void DOS_CALL dos_singleinstance_delete(DosSingleInstance *vptr);
 
 DOS_API DosEvent* dos_event_create_showAppEvent(DosQQmlApplicationEngine* vptr);
 DOS_API DosEvent* dos_event_create_osThemeEvent(DosQQmlApplicationEngine* vptr);
+DOS_API DosEvent* dos_event_create_urlSchemeEvent();
 DOS_API void dos_event_delete(DosEvent* vptr);
 
 #pragma endregion
