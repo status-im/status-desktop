@@ -35,8 +35,7 @@ const requestMoreMessagesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall
     info "Requesting additional message history for chat", chatId=arg.chatId
     discard status_mailservers.syncChatFromSyncedFrom(arg.chatId)
   except Exception as e:
-    warn "Disconnecting active mailserver due to error", errDescription=e.msg
-    discard status_mailservers.disconnectActiveMailserver()
+    warn "Could not request additional messages due to error", errDescription=e.msg
 
 const fillGapsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[FillGapsTaskArg](argEncoded)
@@ -44,8 +43,7 @@ const fillGapsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
     info "Requesting fill gaps", chatId=arg.chatId, messageIds=arg.messageIds
     discard status_mailservers.fillGaps(arg.chatId, arg.messageIds)
   except Exception as e:
-    warn "Disconnecting active mailserver due to error", errDescription=e.msg
-    discard status_mailservers.disconnectActiveMailserver()
+    warn "Could not fill gaps due to error", errDescription=e.msg
 
 QtObject:
   type Service* = ref object of QObject
