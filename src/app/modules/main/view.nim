@@ -172,7 +172,7 @@ QtObject:
     return communityVariant
 
   proc getChatSectionModule*(self: View): QVariant {.slot.} =
-    return self.delegate.getChatSectionModule()
+    return self.delegate.getChatSectionModuleAsVariant()
 
   proc getAppSearchModule(self: View): QVariant {.slot.} =
     return self.delegate.getAppSearchModule()
@@ -209,3 +209,7 @@ QtObject:
   QtProperty[bool] isOnline:
     read = isConnected
     notify = onlineStatusChanged
+
+  proc displayUserProfile*(self:View, publicKey: string) {.signal.}
+  proc emitDisplayUserProfileSignal*(self: View, publicKey: string) =
+    self.displayUserProfile(publicKey)

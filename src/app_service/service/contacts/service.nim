@@ -31,6 +31,7 @@ type
     pubkey*: string
     address*: string
     uuid*: string
+    reason*: string
 
   ContactsStatusUpdatedArgs* = ref object of Args
     statusUpdates*: seq[StatusUpdateDto]
@@ -382,10 +383,11 @@ QtObject:
     let data = ResolvedContactArgs(
         pubkey: jsonObj["id"].getStr,
         address: jsonObj["address"].getStr,
-        uuid: jsonObj["uuid"].getStr)
+        uuid: jsonObj["uuid"].getStr,
+        reason: jsonObj["reason"].getStr)
     self.events.emit(SIGNAL_ENS_RESOLVED, data)
 
-  proc resolveENS*(self: Service, value: string, uuid: string = "") =
+  proc resolveENS*(self: Service, value: string, uuid: string = "", reason = "") =
     if(self.closingApp):
       return
     let arg = LookupContactTaskArg(
@@ -394,7 +396,8 @@ QtObject:
       slot: "ensResolved",
       value: value,
       chainId: self.settingsService.getCurrentNetworkId(),
-      uuid: uuid
+      uuid: uuid,
+      reason: reason
     )
     self.threadpool.start(arg)
 

@@ -64,6 +64,11 @@ Item {
     }
 
     Connections {
+        target: rootStore.mainModuleInst
+        onDisplayUserProfile: Global.openProfilePopup(publicKey)
+    }
+
+    Connections {
         target: Global
         onOpenLinkInBrowser: {
             browserLayoutContainer.item.openUrlInNewTab(link);

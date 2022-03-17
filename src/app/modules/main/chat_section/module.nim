@@ -370,7 +370,7 @@ method createPublicChat*(self: Module, chatId: string) =
     return
 
   if(self.chatContentModules.hasKey(chatId)):
-    error "error: public chat is already added", chatId, methodName="createPublicChat"
+    self.setActiveItemSubItem(chatId, "")
     return
 
   self.controller.createPublicChat(chatId)
@@ -546,17 +546,26 @@ method onCommunityChannelEdited*(self: Module, chat: ChatDto) =
   self.view.chatsModel().updateItemDetails(chat.id, chat.name, chat.description, chat.emoji,
     chat.color)
 
-method createOneToOneChat*(self: Module, communityID: string, chatId: string, ensName: string) =
-  if(self.controller.isCommunity()):
-    # initiate chat creation in the `Chat` seciton module.
-    self.controller.switchToOrCreateOneToOneChat(chatId, ensName)
+method switchToOrCreateOneToOneChat*(self: Module, chatId: string) =
+  # One To One chat is available only in the `Chat` section
+  if(self.controller.getMySectionId() != singletonInstance.userProfile.getPubKey()):
     return
 
   if(self.chatContentModules.hasKey(chatId)):
     self.setActiveItemSubItem(chatId, "")
     return
 
-  self.controller.createOneToOneChat(communityID, chatId, ensName)
+  self.controller.createOneToOneChat("", chatId, "")
+
+method createOneToOneChat*(self: Module, communityID: string, chatId: string, ensName: string) =
+  if(self.controller.isCommunity()):
+    # initiate chat creation in the `Chat` seciton module.
+    self.controller.switchToOrCreateOneToOneChat(chatId, ensName)
+    return
+
+  # Adding this call here we have the same as we had before (didn't inspect what are all cases when this 
+  # `createOneToOneChat` is called), but I am sure that after checking all cases and inspecting them, this can be improved.
+  self.switchToOrCreateOneToOneChat(chatId)
 
 method leaveChat*(self: Module, chatId: string) =
   self.controller.leaveChat(chatId)
@@ -685,6 +694,9 @@ method makeAdmin*(self: Module, communityID: string, chatId: string, pubKey: str
 
 method createGroupChat*(self: Module, communityID: string, groupName: string, pubKeys: string) =
   self.controller.createGroupChat(communityID, groupName, self.convertPubKeysToJson(pubKeys))
+
+method createGroupChat*(self: Module, groupName: string, pubKeys: seq[string]) =
+  self.controller.createGroupChat("", groupName, pubKeys)
 
 method joinGroupChatFromInvitation*(self: Module, groupName: string, chatId: string, adminPK: string) =
   self.controller.joinGroupChatFromInvitation(groupName, chatId, adminPK)

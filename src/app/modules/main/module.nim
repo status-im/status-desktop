@@ -59,6 +59,8 @@ export io_interface
 
 const COMMUNITY_PERMISSION_ACCESS_ON_REQUEST = 3
 const TOAST_MESSAGE_VISIBILITY_DURATION_IN_MS = 5000 # 5 seconds
+const STATUS_URL_ENS_RESOLVE_REASON = "StatusUrl"
+const MAX_MEMBERS_IN_GROUP_CHAT_WITHOUT_ADMIN = 19
 
 type
   Module*[T: io_interface.DelegateInterface] = ref object of io_interface.AccessInterface
@@ -77,6 +79,9 @@ type
     nodeSectionModule: node_section_module.AccessInterface
     networksModule: networks_module.AccessInterface
     moduleLoaded: bool
+    statusUrlGroupName: string
+    statusUrlGroupMembers: seq[string] # used only for creating group chat from the status url
+    statusUrlGroupMembersCount: int
 
 # Forward declaration
 method calculateProfileSectionHasNotification*[T](self: Module[T]): bool
@@ -457,7 +462,7 @@ method setActiveSection*[T](self: Module[T], item: SectionItem) =
     echo "section is empty and cannot be made as active one"
     return
 
-  self.controller.setActiveSection(item.id, item.sectionType)
+  self.controller.setActiveSection(item.id)
 
 proc notifySubModulesAboutChange[T](self: Module[T], sectionId: string) =
   for cModule in self.channelGroupModules.values:
@@ -504,8 +509,11 @@ method toggleSection*[T](self: Module[T], sectionType: SectionType) =
 method setUserStatus*[T](self: Module[T], status: bool) =
   self.controller.setUserStatus(status)
 
-method getChatSectionModule*[T](self: Module[T]): QVariant =
-  return self.channelGroupModules[singletonInstance.userProfile.getPubKey()].getModuleAsVariant()
+proc getChatSectionModule*[T](self: Module[T]): chat_section_module.AccessInterface =
+  return self.channelGroupModules[singletonInstance.userProfile.getPubKey()]
+
+method getChatSectionModuleAsVariant*[T](self: Module[T]): QVariant =
+  return self.getChatSectionModule().getModuleAsVariant()
 
 method getCommunitySectionModule*[T](self: Module[T], communityId: string): QVariant =
   if(not self.channelGroupModules.contains(communityId)):
@@ -650,14 +658,36 @@ method getContactDetailsAsJson*[T](self: Module[T], publicKey: string): string =
   }
   return $jsonObj
 
-method resolveENS*[T](self: Module[T], ensName: string, uuid: string) =
+method resolveENS*[T](self: Module[T], ensName: string, uuid: string, reason: string = "") =
   if ensName.len == 0:
     echo "error: cannot do a lookup for empty ens name"
     return
-  self.controller.resolveENS(ensName, uuid)
+  self.controller.resolveENS(ensName, uuid, reason)
 
-method resolvedENS*[T](self: Module[T], publicKey: string, address: string, uuid: string) =
-  self.view.emitResolvedENSSignal(publicKey, address, uuid)
+method resolvedENS*[T](self: Module[T], publicKey: string, address: string, uuid: string, reason: string) =
+  if(publicKey.len == 0):
+    self.displayEphemeralNotification("Unexisting contact", "Wrong public key or ens name", "", false, EphemeralNotificationType.Default.int, "")
+    return
+  
+  if(reason == STATUS_URL_ENS_RESOLVE_REASON & $StatusUrlAction.DisplayUserProfile):
+    let item = self.view.model().getItemById(singletonInstance.userProfile.getPubKey())
+    self.setActiveSection(item)
+    self.view.emitDisplayUserProfileSignal(publicKey)
+  elif(reason == STATUS_URL_ENS_RESOLVE_REASON & $StatusUrlAction.OpenOrCreatePrivateChat):
+    let item = self.view.model().getItemById(singletonInstance.userProfile.getPubKey())
+    self.setActiveSection(item)
+    self.getChatSectionModule().switchToOrCreateOneToOneChat(publicKey)
+  elif(reason == STATUS_URL_ENS_RESOLVE_REASON & $StatusUrlAction.OpenOrCreateGroupChat):
+    self.statusUrlGroupMembers.add(publicKey)
+    if(self.statusUrlGroupMembers.len == self.statusUrlGroupMembersCount):
+      let item = self.view.model().getItemById(singletonInstance.userProfile.getPubKey())
+      self.setActiveSection(item)
+      self.getChatSectionModule().createGroupChat(self.statusUrlGroupName, self.statusUrlGroupMembers)
+      self.statusUrlGroupName = ""
+      self.statusUrlGroupMembers = @[]
+      self.statusUrlGroupMembersCount = 0
+  else:
+    self.view.emitResolvedENSSignal(publicKey, address, uuid)
 
 method contactUpdated*[T](self: Module[T], publicKey: string) =
   let contactDetails = self.controller.getContactDetails(publicKey)
@@ -726,3 +756,53 @@ method displayEphemeralNotification*[T](self: Module[T], title: string, subTitle
 
 method removeEphemeralNotification*[T](self: Module[T], id: int64) =
   self.view.ephemeralNotificationModel().removeItemWithId(id)
+
+method onStatusUrlRequested*[T](self: Module[T], action: StatusUrlAction, communityId: string, chatId: string, 
+  url: string, userId: string, groupName: string, listOfUserIds: seq[string]) =
+  
+  if(action == StatusUrlAction.OpenLinkInBrowser and singletonInstance.localAccountSensitiveSettings.getIsBrowserEnabled()):
+    let item = self.view.model().getItemById(conf.BROWSER_SECTION_ICON)
+    self.setActiveSection(item)
+    self.browserSectionModule.openUrl(url)
+
+  elif(action == StatusUrlAction.DisplayUserProfile):
+    self.resolveENS(userId, "", STATUS_URL_ENS_RESOLVE_REASON & $StatusUrlAction.DisplayUserProfile)
+
+  elif(action == StatusUrlAction.OpenOrCreatePrivateChat):
+    self.resolveENS(chatId, "", STATUS_URL_ENS_RESOLVE_REASON & $StatusUrlAction.OpenOrCreatePrivateChat)
+
+  elif(action == StatusUrlAction.OpenOrJoinPublicChat):
+    let item = self.view.model().getItemById(singletonInstance.userProfile.getPubKey())
+    self.setActiveSection(item)
+    self.getChatSectionModule().createPublicChat(chatId)
+
+  elif(action == StatusUrlAction.OpenOrCreateGroupChat):
+    self.statusUrlGroupName = groupName
+    # if there are more than 20 members added to the url, we add only first 19
+    self.statusUrlGroupMembersCount = if listOfUserIds.len <= MAX_MEMBERS_IN_GROUP_CHAT_WITHOUT_ADMIN: listOfUserIds.len else: MAX_MEMBERS_IN_GROUP_CHAT_WITHOUT_ADMIN
+    var i = 0
+    for id in listOfUserIds:
+      if(i >= MAX_MEMBERS_IN_GROUP_CHAT_WITHOUT_ADMIN):
+        break
+      i.inc
+      self.resolveENS(id, "", STATUS_URL_ENS_RESOLVE_REASON & $StatusUrlAction.OpenOrCreateGroupChat)
+  
+  elif(action == StatusUrlAction.RequestToJoinCommunity and singletonInstance.localAccountSensitiveSettings.getCommunitiesEnabled()):
+    let item = self.view.model().getItemById(singletonInstance.userProfile.getPubKey())
+    self.setActiveSection(item)
+    self.communitiesModule.requestToJoinCommunity(communityId, singletonInstance.userProfile.getName())
+
+  elif(action == StatusUrlAction.OpenCommunity and singletonInstance.localAccountSensitiveSettings.getCommunitiesEnabled()):
+    let item = self.view.model().getItemById(communityId)
+    self.setActiveSection(item)
+
+  elif(action == StatusUrlAction.OpenCommunityChannel and singletonInstance.localAccountSensitiveSettings.getCommunitiesEnabled()):
+    for cId, cModule in self.channelGroupModules.pairs:
+      if(cId == singletonInstance.userProfile.getPubKey()):
+        continue
+      if(cModule.doesCatOrChatExist(chatId)):
+        let item = self.view.model().getItemById(cId)
+        self.setActiveSection(item)
+
+        cModule.makeChatWithIdActive(chatId)
+        break

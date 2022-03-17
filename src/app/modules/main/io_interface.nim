@@ -8,6 +8,7 @@ import ../../../app_service/service/message/service as message_service
 import ../../../app_service/service/gif/service as gif_service
 import ../../../app_service/service/mailservers/service as mailservers_service
 
+import ../../global/app_signals
 import ../../core/eventemitter
 import ../../core/notifications/details
 import ../shared_models/section_item
@@ -116,7 +117,7 @@ method communityEdited*(self: AccessInterface, community: CommunityDto) {.base.}
 method communityLeft*(self: AccessInterface, communityId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method resolvedENS*(self: AccessInterface, publicKey: string, address: string, uuid: string) {.base.} =
+method resolvedENS*(self: AccessInterface, publicKey: string, address: string, uuid: string, reason: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method contactUpdated*(self: AccessInterface, publicKey: string) {.base.} =
@@ -164,7 +165,7 @@ method setActiveSection*(self: AccessInterface, item: SectionItem) {.base.} =
 method setUserStatus*(self: AccessInterface, status: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getChatSectionModule*(self: AccessInterface): QVariant {.base.} =
+method getChatSectionModuleAsVariant*(self: AccessInterface): QVariant {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getCommunitySectionModule*(self: AccessInterface, communityId: string): QVariant {.base.} =
@@ -176,7 +177,7 @@ method getAppSearchModule*(self: AccessInterface): QVariant {.base.} =
 method getContactDetailsAsJson*(self: AccessInterface, publicKey: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method resolveENS*(self: AccessInterface, ensName: string, uuid: string) {.base.} =
+method resolveENS*(self: AccessInterface, ensName: string, uuid: string, reason: string = "") {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method rebuildChatSearchModel*(self: AccessInterface) {.base.} =
@@ -188,6 +189,9 @@ method switchTo*(self: AccessInterface, sectionId, chatId: string) {.base.} =
 method isConnected*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method onStatusUrlRequested*(self: AccessInterface, action: StatusUrlAction, communityId: string, chatId: string, 
+  url: string, userId: string, groupName: string, listOfUserIds: seq[string]) {.base.} =
+  raise newException(ValueError, "No implementation available")
 
 
 
