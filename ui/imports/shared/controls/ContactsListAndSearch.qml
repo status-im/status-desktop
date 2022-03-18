@@ -62,6 +62,8 @@ Item {
 
     Input {
         id: chatKey
+        property bool hasValidSearchResult: false
+
         //% "Enter ENS username or chat key"
         placeholderText: qsTrId("enter-contact-code")
         visible: showSearch
@@ -90,6 +92,7 @@ Item {
                     return;
                 }
 
+                chatKey.hasValidSearchResult = false
                 Qt.callLater(resolveENS, chatKey.text);
             } else {
                 root.validationError = "";
@@ -100,6 +103,7 @@ Item {
         Connections {
             target: mainModule
             onResolvedENS: {
+                chatKey.hasValidSearchResult = false
                 if (chatKey.text == "") {
                     ensUsername.text = "";
                     pubKey = "";
@@ -113,6 +117,7 @@ Item {
                         //% "Can't chat with yourself"
                         root.validationError = qsTrId("can-t-chat-with-yourself");
                     } else {
+                        chatKey.hasValidSearchResult = true
                         searchResults.username = Utils.addStatusEns(chatKey.text.trim())
                         let userAlias = globalUtils.generateAlias(resolvedPubKey)
                         userAlias = userAlias.length > 20 ? userAlias.substring(0, 19) + "..." : userAlias
@@ -151,6 +156,7 @@ Item {
                 noContactsRect.visible = false;
                 searchResults.loading = false;
                 root.validationError = "";
+                chatKey.hasValidSearchResult = false
             }
         }
     }
@@ -199,6 +205,7 @@ Item {
             }
             root.pubKeys = pubKeysCopy
 
+            chatKey.hasValidSearchResult = false
             userClicked(contact.pubKey, contact.isContact, contact.name, contact.address)
         }
         expanded: !searchResults.loading && pubKey === "" && !searchResults.showProfileNotFoundMessage
@@ -217,6 +224,7 @@ Item {
             if (!validate()) {
                 return
             }
+            chatKey.hasValidSearchResult = false
             userClicked(pubKey, isAddedContact, username, searchResults.address)
         }
         onAddToContactsButtonClicked: {

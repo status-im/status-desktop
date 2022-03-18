@@ -53,6 +53,14 @@ QtObject {
 
     property var walletSectionTransactionsInst: walletSectionTransactions
 
+    property bool isMultiNetworkEnabled: localAccountSensitiveSettings.isMultiNetworkEnabled
+
+    property var savedAddressesModel: walletSectionSavedAddresses.model
+
+    function getEtherscanLink() {
+        return profileSectionModule.ensUsernamesModule.getEtherscanLink()
+    }
+
     function createCommunity(communityName, communityDescription, checkedMembership, ensOnlySwitchChecked, communityColor, communityImage, imageCropperModalaX, imageCropperModalaY, imageCropperModalbX, imageCropperModalbY) {
         communitiesModuleInst.createCommunity(communityName, communityDescription, checkedMembership, ensOnlySwitchChecked, communityColor, communityImage, imageCropperModalaX, imageCropperModalaY, imageCropperModalbX, imageCropperModalbY);
     }
@@ -103,5 +111,9 @@ QtObject {
 
     function suggestedFees() {
         return JSON.parse(walletSectionTransactions.suggestedFees())
+    }
+
+    function hex2Eth(value) {
+        return globalUtils.hex2Eth(value)
     }
 }

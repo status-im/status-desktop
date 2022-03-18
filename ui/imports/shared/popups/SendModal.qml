@@ -2,32 +2,32 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtQuick.Dialogs 1.3
+import QtGraphicalEffects 1.0
+import StatusQ.Controls.Validators 0.1
 
 import utils 1.0
 import shared.stores 1.0
 
 import StatusQ.Controls 0.1
+import StatusQ.Popups 0.1
+import StatusQ.Components 0.1
+import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
 
 import "../panels"
 import "../controls"
 import "../views"
-import "."
 
-// TODO: replace with StatusModal
-ModalPopup {
-    id: root
-    property var contactsStore
+StatusModal {
+    id: popup
 
-    property alias selectFromAccount: selectFromAccount
-    property alias selectRecipient: selectRecipient
     property alias stack: stack
+
     property var store
-    property bool isContact: false
-
-    //% "Send"
-    title: qsTrId("command-button-send")
-    height: 540
-
+    property var contactsStore
+    property var preSelectedAccount
+    property var preSelectedRecipient
+    property bool launchedFromChat: false
     property MessageDialog sendingError: MessageDialog {
         id: sendingError
         //% "Error sending the transaction"
@@ -39,11 +39,11 @@ ModalPopup {
     function sendTransaction() {
         stack.currentGroup.isPending = true
         let success = false
-        if(txtAmount.selectedAsset.address === "" || txtAmount.selectedAsset.address === Constants.zeroAddress){
-            success = root.store.transferEth(
-                        selectFromAccount.selectedAccount.address,
-                        selectRecipient.selectedRecipient.address,
-                        txtAmount.selectedAmount,
+        if(advancedHeader.assetSelector.selectedAsset.address === "" || advancedHeader.assetSelector.selectedAsset.address === Constants.zeroAddress){
+            success = popup.store.transferEth(
+                        advancedHeader.accountSelector.selectedAccount.address,
+                        advancedHeader.recipientSelector.selectedRecipient.address,
+                        advancedHeader.amountToSendInput.text,
                         gasSelector.selectedGasLimit,
                         gasSelector.isEIP1559Enabled ? "" : gasSelector.selectedGasPrice,
                         gasSelector.selectedTipLimit,
@@ -51,11 +51,11 @@ ModalPopup {
                         transactionSigner.enteredPassword,
                         stack.uuid)
         } else {
-            success = root.store.transferTokens(
-                        selectFromAccount.selectedAccount.address,
-                        selectRecipient.selectedRecipient.address,
-                        txtAmount.selectedAsset.address,
-                        txtAmount.selectedAmount,
+            success = popup.store.transferTokens(
+                        advancedHeader.accountSelector.selectedAccount.address,
+                        advancedHeader.recipientSelector.selectedRecipient.address,
+                        advancedHeader.assetSelector.selectedAsset.address,
+                        advancedHeader.amountToSendInput.text,
                         gasSelector.selectedGasLimit,
                         gasSelector.isEIP1559Enabled ? "" : gasSelector.selectedGasPrice,
                         gasSelector.selectedTipLimit,
@@ -63,291 +63,246 @@ ModalPopup {
                         transactionSigner.enteredPassword,
                         stack.uuid)
         }
-
-        // Till the method is moved to thread this is handled by a signal to which connection is made in the end of the file
-//        if(!success){
-//            //% "Invalid transaction parameters"
-//            sendingError.text = qsTrId("invalid-transaction-parameters")
-//            sendingError.open()
-//        }
     }
 
-    TransactionStackView {
-        id: stack
-        anchors.fill: parent
-        anchors.leftMargin: Style.current.padding
-        anchors.rightMargin: Style.current.padding
-        onGroupActivated: {
-            root.title = group.headerText
-            btnNext.text = group.footerText
+    width: 556
+    // To-Do as per design once the account selector become floating the heigth can be as defined in design as 595
+    height: 670
+    showHeader: false
+    showFooter: false
+    showAdvancedFooter: !!popup.advancedHeader ? popup.advancedHeader.isReady && gasValidator.isValid : false
+    showAdvancedHeader: true
+
+    onOpened: {
+        if(!!advancedHeader) {
+            advancedHeader.amountToSendInput.input.edit.forceActiveFocus()
+
+            if(popup.launchedFromChat) {
+                advancedHeader.recipientSelector.selectedType = RecipientSelector.Type.Contact
+                advancedHeader.recipientSelector.readOnly = true
+                advancedHeader.recipientSelector.selectedRecipient = popup.preSelectedRecipient
+            }
+            if(popup.preSelectedAccount) {
+                advancedHeader.accountSelector.selectedAccount = popup.preSelectedAccount
+            }
         }
+    }
+
+    advancedHeaderComponent: SendModalHeader {
+        store: popup.store
+        contactsStore: popup.contactsStore
+        estimateGas: function() {
+            if(popup.contentItem.currentGroup.isValid)
+                gasSelector.estimateGas()
+        }
+    }
+
+    contentItem: TransactionStackView {
+        id: stack
+        property alias currentGroup: stack.currentGroup
+        anchors.leftMargin: Style.current.xlPadding
+        anchors.topMargin: (!!advancedHeader ? advancedHeader.height: 0) + Style.current.smallPadding
+        anchors.rightMargin: Style.current.xlPadding
+        anchors.bottomMargin: popup.showAdvancedFooter  && !!advancedFooter ? advancedFooter.height : Style.current.padding
         TransactionFormGroup {
             id: group1
-            //% "Send"
-            headerText: qsTrId("command-button-send")
-            //% "Continue"
-            footerText: qsTrId("continue")
+            anchors.fill: parent
+            ScrollView {
+                height: stack.height
+                width: parent.width
+                anchors.top: parent.top
+                anchors.left: parent.left
 
-            StatusAccountSelector {
-                id: selectFromAccount
-                accounts: root.store.accounts
-                selectedAccount: {
-                    const currAcc = root.store.currentAccount
-                    if (currAcc.walletType !== Constants.watchWalletType) {
-                        return currAcc
+                ScrollBar.vertical.policy: ScrollBar.AlwaysOff
+                ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+                contentHeight: addressSelector.height + networkAndFeesSelector.height + gasSelector.height + gasValidator.height
+                clip: true
+
+                TabAddressSelectorView {
+                    id: addressSelector
+                    anchors.top: parent.top
+                    anchors.right: parent.right
+                    anchors.left: parent.left
+                    store: popup.store
+                    onContactSelected:  {
+                        if(!!popup.advancedHeader)
+                            advancedHeader.recipientSelector.input.text = address
                     }
-                    return null
                 }
-                currency: root.store.currentCurrency
-                width: stack.width
-                //% "From account"
-                label: qsTrId("from-account")
-                onSelectedAccountChanged: if (isValid) { gasSelector.estimateGas() }
-            }
-            SeparatorWithIcon {
-                id: separator
-                anchors.top: selectFromAccount.bottom
-                anchors.topMargin: 19
-            }
-            RecipientSelector {
-                id: selectRecipient
-                accounts: root.store.accounts
-                contactsStore: root.contactsStore
-                //% "Recipient"
-                label: qsTrId("recipient")
-                anchors.top: separator.bottom
-                anchors.topMargin: 10
-                width: stack.width
-                onSelectedRecipientChanged: if (isValid) { gasSelector.estimateGas() }
-            }
-        }
-        TransactionFormGroup {
-            id: group2
-            //% "Send"
-            headerText: qsTrId("command-button-send")
-            //% "Preview"
-            footerText: qsTr("Continue")
 
-            AssetAndAmountInput {
-                id: txtAmount
-                selectedAccount: selectFromAccount.selectedAccount
-                currentCurrency: root.store.currentCurrency
-                // TODO make those use a debounce
-                getFiatValue: root.store.getFiatValue
-//                getCryptoValue: RootStore.cryptoValue
-                width: stack.width
-                onSelectedAssetChanged: if (isValid) { gasSelector.estimateGas() }
-                onSelectedAmountChanged: if (isValid) { gasSelector.estimateGas() }
-            }
-            GasSelector {
-                id: gasSelector
-                anchors.top: txtAmount.bottom
-                anchors.topMargin: Style.current.padding
-                gasPrice: parseFloat(root.store.gasPrice)
-                getGasEthValue: root.store.getGasEthValue
-                getFiatValue: root.store.getFiatValue
-                defaultCurrency: root.store.currentCurrency
-                isEIP1559Enabled: root.store.isEIP1559Enabled()
-                latestBaseFeePerGas: root.store.latestBaseFeePerGas()
-                suggestedFees: root.store.suggestedFees()
+                TabNetworkAndFees {
+                    id: networkAndFeesSelector
+                    anchors.top: addressSelector.bottom
+                    anchors.right: parent.right
+                    anchors.left: parent.left
+                    visible: popup.store.isMultiNetworkEnabled
+                }
 
-                width: stack.width
-                property var estimateGas: Backpressure.debounce(gasSelector, 600, function() {
-                   if (!(selectFromAccount.selectedAccount && selectFromAccount.selectedAccount.address &&
-                       selectRecipient.selectedRecipient && selectRecipient.selectedRecipient.address &&
-                       txtAmount.selectedAsset && txtAmount.selectedAsset.address &&
-                       txtAmount.selectedAmount)) {
-                        selectedGasLimit = 250000
+                GasSelector {
+                    id: gasSelector
+                    anchors.top: networkAndFeesSelector.visible ? networkAndFeesSelector.bottom : addressSelector.bottom
+                    gasPrice: parseFloat(popup.store.gasPrice)
+                    getGasEthValue: popup.store.getGasEthValue
+                    getFiatValue: popup.store.getFiatValue
+                    defaultCurrency: popup.store.currentCurrency
+                    isEIP1559Enabled: popup.store.isEIP1559Enabled()
+                    latestBaseFeePerGas: popup.store.latestBaseFeePerGas()
+                    suggestedFees: popup.store.suggestedFees()
+
+                    visible: !popup.store.isMultiNetworkEnabled
+
+                    width: stack.width
+                    property var estimateGas: Backpressure.debounce(gasSelector, 600, function() {
+                        if (!(advancedHeader.accountSelector.selectedAccount && advancedHeader.accountSelector.selectedAccount.address &&
+                              advancedHeader.recipientSelector.selectedRecipient && advancedHeader.recipientSelector.selectedRecipient.address &&
+                              advancedHeader.assetSelector.selectedAsset && advancedHeader.assetSelector.selectedAsset.address &&
+                              advancedHeader.amountToSendInput.text)) {
+                            selectedGasLimit = 250000
+                            defaultGasLimit = selectedGasLimit
+                            return
+                        }
+
+                        let gasEstimate = JSON.parse(popup.store.estimateGas(
+                                                         advancedHeader.accountSelector.selectedAccount.address,
+                                                         advancedHeader.recipientSelector.selectedRecipient.address,
+                                                         advancedHeader.assetSelector.selectedAsset.address,
+                                                         advancedHeader.amountToSendInput.text,
+                                                         ""))
+
+                        if (!gasEstimate.success) {
+                            //% "Error estimating gas: %1"
+                            console.warn(qsTrId("error-estimating-gas---1").arg(gasEstimate.error.message))
+                            return
+                        }
+
+                        selectedGasLimit = gasEstimate.result
                         defaultGasLimit = selectedGasLimit
-                        return
-                    }
-
-                   let gasEstimate = JSON.parse(root.store.estimateGas(
-                       selectFromAccount.selectedAccount.address,
-                       selectRecipient.selectedRecipient.address,
-                       txtAmount.selectedAsset.address,
-                       txtAmount.selectedAmount,
-                       ""))
-
-                   if (!gasEstimate.success) {
-                       //% "Error estimating gas: %1"
-                       console.warn(qsTrId("error-estimating-gas---1").arg(gasEstimate.error.message))
-                       return
-                   }
-
-                   selectedGasLimit = gasEstimate.result
-                   defaultGasLimit = selectedGasLimit
-                })
-            }
-            GasValidator {
-                id: gasValidator
-                anchors.top: gasSelector.bottom
-                selectedAccount: selectFromAccount.selectedAccount
-                selectedAmount: parseFloat(txtAmount.selectedAmount)
-                selectedAsset: txtAmount.selectedAsset
-                selectedGasEthValue: gasSelector.selectedGasEthValue
-            }
-        }
-        TransactionFormGroup {
-            id: group3
-            //% "Transaction preview"
-            headerText: qsTrId("transaction-preview")
-            //% "Sign with password"
-            footerText: qsTrId("sign-with-password")
-
-            TransactionPreview {
-                id: pvwTransaction
-                width: stack.width
-                fromAccount: selectFromAccount.selectedAccount
-                gas: {
-                    "value": gasSelector.selectedGasEthValue,
-                    "symbol": "ETH",
-                    "fiatValue": gasSelector.selectedGasFiatValue
+                    })
                 }
-                toAccount: selectRecipient.selectedRecipient
-                asset: txtAmount.selectedAsset
-                amount: { "value": txtAmount.selectedAmount, "fiatValue": txtAmount.selectedFiatAmount }
-                currency: root.store.currentCurrency
-            }
-            SendToContractWarning {
-                id: sendToContractWarning
-                anchors.top: pvwTransaction.bottom
-                selectedRecipient: selectRecipient.selectedRecipient
+                GasValidator {
+                    id: gasValidator
+                    anchors.top: gasSelector.bottom
+                    selectedAccount: advancedHeader.accountSelector.selectedAccount
+                    selectedAmount: parseFloat(advancedHeader.amountToSendInput.text)
+                    selectedAsset: advancedHeader.assetSelector.selectedAsset
+                    selectedGasEthValue: gasSelector.selectedGasEthValue
+                }
             }
         }
         TransactionFormGroup {
             id: group4
-            //% "Sign with password"
-            headerText: qsTrId("sign-with-password")
-            //% "Send %1 %2"
-            footerText: qsTrId("send--1--2").arg(txtAmount.selectedAmount).arg(!!txtAmount.selectedAsset ? txtAmount.selectedAsset.symbol : "")
+
+            StackView.onActivated: {
+                transactionSigner.forceActiveFocus(Qt.MouseFocusReason)
+            }
 
             TransactionSigner {
                 id: transactionSigner
+                Layout.topMargin: Style.current.smallPadding
                 width: stack.width
-                signingPhrase: root.store.signingPhrase
+                signingPhrase: popup.store.signingPhrase
             }
         }
     }
 
-    footer: Item {
-        width: parent.width
-        height: btnNext.height
-
-        StatusRoundButton {
-            id: btnBack
-            anchors.left: parent.left
-            visible: !stack.isFirstGroup
-            icon.name: "arrow-right"
-            icon.width: 20
-            icon.height: 16
-            icon.rotation: 180
-            onClicked: {
-                stack.back()
-            }
-        }
-
-        Component {
-            id: transactionSettingsConfirmationPopupComponent
-            TransactionSettingsConfirmationPopup {
-
-            }
-        }
-
-        StatusButton {
-            id: btnNext
-            anchors.right: parent.right
-            //% "Next"
-            text: qsTrId("next")
-            enabled: stack.currentGroup.isValid && !stack.currentGroup.isPending
-            loading: stack.currentGroup.isPending
-            onClicked: {
-                const validity = stack.currentGroup.validate()
-                if (validity.isValid && !validity.isPending) {
-                    if (stack.isLastGroup) {
-                        return root.sendTransaction()
-                    }
-
-                    if(gasSelector.isEIP1559Enabled && stack.currentGroup === group2 && gasSelector.advancedMode){
-                        if(gasSelector.showPriceLimitWarning || gasSelector.showTipLimitWarning){
-                            Global.openPopup(transactionSettingsConfirmationPopupComponent, {
-                                currentBaseFee: gasSelector.latestBaseFeePerGasGwei,
-                                currentMinimumTip: gasSelector.perGasTipLimitFloor,
-                                currentAverageTip: gasSelector.perGasTipLimitAverage,
-                                tipLimit: gasSelector.selectedTipLimit,
-                                suggestedTipLimit: gasSelector.perGasTipLimitFloor,
-                                priceLimit: gasSelector.selectedOverallLimit,
-                                suggestedPriceLimit: gasSelector.latestBaseFeePerGasGwei + gasSelector.perGasTipLimitFloor,
-                                showPriceLimitWarning: gasSelector.showPriceLimitWarning,
-                                showTipLimitWarning: gasSelector.showTipLimitWarning,
-                                onConfirm: function(){
-                                    stack.next();
-                                }
-                            })
-                            return
-                        }
-                    }
-
-                    stack.next()
+    advancedFooterComponent: SendModalFooter {
+        maxFiatFees: gasSelector.maxFiatFees
+        currentGroupPending: popup.contentItem.currentGroup.isPending
+        currentGroupValid: popup.contentItem.currentGroup.isValid
+        isLastGroup: popup.contentItem.isLastGroup
+        onNextButtonClicked: {
+            const validity = popup.contentItem.currentGroup.validate()
+            if (validity.isValid && !validity.isPending) {
+                if (popup.contentItem.isLastGroup) {
+                    return popup.sendTransaction()
                 }
+
+                if(gasSelector.isEIP1559Enabled && popup.contentItem.currentGroup === group1 && gasSelector.advancedMode){
+                    if(gasSelector.showPriceLimitWarning || gasSelector.showTipLimitWarning){
+                        Global.openPopup(transactionSettingsConfirmationPopupComponent, {
+                                             currentBaseFee: gasSelector.latestBaseFeePerGasGwei,
+                                             currentMinimumTip: gasSelector.perGasTipLimitFloor,
+                                             currentAverageTip: gasSelector.perGasTipLimitAverage,
+                                             tipLimit: gasSelector.selectedTipLimit,
+                                             suggestedTipLimit: gasSelector.perGasTipLimitFloor,
+                                             priceLimit: gasSelector.selectedOverallLimit,
+                                             suggestedPriceLimit: gasSelector.latestBaseFeePerGasGwei + gasSelector.perGasTipLimitFloor,
+                                             showPriceLimitWarning: gasSelector.showPriceLimitWarning,
+                                             showTipLimitWarning: gasSelector.showTipLimitWarning,
+                                             onConfirm: function(){
+                                                 popup.contentItem.next();
+                                             }
+                                         })
+                        return
+                    }
+                }
+
+                popup.contentItem.next()
             }
         }
+    }
 
+    Component {
+        id: transactionSettingsConfirmationPopupComponent
+        TransactionSettingsConfirmationPopup {}
+    }
+
+    Connections {
+        target: advancedHeader
+        onIsReadyChanged: {
+            if(!advancedHeader.isReady && popup.contentItem.isLastGroup)
+                popup.contentItem.back()
+
+        }
+    }
+
+    Connections {
+        target: popup.store.walletSectionTransactionsInst
+        onTransactionSent: {
+            try {
+                let response = JSON.parse(txResult)
+                if (response.uuid !== stack.uuid) return
+
+                stack.currentGroup.isPending = false
+
+                if (!response.success) {
+                    if (Utils.isInvalidPasswordMessage(response.result)){
+                        //% "Wrong password"
+                        transactionSigner.validationError = qsTrId("wrong-password")
+                        return
+                    }
+                    sendingError.text = response.result
+                    return sendingError.open()
+                }
+
+                // % "Transaction pending..."
+                Global.toastMessage.title = qsTrId("ens-transaction-pending")
+                Global.toastMessage.source = Style.svg("loading")
+                Global.toastMessage.iconColor = Style.current.primary
+                Global.toastMessage.iconRotates = true
+                Global.toastMessage.link = `${popup.store.getEtherscanLink()}/${response.result}`
+                Global.toastMessage.open()
+                popup.close()
+            } catch (e) {
+                console.error('Error parsing the response', e)
+            }
+        }
         // Not Refactored Yet
-        Connections {
-            target: root.store.walletSectionTransactionsInst
-            onTransactionSent: {
-                try {
-                    let response = JSON.parse(txResult)
-                    if (response.uuid !== stack.uuid) return
-
-                    stack.currentGroup.isPending = false
-
-                    if (!response.success) {
-                        if (Utils.isInvalidPasswordMessage(response.result)){
-                            //% "Wrong password"
-                            transactionSigner.validationError = qsTrId("wrong-password")
-                            return
-                        }
-                        sendingError.text = response.result
-                        return sendingError.open()
-                    }
-
-                    // % "Transaction pending..."
-                    Global.toastMessage.title = qsTrId("ens-transaction-pending")
-                    Global.toastMessage.source = Style.svg("loading")
-                    Global.toastMessage.iconColor = Style.current.primary
-                    Global.toastMessage.iconRotates = true
-                    // Refactor this
-//                    Global.toastMessage.link = `${walletModel.utilsView.etherscanLink}/${response.result}`
-                    Global.toastMessage.open()
-                    root.close()
-                } catch (e) {
-                    console.error('Error parsing the response', e)
-                }
-            }
-//            onTransactionCompleted: {
-//                if (success) {
-//                    //% "Transaction completed"
-//                    Global.toastMessage.title = qsTrId("transaction-completed")
-//                    Global.toastMessage.source = Style.svg("check-circle")
-//                    Global.toastMessage.iconColor = Style.current.success
-//                } else {
-//                    //% "Transaction failed"
-//                    Global.toastMessage.title = qsTrId("ens-registration-failed-title")
-//                    Global.toastMessage.source = Style.svg("block-icon")
-//                    Global.toastMessage.iconColor = Style.current.danger
-//                }
-//                Global.toastMessage.link = `${walletModel.utilsView.etherscanLink}/${txHash}`
-//                Global.toastMessage.open()
-//            }
-        }
+        //            onTransactionCompleted: {
+        //                if (success) {
+        //                    //% "Transaction completed"
+        //                    Global.toastMessage.title = qsTrId("transaction-completed")
+        //                    Global.toastMessage.source = Style.svg("check-circle")
+        //                    Global.toastMessage.iconColor = Style.current.success
+        //                } else {
+        //                    //% "Transaction failed"
+        //                    Global.toastMessage.title = qsTrId("ens-registration-failed-title")
+        //                    Global.toastMessage.source = Style.svg("block-icon")
+        //                    Global.toastMessage.iconColor = Style.current.danger
+        //                }
+        //                Global.toastMessage.link = `${walletModel.utilsView.etherscanLink}/${txHash}`
+        //                Global.toastMessage.open()
+        //            }
     }
 }
-
-/*##^##
-Designer {
-    D{i:0;autoSize:true;height:480;width:640}
-}
-##^##*/
 

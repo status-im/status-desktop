@@ -801,6 +801,7 @@ Item {
             }
             property var selectedAccount
             sourceComponent: SendModal {
+                anchors.centerIn: parent
                 store: appMain.rootStore
                 contactsStore: appMain.rootStore.profileSectionStore.contactsStore
                 onOpened: {
@@ -813,7 +814,7 @@ Item {
             }
             onLoaded: {
                 if(!!sendModal.selectedAccount) {
-                    item.selectFromAccount.selectedAccount = sendModal.selectedAccount
+                    item.preSelectedAccount = sendModal.selectedAccount
                 }
             }
         }

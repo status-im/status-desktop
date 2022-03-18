@@ -381,6 +381,7 @@ Item {
         id: cmpSendTransactionWithEns
         SendModal {
             id: sendTransactionWithEns
+            anchors.centerIn: parent
             store: root.rootStore
             contactsStore: root.contactsStore
             onOpened: {
@@ -390,9 +391,8 @@ Item {
             onClosed: {
                 destroy()
             }
-            isContact: root.isContact
-            selectRecipient.readOnly: true
-            selectRecipient.selectedRecipient: {
+            launchedFromChat: true
+            preSelectedRecipient: {
                 parentModule.prepareChatContentModuleForChatId(activeChatId)
                 let chatContentModule = parentModule.getChatContentModule()
 
@@ -405,7 +405,6 @@ Item {
                     ensVerified: true
                 }
             }
-            selectRecipient.selectedType: RecipientSelector.Type.Contact
         }
     }
 
