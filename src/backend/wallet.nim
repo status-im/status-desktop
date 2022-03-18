@@ -26,3 +26,7 @@ proc addAccountWithPrivateKey*(privateKey, password, name, color, emoji: string)
 proc addAccountWatch*(address, name, color, emoji: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [address, name, color, emoji]
   return core.callPrivateRPC("accounts_addAccountWatch", payload)
+
+proc fetchPrices*(symbols: seq[string], currency: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [symbols, currency]
+  return core.callPrivateRPC("wallet_fetchPrices", payload)

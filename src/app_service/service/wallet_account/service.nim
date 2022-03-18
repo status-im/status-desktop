@@ -28,7 +28,6 @@ const SIGNAL_WALLET_ACCOUNT_UPDATED* = "walletAccount/walletAccountUpdated"
 const SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED* = "walletAccount/networkEnabledUpdated"
 
 var
-  priceCache {.threadvar.}: Table[string, float64]
   balanceCache {.threadvar.}: Table[string, float64]
 
 proc hex2Balance*(input: string, decimals: int): string =
@@ -44,31 +43,6 @@ proc hex2Balance*(input: string, decimals: int): string =
   var d = fmt"{leading_zeros}{$r}"
   result = $i
   if(r > 0): result = fmt"{result}.{d}"
-
-
-proc fetchPrice(crypto: string, fiat: string): float64 =
-  let key = crypto & fiat
-  if priceCache.hasKey(key):
-    return priceCache[key]
-
-  let secureSSLContext = newContext()
-  let client = newHttpClient(sslContext = secureSSLContext)
-  try:
-    let url: string = fmt"https://min-api.cryptocompare.com/data/price?fsym={crypto}&tsyms={fiat}"
-    client.headers = newHttpHeaders({ "Content-Type": "application/json" })
-
-    let response = client.request(url)
-    let parsedResponse = parseJson(response.body)
-    if (parsedResponse{"Response"} != nil and parsedResponse{"Response"}.getStr == "Error"):
-      error "Error while getting price", message = parsedResponse["Message"].getStr
-      return 0.0
-    result = parsefloat($parseJson(response.body)[fiat.toUpper])
-    priceCache[key] = result
-  except Exception as e:
-    error "Error getting price", message = e.msg
-    result = 0.0
-  finally:
-    client.close()
 
 proc fetchAccounts(): seq[WalletAccountDto] =
   let response = status_go_accounts.getAccounts()
@@ -134,7 +108,7 @@ proc newService*(
 proc buildTokens(
   self: Service,
   account: WalletAccountDto,
-  prices: Table[string, float64],
+  prices: Table[string, float],
   balances: JsonNode
 ): seq[WalletTokenDto] =
   for network in self.networkService.getEnabledNetworks():
@@ -169,17 +143,39 @@ proc buildTokens(
     )
 
 proc getPrice*(self: Service, crypto: string, fiat: string): float64 =
-  return fetchPrice(crypto, fiat)
+  var prices = initTable[string, float]()
 
-proc fetchPrices(self: Service): Table[string, float64] =
+  try:
+    let response = status_go_wallet.fetchPrices(@[crypto], fiat)
+    for (symbol, value) in response.result.pairs:
+      prices[symbol] = value.getFloat
+  except Exception as e:
+    let errDesription = e.msg
+    error "error: ", errDesription
+
+  return prices[crypto]
+
+proc fetchPrices(self: Service): Table[string, float] =
   let currency = self.settingsService.getCurrency()
-  var prices = initTable[string, float64]()
+
+  var symbols: seq[string] = @[]
+
   for network in self.networkService.getEnabledNetworks():
-    prices[network.nativeCurrencySymbol] = fetchPrice(network.nativeCurrencySymbol, currency)
+    symbols.add(network.nativeCurrencySymbol)
 
   for token in self.tokenService.getVisibleTokens():
-    prices[token.symbol] = fetchPrice(token.symbol, currency)
+    symbols.add(token.symbol)
 
+  var prices = initTable[string, float]()
+  try:
+    let response = status_go_wallet.fetchPrices(symbols, currency)
+    for (symbol, value) in response.result.pairs:
+      prices[symbol] = value.getFloat
+
+  except Exception as e:
+    let errDesription = e.msg
+    error "error: ", errDesription
+  
   return prices
 
 proc fetchBalances(self: Service, accounts: seq[string]): JsonNode =
