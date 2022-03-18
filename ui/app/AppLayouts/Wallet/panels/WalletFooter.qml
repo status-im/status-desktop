@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.13
 
 import StatusQ.Popups 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Core.Theme 0.1
 
 import utils 1.0
 

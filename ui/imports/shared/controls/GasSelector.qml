@@ -11,8 +11,8 @@ import StatusQ.Controls 0.1
 Item {
     id: root
     width: parent.width
-    height:  Style.current.smallPadding + prioritytext.height +
-             (advancedMode ? advancedModeItemGroup.height : selectorButtons.height)
+    height:  visible ? Style.current.smallPadding + prioritytext.height +
+             (advancedMode ? advancedModeItemGroup.height : selectorButtons.height) : 0
 
     property double gasPrice: 0
 
@@ -36,6 +36,7 @@ Item {
     property alias selectedGasPrice: inputGasPrice.text
     property alias selectedGasLimit: inputGasLimit.text
     property string defaultGasLimit: "0"
+    property string maxFiatFees: selectedGasFiatValue + root.defaultCurrency.toUpperCase()
 
 
     property alias selectedTipLimit: inputPerGasTipLimit.text
@@ -441,7 +442,7 @@ Item {
 
         StyledText {
             id: maxPriorityFeeFiatText
-            text: `${selectedGasFiatValue} ${root.defaultCurrency.toUpperCase()}`
+            text: root.maxFiatFees
             anchors.verticalCenter: maxPriorityFeeText.verticalCenter
             anchors.left: maxPriorityFeeText.right
             anchors.leftMargin: 6
