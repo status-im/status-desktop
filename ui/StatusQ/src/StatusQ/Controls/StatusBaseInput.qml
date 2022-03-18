@@ -161,6 +161,7 @@ Item {
                         id: edit
 
                         property string previousText: text
+                        property var keyEvent
 
                         width: flick.width
                         height: flick.height
@@ -176,7 +177,8 @@ Item {
 
                         Keys.onReturnPressed: event.accepted = !multiline
                         Keys.onEnterPressed: event.accepted = !multiline
-                        Keys.forwardTo: [statusBaseInput]
+                        Keys.forwardTo: [root]
+                        Keys.onPressed: edit.keyEvent = event.key
 
                         onCursorRectangleChanged: flick.ensureVisible(cursorRectangle)
                         onActiveFocusChanged: if (root.pristine) root.pristine = false
