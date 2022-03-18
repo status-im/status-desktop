@@ -146,7 +146,7 @@ Column {
     StatusInput {
         label: "Label"
         input.placeholderText: "Input width component (right side)"
-        input.component: StatusIcon {
+        input.rightComponent: StatusIcon {
             icon: "cancel"
             height: 16
             color: Theme.palette.dangerColor1
@@ -173,25 +173,27 @@ Column {
     }
 
     StatusInput {
+        property bool toggled: true
         label: "Input with emoji icon"
         input.placeholderText: "Enter Name"
-        input.icon.emoji: "😁"
+        input.icon.emoji: toggled ? "😁" : "🧸"
         input.icon.color: "blue"
         input.isIconSelectable: true
         onIconClicked: {
-            // launch emoji popup
+            toggled = !toggled
         }
     }
 
     StatusInput {
+        property bool toggled: true
         label: "Input with selectable icon which is not an emoji"
         input.placeholderText: "Enter Name"
         input.icon.emoji: ""
-        input.icon.name: "filled-account"
+        input.icon.name: toggled ? "filled-account" : "image"
         input.icon.color: "blue"
         input.isIconSelectable: true
         onIconClicked: {
-            // launch emoji popup
+            toggled = !toggled
         }
     }
 }

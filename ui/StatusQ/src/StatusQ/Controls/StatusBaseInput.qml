@@ -1,15 +1,15 @@
 import QtQuick 2.14
 
 import QtQuick.Controls 2.14 as QC
+import QtQuick.Layouts 1.14
 
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 
-
 Item {
-    id: statusBaseInput
+    id: root
 
     property bool multiline: false
 
@@ -66,40 +66,24 @@ Item {
         }
     }
 
-    property Item leftComponent
-    property Item component
+    property Component leftComponent
+    property Component rightComponent
 
-    signal iconClicked()
-
-    onClearableChanged: {
-        if (clearable && !component) {
-            clearButtonLoader.active = true
-            clearButtonLoader.parent = statusBaseInputComponentSlot
-        } else {
-            clearButtonLoader.active = false
-        }
-    }
-
-    onLeftComponentChanged: {
-        if (!!leftComponent) {
-            leftComponent.parent = statusBaseInputLeftComponentSlot;
-        }
-    }
-
-    onComponentChanged: {
-        if (!!component) {
-            component.parent = statusBaseInputComponentSlot
-        }
-    }
+    signal iconClicked
 
     implicitWidth: 448
-    implicitHeight: multiline ? Math.max((edit.implicitHeight + topPadding + bottomPadding), 44) : 44
+    implicitHeight: multiline ? Math.min(Math.max(
+                                    (edit.implicitHeight + topPadding + bottomPadding),
+                                    44, root.minimumHeight), root.maximumHeight) : 44
 
     Rectangle {
         width: parent.width
         height: maximumHeight != 0 ? Math.min(
-                                         minimumHeight != 0 ? Math.max(statusBaseInput.implicitHeight, minimumHeight)
-                                         : statusBaseInput.implicitHeight, maximumHeight) : parent.height
+                                         minimumHeight
+                                         != 0 ? Math.max(
+                                                    root.implicitHeight,
+                                                    minimumHeight) : root.implicitHeight,
+                                         maximumHeight) : parent.height
         color: Theme.palette.baseColor2
         radius: 8
 
@@ -107,15 +91,14 @@ Item {
 
         border.width: 1
         border.color: {
-            if (!statusBaseInput.valid && statusBaseInput.dirty) {
-                return Theme.palette.dangerColor1;
+            if (!root.valid && root.dirty) {
+                return Theme.palette.dangerColor1
             }
             if (edit.activeFocus) {
-                return Theme.palette.primaryColor1;
+                return Theme.palette.primaryColor1
             }
             return sensor.containsMouse ? Theme.palette.primaryColor2 : "transparent"
         }
-
 
         MouseArea {
             id: sensor
@@ -127,191 +110,128 @@ Item {
                 edit.forceActiveFocus()
             }
 
-            StatusSmartIdenticon {
-                id: emoji
-                anchors.left: parent.left
-                anchors.leftMargin: 10
-                anchors.verticalCenter: parent.verticalCenter
-                icon.width: !statusBaseInput.icon.emoji ? 20 : 30
-                icon.height: !statusBaseInput.icon.emoji ? 20 : 30
-                icon.background: statusBaseInput.icon.background
-                icon.color: statusBaseInput.icon.color
-                icon.letterSize: statusBaseInput.icon.letterSize
-                icon.emoji: statusBaseInput.icon.emoji
-                icon.name: !statusBaseInput.icon.emoji ? statusBaseInput.icon.name : ""
-                visible: (!!statusBaseInput.icon.emoji || !!statusBaseInput.icon.name) && statusBaseInput.isIconSelectable
-                MouseArea {
-                    cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
-                    acceptedButtons: Qt.LeftButton | Qt.RightButton
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    enabled: emoji.visible
-                    onClicked: statusBaseInput.iconClicked()
+            RowLayout {
+                anchors {
+                    fill: parent
+                    leftMargin: root.leftPadding
+                    rightMargin: root.rightPadding
                 }
-            }
 
-            StatusIcon {
-                id: statusIcon
-                anchors.topMargin: 10
-                anchors.left: statusBaseInput.leftIcon ? parent.left : undefined
-                anchors.right: !statusBaseInput.leftIcon ? parent.right : undefined
-                anchors.leftMargin: 10
-                anchors.rightMargin: 10
-                anchors.verticalCenter: parent.verticalCenter
-                icon: statusBaseInput.icon.name
-                width: statusBaseInput.icon.width
-                height: statusBaseInput.icon.height
-                color: statusBaseInput.icon.color
-                visible: !!statusBaseInput.icon.name && !statusBaseInput.isIconSelectable
-            }
-
-            Item {
-                id: statusBaseInputLeftComponentSlot
-                anchors.left: parent.left
-                anchors.leftMargin: 12
-                width: childrenRect.width
-                height: childrenRect.height
-                anchors.verticalCenter: parent.verticalCenter
-            }
-
-            Flickable {
-                id: flick
-                anchors.top: parent.top
-                anchors.bottom: parent.bottom
-                anchors.left: {
-                    if (statusIcon.visible && statusBaseInput.leftIcon) {
-                        return statusIcon.right;
-                    } else if (emoji.visible) {
-                        return emoji.right;
-                    } else if (!!statusBaseInput.leftComponent) {
-                        return statusBaseInputLeftComponentSlot.right;
-                    } else {
-                        return parent.left;
-                    }
-                }
-                anchors.right: {
-                    if (!!statusBaseInput.component) {
-                        return statusBaseInputComponentSlot.left
-                    }
-                    return statusIcon.visible && !statusBaseInput.leftIcon ? statusIcon.left : parent.right
-                }
-                anchors.leftMargin: (statusIcon.visible && statusBaseInput.leftIcon)
-                                    || !!statusBaseInput.leftComponent ? 8
-                                    : statusBaseInput.leftPadding
-                anchors.rightMargin: {
-                    return clearable ? clearButtonLoader.width + 12 : 
-                        (statusIcon.visible && !leftIcon) || !!statusBaseInput.component ? 8 : 0
-                }
-                contentWidth: edit.paintedWidth
-                contentHeight: edit.paintedHeight
-                boundsBehavior: Flickable.StopAtBounds
-                QC.ScrollBar.vertical: QC.ScrollBar { interactive: multiline; enabled: multiline }
                 clip: true
-                function ensureVisible(r) {
-                    if (contentX >= r.x)
-                        contentX = r.x;
-                    else if (contentX+width <= r.x+r.width)
-                        contentX = r.x+r.width-width;
-                    if (contentY >= r.y)
-                        contentY = r.y;
-                    else if (contentY+height <= r.y+r.height)
-                        contentY = r.y+r.height-height;
+
+                Loader {
+                    sourceComponent: {
+                        if (root.leftComponent) return root.leftComponent
+                        if (!root.leftIcon) return undefined
+                        if (root.icon.emoji) return identiconComponent
+                        if (root.icon.name) return isIconSelectable ? identiconComponent : iconComponent
+                        return undefined
+                    }
                 }
-                TextEdit {
-                    id: edit
-                    property string previousText: text
-                    property var keyEvent
-                    width: flick.width
-                    height: flick.height
-                    verticalAlignment: Text.AlignVCenter
-                    selectByMouse: true
-                    selectionColor: Theme.palette.primaryColor2
-                    selectedTextColor: color
-                    focus: true
-                    font.pixelSize: 15
-                    font.family: Theme.palette.baseFont.name
-                    color: Theme.palette.directColor1
-                    onCursorRectangleChanged: { flick.ensureVisible(cursorRectangle); }
-                    wrapMode: statusBaseInput.multiline ? Text.WrapAtWordBoundaryOrAnywhere : TextEdit.NoWrap
-                    onActiveFocusChanged: {
-                        if (statusBaseInput.pristine) {
-                            statusBaseInput.pristine = false
-                        }
+
+                Flickable {
+                    id: flick
+
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    Layout.topMargin: root.topPadding
+                    Layout.bottomMargin: root.bottomPadding
+
+                    contentWidth: edit.paintedWidth
+                    contentHeight: edit.paintedHeight
+                    boundsBehavior: Flickable.StopAtBounds
+                    QC.ScrollBar.vertical: QC.ScrollBar {
+                        interactive: multiline
+                        enabled: multiline
+                    }
+                    clip: true
+
+                    function ensureVisible(r) {
+                        if (contentX >= r.x)
+                            contentX = r.x
+                        else if (contentX + width <= r.x + r.width)
+                            contentX = r.x + r.width - width
+                        if (contentY >= r.y)
+                            contentY = r.y
+                        else if (contentY + height <= r.y + r.height)
+                            contentY = r.y + r.height - height
                     }
 
-                    Keys.onPressed: {
-                        edit.keyEvent = event.key;
-                    }
+                    TextEdit {
+                        id: edit
 
-                    Keys.onReturnPressed: {
-                        if (multiline) {
-                            event.accepted = false
-                        } else {
-                            event.accepted = true
-                        }
-                    }
+                        property string previousText: text
 
-                    Keys.onEnterPressed: {
-                        if (multiline) {
-                            event.accepted = false
-                        } else {
-                            event.accepted = true
-                        }
-                    }
-
-                    Keys.forwardTo: [statusBaseInput]
-
-                    onTextChanged: {
-                        statusBaseInput.dirty = true
-                        if (statusBaseInput.maximumLength > 0) {
-                            if (text.length > statusBaseInput.maximumLength) {
-                                var cursor = cursorPosition;
-                                text = previousText;
-                                if (cursor > text.length) {
-                                    cursorPosition = text.length;
-                                } else {
-                                    cursorPosition = cursor-1;
-                                }
-                            }
-                            previousText = text
-                        }
-                    }
-                    StatusBaseText {
-                        id: placeholder
-                        visible: (edit.text.length === 0)
-                        anchors.left: parent.left
-                        anchors.right: parent.right
-                        anchors.rightMargin: statusBaseInput.rightPadding
-                        anchors.verticalCenter: parent.verticalCenter
+                        width: flick.width
+                        height: flick.height
+                        verticalAlignment: Text.AlignVCenter
+                        selectByMouse: true
+                        selectionColor: Theme.palette.primaryColor2
+                        selectedTextColor: color
+                        focus: true
                         font.pixelSize: 15
-                        elide: StatusBaseText.ElideRight
                         font.family: Theme.palette.baseFont.name
-                        color: statusBaseInput.enabled ? Theme.palette.baseColor1 :
-                                                        Theme.palette.directColor6
+                        color: Theme.palette.directColor1
+                        wrapMode: root.multiline ? Text.WrapAtWordBoundaryOrAnywhere : TextEdit.NoWrap
+
+                        Keys.onReturnPressed: event.accepted = !multiline
+                        Keys.onEnterPressed: event.accepted = !multiline
+                        Keys.forwardTo: [statusBaseInput]
+
+                        onCursorRectangleChanged: flick.ensureVisible(cursorRectangle)
+                        onActiveFocusChanged: if (root.pristine) root.pristine = false
+                        onTextChanged: {
+                            root.dirty = true
+                            if (root.maximumLength > 0) {
+                                if (text.length > root.maximumLength) {
+                                    var cursor = cursorPosition
+                                    text = previousText
+                                    if (cursor > text.length) {
+                                        cursorPosition = text.length
+                                    } else {
+                                        cursorPosition = cursor - 1
+                                    }
+                                }
+                                previousText = text
+                            }
+                        }
+
+                        StatusBaseText {
+                            id: placeholder
+                            visible: (edit.text.length === 0)
+                            anchors.left: parent.left
+                            anchors.right: parent.right
+                            anchors.rightMargin: root.rightPadding
+                            anchors.verticalCenter: parent.verticalCenter
+                            font.pixelSize: 15
+                            elide: StatusBaseText.ElideRight
+                            font.family: Theme.palette.baseFont.name
+                            color: root.enabled ? Theme.palette.baseColor1 : Theme.palette.directColor6
+                        }
+                    }
+                } // Flickable
+
+                Loader {
+                    sourceComponent: {
+                        if (root.rightComponent) return root.rightComponent
+                        if (root.clearable) return clearButton
+                        if (root.leftIcon) return undefined
+                        if (root.icon.emoji) return identiconComponent
+                        if (root.icon.name) return isIconSelectable ? identiconComponent : iconComponent
+                        return undefined
                     }
                 }
-
-            } // Flickable
-
-            Item {
-                id: statusBaseInputComponentSlot
-                anchors.right: parent.right
-                anchors.rightMargin: 12
-                width: childrenRect.width
-                height: childrenRect.height
-                anchors.verticalCenter: parent.verticalCenter
             }
         }
     } // Rectangle
 
-    Loader {
-        id: clearButtonLoader
-        sourceComponent: StatusFlatRoundButton {
-            id: clearButton
-            visible: edit.text.length != 0 &&
-                    statusBaseInput.clearable &&
-                    !statusBaseInput.multiline &&
-                    edit.activeFocus
+
+    Component {
+        id: clearButton
+
+        StatusFlatRoundButton {
+            visible: edit.text.length != 0 && root.clearable && !root.multiline
+                     && edit.activeFocus
             type: StatusFlatRoundButton.Type.Secondary
             width: 24
             height: 24
@@ -325,5 +245,41 @@ Item {
         }
     }
 
+    Component {
+        id: identiconComponent
 
+        StatusSmartIdenticon {
+            id: identicon
+
+            icon.width: !root.icon.emoji ? 20 : 30
+            icon.height: !root.icon.emoji ? 20 : 30
+            icon.background: root.icon.background
+            icon.color: root.icon.color
+            icon.letterSize: root.icon.letterSize
+            icon.emoji: root.icon.emoji
+            icon.name: !root.icon.emoji ? root.icon.name : ""
+
+            MouseArea {
+                cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
+                acceptedButtons: Qt.LeftButton | Qt.RightButton
+                anchors.fill: parent
+                hoverEnabled: true
+                enabled: identicon.visible
+                onClicked: root.iconClicked()
+            }
+        }
+    }
+
+    Component {
+        id: iconComponent
+
+        StatusIcon {
+            id: statusIcon
+
+            icon: root.icon.name
+            width: root.icon.width
+            height: root.icon.height
+            color: root.icon.color
+        }
+    }
 }
