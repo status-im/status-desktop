@@ -267,3 +267,6 @@ method reorderCommunityCategories*(self: AccessInterface, categoryId: string, po
 
 method reorderCommunityChat*(self: AccessInterface, categoryId: string, chatId: string, position: int): string =
   raise newException(ValueError, "No implementation available")
+
+method onMeMentionedInEditedMessage*(self: AccessInterface, chatId: string, editedMessage : MessageDto) {.base.} =
+  raise newException(ValueError, "No implementation available")

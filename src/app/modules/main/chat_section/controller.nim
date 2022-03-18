@@ -61,6 +61,10 @@ proc init*(self: Controller) =
     self.delegate.onNewMessagesReceived(args.chatId, args.unviewedMessagesCount, args.unviewedMentionsCount,
     args.messages)
 
+  self.events.on(message_service.SIGNAL_MENTIONED_IN_EDITED_MESSAGE) do(e: Args):
+    let args = MessageEditedArgs(e)
+    self.delegate.onMeMentionedInEditedMessage(args.chatId, args.message)
+
   self.events.on(chat_service.SIGNAL_CHAT_MUTED) do(e:Args):
     let args = chat_service.ChatArgs(e)
     self.delegate.onChatMuted(args.chatId)
