@@ -94,6 +94,7 @@ proc createFetchMoreMessagesItem(self: Module): Item =
     stickerPack = -1,
     @[],
     newTransactionParametersItem("","","","","","",-1,""),
+    @[]
   )
 
 proc createChatIdentifierItem(self: Module): Item =
@@ -131,6 +132,7 @@ proc createChatIdentifierItem(self: Module): Item =
     stickerPack = -1,
     @[],
     newTransactionParametersItem("","","","","","",-1,""),
+    @[]
   )
 
 proc checkIfMessageLoadedAndScrollToItIfItIs(self: Module): bool =
@@ -202,7 +204,8 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
           m.transactionParameters.transactionHash,
           m.transactionParameters.commandState,
           m.transactionParameters.signature),
-        )
+        m.mentionedUsersPks()
+      )
 
       for r in reactions:
         if(r.messageId == m.id):
@@ -290,6 +293,7 @@ method messageAdded*(self: Module, message: MessageDto) =
                     message.transactionParameters.transactionHash,
                     message.transactionParameters.commandState,
                     message.transactionParameters.signature),
+    message.mentionedUsersPks
   )
 
   self.view.model().insertItemBasedOnTimestamp(item)
@@ -413,13 +417,23 @@ method editMessage*(self: Module, messageId: string, updatedMsg: string) =
   self.controller.editMessage(messageId, updatedMsg)
 
 method onMessageEdited*(self: Module, message: MessageDto) =
+  let itemBeforeChange = self.view.model().getItemWithMessageId(message.id)
+  if(itemBeforeChange.isNil):
+    return
+
+  let mentionedUsersPks = itemBeforeChange.mentionedUsersPks
   let renderedMessageText = self.controller.getRenderedText(message.parsedText)
+
   self.view.model().updateEditedMsg(
     message.id,
     renderedMessageText,
     message.containsContactMentions(),
-    message.links
+    message.links,
+    message.mentionedUsersPks
     )
+
+  # ask service to send SIGNAL_MENTIONED_IN_EDITED_MESSAGE signal if there is a new user's mention
+  self.controller.checkEditedMessageForMentions(self.getChatId(), message, mentionedUsersPks)
 
   let messagesIds = self.view.model().findIdsOfTheMessagesWhichRespondedToMessageWithId(message.id)
   for msgId in messagesIds:

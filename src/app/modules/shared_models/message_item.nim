@@ -36,6 +36,7 @@ type
     isEdited: bool
     links: seq[string]
     transactionParameters: TransactionParametersItem
+    mentionedUsersPks: seq[string]
 
 proc initItem*(
     id,
@@ -61,6 +62,7 @@ proc initItem*(
     stickerPack: int,
     links: seq[string],
     transactionParameters: TransactionParametersItem,
+    mentionedUsersPks: seq[string],
     ): Item =
   result = Item()
   result.id = id
@@ -90,6 +92,7 @@ proc initItem*(
   result.isEdited = false
   result.links = links
   result.transactionParameters = transactionParameters
+  result.mentionedUsersPks = mentionedUsersPks
   result.gapFrom = 0
   result.gapTo = 0
 
@@ -118,6 +121,7 @@ proc `$`*(self: Item): string =
     isEdited:{$self.isEdited},
     links:{$self.links},
     transactionParameters:{$self.transactionParameters},
+    mentionedUsersPks:{$self.mentionedUsersPks},
     )"""
 
 proc id*(self: Item): string {.inline.} =
@@ -238,6 +242,12 @@ proc links*(self: Item): seq[string] {.inline.} =
 proc `links=`*(self: Item, links: seq[string]) {.inline.} =
   self.links = links
 
+proc mentionedUsersPks*(self: Item): seq[string] {.inline.} =
+  self.mentionedUsersPks
+
+proc `mentionedUsersPks=`*(self: Item, mentionedUsersPks: seq[string]) {.inline.} =
+  self.mentionedUsersPks = mentionedUsersPks
+
 proc transactionParameters*(self: Item): TransactionParametersItem {.inline.} =
   self.transactionParameters
 
@@ -270,7 +280,8 @@ proc toJsonNode*(self: Item): JsonNode =
     "pinnedBy": self.pinnedBy,
     "editMode": self.editMode,
     "isEdited": self.isEdited,
-    "links": self.links
+    "links": self.links,
+    "mentionedUsersPks": self.mentionedUsersPks
   }
 
 proc editMode*(self: Item): bool {.inline.} =

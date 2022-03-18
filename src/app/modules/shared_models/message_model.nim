@@ -35,6 +35,7 @@ type
     IsEdited
     Links
     TransactionParameters
+    MentionedUsersPks
 
 QtObject:
   type
@@ -107,6 +108,7 @@ QtObject:
       ModelRole.IsEdited.int: "isEdited",
       ModelRole.Links.int: "links",
       ModelRole.TransactionParameters.int: "transactionParameters",
+      ModelRole.MentionedUsersPks.int: "mentionedUsersPks"
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -189,6 +191,8 @@ QtObject:
         "commandState": item.transactionParameters.commandState,
         "signature": item.transactionParameters.signature
       }))
+    of ModelRole.MentionedUsersPks:
+      result = newQVariant(item.mentionedUsersPks.join(" "))
 
   proc findIndexForMessageId*(self: Model, messageId: string): int =
     for i in 0 ..< self.items.len:
@@ -384,7 +388,8 @@ QtObject:
       messageId: string, 
       updatedMsg: string,
       messageContainsMentions: bool,
-      links: seq[string]
+      links: seq[string],
+      mentionedUsersPks: seq[string]
       ) =
     let ind = self.findIndexForMessageId(messageId)
     if(ind == -1):
@@ -394,13 +399,15 @@ QtObject:
     self.items[ind].messageContainsMentions = messageContainsMentions
     self.items[ind].isEdited = true
     self.items[ind].links = links
+    self.items[ind].mentionedUsersPks = mentionedUsersPks
 
     let index = self.createIndex(ind, 0, nil)
     self.dataChanged(index, index, @[
       ModelRole.MessageText.int,
       ModelRole.MessageContainsMentions.int,
       ModelRole.IsEdited.int,
-      ModelRole.Links.int
+      ModelRole.Links.int,
+      ModelRole.MentionedUsersPks.int
       ])
 
   proc clear*(self: Model) =

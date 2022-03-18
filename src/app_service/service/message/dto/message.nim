@@ -182,3 +182,9 @@ proc isUserWithPkMentioned*(self: MessageDto, publicKey: string): bool =
       if (child.type == PARSED_TEXT_CHILD_TYPE_MENTION and child.literal.contains(publicKey)):
         return true
   return false
+
+proc mentionedUsersPks*(self: MessageDto): seq[string] =
+  for pText in self.parsedText:
+    for child in pText.children:
+      if (child.type == PARSED_TEXT_CHILD_TYPE_MENTION):
+        result.add(child.literal)

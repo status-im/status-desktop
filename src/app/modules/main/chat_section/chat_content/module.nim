@@ -185,7 +185,8 @@ proc buildPinnedMessageItem(self: Module, messageId: string, actionInitiatedBy: 
       transactionValue,
       m.transactionParameters.transactionHash,
       m.transactionParameters.commandState,
-      m.transactionParameters.signature)
+      m.transactionParameters.signature),
+      m.mentionedUsersPks
   )
   item.pinned = true
   item.pinnedBy = actionInitiatedBy

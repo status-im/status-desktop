@@ -261,3 +261,7 @@ proc joinGroupChat*(self: Controller) =
 
 proc leaveChat*(self: Controller) =
   self.chatService.leaveChat(self.chatId)
+
+method checkEditedMessageForMentions*(self: Controller, chatId: string,
+  editedMessage: MessageDto, oldMentions: seq[string]) =
+  self.messageService.checkEditedMessageForMentions(chatId, editedMessage, oldMentions)
