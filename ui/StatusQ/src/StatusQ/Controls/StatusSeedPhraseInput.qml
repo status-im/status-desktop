@@ -17,6 +17,12 @@ Item {
     property ListModel filteredList: ListModel { }
     signal doneInsertingWord(string word)
 
+    onActiveFocusChanged: {
+        if (root.activeFocus) {
+            seedWordInput.input.edit.forceActiveFocus();
+        }
+    }
+
     StatusInput {
         id: seedWordInput
         implicitWidth: parent.width
@@ -115,7 +121,7 @@ Item {
                     onClicked: {
                         seedWordInput.text = seedWord;
                         seedWordInput.input.edit.cursorPosition = seedWordInput.text.length;
-                        root.doneInsertingWord(seedWord);
+                        root.doneInsertingWord(seedWordInput.text);
                         seedSuggestionsList.model = 0;
                     }
                 }
