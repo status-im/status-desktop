@@ -14,6 +14,7 @@ type ContactsDto* = object
   id*: string
   name*: string
   ensVerified*: bool
+  displayName*: string
   alias*: string
   identicon*: string
   lastUpdated*: int64
@@ -42,6 +43,7 @@ proc `$`*(self: ContactsDto): string =
     lastUpdated: {self.lastUpdated},
     lastUpdatedLocally: {self.lastUpdatedLocally},
     localNickname: {self.localNickname},
+    displayName: {self.displayName},
     image:[
       {$self.image}
     ],
@@ -68,6 +70,7 @@ proc toContactsDto*(jsonObj: JsonNode): ContactsDto =
   discard jsonObj.getProp("id", result.id)
   discard jsonObj.getProp("name", result.name)
   discard jsonObj.getProp("ensVerified", result.ensVerified)
+  discard jsonObj.getProp("displayName", result.displayName)
   discard jsonObj.getProp("alias", result.alias)
   discard jsonObj.getProp("identicon", result.identicon)
   discard jsonObj.getProp("lastUpdated", result.lastUpdated)
@@ -89,6 +92,8 @@ proc userNameOrAlias*(contact: ContactsDto): string =
     result = contact.localNickname
   elif(contact.name.len > 0 and contact.ensVerified):
     result = prettyEnsName(contact.name)
+  elif contact.displayName.len > 0:
+    result = contact.displayName
   else:
     result = contact.alias
 
