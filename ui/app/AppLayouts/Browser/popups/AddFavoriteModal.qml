@@ -87,7 +87,7 @@ ModalPopup {
             label: qsTr("URL")
             input.text: ogUrl
             input.placeholderText: qsTr("Paste URL")
-            input.component: StatusButton {
+            input.rightComponent: StatusButton {
                 anchors.verticalCenter: parent.verticalCenter
                 border.width: 1
                 border.color: Theme.palette.primaryColor1

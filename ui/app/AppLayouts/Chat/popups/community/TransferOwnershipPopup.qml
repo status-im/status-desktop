@@ -49,7 +49,7 @@ StatusModal {
                 input.edit.onActiveFocusChanged: {
                     pKeyInput.input.text =  pKeyInput.input.edit.focus ? popup.privateKey : elidedPkey
                 }
-                input.component: StatusButton {
+                input.rightComponent: StatusButton {
                     anchors.verticalCenter: parent.verticalCenter
                     border.width: 1
                     border.color: Theme.palette.primaryColor1
