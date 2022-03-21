@@ -5,11 +5,16 @@ import utils 1.0
 import "../"
 import "../panels"
 
+import StatusQ.Core 0.1
+import StatusQ.Components 0.1
+
 TabButton {
     property string btnText: "Default Button"
+    property alias badge: statusBadge
 
     id: tabButton
-    width: tabBtnText.width
+    width: tabBtnText.width +
+        (statusBadge.visible ? statusBadge.width + statusBadge.anchors.leftMargin : 0)
     height: tabBtnText.height + 11
     text: ""
     padding: 0
@@ -24,6 +29,14 @@ TabButton {
         font.weight: Font.Medium
         font.pixelSize: 15
         color: parent.checked || parent.hovered ? Style.current.textColor : Style.current.secondaryText
+    }
+
+    StatusBadge {
+        id: statusBadge
+        visible: value > 0
+        anchors.left: tabBtnText.right
+        anchors.leftMargin: 10
+        anchors.verticalCenter: tabBtnText.verticalCenter
     }
 
     Rectangle {

@@ -51,6 +51,13 @@ Column {
                 (model.subsection === Constants.settingsSubsection.browserSettings && root.browserMenuItemEnabled) ||
                 (model.subsection === Constants.settingsSubsection.wallet && root.walletMenuItemEnabled)
             }
+            badge.value: {
+                switch (model.subsection) {
+                    case Constants.settingsSubsection.messaging:
+                        return root.messagingStore.contactRequestsModel.count
+                    default: return ""
+                }
+            }
         }
     }
 
@@ -70,8 +77,6 @@ Column {
                 switch (model.subsection) {
                     case Constants.settingsSubsection.privacyAndSecurity:
                         return !root.privacyStore.mnemonicBackedUp
-                    case Constants.settingsSubsection.messaging:
-                        return root.messagingStore.contactRequestsModel.count
                     default: return ""
                 }
             }
