@@ -252,9 +252,12 @@ proc getTransactionDetails*(self: Controller, message: MessageDto): (string,stri
 
 proc getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAccountDto] =
   return self.messageService.getWalletAccounts()
-  
+
 proc joinGroupChat*(self: Controller) =
-  self.chatService.confirmJoiningGroup("", self.chatId)
+  var communityId = ""
+  if (self.belongsToCommunity):
+    communityId = self.sectionId
+  self.chatService.confirmJoiningGroup(communityId, self.chatId)
 
 proc leaveChat*(self: Controller) =
   self.chatService.leaveChat(self.chatId)
