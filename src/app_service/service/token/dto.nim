@@ -18,7 +18,7 @@ type
     isCustom* {.dontSerialize.}: bool
     isVisible* {.dontSerialize.}: bool
 
-proc newDto*(
+proc newTokenDto*(
   name: string, chainId: int, address: Address, symbol: string, decimals: int, hasIcon: bool, isCustom: bool = false
 ): TokenDto =
   return TokenDto(

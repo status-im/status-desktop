@@ -1,8 +1,8 @@
 # include strformat, json
 include ../../common/json_utils
-import ../eth/dto/contract
 import ../eth/utils
 
+import ../../../backend/backend as backend
 #################################################
 # Async load transactions
 #################################################
@@ -16,19 +16,18 @@ type
 const getTokenDetailsTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[GetTokenDetailsTaskArg](argEncoded)
   try:
-    let
-      tkn = newErc20Contract(arg.chainId, arg.address.parseAddress)
-      decimals = tkn.tokenDecimals()
-      output = %* {
-        "address": arg.address,
-        "name": tkn.tokenName(),
-        "symbol": tkn.tokenSymbol(),
-        "decimals": $decimals
-      }
+    let response = backend.discoverToken(arg.chainId, arg.address).result
+    
+    let output = %* {
+      "address": arg.address,
+      "name": response{"name"}.getStr,
+      "symbol": response{"symbol"}.getStr,
+      "decimals": response{"decimals"}.getInt
+    }
     arg.finish(output)
   except Exception as e:
     let output = %* {
       "address": arg.address,
-      "error": fmt"{e.msg}. Is this an ERC-20 or ERC-721 contract?",
+      "error": "Is this an ERC-20 or ERC-721 contract?",
     }
     arg.finish(output)

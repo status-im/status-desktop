@@ -12,11 +12,12 @@ import ../../../backend/stickers as status_stickers
 import ../../../backend/chat as status_chat
 import ../../../backend/response_type
 import ../../../backend/eth as status_eth
+import ../../../backend/backend as status_go_backend
 import ./dto/stickers
 import ../ens/utils as ens_utils
-import ../eth/service as eth_service
 import ../token/service as token_service
 import ../settings/service as settings_service
+import ../eth/dto/transaction
 import ../wallet_account/service as wallet_account_service
 import ../transaction/service as transaction_service
 import ../network/service as network_service
@@ -24,8 +25,6 @@ import ../chat/service as chat_service
 import ../../common/types
 import ../network/types as network_types
 import ../eth/utils as status_utils
-
-import ../eth/dto/edn_dto as edn_helper
 
 export StickerDto
 export StickerPackDto
@@ -67,7 +66,6 @@ QtObject:
     marketStickerPacks*: Table[string, StickerPackDto]
     recentStickers*: seq[StickerDto]
     events: EventEmitter
-    ethService: eth_service.Service
     settingsService: settings_service.Service
     walletAccountService: wallet_account_service.Service
     transactionService: transaction_service.Service
@@ -84,19 +82,17 @@ QtObject:
   proc newService*(
       events: EventEmitter,
       threadpool: ThreadPool,
-      ethService: eth_service.Service,
       settingsService: settings_service.Service,
       walletAccountService: wallet_account_service.Service,
       transactionService: transaction_service.Service,
       networkService: network_service.Service,
       chatService: chat_service.Service,
       tokenService: token_service.Service
-      ): Service =
+  ): Service =
     new(result, delete)
     result.QObject.setup
     result.events = events
     result.threadpool = threadpool
-    result.ethService = ethService
     result.settingsService = settingsService
     result.walletAccountService = walletAccountService
     result.transactionService = transactionService
@@ -105,11 +101,6 @@ QtObject:
     result.chatService = chatService
     result.marketStickerPacks = initTable[string, StickerPackDto]()
     result.recentStickers = @[]
-
-  proc getCurrentNetworkErc20ContractForSymbol(self: Service, symbol: string = ""): Erc20ContractDto =
-    let networkType = self.settingsService.getCurrentNetwork().toNetworkType()
-    let networkDto = self.networkService.getNetwork(networkType)
-    return self.ethService.findErc20Contract(networkDto.chainId, if symbol.len > 0: symbol else: networkDto.sntSymbol())
 
   proc getInstalledStickerPacks*(self: Service): Table[string, StickerPackDto] =
     result = initTable[string, StickerPackDto]()
@@ -204,6 +195,12 @@ QtObject:
     else:
       result.gasPrice = (if gasPrice.isEmptyOrWhitespace: int.none else: gwei2Wei(parseFloat(gasPrice)).truncate(int).some)
 
+  proc getStatusToken*(self: Service): TokenDto =
+    let networkType = self.settingsService.getCurrentNetwork().toNetworkType()
+    let networkDto = self.networkService.getNetwork(networkType)
+
+    return self.tokenService.findTokenBySymbol(networkDto, networkType.sntSymbol())
+
   proc buyPack*(self: Service, packId: string, address, gas, gasPrice: string, eip1559Enabled: bool, maxPriorityFeePerGas: string, maxFeePerGas: string, password: string, success: var bool): tuple[txHash: string, error: string] =
     let
       networkType = self.settingsService.getCurrentNetwork().toNetworkType()
@@ -214,7 +211,7 @@ QtObject:
     try:
       let transactionResponse = status_stickers.buy(chainId, %txData, packId, password)
       let transactionHash = transactionResponse.result.getStr()
-      let sntContract = self.getCurrentNetworkErc20ContractForSymbol()
+      let sntContract = self.getStatusToken()
       self.transactionService.trackPendingTransaction(
         transactionHash,
         address,
@@ -234,12 +231,12 @@ QtObject:
       error "Error sending transaction", message = getCurrentExceptionMsg()
 
   proc buy*(self: Service, packId: string, address: string, gas: string, gasPrice: string, maxPriorityFeePerGas: string, maxFeePerGas: string, password: string): tuple[response: string, success: bool] =
-    let eip1559Enabled = self.settingsService.isEIP1559Enabled()
+    let eip1559Enabled = self.networkService.isEIP1559Enabled()
     try:
       status_utils.validateTransactionInput(address, address, "", "0", gas, gasPrice, "", eip1559Enabled, maxPriorityFeePerGas, maxFeePerGas, "ok")
     except Exception as e:
       error "Error buying sticker pack", msg = e.msg
-      return (response: "", success: false)
+      return (response: e.msg, success: false)
 
     var success: bool
     var (response, err) = self.buyPack(packId, address, gas, gasPrice, eip1559Enabled, maxPriorityFeePerGas, maxFeePerGas, password, success)
@@ -381,38 +378,13 @@ QtObject:
       error "Error removing recent stickers", message = getCurrentExceptionMsg()
 
   proc getSNTBalance*(self: Service): string =
-    let address = self.walletAccountService.getWalletAccount(0).address
-    let sntContract = self.getCurrentNetworkErc20ContractForSymbol()
+    let token = self.getStatusToken()
+    let account = self.walletAccountService.getWalletAccount(0).address
+    let networkType = self.settingsService.getCurrentNetwork().toNetworkType()
+    let network = self.networkService.getNetwork(networkType)
 
-    var postfixedAccount: string = address
-    postfixedAccount.removePrefix("0x")
-    let payload = %* [{
-      "to": $sntContract.address,
-      "from": address,
-      "data": fmt"0x70a08231000000000000000000000000{postfixedAccount}"
-    }, "latest"]
-    let response = status_eth.doEthCall(payload)
-    let balance = response.result.getStr
-
-    var decimals = 18
-
-    let allTokens = self.tokenService.getTokens()
-    for tokens in allTokens.values:
-      for t in tokens:
-        if(t.address == sntContract.address):
-          decimals = t.decimals
-          break
-
-    result = ens_utils.hex2Token(balance, decimals)
-
-  proc getStatusToken*(self: Service): string =
-    let sntContract = self.getCurrentNetworkErc20ContractForSymbol()
-    let jsonObj = %* {
-      "name": sntContract.name,
-      "symbol": sntContract.symbol,
-      "address": sntContract.address
-    }
-    return $jsonObj
+    let balances = status_go_backend.getTokensBalancesForChainIDs(@[network.chainId], @[account], @[token.addressAsString()]).result
+    return ens_utils.hex2Token(balances{account}{token.addressAsString()}.getStr, token.decimals)
 
   proc onGasPriceFetched*(self: Service, response: string) {.slot.} =
     let responseObj = response.parseJson

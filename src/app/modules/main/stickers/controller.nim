@@ -1,10 +1,11 @@
-import Tables, stint
+import Tables, stint, json
 
 import ./io_interface
 
 import ../../../core/eventemitter
 import ../../../../app_service/service/node/service as node_service
 import ../../../../app_service/service/stickers/service as stickers_service
+import ../../../../app_service/service/token/service
 import ../../../../app_service/service/settings/service as settings_service
 import ../../../../app_service/service/eth/utils as eth_utils
 import ../../../../app_service/service/wallet_account/service as wallet_account_service
@@ -148,7 +149,14 @@ proc getPrice*(self: Controller, crypto: string, fiat: string): float64 =
   return self.walletAccountService.getPrice(crypto, fiat)
 
 proc getStatusToken*(self: Controller): string =
-  return self.stickerService.getStatusToken()
+  let token = self.stickerService.getStatusToken()
+
+  let jsonObj = %* {
+    "name": token.name,
+    "symbol": token.symbol,
+    "address": token.addressAsString()
+  }
+  return $jsonObj
 
 proc fetchGasPrice*(self: Controller) =
   self.stickerService.fetchGasPrice()

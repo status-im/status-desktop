@@ -1,4 +1,4 @@
-import Tables, chronicles
+import Tables, chronicles, json
 import io_interface
 
 import ../../../../global/global_singleton
@@ -6,6 +6,7 @@ import ../../../../core/eventemitter
 import ../../../../../app_service/service/settings/service as settings_service
 import ../../../../../app_service/service/ens/service as ens_service
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
+import ../../../../../app_service/service/token/dto
 
 logScope:
   topics = "profile-section-ens-usernames-module-controller"
@@ -122,4 +123,11 @@ proc getPrice*(self: Controller, crypto: string, fiat: string): float64 =
   return self.walletAccountService.getPrice(crypto, fiat)
 
 proc getStatusToken*(self: Controller): string =
-  return self.ensService.getStatusToken()
+  let token = self.ensService.getStatusToken()
+
+  let jsonObj = %* {
+    "name": token.name,
+    "symbol": token.symbol,
+    "address": token.addressAsString()
+  }
+  return $jsonObj

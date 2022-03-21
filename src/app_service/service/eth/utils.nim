@@ -149,7 +149,7 @@ proc validateTransactionInput*(from_addr, to_addr, assetAddress, value, gas, gas
   if not isAddress(to_addr): raise newException(ValueError, "to_addr is not a valid ETH address")
   if parseFloat(value) < 0: raise newException(ValueError, "value should be a number >= 0")
   if parseInt(gas) <= 0: raise newException(ValueError, "gas should be a number > 0")
-
+  
   if isEIP1599Enabled:
     if gasPrice != "" and (maxPriorityFeePerGas != "" or maxFeePerGas != ""):
       raise newException(ValueError, "gasPrice can't be used with maxPriorityFeePerGas and maxFeePerGas")
@@ -158,6 +158,7 @@ proc validateTransactionInput*(from_addr, to_addr, assetAddress, value, gas, gas
       if parseFloat(maxFeePerGas) <= 0: raise newException(ValueError, "maxFeePerGas should be a number > 0")
   else:
     if parseFloat(gasPrice) <= 0: raise newException(ValueError, "gasPrice should be a number > 0")
+
   if uuid.isEmptyOrWhitespace(): raise newException(ValueError, "uuid is required")
 
   if assetAddress != "": # If a token is being used

@@ -9,6 +9,9 @@ import ../../../app/core/tasks/[qt, threadpool]
 import ../../../app/global/global_singleton
 import ../../../backend/eth as status_eth
 import ../../../backend/ens as status_ens
+import ../../../backend/accounts as status_go_accounts
+import ../../../backend/backend as status_go_backend
+
 import ../network/types as network_types
 
 import ../../common/conversion as common_conversion
@@ -16,9 +19,9 @@ import utils as ens_utils
 import ../settings/service as settings_service
 import ../wallet_account/service as wallet_account_service
 import ../transaction/service as transaction_service
-import ../eth/service as eth_service
 import ../network/service as network_service
 import ../token/service as token_service
+import ../eth/dto/coder
 
 
 logScope:
@@ -71,7 +74,6 @@ QtObject:
       settingsService: settings_service.Service
       walletAccountService: wallet_account_service.Service
       transactionService: transaction_service.Service
-      ethService: eth_service.Service
       networkService: network_service.Service
       tokenService: token_service.Service
 
@@ -84,7 +86,6 @@ QtObject:
       settingsService: settings_service.Service,
       walletAccountService: wallet_account_service.Service,
       transactionService: transaction_service.Service,
-      ethService: eth_service.Service,
       networkService: network_service.Service,
       tokenService: token_service.Service
       ): Service =
@@ -95,7 +96,6 @@ QtObject:
     result.settingsService = settingsService
     result.walletAccountService = walletAccountService
     result.transactionService = transactionService
-    result.ethService = ethService
     result.networkService = networkService
     result.tokenService = tokenService
 
@@ -107,8 +107,9 @@ QtObject:
   proc revertTransaction(self: Service, trxType: string, ensUsername: string, transactionHash: string,
     revertReason: string) =
     self.pendingEnsUsernames.excl(ensUsername)
-    let data = EnsTransactionArgs(transactionHash: transactionHash, ensUsername: ensUsername, transactionType: $trxType,
-    revertReason: revertReason)
+    let data = EnsTransactionArgs(
+      transactionHash: transactionHash, ensUsername: ensUsername, transactionType: $trxType, revertReason: revertReason
+    )
     self.events.emit(SIGNAL_ENS_TRANSACTION_REVERTED, data)
 
   proc doConnect(self: Service) =
@@ -204,22 +205,6 @@ QtObject:
     discard responseObj.getProp("expirationTime", data.expirationTime)
 
     self.events.emit(SIGNAL_ENS_USERNAME_DETAILS_FETCHED, data)
-
-  proc sntSymbol(networkType: NetworkType): string =
-    if networkType == NetworkType.Mainnet:
-      return "SNT"
-    else:
-      return "STT"
-
-  proc getCurrentNetworkContractForName(self: Service, name: string): ContractDto =
-    let networkType = self.settingsService.getCurrentNetwork().toNetworkType()
-    let networkDto = self.networkService.getNetwork(networkType)
-    return self.ethService.findContract(networkDto.chainId, name)
-
-  proc getCurrentNetworkErc20ContractForSymbol(self: Service, symbol: string = ""): Erc20ContractDto =
-    let networkType = self.settingsService.getCurrentNetwork().toNetworkType()
-    let networkDto = self.networkService.getNetwork(networkType)
-    return self.ethService.findErc20Contract(networkDto.chainId, if symbol.len > 0: symbol else: networkType.sntSymbol())
 
   proc fetchDetailsForEnsUsername*(self: Service, ensUsername: string) =
     var isStatus = false
@@ -326,6 +311,12 @@ QtObject:
       error "error occurred", procName="releaseEnsEstimate", msg = e.msg
       result = 100000
 
+  proc getEnsRegisteredAddress*(self: Service): string =
+    let networkType = self.settingsService.getCurrentNetwork().toNetworkType()
+    let networkDto = self.networkService.getNetwork(networkType)
+
+    return status_ens.getRegistrarAddress(networkDto.chainId).result.getStr
+
   proc release*(
       self: Service,
       ensUsername: string,
@@ -342,8 +333,8 @@ QtObject:
       let resp = status_ens.release(chainId, %txData, password, ensUsername)
       let hash = resp.result.getStr
 
-      let ensUsernamesContract = self.ethService.findContract(chainId, "ens-usernames")
-      self.transactionService.trackPendingTransaction(hash, address, $ensUsernamesContract.address,
+      let ensUsernamesAddress = self.getEnsRegisteredAddress()
+      self.transactionService.trackPendingTransaction(hash, address, ensUsernamesAddress,
         $PendingTransactionTypeDto.ReleaseENS, ensUsername)
       self.pendingEnsUsernames.excl(ensUsername)
 
@@ -351,11 +342,6 @@ QtObject:
     except RpcException as e:
       error "error occurred", procName="release", msg = e.msg
       result = $(%* { "result": e.msg, "success": false })
-
-  proc getEnsRegisteredAddress*(self: Service): string =
-    let contractDto = self.getCurrentNetworkContractForName("ens-usernames")
-    if contractDto != nil:
-      return $contractDto.address
 
   proc registerENSGasEstimate*(self: Service, ensUsername: string, address: string): int =
     try:
@@ -369,6 +355,12 @@ QtObject:
     except Exception as e:
       result = 380000
       error "error occurred", procName="registerENSGasEstimate", msg = e.msg
+
+  proc getStatusToken*(self: Service): TokenDto =
+    let networkType = self.settingsService.getCurrentNetwork().toNetworkType()
+    let networkDto = self.networkService.getNetwork(networkType)
+
+    return self.tokenService.findTokenBySymbol(networkDto, networkType.sntSymbol())
 
   proc registerEns*(
       self: Service,
@@ -392,7 +384,7 @@ QtObject:
       let resp = status_ens.register(chainId, %txData, password, username,
         singletonInstance.userProfile.getPubKey())
       let hash = resp.result.getStr
-      let sntContract = self.ethService.findErc20Contract(chainId, network.sntSymbol())
+      let sntContract = self.getStatusToken()
       let ensUsername = self.formatUsername(username, true)
       self.transactionService.trackPendingTransaction(hash, address, $sntContract.address,
         $PendingTransactionTypeDto.RegisterEns, ensUsername)
@@ -404,38 +396,13 @@ QtObject:
       result = $(%* { "result": e.msg, "success": false })
 
   proc getSNTBalance*(self: Service): string =
-    let address = self.walletAccountService.getWalletAccount(0).address
-    let sntContract = self.getCurrentNetworkErc20ContractForSymbol()
+    let token = self.getStatusToken()
+    let account = self.walletAccountService.getWalletAccount(0).address
+    let networkType = self.settingsService.getCurrentNetwork().toNetworkType()
+    let network = self.networkService.getNetwork(networkType)
 
-    var postfixedAccount: string = address
-    postfixedAccount.removePrefix("0x")
-    let payload = %* [{
-      "to": $sntContract.address,
-      "from": address,
-      "data": fmt"0x70a08231000000000000000000000000{postfixedAccount}"
-    }, "latest"]
-    let response = status_eth.doEthCall(payload)
-    let balance = response.result.getStr
-
-    var decimals = 18
-
-    let allTokens = self.tokenService.getTokens()
-    for tokens in allTokens.values:
-      for t in tokens:
-        if(t.address == sntContract.address):
-          decimals = t.decimals
-          break
-
-    result = ens_utils.hex2Token(balance, decimals)
-
-  proc getStatusToken*(self: Service): string =
-    let sntContract = self.getCurrentNetworkErc20ContractForSymbol()
-    let jsonObj = %* {
-      "name": sntContract.name,
-      "symbol": sntContract.symbol,
-      "address": sntContract.address
-    }
-    return $jsonObj
+    let balances = status_go_backend.getTokensBalancesForChainIDs(@[network.chainId], @[account], @[token.addressAsString()]).result
+    return ens_utils.hex2Token(balances{account}{token.addressAsString()}.getStr, token.decimals)
 
   proc resourceUrl*(self: Service, username: string): (string, string, string) =
     try:

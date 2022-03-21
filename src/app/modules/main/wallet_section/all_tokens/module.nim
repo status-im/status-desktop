@@ -83,8 +83,8 @@ method toggleVisible*(self: Module, chainId: int, symbol: string) =
 method removeCustomToken*(self: Module, chainId: int, address: string) =
   self.controller.removeCustomToken(chainId, address)
 
-method getTokenDetails*(self: Module, chainId: int, address: string) =
-  self.controller.getTokenDetails(chainId, address)
+method getTokenDetails*(self: Module, address: string) =
+  self.controller.getTokenDetails(address)
 
 method tokenDetailsWereResolved*(self: Module, tokenDetails: string) =
   self.view.tokenDetailsWereResolved(tokenDetails)

@@ -23,7 +23,7 @@ method removeCustomToken*(self: AccessInterface, chainId: int, address: string) 
 method refreshTokens*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getTokenDetails*(self: AccessInterface, chainId: int, address: string) {.base.} =
+method getTokenDetails*(self: AccessInterface, address: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method tokenDetailsWereResolved*(self: AccessInterface, tokenDetails: string) {.base.} =

@@ -5,8 +5,6 @@ import nimcrypto, stint
 import web3/conversions
 import ../../common/conversion as common_conversion
 import ../eth/dto/transaction as eth_transaction_dto
-import ../eth/dto/coder as eth_coder_dto
-import ../eth/dto/contract as eth_contract_dto
 import ../../../backend/eth as status_eth
 import ../../../backend/ens as status_ens
 import ../../common/account_constants
