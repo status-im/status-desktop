@@ -2,13 +2,13 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 
+import StatusQ.Core 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core.Theme 0.1
 
 import utils 1.0
 
-import StatusQ.Core 0.1
 import shared.views 1.0
 import shared.panels 1.0
 import shared.popups 1.0
@@ -91,6 +91,7 @@ Item {
                 anchors.top: parent.top
                 anchors.leftMargin: Style.current.bigPadding
                 btnText: qsTr("Pending Requests")
+                badge.value: contactList.count
             }
             StatusTabButton {
                 id: blockedBtn
