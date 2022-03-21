@@ -266,17 +266,6 @@ Item {
     }
 
     Component {
-        id: groupChatPopupComponent
-        GroupChatPopup {
-            chatSectionModule: root.chatSectionModule
-            store: root.store
-            onClosed: {
-                destroy()
-            }
-        }
-    }
-
-    Component {
         id: privateChatPopupComponent
         PrivateChatPopup {
             store: root.store
