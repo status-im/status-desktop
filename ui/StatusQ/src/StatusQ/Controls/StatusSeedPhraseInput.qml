@@ -1,5 +1,6 @@
 import QtQuick 2.12
 import QtGraphicalEffects 1.13
+import QtQuick.Controls 2.12
 
 import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
@@ -61,7 +62,7 @@ Item {
     Item {
         id: suggListContainer
         width: seedSuggestionsList.width
-        height: (seedSuggestionsList.count*34) + 16
+        height: (((seedSuggestionsList.count <= 5) ? seedSuggestionsList.count : 5) *34) + 16
         anchors.left: parent.left
         anchors.leftMargin: 16
         anchors.top: seedWordInput.bottom
@@ -93,6 +94,7 @@ Item {
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 8
             clip: true
+            ScrollBar.vertical: ScrollBar { }
             delegate: Item {
                 id: txtDelegate
                 width: suggWord.contentWidth
