@@ -4,6 +4,8 @@ import QtTest 1.0
 import StatusQ.Controls 0.1
 import StatusQ.Controls.Validators 0.1
 
+import StatusQ.TestHelpers 0.1
+
 Item {
     width: 300
     height: 100
@@ -28,6 +30,8 @@ Item {
     }
 
     TestCase {
+        id: regexTC
+
         name: "RegexValidationTest"
 
         when: windowShown
@@ -50,9 +54,9 @@ Item {
         }
 
         function test_regex_validation() {
-            keyClick(Qt.Key_1)
+            TestUtils.pressKeyAndWait(regexTC, statusInput, Qt.Key_1)
             verify(statusInput.valid, "Expected valid input")
-            keyClick(Qt.Key_Ampersand)
+            TestUtils.pressKeyAndWait(regexTC, statusInput, Qt.Key_Ampersand)
             verify(!statusInput.valid, "Expected invalid input")
         }
 
@@ -61,10 +65,10 @@ Item {
 
             verify(statusInput.valid, "Expected valid input")
             verify(statusInput.text.length === 0, "Expected no input")
-            keyClick(Qt.Key_2)
+            TestUtils.pressKeyAndWait(regexTC, statusInput, Qt.Key_2)
             verify(statusInput.valid, "Expected valid input")
             verify(statusInput.text === "2", "Expect one character")
-            keyClick(Qt.Key_Ampersand)
+            TestUtils.pressKeyAndWait(regexTC, statusInput, Qt.Key_Ampersand)
             verify(statusInput.valid, "Expected invalid input")
             verify(statusInput.text === "2", "Expect the same input")
         }
@@ -74,12 +78,43 @@ Item {
             const appendInvalidChars = "#@!*"
 
             statusInput.text = "invalid $" + appendInvalidChars
-            keyClick(Qt.Key_End)
+            TestUtils.pressKeyAndWait(regexTC, statusInput, Qt.Key_End)
             verify(!statusInput.valid, "Expected invalid input due to characters not matching")
             // Delete invalid characters to get a valid text
             for(let i = 0; i < appendInvalidChars.length; ++i)
-                keyClick(Qt.Key_Backspace)
+                TestUtils.pressKeyAndWait(regexTC, statusInput, Qt.Key_Backspace)
             verify(statusInput.valid, "Expected valid input")
         }
+    }
+
+    TestCase {
+        id: qmlWarnTC
+
+        name: "CheckQmlWarnings"
+
+        when: windowShown
+
+        //
+        // Test guards
+
+        function initTestCase() {
+        }
+
+        function cleanup() {
+            statusInput.text = ""
+            statusInput.validationMode = _defaultValidationMode
+        }
+
+        //
+        // Tests
+
+        function test_initial_empty_is_valid() {
+            mouseClick(statusInput)
+            verify(qtOuput.qtOuput().length === 0, `No output expected. Found:\n"${qtOuput.qtOuput()}"\n`)
+        }
+    }
+
+    MonitorQtOutput {
+        id: qtOuput
     }
 }

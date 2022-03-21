@@ -1,0 +1,3 @@
+module StatusQ.TestHelpers
+
+singleton TestUtils 0.1 TestUtils.qml
