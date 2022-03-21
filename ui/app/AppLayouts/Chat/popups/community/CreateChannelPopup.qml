@@ -47,7 +47,12 @@ StatusModal {
             header.title = qsTrId("edit---1").arg(popup.channelName);
             contentItem.channelName.input.text = popup.channelName
             contentItem.channelDescription.input.text = popup.channelDescription
-            contentItem.channelName.input.icon.emoji  = popup.channelEmoji
+            if (popup.channelEmoji) {
+                contentItem.channelName.input.icon.emoji = popup.channelEmoji
+            } else {
+                // Assign a random emoji to channels who down't have one (from old versions)
+                contentItem.channelName.input.icon.emoji = StatusQUtils.Emoji.getRandomEmoji()
+            }
             scrollView.channelColorDialog.color = popup.channelColor
         }
         else {
@@ -274,17 +279,24 @@ StatusModal {
                     return
                 }
                 let error = "";
+                let emoji =  popup.contentItem.channelName.input.icon.emoji
+                // Extract the UTF emoji from the `img` tag so that we only store the emoi and not the full image
+                const found = RegExp(emojiRegexStr, 'g').exec(emoji);
+                if (found) {
+                    emoji = found[1]
+                }
+
                 if (!isEdit) {
                     //popup.contentItem.communityColor.color.toString().toUpperCase()
                     popup.createCommunityChannel(Utils.filterXSS(popup.contentItem.channelName.input.text),
                                                  Utils.filterXSS(popup.contentItem.channelDescription.input.text),
-                                                 popup.contentItem.channelName.input.icon.emoji,
+                                                 emoji,
                                                  popup.contentItem.channelColorDialog.color.toString().toUpperCase(),
                                                  popup.categoryId)
                 } else {
                     popup.editCommunityChannel(Utils.filterXSS(popup.contentItem.channelName.input.text),
                                                  Utils.filterXSS(popup.contentItem.channelDescription.input.text),
-                                                 popup.contentItem.channelName.input.icon.emoji,
+                                                 emoji,
                                                  popup.contentItem.channelColorDialog.color.toString().toUpperCase(),
                                                  popup.categoryId)
                 }

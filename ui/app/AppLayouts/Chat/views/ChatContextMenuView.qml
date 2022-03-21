@@ -101,7 +101,7 @@ StatusPopupMenu {
     StatusMenuItem {
         text: qsTr("Edit name and image")
         icon.name: "edit"
-        enabled: (root.isCommunityChat ||root.chatType === Constants.chatType.privateGroupChat)
+        enabled: root.chatType === Constants.chatType.privateGroupChat
                  && root.amIChatAdmin
         onTriggered: {
             Global.openPopup(editChannelPopup, {
