@@ -58,7 +58,7 @@ Item {
         name: ""
         color: Theme.palette.baseColor1
         emoji: ""
-        letterSize: 14
+        letterSize: emoji ? 11 : 14
         background: StatusIconBackgroundSettings {
             width: 30
             height: 30

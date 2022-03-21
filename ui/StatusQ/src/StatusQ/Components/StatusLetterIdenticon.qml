@@ -21,11 +21,11 @@ Rectangle {
     StatusBaseText {
         id: identiconText
 
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.verticalCenter: parent.verticalCenter
         anchors.alignWhenCentered: false
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
+        width: parent.width
+        height: parent.height
 
         font.weight: Font.Bold
         font.pixelSize: root.letterSize
