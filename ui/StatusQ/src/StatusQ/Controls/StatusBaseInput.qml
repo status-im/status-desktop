@@ -51,6 +51,7 @@ Item {
     property bool pending: false
     property bool leftIcon: true
     property bool isIconSelectable: false
+    property bool showBackground: true
 
     property StatusIconSettings icon: StatusIconSettings {
         width: 24
@@ -84,13 +85,17 @@ Item {
                                                     root.implicitHeight,
                                                     minimumHeight) : root.implicitHeight,
                                          maximumHeight) : parent.height
-        color: Theme.palette.baseColor2
+        color: root.showBackground ? Theme.palette.baseColor2
+                                              : "transparent"
         radius: 8
 
         clip: true
 
         border.width: 1
         border.color: {
+            if (!root.showBackground) {
+                return "transparent"
+            }
             if (!root.valid && root.dirty) {
                 return Theme.palette.dangerColor1
             }

@@ -55,7 +55,7 @@ StatusModal {
     }
 
     function forceActiveFocus() {
-        contentItem.searchInput.forceActiveFocus()
+        contentItem.searchInput.edit.forceActiveFocus()
     }
 
     onOpened: {
@@ -85,7 +85,8 @@ StatusModal {
                     icon: "search"
                     color: Theme.palette.baseColor1
                 }
-                TextEdit {
+
+                StatusBaseInput {
                     id: inputText
                     anchors.left: statusIcon.right
                     anchors.leftMargin: 15
@@ -94,6 +95,8 @@ StatusModal {
                     anchors.verticalCenter: parent.verticalCenter
                     focus: true
                     font.pixelSize: 28
+                    clearable: true
+                    showBackground: false
                     font.family: Theme.palette.baseFont.name
                     color: Theme.palette.directColor1
                     Keys.onPressed: {
