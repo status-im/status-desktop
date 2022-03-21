@@ -31,6 +31,7 @@ ModalPopup {
         id: displayNameInput
         placeholderText: "DisplayName"
         validationError: displayNameValidationError
+        maxLength: 24
         onTextChanged: {
             if(displayNameInput.text === ""){
                 displayNameValidationError = qsTr("Display name is required")
@@ -48,6 +49,8 @@ ModalPopup {
                 displayNameValidationError = qsTr(`Usernames ending with "_eth" are not allowed`)
             } else if (globalUtils.isAlias(displayNameInput.text)){
                 displayNameValidationError = qsTr("Sorry, the name you have chosen is not allowed, try picking another username")
+            } else {
+                displayNameValidationError = ""
             }
         }
     }
