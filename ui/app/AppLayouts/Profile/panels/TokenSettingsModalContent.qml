@@ -72,10 +72,11 @@ Item {
 
     SearchBox {
         id: searchBox
-        customHeight: 36
-        fontPixelSize: 12
+        input.font.pixelSize: 12
         anchors.top: modalBody.top
         anchors.topMargin: Style.current.padding
+        anchors.right: parent.right
+        anchors.left: parent.left
     }
 
 

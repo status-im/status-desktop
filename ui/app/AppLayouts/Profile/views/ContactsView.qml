@@ -66,8 +66,9 @@ Item {
             id: searchBox
             anchors.top: titleText.bottom
             anchors.topMargin: 32
-            fontPixelSize: 15
-            placeholderText: qsTr("Search by a display name or chat key")
+            width: parent.width
+            input.implicitHeight: 44
+            input.placeholderText: qsTr("Search by a display name or chat key")
         }
 
         TabBar {
