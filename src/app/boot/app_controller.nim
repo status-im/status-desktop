@@ -1,7 +1,6 @@
 import NimQml
 
 import ../../app_service/service/general/service as general_service
-import ../../app_service/service/eth/service as eth_service
 import ../../app_service/service/keychain/service as keychain_service
 import ../../app_service/service/accounts/service as accounts_service
 import ../../app_service/service/contacts/service as contacts_service
@@ -54,7 +53,6 @@ type
     # Services
     generalService: general_service.Service
     keychainService: keychain_service.Service
-    ethService: eth_service.Service
     accountsService: accounts_service.Service
     contactsService: contacts_service.Service
     chatService: chat_service.Service
@@ -125,7 +123,6 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.nodeConfigurationService = node_configuration_service.newService(statusFoundation.fleetConfiguration,
   result.settingsService)
   result.keychainService = keychain_service.newService(statusFoundation.events)
-  result.ethService = eth_service.newService()
   result.accountsService = accounts_service.newService(statusFoundation.fleetConfiguration)
   result.networkService = network_service.newService(statusFoundation.events, result.settingsService)
   result.contactsService = contacts_service.newService(
@@ -144,16 +141,16 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     statusFoundation.events, result.settingsService, result.accountsService, result.tokenService,
     result.networkService,
   )
-  result.messageService = message_service.newService(statusFoundation.events, statusFoundation.threadpool,
-    result.contactsService, result.ethService, result.tokenService, result.walletAccountService)
+  result.messageService = message_service.newService(
+    statusFoundation.events, statusFoundation.threadpool, result.contactsService, result.tokenService, result.walletAccountService, result.networkService
+  )
   result.transactionService = transaction_service.newService(statusFoundation.events, statusFoundation.threadpool,
-  result.walletAccountService, result.ethService, result.networkService, result.settingsService)
+  result.walletAccountService, result.networkService, result.settingsService, result.tokenService)
   result.bookmarkService = bookmark_service.newService()
   result.profileService = profile_service.newService()
   result.stickersService = stickers_service.newService(
     statusFoundation.events,
     statusFoundation.threadpool,
-    result.ethService,
     result.settingsService,
     result.walletAccountService,
     result.transactionService,
@@ -176,7 +173,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.settingsService)
   result.gifService = gif_service.newService(result.settingsService)
   result.ensService = ens_service.newService(statusFoundation.events, statusFoundation.threadpool,
-    result.settingsService, result.walletAccountService, result.transactionService, result.ethService,
+    result.settingsService, result.walletAccountService, result.transactionService,
     result.networkService, result.tokenService)
   result.providerService = provider_service.newService(statusFoundation.events, statusFoundation.threadpool, result.ensService)
 
@@ -235,7 +232,6 @@ proc delete*(self: AppController) =
   self.gifService.delete
   self.startupModule.delete
   self.mainModule.delete
-  self.ethService.delete
   self.languageService.delete
 
   self.localAppSettingsVariant.delete
@@ -289,7 +285,6 @@ proc mainDidLoad*(self: AppController) =
 proc start*(self: AppController) =
   self.keychainService.init()
   self.generalService.init()
-  self.ethService.init()
   self.accountsService.init()
 
   self.startupModule.load()

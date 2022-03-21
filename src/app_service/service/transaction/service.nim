@@ -1,4 +1,4 @@
-import NimQml, chronicles, sequtils, sugar, stint, strutils, json, strformat, algorithm, math
+import Tables, NimQml, chronicles, sequtils, sugar, stint, strutils, json, strformat, algorithm, math
 import ../../../backend/transactions as transactions
 import ../../../backend/backend
 import ../../../backend/eth
@@ -11,11 +11,11 @@ import ../../../app/core/[main]
 import ../../../app/core/signals/types
 import ../../../app/core/tasks/[qt, threadpool]
 import ../wallet_account/service as wallet_account_service
-import ../eth/service as eth_service
 import ../network/service as network_service
+import ../token/service as token_service
 import ../settings/service as settings_service
 import ../eth/dto/transaction as transaction_data_dto
-import ../eth/dto/[contract, method_dto]
+import ../eth/dto/[method_dto, coder, method_dto]
 import ./dto as transaction_dto
 import ./cryptoRampDto
 import ../eth/utils as eth_utils
@@ -63,9 +63,9 @@ QtObject:
     events: EventEmitter
     threadpool: ThreadPool
     walletAccountService: wallet_account_service.Service
-    ethService: eth_service.Service
     networkService: network_service.Service
     settingsService: settings_service.Service
+    tokenService: token_service.Service
 
   # Forward declaration
   proc checkPendingTransactions*(self: Service)
@@ -78,18 +78,18 @@ QtObject:
       events: EventEmitter,
       threadpool: ThreadPool,
       walletAccountService: wallet_account_service.Service,
-      ethService: eth_service.Service,
       networkService: network_service.Service,
-      settingsService: settings_service.Service
+      settingsService: settings_service.Service,
+      tokenService: token_service.Service,
   ): Service =
     new(result, delete)
     result.QObject.setup
     result.events = events
     result.threadpool = threadpool
     result.walletAccountService = walletAccountService
-    result.ethService = ethService
     result.networkService = networkService
     result.settingsService = settingsService
+    result.tokenService = tokenService
 
   proc doConnect*(self: Service) =
     self.events.on(SignalType.Wallet.event) do(e:Args):
@@ -227,17 +227,18 @@ QtObject:
     try:
       if assetAddress != ZERO_ADDRESS and not assetAddress.isEmptyOrWhitespace:
         var tx = buildTokenTransaction(
-            parseAddress(from_addr),
-            parseAddress(assetAddress)
-          )
+          parseAddress(from_addr),
+          parseAddress(assetAddress)
+        )
         let networkType = self.settingsService.getCurrentNetwork().toNetworkType()
         let network = self.networkService.getNetwork(networkType)
-        let contract = self.ethService.findErc20Contract(network.chainId, parseAddress(assetAddress))
-        if contract == nil:
+        let token = self.tokenService.findTokenByAddress(network, parseAddress(assetAddress))
+
+        if token == nil:
           raise newException(ValueError, fmt"Could not find ERC-20 contract with address '{assetAddress}' for the current network")
 
-        let transfer = Transfer(to: parseAddress(to), value: conversion.eth2Wei(parseFloat(value), contract.decimals))
-        let transferproc = contract.getproc("transfer")
+        let transfer = Transfer(to: parseAddress(to), value: conversion.eth2Wei(parseFloat(value), token.decimals))
+        let transferproc = ERC20_procS.toTable["transfer"]
         var success: bool
         let gas = transferproc.estimateGas(tx, transfer, success)
 
@@ -318,15 +319,15 @@ QtObject:
       # TODO move this to another thread
       let networkType = self.settingsService.getCurrentNetwork().toNetworkType()
       let network = self.networkService.getNetwork(networkType)
-      let contract = self.eth_service.findErc20Contract(network.chainId, parseAddress(assetAddress))
+      let token = self.tokenService.findTokenByAddress(network, parseAddress(assetAddress))
 
       var tx = ens_utils.buildTokenTransaction(parseAddress(from_addr), parseAddress(assetAddress),
         gas, gasPrice, eip1559Enabled, maxPriorityFeePerGas, maxFeePerGas)
 
       var success: bool
       let transfer = Transfer(to: parseAddress(to_addr),
-        value: conversion.eth2Wei(parseFloat(value), contract.decimals))
-      let transferproc = contract.getproc("transfer")
+        value: conversion.eth2Wei(parseFloat(value), token.decimals))
+      let transferproc = ERC20_procS.toTable["transfer"]
       let response = transferproc.send(tx, transfer, password, success)
 
       let output = %* { "result": %response,  "success": %success, "uuid": %uuid }

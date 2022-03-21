@@ -49,5 +49,5 @@ proc toggleVisible*(self: Controller, chainId: int, symbol: string) =
 proc removeCustomToken*(self: Controller, chainId: int, address: string) =
   self.tokenService.removeCustomToken(chainId, address)
 
-proc getTokenDetails*(self: Controller, chainId: int, address: string) =
-  self.tokenService.getTokenDetails(chainId, address)
+proc getTokenDetails*(self: Controller, address: string) =
+  self.tokenService.getTokenDetails(address)

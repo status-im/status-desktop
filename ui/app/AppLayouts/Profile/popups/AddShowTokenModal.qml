@@ -17,7 +17,6 @@ StatusModal {
     property int marginBetweenInputs: 35
     property string validationError: ""
     property WalletStore walletStore
-    property int mainnetChainID: 1
 
     header.title: editable ?
         //% "Add custom token"
@@ -61,7 +60,7 @@ StatusModal {
     }
 
     property var getTokenDetails: Backpressure.debounce(popup, 500, function (tokenAddress){
-        popup.walletStore.walletTokensModule.getTokenDetails(mainnetChainID, tokenAddress)
+        popup.walletStore.walletTokensModule.getTokenDetails(tokenAddress)
     });
 
     function onKeyReleased(){

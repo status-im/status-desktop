@@ -72,5 +72,5 @@ QtObject:
 
   proc tokenDetailsWereResolved*(self: View, tokenDetails: string) {.signal.}
 
-  proc getTokenDetails*(self: View, chainId: int, address: string) {.slot.} =
-    self.delegate.getTokenDetails(chainId, address)
+  proc getTokenDetails*(self: View, address: string) {.slot.} =
+    self.delegate.getTokenDetails(address)

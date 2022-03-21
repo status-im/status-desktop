@@ -156,11 +156,13 @@ proc getPrice*(self: Service, crypto: string, fiat: string): float64 =
     for (symbol, value) in response.result.pairs:
       prices[symbol] = value.getFloat
       self.priceCache.set(cacheKey, $value.getFloat)
+
+    return prices[crypto]
   except Exception as e:
     let errDesription = e.msg
     error "error: ", errDesription
-
-  return prices[crypto]
+    return 0.0
+  
 
 proc fetchPrices(self: Service): Table[string, float] =
   let currency = self.settingsService.getCurrency()

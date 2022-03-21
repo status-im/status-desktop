@@ -99,6 +99,21 @@ QtObject:
   proc getTokens*(self: Service): Table[NetworkDto, seq[TokenDto]] =
     return self.tokens
 
+  proc findTokenByName*(self: Service, network: NetworkDto, name: string): TokenDto =
+    for token in self.tokens[network]:
+      if token.name == name:
+        return token
+
+  proc findTokenBySymbol*(self: Service, network: NetworkDto, symbol: string): TokenDto =
+    for token in self.tokens[network]:
+      if token.symbol == symbol:
+        return token
+
+  proc findTokenByAddress*(self: Service, network: NetworkDto, address: Address): TokenDto =
+    for token in self.tokens[network]:
+      if token.address == address:
+        return token
+
   proc getVisibleTokens*(self: Service): seq[TokenDto] =
     for tokens in self.getTokens().values:
       for token in tokens:
@@ -112,7 +127,7 @@ QtObject:
       name: name, chainId: networkWIP.chainId, address: address, symbol: symbol, decimals: decimals, color: ""
     )
     discard backend.addCustomToken(backendToken)
-    let token = newDto(
+    let token = newTokenDto(
       name,
       networkWIP.chainId,
       fromHex(Address, address),
@@ -161,7 +176,9 @@ QtObject:
       tokenDetails: tokenDetails
     ))
     
-  proc getTokenDetails*(self: Service, chainId: int, address: string) =
+  proc getTokenDetails*(self: Service, address: string) =
+    # TODO: use multi network rather than first enabled network
+    let chainId = self.networkService.getEnabledNetworks()[0].chainId
     let arg = GetTokenDetailsTaskArg(
       tptr: cast[ByteAddress](getTokenDetailsTask),
       vptr: cast[ByteAddress](self.vptr),

@@ -89,6 +89,10 @@ rpc(getTokensBalancesForChainIDs, "wallet"):
   accounts: seq[string]
   tokens: seq[string]
 
+rpc(discoverToken, "wallet"):
+  chainId: int
+  address: string
+
 rpc(getPendingTransactions, "wallet"):
   discard
 

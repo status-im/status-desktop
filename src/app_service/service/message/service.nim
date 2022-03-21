@@ -6,8 +6,8 @@ import ../../../app/core/eventemitter
 import ../../../app/global/global_singleton
 import ../../../backend/messages as status_go
 import ../contacts/service as contact_service
-import ../eth/service as eth_service
 import ../token/service as token_service
+import ../network/service as network_service
 import ../wallet_account/service as wallet_account_service
 import ./dto/message as message_dto
 import ./dto/pinned_message as pinned_msg_dto
@@ -99,9 +99,9 @@ QtObject:
     events: EventEmitter
     threadpool: ThreadPool
     contactService: contact_service.Service
-    ethService: eth_service.Service
     tokenService: token_service.Service
     walletAccountService: wallet_account_service.Service
+    networkService: network_service.Service
     msgCursor: Table[string, string]
     lastUsedMsgCursor: Table[string, string]
     pinnedMsgCursor: Table[string, string]
@@ -111,15 +111,22 @@ QtObject:
   proc delete*(self: Service) =
     self.QObject.delete
 
-  proc newService*(events: EventEmitter, threadpool: ThreadPool, contactService: contact_service.Service, ethService: eth_service.Service, tokenService: token_service.Service, walletAccountService: wallet_account_service.Service): Service =
+  proc newService*(
+    events: EventEmitter,
+    threadpool: ThreadPool,
+    contactService: contact_service.Service,
+    tokenService: token_service.Service,
+    walletAccountService: wallet_account_service.Service,
+    networkService: network_service.Service,
+  ): Service =
     new(result, delete)
     result.QObject.setup
     result.events = events
     result.threadpool = threadpool
     result.contactService = contactService
-    result.ethService = ethService
     result.tokenService = tokenService
     result.walletAccountService = walletAccountService
+    result.networkService = networkService
     result.msgCursor = initTable[string, string]()
     result.lastUsedMsgCursor = initTable[string, string]()
     result.pinnedMsgCursor = initTable[string, string]()
@@ -247,11 +254,11 @@ QtObject:
 
     return self.pinnedMsgCursor[chatId]
 
-
   proc getTransactionDetails*(self: Service, message: MessageDto): (string, string) =
-    let allContracts = self.ethService.allErc20Contracts()
-    let ethereum = newErc20Contract("Ethereum", Mainnet, parseAddress(ZERO_ADDRESS), "ETH", 18, true)
-    let tokenContract = if message.transactionParameters.contract == "" : ethereum else: self.ethService.findByAddress(allContracts, parseAddress(message.transactionParameters.contract))
+    # TODO(alaibe): handle multi network
+    let networkDto = self.networkService.getEnabledNetworks()[0]
+    let ethereum = newTokenDto("Ethereum", networkDto.chainId, parseAddress(ZERO_ADDRESS), "ETH", 18, true)
+    let tokenContract = if message.transactionParameters.contract == "" : ethereum else: self.tokenService.findTokenByAddress(networkDto, parseAddress(message.transactionParameters.contract))
     let tokenContractStr = if tokenContract == nil: "{}" else: $(Json.encode(tokenContract))
     var weiStr = if tokenContract == nil: "0" else: service_conversion.wei2Eth(message.transactionParameters.value, tokenContract.decimals)
     weiStr.trimZeros()
