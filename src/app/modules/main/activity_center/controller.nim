@@ -1,5 +1,4 @@
 import Tables, stint
-import ./controller_interface
 import ./io_interface
 
 import ../../../global/app_signals
@@ -10,10 +9,8 @@ import ../../../../app_service/service/message/service as message_service
 import ../../../../app_service/service/eth/utils as eth_utils
 import ../../../../app_service/service/chat/service as chat_service
 
-export controller_interface
-
 type
-  Controller*[T: controller_interface.DelegateInterface] = ref object of controller_interface.AccessInterface
+  Controller* = ref object of RootObj
     delegate: io_interface.AccessInterface
     events: EventEmitter
     activityCenterService: activity_center_service.Service
@@ -21,15 +18,15 @@ type
     messageService: message_service.Service
     chatService: chat_service.Service
 
-proc newController*[T](
+proc newController*(
     delegate: io_interface.AccessInterface,
     events: EventEmitter,
     activityCenterService: activity_center_service.Service,
     contactsService: contacts_service.Service,
     messageService: message_service.Service,
     chatService: chat_service.Service
-    ): Controller[T] =
-  result = Controller[T]()
+    ): Controller =
+  result = Controller()
   result.delegate = delegate
   result.events = events
   result.activityCenterService = activityCenterService
@@ -37,10 +34,10 @@ proc newController*[T](
   result.messageService = messageService
   result.chatService = chatService
 
-method delete*[T](self: Controller[T]) =
+proc delete*(self: Controller) =
   discard
 
-method init*[T](self: Controller[T]) =
+proc init*(self: Controller) =
   self.events.on(activity_center_service.SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_LOADED) do(e: Args):
     let args = ActivityCenterNotificationsArgs(e)
     self.delegate.addActivityCenterNotification(args.activityCenterNotifications)
@@ -67,50 +64,50 @@ method init*[T](self: Controller[T]) =
       self.delegate.markActivityCenterNotificationUnreadDone(evArgs.notificationIds)
 
 
-method hasMoreToShow*[T](self: Controller[T]): bool =
+proc hasMoreToShow*(self: Controller): bool =
    return self.activityCenterService.hasMoreToShow()
 
-method unreadActivityCenterNotificationsCount*[T](self: Controller[T]): int =
+proc unreadActivityCenterNotificationsCount*(self: Controller): int =
    return self.activityCenterService.unreadActivityCenterNotificationsCount()
 
-method getContactDetails*[T](self: Controller[T], contactId: string): ContactDetails =
+proc getContactDetails*(self: Controller, contactId: string): ContactDetails =
    return self.contactsService.getContactDetails(contactId)
 
-method getActivityCenterNotifications*[T](self: Controller[T]): seq[ActivityCenterNotificationDto] =
+proc getActivityCenterNotifications*(self: Controller): seq[ActivityCenterNotificationDto] =
    return self.activityCenterService.getActivityCenterNotifications()
 
-method markAllActivityCenterNotificationsRead*[T](self: Controller[T]): string =
+proc markAllActivityCenterNotificationsRead*(self: Controller): string =
    return self.activityCenterService.markAllActivityCenterNotificationsRead()
 
-method markActivityCenterNotificationRead*[T](
-    self: Controller[T],
+proc markActivityCenterNotificationRead*(
+    self: Controller,
     notificationId: string,
     markAsReadProps: MarkAsReadNotificationProperties
     ): string =
    return self.activityCenterService.markActivityCenterNotificationRead(notificationId, markAsReadProps)
 
-method markActivityCenterNotificationUnread*[T](
-    self: Controller[T],
+proc markActivityCenterNotificationUnread*(
+    self: Controller,
     notificationId: string,
     markAsUnreadProps: MarkAsUnreadNotificationProperties
     ): string =
    return self.activityCenterService.markActivityCenterNotificationUnread(notificationId, markAsUnreadProps)
 
-method acceptActivityCenterNotifications*[T](self: Controller[T], notificationIds: seq[string]): string =
+proc acceptActivityCenterNotifications*(self: Controller, notificationIds: seq[string]): string =
    return self.activityCenterService.acceptActivityCenterNotifications(notificationIds)
 
-method dismissActivityCenterNotifications*[T](self: Controller[T], notificationIds: seq[string]): string =
+proc dismissActivityCenterNotifications*(self: Controller, notificationIds: seq[string]): string =
    return self.activityCenterService.dismissActivityCenterNotifications(notificationIds)
 
-method getRenderedText*[T](self: Controller[T], parsedTextArray: seq[ParsedText]): string =
+proc getRenderedText*(self: Controller, parsedTextArray: seq[ParsedText]): string =
   return self.messageService.getRenderedText(parsedTextArray)
 
-method decodeContentHash*[T](self: Controller[T], hash: string): string =
+proc decodeContentHash*(self: Controller, hash: string): string =
   return eth_utils.decodeContentHash(hash)
 
-method switchTo*[T](self: Controller[T], sectionId, chatId, messageId: string) =
+proc switchTo*(self: Controller, sectionId, chatId, messageId: string) =
   let data = ActiveSectionChatArgs(sectionId: sectionId, chatId: chatId, messageId: messageId)
   self.events.emit(SIGNAL_MAKE_SECTION_CHAT_ACTIVE, data)
 
-method getChatDetails*[T](self: Controller[T], chatId: string): ChatDto =
+proc getChatDetails*(self: Controller, chatId: string): ChatDto =
   return self.chatService.getChatById(chatId)

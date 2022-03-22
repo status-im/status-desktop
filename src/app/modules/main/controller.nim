@@ -1,4 +1,4 @@
-import ../shared_models/section_item, controller_interface, io_interface, chronicles
+import ../shared_models/section_item, io_interface, chronicles
 import ../../global/app_sections_config as conf
 import ../../global/global_singleton
 import ../../global/app_signals
@@ -17,13 +17,11 @@ import ../../../app_service/service/mailservers/service as mailservers_service
 import ../../../app_service/service/privacy/service as privacy_service
 import ../../../app_service/service/node/service as node_service
 
-export controller_interface
-
 logScope:
   topics = "main-module-controller"
 
 type
-  Controller* = ref object of controller_interface.AccessInterface
+  Controller* = ref object of RootObj
     delegate: io_interface.AccessInterface
     events: EventEmitter
     settingsService: settings_service.Service
@@ -38,6 +36,9 @@ type
     mailserversService: mailservers_service.Service
     nodeService: node_service.Service
     activeSectionId: string
+
+# Forward declaration
+proc setActiveSection*(self: Controller, sectionId: string, sectionType: SectionType)
 
 proc newController*(delegate: io_interface.AccessInterface,
   events: EventEmitter,
@@ -68,10 +69,10 @@ proc newController*(delegate: io_interface.AccessInterface,
   result.privacyService = privacyService
   result.nodeService = nodeService
 
-method delete*(self: Controller) =
+proc delete*(self: Controller) =
   discard
 
-method init*(self: Controller) =
+proc init*(self: Controller) =
   self.events.on("mailserverAvailable") do(e:Args):
     echo "MAILSERVER AVAILABLE: ", repr(e)
     # We need to take some actions here. This is the only pace where "mailserverAvailable" signal should be handled.
@@ -187,14 +188,14 @@ method init*(self: Controller) =
   self.events.on(SIGNAL_NETWORK_DISCONNECTED) do(e: Args):
     self.delegate.onNetworkDisconnected()
 
-method isConnected*(self: Controller): bool =
+proc isConnected*(self: Controller): bool =
   return self.nodeService.isConnected()
 
-method getJoinedCommunities*(self: Controller): seq[CommunityDto] =
+proc getJoinedCommunities*(self: Controller): seq[CommunityDto] =
   return self.communityService.getJoinedCommunities()
 
-method checkForStoringPassword*(self: Controller) =
-  # This method is called once user is logged in irrespective he is logged in
+proc checkForStoringPassword*(self: Controller) =
+  # This proc is called once user is logged in irrespective he is logged in
   # through the onboarding or login view.
 
   # This is MacOS only feature
@@ -209,7 +210,7 @@ method checkForStoringPassword*(self: Controller) =
   # is either empty or set to "NotNow".
   self.delegate.offerToStorePassword()
 
-method storePassword*(self: Controller, password: string) =
+proc storePassword*(self: Controller, password: string) =
   let account = self.accountsService.getLoggedInAccount()
 
   let value = singletonInstance.localAccountSettings.getStoreToKeychainValue()
@@ -218,10 +219,10 @@ method storePassword*(self: Controller, password: string) =
 
   self.keychainService.storePassword(account.name, password)
 
-method getActiveSectionId*(self: Controller): string =
+proc getActiveSectionId*(self: Controller): string =
   result = self.activeSectionId
 
-method setActiveSection*(self: Controller, sectionId: string, sectionType: SectionType) =
+proc setActiveSection*(self: Controller, sectionId: string, sectionType: SectionType) =
   self.activeSectionId = sectionId
 
   if(sectionType == SectionType.Chat or sectionType == SectionType.Community):
@@ -233,7 +234,7 @@ method setActiveSection*(self: Controller, sectionId: string, sectionType: Secti
 
   self.delegate.activeSectionSet(self.activeSectionId)
 
-method getNumOfNotificaitonsForChat*(self: Controller): tuple[unviewed:int, mentions:int] =
+proc getNumOfNotificaitonsForChat*(self: Controller): tuple[unviewed:int, mentions:int] =
   result.unviewed = 0
   result.mentions = 0
   let chats = self.chatService.getAllChats()
@@ -244,7 +245,7 @@ method getNumOfNotificaitonsForChat*(self: Controller): tuple[unviewed:int, ment
     result.unviewed += chat.unviewedMessagesCount
     result.mentions += chat.unviewedMentionsCount
 
-method getNumOfNotificationsForCommunity*(self: Controller, communityId: string): tuple[unviewed:int, mentions:int] =
+proc getNumOfNotificationsForCommunity*(self: Controller, communityId: string): tuple[unviewed:int, mentions:int] =
   result.unviewed = 0
   result.mentions = 0
   let chats = self.chatService.getAllChats()
@@ -255,34 +256,34 @@ method getNumOfNotificationsForCommunity*(self: Controller, communityId: string)
     result.unviewed += chat.unviewedMessagesCount
     result.mentions += chat.unviewedMentionsCount
 
-method setUserStatus*(self: Controller, status: bool) =
+proc setUserStatus*(self: Controller, status: bool) =
   if(self.settingsService.saveSendStatusUpdates(status)):
     singletonInstance.userProfile.setUserStatus(status)
   else:
     error "error updating user status"
 
-method getContact*(self: Controller, id: string): ContactsDto =
+proc getContact*(self: Controller, id: string): ContactsDto =
   return self.contactsService.getContactById(id)
 
-method getContacts*(self: Controller): seq[ContactsDto] =
+proc getContacts*(self: Controller): seq[ContactsDto] =
   return self.contactsService.getContacts()
 
-method getContactNameAndImage*(self: Controller, contactId: string):
+proc getContactNameAndImage*(self: Controller, contactId: string):
   tuple[name: string, image: string, isIdenticon: bool] =
   return self.contactsService.getContactNameAndImage(contactId)
 
-method getContactDetails*(self: Controller, contactId: string): ContactDetails =
+proc getContactDetails*(self: Controller, contactId: string): ContactDetails =
   return self.contactsService.getContactDetails(contactId)
 
-method resolveENS*(self: Controller, ensName: string, uuid: string = "") =
+proc resolveENS*(self: Controller, ensName: string, uuid: string = "") =
   self.contactsService.resolveENS(ensName, uuid)
 
-method isMnemonicBackedUp*(self: Controller): bool =
+proc isMnemonicBackedUp*(self: Controller): bool =
   result = self.privacyService.isMnemonicBackedUp()
 
-method switchTo*(self: Controller, sectionId, chatId, messageId: string) =
+proc switchTo*(self: Controller, sectionId, chatId, messageId: string) =
   let data = ActiveSectionChatArgs(sectionId: sectionId, chatId: chatId, messageId: messageId)
   self.events.emit(SIGNAL_MAKE_SECTION_CHAT_ACTIVE, data)
 
-method getCommunityById*(self: Controller, communityId: string): CommunityDto =
+proc getCommunityById*(self: Controller, communityId: string): CommunityDto =
   return self.communityService.getCommunityById(communityId)

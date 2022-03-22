@@ -1,12 +1,10 @@
-import ./controller_interface
 import io_interface
 import ../../../../core/eventemitter
 import ../../../../../app_service/service/saved_address/service as saved_address_service
 
-export controller_interface
 
 type
-  Controller* = ref object of controller_interface.AccessInterface
+  Controller* = ref object of RootObj
     delegate: io_interface.AccessInterface
     events: EventEmitter
     savedAddressService: saved_address_service.Service
@@ -21,18 +19,18 @@ proc newController*(
   result.events = events
   result.savedAddressService = savedAddressService
 
-method delete*(self: Controller) =
+proc delete*(self: Controller) =
   discard
 
-method init*(self: Controller) =
+proc init*(self: Controller) =
   self.events.on(SIGNAL_SAVED_ADDRESS_CHANGED) do(e:Args):
     self.delegate.loadSavedAddresses()
 
-method getSavedAddresses*(self: Controller): seq[saved_address_service.SavedAddressDto] =
+proc getSavedAddresses*(self: Controller): seq[saved_address_service.SavedAddressDto] =
   return self.savedAddressService.getSavedAddresses()
 
-method createOrUpdateSavedAddress*(self: Controller, name, address: string): string =
+proc createOrUpdateSavedAddress*(self: Controller, name, address: string): string =
   return self.savedAddressService.createOrUpdateSavedAddress(name, address)
 
-method deleteSavedAddress*(self: Controller, address: string): string =
+proc deleteSavedAddress*(self: Controller, address: string): string =
   return self.savedAddressService.deleteSavedAddress(address)

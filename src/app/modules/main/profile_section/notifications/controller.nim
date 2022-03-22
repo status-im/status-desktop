@@ -1,17 +1,14 @@
 import Tables, chronicles
-import controller_interface
 import io_interface
 
 import ../../../../core/eventemitter
 import ../../../../../app_service/service/chat/service as chat_service
 
-export controller_interface
-
 logScope:
   topics = "profile-section-notifications-module-controller"
 
 type
-  Controller* = ref object of controller_interface.AccessInterface
+  Controller* = ref object of RootObj
     delegate: io_interface.AccessInterface
     events: EventEmitter
     chatService: chat_service.Service
@@ -24,10 +21,10 @@ proc newController*(delegate: io_interface.AccessInterface,
   result.events = events
   result.chatService = chatService
 
-method delete*(self: Controller) =
+proc delete*(self: Controller) =
   discard
 
-method init*(self: Controller) =
+proc init*(self: Controller) =
   self.events.on(chat_service.SIGNAL_CHAT_MUTED) do(e:Args):
     let args = chat_service.ChatArgs(e)
     self.delegate.onChatMuted(args.chatId)
@@ -42,15 +39,15 @@ method init*(self: Controller) =
 
   ## We need to add leave community handler here, once we have appropriate signal in place
 
-method getAllChats*(self: Controller): seq[ChatDto] =
+proc getAllChats*(self: Controller): seq[ChatDto] =
   return self.chatService.getAllChats()
 
-method getChatDetails*(self: Controller, chatId: string): ChatDto =
+proc getChatDetails*(self: Controller, chatId: string): ChatDto =
   return self.chatService.getChatById(chatId)
 
-method getOneToOneChatNameAndImage*(self: Controller, chatId: string):
+proc getOneToOneChatNameAndImage*(self: Controller, chatId: string):
   tuple[name: string, image: string, isIdenticon: bool] =
   return self.chatService.getOneToOneChatNameAndImage(chatId)
 
-method unmuteChat*(self: Controller, chatId: string) =
+proc unmuteChat*(self: Controller, chatId: string) =
   self.chatService.unmuteChat(chatId)

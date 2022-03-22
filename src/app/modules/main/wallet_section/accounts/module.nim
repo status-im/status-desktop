@@ -15,7 +15,7 @@ type
     delegate: delegate_interface.AccessInterface
     events: EventEmitter
     view: View
-    controller: controller.AccessInterface
+    controller: Controller
     moduleLoaded: bool
 
 proc newModule*(

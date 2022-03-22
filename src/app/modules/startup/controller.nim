@@ -1,19 +1,17 @@
 import chronicles
 
-import controller_interface
 import io_interface
 
 import ../../core/signals/types
 import ../../core/eventemitter
 import ../../../app_service/service/accounts/service as accounts_service
 
-export controller_interface
 
 logScope:
   topics = "startup-controller"
 
 type
-  Controller* = ref object of controller_interface.AccessInterface
+  Controller* = ref object of RootObj
     delegate: io_interface.AccessInterface
     events: EventEmitter
     accountsService: accounts_service.Service
@@ -27,10 +25,10 @@ proc newController*(delegate: io_interface.AccessInterface,
   result.events = events
   result.accountsService = accountsService
 
-method delete*(self: Controller) =
+proc delete*(self: Controller) =
   discard
 
-method init*(self: Controller) =
+proc init*(self: Controller) =
   self.events.on(SignalType.NodeLogin.event) do(e:Args):
     let signal = NodeSignal(e)
     if signal.event.error == "":
@@ -46,5 +44,5 @@ method init*(self: Controller) =
   self.events.on(SignalType.NodeReady.event) do(e:Args):
     self.events.emit("nodeReady", Args())
 
-method shouldStartWithOnboardingScreen*(self: Controller): bool =
+proc shouldStartWithOnboardingScreen*(self: Controller): bool =
   return self.accountsService.openedAccounts().len == 0

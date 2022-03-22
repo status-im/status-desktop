@@ -2,6 +2,7 @@ import NimQml
 
 import ./controller, ./view
 import ./io_interface as io_interface
+import ../io_interface as delegate_interface
 
 import ./account_tokens/module as account_tokens_module
 import ./accounts/module as accountsModule
@@ -26,11 +27,11 @@ import io_interface
 export io_interface
 
 type
-  Module* [T: io_interface.DelegateInterface] = ref object of io_interface.AccessInterface
-    delegate: T
+  Module* = ref object of io_interface.AccessInterface
+    delegate: delegate_interface.AccessInterface
     events: EventEmitter
     moduleLoaded: bool
-    controller: controller.AccessInterface
+    controller: Controller
     view: View
 
     accountTokensModule: account_tokens_module.AccessInterface
@@ -42,8 +43,8 @@ type
     savedAddressesModule: saved_addresses_module.AccessInterface
     buySellCryptoModule: buy_sell_crypto_module.AccessInterface
 
-proc newModule*[T](
-  delegate: T,
+proc newModule*(
+  delegate: delegate_interface.AccessInterface,
   events: EventEmitter,
   tokenService: token_service.Service,
   transactionService: transaction_service.Service,
@@ -52,8 +53,8 @@ proc newModule*[T](
   settingsService: settings_service.Service,
   savedAddressService: saved_address_service.Service,
   networkService: network_service.Service,
-): Module[T] =
-  result = Module[T]()
+): Module =
+  result = Module()
   result.delegate = delegate
   result.events = events
   result.moduleLoaded = false
@@ -69,7 +70,7 @@ proc newModule*[T](
   result.savedAddressesModule = saved_addresses_module.newModule(result, events, savedAddressService)
   result.buySellCryptoModule = buy_sell_crypto_module.newModule(result, events, transactionService)
 
-method delete*[T](self: Module[T]) =
+method delete*(self: Module) =
   self.accountTokensModule.delete
   self.accountsModule.delete
   self.allTokensModule.delete
@@ -81,26 +82,26 @@ method delete*[T](self: Module[T]) =
   self.controller.delete
   self.view.delete
 
-method updateCurrency*[T](self: Module[T], currency: string) =
+method updateCurrency*(self: Module, currency: string) =
   self.controller.updateCurrency(currency)
 
-method switchAccount*[T](self: Module[T], accountIndex: int) =
+method switchAccount*(self: Module, accountIndex: int) =
   self.currentAccountModule.switchAccount(accountIndex)
   self.collectiblesModule.switchAccount(accountIndex)
   self.accountTokensModule.switchAccount(accountIndex)
   self.transactionsModule.switchAccount(accountIndex)
 
-method switchAccountByAddress*[T](self: Module[T], address: string) =
+method switchAccountByAddress*(self: Module, address: string) =
   let accountIndex = self.controller.getIndex(address)
   self.switchAccount(accountIndex)
 
-method setTotalCurrencyBalance*[T](self: Module[T]) =
+method setTotalCurrencyBalance*(self: Module) =
   self.view.setTotalCurrencyBalance(self.controller.getCurrencyBalance())
 
-method isEIP1559Enabled*[T](self: Module[T]): bool =
+method isEIP1559Enabled*(self: Module): bool =
   return self.controller.isEIP1559Enabled()
 
-method load*[T](self: Module[T]) =
+method load*(self: Module) =
   singletonInstance.engine.setRootContextProperty("walletSection", newQVariant(self.view))
 
   self.events.on(SIGNAL_WALLET_ACCOUNT_SAVED) do(e:Args):
@@ -125,10 +126,10 @@ method load*[T](self: Module[T]) =
   self.savedAddressesModule.load()
   self.buySellCryptoModule.load()
 
-method isLoaded*[T](self: Module[T]): bool =
+method isLoaded*(self: Module): bool =
   return self.moduleLoaded
 
-proc checkIfModuleDidLoad[T](self: Module[T]) =
+proc checkIfModuleDidLoad(self: Module) =
   if(not self.accountTokensModule.isLoaded()):
     return
 
@@ -163,29 +164,29 @@ proc checkIfModuleDidLoad[T](self: Module[T]) =
   self.moduleLoaded = true
   self.delegate.walletSectionDidLoad()
 
-method viewDidLoad*[T](self: Module[T]) =
+method viewDidLoad*(self: Module) =
   self.checkIfModuleDidLoad()
 
-method accountTokensModuleDidLoad*[T](self: Module[T]) =
+method accountTokensModuleDidLoad*(self: Module) =
   self.checkIfModuleDidLoad()
 
-method accountsModuleDidLoad*[T](self: Module[T]) =
+method accountsModuleDidLoad*(self: Module) =
   self.checkIfModuleDidLoad()
 
-method allTokensModuleDidLoad*[T](self: Module[T]) =
+method allTokensModuleDidLoad*(self: Module) =
   self.checkIfModuleDidLoad()
 
-method collectiblesModuleDidLoad*[T](self: Module[T]) =
+method collectiblesModuleDidLoad*(self: Module) =
   self.checkIfModuleDidLoad()
 
-method currentAccountModuleDidLoad*[T](self: Module[T]) =
+method currentAccountModuleDidLoad*(self: Module) =
   self.checkIfModuleDidLoad()
 
-method transactionsModuleDidLoad*[T](self: Module[T]) =
+method transactionsModuleDidLoad*(self: Module) =
   self.checkIfModuleDidLoad()
 
-method savedAddressesModuleDidLoad*[T](self: Module[T]) =
+method savedAddressesModuleDidLoad*(self: Module) =
   self.checkIfModuleDidLoad()
 
-method buySellCryptoModuleDidLoad*[T](self: Module[T]) =
+method buySellCryptoModuleDidLoad*(self: Module) =
   self.checkIfModuleDidLoad()

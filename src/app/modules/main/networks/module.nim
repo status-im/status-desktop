@@ -13,7 +13,7 @@ type
     delegate: delegate_interface.AccessInterface
     view: View
     viewVariant: QVariant
-    controller: controller.AccessInterface
+    controller: Controller
     moduleLoaded: bool
 
 proc newModule*(

@@ -14,7 +14,7 @@ type
   Module* = ref object of io_interface.AccessInterface
     delegate: delegate_interface.AccessInterface
     moduleLoaded: bool
-    controller: controller.AccessInterface
+    controller: Controller
 
     collectiblesModule: collectibles_module.AccessInterface
     collectionsModule: collections_module.AccessInterface

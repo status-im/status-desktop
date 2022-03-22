@@ -101,9 +101,3 @@ method stickerTransactionConfirmed*(self: AccessInterface, trxType: string, pack
 method stickerTransactionReverted*(self: AccessInterface, trxType: string, packID: string, transactionHash: string,
   revertReason: string) {.base.} =
   raise newException(ValueError, "No implementation available")
-
-type
-  ## Abstract class (concept) which must be implemented by object/s used in this
-  ## module.
-  DelegateInterface* = concept c
-    c.stickersDidLoad()

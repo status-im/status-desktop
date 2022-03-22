@@ -56,9 +56,3 @@ method isEIP1559Enabled*(self: AccessInterface): bool {.base.} =
 
 method buySellCryptoModuleDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
-
-type
-  ## Abstract class (concept) which must be implemented by object/s used in this
-  ## module.
-  DelegateInterface* = concept c
-    c.walletSectionDidLoad()

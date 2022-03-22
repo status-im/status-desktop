@@ -31,7 +31,7 @@ type
     delegate: delegate_interface.AccessInterface
     view: View
     viewVariant: QVariant
-    controller: controller.AccessInterface
+    controller: Controller
     inputAreaModule: input_area_module.AccessInterface
     messagesModule: messages_module.AccessInterface
     usersModule: users_module.AccessInterface

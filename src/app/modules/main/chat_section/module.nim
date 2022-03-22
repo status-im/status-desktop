@@ -30,7 +30,7 @@ type
     delegate: delegate_interface.AccessInterface
     view: View
     viewVariant: QVariant
-    controller: controller.AccessInterface
+    controller: Controller
     chatContentModules: OrderedTable[string, chat_content_module.AccessInterface]
     moduleLoaded: bool
 
@@ -679,9 +679,6 @@ method makeAdmin*(self: Module, communityID: string, chatId: string, pubKey: str
 
 method createGroupChat*(self: Module, communityID: string, groupName: string, pubKeys: string) =
   self.controller.createGroupChat(communityID, groupName, self.convertPubKeysToJson(pubKeys))
-
-method joinGroup*(self: Module) =
-  self.controller.joinGroup()
 
 method joinGroupChatFromInvitation*(self: Module, groupName: string, chatId: string, adminPK: string) =
   self.controller.joinGroupChatFromInvitation(groupName, chatId, adminPK)

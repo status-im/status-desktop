@@ -1,52 +1,50 @@
-import ./controller_interface
+import io_interface
 import ../../../../app_service/service/settings/service as settings_service
 import ../../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../../app_service/service/network/service as network_service
 
-export controller_interface
-
 type
-  Controller*[T: controller_interface.DelegateInterface] = ref object of controller_interface.AccessInterface
-    delegate: T
+  Controller* = ref object of RootObj
+    delegate: io_interface.AccessInterface
     settingsService: settings_service.Service
     walletAccountService: wallet_account_service.Service
     networkService: network_service.Service
  
-proc newController*[T](
-  delegate: T,
+proc newController*(
+  delegate: io_interface.AccessInterface,
   settingsService: settings_service.Service,
   walletAccountService: wallet_account_service.Service,
   networkService: network_service.Service,
-): Controller[T] =
-  result = Controller[T]()
+): Controller =
+  result = Controller()
   result.delegate = delegate
   result.settingsService = settingsService
   result.walletAccountService = walletAccountService
   result.networkService = networkService
 
-method delete*[T](self: Controller[T]) =
+proc delete*(self: Controller) =
   discard
 
-method init*[T](self: Controller[T]) =
+proc init*(self: Controller) =
   discard
 
-method getCurrency*[T](self: Controller[T]): string =
+proc getCurrency*(self: Controller): string =
   return self.settingsService.getCurrency()
 
-method getSigningPhrase*[T](self: Controller[T]): string =
+proc getSigningPhrase*(self: Controller): string =
   return self.settingsService.getSigningPhrase()
 
-method isMnemonicBackedUp*[T](self: Controller[T]): bool =
+proc isMnemonicBackedUp*(self: Controller): bool =
   return self.settingsService.getMnemonic().len > 0
 
-method getCurrencyBalance*[T](self: Controller[T]): float64 =
+proc getCurrencyBalance*(self: Controller): float64 =
   return self.walletAccountService.getCurrencyBalance()
 
-method updateCurrency*[T](self: Controller[T], currency: string) =
+proc updateCurrency*(self: Controller, currency: string) =
   self.walletAccountService.updateCurrency(currency)
 
-method isEIP1559Enabled*[T](self: Controller[T]): bool =
+proc isEIP1559Enabled*(self: Controller): bool =
   return self.networkService.isEIP1559Enabled()
 
-method getIndex*[T](self: Controller[T], address: string): int =
+proc getIndex*(self: Controller, address: string): int =
   return self.walletAccountService.getIndex(address)

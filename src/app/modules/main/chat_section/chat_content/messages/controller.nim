@@ -1,5 +1,4 @@
 import chronicles
-import controller_interface
 import io_interface
 
 import ../../../../../../app/global/global_singleton
@@ -14,13 +13,11 @@ import ../../../../../global/app_signals
 import ../../../../../core/signals/types
 import ../../../../../core/eventemitter
 
-export controller_interface
-
 logScope:
   topics = "messages-controller"
 
 type
-  Controller* = ref object of controller_interface.AccessInterface
+  Controller* = ref object of RootObj
     delegate: io_interface.AccessInterface
     events: EventEmitter
     sectionId: string
@@ -51,10 +48,10 @@ proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter
   result.messageService = messageService
   result.mailserversService = mailserversService
 
-method delete*(self: Controller) =
+proc delete*(self: Controller) =
   discard
 
-method init*(self: Controller) =
+proc init*(self: Controller) =
   self.events.on(SIGNAL_MESSAGES_LOADED) do(e:Args):
     let args = MessagesLoadedArgs(e)
     if(self.chatId != args.chatId):
@@ -167,97 +164,97 @@ method init*(self: Controller) =
       return
     self.delegate.onChatMemberUpdated(args.id, args.admin, args.joined)
 
-method getMySectionId*(self: Controller): string =
+proc getMySectionId*(self: Controller): string =
   return self.sectionId
 
-method getMyChatId*(self: Controller): string =
+proc getMyChatId*(self: Controller): string =
   return self.chatId
 
-method getChatDetails*(self: Controller): ChatDto =
+proc getChatDetails*(self: Controller): ChatDto =
   return self.chatService.getChatById(self.chatId)
 
-method getCommunityDetails*(self: Controller): CommunityDto =
+proc getCommunityDetails*(self: Controller): CommunityDto =
   return self.communityService.getCommunityById(self.sectionId)
 
-method getOneToOneChatNameAndImage*(self: Controller): tuple[name: string, image: string, isIdenticon: bool] =
+proc getOneToOneChatNameAndImage*(self: Controller): tuple[name: string, image: string, isIdenticon: bool] =
   return self.chatService.getOneToOneChatNameAndImage(self.chatId)
 
-method belongsToCommunity*(self: Controller): bool =
+proc belongsToCommunity*(self: Controller): bool =
   return self.belongsToCommunity
 
-method loadMoreMessages*(self: Controller) =
+proc loadMoreMessages*(self: Controller) =
   let limit = self.loadingMessagesPerPageFactor * MESSAGES_PER_PAGE
   self.messageService.asyncLoadMoreMessagesForChat(self.chatId, limit)
 
-method addReaction*(self: Controller, messageId: string, emojiId: int) =
+proc addReaction*(self: Controller, messageId: string, emojiId: int) =
   self.messageService.addReaction(self.chatId, messageId, emojiId)
 
-method removeReaction*(self: Controller, messageId: string, emojiId: int, reactionId: string) =
+proc removeReaction*(self: Controller, messageId: string, emojiId: int, reactionId: string) =
   self.messageService.removeReaction(reactionId, self.chatId, messageId, emojiId)
 
-method pinUnpinMessage*(self: Controller, messageId: string, pin: bool) =
+proc pinUnpinMessage*(self: Controller, messageId: string, pin: bool) =
   self.messageService.pinUnpinMessage(self.chatId, messageId, pin)
 
-method getContactById*(self: Controller, contactId: string): ContactsDto =
+proc getContactById*(self: Controller, contactId: string): ContactsDto =
   return self.contactService.getContactById(contactId)
 
-method getContactDetails*(self: Controller, contactId: string): ContactDetails =
+proc getContactDetails*(self: Controller, contactId: string): ContactDetails =
   return self.contactService.getContactDetails(contactId)
 
-method getNumOfPinnedMessages*(self: Controller): int =
+proc getNumOfPinnedMessages*(self: Controller): int =
   return self.messageService.getNumOfPinnedMessages(self.chatId)
 
-method getRenderedText*(self: Controller, parsedTextArray: seq[ParsedText]): string =
+proc getRenderedText*(self: Controller, parsedTextArray: seq[ParsedText]): string =
   return self.messageService.getRenderedText(parsedTextArray)
 
-method getMessageDetails*(self: Controller, messageId: string):
+proc getMessageDetails*(self: Controller, messageId: string):
   tuple[message: MessageDto, reactions: seq[ReactionDto], error: string] =
   return self.messageService.getDetailsForMessage(self.chatId, messageId)
 
-method deleteMessage*(self: Controller, messageId: string) =
+proc deleteMessage*(self: Controller, messageId: string) =
   self.messageService.deleteMessage(messageId)
 
-method decodeContentHash*(self: Controller, hash: string): string =
+proc decodeContentHash*(self: Controller, hash: string): string =
   return eth_utils.decodeContentHash(hash)
 
-method editMessage*(self: Controller, messageId: string, updatedMsg: string) =
+proc editMessage*(self: Controller, messageId: string, updatedMsg: string) =
   self.messageService.editMessage(messageId, updatedMsg)
 
-method getLinkPreviewData*(self: Controller, link: string, uuid: string): string =
+proc getLinkPreviewData*(self: Controller, link: string, uuid: string): string =
   self.messageService.asyncGetLinkPreviewData(link, uuid)
 
-method getSearchedMessageId*(self: Controller): string =
+proc getSearchedMessageId*(self: Controller): string =
   return self.searchedMessageId
 
-method setSearchedMessageId*(self: Controller, searchedMessageId: string) =
+proc setSearchedMessageId*(self: Controller, searchedMessageId: string) =
   self.searchedMessageId = searchedMessageId
 
-method clearSearchedMessageId*(self: Controller) =
+proc clearSearchedMessageId*(self: Controller) =
   self.setSearchedMessageId("")
 
-method getLoadingMessagesPerPageFactor*(self: Controller): int =
+proc getLoadingMessagesPerPageFactor*(self: Controller): int =
   return self.loadingMessagesPerPageFactor
 
-method increaseLoadingMessagesPerPageFactor*(self: Controller) =
+proc increaseLoadingMessagesPerPageFactor*(self: Controller) =
   self.loadingMessagesPerPageFactor = self.loadingMessagesPerPageFactor + 1
 
-method resetLoadingMessagesPerPageFactor*(self: Controller) =
+proc resetLoadingMessagesPerPageFactor*(self: Controller) =
   self.loadingMessagesPerPageFactor = 1
 
-method requestMoreMessages*(self: Controller) =
+proc requestMoreMessages*(self: Controller) =
   self.mailserversService.requestMoreMessages(self.chatId)
 
-method fillGaps*(self: Controller, messageId: string) =
+proc fillGaps*(self: Controller, messageId: string) =
   self.mailserversService.fillGaps(self.chatId, messageId)
 
-method getTransactionDetails*(self: Controller, message: MessageDto): (string,string) =
+proc getTransactionDetails*(self: Controller, message: MessageDto): (string,string) =
   return self.messageService.getTransactionDetails(message)
 
-method getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAccountDto] =
+proc getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAccountDto] =
   return self.messageService.getWalletAccounts()
   
-method joinGroupChat*(self: Controller, communityID: string, chatID: string) =
-  self.chatService.confirmJoiningGroup(communityID, self.chatId)
+proc joinGroupChat*(self: Controller) =
+  self.chatService.confirmJoiningGroup("", self.chatId)
 
-method leaveChat*(self: Controller) =
+proc leaveChat*(self: Controller) =
   self.chatService.leaveChat(self.chatId)

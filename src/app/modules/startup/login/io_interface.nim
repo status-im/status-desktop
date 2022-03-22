@@ -1,12 +1,33 @@
-# Defines how parent module accesses this module
-include ./private_interfaces/module_base_interface
-include ./private_interfaces/module_access_interface
+import item
 
-# Defines how this module view communicates with this module
-include ./private_interfaces/module_view_delegate_interface
+type
+  AccessInterface* {.pure inheritable.} = ref object of RootObj
 
-# Defines how this controller communicates with this module
-include ./private_interfaces/module_controller_delegate_interface
+method delete*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
 
-# Defines how submodules of this module communicate with this module
-# will be added if needed
+method load*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method isLoaded*(self: AccessInterface): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method emitAccountLoginError*(self: AccessInterface, error: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method emitObtainingPasswordError*(self: AccessInterface, errorDescription: string)
+  {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method emitObtainingPasswordSuccess*(self: AccessInterface, password: string)
+  {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method viewDidLoad*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method setSelectedAccount*(self: AccessInterface, item: Item) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method login*(self: AccessInterface, password: string) {.base.} =
+  raise newException(ValueError, "No implementation available")

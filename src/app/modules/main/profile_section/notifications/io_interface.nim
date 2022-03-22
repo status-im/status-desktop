@@ -1,11 +1,31 @@
-# Defines how parent module accesses this module
-include ./private_interfaces/module_base_interface
-include ./private_interfaces/module_access_interface
+import NimQml
 
-# Defines how this module view communicates with this module
-include ./private_interfaces/module_view_delegate_interface
+type
+  AccessInterface* {.pure inheritable.} = ref object of RootObj
 
-# Defines how this controller communicates with this module
-include ./private_interfaces/module_controller_delegate_interface
+method delete*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
 
-# Defines how submodules of this module communicate with this module
+method load*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method isLoaded*(self: AccessInterface): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getModuleAsVariant*(self: AccessInterface): QVariant {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onChatMuted*(self: AccessInterface, chatId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onChatUnmuted*(self: AccessInterface, chatId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onChatLeft*(self: AccessInterface, chatId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method viewDidLoad*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method unmuteChat*(self: AccessInterface, chatId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")

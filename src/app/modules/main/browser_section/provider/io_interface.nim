@@ -1,9 +1,29 @@
-# Defines how parent module accesses this module
-include ./private_interfaces/module_base_interface
-include ./private_interfaces/module_access_interface
+type
+  AccessInterface* {.pure inheritable.} = ref object of RootObj
 
-# Defines how this module view communicates with this module
-include ./private_interfaces/module_view_delegate_interface
+method delete*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
 
-# Defines how this controller communicates with this module
-include ./private_interfaces/module_controller_delegate_interface
+method load*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method isLoaded*(self: AccessInterface): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method setDappsAddress*(self: AccessInterface, newDappAddress: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onDappAddressChanged*(self: AccessInterface, newDappAddress: string) {.base.}  =
+  raise newException(ValueError, "No implementation available")
+
+method disconnect*(self: AccessInterface, dappName: string, address: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method postMessage*(self: AccessInterface, requestType: string, message: string): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method ensResourceURL*(self: AccessInterface, ens: string, url: string): (string, string, string, string, bool) =
+  raise newException(ValueError, "No implementation available")
+
+method viewDidLoad*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")

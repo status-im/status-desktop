@@ -1,12 +1,62 @@
-# Defines how parent module accesses this module
-include ./private_interfaces/module_base_interface
-include ./private_interfaces/module_access_interface
+import json
+import ../../../core/signals/types
 
-# Defines how this module view communicates with this module
-include ./private_interfaces/module_view_delegate_interface
+type
+  AccessInterface* {.pure inheritable.} = ref object of RootObj
 
-# Defines how this controller communicates with this module
-include ./private_interfaces/module_controller_delegate_interface
+method delete*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
 
-# Defines how submodules of this module communicate with this module
-# will be added if needed
+method load*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method isLoaded*(self: AccessInterface): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method setPeerSize*(self: AccessInterface, peerSize: int) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method setLastMessage*(self: AccessInterface, lastMessage: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method setStats*(self: AccessInterface, stats: Stats) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method log*(self: AccessInterface, logContent: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method setBitsSet*(self: AccessInterface, bitsSet: int) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method viewDidLoad*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method sendRPCMessageRaw*(self: AccessInterface, inputJSON: string): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method setBloomFilterMode*(self: AccessInterface, bloomFilterMode: bool){.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method setBloomLevel*(self: AccessInterface, level: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method setV2LightMode*(self: AccessInterface, enabled: bool) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getWakuBloomFilterMode*(self: AccessInterface): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method fetchBitsSet*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method isV2LightMode*(self: AccessInterface): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method isFullNode*(self: AccessInterface): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getWakuVersion*(self: AccessInterface): int {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getBloomLevel*(self: AccessInterface): string {.base.} =
+  raise newException(ValueError, "No implementation available")

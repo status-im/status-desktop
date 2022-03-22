@@ -1,18 +1,15 @@
-import controller_interface
-
-export controller_interface
+import io_interface
 
 type
-  Controller*[T: controller_interface.DelegateInterface] =
-    ref object of controller_interface.AccessInterface
-    delegate: T
+  Controller* = ref object of RootObj
+    delegate: io_interface.AccessInterface
 
-proc newController*[T](delegate: T): Controller[T] =
-  result = Controller[T]()
+proc newController*(delegate: io_interface.AccessInterface): Controller =
+  result = Controller()
   result.delegate = delegate
 
-method delete*[T](self: Controller[T]) =
+proc delete*(self: Controller) =
   discard
 
-method init*[T](self: Controller[T]) =
+proc init*(self: Controller) =
   discard

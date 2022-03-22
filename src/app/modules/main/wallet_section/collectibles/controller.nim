@@ -1,11 +1,8 @@
-import ./controller_interface
 import io_interface
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 
-export controller_interface
-
 type
-  Controller* = ref object of controller_interface.AccessInterface
+  Controller* = ref object of RootObj
     delegate: io_interface.AccessInterface
     walletAccountService: wallet_account_service.Service
 
@@ -17,11 +14,11 @@ proc newController*(
   result.delegate = delegate
   result.walletAccountService = walletAccountService
 
-method delete*(self: Controller) =
+proc delete*(self: Controller) =
   discard
 
-method init*(self: Controller) =
+proc init*(self: Controller) =
   discard
 
-method getWalletAccount*(self: Controller, accountIndex: int): wallet_account_service.WalletAccountDto =
+proc getWalletAccount*(self: Controller, accountIndex: int): wallet_account_service.WalletAccountDto =
   return self.walletAccountService.getWalletAccount(accountIndex)

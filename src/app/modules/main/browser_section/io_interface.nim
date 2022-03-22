@@ -1,15 +1,23 @@
-# Defines how parent module accesses this module
-include ./private_interfaces/module_base_interface
-include ./private_interfaces/module_access_interface
+type
+  AccessInterface* {.pure inheritable.} = ref object of RootObj
 
-# Defines how this module view communicates with this module
-include ./private_interfaces/module_view_delegate_interface
+method delete*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
 
-# Defines how this controller communicates with this module
-include ./private_interfaces/module_controller_delegate_interface
+method load*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
 
-# Defines how submodules of this module communicate with this module
-# will be added if needed
-include ./private_interfaces/module_provider_delegate_interface
-include ./private_interfaces/module_bookmark_delegate_interface
-include ./private_interfaces/module_dapps_delegate_interface
+method isLoaded*(self: AccessInterface): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method bookmarkDidLoad*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method dappsDidLoad*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method providerDidLoad*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method viewDidLoad*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")

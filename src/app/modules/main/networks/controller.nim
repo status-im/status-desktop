@@ -1,13 +1,11 @@
-import ./controller_interface
 import ../../../core/eventemitter
 import ../../../../app_service/service/network/service as network_service
 import ../../../../app_service/service/wallet_account/service as wallet_account_service
 import ./io_interface
 
-export controller_interface
 
 type
-  Controller* = ref object of controller_interface.AccessInterface
+  Controller* = ref object of RootObj
     delegate: io_interface.AccessInterface
     events: EventEmitter
     networkService: network_service.Service
@@ -25,15 +23,15 @@ proc newController*(
   result.networkService = networkService
   result.walletAccountService = walletAccountService
 
-method delete*(self: Controller) =
+proc delete*(self: Controller) =
   discard
 
-method init*(self: Controller) =
+proc init*(self: Controller) =
   self.events.on(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED) do(e: Args):
     self.delegate.refreshNetworks()
 
-method getNetworks*(self: Controller): seq[NetworkDto] =
+proc getNetworks*(self: Controller): seq[NetworkDto] =
   return self.networkService.getNetworks()
 
-method toggleNetwork*(self: Controller, chainId: int) =
+proc toggleNetwork*(self: Controller, chainId: int) =
   self.walletAccountService.toggleNetworkEnabled(chainId)

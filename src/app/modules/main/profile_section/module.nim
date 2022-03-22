@@ -1,5 +1,6 @@
 import NimQml
 import io_interface, view, controller
+import ../io_interface as delegate_interface
 import ../../../global/global_singleton
 import ../../../core/eventemitter
 import ../../../../app_service/service/profile/service as profile_service
@@ -31,11 +32,11 @@ import ./ens_usernames/module as ens_usernames_module
 export io_interface
 
 type
-  Module* [T: io_interface.DelegateInterface] = ref object of io_interface.AccessInterface
-    delegate: T
+  Module* = ref object of io_interface.AccessInterface
+    delegate: delegate_interface.AccessInterface
     view: View
     viewVariant: QVariant
-    controller: controller.AccessInterface
+    controller: Controller
     moduleLoaded: bool
 
     profileModule: profile_module.AccessInterface
@@ -49,7 +50,7 @@ type
     notificationsModule: notifications_module.AccessInterface
     ensUsernamesModule: ens_usernames_module.AccessInterface
 
-proc newModule*[T](delegate: T,
+proc newModule*(delegate: delegate_interface.AccessInterface,
   events: EventEmitter,
   accountsService: accounts_service.Service,
   settingsService: settings_service.Service,
@@ -65,12 +66,12 @@ proc newModule*[T](delegate: T,
   chatService: chat_service.Service,
   ensService: ens_service.Service,
   walletAccountService: wallet_account_service.Service,
-): Module[T] =
-  result = Module[T]()
+): Module =
+  result = Module()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController[Module[T]](result)
+  result.controller = controller.newController(result)
   result.moduleLoaded = false
 
   result.profileModule = profile_module.newModule(result, profileService)
@@ -88,7 +89,7 @@ proc newModule*[T](delegate: T,
 
   singletonInstance.engine.setRootContextProperty("profileSectionModule", result.viewVariant)
 
-method delete*[T](self: Module[T]) =
+method delete*(self: Module) =
   self.profileModule.delete
   self.contactsModule.delete
   self.languageModule.delete
@@ -102,7 +103,7 @@ method delete*[T](self: Module[T]) =
   self.viewVariant.delete
   self.controller.delete
 
-method load*[T](self: Module[T]) =
+method load*(self: Module) =
   self.view.load()
   self.profileModule.load()
   self.contactsModule.load()
@@ -115,10 +116,10 @@ method load*[T](self: Module[T]) =
   self.notificationsModule.load()
   self.ensUsernamesModule.load()
 
-method isLoaded*[T](self: Module[T]): bool =
+method isLoaded*(self: Module): bool =
   return self.moduleLoaded
 
-proc checkIfModuleDidLoad[T](self: Module[T]) =
+proc checkIfModuleDidLoad(self: Module) =
   if(not self.profileModule.isLoaded()):
     return
 
@@ -152,62 +153,62 @@ proc checkIfModuleDidLoad[T](self: Module[T]) =
   self.moduleLoaded = true
   self.delegate.profileSectionDidLoad()
 
-method viewDidLoad*[T](self: Module[T]) =
+method viewDidLoad*(self: Module) =
   self.checkIfModuleDidLoad()
 
-method profileModuleDidLoad*[T](self: Module[T]) =
+method profileModuleDidLoad*(self: Module) =
   self.checkIfModuleDidLoad()
 
-method getProfileModule*[T](self: Module[T]): QVariant =
+method getProfileModule*(self: Module): QVariant =
   self.profileModule.getModuleAsVariant()
 
-method contactsModuleDidLoad*[T](self: Module[T]) =
+method contactsModuleDidLoad*(self: Module) =
   self.checkIfModuleDidLoad()
 
-method getContactsModule*[T](self: Module[T]): QVariant =
+method getContactsModule*(self: Module): QVariant =
   self.contactsModule.getModuleAsVariant()
 
-method languageModuleDidLoad*[T](self: Module[T]) =
+method languageModuleDidLoad*(self: Module) =
   self.checkIfModuleDidLoad()
 
-method getLanguageModule*[T](self: Module[T]): QVariant =
+method getLanguageModule*(self: Module): QVariant =
   self.languageModule.getModuleAsVariant()
 
-method privacyModuleDidLoad*[T](self: Module[T]) =
+method privacyModuleDidLoad*(self: Module) =
   self.checkIfModuleDidLoad()
 
-method getPrivacyModule*[T](self: Module[T]): QVariant =
+method getPrivacyModule*(self: Module): QVariant =
   self.privacyModule.getModuleAsVariant()
 
-method aboutModuleDidLoad*[T](self: Module[T]) =
+method aboutModuleDidLoad*(self: Module) =
   self.checkIfModuleDidLoad()
 
-method advancedModuleDidLoad*[T](self: Module[T]) =
+method advancedModuleDidLoad*(self: Module) =
   self.checkIfModuleDidLoad()
 
-method getAdvancedModule*[T](self: Module[T]): QVariant =
+method getAdvancedModule*(self: Module): QVariant =
   self.advancedModule.getModuleAsVariant()
 
-method devicesModuleDidLoad*[T](self: Module[T]) =
+method devicesModuleDidLoad*(self: Module) =
   self.checkIfModuleDidLoad()
 
-method getDevicesModule*[T](self: Module[T]): QVariant =
+method getDevicesModule*(self: Module): QVariant =
   self.devicesModule.getModuleAsVariant()
 
-method syncModuleDidLoad*[T](self: Module[T]) =
+method syncModuleDidLoad*(self: Module) =
   self.checkIfModuleDidLoad()
 
-method getSyncModule*[T](self: Module[T]): QVariant =
+method getSyncModule*(self: Module): QVariant =
   self.syncModule.getModuleAsVariant()
 
-method notificationsModuleDidLoad*[T](self: Module[T]) =
+method notificationsModuleDidLoad*(self: Module) =
   self.checkIfModuleDidLoad()
 
-method getNotificationsModule*[T](self: Module[T]): QVariant =
+method getNotificationsModule*(self: Module): QVariant =
   self.notificationsModule.getModuleAsVariant()
 
-method ensUsernamesModuleDidLoad*[T](self: Module[T]) =
+method ensUsernamesModuleDidLoad*(self: Module) =
   self.checkIfModuleDidLoad()
 
-method getEnsUsernamesModule*[T](self: Module[T]): QVariant =
+method getEnsUsernamesModule*(self: Module): QVariant =
   self.ensUsernamesModule.getModuleAsVariant()
