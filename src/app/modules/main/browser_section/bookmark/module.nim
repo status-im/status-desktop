@@ -17,7 +17,7 @@ type
     moduleLoaded: bool
     controller: controller.AccessInterface
 
-proc newModule*(delegate: delegate_interface.AccessInterface, bookmarkService: bookmark_service.ServiceInterface): Module =
+proc newModule*(delegate: delegate_interface.AccessInterface, bookmarkService: bookmark_service.Service): Module =
   result = Module()
   result.delegate = delegate
   result.view = view.newView(result)

@@ -1,18 +1,18 @@
 import ./controller_interface
 import io_interface
-import ../../../../../app_service/service/language/service_interface as language_service
+import ../../../../../app_service/service/language/service as language_service
 
 export controller_interface
 
 type
   Controller* = ref object of controller_interface.AccessInterface
     delegate: io_interface.AccessInterface
-    languageService: language_service.ServiceInterface
+    languageService: language_service.Service
 
 method init*(self: Controller) =
   discard
 
-proc newController*(delegate: io_interface.AccessInterface, languageService: language_service.ServiceInterface):
+proc newController*(delegate: io_interface.AccessInterface, languageService: language_service.Service):
   Controller =
   result = Controller()
   result.delegate = delegate

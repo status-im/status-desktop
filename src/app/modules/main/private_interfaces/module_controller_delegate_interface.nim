@@ -17,7 +17,7 @@ method toggleSection*(self: AccessInterface, sectionType: SectionType) {.base.} 
   raise newException(ValueError, "No implementation available")
 
 method communityJoined*(self: AccessInterface, community: CommunityDto, events: EventEmitter,
-  settingsService: settings_service.ServiceInterface,
+  settingsService: settings_service.Service,
   contactsService: contacts_service.Service,
   chatService: chat_service.Service,
   communityService: community_service.Service,

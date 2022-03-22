@@ -7,7 +7,7 @@ import view, controller
 import ../../../global/global_singleton
 import ../../../core/signals/types
 import ../../../core/eventemitter
-import ../../../../app_service/service/settings/service_interface as settings_service
+import ../../../../app_service/service/settings/service as settings_service
 import ../../../../app_service/service/node/service as node_service
 import ../../../../app_service/service/node_configuration/service as node_configuration_service
 
@@ -23,9 +23,9 @@ type
 
 proc newModule*(delegate: delegate_interface.AccessInterface,
   events: EventEmitter,
-  settingsService: settings_service.ServiceInterface,
+  settingsService: settings_service.Service,
   nodeService: node_service.Service,
-  nodeConfigurationService:  node_configuration_service.ServiceInterface
+  nodeConfigurationService:  node_configuration_service.Service
   ): Module =
   result = Module()
   result.delegate = delegate

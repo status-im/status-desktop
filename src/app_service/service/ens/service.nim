@@ -13,11 +13,11 @@ import ../network/types as network_types
 
 import ../../common/conversion as common_conversion
 import utils as ens_utils
-import ../settings/service_interface as settings_service
-import ../wallet_account/service_interface as wallet_account_service
+import ../settings/service as settings_service
+import ../wallet_account/service as wallet_account_service
 import ../transaction/service as transaction_service
-import ../eth/service_interface as eth_service
-import ../network/service_interface as network_service
+import ../eth/service as eth_service
+import ../network/service as network_service
 import ../token/service as token_service
 
 
@@ -68,11 +68,11 @@ QtObject:
       events: EventEmitter
       threadpool: ThreadPool
       pendingEnsUsernames*: HashSet[string]
-      settingsService: settings_service.ServiceInterface
-      walletAccountService: wallet_account_service.ServiceInterface
+      settingsService: settings_service.Service
+      walletAccountService: wallet_account_service.Service
       transactionService: transaction_service.Service
-      ethService: eth_service.ServiceInterface
-      networkService: network_service.ServiceInterface
+      ethService: eth_service.Service
+      networkService: network_service.Service
       tokenService: token_service.Service
 
   proc delete*(self: Service) =
@@ -81,11 +81,11 @@ QtObject:
   proc newService*(
       events: EventEmitter,
       threadpool: ThreadPool,
-      settingsService: settings_service.ServiceInterface,
-      walletAccountService: wallet_account_service.ServiceInterface,
+      settingsService: settings_service.Service,
+      walletAccountService: wallet_account_service.Service,
       transactionService: transaction_service.Service,
-      ethService: eth_service.ServiceInterface,
-      networkService: network_service.ServiceInterface,
+      ethService: eth_service.Service,
+      networkService: network_service.Service,
       tokenService: token_service.Service
       ): Service =
     new(result, delete)
@@ -153,7 +153,7 @@ QtObject:
   proc onEnsUsernameAvailabilityChecked*(self: Service, response: string) {.slot.} =
     let responseObj = response.parseJson
     if (responseObj.kind != JObject):
-      info "expected response is not a json object", methodName="onEnsUsernameAvailabilityChecked"
+      info "expected response is not a json object", procName="onEnsUsernameAvailabilityChecked"
       # notify view, this is important
       self.events.emit(SIGNAL_ENS_USERNAME_AVAILABILITY_CHECKED, EnsUsernameAvailabilityArgs())
       return
@@ -191,7 +191,7 @@ QtObject:
   proc onEnsUsernameDetailsFetched*(self: Service, response: string) {.slot.} =
     let responseObj = response.parseJson
     if (responseObj.kind != JObject):
-      info "expected response is not a json object", methodName="onEnsUsernameDetailsFetched"
+      info "expected response is not a json object", procName="onEnsUsernameDetailsFetched"
       # notify view, this is important
       self.events.emit(SIGNAL_ENS_USERNAME_DETAILS_FETCHED, EnsUsernameDetailsArgs())
       return
@@ -242,14 +242,14 @@ QtObject:
   proc onGasPriceFetched*(self: Service, response: string) {.slot.} =
     let responseObj = response.parseJson
     if (responseObj.kind != JObject):
-      info "expected response is not a json object", methodName="onGasPriceFetched"
+      info "expected response is not a json object", procName="onGasPriceFetched"
       # notify view, this is important
       self.events.emit(SIGNAL_GAS_PRICE_FETCHED, GasPriceArgs(gasPrice: "0"))
       return
 
     var gasPriceHex: string
     if(not responseObj.getProp("gasPrice", gasPriceHex)):
-      info "expected response doesn't contain gas price", methodName="onGasPriceFetched"
+      info "expected response doesn't contain gas price", procName="onGasPriceFetched"
       # notify view, this is important
       self.events.emit(SIGNAL_GAS_PRICE_FETCHED, GasPriceArgs(gasPrice: "0"))
       return
@@ -281,7 +281,7 @@ QtObject:
       result = resp.result.getInt
     except Exception as e:
       result = 80000
-      error "error occurred", methodName="setPubKeyGasEstimate", msg = e.msg
+      error "error occurred", procName="setPubKeyGasEstimate", msg = e.msg
 
   proc setPubKey*(
       self: Service,
@@ -311,7 +311,7 @@ QtObject:
 
       result = $(%* { "result": hash, "success": true })
     except Exception as e:
-      error "error occurred", methodName="setPubKey", msg = e.msg
+      error "error occurred", procName="setPubKey", msg = e.msg
       result = $(%* { "result": e.msg, "success": false })
 
   proc releaseEnsEstimate*(self: Service, ensUsername: string, address: string): int =
@@ -323,7 +323,7 @@ QtObject:
       let resp = status_ens.releaseEstimate(chainId, %txData, ensUsername)
       result = resp.result.getInt
     except Exception as e:
-      error "error occurred", methodName="releaseEnsEstimate", msg = e.msg
+      error "error occurred", procName="releaseEnsEstimate", msg = e.msg
       result = 100000
 
   proc release*(
@@ -349,7 +349,7 @@ QtObject:
 
       result = $(%* { "result": hash, "success": true })
     except RpcException as e:
-      error "error occurred", methodName="release", msg = e.msg
+      error "error occurred", procName="release", msg = e.msg
       result = $(%* { "result": e.msg, "success": false })
 
   proc getEnsRegisteredAddress*(self: Service): string =
@@ -368,7 +368,7 @@ QtObject:
       result = resp.result.getInt
     except Exception as e:
       result = 380000
-      error "error occurred", methodName="registerENSGasEstimate", msg = e.msg
+      error "error occurred", procName="registerENSGasEstimate", msg = e.msg
 
   proc registerEns*(
       self: Service,
@@ -400,7 +400,7 @@ QtObject:
       self.pendingEnsUsernames.incl(ensUsername)
       result = $(%* { "result": hash, "success": true })
     except Exception as e:
-      error "error occurred", methodName="registerEns", msg = e.msg
+      error "error occurred", procName="registerEns", msg = e.msg
       result = $(%* { "result": e.msg, "success": false })
 
   proc getSNTBalance*(self: Service): string =

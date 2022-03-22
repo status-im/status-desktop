@@ -15,7 +15,7 @@ proc emojiHashOf*(pubkey: string): EmojiHashDto =
     result = toEmojiHashDto(response.result)
 
   except Exception as e:
-    error "error: ", methodName = "emojiHashOf", errName = e.name,
+    error "error: ", procName = "emojiHashOf", errName = e.name,
         errDesription = e.msg
 
 proc colorHashOf*(pubkey: string): ColorHashDto =
@@ -28,7 +28,7 @@ proc colorHashOf*(pubkey: string): ColorHashDto =
     result = toColorHashDto(response.result)
 
   except Exception as e:
-    error "error: ", methodName = "colorHashOf", errName = e.name,
+    error "error: ", procName = "colorHashOf", errName = e.name,
         errDesription = e.msg
 
 proc getEmojiHashAsJson*(publicKey: string): string =

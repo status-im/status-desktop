@@ -15,7 +15,7 @@ type
     moduleLoaded: bool
     currentAddress: string
 
-proc newModule*(delegate: delegate_interface.AccessInterface, collectibleService: collectible_service.ServiceInterface):
+proc newModule*(delegate: delegate_interface.AccessInterface, collectibleService: collectible_service.Service):
   Module =
   result = Module()
   result.delegate = delegate

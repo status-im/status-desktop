@@ -6,9 +6,9 @@ import ./io_interface
 import ../../../core/eventemitter
 import ../../../../app_service/service/node/service as node_service
 import ../../../../app_service/service/stickers/service as stickers_service
-import ../../../../app_service/service/settings/service_interface as settings_service
+import ../../../../app_service/service/settings/service as settings_service
 import ../../../../app_service/service/eth/utils as eth_utils
-import ../../../../app_service/service/wallet_account/service_interface as wallet_account_service
+import ../../../../app_service/service/wallet_account/service as wallet_account_service
 
 export controller_interface
 
@@ -17,8 +17,8 @@ type
     delegate: io_interface.AccessInterface
     events: EventEmitter
     stickerService: stickers_service.Service
-    settingsService: settings_service.ServiceInterface
-    walletAccountService: wallet_account_service.ServiceInterface
+    settingsService: settings_service.Service
+    walletAccountService: wallet_account_service.Service
     disconnected: bool
 
 # Forward declaration
@@ -29,8 +29,8 @@ proc newController*[T](
     delegate: io_interface.AccessInterface,
     events: EventEmitter,
     stickerService: stickers_service.Service,
-    settingsService: settings_service.ServiceInterface,
-    walletAccountService: wallet_account_service.ServiceInterface
+    settingsService: settings_service.Service,
+    walletAccountService: wallet_account_service.Service
     ): Controller[T] =
   result = Controller[T]()
   result.delegate = delegate

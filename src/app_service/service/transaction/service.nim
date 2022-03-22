@@ -67,10 +67,10 @@ QtObject:
   type Service* = ref object of QObject
     events: EventEmitter
     threadpool: ThreadPool
-    walletAccountService: wallet_account_service.ServiceInterface
-    ethService: eth_service.ServiceInterface
-    networkService: network_service.ServiceInterface
-    settingsService: settings_service.ServiceInterface
+    walletAccountService: wallet_account_service.Service
+    ethService: eth_service.Service
+    networkService: network_service.Service
+    settingsService: settings_service.Service
 
     baseFeePerGas: string
 
@@ -84,10 +84,10 @@ QtObject:
   proc newService*(
       events: EventEmitter,
       threadpool: ThreadPool,
-      walletAccountService: wallet_account_service.ServiceInterface,
-      ethService: eth_service.ServiceInterface,
-      networkService: network_service.ServiceInterface,
-      settingsService: settings_service.ServiceInterface
+      walletAccountService: wallet_account_service.Service,
+      ethService: eth_service.Service,
+      networkService: network_service.Service,
+      settingsService: settings_service.Service
   ): Service =
     new(result, delete)
     result.QObject.setup
@@ -254,9 +254,9 @@ QtObject:
           raise newException(ValueError, fmt"Could not find ERC-20 contract with address '{assetAddress}' for the current network")
 
         let transfer = Transfer(to: parseAddress(to), value: conversion.eth2Wei(parseFloat(value), contract.decimals))
-        let transferMethod = contract.getMethod("transfer")
+        let transferproc = contract.getproc("transfer")
         var success: bool
-        let gas = transferMethod.estimateGas(tx, transfer, success)
+        let gas = transferproc.estimateGas(tx, transfer, success)
 
         let res = fromHex[int](gas)
         result = $(%* { "result": res, "success": success })
@@ -343,8 +343,8 @@ QtObject:
       var success: bool
       let transfer = Transfer(to: parseAddress(to_addr),
         value: conversion.eth2Wei(parseFloat(value), contract.decimals))
-      let transferMethod = contract.getMethod("transfer")
-      let response = transferMethod.send(tx, transfer, password, success)
+      let transferproc = contract.getproc("transfer")
+      let response = transferproc.send(tx, transfer, password, success)
 
       let output = %* { "result": %response,  "success": %success, "uuid": %uuid }
       self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(result: $output))

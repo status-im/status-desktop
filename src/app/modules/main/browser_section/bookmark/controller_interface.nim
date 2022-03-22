@@ -1,4 +1,4 @@
-import ../../../../../app_service/service/bookmarks/service_interface as bookmark_service
+import ../../../../../app_service/service/bookmarks/service as bookmark_service
 
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj

@@ -6,8 +6,8 @@ from web3/conversions import `$`
 import ../../../backend/custom_tokens as custom_tokens
 import ../../../backend/tokens as token_backend
 
-import ../settings/service_interface as settings_service
-import ../network/service_interface as network_service
+import ../settings/service as settings_service
+import ../network/service as network_service
 
 import ../../../app/core/eventemitter
 import ../../../app/core/tasks/[qt, threadpool]
@@ -45,8 +45,8 @@ QtObject:
   type Service* = ref object of QObject
     events: EventEmitter
     threadpool: ThreadPool
-    settingsService: settings_service.ServiceInterface
-    networkService: network_service.ServiceInterface
+    settingsService: settings_service.Service
+    networkService: network_service.Service
     tokens: Table[NetworkDto, seq[TokenDto]]
 
   proc delete*(self: Service) =
@@ -55,8 +55,8 @@ QtObject:
   proc newService*(
     events: EventEmitter,
     threadpool: ThreadPool,
-    settingsService: settings_service.ServiceInterface,
-    networkService: network_service.ServiceInterface,
+    settingsService: settings_service.Service,
+    networkService: network_service.Service,
   ): Service =
     new(result, delete)
     result.QObject.setup

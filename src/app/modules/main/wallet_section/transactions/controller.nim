@@ -14,7 +14,7 @@ type
     delegate: io_interface.AccessInterface
     events: EventEmitter
     transactionService: transaction_service.Service
-    walletAccountService: wallet_account_service.ServiceInterface
+    walletAccountService: wallet_account_service.Service
 
 # Forward declaration
 method loadTransactions*(self: Controller, address: string, toBlock: Uint256, limit: int = 20, loadMore: bool = false)
@@ -24,7 +24,7 @@ proc newController*(
   delegate: io_interface.AccessInterface,
   events: EventEmitter,
   transactionService: transaction_service.Service,
-  walletAccountService: wallet_account_service.ServiceInterface
+  walletAccountService: wallet_account_service.Service
 ): Controller =
   result = Controller()
   result.events = events

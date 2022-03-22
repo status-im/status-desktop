@@ -2,8 +2,8 @@ import NimQml, json, strutils, chronicles
 
 import ../../../app/global/global_singleton
 
-import ../settings/service_interface as settings_service
-import ../accounts/service_interface as accounts_service
+import ../settings/service as settings_service
+import ../accounts/service as accounts_service
 
 import ../../../app/core/eventemitter
 
@@ -25,14 +25,14 @@ type
 QtObject:
   type Service* = ref object of QObject
     events: EventEmitter
-    settingsService: settings_service.ServiceInterface
-    accountsService: accounts_service.ServiceInterface
+    settingsService: settings_service.Service
+    accountsService: accounts_service.Service
 
   proc delete*(self: Service) =
     self.QObject.delete
 
-  proc newService*(events: EventEmitter, settingsService: settings_service.ServiceInterface,
-    accountsService: accounts_service.ServiceInterface): Service =
+  proc newService*(events: EventEmitter, settingsService: settings_service.Service,
+    accountsService: accounts_service.Service): Service =
     new(result, delete)
     result.QObject.setup
     result.events = events
@@ -50,19 +50,19 @@ QtObject:
         var errMsg = "response is not an array"
         if(response.result.contains("error")):
           errMsg = response.result["error"].getStr
-        error "error: ", methodName="getLinkPreviewWhitelist", errDesription = errMsg
+        error "error: ", procName="getLinkPreviewWhitelist", errDesription = errMsg
         return
 
       return $(response.result)
     except Exception as e:
-      error "error: ", methodName="removeReaction", errName = e.name, errDesription = e.msg
+      error "error: ", procName="removeReaction", errName = e.name, errDesription = e.msg
 
   proc getDefaultAccount(self: Service): string =
     try:
       let response = status_eth.getEthAccounts()
 
       if(response.result.kind != JArray):
-        error "error: ", methodName="getDefaultAccount", errDesription = "response is not an array"
+        error "error: ", procName="getDefaultAccount", errDesription = "response is not an array"
         return
 
       for acc in response.result:
@@ -71,7 +71,7 @@ QtObject:
 
       return ""
     except Exception as e:
-      error "error: ", methodName="getDefaultAccount", errName = e.name, errDesription = e.msg
+      error "error: ", procName="getDefaultAccount", errName = e.name, errDesription = e.msg
 
   proc changePassword*(self: Service, password: string, newPassword: string) =
     try:
@@ -79,13 +79,13 @@ QtObject:
 
       let defaultAccount = self.getDefaultAccount()
       if(defaultAccount.len == 0):
-        error "error: ", methodName="changePassword", errDesription = "default eth account is empty"
+        error "error: ", procName="changePassword", errDesription = "default eth account is empty"
         self.events.emit(SIGNAL_PASSWORD_CHANGED, data)
         return
 
       let isPasswordOk = self.accountsService.verifyAccountPassword(defaultAccount, password)
       if not isPasswordOk:
-        error "error: ", methodName="changePassword", errDesription = "password cannnot be verified"
+        error "error: ", procName="changePassword", errDesription = "password cannnot be verified"
         self.events.emit(SIGNAL_PASSWORD_CHANGED, data)
         return
 
@@ -97,12 +97,12 @@ QtObject:
         if(errMsg.len == 0):
           data.success = true
         else:
-          error "error: ", methodName="changePassword", errDesription = errMsg
+          error "error: ", procName="changePassword", errDesription = errMsg
 
       self.events.emit(SIGNAL_PASSWORD_CHANGED, data)
 
     except Exception as e:
-      error "error: ", methodName="changePassword", errName = e.name, errDesription = e.msg
+      error "error: ", procName="changePassword", errName = e.name, errDesription = e.msg
 
   proc isMnemonicBackedUp*(self: Service): bool =
     return self.settingsService.getMnemonic().len == 0
@@ -114,7 +114,7 @@ QtObject:
     var data = OperationSuccessArgs(success: true)
     if(not self.settingsService.saveMnemonic("")):
       data.success = false
-      error "error: ", methodName="removeMnemonic", errDesription = "an error occurred removing mnemonic"
+      error "error: ", procName="removeMnemonic", errDesription = "an error occurred removing mnemonic"
 
     self.events.emit(SIGNAL_MNEMONIC_REMOVAL, data)
 
@@ -122,13 +122,13 @@ QtObject:
     let mnemonic = self.settingsService.getMnemonic()
     if(mnemonic.len == 0):
       let msg = "tyring to get a word on index " & $(index) & " from an empty mnemonic"
-      error "error: ", methodName="getMnemonicWordAtIndex", errDesription = msg
+      error "error: ", procName="getMnemonicWordAtIndex", errDesription = msg
       return
 
     let mnemonics = mnemonic.split(" ")
     if(index < 0 or index >= mnemonics.len):
       let msg = "tyring to get a word on index " & $(index) & " but mnemonic contains " & $(mnemonics.len) & " words"
-      error "error: ", methodName="getMnemonicWordAtIndex", errDesription = msg
+      error "error: ", procName="getMnemonicWordAtIndex", errDesription = msg
       return
 
     return mnemonics[index]
@@ -138,17 +138,17 @@ QtObject:
       let defaultAccount = self.getDefaultAccount()
 
       if(defaultAccount.len == 0):
-        error "error: ", methodName="validatePassword", errDesription = "default eth account is empty"
+        error "error: ", procName="validatePassword", errDesription = "default eth account is empty"
         return false
 
       let isPasswordOk = self.accountsService.verifyAccountPassword(defaultAccount, password)
       if not isPasswordOk:
-        error "error: ", methodName="validatePassword", errDesription = "password cannnot be verified"
+        error "error: ", procName="validatePassword", errDesription = "password cannnot be verified"
         return false
 
       return true
     except Exception as e:
-      error "error: ", methodName="validatePassword", errName = e.name, errDesription = e.msg
+      error "error: ", procName="validatePassword", errName = e.name, errDesription = e.msg
       return false
 
   proc getPasswordStrengthScore*(self: Service, password: string): int =
@@ -157,9 +157,9 @@ QtObject:
       let response = status_privacy.getPasswordStrength(password, @[userName])
       if(response.result.contains("error")):
         let errMsg = response.result["error"].getStr()
-        error "error: ", methodName="getPasswordStrengthScore", errDesription = errMsg
+        error "error: ", procName="getPasswordStrengthScore", errDesription = errMsg
         return
 
       return response.result["Score"].getInt()
     except Exception as e:
-      error "error: ", methodName="getPasswordStrengthScore", errName = e.name, errDesription = e.msg
+      error "error: ", procName="getPasswordStrengthScore", errName = e.name, errDesription = e.msg

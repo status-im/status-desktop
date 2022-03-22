@@ -1,32 +1,32 @@
 import chronicles, sequtils, json
 
-import ./service_interface, ./dto
-import ../settings/service_interface as settings_service
+import dto
+import ../settings/service as settings_service
 
 import ../../../backend/collectibles as collectibles
 
-export service_interface
-
-const limit = 200
+export dto
 
 logScope:
   topics = "collectible-service"
 
-type
-  Service* = ref object of service_interface.ServiceInterface
-    settingsService: settings_service.ServiceInterface
+const limit = 200
 
-method delete*(self: Service) =
+type
+  Service* = ref object of RootObj
+    settingsService: settings_service.Service
+
+proc delete*(self: Service) =
   discard
 
-proc newService*(settingsService: settings_service.ServiceInterface): Service =
+proc newService*(settingsService: settings_service.Service): Service =
   result = Service()
   result.settingsService = settingsService
 
-method init*(self: Service) =
+proc init*(self: Service) =
   discard
 
-method getCollections(self: Service, address: string): seq[CollectionDto] =
+proc getCollections*(self: Service, address: string): seq[CollectionDto] =
   try:
     let networkId = self.settingsService.getCurrentNetworkId()
     let response = collectibles.getOpenseaCollections(networkId, address)
@@ -36,7 +36,7 @@ method getCollections(self: Service, address: string): seq[CollectionDto] =
     error "error: ", errDesription
     return
 
-method getCollectibles(self: Service, address: string, collectionSlug: string): seq[CollectibleDto] =
+proc getCollectibles*(self: Service, address: string, collectionSlug: string): seq[CollectibleDto] =
   try:
     let networkId = self.settingsService.getCurrentNetworkId()
     let response = collectibles.getOpenseaAssets(networkId, address, collectionSlug, limit)

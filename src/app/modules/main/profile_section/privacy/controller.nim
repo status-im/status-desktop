@@ -2,7 +2,7 @@ import ./controller_interface
 import io_interface
 
 import ../../../../core/eventemitter
-import ../../../../../app_service/service/settings/service_interface as settings_service
+import ../../../../../app_service/service/settings/service as settings_service
 import ../../../../../app_service/service/privacy/service as privacy_service
 
 export controller_interface
@@ -11,11 +11,11 @@ type
   Controller* = ref object of controller_interface.AccessInterface
     delegate: io_interface.AccessInterface
     events: EventEmitter
-    settingsService: settings_service.ServiceInterface
+    settingsService: settings_service.Service
     privacyService: privacy_service.Service
 
 proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter,
-  settingsService: settings_service.ServiceInterface,
+  settingsService: settings_service.Service,
   privacyService: privacy_service.Service): Controller =
   result = Controller()
   result.delegate = delegate

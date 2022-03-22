@@ -4,9 +4,9 @@ import io_interface
 
 import ../../../../global/global_singleton
 import ../../../../core/eventemitter
-import ../../../../../app_service/service/settings/service_interface as settings_service
+import ../../../../../app_service/service/settings/service as settings_service
 import ../../../../../app_service/service/ens/service as ens_service
-import ../../../../../app_service/service/wallet_account/service_interface as wallet_account_service
+import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 
 export controller_interface
 
@@ -17,13 +17,13 @@ type
   Controller* = ref object of controller_interface.AccessInterface
     delegate: io_interface.AccessInterface
     events: EventEmitter
-    settingsService: settings_service.ServiceInterface
+    settingsService: settings_service.Service
     ensService: ens_service.Service
-    walletAccountService: wallet_account_service.ServiceInterface
+    walletAccountService: wallet_account_service.Service
 
 proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter,
-  settingsService: settings_service.ServiceInterface, ensService: ens_service.Service,
-  walletAccountService: wallet_account_service.ServiceInterface): Controller =
+  settingsService: settings_service.Service, ensService: ens_service.Service,
+  walletAccountService: wallet_account_service.Service): Controller =
   result = Controller()
   result.delegate = delegate
   result.events = events

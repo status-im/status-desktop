@@ -98,9 +98,9 @@ QtObject:
     events: EventEmitter
     threadpool: ThreadPool
     contactService: contact_service.Service
-    ethService: eth_service.ServiceInterface
+    ethService: eth_service.Service
     tokenService: token_service.Service
-    walletAccountService: wallet_account_service.ServiceInterface
+    walletAccountService: wallet_account_service.Service
     msgCursor: Table[string, string]
     lastUsedMsgCursor: Table[string, string]
     pinnedMsgCursor: Table[string, string]
@@ -110,7 +110,7 @@ QtObject:
   proc delete*(self: Service) =
     self.QObject.delete
 
-  proc newService*(events: EventEmitter, threadpool: ThreadPool, contactService: contact_service.Service, ethService: eth_service.ServiceInterface, tokenService: token_service.Service, walletAccountService: wallet_account_service.ServiceInterface): Service =
+  proc newService*(events: EventEmitter, threadpool: ThreadPool, contactService: contact_service.Service, ethService: eth_service.Service, tokenService: token_service.Service, walletAccountService: wallet_account_service.Service): Service =
     new(result, delete)
     result.QObject.setup
     result.events = events
@@ -317,7 +317,7 @@ QtObject:
 
   proc asyncLoadMoreMessagesForChat*(self: Service, chatId: string, limit = MESSAGES_PER_PAGE) =
     if (chatId.len == 0):
-      error "empty chat id", methodName="asyncLoadMoreMessagesForChat"
+      error "empty chat id", procName="asyncLoadMoreMessagesForChat"
       return
 
     var msgCursor = self.getCurrentMessageCursor(chatId)
@@ -363,7 +363,7 @@ QtObject:
 
       if(response.result.contains("error")):
         let errMsg = response.result["error"].getStr
-        error "error: ", methodName="addReaction", errDesription = errMsg
+        error "error: ", procName="addReaction", errDesription = errMsg
         return
 
       var reactionsArr: JsonNode
@@ -380,7 +380,7 @@ QtObject:
       self.events.emit(SIGNAL_MESSAGE_REACTION_ADDED, data)
 
     except Exception as e:
-      error "error: ", methodName="addReaction", errName = e.name, errDesription = e.msg
+      error "error: ", procName="addReaction", errName = e.name, errDesription = e.msg
 
   proc removeReaction*(self: Service, reactionId: string, chatId: string, messageId: string, emojiId: int) =
     try:
@@ -388,7 +388,7 @@ QtObject:
 
       if(response.result.contains("error")):
         let errMsg = response.result["error"].getStr
-        error "error: ", methodName="removeReaction", errDesription = errMsg
+        error "error: ", procName="removeReaction", errDesription = errMsg
         return
 
       let data = MessageAddRemoveReactionArgs(chatId: chatId, messageId: messageId, emojiId: emojiId,
@@ -396,7 +396,7 @@ QtObject:
       self.events.emit(SIGNAL_MESSAGE_REACTION_REMOVED, data)
 
     except Exception as e:
-      error "error: ", methodName="removeReaction", errName = e.name, errDesription = e.msg
+      error "error: ", procName="removeReaction", errName = e.name, errDesription = e.msg
 
   proc pinUnpinMessage*(self: Service, chatId: string, messageId: string, pin: bool) =
     try:
@@ -421,7 +421,7 @@ QtObject:
               self.events.emit(SIGNAL_MESSAGE_UNPINNED, data)
 
     except Exception as e:
-      error "error: ", methodName="pinUnpinMessage", errName = e.name, errDesription = e.msg
+      error "error: ", procName="pinUnpinMessage", errName = e.name, errDesription = e.msg
 
   proc getDetailsForMessage*(self: Service, chatId: string, messageId: string):
     tuple[message: MessageDto, reactions: seq[ReactionDto], error: string] =
@@ -440,10 +440,10 @@ QtObject:
 
     except Exception as e:
       result.error = e.msg
-      error "error: ", methodName="getDetailsForMessage", errName = e.name, errDesription = e.msg
+      error "error: ", procName="getDetailsForMessage", errName = e.name, errDesription = e.msg
 
   proc finishAsyncSearchMessagesWithError*(self: Service, chatId, errorMessage: string) =
-    error "error: ", methodName="onAsyncSearchMessages", errDescription = errorMessage
+    error "error: ", procName="onAsyncSearchMessages", errDescription = errorMessage
     self.events.emit(SIGNAL_SEARCH_MESSAGES_LOADED, MessagesArgs(chatId: chatId))
 
   proc onAsyncSearchMessages*(self: Service, response: string) {.slot.} =
@@ -477,7 +477,7 @@ QtObject:
   proc asyncSearchMessages*(self: Service, chatId: string, searchTerm: string, caseSensitive: bool) =
     ## Asynchronous search for messages which contain the searchTerm and belong to the chat with chatId.
     if (chatId.len == 0):
-      error "error: empty channel id set for fetching more messages", methodName="asyncSearchMessages"
+      error "error: empty channel id set for fetching more messages", procName="asyncSearchMessages"
       return
 
     if (searchTerm.len == 0):
@@ -499,7 +499,7 @@ QtObject:
     ## or any channel of community from communityIds array.
 
     if (communityIds.len == 0 and chatIds.len == 0):
-      error "either community ids or chat ids or both must be set", methodName="asyncSearchMessages"
+      error "either community ids or chat ids or both must be set", procName="asyncSearchMessages"
       return
 
     if (searchTerm.len == 0):
@@ -522,7 +522,7 @@ QtObject:
     var error: string
     discard responseObj.getProp("error", error)
     if(error.len > 0):
-      error "error: ", methodName="onMarkCertainMessagesRead", errDescription=error
+      error "error: ", procName="onMarkCertainMessagesRead", errDescription=error
       return
 
     var chatId: string
@@ -533,7 +533,7 @@ QtObject:
 
   proc markAllMessagesRead*(self: Service, chatId: string) =
     if (chatId.len == 0):
-      error "empty chat id", methodName="markAllMessagesRead"
+      error "empty chat id", procName="markAllMessagesRead"
       return
 
     let arg = AsyncMarkAllMessagesReadTaskArg(
@@ -551,7 +551,7 @@ QtObject:
     var error: string
     discard responseObj.getProp("error", error)
     if(error.len > 0):
-      error "error: ", methodName="onMarkCertainMessagesRead", errDescription=error
+      error "error: ", procName="onMarkCertainMessagesRead", errDescription=error
       return
 
     var chatId: string
@@ -568,7 +568,7 @@ QtObject:
 
   proc markCertainMessagesRead*(self: Service, chatId: string, messagesIds: seq[string]) =
     if (chatId.len == 0):
-      error "empty chat id", methodName="markCertainMessagesRead"
+      error "empty chat id", procName="markCertainMessagesRead"
       return
 
     let arg = AsyncMarkCertainMessagesReadTaskArg(
@@ -660,25 +660,25 @@ proc deleteMessage*(self: Service, messageId: string) =
 
     var deletesMessagesObj: JsonNode
     if(not response.result.getProp("removedMessages", deletesMessagesObj) or deletesMessagesObj.kind != JArray):
-      error "error: ", methodName="deleteMessage", errDesription = "no messages deleted or it's not an array"
+      error "error: ", procName="deleteMessage", errDesription = "no messages deleted or it's not an array"
       return
 
     let deletedMessagesArr = deletesMessagesObj.getElems()
     if(deletedMessagesArr.len == 0): # an array is returned
-      error "error: ", methodName="deleteMessage", errDesription = "array has no message to delete"
+      error "error: ", procName="deleteMessage", errDesription = "array has no message to delete"
       return
 
     let deletedMessageObj = deletedMessagesArr[0]
     var chat_Id, message_Id: string
     if not deletedMessageObj.getProp("chatId", chat_Id) or not deletedMessageObj.getProp("messageId", message_Id):
-      error "error: ", methodName="deleteMessage", errDesription = "there is no set chat id or message id in response"
+      error "error: ", procName="deleteMessage", errDesription = "there is no set chat id or message id in response"
       return
 
     let data = MessageDeletedArgs(chatId: chat_Id, messageId: message_Id)
     self.events.emit(SIGNAL_MESSAGE_DELETION, data)
 
   except Exception as e:
-    error "error: ", methodName="deleteMessage", errName = e.name, errDesription = e.msg
+    error "error: ", procName="deleteMessage", errName = e.name, errDesription = e.msg
 
 proc editMessage*(self: Service, messageId: string, msg: string) =
   try:
@@ -693,18 +693,18 @@ proc editMessage*(self: Service, messageId: string, msg: string) =
       messages = map(messagesArr.getElems(), proc(x: JsonNode): MessageDto = x.toMessageDto())
 
     if(messages.len == 0):
-      error "error: ", methodName="editMessage", errDesription = "messages array is empty"
+      error "error: ", procName="editMessage", errDesription = "messages array is empty"
       return
 
     if messages[0].editedAt <= 0:
-      error "error: ", methodName="editMessage", errDesription = "message is not edited"
+      error "error: ", procName="editMessage", errDesription = "message is not edited"
       return
 
     let data = MessageEditedArgs(chatId: messages[0].chatId, message: messages[0])
     self.events.emit(SIGNAL_MESSAGE_EDITED, data)
 
   except Exception as e:
-    error "error: ", methodName="editMessage", errName = e.name, errDesription = e.msg
+    error "error: ", procName="editMessage", errName = e.name, errDesription = e.msg
 
 proc getWalletAccounts*(self: Service): seq[wallet_account_service.WalletAccountDto] =
   return self.walletAccountService.getWalletAccounts()

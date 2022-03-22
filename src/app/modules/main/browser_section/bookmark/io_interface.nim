@@ -1,4 +1,4 @@
-import ../../../../../app_service/service/bookmarks/service_interface as bookmark_service
+import ../../../../../app_service/service/bookmarks/service as bookmark_service
 
 # Defines how parent module accesses this module
 include ./private_interfaces/module_base_interface

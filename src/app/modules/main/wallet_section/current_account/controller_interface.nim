@@ -1,4 +1,4 @@
-import ../../../../../app_service/service/wallet_account/service_interface as wallet_account_service
+import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj

@@ -1,4 +1,4 @@
-import ../../../../../app_service/service/accounts/service_interface
+import ../../../../../app_service/service/accounts/service
 
 method viewDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")

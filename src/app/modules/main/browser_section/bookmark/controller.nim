@@ -10,10 +10,10 @@ export controller_interface
 type
   Controller* = ref object of controller_interface.AccessInterface
     delegate: io_interface.AccessInterface
-    bookmarkService: bookmark_service.ServiceInterface
+    bookmarkService: bookmark_service.Service
 
 proc newController*(delegate: io_interface.AccessInterface,
-  bookmarkService: bookmark_service.ServiceInterface):
+  bookmarkService: bookmark_service.Service):
   Controller =
   result = Controller()
   result.delegate = delegate

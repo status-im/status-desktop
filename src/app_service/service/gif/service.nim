@@ -6,10 +6,9 @@ import uri
 import chronicles
 import sequtils
 
-import ../settings/service_interface as settings_service
+import ../settings/service as settings_service
 import ../../../backend/gif as status_gif
 import ./dto
-import ./service_interface
 
 logScope:
   topics = "gif-service"
@@ -26,16 +25,16 @@ let TENOR_API_KEY_RESOLVED =
     TENOR_API_KEY
 
 type
-  Service* = ref object of service_interface.ServiceInterface
-    settingsService: settings_service.ServiceInterface
+  Service* = ref object of RootObj
+    settingsService: settings_service.Service
     client: HttpClient
     favorites: seq[GifDto]
     recents: seq[GifDto]
 
-method delete*(self: Service) =
+proc delete*(self: Service) =
   discard
 
-proc newService*(settingsService: settings_service.ServiceInterface): Service =
+proc newService*(settingsService: settings_service.Service): Service =
   result = Service()
   result.settingsService = settingsService
   result.client = newHttpClient()
@@ -49,7 +48,7 @@ proc setTenorAPIKey(self: Service) =
       error "error setTenorAPIKey: ", errDescription = response.error.message
 
   except Exception as e:
-    error "error: ", methodName="setTenorAPIKey", errName = e.name, errDesription = e.msg
+    error "error: ", procName="setTenorAPIKey", errName = e.name, errDesription = e.msg
 
 proc getRecentGifs(self: Service) =
   try:
@@ -61,7 +60,7 @@ proc getRecentGifs(self: Service) =
     self.recents = map(response.result.getElems(), settingToGifDto)
 
   except Exception as e:
-    error "error: ", methodName="getRecentGifs", errName = e.name, errDesription = e.msg
+    error "error: ", procName="getRecentGifs", errName = e.name, errDesription = e.msg
 
 proc getFavoriteGifs(self: Service) =
   try:
@@ -73,9 +72,9 @@ proc getFavoriteGifs(self: Service) =
     self.favorites = map(response.result.getElems(), settingToGifDto)
 
   except Exception as e:
-    error "error: ", methodName="getFavoriteGifs", errName = e.name, errDesription = e.msg
+    error "error: ", procName="getFavoriteGifs", errName = e.name, errDesription = e.msg
 
-method init*(self: Service) =
+proc init*(self: Service) =
   # set Tenor API Key
   self.setTenorAPIKey()
 

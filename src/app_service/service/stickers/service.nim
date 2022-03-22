@@ -417,14 +417,14 @@ QtObject:
   proc onGasPriceFetched*(self: Service, response: string) {.slot.} =
     let responseObj = response.parseJson
     if (responseObj.kind != JObject):
-      info "expected response is not a json object", methodName="onGasPriceFetched"
+      info "expected response is not a json object", procName="onGasPriceFetched"
       # notify view, this is important
       self.events.emit(SIGNAL_GAS_PRICE_FETCHED, GasPriceArgs(gasPrice: "0"))
       return
 
     var gasPriceHex: string
     if(not responseObj.getProp("gasPrice", gasPriceHex)):
-      info "expected response doesn't contain gas price", methodName="onGasPriceFetched"
+      info "expected response doesn't contain gas price", procName="onGasPriceFetched"
       # notify view, this is important
       self.events.emit(SIGNAL_GAS_PRICE_FETCHED, GasPriceArgs(gasPrice: "0"))
       return

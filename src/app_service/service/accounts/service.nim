@@ -1,9 +1,8 @@
 import json, sequtils, strutils, uuids
 import json_serialization, chronicles
 
-import service_interface
-import ./dto/accounts
-import ./dto/generated_accounts
+import ./dto/accounts as dto_accounts
+import ./dto/generated_accounts as dto_generated_accounts
 import ../../../backend/accounts as status_account
 import ../../../backend/general as status_general
 
@@ -11,7 +10,9 @@ import ../../../app/core/fleets/fleet_configuration
 import ../../common/[account_constants, network_constants, utils, string_utils]
 import ../../../constants as main_constants
 
-export service_interface
+export dto_accounts
+export dto_generated_accounts
+
 
 logScope:
   topics = "accounts-service"
@@ -19,14 +20,14 @@ logScope:
 const PATHS = @[PATH_WALLET_ROOT, PATH_EIP_1581, PATH_WHISPER, PATH_DEFAULT_WALLET]
 
 type
-  Service* = ref object of ServiceInterface
+  Service* = ref object of RootObj
     fleetConfiguration: FleetConfiguration
     generatedAccounts: seq[GeneratedAccountDto]
     loggedInAccount: AccountDto
     importedAccount: GeneratedAccountDto
     isFirstTimeAccountLogin: bool
 
-method delete*(self: Service) =
+proc delete*(self: Service) =
   discard
 
 proc newService*(fleetConfiguration: FleetConfiguration): Service =
@@ -34,13 +35,13 @@ proc newService*(fleetConfiguration: FleetConfiguration): Service =
   result.fleetConfiguration = fleetConfiguration
   result.isFirstTimeAccountLogin = false
 
-method getLoggedInAccount*(self: Service): AccountDto =
+proc getLoggedInAccount*(self: Service): AccountDto =
   return self.loggedInAccount
 
-method getImportedAccount*(self: Service): GeneratedAccountDto =
+proc getImportedAccount*(self: Service): GeneratedAccountDto =
   return self.importedAccount
 
-method isFirstTimeAccountLogin*(self: Service): bool =
+proc isFirstTimeAccountLogin*(self: Service): bool =
   return self.isFirstTimeAccountLogin
 
 proc generateAliasFromPk*(publicKey: string): string =
@@ -52,7 +53,7 @@ proc generateIdenticonFromPk*(publicKey: string): string =
 proc isAlias*(value: string): bool =
   return status_account.isAlias(value)
 
-method init*(self: Service) =
+proc init*(self: Service) =
   try:
     let response = status_account.generateAddresses(PATHS)
 
@@ -64,15 +65,15 @@ method init*(self: Service) =
       account.identicon = generateIdenticonFromPk(account.derivedAccounts.whisper.publicKey)
 
   except Exception as e:
-    error "error: ", methodName="init", errName = e.name, errDesription = e.msg
+    error "error: ", procName="init", errName = e.name, errDesription = e.msg
 
-method clear*(self: Service) =
+proc clear*(self: Service) =
   self.generatedAccounts = @[]
   self.loggedInAccount = AccountDto()
   self.importedAccount = GeneratedAccountDto()
   self.isFirstTimeAccountLogin = false
 
-method validateMnemonic*(self: Service, mnemonic: string): string =
+proc validateMnemonic*(self: Service, mnemonic: string): string =
   try:
     let response = status_general.validateMnemonic(mnemonic)
 
@@ -84,16 +85,16 @@ method validateMnemonic*(self: Service, mnemonic: string): string =
     return error
 
   except Exception as e:
-    error "error: ", methodName="validateMnemonic", errName = e.name, errDesription = e.msg
+    error "error: ", procName="validateMnemonic", errName = e.name, errDesription = e.msg
 
-method generatedAccounts*(self: Service): seq[GeneratedAccountDto] =
+proc generatedAccounts*(self: Service): seq[GeneratedAccountDto] =
   if(self.generatedAccounts.len == 0):
     error "There was some issue initiating account service"
     return
 
   result = self.generatedAccounts
 
-method openedAccounts*(self: Service): seq[AccountDto] =
+proc openedAccounts*(self: Service): seq[AccountDto] =
   try:
     let response = status_account.openedAccounts(main_constants.STATUSGODIR)
 
@@ -102,7 +103,7 @@ method openedAccounts*(self: Service): seq[AccountDto] =
     return accounts
 
   except Exception as e:
-    error "error: ", methodName="openedAccounts", errName = e.name, errDesription = e.msg
+    error "error: ", procName="openedAccounts", errName = e.name, errDesription = e.msg
 
 proc storeDerivedAccounts(self: Service, accountId, hashedPassword: string,
   paths: seq[string]): DerivedAccounts =
@@ -111,7 +112,7 @@ proc storeDerivedAccounts(self: Service, accountId, hashedPassword: string,
     result = toDerivedAccounts(response.result)
 
   except Exception as e:
-    error "error: ", methodName="storeDerivedAccounts", errName = e.name, errDesription = e.msg
+    error "error: ", procName="storeDerivedAccounts", errName = e.name, errDesription = e.msg
 
 proc saveAccountAndLogin(self: Service, hashedPassword: string, account,
   subaccounts, settings, config: JsonNode): AccountDto =
@@ -128,10 +129,10 @@ proc saveAccountAndLogin(self: Service, hashedPassword: string, account,
         return
 
     let err = "Error saving account and logging in: " & error
-    error "error: ", methodName="saveAccountAndLogin", errDesription = err
+    error "error: ", procName="saveAccountAndLogin", errDesription = err
 
   except Exception as e:
-    error "error: ", methodName="saveAccountAndLogin", errName = e.name, errDesription = e.msg
+    error "error: ", procName="saveAccountAndLogin", errName = e.name, errDesription = e.msg
 
 proc prepareAccountJsonObject(self: Service, account: GeneratedAccountDto, displayName: string): JsonNode =
   result = %* {
@@ -249,7 +250,7 @@ proc getDefaultNodeConfig*(self: Service, installationId: string): JsonNode =
   # TODO: commented since it's not necessary (we do the connections thru C bindings). Enable it thru an option once status-nodes are able to be configured in desktop
   # result["ListenAddr"] = if existsEnv("STATUS_PORT"): newJString("0.0.0.0:" & $getEnv("STATUS_PORT")) else: newJString("0.0.0.0:30305")
 
-method setupAccount*(self: Service, accountId, password, displayName: string): bool =
+proc setupAccount*(self: Service, accountId, password, displayName: string): bool =
   try:
     let installationId = $genUUID()
     let accountDataJson = self.getAccountDataForAccountId(accountId, displayName)
@@ -260,7 +261,7 @@ method setupAccount*(self: Service, accountId, password, displayName: string): b
     if(accountDataJson.isNil or subaccountDataJson.isNil or settingsJson.isNil or
       nodeConfigJson.isNil):
       let description = "at least one json object is not prepared well"
-      error "error: ", methodName="setupAccount", errDesription = description
+      error "error: ", procName="setupAccount", errDesription = description
       return false
 
     let hashedPassword = hashString(password)
@@ -272,10 +273,10 @@ method setupAccount*(self: Service, accountId, password, displayName: string): b
     return self.getLoggedInAccount.isValid()
 
   except Exception as e:
-    error "error: ", methodName="setupAccount", errName = e.name, errDesription = e.msg
+    error "error: ", procName="setupAccount", errName = e.name, errDesription = e.msg
     return false
 
-method importMnemonic*(self: Service, mnemonic: string): bool =
+proc importMnemonic*(self: Service, mnemonic: string): bool =
   try:
     let response = status_account.multiAccountImportMnemonic(mnemonic)
     self.importedAccount = toGeneratedAccountDto(response.result)
@@ -289,10 +290,10 @@ method importMnemonic*(self: Service, mnemonic: string): bool =
     return self.importedAccount.isValid()
 
   except Exception as e:
-    error "error: ", methodName="importMnemonic", errName = e.name, errDesription = e.msg
+    error "error: ", procName="importMnemonic", errName = e.name, errDesription = e.msg
     return false
 
-method login*(self: Service, account: AccountDto, password: string): string =
+proc login*(self: Service, account: AccountDto, password: string): string =
   try:
     let hashedPassword = hashString(password)
     var thumbnailImage: string
@@ -338,10 +339,10 @@ method login*(self: Service, account: AccountDto, password: string): string =
     return error
 
   except Exception as e:
-    error "error: ", methodName="setupAccount", errName = e.name, errDesription = e.msg
+    error "error: ", procName="setupAccount", errName = e.name, errDesription = e.msg
     return e.msg
 
-method verifyAccountPassword*(self: Service, account: string, password: string): bool =
+proc verifyAccountPassword*(self: Service, account: string, password: string): bool =
   try:
     let response = status_account.verifyAccountPassword(account, password, main_constants.KEYSTOREDIR)
     if(response.result.contains("error")):
@@ -349,7 +350,7 @@ method verifyAccountPassword*(self: Service, account: string, password: string):
       if(errMsg.len == 0):
         return true
       else:
-        error "error: ", methodName="verifyAccountPassword", errDesription = errMsg
+        error "error: ", procName="verifyAccountPassword", errDesription = errMsg
     return false
   except Exception as e:
-    error "error: ", methodName="verifyAccountPassword", errName = e.name, errDesription = e.msg
+    error "error: ", procName="verifyAccountPassword", errName = e.name, errDesription = e.msg

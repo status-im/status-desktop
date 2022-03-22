@@ -391,7 +391,7 @@ QtObject:
       error "error: ", errDesription
       return
 
-  method clearChatHistory*(self: Service, chatId: string) =
+  proc clearChatHistory*(self: Service, chatId: string) =
     try:
       let response = status_chat.deleteMessagesByChatId(chatId)
       if(not response.error.isNil):
@@ -405,7 +405,7 @@ QtObject:
       error "error: ", errDesription
       return
 
-  method addGroupMembers*(self: Service, communityID: string, chatID: string, members: seq[string]) =
+  proc addGroupMembers*(self: Service, communityID: string, chatID: string, members: seq[string]) =
     try:
       let response = status_group_chat.addMembers(communityID, chatId, members)
       if (response.error.isNil):
@@ -413,7 +413,7 @@ QtObject:
     except Exception as e:
       error "error while adding group members: ", msg = e.msg
 
-  method removeMemberFromGroupChat*(self: Service, communityID: string, chatID: string, member: string) =
+  proc removeMemberFromGroupChat*(self: Service, communityID: string, chatID: string, member: string) =
     try:
       let response = status_group_chat.removeMember(communityID, chatId, member)
       if (response.error.isNil):
@@ -422,7 +422,7 @@ QtObject:
       error "error while removing member from group: ", msg = e.msg
 
 
-  method renameGroupChat*(self: Service, communityID: string, chatID: string, name: string) =
+  proc renameGroupChat*(self: Service, communityID: string, chatID: string, name: string) =
     try:
       let response = status_group_chat.renameChat(communityID, chatId, name)
       if (not response.error.isNil):
@@ -435,7 +435,7 @@ QtObject:
       error "error while renaming group chat: ", msg = e.msg
 
 
-  method makeAdmin*(self: Service, communityID: string, chatID: string, memberId: string) =
+  proc makeAdmin*(self: Service, communityID: string, chatID: string, memberId: string) =
     try:
       let response = status_group_chat.makeAdmin(communityID, chatId, memberId)
       for member in self.chats[chatId].members.mitems:
@@ -450,21 +450,21 @@ QtObject:
       error "error while making user admin: ", msg = e.msg
 
 
-  method confirmJoiningGroup*(self: Service, communityID: string, chatID: string) =
+  proc confirmJoiningGroup*(self: Service, communityID: string, chatID: string) =
     try:
       let response = status_group_chat.confirmJoiningGroup(communityID, chatId)
       self.emitUpdate(response)
     except Exception as e:
       error "error while confirmation joining to group: ", msg = e.msg
 
-  method createGroupChatFromInvitation*(self: Service, groupName: string, chatId: string, adminPK: string): tuple[chatDto: ChatDto, success: bool]  =
+  proc createGroupChatFromInvitation*(self: Service, groupName: string, chatId: string, adminPK: string): tuple[chatDto: ChatDto, success: bool]  =
     try:
       let response = status_group_chat.createGroupChatFromInvitation(groupName, chatId, adminPK)
       result = self.createChatFromResponse(response)
     except Exception as e:
       error "error while creating group from invitation: ", msg = e.msg
 
-  method createGroupChat*(self: Service, communityID: string, name: string, members: seq[string]): tuple[chatDto: ChatDto, success: bool] =
+  proc createGroupChat*(self: Service, communityID: string, name: string, members: seq[string]): tuple[chatDto: ChatDto, success: bool] =
     try:
       let response = status_group_chat.createGroupChat(communityID, name, members)
       result = self.createChatFromResponse(response)

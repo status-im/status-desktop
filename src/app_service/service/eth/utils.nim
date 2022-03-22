@@ -68,10 +68,10 @@ proc decodeContentHash*(value: string): string =
 proc isWakuEnabled(): bool =
   true # TODO:
 
-proc prefix*(methodName: string, isExt:bool = true): string =
+proc prefix*(procName: string, isExt:bool = true): string =
   result = if isWakuEnabled(): "waku" else: "shh"
   result = result & (if isExt: "ext_" else: "_")
-  result = result & methodName
+  result = result & procName
 
 proc isOneToOneChat*(chatId: string): bool =
   result = chatId.startsWith("0x") # There is probably a better way to do this

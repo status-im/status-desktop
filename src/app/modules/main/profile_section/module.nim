@@ -4,18 +4,18 @@ import ../../../global/global_singleton
 import ../../../core/eventemitter
 import ../../../../app_service/service/profile/service as profile_service
 import ../../../../app_service/service/accounts/service as accounts_service
-import ../../../../app_service/service/settings/service_interface as settings_service
+import ../../../../app_service/service/settings/service as settings_service
 import ../../../../app_service/service/contacts/service as contacts_service
 import ../../../../app_service/service/about/service as about_service
-import ../../../../app_service/service/language/service_interface as language_service
+import ../../../../app_service/service/language/service as language_service
 import ../../../../app_service/service/privacy/service as privacy_service
-import ../../../../app_service/service/node_configuration/service_interface as node_configuration_service
+import ../../../../app_service/service/node_configuration/service as node_configuration_service
 import ../../../../app_service/service/devices/service as devices_service
 import ../../../../app_service/service/mailservers/service as mailservers_service
 import ../../../../app_service/service/chat/service as chat_service
 import ../../../../app_service/service/stickers/service as stickersService
 import ../../../../app_service/service/ens/service as ens_service
-import ../../../../app_service/service/wallet_account/service_interface as wallet_account_service
+import ../../../../app_service/service/wallet_account/service as wallet_account_service
 
 import ./profile/module as profile_module
 import ./contacts/module as contacts_module
@@ -51,20 +51,20 @@ type
 
 proc newModule*[T](delegate: T,
   events: EventEmitter,
-  accountsService: accounts_service.ServiceInterface,
-  settingsService: settings_service.ServiceInterface,
+  accountsService: accounts_service.Service,
+  settingsService: settings_service.Service,
   stickersService: stickers_service.Service,
-  profileService: profile_service.ServiceInterface,
+  profileService: profile_service.Service,
   contactsService: contacts_service.Service,
   aboutService: about_service.Service,
-  languageService: language_service.ServiceInterface,
+  languageService: language_service.Service,
   privacyService: privacy_service.Service,
-  nodeConfigurationService: node_configuration_service.ServiceInterface,
+  nodeConfigurationService: node_configuration_service.Service,
   devicesService: devices_service.Service,
   mailserversService: mailservers_service.Service,
   chatService: chat_service.Service,
   ensService: ens_service.Service,
-  walletAccountService: wallet_account_service.ServiceInterface,
+  walletAccountService: wallet_account_service.Service,
 ): Module[T] =
   result = Module[T]()
   result.delegate = delegate

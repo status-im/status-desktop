@@ -7,11 +7,11 @@ export controller_interface
 type
   Controller* = ref object of controller_interface.AccessInterface
     delegate: io_interface.AccessInterface
-    walletAccountService: wallet_account_service.ServiceInterface
+    walletAccountService: wallet_account_service.Service
 
 proc newController*(
   delegate: io_interface.AccessInterface,
-  walletAccountService: wallet_account_service.ServiceInterface
+  walletAccountService: wallet_account_service.Service
 ): Controller =
   result = Controller()
   result.delegate = delegate

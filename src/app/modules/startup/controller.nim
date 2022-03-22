@@ -5,7 +5,7 @@ import io_interface
 
 import ../../core/signals/types
 import ../../core/eventemitter
-import ../../../app_service/service/accounts/service_interface as accounts_service
+import ../../../app_service/service/accounts/service as accounts_service
 
 export controller_interface
 
@@ -16,11 +16,11 @@ type
   Controller* = ref object of controller_interface.AccessInterface
     delegate: io_interface.AccessInterface
     events: EventEmitter
-    accountsService: accounts_service.ServiceInterface
+    accountsService: accounts_service.Service
 
 proc newController*(delegate: io_interface.AccessInterface,
   events: EventEmitter,
-  accountsService: accounts_service.ServiceInterface):
+  accountsService: accounts_service.Service):
   Controller =
   result = Controller()
   result.delegate = delegate

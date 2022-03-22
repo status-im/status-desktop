@@ -3,9 +3,9 @@ import ./io_interface, ./view, ./controller, ./item, ./models/sticker_pack_list
 import ../../../global/global_singleton
 import ../../../core/eventemitter
 import ../../../../app_service/service/stickers/service as stickers_service
-import ../../../../app_service/service/settings/service_interface as settings_service
+import ../../../../app_service/service/settings/service as settings_service
 import ../../../../app_service/common/conversion as service_conversion
-import ../../../../app_service/service/wallet_account/service_interface as wallet_account_service
+import ../../../../app_service/service/wallet_account/service as wallet_account_service
 
 export io_interface
 
@@ -21,8 +21,8 @@ proc newModule*[T](
     delegate: T,
     events: EventEmitter,
     stickersService: stickers_service.Service,
-    settingsService: settings_Service.ServiceInterface,
-    walletAccountService: wallet_account_service.ServiceInterface
+    settingsService: settings_Service.Service,
+    walletAccountService: wallet_account_service.Service
     ): Module[T] =
   result = Module[T]()
   result.delegate = delegate
@@ -146,7 +146,7 @@ method getGasEthValue*[T](self: Module[T], gweiValue: string, gasLimit: string):
   var gasLimitInt:int
 
   if(gasLimit.parseInt(gasLimitInt) == 0):
-    info "an error occurred parsing gas limit", methodName="getGasEthValue"
+    echo "an error occurred parsing gas limit, methodName=getGasEthValue"
     return ""
 
   # The following check prevents app crash, cause we're trying to promote

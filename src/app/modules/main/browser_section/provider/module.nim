@@ -3,8 +3,8 @@ import io_interface
 import view
 import controller
 import ../io_interface as delegate_interface
-import ../../../../../app_service/service/settings/service_interface as settings_service
-import ../../../../../app_service/service/provider/service_interface as provider_service
+import ../../../../../app_service/service/settings/service as settings_service
+import ../../../../../app_service/service/provider/service as provider_service
 import ../../../../global/global_singleton
 export io_interface
 
@@ -17,8 +17,8 @@ type
     controller: controller.AccessInterface
 
 proc newModule*(delegate: delegate_interface.AccessInterface,
-  settingsService: settings_service.ServiceInterface,
-  providerService: provider_service.ServiceInterface): Module =
+  settingsService: settings_service.Service,
+  providerService: provider_service.Service): Module =
   result = Module()
   result.delegate = delegate
   result.view = newView(result)

@@ -9,12 +9,12 @@ type
   Controller* = ref object of controller_interface.AccessInterface
     delegate: io_interface.AccessInterface
     events: EventEmitter
-    savedAddressService: saved_address_service.ServiceInterface
+    savedAddressService: saved_address_service.Service
 
 proc newController*(
   delegate: io_interface.AccessInterface,
   events: EventEmitter,
-  savedAddressService: saved_address_service.ServiceInterface
+  savedAddressService: saved_address_service.Service
 ): Controller =
   result = Controller()
   result.delegate = delegate

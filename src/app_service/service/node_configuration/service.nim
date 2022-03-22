@@ -1,26 +1,31 @@
 import chronicles, json, strutils
 
-import service_interface
 import ./dto/node_config
-import ../settings/service_interface as settings_service
+import ../settings/service as settings_service
 import ../../../app/core/fleets/fleet_configuration
 import ../../../backend/node_config as status_node_config
 
-export service_interface
+export node_config
 
 logScope:
   topics = "node-config-service"
 
+const WAKU_VERSION_1* = 1
+const WAKU_VERSION_2* = 2
+const BLOOM_LEVEL_NORMAL* = "normal"
+const BLOOM_LEVEL_FULL* = "full"
+const BLOOM_LEVEL_LIGHT* = "light"
+
 type
-  Service* = ref object of service_interface.ServiceInterface
+  Service* = ref object of RootObj
     configuration: NodeConfigDto
     fleetConfiguration: FleetConfiguration
-    settingsService: settings_service.ServiceInterface
+    settingsService: settings_service.Service
 
-method delete*(self: Service) =
+proc delete*(self: Service) =
   discard
 
-proc newService*(fleetConfiguration: FleetConfiguration, settingsService: settings_service.ServiceInterface): Service =
+proc newService*(fleetConfiguration: FleetConfiguration, settingsService: settings_service.Service): Service =
   result = Service()
   result.fleetConfiguration = fleetConfiguration
   result.settingsService = settingsService
@@ -35,7 +40,7 @@ proc adaptNodeSettingsForTheAppNeed(self: Service) =
   self.configuration.LogFile = "./geth.log"
   self.configuration.ShhextConfig.BackupDisabledDataDir = "./"
 
-method init*(self: Service) =
+proc init*(self: Service) =
   try:
     let response = status_node_config.getNodeConfig()
     self.configuration = response.result.toNodeConfigDto()
@@ -53,7 +58,7 @@ proc saveConfiguration(self: Service, configuration: NodeConfigDto): bool =
   self.configuration = configuration
   return true
 
-method getWakuVersion*(self: Service): int =
+proc getWakuVersion*(self: Service): int =
   if self.configuration.WakuConfig.Enabled:
     return WAKU_VERSION_1
   elif self.configuration.WakuV2Config.Enabled:
@@ -62,7 +67,7 @@ method getWakuVersion*(self: Service): int =
   error "unsupported waku version"
   return 0
 
-method getBloomLevel*(self: Service): string =
+proc getBloomLevel*(self: Service): string =
   let wakuVersion = self.getWakuVersion()
   if wakuVersion == WAKU_VERSION_2:
     error "get - bloom level is supported only for a waku version 1"
@@ -80,7 +85,7 @@ method getBloomLevel*(self: Service): string =
     else:
       return BLOOM_LEVEL_LIGHT
 
-method setWakuVersion*(self: Service, wakuVersion: int): bool =
+proc setWakuVersion*(self: Service, wakuVersion: int): bool =
   var newConfiguration = self.configuration
   newConfiguration.RegisterTopics = @["whispermail"]
   newConfiguration.WakuConfig.Enabled = wakuVersion == WAKU_VERSION_1
@@ -96,9 +101,9 @@ method setWakuVersion*(self: Service, wakuVersion: int): bool =
     newConfiguration.WakuV2Config.Rendezvous = true
   return self.saveConfiguration(newConfiguration)
 
-method setNetwork*(self: Service, network: string): bool =
+proc setNetwork*(self: Service, network: string): bool =
   if(not self.settingsService.saveCurrentNetwork(network)):
-    error "error saving network ", network, methodName="setNetwork"
+    error "error saving network ", network, procName="setNetwork"
     return false
 
   let currentNetworkDetails = self.settingsService.getCurrentNetworkDetails()
@@ -112,16 +117,16 @@ method setNetwork*(self: Service, network: string): bool =
   newConfiguration.UpstreamConfig.URL = currentNetworkDetails.config.UpstreamConfig.URL
   return self.saveConfiguration(newConfiguration)
 
-method setBloomFilterMode*(self: Service, bloomFilterMode: bool): bool =
+proc setBloomFilterMode*(self: Service, bloomFilterMode: bool): bool =
   if(not self.settingsService.saveWakuBloomFilterMode(bloomFilterMode)):
-    error "error saving waku bloom filter mode ", methodName="setBloomFilterMode"
+    error "error saving waku bloom filter mode ", procName="setBloomFilterMode"
     return false
 
   var newConfiguration = self.configuration
   newConfiguration.WakuConfig.BloomFilterMode = bloomFilterMode
   return self.saveConfiguration(newConfiguration)
 
-method setBloomLevel*(self: Service, bloomLevel: string): bool =
+proc setBloomLevel*(self: Service, bloomLevel: string): bool =
   let wakuVersion = self.getWakuVersion()
   if wakuVersion == WAKU_VERSION_2:
     error "set - bloom level is supported only for a waku version 1"
@@ -138,7 +143,7 @@ method setBloomLevel*(self: Service, bloomLevel: string): bool =
     fullNode = true
 
   if(not self.settingsService.saveWakuBloomFilterMode(bloomFilterMode)):
-    error "error saving waku bloom filter mode ", methodName="setBloomLevel"
+    error "error saving waku bloom filter mode ", procName="setBloomLevel"
     return false
 
   if wakuVersion == WAKU_VERSION_1:
@@ -150,9 +155,9 @@ method setBloomLevel*(self: Service, bloomLevel: string): bool =
 
   return false
 
-method setFleet*(self: Service, fleet: string): bool =
+proc setFleet*(self: Service, fleet: string): bool =
   if(not self.settingsService.saveFleet(fleet)):
-    error "error saving fleet ", methodName="setFleet"
+    error "error saving fleet ", procName="setFleet"
     return false
 
   let fleetType = parseEnum[Fleet](fleet)
@@ -186,24 +191,24 @@ method setFleet*(self: Service, fleet: string): bool =
   # newConfiguration.ClusterConfig.WakuRendezvousNodes = self.fleetConfiguration.getNodes(Fleet.GoWakuTest, FleetNodes.LibP2P)
   return self.saveConfiguration(newConfiguration)
 
-method getV2LightMode*(self: Service): bool =
+proc getV2LightMode*(self: Service): bool =
   return self.configuration.WakuV2Config.LightClient
 
-method setV2LightMode*(self: Service, enabled: bool): bool =
+proc setV2LightMode*(self: Service, enabled: bool): bool =
   var newConfiguration = self.configuration
   newConfiguration.WakuV2Config.LightClient = enabled
   return self.saveConfiguration(newConfiguration)
 
-method getDebugLevel*(self: Service): string =
+proc getDebugLevel*(self: Service): string =
   return self.configuration.LogLevel
 
-method setDebugLevel*(self: Service, logLevel: LogLevel): bool =
+proc setDebugLevel*(self: Service, logLevel: LogLevel): bool =
   var newConfiguration = self.configuration
   newConfiguration.LogLevel = $logLevel
   return self.saveConfiguration(newConfiguration)
 
-method isV2LightMode*(self: Service): bool =
+proc isV2LightMode*(self: Service): bool =
    return self.configuration.WakuV2Config.LightClient
 
-method isFullNode*(self: Service): bool =
+proc isFullNode*(self: Service): bool =
    return self.configuration.WakuConfig.FullNode

@@ -1,4 +1,4 @@
-import strformat, sequtils, sugar
+import strformat
 
 type
   OnlineStatus* {.pure.} = enum
