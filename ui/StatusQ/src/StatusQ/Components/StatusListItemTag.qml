@@ -6,12 +6,15 @@ import StatusQ.Core.Theme 0.1
 
 Rectangle {
     id: root
-    width: titleText.contentWidth + 60
+    width: layout.width
     height: 30
     color: Theme.palette.primaryColor3
     radius: 15
 
+    property alias titleText: titleText
+
     property string title: ""
+    property bool closeButtonVisible: true
     signal clicked()
 
     property StatusImageSettings image: StatusImageSettings {
@@ -34,44 +37,45 @@ Rectangle {
         }
     }
 
-    StatusSmartIdenticon {
-        id: iconOrImage
-        anchors.left: parent.left
-        anchors.leftMargin: 5
-        anchors.verticalCenter: parent.verticalCenter
-        image: root.image
-        icon: root.icon
-        name: root.title
-        active: root.icon.isLetterIdenticon ||
-                !!root.icon.name ||
-                !!root.image.source.toString()
-    }
+    RowLayout {
+        id: layout
 
-    StatusBaseText {
-        id: titleText
-        anchors.left: iconOrImage.right
-        anchors.leftMargin: 5
-        anchors.verticalCenter: parent.verticalCenter
-        color: Theme.palette.primaryColor1
-        text: root.title
-    }
- 
-    StatusIcon {
-        id: closeIcon
-        anchors.left: titleText.right
-        anchors.leftMargin: 5
-        anchors.verticalCenter: parent.verticalCenter
-        color: Theme.palette.primaryColor1
-        icon: "close-circle"
-    }
-    
-    MouseArea {
-        id: mouseArea
-        anchors.fill: closeIcon
-        hoverEnabled: true
-        cursorShape: Qt.PointingHandCursor
-        onClicked: {
-            root.clicked()
+        height: parent.height
+        spacing: 5
+
+        StatusSmartIdenticon {
+            id: iconOrImage
+            Layout.leftMargin: 5
+            image: root.image
+            icon: root.icon
+            name: root.title
+            active: root.icon.isLetterIdenticon ||
+                    !!root.icon.name ||
+                    !!root.image.source.toString()
+        }
+
+        StatusBaseText {
+            id: titleText
+            color: Theme.palette.primaryColor1
+            text: root.title
+            Layout.rightMargin: closeButtonVisible ? 0 : 5
+        }
+
+        StatusIcon {
+            id: closeIcon
+            color: Theme.palette.primaryColor1
+            icon: "close-circle"
+            visible: closeButtonVisible
+            Layout.rightMargin: 5
+            MouseArea {
+                id: mouseArea
+                anchors.fill: parent
+                hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
+                onClicked: {
+                    root.clicked()
+                }
+            }
         }
     }
 }
