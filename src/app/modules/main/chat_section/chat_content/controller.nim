@@ -1,6 +1,5 @@
 import Tables
 
-import controller_interface
 import io_interface
 
 import ../../../../../app_service/service/settings/service as settings_service
@@ -14,10 +13,9 @@ import ../../../../../app_service/service/wallet_account/service as wallet_accou
 import ../../../../core/signals/types
 import ../../../../core/eventemitter
 
-export controller_interface
 
 type
-  Controller* = ref object of controller_interface.AccessInterface
+  Controller* = ref object of RootObj
     delegate: io_interface.AccessInterface
     events: EventEmitter
     sectionId: string
@@ -47,10 +45,10 @@ proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter
   result.communityService = communityService
   result.messageService = messageService
 
-method delete*(self: Controller) =
+proc delete*(self: Controller) =
   discard
 
-method init*(self: Controller) =
+proc init*(self: Controller) =
   self.events.on(SIGNAL_MESSAGES_LOADED) do(e:Args):
     let args = MessagesLoadedArgs(e)
     if(self.chatId != args.chatId or args.pinnedMessages.len == 0):
@@ -126,69 +124,69 @@ method init*(self: Controller) =
       return
     self.delegate.onChatRenamed(args.newName)
 
-method getMyChatId*(self: Controller): string =
+proc getMyChatId*(self: Controller): string =
   return self.chatId
 
-method getChatDetails*(self: Controller): ChatDto =
+proc getChatDetails*(self: Controller): ChatDto =
   return self.chatService.getChatById(self.chatId)
 
-method getCommunityDetails*(self: Controller): CommunityDto =
+proc getCommunityDetails*(self: Controller): CommunityDto =
   return self.communityService.getCommunityById(self.sectionId)
 
-method getOneToOneChatNameAndImage*(self: Controller): tuple[name: string, image: string, isIdenticon: bool] =
+proc getOneToOneChatNameAndImage*(self: Controller): tuple[name: string, image: string, isIdenticon: bool] =
   return self.chatService.getOneToOneChatNameAndImage(self.chatId)
 
-method belongsToCommunity*(self: Controller): bool =
+proc belongsToCommunity*(self: Controller): bool =
   return self.belongsToCommunity
 
-method unpinMessage*(self: Controller, messageId: string) =
+proc unpinMessage*(self: Controller, messageId: string) =
   self.messageService.pinUnpinMessage(self.chatId, messageId, false)
 
-method getMessageDetails*(self: Controller, messageId: string):
+proc getMessageDetails*(self: Controller, messageId: string):
   tuple[message: MessageDto, reactions: seq[ReactionDto], error: string] =
   return self.messageService.getDetailsForMessage(self.chatId, messageId)
 
-method isUsersListAvailable*(self: Controller): bool =
+proc isUsersListAvailable*(self: Controller): bool =
   return self.isUsersListAvailable
 
-method getMyAddedContacts*(self: Controller): seq[ContactsDto] =
+proc getMyAddedContacts*(self: Controller): seq[ContactsDto] =
   return self.contactService.getAddedContacts()
 
-method muteChat*(self: Controller) =
+proc muteChat*(self: Controller) =
   self.chatService.muteChat(self.chatId)
 
-method unmuteChat*(self: Controller) =
+proc unmuteChat*(self: Controller) =
   self.chatService.unmuteChat(self.chatId)
 
-method unblockChat*(self: Controller) =
+proc unblockChat*(self: Controller) =
   self.contactService.unblockContact(self.chatId)
 
-method markAllMessagesRead*(self: Controller) =
+proc markAllMessagesRead*(self: Controller) =
   self.messageService.markAllMessagesRead(self.chatId)
 
-method clearChatHistory*(self: Controller) =
+proc clearChatHistory*(self: Controller) =
   self.chatService.clearChatHistory(self.chatId)
 
-method leaveChat*(self: Controller) =
+proc leaveChat*(self: Controller) =
   self.chatService.leaveChat(self.chatId)
 
-method getContactById*(self: Controller, contactId: string): ContactsDto =
+proc getContactById*(self: Controller, contactId: string): ContactsDto =
   return self.contactService.getContactById(contactId)
 
-method getContactDetails*(self: Controller, contactId: string): ContactDetails =
+proc getContactDetails*(self: Controller, contactId: string): ContactDetails =
   return self.contactService.getContactDetails(contactId)
 
-method getCurrentFleet*(self: Controller): string =
+proc getCurrentFleet*(self: Controller): string =
   return self.settingsService.getFleetAsString()
 
-method getRenderedText*(self: Controller, parsedTextArray: seq[ParsedText]): string =
+proc getRenderedText*(self: Controller, parsedTextArray: seq[ParsedText]): string =
   return self.messageService.getRenderedText(parsedTextArray)
 
-method decodeContentHash*(self: Controller, hash: string): string =
+proc decodeContentHash*(self: Controller, hash: string): string =
   return eth_utils.decodeContentHash(hash)
 
-method getTransactionDetails*(self: Controller, message: MessageDto): (string,string) =
+proc getTransactionDetails*(self: Controller, message: MessageDto): (string,string) =
   return self.messageService.getTransactionDetails(message)
 
-method getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAccountDto] =
+proc getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAccountDto] =
   return self.messageService.getWalletAccounts()

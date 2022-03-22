@@ -1,12 +1,9 @@
-import ./controller_interface
 import io_interface
 
 import ../../../../../app_service/service/profile/service as profile_service
 
-export controller_interface
-
 type
-  Controller* = ref object of controller_interface.AccessInterface
+  Controller* = ref object of RootObj
     delegate: io_interface.AccessInterface
     profileService: profile_service.Service
 
@@ -16,17 +13,17 @@ proc newController*(delegate: io_interface.AccessInterface,
   result.delegate = delegate
   result.profileService = profileService
 
-method delete*(self: Controller) =
+proc delete*(self: Controller) =
   discard
 
-method init*(self: Controller) =
+proc init*(self: Controller) =
   discard
 
-method storeIdentityImage*(self: Controller, address: string, image: string, aX: int, aY: int, bX: int, bY: int): seq[Image] =
+proc storeIdentityImage*(self: Controller, address: string, image: string, aX: int, aY: int, bX: int, bY: int): seq[Image] =
   return self.profileService.storeIdentityImage(address, image, aX, aY, bX, bY)
 
-method deleteIdentityImage*(self: Controller, address: string) =
+proc deleteIdentityImage*(self: Controller, address: string) =
   self.profileService.deleteIdentityImage(address)
 
-method setDisplayName*(self: Controller, displayName: string): bool =
+proc setDisplayName*(self: Controller, displayName: string): bool =
   self.profileService.setDisplayName(displayName)

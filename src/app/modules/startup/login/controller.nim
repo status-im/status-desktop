@@ -1,6 +1,5 @@
 import NimQml, Tables
 
-import controller_interface
 import io_interface
 import ../../../global/global_singleton
 import ../../../core/signals/types
@@ -8,10 +7,8 @@ import ../../../core/eventemitter
 import ../../../../app_service/service/keychain/service as keychain_service
 import ../../../../app_service/service/accounts/service as accounts_service
 
-export controller_interface
-
 type
-  Controller* = ref object of controller_interface.AccessInterface
+  Controller* = ref object of RootObj
     delegate: io_interface.AccessInterface
     events: EventEmitter
     keychainService: keychain_service.Service
@@ -29,10 +26,10 @@ proc newController*(delegate: io_interface.AccessInterface,
   result.keychainService = keychainService
   result.accountsService = accountsService
 
-method delete*(self: Controller) =
+proc delete*(self: Controller) =
   discard
 
-method init*(self: Controller) =
+proc init*(self: Controller) =
   self.events.on(SignalType.NodeLogin.event) do(e:Args):
     let signal = NodeSignal(e)
     if signal.event.error != "":
@@ -51,7 +48,7 @@ method init*(self: Controller) =
     singletonInstance.localAccountSettings.removeKey(LS_KEY_STORE_TO_KEYCHAIN)
     self.delegate.emitObtainingPasswordError(args.errDescription)
 
-method getOpenedAccounts*(self: Controller): seq[AccountDto] =
+proc getOpenedAccounts*(self: Controller): seq[AccountDto] =
   return self.accountsService.openedAccounts()
 
 proc getSelectedAccount(self: Controller): AccountDto =
@@ -60,7 +57,7 @@ proc getSelectedAccount(self: Controller): AccountDto =
     if(acc.keyUid == self.selectedAccountKeyUid):
       return acc
 
-method setSelectedAccountKeyUid*(self: Controller, keyUid: string) =
+proc setSelectedAccountKeyUid*(self: Controller, keyUid: string) =
   self.selectedAccountKeyUid = keyUid
 
   # Dealing with Keychain is the MacOS only feature
@@ -76,7 +73,7 @@ method setSelectedAccountKeyUid*(self: Controller, keyUid: string) =
 
   self.keychainService.tryToObtainPassword(selectedAccount.name)
 
-method login*(self: Controller, password: string) =
+proc login*(self: Controller, password: string) =
   let selectedAccount = self.getSelectedAccount()
 
   let error = self.accountsService.login(selectedAccount, password)

@@ -1,5 +1,4 @@
 import Tables, chronicles
-import controller_interface
 import io_interface
 
 import ../../../../global/global_singleton
@@ -8,13 +7,11 @@ import ../../../../../app_service/service/settings/service as settings_service
 import ../../../../../app_service/service/ens/service as ens_service
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 
-export controller_interface
-
 logScope:
   topics = "profile-section-ens-usernames-module-controller"
 
 type
-  Controller* = ref object of controller_interface.AccessInterface
+  Controller* = ref object of RootObj
     delegate: io_interface.AccessInterface
     events: EventEmitter
     settingsService: settings_service.Service
@@ -31,10 +28,10 @@ proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter
   result.ensService = ensService
   result.walletAccountService = walletAccountService
 
-method delete*(self: Controller) =
+proc delete*(self: Controller) =
   discard
 
-method init*(self: Controller) =
+proc init*(self: Controller) =
   self.events.on(SIGNAL_ENS_USERNAME_AVAILABILITY_CHECKED) do(e:Args):
     let args = EnsUsernameAvailabilityArgs(e)
     self.delegate.ensUsernameAvailabilityChecked(args.availabilityStatus)
@@ -55,74 +52,74 @@ method init*(self: Controller) =
     let args = EnsTransactionArgs(e)
     self.delegate.ensTransactionReverted(args.transactionType, args.ensUsername, args.transactionHash, args.revertReason)
 
-method checkEnsUsernameAvailability*(self: Controller, desiredEnsUsername: string, statusDomain: bool) =
+proc checkEnsUsernameAvailability*(self: Controller, desiredEnsUsername: string, statusDomain: bool) =
   self.ensService.checkEnsUsernameAvailability(desiredEnsUsername, statusDomain)
 
-method getMyPendingEnsUsernames*(self: Controller): seq[string] =
+proc getMyPendingEnsUsernames*(self: Controller): seq[string] =
   return self.ensService.getMyPendingEnsUsernames()
 
-method getAllMyEnsUsernames*(self: Controller, includePendingEnsUsernames: bool): seq[string] =
+proc getAllMyEnsUsernames*(self: Controller, includePendingEnsUsernames: bool): seq[string] =
   return self.ensService.getAllMyEnsUsernames(includePendingEnsUsernames)
 
-method fetchDetailsForEnsUsername*(self: Controller, ensUsername: string) =
+proc fetchDetailsForEnsUsername*(self: Controller, ensUsername: string) =
   self.ensService.fetchDetailsForEnsUsername(ensUsername)
 
-method fetchGasPrice*(self: Controller) =
+proc fetchGasPrice*(self: Controller) =
   self.ensService.fetchGasPrice()
 
-method setPubKeyGasEstimate*(self: Controller, ensUsername: string, address: string): int =
+proc setPubKeyGasEstimate*(self: Controller, ensUsername: string, address: string): int =
   return self.ensService.setPubKeyGasEstimate(ensUsername, address)
 
-method setPubKey*(self: Controller, ensUsername: string, address: string, gas: string, gasPrice: string,
+proc setPubKey*(self: Controller, ensUsername: string, address: string, gas: string, gasPrice: string,
   maxPriorityFeePerGas: string, maxFeePerGas: string, password: string): string =
   return self.ensService.setPubKey(ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password)
 
-method getCurrentNetworkDetails*(self: Controller): Network =
+proc getCurrentNetworkDetails*(self: Controller): Network =
   return self.settingsService.getCurrentNetworkDetails()
 
-method getSigningPhrase*(self: Controller): string =
+proc getSigningPhrase*(self: Controller): string =
   return self.settingsService.getSigningPhrase()
 
-method saveNewEnsUsername*(self: Controller, ensUsername: string): bool =
+proc saveNewEnsUsername*(self: Controller, ensUsername: string): bool =
   return self.settingsService.saveNewEnsUsername(ensUsername)
 
-method getPreferredEnsUsername*(self: Controller): string =
+proc getPreferredEnsUsername*(self: Controller): string =
   return self.settingsService.getPreferredName()
 
-method releaseEnsEstimate*(self: Controller, ensUsername: string, address: string): int =
+proc releaseEnsEstimate*(self: Controller, ensUsername: string, address: string): int =
   return self.ensService.releaseEnsEstimate(ensUsername, address)
 
-method release*(self: Controller, ensUsername: string, address: string, gas: string, gasPrice: string, password: string):
+proc release*(self: Controller, ensUsername: string, address: string, gas: string, gasPrice: string, password: string):
   string =
   return self.ensService.release(ensUsername, address, gas, gasPrice, password)
 
-method setPreferredName*(self: Controller, preferredName: string) =
+proc setPreferredName*(self: Controller, preferredName: string) =
   if(self.settingsService.savePreferredName(preferredName)):
     singletonInstance.userProfile.setPreferredName(preferredName)
   else:
     info "an error occurred saving prefered ens username", methodName="setPreferredName"
 
-method getEnsRegisteredAddress*(self: Controller): string =
+proc getEnsRegisteredAddress*(self: Controller): string =
   return self.ensService.getEnsRegisteredAddress()
 
-method registerEnsGasEstimate*(self: Controller, ensUsername: string, address: string): int =
+proc registerEnsGasEstimate*(self: Controller, ensUsername: string, address: string): int =
   return self.ensService.registerEnsGasEstimate(ensUsername, address)
 
-method registerEns*(self: Controller, ensUsername: string, address: string, gas: string, gasPrice: string,
+proc registerEns*(self: Controller, ensUsername: string, address: string, gas: string, gasPrice: string,
   maxPriorityFeePerGas: string, maxFeePerGas: string, password: string): string =
   return self.ensService.registerEns(ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password)
 
-method getSNTBalance*(self: Controller): string =
+proc getSNTBalance*(self: Controller): string =
   return self.ensService.getSNTBalance()
 
-method getWalletDefaultAddress*(self: Controller): string =
+proc getWalletDefaultAddress*(self: Controller): string =
   return self.walletAccountService.getWalletAccount(0).address
 
-method getCurrentCurrency*(self: Controller): string =
+proc getCurrentCurrency*(self: Controller): string =
   return self.settingsService.getCurrency()
 
-method getPrice*(self: Controller, crypto: string, fiat: string): float64 =
+proc getPrice*(self: Controller, crypto: string, fiat: string): float64 =
   return self.walletAccountService.getPrice(crypto, fiat)
 
-method getStatusToken*(self: Controller): string =
+proc getStatusToken*(self: Controller): string =
   return self.ensService.getStatusToken()

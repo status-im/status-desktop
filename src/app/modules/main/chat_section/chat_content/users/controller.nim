@@ -1,5 +1,4 @@
 import sequtils, sugar
-import controller_interface
 import io_interface
 
 import ../../../../../../app_service/service/contacts/service as contact_service
@@ -9,10 +8,8 @@ import ../../../../../../app_service/service/chat/service as chat_service
 
 import ../../../../../core/eventemitter
 
-export controller_interface
-
 type
-  Controller* = ref object of controller_interface.AccessInterface
+  Controller* = ref object of RootObj
     delegate: io_interface.AccessInterface
     events: EventEmitter
     sectionId: string
@@ -43,10 +40,10 @@ proc newController*(
   result.messageService = messageService
   result.chatService = chatService
 
-method delete*(self: Controller) =
+proc delete*(self: Controller) =
   discard
 
-method handleCommunityOnlyConnections(self: Controller) =
+proc handleCommunityOnlyConnections(self: Controller) =
   self.events.on(SIGNAL_COMMUNITY_MEMBER_APPROVED) do(e: Args):
     let args = CommunityMemberArgs(e)
     if (args.communityId == self.sectionId):
@@ -60,7 +57,7 @@ method handleCommunityOnlyConnections(self: Controller) =
       let membersPubKeys = community.members.map(x => x.id)
       self.delegate.onChatMembersAdded(membersPubKeys)
 
-method init*(self: Controller) =
+proc init*(self: Controller) =
   if(self.isUsersListAvailable):
     self.events.on(SIGNAL_MESSAGES_LOADED) do(e:Args):
       let args = MessagesLoadedArgs(e)
@@ -124,10 +121,10 @@ method init*(self: Controller) =
         if (args.communityId == self.sectionId):
           self.delegate.onChatMemberRemoved(args.pubKey)
 
-method getChat*(self: Controller): ChatDto =
+proc getChat*(self: Controller): ChatDto =
   return self.chatService.getChatById(self.chatId)
 
-method getChatMemberInfo*(self: Controller, id: string): (bool, bool) =
+proc getChatMemberInfo*(self: Controller, id: string): (bool, bool) =
   let chat = self.getChat()
   for member in chat.members:
     if (member.id == id):
@@ -135,7 +132,7 @@ method getChatMemberInfo*(self: Controller, id: string): (bool, bool) =
 
   return (false, false)
 
-method getMembersPublicKeys*(self: Controller): seq[string] =
+proc getMembersPublicKeys*(self: Controller): seq[string] =
   if(self.belongsToCommunity):
     let communityDto = self.communityService.getCommunityById(self.sectionId)
     return communityDto.members.map(x => x.id)
@@ -143,12 +140,12 @@ method getMembersPublicKeys*(self: Controller): seq[string] =
     let chatDto = self.getChat()
     return chatDto.members.map(x => x.id)
 
-method getContactNameAndImage*(self: Controller, contactId: string):
+proc getContactNameAndImage*(self: Controller, contactId: string):
   tuple[name: string, image: string, isIdenticon: bool] =
   return self.contactService.getContactNameAndImage(contactId)
 
-method getContactDetails*(self: Controller, contactId: string): ContactDetails =
+proc getContactDetails*(self: Controller, contactId: string): ContactDetails =
   return self.contactService.getContactDetails(contactId)
 
-method getStatusForContact*(self: Controller, contactId: string): StatusUpdateDto =
+proc getStatusForContact*(self: Controller, contactId: string): StatusUpdateDto =
   return self.contactService.getStatusForContactWithId(contactId)

@@ -17,7 +17,7 @@ type
     delegate: T
     view: View
     viewVariant: QVariant
-    controller: controller.AccessInterface
+    controller: Controller
     onboardingModule: onboarding_module.AccessInterface
     loginModule: login_module.AccessInterface
 

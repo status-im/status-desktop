@@ -14,7 +14,7 @@ type
     delegate: delegate_interface.AccessInterface
     view: View
     moduleLoaded: bool
-    controller: controller.AccessInterface
+    controller: Controller
 
 proc newModule*(
   delegate: delegate_interface.AccessInterface,

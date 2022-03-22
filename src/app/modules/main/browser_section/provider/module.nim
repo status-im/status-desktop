@@ -14,7 +14,7 @@ type
     view: View
     viewVariant: QVariant
     moduleLoaded: bool
-    controller: controller.AccessInterface
+    controller: Controller
 
 proc newModule*(delegate: delegate_interface.AccessInterface,
   settingsService: settings_service.Service,

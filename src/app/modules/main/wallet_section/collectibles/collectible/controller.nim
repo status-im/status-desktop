@@ -1,11 +1,8 @@
-import ./controller_interface
 import io_interface
 import ../../../../../../app_service/service/collectible/service as collectible_service
 
-export controller_interface
-
 type
-  Controller* = ref object of controller_interface.AccessInterface
+  Controller* = ref object of RootObj
     delegate: io_interface.AccessInterface
     collectibleService: collectible_service.Service
 
@@ -17,8 +14,8 @@ proc newController*(
   result.delegate = delegate
   result.collectibleService = collectibleService
 
-method delete*(self: Controller) =
+proc delete*(self: Controller) =
   discard
 
-method init*(self: Controller) =
+proc init*(self: Controller) =
   discard

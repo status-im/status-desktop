@@ -1,4 +1,4 @@
-import Tables, controller_interface, chronicles
+import Tables, chronicles
 import io_interface
 
 import ../../../global/app_signals
@@ -11,8 +11,6 @@ import ../../../../app_service/service/message/service as message_service
 import ../../../core/signals/types
 import ../../../core/eventemitter
 
-export controller_interface
-
 logScope:
   topics = "app-search-module-controller"
 
@@ -21,13 +19,13 @@ type ResultItemDetails = object
   channelId*: string
   messageId*: string
 
-method isEmpty(self: ResultItemDetails): bool =
+proc isEmpty(self: ResultItemDetails): bool =
   self.sectionId.len == 0 and
   self.channelId.len == 0 and
   self.messageId.len == 0
 
 type
-  Controller* = ref object of controller_interface.AccessInterface
+  Controller* = ref object of RootObj
     delegate: io_interface.AccessInterface
     events: EventEmitter
     contactsService: contact_service.Service
@@ -53,56 +51,56 @@ proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter
   result.messageService = messageService
   result.resultItems = initTable[string, ResultItemDetails]()
 
-method delete*(self: Controller) =
+proc delete*(self: Controller) =
   self.resultItems.clear
 
-method init*(self: Controller) =
+proc init*(self: Controller) =
   self.events.on(SIGNAL_SEARCH_MESSAGES_LOADED) do(e:Args):
     let args = MessagesArgs(e)
     self.delegate.onSearchMessagesDone(args.messages)
 
-method activeSectionId*(self: Controller): string =
+proc activeSectionId*(self: Controller): string =
   return self.activeSectionId
 
-method activeChatId*(self: Controller): string =
+proc activeChatId*(self: Controller): string =
   return self.activeChatId
 
-method setActiveSectionIdAndChatId*(self: Controller, sectionId: string, chatId: string) =
+proc setActiveSectionIdAndChatId*(self: Controller, sectionId: string, chatId: string) =
     self.activeSectionId = sectionId
     self.activeChatId = chatId
 
-method searchTerm*(self: Controller): string =
+proc searchTerm*(self: Controller): string =
   return self.searchTerm
 
-method searchLocation*(self: Controller): string =
+proc searchLocation*(self: Controller): string =
   return self.searchLocation
 
-method searchSubLocation*(self: Controller): string =
+proc searchSubLocation*(self: Controller): string =
   return self.searchSubLocation
 
-method setSearchLocation*(self: Controller, location: string, subLocation: string) =
+proc setSearchLocation*(self: Controller, location: string, subLocation: string) =
     ## Setting location and subLocation to an empty string means we're
     ## searching in all available chats/channels/communities.
     self.searchLocation = location
     self.searchSubLocation = subLocation
 
-method getJoinedCommunities*(self: Controller): seq[CommunityDto] =
+proc getJoinedCommunities*(self: Controller): seq[CommunityDto] =
   return self.communityService.getJoinedCommunities()
 
-method getCommunityById*(self: Controller, communityId: string): CommunityDto =
+proc getCommunityById*(self: Controller, communityId: string): CommunityDto =
   return self.communityService.getCommunityById(communityId)
 
-method getAllChatsForCommunity*(self: Controller, communityId: string): seq[Chat] =
+proc getAllChatsForCommunity*(self: Controller, communityId: string): seq[Chat] =
   return self.communityService.getAllChats(communityId)
 
-method getChatDetailsForChatTypes*(self: Controller, types: seq[ChatType]): seq[ChatDto] =
+proc getChatDetailsForChatTypes*(self: Controller, types: seq[ChatType]): seq[ChatDto] =
   return self.chatService.getChatsOfChatTypes(types)
 
-method getChatDetails*(self: Controller, communityId, chatId: string): ChatDto =
+proc getChatDetails*(self: Controller, communityId, chatId: string): ChatDto =
   let fullId = communityId & chatId
   return self.chatService.getChatById(fullId)
 
-method searchMessages*(self: Controller, searchTerm: string) =
+proc searchMessages*(self: Controller, searchTerm: string) =
   self.resultItems.clear
   self.searchTerm = searchTerm
 
@@ -133,18 +131,18 @@ method searchMessages*(self: Controller, searchTerm: string) =
 
   self.messageService.asyncSearchMessages(communities, chats, self.searchTerm, false)
 
-method getOneToOneChatNameAndImage*(self: Controller, chatId: string):
+proc getOneToOneChatNameAndImage*(self: Controller, chatId: string):
   tuple[name: string, image: string, isIdenticon: bool] =
   return self.chatService.getOneToOneChatNameAndImage(chatId)
 
-method getContactNameAndImage*(self: Controller, contactId: string):
+proc getContactNameAndImage*(self: Controller, contactId: string):
   tuple[name: string, image: string, isIdenticon: bool] =
   return self.contactsService.getContactNameAndImage(contactId)
 
-method addResultItemDetails*(self: Controller, itemId: string, sectionId = "", channelId = "", messageId = "") =
+proc addResultItemDetails*(self: Controller, itemId: string, sectionId = "", channelId = "", messageId = "") =
   self.resultItems.add(itemId, ResultItemDetails(sectionId: sectionId, channelId: channelId, messageId: messageId))
 
-method resultItemClicked*(self: Controller, itemId: string) =
+proc resultItemClicked*(self: Controller, itemId: string) =
   let itemDetails = self.resultItems.getOrDefault(itemId)
   if(itemDetails.isEmpty()):
     # we shouldn't be here ever

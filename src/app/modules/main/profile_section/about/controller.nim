@@ -1,12 +1,9 @@
-import ./controller_interface
 import io_interface
 import ../../../../../app_service/service/about/service as about_service
 import ../../../../core/eventemitter
 
-export controller_interface
-
 type
-  Controller* = ref object of controller_interface.AccessInterface
+  Controller* = ref object of RootObj
     delegate: io_interface.AccessInterface
     events: EventEmitter
     aboutService: about_service.Service
@@ -21,19 +18,19 @@ proc newController*(
   result.events = events
   result.aboutService = aboutService
 
-method delete*(self: Controller) =
+proc delete*(self: Controller) =
   discard
 
-method init*(self: Controller) =
+proc init*(self: Controller) =
   self.events.on(SIGNAL_VERSION_FETCHED) do(e: Args):
     let args = VersionArgs(e)
     self.delegate.versionFetched(args.version)
 
-method getAppVersion*(self: Controller): string =
+proc getAppVersion*(self: Controller): string =
   return self.aboutService.getAppVersion()
 
-method checkForUpdates*(self: Controller) =
+proc checkForUpdates*(self: Controller) =
   self.aboutService.checkForUpdates()
 
-method getNodeVersion*(self: Controller): string =
+proc getNodeVersion*(self: Controller): string =
   return self.aboutService.getNodeVersion()

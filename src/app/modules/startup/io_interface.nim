@@ -1,16 +1,34 @@
-# Defines how parent module accesses this module
-include ./private_interfaces/module_base_interface
-include ./private_interfaces/module_access_interface
+type
+  AccessInterface* {.pure inheritable.} = ref object of RootObj
 
-# Defines how this module view communicates with this module
-include ./private_interfaces/module_view_delegate_interface
+method delete*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
 
-# Defines how this controller communicates with this module
-include ./private_interfaces/module_controller_delegate_interface
+method load*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
 
-# Defines how submodules of this module communicate with this module
-include ./private_interfaces/module_onboarding_delegate_interface
-include ./private_interfaces/module_login_delegate_interface
+method moveToAppState*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method startUpUIRaised*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method userLoggedIn*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method emitLogOut*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method loginDidLoad*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onboardingDidLoad*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method viewDidLoad*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+
 
 # This way (using concepts) is used only for the modules managed by AppController
 type

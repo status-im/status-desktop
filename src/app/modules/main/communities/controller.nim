@@ -1,5 +1,4 @@
 import Tables, stint
-import ./controller_interface
 import ./io_interface
 
 import ../../../core/signals/types
@@ -7,10 +6,8 @@ import ../../../core/eventemitter
 import ../../../../app_service/service/community/service as community_service
 import ../../../../app_service/service/contacts/service as contacts_service
 
-export controller_interface
-
 type
-  Controller* = ref object of controller_interface.AccessInterface
+  Controller* = ref object of RootObj
     delegate: io_interface.AccessInterface
     events: EventEmitter
     communityService: community_service.Service
@@ -28,10 +25,10 @@ proc newController*(
   result.communityService = communityService
   result.contactsService = contactsService
 
-method delete*(self: Controller) =
+proc delete*(self: Controller) =
   discard
 
-method init*(self: Controller) =
+proc init*(self: Controller) =
   self.events.on(SIGNAL_COMMUNITY_CREATED) do(e:Args):
     let args = CommunityArgs(e)
     self.delegate.communityAdded(args.community)
@@ -56,16 +53,16 @@ method init*(self: Controller) =
     for community in args.communities:
       self.delegate.communityEdited(community)
 
-method getAllCommunities*(self: Controller): seq[CommunityDto] =
+proc getAllCommunities*(self: Controller): seq[CommunityDto] =
   result = self.communityService.getAllCommunities()
 
-method joinCommunity*(self: Controller, communityId: string): string =
+proc joinCommunity*(self: Controller, communityId: string): string =
   self.communityService.joinCommunity(communityId)
 
-method requestToJoinCommunity*(self: Controller, communityId: string, ensName: string) =
+proc requestToJoinCommunity*(self: Controller, communityId: string, ensName: string) =
   self.communityService.requestToJoinCommunity(communityId, ensName)
 
-method createCommunity*(
+proc createCommunity*(
     self: Controller,
     name: string,
     description: string,
@@ -83,7 +80,7 @@ method createCommunity*(
     imageUrl,
     aX, aY, bX, bY)
 
-method reorderCommunityChat*(
+proc reorderCommunityChat*(
     self: Controller,
     communityId: string,
     categoryId: string,
@@ -95,42 +92,42 @@ method reorderCommunityChat*(
     chatId,
     position)
 
-method deleteCommunityChat*(
+proc deleteCommunityChat*(
     self: Controller,
     communityId: string,
     chatId: string) =
   self.communityService.deleteCommunityChat(communityId, chatId)
 
-method deleteCommunityCategory*(
+proc deleteCommunityCategory*(
     self: Controller,
     communityId: string,
     categoryId: string) =
   self.communityService.deleteCommunityCategory(communityId, categoryId)
 
-method requestCommunityInfo*(self: Controller, communityId: string) =
+proc requestCommunityInfo*(self: Controller, communityId: string) =
   self.communityService.requestCommunityInfo(communityId)
 
-method importCommunity*(self: Controller, communityKey: string) =
+proc importCommunity*(self: Controller, communityKey: string) =
   self.communityService.importCommunity(communityKey)
 
-method banUserFromCommunity*(self: Controller, communityId: string, pubKey: string) =
+proc banUserFromCommunity*(self: Controller, communityId: string, pubKey: string) =
   self.communityService.removeUserFromCommunity(communityId, pubKey)
 
-method setCommunityMuted*(self: Controller, communityId: string, muted: bool) =
+proc setCommunityMuted*(self: Controller, communityId: string, muted: bool) =
   self.communityService.setCommunityMuted(communityId, muted)
 
-method getContactNameAndImage*(self: Controller, contactId: string):
+proc getContactNameAndImage*(self: Controller, contactId: string):
     tuple[name: string, image: string, isIdenticon: bool] =
   return self.contactsService.getContactNameAndImage(contactId)
 
-method getContactDetails*(self: Controller, contactId: string): ContactDetails =
+proc getContactDetails*(self: Controller, contactId: string): ContactDetails =
   return self.contactsService.getContactDetails(contactId)
 
-method isUserMemberOfCommunity*(self: Controller, communityId: string): bool =
+proc isUserMemberOfCommunity*(self: Controller, communityId: string): bool =
   return self.communityService.isUserMemberOfCommunity(communityId)
 
-method userCanJoin*(self: Controller, communityId: string): bool =
+proc userCanJoin*(self: Controller, communityId: string): bool =
   return self.communityService.userCanJoin(communityId)
 
-method isCommunityRequestPending*(self: Controller, communityId: string): bool =
+proc isCommunityRequestPending*(self: Controller, communityId: string): bool =
   return self.communityService.isCommunityRequestPending(communityId)

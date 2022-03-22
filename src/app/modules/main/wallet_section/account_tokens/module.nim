@@ -14,7 +14,7 @@ type
     events: EventEmitter
     view: View
     moduleLoaded: bool
-    controller: controller.AccessInterface
+    controller: Controller
     currentAccountIndex: int
 
 proc newModule*(

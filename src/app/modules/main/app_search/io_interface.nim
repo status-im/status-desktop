@@ -1,11 +1,42 @@
-# Defines how parent module accesses this module
-include ./private_interfaces/module_base_interface
-include ./private_interfaces/module_access_interface
+import NimQml
 
-# Defines how this module view communicates with this module
-include ./private_interfaces/module_view_delegate_interface
+import ../../../../app_service/service/message/dto/message
 
-# Defines how this controller communicates with this module
-include ./private_interfaces/module_controller_delegate_interface
+type
+  AccessInterface* {.pure inheritable.} = ref object of RootObj
 
-# Defines how submodules of this module communicate with this module
+method delete*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method load*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method isLoaded*(self: AccessInterface): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getModuleAsVariant*(self: AccessInterface): QVariant {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onActiveChatChange*(self: AccessInterface, sectionId: string, chatId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onSearchMessagesDone*(self: AccessInterface, messages: seq[MessageDto]) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method viewDidLoad*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method prepareLocationMenuModel*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method setSearchLocation*(self: AccessInterface, location: string, subLocation: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getSearchLocationObject*(self: AccessInterface): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method searchMessages*(self: AccessInterface, searchTerm: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method resultItemClicked*(self: AccessInterface, itemId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")

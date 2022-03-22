@@ -12,7 +12,7 @@ type
   Module* = ref object of io_interface.AccessInterface
     delegate: delegate_interface.AccessInterface
     view: View
-    controller: controller.AccessInterface
+    controller: Controller
     moduleLoaded: bool
     currentAccountIndex: int
 

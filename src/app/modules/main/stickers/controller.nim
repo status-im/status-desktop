@@ -1,6 +1,5 @@
 import Tables, stint
 
-import ./controller_interface
 import ./io_interface
 
 import ../../../core/eventemitter
@@ -10,10 +9,9 @@ import ../../../../app_service/service/settings/service as settings_service
 import ../../../../app_service/service/eth/utils as eth_utils
 import ../../../../app_service/service/wallet_account/service as wallet_account_service
 
-export controller_interface
 
 type
-  Controller*[T: controller_interface.DelegateInterface] = ref object of controller_interface.AccessInterface
+  Controller* = ref object of RootObj
     delegate: io_interface.AccessInterface
     events: EventEmitter
     stickerService: stickers_service.Service
@@ -22,17 +20,17 @@ type
     disconnected: bool
 
 # Forward declaration
-method obtainMarketStickerPacks*[T](self: Controller[T])
-method getInstalledStickerPacks*[T](self: Controller[T]): Table[string, StickerPackDto]
+proc obtainMarketStickerPacks*(self: Controller)
+proc getInstalledStickerPacks*(self: Controller): Table[string, StickerPackDto]
 
-proc newController*[T](
+proc newController*(
     delegate: io_interface.AccessInterface,
     events: EventEmitter,
     stickerService: stickers_service.Service,
     settingsService: settings_service.Service,
     walletAccountService: wallet_account_service.Service
-    ): Controller[T] =
-  result = Controller[T]()
+    ): Controller =
+  result = Controller()
   result.delegate = delegate
   result.events = events
   result.stickerService = stickerService
@@ -40,10 +38,10 @@ proc newController*[T](
   result.walletAccountService = walletAccountService
   result.disconnected = false
 
-method delete*[T](self: Controller[T]) =
+proc delete*(self: Controller) =
   discard
 
-method init*[T](self: Controller[T]) =
+proc init*(self: Controller) =
   let recentStickers = self.stickerService.getRecentStickers()
   for sticker in recentStickers:
     self.delegate.addRecentStickerToList(sticker)
@@ -93,64 +91,64 @@ method init*[T](self: Controller[T]) =
     let args = StickerTransactionArgs(e)
     self.delegate.stickerTransactionReverted(args.transactionType, args.packID, args.transactionHash, args.revertReason)
 
-method buy*[T](self: Controller[T], packId: string, address: string, gas: string, gasPrice: string, maxPriorityFeePerGas: string, maxFeePerGas: string, password: string): tuple[response: string, success: bool] =
+proc buy*(self: Controller, packId: string, address: string, gas: string, gasPrice: string, maxPriorityFeePerGas: string, maxFeePerGas: string, password: string): tuple[response: string, success: bool] =
   self.stickerService.buy(packId, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password)
 
-method estimate*[T](self: Controller[T], packId: string, address: string, price: string, uuid: string) =
+proc estimate*(self: Controller, packId: string, address: string, price: string, uuid: string) =
   self.stickerService.estimate(packId, address, price, uuid)
 
-method getInstalledStickerPacks*[T](self: Controller[T]): Table[string, StickerPackDto] =
+proc getInstalledStickerPacks*(self: Controller): Table[string, StickerPackDto] =
   self.stickerService.getInstalledStickerPacks()
 
-method obtainMarketStickerPacks*[T](self: Controller[T]) =
+proc obtainMarketStickerPacks*(self: Controller) =
   self.stickerService.obtainMarketStickerPacks()
 
-method getNumInstalledStickerPacks*[T](self: Controller[T]): int =
+proc getNumInstalledStickerPacks*(self: Controller): int =
   self.stickerService.getNumInstalledStickerPacks()
 
-method installStickerPack*[T](self: Controller[T], packId: string) =
+proc installStickerPack*(self: Controller, packId: string) =
   self.stickerService.installStickerPack(packId)
 
-method uninstallStickerPack*[T](self: Controller[T], packId: string) =
+proc uninstallStickerPack*(self: Controller, packId: string) =
   self.stickerService.uninstallStickerPack(packId)
 
-method removeRecentStickers*[T](self: Controller[T], packId: string) =
+proc removeRecentStickers*(self: Controller, packId: string) =
   self.stickerService.removeRecentStickers(packId)
 
-method sendSticker*[T](
-    self: Controller[T],
+proc sendSticker*(
+    self: Controller,
     channelId: string,
     replyTo: string,
     sticker: StickerDto,
     preferredUsername: string) =
   self.stickerService.sendSticker(channelId, replyTo, sticker, preferredUsername)
 
-method decodeContentHash*[T](self: Controller[T], hash: string): string =
+proc decodeContentHash*(self: Controller, hash: string): string =
   eth_utils.decodeContentHash(hash)
 
-method wei2Eth*[T](self: Controller[T], price: Stuint[256]): string =
+proc wei2Eth*(self: Controller, price: Stuint[256]): string =
   eth_utils.wei2Eth(price)
 
-method getSigningPhrase*[T](self: Controller[T]): string =
+proc getSigningPhrase*(self: Controller): string =
   return self.settingsService.getSigningPhrase()
 
-method getStickerMarketAddress*[T](self: Controller[T]): string =
+proc getStickerMarketAddress*(self: Controller): string =
   return self.stickerService.getStickerMarketAddress()
 
-method getSNTBalance*[T](self: Controller[T]): string =
+proc getSNTBalance*(self: Controller): string =
   return self.stickerService.getSNTBalance()
 
-method getWalletDefaultAddress*[T](self: Controller[T]): string =
+proc getWalletDefaultAddress*(self: Controller): string =
   return self.walletAccountService.getWalletAccount(0).address
 
-method getCurrentCurrency*[T](self: Controller[T]): string =
+proc getCurrentCurrency*(self: Controller): string =
   return self.settingsService.getCurrency()
 
-method getPrice*[T](self: Controller[T], crypto: string, fiat: string): float64 =
+proc getPrice*(self: Controller, crypto: string, fiat: string): float64 =
   return self.walletAccountService.getPrice(crypto, fiat)
 
-method getStatusToken*[T](self: Controller[T]): string =
+proc getStatusToken*(self: Controller): string =
   return self.stickerService.getStatusToken()
 
-method fetchGasPrice*[T](self: Controller[T]) =
+proc fetchGasPrice*(self: Controller) =
   self.stickerService.fetchGasPrice()

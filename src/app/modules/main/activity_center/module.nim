@@ -1,6 +1,7 @@
 import NimQml, Tables, stint, sugar, sequtils
 
 import ./io_interface, ./view, ./controller
+import ../io_interface as delegate_interface
 import ./item as notification_item
 import ../../shared_models/message_item as msg_item
 import ../../shared_models/message_item_qobject as msg_item_qobj
@@ -17,26 +18,26 @@ import ../../../global/app_sections_config as conf
 export io_interface
 
 type
-  Module* [T: io_interface.DelegateInterface] = ref object of io_interface.AccessInterface
-    delegate: T
-    controller: controller.AccessInterface
+  Module* = ref object of io_interface.AccessInterface
+    delegate: delegate_interface.AccessInterface
+    controller: Controller
     view: View
     viewVariant: QVariant
     moduleLoaded: bool
 
-proc newModule*[T](
-    delegate: T,
+proc newModule*(
+    delegate: delegate_interface.AccessInterface,
     events: EventEmitter,
     activityCenterService: activity_center_service.Service,
     contactsService: contacts_service.Service,
     messageService: message_service.Service,
     chatService: chat_service.Service
-    ): Module[T] =
-  result = Module[T]()
+    ): Module =
+  result = Module()
   result.delegate = delegate
   result.view = newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController[Module[T]](
+  result.controller = controller.newController(
     result,
     events,
     activityCenterService,
@@ -46,29 +47,29 @@ proc newModule*[T](
   )
   result.moduleLoaded = false
 
-method delete*[T](self: Module[T]) =
+method delete*(self: Module) =
   self.view.delete
 
-method load*[T](self: Module[T]) =
+method load*(self: Module) =
   singletonInstance.engine.setRootContextProperty("activityCenterModule", self.viewVariant)
   self.controller.init()
   self.view.load()
 
-method isLoaded*[T](self: Module[T]): bool =
+method isLoaded*(self: Module): bool =
   return self.moduleLoaded
 
-method viewDidLoad*[T](self: Module[T]) =
+method viewDidLoad*(self: Module) =
   self.moduleLoaded = true
   self.delegate.activityCenterDidLoad()
 
-method hasMoreToShow*[T](self: Module[T]): bool =
+method hasMoreToShow*(self: Module): bool =
   self.controller.hasMoreToShow()
 
-method unreadActivityCenterNotificationsCount*[T](self: Module[T]): int =
+method unreadActivityCenterNotificationsCount*(self: Module): int =
   self.controller.unreadActivityCenterNotificationsCount()
 
-method convertToItems*[T](
-  self: Module[T],
+method convertToItems*(
+  self: Module,
   activityCenterNotifications: seq[ActivityCenterNotificationDto]
   ): seq[notification_item.Item] =
   result = activityCenterNotifications.map(
@@ -123,18 +124,18 @@ method convertToItems*[T](
       )
     )
 
-method getActivityCenterNotifications*[T](self: Module[T]): seq[notification_item.Item] =
+method getActivityCenterNotifications*(self: Module): seq[notification_item.Item] =
   let activityCenterNotifications = self.controller.getActivityCenterNotifications()
   self.view.pushActivityCenterNotifications(self.convertToItems(activityCenterNotifications))
 
-method markAllActivityCenterNotificationsRead*[T](self: Module[T]): string =
+method markAllActivityCenterNotificationsRead*(self: Module): string =
   self.controller.markAllActivityCenterNotificationsRead()
 
-method markAllActivityCenterNotificationsReadDone*[T](self: Module[T]) =
+method markAllActivityCenterNotificationsReadDone*(self: Module) =
   self.view.markAllActivityCenterNotificationsReadDone()
 
-method markActivityCenterNotificationRead*[T](
-    self: Module[T],
+method markActivityCenterNotificationRead*(
+    self: Module,
     notificationId: string,
     communityId: string,
     channelId: string,
@@ -149,24 +150,24 @@ method markActivityCenterNotificationRead*[T](
   )
   result = self.controller.markActivityCenterNotificationRead(notificationId, markAsReadProps)
 
-method markActivityCenterNotificationReadDone*[T](self: Module[T], notificationIds: seq[string]) =
+method markActivityCenterNotificationReadDone*(self: Module, notificationIds: seq[string]) =
   for notificationId in notificationIds:
     self.view.markActivityCenterNotificationReadDone(notificationId)
 
-method pushActivityCenterNotifications*[T](
-    self: Module[T],
+method pushActivityCenterNotifications*(
+    self: Module,
     activityCenterNotifications: seq[ActivityCenterNotificationDto]
     ) =
   self.view.pushActivityCenterNotifications(self.convertToItems(activityCenterNotifications))
 
-method addActivityCenterNotification*[T](
-    self: Module[T],
+method addActivityCenterNotification*(
+    self: Module,
     activityCenterNotifications: seq[ActivityCenterNotificationDto]
     ) =
   self.view.addActivityCenterNotification(self.convertToItems(activityCenterNotifications))
 
-method markActivityCenterNotificationUnread*[T](
-    self: Module[T],
+method markActivityCenterNotificationUnread*(
+    self: Module,
     notificationId: string,
     communityId: string,
     channelId: string,
@@ -182,21 +183,21 @@ method markActivityCenterNotificationUnread*[T](
 
   result = self.controller.markActivityCenterNotificationUnread(notificationId, markAsUnreadProps)
 
-method markActivityCenterNotificationUnreadDone*[T](self: Module[T], notificationIds: seq[string]) =
+method markActivityCenterNotificationUnreadDone*(self: Module, notificationIds: seq[string]) =
   for notificationId in notificationIds:
     self.view.markActivityCenterNotificationUnreadDone(notificationId)
 
-method acceptActivityCenterNotificationsDone*[T](self: Module[T], notificationIds: seq[string]) =
+method acceptActivityCenterNotificationsDone*(self: Module, notificationIds: seq[string]) =
   self.view.acceptActivityCenterNotificationsDone(notificationIds)
 
-method acceptActivityCenterNotifications*[T](self: Module[T], notificationIds: seq[string]): string =
+method acceptActivityCenterNotifications*(self: Module, notificationIds: seq[string]): string =
   self.controller.acceptActivityCenterNotifications(notificationIds)
 
-method dismissActivityCenterNotificationsDone*[T](self: Module[T], notificationIds: seq[string]) =
+method dismissActivityCenterNotificationsDone*(self: Module, notificationIds: seq[string]) =
   self.view.dismissActivityCenterNotificationsDone(notificationIds)
 
-method dismissActivityCenterNotifications*[T](self: Module[T], notificationIds: seq[string]): string =
+method dismissActivityCenterNotifications*(self: Module, notificationIds: seq[string]): string =
   self.controller.dismissActivityCenterNotifications(notificationIds)
 
-method switchTo*[T](self: Module[T], sectionId, chatId, messageId: string) =
+method switchTo*(self: Module, sectionId, chatId, messageId: string) =
   self.controller.switchTo(sectionId, chatId, messageId)

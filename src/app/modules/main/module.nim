@@ -60,7 +60,7 @@ type
     delegate: T
     view: View
     viewVariant: QVariant
-    controller: controller.AccessInterface
+    controller: Controller
     chatSectionModule: chat_section_module.AccessInterface
     communitySectionsModule: OrderedTable[string, chat_section_module.AccessInterface]
     walletSectionModule: wallet_section_module.AccessInterface
@@ -134,7 +134,7 @@ proc newModule*[T](
   result.chatSectionModule = chat_section_module.newModule(result, events, conf.CHAT_SECTION_ID, false, settingsService,
   contactsService, chatService, communityService, messageService, gifService, mailserversService)
   result.communitySectionsModule = initOrderedTable[string, chat_section_module.AccessInterface]()
-  result.walletSectionModule = wallet_section_module.newModule[Module[T]](
+  result.walletSectionModule = wallet_section_module.newModule(
     result, events, tokenService,
     transactionService, collectible_service, walletAccountService,
     settingsService, savedAddressService, networkService,
@@ -416,22 +416,22 @@ method communitySectionDidLoad*[T](self: Module[T]) =
 method appSearchDidLoad*[T](self: Module[T]) =
   self.checkIfModuleDidLoad()
 
-proc stickersDidLoad*[T](self: Module[T]) =
+method stickersDidLoad*[T](self: Module[T]) =
   self.checkIfModuleDidLoad()
 
-proc activityCenterDidLoad*[T](self: Module[T]) =
+method activityCenterDidLoad*[T](self: Module[T]) =
   self.checkIfModuleDidLoad()
 
 method communitiesModuleDidLoad*[T](self: Module[T]) =
   self.checkIfModuleDidLoad()
 
-proc walletSectionDidLoad*[T](self: Module[T]) =
+method walletSectionDidLoad*[T](self: Module[T]) =
   self.checkIfModuleDidLoad()
 
 method browserSectionDidLoad*[T](self: Module[T]) =
   self.checkIfModuleDidLoad()
 
-proc profileSectionDidLoad*[T](self: Module[T]) =
+method profileSectionDidLoad*[T](self: Module[T]) =
   self.checkIfModuleDidLoad()
 
 method nodeSectionDidLoad*[T](self: Module[T]) =

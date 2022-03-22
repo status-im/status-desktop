@@ -1,5 +1,4 @@
 import json, strutils
-import controller_interface
 import io_interface
 
 import ../../../../app_service/service/settings/service as settings_service
@@ -10,10 +9,8 @@ import ../../../core/signals/types
 import ../../../core/eventemitter
 import ../../../core/fleets/fleet_configuration
 
-export controller_interface
-
 type
-  Controller* = ref object of controller_interface.AccessInterface
+  Controller* = ref object of RootObj
     delegate: io_interface.AccessInterface
     events: EventEmitter
     settingsService: settings_service.Service
@@ -34,14 +31,14 @@ proc newController*(delegate: io_interface.AccessInterface,
   result.nodeService = nodeService
   result.nodeConfigurationService = nodeConfigurationService
 
-method delete*(self: Controller) =
+proc delete*(self: Controller) =
    discard
 
 proc setPeers(self: Controller, peers: seq[string]) =
   self.nodeService.peerSummaryChange(peers)
   self.delegate.setPeerSize(peers.len)
 
-method init*(self: Controller) =
+proc init*(self: Controller) =
   self.isWakuV2 = self.nodeConfigurationService.getWakuVersion() == WAKU_VERSION_2
 
   self.events.on(SignalType.Wallet.event) do(e:Args):
@@ -67,31 +64,31 @@ method init*(self: Controller) =
 
   self.setPeers(self.nodeService.fetchPeers())
 
-method sendRPCMessageRaw*(self: Controller, inputJSON: string): string =
+proc sendRPCMessageRaw*(self: Controller, inputJSON: string): string =
    return self.nodeService.sendRPCMessageRaw(inputJSON);
 
-method setBloomFilterMode*(self: Controller, bloomFilterMode: bool): bool =
+proc setBloomFilterMode*(self: Controller, bloomFilterMode: bool): bool =
    return self.nodeConfigurationService.setBloomFilterMode(bloomFilterMode)
 
-method setBloomLevel*(self: Controller, level: string): bool =
+proc setBloomLevel*(self: Controller, level: string): bool =
    return self.nodeConfigurationService.setBloomLevel(level)
 
-method isV2LightMode*(self: Controller): bool =
+proc isV2LightMode*(self: Controller): bool =
    return self.nodeConfigurationService.isV2LightMode()
 
-method isFullNode*(self: Controller): bool =
+proc isFullNode*(self: Controller): bool =
    return self.nodeConfigurationService.isFullNode()
 
-method setV2LightMode*(self: Controller, enabled: bool): bool =
+proc setV2LightMode*(self: Controller, enabled: bool): bool =
    return self.nodeConfigurationService.setV2LightMode(enabled)
 
-method getWakuBloomFilterMode*(self: Controller): bool =
+proc getWakuBloomFilterMode*(self: Controller): bool =
     return self.settingsService.getWakuBloomFilterMode()
 
-method fetchBitsSet*(self: Controller) =
+proc fetchBitsSet*(self: Controller) =
     self.nodeService.fetchBitsSet()
 
-method getWakuVersion*(self: Controller): int =
+proc getWakuVersion*(self: Controller): int =
     var fleet = self.settingsService.getFleet()
     let isWakuV2 = if fleet == WakuV2Prod or fleet == WakuV2Test or fleet == StatusTest or fleet == StatusProd: 
       true 
@@ -100,5 +97,5 @@ method getWakuVersion*(self: Controller): int =
     if isWakuV2: return 2
     return 1
 
-method getBloomLevel*(self: Controller): string =
+proc getBloomLevel*(self: Controller): string =
     return self.nodeConfigurationService.getBloomLevel()

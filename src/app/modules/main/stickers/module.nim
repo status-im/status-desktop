@@ -1,5 +1,6 @@
 import NimQml, Tables, stint, sugar, sequtils, json, strutils, strformat, parseutils, chronicles
 import ./io_interface, ./view, ./controller, ./item, ./models/sticker_pack_list
+import ../io_interface as delegate_interface
 import ../../../global/global_singleton
 import ../../../core/eventemitter
 import ../../../../app_service/service/stickers/service as stickers_service
@@ -10,73 +11,73 @@ import ../../../../app_service/service/wallet_account/service as wallet_account_
 export io_interface
 
 type
-  Module* [T: io_interface.DelegateInterface] = ref object of io_interface.AccessInterface
-    delegate: T
-    controller: controller.AccessInterface
+  Module* = ref object of io_interface.AccessInterface
+    delegate: delegate_interface.AccessInterface
+    controller: Controller
     view: View
     viewVariant: QVariant
     moduleLoaded: bool
 
-proc newModule*[T](
-    delegate: T,
+proc newModule*(
+    delegate: delegate_interface.AccessInterface,
     events: EventEmitter,
     stickersService: stickers_service.Service,
     settingsService: settings_Service.Service,
     walletAccountService: wallet_account_service.Service
-    ): Module[T] =
-  result = Module[T]()
+    ): Module =
+  result = Module()
   result.delegate = delegate
   result.view = newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController[Module[T]](result, events, stickersService, settingsService, walletAccountService)
+  result.controller = controller.newController(result, events, stickersService, settingsService, walletAccountService)
   result.moduleLoaded = false
 
   singletonInstance.engine.setRootContextProperty("stickersModule", result.viewVariant)
 
-method delete*[T](self: Module[T]) =
+method delete*(self: Module) =
   self.view.delete
 
-method load*[T](self: Module[T]) =
+method load*(self: Module) =
   self.controller.init()
   let signingPhrase = self.controller.getSigningPhrase()
   let stickerMarketAddress = self.controller.getStickerMarketAddress()
   self.view.load(signingphrase, stickerMarketAddress)
 
-method isLoaded*[T](self: Module[T]): bool =
+method isLoaded*(self: Module): bool =
   return self.moduleLoaded
 
-method viewDidLoad*[T](self: Module[T]) =
+method viewDidLoad*(self: Module) =
   self.moduleLoaded = true
   self.delegate.stickersDidLoad()
 
-method buy*[T](self: Module[T], packId: string, address: string, gas: string, gasPrice: string, maxPriorityFeePerGas: string, maxFeePerGas: string, password: string): tuple[response: string, success: bool] =
+method buy*(self: Module, packId: string, address: string, gas: string, gasPrice: string, maxPriorityFeePerGas: string, maxFeePerGas: string, password: string): tuple[response: string, success: bool] =
   return self.controller.buy(packId, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password)
 
-method getInstalledStickerPacks*[T](self: Module[T]): Table[string, StickerPackDto] =
+method getInstalledStickerPacks*(self: Module): Table[string, StickerPackDto] =
   self.controller.getInstalledStickerPacks()
 
-method obtainMarketStickerPacks*[T](self: Module[T]) =
+method obtainMarketStickerPacks*(self: Module) =
   self.controller.obtainMarketStickerPacks()
 
-method getNumInstalledStickerPacks*[T](self: Module[T]): int =
+method getNumInstalledStickerPacks*(self: Module): int =
   self.controller.getNumInstalledStickerPacks()
 
-method installStickerPack*[T](self: Module[T], packId: string) =
+method installStickerPack*(self: Module, packId: string) =
   self.controller.installStickerPack(packId)
 
-method uninstallStickerPack*[T](self: Module[T], packId: string) =
+method uninstallStickerPack*(self: Module, packId: string) =
   self.controller.uninstallStickerPack(packId)
 
-method removeRecentStickers*[T](self: Module[T], packId: string) =
+method removeRecentStickers*(self: Module, packId: string) =
   self.controller.removeRecentStickers(packId)
 
-method decodeContentHash*[T](self: Module[T], hash: string): string =
+method decodeContentHash*(self: Module, hash: string): string =
   self.controller.decodeContentHash(hash)
 
-method wei2Eth*[T](self: Module[T], price: Stuint[256]): string =
+method wei2Eth*(self: Module, price: Stuint[256]): string =
   self.controller.wei2Eth(price)
 
-method sendSticker*[T](self: Module[T], channelId: string, replyTo: string, sticker: Item) =
+method sendSticker*(self: Module, channelId: string, replyTo: string, sticker: Item) =
   let stickerDto = StickerDto(hash: sticker.getHash, packId: sticker.getPackId)
   self.controller.sendSticker(
     channelId,
@@ -84,19 +85,19 @@ method sendSticker*[T](self: Module[T], channelId: string, replyTo: string, stic
     stickerDto,
     singletonInstance.userProfile.getEnsName())
 
-method estimate*[T](self: Module[T], packId: string, address: string, price: string, uuid: string) =
+method estimate*(self: Module, packId: string, address: string, price: string, uuid: string) =
   self.controller.estimate(packId, address, price, uuid)
 
-method addRecentStickerToList*[T](self: Module[T], sticker: StickerDto) =
+method addRecentStickerToList*(self: Module, sticker: StickerDto) =
   self.view.addRecentStickerToList(initItem(sticker.hash, sticker.packId, sticker.url))
 
-method clearStickerPacks*[T](self: Module[T]) =
+method clearStickerPacks*(self: Module) =
   self.view.clearStickerPacks()
 
-method allPacksLoaded*[T](self: Module[T]) =
+method allPacksLoaded*(self: Module) =
   self.view.allPacksLoaded()
 
-method populateInstalledStickerPacks*[T](self: Module[T], stickers: Table[string, StickerPackDto]) =
+method populateInstalledStickerPacks*(self: Module, stickers: Table[string, StickerPackDto]) =
   var stickerPackItems: seq[PackItem] = @[]
   for stickerPack in stickers.values:
     stickerPackItems.add(initPackItem(
@@ -110,10 +111,10 @@ method populateInstalledStickerPacks*[T](self: Module[T], stickers: Table[string
     ))
   self.view.populateInstalledStickerPacks(stickerPackItems)
 
-method gasEstimateReturned*[T](self: Module[T], estimate: int, uuid: string) =
+method gasEstimateReturned*(self: Module, estimate: int, uuid: string) =
   self.view.gasEstimateReturned(estimate, uuid)
 
-method addStickerPackToList*[T](self: Module[T], stickerPack: StickerPackDto, isInstalled: bool, isBought: bool, isPending: bool) =
+method addStickerPackToList*(self: Module, stickerPack: StickerPackDto, isInstalled: bool, isBought: bool, isPending: bool) =
   let stickerPackItem = initPackItem(
           stickerPack.id,
           stickerPack.name,
@@ -125,16 +126,16 @@ method addStickerPackToList*[T](self: Module[T], stickerPack: StickerPackDto, is
         )
   self.view.addStickerPackToList(stickerPackItem, isInstalled, isBought, isPending)
 
-method getSNTBalance*[T](self: Module[T]): string =
+method getSNTBalance*(self: Module): string =
   return self.controller.getSNTBalance()
 
-method getWalletDefaultAddress*[T](self: Module[T]): string =
+method getWalletDefaultAddress*(self: Module): string =
   return self.controller.getWalletDefaultAddress()
 
-method getCurrentCurrency*[T](self: Module[T]): string =
+method getCurrentCurrency*(self: Module): string =
   return self.controller.getCurrentCurrency()
 
-method getFiatValue*[T](self: Module[T], cryptoBalance: string, cryptoSymbol: string, fiatSymbol: string): string =
+method getFiatValue*(self: Module, cryptoBalance: string, cryptoSymbol: string, fiatSymbol: string): string =
   if (cryptoBalance == "" or cryptoSymbol == "" or fiatSymbol == ""):
     return "0.00"
 
@@ -142,7 +143,7 @@ method getFiatValue*[T](self: Module[T], cryptoBalance: string, cryptoSymbol: st
   let value = parseFloat(cryptoBalance) * price
   return fmt"{value:.2f}"
 
-method getGasEthValue*[T](self: Module[T], gweiValue: string, gasLimit: string): string {.slot.} =
+method getGasEthValue*(self: Module, gweiValue: string, gasLimit: string): string {.slot.} =
   var gasLimitInt:int
 
   if(gasLimit.parseInt(gasLimitInt) == 0):
@@ -163,21 +164,21 @@ method getGasEthValue*[T](self: Module[T], gweiValue: string, gasLimit: string):
   let ethValue = service_conversion.wei2Eth(weiValue)
   return fmt"{ethValue}"
 
-method getStatusToken*[T](self: Module[T]): string =
+method getStatusToken*(self: Module): string =
   return self.controller.getStatusToken()
 
-method fetchGasPrice*[T](self: Module[T]) =
+method fetchGasPrice*(self: Module) =
   self.controller.fetchGasPrice()
 
-method gasPriceFetched*[T](self: Module[T], gasPrice: string) =
+method gasPriceFetched*(self: Module, gasPrice: string) =
   self.view.setGasPrice(gasPrice)
 
-method stickerTransactionConfirmed*[T](self: Module[T], trxType: string, packID: string, transactionHash: string) =
+method stickerTransactionConfirmed*(self: Module, trxType: string, packID: string, transactionHash: string) =
   self.view.stickerPacks.updateStickerPackInList(packID, true, false)
   self.controller.installStickerPack(packID)
   self.view.emitTransactionCompletedSignal(true, transactionHash, packID, trxType, "")
 
-method stickerTransactionReverted*[T](self: Module[T], trxType: string, packID: string, transactionHash: string,
+method stickerTransactionReverted*(self: Module, trxType: string, packID: string, transactionHash: string,
   revertReason: string) =
   self.view.stickerPacks.updateStickerPackInList(packID, false, false)
   self.view.emitTransactionCompletedSignal(false, transactionHash, packID, trxType, revertReason)

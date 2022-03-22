@@ -1,6 +1,5 @@
 import Tables
 
-import controller_interface
 import io_interface
 
 import ../../../../app_service/service/settings/service as settings_service
@@ -15,10 +14,9 @@ import ../../../core/signals/types
 import ../../../global/app_signals
 import ../../../core/eventemitter
 
-export controller_interface
 
 type
-  Controller* = ref object of controller_interface.AccessInterface
+  Controller* = ref object of RootObj
     delegate: io_interface.AccessInterface
     sectionId: string
     isCommunitySection: bool
@@ -51,10 +49,10 @@ proc newController*(delegate: io_interface.AccessInterface, sectionId: string, i
   result.gifService = gifService
   result.mailserversService = mailserversService
 
-method delete*(self: Controller) =
+proc delete*(self: Controller) =
   discard
 
-method init*(self: Controller) =
+proc init*(self: Controller) =
   self.events.on(SIGNAL_NEW_MESSAGE_RECEIVED) do(e: Args):
     let args = MessagesArgs(e)
     if(self.isCommunitySection and args.chatType != ChatType.CommunityChat or
@@ -184,38 +182,38 @@ method init*(self: Controller) =
   self.events.on(SignalType.HistoryRequestFailed.event) do(e:Args):
     discard
 
-method getMySectionId*(self: Controller): string =
+proc getMySectionId*(self: Controller): string =
   return self.sectionId
 
-method getActiveChatId*(self: Controller): string =
+proc getActiveChatId*(self: Controller): string =
   if(self.activeSubItemId.len > 0):
     return self.activeSubItemId
   else:
     return self.activeItemId
 
-method isCommunity*(self: Controller): bool =
+proc isCommunity*(self: Controller): bool =
   return self.isCommunitySection
 
-method getJoinedCommunities*(self: Controller): seq[CommunityDto] =
+proc getJoinedCommunities*(self: Controller): seq[CommunityDto] =
   return self.communityService.getJoinedCommunities()
 
-method getMyCommunity*(self: Controller): CommunityDto =
+proc getMyCommunity*(self: Controller): CommunityDto =
   return self.communityService.getCommunityById(self.sectionId)
 
-method getCategories*(self: Controller, communityId: string): seq[Category] =
+proc getCategories*(self: Controller, communityId: string): seq[Category] =
   return self.communityService.getCategories(communityId)
 
-method getChats*(self: Controller, communityId: string, categoryId: string): seq[Chat] =
+proc getChats*(self: Controller, communityId: string, categoryId: string): seq[Chat] =
   return self.communityService.getChats(communityId, categoryId)
 
-method getChatDetails*(self: Controller, communityId, chatId: string): ChatDto =
+proc getChatDetails*(self: Controller, communityId, chatId: string): ChatDto =
   let fullId = communityId & chatId
   return self.chatService.getChatById(fullId)
 
-method getChatDetailsForChatTypes*(self: Controller, types: seq[ChatType]): seq[ChatDto] =
+proc getChatDetailsForChatTypes*(self: Controller, types: seq[ChatType]): seq[ChatDto] =
   return self.chatService.getChatsOfChatTypes(types)
 
-method setActiveItemSubItem*(self: Controller, itemId: string, subItemId: string) =
+proc setActiveItemSubItem*(self: Controller, itemId: string, subItemId: string) =
   self.activeItemId = itemId
   self.activeSubItemId = subItemId
 
@@ -225,95 +223,95 @@ method setActiveItemSubItem*(self: Controller, itemId: string, subItemId: string
 
   self.delegate.activeItemSubItemSet(self.activeItemId, self.activeSubItemId)
 
-method removeCommunityChat*(self: Controller, itemId: string) =
+proc removeCommunityChat*(self: Controller, itemId: string) =
   self.communityService.deleteCommunityChat(self.getMySectionId(), itemId)
 
-method getOneToOneChatNameAndImage*(self: Controller, chatId: string):
+proc getOneToOneChatNameAndImage*(self: Controller, chatId: string):
   tuple[name: string, image: string, isIdenticon: bool] =
   return self.chatService.getOneToOneChatNameAndImage(chatId)
 
-method createPublicChat*(self: Controller, chatId: string) =
+proc createPublicChat*(self: Controller, chatId: string) =
   let response = self.chatService.createPublicChat(chatId)
   if(response.success):
     self.delegate.addNewChat(response.chatDto, false, self.events, self.settingsService, self.contactService, self.chatService,
     self.communityService, self.messageService, self.gifService, self.mailserversService)
 
-method createOneToOneChat*(self: Controller, communityID: string, chatId: string, ensName: string) =
+proc createOneToOneChat*(self: Controller, communityID: string, chatId: string, ensName: string) =
   let response = self.chatService.createOneToOneChat(communityID, chatId, ensName)
   if(response.success):
     self.delegate.addNewChat(response.chatDto, false, self.events, self.settingsService, self.contactService, self.chatService,
     self.communityService, self.messageService, self.gifService, self.mailserversService)
 
-method switchToOrCreateOneToOneChat*(self: Controller, chatId: string, ensName: string) =
+proc switchToOrCreateOneToOneChat*(self: Controller, chatId: string, ensName: string) =
   self.chatService.switchToOrCreateOneToOneChat(chatId, ensName)
 
-method leaveChat*(self: Controller, chatId: string) =
+proc leaveChat*(self: Controller, chatId: string) =
   self.chatService.leaveChat(chatId)
 
-method muteChat*(self: Controller, chatId: string) =
+proc muteChat*(self: Controller, chatId: string) =
   self.chatService.muteChat(chatId)
 
-method unmuteChat*(self: Controller, chatId: string) =
+proc unmuteChat*(self: Controller, chatId: string) =
   self.chatService.unmuteChat(chatId)
 
-method markAllMessagesRead*(self: Controller, chatId: string) =
+proc markAllMessagesRead*(self: Controller, chatId: string) =
   self.messageService.markAllMessagesRead(chatId)
 
-method clearChatHistory*(self: Controller, chatId: string) =
+proc clearChatHistory*(self: Controller, chatId: string) =
   self.chatService.clearChatHistory(chatId)
 
-method getCurrentFleet*(self: Controller): string =
+proc getCurrentFleet*(self: Controller): string =
   return self.settingsService.getFleetAsString()
 
-method getContacts*(self: Controller): seq[ContactsDto] =
+proc getContacts*(self: Controller): seq[ContactsDto] =
   return self.contactService.getContacts()
 
-method getContactDetails*(self: Controller, id: string): ContactDetails =
+proc getContactDetails*(self: Controller, id: string): ContactDetails =
   return self.contactService.getContactDetails(id)
 
-method addContact*(self: Controller, publicKey: string) =
+proc addContact*(self: Controller, publicKey: string) =
   self.contactService.addContact(publicKey)
 
-method rejectContactRequest*(self: Controller, publicKey: string) =
+proc rejectContactRequest*(self: Controller, publicKey: string) =
   self.contactService.rejectContactRequest(publicKey)
 
-method blockContact*(self: Controller, publicKey: string) =
+proc blockContact*(self: Controller, publicKey: string) =
   self.contactService.blockContact(publicKey)
 
-method addGroupMembers*(self: Controller, communityID: string, chatId: string, pubKeys: seq[string]) =
+proc addGroupMembers*(self: Controller, communityID: string, chatId: string, pubKeys: seq[string]) =
   self.chatService.addGroupMembers(communityID, chatId, pubKeys)
 
-method removeMemberFromGroupChat*(self: Controller, communityID: string, chatId: string, pubKey: string) =
+proc removeMemberFromGroupChat*(self: Controller, communityID: string, chatId: string, pubKey: string) =
    self.chatService.removeMemberFromGroupChat(communityID, chatId, pubKey)
 
-method renameGroupChat*(self: Controller, communityID: string, chatId: string, newName: string) =
+proc renameGroupChat*(self: Controller, communityID: string, chatId: string, newName: string) =
   self.chatService.renameGroupChat(communityID, chatId, newName)
 
-method makeAdmin*(self: Controller, communityID: string, chatId: string, pubKey: string) =
+proc makeAdmin*(self: Controller, communityID: string, chatId: string, pubKey: string) =
   self.chatService.makeAdmin(communityID, chatId, pubKey)
 
-method createGroupChat*(self: Controller, communityID: string, groupName: string, pubKeys: seq[string]) =
+proc createGroupChat*(self: Controller, communityID: string, groupName: string, pubKeys: seq[string]) =
   let response = self.chatService.createGroupChat(communityID, groupName, pubKeys)
   if(response.success):
     self.delegate.addNewChat(response.chatDto, false, self.events, self.settingsService, self.contactService, self.chatService,
     self.communityService, self.messageService, self.gifService, self.mailserversService)
 
-method confirmJoiningGroup*(self: Controller, communityID: string, chatID: string) =
+proc confirmJoiningGroup*(self: Controller, communityID: string, chatID: string) =
   self.chatService.confirmJoiningGroup(communityID, self.getActiveChatId())
 
-method joinGroupChatFromInvitation*(self: Controller, groupName: string, chatId: string, adminPK: string) =
+proc joinGroupChatFromInvitation*(self: Controller, groupName: string, chatId: string, adminPK: string) =
   let response = self.chatService.createGroupChatFromInvitation(groupName, chatId, adminPK)
   if(response.success):
     self.delegate.addNewChat(response.chatDto, false, self.events, self.settingsService, self.contactService, self.chatService,
     self.communityService, self.messageService, self.gifService, self.mailserversService)
 
-method acceptRequestToJoinCommunity*(self: Controller, requestId: string) =
+proc acceptRequestToJoinCommunity*(self: Controller, requestId: string) =
   self.communityService.acceptRequestToJoinCommunity(self.sectionId, requestId)
 
-method declineRequestToJoinCommunity*(self: Controller, requestId: string) =
+proc declineRequestToJoinCommunity*(self: Controller, requestId: string) =
   self.communityService.declineRequestToJoinCommunity(self.sectionId, requestId)
 
-method createCommunityChannel*(
+proc createCommunityChannel*(
     self: Controller,
     name: string,
     description: string,
@@ -323,7 +321,7 @@ method createCommunityChannel*(
   self.communityService.createCommunityChannel(self.sectionId, name, description, emoji, color,
     categoryId)
 
-method editCommunityChannel*(
+proc editCommunityChannel*(
     self: Controller,
     channelId: string,
     name: string,
@@ -342,22 +340,22 @@ method editCommunityChannel*(
     categoryId,
     position)
 
-method createCommunityCategory*(self: Controller, name: string, channels: seq[string]) =
+proc createCommunityCategory*(self: Controller, name: string, channels: seq[string]) =
   self.communityService.createCommunityCategory(self.sectionId, name, channels)
 
-method editCommunityCategory*(self: Controller, categoryId: string, name: string, channels: seq[string]) =
+proc editCommunityCategory*(self: Controller, categoryId: string, name: string, channels: seq[string]) =
   self.communityService.editCommunityCategory(self.sectionId, categoryId, name, channels)
 
-method deleteCommunityCategory*(self: Controller, categoryId: string) =
+proc deleteCommunityCategory*(self: Controller, categoryId: string) =
   self.communityService.deleteCommunityCategory(self.sectionId, categoryId)
 
-method leaveCommunity*(self: Controller) =
+proc leaveCommunity*(self: Controller) =
   self.communityService.leaveCommunity(self.sectionId)
 
-method removeUserFromCommunity*(self: Controller, pubKey: string) =
+proc removeUserFromCommunity*(self: Controller, pubKey: string) =
   self.communityService.removeUserFromCommunity(self.sectionId, pubKey)
 
-method editCommunity*(
+proc editCommunity*(
     self: Controller,
     name: string,
     description: string,
@@ -376,20 +374,20 @@ method editCommunity*(
     imageUrl,
     aX, aY, bX, bY)
 
-method exportCommunity*(self: Controller): string =
+proc exportCommunity*(self: Controller): string =
   self.communityService.exportCommunity(self.sectionId)
 
-method setCommunityMuted*(self: Controller, muted: bool) =
+proc setCommunityMuted*(self: Controller, muted: bool) =
   self.communityService.setCommunityMuted(self.sectionId, muted)
 
-method inviteUsersToCommunity*(self: Controller, pubKeys: string): string =
+proc inviteUsersToCommunity*(self: Controller, pubKeys: string): string =
   result = self.communityService.inviteUsersToCommunityById(self.sectionId, pubKeys)
 
-method reorderCommunityCategories*(self: Controller, categoryId: string, position: int) =
+proc reorderCommunityCategories*(self: Controller, categoryId: string, position: int) =
   self.communityService.reorderCommunityCategories(self.sectionId, categoryId, position)
 
-method reorderCommunityChat*(self: Controller, categoryId: string, chatId: string, position: int): string =
+proc reorderCommunityChat*(self: Controller, categoryId: string, chatId: string, position: int): string =
   self.communityService.reorderCommunityChat(self.sectionId, categoryId, chatId, position)
 
-method getRenderedText*(self: Controller, parsedTextArray: seq[ParsedText]): string =
+proc getRenderedText*(self: Controller, parsedTextArray: seq[ParsedText]): string =
   return self.messageService.getRenderedText(parsedTextArray)

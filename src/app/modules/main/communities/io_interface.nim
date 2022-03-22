@@ -1,9 +1,95 @@
-# Defines how parent module accesses this module
-include ./private_interfaces/module_base_interface
-include ./private_interfaces/module_access_interface
+import ../../../../app_service/service/community/service as community_service
+import ../../shared_models/section_item
 
-# Defines how this module view communicates with this module
-include ./private_interfaces/module_view_delegate_interface
+type
+  AccessInterface* {.pure inheritable.} = ref object of RootObj
 
-# Defines how this controller communicates with this module
-include ./private_interfaces/module_controller_delegate_interface
+method delete*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method load*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method isLoaded*(self: AccessInterface): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method setAllCommunities*(self: AccessInterface, communities: seq[CommunityDto]) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getCommunityItem*(self: AccessInterface, community: CommunityDto): SectionItem {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method joinCommunity*(self: AccessInterface, communityId: string): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method createCommunity*(self: AccessInterface, name: string, description: string, access: int, ensOnly: bool, color: string, imagePath: string, aX: int, aY: int, bX: int, bY: int) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method deleteCommunityCategory*(self: AccessInterface, communityId: string, categoryId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method reorderCommunityCategories*(self: AccessInterface, communityId: string, categoryId: string, position: int) {.base} =
+  raise newException(ValueError, "No implementation available")
+
+method reorderCommunityChannel*(self: AccessInterface, communityId: string, categoryId: string, chatId: string, position: int) {.base} =
+  raise newException(ValueError, "No implementation available")
+
+method banUserFromCommunity*(self: AccessInterface, pubKey: string, communityId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method isUserMemberOfCommunity*(self: AccessInterface, communityId: string): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method userCanJoin*(self: AccessInterface, communityId: string): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method isCommunityRequestPending*(self: AccessInterface, communityId: string): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method requestToJoinCommunity*(self: AccessInterface, communityId: string, ensName: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method requestCommunityInfo*(self: AccessInterface, communityId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method deleteCommunityChat*(self: AccessInterface, communityId: string, channelId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method importCommunity*(self: AccessInterface, communityKey: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method myRequestAdded*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method communityLeft*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method communityChannelReordered*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method communityChannelDeleted*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method communityCategoryCreated*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method communityCategoryEdited*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method communityCategoryDeleted*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method communityEdited*(self: AccessInterface, community: CommunityDto) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method communityAdded*(self: AccessInterface, community: CommunityDto) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method communityImported*(self: AccessInterface, community: CommunityDto) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onImportCommunityErrorOccured*(self: AccessInterface, error: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method viewDidLoad*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")

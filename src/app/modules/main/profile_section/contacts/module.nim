@@ -17,7 +17,7 @@ logScope:
 type
   Module* = ref object of io_interface.AccessInterface
     delegate: delegate_interface.AccessInterface
-    controller: controller.AccessInterface
+    controller: Controller
     view: View
     viewVariant: QVariant
     moduleLoaded: bool

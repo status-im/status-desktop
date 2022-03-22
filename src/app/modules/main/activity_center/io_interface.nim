@@ -68,9 +68,3 @@ method dismissActivityCenterNotifications*(self: AccessInterface, notificationId
 
 method switchTo*(self: AccessInterface, sectionId, chatId, messageId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
-
-type
-  ## Abstract class (concept) which must be implemented by object/s used in this
-  ## module.
-  DelegateInterface* = concept c
-    c.activityCenterDidLoad()
