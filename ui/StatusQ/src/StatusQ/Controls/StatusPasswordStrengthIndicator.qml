@@ -23,6 +23,8 @@ StatusProgressBar {
         Great // 5
     }
 
+    onValueChanged: if(value === 0) control.strength = StatusPasswordStrengthIndicator.Strength.None
+
     // Behavior:
     states: [
         // Strength states definition:
