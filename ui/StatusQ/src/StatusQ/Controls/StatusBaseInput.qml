@@ -25,6 +25,7 @@ Item {
 
     property alias edit: edit
     property alias text: edit.text
+    property alias background: background
 
     property alias color: edit.color
     property alias font: edit.font
@@ -78,6 +79,7 @@ Item {
                                     44, root.minimumHeight), root.maximumHeight) : 44
 
     Rectangle {
+        id: background
         width: parent.width
         height: maximumHeight != 0 ? Math.min(
                                          minimumHeight

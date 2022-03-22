@@ -212,4 +212,12 @@ Column {
         }
         input.edit.readOnly: true
     }
+
+    StatusInputWithCursor {
+        id: cursor
+        input.placeholderText: "0.00 SNT"
+        Component.onCompleted: {
+            cursor.input.edit.forceActiveFocus()
+        }
+    }
 }

@@ -36,3 +36,4 @@ StatusWalletColorButton 0.1 StatusWalletColorButton.qml
 StatusWalletColorSelect 0.1 StatusWalletColorSelect.qml
 StatusColorSelectorGrid 0.1 StatusColorSelectorGrid.qml
 StatusSeedPhraseInput 0.1 StatusSeedPhraseInput.qml
+StatusInputWithCursor 0.1 StatusInputWithCursor.qml
