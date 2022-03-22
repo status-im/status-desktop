@@ -330,5 +330,10 @@
         <file>src/StatusQ/Controls/Validators/StatusRegularExpressionValidator.qml</file>
         <file>src/StatusQ/Controls/Validators/StatusIntValidator.qml</file>
         <file>src/StatusQ/Controls/StatusSeedPhraseInput.qml</file>
+        <file>src/StatusQ/Controls/StatusTokenInlineSelector.qml</file>
+        <file>src/assets/img/icons/SNT.png</file>
+        <file>src/assets/img/icons/OMG.png</file>
+        <file>src/assets/img/icons/ETH.png</file>
+        <file>src/assets/img/icons/MANA.png</file>
     </qresource>
 </RCC>

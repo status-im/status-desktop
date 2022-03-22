@@ -196,4 +196,20 @@ Column {
             toggled = !toggled
         }
     }
+
+    StatusInput {
+        label: "Input with inline token selector"
+        input.leftComponent: StatusTokenInlineSelector {
+            tokens: [{amount: 0.1, token: "ETH"},
+                     {amount: 10, token: "SNT"},
+                     {amount: 15, token: "MANA"}]
+
+            StatusToolTip {
+                id: toolTip
+                text: "posted"
+            }
+            onTriggered: toolTip.visible = true
+        }
+        input.edit.readOnly: true
+    }
 }
