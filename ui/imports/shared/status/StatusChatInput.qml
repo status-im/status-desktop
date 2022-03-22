@@ -161,17 +161,6 @@ Rectangle {
         mentionsPos.push({"name": aliasName,"leftIndex": lastAtPosition, "rightIndex": (lastAtPosition+aliasName.length+1)});
     }
 
-    property var interpretMessage: function (msg) {
-        if (msg.startsWith("/shrug")) {
-            return  msg.replace("/shrug", "") + " ¯\\\\\\_(ツ)\\_/¯"
-        }
-        if (msg.startsWith("/tableflip")) {
-            return msg.replace("/tableflip", "") + " (╯°□°）╯︵ ┻━┻"
-        }
-
-        return msg
-    }
-
     function isUploadFilePressed(event) {
         return (event.key === Qt.Key_U) && (event.modifiers & Qt.ControlModifier) && imageBtn.visible && !imageDialog.visible
     }

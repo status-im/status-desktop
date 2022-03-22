@@ -105,6 +105,44 @@ Item {
                                                     tokenAddress)
     }
 
+    // This function is called once `1:1` or `group` chat is created.
+    function checkForCreateChatOptions(chatId) {
+        if(root.rootStore.createChatStartSendTransactionProcess) {
+            if (Utils.getContactDetailsAsJson(chatId).ensVerified) {
+                Global.openPopup(cmpSendTransactionWithEns);
+            } else {
+                Global.openPopup(cmpSendTransactionNoEns);
+            }
+        }
+        else if (root.rootStore.createChatStartSendTransactionProcess) {
+            Global.openPopup(cmpReceiveTransaction);
+        }
+        else if (root.rootStore.createChatStickerHashId !== "" &&
+                 root.rootStore.createChatStickerPackId !== "") {
+            root.rootStore.sendSticker(chatId,
+                                       root.rootStore.createChatStickerHashId,
+                                       "",
+                                       root.rootStore.createChatStickerPackId);
+        }
+        else if (root.rootStore.createChatInitMessage !== "" ||
+                 root.rootStore.createChatFileUrls.length > 0) {
+
+            root.rootStore.sendMessage(Qt.Key_Enter,
+                                       root.rootStore.createChatInitMessage,
+                                       "",
+                                       root.rootStore.createChatFileUrls
+                                       );
+        }
+
+        // Clear.
+        root.rootStore.createChatInitMessage = "";
+        root.rootStore.createChatFileUrls = [];
+        root.rootStore.createChatStartSendTransactionProcess = false;
+        root.rootStore.createChatStartReceiveTransactionProcess = false;
+        root.rootStore.createChatStickerHashId = "";
+        root.rootStore.createChatStickerPackId = "";
+    }
+
     Timer {
         interval: 60000; // 1 min
         running: true
@@ -126,6 +164,12 @@ Item {
         visible: root.activeChatId === ""
         rootStore: root.rootStore
         onShareChatKeyClicked: Global.openProfilePopup(userProfile.pubKey);
+    }
+
+    CreateChatView {
+        rootStore: root.rootStore
+        emojiPopup: root.emojiPopup
+        visible: mainModule.activeSection.sectionType === Constants.appSection.chat && root.rootStore.openCreateChat
     }
 
     // This is kind of a solution for applying backend refactored changes with the minimal qml changes.
@@ -179,6 +223,7 @@ Item {
                         }
 
                         sourceComponent: ChatContentView {
+                            visible: !root.rootStore.openCreateChat
                             width: parent.width
                             height: parent.height
                             clip: true
@@ -223,6 +268,7 @@ Item {
                     }
 
                     sourceComponent: ChatContentView {
+                        visible: !root.rootStore.openCreateChat
                         width: parent.width
                         height: parent.height
                         onHeightChanged: {
@@ -241,55 +287,12 @@ Item {
                         onOpenStickerPackPopup: {
                             root.openStickerPackPopup(stickerPackId)
                         }
-                        onIsActiveChannelChanged: {
-                            if (isActiveChannel && root.rootStore.openCreateChat) {
-                                root.rootStore.chatTextInput = textInputField.textInput;
-                            }
-                        }
                         Component.onCompleted: {
                             parentModule.prepareChatContentModuleForChatId(model.itemId)
                             chatContentModule = parentModule.getChatContentModule()
-                            if (root.rootStore.openCreateChat) {
-                                root.rootStore.openCreateChat = false;
-                                if (root.rootStore.createChatInitMessage !== "") {
-                                    textInputField.textInput.insert(0, root.rootStore.createChatInitMessage);
-                                    root.rootStore.createChatInitMessage = "";
-                                    textInputField.sendMessage(Qt.Key_Enter);
-                                }
-                            }
+
+                            root.checkForCreateChatOptions(model.itemId)
                         }
-                    }
-                }
-            }
-            DelegateChoice { // In all other cases
-                delegate: ChatContentView {
-                    width: parent.width
-                    clip: true
-                    height: {
-                        // dynamically calculate the height of the view, if the active one is the current one
-                        // then set the height to parent otherwise set it to 0
-                        if(!chatContentModule)
-                            return 0
-
-                        let myChatId = chatContentModule.getMyChatId()
-                        if(myChatId === root.activeChatId || myChatId === root.activeSubItemId)
-                            return parent.height
-
-                        return 0
-                    }
-                    rootStore: root.rootStore
-                    contactsStore: root.contactsStore
-                    sendTransactionNoEnsModal: cmpSendTransactionNoEns
-                    receiveTransactionModal: cmpReceiveTransaction
-                    sendTransactionWithEnsModal: cmpSendTransactionWithEns
-                    stickersLoaded: root.stickersLoaded
-                    isBlocked: model.blocked
-                    onOpenStickerPackPopup: {
-                        root.openStickerPackPopup(stickerPackId)
-                    }
-                    Component.onCompleted: {
-                        parentModule.prepareChatContentModuleForChatId(itemId)
-                        chatContentModule = parentModule.getChatContentModule()
                     }
                 }
             }

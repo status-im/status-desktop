@@ -374,7 +374,6 @@ ColumnLayout {
 
         ChatMessagesView {
             id: chatMessages
-            opacity: !chatContentRoot.rootStore.openCreateChat ? 1.0 : 0.0
             Layout.fillWidth: true
             Layout.fillHeight: true
             store: chatContentRoot.rootStore
@@ -406,7 +405,6 @@ ColumnLayout {
 
             Loader {
                 id: loadingMessagesIndicator
-                visible: !chatContentRoot.rootStore.openCreateChat
                 sourceComponent: LoadingAnimation { }
                 anchors {
                     right: parent.right
@@ -422,10 +420,7 @@ ColumnLayout {
                 usersStore: chatContentRoot.usersStore
 
                 visible: {
-                    if (chatContentRoot.rootStore.openCreateChat && chatContentRoot.rootStore.hideInput) {
-                        return false;
-                    } else {
-                        return true;
+                    return true
                         // Not Refactored Yet
                         //                if (chatContentRoot.rootStore.chatsModelInst.channelView.activeChannel.chatType === Constants.chatType.privateGroupChat) {
                         //                    return chatContentRoot.rootStore.chatsModelInst.channelView.activeChannel.isMember
@@ -438,7 +433,6 @@ ColumnLayout {
                         //                        community.access === Constants.communityChatPublicAccess ||
                         //                        community.admin ||
                         //                        chatContentRoot.rootStore.chatsModelInst.channelView.activeChannel.canPost
-                    }
                 }
                 messageContextMenu: contextmenu
                 emojiPopup: chatContentRoot.emojiPopup
@@ -477,37 +471,23 @@ ColumnLayout {
 
 
                 onSendMessage: {
-                    if (chatContentRoot.rootStore.openCreateChat) {
-                        chatContentRoot.rootStore.createChatInitMessage = textInput.getText(0, textInput.cursorPosition);
-                        textInput.clear();
-                        chatContentRoot.rootStore.createChatWithMessage();
-                    } else {
-                        if (!chatContentModule) {
-                            console.debug("error on sending message - chat content module is not set")
-                            return
-                        }
+                    if (!chatContentModule) {
+                        console.debug("error on sending message - chat content module is not set")
+                        return
+                    }
 
-                        if (chatInput.fileUrls.length > 0){
-                            chatContentModule.inputAreaModule.sendImages(JSON.stringify(fileUrls));
-                        }
-                        let msg = globalUtils.plainText(StatusQUtils.Emoji.deparse(chatInput.textInput.text))
-                        if (msg.length > 0) {
-                            msg = chatInput.interpretMessage(msg)
+                    if(chatContentRoot.rootStore.sendMessage(event,
+                                                             chatInput.textInput.text,
+                                                             chatInput.isReply? chatInput.replyMessageId : "",
+                                                             chatInput.fileUrls
+                                                             ))
+                    {
+                        sendMessageSound.stop();
+                        Qt.callLater(sendMessageSound.play);
 
-                            chatContentModule.inputAreaModule.sendMessage(
-                                        msg,
-                                        chatInput.isReply ? chatInput.replyMessageId : "",
-                                        Utils.isOnlyEmoji(msg) ? Constants.messageContentType.emojiType : Constants.messageContentType.messageType,
-                                        false)
-
-                            if (event) event.accepted = true
-                            sendMessageSound.stop();
-                            Qt.callLater(sendMessageSound.play);
-
-                            chatInput.textInput.clear();
-                            chatInput.textInput.textFormat = TextEdit.PlainText;
-                            chatInput.textInput.textFormat = TextEdit.RichText;
-                        }
+                        chatInput.textInput.clear();
+                        chatInput.textInput.textFormat = TextEdit.PlainText;
+                        chatInput.textInput.textFormat = TextEdit.RichText;
                     }
                 }
 

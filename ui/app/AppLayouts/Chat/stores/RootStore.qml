@@ -1,18 +1,23 @@
 import QtQuick 2.13
 
 import utils 1.0
+import StatusQ.Core.Utils 0.1 as StatusQUtils
 
 QtObject {
     id: root
 
     property var contactsStore
+
     property bool openCreateChat: false
-    property bool hideInput: false
-    property string createChatInitMessage
-    property var chatTextInput
+    property string createChatInitMessage: ""
+    property var createChatFileUrls: []
+    property bool createChatStartSendTransactionProcess: false
+    property bool createChatStartReceiveTransactionProcess: false
+    property string createChatStickerHashId: ""
+    property string createChatStickerPackId: ""
+
     property var contactsModel: profileSectionModule.contactsModule.myContactsModel
-    signal addRemoveGroupMember()
-    signal createChatWithMessage()
+
     // Important:
     // Each `ChatLayout` has its own chatCommunitySectionModule
     // (on the backend chat and community sections share the same module since they are actually the same)
@@ -65,6 +70,40 @@ QtObject {
 
     function blockContact(pubKey) {
         chatCommunitySectionModule.blockContact(pubKey)
+    }
+
+    function interpretMessage(msg) {
+        if (msg.startsWith("/shrug")) {
+            return  msg.replace("/shrug", "") + " ¯\\\\\\_(ツ)\\_/¯"
+        }
+        if (msg.startsWith("/tableflip")) {
+            return msg.replace("/tableflip", "") + " (╯°□°）╯︵ ┻━┻"
+        }
+
+        return msg
+    }
+
+    function sendMessage(event, text, replyMessageId, fileUrls) {
+        var chatContentModule = currentChatContentModule()
+        if (fileUrls.length > 0){
+            chatContentModule.inputAreaModule.sendImages(JSON.stringify(fileUrls));
+        }
+        let msg = globalUtils.plainText(StatusQUtils.Emoji.deparse(text))
+        if (msg.length > 0) {
+            msg = interpretMessage(msg)
+
+            chatContentModule.inputAreaModule.sendMessage(
+                        msg,
+                        replyMessageId,
+                        Utils.isOnlyEmoji(msg) ? Constants.messageContentType.emojiType : Constants.messageContentType.messageType,
+                        false)
+
+            if (event)
+                event.accepted = true
+
+            return true
+        }
+        return false
     }
 
 
