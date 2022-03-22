@@ -236,6 +236,7 @@ proc getDefaultNodeConfig*(self: Service, installationId: string): JsonNode =
   result["ClusterConfig"]["TrustedMailServers"] = %* self.fleetConfiguration.getNodes(fleet, FleetNodes.Mailservers)
   result["ClusterConfig"]["StaticNodes"] = %* self.fleetConfiguration.getNodes(fleet, FleetNodes.Whisper)
   result["ClusterConfig"]["RendezvousNodes"] = %* self.fleetConfiguration.getNodes(fleet, FleetNodes.Rendezvous)
+  result["ClusterConfig"]["DiscV5BootstrapNodes"] = %* (@[]) # TODO: set default status.prod enr
   result["NetworkId"] = networkConfig["config"]["NetworkId"]
   result["DataDir"] = newDataDir.newJString()
   result["UpstreamConfig"]["Enabled"] = networkConfig["config"]["UpstreamConfig"]["Enabled"]
