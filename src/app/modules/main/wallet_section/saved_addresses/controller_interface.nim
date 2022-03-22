@@ -1,4 +1,4 @@
-import ../../../../../app_service/service/saved_address/service_interface as saved_address_service
+import ../../../../../app_service/service/saved_address/service as saved_address_service
 
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj

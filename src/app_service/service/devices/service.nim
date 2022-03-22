@@ -24,7 +24,7 @@ const SIGNAL_UPDATE_DEVICE* = "updateDevice"
 QtObject:
   type Service* = ref object of QObject
     events: EventEmitter
-    settingsService: settings_service.ServiceInterface
+    settingsService: settings_service.Service
 
   ## Forward declaration
   proc isNewDevice(self: Service, device: DeviceDto): bool
@@ -32,7 +32,7 @@ QtObject:
   proc delete*(self: Service) =
     self.QObject.delete
 
-  proc newService*(events: EventEmitter, settingsService: settings_service.ServiceInterface): Service =
+  proc newService*(events: EventEmitter, settingsService: settings_service.Service): Service =
     new(result, delete)
     result.QObject.setup
     result.events = events

@@ -19,7 +19,7 @@ type
 proc newModule*(
   delegate: delegate_interface.AccessInterface,
   events: EventEmitter,
-  savedAddressService: saved_address_service.ServiceInterface,
+  savedAddressService: saved_address_service.Service,
 ): Module =
   result = Module()
   result.delegate = delegate

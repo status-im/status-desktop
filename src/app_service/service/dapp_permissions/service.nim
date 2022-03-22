@@ -19,14 +19,14 @@ type
 
 type R = Result[Dapp, string]
 
-method delete*(self: Service) =
+proc delete*(self: Service) =
   discard
 
 proc newService*(): Service =
   result = Service()
   result.dapps = initTable[string, Dapp]()
 
-method init*(self: Service) =
+proc init*(self: Service) =
   try:
     let response = status_go.getDappPermissions()
     for dapp in response.result.getElems().mapIt(it.toDapp()):
@@ -38,17 +38,17 @@ method init*(self: Service) =
     let errDescription = e.msg
     error "error: ", errDescription
 
-method getDapps*(self: Service): seq[Dapp] =
+proc getDapps*(self: Service): seq[Dapp] =
   return toSeq(self.dapps.values)
 
-method getDapp*(self: Service, name: string, address: string): Option[Dapp] =
+proc getDapp*(self: Service, name: string, address: string): Option[Dapp] =
   let key = name & address
   if self.dapps.hasKey(key):
     return some(self.dapps[key])
 
   return none(Dapp)
 
-method addPermission*(self: Service, name: string, address: string, permission: Permission): R =
+proc addPermission*(self: Service, name: string, address: string, permission: Permission): R =
   let key = name & address
 
   try:
@@ -69,13 +69,13 @@ method addPermission*(self: Service, name: string, address: string, permission: 
     result.err errDescription
 
 
-method hasPermission*(self: Service, dapp: string, address: string, permission: Permission): bool =
+proc hasPermission*(self: Service, dapp: string, address: string, permission: Permission): bool =
   let key = dapp & address
   if not self.dapps.hasKey(key):
     return false
   return self.dapps[key].permissions.contains(permission)
 
-method disconnect*(self: Service, dappName: string): bool =
+proc disconnect*(self: Service, dappName: string): bool =
   try:
     var addresses: seq[string] = @[]
     for dapp in self.dapps.values:
@@ -93,7 +93,7 @@ method disconnect*(self: Service, dappName: string): bool =
     let errDescription = e.msg
     error "error: ", errDescription
 
-method disconnectAddress*(self: Service, dappName: string, address: string): bool =
+proc disconnectAddress*(self: Service, dappName: string, address: string): bool =
   let key = dappName & address
   if not self.dapps.hasKey(key):
       return
@@ -106,7 +106,7 @@ method disconnectAddress*(self: Service, dappName: string, address: string): boo
     let errDescription = e.msg
     error "error: ", errDescription
 
-method removePermission*(self: Service, name: string, address: string, permission: Permission): bool =
+proc removePermission*(self: Service, name: string, address: string, permission: Permission): bool =
   let key = name & address
   if not self.dapps.hasKey(key):
       return

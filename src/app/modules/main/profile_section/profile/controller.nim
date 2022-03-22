@@ -1,17 +1,17 @@
 import ./controller_interface
 import io_interface
 
-import ../../../../../app_service/service/profile/service_interface as profile_service
+import ../../../../../app_service/service/profile/service as profile_service
 
 export controller_interface
 
 type
   Controller* = ref object of controller_interface.AccessInterface
     delegate: io_interface.AccessInterface
-    profileService: profile_service.ServiceInterface
+    profileService: profile_service.Service
 
 proc newController*(delegate: io_interface.AccessInterface,
-  profileService: profile_service.ServiceInterface): Controller =
+  profileService: profile_service.Service): Controller =
   result = Controller()
   result.delegate = delegate
   result.profileService = profileService

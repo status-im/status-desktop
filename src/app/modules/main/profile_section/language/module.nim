@@ -4,7 +4,7 @@ import ./io_interface, ./view, ./controller
 import ../io_interface as delegate_interface
 import ../../../../global/global_singleton
 
-import ../../../../../app_service/service/language/service_interface as language_service
+import ../../../../../app_service/service/language/service as language_service
 
 export io_interface
 
@@ -16,7 +16,7 @@ type
     viewVariant: QVariant
     moduleLoaded: bool
 
-proc newModule*(delegate: delegate_interface.AccessInterface, languageService: language_service.ServiceInterface): Module =
+proc newModule*(delegate: delegate_interface.AccessInterface, languageService: language_service.Service): Module =
   result = Module()
   result.delegate = delegate
   result.view = newView(result)

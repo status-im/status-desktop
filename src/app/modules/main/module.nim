@@ -34,16 +34,16 @@ import ../../../app_service/service/dapp_permissions/service as dapp_permissions
 import ../../../app_service/service/provider/service as provider_service
 import ../../../app_service/service/profile/service as profile_service
 import ../../../app_service/service/accounts/service as accounts_service
-import ../../../app_service/service/settings/service_interface as settings_service
+import ../../../app_service/service/settings/service as settings_service
 import ../../../app_service/service/contacts/service as contacts_service
 import ../../../app_service/service/about/service as about_service
-import ../../../app_service/service/language/service_interface as language_service
+import ../../../app_service/service/language/service as language_service
 import ../../../app_service/service/privacy/service as privacy_service
 import ../../../app_service/service/stickers/service as stickers_service
 import ../../../app_service/service/activity_center/service as activity_center_service
 import ../../../app_service/service/saved_address/service as saved_address_service
 import ../../../app_service/service/node/service as node_service
-import ../../../app_service/service/node_configuration/service_interface as node_configuration_service
+import ../../../app_service/service/node_configuration/service as node_configuration_service
 import ../../../app_service/service/devices/service as devices_service
 import ../../../app_service/service/mailservers/service as mailservers_service
 import ../../../app_service/service/gif/service as gif_service
@@ -81,7 +81,7 @@ proc newModule*[T](
   delegate: T,
   events: EventEmitter,
   keychainService: keychain_service.Service,
-  accountsService: accounts_service.ServiceInterface,
+  accountsService: accounts_service.Service,
   chatService: chat_service.Service,
   communityService: community_service.Service,
   messageService: message_service.Service,
@@ -89,19 +89,19 @@ proc newModule*[T](
   transactionService: transaction_service.Service,
   collectibleService: collectible_service.Service,
   walletAccountService: wallet_account_service.Service,
-  bookmarkService: bookmark_service.ServiceInterface,
-  profileService: profile_service.ServiceInterface,
-  settingsService: settings_service.ServiceInterface,
+  bookmarkService: bookmark_service.Service,
+  profileService: profile_service.Service,
+  settingsService: settings_service.Service,
   contactsService: contacts_service.Service,
   aboutService: about_service.Service,
   dappPermissionsService: dapp_permissions_service.Service,
-  languageService: language_service.ServiceInterface,
+  languageService: language_service.Service,
   privacyService: privacy_service.Service,
-  providerService: provider_service.ServiceInterface,
+  providerService: provider_service.Service,
   stickersService: stickers_service.Service,
   activityCenterService: activity_center_service.Service,
-  savedAddressService: saved_address_service.ServiceInterface,
-  nodeConfigurationService: node_configuration_service.ServiceInterface,
+  savedAddressService: saved_address_service.Service,
+  nodeConfigurationService: node_configuration_service.Service,
   devicesService: devices_service.Service,
   mailserversService: mailservers_service.Service,
   nodeService: node_service.Service,
@@ -225,7 +225,7 @@ proc createCommunityItem[T](self: Module[T], c: CommunityDto): SectionItem =
 method load*[T](
   self: Module[T],
   events: EventEmitter,
-  settingsService: settings_service.ServiceInterface,
+  settingsService: settings_service.Service,
   contactsService: contacts_service.Service,
   chatService: chat_service.Service,
   communityService: community_service.Service,
@@ -569,7 +569,7 @@ method communityJoined*[T](
   self: Module[T],
   community: CommunityDto,
   events: EventEmitter,
-  settingsService: settings_service.ServiceInterface,
+  settingsService: settings_service.Service,
   contactsService: contacts_service.Service,
   chatService: chat_service.Service,
   communityService: community_service.Service,
@@ -648,7 +648,7 @@ method getContactDetailsAsJson*[T](self: Module[T], publicKey: string): string =
 
 method resolveENS*[T](self: Module[T], ensName: string, uuid: string) =
   if ensName.len == 0:
-    error "error: cannot do a lookup for empty ens name"
+    echo "error: cannot do a lookup for empty ens name"
     return
   self.controller.resolveENS(ensName, uuid)
 
@@ -686,7 +686,7 @@ method osNotificationClicked*[T](self: Module[T], details: NotificationDetails) 
   elif(details.notificationType == NotificationType.MyRequestToJoinCommunityAccepted):
     self.controller.switchTo(details.sectionId, "", "")
   elif(details.notificationType == NotificationType.MyRequestToJoinCommunityRejected):
-    info "There is no particular action clicking on a notification informing you about rejection to join community"
+    echo "There is no particular action clicking on a notification informing you about rejection to join community"
 
 method newCommunityMembershipRequestReceived*[T](self: Module[T], membershipRequest: CommunityMembershipRequestDto) =
   let (contactName, _, _) = self.controller.getContactNameAndImage(membershipRequest.publicKey)

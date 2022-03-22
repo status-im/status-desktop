@@ -4,7 +4,7 @@ import io_interface
 
 import ../../../../core/eventemitter
 import ../../../../core/fleets/fleet_configuration
-import ../../../../../app_service/service/settings/service_interface as settings_service
+import ../../../../../app_service/service/settings/service as settings_service
 import ../../../../../app_service/service/mailservers/service as mailservers_service
 
 export controller_interface
@@ -16,12 +16,12 @@ type
   Controller* = ref object of controller_interface.AccessInterface
     delegate: io_interface.AccessInterface
     events: EventEmitter
-    settingsService: settings_service.ServiceInterface
+    settingsService: settings_service.Service
     mailserversService: mailservers_service.Service
 
 proc newController*(delegate: io_interface.AccessInterface,
   events: EventEmitter,
-  settingsService: settings_service.ServiceInterface,
+  settingsService: settings_service.Service,
   mailserversService: mailservers_service.Service): Controller =
   result = Controller()
   result.delegate = delegate

@@ -1,28 +1,28 @@
 import Tables, json, sequtils, strformat, chronicles
 import result
 include ../../common/json_utils
-import service_interface, dto/bookmark
+import ./dto/bookmark as bookmark_dto
 import ../../../backend/bookmarks as status_go
 
-export service_interface
+export bookmark_dto
 
 logScope:
   topics = "bookmarks-service"
 
 type
-  Service* = ref object of ServiceInterface
+  Service* = ref object of RootObj
     bookmarks: Table[string, BookmarkDto] # [url, BookmarkDto]
 
 type R = Result[BookmarkDto, string]
 
-method delete*(self: Service) =
+proc delete*(self: Service) =
   discard
 
 proc newService*(): Service =
   result = Service()
   result.bookmarks = initTable[string, BookmarkDto]()
 
-method init*(self: Service) =
+proc init*(self: Service) =
   try:
     let response = status_go.getBookmarks()
     for bookmark in response.result.getElems().mapIt(it.toBookmarkDto()):
@@ -32,10 +32,10 @@ method init*(self: Service) =
     let errDescription = e.msg
     error "error: ", errDescription
 
-method getBookmarks*(self: Service): seq[BookmarkDto] =
+proc getBookmarks*(self: Service): seq[BookmarkDto] =
   return toSeq(self.bookmarks.values)
 
-method storeBookmark*(self: Service, url, name: string): R =
+proc storeBookmark*(self: Service, url, name: string): R =
   try:
     let response = status_go.storeBookmark(url, name).result
     self.bookmarks[url] = BookmarkDto()
@@ -48,7 +48,7 @@ method storeBookmark*(self: Service, url, name: string): R =
     error "error: ", errDescription
     result.err errDescription
 
-method deleteBookmark*(self: Service, url: string): bool =
+proc deleteBookmark*(self: Service, url: string): bool =
   try:
     if not self.bookmarks.hasKey(url):
       return
@@ -60,7 +60,7 @@ method deleteBookmark*(self: Service, url: string): bool =
     return
   return true
 
-method updateBookmark*(self: Service, oldUrl, newUrl, newName: string): R =
+proc updateBookmark*(self: Service, oldUrl, newUrl, newName: string): R =
   try:
     if not self.bookmarks.hasKey(oldUrl):
       return

@@ -13,13 +13,13 @@ type
     delegate: io_interface.AccessInterface
     events: EventEmitter
     tokenService: token_service.Service
-    walletAccountService: wallet_account_service.ServiceInterface
+    walletAccountService: wallet_account_service.Service
 
 proc newController*(
   delegate: io_interface.AccessInterface,
   events: EventEmitter,
   tokenService: token_service.Service,
-  walletAccountService: wallet_account_service.ServiceInterface,
+  walletAccountService: wallet_account_service.Service,
 ): Controller =
   result = Controller()
   result.events = events

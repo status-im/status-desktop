@@ -18,7 +18,7 @@ type
     name*: string
     chainId*: int
     address*: Address
-    methods* {.dontSerialize.}: Table[string, MethodDto]
+    procs* {.dontSerialize.}: Table[string, MethodDto]
 
   Erc20ContractDto* = ref object of ContractDto
     symbol*: string
@@ -31,18 +31,18 @@ type
     hasIcon*: bool
 
 proc newErc20Contract*(name: string, chainId: int, address: Address, symbol: string, decimals: int, hasIcon: bool): Erc20ContractDto =
-  Erc20ContractDto(name: name, chainId: chainId, address: address, methods: ERC20_METHODS.toTable, symbol: symbol, decimals: decimals, hasIcon: hasIcon)
+  Erc20ContractDto(name: name, chainId: chainId, address: address, procs: ERC20_procS.toTable, symbol: symbol, decimals: decimals, hasIcon: hasIcon)
 
 proc newErc20Contract*(chainId: int, address: Address): Erc20ContractDto =
-  Erc20ContractDto(name: "", chainId: chainId, address: address, methods: ERC20_METHODS.toTable, symbol: "", decimals: 0, hasIcon: false)
+  Erc20ContractDto(name: "", chainId: chainId, address: address, procs: ERC20_procS.toTable, symbol: "", decimals: 0, hasIcon: false)
 
-proc newErc721Contract*(name: string, chainId: int, address: Address, symbol: string, hasIcon: bool, addlMethods: seq[tuple[name: string, meth: MethodDto]] = @[]): Erc721ContractDto =
-  Erc721ContractDto(name: name, chainId: chainId, address: address, symbol: symbol, hasIcon: hasIcon, methods: ERC721_ENUMERABLE_METHODS.concat(addlMethods).toTable)
+proc newErc721Contract*(name: string, chainId: int, address: Address, symbol: string, hasIcon: bool, addlprocs: seq[tuple[name: string, meth: MethodDto]] = @[]): Erc721ContractDto =
+  Erc721ContractDto(name: name, chainId: chainId, address: address, symbol: symbol, hasIcon: hasIcon, procs: ERC721_ENUMERABLE_procS.concat(addlprocs).toTable)
 
 proc tokenDecimals*(contract: ContractDto): int =
   let payload = %* [{
       "to": $contract.address,
-      "data": contract.methods["decimals"].encodeAbi()
+      "data": contract.procs["decimals"].encodeAbi()
     }, "latest"]
 
   let response = status_eth.doEthCall(payload)
@@ -52,15 +52,15 @@ proc tokenDecimals*(contract: ContractDto): int =
     return 0
   result = parseHexInt(response.result.getStr)
 
-proc getTokenString*(contract: ContractDto, methodName: string): string =
+proc getTokenString*(contract: ContractDto, procName: string): string =
   let payload = %* [{
       "to": $contract.address,
-      "data": contract.methods[methodName].encodeAbi()
+      "data": contract.procs[procName].encodeAbi()
     }, "latest"]
 
   let response = status_eth.doEthCall(payload)
   if not response.error.isNil:
-    raise newException(RpcException, "Error getting token string - " & methodName & ": " & response.error.message)
+    raise newException(RpcException, "Error getting token string - " & procName & ": " & response.error.message)
   if response.result.getStr == "0x":
     return ""
 
@@ -73,5 +73,5 @@ proc tokenName*(contract: ContractDto): string =
 proc tokenSymbol*(contract: ContractDto): string =
   getTokenString(contract, "symbol")
 
-proc getMethod*(contract: ContractDto, methodName: string): MethodDto =
-  return contract.methods[methodName]
+proc getproc*(contract: ContractDto, procName: string): MethodDto =
+  return contract.procs[procName]

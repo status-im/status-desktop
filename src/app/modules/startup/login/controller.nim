@@ -6,7 +6,7 @@ import ../../../global/global_singleton
 import ../../../core/signals/types
 import ../../../core/eventemitter
 import ../../../../app_service/service/keychain/service as keychain_service
-import ../../../../app_service/service/accounts/service_interface as accounts_service
+import ../../../../app_service/service/accounts/service as accounts_service
 
 export controller_interface
 
@@ -15,13 +15,13 @@ type
     delegate: io_interface.AccessInterface
     events: EventEmitter
     keychainService: keychain_service.Service
-    accountsService: accounts_service.ServiceInterface
+    accountsService: accounts_service.Service
     selectedAccountKeyUid: string
 
 proc newController*(delegate: io_interface.AccessInterface,
   events: EventEmitter,
   keychainService: keychain_service.Service,
-  accountsService: accounts_service.ServiceInterface):
+  accountsService: accounts_service.Service):
   Controller =
   result = Controller()
   result.delegate = delegate

@@ -7,11 +7,11 @@ export controller_interface
 type
   Controller* = ref object of controller_interface.AccessInterface
     delegate: io_interface.AccessInterface
-    collectibleService: collectible_service.ServiceInterface
+    collectibleService: collectible_service.Service
 
 proc newController*(
   delegate: io_interface.AccessInterface,
-  collectibleService: collectible_service.ServiceInterface
+  collectibleService: collectible_service.Service
 ): Controller =
   result = Controller()
   result.delegate = delegate
@@ -24,4 +24,4 @@ method init*(self: Controller) =
   discard
 
 method fetch*(self: Controller, address: string, collectionSlug: string): seq[collectible_service.CollectibleDto] =
-  return self.collectible_service.getCollectibles(address, collectionSlug)
+  return self.collectibleService.getCollectibles(address, collectionSlug)

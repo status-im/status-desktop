@@ -5,8 +5,8 @@ import ../../../app/core/signals/types
 import ../../../app/core/fleets/fleet_configuration
 import ../../../app/core/[main]
 import ../../../app/core/tasks/[qt, threadpool]
-import ../settings/service_interface as settings_service
-import ../node_configuration/service_interface as node_configuration_service
+import ../settings/service as settings_service
+import ../node_configuration/service as node_configuration_service
 import ../../../backend/mailservers as status_mailservers
 
 logScope:
@@ -63,8 +63,8 @@ QtObject:
     mailservers: seq[tuple[name: string, nodeAddress: string]]
     events: EventEmitter
     threadpool: ThreadPool
-    settingsService: settings_service.ServiceInterface
-    nodeConfigurationService: node_configuration_service.ServiceInterface
+    settingsService: settings_service.Service
+    nodeConfigurationService: node_configuration_service.Service
     fleetConfiguration: FleetConfiguration
 
   # Forward declaration:
@@ -76,8 +76,8 @@ QtObject:
     self.QObject.delete
 
   proc newService*(events: EventEmitter, threadpool: ThreadPool,
-    settingsService: settings_service.ServiceInterface,
-    nodeConfigurationService: node_configuration_service.ServiceInterface,
+    settingsService: settings_service.Service,
+    nodeConfigurationService: node_configuration_service.Service,
     fleetConfiguration: FleetConfiguration): Service =
     new(result, delete)
     result.QObject.setup
@@ -159,7 +159,7 @@ QtObject:
   proc fetchMailservers(self: Service) =
     try:
       let response = status_mailservers.getMailservers()
-      info "fetch mailservers", topics="mailserver-interaction", rpc_method="mailservers_getMailservers", response
+      info "fetch mailservers", topics="mailserver-interaction", rpc_proc="mailservers_getMailservers", response
 
       for el in response.result.getElems():
         let dto = el.toMailserverDto()
@@ -179,7 +179,7 @@ QtObject:
       let id = $genUUID()
 
       let response = status_mailservers.saveMailserver(id, name, nodeAddress, fleet)
-      info "save mailserver", topics="mailserver-interaction", rpc_method="mailservers_addMailserver", response
+      info "save mailserver", topics="mailserver-interaction", rpc_proc="mailservers_addMailserver", response
       # once we have more info from `status-go` we may emit a signal from here and
       # update view or display an error accordingly
 
@@ -196,7 +196,7 @@ QtObject:
       discard # TODO: handle pin mailservers in status-go (in progress)
       #let mailserverWorker = self.marathon[MailserverWorker().name]
       #let task = GetActiveMailserverTaskArg(
-      #    `method`: "getActiveMailserver",
+      #    `proc`: "getActiveMailserver",
       #    vptr: cast[ByteAddress](self.vptr),
       #    slot: "onActiveMailserverResult"
       #  )

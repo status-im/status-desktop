@@ -2,19 +2,19 @@ import strutils
 import controller_interface
 import io_interface
 
-import ../../../../../app_service/service/settings/service_interface as settings_service
-import ../../../../../app_service/service/provider/service_interface as provider_service
+import ../../../../../app_service/service/settings/service as settings_service
+import ../../../../../app_service/service/provider/service as provider_service
 export controller_interface
 
 type
   Controller* = ref object of controller_interface.AccessInterface
     delegate: io_interface.AccessInterface
-    settingsService: settings_service.ServiceInterface
-    providerService: provider_service.ServiceInterface
+    settingsService: settings_service.Service
+    providerService: provider_service.Service
 
 proc newController*(delegate: io_interface.AccessInterface,
-    settingsService: settings_service.ServiceInterface,
-    providerService: provider_service.ServiceInterface):
+    settingsService: settings_service.Service,
+    providerService: provider_service.Service):
   Controller =
   result = Controller()
   result.delegate = delegate

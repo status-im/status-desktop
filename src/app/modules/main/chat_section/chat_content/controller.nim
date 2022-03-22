@@ -3,7 +3,7 @@ import Tables
 import controller_interface
 import io_interface
 
-import ../../../../../app_service/service/settings/service_interface as settings_service
+import ../../../../../app_service/service/settings/service as settings_service
 import ../../../../../app_service/service/contacts/service as contact_service
 import ../../../../../app_service/service/chat/service as chat_service
 import ../../../../../app_service/service/community/service as community_service
@@ -24,14 +24,14 @@ type
     chatId: string
     belongsToCommunity: bool
     isUsersListAvailable: bool #users list is not available for 1:1 chat
-    settingsService: settings_service.ServiceInterface
+    settingsService: settings_service.Service
     contactService: contact_service.Service
     chatService: chat_service.Service
     communityService: community_service.Service
     messageService: message_service.Service
 
 proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter, sectionId: string, chatId: string,
-  belongsToCommunity: bool, isUsersListAvailable: bool, settingsService: settings_service.ServiceInterface,
+  belongsToCommunity: bool, isUsersListAvailable: bool, settingsService: settings_service.Service,
   contactService: contact_service.Service, chatService: chat_service.Service,
   communityService: community_service.Service, messageService: message_service.Service): Controller =
   result = Controller()

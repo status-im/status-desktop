@@ -6,10 +6,10 @@ import view, controller, model
 
 import ../../../../core/eventemitter
 import ../../../../../app_service/common/conversion as service_conversion
-import ../../../../../app_service/service/settings/service_interface as settings_service
+import ../../../../../app_service/service/settings/service as settings_service
 import ../../../../../app_service/service/ens/service as ens_service
 import ../../../../../app_service/service/ens/utils as ens_utils
-import ../../../../../app_service/service/wallet_account/service_interface as wallet_account_service
+import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 
 export io_interface
 
@@ -27,8 +27,8 @@ type
     moduleLoaded: bool
 
 proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter,
-  settingsService: settings_service.ServiceInterface, ensService: ens_service.Service,
-  walletAccountService: wallet_account_service.ServiceInterface): Module =
+  settingsService: settings_service.Service, ensService: ens_service.Service,
+  walletAccountService: wallet_account_service.Service): Module =
   result = Module()
   result.delegate = delegate
   result.view = view.newView(result)

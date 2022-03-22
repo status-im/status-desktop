@@ -12,7 +12,7 @@ include  ../../../common/json_utils
 # Cause we're storing node configuration to the settings as JsonNode, and in order to
 # convert `NodeConfigDto` to JsonNode we're using `marshal` Nim's module, which actually
 # follows property names inside object types and convert them to "keys" of json object.
-# That further means if we want to have parsing methods from this file reusable we have
+# That further means if we want to have parsing procs from this file reusable we have
 # to store "keys" as they are received.
 #################################################
 

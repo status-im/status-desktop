@@ -4,7 +4,7 @@ import ../io_interface as delegate_interface
 import view, controller, model, item
 
 import ../../../../core/eventemitter
-import ../../../../../app_service/service/settings/service_interface as settings_service
+import ../../../../../app_service/service/settings/service as settings_service
 import ../../../../../app_service/service/devices/service as devices_service
 
 export io_interface
@@ -22,7 +22,7 @@ type
 
 proc newModule*(delegate: delegate_interface.AccessInterface,
   events: EventEmitter,
-  settingsService: settings_service.ServiceInterface,
+  settingsService: settings_service.Service,
   devicesService: devices_service.Service): Module =
   result = Module()
   result.delegate = delegate

@@ -238,7 +238,7 @@ QtObject:
       self.addContact(result)
 
   proc getStatusForContactWithId*(self: Service, publicKey: string): StatusUpdateDto =
-    # This method will fetch current accurate status from `status-go` once we add an api point there for it.
+    # This proc will fetch current accurate status from `status-go` once we add an api point there for it.
     if(not self.contactsStatus.hasKey(publicKey)):
       # following line ensures that we have added a contact before setting status for it
       discard self.getContactById(publicKey)

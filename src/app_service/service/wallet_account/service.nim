@@ -1,13 +1,13 @@
 import Tables, json, sequtils, sugar, chronicles, strformat, stint, httpclient, net, strutils
 import web3/[ethtypes, conversions]
 
-import ../settings/service_interface as settings_service
-import ../accounts/service_interface as accounts_service
+import ../settings/service as settings_service
+import ../accounts/service as accounts_service
 import ../token/service as token_service
 import ../network/service as network_service
 import ../../common/account_constants
 
-import ./service_interface, ./dto
+import dto
 
 import ../../../app/core/eventemitter
 import ../../../backend/accounts as status_go_accounts
@@ -15,7 +15,7 @@ import ../../../backend/tokens as status_go_tokens
 import ../../../backend/wallet as status_go_wallet
 import ../../../backend/eth as status_go_eth
 
-export service_interface
+export dto
 
 logScope:
   topics = "wallet-account-service"
@@ -105,21 +105,21 @@ type WalletAccountUpdated = ref object of Args
   account: WalletAccountDto
 
 type
-  Service* = ref object of service_interface.ServiceInterface
+  Service* = ref object of RootObj
     events: EventEmitter
-    settingsService: settings_service.ServiceInterface
-    accountsService: accounts_service.ServiceInterface
+    settingsService: settings_service.Service
+    accountsService: accounts_service.Service
     tokenService: token_service.Service
     networkService: network_service.Service
     accounts: OrderedTable[string, WalletAccountDto]
 
-method delete*(self: Service) =
+proc delete*(self: Service) =
   discard
 
 proc newService*(
   events: EventEmitter, 
-  settingsService: settings_service.ServiceInterface,
-  accountsService: accounts_service.ServiceInterface,
+  settingsService: settings_service.Service,
+  accountsService: accounts_service.Service,
   tokenService: token_service.Service,
   networkService: network_service.Service,
 ): Service =
@@ -131,7 +131,7 @@ proc newService*(
   result.networkService = networkService
   result.accounts = initOrderedTable[string, WalletAccountDto]()
 
-method buildTokens(
+proc buildTokens(
   self: Service,
   account: WalletAccountDto,
   prices: Table[string, float64],
@@ -168,10 +168,10 @@ method buildTokens(
       )
     )
 
-method getPrice*(self: Service, crypto: string, fiat: string): float64 =
+proc getPrice*(self: Service, crypto: string, fiat: string): float64 =
   return fetchPrice(crypto, fiat)
 
-method fetchPrices(self: Service): Table[string, float64] =
+proc fetchPrices(self: Service): Table[string, float64] =
   let currency = self.settingsService.getCurrency()
   var prices = initTable[string, float64]()
   for network in self.networkService.getEnabledNetworks():
@@ -182,13 +182,13 @@ method fetchPrices(self: Service): Table[string, float64] =
 
   return prices
 
-method fetchBalances(self: Service, accounts: seq[string]): JsonNode =
+proc fetchBalances(self: Service, accounts: seq[string]): JsonNode =
   let visibleTokens = self.tokenService.getVisibleTokens()
   let tokens = visibleTokens.map(t => t.addressAsString())
   let chainIds = visibleTokens.map(t => t.chainId)
   return status_go_tokens.getBalances(chainIds, accounts, tokens).result
 
-method refreshBalances(self: Service) =
+proc refreshBalances(self: Service) =
   let prices = self.fetchPrices()
   let accounts = toSeq(self.accounts.keys)
   let balances = self.fetchBalances(accounts)
@@ -196,7 +196,7 @@ method refreshBalances(self: Service) =
   for account in toSeq(self.accounts.values):
     account.tokens = self.buildTokens(account, prices, balances{account.address})
 
-method init*(self: Service) =
+proc init*(self: Service) =
   try:
     let accounts = fetchAccounts()
 
@@ -209,27 +209,27 @@ method init*(self: Service) =
     error "error: ", errDesription
     return
 
-method getAccountByAddress*(self: Service, address: string): WalletAccountDto =
+proc getAccountByAddress*(self: Service, address: string): WalletAccountDto =
   return self.accounts[address]
 
-method getWalletAccounts*(self: Service): seq[WalletAccountDto] =
+proc getWalletAccounts*(self: Service): seq[WalletAccountDto] =
   return toSeq(self.accounts.values)
 
-method getWalletAccount*(self: Service, accountIndex: int): WalletAccountDto =
+proc getWalletAccount*(self: Service, accountIndex: int): WalletAccountDto =
   if(accountIndex < 0 or accountIndex >= self.getWalletAccounts().len):
     return
   return self.getWalletAccounts()[accountIndex]
 
-method getIndex*(self: Service, address: string): int =
+proc getIndex*(self: Service, address: string): int =
   let accounts = self.getWalletAccounts()
   for i in 0..accounts.len:
     if(accounts[i].address == address):
       return i
   
-method getCurrencyBalance*(self: Service): float64 =
+proc getCurrencyBalance*(self: Service): float64 =
   return self.getWalletAccounts().map(a => a.getCurrencyBalance()).foldl(a + b, 0.0)
 
-method addNewAccountToLocalStore(self: Service) =
+proc addNewAccountToLocalStore(self: Service) =
   let accounts = fetchAccounts()
   let prices = self.fetchPrices()
 
@@ -244,7 +244,7 @@ method addNewAccountToLocalStore(self: Service) =
   self.accounts[newAccount.address] = newAccount
   self.events.emit(SIGNAL_WALLET_ACCOUNT_SAVED, AccountSaved(account: newAccount))
 
-method generateNewAccount*(self: Service, password: string, accountName: string, color: string, emoji: string): string =
+proc generateNewAccount*(self: Service, password: string, accountName: string, color: string, emoji: string): string =
   try:
     discard status_go_wallet.generateAccount(
       password,
@@ -256,7 +256,7 @@ method generateNewAccount*(self: Service, password: string, accountName: string,
 
   self.addNewAccountToLocalStore()
 
-method addAccountsFromPrivateKey*(self: Service, privateKey: string, password: string, accountName: string, color: string, emoji: string): string =
+proc addAccountsFromPrivateKey*(self: Service, privateKey: string, password: string, accountName: string, color: string, emoji: string): string =
   try:
     discard status_go_wallet.addAccountWithPrivateKey(
       privateKey,
@@ -270,7 +270,7 @@ method addAccountsFromPrivateKey*(self: Service, privateKey: string, password: s
 
   self.addNewAccountToLocalStore()
 
-method addAccountsFromSeed*(self: Service, mnemonic: string, password: string, accountName: string, color: string, emoji: string): string =
+proc addAccountsFromSeed*(self: Service, mnemonic: string, password: string, accountName: string, color: string, emoji: string): string =
   try:
     discard status_go_wallet.addAccountWithMnemonic(
       mnemonic,
@@ -284,7 +284,7 @@ method addAccountsFromSeed*(self: Service, mnemonic: string, password: string, a
 
   self.addNewAccountToLocalStore()
 
-method addWatchOnlyAccount*(self: Service, address: string, accountName: string, color: string, emoji: string): string =
+proc addWatchOnlyAccount*(self: Service, address: string, accountName: string, color: string, emoji: string): string =
   try:
     discard status_go_wallet.addAccountWatch(
       address,
@@ -297,30 +297,30 @@ method addWatchOnlyAccount*(self: Service, address: string, accountName: string,
 
   self.addNewAccountToLocalStore()
 
-method deleteAccount*(self: Service, address: string) =
+proc deleteAccount*(self: Service, address: string) =
   discard status_go_accounts.deleteAccount(address)
   let accountDeleted = self.accounts[address]
   self.accounts.del(address)
 
   self.events.emit(SIGNAL_WALLET_ACCOUNT_DELETED, AccountDeleted(account: accountDeleted))
 
-method updateCurrency*(self: Service, newCurrency: string) =
+proc updateCurrency*(self: Service, newCurrency: string) =
   discard self.settingsService.saveCurrency(newCurrency)
   self.refreshBalances()
   self.events.emit(SIGNAL_WALLET_ACCOUNT_CURRENCY_UPDATED, CurrencyUpdated())
 
-method toggleTokenVisible*(self: Service, chainId: int, symbol: string) =
+proc toggleTokenVisible*(self: Service, chainId: int, symbol: string) =
   self.tokenService.toggleVisible(chainId, symbol)
   self.refreshBalances()
   self.events.emit(SIGNAL_WALLET_ACCOUNT_TOKEN_VISIBILITY_UPDATED, TokenVisibilityToggled())
 
-method toggleNetworkEnabled*(self: Service, chainId: int) = 
+proc toggleNetworkEnabled*(self: Service, chainId: int) = 
   self.networkService.toggleNetwork(chainId)
   self.tokenService.init()
   self.refreshBalances()
   self.events.emit(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED, NetwordkEnabledToggled())
 
-method updateWalletAccount*(self: Service, address: string, accountName: string, color: string, emoji: string) =
+proc updateWalletAccount*(self: Service, address: string, accountName: string, color: string, emoji: string) =
   let account = self.accounts[address]
   status_go_accounts.updateAccount(
     accountName,

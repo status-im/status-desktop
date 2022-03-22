@@ -3,7 +3,7 @@ import Tables
 import controller_interface
 import io_interface
 
-import ../../../../app_service/service/settings/service_interface as settings_service
+import ../../../../app_service/service/settings/service as settings_service
 import ../../../../app_service/service/contacts/service as contact_service
 import ../../../../app_service/service/chat/service as chat_service
 import ../../../../app_service/service/community/service as community_service
@@ -25,7 +25,7 @@ type
     activeItemId: string
     activeSubItemId: string
     events: EventEmitter
-    settingsService: settings_service.ServiceInterface
+    settingsService: settings_service.Service
     contactService: contact_service.Service
     chatService: chat_service.Service
     communityService: community_service.Service
@@ -34,7 +34,7 @@ type
     mailserversService: mailservers_service.Service
 
 proc newController*(delegate: io_interface.AccessInterface, sectionId: string, isCommunity: bool, events: EventEmitter,
-  settingsService: settings_service.ServiceInterface, contactService: contact_service.Service,
+  settingsService: settings_service.Service, contactService: contact_service.Service,
   chatService: chat_service.Service, communityService: community_service.Service,
   messageService: message_service.Service, gifService: gif_service.Service,
   mailserversService: mailservers_service.Service): Controller =

@@ -4,7 +4,7 @@ import ./io_interface, ./view, ./controller
 import ../io_interface as delegate_interface
 
 import ../../../../core/eventemitter
-import ../../../../../app_service/service/settings/service_interface as settings_service
+import ../../../../../app_service/service/settings/service as settings_service
 import ../../../../../app_service/service/privacy/service as privacy_service
 
 export io_interface
@@ -18,7 +18,7 @@ type
     moduleLoaded: bool
 
 proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter,
-  settingsService: settings_service.ServiceInterface,
+  settingsService: settings_service.Service,
   privacyService: privacy_service.Service):
   Module =
   result = Module()

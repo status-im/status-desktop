@@ -5,7 +5,7 @@ import view, controller, item
 import ../../../global/global_singleton
 import ../../../core/eventemitter
 import ../../../../app_service/service/keychain/service as keychain_service
-import ../../../../app_service/service/accounts/service_interface as accounts_service
+import ../../../../app_service/service/accounts/service as accounts_service
 
 export io_interface
 
@@ -20,7 +20,7 @@ type
 proc newModule*(delegate: delegate_interface.AccessInterface,
   events: EventEmitter,
   keychainService: keychain_service.Service,
-  accountsService: accounts_service.ServiceInterface):
+  accountsService: accounts_service.Service):
   Module =
   result = Module()
   result.delegate = delegate

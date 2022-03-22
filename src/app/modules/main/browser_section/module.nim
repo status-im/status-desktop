@@ -27,10 +27,10 @@ type
     currentAccountModule: current_account_module.AccessInterface
 
 proc newModule*(delegate: delegate_interface.AccessInterface,
-    bookmarkService: bookmark_service.ServiceInterface,
-    settingsService: settings_service.ServiceInterface,
+    bookmarkService: bookmark_service.Service,
+    settingsService: settings_service.Service,
     dappPermissionsService: dapp_permissions_service.Service,
-    providerService: provider_service.ServiceInterface,
+    providerService: provider_service.Service,
     walletAccountService: wallet_account_service.Service): Module =
   result = Module()
   result.delegate = delegate

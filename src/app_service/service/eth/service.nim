@@ -4,18 +4,28 @@ import web3/ethtypes, json_serialization, chronicles, tables
 import ../../../backend/eth
 
 import utils
-import ./service_interface
+import ./dto/contract
+import ./dto/method_dto
+import ./dto/network
+import ./dto/coder
+import ./dto/edn_dto
+import ./dto/transaction
 
-export service_interface
+export contract
+export method_dto
+export network
+export coder
+export edn_dto
+export transaction
 
 logScope:
   topics = "eth-service"
 
 type
-  Service* = ref object of service_interface.ServiceInterface
+  Service* = ref object of RootObj
     contracts: seq[ContractDto]
 
-method delete*(self: Service) =
+proc delete*(self: Service) =
   discard
 
 proc newService*(): Service =
@@ -25,7 +35,7 @@ proc newService*(): Service =
 # Forward declaration
 proc initContracts(self: Service)
 
-method init*(self: Service) =
+proc init*(self: Service) =
   self.initContracts()
 
 proc initContracts(self: Service) =
@@ -136,7 +146,7 @@ proc initContracts(self: Service) =
       newErc721Contract("kudos", Mainnet, parseAddress("0x2aea4add166ebf38b63d09a75de1a7b94aa24163"), "KDO", true),
       newErc721Contract("crypto-kitties", Mainnet, parseAddress("0x06012c8cf97bead5deae237070f9587f8e7a266d"), "CK", true),
       ContractDto(name: "ens-usernames", chainId: Mainnet, address: parseAddress("0xDB5ac1a559b02E12F29fC0eC0e37Be8E046DEF49"),
-          methods: [
+          procs: [
             ("register", MethodDto(signature: "register(bytes32,address,bytes32,bytes32)")),
             ("getPrice", MethodDto(signature: "getPrice()")),
             ("getExpirationTime", MethodDto(signature: "getExpirationTime(bytes32)")),
@@ -144,7 +154,7 @@ proc initContracts(self: Service) =
           ].toTable
       ),
       ContractDto(name: "ens-resolver", chainId: Mainnet, address: parseAddress("0x4976fb03C32e5B8cfe2b6cCB31c09Ba78EBaBa41"),
-          methods: [
+          procs: [
             ("setPubkey", MethodDto(signature: "setPubkey(bytes32,bytes32,bytes32)"))
           ].toTable
       ),
@@ -160,7 +170,7 @@ proc initContracts(self: Service) =
       newErc721Contract("sticker-pack", Ropsten, parseAddress("0xf852198d0385c4b871e0b91804ecd47c6ba97351"), "PACK", false, @[("tokenPackId", MethodDto(signature: "tokenPackId(uint256)"))]),
       newErc721Contract("kudos", Ropsten, parseAddress("0xcd520707fc68d153283d518b29ada466f9091ea8"), "KDO", true),
       ContractDto(name: "ens-usernames", chainId: Ropsten, address: parseAddress("0xdaae165beb8c06e0b7613168138ebba774aff071"),
-          methods: [
+          procs: [
             ("register", MethodDto(signature: "register(bytes32,address,bytes32,bytes32)")),
             ("getPrice", MethodDto(signature: "getPrice()")),
             ("getExpirationTime", MethodDto(signature: "getExpirationTime(bytes32)")),
@@ -168,7 +178,7 @@ proc initContracts(self: Service) =
           ].toTable
       ),
       ContractDto(name: "ens-resolver", chainId: Ropsten, address: parseAddress("0x42D63ae25990889E35F215bC95884039Ba354115"),
-          methods: [
+          procs: [
             ("setPubkey", MethodDto(signature: "setPubkey(bytes32,bytes32,bytes32)"))
           ].toTable
       ),
@@ -191,33 +201,33 @@ proc initContracts(self: Service) =
 proc allContracts(self: Service): seq[ContractDto] =
   result = self.contracts
 
-method findByAddress*(self: Service, contracts: seq[Erc20ContractDto], address: Address): Erc20ContractDto =
+proc findByAddress*(self: Service, contracts: seq[Erc20ContractDto], address: Address): Erc20ContractDto =
   let found = contracts.filter(contract => contract.address == address)
   result = if found.len > 0: found[0] else: nil
 
-method findBySymbol*(self: Service, contracts: seq[Erc20ContractDto], symbol: string): Erc20ContractDto =
+proc findBySymbol*(self: Service, contracts: seq[Erc20ContractDto], symbol: string): Erc20ContractDto =
   let found = contracts.filter(contract => contract.symbol.toLower == symbol.toLower)
   result = if found.len > 0: found[0] else: nil
 
-method findContract*(self: Service, chainId: int, name: string): ContractDto =
+proc findContract*(self: Service, chainId: int, name: string): ContractDto =
   let found = self.allContracts().filter(contract => contract.name == name and contract.chainId == chainId)
   result = if found.len > 0: found[0] else: nil
 
-method allErc20Contracts*(self: Service): seq[Erc20ContractDto] =
+proc allErc20Contracts*(self: Service): seq[Erc20ContractDto] =
   result = self.allContracts().filter(contract => contract of Erc20ContractDto).map(contract => Erc20ContractDto(contract))
 
-method allErc20ContractsByChainId*(self: Service, chainId: int): seq[Erc20ContractDto] =
+proc allErc20ContractsByChainId*(self: Service, chainId: int): seq[Erc20ContractDto] =
   result = self.allContracts().filter(contract => contract of Erc20ContractDto and contract.chainId == chainId).map(contract => Erc20ContractDto(contract))
 
-method findErc20Contract*(self: Service, chainId: int, symbol: string): Erc20ContractDto =
+proc findErc20Contract*(self: Service, chainId: int, symbol: string): Erc20ContractDto =
   return self.findBySymbol(self.allErc20ContractsByChainId(chainId), symbol)
 
-method findErc20Contract*(self: Service, chainId: int, address: Address): Erc20ContractDto =
+proc findErc20Contract*(self: Service, chainId: int, address: Address): Erc20ContractDto =
   return self.findByAddress(self.allErc20ContractsByChainId(chainId), address)
 
-method allErc721ContractsByChainId*(self: Service, chainId: int): seq[Erc721ContractDto] =
+proc allErc721ContractsByChainId*(self: Service, chainId: int): seq[Erc721ContractDto] =
   result = self.allContracts().filter(contract => contract of Erc721ContractDto and contract.chainId == chainId).map(contract => Erc721ContractDto(contract))
 
-method findErc721Contract*(self: Service, chainId: int, name: string): Erc721ContractDto =
+proc findErc721Contract*(self: Service, chainId: int, name: string): Erc721ContractDto =
   let found = self.allErc721ContractsByChainId(chainId).filter(contract => contract.name.toLower == name.toLower)
   result = if found.len > 0: found[0] else: nil

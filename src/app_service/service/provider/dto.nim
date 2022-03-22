@@ -20,7 +20,7 @@ type
 type
   Payload* = ref object
     id*: JsonNode
-    rpcMethod*: string
+    rpcproc*: string
 
   Web3SendAsyncReadOnly* = ref object
     messageId*: JsonNode

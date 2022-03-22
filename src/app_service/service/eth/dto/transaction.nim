@@ -11,7 +11,7 @@ type
     maxPriorityFeePerGas*: Option[Uint256]
     maxFeePerGas*: Option[Uint256]
     value*: Option[Uint256]          # (optional) integer of the value sent with this transaction.
-    data*: string                # the compiled code of a contract OR the hash of the invoked method signature and encoded parameters. For details see Ethereum Contract ABI.
+    data*: string                # the compiled code of a contract OR the hash of the invoked proc signature and encoded parameters. For details see Ethereum Contract ABI.
     nonce*: Option[Nonce]        # (optional) integer of a nonce. This allows to overwrite your own pending transactions that use the same nonce
     txType*: string
 

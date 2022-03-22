@@ -1,6 +1,6 @@
 import NimQml
 
-import ../../../../../app_service/service/settings/service_interface as settings_service
+import ../../../../../app_service/service/settings/service as settings_service
 import ../../../../../app_service/service/contacts/service as contact_service
 import ../../../../../app_service/service/chat/service as chat_service
 import ../../../../../app_service/service/community/service as community_service
@@ -16,7 +16,7 @@ method delete*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method load*(self: AccessInterface, events: EventEmitter,
-  settingsService: settings_service.ServiceInterface,
+  settingsService: settings_service.Service,
   contactService: contact_service.Service,
   chatService: chat_service.Service,
   communityService: community_service.Service,

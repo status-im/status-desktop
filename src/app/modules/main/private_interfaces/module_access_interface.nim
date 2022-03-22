@@ -1,4 +1,4 @@
-import ../../../../app_service/service/settings/service_interface as settings_service
+import ../../../../app_service/service/settings/service as settings_service
 import ../../../../app_service/service/contacts/service as contacts_service
 import ../../../../app_service/service/chat/service as chat_service
 import ../../../../app_service/service/community/service as community_service
@@ -14,7 +14,7 @@ method delete*(self: AccessInterface) {.base.} =
 method load*(
   self: AccessInterface,
   events: EventEmitter,
-  settingsService: settings_service.ServiceInterface,
+  settingsService: settings_service.Service,
   contactsService: contacts_service.Service,
   chatService: chat_service.Service,
   communityService: community_service.Service,

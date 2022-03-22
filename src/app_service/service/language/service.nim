@@ -1,26 +1,23 @@
 import NimQml
 import json, json_serialization, sequtils, chronicles, os, strformat
-import ./service_interface
 import ../../../app/global/global_singleton
-
-export service_interface
 
 logScope:
   topics = "language-service"
 
 type
-  Service* = ref object of ServiceInterface
+  Service* = ref object of RootObj
     i18nPath: string
     shouldRetranslate: bool
 
-method delete*(self: Service) =
+proc delete*(self: Service) =
   discard
 
 proc newService*(): Service =
   result = Service()
   result.shouldRetranslate = not defined(linux)
 
-method init*(self: Service) =
+proc init*(self: Service) =
   try:
     self.i18nPath = ""
     if defined(development):
@@ -40,7 +37,7 @@ method init*(self: Service) =
     error "error: ", errDesription
     return
 
-method setLanguage*(self: Service, locale: string) =
+proc setLanguage*(self: Service, locale: string) =
   if (locale == singletonInstance.localAppSettings.getLocale()):
     return
 

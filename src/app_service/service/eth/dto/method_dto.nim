@@ -15,7 +15,7 @@ type MethodDto* = object
   name*: string
   signature*: string
 
-const ERC20_METHODS* = @[
+const ERC20_procS* = @[
   ("name", MethodDto(signature: "name()")),
   ("symbol", MethodDto(signature: "symbol()")),
   ("decimals", MethodDto(signature: "decimals()")),
@@ -30,7 +30,7 @@ const ERC20_METHODS* = @[
   ("approveAndCall", MethodDto(signature: "approveAndCall(address,uint256,bytes)"))
 ]
 
-const ERC721_ENUMERABLE_METHODS* = @[
+const ERC721_ENUMERABLE_procS* = @[
   ("balanceOf", MethodDto(signature: "balanceOf(address)")),
   ("ownerOf", MethodDto(signature: "ownerOf(uint256)")),
   ("name", MethodDto(signature: "name()")),
@@ -49,11 +49,11 @@ const ERC721_ENUMERABLE_METHODS* = @[
   ("safeTransferFromWithData", MethodDto(signature: "safeTransferFrom(address,address,uint256,bytes)"))
 ]
 
-proc encodeMethod(self: MethodDto): string =
+proc encodeproc(self: MethodDto): string =
   ($nimcrypto.keccak256.digest(self.signature))[0..<8].toLower
 
 proc encodeAbi*(self: MethodDto, obj: object = RootObj()): string =
-  result = "0x" & self.encodeMethod()
+  result = "0x" & self.encodeproc()
 
   # .fields is an iterator, and there's no way to get a count of an iterator
   # in nim, so we have to loop and increment a counter
@@ -74,9 +74,9 @@ proc encodeAbi*(self: MethodDto, obj: object = RootObj()): string =
       result &= encoded.data
   result &= data
 
-proc estimateGas*(self: MethodDto, tx: var TransactionDataDto, methodDescriptor: object, success: var bool): string =
+proc estimateGas*(self: MethodDto, tx: var TransactionDataDto, procDescriptor: object, success: var bool): string =
   success = true
-  tx.data = self.encodeAbi(methodDescriptor)
+  tx.data = self.encodeAbi(procDescriptor)
   try:
     # this call should not be part of this file, we need to move it to appropriate place, or this should not be a DTO class.
     let response = status_eth.estimateGas(%*[%tx])
@@ -85,20 +85,20 @@ proc estimateGas*(self: MethodDto, tx: var TransactionDataDto, methodDescriptor:
     success = false
     result = e.msg
 
-proc getEstimateGasData*(self: MethodDto, tx: var TransactionDataDto, methodDescriptor: object): JsonNode =
-  tx.data = self.encodeAbi(methodDescriptor)
+proc getEstimateGasData*(self: MethodDto, tx: var TransactionDataDto, procDescriptor: object): JsonNode =
+  tx.data = self.encodeAbi(procDescriptor)
   return %*[%tx]
 
-proc send*(self: MethodDto, tx: var TransactionDataDto, methodDescriptor: object, password: string, success: var bool): string =
-  tx.data = self.encodeAbi(methodDescriptor)
+proc send*(self: MethodDto, tx: var TransactionDataDto, procDescriptor: object, password: string, success: var bool): string =
+  tx.data = self.encodeAbi(procDescriptor)
   # this call should not be part of this file, we need to move it to appropriate place, or this should not be a DTO class.
   let response = status_eth.sendTransaction($(%tx), password)
   success = response.error.isNil
   return $response
 
-proc call[T](self: MethodDto, tx: var TransactionDataDto, methodDescriptor: object, success: var bool): T =
+proc call[T](self: MethodDto, tx: var TransactionDataDto, procDescriptor: object, success: var bool): T =
   success = true
-  tx.data = self.encodeAbi(methodDescriptor)
+  tx.data = self.encodeAbi(procDescriptor)
   let response: RpcResponse
   try:
     # this call should not be part of this file, we need to move it to appropriate place, or this should not be a DTO class.

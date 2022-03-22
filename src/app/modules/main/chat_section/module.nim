@@ -12,7 +12,7 @@ import chat_content/module as chat_content_module
 import ../../../global/app_sections_config as conf
 import ../../../global/global_singleton
 import ../../../core/eventemitter
-import ../../../../app_service/service/settings/service_interface as settings_service
+import ../../../../app_service/service/settings/service as settings_service
 import ../../../../app_service/service/contacts/service as contact_service
 import ../../../../app_service/service/chat/service as chat_service
 import ../../../../app_service/service/community/service as community_service
@@ -40,7 +40,7 @@ proc newModule*(
     events: EventEmitter,
     sectionId: string,
     isCommunity: bool,
-    settingsService: settings_service.ServiceInterface,
+    settingsService: settings_service.Service,
     contactService: contact_service.Service,
     chatService: chat_service.Service,
     communityService: community_service.Service,
@@ -79,7 +79,7 @@ proc amIMarkedAsAdminUser(self: Module, members: seq[ChatMember]): bool =
   return false
 
 proc addSubmodule(self: Module, chatId: string, belongToCommunity: bool, isUsersListAvailable: bool, events: EventEmitter,
-  settingsService: settings_service.ServiceInterface,
+  settingsService: settings_service.Service,
   contactService: contact_service.Service,
   chatService: chat_service.Service,
   communityService: community_service.Service,
@@ -96,7 +96,7 @@ proc removeSubmodule(self: Module, chatId: string) =
   self.chatContentModules.del(chatId)
 
 proc buildChatUI(self: Module, events: EventEmitter,
-  settingsService: settings_service.ServiceInterface,
+  settingsService: settings_service.Service,
   contactService: contact_service.Service,
   chatService: chat_service.Service,
   communityService: community_service.Service,
@@ -139,7 +139,7 @@ proc buildChatUI(self: Module, events: EventEmitter,
   self.setActiveItemSubItem(selectedItemId, "")
 
 proc buildCommunityUI(self: Module, events: EventEmitter,
-  settingsService: settings_service.ServiceInterface,
+  settingsService: settings_service.Service,
   contactService: contact_service.Service,
   chatService: chat_service.Service,
   communityService: community_service.Service,
@@ -256,7 +256,7 @@ method clearListOfMyContacts*(self: Module) =
 
 
 method load*(self: Module, events: EventEmitter,
-  settingsService: settings_service.ServiceInterface,
+  settingsService: settings_service.Service,
   contactService: contact_service.Service,
   chatService: chat_service.Service,
   communityService: community_service.Service,
@@ -393,7 +393,7 @@ method addNewChat*(
     chatDto: ChatDto,
     belongsToCommunity: bool,
     events: EventEmitter,
-    settingsService: settings_service.ServiceInterface,
+    settingsService: settings_service.Service,
     contactService: contact_service.Service,
     chatService: chat_service.Service,
     communityService: community_service.Service,
@@ -765,7 +765,7 @@ method addChatIfDontExist*(self: Module,
     chat: ChatDto,
     belongsToCommunity: bool,
     events: EventEmitter,
-    settingsService: settings_service.ServiceInterface,
+    settingsService: settings_service.Service,
     contactService: contact_service.Service,
     chatService: chat_service.Service,
     communityService: community_service.Service,

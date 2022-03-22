@@ -6,9 +6,9 @@ import view, controller, custom_networks_model
 import ../../../../../constants
 import ../../../../core/eventemitter
 import ../../../../global/global_singleton
-import ../../../../../app_service/service/settings/service_interface as settings_service
+import ../../../../../app_service/service/settings/service as settings_service
 import ../../../../../app_service/service/stickers/service as stickers_service
-import ../../../../../app_service/service/node_configuration/service_interface as node_configuration_service
+import ../../../../../app_service/service/node_configuration/service as node_configuration_service
 
 export io_interface
 
@@ -24,9 +24,9 @@ type
     moduleLoaded: bool
 
 proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter,
-  settingsService: settings_service.ServiceInterface,
+  settingsService: settings_service.Service,
   stickersService: stickers_service.Service,
-  nodeConfigurationService: node_configuration_service.ServiceInterface): Module =
+  nodeConfigurationService: node_configuration_service.Service): Module =
   result = Module()
   result.delegate = delegate
   result.view = view.newView(result)

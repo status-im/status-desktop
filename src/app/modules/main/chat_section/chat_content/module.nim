@@ -13,7 +13,7 @@ import input_area/module as input_area_module
 import messages/module as messages_module
 import users/module as users_module
 
-import ../../../../../app_service/service/settings/service_interface as settings_service
+import ../../../../../app_service/service/settings/service as settings_service
 import ../../../../../app_service/service/contacts/service as contact_service
 import ../../../../../app_service/service/chat/service as chat_service
 import ../../../../../app_service/service/community/service as community_service
@@ -38,7 +38,7 @@ type
     moduleLoaded: bool
 
 proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter, sectionId: string, chatId: string,
-  belongsToCommunity: bool, isUsersListAvailable: bool, settingsService: settings_service.ServiceInterface,
+  belongsToCommunity: bool, isUsersListAvailable: bool, settingsService: settings_service.Service,
   contactService: contact_service.Service, chatService: chat_service.Service,
   communityService: community_service.Service, messageService: message_service.Service, gifService: gif_service.Service,
   mailserversService: mailservers_service.Service):

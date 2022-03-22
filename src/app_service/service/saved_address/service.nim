@@ -1,11 +1,11 @@
 import chronicles, sequtils, json
 
-import ./service_interface, ./dto
+import dto
 
 import ../../../app/core/eventemitter
 import ../../../backend/saved_addresses as backend
 
-export service_interface
+export dto
 
 logScope:
   topics = "saved-address-service"
@@ -14,18 +14,18 @@ logScope:
 const SIGNAL_SAVED_ADDRESS_CHANGED* = "savedAddressChanged"
 
 type
-  Service* = ref object of service_interface.ServiceInterface
+  Service* = ref object of RootObj
     events: EventEmitter
     savedAddresses: seq[SavedAddressDto]
 
-method delete*(self: Service) =
+proc delete*(self: Service) =
   discard
 
 proc newService*(events: EventEmitter): Service =
   result = Service()
   result.events = events
 
-method init*(self: Service) =
+proc init*(self: Service) =
   try:
     let response = backend.getSavedAddresses()
 
@@ -35,12 +35,12 @@ method init*(self: Service) =
     )
 
   except Exception as e:
-    error "error: ", methodName="init", errName = e.name, errDesription = e.msg
+    error "error: ", procName="init", errName = e.name, errDesription = e.msg
 
-method getSavedAddresses(self: Service): seq[SavedAddressDto] =
+proc getSavedAddresses*(self: Service): seq[SavedAddressDto] =
   return self.savedAddresses
 
-method createOrUpdateSavedAddress(self: Service, name, address: string): string =
+proc createOrUpdateSavedAddress*(self: Service, name, address: string): string =
   try:
     let response = backend.addSavedAddress(name, address)
 
@@ -64,7 +64,7 @@ method createOrUpdateSavedAddress(self: Service, name, address: string): string 
     error "error: ", errDesription
     return errDesription
 
-method deleteSavedAddress(self: Service, address: string): string =
+proc deleteSavedAddress*(self: Service, address: string): string =
   try:
     let response = backend.deleteSavedAddress(address)
 

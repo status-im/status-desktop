@@ -1,5 +1,5 @@
 import ./controller_interface
-import ../../../../app_service/service/settings/service_interface as settings_service
+import ../../../../app_service/service/settings/service as settings_service
 import ../../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../../app_service/service/network/service as network_service
 
@@ -8,15 +8,15 @@ export controller_interface
 type
   Controller*[T: controller_interface.DelegateInterface] = ref object of controller_interface.AccessInterface
     delegate: T
-    settingsService: settings_service.ServiceInterface
-    walletAccountService: wallet_account_service.ServiceInterface
-    networkService: network_service.ServiceInterface
+    settingsService: settings_service.Service
+    walletAccountService: wallet_account_service.Service
+    networkService: network_service.Service
  
 proc newController*[T](
   delegate: T,
-  settingsService: settings_service.ServiceInterface,
-  walletAccountService: wallet_account_service.ServiceInterface,
-  networkService: network_service.ServiceInterface,
+  settingsService: settings_service.Service,
+  walletAccountService: wallet_account_service.Service,
+  networkService: network_service.Service,
 ): Controller[T] =
   result = Controller[T]()
   result.delegate = delegate

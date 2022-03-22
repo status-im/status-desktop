@@ -5,7 +5,7 @@ method makeChatWithIdActive*(self: AccessInterface, chatId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method addNewChat*(self: AccessInterface, chatDto: ChatDto, belongsToCommunity: bool, events: EventEmitter,
-  settingsService: settings_service.ServiceInterface, contactService: contact_service.Service,
+  settingsService: settings_service.Service, contactService: contact_service.Service,
   chatService: chat_service.Service, communityService: community_service.Service,
   messageService: message_service.Service, gifService: gif_service.Service,
   mailserversService: mailservers_service.Service, setChatAsActive: bool = true) {.base.} =
@@ -21,7 +21,7 @@ method addChatIfDontExist*(self: AccessInterface,
     chat: ChatDto,
     belongsToCommunity: bool,
     events: EventEmitter,
-    settingsService: settings_service.ServiceInterface,
+    settingsService: settings_service.Service,
     contactService: contact_service.Service,
     chatService: chat_service.Service,
     communityService: community_service.Service,

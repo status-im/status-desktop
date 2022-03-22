@@ -20,7 +20,7 @@ type
 proc newModule*(
   delegate: delegate_interface.AccessInterface,
   events: EventEmitter,
-  walletAccountService: wallet_account_service.ServiceInterface
+  walletAccountService: wallet_account_service.Service
 ): Module =
   result = Module()
   result.delegate = delegate

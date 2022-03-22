@@ -1,4 +1,4 @@
-import ../../../../../../app_service/service/collectible/service_interface as collectible_service
+import ../../../../../../app_service/service/collectible/service as collectible_service
 
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj

@@ -4,7 +4,7 @@ import ./io_interface, ./view, ./controller
 import ../io_interface as delegate_interface
 import ../../../../global/global_singleton
 
-import ../../../../../app_service/service/profile/service_interface as profile_service
+import ../../../../../app_service/service/profile/service as profile_service
 
 export io_interface
 
@@ -20,7 +20,7 @@ type
     moduleLoaded: bool
 
 proc newModule*(delegate: delegate_interface.AccessInterface,
-  profileService: profile_service.ServiceInterface): Module =
+  profileService: profile_service.Service): Module =
   result = Module()
   result.delegate = delegate
   result.view = view.newView(result)
