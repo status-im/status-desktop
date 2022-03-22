@@ -10,31 +10,21 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 
 import utils 1.0
+import shared.status 1.0
 
 Page {
     id: root
     anchors.fill: parent
-    anchors.bottomMargin: (tagSelector.namesModel.count > 0) ? 64 : 0
     Behavior on anchors.bottomMargin { NumberAnimation { duration: 30 }}
-    anchors.rightMargin: 32
+
     property ListModel contactsModel: ListModel { }
     property var rootStore
-    property string activeChatId
-    property bool editMembers: false
+    property var emojiPopup: null
 
-    //nim model doesn't support a get function, hence
-    //passing it here so that it can be handled accordingly
-    ListView {
-        id: convertModel
-        model: root.rootStore.currentChatContentModule().usersModule.model
-        delegate: Item {
-            property string publicId: model.id
-            property string name: model.name
-            property bool isAdmin: model.isAdmin
-        }
-    }
     ListView {
         id: contactsModelListView
+        anchors.left: parent.left
+        anchors.right: parent.right
         model: root.rootStore.contactsModel
         delegate: Item {
             property string publicId: model.pubKey
@@ -46,19 +36,6 @@ Page {
 
     Connections {
         target: rootStore
-        onCreateChatWithMessage: {
-            root.createChat();
-        }
-        onAddRemoveGroupMember: {
-            for (var i = 0; i < convertModel.count; i ++) {
-                var entry = convertModel.itemAtIndex(i);
-                if (!entry.isAdmin) {
-                    tagSelector.namesModel.insert(tagSelector.namesModel.count, {"name": entry.name, "publicId": entry.publicId});
-                }
-            }
-            root.rootStore.openCreateChat = true;
-            root.editMembers = true;
-        }
         onOpenCreateChatChanged: {
             if (root.rootStore.openCreateChat) {
                 for (var i = 0; i < contactsModelListView.count; i ++) {
@@ -70,7 +47,6 @@ Page {
             } else {
                 tagSelector.namesModel.clear();
                 contactsModel.clear();
-                root.editMembers = false;
             }
         }
     }
@@ -88,6 +64,10 @@ Page {
             }
             root.rootStore.chatCommunitySectionModule.createGroupChat("",groupName, JSON.stringify(publicIds));
         }
+
+        chatInput.textInput.clear();
+        chatInput.textInput.textFormat = TextEdit.PlainText;
+        chatInput.textInput.textFormat = TextEdit.RichText;
     }
 
     visible: (opacity > 0.01)
@@ -101,7 +81,7 @@ Page {
     Behavior on opacity { NumberAnimation {}}
     background: Rectangle {
         anchors.fill: parent
-        color: Theme.palette.statusPopupMenu.backgroundColor
+        color: Theme.palette.statusAppLayout.rightPanelBackgroundColor
     }
 
     header: RowLayout {
@@ -121,15 +101,6 @@ Page {
             implicitHeight: 44
             toLabelText: qsTr("To: ")
             warningText: qsTr("USER LIMIT REACHED")
-            Connections {
-                target: tagSelector.namesModel
-                onCountChanged: {
-                    root.rootStore.hideInput = (tagSelector.namesModel.count === 0);
-                }
-            }
-            Component.onCompleted: {
-                root.rootStore.hideInput = (tagSelector.namesModel.count === 0);
-            }
 
             //simulate model filtering, TODO this
             //makes more sense to be provided by the backend
@@ -150,24 +121,6 @@ Page {
                     userListView.model = contactsModel;
                 }
             }
-            onAddMember: {
-                if (root.editMembers) {
-                    var pubKeys = [];
-                    pubKeys.push(memberId);
-                    root.rootStore.chatCommunitySectionModule.addGroupMembers("", activeChatId, JSON.stringify(pubKeys));
-                }
-                if (root.rootStore.chatTextInput.length > 0) {
-                    root.rootStore.chatTextInput.clear();
-                }
-            }
-            onRemoveMember: {
-                if (root.editMembers) {
-                    root.rootStore.chatCommunitySectionModule.removeMemberFromGroupChat("", activeChatId, memberId);
-                }
-                if (root.rootStore.chatTextInput.length > 0) {
-                    root.rootStore.chatTextInput.clear();
-                }
-            }
         }
 
         StatusButton {
@@ -176,10 +129,8 @@ Page {
             enabled: (tagSelector.namesModel.count > 0)
             text: "Confirm"
             onClicked: {
-                if (root.rootStore.chatTextInput.length > 0) {
-                    root.rootStore.createChatInitMessage = root.rootStore.chatTextInput.getText(0, root.rootStore.chatTextInput.cursorPosition);
-                    root.rootStore.chatTextInput.clear();
-                }
+                root.rootStore.createChatInitMessage = chatInput.textInput.text;
+                root.rootStore.createChatFileUrls = chatInput.fileUrls;
                 root.createChat();
             }
         }
@@ -190,8 +141,17 @@ Page {
         anchors.topMargin: headerRow.height + 32
 
         Item {
-            anchors.fill: parent
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.bottom: chatInput.visible? chatInput.top : parent.bottom
             visible: (contactsModel.count > 0)
+
+            Component.onCompleted: {
+                if (visible) {
+                    tagSelector.textEdit.forceActiveFocus();
+                }
+            }
 
             StatusBaseText {
                 id: contactsLabel
@@ -201,13 +161,13 @@ Page {
                 color: Theme.palette.baseColor1
                 text: qsTr("Contacts")
             }
+
             Control {
                 width: 360
                 anchors {
                     top: contactsLabel.bottom
                     topMargin: Style.current.halfPadding
                     bottom: !statusPopupMenuBackgroundContent.visible ?  parent.bottom : undefined
-                    bottomMargin: Style.current.bigPadding
                 }
                 height: Style.current.padding + (!statusPopupMenuBackgroundContent.visible ? parent.height :
                         (((userListView.count * 64) > parent.height) ? parent.height : (userListView.count * 64)))
@@ -313,10 +273,40 @@ Page {
                     }
                 }
             }
-            Component.onCompleted: {
-                if (visible) {
-                    tagSelector.textEdit.forceActiveFocus();
-                }
+        }
+
+        StatusChatInput {
+            id: chatInput
+            anchors.bottom: parent.bottom
+            anchors.left: parent.left
+            anchors.right: parent.right
+            visible: tagSelector.namesModel.count > 0
+            chatType: tagSelector.namesModel.count == 1? Constants.chatType.oneToOne : Constants.chatType.privateGroupChat
+
+            emojiPopup: root.emojiPopup
+            recentStickers: root.rootStore.stickersModuleInst.recent
+            stickerPackList: root.rootStore.stickersModuleInst.stickerPacks
+
+            onSendTransactionCommandButtonClicked: {
+                root.rootStore.createChatStartSendTransactionProcess = true;
+                root.createChat();
+            }
+
+            onReceiveTransactionCommandButtonClicked: {
+                root.rootStore.createChatStartReceiveTransactionProcess = true;
+                root.createChat();
+            }
+
+            onStickerSelected: {
+                root.rootStore.createChatStickerHashId = hashId;
+                root.rootStore.createChatStickerPackId = packId;
+                root.createChat();
+            }
+
+            onSendMessage: {
+                root.rootStore.createChatFileUrls = chatInput.fileUrls;
+                root.rootStore.createChatInitMessage = chatInput.textInput.text;
+                root.createChat();
             }
         }
 

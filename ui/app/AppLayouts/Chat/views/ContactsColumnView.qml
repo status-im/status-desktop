@@ -160,7 +160,6 @@ Item {
             model: root.chatSectionModule.model
             onChatItemSelected: {
                 root.chatSectionModule.setActiveItem(id, "")
-                root.store.openCreateChat = false;
             }
             onChatItemUnmuted: root.chatSectionModule.unmuteChat(id)
 

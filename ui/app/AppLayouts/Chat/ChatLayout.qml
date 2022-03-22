@@ -46,6 +46,13 @@ StatusAppThreePanelLayout {
         }
     }
 
+    Connections {
+        target: root.rootStore.chatCommunitySectionModule
+        onActiveItemChanged: {
+            root.rootStore.openCreateChat = false;
+        }
+    }
+
 //    property var onActivated: function () {
 //        root.rootStore.chatsModelInst.channelView.restorePreviousActiveChannel();
 //        chatColumn.onActivated();
@@ -74,14 +81,12 @@ StatusAppThreePanelLayout {
         onOpenAppSearch: {
             root.openAppSearch();
         }
-        CreateChatView {
-            activeChatId: chatColumn.activeChatId
-            rootStore: root.rootStore
-        }
     }
 
     showRightPanel: {
-        if (!localAccountSensitiveSettings.showOnlineUsers || !localAccountSensitiveSettings.expandUsersList) {
+        if (root.rootStore.openCreateChat ||
+                !localAccountSensitiveSettings.showOnlineUsers ||
+                !localAccountSensitiveSettings.expandUsersList) {
             return false
         }
 
