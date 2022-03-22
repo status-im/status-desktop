@@ -11,6 +11,10 @@ import "statusModal" as Spares
 QC.Popup {
     id: statusModal
 
+    property alias advancedHeader: advancedHeader.item
+    property alias advancedFooter: advancedFooter.item
+    property alias advancedHeaderComponent: advancedHeader.sourceComponent
+    property alias advancedFooterComponent: advancedFooter.sourceComponent
     property alias headerActionButton: headerImpl.actionButton
 
     property StatusModalHeaderSettings header: StatusModalHeaderSettings {}
@@ -18,6 +22,8 @@ QC.Popup {
     property alias leftButtons: footerImpl.leftButtons
     property bool showHeader: true
     property bool showFooter: true
+    property bool showAdvancedHeader: false
+    property bool showAdvancedFooter: false
     property alias hasCloseButton: headerImpl.hasCloseButton
 
     signal editButtonClicked()
@@ -64,11 +70,26 @@ QC.Popup {
             onClose: statusModal.close()
         }
 
+        Loader {
+            id: advancedHeader
+            anchors.top: parent.top
+            width: visible ? parent.width : 0
+            active: showAdvancedHeader
+        }
+
         Spares.StatusModalFooter {
             id: footerImpl
             anchors.bottom: parent.bottom
             width: visible ? parent.width : 0
             showFooter: statusModal.showFooter
+        }
+
+
+        Loader {
+            id: advancedFooter
+            anchors.bottom: parent.bottom
+            width: visible ? parent.width : 0
+            active: showAdvancedFooter
         }
     }
 }
