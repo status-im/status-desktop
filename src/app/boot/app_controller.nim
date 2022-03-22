@@ -185,7 +185,8 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     result,
     statusFoundation.events,
     result.keychainService,
-    result.accountsService
+    result.accountsService,
+    result.generalService
   )
   result.mainModule = main_module.newModule[AppController](
     result,
@@ -219,6 +220,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     result.gifService,
     result.ensService,
     result.networkService,
+    result.generalService
   )
 
   # Do connections

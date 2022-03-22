@@ -246,6 +246,7 @@ QtObject {
     property var createPasswordComponent: Component {
         id: createPassword
         CreatePasswordView {
+            store: OnboardingStore
             newPassword: d.newPassword
             confirmationPassword: d.confirmationPassword
 

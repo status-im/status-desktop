@@ -13,6 +13,7 @@ import StatusQ.Components 0.1
 Column {
     id: root
 
+    property var store
     property bool ready: newPswInput.text.length >= root.minPswLen && newPswInput.text === confirmPswInput.text && errorTxt.text === ""
     property int minPswLen: 6
     property bool createNewPsw: true
@@ -21,6 +22,7 @@ Column {
     property string introText: qsTr("Create a password to unlock Status on this device & sign transactions.")
     property string recoverText: qsTr("You will not be able to recover this password if it is lost.")
     property string strengthenText: qsTr("Minimum 6 characers. To strengthen your password consider including:")
+
     readonly property int zBehind: 1
     readonly property int zFront: 100
 
@@ -62,7 +64,7 @@ Column {
         property bool containsNumbers: false
         property bool containsSymbols: false
 
-        readonly property var validator: RegExpValidator { regExp: /^[!-~]+$/ } // That incudes NOT extended ASCII printable characters less space
+        readonly property var validator: RegExpValidator { regExp: /^[!-~]{0,64}$/ } // That incudes NOT extended ASCII printable characters less space and a maximum of 64 characters allowed
 
         // Password strength categorization / validation
         function lowerCaseValidator(text) { return (/[a-z]/.test(text)) }
@@ -70,46 +72,20 @@ Column {
         function numbersValidator(text) { return (/\d/.test(text)) }
         // That incudes NOT extended ASCII printable symbols less space:
         function symbolsValidator(text) { return (/[!-\/:-@[-`{-~]/.test(text)) }
-        function findUniqueChars(text) {
-            // The variable that contains the unique values
-            let uniq = "";
 
-            for(let i = 0; i < text.length; i++) {
-                // Checking if the uniq contains the character
-                if(uniq.includes(text[i]) === false) {
-                    // If the character not present in uniq
-                    // Concatenate the character with uniq
-                    uniq += text[i]
-                }
+        // Used to convert strength from a given score to a specific category
+        function convertStrength(score) {
+            var strength = StatusPasswordStrengthIndicator.Strength.None
+            switch(score) {
+                case 0: strength = StatusPasswordStrengthIndicator.Strength.VeryWeak; break
+                case 1: strength = StatusPasswordStrengthIndicator.Strength.Weak; break
+                case 2: strength = StatusPasswordStrengthIndicator.Strength.SoSo; break
+                case 3: strength = StatusPasswordStrengthIndicator.Strength.Good; break
+                case 4: strength = StatusPasswordStrengthIndicator.Strength.Great; break
             }
-            return uniq
-        }
-
-        // Algorithm defined in functional requirements / Password categorization
-        function getPswStrength() {
-            let rules = 0
-            let points = 0
-            let strengthType = StatusPasswordStrengthIndicator.Strength.None
-
-            if(newPswInput.text.length >= root.minPswLen) { points += 10; rules++ }
-            if(d.containsLower) { points += 5; rules++ }
-            if(d.containsUpper) { points += 5; rules++ }
-            if(d.containsNumbers) { points += 5; rules++ }
-            if(d.containsSymbols) { points += 10; rules++ }
-
-            let uniq = d.findUniqueChars(newPswInput.text)
-            if(uniq.length >= 5) { points += 5; rules++ }
-
-            // Update points according to rules used:
-            points += rules * 10/*factor*/
-
-            // Strength decision taken:
-            if(points > 0 && points < 40) strengthType = StatusPasswordStrengthIndicator.Strength.VeryWeak
-            else if(points >= 40 && points < 60) strengthType = StatusPasswordStrengthIndicator.Strength.Weak
-            else if(points >= 60 && points < 80) strengthType = StatusPasswordStrengthIndicator.Strength.SoSo
-            else if(points >= 80 && points < 100) strengthType = StatusPasswordStrengthIndicator.Strength.Good
-            else if(points >= 100) strengthType = StatusPasswordStrengthIndicator.Strength.Great
-            return strengthType
+            if(strength > 4)
+                strength = StatusPasswordStrengthIndicator.Strength.Great
+            return strength
         }
 
         // Password validation / error message selection:
@@ -232,7 +208,7 @@ Column {
                 d.containsSymbols = d.symbolsValidator(text)
 
                 // Update strength indicator:
-                strengthInditactor.strength = d.getPswStrength()
+                strengthInditactor.strength = d.convertStrength(root.store.getPasswordStrengthScore(newPswInput.text))
             }
 
             StatusFlatRoundButton {

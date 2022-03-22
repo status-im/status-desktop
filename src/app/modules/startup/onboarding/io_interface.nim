@@ -43,3 +43,6 @@ method importMnemonic*(self: AccessInterface, mnemonic: string) {.base.} =
 
 method setDisplayName*(self: AccessInterface, displayName: string) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method getPasswordStrengthScore*(self: AccessInterface, password: string, userName: string): int {.base.} =
+  raise newException(ValueError, "No implementation available")

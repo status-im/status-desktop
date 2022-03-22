@@ -1,11 +1,14 @@
 import NimQml, chronicles
 
+import ../../../../../app/global/global_singleton
+
 import ./io_interface, ./view, ./controller
 import ../io_interface as delegate_interface
 
 import ../../../../core/eventemitter
 import ../../../../../app_service/service/settings/service as settings_service
 import ../../../../../app_service/service/privacy/service as privacy_service
+import ../../../../../app_service/service/general/service as general_service
 
 export io_interface
 
@@ -19,13 +22,14 @@ type
 
 proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter,
   settingsService: settings_service.Service,
-  privacyService: privacy_service.Service):
+  privacyService: privacy_service.Service,
+  generalService: general_service.Service):
   Module =
   result = Module()
   result.delegate = delegate
   result.view = newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, settingsService, privacyService)
+  result.controller = controller.newController(result, events, settingsService, privacyService, generalService)
   result.moduleLoaded = false
 
 method delete*(self: Module) =
@@ -94,4 +98,4 @@ method setProfilePicturesVisibility*(self: Module, value: int) =
     self.view.profilePicturesVisibilityChanged()
 
 method getPasswordStrengthScore*(self: Module, password: string): int =
-  return self.controller.getPasswordStrengthScore(password)
+  return self.controller.getPasswordStrengthScore(password, singletonInstance.userProfile.getUsername())

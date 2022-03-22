@@ -9,6 +9,7 @@ import login/module as login_module
 
 import ../../../app_service/service/keychain/service as keychain_service
 import ../../../app_service/service/accounts/service as accounts_service
+import ../../../app_service/service/general/service as general_service
 
 export io_interface
 
@@ -24,7 +25,8 @@ type
 proc newModule*[T](delegate: T,
   events: EventEmitter,
   keychainService: keychain_service.Service,
-  accountsService: accounts_service.Service):
+  accountsService: accounts_service.Service,
+  generalService: general_service.Service):
   Module[T] =
   result = Module[T]()
   result.delegate = delegate
@@ -33,7 +35,7 @@ proc newModule*[T](delegate: T,
   result.controller = controller.newController(result, events, accountsService)
 
   # Submodules
-  result.onboardingModule = onboarding_module.newModule(result, events, accountsService)
+  result.onboardingModule = onboarding_module.newModule(result, events, accountsService, generalService)
   result.loginModule = login_module.newModule(result, events, keychainService,
   accountsService)
 

@@ -45,6 +45,7 @@ StatusModal {
 
     PasswordView {
         id: view
+        store: root.privacyStore
         anchors.topMargin: Style.current.padding
         anchors.centerIn: parent
         titleVisible: false

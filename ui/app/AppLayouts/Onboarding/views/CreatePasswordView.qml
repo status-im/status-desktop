@@ -12,21 +12,23 @@ import "../../Profile/views"
 Page {
     id: root
 
+    property var store
     property string newPassword
     property string confirmationPassword
 
     signal passwordCreated(string newPassword, string confirmationPassword)
     signal backClicked()
 
-    Component.onCompleted: { view.forceNewPswInputFocus() }
+    anchors.fill: parent
     background: null
+
+    Component.onCompleted: { view.forceNewPswInputFocus() }
+
     QtObject {
         id: d
         readonly property int zBehind: 1
         readonly property int zFront: 100
     }
-
-    anchors.fill: parent
 
     Column {
         spacing: 4 * Style.current.padding
@@ -35,6 +37,7 @@ Page {
 
         PasswordView {
             id: view
+            store: root.store
             newPswText: root.newPassword
             confirmationPswText: root.confirmationPassword
         }

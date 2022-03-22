@@ -5,6 +5,7 @@ import view, controller, item
 import ../../../global/global_singleton
 import ../../../core/eventemitter
 import ../../../../app_service/service/accounts/service as accounts_service
+import ../../../../app_service/service/general/service as general_service
 
 export io_interface
 
@@ -17,13 +18,14 @@ type
     moduleLoaded: bool
 
 proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter,
-  accountsService: accounts_service.Service):
+  accountsService: accounts_service.Service,
+  generalService: general_service.Service):
   Module =
   result = Module()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, accountsService)
+  result.controller = controller.newController(result, events, accountsService, generalService)
   result.moduleLoaded = false
 
 method delete*(self: Module) =
@@ -76,3 +78,6 @@ method importAccountError*(self: Module) =
 
 method importAccountSuccess*(self: Module) =
   self.view.importAccountSuccess()
+
+method getPasswordStrengthScore*(self: Module, password, userName: string): int =
+  return self.controller.getPasswordStrengthScore(password, userName)

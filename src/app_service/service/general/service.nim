@@ -39,3 +39,15 @@ proc startMessenger*(self: Service) =
     let errDesription = e.msg
     error "error: ", errDesription
     return
+
+method getPasswordStrengthScore*(self: Service, password, userName: string): int =
+  try:    
+    let response = status_general.getPasswordStrengthScore(password, @[userName])
+    if(response.result.contains("error")):
+      let errMsg = response.result["error"].getStr()
+      error "error: ", methodName="getPasswordStrengthScore", errDesription = errMsg
+      return
+
+    return response.result["score"].getInt()
+  except Exception as e:
+    error "error: ", methodName="getPasswordStrengthScore", errName = e.name, errDesription = e.msg

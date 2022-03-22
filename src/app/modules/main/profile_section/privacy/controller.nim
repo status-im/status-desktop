@@ -3,6 +3,7 @@ import io_interface
 import ../../../../core/eventemitter
 import ../../../../../app_service/service/settings/service as settings_service
 import ../../../../../app_service/service/privacy/service as privacy_service
+import ../../../../../app_service/service/general/service as general_service
 
 
 type
@@ -11,15 +12,19 @@ type
     events: EventEmitter
     settingsService: settings_service.Service
     privacyService: privacy_service.Service
+    generalService: general_service.Service
 
 proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter,
+
   settingsService: settings_service.Service,
-  privacyService: privacy_service.Service): Controller =
+  privacyService: privacy_service.Service,
+  generalService: general_service.Service): Controller =
   result = Controller()
   result.delegate = delegate
   result.events = events
   result.settingsService = settingsService
   result.privacyService = privacyService
+  result.generalService = generalService
 
 proc delete*(self: Controller) =
   discard
@@ -71,5 +76,5 @@ proc getProfilePicturesVisibility*(self: Controller): int =
 proc setProfilePicturesVisibility*(self: Controller, value: int): bool =
   self.settingsService.saveProfilePicturesVisibility(value)
 
-proc getPasswordStrengthScore*(self: Controller, password: string): int = 
-  return self.privacyService.getPasswordStrengthScore(password)
+method getPasswordStrengthScore*(self: Controller, password, userName: string): int = 
+  return self.generalService.getPasswordStrengthScore(password, userName)

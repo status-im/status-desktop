@@ -49,6 +49,7 @@ import ../../../app_service/service/mailservers/service as mailservers_service
 import ../../../app_service/service/gif/service as gif_service
 import ../../../app_service/service/ens/service as ens_service
 import ../../../app_service/service/network/service as network_service
+import ../../../app_service/service/general/service as general_service
 
 import ../../core/notifications/details
 import ../../core/eventemitter
@@ -108,6 +109,7 @@ proc newModule*[T](
   gifService: gif_service.Service,
   ensService: ens_service.Service,
   networkService: network_service.Service,
+  generalService: general_service.Service
 ): Module[T] =
   result = Module[T]()
   result.delegate = delegate
@@ -144,7 +146,7 @@ proc newModule*[T](
   result.profileSectionModule = profile_section_module.newModule(
     result, events, accountsService, settingsService, stickersService,
     profileService, contactsService, aboutService, languageService, privacyService, nodeConfigurationService,
-    devicesService, mailserversService, chatService, ensService, walletAccountService,
+    devicesService, mailserversService, chatService, ensService, walletAccountService, generalService
   )
   result.stickersModule = stickers_module.newModule(result, events, stickersService, settingsService, walletAccountService)
   result.activityCenterModule = activity_center_module.newModule(result, events, activityCenterService, contactsService,

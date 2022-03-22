@@ -89,3 +89,6 @@ QtObject:
 
   proc importAccountSuccess*(self: View) =
     self.importedAccountChanged()
+
+  proc getPasswordStrengthScore*(self: View, password: string, userName: string): int {.slot.} =
+    return self.delegate.getPasswordStrengthScore(password, userName)

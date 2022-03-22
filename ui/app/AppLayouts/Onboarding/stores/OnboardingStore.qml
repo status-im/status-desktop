@@ -14,6 +14,11 @@ QtObject {
         onBoardingModul.setSelectedAccountByIndex(selectedAccountIdx)
     }
 
+    function getPasswordStrengthScore(password) {
+        let userName = onBoardingModul.importedAccountAlias
+        return onBoardingModul.getPasswordStrengthScore(password, userName)
+    }
+
     property ListModel accountsSampleData: ListModel {
         ListElement {
             username: "Ferocious Herringbone Sinewave2"
