@@ -51,6 +51,7 @@ Item {
     property alias valid: statusBaseInput.valid
     property alias pending: statusBaseInput.pending
     property alias text: statusBaseInput.text
+    property alias errorMessageCmp: errorMessage
     property string label: ""
     property string secondaryLabel: ""
     property int charLimit: 0
