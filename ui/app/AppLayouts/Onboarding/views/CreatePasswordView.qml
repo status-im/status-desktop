@@ -19,7 +19,7 @@ Page {
     signal backClicked()
 
     Component.onCompleted: { view.forceNewPswInputFocus() }
-
+    background: null
     QtObject {
         id: d
         readonly property int zBehind: 1

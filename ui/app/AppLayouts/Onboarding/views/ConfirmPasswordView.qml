@@ -21,6 +21,7 @@ Page {
     signal backClicked()
 
     anchors.fill: parent
+    background: null
 
     Component.onCompleted: confPswInput.forceActiveFocus(Qt.MouseFocusReason)
 
