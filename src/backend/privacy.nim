@@ -23,12 +23,3 @@ proc changeDatabasePassword*(keyUID: string, password: string, newPassword: stri
 proc getLinkPreviewWhitelist*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* []
   result = callPrivateRPC("getLinkPreviewWhitelist".prefix, payload)
-
-proc getPasswordStrength*(password: string, userInputs: seq[string]): RpcResponse[JsonNode] {.raises: [Exception].} =
-  let params = %* {"password": password, "userInputs": userInputs}
-  try:
-    let response = status_go.getPasswordStrength($(params))
-    result.result = Json.decode(response, JsonNode)
-  except RpcException as e:
-    error "error", methodName = "getPasswordStrength", exception=e.msg
-    raise newException(RpcException, e.msg)

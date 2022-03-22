@@ -5,6 +5,7 @@ import io_interface
 import ../../../core/signals/types
 import ../../../core/eventemitter
 import ../../../../app_service/service/accounts/service as accounts_service
+import ../../../../app_service/service/general/service as general_service
 
 logScope:
   topics = "onboarding-controller"
@@ -14,17 +15,20 @@ type
     delegate: io_interface.AccessInterface
     events: EventEmitter
     accountsService: accounts_service.Service
+    generalService: general_service.Service
     selectedAccountId: string
     displayName: string
 
 proc newController*(delegate: io_interface.AccessInterface,
   events: EventEmitter,
-  accountsService: accounts_service.Service):
+  accountsService: accounts_service.Service,
+  generalService: general_service.Service):
   Controller =
   result = Controller()
   result.delegate = delegate
   result.events = events
   result.accountsService = accountsService
+  result.generalService = generalService
 
 proc delete*(self: Controller) =
   discard
@@ -61,4 +65,7 @@ proc importMnemonic*(self: Controller, mnemonic: string) =
     self.delegate.importAccountSuccess()
   else:
     self.delegate.importAccountError()
+
+method getPasswordStrengthScore*(self: Controller, password, userName: string): int = 
+  return self.generalService.getPasswordStrengthScore(password, userName)
 

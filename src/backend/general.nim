@@ -45,3 +45,12 @@ proc dropPeerByID*(peer: string): RpcResponse[JsonNode] {.raises: [Exception].} 
 proc removePeer*(peer: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [peer]
   result = core.callPrivateRPC("admin_removePeer", payload)
+
+proc getPasswordStrengthScore*(password: string, userInputs: seq[string]): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let params = %* {"password": password, "userInputs": userInputs}
+  try:
+    let response = status_go.getPasswordStrengthScore($(params))
+    result.result = Json.decode(response, JsonNode)
+  except RpcException as e:
+    error "error", methodName = "getPasswordStrengthScore", exception=e.msg
+    raise newException(RpcException, e.msg)

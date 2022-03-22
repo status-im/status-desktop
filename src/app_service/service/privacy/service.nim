@@ -1,6 +1,5 @@
 import NimQml, json, strutils, chronicles
 
-import ../../../app/global/global_singleton
 
 import ../settings/service as settings_service
 import ../accounts/service as accounts_service
@@ -150,16 +149,3 @@ QtObject:
     except Exception as e:
       error "error: ", procName="validatePassword", errName = e.name, errDesription = e.msg
       return false
-
-  proc getPasswordStrengthScore*(self: Service, password: string): int =
-    try:
-      let userName = singletonInstance.userProfile.getUsername()
-      let response = status_privacy.getPasswordStrength(password, @[userName])
-      if(response.result.contains("error")):
-        let errMsg = response.result["error"].getStr()
-        error "error: ", procName="getPasswordStrengthScore", errDesription = errMsg
-        return
-
-      return response.result["Score"].getInt()
-    except Exception as e:
-      error "error: ", procName="getPasswordStrengthScore", errName = e.name, errDesription = e.msg

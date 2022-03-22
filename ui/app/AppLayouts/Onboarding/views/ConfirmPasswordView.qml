@@ -77,7 +77,7 @@ Page {
                              qsTr("Connecting...") :
                              qsTr("Confirm you password (again)")
             textField.echoMode: showPassword ? TextInput.Normal : TextInput.Password
-            textField.validator: RegExpValidator { regExp: /^[!-~]+$/ } // That incudes NOT extended ASCII printable characters less space
+            textField.validator: RegExpValidator { regExp: /^[!-~]{0,64}$/ } // That incudes NOT extended ASCII printable characters less space and a maximum of 64 characters allowed
             keepHeight: true
             textField.rightPadding: showHideCurrentIcon.width + showHideCurrentIcon.anchors.rightMargin + Style.current.padding / 2
 

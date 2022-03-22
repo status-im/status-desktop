@@ -17,6 +17,7 @@ import ../../../../app_service/service/chat/service as chat_service
 import ../../../../app_service/service/stickers/service as stickersService
 import ../../../../app_service/service/ens/service as ens_service
 import ../../../../app_service/service/wallet_account/service as wallet_account_service
+import ../../../../app_service/service/general/service as general_service
 
 import ./profile/module as profile_module
 import ./contacts/module as contacts_module
@@ -66,6 +67,7 @@ proc newModule*(delegate: delegate_interface.AccessInterface,
   chatService: chat_service.Service,
   ensService: ens_service.Service,
   walletAccountService: wallet_account_service.Service,
+  generalService: general_service.Service
 ): Module =
   result = Module()
   result.delegate = delegate
@@ -77,7 +79,7 @@ proc newModule*(delegate: delegate_interface.AccessInterface,
   result.profileModule = profile_module.newModule(result, profileService)
   result.contactsModule = contacts_module.newModule(result, events, contactsService)
   result.languageModule = language_module.newModule(result, languageService)
-  result.privacyModule = privacy_module.newModule(result, events, settingsService, privacyService)
+  result.privacyModule = privacy_module.newModule(result, events, settingsService, privacyService, generalService)
   result.aboutModule = about_module.newModule(result, events, aboutService)
   result.advancedModule = advanced_module.newModule(result, events, settingsService, stickersService, nodeConfigurationService)
   result.devicesModule = devices_module.newModule(result, events, settingsService, devicesService)
