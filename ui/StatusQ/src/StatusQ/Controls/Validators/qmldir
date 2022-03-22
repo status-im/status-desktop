@@ -10,3 +10,4 @@ StatusMaxLengthValidator 0.1 StatusMaxLengthValidator.qml
 StatusRegularExpressionValidator 0.1 StatusRegularExpressionValidator.qml
 StatusUrlValidator 0.1 StatusUrlValidator.qml
 StatusValidator 0.1 StatusValidator.qml
+StatusFloatValidator 0.1 StatusFloatValidator.qml
