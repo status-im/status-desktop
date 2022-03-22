@@ -101,7 +101,7 @@ Page {
     Behavior on opacity { NumberAnimation {}}
     background: Rectangle {
         anchors.fill: parent
-        color: Theme.palette.statusPopupMenu.backgroundColor
+        color: Theme.palette.statusAppLayout.rightPanelBackgroundColor
     }
 
     header: RowLayout {
