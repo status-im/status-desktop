@@ -175,6 +175,10 @@ var NODE_CONFIG* = %* {
     "Port": 0,
     "LightClient": false,
     "PersistPeers": true,
+    "EnableDiscV5": true,
+    "UDPPort": 0,
+    "PeerExchange": true,
+    "AutoUpdate": true,
   },
   "WalletConfig": {
     "Enabled": true,

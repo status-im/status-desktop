@@ -97,6 +97,7 @@ proc setWakuVersion*(self: Service, wakuVersion: int): bool =
   elif wakuVersion == WAKU_VERSION_2:
     newConfiguration.NoDiscovery = true
     newConfiguration.Rendezvous = false
+    newConfiguration.WakuV2Config.EnableDiscV5 = true
     newConfiguration.WakuV2Config.DiscoveryLimit = 20
     newConfiguration.WakuV2Config.Rendezvous = true
   return self.saveConfiguration(newConfiguration)
@@ -186,6 +187,20 @@ proc setFleet*(self: Service, fleet: string): bool =
       newConfiguration.ClusterConfig.LightpushNodes = self.fleetConfiguration.getNodes(fleetType, FleetNodes.TCP_P2P_Waku)
     else:
       discard
+
+  if fleetType == Fleet.StatusTest:
+    newConfiguration.ClusterConfig.DiscV5BootstrapNodes = @[
+      "enr:-JK4QM2ylZVUhVPqXrqhWWi38V46bF2XZXPSHh_D7f2PmUHbIw-4DidCBnBnm-IbxtjXOFbdMMgpHUv4dYVH6TgnkucBgmlkgnY0gmlwhCJ6_HaJc2VjcDI1NmsxoQM06FsT6EJ57mzR_wiLu2Bz1dER2nUFSCpaXzCccQtnhYN0Y3CCdl-DdWRwgiMohXdha3UyDw",
+      "enr:-JK4QAi2yenhIbflVpUtkLDAM7yR5qeinZSQ_TNxfAWxdffkQWlstXyspEUlapiLl-S_MTPyp5V1uiV14ATjcVU_iLoBgmlkgnY0gmlwhC_y6SSJc2VjcDI1NmsxoQJkb7I6j5X1-zjieMeBdxgDqQWuMuDUEqDR419lyKNZb4N0Y3CCdl-DdWRwgiMohXdha3UyDw",
+      "enr:-JK4QIGyJyjSlponBZqe9XZ75b5ePSU9fWw5UtxEF1vsYXTLYkTa4psnUxJPmOcJGVt9XCYpC2h2kNoowl1t5KzuW6wBgmlkgnY0gmlwhEDhUe2Jc2VjcDI1NmsxoQIE3HkSvDkl2zD64j2kGMH9XZHpuu-5VYT4wnBgJApW_oN0Y3CCdl-DdWRwgiMohXdha3UyDw"
+    ]
+
+  if fleetType == Fleet.StatusProd:
+    newConfiguration.ClusterConfig.DiscV5BootstrapNodes = @[     
+      "enr:-JK4QM_67uA3pGij4m6J0Bka7-Hzb7HdHXVfopgOD8HAMvD_YlPz9nJ9WLsXJMsG8naD8cRwpzx56bojkwKnX24-UwMBgmlkgnY0gmlwhCPKN5mJc2VjcDI1NmsxoQIaKnT5AGTbzUbsxHnAxsJ7eVGxffKsDNej2RtyZlupFIN0Y3CCdl-DdWRwgiMohXdha3UyDw",
+      "enr:-JK4QHlrYkod8u0NYpBV_1iVCeiU6jVn80UJtbbyOMuO5gkIUGmfSxfMjNrcxkApxHGGiVDizs_6_SzoOAxS6zMxg7YBgmlkgnY0gmlwhCKE1emJc2VjcDI1NmsxoQMLQEj6Ys-Rqt87hblheDE74kFYqYtx2kBsrRfuMH23b4N0Y3CCdl-DdWRwgiMohXdha3UyDw",
+      "enr:-JK4QF8RVwcRLTV0hfSwvpZECy1j8YKu7uy8z7X82qoQC_5LbdTkfRdPiuCgdjydbR3Bti6rvG4hqGtwSlIWDVZDadcBgmlkgnY0gmlwhC_zgIaJc2VjcDI1NmsxoQMxOGCAazyuaE__TL2BHoIJmg3dtOYlODZ9TAIVOcamOYN0Y3CCdl-DdWRwgiMohXdha3UyDw"
+    ]
 
   # Disabling go-waku rendezvous
   # newConfiguration.ClusterConfig.WakuRendezvousNodes = self.fleetConfiguration.getNodes(Fleet.GoWakuTest, FleetNodes.LibP2P)

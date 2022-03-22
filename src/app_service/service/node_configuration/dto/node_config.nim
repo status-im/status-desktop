@@ -46,6 +46,8 @@ type
     FilterNodes*: seq[string]
     LightpushNodes*: seq[string]
     WakuRendezvousNodes*: seq[string]
+    DiscV5BootstrapNodes*: seq[string]
+
 
   LightEthConfig* = object
     Enabled*: bool
@@ -293,6 +295,12 @@ proc toClusterConfig*(jsonObj: JsonNode): ClusterConfig =
     if(arr.kind == JArray):
       for valueObj in arr:
         result.WakuRendezvousNodes.add(valueObj.getStr)
+
+  if(jsonObj.getProp("DiscV5BootstrapNodes", arr)):
+    if(arr.kind == JArray):
+      for valueObj in arr:
+        result.DiscV5BootstrapNodes.add(valueObj.getStr)
+
 
 proc toLightEthConfig*(jsonObj: JsonNode): LightEthConfig =
   discard jsonObj.getProp("Enabled", result.Enabled)
