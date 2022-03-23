@@ -61,8 +61,8 @@ method setDisplayName*(self: Module, displayName: string) =
 method storeSelectedAccountAndLogin*(self: Module, password: string) =
   self.controller.storeSelectedAccountAndLogin(password)
 
-method setupAccountError*(self: Module) =
-  self.view.setupAccountError()
+method setupAccountError*(self: Module, error: string) =
+  self.view.setupAccountError(error)
 
 method getImportedAccount*(self: Module): GeneratedAccountDto =
   return self.controller.getImportedAccount()
@@ -73,8 +73,8 @@ method validateMnemonic*(self: Module, mnemonic: string): string =
 method importMnemonic*(self: Module, mnemonic: string) =
   self.controller.importMnemonic(mnemonic)
 
-method importAccountError*(self: Module) =
-  self.view.importAccountError()
+method importAccountError*(self: Module, error: string) =
+  self.view.importAccountError(error)
 
 method importAccountSuccess*(self: Module) =
   self.view.importAccountSuccess()

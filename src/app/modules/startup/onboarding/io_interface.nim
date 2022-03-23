@@ -12,10 +12,10 @@ method load*(self: AccessInterface) {.base.} =
 method isLoaded*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method setupAccountError*(self: AccessInterface) {.base.} =
+method setupAccountError*(self: AccessInterface, error: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method importAccountError*(self: AccessInterface) {.base.} =
+method importAccountError*(self: AccessInterface, error: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method importAccountSuccess*(self: AccessInterface) {.base.} =

@@ -18,11 +18,13 @@ logScope:
   topics = "accounts-service"
 
 const PATHS = @[PATH_WALLET_ROOT, PATH_EIP_1581, PATH_WHISPER, PATH_DEFAULT_WALLET]
+const ACCOUNT_ALREADY_EXISTS_ERROR =  "account already exists"
 
 type
   Service* = ref object of RootObj
     fleetConfiguration: FleetConfiguration
     generatedAccounts: seq[GeneratedAccountDto]
+    accounts: seq[AccountDto]
     loggedInAccount: AccountDto
     importedAccount: GeneratedAccountDto
     isFirstTimeAccountLogin: bool
@@ -98,21 +100,21 @@ proc openedAccounts*(self: Service): seq[AccountDto] =
   try:
     let response = status_account.openedAccounts(main_constants.STATUSGODIR)
 
-    let accounts = map(response.result.getElems(), proc(x: JsonNode): AccountDto = toAccountDto(x))
+    self.accounts = map(response.result.getElems(), proc(x: JsonNode): AccountDto = toAccountDto(x))
 
-    return accounts
+    return self.accounts
 
   except Exception as e:
     error "error: ", procName="openedAccounts", errName = e.name, errDesription = e.msg
 
 proc storeDerivedAccounts(self: Service, accountId, hashedPassword: string,
   paths: seq[string]): DerivedAccounts =
-  try:
-    let response = status_account.storeDerivedAccounts(accountId, hashedPassword, paths)
-    result = toDerivedAccounts(response.result)
+  let response = status_account.storeDerivedAccounts(accountId, hashedPassword, paths)
 
-  except Exception as e:
-    error "error: ", procName="storeDerivedAccounts", errName = e.name, errDesription = e.msg
+  if response.result.contains("error"):
+    raise newException(Exception, response.result["error"].getStr)
+
+  result = toDerivedAccounts(response.result)
 
 proc saveAccountAndLogin(self: Service, hashedPassword: string, account,
   subaccounts, settings, config: JsonNode): AccountDto =
@@ -250,7 +252,7 @@ proc getDefaultNodeConfig*(self: Service, installationId: string): JsonNode =
   # TODO: commented since it's not necessary (we do the connections thru C bindings). Enable it thru an option once status-nodes are able to be configured in desktop
   # result["ListenAddr"] = if existsEnv("STATUS_PORT"): newJString("0.0.0.0:" & $getEnv("STATUS_PORT")) else: newJString("0.0.0.0:30305")
 
-proc setupAccount*(self: Service, accountId, password, displayName: string): bool =
+proc setupAccount*(self: Service, accountId, password, displayName: string): string =
   try:
     let installationId = $genUUID()
     let accountDataJson = self.getAccountDataForAccountId(accountId, displayName)
@@ -262,24 +264,29 @@ proc setupAccount*(self: Service, accountId, password, displayName: string): boo
       nodeConfigJson.isNil):
       let description = "at least one json object is not prepared well"
       error "error: ", procName="setupAccount", errDesription = description
-      return false
+      return description
 
     let hashedPassword = hashString(password)
     discard self.storeDerivedAccounts(accountId, hashedPassword, PATHS)
 
-    self.loggedInAccount = self.saveAccountAndLogin(hashedPassword, accountDataJson, subaccountDataJson, settingsJson,
-    nodeConfigJson)
+    self.loggedInAccount = self.saveAccountAndLogin(hashedPassword, accountDataJson,
+      subaccountDataJson, settingsJson, nodeConfigJson)
 
-    return self.getLoggedInAccount.isValid()
-
+    if self.getLoggedInAccount.isValid():
+      return ""
+    else:
+      return "logged in account is not valid"
   except Exception as e:
     error "error: ", procName="setupAccount", errName = e.name, errDesription = e.msg
-    return false
+    return e.msg
 
-proc importMnemonic*(self: Service, mnemonic: string): bool =
+proc importMnemonic*(self: Service, mnemonic: string): string =
   try:
     let response = status_account.multiAccountImportMnemonic(mnemonic)
     self.importedAccount = toGeneratedAccountDto(response.result)
+
+    if (self.accounts.contains(self.importedAccount.keyUid)):
+      return ACCOUNT_ALREADY_EXISTS_ERROR
 
     let responseDerived = status_account.deriveAccounts(self.importedAccount.id, PATHS)
     self.importedAccount.derivedAccounts = toDerivedAccounts(responseDerived.result)
@@ -287,11 +294,11 @@ proc importMnemonic*(self: Service, mnemonic: string): bool =
     self.importedAccount.alias= generateAliasFromPk(self.importedAccount.derivedAccounts.whisper.publicKey)
     self.importedAccount.identicon = generateIdenticonFromPk(self.importedAccount.derivedAccounts.whisper.publicKey)
 
-    return self.importedAccount.isValid()
-
+    if (not self.importedAccount.isValid()):
+      return "imported account is not valid"
   except Exception as e:
     error "error: ", procName="importMnemonic", errName = e.name, errDesription = e.msg
-    return false
+    return e.msg
 
 proc login*(self: Service, account: AccountDto, password: string): string =
   try:

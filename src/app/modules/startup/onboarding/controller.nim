@@ -37,7 +37,7 @@ proc init*(self: Controller) =
   self.events.on(SignalType.NodeLogin.event) do(e:Args):
     let signal = NodeSignal(e)
     if signal.event.error != "":
-      self.delegate.setupAccountError()
+      self.delegate.setupAccountError(signal.event.error)
 
 proc getGeneratedAccounts*(self: Controller): seq[GeneratedAccountDto] =
   return self.accountsService.generatedAccounts()
@@ -53,18 +53,20 @@ proc setDisplayName*(self: Controller, displayName: string) =
   self.displayName = displayName
 
 proc storeSelectedAccountAndLogin*(self: Controller, password: string) =
-  if(not self.accountsService.setupAccount(self.selectedAccountId, password, self.displayName)):
-    self.delegate.setupAccountError()
+  let error = self.accountsService.setupAccount(self.selectedAccountId, password, self.displayName)
+  if error != "":
+    self.delegate.setupAccountError(error)
 
 proc validateMnemonic*(self: Controller, mnemonic: string): string =
   return self.accountsService.validateMnemonic(mnemonic)
 
 proc importMnemonic*(self: Controller, mnemonic: string) =
-  if(self.accountsService.importMnemonic(mnemonic)):
+  let error = self.accountsService.importMnemonic(mnemonic)
+  if(error == ""):
     self.selectedAccountId = self.getImportedAccount().id
     self.delegate.importAccountSuccess()
   else:
-    self.delegate.importAccountError()
+    self.delegate.importAccountError(error)
 
 method getPasswordStrengthScore*(self: Controller, password, userName: string): int = 
   return self.generalService.getPasswordStrengthScore(password, userName)

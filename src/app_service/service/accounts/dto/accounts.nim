@@ -47,3 +47,9 @@ proc toAccountDto*(jsonObj: JsonNode): AccountDto =
   if(jsonObj.getProp("images", imagesObj) and imagesObj.kind == JArray):
     for imgObj in imagesObj:
       result.images.add(toImage(imgObj))
+
+proc contains*(accounts: seq[AccountDto], keyUid: string): bool =
+  for account in accounts:
+    if (account.keyUid == keyUid):
+      return true
+  return false
