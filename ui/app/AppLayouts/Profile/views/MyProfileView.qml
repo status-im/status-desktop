@@ -85,7 +85,8 @@ ColumnLayout {
 
         imageWidth: 80
         imageHeight: 80
-        emojiSize: "20x20"
+        emojiSize: Qt.size(20,20)
+        supersampling: true
 
         imageOverlay: Item {
             StatusFlatRoundButton {

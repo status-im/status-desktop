@@ -20,7 +20,8 @@ Item {
 
     property alias imageWidth: userImage.imageWidth
     property alias imageHeight: userImage.imageHeight
-    property alias emojiSize: emojihash.size
+    property size emojiSize: Qt.size(14, 14)
+    property bool supersampling: true
 
     property alias imageOverlay: imageOverlay.sourceComponent
 
@@ -90,10 +91,12 @@ Item {
         Text {
             id: emojihash
 
-            property string size: "14x14"
+            readonly property size finalSize: supersampling ? Qt.size(emojiSize.width * 2, emojiSize.height * 2) : emojiSize
+            property string size: `${finalSize.width}x${finalSize.height}`
 
             Layout.fillWidth: true
             renderType: Text.NativeRendering
+            scale: supersampling ? 0.5 : 1
 
             text: {
                 const emojiHash = Utils.getEmojiHashAsJson(root.pubkey)
