@@ -152,7 +152,7 @@ proc newModule*[T](
   result.profileSectionModule = profile_section_module.newModule(
     result, events, accountsService, settingsService, stickersService,
     profileService, contactsService, aboutService, languageService, privacyService, nodeConfigurationService,
-    devicesService, mailserversService, chatService, ensService, walletAccountService, generalService
+    devicesService, mailserversService, chatService, ensService, walletAccountService, generalService, communityService
   )
   result.stickersModule = stickers_module.newModule(result, events, stickersService, settingsService, walletAccountService)
   result.activityCenterModule = activity_center_module.newModule(result, events, activityCenterService, contactsService,
@@ -217,6 +217,7 @@ proc createChannelGroupItem[T](self: Module[T], c: ChannelGroupDto): SectionItem
     if (isCommunity): communityDetails.isMember else: true,
     c.permissions.access,
     c.permissions.ensOnly,
+    c.muted,
     c.members.map(proc(member: ChatMember): user_item.Item =
       let contactDetails = self.controller.getContactDetails(member.id)
       result = user_item.initItem(

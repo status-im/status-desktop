@@ -34,6 +34,7 @@ type
     canRequestAccess: bool
     access: int
     ensOnly: bool
+    muted: bool
     membersModel: user_model.Model
     pendingRequestsToJoinModel: PendingRequestModel
     historyArchiveSupportEnabled: bool
@@ -60,6 +61,7 @@ proc initItem*(
     isMember = false,
     access: int = 0,
     ensOnly = false,
+    muted = false,
     members: seq[user_item.Item] = @[],
     pendingRequestsToJoin: seq[PendingRequestItem] = @[],
     historyArchiveSupportEnabled = false,
@@ -85,6 +87,7 @@ proc initItem*(
   result.isMember = isMember
   result.access = access
   result.ensOnly = ensOnly
+  result.muted = muted
   result.membersModel = newModel()
   result.membersModel.setItems(members)
   result.pendingRequestsToJoinModel = newPendingRequestModel()
@@ -117,6 +120,7 @@ proc `$`*(self: SectionItem): string =
     isMember:{self.isMember},
     access:{self.access},
     ensOnly:{self.ensOnly},
+    muted:{self.muted},
     members:{self.membersModel},
     historyArchiveSupportEnabled:{self.historyArchiveSupportEnabled},
     pinMessageAllMembersEnabled:{self.pinMessageAllMembersEnabled},
@@ -193,6 +197,12 @@ proc access*(self: SectionItem): int {.inline.} =
 
 proc ensOnly*(self: SectionItem): bool {.inline.} =
   self.ensOnly
+
+proc muted*(self: SectionItem): bool {.inline.} = 
+  self.muted
+
+proc `muted=`*(self: var SectionItem, value: bool) {.inline.} = 
+  self.muted = value
 
 proc members*(self: SectionItem): user_model.Model {.inline.} =
   self.membersModel

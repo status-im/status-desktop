@@ -26,6 +26,7 @@ type
     CanRequestAccess
     Access
     EnsOnly
+    Muted
     MembersModel
     PendingRequestsToJoinModel
     HistoryArchiveSupportEnabled
@@ -87,6 +88,7 @@ QtObject:
       ModelRole.CanRequestAccess.int:"canRequestAccess",
       ModelRole.Access.int:"access",
       ModelRole.EnsOnly.int:"ensOnly",
+      ModelRole.Muted.int:"muted",
       ModelRole.MembersModel.int:"members",
       ModelRole.PendingRequestsToJoinModel.int:"pendingRequestsToJoin",
       ModelRole.HistoryArchiveSupportEnabled.int:"historyArchiveSupportEnabled",
@@ -144,6 +146,8 @@ QtObject:
       result = newQVariant(item.access)
     of ModelRole.EnsOnly:
       result = newQVariant(item.ensOnly)
+    of ModelRole.Muted:
+      result = newQVariant(item.muted)
     of ModelRole.MembersModel:
       result = newQVariant(item.members)
     of ModelRole.PendingRequestsToJoinModel:
@@ -204,6 +208,31 @@ QtObject:
 
     self.countChanged()
 
+  proc setMuted*(self: SectionModel, id: string, muted: bool) = 
+    let index = self.getItemIndex(id)
+    if (index == -1):
+      return
+
+    self.items[index].muted = muted 
+    let dataIndex = self.createIndex(index, 0, nil)
+    self.dataChanged(dataIndex, dataIndex, @[
+      ModelRole.Name.int,
+      ModelRole.Description.int,
+      ModelRole.Image.int,
+      ModelRole.Icon.int,
+      ModelRole.Color.int,
+      ModelRole.HasNotification.int,
+      ModelRole.NotificationsCount.int,
+      ModelRole.IsMember.int,
+      ModelRole.CanJoin.int,
+      ModelRole.Joined.int,
+      ModelRole.Muted.int, 
+      ModelRole.MembersModel.int,
+      ModelRole.PendingRequestsToJoinModel.int,
+      ModelRole.HistoryArchiveSupportEnabled.int
+      ])
+
+
   proc editItem*(self: SectionModel, item: SectionItem) =
     let index = self.getItemIndex(item.id)
     if (index == -1):
@@ -223,6 +252,7 @@ QtObject:
       ModelRole.IsMember.int,
       ModelRole.CanJoin.int,
       ModelRole.Joined.int,
+      ModelRole.Muted.int, 
       ModelRole.MembersModel.int,
       ModelRole.PendingRequestsToJoinModel.int,
       ModelRole.HistoryArchiveSupportEnabled.int,

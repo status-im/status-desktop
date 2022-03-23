@@ -45,8 +45,9 @@ QtObject {
         property int browserSettings: 10
         property int advanced: 11
         property int about: 12
-        property int signout: 13
-        property int backUpSeed: 14
+        property int communitiesSettings: 13
+        property int signout: 14
+        property int backUpSeed: 15
     }
 
     readonly property QtObject userStatus: QtObject{

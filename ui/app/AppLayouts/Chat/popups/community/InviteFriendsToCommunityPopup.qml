@@ -21,6 +21,8 @@ StatusModal {
     property var communitySectionModule
     property bool hasAddedContacts
 
+    signal sendInvites(var pubKeys)
+
     onOpened: {
         contentItem.community = community;
 
@@ -35,6 +37,16 @@ StatusModal {
 
     //% "Invite friends"
     header.title: qsTrId("invite-friends")
+
+    function proccesInviteResult(error) {
+        if (error) {
+            console.error('Error inviting', error)
+            contactFieldAndList.validationError = error
+            return
+        }
+        //% "Invite successfully sent"
+        popup.contentItem.contactListSearch.successMessage = qsTrId("invite-successfully-sent")
+    }
 
     contentItem: CommunityProfilePopupInviteFriendsPanel {
         id: contactFieldAndList
@@ -62,7 +74,7 @@ StatusModal {
             //% "Invite"
             text: qsTrId("invite-button")
             onClicked : {
-                popup.contentItem.sendInvites(popup.contentItem.contactListSearch.pubKeys)
+                popup.sendInvites(popup.contentItem.contactListSearch.pubKeys)
             }
         }
     ]
