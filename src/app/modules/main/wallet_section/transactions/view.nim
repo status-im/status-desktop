@@ -129,9 +129,5 @@ QtObject:
     result = self.delegate.transferTokens(from_addr, to_addr, contractAddress, value, gas, gasPrice,
       maxPriorityFeePerGas, maxFeePerGas, password, uuid)
 
-  proc latestBaseFeePerGas*(self: View): string {.slot.} =
-    let baseFeeWei = self.delegate.baseFeePerGas()
-    return common_conversion.wei2Gwei(baseFeeWei)
-
   proc suggestedFees*(self: View): string {.slot.} =
     return self.delegate.suggestedFees()

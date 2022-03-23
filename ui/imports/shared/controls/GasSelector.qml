@@ -18,17 +18,8 @@ Item {
 
 
     property bool isEIP1559Enabled: true
-    property var latestBaseFeePerGas: ""
 
-    // Not Refactored Yet
     property var suggestedFees: ""
-
-    property double latestBaseFeePerGasGwei: {
-        if (!isEIP1559Enabled) return 0;
-
-        return parseFloat(latestBaseFeePerGas)
-    }
-
     property var getGasGweiValue: function () {}
     property var getGasEthValue: function () {}
     property var getFiatValue: function () {}
@@ -53,11 +44,11 @@ Item {
     property bool isValid: true
     readonly property string uuid: Utils.uuid()
 
-    property bool advancedMode: true // TODO: change to false once EIP1559 suggestions are revised
+    property bool advancedMode: false
 
     // TODO: change these values false once EIP1559 suggestions are revised
     property double perGasTipLimitFloor: 1 // Matches status-react minimum-priority-fee
-    property double perGasTipLimitAverage: formatDec(suggestedFees.maxPriorityFeePerGas, 2) // 1.5 // Matches status-react average-priority-fee
+    property double perGasTipLimitAverage: formatDec(root.suggestedFees.maxPriorityFeePerGas, 2) // 1.5 // Matches status-react average-priority-fee
 
 
     property bool showPriceLimitWarning : false
@@ -109,20 +100,6 @@ Item {
         } else if (inputTipLimit < perGasTipLimitAverage) {
             errorMsg = appendError(errorMsg, qsTr("The average miner tip is %1 Gwei").arg(perGasTipLimitAverage), true)
         }
-
-        // Per-gas overall limit rules
-        if(inputOverallLimit < latestBaseFeePerGasGwei){
-            errorMsg = appendError(errorMsg, qsTr("The limit is below the current base fee of %1 %2").arg(latestBaseFeePerGasGwei).arg("Gwei"))
-            showPriceLimitWarning = true
-        }
-
-        /* TODO: change these values false once EIP1559 suggestions are revised
-         else if((inputOverallLimit - inputTipLimit) < latestBaseFeePerGasGwei){
-            errorMsg = appendError(errorMsg, qsTr("The limit should be at least %1 Gwei above the base fee").arg(perGasTipLimitFloor))
-        } else if((inputOverallLimit - perGasTipLimitAverage) < latestBaseFeePerGasGwei) {
-            errorMsg = appendError(errorMsg, qsTr("The maximum miner tip after the current base fee will be %1 Gwei, the minimum miner tip is currently %2 Gwei").arg(inputOverallLimit).arg(perGasTipLimitFloor), true)
-            showTipLimitWarning = true
-        }*/
 
         errorsText.text = `<style type="text/css">span { color: "#ff0000" } span.non-blocking { color: "#FE8F59" }</style>${errorMsg}`
 
@@ -185,6 +162,7 @@ Item {
             inputPerGasTipLimit.validationError = root.greaterThan0ErrorMessage
         }
         const isInputValid = inputGasLimit.validationError === "" && inputGasPrice.validationError === "" && (!isEIP1559Enabled  || (isEIP1559Enabled && inputPerGasTipLimit.validationError === ""))
+        
         return isInputValid
     }
 
@@ -206,14 +184,13 @@ Item {
         anchors.top: parent.top
         anchors.left: prioritytext.right
         anchors.leftMargin: Style.current.smallPadding
-        text: qsTr("Current base fee: %1 %2").arg(latestBaseFeePerGasGwei).arg("Gwei")
+        text: qsTr("Current base fee: %1 %2").arg(root.suggestedFees.baseFee).arg("Gwei")
         font.weight: Font.Medium
         font.pixelSize: 13
         color: Style.current.secondaryText
     }
 
     StatusFlatButton {
-        visible: false // Change to TRUE once EIP1559 suggestions are revised
         id: buttonAdvanced
         anchors.verticalCenter: prioritytext.verticalCenter
         anchors.right: parent.right
@@ -243,7 +220,7 @@ Item {
             text: qsTr("Low")
             price: {
                 if (!isEIP1559Enabled) return gasPrice;
-                return formatDec(suggestedFees.maxFeePerGasL, 6)
+                return formatDec(root.suggestedFees.maxFeePerGasL, 6)
             }
             gasLimit: inputGasLimit ? inputGasLimit.text : ""
             getGasEthValue: root.getGasEthValue
@@ -251,8 +228,8 @@ Item {
             defaultCurrency: root.defaultCurrency
             onChecked: {
                 if (isEIP1559Enabled){
-                    inputPerGasTipLimit.text = formatDec(suggestedFees.maxPriorityFeePerGas, 2);
-                    inputGasPrice.text = formatDec(suggestedFees.maxFeePerGasL, 2);
+                    inputPerGasTipLimit.text = formatDec(root.suggestedFees.maxPriorityFeePerGas, 2);
+                    inputGasPrice.text = formatDec(root.suggestedFees.maxFeePerGasL, 2);
                 } else {
                     inputGasPrice.text = price
                 }
@@ -273,7 +250,7 @@ Item {
                     return root.gasPrice
                 }
 
-                return formatDec(suggestedFees.maxFeePerGasM, 6)
+                return formatDec(root.suggestedFees.maxFeePerGasM, 6)
             }
             gasLimit: inputGasLimit ? inputGasLimit.text : ""
             getGasEthValue: root.getGasEthValue
@@ -281,8 +258,8 @@ Item {
             defaultCurrency: root.defaultCurrency
             onChecked: {
                 if (isEIP1559Enabled){
-                    inputPerGasTipLimit.text = formatDec(suggestedFees.maxPriorityFeePerGas, 2);
-                    inputGasPrice.text = formatDec(suggestedFees.maxFeePerGasM, 2);
+                    inputPerGasTipLimit.text = formatDec(root.suggestedFees.maxPriorityFeePerGas, 2);
+                    inputGasPrice.text = formatDec(root.suggestedFees.maxFeePerGasM, 2);
                 } else {
                     inputGasPrice.text = root.gasPrice
                 }
@@ -296,7 +273,7 @@ Item {
             text: qsTr("High")
             price: {
                 if (!isEIP1559Enabled) return gasPrice;
-                return formatDec(suggestedFees.maxFeePerGasH,6);
+                return formatDec(root.suggestedFees.maxFeePerGasH,6);
             }
             gasLimit: inputGasLimit ? inputGasLimit.text : ""
             getGasEthValue: root.getGasEthValue
@@ -304,8 +281,8 @@ Item {
             defaultCurrency: root.defaultCurrency
             onChecked: {
                 if (isEIP1559Enabled){
-                    inputPerGasTipLimit.text = formatDec(suggestedFees.maxPriorityFeePerGas, 2);
-                    inputGasPrice.text = formatDec(suggestedFees.maxFeePerGasH, 2);
+                    inputPerGasTipLimit.text = formatDec(root.suggestedFees.maxPriorityFeePerGas, 2);
+                    inputGasPrice.text = formatDec(root.suggestedFees.maxFeePerGasH, 2);
                 } else {
                     inputGasPrice.text = price
                 }
@@ -359,7 +336,7 @@ Item {
             visible: isEIP1559Enabled
             width: 125
             customHeight: 56
-            text: formatDec(suggestedFees.maxPriorityFeePerGas, 2);
+            text: formatDec(root.suggestedFees.maxPriorityFeePerGas, 2);
             placeholderText: "20"
             onTextChanged: {
                 if (root.validate()) {

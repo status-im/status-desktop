@@ -30,10 +30,6 @@ proc getEthAccounts*(): RpcResponse[JsonNode] {.raises: [Exception].} =
 proc getGasPrice*(payload = %* []): RpcResponse[JsonNode] {.raises: [Exception].} =
   return core.callPrivateRPC("eth_gasPrice", payload)
 
-proc maxPriorityFeePerGas*(): RpcResponse[JsonNode] {.raises: [Exception].} =
-  let payload = %* []
-  return core.callPrivateRPC("eth_maxPriorityFeePerGas", payload)
-
-proc feeHistory*(n: int): RpcResponse[JsonNode] {.raises: [Exception].} =
-  let payload = %* [n, "latest", nil]
-  return core.callPrivateRPC("eth_feeHistory", payload)
+proc suggestedFees*(chainId: int): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [chainId]
+  return core.callPrivateRPC("wallet_getSuggestedFees", payload)

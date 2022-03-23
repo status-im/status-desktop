@@ -8,7 +8,6 @@ type WalletSignal* = ref object of Signal
   eventType*: string
   blockNumber*: int
   accounts*: seq[string]
-  baseFeePerGas*: string
   # newTransactions*: ???
   erc20*: bool
 
@@ -19,7 +18,6 @@ proc fromEvent*(T: type WalletSignal, jsonSignal: JsonNode): WalletSignal =
   if jsonSignal["event"].kind != JNull:
     result.eventType = jsonSignal["event"]["type"].getStr
     result.blockNumber = jsonSignal["event"]{"blockNumber"}.getInt
-    result.baseFeePerGas = jsonSignal["event"]{"baseFeePerGas"}.getStr
     result.erc20 = jsonSignal["event"]{"erc20"}.getBool
     result.accounts = @[]
     if jsonSignal["event"]["accounts"].kind != JNull:

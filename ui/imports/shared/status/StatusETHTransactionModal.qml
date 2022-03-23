@@ -121,7 +121,6 @@ ModalPopup {
                 getFiatValue: root.ensUsernamesStore.getFiatValue
                 defaultCurrency: root.ensUsernamesStore.getCurrentCurrency()
                 isEIP1559Enabled: root.store.isEIP1559Enabled()
-                latestBaseFeePerGas: root.store.latestBaseFeePerGas()
                 suggestedFees: root.store.suggestedFees()
                 
                 property var estimateGas: Backpressure.debounce(gasSelector, 600, function() {
@@ -221,13 +220,13 @@ ModalPopup {
                     if(gasSelector.isEIP1559Enabled && stack.currentGroup === group2 && gasSelector.advancedMode){
                         if(gasSelector.showPriceLimitWarning || gasSelector.showTipLimitWarning){
                             Global.openPopup(transactionSettingsConfirmationPopupComponent, {
-                                currentBaseFee: gasSelector.latestBaseFeePerGasGwei,
+                                currentBaseFee: gasSelector.suggestedFees.baseFee,
                                 currentMinimumTip: gasSelector.perGasTipLimitFloor,
                                 currentAverageTip: gasSelector.perGasTipLimitAverage,
                                 tipLimit: gasSelector.selectedTipLimit,
                                 suggestedTipLimit: gasSelector.perGasTipLimitFloor,
                                 priceLimit: gasSelector.selectedOverallLimit,
-                                suggestedPriceLimit: gasSelector.latestBaseFeePerGasGwei + gasSelector.perGasTipLimitFloor,
+                                suggestedPriceLimit: gasSelector.suggestedFees.baseFee + gasSelector.perGasTipLimitFloor,
                                 showPriceLimitWarning: gasSelector.showPriceLimitWarning,
                                 showTipLimitWarning: gasSelector.showTipLimitWarning,
                                 onConfirm: function(){
