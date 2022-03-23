@@ -171,7 +171,10 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_MAKE_SECTION_CHAT_ACTIVE) do(e: Args):
     var args = ActiveSectionChatArgs(e)
-    let sectionType = if args.sectionId == conf.CHAT_SECTION_ID: SectionType.Chat else: SectionType.Community
+    let sectionType = if args.sectionId == singletonInstance.userProfile.getPubKey():
+        SectionType.Chat
+      else:
+        SectionType.Community
     self.setActiveSection(args.sectionId, sectionType)
 
   self.events.on(SIGNAL_OS_NOTIFICATION_CLICKED) do(e: Args):
@@ -193,6 +196,9 @@ proc isConnected*(self: Controller): bool =
 
 proc getJoinedCommunities*(self: Controller): seq[CommunityDto] =
   return self.communityService.getJoinedCommunities()
+
+proc getChannelGroups*(self: Controller): seq[ChannelGroupDto] =
+  return self.chatService.getChannelGroups()
 
 proc checkForStoringPassword*(self: Controller) =
   # This proc is called once user is logged in irrespective he is logged in

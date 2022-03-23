@@ -144,22 +144,8 @@ QtObject:
 
           self.events.emit(SIGNAL_NEW_REQUEST_TO_JOIN_COMMUNITY, CommunityRequestArgs(communityRequest: membershipRequest))
 
-  proc mapChatToChatDto(chat: Chat, communityId: string): ChatDto =
-    result = ChatDto()
-    result.id = chat.id
-    result.communityId = communityId
-    result.name = chat.name
-    result.chatType = ChatType.CommunityChat
-    result.color = chat.color
-    result.emoji = chat.emoji
-    result.description = chat.description
-    result.canPost = chat.canPost
-    result.position = chat.position
-    result.categoryId = chat.categoryId
-    result.communityId = communityId
-
-  proc updateMissingFields(chatDto: var ChatDto, chat: Chat) =
-    # This proc sets fields of `chatDto` which are available only for comminity channels.
+  proc updateMissingFields(chatDto: var ChatDto, chat: ChatDto) =
+    # This proc sets fields of `chatDto` which are available only for community channels.
     chatDto.position = chat.position
     chatDto.canPost = chat.canPost
     chatDto.categoryId = chat.categoryId
@@ -169,7 +155,7 @@ QtObject:
       if(chat.id == id):
         return chat
 
-  proc findIndexById(id: string, chats: seq[Chat]): int =
+  proc findIndexById(id: string, chats: seq[ChatDto]): int =
     var idx = -1
     for chat in chats:
       inc idx
@@ -199,7 +185,6 @@ QtObject:
       if (chat.categoryId == categoryId):
         let fullChatId = community.id & chat.id
         var chatDetails = self.chatService.getChatById(fullChatId)
-        chatDetails.updateMissingFields(chat)
         result.add(chatDetails)
 
   proc handleCommunityUpdates(self: Service, communities: seq[CommunityDto], updatedChats: seq[ChatDto]) =
@@ -368,7 +353,7 @@ QtObject:
     else:
       result.sort(sortDesc[Category])
 
-  proc getChats*(self: Service, communityId: string, categoryId = "", order = SortOrder.Ascending): seq[Chat] =
+  proc getChats*(self: Service, communityId: string, categoryId = "", order = SortOrder.Ascending): seq[ChatDto] =
     ## By default returns chats which don't belong to any category, for passed `communityId`.
     ## If `categoryId` is set then only chats belonging to that category for passed `communityId` will be returned.
     ## Returned chats are sorted by position following set `order` parameter.
@@ -383,11 +368,11 @@ QtObject:
       result.add(chat)
 
     if(order == SortOrder.Ascending):
-      result.sort(sortAsc[Chat])
+      result.sort(sortAsc[ChatDto])
     else:
-      result.sort(sortDesc[Chat])
+      result.sort(sortDesc[ChatDto])
 
-  proc getAllChats*(self: Service, communityId: string, order = SortOrder.Ascending): seq[Chat] =
+  proc getAllChats*(self: Service, communityId: string, order = SortOrder.Ascending): seq[ChatDto] =
     ## Returns all chats belonging to the community with passed `communityId`, sorted by position.
     ## Returned chats are sorted by position following set `order` parameter.
     if(not self.joinedCommunities.contains(communityId)):
@@ -397,9 +382,9 @@ QtObject:
     result = self.joinedCommunities[communityId].chats
 
     if(order == SortOrder.Ascending):
-      result.sort(sortAsc[Chat])
+      result.sort(sortAsc[ChatDto])
     else:
-      result.sort(sortDesc[Chat])
+      result.sort(sortDesc[ChatDto])
 
   proc isUserMemberOfCommunity*(self: Service, communityId: string): bool =
     if(not self.allCommunities.contains(communityId)):
@@ -439,7 +424,7 @@ QtObject:
         if (currentChat.id != ""):
           # The chat service already knows that about that chat
           continue
-        var chatDto = mapChatToChatDto(chat, communityId)
+        var chatDto = chat
         chatDto.id = fullChatId
         # TODO find a way to populate missing infos like the color
         self.chatService.updateOrAddChat(chatDto)
@@ -602,7 +587,7 @@ QtObject:
         raise newException(RpcException, fmt"createCommunityChannel; there is no `chats` key in the response for community id: {communityId}")
 
       for chatObj in chatsJArr:
-        var chatDto = chatObj.toChatDto()
+        var chatDto = chatObj.toChatDto(communityId)
         self.chatService.updateOrAddChat(chatDto)
         let data = CommunityChatArgs(chat: chatDto)
         self.events.emit(SIGNAL_COMMUNITY_CHANNEL_CREATED, data)
@@ -642,7 +627,7 @@ QtObject:
         raise newException(RpcException, fmt"editCommunityChannel; there is no `chats` key in the response for community id: {communityId}")
 
       for chatObj in chatsJArr:
-        var chatDto = chatObj.toChatDto()
+        var chatDto = chatObj.toChatDto(communityId)
 
         self.chatService.updateOrAddChat(chatDto) # we have to update chats stored in the chat service.
 
@@ -863,7 +848,7 @@ QtObject:
       self.joinedCommunities[communityDto.id] = communityDto
 
       for chatObj in chatsJArr:
-        let chatDto = chatObj.toChatDto()
+        let chatDto = chatObj.toChatDto(communityDto.id)
         self.chatService.updateOrAddChat(chatDto) # we have to update chats stored in the chat service.
 
       for chat in communityDto.chats:

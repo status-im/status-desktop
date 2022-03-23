@@ -90,6 +90,7 @@ QtObject:
   type Service* = ref object of QObject
     events: EventEmitter
     chats: Table[string, ChatDto] # [chat_id, ChatDto]
+    channelGroups: OrderedTable[string, ChannelGroupDto] # [chatGroup_id, ChannelGroupDto]
     contactService: contact_service.Service
 
   proc delete*(self: Service) =
@@ -117,22 +118,38 @@ QtObject:
             self.updateOrAddChat(chatDto)
         self.events.emit(SIGNAL_CHAT_UPDATE, ChatUpdateArgsNew(messages: receivedData.messages, chats: chats))
   
+  proc sortPersonnalChatAsFirst[T, D](x, y: (T, D)): int =
+    if (x[1].channelGroupType == Personal): return -1
+    if (y[1].channelGroupType == Personal): return 1
+    return 0
+
   proc init*(self: Service) =  
     self.doConnect()
 
     try:
       let response = status_chat.getChats()
 
-      let chats = map(response.result.getElems(), proc(x: JsonNode): ChatDto = x.toChatDto())
+      var chats: seq[ChatDto] = @[]
+      for (sectionId, section) in response.result.pairs:
+        var channelGroup = section.toChannelGroupDto()
+        channelGroup.id = sectionId
+        self.channelGroups[sectionId] = channelGroup
+        for (chatId, chat) in section["chats"].pairs:
+          chats.add(chat.toChatDto())
+
+      # Make the personal channelGroup the first one
+      self.channelGroups.sort(sortPersonnalChatAsFirst[string, ChannelGroupDto], SortOrder.Ascending)
 
       for chat in chats:
         if chat.active and chat.chatType != chat_dto.ChatType.Unknown:
           self.chats[chat.id] = chat
-
     except Exception as e:
       let errDesription = e.msg
       error "error: ", errDesription
       return
+
+  proc getChannelGroups*(self: Service): seq[ChannelGroupDto] =
+    return toSeq(self.channelGroups.values)
 
   proc hasChannel*(self: Service, chatId: string): bool =
     self.chats.hasKey(chatId)

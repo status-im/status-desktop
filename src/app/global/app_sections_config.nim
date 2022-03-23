@@ -1,4 +1,3 @@
-const CHAT_SECTION_ID* = "chat"
 const CHAT_SECTION_NAME* = "Chat"
 const CHAT_SECTION_ICON* = "chat"
 

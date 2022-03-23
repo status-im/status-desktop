@@ -33,7 +33,7 @@ proc saveChat*(
 
 proc getChats*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* []
-  result = callPrivateRPC("chats".prefix, payload)
+  result = callPrivateRPC("chat_getChats", payload)
 
 proc createPublicChat*(chatId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   let communityId = ""

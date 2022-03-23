@@ -62,8 +62,7 @@ type
     view: View
     viewVariant: QVariant
     controller: Controller
-    chatSectionModule: chat_section_module.AccessInterface
-    communitySectionsModule: OrderedTable[string, chat_section_module.AccessInterface]
+    channelGroupModules: OrderedTable[string, chat_section_module.AccessInterface]
     walletSectionModule: wallet_section_module.AccessInterface
     browserSectionModule: browser_section_module.AccessInterface
     profileSectionModule: profile_section_module.AccessInterface
@@ -133,9 +132,7 @@ proc newModule*[T](
   result.moduleLoaded = false
 
   # Submodules
-  result.chatSectionModule = chat_section_module.newModule(result, events, conf.CHAT_SECTION_ID, false, settingsService,
-  contactsService, chatService, communityService, messageService, gifService, mailserversService)
-  result.communitySectionsModule = initOrderedTable[string, chat_section_module.AccessInterface]()
+  result.channelGroupModules = initOrderedTable[string, chat_section_module.AccessInterface]()
   result.walletSectionModule = wallet_section_module.newModule(
     result, events, tokenService,
     transactionService, collectible_service, walletAccountService,
@@ -158,14 +155,13 @@ proc newModule*[T](
   result.networksModule = networks_module.newModule(result, events, networkService, walletAccountService, settingsService)
 
 method delete*[T](self: Module[T]) =
-  self.chatSectionModule.delete
   self.profileSectionModule.delete
   self.stickersModule.delete
   self.activityCenterModule.delete
   self.communitiesModule.delete
-  for cModule in self.communitySectionsModule.values:
+  for cModule in self.channelGroupModules.values:
     cModule.delete
-  self.communitySectionsModule.clear
+  self.channelGroupModules.clear
   self.walletSectionModule.delete
   self.browserSectionModule.delete
   self.appSearchModule.delete
@@ -175,32 +171,43 @@ method delete*[T](self: Module[T]) =
   self.viewVariant.delete
   self.controller.delete
 
-proc createCommunityItem[T](self: Module[T], c: CommunityDto): SectionItem =
-  let (unviewedCount, mentionsCount) = self.controller.getNumOfNotificationsForCommunity(c.id)
+proc createChannelGroupItem[T](self: Module[T], c: ChannelGroupDto): SectionItem =
+  let isCommunity = c.channelGroupType == ChannelGroupType.Community
+  var communityDetails: CommunityDto
+  var unviewedCount, mentionsCount: int
+  if (isCommunity):
+    (unviewedCount, mentionsCount) = self.controller.getNumOfNotificationsForCommunity(c.id)
+    communityDetails = self.controller.getCommunityById(c.id)
+  else:
+    let receivedContactRequests = self.controller.getContacts(ContactsGroup.IncomingPendingContactRequests)
+    (unviewedCount, mentionsCount) = self.controller.getNumOfNotificaitonsForChat()
+    mentionsCount = mentionsCount + receivedContactRequests.len
+
   let hasNotification = unviewedCount > 0 or mentionsCount > 0
   let notificationsCount = mentionsCount # we need to add here number of requests
   let active = self.getActiveSectionId() == c.id # We must pass on if the current item section is currently active to keep that property as it is
   result = initItem(
     c.id,
-    SectionType.Community,
+    if isCommunity: SectionType.Community else: SectionType.Chat,
     c.name,
     c.admin,
     c.description,
     c.images.thumbnail,
-    icon = "",
+    icon = if (isCommunity): "" else: conf.CHAT_SECTION_ICON,
     c.color,
     hasNotification,
     notificationsCount,
     active,
-    enabled = singletonInstance.localAccountSensitiveSettings.getCommunitiesEnabled(),
-    c.joined,
-    c.canJoin,
+    enabled = (not isCommunity or 
+      singletonInstance.localAccountSensitiveSettings.getCommunitiesEnabled()),
+    if (isCommunity): communityDetails.joined else: true,
+    if (isCommunity): communityDetails.canJoin else: true,
     c.canManageUsers,
-    c.canRequestAccess,
-    c.isMember,
+    if (isCommunity): communityDetails.canRequestAccess else: true,
+    if (isCommunity): communityDetails.isMember else: true,
     c.permissions.access,
     c.permissions.ensOnly,
-    c.members.map(proc(member: Member): user_item.Item =
+    c.members.map(proc(member: ChatMember): user_item.Item =
       let contactDetails = self.controller.getContactDetails(member.id)
       result = user_item.initItem(
         member.id,
@@ -214,14 +221,14 @@ proc createCommunityItem[T](self: Module[T], c: CommunityDto): SectionItem =
         contactDetails.isidenticon,
         contactDetails.details.added
         )),
-    c.pendingRequestsToJoin.map(x => pending_request_item.initItem(
+    if (isCommunity): communityDetails.pendingRequestsToJoin.map(x => pending_request_item.initItem(
       x.id,
       x.publicKey,
       x.chatId,
       x.communityId,
       x.state,
       x.our
-    ))
+    )) else: @[]
   )
 
 method load*[T](
@@ -239,15 +246,18 @@ method load*[T](
   self.controller.init()
   self.view.load()
 
-  # Create community modules here, since we don't know earlier how many joined communities we have.
-  let joinedCommunities = self.controller.getJoinedCommunities()
+  var activeSection: SectionItem
+  var activeSectionId = singletonInstance.localAccountSensitiveSettings.getActiveSection()
+  if (activeSectionId == ""):
+    activeSectionId = singletonInstance.userProfile.getPubKey()
 
-  for c in joinedCommunities:
-    self.communitySectionsModule[c.id] = chat_section_module.newModule(
+  let channelGroups = self.controller.getChannelGroups()
+  for channelGroup in channelGroups:
+    self.channelGroupModules[channelGroup.id] = chat_section_module.newModule(
       self,
       events,
-      c.id,
-      isCommunity = true,
+      channelGroup.id,
+      isCommunity = channelGroup.channelGroupType == ChannelGroupType.Community,
       settingsService,
       contactsService,
       chatService,
@@ -256,35 +266,10 @@ method load*[T](
       gifService,
       mailserversService
     )
-
-  var activeSection: SectionItem
-  var activeSectionId = singletonInstance.localAccountSensitiveSettings.getActiveSection()
-
-  # Chat Section
-  let receivedContactRequests = self.controller.getContacts(ContactsGroup.IncomingPendingContactRequests)
-  let (unviewedCount, mentionsCount) = self.controller.getNumOfNotificaitonsForChat()
-  let notificationsCount = mentionsCount + receivedContactRequests.len
-  let hasNotification = unviewedCount > 0 or notificationsCount > 0
-  let chatSectionItem = initItem(conf.CHAT_SECTION_ID, SectionType.Chat, conf.CHAT_SECTION_NAME,
-  amISectionAdmin = false,
-  description = "",
-  image = "",
-  conf.CHAT_SECTION_ICON,
-  color = "",
-  hasNotification,
-  notificationsCount,
-  active = false,
-  enabled = true)
-  self.view.model().addItem(chatSectionItem)
-  if(activeSectionId == chatSectionItem.id):
-    activeSection = chatSectionItem
-
-  # Community Section
-  for c in joinedCommunities:
-    let communitySectionItem = self.createCommunityItem(c)
-    self.view.model().addItem(communitySectionItem)
-    if(activeSectionId == communitySectionItem.id):
-      activeSection = communitySectionItem
+    let channelGroupItem = self.createChannelGroupItem(channelGroup)
+    self.view.model().addItem(channelGroupItem)
+    if(activeSectionId == channelGroupItem.id):
+      activeSection = channelGroupItem
 
   # Wallet Section
   let walletSectionItem = initItem(conf.WALLET_SECTION_ID, SectionType.Wallet, conf.WALLET_SECTION_NAME,
@@ -349,9 +334,9 @@ method load*[T](
     activeSection = profileSettingsSectionItem
 
   # Load all sections
-  self.chatSectionModule.load(events, settingsService, contactsService, chatService, communityService, messageService, gifService, mailserversService)
-  for cModule in self.communitySectionsModule.values:
-    cModule.load(events, settingsService, contactsService, chatService, communityService, messageService, gifService, mailserversService)
+  for cModule in self.channelGroupModules.values:
+    cModule.load(events, settingsService, contactsService, chatService, communityService,
+      messageService, gifService, mailserversService)
 
   self.browserSectionModule.load()
   # self.nodeManagementSectionModule.load()
@@ -372,10 +357,7 @@ proc checkIfModuleDidLoad [T](self: Module[T]) =
   if self.moduleLoaded:
     return
 
-  if(not self.chatSectionModule.isLoaded()):
-    return
-
-  for cModule in self.communitySectionsModule.values:
+  for cModule in self.channelGroupModules.values:
     if(not cModule.isLoaded()):
       return
 
@@ -471,9 +453,7 @@ method setActiveSection*[T](self: Module[T], item: SectionItem) =
   self.controller.setActiveSection(item.id, item.sectionType)
 
 proc notifySubModulesAboutChange[T](self: Module[T], sectionId: string) =
-  self.chatSectionModule.onActiveSectionChange(sectionId)
-
-  for cModule in self.communitySectionsModule.values:
+  for cModule in self.channelGroupModules.values:
     cModule.onActiveSectionChange(sectionId)
 
   # If there is a need other section may be notified the same way from here...
@@ -518,14 +498,14 @@ method setUserStatus*[T](self: Module[T], status: bool) =
   self.controller.setUserStatus(status)
 
 method getChatSectionModule*[T](self: Module[T]): QVariant =
-  return self.chatSectionModule.getModuleAsVariant()
+  return self.channelGroupModules[singletonInstance.userProfile.getPubKey()].getModuleAsVariant()
 
 method getCommunitySectionModule*[T](self: Module[T], communityId: string): QVariant =
-  if(not self.communitySectionsModule.contains(communityId)):
+  if(not self.channelGroupModules.contains(communityId)):
     echo "main-module, unexisting community key: ", communityId
     return
 
-  return self.communitySectionsModule[communityId].getModuleAsVariant()
+  return self.channelGroupModules[communityId].getModuleAsVariant()
 
 method rebuildChatSearchModel*[T](self: Module[T]) =
   let transformItem = proc(item: chat_section_base_item.BaseItem, sectionId, sectionName: string): chat_search_item.Item =
@@ -539,9 +519,10 @@ method rebuildChatSearchModel*[T](self: Module[T]) =
         for subItem in item.subItems().items():
           result.add(transformItem(subItem, sectionId, sectionName))
 
-  var items = transform(self.chatSectionModule.chatsModel().items(), conf.CHAT_SECTION_ID, conf.CHAT_SECTION_NAME)
-  for cId in self.communitySectionsModule.keys:
-    items.add(transform(self.communitySectionsModule[cId].chatsModel().items(), cId, self.view.model().getItemById(cId).name()))
+  var items: seq[chat_search_item.Item] = @[]
+  for cId in self.channelGroupModules.keys:
+    items.add(transform(self.channelGroupModules[cId].chatsModel().items(), cId,
+      self.view.model().getItemById(cId).name()))
 
   self.view.chatSearchModel().setItems(items)
 
@@ -580,9 +561,9 @@ method communityJoined*[T](
   mailserversService: mailservers_service.Service,
 ) =
   var firstCommunityJoined = false
-  if (self.communitySectionsModule.len == 0):
+  if (self.channelGroupModules.len == 1): # First one is personal chat section
     firstCommunityJoined = true
-  self.communitySectionsModule[community.id] = chat_section_module.newModule(
+  self.channelGroupModules[community.id] = chat_section_module.newModule(
       self,
       events,
       community.id,
@@ -595,33 +576,37 @@ method communityJoined*[T](
       gifService,
       mailserversService
     )
-  self.communitySectionsModule[community.id].load(events, settingsService, contactsService, chatService, communityService, messageService, gifService, mailserversService)
+  self.channelGroupModules[community.id].load(events, settingsService, contactsService, chatService,
+    communityService, messageService, gifService, mailserversService)
 
-  let communitySectionItem = self.createCommunityItem(community)
+  let channelGroup = community.toChannelGroupDto()
+  let communitySectionItem = self.createChannelGroupItem(channelGroup)
   if (firstCommunityJoined):
     # If there are no other communities, add the first community after the Chat section in the model so that the order is respected
-    self.view.model().addItem(communitySectionItem, self.view.model().getItemIndex(conf.CHAT_SECTION_ID) + 1)
+    self.view.model().addItem(communitySectionItem,
+      self.view.model().getItemIndex(singletonInstance.userProfile.getPubKey()) + 1)
   else:
     self.view.model().addItem(communitySectionItem)
   self.setActiveSection(communitySectionItem)
 
 method communityLeft*[T](self: Module[T], communityId: string) =
-  if(not self.communitySectionsModule.contains(communityId)):
+  if(not self.channelGroupModules.contains(communityId)):
     echo "main-module, unexisting community key to leave: ", communityId
     return
 
-  self.communitySectionsModule.del(communityId)
+  self.channelGroupModules.del(communityId)
 
   self.view.model().removeItem(communityId)
 
   if (self.controller.getActiveSectionId() == communityId):
-    let item = self.view.model().getItemById(conf.CHAT_SECTION_ID)
+    let item = self.view.model().getItemById(singletonInstance.userProfile.getPubKey())
     self.setActiveSection(item)
 
 method communityEdited*[T](
     self: Module[T],
     community: CommunityDto) =
-  self.view.editItem(self.createCommunityItem(community))
+  let channelGroup = community.toChannelGroupDto()
+  self.view.editItem(self.createChannelGroupItem(channelGroup))
 
 method getContactDetailsAsJson*[T](self: Module[T], publicKey: string): string =
   let contact =  self.controller.getContact(publicKey)
