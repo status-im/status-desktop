@@ -24,14 +24,6 @@ Item {
     property var emojiPopup
 
     height: walletAddress.y + walletAddress.height
-    anchors.right: parent.right
-    anchors.rightMargin: 0
-    anchors.left: parent.left
-    anchors.leftMargin: 0
-    anchors.top: parent.top
-    anchors.topMargin: 0
-    Layout.fillHeight: true
-    Layout.fillWidth: true
 
     StyledText {
         id: title
@@ -89,17 +81,6 @@ Item {
     }
 
     Component {
-        id: receiveModalComponent
-        ReceiveModal {
-            onClosed: {
-                destroy();
-            }
-            selectedAccount: walletHeader.walletStore.currentAccount
-            anchors.centerIn: parent
-        }
-    }
-
-    Component {
         id: setCurrencyModalComponent
         SetCurrencyModal {
             onClosed: {
@@ -118,55 +99,15 @@ Item {
         }
     }
 
-
-    Component {
-        id: buySellModal
-        CryptoServicesModal {
-            onClosed: destroy()
-        }
-    }
-
     RowLayout {
         id: walletMenu
 
         anchors.top: parent.top
-        anchors.topMargin: 16
+        anchors.topMargin: Style.current.padding
         anchors.right: parent.right
-        anchors.rightMargin: 16
+        anchors.rightMargin: Style.current.padding
 
         spacing:  Style.current.bigPadding
-
-        HeaderButton {
-            id: sendBtn
-            imageSource: Style.svg("send")
-            //% "Send"
-            text: qsTrId("command-button-send")
-            onClicked: function() {
-                sendModal.open()
-            }
-        }
-
-        HeaderButton {
-            id: receiveBtn
-            imageSource: Style.svg("send")
-            flipImage: true
-            //% "Receive"
-            text: qsTrId("receive")
-            onClicked: function () {
-                Global.openPopup(receiveModalComponent);
-            }
-        }
-
-        HeaderButton {
-            id: buySellBtn
-            imageSource: Style.svg("crypto-icon")
-            flipImage: true
-            //% "Buy / Sell"
-            text: qsTrId("Buy / Sell")
-            onClicked: function () {
-                Global.openPopup(buySellModal);
-            }
-        }
 
         HeaderButton {
             id: settingsBtn

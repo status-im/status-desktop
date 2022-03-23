@@ -498,6 +498,7 @@ Item {
                     store: appMain.rootStore
                     contactsStore: appMain.rootStore.profileSectionStore.contactsStore
                     emojiPopup: statusEmojiPopup
+                    sendModal: sendModal
                 }
 
                 Component {
