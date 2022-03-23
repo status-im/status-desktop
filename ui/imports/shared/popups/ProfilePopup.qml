@@ -122,8 +122,9 @@ StatusModal {
 
                 displayNameVisible: false
                 pubkeyVisible: false
+                supersampling: true
+                emojiSize: Qt.size(20,20)
 
-                emojiSize: "20x20"
                 imageWidth: 80
                 imageHeight: 80
 
