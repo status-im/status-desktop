@@ -1,40 +1,31 @@
 {.used.}
 
-import json, sequtils
+import json, sequtils, sugar
 
 import ../../../../backend/communities
 include ../../../common/json_utils
 
-type
-  Permission* = object
-    access*: int
-    ensOnly*: bool
+import ../../chat/dto/chat
 
 type
-  Images* = object
-    thumbnail*: string
-    large*: string
-
-type Chat* = object
-  id*: string
-  name*: string
-  color*: string
-  emoji*: string
-  description*: string
-  #members*: seq[ChatMember] ???? It's always null and a question is why do we need it here within this context ????
-  permissions*: Permission
-  canPost*: bool
-  position*: int
-  categoryId*: string
-
-type Category* = object
-  id*: string
-  name*: string
-  position*: int
+  CommunityMemberRoles* {.pure.} = enum
+    Unknown = 0,
+    All = 1,
+    ManagerUsers = 2
 
 type Member* = object
   id*: string
   roles*: seq[int]
+
+proc toMember*(jsonObj: JsonNode, memberId: string): Member =
+  # Mapping this DTO is not strightforward since only keys are used for id. We
+  # handle it a bit different.
+  result = Member()
+  result.id = memberId
+  var rolesObj: JsonNode
+  if(jsonObj.getProp("roles", rolesObj)):
+    for roleObj in rolesObj:
+      result.roles.add(roleObj.getInt)
 
 type CommunityMembershipRequestDto* = object
   id*: string
@@ -52,7 +43,7 @@ type CommunityDto* = object
   requestedAccessAt: int64
   name*: string
   description*: string
-  chats*: seq[Chat]
+  chats*: seq[ChatDto]
   categories*: seq[Category]
   images*: Images
   permissions*: Permission
@@ -65,53 +56,6 @@ type CommunityDto* = object
   isMember*: bool
   muted*: bool
   pendingRequestsToJoin*: seq[CommunityMembershipRequestDto]
-
-proc toPermission(jsonObj: JsonNode): Permission =
-  result = Permission()
-  discard jsonObj.getProp("access", result.access)
-  discard jsonObj.getProp("ens_only", result.ensOnly)
-
-proc toImages(jsonObj: JsonNode): Images =
-  result = Images()
-
-  var largeObj: JsonNode
-  if(jsonObj.getProp("large", largeObj)):
-    discard largeObj.getProp("uri", result.large)
-
-  var thumbnailObj: JsonNode
-  if(jsonObj.getProp("thumbnail", thumbnailObj)):
-    discard thumbnailObj.getProp("uri", result.thumbnail)
-
-proc toChat*(jsonObj: JsonNode): Chat =
-  result = Chat()
-  discard jsonObj.getProp("id", result.id)
-  discard jsonObj.getProp("name", result.name)
-  discard jsonObj.getProp("color", result.color)
-  discard jsonObj.getProp("emoji", result.emoji)
-  discard jsonObj.getProp("description", result.description)
-  var permissionObj: JsonNode
-  if(jsonObj.getProp("permissions", permissionObj)):
-    result.permissions = toPermission(permissionObj)
-  discard jsonObj.getProp("canPost", result.canPost)
-  discard jsonObj.getProp("position", result.position)
-  discard jsonObj.getProp("categoryID", result.categoryId)
-
-proc toCategory*(jsonObj: JsonNode): Category =
-  result = Category()
-  if (not jsonObj.getProp("category_id", result.id)):
-    discard jsonObj.getProp("id", result.id)
-  discard jsonObj.getProp("name", result.name)
-  discard jsonObj.getProp("position", result.position)
-
-proc toMember*(jsonObj: JsonNode, memberId: string): Member =
-  # Mapping this DTO is not strightforward since only keys are used for id. We
-  # handle it a bit different.
-  result = Member()
-  result.id = memberId
-  var rolesObj: JsonNode
-  if(jsonObj.getProp("roles", rolesObj)):
-    for roleObj in rolesObj:
-      result.roles.add(roleObj.getInt)
 
 proc toCommunityDto*(jsonObj: JsonNode): CommunityDto =
   result = CommunityDto()
@@ -126,7 +70,7 @@ proc toCommunityDto*(jsonObj: JsonNode): CommunityDto =
   var chatsObj: JsonNode
   if(jsonObj.getProp("chats", chatsObj)):
     for _, chatObj in chatsObj:
-      result.chats.add(toChat(chatObj))
+      result.chats.add(chatObj.toChatDto(result.id))
 
   var categoriesObj: JsonNode
   if(jsonObj.getProp("categories", categoriesObj)):
@@ -166,3 +110,33 @@ proc toCommunityMembershipRequestDto*(jsonObj: JsonNode): CommunityMembershipReq
 proc parseCommunities*(response: RpcResponse[JsonNode]): seq[CommunityDto] =
   result = map(response.result.getElems(),
     proc(x: JsonNode): CommunityDto = x.toCommunityDto())
+
+proc contains(arrayToSearch: seq[int], searched: int): bool =
+  for element in arrayToSearch:
+    if element == searched:
+      return true
+  return false
+
+proc toChannelGroupDto*(communityDto: CommunityDto): ChannelGroupDto =
+  ChannelGroupDto(
+    id: communityDto.id,
+    channelGroupType: ChannelGroupType.Community,
+    name: communityDto.name,
+    images: communityDto.images,
+    chats: communityDto.chats,
+    categories: communityDto.categories,
+    # Community doesn't have an ensName yet. Add this when it is added in status-go
+    # ensName: communityDto.ensName,
+    admin: communityDto.admin,
+    verified: communityDto.verified,
+    description: communityDto.description,
+    color: communityDto.color,
+    permissions: communityDto.permissions,
+    members: communityDto.members.map(m => ChatMember(
+        id: m.id,
+        joined: true,
+        admin: m.roles.contains(CommunityMemberRoles.ManagerUsers.int)
+      )),
+    canManageUsers: communityDto.canManageUsers,
+    muted: communityDto.muted
+  )

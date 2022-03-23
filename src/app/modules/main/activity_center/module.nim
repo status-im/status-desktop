@@ -78,7 +78,10 @@ method convertToItems*(
 
       let chatDetails = self.controller.getChatDetails(n.chatId)
       # default section id is `Chat` section
-      let sectionId = if(chatDetails.communityId.len > 0): chatDetails.communityId else: conf.CHAT_SECTION_ID
+      let sectionId = if(chatDetails.communityId.len > 0):
+          chatDetails.communityId
+        else:
+          singletonInstance.userProfile.getPubKey()
 
       if (n.message.id != ""):
         # If there is a message in the Notification, transfer it to a MessageItem (QObject)

@@ -207,7 +207,7 @@ proc getMyCommunity*(self: Controller): CommunityDto =
 proc getCategories*(self: Controller, communityId: string): seq[Category] =
   return self.communityService.getCategories(communityId)
 
-proc getChats*(self: Controller, communityId: string, categoryId: string): seq[Chat] =
+proc getChats*(self: Controller, communityId: string, categoryId: string): seq[ChatDto] =
   return self.communityService.getChats(communityId, categoryId)
 
 proc getChatDetails*(self: Controller, communityId, chatId: string): ChatDto =

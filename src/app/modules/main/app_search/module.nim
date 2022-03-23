@@ -67,8 +67,8 @@ method getModuleAsVariant*(self: Module): QVariant =
   return self.viewVariant
 
 proc buildLocationMenuForChat(self: Module): location_menu_item.Item =
-  var item = location_menu_item.initItem(conf.CHAT_SECTION_ID, SEARCH_MENU_LOCATION_CHAT_SECTION_NAME, "", "chat", "",
-  false)
+  var item = location_menu_item.initItem(singletonInstance.userProfile.getPubKey(),
+    SEARCH_MENU_LOCATION_CHAT_SECTION_NAME, "", "chat", "", false)
 
   let types = @[ChatType.OneToOne, ChatType.Public, ChatType.PrivateGroupChat]
   let displayedChats = self.controller.getChatDetailsForChatTypes(types)
@@ -176,7 +176,8 @@ method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
           channels.add(item)
 
   # Add chats
-  if(self.controller.searchLocation().len == 0 or self.controller.searchLocation() == conf.CHAT_SECTION_ID and
+  if(self.controller.searchLocation().len == 0 or
+    self.controller.searchLocation() == singletonInstance.userProfile.getPubKey() and
     self.controller.searchSubLocation().len == 0):
     let types = @[ChatType.OneToOne, ChatType.Public, ChatType.PrivateGroupChat]
     let displayedChats = self.controller.getChatDetailsForChatTypes(types)
@@ -196,7 +197,7 @@ method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
         let item = result_item.initItem(c.id, "", "", c.id, chatName, SEARCH_RESULT_CHATS_SECTION_NAME, chatImage,
         c.color, "", "", chatImage, c.color, isIdenticon)
 
-        self.controller.addResultItemDetails(c.id, conf.CHAT_SECTION_ID, c.id)
+        self.controller.addResultItemDetails(c.id, singletonInstance.userProfile.getPubKey(), c.id)
         items.add(item)
 
   # Add channels in order as requested by the design
@@ -222,7 +223,8 @@ method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
       let item = result_item.initItem(m.id, m.text, $m.timestamp, m.`from`, senderName,
       SEARCH_RESULT_MESSAGES_SECTION_NAME, senderImage, "", chatName, "", chatImage, chatDto.color, isIdenticon)
 
-      self.controller.addResultItemDetails(m.id, conf.CHAT_SECTION_ID, chatDto.id, m.id)
+      self.controller.addResultItemDetails(m.id, singletonInstance.userProfile.getPubKey(),
+        chatDto.id, m.id)
       items.add(item)
     else:
       let community = self.controller.getCommunityById(chatDto.communityId)

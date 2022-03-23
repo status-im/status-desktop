@@ -2,7 +2,7 @@ import Tables, chronicles
 import io_interface
 
 import ../../../global/app_signals
-import ../../../global/app_sections_config as conf
+import ../../../global/global_singleton
 import ../../../../app_service/service/contacts/service as contact_service
 import ../../../../app_service/service/chat/service as chat_service
 import ../../../../app_service/service/community/service as community_service
@@ -90,7 +90,7 @@ proc getJoinedCommunities*(self: Controller): seq[CommunityDto] =
 proc getCommunityById*(self: Controller, communityId: string): CommunityDto =
   return self.communityService.getCommunityById(communityId)
 
-proc getAllChatsForCommunity*(self: Controller, communityId: string): seq[Chat] =
+proc getAllChatsForCommunity*(self: Controller, communityId: string): seq[ChatDto] =
   return self.communityService.getAllChats(communityId)
 
 proc getChatDetailsForChatTypes*(self: Controller, types: seq[ChatType]): seq[ChatDto] =
@@ -110,8 +110,8 @@ proc searchMessages*(self: Controller, searchTerm: string) =
   if (self.searchSubLocation.len > 0):
     chats.add(self.searchSubLocation)
   elif (self.searchLocation.len > 0):
-    # If "Chat" is set for the meassgeSearchLocation that means we need to search in all chats from the chat section.
-    if (self.searchLocation != conf.CHAT_SECTION_ID):
+    # If user's pubkey is set for the meassgeSearchLocation that means we need to search in all chats from the personal chat section.
+    if (self.searchLocation != singletonInstance.userProfile.getPubKey()):
       communities.add(self.searchLocation)
     else:
       let types = @[ChatType.OneToOne, ChatType.Public, ChatType.PrivateGroupChat]

@@ -9,6 +9,7 @@ import ../../../global/global_singleton
 import ../../../core/eventemitter
 import ../../../../app_service/service/community/service as community_service
 import ../../../../app_service/service/contacts/service as contacts_service
+import ../../../../app_service/service/chat/dto/chat
 
 export io_interface
 

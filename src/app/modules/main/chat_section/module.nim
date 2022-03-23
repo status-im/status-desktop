@@ -148,69 +148,66 @@ proc buildCommunityUI(self: Module, events: EventEmitter,
   mailserversService: mailservers_service.Service) =
   var selectedItemId = ""
   var selectedSubItemId = ""
-  let communities = self.controller.getJoinedCommunities()
-  for comm in communities:
-    if(self.controller.getMySectionId() != comm.id):
-      continue
+  let comm = self.controller.getMyCommunity()
+  
+  # handle channels which don't belong to any category
+  let chats = self.controller.getChats(comm.id, "")
+  for c in chats:
+    let chatDto = self.controller.getChatDetails(comm.id, c.id)
 
-    # handle channels which don't belong to any category
-    let chats = self.controller.getChats(comm.id, "")
-    for c in chats:
+    let hasNotification = chatDto.unviewedMessagesCount > 0 or chatDto.unviewedMentionsCount > 0
+    let notificationsCount = chatDto.unviewedMentionsCount
+    let amIChatAdmin = comm.admin
+    let channelItem = initItem(chatDto.id, chatDto.name, chatDto.identicon, false, chatDto.color,
+      chatDto.emoji, chatDto.description, chatDto.chatType.int, amIChatAdmin, hasNotification,
+      notificationsCount, chatDto.muted, blocked=false, active = false, c.position, c.categoryId)
+    self.view.chatsModel().appendItem(channelItem)
+    self.addSubmodule(chatDto.id, true, true, events, settingsService, contactService, chatService, communityService,
+    messageService, gifService, mailserversService)
+
+    # make the first channel which doesn't belong to any category active when load the app
+    if(selectedItemId.len == 0):
+      selectedItemId = channelItem.id
+
+  # handle categories and channels for each category
+  let categories = self.controller.getCategories(comm.id)
+  for cat in categories:
+    var hasNotificationPerCategory = false
+    var notificationsCountPerCategory = 0
+    var categoryChannels: seq[SubItem]
+
+    let categoryChats = self.controller.getChats(comm.id, cat.id)
+    for c in categoryChats:
       let chatDto = self.controller.getChatDetails(comm.id, c.id)
 
       let hasNotification = chatDto.unviewedMessagesCount > 0 or chatDto.unviewedMentionsCount > 0
       let notificationsCount = chatDto.unviewedMentionsCount
+
+      hasNotificationPerCategory = hasNotificationPerCategory or hasNotification
+      notificationsCountPerCategory += notificationsCount
+
       let amIChatAdmin = comm.admin
-      let channelItem = initItem(chatDto.id, chatDto.name, chatDto.identicon, false, chatDto.color,
-        chatDto.emoji, chatDto.description, chatDto.chatType.int, amIChatAdmin, hasNotification,
-        notificationsCount, chatDto.muted, blocked=false, active = false, c.position, c.categoryId)
-      self.view.chatsModel().appendItem(channelItem)
+
+      let channelItem = initSubItem(chatDto.id, cat.id, chatDto.name, chatDto.identicon,
+        isIdenticon=false, chatDto.color, chatDto.emoji, chatDto.description, chatDto.chatType.int,
+        amIChatAdmin, hasNotification, notificationsCount, chatDto.muted, blocked=false,
+        active=false, c.position)
+      categoryChannels.add(channelItem)
       self.addSubmodule(chatDto.id, true, true, events, settingsService, contactService, chatService, communityService,
       messageService, gifService, mailserversService)
 
-      # make the first channel which doesn't belong to any category active when load the app
+      # in case there is no channels beyond categories,
+      # make the first channel of the first category active when load the app
       if(selectedItemId.len == 0):
-        selectedItemId = channelItem.id
+        selectedItemId = cat.id
+        selectedSubItemId = channelItem.id
 
-    # handle categories and channels for each category
-    let categories = self.controller.getCategories(comm.id)
-    for cat in categories:
-      var hasNotificationPerCategory = false
-      var notificationsCountPerCategory = 0
-      var categoryChannels: seq[SubItem]
-
-      let categoryChats = self.controller.getChats(comm.id, cat.id)
-      for c in categoryChats:
-        let chatDto = self.controller.getChatDetails(comm.id, c.id)
-
-        let hasNotification = chatDto.unviewedMessagesCount > 0 or chatDto.unviewedMentionsCount > 0
-        let notificationsCount = chatDto.unviewedMentionsCount
-
-        hasNotificationPerCategory = hasNotificationPerCategory or hasNotification
-        notificationsCountPerCategory += notificationsCount
-
-        let amIChatAdmin = comm.admin
-
-        let channelItem = initSubItem(chatDto.id, cat.id, chatDto.name, chatDto.identicon,
-          isIdenticon=false, chatDto.color, chatDto.emoji, chatDto.description, chatDto.chatType.int,
-          amIChatAdmin, hasNotification, notificationsCount, chatDto.muted, blocked=false,
-          active=false, c.position)
-        categoryChannels.add(channelItem)
-        self.addSubmodule(chatDto.id, true, true, events, settingsService, contactService, chatService, communityService,
-        messageService, gifService, mailserversService)
-
-        # in case there is no channels beyond categories,
-        # make the first channel of the first category active when load the app
-        if(selectedItemId.len == 0):
-          selectedItemId = cat.id
-          selectedSubItemId = channelItem.id
-
-      var categoryItem = initItem(cat.id, cat.name, icon="", isIdenticon=false, color="", emoji="",
-        description="", ChatType.Unknown.int, amIChatAdmin=false, hasNotificationPerCategory,
-        notificationsCountPerCategory, muted=false, blocked=false, active=false,
-        cat.position, cat.id)
-      categoryItem.prependSubItems(categoryChannels)
-      self.view.chatsModel().appendItem(categoryItem)
+    var categoryItem = initItem(cat.id, cat.name, icon="", isIdenticon=false, color="", emoji="",
+      description="", ChatType.Unknown.int, amIChatAdmin=false, hasNotificationPerCategory,
+      notificationsCountPerCategory, muted=false, blocked=false, active=false,
+      cat.position, cat.id)
+    categoryItem.prependSubItems(categoryChannels)
+    self.view.chatsModel().appendItem(categoryItem)
 
   self.setActiveItemSubItem(selectedItemId, selectedSubItemId)
 
@@ -635,7 +632,8 @@ method onContactDetailsUpdated*(self: Module, publicKey: string) =
       self.view.contactRequestsModel().addItem(item)
       self.updateParentBadgeNotifications()
       singletonInstance.globalEvents.showNewContactRequestNotification("New Contact Request",
-      fmt "{contactDetails.displayName} added you as contact", conf.CHAT_SECTION_ID)
+      fmt "{contactDetails.displayName} added you as contact",
+        singletonInstance.userProfile.getPubKey())
 
   let chatName = contactDetails.displayName
   let chatImage = contactDetails.icon
@@ -663,8 +661,10 @@ method onNewMessagesReceived*(self: Module, chatId: string, unviewedMessagesCoun
       self.controller.getMySectionId(), chatId, m.id)
 
 method onMeMentionedInEditedMessage*(self: Module, chatId: string, editedMessage : MessageDto) =
-  if(editedMessage.communityId.len == 0 and self.controller.getMySectionId() != conf.CHAT_SECTION_ID or
-    editedMessage.communityId.len > 0 and self.controller.getMySectionId() != editedMessage.communityId):
+  if((editedMessage.communityId.len == 0 and
+    self.controller.getMySectionId() != singletonInstance.userProfile.getPubKey()) or
+    (editedMessage.communityId.len > 0 and
+    self.controller.getMySectionId() != editedMessage.communityId)):
     return
   var (sectionHasUnreadMessages, sectionNotificationCount) = self.view.chatsModel().getAllNotifications()
   self.updateBadgeNotifications(chatId, sectionHasUnreadMessages, sectionNotificationCount + 1)
@@ -777,7 +777,7 @@ method addChatIfDontExist*(self: Module,
 
   let sectionId = self.controller.getMySectionId()
   if(belongsToCommunity and sectionId != chat.communityId or
-    not belongsToCommunity and sectionId != conf.CHAT_SECTION_ID):
+    not belongsToCommunity and sectionId != singletonInstance.userProfile.getPubKey()):
     return
 
   if self.doesCatOrChatExist(chat.id):
