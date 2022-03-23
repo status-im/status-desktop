@@ -16,3 +16,4 @@ SignTransactionModal 1.0 SignTransactionModal.qml
 SelectAccountModal 1.0 SelectAccountModal.qml
 ProfilePopup 1.0 ProfilePopup.qml
 ImageCropWorkflow 1.0 ImageCropWorkflow.qml
+ImportCommunityPopup 1.0 ImportCommunityPopup.qml

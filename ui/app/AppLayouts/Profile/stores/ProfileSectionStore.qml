@@ -62,6 +62,12 @@ QtObject {
 
     property bool browserMenuItemEnabled: localAccountSensitiveSettings.isBrowserEnabled
     property bool walletMenuItemEnabled: localAccountSensitiveSettings.isWalletEnabled
+    property bool appsMenuItemsEnabled: localAccountSensitiveSettings.isWalletEnabled || localAccountSensitiveSettings.communitiesEnabled
+    property bool communitiesMenuItemEnabled: localAccountSensitiveSettings.communitiesEnabled
+
+    property var communitiesModuleInst: communitiesModule
+    property var communitiesList: communitiesModuleInst.model
+    property var communitiesProfileModule: profileSectionModuleInst.communitiesModule
 
     property ListModel mainMenuItems: ListModel {
         Component.onCompleted: {
@@ -88,6 +94,9 @@ QtObject {
             append({subsection: Constants.settingsSubsection.browserSettings,
                        text: qsTr("Browser"),
                        icon: "browser"})
+            append({subsection: Constants.settingsSubsection.communitiesSettings,
+                       text: qsTr("Communities"),
+                       icon: "communities"})
         }
     }
 
@@ -123,6 +132,10 @@ QtObject {
                        text: qsTr("Sign out & Quit"),
                        icon: "logout"})
         }
+    }
+
+    function importCommunity(communityKey) {
+        root.communitiesModuleInst.importCommunity(communityKey);
     }
 
     function getCurrentVersion() {

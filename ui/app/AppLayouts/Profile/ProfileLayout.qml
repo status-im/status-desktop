@@ -213,6 +213,17 @@ StatusAppTwoPanelLayout {
                 sectionTitle: profileView.store.getNameForSubsection(Constants.settingsSubsection.about)
                 contentWidth: d.contentWidth
             }
+
+            CommunitiesView {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+
+                profileSectionStore: profileView.store
+                rootStore: profileView.globalStore
+                contactStore: profileView.store.contactsStore
+                sectionTitle: profileView.store.getNameForSubsection(Constants.settingsSubsection.communitiesSettings)
+                contentWidth: d.contentWidth
+            }
         }
     }
 }

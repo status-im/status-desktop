@@ -18,6 +18,8 @@ import ../../../../app_service/service/stickers/service as stickersService
 import ../../../../app_service/service/ens/service as ens_service
 import ../../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../../app_service/service/general/service as general_service
+import ../../../../app_service/service/community/service as community_service
+
 
 import ./profile/module as profile_module
 import ./contacts/module as contacts_module
@@ -29,6 +31,7 @@ import ./devices/module as devices_module
 import ./sync/module as sync_module
 import ./notifications/module as notifications_module
 import ./ens_usernames/module as ens_usernames_module
+import ./communities/module as communities_module
 
 export io_interface
 
@@ -50,6 +53,7 @@ type
     syncModule: sync_module.AccessInterface
     notificationsModule: notifications_module.AccessInterface
     ensUsernamesModule: ens_usernames_module.AccessInterface
+    communitiesModule: communities_module.AccessInterface
 
 proc newModule*(delegate: delegate_interface.AccessInterface,
   events: EventEmitter,
@@ -67,7 +71,8 @@ proc newModule*(delegate: delegate_interface.AccessInterface,
   chatService: chat_service.Service,
   ensService: ens_service.Service,
   walletAccountService: wallet_account_service.Service,
-  generalService: general_service.Service
+  generalService: general_service.Service,
+  communityService: community_service.Service
 ): Module =
   result = Module()
   result.delegate = delegate
@@ -88,6 +93,7 @@ proc newModule*(delegate: delegate_interface.AccessInterface,
   result.ensUsernamesModule = ens_usernames_module.newModule(
     result, events, settingsService, ensService, walletAccountService
   )
+  result.communitiesModule = communities_module.newModule(result, communityService)
 
   singletonInstance.engine.setRootContextProperty("profileSectionModule", result.viewVariant)
 
@@ -100,6 +106,7 @@ method delete*(self: Module) =
   self.advancedModule.delete
   self.devicesModule.delete
   self.syncModule.delete
+  self.communitiesModule.delete
 
   self.view.delete
   self.viewVariant.delete
@@ -117,6 +124,7 @@ method load*(self: Module) =
   self.syncModule.load()
   self.notificationsModule.load()
   self.ensUsernamesModule.load()
+  self.communitiesModule.load()
 
 method isLoaded*(self: Module): bool =
   return self.moduleLoaded
@@ -150,6 +158,9 @@ proc checkIfModuleDidLoad(self: Module) =
     return
 
   if(not self.ensUsernamesModule.isLoaded()):
+    return
+
+  if(not self.communitiesModule.isLoaded()):
     return
 
   self.moduleLoaded = true
@@ -214,3 +225,9 @@ method ensUsernamesModuleDidLoad*(self: Module) =
 
 method getEnsUsernamesModule*(self: Module): QVariant =
   self.ensUsernamesModule.getModuleAsVariant()
+
+method getCommunitiesModule*(self: Module): QVariant =
+  self.communitiesModule.getModuleAsVariant()
+
+method communitiesModuleDidLoad*(self: Module) =
+  self.checkIfModuleDidLoad()

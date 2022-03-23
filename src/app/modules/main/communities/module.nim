@@ -93,6 +93,7 @@ method getCommunityItem(self: Module, c: CommunityDto): SectionItem =
       c.isMember,
       c.permissions.access,
       c.permissions.ensOnly,
+      c.muted, 
       c.members.map(proc(member: Member): user_item.Item =
         let contactDetails = self.controller.getContactDetails(member.id)
         result = user_item.initItem(
@@ -184,6 +185,9 @@ method deleteCommunityCategory*(self: Module, communityId: string, categoryId: s
 method reorderCommunityCategories*(self: Module, communityId: string, categoryId: string, position: int) =
 #   self.controller.reorderCommunityCategories(communityId, categoryId, position)
   discard
+
+method communityMuted*(self: Module, communityId: string, muted: bool) =
+  self.view.model().setMuted(communityId, muted)
 
 method requestToJoinCommunity*(self: Module, communityId: string, ensName: string) =
   self.controller.requestToJoinCommunity(communityId, ensName)

@@ -99,3 +99,6 @@ method onImportCommunityErrorOccured*(self: AccessInterface, error: string) {.ba
 
 method viewDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method communityMuted*(self: AccessInterface, communityId: string, muted: bool) {.base.} =
+  raise newException(ValueError, "No implementation available")

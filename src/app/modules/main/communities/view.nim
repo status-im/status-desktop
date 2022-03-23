@@ -123,3 +123,9 @@ QtObject:
   proc importingCommunityStateChanged*(self:View, state: int, errorMsg: string) {.signal.}
   proc emitImportingCommunityStateChangedSignal*(self: View, state: int, errorMsg: string) =
     self.importingCommunityStateChanged(state, errorMsg)
+
+  proc isMemberOfCommunity*(self: View, communityId: string, pubKey: string): bool {.slot.} =
+    let sectionItem = self.model.getItemById(communityId)
+    if (section_item.id == ""):
+       return false
+    return sectionItem.hasMember(pubKey)

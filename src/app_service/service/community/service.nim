@@ -65,6 +65,10 @@ type
     communityId*: string
     pubKey*: string
 
+  CommunityMutedArgs* = ref object of Args
+    communityId*: string
+    muted*: bool
+
 # Signals which may be emitted by this service:
 const SIGNAL_COMMUNITY_JOINED* = "communityJoined"
 const SIGNAL_COMMUNITY_MY_REQUEST_ADDED* = "communityMyRequestAdded"
@@ -88,6 +92,7 @@ const SIGNAL_COMMUNITY_MEMBER_APPROVED* = "communityMemberApproved"
 const SIGNAL_COMMUNITY_MEMBER_REMOVED* = "communityMemberRemoved"
 const SIGNAL_NEW_REQUEST_TO_JOIN_COMMUNITY* = "newRequestToJoinCommunity"
 const SIGNAL_CURATED_COMMUNITY_FOUND* = "curatedCommunityFound"
+const SIGNAL_COMMUNITY_MUTED* = "communityMuted"
 
 QtObject:
   type
@@ -1030,6 +1035,9 @@ QtObject:
   proc setCommunityMuted*(self: Service, communityId: string, muted: bool) =
     try:
       discard status_go.setCommunityMuted(communityId, muted)
+
+      self.events.emit(SIGNAL_COMMUNITY_MUTED,
+        CommunityMutedArgs(communityId: communityId, muted: muted))
     except Exception as e:
       error "Error setting community un/muted", msg = e.msg
 

@@ -5,6 +5,7 @@ import QtQuick.Layouts 1.13
 
 import utils 1.0
 import shared 1.0
+import shared.popups 1.0
 
 import "../panels"
 import "../popups"
@@ -329,7 +330,7 @@ Item {
 
     Component {
         id: importCommunitiesPopupComponent
-        AccessExistingCommunityPopup {
+        ImportCommunityPopup {
             anchors.centerIn: parent
             store: root.store
             onClosed: {
