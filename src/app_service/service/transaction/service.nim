@@ -51,17 +51,12 @@ type
     result*: string
 
 type SuggestedFees = object
-  gasPrice: string
+  gasPrice: float
   baseFee: float
   maxPriorityFeePerGas: float
   maxFeePerGasL: float 
   maxFeePerGasM: float
   maxFeePerGasH: float
-
-proc cmpUint256(x, y: Uint256): int =
-  if x > y: 1
-  elif x == y: 0
-  else: -1
 
 QtObject:
   type Service* = ref object of QObject
@@ -71,8 +66,6 @@ QtObject:
     ethService: eth_service.Service
     networkService: network_service.Service
     settingsService: settings_service.Service
-
-    baseFeePerGas: string
 
   # Forward declaration
   proc checkPendingTransactions*(self: Service)
@@ -98,25 +91,15 @@ QtObject:
     result.networkService = networkService
     result.settingsService = settingsService
 
-  proc baseFeePerGas*(self: Service): string = 
-    return self.baseFeePerGas
-
-  proc setLatestBaseFeePerGas*(self: Service) = 
-    let response = eth.getBlockByNumber("latest")
-    self.baseFeePerGas = $fromHex(Stuint[256], response.result{"baseFeePerGas"}.getStr)
-
   proc doConnect*(self: Service) =
     self.events.on(SignalType.Wallet.event) do(e:Args):
       var data = WalletSignal(e)
       if(data.eventType == "newblock"):
-        self.setLatestBaseFeePerGas()
-
         for acc in data.accounts:
           self.checkPendingTransactions(acc)
 
   proc init*(self: Service) =
     self.doConnect()
-    self.setLatestBaseFeePerGas()
 
   proc checkRecentHistory*(self: Service) =
     try:
@@ -356,57 +339,18 @@ QtObject:
       return false
     return true
 
-  proc maxPriorityFeePerGas(self: Service): Uint256 =
-    let response = eth.maxPriorityFeePerGas()
-    return fromHex(Stuint[256], response.result.getStr)
-
-  proc getGasPrice(self: Service): Uint256 =
-    let response = eth.getGasPrice()
-    return fromHex(Stuint[256], response.result.getStr)
-
-  proc feeHistory(self: Service, n:int): seq[Uint256] =
-    let response = eth.feeHistory(101)
-    for it in response.result["baseFeePerGas"]:
-      result.add(fromHex(Stuint[256], it.getStr))
-
-    result.sort(cmpUint256)    
-
   proc suggestedFees*(self: Service): SuggestedFees =
-    #[
-      0. priority tip always same, the value returned by eth_maxPriorityFeePerGas
-      1. slow fee 10th percentile base fee (last 100 blocks) + eth_maxPriorityFeePerGas 
-      2. normal fee. 
-        if 20th_percentile <= current_base_fee <= 80th_percentile then fee = current_base_fee + eth_maxPriorityFeePerGas. 
-        if current_base_fee < 20th_percentile then fee = 20th_percentile + eth_maxPriorityFeePerGas
-        if current_base_fee > 80th_percentile then fee = 80th_percentile + eth_maxPriorityFeePerGas
-        The idea is to avoid setting too low base fee when price is in a dip and also to avoid overpaying on peak.
-        Specific percentiles can be revisit later, it doesn't need to be symmetric because we are mostly interested in not getting stuck and overpaying might not be a huge issue here.
-      3. fast fee: current_base_fee + eth_maxPriorityFeePerGas
-    ]#
-
-    let maxPriorityFeePerGas = self.maxPriorityFeePerGas()
-    let feeHistory = self.feeHistory(101)
-    let baseFee = self.baseFeePerGas.u256
-    let gasPrice = self.getGasPrice()
-
-    let perc10 = feeHistory[ceil(10/100 * feeHistory.len.float).int - 1]
-    let perc20 = feeHistory[ceil(20/100 * feeHistory.len.float).int - 1]
-    let perc80 = feeHistory[ceil(80/100 * feeHistory.len.float).int - 1]
-
-    let maxFeePerGasM = if baseFee >= perc20 and baseFee <= perc80:
-      baseFee + maxPriorityFeePerGas
-    elif baseFee < perc20:
-      perc20 + maxPriorityFeePerGas
-    else:
-      perc80 + maxPriorityFeePerGas
+    let networkType = self.settingsService.getCurrentNetwork().toNetworkType()
+    let network = self.networkService.getNetwork(networkType)
+    let response = eth.suggestedFees(network.chainId).result
 
     return SuggestedFees(
-      gasPrice: $gasPrice,
-      baseFee: parseFloat(common_conversion.wei2gwei($baseFee)),
-      maxPriorityFeePerGas: parseFloat(common_conversion.wei2gwei($maxPriorityFeePerGas)),
-      maxFeePerGasL: parseFloat(common_conversion.wei2gwei($(perc10 + maxPriorityFeePerGas))),
-      maxFeePerGasM: parseFloat(common_conversion.wei2gwei($(maxFeePerGasM))),
-      maxFeePerGasH: parseFloat(common_conversion.wei2gwei($(baseFee + maxPriorityFeePerGas)))
+      gasPrice: parseFloat(response{"gasPrice"}.getStr),
+      baseFee: parseFloat(response{"baseFee"}.getStr),
+      maxPriorityFeePerGas: parseFloat(response{"maxPriorityFeePerGas"}.getStr),
+      maxFeePerGasL: parseFloat(response{"maxFeePerGasLow"}.getStr),
+      maxFeePerGasM: parseFloat(response{"maxFeePerGasMedium"}.getStr),
+      maxFeePerGasH: parseFloat(response{"maxFeePerGasHigh"}.getStr)
     ) 
 
   proc fetchCryptoServices*(self: Service): seq[CryptoRampDto] =

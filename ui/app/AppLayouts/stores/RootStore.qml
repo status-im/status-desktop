@@ -104,10 +104,6 @@ QtObject {
         return walletSection.isEIP1559Enabled()
     }
 
-    function latestBaseFeePerGas() {
-        return walletSectionTransactions.latestBaseFeePerGas()
-    }
-
     function suggestedFees() {
         return JSON.parse(walletSectionTransactions.suggestedFees())
     }

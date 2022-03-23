@@ -57,9 +57,6 @@ method transferTokens*(self: AccessInterface, from_addr: string, to_addr: string
 method transactionWasSent*(self: AccessInterface, result: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method baseFeePerGas*(self: AccessInterface): string {.base.} = 
-  raise newException(ValueError, "No implementation available")
-
 method suggestedFees*(self: AccessInterface): string {.base.} = 
   raise newException(ValueError, "No implementation available")
 

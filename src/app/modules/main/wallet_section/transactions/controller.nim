@@ -95,9 +95,6 @@ proc transferTokens*(self: Controller, from_addr: string, to_addr: string, contr
   result = self.transactionService.transferTokens(from_addr, to_addr, contractAddress, value, gas,
     gasPrice, maxPriorityFeePerGas, maxFeePerGas, password, uuid)
 
-proc baseFeePerGas*(self: Controller): string = 
-  return self.transactionService.baseFeePerGas()
-
 proc suggestedFees*(self: Controller): string = 
   let suggestedFees = self.transactionService.suggestedFees()
   return suggestedFees.toJson()

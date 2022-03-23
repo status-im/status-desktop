@@ -146,7 +146,6 @@ StatusModal {
                     getFiatValue: popup.store.getFiatValue
                     defaultCurrency: popup.store.currentCurrency
                     isEIP1559Enabled: popup.store.isEIP1559Enabled()
-                    latestBaseFeePerGas: popup.store.latestBaseFeePerGas()
                     suggestedFees: popup.store.suggestedFees()
 
                     visible: !popup.store.isMultiNetworkEnabled
@@ -220,13 +219,13 @@ StatusModal {
                 if(gasSelector.isEIP1559Enabled && popup.contentItem.currentGroup === group1 && gasSelector.advancedMode){
                     if(gasSelector.showPriceLimitWarning || gasSelector.showTipLimitWarning){
                         Global.openPopup(transactionSettingsConfirmationPopupComponent, {
-                                             currentBaseFee: gasSelector.latestBaseFeePerGasGwei,
+                                             currentBaseFee: gasSelector.suggestedFees.baseFee,
                                              currentMinimumTip: gasSelector.perGasTipLimitFloor,
                                              currentAverageTip: gasSelector.perGasTipLimitAverage,
                                              tipLimit: gasSelector.selectedTipLimit,
                                              suggestedTipLimit: gasSelector.perGasTipLimitFloor,
                                              priceLimit: gasSelector.selectedOverallLimit,
-                                             suggestedPriceLimit: gasSelector.latestBaseFeePerGasGwei + gasSelector.perGasTipLimitFloor,
+                                             suggestedPriceLimit: gasSelector.suggestedFees.baseFee + gasSelector.perGasTipLimitFloor,
                                              showPriceLimitWarning: gasSelector.showPriceLimitWarning,
                                              showTipLimitWarning: gasSelector.showTipLimitWarning,
                                              onConfirm: function(){

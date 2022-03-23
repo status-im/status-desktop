@@ -103,8 +103,5 @@ method transferTokens*(self: Module, from_addr: string, to_addr: string, contrac
 method transactionWasSent*(self: Module, result: string) =
   self.view.transactionWasSent(result)
 
-method baseFeePerGas*(self: Module): string = 
-  return self.controller.baseFeePerGas()
-
 method suggestedFees*(self: Module): string = 
   return self.controller.suggestedFees()
