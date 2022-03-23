@@ -34,6 +34,9 @@ Item {
     //property int chatGroupsListViewCount: communityChatListAndCategories.chatList.count
     property Component pinnedMessagesPopupComponent
 
+    signal infoButtonClicked
+    signal manageButtonClicked
+
     StatusChatInfoToolBar {
         id: communityHeader
         anchors.top: parent.top
@@ -49,11 +52,7 @@ Item {
         chatInfoButton.image.source: communityData.image
         chatInfoButton.icon.color: communityData.color
         menuButton.visible: communityData.amISectionAdmin && communityData.canManageUsers
-        chatInfoButton.onClicked: Global.openPopup(communityProfilePopup, {
-            store: root.store,
-            community: communityData,
-            communitySectionModule: root.communitySectionModule
-        })
+        chatInfoButton.onClicked: root.infoButtonClicked()
 
         popupMenu: StatusPopupMenu {
             StatusMenuItem {
@@ -360,6 +359,7 @@ Item {
                     store: root.store
                     hasAddedContacts: root.hasAddedContacts
                     communitySectionModule: root.communitySectionModule
+                    onManageCommunityClicked: root.manageButtonClicked()
                 }
             }
         }

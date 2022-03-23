@@ -511,17 +511,17 @@ Item {
                     Layout.alignment: Qt.AlignLeft | Qt.AlignTop
                     Layout.fillHeight: true
 
-                    pinnedMessagesListPopupComponent: pinnedMessagesPopupComponent
-                    emojiPopup: statusEmojiPopup
+                    chatView.pinnedMessagesListPopupComponent: pinnedMessagesPopupComponent
+                    chatView.emojiPopup: statusEmojiPopup
 
                     contactsStore: appMain.rootStore.contactStore
                     rootStore.emojiReactionsModel: appMain.rootStore.emojiReactionsModel
 
-                    onProfileButtonClicked: {
+                    chatView.onProfileButtonClicked: {
                         Global.changeAppSectionBySectionType(Constants.appSection.profile);
                     }
 
-                    onOpenAppSearch: {
+                    chatView.onOpenAppSearch: {
                         appSearch.openSearchPopup()
                     }
 
@@ -601,17 +601,17 @@ Item {
                                 Layout.alignment: Qt.AlignLeft | Qt.AlignTop
                                 Layout.fillHeight: true
 
-                                pinnedMessagesListPopupComponent: pinnedMessagesPopupComponent
-                                emojiPopup: statusEmojiPopup
+                                chatView.pinnedMessagesListPopupComponent: pinnedMessagesPopupComponent
+                                chatView.emojiPopup: statusEmojiPopup
 
                                 contactsStore: appMain.rootStore.contactStore
                                 rootStore.emojiReactionsModel: appMain.rootStore.emojiReactionsModel
 
-                                onProfileButtonClicked: {
+                                chatView.onProfileButtonClicked: {
                                     Global.changeAppSectionBySectionType(Constants.appSection.profile);
                                 }
 
-                                onOpenAppSearch: {
+                                chatView.onOpenAppSearch: {
                                     appSearch.openSearchPopup()
                                 }
 
@@ -699,7 +699,7 @@ Item {
             }
         }
 
-        
+
         DropArea {
             id: dragTarget
 
