@@ -79,3 +79,9 @@ method ensUsernamesModuleDidLoad*(self: AccessInterface) {.base.} =
 
 method getEnsUsernamesModule*(self: AccessInterface): QVariant {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method getCommunitiesModule*(self: AccessInterface): QVariant {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method communitiesModuleDidLoad*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")

@@ -45,7 +45,8 @@ QtObject {
         property int advanced: 12
         property int needHelp: 13
         property int about: 14
-        property int signout: 15
+        property int communitiesSettings: 15
+        property int signout: 16
     }
 
     readonly property QtObject userStatus: QtObject{

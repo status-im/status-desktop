@@ -129,5 +129,12 @@ StatusAppTwoPanelLayout {
             globalStore: profileView.globalStore
             profileContentWidth: _internal.profileContentWidth
         }
+
+        CommunitiesView {
+            profileSectionStore: profileView.store
+            rootStore: profileView.globalStore
+            contactStore: profileView.store.contactsStore
+            profileContentWidth: _internal.profileContentWidth
+        }
     }
 }

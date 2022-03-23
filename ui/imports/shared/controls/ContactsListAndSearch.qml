@@ -20,6 +20,7 @@ Item {
     property var rootStore
     property var contactsStore
     property var community
+    property var communityModule
 
     property string validationError: ""
     property string successMessage: ""
@@ -177,6 +178,7 @@ Item {
 
         contactsStore: root.contactsStore
         community: root.community
+        communityModule: root.communityModule
 
         visible: showContactList
         hideCommunityMembers: root.hideCommunityMembers

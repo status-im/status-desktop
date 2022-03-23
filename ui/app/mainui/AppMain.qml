@@ -650,6 +650,11 @@ Item {
                 onClosed: {
                     destroy()
                 }
+
+                onSendInvites: {
+                    const error = communitySectionModule.inviteUsersToCommunity(JSON.stringify(pubKeys))
+                    processInviteResult(error)
+                }
             }
         }
 

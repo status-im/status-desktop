@@ -88,6 +88,7 @@ method getCommunityItem(self: Module, c: CommunityDto): SectionItem =
       c.isMember,
       c.permissions.access,
       c.permissions.ensOnly,
+      c.muted, 
       c.members.map(proc(member: Member): user_item.Item =
         let contactDetails = self.controller.getContactDetails(member.id)
         result = user_item.initItem(

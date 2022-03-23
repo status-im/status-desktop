@@ -41,6 +41,8 @@ Item {
             appsMenuItems: store.appsMenuItems
             browserMenuItemEnabled: store.browserMenuItemEnabled
             walletMenuItemEnabled: store.walletMenuItemEnabled
+            appsMenuItemsEnabled: store.appsMenuItemsEnabled
+            communitiesMenuItemEnabled: store.communitiesMenuItemEnabled
             
             onMenuItemClicked: {
                 if (menu_item.subsection === Constants.settingsSubsection.signout) {

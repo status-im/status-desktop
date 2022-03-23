@@ -23,17 +23,6 @@ Column {
     property var community
     property alias contactListSearch: contactFieldAndList
 
-    function sendInvites(pubKeys) {
-       const error = communitySectionModule.inviteUsersToCommunity(JSON.stringify(pubKeys))
-       if (error) {
-           console.error('Error inviting', error)
-           contactFieldAndList.validationError = error
-           return
-       }
-       //% "Invite successfully sent"
-       contactFieldAndList.successMessage = qsTrId("invite-successfully-sent")
-    }
-
     StatusDescriptionListItem {
         //% "Share community"
         title: qsTrId("share-community")
@@ -66,6 +55,7 @@ Column {
         anchors.horizontalCenter: parent.horizontalCenter
         width: parent.width - 32
         contactsStore: root.contactsStore
+        communityModule: root.communitySectionModule
         community: root.community
         showCheckbox: true
         hideCommunityMembers: true

@@ -13,7 +13,7 @@ import StatusQ.Controls 0.1 as StatusQControls
 
 StatusModal {
     id: root
-    width: 400
+    width: 640
     height: 400
 
     property var store
@@ -22,8 +22,8 @@ StatusModal {
         return communityKey.trim() !== ""
     }
 
-    //% "Access existing community"
-    header.title: qsTrId("access-existing-community")
+    //% "Import Community"
+    header.title: qsTrId("import-community")
 
     onClosed: {
         root.destroy();
@@ -37,30 +37,32 @@ StatusModal {
         anchors.rightMargin: 16
         height: childrenRect.height
 
+        StatusBaseText {
+            id: infoText1
+            anchors.top: parent.top
+            anchors.topMargin: Style.current.padding
+            //% "Entering a community key will grant you the ownership of that community. Please be responsible with it and don’t share the key with people you don’t trust."
+            text: qsTrId("entering-a-community-key-will-grant-you-the-ownership-of-that-community--please-be-responsible-with-it-and-don-t-share-the-key-with-people-you-don-t-trust-")
+            wrapMode: Text.WordWrap
+            width: parent.width
+            font.pixelSize: 13
+            color: Theme.palette.baseColor1
+        }
+
         StyledTextArea {
             id: keyInput
             //% "Community private key"
             label: qsTrId("community-key")
             placeholderText: "0x0..."
             customHeight: 110
+            anchors.top: infoText1.bottom
+            anchors.topMargin: Style.current.bigPadding
             anchors.left: parent.left
             anchors.right: parent.right
 
             onTextChanged: {
                 importButton.enabled = root.validate(keyInput.text)
             }
-        }
-
-        StatusBaseText {
-            id: infoText1
-            //% "Entering a community key will grant you the ownership of that community. Please be responsible with it and don’t share the key with people you don’t trust."
-            text: qsTrId("entering-a-community-key-will-grant-you-the-ownership-of-that-community--please-be-responsible-with-it-and-don-t-share-the-key-with-people-you-don-t-trust-")
-            anchors.top: keyInput.bottom
-            wrapMode: Text.WordWrap
-            anchors.topMargin: Style.current.bigPadding
-            width: parent.width
-            font.pixelSize: 13
-            color: Theme.palette.baseColor1
         }
     }
 

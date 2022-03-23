@@ -25,6 +25,7 @@ type
     CanRequestAccess
     Access
     EnsOnly
+    Muted
     MembersModel
     PendingRequestsToJoinModel
 
@@ -83,6 +84,7 @@ QtObject:
       ModelRole.CanRequestAccess.int:"canRequestAccess",
       ModelRole.Access.int:"access",
       ModelRole.EnsOnly.int:"ensOnly",
+      ModelRole.Muted.int:"muted",
       ModelRole.MembersModel.int:"members",
       ModelRole.PendingRequestsToJoinModel.int:"pendingRequestsToJoin",
     }.toTable
@@ -136,6 +138,8 @@ QtObject:
       result = newQVariant(item.access)
     of ModelRole.EnsOnly:
       result = newQVariant(item.ensOnly)
+    of ModelRole.Muted:
+      result = newQVariant(item.muted)
     of ModelRole.MembersModel:
       result = newQVariant(item.members)
     of ModelRole.PendingRequestsToJoinModel:
@@ -210,6 +214,7 @@ QtObject:
       ModelRole.IsMember.int,
       ModelRole.CanJoin.int,
       ModelRole.Joined.int,
+      ModelRole.Muted.int, 
       ModelRole.MembersModel.int,
       ModelRole.PendingRequestsToJoinModel.int
       ])

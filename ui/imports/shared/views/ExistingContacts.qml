@@ -15,6 +15,7 @@ Item {
 
     property var contactsStore
     property var community
+    property var communityModule
 
     property string filterText: ""
     property bool expanded: true
@@ -56,7 +57,7 @@ Item {
                     model.name.toLowerCase().includes(root.filterText.toLowerCase()) ||
                     model.pubKey.toLowerCase().includes(root.filterText.toLowerCase())) &&
                     (!root.hideCommunityMembers ||
-                    !root.community.hasMember(model.pubKey))
+                    !root.communityModule.hasMember(commmunity.id, model.pubKey))
                 }
                 onContactClicked: function () {
                     root.contactClicked(model)

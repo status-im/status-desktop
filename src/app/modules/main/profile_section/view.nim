@@ -65,3 +65,8 @@ QtObject:
     return self.delegate.getEnsUsernamesModule()
   QtProperty[QVariant] ensUsernamesModule:
     read = getEnsUsernamesModule
+
+  proc getCommunitiesModule(self: View): QVariant {.slot.} =
+    return self.delegate.getCommunitiesModule()
+  QtProperty[QVariant] communitiesModule:
+    read = getCommunitiesModule
