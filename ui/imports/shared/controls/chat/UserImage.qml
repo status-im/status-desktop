@@ -30,7 +30,7 @@ Loader {
             width: root.imageWidth
             height: root.imageHeight
             source: root.isIdenticon ? "" : root.icon
-            isIdenticon: false
+            isIdenticon: root.isIdenticon
         }
         icon {
             width: root.imageWidth

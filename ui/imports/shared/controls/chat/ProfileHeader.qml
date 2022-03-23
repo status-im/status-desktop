@@ -93,6 +93,7 @@ Item {
             property string size: "14x14"
 
             Layout.fillWidth: true
+            renderType: Text.NativeRendering
 
             text: {
                 const emojiHash = Utils.getEmojiHashAsJson(root.pubkey)
