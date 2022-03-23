@@ -69,10 +69,10 @@ QtObject:
   proc storeSelectedAccountAndLogin*(self: View, password: string) {.slot.} =
     self.delegate.storeSelectedAccountAndLogin(password)
 
-  proc accountSetupError*(self: View) {.signal.}
+  proc accountSetupError*(self: View, error: string) {.signal.}
 
-  proc setupAccountError*(self: View) =
-    self.accountSetupError()
+  proc setupAccountError*(self: View, error: string) =
+    self.accountSetupError(error)
 
   proc validateMnemonic*(self: View, mnemonic: string): string {.slot.} =
     return self.delegate.validateMnemonic(mnemonic)
@@ -80,15 +80,18 @@ QtObject:
   proc importMnemonic*(self: View, mnemonic: string) {.slot.} =
     self.delegate.importMnemonic(mnemonic)
 
-  proc accountImportError*(self: View) {.signal.}
+  proc accountImportError*(self: View, error: string) {.signal.}
 
-  proc importAccountError*(self: View) =
+  proc importAccountError*(self: View, error: string) =
     # In QML we can connect to this signal and notify a user
     # before refactoring we didn't have this signal
-    self.accountImportError()
+    self.accountImportError(error)
+
+  proc accountImportSuccess*(self: View) {.signal.}
 
   proc importAccountSuccess*(self: View) =
     self.importedAccountChanged()
+    self.accountImportSuccess()
 
   proc getPasswordStrengthScore*(self: View, password: string, userName: string): int {.slot.} =
     return self.delegate.getPasswordStrengthScore(password, userName)

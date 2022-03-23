@@ -1,6 +1,7 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.12
+import QtQuick.Dialogs 1.3
 
 import shared.controls 1.0
 import shared 1.0
@@ -124,6 +125,35 @@ Page {
                 // Create password operation blocks the UI so loading = true; will never have any affect until changePassword/createPassword is done.
                 // Getting around it with a small pause (timer) in order to get the desired behavior
                 pause.start()
+            }
+
+            Connections {
+                target: onboardingModule
+                onAccountSetupError: {
+                    if (error === Constants.existingAccountError) {
+                        importLoginError.title = qsTr("Keys for this account already exist")
+                        importLoginError.text = qsTr("Keys for this account already exist and can't be added again. If you've lost your password, passcode or Keycard, uninstall the app, reinstall and access your keys by entering your seed phrase")
+                    } else {
+                        //% "Login failed"
+                        importLoginError.title = qsTrId("login-failed")
+                        //% "Login failed. Please re-enter your password and try again."
+                        importLoginError.text = qsTrId("login-failed.-please-re-enter-your-password-and-try-again.")
+                    }
+                    importLoginError.open()
+                }
+            }
+
+            MessageDialog {
+                id: importLoginError
+                //% "Login failed"
+                title: qsTrId("login-failed")
+                //% "Login failed. Please re-enter your password and try again."
+                text: qsTrId("login-failed.-please-re-enter-your-password-and-try-again.")
+                icon: StandardIcon.Critical
+                standardButtons: StandardButton.Ok
+                onVisibilityChanged: {
+                    submitBtn.loading = false
+                }
             }
         }
     }

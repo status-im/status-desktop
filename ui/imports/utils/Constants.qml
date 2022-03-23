@@ -247,4 +247,6 @@ QtObject {
     }
 
     readonly property bool isCppApp: typeof cppApp !== "undefined" ? cppApp : false
+    
+    readonly property string existingAccountError: "account already exists"
 }
