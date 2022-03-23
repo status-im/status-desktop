@@ -19,6 +19,7 @@ Item {
     property var store
     property var contactsStore
     property var emojiPopup: null
+    property var sendModal
 
     function showSigningPhrasePopup(){
         if(!hideSignPhraseModal && !RootStore.hideSignPhraseModal){
@@ -54,6 +55,7 @@ Item {
             changeSelectedAccount: leftTab.changeSelectedAccount
             store: walletView.store
             emojiPopup: walletView.emojiPopup
+            sendModal: walletView.sendModal
         }
     }
 

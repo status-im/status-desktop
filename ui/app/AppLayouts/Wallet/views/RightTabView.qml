@@ -20,28 +20,23 @@ Item {
     property alias currentTabIndex: walletTabBar.currentIndex
     property var store
     property var emojiPopup
+    property var sendModal
 
-    WalletHeader {
-        id: walletHeader
-        locale: RootStore.locale
-        currency: RootStore.currentCurrency
-        currentAccount: RootStore.currentAccount
-        changeSelectedAccount: walletContainer.changeSelectedAccount
-        store: walletContainer.store
-        walletStore: RootStore
-        emojiPopup: walletContainer.emojiPopup
-    }
+    ColumnLayout {
+        width: parent.width
+        height: parent.height
 
-    RowLayout {
-        id: walletInfoContainer
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 0
-        anchors.left: parent.left
-        anchors.leftMargin: 0
-        anchors.right: parent.right
-        anchors.rightMargin: 0
-        anchors.top: walletHeader.bottom
-        anchors.topMargin: 23
+        WalletHeader {
+            id: walletHeader
+            Layout.fillWidth: true
+            locale: RootStore.locale
+            currency: RootStore.currentCurrency
+            currentAccount: RootStore.currentAccount
+            changeSelectedAccount: walletContainer.changeSelectedAccount
+            store: walletContainer.store
+            walletStore: RootStore
+            emojiPopup: walletContainer.emojiPopup
+        }
 
         Item {
             id: walletInfoContent
@@ -102,6 +97,12 @@ Item {
                     id: historyTab
                 }
             }
+        }
+
+        WalletFooter {
+            id: walletFooter
+            Layout.fillWidth: true
+            sendModal: walletContainer.sendModal
         }
     }
 }
