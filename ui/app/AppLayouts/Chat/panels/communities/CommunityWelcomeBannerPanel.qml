@@ -26,6 +26,8 @@ Rectangle {
     property var communitySectionModule
     property bool hasAddedContacts
 
+    signal manageCommunityClicked()
+
     MouseArea {
         anchors.fill: parent
         acceptedButtons: Qt.RightButton
@@ -104,10 +106,7 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
         anchors.bottomMargin: Style.current.padding
-        onClicked: Global.openPopup(communityProfilePopup, {
-            store: rootStore,
-            community: root.activeCommunity,
-            communitySectionModule: root.communitySectionModule
-        })
+
+        onClicked: root.manageCommunityClicked()
     }
 }
