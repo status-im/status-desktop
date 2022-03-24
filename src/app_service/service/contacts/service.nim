@@ -48,11 +48,21 @@ const SIGNAL_CONTACT_ADDED* = "contactAdded"
 const SIGNAL_CONTACT_BLOCKED* = "contactBlocked"
 const SIGNAL_CONTACT_UNBLOCKED* = "contactUnblocked"
 const SIGNAL_CONTACT_REMOVED* = "contactRemoved"
+const SIGNAL_CONTACT_REJECTION_REMOVED* = "contactRejectionRemoved"
 const SIGNAL_CONTACT_NICKNAME_CHANGED* = "contactNicknameChanged"
 const SIGNAL_CONTACTS_STATUS_UPDATED* = "contactsStatusUpdated"
 const SIGNAL_CONTACT_UPDATED* = "contactUpdated"
 const SIGNAL_LOGGEDIN_USER_IMAGE_CHANGED* = "loggedInUserImageChanged"
 
+type
+  ContactsGroup* {.pure.} = enum
+    AllKnownContacts
+    MyMutualContacts    
+    IncomingPendingContactRequests
+    OutgoingPendingContactRequests
+    IncomingRejectedContactRequests
+    OutgoingRejectedContactRequests
+    BlockedContacts
 
 QtObject:
   type Service* = ref object of QObject
@@ -152,18 +162,44 @@ QtObject:
     let data = Args()
     self.events.emit(SIGNAL_LOGGEDIN_USER_IMAGE_CHANGED, data)
 
-  proc getContacts*(self: Service): seq[ContactsDto] =
-    return toSeq(self.contacts.values)
-
-  proc getAddedContacts*(self: Service): seq[ContactsDto] =
-    return self.getContacts().filter(x => x.isContact())
-
-  proc getBlockedContacts*(self: Service): seq[ContactsDto] =
-    return self.getContacts().filter(x => x.isBlocked())
-
-  proc getContactsWhoAddedMe*(self: Service): seq[ContactsDto] =
-    return self.getContacts().filter(x => x.requestReceived())
-
+  proc getContactsByGroup*(self: Service, group: ContactsGroup): seq[ContactsDto] =
+    # Having this logic here we ensure that the same contact group in each part of the app will have the same list
+    # of contacts. Be sure when you change any condition here.
+    let myPubKey = singletonInstance.userProfile.getPubKey()
+    let contacts = toSeq(self.contacts.values)
+    if (group == ContactsGroup.IncomingPendingContactRequests):
+      return contacts.filter(x => x.id != myPubKey and 
+        x.isContactRequestReceived() and 
+        not x.isContactRequestSent() and
+        not x.isReceivedContactRequestRejected() and
+        not x.isBlocked())
+    elif (group == ContactsGroup.OutgoingPendingContactRequests):
+      return contacts.filter(x => x.id != myPubKey and 
+        x.isContactRequestSent() and 
+        not x.isContactRequestReceived() and 
+        not x.isSentContactRequestRejected() and
+        not x.isBlocked())
+    elif (group == ContactsGroup.IncomingRejectedContactRequests):
+      return contacts.filter(x => x.id != myPubKey and 
+        x.isContactRequestReceived() and 
+        x.isReceivedContactRequestRejected() and
+        not x.isBlocked())
+    elif (group == ContactsGroup.OutgoingRejectedContactRequests):
+      return contacts.filter(x => x.id != myPubKey and 
+        x.isContactRequestSent() and 
+        x.isSentContactRequestRejected() and
+        not x.isBlocked())
+    elif (group == ContactsGroup.BlockedContacts):
+      return contacts.filter(x => x.id != myPubKey and 
+        x.isBlocked())
+    elif (group == ContactsGroup.MyMutualContacts):
+      # we need to revise this when we introduce "identity verification" feature
+      return contacts.filter(x => x.id != myPubKey and 
+        x.isMutualContact() and
+        not x.isBlocked())
+    elif (group == ContactsGroup.AllKnownContacts):
+      return contacts
+      
   proc fetchContact(self: Service, id: string): ContactsDto =
     try:
       let response = status_contacts.getContactByID(id)
@@ -280,7 +316,7 @@ QtObject:
 
   proc rejectContactRequest*(self: Service, publicKey: string) =
     var contact = self.getContactById(publicKey)
-    contact.hasAddedUs = false
+    contact.removed = true
 
     let response = status_contacts.rejectContactRequest(contact.id)
     if(not response.error.isNil):
@@ -289,6 +325,16 @@ QtObject:
       return
     self.saveContact(contact)
     self.events.emit(SIGNAL_CONTACT_REMOVED, ContactArgs(contactId: contact.id))
+
+  proc removeContactRequestRejection*(self: Service, publicKey: string) =
+    var contact = self.getContactById(publicKey)
+    contact.removed = false
+
+    # When we know what flags or what `status-go` end point we need to call, we should add
+    # that call here.
+
+    self.saveContact(contact)
+    self.events.emit(SIGNAL_CONTACT_REJECTION_REMOVED, ContactArgs(contactId: contact.id))
 
   proc changeContactNickname*(self: Service, publicKey: string, nickname: string) =
     var contact = self.getContactById(publicKey)
@@ -329,8 +375,7 @@ QtObject:
 
   proc removeContact*(self: Service, publicKey: string) =
     var contact = self.getContactById(publicKey)
-    contact.added = false
-    contact.hasAddedUs = false
+    contact.removed = true
 
     let response = status_contacts.removeContact(contact.id)
     if(not response.error.isNil):

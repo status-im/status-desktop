@@ -10,13 +10,13 @@ QtObject {
     property var mainModuleInst: mainModule
 
     property string myPublicKey: userProfile.pubKey
-    property var myContactsModel: contactsModule.myContactsModel
-    property var blockedContactsModel: contactsModule.blockedContactsModel
 
-    // TODO move contact requests back to the contacts module since we need them in the Profile 
-    // also, having them in the chat section creates some waste, since no community has it
-    property var chatSectionModule: mainModule.getChatSectionModule()
-    property var contactRequestsModel: chatSectionModule.contactRequestsModel
+    property var myContactsModel: contactsModule.myMutualContactsModel
+    property var blockedContactsModel: contactsModule.blockedContactsModel
+    property var receivedContactRequestsModel: contactsModule.receivedContactRequestsModel
+    property var sentContactRequestsModel: contactsModule.sentContactRequestsModel
+    property var receivedButRejectedContactRequestsModel: contactsModule.receivedButRejectedContactRequestsModel
+    property var sentButRejectedContactRequestsModel: contactsModule.sentButRejectedContactRequestsModel
 
     function resolveENS(value) {
         root.mainModuleInst.resolveENS(value, "")
@@ -32,8 +32,7 @@ QtObject {
 
     function joinPrivateChat(pubKey) {
         Global.changeAppSectionBySectionType(Constants.appSection.chat)
-        let chatCommunitySectionModule = root.mainModuleInst.getChatSectionModule()
-        chatCommunitySectionModule.createOneToOneChat("", pubKey, "")
+        root.contactsModule.addContact(pubKey)
     }
 
     function addContact(pubKey) {
@@ -57,18 +56,14 @@ QtObject {
     }
     
     function acceptContactRequest(pubKey) {
-        chatSectionModule.acceptContactRequest(pubKey)
-    }
-
-    function acceptAllContactRequests() {
-        chatSectionModule.acceptAllContactRequests()
+        root.contactsModule.addContact(pubKey)
     }
 
     function rejectContactRequest(pubKey) {
-        chatSectionModule.rejectContactRequest(pubKey)
+        root.contactsModule.rejectContactRequest(pubKey)
     }
 
-    function rejectAllContactRequests() {
-        chatSectionModule.rejectAllContactRequests()
+    function removeContactRequestRejection(pubKey) {
+        root.contactsModule.removeContactRequestRejection(pubKey)
     }
 }

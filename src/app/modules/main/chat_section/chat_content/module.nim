@@ -234,7 +234,7 @@ method getMyChatId*(self: Module): string =
   self.controller.getMyChatId()
 
 method isMyContact*(self: Module, contactId: string): bool =
-  self.controller.getMyAddedContacts().filter(x => x.id == contactId).len > 0
+  self.controller.getMyMutualContacts().filter(x => x.id == contactId).len > 0
 
 method muteChat*(self: Module) =
   self.controller.muteChat()

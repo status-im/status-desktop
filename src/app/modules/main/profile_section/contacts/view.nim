@@ -7,42 +7,78 @@ QtObject:
   type
     View* = ref object of QObject
       delegate: io_interface.AccessInterface
-      myContactsModel: Model
-      myContactsModelVariant: QVariant
+      myMutualContactsModel: Model
+      myMutualContactsModelVariant: QVariant
       blockedContactsModel: Model
       blockedContactsModelVariant: QVariant
+      receivedContactRequestsModel: Model
+      receivedContactRequestsModelVariant: QVariant
+      sentContactRequestsModel: Model
+      sentContactRequestsModelVariant: QVariant
+      receivedButRejectedContactRequestsModel: Model
+      receivedButRejectedContactRequestsModelVariant: QVariant
+      sentButRejectedContactRequestsModel: Model
+      sentButRejectedContactRequestsModelVariant: QVariant
 
   proc delete*(self: View) =
-    self.myContactsModel.delete
-    self.myContactsModelVariant.delete
+    self.myMutualContactsModel.delete
+    self.myMutualContactsModelVariant.delete
     self.blockedContactsModel.delete
     self.blockedContactsModelVariant.delete
+    self.receivedContactRequestsModel.delete
+    self.receivedContactRequestsModelVariant.delete
+    self.sentContactRequestsModel.delete
+    self.sentContactRequestsModelVariant.delete
+    self.receivedButRejectedContactRequestsModel.delete
+    self.receivedButRejectedContactRequestsModelVariant.delete
+    self.sentButRejectedContactRequestsModel.delete
+    self.sentButRejectedContactRequestsModelVariant.delete
     self.QObject.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
     result.QObject.setup
     result.delegate = delegate
-    result.myContactsModel = newModel()
-    result.myContactsModelVariant = newQVariant(result.myContactsModel)
+    result.myMutualContactsModel = newModel()
+    result.myMutualContactsModelVariant = newQVariant(result.myMutualContactsModel)
     result.blockedContactsModel = newModel()
     result.blockedContactsModelVariant = newQVariant(result.blockedContactsModel)
+    result.receivedContactRequestsModel = newModel()
+    result.receivedContactRequestsModelVariant = newQVariant(result.receivedContactRequestsModel)
+    result.sentContactRequestsModel = newModel()
+    result.sentContactRequestsModelVariant = newQVariant(result.sentContactRequestsModel)
+    result.receivedButRejectedContactRequestsModel = newModel()
+    result.receivedButRejectedContactRequestsModelVariant = newQVariant(result.receivedButRejectedContactRequestsModel)
+    result.sentButRejectedContactRequestsModel = newModel()
+    result.sentButRejectedContactRequestsModelVariant = newQVariant(result.sentButRejectedContactRequestsModel)
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
 
-  proc myContactsModel*(self: View): Model =
-    return self.myContactsModel
+  proc myMutualContactsModel*(self: View): Model =
+    return self.myMutualContactsModel
 
   proc blockedContactsModel*(self: View): Model =
     return self.blockedContactsModel
 
-  proc myContactsModelChanged(self: View) {.signal.}
-  proc getMyContactsModel(self: View): QVariant {.slot.} =
-    return self.myContactsModelVariant
-  QtProperty[QVariant] myContactsModel:
-    read = getMyContactsModel
-    notify = myContactsModelChanged
+  proc receivedContactRequestsModel*(self: View): Model =
+    return self.receivedContactRequestsModel
+  
+  proc sentContactRequestsModel*(self: View): Model =
+    return self.sentContactRequestsModel
+
+  proc receivedButRejectedContactRequestsModel*(self: View): Model =
+    return self.receivedButRejectedContactRequestsModel
+
+  proc sentButRejectedContactRequestsModel*(self: View): Model =
+    return self.sentButRejectedContactRequestsModel
+
+  proc myMutualContactsModelChanged(self: View) {.signal.}
+  proc getMyMutualContactsModel(self: View): QVariant {.slot.} =
+    return self.myMutualContactsModelVariant
+  QtProperty[QVariant] myMutualContactsModel:
+    read = getMyMutualContactsModel
+    notify = myMutualContactsModelChanged
 
   proc blockedContactsModelChanged(self: View) {.signal.}
   proc getBlockedContactsModel(self: View): QVariant {.slot.} =
@@ -51,8 +87,39 @@ QtObject:
     read = getBlockedContactsModel
     notify = blockedContactsModelChanged
 
+  proc receivedContactRequestsModelChanged(self: View) {.signal.}
+  proc getReceivedContactRequestsModel(self: View): QVariant {.slot.} =
+    return self.receivedContactRequestsModelVariant
+  QtProperty[QVariant] receivedContactRequestsModel:
+    read = getReceivedContactRequestsModel
+    notify = receivedContactRequestsModelChanged
+
+  proc sentContactRequestsModelChanged(self: View) {.signal.}
+  proc getSentContactRequestsModel(self: View): QVariant {.slot.} =
+    return self.sentContactRequestsModelVariant
+  QtProperty[QVariant] sentContactRequestsModel:
+    read = getSentContactRequestsModel
+    notify = sentContactRequestsModelChanged
+
+  proc receivedButRejectedContactRequestsModelChanged(self: View) {.signal.}
+  proc getReceivedButRejectedContactRequestsModel(self: View): QVariant {.slot.} =
+    return self.receivedButRejectedContactRequestsModelVariant
+  QtProperty[QVariant] receivedButRejectedContactRequestsModel:
+    read = getReceivedButRejectedContactRequestsModel
+    notify = receivedButRejectedContactRequestsModelChanged
+
+  proc sentButRejectedContactRequestsModelChanged(self: View) {.signal.}
+  proc getSentButRejectedContactRequestsModel(self: View): QVariant {.slot.} =
+    return self.sentButRejectedContactRequestsModelVariant
+  QtProperty[QVariant] sentButRejectedContactRequestsModel:
+    read = getSentButRejectedContactRequestsModel
+    notify = sentButRejectedContactRequestsModelChanged
+
   proc addContact*(self: View, publicKey: string) {.slot.} =
     self.delegate.addContact(publicKey)
+
+  proc rejectContactRequest*(self: View, publicKey: string) {.slot.} =
+    self.delegate.rejectContactRequest(publicKey)
 
   proc changeContactNickname*(self: View, publicKey: string, nickname: string) {.slot.} =
     self.delegate.changeContactNickname(publicKey, nickname)
@@ -65,3 +132,6 @@ QtObject:
 
   proc removeContact*(self: View, publicKey: string) {.slot.} =
     self.delegate.removeContact(publicKey)
+
+  proc removeContactRequestRejection*(self: View, publicKey: string) {.slot.} =
+    self.delegate.removeContactRequestRejection(publicKey)

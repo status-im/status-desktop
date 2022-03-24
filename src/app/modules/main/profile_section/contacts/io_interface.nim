@@ -46,6 +46,8 @@ method blockContact*(self: AccessInterface, publicKey: string) {.base.} =
 method removeContact*(self: AccessInterface, publicKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method removeContactRequestRejection*(self: AccessInterface, publicKey: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
 
 # Controller Delegate Interface
 
@@ -65,4 +67,7 @@ method contactNicknameChanged*(self: AccessInterface, publicKey: string) {.base.
   raise newException(ValueError, "No implementation available")
 
 method contactUpdated*(self: AccessInterface, publicKey: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method contactRequestRejectionRemoved*(self: AccessInterface, publicKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")

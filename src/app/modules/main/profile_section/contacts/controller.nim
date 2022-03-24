@@ -37,6 +37,10 @@ proc init*(self: Controller) =
     var args = ContactArgs(e)
     self.delegate.contactRemoved(args.contactId)
 
+  self.events.on(SIGNAL_CONTACT_REJECTION_REMOVED) do(e: Args):
+    var args = ContactArgs(e)
+    self.delegate.contactRequestRejectionRemoved(args.contactId)
+
   self.events.on(SIGNAL_CONTACT_NICKNAME_CHANGED) do(e: Args):
     var args = ContactArgs(e)
     self.delegate.contactNicknameChanged(args.contactId)
@@ -45,8 +49,8 @@ proc init*(self: Controller) =
     var args = ContactArgs(e)
     self.delegate.contactUpdated(args.contactId)
 
-proc getContacts*(self: Controller): seq[ContactsDto] =
-  return self.contactsService.getContacts()
+proc getContacts*(self: Controller, group: ContactsGroup): seq[ContactsDto] =
+  return self.contactsService.getContactsByGroup(group)
 
 proc getContact*(self: Controller, id: string): ContactsDto =
   return self.contactsService.getContactById(id)
@@ -69,3 +73,9 @@ proc removeContact*(self: Controller, publicKey: string) =
 
 proc changeContactNickname*(self: Controller, publicKey: string, nickname: string) =
   self.contactsService.changeContactNickname(publicKey, nickname)
+
+proc rejectContactRequest*(self: Controller, publicKey: string) =
+  self.contactsService.rejectContactRequest(publicKey)
+
+proc removeContactRequestRejection*(self: Controller, publicKey: string) =
+  self.contactsService.removeContactRequestRejection(publicKey)

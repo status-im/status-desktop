@@ -222,38 +222,35 @@ proc createItemFromPublicKey(self: Module, publicKey: string): contacts_item.Ite
     contactDetails.displayName,
     contactDetails.icon,
     contactDetails.isIdenticon,
-    contactDetails.details.isContact(),
+    contactDetails.details.isMutualContact(),
     contactDetails.details.isBlocked(),
-    contactDetails.details.requestReceived()
+    contactDetails.details.isContactVerified(),
+    contactDetails.details.isContactUntrustworthy()
   )
 
 proc initContactRequestsModel(self: Module) =
   var contactsWhoAddedMe: seq[contacts_item.Item]
-  let contacts =  self.controller.getContacts()
+  let contacts =  self.controller.getContacts(ContactsGroup.IncomingPendingContactRequests)
   for c in contacts:
-    if(c.requestReceived() and not c.isContact() and not c.isBlocked()):
-      let item = self.createItemFromPublicKey(c.id)
-      contactsWhoAddedMe.add(item)
+    let item = self.createItemFromPublicKey(c.id)
+    contactsWhoAddedMe.add(item)
 
   self.view.contactRequestsModel().addItems(contactsWhoAddedMe)
 
 proc convertPubKeysToJson(self: Module, pubKeys: string): seq[string] =
   return map(parseJson(pubKeys).getElems(), proc(x:JsonNode):string = x.getStr)
 
-
 method initListOfMyContacts*(self: Module, pubKeys: string) =
   var myContacts: seq[contacts_item.Item]
-  let contacts =  self.controller.getContacts()
+  let contacts =  self.controller.getContacts(ContactsGroup.MyMutualContacts)
   for c in contacts:
-    if(c.isContact() and not c.isBlocked() and not pubKeys.contains(c.id)):
-      let item = self.createItemFromPublicKey(c.id)
-      myContacts.add(item)
+    let item = self.createItemFromPublicKey(c.id)
+    myContacts.add(item)
 
   self.view.listOfMyContacts().addItems(myContacts)
 
 method clearListOfMyContacts*(self: Module) =
   self.view.listOfMyContacts().clear()
-
 
 method load*(self: Module, events: EventEmitter,
   settingsService: settings_service.Service,
@@ -595,11 +592,11 @@ method getCurrentFleet*(self: Module): string =
 
 method acceptContactRequest*(self: Module, publicKey: string) =
   self.controller.addContact(publicKey)
-  self.createOneToOneChat(communityID = "" , publicKey, ensName = "")
 
 method onContactAccepted*(self: Module, publicKey: string) =
   self.view.contactRequestsModel().removeItemWithPubKey(publicKey)
   self.updateParentBadgeNotifications()
+  self.createOneToOneChat(communityID = "" , publicKey, ensName = "")
 
 method acceptAllContactRequests*(self: Module) =
   let pubKeys = self.view.contactRequestsModel().getPublicKeys()
@@ -630,8 +627,8 @@ method onContactUnblocked*(self: Module, publicKey: string) =
 
 method onContactDetailsUpdated*(self: Module, publicKey: string) =
   let contactDetails = self.controller.getContactDetails(publicKey)
-  if (contactDetails.details.requestReceived() and
-    not contactDetails.details.isContact()and
+  if (contactDetails.details.isContactRequestReceived() and
+    not contactDetails.details.isContactRequestSent() and
     not contactDetails.details.isBlocked() and
     not self.view.contactRequestsModel().containsItemWithPubKey(publicKey)):
       let item = self.createItemFromPublicKey(publicKey)

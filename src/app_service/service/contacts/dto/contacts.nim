@@ -97,11 +97,36 @@ proc userNameOrAlias*(contact: ContactsDto): string =
   else:
     result = contact.alias
 
-proc isContact*(self: ContactsDto): bool =
-  result = self.added
+proc isContactRequestReceived*(self: ContactsDto): bool =
+  return self.hasAddedUs
+
+proc isContactRequestSent*(self: ContactsDto): bool =
+  return self.added
+
+proc isSentContactRequestRejected*(self: ContactsDto): bool =
+  # TODO not implemented in `status-go` yet
+  # We don't have this prop for now.
+  return false
+
+proc isReceivedContactRequestRejected*(self: ContactsDto): bool =
+  # We need to check this.
+  return self.removed
 
 proc isBlocked*(self: ContactsDto): bool =
-  result = self.blocked
+  return self.blocked
 
-proc requestReceived*(self: ContactsDto): bool =
-  result = self.hasAddedUs
+proc isMutualContact*(self: ContactsDto): bool =
+  # TODO not implemented in `status-go` yet
+  # But for now we consider that contact is mutual contact if I added him and he added me.
+  return self.hasAddedUs and self.added
+
+proc isContactVerified*(self: ContactsDto): bool =
+  # TODO not implemented in `status-go` yet
+  return false
+
+proc isContactUntrustworthy*(self: ContactsDto): bool =
+  # TODO not implemented in `status-go` yet
+  return false
+
+proc isContactMarked*(self: ContactsDto): bool =
+  return self.isContactVerified() or self.isContactUntrustworthy()

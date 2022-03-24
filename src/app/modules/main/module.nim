@@ -261,7 +261,7 @@ method load*[T](
   var activeSectionId = singletonInstance.localAccountSensitiveSettings.getActiveSection()
 
   # Chat Section
-  let receivedContactRequests = self.controller.getContacts().filter(x => x.requestReceived() and not x.isContact() and not x.isBlocked())
+  let receivedContactRequests = self.controller.getContacts(ContactsGroup.IncomingPendingContactRequests)
   let (unviewedCount, mentionsCount) = self.controller.getNumOfNotificaitonsForChat()
   let notificationsCount = mentionsCount + receivedContactRequests.len
   let hasNotification = unviewedCount > 0 or notificationsCount > 0

@@ -18,7 +18,7 @@ import shared.controls.chat 1.0
 StatusListItem {
     id: container
     width: parent.width
-    visible: container.isContact && (searchStr == "" || container.name.includes(searchStr))
+    visible: container.isMutualContact && (container.searchStr == "" || container.name.includes(container.searchStr))
     height: visible ? implicitHeight : 0
     title: container.name
     image.source: container.icon
@@ -27,26 +27,74 @@ StatusListItem {
     property string publicKey: "0x04d8c07dd137bd1b73a6f51df148b4f77ddaa11209d36e43d8344c0a7d6db1cad6085f27cfb75dd3ae21d86ceffebe4cf8a35b9ce8d26baa19dc264efe6d8f221b"
     property string icon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
     property bool isIdenticon
-
-    property bool isContact: true
+    property bool isMutualContact: false
     property bool isBlocked: false
+    property int verificationState: Constants.contactVerificationState.notMarked
+
     property string searchStr: ""
 
     property bool showSendMessageButton: false
+    property bool showRejectContactRequestButton: false
+    property bool showAcceptContactRequestButton: false
+    property bool showRemoveRejectionButton: false
+    property string contactText: ""
+    property bool contactTextClickable: false
 
     signal openProfilePopup(string publicKey)
     signal openChangeNicknamePopup(string publicKey)
     signal sendMessageActionTriggered(string publicKey)
+    signal acceptContactRequest(string publicKey)
+    signal rejectContactRequest(string publicKey)
+    signal removeRejection(string publicKey)
+    signal textClicked(string publicKey)
 
     components: [
         StatusFlatRoundButton {
             visible: showSendMessageButton
-            id: sendMessageBtn
             width: visible ? 32 : 0
             height: visible ? 32 : 0
             icon.name: "chat"
             type: StatusFlatRoundButton.Type.Secondary
             onClicked: container.sendMessageActionTriggered(container.publicKey)
+        },
+        StatusFlatRoundButton {
+            visible: showRejectContactRequestButton
+            width: visible ? 32 : 0
+            height: visible ? 32 : 0
+            icon.name: "close-circle"
+            icon.color: Style.current.danger
+            onClicked: container.rejectContactRequest(container.publicKey)
+        },
+        StatusFlatRoundButton {
+            visible: showAcceptContactRequestButton
+            width: visible ? 32 : 0
+            height: visible ? 32 : 0
+            icon.name: "checkmark-circle"
+            icon.color: Style.current.success
+            onClicked: container.acceptContactRequest(container.publicKey)
+        },
+        StatusFlatRoundButton {
+            visible: showRemoveRejectionButton
+            width: visible ? 32 : 0
+            height: visible ? 32 : 0
+            icon.name: "cancel"
+            icon.color: Style.current.danger
+            onClicked: container.removeRejection(container.publicKey)
+        },
+        StatusBaseText {
+            text: container.contactText
+            anchors.verticalCenter: parent.verticalCenter
+            color: container.contactTextClickable? Theme.palette.directColor1 : Theme.palette.baseColor1
+
+            MouseArea {
+                anchors.fill: parent
+                enabled: container.contactTextClickable
+                cursorShape: sensor.enabled && containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
+                hoverEnabled: true
+                onClicked: {
+                    container.textClicked(container.publicKey)
+                }
+            }
         },
         StatusFlatRoundButton {
             id: menuButton
@@ -101,7 +149,7 @@ StatusListItem {
                         container.sendMessageActionTriggered(container.publicKey)
                         menuButton.highlighted = false
                     }
-                    enabled: !container.isBlocked
+                    enabled: container.isMutualContact
                 }
 
                 StatusMenuItem {
