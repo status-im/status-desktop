@@ -267,8 +267,8 @@ proc clearChatHistory*(self: Controller, chatId: string) =
 proc getCurrentFleet*(self: Controller): string =
   return self.settingsService.getFleetAsString()
 
-proc getContacts*(self: Controller): seq[ContactsDto] =
-  return self.contactService.getContacts()
+proc getContacts*(self: Controller, group: ContactsGroup): seq[ContactsDto] =
+  return self.contactService.getContactsByGroup(group)
 
 proc getContactDetails*(self: Controller, id: string): ContactDetails =
   return self.contactService.getContactDetails(id)

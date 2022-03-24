@@ -265,8 +265,8 @@ proc setUserStatus*(self: Controller, status: bool) =
 proc getContact*(self: Controller, id: string): ContactsDto =
   return self.contactsService.getContactById(id)
 
-proc getContacts*(self: Controller): seq[ContactsDto] =
-  return self.contactsService.getContacts()
+proc getContacts*(self: Controller, group: ContactsGroup): seq[ContactsDto] =
+  return self.contactsService.getContactsByGroup(group)
 
 proc getContactNameAndImage*(self: Controller, contactId: string):
   tuple[name: string, image: string, isIdenticon: bool] =

@@ -294,7 +294,7 @@ QtObject:
     preferredUsername: string = "",
     communityId: string = "") =
     try:
-      let allKnownContacts = self.contactService.getContacts()
+      let allKnownContacts = self.contactService.getContactsByGroup(ContactsGroup.AllKnownContacts)
       let processedMsg = message_common.replaceMentionsWithPubKeys(allKnownContacts, msg)
 
       let response = status_chat.sendChatMessage(

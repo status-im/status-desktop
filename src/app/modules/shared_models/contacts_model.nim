@@ -7,9 +7,9 @@ type
     Name
     Icon
     IsIdenticon
-    IsContact
+    IsMutualContact
     IsBlocked
-    RequestReceived
+    VerificationState
 
 QtObject:
   type Model* = ref object of QAbstractListModel
@@ -42,9 +42,9 @@ QtObject:
       ModelRole.Name.int:"name",
       ModelRole.Icon.int:"icon",
       ModelRole.IsIdenticon.int:"isIdenticon",
-      ModelRole.IsContact.int:"isContact",
+      ModelRole.IsMutualContact.int:"isMutualContact",
       ModelRole.IsBlocked.int:"isBlocked",
-      ModelRole.RequestReceived.int:"requestReceived"
+      ModelRole.VerificationState.int:"verificationState"
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -64,12 +64,12 @@ QtObject:
         result = newQVariant(item.icon)
       of ModelRole.IsIdenticon:
         result = newQVariant(item.isIdenticon)
-      of ModelRole.IsContact:
-        result = newQVariant(item.isContact)
+      of ModelRole.IsMutualContact:
+        result = newQVariant(item.isMutualContact)
       of ModelRole.IsBlocked:
         result = newQVariant(item.isBlocked)
-      of ModelRole.RequestReceived:
-        result = newQVariant(item.requestReceived)
+      of ModelRole.VerificationState:
+        result = newQVariant(item.verificationState.int)
 
   proc findIndexByPubKey(self: Model, pubKey: string): int =
     for i in 0 ..< self.items.len:
@@ -130,9 +130,9 @@ QtObject:
       ModelRole.Name.int,
       ModelRole.Icon.int,
       ModelRole.IsIdenticon.int,
-      ModelRole.IsContact.int,
+      ModelRole.IsMutualContact.int,
       ModelRole.IsBlocked.int,
-      ModelRole.RequestReceived.int
+      ModelRole.VerificationState.int
       ]
     )
 

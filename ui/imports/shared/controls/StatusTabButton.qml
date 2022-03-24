@@ -10,11 +10,15 @@ import StatusQ.Components 0.1
 
 TabButton {
     property string btnText: "Default Button"
+    property int addToWidth: 0
+
     property alias badge: statusBadge
 
     id: tabButton
     width: tabBtnText.width +
-        (statusBadge.visible ? statusBadge.width + statusBadge.anchors.leftMargin : 0)
+           (statusBadge.visible ? statusBadge.width + statusBadge.anchors.leftMargin : 0) +
+           addToWidth
+
     height: tabBtnText.height + 11
     text: ""
     padding: 0
@@ -25,6 +29,7 @@ TabButton {
 
     StyledText {
         id: tabBtnText
+        anchors.horizontalCenter: parent.horizontalCenter
         text: btnText
         font.weight: Font.Medium
         font.pixelSize: 15

@@ -91,6 +91,23 @@ QtObject {
         readonly property int noOne: 3
     }
 
+    readonly property QtObject contactVerificationState: QtObject {
+        readonly property int notMarked: 0
+        readonly property int verified: 1
+        readonly property int untrustworthy: 2
+    }
+
+    readonly property QtObject contactsPanelUsage: QtObject {
+        readonly property int unknownPosition: -1
+        readonly property int mutualContacts: 0
+        readonly property int verifiedMutualContacts: 1
+        readonly property int sentContactRequest: 2
+        readonly property int receivedContactRequest: 3
+        readonly property int rejectedSentContactRequest: 4
+        readonly property int rejectedReceivedContactRequest: 5
+        readonly property int blockedContacts: 6
+    }
+
     readonly property int communityImported: 0
     readonly property int communityImportingInProgress: 1
     readonly property int communityImportingError: 2

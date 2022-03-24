@@ -49,7 +49,7 @@ Item {
             anchors.left: parent.left
             anchors.leftMargin: -40
             onClicked: Global.changeAppSectionBySectionType(Constants.appSection.profile,
-                Constants.settingsSubsection.messaging)
+                                                            Constants.settingsSubsection.messaging)
         }
 
         RowLayout {
@@ -95,24 +95,28 @@ Item {
             }
             StatusTabButton {
                 id: contactsBtn
-                anchors.top: parent.top
+                addToWidth: Style.current.bigPadding
                 btnText: qsTr("Contacts")
             }
             StatusTabButton {
                 id: pendingRequestsBtn
-                enabled: root.contactsStore.contactRequestsModel.count > 0
-                anchors.left: contactsBtn.right
-                anchors.top: parent.top
-                anchors.leftMargin: Style.current.bigPadding
+                addToWidth: Style.current.bigPadding
+                enabled: root.contactsStore.receivedContactRequestsModel.count > 0 ||
+                         root.contactsStore.sentContactRequestsModel.count > 0
                 btnText: qsTr("Pending Requests")
                 badge.value: contactList.count
             }
             StatusTabButton {
+                id: rejectedRequestsBtn
+                addToWidth: Style.current.bigPadding
+                enabled: root.contactsStore.receivedButRejectedContactRequestsModel.count > 0 ||
+                         root.contactsStore.sentButRejectedContactRequestsModel.count > 0
+                btnText: qsTr("Rejected Requests")
+            }
+            StatusTabButton {
                 id: blockedBtn
+                addToWidth: Style.current.bigPadding
                 enabled: root.contactsStore.blockedContactsModel.count > 0
-                anchors.left: pendingRequestsBtn.right
-                anchors.leftMargin: Style.current.bigPadding
-                anchors.top: parent.top
                 btnText: qsTr("Blocked")
             }
         }
@@ -127,34 +131,59 @@ Item {
 
             // CONTACTS
             Item {
-                anchors.left: parent.left
-                anchors.leftMargin: -Style.current.padding
-                anchors.right: parent.right
-                anchors.rightMargin: -Style.current.padding
-                height: parent.height
+                Layout.fillWidth: true
+                Layout.fillHeight: true
 
-                ContactsListPanel {
-                    id: contactListView
+                ColumnLayout {
                     anchors.fill: parent
-                    contactsModel: root.contactsStore.myContactsModel
-                    clip: true
-                    hideBlocked: true
-                    searchString: searchBox.text
-                    showSendMessageButton: true
 
-                    onContactClicked: {
-                        root.contactsStore.joinPrivateChat(contact.pubKey)
+                    ContactsListPanel {
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: parent.height * 0.5
+                        contactsModel: root.contactsStore.myContactsModel
+                        clip: true
+                        title: qsTr("Identity Verified Contacts")
+                        searchString: searchBox.text
+                        panelUsage: Constants.contactsPanelUsage.verifiedMutualContacts
+
+                        onOpenProfilePopup: {
+                            Global.openProfilePopup(publicKey)
+                        }
+
+                        onSendMessageActionTriggered: {
+                            root.contactsStore.joinPrivateChat(publicKey)
+                        }
+
+                        onOpenChangeNicknamePopup: {
+                            Global.openProfilePopup(publicKey, null, true)
+                        }
                     }
 
-                    onOpenProfilePopup: {
-                        Global.openProfilePopup(contact.pubKey)
+                    ContactsListPanel {
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: parent.height * 0.5
+                        contactsModel: root.contactsStore.myContactsModel
+                        clip: true
+                        title: qsTr("Contacts")
+                        searchString: searchBox.text
+                        panelUsage: Constants.contactsPanelUsage.mutualContacts
+
+                        onOpenProfilePopup: {
+                            Global.openProfilePopup(publicKey)
+                        }
+
+                        onSendMessageActionTriggered: {
+                            root.contactsStore.joinPrivateChat(publicKey)
+                        }
+
+                        onOpenChangeNicknamePopup: {
+                            Global.openProfilePopup(publicKey, null, true)
+                        }
                     }
 
-                    onSendMessageActionTriggered: {
-                        root.contactsStore.joinPrivateChat(contact.pubKey)
-                    }
-                    onOpenChangeNicknamePopup: {
-                        Global.openProfilePopup(contact.pubKey, null, true)
+                    Item {
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
                     }
                 }
 
@@ -163,56 +192,136 @@ Item {
                     //% "You don’t have any contacts yet"
                     text: qsTrId("you-don-t-have-any-contacts-yet")
                     width: parent.width
-                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.centerIn: parent
                 }
             }
 
             // PENDING REQUESTS
             Item {
-                ListView {
-                    id: contactList
+                Layout.fillWidth: true
+                Layout.fillHeight: true
 
+                ColumnLayout {
                     anchors.fill: parent
-                    anchors.leftMargin: -Style.current.halfPadding
-                    anchors.rightMargin: -Style.current.halfPadding
 
-                    model: root.contactsStore.contactRequestsModel
-                    clip: true
+                    ContactsListPanel {
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: parent.height * 0.5
+                        clip: true
+                        title: qsTr("Received")
+                        searchString: searchBox.text
+                        contactsModel: root.contactsStore.receivedContactRequestsModel
+                        panelUsage: Constants.contactsPanelUsage.receivedContactRequest
 
-                    delegate: ContactRequestPanel {
-                        contactName: model.name
-                        contactIcon: model.icon
-                        contactIconIsIdenticon: model.isIdenticon
                         onOpenProfilePopup: {
-                            Global.openProfilePopup(model.pubKey)
+                            Global.openProfilePopup(publicKey)
                         }
-                        onBlockContactActionTriggered: {
-                            blockContactConfirmationDialog.contactName = model.name
-                            blockContactConfirmationDialog.contactAddress = model.pubKey
-                            blockContactConfirmationDialog.open()
+
+                        onOpenChangeNicknamePopup: {
+                            Global.openProfilePopup(publicKey, null, true)
                         }
-                        onAcceptClicked: {
-                            root.contactsStore.acceptContactRequest(model.pubKey)
+
+                        onAcceptContactRequest: {
+                            root.contactsStore.acceptContactRequest(publicKey)
                         }
-                        onDeclineClicked: {
-                            root.contactsStore.rejectContactRequest(model.pubKey)
+
+                        onRejectContactRequest: {
+                            root.contactsStore.rejectContactRequest(publicKey)
                         }
+                    }
+
+                    ContactsListPanel {
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: parent.height * 0.5
+                        clip: true
+                        title: qsTr("Sent")
+                        searchString: searchBox.text
+                        contactsModel: root.contactsStore.sentContactRequestsModel
+                        panelUsage: Constants.contactsPanelUsage.sentContactRequest
+
+                        onOpenProfilePopup: {
+                            Global.openProfilePopup(publicKey)
+                        }
+
+                        onOpenChangeNicknamePopup: {
+                            Global.openProfilePopup(publicKey, null, true)
+                        }
+                    }
+
+                    Item {
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                    }
+                }
+            }
+
+            // REJECTED REQUESTS
+            Item {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+
+                ColumnLayout {
+                    anchors.fill: parent
+
+                    ContactsListPanel {
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: parent.height * 0.5
+                        clip: true
+                        title: qsTr("Received")
+                        searchString: searchBox.text
+                        contactsModel: root.contactsStore.receivedButRejectedContactRequestsModel
+                        panelUsage: Constants.contactsPanelUsage.rejectedReceivedContactRequest
+
+                        onOpenProfilePopup: {
+                            Global.openProfilePopup(publicKey)
+                        }
+
+                        onOpenChangeNicknamePopup: {
+                            Global.openProfilePopup(publicKey, null, true)
+                        }
+
+                        onRemoveRejection: {
+                            root.contactsStore.removeContactRequestRejection(publicKey)
+                        }
+                    }
+
+                    ContactsListPanel {
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: parent.height * 0.5
+                        clip: true
+                        title: qsTr("Sent")
+                        searchString: searchBox.text
+                        contactsModel: root.contactsStore.sentButRejectedContactRequestsModel
+                        panelUsage: Constants.contactsPanelUsage.rejectedSentContactRequest
+
+                        onOpenProfilePopup: {
+                            Global.openProfilePopup(publicKey)
+                        }
+
+                        onOpenChangeNicknamePopup: {
+                            Global.openProfilePopup(publicKey, null, true)
+                        }
+                    }
+
+                    Item {
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
                     }
                 }
             }
 
             // BLOCKED
             ContactsListPanel {
-                anchors.left: parent.left
-                anchors.leftMargin: -Style.current.padding
-                anchors.right: parent.right
-                anchors.rightMargin: -Style.current.padding
-                height: parent.height
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+
                 clip: true
+                searchString: searchBox.text
                 contactsModel: root.contactsStore.blockedContactsModel
+                panelUsage: Constants.contactsPanelUsage.blockedContacts
 
                 onOpenProfilePopup: {
-                    Global.openProfilePopup(contact.pubKey)
+                    Global.openProfilePopup(publicKey)
                 }
             }
         }
@@ -245,7 +354,7 @@ Item {
         confirmationText: qsTrId("are-you-sure-you-want-to-remove-this-contact-")
         onConfirmButtonClicked: {
             if (Utils.getContactDetailsAsJson(removeContactConfirmationDialog.value).isContact) {
-              root.contactsStore.removeContact(removeContactConfirmationDialog.value);
+                root.contactsStore.removeContact(removeContactConfirmationDialog.value);
             }
             removeContactConfirmationDialog.close()
         }

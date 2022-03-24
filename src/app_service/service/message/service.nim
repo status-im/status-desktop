@@ -683,7 +683,7 @@ proc deleteMessage*(self: Service, messageId: string) =
 
 proc editMessage*(self: Service, messageId: string, msg: string) =
   try:
-    let allKnownContacts = self.contactService.getContacts()
+    let allKnownContacts = self.contactService.getContactsByGroup(ContactsGroup.AllKnownContacts)
     let processedMsg = message_common.replaceMentionsWithPubKeys(allKnownContacts, msg)
 
     let response = status_go.editMessage(messageId, processedMsg)
