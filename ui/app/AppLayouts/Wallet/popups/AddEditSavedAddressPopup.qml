@@ -65,8 +65,13 @@ StatusModal {
                 StatusMinLengthValidator {
                     minLength: 1
                     errorMessage: qsTr("Name must not be blank")
+                },
+                StatusRegularExpressionValidator {
+                    regularExpression: /^[^<>]+$/
+                    errorMessage: qsTr("This is not a valid account name")
                 }
             ]
+            charLimit: 40
             validationMode: _internal.validationMode
         }
 
