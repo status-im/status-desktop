@@ -25,7 +25,7 @@ proc newService*(events: EventEmitter): Service =
   result = Service()
   result.events = events
 
-proc init*(self: Service) =
+proc fetchAddresses(self: Service) = 
   try:
     let response = backend.getSavedAddresses()
 
@@ -35,8 +35,11 @@ proc init*(self: Service) =
     )
 
   except Exception as e:
-    error "error: ", procName="init", errName = e.name, errDesription = e.msg
+    error "error: ", procName="fetchAddress", errName = e.name, errDesription = e.msg
 
+proc init*(self: Service) =
+  self.fetchAddresses()
+  
 proc getSavedAddresses*(self: Service): seq[SavedAddressDto] =
   return self.savedAddresses
 
@@ -47,16 +50,7 @@ proc createOrUpdateSavedAddress*(self: Service, name, address: string): string =
     if not response.error.isNil:
       raise newException(Exception, response.error.message)
 
-    var found = false
-    for savedAddress in self.savedAddresses:
-      if savedAddress.address == address:
-        savedAddress.name = name
-        found = true
-        break
-
-    if not found:
-      self.savedAddresses.add(newSavedAddressDto(name, address))
-
+    self.fetchAddresses()
     self.events.emit(SIGNAL_SAVED_ADDRESS_CHANGED, Args())
     return ""
   except Exception as e:
@@ -71,11 +65,7 @@ proc deleteSavedAddress*(self: Service, address: string): string =
     if not response.error.isNil:
       raise newException(Exception, response.error.message)
 
-    for i in 0..<self.savedAddresses.len:
-      if self.savedAddresses[i].address == address:
-        self.savedAddresses.delete(i)
-        break
-
+    self.fetchAddresses()
     self.events.emit(SIGNAL_SAVED_ADDRESS_CHANGED, Args())
     return ""
   except Exception as e:
