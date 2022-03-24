@@ -107,6 +107,7 @@ Item {
                 radius: Style.current.radius
                 width: typeText.width + Style.current.xlPadding
                 height: parent.height
+                color: Style.current.transparent
                 StatusBaseText {
                     id: labelType
                     anchors.top: parent.top
@@ -146,6 +147,8 @@ Item {
                 radius: Style.current.radius
                 width: storageText.width + Style.current.xlPadding
                 height: parent.height
+                color: Style.current.transparent
+
                 StatusBaseText {
                     id: labelStorage
                     anchors.top: parent.top
@@ -180,6 +183,8 @@ Item {
             radius: Style.current.radius
             width: Math.max(path.width, labelPath.width) + Style.current.xlPadding
             height: 50
+            color: Style.current.transparent
+
             StatusBaseText {
                 id: labelPath
                 anchors.top: parent.top
