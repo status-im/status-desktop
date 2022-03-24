@@ -51,6 +51,6 @@ Item {
         anchors.centerIn: parent
         namesModel: root.asortedContacts
         toLabelText: qsTr("To: ")
-        warningText: qsTr("5 USER LIMIT REACHED")
+        warningText: qsTr("USER LIMIT REACHED")
     }
 }
