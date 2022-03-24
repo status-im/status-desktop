@@ -104,6 +104,18 @@ Popup {
         }
     }
 
+
+    Connections {
+        target: WalletStore.dappBrowserAccount
+        onConnectedAccountDeleted: {
+            popup.reload()
+            // This is done because when an account is deleted and the account is updated to default one,
+            // only the properties are updated and we need to listen to those events and update the selected account
+            accountSelectorRow.currentAddress = ""
+            accountSelector.selectedAccount =  Qt.binding(function () {return WalletStore.dappBrowserAccount})
+        }
+    }
+
     Item {
         property string currentAddress: ""
         id: accountSelectorRow

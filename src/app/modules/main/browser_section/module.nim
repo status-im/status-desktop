@@ -3,6 +3,7 @@ import io_interface
 import ../io_interface as delegate_interface
 import view
 import ../../../global/global_singleton
+import ../../../core/eventemitter
 import provider/module as provider_module
 import bookmark/module as bookmark_module
 import dapps/module as dapps_module
@@ -18,6 +19,7 @@ export io_interface
 type
   Module* = ref object of io_interface.AccessInterface
     delegate: delegate_interface.AccessInterface
+    events: EventEmitter
     view: View
     viewVariant: QVariant
     moduleLoaded: bool
@@ -27,6 +29,7 @@ type
     currentAccountModule: current_account_module.AccessInterface
 
 proc newModule*(delegate: delegate_interface.AccessInterface,
+    events: EventEmitter,
     bookmarkService: bookmark_service.Service,
     settingsService: settings_service.Service,
     dappPermissionsService: dapp_permissions_service.Service,
@@ -34,13 +37,14 @@ proc newModule*(delegate: delegate_interface.AccessInterface,
     walletAccountService: wallet_account_service.Service): Module =
   result = Module()
   result.delegate = delegate
+  result.events = events
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
   result.moduleLoaded = false
   result.providerModule = provider_module.newModule(result, settingsService, providerService)
   result.bookmarkModule = bookmark_module.newModule(result, bookmarkService)
   result.dappsModule = dapps_module.newModule(result, dappPermissionsService, walletAccountService)
-  result.currentAccountModule = current_account_module.newModule(result, walletAccountService)
+  result.currentAccountModule = current_account_module.newModule(result, events, walletAccountService)
 
 method delete*(self: Module) =
   self.view.delete

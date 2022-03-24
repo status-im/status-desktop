@@ -66,8 +66,8 @@ proc fetchNativeChainBalance(network: NetworkDto, accountAddress: string): float
 type AccountSaved = ref object of Args
   account: WalletAccountDto
 
-type AccountDeleted = ref object of Args
-  account: WalletAccountDto
+type AccountDeleted* = ref object of Args
+  account*: WalletAccountDto
 
 type CurrencyUpdated = ref object of Args
 

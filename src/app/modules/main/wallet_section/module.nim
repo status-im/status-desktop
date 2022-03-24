@@ -107,6 +107,7 @@ method load*(self: Module) =
   self.events.on(SIGNAL_WALLET_ACCOUNT_SAVED) do(e:Args):
     self.setTotalCurrencyBalance()
   self.events.on(SIGNAL_WALLET_ACCOUNT_DELETED) do(e:Args):
+    self.switchAccount(0)
     self.setTotalCurrencyBalance()
   self.events.on(SIGNAL_WALLET_ACCOUNT_CURRENCY_UPDATED) do(e:Args):
     self.setTotalCurrencyBalance()
