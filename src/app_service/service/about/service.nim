@@ -2,6 +2,7 @@ import NimQml, json, chronicles
 
 import ../../../app/core/eventemitter
 import ../../../app/core/tasks/[qt, threadpool]
+import ../../../constants
 
 import ../settings/service as settings_service
 import ../network/types
@@ -12,9 +13,6 @@ include async_tasks
 
 logScope:
   topics = "about-service"
-
-# This is changed during compilation by reading the VERSION file
-const DESKTOP_VERSION {.strdefine.} = "0.0.0"
 
 type
   VersionArgs* = ref object of Args
