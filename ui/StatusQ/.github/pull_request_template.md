@@ -8,6 +8,7 @@
   - in case of new component, add new component page
   - in case of new features, add variation to existing component page
   - nice to have: add it to the demo application as well
+- [ ] test changes in both light and dark theme?
 - [ ] is this a breaking change?
     - [ ] use the dedicated `BREAKING CHANGE` commit message section
     - [ ] resolve breaking changes in [status-desktop](https://github.com/status-im/status-desktop)
