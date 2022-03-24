@@ -14,6 +14,7 @@ import ../../../backend/accounts as status_go_accounts
 import ../../../backend/tokens as status_go_tokens
 import ../../../backend/wallet as status_go_wallet
 import ../../../backend/eth as status_go_eth
+import ../../../backend/cache
 
 export dto
 
@@ -87,6 +88,9 @@ type
     networkService: network_service.Service
     accounts: OrderedTable[string, WalletAccountDto]
 
+    priceCache: TimedCache
+
+
 proc delete*(self: Service) =
   discard
 
@@ -104,6 +108,7 @@ proc newService*(
   result.tokenService = tokenService
   result.networkService = networkService
   result.accounts = initOrderedTable[string, WalletAccountDto]()
+  result.priceCache = newTimedCache()
 
 proc buildTokens(
   self: Service,
@@ -143,12 +148,16 @@ proc buildTokens(
     )
 
 proc getPrice*(self: Service, crypto: string, fiat: string): float64 =
+  let cacheKey = crypto & fiat
+  if self.priceCache.isCached(cacheKey):
+    return parseFloat(self.priceCache.get(cacheKey))
   var prices = initTable[string, float]()
 
   try:
     let response = status_go_wallet.fetchPrices(@[crypto], fiat)
     for (symbol, value) in response.result.pairs:
       prices[symbol] = value.getFloat
+      self.priceCache.set(cacheKey, $value.getFloat)
   except Exception as e:
     let errDesription = e.msg
     error "error: ", errDesription
