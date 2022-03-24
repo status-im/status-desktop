@@ -86,7 +86,6 @@ Item {
                 if (newIndex > RootStore.accounts) {
                     return
                 }
-                selectedAccountIndex = newIndex
                 RootStore.switchAccount(newIndex)
 
             }

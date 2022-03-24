@@ -18,7 +18,6 @@ import "../stores"
 Rectangle {
     id: walletInfoContainer
 
-    property int selectedAccountIndex: 0
     property var changeSelectedAccount: function(){}
     property var showSavedAddresses: function(showSavedAddresses){}
     property var emojiPopup: null
@@ -162,7 +161,7 @@ Rectangle {
 
             delegate: StatusListItem {
                 width: parent.width
-                highlighted: index === selectedAccountIndex
+                highlighted: RootStore.currentAccount.name === model.name
                 title: model.name
                 subTitle: Utils.toLocaleString(model.currencyBalance.toFixed(2), RootStore.locale, {"model.currency": true}) + " " + RootStore.currentCurrency.toUpperCase()
                 icon.emoji: !!model.emoji ? model.emoji: ""

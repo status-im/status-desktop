@@ -128,6 +128,7 @@ QtObject:
     self.delegate.switchAccountByAddress(address)
 
 
+  proc connectedAccountDeleted*(self: View) {.signal.}
 
 proc setData*(self: View, dto: wallet_account_service.WalletAccountDto) =
     self.name = dto.name
@@ -162,4 +163,7 @@ proc setData*(self: View, dto: wallet_account_service.WalletAccountDto) =
     )
     self.assets = assets
     self.assetsChanged()
+
+proc isAddressCurrentAccount*(self: View, address: string): bool =
+  return self.address == address
 
