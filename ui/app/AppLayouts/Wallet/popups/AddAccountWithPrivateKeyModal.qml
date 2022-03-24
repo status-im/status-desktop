@@ -143,8 +143,13 @@ StatusModal {
                     //% "You need to enter an account name"
                     errorMessage: qsTrId("you-need-to-enter-an-account-name")
                     minLength: 1
+                },
+                StatusRegularExpressionValidator {
+                    regularExpression: /^[^<>]+$/
+                    errorMessage: qsTr("This is not a valid account name")
                 }
             ]
+            charLimit: 40
         }
 
         StatusColorSelectorGrid {
@@ -168,7 +173,7 @@ StatusModal {
                       //% "Add account"
                       qsTrId("add-account")
 
-            enabled: !loading && passwordInput.text !== "" && accountNameInput.text !== "" && accountPKeyInput.text !== ""
+            enabled: !loading && passwordInput.text !== "" && accountNameInput.text !== "" && accountNameInput.valid && accountPKeyInput.text !== ""
 
             MessageDialog {
                 id: accountError

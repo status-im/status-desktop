@@ -66,8 +66,13 @@ StatusModal {
                     //% "You need to enter an account name"
                     errorMessage: qsTrId("you-need-to-enter-an-account-name")
                     minLength: 1
+                },
+                StatusRegularExpressionValidator {
+                    regularExpression: /^[^<>]+$/
+                    errorMessage: qsTr("This is not a valid account name")
                 }
             ]
+            charLimit: 40
         }
 
         StatusColorSelectorGrid {
@@ -104,7 +109,7 @@ StatusModal {
             //% "Change Name"
             text: qsTr("Change Name")
 
-            enabled: accountNameInput.text !== ""
+            enabled: accountNameInput.text !== "" && accountNameInput.valid
 
             MessageDialog {
                 id: changeError
