@@ -64,3 +64,8 @@ proc ensureDirectories*(dataDir, tmpDir, logDir: string) =
   createDir(dataDir)
   createDir(tmpDir)
   createDir(logDir)
+
+# This is changed during compilation by reading the VERSION file
+const DESKTOP_VERSION* {.strdefine.} = "0.0.0"
+# This is changed during compilation by executing git command
+const GIT_COMMIT* {.strdefine.} = ""

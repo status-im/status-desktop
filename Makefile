@@ -195,6 +195,9 @@ VERSIONFILE=VERSION
 DESKTOP_VERSION=`cat $(VERSIONFILE)`
 NIM_PARAMS += -d:DESKTOP_VERSION="$(DESKTOP_VERSION)"
 
+GIT_COMMIT=`git log --pretty=format:'%h' -n 1`
+NIM_PARAMS += -d:GIT_COMMIT="$(GIT_COMMIT)"
+
 $(DOTHERSIDE): | deps
 	echo -e $(BUILD_MSG) "DOtherSide"
 	+ cd vendor/DOtherSide && \

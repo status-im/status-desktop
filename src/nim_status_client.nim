@@ -49,7 +49,8 @@ proc prepareLogging() =
         except:
           logLoggingFailure(cstring(msg), getCurrentException())
 
-  let logFile = fmt"app_{getTime().toUnix}.log"
+  let formattedDate = now().format("yyyyMMdd'_'HHmmss")
+  let logFile = fmt"app_{formattedDate}.log"
   discard defaultChroniclesStream.outputs[1].open(LOGDIR & logFile, fmAppend)
 
 proc setupRemoteSignalsHandling() =
@@ -133,6 +134,10 @@ proc mainProc() =
   if singleInstance.secondInstance():
     info "Terminating the app as the second instance"
     quit()
+
+  info fmt("Version: {DESKTOP_VERSION}")
+  info fmt("Commit: {GIT_COMMIT}")
+  info "Current date:", currentDateTime=now()
 
   info "starting application controller..."
   appController.start()
