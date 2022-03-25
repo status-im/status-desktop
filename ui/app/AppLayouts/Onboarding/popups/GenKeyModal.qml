@@ -33,21 +33,22 @@ ModalPopup {
         validationError: displayNameValidationError
         maxLength: 24
         onTextChanged: {
+            let trimmedText = displayNameInput.text.trim()
             if(displayNameInput.text === ""){
                 displayNameValidationError = qsTr("Display name is required")
-            } else if (!displayNameInput.text.match(/^[a-zA-Z0-9\- ]+$/)){
+            } else if (!trimmedText.match(/^[a-zA-Z0-9\- ]+$/)){
                 displayNameValidationError = qsTr("Only letters, numbers, underscores and hyphens allowed")
-            } else if (displayNameInput.text.length > 24) {
+            } else if (trimmedText.length > 24) {
                 displayNameValidationError = qsTr("24 character username limit")
-            } else if (displayNameInput.text.length < 5) {
+            } else if (trimmedText.length < 5) {
                 displayNameValidationError = qsTr("Username must be at least 5 characters")
-            } else if (displayNameInput.text.endsWith(".eth")) {
+            } else if (trimmedText.endsWith(".eth")) {
                 displayNameValidationError = qsTr(`Usernames ending with ".eth" are not allowed`)
-            } else if (displayNameInput.text.endsWith("-eth")) {
+            } else if (trimmedText.endsWith("-eth")) {
                 displayNameValidationError = qsTr(`Usernames ending with "-eth" are not allowed`)
-            } else if (displayNameInput.text.endsWith("_eth")) {
+            } else if (trimmedText.endsWith("_eth")) {
                 displayNameValidationError = qsTr(`Usernames ending with "_eth" are not allowed`)
-            } else if (globalUtils.isAlias(displayNameInput.text)){
+            } else if (globalUtils.isAlias(trimmedText)){
                 displayNameValidationError = qsTr("Sorry, the name you have chosen is not allowed, try picking another username")
             } else {
                 displayNameValidationError = ""
@@ -76,7 +77,7 @@ ModalPopup {
     footer: StatusRoundButton {
         objectName: "submitButton"
         id: submitBtn
-        enabled: displayNameInput.text !== ""
+        enabled: displayNameInput.text.trim() !== "" && displayNameInput.text.trim().length >= 5
         anchors.bottom: parent.bottom
         anchors.topMargin: Style.current.padding
         anchors.right: parent.right
@@ -84,7 +85,7 @@ ModalPopup {
         icon.width: 20
         icon.height: 16
         onClicked : {
-            onNextClick(selectedIndex, displayNameInput.text);
+            onNextClick(selectedIndex, displayNameInput.text.trim());
             popup.close()
         }
     }
