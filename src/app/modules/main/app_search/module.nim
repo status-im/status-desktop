@@ -143,6 +143,7 @@ method getSearchLocationObject*(self: Module): string =
 method searchMessages*(self: Module, searchTerm: string) =
   if (searchTerm.len == 0):
     self.view.searchResultModel().clear()
+    self.view.emitAppSearchCompletedSignal()
     return
 
   self.controller.searchMessages(searchTerm)
