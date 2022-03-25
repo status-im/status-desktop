@@ -2,8 +2,8 @@ import NimQml, sequtils, sugar
 
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 import ./io_interface
-import ../account_tokens/model as account_tokens
-import ../account_tokens/item as account_tokens_item
+import ../../../shared_models/token_model as token_model
+import ../../../shared_models/token_item as token_item
 
 QtObject:
   type
@@ -17,7 +17,7 @@ QtObject:
       walletType: string
       isChat: bool
       currencyBalance: float64
-      assets: account_tokens.Model
+      assets: token_model.Model
       emoji: string
 
   proc setup(self: View) =
@@ -147,10 +147,10 @@ proc setData*(self: View, dto: wallet_account_service.WalletAccountDto) =
     self.emoji = dto.emoji
     self.emojiChanged()
 
-    let assets = account_tokens.newModel()
+    let assets = token_model.newModel()
 
     assets.setItems(
-      dto.tokens.map(t => account_tokens_item.initItem(
+      dto.tokens.map(t => token_item.initItem(
           t.name,
           t.symbol,
           t.balance,

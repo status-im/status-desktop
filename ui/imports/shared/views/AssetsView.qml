@@ -9,6 +9,8 @@ import "../stores"
 import "../controls"
 
 Item {
+    property var account
+
     height: assetListView.height
 
     ScrollView {
@@ -22,8 +24,7 @@ Item {
             id: assetListView
             spacing: Style.current.padding * 2
             anchors.fill: parent
-            //model: RootStore.exampleAssetModel
-            model: RootStore.assets
+            model: account.assets
             delegate: AssetDelegate {
                 locale: RootStore.locale
                 currency: RootStore.currentCurrency

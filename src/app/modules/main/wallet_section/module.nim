@@ -4,7 +4,6 @@ import ./controller, ./view
 import ./io_interface as io_interface
 import ../io_interface as delegate_interface
 
-import ./account_tokens/module as account_tokens_module
 import ./accounts/module as accountsModule
 import ./all_tokens/module as all_tokens_module
 import ./collectibles/module as collectibles_module
@@ -34,7 +33,6 @@ type
     controller: Controller
     view: View
 
-    accountTokensModule: account_tokens_module.AccessInterface
     accountsModule: accounts_module.AccessInterface
     allTokensModule: all_tokens_module.AccessInterface
     collectiblesModule: collectibles_module.AccessInterface
@@ -61,7 +59,6 @@ proc newModule*(
   result.controller = newController(result, settingsService, walletAccountService, networkService)
   result.view = newView(result)
 
-  result.accountTokensModule = account_tokens_module.newModule(result, events, walletAccountService)
   result.accountsModule = accounts_module.newModule(result, events, walletAccountService)
   result.allTokensModule = all_tokens_module.newModule(result, events, tokenService, walletAccountService)
   result.collectiblesModule = collectibles_module.newModule(result, events, collectibleService, walletAccountService)
@@ -71,7 +68,6 @@ proc newModule*(
   result.buySellCryptoModule = buy_sell_crypto_module.newModule(result, events, transactionService)
 
 method delete*(self: Module) =
-  self.accountTokensModule.delete
   self.accountsModule.delete
   self.allTokensModule.delete
   self.collectiblesModule.delete
@@ -88,7 +84,6 @@ method updateCurrency*(self: Module, currency: string) =
 method switchAccount*(self: Module, accountIndex: int) =
   self.currentAccountModule.switchAccount(accountIndex)
   self.collectiblesModule.switchAccount(accountIndex)
-  self.accountTokensModule.switchAccount(accountIndex)
   self.transactionsModule.switchAccount(accountIndex)
 
 method switchAccountByAddress*(self: Module, address: string) =
@@ -118,7 +113,6 @@ method load*(self: Module) =
 
   self.controller.init()
   self.view.load()
-  self.accountTokensModule.load()
   self.accountsModule.load()
   self.allTokensModule.load()
   self.collectiblesModule.load()
@@ -131,9 +125,6 @@ method isLoaded*(self: Module): bool =
   return self.moduleLoaded
 
 proc checkIfModuleDidLoad(self: Module) =
-  if(not self.accountTokensModule.isLoaded()):
-    return
-
   if(not self.accountsModule.isLoaded()):
     return
 
@@ -166,9 +157,6 @@ proc checkIfModuleDidLoad(self: Module) =
   self.delegate.walletSectionDidLoad()
 
 method viewDidLoad*(self: Module) =
-  self.checkIfModuleDidLoad()
-
-method accountTokensModuleDidLoad*(self: Module) =
   self.checkIfModuleDidLoad()
 
 method accountsModuleDidLoad*(self: Module) =

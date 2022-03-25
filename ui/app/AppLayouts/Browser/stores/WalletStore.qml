@@ -17,6 +17,7 @@ QtObject {
 
     function switchAccountByAddress(address) {
         browserSectionCurrentAccount.switchAccountByAddress(address)
+        walletSectionTransactions.setModel(address)
     }
 
     function getGasPrice(){

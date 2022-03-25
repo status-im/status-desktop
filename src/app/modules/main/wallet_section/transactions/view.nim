@@ -84,12 +84,16 @@ QtObject:
     for address in addresses:
       self.setHistoryFetchState(address, isFetching)
 
-  proc switchAccount*(self: View, walletAccount: WalletAccountDto) =
-    if not self.models.hasKey(walletAccount.address):
-      self.models[walletAccount.address] = newModel()
-    self.model = self.models[walletAccount.address]
+  proc setModel*(self: View, address: string) {.slot.} =
+    if not self.models.hasKey(address):
+      self.models[address] = newModel()
+
+    self.model = self.models[address]
     self.modelVariant = newQVariant(self.model)
     self.modelChanged()
+
+  proc switchAccount*(self: View, walletAccount: WalletAccountDto) =
+    self.setModel(walletAccount.address)
 
   proc getIsNonArchivalNode(self: View): QVariant {.slot.} =
     return newQVariant(self.isNonArchivalNode)
