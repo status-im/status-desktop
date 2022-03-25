@@ -52,52 +52,10 @@ Item {
             height: Style.current.bigPadding
             width: parent.width
         }
-
-
-        Repeater {
+        PermissionsListView {
             id: permissionsList
-            model: walletStore.dappList
-            delegate: Item {
-                width: parent.width
-                height: listItem.height + spacer.height
-                StatusListItem {
-                    id: listItem
-                    title: model.name
-                    icon.isLetterIdenticon: true
-                    width: parent.width
-                    highlighted: true
-                    sensor.enabled: false
-                    components: [
-                        StatusButton {
-                            text: model.accounts.count > 1 ? qsTr("Disconnect All") : qsTr("Disconnect")
-                            size: StatusBaseButton.Size.Small
-                            type: StatusBaseButton.Type.Danger
-                            onClicked: {
-                                walletStore.disconnect(model.name)
-                            }
-                        }
-                    ]
-                    bottomModel: model.accounts
-                    bottomDelegate: StatusListItemTag {
-                        property int outerIndex: listItem.index
-
-                        title: model.name
-                        icon.isLetterIdenticon: true
-                        icon.color: model.color
-                        onClicked: {
-                            const dappName = walletStore.dappList.rowData(outerIndex, 'name')
-                            walletStore.disconnectAddress(dappName, model.address)
-                        }
-                    }
-                }
-
-                Item {
-                    id: spacer
-                    height: Style.current.bigPadding
-                    width: parent.width
-                }
-
-            }
+            width: parent.width
+            walletStore: root.walletStore
         }
     }
 }
