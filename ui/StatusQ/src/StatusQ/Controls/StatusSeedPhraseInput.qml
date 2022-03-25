@@ -46,7 +46,7 @@ Item {
                     }
                 }
                 seedSuggestionsList.model = filteredList;
-                if ((text.length === 3) && (filteredList.count === 1) &&
+                if ((text.length === 4) && (filteredList.count === 1) &&
                     ((input.edit.keyEvent !== Qt.Key_Backspace) && (input.edit.keyEvent !== Qt.Key_Delete))) {
                     seedWordInput.text = filteredList.get(0).seedWord;
                     seedWordInput.input.edit.cursorPosition = seedWordInput.text.length;
