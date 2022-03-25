@@ -30,6 +30,10 @@ QtObject {
        return root.globalUtilsInst.getFromClipboard()
     }
 
+    function isMyMutualContact(pubKey) {
+       return root.contactsModule.isMyMutualContact(pubKey)
+    }
+
     function joinPrivateChat(pubKey) {
         Global.changeAppSectionBySectionType(Constants.appSection.chat)
         root.contactsModule.addContact(pubKey)

@@ -43,9 +43,9 @@ StatusListItem {
     signal openProfilePopup(string publicKey)
     signal openChangeNicknamePopup(string publicKey)
     signal sendMessageActionTriggered(string publicKey)
-    signal acceptContactRequest(string publicKey)
-    signal rejectContactRequest(string publicKey)
-    signal removeRejection(string publicKey)
+    signal contactRequestAccepted(string publicKey)
+    signal contactRequestRejected(string publicKey)
+    signal rejectionRemoved(string publicKey)
     signal textClicked(string publicKey)
 
     components: [
@@ -63,7 +63,7 @@ StatusListItem {
             height: visible ? 32 : 0
             icon.name: "close-circle"
             icon.color: Style.current.danger
-            onClicked: container.rejectContactRequest(container.publicKey)
+            onClicked: container.contactRequestRejected(container.publicKey)
         },
         StatusFlatRoundButton {
             visible: showAcceptContactRequestButton
@@ -71,7 +71,7 @@ StatusListItem {
             height: visible ? 32 : 0
             icon.name: "checkmark-circle"
             icon.color: Style.current.success
-            onClicked: container.acceptContactRequest(container.publicKey)
+            onClicked: container.contactRequestAccepted(container.publicKey)
         },
         StatusFlatRoundButton {
             visible: showRemoveRejectionButton
@@ -79,7 +79,7 @@ StatusListItem {
             height: visible ? 32 : 0
             icon.name: "cancel"
             icon.color: Style.current.danger
-            onClicked: container.removeRejection(container.publicKey)
+            onClicked: container.rejectionRemoved(container.publicKey)
         },
         StatusBaseText {
             text: container.contactText

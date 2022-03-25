@@ -188,8 +188,7 @@ StatusPopupMenu {
             root.close()
         }
         icon.name: "chat"
-        enabled: (root.myPublicKey !== root.selectedUserPublicKey) &&
-                 root.isProfile && !root.isMyMessage ||
+        enabled: root.isProfile && root.store.contactsStore.isMyMutualContact(root.selectedUserPublicKey) ||
                  (!root.hideEmojiPicker &&
                   !root.emojiOnly &&
                   !root.isProfile &&

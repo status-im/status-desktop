@@ -16,7 +16,7 @@ QtObject {
     property string createChatStickerHashId: ""
     property string createChatStickerPackId: ""
 
-    property var contactsModel: profileSectionModule.contactsModule.myContactsModel
+    property var contactsModel: root.contactsStore.myContactsModel
 
     // Important:
     // Each `ChatLayout` has its own chatCommunitySectionModule

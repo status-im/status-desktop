@@ -115,6 +115,9 @@ QtObject:
     read = getSentButRejectedContactRequestsModel
     notify = sentButRejectedContactRequestsModelChanged
 
+  proc isMyMutualContact*(self: View, publicKey: string): bool {.slot.} =
+    return self.myMutualContactsModel.containsItemWithPubKey(publicKey)
+
   proc addContact*(self: View, publicKey: string) {.slot.} =
     self.delegate.addContact(publicKey)
 

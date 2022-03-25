@@ -221,11 +221,11 @@ Item {
                             Global.openProfilePopup(publicKey, null, true)
                         }
 
-                        onAcceptContactRequest: {
+                        onContactRequestAccepted: {
                             root.contactsStore.acceptContactRequest(publicKey)
                         }
 
-                        onRejectContactRequest: {
+                        onContactRequestRejected: {
                             root.contactsStore.rejectContactRequest(publicKey)
                         }
                     }
@@ -280,7 +280,7 @@ Item {
                             Global.openProfilePopup(publicKey, null, true)
                         }
 
-                        onRemoveRejection: {
+                        onRejectionRemoved: {
                             root.contactsStore.removeContactRequestRejection(publicKey)
                         }
                     }
