@@ -89,16 +89,6 @@ Item {
         }
     }
 
-    Component {
-        id: accountSettingsModalComponent
-        AccountSettingsModal {
-            anchors.centerIn: parent
-            onClosed: destroy()
-            changeSelectedAccount: walletHeader.changeSelectedAccount
-            emojiPopup: walletHeader.emojiPopup
-        }
-    }
-
     RowLayout {
         id: walletMenu
 
@@ -128,14 +118,6 @@ Item {
                 id: newSettingsMenu
                 closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
                 width: 176
-                Action {
-                    //% "Account Settings"
-                    text: qsTrId("account-settings")
-                    icon.source: Style.svg("manage-wallet")
-                    icon.width: 16
-                    icon.height: 16
-                    onTriggered: Global.openPopup(accountSettingsModalComponent)
-                }
                 Action {
                     //% "Set Currency"
                     text: qsTrId("set-currency")

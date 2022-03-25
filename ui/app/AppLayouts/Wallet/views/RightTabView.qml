@@ -16,10 +16,8 @@ import "../panels"
 Item {
     id: walletContainer
 
-    property var changeSelectedAccount
     property alias currentTabIndex: walletTabBar.currentIndex
     property var store
-    property var emojiPopup
     property var sendModal
 
     ColumnLayout {
@@ -32,10 +30,8 @@ Item {
             locale: RootStore.locale
             currency: RootStore.currentCurrency
             currentAccount: RootStore.currentAccount
-            changeSelectedAccount: walletContainer.changeSelectedAccount
             store: walletContainer.store
             walletStore: RootStore
-            emojiPopup: walletContainer.emojiPopup
         }
 
         Item {

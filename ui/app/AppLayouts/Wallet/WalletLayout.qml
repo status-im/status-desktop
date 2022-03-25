@@ -52,9 +52,7 @@ Item {
     Component {
         id: walletContainer
         RightTabView {
-            changeSelectedAccount: leftTab.changeSelectedAccount
             store: walletView.store
-            emojiPopup: walletView.emojiPopup
             sendModal: walletView.sendModal
         }
     }
