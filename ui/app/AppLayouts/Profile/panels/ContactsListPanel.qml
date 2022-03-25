@@ -25,9 +25,9 @@ Item {
     signal openProfilePopup(string publicKey)
     signal sendMessageActionTriggered(string publicKey)
     signal openChangeNicknamePopup(string publicKey)
-    signal acceptContactRequest(string publicKey)
-    signal rejectContactRequest(string publicKey)
-    signal removeRejection(string publicKey)
+    signal contactRequestAccepted(string publicKey)
+    signal contactRequestRejected(string publicKey)
+    signal rejectionRemoved(string publicKey)
     signal textClicked(string publicKey)
 
     visible: contactsList.count > 0
@@ -150,9 +150,9 @@ Item {
             onOpenProfilePopup: contactListRoot.openProfilePopup(publicKey)
             onSendMessageActionTriggered: contactListRoot.sendMessageActionTriggered(publicKey)
             onOpenChangeNicknamePopup: contactListRoot.openChangeNicknamePopup(publicKey)
-            onAcceptContactRequest: contactListRoot.acceptContactRequest(publicKey)
-            onRejectContactRequest: contactListRoot.rejectContactRequest(publicKey)
-            onRemoveRejection: contactListRoot.removeRejection(publicKey)
+            onContactRequestAccepted: contactListRoot.contactRequestAccepted(publicKey)
+            onContactRequestRejected: contactListRoot.contactRequestRejected(publicKey)
+            onRejectionRemoved: contactListRoot.rejectionRemoved(publicKey)
             onTextClicked: contactListRoot.textClicked(publicKey)
 
             visible: searchString === "" ||
