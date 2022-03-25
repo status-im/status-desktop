@@ -136,7 +136,7 @@ StatusWindow {
                 loader.sourceComponent = undefined
                 close.accepted = true
             } else {
-                if (loader.sourceComponent == login) {
+                if (loader.sourceComponent != app) {
                     Qt.quit();
                 }
                 else if (loader.sourceComponent == app) {
@@ -338,7 +338,7 @@ StatusWindow {
         visible: Qt.platform.os === "osx" && !applicationWindow.isFullScreen
 
         onClose: {
-            if (loader.sourceComponent == login) {
+            if (loader.sourceComponent != app) {
                 Qt.quit();
             }
             else if (loader.sourceComponent == app) {
