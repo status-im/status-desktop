@@ -1,5 +1,6 @@
-import QtQuick 2.13
-import QtQuick.Layouts 1.13
+import QtQuick 2.14
+import QtQuick.Controls 2.14
+import QtQuick.Layouts 1.14
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -12,56 +13,52 @@ import shared.panels 1.0
 import shared.status 1.0
 
 import "../popups"
+import "../stores"
+import "browser"
+import "wallet"
 
-Item {
+ScrollView {
     id: root
     Layout.fillHeight: true
     Layout.fillWidth: true
     clip: true
 
-    property var store
-    property int profileContentWidth
+    property ProfileSectionStore store
+    property real profileContentWidth
 
-    property Component homePagePopup: HomepageModal {}
     property Component searchEngineModal: SearchEngineModal {}
-    property Component ethereumExplorerModal: EthereumExplorerModal {}
+
+    contentHeight: rootItem.height
 
     Item {
-        anchors.top: parent.top
-        anchors.topMargin: 64
-        anchors.bottom: parent.bottom
-        width: profileContentWidth
-
-        anchors.horizontalCenter: parent.horizontalCenter
+        id: rootItem
+        width: parent.width
+        height: childrenRect.height
 
         Column {
-            id: generalColumn
-            width: parent.width
-
-            StatusSectionHeadline {
-                //% "General"
-                text: qsTrId("general")
-                bottomPadding: Style.current.bigPadding
+            id: layout
+            anchors.top: parent.top
+            anchors.topMargin: 24
+            anchors.left: parent.left
+            anchors.leftMargin: 48
+            width: profileContentWidth
+            spacing: 10
+            StatusBaseText {
+                id: titleText
+                text: qsTr("Browser")
+                font.weight: Font.Bold
+                font.pixelSize: 28
+                color: Theme.palette.directColor1
             }
 
-            // TODO: Replace with StatusQ StatusListItem component
-            StatusSettingsLineButton {
-                //% "Homepage"
-                text: qsTrId("homepage")
-                //% "Default"
-                currentValue: localAccountSensitiveSettings.browserHomepage === "" ? qsTrId("default") : localAccountSensitiveSettings.browserHomepage
-                onClicked: homePagePopup.createObject(root).open()
+            Item {
+                height: 25
+                width: 1
             }
 
-            // TODO: Replace with StatusQ StatusListItem component
-            StatusSettingsLineButton {
-                //% "Show favorites bar"
-                text: qsTrId("show-favorites-bar")
-                isSwitch: true
-                switchChecked: localAccountSensitiveSettings.shouldShowFavoritesBar
-                onClicked: function (checked) {
-                    localAccountSensitiveSettings.shouldShowFavoritesBar = checked
-                }
+            HomePageView {
+                id: homePageView
+                homepage: localAccountSensitiveSettings.browserHomepage
             }
 
             // TODO: Replace with StatusQ StatusListItem component
@@ -74,55 +71,51 @@ Item {
                     case Constants.browserSearchEngineYahoo: return "Yahoo!"
                     case Constants.browserSearchEngineDuckDuckGo: return "DuckDuckGo"
                     case Constants.browserSearchEngineNone:
-                    //% "None"
+                        //% "None"
                     default: return qsTrId("none")
                     }
                 }
                 onClicked: searchEngineModal.createObject(root).open()
             }
 
-            // TODO: Replace with StatusQ StatusListItem component
-            StatusSettingsLineButton {
-                id: ethereumExplorerBtn
-                //% "Ethereum explorer used in the address bar"
-                text: qsTrId("ethereum-explorer-used-in-the-address-bar")
-                currentValue: {
-                    switch (localAccountSensitiveSettings.useBrowserEthereumExplorer) {
-                    case Constants.browserEthereumExplorerEtherscan: return "etherscan.io"
-                    case Constants.browserEthereumExplorerEthplorer: return "ethplorer.io"
-                    case Constants.browserEthereumExplorerBlockchair: return "blockchair.com"
-                    case Constants.browserSearchEngineNone:
-                    //% "None"
-                    default: return qsTrId("none")
-                    }
-                }
-                onClicked: ethereumExplorerModal.createObject(root).open()
+            DefaultDAppExplorerView {
+                id: dAppExplorerView
             }
-            StatusBaseText {
-                //% "Open an ethereum explorer after a transaction hash or an address is entered"
-                text: qsTrId("open-an-ethereum-explorer-after-a-transaction-hash-or-an-address-is-entered")
-                font.pixelSize: 15
-                color: Theme.palette.baseColor1
-                width: parent.width - 150
-                wrapMode: Text.WordWrap
-                bottomPadding: Style.current.bigPadding
+
+            StatusListItem {
+                id: showFavouritesItem
+                anchors.horizontalCenter: parent.horizontalCenter
+                width: parent.width + Style.current.padding * 2
+                title: qsTr("Show Favorites Bar")
+                components: [
+                    StatusSwitch {
+                        checked: localAccountSensitiveSettings.shouldShowFavoritesBar
+                        onCheckedChanged: {
+                            localAccountSensitiveSettings.shouldShowFavoritesBar = checked
+                        }
+                    }
+                ]
             }
 
             Separator {
                 id: separator1
-                anchors.topMargin: Style.current.bigPadding
                 anchors.left: parent.left
                 anchors.leftMargin: -Style.current.padding
                 anchors.right: parent.right
                 anchors.rightMargin: -Style.current.padding
             }
 
-            StatusSectionHeadline {
-                //% "Privacy"
-                text: qsTrId("privacy")
-                topPadding: Style.current.bigPadding
-                bottomPadding: Style.current.padding
+            StatusBaseText {
+                text: qsTr("Connected DApps")
+                font.pixelSize: 15
+                color: Theme.palette.baseColor1
             }
-        }
-    }
-}
+
+            PermissionsListView {
+                id: permissionListView
+                width: parent.width
+                walletStore: root.store.walletStore
+            }
+        } // Column
+    } // Item
+} // ScrollView
