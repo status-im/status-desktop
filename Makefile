@@ -367,7 +367,9 @@ $(FCITX5_QT): | deps
 			.. $(HANDLE_OUTPUT) && \
 		$(FCITX5_QT_BUILD_CMD)
 
-$(STATUS_CLIENT_APPIMAGE): override RESOURCES_LAYOUT := -d:production
+PRODUCTION_PARAMETERS := -d:production -d:chronicles_enabled=off
+
+$(STATUS_CLIENT_APPIMAGE): override RESOURCES_LAYOUT := $(PRODUCTION_PARAMETERS)
 $(STATUS_CLIENT_APPIMAGE): nim_status_client $(APPIMAGE_TOOL) nim-status.desktop $(FCITX5_QT)
 	rm -rf pkg/*.AppImage
 	rm -rf tmp/linux/dist
@@ -431,7 +433,7 @@ MACOS_INNER_BUNDLE := $(MACOS_OUTER_BUNDLE)/Contents/Frameworks/QtWebEngineCore.
 
 STATUS_CLIENT_DMG ?= pkg/Status.dmg
 
-$(STATUS_CLIENT_DMG): override RESOURCES_LAYOUT := -d:production
+$(STATUS_CLIENT_DMG): override RESOURCES_LAYOUT := $(PRODUCTION_PARAMETERS)
 $(STATUS_CLIENT_DMG): nim_status_client $(DMG_TOOL)
 	rm -rf tmp/macos pkg/*.dmg
 	mkdir -p $(MACOS_OUTER_BUNDLE)/Contents/MacOS
@@ -503,7 +505,7 @@ nim_windows_launcher: | deps
 STATUS_CLIENT_EXE ?= pkg/Status.exe
 STATUS_CLIENT_7Z ?= pkg/Status.7z
 
-$(STATUS_CLIENT_EXE): override RESOURCES_LAYOUT := -d:production
+$(STATUS_CLIENT_EXE): override RESOURCES_LAYOUT := $(PRODUCTION_PARAMETERS)
 $(STATUS_CLIENT_EXE): OUTPUT := tmp/windows/dist/Status
 $(STATUS_CLIENT_EXE): INSTALLER_OUTPUT := pkg
 $(STATUS_CLIENT_EXE): nim_status_client nim_windows_launcher $(NIM_WINDOWS_PREBUILT_DLLS)

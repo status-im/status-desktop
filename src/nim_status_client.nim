@@ -1,4 +1,4 @@
-import NimQml, chronicles, os, strformat, times, md5, json
+import NimQml, chronicles, os, strformat, strutils, times, md5, json
 
 import status_go
 import app/core/main
@@ -40,6 +40,16 @@ proc determineStatusAppIconPath(): string =
       return "/../status-dev.svg"
 
 proc prepareLogging() =
+  # do not create log file
+  if defined(production):
+    return
+
+  # log level can be overriden by LOG_LEVEL env parameter
+  let logLvl = try: parseEnum[LogLevel](getEnv("LOG_LEVEL"))
+                    except: NONE
+
+  setLogLevel(logLvl)
+
   when compiles(defaultChroniclesStream.output.writer):
     defaultChroniclesStream.output.writer =
       proc (logLevel: LogLevel, msg: LogOutputStr) {.gcsafe, raises: [Defect].} =
