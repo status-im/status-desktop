@@ -78,6 +78,11 @@ Column {
         onClicked: editTitleModal.open()
     }
 
+    StatusButton {
+        text: "Modal with Advanced Header/Footer"
+        onClicked: advancedHeaderFooterModal.open()
+    }
+
     StatusModal {
         id: simpleModal
         anchors.centerIn: parent
@@ -351,6 +356,42 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
         anchors.centerIn: parent
         header.title: "This title can be edited"
         header.editable: true
+    }
+
+    StatusModal {
+        id: advancedHeaderFooterModal
+        anchors.centerIn: parent
+        showHeader: false
+        showFooter: false
+        showAdvancedHeader: true
+        showAdvancedFooter: true
+        height: 200
+        advancedHeaderComponent: Rectangle {
+            width: parent.width
+            height: 50
+            color: Theme.palette.baseColor1
+            border.width: 1
+            StatusBaseText {
+                anchors.centerIn: parent
+                text: "Add any header here"
+                font.pixelSize: 15
+                color: Theme.palette.directColor1
+            }
+
+        }
+        advancedFooterComponent: Rectangle {
+            width: parent.width
+            height: 50
+            color: Theme.palette.baseColor1
+            border.width: 1
+            StatusBaseText {
+                anchors.centerIn: parent
+                text: "Add any footer here"
+                font.pixelSize: 15
+                color: Theme.palette.directColor1
+            }
+
+        }
     }
 
     ListModel {

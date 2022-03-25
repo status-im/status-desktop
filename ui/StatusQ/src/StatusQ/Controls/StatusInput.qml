@@ -51,6 +51,22 @@ Item {
     property alias valid: statusBaseInput.valid
     property alias pending: statusBaseInput.pending
     property alias text: statusBaseInput.text
+
+    /*!
+       \qmlproperty errorMessageCmp
+        This property represents the errorMessage shown on statusInput in cases one of the validators fails
+
+        This can be used to control the error message's look and position from the outside.
+
+        Examples of usage
+
+        \qml
+            StatusInput {
+                errorMessageCmp.font.pixelSize: 15
+                errorMessageCmp.font.weight: Font.Medium
+            }
+        \endqml
+    */
     property alias errorMessageCmp: errorMessage
     property string label: ""
     property string secondaryLabel: ""
