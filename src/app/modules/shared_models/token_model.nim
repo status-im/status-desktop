@@ -1,6 +1,6 @@
 import NimQml, Tables, strutils, strformat
 
-import ./item
+import ./token_item
 
 type
   ModelRole {.pure.} = enum

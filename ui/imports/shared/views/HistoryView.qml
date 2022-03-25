@@ -7,7 +7,7 @@ import utils 1.0
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 
-import shared.panels 1.0
+import "../panels"
 import "../popups"
 import "../stores"
 import "../controls"
@@ -15,13 +15,14 @@ import "../controls"
 Item {
     id: historyView
 
+    property var account
     property int pageSize: 20 // number of transactions per page
 
     function fetchHistory() {
-        if (RootStore.isFetchingHistory()) {
+        if (RootStore.isFetchingHistory(historyView.account.address)) {
             loadingImg.active = true
         } else {
-            RootStore.loadTransactionsForAccount(pageSize)
+            RootStore.loadTransactionsForAccount(historyView.account.address, pageSize)
         }
     }
 
@@ -41,8 +42,8 @@ Item {
 
     Connections {
         target: RootStore.history
-        onLoadingTrxHistoryChanged: {
-            if (RootStore.currentAccount.address.toLowerCase() === address.toLowerCase()) {
+        onLoadingTrxHistoryChanged: function(isLoading, address) {
+            if (historyView.account.address.toLowerCase() === address.toLowerCase()) {
                 loadingImg.active = isLoading
             }
         }
@@ -82,7 +83,7 @@ Item {
         delegate: TransactionDelegate {
             tokens: RootStore.tokens
             locale: RootStore.locale
-            currentAccountAddress: RootStore.currentAccount.address
+            currentAccountAddress: account.address
             ethValue: RootStore.hex2Eth(value)
             onLaunchTransactionModal: {
                 transactionModal.transaction = model

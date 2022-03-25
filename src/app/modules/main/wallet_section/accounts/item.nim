@@ -1,5 +1,5 @@
 import strformat
-import ../account_tokens/model as account_tokens
+import ../../../shared_models/token_model as token_model
 
 type
   Item* = object
@@ -12,7 +12,7 @@ type
     isWallet: bool
     isChat: bool
     currencyBalance: float64
-    assets: account_tokens.Model
+    assets: token_model.Model
     emoji: string
 
 proc initItem*(
@@ -25,7 +25,7 @@ proc initItem*(
   isWallet: bool,
   isChat: bool,
   currencyBalance: float64,
-  assets: account_tokens.Model,
+  assets: token_model.Model,
   emoji: string
 ): Item =
   result.name = name
@@ -85,5 +85,5 @@ proc getIsChat*(self: Item): bool =
 proc getCurrencyBalance*(self: Item): float64 =
   return self.currencyBalance
 
-proc getAssets*(self: Item): account_tokens.Model =
+proc getAssets*(self: Item): token_model.Model =
   return self.assets

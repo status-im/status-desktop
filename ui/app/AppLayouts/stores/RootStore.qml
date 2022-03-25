@@ -45,7 +45,6 @@ QtObject {
     property var messagingStore: profileSectionStore.messagingStore
     property bool hasAddedContacts: contactStore.myContactsModel.count > 0
 
-    property var assets: walletSectionAccountTokens.model
 //    property MessageStore messageStore: MessageStore { }
 
     property real volume: !!localAccountSensitiveSettings ? localAccountSensitiveSettings.volume * 0.1 : 0.2

@@ -5,8 +5,8 @@ import ../io_interface as delegate_interface
 import ../../../../global/global_singleton
 import ../../../../core/eventemitter
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
-import ../account_tokens/model as account_tokens
-import ../account_tokens/item as account_tokens_item
+import ../../../shared_models/token_model as token_model
+import ../../../shared_models/token_item as token_item
 
 export io_interface
 
@@ -39,11 +39,11 @@ method refreshWalletAccounts*(self: Module) =
 
 
   let items = walletAccounts.map(proc (w: WalletAccountDto): item.Item =
-    let assets = account_tokens.newModel()
+    let assets = token_model.newModel()
 
 
     assets.setItems(
-      w.tokens.map(t => account_tokens_item.initItem(
+      w.tokens.map(t => token_item.initItem(
           t.name,
           t.symbol,
           t.balance,

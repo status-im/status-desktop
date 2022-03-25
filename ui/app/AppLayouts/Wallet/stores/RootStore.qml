@@ -22,14 +22,8 @@ QtObject {
     property var walletTokensModule: walletSectionAllTokens
     property var tokens: walletSectionAllTokens.all
 
-    property var assets: walletSectionAccountTokens.model
-
     property CollectiblesStore collectiblesStore: CollectiblesStore { }
     property var collectionList: walletSectionCollectiblesCollections.model
-
-    property var history: walletSectionTransactions
-    property var historyTransactions: walletSectionTransactions.model
-    property bool isNonArchivalNode:  history.isNonArchivalNode
 
     property var savedAddresses: walletSectionSavedAddresses.model
 
@@ -141,25 +135,11 @@ QtObject {
         return globalUtils.hex2Dec(value)
     }
 
-    function hex2Eth(value) {
-        return globalUtils.hex2Eth(value)
-    }
-
     function checkRecentHistory() {
         history.checkRecentHistory()
     }
 
-    function isFetchingHistory() {
-        return history.isFetchingHistory(currentAccount.address)
-    }
-
-    function loadTransactionsForAccount(pageSize) {
-        history.loadTransactionsForAccount(currentAccount.address,
-                                            historyTransactions.getLastTxBlockNumber(),
-                                            pageSize, true)
-    }
-
-    function fetchCollectionCollectiblesList(slug) {
+     function fetchCollectionCollectiblesList(slug) {
         walletSectionCollectiblesCollectibles.fetch(slug)
     }
 

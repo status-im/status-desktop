@@ -29,10 +29,18 @@ QtObject {
 //    property string signingPhrase: !!walletModelInst ? walletModelInst.utilsView.signingPhrase : ""
 //    property string gasPrice: !!walletModelInst ? walletModelInst.gasView.gasPrice : "0"
 //    property string gasEthValue: !!walletModelInst ? walletModelInst.gasView.getGasEthValue : "0"
-//    property string currentCurrency: !!walletSectionInst ? walletSectionInst.currentCurrency : ""
+    property string currentCurrency: walletSection.currentCurrency
 //    property string defaultCurrency: !!walletModelInst ? walletModelInst.balanceView.defaultCurrency : "0"
 //    property string fiatValue: !!walletModelInst ? walletModelInst.balanceView.getFiatValue : "0"
 //    property string cryptoValue: !!walletModelInst ? walletModelInst.balanceView.getCryptoValue : "0"
+
+    property var history: walletSectionTransactions
+    property var historyTransactions: walletSectionTransactions.model
+    property bool isNonArchivalNode:  history.isNonArchivalNode
+
+    property var walletTokensModule: walletSectionAllTokens
+    property var tokens: walletSectionAllTokens.all
+
     readonly property var formationChars: (["*", "`", "~"])
     function getSelectedTextWithFormationChars(messageInputField) {
         let i = 1
@@ -108,5 +116,17 @@ QtObject {
         } else {
             return root.privacyModule.getPasswordStrengthScore(password);
         }
+    }
+
+    function isFetchingHistory(address) {
+        return history.isFetchingHistory(address)
+    }
+
+    function loadTransactionsForAccount(address, pageSize) {
+        history.loadTransactionsForAccount(address, historyTransactions.getLastTxBlockNumber(), pageSize, true)
+    }
+
+    function hex2Eth(value) {
+        return globalUtils.hex2Eth(value)
     }
 }

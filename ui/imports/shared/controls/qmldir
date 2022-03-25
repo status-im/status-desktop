@@ -1,6 +1,7 @@
 AddressInput 1.0 AddressInput.qml
 AddressSourceSelector 1.0 AddressSourceSelector.qml
 AssetAndAmountInput 1.0 AssetAndAmountInput.qml
+AssetDelegate 1.0 AssetDelegate.qml
 ContactSelector 1.0 ContactSelector.qml
 ContactsListAndSearch 1.0 ContactsListAndSearch.qml
 CopyToClipBoardButton 1.0 CopyToClipBoardButton.qml
@@ -22,5 +23,6 @@ StyledTextArea 1.0 StyledTextArea.qml
 StyledTextEdit 1.0 StyledTextEdit.qml
 StyledTextField 1.0 StyledTextField.qml
 Timer 1.0 Timer.qml
+TransactionDelegate 1.0 TransactionDelegate.qml
 TransactionFormGroup 1.0 TransactionFormGroup.qml
 EmojiHash 1.0 EmojiHash.qml

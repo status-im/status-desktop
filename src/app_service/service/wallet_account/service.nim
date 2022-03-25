@@ -117,7 +117,6 @@ proc buildTokens(
 ): seq[WalletTokenDto] =
   for network in self.networkService.getEnabledNetworks():
     let balance = fetchNativeChainBalance(network, account.address)
-
     result.add(WalletTokenDto(
       name: network.chainName,
       address: "0x0000000000000000000000000000000000000000",
