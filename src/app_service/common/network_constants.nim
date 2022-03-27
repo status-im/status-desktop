@@ -187,6 +187,7 @@ var NODE_CONFIG* = %* {
   "DataDir": "./ethereum/mainnet",
   "EnableNTPSync": true,
   "KeyStoreDir": "./keystore",
+  "IPFSDir": "./ipfs",
   # TODO: commented since it's not necessary (we do the connections thru C bindings). Enable it thru an option once status-nodes are able to be configured in desktop
   #"ListenAddr": ":30304",
   "LogEnabled": true,
