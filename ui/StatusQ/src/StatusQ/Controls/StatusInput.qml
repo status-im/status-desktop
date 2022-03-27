@@ -33,19 +33,22 @@ import StatusQ.Controls.Validators 0.1
 Item {
     id: root
     implicitWidth: 480
-    height: (label.visible ?
-                  label.anchors.topMargin +
-                  label.height :
-              charLimitLabel.visible ?
-                  charLimitLabel.anchors.topMargin +
-                  charLimitLabel.height :
-              0) +
-            statusBaseInput.anchors.topMargin +
-            statusBaseInput.height +
-            (errorMessage.visible ?
-                  errorMessage.anchors.topMargin +
-                  errorMessage.height :
-                  0) + 8
+    implicitHeight: (label.visible ?
+                      label.anchors.topMargin +
+                      label.height :
+                  charLimitLabel.visible ?
+                      charLimitLabel.anchors.topMargin +
+                      charLimitLabel.height :
+                  0) +
+                statusBaseInput.anchors.topMargin +
+                statusBaseInput.height +
+                (errorMessage.visible ?
+                      errorMessage.anchors.topMargin +
+                      errorMessage.height :
+                      0) + 8
+
+    height: implicitHeight
+    width: implicitWidth
 
     property alias input: statusBaseInput
     property alias valid: statusBaseInput.valid
