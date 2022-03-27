@@ -75,6 +75,14 @@ proc init*(self: Controller) =
       let args = ContactArgs(e)
       self.delegate.contactNicknameChanged(args.contactId)
 
+    self.events.on(SIGNAL_CONTACT_UNTRUSTWORTHY) do(e: Args):
+      var args = TrustArgs(e)
+      self.delegate.contactUpdated(args.publicKey)
+        
+    self.events.on(SIGNAL_REMOVED_TRUST_STATUS) do(e: Args):
+      var args = TrustArgs(e)
+      self.delegate.contactUpdated(args.publicKey)
+
     self.events.on(SIGNAL_CONTACTS_STATUS_UPDATED) do(e: Args):
       let args = ContactsStatusUpdatedArgs(e)
       self.delegate.contactsStatusUpdated(args.statusUpdates)

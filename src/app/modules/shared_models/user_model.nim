@@ -1,5 +1,5 @@
 import NimQml, Tables, strformat
-
+import ../../../app_service/service/contacts/dto/contacts
 import user_item
 
 type
@@ -14,6 +14,7 @@ type
     IsAdded
     IsAdmin
     Joined
+    TrustStatus
 
 QtObject:
   type
@@ -65,6 +66,7 @@ QtObject:
       ModelRole.IsAdded.int:"isAdded",
       ModelRole.IsAdmin.int:"isAdmin",
       ModelRole.Joined.int:"joined",
+      ModelRole.TrustStatus.int:"trustStatus"
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -98,6 +100,8 @@ QtObject:
       result = newQVariant(item.isAdmin)
     of ModelRole.Joined:
       result = newQVariant(item.joined)
+    of ModelRole.TrustStatus:
+      result = newQVariant(item.trustStatus.int)
 
   proc addItem*(self: Model, item: Item) =
     # we need to maintain online contact on top, that means
@@ -175,7 +179,8 @@ QtObject:
       icon: string,
       isAdded: bool = false,
       isAdmin: bool = false,
-      joined: bool = false
+      joined: bool = false,
+      trustStatus: TrustStatus = TrustStatus.Unknown
       ) =
     let ind = self.findIndexForMessageId(id)
     if(ind == -1):
@@ -189,6 +194,7 @@ QtObject:
     self.items[ind].isAdded = isAdded
     self.items[ind].isAdmin = isAdmin
     self.items[ind].joined = joined
+    self.items[ind].trustStatus = trustStatus
 
     let index = self.createIndex(ind, 0, nil)
     self.dataChanged(index, index, @[
@@ -200,6 +206,38 @@ QtObject:
       ModelRole.IsAdded.int,
       ModelRole.IsAdmin.int,
       ModelRole.Joined.int,
+      ModelRole.TrustStatus.int,
+    ])
+
+  proc updateItem*(
+      self: Model,
+      id: string,
+      name: string,
+      ensName: string,
+      localNickname: string,
+      alias: string,
+      icon: string,
+      trustStatus: TrustStatus = TrustStatus.Unknown
+      ) =
+    let ind = self.findIndexForMessageId(id)
+    if(ind == -1):
+      return
+
+    self.items[ind].name = name
+    self.items[ind].ensName = ensName
+    self.items[ind].localNickname = localNickname
+    self.items[ind].alias = alias
+    self.items[ind].icon = icon
+    self.items[ind].trustStatus = trustStatus
+
+    let index = self.createIndex(ind, 0, nil)
+    self.dataChanged(index, index, @[
+      ModelRole.Name.int,
+      ModelRole.EnsName.int,
+      ModelRole.Nickname.int,
+      ModelRole.Alias.int,
+      ModelRole.Icon.int,
+      ModelRole.TrustStatus.int,
     ])
 
   proc setOnlineStatus*(self: Model, id: string, onlineStatus: OnlineStatus) =

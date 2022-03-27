@@ -10,6 +10,11 @@ type
     thumbnail*: string
     large*: string
 
+type TrustStatus* {.pure.}= enum
+  Unknown = 0,
+  Trusted = 1,
+  Untrustworthy = 2
+
 type ContactsDto* = object
   id*: string
   name*: string
@@ -25,6 +30,7 @@ type ContactsDto* = object
   hasAddedUs*: bool
   isSyncing*: bool
   removed*: bool
+  trustStatus*: TrustStatus
 
 proc `$`(self: Images): string =
   result = fmt"""Images(
@@ -45,11 +51,12 @@ proc `$`*(self: ContactsDto): string =
     image:[
       {$self.image}
     ],
-    added:{self.added}
-    blocked:{self.blocked}
-    hasAddedUs:{self.hasAddedUs}
-    isSyncing:{self.isSyncing}
-    removed:{self.removed}
+    added:{self.added},
+    blocked:{self.blocked},
+    hasAddedUs:{self.hasAddedUs},
+    isSyncing:{self.isSyncing},
+    removed:{self.removed},
+    trustStatus:{self.trustStatus}
     )"""
 
 proc toImages(jsonObj: JsonNode): Images =
@@ -63,6 +70,11 @@ proc toImages(jsonObj: JsonNode): Images =
   if(jsonObj.getProp("thumbnail", thumbnailObj)):
     discard thumbnailObj.getProp("uri", result.thumbnail)
 
+proc toTrustStatus*(value: int): TrustStatus =
+  result = TrustStatus.Unknown
+  if value >= ord(low(TrustStatus)) or value <= ord(high(TrustStatus)):
+      result = TrustStatus(value)
+  
 proc toContactsDto*(jsonObj: JsonNode): ContactsDto =
   result = ContactsDto()
   discard jsonObj.getProp("id", result.id)
@@ -73,7 +85,12 @@ proc toContactsDto*(jsonObj: JsonNode): ContactsDto =
   discard jsonObj.getProp("lastUpdated", result.lastUpdated)
   discard jsonObj.getProp("lastUpdatedLocally", result.lastUpdatedLocally)
   discard jsonObj.getProp("localNickname", result.localNickname)
-
+  
+  result.trustStatus = TrustStatus.Unknown
+  var trustStatusInt: int
+  discard jsonObj.getProp("trustStatus", trustStatusInt)
+  result.trustStatus = trustStatusInt.toTrustStatus()
+  
   var imageObj: JsonNode
   if(jsonObj.getProp("images", imageObj)):
     result.image = toImages(imageObj)
@@ -116,6 +133,9 @@ proc isMutualContact*(self: ContactsDto): bool =
   # TODO not implemented in `status-go` yet
   # But for now we consider that contact is mutual contact if I added him and he added me.
   return self.hasAddedUs and self.added
+
+proc trustStatus*(self: ContactsDto): TrustStatus =
+  result = self.trustStatus
 
 proc isContactVerified*(self: ContactsDto): bool =
   # TODO not implemented in `status-go` yet

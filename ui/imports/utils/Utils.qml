@@ -597,7 +597,8 @@ QtObject {
                 isBlocked: false,
                 requestReceived: false,
                 isSyncing: false,
-                removed: false
+                removed: false,
+                trustStatus: Constants.trustStatus.unknown
             }
         }
     }

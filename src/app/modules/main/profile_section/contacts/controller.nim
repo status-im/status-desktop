@@ -45,6 +45,14 @@ proc init*(self: Controller) =
     var args = ContactArgs(e)
     self.delegate.contactNicknameChanged(args.contactId)
 
+  self.events.on(SIGNAL_CONTACT_UNTRUSTWORTHY) do(e: Args):
+    var args = TrustArgs(e)
+    self.delegate.contactTrustStatusChanged(args.publicKey, args.trustStatus)
+
+  self.events.on(SIGNAL_REMOVED_TRUST_STATUS) do(e: Args):
+    var args = TrustArgs(e)
+    self.delegate.contactTrustStatusChanged(args.publicKey, args.trustStatus)
+
   self.events.on(SIGNAL_CONTACT_UPDATED) do(e: Args):
     var args = ContactArgs(e)
     self.delegate.contactUpdated(args.contactId)
@@ -79,3 +87,9 @@ proc rejectContactRequest*(self: Controller, publicKey: string) =
 
 proc removeContactRequestRejection*(self: Controller, publicKey: string) =
   self.contactsService.removeContactRequestRejection(publicKey)
+
+proc markUntrustworthy*(self: Controller, publicKey: string): void =
+  self.contactsService.markUntrustworthy(publicKey)
+
+proc removeTrustStatus*(self: Controller, publicKey: string): void =
+  self.contactsService.removeTrustStatus(publicKey)

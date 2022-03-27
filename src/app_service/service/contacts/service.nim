@@ -27,6 +27,10 @@ type
   ContactArgs* = ref object of Args
     contactId*: string
 
+  TrustArgs* = ref object of Args
+    publicKey*: string
+    trustStatus*: TrustStatus
+
   ResolvedContactArgs* = ref object of Args
     pubkey*: string
     address*: string
@@ -51,6 +55,8 @@ const SIGNAL_CONTACT_NICKNAME_CHANGED* = "contactNicknameChanged"
 const SIGNAL_CONTACTS_STATUS_UPDATED* = "contactsStatusUpdated"
 const SIGNAL_CONTACT_UPDATED* = "contactUpdated"
 const SIGNAL_LOGGEDIN_USER_IMAGE_CHANGED* = "loggedInUserImageChanged"
+const SIGNAL_REMOVED_TRUST_STATUS* = "removedTrustStatus"
+const SIGNAL_CONTACT_UNTRUSTWORTHY* = "contactUntrustworthy"
 
 type
   ContactsGroup* {.pure.} = enum
@@ -219,6 +225,15 @@ QtObject:
       return
     return status_accounts.generateAlias(publicKey).result.getStr
 
+  proc getTrustStatus*(self: Service, publicKey: string): TrustStatus =
+    try:
+      let t = status_contacts.getTrustStatus(publicKey).result.getInt
+      return t.toTrustStatus()
+    except Exception as e:
+      let errDesription = e.msg
+      error "error: ", errDesription
+      return TrustStatus.Unknown
+
   proc getContactById*(self: Service, id: string): ContactsDto =
     if(id == singletonInstance.userProfile.getPubKey()):
       # If we try to get the contact details of ourselves, just return our own info
@@ -231,7 +246,8 @@ QtObject:
         image: Images(
           thumbnail: singletonInstance.userProfile.getThumbnailImage(),
           large: singletonInstance.userProfile.getLargeImage()
-        )
+        ),
+        trustStatus: TrustStatus.Trusted
       )
 
     ## Returns contact details based on passed id (public key)
@@ -252,13 +268,15 @@ QtObject:
         return
 
       let alias = self.generateAlias(id)
+      let trustStatus = self.getTrustStatus(id)
       result = ContactsDto(
         id: id,
         alias: alias,
         ensVerified: false,
         added: false,
         blocked: false,
-        hasAddedUs: false
+        hasAddedUs: false,
+        trustStatus: trustStatus
       )
       self.addContact(result)
 
@@ -438,3 +456,49 @@ QtObject:
     result.icon = icon
     result.isCurrentUser = pubKey == singletonInstance.userProfile.getPubKey()
     result.details = self.getContactById(pubKey)
+
+  proc markUntrustworthy*(self: Service, publicKey: string) =
+    let response = status_contacts.markUntrustworthy(publicKey)
+    if(not response.error.isNil):
+      let msg = response.error.message
+      error "error marking as untrustworthy ", msg
+      return
+
+    if self.contacts.hasKey(publicKey):
+      self.contacts[publicKey].trustStatus = TrustStatus.Untrustworthy
+
+    self.events.emit(SIGNAL_CONTACT_UNTRUSTWORTHY, TrustArgs(publicKey: publicKey, trustStatus: TrustStatus.Untrustworthy))
+
+  proc removeTrustStatus*(self: Service, publicKey: string) =
+    let response = status_contacts.removeTrustStatus(publicKey)
+    if(not response.error.isNil):
+      let msg = response.error.message
+      error "error removing trust status", msg
+      return
+
+    if self.contacts.hasKey(publicKey):
+      self.contacts[publicKey].trustStatus = TrustStatus.Unknown
+
+    self.events.emit(SIGNAL_REMOVED_TRUST_STATUS, TrustArgs(publicKey: publicKey, trustStatus: TrustStatus.Unknown))
+
+
+#[
+  proc sendVerificationRequest*(self: Service, publicKey: string, challenge: string) =
+    let response = status_contacts.sendVerificationRequest(publicKey, challenge)
+    if(not response.error.isNil):
+      let msg = response.error.message
+      error "error sending contact verification request", msg
+      return
+
+    var contact = self.getContactById(publicKey)
+    contact.verificationStatus = RequestStatus.Pending
+    self.saveContact(contact)
+    
+    self.events.emit(SIGNAL_CONTACT_VERIFICATION_SENT, TrustArgs(publicKey: publicKey, trustLevel: TrustStatus.Untrustworthy))
+
+
+  proc acceptVerificationRequest*(self: Service, publicKey: string, response: string) =
+    discard
+
+  proc declineVerificationRequest*(self: Service, publicKey: string) =
+    discard]#

@@ -70,4 +70,12 @@ QtObject {
     function removeContactRequestRejection(pubKey) {
         root.contactsModule.removeContactRequestRejection(pubKey)
     }
+
+    function markUntrustworthy(pubKey) {
+        root.contactsModule.markUntrustworthy(pubKey)
+    }
+
+    function removeTrustStatus(pubKey) {
+        root.contactsModule.removeTrustStatus(pubKey)
+    }
 }

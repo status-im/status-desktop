@@ -108,7 +108,8 @@ method convertToItems*(
           n.message.sticker.pack,
           n.message.links,
           newTransactionParametersItem("","","","","","",-1,""),
-          n.message.mentionedUsersPks
+          n.message.mentionedUsersPks,
+          contactDetails.details.trustStatus
         ))
 
       return notification_item.initItem(

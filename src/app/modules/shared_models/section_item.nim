@@ -1,6 +1,7 @@
 import strformat
 import ./user_model, ./user_item
 import ../main/communities/models/[pending_request_item, pending_request_model]
+import ../../../app_service/service/contacts/dto/contacts
 
 type
   SectionType* {.pure.} = enum
@@ -191,8 +192,9 @@ proc updateMember*(
     ensName: string,
     nickname: string,
     alias: string,
-    image: string) =
-  self.membersModel.updateItem(pubkey, name, ensName, nickname, alias, image)
+    image: string,
+    trustStatus: TrustStatus) =
+  self.membersModel.updateItem(pubkey, name, ensName, nickname, alias, image, trustStatus)
 
 proc pendingRequestsToJoin*(self: SectionItem): PendingRequestModel {.inline.} =
   self.pendingRequestsToJoinModel

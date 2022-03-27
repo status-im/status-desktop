@@ -30,12 +30,15 @@ StatusModal {
     property string userNickname: ""
     property string userEnsName: ""
     property string userIcon: ""
+    property int userTrustStatus: Constants.trustStatus.unknown
     property string text: ""
 
     readonly property int innerMargin: 20
 
     property bool userIsEnsVerified: false
     property bool userIsBlocked: false
+    property bool userIsUntrustworthy: false
+    property bool userTrustIsUnknown: false
     property bool isCurrentUser: false
     property bool isAddedContact: false
 
@@ -59,6 +62,9 @@ StatusModal {
         userIsEnsVerified = contactDetails.ensVerified
         userIsBlocked = contactDetails.isBlocked
         isAddedContact = contactDetails.isContact
+        userTrustStatus = contactDetails.trustStatus
+        userTrustIsUnknown = contactDetails.trustStatus === Constants.trustStatus.unknown
+        userIsUntrustworthy = contactDetails.trustStatus === Constants.trustStatus.untrustworthy
 
         text = "" // this is most likely unneeded
         isCurrentUser = popup.profileStore.pubkey === publicKey
@@ -110,7 +116,8 @@ StatusModal {
                 displayName: popup.userDisplayName
                 pubkey: popup.userPublicKey
                 icon: popup.isCurrentUser ? popup.profileStore.icon : popup.userIcon
-
+                trustStatus: popup.userTrustStatus
+                isContact: isAddedContact
                 displayNameVisible: false
                 pubkeyVisible: false
                 supersampling: true
@@ -308,6 +315,7 @@ StatusModal {
                 qsTr("Unblock User") :
                 qsTr("Block User")
             type: StatusBaseButton.Type.Danger
+            visible: !isAddedContact
             onClicked: {
                 if (userIsBlocked) {
                     contentItem.unblockContactConfirmationDialog.contactName = userName;
@@ -328,6 +336,25 @@ StatusModal {
             onClicked: {
                 contentItem.removeContactConfirmationDialog.parentPopup = popup;
                 contentItem.removeContactConfirmationDialog.open();
+            }
+        },
+
+        StatusButton {
+            text: qsTr("Mark Untrustworthy")
+            visible: userTrustIsUnknown
+            type: StatusBaseButton.Type.Danger
+            onClicked: {
+                popup.contactsStore.markUntrustworthy(userPublicKey);
+                popup.close();
+            }
+        },
+
+        StatusButton {
+            text: qsTr("Remove Untrustworthy Mark")
+            visible: userIsUntrustworthy
+            onClicked: {
+                popup.contactsStore.removeTrustStatus(userPublicKey);
+                popup.close();
             }
         },
 

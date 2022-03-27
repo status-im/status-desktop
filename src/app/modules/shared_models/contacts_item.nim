@@ -1,3 +1,5 @@
+import ../../../app_service/service/contacts/dto/contacts
+
 type
   ContactVerificationState* {.pure.} = enum
     NotMarked = 0
@@ -12,9 +14,10 @@ type
     isBlocked: bool
     isMutualContact: bool
     verificationState: ContactVerificationState
+    trustStatus: TrustStatus
 
 proc initItem*(pubKey, name, icon: string, isMutualContact, isBlocked: bool, 
-  isContactVerified, isContactUntrustworthy: bool): Item =
+    isContactVerified, isContactUntrustworthy: bool, trustStatus: TrustStatus): Item =
   result = Item()
   result.pubKey = pubKey
   result.name = name
@@ -27,6 +30,7 @@ proc initItem*(pubKey, name, icon: string, isMutualContact, isBlocked: bool,
     result.verificationState = ContactVerificationState.Untrustworthy
   else:
     result.verificationState = ContactVerificationState.NotMarked
+  result.trustStatus = trustStatus
 
 proc pubKey*(self: Item): string =
   self.pubKey
@@ -48,3 +52,9 @@ proc isBlocked*(self: Item): bool =
 
 proc verificationState*(self: Item): ContactVerificationState =
   self.verificationState
+
+proc `trustStatus=`*(self: Item, value: TrustStatus) =
+  self.trustStatus = value
+
+proc trustStatus*(self: Item): TrustStatus =
+  self.trustStatus

@@ -1,5 +1,6 @@
 import NimQml, Tables
 import contacts_item
+import ../../../app_service/service/contacts/dto/contacts
 
 type
   ModelRole {.pure.} = enum
@@ -9,6 +10,7 @@ type
     IsMutualContact
     IsBlocked
     VerificationState
+    TrustStatus
 
 QtObject:
   type Model* = ref object of QAbstractListModel
@@ -42,7 +44,8 @@ QtObject:
       ModelRole.Icon.int:"icon",
       ModelRole.IsMutualContact.int:"isMutualContact",
       ModelRole.IsBlocked.int:"isBlocked",
-      ModelRole.VerificationState.int:"verificationState"
+      ModelRole.VerificationState.int:"verificationState",
+      ModelRole.TrustStatus.int:"trustStatus"
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -66,6 +69,8 @@ QtObject:
         result = newQVariant(item.isBlocked)
       of ModelRole.VerificationState:
         result = newQVariant(item.verificationState.int)
+      of ModelRole.TrustStatus:
+        result = newQVariant(item.trustStatus().int)
 
   proc findIndexByPubKey(self: Model, pubKey: string): int =
     for i in 0 ..< self.items.len:
@@ -127,7 +132,8 @@ QtObject:
       ModelRole.Icon.int,
       ModelRole.IsMutualContact.int,
       ModelRole.IsBlocked.int,
-      ModelRole.VerificationState.int
+      ModelRole.VerificationState.int,
+      ModelRole.TrustStatus.int
       ]
     )
 
@@ -140,6 +146,17 @@ QtObject:
     let last = self.createIndex(ind, 0, nil)
     self.items[ind].name = name
     self.dataChanged(first, last, @[ModelRole.Name.int])
+
+  proc updateTrustStatus*(self: Model, pubKey: string, trustStatus: TrustStatus) =
+    let ind = self.findIndexByPubKey(pubKey)
+    if(ind == -1):
+      return
+
+    let first = self.createIndex(ind, 0, nil)
+    let last = self.createIndex(ind, 0, nil)
+    self.items[ind].trustStatus = trustStatus
+    self.dataChanged(first, last, @[ModelRole.TrustStatus.int])
+
 
   proc getPublicKeys*(self: Model): seq[string] =
     for i in self.items:

@@ -22,6 +22,8 @@ Item {
     property string icon: ""
     property bool isCurrentUser: false
     property bool isAdded: false
+    property int trustStatus: 0
+
     property string iconToShow: {
         if ((!isAdded &&
             Global.privacyModuleInst.profilePicturesVisibility !==
@@ -66,8 +68,6 @@ Item {
         StyledText {
             id: contactInfo
             text: wrapper.name
-            anchors.right: parent.right
-            anchors.rightMargin: Style.current.smallPadding
             elide: Text.ElideRight
             color: Style.current.textColor
             font.weight: Font.Medium
@@ -75,6 +75,15 @@ Item {
             anchors.left: contactImage.right
             anchors.leftMargin: Style.current.halfPadding
             anchors.verticalCenter: parent.verticalCenter
+        }
+
+        VerificationLabel {
+            id: trustStatusLbl
+            anchors.left: contactInfo.right
+            anchors.leftMargin: 4
+            anchors.bottom: contactInfo.bottom
+            anchors.bottomMargin: 4
+            trustStatus: wrapper.trustStatus
         }
 
         StatusBadge {

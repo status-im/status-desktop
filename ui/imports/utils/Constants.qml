@@ -93,6 +93,12 @@ QtObject {
         readonly property int noOne: 3
     }
 
+    readonly property QtObject trustStatus: QtObject {
+        readonly property int unknown: 0
+        readonly property int trusted: 1
+        readonly property int untrustworthy: 2
+    }
+
     readonly property QtObject contactVerificationState: QtObject {
         readonly property int notMarked: 0
         readonly property int verified: 1

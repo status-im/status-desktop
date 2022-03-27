@@ -60,6 +60,7 @@ Item {
             icon: model.icon
             isAdded: model.isAdded
             userStatus: model.onlineStatus
+            trustStatus: model.trustStatus
             messageContextMenu: root.messageContextMenu
             isCurrentUser: rootStore.isCurrentUser(model.id)
         }

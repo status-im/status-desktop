@@ -20,6 +20,7 @@ import activity_center/module as activity_center_module
 import communities/module as communities_module
 import node_section/module as node_section_module
 import networks/module as networks_module
+import ../../../app_service/service/contacts/dto/contacts
 
 import ../../../app_service/service/keychain/service as keychain_service
 import ../../../app_service/service/chat/service as chat_service
@@ -625,7 +626,8 @@ method getContactDetailsAsJson*[T](self: Module[T], publicKey: string): string =
     "isBlocked":contact.blocked,
     "requestReceived":contact.hasAddedUs,
     "isSyncing":contact.isSyncing,
-    "removed":contact.removed
+    "removed":contact.removed,
+    "trustStatus": contact.trustStatus.int,
   }
   return $jsonObj
 
@@ -647,6 +649,7 @@ method contactUpdated*[T](self: Module[T], publicKey: string) =
     contactDetails.details.localNickname,
     contactDetails.details.alias,
     contactDetails.icon,
+    contactDetails.details.trustStatus,
     )
 
 method calculateProfileSectionHasNotification*[T](self: Module[T]): bool =

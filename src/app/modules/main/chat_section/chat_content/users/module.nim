@@ -5,6 +5,7 @@ import view, controller
 import ../../../../shared_models/[user_model, user_item]
 import ../../../../../global/global_singleton
 import ../../../../../core/eventemitter
+import ../../../../../../app_service/service/contacts/dto/contacts
 import ../../../../../../app_service/service/contacts/service as contact_service
 import ../../../../../../app_service/service/chat/service as chat_service
 import ../../../../../../app_service/service/community/service as community_service
@@ -83,6 +84,7 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto]) =
       status,
       contactDetails.icon,
       contactDetails.details.added,
+      trustStatus = contactDetails.details.trustStatus
       ))
 
 method contactNicknameChanged*(self: Module, publicKey: string) =
@@ -109,6 +111,7 @@ method contactUpdated*(self: Module, publicKey: string) =
     contactDetails.details.alias,
     contactDetails.icon,
     contactDetails.details.added,
+    trustStatus = contactDetails.details.trustStatus,
   )
 
 method loggedInUserImageChanged*(self: Module) =
@@ -141,7 +144,8 @@ method addChatMember*(self: Module,  member: ChatMember) =
     contactDetails.icon,
     contactDetails.details.added,
     member.admin,
-    member.joined
+    member.joined,
+    contactDetails.details.trustStatus
     ))
 
 method onChatMembersAdded*(self: Module,  ids: seq[string]) =
@@ -166,7 +170,9 @@ method onChatMemberUpdated*(self: Module, publicKey: string, admin: bool, joined
     contactDetails.icon,
     contactDetails.details.added,
     admin,
-    joined)
+    joined,
+    trustStatus = contactDetails.details.trustStatus
+    )
 
 method getMembersPublicKeys*(self: Module): string =
   let publicKeys = self.controller.getMembersPublicKeys()

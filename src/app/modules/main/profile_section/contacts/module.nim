@@ -7,6 +7,7 @@ import ../io_interface as delegate_interface
 import ../../../../global/global_singleton
 
 import ../../../../core/eventemitter
+import ../../../../../app_service/service/contacts/dto/contacts as contacts_dto
 import ../../../../../app_service/service/contacts/service as contacts_service
 
 export io_interface
@@ -41,7 +42,7 @@ proc createItemFromPublicKey(self: Module, publicKey: string): Item =
   let (name, image) = self.controller.getContactNameAndImage(contact.id)
 
   return initItem(contact.id, name, image, contact.isMutualContact(), contact.isBlocked(),
-  contact.isContactVerified(), contact.isContactUntrustworthy())
+    contact.isContactVerified(), contact.isContactUntrustworthy(), contact.trustStatus)
 
 proc buildModel(self: Module, model: Model, group: ContactsGroup) =
   var items: seq[Item]
@@ -149,3 +150,13 @@ method contactNicknameChanged*(self: Module, publicKey: string) =
   self.view.receivedButRejectedContactRequestsModel().updateName(publicKey, name)
   self.view.sentButRejectedContactRequestsModel().updateName(publicKey, name)
   self.view.blockedContactsModel().updateName(publicKey, name)
+
+method contactTrustStatusChanged*(self: Module, publicKey: string, trustStatus: TrustStatus) =
+  self.view.myMutualContactsModel().updateTrustStatus(publicKey, trustStatus)
+  self.view.blockedContactsModel().updateTrustStatus(publicKey, trustStatus)
+
+method markUntrustworthy*(self: Module, publicKey: string): void =
+  self.controller.markUntrustworthy(publicKey)
+
+method removeTrustStatus*(self: Module, publicKey: string): void =
+  self.controller.removeTrustStatus(publicKey)

@@ -1,4 +1,5 @@
 import strformat
+import ../../../app_service/service/contacts/dto/contacts
 
 type
   OnlineStatus* {.pure.} = enum
@@ -21,6 +22,7 @@ type
     isAdded: bool
     isAdmin: bool
     joined: bool
+    trustStatus: TrustStatus
 
 proc initItem*(
   id: string,
@@ -33,6 +35,7 @@ proc initItem*(
   isAdded: bool = false,
   isAdmin: bool = false,
   joined: bool = false,
+  trustStatus: TrustStatus = TrustStatus.Unknown
 ): Item =
   result = Item()
   result.id = id
@@ -45,6 +48,7 @@ proc initItem*(
   result.isAdded = isAdded
   result.isAdmin = isAdmin
   result.joined = joined
+  result.trustStatus = trustStatus
 
 proc `$`*(self: Item): string =
   result = fmt"""User Item(
@@ -57,6 +61,7 @@ proc `$`*(self: Item): string =
     isAdded: {$self.isAdded},
     isAdmin: {$self.isAdmin},
     joined: {$self.joined},
+    trustStatus: {self.trustStatus},
     ]"""
 
 proc id*(self: Item): string {.inline.} =
@@ -115,3 +120,9 @@ proc joined*(self: Item): bool {.inline.} =
 
 proc `joined=`*(self: Item, value: bool) {.inline.} =
   self.joined = value
+
+proc trustStatus*(self: Item): TrustStatus {.inline.} =
+  self.trustStatus
+
+proc `trustStatus=`*(self: Item, value: TrustStatus) {.inline.} =
+  self.trustStatus = value

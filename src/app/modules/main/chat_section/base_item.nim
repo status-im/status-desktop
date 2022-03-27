@@ -1,5 +1,6 @@
 import sequtils, sugar
 import color_hash_item, color_hash_model
+import ../../../../app_service/service/contacts/dto/contacts
 
 type
   ColorHashSegment* = tuple[len, colorIdx: int]
@@ -23,10 +24,13 @@ type
     position: int
     categoryId: string
     highlight: bool
+    trustStatus: TrustStatus
 
 proc setup*(self: BaseItem, id, name, icon: string, color, emoji, description: string,
-  `type`: int, amIChatAdmin: bool, hasUnreadMessages: bool, notificationsCount: int, muted, blocked, active: bool,
-    position: int, categoryId: string = "", colorHash: seq[ColorHashSegment] = @[], highlight: bool = false) =
+    `type`: int, amIChatAdmin: bool, hasUnreadMessages: bool, notificationsCount: int, muted,
+    blocked, active: bool, position: int, categoryId: string = "",
+    colorHash: seq[ColorHashSegment] = @[], highlight: bool = false,
+    trustStatus: TrustStatus = TrustStatus.Unknown) =
   self.id = id
   self.name = name
   self.amIChatAdmin = amIChatAdmin
@@ -45,13 +49,16 @@ proc setup*(self: BaseItem, id, name, icon: string, color, emoji, description: s
   self.position = position
   self.categoryId = categoryId
   self.highlight = highlight
+  self.trustStatus = trustStatus
 
 proc initBaseItem*(id, name, icon: string, color, emoji, description: string, `type`: int,
-    amIChatAdmin: bool, hasUnreadMessages: bool, notificationsCount: int, muted, blocked, active: bool,
-    position: int, categoryId: string = "", colorHash: seq[ColorHashSegment] = @[], highlight: bool = false): BaseItem =
+    amIChatAdmin: bool, hasUnreadMessages: bool, notificationsCount: int, muted, blocked,
+    active: bool, position: int, categoryId: string = "", colorHash: seq[ColorHashSegment] = @[],
+    highlight: bool = false, trustStatus: TrustStatus = TrustStatus.Unknown): BaseItem =
   result = BaseItem()
   result.setup(id, name, icon, color, emoji, description, `type`, amIChatAdmin,
-  hasUnreadMessages, notificationsCount, muted, blocked, active, position, categoryId, colorHash, highlight)
+    hasUnreadMessages, notificationsCount, muted, blocked, active, position, categoryId, colorHash,
+    highlight, trustStatus)
 
 proc delete*(self: BaseItem) =
   discard
@@ -145,3 +152,9 @@ method highlight*(self: BaseItem): bool {.inline base.} =
 
 method `highlight=`*(self: var BaseItem, value: bool) {.inline base.} =
   self.highlight = value
+
+method trustStatus*(self: BaseItem): TrustStatus {.inline base.} =
+  self.trustStatus
+
+method `trustStatus=`*(self: var BaseItem, value: TrustStatus) {.inline base.} =
+  self.trustStatus = value

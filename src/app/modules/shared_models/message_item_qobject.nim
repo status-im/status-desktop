@@ -34,6 +34,13 @@ QtObject:
   QtProperty[string] pinnedBy:
     read = pinnedBy
 
+  proc senderTrustStatus*(self: MessageItem): int {.slot.} = 
+    let trustStatus = ?.self.messageItem.senderTrustStatus
+    return trustStatus.int
+
+  QtProperty[int] senderTrustStatus:
+    read = senderTrustStatus
+
   proc senderDisplayName*(self: MessageItem): string {.slot.} = result = ?.self.messageItem.senderDisplayName
   QtProperty[string] senderDisplayName:
     read = senderDisplayName
