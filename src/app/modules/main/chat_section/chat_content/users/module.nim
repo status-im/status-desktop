@@ -5,6 +5,7 @@ import view, controller
 import ../../../../shared_models/[user_model, user_item]
 import ../../../../../global/global_singleton
 import ../../../../../core/eventemitter
+import ../../../../../../app_service/service/contacts/dto/contacts
 import ../../../../../../app_service/service/contacts/service as contact_service
 import ../../../../../../app_service/service/chat/service as chat_service
 import ../../../../../../app_service/service/community/service as community_service
@@ -89,7 +90,8 @@ method viewDidLoad*(self: Module) =
       contactDetails.isidenticon,
       contactDetails.details.added,
       admin,
-      joined
+      joined,
+      trustStatus = contactDetails.details.trustStatus
       ))
 
   self.moduleLoaded = true
@@ -121,6 +123,7 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto]) =
       contactDetails.details.identicon,
       contactDetails.isidenticon,
       contactDetails.details.added,
+      trustStatus = contactDetails.details.trustStatus
       ))
 
 method contactNicknameChanged*(self: Module, publicKey: string) =
@@ -148,6 +151,7 @@ method contactUpdated*(self: Module, publicKey: string) =
     contactDetails.icon,
     contactDetails.isidenticon,
     contactDetails.details.added,
+    trustStatus = contactDetails.details.trustStatus,
   )
 
 method loggedInUserImageChanged*(self: Module) =
@@ -175,7 +179,8 @@ method onChatMembersAdded*(self: Module,  ids: seq[string]) =
       contactDetails.isidenticon,
       contactDetails.details.added,
       admin,
-      joined
+      joined,
+      trustStatus = contactDetails.details.trustStatus
       ))
 
 method onChatMemberRemoved*(self: Module, id: string) =
@@ -193,7 +198,9 @@ method onChatMemberUpdated*(self: Module, publicKey: string, admin: bool, joined
     contactDetails.isidenticon,
     contactDetails.details.added,
     admin,
-    joined)
+    joined,
+    trustStatus = contactDetails.details.trustStatus
+    )
 
 method getMembersPublicKeys*(self: Module): string =
   let publicKeys = self.controller.getMembersPublicKeys()

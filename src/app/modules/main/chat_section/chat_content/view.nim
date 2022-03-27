@@ -1,5 +1,7 @@
 import NimQml
 import ../../../shared_models/message_model as pinned_msg_model
+import ../../../../../app_service/service/contacts/dto/contacts as contacts_dto
+
 import io_interface
 import chat_details
 
@@ -32,9 +34,9 @@ QtObject:
 
   proc load*(self: View, id: string, `type`: int, belongsToCommunity, isUsersListAvailable: bool,
       name, icon: string, isIdenticon: bool, color, description, emoji: string,
-      hasUnreadMessages: bool, notificationsCount: int, muted: bool, position: int) =
+      hasUnreadMessages: bool, notificationsCount: int, muted: bool, position: int, trustStatus: TrustStatus) =
     self.chatDetails.setChatDetails(id, `type`, belongsToCommunity, isUsersListAvailable, name, icon,
-      isIdenticon, color, description, emoji, hasUnreadMessages, notificationsCount, muted, position)
+      isIdenticon, color, description, emoji, hasUnreadMessages, notificationsCount, muted, position, trustStatus)
     self.delegate.viewDidLoad()
     self.chatDetailsChanged()
 
@@ -94,6 +96,9 @@ QtObject:
   proc updateChatDetailsNameAndIcon*(self: View, name, icon: string, isIdenticon: bool) =
     self.chatDetails.setName(name)
     self.chatDetails.setIcon(icon, isIdenticon)
+
+  proc updateTrustStatus*(self: View, trustStatus: TrustStatus) =
+    self.chatDetails.setTrustStatus(trustStatus)
 
   proc updateChatDetailsNotifications*(self: View, hasUnreadMessages: bool, notificationCount: int) =
     self.chatDetails.setHasUnreadMessages(hasUnreadMessages)

@@ -67,4 +67,12 @@ QtObject {
     function rejectAllContactRequests() {
         chatSectionModule.rejectAllContactRequests()
     }
+
+    function markUntrustworthy(pubKey) {
+        root.contactsModule.markUntrustworthy(pubKey)
+    }
+
+    function removeTrustStatus(pubKey) {
+        root.contactsModule.removeTrustStatus(pubKey)
+    }
 }

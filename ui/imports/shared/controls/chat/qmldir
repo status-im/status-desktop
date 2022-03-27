@@ -13,3 +13,4 @@ GasSelectorButton 1.0 GasSelectorButton.qml
 MessageBorder 1.0 MessageBorder.qml
 EmojiReaction 1.0 EmojiReaction.qml
 ProfileHeader 1.0 ProfileHeader.qml
+VerificationLabel 1.0 VerificationLabel.qml

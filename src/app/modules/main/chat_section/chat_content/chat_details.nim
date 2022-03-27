@@ -1,4 +1,6 @@
 import NimQml
+import ../../../../../app_service/service/contacts/dto/contacts as contacts_dto
+
 
 QtObject:
   type ChatDetails* = ref object of QObject
@@ -18,6 +20,7 @@ QtObject:
     notificationsCount: int
     muted: bool
     position: int
+    trustStatus: TrustStatus
 
   proc delete*(self: ChatDetails) =
     self.QObject.delete
@@ -28,7 +31,8 @@ QtObject:
 
   proc setChatDetails*(self: ChatDetails, id: string, `type`: int, belongsToCommunity,
     isUsersListAvailable: bool, name, icon: string, isIdenticon: bool, color, description,
-    emoji: string, hasUnreadMessages: bool, notificationsCount: int, muted: bool, position: int) =
+    emoji: string, hasUnreadMessages: bool, notificationsCount: int, muted: bool, position: int,
+    trustStatus: TrustStatus) =
     self.id = id
     self.`type` = `type`
     self.belongsToCommunity = belongsToCommunity
@@ -43,6 +47,7 @@ QtObject:
     self.notificationsCount = notificationsCount
     self.muted = muted
     self.position = position
+    self.trustStatus = trustStatus
 
   proc getId(self: ChatDetails): string {.slot.} =
     return self.id
@@ -169,3 +174,14 @@ QtObject:
   proc setPotion*(self: ChatDetails, value: int) = # this is not a slot
     self.position = value
     self.positionChanged()
+
+  proc trustStatusChanged(self: ChatDetails) {.signal.}
+  proc getTrustStatus(self: ChatDetails): int {.slot.} =
+    return self.trustStatus.int
+  QtProperty[int] trustStatus:
+    read = getTrustStatus
+    notify = trustStatusChanged
+
+  proc setTrustStatus*(self: ChatDetails, value: TrustStatus) = # this is not a slot
+    self.trustStatus = value
+    self.trustStatusChanged()

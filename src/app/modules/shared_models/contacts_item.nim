@@ -1,3 +1,5 @@
+import ../../../app_service/service/contacts/dto/contacts
+
 type
   Item* = ref object
     pubKey: string
@@ -7,8 +9,9 @@ type
     isContact: bool
     isBlocked: bool
     requestReceived: bool
+    trustStatus: TrustStatus
 
-proc initItem*(pubKey, name, icon: string, isIdenticon, isContact, isBlocked, requestReceived: bool): Item =
+proc initItem*(pubKey, name, icon: string, isIdenticon, isContact, isBlocked, requestReceived: bool, trustStatus: TrustStatus): Item =
   result = Item()
   result.pubKey = pubKey
   result.name = name
@@ -17,6 +20,7 @@ proc initItem*(pubKey, name, icon: string, isIdenticon, isContact, isBlocked, re
   result.isContact = isContact
   result.isBlocked = isBlocked
   result.requestReceived = requestReceived
+  result.trustStatus = trustStatus
 
 proc pubKey*(self: Item): string =
   self.pubKey
@@ -41,3 +45,9 @@ proc isBlocked*(self: Item): bool =
 
 proc requestReceived*(self: Item): bool =
   self.requestReceived
+
+proc `trustStatus=`*(self: Item, value: TrustStatus) =
+  self.trustStatus = value
+
+proc trustStatus*(self: Item): TrustStatus =
+  self.trustStatus

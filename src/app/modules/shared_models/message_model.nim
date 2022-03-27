@@ -35,6 +35,7 @@ type
     IsEdited
     Links
     TransactionParameters
+    SenderTrustStatus
 
 QtObject:
   type
@@ -107,6 +108,7 @@ QtObject:
       ModelRole.IsEdited.int: "isEdited",
       ModelRole.Links.int: "links",
       ModelRole.TransactionParameters.int: "transactionParameters",
+      ModelRole.SenderTrustStatus.int: "senderTrustStatus"
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -130,6 +132,8 @@ QtObject:
       result = newQVariant(item.senderId)
     of ModelRole.SenderDisplayName:
       result = newQVariant(item.senderDisplayName)
+    of ModelRole.SenderTrustStatus:
+      result = newQVariant(item.senderTrustStatus.int)
     of ModelRole.SenderLocalName:
       result = newQVariant(item.senderLocalName)
     of ModelRole.SenderIcon:
@@ -349,7 +353,7 @@ QtObject:
       var roles: seq[int]
       if(self.items[i].senderId == contactId):
         roles = @[ModelRole.SenderDisplayName.int, ModelRole.SenderLocalName.int, ModelRole.SenderIcon.int,
-        ModelRole.IsSenderIconIdenticon.int, ModelRole.SenderIsAdded.int]
+        ModelRole.IsSenderIconIdenticon.int, ModelRole.SenderIsAdded.int, ModelRole.SenderTrustStatus.int]
       if(self.items[i].pinnedBy == contactId):
         roles.add(ModelRole.PinnedBy.int)
       if(self.items[i].messageContainsMentions):

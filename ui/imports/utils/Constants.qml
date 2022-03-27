@@ -91,6 +91,12 @@ QtObject {
         readonly property int noOne: 3
     }
 
+    readonly property QtObject trustStatus: QtObject {
+        readonly property int unknown: 0
+        readonly property int trusted: 1
+        readonly property int untrustworthy: 2
+    }
+
     readonly property int communityImported: 0
     readonly property int communityImportingInProgress: 1
     readonly property int communityImportingError: 2

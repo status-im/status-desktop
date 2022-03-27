@@ -19,6 +19,7 @@ import ../../../../app_service/service/community/service as community_service
 import ../../../../app_service/service/message/service as message_service
 import ../../../../app_service/service/mailservers/service as mailservers_service
 import ../../../../app_service/service/gif/service as gif_service
+import ../../../../app_service/service/contacts/dto/contacts as contacts_dto
 
 export io_interface
 
@@ -224,7 +225,8 @@ proc createItemFromPublicKey(self: Module, publicKey: string): contacts_item.Ite
     contactDetails.isIdenticon,
     contactDetails.details.isContact(),
     contactDetails.details.isBlocked(),
-    contactDetails.details.requestReceived()
+    contactDetails.details.requestReceived(),
+    contactDetails.details.trustStatus,
   )
 
 proc initContactRequestsModel(self: Module) =
@@ -644,7 +646,8 @@ method onContactDetailsUpdated*(self: Module, publicKey: string) =
   let chatName = contactDetails.displayName
   let chatImage = contactDetails.icon
   let isIdenticon = contactDetails.isIdenticon
-  self.view.chatsModel().updateItemDetails(publicKey, chatName, chatImage, isIdenticon)
+  let trustStatus = contactDetails.details.trustStatus
+  self.view.chatsModel().updateItemDetails(publicKey, chatName, chatImage, isIdenticon, trustStatus)
 
 method onNewMessagesReceived*(self: Module, chatId: string, unviewedMessagesCount: int, unviewedMentionsCount: int,
   messages: seq[MessageDto]) =

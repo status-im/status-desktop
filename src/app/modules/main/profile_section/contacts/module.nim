@@ -7,6 +7,7 @@ import ../io_interface as delegate_interface
 import ../../../../global/global_singleton
 
 import ../../../../core/eventemitter
+import ../../../../../app_service/service/contacts/dto/contacts as contacts_dto
 import ../../../../../app_service/service/contacts/service as contacts_service
 
 export io_interface
@@ -41,7 +42,7 @@ proc createItemFromPublicKey(self: Module, publicKey: string): Item =
   let (name, image, isIdenticon) = self.controller.getContactNameAndImage(contact.id)
 
   return initItem(contact.id, name, image, isIdenticon, contact.isContact(), contact.isBlocked(),
-  contact.requestReceived())
+  contact.requestReceived(), contact.trustStatus)
 
 proc initModels(self: Module) =
   var myContacts: seq[Item]
@@ -115,3 +116,13 @@ method removeContact*(self: Module, publicKey: string) =
 
 method changeContactNickname*(self: Module, publicKey: string, nickname: string) =
   self.controller.changeContactNickname(publicKey, nickname)
+
+method contactTrustStatusChanged*(self: Module, publicKey: string, trustStatus: TrustStatus) =
+  self.view.myContactsModel().updateTrustStatus(publicKey, trustStatus)
+  self.view.blockedContactsModel().updateTrustStatus(publicKey, trustStatus)
+
+method markUntrustworthy*(self: Module, publicKey: string): void =
+  self.controller.markUntrustworthy(publicKey)
+
+method removeTrustStatus*(self: Module, publicKey: string): void =
+  self.controller.removeTrustStatus(publicKey)

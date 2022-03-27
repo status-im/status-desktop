@@ -13,6 +13,8 @@ Item {
     property string displayName
     property string pubkey
     property string icon
+    property int trustStatus
+    property bool isContact: false
     property bool isIdenticon: false
 
     property bool displayNameVisible: true
@@ -86,6 +88,27 @@ Item {
             font.pixelSize: Style.current.asideTextFontSize
             color: Style.current.secondaryText
         }
+
+        Loader {
+            sourceComponent: SVGImage {
+                height: 16
+                width: 16
+                source: Style.svg("contact")
+            }
+            active: isContact
+        }
+
+        Loader {
+            sourceComponent: VerificationLabel {
+                id: trustStatus
+                trustStatus: root.trustStatus
+                height: 16
+                width: 16
+            }
+            active: root.trustStatus !== Constants.trustStatus.unknown
+        }
+
+        
 
         Text {
             id: emojihash

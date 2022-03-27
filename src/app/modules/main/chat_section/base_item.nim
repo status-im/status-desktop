@@ -1,3 +1,5 @@
+import ../../../../app_service/service/contacts/dto/contacts
+
 type
   BaseItem* {.pure inheritable.} = ref object of RootObj
     id: string
@@ -17,10 +19,11 @@ type
     position: int
     categoryId: string
     highlight: bool
+    trustStatus: TrustStatus
 
 proc setup*(self: BaseItem, id, name, icon: string, isIdenticon: bool, color, emoji, description: string,
   `type`: int, amIChatAdmin: bool, hasUnreadMessages: bool, notificationsCount: int, muted, blocked, active: bool,
-    position: int, categoryId: string = "", highlight: bool = false) =
+    position: int, categoryId: string = "", highlight: bool = false, trustStatus: TrustStatus = TrustStatus.Unknown) =
   self.id = id
   self.name = name
   self.amIChatAdmin = amIChatAdmin
@@ -38,13 +41,14 @@ proc setup*(self: BaseItem, id, name, icon: string, isIdenticon: bool, color, em
   self.position = position
   self.categoryId = categoryId
   self.highlight = highlight
+  self.trustStatus = trustStatus
 
 proc initBaseItem*(id, name, icon: string, isIdenticon: bool, color, emoji, description: string, `type`: int,
     amIChatAdmin: bool, hasUnreadMessages: bool, notificationsCount: int, muted, blocked, active: bool,
-    position: int, categoryId: string = "", highlight: bool = false): BaseItem =
+    position: int, categoryId: string = "", highlight: bool = false, trustStatus: TrustStatus = TrustStatus.Unknown): BaseItem =
   result = BaseItem()
   result.setup(id, name, icon, isIdenticon, color, emoji, description, `type`, amIChatAdmin,
-  hasUnreadMessages, notificationsCount, muted, blocked, active, position, categoryId, highlight)
+  hasUnreadMessages, notificationsCount, muted, blocked, active, position, categoryId, highlight, trustStatus)
 
 proc delete*(self: BaseItem) =
   discard
@@ -141,3 +145,9 @@ method highlight*(self: BaseItem): bool {.inline base.} =
 
 method `highlight=`*(self: var BaseItem, value: bool) {.inline base.} =
   self.highlight = value
+
+method trustStatus*(self: BaseItem): TrustStatus {.inline base.} =
+  self.trustStatus
+
+method `trustStatus=`*(self: var BaseItem, value: TrustStatus) {.inline base.} =
+  self.trustStatus = value

@@ -1,5 +1,6 @@
 import json, strformat
 import ../../../app_service/common/types
+import ../../../app_service/service/contacts/dto/contacts
 
 export types.ContentType
 import message_reaction_model, message_reaction_item, message_transaction_parameters_item
@@ -36,6 +37,7 @@ type
     isEdited: bool
     links: seq[string]
     transactionParameters: TransactionParametersItem
+    senderTrustStatus: TrustStatus
 
 proc initItem*(
     id,
@@ -61,6 +63,7 @@ proc initItem*(
     stickerPack: int,
     links: seq[string],
     transactionParameters: TransactionParametersItem,
+    senderTrustStatus: TrustStatus
     ): Item =
   result = Item()
   result.id = id
@@ -92,6 +95,7 @@ proc initItem*(
   result.transactionParameters = transactionParameters
   result.gapFrom = 0
   result.gapTo = 0
+  result.senderTrustStatus = senderTrustStatus
 
 proc `$`*(self: Item): string =
   result = fmt"""Item(
@@ -118,6 +122,7 @@ proc `$`*(self: Item): string =
     isEdited:{$self.isEdited},
     links:{$self.links},
     transactionParameters:{$self.transactionParameters},
+    senderTrustStatus:{$self.senderTrustStatus},
     )"""
 
 proc id*(self: Item): string {.inline.} =
@@ -167,6 +172,12 @@ proc senderIsAdded*(self: Item): bool {.inline.} =
 
 proc `senderIsAdded=`*(self: Item, value: bool) {.inline.} =
   self.senderIsAdded = value
+
+proc senderTrustStatus*(self: Item): TrustStatus {.inline.} =
+  self.senderTrustStatus
+
+proc `senderTrustStatus=`*(self: Item, value: TrustStatus) {.inline.} =
+  self.senderTrustStatus = value
 
 proc outgoingStatus*(self: Item): string {.inline.} =
   self.outgoingStatus

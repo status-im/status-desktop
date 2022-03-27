@@ -48,3 +48,27 @@ proc sendContactUpdate*(publicKey, ensName, thumbnail: string): RpcResponse[Json
 proc getImageServerURL*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* []
   result = callPrivateRPC("imageServerURL".prefix, payload)
+
+proc markUntrustworthy*(pubkey: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [pubkey]
+  result = callPrivateRPC("markAsUntrustworthy".prefix, payload)
+
+proc removeTrustStatus*(pubkey: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [pubkey]
+  result = callPrivateRPC("removeTrustStatus".prefix, payload)
+
+proc getTrustStatus*(pubkey: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [pubkey]
+  result = callPrivateRPC("getTrustStatus".prefix, payload)
+
+proc sendVerificationRequest*(pubkey: string, challenge: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [pubkey, challenge]
+  result = callPrivateRPC("sendContactVerificationRequest".prefix, payload)
+
+proc acceptVerificationRequest*(pubkey: string, response: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [pubkey, response]
+  result = callPrivateRPC("acceptContactVerificationRequest".prefix, payload)
+
+proc declineVerificationRequest*(pubkey: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [pubkey]
+  result = callPrivateRPC("declineContactVerificationRequest".prefix, payload)

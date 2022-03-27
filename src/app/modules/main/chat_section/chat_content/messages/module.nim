@@ -8,6 +8,7 @@ import ../../../../shared_models/message_reaction_item
 import ../../../../shared_models/message_transaction_parameters_item
 import ../../../../../global/global_singleton
 import ../../../../../core/eventemitter
+import ../../../../../../app_service/service/contacts/dto/contacts
 import ../../../../../../app_service/service/contacts/service as contact_service
 import ../../../../../../app_service/service/community/service as community_service
 import ../../../../../../app_service/service/chat/service as chat_service
@@ -94,6 +95,7 @@ proc createFetchMoreMessagesItem(self: Module): Item =
     stickerPack = -1,
     @[],
     newTransactionParametersItem("","","","","","",-1,""),
+    TrustStatus.Unknown
   )
 
 proc createChatIdentifierItem(self: Module): Item =
@@ -131,6 +133,7 @@ proc createChatIdentifierItem(self: Module): Item =
     stickerPack = -1,
     @[],
     newTransactionParametersItem("","","","","","",-1,""),
+    TrustStatus.Unknown
   )
 
 proc checkIfMessageLoadedAndScrollToItIfItIs(self: Module): bool =
@@ -202,6 +205,7 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
           m.transactionParameters.transactionHash,
           m.transactionParameters.commandState,
           m.transactionParameters.signature),
+        sender.details.trustStatus,
         )
 
       for r in reactions:
@@ -290,6 +294,7 @@ method messageAdded*(self: Module, message: MessageDto) =
                     message.transactionParameters.transactionHash,
                     message.transactionParameters.commandState,
                     message.transactionParameters.signature),
+    sender.details.trustStatus,
   )
 
   self.view.model().insertItemBasedOnTimestamp(item)
@@ -397,6 +402,7 @@ method updateContactDetails*(self: Module, contactId: string) =
       item.senderIcon = updatedContact.icon
       item.isSenderIconIdenticon = updatedContact.isIdenticon
       item.senderIsAdded = updatedContact.details.added
+      item.senderTrustStatus = updatedContact.details.trustStatus
     if(item.messageContainsMentions):
       let (m, _, err) = self.controller.getMessageDetails(item.id)
       if(err.len == 0):
