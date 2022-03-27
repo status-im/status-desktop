@@ -8,6 +8,7 @@
   "DataDir": "./ethereum/mainnet",
   "EnableNTPSync": true,
   "KeyStoreDir": "./keystore",
+  "IPFSDir": "./ipfs",
   "LogEnabled": true,
   "LogFile": "./geth.log",
   "LogLevel": "INFO",
