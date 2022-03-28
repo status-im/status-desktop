@@ -29,7 +29,7 @@ proc recent*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   return core.callPrivateRPC("stickers_recent", payload)
 
 proc addRecent*(packId: string, hash: string): RpcResponse[JsonNode] {.raises: [Exception].} =
-  let payload = %* [{"packID": packId, "hash": hash}]
+  let payload = %* [packId, hash]
   return core.callPrivateRPC("stickers_addRecent", payload)
 
 proc stickerMarketAddress*(chainId: int): RpcResponse[JsonNode] {.raises: [Exception].} =
