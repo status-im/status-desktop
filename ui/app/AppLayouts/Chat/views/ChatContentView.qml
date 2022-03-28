@@ -408,6 +408,8 @@ ColumnLayout {
 
             Loader {
                 id: loadingMessagesIndicator
+                active: root.rootStore.loadingHistoryMessagesInProgress
+                visible: root.rootStore.loadingHistoryMessagesInProgress
                 sourceComponent: LoadingAnimation { }
                 anchors {
                     right: parent.right
