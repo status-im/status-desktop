@@ -62,8 +62,10 @@ Item {
         }
 
         onSearchTextChanged: {
-            searchPopup.loading = true
-            searchMessages(searchPopup.searchText);
+            if (searchPopup.searchText !== "") {
+                searchPopup.loading = true
+                searchMessages(searchPopup.searchText);
+            }
         }
         onAboutToHide: {
             if (searchPopupMenu.visible) {
