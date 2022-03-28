@@ -44,6 +44,7 @@ Page {
                     {"publicId": entry.publicId, "name": entry.name,
                      "icon": entry.icon, "isIdenticon": entry.isIdenticon});
                 }
+                tagSelector.sortModel(root.contactsModel);
             } else {
                 tagSelector.namesModel.clear();
                 contactsModel.clear();
@@ -105,7 +106,6 @@ Page {
             onTextChanged: {
                 sortModel(root.contactsModel);
             }
-            Component.onCompleted: { sortModel(root.contactsModel); }
         }
 
         StatusButton {
