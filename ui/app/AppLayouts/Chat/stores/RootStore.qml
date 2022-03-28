@@ -167,12 +167,12 @@ QtObject {
         globalUtilsInst.copyToClipboard(text)
     }
 
-    function copyImageToClipboard(content) {
-        globalUtilsInst.copyImageToClipboard(content)
+    function copyImageToClipboardByUrl(content) {
+        globalUtilsInst.copyImageToClipboardByUrl(content)
     }
 
-    function downloadImage(content, path) {
-        globalUtilsInst.downloadImage(content, path)
+    function downloadImageByUrl(url, path) {
+        globalUtilsInst.downloadImageByUrl(url, path)
     }
 
     function isCurrentUser(pubkey) {
