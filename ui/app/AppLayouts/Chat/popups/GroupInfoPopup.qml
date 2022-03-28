@@ -239,7 +239,7 @@ StatusModal {
                                 icon.height: 16
                                 //% "Make Admin"
                                 text: qsTrId("make-admin")
-                                onTriggered: popup.chatSectionModule.makeAdmin(popup.chatDetails.id,  model.id)
+                                onTriggered: popup.chatSectionModule.makeAdmin("", popup.chatDetails.id,  model.id)
                             }
                             StatusMenuItem {
                                 icon.name: "remove-contact"
@@ -248,13 +248,13 @@ StatusModal {
                                 type: StatusMenuItem.Type.Danger
                                 //% "Remove From Group"
                                 text: qsTrId("remove-from-group")
-                                onTriggered: popup.chatSectionModule.removeMemberFromGroupChat(popup.chatDetails.id,  model.id)
+                                onTriggered: popup.chatSectionModule.removeMemberFromGroupChat("", popup.chatDetails.id,  model.id)
                             }
                         }
                     }
                 ]
                 onTitleClicked: {
-                    Global.openProfilePopup(model.publicKey, popup)
+                    Global.openProfilePopup(model.id, popup)
                 }
             }
         }
