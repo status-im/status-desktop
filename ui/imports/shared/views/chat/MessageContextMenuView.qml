@@ -141,7 +141,7 @@ StatusPopupMenu {
         text: qsTr("Copy image")
         onTriggered: {
             if (root.imageSource) {
-                root.store.copyImageToClipboard(root.imageSource)
+                root.store.copyImageToClipboardByUrl(root.imageSource)
             }
             root.close()
         }
@@ -324,7 +324,7 @@ StatusPopupMenu {
         modality: Qt.NonModal
         onAccepted: {
             if (root.imageSource) {
-                root.store.downloadImage(root.imageSource, fileDialog.fileUrls)
+                root.store.downloadImageByUrl(root.imageSource, fileDialog.fileUrls)
             }
             fileDialog.close()
         }
