@@ -31,6 +31,7 @@
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkDiskCache>
 #include <QtNetwork/QNetworkConfigurationManager>
+#include <QtNetwork/QNetworkReply>
 #include <QtNetwork/QSslSocket>
 #include <QtGui/QGuiApplication>
 #include <QtGui/QIcon>
@@ -190,6 +191,25 @@ void dos_qguiapplication_clipboard_setImage(const char* text)
     QGuiApplication::clipboard()->setImage(image);
 }
 
+void dos_qguiapplication_clipboard_setImageByUrl(const char* url)
+{
+    QNetworkAccessManager *manager = new QNetworkAccessManager();
+    QObject::connect(manager, &QNetworkAccessManager::finished, [](QNetworkReply *reply) {
+        if(reply->error() == QNetworkReply::NoError) {
+            QByteArray btArray = reply->readAll();
+            QImage image;
+            image.loadFromData(btArray);
+            Q_ASSERT(!image.isNull());
+            QGuiApplication::clipboard()->setImage(image);
+        }
+        else {
+            qDebug() << "clipboard_setImage:: Downloading image failed!";
+        }
+    });
+
+    manager->get(QNetworkRequest(QUrl(url)));
+}
+
 void dos_qguiapplication_download_image(const char *imageSource, const char *filePath)
 {
     // Extract file path that can be used to save the image
@@ -203,6 +223,33 @@ void dos_qguiapplication_download_image(const char *imageSource, const char *fil
     QImage image;
     image.loadFromData(QByteArray::fromBase64(btArray));
     image.save(QString(fileL) + "/image_" + dateTimeString + ".png");
+}
+
+void dos_qguiapplication_download_imageByUrl(const char *url, const char *filePath)
+{
+
+    QNetworkAccessManager *manager = new QNetworkAccessManager();
+    QObject::connect(manager, &QNetworkAccessManager::finished, [filePath](QNetworkReply *reply) {
+        if(reply->error() == QNetworkReply::NoError) {
+            // Extract file path that can be used to save the image
+            QString fileL = QString(filePath).replace(QRegExp("^(file:/{2})|(qrc:/{2})|(http:/{2})"), "");
+
+            // Get current Date/Time information to use in naming of the image file
+            QString dateTimeString = QDateTime::currentDateTime().toString("dd-MM-yyyy_ hh-mm-ss");
+
+            // Extract the image data to be able to load and save into a QImage
+            QByteArray btArray = reply->readAll();
+            QImage image;
+            image.loadFromData(btArray);
+            Q_ASSERT(!image.isNull());
+            image.save(QString(fileL) + "/image_" + dateTimeString + ".png");
+        }
+        else {
+            qDebug() << "download_image:: Downloading image failed!";
+        }
+    });
+
+    manager->get(QNetworkRequest(QUrl(url)));
 }
 
 void dos_qguiapplication_delete()
