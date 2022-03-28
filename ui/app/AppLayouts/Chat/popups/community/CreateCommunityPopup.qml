@@ -94,10 +94,16 @@ StatusModal {
                 label: qsTr("Name your community")
                 charLimit: maxCommunityNameLength
                 input.placeholderText: qsTr("A catchy name")
-                validators: [StatusMinLengthValidator {
-                    minLength: 1
-                    errorMessage: Utils.getErrorMessage(nameInput.errors, "community name")
-                }]
+                validators: [
+                    StatusMinLengthValidator {
+                        minLength: 1
+                        errorMessage: Utils.getErrorMessage(nameInput.errors, "community name")
+                    },
+                    StatusRegularExpressionValidator {
+                        regularExpression: /^[^<>]+$/
+                        errorMessage: qsTr("This is not a valid community name")
+                    }
+                ]
                 validationMode: StatusInput.ValidationMode.Always
             }
 

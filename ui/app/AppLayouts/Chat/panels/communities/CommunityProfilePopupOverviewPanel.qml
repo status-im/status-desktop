@@ -39,6 +39,7 @@ Column {
             font.pixelSize: 15
             color: Theme.palette.directColor1
             wrapMode: Text.Wrap
+            textFormat: Text.PlainText
         }
     }
 

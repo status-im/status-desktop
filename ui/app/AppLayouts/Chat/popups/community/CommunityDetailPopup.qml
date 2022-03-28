@@ -72,6 +72,7 @@ StatusModal {
                 color: Theme.palette.directColor1
                 wrapMode: Text.WordWrap
                 width: parent.width
+                textFormat: Text.PlainText
             }
 
             StatusIcon {
