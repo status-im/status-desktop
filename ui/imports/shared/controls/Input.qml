@@ -3,6 +3,7 @@ import QtQuick.Controls 2.13
 
 import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
+import StatusQ.Core 0.1
 
 import utils 1.0
 
@@ -193,15 +194,13 @@ Item {
         }
     }
 
-    TextEdit {
+    StatusBaseText {
         visible: !!validationError
         id: validationErrorText
         text: validationError
         anchors.top: inputField.bottom
         anchors.topMargin: validationErrorTopMargin
         anchors.right: inputField.right
-        selectByMouse: true
-        readOnly: true
         font.pixelSize: 12
         height: 16
         color: validationErrorColor
