@@ -102,6 +102,9 @@ QtObject:
   proc copyToClipboard*(self: Utils, content: string) {.slot.} =
     setClipBoardText(content)
 
+  proc getFromClipboard*(self: Utils): string {.slot.} =
+    return getClipBoardText()
+
   proc copyImageToClipboard*(self: Utils, content: string) {.slot.} =
     setClipBoardImage(content)
 

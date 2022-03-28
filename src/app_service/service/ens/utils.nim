@@ -55,8 +55,11 @@ proc publicKeyOf*(chainId: int, username: string): string =
     return ""
 
 proc addressOf*(chainId: int, username: string): string =
-  let res = status_ens.addressOf(chainId, username.addDomain())
-  return res.result.getStr
+  try:
+    let res = status_ens.addressOf(chainId, username.addDomain())
+    return res.result.getStr
+  except:
+    return ""
 
 proc ownerOf*(chainId: int, username: string): string =
   let res = status_ens.ownerOf(chainId, username)

@@ -52,19 +52,32 @@ Item {
                 Constants.settingsSubsection.messaging)
         }
 
-        StatusBaseText {
-            id: titleText
-            text: qsTr("Contacts")
-            font.weight: Font.Bold
-            font.pixelSize: 28
-            color: Theme.palette.directColor1
+        RowLayout {
+            id: contactsHeader
             anchors.top: parent.top
             anchors.topMargin: 56
+            anchors.left: parent.left
+            anchors.right: parent.right
+
+            StatusBaseText {
+                Layout.fillWidth: true
+                text: qsTr("Contacts")
+                font.weight: Font.Bold
+                font.pixelSize: 28
+                color: Theme.palette.directColor1
+            }
+
+            StatusButton {
+                text: qsTr("Send contact request to chat key")
+                onClicked: {
+                    sendContactRequest.open()
+                }
+            }
         }
 
         SearchBox {
             id: searchBox
-            anchors.top: titleText.bottom
+            anchors.top: contactsHeader.bottom
             anchors.topMargin: 32
             width: parent.width
             input.implicitHeight: 44
@@ -235,6 +248,28 @@ Item {
               root.contactsStore.removeContact(removeContactConfirmationDialog.value);
             }
             removeContactConfirmationDialog.close()
+        }
+    }
+
+    Loader {
+        id: sendContactRequest
+        active: false
+
+        function open() {
+            active = true
+            sendContactRequest.item.open()
+        }
+        function close() {
+            active = false
+        }
+
+        sourceComponent: SendContactRequestModal {
+            anchors.centerIn: parent
+            contactsStore: root.contactsStore
+
+            onClosed: {
+                sendContactRequest.close();
+            }
         }
     }
 }
