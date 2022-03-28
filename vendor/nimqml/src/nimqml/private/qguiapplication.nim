@@ -41,8 +41,14 @@ proc installSelfSignedCertificate*(certificate: string) =
 proc setClipboardImage*(text: string = "") =
   dos_qguiapplication_clipboard_setImage(text.cstring)
 
+proc setClipboardImageByUrl*(url: string = "") =
+  dos_qguiapplication_clipboard_setImageByUrl(url.cstring)
+
 proc downloadImage*(imageSource: string = "", filePath = "") =
   dos_qguiapplication_download_image(imageSource.cstring, filePath.cstring)
+
+proc downloadImageByUrl*(url: string = "", filePath = "") =
+  dos_qguiapplication_download_imageByUrl(url.cstring, filePath.cstring)
 
 proc enableHDPI*(uiScaleFilePath: string) =
   dos_qguiapplication_enable_hdpi(uiScaleFilePath)

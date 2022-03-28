@@ -141,6 +141,8 @@ proc dos_qguiapplication_clipboard_setText(content: cstring) {.cdecl, dynlib: dy
 proc dos_qguiapplication_installEventFilter(engine: DosStatusEvent) {.cdecl, dynlib: dynLibName, importc.}
 proc dos_qguiapplication_clipboard_setImage(content: cstring) {.cdecl, dynlib: dynLibName, importc.}
 proc dos_qguiapplication_download_image(imageSource: cstring, filePath: cstring) {.cdecl, dynlib: dynLibName, importc.}
+proc dos_qguiapplication_clipboard_setImageByUrl(url: cstring) {.cdecl, dynlib: dynLibName, importc.}
+proc dos_qguiapplication_download_imageByUrl(url: cstring, filePath: cstring) {.cdecl, dynlib: dynLibName, importc.}
 
 proc dos_add_self_signed_certificate(content: cstring) {.cdecl, dynlib: dynLibName, importc.}
 
