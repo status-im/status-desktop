@@ -88,6 +88,7 @@ Item {
 
         StatusIconTabButton {
             icon.name: "public-chat"
+            checked: publicChatCommunityContextMenu.visible
             onClicked: { publicChatCommunityContextMenu.popup(); }
             StatusPopupMenu {
                  id: publicChatCommunityContextMenu
@@ -112,6 +113,7 @@ Item {
 
         StatusIconTabButton {
             icon.name: "edit"
+            checked: root.store.openCreateChat
             onClicked: {
                 root.store.openCreateChat = !root.store.openCreateChat;
             }
