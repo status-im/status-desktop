@@ -25,7 +25,7 @@ Rectangle {
 
     RowLayout {
         anchors.centerIn: parent
-        height: sendBtn.height
+        height: parent.height
         spacing:  Style.current.padding
 
         StatusFlatButton {

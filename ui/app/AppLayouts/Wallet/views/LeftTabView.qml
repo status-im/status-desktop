@@ -10,6 +10,7 @@ import shared.controls 1.0
 
 import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Controls 0.1
 
 import "../controls"
 import "../popups"
@@ -73,66 +74,10 @@ Rectangle {
             font.weight: Font.Medium
             font.pixelSize: 13
         }
-
-        AddAccountButton {
-            id: addAccountButton
-            anchors.top: parent.top
-            anchors.right: parent.right
-            onClicked: {
-                if (newAccountMenu.opened) {
-                    newAccountMenu.close()
-                } else {
-                    newAccountMenu.popup(addAccountButton.x + addAccountButton.width/2 - newAccountMenu.width/2 ,
-                                         addAccountButton.y + addAccountButton.height + 55)
-                }
-            }
-        }
     }
 
-    AddNewAccountMenu {
-        id: newAccountMenu
-        onAboutToShow: addAccountButton.state = "pressed"
-        onAboutToHide: {
-            addAccountButton.state = "default";
-            addAccountButton.checked = false;
-        }
-        onGenerateNewAccountTriggered: {
-            generateAccountModal.open();
-        }
-        onAddWatchAccountTriggered: {
-            addWatchOnlyAccountModal.open();
-        }
-        onEnterSeedPhraseTriggered: {
-            addAccountWithSeedModal.open();
-        }
-        onEnterPrivateKeyTriggered: {
-            addAccountWithPrivateKeydModal.open();
-        }
-    }
-
-    GenerateAccountModal {
-        id: generateAccountModal
-        anchors.centerIn: parent
-        onAfterAddAccount: walletInfoContainer.onAfterAddAccount()
-        emojiPopup: walletInfoContainer.emojiPopup
-    }
-
-    AddAccountWithSeedModal {
-        id: addAccountWithSeedModal
-        anchors.centerIn: parent
-        onAfterAddAccount: walletInfoContainer.onAfterAddAccount()
-        emojiPopup: walletInfoContainer.emojiPopup
-    }
-
-    AddAccountWithPrivateKeyModal {
-        id: addAccountWithPrivateKeydModal
-        anchors.centerIn: parent
-        onAfterAddAccount: walletInfoContainer.onAfterAddAccount()
-        emojiPopup: walletInfoContainer.emojiPopup
-    }
-
-    AddWatchOnlyAccountModal {
-        id: addWatchOnlyAccountModal
+    AddAccountModal {
+        id: addAccountModal
         anchors.centerIn: parent
         onAfterAddAccount: walletInfoContainer.onAfterAddAccount()
         emojiPopup: walletInfoContainer.emojiPopup
@@ -173,6 +118,20 @@ Rectangle {
                 onClicked: {
                     changeSelectedAccount(index)
                     showSavedAddresses(false)
+                }
+            }
+
+            footer: Item {
+                width: parent.width
+                height: addAccountBtn.height + Style.current.xlPadding
+                StatusButton {
+                    id: addAccountBtn
+                    anchors.top: parent.top
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.margins: Style.current.bigPadding
+                    //% "Add account"
+                    text: qsTrId("add-account")
+                    onClicked: addAccountModal.open()
                 }
             }
 

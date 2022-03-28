@@ -8,6 +8,7 @@ QtObject {
     id: root
     property var currentAccount: Constants.isCppApp ? walletSectionAccounts.currentAccount: walletSectionCurrent
     property var accounts: walletSectionAccounts.model
+    property var generatedAccounts: walletSectionAccounts.generated
     property var appSettings: localAppSettings
     property var accountSensitiveSettings: localAccountSensitiveSettings
     property string locale: appSettings.locale
