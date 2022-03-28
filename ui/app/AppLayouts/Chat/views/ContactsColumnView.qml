@@ -255,9 +255,11 @@ Item {
         PublicChatPopup {
             onJoinPublicChat: {
                 chatSectionModule.createPublicChat(name)
+                close()
             }
             onSuggestedMessageClicked: {
                 chatSectionModule.createPublicChat(channel)
+                close()
             }
 
             onClosed: {
