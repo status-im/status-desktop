@@ -20,7 +20,7 @@ StatusModal {
     property string searchText: contentItem.searchText
     property string noResultsLabel: "No results"
     property string defaultSearchLocationText: "Anywhere"
-    property bool loading
+    property bool loading: false
     property Menu searchOptionsPopupMenu: Menu { }
     property var searchResults: [ ]
     property var searchSelectionButton
@@ -95,6 +95,8 @@ StatusModal {
                     anchors.verticalCenter: parent.verticalCenter
                     focus: true
                     font.pixelSize: 28
+                    topPadding: 5 //smaller padding to handle bigger font
+                    bottomPadding: 5
                     clearable: true
                     showBackground: false
                     font.family: Theme.palette.baseFont.name
