@@ -77,7 +77,7 @@ proc `$`*(self: ChatDto): string =
     highlight: {self.highlight}
     )"""
 
-proc toChatMember(jsonObj: JsonNode): ChatMember =
+proc toChatMember*(jsonObj: JsonNode): ChatMember =
   result = ChatMember()
   discard jsonObj.getProp("id", result.id)
   discard jsonObj.getProp("admin", result.admin)

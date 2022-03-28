@@ -49,37 +49,21 @@ method isLoaded*(self: Module): bool =
   return self.moduleLoaded
 
 method viewDidLoad*(self: Module) =
-  # add me as the first user to the list
-  let (admin, joined) = self.controller.getChatMemberInfo(singletonInstance.userProfile.getPubKey())
-  let loggedInUserDisplayName = singletonInstance.userProfile.getName() & " (You)"
-  self.view.model().addItem(initItem(
-    singletonInstance.userProfile.getPubKey(),
-    loggedInUserDisplayName,
-    singletonInstance.userProfile.getEnsName(),
-    localNickname = "",
-    alias = singletonInstance.userProfile.getUsername(),
-    OnlineStatus.Online,
-    singletonInstance.userProfile.getIcon(),
-    singletonInstance.userProfile.getIdenticon(),
-    singletonInstance.userProfile.getIsIdenticon(),
-    isAdded = true,
-    admin,
-    joined,
-  ))
-
-    # add other memebers
-  let publicKeys = self.controller.getMembersPublicKeys()
-  for publicKey in publicKeys:
-    if (publicKey == singletonInstance.userProfile.getPubKey()):
-      continue
-
-    let (admin, joined) = self.controller.getChatMemberInfo(publicKey)
-    let contactDetails = self.controller.getContactDetails(publicKey)
-    let statusUpdateDto = self.controller.getStatusForContact(publicKey)
-    let status = statusUpdateDto.statusType.int.OnlineStatus
+  let members = self.controller.getChatMembers()
+  for member in members:
+    let isMe = member.id == singletonInstance.userProfile.getPubKey()
+    let contactDetails = self.controller.getContactDetails(member.id)
+    var status = OnlineStatus.Online
+    if (not isMe):
+      let statusUpdateDto = self.controller.getStatusForContact(member.id)
+      status = statusUpdateDto.statusType.int.OnlineStatus
+    
     self.view.model().addItem(initItem(
-      publicKey,
-      contactDetails.displayName,
+      member.id,
+      if (isMe):
+        contactDetails.displayName & " (You)"
+      else:
+        contactDetails.displayName,
       contactDetails.details.name,
       contactDetails.details.localNickname,
       contactDetails.details.alias,
@@ -88,8 +72,8 @@ method viewDidLoad*(self: Module) =
       contactDetails.details.identicon,
       contactDetails.isidenticon,
       contactDetails.details.added,
-      admin,
-      joined
+      member.admin,
+      member.joined
       ))
 
   self.moduleLoaded = true
