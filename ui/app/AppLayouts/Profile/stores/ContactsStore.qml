@@ -26,6 +26,10 @@ QtObject {
        return root.globalUtilsInst.generateAlias(pubKey)
     }
 
+    function getFromClipboard() {
+       return root.globalUtilsInst.getFromClipboard()
+    }
+
     function joinPrivateChat(pubKey) {
         Global.changeAppSectionBySectionType(Constants.appSection.chat)
         let chatCommunitySectionModule = root.mainModuleInst.getChatSectionModule()

@@ -261,19 +261,22 @@ QtObject:
     self.contacts[contact.id] = contact
 
   proc addContact*(self: Service, publicKey: string) =
-    var contact = self.getContactById(publicKey)
-    if not contact.added:
-      contact.added = true
-    else:
-      contact.blocked = false
+    try:
+      var contact = self.getContactById(publicKey)
+      if not contact.added:
+        contact.added = true
+      else:
+        contact.blocked = false
 
-    let response = status_contacts.addContact(contact.id, contact.name)
-    if(not response.error.isNil):
-      let msg = response.error.message
-      error "error adding contact ", msg
-      return
-    self.saveContact(contact)
-    self.events.emit(SIGNAL_CONTACT_ADDED, ContactArgs(contactId: contact.id))
+      let response = status_contacts.addContact(contact.id, contact.name)
+      if(not response.error.isNil):
+        let msg = response.error.message
+        error "error adding contact ", msg
+        return
+      self.saveContact(contact)
+      self.events.emit(SIGNAL_CONTACT_ADDED, ContactArgs(contactId: contact.id))
+    except Exception as e:
+      error "an error occurred while edding contact ", msg=e.msg
 
   proc rejectContactRequest*(self: Service, publicKey: string) =
     var contact = self.getContactById(publicKey)
