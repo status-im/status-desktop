@@ -75,6 +75,7 @@ proc toStickerDto*(jsonObj: JsonNode): StickerDto =
   discard jsonObj.getProp("hash", result.hash)
   discard jsonObj.getProp("packID", result.packId)
   discard jsonObj.getProp("url", result.url)
+  result.url = result.url & "&download=true"
 
 proc toStickerPackDto*(jsonObj: JsonNode): StickerPackDto =
   result = StickerPackDto()
@@ -86,6 +87,8 @@ proc toStickerPackDto*(jsonObj: JsonNode): StickerPackDto =
 
   result.status = jsonObj{"status"}.getInt(0).toStickerPackStatus()
   result.price = jsonObj["price"].getStr().parse(Stuint[256])
+  result.preview = result.preview & "&download=true"
+  result.thumbnail = result.thumbnail & "&download=true"
   result.stickers = @[]
   for sticker in jsonObj["stickers"]:
     result.stickers.add(sticker.toStickerDto)
