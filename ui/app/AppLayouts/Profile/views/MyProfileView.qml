@@ -1,4 +1,5 @@
 import QtQuick 2.13
+import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
 
@@ -160,9 +161,8 @@ ColumnLayout {
         id: displayNamePopupComponent
         DisplayNamePopup {
             profileStore: root.profileStore
-            onClosed: {
-                destroy()
-            }
+            anchors.centerIn: Overlay.overlay
+            onClosed: { destroy() }
         }
     }
 
