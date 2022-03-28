@@ -84,7 +84,7 @@ proc toStickerPackDto*(jsonObj: JsonNode): StickerPackDto =
   discard jsonObj.getProp("preview", result.preview)
   discard jsonObj.getProp("thumbnail", result.thumbnail)
 
-  result.status = jsonObj["status"].getInt(-1).toStickerPackStatus()
+  result.status = jsonObj{"status"}.getInt(0).toStickerPackStatus()
   result.price = jsonObj["price"].getStr().parse(Stuint[256])
   result.stickers = @[]
   for sticker in jsonObj["stickers"]:
