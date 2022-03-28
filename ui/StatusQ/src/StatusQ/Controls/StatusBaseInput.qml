@@ -37,7 +37,7 @@ Item {
     property alias placeholderTextColor: placeholder.color
     property alias placeholderFont: placeholder.font
 
-    property real leftPadding: 16
+    property real leftPadding: leftComponentLoader.item ? 8 : 16
     property real rightPadding: 16
     property real topPadding: 12
     property real bottomPadding: 12
@@ -127,6 +127,7 @@ Item {
                 clip: true
 
                 Loader {
+                    id: leftComponentLoader
                     sourceComponent: {
                         if (root.leftComponent) return root.leftComponent
                         if (!root.leftIcon) return undefined
