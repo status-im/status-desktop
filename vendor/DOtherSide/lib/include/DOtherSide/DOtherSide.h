@@ -84,7 +84,11 @@ DOS_API void dos_qguiapplication_clipboard_setText(const char* text);
 
 DOS_API void dos_qguiapplication_clipboard_setImage(const char *text);
 
+DOS_API void dos_qguiapplication_clipboard_setImageByUrl(const char *url);
+
 DOS_API void dos_qguiapplication_download_image(const char *imageSource, const char* filePath);
+
+DOS_API void dos_qguiapplication_download_imageByUrl(const char *url, const char* filePath);
 
 /// \brief Calls the QGuiApplication::exec() function of the current QGuiApplication
 /// \note A QGuiApplication should have been already created through dos_qguiapplication_create()
