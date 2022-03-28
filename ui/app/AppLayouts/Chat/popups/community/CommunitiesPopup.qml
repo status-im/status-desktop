@@ -58,8 +58,6 @@ StatusModal {
             id: searchBox
             input.placeholderText: qsTr("Search for communities or topics")
             input.icon.name: "search"
-            input.height: 36
-            input.topPadding: 9
         }
 
         StatusModalDivider { topPadding: 8 }
