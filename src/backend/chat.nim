@@ -134,3 +134,6 @@ proc createGroupChatFromInvitation*(groupName: string, chatId: string, adminPK: 
 
 proc getLinkPreviewData*(link: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = callPrivateRPC("getLinkPreviewData".prefix, %* [link])
+
+proc getMembers*(communityId, chatId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  result = callPrivateRPC("chat_getMembers", %* [communityId, chatId])

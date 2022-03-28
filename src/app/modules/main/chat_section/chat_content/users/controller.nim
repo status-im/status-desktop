@@ -132,6 +132,12 @@ proc getChatMemberInfo*(self: Controller, id: string): (bool, bool) =
 
   return (false, false)
 
+proc getChatMembers*(self: Controller): seq[ChatMember] =
+  var communityId = ""
+  if (self.belongsToCommunity):
+    communityId = self.sectionId
+  return self.chatService.getMembers(communityId, self.chatId)
+
 proc getMembersPublicKeys*(self: Controller): seq[string] =
   if(self.belongsToCommunity):
     let communityDto = self.communityService.getCommunityById(self.sectionId)

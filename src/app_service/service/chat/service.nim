@@ -1,4 +1,4 @@
-import NimQml, Tables, json, sequtils, strformat, chronicles, os
+import NimQml, Tables, json, sequtils, strformat, chronicles, os, std/algorithm, strutils
 
 import ./dto/chat as chat_dto
 import ../message/dto/message as message_dto
@@ -471,3 +471,19 @@ QtObject:
     except Exception as e:
       error "error while creating group chat", msg = e.msg
 
+  proc getMembers*(self: Service, communityID, chatId: string): seq[ChatMember] =
+    try:
+      var realChatId = chatId.replace(communityID, "")
+      let response = status_chat.getMembers(communityID, realChatId)
+      let myPubkey = singletonInstance.userProfile.getPubKey()
+      result = @[]
+      for (id, memberObj) in response.result.pairs:
+        var member = toChatMember(memberObj)
+        member.id = id
+        # Make yourself as the first result
+        if (id == myPubkey):
+          result.insert(member)
+        else:
+          result.add(member)
+    except Exception as e:
+      error "error while getting members", msg = e.msg, communityID, chatId
