@@ -48,7 +48,6 @@ Column {
                     popupMenuSlot.item.popup(mouse.x + 4, mouse.y + 6);
                     return
                 }
-                statusChatListCategory.opened = !opened;
             }
         }
         onTitleClicked: statusChatListCategory.opened = !opened
