@@ -36,7 +36,7 @@ StatusModal {
         if(isAllowed){
             Web3ProviderStore.addPermission(request.hostname, request.address, request.permission)
         }
-        browserConnectionModal.web3Response(Web3ProviderStore.web3ProviderInst.postMessage(Constants.api_request, JSON.stringify(request)))
+        Web3ProviderStore.web3ProviderInst.postMessage("", Constants.api_request, JSON.stringify(request))
     }
 
     onClosed: {

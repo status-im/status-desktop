@@ -70,8 +70,10 @@ QtObject:
   proc getHost*(self: View, url: string): string {.slot.} =
     result = url_host(url)
 
-  proc postMessage*(self: View, requestType: string, message: string): string {.slot.} =
-    return self.delegate.postMessage(requestType, message)
+  proc postMessageResult*(self: View, payloadMethod: string, result: string) {.signal.}
+
+  proc postMessage*(self: View, payloadMethod: string, requestType: string, message: string) {.slot.} =
+    self.delegate.postMessage(payloadMethod, requestType, message)
 
   proc ensResourceURL*(self: View, ens: string, url: string): string {.slot.} =
     let (url, base, http_scheme, path_prefix, hasContentHash) = self.delegate.ensResourceURL(ens, url)
