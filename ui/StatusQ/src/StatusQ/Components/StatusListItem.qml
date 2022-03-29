@@ -25,6 +25,8 @@ Rectangle {
     property list<Item> components
     property var bottomModel: []
     property Component bottomDelegate
+    property var tagsModel: []
+    property Component tagsDelegate
 
     property StatusIconSettings icon: StatusIconSettings {
         height: isLetterIdenticon ? 40 : 20
@@ -71,6 +73,7 @@ Rectangle {
     property alias statusListItemTertiaryTitle: statusListItemTertiaryTitle
     property alias statusListItemComponentsSlot: statusListItemComponentsSlot
     property alias statusListItemTagsSlot: statusListItemTagsSlot
+    property alias statusListItemInlineTagsSlot: statusListItemTagsSlotInline
 
     signal clicked(string itemId)
     signal titleClicked(string titleId)
@@ -247,7 +250,19 @@ Rectangle {
                 width: contentItem.width
                 implicitHeight: visible ? 22 : 0
             }
-   
+
+            Row {
+                id: statusListItemTagsSlotInline
+                anchors.top: statusListItemTertiaryTitle.bottom
+                width: parent.width
+                spacing: 10
+                clip: true
+
+                Repeater {
+                    model: tagsModel
+                    delegate: tagsDelegate
+                }
+            }
         }
 
         Row {

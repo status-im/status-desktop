@@ -12,6 +12,7 @@ Rectangle {
     property alias additionalText: additionalText.text
     property alias button: button
     property alias expandableComponent: expandableRegion.sourceComponent
+    property alias expandableItem: expandableRegion.item
 
     property int type: StatusExpandableItem.Type.Primary
     property bool expandable: true
@@ -185,7 +186,7 @@ Rectangle {
         anchors.leftMargin: (statusExpandableItem.type === StatusExpandableItem.Type.Primary) ? 48 : 0
         anchors.right: parent.right
         anchors.rightMargin: (statusExpandableItem.type === StatusExpandableItem.Type.Primary) ? 16 : 0
-        active: false
+        visible: false
     }
 
     onExpandedChanged: {
@@ -202,13 +203,13 @@ Rectangle {
             name: "EXPANDED"
             PropertyChanges {target: expandImage; icon: "chevron-up"}
             PropertyChanges {target: statusExpandableItem; height: 82 + expandableRegion.height + 22}
-            PropertyChanges {target: expandableRegion; active: true}
+            PropertyChanges {target: expandableRegion; visible: true}
         },
         State {
             name: "COLLAPSED"
             PropertyChanges {target: expandImage; icon: "chevron-down"}
             PropertyChanges {target: statusExpandableItem; height: 82}
-            PropertyChanges {target: expandableRegion; active: false}
+            PropertyChanges {target: expandableRegion; visible: false}
         }
     ]
 

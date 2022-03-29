@@ -4,6 +4,7 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
+import StatusQ.Core.Utils 0.1
 
 GridLayout {
     columns: 1
@@ -335,6 +336,24 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
         bottomDelegate: StatusListItemTag {
             title: "tag"
             icon.isLetterIdenticon: true
+        }
+    }
+
+    StatusListItem {
+        title: "List Item with Inline Tags"
+        icon.isLetterIdenticon: true
+        tagsModel : 2
+        tagsDelegate: StatusListItemTag {
+            color: "blue"
+            height: 24
+            radius: 6
+            closeButtonVisible: false
+            icon.emoji: "😁"
+            icon.emojiSize: Emoji.size.verySmall
+            icon.isLetterIdenticon: true
+            title: "helloworld.eth"
+            titleText.font.pixelSize: 12
+            titleText.color: Theme.palette.indirectColor1
         }
     }
 

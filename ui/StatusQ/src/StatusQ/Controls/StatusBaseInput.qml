@@ -41,6 +41,7 @@ Item {
     property real rightPadding: 16
     property real topPadding: 12
     property real bottomPadding: 12
+    property var tabNavItem: null
 
     property real minimumHeight: 0
     property real maximumHeight: 0
@@ -72,6 +73,8 @@ Item {
     property Component rightComponent
 
     signal iconClicked
+    signal keyPressed(var event)
+    signal editClicked()
 
     implicitWidth: 448
     implicitHeight: multiline ? Math.min(Math.max(
@@ -115,8 +118,8 @@ Item {
             cursorShape: Qt.IBeamCursor
             onClicked: {
                 edit.forceActiveFocus()
+                root.editClicked()
             }
-
             RowLayout {
                 anchors {
                     fill: parent
@@ -186,7 +189,12 @@ Item {
                         Keys.onReturnPressed: event.accepted = !multiline
                         Keys.onEnterPressed: event.accepted = !multiline
                         Keys.forwardTo: [root]
-                        Keys.onPressed: edit.keyEvent = event.key
+                        KeyNavigation.priority: !!root.tabNavItem ? KeyNavigation.BeforeItem : KeyNavigation.AfterItem
+                        KeyNavigation.tab: root.tabNavItem
+                        Keys.onPressed: {
+                            edit.keyEvent = event.key
+                            root.keyPressed(event);
+                        }
 
                         onCursorRectangleChanged: flick.ensureVisible(cursorRectangle)
                         onActiveFocusChanged: if (root.pristine) root.pristine = false

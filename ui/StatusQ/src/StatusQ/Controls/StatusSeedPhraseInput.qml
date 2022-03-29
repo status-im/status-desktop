@@ -7,6 +7,42 @@ import StatusQ.Popups 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 
+/*!
+   \qmltype StatusSeedPhraseInput
+   \inherits Item
+   \inqmlmodule StatusQ.Controls
+   \since StatusQ.Controls 0.1
+   \brief Displays a text input with suggestions. Inherits \l{https://doc.qt.io/qt-5/qml-qtquick-item.html}{Item}.
+
+   The \c StatusSeedPhraseInput item displays a text input with suggestions filtered based on the typed text.
+   For example:
+
+   \qml
+       StatusSeedPhraseInput {
+           id: statusSeedInput
+           anchors.left: parent.left
+           anchors.right: parent.right
+           textEdit.input.anchors.leftMargin: 16
+           textEdit.input.anchors.rightMargin: 16
+           textEdit.input.anchors.topMargin: 11
+           leftComponentText: "1"
+           inputList: ListModel {
+               ListElement {
+                   seedWord: "panda"
+               }
+               ListElement {
+                   seedWord: "posible"
+               }
+               ListElement {
+                   seedWord: "wing"
+               }
+           }
+       }
+   \endqml
+
+   For a list of components available see StatusQ.
+*/
+
 Item {
     id: root
     width: 162
@@ -17,6 +53,12 @@ Item {
     property ListModel inputList: ListModel { }
     property ListModel filteredList: ListModel { }
     signal doneInsertingWord(string word)
+    /*
+        This signal is emitted when the user pressed a keyboard key and passes as a
+        parameter the event. The corresponding handler is \c onKeyPressed.
+    */
+    signal keyPressed(var event)
+    signal editClicked()
 
     onActiveFocusChanged: {
         if (root.activeFocus) {
@@ -56,6 +98,12 @@ Item {
             } else {
                 seedSuggestionsList.model = 0;
             }
+        }
+        onKeyPressed: {
+            root.keyPressed(event);
+        }
+        onEditClicked: {
+            root.editClicked();
         }
     }
 
