@@ -46,9 +46,13 @@ method fetchDapps*(self: Module) =
     var found = false
     for item in items:
       if item.name == dapp.name:
-        let account = self.controller.getAccountForAddress(dapp.address)
-        item.addAccount(account)
         found = true
+
+        let account = self.controller.getAccountForAddress(dapp.address)
+        if account.isNil:
+          break
+
+        item.addAccount(account)
         break
       
     if not found:

@@ -213,6 +213,9 @@ proc init*(self: Service) =
     return
 
 proc getAccountByAddress*(self: Service, address: string): WalletAccountDto =
+  if not self.accounts.hasKey(address):
+    return
+
   return self.accounts[address]
 
 proc getWalletAccounts*(self: Service): seq[WalletAccountDto] =
