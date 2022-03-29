@@ -24,9 +24,9 @@ QtObject:
   proc changePassword*(self: View, password: string, newPassword: string) {.slot.} =
     self.delegate.changePassword(password, newPassword)
 
-  proc passwordChanged(self: View, success: bool) {.signal.}
-  proc emitPasswordChangedSignal*(self: View, success: bool) =
-    self.passwordChanged(success)
+  proc passwordChanged(self: View, success: bool, errorMsg: string) {.signal.}
+  proc emitPasswordChangedSignal*(self: View, success: bool, errorMsg: string) =
+    self.passwordChanged(success, errorMsg)
 
   proc mnemonicBackedUpChanged(self: View) {.signal.}
   proc isMnemonicBackedUp(self: View): bool {.slot.} =

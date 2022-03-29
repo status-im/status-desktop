@@ -61,8 +61,8 @@ method isMnemonicBackedUp*(self: Module): bool =
 method onMnemonicUpdated*(self: Module) =
   self.view.emitMnemonicBackedUpSignal()
 
-method onPasswordChanged*(self: Module, success: bool) =
-  self.view.emitPasswordChangedSignal(success)
+method onPasswordChanged*(self: Module, success: bool, errorMsg: string) =
+  self.view.emitPasswordChangedSignal(success, errorMsg)
 
 method getMnemonic*(self: Module): string =
   self.controller.getMnemonic()
