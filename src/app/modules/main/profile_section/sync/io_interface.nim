@@ -35,3 +35,9 @@ method saveNewMailserver*(self: AccessInterface, name: string, nodeAddress: stri
 
 method enableAutomaticSelection*(self: AccessInterface, value: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method getUseMailservers*(self: AccessInterface): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method setUseMailservers*(self: AccessInterface, value: bool) {.base.} =
+  raise newException(ValueError, "No implementation available")

@@ -45,20 +45,22 @@ StatusModal {
             anchors.right: parent.right
             anchors.rightMargin: Style.current.padding
 
-            // TODO re-add that when the status-go API to disconnect from the mailserver is added
-            // StatusListItem {
-            //     anchors.left: parent.left
-            //     anchors.leftMargin: -Style.current.padding
-            //     anchors.right: parent.right
-            //     anchors.rightMargin: -Style.current.padding
-            //     title: qsTr("Use Waku nodes")
-            //     components: [
-            //         StatusSwitch {
-            //             // TODO find what this is
-            //             checked: true
-            //         }
-            //     ]
-            // }
+            StatusListItem {
+                anchors.left: parent.left
+                anchors.leftMargin: -Style.current.padding
+                anchors.right: parent.right
+                anchors.rightMargin: -Style.current.padding
+                title: qsTr("Use Waku nodes")
+                components: [
+                    StatusSwitch {
+                        checked: root.messagingStore.useMailservers
+                        onCheckedChanged: root.messagingStore.toggleUseMailservers(checked)
+                    }
+                ]
+                sensor.onClicked: {
+                    root.messagingStore.toggleUseMailservers(!root.messagingStore.useMailservers)
+                }
+            }
 
             Separator {
                 anchors.left: parent.left

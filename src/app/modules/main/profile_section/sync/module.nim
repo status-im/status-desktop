@@ -83,3 +83,10 @@ method saveNewMailserver*(self: Module, name: string, nodeAddress: string) =
 
 method enableAutomaticSelection*(self: Module, value: bool) =
   self.controller.enableAutomaticSelection(value)
+
+method getUseMailservers*(self: Module): bool =
+  return self.controller.getUseMailservers()
+
+method setUseMailservers*(self: Module, value: bool) =
+  if (self.controller.setUseMailservers(value)):
+    self.view.useMailserversChanged()
