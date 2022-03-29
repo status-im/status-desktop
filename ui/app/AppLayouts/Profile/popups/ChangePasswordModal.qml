@@ -21,12 +21,13 @@ StatusModal {
     property var privacyStore
     signal passwordChanged()
 
-    function onChangePasswordResponse(success) {
+    function onChangePasswordResponse(success, errorMsg) {
         if (success) {
             passwordChanged()
             submitBtn.enabled = false
         } else {
             view.reset()
+            view.errorMsgText = errorMsg
             console.warn("TODO: Display error message when change password action failure! ")
         }
         submitBtn.loading = false
@@ -34,7 +35,7 @@ StatusModal {
 
     Connections {
         target: root.privacyStore.privacyModule
-        onPasswordChanged: onChangePasswordResponse(success)
+        onPasswordChanged: onChangePasswordResponse(success, errorMsg)
     }
 
     width: 480

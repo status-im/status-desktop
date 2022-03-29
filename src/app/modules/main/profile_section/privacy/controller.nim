@@ -35,7 +35,7 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_PASSWORD_CHANGED) do(e: Args):
     var args = OperationSuccessArgs(e)
-    self.delegate.onPasswordChanged(args.success)
+    self.delegate.onPasswordChanged(args.success, args.errorMsg)
 
 proc isMnemonicBackedUp*(self: Controller): bool =
   return self.privacyService.isMnemonicBackedUp()
@@ -78,3 +78,4 @@ proc setProfilePicturesVisibility*(self: Controller, value: int): bool =
 
 method getPasswordStrengthScore*(self: Controller, password, userName: string): int = 
   return self.generalService.getPasswordStrengthScore(password, userName)
+

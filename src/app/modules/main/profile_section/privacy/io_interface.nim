@@ -44,7 +44,7 @@ method getMnemonicWordAtIndex*(self: AccessInterface, index: int): string {.base
 method onMnemonicUpdated*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onPasswordChanged*(self: AccessInterface, success: bool) {.base.} =
+method onPasswordChanged*(self: AccessInterface, success: bool, errorMsg: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getMessagesFromContactsOnly*(self: AccessInterface): bool {.base.} =

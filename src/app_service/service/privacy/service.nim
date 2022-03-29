@@ -20,6 +20,7 @@ const SIGNAL_PASSWORD_CHANGED* = "passwordChanged"
 type
   OperationSuccessArgs* = ref object of Args
     success*: bool
+    errorMsg*: string
 
 QtObject:
   type Service* = ref object of QObject
@@ -74,7 +75,7 @@ QtObject:
 
   proc changePassword*(self: Service, password: string, newPassword: string) =
     try:
-      var data = OperationSuccessArgs(success: false)
+      var data = OperationSuccessArgs(success: false, errorMsg: "")
 
       let defaultAccount = self.getDefaultAccount()
       if(defaultAccount.len == 0):
@@ -84,6 +85,7 @@ QtObject:
 
       let isPasswordOk = self.accountsService.verifyAccountPassword(defaultAccount, password)
       if not isPasswordOk:
+        data.errorMsg = "Incorrect current password"
         error "error: ", procName="changePassword", errDesription = "password cannnot be verified"
         self.events.emit(SIGNAL_PASSWORD_CHANGED, data)
         return
