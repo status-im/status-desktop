@@ -82,6 +82,8 @@ DOS_API void dos_qguiapplication_installEventFilter(DosEvent *vptr);
 
 DOS_API void dos_qguiapplication_clipboard_setText(const char* text);
 
+DOS_API char* dos_qguiapplication_clipboard_getText();
+
 DOS_API void dos_qguiapplication_clipboard_setImage(const char *text);
 
 DOS_API void dos_qguiapplication_clipboard_setImageByUrl(const char *url);
