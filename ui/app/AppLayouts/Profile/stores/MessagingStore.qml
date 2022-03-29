@@ -17,6 +17,12 @@ QtObject {
 
     property var mailservers: syncModule.model
 
+    property bool useMailservers: syncModule.useMailservers
+
+    function toggleUseMailservers(value) {
+        root.syncModule.useMailservers = value
+    }
+
     // Module Properties
     property bool automaticMailserverSelection: syncModule.automaticSelection
     property string activeMailserver: syncModule.activeMailserver

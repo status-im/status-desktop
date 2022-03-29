@@ -50,3 +50,9 @@ proc saveNewMailserver*(self: Controller, name: string, nodeAddress: string) =
 
 proc enableAutomaticSelection*(self: Controller, value: bool) =
   self.mailserversService.enableAutomaticSelection(value)
+
+method getUseMailservers*(self: Controller): bool =
+  return self.settingsService.getUseMailservers()
+
+method setUseMailservers*(self: Controller, value: bool): bool =
+  return self.settingsService.saveUseMailservers(value)
