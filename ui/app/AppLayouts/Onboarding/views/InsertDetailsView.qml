@@ -22,13 +22,25 @@ Item {
 
     state: "username"
 
-    ListView {
-        id: accountsList
-        model: OnboardingStore.onboardingModuleInst.accountsModel
-        delegate: Item {
-            Component.onCompleted: {
-                root.pubKey = model.pubKey;
-                root.address = model.address;
+    Component.onCompleted: {
+        if (OnboardingStore.accountImported) {
+            root.pubKey = OnboardingStore.onboardingModuleInst.importedAccountPubKey;
+            root.address = OnboardingStore.onboardingModuleInst.importedAccountAddress;
+        }
+    }
+
+    Loader {
+        active: !OnboardingStore.accountImported
+        sourceComponent: ListView {
+            id: accountsList
+            model: OnboardingStore.onboardingModuleInst.accountsModel
+            delegate: Item {
+                Component.onCompleted: {
+                    if (index === 0) {
+                        root.pubKey = model.pubKey;
+                        root.address = model.address;
+                    }
+                }
             }
         }
     }

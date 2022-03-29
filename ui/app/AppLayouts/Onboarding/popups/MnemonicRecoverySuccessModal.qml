@@ -79,6 +79,7 @@ ModalPopup {
             text: qsTrId("re-encrypt-key")
 
             onClicked: {
+                OnboardingStore.accountImported = true
                 popup.buttonClicked()
             }
         }

@@ -203,15 +203,18 @@ QtObject {
         id: keysMain
         KeysMainView {
             onButtonClicked: {
+                OnboardingStore.accountImported = false
                 Global.applicationWindow.navigateTo("GenKey");
             }
             onKeycardLinkClicked: {
+                OnboardingStore.accountImported = false
                 Global.applicationWindow.navigateTo("KeycardFlowSelection");
             }
             onSeedLinkClicked: {
                 Global.applicationWindow.navigateTo("ExistingKey");
             }
             onBackClicked: {
+                OnboardingStore.accountImported = false
                 Global.applicationWindow.navigateTo("Welcome");
             }
         }

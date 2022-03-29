@@ -115,7 +115,6 @@ OnboardingBasePage {
             }
 
             onClicked: {
-                //confPswInput.text = ""
                 if (OnboardingStore.accountCreated) {
                     if (root.password !== root.tmpPass) {
                         OnboardingStore.changePassword(root.tmpPass, root.password);
@@ -127,7 +126,12 @@ OnboardingBasePage {
                 } else {
                     root.tmpPass = root.password;
                     submitBtn.loading = true
-                    OnboardingStore.setCurrentAccountAndDisplayName(0, root.displayName);
+                    if (OnboardingStore.accountImported) {
+                        OnboardingStore.importAccountAndDisplayName(root.displayName);
+                    } else {
+                        OnboardingStore.setCurrentAccountAndDisplayName(0, root.displayName);
+                    }
+                    
                     pause.start();
                 }
             }

@@ -19,6 +19,7 @@ QtObject {
     property real profImgBX: 0.0
     property real profImgBY: 0.0
     property bool accountCreated: false
+    property bool accountImported: false
 
     property bool showBeforeGetStartedPopup: true
 
@@ -29,6 +30,10 @@ QtObject {
     function setCurrentAccountAndDisplayName(selectedAccountIdx, displayName) {
         onboardingModuleInst.setDisplayName(displayName)
         onboardingModuleInst.setSelectedAccountByIndex(selectedAccountIdx)
+    }
+
+    function importAccountAndDisplayName(displayName) {
+        onboardingModuleInst.setDisplayName(displayName)
     }
 
     function updatedDisplayName(displayName) {
