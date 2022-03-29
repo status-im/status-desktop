@@ -182,6 +182,12 @@ void dos_qguiapplication_clipboard_setText(const char* text)
     QGuiApplication::clipboard()->setText(text);
 }
 
+char* dos_qguiapplication_clipboard_getText()
+{
+    auto clipboardText = QGuiApplication::clipboard()->text();
+    return convert_to_cstring(clipboardText);
+}
+
 void dos_qguiapplication_clipboard_setImage(const char* text)
 {
     QByteArray btArray =  QString(text).split("base64,")[1].toUtf8();
