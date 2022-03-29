@@ -6,7 +6,6 @@ proc getLatestVersionJSON(): string =
     "version": "",
     "url": ""
   }
-
   try:
     debug "Getting latest version information"
 

@@ -27,6 +27,39 @@ QtObject {
         return RootStore.getAscii2Hex(input)
     }
 
+    property Connections conn: Connections {
+        target: Web3ProviderStore.web3ProviderInst
+
+        onPostMessageResult: {
+            web3Response(result)
+            const isSign = ["eth_sign", "personal_sign", "eth_signTypedData", "eth_signTypedData_v3"].indexOf(payloadMethod) > -1
+            const isTx = payloadMethod === "eth_sendTransaction"
+            try {
+                let responseObj = JSON.parse(result)
+                if (responseObj.error) {
+                   throw new Error(responseObj.error)
+                }
+
+                if (isTx) {
+                    showToastMessage(responseObj.result.result)
+                }
+                
+            } catch (e) {
+                if (Utils.isInvalidPasswordMessage(e.message)){
+                    //% "Wrong password"
+                    sendDialog.transactionSigner.validationError = qsTrId("wrong-password")
+                    return
+                }
+                if (isTx) {
+                    showSendingError(e.message)
+                } else if (isSign) {
+                    showSigningError(e.message)
+                }
+            }
+        }
+    }
+
+
     function postMessage(requestType, data) {
         var request;
         try {
@@ -53,7 +86,7 @@ QtObject {
                 dialog.open();
             } else {
                 RootStore.currentTabConnected = true
-                web3Response(Web3ProviderStore.web3ProviderInst.postMessage(requestType, JSON.stringify(request)));
+                Web3ProviderStore.web3ProviderInst.postMessage("", requestType, JSON.stringify(request));
             }
         } else if (requestType === Constants.web3SendAsyncReadOnly &&
                    request.payload.method === "eth_sendTransaction") {
@@ -76,27 +109,7 @@ QtObject {
                 request.payload.password = enteredPassword
                 request.payload.params[0] = trx
 
-                const response = Web3ProviderStore.web3ProviderInst.postMessage(requestType, JSON.stringify(request))
-                provider.web3Response(response)
-
-                let responseObj
-                try {
-                    responseObj = JSON.parse(response)
-
-                    if (responseObj.error) {
-                        throw new Error(responseObj.error)
-                    }
-
-                    showToastMessage(responseObj.result.result)
-                } catch (e) {
-                    if (Utils.isInvalidPasswordMessage(e.message)){
-                        //% "Wrong password"
-                        sendDialog.transactionSigner.validationError = qsTrId("wrong-password")
-                        return
-                    }
-                    return showSendingError(e.message)
-                }
-
+                Web3ProviderStore.web3ProviderInst.postMessage(request.payload.method, requestType, JSON.stringify(request))
                 sendDialog.close()
                 sendDialog.destroy()
             }
@@ -115,21 +128,7 @@ QtObject {
                     case Constants.eth_sign:
                         request.payload.params[1] = signValue(request.payload.params[1]);
                 }
-                const response = Web3ProviderStore.web3ProviderInst.postMessage(requestType, JSON.stringify(request));
-                provider.web3Response(response);
-                try {
-                    let responseObj = JSON.parse(response)
-                    if (responseObj.error) {
-                        throw new Error(responseObj.error.message)
-                    }
-                } catch (e) {
-                    if (Utils.isInvalidPasswordMessage(e.message)){
-                        //% "Wrong password"
-                        signDialog.transactionSigner.validationError = qsTrId("wrong-password")
-                        return
-                    }
-                    return showSigningError(e.message)
-                }
+                Web3ProviderStore.web3ProviderInst.postMessage(request.payload.method, requestType, JSON.stringify(request));
                 signDialog.close()
                 signDialog.destroy()
             }
@@ -139,7 +138,7 @@ QtObject {
         } else if (request.type === Constants.web3DisconnectAccount) {
             web3Response(data);
         } else {
-            web3Response(Web3ProviderStore.web3ProviderInst.postMessage(requestType, data));
+            Web3ProviderStore.web3ProviderInst.postMessage(request.payload.method, requestType, data);
         }
     }
 

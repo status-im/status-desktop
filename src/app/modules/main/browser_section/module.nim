@@ -41,7 +41,7 @@ proc newModule*(delegate: delegate_interface.AccessInterface,
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
   result.moduleLoaded = false
-  result.providerModule = provider_module.newModule(result, settingsService, providerService)
+  result.providerModule = provider_module.newModule(result, events, settingsService, providerService)
   result.bookmarkModule = bookmark_module.newModule(result, bookmarkService)
   result.dappsModule = dapps_module.newModule(result, dappPermissionsService, walletAccountService)
   result.currentAccountModule = current_account_module.newModule(result, events, walletAccountService)
