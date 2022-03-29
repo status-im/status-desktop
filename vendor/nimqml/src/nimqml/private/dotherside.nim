@@ -138,6 +138,7 @@ proc dos_qguiapplication_icon(filename: cstring) {.cdecl, dynlib: dynLibName, im
 proc dos_qguiapplication_delete() {.cdecl, dynlib: dynLibName, importc.}
 
 proc dos_qguiapplication_clipboard_setText(content: cstring) {.cdecl, dynlib: dynLibName, importc.}
+proc dos_qguiapplication_clipboard_getText(): cstring {.cdecl, dynlib: dynLibName, importc.}
 proc dos_qguiapplication_installEventFilter(engine: DosStatusEvent) {.cdecl, dynlib: dynLibName, importc.}
 proc dos_qguiapplication_clipboard_setImage(content: cstring) {.cdecl, dynlib: dynLibName, importc.}
 proc dos_qguiapplication_download_image(imageSource: cstring, filePath: cstring) {.cdecl, dynlib: dynLibName, importc.}
