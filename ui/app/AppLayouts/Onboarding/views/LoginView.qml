@@ -248,6 +248,7 @@ Item {
             anchors.topMargin: 16
             anchors.horizontalCenter: parent.horizontalCenter
             onClicked: {
+                OnboardingStore.accountImported = false
                 onGenKeyClicked()
             }
         }

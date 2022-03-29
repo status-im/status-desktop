@@ -180,7 +180,7 @@ OnboardingBasePage {
             }
             PropertyChanges {
                 target: seedLink
-                text: qsTr("lmport a seed phrase")
+                text: qsTr("Import a seed phrase")
 
             }
         },
@@ -188,7 +188,7 @@ OnboardingBasePage {
             name: "importseed"
             PropertyChanges {
                 target: txtTitle
-                text: qsTr("lmport a seed phrase")
+                text: qsTr("Import a seed phrase")
 
             }
             PropertyChanges {
@@ -199,12 +199,12 @@ Only use this option if you already have a seed phrase.")
             }
             PropertyChanges {
                 target: button
-                text: qsTr("lmport a seed phrase")
+                text: qsTr("Import a seed phrase")
 
             }
             PropertyChanges {
                 target: keycardLink
-                text: qsTr("lmport a seed phrase into a new Keycard")
+                text: qsTr("Import a seed phrase into a new Keycard")
 
             }
             PropertyChanges {
