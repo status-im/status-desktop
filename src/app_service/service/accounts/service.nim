@@ -46,6 +46,16 @@ proc getImportedAccount*(self: Service): GeneratedAccountDto =
 proc isFirstTimeAccountLogin*(self: Service): bool =
   return self.isFirstTimeAccountLogin
 
+proc compressPk*(publicKey: string): string =
+  try:
+    let response = status_account.compressPk(publicKey)
+    if(not response.error.isNil):
+      error "error compressPk: ", errDescription = response.error.message
+    result = response.result
+
+  except Exception as e:
+    error "error: ", procName="compressPk", errName = e.name, errDesription = e.msg
+
 proc generateAliasFromPk*(publicKey: string): string =
   return status_account.generateAlias(publicKey).result.getStr
 

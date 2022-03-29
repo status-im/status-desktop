@@ -1,4 +1,4 @@
-import json, json_serialization, chronicles, nimcrypto
+import json, json_serialization, chronicles, nimcrypto, strutils
 import ./core, ./utils
 import ./response_type
 
@@ -51,6 +51,22 @@ proc generateAddresses*(paths: seq[string]): RpcResponse[JsonNode] {.raises: [Ex
   except RpcException as e:
     error "error doing rpc request", methodName = "generateAddresses", exception=e.msg
     raise newException(RpcException, e.msg)
+
+proc compressPk*(publicKey: string): RpcResponse[string] =
+  let secp256k1Code = "0xe701"
+  let base58btc = "z"
+  var multiCodecKey = publicKey
+  multiCodecKey.removePrefix("0x")
+  multiCodecKey.insert(secp256k1Code)
+
+  let response = status_go.multiformatSerializePublicKey(multiCodecKey, base58btc)
+
+  # json response indicates error
+  try:
+    let jsonReponse = parseJson(response)
+    result.error = RpcError(message: jsonReponse["error"].getStr())
+  except JsonParsingError as e:
+    result.result = response
 
 proc generateAlias*(publicKey: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   try:
