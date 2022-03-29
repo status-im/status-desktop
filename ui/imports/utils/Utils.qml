@@ -618,6 +618,21 @@ QtObject {
         return JSON.parse(jsonObj)
     }
 
+    function getCompressedPk(publicKey) {
+        if (publicKey === "") {
+            return ""
+        }
+        return globalUtils.getCompressedPk(publicKey)
+    }
+
+    function getElidedCompressedPk(publicKey) {
+        if (publicKey === "") {
+            return ""
+        }
+        let compressedPk = getCompressedPk(publicKey)
+        return compressedPk.substr(3, 3) + "..." + compressedPk.substr(compressedPk.length - 3)
+    }
+
     function getTimeDifference(d1, d2) {
         var timeString = ""
         var day1Year = d1.getFullYear()
