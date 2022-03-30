@@ -75,8 +75,8 @@ Item {
         visible: walletHeader.walletStore.isMultiNetworkEnabled 
         anchors.top: parent.top
         anchors.topMargin: 56
-        anchors.left: walletBalance.right
-        anchors.leftMargin: 70
+        anchors.right: parent.right
+        anchors.rightMargin: 63
         store: walletHeader.walletStore
     }
 
