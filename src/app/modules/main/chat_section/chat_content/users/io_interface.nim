@@ -1,5 +1,6 @@
 import NimQml
 
+import ../../../../../../app_service/service/chat/service as chat_service
 import ../../../../../../app_service/service/message/dto/[message]
 import ../../../../../../app_service/service/contacts/dto/[status_update]
 
@@ -33,7 +34,13 @@ method contactUpdated*(self: AccessInterface, publicKey: string) {.base.} =
 method loggedInUserImageChanged*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method addChatMember*(self: AccessInterface, member: ChatMember) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method onChatMembersAdded*(self: AccessInterface, ids: seq[string]) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onChatUpdated*(self: AccessInterface, chat: ChatDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onChatMemberRemoved*(self: AccessInterface, ids: string) {.base.} =
