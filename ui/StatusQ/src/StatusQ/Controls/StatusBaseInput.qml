@@ -176,7 +176,7 @@ Item {
 
                         width: flick.width
                         height: flick.height
-                        verticalAlignment: Text.AlignVCenter
+                        verticalAlignment: TextEdit.AlignVCenter
                         selectByMouse: true
                         selectionColor: Theme.palette.primaryColor2
                         selectedTextColor: color
@@ -217,10 +217,8 @@ Item {
                         StatusBaseText {
                             id: placeholder
                             visible: (edit.text.length === 0)
-                            anchors.left: parent.left
-                            anchors.right: parent.right
-                            anchors.rightMargin: root.rightPadding
-                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.fill: parent
+                            verticalAlignment: parent.verticalAlignment
                             font.pixelSize: 15
                             elide: StatusBaseText.ElideRight
                             font.family: Theme.palette.baseFont.name
