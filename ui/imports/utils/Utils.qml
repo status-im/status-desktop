@@ -630,7 +630,7 @@ QtObject {
             return ""
         }
         let compressedPk = getCompressedPk(publicKey)
-        return compressedPk.substr(3, 3) + "..." + compressedPk.substr(compressedPk.length - 3)
+        return compressedPk.substr(0, 6) + "..." + compressedPk.substr(compressedPk.length - 3)
     }
 
     function getTimeDifference(d1, d2) {

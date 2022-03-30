@@ -71,7 +71,7 @@ StatusModal {
     }
 
     header.title: userDisplayName
-    header.subTitle: userIsEnsVerified ? userName : userPublicKey
+    header.subTitle: userIsEnsVerified ? userName : Utils.getElidedCompressedPk(userPublicKey)
     header.subTitleElide: Text.ElideMiddle
 
     headerActionButton: StatusFlatRoundButton {
@@ -171,7 +171,7 @@ StatusModal {
 
             StatusDescriptionListItem {
                 title: qsTr("Chat key")
-                subTitle: userPublicKey
+                subTitle: Utils.getCompressedPk(userPublicKey)
                 subTitleComponent.elide: Text.ElideMiddle
                 subTitleComponent.width: 320
                 subTitleComponent.font.family: Theme.palette.monoFont.name

@@ -110,7 +110,7 @@ SettingsPageLayout {
                     }
                     return !model.name.endsWith(".eth") ? model.name : Utils.removeStatusEns(model.name)
                 }
-                subTitle: model.id.substring(0, 5) + "..." + model.id.substring(model.id.length - 3)
+                subTitle: Utils.getElidedCompressedPk(model.id)
 
                 statusListItemIcon {
                     name: model.name
