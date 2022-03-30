@@ -1,8 +1,13 @@
 import QtQuick 2.13
+
+import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
+import StatusQ.Components 0.1
+
 import shared 1.0
 import shared.panels 1.0
-
 import utils 1.0
+
 import "../popups"
 
 Item {
@@ -11,39 +16,24 @@ Item {
     height: childrenRect.height
 
     property var store
-    
-    Rectangle {
+
+    StatusListItem {
         id: selectRectangle
+        implicitWidth: 210
+        implicitHeight: 40
         border.width: 1
-        border.color: Style.current.border
-        radius: Style.current.radius
-        width: text.width + Style.current.padding * 4
-        height: text.height + Style.current.padding
-
-        StyledText {
-            id: text
-            text: qsTr("Select networks")
-            anchors.left: parent.left
-            anchors.leftMargin: Style.current.padding
-            anchors.verticalCenter: parent.verticalCenter
-            font.pixelSize: Style.current.primaryTextFontSize
-        }
-
-        SVGImage {
-            id: caretImg
-            width: 10
-            height: 6
-            source: Style.svg("caret")
-            anchors.right: parent.right
-            anchors.rightMargin: Style.current.padding
-            anchors.verticalCenter: parent.verticalCenter
-            fillMode: Image.PreserveAspectFit
-        }
-    }
-
-    MouseArea {
-        anchors.fill: selectRectangle
-        cursorShape: Qt.PointingHandCursor
+        border.color: Theme.palette.baseColor2
+        color: Theme.palette.statusListItem.backgroundColor
+        //% "All networks"
+        title: qsTr("All networks")
+        components:[
+            StatusIcon {
+                width: 20
+                height: 20
+                icon: "chevron-down"
+                color: Theme.palette.baseColor1
+            }
+        ]
         onClicked: {
             if (selectPopup.opened) {
                 selectPopup.close();
@@ -61,6 +51,7 @@ Item {
 
         anchors.top: selectRectangle.bottom
         anchors.topMargin: Style.current.padding
+        anchors.horizontalCenter: parent.horizontalCenter
 
         Repeater {
             id: chainRepeater
