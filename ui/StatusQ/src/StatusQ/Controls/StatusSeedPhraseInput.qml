@@ -90,7 +90,7 @@ Item {
                 seedSuggestionsList.model = filteredList;
                 if ((text.length === 4) && (filteredList.count === 1) &&
                     ((input.edit.keyEvent !== Qt.Key_Backspace) && (input.edit.keyEvent !== Qt.Key_Delete))) {
-                    seedWordInput.text = filteredList.get(0).seedWord;
+                    seedWordInput.text = filteredList.get(0).seedWord.trim();
                     seedWordInput.input.edit.cursorPosition = seedWordInput.text.length;
                     seedSuggestionsList.model = 0;
                     root.doneInsertingWord(seedWordInput.text);
