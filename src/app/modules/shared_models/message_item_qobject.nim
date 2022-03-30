@@ -111,15 +111,15 @@ QtObject:
   #   read = reactionIds
 
   proc pinned*(self: MessageItem): bool {.slot.} = result = ?.self.messageItem.pinned
-  QtProperty[int] bool:
+  QtProperty[bool] pinned:
     read = bool
 
   proc editMode*(self: MessageItem): bool {.slot.} = result = ?.self.messageItem.editMode
-  QtProperty[int] bool:
+  QtProperty[bool] editMode:
     read = bool
 
   proc isEdited*(self: MessageItem): bool {.slot.} = result = ?.self.messageItem.isEdited
-  QtProperty[int] bool:
+  QtProperty[bool] isEdited:
     read = bool
 
   # this is not the greatest approach, but aligns with the rest of the code
