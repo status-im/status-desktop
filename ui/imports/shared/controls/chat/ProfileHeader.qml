@@ -79,8 +79,7 @@ Item {
 
             visible: root.pubkeyVisible
 
-            text: pubkey.substring(0, 10) + "..." + pubkey.substring(
-                      pubkey.length - 4)
+            text: Utils.getElidedCompressedPk(pubkey)
 
             horizontalAlignment: Text.AlignHCenter
             font.pixelSize: Style.current.asideTextFontSize

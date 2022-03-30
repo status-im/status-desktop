@@ -80,6 +80,7 @@ Item {
                 icon.letterSize: 32
                 icon.color: Theme.palette.miscColor5
                 icon.charactersLen: 2
+                image.isIdenticon: false
                 image.source: uploadProfilePicPopup.selectedImage
                 ringSettings { ringSpecModel: Utils.getColorHashAsJson(root.pubKey) }
             }
@@ -122,7 +123,7 @@ Item {
         StyledText {
             id: chatKeyTxt
             color: Style.current.secondaryText
-            text: "Chatkey:" + root.pubKey
+            text: qsTr("Chatkey:") + " " + Utils.getCompressedPk(root.pubKey)
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
             Layout.alignment: Qt.AlignHCenter

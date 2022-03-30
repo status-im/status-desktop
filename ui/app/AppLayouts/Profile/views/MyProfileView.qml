@@ -130,7 +130,7 @@ ColumnLayout {
         Layout.preferredWidth: root.profileContentWidth
 
         title: qsTr("Chat key")
-        subTitle: root.profileStore.pubkey
+        subTitle: Utils.getCompressedPk(root.profileStore.pubkey)
         subTitleComponent.elide: Text.ElideMiddle
         subTitleComponent.width: 320
         subTitleComponent.font.family: Theme.palette.monoFont.name
