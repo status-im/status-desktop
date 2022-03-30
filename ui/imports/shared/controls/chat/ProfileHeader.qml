@@ -14,7 +14,6 @@ Item {
     property string displayName
     property string pubkey
     property string icon
-    property bool isIdenticon: false
 
     property bool displayNameVisible: true
     property bool pubkeyVisible: true
@@ -48,8 +47,7 @@ Item {
 
             name: root.displayName
             pubkey: root.pubkey
-            icon: root.icon
-            isIdenticon: root.isIdenticon
+            image: root.icon
             showRing: true
             interactive: false
 

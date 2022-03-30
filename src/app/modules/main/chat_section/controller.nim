@@ -101,16 +101,16 @@ proc init*(self: Controller) =
     var args = ChatUpdateArgsNew(e)
     for chat in args.chats:
       let belongsToCommunity = chat.communityId.len > 0
-      self.delegate.addChatIfDontExist(chat, belongsToCommunity, self.events, self.settingsService, 
-        self.contactService, self.chatService, self.communityService, self.messageService, self.gifService, 
+      self.delegate.addChatIfDontExist(chat, belongsToCommunity, self.events, self.settingsService,
+        self.contactService, self.chatService, self.communityService, self.messageService, self.gifService,
         self.mailserversService, setChatAsActive = false)
 
   if (self.isCommunitySection):
     self.events.on(SIGNAL_COMMUNITY_CHANNEL_CREATED) do(e:Args):
       let args = CommunityChatArgs(e)
       let belongsToCommunity = args.chat.communityId.len > 0
-      self.delegate.addChatIfDontExist(args.chat, belongsToCommunity, self.events, self.settingsService, 
-        self.contactService, self.chatService, self.communityService, self.messageService, self.gifService, 
+      self.delegate.addChatIfDontExist(args.chat, belongsToCommunity, self.events, self.settingsService,
+        self.contactService, self.chatService, self.communityService, self.messageService, self.gifService,
         self.mailserversService, setChatAsActive = true)
 
     self.events.on(SIGNAL_COMMUNITY_CHANNEL_DELETED) do(e:Args):
@@ -231,7 +231,7 @@ proc removeCommunityChat*(self: Controller, itemId: string) =
   self.communityService.deleteCommunityChat(self.getMySectionId(), itemId)
 
 proc getOneToOneChatNameAndImage*(self: Controller, chatId: string):
-  tuple[name: string, image: string, isIdenticon: bool] =
+  tuple[name: string, image: string] =
   return self.chatService.getOneToOneChatNameAndImage(chatId)
 
 proc createPublicChat*(self: Controller, chatId: string) =

@@ -31,10 +31,10 @@ QtObject:
     result.chatDetailsVariant = newQVariant(result.chatDetails)
 
   proc load*(self: View, id: string, `type`: int, belongsToCommunity, isUsersListAvailable: bool,
-      name, icon: string, isIdenticon: bool, color, description, emoji: string,
+      name, icon: string, color, description, emoji: string,
       hasUnreadMessages: bool, notificationsCount: int, muted: bool, position: int) =
     self.chatDetails.setChatDetails(id, `type`, belongsToCommunity, isUsersListAvailable, name, icon,
-      isIdenticon, color, description, emoji, hasUnreadMessages, notificationsCount, muted, position)
+      color, description, emoji, hasUnreadMessages, notificationsCount, muted, position)
     self.delegate.viewDidLoad()
     self.chatDetailsChanged()
 
@@ -91,9 +91,9 @@ QtObject:
   proc setMuted*(self: View, muted: bool) =
     self.chatDetails.setMuted(muted)
 
-  proc updateChatDetailsNameAndIcon*(self: View, name, icon: string, isIdenticon: bool) =
+  proc updateChatDetailsNameAndIcon*(self: View, name, icon: string) =
     self.chatDetails.setName(name)
-    self.chatDetails.setIcon(icon, isIdenticon)
+    self.chatDetails.setIcon(icon)
 
   proc updateChatDetailsNotifications*(self: View, hasUnreadMessages: bool, notificationCount: int) =
     self.chatDetails.setHasUnreadMessages(hasUnreadMessages)

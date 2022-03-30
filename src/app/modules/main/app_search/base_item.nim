@@ -5,19 +5,17 @@ type
     image: string
     icon: string
     iconColor: string
-    isIdenticon: bool
 
-proc setup*(self: BaseItem, value, text, image, icon, iconColor: string, isIdenticon: bool) =
+proc setup*(self: BaseItem, value, text, image, icon, iconColor: string) =
   self.value = value
   self.text = text
   self.image = image
   self.icon = icon
   self.iconColor = iconColor
-  self.isIdenticon = isIdenticon
 
-proc initBaseItem*(value, text, image, icon, iconColor: string, isIdenticon: bool): BaseItem =
+proc initBaseItem*(value, text, image, icon, iconColor: string): BaseItem =
   result = BaseItem()
-  result.setup(value, text, image, icon, iconColor, isIdenticon)
+  result.setup(value, text, image, icon, iconColor)
 
 proc delete*(self: BaseItem) =
   discard
@@ -36,6 +34,3 @@ method icon*(self: BaseItem): string {.inline base.} =
 
 method iconColor*(self: BaseItem): string {.inline base.} =
   self.iconColor
-
-method isIdenticon*(self: BaseItem): bool {.inline base.} =
-  self.isIdenticon

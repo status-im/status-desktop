@@ -73,9 +73,6 @@ QtObject:
   proc generateAlias*(self: Utils, pk: string): string {.slot.} =
     return procs_from_accounts.generateAliasFromPk(pk)
 
-  proc generateIdenticon*(self: Utils, pk: string): string {.slot.} =
-    return procs_from_accounts.generateIdenticonFromPk(pk)
-
   proc getFileSize*(self: Utils, filename: string): string {.slot.} =
     var f: File = nil
     if f.open(self.formatImagePath(filename)):

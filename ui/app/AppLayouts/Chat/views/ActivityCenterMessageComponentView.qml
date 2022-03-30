@@ -120,7 +120,6 @@ Item {
             senderId: model.message.senderId
             senderLocalName: model.message.senderLocalName
             senderIcon: model.message.senderIcon
-            isSenderIconIdenticon: model.message.isSenderIconIdenticon
             amISender: model.message.amISender
             messageImage: model.message.messageImage
             messageTimestamp: model.timestamp

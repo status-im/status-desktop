@@ -50,10 +50,6 @@ QtObject:
   QtProperty[string] senderIcon:
     read = senderIcon
 
-  proc isSenderIconIdenticon*(self: MessageItem): bool {.slot.} = result = ?.self.messageItem.isSenderIconIdenticon
-  QtProperty[bool] isSenderIconIdenticon:
-    read = isSenderIconIdenticon
-
   proc seen*(self: MessageItem): bool {.slot.} = result = ?.self.messageItem.seen
   QtProperty[bool] seen:
     read = seen

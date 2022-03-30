@@ -17,7 +17,6 @@ type
 type AccountDto* = object
   name*: string
   timestamp*: int64
-  identicon*: string
   keycardPairing*: string
   keyUid*: string
   images*: seq[Image]
@@ -39,7 +38,6 @@ proc toAccountDto*(jsonObj: JsonNode): AccountDto =
   result = AccountDto()
   discard jsonObj.getProp("name", result.name)
   discard jsonObj.getProp("timestamp", result.timestamp)
-  discard jsonObj.getProp("identicon", result.identicon)
   discard jsonObj.getProp("keycard-pairing", result.keycardPairing)
   discard jsonObj.getProp("key-uid", result.keyUid)
 

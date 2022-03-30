@@ -2,15 +2,13 @@ type
   Item* = object
     id: string
     alias: string
-    identicon: string
     address: string
     pubKey: string
     keyUid: string
 
-proc initItem*(id, alias, identicon, address, pubKey, keyUid: string): Item =
+proc initItem*(id, alias, address, pubKey, keyUid: string): Item =
   result.id = id
   result.alias = alias
-  result.identicon = identicon
   result.address = address
   result.pubKey = pubKey
   result.keyUid = keyUid
@@ -20,9 +18,6 @@ proc getId*(self: Item): string =
 
 proc getAlias*(self: Item): string =
   return self.alias
-
-proc getIdenticon*(self: Item): string =
-  return self.identicon
 
 proc getAddress*(self: Item): string =
   return self.address

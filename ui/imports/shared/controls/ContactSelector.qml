@@ -105,7 +105,6 @@ Item {
                 image.width: (!!selectedContact && !!selectedContact.displayIcon) ? 32 : 0
                 image.height: 32
                 image.source: (!!selectedContact && !!selectedContact.displayIcon) ? selectedContact.displayIcon : ""
-                image.isIdenticon: (!!selectedContact && !!selectedContact.isDisplayIconIdenticon) ? selectedContact.isDisplayIconIdenticon : true
                 active: !!selectedContact && !!selectedContact.displayIcon
             }
             StatusBaseText {
@@ -174,7 +173,6 @@ Item {
                 anchors.leftMargin: Style.current.padding
                 anchors.verticalCenter: parent.verticalCenter
                 image.source: currentContact.displayIcon
-                image.isIdenticon: currentContact.isDisplayIconIdenticon
             }
             Column {
                 anchors.left: iconImg.right

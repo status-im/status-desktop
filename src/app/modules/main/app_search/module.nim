@@ -68,7 +68,7 @@ method getModuleAsVariant*(self: Module): QVariant =
 
 proc buildLocationMenuForChat(self: Module): location_menu_item.Item =
   var item = location_menu_item.initItem(singletonInstance.userProfile.getPubKey(),
-    SEARCH_MENU_LOCATION_CHAT_SECTION_NAME, "", "chat", "", false)
+    SEARCH_MENU_LOCATION_CHAT_SECTION_NAME, "", "chat", "")
 
   let types = @[ChatType.OneToOne, ChatType.Public, ChatType.PrivateGroupChat]
   let displayedChats = self.controller.getChatDetailsForChatTypes(types)
@@ -77,26 +77,23 @@ proc buildLocationMenuForChat(self: Module): location_menu_item.Item =
   for c in displayedChats:
     var chatName = c.name
     var chatImage = c.identicon
-    var isIdenticon = false
     if(c.chatType == ChatType.OneToOne):
-      (chatName, chatImage, isIdenticon) = self.controller.getOneToOneChatNameAndImage(c.id)
+      (chatName, chatImage) = self.controller.getOneToOneChatNameAndImage(c.id)
 
-    let subItem = location_menu_sub_item.initSubItem(c.id, chatName, chatImage, "", c.color, isIdenticon)
+    let subItem = location_menu_sub_item.initSubItem(c.id, chatName, chatImage, "", c.color)
     subItems.add(subItem)
 
   item.setSubItems(subItems)
   return item
 
 proc buildLocationMenuForCommunity(self: Module, community: CommunityDto): location_menu_item.Item =
-  var item = location_menu_item.initItem(community.id, community.name, community.images.thumbnail, "", community.color,
-  community.images.thumbnail.len == 0)
+  var item = location_menu_item.initItem(community.id, community.name, community.images.thumbnail, "", community.color)
 
   var subItems: seq[location_menu_sub_item.SubItem]
   let chats = self.controller.getAllChatsForCommunity(community.id)
   for c in chats:
     let chatDto = self.controller.getChatDetails(community.id, c.id)
-    let subItem = location_menu_sub_item.initSubItem(chatDto.id, chatDto.name, chatDto.identicon, "", chatDto.color,
-    chatDto.identicon.len == 0)
+    let subItem = location_menu_sub_item.initSubItem(chatDto.id, chatDto.name, chatDto.identicon, "", chatDto.color)
     subItems.add(subItem)
 
   item.setSubItems(subItems)
@@ -185,9 +182,8 @@ method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
     for c in displayedChats:
       var chatName = c.name
       var chatImage = c.identicon
-      var isIdenticon = false
       if(c.chatType == ChatType.OneToOne):
-        (chatName, chatImage, isIdenticon) = self.controller.getOneToOneChatNameAndImage(c.id)
+        (chatName, chatImage) = self.controller.getOneToOneChatNameAndImage(c.id)
 
       var rawChatName = chatName
       if(chatName.startsWith("@")):
@@ -195,7 +191,7 @@ method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
 
       if(rawChatName.toLower.startsWith(self.controller.searchTerm().toLower)):
         let item = result_item.initItem(c.id, "", "", c.id, chatName, SEARCH_RESULT_CHATS_SECTION_NAME, chatImage,
-        c.color, "", "", chatImage, c.color, isIdenticon)
+        c.color, "", "", chatImage, c.color, false)
 
         self.controller.addResultItemDetails(c.id, singletonInstance.userProfile.getPubKey(), c.id)
         items.add(item)
@@ -209,19 +205,18 @@ method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
       continue
 
     let chatDto = self.controller.getChatDetails("", m.chatId)
-    var (senderName, senderImage, senderIsIdenticon) = self.controller.getContactNameAndImage(m.`from`)
+    var (senderName, senderImage) = self.controller.getContactNameAndImage(m.`from`)
     if(m.`from` == singletonInstance.userProfile.getPubKey()):
       senderName = "You"
 
     if(chatDto.communityId.len == 0):
       var chatName = chatDto.name
       var chatImage = chatDto.identicon
-      var isIdenticon = false
       if(chatDto.chatType == ChatType.OneToOne):
-        (chatName, chatImage, isIdenticon) = self.controller.getOneToOneChatNameAndImage(chatDto.id)
+        (chatName, chatImage) = self.controller.getOneToOneChatNameAndImage(chatDto.id)
 
       let item = result_item.initItem(m.id, m.text, $m.timestamp, m.`from`, senderName,
-      SEARCH_RESULT_MESSAGES_SECTION_NAME, senderImage, "", chatName, "", chatImage, chatDto.color, isIdenticon)
+      SEARCH_RESULT_MESSAGES_SECTION_NAME, senderImage, "", chatName, "", chatImage, chatDto.color, false)
 
       self.controller.addResultItemDetails(m.id, singletonInstance.userProfile.getPubKey(),
         chatDto.id, m.id)

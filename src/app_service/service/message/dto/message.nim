@@ -52,7 +52,6 @@ type MessageDto* = object
   whisperTimestamp*: int64
   `from`*: string
   alias*: string
-  identicon*: string
   seen*: bool
   outgoingStatus*: string
   quotedMessage*: QuotedMessage
@@ -125,7 +124,6 @@ proc toMessageDto*(jsonObj: JsonNode): MessageDto =
   discard jsonObj.getProp("whisperTimestamp", result.whisperTimestamp)
   discard jsonObj.getProp("from", result.from)
   discard jsonObj.getProp("alias", result.alias)
-  discard jsonObj.getProp("identicon", result.identicon)
   discard jsonObj.getProp("seen", result.seen)
   discard jsonObj.getProp("outgoingStatus", result.outgoingStatus)
   discard jsonObj.getProp("rtl", result.rtl)

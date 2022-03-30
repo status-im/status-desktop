@@ -219,7 +219,6 @@ StatusModal {
                 statusListItemTitleAside.font.pixelSize: 17
                 label: model.isAdmin ? qsTrId("group-chat-admin"): ""
                 image.source: model.icon
-                image.isIdenticon: model.isIdenticon
                 components: [
                     StatusFlatRoundButton {
                         id: moreActionsBtn

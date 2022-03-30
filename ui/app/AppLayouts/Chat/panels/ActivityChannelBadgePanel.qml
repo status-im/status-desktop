@@ -12,7 +12,6 @@ Rectangle {
     id: wrapper
 
     property string name: "channelName"
-    property string identicon: ""
     property string chatId: ""
     property int realChatType: -1
     property string communityId
@@ -90,7 +89,6 @@ Rectangle {
             name: wrapper.name
             chatId: wrapper.chatId
             profileImage: wrapper.profileImage
-            identicon: wrapper.identicon
         }
     }
 }

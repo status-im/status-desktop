@@ -586,7 +586,6 @@ Rectangle {
         control.fileUrls = []
         imageArea.imageSource = [];
         replyArea.userName = ""
-        replyArea.identicon = ""
         replyArea.message = ""
         for (let i=0; i<validators.children.length; i++) {
             const validator = validators.children[i]
@@ -613,11 +612,10 @@ Rectangle {
         control.fileUrls = imageArea.imageSource
     }
 
-    function showReplyArea(messageId, userName, message, identicon, contentType, image, sticker) {
+    function showReplyArea(messageId, userName, message, contentType, image, sticker) {
         isReply = true
         replyArea.userName = userName
         replyArea.message = message
-        replyArea.identicon = identicon
         replyArea.contentType = contentType
         replyArea.image = image
         replyArea.stickerData = sticker
@@ -928,7 +926,6 @@ Rectangle {
             anchors.top: parent.top
             anchors.topMargin: Style.current.halfPadding
             image.source: userProfile.icon
-            image.isIdenticon: userProfile.isIdenticon
             visible: control.isStatusUpdateInput
         }
 

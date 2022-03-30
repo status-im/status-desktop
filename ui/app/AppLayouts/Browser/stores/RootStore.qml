@@ -36,10 +36,6 @@ QtObject {
         return globalUtils.gwei2Hex(gwei)
     }
 
-    function generateIdenticon(pk) {
-        return globalUtils.generateIdenticon(pk)
-    }
-
     function generateAlias(pk) {
         return globalUtils.generateAlias(pk)
     }

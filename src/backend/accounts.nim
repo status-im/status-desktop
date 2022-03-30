@@ -66,15 +66,6 @@ proc isAlias*(value: string): bool =
   let r = Json.decode(response, JsonNode)
   return r["result"].getBool()
 
-proc generateIdenticon*(publicKey: string): RpcResponse[JsonNode] {.raises: [Exception].} =
-  try:
-    let response = status_go.identicon(publicKey)
-    result.result = %* response
-
-  except RpcException as e:
-    error "error doing rpc request", methodName = "generateIdenticon", exception=e.msg
-    raise newException(RpcException, e.msg)
-
 proc multiAccountImportMnemonic*(mnemonic: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* {
     "mnemonicPhrase": mnemonic,

@@ -40,8 +40,6 @@ const CheckStatusIntervalInMilliseconds = 5000 # 5 seconds, this is timeout how 
 const OnlineLimitInSeconds = int(5.5 * 60) # 5.5 minutes
 const IdleLimitInSeconds = int(7 * 60) # 7 minutes
 
-const identiconURLParam = "identicons?publicKey="
-
 # Signals which may be emitted by this service:
 const SIGNAL_ENS_RESOLVED* = "ensResolved"
 const SIGNAL_CONTACT_ADDED* = "contactAdded"
@@ -221,19 +219,12 @@ QtObject:
       return
     return status_accounts.generateAlias(publicKey).result.getStr
 
-  proc generateIdenticonURL*(self: Service, publicKey: string): string =
-    if(publicKey.len == 0):
-      error "cannot generate an identicon from the empty public key"
-      return 
-    return self.imageServerUrl & identiconURLParam & publicKey
-
   proc getContactById*(self: Service, id: string): ContactsDto =
     if(id == singletonInstance.userProfile.getPubKey()):
       # If we try to get the contact details of ourselves, just return our own info
       return ContactsDto(
         id: singletonInstance.userProfile.getPubKey(),
         name: singletonInstance.userProfile.getName(),
-        identicon: singletonInstance.userProfile.getIdenticon(),
         alias: singletonInstance.userProfile.getUsername(),
         ensVerified: singletonInstance.userProfile.getEnsName().len > 0,
         added: true,
@@ -253,18 +244,16 @@ QtObject:
       if(not id.startsWith("0x")):
         debug "id is not in a hex format"
         return
-      
+
       var num64: int64
       let parsedChars = parseHex(id, num64)
       if(parsedChars != PK_LENGTH_0X_INCLUDED):
         debug "id doesn't have expected lenght"
-        return 
+        return
 
       let alias = self.generateAlias(id)
-      let identicon = self.generateIdenticonURL(id)
       result = ContactsDto(
         id: id,
-        identicon: identicon,
         alias: alias,
         ensVerified: false,
         added: false,
@@ -281,16 +270,13 @@ QtObject:
 
     return self.contactsStatus[publicKey]
 
-  proc getContactNameAndImage*(self: Service, publicKey: string): tuple[name: string, image: string, isIdenticon: bool] =
+  proc getContactNameAndImage*(self: Service, publicKey: string): tuple[name: string, image: string] =
     ## This proc should be used accross the app in order to have for the same contact
     ## same image and name displayed everywhere in the app.
     let contactDto = self.getContactById(publicKey)
     result.name = contactDto.userNameOrAlias()
-    result.image = contactDto.identicon
-    result.isIdenticon = contactDto.identicon.len > 0
     if(contactDto.image.thumbnail.len > 0):
       result.image = contactDto.image.thumbnail
-      result.isIdenticon = false
 
   proc saveContact(self: Service, contact: ContactsDto) =
     # we must keep local contacts updated
@@ -447,9 +433,8 @@ QtObject:
 
   proc getContactDetails*(self: Service, pubKey: string): ContactDetails =
     result = ContactDetails()
-    let (name, icon, isIdenticon) = self.getContactNameAndImage(pubKey)
+    let (name, icon) = self.getContactNameAndImage(pubKey)
     result.displayName = name
     result.icon = icon
-    result.isIdenticon = isIdenticon
     result.isCurrentUser = pubKey == singletonInstance.userProfile.getPubKey()
     result.details = self.getContactById(pubKey)

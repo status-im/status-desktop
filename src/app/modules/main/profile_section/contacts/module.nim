@@ -38,9 +38,9 @@ method delete*(self: Module) =
 
 proc createItemFromPublicKey(self: Module, publicKey: string): Item =
   let contact =  self.controller.getContact(publicKey)
-  let (name, image, isIdenticon) = self.controller.getContactNameAndImage(contact.id)
+  let (name, image) = self.controller.getContactNameAndImage(contact.id)
 
-  return initItem(contact.id, name, image, isIdenticon, contact.isMutualContact(), contact.isBlocked(),
+  return initItem(contact.id, name, image, contact.isMutualContact(), contact.isBlocked(),
   contact.isContactVerified(), contact.isContactUntrustworthy())
 
 proc buildModel(self: Module, model: Model, group: ContactsGroup) =
@@ -142,7 +142,7 @@ method contactUpdated*(self: Module, publicKey: string) =
   self.removeIfExistsAndAddToAppropriateModel(publicKey)
 
 method contactNicknameChanged*(self: Module, publicKey: string) =
-  let (name, _, _) = self.controller.getContactNameAndImage(publicKey)
+  let (name, _) = self.controller.getContactNameAndImage(publicKey)
   self.view.myMutualContactsModel().updateName(publicKey, name)
   self.view.receivedContactRequestsModel().updateName(publicKey, name)
   self.view.sentContactRequestsModel().updateName(publicKey, name)

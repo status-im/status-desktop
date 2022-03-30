@@ -36,15 +36,13 @@ Column {
     property string senderDisplayName: ""
     property string senderLocalName: ""
     property string senderIcon: ""
-    property string senderIdenticon: ""
-    property bool isSenderIconIdenticon: true
     property bool amISender: false
     property bool senderIsAdded: false
-    property string senderIconToShow: {
-        if (isSenderIconIdenticon || (!senderIsAdded &&
+    readonly property string senderIconToShow: {
+        if ((!senderIsAdded &&
             Global.privacyModuleInst.profilePicturesVisibility !==
             Constants.profilePicturesVisibility.everyone)) {
-            return senderIdenticon
+            return ""
         }
         return senderIcon
     }
@@ -182,7 +180,6 @@ Column {
         messageContextMenu.selectedUserPublicKey = root.senderId
         messageContextMenu.selectedUserDisplayName = root.senderDisplayName
         messageContextMenu.selectedUserIcon = root.senderIconToShow
-        messageContextMenu.isSelectedUserIconIdenticon = root.isSenderIconIdenticon
 
         messageContextMenu.imageSource = imageSource
 
@@ -200,7 +197,6 @@ Column {
             messageContextMenu.selectedUserPublicKey = obj.senderId
             messageContextMenu.selectedUserDisplayName = obj.senderDisplayName
             messageContextMenu.selectedUserIcon = obj.senderIcon
-            messageContextMenu.isSelectedUserIconIdenticon = obj.isSenderIconIdenticon
         }
 
 
@@ -297,7 +293,6 @@ Column {
             chatEmoji: root.channelEmoji
             amIChatAdmin: root.messageStore.amIChatAdmin()
             chatIcon: root.senderIcon
-            chatIconIsIdenticon: root.isSenderIconIdenticon
             didIJoinedChat: root.messageStore.didIJoinedChat()
 
             onJoinChatClicked: root.messageStore.joinGroupChat()
@@ -354,7 +349,6 @@ Column {
             sticker: root.sticker
             stickerPack: root.stickerPack
             isMessageActive: root.isMessageActive
-            isSenderIconIdenticon: root.isSenderIconIdenticon
             senderIcon: root.senderIconToShow
             amISender: root.amISender
             isHovered: root.isHovered

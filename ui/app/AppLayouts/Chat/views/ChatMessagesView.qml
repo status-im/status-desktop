@@ -258,9 +258,7 @@ Item {
             senderDisplayName: model.senderDisplayName
             senderLocalName: model.senderLocalName
             senderIcon: model.senderIcon
-            senderIdenticon: model.senderIdenticon
             senderIsAdded: model.senderIsAdded
-            isSenderIconIdenticon: model.isSenderIconIdenticon
             amISender: model.amISender
             message: model.messageText
             messageImage: model.messageImage

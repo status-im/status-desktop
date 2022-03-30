@@ -274,10 +274,6 @@ QtObject {
         return globalUtils.generateAlias(pk);
     }
 
-    function generateIdenticon(pk) {
-        return globalUtils.generateIdenticon(pk);
-    }
-
     function plainText(text) {
         return globalUtils.plainText(text)
     }

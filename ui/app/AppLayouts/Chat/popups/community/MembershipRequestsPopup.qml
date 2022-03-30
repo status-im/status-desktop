@@ -64,14 +64,7 @@ StatusModal {
 
                     property string displayName: contactDetails.displayName || root.store.generateAlias(model.pubKey)
 
-                    image.isIdenticon: contactDetails.isDisplayIconIdenticon === undefined ?
-                        true: contactDetails.isDisplayIconIdenticon
-                    image.source: {
-                        if (!contactDetails.identicon) {
-                            return root.store.generateIdenticon(model.pubKey)
-                        }
-                        return contactDetails.isDisplayIconIdenticon ? contactDetails.identicon : contactDetails.thumbnailImage
-                    }
+                    image.source: contactDetails.thumbnailImage
 
                     title: displayName
 

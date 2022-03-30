@@ -95,7 +95,7 @@ Item {
                     searchPopup.setSearchSelection(obj.subLocation.text,
                                                    "",
                                                    obj.subLocation.imageSource,
-                                                   obj.subLocation.isIdenticon,
+                                                   false,
                                                    obj.subLocation.iconName,
                                                    obj.subLocation.identiconColor)
 
@@ -107,7 +107,7 @@ Item {
                     searchPopup.setSearchSelection(obj.subLocation.text,
                                                    "",
                                                    obj.subLocation.imageSource,
-                                                   obj.subLocation.isIdenticon,
+                                                   false,
                                                    obj.subLocation.iconName,
                                                    obj.subLocation.identiconColor)
 
@@ -117,7 +117,7 @@ Item {
                     searchPopup.setSearchSelection(obj.location.title,
                                                    obj.subLocation.text,
                                                    obj.location.imageSource,
-                                                   obj.location.isIdenticon,
+                                                   false,
                                                    obj.location.iconName,
                                                    obj.location.identiconColor)
 

@@ -10,7 +10,6 @@ QtObject:
     # changable props
     name: string
     icon: string
-    isIdenticon: bool
     color: string
     description: string
     emoji: string
@@ -27,7 +26,7 @@ QtObject:
     result.QObject.setup
 
   proc setChatDetails*(self: ChatDetails, id: string, `type`: int, belongsToCommunity,
-    isUsersListAvailable: bool, name, icon: string, isIdenticon: bool, color, description,
+    isUsersListAvailable: bool, name, icon: string, color, description,
     emoji: string, hasUnreadMessages: bool, notificationsCount: int, muted: bool, position: int) =
     self.id = id
     self.`type` = `type`
@@ -35,7 +34,6 @@ QtObject:
     self.isUsersListAvailable = isUsersListAvailable
     self.name = name
     self.icon = icon
-    self.isIdenticon = isIdenticon
     self.color = color
     self.emoji = emoji
     self.description = description
@@ -82,15 +80,8 @@ QtObject:
     read = getIcon
     notify = iconChanged
 
-  proc getIsIdenticon(self: ChatDetails): bool {.slot.} =
-    return self.isIdenticon
-  QtProperty[bool] isIdenticon:
-    read = getIsIdenticon
-    notify = iconChanged
-
-  proc setIcon*(self: ChatDetails, icon: string, isIdenticon: bool) = # this is not a slot
+  proc setIcon*(self: ChatDetails, icon: string) = # this is not a slot
     self.icon = icon
-    self.isIdenticon = isIdenticon
     self.iconChanged()
 
   proc colorChanged(self: ChatDetails) {.signal.}

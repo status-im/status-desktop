@@ -151,7 +151,7 @@ proc getMembersPublicKeys*(self: Controller): seq[string] =
     return chatDto.members.map(x => x.id)
 
 proc getContactNameAndImage*(self: Controller, contactId: string):
-  tuple[name: string, image: string, isIdenticon: bool] =
+  tuple[name: string, image: string] =
   return self.contactService.getContactNameAndImage(contactId)
 
 proc getContactDetails*(self: Controller, contactId: string): ContactDetails =

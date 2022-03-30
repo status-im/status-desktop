@@ -132,11 +132,11 @@ proc searchMessages*(self: Controller, searchTerm: string) =
   self.messageService.asyncSearchMessages(communities, chats, self.searchTerm, false)
 
 proc getOneToOneChatNameAndImage*(self: Controller, chatId: string):
-  tuple[name: string, image: string, isIdenticon: bool] =
+  tuple[name: string, image: string] =
   return self.chatService.getOneToOneChatNameAndImage(chatId)
 
 proc getContactNameAndImage*(self: Controller, contactId: string):
-  tuple[name: string, image: string, isIdenticon: bool] =
+  tuple[name: string, image: string] =
   return self.contactsService.getContactNameAndImage(contactId)
 
 proc addResultItemDetails*(self: Controller, itemId: string, sectionId = "", channelId = "", messageId = "") =
@@ -149,7 +149,7 @@ proc resultItemClicked*(self: Controller, itemId: string) =
     info "important: we don't have stored details for a searched result item with id: ", itemId
     return
 
-  let data = ActiveSectionChatArgs(sectionId: itemDetails.sectionId, 
-    chatId: itemDetails.channelId, 
+  let data = ActiveSectionChatArgs(sectionId: itemDetails.sectionId,
+    chatId: itemDetails.channelId,
     messageId: itemDetails.messageId)
   self.events.emit(SIGNAL_MAKE_SECTION_CHAT_ACTIVE, data)

@@ -10,7 +10,6 @@ QtObject {
 
     property string pubkey: userProfile.pubKey
     property string icon: userProfile.icon
-    property bool isIdenticon: userProfile.isIdenticon
     property string preferredUsername: userProfile.preferredName
 
     property string username: userProfile.username

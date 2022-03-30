@@ -162,7 +162,7 @@ Rectangle {
                                                                   },
                                                                   selectedRecipient: {
                                                                       address: request.payload.params[0].to,
-                                                                      identicon: RootStore.generateIdenticon(request.payload.params[0].to),
+                                                                      identicon: "",
                                                                       name: RootStore.activeChannelName,
                                                                       type: RecipientSelector.Type.Address
                                                                   },

@@ -72,10 +72,6 @@ QtObject {
         return globalUtils.generateAlias(pk);
     }
 
-    function generateIdenticon(pk) {
-        return globalUtils.generateIdenticon(pk);
-    }
-
     property string currentCurrency: walletSection.currentCurrency
     property string signingPhrase: walletSection.signingPhrase
     function estimateGas(from_addr, to, assetAddress, value, data) {

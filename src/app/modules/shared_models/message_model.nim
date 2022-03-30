@@ -11,8 +11,6 @@ type
     SenderDisplayName
     SenderLocalName
     SenderIcon
-    SenderIdenticon
-    IsSenderIconIdenticon
     AmISender
     SenderIsAdded
     Seen
@@ -85,8 +83,6 @@ QtObject:
       ModelRole.SenderDisplayName.int:"senderDisplayName",
       ModelRole.SenderLocalName.int:"senderLocalName",
       ModelRole.SenderIcon.int:"senderIcon",
-      ModelRole.SenderIdenticon.int:"senderIdenticon",
-      ModelRole.IsSenderIconIdenticon.int:"isSenderIconIdenticon",
       ModelRole.AmISender.int:"amISender",
       ModelRole.SenderIsAdded.int:"senderIsAdded",
       ModelRole.Seen.int:"seen",
@@ -136,10 +132,6 @@ QtObject:
       result = newQVariant(item.senderLocalName)
     of ModelRole.SenderIcon:
       result = newQVariant(item.senderIcon)
-    of ModelRole.SenderIdenticon:
-      result = newQVariant(item.senderIdenticon)
-    of ModelRole.IsSenderIconIdenticon:
-      result = newQVariant(item.isSenderIconIdenticon)
     of ModelRole.AmISender:
       result = newQVariant(item.amISender)
     of ModelRole.SenderIsAdded:
@@ -352,8 +344,7 @@ QtObject:
 
       var roles: seq[int]
       if(self.items[i].senderId == contactId):
-        roles = @[ModelRole.SenderDisplayName.int, ModelRole.SenderLocalName.int, ModelRole.SenderIcon.int,
-        ModelRole.IsSenderIconIdenticon.int, ModelRole.SenderIsAdded.int]
+        roles = @[ModelRole.SenderDisplayName.int, ModelRole.SenderLocalName.int, ModelRole.SenderIcon.int, ModelRole.SenderIsAdded.int]
       if(self.items[i].pinnedBy == contactId):
         roles.add(ModelRole.PinnedBy.int)
       if(self.items[i].messageContainsMentions):
@@ -384,8 +375,8 @@ QtObject:
     self.dataChanged(index, index, @[ModelRole.EditMode.int])
 
   proc updateEditedMsg*(
-      self: Model, 
-      messageId: string, 
+      self: Model,
+      messageId: string,
       updatedMsg: string,
       messageContainsMentions: bool,
       links: seq[string],

@@ -90,9 +90,8 @@ Item {
         StatusSmartIdenticon {
             id: userImage
             anchors.horizontalCenter: parent.horizontalCenter
-            image.source: LoginStore.currentAccount.thumbnailImage ||
-                          LoginStore.currentAccount.identicon
-            image.isIdenticon: true
+            image.source: LoginStore.currentAccount.thumbnailImage
+
         }
 
         StyledText {

@@ -48,11 +48,11 @@ proc initModel(self: Module) =
       continue
 
     if(c.chatType == ChatType.OneToOne):
-      let (chatName, chatImage, isIdenticon) = self.controller.getOneToOneChatNameAndImage(c.id)
-      let item = initItem(c.id, chatName, chatImage, isIdenticon, c.color)
+      let (chatName, chatImage) = self.controller.getOneToOneChatNameAndImage(c.id)
+      let item = initItem(c.id, chatName, chatImage, c.color)
       self.view.mutedContactsModel().addItem(item)
     else:
-      let item = initItem(c.id, c.name, c.identicon, false, c.color)
+      let item = initItem(c.id, c.name, c.identicon, c.color)
       self.view.mutedChatsModel().addItem(item)
 
 method viewDidLoad*(self: Module) =
@@ -69,11 +69,11 @@ method unmuteChat*(self: Module, chatId: string) =
 method onChatMuted*(self: Module, chatId: string) =
   let chat = self.controller.getChatDetails(chatId)
   if(chat.chatType == ChatType.OneToOne):
-    let (chatName, chatImage, isIdenticon) = self.controller.getOneToOneChatNameAndImage(chat.id)
-    let item = initItem(chat.id, chatName, chatImage, isIdenticon, chat.color)
+    let (chatName, chatImage) = self.controller.getOneToOneChatNameAndImage(chat.id)
+    let item = initItem(chat.id, chatName, chatImage, chat.color)
     self.view.mutedContactsModel().addItem(item)
   else:
-    let item = initItem(chat.id, chat.name, chat.identicon, false, chat.color)
+    let item = initItem(chat.id, chat.name, chat.identicon, chat.color)
     self.view.mutedChatsModel().addItem(item)
 
 method onChatUnmuted*(self: Module, chatId: string) =

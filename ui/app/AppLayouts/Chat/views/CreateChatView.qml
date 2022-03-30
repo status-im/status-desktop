@@ -30,7 +30,6 @@ Page {
             property string publicId: model.pubKey
             property string name: model.name
             property string icon: model.icon
-            property bool isIdenticon: model.isIdenticon
         }
     }
 
@@ -42,7 +41,7 @@ Page {
                     var entry = contactsModelListView.itemAtIndex(i);
                     contactsModel.insert(contactsModel.count,
                     {"publicId": entry.publicId, "name": entry.name,
-                     "icon": entry.icon, "isIdenticon": entry.isIdenticon});
+                     "icon": entry.icon});
                 }
                 tagSelector.sortModel(root.contactsModel);
             } else {

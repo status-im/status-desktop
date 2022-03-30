@@ -50,7 +50,6 @@ ModalPopup {
                     width: 40
                     height: 40
                     source: model.icon
-                    isIdenticon: model.isIdenticon
                 }
                 icon: StatusIconSettings {
                     width: 40

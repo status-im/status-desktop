@@ -188,8 +188,8 @@ Item {
                 if (!selectedContact || !selAddressSource.selectedSource || !selectedContact.address || (selAddressSource.selectedSource && selAddressSource.selectedSource.value !== RecipientSelector.Type.Contact)) {
                     return
                 }
-                const { address, name, alias, isContact, identicon, ensVerified } = selectedContact
-                root.selectedRecipient = { address, name, alias, isContact, identicon, ensVerified, type: RecipientSelector.Type.Contact }
+                const { address, name, alias, isContact, ensVerified } = selectedContact
+                root.selectedRecipient = { address, name, alias, isContact, ensVerified, type: RecipientSelector.Type.Contact }
             }
             onIsValidChanged: root.validate()
         }
@@ -239,10 +239,10 @@ Item {
                         selContact.visible = true
                         inpAddress.visible = selAccount.visible = false
                         root.height = Qt.binding(function() { return selContact.height + txtLabel.height })
-                        let { alias, isContact, identicon, ensVerified } = selContact.selectedContact
+                        let { alias, isContact, ensVerified } = selContact.selectedContact
                         address = selContact.selectedContact.address
                         name = selContact.selectedContact.name
-                        root.selectedRecipient = { address, name, alias, isContact, identicon, ensVerified, type: RecipientSelector.Type.Contact }
+                        root.selectedRecipient = { address, name, alias, isContact, ensVerified, type: RecipientSelector.Type.Contact }
                         if (root.selectedType !== RecipientSelector.Type.Contact) root.selectedType = RecipientSelector.Type.Contact
                         root.isValid = selContact.isValid
                         break;

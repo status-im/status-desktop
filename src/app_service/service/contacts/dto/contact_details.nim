@@ -8,6 +8,5 @@ type
   ContactDetails* = object
     displayName*: string
     icon*: string
-    isIdenticon*: bool
     isCurrentUser*: bool
     details*: ContactsDto

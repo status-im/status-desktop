@@ -16,7 +16,6 @@ Rectangle {
     property string name: "channelName"
     property string message: "My latest message\n with a return"
     property int chatType: Constants.chatType.publicChat
-    property string identicon: ""
 
     color: "#F7F7F7"
     width: 366
@@ -27,7 +26,7 @@ Rectangle {
 
     Loader {
         id: identicon
-        sourceComponent: root.identicon === "" || localAccountSensitiveSettings.notificationMessagePreviewSetting === Constants.notificationPreviewAnonymous ?  statusIdenticon : userOrChannelIdenticon
+        sourceComponent: localAccountSensitiveSettings.notificationMessagePreviewSetting === Constants.notificationPreviewAnonymous ?  statusIdenticon : userOrChannelIdenticon
         anchors.left: parent.left
         anchors.leftMargin: Style.current.padding
         anchors.verticalCenter: parent.verticalCenter
@@ -45,8 +44,6 @@ Rectangle {
             image: StatusImageSettings {
                 width: 40
                 height: 40
-                source: root.identicon
-                isIdenticon: true
             }
             icon: StatusIconSettings {
                 width: 40

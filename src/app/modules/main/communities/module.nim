@@ -98,8 +98,6 @@ method getCommunityItem(self: Module, c: CommunityDto): SectionItem =
           contactDetails.details.alias,
           OnlineStatus.Offline, # TODO get the actual status?
           contactDetails.icon,
-          contactDetails.details.identicon,
-          contactDetails.isidenticon,
           contactDetails.details.added,
           ))
     )

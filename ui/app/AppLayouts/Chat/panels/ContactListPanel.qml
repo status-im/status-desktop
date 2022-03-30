@@ -39,8 +39,7 @@ ScrollView {
 
             title: !model.name.endsWith(".eth") && !!model.localNickname ?
                        model.localNickname : Utils.removeStatusEns(model.name)
-            image.source: Global.getProfileImage(model.pubKey) || model.identicon
-            image.isIdenticon: !!model.identicon
+            image.source: Global.getProfileImage(model.pubKey)
             ringSettings.ringSpecModel: Utils.getColorHashAsJson(model.pubKey)
 
             height: visible ? implicitHeight : 0

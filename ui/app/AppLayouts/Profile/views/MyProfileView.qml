@@ -79,7 +79,6 @@ ColumnLayout {
         displayName: profileStore.name
         pubkey: profileStore.pubkey
         icon: profileStore.icon
-        isIdenticon: profileStore.isIdenticon
 
         displayNameVisible: false
         pubkeyVisible: false

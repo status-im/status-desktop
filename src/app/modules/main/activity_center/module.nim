@@ -94,8 +94,6 @@ method convertToItems*(
           contactDetails.displayName,
           contactDetails.details.localNickname,
           contactDetails.icon,
-          contactDetails.details.identicon,
-          contactDetails.isIdenticon,
           contactDetails.isCurrentUser,
           contactDetails.details.added,
           n.message.outgoingStatus,

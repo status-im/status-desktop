@@ -20,7 +20,6 @@ Rectangle {
 
     property string userName: ""
     property string message : ""
-    property string identicon: ""
     property string image: ""
     property string stickerData: ""
     property string messageId: ""
@@ -129,7 +128,6 @@ Rectangle {
         onClicked: {
             root.userName = ""
             root.message = ""
-            root.identicon = ""
             root.messageId = ""
             root.stickerData = ""
             root.image = ""

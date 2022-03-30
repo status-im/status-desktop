@@ -124,7 +124,6 @@ SettingsPageLayout {
                     width: 40
                     height: 40
                     source: model.icon
-                    isIdenticon: false
                 }
 
                 icon {

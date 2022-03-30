@@ -211,8 +211,7 @@ Rectangle {
 
                     name: model.name
                     pubkey: model.publicKey
-                    icon: model.icon
-                    isIdenticon: model.isIdenticon
+                    image: model.icon
                     showRing: !model.isAdded
                     interactive: false
                 }

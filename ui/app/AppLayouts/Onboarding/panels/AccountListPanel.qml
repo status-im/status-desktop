@@ -17,7 +17,7 @@ ListView {
 
     delegate: AccountViewDelegate {
         username: model.username
-        identicon: model.thumbnailImage || model.identicon
+        image: model.thumbnailImage
         keyUid: model.keyUid
         address: model.address || ''
         isSelected: function (index, keyUid) {

@@ -6,7 +6,6 @@ type
   ModelRole {.pure.} = enum
     Id = UserRole + 1
     Alias
-    Identicon
     Address
     PubKey
     KeyUid
@@ -34,7 +33,6 @@ QtObject:
     {
       ModelRole.Id.int:"accountId",
       ModelRole.Alias.int:"username",
-      ModelRole.Identicon.int:"identicon",
       ModelRole.Address.int:"address",
       ModelRole.PubKey.int:"pubKey",
       ModelRole.KeyUid.int:"keyUid"
@@ -55,8 +53,6 @@ QtObject:
       result = newQVariant(item.getId())
     of ModelRole.Alias:
       result = newQVariant(item.getAlias())
-    of ModelRole.Identicon:
-      result = newQVariant(item.getIdenticon())
     of ModelRole.Address:
       result = newQVariant(item.getAddress())
     of ModelRole.PubKey:

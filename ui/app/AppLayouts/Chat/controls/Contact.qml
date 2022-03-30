@@ -14,8 +14,7 @@ import shared.status 1.0
 Rectangle {
     property string pubKey: "0x123456"
     property string name: "Jotaro Kujo"
-    property string identicon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
-    property bool isIdenticon: true
+    property string image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
 
     property bool isContact: true
     property bool isUser: false
@@ -43,8 +42,7 @@ Rectangle {
         anchors.left: parent.left
         anchors.verticalCenter: parent.verticalCenter
         anchors.leftMargin: Style.current.padding
-        image.source: identicon
-        image.isIdenticon: isIdenticon
+        image.source: image
     }
 
     StyledText {

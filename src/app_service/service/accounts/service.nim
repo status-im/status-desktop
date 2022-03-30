@@ -49,9 +49,6 @@ proc isFirstTimeAccountLogin*(self: Service): bool =
 proc generateAliasFromPk*(publicKey: string): string =
   return status_account.generateAlias(publicKey).result.getStr
 
-proc generateIdenticonFromPk*(publicKey: string): string =
-  return status_account.generateIdenticon(publicKey).result.getStr
-
 proc isAlias*(value: string): bool =
   return status_account.isAlias(value)
 
@@ -64,7 +61,6 @@ proc init*(self: Service) =
 
     for account in self.generatedAccounts.mitems:
       account.alias = generateAliasFromPk(account.derivedAccounts.whisper.publicKey)
-      account.identicon = generateIdenticonFromPk(account.derivedAccounts.whisper.publicKey)
 
   except Exception as e:
     error "error: ", procName="init", errName = e.name, errDesription = e.msg
@@ -140,7 +136,7 @@ proc prepareAccountJsonObject(self: Service, account: GeneratedAccountDto, displ
   result = %* {
     "name": if displayName == "": account.alias else: displayName,
     "address": account.address,
-    "identicon": account.identicon,
+    "identicon": "",
     "key-uid": account.keyUid,
     "keycard-pairing": nil
   }
@@ -169,7 +165,7 @@ proc prepareSubaccountJsonObject(self: Service, account: GeneratedAccountDto, di
       "public-key": account.derivedAccounts.whisper.publicKey,
       "address": account.derivedAccounts.whisper.address,
       "name": if displayName == "": account.alias else: displayName,
-      "identicon": account.identicon,
+      "identicon": "",
       "path": PATH_WHISPER,
       "chat": true
     }
@@ -202,7 +198,7 @@ proc prepareAccountSettingsJsonObject(self: Service, account: GeneratedAccountDt
     "latest-derived-path": 0,
     "networks/networks": DEFAULT_NETWORKS,
     "currency": "usd",
-    "identicon": account.identicon,
+    "identicon": "",
     "waku-enabled": true,
     "wallet/visible-tokens": {
       DEFAULT_NETWORK_NAME: ["SNT"]
@@ -293,7 +289,6 @@ proc importMnemonic*(self: Service, mnemonic: string): string =
     self.importedAccount.derivedAccounts = toDerivedAccounts(responseDerived.result)
 
     self.importedAccount.alias= generateAliasFromPk(self.importedAccount.derivedAccounts.whisper.publicKey)
-    self.importedAccount.identicon = generateIdenticonFromPk(self.importedAccount.derivedAccounts.whisper.publicKey)
 
     if (not self.importedAccount.isValid()):
       return "imported account is not valid"
@@ -334,7 +329,7 @@ proc login*(self: Service, account: AccountDto, password: string): string =
       },
     }
 
-    let response = status_account.login(account.name, account.keyUid, hashedPassword, account.identicon, thumbnailImage,
+    let response = status_account.login(account.name, account.keyUid, hashedPassword, "", thumbnailImage,
     largeImage, $nodeCfg)
 
     var error = "response doesn't contain \"error\""

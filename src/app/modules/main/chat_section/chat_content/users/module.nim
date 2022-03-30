@@ -82,8 +82,6 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto]) =
       contactDetails.details.alias,
       status,
       contactDetails.icon,
-      contactDetails.details.identicon,
-      contactDetails.isidenticon,
       contactDetails.details.added,
       ))
 
@@ -110,13 +108,11 @@ method contactUpdated*(self: Module, publicKey: string) =
     contactDetails.details.localNickname,
     contactDetails.details.alias,
     contactDetails.icon,
-    contactDetails.isidenticon,
     contactDetails.details.added,
   )
 
 method loggedInUserImageChanged*(self: Module) =
-  self.view.model().setIcon(singletonInstance.userProfile.getPubKey(), singletonInstance.userProfile.getIcon(),
-  singletonInstance.userProfile.getIsIdenticon())
+  self.view.model().setIcon(singletonInstance.userProfile.getPubKey(), singletonInstance.userProfile.getIcon())
 
 method addChatMember*(self: Module,  member: ChatMember) =
   if(member.id == "" or self.view.model().isContactWithIdAdded(member.id)):
@@ -143,8 +139,6 @@ method addChatMember*(self: Module,  member: ChatMember) =
     contactDetails.details.alias,
     status,
     contactDetails.icon,
-    contactDetails.details.identicon,
-    contactDetails.isidenticon,
     contactDetails.details.added,
     member.admin,
     member.joined
@@ -170,7 +164,6 @@ method onChatMemberUpdated*(self: Module, publicKey: string, admin: bool, joined
     contactDetails.details.localNickname,
     contactDetails.details.alias,
     contactDetails.icon,
-    contactDetails.isidenticon,
     contactDetails.details.added,
     admin,
     joined)

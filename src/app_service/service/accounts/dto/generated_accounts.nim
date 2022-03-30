@@ -26,7 +26,6 @@ type GeneratedAccountDto* = object
   derivedAccounts*: DerivedAccounts
   # The following two are set additionally.
   alias*: string
-  identicon*: string
 
 proc isValid*(self: GeneratedAccountDto): bool =
   result = self.id.len > 0 and self.publicKey.len > 0 and
