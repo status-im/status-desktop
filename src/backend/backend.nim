@@ -26,6 +26,20 @@ type
     name* {.serializedFieldName("name").}: string
     address* {.serializedFieldName("address").}: string
 
+  Network* = ref object of RootObj
+    chainId* {.serializedFieldName("chainId").}: int
+    nativeCurrencyDecimals* {.serializedFieldName("nativeCurrencyDecimals").}: int
+    layer* {.serializedFieldName("layer").}: int
+    chainName* {.serializedFieldName("chainName").}: string
+    rpcURL* {.serializedFieldName("rpcUrl").}: string
+    blockExplorerURL* {.serializedFieldName("blockExplorerUrl").}: string
+    iconURL* {.serializedFieldName("iconUrl").}: string
+    nativeCurrencyName* {.serializedFieldName("nativeCurrencyName").}: string
+    nativeCurrencySymbol* {.serializedFieldName("nativeCurrencySymbol").}: string
+    isTest* {.serializedFieldName("isTest").}: bool
+    enabled* {.serializedFieldName("enabled").}: bool
+
+
 rpc(clientVersion, "web3"):
   discard
 
@@ -53,10 +67,10 @@ rpc(getEthereumChains, "wallet"):
   onlyEnabled: bool
 
 rpc(addEthereumChain, "wallet"):
-  payload: JsonNode
+  network: Network
 
 rpc(deleteEthereumChain, "wallet"):
-  payload: JsonNode
+  chainId: int
 
 rpc(addSavedAddress, "wallet"):
   savedAddress: SavedAddress
