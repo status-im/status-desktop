@@ -69,11 +69,23 @@ proc getEnabledNetworks*(self: Service): seq[NetworkDto] =
       result.add(network)  
 
 proc upsertNetwork*(self: Service, network: NetworkDto) =
-  discard backend.addEthereumChain(network.toPayload())
+  discard backend.addEthereumChain(backend.Network(
+    chainId: network.chainId,
+    nativeCurrencyDecimals: network.nativeCurrencyDecimals,
+    layer: network.layer,
+    chainName: network.chainName,
+    rpcURL: network.rpcURL,
+    blockExplorerURL: network.blockExplorerURL,
+    iconURL: network.iconURL,
+    nativeCurrencyName: network.nativeCurrencyName,
+    nativeCurrencySymbol: network.nativeCurrencySymbol,
+    isTest: network.isTest,
+    enabled: network.enabled,
+  ))
   self.dirty.store(true)
 
 proc deleteNetwork*(self: Service, network: NetworkDto) =
-  discard backend.deleteEthereumChain(%* [network.chainId])
+  discard backend.deleteEthereumChain(network.chainId)
   self.dirty.store(true)
 
 proc getNetwork*(self: Service, chainId: int): NetworkDto =

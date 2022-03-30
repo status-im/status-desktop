@@ -22,9 +22,6 @@ proc `$`*(self: NetworkDto): string =
 proc hash*(self: NetworkDto): Hash =
   return self.chainId.hash
 
-proc toPayload*(self: NetworkDto): JsonNode =
-  return %* [Json.encode(self).parseJson]
-
 proc sntSymbol*(self: NetworkDto): string =
   if self.chainId == Mainnet:
     return "SNT"
