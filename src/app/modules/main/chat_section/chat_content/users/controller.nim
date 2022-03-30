@@ -103,6 +103,12 @@ proc init*(self: Controller) =
       if (args.chatId == self.chatId):
         self.delegate.onChatMembersAdded(args.ids)
 
+    self.events.on(SIGNAL_CHAT_UPDATE) do(e: Args):
+      var args = ChatUpdateArgsNew(e)
+      for chat in args.chats:
+        if (chat.id == self.chatId):
+          self.delegate.onChatUpdated(chat)
+
     self.events.on(SIGNAL_CHAT_MEMBER_REMOVED) do(e: Args):
       let args = ChatMemberRemovedArgs(e)
       if (args.chatId == self.chatId):
@@ -124,13 +130,11 @@ proc init*(self: Controller) =
 proc getChat*(self: Controller): ChatDto =
   return self.chatService.getChatById(self.chatId)
 
-proc getChatMemberInfo*(self: Controller, id: string): (bool, bool) =
+proc getChatMember*(self: Controller, id: string): ChatMember =
   let chat = self.getChat()
   for member in chat.members:
     if (member.id == id):
-      return (member.admin, member.joined)
-
-  return (false, false)
+      return member
 
 proc getChatMembers*(self: Controller): seq[ChatMember] =
   var communityId = ""

@@ -20,6 +20,9 @@ type
     controller: Controller
     moduleLoaded: bool
 
+# Forward declaration
+method addChatMember*(self: Module,  member: ChatMember)
+
 proc newModule*(
   delegate: delegate_interface.AccessInterface, events: EventEmitter, sectionId: string, chatId: string,
   belongsToCommunity: bool, isUsersListAvailable: bool, contactService: contact_service.Service,
@@ -51,30 +54,7 @@ method isLoaded*(self: Module): bool =
 method viewDidLoad*(self: Module) =
   let members = self.controller.getChatMembers()
   for member in members:
-    let isMe = member.id == singletonInstance.userProfile.getPubKey()
-    let contactDetails = self.controller.getContactDetails(member.id)
-    var status = OnlineStatus.Online
-    if (not isMe):
-      let statusUpdateDto = self.controller.getStatusForContact(member.id)
-      status = statusUpdateDto.statusType.int.OnlineStatus
-    
-    self.view.model().addItem(initItem(
-      member.id,
-      if (isMe):
-        contactDetails.displayName & " (You)"
-      else:
-        contactDetails.displayName,
-      contactDetails.details.name,
-      contactDetails.details.localNickname,
-      contactDetails.details.alias,
-      status,
-      contactDetails.icon,
-      contactDetails.details.identicon,
-      contactDetails.isidenticon,
-      contactDetails.details.added,
-      member.admin,
-      member.joined
-      ))
+    self.addChatMember(member)
 
   self.moduleLoaded = true
   self.delegate.usersDidLoad()
@@ -138,29 +118,45 @@ method loggedInUserImageChanged*(self: Module) =
   self.view.model().setIcon(singletonInstance.userProfile.getPubKey(), singletonInstance.userProfile.getIcon(),
   singletonInstance.userProfile.getIsIdenticon())
 
+method addChatMember*(self: Module,  member: ChatMember) =
+  if(member.id == "" or self.view.model().isContactWithIdAdded(member.id)):
+    return
+
+  if (not member.joined):
+    return
+
+  let isMe = member.id == singletonInstance.userProfile.getPubKey()
+  let contactDetails = self.controller.getContactDetails(member.id)
+  var status = OnlineStatus.Online
+  if (not isMe):
+    let statusUpdateDto = self.controller.getStatusForContact(member.id)
+    status = statusUpdateDto.statusType.int.OnlineStatus
+  
+  self.view.model().addItem(initItem(
+    member.id,
+    if (isMe):
+      contactDetails.displayName & " (You)"
+    else:
+      contactDetails.displayName,
+    contactDetails.details.name,
+    contactDetails.details.localNickname,
+    contactDetails.details.alias,
+    status,
+    contactDetails.icon,
+    contactDetails.details.identicon,
+    contactDetails.isidenticon,
+    contactDetails.details.added,
+    member.admin,
+    member.joined
+    ))
+
 method onChatMembersAdded*(self: Module,  ids: seq[string]) =
   for id in ids:
-    if(self.view.model().isContactWithIdAdded(id)):
-      continue
+    self.addChatMember(self.controller.getChatMember(id))
 
-    let (admin, joined) = self.controller.getChatMemberInfo(id)
-    let contactDetails = self.controller.getContactDetails(id)
-    let statusUpdateDto = self.controller.getStatusForContact(id)
-    let status = statusUpdateDto.statusType.int.OnlineStatus
-    self.view.model().addItem(initItem(
-      id,
-      contactDetails.displayName,
-      contactDetails.details.name,
-      contactDetails.details.localNickname,
-      contactDetails.details.alias,
-      status,
-      contactDetails.icon,
-      contactDetails.details.identicon,
-      contactDetails.isidenticon,
-      contactDetails.details.added,
-      admin,
-      joined
-      ))
+method onChatUpdated*(self: Module,  chat: ChatDto) =
+  for member in chat.members:
+    self.addChatMember(self.controller.getChatMember(member.id))
 
 method onChatMemberRemoved*(self: Module, id: string) =
   self.view.model().removeItemById(id)
