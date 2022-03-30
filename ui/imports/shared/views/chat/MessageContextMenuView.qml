@@ -35,7 +35,6 @@ StatusPopupMenu {
     property string selectedUserPublicKey: ""
     property string selectedUserDisplayName: ""
     property string selectedUserIcon: ""
-    property bool isSelectedUserIconIdenticon: true
     property string imageSource: ""
 
     property bool isProfile: false
@@ -123,7 +122,6 @@ StatusPopupMenu {
         displayName: root.selectedUserDisplayName
         pubkey: root.selectedUserPublicKey
         icon: root.selectedUserIcon
-        isIdenticon: root.isSelectedUserIconIdenticon
     }
 
     Item {

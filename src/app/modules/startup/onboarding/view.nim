@@ -39,13 +39,6 @@ QtObject:
 
   proc importedAccountChanged*(self: View) {.signal.}
 
-  proc getImportedAccountIdenticon*(self: View): string {.slot.} =
-    return self.delegate.getImportedAccount().identicon
-
-  QtProperty[string] importedAccountIdenticon:
-    read = getImportedAccountIdenticon
-    notify = importedAccountChanged
-
   proc getImportedAccountAlias*(self: View): string {.slot.} =
     return self.delegate.getImportedAccount().alias
 

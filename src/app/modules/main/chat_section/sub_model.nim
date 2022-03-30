@@ -9,7 +9,6 @@ type
     Name
     AmIChatAdmin
     Icon
-    IsIdenticon
     Color
     Emoji
     Description
@@ -68,7 +67,6 @@ QtObject:
       ModelRole.Name.int:"name",
       ModelRole.AmIChatAdmin.int:"amIChatAdmin",
       ModelRole.Icon.int:"icon",
-      ModelRole.IsIdenticon.int:"isIdenticon",
       ModelRole.Color.int:"color",
       ModelRole.Emoji.int:"emoji",
       ModelRole.Description.int:"description",
@@ -102,8 +100,6 @@ QtObject:
       result = newQVariant(item.amIChatAdmin)
     of ModelRole.Icon:
       result = newQVariant(item.icon)
-    of ModelRole.IsIdenticon:
-      result = newQVariant(item.isIdenticon)
     of ModelRole.Color:
       result = newQVariant(item.color)
     of ModelRole.Emoji:

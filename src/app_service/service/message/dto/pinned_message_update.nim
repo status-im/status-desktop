@@ -9,7 +9,7 @@ type PinnedMessageUpdateDto* = object
   messageId*: string
   localChatId*: string # not sure what's this and do we need this at all
   pinnedBy*: string
-  identicon*: string
+  identicon*: string # is it identicon or image???
   alias*: string
   clock*: int64
   pinned*: bool

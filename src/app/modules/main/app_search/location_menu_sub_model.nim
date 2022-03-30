@@ -9,7 +9,6 @@ type
     Image
     Icon
     IconColor
-    IsIdenticon
 
 QtObject:
   type
@@ -54,7 +53,6 @@ QtObject:
       SubModelRole.Image.int:"imageSource",
       SubModelRole.Icon.int:"iconName",
       SubModelRole.IconColor.int:"iconColor",
-      SubModelRole.IsIdenticon.int:"isIdenticon"
     }.toTable
 
   method data(self: SubModel, index: QModelIndex, role: int): QVariant =
@@ -78,8 +76,6 @@ QtObject:
       result = newQVariant(item.icon)
     of SubModelRole.IconColor:
       result = newQVariant(item.iconColor)
-    of SubModelRole.IsIdenticon:
-      result = newQVariant(item.isIdenticon)
 
   proc setItems*(self: SubModel, items: seq[SubItem]) =
     self.beginResetModel()

@@ -117,7 +117,7 @@ proc setCommunityMuted*(self: Controller, communityId: string, muted: bool) =
   self.communityService.setCommunityMuted(communityId, muted)
 
 proc getContactNameAndImage*(self: Controller, contactId: string):
-    tuple[name: string, image: string, isIdenticon: bool] =
+    tuple[name: string, image: string] =
   return self.contactsService.getContactNameAndImage(contactId)
 
 proc getContactDetails*(self: Controller, contactId: string): ContactDetails =

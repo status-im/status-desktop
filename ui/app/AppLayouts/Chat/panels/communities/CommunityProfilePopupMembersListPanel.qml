@@ -133,7 +133,6 @@ Item {
                         model.name.toLowerCase().includes(memberSearch.input.text.toLowerCase())
                     anchors.horizontalCenter: parent.horizontalCenter
 
-                    image.isIdenticon: model.isIdenticon
                     image.source: model.icon
 
                     title: {

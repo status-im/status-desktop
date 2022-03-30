@@ -376,8 +376,7 @@ proc buildAndRegisterUserProfile(self: AppController) =
 
   let meAsContact = self.contactsService.getContactById(pubKey)
 
-  singletonInstance.userProfile.setFixedData(loggedInAccount.name, loggedInAccount.keyUid, loggedInAccount.identicon,
-  pubKey)
+  singletonInstance.userProfile.setFixedData(loggedInAccount.name, loggedInAccount.keyUid, pubKey)
   singletonInstance.userProfile.setDisplayName(displayName)
   singletonInstance.userProfile.setPreferredName(preferredName)
   singletonInstance.userProfile.setEnsName(meAsContact.name)

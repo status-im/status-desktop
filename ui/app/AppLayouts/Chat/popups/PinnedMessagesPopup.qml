@@ -120,7 +120,6 @@ ModalPopup {
                     senderDisplayName: model.senderDisplayName
                     senderLocalName: model.senderLocalName
                     senderIcon: model.senderIcon
-                    isSenderIconIdenticon: model.isSenderIconIdenticon
                     amISender: model.amISender
                     message: model.messageText
                     messageImage: model.messageImage

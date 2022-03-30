@@ -360,6 +360,7 @@ Item {
                 id: profileButton
                 property bool opened: false
 
+                name: appMain.rootStore.userProfileInst.name
                 icon.source: appMain.rootStore.userProfileInst.icon
                 badge.visible: true
                 badge.anchors.rightMargin: 4
@@ -888,7 +889,6 @@ Item {
                 }
                 image {
                     source: modelData ? modelData.icon : ""
-                    isIdenticon: true
                 }
             }
 

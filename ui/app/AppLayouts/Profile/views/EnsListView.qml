@@ -287,8 +287,7 @@ Item {
                 anchors.top: parent.top
                 anchors.topMargin: 20
 
-                icon: root.ensUsernamesStore.icon
-                isIdenticon: root.ensUsernamesStore.isIdenticon
+                image: root.ensUsernamesStore.icon
                 showRing: true
 
                 onClicked: root.parent.clickMessage(true, false, false, null, false, false, false)

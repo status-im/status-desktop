@@ -11,7 +11,6 @@ QtObject {
     property string localName: ""
     property string message: "That's right. We're friends...  Of justice, that is."
     property string plainText: "That's right. We're friends...  Of justice, that is."
-    property string identicon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAZAAAAGQAQMAAAC6caSPAAAABlBMVEXMzMz////TjRV2AAAAAWJLR0QB/wIt3gAAACpJREFUGBntwYEAAAAAw6D7Uw/gCtUAAAAAAAAAAAAAAAAAAAAAAAAAgBNPsAABAjKCqQAAAABJRU5ErkJggg=="
     property bool isCurrentUser: false
     property string timestamp: "1234567"
     property string sticker: "Qme8vJtyrEHxABcSVGPF95PtozDgUyfr1xGjePmFdZgk9v"
@@ -159,10 +158,10 @@ QtObject {
         //TODO remove dynamic scoping
         if (isReply) {
             let nickname = appMain.getUserNickname(repliedMessageAuthor)
-            messageContextMenu.show(repliedMessageAuthor, repliedMessageAuthorPubkey, repliedMessageUserImage || repliedMessageUserIdenticon, plainText, nickname, emojiReactionsModel);
+            messageContextMenu.show(repliedMessageAuthor, repliedMessageAuthorPubkey, repliedMessageUserImage, plainText, nickname, emojiReactionsModel);
         } else {
             let nickname = appMain.getUserNickname(fromAuthor)
-            messageContextMenu.show(userName, fromAuthor, profileImageSource || identicon, plainText, nickname, emojiReactionsModel);
+            messageContextMenu.show(userName, fromAuthor, profileImageSource, plainText, nickname, emojiReactionsModel);
         }
 
          messageContextMenu.x = messageContextMenu.setXPosition()

@@ -9,7 +9,6 @@ type
     ImageSource
     IconName
     IconColor
-    IsIdenticon
     SubItems
 
 QtObject:
@@ -40,7 +39,6 @@ QtObject:
       ModelRole.ImageSource.int:"imageSource",
       ModelRole.IconName.int:"iconName",
       ModelRole.IconColor.int:"iconColor",
-      ModelRole.IsIdenticon.int:"isIdenticon",
       ModelRole.SubItems.int:"subItems"
     }.toTable
 
@@ -65,8 +63,6 @@ QtObject:
       result = newQVariant(item.icon)
     of ModelRole.IconColor:
       result = newQVariant(item.iconColor)
-    of ModelRole.IsIdenticon:
-      result = newQVariant(item.isIdenticon)
     of ModelRole.SubItems:
       result = newQVariant(item.subItems)
 

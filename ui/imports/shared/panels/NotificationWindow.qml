@@ -17,7 +17,6 @@ Item {
     property string message: "Everything is connected"
     property int chatType: 1
     property var onClick
-    property string identicon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAZAAAAGQAQMAAAC6caSPAAAABlBMVEXMzMz////TjRV2AAAAAWJLR0QB/wIt3gAAACpJREFUGBntwYEAAAAAw6D7Uw/gCtUAAAAAAAAAAAAAAAAAAAAAAAAAgBNPsAABAjKCqQAAAABJRU5ErkJggg=="
 
     property var processClick: Backpressure.oneInTime(root, 1000, function () {
         notificationSound.play()
@@ -57,7 +56,6 @@ Item {
                 chatId: root.chatId
                 name: root.name
                 message: root.message
-                identicon: appSettings.notificationMessagePreviewSetting === Constants.notificationPreviewAnonymous ? "" : root.identicon
 
                 MouseArea {
                     cursorShape: Qt.PointingHandCursor
@@ -95,12 +93,11 @@ Item {
         }
     }
 
-    function notifyUser(chatId, name, msg, chatType, identicon, onClick) {
+    function notifyUser(chatId, name, msg, chatType, onClick) {
         this.chatId = chatId
         this.name = name
         this.message = msg
         this.chatType = chatType
-        this.identicon = identicon
         this.onClick = onClick
         processClick()
     }

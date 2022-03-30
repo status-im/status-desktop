@@ -57,7 +57,7 @@ type ChatDto* = object
   members*: seq[ChatMember]
   #membershipUpdateEvents*: seq[ChatMembershipEvent]  ???? It's always null and a question why do we need it here within this context ????
   alias*: string
-  identicon*: string
+  identicon*: string # is it identicon or image???
   muted*: bool
   communityId*: string #set if chat belongs to a community
   profile*: string

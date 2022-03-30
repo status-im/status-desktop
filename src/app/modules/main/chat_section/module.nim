@@ -111,8 +111,7 @@ proc buildChatUI(self: Module, events: EventEmitter,
     let hasNotification = c.unviewedMessagesCount > 0 or c.unviewedMentionsCount > 0
     let notificationsCount = c.unviewedMentionsCount
     var chatName = c.name
-    var chatImage = c.identicon
-    var isIdenticon = false
+    var chatImage = ""
     var isUsersListAvailable = true
     var blocked = false
     if(c.chatType == ChatType.OneToOne):
@@ -120,12 +119,11 @@ proc buildChatUI(self: Module, events: EventEmitter,
       let contactDetails = self.controller.getContactDetails(c.id)
       chatName = contactDetails.displayName
       chatImage = contactDetails.icon
-      isIdenticon = contactDetails.isIdenticon
       blocked = contactDetails.details.isBlocked()
 
     let amIChatAdmin = self.amIMarkedAsAdminUser(c.members)
 
-    let item = initItem(c.id, chatName, chatImage, isIdenticon, c.color, c.emoji, c.description,
+    let item = initItem(c.id, chatName, chatImage, c.color, c.emoji, c.description,
       c.chatType.int, amIChatAdmin, hasNotification, notificationsCount, c.muted, blocked,
       active=false, c.position, c.categoryId)
     self.view.chatsModel().appendItem(item)
@@ -158,7 +156,7 @@ proc buildCommunityUI(self: Module, events: EventEmitter,
     let hasNotification = chatDto.unviewedMessagesCount > 0 or chatDto.unviewedMentionsCount > 0
     let notificationsCount = chatDto.unviewedMentionsCount
     let amIChatAdmin = comm.admin
-    let channelItem = initItem(chatDto.id, chatDto.name, chatDto.identicon, false, chatDto.color,
+    let channelItem = initItem(chatDto.id, chatDto.name, chatDto.identicon, chatDto.color,
       chatDto.emoji, chatDto.description, chatDto.chatType.int, amIChatAdmin, hasNotification,
       notificationsCount, chatDto.muted, blocked=false, active = false, c.position, c.categoryId)
     self.view.chatsModel().appendItem(channelItem)
@@ -202,7 +200,7 @@ proc buildCommunityUI(self: Module, events: EventEmitter,
         selectedItemId = cat.id
         selectedSubItemId = channelItem.id
 
-    var categoryItem = initItem(cat.id, cat.name, icon="", isIdenticon=false, color="", emoji="",
+    var categoryItem = initItem(cat.id, cat.name, icon="", color="", emoji="",
       description="", ChatType.Unknown.int, amIChatAdmin=false, hasNotificationPerCategory,
       notificationsCountPerCategory, muted=false, blocked=false, active=false,
       cat.position, cat.id)
@@ -218,7 +216,6 @@ proc createItemFromPublicKey(self: Module, publicKey: string): contacts_item.Ite
     contactDetails.details.id,
     contactDetails.displayName,
     contactDetails.icon,
-    contactDetails.isIdenticon,
     contactDetails.details.isMutualContact(),
     contactDetails.details.isBlocked(),
     contactDetails.details.isContactVerified(),
@@ -398,11 +395,10 @@ method addNewChat*(
   let notificationsCount = chatDto.unviewedMentionsCount
   var chatName = chatDto.name
   var chatImage = chatDto.identicon
-  var isIdenticon = false
   var isUsersListAvailable = true
   if(chatDto.chatType == ChatType.OneToOne):
     isUsersListAvailable = false
-    (chatName, chatImage, isIdenticon) = self.controller.getOneToOneChatNameAndImage(chatDto.id)
+    (chatName, chatImage) = self.controller.getOneToOneChatNameAndImage(chatDto.id)
   var amIChatAdmin = false
   if(belongsToCommunity):
     amIChatAdmin = self.controller.getMyCommunity().admin
@@ -410,7 +406,7 @@ method addNewChat*(
     amIChatAdmin = self.amIMarkedAsAdminUser(chatDto.members)
 
   if chatDto.categoryId.len == 0:
-    let item = initItem(chatDto.id, chatName, chatImage, isIdenticon, chatDto.color, chatDto.emoji,
+    let item = initItem(chatDto.id, chatName, chatImage, chatDto.color, chatDto.emoji,
       chatDto.description, chatDto.chatType.int, amIChatAdmin, hasNotification, notificationsCount,
       chatDto.muted, blocked=false, active=false, position = 0, chatDto.categoryId, chatDto.highlight)
     self.addSubmodule(chatDto.id, belongsToCommunity, isUsersListAvailable, events, settingsService, contactService, chatService,
@@ -426,7 +422,7 @@ method addNewChat*(
       return
 
     let channelItem = initSubItem(chatDto.id, chatDto.categoryId, chatDto.name, chatDto.identicon,
-      isIdenticon=false, chatDto.color, chatDto.emoji, chatDto.description, chatDto.chatType.int,
+      chatDto.color, chatDto.emoji, chatDto.description, chatDto.chatType.int,
       amIChatAdmin, hasNotification, notificationsCount, chatDto.muted, blocked=false, active=false,
       chatDto.position)
     self.addSubmodule(chatDto.id, belongsToCommunity, isUsersListAvailable, events, settingsService, contactService, chatService,
@@ -452,7 +448,7 @@ method removeCommunityChat*(self: Module, chatId: string) =
 method onCommunityCategoryCreated*(self: Module, cat: Category, chats: seq[ChatDto]) =
   if (self.doesCatOrChatExist(cat.id)):
     return
-  var categoryItem = initItem(cat.id, cat.name, icon="", isIdenticon=false, color="", emoji="",
+  var categoryItem = initItem(cat.id, cat.name, icon="", color="", emoji="",
     description="", ChatType.Unknown.int, amIChatAdmin=false, hasUnreadMessages=false,
     notificationsCount=0, muted=false, blocked=false, active=false, cat.position, cat.id)
   var categoryChannels: seq[SubItem]
@@ -460,7 +456,7 @@ method onCommunityCategoryCreated*(self: Module, cat: Category, chats: seq[ChatD
     let hasNotification = chatDto.unviewedMessagesCount > 0 or chatDto.unviewedMentionsCount > 0
     let notificationsCount = chatDto.unviewedMentionsCount
     let channelItem = initSubItem(chatDto.id, cat.id, chatDto.name, chatDto.identicon,
-      isIdenticon=false, chatDto.color, chatDto.emoji, chatDto.description, chatDto.chatType.int,
+      chatDto.color, chatDto.emoji, chatDto.description, chatDto.chatType.int,
       amIChatAdmin=true, hasNotification, notificationsCount, chatDto.muted, blocked=false,
       active=false, chatDto.position)
 
@@ -483,7 +479,7 @@ method onCommunityCategoryDeleted*(self: Module, cat: Category) =
     let hasNotification = chatDto.unviewedMessagesCount > 0 or chatDto.unviewedMentionsCount > 0
     let notificationsCount = chatDto.unviewedMentionsCount
     let amIChatAdmin = self.controller.getMyCommunity().admin
-    let channelItem = initItem(chatDto.id, chatDto.name, chatDto.identicon, isIdenticon=false,
+    let channelItem = initItem(chatDto.id, chatDto.name, chatDto.identicon,
       chatDto.color, chatDto.emoji, chatDto.description, chatDto.chatType.int, amIChatAdmin,
       hasNotification, notificationsCount, chatDto.muted, false, active = false,
       chatDto.position, categoryId="")
@@ -523,12 +519,12 @@ method onCommunityCategoryEdited*(self: Module, cat: Category, chats: seq[ChatDt
 
     if chatDto.categoryId == cat.id:
       let channelItem = initSubItem(chatDto.id, cat.id, chatDto.name, chatDto.identicon,
-        isIdenticon=false, chatDto.color, chatDto.emoji, chatDto.description, chatDto.chatType.int,
+        chatDto.color, chatDto.emoji, chatDto.description, chatDto.chatType.int,
         amIChatAdmin=true, hasNotification, notificationsCount, chatDto.muted, blocked=false,
         active=false, chatDto.position)
       categoryItem.prependSubItem(channelItem)
     else:
-      let channelItem = initItem(chatDto.id, chatDto.name, chatDto.identicon, isIdenticon=false,
+      let channelItem = initItem(chatDto.id, chatDto.name, chatDto.identicon,
         chatDto.color, chatDto.emoji, chatDto.description, chatDto.chatType.int, amIChatAdmin,
         hasNotification, notificationsCount, chatDto.muted, blocked=false, active = false,
         chatDto.position, categoryId="")
@@ -637,8 +633,7 @@ method onContactDetailsUpdated*(self: Module, publicKey: string) =
 
   let chatName = contactDetails.displayName
   let chatImage = contactDetails.icon
-  let isIdenticon = contactDetails.isIdenticon
-  self.view.chatsModel().updateItemDetails(publicKey, chatName, chatImage, isIdenticon)
+  self.view.chatsModel().updateItemDetails(publicKey, chatName, chatImage)
 
 method onNewMessagesReceived*(self: Module, chatId: string, unviewedMessagesCount: int, unviewedMentionsCount: int,
   messages: seq[MessageDto]) =
@@ -740,7 +735,7 @@ method prepareEditCategoryModel*(self: Module, categoryId: string) =
   let chats = self.controller.getChats(communityId, "")
   for chat in chats:
     let c = self.controller.getChatDetails(communityId, chat.id)
-    let item = initItem(c.id, c.name, icon="", isIdenticon=false, c.color, c.emoji, c.description,
+    let item = initItem(c.id, c.name, icon="", c.color, c.emoji, c.description,
       c.chatType.int, amIChatAdmin=false, hasUnreadMessages=false, notificationsCount=0, c.muted,
       blocked=false, active=false, c.position, categoryId="")
 
@@ -748,7 +743,7 @@ method prepareEditCategoryModel*(self: Module, categoryId: string) =
   let catChats = self.controller.getChats(communityId, categoryId)
   for chat in catChats:
     let c = self.controller.getChatDetails(communityId, chat.id)
-    let item = initItem(c.id, c.name, icon="", isIdenticon=false, c.color, c.emoji, c.description,
+    let item = initItem(c.id, c.name, icon="", c.color, c.emoji, c.description,
       c.chatType.int, amIChatAdmin=false, hasUnreadMessages=false, notificationsCount=0, c.muted,
       blocked=false, active=false, c.position, categoryId)
     self.view.editCategoryChannelsModel().appendItem(item)

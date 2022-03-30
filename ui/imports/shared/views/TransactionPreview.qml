@@ -263,7 +263,6 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 image.width: 32
                 image.height: 32
-                image.isIdenticon: true
             }
             SVGImage {
                 id: toInvalid

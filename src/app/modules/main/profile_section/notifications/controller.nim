@@ -46,7 +46,7 @@ proc getChatDetails*(self: Controller, chatId: string): ChatDto =
   return self.chatService.getChatById(chatId)
 
 proc getOneToOneChatNameAndImage*(self: Controller, chatId: string):
-  tuple[name: string, image: string, isIdenticon: bool] =
+  tuple[name: string, image: string] =
   return self.chatService.getOneToOneChatNameAndImage(chatId)
 
 proc unmuteChat*(self: Controller, chatId: string) =

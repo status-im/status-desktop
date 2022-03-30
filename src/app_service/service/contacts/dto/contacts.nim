@@ -16,7 +16,6 @@ type ContactsDto* = object
   ensVerified*: bool
   displayName*: string
   alias*: string
-  identicon*: string
   lastUpdated*: int64
   lastUpdatedLocally*: int64
   localNickname*: string
@@ -39,7 +38,6 @@ proc `$`*(self: ContactsDto): string =
     name: {self.name},
     ensVerified: {self.ensVerified},
     alias: {self.alias},
-    identicon: {self.identicon},
     lastUpdated: {self.lastUpdated},
     lastUpdatedLocally: {self.lastUpdatedLocally},
     localNickname: {self.localNickname},
@@ -72,7 +70,6 @@ proc toContactsDto*(jsonObj: JsonNode): ContactsDto =
   discard jsonObj.getProp("ensVerified", result.ensVerified)
   discard jsonObj.getProp("displayName", result.displayName)
   discard jsonObj.getProp("alias", result.alias)
-  discard jsonObj.getProp("identicon", result.identicon)
   discard jsonObj.getProp("lastUpdated", result.lastUpdated)
   discard jsonObj.getProp("lastUpdatedLocally", result.lastUpdatedLocally)
   discard jsonObj.getProp("localNickname", result.localNickname)

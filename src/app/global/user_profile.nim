@@ -7,10 +7,8 @@ QtObject:
     # fields which cannot change
     username: string
     address: string
-    identicon: string
     pubKey: string
     # fields which may change during runtime
-    isIdenticon: bool
     ensName: string
     displayName: string
     firstEnsName: string
@@ -30,12 +28,10 @@ QtObject:
     new(result, delete)
     result.setup
 
-  proc setFixedData*(self: UserProfile, username: string, address: string, identicon: string, pubKey: string) =
+  proc setFixedData*(self: UserProfile, username: string, address: string, pubKey: string) =
     self.username = username
     self.address = address
-    self.identicon = identicon
     self.pubKey = pubKey
-    self.isIdenticon = true
 
   proc getAddress*(self: UserProfile): string {.slot.} =
     self.address
@@ -146,24 +142,12 @@ QtObject:
 
   proc imageChanged*(self: UserProfile) {.signal.}
 
-  proc getIsIdenticon*(self: UserProfile): bool {.slot.} =
-    return self.isIdenticon
-
-  proc getIdenticon*(self: UserProfile): string {.slot.} =
-    self.identicon
-
   proc getThumbnailImage*(self: UserProfile): string {.slot.} =
     return self.thumbnailImage
 
-  QtProperty[bool] isIdenticon:
-    read = getIsIdenticon
-    notify = imageChanged
 
   proc getIcon*(self: UserProfile): string {.slot.} =
-    if(self.thumbnailImage.len > 0):
-      return self.thumbnailImage
-
-    return self.identicon
+    return self.thumbnailImage
 
   # this is not a slot
   proc setThumbnailImage*(self: UserProfile, image: string) =
@@ -171,15 +155,10 @@ QtObject:
       return
 
     self.thumbnailImage = image
-    self.isIdenticon = self.thumbnailImage.len == 0
     self.imageChanged()
 
   QtProperty[string] icon:
     read = getIcon
-    notify = imageChanged
-
-  QtProperty[string] identicon:
-    read = getIdenticon
     notify = imageChanged
 
   QtProperty[string] thumbnailImage:
@@ -189,10 +168,7 @@ QtObject:
   proc largeImageChanged*(self: UserProfile) {.signal.}
 
   proc getLargeImage*(self: UserProfile): string {.slot.} =
-    if(self.largeImage.len > 0):
-      return self.largeImage
-
-    return self.identicon
+    return self.largeImage
 
   # this is not a slot
   proc setLargeImage*(self: UserProfile, image: string) =

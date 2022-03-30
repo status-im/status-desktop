@@ -7,7 +7,6 @@ type
     Id = UserRole + 1
     Name
     Icon
-    IsIdenticon
     Color
 
 QtObject:
@@ -43,7 +42,6 @@ QtObject:
       ModelRole.Id.int:"itemId",
       ModelRole.Name.int:"name",
       ModelRole.Icon.int:"icon",
-      ModelRole.IsIdenticon.int:"isIdenticon",
       ModelRole.Color.int:"color"
     }.toTable
 
@@ -64,8 +62,6 @@ QtObject:
       result = newQVariant(item.name)
     of ModelRole.Icon:
       result = newQVariant(item.icon)
-    of ModelRole.IsIdenticon:
-      result = newQVariant(item.isIdenticon)
     of ModelRole.Color:
       result = newQVariant(item.color)
 

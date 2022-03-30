@@ -5,7 +5,6 @@ type
     `type`: int
     amIChatAdmin: bool
     icon: string
-    isIdenticon: bool
     color: string
     emoji: string
     description: string
@@ -18,14 +17,13 @@ type
     categoryId: string
     highlight: bool
 
-proc setup*(self: BaseItem, id, name, icon: string, isIdenticon: bool, color, emoji, description: string,
+proc setup*(self: BaseItem, id, name, icon: string, color, emoji, description: string,
   `type`: int, amIChatAdmin: bool, hasUnreadMessages: bool, notificationsCount: int, muted, blocked, active: bool,
     position: int, categoryId: string = "", highlight: bool = false) =
   self.id = id
   self.name = name
   self.amIChatAdmin = amIChatAdmin
   self.icon = icon
-  self.isIdenticon = isIdenticon
   self.color = color
   self.emoji = emoji
   self.description = description
@@ -39,11 +37,11 @@ proc setup*(self: BaseItem, id, name, icon: string, isIdenticon: bool, color, em
   self.categoryId = categoryId
   self.highlight = highlight
 
-proc initBaseItem*(id, name, icon: string, isIdenticon: bool, color, emoji, description: string, `type`: int,
+proc initBaseItem*(id, name, icon: string, color, emoji, description: string, `type`: int,
     amIChatAdmin: bool, hasUnreadMessages: bool, notificationsCount: int, muted, blocked, active: bool,
     position: int, categoryId: string = "", highlight: bool = false): BaseItem =
   result = BaseItem()
-  result.setup(id, name, icon, isIdenticon, color, emoji, description, `type`, amIChatAdmin,
+  result.setup(id, name, icon, color, emoji, description, `type`, amIChatAdmin,
   hasUnreadMessages, notificationsCount, muted, blocked, active, position, categoryId, highlight)
 
 proc delete*(self: BaseItem) =
@@ -66,12 +64,6 @@ method icon*(self: BaseItem): string {.inline base.} =
 
 method `icon=`*(self: var BaseItem, value: string) {.inline base.} =
   self.icon = value
-
-method isIdenticon*(self: BaseItem): bool {.inline base.} =
-  self.isIdenticon
-
-method `isIdenticon=`*(self: var BaseItem, value: bool) {.inline base.} =
-  self.isIdenticon = value
 
 method color*(self: BaseItem): string {.inline base.} =
   self.color

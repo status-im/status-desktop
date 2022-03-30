@@ -18,7 +18,6 @@ Column {
     property string chatColor: ""
     property string chatEmoji: ""
     property string chatIcon: ""
-    property bool chatIconIsIdenticon: true
     property bool didIJoinedChat: true
 
     signal joinChatClicked()

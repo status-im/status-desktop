@@ -36,7 +36,6 @@ Item {
     property bool isMessageActive: false
     property bool amISender: false
     property string senderIcon: ""
-    property bool isSenderIconIdenticon: true
     property bool isHovered: false
     property bool isInPinnedPopup: false
     property string communityId
@@ -303,7 +302,6 @@ Item {
                 amISenderOfTheRepliedMessage = obj.amISender
                 repliedMessageContentType = obj.contentType
                 repliedMessageSenderIcon = obj.senderIcon
-                repliedMessageSenderIconIsIdenticon = obj.isSenderIconIdenticon
                 // TODO: not sure about is edited at the moment
                 repliedMessageIsEdited = false
                 repliedMessageSender = obj.senderDisplayName
@@ -339,8 +337,7 @@ Item {
                                             pinnedRectangleLoader.active ? pinnedRectangleLoader.bottom : parent.top
             anchors.topMargin: chatReply.active || pinnedRectangleLoader.active ? 4 : Style.current.smallPadding
 
-            icon: root.senderIcon
-            isIdenticon: root.isSenderIconIdenticon
+            image: root.senderIcon
             pubkey: senderId
             name: senderDisplayName
             showRing: !(root.amISender || senderIsAdded)

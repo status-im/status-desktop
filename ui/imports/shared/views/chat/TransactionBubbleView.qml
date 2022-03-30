@@ -51,7 +51,6 @@ Item {
     property var selectedRecipient: {
         return {
             address: transactionParamsObject.address,
-            identicon: senderIcon,
             name: senderDisplayName,
             type: RecipientSelector.Type.Contact,
             alias: senderDisplayName

@@ -30,7 +30,6 @@ StatusModal {
     property string userNickname: ""
     property string userEnsName: ""
     property string userIcon: ""
-    property bool isUserIconIdenticon: true
     property string text: ""
 
     readonly property int innerMargin: 20
@@ -56,14 +55,7 @@ StatusModal {
         userName = contactDetails.alias
         userNickname = contactDetails.localNickname
         userEnsName = contactDetails.name
-        if (contactDetails.isDisplayIconIdenticon || (!contactDetails.isContact &&
-            Global.privacyModuleInst.profilePicturesVisibility !==
-            Constants.profilePicturesVisibility.everyone)) {
-            userIcon = contactDetails.identicon
-        } else {
-            userIcon = contactDetails.displayIcon
-        }
-        isUserIconIdenticon = contactDetails.isDisplayIconIdenticon
+        userIcon = contactDetails.displayIcon
         userIsEnsVerified = contactDetails.ensVerified
         userIsBlocked = contactDetails.isBlocked
         isAddedContact = contactDetails.isContact
@@ -118,7 +110,6 @@ StatusModal {
                 displayName: popup.userDisplayName
                 pubkey: popup.userPublicKey
                 icon: popup.isCurrentUser ? popup.profileStore.icon : popup.userIcon
-                isIdenticon: popup.isCurrentUser ? popup.profileStore.isIdenticon : popup.isUserIconIdenticon
 
                 displayNameVisible: false
                 pubkeyVisible: false

@@ -20,15 +20,13 @@ Item {
     property string publicKey: ""
     property string name: ""
     property string icon: ""
-    property string identicon: ""
-    property bool isIdenticon: true
     property bool isCurrentUser: false
     property bool isAdded: false
     property string iconToShow: {
-        if (isIdenticon || (!isAdded &&
+        if ((!isAdded &&
             Global.privacyModuleInst.profilePicturesVisibility !==
             Constants.profilePicturesVisibility.everyone)) {
-            return identicon
+            return ""
         }
 
         return icon
@@ -61,8 +59,7 @@ Item {
             imageHeight: 28
             name: wrapper.name
             pubkey: wrapper.publicKey
-            icon: wrapper.iconToShow
-            isIdenticon: wrapper.isIdenticon
+            image: wrapper.iconToShow
             showRing: !(wrapper.isCurrentUser || wrapper.isAdded)
         }
 
@@ -129,7 +126,6 @@ Item {
                     messageContextMenu.selectedUserPublicKey = wrapper.publicKey
                     messageContextMenu.selectedUserDisplayName = wrapper.name
                     messageContextMenu.selectedUserIcon = wrapper.iconToShow
-                    messageContextMenu.isSelectedUserIconIdenticon = wrapper.isIdenticon
                     messageContextMenu.popup()
                 }
             }

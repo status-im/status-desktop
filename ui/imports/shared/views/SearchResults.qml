@@ -87,8 +87,7 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             anchors.left: parent.left
             anchors.leftMargin: Style.current.padding
-            image.source: globalUtils.generateIdenticon(root.pubKey)
-            image.isIdenticon: true
+            name: root.userName
         }
 
         StyledText {

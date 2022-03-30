@@ -49,8 +49,7 @@ Item {
                 isContact: model.isContact
                 isUser: false
                 name: model.name
-                identicon: model.icon
-                isIdenticon: model.isIdenticon
+                image: model.icon
                 isVisible: {
                     return model.isContact && !model.isBlocked && (root.filterText === "" ||
                     root.matchesAlias(model.name.toLowerCase(), root.filterText.toLowerCase()) ||

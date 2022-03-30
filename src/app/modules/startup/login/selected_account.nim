@@ -24,12 +24,6 @@ QtObject:
   QtProperty[string] username:
     read = getName
 
-  proc getIdenticon(self: SelectedAccount): string {.slot.} =
-    return self.item.getIdenticon()
-
-  QtProperty[string] identicon:
-    read = getIdenticon
-
   proc getKeyUid(self: SelectedAccount): string {.slot.} =
     return self.item.getKeyUid()
 

@@ -6,7 +6,6 @@ type
     PubKey = UserRole + 1
     Name
     Icon
-    IsIdenticon
     IsMutualContact
     IsBlocked
     VerificationState
@@ -41,7 +40,6 @@ QtObject:
       ModelRole.PubKey.int:"pubKey",
       ModelRole.Name.int:"name",
       ModelRole.Icon.int:"icon",
-      ModelRole.IsIdenticon.int:"isIdenticon",
       ModelRole.IsMutualContact.int:"isMutualContact",
       ModelRole.IsBlocked.int:"isBlocked",
       ModelRole.VerificationState.int:"verificationState"
@@ -62,8 +60,6 @@ QtObject:
         result = newQVariant(item.name)
       of ModelRole.Icon:
         result = newQVariant(item.icon)
-      of ModelRole.IsIdenticon:
-        result = newQVariant(item.isIdenticon)
       of ModelRole.IsMutualContact:
         result = newQVariant(item.isMutualContact)
       of ModelRole.IsBlocked:
@@ -129,7 +125,6 @@ QtObject:
     self.dataChanged(index, index, @[
       ModelRole.Name.int,
       ModelRole.Icon.int,
-      ModelRole.IsIdenticon.int,
       ModelRole.IsMutualContact.int,
       ModelRole.IsBlocked.int,
       ModelRole.VerificationState.int

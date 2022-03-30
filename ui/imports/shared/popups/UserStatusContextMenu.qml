@@ -26,7 +26,6 @@ PopupMenu {
         displayName: root.store.userProfileInst.name
         pubkey: root.store.userProfileInst.pubKey
         icon: root.store.userProfileInst.icon
-        isIdenticon: root.store.userProfileInst.isIdenticon
     }
 
     Item {

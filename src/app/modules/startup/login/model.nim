@@ -5,7 +5,6 @@ import item
 type
   ModelRole {.pure.} = enum
     Name = UserRole + 1
-    Identicon
     ThumbnailImage
     LargeImage
     KeyUid
@@ -32,7 +31,6 @@ QtObject:
   method roleNames(self: Model): Table[int, string] =
     {
       ModelRole.Name.int:"username",
-      ModelRole.Identicon.int:"identicon",
       ModelRole.ThumbnailImage.int:"thumbnailImage",
       ModelRole.LargeImage.int:"largeImage",
       ModelRole.KeyUid.int:"keyUid"
@@ -51,8 +49,6 @@ QtObject:
     case enumRole:
     of ModelRole.Name:
       result = newQVariant(item.getName())
-    of ModelRole.Identicon:
-      result = newQVariant(item.getIdenticon())
     of ModelRole.ThumbnailImage:
       result = newQVariant(item.getThumbnailImage())
     of ModelRole.LargeImage:

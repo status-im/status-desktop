@@ -75,12 +75,11 @@ method load*(self: Module) =
   let notificationsCount = chatDto.unviewedMentionsCount
   var chatName = chatDto.name
   var chatImage = chatDto.identicon
-  var isIdenticon = false
   if(chatDto.chatType == ChatType.OneToOne):
-    (chatName, chatImage, isIdenticon) = self.controller.getOneToOneChatNameAndImage()
+    (chatName, chatImage) = self.controller.getOneToOneChatNameAndImage()
 
   self.view.load(chatDto.id, chatDto.chatType.int, self.controller.belongsToCommunity(),
-    self.controller.isUsersListAvailable(), chatName, chatImage, isIdenticon,
+    self.controller.isUsersListAvailable(), chatName, chatImage,
     chatDto.color, chatDto.description, chatDto.emoji, hasNotification, notificationsCount,
     chatDto.muted, chatDto.position)
 
@@ -163,8 +162,6 @@ proc buildPinnedMessageItem(self: Module, messageId: string, actionInitiatedBy: 
     contactDetails.displayName,
     contactDetails.details.localNickname,
     contactDetails.icon,
-    contactDetails.details.identicon,
-    contactDetails.isIdenticon,
     isCurrentUser,
     contactDetails.details.added,
     m.outgoingStatus,
@@ -315,7 +312,6 @@ method onContactDetailsUpdated*(self: Module, contactId: string) =
       item.senderDisplayName = updatedContact.displayName
       item.senderLocalName = updatedContact.details.localNickname
       item.senderIcon = updatedContact.icon
-      item.isSenderIconIdenticon = updatedContact.isIdenticon
     if(item.messageContainsMentions):
       let (m, _, err) = self.controller.getMessageDetails(item.id)
       if(err.len == 0):
@@ -323,7 +319,7 @@ method onContactDetailsUpdated*(self: Module, contactId: string) =
         item.messageContainsMentions = m.containsContactMentions()
 
   if(self.controller.getMyChatId() == contactId):
-    self.view.updateChatDetailsNameAndIcon(updatedContact.displayName, updatedContact.icon, updatedContact.isIdenticon)
+    self.view.updateChatDetailsNameAndIcon(updatedContact.displayName, updatedContact.icon)
 
 method onNotificationsUpdated*(self: Module, hasUnreadMessages: bool, notificationCount: int) =
   self.view.updateChatDetailsNotifications(hasUnreadMessages, notificationCount)

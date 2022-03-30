@@ -33,7 +33,6 @@ ModalPopup {
         delegate: ContactRequestPanel {
             contactName: model.name
             contactIcon: model.icon
-            contactIconIsIdenticon: model.isIdenticon
             onOpenProfilePopup: {
                 Global.openProfilePopup(model.pubKey)
             }

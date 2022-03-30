@@ -17,7 +17,6 @@ Loader {
     property bool amISenderOfTheRepliedMessage
     property int repliedMessageContentType
     property string repliedMessageSenderIcon
-    property bool repliedMessageSenderIconIsIdenticon
     property bool repliedMessageIsEdited
     property string repliedMessageSender
     property string repliedMessageSenderPubkey
@@ -109,8 +108,7 @@ Loader {
 
                 name: repliedMessageSender
                 pubkey: repliedMessageSenderPubkey
-                icon: repliedMessageSenderIcon
-                isIdenticon: repliedMessageSenderIconIsIdenticon
+                image: repliedMessageSenderIcon
                 showRing: !(amISenderOfTheRepliedMessage || repliedMessageSenderIsAdded)
 
                 onClicked: root.clickMessage(true, false, false, null, false, false, true)

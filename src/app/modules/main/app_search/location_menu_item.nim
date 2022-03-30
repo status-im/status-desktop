@@ -6,9 +6,9 @@ type
   Item* = ref object of BaseItem
     subItems: SubModel
 
-proc initItem*(value, text, image, icon, iconColor: string = "", isIdenticon: bool = true): Item =
+proc initItem*(value, text, image, icon, iconColor: string = ""): Item =
   result = Item()
-  result.setup(value, text, image, icon, iconColor, isIdenticon)
+  result.setup(value, text, image, icon, iconColor)
   result.subItems = newSubModel()
 
 proc delete*(self: Item) =
@@ -25,7 +25,6 @@ proc `$`*(self: Item): string =
     imageSource: {self.image},
     iconName: {self.icon},
     iconColor: {self.iconColor},
-    isIdenticon: {self.isIdenticon},
     subItems:[
       {$self.subItems}
     ]"""
@@ -37,7 +36,6 @@ proc toJsonNode*(self: Item): JsonNode =
     "imageSource": self.image,
     "iconName": self.icon,
     "iconColor": self.iconColor,
-    "isIdenticon": self.isIdenticon
   }
 
 proc setSubItems*(self: Item, subItems: seq[SubItem]) =

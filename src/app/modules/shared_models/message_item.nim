@@ -15,8 +15,6 @@ type
     amISender: bool
     senderIsAdded: bool
     senderIcon: string
-    senderIdenticon: string
-    isSenderIconIdenticon: bool
     seen: bool
     outgoingStatus: string
     messageText: string
@@ -45,9 +43,7 @@ proc initItem*(
     senderId,
     senderDisplayName,
     senderLocalName,
-    senderIcon,
-    senderIdenticon: string,
-    isSenderIconIdenticon,
+    senderIcon: string,
     amISender: bool,
     senderIsAdded: bool,
     outgoingStatus,
@@ -74,8 +70,6 @@ proc initItem*(
   result.amISender = amISender
   result.senderIsAdded = senderIsAdded
   result.senderIcon = senderIcon
-  result.senderIdenticon = senderIdenticon
-  result.isSenderIconIdenticon = isSenderIconIdenticon
   result.seen = seen
   result.outgoingStatus = outgoingStatus
   result.messageText = text
@@ -106,7 +100,6 @@ proc `$`*(self: Item): string =
     senderLocalName: {self.senderLocalName},
     amISender: {$self.amISender},
     senderIsAdded: {$self.senderIsAdded},
-    isSenderIconIdenticon: {$self.isSenderIconIdenticon},
     seen: {$self.seen},
     outgoingStatus:{$self.outgoingStatus},
     messageText:{self.messageText},
@@ -153,15 +146,6 @@ proc senderIcon*(self: Item): string {.inline.} =
 
 proc `senderIcon=`*(self: Item, value: string) {.inline.} =
   self.senderIcon = value
-
-proc senderIdenticon*(self: Item): string {.inline.} =
-  self.senderIdenticon
-
-proc isSenderIconIdenticon*(self: Item): bool {.inline.} =
-  self.isSenderIconIdenticon
-
-proc `isSenderIconIdenticon=`*(self: Item, value: bool) {.inline.} =
-  self.isSenderIconIdenticon = value
 
 proc amISender*(self: Item): bool {.inline.} =
   self.amISender
@@ -262,8 +246,6 @@ proc toJsonNode*(self: Item): JsonNode =
     "amISender": self.amISender,
     "senderIsAdded": self.senderIsAdded,
     "senderIcon": self.senderIcon,
-    "senderIdenticon": self.senderIdenticon,
-    "isSenderIconIdenticon": self.isSenderIconIdenticon,
     "seen": self.seen,
     "outgoingStatus": self.outgoingStatus,
     "messageText": self.messageText,

@@ -11,7 +11,6 @@ import StatusQ.Components 0.1
 Rectangle {
     property string contactName
     property string contactIcon
-    property string contactIconIsIdenticon
     signal openProfilePopup()
     signal blockContactActionTriggered()
     signal acceptClicked()
@@ -32,7 +31,6 @@ Rectangle {
         anchors.leftMargin: Style.current.padding
         anchors.verticalCenter: parent.verticalCenter
         image.source: contactIcon
-        image.isIdenticon: contactIconIsIdenticon
     }
 
     StyledText {

@@ -9,15 +9,14 @@ import StatusQ.Components 0.1
 Loader {
     id: root
 
-    property int imageHeight: 36
-    property int imageWidth: 36
+    property int imageHeight: compact ? 36 : 40
+    property int imageWidth: compact ? 36 : 40
+    property bool compact: true
 
     property string name
     property string pubkey
-    property string icon: ""
-    property bool isIdenticon: false
+    property string image
     property bool showRing: false
-
     property bool interactive: true
 
     signal clicked()
@@ -29,8 +28,7 @@ Loader {
         image {
             width: root.imageWidth
             height: root.imageHeight
-            source: root.isIdenticon ? "" : root.icon
-            isIdenticon: root.isIdenticon
+            source: root.image
         }
         icon {
             width: root.imageWidth

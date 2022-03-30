@@ -56,7 +56,7 @@ proc getContact*(self: Controller, id: string): ContactsDto =
   return self.contactsService.getContactById(id)
 
 proc getContactNameAndImage*(self: Controller, contactId: string):
-  tuple[name: string, image: string, isIdenticon: bool] =
+  tuple[name: string, image: string] =
   return self.contactsService.getContactNameAndImage(contactId)
 
 proc addContact*(self: Controller, publicKey: string) =

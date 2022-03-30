@@ -584,7 +584,6 @@ QtObject {
             return {
                 displayName: "",
                 displayIcon: "",
-                isDisplayIconIdenticon: true,
                 publicKey: publicKey,
                 name: "",
                 ensVerified: false,
@@ -592,7 +591,6 @@ QtObject {
                 lastUpdated: 0,
                 lastUpdatedLocally: 0,
                 localNickname: "",
-                identicon: "",
                 thumbnailImage: "",
                 largeImage: "",
                 isContact: false,

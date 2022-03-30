@@ -7,11 +7,11 @@ type
   SubItem* = ref object of BaseItem
     parentId: string
 
-proc initSubItem*(id, parentId, name, icon: string, isIdenticon: bool, color, emoji, description: string,
+proc initSubItem*(id, parentId, name, icon: string, color, emoji, description: string,
   `type`: int, amIChatAdmin: bool, hasUnreadMessages: bool, notificationsCount: int, muted, blocked,
   active: bool, position: int): SubItem =
   result = SubItem()
-  result.setup(id, name, icon, isIdenticon, color, emoji, description, `type`, amIChatAdmin,
+  result.setup(id, name, icon, color, emoji, description, `type`, amIChatAdmin,
     hasUnreadMessages, notificationsCount, muted, blocked, active, position)
   result.parentId = parentId
 
@@ -28,7 +28,6 @@ proc `$`*(self: SubItem): string =
     name: {self.name},
     amIChatAdmin: {self.amIChatAdmin},
     icon: {self.icon},
-    isIdenticon: {self.isIdenticon},
     color: {self.color},
     emoji: {self.emoji},
     description: {self.description},
@@ -47,7 +46,6 @@ proc toJsonNode*(self: SubItem): JsonNode =
     "name": self.name,
     "amIChatAdmin": self.amIChatAdmin,
     "icon": self.icon,
-    "isIdenticon": self.isIdenticon,
     "color": self.color,
     "emoji": self.emoji,
     "description": self.description,

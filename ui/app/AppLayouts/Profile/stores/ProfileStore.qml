@@ -13,8 +13,6 @@ QtObject {
     property string ensName: userProfile.preferredName || userProfile.firstEnsName || userProfile.ensName
     property string profileLargeImage: userProfile.largeImage
     property string icon: userProfile.icon
-    property bool isIdenticon: userProfile.isIdenticon
-
 
     function uploadImage(source, aX, aY, bX, bY) {
         return root.profileModule.upload(source, aX, aY, bX, bY)

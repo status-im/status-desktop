@@ -33,7 +33,6 @@ Item {
             property string alias: model.alias
             property string ensName: model.ensName
             property string icon: model.icon
-            property bool isIdenticon: model.isIdenticon
             property bool isAdded: model.isAdded
         }
     }
@@ -73,7 +72,6 @@ Item {
                 alias: listItem.alias,
                 ensName: listItem.ensName,
                 icon: listItem.icon,
-                isIdenticon: listItem.isIdenticon,
                 isAdded: listItem.isAdded
             }
             if (all || isAcceptedItem(filter, item)) {

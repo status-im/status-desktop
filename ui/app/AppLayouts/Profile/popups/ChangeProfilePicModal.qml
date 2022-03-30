@@ -19,10 +19,8 @@ ModalPopup {
 
     property string selectedImage // selectedImage is for us to be able to analyze it before setting it as current
     property string uploadError
-    property url largeImage: !popup.profileStore.isIdenticon?
-                                 popup.profileStore.profileLargeImage :
-                                 popup.profileStore.icon
-    property bool hasIdentityImage: !popup.profileStore.isIdenticon
+    property url largeImage: popup.profileStore.profileLargeImage
+    property bool hasIdentityImage: !!popup.profileStore.profileLargeImage
 
     onClosed: {
         destroy()

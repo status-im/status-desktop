@@ -103,7 +103,6 @@ Item {
             name: model.name
             publicKey: model.pubKey
             icon: model.icon
-            isIdenticon: model.isIdenticon
             isMutualContact: model.isMutualContact
             isBlocked: model.isBlocked
             verificationState: model.verificationState

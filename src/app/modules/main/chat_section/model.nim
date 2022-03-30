@@ -8,7 +8,6 @@ type
     Name
     AmIChatAdmin
     Icon
-    IsIdenticon
     Color
     Emoji
     Description
@@ -75,7 +74,6 @@ QtObject:
       ModelRole.Name.int:"name",
       ModelRole.AmIChatAdmin.int:"amIChatAdmin",
       ModelRole.Icon.int:"icon",
-      ModelRole.IsIdenticon.int:"isIdenticon",
       ModelRole.Color.int:"color",
       ModelRole.Emoji.int:"emoji",
       ModelRole.Description.int:"description",
@@ -111,8 +109,6 @@ QtObject:
       result = newQVariant(item.amIChatAdmin)
     of ModelRole.Icon:
       result = newQVariant(item.icon)
-    of ModelRole.IsIdenticon:
-      result = newQVariant(item.isIdenticon)
     of ModelRole.Color:
       result = newQVariant(item.color)
     of ModelRole.Emoji:
@@ -253,15 +249,14 @@ QtObject:
       if self.items[i].subItems.blockUnblockItemById(id, blocked):
         return
 
-  proc updateItemDetails*(self: Model, id, name, icon: string, isIdenticon: bool) =
+  proc updateItemDetails*(self: Model, id, name, icon: string) =
     ## This updates only first level items, it doesn't update subitems, since subitems cannot have custom icon.
     for i in 0 ..< self.items.len:
       if(self.items[i].id == id):
         self.items[i].BaseItem.name = name
         self.items[i].BaseItem.icon = icon
-        self.items[i].BaseItem.isIdenticon = isIdenticon
         let index = self.createIndex(i, 0, nil)
-        self.dataChanged(index, index, @[ModelRole.Name.int, ModelRole.Icon.int, ModelRole.IsIdenticon.int])
+        self.dataChanged(index, index, @[ModelRole.Name.int, ModelRole.Icon.int])
         return
 
   proc renameItem*(self: Model, id: string, name: string) =

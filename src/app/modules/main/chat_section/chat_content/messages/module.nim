@@ -78,8 +78,6 @@ proc createFetchMoreMessagesItem(self: Module): Item =
     senderDisplayName = "",
     senderLocalName = "",
     senderIcon = "",
-    senderIdenticon = "",
-    isSenderIconIdenticon = false,
     amISender = false,
     senderIsAdded = false,
     outgoingStatus = "",
@@ -100,13 +98,12 @@ proc createFetchMoreMessagesItem(self: Module): Item =
 proc createChatIdentifierItem(self: Module): Item =
   let chatDto = self.controller.getChatDetails()
   var chatName = chatDto.name
-  var chatIcon = chatDto.identicon
-  var isIdenticon = false
+  var chatIcon = ""
   var senderIsAdded = false
   if(chatDto.chatType == ChatType.OneToOne):
     let sender = self.controller.getContactDetails(chatDto.id)
     senderIsAdded = sender.details.added
-    (chatName, chatIcon, isIdenticon) = self.controller.getOneToOneChatNameAndImage()
+    (chatName, chatIcon) = self.controller.getOneToOneChatNameAndImage()
 
   result = initItem(
     CHAT_IDENTIFIER_MESSAGE_ID,
@@ -116,8 +113,6 @@ proc createChatIdentifierItem(self: Module): Item =
     senderDisplayName = chatName,
     senderLocalName = "",
     senderIcon = chatIcon,
-    chatDto.identicon,
-    isIdenticon,
     amISender = false,
     senderIsAdded,
     outgoingStatus = "",
@@ -181,8 +176,6 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
         sender.displayName,
         sender.details.localNickname,
         sender.icon,
-        sender.details.identicon,
-        sender.isIdenticon,
         isCurrentUser,
         sender.details.added,
         m.outgoingStatus,
@@ -270,8 +263,6 @@ method messageAdded*(self: Module, message: MessageDto) =
     sender.displayName,
     sender.details.localNickname,
     sender.icon,
-    sender.details.identicon,
-    sender.isIdenticon,
     isCurrentUser,
     sender.details.added,
     message.outgoingStatus,
@@ -398,8 +389,7 @@ method updateContactDetails*(self: Module, contactId: string) =
     if(item.senderId == contactId):
       item.senderDisplayName = updatedContact.displayName
       item.senderLocalName = updatedContact.details.localNickname
-      item.senderIcon = updatedContact.icon
-      item.isSenderIconIdenticon = updatedContact.isIdenticon
+      item.senderIcon = ""
       item.senderIsAdded = updatedContact.details.added
     if(item.messageContainsMentions):
       let (m, _, err) = self.controller.getMessageDetails(item.id)
@@ -492,7 +482,7 @@ method didIJoinedChat*(self: Module): bool =
     if (member.id == myPublicKey):
       return member.joined
   return true
-  
+
 method onChatMemberUpdated*(self: Module, publicKey: string, admin: bool, joined: bool) =
   let chatDto = self.controller.getChatDetails()
   if(chatDto.chatType != ChatType.PrivateGroupChat):
@@ -501,5 +491,5 @@ method onChatMemberUpdated*(self: Module, publicKey: string, admin: bool, joined
   let myPublicKey = singletonInstance.userProfile.getPubKey()
   if(publicKey != myPublicKey):
     return
-  
+
   self.view.model().refreshItemWithId(CHAT_IDENTIFIER_MESSAGE_ID)

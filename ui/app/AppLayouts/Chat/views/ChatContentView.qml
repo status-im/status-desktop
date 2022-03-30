@@ -93,7 +93,6 @@ ColumnLayout {
             }
         }
         chatInfoButton.image.source: chatContentModule? chatContentModule.chatDetails.icon : ""
-        chatInfoButton.image.isIdenticon: chatContentModule? chatContentModule.chatDetails.isIdenticon : false
         chatInfoButton.icon.color: chatContentModule? chatContentModule.chatDetails.color : ""
         chatInfoButton.icon.emoji: chatContentModule? chatContentModule.chatDetails.emoji : ""
         chatInfoButton.icon.emojiSize: "24x24"

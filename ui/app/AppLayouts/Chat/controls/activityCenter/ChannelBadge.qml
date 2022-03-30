@@ -19,7 +19,6 @@ Item {
     property color textColor
     property string chatId: ""
     property string profileImage: ""
-    property string identicon
 
     SVGImage {
         id: channelIcon
@@ -39,8 +38,7 @@ Item {
         image: StatusImageSettings {
             width: 16
             height: 16
-            source: profileImage || identicon
-            isIdenticon: true
+            source: profileImage
         }
         icon: StatusIconSettings {
             width: 16

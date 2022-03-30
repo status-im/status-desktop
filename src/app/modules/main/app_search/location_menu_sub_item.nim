@@ -6,9 +6,9 @@ export base_item
 type
   SubItem* = ref object of BaseItem
 
-proc initSubItem*(value, text, image, icon, iconColor: string, isIdenticon: bool): SubItem =
+proc initSubItem*(value, text, image, icon, iconColor: string): SubItem =
   result = SubItem()
-  result.setup(value, text, image, icon, iconColor, isIdenticon)
+  result.setup(value, text, image, icon, iconColor)
 
 proc delete*(self: SubItem) =
   self.BaseItem.delete
@@ -20,7 +20,6 @@ proc `$`*(self: SubItem): string =
     imageSource: {self.image},
     iconName: {self.icon},
     iconColor: {self.iconColor},
-    isIdenticon: {self.isIdenticon}
     ]"""
 
 proc toJsonNode*(self: SubItem): JsonNode =
@@ -30,5 +29,4 @@ proc toJsonNode*(self: SubItem): JsonNode =
     "imageSource": self.image,
     "iconName": self.icon,
     "iconColor": self.iconColor,
-    "isIdenticon": self.isIdenticon
   }
