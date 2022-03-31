@@ -14,7 +14,8 @@ type
     IsChat,
     CurrencyBalance,
     Assets,
-    Emoji
+    Emoji,
+    DerivedFrom
 
 QtObject:
   type
@@ -38,7 +39,7 @@ QtObject:
 
   proc countChanged(self: Model) {.signal.}
 
-  proc getCount(self: Model): int {.slot.} =
+  proc getCount*(self: Model): int {.slot.} =
     self.items.len
 
   QtProperty[int] count:
@@ -60,7 +61,8 @@ QtObject:
       ModelRole.IsChat.int:"isChat",
       ModelRole.Assets.int:"assets",
       ModelRole.CurrencyBalance.int:"currencyBalance",
-      ModelRole.Emoji.int: "emoji"
+      ModelRole.Emoji.int: "emoji",
+      ModelRole.DerivedFrom.int: "derivedfrom"
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -96,6 +98,8 @@ QtObject:
       result = newQVariant(item.getAssets())
     of ModelRole.Emoji:
       result = newQVariant(item.getEmoji())
+    of ModelRole.DerivedFrom:
+      result = newQVariant(item.getDerivedFrom())
 
   proc setItems*(self: Model, items: seq[Item]) =
     self.beginResetModel()

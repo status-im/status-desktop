@@ -63,7 +63,8 @@ method refreshWalletAccounts*(self: Module) =
       w.isChat,
       w.getCurrencyBalance(),
       assets,
-      w.emoji
+      w.emoji,
+      w.derivedfrom
     ))
 
   self.view.setItems(items)
@@ -101,17 +102,26 @@ method viewDidLoad*(self: Module) =
   self.moduleLoaded = true
   self.delegate.accountsModuleDidLoad()
 
-method generateNewAccount*(self: Module, password: string, accountName: string, color: string, emoji: string): string =
-  return self.controller.generateNewAccount(password, accountName, color, emoji)
+method generateNewAccount*(self: Module, password: string, accountName: string, color: string, emoji: string, path: string, derivedFrom: string): string =
+  return self.controller.generateNewAccount(password, accountName, color, emoji, path, derivedFrom)
 
 method addAccountsFromPrivateKey*(self: Module, privateKey: string, password: string, accountName: string, color: string, emoji: string): string =
   return self.controller.addAccountsFromPrivateKey(privateKey, password, accountName, color, emoji)
 
-method addAccountsFromSeed*(self: Module, seedPhrase: string, password: string, accountName: string, color: string, emoji: string): string =
-  return self.controller.addAccountsFromSeed(seedPhrase, password, accountName, color, emoji)
+method addAccountsFromSeed*(self: Module, seedPhrase: string, password: string, accountName: string, color: string, emoji: string, path: string): string =
+  return self.controller.addAccountsFromSeed(seedPhrase, password, accountName, color, emoji, path)
 
 method addWatchOnlyAccount*(self: Module, address: string, accountName: string, color: string, emoji: string): string =
   return self.controller.addWatchOnlyAccount(address, accountName, color, emoji)
 
 method deleteAccount*(self: Module, address: string) =
   self.controller.deleteAccount(address)
+
+method getDerivedAddressList*(self: Module, password: string, derivedFrom: string, path: string, pageSize: int, pageNumber: int): (seq[DerivedAddressDto], string) =
+  return self.controller.getDerivedAddressList(password, derivedFrom, path, pageSize, pageNumber)
+
+method getDerivedAddressListForMnemonic*(self: Module, mnemonic: string, path: string, pageSize: int, pageNumber: int): (seq[wallet_account_service.DerivedAddressDto], string) =
+  return self.controller.getDerivedAddressListForMnemonic(mnemonic, path, pageSize, pageNumber)
+
+
+

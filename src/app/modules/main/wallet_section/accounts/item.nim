@@ -14,6 +14,7 @@ type
     currencyBalance: float64
     assets: token_model.Model
     emoji: string
+    derivedfrom: string
 
 proc initItem*(
   name: string,
@@ -26,7 +27,8 @@ proc initItem*(
   isChat: bool,
   currencyBalance: float64,
   assets: token_model.Model,
-  emoji: string
+  emoji: string,
+  derivedfrom: string
 ): Item =
   result.name = name
   result.address = address
@@ -39,6 +41,7 @@ proc initItem*(
   result.currencyBalance = currencyBalance
   result.assets = assets
   result.emoji = emoji
+  result.derivedfrom = derivedfrom
 
 proc `$`*(self: Item): string =
   result = fmt"""WalletAccountItem(
@@ -52,7 +55,8 @@ proc `$`*(self: Item): string =
     isChat: {self.isChat},
     currencyBalance: {self.currencyBalance},
     assets.len: {self.assets.getCount()},
-    emoji: {self.emoji}
+    emoji: {self.emoji},
+    derivedfrom: {self.derivedfrom}
     ]"""
 
 proc getName*(self: Item): string =
@@ -87,3 +91,6 @@ proc getCurrencyBalance*(self: Item): float64 =
 
 proc getAssets*(self: Item): token_model.Model =
   return self.assets
+
+proc getDerivedFrom*(self: Item): string =
+  return self.derivedfrom

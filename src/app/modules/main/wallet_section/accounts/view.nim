@@ -1,11 +1,17 @@
-import NimQml
+import NimQml, sequtils, strutils, sugar
 
 import ./model
 import ./item
 import ./io_interface
+import ./generated_wallet_model
+import ./generated_wallet_item
+import ./derived_address_model
+import ./derived_address_item
 
 const WATCH = "watch"
 const GENERATED = "generated"
+const SEED = "seed"
+const KEY = "key"
 
 QtObject:
   type
@@ -15,10 +21,14 @@ QtObject:
       generated: Model
       watchOnly: Model
       imported: Model
+      generatedAccounts: GeneratedWalletModel
+      derivedAddresses: DerivedAddressModel
       modelVariant: QVariant
       generatedVariant: QVariant
       importedVariant: QVariant
       watchOnlyVariant: QVariant
+      generatedAccountsVariant: QVariant
+      derivedAddressesVariant: QVariant
       tmpAddress: string
 
   proc delete*(self: View) =
@@ -30,6 +40,10 @@ QtObject:
     self.generatedVariant.delete
     self.watchOnly.delete
     self.watchOnlyVariant.delete
+    self.generatedAccounts.delete
+    self.generatedAccountsVariant.delete
+    self.derivedAddresses.delete
+    self.derivedAddressesVariant.delete
     self.QObject.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =
@@ -44,6 +58,10 @@ QtObject:
     result.generatedVariant = newQVariant(result.generated)
     result.watchOnly = newModel()
     result.watchOnlyVariant = newQVariant(result.watchOnly)
+    result.generatedAccounts = newGeneratedWalletModel()
+    result.generatedAccountsVariant = newQVariant(result.generatedAccounts)
+    result.derivedAddresses = newDerivedAddressModel()
+    result.derivedAddressesVariant = newQVariant(result.derivedAddresses)
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
@@ -84,6 +102,24 @@ QtObject:
     read = getGenereated
     notify = generatedChanged
 
+  proc generatedAccountsChanged*(self: View) {.signal.}
+
+  proc getGeneratedAccounts(self: View): QVariant {.slot.} =
+    return self.generatedAccountsVariant
+
+  QtProperty[QVariant] generatedAccounts:
+    read = getGeneratedAccounts
+    notify = generatedAccountsChanged
+
+  proc derivedAddressesChanged*(self: View) {.signal.}
+
+  proc getDerivedAddresses(self: View): QVariant {.slot.} =
+    return self.derivedAddressesVariant
+
+  QtProperty[QVariant] derivedAddresses:
+    read = getDerivedAddresses
+    notify = derivedAddressesChanged
+
   proc setItems*(self: View, items: seq[Item]) =
     self.model.setItems(items)
     
@@ -98,19 +134,37 @@ QtObject:
         watchOnly.add(item)
       else:
         imported.add(item)
-      
+
     self.watchOnly.setItems(watchOnly)
     self.imported.setItems(imported)
     self.generated.setItems(generated)
 
-  proc generateNewAccount*(self: View, password: string, accountName: string, color: string, emoji: string): string {.slot.} =
-    return self.delegate.generateNewAccount(password, accountName, color, emoji)
+    # create a list of imported seeds/default account created from where more accounts can be derived
+    var generatedAccounts: seq[GeneratedWalletItem] = @[]
+    var importedSeedIndex: int = 1
+    for item in items:
+      if item.getWalletType() == "":
+        var generatedAccs: Model = newModel()
+        generatedAccs.setItems(generated.filter(x => cmpIgnoreCase(x.getDerivedFrom(), item.getDerivedFrom()) == 0))
+        generatedAccounts.add(initGeneratedWalletItem("Default", "status", generatedAccs, item.getDerivedFrom()))
+      elif item.getWalletType() == SEED:
+        var generatedAccs1: Model = newModel()
+        var filterItems: seq[Item] = generated.filter(x => cmpIgnoreCase(x.getDerivedFrom(), item.getDerivedFrom()) == 0)
+        filterItems.insert(item, 0)
+        generatedAccs1.setItems(filterItems)
+        generatedAccounts.add(initGeneratedWalletItem("Seed " & $importedSeedIndex , "seed-phrase", generatedAccs1, item.getDerivedFrom()))
+        importedSeedIndex += 1
+    self.generatedAccounts.setItems(generatedAccounts)
+
+
+  proc generateNewAccount*(self: View, password: string, accountName: string, color: string, emoji: string, path: string, derivedFrom: string): string {.slot.} =
+    return self.delegate.generateNewAccount(password, accountName, color, emoji, path, derivedFrom)
 
   proc addAccountsFromPrivateKey*(self: View, privateKey: string, password: string, accountName: string, color: string, emoji: string): string {.slot.} =
     return self.delegate.addAccountsFromPrivateKey(privateKey, password, accountName, color, emoji)
 
-  proc addAccountsFromSeed*(self: View, seedPhrase: string, password: string, accountName: string, color: string, emoji: string): string {.slot.} =
-    return self.delegate.addAccountsFromSeed(seedPhrase, password, accountName, color, emoji)
+  proc addAccountsFromSeed*(self: View, seedPhrase: string, password: string, accountName: string, color: string, emoji: string, path: string): string {.slot.} =
+    return self.delegate.addAccountsFromSeed(seedPhrase, password, accountName, color, emoji, path)
 
   proc addWatchOnlyAccount*(self: View, address: string, accountName: string, color: string, emoji: string): string {.slot.} =
     return self.delegate.addWatchOnlyAccount(address, accountName, color, emoji)
@@ -129,3 +183,36 @@ QtObject:
 
   proc getAccountAssetsByAddress*(self: View): QVariant {.slot.} =
     return self.model.getAccountAssetsByAddress(self.tmpAddress)
+
+  proc getDerivedAddressList*(self: View, password: string, derivedFrom: string, path: string, pageSize: int, pageNumber: int): string {.slot.} =
+    var items: seq[DerivedAddressItem] = @[]
+    let (result, error) = self.delegate.getDerivedAddressList(password, derivedfrom, path, pageSize, pageNumber)
+    for item in result:
+      items.add(initDerivedAddressItem(item.address, item.path, item.hasActivity))
+    self.derivedAddresses.setItems(items)
+    self.derivedAddressesChanged()
+    return error
+
+  proc getDerivedAddressListForMnemonic*(self: View, mnemonic: string, path: string, pageSize: int, pageNumber: int): string {.slot.} =
+    var items: seq[DerivedAddressItem] = @[]
+    let (result, error) = self.delegate.getDerivedAddressListForMnemonic(mnemonic, path, pageSize, pageNumber)
+    for item in result:
+      items.add(initDerivedAddressItem(item.address, item.path, item.hasActivity))
+    self.derivedAddresses.setItems(items)
+    self.derivedAddressesChanged()
+    return error
+
+  proc resetDerivedAddressModel*(self: View) {.slot.} =
+    var items: seq[DerivedAddressItem] = @[]
+    self.derivedAddresses.setItems(items)
+    self.derivedAddressesChanged()
+
+  proc getDerivedAddressAtIndex*(self: View, index: int): string {.slot.} =
+    return self.derivedAddresses.getDerivedAddressAtIndex(index)
+
+  proc getDerivedAddressPathAtIndex*(self: View, index: int): string {.slot.} =
+    return self.derivedAddresses.getDerivedAddressPathAtIndex(index)
+
+  proc getDerivedAddressHasActivityAtIndex*(self: View, index: int): bool {.slot.} =
+    return self.derivedAddresses.getDerivedAddressHasActivityAtIndex(index)
+

@@ -8,6 +8,7 @@ import ../network/service as network_service
 import ../../common/account_constants
 
 import dto
+import derived_address
 
 import ../../../app/core/eventemitter
 import ../../../backend/accounts as status_go_accounts
@@ -16,6 +17,7 @@ import ../../../backend/eth as status_go_eth
 import ../../../backend/cache
 
 export dto
+export derived_address
 
 logScope:
   topics = "wallet-account-service"
@@ -252,13 +254,15 @@ proc addNewAccountToLocalStore(self: Service) =
   self.accounts[newAccount.address] = newAccount
   self.events.emit(SIGNAL_WALLET_ACCOUNT_SAVED, AccountSaved(account: newAccount))
 
-proc generateNewAccount*(self: Service, password: string, accountName: string, color: string, emoji: string): string =
+proc generateNewAccount*(self: Service, password: string, accountName: string, color: string, emoji: string, path: string, derivedFrom: string): string =
   try:
-    discard backend.generateAccount(
+    discard backend.generateAccountWithDerivedPath(
       hashPassword(password),
       accountName,
       color,
-      emoji)
+      emoji,
+      path,
+      derivedFrom)
   except Exception as e:
     return fmt"Error generating new account: {e.msg}"
 
@@ -271,21 +275,21 @@ proc addAccountsFromPrivateKey*(self: Service, privateKey: string, password: str
       hashPassword(password),
       accountName,
       color,
-      emoji
-    )
+      emoji)
   except Exception as e:
     return fmt"Error adding account with private key: {e.msg}"
 
   self.addNewAccountToLocalStore()
 
-proc addAccountsFromSeed*(self: Service, mnemonic: string, password: string, accountName: string, color: string, emoji: string): string =
+proc addAccountsFromSeed*(self: Service, mnemonic: string, password: string, accountName: string, color: string, emoji: string, path: string): string =
   try:
-    discard backend.addAccountWithMnemonic(
+    discard backend.addAccountWithMnemonicAndPath(
       mnemonic,
       hashPassword(password),
       accountName,
       color,
-      emoji
+      emoji,
+      path
     )
   except Exception as e:
     return fmt"Error adding account with mnemonic: {e.msg}"
@@ -349,3 +353,25 @@ proc updateWalletAccount*(self: Service, address: string, accountName: string, c
   account.emoji = emoji
 
   self.events.emit(SIGNAL_WALLET_ACCOUNT_UPDATED, WalletAccountUpdated(account: account))
+
+proc getDerivedAddressList*(self: Service, password: string, derivedFrom: string, path: string, pageSize: int, pageNumber: int): (seq[DerivedAddressDto], string) =
+  var derivedAddress: seq[DerivedAddressDto] = @[]
+  var error: string = ""
+  try:
+    let response = status_go_accounts.getDerivedAddressList(hashPassword(password), derivedFrom, path, pageSize, pageNumber)
+    derivedAddress = response.result.getElems().map(x => x.toDerivedAddressDto())
+  except Exception as e:
+    error = fmt"Error getting derived address list: {e.msg}"
+  return (derivedAddress, error)
+
+proc getDerivedAddressListForMnemonic*(self: Service, mnemonic: string, path: string, pageSize: int, pageNumber: int): (seq[DerivedAddressDto], string) =
+  var derivedAddress: seq[DerivedAddressDto] = @[]
+  var error: string = ""
+  try:
+    let response = status_go_accounts.getDerivedAddressListForMnemonic(mnemonic, path, pageSize, pageNumber)
+    derivedAddress = response.result.getElems().map(x => x.toDerivedAddressDto())
+  except Exception as e:
+    error = fmt"Error getting derived address list for mnemonic: {e.msg}"
+  return (derivedAddress, error)
+
+

@@ -107,18 +107,21 @@ rpc(fetchPrices, "wallet"):
   symbols: seq[string]
   currency: string
 
-rpc(generateAccount, "accounts"):
+rpc(generateAccountWithDerivedPath, "accounts"):
   password: string
   name: string
   color: string
   emoji: string
+  path: string
+  derivedFrom: string
 
-rpc(addAccountWithMnemonic, "accounts"):
+rpc(addAccountWithMnemonicAndPath, "accounts"):
   mnemonic: string
   password: string
   name: string
   color: string
   emoji: string
+  path: string
 
 rpc(addAccountWithPrivateKey, "accounts"):
   privateKey: string

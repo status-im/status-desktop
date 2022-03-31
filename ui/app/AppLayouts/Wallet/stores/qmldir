@@ -1,1 +1,2 @@
 singleton RootStore 1.0 RootStore.qml
+singleton DerivationPathModel 1.0 DerivationPathModel.qml

@@ -17,6 +17,7 @@ import shared.controls 1.0
 
 import "../stores"
 import "../views"
+import "../panels"
 
 StatusModal {
     id: popup
@@ -31,6 +32,40 @@ StatusModal {
     //% "Generate an account"
     header.title: qsTrId("generate-a-new-account")
 
+    QtObject {
+        id: _internal
+
+        property int numOfItems: 100
+        property int pageNumber: 1
+        function getDerivedAddressList() {
+            if(advancedSelection.expandableItem) {
+                var errMessage = ""
+                if(advancedSelection.expandableItem.addAccountType === SelectGeneratedAccount.AddAccountType.ImportSeedPhrase &&
+                        !!advancedSelection.expandableItem.path &&
+                        !!advancedSelection.expandableItem.mnemonicText) {
+                    errMessage = RootStore.getDerivedAddressListForMnemonic(advancedSelection.expandableItem.mnemonicText, advancedSelection.expandableItem.path, numOfItems, pageNumber)
+                    _internal.showPasswordError(errMessage)
+                }
+                else if(!!advancedSelection.expandableItem.path && !!advancedSelection.expandableItem.derivedFromAddress && (passwordInput.text.length >= 6)) {
+                    errMessage = RootStore.getDerivedAddressList(passwordInput.text, advancedSelection.expandableItem.derivedFromAddress, advancedSelection.expandableItem.path, numOfItems, pageNumber)
+                    _internal.showPasswordError(errMessage)
+                }
+            }
+        }
+
+        function showPasswordError(errMessage) {
+            if (errMessage) {
+                if (Utils.isInvalidPasswordMessage(errMessage)) {
+                    //% "Wrong password"
+                    popup.passwordValidationError = qsTrId("wrong-password")
+                } else {
+                    accountError.text = errMessage;
+                    accountError.open();
+                }
+            }
+        }
+    }
+
     function validate() {
         if (passwordInput.text === "") {
             //% "You need to enter a password"
@@ -41,8 +76,8 @@ StatusModal {
         } else {
             passwordValidationError = ""
         }
-            return passwordValidationError === "" && accountNameInput.valid
-        }
+        return passwordValidationError === "" && accountNameInput.valid
+    }
 
     onOpened: {
         passwordValidationError = "";
@@ -96,6 +131,10 @@ StatusModal {
                     validationError: popup.passwordValidationError
                     inputLabel.font.pixelSize: 15
                     inputLabel.font.weight: Font.Normal
+                    onTextChanged: {
+                        popup.passwordValidationError = ""
+                        _internal.getDerivedAddressList()
+                    }
                 }
             }
 
@@ -124,7 +163,6 @@ StatusModal {
             StatusColorSelectorGrid {
                 id: colorSelectionGrid
                 anchors.horizontalCenter: parent.horizontalCenter
-                //% "color"
                 titleText: qsTr("color").toUpperCase()
             }
 
@@ -148,7 +186,6 @@ StatusModal {
                 anchors.horizontalCenter: parent.horizontalCenter
                 width: parent.width
 
-                //% "Advanced"
                 primaryText: qsTr("Advanced")
                 type: StatusExpandableItem.Type.Tertiary
                 expandable: true
@@ -156,6 +193,7 @@ StatusModal {
                     width: parent.width
                     Layout.margins: Style.current.padding
                     Component.onCompleted: advancedSelection.isValid = Qt.binding(function(){return isValid})
+                    onCalculateDerivedPath: _internal.getDerivedAddressList()
                 }
             }
         }
@@ -192,35 +230,26 @@ StatusModal {
                 var errMessage = ""
                 if(advancedSelection.expandableItem) {
                     switch(advancedSelection.expandableItem.addAccountType) {
-                    case AdvancedAddAccountView.AddAccountType.GenerateNew:
-                        errMessage = RootStore.generateNewAccount(passwordInput.text, accountNameInput.text, colorSelectionGrid.selectedColor, emoji)
+                    case SelectGeneratedAccount.AddAccountType.GenerateNew:
+                        errMessage = RootStore.generateNewAccount(passwordInput.text, accountNameInput.text, colorSelectionGrid.selectedColor, accountNameInput.input.icon.emoji, advancedSelection.expandableItem.completePath, advancedSelection.expandableItem.derivedFromAddress)
                         break
-                    case AdvancedAddAccountView.AddAccountType.ImportSeedPhrase:
-                        errMessage = RootStore.addAccountsFromSeed(advancedSelection.expandableItem.mnemonicText, passwordInput.text, accountNameInput.text, colorSelectionGrid.selectedColor, emoji)
+                    case SelectGeneratedAccount.AddAccountType.ImportSeedPhrase:
+                        errMessage = RootStore.addAccountsFromSeed(advancedSelection.expandableItem.mnemonicText, passwordInput.text, accountNameInput.text, colorSelectionGrid.selectedColor, accountNameInput.input.icon.emoji, advancedSelection.expandableItem.completePath)
                         break
-                    case AdvancedAddAccountView.AddAccountType.ImportPrivateKey:
-                        errMessage = RootStore.addAccountsFromPrivateKey(advancedSelection.expandableItem.privateKey, passwordInput.text, accountNameInput.text, colorSelectionGrid.selectedColor, emoji)
+                    case SelectGeneratedAccount.AddAccountType.ImportPrivateKey:
+                        errMessage = RootStore.addAccountsFromPrivateKey(advancedSelection.expandableItem.privateKey, passwordInput.text, accountNameInput.text, colorSelectionGrid.selectedColor, accountNameInput.input.icon.emoji)
                         break
-                    case AdvancedAddAccountView.AddAccountType.WatchOnly:
+                    case SelectGeneratedAccount.AddAccountType.WatchOnly:
                         errMessage = RootStore.addWatchOnlyAccount(advancedSelection.expandableItem.watchAddress, accountNameInput.text, colorSelectionGrid.selectedColor, accountNameInput.input.icon.emoji)
                         break
                     }
                 } else {
-                    errMessage = RootStore.generateNewAccount(passwordInput.text, accountNameInput.text, colorSelectionGrid.selectedColor, emoji)
+                    errMessage = RootStore.generateNewAccount(passwordInput.text, accountNameInput.text, colorSelectionGrid.selectedColor, accountNameInput.input.icon.emoji, advancedSelection.expandableItem.completePath, advancedSelection.expandableItem.derivedFromAddress)
                 }
 
                 loading = false
-                if (errMessage) {
-                    Global.playErrorSound();
-                    if (Utils.isInvalidPasswordMessage(errMessage)) {
-                        //% "Wrong password"
-                        popup.passwordValidationError = qsTrId("wrong-password")
-                    } else {
-                        accountError.text = errMessage;
-                        accountError.open();
-                    }
-                    return
-                }
+                _internal.showPasswordError(errMessage)
+
                 popup.afterAddAccount();
                 popup.close();
             }
