@@ -123,7 +123,7 @@ Item {
         StyledText {
             id: chatKeyTxt
             color: Style.current.secondaryText
-            text: "Chatkey:" + root.address
+            text: "Chatkey:" + root.pubKey
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
             Layout.alignment: Qt.AlignHCenter
