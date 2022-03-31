@@ -122,6 +122,14 @@ proc storeDerivedAccounts(self: Service, accountId, hashedPassword: string,
 
   result = toDerivedAccounts(response.result)
 
+proc storeAccount(self: Service, accountId, hashedPassword: string): GeneratedAccountDto =
+  let response = status_account.storeAccounts(accountId, hashedPassword)
+
+  if response.result.contains("error"):
+    raise newException(Exception, response.result["error"].getStr)
+
+  result = toGeneratedAccountDto(response.result)
+
 proc saveAccountAndLogin(self: Service, hashedPassword: string, account,
   subaccounts, settings, config: JsonNode): AccountDto =
   try:
@@ -168,14 +176,16 @@ proc prepareSubaccountJsonObject(self: Service, account: GeneratedAccountDto, di
       "color": "#4360df",
       "wallet": true,
       "path": PATH_DEFAULT_WALLET,
-      "name": "Status account"
+      "name": "Status account",
+      "derived-from": account.address
     },
     {
       "public-key": account.derivedAccounts.whisper.publicKey,
       "address": account.derivedAccounts.whisper.address,
       "name": if displayName == "": account.alias else: displayName,
       "path": PATH_WHISPER,
-      "chat": true
+      "chat": true,
+      "derived-from": ""
     }
   ]
 
@@ -271,6 +281,7 @@ proc setupAccount*(self: Service, accountId, password, displayName: string): str
       return description
 
     let hashedPassword = hashString(password)
+    discard self.storeAccount(accountId, hashedPassword)
     discard self.storeDerivedAccounts(accountId, hashedPassword, PATHS)
 
     self.loggedInAccount = self.saveAccountAndLogin(hashedPassword, accountDataJson,

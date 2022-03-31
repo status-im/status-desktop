@@ -28,6 +28,9 @@ QtObject {
 
     property var savedAddresses: walletSectionSavedAddresses.model
 
+    // Used for new wallet account generation
+    property var generatedAccountsViewModel: walletSectionAccounts.generatedAccounts
+    property var derivedAddressesList: walletSectionAccounts.derivedAddresses
 
     property var layer1Networks: networksModule.layer1
     property var layer2Networks: networksModule.layer2
@@ -100,16 +103,16 @@ QtObject {
             walletSection.switchAccount(newIndex)
     }
 
-    function generateNewAccount(password, accountName, color, emoji) {
-        return walletSectionAccounts.generateNewAccount(password, accountName, color, emoji)
+    function generateNewAccount(password, accountName, color, emoji, path, derivedFrom) {
+        return walletSectionAccounts.generateNewAccount(password, accountName, color, emoji, path, derivedFrom)
     }
 
     function addAccountsFromPrivateKey(privateKey, password, accountName, color, emoji) {
         return walletSectionAccounts.addAccountsFromPrivateKey(privateKey, password, accountName, color, emoji)
     }
 
-    function addAccountsFromSeed(seedPhrase, password, accountName, color, emoji) {
-        return walletSectionAccounts.addAccountsFromSeed(seedPhrase, password, accountName, color, emoji)
+    function addAccountsFromSeed(seedPhrase, password, accountName, color, emoji, path) {
+        return walletSectionAccounts.addAccountsFromSeed(seedPhrase, password, accountName, color, emoji, path)
     }
 
     function addWatchOnlyAccount(address, accountName,color, emoji) {
@@ -171,5 +174,33 @@ QtObject {
 
     function copyToClipboard(text) {
         globalUtils.copyToClipboard(text)
+    }
+
+    function getDerivedAddressList(password, derivedFrom, path, pageSize , pageNumber) {
+        return walletSectionAccounts.getDerivedAddressList(password, derivedFrom, path, pageSize , pageNumber)
+    }
+
+    function getDerivedAddressData(index) {
+        return walletSectionAccounts.getDerivedAddressAtIndex(index)
+    }
+
+    function getDerivedAddressPathData(index) {
+        return walletSectionAccounts.getDerivedAddressPathAtIndex(index)
+    }
+
+    function getDerivedAddressHasActivityData(index) {
+        return walletSectionAccounts.getDerivedAddressHasActivityAtIndex(index)
+    }
+
+    function getDerivedAddressListForMnemonic(mnemonic, path, pageSize , pageNumber) {
+        return walletSectionAccounts.getDerivedAddressListForMnemonic(mnemonic, path, pageSize , pageNumber)
+    }
+
+    function resetDerivedAddressModel() {
+        walletSectionAccounts.resetDerivedAddressModel()
+    }
+
+    function vaildateMnemonic(mnemonic) {
+        return onboardingModule.validateMnemonic(mnemonic)
     }
 }
