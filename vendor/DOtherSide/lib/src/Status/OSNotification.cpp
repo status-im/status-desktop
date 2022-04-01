@@ -160,3 +160,12 @@ void OSNotification::showNotification(const QString& title,
     showNotificationMacOs(title, message, identifier);
 #endif
 }
+
+void OSNotification::showIconBadgeNotification(int notificationsCount)
+{
+#ifdef Q_OS_WIN
+    // TODO
+#elif defined Q_OS_MACOS
+    showIconBadgeNotificationMacOs(notificationsCount);
+#endif
+}

@@ -1435,6 +1435,13 @@ void dos_osnotification_show_notification(DosOSNotification* vptr,
         notificationObj->showNotification(title, message, identifier);
 }
 
+void dos_osnotification_show_badge_notification(DosOSNotification* vptr, int notificationsCount)
+{
+    auto notificationObj = static_cast<Status::OSNotification*>(vptr);
+    if(notificationObj)
+        notificationObj->showIconBadgeNotification(notificationsCount);
+}
+
 void dos_osnotification_delete(DosOSNotification* vptr)
 {
     auto qobject = static_cast<QObject*>(vptr);
