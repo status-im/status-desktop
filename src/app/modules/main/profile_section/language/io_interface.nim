@@ -19,6 +19,12 @@ method getModuleAsVariant*(self: AccessInterface): QVariant {.base.} =
 method changeLanguage*(self: AccessInterface, locale: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method setIsDDMMYYDateFormat*(self: AccessInterface, isDDMMYYDateFormat: bool) {.slot.} =
+  raise newException(ValueError, "No implementation available")
+
+method setIs24hTimeFormat*(self: AccessInterface, is24hTimeFormat: bool) {.slot.} =
+  raise newException(ValueError, "No implementation available")
+
 # View Delegate Interface
 # Delegate for the view must be declared here due to use of QtObject and multi
 # inheritance, which is not well supported in Nim.

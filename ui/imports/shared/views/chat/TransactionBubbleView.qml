@@ -6,6 +6,7 @@ import shared.popups 1.0
 import shared.views.chat 1.0
 import shared.controls.chat 1.0
 import shared.controls 1.0
+import shared.stores 1.0
 
 Item {
     id: root
@@ -252,7 +253,7 @@ Item {
         StyledText {
             id: timeText
             color: Style.current.secondaryText
-            text: Utils.formatTime(timestamp)
+            text: Utils.formatShortTime(timestamp, RootStore.accountSensitiveSettings.is24hTimeFormat)
             anchors.left: bubbleLoader.active ? bubbleLoader.right : undefined
             anchors.leftMargin: bubbleLoader.active ? 13 : 0
             anchors.right: bubbleLoader.active ? undefined : parent.right
