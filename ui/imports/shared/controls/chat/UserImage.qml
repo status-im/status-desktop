@@ -35,12 +35,10 @@ Loader {
             height: root.imageHeight
             color: Style.current.background
             textColor: Style.current.secondaryText
-            letterSize: Math.max(4, root.imageWidth / 2.4)
             charactersLen: 2
         }
         ringSettings {
             ringSpecModel: root.showRing ? Utils.getColorHashAsJson(root.pubkey) : undefined
-            ringPxSize: Math.max(root.imageWidth / 24.0)
         }
 
         Loader {

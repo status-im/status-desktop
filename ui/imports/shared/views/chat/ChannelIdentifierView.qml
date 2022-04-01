@@ -3,6 +3,8 @@ import shared 1.0
 import shared.panels 1.0
 
 import StatusQ.Core.Utils 0.1 as StatusQUtils
+import StatusQ.Components 0.1
+
 import utils 1.0
 
 Column {
@@ -14,6 +16,7 @@ Column {
 
     property bool amIChatAdmin: false
     property string chatName: ""
+    property string chatId: ""
     property int chatType: -1
     property string chatColor: ""
     property string chatEmoji: ""
@@ -23,39 +26,22 @@ Column {
     signal joinChatClicked()
     signal rejectJoiningChatClicked()
 
-    Rectangle {
-        id: circleId
+    StatusSmartIdenticon {
         anchors.horizontalCenter: parent.horizontalCenter
-        width: 120
-        height: 120
-        radius: 120
-        border.width: root.chatType === Constants.chatType.oneToOne ? 2 : 0
-        border.color: Style.current.border
-        color: root.chatColor
-
-        RoundedImage {
-            visible: root.chatType === Constants.chatType.oneToOne
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
+        name: root.chatName
+        icon {
+            width: 120
+            height: 120
+            color: root.chatColor
+            emoji: root.chatEmoji
+            charactersLen: root.chatType === Constants.chatType.oneToOne ? 2 : 1
+        }
+        image {
             width: 120
             height: 120
             source: root.chatIcon
-            smooth: false
-            antialiasing: true
         }
-
-        StyledText {
-            visible: root.chatType !== Constants.chatType.oneToOne
-            text: root.chatEmoji ?
-                StatusQUtils.Emoji.parse(root.chatEmoji, StatusQUtils.Emoji.size.veryBig) :
-                root.chatName.charAt(0).toUpperCase()
-            opacity: root.chatEmoji ? 1 : 0.7
-            font.weight: Font.Bold
-            font.pixelSize: 51
-            color: Style.current.white
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
-        }
+        ringSettings.ringSpecModel: root.chatType === Constants.chatType.oneToOne ? Utils.getColorHashAsJson(root.chatId) : undefined
     }
 
     StyledText {

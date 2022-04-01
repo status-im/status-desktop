@@ -9,6 +9,7 @@ import ../../../../app_service/service/community/service as community_service
 import ../../../../app_service/service/message/service as message_service
 import ../../../../app_service/service/gif/service as gif_service
 import ../../../../app_service/service/mailservers/service as mailservers_service
+import ../../../../app_service/service/visual_identity/service as procs_from_visual_identity_service
 
 import ../../../core/signals/types
 import ../../../global/app_signals
@@ -395,3 +396,6 @@ proc reorderCommunityChat*(self: Controller, categoryId: string, chatId: string,
 
 proc getRenderedText*(self: Controller, parsedTextArray: seq[ParsedText]): string =
   return self.messageService.getRenderedText(parsedTextArray)
+
+proc getColorHash*(self: Controller, pubkey: string): ColorHashDto =
+  procs_from_visual_identity_service.colorHashOf(pubkey)
