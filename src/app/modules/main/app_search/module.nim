@@ -66,34 +66,28 @@ method viewDidLoad*(self: Module) =
 method getModuleAsVariant*(self: Module): QVariant =
   return self.viewVariant
 
-proc buildLocationMenuForChat(self: Module): location_menu_item.Item =
-  var item = location_menu_item.initItem(singletonInstance.userProfile.getPubKey(),
-    SEARCH_MENU_LOCATION_CHAT_SECTION_NAME, "", "chat", "")
+proc buildLocationMenuForChannelGroup(self: Module, channelGroup: ChannelGroupDto): location_menu_item.Item =
+  let isCommunity = channelGroup.channelGroupType == ChannelGroupType.Community
 
-  let types = @[ChatType.OneToOne, ChatType.Public, ChatType.PrivateGroupChat]
-  let displayedChats = self.controller.getChatDetailsForChatTypes(types)
-
-  var subItems: seq[location_menu_sub_item.SubItem]
-  for c in displayedChats:
-    var chatName = c.name
-    var chatImage = c.icon
-    if(c.chatType == ChatType.OneToOne):
-      (chatName, chatImage) = self.controller.getOneToOneChatNameAndImage(c.id)
-
-    let subItem = location_menu_sub_item.initSubItem(c.id, chatName, chatImage, "", c.color)
-    subItems.add(subItem)
-
-  item.setSubItems(subItems)
-  return item
-
-proc buildLocationMenuForCommunity(self: Module, community: CommunityDto): location_menu_item.Item =
-  var item = location_menu_item.initItem(community.id, community.name, community.images.thumbnail, "", community.color)
+  var item = location_menu_item.initItem(
+    channelGroup.id,
+    if (isCommunity): channelGroup.name else: SEARCH_MENU_LOCATION_CHAT_SECTION_NAME,
+    channelGroup.images.thumbnail,
+    icon=if (isCommunity): "" else: "chat",
+    channelGroup.color)
 
   var subItems: seq[location_menu_sub_item.SubItem]
-  let chats = self.controller.getAllChatsForCommunity(community.id)
-  for c in chats:
-    let chatDto = self.controller.getChatDetails(community.id, c.id)
-    let subItem = location_menu_sub_item.initSubItem(chatDto.id, chatDto.name, chatDto.icon, "", chatDto.color)
+  for chatDto in channelGroup.chats:
+    var chatName = chatDto.name
+    var chatImage = chatDto.icon
+    if(chatDto.chatType == ChatType.OneToOne):
+      (chatName, chatImage) = self.controller.getOneToOneChatNameAndImage(chatDto.id)
+    let subItem = location_menu_sub_item.initSubItem(
+      chatDto.id,
+      chatName,
+      chatImage,
+      "",
+      chatDto.color)
     subItems.add(subItem)
 
   item.setSubItems(subItems)
@@ -101,11 +95,10 @@ proc buildLocationMenuForCommunity(self: Module, community: CommunityDto): locat
 
 method prepareLocationMenuModel*(self: Module) =
   var items: seq[location_menu_item.Item]
-  items.add(self.buildLocationMenuForChat())
+  let channelGroups = self.controller.getChannelGroups()
 
-  let communities = self.controller.getJoinedCommunities()
-  for c in communities:
-    items.add(self.buildLocationMenuForCommunity(c))
+  for c in channelGroups:
+    items.add(self.buildLocationMenuForChannelGroup(c))
 
   self.view.locationMenuModel().setItems(items)
 
@@ -149,52 +142,68 @@ method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
   var items: seq[result_item.Item]
   var channels: seq[result_item.Item]
 
-  # Add communities
-  let communities = self.controller.getJoinedCommunities()
-  for co in communities:
-    if(self.controller.searchLocation().len == 0 and co.name.toLower.startsWith(self.controller.searchTerm().toLower)):
-      let item = result_item.initItem(co.id, "", "", co.id, co.name, SEARCH_RESULT_COMMUNITIES_SECTION_NAME,
-        co.images.thumbnail, co.color, "", "", co.images.thumbnail, co.color, false)
+  # Add Channel groups
+  let channelGroups = self.controller.getChannelGroups()
+  let searchTerm = self.controller.searchTerm().toLower
+  for channelGroup in channelGroups:
+    let isCommunity = channelGroup.channelGroupType == ChannelGroupType.Community
+    if(self.controller.searchLocation().len == 0 and
+        channelGroup.name.toLower.startsWith(searchTerm)):
+      let item = result_item.initItem(
+        channelGroup.id,
+        content="",
+        time="",
+        titleId=channelGroup.id,
+        title=channelGroup.name,
+        if (isCommunity):
+            SEARCH_RESULT_COMMUNITIES_SECTION_NAME
+          else:
+            SEARCH_RESULT_CHATS_SECTION_NAME,
+        channelGroup.images.thumbnail,
+        channelGroup.color,
+        badgePrimaryText="",
+        badgeSecondaryText="",
+        channelGroup.images.thumbnail,
+        channelGroup.color,
+        badgeIsLetterIdenticon=false)
 
-      self.controller.addResultItemDetails(co.id, co.id)
+      self.controller.addResultItemDetails(channelGroup.id, channelGroup.id)
       items.add(item)
 
     # Add channels
     if(self.controller.searchSubLocation().len == 0 and self.controller.searchLocation().len == 0 or
-      self.controller.searchLocation() == co.id):
-      for c in co.chats:
-        let chatDto = self.controller.getChatDetails(co.id, c.id)
-        if(c.name.toLower.startsWith(self.controller.searchTerm().toLower)):
-          let item = result_item.initItem(chatDto.id, "", "", chatDto.id, chatDto.name,
-          SEARCH_RESULT_CHANNELS_SECTION_NAME, chatDto.icon, chatDto.color, "", "", chatDto.icon, chatDto.color,
-          false)
+        self.controller.searchLocation() == channelGroup.id):
+      for chatDto in channelGroup.chats:
+        var chatName = chatDto.name
+        var chatImage = chatDto.icon
+        if(chatDto.chatType == ChatType.OneToOne):
+          (chatName, chatImage) = self.controller.getOneToOneChatNameAndImage(chatDto.id)
 
-          self.controller.addResultItemDetails(chatDto.id, co.id, chatDto.id)
+        var rawChatName = chatName
+        if(chatName.startsWith("@")):
+          rawChatName = chatName[1 ..^ 1]
+
+        if(rawChatName.toLower.startsWith(searchTerm)):
+          let item = result_item.initItem(
+            chatDto.id,
+            content="",
+            time="",
+            titleId=chatDto.id,
+            title=chatName,
+            if isCommunity:
+                SEARCH_RESULT_CHANNELS_SECTION_NAME
+              else:
+                SEARCH_RESULT_CHATS_SECTION_NAME,
+            chatImage,
+            chatDto.color,
+            badgePrimaryText="",
+            badgeSecondaryText="",
+            chatImage,
+            chatDto.color,
+            false)
+
+          self.controller.addResultItemDetails(chatDto.id, channelGroup.id, chatDto.id)
           channels.add(item)
-
-  # Add chats
-  if(self.controller.searchLocation().len == 0 or
-    self.controller.searchLocation() == singletonInstance.userProfile.getPubKey() and
-    self.controller.searchSubLocation().len == 0):
-    let types = @[ChatType.OneToOne, ChatType.Public, ChatType.PrivateGroupChat]
-    let displayedChats = self.controller.getChatDetailsForChatTypes(types)
-
-    for c in displayedChats:
-      var chatName = c.name
-      var chatImage = c.icon
-      if(c.chatType == ChatType.OneToOne):
-        (chatName, chatImage) = self.controller.getOneToOneChatNameAndImage(c.id)
-
-      var rawChatName = chatName
-      if(chatName.startsWith("@")):
-        rawChatName = chatName[1 ..^ 1]
-
-      if(rawChatName.toLower.startsWith(self.controller.searchTerm().toLower)):
-        let item = result_item.initItem(c.id, "", "", c.id, chatName, SEARCH_RESULT_CHATS_SECTION_NAME, chatImage,
-        c.color, "", "", chatImage, c.color, false)
-
-        self.controller.addResultItemDetails(c.id, singletonInstance.userProfile.getPubKey(), c.id)
-        items.add(item)
 
   # Add channels in order as requested by the design
   items.add(channels)
@@ -216,9 +225,9 @@ method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
       var chatImage = chatDto.icon
       if(chatDto.chatType == ChatType.OneToOne):
         (chatName, chatImage) = self.controller.getOneToOneChatNameAndImage(chatDto.id)
-
       let item = result_item.initItem(m.id, renderedMessageText, $m.timestamp, m.`from`, senderName,
-      SEARCH_RESULT_MESSAGES_SECTION_NAME, senderImage, "", chatName, "", chatImage, chatDto.color, false)
+        SEARCH_RESULT_MESSAGES_SECTION_NAME, senderImage, chatDto.color, chatName, "", chatImage,
+        chatDto.color, false)
 
       self.controller.addResultItemDetails(m.id, singletonInstance.userProfile.getPubKey(),
         chatDto.id, m.id)
@@ -228,8 +237,8 @@ method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
       let channelName = "#" & chatDto.name
 
       let item = result_item.initItem(m.id, renderedMessageText, $m.timestamp, m.`from`, senderName,
-      SEARCH_RESULT_MESSAGES_SECTION_NAME, senderImage, "", community.name, channelName, community.images.thumbnail,
-      community.color, false)
+        SEARCH_RESULT_MESSAGES_SECTION_NAME, senderImage, chatDto.color, community.name,
+        channelName, community.images.thumbnail, community.color, false)
 
       self.controller.addResultItemDetails(m.id, chatDto.communityId, chatDto.id, m.id)
       items.add(item)

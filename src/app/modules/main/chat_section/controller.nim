@@ -205,9 +205,6 @@ proc getMySectionId*(self: Controller): string =
 proc isCommunity*(self: Controller): bool =
   return self.isCommunitySection
 
-proc getJoinedCommunities*(self: Controller): seq[CommunityDto] =
-  return self.communityService.getJoinedCommunities()
-
 proc getMyCommunity*(self: Controller): CommunityDto =
   return self.communityService.getCommunityById(self.sectionId)
 
