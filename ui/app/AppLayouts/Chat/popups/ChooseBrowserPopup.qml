@@ -22,7 +22,7 @@ StatusModal {
         anchors.horizontalCenter: popup.horizontalCenter
 
         Image {
-            source: Style.png("chooseBrowserImage")
+            source: Style.png("browser/chooseBrowserImage")
             width: 240
             height: 148
             anchors.horizontalCenter: parent.horizontalCenter
