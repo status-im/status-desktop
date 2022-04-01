@@ -2,6 +2,8 @@ pragma Singleton
 
 import QtQuick 2.13
 
+import StatusQ.Controls.Validators 0.1
+
 QtObject {
     readonly property QtObject appState: QtObject {
         readonly property int onboarding: 0
@@ -106,6 +108,45 @@ QtObject {
         readonly property int rejectedSentContactRequest: 4
         readonly property int rejectedReceivedContactRequest: 5
         readonly property int blockedContacts: 6
+    }
+
+    readonly property QtObject validators: QtObject {
+        readonly property list<StatusValidator> displayName: [
+            StatusMinLengthValidator {
+                minLength: 5
+                errorMessage: qsTr("Username must be at least 5 characters")
+            },
+            StatusRegularExpressionValidator {
+                regularExpression: /^[a-zA-Z0-9\-_]+$/
+                errorMessage: qsTr("Only letters, numbers, underscores and hyphens allowed")
+            },
+            // TODO: Create `StatusMaxLengthValidator` in StatusQ
+            StatusValidator {
+                name: "maxLengthValidator"
+                validate: function (t) { return t.length <= 24 }
+                errorMessage: qsTr("24 character username limit")
+            },
+            StatusValidator {
+                name: "endsWith-ethValidator"
+                validate: function (t) { return !t.endsWith("-eth") }
+                errorMessage: qsTr("Usernames ending with '-eth' are not allowed")
+            },
+            StatusValidator {
+                name: "endsWith_ethValidator"
+                validate: function (t) { return !t.endsWith("_eth") }
+                errorMessage: qsTr("Usernames ending with '_eth' are not allowed")
+            },
+            StatusValidator {
+                name: "endsWith.ethValidator"
+                validate: function (t) { return !t.endsWith(".eth") }
+                errorMessage: qsTr("Usernames ending with '.eth' are not allowed")
+            },
+            StatusValidator {
+                name: "isAliasValidator"
+                validate: function (t) { return !globalUtils.isAlias(t) }
+                errorMessage: qsTr("Sorry, the name you have chosen is not allowed, try picking another username")
+            }
+        ]
     }
 
     readonly property int communityImported: 0
