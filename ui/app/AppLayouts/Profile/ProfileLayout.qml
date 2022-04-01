@@ -99,6 +99,7 @@ StatusAppTwoPanelLayout {
 
         LanguageView {
             languageStore: profileView.store.languageStore
+            currencyStore: profileView.store.walletStore.currencyStore
             profileContentWidth: _internal.profileContentWidth
         }
 
