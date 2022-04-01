@@ -9,6 +9,7 @@ import shared.popups 1.0
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
+import StatusQ.Controls 0.1
 
 import "../popups"
 import "../stores"
@@ -19,27 +20,22 @@ SettingsContentBase {
     property LanguageStore languageStore
     property var currencyStore
 
-    onVisibleChanged: { if(!visible) d.setViewIdleState()}
+    onVisibleChanged: { if(!visible) root.setViewIdleState()}
+    onBaseAreaClicked: { root.setViewIdleState() }
 
     Component.onCompleted: {
         root.currencyStore.updateCurrenciesModel()
         root.languageStore.initializeLanguageModel()
     }
 
+    function setViewIdleState() {
+        currencyPicker.close()
+        languagePicker.close()
+    }
+
     ColumnLayout {
         spacing: Constants.settingsSection.itemSpacing
         width: root.contentWidth
-
-        QtObject {
-            id: d
-            property int margins: 64
-            property int zOnTop: 100
-
-            function setViewIdleState() {
-                currencyPicker.close()
-                languagePicker.close()
-            }
-        }
 
         Item {
             id: currency
@@ -47,7 +43,7 @@ SettingsContentBase {
             Layout.leftMargin: Style.current.padding
             Layout.rightMargin: Style.current.padding
             height: 38
-            z: d.zOnTop + 1
+            z: root.z + 2
 
             StatusBaseText {
                 text: qsTr("Set Display Currency")
@@ -69,13 +65,14 @@ SettingsContentBase {
                     }
                 }
 
-                z: d.zOnTop + 1
+                z: root.z + 2
                 width: 104
                 height: parent.height
                 anchors.right: parent.right
                 inputList: root.currencyStore.currenciesModel
                 printSymbol: true
                 placeholderSearchText: qsTr("Search Currencies")
+                maxPickerHeight: 350
 
                 onItemPickerChanged: {
                     if(selected) {
@@ -92,7 +89,7 @@ SettingsContentBase {
             Layout.leftMargin: Style.current.padding
             Layout.rightMargin: Style.current.padding
             height: 38
-            z: d.zOnTop
+            z: root.z + 1
 
             StatusBaseText {
                 text: qsTr("Language")
@@ -114,12 +111,13 @@ SettingsContentBase {
                     }
                 }
 
-                z: d.zOnTop
+                z: root.z + 1
                 width: 104
                 height: parent.height
                 anchors.right: parent.right
                 inputList: root.languageStore.languageModel
                 placeholderSearchText: qsTr("Search Languages")
+                maxPickerHeight: 350
 
                 onItemPickerChanged: {
                     if(selected && localAppSettings.locale !== key) {
@@ -140,8 +138,75 @@ SettingsContentBase {
 
         Separator {
             Layout.fillWidth: true
+            Layout.bottomMargin: Style.current.padding
         }
 
+        // Date format options:
+        Column {
+            Layout.fillWidth: true
+            Layout.leftMargin: Style.current.padding
+            Layout.rightMargin: Style.current.padding
+            spacing: Style.current.padding
+            StatusBaseText {
+                text: qsTr("Date Format")
+                anchors.left: parent.left
+                font.pixelSize: 15
+                color: Theme.palette.directColor1
+            }
+
+            StatusRadioButton {
+                id: ddmmyyFormat
+                ButtonGroup.group: dateFormatGroup
+                text: qsTr("DD/MM/YY")
+                font.pixelSize: 13
+                checked: root.languageStore.isDDMMYYDateFormat
+                onCheckedChanged: root.languageStore.setIsDDMMYYDateFormat(checked)
+            }
+
+            StatusRadioButton {
+                id: mmddyyFormat
+                ButtonGroup.group: dateFormatGroup
+                text: qsTr("MM/DD/YY")
+                font.pixelSize: 13
+                checked: !root.languageStore.isDDMMYYDateFormat
+            }
+
+            ButtonGroup { id: dateFormatGroup }
+        }
+
+        // Time format options:
+        Column {
+            Layout.fillWidth: true
+            Layout.leftMargin: Style.current.padding
+            Layout.rightMargin: Style.current.padding
+            Layout.topMargin: Style.current.padding
+            spacing: Style.current.padding
+            StatusBaseText {
+                text: qsTr("Time Format")
+                anchors.left: parent.left
+                font.pixelSize: 15
+                color: Theme.palette.directColor1
+            }
+
+            StatusRadioButton {
+                id: h24Format
+                ButtonGroup.group: timeFormatGroup
+                text: qsTr("24-Hour Time")
+                font.pixelSize: 13
+                checked: root.languageStore.is24hTimeFormat
+                onCheckedChanged: root.languageStore.setIs24hTimeFormat(checked)
+            }
+
+            StatusRadioButton {
+                id: h12Format
+                ButtonGroup.group: timeFormatGroup
+                text: qsTr("12-Hour Time")
+                font.pixelSize: 13
+                checked: !root.languageStore.is24hTimeFormat
+            }
+
+            ButtonGroup { id: timeFormatGroup }
+        }
 
         // TEMPORARY: It should be removed as it is only used in Linux OS but it must be investigated how to change language in execution time, as well, in Linux (will be addressed in another task)
         Loader {
@@ -160,11 +225,6 @@ SettingsContentBase {
                 }
             }
         }
-
-        // Outsite area
-        MouseArea {
-            anchors.fill: parent
-            onClicked: { d.setViewIdleState() }
-        }
     }
 }
+

@@ -3,6 +3,7 @@ import QtQuick 2.13
 import utils 1.0
 import shared 1.0
 import shared.panels 1.0
+import shared.stores 1.0
 
 
 Rectangle {
@@ -142,7 +143,7 @@ Rectangle {
         }
         StyledText {
             id: timeValue
-            text: new Date(parseInt(timestamp) * 1000).toLocaleString(locale)
+            text: Utils.formatLongDateTime(parseInt(timestamp) * 1000, RootStore.accountSensitiveSettings.isDDMMYYDateFormat, RootStore.accountSensitiveSettings.is24hTimeFormat)
             font.pixelSize: Style.current.primaryTextFontSize
             anchors.rightMargin: Style.current.smallPadding
         }

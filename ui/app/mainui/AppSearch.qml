@@ -1,6 +1,7 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 
+import shared.stores 1.0
 import utils 1.0
 import StatusQ.Popups 0.1
 
@@ -50,17 +51,13 @@ Item {
 
     StatusSearchPopup {
         id: searchPopup
-
         noResultsLabel: qsTr("No results")
         defaultSearchLocationText: qsTr("Anywhere")
-
         searchOptionsPopupMenu: searchPopupMenu
         searchResults: appSearch.store.resultModel
-
         formatTimestampFn: function (ts) {
-            return new Date(parseInt(ts, 10)).toLocaleString(Qt.locale(localAppSettings.locale))
+            return Utils.formatLongDateTime(parseInt(ts, 10), RootStore.accountSensitiveSettings.isDDMMYYDateFormat, RootStore.accountSensitiveSettings.is24hTimeFormat)
         }
-
         onSearchTextChanged: {
             if (searchPopup.searchText !== "") {
                 searchPopup.loading = true

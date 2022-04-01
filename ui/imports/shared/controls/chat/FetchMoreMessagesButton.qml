@@ -15,6 +15,13 @@ Item {
     property string nextMsgTimestamp
     signal clicked()
     signal timerTriggered()
+
+    QtObject {
+        id: d
+         property string formattedDate: nextMessageIndex > -1 ? Utils.formatLongDate(nextMsgTimestamp * 1, RootStore.accountSensitiveSettings.isDDMMYYDateFormat) :
+                                                                Utils.formatLongDate(undefined, RootStore.accountSensitiveSettings.isDDMMYYDateFormat)
+    }
+
     Timer {
         id: timer
         interval: 3000
@@ -72,8 +79,7 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
         horizontalAlignment: Text.AlignHCenter
         color: Style.current.secondaryText
-        //% "before %1"
-        text: qsTrId("before--1").arg((nextMessageIndex > -1 ? new Date(nextMsgTimestamp * 1) : new Date()).toLocaleString(Qt.locale(RootStore.locale)))
+        text: qsTr("before--%1").arg(d.formattedDate)
     }
     Separator {
         anchors.top: fetchDate.bottom

@@ -224,35 +224,22 @@ QtObject {
         return Qt.hsla(color.hslHue, color.hslSaturation, color.hslLightness, alpha)
     }
 
-    function formatTime(timestamp) {
-        let messageDate = new Date(Math.floor(timestamp))
-        let minutes = messageDate.getMinutes();
-        let hours = messageDate.getHours();
-        return (hours < 10 ? "0" + hours : hours) + ":" + (minutes < 10 ? "0" + minutes : minutes)
+    function formatTime(value, is24hTimeFormat) {
+        const format24h = "hh:mm:ss t"
+        const format12h = "h:mm:ss AP t"
+        const currentTimeFormat = is24hTimeFormat ? format24h : format12h
+
+        return !!value ? Qt.formatTime(new Date(), currentTimeFormat) :
+                         Qt.formatTime(new Date(value), currentTimeFormat)
     }
 
-    function formatAgeFromTime(timestamp, epoch) {
-        epoch++ // pretending the parameter is not unused
-        const now = new Date()
-        const messageDate = new Date(Math.floor(timestamp))
-        const diffMs = now - messageDate
-        const diffMin = Math.floor(diffMs / 60000)
-        if (diffMin < 1) {
-            //% "NOW"
-            return qsTrId("now")
-        }
-        const diffHour = Math.floor(diffMin / 60)
-        if (diffHour < 1) {
-            //% "%1M"
-            return qsTrId("-1m").arg(diffMin)
-        }
-        const diffDay = Math.floor(diffHour / 24)
-        if (diffDay < 1) {
-            //% "%1H"
-            return qsTrId("-1h").arg(diffHour)
-        }
-        //% "%1D"
-        return qsTrId("-1d").arg(diffDay)
+    function formatShortTime(value, is24hTimeFormat) {
+        const format24h = "hh:mm"
+        const format12h = "h:mm AP"
+        const currentTimeFormat = is24hTimeFormat ? format24h : format12h
+
+        return !!value ? Qt.formatTime(new Date(), currentTimeFormat) :
+                         Qt.formatTime(new Date(value), currentTimeFormat)
     }
 
     function formatShortDateStr(longStr) {
@@ -309,6 +296,26 @@ QtObject {
         return shortStr;
     }
 
+    function formatLongDate(value, isDDMMYYDateFormat) {
+        const formatDDMMYY = "dddd d MMMM yyyy"
+        const formatMMDDYY = "dddd, MMMM d, yyyy"
+        const currentFormat = isDDMMYYDateFormat ? formatDDMMYY : formatMMDDYY
+        return !!value ? Qt.formatDate(new Date(), currentFormat) :
+                         Qt.formatDate(new Date(value), currentFormat)
+    }
+
+    function formatLongDateTime(value, isDDMMYYDateFormat, is24hTimeFormat) {
+        const formatDDMMYY = "dddd d MMMM yyyy"
+        const formatMMDDYY = "dddd, MMMM d, yyyy"
+        const format24h = "hh:mm:ss t"
+        const format12h = "h:mm:ss AP t"
+        const currentDateFormat = isDDMMYYDateFormat ? formatDDMMYY : formatMMDDYY
+        const currentTimeFormat = is24hTimeFormat ? format24h : format12h
+        return !!value ? Qt.formatDateTime(new Date(), currentDateFormat + " " + currentTimeFormat) :
+                         Qt.formatDateTime(new Date(value), currentDateFormat + " " + currentTimeFormat)
+    }
+
+     // WARN: It is not used!! TO BE REMOVE??
     function formatDateTime(timestamp, locale) {
         let now = new Date()
         let yesterday = new Date()
@@ -344,6 +351,31 @@ QtObject {
         } else {
             return formatShortDateStr(new Date().toLocaleDateString(Qt.locale(locale)))
         }
+    }
+
+    // WARN: It is not used!! TO BE REMOVE??
+    function formatAgeFromTime(timestamp, epoch) {
+        epoch++ // pretending the parameter is not unused
+        const now = new Date()
+        const messageDate = new Date(Math.floor(timestamp))
+        const diffMs = now - messageDate
+        const diffMin = Math.floor(diffMs / 60000)
+        if (diffMin < 1) {
+            //% "NOW"
+            return qsTrId("now")
+        }
+        const diffHour = Math.floor(diffMin / 60)
+        if (diffHour < 1) {
+            //% "%1M"
+            return qsTrId("-1m").arg(diffMin)
+        }
+        const diffDay = Math.floor(diffHour / 24)
+        if (diffDay < 1) {
+            //% "%1H"
+            return qsTrId("-1h").arg(diffHour)
+        }
+        //% "%1D"
+        return qsTrId("-1d").arg(diffDay)
     }
 
     function findAssetBySymbol(assets, symbolToFind) {

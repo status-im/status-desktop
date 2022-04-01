@@ -8,7 +8,7 @@ import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core.Theme 0.1
 
-Item {
+MouseArea {
     id: root
 
     property string sectionTitle
@@ -21,6 +21,7 @@ Item {
     default property Item content
 
     signal backButtonClicked()
+    signal baseAreaClicked()
 
     QtObject {
         id: d
@@ -28,6 +29,8 @@ Item {
         readonly property int topHeaderHeight: 56
         readonly property int titleRowHeight: 56
     }
+
+    onClicked: { root.baseAreaClicked() }
 
     Component.onCompleted: {
         content.parent = contentWrapper
@@ -89,10 +92,17 @@ Item {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.topMargin: Style.current.bigPadding
+        contentWidth: Math.max(contentWrapper.implicitWidth, width)
+        contentHeight: Math.max(contentWrapper.implicitHeight, height)
         clip: true
 
-        Column {
-            id: contentWrapper
+        MouseArea {
+            anchors.fill: parent
+            onClicked: { root.baseAreaClicked() }
+
+            Column {
+                id: contentWrapper
+            }
         }
     }
 }

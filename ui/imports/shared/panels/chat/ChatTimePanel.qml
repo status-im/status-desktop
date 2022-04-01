@@ -8,14 +8,16 @@ import utils 1.0
 
 StyledText {
     id: chatTime
-    color: Style.current.secondaryText
+
     property string timestamp
-    text: Utils.formatTime(chatTime.timestamp)
+
+    color: Style.current.secondaryText
+    text: Utils.formatShortTime(chatTime.timestamp, RootStore.accountSensitiveSettings.is24hTimeFormat)
     font.pixelSize: Style.current.asideTextFontSize
 
     StatusQ.StatusToolTip {
         visible: hhandler.hovered
-        text: new Date(parseInt(chatTime.timestamp, 10)).toLocaleString(Qt.locale(RootStore.locale))
+        text: Utils.formatLongDateTime(parseInt(chatTime.timestamp, 10), RootStore.accountSensitiveSettings.isDDMMYYDateFormat, RootStore.accountSensitiveSettings.is24hTimeFormat)
         maxWidth: 350
     }
 

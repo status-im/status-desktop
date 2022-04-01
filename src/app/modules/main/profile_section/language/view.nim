@@ -21,3 +21,9 @@ QtObject:
 
   proc changeLocale*(self: View, locale: string) {.slot.} =
     self.delegate.changeLanguage(locale)
+
+  proc setIsDDMMYYDateFormat*(self: View, isDDMMYYDateFormat: bool) {.slot.} =
+    self.delegate.setIsDDMMYYDateFormat(isDDMMYYDateFormat)
+
+  proc setIs24hTimeFormat*(self: View, is24hTimeFormat: bool) {.slot.} =
+    self.delegate.setIs24hTimeFormat(is24hTimeFormat)
