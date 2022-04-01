@@ -79,6 +79,9 @@ QtObject:
       self, "onMyRequestToJoinCommunityAcccepted(QString, QString, QString)", 2)
     signalConnect(singletonInstance.globalEvents, "myRequestToJoinCommunityRejected(QString, QString, QString)", 
       self, "onMyRequestToJoinCommunityRejected(QString, QString, QString)", 2)
+    signalConnect(singletonInstance.globalEvents, "meMentionedIconBadgeNotification(int)",
+      self, "onMeMentionedIconBadgeNotification(int)", 2)
+
     self.notificationSetUp = true
 
   proc showOSNotification(self: NotificationsManager, title: string, message: string, identifier: string) =
@@ -147,6 +150,9 @@ QtObject:
     let details = NotificationDetails(notificationType: NotificationType.MyRequestToJoinCommunityRejected, 
     sectionId: sectionId)
     self.processNotification(title, message, details)
+
+  proc onMeMentionedIconBadgeNotification(self: NotificationsManager, allMentions: int) {.slot.} =
+    self.osNotification.showIconBadgeNotification(allMentions)
 
   proc notificationCheck(self: NotificationsManager, title: string, message: string, details: NotificationDetails,
     notificationWay: string) =

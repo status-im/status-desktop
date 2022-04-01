@@ -539,7 +539,7 @@ method onActiveChatChange*[T](self: Module[T], sectionId: string, chatId: string
 
 method onNotificationsUpdated[T](self: Module[T], sectionId: string, sectionHasUnreadMessages: bool,
   sectionNotificationCount: int) =
-  self.view.model().udpateNotifications(sectionId, sectionHasUnreadMessages, sectionNotificationCount)
+  self.view.model().updateNotifications(sectionId, sectionHasUnreadMessages, sectionNotificationCount)
 
 method onNetworkConnected[T](self: Module[T]) =
   self.view.setConnected(true)
@@ -672,7 +672,7 @@ method calculateProfileSectionHasNotification*[T](self: Module[T]): bool =
   return not self.controller.isMnemonicBackedUp()
 
 method mnemonicBackedUp*[T](self: Module[T]) =
-  self.view.model().udpateNotifications(
+  self.view.model().updateNotifications(
     conf.SETTINGS_SECTION_ID,
     self.calculateProfileSectionHasNotification(),
     notificationsCount = 0)
@@ -694,3 +694,6 @@ method newCommunityMembershipRequestReceived*[T](self: Module[T], membershipRequ
   let community =  self.controller.getCommunityById(membershipRequest.communityId)
   singletonInstance.globalEvents.newCommunityMembershipRequestNotification("New membership request",
   fmt "{contactName} asks to join {community.name}", community.id)
+
+method meMentionedCountChanged*[T](self: Module[T], allMentions: int) =
+  singletonInstance.globalEvents.meMentionedIconBadgeNotification(allMentions)

@@ -38,6 +38,8 @@ QtObject:
     result.activeSectionVariant = newQVariant(result.activeSection)
     result.chatSearchModel = chat_search_model.newModel()
     result.chatSearchModelVariant = newQVariant(result.chatSearchModel)
+    signalConnect(result.model, "notificationsCountChanged()", result,
+    "onNotificationsCountChanged()", 2)
 
   proc load*(self: View) =
     # In some point, here, we will setup some exposed main module related things.
@@ -71,6 +73,9 @@ QtObject:
 
   proc rebuildChatSearchModel*(self: View) {.slot.} =
     self.delegate.rebuildChatSearchModel()
+
+  proc onNotificationsCountChanged*(self: View) {.slot.} =
+    self.delegate.meMentionedCountChanged(self.model.allMentionsCount())
 
   QtProperty[QVariant] chatSearchModel:
     read = getChatSearchModel

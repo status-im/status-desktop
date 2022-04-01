@@ -248,6 +248,8 @@ QtObject:
 
   proc sectionVisibilityUpdated*(self: SectionModel) {.signal.}
 
+  proc notificationsCountChanged*(self: SectionModel) {.signal.}
+
   proc enableDisableSection(self: SectionModel, sectionType: SectionType, value: bool) =
     if(sectionType != SectionType.Community):
       for i in 0 ..< self.items.len:
@@ -280,13 +282,20 @@ QtObject:
   proc disableSection*(self: SectionModel, sectionType: SectionType) =
     self.enableDisableSection(sectionType, false)
 
-  proc udpateNotifications*(self: SectionModel, id: string, hasNotification: bool, notificationsCount: int) =
+  # Count all mentions from all chat&community sections
+  proc allMentionsCount*(self: SectionModel): int =
+    for item in self.items:
+      if item.sectionType == SectionType.Chat or item.sectionType == SectionType.Community:
+        result += item.notificationsCount
+
+  proc updateNotifications*(self: SectionModel, id: string, hasNotification: bool, notificationsCount: int) =
     for i in 0 ..< self.items.len:
       if(self.items[i].id == id):
         let index = self.createIndex(i, 0, nil)
         self.items[i].hasNotification = hasNotification
         self.items[i].notificationsCount = notificationsCount
         self.dataChanged(index, index, @[ModelRole.HasNotification.int, ModelRole.NotificationsCount.int])
+        self.notificationsCountChanged()
         return
 
   proc getSectionNameById*(self: SectionModel, sectionId: string): string {.slot.} =
