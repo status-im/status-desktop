@@ -29,42 +29,7 @@ StatusModal {
             anchors.horizontalCenter: parent.horizontalCenter
             input.placeholderText: qsTr("Display Name")
             input.text: root.profileStore.displayName
-            validators: [
-                StatusMinLengthValidator {
-                    minLength: 5
-                    errorMessage: qsTr("Username must be at least 5 characters")
-                },
-                StatusRegularExpressionValidator {
-                    regularExpression: /^[a-zA-Z0-9\-_]+$/
-                    errorMessage: qsTr("Only letters, numbers, underscores and hyphens allowed")
-                },
-                // TODO: Create `StatusMaxLengthValidator` in StatusQ
-                StatusValidator {
-                    name: "maxLengthValidator"
-                    validate: function (t) { return displayNameInput.input.text.length <= 24 }
-                    errorMessage: qsTr("24 character username limit")
-                },
-                StatusValidator {
-                    name: "endsWith-ethValidator"
-                    validate: function (t) { return !displayNameInput.input.text.endsWith("-eth") }
-                    errorMessage: qsTr("Usernames ending with '-eth' are not allowed")
-                },
-                StatusValidator {
-                    name: "endsWith_ethValidator"
-                    validate: function (t) { return !displayNameInput.input.text.endsWith("_eth") }
-                    errorMessage: qsTr("Usernames ending with '_eth' are not allowed")
-                },
-                StatusValidator {
-                    name: "endsWith.ethValidator"
-                    validate: function (t) { return !displayNameInput.input.text.endsWith(".eth") }
-                    errorMessage: qsTr("Usernames ending with '.eth' are not allowed")
-                },
-                StatusValidator {
-                    name: "isAliasValidator"
-                    validate: function (t) { return !globalUtils.isAlias(displayNameInput.input.text) }
-                    errorMessage: qsTr("Sorry, the name you have chosen is not allowed, try picking another username")
-                }
-            ]
+            validators: Constants.validators.displayName
         }
     }
 
@@ -72,9 +37,9 @@ StatusModal {
         StatusButton {
             id: doneBtn
             text: qsTr("Ok")
-            enabled: displayNameInput.valid
+            enabled: !!displayNameInput.text && displayNameInput.valid
             onClicked: {
-                root.profileStore.setDisplayName(displayNameInput.input.text)
+                root.profileStore.setDisplayName(displayNameInput.text)
                 root.close()
             }
         }

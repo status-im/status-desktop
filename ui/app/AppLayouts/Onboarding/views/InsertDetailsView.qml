@@ -101,6 +101,7 @@ Item {
         StatusInput {
             id: nameInput
             implicitWidth: 328
+            Layout.preferredHeight: 78
             Layout.alignment: Qt.AlignHCenter
             input.placeholderText: qsTr("Display name")
             input.edit.font.capitalization: Font.Capitalize
@@ -115,6 +116,7 @@ Item {
                     nameInput.input.edit.clear();
                 }
             }
+            validators: Constants.validators.displayName
             onTextChanged: {
                 userImage.name = text;
             }
@@ -156,7 +158,7 @@ Item {
         StatusButton {
             Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
             Layout.topMargin: 125
-            enabled: !!nameInput.text
+            enabled: !!nameInput.text && nameInput.valid
             text: qsTr("Next")
             onClicked: {
                 if (root.state === "username") {
