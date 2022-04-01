@@ -12,3 +12,6 @@ proc newStatusOSNotification*(): StatusOSNotification =
 proc showNotification*(self: StatusOSNotification, title: string, 
   message: string, identifier: string) =
   dos_osnotification_show_notification(self.vptr, title, message, identifier)
+
+proc showIconBadgeNotification*(self: StatusOSNotification, notificationsCount: int) =
+  dos_osnotification_show_badge_notification(self.vptr, notificationsCount)

@@ -352,6 +352,8 @@ proc dos_osnotification_create(): DosStatusOSNotification
 proc dos_osnotification_show_notification(vptr: DosStatusOSNotification,
   title: cstring, messsage: cstring, identifier: cstring) 
   {.cdecl, dynlib: dynLibName, importc.}
+proc dos_osnotification_show_badge_notification(vptr: DosStatusOSNotification, notificationsCount: int) 
+  {.cdecl, dynlib: dynLibName, importc.}
 proc dos_osnotification_delete(vptr: DosStatusOSNotification) 
   {.cdecl, dynlib: dynLibName, importc.}
 
