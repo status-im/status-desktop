@@ -84,14 +84,11 @@ proc setSearchLocation*(self: Controller, location: string, subLocation: string)
     self.searchLocation = location
     self.searchSubLocation = subLocation
 
-proc getJoinedCommunities*(self: Controller): seq[CommunityDto] =
-  return self.communityService.getJoinedCommunities()
+proc getChannelGroups*(self: Controller): seq[ChannelGroupDto] =
+  return self.chatService.getChannelGroups()
 
 proc getCommunityById*(self: Controller, communityId: string): CommunityDto =
   return self.communityService.getCommunityById(communityId)
-
-proc getAllChatsForCommunity*(self: Controller, communityId: string): seq[ChatDto] =
-  return self.communityService.getAllChats(communityId)
 
 proc getChatDetailsForChatTypes*(self: Controller, types: seq[ChatType]): seq[ChatDto] =
   return self.chatService.getChatsOfChatTypes(types)
