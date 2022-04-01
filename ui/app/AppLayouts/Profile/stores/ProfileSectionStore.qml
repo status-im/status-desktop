@@ -94,7 +94,7 @@ QtObject {
                        text: qsTr("Sound"),
                        icon: "sound"})
             append({subsection: Constants.settingsSubsection.language,
-                       text: qsTr("Language"),
+                       text: qsTr("Language & Currency"),
                        icon: "language"})
             append({subsection: Constants.settingsSubsection.notifications,
                        text: qsTr("Notifications"),

@@ -103,7 +103,6 @@ StatusModal {
                 switch (confirmationDialog.btnType) {
                     case "warn":
                         return StatusBaseButton.Type.Danger
-                        break
                     default:
                         return StatusBaseButton.Type.Primary
                 }
