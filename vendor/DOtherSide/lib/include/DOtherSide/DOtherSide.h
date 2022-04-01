@@ -1004,6 +1004,7 @@ DOS_API void dos_event_delete(DosEvent* vptr);
 DOS_API DosOSNotification* dos_osnotification_create();
 DOS_API void dos_osnotification_show_notification(DosOSNotification* vptr, 
     const char* title, const char* message, const char* identifier);
+DOS_API void dos_osnotification_show_badge_notification(DosOSNotification* vptr, int notificationsCount);
 DOS_API void dos_osnotification_delete(DosOSNotification* vptr);
 
 #pragma endregion

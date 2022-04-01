@@ -23,6 +23,8 @@ namespace Status
         void showNotification(const QString& title, const QString& message, 
         const QString& identifier);
 
+        void showIconBadgeNotification(int notificationsCount);
+
     signals:
         void notificationClicked(QString identifier);
 
@@ -41,6 +43,7 @@ namespace Status
     private:
         void initNotificationMacOs();
         void showNotificationMacOs(QString title, QString message, QString identifier);
+        void showIconBadgeNotificationMacOs(int notificationsCount);
 
     private:
         NotificationHelper *m_notificationHelper;
