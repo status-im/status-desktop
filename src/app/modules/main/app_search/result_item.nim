@@ -15,8 +15,9 @@ type Item* = object
   badgeIconColor: string
   badgeIsLetterIdenticon: bool
 
-proc initItem*(itemId, content, time, titleId, title, sectionName: string, image, color, badgePrimaryText,
-  badgeSecondaryText, badgeImage, badgeIconColor: string, badgeIsLetterIdenticon: bool):
+proc initItem*(itemId, content, time, titleId, title, sectionName: string, image, color,
+  badgePrimaryText, badgeSecondaryText, badgeImage, badgeIconColor: string,
+  badgeIsLetterIdenticon: bool):
   Item =
 
   result.itemId = itemId

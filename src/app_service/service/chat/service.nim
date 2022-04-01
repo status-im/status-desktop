@@ -154,8 +154,32 @@ QtObject:
   proc hasChannel*(self: Service, chatId: string): bool =
     self.chats.hasKey(chatId)
 
+
+  proc getChatIndex*(self: Service, channelGroupId, chatId: string): int =
+    var i = 0
+    for chat in self.channelGroups[channelGroupId].chats:
+      if (chat.id == chatId):
+        return i
+      i.inc()
+    return -1
+      
+
   proc updateOrAddChat*(self: Service, chat: ChatDto) =
     self.chats[chat.id] = chat
+
+    var channelGroupId = chat.communityId
+    if (channelGroupId == ""):
+      channelGroupId = singletonInstance.userProfile.getPubKey()
+    if (not self.channelGroups.contains(channelGroupId)):
+      warn "Unknown community for new channel update", channelGroupId
+      return
+
+    let index = self.getChatIndex(channelGroupId, chat.id)
+    if (index == -1):
+      self.channelGroups[channelGroupId].chats.add(chat)
+    else:
+      self.channelGroups[channelGroupId].chats[index] = chat
+    
 
   proc parseChatResponse*(self: Service, response: RpcResponse[JsonNode]): (seq[ChatDto], seq[MessageDto]) =
     var chats: seq[ChatDto] = @[]
