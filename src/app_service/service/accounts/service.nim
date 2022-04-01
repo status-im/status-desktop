@@ -136,7 +136,6 @@ proc prepareAccountJsonObject(self: Service, account: GeneratedAccountDto, displ
   result = %* {
     "name": if displayName == "": account.alias else: displayName,
     "address": account.address,
-    "identicon": "",
     "key-uid": account.keyUid,
     "keycard-pairing": nil
   }
@@ -165,7 +164,6 @@ proc prepareSubaccountJsonObject(self: Service, account: GeneratedAccountDto, di
       "public-key": account.derivedAccounts.whisper.publicKey,
       "address": account.derivedAccounts.whisper.address,
       "name": if displayName == "": account.alias else: displayName,
-      "identicon": "",
       "path": PATH_WHISPER,
       "chat": true
     }
@@ -198,7 +196,6 @@ proc prepareAccountSettingsJsonObject(self: Service, account: GeneratedAccountDt
     "latest-derived-path": 0,
     "networks/networks": DEFAULT_NETWORKS,
     "currency": "usd",
-    "identicon": "",
     "waku-enabled": true,
     "wallet/visible-tokens": {
       DEFAULT_NETWORK_NAME: ["SNT"]
@@ -329,7 +326,7 @@ proc login*(self: Service, account: AccountDto, password: string): string =
       },
     }
 
-    let response = status_account.login(account.name, account.keyUid, hashedPassword, "", thumbnailImage,
+    let response = status_account.login(account.name, account.keyUid, hashedPassword, thumbnailImage,
     largeImage, $nodeCfg)
 
     var error = "response doesn't contain \"error\""

@@ -52,7 +52,7 @@ proc initModel(self: Module) =
       let item = initItem(c.id, chatName, chatImage, c.color)
       self.view.mutedContactsModel().addItem(item)
     else:
-      let item = initItem(c.id, c.name, c.identicon, c.color)
+      let item = initItem(c.id, c.name, c.icon, c.color)
       self.view.mutedChatsModel().addItem(item)
 
 method viewDidLoad*(self: Module) =
@@ -73,7 +73,7 @@ method onChatMuted*(self: Module, chatId: string) =
     let item = initItem(chat.id, chatName, chatImage, chat.color)
     self.view.mutedContactsModel().addItem(item)
   else:
-    let item = initItem(chat.id, chat.name, chat.identicon, chat.color)
+    let item = initItem(chat.id, chat.name, chat.icon, chat.color)
     self.view.mutedChatsModel().addItem(item)
 
 method onChatUnmuted*(self: Module, chatId: string) =

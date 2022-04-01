@@ -57,7 +57,7 @@ type ChatDto* = object
   members*: seq[ChatMember]
   #membershipUpdateEvents*: seq[ChatMembershipEvent]  ???? It's always null and a question why do we need it here within this context ????
   alias*: string
-  identicon*: string # is it identicon or image???
+  icon*: string
   muted*: bool
   communityId*: string #set if chat belongs to a community
   profile*: string
@@ -104,7 +104,7 @@ proc `$`*(self: ChatDto): string =
     unviewedMentionsCount: {self.unviewedMentionsCount},
     members: {self.members},
     alias: {self.alias},
-    identicon: {self.identicon},
+    icon: {self.icon},
     muted: {self.muted},
     communityId: {self.communityId},
     profile: {self.profile},
@@ -168,7 +168,7 @@ proc toChatDto*(jsonObj: JsonNode): ChatDto =
   discard jsonObj.getProp("unviewedMentionsCount", result.unviewedMentionsCount)
   discard jsonObj.getProp("canPost", result.canPost)
   discard jsonObj.getProp("alias", result.alias)
-  discard jsonObj.getProp("identicon", result.identicon)
+  discard jsonObj.getProp("identicon", result.icon)
   discard jsonObj.getProp("muted", result.muted)
   discard jsonObj.getProp("categoryId", result.categoryId)
   if (result.categoryId == ""):

@@ -74,7 +74,7 @@ method load*(self: Module) =
   let hasNotification = chatDto.unviewedMessagesCount > 0 or chatDto.unviewedMentionsCount > 0
   let notificationsCount = chatDto.unviewedMentionsCount
   var chatName = chatDto.name
-  var chatImage = chatDto.identicon
+  var chatImage = chatDto.icon
   if(chatDto.chatType == ChatType.OneToOne):
     (chatName, chatImage) = self.controller.getOneToOneChatNameAndImage()
 

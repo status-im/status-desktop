@@ -9,7 +9,7 @@ type PinnedMessageUpdateDto* = object
   messageId*: string
   localChatId*: string # not sure what's this and do we need this at all
   pinnedBy*: string
-  identicon*: string # is it identicon or image???
+  icon*: string
   alias*: string
   clock*: int64
   pinned*: bool
@@ -21,7 +21,7 @@ proc toPinnedMessageUpdateDto*(jsonObj: JsonNode): PinnedMessageUpdateDto =
   discard jsonObj.getProp("message_id", result.messageId)
   discard jsonObj.getProp("localChatId", result.localChatId)
   discard jsonObj.getProp("from", result.pinnedBy)
-  discard jsonObj.getProp("identicon", result.identicon)
+  discard jsonObj.getProp("identicon", result.icon)
   discard jsonObj.getProp("alias", result.alias)
   discard jsonObj.getProp("clock", result.clock)
   discard jsonObj.getProp("pinned", result.pinned)
