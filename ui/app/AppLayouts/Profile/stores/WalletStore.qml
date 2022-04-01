@@ -1,5 +1,7 @@
 import QtQuick 2.13
 
+import "../../Wallet/stores"
+
 QtObject {
     id: root
 
@@ -21,6 +23,9 @@ QtObject {
     property var walletTokensModule: walletSectionAllTokens
     property var defaultTokenList: walletSectionAllTokens.default
     property var customTokenList: walletSectionAllTokens.custom
+
+
+    property var currencyStore: CurrenciesStore {}
 
     function addCustomToken(chainId, address, name, symbol, decimals) {
         return walletSectionAllTokens.addCustomToken(chainId, address, name, symbol, decimals)
