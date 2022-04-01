@@ -40,19 +40,16 @@ QtObject {
     }
 
     property string assetPath: Qt.resolvedUrl("./../assets/")
-    function svg(name) {
-        return assetPath + "images/" + name + ".svg";
-    }
     function png(name) {
-        return assetPath + "images/" +name + ".png";
+        return assetPath + "png/" + name + ".png";
     }
-    function icon(name) {
-        return assetPath + "icons/" +name + ".svg";
+    function svg(name) {
+        return assetPath + "icons/" + name + ".svg";
     }
     function emoji(name) {
-        return "qrc:/StatusQ/src/assets/twemoji/" +name + ".png";
+        return "qrc:/StatusQ/src/assets/twemoji/" + name + ".png";
     }
     function lottie(name) {
-        return assetPath + "lottie/" +name + ".json";
+        return assetPath + "lottie/" + name + ".json";
     }
 }

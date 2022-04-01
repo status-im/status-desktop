@@ -225,7 +225,7 @@ Popup {
                 height: 24
                 selected: true
                 useIconInsteadOfImage: true
-                source: Style.svg("history_icon")
+                source: Style.svg("history")
                 anchors.left: btnAddStickerPack.right
                 anchors.leftMargin: Style.current.padding
                 onClicked: {

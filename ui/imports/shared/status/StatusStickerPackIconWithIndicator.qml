@@ -9,7 +9,7 @@ Item {
     id: root
     property bool selected: false
     property bool useIconInsteadOfImage: false
-    property url source: Style.svg("history_icon")
+    property url source: Style.svg("history")
     signal clicked
     height: 24
     width: 24
