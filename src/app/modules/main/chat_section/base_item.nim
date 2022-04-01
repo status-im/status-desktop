@@ -1,3 +1,9 @@
+import sequtils, sugar
+import color_hash_item, color_hash_model
+
+type
+  ColorHashSegment* = tuple[len, colorIdx: int]
+
 type
   BaseItem* {.pure inheritable.} = ref object of RootObj
     id: string
@@ -7,6 +13,7 @@ type
     icon: string
     color: string
     emoji: string
+    colorHash: color_hash_model.Model
     description: string
     hasUnreadMessages: bool
     notificationsCount: int
@@ -19,13 +26,15 @@ type
 
 proc setup*(self: BaseItem, id, name, icon: string, color, emoji, description: string,
   `type`: int, amIChatAdmin: bool, hasUnreadMessages: bool, notificationsCount: int, muted, blocked, active: bool,
-    position: int, categoryId: string = "", highlight: bool = false) =
+    position: int, categoryId: string = "", colorHash: seq[ColorHashSegment] = @[], highlight: bool = false) =
   self.id = id
   self.name = name
   self.amIChatAdmin = amIChatAdmin
   self.icon = icon
   self.color = color
   self.emoji = emoji
+  self.colorHash = color_hash_model.newModel()
+  self.colorHash.setItems(map(colorHash, x => color_hash_item.initItem(x.len, x.colorIdx)))
   self.description = description
   self.`type` = `type`
   self.hasUnreadMessages = hasUnreadMessages
@@ -39,10 +48,10 @@ proc setup*(self: BaseItem, id, name, icon: string, color, emoji, description: s
 
 proc initBaseItem*(id, name, icon: string, color, emoji, description: string, `type`: int,
     amIChatAdmin: bool, hasUnreadMessages: bool, notificationsCount: int, muted, blocked, active: bool,
-    position: int, categoryId: string = "", highlight: bool = false): BaseItem =
+    position: int, categoryId: string = "", colorHash: seq[ColorHashSegment] = @[], highlight: bool = false): BaseItem =
   result = BaseItem()
   result.setup(id, name, icon, color, emoji, description, `type`, amIChatAdmin,
-  hasUnreadMessages, notificationsCount, muted, blocked, active, position, categoryId, highlight)
+  hasUnreadMessages, notificationsCount, muted, blocked, active, position, categoryId, colorHash, highlight)
 
 proc delete*(self: BaseItem) =
   discard
@@ -76,6 +85,9 @@ method emoji*(self: BaseItem): string {.inline base.} =
 
 method `emoji=`*(self: var BaseItem, value: string) {.inline base.} =
   self.emoji = value
+
+method colorHash*(self: BaseItem): color_hash_model.Model {.inline base.} =
+  self.colorHash
 
 method description*(self: BaseItem): string {.inline base.} =
   self.description

@@ -10,6 +10,7 @@ type
     Icon
     Color
     Emoji
+    ColorHash
     Description
     Type
     HasUnreadMessages
@@ -76,6 +77,7 @@ QtObject:
       ModelRole.Icon.int:"icon",
       ModelRole.Color.int:"color",
       ModelRole.Emoji.int:"emoji",
+      ModelRole.ColorHash.int:"colorHash",
       ModelRole.Description.int:"description",
       ModelRole.Type.int:"type",
       ModelRole.HasUnreadMessages.int:"hasUnreadMessages",
@@ -113,6 +115,8 @@ QtObject:
       result = newQVariant(item.color)
     of ModelRole.Emoji:
       result = newQVariant(item.emoji)
+    of ModelRole.ColorHash:
+      result = newQVariant(item.colorHash)
     of ModelRole.Description:
       result = newQVariant(item.description)
     of ModelRole.Type:

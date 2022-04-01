@@ -11,7 +11,7 @@ import StatusQ.Controls 0.1 as StatusQControls
 import StatusQ.Components 0.1
 
 Rectangle {
-    id: accountViewDelegate
+    id: root
 
     property string username: "Jotaro Kujo"
     property string keyUid: "0x123345677890987654321123456"
@@ -42,7 +42,9 @@ Rectangle {
         anchors.left: parent.left
         anchors.leftMargin: Style.current.padding
         anchors.verticalCenter: parent.verticalCenter
-        image.source: accountViewDelegate.image
+        name: root.username
+        image.source: root.image
+        icon.charactersLen: 2
     }
 
     StyledText {
@@ -76,7 +78,7 @@ Rectangle {
         anchors.right: parent.right
         anchors.rightMargin: Style.current.padding
         anchors.verticalCenter: parent.verticalCenter
-        checked: accountViewDelegate.selected
+        checked: root.selected
     }
 
     MouseArea {
@@ -87,10 +89,10 @@ Rectangle {
             onAccountSelect(index)
         }
         onEntered: {
-            accountViewDelegate.isHovered = true
+            root.isHovered = true
         }
         onExited: {
-            accountViewDelegate.isHovered = false
+            root.isHovered = false
         }
     }
 }

@@ -19,6 +19,7 @@ import ../../../../app_service/service/community/service as community_service
 import ../../../../app_service/service/message/service as message_service
 import ../../../../app_service/service/mailservers/service as mailservers_service
 import ../../../../app_service/service/gif/service as gif_service
+import ../../../../app_service/service/visual_identity/service as visual_identity
 
 export io_interface
 
@@ -112,6 +113,7 @@ proc buildChatUI(self: Module, events: EventEmitter,
     let notificationsCount = c.unviewedMentionsCount
     var chatName = c.name
     var chatImage = ""
+    var colorHash: ColorHashDto = @[]
     var isUsersListAvailable = true
     var blocked = false
     if(c.chatType == ChatType.OneToOne):
@@ -120,12 +122,13 @@ proc buildChatUI(self: Module, events: EventEmitter,
       chatName = contactDetails.displayName
       chatImage = contactDetails.icon
       blocked = contactDetails.details.isBlocked()
+      colorHash = self.controller.getColorHash(c.id)
 
     let amIChatAdmin = self.amIMarkedAsAdminUser(c.members)
 
     let item = initItem(c.id, chatName, chatImage, c.color, c.emoji, c.description,
       c.chatType.int, amIChatAdmin, hasNotification, notificationsCount, c.muted, blocked,
-      active=false, c.position, c.categoryId)
+      active=false, c.position, c.categoryId, colorHash)
     self.view.chatsModel().appendItem(item)
     self.addSubmodule(c.id, false, isUsersListAvailable, events, settingsService, contactService, chatService,
     communityService, messageService, gifService, mailserversService)
@@ -395,10 +398,12 @@ method addNewChat*(
   let notificationsCount = chatDto.unviewedMentionsCount
   var chatName = chatDto.name
   var chatImage = chatDto.identicon
+  var colorHash: ColorHashDto = @[]
   var isUsersListAvailable = true
   if(chatDto.chatType == ChatType.OneToOne):
     isUsersListAvailable = false
     (chatName, chatImage) = self.controller.getOneToOneChatNameAndImage(chatDto.id)
+    colorHash = self.controller.getColorHash(chatDto.id)
   var amIChatAdmin = false
   if(belongsToCommunity):
     amIChatAdmin = self.controller.getMyCommunity().admin
@@ -408,7 +413,7 @@ method addNewChat*(
   if chatDto.categoryId.len == 0:
     let item = initItem(chatDto.id, chatName, chatImage, chatDto.color, chatDto.emoji,
       chatDto.description, chatDto.chatType.int, amIChatAdmin, hasNotification, notificationsCount,
-      chatDto.muted, blocked=false, active=false, position = 0, chatDto.categoryId, chatDto.highlight)
+      chatDto.muted, blocked=false, active=false, position = 0, chatDto.categoryId, colorHash, chatDto.highlight)
     self.addSubmodule(chatDto.id, belongsToCommunity, isUsersListAvailable, events, settingsService, contactService, chatService,
                       communityService, messageService, gifService, mailserversService)
     self.chatContentModules[chatDto.id].load()

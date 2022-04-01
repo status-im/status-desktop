@@ -288,6 +288,7 @@ Column {
         id: channelIdentifierComponent
         ChannelIdentifierView {
             chatName: root.senderDisplayName
+            chatId: root.messageStore.getChatId()
             chatType: root.messageStore.getChatType()
             chatColor: root.messageStore.getChatColor()
             chatEmoji: root.channelEmoji

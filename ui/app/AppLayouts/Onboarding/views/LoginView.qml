@@ -91,7 +91,8 @@ Item {
             id: userImage
             anchors.horizontalCenter: parent.horizontalCenter
             image.source: LoginStore.currentAccount.thumbnailImage
-
+            name: LoginStore.currentAccount.username
+            icon.charactersLen: 2
         }
 
         StyledText {
