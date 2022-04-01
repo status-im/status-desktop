@@ -110,8 +110,8 @@ Column {
                 anchors.fill: parent
                 hoverEnabled: true
                 onClicked: function (event) {
-                    root.gifSelected(event, model.url)
                     root.store.addToRecentsGif(model.id)
+                    root.gifSelected(event, model.url)
                 }
             }
         }

@@ -35,6 +35,7 @@ Rectangle {
     property var emojiPopup: null
     // Use this to only enable the Connections only when this Input opens the Emoji popup
     property bool emojiPopupOpened: false
+    property bool closeGifPopupAfterSelection: false
 
     property bool emojiEvent: false;
     property bool paste: false;
@@ -740,7 +741,9 @@ Rectangle {
             messageInputField.text = url
             control.sendMessage(event)
             gifBtn.highlighted = false
-            messageInputField.forceActiveFocus();
+            messageInputField.forceActiveFocus()
+            if(control.closeGifPopupAfterSelection)
+                gifPopup.close()
         }
         onClosed: {
             gifBtn.highlighted = false

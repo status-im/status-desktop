@@ -136,6 +136,7 @@ Page {
             emojiPopup: root.emojiPopup
             recentStickers: root.rootStore.stickersModuleInst.recent
             stickerPackList: root.rootStore.stickersModuleInst.stickerPacks
+            closeGifPopupAfterSelection: true
 
             onSendTransactionCommandButtonClicked: {
                 root.rootStore.createChatStartSendTransactionProcess = true;
