@@ -15,7 +15,6 @@ Loader {
     property StatusIconSettings icon: StatusIconSettings {
         width: 40
         height: 40
-        charactersLen: 1
     }
 
     property StatusImageSettings image: StatusImageSettings {
@@ -25,7 +24,7 @@ Loader {
 
     property StatusIdenticonRingSettings ringSettings: StatusIdenticonRingSettings {
         initalAngleRad: 0
-        ringPxSize: 1.5
+        ringPxSize: Math.max(1.5, statusSmartIdenticon.image.width / 24.0)
         distinctiveColors: Theme.palette.identiconRingColors
     }
 

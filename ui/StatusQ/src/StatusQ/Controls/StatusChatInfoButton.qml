@@ -25,8 +25,10 @@ Rectangle {
     property StatusIconSettings icon: StatusIconSettings {
         width: 36
         height: 36
-        letterSize: 20
+        charactersLen: 2
     }
+    property alias ringSettings: identicon.ringSettings
+
     property int type: StatusChatInfoButton.Type.PublicChat
     property alias tooltip: statusToolTip
     property alias sensor: sensor

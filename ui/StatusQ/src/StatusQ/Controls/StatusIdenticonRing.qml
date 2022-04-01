@@ -79,6 +79,9 @@ Item {
             }
 
             function getSegmentsCount() {
+                if (typeof settings.ringSpecModel.rowCount !== "undefined") {
+                    return settings.ringSpecModel.rowCount()
+                }
                 if (typeof settings.ringSpecModel.count !== "undefined") {
                     return settings.ringSpecModel.count
                 }
@@ -86,6 +89,9 @@ Item {
             }
 
             function getSegment(i) {
+                if (typeof settings.ringSpecModel.rowCount !== "undefined") {
+                    return abstactItemModelWrapper.itemAt(i)
+                }
                 if (typeof settings.ringSpecModel.count !== "undefined") {
                     return settings.ringSpecModel.get(i)
                 }
@@ -101,6 +107,14 @@ Item {
                 return Math.max(1, units)
             }
 
+            Repeater {
+                id: abstactItemModelWrapper
+                model: typeof settings.ringSpecModel.rowCount !== "undefined" ? settings.ringSpecModel : null
+                delegate: Item {
+                    readonly property int segmentLength: model.segmentLength
+                    readonly property int colorId: model.colorId
+                }
+            }
 
             onPaint: {
                 const context = getContext("2d")

@@ -11,6 +11,8 @@ TabButton {
     property string name: ""
     property bool highlighted: false
 
+    property alias identicon: identicon
+
     implicitWidth: 40
     implicitHeight: 40
 
@@ -32,7 +34,6 @@ TabButton {
             icon.name: statusIconTabButton.icon.name
             icon.color: (statusIconTabButton.hovered || highlighted || statusIconTabButton.checked) ? Theme.palette.primaryColor1 : statusIconTabButton.icon.color
             icon.isLetterIdenticon: statusIconTabButton.name !== "" && !statusIconTabButton.icon.source.toString()
-            icon.letterSize: 15
             name: statusIconTabButton.name
         }
     }

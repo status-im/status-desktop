@@ -36,7 +36,6 @@ StatusPopupMenu {
                     item.parentIconName = model.iconName;
                     item.parentImageSource = model.imageSource;
                     item.parentIdenticonColor = !!model.iconColor ? model.iconColor : Theme.palette.primaryColor1;
-                    item.parentIsIdenticon = model.isIdenticon;
                     root.subMenuItemIcons.push({
                                     source: model.imageSource,
                                     icon: model.iconName,
@@ -103,7 +102,6 @@ StatusPopupMenu {
                         image.source: model.imageSource
                         iconSettings.name: model.iconName
                         iconSettings.color: model.iconColor
-                        image.isIdenticon: model.isIdenticon
                         onTriggered: {
                             searchPopup.resetSearchSelection()
                             if (menuLoader.parentTitleText === "Chat") {

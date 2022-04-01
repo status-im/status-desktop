@@ -90,23 +90,25 @@ Column {
                 }
 
                 StatusChatListItem {
-
                     id: statusChatListItem
+
                     opacity: dragSensor.active ? 0.0 : 1.0
                     originalOrder: model.position
                     chatId: model.itemId
                     categoryId: model.parentItemId? model.parentItemId : ""
                     name: model.name
-                    icon.emoji: model.emoji
                     type: !!model.type ? model.type : StatusChatListItem.Type.CommunityChat
                     muted: model.muted
                     hasUnreadMessages: model.hasUnreadMessages
                     notificationsCount: model.notificationsCount
                     highlightWhenCreated: !!model.highlight
                     selected: model.active
+
+                    icon.emoji: model.emoji
                     icon.color: model.color
-                    image.isIdenticon: model.isIdenticon
+                    image.isIdenticon: false
                     image.source: model.icon
+                    ringSettings.ringSpecModel: model.colorHash
 
                     sensor.cursorShape: dragSensor.cursorShape
                     onClicked: {

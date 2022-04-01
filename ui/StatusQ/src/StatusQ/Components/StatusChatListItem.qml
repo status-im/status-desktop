@@ -10,7 +10,7 @@ import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 
 Rectangle {
-    id: statusChatListItem
+    id: root
 
     objectName: "chatItem"
     property int originalOrder: -1
@@ -29,11 +29,10 @@ Rectangle {
         width: 24
         height: 24
         color: Theme.palette.miscColor5
-        letterSize: emoji ? 11 : 15
         emoji: ""
-        emojiSize: Emoji.size.verySmall
-        charactersLen: 1
+        charactersLen: root.type === StatusChatListItem.Type.OneToOneChat ? 2 : 1
     }
+    property alias ringSettings: identicon.ringSettings
     property int type: StatusChatListItem.Type.PublicChat
     property bool highlighted: false
     property bool highlightWhenCreated: false
@@ -79,16 +78,16 @@ Rectangle {
         cursorShape: Qt.PointingHandCursor
         acceptedButtons: Qt.LeftButton | Qt.RightButton
 
-        onClicked: statusChatListItem.clicked(mouse)
+        onClicked: root.clicked(mouse)
 
         StatusSmartIdenticon {
             id: identicon
             anchors.left: parent.left
             anchors.leftMargin: 8
             anchors.verticalCenter: parent.verticalCenter
-            image: statusChatListItem.image
-            icon: statusChatListItem.icon
-            name: statusChatListItem.name
+            image: root.image
+            icon: root.icon
+            name: root.name
         }
 
         StatusIcon {
@@ -98,21 +97,21 @@ Rectangle {
             anchors.verticalCenter: parent.verticalCenter
 
             width: 14
-            visible: statusChatListItem.type !== StatusChatListItem.Type.OneToOneChat
+            visible: root.type !== StatusChatListItem.Type.OneToOneChat
             opacity: {
-                if (statusChatListItem.muted && !hoverHander.hovered && !statusChatListItem.highlighted) {
+                if (root.muted && !hoverHander.hovered && !root.highlighted) {
                     return 0.4
                 }
-                return statusChatListItem.hasUnreadMessages ||
-                        statusChatListItem.notificationsCount > 0 ||
-                        statusChatListItem.selected ||
-                        statusChatListItem.highlighted ||
+                return root.hasUnreadMessages ||
+                        root.notificationsCount > 0 ||
+                        root.selected ||
+                        root.highlighted ||
                         statusBadge.visible ||
                         hoverHander.hovered ? 1.0 : 0.7
             }
 
             icon: {
-                switch (statusChatListItem.type) {
+                switch (root.type) {
                 case StatusChatListItem.Type.PublicCat:
                     return Theme.palette.name == "light" ? "tiny/public-chat" : "tiny/public-chat-white"
                     break;
@@ -137,27 +136,27 @@ Rectangle {
             anchors.rightMargin: 6
             anchors.verticalCenter: parent.verticalCenter
 
-            text: (statusChatListItem.type === StatusChatListItem.Type.PublicChat &&
-                  !statusChatListItem.name.startsWith("#") ?
-                      "#" + statusChatListItem.name :
-                      statusChatListItem.name)
+            text: (root.type === StatusChatListItem.Type.PublicChat &&
+                  !root.name.startsWith("#") ?
+                      "#" + root.name :
+                      root.name)
             elide: Text.ElideRight
             color: {
-                if (statusChatListItem.muted && !hoverHander.hovered && !statusChatListItem.highlighted) {
+                if (root.muted && !hoverHander.hovered && !root.highlighted) {
                     return Theme.palette.directColor5
                 }
-                return statusChatListItem.hasUnreadMessages ||
-                        statusChatListItem.notificationsCount > 0 ||
-                        statusChatListItem.selected ||
-                        statusChatListItem.highlighted ||
-                        statusChatListItem.highlightWhenCreated ||
+                return root.hasUnreadMessages ||
+                        root.notificationsCount > 0 ||
+                        root.selected ||
+                        root.highlighted ||
+                        root.highlightWhenCreated ||
                         hoverHander.hovered ||
                         statusBadge.visible ? Theme.palette.directColor1 : Theme.palette.directColor4
             }
-            font.weight: !statusChatListItem.muted &&
-                         (statusChatListItem.hasUnreadMessages ||
-                          statusChatListItem.notificationsCount > 0 ||
-                          statusChatListItem.highlightWhenCreated ||
+            font.weight: !root.muted &&
+                         (root.hasUnreadMessages ||
+                          root.notificationsCount > 0 ||
+                          root.highlightWhenCreated ||
                           statusBadge.visible) ? Font.Bold : Font.Medium
             font.pixelSize: 15
         }
@@ -170,14 +169,14 @@ Rectangle {
             width: 14
             opacity: mutedIconSensor.containsMouse ? 1.0 : 0.2
             icon: Theme.palette.name === "light" ? "tiny/muted" : "tiny/muted-white"
-            visible: statusChatListItem.muted
+            visible: root.muted
 
             MouseArea {
                 id: mutedIconSensor
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
                 anchors.fill: parent
-                onClicked: statusChatListItem.unmute()
+                onClicked: root.unmute()
             }
 
             StatusToolTip {
@@ -193,11 +192,11 @@ Rectangle {
             anchors.right: parent.right
             anchors.rightMargin: 8
 
-            color: statusChatListItem.muted ? Theme.palette.primaryColor2 : Theme.palette.primaryColor1
+            color: root.muted ? Theme.palette.primaryColor2 : Theme.palette.primaryColor1
             border.width: 4
             border.color: color
-            value: statusChatListItem.notificationsCount
-            visible: statusChatListItem.notificationsCount > 0
+            value: root.notificationsCount
+            visible: root.notificationsCount > 0
         }
     }
 }

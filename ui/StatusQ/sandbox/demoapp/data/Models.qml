@@ -62,7 +62,9 @@ QtObject {
             itemId: "x012340000"
             name: "#status"
             icon: ""
+            emoji: ""
             isIdenticon: false
+            colorHash: []
             color: "blue"
             description: ""
             type: StatusChatListItem.Type.PublicChat
@@ -78,7 +80,9 @@ QtObject {
             itemId: "x012340001"
             name: "status-desktop"
             icon: ""
+            emoji: ""
             isIdenticon: false
+            colorHash: []
             color: "red"
             description: ""
             type: StatusChatListItem.Type.PublicChat
@@ -95,7 +99,9 @@ QtObject {
             name: "Amazing Funny Squirrel"
             icon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAlklEQVR4nOzW0QmDQBAG4SSkl7SUQlJGCrElq9F3QdjjVhh/5nv3cFhY9vUIYQiNITSG0Bh
 CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2ImYgiNITTlTdG1nUZ5a92VITQxITFiJmIIjSE0htAYQrMHAAD//+wwFVpz+yqXAAAAAElFTkSuQmCC"
+            emoji: ""
             isIdenticon: true
+            colorHash: []
             color: "green"
             description: ""
             type: StatusChatListItem.Type.OneToOneChat
@@ -111,7 +117,9 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             itemId: "x012340003"
             name: "Black Ops"
             icon: ""
+            emoji: ""
             isIdenticon: false
+            colorHash: []
             color: "purple"
             description: ""
             type: StatusChatListItem.Type.OneToOneChat
@@ -127,7 +135,9 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             itemId: "x012340004"
             name: "Spectacular Growing Otter"
             icon: ""
+            emoji: ""
             isIdenticon: false
+            colorHash: []
             color: "orange"
             description: ""
             type: StatusChatListItem.Type.OneToOneChat
@@ -143,7 +153,9 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             itemId: "x012340005"
             name: "channel-with-a-super-duper-long-name"
             icon: ""
+            emoji: ""
             isIdenticon: false
+            colorHash: []
             color: "green"
             description: ""
             type: StatusChatListItem.Type.PublicChat
@@ -397,7 +409,6 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             imageSource: ""
             iconName: "chat"
             iconColor: ""
-            isIdenticon: false
             subItems: [
                 ListElement {
                     value: "sub_item_1_1"
@@ -405,7 +416,6 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
                     imageSource: "https://pbs.twimg.com/profile_images/1369221718338895873/T_5fny6o_400x400.jpg"
                     iconName: ""
                     iconColor: ""
-                    isIdenticon: false
                 },
                 ListElement {
                     value: "sub_item_1_2"
@@ -413,7 +423,6 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
                     imageSource: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAlklEQVR4nOzW0QmDQBAG4SSkl7SUQlJGCrElq9F3QdjjVhh/5nv3cFhY9vUIYQiNITSG0BhCExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2ImYgiNITTlTdG1nUZ5a92VITQxITFiJmIIjSE0htAYQrMHAAD//+wwFVpz+yqXAAAAAElFTkSuQmCC"
                     iconName: ""
                     iconColor: ""
-                    isIdenticon: true
                 }]}
         ListElement {
             value: "item_2"
@@ -421,7 +430,6 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             imageSource: "https://pbs.twimg.com/profile_images/1369221718338895873/T_5fny6o_400x400.jpg"
             iconName: ""
             iconColor: ""
-            isIdenticon: false
             subItems: [
                 ListElement {
                     value: "sub_item_2_1"
@@ -429,7 +437,6 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
                     imageSource: ""
                     iconName: "channel"
                     iconColor: ""
-                    isIdenticon: false
                 },
                 ListElement {
                     value: "sub_item_2_2"
@@ -437,7 +444,6 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
                     imageSource: ""
                     iconName: "channel"
                     iconColor: ""
-                    isIdenticon: false
                 },
                 ListElement {
                     value: "sub_item_2_3"
@@ -445,7 +451,6 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
                     imageSource: ""
                     iconName: "channel"
                     iconColor: ""
-                    isIdenticon: false
                 }]}
         ListElement {
             value: "item_3"
@@ -453,7 +458,6 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             imageSource: "";
             iconName: "info"
             iconColor: ""
-            isIdenticon: false
             subItems: [
                 ListElement {
                     value: "sub_item_3_1"
@@ -461,7 +465,6 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
                     imageSource: ""
                     iconName: "channel"
                     iconColor: ""
-                    isIdenticon: false
                 }]}
         ListElement {
             value: "item_4"
@@ -469,7 +472,6 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             imageSource: "";
             iconName: ""
             iconColor: "red"
-            isIdenticon: false
             subItems: [
                 ListElement {
                     value: "sub_item_4_1"
@@ -477,7 +479,6 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
                     imageSource: ""
                     iconName: "channel"
                     iconColor: ""
-                    isIdenticon: false
                 }]}
     }
 
