@@ -10,7 +10,7 @@ Item {
     id: root
 
     implicitWidth: 448
-    implicitHeight: 44 + ((userListView.count > 0) ? 44 + ((((userListView.count * 64) > root.maxHeight)
+    implicitHeight: 44 + ((userListView.count > 0) ? 44 + contactsLabel.height + contactsLabel.anchors.topMargin + ((((userListView.count * 64) > root.maxHeight)
                     ? root.maxHeight : (userListView.count * 64))) :0)
 
     property real maxHeight
@@ -142,7 +142,8 @@ Item {
                 color: Theme.palette.directColor1
                 Keys.onPressed: {
                     if ((event.key === Qt.Key_Backspace || event.key === Qt.Key_Escape)
-                            && getText(cursorPosition, (cursorPosition-1)) === "") {
+                            && getText(cursorPosition, (cursorPosition-1)) === ""
+                            && (namesList.count-1) >= 0) {
                         removeMember(namesModel.get(namesList.count-1).publicId);
                         namesModel.remove((namesList.count-1), 1);
                     }
@@ -167,8 +168,9 @@ Item {
         anchors.left: parent.left
         anchors.leftMargin: 8
         anchors.top: tagSelectorRect.bottom
-        anchors.topMargin: 32
-        visible: (namesModel.count === 0)
+        anchors.topMargin: visible ? 32 : 0
+        height: visible ? contentHeight : 0
+        visible: (root.sortedList.count === 0)
         color: Theme.palette.baseColor1
         text: root.listLabel
     }
@@ -182,8 +184,8 @@ Item {
             bottom: parent.bottom
             bottomMargin: 20//Style.current.bigPadding
         }
-        visible: ((root.namesModel.count === 0) || (root.sortedList.count > 0))
-        x: ((root.namesModel.count > 0) && ((edit.x + 8) <= (root.width - suggestionsContainer.width)))
+        visible: ((edit.text === "") || (root.sortedList.count > 0))
+        x: ((root.namesModel.count > 0) && (root.sortedList.count > 0) && ((edit.x + 8) <= (root.width - suggestionsContainer.width)))
            ? (edit.x + 8) : 0
         background: Rectangle {
             id: bgRect
