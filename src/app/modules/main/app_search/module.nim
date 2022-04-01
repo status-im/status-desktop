@@ -76,7 +76,7 @@ proc buildLocationMenuForChat(self: Module): location_menu_item.Item =
   var subItems: seq[location_menu_sub_item.SubItem]
   for c in displayedChats:
     var chatName = c.name
-    var chatImage = c.identicon
+    var chatImage = c.icon
     if(c.chatType == ChatType.OneToOne):
       (chatName, chatImage) = self.controller.getOneToOneChatNameAndImage(c.id)
 
@@ -93,7 +93,7 @@ proc buildLocationMenuForCommunity(self: Module, community: CommunityDto): locat
   let chats = self.controller.getAllChatsForCommunity(community.id)
   for c in chats:
     let chatDto = self.controller.getChatDetails(community.id, c.id)
-    let subItem = location_menu_sub_item.initSubItem(chatDto.id, chatDto.name, chatDto.identicon, "", chatDto.color)
+    let subItem = location_menu_sub_item.initSubItem(chatDto.id, chatDto.name, chatDto.icon, "", chatDto.color)
     subItems.add(subItem)
 
   item.setSubItems(subItems)
@@ -166,7 +166,7 @@ method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
         let chatDto = self.controller.getChatDetails(co.id, c.id)
         if(c.name.toLower.startsWith(self.controller.searchTerm().toLower)):
           let item = result_item.initItem(chatDto.id, "", "", chatDto.id, chatDto.name,
-          SEARCH_RESULT_CHANNELS_SECTION_NAME, chatDto.identicon, chatDto.color, "", "", chatDto.identicon, chatDto.color,
+          SEARCH_RESULT_CHANNELS_SECTION_NAME, chatDto.icon, chatDto.color, "", "", chatDto.icon, chatDto.color,
           false)
 
           self.controller.addResultItemDetails(chatDto.id, co.id, chatDto.id)
@@ -181,7 +181,7 @@ method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
 
     for c in displayedChats:
       var chatName = c.name
-      var chatImage = c.identicon
+      var chatImage = c.icon
       if(c.chatType == ChatType.OneToOne):
         (chatName, chatImage) = self.controller.getOneToOneChatNameAndImage(c.id)
 
@@ -211,7 +211,7 @@ method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
 
     if(chatDto.communityId.len == 0):
       var chatName = chatDto.name
-      var chatImage = chatDto.identicon
+      var chatImage = chatDto.icon
       if(chatDto.chatType == ChatType.OneToOne):
         (chatName, chatImage) = self.controller.getOneToOneChatNameAndImage(chatDto.id)
 
