@@ -1,5 +1,7 @@
 #include "DOtherSide/Status/OSNotification.h"
 
+#include <QString>
+
 #ifdef Q_OS_MACOS
 
 #import <AppKit/AppKit.h>
@@ -53,6 +55,17 @@ void OSNotification::showNotificationMacOs(QString title, QString message,
     center.delegate = m_notificationHelper->delegate;
     [center deliverNotification:notification];
     [notification release];
+}
+
+void OSNotification::showIconBadgeNotificationMacOs(int notificationsCount)
+{
+    QString notificationsString; // empty string will clear the badge
+    if (notificationsCount > 0 && notificationsCount < 10) {
+        notificationsString = QString::number(notificationsCount);
+    } else if (notificationsCount >= 10) {
+        notificationsString = "9+";
+    }
+    [[NSApp dockTile] setBadgeLabel:notificationsString.toNSString()];
 }
 
 @implementation NotificationDelegate {
