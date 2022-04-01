@@ -75,6 +75,10 @@ proc delete*(self: Controller) =
   discard
 
 proc init*(self: Controller) =
+  if self.accountsService.isFirstTimeAccountLogin():
+    let d9 = 9*86400 # 9 days
+    discard self.settingsService.setDefaultSyncPeriod(d9)
+    
   self.events.on("mailserverAvailable") do(e:Args):
     echo "MAILSERVER AVAILABLE: ", repr(e)
     # We need to take some actions here. This is the only pace where "mailserverAvailable" signal should be handled.

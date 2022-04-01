@@ -435,6 +435,12 @@ QtObject:
   proc autoMessageEnabled*(self: Service): bool =
     return self.settings.autoMessageEnabled
 
+  proc setDefaultSyncPeriod*(self: Service, value: int): bool =
+    if(self.saveSetting(KEY_DEFAULT_SYNC_PERIOD,value)):
+      self.settings.defaultSyncPeriod = value
+      return true
+    return false
+
   proc getWakuBloomFilterMode*(self: Service): bool =
     return self.settings.wakuBloomFilterMode
 
