@@ -61,7 +61,7 @@ QtObject:
     notify = importedAccountChanged
 
   proc getImportedAccountPubKey*(self: View): string {.slot.} =
-    return self.delegate.getImportedAccount().publicKey
+    return self.delegate.getImportedAccount().derivedAccounts.whisper.publicKey
 
   QtProperty[string] importedAccountPubKey:
     read = getImportedAccountPubKey
