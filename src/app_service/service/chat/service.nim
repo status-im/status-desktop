@@ -85,6 +85,7 @@ const SIGNAL_CHAT_MEMBERS_ADDED* = "chatMemberAdded"
 const SIGNAL_CHAT_MEMBER_REMOVED* = "chatMemberRemoved"
 const SIGNAL_CHAT_MEMBER_UPDATED* = "chatMemberUpdated"
 const SIGNAL_CHAT_SWITCH_TO_OR_CREATE_1_1_CHAT* = "switchToOrCreateOneToOneChat"
+const SIGNAL_CHAT_ADDED_OR_UPDATED* = "chatAddedOrUpdated"
 
 QtObject:
   type Service* = ref object of QObject
@@ -166,6 +167,7 @@ QtObject:
 
   proc updateOrAddChat*(self: Service, chat: ChatDto) =
     self.chats[chat.id] = chat
+    self.events.emit(SIGNAL_CHAT_ADDED_OR_UPDATED, ChatArgs(communityId: chat.communityId, chatId: chat.id))
 
     var channelGroupId = chat.communityId
     if (channelGroupId == ""):

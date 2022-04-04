@@ -56,6 +56,7 @@ include async_tasks
 
 type
   MessagesArgs* = ref object of Args
+    sectionId*: string
     chatId*: string
     chatType*: ChatType
     unviewedMessagesCount*: int
@@ -157,6 +158,7 @@ QtObject:
     # if (not chats[0].active):
     #   return
 
+    let sectionId = if chats[0].communityId.len > 0: chats[0].communityId else: singletonInstance.userProfile.getPubKey()
     let chatId = chats[0].id
     let chatType = chats[0].chatType
     let unviewedMessagesCount = chats[0].unviewedMessagesCount
@@ -187,6 +189,7 @@ QtObject:
       removeMessageWithId(messages, msgId)
 
     let data = MessagesArgs(
+      sectionId: sectionId,
       chatId: chatId,
       chatType: chatType,
       unviewedMessagesCount: unviewedMessagesCount,

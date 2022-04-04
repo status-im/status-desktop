@@ -37,15 +37,14 @@ QtObject {
         property int wallet: 4
         property int privacyAndSecurity: 5
         property int appearance: 6
-        property int sound: 7
-        property int language: 8
-        property int notifications: 9
-        property int devicesSettings: 10
-        property int browserSettings: 11
-        property int advanced: 12
-        property int needHelp: 13
-        property int about: 14
-        property int signout: 15
+        property int language: 7
+        property int notifications: 8
+        property int devicesSettings: 9
+        property int browserSettings: 10
+        property int advanced: 11
+        property int needHelp: 12
+        property int about: 13
+        property int signout: 14
     }
 
     readonly property QtObject userStatus: QtObject{
@@ -151,7 +150,35 @@ QtObject {
 
     readonly property QtObject settingsSection: QtObject {
         readonly property int itemSpacing: 10
+        readonly property int radius: 8
         readonly property int mainHeaderFontSize: 28
+        readonly property int subHeaderFontSize: 15
+        readonly property int infoFontSize: 15
+        readonly property int infoLineHeight: 22
+        readonly property int infoSpacing: 5
+        readonly property int itemHeight: 64
+        readonly property int leftMargin: 64
+        readonly property int rightMargin: 64
+        readonly property int topMargin: 64
+        readonly property int bottomMargin: 64
+
+        readonly property QtObject notificationsBubble: QtObject {
+            readonly property int previewAnonymous: 0
+            readonly property int previewNameOnly: 1
+            readonly property int previewNameAndMessage: 2
+        }
+
+        readonly property QtObject notifications: QtObject {
+            readonly property string sendAlertsValue: "sendAlerts"
+            readonly property string deliverQuietlyValue: "deliverQuietly"
+            readonly property string turnOffValue: "turnOff"
+        }
+
+        readonly property QtObject exemptions: QtObject {
+            readonly property int community: 0
+            readonly property int oneToOneChat: 1
+            readonly property int groupChat: 2
+        }
     }
 
     readonly property int communityImported: 0
@@ -194,9 +221,7 @@ QtObject {
     readonly property int notifyAllMessages: 0
     readonly property int notifyJustMentions: 1
     readonly property int notifyNone: 2
-    readonly property int notificationPreviewAnonymous: 0
-    readonly property int notificationPreviewNameOnly: 1
-    readonly property int notificationPreviewNameAndMessage: 2
+
 
     readonly property string watchWalletType: "watch"
     readonly property string keyWalletType: "key"

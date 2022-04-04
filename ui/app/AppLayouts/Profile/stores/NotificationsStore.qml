@@ -6,10 +6,13 @@ QtObject {
 
     property var notificationsModule
 
-    property var mutedContactsModel: notificationsModule.mutedContactsModel
-    property var mutedChatsModel: notificationsModule.mutedChatsModel
+    property var exemptionsModel: notificationsModule.exemptionsModel
 
-    function unmuteChat(chatId) {
-        return root.notificationsModule.unmuteChat(chatId)
+    function sendTestNotification(title, message) {
+        root.notificationsModule.sendTestNotification(title, message)
+    }
+
+    function saveExemptions(itemId, muteAllMessages, personalMentions, globalMentions, allMessages) {
+        root.notificationsModule.saveExemptions(itemId, muteAllMessages, personalMentions, globalMentions, allMessages)
     }
 }

@@ -1,4 +1,7 @@
 import NimQml
+import ../../../../global/app_signals
+from ../../../../../app_service/service/community/dto/community import CommunityDto
+from ../../../../../app_service/service/chat/dto/chat import ChatDto
 
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -9,23 +12,39 @@ method delete*(self: AccessInterface) {.base.} =
 method load*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method viewDidLoad*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method isLoaded*(self: AccessInterface): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method sendTestNotification*(self: AccessInterface, title: string, message: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getModuleAsVariant*(self: AccessInterface): QVariant {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onChatMuted*(self: AccessInterface, chatId: string) {.base.} =
+method saveExemptions*(self: AccessInterface, itemId: string, muteAllMessages: bool, personalMentions: string, 
+  globalMentions: string, allMessages: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onChatUnmuted*(self: AccessInterface, chatId: string) {.base.} =
+method onToggleSection*(self: AccessInterface, sectionType: SectionType) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onChatLeft*(self: AccessInterface, chatId: string) {.base.} =
+method addCommunity*(self: AccessInterface, communityDto: CommunityDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method viewDidLoad*(self: AccessInterface) {.base.} =
+method editCommunity*(self: AccessInterface, communityDto: CommunityDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method unmuteChat*(self: AccessInterface, chatId: string) {.base.} =
+method removeItemWithId*(self: AccessInterface, itemId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+  
+method addChat*(self: AccessInterface, chatDto: ChatDto) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method addChat*(self: AccessInterface, itemId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method setName*(self: AccessInterface, itemId: string, name: string) {.base.} =
   raise newException(ValueError, "No implementation available")

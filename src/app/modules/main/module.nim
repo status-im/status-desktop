@@ -56,6 +56,8 @@ import ../../core/eventemitter
 
 export io_interface
 
+const COMMUNITY_PERMISSION_ACCESS_ON_REQUEST = 3
+
 type
   Module*[T: io_interface.DelegateInterface] = ref object of io_interface.AccessInterface
     delegate: T
@@ -587,6 +589,12 @@ method communityJoined*[T](
       self.view.model().getItemIndex(singletonInstance.userProfile.getPubKey()) + 1)
   else:
     self.view.model().addItem(communitySectionItem)
+
+  if(community.permissions.access == COMMUNITY_PERMISSION_ACCESS_ON_REQUEST and 
+    community.requestedToJoinAt > 0 and 
+    community.joined):
+    singletonInstance.globalEvents.myRequestToJoinCommunityAcccepted("Community Request Accepted",
+      fmt "Your request to join community {community.name} is accepted", community.id)
 
   if setActive:
     self.setActiveSection(communitySectionItem)

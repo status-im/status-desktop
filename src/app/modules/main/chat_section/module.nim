@@ -12,6 +12,7 @@ import chat_content/module as chat_content_module
 import ../../../global/app_sections_config as conf
 import ../../../global/global_singleton
 import ../../../core/eventemitter
+import ../../../core/notifications/details as notification_details
 import ../../../../app_service/service/settings/service as settings_service
 import ../../../../app_service/service/contacts/service as contact_service
 import ../../../../app_service/service/chat/service as chat_service
@@ -636,25 +637,29 @@ method onContactDetailsUpdated*(self: Module, publicKey: string) =
   let chatImage = contactDetails.icon
   self.view.chatsModel().updateItemDetails(publicKey, chatName, chatImage)
 
-method onNewMessagesReceived*(self: Module, chatId: string, unviewedMessagesCount: int, unviewedMentionsCount: int,
-  messages: seq[MessageDto]) =
-  if(self.controller.getMySectionId() != self.delegate.getActiveSectionId() or
-    self.controller.getActiveChatId() != chatId):
+method onNewMessagesReceived*(self: Module, sectionIdMsgBelongsTo: string, chatIdMsgBelongsTo: string, 
+  chatTypeMsgBelongsTo: ChatType, unviewedMessagesCount: int, unviewedMentionsCount: int, message: MessageDto) =
+  let messageBelongsToActiveSection = sectionIdMsgBelongsTo == self.controller.getMySectionId() and 
+    self.controller.getMySectionId() == self.delegate.getActiveSectionId()
+  let messageBelongsToActiveChat = self.controller.getActiveChatId() == chatIdMsgBelongsTo
+  if(not messageBelongsToActiveSection or not messageBelongsToActiveChat):
     let hasUnreadMessages = unviewedMessagesCount > 0
-    self.updateBadgeNotifications(chatId, hasUnreadMessages, unviewedMentionsCount)
+    self.updateBadgeNotifications(chatIdMsgBelongsTo, hasUnreadMessages, unviewedMentionsCount)
 
-  # Prepare bubble notification
+  # Prepare notification
   let myPK = singletonInstance.userProfile.getPubKey()
-  for m in messages:
-    let contactDetails = self.controller.getContactDetails(m.`from`)
-    let renderedMessageText = self.controller.getRenderedText(m.parsedText)
-    let plainText = singletonInstance.utils.plainText(renderedMessageText)
-    if(m.isUserWithPkMentioned(myPK)):
-      singletonInstance.globalEvents.showMentionMessageNotification(contactDetails.displayName, plainText,
-      self.controller.getMySectionId(), chatId, m.id)
-    else:
-      singletonInstance.globalEvents.showNormalMessageNotification(contactDetails.displayName, plainText,
-      self.controller.getMySectionId(), chatId, m.id)
+  var notificationType = notification_details.NotificationType.NewMessage
+  if(message.isPersonalMention(myPK)):
+    notificationType = notification_details.NotificationType.NewMessageWithPersonalMention
+  elif(message.isGlobalMention()):
+    notificationType = notification_details.NotificationType.NewMessageWithGlobalMention
+  let contactDetails = self.controller.getContactDetails(message.`from`)
+  let renderedMessageText = self.controller.getRenderedText(message.parsedText)
+  let plainText = singletonInstance.utils.plainText(renderedMessageText)
+  singletonInstance.globalEvents.showMessageNotification(contactDetails.displayName, plainText, sectionIdMsgBelongsTo, 
+    self.controller.isCommunity(), messageBelongsToActiveSection, chatIdMsgBelongsTo, messageBelongsToActiveChat, 
+    message.id, notificationType.int, 
+    chatTypeMsgBelongsTo == ChatType.OneToOne, chatTypeMsgBelongsTo == ChatType.PrivateGroupChat)
 
 method onMeMentionedInEditedMessage*(self: Module, chatId: string, editedMessage : MessageDto) =
   if((editedMessage.communityId.len == 0 and
