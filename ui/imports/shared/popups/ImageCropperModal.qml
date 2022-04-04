@@ -22,8 +22,7 @@ ModalPopup {
     id: cropImageModal
     width: image.width + 50
     height: image.height + 170
-    //% "Crop your image (optional)"
-    title: qsTrId("crop-your-image--optional-")
+    title: qsTr("Crop your image (optional)")
 
     Image {
         id: image
@@ -66,8 +65,7 @@ ModalPopup {
 
     footer: StatusButton {
         id: doneBtn
-        //% "Finish"
-        text: qsTrId("finish")
+        text: qsTr("Finish")
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         onClicked: {

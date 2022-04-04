@@ -89,8 +89,7 @@ Item {
                         when: invitedCommunity.ensOnly && !userProfile.ensName
                         PropertyChanges {
                             target: joinBtn
-                            //% "Membership requires an ENS username"
-                            text: qsTrId("membership-requires-an-ens-username")
+                            text: qsTr("Membership requires an ENS username")
                             enabled: false
                         }
                     },
@@ -99,8 +98,7 @@ Item {
                         when: invitedCommunity.access === Constants.communityChatInvitationOnlyAccess
                         PropertyChanges {
                             target: joinBtn
-                            //% "You need to be invited"
-                            text: qsTrId("you-need-to-be-invited")
+                            text: qsTr("You need to be invited")
                             enabled: false
                         }
                     },
@@ -110,8 +108,7 @@ Item {
                               rectangleBubble.isPendingRequest
                         PropertyChanges {
                             target: joinBtn
-                            //% "Pending"
-                            text: qsTrId("invite-chat-pending")
+                            text: qsTr("Pending")
                             enabled: false
                         }
                     },
@@ -122,8 +119,7 @@ Item {
                                 invitedCommunity.joined)
                         PropertyChanges {
                             target: joinBtn
-                            //% "View"
-                            text: qsTrId("view")
+                            text: qsTr("View")
                         }
                     },
                     State {
@@ -133,8 +129,7 @@ Item {
                               invitedCommunity.canRequestAccess
                         PropertyChanges {
                             target: joinBtn
-                            //% "Request Access"
-                            text: qsTrId("request-access")
+                            text: qsTr("Request Access")
 
                         }
                     },
@@ -146,8 +141,7 @@ Item {
                                 !invitedCommunity.joined)
                         PropertyChanges {
                             target: joinBtn
-                            //% "Join"
-                            text: qsTrId("join")
+                            text: qsTr("Join")
                         }
                     }
                 ]
@@ -172,10 +166,8 @@ Item {
                         id: title
                         color: invitedCommunity.verifed ? Theme.palette.primaryColor1 : Theme.palette.baseColor1
                         text: invitedCommunity.verifed ?
-                                  //% "Verified community invitation"
-                                  qsTrId("verified-community-invitation") :
-                                  //% "Community invitation"
-                                  qsTrId("community-invitation")
+                                  qsTr("Verified community invitation") :
+                                  qsTr("Community invitation")
                         font.weight: Font.Medium
                         Layout.topMargin: Style.current.halfPadding
                         Layout.leftMargin: root.innerMargin
@@ -189,16 +181,12 @@ Item {
                             return ""
     //                        if (root.store.chatsModelInst.channelView.activeChannel.chatType === Constants.chatType.oneToOne) {
     //                            return isCurrentUser ?
-    //                                        //% "You invited %1 to join a community"
-    //                                        qsTrId("you-invited--1-to-join-a-community").arg(root.store.chatsModelInst.userNameOrAlias(root.store.chatsModelInst.channelView.activeChannel.id))
-    //                                        //% "%1 invited you to join a community"
-    //                                      : qsTrId("-1-invited-you-to-join-a-community").arg(displayUserName)
+    //                                        qsTr("You invited %1 to join a community").arg(root.store.chatsModelInst.userNameOrAlias(root.store.chatsModelInst.channelView.activeChannel.id))
+    //                                      : qsTr("%1 invited you to join a community").arg(displayUserName)
     //                        } else {
     //                            return isCurrentUser ?
-    //                                        //% "You shared a community"
-    //                                        qsTrId("you-shared-a-community")
-    //                                        //% "A community has been shared"
-    //                                      : qsTrId("a-community-has-been-shared")
+    //                                        qsTr("You shared a community")
+    //                                      : qsTr("A community has been shared")
     //                        }
                         }
                         Layout.leftMargin: root.innerMargin
@@ -241,8 +229,7 @@ Item {
                     StatusBaseText {
                         id: communityNbMembers
                         // TODO add the plural support
-                        //% "%1 members"
-                        text: qsTrId("-1-members").arg(invitedCommunity.nbMembers)
+                        text: qsTr("%1 members").arg(invitedCommunity.nbMembers)
                         Layout.leftMargin: root.innerMargin
                         font.pixelSize: 13
                         font.weight: Font.Medium
@@ -298,8 +285,7 @@ Item {
                                     joiningError.open()
                                 }
 
-                                //% "Error joining the community"
-                                title: qsTrId("error-joining-the-community")
+                                title: qsTr("Error joining the community")
                                 icon: StandardIcon.Critical
                                 standardButtons: StandardButton.Ok
                             }

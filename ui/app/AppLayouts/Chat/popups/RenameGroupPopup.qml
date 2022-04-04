@@ -14,8 +14,7 @@ StatusModal {
     height: 210
     anchors.centerIn: parent
 
-    //% "Group name"
-    header.title: qsTrId("group-name")
+    header.title: qsTr("Group name")
 
     property string activeChannelName
     signal doRename(string groupName)
@@ -36,8 +35,7 @@ StatusModal {
             anchors.rightMargin: Style.current.padding
             anchors.top: parent.top
             anchors.topMargin: Style.current.padding
-            //% "Group name"
-            placeholderText: qsTrId("group-name")
+            placeholderText: qsTr("Group name")
             Keys.onEnterPressed: doRename(groupName.text)
             Keys.onReturnPressed: doRename(groupName.text)
         }
@@ -46,8 +44,7 @@ StatusModal {
     rightButtons: [
         StatusButton {
             id: saveBtn
-            //% "Save"
-            text: qsTrId("save")
+            text: qsTr("Save")
             onClicked : { doRename(groupName.text) }
         }
     ]

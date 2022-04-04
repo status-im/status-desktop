@@ -383,8 +383,7 @@ QtObject {
         }
         if (index > -1) {
             const pk = link.substring(index + 3)
-            //% "Start a 1-on-1 chat with %1"
-            result.title = qsTrId("start-a-1-on-1-chat-with--1")
+            result.title = qsTr("Start a 1-on-1 chat with %1")
                             .arg(isChatKey(pk) ? globalUtils.generateAlias(pk) : ("@" + removeStatusEns(pk)))
             result.callback = function () {
                 if (isChatKey(pk)) {
@@ -412,8 +411,7 @@ QtObject {
                 return result
             }
 
-            //% "Join the %1 community"
-            result.title = qsTrId("join-the--1-community").arg(communityName)
+            result.title = qsTr("Join the %1 community").arg(communityName)
             result.communityId = communityId
             result.callback = function () {
                 const isUserMemberOfCommunity = isUserMemberOfCommunity(communityId)
@@ -440,8 +438,7 @@ QtObject {
             const pubKey = link.substring(indexAdminPk + 2, indexChatName - 1)
             const chatName = link.substring(indexChatName + 3, indexChatId - 1)
             const chatId = link.substring(indexChatId + 3, link.length)
-            //% "Join the %1 group chat"
-            result.title = qsTrId("join-the--1-group-chat").arg(chatName)
+            result.title = qsTr("Join the %1 group chat").arg(chatName)
             result.callback = function () {
                 // Not Refactored Yet
 //                chatsModel.groups.joinGroupChatFromInvitation(chatName, chatId, pubKey);
@@ -456,8 +453,7 @@ QtObject {
 //        index = link.lastIndexOf("/")
 //        if (index > -1) {
 //            const chatId = link.substring(index + 1)
-//            //% "Join the %1 public channel"
-//            result.title = qsTrId("join-the--1-public-channel").arg(chatId)
+//            result.title = qsTr("Join the %1 public channel").arg(chatId)
 //            result.callback = function () {
 //                chatsModel.channelView.joinPublicChat(chatId);
 //            }

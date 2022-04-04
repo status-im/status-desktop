@@ -12,8 +12,7 @@ import "../controls"
 // TODO: replace with StatusModal
 ModalPopup {
     id: popup
-    //% "Fleet"
-    title: qsTrId("fleet")
+    title: qsTr("Fleet")
 
     property var advancedStore
 

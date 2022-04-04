@@ -226,10 +226,8 @@ Item {
             width: 318
             enabled: !loading
             placeholderText: loading ?
-                //% "Connecting..."
-                qsTrId("connecting") :
-                //% "Enter password"
-                qsTrId("enter-password")
+                qsTr("Connecting...") :
+                qsTr("Enter password")
             textField.echoMode: TextInput.Password
             Keys.onReturnPressed: {
                 doLogin(textField.text)
@@ -279,8 +277,7 @@ Item {
                     if (error === "file is not a database") {
                         errMsg.text = errMsg.incorrectPasswordMsg
                     } else {
-                        //% "Login failed: %1"
-                        errMsg.text = qsTrId("login-failed---1").arg(error.toUpperCase())
+                        errMsg.text = qsTr("Login failed: %1").arg(error.toUpperCase())
                     }
                     errMsg.visible = true
                     loading = false
@@ -291,8 +288,7 @@ Item {
 
         StyledText {
             id: errMsg
-            //% "Login failed. Please re-enter your password and try again."
-            readonly property string incorrectPasswordMsg: qsTrId("login-failed--please-re-enter-your-password-and-try-again-")
+            readonly property string incorrectPasswordMsg: qsTr("Login failed. Please re-enter your password and try again.")
             anchors.top: txtPassword.bottom
             anchors.topMargin: Style.current.padding
             anchors.horizontalCenter: parent.horizontalCenter

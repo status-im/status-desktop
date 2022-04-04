@@ -177,10 +177,8 @@ OnboardingBasePage {
                         importLoginError.title = qsTr("Keys for this account already exist")
                         importLoginError.text = qsTr("Keys for this account already exist and can't be added again. If you've lost your password, passcode or Keycard, uninstall the app, reinstall and access your keys by entering your seed phrase")
                     } else {
-                        //% "Login failed"
-                        importLoginError.title = qsTrId("login-failed")
-                        //% "Login failed. Please re-enter your password and try again."
-                        importLoginError.text = qsTrId("login-failed.-please-re-enter-your-password-and-try-again.")
+                        importLoginError.title = qsTr("Login failed")
+                        importLoginError.text = qsTr("Login failed. Please re-enter your password and try again.")
                     }
                     importLoginError.open()
                 }
@@ -188,10 +186,8 @@ OnboardingBasePage {
 
             MessageDialog {
                 id: importLoginError
-                //% "Login failed"
-                title: qsTrId("login-failed")
-                //% "Login failed. Please re-enter your password and try again."
-                text: qsTrId("login-failed.-please-re-enter-your-password-and-try-again.")
+                title: qsTr("Login failed")
+                text: qsTr("Login failed. Please re-enter your password and try again.")
                 icon: StandardIcon.Critical
                 standardButtons: StandardButton.Ok
                 onVisibilityChanged: {

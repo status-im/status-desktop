@@ -64,8 +64,7 @@ Rectangle {
 
     StatusBaseText {
         id: backUpText
-        //% "Back up community key"
-        text: qsTrId("back-up-community-key")
+        text: qsTr("Back up community key")
         anchors.top: parent.top
         anchors.topMargin: 48
         horizontalAlignment: Text.AlignHCenter
@@ -80,8 +79,7 @@ Rectangle {
 
     StatusButton {
         id: backUpBtn
-        //% "Back up"
-        text: qsTrId("back-up")
+        text: qsTr("Back up")
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: backUpText.bottom
         anchors.topMargin: Style.current.padding

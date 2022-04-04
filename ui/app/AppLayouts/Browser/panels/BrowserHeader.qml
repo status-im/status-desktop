@@ -105,8 +105,7 @@ Rectangle {
             }
             leftPadding: Style.current.padding
             rightPadding: addFavoriteBtn.width + reloadBtn.width + Style.current.bigPadding
-            //% "Enter URL"
-            placeholderText: qsTrId("enter-url")
+            placeholderText: qsTr("Enter URL")
             focus: true
             text: ""
             color: Style.current.textColor

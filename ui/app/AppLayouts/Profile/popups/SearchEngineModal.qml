@@ -9,8 +9,7 @@ import shared.controls 1.0
 ModalPopup {
     id: popup
 
-    //% "Search engine"
-    title: qsTrId("search-engine")
+    title: qsTr("Search engine")
 
     onClosed: {
         destroy()
@@ -29,8 +28,7 @@ ModalPopup {
         }
 
         RadioButtonSelector {
-            //% "None"
-            title: qsTrId("none")
+            title: qsTr("None")
             buttonGroup: searchEnginGroup
             checked: localAccountSensitiveSettings.shouldShowBrowserSearchEngine === Constants.browserSearchEngineNone
             onCheckedChanged: {

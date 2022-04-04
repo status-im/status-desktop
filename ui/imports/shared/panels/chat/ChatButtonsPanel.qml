@@ -189,8 +189,8 @@ Rectangle {
             id: deleteMessageConfirmationDialogComponent
 
             ConfirmationDialog {
-                header.title: qsTrId("Confirm deleting this message")
-                confirmationText: qsTrId("Are you sure you want to delete this message? Be aware that other clients are not guaranteed to delete the message as well.")
+                header.title: qsTr("Confirm deleting this message")
+                confirmationText: qsTr("Are you sure you want to delete this message? Be aware that other clients are not guaranteed to delete the message as well.")
                 height: 260
                 checkbox.visible: true
                 executeConfirm: function () {

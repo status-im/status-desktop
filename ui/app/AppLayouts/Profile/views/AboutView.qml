@@ -20,7 +20,7 @@ SettingsContentBase {
 
     titleRowComponentLoader.sourceComponent: StatusButton {
         size: StatusBaseButton.Size.Small
-        text: qsTrId("check-for-updates")
+        text: qsTr("Check for updates")
         onClicked: {
             root.store.checkForUpdates()
         }
@@ -171,7 +171,7 @@ SettingsContentBase {
                 Layout.fillWidth: true
                 leftPadding: Style.current.padding
                 rightPadding: Style.current.padding
-                text: qsTrId("Software License")
+                text: qsTr("Software License")
                 icon.width: 0
             }
         } // Column

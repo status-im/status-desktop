@@ -94,8 +94,7 @@ StatusModal {
 
             StatusBaseText {
                 id: titleText
-                //% "'%1' would like to connect to"
-                text: qsTrId("--1--would-like-to-connect-to").arg(request.title)
+                text: qsTr("'%1' would like to connect to").arg(request.title)
                 wrapMode: Text.WordWrap
                 font.weight: Font.Bold
                 font.pixelSize: 17
@@ -140,10 +139,8 @@ StatusModal {
                 id: infoText
                 text: {
                     switch(request.permission){
-                        //% "Allowing authorizes this DApp to retrieve your wallet address and enable Web3"
-                    case Constants.permission_web3: return qsTrId("allowing-authorizes-this-dapp");
-                        //% "Granting access authorizes this DApp to retrieve your chat key"
-                    case Constants.permission_contactCode: return qsTrId("your-contact-code");
+                    case Constants.permission_web3: return qsTr("Allowing authorizes this DApp to retrieve your wallet address and enable Web3");
+                    case Constants.permission_contactCode: return qsTr("Granting access authorizes this DApp to retrieve your chat key");
                     default: return qsTr("Unknown permission: " + request.permission);
                     }
                 }
@@ -163,8 +160,7 @@ StatusModal {
                 StatusButton {
                     type: StatusBaseButton.Type.Danger
                     width: 151
-                    //% "Deny"
-                    text: qsTrId("deny")
+                    text: qsTr("Deny")
                     onClicked: {
                         postMessage(false);
                         browserConnectionModal.close();
@@ -175,8 +171,7 @@ StatusModal {
                     normalColor: Utils.setColorAlpha(Style.current.success, 0.1)
                     textColor: Style.current.success
                     width: 151
-                    //% "Allow"
-                    text: qsTrId("allow")
+                    text: qsTr("Allow")
                     onClicked: {
                         postMessage(true);
                         browserConnectionModal.close();

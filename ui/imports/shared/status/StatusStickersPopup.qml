@@ -137,8 +137,7 @@ Popup {
                         visible: root.installedPacksCount === 0
                         anchors.fill: parent
                         font.pixelSize: 15
-                        //% "You don't have any stickers yet"
-                        text: qsTrId("you-don't-have-any-stickers-yet")
+                        text: qsTr("You don't have any stickers yet")
                         lineHeight: 22
                         horizontalAlignment: Text.AlignHCenter
                     }
@@ -148,8 +147,7 @@ Popup {
                         visible: stickerPackListView.selectedPackId === -1 && stickersModule.recent.rowCount() === 0 && !lblNoStickersYet.visible
                         anchors.fill: parent
                         font.pixelSize: 15
-                        //% "Recently used stickers will appear here"
-                        text: qsTrId("recently-used-stickers")
+                        text: qsTr("Recently used stickers will appear here")
                         lineHeight: 22
                         horizontalAlignment: Text.AlignHCenter
                     }
@@ -157,8 +155,7 @@ Popup {
 
                 StatusQControls.StatusButton {
                     visible: lblNoStickersYet.visible
-                    //% "Get Stickers"
-                    text: qsTrId("get-stickers")
+                    text: qsTr("Get Stickers")
                     anchors.top: noStickersContainer.bottom
                     anchors.topMargin: Style.current.padding
                     anchors.horizontalCenter: parent.horizontalCenter

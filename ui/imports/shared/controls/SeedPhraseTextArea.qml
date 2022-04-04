@@ -21,16 +21,13 @@ Item {
         errorText.text = "";
 
         if (!Utils.isMnemonic(mnemonicTextField.textField.text)) {
-            //% "Invalid seed phrase"
-            errorText.text = qsTrId("custom-seed-phrase")
+            errorText.text = qsTr("Invalid seed phrase")
         } else {
             errorText.text = onboardingModule.validateMnemonic(mnemonicTextField.textField.text)
             const regex = new RegExp('word [a-z]+ not found in the dictionary', 'i');
             if (regex.test(errorText.text)) {
-                //% "Invalid seed phrase"
-                errorText.text = qsTrId("custom-seed-phrase") + '. ' +
-                        //% "This seed phrase doesn't match our supported dictionary. Check for misspelled words."
-                        qsTrId("custom-seed-phrase-text-1")
+                errorText.text = qsTr("Invalid seed phrase") + '. ' +
+                        qsTr("This seed phrase doesn't match our supported dictionary. Check for misspelled words.")
             }
         }
         return errorText.text === ""
@@ -48,8 +45,7 @@ Item {
         textField.verticalAlignment: TextEdit.AlignVCenter
         textField.font.pixelSize: 15
         textField.font.weight: Font.DemiBold
-        //% "Start with the first word"
-        placeholderText: qsTrId("start-with-the-first-word")
+        placeholderText: qsTr("Start with the first word")
         textField.placeholderTextColor: Style.current.secondaryText
         textField.selectByMouse: true
         textField.selectByKeyboard: true

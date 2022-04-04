@@ -21,15 +21,13 @@ Popup {
     y: parent.height - height - Style.current.bigPadding
 
 
-    //% "View on Etherscan"
-    readonly property string defaultLinkText: qsTrId("view-on-etherscan")
+    readonly property string defaultLinkText: qsTr("View on Etherscan")
 
     property string uuid: "" // set this if you want to distinct among multiple toasts
     property url source: Style.svg("check-circle")
     property color iconColor: Style.current.primary
     property bool iconRotates: false
-    //% "Transaction pending..."
-    property string title: qsTrId("ens-transaction-pending")
+    property string title: qsTr("Transaction pending...")
     property string link: "https://etherscan.io/"
     property string linkText: defaultLinkText
     property int dissapearInMs: 4000 /* setting this to -1 makes caller responsible to close it */
@@ -49,8 +47,7 @@ Popup {
         source = Style.svg("check-circle")
         iconColor = Style.current.primary
         iconRotates = false
-        //% "Transaction pending..."
-        title = qsTrId("ens-transaction-pending")
+        title = qsTr("Transaction pending...")
         link = "https://etherscan.io/"
         linkText = defaultLinkText
         dissapearInMs = 4000

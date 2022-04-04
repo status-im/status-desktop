@@ -6,13 +6,11 @@ StatusModal {
     id: root
     anchors.centerIn: parent
 
-    //% "Get Status at https://status.im"
-    readonly property string getStatusText: qsTrId("get-status-at-https---status-im")
+    readonly property string getStatusText: qsTr("Get Status at https://status.im")
 
     property var rootStore
 
-    //% "Download Status link"
-    header.title: qsTrId("download-status-link")
+    header.title: qsTr("Download Status link")
     height: 156
 
     StatusDescriptionListItem {

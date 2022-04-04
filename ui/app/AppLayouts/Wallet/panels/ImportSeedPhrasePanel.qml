@@ -35,16 +35,13 @@ GridView {
     function validate() {
         _internal.errorString  = ""
         if (!Utils.isMnemonic(mnemonicString)) {
-            //% "Invalid seed phrase"
-            _internal.errorString = qsTrId("custom-seed-phrase")
+            _internal.errorString = qsTr("Invalid seed phrase")
         } else {
             _internal.errorString = RootStore.vaildateMnemonic(mnemonicString)
             const regex = new RegExp('word [a-z]+ not found in the dictionary', 'i');
             if (regex.test(_internal.errorString)) {
-                //% "Invalid seed phrase"
-                _internal.errorString = qsTrId("custom-seed-phrase") + '. ' +
-                        //% "This seed phrase doesn't match our supported dictionary. Check for misspelled words."
-                        qsTrId("custom-seed-phrase-text-1")
+                _internal.errorString = qsTr("Invalid seed phrase") + '. ' +
+                        qsTr("This seed phrase doesn't match our supported dictionary. Check for misspelled words.")
             }
         }
         return _internal.errorString === ""

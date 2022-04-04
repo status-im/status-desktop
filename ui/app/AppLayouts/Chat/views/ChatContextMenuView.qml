@@ -78,8 +78,7 @@ StatusPopupMenu {
                  root.currentFleet === Constants.status_test ||
                  root.currentFleet === Constants.status_prod
 
-        //% "Test WakuV2 - requestAllHistoricMessages"
-        text: qsTrId("test-wakuv2---requestallhistoricmessages")
+        text: qsTr("Test WakuV2 - requestAllHistoricMessages")
         onTriggered: {
             root.requestAllHistoricMessages(root.chatId)
         }
@@ -118,8 +117,7 @@ StatusPopupMenu {
     }
 
     StatusMenuItem {
-        //% "Mark as Read"
-        text: qsTrId("mark-as-read")
+        text: qsTr("Mark as Read")
         icon.name: "checkmark-circle"
         onTriggered: {
             root.markAllMessagesRead(root.chatId)
@@ -161,8 +159,7 @@ StatusPopupMenu {
 //    }
 
     StatusMenuItem {
-        //% "Clear history"
-        text: qsTrId("clear-history")
+        text: qsTr("Clear history")
         icon.name: "close-circle"
         onTriggered: {
             root.clearChatHistory(root.chatId)
@@ -170,8 +167,7 @@ StatusPopupMenu {
     }
 
     StatusMenuItem {
-        //% "Edit Channel"
-        text: qsTrId("edit-channel")
+        text: qsTr("Edit Channel")
         icon.name: "edit"
         enabled: root.isCommunityChat && root.amIChatAdmin
         onTriggered: {
@@ -226,10 +222,8 @@ StatusPopupMenu {
                 return qsTr("Leave group")
             }
             return root.chatType === Constants.chatType.oneToOne ?
-                        //% "Delete chat"
-                        qsTrId("delete-chat") :
-                        //% "Leave chat"
-                        qsTrId("leave-chat")
+                        qsTr("Delete chat") :
+                        qsTr("Leave chat")
         }
         icon.name: root.chatType === Constants.chatType.oneToOne || root.isCommunityChat ? "delete" : "arrow-right"
         icon.width: root.chatType === Constants.chatType.oneToOne || root.isCommunityChat ? 18 : 14
@@ -266,10 +260,8 @@ StatusPopupMenu {
             btnType: "warn"
             header.title: root.isCommunityChat ? qsTr("Delete #%1").arg(root.chatName) :
                                             root.chatType === Constants.chatType.oneToOne ?
-                                            //% "Delete chat"
-                                            qsTrId("delete-chat") :
-                                            //% "Leave chat"
-                                            qsTrId("leave-chat")
+                                            qsTr("Delete chat") :
+                                            qsTr("Leave chat")
             confirmButtonLabel: root.isCommunityChat ? qsTr("Delete") : header.title
             confirmationText: root.isCommunityChat ? qsTr("Are you sure you want to delete #%1 channel?").arg(root.chatName) :
                                                 root.chatType === Constants.chatType.oneToOne ?

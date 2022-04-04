@@ -41,10 +41,8 @@ Item {
         id: communityHeader
         title: communityData.name
         subTitle: communityData.members.count <= 1 ?
-                                     //% "1 Member"
-                                     qsTrId("1-member") :
-                                     //% "%1 Members"
-                                     qsTrId("-1-members").arg(communityData.members.count)
+                                     qsTr("1 Member") :
+                                     qsTr("%1 Members").arg(communityData.members.count)
         image.source: communityData.image
         icon.color: communityData.color
         onClicked: root.infoButtonClicked()
@@ -93,8 +91,7 @@ Item {
         height: nbRequests > 0 ? 64 : 0
         sourceComponent: Component {
             StatusContactRequestsIndicatorListItem {
-                //% "Membership requests"
-                title: qsTrId("membership-requests")
+                title: qsTr("Membership requests")
                 requestsCount: membershipRequests.nbRequests
                 sensor.onClicked: Global.openPopup(root.membershipRequestPopup, {
                     communitySectionModule: root.communitySectionModule
@@ -188,8 +185,7 @@ Item {
 
             popupMenu: StatusPopupMenu {
                 StatusMenuItem {
-                    //% "Create channel"
-                    text: qsTrId("create-channel")
+                    text: qsTr("Create channel")
                     icon.name: "channel"
                     // Not Refactored Yet
                     enabled: communityData.amISectionAdmin
@@ -197,8 +193,7 @@ Item {
                 }
 
                 StatusMenuItem {
-                    //% "Create category"
-                    text: qsTrId("create-category")
+                    text: qsTr("Create category")
                     icon.name: "channel-category"
                     enabled: communityData.amISectionAdmin
                     onTriggered: Global.openPopup(createCategoryPopup)
@@ -207,8 +202,7 @@ Item {
                 StatusMenuSeparator {}
 
                 StatusMenuItem {
-                    //% "Invite people"
-                    text: qsTrId("invite-people")
+                    text: qsTr("Invite people")
                     icon.name: "share-ios"
                     enabled: communityData.canManageUsers
                     onTriggered: Global.openPopup(inviteFriendsToCommunityPopup, {
@@ -248,8 +242,7 @@ Item {
 
                 StatusMenuItem {
                     enabled: communityData.amISectionAdmin
-                    //% "Edit Category"
-                    text: qsTrId("edit-category")
+                    text: qsTr("Edit Category")
                     icon.name: "edit"
                     onTriggered: {
                        Global.openPopup(createCategoryPopup, {
@@ -267,16 +260,13 @@ Item {
 
                 StatusMenuItem {
                     enabled: communityData.amISectionAdmin
-                    //% "Delete Category"
-                    text: qsTrId("delete-category")
+                    text: qsTr("Delete Category")
                     icon.name: "delete"
                     type: StatusMenuItem.Type.Danger
                     onTriggered: {
                         Global.openPopup(deleteCategoryConfirmationDialogComponent, {
-                            //% "Delete %1 category"
-                            title: qsTrId("delete--1-category").arg(categoryItem.name),
-                            //% "Are you sure you want to delete %1 category? Channels inside the category won’t be deleted."
-                            confirmationText: qsTrId("are-you-sure-you-want-to-delete--1-category--channels-inside-the-category-won-t-be-deleted-")
+                            title: qsTr("Delete %1 category").arg(categoryItem.name),
+                            confirmationText: qsTr("Are you sure you want to delete %1 category? Channels inside the category won’t be deleted.")
                                 .arg(categoryItem.name),
                             categoryId: categoryItem.categoryId
                         })
@@ -513,7 +503,7 @@ Item {
                     }
 
                     StatusMenuItem {
-                        text: qsTrId("Create category")
+                        text: qsTr("Create category")
                         icon.name: "channel-category"
                         onTriggered: Global.openPopup(createCategoryPopup)
                     }
@@ -574,8 +564,7 @@ Item {
 
     MessageDialog {
         id: deleteError
-        //% "Error deleting the category"
-        title: qsTrId("error-deleting-the-category")
+        title: qsTr("Error deleting the category")
         icon: StandardIcon.Critical
         standardButtons: StandardButton.Ok
     }

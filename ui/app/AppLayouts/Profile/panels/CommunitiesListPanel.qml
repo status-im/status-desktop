@@ -41,7 +41,7 @@ ListView {
                 size: StatusBaseButton.Size.Small
                 type: StatusBaseButton.Type.Danger
                 border.color: "transparent"
-                text: qsTrId("leave-community")
+                text: qsTr("Leave community")
                 onClicked: {
                     Global.openPopup(leaveCommunityPopup, {
                                          community: model.name,

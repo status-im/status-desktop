@@ -7,8 +7,7 @@ import utils 1.0
 StyledText {
     id: retryLbl
     color: Style.current.red
-    //% "Resend"
-    text: qsTrId("resend-message")
+    text: qsTr("Resend")
     font.pixelSize: Style.current.tertiaryTextFontSize
     visible: isCurrentUser && (timeout || isExpired)
     property bool isCurrentUser: false

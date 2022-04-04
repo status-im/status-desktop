@@ -8,8 +8,7 @@ import ".."
 
 StatusChatImageValidator {
     id: root
-    //% "You can only upload %1 images at a time"
-    errorMessage: qsTrId("you-can-only-upload--1-images-at-a-time").arg(Constants.maxUploadFiles)
+    errorMessage: qsTr("You can only upload %1 images at a time").arg(Constants.maxUploadFiles)
 
     onImagesChanged: {
         root.isValid = images.length <= Constants.maxUploadFiles

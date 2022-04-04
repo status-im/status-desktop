@@ -37,16 +37,14 @@ SettingsContentBase {
 
             StatusBaseText {
                 id: deviceNameLbl
-                //% "Please set a name for your device."
-                text: qsTrId("pairing-please-set-a-name")
+                text: qsTr("Please set a name for your device.")
                 font.pixelSize: 14
                 color: Theme.palette.directColor1
             }
 
             Input {
                 id: deviceNameTxt
-                //% "Specify a name"
-                placeholderText: qsTrId("specify-name")
+                placeholderText: qsTr("Specify a name")
                 anchors.top: deviceNameLbl.bottom
                 anchors.topMargin: Style.current.padding
             }
@@ -56,8 +54,7 @@ SettingsContentBase {
                 anchors.top: deviceNameTxt.bottom
                 anchors.topMargin: 10
                 anchors.right: deviceNameTxt.right
-                //% "Continue"
-                text: qsTrId("continue")
+                text: qsTr("Continue")
                 enabled: deviceNameTxt.text !== ""
                 onClicked : root.devicesStore.setName(deviceNameTxt.text.trim())
             }
@@ -98,8 +95,7 @@ SettingsContentBase {
 
                 StatusBaseText {
                     id: advertiseDeviceTitle
-                    //% "Advertise device"
-                    text: qsTrId("pair-this-device")
+                    text: qsTr("Advertise device")
                     font.pixelSize: 18
                     font.weight: Font.Bold
                     color: Theme.palette.primaryColor1
@@ -109,8 +105,7 @@ SettingsContentBase {
 
                 StatusBaseText {
                     id: advertiseDeviceDesk
-                    //% "Pair your devices to sync contacts and chats between them"
-                    text: qsTrId("pair-this-device-description")
+                    text: qsTr("Pair your devices to sync contacts and chats between them")
                     font.pixelSize: 14
                     anchors.top: advertiseDeviceTitle.bottom
                     anchors.topMargin: 6
@@ -129,8 +124,7 @@ SettingsContentBase {
             StatusBaseText {
                 anchors.top: advertiseDevice.bottom
                 anchors.topMargin: Style.current.padding
-                //% "Learn more"
-                text: qsTrId("learn-more")
+                text: qsTr("Learn more")
                 font.pixelSize: 16
                 color: Theme.palette.primaryColor1
                 anchors.left: parent.left
@@ -155,8 +149,7 @@ SettingsContentBase {
 
             StatusBaseText {
                 id: deviceListLbl
-                //% "Paired devices"
-                text: qsTrId("paired-devices")
+                text: qsTr("Paired devices")
                 font.pixelSize: 16
                 font.weight: Font.Bold
                 color: Theme.palette.directColor1
@@ -188,10 +181,8 @@ SettingsContentBase {
                         id: deviceItemLbl
                         text: {
                             let deviceId = model.installationId.split("-")[0].substr(0, 5)
-                            //% "No info"
-                            let labelText = `${model.name || qsTrId("pairing-no-info")} ` +
-                                //% "you"
-                                `(${model.isCurrentDevice ? qsTrId("you") + ", ": ""}${deviceId})`;
+                            let labelText = `${model.name || qsTr("No info")} ` +
+                                `(${model.isCurrentDevice ? qsTr("you") + ", ": ""}${deviceId})`;
                             return labelText;
                         }
                         elide: Text.ElideRight
@@ -222,10 +213,8 @@ SettingsContentBase {
                 anchors.horizontalCenter: listView.horizontalCenter
 
                 text: isSyncing ?
-                        //% "Syncing..."
-                        qsTrId("sync-in-progress") :
-                        //% "Sync all devices"
-                        qsTrId("sync-all-devices")
+                        qsTr("Syncing...") :
+                        qsTr("Sync all devices")
                 enabled: !isSyncing
                 onClicked : {
                     isSyncing = true;

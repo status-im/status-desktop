@@ -34,8 +34,7 @@ StatusModal {
         qrCodeImage.source = RootStore.getQrCode(completeAddressWithNetworkPrefix)
     }
 
-    //% "Receive"
-    header.title: qsTrId("receive")
+    header.title: qsTr("Receive")
     contentHeight: layout.implicitHeight
     width: 556
 

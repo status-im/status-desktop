@@ -29,8 +29,7 @@ Item {
     property bool isEmoji: false
     property bool isCurrentUser: false
     property int contentType: 1
-    //% "Hey"
-    property string message: qsTrId("ens-test-message")
+    property string message: qsTr("Hey")
     property string authorCurrentMsg: "0"
     property string authorPrevMsg: "1"
     property bool isText: true
@@ -53,8 +52,7 @@ Item {
             Item {
                 Text {
                     id: usernameTxt
-                    //% "(pending)"
-                    text: username.substr(0, username.indexOf(".")) + " " + (isPending ? qsTrId("-pending-") : "")
+                    text: username.substr(0, username.indexOf(".")) + " " + (isPending ? qsTr("(pending)") : "")
                     color: Style.current.textColor
                 }
 
@@ -73,8 +71,7 @@ Item {
             Item {
                 Text {
                     id: usernameTxt
-                    //% "(pending)"
-                    text: username  + " " + (isPending ? qsTrId("-pending-") : "")
+                    text: username  + " " + (isPending ? qsTr("(pending)") : "")
                     font.pixelSize: 16
                     color: Theme.palette.directColor1
                     anchors.top: parent.top
@@ -134,8 +131,7 @@ Item {
 
         StatusBaseText {
             id: sectionTitle
-            //% "ENS usernames"
-            text: qsTrId("ens-usernames")
+            text: qsTr("ENS usernames")
             anchors.left: parent.left
             anchors.leftMargin: 24
             anchors.top: parent.top
@@ -163,8 +159,7 @@ Item {
 
             StatusBaseText {
                 id: usernameText
-                //% "Add username"
-                text: qsTrId("ens-add-username")
+                text: qsTr("Add username")
                 color: Theme.palette.primaryColor1
                 anchors.left: addButton.right
                 anchors.leftMargin: Style.current.padding
@@ -182,8 +177,7 @@ Item {
 
         StatusBaseText {
             id: usernamesLabel
-            //% "Your usernames"
-            text: qsTrId("ens-your-usernames")
+            text: qsTr("Your usernames")
             anchors.left: parent.left
             anchors.top: addUsername.bottom
             anchors.topMargin: 24
@@ -228,8 +222,7 @@ Item {
             id: chatSettingsLabel
             visible: root.ensUsernamesStore.ensUsernamesModel.count > 0 &&
                      root.ensUsernamesStore.numOfPendingEnsUsernames() != root.ensUsernamesStore.ensUsernamesModel.count
-            //% "Chat settings"
-            text: qsTrId("chat-settings")
+            text: qsTr("Chat settings")
             anchors.left: parent.left
             anchors.top: ensList.bottom
             anchors.topMargin: 24
@@ -249,8 +242,7 @@ Item {
             StatusBaseText {
                 id: usernameLabel
                 visible: chatSettingsLabel.visible
-                //% "Primary Username"
-                text: qsTrId("primary-username")
+                text: qsTr("Primary Username")
                 font.pixelSize: 14
                 font.weight: Font.Bold
                 color: Theme.palette.directColor1
@@ -259,8 +251,7 @@ Item {
             StatusBaseText {
                 id: usernameLabel2
                 visible: chatSettingsLabel.visible
-                //% "None selected"
-                text: root.ensUsernamesStore.preferredUsername || qsTrId("none-selected")
+                text: root.ensUsernamesStore.preferredUsername || qsTr("None selected")
                 anchors.left: usernameLabel.right
                 anchors.leftMargin: Style.current.padding
                 font.pixelSize: 14
@@ -346,8 +337,7 @@ Item {
                 anchors.top: chatTime.bottom
                 anchors.left: chatImage.left
                 anchors.topMargin: Style.current.padding
-                //% "You’re displaying your ENS username in chats"
-                text: qsTrId("you-re-displaying-your-ens-username-in-chats")
+                text: qsTr("You’re displaying your ENS username in chats")
                 font.pixelSize: 14
                 color: Theme.palette.baseColor1
             }

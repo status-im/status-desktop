@@ -24,11 +24,9 @@ ColumnLayout {
 
     function validateMe()  {
         if (privateKey.text === "") {
-            //% "You need to enter a private key"
-            _internal.errorString = qsTrId("you-need-to-enter-a-private-key")
+            _internal.errorString = qsTr("You need to enter a private key")
         } else if (!Utils.isPrivateKey(privateKey.text)) {
-            //% "Enter a valid private key (64 characters hexadecimal string)"
-            _internal.errorString = qsTrId("enter-a-valid-private-key-(64-characters-hexadecimal-string)")
+            _internal.errorString = qsTr("Enter a valid private key (64 characters hexadecimal string)")
         } else {
             _internal.errorString = ""
         }
@@ -47,27 +45,23 @@ ColumnLayout {
     StatusInput {
         id: privateKey
 
-        //% "Private key"
-        label: qsTrId("private-key")
+        label: qsTr("Private key")
         charLimit: _internal.privateKeyCharLimit
         input.multiline: true
         input.minimumHeight: 80
         input.maximumHeight: 108
-        //% "Paste the contents of your private key"
-        input.placeholderText: qsTrId("paste-the-contents-of-your-private-key")
+        input.placeholderText: qsTr("Paste the contents of your private key")
         errorMessage: _internal.errorString
         validators: [
             StatusMinLengthValidator {
                 minLength: 1
-                //% "You need to enter a private key"
-                errorMessage: qsTrId("you-need-to-enter-a-private-key")
+                errorMessage: qsTr("You need to enter a private key")
             },
             StatusValidator {
                 property var validate: function (value) {
                     return Utils.isPrivateKey(value)
                 }
-                //% "Enter a valid private key (64 characters hexadecimal string)"
-                errorMessage: qsTrId("enter-a-valid-private-key-(64-characters-hexadecimal-string)")
+                errorMessage: qsTr("Enter a valid private key (64 characters hexadecimal string)")
             }
         ]
         onTextChanged: {

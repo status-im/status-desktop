@@ -87,10 +87,8 @@ Item {
             StyledText {
                 anchors.centerIn: parent
                 text: imageMessage.status === Image.Error?
-                        //% "Error loading the image"
-                        qsTrId("error-loading-the-image") :
-                        //% "Loading image..."
-                        qsTrId("loading-image---")
+                        qsTr("Error loading the image") :
+                        qsTr("Loading image...")
                 color: imageMessage.status === Image.Error?
                         Style.current.red :
                         Style.current.textColor

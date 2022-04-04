@@ -96,15 +96,12 @@ Item {
             text: {
                 if (root.state === Constants.transactionRequested) {
                     let prefix = outgoing? "↑ " : "↓ "
-                    //% "Transaction request"
-                    return prefix + qsTrId("transaction-request")
+                    return prefix + qsTr("Transaction request")
                 }
 
                 return outgoing ?
-                    //% "↑ Outgoing transaction"
-                    qsTrId("--outgoing-transaction") :
-                    //% "↓ Incoming transaction"
-                    qsTrId("--incoming-transaction")
+                    qsTr("↑ Outgoing transaction") :
+                    qsTr("↓ Incoming transaction")
             }
             font.weight: Font.Medium
             anchors.top: parent.top

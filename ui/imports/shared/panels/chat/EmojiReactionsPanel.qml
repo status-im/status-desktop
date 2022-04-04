@@ -185,8 +185,7 @@ Item {
 
             StatusQ.StatusToolTip {
               visible: addEmojiBtn.isHovered
-              //% "Add reaction"
-              text: qsTrId("add-reaction")
+              text: qsTr("Add reaction")
             }
         }
     }

@@ -34,7 +34,7 @@ ColumnLayout {
         Layout.alignment: Qt.AlignTop
         Layout.topMargin: 10
         checked: localAccountSensitiveSettings.useBrowserEthereumExplorer === Constants.browserEthereumExplorerNone
-        text: qsTrId("none")
+        text: qsTr("none")
         onCheckedChanged: {
             if (checked) {
                 localAccountSensitiveSettings.useBrowserEthereumExplorer = Constants.browserEthereumExplorerNone

@@ -344,10 +344,8 @@ Column {
 
             StatusBaseText {
                 id: enableText
-                //% "Enable automatic image unfurling"
-                text: isImageLink ? qsTrId("enable-automatic-image-unfurling") :
-                                    //% "Enable link previews in chat?"
-                                    qsTrId("enable-link-previews")
+                text: isImageLink ? qsTr("Enable automatic image unfurling") :
+                                    qsTr("Enable link previews in chat?")
                 horizontalAlignment: Text.AlignHCenter
                 width: parent.width
                 wrapMode: Text.WordWrap
@@ -359,8 +357,7 @@ Column {
 
             StatusBaseText {
                 id: infoText
-                //% "Once enabled, links posted in the chat may share your metadata with their owners"
-                text: qsTrId("once-enabled--links-posted-in-the-chat-may-share-your-metadata-with-their-owners")
+                text: qsTr("Once enabled, links posted in the chat may share your metadata with their owners")
                 horizontalAlignment: Text.AlignHCenter
                 width: parent.width
                 wrapMode: Text.WordWrap
@@ -377,8 +374,7 @@ Column {
 
             StatusFlatButton {
                 id: enableBtn
-                //% "Enable in Settings"
-                text: qsTrId("enable-in-settings")
+                text: qsTr("Enable in Settings")
                 onClicked: {
                     Global.changeAppSectionBySectionType(Constants.appSection.profile, Constants.settingsSubsection.messaging);
                 }
@@ -393,8 +389,7 @@ Column {
             }
 
             StatusFlatButton {
-                //% "Don't ask me again"
-                text: qsTrId("dont-ask")
+                text: qsTr("Don't ask me again")
                 onClicked: {
                     RootStore.setNeverAskAboutUnfurlingAgain(true);
                 }

@@ -54,8 +54,7 @@ Item {
         visible: RootStore.isNonArchivalNode
         height: visible ? implicitHeight : 0
         anchors.top: parent.top
-        //% "Status Desktop is connected to a non-archival node. Transaction history may be incomplete."
-        text: qsTrId("status-desktop-is-connected-to-a-non-archival-node--transaction-history-may-be-incomplete-")
+        text: qsTr("Status Desktop is connected to a non-archival node. Transaction history may be incomplete.")
         font.pixelSize: Style.current.primaryTextFontSize
         color: Style.current.danger
     }
@@ -65,8 +64,7 @@ Item {
         anchors.top: nonArchivalNodeError.bottom
         visible: transactionListRoot.count === 0
         height: visible ? implicitHeight : 0
-        //% "No transactions found"
-        text: qsTrId("no-transactions-found")
+        text: qsTr("No transactions found")
         font.pixelSize: Style.current.primaryTextFontSize
     }
 
@@ -103,8 +101,7 @@ Item {
 
     StatusButton {
         id: loadMoreButton
-        //% "Load More"
-        text: qsTrId("load-more")
+        text: qsTr("Load More")
         // TODO: handle case when requested limit === transaction count -- there
         // is currently no way to know that there are no more results
         enabled: !loadingImg.active && RootStore.historyTransactions.hasMore

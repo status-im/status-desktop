@@ -14,8 +14,7 @@ Item {
 
     StatusBaseText {
         id: sectionTitle
-        //% "ENS usernames"
-        text: qsTrId("ens-usernames")
+        text: qsTr("ENS usernames")
         anchors.left: parent.left
         anchors.leftMargin: 24
         anchors.top: parent.top
@@ -50,8 +49,7 @@ Item {
 
     StatusBaseText {
         id: title
-        //% "Username added"
-        text: qsTrId("ens-saved-title")
+        text: qsTr("Username added")
         anchors.top: circle.bottom
         anchors.topMargin: 24
         font.weight: Font.Bold
@@ -65,8 +63,7 @@ Item {
 
     StatusBaseText {
         id: subtitle
-        //% "%1 is now connected with your chat key and can be used in Status."
-        text: qsTrId("-1-is-now-connected-with-your-chat-key-and-can-be-used-in-status-").arg(ensUsername)
+        text: qsTr("%1 is now connected with your chat key and can be used in Status.").arg(ensUsername)
         anchors.top: title.bottom
         anchors.topMargin: 24
         font.pixelSize: 14
@@ -82,8 +79,7 @@ Item {
         anchors.top: subtitle.bottom
         anchors.topMargin: Style.current.padding
         anchors.horizontalCenter: parent.horizontalCenter
-        //% "Ok, got it"
-        text: qsTrId("ens-got-it")
+        text: qsTr("Ok, got it")
         onClicked: okBtnClicked()
     }
 }

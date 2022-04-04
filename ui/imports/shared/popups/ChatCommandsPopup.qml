@@ -44,8 +44,7 @@ Popup {
         spacing: Style.current.halfPadding
 
         StatusChatCommandButton {
-            //% "Send transaction"
-            text: qsTrId("send-transaction")
+            text: qsTr("Send transaction")
             icon.color: Style.current.purple
             icon.name: "send"
             onClicked: root.sendTransactionCommandButtonClicked()
@@ -53,8 +52,7 @@ Popup {
 
 
         StatusChatCommandButton {
-            //% "Request transaction"
-            text: qsTrId("request-transaction")
+            text: qsTr("Request transaction")
             icon.color: Style.current.orange
             icon.name: "send"
             icon.rotation: 180

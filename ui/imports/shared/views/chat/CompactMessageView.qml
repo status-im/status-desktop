@@ -283,8 +283,7 @@ Item {
                     }
 
                     StyledText {
-                        //% "Pinned by %1"
-                        text: qsTrId("pinned-by--1").arg(Utils.getContactDetailsAsJson(messagePinnedBy).displayName)
+                        text: qsTr("Pinned by %1").arg(Utils.getContactDetailsAsJson(messagePinnedBy).displayName)
                         anchors.left: pinImage.right
                         anchors.verticalCenter: parent.verticalCenter
                         font.pixelSize: 13
@@ -432,7 +431,7 @@ Item {
                     store: root.store
                     usersStore: root.usersStore
 
-                    chatInputPlaceholder: qsTrId("type-a-message-")
+                    chatInputPlaceholder: qsTr("Pinned by %1")
                     chatType: messageStore.getChatType()
                     isEdit: true
                     emojiPopup: root.emojiPopup
@@ -493,8 +492,7 @@ Item {
                     anchors.left: parent.left
                     anchors.leftMargin: Style.current.halfPadding
                     anchors.top: editTextInput.bottom
-                    //% "Cancel"
-                    text: qsTrId("browsing-cancel")
+                    text: qsTr("Cancel")
                     onClicked: {
                         messageStore.setEditModeOff(messageId)
                         editTextInput.textInput.text = StatusQUtils.Emoji.parse(message)
@@ -507,8 +505,7 @@ Item {
                     anchors.left: cancelBtn.right
                     anchors.leftMargin: Style.current.halfPadding
                     anchors.top: editTextInput.bottom
-                    //% "Save"
-                    text: qsTrId("save")
+                    text: qsTr("Save")
                     enabled: editTextInput.textInput.text.trim().length > 0
                     onClicked: {
                         let msg = rootStore.plainText(StatusQUtils.Emoji.deparse(editTextInput.textInput.text))

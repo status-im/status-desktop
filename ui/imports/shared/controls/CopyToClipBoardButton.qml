@@ -30,8 +30,7 @@ StatusRoundButton {
 
     StatusToolTip {
         id: toolTip
-        //% "Copied!"
-        text: qsTrId("copied-")
+        text: qsTr("Copied!")
         orientation: tooltipUnder ? StatusToolTip.Orientation.Bottom: StatusToolTip.Orientation.Top
     }
 

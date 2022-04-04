@@ -26,8 +26,7 @@ Item {
 
     TextWithLabel {
         id: idText
-        //% "ID"
-        label: qsTrId("id")
+        label: qsTr("ID")
         text: root.collectibleId
         anchors.top: collectibleImage.bottom
         anchors.topMargin:0
@@ -37,8 +36,7 @@ Item {
     TextWithLabel {
         visible: !!root.collectibleDescription
         id: descriptionText
-        //% "Description"
-        label: qsTrId("description")
+        label: qsTr("Description")
         text: root.collectibleDescription
         anchors.top: idText.bottom
         anchors.topMargin: 0

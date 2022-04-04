@@ -15,7 +15,7 @@ ColumnLayout {
     spacing: 0
 
     StatusBaseText {
-        text: qsTrId("homepage")
+        text: qsTr("homepage")
         font.pixelSize: 15
         color: Theme.palette.directColor1
     }

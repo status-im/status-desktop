@@ -26,8 +26,7 @@ Item {
             anchors.fill: parent
             StatusBaseText {
                 id: selectedTextField
-                //% "Invalid source"
-                text: !!root.selectedSource ? root.selectedSource.text : qsTrId("invalid-source")
+                text: !!root.selectedSource ? root.selectedSource.text : qsTr("Invalid source")
                 anchors.left: parent.left
                 anchors.leftMargin: Style.current.padding
                 anchors.verticalCenter: parent.verticalCenter

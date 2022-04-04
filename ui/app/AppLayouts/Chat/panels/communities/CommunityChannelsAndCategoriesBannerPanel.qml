@@ -82,7 +82,7 @@ Rectangle {
 
     StatusButton {
         id: addMembersBtn
-        text: qsTrId("Add channels")
+        text: qsTr("Add channels")
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: descriptionText.bottom
         anchors.topMargin: Style.current.padding

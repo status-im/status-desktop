@@ -52,8 +52,7 @@ Item {
 
     StyledText {
         id: nonContactsLabel
-        //% "Non contacts"
-        text: qsTrId("non-contacts")
+        text: qsTr("Non contacts")
         anchors.top: parent.top
         color: Style.current.secondaryText
         font.pixelSize: 15
@@ -161,8 +160,7 @@ Item {
         font.pixelSize: 15
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
-        //% "No profile found"
-        text: qsTrId("no-profile-found")
+        text: qsTr("No profile found")
     }
 
 }

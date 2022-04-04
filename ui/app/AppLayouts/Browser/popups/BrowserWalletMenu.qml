@@ -73,7 +73,7 @@ Popup {
                 switch (Web3ProviderStore.chainName) {
                     case Constants.networkMainnet: return qsTr("Mainnet");
                     case Constants.networkRopsten: return qsTr("Ropsten");
-                    default: return qsTrId("Unknown")
+                    default: return qsTr("Unknown")
                 }
             }
             font.pixelSize: 15
@@ -190,7 +190,7 @@ Popup {
             StatusTabButton {
                 id: historyBtn
                 width: implicitWidth
-                text: qsTrId("History")
+                text: qsTr("History")
             }
         }
 

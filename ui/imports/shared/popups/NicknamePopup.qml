@@ -43,8 +43,7 @@ StatusModal {
 
             StatusBaseText {
                 id: descriptionText
-                //% "Nicknames help you identify others in Status. Only you can see the nicknames you’ve added"
-                text: qsTrId("nicknames-help-you-identify-others-in-status--only-you-can-see-the-nicknames-you-ve-added")
+                text: qsTr("Nicknames help you identify others in Status. Only you can see the nicknames you’ve added")
                 font.pixelSize: 15
                 wrapMode: Text.WordWrap
                 color: Theme.palette.baseColor1
@@ -53,8 +52,7 @@ StatusModal {
 
             StatusInput {
                 id: nicknameInput
-                //% "Nickname"
-                input.placeholderText: qsTrId("nickname")
+                input.placeholderText: qsTr("Nickname")
                 text: nickname
 
                 width: parent.width
@@ -78,8 +76,7 @@ StatusModal {
     rightButtons: [
         StatusButton {
             id: doneBtn
-            //% "Done"
-            text: qsTrId("done")
+            text: qsTr("Done")
             enabled: !popup.nicknameTooLong
             onClicked: editDone(nicknameInput.text)
         }
