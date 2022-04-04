@@ -67,10 +67,11 @@ Popup {
                 objectName: "titleText"
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.rightMargin: 44
                 font.bold: true
                 font.pixelSize: 17
                 height: visible ? 24 : 0
-                width: visible ? parent.width - 44 : 0
                 elide: Text.ElideRight
                 visible: !!title
                 verticalAlignment: Text.AlignVCenter
