@@ -187,24 +187,26 @@ StatusModal {
                     return loading = false
                 }
 
+                let emoji =  StatusQUtils.Emoji.deparseFromParse(accountNameInput.input.icon.emoji)
+
                 var errMessage = ""
                 if(advancedSelection.expandableItem) {
                     switch(advancedSelection.expandableItem.addAccountType) {
                     case AdvancedAddAccountView.AddAccountType.GenerateNew:
-                        errMessage = RootStore.generateNewAccount(passwordInput.text, accountNameInput.text, colorSelectionGrid.selectedColor, accountNameInput.input.icon.emoji)
+                        errMessage = RootStore.generateNewAccount(passwordInput.text, accountNameInput.text, colorSelectionGrid.selectedColor, emoji)
                         break
                     case AdvancedAddAccountView.AddAccountType.ImportSeedPhrase:
-                        errMessage = RootStore.addAccountsFromSeed(advancedSelection.expandableItem.mnemonicText, passwordInput.text, accountNameInput.text, colorSelectionGrid.selectedColor, accountNameInput.input.icon.emoji)
+                        errMessage = RootStore.addAccountsFromSeed(advancedSelection.expandableItem.mnemonicText, passwordInput.text, accountNameInput.text, colorSelectionGrid.selectedColor, emoji)
                         break
                     case AdvancedAddAccountView.AddAccountType.ImportPrivateKey:
-                        errMessage = RootStore.addAccountsFromPrivateKey(advancedSelection.expandableItem.privateKey, passwordInput.text, accountNameInput.text, colorSelectionGrid.selectedColor, accountNameInput.input.icon.emoji)
+                        errMessage = RootStore.addAccountsFromPrivateKey(advancedSelection.expandableItem.privateKey, passwordInput.text, accountNameInput.text, colorSelectionGrid.selectedColor, emoji)
                         break
                     case AdvancedAddAccountView.AddAccountType.WatchOnly:
                         errMessage = RootStore.addWatchOnlyAccount(advancedSelection.expandableItem.watchAddress, accountNameInput.text, colorSelectionGrid.selectedColor, accountNameInput.input.icon.emoji)
                         break
                     }
                 } else {
-                    errMessage = RootStore.generateNewAccount(passwordInput.text, accountNameInput.text, colorSelectionGrid.selectedColor, accountNameInput.input.icon.emoji)
+                    errMessage = RootStore.generateNewAccount(passwordInput.text, accountNameInput.text, colorSelectionGrid.selectedColor, emoji)
                 }
 
                 loading = false
