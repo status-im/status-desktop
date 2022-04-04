@@ -26,8 +26,8 @@ QtObject {
         return walletSectionAllTokens.addCustomToken(chainId, address, name, symbol, decimals)
     }
 
-    function toggleVisible(chainId, symbol) {
-        walletSectionAllTokens.toggleVisible(chainId, symbol)
+    function toggleVisible(chainId, address) {
+        walletSectionAllTokens.toggleVisible(chainId, address)
     }
 
     function removeCustomToken(chainId, address) {

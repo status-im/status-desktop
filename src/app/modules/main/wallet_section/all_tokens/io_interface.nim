@@ -14,7 +14,7 @@ method isLoaded*(self: AccessInterface): bool {.base.} =
 method addCustomToken*(self: AccessInterface, chainId: int, address: string, name: string, symbol: string, decimals: int)  {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method toggleVisible*(self: AccessInterface, chainId: int, symbol: string) {.base.} =
+method toggleVisible*(self: AccessInterface, chainId: int, address: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method removeCustomToken*(self: AccessInterface, chainId: int, address: string) {.base.} =

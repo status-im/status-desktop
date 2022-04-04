@@ -394,19 +394,22 @@ proc pinMailserver*(self: Service, address: string, fleet: Fleet): bool =
 proc unpinMailserver*(self: Service, fleet: Fleet): bool =
   return self.pinMailserver("", fleet)
 
-proc getWalletVisibleTokens*(self: Service): Table[int, seq[string]] =
-  self.settings.walletVisibleTokens
+proc isEIP1559Enabled*(self: Service, blockNumber: int): bool =
+  let networkId = self.getCurrentNetworkDetails().config.NetworkId
+  let activationBlock = case networkId:
+    of 3: 10499401 # Ropsten
+    of 4: 8897988 # Rinkeby
+    of 5: 5062605 # Goerli
+    of 1: 12965000 # Mainnet
+    else: -1
+  if activationBlock > -1 and blockNumber >= activationBlock:
+    result = true
+  else:
+    result = false
+  self.eip1559Enabled = result
 
-proc saveWalletVisibleTokens*(self: Service, visibleTokens: Table[int, seq[string]]): bool =
-  var obj = newJObject()
-  for chainId, tokens in visibleTokens.pairs:
-    obj[$chainId] = %* tokens
-  
-  if(self.saveSetting(KEY_WALLET_VISIBLE_TOKENS, obj)):
-    self.settings.walletVisibleTokens = visibleTokens
-    return true
-  
-  return false
+proc isEIP1559Enabled*(self: Service): bool =
+  result = self.eip1559Enabled
 
 proc saveNodeConfiguration*(self: Service, value: JsonNode): bool =
   if(self.saveSetting(KEY_NODE_CONFIG, value)):

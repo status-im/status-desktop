@@ -115,7 +115,6 @@ type
     telemetryServerUrl*: string
     fleet*: string
     currentUserStatus*: CurrentUserStatus
-    walletVisibleTokens*: Table[int, seq[string]]
     nodeConfig*: JsonNode
     wakuBloomFilterMode*: bool
     autoMessageEnabled*: bool
@@ -155,22 +154,10 @@ proc toPinnedMailserver*(jsonObj: JsonNode): PinnedMailserver =
   discard jsonObj.getProp("status.test", result.statusTest)
   discard jsonObj.getProp("status.prod", result.statusProd)
 
-
-
 proc toCurrentUserStatus*(jsonObj: JsonNode): CurrentUserStatus =
   discard jsonObj.getProp("statusType", result.statusType)
   discard jsonObj.getProp("clock", result.clock)
   discard jsonObj.getProp("text", result.text)
-
-proc toWalletVisibleTokens*(jsonObj: JsonNode): Table[int, seq[string]] =
-  for chainIdStr, tokenArr in jsonObj:
-    if(tokenArr.kind != JArray):
-      continue
-    
-    let chainId = parseInt(chainIdStr)
-    result[chainId] = @[]
-    for token in tokenArr:
-      result[chainId].add(token.getStr)
 
 proc toSettingsDto*(jsonObj: JsonNode): SettingsDto =
   discard jsonObj.getProp(KEY_ADDRESS, result.address)
@@ -220,10 +207,6 @@ proc toSettingsDto*(jsonObj: JsonNode): SettingsDto =
   var currentUserStatusObj: JsonNode
   if(jsonObj.getProp(KEY_CURRENT_USER_STATUS, currentUserStatusObj)):
     result.currentUserStatus = toCurrentUserStatus(currentUserStatusObj)
-
-  var walletVisibleTokensObj: JsonNode
-  if(jsonObj.getProp(KEY_WALLET_VISIBLE_TOKENS, walletVisibleTokensObj)):
-    result.walletVisibleTokens = toWalletVisibleTokens(walletVisibleTokensObj)
 
   discard jsonObj.getProp(KEY_NODE_CONFIG, result.nodeConfig)
   discard jsonObj.getProp(KEY_WAKU_BLOOM_FILTER_MODE, result.wakuBloomFilterMode)

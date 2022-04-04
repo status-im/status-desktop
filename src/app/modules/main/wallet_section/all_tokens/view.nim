@@ -64,8 +64,8 @@ QtObject:
   proc addCustomToken(self: View, chainId: int, address: string, name: string, symbol: string, decimals: string) {.slot.} =
     self.delegate.addCustomToken(chainId, address, name, symbol, parseInt(decimals))
         
-  proc toggleVisible(self: View, chainId: int, symbol: string) {.slot.} =
-    self.delegate.toggleVisible(chainId, symbol)
+  proc toggleVisible(self: View, chainId: int, address: string) {.slot.} =
+    self.delegate.toggleVisible(chainId, address)
 
   proc removeCustomToken(self: View, chainId: int, address: string) {.slot.} =
     self.delegate.removeCustomToken(chainId, address)

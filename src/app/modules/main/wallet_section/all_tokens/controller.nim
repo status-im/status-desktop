@@ -43,8 +43,8 @@ proc getTokens*(self: Controller): seq[token_service.TokenDto] =
 proc addCustomToken*(self: Controller, chainId: int, address: string, name: string, symbol: string, decimals: int) =
   self.tokenService.addCustomToken(chainId, address, name, symbol, decimals)
         
-proc toggleVisible*(self: Controller, chainId: int, symbol: string) =
-  self.walletAccountService.toggleTokenVisible(chainId, symbol)
+proc toggleVisible*(self: Controller, chainId: int, address: string) =
+  self.walletAccountService.toggleTokenVisible(chainId, address)
 
 proc removeCustomToken*(self: Controller, chainId: int, address: string) =
   self.tokenService.removeCustomToken(chainId, address)
