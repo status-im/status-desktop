@@ -22,6 +22,7 @@
        \li \l{StatusDescriptionListItem}
        \li \l{StatusLetterIdenticon}
        \li \l{StatusListItem}
+       \li \l{StatusListPicker}
        \li \l{StatusListSectionHeadline}
        \li \l{StatusLoadingIndicator}
        \li \l{StatusMemberListItem}

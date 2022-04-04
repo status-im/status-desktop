@@ -275,6 +275,11 @@ StatusWindow {
                             selected: viewLoader.source.toString().includes(title)
                             onClicked: mainPageView.page(title);
                         }
+                        StatusNavigationListItem {
+                            title: "StatusListPicker"
+                            selected: viewLoader.source.toString().includes(title)
+                            onClicked: mainPageView.page(title);
+                        }
                         StatusListSectionHeadline { text: "StatusQ.Popup" }
                         StatusNavigationListItem { 
                             title: "StatusPopupMenu"

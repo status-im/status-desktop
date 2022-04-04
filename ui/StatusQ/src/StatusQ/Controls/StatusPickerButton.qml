@@ -11,7 +11,13 @@ Button {
 
     property color bgColor: Theme.palette.baseColor2
     property color contentColor: Theme.palette.baseColor1
-    signal clicked()
+    property var type: StatusPickerButton.Type.Next
+    property int lateralMargins: 16
+
+    enum Type {
+        Next,
+        Down
+    }
 
     background: Item {
         anchors.fill: parent
@@ -20,31 +26,57 @@ Button {
             anchors.fill: parent
             radius: 8
             color: root.bgColor
-        }
-        StatusIcon {
-            id: nextIcon
-            anchors.right: parent.right
-            anchors.rightMargin: 8
-            anchors.verticalCenter: parent.verticalCenter
-            icon: "next"
-            color: !Qt.colorEqual(root.contentColor, Theme.palette.baseColor1)
-                   ? root.contentColor : Theme.palette.directColor1
-        }
+        }   
     }
 
     contentItem: Item {
         anchors.fill: parent
+        state: root.type === StatusPickerButton.Type.Next ? "NEXT" : "DOWN"
+
         StatusBaseText {
             id: textLabel
-            anchors {
-                fill: parent
-                leftMargin: 16
-            }
+            anchors.verticalCenter: parent.verticalCenter
+            width: parent.width - icon.width - anchors.rightMargin - anchors.leftMargin - icon.anchors.rightMargin - icon.anchors.leftMargin
             verticalAlignment: Text.AlignVCenter
             font.pixelSize: 15
             color: root.contentColor
             text: root.text
+            clip: true
+            elide: Text.ElideRight
         }
+
+        StatusIcon {
+            id: icon
+            anchors.verticalCenter: parent.verticalCenter
+            color: !Qt.colorEqual(root.contentColor, Theme.palette.baseColor1) ? root.contentColor : Theme.palette.directColor1
+        }
+
+        states: [
+            State {
+                name: "NEXT"
+                PropertyChanges {target: icon; icon: "next"}
+                PropertyChanges {target: icon; anchors.left: undefined }
+                PropertyChanges {target: icon; anchors.right: parent.right }
+                PropertyChanges {target: icon; anchors.rightMargin: root.lateralMargins / 2 }
+                PropertyChanges {target: icon; anchors.leftMargin: root.lateralMargins / 2 }
+                PropertyChanges {target: textLabel; anchors.left: parent.left }
+                PropertyChanges {target: textLabel; anchors.right: undefined }
+                PropertyChanges {target: textLabel; anchors.rightMargin: undefined }
+                PropertyChanges {target: textLabel; anchors.leftMargin: root.lateralMargins }
+            },
+            State {
+                name: "DOWN"
+                PropertyChanges {target: icon; icon: "chevron-down"}
+                PropertyChanges {target: icon; anchors.left: parent.left }
+                PropertyChanges {target: icon; anchors.right: undefined }
+                PropertyChanges {target: icon; anchors.rightMargin: root.lateralMargins / 2 }
+                PropertyChanges {target: icon; anchors.leftMargin: root.lateralMargins }
+                PropertyChanges {target: textLabel; anchors.left: icon.right }
+                PropertyChanges {target: textLabel; anchors.right: undefined }
+                PropertyChanges {target: textLabel; anchors.rightMargin: root.lateralMargins / 2 }
+                PropertyChanges {target: textLabel; anchors.leftMargin: undefined }
+            }
+        ]
     }
 
     MouseArea {
@@ -52,8 +84,6 @@ Button {
         anchors.fill: parent
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
-        onClicked: {
-            root.clicked();
-        }
+        onClicked: { root.clicked() }
     }
 }

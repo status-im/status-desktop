@@ -32,6 +32,7 @@
        \li \l{StatusBaseInput}
        \li \l{StatusIdenticonRing}
        \li \l{StatusInput}
+       \li \l{StatusItemPicker}
        \li \l{StatusPickerButton}
        \li \l{StatusPinInput}
        \li \l{StatusProgressBar}

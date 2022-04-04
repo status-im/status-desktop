@@ -335,5 +335,7 @@
         <file>src/assets/img/icons/OMG.png</file>
         <file>src/assets/img/icons/ETH.png</file>
         <file>src/assets/img/icons/MANA.png</file>
+        <file>src/StatusQ/Components/StatusListPicker.qml</file>
+        <file>src/StatusQ/Controls/StatusItemPicker.qml</file>
     </qresource>
 </RCC>
