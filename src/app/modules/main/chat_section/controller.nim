@@ -63,11 +63,10 @@ proc getActiveChatId*(self: Controller): string =
 proc init*(self: Controller) =
   self.events.on(SIGNAL_NEW_MESSAGE_RECEIVED) do(e: Args):
     let args = MessagesArgs(e)
-    if(self.isCommunitySection and args.chatType != ChatType.CommunityChat or
-      not self.isCommunitySection and args.chatType == ChatType.CommunityChat):
-        return
-    self.delegate.onNewMessagesReceived(args.chatId, args.unviewedMessagesCount, args.unviewedMentionsCount,
-    args.messages)
+    if (self.sectionId != args.sectionId or args.messages.len == 0):
+      return
+    self.delegate.onNewMessagesReceived(args.sectionId, args.chatId, args.chatType, args.unviewedMessagesCount, 
+    args.unviewedMentionsCount, args.messages[0])
 
   self.events.on(message_service.SIGNAL_MENTIONED_IN_EDITED_MESSAGE) do(e: Args):
     let args = MessageEditedArgs(e)

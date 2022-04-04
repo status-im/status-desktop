@@ -23,6 +23,13 @@ QtObject:
     new(result, delete)
     result.setup
 
+  proc countChanged(self: Model) {.signal.}
+  proc getCount(self: Model): int {.slot.} =
+    self.items.len
+  QtProperty[int] count:
+    read = getCount
+    notify = countChanged
+
   method rowCount(self: Model, index: QModelIndex = nil): int =
     return self.items.len
 
@@ -64,6 +71,7 @@ QtObject:
     self.beginInsertRows(parentModelIndex, first, last)
     self.items.add(items)
     self.endInsertRows()
+    self.countChanged()
 
   proc addItem*(self: Model, item: Item) =
     let parentModelIndex = newQModelIndex()
@@ -72,6 +80,7 @@ QtObject:
     self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
     self.items.add(item)
     self.endInsertRows()
+    self.countChanged()
 
   proc findIndexByInstallationId(self: Model, installationId: string): int =
     for i in 0..<self.items.len:

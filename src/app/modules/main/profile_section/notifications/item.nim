@@ -1,25 +1,86 @@
+import ../../../../global/local_account_sensitive_settings
+
 type
-  Item* = object
+  Type* {.pure.} = enum
+    Community
+    OneToOneChat
+    GroupChat
+
+type
+  Item* = ref object
     id: string
     name: string
-    icon: string
+    image: string
     color: string
+    joinedTimestamp: int64
+    itemType: Type
+    muteAllMessages: bool
+    personalMentions: string
+    globalMentions: string
+    otherMessages: string
 
-proc initItem*(id, name, icon: string, color: string): Item =
+proc initItem*(id, name, image, color: string, joinedTimestamp: int64, itemType: Type, muteAllMessages = false, 
+  personalMentions = LSS_VALUE_NOTIF_SEND_ALERTS, globalMentions = LSS_VALUE_NOTIF_SEND_ALERTS, 
+  otherMessages = LSS_VALUE_NOTIF_SEND_TURN_OFF): Item =
   result = Item()
   result.id = id
   result.name = name
-  result.icon = icon
+  result.image = image
   result.color = color
+  result.joinedTimestamp = joinedTimestamp
+  result.itemType = itemType
+  result.muteAllMessages = muteAllMessages
+  result.personalMentions = personalMentions
+  result.globalMentions = globalMentions
+  result.otherMessages = otherMessages
 
 proc id*(self: Item): string =
-  self.id
+  return self.id
 
 proc name*(self: Item): string =
-  self.name
+  return self.name
 
-proc icon*(self: Item): string =
-  self.icon
+proc `name=`*(self: Item, value: string) =
+  self.name = value
+
+proc image*(self: Item): string =
+  return self.image
 
 proc color*(self: Item): string =
   self.color
+
+proc joinedTimestamp*(self: Item): int64 =
+  return self.joinedTimestamp
+
+proc itemType*(self: Item): Type =
+  return self.itemType
+
+proc customized*(self: Item): bool =
+  return self.muteAllMessages or
+    self.personalMentions != LSS_VALUE_NOTIF_SEND_ALERTS or
+    self.globalMentions != LSS_VALUE_NOTIF_SEND_ALERTS or
+    self.otherMessages != LSS_VALUE_NOTIF_SEND_TURN_OFF
+
+proc muteAllMessages*(self: Item): bool =
+  return self.muteAllMessages
+
+proc `muteAllMessages=`*(self: Item, value: bool) =
+  self.muteAllMessages = value
+
+proc personalMentions*(self: Item): string =
+  return self.personalMentions
+
+proc `personalMentions=`*(self: Item, value: string) =
+  self.personalMentions = value
+
+proc globalMentions*(self: Item): string =
+  return self.globalMentions
+
+proc `globalMentions=`*(self: Item, value: string) =
+  self.globalMentions = value
+
+proc otherMessages*(self: Item): string =
+  return self.otherMessages
+
+proc `otherMessages=`*(self: Item, value: string) =
+  self.otherMessages = value

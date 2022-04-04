@@ -106,7 +106,6 @@ StatusAppTwoPanelLayout {
 
             EnsView {
                 // TODO: we need to align structure for the entire this part using `SettingsContentBase` as root component
-
                 // TODO: handle structure for this subsection to match style used in onther sections
                 // using `SettingsContentBase` component as base.
                 id: ensContainer
@@ -158,14 +157,6 @@ StatusAppTwoPanelLayout {
                 systemPalette: profileView.systemPalette
             }
 
-            SoundsView {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-
-                sectionTitle: profileView.store.getNameForSubsection(Constants.settingsSubsection.sound)
-                contentWidth: d.contentWidth
-            }
-
             LanguageView {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
@@ -181,6 +172,7 @@ StatusAppTwoPanelLayout {
                 Layout.fillHeight: true
 
                 notificationsStore: profileView.store.notificationsStore
+                devicesStore: profileView.store.devicesStore
                 sectionTitle: profileView.store.getNameForSubsection(Constants.settingsSubsection.notifications)
                 contentWidth: d.contentWidth
             }

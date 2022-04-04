@@ -174,11 +174,15 @@ proc containsContactMentions*(self: MessageDto): bool =
         return true
   return false
 
-proc isUserWithPkMentioned*(self: MessageDto, publicKey: string): bool =
+proc isPersonalMention*(self: MessageDto, publicKey: string): bool =
   for pText in self.parsedText:
     for child in pText.children:
       if (child.type == PARSED_TEXT_CHILD_TYPE_MENTION and child.literal.contains(publicKey)):
         return true
+  return false
+
+proc isGlobalMention*(self: MessageDto): bool =
+  # TODO: we should check here if message contains global mention.
   return false
 
 proc mentionedUsersPks*(self: MessageDto): seq[string] =

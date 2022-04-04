@@ -26,7 +26,7 @@ Rectangle {
 
     Loader {
         id: identicon
-        sourceComponent: localAccountSensitiveSettings.notificationMessagePreviewSetting === Constants.notificationPreviewAnonymous ?  statusIdenticon : userOrChannelIdenticon
+        sourceComponent: localAccountSensitiveSettings.notificationMessagePreviewSetting === Constants.settingsSection.notificationsBubble.previewAnonymous ?  statusIdenticon : userOrChannelIdenticon
         anchors.left: parent.left
         anchors.leftMargin: Style.current.padding
         anchors.verticalCenter: parent.verticalCenter

@@ -1,406 +1,551 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
-import QtGraphicalEffects 1.13
 import QtQuick.Layouts 1.13
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Controls 0.1
+import StatusQ.Components 0.1
+import StatusQ.Popups 0.1
 
 import utils 1.0
-
 import shared.panels 1.0
-import shared.status 1.0
 import shared.controls 1.0
 
 import "../stores"
-import "../popups"
+import "../controls"
 import "../panels"
-import "./"
+import "../popups"
 
 SettingsContentBase {
     id: root
-
     property NotificationsStore notificationsStore
+    property DevicesStore devicesStore
 
-    Item {
-        id: notificationsContainer
-        width: root.contentWidth
-        height: this.childrenRect.height + 100
+    ColumnLayout {
+        id: contentColumn
+        spacing: Constants.settingsSection.itemSpacing
 
-        property Component mutedChatsModalComponent: MutedChatsModal {}
+            ButtonGroup {
+                id: messageSetting
+            }
 
+            Loader {
+                id: exemptionNotificationsModal
+                active: false
 
-        ButtonGroup {
-            id: notificationSetting
-        }
+                function open(item) {
+                    active = true
+                    exemptionNotificationsModal.item.item = item
+                    exemptionNotificationsModal.item.open()
+                }
+                function close() {
+                    active = false
+                }
 
-        ButtonGroup {
-            id: soundSetting
-        }
+                sourceComponent: ExemptionNotificationsModal {
+                    anchors.centerIn: parent
+                    notificationsStore: root.notificationsStore
 
-        ButtonGroup {
-            id: messageSetting
-        }
-
-        Column {
-            id: column
-            anchors.top: parent.top
-            anchors.left: parent.left
-            anchors.right: parent.right
-
-            RadioButtonSelector {
-                anchors.leftMargin: 0
-                anchors.rightMargin: 0
-                //% "All messages"
-                title: qsTrId("all-messages")
-                buttonGroup: notificationSetting
-                checked: localAccountSensitiveSettings.notificationSetting === Constants.notifyAllMessages
-                onCheckedChanged: {
-                    if (checked) {
-                        localAccountSensitiveSettings.notificationSetting = Constants.notifyAllMessages
+                    onClosed: {
+                        exemptionNotificationsModal.close();
                     }
                 }
             }
 
-            RadioButtonSelector {
-                anchors.leftMargin: 0
-                anchors.rightMargin: 0
-                //% "Just @mentions"
-                title: qsTrId("just--mentions")
-                buttonGroup: notificationSetting
-                checked:  localAccountSensitiveSettings.notificationSetting === Constants.notifyJustMentions
-                onCheckedChanged: {
-                    if (checked) {
-                        localAccountSensitiveSettings.notificationSetting = Constants.notifyJustMentions
-                    }
-                }
-            }
+            Component {
+                id: exemptionDelegateComponent
+                StatusListItem {
+                    property string lowerCaseSearchString: searchBox.text.toLowerCase()
 
-            RadioButtonSelector {
-                anchors.leftMargin: 0
-                anchors.rightMargin: 0
-                //% "Nothing"
-                title: qsTrId("nothing")
-                buttonGroup: notificationSetting
-                checked:  localAccountSensitiveSettings.notificationSetting === Constants.notifyNone
-                onCheckedChanged: {
-                    if (checked) {
-                        localAccountSensitiveSettings.notificationSetting = Constants.notifyNone
-                    }
-                }
-            }
-        }
-
-        Separator {
-            id: separator
-            anchors.top: column.bottom
-            anchors.topMargin: Style.current.bigPadding
-            anchors.left: parent.left
-            anchors.right: parent.right
-        }
-
-        StatusSectionHeadline {
-            id: sectionHeadlineSound
-            //% "Appearance"
-            text: qsTrId("appearance")
-            anchors.top: separator.bottom
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.leftMargin: Style.current.padding
-            anchors.rightMargin: Style.current.padding
-        }
-
-        Column {
-            id: column2
-            anchors.top: sectionHeadlineSound.bottom
-            anchors.topMargin: Style.current.smallPadding
-            anchors.left: parent.left
-            anchors.right: parent.right
-            width: parent.width
-
-            // TODO: replace with StatusListItem
-            StatusSettingsLineButton {
-                anchors.leftMargin: 0
-                anchors.rightMargin: 0
-                //% "Play a sound when receiving a notification"
-                text: qsTrId("play-a-sound-when-receiving-a-notification")
-                isSwitch: true
-                switchChecked: localAccountSensitiveSettings.notificationSoundsEnabled
-                onClicked: {
-                    localAccountSensitiveSettings.notificationSoundsEnabled = checked
-                }
-            }
-
-            // TODO: replace with StatusListItem
-            StatusSettingsLineButton {
-                anchors.leftMargin: 0
-                anchors.rightMargin: 0
-                //% "Use your operating system's notifications"
-                text: qsTrId("use-your-operating-system-s-notifications")
-                isSwitch: true
-                switchChecked: localAccountSensitiveSettings.useOSNotifications
-                onClicked: {
-                    localAccountSensitiveSettings.useOSNotifications = checked
-                }
-
-                StatusBaseText {
-                    id: detailText
-                    //% "Setting this to false will instead use Status' notification style as seen below"
-                    text: qsTrId("setting-this-to-false-will-instead-use-status--notification-style-as-seen-below")
-                    color: Theme.palette.baseColor1
                     width: parent.width
-                    font.pixelSize: 12
-                    wrapMode: Text.WordWrap
-                    anchors.left: parent.left
-                    anchors.leftMargin: Style.current.padding
-                    anchors.bottom: parent.bottom
-                    anchors.topMargin: 2
+                    height: visible ? implicitHeight : 0
+                    visible: lowerCaseSearchString === "" ||
+                             model.itemId.toLowerCase().includes(lowerCaseSearchString) ||
+                             model.name.toLowerCase().includes(lowerCaseSearchString)
+                    title: model.name
+                    subTitle: {
+                        if(model.type === Constants.settingsSection.exemptions.community)
+                            return qsTr("Community")
+                        else if(model.type === Constants.settingsSection.exemptions.oneToOneChat)
+                            return qsTr("1:1 Chat")
+                        else if(model.type === Constants.settingsSection.exemptions.groupChat)
+                            return qsTr("Group Chat")
+                        else
+                            return ""
+                    }
+                    label: {
+                        if(!model.customized)
+                            return ""
+
+                        let l = ""
+                        if(model.muteAllMessages)
+                            l += qsTr("Muted")
+                        else {
+                            let nbOfChanges = 0
+
+                            if(model.personalMentions !== Constants.settingsSection.notifications.sendAlertsValue)
+                            {
+                                nbOfChanges++
+                                let valueText = model.personalMentions === Constants.settingsSection.notifications.turnOffValue?
+                                        qsTr("Off") :
+                                        qsTr("Quiet")
+                                l = qsTr("Personal @ Mentions %1").arg(valueText)
+                            }
+
+                            if(model.globalMentions !== Constants.settingsSection.notifications.sendAlertsValue)
+                            {
+                                nbOfChanges++
+                                let valueText = model.globalMentions === Constants.settingsSection.notifications.turnOffValue?
+                                        qsTr("Off") :
+                                        qsTr("Quiet")
+                                l = qsTr("Global @ Mentions %1").arg(valueText)
+                            }
+
+                            if(model.otherMessages !== Constants.settingsSection.notifications.turnOffValue)
+                            {
+                                nbOfChanges++
+                                let valueText = model.otherMessages === Constants.settingsSection.notifications.sendAlertsValue?
+                                        qsTr("Alerts") :
+                                        qsTr("Quiet")
+                                l = qsTr("Other Messages %1").arg(valueText)
+                            }
+
+                            if(nbOfChanges > 1)
+                                l = qsTr("Multiple Exemptions")
+                        }
+
+                        return l
+                    }
+
+                    // Maybe we need to redo `StatusListItem` to display identicon ring, but that's not in Figma design for now.
+                    image.source: model.image
+                    ringSettings.ringSpecModel: Utils.getColorHashAsJson(model.itemId)
+                    icon: StatusIconSettings {
+                        color: model.type === Constants.settingsSection.exemptions.oneToOneChat?
+                                   Theme.palette.userCustomizationColors[Utils.colorIdForPubkey(model.itemId)] :
+                                   model.color
+                        charactersLen: model.type === Constants.settingsSection.exemptions.oneToOneChat? 2 : 1
+                        isLetterIdenticon: model.image === ""
+                        height: isLetterIdenticon ? 40 : 20
+                        width: isLetterIdenticon ? 40 : 20
+                    }
+
+                    components: [
+                        StatusIcon {
+                            visible: model.customized
+                            icon: "chevron-down"
+                            rotation: 270
+                            color: Theme.palette.baseColor1
+                            MouseArea {
+                                anchors.fill: parent
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: {
+                                    exemptionNotificationsModal.open(model)
+                                }
+                            }
+                        },
+                        StatusIcon {
+                            visible: !model.customized
+                            icon: "add"
+                            rotation: 270
+                            color: Theme.palette.primaryColor1
+                            MouseArea {
+                                anchors.fill: parent
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: {
+                                    exemptionNotificationsModal.open(model)
+                                }
+                            }
+                        }]
                 }
             }
-        }
 
-        Column {
-            id: column3
-            spacing: Style.current.bigPadding
-            anchors.top: column2.bottom
-            anchors.topMargin: Style.current.padding*2
-            anchors.left: parent.left
-            anchors.right: parent.right
+                    Rectangle {
+                        Layout.preferredWidth: root.contentWidth
+                        implicitHeight: col1.height + 2 * Style.current.padding
+                        visible: Qt.platform.os == "osx"
+                        radius: Constants.settingsSection.radius
+                        color: Theme.palette.primaryColor3
 
-            StatusBaseText {
-                //% "Message preview"
-                text: qsTrId("message-preview")
-                font.pixelSize: 15
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.leftMargin: Style.current.padding
-                anchors.rightMargin: Style.current.padding
-                color: Theme.palette.directColor1
-            }
+                        ColumnLayout {
+                            id: col1
+                            anchors.margins: Style.current.padding
+                            anchors.left: parent.left
+                            anchors.right: parent.right
+                            anchors.verticalCenter: parent.verticalCenter
+                            spacing: Constants.settingsSection.infoSpacing
 
-            Column {
-                anchors.left: parent.left
-                anchors.right: parent.right
-                spacing: 10
+                            StatusBaseText {
+                                Layout.preferredWidth: parent.width
+                                text: qsTr("Enable Notifications in macOS Settings")
+                                font.pixelSize: Constants.settingsSection.infoFontSize
+                                lineHeight: Constants.settingsSection.infoLineHeight
+                                lineHeightMode: Text.FixedHeight
+                                color: Theme.palette.primaryColor1
 
-                NotificationAppearancePreviewPanel {
-                    //% "Anonymous"
-                    name: qsTrId("anonymous")
-                    notificationTitle: "Status"
-                    //% "You have a new message"
-                    notificationMessage: qsTrId("you-have-a-new-message")
-                    buttonGroup: messageSetting
-                    checked: localAccountSensitiveSettings.notificationMessagePreviewSetting === Constants.notificationPreviewAnonymous
-                    onRadioCheckedChanged: {
-                        if (checked) {
-                            localAccountSensitiveSettings.notificationMessagePreviewSetting = Constants.notificationPreviewAnonymous
+                            }
+
+                            StatusBaseText {
+                                Layout.preferredWidth: parent.width
+                                text: qsTr("To receive Status notifications, make sure you've enabled them in" +
+                                           " your computer's settings under <b>System Preferences > Notifications</b>")
+                                font.pixelSize: Constants.settingsSection.infoFontSize
+                                lineHeight: Constants.settingsSection.infoLineHeight
+                                lineHeightMode: Text.FixedHeight
+                                color: Theme.palette.baseColor1
+                                wrapMode: Text.WordWrap
+                            }
                         }
                     }
-                }
 
-                NotificationAppearancePreviewPanel {
-                    //% "Name only"
-                    name: qsTrId("name-only")
-                    notificationTitle: "Vitalik Buterin"
-                    //% "You have a new message"
-                    notificationMessage: qsTrId("you-have-a-new-message")
-                    buttonGroup: messageSetting
-                    checked: localAccountSensitiveSettings.notificationMessagePreviewSetting === Constants.notificationPreviewNameOnly
-                    onRadioCheckedChanged: {
-                        if (checked) {
-                            localAccountSensitiveSettings.notificationMessagePreviewSetting = Constants.notificationPreviewNameOnly
+                    Rectangle {
+                        Layout.preferredWidth: root.contentWidth
+                        implicitHeight: row1.height + 2 * Style.current.padding
+                        radius: Constants.settingsSection.radius
+                        color: Theme.palette.pinColor2
+
+                        RowLayout {
+                            id: row1
+                            anchors.margins: Style.current.padding
+                            anchors.left: parent.left
+                            anchors.right: parent.right
+                            anchors.verticalCenter: parent.verticalCenter
+                            visible: root.devicesStore.devicesModel.count > 0
+
+                            StatusBaseText {
+                                Layout.fillWidth: true
+                                text: qsTr("Sync your devices to share notifications preferences")
+                                font.pixelSize: Constants.settingsSection.infoFontSize
+                                lineHeight: Constants.settingsSection.infoLineHeight
+                                lineHeightMode: Text.FixedHeight
+                                color: Theme.palette.pinColor1
+                            }
+
+                            StatusBaseText {
+                                text: qsTr("Syncing >")
+                                font.pixelSize: Constants.settingsSection.infoFontSize
+                                lineHeight: Constants.settingsSection.infoLineHeight
+                                lineHeightMode: Text.FixedHeight
+                                color: Theme.palette.pinColor1
+                                MouseArea {
+                                    anchors.fill: parent
+                                    cursorShape: Qt.PointingHandCursor
+                                    onClicked: {
+                                        root.devicesStore.syncAll()
+                                    }
+                                }
+                            }
                         }
                     }
-                }
 
-                NotificationAppearancePreviewPanel {
-                    //% "Name & Message"
-                    name: qsTrId("name---message")
-                    notificationTitle: "Vitalik Buterin"
-                    //% "Hi there! Yes, no problem, let me know if I can help."
-                    notificationMessage: qsTrId("hi-there--yes--no-problem--let-me-know-if-i-can-help-")
-                    buttonGroup: messageSetting
-                    checked: localAccountSensitiveSettings.notificationMessagePreviewSetting === Constants.notificationPreviewNameAndMessage
-                    onRadioCheckedChanged: {
-                        if (checked) {
-                            localAccountSensitiveSettings.notificationMessagePreviewSetting = Constants.notificationPreviewNameAndMessage
+                    StatusListItem {
+                        Layout.preferredWidth: root.contentWidth
+                        title: qsTr("Allow Notifications")
+                        components: [
+                            StatusSwitch {
+                                id: allowNotifSwitch
+                                checked: localAccountSensitiveSettings.notifSettingAllowNotifications
+                                onClicked: {
+                                    localAccountSensitiveSettings.notifSettingAllowNotifications = !localAccountSensitiveSettings.notifSettingAllowNotifications
+                                }
+                            }
+                        ]
+                        sensor.onClicked: {
+                            allowNotifSwitch.clicked()
                         }
                     }
-                }
-            }
 
-            StatusBaseText {
-                //% "No preview or Advanced? Go to Notification Center"
-                text: qsTrId("no-preview-or-advanced--go-to-notification-center")
-                font.pixelSize: 15
-                anchors.left: parent.left
-                anchors.leftMargin: Style.current.padding
-                anchors.rightMargin: Style.current.padding
-                color: Theme.palette.directColor1
-            }
-        }
-
-        Separator {
-            id: separator2
-            anchors.top: column3.bottom
-            anchors.topMargin: Style.current.bigPadding
-            anchors.left: parent.left
-            anchors.right: parent.right
-        }
-
-        StatusSectionHeadline {
-            id: sectionHeadlineContacts
-            //% "Contacts & Users"
-            text: qsTrId("contacts---users")
-            anchors.top: separator2.bottom
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.leftMargin: Style.current.padding
-            anchors.rightMargin: Style.current.padding
-        }
-
-        Column {
-            id: column4
-            anchors.top: sectionHeadlineContacts.bottom
-            anchors.topMargin: Style.current.smallPadding
-            anchors.left: parent.left
-            anchors.right: parent.right
-            width: parent.width
-
-            // TODO: replace with StatusListItem
-            StatusSettingsLineButton {
-                anchors.leftMargin: 0
-                anchors.rightMargin: 0
-                //% "Notify on new requests"
-                text: qsTrId("notify-on-new-requests")
-                isSwitch: true
-                switchChecked: localAccountSensitiveSettings.notifyOnNewRequests
-                onClicked: {
-                    localAccountSensitiveSettings.notifyOnNewRequests = checked
-                }
-            }
-
-            // TODO: replace with StatusListItem
-            StatusSettingsLineButton {
-                anchors.leftMargin: 0
-                anchors.rightMargin: 0
-                //% "Muted users"
-                text: qsTrId("muted-users")
-                currentValue: root.notificationsStore.mutedContactsModel.count > 0 ?
-                                  //% "None"
-                                  root.notificationsStore.mutedContactsModel.count : qsTrId("none")
-                isSwitch: false
-                onClicked: {
-                    const mutedChatsModal = notificationsContainer.mutedChatsModalComponent.createObject(notificationsContainer)
-                    mutedChatsModal.model = root.notificationsStore.notificationsModule.mutedContactsModel
-                    //% "Muted contacts"
-                    mutedChatsModal.title = qsTrId("muted-contacts");
-                    //% "Muted contacts will appear here"
-                    mutedChatsModal.noContentText = qsTrId("muted-contacts-will-appear-here");
-
-                    mutedChatsModal.unmuteChat.connect(function(chatId){
-                        root.notificationsStore.unmuteChat(chatId)
-                    })
-
-                    mutedChatsModal.open();
-                }
-            }
-
-            // TODO: replace with StatusListItem
-            StatusSettingsLineButton {
-                anchors.leftMargin: 0
-                anchors.rightMargin: 0
-                //% "Muted chats"
-                text: qsTrId("muted-chats")
-                currentValue: root.notificationsStore.mutedChatsModel.count > 0 ?
-                                  //% "None"
-                                  root.notificationsStore.mutedChatsModel.count : qsTrId("none")
-                isSwitch: false
-                onClicked: {
-                    const mutedChatsModal = notificationsContainer.mutedChatsModalComponent.createObject(notificationsContainer)
-                    mutedChatsModal.model = root.notificationsStore.notificationsModule.mutedChatsModel
-                    //% "Muted chats"
-                    mutedChatsModal.title = qsTrId("muted-chats");
-                    //% "Muted chats will appear here"
-                    mutedChatsModal.noContentText = qsTrId("muted-chats-will-appear-here");
-
-                    mutedChatsModal.unmuteChat.connect(function(chatId){
-                        root.notificationsStore.unmuteChat(chatId)
-                    })
-
-                    mutedChatsModal.open();
-                }
-
-                StatusBaseText {
-                    //% "You can limit what gets shown in notifications"
-                    text: qsTrId("you-can-limit-what-gets-shown-in-notifications")
-                    color: Theme.palette.baseColor1
-                    width: parent.width
-                    font.pixelSize: 12
-                    wrapMode: Text.WordWrap
-                    anchors.left: parent.left
-                    anchors.leftMargin: Style.current.padding
-                    anchors.bottom: parent.bottom
-                    anchors.topMargin: 2
-                }
-            }
-        }
-
-        Separator {
-            id: separator3
-            anchors.top: column4.bottom
-            anchors.topMargin: Style.current.bigPadding
-            anchors.left: parent.left
-            anchors.right: parent.right
-        }
-
-        Column {
-            id: column5
-            spacing: Style.current.smallPadding
-            anchors.top: separator3.bottom
-            anchors.topMargin: Style.current.bigPadding
-            anchors.left: parent.left
-            anchors.right: parent.right
-            width: parent.width
-
-            StatusBaseText {
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.leftMargin: Style.current.padding
-                anchors.rightMargin: Style.current.padding
-                //% "Reset notification settings"
-                text: qsTrId("reset-notification-settings")
-                font.pixelSize: 15
-                color: Theme.palette.dangerColor1
-                MouseArea {
-                    anchors.fill: parent
-                    cursorShape: Qt.PointingHandCursor
-                    hoverEnabled: true
-                    onEntered: {
-                        parent.font.underline = true
+                    StatusBaseText {
+                        Layout.preferredWidth: root.contentWidth
+                        Layout.leftMargin: Style.current.padding
+                        text: qsTr("Messages")
+                        font.pixelSize: Constants.settingsSection.subHeaderFontSize
+                        color: Theme.palette.baseColor1
                     }
-                    onExited: {
-                        parent.font.underline = false
+
+                    StatusListItem {
+                        Layout.preferredWidth: root.contentWidth
+                        title: qsTr("1:1 Chats")
+                        components: [
+                            NotificationSelect {
+                                selected: localAccountSensitiveSettings.notifSettingOneToOneChats
+                                onSendAlertsClicked: localAccountSensitiveSettings.notifSettingOneToOneChats = Constants.settingsSection.notifications.sendAlertsValue
+                                onDeliverQuietlyClicked: localAccountSensitiveSettings.notifSettingOneToOneChats = Constants.settingsSection.notifications.deliverQuietlyValue
+                                onTurnOffClicked: localAccountSensitiveSettings.notifSettingOneToOneChats = Constants.settingsSection.notifications.turnOffValue
+                            }
+                        ]
                     }
-                    onClicked: {
-                        localAccountSensitiveSettings.notificationSetting = Constants.notifyAllMessages
-                        localAccountSensitiveSettings.notificationSoundsEnabled = true
-                        localAccountSensitiveSettings.notificationMessagePreviewSetting = Constants.notificationPreviewNameAndMessage
-                        localAccountSensitiveSettings.allowNotificationsFromNonContacts = false
+
+                    StatusListItem {
+                        Layout.preferredWidth: root.contentWidth
+                        title: qsTr("Group Chats")
+                        components: [
+                            NotificationSelect {
+                                selected: localAccountSensitiveSettings.notifSettingGroupChats
+                                onSendAlertsClicked: localAccountSensitiveSettings.notifSettingGroupChats = Constants.settingsSection.notifications.sendAlertsValue
+                                onDeliverQuietlyClicked: localAccountSensitiveSettings.notifSettingGroupChats = Constants.settingsSection.notifications.deliverQuietlyValue
+                                onTurnOffClicked: localAccountSensitiveSettings.notifSettingGroupChats = Constants.settingsSection.notifications.turnOffValue
+                            }
+                        ]
+                    }
+
+                    StatusListItem {
+                        Layout.preferredWidth: root.contentWidth
+                        title: qsTr("Personal @ Mentions")
+                        tertiaryTitle: qsTr("Messages containing @%1").arg(userProfile.name)
+                        components: [
+                            NotificationSelect {
+                                selected: localAccountSensitiveSettings.notifSettingPersonalMentions
+                                onSendAlertsClicked: localAccountSensitiveSettings.notifSettingPersonalMentions = Constants.settingsSection.notifications.sendAlertsValue
+                                onDeliverQuietlyClicked: localAccountSensitiveSettings.notifSettingPersonalMentions = Constants.settingsSection.notifications.deliverQuietlyValue
+                                onTurnOffClicked: localAccountSensitiveSettings.notifSettingPersonalMentions = Constants.settingsSection.notifications.turnOffValue
+                            }
+                        ]
+                    }
+
+                    StatusListItem {
+                        Layout.preferredWidth: root.contentWidth
+                        title: qsTr("Global @ Mentions")
+                        tertiaryTitle: qsTr("Messages containing @here and @channel")
+                        components: [
+                            NotificationSelect {
+                                selected: localAccountSensitiveSettings.notifSettingGlobalMentions
+                                onSendAlertsClicked: localAccountSensitiveSettings.notifSettingGlobalMentions = Constants.settingsSection.notifications.sendAlertsValue
+                                onDeliverQuietlyClicked: localAccountSensitiveSettings.notifSettingGlobalMentions = Constants.settingsSection.notifications.deliverQuietlyValue
+                                onTurnOffClicked: localAccountSensitiveSettings.notifSettingGlobalMentions = Constants.settingsSection.notifications.turnOffValue
+                            }
+                        ]
+                    }
+
+                    StatusListItem {
+                        Layout.preferredWidth: root.contentWidth
+                        title: qsTr("All Messages")
+                        components: [
+                            NotificationSelect {
+                                selected: localAccountSensitiveSettings.notifSettingAllMessages
+                                onSendAlertsClicked: localAccountSensitiveSettings.notifSettingAllMessages = Constants.settingsSection.notifications.sendAlertsValue
+                                onDeliverQuietlyClicked: localAccountSensitiveSettings.notifSettingAllMessages = Constants.settingsSection.notifications.deliverQuietlyValue
+                                onTurnOffClicked: localAccountSensitiveSettings.notifSettingAllMessages = Constants.settingsSection.notifications.turnOffValue
+                            }
+                        ]
+                    }
+
+                    StatusBaseText {
+                        Layout.preferredWidth: root.contentWidth
+                        Layout.leftMargin: Style.current.padding
+                        text: qsTr("Others")
+                        font.pixelSize: Constants.settingsSection.subHeaderFontSize
+                        color: Theme.palette.baseColor1
+                    }
+
+                    StatusListItem {
+                        Layout.preferredWidth: root.contentWidth
+                        title: qsTr("Contact Requests")
+                        components: [
+                            NotificationSelect {
+                                selected: localAccountSensitiveSettings.notifSettingContactRequests
+                                onSendAlertsClicked: localAccountSensitiveSettings.notifSettingContactRequests = Constants.settingsSection.notifications.sendAlertsValue
+                                onDeliverQuietlyClicked: localAccountSensitiveSettings.notifSettingContactRequests = Constants.settingsSection.notifications.deliverQuietlyValue
+                                onTurnOffClicked: localAccountSensitiveSettings.notifSettingContactRequests = Constants.settingsSection.notifications.turnOffValue
+                            }
+                        ]
+                    }
+
+                    StatusListItem {
+                        Layout.preferredWidth: root.contentWidth
+                        title: qsTr("Identity Verification Requests")
+                        components: [
+                            NotificationSelect {
+                                selected: localAccountSensitiveSettings.notifSettingIdentityVerificationRequests
+                                onSendAlertsClicked: localAccountSensitiveSettings.notifSettingIdentityVerificationRequests = Constants.settingsSection.notifications.sendAlertsValue
+                                onDeliverQuietlyClicked: localAccountSensitiveSettings.notifSettingIdentityVerificationRequests = Constants.settingsSection.notifications.deliverQuietlyValue
+                                onTurnOffClicked: localAccountSensitiveSettings.notifSettingIdentityVerificationRequests = Constants.settingsSection.notifications.turnOffValue
+                            }
+                        ]
+                    }
+
+                    Separator {
+                        Layout.preferredWidth: root.contentWidth
+                        Layout.preferredHeight: Style.current.bigPadding
+                    }
+
+                    StatusBaseText {
+                        Layout.preferredWidth: root.contentWidth
+                        Layout.leftMargin: Style.current.padding
+                        text: qsTr("Notification Content")
+                        font.pixelSize: Constants.settingsSection.subHeaderFontSize
+                        color: Theme.palette.directColor1
+                    }
+
+                    NotificationAppearancePreviewPanel {
+                        id: notifNameAndMsg
+                        Layout.preferredWidth: root.contentWidth
+                        Layout.leftMargin: Style.current.padding
+                        name: qsTr("Show Name and Message")
+                        notificationTitle: "Vitalik Buterin"
+                        notificationMessage: qsTr("Hi there! So EIP-1559 will defini...")
+                        buttonGroup: messageSetting
+                        checked: localAccountSensitiveSettings.notificationMessagePreviewSetting === Constants.settingsSection.notificationsBubble.previewNameAndMessage
+                        onRadioCheckedChanged: {
+                            if (checked) {
+                                localAccountSensitiveSettings.notificationMessagePreviewSetting = Constants.settingsSection.notificationsBubble.previewNameAndMessage
+                            }
+                        }
+                    }
+
+                    NotificationAppearancePreviewPanel {
+                        Layout.preferredWidth: root.contentWidth
+                        Layout.leftMargin: Style.current.padding
+                        name: qsTr("Name Only")
+                        notificationTitle: "Vitalik Buterin"
+                        notificationMessage: qsTr("You have a new message")
+                        buttonGroup: messageSetting
+                        checked: localAccountSensitiveSettings.notificationMessagePreviewSetting === Constants.settingsSection.notificationsBubble.previewNameOnly
+                        onRadioCheckedChanged: {
+                            if (checked) {
+                                localAccountSensitiveSettings.notificationMessagePreviewSetting = Constants.settingsSection.notificationsBubble.previewNameOnly
+                            }
+                        }
+                    }
+
+                    NotificationAppearancePreviewPanel {
+                        Layout.preferredWidth: root.contentWidth
+                        Layout.leftMargin: Style.current.padding
+                        name: qsTr("Anonymous")
+                        notificationTitle: "Status"
+                        notificationMessage: qsTr("You have a new message")
+                        buttonGroup: messageSetting
+                        checked: localAccountSensitiveSettings.notificationMessagePreviewSetting === Constants.settingsSection.notificationsBubble.previewAnonymous
+                        onRadioCheckedChanged: {
+                            if (checked) {
+                                localAccountSensitiveSettings.notificationMessagePreviewSetting = Constants.settingsSection.notificationsBubble.previewAnonymous
+                            }
+                        }
+                    }
+
+                    StatusListItem {
+                        Layout.preferredWidth: root.contentWidth
+                        title: qsTr("Play a Sound When Receiving a Notification")
+                        components: [
+                            StatusSwitch {
+                                id: soundSwitch
+                                checked: localAccountSensitiveSettings.notificationSoundsEnabled
+                                onClicked: {
+                                    localAccountSensitiveSettings.notificationSoundsEnabled = !localAccountSensitiveSettings.notificationSoundsEnabled
+                                }
+                            }
+                        ]
+                        sensor.onClicked: {
+                            soundSwitch.clicked()
+                        }
+                    }
+
+                    StatusBaseText {
+                        Layout.preferredWidth: root.contentWidth
+                        Layout.leftMargin: Style.current.padding
+                        text: qsTr("Volume")
+                        font.pixelSize: Constants.settingsSection.subHeaderFontSize
+                        color: Theme.palette.directColor1
+                    }
+
+                    Item {
+                        Layout.preferredWidth: root.contentWidth
+                        Layout.preferredHeight: Constants.settingsSection.itemHeight + Style.current.padding
+
+                        StatusSlider {
+                            id: volumeSlider
+                            anchors.top: parent.top
+                            anchors.left: parent.left
+                            anchors.right: parent.right
+                            anchors.topMargin: Style.current.bigPadding
+                            anchors.leftMargin: Style.current.padding
+                            anchors.rightMargin: Style.current.padding
+                            from: 0
+                            to: 100
+                            stepSize: 1
+
+                            onValueChanged: {
+                                localAccountSensitiveSettings.volume = value
+                            }
+
+                            Component.onCompleted: {
+                                value = localAccountSensitiveSettings.volume
+                            }
+                        }
+
+                        RowLayout {
+                            anchors.top: volumeSlider.bottom
+                            anchors.left: volumeSlider.left
+                            anchors.topMargin: Style.current.halfPadding
+                            width: volumeSlider.width
+
+                            StatusBaseText {
+                                font.pixelSize: 15
+                                text: volumeSlider.from
+                                Layout.preferredWidth: volumeSlider.width/2
+                                color: Theme.palette.baseColor1
+                            }
+
+                            StatusBaseText {
+                                font.pixelSize: 15
+                                text: volumeSlider.to
+                                Layout.alignment: Qt.AlignRight
+                                color: Theme.palette.baseColor1
+                            }
+                        }
+                    }
+
+                    StatusButton {
+                        Layout.leftMargin: Style.current.padding
+                        text: qsTr("Send a Test Notification")
+                        onClicked: {
+                            root.notificationsStore.sendTestNotification(notifNameAndMsg.notificationTitle,
+                                                                         notifNameAndMsg.notificationMessage)
+                        }
+                    }
+
+                    Separator {
+                        Layout.preferredWidth: root.contentWidth
+                        Layout.preferredHeight: Style.current.bigPadding
+                    }
+
+                    StatusBaseText {
+                        Layout.preferredWidth: root.contentWidth
+                        Layout.leftMargin: Style.current.padding
+                        text: qsTr("Exemptions")
+                        font.pixelSize: Constants.settingsSection.subHeaderFontSize
+                        color: Theme.palette.directColor1
+                    }
+
+                    SearchBox {
+                        id: searchBox
+                        Layout.preferredWidth: root.contentWidth - 2 * Style.current.padding
+                        Layout.leftMargin: Style.current.padding
+                        Layout.rightMargin: Style.current.padding
+                        input.implicitHeight: 44
+                        input.placeholderText: qsTr("Search Communities, Group Chats and 1:1 Chats")
+                    }
+
+                    StatusBaseText {
+                        Layout.preferredWidth: root.contentWidth
+                        Layout.leftMargin: Style.current.padding
+                        text: qsTr("Most recent")
+                        font.pixelSize: Constants.settingsSection.subHeaderFontSize
+                        color: Theme.palette.baseColor1
+                    }
+
+                    ListView {
+                        Layout.preferredWidth: root.contentWidth
+                        Layout.preferredHeight: 400
+                        visible: root.notificationsStore.exemptionsModel.count > 0
+                        clip: true
+
+                        model: root.notificationsStore.exemptionsModel
+                        delegate: exemptionDelegateComponent
                     }
                 }
-            }
-
-            StatusBaseText {
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.leftMargin: Style.current.padding
-                anchors.rightMargin: Style.current.padding
-                //% "Restore default notification settings and unmute all chats and users"
-                text: qsTrId("restore-default-notification-settings-and-unmute-all-chats-and-users")
-                font.pixelSize: 15
-                color: Theme.palette.baseColor1
-            }
-        }
-    }
+            //}
+       // }
+//}
 }

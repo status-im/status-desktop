@@ -5,49 +5,37 @@ QtObject:
   type
     View* = ref object of QObject
       delegate: io_interface.AccessInterface
-      mutedContactsModel: Model
-      mutedContactsModelVariant: QVariant
-      mutedChatsModel: Model
-      mutedChatsModelVariant: QVariant
-
+      exemptionsModel: Model
+      exemptionsModelVariant: QVariant
+      
   proc delete*(self: View) =
-    self.mutedContactsModel.delete
-    self.mutedContactsModelVariant.delete
-    self.mutedChatsModel.delete
-    self.mutedChatsModelVariant.delete
+    self.exemptionsModel.delete
+    self.exemptionsModelVariant.delete
     self.QObject.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
     result.QObject.setup
     result.delegate = delegate
-    result.mutedContactsModel = newModel()
-    result.mutedContactsModelVariant = newQVariant(result.mutedContactsModel)
-    result.mutedChatsModel = newModel()
-    result.mutedChatsModelVariant = newQVariant(result.mutedChatsModel)
-
+    result.exemptionsModel = newModel()
+    result.exemptionsModelVariant = newQVariant(result.exemptionsModel)
+    
   proc load*(self: View) =
     self.delegate.viewDidLoad()
 
-  proc mutedContactsModel*(self: View): Model =
-    return self.mutedContactsModel
+  proc sendTestNotification*(self: View, title: string, message: string) {.slot.} =
+    self.delegate.sendTestNotification(title, message)
 
-  proc mutedContactsModelChanged*(self: View) {.signal.}
-  proc getMutedContactsModel(self: View): QVariant {.slot.} =
-    return self.mutedContactsModelVariant
-  QtProperty[QVariant] mutedContactsModel:
-    read = getMutedContactsModel
-    notify = mutedContactsModelChanged
+  proc exemptionsModel*(self: View): Model =
+    return self.exemptionsModel
 
-  proc mutedChatsModel*(self: View): Model =
-    return self.mutedChatsModel
+  proc exemptionsModelChanged*(self: View) {.signal.}
+  proc getExemptionsModel(self: View): QVariant {.slot.} =
+    return self.exemptionsModelVariant
+  QtProperty[QVariant] exemptionsModel:
+    read = getExemptionsModel
+    notify = exemptionsModelChanged
 
-  proc mutedChatsModelChanged*(self: View) {.signal.}
-  proc getMutedChatsModel(self: View): QVariant {.slot.} =
-    return self.mutedChatsModelVariant
-  QtProperty[QVariant] mutedChatsModel:
-    read = getMutedChatsModel
-    notify = mutedChatsModelChanged
-
-  proc unmuteChat*(self: View, chatId: string) {.slot.} =
-    self.delegate.unmuteChat(chatId)
+  proc saveExemptions*(self: View, itemId: string, muteAllMessages: bool, personalMentions: string, 
+    globalMentions: string, otherMessages: string) {.slot.} =
+    self.delegate.saveExemptions(itemId, muteAllMessages, personalMentions, globalMentions, otherMessages)

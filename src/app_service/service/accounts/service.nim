@@ -1,4 +1,4 @@
-import json, sequtils, strutils, uuids, os
+import json, sequtils, strutils, uuids
 import json_serialization, chronicles
 
 import ./dto/accounts as dto_accounts

@@ -1,13 +1,20 @@
 import NimQml, Tables
-
 import item
+
+import ../../../../global/local_account_sensitive_settings
 
 type
   ModelRole {.pure.} = enum
     Id = UserRole + 1
     Name
-    Icon
+    Image
     Color
+    Type
+    Customized
+    MuteAllMessages
+    PersonalMentions
+    GlobalMentions
+    OtherMessages
 
 QtObject:
   type
@@ -26,10 +33,8 @@ QtObject:
     result.setup
 
   proc countChanged(self: Model) {.signal.}
-
   proc getCount(self: Model): int {.slot.} =
     self.items.len
-
   QtProperty[int] count:
     read = getCount
     notify = countChanged
@@ -41,8 +46,14 @@ QtObject:
     {
       ModelRole.Id.int:"itemId",
       ModelRole.Name.int:"name",
-      ModelRole.Icon.int:"icon",
-      ModelRole.Color.int:"color"
+      ModelRole.Image.int:"image",
+      ModelRole.Color.int:"color",
+      ModelRole.Type.int:"type",
+      ModelRole.Customized.int:"customized",
+      ModelRole.MuteAllMessages.int:"muteAllMessages",
+      ModelRole.PersonalMentions.int:"personalMentions",
+      ModelRole.GlobalMentions.int:"globalMentions",
+      ModelRole.OtherMessages.int:"otherMessages"
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -60,39 +71,107 @@ QtObject:
       result = newQVariant(item.id)
     of ModelRole.Name:
       result = newQVariant(item.name)
-    of ModelRole.Icon:
-      result = newQVariant(item.icon)
+    of ModelRole.Image:
+      result = newQVariant(item.image)
     of ModelRole.Color:
       result = newQVariant(item.color)
+    of ModelRole.Type:
+      result = newQVariant(item.itemType.int)
+    of ModelRole.Customized:
+      result = newQVariant(item.customized)
+    of ModelRole.MuteAllMessages:
+      result = newQVariant(item.muteAllMessages)
+    of ModelRole.PersonalMentions:
+      result = newQVariant(item.personalMentions)
+    of ModelRole.GlobalMentions:
+      result = newQVariant(item.globalMentions)
+    of ModelRole.OtherMessages:
+      result = newQVariant(item.otherMessages)
 
   proc addItem*(self: Model, item: Item) =
+    # add most recent item on top
+    var position = -1
+    for i in 0 ..< self.items.len:
+      if(item.joinedTimestamp >= self.items[i].joinedTimestamp):
+        position = i
+        break
+
+    if(position == -1):
+      position = self.items.len
+
     let parentModelIndex = newQModelIndex()
     defer: parentModelIndex.delete
 
-    self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
-    self.items.add(item)
+    self.beginInsertRows(parentModelIndex, position, position)
+    self.items.insert(item, position)
     self.endInsertRows()
-
     self.countChanged()
 
-  proc getItemIdxById*(self: Model, id: string): int =
-    var idx = 0
-    for it in self.items:
-      if(it.id == id):
-        return idx
-      idx.inc
-    return -1
-
-  proc removeItemById*(self: Model, id: string) =
-    let idx = self.getItemIdxById(id)
-    if idx == -1:
+  proc setItems*(self: Model, items: seq[Item]) =
+    if(items.len == 0):
       return
 
     let parentModelIndex = newQModelIndex()
     defer: parentModelIndex.delete
 
-    self.beginRemoveRows(parentModelIndex, idx, idx)
-    self.items.delete(idx)
+    self.beginInsertRows(parentModelIndex, 0, items.len - 1)
+    self.items = items
+    self.endInsertRows()
+    self.countChanged()
+
+  proc findIndexForItemId*(self: Model, id: string): int =
+    var ind = 0
+    for it in self.items:
+      if(it.id == id):
+        return ind
+      ind.inc
+    return -1
+
+  proc removeItemById*(self: Model, id: string) =
+    let ind = self.findIndexForItemId(id)
+    if(ind == -1):
+      return
+
+    let parentModelIndex = newQModelIndex()
+    defer: parentModelIndex.delete
+
+    self.beginRemoveRows(parentModelIndex, ind, ind)
+    self.items.delete(ind)
     self.endRemoveRows()
 
     self.countChanged()
+
+  proc removeItemsByType*(self: Model, itemType: Type) =
+    let items = self.items
+    for i in items:
+      if(i.itemType == itemType):
+        self.removeItemById(i.id)
+
+  iterator modelIterator*(self: Model): Item =
+    for i in 0 ..< self.items.len:
+      yield self.items[i]
+
+  proc updateExemptions*(self: Model, id: string, muteAllMessages = false, personalMentions = LSS_VALUE_NOTIF_SEND_ALERTS, 
+    globalMentions = LSS_VALUE_NOTIF_SEND_ALERTS, otherMessages = LSS_VALUE_NOTIF_SEND_TURN_OFF) =
+    let ind = self.findIndexForItemId(id)
+    if(ind == -1):
+      return
+
+    self.items[ind].muteAllMessages = muteAllMessages
+    self.items[ind].personalMentions = personalMentions
+    self.items[ind].globalMentions = globalMentions
+    self.items[ind].otherMessages = otherMessages
+
+    let index = self.createIndex(ind, 0, nil)
+    self.dataChanged(index, index, @[ModelRole.MuteAllMessages.int, ModelRole.PersonalMentions.int,
+      ModelRole.GlobalMentions.int, ModelRole.OtherMessages.int, ModelRole.Customized.int])
+
+  proc updateName*(self: Model, id: string, name: string) =
+    let ind = self.findIndexForItemId(id)
+    if(ind == -1):
+      return
+
+    self.items[ind].name = name
+
+    let index = self.createIndex(ind, 0, nil)
+    self.dataChanged(index, index, @[ModelRole.Name.int])

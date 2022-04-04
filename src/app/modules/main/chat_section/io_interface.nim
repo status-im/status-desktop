@@ -81,8 +81,8 @@ method addChatIfDontExist*(self: AccessInterface,
     setChatAsActive: bool = true) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onNewMessagesReceived*(self: AccessInterface, chatId: string, unviewedMessagesCount: int,
-  unviewedMentionsCount: int, messages: seq[MessageDto]) {.base.} =
+method onNewMessagesReceived*(self: AccessInterface, sectionIdMsgBelongsTo: string, chatIdMsgBelongsTo: string, 
+  chatTypeMsgBelongsTo: ChatType, unviewedMessagesCount: int, unviewedMentionsCount: int, message: MessageDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onChatMuted*(self: AccessInterface, chatId: string) {.base.} =
