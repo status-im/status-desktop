@@ -236,8 +236,7 @@ Item {
                         leftPadding: 0
                         padding: 0
                         font.pixelSize: 14
-                        //% "Type json-rpc message... e.g {\"method\": \"eth_accounts\"}"
-                        placeholderText: qsTrId("type-json-rpc-message")
+                        placeholderText: qsTr("Type json-rpc message... e.g {\"method\": \"eth_accounts\"}")
                         anchors.right: rpcSendBtn.left
                         anchors.rightMargin: 16
                         anchors.top: parent.top

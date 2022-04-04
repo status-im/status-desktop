@@ -10,8 +10,7 @@ import StatusQ.Controls 0.1
 
 Rectangle {
     property var buttonGroup
-    //% "TODO"
-    property string btnText: qsTrId("todo")
+    property string btnText: qsTr("TODO")
     property bool hovered: false
     property bool checkedByDefault: false
 

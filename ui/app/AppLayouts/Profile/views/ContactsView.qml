@@ -143,8 +143,7 @@ SettingsContentBase {
                     NoFriendsRectangle {
                         anchors.centerIn: parent
                         visible: root.contactsStore.myContactsModel.count === 0
-                        //% "You don’t have any contacts yet"
-                        text: qsTrId("you-don-t-have-any-contacts-yet")
+                        text: qsTr("You don’t have any contacts yet")
                     }
                 }
             }
@@ -310,10 +309,8 @@ SettingsContentBase {
         // TODO: Make ConfirmationDialog a dynamic component on a future refactor
         ConfirmationDialog {
             id: removeContactConfirmationDialog
-            //% "Remove contact"
-            header.title: qsTrId("remove-contact")
-            //% "Are you sure you want to remove this contact?"
-            confirmationText: qsTrId("are-you-sure-you-want-to-remove-this-contact-")
+            header.title: qsTr("Remove contact")
+            confirmationText: qsTr("Are you sure you want to remove this contact?")
             onConfirmButtonClicked: {
                 if (Utils.getContactDetailsAsJson(removeContactConfirmationDialog.value).isContact) {
                     root.contactsStore.removeContact(removeContactConfirmationDialog.value);

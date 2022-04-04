@@ -43,8 +43,7 @@ QtObject {
     property bool isMessageActive: typeof root.activeMessage !== "undefined" && root.activeMessage === root.messageId
     property string displayUserName: {
         if (isCurrentUser) {
-            //% "You"
-            return qsTrId("You")
+            return qsTr("You")
         }
 
         if (localName !== "") {

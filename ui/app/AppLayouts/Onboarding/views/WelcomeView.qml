@@ -52,7 +52,6 @@ Page {
 
         StyledText {
             id: txtTitle1
-            //% "Get your keys"
             text: qsTr("Welcome to Status")
             anchors.topMargin: Style.current.padding
             font.bold: true

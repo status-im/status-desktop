@@ -10,8 +10,7 @@ Item {
     id: root
     anchors.left: parent.left
     anchors.right: parent.right
-    //% "Tokens will be sent directly to a contract address, which may result in a loss of funds. To transfer ERC-20 tokens, ensure the recipient address is the address of the destination wallet."
-    property string sendToContractWarningMessage: qsTrId("tokens-will-be-sent-directly-to-a-contract-address--which-may-result-in-a-loss-of-funds--to-transfer-erc-20-tokens--ensure-the-recipient-address-is-the-address-of-the-destination-wallet-")
+    property string sendToContractWarningMessage: qsTr("Tokens will be sent directly to a contract address, which may result in a loss of funds. To transfer ERC-20 tokens, ensure the recipient address is the address of the destination wallet.")
     property var selectedRecipient
     property bool isValid: true
 

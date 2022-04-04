@@ -54,8 +54,7 @@ Item {
             pubKey = ""
             ensUsername = "";
         } else if (RootStore.userProfileInst.pubKey === chatKey.text) {
-            //% "Can't chat with yourself"
-            root.validationError = qsTrId("can-t-chat-with-yourself");
+            root.validationError = qsTr("Can't chat with yourself");
         } else {
             root.validationError = "";
         }
@@ -66,8 +65,7 @@ Item {
         id: chatKey
         property bool hasValidSearchResult: false
 
-        //% "Enter ENS username or chat key"
-        placeholderText: qsTrId("enter-contact-code")
+        placeholderText: qsTr("Enter ENS username or chat key")
         visible: showSearch
         height: visible ? implicitHeight : 0
         Keys.onReleased: {
@@ -117,8 +115,7 @@ Item {
                     searchResults.showProfileNotFoundMessage = root.showContactList
                 } else {
                     if (userProfile.pubKey === resolvedPubKey) {
-                        //% "Can't chat with yourself"
-                        root.validationError = qsTrId("can-t-chat-with-yourself");
+                        root.validationError = qsTr("Can't chat with yourself");
                     } else {
                         chatKey.hasValidSearchResult = true
                         searchResults.username = Utils.addStatusEns(chatKey.text.trim())

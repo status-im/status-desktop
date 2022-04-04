@@ -136,8 +136,7 @@ QtObject {
     }
 
     function lastTwoItems(nodes) {
-        //% " and "
-        return nodes.join(qsTrId("-and-"));
+        return nodes.join(qsTr(" and "));
     }
 
     function showReactionAuthors(jsonArrayOfUsersReactedWithThisEmoji, emojiId) {
@@ -163,8 +162,7 @@ QtObject {
                 rightNode = listOfUsers.slice(maxReactions, listOfUsers.length);
                 return (rightNode.length === 1) ?
                             lastTwoItems([leftNode.join(", "), rightNode[0]]) :
-                            //% "%1 more"
-                            lastTwoItems([leftNode.join(", "), qsTrId("-1-more").arg(rightNode.length)]);
+                            lastTwoItems([leftNode.join(", "), qsTr("%1 more").arg(rightNode.length)]);
             }
 
             leftNode = listOfUsers.slice(0, maximum - 1);
@@ -172,8 +170,7 @@ QtObject {
             tooltip = lastTwoItems([leftNode.join(", "), rightNode[0]])
         }
 
-        //% " reacted with "
-        tooltip += qsTrId("-reacted-with-");
+        tooltip += qsTr(" reacted with ");
         let emojiHtml = StatusQUtils.Emoji.getEmojiFromId(emojiId);
         if (emojiHtml) {
             tooltip += emojiHtml;

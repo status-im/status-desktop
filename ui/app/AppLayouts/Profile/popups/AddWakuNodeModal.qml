@@ -35,27 +35,22 @@ StatusModal {
 
         StatusInput {
             id: nameInput
-            //% "Name"
-            label: qsTrId("name")
-            //% "Specify a name"
-            input.placeholderText: qsTrId("specify-name")
+            label: qsTr("Name")
+            input.placeholderText: qsTr("Specify a name")
             validators: [StatusMinLengthValidator {
                 minLength: 1
-                //% "You need to enter a name"
-                errorMessage: qsTrId("you-need-to-enter-a-name")
+                errorMessage: qsTr("You need to enter a name")
             }]
             validationMode: StatusInput.ValidationMode.OnlyWhenDirty
         }
 
         StatusInput {
             id: enodeInput
-            //% "History node address"
-            label: qsTrId("history-node-address")
+            label: qsTr("History node address")
             input.placeholderText:  "enode://{enode-id}:{password}@{ip-address}:{port-number}"
             validators: [StatusMinLengthValidator {
                 minLength: 1
-                //% "You need to enter the enode address"
-                errorMessage: qsTrId("you-need-to-enter-the-enode-address")
+                errorMessage: qsTr("You need to enter the enode address")
             },
             StatusRegularExpressionValidator {
                 errorMessage: qsTr("The format must be: enode://{enode-id}:{password}@{ip-address}:{port}")
@@ -69,8 +64,7 @@ StatusModal {
 
     rightButtons: [
        StatusButton {
-            //% "Save"
-            text: qsTrId("save")
+            text: qsTr("Save")
             enabled: nameInput.valid && enodeInput.valid
             // enabled: nameInput.text !== "" && enodeInput.text !== ""
             onClicked: {

@@ -162,16 +162,12 @@ Item {
                         text: {
                             if (copied) {
                                 return inputBox.copyToClipboard ?
-                                            //% "Copied"
-                                            qsTrId("sharing-copied-to-clipboard")  :
-                                            //% "Pasted"
-                                            qsTrId("pasted")
+                                            qsTr("Copied")  :
+                                            qsTr("Pasted")
                             }
                             return inputBox.copyToClipboard ?
-                                        //% "Copy"
-                                        qsTrId("copy-to-clipboard") :
-                                        //% "Paste"
-                                        qsTrId("paste")
+                                        qsTr("Copy") :
+                                        qsTr("Paste")
 
                         }
                         onClicked: {

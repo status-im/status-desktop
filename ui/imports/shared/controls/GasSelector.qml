@@ -36,12 +36,9 @@ Item {
 
     property double selectedGasEthValue
     property double selectedGasFiatValue
-    //% "Must be greater than 0"
-    property string greaterThan0ErrorMessage: qsTrId("must-be-greater-than-0")
-    //% "This needs to be a number"
-    property string invalidInputErrorMessage: qsTrId("this-needs-to-be-a-number")
-    //% "Please enter an amount"
-    property string noInputErrorMessage: qsTrId("please-enter-an-amount")
+    property string greaterThan0ErrorMessage: qsTr("Must be greater than 0")
+    property string invalidInputErrorMessage: qsTr("This needs to be a number")
+    property string noInputErrorMessage: qsTr("Please enter an amount")
     property bool isValid: true
     readonly property string uuid: Utils.uuid()
 
@@ -200,10 +197,8 @@ Item {
         anchors.right: parent.right
         visible: root.suggestedFees.eip1559Enabled
         text: advancedMode ?
-            //% "Use suggestions"
-            qsTrId("use-suggestions") :
-            //% "Use custom"
-            qsTrId("use-custom")
+            qsTr("Use suggestions") :
+            qsTr("Use custom")
         font.pixelSize: 13
         onClicked: advancedMode = !advancedMode
     }
@@ -246,8 +241,7 @@ Item {
         GasSelectorButton {
             id: optimalGasButton
             buttonGroup: gasGroup
-            //% "Optimal"
-            text: qsTrId("optimal")
+            text: qsTr("Optimal")
             price: {
                 if (!root.suggestedFees.eip1559Enabled) {
                     // Setting the gas price field here because the binding didn't work
@@ -308,8 +302,7 @@ Item {
 
         Input {
             id: inputGasLimit
-            //% "Gas amount limit"
-            label: qsTrId("gas-amount-limit")
+            label: qsTr("Gas amount limit")
             text: "21000"
             inputLabel.color: Style.current.secondaryText
             customHeight: 56
@@ -354,8 +347,7 @@ Item {
 
         StyledText {
             color: Style.current.secondaryText
-            //% "Gwei"
-            text: qsTrId("gwei")
+            text: qsTr("Gwei")
             visible: root.suggestedFees.eip1559Enabled
             anchors.top: parent.top
             anchors.topMargin: 42
@@ -366,8 +358,7 @@ Item {
 
         Input {
             id: inputGasPrice
-            //% "Per-gas overall limit"
-            label: qsTrId("per-gas-overall-limit")
+            label: qsTr("Per-gas overall limit")
             inputLabel.color: Style.current.secondaryText
             anchors.top: parent.top
             anchors.left: undefined
@@ -385,8 +376,7 @@ Item {
 
         StyledText {
             color: Style.current.secondaryText
-            //% "Gwei"
-            text: qsTrId("gwei")
+            text: qsTr("Gwei")
             anchors.top: parent.top
             anchors.topMargin: 42
             anchors.right: inputGasPrice.right
@@ -412,11 +402,10 @@ Item {
             id: maxPriorityFeeText
             anchors.left: parent.left
             visible: root.suggestedFees.eip1559Enabled
-            //% "Maximum priority fee: %1 ETH"
             text: {
                 let v = selectedGasEthValue > 0.00009 ? selectedGasEthValue :
                     (selectedGasEthValue < 0.000001 ? "0.000000..." : selectedGasEthValue.toFixed(6))
-                return qsTrId("maximum-priority-fee---1-eth").arg(v)
+                return qsTr("Maximum priority fee: %1 ETH").arg(v)
             }
             anchors.top: errorsText.bottom
             anchors.topMargin: Style.current.smallPadding + 5
@@ -438,8 +427,7 @@ Item {
 
         StyledText {
             id: maxPriorityFeeDetailsText
-            //% "Maximum overall price for the transaction. If the block base fee exceeds this, it will be included in a following block with a lower base fee."
-            text: qsTrId("maximum-overall-price-for-the-transaction--if-the-block-base-fee-exceeds-this--it-will-be-included-in-a-following-block-with-a-lower-base-fee-")
+            text: qsTr("Maximum overall price for the transaction. If the block base fee exceeds this, it will be included in a following block with a lower base fee.")
             visible: root.suggestedFees.eip1559Enabled
             width: parent.width
             anchors.top: maxPriorityFeeText.bottom

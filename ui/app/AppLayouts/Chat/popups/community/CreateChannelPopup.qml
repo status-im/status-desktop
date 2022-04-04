@@ -35,16 +35,14 @@ StatusModal {
     signal editCommunityChannel(string chName, string chDescription, string chEmoji, string chColor,
         string chCategoryId)
 
-    //% "New channel"
-    header.title: qsTrId("create-channel-title")
+    header.title: qsTr("New channel")
 
     onOpened: {
         contentItem.channelName.input.text = ""
         contentItem.channelName.input.icon.emoji = ""
         contentItem.channelName.input.edit.forceActiveFocus(Qt.MouseFocusReason)
         if (isEdit) {
-            //% "Edit #%1"
-            header.title = qsTrId("edit---1").arg(popup.channelName);
+            header.title = qsTr("Edit #%1").arg(popup.channelName);
             contentItem.channelName.input.text = popup.channelName
             contentItem.channelDescription.input.text = popup.channelDescription
             if (popup.channelEmoji) {
@@ -181,8 +179,7 @@ StatusModal {
                     // contentColor: colorDialog.colorSelected ? Theme.palette.indirectColor1 : Theme.palette.baseColor1
                     text: colorDialog.colorSelected ?
                         colorDialog.color.toString().toUpperCase() :
-                        //% "Pick a color"
-                        qsTrId("pick-a-color")
+                        qsTr("Pick a color")
 
                     onClicked: colorDialog.open();
                     onTextChanged: {
@@ -235,8 +232,7 @@ StatusModal {
             /*     width: parent.width */
             /*     height: 56 */
             /*     sensor.enabled: false */
-            //% "Private channel"
-            /*     title: qsTrId("private-channel") */
+            /*     title: qsTr("Private channel") */
             /*     components: [ */
             /*         StatusSwitch { */
             /*             id: privateSwitch */
@@ -252,8 +248,7 @@ StatusModal {
             /*     anchors.leftMargin: 16 */
             /*     color: Theme.palette.baseColor1 */
             /*     wrapMode: Text.WordWrap */
-            //% "By making a channel private, only members with selected permission will be able to access it"
-            /*     text: qsTrId("by-making-a-channel-private--only-members-with-selected-permission-will-be-able-to-access-it") */
+            /*     text: qsTr("By making a channel private, only members with selected permission will be able to access it") */
             /* } */
 
             /* StatusModalDivider { */
@@ -265,8 +260,7 @@ StatusModal {
             /*     width: parent.width */
             /*     height: 56 */
             /*     sensor.enabled: false */
-            //% "Message limit"
-            /*     title: qsTrId("message-limit") */
+            /*     title: qsTr("Message limit") */
             /*     components: [ */
             /*         StatusSwitch {} */
             /*     ] */
@@ -280,8 +274,7 @@ StatusModal {
             /*     anchors.leftMargin: 16 */
             /*     color: Theme.palette.baseColor1 */
             /*     wrapMode: Text.WordWrap */
-            //% "Limit channel members to sending one message per chose time interval"
-            /*     text: qsTrId("limit-channel-members-to-sending-one-message-per-chose-time-interval") */
+            /*     text: qsTr("Limit channel members to sending one message per chose time interval") */
             /* } */
 
             Item {
@@ -295,10 +288,8 @@ StatusModal {
         StatusButton {
             enabled: isFormValid()
             text: isEdit ?
-                  //% "Save"
-                  qsTrId("save") :
-                  //% "Create"
-                  qsTrId("create")
+                  qsTr("Save") :
+                  qsTr("Create")
             onClicked: {
                 if (!isFormValid()) {
                     scrollView.scrollBackUp()
@@ -336,8 +327,7 @@ StatusModal {
 
     MessageDialog {
         id: creatingError
-        //% "Error creating the community"
-        title: qsTrId("error-creating-the-community")
+        title: qsTr("Error creating the community")
         icon: StandardIcon.Critical
         standardButtons: StandardButton.Ok
     }

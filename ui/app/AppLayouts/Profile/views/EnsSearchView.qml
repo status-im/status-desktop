@@ -38,14 +38,11 @@ Item {
         valid = false;
         ensStatus = "";
         if (ensUsername.length < 4) {
-            //% "At least 4 characters. Latin letters, numbers, and lowercase only."
-            validationMessage = qsTrId("ens-username-hints");
+            validationMessage = qsTr("At least 4 characters. Latin letters, numbers, and lowercase only.");
         } else if(isStatus && !ensUsername.match(/^[a-z0-9]+$/)){
-            //% "Letters and numbers only."
-            validationMessage = qsTrId("ens-username-invalid");
+            validationMessage = qsTr("Letters and numbers only.");
         } else if(!isStatus && !ensUsername.endsWith(".eth")){
-            //% "Type the entire username including the custom domain like username.domain.eth"
-            validationMessage = qsTrId("ens-custom-username-hints")
+            validationMessage = qsTr("Type the entire username including the custom domain like username.domain.eth")
         }
         return validationMessage === "";
     }
@@ -229,8 +226,7 @@ Item {
 
                 StatusBaseText {
                     text: !isStatus ?
-                        //% "Custom domain"
-                        qsTrId("ens-custom-domain")
+                        qsTr("Custom domain")
                         :
                         ".stateofus.eth"
                     font.weight: Font.Bold
@@ -241,11 +237,9 @@ Item {
 
                 StatusBaseText {
                     text: !isStatus ?
-                        //% "I want a stateofus.eth domain"
-                        qsTrId("ens-want-domain")
+                        qsTr("I want a stateofus.eth domain")
                         :
-                        //% "I own a name on another domain"
-                        qsTrId("ens-want-custom-domain")
+                        qsTr("I own a name on another domain")
                     font.pixelSize: 12
                     color: Theme.palette.primaryColor1
                     anchors.right: parent.right

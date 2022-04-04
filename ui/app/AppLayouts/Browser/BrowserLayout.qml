@@ -65,15 +65,13 @@ Rectangle {
         property Component signMessageModalComponent: SignMessageModal {}
 
         property MessageDialog sendingError: MessageDialog {
-            //% "Error sending the transaction"
-            title: qsTrId("error-sending-the-transaction")
+            title: qsTr("Error sending the transaction")
             icon: StandardIcon.Critical
             standardButtons: StandardButton.Ok
         }
 
         property MessageDialog signingError: MessageDialog {
-            //% "Error signing message"
-            title: qsTrId("error-signing-message")
+            title: qsTr("Error signing message")
             icon: StandardIcon.Critical
             standardButtons: StandardButton.Ok
         }
@@ -344,12 +342,9 @@ Rectangle {
         property var certErrors: []
         icon: StandardIcon.Warning
         standardButtons: StandardButton.No | StandardButton.Yes
-        //% "Server's certificate not trusted"
-        title: qsTrId("server-s-certificate-not-trusted")
-        //% "Do you wish to continue?"
-        text: qsTrId("do-you-wish-to-continue-")
-        //% "If you wish so, you may continue with an unverified certificate. Accepting an unverified certificate means you may not be connected with the host you tried to connect to.\nDo you wish to override the security check and continue?"
-        detailedText: qsTrId("if-you-wish-so--you-may-continue-with-an-unverified-certificate--accepting-an-unverified-certificate-means-you-may-not-be-connected-with-the-host-you-tried-to-connect-to--ndo-you-wish-to-override-the-security-check-and-continue-")
+        title: qsTr("Server's certificate not trusted")
+        text: qsTr("Do you wish to continue?")
+        detailedText: qsTr("If you wish so, you may continue with an unverified certificate. Accepting an unverified certificate means you may not be connected with the host you tried to connect to.\nDo you wish to override the security check and continue?")
         onYes: {
             certErrors.shift().ignoreCertificateError();
             presentError();

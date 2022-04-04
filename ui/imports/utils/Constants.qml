@@ -337,29 +337,21 @@ QtObject {
     readonly property string storeToKeychainValueNotNow: "notNow"
     readonly property string storeToKeychainValueNever: "never"
 
-    //% "(edited)"
-    readonly property string editLabel: ` <span class="isEdited">` + qsTrId("-edited-") + `</span>`
+    readonly property string editLabel: ` <span class="isEdited">` + qsTr("(edited)") + `</span>`
 
     readonly property string newBookmark: " "
 
     readonly property var ensState: {
-        //% "Username already taken :("
-        "taken": qsTrId("ens-username-taken"),
-        //% "Username doesn’t belong to you :("
-        "taken-custom": qsTrId("ens-custom-username-taken"),
-        //% "Continuing will connect this username with your chat key."
-        "owned": qsTrId("ens-username-owned-continue"),
-        //% "✓ Username available!"
-        "available": qsTrId("ens-username-available"),
-        //% "Username is already connected with your chat key and can be used inside Status."
-        "already-connected": qsTrId("ens-username-already-added"),
-        //% "This user name is owned by you and connected with your chat key. Continue to set `Show my ENS username in chats`."
-        "connected": qsTrId("this-user-name-is-owned-by-you-and-connected-with-your-chat-key--continue-to-set--show-my-ens-username-in-chats--"),
-        //% "Continuing will require a transaction to connect the username with your current chat key."
-        "connected-different-key": qsTrId("ens-username-connected-with-different-key"),
+        "taken": qsTr("Username already taken :("),
+        "taken-custom": qsTr("Username doesn’t belong to you :("),
+        "owned": qsTr("Continuing will connect this username with your chat key."),
+        "available": qsTr("✓ Username available!"),
+        "already-connected": qsTr("Username is already connected with your chat key and can be used inside Status."),
+        "connected": qsTr("This user name is owned by you and connected with your chat key. Continue to set `Show my ENS username in chats`."),
+        "connected-different-key": qsTr("Continuing will require a transaction to connect the username with your current chat key."),
     }
 
     readonly property bool isCppApp: typeof cppApp !== "undefined" ? cppApp : false
-    
+
     readonly property string existingAccountError: "account already exists"
 }

@@ -14,8 +14,7 @@ Item {
 
     StatusBaseText {
         id: sectionTitle
-        //% "ENS usernames"
-        text: qsTrId("ens-usernames")
+        text: qsTr("ENS usernames")
         anchors.left: parent.left
         anchors.leftMargin: 24
         anchors.top: parent.top
@@ -50,8 +49,7 @@ Item {
 
     StatusBaseText {
         id: title
-        //% "Username added"
-        text: qsTrId("ens-saved-title")
+        text: qsTr("Username added")
         anchors.top: circle.bottom
         anchors.topMargin: 24
         font.weight: Font.Bold
@@ -65,8 +63,7 @@ Item {
 
     StatusBaseText {
         id: subtitle
-        //% "%1 will be connected once the transaction is complete."
-        text: qsTrId("-1-will-be-connected-once-the-transaction-is-complete-").arg(ensUsername)
+        text: qsTr("%1 will be connected once the transaction is complete.").arg(ensUsername)
         anchors.top: title.bottom
         anchors.topMargin: 24
         font.pixelSize: 14
@@ -79,8 +76,7 @@ Item {
 
     StatusBaseText {
         id: progress
-        //% "You can follow the progress in the Transaction History section of your wallet."
-        text: qsTrId("ens-username-you-can-follow-progress")
+        text: qsTr("You can follow the progress in the Transaction History section of your wallet.")
         anchors.top: subtitle.bottom
         anchors.topMargin: 24
         font.pixelSize: 12
@@ -97,8 +93,7 @@ Item {
         anchors.top: progress.bottom
         anchors.topMargin: Style.current.padding
         anchors.horizontalCenter: parent.horizontalCenter
-        //% "Ok, got it"
-        text: qsTrId("ens-got-it")
+        text: qsTr("Ok, got it")
         onClicked: okBtnClicked()
     }
 }

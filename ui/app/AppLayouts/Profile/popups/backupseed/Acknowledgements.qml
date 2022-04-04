@@ -67,12 +67,12 @@ Item {
         StatusCheckBox {
             id: havePen
             width: parent.width
-            text: qsTrId("I have a pen and paper")
+            text: qsTr("I have a pen and paper")
         }
         StatusCheckBox {
             id: writeDown
             width: parent.width
-            text: qsTrId("I am ready to write down my seed phrase")
+            text: qsTr("I am ready to write down my seed phrase")
         }
         StatusCheckBox {
             id: storeIt

@@ -22,8 +22,7 @@ StatusModal {
         return Utils.isPrivateKey(communityKey) && Utils.startsWith0x(communityKey)
     }
 
-    //% "Import Community"
-    header.title: qsTrId("Import Community")
+    header.title: qsTr("Import Community")
 
     onClosed: {
         root.destroy();
@@ -41,8 +40,7 @@ StatusModal {
             id: infoText1
             anchors.top: parent.top
             anchors.topMargin: Style.current.padding
-            //% "Entering a community key will grant you the ownership of that community. Please be responsible with it and don’t share the key with people you don’t trust."
-            text: qsTrId("entering-a-community-key-will-grant-you-the-ownership-of-that-community--please-be-responsible-with-it-and-don-t-share-the-key-with-people-you-don-t-trust-")
+            text: qsTr("Entering a community key will grant you the ownership of that community. Please be responsible with it and don’t share the key with people you don’t trust.")
             wrapMode: Text.WordWrap
             width: parent.width
             font.pixelSize: 13
@@ -51,8 +49,7 @@ StatusModal {
 
         StyledTextArea {
             id: keyInput
-            //% "Community private key"
-            label: qsTrId("Community key")
+            label: qsTr("Community private key")
             placeholderText: "0x0..."
             customHeight: 110
             anchors.top: infoText1.bottom
@@ -70,8 +67,7 @@ StatusModal {
         StatusQControls.StatusButton {
             id: importButton
             enabled: false
-            //% "Import"
-            text: qsTrId("import")
+            text: qsTr("Import")
             onClicked: {
                 let communityKey = keyInput.text.trim();
                 if (!communityKey.startsWith("0x")) {

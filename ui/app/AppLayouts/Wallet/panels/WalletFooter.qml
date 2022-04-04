@@ -30,8 +30,7 @@ Rectangle {
 
         StatusFlatButton {
             icon.name: "send"
-            //% "Send"
-            text: qsTrId("command-button-send")
+            text: qsTr("Send")
             onClicked: function() {
                 sendModal.open()
             }
@@ -39,8 +38,7 @@ Rectangle {
 
         StatusFlatButton {
             icon.name: "receive"
-            //% "Receive"
-            text: qsTrId("receive")
+            text: qsTr("Receive")
             onClicked: function () {
                 Global.openPopup(receiveModalComponent);
             }
@@ -49,8 +47,7 @@ Rectangle {
         StatusFlatButton {
             id: buySellBtn
             icon.name: "token"
-            //% "Buy / Sell"
-            text: qsTrId("Buy / Sell")
+            text: qsTr("Buy / Sell")
             onClicked: function () {
                 Global.openPopup(buySellModal);
             }

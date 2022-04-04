@@ -27,8 +27,7 @@ ModalPopup {
     id: popup
     title: storingPasswordModal?
                qsTr("Store password") :
-               //% "Create a password"
-               qsTrId("intro-wizard-title-alt4")
+               qsTr("Create a password")
     height: 500
 
     onOpened: {
@@ -44,8 +43,7 @@ ModalPopup {
         anchors.topMargin: storingPasswordModal? Style.current.xlPadding : 88
         placeholderText: storingPasswordModal?
                              qsTr("Current password...") :
-                             //% "New password..."
-                             qsTrId("new-password...")
+                             qsTr("New password...")
         textField.echoMode: TextInput.Password
         onTextChanged: {
             [firstPasswordFieldValid, passwordValidationError] =
@@ -64,8 +62,7 @@ ModalPopup {
         anchors.left: firstPasswordField.left
         anchors.top: firstPasswordField.bottom
         anchors.topMargin: Style.current.xlPadding
-        //% "Confirm password…"
-        placeholderText: qsTrId("confirm-password…")
+        placeholderText: qsTr("Confirm password…")
         textField.echoMode: TextInput.Password
         Keys.onReturnPressed: function(event) {
             if (submitBtn.enabled) {
@@ -98,8 +95,7 @@ ModalPopup {
 
     StyledText {
         visible: !storingPasswordModal
-        //% "At least 6 characters. You will use this password to unlock status on this device & sign transactions."
-        text: qsTrId("at-least-6-characters-you-will-use-this-password-to-unlock-status-on-this-device-sign-transactions.")
+        text: qsTr("At least 6 characters. You will use this password to unlock status on this device & sign transactions.")
         wrapMode: Text.WordWrap
         anchors.right: parent.right
         anchors.rightMargin: Style.current.xlPadding
@@ -125,17 +121,14 @@ ModalPopup {
 
             text: storingPasswordModal?
                       qsTr("Store password") :
-                      //% "Create password"
-                      qsTrId("create-password")
+                      qsTr("Create password")
 
             enabled: firstPasswordFieldValid && repeatPasswordFieldValid && !loading
 
             MessageDialog {
                 id: importError
-                //% "Error importing account"
-                title: qsTrId("error-importing-account")
-                //% "An error occurred while importing your account: "
-                text: qsTrId("an-error-occurred-while-importing-your-account:-")
+                title: qsTr("Error importing account")
+                text: qsTr("An error occurred while importing your account: ")
                 icon: StandardIcon.Critical
                 standardButtons: StandardButton.Ok
                 onVisibilityChanged: {
@@ -145,10 +138,8 @@ ModalPopup {
 
             MessageDialog {
                 id: importLoginError
-                //% "Login failed"
-                title: qsTrId("login-failed")
-                //% "Login failed. Please re-enter your password and try again."
-                text: qsTrId("login-failed.-please-re-enter-your-password-and-try-again.")
+                title: qsTr("Login failed")
+                text: qsTr("Login failed. Please re-enter your password and try again.")
                 icon: StandardIcon.Critical
                 standardButtons: StandardButton.Ok
                 onVisibilityChanged: {

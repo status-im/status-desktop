@@ -66,7 +66,7 @@ OnboardingBasePage {
             anchors.top: txtTitle.bottom
             anchors.topMargin: Style.current.padding
             color: Style.current.secondaryText
-            text: qsTrId("Would you like to use your Touch ID to login to Status?")
+            text: qsTr("Would you like to use your Touch ID to login to Status?")
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
             font.pixelSize: 15

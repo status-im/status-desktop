@@ -18,10 +18,8 @@ Item {
     property alias signingPhrase: signingPhrase.text
     property string enteredPassword
     property alias validationError: txtPassword.validationError
-    //% "You need to enter a password"
-    property string noInputErrorMessage: qsTrId("you-need-to-enter-a-password")
-    //% "Password needs to be 6 characters or more"
-    property string invalidInputErrorMessage: qsTrId("password-needs-to-be-6-characters-or-more")
+    property string noInputErrorMessage: qsTr("You need to enter a password")
+    property string invalidInputErrorMessage: qsTr("Password needs to be 6 characters or more")
     property bool isValid: false
 
     function forceActiveFocus(reason) {
@@ -50,8 +48,7 @@ Item {
             id: labelSigningPhrase
             color: Style.current.secondaryText
             font.pixelSize: 15
-            //% "Signing phrase"
-            text: qsTrId("signing-phrase")
+            text: qsTr("Signing phrase")
         }
 
         StatusQControls.StatusRoundButton {
@@ -66,8 +63,7 @@ Item {
             icon.name: "info"
             StatusQ.StatusToolTip {
               visible: infoButton.hovered
-              //% "Signing phrase is a 3 word combination that displayed when you entered the wallet on this device for the first time."
-              text: qsTrId("signing-phrase-is-a-3-word-combination-that-displayed-when-you-entered-the-wallet-on-this-device-for-the-first-time-")
+              text: qsTr("Signing phrase is a 3 word combination that displayed when you entered the wallet on this device for the first time.")
             }
         }
     }
@@ -94,8 +90,7 @@ Item {
         icon.name: "info"
         StatusQ.StatusToolTip {
           visible: passwordInfoButton.hovered
-          //% "Enter the password you use to unlock this device"
-          text: qsTrId("enter-the-password-you-use-to-unlock-this-device")
+          text: qsTr("Enter the password you use to unlock this device")
         }
     }
 
@@ -105,10 +100,8 @@ Item {
         anchors.topMargin: Style.current.bigPadding
         focus: true
         customHeight: 56
-        //% "Password"
-        label: qsTrId("password")
-        //% "Enter password"
-        placeholderText: qsTrId("enter-password")
+        label: qsTr("Password")
+        placeholderText: qsTr("Enter password")
         textField.echoMode: TextInput.Password
         validationErrorAlignment: TextEdit.AlignRight
         validationErrorTopMargin: 8

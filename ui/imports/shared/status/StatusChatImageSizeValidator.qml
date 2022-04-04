@@ -20,6 +20,5 @@ StatusChatImageValidator {
         })
         root.isValid = isValid
     }
-    //% "Max image size is %1 MB"
-    errorMessage: qsTrId("max-image-size-is--1-mb").arg(Constants.maxUploadFilesizeMB)
+    errorMessage: qsTr("Max image size is %1 MB").arg(Constants.maxUploadFilesizeMB)
 }

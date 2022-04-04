@@ -49,16 +49,14 @@ SettingsContentBase {
             StatusSettingsLineButton {
                 anchors.leftMargin: 0
                 anchors.rightMargin: 0
-                //% "Search engine used in the address bar"
-                text: qsTrId("search-engine-used-in-the-address-bar")
+                text: qsTr("Search engine used in the address bar")
                 currentValue: {
                     switch (localAccountSensitiveSettings.shouldShowBrowserSearchEngine) {
                     case Constants.browserSearchEngineGoogle: return "Google"
                     case Constants.browserSearchEngineYahoo: return "Yahoo!"
                     case Constants.browserSearchEngineDuckDuckGo: return "DuckDuckGo"
                     case Constants.browserSearchEngineNone:
-                        //% "None"
-                    default: return qsTrId("none")
+                    default: return qsTr("None")
                     }
                 }
                 onClicked: searchEngineModal.createObject(root).open()

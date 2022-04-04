@@ -12,8 +12,7 @@ import shared.popups 1.0
 ModalPopup {
     id: popup
 
-    //% "Primary username"
-    title: qsTrId("ens-primary-username")
+    title: qsTr("Primary username")
 
     property var ensUsernamesStore
     property string newUsername: ""
@@ -27,11 +26,9 @@ ModalPopup {
     StyledText {
         id: lbl1
         text: popup.ensUsernamesStore.preferredUsername ?
-              //% "Your messages are displayed to others with this username:"
-              qsTrId("your-messages-are-displayed-to-others-with-this-username-")
+              qsTr("Your messages are displayed to others with this username:")
               :
-              //% "Once you select a username, you won’t be able to disable it afterwards. You will only be able choose a different username to display."
-              qsTrId("once-you-select-a-username--you-won-t-be-able-to-disable-it-afterwards--you-will-only-be-able-choose-a-different-username-to-display-")
+              qsTr("Once you select a username, you won’t be able to disable it afterwards. You will only be able choose a different username to display.")
         font.pixelSize: 15
         wrapMode: Text.WordWrap
         width: parent.width

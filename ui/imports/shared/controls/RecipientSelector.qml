@@ -26,8 +26,7 @@ Item {
     property var selectedRecipient
     property bool readOnly: false
     height: inpAddress.height + txtLabel.height
-    //% "Invalid ethereum address"
-    readonly property string addressValidationError: qsTrId("invalid-ethereum-address")
+    readonly property string addressValidationError: qsTr("Invalid ethereum address")
     property alias wrongInputValidationError: inpAddress.wrongInputValidationError
     property bool isValid: false
     property bool isSelectorVisible: true
@@ -46,12 +45,9 @@ Item {
         }
     }
     readonly property var sources: [
-        //% "Address"
-        { text: qsTrId("address"), value: RecipientSelector.Type.Address, visible: true },
-        //% "My account"
-        { text: qsTrId("my-account"), value: RecipientSelector.Type.Account, visible: true },
-        //% "Contact"
-        { text: qsTrId("chat-is-a-contact"), value: RecipientSelector.Type.Contact, visible: true }
+        { text: qsTr("Address"), value: RecipientSelector.Type.Address, visible: true },
+        { text: qsTr("My account"), value: RecipientSelector.Type.Account, visible: true },
+        { text: qsTr("Contact"), value: RecipientSelector.Type.Contact, visible: true }
     ]
     property var selectedType: RecipientSelector.Type.Address
 
@@ -122,8 +118,7 @@ Item {
     Text {
         id: txtLabel
         visible: label !== ""
-        //% "Recipient"
-        text: qsTrId("recipient")
+        text: qsTr("Recipient")
         font.pixelSize: 13
         font.family: Style.current.fontRegular.name
         font.weight: Font.Medium

@@ -26,12 +26,10 @@ QQC1.TabView {
                 tabTitle = tab.item.title
             }
             else if (createAsStartPage) {
-                //% "Start Page"
-                tabTitle = qsTrId("start-page")
+                tabTitle = qsTr("Start Page")
             }
             else {
-                //% "New Tab"
-                tabTitle = qsTrId("new-tab")
+                tabTitle = qsTr("New Tab")
             }
 
             return Utils.escapeHtml(tabTitle);
@@ -51,8 +49,7 @@ QQC1.TabView {
     function createDownloadTab(profile) {
         var tab = addTab("", tabComponent);
         tab.active = true;
-        //% "Downloads Page"
-        tab.title = qsTrId("downloads-page")
+        tab.title = qsTr("Downloads Page")
         tab.item.profile = profile
         tab.item.url = "status://downloads";
     }

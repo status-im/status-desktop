@@ -49,8 +49,7 @@ SettingsContentBase {
             Layout.fillWidth: true
             implicitHeight: 64
 
-            //% "Allow new contact requests"
-            title: qsTrId("allow-new-contact-requests")
+            title: qsTr("Allow new contact requests")
 
             components: [
                 StatusSwitch {

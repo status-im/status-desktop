@@ -38,8 +38,7 @@ StatusModal {
     margins: 32
     height: 550
 
-    //% "Invite friends"
-    header.title: qsTrId("invite-friends")
+    header.title: qsTr("Invite friends")
 
     function processInviteResult(error) {
         if (error) {
@@ -47,8 +46,7 @@ StatusModal {
             contactFieldAndList.validationError = error
             return
         }
-        //% "Invite successfully sent"
-        popup.contentItem.contactListSearch.successMessage = qsTrId("invite-successfully-sent")
+        popup.contentItem.contactListSearch.successMessage = qsTr("Invite successfully sent")
     }
 
     contentItem: CommunityProfilePopupInviteFriendsPanel {
@@ -73,8 +71,7 @@ StatusModal {
     rightButtons: [
         StatusButton {
             enabled: popup.contentItem.contactListSearch.pubKeys.length > 0
-            //% "Invite"
-            text: qsTrId("invite-button")
+            text: qsTr("Invite")
             onClicked : {
                 popup.sendInvites(popup.contentItem.contactListSearch.pubKeys)
             }

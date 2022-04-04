@@ -17,8 +17,7 @@ ModalPopup {
     signal remindLaterClicked()
     signal acceptClicked()
 
-    //% "Signing phrase"
-    title: qsTrId("signing-phrase")
+    title: qsTr("Signing phrase")
     height: 390
     closePolicy: Popup.NoAutoClose
 
@@ -28,8 +27,7 @@ ModalPopup {
 
         StyledText {
             anchors.horizontalCenter: parent.horizontalCenter
-            //% "This is your signing phrase"
-            text: qsTrId("this-is-you-signing")
+            text: qsTr("This is your signing phrase")
             font.pixelSize: 17
             font.weight: Font.Bold
             horizontalAlignment: Text.AlignHCenter
@@ -38,8 +36,7 @@ ModalPopup {
 
         StyledText {
             anchors.horizontalCenter: parent.horizontalCenter
-            //% "You should see these 3 words before signing each transaction"
-            text: qsTrId("three-words-description")
+            text: qsTr("You should see these 3 words before signing each transaction")
             font.pixelSize: 15
             width: 330
             wrapMode: Text.WordWrap
@@ -76,8 +73,7 @@ ModalPopup {
         }
 
         StyledText {
-            //% "If you see a different combination, cancel the transaction and sign out"
-            text: qsTrId("three-words-description-2")
+            text: qsTr("If you see a different combination, cancel the transaction and sign out")
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
             width: parent.width
@@ -95,8 +91,7 @@ ModalPopup {
         StatusFlatButton {
             anchors.right: btnRemindLater.left
             anchors.rightMargin: Style.current.padding
-            //% "Ok, got it"
-            text: qsTrId("ens-got-it")
+            text: qsTr("Ok, got it")
             onClicked: {
                 acceptClicked()
                 close()
@@ -106,8 +101,7 @@ ModalPopup {
         StatusButton {
             id: btnRemindLater
             anchors.right: parent.right
-            //% "Remind me later"
-            text: qsTrId("remind-me-later")
+            text: qsTr("Remind me later")
             onClicked: {
                 remindLaterClicked()
                 close()

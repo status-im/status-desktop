@@ -30,10 +30,8 @@ RadioButtonSelector {
     Component {
         id: confirmDialogComponent
         ConfirmationDialog {
-            //% "Warning!"
-            header.title: qsTrId("close-app-title")
-            //% "Change fleet to %1"
-            confirmationText: qsTrId("change-fleet-to--1").arg(root.newFleet)
+            header.title: qsTr("Warning!")
+            confirmationText: qsTr("Change fleet to %1").arg(root.newFleet)
             onConfirmButtonClicked: {
                 root.advancedStore.setFleet(root.newFleet)
             }

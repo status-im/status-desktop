@@ -33,19 +33,16 @@ Item {
         
         StatusTabButton {
             id: assetBtn
-            //% "Saved"
             width: implicitWidth
             text: qsTr("Saved")
         }
         StatusTabButton {
             id: collectiblesBtn
-            //% "My Accounts"
             width: implicitWidth
             text: qsTr("My Accounts")
         }
         StatusTabButton {
             id: historyBtn
-            //% "Recent"
             width: implicitWidth
             text: qsTr("Recent")
         }
@@ -111,7 +108,6 @@ Item {
                     StatusBaseText {
                         font.pixelSize: 15
                         color: Theme.palette.directColor1
-                        //% "No Saved Address"
                         text: qsTr("No Saved Address")
                     }
                 }
@@ -172,7 +168,6 @@ Item {
                 header: StatusBaseText {
                     font.pixelSize: 15
                     color: Theme.palette.directColor1
-                    //% "No Recents"
                     text: qsTr("No Recents")
                     visible: recents.count <= 0
                 }

@@ -14,14 +14,10 @@ import "."
 
 Item {
     id: root
-    //% "Insufficient balance"
-    property string balanceErrorMessage: qsTrId("insufficient-balance")
-    //% "Must be greater than or equal to 0"
-    property string greaterThanOrEqualTo0ErrorMessage: qsTrId("must-be-greater-than-or-equal-to-0")
-    //% "This needs to be a number"
-    property string invalidInputErrorMessage: qsTrId("this-needs-to-be-a-number")
-    //% "Please enter an amount"
-    property string noInputErrorMessage: qsTrId("please-enter-an-amount")
+    property string balanceErrorMessage: qsTr("Insufficient balance")
+    property string greaterThanOrEqualTo0ErrorMessage: qsTr("Must be greater than or equal to 0")
+    property string invalidInputErrorMessage: qsTr("This needs to be a number")
+    property string noInputErrorMessage: qsTr("Please enter an amount")
     property string currentCurrency: "USD"
     property alias selectedFiatAmount: txtFiatBalance.text
     property alias selectedAmount: inputAmount.text
@@ -92,8 +88,7 @@ Item {
 
         StyledText {
             id: txtBalanceDesc
-            //% "Balance: "
-            text: qsTrId("balance--")
+            text: qsTr("Balance: ")
             anchors.right: txtBalance.left
             font.weight: Font.Medium
             font.pixelSize: 13
@@ -129,8 +124,7 @@ Item {
 
     Input {
         id: inputAmount
-        //% "Asset & Amount"
-        label: qsTrId("asset---amount")
+        label: qsTr("Asset & Amount")
         placeholderText: "0.00"
         anchors.top: parent.top
         customHeight: 56
@@ -142,8 +136,7 @@ Item {
                 return root.validationError
             }
             if (formattedInputValue === 0) {
-                //% "The amount is 0. Proceed only if this is desired."
-                return qsTrId("the-amount-is-0--proceed-only-if-this-is-desired-")
+                return qsTr("The amount is 0. Proceed only if this is desired.")
             }
             return ""
         }

@@ -32,10 +32,8 @@ ModalPopup {
 
         StyledText {
             id: title
-            //% "Pin limit reached"
-            text: !!popup.messageToPin ? qsTrId("pin-limit-reached") :
-                                               //% "Pinned messages"
-                                               qsTrId("pinned-messages")
+            text: !!popup.messageToPin ? qsTr("Pin limit reached") :
+                                               qsTr("Pinned messages")
             anchors.top: parent.top
             anchors.left: parent.left
             font.bold: true
@@ -48,14 +46,11 @@ ModalPopup {
             id: nbPinnedMessages
             text: {
                 if (!!popup.messageToPin) {
-                    //% "Unpin a previous message first"
-                    return qsTrId("unpin-a-previous-message-first")
+                    return qsTr("Unpin a previous message first")
                 }
 
-                //% "%1 messages"
-                return nbMessages > 1 ? qsTrId("-1-messages").arg(nbMessages) :
-                                        //% "%1 message"
-                                        qsTrId("-1-message").arg(nbMessages)
+                return nbMessages > 1 ? qsTr("%1 messages").arg(nbMessages) :
+                                        qsTr("%1 message").arg(nbMessages)
             }
             anchors.left: parent.left
             anchors.top: title.bottom
@@ -79,8 +74,7 @@ ModalPopup {
 
         StyledText {
             visible: pinnedMessageListView.count === 0
-            //% "Pinned messages will appear here."
-            text: qsTrId("pinned-messages-will-appear-here-")
+            text: qsTr("Pinned messages will appear here.")
             anchors.centerIn: parent
             color: Style.current.secondaryText
         }
@@ -206,8 +200,7 @@ ModalPopup {
             id: btnUnpin
             visible: !!popup.messageToPin
             enabled: !!popup.messageToUnpin
-            //% "Unpin"
-            text: qsTrId("unpin")
+            text: qsTr("Unpin")
             type: StatusQControls.StatusBaseButton.Type.Danger
             anchors.right: parent.right
             onClicked: {

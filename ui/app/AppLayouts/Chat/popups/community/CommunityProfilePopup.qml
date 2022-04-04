@@ -49,14 +49,10 @@ StatusModal {
                 headerTitle: root.community.name
                 headerSubtitle: {
                     switch(root.community.access) {
-                        //% "Public community"
-                        case Constants.communityChatPublicAccess: return qsTrId("public-community");
-                        //% "Invitation only community"
-                        case Constants.communityChatInvitationOnlyAccess: return qsTrId("invitation-only-community");
-                        //% "On request community"
-                        case Constants.communityChatOnRequestAccess: return qsTrId("on-request-community");
-                        //% "Unknown community"
-                        default: return qsTrId("unknown-community");
+                        case Constants.communityChatPublicAccess: return qsTr("Public community");
+                        case Constants.communityChatInvitationOnlyAccess: return qsTr("Invitation only community");
+                        case Constants.communityChatOnRequestAccess: return qsTr("On request community");
+                        default: return qsTr("Unknown community");
                     }
                 }
                 headerImageSource: root.community.image
@@ -90,8 +86,7 @@ StatusModal {
             id: inviteFriendsView
             CommunityProfilePopupInviteFriendsPanel {
                 width: stack.width
-                //% "Invite friends"
-                headerTitle: qsTrId("invite-friends")
+                headerTitle: qsTr("Invite friends")
                 community: root.community
                 contactsStore: root.contactsStore
                 rootStore: root.store
@@ -123,8 +118,7 @@ StatusModal {
 
     rightButtons: [
         StatusButton {
-            //% "Invite"
-            text: qsTrId("community-invite-title")
+            text: qsTr("Invite")
             visible: root.contentItem.depth > 2
             height: !visible ? 0 : implicitHeight
             enabled: root.contentItem.currentItem.contactListSearch !== undefined && root.contentItem.currentItem.contactListSearch.pubKeys.length > 0

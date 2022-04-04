@@ -23,7 +23,6 @@ StatusModal {
     property var currentAccount: walletStore.currentAccount
     property var emojiPopup
 
-    //% "'%1' would like to connect to"
     header.title: qsTr("Rename %1").arg(currentAccount.name)
 
     property int marginBetweenInputs: 30
@@ -49,9 +48,8 @@ StatusModal {
 
         StatusInput {
             id: accountNameInput
-            //% "Enter an account name..."
             input.isIconSelectable: true
-            input.placeholderText: qsTrId("enter-an-account-name...")
+            input.placeholderText: qsTr("Enter an account name...")
             input.text: currentAccount.name
             input.icon.emoji: currentAccount.emoji
             input.icon.color: currentAccount.color
@@ -63,8 +61,7 @@ StatusModal {
             }
             validators: [
                 StatusMinLengthValidator {
-                    //% "You need to enter an account name"
-                    errorMessage: qsTrId("you-need-to-enter-an-account-name")
+                    errorMessage: qsTr("You need to enter an account name")
                     minLength: 1
                 },
                 StatusRegularExpressionValidator {
@@ -80,7 +77,6 @@ StatusModal {
             anchors.top: selectedColor.bottom
             anchors.topMargin: 10
             anchors.horizontalCenter: parent.horizontalCenter
-            //% "color"
             titleText: qsTr("color").toUpperCase()
             selectedColor: currentAccount.color
             selectedColorIndex: {
@@ -106,7 +102,6 @@ StatusModal {
     rightButtons: [
         StatusButton {
             id: saveBtn
-            //% "Change Name"
             text: qsTr("Change Name")
 
             enabled: accountNameInput.text !== "" && accountNameInput.valid

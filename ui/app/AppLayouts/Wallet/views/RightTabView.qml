@@ -53,21 +53,18 @@ Item {
                 
                 StatusTabButton {
                     id: assetBtn
-                    //% "Assets"
                     width: implicitWidth
-                    text: qsTrId("wallet-assets")
+                    text: qsTr("Assets")
                 }
                 StatusTabButton {
                     id: collectiblesBtn
-                    //% "Collectibles"
                     width: implicitWidth
-                    text: qsTrId("wallet-collectibles")
+                    text: qsTr("Collectibles")
                 }
                 StatusTabButton {
                     id: historyBtn
-                    //% "History"
                     width: implicitWidth
-                    text: qsTrId("history")
+                    text: qsTr("History")
                 }
             }
 

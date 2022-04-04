@@ -55,8 +55,7 @@ Item {
         anchors.top: parent.top
         anchors.topMargin: 16
         anchors.horizontalCenter: parent.horizontalCenter
-        //% "Chat"
-        text: qsTrId("chat")
+        text: qsTr("Chat")
     }
 
     RowLayout {
@@ -73,8 +72,7 @@ Item {
             Layout.alignment: Qt.AlignVCenter
             implicitHeight: 36
             topPadding: 9
-            //% "Search"
-            placeholderText: qsTrId("search")
+            placeholderText: qsTr("Search")
             icon.name: "search"
             MouseArea {
                 anchors.fill: parent
@@ -134,8 +132,7 @@ Item {
         visible: nbRequests > 0
         height: visible ? implicitHeight : 0
 
-        //% "Contact requests"
-        title: qsTrId("contact-requests")
+        title: qsTr("Contact requests")
         requestsCount: nbRequests
 
         sensor.onClicked: Global.openPopup(contactRequestsPopup)
@@ -337,13 +334,11 @@ Item {
 
             if (state === Constants.communityImported)
             {
-                //% "Community imported"
-                title = qsTrId("community-imported")
+                title = qsTr("Community imported")
             }
             else if (state === Constants.communityImportingInProgress)
             {
-                //% "Importing community is in progress"
-                title = qsTrId("importing-community-is-in-progress")
+                title = qsTr("Importing community is in progress")
                 loading = true
             }
             else if (state === Constants.communityImportingError)

@@ -13,8 +13,7 @@ import "./"
 // TODO: replace with StatusModal
 ModalPopup {
     id: popup
-    //% "New chat"
-    title: qsTrId("new-chat")
+    title: qsTr("New chat")
     property var store
     property var contactsStore
 
@@ -77,8 +76,7 @@ ModalPopup {
                 anchors.left: dollarEmoji.right
                 anchors.leftMargin: 6
                 anchors.verticalCenter: parent.verticalCenter
-                //% "My Profile"
-                text: qsTrId("my-profile")
+                text: qsTr("My Profile")
                 font.pixelSize: 15
                 color: Style.current.white
             }

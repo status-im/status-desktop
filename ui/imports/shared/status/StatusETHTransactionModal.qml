@@ -45,8 +45,7 @@ ModalPopup {
 
             if (!response.success) {
                 if (Utils.isInvalidPasswordMessage(response.result)){
-                    //% "Wrong password"
-                    transactionSigner.validationError = qsTrId("wrong-password")
+                    transactionSigner.validationError = qsTr("Wrong password")
                     return
                 }
                 sendingError.text = response.result
@@ -69,8 +68,7 @@ ModalPopup {
 
     property MessageDialog sendingError: MessageDialog {
         id: sendingError
-        //% "Error sending the transaction"
-        title: qsTrId("error-sending-the-transaction")
+        title: qsTr("Error sending the transaction")
         icon: StandardIcon.Critical
         standardButtons: StandardButton.Ok
     }
@@ -88,8 +86,7 @@ ModalPopup {
         TransactionFormGroup {
             id: group1
             headerText: root.title
-            //% "Continue"
-            footerText: qsTrId("continue")
+            footerText: qsTr("Continue")
 
             StatusAccountSelector {
                 id: selectFromAccount
@@ -104,8 +101,7 @@ ModalPopup {
                 currency: root.ensUsernamesStore.getCurrentCurrency()
                 width: stack.width
                 chainId: root.chainId
-                //% "Choose account"
-                label: qsTrId("choose-account")
+                label: qsTr("Choose account")
                 showBalanceForAssetSymbol: "ETH"
                 minRequiredAssetBalance: 0
                 onSelectedAccountChanged: if (isValid) { gasSelector.estimateGas() }
@@ -146,8 +142,7 @@ ModalPopup {
         TransactionFormGroup {
             id: group3
             headerText: root.title
-            //% "Sign with password"
-            footerText: qsTrId("sign-with-password")
+            footerText: qsTr("Sign with password")
 
             TransactionPreview {
                 id: pvwTransaction
@@ -170,8 +165,7 @@ ModalPopup {
         TransactionFormGroup {
             id: group4
             headerText: root.title
-            //% "Sign with password"
-            footerText: qsTrId("sign-with-password")
+            footerText: qsTr("Sign with password")
 
             TransactionSigner {
                 id: transactionSigner
@@ -212,8 +206,7 @@ ModalPopup {
         StatusButton {
             id: btnNext
             anchors.right: parent.right
-            //% "Next"
-            text: qsTrId("next")
+            text: qsTr("Next")
             enabled: stack.currentGroup.isValid
             onClicked: {
                 const validity = stack.currentGroup.validate()

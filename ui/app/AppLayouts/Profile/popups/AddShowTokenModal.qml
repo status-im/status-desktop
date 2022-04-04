@@ -19,8 +19,7 @@ StatusModal {
     property WalletStore walletStore
 
     header.title: editable ?
-        //% "Add custom token"
-        qsTrId("add-custom-token")
+        qsTr("Add custom token")
         : nameInput.text
 
     x: Math.round(((parent ? parent.width : 0) - width) / 2)
@@ -53,8 +52,7 @@ StatusModal {
 
     function validate() {
         if (addressInput.text !== "" && !Utils.isAddress(addressInput.text)) {
-            //% "This needs to be a valid address"
-            validationError = qsTrId("this-needs-to-be-a-valid-address");
+            validationError = qsTr("This needs to be a valid address");
         }
         return validationError === ""
     }
@@ -80,8 +78,7 @@ StatusModal {
                 return
             }
             if (jsonObj.name === "" && jsonObj.symbol === "" && jsonObj.decimals === "") {
-                //% "Invalid ERC20 address"
-                validationError = qsTrId("invalid-erc20-address")
+                validationError = qsTr("Invalid ERC20 address")
                 return;
             }
 
@@ -102,10 +99,8 @@ StatusModal {
             id: addressInput
             readOnly: !editable
             textField.maximumLength: 42
-            //% "Enter contract address..."
-            placeholderText: qsTrId("enter-contract-address...")
-            //% "Contract address"
-            label: qsTrId("contract-address")
+            placeholderText: qsTr("Enter contract address...")
+            label: qsTr("Contract address")
             validationError: popup.validationError
             Keys.onReleased: onKeyReleased()
         }
@@ -115,19 +110,15 @@ StatusModal {
             readOnly: !editable
             anchors.top: addressInput.bottom
             anchors.topMargin: marginBetweenInputs
-            //% "The name of your token..."
-            placeholderText: qsTrId("the-name-of-your-token...")
-            //% "Name"
-            label: qsTrId("name")
+            placeholderText: qsTr("The name of your token...")
+            label: qsTr("Name")
         }
 
         Input {
             id: symbolInput
             readOnly: !editable
-            //% "ABC"
-            placeholderText: qsTrId("abc")
-            //% "Symbol"
-            label: qsTrId("symbol")
+            placeholderText: qsTr("ABC")
+            label: qsTr("Symbol")
             anchors.top: nameInput.bottom
             anchors.topMargin: marginBetweenInputs
             anchors.left: parent.left
@@ -139,8 +130,7 @@ StatusModal {
             id: decimalsInput
             readOnly: !editable
             placeholderText: "18"
-            //% "Decimals"
-            label: qsTrId("decimals")
+            label: qsTr("Decimals")
             text: "18"
             anchors.top: nameInput.bottom
             anchors.topMargin: marginBetweenInputs
@@ -159,8 +149,7 @@ StatusModal {
 
     rightButtons: [
         StatusButton {
-            //% "Add"
-            text: qsTrId("add")
+            text: qsTr("Add")
             enabled: validationError === "" && addressInput.text !== "" && nameInput.text !== "" && symbolInput.text !== "" && decimalsInput.text !== ""
             visible: editable
             onClicked: {

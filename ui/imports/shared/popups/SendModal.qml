@@ -30,8 +30,7 @@ StatusModal {
     property bool launchedFromChat: false
     property MessageDialog sendingError: MessageDialog {
         id: sendingError
-        //% "Error sending the transaction"
-        title: qsTrId("error-sending-the-transaction")
+        title: qsTr("Error sending the transaction")
         icon: StandardIcon.Critical
         standardButtons: StandardButton.Ok
     }
@@ -135,14 +134,12 @@ StatusModal {
                 RowLayout {
                     spacing: 16
                     StatusBaseText {
-                        //% "Send"
-                        text: qsTrId("command-button-send")
+                        text: qsTr("Send")
                         font.pixelSize: 15
                         color: Theme.palette.directColor1
                         Layout.alignment: Qt.AlignVCenter
                     }
                     StatusListItemTag {
-                        //% "No balances active"
                         title: assetSelector.selectedAsset.totalBalance > 0 ? qsTr("Max: ") + (assetSelector.selectedAsset ? d.maxFiatBalance : "0.00") : qsTr("No balances active")
                         closeButtonVisible: false
                         titleText.font.pixelSize: 12
@@ -285,10 +282,8 @@ StatusModal {
                     id: recipientSelector
                     accounts: popup.store.accounts
                     contactsStore: popup.contactsStore
-                    //% To
                     label: qsTr("To")
                     Layout.fillWidth: true
-                    //% "Enter an ENS name or address"
                     input.placeholderText: qsTr("Enter an ENS name or address")
                     input.anchors.leftMargin: 0
                     input.anchors.rightMargin: 0
@@ -351,8 +346,7 @@ StatusModal {
 
                         if (!gasEstimate.success) {
                             
-                            //% "Error estimating gas: %1"
-                            console.warn(qsTrId("error-estimating-gas---1").arg(gasEstimate.error.message))
+                            console.warn(qsTr("Error estimating gas: %1").arg(gasEstimate.error.message))
                             return
                         }
 
@@ -443,8 +437,7 @@ StatusModal {
 
                 if (!response.success) {
                     if (Utils.isInvalidPasswordMessage(response.result)){
-                        //% "Wrong password"
-                        transactionSigner.validationError = qsTrId("wrong-password")
+                        transactionSigner.validationError = qsTr("Wrong password")
                         return
                     }
                     sendingError.text = response.result
@@ -467,12 +460,12 @@ StatusModal {
         //            onTransactionCompleted: {
         //                if (success) {
         //                    //% "Transaction completed"
-        //                    Global.toastMessage.title = qsTrId("transaction-completed")
+        //                    Global.toastMessage.title = qsTr("Wrong password")
         //                    Global.toastMessage.source = Style.svg("check-circle")
         //                    Global.toastMessage.iconColor = Style.current.success
         //                } else {
         //                    //% "Transaction failed"
-        //                    Global.toastMessage.title = qsTrId("ens-registration-failed-title")
+        //                    Global.toastMessage.title = qsTr("Wrong password")
         //                    Global.toastMessage.source = Style.svg("block-icon")
         //                    Global.toastMessage.iconColor = Style.current.danger
         //                }

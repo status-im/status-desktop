@@ -313,11 +313,9 @@ Item {
             }
             sendChatCommand: root.requestAddressForTransaction
             isRequested: false
-            //% "Send"
-            commandTitle: qsTrId("command-button-send")
+            commandTitle: qsTr("Send")
             header.title: commandTitle
-            //% "Request Address"
-            finalButtonLabel: qsTrId("request-address")
+            finalButtonLabel: qsTr("Request Address")
             selectRecipient.selectedRecipient: {
                 parentModule.prepareChatContentModuleForChatId(activeChatId)
                 let chatContentModule = parentModule.getChatContentModule()
@@ -348,11 +346,9 @@ Item {
             }
             sendChatCommand: root.requestTransaction
             isRequested: true
-            //% "Request"
-            commandTitle: qsTrId("wallet-request")
+            commandTitle: qsTr("Request")
             header.title: commandTitle
-            //% "Request"
-            finalButtonLabel: qsTrId("wallet-request")
+            finalButtonLabel: qsTr("Request")
             selectRecipient.selectedRecipient: {
                 parentModule.prepareChatContentModuleForChatId(activeChatId)
                 let chatContentModule = parentModule.getChatContentModule()
@@ -420,11 +416,9 @@ Item {
 //            }
 //            onTransactionCompleted: {
 //                toastMessage.title = !success ?
-//                                     //% "Could not buy Stickerpack"
-//                                     qsTrId("could-not-buy-stickerpack")
+//                                     qsTr("Could not buy Stickerpack")
 //                                     :
-//                                     //% "Stickerpack bought successfully"
-//                                     qsTrId("stickerpack-bought-successfully");
+//                                     qsTr("Stickerpack bought successfully");
 //                if (success) {
 //                    toastMessage.source = Style.svg("check-circle")
 //                    toastMessage.iconColor = Style.current.success

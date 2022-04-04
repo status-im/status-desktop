@@ -59,8 +59,7 @@ Column {
     }
     StyledText {
         id: txtValidationError
-        //% "Not enough ETH for gas"
-        text: qsTrId("wallet-insufficient-gas")
+        text: qsTr("Not enough ETH for gas")
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
         font.pixelSize: 13

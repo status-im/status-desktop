@@ -23,8 +23,7 @@ Column {
     property alias contactListSearch: contactFieldAndList
 
     StatusDescriptionListItem {
-        //% "Share community"
-        title: qsTrId("share-community")
+        title: qsTr("Share community")
         subTitle: `${Constants.communityLinkPrefix}${root.community && root.community.id.substring(0, 4)}...${root.community && root.community.id.substring(root.community.id.length -2)}`
         tooltip.text: qsTr("Copied!")
         icon.name: "copy"

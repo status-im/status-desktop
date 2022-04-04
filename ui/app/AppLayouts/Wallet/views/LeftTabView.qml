@@ -31,8 +31,7 @@ Rectangle {
 
     StyledText {
         id: title
-        //% "Wallet"
-        text: qsTrId("wallet")
+        text: qsTr("Wallet")
         anchors.top: parent.top
         anchors.topMargin: Style.current.padding
         anchors.horizontalCenter: parent.horizontalCenter
@@ -67,8 +66,7 @@ Rectangle {
         StyledText {
             id: totalValue
             color: Style.current.secondaryText
-            //% "Total value"
-            text: qsTrId("wallet-total-value")
+            text: qsTr("Total value")
             anchors.left: walletAmountValue.left
             anchors.top: walletAmountValue.bottom
             font.weight: Font.Medium
@@ -129,8 +127,7 @@ Rectangle {
                     anchors.top: parent.top
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.margins: Style.current.bigPadding
-                    //% "Add account"
-                    text: qsTrId("add-account")
+                    text: qsTr("Add account")
                     onClicked: addAccountModal.open()
                 }
             }
