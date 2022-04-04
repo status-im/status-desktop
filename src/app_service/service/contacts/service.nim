@@ -476,6 +476,8 @@ QtObject:
 
     if self.contacts.hasKey(publicKey):
       self.contacts[publicKey].trustStatus = TrustStatus.Unknown
+      if self.contacts[publicKey].verificationStatus == VerificationStatus.Verified:
+        self.contacts[publicKey].verificationStatus = VerificationStatus.Unverified
 
     self.events.emit(SIGNAL_REMOVED_TRUST_STATUS, TrustArgs(publicKey: publicKey, trustStatus: TrustStatus.Unknown))
 

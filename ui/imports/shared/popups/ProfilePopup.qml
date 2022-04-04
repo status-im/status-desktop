@@ -51,6 +51,7 @@ StatusModal {
     property bool isVerificationSent: false
     property bool isVerified: false
 
+    property bool showRemoveVerified: false
     property bool showVerifyIdentitySection: false
     property bool showVerificationPendingSection: false
     property bool showIdentityVerified: false
@@ -367,7 +368,7 @@ StatusModal {
         },
 
         StatusFlatButton {
-            visible:  !showIdentityVerified && !showVerifyIdentitySection && !showVerificationPendingSection && !userIsBlocked && isAddedContact
+            visible:  !showRemoveVerified && !showIdentityVerified && !showVerifyIdentitySection && !showVerificationPendingSection && !userIsBlocked && isAddedContact
             type: StatusBaseButton.Type.Danger
             text: qsTr('Remove Contact')
             onClicked: {
@@ -393,6 +394,33 @@ StatusModal {
                     popup.contactsStore.markUntrustworthy(userPublicKey);
                     popup.close();
                 }
+            }
+        },
+
+        StatusButton {
+            text: qsTr("Remove ‘Identity Verified’ status")
+            visible: isVerified && !showIdentityVerified && !showRemoveVerified
+            type: StatusBaseButton.Type.Danger
+            onClicked: {
+                showRemoveVerified = true
+            }
+        },
+
+        StatusButton {
+            text: qsTr("No")
+            visible: showRemoveVerified
+            type: StatusBaseButton.Type.Danger
+            onClicked: {
+                showRemoveVerified = false
+            }
+        },
+
+        StatusButton {
+            text: qsTr("Yes")
+            visible: showRemoveVerified
+            onClicked: {
+                popup.contactsStore.removeTrustStatus(userPublicKey);
+                popup.close();
             }
         },
 
@@ -442,6 +470,7 @@ StatusModal {
                 popup.showVerifyIdentitySection = false;
                 stepsListModel.setProperty(2, "stepCompleted", true);
                 popup.contactsStore.verifiedTrusted(userPublicKey);
+                popup.isVerified = true
             }
         },
 
