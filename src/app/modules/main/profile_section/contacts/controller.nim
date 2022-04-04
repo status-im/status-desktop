@@ -45,6 +45,10 @@ proc init*(self: Controller) =
     var args = TrustArgs(e)
     self.delegate.contactTrustStatusChanged(args.publicKey, args.trustStatus)
 
+  self.events.on(SIGNAL_CONTACT_TRUSTED) do(e: Args):
+    var args = TrustArgs(e)
+    self.delegate.contactTrustStatusChanged(args.publicKey, args.trustStatus)
+
   self.events.on(SIGNAL_REMOVED_TRUST_STATUS) do(e: Args):
     var args = TrustArgs(e)
     self.delegate.contactTrustStatusChanged(args.publicKey, args.trustStatus)
@@ -83,3 +87,21 @@ method markUntrustworthy*(self: Controller, publicKey: string): void =
 
 method removeTrustStatus*(self: Controller, publicKey: string): void =
   self.contactsService.removeTrustStatus(publicKey)
+
+method getVerificationRequestSentTo*(self: Controller, publicKey: string): VerificationRequest =
+  self.contactsService.getVerificationRequestSentTo(publicKey)
+
+method getVerificationRequestFrom*(self: Controller, publicKey: string): VerificationRequest =
+  self.contactsService.getVerificationRequestFrom(publicKey)
+
+method sendVerificationRequest*(self: Controller, publicKey: string, challenge: string) =
+  self.contactsService.sendVerificationRequest(publicKey, challenge)
+
+method cancelVerificationRequest*(self: Controller, publicKey: string) =
+  self.contactsService.cancelVerificationRequest(publicKey)
+
+method verifiedTrusted*(self: Controller, publicKey: string): void =
+  self.contactsService.verifiedTrusted(publicKey)
+
+method verifiedUntrustworthy*(self: Controller, publicKey: string): void =
+  self.contactsService.verifiedUntrustworthy(publicKey)

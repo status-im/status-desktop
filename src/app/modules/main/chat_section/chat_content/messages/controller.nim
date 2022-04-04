@@ -115,6 +115,10 @@ proc init*(self: Controller) =
     var args = TrustArgs(e)
     self.delegate.updateContactDetails(args.publicKey)
 
+  self.events.on(SIGNAL_CONTACT_TRUSTED) do(e: Args):
+    var args = TrustArgs(e)
+    self.delegate.updateContactDetails(args.publicKey)
+
   self.events.on(SIGNAL_REMOVED_TRUST_STATUS) do(e: Args):
     var args = TrustArgs(e)
     self.delegate.updateContactDetails(args.publicKey)

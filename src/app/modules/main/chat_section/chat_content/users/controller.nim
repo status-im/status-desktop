@@ -78,6 +78,10 @@ proc init*(self: Controller) =
     self.events.on(SIGNAL_CONTACT_UNTRUSTWORTHY) do(e: Args):
       var args = TrustArgs(e)
       self.delegate.contactUpdated(args.publicKey)
+    
+    self.events.on(SIGNAL_CONTACT_TRUSTED) do(e: Args):
+      var args = TrustArgs(e)
+      self.delegate.contactUpdated(args.publicKey)
         
     self.events.on(SIGNAL_REMOVED_TRUST_STATUS) do(e: Args):
       var args = TrustArgs(e)

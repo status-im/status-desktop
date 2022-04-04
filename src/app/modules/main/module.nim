@@ -645,6 +645,8 @@ method getContactDetailsAsJson*[T](self: Module[T], publicKey: string): string =
     "isSyncing":contact.isSyncing,
     "removed":contact.removed,
     "trustStatus": contact.trustStatus.int,
+    "verificationStatus": contact.verificationStatus.int,
+    "hasAddedUs": contact.hasAddedUs
   }
   return $jsonObj
 

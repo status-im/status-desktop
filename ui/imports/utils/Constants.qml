@@ -97,6 +97,12 @@ QtObject {
         readonly property int untrustworthy: 2
     }
 
+    readonly property QtObject verificationStatus: QtObject {
+        readonly property int unverified: 0
+        readonly property int verifying: 1
+        readonly property int verified: 2
+    }
+
     readonly property int communityImported: 0
     readonly property int communityImportingInProgress: 1
     readonly property int communityImportingError: 2

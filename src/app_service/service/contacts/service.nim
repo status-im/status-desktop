@@ -58,6 +58,10 @@ const SIGNAL_CONTACT_UPDATED* = "contactUpdated"
 const SIGNAL_LOGGEDIN_USER_IMAGE_CHANGED* = "loggedInUserImageChanged"
 const SIGNAL_REMOVED_TRUST_STATUS* = "removedTrustStatus"
 const SIGNAL_CONTACT_UNTRUSTWORTHY* = "contactUntrustworthy"
+const SIGNAL_CONTACT_TRUSTED* = "contactTrusted"
+const SIGNAL_CONTACT_VERIFIED* = "contactVerified"
+const SIGNAL_CONTACT_VERIFICATION_SENT* = "contactVerificationRequestSent"
+const SIGNAL_CONTACT_VERIFICATION_CANCELLED* = "contactVerificationRequestCancelled"
 
 QtObject:
   type Service* = ref object of QObject
@@ -435,6 +439,34 @@ QtObject:
 
     self.events.emit(SIGNAL_CONTACT_UNTRUSTWORTHY, TrustArgs(publicKey: publicKey, trustStatus: TrustStatus.Untrustworthy))
 
+  proc verifiedTrusted*(self: Service, publicKey: string) =
+    let response = status_contacts.verifiedTrusted(publicKey)
+    if(not response.error.isNil):
+      let msg = response.error.message
+      error "error confirming identity ", msg
+      return
+
+    if self.contacts.hasKey(publicKey):
+      self.contacts[publicKey].trustStatus = TrustStatus.Trusted
+      self.contacts[publicKey].verificationStatus = VerificationStatus.Verified
+
+    self.events.emit(SIGNAL_CONTACT_TRUSTED, TrustArgs(publicKey: publicKey, trustStatus: TrustStatus.Trusted))
+    self.events.emit(SIGNAL_CONTACT_VERIFIED, ContactArgs(contactId: publicKey))
+
+  proc verifiedUntrustworthy*(self: Service, publicKey: string) =
+    let response = status_contacts.verifiedUntrustworthy(publicKey)
+    if(not response.error.isNil):
+      let msg = response.error.message
+      error "error confirming identity ", msg
+      return
+
+    if self.contacts.hasKey(publicKey):
+      self.contacts[publicKey].trustStatus = TrustStatus.Untrustworthy
+      self.contacts[publicKey].verificationStatus = VerificationStatus.Verified
+
+    self.events.emit(SIGNAL_CONTACT_UNTRUSTWORTHY, TrustArgs(publicKey: publicKey, trustStatus: TrustStatus.Untrustworthy))
+    self.events.emit(SIGNAL_CONTACT_VERIFIED, ContactArgs(contactId: publicKey))
+
   proc removeTrustStatus*(self: Service, publicKey: string) =
     let response = status_contacts.removeTrustStatus(publicKey)
     if(not response.error.isNil):
@@ -447,8 +479,24 @@ QtObject:
 
     self.events.emit(SIGNAL_REMOVED_TRUST_STATUS, TrustArgs(publicKey: publicKey, trustStatus: TrustStatus.Unknown))
 
-
-#[
+  proc getVerificationRequestSentTo*(self: Service, publicKey: string): VerificationRequest =
+    try:
+      let response = status_contacts.getVerificationRequestSentTo(publicKey)
+      return response.result.toVerificationRequest()
+    except Exception as e:
+      let errDesription = e.msg
+      error "error obtaining verification request", errDesription
+      return
+    
+  proc getVerificationRequestFrom*(self: Service, publicKey: string): VerificationRequest =
+    try:
+      let response = status_contacts.getVerificationRequestFrom(publicKey)
+      return response.result.toVerificationRequest()
+    except Exception as e:
+      let errDesription = e.msg
+      error "error obtaining verification request", errDesription
+      return
+    
   proc sendVerificationRequest*(self: Service, publicKey: string, challenge: string) =
     let response = status_contacts.sendVerificationRequest(publicKey, challenge)
     if(not response.error.isNil):
@@ -457,12 +505,25 @@ QtObject:
       return
 
     var contact = self.getContactById(publicKey)
-    contact.verificationStatus = RequestStatus.Pending
+    contact.verificationStatus = VerificationStatus.Verifying
     self.saveContact(contact)
     
-    self.events.emit(SIGNAL_CONTACT_VERIFICATION_SENT, TrustArgs(publicKey: publicKey, trustLevel: TrustStatus.Untrustworthy))
+    self.events.emit(SIGNAL_CONTACT_VERIFICATION_SENT, ContactArgs(contactId: publicKey))
 
+  proc cancelVerificationRequest*(self: Service, publicKey: string) =
+    let response = status_contacts.cancelVerificationRequest(publicKey)
+    if(not response.error.isNil):
+      let msg = response.error.message
+      error "error sending contact verification request", msg
+      return
 
+    var contact = self.getContactById(publicKey)
+    contact.verificationStatus = VerificationStatus.Unverified
+    self.saveContact(contact)
+    
+    self.events.emit(SIGNAL_CONTACT_VERIFICATION_CANCELLED, ContactArgs(contactId: publicKey))
+
+#[
   proc acceptVerificationRequest*(self: Service, publicKey: string, response: string) =
     discard
 

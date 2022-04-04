@@ -14,3 +14,4 @@ UserStatusContextMenu 1.0 UserStatusContextMenu.qml
 SignTransactionModal 1.0 SignTransactionModal.qml
 SelectAccountModal 1.0 SelectAccountModal.qml
 ProfilePopup 1.0 ProfilePopup.qml
+DisplayNamePopup 1.0 DisplayNamePopup.qml

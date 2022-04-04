@@ -33,7 +33,7 @@ StatusModal {
             Input {
                 id: displayNameInput
                 placeholderText: "DisplayName"
-                text: root.profileStore.displayName
+                text: popup.profileStore.displayName
                 //validationError: popup.nicknameTooLong ? qsTrId("your-nickname-is-too-long") : ""
             }
         }

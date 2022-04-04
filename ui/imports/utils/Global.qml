@@ -30,6 +30,7 @@ QtObject {
 
     signal openProfilePopupRequested(string publicKey, var parentPopup, bool openNicknamePopup)
     signal openChangeProfilePicPopup()
+    signal openEditDisplayNamePopup()
 
     function openProfilePopup(publicKey, parentPopup, openNicknamePopup){
         openProfilePopupRequested(publicKey, parentPopup, openNicknamePopup);

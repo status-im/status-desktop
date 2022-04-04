@@ -600,7 +600,8 @@ QtObject {
                 requestReceived: false,
                 isSyncing: false,
                 removed: false,
-                trustStatus: Constants.trustStatus.unknown
+                trustStatus: Constants.trustStatus.unknown,
+                verificationStatus: Constants.verificationStatus.unverified
             }
         }
     }

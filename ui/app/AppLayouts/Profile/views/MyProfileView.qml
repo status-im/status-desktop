@@ -45,7 +45,7 @@ ColumnLayout {
 
         StatusButton {
             text: "Edit"
-            onClicked: Global.openPopup(displayNamePopupComponent)
+            onClicked: Global.openEditDisplayNamePopup()
         }
 
         Item {
@@ -152,16 +152,6 @@ ColumnLayout {
         iconButton.onClicked: {
             root.profileStore.copyToClipboard(Constants.userLinkPrefix + (root.profileStore.ensName !== "" ? root.profileStore.ensName : root.profileStore.pubkey))
             tooltip.visible = !tooltip.visible
-        }
-    }
-
-    Component {
-        id: displayNamePopupComponent
-        DisplayNamePopup {
-            profileStore: root.profileStore
-            onClosed: {
-                destroy()
-            }
         }
     }
 

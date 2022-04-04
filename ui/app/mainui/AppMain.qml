@@ -90,6 +90,10 @@ Item {
             var popup = backupSeedModalComponent.createObject(appMain)
             popup.open()
         }
+        onOpenEditDisplayNamePopup: {
+            var popup = displayNamePopupComponent.createObject(appMain)
+            popup.open()
+        }
     }
 
     function changeAppSectionBySectionId(sectionId) {
@@ -131,6 +135,13 @@ Item {
     property Component backupSeedModalComponent: BackupSeedModal {
         id: backupSeedModal
         privacyStore: appMain.rootStore.profileSectionStore.privacyStore
+    }
+
+    property Component displayNamePopupComponent: DisplayNamePopup {
+        profileStore: appMain.rootStore.profileSectionStore.profileStore
+        onClosed: {
+            destroy()
+        }
     }
 
     Component {

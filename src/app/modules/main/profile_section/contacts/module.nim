@@ -1,6 +1,6 @@
 import NimQml, chronicles
 
-import io_interface, view, controller
+import io_interface, view, controller, json
 import ../../../shared_models/contacts_item
 import ../../../shared_models/contacts_model
 import ../io_interface as delegate_interface
@@ -126,3 +126,37 @@ method markUntrustworthy*(self: Module, publicKey: string): void =
 
 method removeTrustStatus*(self: Module, publicKey: string): void =
   self.controller.removeTrustStatus(publicKey)
+
+method getSentVerificationDetailsAsJson*(self: Module, publicKey: string): string =
+  let verificationRequest = self.controller.getVerificationRequestSentTo(publicKey)
+  let jsonObj = %* {
+    "challenge": verificationRequest.challenge,
+    "response": verificationRequest.response,
+    "requestedAt": verificationRequest.requestedAt,
+    "requestStatus": verificationRequest.status.int,
+    "repliedAt": verificationRequest.repliedAt
+  }
+  return $jsonObj
+
+method getVerificationDetailsFromAsJson*(self: Module, publicKey: string): string =
+  let verificationRequest = self.controller.getVerificationRequestFrom(publicKey)
+  let jsonObj = %* {
+    "challenge": verificationRequest.challenge,
+    "response": verificationRequest.response,
+    "requestedAt": verificationRequest.requestedAt,
+    "requestStatus": verificationRequest.status.int,
+    "repliedAt": verificationRequest.repliedAt
+  }
+  return $jsonObj
+
+method sendVerificationRequest*(self: Module, publicKey: string, challenge: string) =
+  self.controller.sendVerificationRequest(publicKey, challenge)
+
+method cancelVerificationRequest*(self: Module, publicKey: string) =
+  self.controller.cancelVerificationRequest(publicKey)
+
+method verifiedTrusted*(self: Module, publicKey: string): void =
+  self.controller.verifiedTrusted(publicKey)
+
+method verifiedUntrustworthy*(self: Module, publicKey: string): void =
+  self.controller.verifiedUntrustworthy(publicKey)

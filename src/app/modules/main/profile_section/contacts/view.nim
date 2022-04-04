@@ -66,8 +66,26 @@ QtObject:
   proc removeContact*(self: View, publicKey: string) {.slot.} =
     self.delegate.removeContact(publicKey)
 
-  proc markUntrustworthy*(self: View, publicKey: string): void {.slot.} =
+  proc markUntrustworthy*(self: View, publicKey: string) {.slot.} =
     self.delegate.markUntrustworthy(publicKey)
 
-  proc removeTrustStatus*(self: View, publicKey: string): void {.slot.} =
+  proc removeTrustStatus*(self: View, publicKey: string) {.slot.} =
     self.delegate.removeTrustStatus(publicKey)
+
+  proc getSentVerificationDetailsAsJson(self: View, publicKey: string): string {.slot.} =
+    return self.delegate.getSentVerificationDetailsAsJson(publicKey)
+
+  proc getVerificationDetailsFromAsJson(self: View, publicKey: string): string {.slot.} =
+    return self.delegate.getVerificationDetailsFromAsJson(publicKey)
+
+  proc sendVerificationRequest*(self: View, publicKey: string, challenge: string) {.slot.} =
+    self.delegate.sendVerificationRequest(publicKey, challenge)
+
+  proc cancelVerificationRequest*(self: View, publicKey: string) {.slot.} =
+    self.delegate.cancelVerificationRequest(publicKey)
+
+  proc verifiedTrusted*(self: View, publicKey: string) {.slot.} =
+    self.delegate.verifiedTrusted(publicKey)
+
+  proc verifiedUntrustworthy*(self: View, publicKey: string) {.slot.} =
+    self.delegate.verifiedUntrustworthy(publicKey)

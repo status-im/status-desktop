@@ -15,6 +15,20 @@ type TrustStatus* {.pure.}= enum
   Trusted = 1,
   Untrustworthy = 2
 
+type  VerificationStatus* {.pure.}= enum
+  Unverified = 0
+  Verifying = 1
+  Verified = 2
+
+type VerificationRequest* = object
+  fromID*: string
+  toID*: string
+  challenge*: string
+  requestedAt*: int64
+  response*: string
+  repliedAt*: int64
+  status*: VerificationStatus
+
 type ContactsDto* = object
   id*: string
   name*: string
@@ -32,6 +46,7 @@ type ContactsDto* = object
   isSyncing*: bool
   removed*: bool
   trustStatus*: TrustStatus
+  verificationStatus*: VerificationStatus
 
 proc `$`(self: Images): string =
   result = fmt"""Images(
@@ -58,7 +73,8 @@ proc `$`*(self: ContactsDto): string =
     hasAddedUs:{self.hasAddedUs},
     isSyncing:{self.isSyncing},
     removed:{self.removed},
-    trustStatus:{self.trustStatus}
+    trustStatus:{self.trustStatus},
+    verificationStatus:{self.verificationStatus},
     )"""
 
 proc toImages(jsonObj: JsonNode): Images =
@@ -77,6 +93,23 @@ proc toTrustStatus*(value: int): TrustStatus =
   if value >= ord(low(TrustStatus)) or value <= ord(high(TrustStatus)):
       result = TrustStatus(value)
   
+proc toVerificationStatus*(value: int): VerificationStatus =
+  result = VerificationStatus.Unverified
+  if value >= ord(low(VerificationStatus)) or value <= ord(high(VerificationStatus)):
+      result = VerificationStatus(value)
+  
+proc toVerificationRequest*(jsonObj: JsonNode): VerificationRequest =
+  result = VerificationRequest()
+  discard jsonObj.getProp("from", result.fromID)
+  discard jsonObj.getProp("to", result.toID)
+  discard jsonObj.getProp("challenge", result.challenge)
+  discard jsonObj.getProp("response", result.response)
+  discard jsonObj.getProp("requested_at", result.requestedAt)
+  discard jsonObj.getProp("replied_at", result.repliedAt)
+  var verificationStatusInt: int
+  discard jsonObj.getProp("verification_status", verificationStatusInt)
+  result.status = verificationStatusInt.toVerificationStatus()
+
 proc toContactsDto*(jsonObj: JsonNode): ContactsDto =
   result = ContactsDto()
   discard jsonObj.getProp("id", result.id)
@@ -94,6 +127,10 @@ proc toContactsDto*(jsonObj: JsonNode): ContactsDto =
   discard jsonObj.getProp("trustStatus", trustStatusInt)
   result.trustStatus = trustStatusInt.toTrustStatus()
   
+  var verificationStatusInt: int
+  discard jsonObj.getProp("verificationStatus", verificationStatusInt)
+  result.verificationStatus = verificationStatusInt.toVerificationStatus()
+
   var imageObj: JsonNode
   if(jsonObj.getProp("images", imageObj)):
     result.image = toImages(imageObj)

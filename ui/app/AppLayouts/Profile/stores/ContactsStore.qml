@@ -75,4 +75,30 @@ QtObject {
     function removeTrustStatus(pubKey) {
         root.contactsModule.removeTrustStatus(pubKey)
     }
+
+    function sendVerificationRequest(pubKey, challenge) {
+        root.contactsModule.sendVerificationRequest(pubKey, challenge);
+    }
+
+    function cancelVerificationRequest(pubKey) {
+        root.contactsModule.cancelVerificationRequest(pubKey);
+    }
+
+    function getVerificationDetailsFromAsJson(pubKey) {
+        let resp = root.contactsModule.getVerificationDetailsFromAsJson(pubKey);
+        return JSON.parse(resp);
+    }
+
+    function getSentVerificationDetailsAsJson(pubKey) {
+        let resp = root.contactsModule.getSentVerificationDetailsAsJson(pubKey);
+        return JSON.parse(resp);
+    }
+
+    function verifiedTrusted(pubKey) {
+        root.contactsModule.verifiedTrusted(pubKey);
+    }
+
+    function verifiedUntrustworthy(pubKey) {
+        root.contactsModule.verifiedUntrustworthy(pubKey);
+    }
 }
