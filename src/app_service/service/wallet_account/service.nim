@@ -317,8 +317,8 @@ proc updateCurrency*(self: Service, newCurrency: string) =
   self.refreshBalances()
   self.events.emit(SIGNAL_WALLET_ACCOUNT_CURRENCY_UPDATED, CurrencyUpdated())
 
-proc toggleTokenVisible*(self: Service, chainId: int, symbol: string) =
-  self.tokenService.toggleVisible(chainId, symbol)
+proc toggleTokenVisible*(self: Service, chainId: int, address: string) =
+  self.tokenService.toggleVisible(chainId, address)
   self.refreshBalances()
   self.events.emit(SIGNAL_WALLET_ACCOUNT_TOKEN_VISIBILITY_UPDATED, TokenVisibilityToggled())
 

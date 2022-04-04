@@ -77,8 +77,8 @@ method viewDidLoad*(self: Module) =
 method addCustomToken*(self: Module, chainId: int, address: string, name: string, symbol: string, decimals: int) =
   self.controller.addCustomToken(chainId, address, name, symbol, decimals)
         
-method toggleVisible*(self: Module, chainId: int, symbol: string) =
-  self.controller.toggleVisible(chainId, symbol)
+method toggleVisible*(self: Module, chainId: int, address: string) =
+  self.controller.toggleVisible(chainId, address)
 
 method removeCustomToken*(self: Module, chainId: int, address: string) =
   self.controller.removeCustomToken(chainId, address)

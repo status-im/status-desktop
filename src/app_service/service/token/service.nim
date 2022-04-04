@@ -5,7 +5,6 @@ import web3/ethtypes
 from web3/conversions import `$`
 import ../../../backend/backend as backend
 
-import ../settings/service as settings_service
 import ../network/service as network_service
 
 import ../../../app/core/eventemitter
@@ -19,7 +18,6 @@ logScope:
 
 include async_tasks
 
-const DEFAULT_VISIBLE_TOKENS = {1: @["SNT"], 3: @["STT"], 4: @["STT"]}.toTable()
 # Signals which may be emitted by this service:
 const SIGNAL_TOKEN_DETAILS_LOADED* = "tokenDetailsLoaded"
 const SIGNAL_TOKEN_LIST_RELOADED* = "tokenListReloaded"
@@ -44,7 +42,6 @@ QtObject:
   type Service* = ref object of QObject
     events: EventEmitter
     threadpool: ThreadPool
-    settingsService: settings_service.Service
     networkService: network_service.Service
     tokens: Table[NetworkDto, seq[TokenDto]]
 
@@ -54,39 +51,34 @@ QtObject:
   proc newService*(
     events: EventEmitter,
     threadpool: ThreadPool,
-    settingsService: settings_service.Service,
     networkService: network_service.Service,
   ): Service =
     new(result, delete)
     result.QObject.setup
     result.events = events
     result.threadpool = threadpool
-    result.settingsService = settingsService
     result.networkService = networkService
     result.tokens = initTable[NetworkDto, seq[TokenDto]]()
 
   proc init*(self: Service) =
     try:
       self.tokens = initTable[NetworkDto, seq[TokenDto]]()
-      var activeTokenSymbols = self.settingsService.getWalletVisibleTokens()
       let networks = self.networkService.getEnabledNetworks()
+      let chainIds = networks.map(n => n.chainId)
+      let visibleTokens = backend.getVisibleTokens(chainIds).result
       let responseCustomTokens = backend.getCustomTokens()
 
       for network in networks:
-        if not activeTokenSymbols.hasKey(network.chainId) and DEFAULT_VISIBLE_TOKENS.hasKey(network.chainId):
-          activeTokenSymbols[network.chainId] = DEFAULT_VISIBLE_TOKENS[network.chainId]
-        else:
-          activeTokenSymbols[network.chainId] = @[]
-
+        let activeTokenSymbols = visibleTokens[$network.chainId].getElems().map(n => n["symbol"].getStr)
         let responseTokens = backend.getTokens(network.chainId)
         let default_tokens = map(
           responseTokens.result.getElems(), 
-          proc(x: JsonNode): TokenDto = x.toTokenDto(activeTokenSymbols[network.chainId], hasIcon=true, isCustom=false)
+          proc(x: JsonNode): TokenDto = x.toTokenDto(activeTokenSymbols, hasIcon=true, isCustom=false)
         )
 
         self.tokens[network] = concat(
           default_tokens,
-          map(responseCustomTokens.result.getElems(), proc(x: JsonNode): TokenDto = x.toTokenDto(activeTokenSymbols[network.chainId]))
+          map(responseCustomTokens.result.getElems(), proc(x: JsonNode): TokenDto = x.toTokenDto(activeTokenSymbols))
         ).filter(
           proc(x: TokenDto): bool = x.chainId == network.chainId
         )
@@ -140,21 +132,17 @@ QtObject:
     self.tokens[network].add(token)
     self.events.emit("token/customTokenAdded", CustomTokenAdded(token: token))
 
-  proc toggleVisible*(self: Service, chainId: int, symbol: string) =
+  proc toggleVisible*(self: Service, chainId: int, address: string) =
+    discard backend.toggleVisibleToken(chainId, address)
+    
     let network = self.networkService.getNetwork(chainId)
     var tokenChanged = self.tokens[network][0]
     for token in self.tokens[network]:
-      if token.symbol == symbol:
+      if token.addressAsString() == address:
         token.isVisible = not token.isVisible
         tokenChanged = token
         break
       
-    var visibleSymbols = initTable[int, seq[string]]()
-    for network, tokens in self.tokens.pairs:
-      let symbols = tokens.filter(t => t.isVisible).map(t => t.symbol)
-      visibleSymbols[network.chainId] = symbols
-
-    discard self.settingsService.saveWalletVisibleTokens(visibleSymbols)
     self.events.emit("token/visibilityToggled", VisibilityToggled(token: tokenChanged))
 
   proc removeCustomToken*(self: Service, chainId: int, address: string) =

@@ -96,6 +96,13 @@ rpc(discoverToken, "wallet"):
 rpc(getPendingTransactions, "wallet"):
   discard
 
+rpc(getVisibleTokens, "wallet"):
+  chainIds: seq[int]
+
+rpc(toggleVisibleToken, "wallet"):
+  chainId: int
+  address: string
+
 rpc(fetchPrices, "wallet"):
   symbols: seq[string]
   currency: string

@@ -39,7 +39,7 @@ StatusModal {
         customTokenList: walletStore.customTokenList
 
         onToggleVisibleClicked: {
-            walletStore.toggleVisible(chainId, symbol)
+            walletStore.toggleVisible(chainId, address)
         }
         onRemoveCustomTokenTriggered: {
             walletStore.removeCustomToken(chainId, address)

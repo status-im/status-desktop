@@ -16,7 +16,7 @@ Item {
 
     property var defaultTokenList
     property var customTokenList
-    signal toggleVisibleClicked(int chainId, string symbol)
+    signal toggleVisibleClicked(int chainId, string address)
     signal removeCustomTokenTriggered(int chainId, string address)
     signal showTokenDetailsTriggered(int chainId, string address, string name, string symbol, string decimals)
 
@@ -32,7 +32,7 @@ Item {
             components: [StatusCheckBox {
                 id: assetCheck
                 checked: model.isVisible
-                onClicked: toggleVisibleClicked(chainId, symbol)
+                onClicked: toggleVisibleClicked(chainId, address)
             }]
             visible: symbol && (searchBox.text == "" || name.toLowerCase().includes(searchBox.text.toLowerCase()) || symbol.toLowerCase().includes(searchBox.text.toLowerCase()))
             MouseArea {
@@ -44,13 +44,13 @@ Item {
                         return contextMenu.popup(mouseX, mouseY)
                     }
                     assetCheck.checked = !assetCheck.checked
-                    toggleVisibleClicked(chainId, symbol)
+                    toggleVisibleClicked(chainId, address)
                 }
                 
                 StatusPopupMenu {
                     id: contextMenu
                     Action {
-                        icon.source: Style.svg("make-admin")
+                        icon.name: "admin"
                         //% "Token details"
                         text: qsTrId("token-details")
                         onTriggered: {
@@ -58,7 +58,7 @@ Item {
                         }
                     }
                     Action {
-                        icon.source: Style.svg("remove-from-group")
+                        icon.name: "remove"
                         icon.color: Style.current.red
                         enabled: isCustom
                         //% "Remove token"
