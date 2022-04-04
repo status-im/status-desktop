@@ -86,7 +86,7 @@ Use `Layout.preferredWidth` and `Layout.preferredHeight` attached properties to 
 
 Follow [Qt's recommendations](https://doc.qt.io/qt-5/qtqml-documents-scope.html) if appropriate
 
-- Consider dynamic scoping. Component `id`s are not accessible outside the component's scope. If required, the component can expose the instance through properties binding. E.g. `readonly property ComponentType exposedComponent: privateInstanceId`
+- Avoid dynamic scoping in out-of-line components, see more: https://doc.qt.io/qt-5/qtqml-documents-scope.html#component-instance-hierarchy
   - Example
 
     ```qml
@@ -100,6 +100,8 @@ Follow [Qt's recommendations](https://doc.qt.io/qt-5/qtqml-documents-scope.html)
       }
     }
     ```
+
+- Component `id`s are not accessible outside the component's scope. If required, the component can expose the instance through properties binding. E.g. `readonly property ComponentType exposedComponent: privateInstanceId`
 
 - If in doubt, explicitly use an instance variable to access properties
 - If the scope is clear and there is no ambiguity, use the property directly for readability
