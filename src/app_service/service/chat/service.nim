@@ -454,7 +454,7 @@ QtObject:
 
   proc makeAdmin*(self: Service, communityID: string, chatID: string, memberId: string) =
     try:
-      let response = status_group_chat.makeAdmin(communityID, chatId, memberId)
+      discard status_group_chat.makeAdmin(communityID, chatId, memberId)
       for member in self.chats[chatId].members.mitems:
         if (member.id == memberId):
           member.admin = true
@@ -492,6 +492,9 @@ QtObject:
     try:
       var realChatId = chatId.replace(communityID, "")
       let response = status_chat.getMembers(communityID, realChatId)
+      if response.result.kind == JNull:
+        # No members. Could be a public chat
+        return
       let myPubkey = singletonInstance.userProfile.getPubKey()
       result = @[]
       for (id, memberObj) in response.result.pairs:
