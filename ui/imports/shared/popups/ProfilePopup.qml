@@ -229,7 +229,7 @@ StatusModal {
                 wrapMode: Text.WordWrap
             }
 
-             StyledText {
+            StyledText {
                 id: confirmUntrustworthyLbl
                 visible: showIdentityVerifiedUntrustworthy
                 text: qsTr("You have marked %1 as Untrustworthy. From now on this Untrustworthy emblem will always be displayed alongside %1’s nickname.").arg(userIsEnsVerified ? userEnsName : userDisplayName)
@@ -455,6 +455,12 @@ StatusModal {
             visible: showVerifyIdentitySection && isMutualContact  && !isVerificationSent
             onClicked: {
                 popup.contactsStore.sendVerificationRequest(userPublicKey, challengeTxt.input.text);
+                reqSentToastMsg.open = true
+                Global.toastMessage.title = qsTr("Verification request sent");
+                Global.toastMessage.iconColor = Style.current.success;
+                Global.toastMessage.source = Style.svg("check-circle");
+                Global.toastMessage.displayLink = false;
+                Global.toastMessage.open()
                 popup.close();
             }
         },
