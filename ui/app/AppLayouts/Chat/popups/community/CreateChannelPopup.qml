@@ -23,7 +23,6 @@ StatusModal {
     property string channelColor: ""
     property bool emojiPopupOpened: false
     property var emojiPopup: null
-    readonly property string emojiRegexStr: 'alt="(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])"'
     readonly property var communityColorValidator: Utils.Validate.NoEmpty
                                                    | Utils.Validate.TextHexColor
 
@@ -279,12 +278,7 @@ StatusModal {
                     return
                 }
                 let error = "";
-                let emoji =  popup.contentItem.channelName.input.icon.emoji
-                // Extract the UTF emoji from the `img` tag so that we only store the emoi and not the full image
-                const found = RegExp(emojiRegexStr, 'g').exec(emoji);
-                if (found) {
-                    emoji = found[1]
-                }
+                let emoji =  StatusQUtils.Emoji.deparseFromParse(popup.contentItem.channelName.input.icon.emoji)
 
                 if (!isEdit) {
                     //popup.contentItem.communityColor.color.toString().toUpperCase()
