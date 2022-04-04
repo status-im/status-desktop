@@ -238,14 +238,16 @@ proc getOneToOneChatNameAndImage*(self: Controller, chatId: string):
 proc createPublicChat*(self: Controller, chatId: string) =
   let response = self.chatService.createPublicChat(chatId)
   if(response.success):
-    self.delegate.addNewChat(response.chatDto, false, self.events, self.settingsService, self.contactService, self.chatService,
-    self.communityService, self.messageService, self.gifService, self.mailserversService)
+    self.delegate.addChatIfDontExist(response.chatDto, false, self.events, self.settingsService,
+      self.contactService, self.chatService, self.communityService, self.messageService,
+      self.gifService, self.mailserversService)
 
 proc createOneToOneChat*(self: Controller, communityID: string, chatId: string, ensName: string) =
   let response = self.chatService.createOneToOneChat(communityID, chatId, ensName)
   if(response.success):
-    self.delegate.addNewChat(response.chatDto, false, self.events, self.settingsService, self.contactService, self.chatService,
-    self.communityService, self.messageService, self.gifService, self.mailserversService)
+    self.delegate.addChatIfDontExist(response.chatDto, false, self.events, self.settingsService,
+      self.contactService, self.chatService, self.communityService, self.messageService,
+      self.gifService, self.mailserversService)
 
 proc switchToOrCreateOneToOneChat*(self: Controller, chatId: string, ensName: string) =
   self.chatService.switchToOrCreateOneToOneChat(chatId, ensName)
@@ -298,8 +300,9 @@ proc makeAdmin*(self: Controller, communityID: string, chatId: string, pubKey: s
 proc createGroupChat*(self: Controller, communityID: string, groupName: string, pubKeys: seq[string]) =
   let response = self.chatService.createGroupChat(communityID, groupName, pubKeys)
   if(response.success):
-    self.delegate.addNewChat(response.chatDto, false, self.events, self.settingsService, self.contactService, self.chatService,
-    self.communityService, self.messageService, self.gifService, self.mailserversService)
+    self.delegate.addChatIfDontExist(response.chatDto, false, self.events, self.settingsService,
+      self.contactService, self.chatService, self.communityService, self.messageService,
+      self.gifService, self.mailserversService)
 
 proc confirmJoiningGroup*(self: Controller, communityID: string, chatID: string) =
   self.chatService.confirmJoiningGroup(communityID, self.getActiveChatId())
@@ -307,8 +310,9 @@ proc confirmJoiningGroup*(self: Controller, communityID: string, chatID: string)
 proc joinGroupChatFromInvitation*(self: Controller, groupName: string, chatId: string, adminPK: string) =
   let response = self.chatService.createGroupChatFromInvitation(groupName, chatId, adminPK)
   if(response.success):
-    self.delegate.addNewChat(response.chatDto, false, self.events, self.settingsService, self.contactService, self.chatService,
-    self.communityService, self.messageService, self.gifService, self.mailserversService)
+    self.delegate.addChatIfDontExist(response.chatDto, false, self.events, self.settingsService,
+      self.contactService, self.chatService, self.communityService, self.messageService,
+      self.gifService, self.mailserversService)
 
 proc acceptRequestToJoinCommunity*(self: Controller, requestId: string) =
   self.communityService.acceptRequestToJoinCommunity(self.sectionId, requestId)
