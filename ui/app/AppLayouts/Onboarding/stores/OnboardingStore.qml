@@ -69,7 +69,7 @@ QtObject {
     }
 
     function validateMnemonic(text) {
-        root.onboardingModuleInst.validateMnemonic(text);
+        return root.onboardingModuleInst.validateMnemonic(text);
     }
 
     property ListModel accountsSampleData: ListModel {
