@@ -29,6 +29,7 @@ import ../../app_service/service/devices/service as devices_service
 import ../../app_service/service/mailservers/service as mailservers_service
 import ../../app_service/service/gif/service as gif_service
 import ../../app_service/service/ens/service as ens_service
+import ../../app_service/service/wallet/service as wallet_service
 
 import ../modules/startup/module as startup_module
 import ../modules/main/module as main_module
@@ -81,6 +82,7 @@ type
     nodeService: node_service.Service
     gifService: gif_service.Service
     ensService: ens_service.Service
+    walletService: wallet_service.Service
 
     # Modules
     startupModule: startup_module.AccessInterface
@@ -176,6 +178,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     result.settingsService, result.walletAccountService, result.transactionService,
     result.networkService, result.tokenService)
   result.providerService = provider_service.newService(statusFoundation.events, statusFoundation.threadpool, result.ensService)
+  result.walletService = wallet_service.newService(statusFoundation.events, statusFoundation.threadpool, result.settingsService, result.networkService)
 
   # Modules
   result.startupModule = startup_module.newModule[AppController](
@@ -265,6 +268,7 @@ proc delete*(self: AppController) =
   self.generalService.delete
   self.ensService.delete
   self.gifService.delete
+  self.walletService.delete
 
 proc startupDidLoad*(self: AppController) =
   singletonInstance.engine.setRootContextProperty("localAppSettings", self.localAppSettingsVariant)
@@ -323,6 +327,7 @@ proc load(self: AppController) =
   self.networkService.init()
   self.tokenService.init()
   self.walletAccountService.init()
+  self.walletService.init()
 
   # load main module
   self.mainModule.load(

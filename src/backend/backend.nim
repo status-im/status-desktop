@@ -43,6 +43,12 @@ type
 rpc(clientVersion, "web3"):
   discard
 
+rpc(startWallet, "wallet"):
+  chainIds: seq[int]
+
+rpc(getWallet, "wallet"):
+  chainIds: seq[int]
+
 rpc(getCustomTokens, "wallet"):
   discard
 
