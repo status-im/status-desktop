@@ -20,11 +20,10 @@ StatusModal {
     property string selectedImage
     property string uploadError
 
-    onSelectedImageChanged: {
-        if (!selectedImage) {
-            return;
-        }
-        cropImageModal.open();
+    signal accepted()
+
+    onOpened: {
+        selectedImage = ""
     }
 
     contentItem: Item {
@@ -57,9 +56,9 @@ StatusModal {
 
         ImageCropperModal {
             id: cropImageModal
-            selectedImage: popup.selectedImage
             ratio: "1:1"
             onCropFinished: {
+                popup.selectedImage = selectedImage
                 OnboardingStore.uploadImage(selectedImage, aX, aY, bX, bY);
             }
         }
@@ -71,6 +70,7 @@ StatusModal {
             text: !!selectedImage ? qsTr("Done") : qsTr("Upload")
             onClicked: {
                 if (!!selectedImage) {
+                    popup.accepted()
                     close();
                 } else {
                     imageDialog.open();
@@ -84,7 +84,8 @@ StatusModal {
                     qsTrId("image-files----jpg---jpeg---png-")
                 ]
                 onAccepted: {
-                    selectedImage = imageDialog.fileUrls[0];
+                    cropImageModal.selectedImage = imageDialog.fileUrls[0];
+                    cropImageModal.open()
                 }
             }
         }

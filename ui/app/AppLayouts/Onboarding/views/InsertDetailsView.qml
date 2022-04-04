@@ -81,7 +81,6 @@ Item {
                 icon.color: Theme.palette.miscColor5
                 icon.charactersLen: 2
                 image.isIdenticon: false
-                image.source: uploadProfilePicPopup.selectedImage
                 ringSettings { ringSpecModel: Utils.getColorHashAsJson(root.pubKey) }
             }
             StatusRoundButton {
@@ -180,6 +179,9 @@ Item {
         UploadProfilePicModal {
             id: uploadProfilePicPopup
             anchors.centerIn: parent
+            onAccepted: {
+                userImage.image.source = uploadProfilePicPopup.selectedImage
+            }
         }
     }
 
