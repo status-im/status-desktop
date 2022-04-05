@@ -42,13 +42,6 @@ StatusModal {
         communitySectionModule: popup.communitySectionModule
         contactsStore: popup.contactsStore
         community: popup.community
-        contactListSearch.onUserClicked: {
-            if (isAddedContact) {
-                // those are just added to the list to be added by the bunch
-                return
-            }
-            contactFieldAndList.sendInvites([pubKey])
-        }
     }
 
     leftButtons: [
