@@ -17,6 +17,7 @@ import ../../../backend/utils as status_utils
 export contacts_dto, status_update_dto, contact_details
 
 const PK_LENGTH_0X_INCLUDED = 132
+const PK_LENGTH_COMPRESSED = 49
 
 include async_tasks
 
@@ -282,8 +283,9 @@ QtObject:
     # we must keep local contacts updated
     self.contacts[contact.id] = contact
 
-  proc addContact*(self: Service, publicKey: string) =
+  proc addContact*(self: Service, chatKey: string) =
     try:
+      let publicKey = status_accounts.decompressPk(chatKey).result
       var contact = self.getContactById(publicKey)
       if not contact.added:
         contact.added = true

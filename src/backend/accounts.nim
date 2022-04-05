@@ -11,6 +11,7 @@ logScope:
 
 const NUMBER_OF_ADDRESSES_TO_GENERATE = 1
 const MNEMONIC_PHRASE_LENGTH = 12
+const PK_LENGTH_0X_INCLUDED = 132
 
 const GENERATED* = "generated"
 const SEED* = "seed"
@@ -52,6 +53,23 @@ proc generateAddresses*(paths: seq[string]): RpcResponse[JsonNode] {.raises: [Ex
     error "error doing rpc request", methodName = "generateAddresses", exception=e.msg
     raise newException(RpcException, e.msg)
 
+proc decompressPk*(publicKey: string): RpcResponse[string] =
+  discard
+  if publicKey.startsWith("0x04") and publicKey.len == PK_LENGTH_0X_INCLUDED:
+    # already decompressed
+    result.result = publicKey
+    return
+
+  var response = status_go.multiformatDeserializePublicKey(publicKey, "f")
+  # json response indicates error
+  try:
+    let jsonReponse = parseJson(response)
+    result.error = RpcError(message: jsonReponse["error"].getStr())
+  except JsonParsingError as e:
+    let secp256k1Code = "fe701"
+    response.removePrefix(secp256k1Code)
+    result.result = "0x" & response
+  
 proc compressPk*(publicKey: string): RpcResponse[string] =
   let secp256k1Code = "0xe701"
   let base58btc = "z"

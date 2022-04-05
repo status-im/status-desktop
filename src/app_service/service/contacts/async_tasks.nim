@@ -2,6 +2,7 @@ import os, parseutils
 import ../ens/utils as ens_utils
 
 include ../../common/json_utils
+from ../../common/conversion import isCompressedPubKey
 include ../../../app/core/tasks/common
 
 #################################################
@@ -19,12 +20,13 @@ const lookupContactTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   var pubkey = arg.value
   var address = ""
 
-  if (pubkey.startsWith("0x")):
-    var num64: int64
-    let parsedChars = parseHex(pubkey, num64)
-    if(parsedChars != PK_LENGTH_0X_INCLUDED):
-      pubkey = ""
-      address = ""
+  if (pubkey.startsWith("0x") or isCompressedPubKey(pubkey)):
+    if pubkey.startsWith("0x"):
+      var num64: int64
+      let parsedChars = parseHex(pubkey, num64)
+      if(parsedChars != PK_LENGTH_0X_INCLUDED):
+        pubkey = ""
+        address = ""
   else:
     # TODO refactor those calls to use the new backend and also do it in a signle call
     pubkey = ens_utils.publicKeyOf(arg.chainId, arg.value)
