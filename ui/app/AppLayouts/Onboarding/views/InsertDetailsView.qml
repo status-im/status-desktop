@@ -116,6 +116,8 @@ Item {
                     nameInput.input.edit.clear();
                 }
             }
+            errorMessageCmp.wrapMode: Text.NoWrap
+            errorMessageCmp.horizontalAlignment: Text.AlignHCenter
             validators: Constants.validators.displayName
             onTextChanged: {
                 userImage.name = text;
