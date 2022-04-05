@@ -76,6 +76,9 @@ OnboardingBasePage {
             textField.validator: RegExpValidator { regExp: /^[!-~]{0,64}$/ } // That incudes NOT extended ASCII printable characters less space and a maximum of 64 characters allowed
             keepHeight: true
             textField.rightPadding: showHideCurrentIcon.width + showHideCurrentIcon.anchors.rightMargin + Style.current.padding / 2
+            onTextChanged: {
+                errorTxt.text = ""
+            }
 
             StatusFlatRoundButton {
                 id: showHideCurrentIcon
@@ -92,6 +95,14 @@ OnboardingBasePage {
             }
         }
 
+        StatusBaseText {
+            id: errorTxt
+            font.pixelSize: 12
+            width: parent.width
+            horizontalAlignment: StatusBaseText.AlignHCenter
+            color: Theme.palette.dangerColor1
+        }
+
         // Just a column filler to fit the design
         Item {
             height: Style.current.padding
@@ -102,7 +113,7 @@ OnboardingBasePage {
             id: submitBtn
             anchors.horizontalCenter: parent.horizontalCenter
             text: qsTr("Finalize Status Password Creation")
-            enabled:!submitBtn.loading && confPswInput.text === root.password
+            enabled:!submitBtn.loading && confPswInput.text.length >= 6
 
             property Timer sim: Timer {
                 id: pause
@@ -114,7 +125,19 @@ OnboardingBasePage {
                 }
             }
 
+            function checkPasswordMatches() {
+                if (confPswInput.text !== root.password) {
+                    errorTxt.text = qsTr("Passwords don't match")
+                    return false
+                }
+                return true
+            }
+
             onClicked: {
+                if (!checkPasswordMatches()) {
+                    return
+                }
+
                 if (OnboardingStore.accountCreated) {
                     if (root.password !== root.tmpPass) {
                         OnboardingStore.changePassword(root.tmpPass, root.password);
