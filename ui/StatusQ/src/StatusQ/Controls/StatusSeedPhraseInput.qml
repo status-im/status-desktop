@@ -88,7 +88,7 @@ Item {
                     }
                 }
                 seedSuggestionsList.model = filteredList;
-                if ((text.length === 4) && (filteredList.count === 1) &&
+                if ((text.length >= 3) && (filteredList.count === 1) &&
                     ((input.edit.keyEvent !== Qt.Key_Backspace) && (input.edit.keyEvent !== Qt.Key_Delete))) {
                     seedWordInput.text = filteredList.get(0).seedWord.trim();
                     seedWordInput.input.edit.cursorPosition = seedWordInput.text.length;
@@ -100,6 +100,11 @@ Item {
             }
         }
         onKeyPressed: {
+            if (input.edit.keyEvent === Qt.Key_Tab) {
+                if (text.length != 0){
+                    root.doneInsertingWord(seedWordInput.text);
+                }
+            }
             root.keyPressed(event);
         }
         onEditClicked: {
@@ -169,8 +174,8 @@ Item {
                     cursorShape: Qt.PointingHandCursor
                     hoverEnabled: true
                     onClicked: {
-                        seedWordInput.text = seedWord.trim();
-                        seedWordInput.input.edit.cursorPosition = seedWordInput.text.length;
+                        root.seedWordInput.input.edit.text = seedWord.trim();
+                        root.seedWordInput.input.edit.cursorPosition = seedWordInput.text.length;
                         root.doneInsertingWord(seedWordInput.text);
                         seedSuggestionsList.model = 0;
                     }
