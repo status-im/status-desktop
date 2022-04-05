@@ -126,8 +126,7 @@ Item {
                 id: txtError
                 color: Style.current.danger
                 visible: root.isError
-                //% "Something has gone wrong"
-                text: qsTrId("something-has-gone-wrong")
+                text: qsTr("Token not found on your current network")
             }
 
             Image {
