@@ -215,49 +215,52 @@ QtObject:
     self.threadpool.start(arg)
 
   proc estimateGas*(
-      self: Service,
-      from_addr: string,
-      to: string,
-      assetAddress: string,
-      value: string,
-      data: string = ""
-    ): string {.slot.} =
+    self: Service,
+    from_addr: string,
+    to: string,
+    assetAddress: string,
+    value: string,
+    data: string = ""
+  ): string {.slot.} =
     var response: RpcResponse[JsonNode]
     # TODO make this async
-    try:
-      if assetAddress != ZERO_ADDRESS and not assetAddress.isEmptyOrWhitespace:
-        var tx = buildTokenTransaction(
-          parseAddress(from_addr),
-          parseAddress(assetAddress)
-        )
-        let networkType = self.settingsService.getCurrentNetwork().toNetworkType()
-        let network = self.networkService.getNetwork(networkType)
-        let token = self.tokenService.findTokenByAddress(network, parseAddress(assetAddress))
+    if assetAddress != ZERO_ADDRESS and not assetAddress.isEmptyOrWhitespace:
+      var tx = buildTokenTransaction(
+        parseAddress(from_addr),
+        parseAddress(assetAddress)
+      )
+      let networkType = self.settingsService.getCurrentNetwork().toNetworkType()
+      let network = self.networkService.getNetwork(networkType)
+      let token = self.tokenService.findTokenByAddress(network, parseAddress(assetAddress))
 
-        if token == nil:
-          raise newException(ValueError, fmt"Could not find ERC-20 contract with address '{assetAddress}' for the current network")
+      if token == nil:
+        raise newException(ValueError, fmt"Could not find ERC-20 contract with address '{assetAddress}' for the current network")
 
-        let transfer = Transfer(to: parseAddress(to), value: conversion.eth2Wei(parseFloat(value), token.decimals))
-        let transferproc = ERC20_procS.toTable["transfer"]
-        var success: bool
+      let transfer = Transfer(to: parseAddress(to), value: conversion.eth2Wei(parseFloat(value), token.decimals))
+      let transferproc = ERC20_procS.toTable["transfer"]
+      var success: bool
+      try:
         let gas = transferproc.estimateGas(tx, transfer, success)
 
         let res = fromHex[int](gas)
-        result = $(%* { "result": res, "success": success })
-      else:
-        var tx = ens_utils.buildTransaction(
-          parseAddress(from_addr),
-          eth2Wei(parseFloat(value), 18),
-          data = data
-        )
-        tx.to = parseAddress(to).some
-        response = eth.estimateGas(%*[%tx])
+        return $(%* { "result": res, "success": success })
+      except Exception as e:
+        error "Error estimating gas", msg = e.msg
+        return $(%* { "result": "-1", "success": false, "error": { "message": e.msg } })
 
-        let res = fromHex[int](response.result.getStr)
-        result = $(%* { "result": %res, "success": true })
+    var tx = ens_utils.buildTransaction(
+      parseAddress(from_addr),
+      eth2Wei(parseFloat(value), 18),
+      data = data
+    )
+    tx.to = parseAddress(to).some
+    try:
+      response = eth.estimateGas(%*[%tx])
+      let res = fromHex[int](response.result.getStr)
     except Exception as e:
       error "Error estimating gas", msg = e.msg
-      result = $(%* { "result": "-1", "success": false, "error": { "message": e.msg } })
+      return $(%* { "result": "-1", "success": false })
+    
 
   proc transferEth*(
       self: Service,
