@@ -48,7 +48,7 @@ StatusValidator {
     errorMessage: "Please enter a valid numeric value."
 
     validate: function (t) {
-        return !isNaN(t) && t > bottom && t <= top  ? true : {
+        return !isNaN(t) && t >= bottom && t <= top  ? true : {
                                              bottom: bottom,
                                              top: top,
                                              actual: t
