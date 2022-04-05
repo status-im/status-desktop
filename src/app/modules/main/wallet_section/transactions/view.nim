@@ -110,7 +110,6 @@ QtObject:
 
   proc estimateGas*(self: View, from_addr: string, to: string, assetAddress: string, value: string, data: string): string {.slot.} =
     result = self.delegate.estimateGas(from_addr, to, assetAddress, value, data)
-    result = self.delegate.estimateGas(from_addr, to, assetAddress, value, data)
 
   proc transactionSent*(self: View, txResult: string) {.signal.}
 
