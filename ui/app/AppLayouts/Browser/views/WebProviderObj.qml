@@ -45,15 +45,10 @@ QtObject {
                 }
                 
             } catch (e) {
-                if (Utils.isInvalidPasswordMessage(e.message)){
-                    //% "Wrong password"
-                    sendDialog.transactionSigner.validationError = qsTrId("wrong-password")
-                    return
-                }
                 if (isTx) {
                     showSendingError(e.message)
                 } else if (isSign) {
-                    showSigningError(e.message)
+                    showSigningError(e.message.message)
                 }
             }
         }

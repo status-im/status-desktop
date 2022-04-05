@@ -724,15 +724,16 @@ QtObject {
             .replace(/'/g, "&#039;");
     }
 
-    // Leave this function at the bottom of the file as QT Creator messes up the code color after this
-    function isPunct(c) {
-        return /(!|\@|#|\$|%|\^|&|\*|\(|\)|_|\+|\||-|=|\\|{|}|[|]|"|;|'|<|>|\?|,|\.|\/)/.test(c)
-    }
-
     function isInvalidPasswordMessage(msg) {
         return (
             msg.includes("could not decrypt key with given password") ||
             msg.includes("invalid password")
         );
     }
+
+    // Leave this function at the bottom of the file as QT Creator messes up the code color after this
+    function isPunct(c) {
+        return /(!|\@|#|\$|%|\^|&|\*|\(|\)|_|\+|\||-|=|\\|{|}|[|]|"|;|'|<|>|\?|,|\.|\/)/.test(c)
+    }
+
 }
