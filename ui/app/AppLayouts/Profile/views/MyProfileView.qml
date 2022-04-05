@@ -137,7 +137,7 @@ ColumnLayout {
         tooltip.text: qsTr("Copy to clipboard")
         icon.name: "copy"
         iconButton.onClicked: {
-            root.profileStore.copyToClipboard(root.profileStore.pubkey)
+            root.profileStore.copyToClipboard(subTitle)
             tooltip.visible = !tooltip.visible
         }
     }

@@ -13,7 +13,8 @@ QtObject {
     }
 
     function isChatKey(value) {
-        return startsWith0x(value) && isHex(value) && value.length === 132
+        return (startsWith0x(value) && isHex(value) && value.length === 132) || 
+               /^z[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{48}$/.test(inputValue)
     }
 
     function isValidETHNamePrefix(value) {
