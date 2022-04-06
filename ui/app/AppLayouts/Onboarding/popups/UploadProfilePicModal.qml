@@ -10,8 +10,6 @@ import shared 1.0
 import shared.panels 1.0
 import shared.popups 1.0
 
-import "../stores"
-
 StatusModal {
     id: popup
     height: 510
@@ -59,7 +57,6 @@ StatusModal {
             ratio: "1:1"
             onCropFinished: {
                 popup.selectedImage = selectedImage
-                OnboardingStore.uploadImage(selectedImage, aX, aY, bX, bY);
             }
         }
     }
