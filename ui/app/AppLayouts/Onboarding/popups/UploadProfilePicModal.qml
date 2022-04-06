@@ -81,8 +81,10 @@ StatusModal {
                     qsTrId("image-files----jpg---jpeg---png-")
                 ]
                 onAccepted: {
-                    cropImageModal.selectedImage = imageDialog.fileUrls[0];
-                    cropImageModal.open()
+                    if(imageDialog.fileUrls.length > 0) {
+                        cropImageModal.selectedImage = imageDialog.fileUrls[0];
+                        cropImageModal.open()
+                    }
                 }
             }
         }
