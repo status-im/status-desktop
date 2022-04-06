@@ -68,7 +68,7 @@ OnboardingBasePage {
                 height: (grid.cellHeight - 28)
                 textEdit.input.anchors.leftMargin: 16
                 textEdit.input.anchors.rightMargin: 16
-                visible: !(((index === 13) || (index === 19)) && (grid.count === 20))
+                visible: grid.count !== 20 || (index !== 13 && index !== 19)
                 leftComponentText: (grid.count === 20) ? grid.wordIndex18[index] : grid.wordIndex[index]
                 inputList: BIP39_en { }
                 property int itemIndex: index
@@ -95,7 +95,7 @@ OnboardingBasePage {
                         if (parseInt(grid.itemAtIndex(i).leftComponentText) === (parseInt(leftComponentText)+1)) {
                             grid.currentIndex = grid.itemAtIndex(i).itemIndex;
                             grid.itemAtIndex(i).textEdit.input.edit.forceActiveFocus();
-                            if (grid.currentIndex === 11) {
+                            if (grid.currentIndex === 12) {
                                 grid.positionViewAtEnd();
                                 if (grid.count === 20) {
                                     grid.contentX = 1500;
