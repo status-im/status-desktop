@@ -68,6 +68,8 @@ proc importMnemonic*(self: Controller, mnemonic: string) =
   else:
     self.delegate.importAccountError(error)
 
-method getPasswordStrengthScore*(self: Controller, password, userName: string): int = 
+proc getPasswordStrengthScore*(self: Controller, password, userName: string): int = 
   return self.generalService.getPasswordStrengthScore(password, userName)
 
+proc generateImages*(self: Controller, image: string, aX: int, aY: int, bX: int, bY: int): seq[general_service.Image] =
+  return self.generalService.generateImages(image, aX, aY, bX, bY)

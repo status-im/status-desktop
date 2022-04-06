@@ -81,3 +81,13 @@ method importAccountSuccess*(self: Module) =
 
 method getPasswordStrengthScore*(self: Module, password, userName: string): int =
   return self.controller.getPasswordStrengthScore(password, userName)
+
+method generateImage*(self: Module, imageUrl: string, aX: int, aY: int, bX: int, bY: int): string =
+  let formatedImg = singletonInstance.utils.formatImagePath(imageUrl)
+  let images = self.controller.generateImages(formatedImg, aX, aY, bX, bY)
+  if(images.len == 0):
+    return
+
+  for img in images:
+    if(img.imgType == "large"):
+      return img.uri

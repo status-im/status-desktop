@@ -46,3 +46,6 @@ method setDisplayName*(self: AccessInterface, displayName: string) {.base.} =
 
 method getPasswordStrengthScore*(self: AccessInterface, password: string, userName: string): int {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method generateImage*(self: AccessInterface, imageUrl: string, aX: int, aY: int, bX: int, bY: int): string {.base.} =
+  raise newException(ValueError, "No implementation available")

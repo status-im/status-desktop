@@ -22,6 +22,10 @@ QtObject {
 
     property bool showBeforeGetStartedPopup: true
 
+    function generateImage(source, aX, aY, bX, bY) {
+        return onboardingModuleInst.generateImage(source, aX, aY, bX, bY)
+    }
+
     function importMnemonic(mnemonic) {
         onboardingModuleInst.importMnemonic(mnemonic)
     }
@@ -50,6 +54,8 @@ QtObject {
         root.profImgAY = aY;
         root.profImgBX = bX;
         root.profImgBY = bY;
+
+        return root.generateImage(source, aX, aY, bX, bY)
     }
 
     function removeImage() {
