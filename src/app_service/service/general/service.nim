@@ -2,9 +2,11 @@ import json, chronicles
 
 import ../../../backend/general as status_general
 import ../../../backend/keycard as status_keycard
-
+import ../../../backend/accounts as status_accounts
 import ../../../constants as app_constants
 
+import ../profile/dto/profile as profile_dto
+export profile_dto
 
 logScope:
   topics = "general-app-service"
@@ -40,7 +42,7 @@ proc startMessenger*(self: Service) =
     error "error: ", errDesription
     return
 
-method getPasswordStrengthScore*(self: Service, password, userName: string): int =
+proc getPasswordStrengthScore*(self: Service, password, userName: string): int =
   try:    
     let response = status_general.getPasswordStrengthScore(password, @[userName])
     if(response.result.contains("error")):
@@ -51,3 +53,15 @@ method getPasswordStrengthScore*(self: Service, password, userName: string): int
     return response.result["score"].getInt()
   except Exception as e:
     error "error: ", methodName="getPasswordStrengthScore", errName = e.name, errDesription = e.msg
+
+proc generateImages*(self: Service, image: string, aX: int, aY: int, bX: int, bY: int): seq[Image] =
+  try:
+    let response = status_general.generateImages(image, aX, aY, bX, bY)
+    if(response.result.kind != JArray):
+      error "error: ", procName="generateImages", errDesription = "response is not an array"
+      return
+
+    for img in response.result:
+      result.add(profile_dto.toImage(img))
+  except Exception as e:
+    error "error: ", procName="generateImages", errName = e.name, errDesription = e.msg

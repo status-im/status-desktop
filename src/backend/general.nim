@@ -62,3 +62,11 @@ proc enableCommunityHistoryArchiveSupport*(): RpcResponse[JsonNode] {.raises: [E
 proc disableCommunityHistoryArchiveSupport*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* []
   result = core.callPrivateRPC("disableCommunityHistoryArchiveProtocol", payload)
+
+proc generateImages*(imagePath: string, aX, aY, bX, bY: int): RpcResponse[JsonNode] {.raises: [Exception].} =
+  try:
+    let response = status_go.generateImages(imagePath, aX, aY, bX, bY)
+    result.result = Json.decode(response, JsonNode)
+  except RpcException as e:
+    error "error", methodName = "generateImages", exception=e.msg
+    raise newException(RpcException, e.msg)
