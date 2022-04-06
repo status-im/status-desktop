@@ -119,6 +119,11 @@ StatusModal {
                         visible: model.type != Constants.chatType.unknown
                         height: visible ? implicitHeight : 0
                         title: "#" + model.name
+                        icon.emoji: model.emoji
+                        icon.color: model.color
+                        image.isIdenticon: false
+                        image.source: model.icon
+                        ringSettings.ringSpecModel: model.colorHash
                         icon.isLetterIdenticon: true
                         icon.background.color: model.color
                         sensor.onClicked: channelItemCheckbox.checked = !channelItemCheckbox.checked
