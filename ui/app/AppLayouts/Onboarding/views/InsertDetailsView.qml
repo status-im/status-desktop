@@ -180,6 +180,7 @@ Item {
             anchors.centerIn: parent
             onAccepted: {
                 userImage.image.source = uploadProfilePicPopup.selectedImage
+                OnboardingStore.uploadImage(selectedImage, aX, aY, bX, bY);
             }
         }
     }
