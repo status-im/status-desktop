@@ -32,7 +32,7 @@ Loader {
     property color elementsColor: amISenderOfTheRepliedMessage ? Style.current.chatReplyCurrentUser : Style.current.secondaryText
     property var container
     property int chatHorizontalPadding
-    property var stickerData
+    property string stickerData
 
     signal clickMessage(bool isProfileClick, bool isSticker, bool isImage, var image, bool emojiOnly, bool hideEmojiPicker, bool isReply)
     signal scrollToBottom(bool isit, var container)

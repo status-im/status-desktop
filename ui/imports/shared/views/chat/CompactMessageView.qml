@@ -288,8 +288,6 @@ Item {
             longReply: active && textFieldImplicitWidth > width
             container: root.container
             chatHorizontalPadding: chatHorizontalPadding
-            // Not Refactored Yet
-//            stickerData: !!rootStore ? rootStore.chatsModelInst.messageView.messageList.getMessageData(replyMessageIndex, "sticker") : null
             active: responseTo !== "" && !activityCenterMessage
 
             function resetOriginalMessage() {
@@ -309,6 +307,7 @@ Item {
                 repliedMessageSenderIsAdded = obj.senderIsAdded
                 repliedMessageContent = obj.messageText
                 repliedMessageImage = obj.messageImage
+                stickerData = obj.sticker
             }
 
             Component.onCompleted: {
