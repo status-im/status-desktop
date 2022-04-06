@@ -139,7 +139,8 @@ Rectangle {
             name: statusListItem.title
             active: statusListItem.icon.isLetterIdenticon ||
                     !!statusListItem.icon.name ||
-                    !!statusListItem.image.source.toString()
+                    !!statusListItem.image.source.toString() ||
+                    !!statusListItem.icon.emoji
             badge.border.color: statusListItem.color
             ringSettings: statusListItem.ringSettings
         }
