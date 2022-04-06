@@ -287,14 +287,10 @@ QtObject:
       let json: JsonNode = %tx
       let response = eth.sendTransaction($json, password)
 
-      # only till it is moved to another thred
-      # if response.error != nil:
-      #   raise newException(Exception, response.error.message)
-
-      let output = %* { "result": %($response),  "success": %(response.error.isNil), "uuid": %uuid }
+      let output = %* { "result": response.result.getStr,  "success": %(response.error.isNil), "uuid": %uuid }
       self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(result: $output))
 
-      self.trackPendingTransaction($response, from_addr, to_addr,
+      self.trackPendingTransaction(response.result.getStr, from_addr, to_addr,
         $PendingTransactionTypeDto.WalletTransfer, data = "")
     except Exception as e:
       error "Error sending eth transfer transaction", msg = e.msg
@@ -323,20 +319,18 @@ QtObject:
       let networkType = self.settingsService.getCurrentNetwork().toNetworkType()
       let network = self.networkService.getNetwork(networkType)
       let token = self.tokenService.findTokenByAddress(network, parseAddress(assetAddress))
-
       var tx = ens_utils.buildTokenTransaction(parseAddress(from_addr), parseAddress(assetAddress),
         gas, gasPrice, eip1559Enabled, maxPriorityFeePerGas, maxFeePerGas)
-
       var success: bool
       let transfer = Transfer(to: parseAddress(to_addr),
         value: conversion.eth2Wei(parseFloat(value), token.decimals))
       let transferproc = ERC20_procS.toTable["transfer"]
       let response = transferproc.send(tx, transfer, password, success)
-
-      let output = %* { "result": %response,  "success": %success, "uuid": %uuid }
+      let txHash = response.result.getStr
+      let output = %* { "result": txHash, "success": %success, "uuid": %uuid }
       self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(result: $output))
 
-      self.trackPendingTransaction(response, from_addr, to_addr,
+      self.trackPendingTransaction(txHash, from_addr, to_addr,
         $PendingTransactionTypeDto.WalletTransfer, data = "")
     except Exception as e:
       error "Error sending token transfer transaction", msg = e.msg
