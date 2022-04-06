@@ -95,3 +95,6 @@ QtObject:
 
   proc getPasswordStrengthScore*(self: View, password: string, userName: string): int {.slot.} =
     return self.delegate.getPasswordStrengthScore(password, userName)
+
+  proc generateImage*(self: View, imageUrl: string, aX: int, aY: int, bX: int, bY: int): string {.slot.} =
+    self.delegate.generateImage(imageUrl, aX, aY, bX, bY)

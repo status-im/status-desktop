@@ -54,3 +54,11 @@ proc getPasswordStrengthScore*(password: string, userInputs: seq[string]): RpcRe
   except RpcException as e:
     error "error", methodName = "getPasswordStrengthScore", exception=e.msg
     raise newException(RpcException, e.msg)
+
+proc generateImages*(imagePath: string, aX, aY, bX, bY: int): RpcResponse[JsonNode] {.raises: [Exception].} =
+  try:
+    let response = status_go.generateImages(imagePath, aX, aY, bX, bY)
+    result.result = Json.decode(response, JsonNode)
+  except RpcException as e:
+    error "error", methodName = "generateImages", exception=e.msg
+    raise newException(RpcException, e.msg)

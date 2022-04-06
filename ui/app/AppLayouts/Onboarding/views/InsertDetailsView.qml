@@ -73,16 +73,25 @@ Item {
             Layout.alignment: Qt.AlignHCenter
             StatusSmartIdenticon {
                 id: userImage
-                image.width: 80
-                image.height: 80
-                icon.width: 80
-                icon.height: 80
-                icon.letterSize: 32
-                icon.color: Theme.palette.miscColor5
-                icon.charactersLen: 2
-                image.isIdenticon: false
-                image.source: uploadProfilePicPopup.selectedImage
-                ringSettings { ringSpecModel: Utils.getColorHashAsJson(root.pubKey) }
+
+                image {
+                    width: 80
+                    height: 80
+                    isIdenticon: false
+                    source: OnboardingStore.croppedImg
+                }
+
+                icon {
+                    width: 80
+                    height: 80
+                    letterSize: 32
+                    color: Theme.palette.miscColor5
+                    charactersLen: 2
+                }
+
+                ringSettings {
+                    ringSpecModel: Utils.getColorHashAsJson(root.pubKey)
+                }
             }
             StatusRoundButton {
                 id: updatePicButton

@@ -13,6 +13,7 @@ QtObject {
     property var privacyModule: profileSectionModuleInst.privacyModule
     property string displayName: userProfile !== undefined ? userProfile.displayName : ""
 
+    property string croppedImg: ""
     property url profImgUrl: ""
     property real profImgAX: 0.0
     property real profImgAY: 0.0
@@ -21,6 +22,10 @@ QtObject {
     property bool accountCreated: false
 
     property bool showBeforeGetStartedPopup: true
+
+    function generateImage(source, aX, aY, bX, bY) {
+        return onboardingModuleInst.generateImage(source, aX, aY, bX, bY)
+    }
 
     function importMnemonic(mnemonic) {
         onboardingModuleInst.importMnemonic(mnemonic)
@@ -45,6 +50,8 @@ QtObject {
     }
 
     function uploadImage(source, aX, aY, bX, bY) {
+        root.croppedImg = root.generateImage(source, aX, aY, bX, bY)
+
         root.profImgUrl = source;
         root.profImgAX = aX;
         root.profImgAY = aY;

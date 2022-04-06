@@ -4,6 +4,7 @@ import QtQuick.Dialogs 1.3
 import utils 1.0
 
 import StatusQ.Controls 0.1
+import StatusQ.Components 0.1
 import StatusQ.Popups 0.1
 
 import shared 1.0
@@ -29,16 +30,23 @@ StatusModal {
 
     contentItem: Item {
         anchors.fill: parent
-        RoundedImage {
+        StatusRoundedImage {
             id: profilePic
-            source: selectedImage
             width: 160
             height: 160
             anchors.verticalCenter: parent.verticalCenter
             anchors.horizontalCenter: parent.horizontalCenter
+            image.source: OnboardingStore.croppedImg || popup.selectedImage
+            showLoadingIndicator: true
             border.width: 1
             border.color: Style.current.border
-            onClicked: imageDialog.open();
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                hoverEnabled: true
+                onClicked: imageDialog.open()
+            }
         }
 
         StyledText {
