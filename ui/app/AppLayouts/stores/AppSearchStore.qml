@@ -29,7 +29,7 @@ QtObject {
     function getSearchLocationObject() {
         if(!root.appSearchModule)
             return ""
-        root.appSearchModule.getSearchLocationObject()
+        return root.appSearchModule.getSearchLocationObject()
     }
 
     function resultItemClicked(itemId) {
