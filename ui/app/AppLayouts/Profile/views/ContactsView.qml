@@ -55,7 +55,7 @@ SettingsContentBase {
             Layout.fillWidth: true
             Layout.leftMargin: Style.current.padding
             Layout.rightMargin: Style.current.padding
-            Layout.topMargin: Style.current.padding
+            Layout.topMargin: 2 * Style.current.padding
             height: contactsBtn.height
             background: Rectangle {
                 color: Style.current.transparent
