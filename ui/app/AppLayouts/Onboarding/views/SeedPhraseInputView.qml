@@ -39,6 +39,7 @@ OnboardingBasePage {
             onCurrentIndexChanged: {
                 root.mnemonicString = "";
                 root.mnemonicInput = [];
+                submitButton.enabled = false;
             }
         }
         clip: true
