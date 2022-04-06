@@ -6,10 +6,40 @@ import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core.Theme 0.1
 
+/*!
+   \qmltype StatusWizardStepper
+   \inherits Item
+   \inqmlmodule StatusQ.Components
+   \since StatusQ.Components 0.1
+   \brief Displays a step sequence provided by the stepsModel. Inherits \l{https://doc.qt.io/qt-5/qml-qtquick-item.html}{Item}.
+
+   The \c StatusWizardStepper steps and their descriptions as provided by the stepsModel.
+   For example:
+
+   \qml
+    StatusWizardStepper {
+        id: wizardStepper
+        stepsModel: ListModel {
+            ListElement {description:"Send Request"; loadingTime: 0; stepCompleted: false}
+            ListElement {description:"Receive Response"; loadingTime: 0; stepCompleted: false}
+            ListElement {description:"Confirm Identity"; loadingTime: 0; stepCompleted: false}
+        }
+    }
+   \endqml
+
+   \image status_wizard_stepper.png
+
+   For a list of components available see StatusQ.
+*/
+
 Item {
     id: wizardWrapper
     width: parent.width
     height: 56
+    /*!
+       \qmlproperty ListModel StatusWizardStepper::stepsModel
+        This property represents all steps and their descriptions as provided by the user.
+    */
     property ListModel stepsModel: ListModel { }
 
     ListView {

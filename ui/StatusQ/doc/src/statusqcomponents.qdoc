@@ -38,5 +38,6 @@
        \li \l{StatusMessageDetails}
        \li \l{StatusTagSelector}
        \li \l{StatusToastMessage}
+       \li \l{StatusWizardStepper}
    \endlist
 */
