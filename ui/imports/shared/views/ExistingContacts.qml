@@ -12,6 +12,7 @@ Item {
     id: root
     anchors.left: parent.left
     anchors.right: parent.right
+    height: visible ? Math.min(contactListView.contentHeight, (expanded ? 320 : 192)) : 0
 
     property var contactsStore
     property var community
@@ -28,7 +29,6 @@ Item {
         return parts.some(p => p.startsWith(filter))
     }
 
-    height: Math.min(contactListView.contentHeight, (expanded ? 320 : 192))
 
     ScrollView {
         anchors.fill: parent

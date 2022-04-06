@@ -15,7 +15,8 @@ import "."
 
 Item {
     id: root
-    height: childrenRect.height + 24
+    height: (chatKey.height + message.height + existingContacts.height
+            + searchResults.height + noContactsRect.height + 24)
 
     property var rootStore
     property var contactsStore
@@ -67,6 +68,7 @@ Item {
         //% "Enter ENS username or chat key"
         placeholderText: qsTrId("enter-contact-code")
         visible: showSearch
+        height: visible ? implicitHeight : 0
         Keys.onReleased: {
             successMessage = "";
             searchResults.pubKey = "";
@@ -165,6 +167,7 @@ Item {
         id: message
         text: root.validationError || successMessage
         visible: root.validationError !== "" || successMessage !== ""
+        height: visible ? contentHeight : 0
         font.pixelSize: 13
         color: !!root.validationError ? Style.current.danger : Style.current.success
         anchors.top: chatKey.bottom
@@ -177,7 +180,6 @@ Item {
 
         contactsStore: root.contactsStore
         community: root.community
-
         visible: showContactList
         hideCommunityMembers: root.hideCommunityMembers
         anchors.topMargin: this.height > 0 ? Style.current.halfPadding : 0
@@ -235,10 +237,7 @@ Item {
     NoFriendsRectangle {
         id: noContactsRect
         visible: showContactList
-        anchors.top: chatKey.bottom
-        anchors.topMargin: Style.current.xlPadding * 3
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.verticalCenter: parent.verticalCenter
+        anchors.centerIn: parent
         rootStore: root.rootStore
     }
 }
