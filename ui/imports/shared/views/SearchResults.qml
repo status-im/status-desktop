@@ -16,8 +16,8 @@ import StatusQ.Components 0.1
 
 Item {
     id: root
-    height: 64
     width: parent.width
+    height: hasExistingContacts ? 64 : 0
 
     property bool hasExistingContacts: false
     property bool showProfileNotFoundMessage: false
