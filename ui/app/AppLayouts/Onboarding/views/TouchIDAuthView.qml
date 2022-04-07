@@ -39,7 +39,8 @@ OnboardingBasePage {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: parent.top
             fillMode: Image.PreserveAspectFit
-            source: Style.png("onboarding/fingerprint")
+            antialiasing: true
+            source: Style.png("onboarding/fingerprint@2x")
             width: 160
             height: 160
             mipmap: true
