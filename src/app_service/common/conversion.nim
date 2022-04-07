@@ -4,7 +4,7 @@ from web3 import Address, fromHex
 const CompressedKeyChars* = {'0'..'9', 'A','B','C','D','E','F','G','H','J','K','L','M','N','P','Q','R','S','T','U','V','W','X','Y','Z','a','b','c','d','e','f','g','h','i','j','k','m','n','o','p','q','r','s','t','u','v','w','x','y','z'}
 
 proc isCompressedPubKey*(strPubKey: string): bool =
-  return strPubKey.startsWith("z") and strPubKey.len == 49 and allCharsInSet(strPubKey, CompressedKeyChars)
+  return strPubKey.startsWith("zQ3") and allCharsInSet(strPubKey, CompressedKeyChars)
 
 proc parseAddress*(strAddress: string): Address =
   fromHex(Address, strAddress)
