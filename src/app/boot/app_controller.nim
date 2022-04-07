@@ -290,6 +290,8 @@ proc start*(self: AppController) =
   self.startupModule.load()
 
 proc load(self: AppController) =
+  self.accountsService.deleteExtraKeyStoreFile()
+  
   self.notificationsManager.init()
 
   self.settingsService.init()

@@ -3,7 +3,7 @@ import os, sequtils, strutils
 import # vendor libs
   confutils
 
-const sep = when defined(windows): "\\" else: "/"
+const sep* = when defined(windows): "\\" else: "/"
 
 proc defaultDataDir*(): string =
   let homeDir = getHomeDir()
@@ -56,7 +56,7 @@ let
   OPENURI* = desktopConfig.uri
   DATADIR* = baseDir & sep
   STATUSGODIR* = joinPath(baseDir, "data") & sep
-  KEYSTOREDIR* = joinPath(baseDir, "data", "keystore") & sep
+  ROOTKEYSTOREDIR* = joinPath(baseDir, "data", "keystore") & sep
   TMPDIR* = joinPath(baseDir, "tmp") & sep
   LOGDIR* = joinPath(baseDir, "logs") & sep
 
