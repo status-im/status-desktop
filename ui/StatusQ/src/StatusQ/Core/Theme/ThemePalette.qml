@@ -90,7 +90,7 @@ QtObject {
     property color miscColor11
     property color miscColor12
 
-    property var accountColors: []
+    property var userCustomizationColors: []
 
     property var identiconRingColors: []
 

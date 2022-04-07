@@ -145,15 +145,19 @@ ThemePalette {
     miscColor11: getColor('brown2')
     miscColor12: getColor('green5')
 
-    accountColors: [
-        getColor('blue'),
-        getColor('brown2'),
-        getColor('violet'),
-        "#1D806F",
-        getColor('red2'),
-        getColor('green2'),
-        getColor('purple'),
-        getColor('brown')
+    userCustomizationColors: [
+        "#2946C4",
+        "#887AF9",
+        "#51D0F0",
+        "#D37EF4",
+        "#FA6565",
+        "#FFCA0F",
+        "#7CDA00",
+        "#26A69A",
+        "#8B3131",
+        "#9B832F",
+        "silver", // update me when figma is ready
+        "darkgrey", // update me when figma is ready
     ]
 
     identiconRingColors: ["#000000", "#726F6F", "#C4C4C4", "#E7E7E7", "#FFFFFF", "#00FF00",

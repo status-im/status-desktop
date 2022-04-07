@@ -45,7 +45,7 @@ Item {
                         return true
                     }
                     // Check the colors in the other theme
-                    const currentColor = Utils.getThemeAccountColor(upperCaseColor, Theme.palette.accountColors)
+                    const currentColor = Utils.getThemeAccountColor(upperCaseColor, Theme.palette.userCustomizationColors)
                     if (!currentColor) {
                         return false
                     }

@@ -55,7 +55,7 @@ Item {
             return
         }
         if (selectedAccount.color) {
-            selectedIconImg.color = Utils.getThemeAccountColor(selectedAccount.color, Theme.palette.accountColors) || Theme.palette.accountColors[0]
+            selectedIconImg.color = Utils.getThemeAccountColor(selectedAccount.color, Theme.palette.userCustomizationColors) || Theme.palette.userCustomizationColors[0]
         }
         if (selectedAccount.name) {
             selectedTextField.text = selectedAccount.name
@@ -208,7 +208,7 @@ Item {
                 width: 20
                 height: 20
                 icon: "filled-account"
-                color: Utils.getThemeAccountColor(model.color, Theme.palette.accountColors) || Theme.palette.accountColors[0]
+                color: Utils.getThemeAccountColor(model.color, Theme.palette.userCustomizationColors) || Theme.palette.userCustomizationColors[0]
             }
 
             Column {

@@ -12,6 +12,6 @@ Column {
     spacing: 8
 
     StatusWalletColorSelect {
-        model: Theme.palette.accountColors
+        model: Theme.palette.userCustomizationColors
     }
 }
