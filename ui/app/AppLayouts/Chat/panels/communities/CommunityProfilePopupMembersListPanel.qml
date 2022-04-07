@@ -192,8 +192,7 @@ Item {
                                     icon.name: "cancel"
                                     type: StatusMenuItem.Type.Danger
                                     enabled: root.community.amISectionAdmin
-                                    // Not Refactored Yet
-//                                    onTriggered: chatsModel.communities.banUserFromCommunity(model.pubKey, root.community.id)
+                                    onTriggered: root.store.banUserFromCommunity(model.id)
                                 }
                             }
                         }

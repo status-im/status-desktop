@@ -110,9 +110,6 @@ proc requestCommunityInfo*(self: Controller, communityId: string) =
 proc importCommunity*(self: Controller, communityKey: string) =
   self.communityService.importCommunity(communityKey)
 
-proc banUserFromCommunity*(self: Controller, communityId: string, pubKey: string) =
-  self.communityService.removeUserFromCommunity(communityId, pubKey)
-
 proc setCommunityMuted*(self: Controller, communityId: string, muted: bool) =
   self.communityService.setCommunityMuted(communityId, muted)
 

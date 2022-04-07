@@ -360,6 +360,9 @@ proc leaveCommunity*(self: Controller) =
 proc removeUserFromCommunity*(self: Controller, pubKey: string) =
   self.communityService.removeUserFromCommunity(self.sectionId, pubKey)
 
+proc banUserFromCommunity*(self: Controller, pubKey: string) =
+  self.communityService.banUserFromCommunity(self.sectionId, pubKey)
+
 proc editCommunity*(
     self: Controller,
     name: string,

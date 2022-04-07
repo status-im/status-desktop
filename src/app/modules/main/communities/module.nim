@@ -157,9 +157,6 @@ method reorderCommunityCategories*(self: Module, communityId: string, categoryId
 #   self.controller.reorderCommunityCategories(communityId, categoryId, position)
   discard
 
-method banUserFromCommunity*(self: Module, pubKey: string, communityId: string) =
-  self.controller.banUserFromCommunity(communityId, pubkey)
-
 method requestToJoinCommunity*(self: Module, communityId: string, ensName: string) =
   self.controller.requestToJoinCommunity(communityId, ensName)
 

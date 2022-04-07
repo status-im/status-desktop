@@ -238,6 +238,10 @@ QtObject {
         chatCommunitySectionModule.removeUserFromCommunity(pubKey);
     }
 
+    function banUserFromCommunity(pubKey) {
+        chatCommunitySectionModule.banUserFromCommunity(pubKey);
+    }
+
     function createCommunityChannel(channelName, channelDescription, channelEmoji, channelColor,
             categoryId) {
         chatCommunitySectionModule.createCommunityChannel(channelName, channelDescription,
