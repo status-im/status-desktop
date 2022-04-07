@@ -142,5 +142,8 @@ QtObject:
   proc getColorHashAsJson*(self: Utils, publicKey: string): string {.slot.} =
     procs_from_visual_identity_service.getColorHashAsJson(publicKey)
 
+  proc getColorId*(self: Utils, publicKey: string): int {.slot.} =
+    int(procs_from_visual_identity_service.colorIdOf(publicKey))
+
   proc getCompressedPk*(self: Utils, publicKey: string): string {.slot.} =
     procs_from_accounts.compressPk(publicKey)
