@@ -7,30 +7,106 @@ import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core.Theme 0.1
 
+/*!
+    \qmltype StatusToastMessage
+    \inherits Control
+    \inqmlmodule StatusQ.Components
+    \since StatusQ.Components 0.1
+    \brief Displays a toast message in the UI. Inherits \l{https://doc.qt.io/qt-5/qml-qtquick-controls2-control.html}{Control}.
+
+    The \c StatusToastMessage displays a toast message in the UI either standalone or as part
+    of a stack of toast messages.
+    For example:
+
+    \qml
+    StatusToastMessage {
+        primaryText: "Collectible is being minted..."
+        secondaryText: "View on Etherscan"
+        loading: true
+        type: 0
+        linkUrl: "http://google.com"
+    }
+    \endqml
+
+    \image status_toast_message.png
+
+    For a list of components available see StatusQ.
+ */
+
+
 Control {
     id: root
     width: 343
     height: !!secondaryText ? 68 : 48
     anchors.right: parent.right
 
+    /*!
+        \qmlproperty bool StatusToastMessage::open
+        This property represents all steps and their descriptions as provided by the user.
+    */
     property bool open: false
+    /*!
+        \qmlproperty string StatusToastMessage::primaryText
+        This property represents the title text of the ToastMessage.
+    */
     property string primaryText: ""
+    /*!
+        \qmlproperty string StatusToastMessage::secondaryText
+        This property represents the subtitle text of the ToastMessage.
+    */
     property string secondaryText: ""
+    /*!
+        \qmlproperty bool StatusToastMessage::loading
+        This property represents activates/deactivates the loading indicator of the ToastMessage.
+    */
     property bool loading: false
-    property string iconName: ""
+    /*!
+        \qmlproperty string StatusToastMessage::linkUrl
+        This property represents all steps and their descriptions as provided by the user.
+    */
     property string linkUrl: ""
 
+    /*!
+        \qmlproperty StatusIconSettings StatusToastMessage::icon
+        This property holds a set of settings for the icon of the ToastMessage.
+    */
     property StatusIconSettings icon: StatusIconSettings {
         width: 23
         height: 23
     }
 
+    /*!
+        \qmlproperty int StatusToastMessage::type
+        This property holds the type of the ToastMessage. Values are:
+        \list
+            \li Default
+            \li Success
+        \endlist
+
+    */
     property int type: StatusToastMessage.Type.Default
     enum Type {
         Default,
         Success
     }
 
+    /*!
+        \qmlmethod
+        This function is used to open the ToastMessage setting all its properties.
+        Examples of usage:
+        \qml
+        StatusToastMessage {
+            id: toastMessage
+        }
+        MouseArea {
+            anchors.fill: parent
+            onClicked: {
+                toastMessage.open("Verification Request Sent", "", "checkmark-circle", 1, false,"");
+            }
+        }
+    \endqml
+
+    */
     function open(title, subTitle, iconName, type, loading, url) {
         root.primaryText = title;
         root.secondaryText = subTitle;
@@ -41,7 +117,16 @@ Control {
         root.open = true;
     }
 
+    /*!
+        \qmlsignal
+        This signal is emitted when the ToastMessage is closed.
+    */
     signal close()
+    /*!
+        \qmlsignal
+        This signal is emitted when the ToastMessage contains a url and this url
+        is clicked by the user.
+    */
     signal linkActivated(var link)
 
     states: [
