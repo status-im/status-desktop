@@ -174,8 +174,8 @@ Item {
                     cursorShape: Qt.PointingHandCursor
                     hoverEnabled: true
                     onClicked: {
-                        root.seedWordInput.input.edit.text = seedWord.trim();
-                        root.seedWordInput.input.edit.cursorPosition = seedWordInput.text.length;
+                        seedWordInput.input.edit.text = seedWord.trim();
+                        seedWordInput.input.edit.cursorPosition = seedWordInput.text.length;
                         root.doneInsertingWord(seedWordInput.text);
                         seedSuggestionsList.model = 0;
                     }
