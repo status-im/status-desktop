@@ -9,6 +9,7 @@ type
     AmIChatAdmin
     Icon
     Color
+    ColorId
     Emoji
     ColorHash
     Description
@@ -76,6 +77,7 @@ QtObject:
       ModelRole.AmIChatAdmin.int:"amIChatAdmin",
       ModelRole.Icon.int:"icon",
       ModelRole.Color.int:"color",
+      ModelRole.ColorId.int:"colorId",
       ModelRole.Emoji.int:"emoji",
       ModelRole.ColorHash.int:"colorHash",
       ModelRole.Description.int:"description",
@@ -113,6 +115,8 @@ QtObject:
       result = newQVariant(item.icon)
     of ModelRole.Color:
       result = newQVariant(item.color)
+    of ModelRole.ColorId:
+      result = newQVariant(item.colorId)
     of ModelRole.Emoji:
       result = newQVariant(item.emoji)
     of ModelRole.ColorHash:

@@ -403,3 +403,6 @@ proc getRenderedText*(self: Controller, parsedTextArray: seq[ParsedText]): strin
 
 proc getColorHash*(self: Controller, pubkey: string): ColorHashDto =
   procs_from_visual_identity_service.colorHashOf(pubkey)
+
+proc getColorId*(self: Controller, pubkey: string): int =
+  procs_from_visual_identity_service.colorIdOf(pubkey)

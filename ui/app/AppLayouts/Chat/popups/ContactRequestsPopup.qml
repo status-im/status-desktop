@@ -31,8 +31,10 @@ ModalPopup {
         clip: true
 
         delegate: ContactRequestPanel {
+            contactPubKey: model.pubKey
             contactName: model.name
             contactIcon: model.icon
+
             onOpenProfilePopup: {
                 Global.openProfilePopup(model.pubKey)
             }

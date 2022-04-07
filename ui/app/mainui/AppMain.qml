@@ -363,6 +363,7 @@ Item {
                 name: appMain.rootStore.userProfileInst.name
                 icon.source: appMain.rootStore.userProfileInst.icon
                 identicon.icon.charactersLen: 2
+                identicon.icon.color: Utils.colorForPubkey(appMain.rootStore.userProfileInst.pubKey)
                 identicon.ringSettings.ringSpecModel: Utils.getColorHashAsJson(appMain.rootStore.userProfileInst.pubKey)
 
                 badge.visible: true

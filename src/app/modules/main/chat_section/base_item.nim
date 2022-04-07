@@ -13,6 +13,7 @@ type
     amIChatAdmin: bool
     icon: string
     color: string
+    colorId: int # only for oneToOne sections
     emoji: string
     colorHash: color_hash_model.Model
     description: string
@@ -27,12 +28,13 @@ type
 
 proc setup*(self: BaseItem, id, name, icon: string, color, emoji, description: string,
   `type`: int, amIChatAdmin: bool, hasUnreadMessages: bool, notificationsCount: int, muted, blocked, active: bool,
-    position: int, categoryId: string = "", colorHash: seq[ColorHashSegment] = @[], highlight: bool = false) =
+    position: int, categoryId: string = "", colorId: int = 0, colorHash: seq[ColorHashSegment] = @[], highlight: bool = false) =
   self.id = id
   self.name = name
   self.amIChatAdmin = amIChatAdmin
   self.icon = icon
   self.color = color
+  self.colorId = colorId
   self.emoji = emoji
   self.colorHash = color_hash_model.newModel()
   self.colorHash.setItems(map(colorHash, x => color_hash_item.initItem(x.len, x.colorIdx)))
@@ -49,10 +51,10 @@ proc setup*(self: BaseItem, id, name, icon: string, color, emoji, description: s
 
 proc initBaseItem*(id, name, icon: string, color, emoji, description: string, `type`: int,
     amIChatAdmin: bool, hasUnreadMessages: bool, notificationsCount: int, muted, blocked, active: bool,
-    position: int, categoryId: string = "", colorHash: seq[ColorHashSegment] = @[], highlight: bool = false): BaseItem =
+    position: int, categoryId: string = "", colorId: int = 0, colorHash: seq[ColorHashSegment] = @[], highlight: bool = false): BaseItem =
   result = BaseItem()
   result.setup(id, name, icon, color, emoji, description, `type`, amIChatAdmin,
-  hasUnreadMessages, notificationsCount, muted, blocked, active, position, categoryId, colorHash, highlight)
+  hasUnreadMessages, notificationsCount, muted, blocked, active, position, categoryId, colorId, colorHash, highlight)
 
 proc delete*(self: BaseItem) =
   discard
@@ -80,6 +82,9 @@ method color*(self: BaseItem): string {.inline base.} =
 
 method `color=`*(self: var BaseItem, value: string) {.inline base.} =
   self.color = value
+
+method colorId*(self: BaseItem): int {.inline base.} =
+  self.colorId
 
 method emoji*(self: BaseItem): string {.inline base.} =
   self.emoji

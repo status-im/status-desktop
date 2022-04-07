@@ -10,8 +10,11 @@ import StatusQ.Components 0.1
 
 import shared.panels 1.0
 import shared.status 1.0
+import shared.controls.chat 1.0
 
 Rectangle {
+    id: root
+
     property string pubKey: "0x123456"
     property string name: "Jotaro Kujo"
     property string image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
@@ -28,7 +31,6 @@ Rectangle {
 
     property var onContactClicked
 
-    id: root
     visible: isVisible && (isContact || isUser)
     height: visible ? 64 : 0
     anchors.right: parent.right
@@ -37,12 +39,15 @@ Rectangle {
     radius: Style.current.radius
     color: isHovered ? Style.current.backgroundHover : Style.current.transparent
 
-    StatusSmartIdenticon {
+    UserImage {
         id: accountImage
         anchors.left: parent.left
         anchors.verticalCenter: parent.verticalCenter
         anchors.leftMargin: Style.current.padding
-        image.source: image
+
+        pubkey: root.pubKey
+        name: root.name
+        image: root.image
     }
 
     StyledText {

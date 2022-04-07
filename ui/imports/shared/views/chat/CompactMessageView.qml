@@ -339,7 +339,6 @@ Item {
             image: root.senderIcon
             pubkey: senderId
             name: senderDisplayName
-            showRing: !(root.amISender || senderIsAdded)
 
             onClicked: root.clickMessage(true, false, false, null, false, false, false, false, "")
         }

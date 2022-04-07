@@ -48,7 +48,6 @@ Item {
             name: root.displayName
             pubkey: root.pubkey
             image: root.icon
-            showRing: true
             interactive: false
 
             Loader {

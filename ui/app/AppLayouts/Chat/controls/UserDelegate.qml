@@ -60,7 +60,6 @@ Item {
             name: wrapper.name
             pubkey: wrapper.publicKey
             image: wrapper.iconToShow
-            showRing: !(wrapper.isCurrentUser || wrapper.isAdded)
         }
 
         StyledText {
