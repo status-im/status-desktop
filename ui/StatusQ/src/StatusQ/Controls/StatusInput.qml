@@ -13,8 +13,6 @@ import StatusQ.Controls.Validators 0.1
    \since StatusQ.Controls 0.1
    \brief The StatusInput control provides a generic user text input
 
-
-
    Example of how to use it:
 
    \qml
@@ -22,7 +20,6 @@ import StatusQ.Controls.Validators 0.1
             label: "Label"
             charLimit: 30
             errorMessage: "Input doesn't match validator"
-
             input.clearable: true
             input.placeholderText: "Placeholder text"
         }
@@ -49,10 +46,25 @@ Item {
 
     height: implicitHeight
     width: implicitWidth
-
+    /*!
+        \qmlproperty alias StatusInput::input
+        This property holds a reference to the TextEdit component.
+    */
     property alias input: statusBaseInput
+    /*!
+        \qmlproperty alias StatusInput::valid
+        This property holds a reference to the TextEdit's valid property.
+    */
     property alias valid: statusBaseInput.valid
+    /*!
+        \qmlproperty alias StatusInput::pending
+        This property holds a reference to the TextEdit's pending property.
+    */
     property alias pending: statusBaseInput.pending
+    /*!
+        \qmlproperty alias StatusInput::text
+        This property holds a reference to the TextEdit's text property.
+    */
     property alias text: statusBaseInput.text
 
     /*!
@@ -71,16 +83,48 @@ Item {
         \endqml
     */
     property alias errorMessageCmp: errorMessage
+    /*!
+        \qmlproperty string StatusInput::label
+        This property sets the label text.
+    */
     property string label: ""
+    /*!
+        \qmlproperty string StatusInput::secondaryLabel
+        This property sets the secondary label text.
+    */
     property string secondaryLabel: ""
+    /*!
+        \qmlproperty int StatusInput::charLimit
+        This property sets the character limit of the text input.
+    */
     property int charLimit: 0
+    /*!
+        \qmlproperty string StatusInput::errorMessage
+        This property sets the error message text.
+    */
     property string errorMessage: ""
+    /*!
+        \qmlproperty real StatusBaseInput::leftPadding
+        This property sets the leftComponentLoader's left padding.
+    */
     property real leftPadding: 16
+    /*!
+        \qmlproperty real StatusBaseInput::rightPadding
+        This property sets the right padding.
+    */
     property real rightPadding: 16
+    /*!
+        \qmlproperty list StatusBaseInput::validators
+        This property sets the list of validators to be considered.
+    */
     property list<StatusValidator> validators
+    /*!
+        \qmlproperty list StatusBaseInput::validators
+        This property sets the list of async validators to be considered.
+    */
     property list<StatusAsyncValidator> asyncValidators
     /*!
-       \qmlproperty int (enumeration ValidationMode)
+       \qmlproperty int StatusInput::validationMode
         This property describes the validation mode
 
         Note that this property should be always strictly compared with one of ValidationMode's value
@@ -102,12 +146,31 @@ Item {
         \endqml
     */
     property int validationMode: StatusInput.ValidationMode.OnlyWhenDirty
+    /*!
+        \qmlproperty string StatusBaseInput::validatedValue
+        This property sets the validated value text.
+    */
     property string validatedValue
-
+    /*!
+        \qmlproperty var StatusBaseInput::pendingValidators
+        This property sets the pending validators to be considered.
+    */
     property var pendingValidators: []
 
+    /*!
+        \qmlsignal
+        This signal is emitted when the icon is clicked.
+    */
     signal iconClicked()
+    /*!
+        \qmlsignal
+        This signal is emitted when a hard key is pressed passing as parameter the keyboard event.
+    */
     signal keyPressed(var event)
+    /*!
+        \qmlsignal
+        This signal is emitted when the text edit is clicked.
+    */
     signal editClicked()
 
     /*!
@@ -133,9 +196,20 @@ Item {
         IgnoreInvalidInput // ignore the new content if it doesn't match
     }
 
+    /*!
+        \qmlproperty var StatusBaseInput::errors
+        This property holds the validation errors.
+    */
     property var errors: ({})
+    /*!
+        \qmlproperty var StatusBaseInput::errors
+        This property holds the validation async errors.
+    */
     property var asyncErrors: ({})
-
+    /*!
+        \qmlmethod
+        This function resets the text input validation and text.
+    */
     function reset() {
         statusBaseInput.valid = true
         statusBaseInput.pristine = true
@@ -144,6 +218,10 @@ Item {
     }
 
     property string _previousText: text
+    /*!
+        \qmlmethod
+        This function validates the text input's text.
+    */
     function validate() {
 
         if (!statusBaseInput.dirty && validationMode === StatusInput.ValidationMode.OnlyWhenDirty) {
@@ -208,7 +286,10 @@ Item {
             root.validatedValue = root.text
         }
     }
-
+    /*!
+        \qmlmethod
+        This function updates the text input async validation.
+    */
     function updateAsyncValidity(validatorName, value, result) {
         if (!asyncErrors) {
             asyncErrors = {}
