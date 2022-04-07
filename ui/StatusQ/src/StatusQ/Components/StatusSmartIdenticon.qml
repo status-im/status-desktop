@@ -86,7 +86,6 @@ Loader {
             emoji: statusSmartIdenticon.icon.emoji
             emojiSize: statusSmartIdenticon.icon.emojiSize
             letterSize: statusSmartIdenticon.icon.letterSize
-            identiconText.color: statusSmartIdenticon.icon.textColor
             charactersLen: statusSmartIdenticon.icon.charactersLen
         }
     }

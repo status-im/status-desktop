@@ -29,7 +29,7 @@ Rectangle {
 
         font.weight: Font.Bold
         font.pixelSize: root.letterSize
-        color: Qt.rgba(255, 255, 255, 0.7)
+        color: d.luminance(root.color) > 0.5 ? Qt.rgba(0, 0, 0, 0.5) : Qt.rgba(255, 255, 255, 0.7)
 
         text: {
             if (emoji) {
@@ -43,6 +43,16 @@ Rectangle {
                           (root.name.charAt(0) === "@")
 
             return root.name.substring(shift, shift + charactersLen).toUpperCase()
+        }
+    }
+
+    QtObject {
+        id: d
+        function luminance(color) {
+            let r = Math.pow(color.r, 2.2) * 0.2126
+            let g = Math.pow(color.g, 2.2) * 0.7151
+            let b = Math.pow(color.b, 2.2) * 0.0721
+            return r + g + b
         }
     }
 }
