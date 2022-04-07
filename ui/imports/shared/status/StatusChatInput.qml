@@ -945,6 +945,7 @@ Rectangle {
             TextArea {
                 id: messageInputField
                 property var lastClick: 0
+                property int cursorWhenPressed: 0
                 textFormat: Text.RichText
                 font.pixelSize: 15
                 font.family: Style.current.fontRegular.name
@@ -958,6 +959,7 @@ Rectangle {
                 Keys.onPressed: {
                     keyEvent = event;
                     onKeyPress(event)
+                    cursorWhenPressed = cursorPosition;
                 }
                 Keys.onReleased: onRelease(event) // gives much more up to date cursorPosition
                 Keys.onShortcutOverride: event.accepted = isUploadFilePressed(event)
@@ -1006,20 +1008,26 @@ Rectangle {
                     }
                 }
                 onTextChanged: {
-                    var symbols = ":='xX><0O;*dB8-D#%\\";
-                    if ((length > 1) && (symbols.indexOf(getText((cursorPosition - 2), (cursorPosition - 1))) !== -1)
-                        && (!getText((cursorPosition - 7), cursorPosition).includes("http"))) {
-                        const emojis = EmojiJSON.emoji_json.filter(function (emoji) {
-                            if (emoji.aliases_ascii.includes(getText((cursorPosition - 2), cursorPosition)) ||
-                                emoji.aliases_ascii.includes(getText((cursorPosition - 3), cursorPosition))) {
-                                var has2Chars = emoji.aliases_ascii.includes(getText((cursorPosition - 2), cursorPosition));
-                                replaceWithEmoji("", getText(cursorPosition - (has2Chars ? 2 : 3), cursorPosition), emoji.unicode);
-                            }
-                        })
+                    if (length <= control.messageLimit) {
+                        var symbols = ":='xX><0O;*dB8-D#%\\";
+                        if ((length > 1) && (symbols.indexOf(getText((cursorPosition - 2), (cursorPosition - 1))) !== -1)
+                                && (!getText((cursorPosition - 7), cursorPosition).includes("http"))) {
+                            const emojis = EmojiJSON.emoji_json.filter(function (emoji) {
+                                if (emoji.aliases_ascii.includes(getText((cursorPosition - 2), cursorPosition)) ||
+                                        emoji.aliases_ascii.includes(getText((cursorPosition - 3), cursorPosition))) {
+                                    var has2Chars = emoji.aliases_ascii.includes(getText((cursorPosition - 2), cursorPosition));
+                                    replaceWithEmoji("", getText(cursorPosition - (has2Chars ? 2 : 3), cursorPosition), emoji.unicode);
+                                }
+                            })
+                        }
+                        if (text === "") {
+                            mentionsPos = [];
+                        }
+                    } else {
+                        var removeFrom = (cursorPosition < messageLimit) ? cursorWhenPressed : messageLimit;
+                        remove(removeFrom, cursorPosition);
                     }
-                    if (text === "") {
-                        mentionsPos = [];
-                    }
+                    messageLengthLimit.remainingChars = (messageLimit - length);
                 }
 
                 onReleased: function (event) {
@@ -1146,15 +1154,15 @@ Rectangle {
 
         StyledText {
             id: messageLengthLimit
-            property int remainingChars: messageLimit - messageInputField.length
-            text: remainingChars.toString()
-            visible: remainingChars <= control.messageLimitVisible
-            color: (remainingChars <= 0) ? Style.current.danger : Style.current.textColor
+            property int remainingChars: -1
             anchors.right: parent.right
             anchors.bottom: actions.top
             anchors.rightMargin: control.isStatusUpdateInput ? Style.current.padding : Style.current.radius
             leftPadding: Style.current.halfPadding
             rightPadding: Style.current.halfPadding
+            visible: ((messageInputField.length >= control.messageLimitVisible) && (messageInputField.length <= control.messageLimit))
+            color: (remainingChars <=  messageLimitVisible) ? Style.current.danger : Style.current.textColor
+            text: visible ? remainingChars.toString() : ""
         }
 
         Item {
