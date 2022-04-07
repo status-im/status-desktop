@@ -168,7 +168,7 @@ ColumnLayout {
         id: privateKey
         //% "Private key"
         label: qsTrId("private-key")
-        charLimit: 64
+        charLimit: 66
         input.multiline: true
         input.minimumHeight: 80
         input.maximumHeight: 108
