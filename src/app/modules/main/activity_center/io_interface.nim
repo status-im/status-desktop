@@ -68,3 +68,6 @@ method dismissActivityCenterNotifications*(self: AccessInterface, notificationId
 
 method switchTo*(self: AccessInterface, sectionId, chatId, messageId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method getDetails*(self: AccessInterface, sectionId: string, chatId: string): string {.base.} =
+  raise newException(ValueError, "No implementation available")

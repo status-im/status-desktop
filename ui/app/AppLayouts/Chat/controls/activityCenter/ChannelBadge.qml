@@ -17,7 +17,6 @@ Item {
     property int realChatType: -1
     property string name: "channelName"
     property color textColor
-    property string chatId: ""
     property string profileImage: ""
 
     SVGImage {

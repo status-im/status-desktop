@@ -207,9 +207,19 @@ Popup {
                         id: messageNotificationComponent
 
                         ActivityCenterMessageComponentView {
+                            id: activityCenterMessageView
                             store: activityCenter.store
                             chatSectionModule: activityCenter.chatSectionModule
                             messageContextMenu: activityCenter.messageContextMenu
+
+                            Connections {
+                                target: activityCenter
+                                onOpened: activityCenterMessageView.reevaluateItemBadge()
+                            }
+
+                            Component.onCompleted: {
+                                activityCenterMessageView.reevaluateItemBadge()
+                            }
                         }
                     }
 
