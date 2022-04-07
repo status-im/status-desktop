@@ -6,29 +6,121 @@ import QtGraphicalEffects 1.0
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 
+/*!
+     \qmltype StatusTagSelector
+     \inherits Item
+     \inqmlmodule StatusQ.Components
+     \since StatusQ.Components 0.1
+     \brief Displays a tag selector component together with a list of where to select and add the tags from.
+     Inherits \l{https://doc.qt.io/qt-5/qml-qtquick-item.html}{Item}.
+
+     The \c StatusTagSelector displays a list of asorted elements together with a text input where tags are added. As the user
+     types some text, the list elements are filtered and if the user selects any of those a new tag is created.
+     For example:
+
+     \qml
+     StatusTagSelector {
+        width: 650
+        height: 44
+        anchors.centerIn: parent
+        namesModel: ListModel {
+            ListElement {
+                publicId: "0x0"
+                name: "Maria"
+                icon: ""
+                isIdenticon: false
+                onlineStatus: 3
+            }
+            ListElement {
+                publicId: "0x1"
+                name: "James"
+                icon: "https://pbs.twimg.com/profile_images/1369221718338895873/T_5fny6o_400x400.jpg"
+                isIdenticon: false
+                onlineStatus: 1
+            }
+            ListElement {
+                publicId: "0x2"
+                name: "Paul"
+                icon: ""
+                isIdenticon: false
+                onlineStatus: 2
+            }
+        }
+        toLabelText: qsTr("To: ")
+        warningText: qsTr("USER LIMIT REACHED")
+     }
+     \endqml
+
+     \image status_tag_selector.png
+
+     For a list of components available see StatusQ.
+  */
+
 Item {
     id: root
 
     implicitWidth: 448
     implicitHeight: 44 + ((userListView.count > 0) ? 44 + contactsLabel.height + contactsLabel.anchors.topMargin + ((((userListView.count * 64) > root.maxHeight)
                     ? root.maxHeight : (userListView.count * 64))) :0)
-
+    /*!
+        \qmlproperty real StatusTagSelector::maxHeight
+        This property holds the maximum height of the component.
+    */
     property real maxHeight
+    /*!
+        \qmlproperty alias StatusTagSelector::textEdit
+        This property holds a reference to the TextEdit component.
+    */
     property alias textEdit: edit
+    /*!
+        \qmlproperty alias StatusTagSelector::text
+        This property holds a reference to the TextEdit's text property.
+    */
     property alias text: edit.text
+    /*!
+        \qmlproperty string StatusTagSelector::warningText
+        This property sets the warning text.
+    */
     property string warningText: ""
+    /*!
+        \qmlproperty string StatusTagSelector::toLabelText
+        This property sets the 'to' label text.
+    */
     property string toLabelText: ""
+    /*!
+        \qmlproperty string StatusTagSelector::listLabel
+        This property sets the elements list label text.
+    */
     property string listLabel: ""
+    /*!
+        \qmlproperty int StatusTagSelector::nameCountLimit
+        This property sets the tags count limit.
+    */
     property int nameCountLimit: 5
-
+    /*!
+        \qmlproperty ListModel StatusTagSelector::sortedList
+        This property holds the sorted list model.
+    */
     property ListModel sortedList: ListModel { }
+    /*!
+        \qmlproperty ListModel StatusTagSelector::namesModel
+        This property holds the asorted names model.
+    */
     property ListModel namesModel: ListModel { }
 
+    /*!
+        \qmlmethod
+        This function is used to find an entry in a model.
+    */
     function find(model, criteria) {
         for (var i = 0; i < model.count; ++i) if (criteria(model.get(i))) return model.get(i);
         return null;
     }
 
+    /*!
+        \qmlmethod
+        This function is used to insert a new tag.
+    */
     function insertTag(name, id) {
         if (!find(namesModel, function(item) { return item.publicId === id }) && namesModel.count < root.nameCountLimit) {
             namesModel.insert(namesModel.count, {"name": name, "publicId": id});
@@ -37,6 +129,10 @@ Item {
         }
     }
 
+    /*!
+        \qmlmethod
+        This function is used to sort the source model.
+    */
     function sortModel(inputModel) {
         sortedList.clear();
         if (text !== "") {
@@ -54,7 +150,16 @@ Item {
         }
     }
 
+    /*!
+        \qmlsignal
+        This signal is emitted when a new tag is created.
+    */
     signal addMember(string memberId)
+
+    /*!
+        \qmlsignal
+        This signal is emitted when a tag is removed.
+    */
     signal removeMember(string memberId)
 
     Rectangle {
