@@ -141,6 +141,11 @@ Item {
                     }
                 }
             }
+
+            Connections {
+                target: root.settings
+                onRingSpecModelChanged: requestPaint()
+            }
         }
     }
 }
