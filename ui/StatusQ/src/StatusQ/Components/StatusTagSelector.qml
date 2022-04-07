@@ -138,6 +138,7 @@ Item {
                 enabled: visible
                 focus: true
                 font.pixelSize: 15
+                wrapMode: TextEdit.WrapAnywhere
                 font.family: Theme.palette.baseFont.name
                 color: Theme.palette.directColor1
                 Keys.onPressed: {
