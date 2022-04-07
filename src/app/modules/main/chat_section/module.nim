@@ -724,6 +724,9 @@ method leaveCommunity*(self: Module) =
 method removeUserFromCommunity*(self: Module, pubKey: string) =
   self.controller.removeUserFromCommunity(pubKey)
 
+method banUserFromCommunity*(self: Module, pubKey: string) =
+  self.controller.banUserFromCommunity(pubkey)
+
 method editCommunity*(self: Module, name: string, description: string,
                         access: int, ensOnly: bool, color: string,
                         imagePath: string,

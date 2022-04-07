@@ -143,7 +143,7 @@ StatusAppTwoPanelLayout {
 
                 onUserProfileClicked: Global.openProfilePopup(id)
                 onKickUserClicked: root.rootStore.removeUserFromCommunity(id)
-                onBanUserClicked: console.debug("NOT IMPLEMENTED") // TODO: implement me
+                onBanUserClicked: root.rootStore.banUserFromCommunity(id)
                 onMembershipRequestsClicked: Global.openPopup(membershipRequestPopup, {
                     communitySectionModule: root.chatCommunitySectionModule
                 })

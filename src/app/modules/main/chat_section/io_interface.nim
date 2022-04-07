@@ -238,6 +238,9 @@ method leaveCommunity*(self: AccessInterface) {.base.} =
 method removeUserFromCommunity*(self: AccessInterface, pubKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method banUserFromCommunity*(self: AccessInterface, pubKey: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method editCommunity*(self: AccessInterface, name: string, description: string, access: int, ensOnly: bool, color: string, imagePath: string, aX: int, aY: int, bX: int, bY: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 

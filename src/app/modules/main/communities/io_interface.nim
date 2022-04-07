@@ -34,9 +34,6 @@ method reorderCommunityCategories*(self: AccessInterface, communityId: string, c
 method reorderCommunityChannel*(self: AccessInterface, communityId: string, categoryId: string, chatId: string, position: int) {.base} =
   raise newException(ValueError, "No implementation available")
 
-method banUserFromCommunity*(self: AccessInterface, pubKey: string, communityId: string) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method isUserMemberOfCommunity*(self: AccessInterface, communityId: string): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
