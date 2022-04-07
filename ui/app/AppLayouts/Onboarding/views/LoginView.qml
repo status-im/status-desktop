@@ -10,6 +10,7 @@ import shared.panels 1.0
 import shared.popups 1.0
 import shared.status 1.0
 import shared.controls 1.0
+import shared.controls.chat 1.0
 import "../popups"
 import "../stores"
 
@@ -87,12 +88,15 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
 
-        StatusSmartIdenticon {
+        UserImage {
             id: userImage
+
             anchors.horizontalCenter: parent.horizontalCenter
-            image.source: LoginStore.currentAccount.thumbnailImage
+
+            image: LoginStore.currentAccount.thumbnailImage
             name: LoginStore.currentAccount.username
-            icon.charactersLen: 2
+            colorId: LoginStore.currentAccount.colorId
+            colorHash: LoginStore.currentAccount.colorHash
         }
 
         StyledText {
