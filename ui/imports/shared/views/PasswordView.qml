@@ -21,7 +21,7 @@ Column {
     property bool titleVisible: true
     property string introText: qsTr("Create a password to unlock Status on this device & sign transactions.")
     property string recoverText: qsTr("You will not be able to recover this password if it is lost.")
-    property string strengthenText: qsTr("Minimum 6 characers. To strengthen your password consider including:")
+    property string strengthenText: qsTr("Minimum 6 characters. To strengthen your password consider including:")
     property bool onboarding: false
 
     readonly property int zBehind: 1
