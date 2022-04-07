@@ -6,6 +6,8 @@ import shared 1.0
 import StatusQ.Core.Theme 0.1
 
 QtObject {
+    property var globalUtilsInst: globalUtils
+
     function isHex(value) {
         return /^(-0x|0x)?[0-9a-fA-F]*$/i.test(value)
     }
@@ -15,8 +17,7 @@ QtObject {
     }
 
     function isChatKey(value) {
-        return (startsWith0x(value) && isHex(value) && value.length === 132) || 
-               /^z[123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz]{48}$/.test(value)
+        return (startsWith0x(value) && isHex(value) && value.length === 132) || globalUtilsInst.isCompressedPubKey(value)
     }
 
     function isValidETHNamePrefix(value) {

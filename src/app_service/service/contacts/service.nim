@@ -17,7 +17,6 @@ import ../../../backend/utils as status_utils
 export contacts_dto, status_update_dto, contact_details
 
 const PK_LENGTH_0X_INCLUDED = 132
-const PK_LENGTH_COMPRESSED = 49
 
 include async_tasks
 

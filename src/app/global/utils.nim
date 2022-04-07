@@ -147,3 +147,6 @@ QtObject:
 
   proc getCompressedPk*(self: Utils, publicKey: string): string {.slot.} =
     procs_from_accounts.compressPk(publicKey)
+
+  proc isCompressedPubKey*(self: Utils, publicKey: string): bool {.slot.} =
+    conversion.isCompressedPubKey(publicKey)
