@@ -4,38 +4,58 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
 
-GridLayout {
-    columns: 6
-    columnSpacing: 5
-    rowSpacing: 5
+ColumnLayout {
+    GridLayout {
+        Layout.fillWidth: true
+        Layout.fillHeight: true
 
-    StatusLoadingIndicator {
-        color: Theme.palette.directColor4
+        columns: 6
+        columnSpacing: 5
+        rowSpacing: 5
+
+        StatusLoadingIndicator {
+            color: Theme.palette.directColor4
+        }
+
+        StatusLetterIdenticon {
+            name: "#status"
+        }
+
+        StatusRoundedImage {
+            image.source: "https://pbs.twimg.com/profile_images/1369221718338895873/T_5fny6o_400x400.jpg"
+        }
+
+        StatusBadge {}
+
+        StatusBadge {
+            value: 1
+        }
+
+        StatusBadge {
+            value: 10
+        }
+
+        StatusBadge {
+            value: 100
+        }
+
+        StatusRoundIcon {
+            icon.name: "info"
+        }
     }
 
-    StatusLetterIdenticon {
-        name: "#status"
-    }
+    Flow {
+        Layout.fillWidth: true
+        spacing: 4
 
-    StatusRoundedImage {
-        image.source: "https://pbs.twimg.com/profile_images/1369221718338895873/T_5fny6o_400x400.jpg"
-    }
-
-    StatusBadge {}
-
-    StatusBadge {
-        value: 1
-    }
-
-    StatusBadge {
-        value: 10
-    }
-
-    StatusBadge {
-        value: 100
-    }
-
-    StatusRoundIcon {
-        icon.name: "info"
+        Repeater {
+            model: 12
+            StatusLetterIdenticon {
+                name: "A"
+                color: Theme.palette.userCustomizationColors[index]
+                letterSize: 16
+            }
+        }
     }
 }
+
