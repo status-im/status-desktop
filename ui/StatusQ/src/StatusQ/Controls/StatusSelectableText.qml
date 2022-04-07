@@ -23,7 +23,7 @@ Item {
     property alias color: edit.color
     property alias font: edit.font
     property alias focussed: edit.activeFocus
-    property alias verticalAlignmet: edit.verticalAlignment
+    property alias verticalAlignment: edit.verticalAlignment
     property alias horizontalAlignment: edit.horizontalAlignment
 
     signal linkActivated(string link)

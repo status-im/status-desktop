@@ -119,10 +119,10 @@ Item {
     */
     property alias focussed: edit.activeFocus
     /*!
-        \qmlproperty alias StatusBaseInput::verticalAlignmet
-        This property holds a reference to the TextEdit component's verticalAlignmet property.
+        \qmlproperty alias StatusBaseInput::verticalAlignment
+        This property holds a reference to the TextEdit component's verticalAlignment property.
     */
-    property alias verticalAlignmet: edit.verticalAlignment
+    property alias verticalAlignment: edit.verticalAlignment
     /*!
         \qmlproperty alias StatusBaseInput::horizontalAlignment
         This property holds a reference to the TextEdit component's horizontalAlignment property.
