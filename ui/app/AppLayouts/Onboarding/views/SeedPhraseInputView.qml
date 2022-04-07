@@ -68,6 +68,16 @@ OnboardingBasePage {
                 height: (grid.cellHeight - 28)
                 textEdit.input.anchors.leftMargin: 16
                 textEdit.input.anchors.rightMargin: 16
+                textEdit.text: {
+                    for (var i in root.mnemonicInput) {
+                        let p = root.mnemonicInput[i]
+                        if (p.pos === seedWordInput.leftComponentText) {
+                            return p.seed
+                        }
+                    }
+                    return ""
+                }
+
                 visible: grid.count !== 20 || (index !== 13 && index !== 19)
                 leftComponentText: (grid.count === 20) ? grid.wordIndex18[index] : grid.wordIndex[index]
                 inputList: BIP39_en { }
@@ -192,10 +202,10 @@ OnboardingBasePage {
 
     onBackClicked: {
         root.mnemonicString = "";
-        root.mnemonicInput = [];
         if (!grid.atXBeginning) {
             grid.positionViewAtBeginning();
         } else {
+            root.mnemonicInput = [];
             root.exit();
         }
     }
