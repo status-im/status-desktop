@@ -70,3 +70,11 @@ proc generateImages*(imagePath: string, aX, aY, bX, bY: int): RpcResponse[JsonNo
   except RpcException as e:
     error "error", methodName = "generateImages", exception=e.msg
     raise newException(RpcException, e.msg)
+
+proc initKeystore*(keystoreDir: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  try:
+    let response = status_go.initKeystore(keystoreDir)
+    result.result = Json.decode(response, JsonNode)
+  except RpcException as e:
+    error "error", methodName = "initKeystore", exception=e.msg
+    raise newException(RpcException, e.msg)

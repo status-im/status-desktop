@@ -198,21 +198,6 @@ proc saveAccount*(
     }]
   ])
 
-proc loadAccount*(address: string, password: string): RpcResponse[JsonNode] {.raises: [Exception].} =
-  let hashedPassword = hashPassword(password)
-  let payload = %* {
-    "address": address,
-    "password": hashedPassword
-  }
-
-  try:
-    let response = status_go.multiAccountLoadAccount($payload)
-    result.result = Json.decode(response, JsonNode)
-
-  except RpcException as e:
-    error "error doing rpc request", methodName = "storeAccounts", exception=e.msg
-    raise newException(RpcException, e.msg)
-
 proc addPeer*(peer: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   try:
     let response = status_go.addPeer(peer)
@@ -251,18 +236,6 @@ proc login*(name, keyUid, hashedPassword, thumbnail, large: string, nodeCfgObj: 
 
   except RpcException as e:
     error "error doing rpc request", methodName = "login", exception=e.msg
-    raise newException(RpcException, e.msg)
-
-proc multiAccountImportPrivateKey*(privateKey: string): RpcResponse[JsonNode] =
-  let payload = %* {
-    "privateKey": privateKey
-  }
-  try:
-    let response = status_go.multiAccountImportPrivateKey($payload)
-    result.result = Json.decode(response, JsonNode)
-
-  except RpcException as e:
-    error "error doing rpc request", methodName = "multiAccountImportPrivateKey", exception=e.msg
     raise newException(RpcException, e.msg)
 
 proc verifyAccountPassword*(address: string, password: string, keystoreDir: string):

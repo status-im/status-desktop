@@ -1,5 +1,7 @@
-import json, sequtils, strutils, uuids
+import os, json, sequtils, strutils, uuids
+>>>>>>> 8b5de1363 (fix(@general): keystore management)
 import json_serialization, chronicles
+import times as times
 
 import ./dto/accounts as dto_accounts
 import ./dto/generated_accounts as dto_generated_accounts
@@ -28,6 +30,7 @@ type
     loggedInAccount: AccountDto
     importedAccount: GeneratedAccountDto
     isFirstTimeAccountLogin: bool
+    keyStoreDir: string
 
 proc delete*(self: Service) =
   discard
@@ -36,6 +39,7 @@ proc newService*(fleetConfiguration: FleetConfiguration): Service =
   result = Service()
   result.fleetConfiguration = fleetConfiguration
   result.isFirstTimeAccountLogin = false
+  result.keyStoreDir = main_constants.ROOTKEYSTOREDIR
 
 proc getLoggedInAccount*(self: Service): AccountDto =
   return self.loggedInAccount
@@ -45,6 +49,53 @@ proc getImportedAccount*(self: Service): GeneratedAccountDto =
 
 proc isFirstTimeAccountLogin*(self: Service): bool =
   return self.isFirstTimeAccountLogin
+
+# Remove extra copied keystore that are not needed (can be remove 1st jan 2023)
+proc deleteExtraKeyStoreFile*(self: Service) =
+  let accounts = status_account.getAccounts().result
+  var deleteCandidates: seq[string] = @[]
+  for path in walkFiles(self.keyStoreDir & "*"):
+    var found = false
+    for account in accounts.getElems():
+      let address = account{"address"}.getStr.replace("0x", "")
+      if path.endsWith(address):
+        found = true
+        break
+
+    if not found:
+      deleteCandidates.add(path)
+
+  if len(deleteCandidates) == 2:
+    return
+
+  let tz = times.utc()
+  let tf = times.initTimeFormat("yyyy-mm-dd'T'HH-mm-ss")
+  proc extractTime(path: string): DateTime =
+    return os.extractFilename(path).split("--")[1].split(".")[0].parse(tf, tz)
+
+  let interval = times.initDuration(seconds = 2)
+  var toDelete: seq[string] = @[]
+  for a in deleteCandidates:
+    let aTime = extractTime(a)
+    var found = false
+    for b in deleteCandidates:
+      let bTime = extractTime(b)
+
+      if aTime - bTime < interval:
+        found = true
+        break
+
+    if found:
+      continue
+    
+    toDelete.add(a)
+
+  for path in toDelete:
+    os.removeFile(path)
+
+proc setKeyStoreDir(self: Service, key: string) = 
+  self.keyStoreDir = joinPath(main_constants.ROOTKEYSTOREDIR, key) & main_constants.sep
+  discard status_general.initKeystore(self.keyStoreDir)
 
 proc compressPk*(publicKey: string): string =
   try:
@@ -265,11 +316,16 @@ proc getDefaultNodeConfig*(self: Service, installationId: string): JsonNode =
 
   # TODO: commented since it's not necessary (we do the connections thru C bindings). Enable it thru an option once status-nodes are able to be configured in desktop
   # result["ListenAddr"] = if existsEnv("STATUS_PORT"): newJString("0.0.0.0:" & $getEnv("STATUS_PORT")) else: newJString("0.0.0.0:30305")
+  
+  result["KeyStoreDir"] = newJString(self.keyStoreDir.replace(main_constants.STATUSGODIR, ""))
 
 proc setupAccount*(self: Service, accountId, password, displayName: string): string =
   try:
     let installationId = $genUUID()
     let accountDataJson = self.getAccountDataForAccountId(accountId, displayName)
+
+    self.setKeyStoreDir(accountDataJson{"key-uid"}.getStr)
+
     let subaccountDataJson = self.getSubaccountDataForAccountId(accountId, displayName)
     let settingsJson = self.getAccountSettings(accountId, installationId, displayName)
     let nodeConfigJson = self.getDefaultNodeConfig(installationId)
@@ -325,6 +381,14 @@ proc login*(self: Service, account: AccountDto, password: string): string =
       elif(img.imgType == "large"):
         largeImage = img.uri
 
+    # Copy old keystore file to new dir, this code can be remove 1st jan 2023    
+    let keyStoreDir = joinPath(main_constants.ROOTKEYSTOREDIR, account.keyUid) & main_constants.sep
+    if not dirExists(self.keyStoreDir):
+      os.createDir(self.keyStoreDir)
+      for path in walkFiles(main_constants.ROOTKEYSTOREDIR & "*"):
+        os.copyFile(path, self.keyStoreDir & os.extractFilename(path))
+
+    self.setKeyStoreDir(account.keyUid)
     # This is moved from `status-lib` here
     # TODO:
     # If you added a new value in the nodeconfig in status-go, old accounts will not have this value, since the node config
@@ -332,6 +396,7 @@ proc login*(self: Service, account: AccountDto, password: string): string =
     # While this is fixed, you can add here any missing attribute on the node config, and it will be merged with whatever
     # the account has in the db
     var nodeCfg = %* {
+      "KeyStoreDir": self.keyStoreDir.replace(main_constants.STATUSGODIR, ""),
       "ShhextConfig": %* {
         "BandwidthStatsEnabled": true
       },
@@ -372,7 +437,7 @@ proc login*(self: Service, account: AccountDto, password: string): string =
 
 proc verifyAccountPassword*(self: Service, account: string, password: string): bool =
   try:
-    let response = status_account.verifyAccountPassword(account, password, main_constants.KEYSTOREDIR)
+    let response = status_account.verifyAccountPassword(account, password, self.keyStoreDir)
     if(response.result.contains("error")):
       let errMsg = response.result["error"].getStr
       if(errMsg.len == 0):

@@ -1,8 +1,6 @@
-import json, chronicles
+import os, json, chronicles
 
 import ../../../backend/general as status_general
-import ../../../backend/keycard as status_keycard
-import ../../../backend/accounts as status_accounts
 import ../../../constants as app_constants
 
 import ../profile/dto/profile as profile_dto
@@ -20,19 +18,9 @@ proc delete*(self: Service) =
 proc newService*(): Service =
   result = Service()
 
-proc initKeycard(self: Service) =
-  ## This should not be part of the "general service", but part of the "keystore service", but since we don't have
-  ## keycard in place for the refactored part yet but `status-go` part requires keycard to be initialized on the app
-  ## start. This call is added as a part of the "global service".
-  try:
-    discard status_keycard.initKeycard(app_constants.KEYSTOREDIR)
-  except Exception as e:
-    let errDesription = e.msg
-    error "error: ", errDesription
-    return
-
 proc init*(self: Service) =
-  self.initKeycard()
+  if not existsDir(app_constants.ROOTKEYSTOREDIR):
+    createDir(app_constants.ROOTKEYSTOREDIR)
 
 proc startMessenger*(self: Service) =
   try:
