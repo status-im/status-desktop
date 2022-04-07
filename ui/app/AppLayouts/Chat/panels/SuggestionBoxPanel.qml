@@ -212,7 +212,6 @@ Rectangle {
                     name: model.name
                     pubkey: model.publicKey
                     image: model.icon
-                    showRing: !model.isAdded
                     interactive: false
                 }
 

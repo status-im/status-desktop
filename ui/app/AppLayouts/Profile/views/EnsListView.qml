@@ -288,7 +288,6 @@ Item {
                 anchors.topMargin: 20
 
                 image: root.ensUsernamesStore.icon
-                showRing: true
 
                 onClicked: root.parent.clickMessage(true, false, false, null, false, false, false)
             }

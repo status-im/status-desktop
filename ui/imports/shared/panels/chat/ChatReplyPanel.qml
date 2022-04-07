@@ -109,7 +109,6 @@ Loader {
                 name: repliedMessageSender
                 pubkey: repliedMessageSenderPubkey
                 image: repliedMessageSenderIcon
-                showRing: !(amISenderOfTheRepliedMessage || repliedMessageSenderIsAdded)
 
                 onClicked: root.clickMessage(true, false, false, null, false, false, true)
             }

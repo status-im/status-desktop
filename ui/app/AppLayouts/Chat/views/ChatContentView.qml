@@ -95,7 +95,11 @@ ColumnLayout {
         chatInfoButton.image.source: chatContentModule? chatContentModule.chatDetails.icon : ""
         chatInfoButton.ringSettings.ringSpecModel: chatContentModule && chatContentModule.chatDetails.type === Constants.chatType.oneToOne ?
                                                        Utils.getColorHashAsJson(chatContentModule.chatDetails.id) : ""
-        chatInfoButton.icon.color: chatContentModule? chatContentModule.chatDetails.color : ""
+        chatInfoButton.icon.color: chatContentModule?
+                                        chatContentModule.chatDetails.type === Constants.chatType.oneToOne ?
+                                            Utils.colorForPubkey(chatContentModule.chatDetails.id)
+                                            : chatContentModule.chatDetails.color
+                                        : ""
         chatInfoButton.icon.emoji: chatContentModule? chatContentModule.chatDetails.emoji : ""
         chatInfoButton.icon.emojiSize: "24x24"
         chatInfoButton.type: chatContentModule? chatContentModule.chatDetails.type : Constants.chatType.unknown

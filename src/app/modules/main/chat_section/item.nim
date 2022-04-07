@@ -7,10 +7,10 @@ type
 
 proc initItem*(id, name, icon: string, color, emoji, description: string,
     `type`: int, amIChatAdmin: bool, hasUnreadMessages: bool, notificationsCount: int, muted,
-    blocked, active: bool, position: int, categoryId: string, colorHash: seq[ColorHashSegment] = @[], highlight: bool = false): Item =
+    blocked, active: bool, position: int, categoryId: string, colorId: int = 0, colorHash: seq[ColorHashSegment] = @[], highlight: bool = false): Item =
   result = Item()
   result.setup(id, name, icon, color, emoji, description, `type`, amIChatAdmin, hasUnreadMessages,
-  notificationsCount, muted, blocked, active, position, categoryId, colorHash, highlight)
+  notificationsCount, muted, blocked, active, position, categoryId, colorId, colorHash, highlight)
   result.subItems = newSubModel()
 
 proc delete*(self: Item) =

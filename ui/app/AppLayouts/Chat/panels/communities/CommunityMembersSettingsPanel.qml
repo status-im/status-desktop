@@ -129,15 +129,14 @@ SettingsPageLayout {
                 icon {
                     width: 40
                     height: 40
-                    color: Style.current.background
-                    textColor: Style.current.secondaryText
+                    color: Utils.colorForPubkey(model.id)
                     letterSize: Math.max(4, root.imageWidth / 2.4)
                     charactersLen: 2
                     isLetterIdenticon: true
                 }
 
                 ringSettings {
-                    ringSpecModel: model.isAdded ? "" : Utils.getColorHashAsJson(model.id)
+                    ringSpecModel: Utils.getColorHashAsJson(model.id)
                     ringPxSize: Math.max(icon.width / 24.0)
                 }
 

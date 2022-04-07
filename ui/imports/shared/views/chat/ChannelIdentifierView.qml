@@ -32,7 +32,7 @@ Column {
         icon {
             width: 120
             height: 120
-            color: root.chatColor
+            color: root.chatType === Constants.chatType.oneToOne ? Utils.colorForPubkey(root.chatId) : root.chatColor
             emoji: root.chatEmoji
             charactersLen: root.chatType === Constants.chatType.oneToOne ? 2 : 1
         }

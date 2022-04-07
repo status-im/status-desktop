@@ -5,10 +5,12 @@ import QtQuick.Layouts 1.13
 import utils 1.0
 import shared 1.0
 import shared.panels 1.0
+import shared.controls.chat 1.0
 
 import StatusQ.Components 0.1
 
 Rectangle {
+    property string contactPubKey
     property string contactName
     property string contactIcon
     signal openProfilePopup()
@@ -25,12 +27,16 @@ Rectangle {
     radius: Style.current.radius
     color: isHovered ? Style.current.backgroundHover : Style.current.transparent
 
-    StatusSmartIdenticon {
+    UserImage {
         id: accountImage
+
         anchors.left: parent.left
         anchors.leftMargin: Style.current.padding
         anchors.verticalCenter: parent.verticalCenter
-        image.source: contactIcon
+
+        name: contactName
+        image: contactIcon
+        pubkey: contactPubKey
     }
 
     StyledText {
