@@ -110,6 +110,7 @@ Item {
                 height: 14
                 iconWidth: 14
                 iconHeight: 14
+                visible: (nameInput.input.text.length > 0)
                 color: "transparent"
                 source: Style.svg("close-filled")
                 onClicked: {
