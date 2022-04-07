@@ -11,7 +11,6 @@ StatusInput {
     //% "Search"
     input.placeholderText: qsTrId("search")
     input.icon.name: "search"
-    input.implicitHeight: 36
     input.clearable: true
     leftPadding: 0
     rightPadding: 0
