@@ -8,6 +8,8 @@ type
     ThumbnailImage
     LargeImage
     KeyUid
+    ColorHash
+    ColorId
 
 QtObject:
   type
@@ -33,7 +35,9 @@ QtObject:
       ModelRole.Name.int:"username",
       ModelRole.ThumbnailImage.int:"thumbnailImage",
       ModelRole.LargeImage.int:"largeImage",
-      ModelRole.KeyUid.int:"keyUid"
+      ModelRole.KeyUid.int:"keyUid",
+      ModelRole.ColorHash.int:"colorHash",
+      ModelRole.ColorId.int:"colorId"
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -55,6 +59,10 @@ QtObject:
       result = newQVariant(item.getLargeImage())
     of ModelRole.KeyUid:
       result = newQVariant(item.getKeyUid())
+    of ModelRole.ColorHash:
+      result = newQVariant(item.getColorHash())
+    of ModelRole.ColorId:
+      result = newQVariant(item.getColorId())
 
   proc setItems*(self: Model, items: seq[Item]) =
     self.beginResetModel()

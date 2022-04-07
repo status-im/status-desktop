@@ -30,6 +30,18 @@ QtObject:
   QtProperty[string] keyUid:
     read = getKeyUid
 
+  proc getColorHash(self: SelectedAccount): QVariant {.slot.} =
+    return self.item.getColorHashVariant()
+
+  QtProperty[QVariant] colorHash:
+    read = getColorHash
+
+  proc getColorId(self: SelectedAccount): int {.slot.} =
+    return self.item.getColorId()
+
+  QtProperty[int] colorId:
+    read = getColorId
+
   proc getThumbnailImage(self: SelectedAccount): string {.slot.} =
     return self.item.getThumbnailImage()
 

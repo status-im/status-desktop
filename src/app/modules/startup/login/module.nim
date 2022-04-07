@@ -56,7 +56,7 @@ method load*(self: Module) =
       var largeImage: string
       self.extractImages(acc, thumbnailImage, largeImage)
       items.add(initItem(acc.name, thumbnailImage, largeImage,
-      acc.keyUid))
+      acc.keyUid, acc.colorHash, acc.colorId))
 
     self.view.setModelItems(items)
 

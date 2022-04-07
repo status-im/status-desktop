@@ -20,6 +20,8 @@ ListView {
         image: model.thumbnailImage
         keyUid: model.keyUid
         address: model.address || ''
+        colorHash: model.colorHash
+        colorId: model.colorId
         isSelected: function (index, keyUid) {
             return accountsView.isSelected(index, keyUid)
         }

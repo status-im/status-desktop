@@ -5,6 +5,7 @@ import shared.panels 1.0
 import utils 1.0
 
 import StatusQ.Components 0.1
+import StatusQ.Core.Theme 0.1
 
 Loader {
     id: root
@@ -16,8 +17,11 @@ Loader {
     property string name
     property string pubkey
     property string image
-    property bool showRing: false
+    property bool showRing: true
     property bool interactive: true
+
+    property int colorId: Utils.colorIdForPubkey(pubkey)
+    property var colorHash: Utils.getColorHashAsJson(pubkey)
 
     signal clicked()
 
@@ -33,12 +37,11 @@ Loader {
         icon {
             width: root.imageWidth
             height: root.imageHeight
-            color: Style.current.background
-            textColor: Style.current.secondaryText
+            color: Theme.palette.userCustomizationColors[root.colorId]
             charactersLen: 2
         }
         ringSettings {
-            ringSpecModel: root.showRing ? Utils.getColorHashAsJson(root.pubkey) : undefined
+            ringSpecModel: root.showRing ? root.colorHash : undefined
         }
 
         Loader {

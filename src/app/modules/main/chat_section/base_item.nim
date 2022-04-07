@@ -1,5 +1,6 @@
 import sequtils, sugar
-import color_hash_item, color_hash_model
+
+import ../../shared_models/[color_hash_item, color_hash_model]
 
 type
   ColorHashSegment* = tuple[len, colorIdx: int]

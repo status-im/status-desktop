@@ -1,7 +1,9 @@
 pragma Singleton
 
 import QtQuick 2.13
+
 import shared 1.0
+import StatusQ.Core.Theme 0.1
 
 QtObject {
     function isHex(value) {
@@ -617,6 +619,17 @@ QtObject {
         }
         let jsonObj = globalUtils.getColorHashAsJson(publicKey)
         return JSON.parse(jsonObj)
+    }
+
+    function colorIdForPubkey(publicKey) {
+        if (publicKey === "") {
+            return 0
+        }
+        return globalUtils.getColorId(publicKey)
+    }
+
+    function colorForPubkey(publicKey) {
+        return Theme.palette.userCustomizationColors[colorIdForPubkey(publicKey)]
     }
 
     function getCompressedPk(publicKey) {

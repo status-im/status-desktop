@@ -6,6 +6,7 @@ import utils 1.0
 import shared 1.0
 import shared.panels 1.0
 import shared.status 1.0
+import shared.controls.chat 1.0
 
 import StatusQ.Controls 0.1 as StatusQControls
 import StatusQ.Components 0.1
@@ -16,6 +17,8 @@ Rectangle {
     property string username: "Jotaro Kujo"
     property string keyUid: "0x123345677890987654321123456"
     property string address: ""
+    property var colorHash
+    property int colorId
     property url image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAg0lEQVR4nOzXwQmAMBAFURV7sQybsgybsgyr0QYUlE1g+Mw7ioQMe9lMQwhDaAyhMYTGEJqYkPnrj/t5XE/ft2UdW1yken7MRAyhMYTGEBpDaAyhKe9JbzvSX9WdLWYihtAYQuMLkcYQGkPUScxEDKExhMYQGkNoDKExhMYQmjsAAP//ZfIUZgXTZXQAAAAASUVORK5CYII="
     property var onAccountSelect: function() {}
     property var isSelected: function() {}
@@ -37,14 +40,17 @@ Rectangle {
         return Style.current.transparent
     }
 
-    StatusSmartIdenticon {
+    UserImage {
         id: accountImage
+
         anchors.left: parent.left
         anchors.leftMargin: Style.current.padding
         anchors.verticalCenter: parent.verticalCenter
+
         name: root.username
-        image.source: root.image
-        icon.charactersLen: 2
+        image: root.image
+        colorId: root.colorId
+        colorHash: root.colorHash
     }
 
     StyledText {
