@@ -4,6 +4,7 @@ import QtQuick.Dialogs 1.3
 import utils 1.0
 
 import StatusQ.Controls 0.1
+import StatusQ.Popups 0.1
 
 import shared 1.0
 import shared.panels 1.0
@@ -11,10 +12,11 @@ import shared.popups 1.0
 
 import "../stores"
 
-// TODO: replace with StatusModal
-ModalPopup {
+StatusModal {
     id: popup
-    title: qsTr("Upload profile picture")
+    height: 510
+    header.title: qsTr("Upload profile picture")
+
     property string selectedImage
     property string uploadError
 
@@ -25,9 +27,8 @@ ModalPopup {
         cropImageModal.open();
     }
 
-    Item {
+    contentItem: Item {
         anchors.fill: parent
-
         RoundedImage {
             id: profilePic
             source: selectedImage
@@ -64,15 +65,10 @@ ModalPopup {
         }
     }
 
-    footer: Item {
-        width: parent.width
-        height: uploadBtn.height
-
+    rightButtons: [
         StatusButton {
             id: uploadBtn
             text: !!selectedImage ? qsTr("Done") : qsTr("Upload")
-            anchors.right: parent.right
-            anchors.bottom: parent.bottom
             onClicked: {
                 if (!!selectedImage) {
                     close();
@@ -80,7 +76,6 @@ ModalPopup {
                     imageDialog.open();
                 }
             }
-
             FileDialog {
                 id: imageDialog
                 title: qsTrId("please-choose-an-image")
@@ -93,6 +88,6 @@ ModalPopup {
                 }
             }
         }
-    }
+    ]
 }
 

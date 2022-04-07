@@ -178,6 +178,7 @@ Item {
 
         UploadProfilePicModal {
             id: uploadProfilePicPopup
+            anchors.centerIn: parent
         }
     }
 
