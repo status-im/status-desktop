@@ -92,7 +92,7 @@ Page {
         anchors.topMargin: 8
         anchors.right: parent.right
         anchors.rightMargin: 8
-
+        clip: true
         StatusTagSelector {
             id: tagSelector
             Layout.fillWidth: true
