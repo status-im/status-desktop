@@ -10,7 +10,7 @@ import StatusQ.Controls 0.1
    \inherits Item
    \inqmlmodule StatusQ.Controls
    \since StatusQ.Controls 0.1
-   \brief It presents a selectable item to the user.
+   \brief It presents a selectable item to the user. Inherits \l{https://doc.qt.io/qt-5/qml-qtquick-rectangle.html}{Rectangle}.
 
    The \c StatusItemPicker is populated with the given properties data.
 
@@ -35,7 +35,7 @@ import StatusQ.Controls 0.1
    \endqml
    For a list of components available see StatusQ.
 */
-Item {
+Rectangle {
     id: root
 
     /*!
@@ -169,7 +169,10 @@ Item {
         StatusRadioButton {
             ButtonGroup.group: root.radioGroup
             checked: root.selected
-            onCheckedChanged: root.checkedChanged(checked)
+            onCheckedChanged: {
+                root.selected = checked
+                root.checkedChanged(checked)
+            }
         }
     }
 
@@ -177,7 +180,10 @@ Item {
         id: checkbox
         StatusCheckBox {
             checked: root.selected
-            onCheckedChanged: root.checkedChanged(checked)
+            onCheckedChanged: {
+                root.selected = checked
+                root.checkedChanged(checked)
+            }
         }
     }
 }// End of Content item

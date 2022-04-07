@@ -47,6 +47,7 @@ GridLayout {
             searchText: qsTr("Search Currencies")
             multiSelection: true
             printSymbol: true
+            enableSelectableItem: false
         }
     }
 

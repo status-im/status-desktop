@@ -11,7 +11,7 @@ import StatusQ.Controls 0.1
    \inherits Item
    \inqmlmodule StatusQ.Components
    \since StatusQ.Components 0.1
-   \brief It is a combination of StatusPickerButton and a drop-down list component that provides a way of presenting a list of selectable options to the user.
+   \brief It is a combination of StatusPickerButton and a drop-down list component that provides a way of presenting a list of selectable options to the user. Inherits \l{https://doc.qt.io/qt-5/qml-qtquick-item.html}{Item}.
 
    The \c StatusListPicker is populated with a data model. The data model is commonly a JavaScript array or a ListModel object.
 
@@ -95,6 +95,12 @@ Item {
     */
     property int maxPickerHeight: 718
 
+    /*!
+       \qmlproperty string StatusListPicker::enableSelectableItem
+       This property holds if the item in the list will be highlighted when hovering and clickable in its complete area or just not highlighted and able to be selected by clicking only the checbox or radiobutton area.
+    */
+    property bool enableSelectableItem: true
+
     /*
         \qmlmethod StatusListPicker::close()
         It can be used to force to close the drop-down picker list whenever the consumer needs it. For example by adding an outside MouseArea to close the picker when user clicks outsite the component:
@@ -107,7 +113,13 @@ Item {
             }
        \endqml
     */
-    function close() { if(picker.visible) picker.visible = false }
+    function close() { picker.visible = false }
+
+    /*!
+        \qmlsignal StatusListPicker::itemPickerChanged(string key, bool selected)
+        This signal is emitted when an item changes its selected value.
+    */
+    signal itemPickerChanged(string key, bool selected)
 
     QtObject {
         id: d
@@ -198,6 +210,7 @@ Item {
         bgColor: Theme.palette.primaryColor3
         contentColor: Theme.palette.primaryColor1
         text: picker.selectedItemsText
+        textPixelSize: 13
         type: StatusPickerButton.Type.Down
 
         onClicked: {
@@ -272,6 +285,7 @@ Item {
             delegate: StatusItemPicker {
                 width: content.itemWidth
                 height: content.itemHeight
+                color: mouseArea.containsMouse? Theme.palette.baseColor4 : "transparent"
                 image: StatusImageSettings {
                     source: model.imageSource ? model.imageSource : ""
                     width: 15
@@ -294,6 +308,18 @@ Item {
                         // Update selected items text (multiple selection, text chain).
                         picker.selectedItemsText = d.getSelectedItemsText()
                     }
+
+                    // Used to notify selected property changes in the specific item picker.
+                    itemPickerChanged(model.key, checked)
+                }
+
+                MouseArea {
+                    id: mouseArea
+                    enabled: root.enableSelectableItem
+                    anchors.fill: parent
+                    cursorShape: root.enableSelectableItem ? Qt.PointingHandCursor : Qt.ArrowCursor
+                    hoverEnabled: true
+                    onClicked: { selected = !selected }
                 }
             }
             section.property: "category"
@@ -318,7 +344,7 @@ Item {
             // Not visual element to control mutual-exclusion of radiobuttons that are not sharing the same parent (inside list view)
             ButtonGroup {
                 id: radioBtnGroup
-            }
+            }           
         }// End of Content        
     }// End of Rectangle picker
 }

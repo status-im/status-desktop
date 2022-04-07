@@ -13,6 +13,7 @@ Button {
     property color contentColor: Theme.palette.baseColor1
     property var type: StatusPickerButton.Type.Next
     property int lateralMargins: 16
+    property int textPixelSize: 15
 
     enum Type {
         Next,
@@ -38,7 +39,7 @@ Button {
             anchors.verticalCenter: parent.verticalCenter
             width: parent.width - icon.width - anchors.rightMargin - anchors.leftMargin - icon.anchors.rightMargin - icon.anchors.leftMargin
             verticalAlignment: Text.AlignVCenter
-            font.pixelSize: 15
+            font.pixelSize: root.textPixelSize
             color: root.contentColor
             text: root.text
             clip: true
