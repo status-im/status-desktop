@@ -40,6 +40,8 @@ import StatusQ.Core.Theme 0.1
        }
    \endqml
 
+   \image status_seed_phrase_input.png
+
    For a list of components available see StatusQ.
 */
 
@@ -47,17 +49,53 @@ Item {
     id: root
     width: 162
     height: 44
+    /*!
+        \qmlproperty alias StatusSeedPhraseInput::textEdit
+        This property is an alias to the StatusInput's textEdit property.
+    */
     property alias textEdit: seedWordInput
+    /*!
+        \qmlproperty alias StatusSeedPhraseInput::text
+        This property is an alias to the StatusInput's text property.
+    */
     property alias text: seedWordInput.text
+    /*!
+        \qmlproperty string StatusSeedPhraseInput::leftComponentText
+        This property sets the StatusInput's left component's text.
+    */
     property string leftComponentText: ""
+    /*!
+        \qmlproperty ListModel StatusSeedPhraseInput::inputList
+        This property holds the filtered words list based on the user's
+        input text.
+    */
     property ListModel inputList: ListModel { }
+    /*!
+        \qmlproperty ListModel StatusSeedPhraseInput::filteredList
+        This signal is emitted when the user selects a word from
+        the suggestions list, either by clicking on it or by completing
+        typing 4 charactersnd passes as a parameter the selected word.
+        The corresponding handler is \c onDoneInsertingWord
+    */
     property ListModel filteredList: ListModel { }
+    /*!
+        \qmlsignal doneInsertingWord
+        This signal is emitted when the user selects a word from the suggestions list
+        either by mouse click or by typing 4 characters that match and passes as a parameter
+        the selected word. The corresponding handler is \c onDoneInsertingWord.
+    */
     signal doneInsertingWord(string word)
-    /*
-        This signal is emitted when the user pressed a keyboard key and passes as a
+    /*!
+        \qmlsignal keyPressed
+        This signal is emitted when the user presses a keyboard key and passes as a
         parameter the event. The corresponding handler is \c onKeyPressed.
     */
     signal keyPressed(var event)
+    /*!
+        \qmlsignal editClicked
+        This signal is emitted when the user clicks inside the StatusInput.
+        The corresponding handler is \c onEditClicked
+    */
     signal editClicked()
 
     onActiveFocusChanged: {

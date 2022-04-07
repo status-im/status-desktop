@@ -44,5 +44,6 @@
        \li \l{StatusWalletColorSelect}
        \li \l{StatusRegularExpressionValidator}
        \li \l{StatusIntValidator}
+       \li \l{StatusSeedPhraseInput}
    \endlist
 */

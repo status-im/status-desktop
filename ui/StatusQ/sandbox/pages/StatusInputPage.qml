@@ -59,12 +59,13 @@ Column {
 
     Item {
         implicitWidth: 480
-        implicitHeight: 102
+        implicitHeight: 82
         z: 100000
         StatusSeedPhraseInput {
             id: statusSeedInput
             anchors.left: parent.left
             anchors.right: parent.right
+            height: parent.height
             textEdit.input.anchors.leftMargin: 16
             textEdit.input.anchors.rightMargin: 16
             textEdit.input.anchors.topMargin: 11
@@ -88,7 +89,6 @@ Column {
         label: "Label"
         charLimit: 30
         errorMessage: "Error message"
-
         input.clearable: true
         input.valid: false
         input.placeholderText: "Placeholder"
