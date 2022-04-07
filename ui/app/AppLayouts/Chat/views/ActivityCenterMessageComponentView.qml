@@ -41,6 +41,16 @@ Item {
         Global.openProfilePopup(model.author)
     }
 
+    function reevaluateItemBadge() {
+        let details = root.store.getBadgeDetails(model.sectionId, model.chatId)
+        badge.isCommunity = details.sType == "community"
+        badge.name = details.cName
+        badge.channelName = details.cName
+        badge.communityName = details.sName
+        badge.communityColor = details.sColor
+        badge.communityThumbnailImage = details.sImage
+    }
+
     Component {
         id: markReadBtnComponent
         StatusFlatRoundButton {
@@ -123,12 +133,8 @@ Item {
             amISender: model.message.amISender
             messageImage: model.message.messageImage
             messageTimestamp: model.timestamp
-            linkUrls: model.links
             messageOutgoingStatus: model.message.outgoingStatus
             messageContentType: model.message.contentType
-            pinnedMessage: model.message.pinned
-            messagePinnedBy: model.message.pinnedBy
-            reactionsModel: model.message.reactions
             activityCenterMessage: true
             read: model.read
             onImageClicked: Global.openImagePopup(image, root.messageContextMenu)
@@ -177,53 +183,17 @@ Item {
             anchors.left: parent.left
             anchors.leftMargin: 61 // TODO find a way to align with the text of the message
             visible: model.notificationType !== Constants.activityCenterNotificationTypeOneToOne
-            name: model.name
-            chatId: model.chatId
             notificationType: model.notificationType
-//            communityId: model.message.communityId
-            // Not Refactored Yet
-//            replyMessageIndex: root.store.chatsModelInst.messageView.getMessageIndex(model.chatId, model.responseTo)
-            // Not Refactored Yet
-//            repliedMessageContent: replyMessageIndex > -1 ? root.store.chatsModelInst.messageView.getMessageData(chatId, replyMessageIndex, "message") : ""
-//            realChatType: {
-                // Not Refactored Yet
-//                var chatType = root.store.chatsModelInst.channelView.chats.getChannelType(model.chatId)
-//                if (chatType === Constants.chatType.communityChat) {
-//                    // TODO add a check for private community chats once it is created
-//                    return Constants.chatType.publicChat
-//                }
-//                return chatType
-//            }
             profileImage: realChatType === Constants.chatType.oneToOne ? Global.getProfileImage(chatId) || ""  : ""
-            // Not Refactored Yet
-//            channelName: root.store.chatsModelInst.getChannelNameById(badge.chatId)
-            // Not Refactored Yet
-//            communityName: root.communityIndex > -1 ? root.store.chatsModelInst.communities.joinedCommunities.rowData(root.communityIndex, "name") : ""
-            // Not Refactored Yet
-//            communityThumbnailImage: root.communityIndex > -1 ? root.store.chatsModelInst.communities.joinedCommunities.rowData(root.communityIndex, "thumbnailImage") : ""
-            // Not Refactored Yet
-//            communityColor: !model.image && root.communityIndex > -1 ? root.store.chatsModelInst.communities.joinedCommunities.rowData(root.communityIndex, "communityColor"): ""
 
             onCommunityNameClicked: {
-                // Not Refactored Yet
-//                root.store.chatsModelInst.communities.setActiveCommunity(badge.communityId)
+                root.store.activityCenterModuleInst.switchTo(model.sectionId, "", "")
+                activityCenter.close()
             }
             onChannelNameClicked: {
-                // Not Refactored Yet
-//                root.store.chatsModelInst.communities.setActiveCommunity(badge.communityId)
-//                root.store.chatsModelInst.setActiveChannel(badge.chatId)
+                root.store.activityCenterModuleInst.switchTo(model.sectionId, model.chatId, "")
+                activityCenter.close()
             }
-
-            // Not Refactored Yet
-//            Connections {
-//                enabled: badge.realChatType === Constants.chatType.oneToOne
-//                target: root.store.allContacts
-//                onContactChanged: {
-//                    if (pubkey === badge.chatId) {
-//                        badge.profileImage = Global.getProfileImage(badge.chatId)
-//                    }
-//                }
-//            }
         }
     }
 }

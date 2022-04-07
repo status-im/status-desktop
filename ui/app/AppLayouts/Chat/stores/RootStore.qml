@@ -163,6 +163,26 @@ QtObject {
     // Not Refactored Yet
 //    property var activeCommunity: chatsModelInst.communities.activeCommunity
 
+    function getBadgeDetails(sectionId, chatId) {
+        try {
+            const jsonObj = root.activityCenterModuleInst.getDetails(sectionId, chatId)
+            let obj = JSON.parse(jsonObj)
+            return obj
+        }
+        catch (e) {
+            return {
+                sType: "",
+                sName: "",
+                sImage: "",
+                sColor: "",
+                cName: "",
+                cImage: "",
+                cColor: "",
+                cEmoji: ""
+            }
+        }
+    }
+
     function sendSticker(channelId, hash, replyTo, pack) {
         stickersModuleInst.send(channelId, hash, replyTo, pack)
     }

@@ -111,3 +111,9 @@ proc switchTo*(self: Controller, sectionId, chatId, messageId: string) =
 
 proc getChatDetails*(self: Controller, chatId: string): ChatDto =
   return self.chatService.getChatById(chatId)
+
+proc getChannelGroups*(self: Controller): seq[ChannelGroupDto] =
+  return self.chatService.getChannelGroups()
+
+proc getOneToOneChatNameAndImage*(self: Controller, chatId: string): tuple[name: string, image: string] =
+  return self.chatService.getOneToOneChatNameAndImage(chatId)

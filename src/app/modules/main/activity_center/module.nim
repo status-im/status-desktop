@@ -1,4 +1,4 @@
-import NimQml, Tables, stint, sugar, sequtils
+import NimQml, Tables, json, stint, sugar, sequtils
 
 import ./io_interface, ./view, ./controller
 import ../io_interface as delegate_interface
@@ -203,3 +203,31 @@ method dismissActivityCenterNotifications*(self: Module, notificationIds: seq[st
 
 method switchTo*(self: Module, sectionId, chatId, messageId: string) =
   self.controller.switchTo(sectionId, chatId, messageId)
+
+method getDetails*(self: Module, sectionId: string, chatId: string): string =
+  let groups = self.controller.getChannelGroups()
+  var jsonObject = newJObject()
+
+  for g in groups:
+    if(g.id != sectionId):
+      continue
+
+    jsonObject["sType"] = %* g.channelGroupType
+    jsonObject["sName"] = %* g.name
+    jsonObject["sImage"] = %* g.images.thumbnail
+    jsonObject["sColor"] = %* g.color
+
+    for c in g.chats:
+      if(c.id != chatId):
+        continue
+
+      var chatName = c.name
+      var chatImage = c.icon
+      if(c.chatType == ChatType.OneToOne):
+        (chatName, chatImage) = self.controller.getOneToOneChatNameAndImage(c.id)
+
+      jsonObject["cName"] = %* chatName
+      jsonObject["cImage"] = %* chatImage
+      jsonObject["cColor"] = %* c.color
+      jsonObject["cEmoji"] = %* c.emoji
+      return $jsonObject

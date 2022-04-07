@@ -26,7 +26,6 @@ Item {
 
     SVGImage {
         id: communityIcon
-        visible: !hideSecondIcon
         width: 16
         height: 16
         source: Style.svg("communities")

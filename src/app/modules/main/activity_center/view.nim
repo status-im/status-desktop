@@ -44,7 +44,6 @@ QtObject:
 
   proc pushActivityCenterNotifications*(self:View, activityCenterNotifications: seq[Item]) =
     self.model.addActivityNotificationItemsToList(activityCenterNotifications)
-    self.activityNotificationsChanged()
     self.hasMoreToShowChanged()
 
     let count = self.delegate.unreadActivityCenterNotificationsCount()
@@ -125,7 +124,9 @@ QtObject:
       #   if communityId != "":
       #     self.communities.joinedCommunityList.decrementMentions(communityId, activityCenterNotification.chatId)
       self.model.addActivityNotificationItemToList(activityCenterNotification)
-    self.activityNotificationsChanged()
 
   proc switchTo*(self: View, sectionId: string, chatId: string, messageId: string) {.slot.} =
     self.delegate.switchTo(sectionId, chatId, messageId)
+
+  proc getDetails*(self: View, sectionId: string, chatId: string): string {.slot.} =
+    return self.delegate.getDetails(sectionId, chatId)

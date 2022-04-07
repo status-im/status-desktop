@@ -1,5 +1,7 @@
 import QtQuick 2.13
 
+import StatusQ.Core.Theme 0.1
+
 import utils 1.0
 import shared.controls 1.0
 import shared 1.0
@@ -11,10 +13,9 @@ import "../controls/activityCenter" as ActivityCenter
 Rectangle {
     id: wrapper
 
+    property bool isCommunity: false
     property string name: "channelName"
-    property string chatId: ""
     property int realChatType: -1
-    property string communityId
     property string channelName: ""
     property string communityName: ""
     property string communityColor: ""
@@ -24,7 +25,7 @@ Rectangle {
     property int notificationType
     property string profileImage: ""
 
-    property color textColor: Style.current.textColor
+    property color textColor: Theme.palette.baseColor1
 
     signal communityNameClicked()
     signal channelNameClicked()
@@ -43,9 +44,9 @@ Rectangle {
         anchors.leftMargin: 4
         sourceComponent: {
             switch (wrapper.notificationType) {
-            case Constants.activityCenterNotificationTypeMention: return wrapper.communityId ? communityBadgeComponent : channelBadgeComponent
+            case Constants.activityCenterNotificationTypeMention: return wrapper.isCommunity? communityBadgeComponent : channelBadgeComponent
             case Constants.activityCenterNotificationTypeReply: return replyComponent
-            default: return wrapper.communityId ? communityBadgeComponent : channelBadgeComponent
+            default: return wrapper.isCommunity? communityBadgeComponent : channelBadgeComponent
             }
         }
     }
@@ -73,8 +74,8 @@ Rectangle {
             channelName: wrapper.channelName
             name: wrapper.name
 
-            onCommunityNameClicked: communityNameClicked()
-            onChannelNameClicked: channelNameClicked()
+            onCommunityNameClicked: wrapper.communityNameClicked()
+            onChannelNameClicked: wrapper.channelNameClicked()
         }
     }
 
@@ -87,7 +88,6 @@ Rectangle {
             realChatType: wrapper.realChatType
             textColor: wrapper.textColor
             name: wrapper.name
-            chatId: wrapper.chatId
             profileImage: wrapper.profileImage
         }
     }
