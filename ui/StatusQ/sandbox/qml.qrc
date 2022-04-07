@@ -33,6 +33,7 @@
         <file>demoapp/StatusAppProfileSettingsView.qml</file>
         <file>demoapp/data/Models.qml</file>
         <file>demoapp/data/qmldir</file>
+        <file>demoapp/data/logo-test-image.png</file>
         <file>DemoApp.qml</file>
         <file>ThemeSwitch.qml</file>
         <file>pages/StatusColorSelectorGridPage.qml</file>

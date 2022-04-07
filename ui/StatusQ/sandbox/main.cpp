@@ -11,6 +11,11 @@ int main(int argc, char *argv[])
 #endif
 
     SandboxApp app(argc, argv);
+
+    app.setOrganizationName("Status");
+    app.setOrganizationDomain("status.im");
+    app.setApplicationName("Sandbox");
+
     app.startEngine();
 
     return app.exec();

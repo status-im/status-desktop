@@ -2,6 +2,8 @@ import QtQuick 2.14
 import QtQuick.Window 2.14
 import QtQuick.Controls 2.14
 import QtGraphicalEffects 1.13
+import QtQuick.Layouts 1.14
+import Qt.labs.settings 1.0
 
 import Sandbox 0.1
 
@@ -31,10 +33,7 @@ StatusWindow {
 
     property real factor: 1.0
 
-    Component.onCompleted: {
-        Theme.palette = lightTheme
-        rootWindow.updatePosition();
-    }
+    Component.onCompleted: rootWindow.updatePosition()
 
     QtObject {
         id: appSectionType
@@ -110,12 +109,10 @@ StatusWindow {
             anchors.topMargin: 32
             anchors.right: parent.right
             anchors.rightMargin: 32
-            onCheckedChanged: {
-                if (Theme.palette === rootWindow.lightTheme) {
-                    Theme.palette = rootWindow.darkTheme
-                } else {
-                    Theme.palette = rootWindow.lightTheme
-                }
+            lightThemeEnabled: storeSettings.lightTheme
+            onLightThemeEnabledChanged: {
+                Theme.palette = lightThemeEnabled ? rootWindow.darkTheme : rootWindow.lightTheme
+                storeSettings.lightTheme = lightThemeEnabled
             }
         }
     }
@@ -126,11 +123,13 @@ StatusWindow {
         StatusAppTwoPanelLayout {
             id: mainPageView
 
-            function page(name) {
+            function page(name, fillPage) {
+                storeSettings.fillPage = fillPage ? true : false
                 viewLoader.source = Qt.resolvedUrl("./pages/" + name + "Page.qml");
             }
             function control(name) {
                 viewLoader.source = Qt.resolvedUrl("./controls/" + name + ".qml");
+                storeSettings.fillPage = false
             }
 
             leftPanel: Item {
@@ -303,6 +302,11 @@ StatusWindow {
                             selected: viewLoader.source.toString().includes(title)
                             onClicked: mainPageView.page(title);
                         }
+                        StatusNavigationListItem {
+                            title: "StatusImageCropPanel"
+                            selected: viewLoader.source.toString().includes(title)
+                            onClicked: mainPageView.page(title, true);
+                        }
                     }
                 }
             }
@@ -310,8 +314,11 @@ StatusWindow {
             rightPanel: Item {
                 id: rightPanel
                 anchors.fill: parent
+
                 ScrollView {
+                    visible: !storeSettings.fillPage
                     anchors.fill: parent
+                    anchors.topMargin: 64
                     contentHeight: (pageWrapper.height + pageWrapper.anchors.topMargin) * rootWindow.factor
                     contentWidth: (pageWrapper.width * rootWindow.factor)
                     clip: true
@@ -320,20 +327,31 @@ StatusWindow {
                         id: pageWrapper
                         width: rightPanel.width
                         anchors.top: parent.top
-                        anchors.topMargin: 64
                         height: Math.max(rootWindow.height, viewLoader.height + 128)
                         scale: rootWindow.factor
+
                         Loader {
                             id: viewLoader
+                            active: !storeSettings.fillPage
                             anchors.centerIn: parent
-                            source: mainPageView.control("Icons")
+                            source: storeSettings.selected.length === 0 ? mainPageView.control("Icons") : storeSettings.selected
                             onSourceChanged: {
+                                storeSettings.selected = viewLoader.source
                                 if (source.toString().includes("Icons")) {
                                     item.iconColor = Theme.palette.primaryColor1;
                                 }
                             }
                         }
                     }
+                }
+                Loader {
+                    active: storeSettings.fillPage
+                    anchors.fill: parent
+                    anchors.topMargin: 64
+                    visible: storeSettings.fillPage
+                    clip: true
+
+                    source: viewLoader.source
                 }
             }
         }
@@ -451,5 +469,12 @@ StatusWindow {
         onMaximized: {
             rootWindow.toggleFullScreen()
         }
+    }
+
+    Settings {
+        id: storeSettings
+        property string selected: ""
+        property bool lightTheme: true
+        property bool fillPage: false
     }
 }

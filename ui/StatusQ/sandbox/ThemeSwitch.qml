@@ -7,6 +7,8 @@ Item {
     id: themeSwitchWrapper
     signal checkedChanged()
 
+    property alias lightThemeEnabled: switchControl.checked
+
     width: themeSwitch.width
     height: themeSwitch.height
 
@@ -26,6 +28,7 @@ Item {
             }
 
             StatusSwitch {
+                id: switchControl
                 onCheckedChanged: themeSwitchWrapper.checkedChanged()
 
                 StatusToolTip {
