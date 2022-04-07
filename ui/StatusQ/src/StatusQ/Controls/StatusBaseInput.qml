@@ -8,53 +8,217 @@ import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 
+/*!
+      \qmltype StatusBaseInput
+      \inherits Item
+      \inqmlmodule StatusQ.Controls
+      \since StatusQ.Controls 0.1
+      \brief Displays a customized TextInput component.
+      Inherits \l{https://doc.qt.io/qt-5/qml-qtquick-item.html}{Item}.
+
+      The \c StatusBaseInput displays an enhanced TextInput for users to type text.
+      For example:
+
+      \qml
+      StatusBaseInput {
+        implicitWidth: parent.width
+        implicitHeight: 36
+        topPadding: 8
+        bottomPadding: 8
+        clearable: true
+        placeholderText: "Search"
+        icon.name: "search"
+      }
+      \endqml
+
+      \image status_base_input.png
+
+      For a list of components available see StatusQ.
+*/
+
 Item {
     id: root
 
+    /*!
+        \qmlproperty bool StatusBaseInput::multiline
+        This property indicates whether the StatusBaseInput allows multiline text. Default value is false.
+    */
     property bool multiline: false
-
+    /*!
+        \qmlproperty bool StatusBaseInput::clearable
+        This property indicates whether the StatusBaseInput allows clearing all text. Default value is false.
+    */
     property bool clearable: false
-
+    /*!
+        \qmlproperty alias StatusBaseInput::inputMethodHints
+        This property holds a reference to the TextEdit component's inputMethodHints property.
+    */
     property alias inputMethodHints: edit.inputMethodHints
-
+    /*!
+        \qmlproperty alias StatusBaseInput::selectedText
+        This property holds a reference to the TextEdit component's selectedText property.
+    */
     property alias selectedText: edit.selectedText
+    /*!
+        \qmlproperty alias StatusBaseInput::selectedTextColor
+        This property holds a reference to the TextEdit component's selectedTextColor property.
+    */
     property alias selectedTextColor: edit.selectedTextColor
+    /*!
+        \qmlproperty alias StatusBaseInput::selectionStart
+        This property holds a reference to the TextEdit component's selectionStart property.
+    */
     property alias selectionStart: edit.selectionStart
+    /*!
+        \qmlproperty alias StatusBaseInput::selectionEnd
+        This property holds a reference to the TextEdit component's selectionEnd property.
+    */
     property alias selectionEnd: edit.selectionEnd
+    /*!
+        \qmlproperty alias StatusBaseInput::cursorPosition
+        This property holds a reference to the TextEdit component's cursorPosition property.
+    */
     property alias cursorPosition: edit.cursorPosition
 
+    /*!
+        \qmlproperty alias StatusBaseInput::edit
+        This property holds a reference to the TextEdit component.
+    */
     property alias edit: edit
+    /*!
+        \qmlproperty alias StatusBaseInput::text
+        This property holds a reference to the TextEdit component's text property.
+    */
     property alias text: edit.text
+    /*!
+        \qmlproperty alias StatusBaseInput::background
+        This property holds a reference to the background component.
+    */
     property alias background: background
+    /*!
+        \qmlproperty alias StatusBaseInput::color
+        This property holds a reference to the TextEdit component's color property.
+    */
 
     property alias color: edit.color
+    /*!
+        \qmlproperty alias StatusBaseInput::font
+        This property holds a reference to the TextEdit component's font property.
+    */
     property alias font: edit.font
+    /*!
+        \qmlproperty alias StatusBaseInput::focussed
+        This property holds a reference to the TextEdit component's activeFocus property.
+    */
     property alias focussed: edit.activeFocus
+    /*!
+        \qmlproperty alias StatusBaseInput::verticalAlignmet
+        This property holds a reference to the TextEdit component's verticalAlignmet property.
+    */
     property alias verticalAlignmet: edit.verticalAlignment
+    /*!
+        \qmlproperty alias StatusBaseInput::horizontalAlignment
+        This property holds a reference to the TextEdit component's horizontalAlignment property.
+    */
     property alias horizontalAlignment: edit.horizontalAlignment
-
+    /*!
+        \qmlproperty alias StatusBaseInput::placeholderText
+        This property holds a reference to the placeholder component's placeholderText property.
+    */
     property alias placeholderText: placeholder.text
+    /*!
+        \qmlproperty alias StatusBaseInput::placeholderTextColor
+        This property holds a reference to the placeholder component's placeholderTextColor property.
+    */
     property alias placeholderTextColor: placeholder.color
+    /*!
+        \qmlproperty alias StatusBaseInput::placeholderFont
+        This property holds a reference to the placeholder component's font property.
+    */
     property alias placeholderFont: placeholder.font
 
+    /*!
+        \qmlproperty real StatusBaseInput::leftPadding
+        This property sets the leftComponentLoader's left padding.
+    */
     property real leftPadding: leftComponentLoader.item ? 8 : 16
+    /*!
+        \qmlproperty real StatusBaseInput::rightPadding
+        This property sets the right padding.
+    */
     property real rightPadding: 16
+    /*!
+        \qmlproperty real StatusBaseInput::topPadding
+        This property sets the top padding.
+    */
     property real topPadding: 12
+    /*!
+        \qmlproperty alias StatusBaseInput::bottomPadding
+        This property sets the bottom padding.
+    */
     property real bottomPadding: 12
+    /*!
+        \qmlproperty var StatusBaseInput::tabNavItem
+        This property sets the tab key navigation item.
+    */
     property var tabNavItem: null
 
+    /*!
+        \qmlproperty real StatusBaseInput::minimumHeight
+        This property sets the minimum height.
+    */
     property real minimumHeight: 0
+    /*!
+        \qmlproperty alias StatusBaseInput::maximumHeight
+        This property sets the maximum height.
+    */
     property real maximumHeight: 0
+    /*!
+        \qmlproperty int StatusBaseInput::maximumLength
+        This property sets the text's maximum length.
+    */
     property int maximumLength: 0
 
+    /*!
+        \qmlproperty bool StatusBaseInput::valid
+        This property sets the valid state. Default value is true.
+    */
     property bool valid: true
+    /*!
+        \qmlproperty bool StatusBaseInput::pristine
+        This property sets the pristine. Default value is true.
+    */
     property bool pristine: true
+    /*!
+        \qmlproperty bool StatusBaseInput::dirty
+        This property sets the dirty property. Default value is false.
+    */
     property bool dirty: false
+    /*!
+        \qmlproperty bool StatusBaseInput::pending
+        This property holds the maximum height of the component. Default value is false.
+    */
     property bool pending: false
+    /*!
+        \qmlproperty bool StatusBaseInput::leftIcon
+        This property sets the visibility of the left icon. Default value is true.
+    */
     property bool leftIcon: true
+    /*!
+        \qmlproperty bool StatusBaseInput::isIconSelectable
+        This property indicates whether icon is selectable. Default value is false.
+    */
     property bool isIconSelectable: false
+    /*!
+        \qmlproperty bool StatusBaseInput::showBackground
+        This property sets the visibility of the background. Default value is true.
+    */
     property bool showBackground: true
 
+    /*!
+        \qmlproperty StatusIconSettings StatusBaseInput::icon
+        This property holds a set of settings for the icon of the StatusBaseInput.
+    */
     property StatusIconSettings icon: StatusIconSettings {
         width: 24
         height: 24
@@ -69,11 +233,31 @@ Item {
         }
     }
 
+    /*!
+        \qmlproperty Component StatusBaseInput::leftComponent
+        This property sets the left component to be displayed inside the input.
+    */
     property Component leftComponent
+    /*!
+        \qmlproperty Component StatusBaseInput::selectedText
+        This property sets the right component to be displayed inside the input.
+    */
     property Component rightComponent
 
+    /*!
+        \qmlsignal
+         This signal is emitted when the icon is clicked.
+    */
     signal iconClicked
+    /*!
+        \qmlsignal
+         This signal is emitted when a hard key is pressed passing as parameter the keyboard event.
+    */
     signal keyPressed(var event)
+    /*!
+        \qmlsignal
+         This signal is emitted when the text edit is clicked.
+    */
     signal editClicked()
 
     implicitWidth: 448

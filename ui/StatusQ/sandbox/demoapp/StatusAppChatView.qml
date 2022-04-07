@@ -41,7 +41,7 @@ StatusAppThreePanelLayout {
                 Layout.leftMargin: 17
                 implicitHeight: 36
                 topPadding: 8
-                bottomPadding: 0
+                bottomPadding: 8
                 placeholderText: "Search"
                 icon.name: "search"
             }
