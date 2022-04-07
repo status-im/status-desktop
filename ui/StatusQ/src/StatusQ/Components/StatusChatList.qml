@@ -105,7 +105,7 @@ Column {
                     selected: model.active
 
                     icon.emoji: model.emoji
-                    icon.color: model.color
+                    icon.color: !!model.color ? model.color : Theme.palette.userCustomizationColors[model.colorId]
                     image.isIdenticon: false
                     image.source: model.icon
                     ringSettings.ringSpecModel: model.colorHash
