@@ -15,3 +15,6 @@ proc toColorHashDto*(jsonObj: JsonNode): ColorHashDto =
                         colorIdx: node.getElems()[1].getInt())
               )
   return
+
+proc toColorId*(jsonObj: JsonNode): int =
+  return jsonObj.getInt()

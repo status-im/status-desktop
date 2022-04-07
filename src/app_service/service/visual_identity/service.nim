@@ -31,6 +31,19 @@ proc colorHashOf*(pubkey: string): ColorHashDto =
     error "error: ", procName = "colorHashOf", errName = e.name,
         errDesription = e.msg
 
+proc colorIdOf*(pubkey: string): int =
+  try:
+    let response = status_visual_identity.colorIdOf(pubkey)
+
+    if(not response.error.isNil):
+      error "error colorIdOf: ", errDescription = response.error.message
+
+    result = toColorId(response.result)
+
+  except Exception as e:
+    error "error: ", procName = "colorIdOf", errName = e.name,
+        errDesription = e.msg
+
 proc getEmojiHashAsJson*(publicKey: string): string =
   return $$emojiHashOf(publicKey)
 

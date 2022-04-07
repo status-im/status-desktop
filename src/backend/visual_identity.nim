@@ -10,3 +10,6 @@ proc emojiHashOf*(pubkey: string): RpcResponse[JsonNode] {.raises: [Exception].}
 
 proc colorHashOf*(pubkey: string): RpcResponse[JsonNode] {.raises: [Exception].} =
     result = Json.decode(status_go.colorHash(pubkey), RpcResponse[JsonNode])
+
+proc colorIdOf*(pubkey: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+    result = Json.decode(status_go.colorID(pubkey), RpcResponse[JsonNode])

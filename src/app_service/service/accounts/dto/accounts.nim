@@ -1,6 +1,7 @@
 {.used.}
 
 import json
+import ../../visual_identity/dto
 
 include ../../../common/json_utils
 
@@ -20,6 +21,8 @@ type AccountDto* = object
   keycardPairing*: string
   keyUid*: string
   images*: seq[Image]
+  colorHash*: ColorHashDto
+  colorId*: int
 
 proc isValid*(self: AccountDto): bool =
   result = self.name.len > 0 and self.keyUid.len > 0
@@ -40,6 +43,8 @@ proc toAccountDto*(jsonObj: JsonNode): AccountDto =
   discard jsonObj.getProp("timestamp", result.timestamp)
   discard jsonObj.getProp("keycard-pairing", result.keycardPairing)
   discard jsonObj.getProp("key-uid", result.keyUid)
+  discard jsonObj.getProp("colorId", result.colorId)
+  result.colorHash = toColorHashDto(jsonObj["colorHash"])
 
   var imagesObj: JsonNode
   if(jsonObj.getProp("images", imagesObj) and imagesObj.kind == JArray):
