@@ -106,13 +106,14 @@ Item {
                 btnText: qsTr("Pending Requests")
                 badge.value: contactList.count
             }
-            StatusTabButton {
-                id: rejectedRequestsBtn
-                addToWidth: Style.current.bigPadding
-                enabled: root.contactsStore.receivedButRejectedContactRequestsModel.count > 0 ||
-                         root.contactsStore.sentButRejectedContactRequestsModel.count > 0
-                btnText: qsTr("Rejected Requests")
-            }
+            // Temporary commented until we provide appropriate flags on the `status-go` side to cover all sections.
+//            StatusTabButton {
+//                id: rejectedRequestsBtn
+//                addToWidth: Style.current.bigPadding
+//                enabled: root.contactsStore.receivedButRejectedContactRequestsModel.count > 0 ||
+//                         root.contactsStore.sentButRejectedContactRequestsModel.count > 0
+//                btnText: qsTr("Rejected Requests")
+//            }
             StatusTabButton {
                 id: blockedBtn
                 addToWidth: Style.current.bigPadding
@@ -255,60 +256,61 @@ Item {
                 }
             }
 
-            // REJECTED REQUESTS
-            Item {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
+            // Temporary commented until we provide appropriate flags on the `status-go` side to cover all sections.
+//            // REJECTED REQUESTS
+//            Item {
+//                Layout.fillWidth: true
+//                Layout.fillHeight: true
 
-                ColumnLayout {
-                    anchors.fill: parent
+//                ColumnLayout {
+//                    anchors.fill: parent
 
-                    ContactsListPanel {
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: parent.height * 0.5
-                        clip: true
-                        title: qsTr("Received")
-                        searchString: searchBox.text
-                        contactsModel: root.contactsStore.receivedButRejectedContactRequestsModel
-                        panelUsage: Constants.contactsPanelUsage.rejectedReceivedContactRequest
+//                    ContactsListPanel {
+//                        Layout.fillWidth: true
+//                        Layout.preferredHeight: parent.height * 0.5
+//                        clip: true
+//                        title: qsTr("Received")
+//                        searchString: searchBox.text
+//                        contactsModel: root.contactsStore.receivedButRejectedContactRequestsModel
+//                        panelUsage: Constants.contactsPanelUsage.rejectedReceivedContactRequest
 
-                        onOpenProfilePopup: {
-                            Global.openProfilePopup(publicKey)
-                        }
+//                        onOpenProfilePopup: {
+//                            Global.openProfilePopup(publicKey)
+//                        }
 
-                        onOpenChangeNicknamePopup: {
-                            Global.openProfilePopup(publicKey, null, true)
-                        }
+//                        onOpenChangeNicknamePopup: {
+//                            Global.openProfilePopup(publicKey, null, true)
+//                        }
 
-                        onRejectionRemoved: {
-                            root.contactsStore.removeContactRequestRejection(publicKey)
-                        }
-                    }
+//                        onRejectionRemoved: {
+//                            root.contactsStore.removeContactRequestRejection(publicKey)
+//                        }
+//                    }
 
-                    ContactsListPanel {
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: parent.height * 0.5
-                        clip: true
-                        title: qsTr("Sent")
-                        searchString: searchBox.text
-                        contactsModel: root.contactsStore.sentButRejectedContactRequestsModel
-                        panelUsage: Constants.contactsPanelUsage.rejectedSentContactRequest
+//                    ContactsListPanel {
+//                        Layout.fillWidth: true
+//                        Layout.preferredHeight: parent.height * 0.5
+//                        clip: true
+//                        title: qsTr("Sent")
+//                        searchString: searchBox.text
+//                        contactsModel: root.contactsStore.sentButRejectedContactRequestsModel
+//                        panelUsage: Constants.contactsPanelUsage.rejectedSentContactRequest
 
-                        onOpenProfilePopup: {
-                            Global.openProfilePopup(publicKey)
-                        }
+//                        onOpenProfilePopup: {
+//                            Global.openProfilePopup(publicKey)
+//                        }
 
-                        onOpenChangeNicknamePopup: {
-                            Global.openProfilePopup(publicKey, null, true)
-                        }
-                    }
+//                        onOpenChangeNicknamePopup: {
+//                            Global.openProfilePopup(publicKey, null, true)
+//                        }
+//                    }
 
-                    Item {
-                        Layout.fillWidth: true
-                        Layout.fillHeight: true
-                    }
-                }
-            }
+//                    Item {
+//                        Layout.fillWidth: true
+//                        Layout.fillHeight: true
+//                    }
+//                }
+//            }
 
             // BLOCKED
             ContactsListPanel {

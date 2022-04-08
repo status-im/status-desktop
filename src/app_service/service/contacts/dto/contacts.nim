@@ -100,14 +100,19 @@ proc isContactRequestReceived*(self: ContactsDto): bool =
 proc isContactRequestSent*(self: ContactsDto): bool =
   return self.added
 
-proc isSentContactRequestRejected*(self: ContactsDto): bool =
-  # TODO not implemented in `status-go` yet
-  # We don't have this prop for now.
-  return false
-
-proc isReceivedContactRequestRejected*(self: ContactsDto): bool =
-  # We need to check this.
+proc isContactRemoved*(self: ContactsDto): bool =
   return self.removed
+
+# Temporary commented until we provide appropriate flags on the `status-go` side to cover all sections.
+# proc isSentContactRequestRejected*(self: ContactsDto): bool =
+#   # TODO not implemented in `status-go` yet
+#   # We don't have this prop for now.
+#   return false
+
+# Temporary commented until we provide appropriate flags on the `status-go` side to cover all sections.
+# proc isReceivedContactRequestRejected*(self: ContactsDto): bool =
+#   # We need to check this.
+#   return self.removed
 
 proc isBlocked*(self: ContactsDto): bool =
   return self.blocked

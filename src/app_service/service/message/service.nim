@@ -151,8 +151,11 @@ QtObject:
       error "error: received `chats` array for handling messages update is empty"
       return
 
-    if (not chats[0].active):
-      return
+    # Temporary commented until we provide appropriate flags on the `status-go` side to cover all sections.
+    # blocking contact deletes the chat on the `status-go` side, after unblocking it, `active` prop is still false
+    # that's the reason why the following check is commented out here.
+    # if (not chats[0].active):
+    #   return
 
     let chatId = chats[0].id
     let chatType = chats[0].chatType

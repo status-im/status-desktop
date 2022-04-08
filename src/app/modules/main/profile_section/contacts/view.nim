@@ -15,10 +15,11 @@ QtObject:
       receivedContactRequestsModelVariant: QVariant
       sentContactRequestsModel: Model
       sentContactRequestsModelVariant: QVariant
-      receivedButRejectedContactRequestsModel: Model
-      receivedButRejectedContactRequestsModelVariant: QVariant
-      sentButRejectedContactRequestsModel: Model
-      sentButRejectedContactRequestsModelVariant: QVariant
+      # Temporary commented until we provide appropriate flags on the `status-go` side to cover all sections.
+      # receivedButRejectedContactRequestsModel: Model
+      # receivedButRejectedContactRequestsModelVariant: QVariant
+      # sentButRejectedContactRequestsModel: Model
+      # sentButRejectedContactRequestsModelVariant: QVariant
 
   proc delete*(self: View) =
     self.myMutualContactsModel.delete
@@ -29,10 +30,11 @@ QtObject:
     self.receivedContactRequestsModelVariant.delete
     self.sentContactRequestsModel.delete
     self.sentContactRequestsModelVariant.delete
-    self.receivedButRejectedContactRequestsModel.delete
-    self.receivedButRejectedContactRequestsModelVariant.delete
-    self.sentButRejectedContactRequestsModel.delete
-    self.sentButRejectedContactRequestsModelVariant.delete
+    # Temporary commented until we provide appropriate flags on the `status-go` side to cover all sections.
+    # self.receivedButRejectedContactRequestsModel.delete
+    # self.receivedButRejectedContactRequestsModelVariant.delete
+    # self.sentButRejectedContactRequestsModel.delete
+    # self.sentButRejectedContactRequestsModelVariant.delete
     self.QObject.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =
@@ -47,10 +49,11 @@ QtObject:
     result.receivedContactRequestsModelVariant = newQVariant(result.receivedContactRequestsModel)
     result.sentContactRequestsModel = newModel()
     result.sentContactRequestsModelVariant = newQVariant(result.sentContactRequestsModel)
-    result.receivedButRejectedContactRequestsModel = newModel()
-    result.receivedButRejectedContactRequestsModelVariant = newQVariant(result.receivedButRejectedContactRequestsModel)
-    result.sentButRejectedContactRequestsModel = newModel()
-    result.sentButRejectedContactRequestsModelVariant = newQVariant(result.sentButRejectedContactRequestsModel)
+    # Temporary commented until we provide appropriate flags on the `status-go` side to cover all sections.
+    # result.receivedButRejectedContactRequestsModel = newModel()
+    # result.receivedButRejectedContactRequestsModelVariant = newQVariant(result.receivedButRejectedContactRequestsModel)
+    # result.sentButRejectedContactRequestsModel = newModel()
+    # result.sentButRejectedContactRequestsModelVariant = newQVariant(result.sentButRejectedContactRequestsModel)
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
@@ -67,11 +70,12 @@ QtObject:
   proc sentContactRequestsModel*(self: View): Model =
     return self.sentContactRequestsModel
 
-  proc receivedButRejectedContactRequestsModel*(self: View): Model =
-    return self.receivedButRejectedContactRequestsModel
+  # Temporary commented until we provide appropriate flags on the `status-go` side to cover all sections.
+  # proc receivedButRejectedContactRequestsModel*(self: View): Model =
+  #   return self.receivedButRejectedContactRequestsModel
 
-  proc sentButRejectedContactRequestsModel*(self: View): Model =
-    return self.sentButRejectedContactRequestsModel
+  # proc sentButRejectedContactRequestsModel*(self: View): Model =
+  #   return self.sentButRejectedContactRequestsModel
 
   proc myMutualContactsModelChanged(self: View) {.signal.}
   proc getMyMutualContactsModel(self: View): QVariant {.slot.} =
@@ -101,19 +105,20 @@ QtObject:
     read = getSentContactRequestsModel
     notify = sentContactRequestsModelChanged
 
-  proc receivedButRejectedContactRequestsModelChanged(self: View) {.signal.}
-  proc getReceivedButRejectedContactRequestsModel(self: View): QVariant {.slot.} =
-    return self.receivedButRejectedContactRequestsModelVariant
-  QtProperty[QVariant] receivedButRejectedContactRequestsModel:
-    read = getReceivedButRejectedContactRequestsModel
-    notify = receivedButRejectedContactRequestsModelChanged
+  # Temporary commented until we provide appropriate flags on the `status-go` side to cover all sections.
+  # proc receivedButRejectedContactRequestsModelChanged(self: View) {.signal.}
+  # proc getReceivedButRejectedContactRequestsModel(self: View): QVariant {.slot.} =
+  #   return self.receivedButRejectedContactRequestsModelVariant
+  # QtProperty[QVariant] receivedButRejectedContactRequestsModel:
+  #   read = getReceivedButRejectedContactRequestsModel
+  #   notify = receivedButRejectedContactRequestsModelChanged
 
-  proc sentButRejectedContactRequestsModelChanged(self: View) {.signal.}
-  proc getSentButRejectedContactRequestsModel(self: View): QVariant {.slot.} =
-    return self.sentButRejectedContactRequestsModelVariant
-  QtProperty[QVariant] sentButRejectedContactRequestsModel:
-    read = getSentButRejectedContactRequestsModel
-    notify = sentButRejectedContactRequestsModelChanged
+  # proc sentButRejectedContactRequestsModelChanged(self: View) {.signal.}
+  # proc getSentButRejectedContactRequestsModel(self: View): QVariant {.slot.} =
+  #   return self.sentButRejectedContactRequestsModelVariant
+  # QtProperty[QVariant] sentButRejectedContactRequestsModel:
+  #   read = getSentButRejectedContactRequestsModel
+  #   notify = sentButRejectedContactRequestsModelChanged
 
   proc isMyMutualContact*(self: View, publicKey: string): bool {.slot.} =
     return self.myMutualContactsModel.containsItemWithPubKey(publicKey)

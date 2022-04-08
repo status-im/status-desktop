@@ -13,7 +13,7 @@ proc getContactById*(id: string): RpcResponse[JsonNode] {.raises: [Exception].} 
   result = callPrivateRPC("getContactByID".prefix, payload)
 
 proc blockContact*(id: string): RpcResponse[JsonNode] {.raises: [Exception].} =
-  result = callPrivateRPC("blockContact".prefix, %* [id])
+  result = callPrivateRPC("blockContactDesktop".prefix, %* [id])
 
 proc unblockContact*(id: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = callPrivateRPC("unblockContact".prefix, %* [id])

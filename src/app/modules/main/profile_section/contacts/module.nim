@@ -64,8 +64,9 @@ method viewDidLoad*(self: Module) =
   self.buildModel(self.view.blockedContactsModel(), ContactsGroup.BlockedContacts)
   self.buildModel(self.view.receivedContactRequestsModel(), ContactsGroup.IncomingPendingContactRequests)
   self.buildModel(self.view.sentContactRequestsModel(), ContactsGroup.OutgoingPendingContactRequests)
-  self.buildModel(self.view.receivedButRejectedContactRequestsModel(), ContactsGroup.IncomingRejectedContactRequests)
-  self.buildModel(self.view.sentButRejectedContactRequestsModel(), ContactsGroup.IncomingRejectedContactRequests)
+  # Temporary commented until we provide appropriate flags on the `status-go` side to cover all sections.
+  # self.buildModel(self.view.receivedButRejectedContactRequestsModel(), ContactsGroup.IncomingRejectedContactRequests)
+  # self.buildModel(self.view.sentButRejectedContactRequestsModel(), ContactsGroup.IncomingRejectedContactRequests)
 
   self.moduleLoaded = true
   self.delegate.contactsModuleDidLoad()
@@ -95,27 +96,33 @@ method removeContactRequestRejection*(self: Module, publicKey: string) =
   self.controller.removeContactRequestRejection(publicKey)
 
 proc addItemToAppropriateModel(self: Module, item: Item) =
-  if(item.isBlocked()):
+  if(singletonInstance.userProfile.getPubKey() == item.pubKey):
+    return
+  let contact = self.controller.getContact(item.pubKey())
+  if(contact.isContactRemoved()):
+    return
+  elif(contact.isBlocked()):
     self.view.blockedContactsModel().addItem(item)
-  elif(item.isMutualContact()):
+  elif(contact.isMutualContact()):
     self.view.myMutualContactsModel().addItem(item)
   else:
-    let contact =  self.controller.getContact(item.pubKey())
-    if(contact.isContactRequestReceived() and not contact.isContactRequestSent() and not contact.isReceivedContactRequestRejected()):
+    if(contact.isContactRequestReceived() and not contact.isContactRequestSent()):
       self.view.receivedContactRequestsModel().addItem(item)
-    elif(contact.isContactRequestSent() and not contact.isContactRequestReceived() and not contact.isSentContactRequestRejected() and singletonInstance.userProfile.getPubKey() != item.pubKey):
+    elif(contact.isContactRequestSent() and not contact.isContactRequestReceived()):
       self.view.sentContactRequestsModel().addItem(item)
-    elif(contact.isContactRequestReceived() and contact.isReceivedContactRequestRejected()):
-      self.view.receivedButRejectedContactRequestsModel().addItem(item)
-    elif(contact.isContactRequestSent() and contact.isSentContactRequestRejected()):
-      self.view.sentButRejectedContactRequestsModel().addItem(item)
+    # Temporary commented until we provide appropriate flags on the `status-go` side to cover all sections.
+    # elif(contact.isContactRequestReceived() and contact.isReceivedContactRequestRejected()):
+    #   self.view.receivedButRejectedContactRequestsModel().addItem(item)
+    # elif(contact.isContactRequestSent() and contact.isSentContactRequestRejected()):
+    #   self.view.sentButRejectedContactRequestsModel().addItem(item)
 
 proc removeItemWithPubKeyFromAllModels(self: Module, publicKey: string) =
   self.view.myMutualContactsModel().removeItemWithPubKey(publicKey)
   self.view.receivedContactRequestsModel().removeItemWithPubKey(publicKey)
   self.view.sentContactRequestsModel().removeItemWithPubKey(publicKey)
-  self.view.receivedButRejectedContactRequestsModel().removeItemWithPubKey(publicKey)
-  self.view.sentButRejectedContactRequestsModel().removeItemWithPubKey(publicKey)
+  # Temporary commented until we provide appropriate flags on the `status-go` side to cover all sections.
+  # self.view.receivedButRejectedContactRequestsModel().removeItemWithPubKey(publicKey)
+  # self.view.sentButRejectedContactRequestsModel().removeItemWithPubKey(publicKey)
   self.view.blockedContactsModel().removeItemWithPubKey(publicKey)
 
 method removeIfExistsAndAddToAppropriateModel*(self: Module, publicKey: string) =
@@ -146,6 +153,7 @@ method contactNicknameChanged*(self: Module, publicKey: string) =
   self.view.myMutualContactsModel().updateName(publicKey, name)
   self.view.receivedContactRequestsModel().updateName(publicKey, name)
   self.view.sentContactRequestsModel().updateName(publicKey, name)
-  self.view.receivedButRejectedContactRequestsModel().updateName(publicKey, name)
-  self.view.sentButRejectedContactRequestsModel().updateName(publicKey, name)
+  # Temporary commented until we provide appropriate flags on the `status-go` side to cover all sections.
+  # self.view.receivedButRejectedContactRequestsModel().updateName(publicKey, name)
+  # self.view.sentButRejectedContactRequestsModel().updateName(publicKey, name)
   self.view.blockedContactsModel().updateName(publicKey, name)
