@@ -92,6 +92,7 @@ Item {
                 type: StatusFlatRoundButton.Type.Secondary
                 icon.name: "add"
                 onClicked: {
+                    uploadProfilePicPopup.selectedImage = userImage.image.source
                     uploadProfilePicPopup.open();
                 }
             }
@@ -180,7 +181,7 @@ Item {
             id: uploadProfilePicPopup
             anchors.centerIn: parent
             onAccepted: {
-                userImage.image.source = uploadProfilePicPopup.selectedImage
+                userImage.image.source = selectedImage
                 OnboardingStore.uploadImage(selectedImage, aX, aY, bX, bY);
             }
         }

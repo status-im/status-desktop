@@ -12,17 +12,19 @@ import shared.popups 1.0
 
 StatusModal {
     id: popup
+
     height: 510
     header.title: qsTr("Upload profile picture")
+
+    readonly property alias aX: cropImageModal.aX
+    readonly property alias aY: cropImageModal.aY
+    readonly property alias bX: cropImageModal.bX
+    readonly property alias bY: cropImageModal.bY
 
     property string selectedImage
     property string uploadError
 
     signal accepted()
-
-    onOpened: {
-        selectedImage = ""
-    }
 
     contentItem: Item {
         anchors.fill: parent
