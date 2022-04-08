@@ -303,6 +303,7 @@ ColumnLayout {
             }
             StatusButton {
                 id: button
+                visible: false
                 anchors.top: errorMessage.bottom
                 anchors.topMargin: Style.current.padding
                 anchors.horizontalCenter: parent.horizontalCenter
