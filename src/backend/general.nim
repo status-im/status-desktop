@@ -54,3 +54,11 @@ proc getPasswordStrengthScore*(password: string, userInputs: seq[string]): RpcRe
   except RpcException as e:
     error "error", methodName = "getPasswordStrengthScore", exception=e.msg
     raise newException(RpcException, e.msg)
+
+proc enableCommunityHistoryArchiveSupport*(): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* []
+  result = core.callPrivateRPC("enableCommunityHistoryArchiveProtocol", payload)
+
+proc disableCommunityHistoryArchiveSupport*(): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* []
+  result = core.callPrivateRPC("disableCommunityHistoryArchiveProtocol", payload)

@@ -51,11 +51,39 @@ proc init*(self: Service) =
     error "error: ", errDesription
     return
 
+proc fetchNodeConfig(self: Service) =
+  try:
+    let response = status_node_config.getNodeConfig()
+    self.configuration = response.result.toNodeConfigDto()
+  except Exception as e:
+    let errDesription = e.msg
+    error "error: ", errDesription
+    return
+
+
 proc saveConfiguration(self: Service, configuration: NodeConfigDto): bool =
   if(not self.settingsService.saveNodeConfiguration(configuration.toJsonNode())):
     error "error saving node configuration "
     return false
   self.configuration = configuration
+  return true
+
+method enableCommunityHistoryArchiveSupport*(self: Service): bool =
+  let response = status_node_config.enableCommunityHistoryArchiveSupport()
+  if(not response.error.isNil):
+    error "error enabling community history archive support: ", errDescription = response.error.message
+    return false
+
+  self.fetchNodeConfig()
+  return true
+
+method disableCommunityHistoryArchiveSupport*(self: Service): bool =
+  let response = status_node_config.disableCommunityHistoryArchiveSupport()
+  if(not response.error.isNil):
+    error "error disabling community history archive support: ", errDescription = response.error.message
+    return false
+
+  self.fetchNodeConfig()
   return true
 
 proc getWakuVersion*(self: Service): int =
@@ -101,6 +129,9 @@ proc setWakuVersion*(self: Service, wakuVersion: int): bool =
     newConfiguration.WakuV2Config.DiscoveryLimit = 20
     newConfiguration.WakuV2Config.Rendezvous = true
   return self.saveConfiguration(newConfiguration)
+
+method isCommunityHistoryArchiveSupportEnabled*(self: Service): bool =
+  return self.configuration.TorrentConfig.Enabled
 
 proc setNetwork*(self: Service, network: string): bool =
   if(not self.settingsService.saveCurrentNetwork(network)):
