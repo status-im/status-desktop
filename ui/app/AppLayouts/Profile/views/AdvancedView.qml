@@ -156,6 +156,21 @@ ScrollView {
                 }
             }
 
+            StatusSettingsLineButton {
+                //% "Communities"
+                text: qsTrId("Community History Archive Protocol")
+                isSwitch: true
+                switchChecked: root.advancedStore.isCommunityHistoryArchiveSupportEnabled
+                onClicked: {
+                    if (!root.advancedStore.isCommunityHistoryArchiveSupportEnabled) {
+                        confirmationPopup.experimentalFeature = root.advancedStore.experimentalFeatures.communityHistoryArchiveSupport
+                        confirmationPopup.open()
+                    } else {
+                        root.advancedStore.toggleExperimentalFeature(root.advancedStore.experimentalFeatures.communityHistoryArchiveSupport)
+                    }
+                }
+            }
+
             // TODO: replace with StatusQ component
             StatusSettingsLineButton {
                 //% "Activity Center"

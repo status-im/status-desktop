@@ -40,6 +40,8 @@ QtObject {
 
     property var loadingHistoryMessagesInProgress: chatCommunitySectionModule.loadingHistoryMessagesInProgress
 
+    property var advancedModule: profileSectionModule.advancedModule
+
     function setActiveCommunity(communityId) {
         mainModule.setActiveSectionById(communityId);
     }
@@ -135,6 +137,8 @@ QtObject {
     property ListModel addToGroupContacts: ListModel {}
 
     property var walletSectionTransactionsInst: walletSectionTransactions
+
+    property bool isCommunityHistoryArchiveSupportEnabled: advancedModule? advancedModule.isCommunityHistoryArchiveSupportEnabled : false
 
     function reCalculateAddToGroupContacts(channel) {
         const contacts = getContactListObject()
