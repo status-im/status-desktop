@@ -15,8 +15,10 @@ QtObject {
     property var blockedContactsModel: contactsModule.blockedContactsModel
     property var receivedContactRequestsModel: contactsModule.receivedContactRequestsModel
     property var sentContactRequestsModel: contactsModule.sentContactRequestsModel
-    property var receivedButRejectedContactRequestsModel: contactsModule.receivedButRejectedContactRequestsModel
-    property var sentButRejectedContactRequestsModel: contactsModule.sentButRejectedContactRequestsModel
+
+    // Temporary commented until we provide appropriate flags on the `status-go` side to cover all sections.
+//    property var receivedButRejectedContactRequestsModel: contactsModule.receivedButRejectedContactRequestsModel
+//    property var sentButRejectedContactRequestsModel: contactsModule.sentButRejectedContactRequestsModel
 
     function resolveENS(value) {
         root.mainModuleInst.resolveENS(value, "")
