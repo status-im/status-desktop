@@ -29,6 +29,14 @@ type SignalType* {.pure.} = enum
   KeycardConnected = "keycard.connected"
   MailserverAvailable = "mailserver.available"
   MailserverChanged = "mailserver.changed"
+  HistoryArchivesProtocolEnabled = "community.historyArchivesProtocolEnabled"
+  HistoryArchivesProtocolDisabled = "community.historyArchivesProtocolDisabled"
+  CreatingHistoryArchives = "community.creatingHistoryArchives"
+  HistoryArchivesCreated = "community.historyArchivesCreated"
+  NoHistoryArchivesCreated = "community.noHistoryArchivesCreated"
+  HistoryArchivesSeeding = "community.historyArchivesSeeding"
+  HistoryArchivesUnseeded = "community.historyArchivesUnseeded"
+  HistoryArchiveDownloaded = "community.historyArchiveDownloaded"
   Unknown
 
 proc event*(self:SignalType):string =

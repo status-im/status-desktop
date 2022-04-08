@@ -1,4 +1,4 @@
-import NimQml, tables, json, re, sequtils, strformat, strutils, chronicles
+import NimQml, tables, json, re, sequtils, strformat, strutils, chronicles, times
 
 import ../../../app/core/tasks/[qt, threadpool]
 import ../../../app/core/signals/types
@@ -34,6 +34,7 @@ let NEW_LINE = re"\n|\r" #must be defined as let, not const
 const MESSAGES_PER_PAGE* = 20
 const MESSAGES_PER_PAGE_MAX* = 300
 const CURSOR_VALUE_IGNORE = "ignore"
+const WEEK_AS_MILLISECONDS = initDuration(seconds = 60*60*24*7).inMilliSeconds
 
 # Signals which may be emitted by this service:
 const SIGNAL_MESSAGES_LOADED* = "messagesLoaded"
@@ -49,6 +50,7 @@ const SIGNAL_MESSAGE_DELETION* = "messageDeleted"
 const SIGNAL_MESSAGE_EDITED* = "messageEdited"
 const SIGNAL_MESSAGE_LINK_PREVIEW_DATA_LOADED* = "messageLinkPreviewDataLoaded"
 const SIGNAL_MENTIONED_IN_EDITED_MESSAGE* = "mentionedInEditedMessage"
+const SIGNAL_RELOAD_MESSAGES* = "reloadMessages"
 
 include async_tasks
 
@@ -93,6 +95,9 @@ type
 
   LinkPreviewDataArgs* = ref object of Args
     response*: string
+
+  ReloadMessagesArgs* = ref object of Args
+    communityId*: string
 
 QtObject:
   type Service* = ref object of QObject
@@ -222,6 +227,37 @@ QtObject:
       reactionId: r.id, reactionFrom: r.`from`)
       self.events.emit(SIGNAL_MESSAGE_REACTION_FROM_OTHERS, data)
 
+  proc handleMessagesReload(self: Service, communityId: string) =
+    var keys = newSeq[string]()
+    for k in self.msgCursor.keys:
+      if k.startsWith(communityId):
+        keys.add(k)
+    for k in keys:
+      self.msgCursor.del(k)
+
+    keys = @[]
+    for k in self.lastUsedMsgCursor.keys:
+      if k.startsWith(communityId):
+        keys.add(k)
+    for k in keys:
+      self.lastUsedMsgCursor.del(k)
+
+    keys = @[]
+    for k in self.pinnedMsgCursor.keys:
+      if k.startsWith(communityId):
+        keys.add(k)
+    for k in keys:
+      self.pinnedMsgCursor.del(k)
+
+    keys = @[]
+    for k in self.lastUsedPinnedMsgCursor.keys:
+      if k.startsWith(communityId):
+        keys.add(k)
+    for k in keys:
+      self.lastUsedPinnedMsgCursor.del(k)
+
+    self.events.emit(SIGNAL_RELOAD_MESSAGES, ReloadMessagesArgs(communityId: communityId))
+
   proc init*(self: Service) =
     self.events.on(SignalType.Message.event) do(e: Args):
       var receivedData = MessageSignal(e)
@@ -239,13 +275,18 @@ QtObject:
       if (receivedData.emojiReactions.len > 0):
         self.handleEmojiReactionsUpdate(receivedData.emojiReactions)
 
+    self.events.on(SignalType.HistoryArchiveDownloaded.event) do(e: Args):
+      var receivedData = HistoryArchivesSignal(e)
+      if  now().toTime().toUnix()-receivedData.begin <= WEEK_AS_MILLISECONDS:
+        # we don't need to reload the messages for archives older than 7 days
+        self.handleMessagesReload(receivedData.communityId)
+
   proc initialMessagesFetched(self: Service, chatId: string): bool =
     return self.msgCursor.hasKey(chatId)
 
   proc getCurrentMessageCursor(self: Service, chatId: string): string =
     if(not self.msgCursor.hasKey(chatId)):
       self.msgCursor[chatId] = ""
-
     return self.msgCursor[chatId]
 
   proc getCurrentPinnedMessageCursor(self: Service, chatId: string): string =
@@ -275,6 +316,15 @@ QtObject:
 
     var chatId: string
     discard responseObj.getProp("chatId", chatId)
+
+    if not self.msgCursor.hasKey(chatId):
+      self.msgCursor[chatId] = ""
+    if not self.lastUsedMsgCursor.hasKey(chatId):
+      self.lastUsedMsgCursor[chatId] = ""
+    if not self.pinnedMsgCursor.hasKey(chatId):
+      self.pinnedMsgCursor[chatId] = ""
+    if not self.lastUsedPinnedMsgCursor.hasKey(chatId):
+      self.lastUsedPinnedMsgCursor[chatId] = ""
 
     # this is important case we don't want to fetch the same messages multiple times.
     self.lastUsedMsgCursor[chatId] = self.msgCursor[chatId]
