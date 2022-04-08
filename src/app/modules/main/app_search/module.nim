@@ -209,13 +209,15 @@ method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
     if(m.`from` == singletonInstance.userProfile.getPubKey()):
       senderName = "You"
 
+    let renderedMessageText = self.controller.getRenderedText(m.parsedText)
+
     if(chatDto.communityId.len == 0):
       var chatName = chatDto.name
       var chatImage = chatDto.icon
       if(chatDto.chatType == ChatType.OneToOne):
         (chatName, chatImage) = self.controller.getOneToOneChatNameAndImage(chatDto.id)
 
-      let item = result_item.initItem(m.id, m.text, $m.timestamp, m.`from`, senderName,
+      let item = result_item.initItem(m.id, renderedMessageText, $m.timestamp, m.`from`, senderName,
       SEARCH_RESULT_MESSAGES_SECTION_NAME, senderImage, "", chatName, "", chatImage, chatDto.color, false)
 
       self.controller.addResultItemDetails(m.id, singletonInstance.userProfile.getPubKey(),
@@ -225,7 +227,7 @@ method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
       let community = self.controller.getCommunityById(chatDto.communityId)
       let channelName = "#" & chatDto.name
 
-      let item = result_item.initItem(m.id, m.text, $m.timestamp, m.`from`, senderName,
+      let item = result_item.initItem(m.id, renderedMessageText, $m.timestamp, m.`from`, senderName,
       SEARCH_RESULT_MESSAGES_SECTION_NAME, senderImage, "", community.name, channelName, community.images.thumbnail,
       community.color, false)
 
