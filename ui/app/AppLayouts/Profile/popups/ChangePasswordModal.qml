@@ -70,10 +70,12 @@ StatusModal {
             }
 
             onClicked: {
-                submitBtn.loading = true;
-                // ChangePassword operation blocks the UI so loading = true; will never have any affect until changePassword/createPassword is done.
-                // Getting around it with a small pause (timer) in order to get the desired behavior
-                pause.start();
+                if (view.validatePassword()) {
+                    submitBtn.loading = true;
+                    // ChangePassword operation blocks the UI so loading = true; will never have any affect until changePassword/createPassword is done.
+                    // Getting around it with a small pause (timer) in order to get the desired behavior
+                    pause.start();
+                }
             }
         }
     ]

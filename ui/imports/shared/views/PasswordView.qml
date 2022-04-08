@@ -14,7 +14,13 @@ import StatusQ.Components 0.1
 Column {
     id: root
 
-    property bool ready: newPswInput.text.length >= root.minPswLen && newPswInput.text === confirmPswInput.text && errorTxt.text === ""
+    /*!
+       \qmlproperty ready
+        Indicates that the password and confirmation are filled,
+        have correct sizes and are of the same size
+    */
+    readonly property bool ready: (newPswText.length >= minPswLen) &&
+                                  (confirmationPswText.length === newPswText.length)
     property int minPswLen: 6
     property bool createNewPsw: true
     property string title: qsTr("Create a password")
@@ -48,13 +54,40 @@ Column {
             currentPswInput.forceActiveFocus(Qt.MouseFocusReason)
     }
 
-    function checkPasswordMatches() {
-        if(newPswInput.text.length >= root.minPswLen) {
-            errorTxt.text = ""
-            if(confirmPswInput.text !== newPswInput.text) {
-                errorTxt.text = qsTr("Passwords don't match")
-            }
+    /*!
+       \qmlmethod validatePassword()
+        Validates password and confirmation.
+        Returns true if all rules are fullfilled.
+        Otherwise, returns false and shows the error message.
+    */
+    function validatePassword() {
+        errorTxt.text = ""
+
+        // Password too short
+        if(d.isTooShort()) {
+            errorTxt.text = qsTr("Password must be at least 6 characters long")
+            return false
         }
+
+        // Passwords must match
+        if (!d.checkPasswordsMatch()) {
+            errorTxt.text = qsTr("Passwords don't match")
+            return false
+        }
+
+        // Password is in pwnd passwords database
+        if(d.isInPwndDatabase()) {
+            errorTxt.text = qsTr("This password has been pwned and shouldn't be used")
+            return false
+        }
+
+        // Common password
+        if(d.isCommonPassword()) {
+            errorTxt.text = qsTr("This password is a common word and shouldn't be used")
+            return false
+        }
+
+        return true
     }
 
     QtObject {
@@ -89,24 +122,6 @@ Column {
             return strength
         }
 
-        // Password validation / error message selection:
-        function passwordValidation() {
-            errorTxt.text = ""
-
-            // 3 rules to validate:
-            // * Password is in pwnd passwords database
-            if(isInPwndDatabase())
-                errorTxt.text = qsTr("This password has been pwned and shouldn't be used")
-
-            // * Common password
-            else if(isCommonPassword())
-                errorTxt.text = qsTr("This password is a common word and shouldn't be used")
-
-            // * Password too short
-            else if(isTooShort())
-                errorTxt.text = qsTr("Password must be at least 6 characters long")
-        }
-
         function isInPwndDatabase() {
             // "TODO - Nice To Have: Pwnd password validation NOT implemented yet! "
             return false
@@ -115,6 +130,15 @@ Column {
         function isCommonPassword() {
             // "TODO - Nice To Have: Common password validation NOT implemented yet! "
             return false
+        }
+
+        /*!
+           \qmlmethod checkPasswordsMatch()
+            Checks if the new password and the confirmation are the same.
+            Returns true or false
+        */
+        function checkPasswordsMatch() {
+            return (confirmPswInput.text === newPswInput.text)
         }
 
         function isTooShort() { return newPswInput.text.length < root.minPswLen }        
@@ -202,6 +226,8 @@ Column {
             textField.rightPadding: showHideNewIcon.width + showHideNewIcon.anchors.rightMargin + Style.current.padding / 2
 
             onTextChanged: {
+                errorTxt.text = ""
+
                 // Update password checkers
                 d.containsLower = d.lowerCaseValidator(text)
                 d.containsUpper = d.upperCaseValidator(text)
@@ -296,14 +322,9 @@ Column {
         textField.validator: d.validator
         keepHeight: true
         textField.rightPadding: showHideConfirmIcon.width + showHideConfirmIcon.anchors.rightMargin + Style.current.padding / 2
-
-        onTextChanged: { if(textField.text.length === newPswInput.text.length) root.checkPasswordMatches() }
-        textField.onFocusChanged: {
-            // When clicking into the confirmation input, validate if new password:
-            if(textField.focus) d.passwordValidation()
-
-            // When leaving the confirmation input because of the button or other input component is focused, check if password matches
-            else root.checkPasswordMatches(true)
+        textField.onTextChanged: {
+            // clear error if the user changes confirmation
+            errorTxt.text = ""
         }
 
         StatusFlatRoundButton {

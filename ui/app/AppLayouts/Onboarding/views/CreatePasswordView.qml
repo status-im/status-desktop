@@ -39,9 +39,11 @@ OnboardingBasePage {
             text: qsTr("Create password")
             enabled: view.ready
             onClicked: {
-                root.newPassword = view.newPswText
-                root.confirmationPassword = view.confirmationPswText
-                root.exit()
+                if (view.validatePassword()) {
+                    root.newPassword = view.newPswText
+                    root.confirmationPassword = view.confirmationPswText
+                    root.exit()
+                }
             }
         }
     }
@@ -55,11 +57,5 @@ OnboardingBasePage {
         anchors.bottomMargin: Style.current.padding
         icon.name: "arrow-left"
         onClicked: { root.backClicked() }
-    }
-    // By clicking anywhere outside password entries fields or focusable element in the view, it is needed to check if passwords entered matches
-    MouseArea {
-        anchors.fill: parent
-        z: d.zBehind // Behind focusable components
-        onClicked: { view.checkPasswordMatches() }
     }
 }
