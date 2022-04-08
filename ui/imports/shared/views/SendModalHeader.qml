@@ -209,7 +209,7 @@ Rectangle {
             input.anchors.rightMargin: 0
             labelFont.pixelSize: 15
             labelFont.weight: Font.Normal
-            input.implicitHeight: 56
+            input.height: 56
             isSelectorVisible: false
             addContactEnabled: false
             onSelectedRecipientChanged: estimateGas()
