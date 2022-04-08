@@ -22,7 +22,7 @@ method getCommunityItem*(self: AccessInterface, community: CommunityDto): Sectio
 method joinCommunity*(self: AccessInterface, communityId: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method createCommunity*(self: AccessInterface, name: string, description: string, access: int, ensOnly: bool, color: string, imagePath: string, aX: int, aY: int, bX: int, bY: int) {.base.} =
+method createCommunity*(self: AccessInterface, name: string, description: string, access: int, ensOnly: bool, color: string, imagePath: string, aX: int, aY: int, bX: int, bY: int, historyArchiveSupportEnabled: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method deleteCommunityCategory*(self: AccessInterface, communityId: string, categoryId: string) {.base.} =

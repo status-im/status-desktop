@@ -97,6 +97,7 @@ QtObject:
   # Forward declaration
   proc loadAllCommunities(self: Service): seq[CommunityDto]
   proc loadJoinedComunities(self: Service): seq[CommunityDto]
+  proc loadCommunitiesSettings(self: Service): seq[CommunitySettingsDto]
   proc loadMyPendingRequestsToJoin*(self: Service)
   proc handleCommunityUpdates(self: Service, communities: seq[CommunityDto], updatedChats: seq[ChatDto])
   proc pendingRequestsToJoinForCommunity*(self: Service, communityId: string): seq[CommunityMembershipRequestDto]
@@ -295,6 +296,13 @@ QtObject:
       for community in allCommunities:
         self.allCommunities[community.id] = community
 
+      let communitiesSettings = self.loadCommunitiesSettings()
+      for settings in communitiesSettings:
+        if self.allCommunities.hasKey(settings.id):
+          self.allCommunities[settings.id].settings = settings
+        if self.joinedCommunities.hasKey(settings.id):
+          self.joinedCommunities[settings.id].settings = settings
+
       self.loadMyPendingRequestsToJoin()
 
     except Exception as e:
@@ -309,6 +317,10 @@ QtObject:
   proc loadJoinedComunities(self: Service): seq[CommunityDto] =
     let response = status_go.getJoinedComunities()
     return parseCommunities(response)
+
+  proc loadCommunitiesSettings(self: Service): seq[CommunitySettingsDto] =
+    let response = status_go.getCommunitiesSettings()
+    return parseCommunitiesSettings(response)
 
   proc getJoinedCommunities*(self: Service): seq[CommunityDto] =
     return toSeq(self.joinedCommunities.values)
@@ -412,8 +424,10 @@ QtObject:
         error "error: ", procName="joinCommunity", errDesription = "result is nil"
         return
 
-      let updatedCommunity = response.result["communities"][0].toCommunityDto()
+      var updatedCommunity = response.result["communities"][0].toCommunityDto()
+      let communitySettings = response.result["communitiesSettings"][0].toCommunitySettingsDto()
 
+      updatedCommunity.settings = communitySettings
       self.allCommunities[communityId] = updatedCommunity
       self.joinedCommunities[communityId] = updatedCommunity
 
@@ -502,7 +516,8 @@ QtObject:
       ensOnly: bool,
       color: string,
       imageUrl: string,
-      aX: int, aY: int, bX: int, bY: int) =
+      aX: int, aY: int, bX: int, bY: int,
+      historyArchiveSupportEnabled: bool) =
     try:
       var image = singletonInstance.utils.formatImagePath(imageUrl)
       let response = status_go.createCommunity(
@@ -512,16 +527,20 @@ QtObject:
         ensOnly,
         color,
         image,
-        aX, aY, bX, bY)
+        aX, aY, bX, bY,
+        historyArchiveSupportEnabled)
 
       if response.error != nil:
         let error = Json.decode($response.error, RpcError)
         raise newException(RpcException, "Error creating community: " & error.message)
 
       if response.result != nil and response.result.kind != JNull:
-        let community = response.result["communities"][0].toCommunityDto()
+        var community = response.result["communities"][0].toCommunityDto()
+        let communitySettings = response.result["communitiesSettings"][0].toCommunitySettingsDto()
 
-        # add this to the joinedCommunities list
+
+        community.settings = communitySettings
+        # add this to the joinedCommunities list and communitiesSettings
         self.joinedCommunities[community.id] = community
 
         self.events.emit(SIGNAL_COMMUNITY_CREATED, CommunityArgs(community: community))
@@ -537,7 +556,8 @@ QtObject:
       ensOnly: bool,
       color: string,
       imageUrl: string,
-      aX: int, aY: int, bX: int, bY: int) =
+      aX: int, aY: int, bX: int, bY: int,
+      historyArchiveSupportEnabled: bool) =
     try:
       var image = singletonInstance.utils.formatImagePath(imageUrl)
       let response = status_go.editCommunity(
@@ -548,7 +568,8 @@ QtObject:
         ensOnly,
         color,
         image,
-        aX, aY, bX, bY)
+        aX, aY, bX, bY,
+        historyArchiveSupportEnabled)
 
       if response.error != nil:
         let error = Json.decode($response.error, RpcError)
@@ -556,9 +577,10 @@ QtObject:
 
       if response.result != nil and response.result.kind != JNull:
         var community = response.result["communities"][0].toCommunityDto()
+        var communitySettings = response.result["communitiesSettings"][0].toCommunitySettingsDto()
 
+        community.settings = communitySettings
         self.saveUpdatedJoinedCommunity(community)
-
         self.events.emit(SIGNAL_COMMUNITY_EDITED, CommunityArgs(community: community))
     except Exception as e:
       error "Error editing community", msg = e.msg
@@ -840,11 +862,21 @@ QtObject:
       if(communityJArr.len == 0):
         raise newException(RpcException, fmt"`communities` array is empty in the response for community id: {communityKey}")
 
+      var communitiesSettingsJArr: JsonNode
+      if(not response.result.getProp("communitiesSettings", communitiesSettingsJArr)):
+        raise newException(RpcException, fmt"there is no `communitiesSettings` key in the response for community id: {communityKey}")
+
+      if(communitiesSettingsJArr.len == 0):
+        raise newException(RpcException, fmt"`communitiesSettings` array is empty in the response for community id: {communityKey}")
+
       var chatsJArr: JsonNode
       if(not response.result.getProp("chats", chatsJArr)):
         raise newException(RpcException, fmt"there is no `chats` key in the response for community id: {communityKey}")
 
-      let communityDto = communityJArr[0].toCommunityDto()
+      var communityDto = communityJArr[0].toCommunityDto()
+      let communitySettingsDto = communitiesSettingsJArr[0].toCommunitySettingsDto()
+
+      communityDto.settings = communitySettingsDto
       self.joinedCommunities[communityDto.id] = communityDto
 
       for chatObj in chatsJArr:

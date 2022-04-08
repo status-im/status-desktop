@@ -17,11 +17,13 @@ QtObject:
 
   proc membersChanged*(self: ActiveSection) {.signal.}
   proc pendingRequestsToJoinChanged*(self: ActiveSection) {.signal.}
+  proc historyArchiveSupportEnabledChanged*(self: ActiveSection) {.signal.}
 
   proc setActiveSectionData*(self: ActiveSection, item: SectionItem) =
     self.item = item
     self.membersChanged()
     self.pendingRequestsToJoinChanged()
+    self.historyArchiveSupportEnabledChanged()
 
   proc getId*(self: ActiveSection): string {.slot.} =
     return self.item.id
@@ -124,6 +126,12 @@ QtObject:
 
   QtProperty[bool] ensOnly:
     read = ensOnly
+
+  proc historyArchiveSupportEnabled(self: ActiveSection): bool {.slot.} =
+    return self.item.historyArchiveSupportEnabled
+
+  QtProperty[bool] historyArchiveSupportEnabled:
+    read = historyArchiveSupportEnabled
 
   proc members(self: ActiveSection): QVariant {.slot.} =
     if (self.item.id == ""):

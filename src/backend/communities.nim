@@ -36,7 +36,8 @@ proc createCommunity*(
     ensOnly: bool,
     color: string,
     imageUrl: string,
-    aX: int, aY: int, bX: int, bY: int
+    aX: int, aY: int, bX: int, bY: int,
+    historyArchiveSupportEnabled: bool
     ): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = callPrivateRPC("createCommunity".prefix, %*[{
       # TODO this will need to be renamed membership (small m)
@@ -49,7 +50,8 @@ proc createCommunity*(
       "imageAx": aX,
       "imageAy": aY,
       "imageBx": bX,
-      "imageBy": bY
+      "imageBy": bY,
+      "historyArchiveSupportEnabled": historyArchiveSupportEnabled,
     }])
 
 proc editCommunity*(
@@ -63,7 +65,8 @@ proc editCommunity*(
     aX: int,
     aY: int,
     bX: int,
-    bY: int
+    bY: int,
+    historyArchiveSupportEnabled: bool
     ): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = callPrivateRPC("editCommunity".prefix, %*[{
     # TODO this will need to be renamed membership (small m)
@@ -77,7 +80,8 @@ proc editCommunity*(
     "imageAx": aX,
     "imageAy": aY,
     "imageBx": bX,
-    "imageBy": bY
+    "imageBy": bY,
+    "historyArchiveSupportEnabled": historyArchiveSupportEnabled
   }])
 
 proc createCommunityChannel*(
@@ -230,3 +234,6 @@ proc inviteUsersToCommunity*(communityId: string, pubKeys: seq[string]): RpcResp
     "communityId": communityId,
     "users": pubKeys
   }])
+
+proc getCommunitiesSettings*(): RpcResponse[JsonNode] {.raises: [Exception].} =
+  return callPrivateRPC("getCommunitiesSettings".prefix, %*[])

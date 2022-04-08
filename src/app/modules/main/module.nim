@@ -226,8 +226,11 @@ proc createChannelGroupItem[T](self: Module[T], c: ChannelGroupDto): SectionItem
       x.communityId,
       x.state,
       x.our
-    )) else: @[]
+    )) else: @[],
+    communityDetails.settings.historyArchiveSupportEnabled
   )
+
+
 
 method load*[T](
   self: Module[T],
