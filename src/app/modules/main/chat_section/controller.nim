@@ -53,6 +53,13 @@ proc newController*(delegate: io_interface.AccessInterface, sectionId: string, i
 proc delete*(self: Controller) =
   discard
 
+proc getActiveChatId*(self: Controller): string =
+  if(self.activeSubItemId.len > 0):
+    return self.activeSubItemId
+  else:
+    return self.activeItemId
+
+
 proc init*(self: Controller) =
   self.events.on(SIGNAL_NEW_MESSAGE_RECEIVED) do(e: Args):
     let args = MessagesArgs(e)
@@ -154,6 +161,11 @@ proc init*(self: Controller) =
       if (args.communityId == self.sectionId):
         self.delegate.onReorderChatOrCategory(args.chatId, args.position)
 
+    self.events.on(SIGNAL_RELOAD_MESSAGES) do(e: Args):
+      let args = ReloadMessagesArgs(e)
+      if (args.communityId == self.sectionId):
+        self.messageService.asyncLoadInitialMessagesForChat(self.getActiveChatId())
+
   self.events.on(SIGNAL_CONTACT_NICKNAME_CHANGED) do(e: Args):
     var args = ContactArgs(e)
     self.delegate.onContactDetailsUpdated(args.contactId)
@@ -189,12 +201,6 @@ proc init*(self: Controller) =
 
 proc getMySectionId*(self: Controller): string =
   return self.sectionId
-
-proc getActiveChatId*(self: Controller): string =
-  if(self.activeSubItemId.len > 0):
-    return self.activeSubItemId
-  else:
-    return self.activeItemId
 
 proc isCommunity*(self: Controller): bool =
   return self.isCommunitySection

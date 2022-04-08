@@ -32,6 +32,14 @@ proc decode*(jsonSignal: JsonNode): Signal =
     of SignalType.KeycardConnected: KeycardConnectedSignal.fromEvent(jsonSignal)
     of SignalType.MailserverAvailable: MailserverAvailableSignal.fromEvent(jsonSignal)
     of SignalType.MailserverChanged: MailserverChangedSignal.fromEvent(jsonSignal)
+    of SignalType.HistoryArchivesProtocolEnabled: historyArchivesProtocolEnabledFromEvent(jsonSignal)
+    of SignalType.HistoryArchivesProtocolDisabled: historyArchivesProtocolDisabledFromEvent(jsonSignal)
+    of SignalType.CreatingHistoryArchives: creatingHistoryArchivesFromEvent(jsonSignal)
+    of SignalType.NoHistoryArchivesCreated: noHistoryArchivesCreatedFromEvent(jsonSignal)
+    of SignalType.HistoryArchivesCreated: historyArchivesCreatedFromEvent(jsonSignal)
+    of SignalType.HistoryArchivesSeeding: historyArchivesSeedingFromEvent(jsonSignal)
+    of SignalType.HistoryArchivesUnseeded: historyArchivesUnseededFromEvent(jsonSignal)
+    of SignalType.HistoryArchiveDownloaded: historyArchiveDownloadedFromEvent(jsonSignal)
     else: Signal()
 
   result.signalType = signalType
