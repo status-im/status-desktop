@@ -1,4 +1,5 @@
 import json, os, chronicles, utils
+import ../../constants as main_constants
 
 # set via `nim c` param `-d:INFURA_TOKEN:[token]`; should be set in CI/release builds
 const INFURA_TOKEN {.strdefine.} = ""
@@ -21,6 +22,9 @@ let OPENSEA_API_KEY_RESOLVED* =
   else:
     OPENSEA_API_KEY
 
+let DEFAULT_TORRENT_CONFIG_PORT* = 9025
+let DEFAULT_TORRENT_CONFIG_DATADIR* = joinPath(main_constants.defaultDataDir(), "data", "archivedata")
+let DEFAULT_TORRENT_CONFIG_TORRENTDIR* = joinPath(main_constants.defaultDataDir(), "data", "torrents")
 
 
 const DEFAULT_NETWORK_NAME* = "mainnet_rpc"
@@ -253,7 +257,13 @@ var NODE_CONFIG* = %* {
       "layer":   2,
       "enabled": true,
     }
-  ]
+  ],
+  "TorrentConfig": {
+    "Enabled": false,
+    "Port": DEFAULT_TORRENT_CONFIG_PORT,
+    "DataDir": DEFAULT_TORRENT_CONFIG_DATADIR,
+    "TorrentDir": DEFAULT_TORRENT_CONFIG_TORRENTDIR
+  }
 }
 
 proc getNetworkConfig*(currentNetwork: string): JsonNode =
