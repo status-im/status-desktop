@@ -1,4 +1,4 @@
-import json, sequtils, strutils, uuids
+import json, sequtils, strutils, uuids, os
 import json_serialization, chronicles
 
 import ./dto/accounts as dto_accounts
@@ -334,6 +334,12 @@ proc login*(self: Service, account: AccountDto, password: string): string =
         "Enabled": true,
         "OpenseaAPIKey": OPENSEA_API_KEY_RESOLVED
       },
+      "TorrentConfig": {
+        "Enabled": false,
+        "DataDir": DEFAULT_TORRENT_CONFIG_DATADIR,
+        "TorrentDir": DEFAULT_TORRENT_CONFIG_TORRENTDIR,
+        "Port": DEFAULT_TORRENT_CONFIG_PORT
+      }
     }
 
     let response = status_account.login(account.name, account.keyUid, hashedPassword, thumbnailImage,

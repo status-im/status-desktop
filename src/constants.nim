@@ -5,7 +5,7 @@ import # vendor libs
 
 const sep = when defined(windows): "\\" else: "/"
 
-proc defaultDataDir(): string =
+proc defaultDataDir*(): string =
   let homeDir = getHomeDir()
   let parentDir =
     if defined(development):
