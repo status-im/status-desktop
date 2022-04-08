@@ -99,7 +99,8 @@ method getCommunityItem(self: Module, c: CommunityDto): SectionItem =
           OnlineStatus.Offline, # TODO get the actual status?
           contactDetails.icon,
           contactDetails.details.added,
-          ))
+          )),
+      historyArchiveSupportEnabled = c.settings.historyArchiveSupportEnabled
     )
 
 method setAllCommunities*(self: Module, communities: seq[CommunityDto]) =
@@ -147,8 +148,9 @@ method communityCategoryDeleted*(self: Module) =
 method createCommunity*(self: Module, name: string, description: string,
                         access: int, ensOnly: bool, color: string,
                         imagePath: string,
-                        aX: int, aY: int, bX: int, bY: int) =
-  self.controller.createCommunity(name, description, access, ensOnly, color, imagePath, aX, aY, bX, bY)
+                        aX: int, aY: int, bX: int, bY: int,
+                        historyArchiveSupportEnabled: bool) =
+  self.controller.createCommunity(name, description, access, ensOnly, color, imagePath, aX, aY, bX, bY, historyArchiveSupportEnabled)
 
 method deleteCommunityCategory*(self: Module, communityId: string, categoryId: string) =
   self.controller.deleteCommunityCategory(communityId, categoryId)

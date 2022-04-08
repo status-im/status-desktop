@@ -87,6 +87,7 @@ type ChannelGroupDto* = object
   canManageUsers*: bool
   color*: string
   muted*: bool
+  historyArchiveSupportEnabled*: bool
 
 proc `$`*(self: ChatDto): string =
   result = fmt"""ChatDto(

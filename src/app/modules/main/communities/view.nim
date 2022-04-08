@@ -68,8 +68,9 @@ QtObject:
   proc createCommunity*(self: View, name: string, description: string,
                         access: int, ensOnly: bool, color: string,
                         imagePath: string,
-                        aX: int, aY: int, bX: int, bY: int) {.slot.} =
-    self.delegate.createCommunity(name, description, access, ensOnly, color, imagePath, aX, aY, bX, bY)
+                        aX: int, aY: int, bX: int, bY: int,
+                        historyArchiveSupportEnabled: bool) {.slot.} =
+    self.delegate.createCommunity(name, description, access, ensOnly, color, imagePath, aX, aY, bX, bY, historyArchiveSupportEnabled)
 
   proc deleteCommunityCategory*(self: View, communityId: string, categoryId: string): string {.slot.} =
     self.delegate.deleteCommunityCategory(communityId, categoryId)

@@ -27,6 +27,7 @@ type
     EnsOnly
     MembersModel
     PendingRequestsToJoinModel
+    HistoryArchiveSupportEnabled
 
 QtObject:
   type
@@ -85,6 +86,7 @@ QtObject:
       ModelRole.EnsOnly.int:"ensOnly",
       ModelRole.MembersModel.int:"members",
       ModelRole.PendingRequestsToJoinModel.int:"pendingRequestsToJoin",
+      ModelRole.HistoryArchiveSupportEnabled.int:"historyArchiveSupportEnabled",
     }.toTable
 
   method data(self: SectionModel, index: QModelIndex, role: int): QVariant =
@@ -140,6 +142,8 @@ QtObject:
       result = newQVariant(item.members)
     of ModelRole.PendingRequestsToJoinModel:
       result = newQVariant(item.pendingRequestsToJoin)
+    of ModelRole.HistoryArchiveSupportEnabled:
+      result = newQVariant(item.historyArchiveSupportEnabled)
 
   proc isItemExist(self: SectionModel, id: string): bool =
     for it in self.items:
@@ -211,7 +215,8 @@ QtObject:
       ModelRole.CanJoin.int,
       ModelRole.Joined.int,
       ModelRole.MembersModel.int,
-      ModelRole.PendingRequestsToJoinModel.int
+      ModelRole.PendingRequestsToJoinModel.int,
+      ModelRole.HistoryArchiveSupportEnabled.int
       ])
 
   proc getItemById*(self: SectionModel, id: string): SectionItem =

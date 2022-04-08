@@ -34,6 +34,7 @@ type
     ensOnly: bool
     membersModel: user_model.Model
     pendingRequestsToJoinModel: PendingRequestModel
+    historyArchiveSupportEnabled: bool
 
 proc initItem*(
     id: string,
@@ -56,7 +57,8 @@ proc initItem*(
     access: int = 0,
     ensOnly = false,
     members: seq[user_item.Item] = @[],
-    pendingRequestsToJoin: seq[PendingRequestItem] = @[]
+    pendingRequestsToJoin: seq[PendingRequestItem] = @[],
+    historyArchiveSupportEnabled = false
     ): SectionItem =
   result.id = id
   result.sectionType = sectionType
@@ -81,6 +83,7 @@ proc initItem*(
   result.membersModel.setItems(members)
   result.pendingRequestsToJoinModel = newPendingRequestModel()
   result.pendingRequestsToJoinModel.setItems(pendingRequestsToJoin)
+  result.historyArchiveSupportEnabled = historyArchiveSupportEnabled
 
 proc isEmpty*(self: SectionItem): bool =
   return self.id.len == 0
@@ -107,6 +110,7 @@ proc `$`*(self: SectionItem): string =
     access:{self.access},
     ensOnly:{self.ensOnly},
     members:{self.membersModel},
+    historyArchiveSupportEnabled:{self.historyArchiveSupportEnabled},
     ]"""
 
 proc id*(self: SectionItem): string {.inline.} =
@@ -196,3 +200,6 @@ proc updateMember*(
 
 proc pendingRequestsToJoin*(self: SectionItem): PendingRequestModel {.inline.} =
   self.pendingRequestsToJoinModel
+
+proc historyArchiveSupportEnabled*(self: SectionItem): bool {.inline.} =
+  self.historyArchiveSupportEnabled

@@ -381,7 +381,8 @@ proc editCommunity*(
     ensOnly: bool,
     color: string,
     imageUrl: string,
-    aX: int, aY: int, bX: int, bY: int) =
+    aX: int, aY: int, bX: int, bY: int,
+    historyArchiveSupportEnabled: bool) =
   self.communityService.editCommunity(
     self.sectionId,
     name,
@@ -390,7 +391,8 @@ proc editCommunity*(
     ensOnly,
     color,
     imageUrl,
-    aX, aY, bX, bY)
+    aX, aY, bX, bY,
+    historyArchiveSupportEnabled)
 
 proc exportCommunity*(self: Controller): string =
   self.communityService.exportCommunity(self.sectionId)
