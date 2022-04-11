@@ -24,6 +24,7 @@ type
   CommunityArgs* = ref object of Args
     community*: CommunityDto
     error*: string
+    fromUserAction*: bool
 
   CommunitiesArgs* = ref object of Args
     communities*: seq[CommunityDto]
@@ -199,7 +200,7 @@ QtObject:
     if(not self.joinedCommunities.hasKey(community.id)):
       if (community.joined and community.isMember):
         self.joinedCommunities[community.id] = community
-        self.events.emit(SIGNAL_COMMUNITY_JOINED, CommunityArgs(community: community))
+        self.events.emit(SIGNAL_COMMUNITY_JOINED, CommunityArgs(community: community, fromUserAction: false))
       return
 
     let prev_community = self.joinedCommunities[community.id]
@@ -444,7 +445,7 @@ QtObject:
         self.chatService.updateOrAddChat(chatDto)
 
       self.events.emit(SIGNAL_COMMUNITIES_UPDATE, CommunitiesArgs(communities: @[updatedCommunity]))
-      self.events.emit(SIGNAL_COMMUNITY_JOINED, CommunityArgs(community: updatedCommunity))
+      self.events.emit(SIGNAL_COMMUNITY_JOINED, CommunityArgs(community: updatedCommunity, fromUserAction: true))
     except Exception as e:
       error "Error joining the community", msg = e.msg
       result = fmt"Error joining the community: {e.msg}"
