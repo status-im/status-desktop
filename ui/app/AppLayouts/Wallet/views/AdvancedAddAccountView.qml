@@ -19,14 +19,17 @@ ColumnLayout {
     property alias privateKey: privateKey.text
     property int addAccountType: AdvancedAddAccountView.AddAccountType.GenerateNew
     property string mnemonicText: getSeedPhraseString()
+    property alias watchAddress: addressInput.text
     property string errorString: ""
     property bool isValid: addAccountType === AdvancedAddAccountView.AddAccountType.ImportSeedPhrase ? grid.isValid :
-                           addAccountType === AdvancedAddAccountView.AddAccountType.ImportPrivateKey ? (privateKey.text !== "" && privateKey.valid) : true
+                           addAccountType === AdvancedAddAccountView.AddAccountType.ImportPrivateKey ? (privateKey.text !== "" && privateKey.valid) :
+                           advancedSection.addAccountType === AdvancedAddAccountView.AddAccountType.WatchOnly ? (addressInput.text !== "" && addressInput.valid) : true
 
     enum AddAccountType {
         GenerateNew,
         ImportSeedPhrase,
-        ImportPrivateKey
+        ImportPrivateKey,
+        WatchOnly
     }
 
     function reset() {
@@ -36,6 +39,8 @@ ColumnLayout {
         addAccountType = AdvancedAddAccountView.AddAccountType.GenerateNew
         privateKey.text = ""
         privateKey.reset()
+        addressInput.text = ""
+        addressInput.reset()
         for(var i = 0; i < grid.model; i++) {
             if(grid.itemAtIndex(i)) {
                 grid.itemAtIndex(i).textEdit.text =  ""
@@ -76,6 +81,10 @@ ColumnLayout {
             }
             return errorString === ""
         }
+        else if(advancedSection.addAccountType === AdvancedAddAccountView.AddAccountType.WatchOnly) {
+            return addressInput.valid
+        }
+
         return true
     }
 
@@ -129,6 +138,8 @@ ColumnLayout {
                 append({"name": qsTr("Import new Seed Phrase"), "iconName": "seed-phrase", "enabled": true})
                 //% "Import new Private Key"
                 append({"name": qsTr("Import new Private Key"), "iconName": "password", "enabled": true})
+                //% "Import new Private Key"
+                append({"name": qsTrId("add-a-watch-account"), "iconName": "show", "enabled": true})
                 selectedItem.title = Qt.binding(function() {return get(select.currentIndex).name})
                 selectedItem.icon.name = Qt.binding(function() {return get(select.currentIndex).iconName})
                 selectedItem.tagsModel = Qt.binding(function() {return get(select.currentIndex).accountsModel})
@@ -156,8 +167,9 @@ ColumnLayout {
             }
             onClicked: {
                 advancedSection.addAccountType = (index === 2) ? AdvancedAddAccountView.AddAccountType.ImportSeedPhrase :
-                                                                 (index === 3) ? AdvancedAddAccountView.AddAccountType.ImportPrivateKey :
-                                                                                 AdvancedAddAccountView.AddAccountType.GenerateNew
+                                                 (index === 3) ? AdvancedAddAccountView.AddAccountType.ImportPrivateKey :
+                                                 (index === 4) ? AdvancedAddAccountView.AddAccountType.WatchOnly :
+                                                                 AdvancedAddAccountView.AddAccountType.GenerateNew
                 select.currentIndex = index
                 select.selectMenu.close()
             }
@@ -315,11 +327,32 @@ ColumnLayout {
         }
     }
 
+    StatusInput {
+        id: addressInput
+        visible: advancedSection.addAccountType === AdvancedAddAccountView.AddAccountType.WatchOnly && advancedSection.visible
+        //% "Enter address..."
+        input.placeholderText: qsTrId("enter-address...")
+        //% "Account address"
+        label: qsTrId("wallet-key-title")
+        validators: [
+            StatusAddressValidator {
+                //% "This needs to be a valid address (starting with 0x)"
+                errorMessage: qsTrId("this-needs-to-be-a-valid-address-(starting-with-0x)")
+            },
+            StatusMinLengthValidator {
+                //% "You need to enter an address"
+                errorMessage: qsTrId("you-need-to-enter-an-address")
+                minLength: 1
+            }
+        ]
+    }
 
     RowLayout {
         Layout.margins: Style.current.padding
         Layout.preferredWidth: parent.width
         spacing: Style.current.bigPadding
+        visible: advancedSection.addAccountType !== AdvancedAddAccountView.AddAccountType.WatchOnly &&
+                 advancedSection.addAccountType !== AdvancedAddAccountView.AddAccountType.ImportPrivateKey
         StatusSelect {
             Layout.preferredWidth: 213
             //% "Origin"

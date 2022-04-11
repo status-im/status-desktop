@@ -199,6 +199,9 @@ StatusModal {
                     case AdvancedAddAccountView.AddAccountType.ImportPrivateKey:
                         errMessage = RootStore.addAccountsFromPrivateKey(advancedSelection.expandableItem.privateKey, passwordInput.text, accountNameInput.text, colorSelectionGrid.selectedColor, accountNameInput.input.icon.emoji)
                         break
+                    case AdvancedAddAccountView.AddAccountType.WatchOnly:
+                        errMessage = RootStore.addWatchOnlyAccount(advancedSelection.expandableItem.watchAddress, accountNameInput.text, colorSelectionGrid.selectedColor, accountNameInput.input.icon.emoji)
+                        break
                     }
                 } else {
                     errMessage = RootStore.generateNewAccount(passwordInput.text, accountNameInput.text, colorSelectionGrid.selectedColor, accountNameInput.input.icon.emoji)
