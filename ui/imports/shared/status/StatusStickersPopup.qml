@@ -196,22 +196,22 @@ Popup {
             }
         }
 
-        Item {
+        Row {
             id: footerContent
-            Layout.leftMargin: 8
             Layout.fillWidth: true
-            Layout.preferredHeight: 40 - 8 * 2
-            Layout.topMargin: 8
-            Layout.rightMargin: 8
-            Layout.bottomMargin: 8
-            Layout.alignment: Qt.AlignTop | Qt.AlignLeft
+            leftPadding: Style.current.padding / 2
+            rightPadding: Style.current.padding / 2
+            spacing: Style.current.padding / 2
 
             StatusQControls.StatusFlatRoundButton {
                 id: btnAddStickerPack
-                implicitWidth: 24
                 implicitHeight: 24
-                type: StatusQControls.StatusRoundButton.Type.Secondary
+                implicitWidth: 24
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: Style.current.padding / 2
                 icon.name: "add"
+                type: StatusQControls.StatusFlatRoundButton.Type.Tertiary
+                color: "transparent"
                 state: root.stickerPacksLoaded ? "default" : "pending"
                 onClicked: {
                     stickersContainer.visible = false
@@ -219,32 +219,25 @@ Popup {
                     footerContent.visible = false
                 }
             }
-            StatusStickerPackIconWithIndicator {
+
+            StatusQControls.StatusTabBarIconButton {
                 id: btnHistory
-                width: 24
-                height: 24
-                selected: true
-                useIconInsteadOfImage: true
-                source: Style.svg("history")
-                anchors.left: btnAddStickerPack.right
-                anchors.leftMargin: Style.current.padding
+                icon.name: "time"
+                highlighted: true
                 onClicked: {
-                    btnHistory.selected = true
+                    highlighted = true
                     stickerPackListView.selectedPackId = -1
                     stickerGrid.model = recentStickers
                 }
             }
 
-
             ScrollView {
-                anchors.top: parent.top
-                anchors.left: btnHistory.right
-                anchors.leftMargin: Style.current.padding
-                anchors.right: parent.right
-                height: 32
-                clip: true
                 id: installedStickersSV
-                ScrollBar.vertical.policy: ScrollBar.AlwaysOff
+                anchors.bottom: parent.bottom
+                height: 32
+                clip: true                
+                ScrollBar.vertical.policy: ScrollBar.AlwaysOff                
+
                 RowLayout {
                     id: stickersRowLayout
                     spacing: Style.current.padding
@@ -263,7 +256,7 @@ Popup {
                             Layout.preferredHeight: height
                             Layout.preferredWidth: width
                             onClicked: {
-                                btnHistory.selected = false
+                                btnHistory.highlighted = false
                                 stickerPackListView.selectedPackId = packId
                                 stickerGrid.model = stickers
                             }
