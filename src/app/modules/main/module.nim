@@ -560,6 +560,7 @@ method communityJoined*[T](
   messageService: message_service.Service,
   gifService: gif_service.Service,
   mailserversService: mailservers_service.Service,
+  setActive: bool = false,
 ) =
   var firstCommunityJoined = false
   if (self.channelGroupModules.len == 1): # First one is personal chat section
@@ -588,7 +589,9 @@ method communityJoined*[T](
       self.view.model().getItemIndex(singletonInstance.userProfile.getPubKey()) + 1)
   else:
     self.view.model().addItem(communitySectionItem)
-  self.setActiveSection(communitySectionItem)
+
+  if setActive:
+    self.setActiveSection(communitySectionItem)
 
 method communityLeft*[T](self: Module[T], communityId: string) =
   if(not self.channelGroupModules.contains(communityId)):

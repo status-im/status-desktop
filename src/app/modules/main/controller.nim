@@ -106,6 +106,7 @@ proc init*(self: Controller) =
       self.messageService,
       self.gifService,
       self.mailserversService,
+      setActive = args.fromUserAction
     )
 
   self.events.on(TOGGLE_SECTION) do(e:Args):
@@ -124,6 +125,7 @@ proc init*(self: Controller) =
       self.messageService,
       self.gifService,
       self.mailserversService,
+      setActive = true
     )
 
   self.events.on(SIGNAL_COMMUNITY_IMPORTED) do(e:Args):
@@ -140,6 +142,7 @@ proc init*(self: Controller) =
       self.messageService,
       self.gifService,
       self.mailserversService,
+      setActive = false
     )
 
   self.events.on(SIGNAL_COMMUNITY_LEFT) do(e:Args):
@@ -230,12 +233,12 @@ proc getActiveSectionId*(self: Controller): string =
   result = self.activeSectionId
 
 proc setActiveSection*(self: Controller, sectionId: string, sectionType: SectionType) =
-  self.activeSectionId = sectionId
+  if sectionType == SectionType.Community and
+      not singletonInstance.localAccountSensitiveSettings.getCommunitiesEnabled():
+    # Communities are not supposed to be shown
+    return
 
-  if(sectionType == SectionType.Chat or sectionType == SectionType.Community):
-    # We need to take other actions here, in case of Chat or Community sections like
-    # notify status go that unviewed mentions count is updated and so...
-    echo "deal with appropriate service..."
+  self.activeSectionId = sectionId
 
   singletonInstance.localAccountSensitiveSettings.setActiveSection(self.activeSectionId)
 
