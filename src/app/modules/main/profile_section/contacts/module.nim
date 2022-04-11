@@ -103,7 +103,7 @@ proc addItemToAppropriateModel(self: Module, item: Item) =
     let contact =  self.controller.getContact(item.pubKey())
     if(contact.isContactRequestReceived() and not contact.isContactRequestSent() and not contact.isReceivedContactRequestRejected()):
       self.view.receivedContactRequestsModel().addItem(item)
-    elif(contact.isContactRequestSent() and not contact.isContactRequestReceived() and not contact.isSentContactRequestRejected()):
+    elif(contact.isContactRequestSent() and not contact.isContactRequestReceived() and not contact.isSentContactRequestRejected() and singletonInstance.userProfile.getPubKey() != item.pubKey):
       self.view.sentContactRequestsModel().addItem(item)
     elif(contact.isContactRequestReceived() and contact.isReceivedContactRequestRejected()):
       self.view.receivedButRejectedContactRequestsModel().addItem(item)
