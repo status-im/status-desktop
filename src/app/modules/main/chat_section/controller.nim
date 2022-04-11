@@ -176,7 +176,7 @@ proc init*(self: Controller) =
     let args = ChatExtArgs(e)
     if (self.isCommunitySection):
       return
-    self.delegate.createOneToOneChat(args.communityId, args.chatId, args.ensName)
+    self.delegate.createOneToOneChat(args.chatId, args.ensName)
 
   self.events.on(SignalType.HistoryRequestStarted.event) do(e: Args):
     self.delegate.setLoadingHistoryMessagesInProgress(true)
@@ -242,8 +242,8 @@ proc createPublicChat*(self: Controller, chatId: string) =
       self.contactService, self.chatService, self.communityService, self.messageService,
       self.gifService, self.mailserversService)
 
-proc createOneToOneChat*(self: Controller, communityID: string, chatId: string, ensName: string) =
-  let response = self.chatService.createOneToOneChat(communityID, chatId, ensName)
+proc createOneToOneChat*(self: Controller, chatId: string, ensName: string) =
+  let response = self.chatService.createOneToOneChat(chatId, ensName)
   if(response.success):
     self.delegate.addChatIfDontExist(response.chatDto, false, self.events, self.settingsService,
       self.contactService, self.chatService, self.communityService, self.messageService,
@@ -285,20 +285,20 @@ proc rejectContactRequest*(self: Controller, publicKey: string) =
 proc blockContact*(self: Controller, publicKey: string) =
   self.contactService.blockContact(publicKey)
 
-proc addGroupMembers*(self: Controller, communityID: string, chatId: string, pubKeys: seq[string]) =
-  self.chatService.addGroupMembers(communityID, chatId, pubKeys)
+proc addGroupMembers*(self: Controller, chatId: string, pubKeys: seq[string]) =
+  self.chatService.addGroupMembers(chatId, pubKeys)
 
-proc removeMemberFromGroupChat*(self: Controller, communityID: string, chatId: string, pubKey: string) =
-   self.chatService.removeMemberFromGroupChat(communityID, chatId, pubKey)
+proc removeMemberFromGroupChat*(self: Controller, chatId: string, pubKey: string) =
+  self.chatService.removeMemberFromGroupChat(chatId, pubKey)
 
-proc renameGroupChat*(self: Controller, communityID: string, chatId: string, newName: string) =
-  self.chatService.renameGroupChat(communityID, chatId, newName)
+proc renameGroupChat*(self: Controller, chatId: string, newName: string) =
+  self.chatService.renameGroupChat(chatId, newName)
 
-proc makeAdmin*(self: Controller, communityID: string, chatId: string, pubKey: string) =
-  self.chatService.makeAdmin(communityID, chatId, pubKey)
+proc makeAdmin*(self: Controller, chatId: string, pubKey: string) =
+  self.chatService.makeAdmin(chatId, pubKey)
 
-proc createGroupChat*(self: Controller, communityID: string, groupName: string, pubKeys: seq[string]) =
-  let response = self.chatService.createGroupChat(communityID, groupName, pubKeys)
+proc createGroupChat*(self: Controller, groupName: string, pubKeys: seq[string]) =
+  let response = self.chatService.createGroupChat(groupName, pubKeys)
   if(response.success):
     self.delegate.addChatIfDontExist(response.chatDto, false, self.events, self.settingsService,
       self.contactService, self.chatService, self.communityService, self.messageService,

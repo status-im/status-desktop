@@ -366,7 +366,7 @@ ColumnLayout {
 
         onCreateOneToOneChat: {
             Global.changeAppSectionBySectionType(Constants.appSection.chat)
-            root.rootStore.chatCommunitySectionModule.createOneToOneChat("", chatId, ensName)
+            root.rootStore.chatCommunitySectionModule.createOneToOneChat(chatId, ensName)
         }
     }
 

@@ -276,7 +276,7 @@ Item {
             store: root.store
             contactsStore: root.contactsStore
             onJoinPrivateChat: {
-                chatSectionModule.createOneToOneChat("", publicKey, ensName)
+                chatSectionModule.createOneToOneChat(publicKey, ensName)
             }
             onClosed: {
                 destroy()

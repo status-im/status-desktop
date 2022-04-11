@@ -152,7 +152,7 @@ method getMySectionId*(self: AccessInterface): string {.base.} =
 method createPublicChat*(self: AccessInterface, chatId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method createOneToOneChat*(self: AccessInterface, communityID: string, chatId: string, ensName: string) {.base.} =
+method createOneToOneChat*(self: AccessInterface, chatId: string, ensName: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method leaveChat*(self: AccessInterface, chatId: string) {.base.} =
@@ -194,19 +194,19 @@ method rejectAllContactRequests*(self: AccessInterface) {.base.} =
 method blockContact*(self: AccessInterface, publicKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method addGroupMembers*(self: AccessInterface, communityID: string, chatId: string, pubKeys: string) {.base.} =
+method addGroupMembers*(self: AccessInterface, chatId: string, pubKeys: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method removeMemberFromGroupChat*(self: AccessInterface, communityID: string, chatId: string, pubKey: string) {.base.} =
+method removeMemberFromGroupChat*(self: AccessInterface, chatId: string, pubKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method renameGroupChat*(self: AccessInterface, communityID: string, chatId: string, newName: string) {.base.} =
+method renameGroupChat*(self: AccessInterface, chatId: string, newName: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method makeAdmin*(self: AccessInterface, communityID: string, chatId: string, pubKey: string) {.base.} =
+method makeAdmin*(self: AccessInterface, chatId: string, pubKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method createGroupChat*(self: AccessInterface, communityID: string, groupName: string, pubKeys: string) {.base.} =
+method createGroupChat*(self: AccessInterface, groupName: string, pubKeys: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method joinGroupChatFromInvitation*(self: AccessInterface, groupName: string, chatId: string, adminPK: string) {.base.} =

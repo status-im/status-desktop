@@ -31,7 +31,7 @@ StatusModal {
 
     property int channelType: GroupInfoPopup.ChannelType.ActiveChannel
     property var chatDetails
-    property bool isAdmin: popup.chatSectionModule.activeItem.amIChatAdmin
+    property bool isAdmin: popup.chatContentModule.amIChatAdmin()
     property Component pinnedMessagesPopupComponent
 
     property var chatContentModule
@@ -241,9 +241,10 @@ StatusModal {
                                 icon.name: "admin"
                                 icon.width: 16
                                 icon.height: 16
+                                enabled: !model.isAdmin
                                 //% "Make Admin"
                                 text: qsTrId("make-admin")
-                                onTriggered: popup.chatSectionModule.makeAdmin("", popup.chatDetails.id,  model.id)
+                                onTriggered: popup.chatSectionModule.makeAdmin(popup.chatDetails.id, model.id)
                             }
                             StatusMenuItem {
                                 icon.name: "remove-contact"
@@ -252,7 +253,7 @@ StatusModal {
                                 type: StatusMenuItem.Type.Danger
                                 //% "Remove From Group"
                                 text: qsTrId("remove-from-group")
-                                onTriggered: popup.chatSectionModule.removeMemberFromGroupChat("", popup.chatDetails.id,  model.id)
+                                onTriggered: popup.chatSectionModule.removeMemberFromGroupChat(popup.chatDetails.id, model.id)
                             }
                         }
                     }

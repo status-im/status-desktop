@@ -193,7 +193,7 @@ StatusAppThreePanelLayout {
         }
         onCreateOneToOneChat: {
             Global.changeAppSectionBySectionType(Constants.appSection.chat)
-            root.rootStore.chatCommunitySectionModule.createOneToOneChat(communityId, chatId, ensName)
+            root.rootStore.chatCommunitySectionModule.createOneToOneChat(chatId, ensName)
         }
     }
 }

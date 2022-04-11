@@ -549,7 +549,7 @@ method onCommunityChannelEdited*(self: Module, chat: ChatDto) =
   self.view.chatsModel().updateItemDetails(chat.id, chat.name, chat.description, chat.emoji,
     chat.color)
 
-method createOneToOneChat*(self: Module, communityID: string, chatId: string, ensName: string) =
+method createOneToOneChat*(self: Module, chatId: string, ensName: string) =
   if(self.controller.isCommunity()):
     # initiate chat creation in the `Chat` seciton module.
     self.controller.switchToOrCreateOneToOneChat(chatId, ensName)
@@ -559,7 +559,7 @@ method createOneToOneChat*(self: Module, communityID: string, chatId: string, en
     self.setActiveItemSubItem(chatId, "")
     return
 
-  self.controller.createOneToOneChat(communityID, chatId, ensName)
+  self.controller.createOneToOneChat(chatId, ensName)
 
 method leaveChat*(self: Module, chatId: string) =
   self.controller.leaveChat(chatId)
@@ -594,7 +594,7 @@ method acceptContactRequest*(self: Module, publicKey: string) =
 method onContactAccepted*(self: Module, publicKey: string) =
   self.view.contactRequestsModel().removeItemWithPubKey(publicKey)
   self.updateParentBadgeNotifications()
-  self.createOneToOneChat(communityID = "" , publicKey, ensName = "")
+  self.createOneToOneChat(publicKey, ensName = "")
 
 method acceptAllContactRequests*(self: Module) =
   let pubKeys = self.view.contactRequestsModel().getPublicKeys()
@@ -669,20 +669,20 @@ method onMeMentionedInEditedMessage*(self: Module, chatId: string, editedMessage
   var (sectionHasUnreadMessages, sectionNotificationCount) = self.view.chatsModel().getAllNotifications()
   self.updateBadgeNotifications(chatId, sectionHasUnreadMessages, sectionNotificationCount + 1)
 
-method addGroupMembers*(self: Module, communityID: string, chatId: string, pubKeys: string) =
-  self.controller.addGroupMembers(communityID, chatId, self.convertPubKeysToJson(pubKeys))
+method addGroupMembers*(self: Module, chatId: string, pubKeys: string) =
+  self.controller.addGroupMembers(chatId, self.convertPubKeysToJson(pubKeys))
 
-method removeMemberFromGroupChat*(self: Module, communityID: string, chatId: string, pubKey: string) =
-  self.controller.removeMemberFromGroupChat(communityID, chatId, pubKey)
+method removeMemberFromGroupChat*(self: Module, chatId: string, pubKey: string) =
+  self.controller.removeMemberFromGroupChat(chatId, pubKey)
 
-method renameGroupChat*(self: Module, communityID: string, chatId: string, newName: string) =
-  self.controller.renameGroupChat(communityID, chatId, newName)
+method renameGroupChat*(self: Module, chatId: string, newName: string) =
+  self.controller.renameGroupChat(chatId, newName)
 
-method makeAdmin*(self: Module, communityID: string, chatId: string, pubKey: string) =
-  self.controller.makeAdmin(communityID, chatId, pubKey)
+method makeAdmin*(self: Module, chatId: string, pubKey: string) =
+  self.controller.makeAdmin(chatId, pubKey)
 
-method createGroupChat*(self: Module, communityID: string, groupName: string, pubKeys: string) =
-  self.controller.createGroupChat(communityID, groupName, self.convertPubKeysToJson(pubKeys))
+method createGroupChat*(self: Module, groupName: string, pubKeys: string) =
+  self.controller.createGroupChat(groupName, self.convertPubKeysToJson(pubKeys))
 
 method joinGroupChatFromInvitation*(self: Module, groupName: string, chatId: string, adminPK: string) =
   self.controller.joinGroupChatFromInvitation(groupName, chatId, adminPK)

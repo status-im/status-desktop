@@ -337,7 +337,7 @@ QtObject {
                             .arg(isChatKey(pk) ? globalUtils.generateAlias(pk) : ("@" + removeStatusEns(pk)))
             result.callback = function () {
                 if (isChatKey(pk)) {
-                    chatCommunitySectionModule.createOneToOneChat("", pk, "")
+                    chatCommunitySectionModule.createOneToOneChat(pk, "")
                 } else {
                 // Not Refactored Yet
 //                    chatsModel.channelView.joinWithENS(pk);

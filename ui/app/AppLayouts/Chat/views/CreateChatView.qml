@@ -54,7 +54,7 @@ Page {
     function createChat() {
         if (tagSelector.namesModel.count === 1) {
             var ensName = tagSelector.namesModel.get(0).name.includes(".eth") ? tagSelector.namesModel.get(0).name : "";
-            root.rootStore.chatCommunitySectionModule.createOneToOneChat("", tagSelector.namesModel.get(0).publicId, ensName);
+            root.rootStore.chatCommunitySectionModule.createOneToOneChat(tagSelector.namesModel.get(0).publicId, ensName);
         } else {
             var groupName = "";
             var publicIds = [];
@@ -62,7 +62,7 @@ Page {
                 groupName += (tagSelector.namesModel.get(i).name + (i === tagSelector.namesModel.count - 1 ? "" : "&"));
                 publicIds.push(tagSelector.namesModel.get(i).publicId);
             }
-            root.rootStore.chatCommunitySectionModule.createGroupChat("",groupName, JSON.stringify(publicIds));
+            root.rootStore.chatCommunitySectionModule.createGroupChat(groupName, JSON.stringify(publicIds));
         }
 
         chatInput.textInput.clear();

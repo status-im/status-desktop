@@ -57,7 +57,7 @@ StatusPopupMenu {
     signal pinnedMessagesLimitReached(string messageId)
     signal jumpToMessage(string messageId)
     signal shouldCloseParentPopup()
-    signal createOneToOneChat(string communityId, string chatId, string ensName)
+    signal createOneToOneChat(string chatId, string ensName)
     signal showReplyArea()
     signal toggleReaction(string messageId, int emojiId)
     signal deleteMessage(string messageId)
@@ -179,7 +179,7 @@ StatusPopupMenu {
                   qsTrId("reply-to")
         onTriggered: {
             if (root.isProfile) {
-                root.createOneToOneChat("", root.selectedUserPublicKey, "")
+                root.createOneToOneChat(root.selectedUserPublicKey, "")
             } else {
                 root.showReplyArea()
             }
