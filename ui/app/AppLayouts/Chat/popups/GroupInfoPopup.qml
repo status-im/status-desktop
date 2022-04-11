@@ -214,11 +214,16 @@ StatusModal {
                 id: contactRow
 
                 title: model.name
-                //% "Admin"
                 statusListItemTitle.font.pixelSize: 17
                 statusListItemTitleAside.font.pixelSize: 17
                 label: model.isAdmin ? qsTrId("group-chat-admin"): ""
                 image.source: model.icon
+                icon.isLetterIdenticon: model.icon === ""
+                icon.color: Style.current.background
+                icon.textColor: Style.current.secondaryText
+                icon.charactersLen: 2
+                ringSettings.ringSpecModel: Utils.getColorHashAsJson(model.id)
+
                 components: [
                     StatusFlatRoundButton {
                         id: moreActionsBtn
