@@ -48,7 +48,7 @@ Popup {
             text: qsTrId("send-transaction")
             icon.color: Style.current.purple
             icon.name: "send"
-            onClicked: RootStore.isWalletEnabled ? root.sendTransactionCommandButtonClicked() : sendConfirmationPopup.open()
+            onClicked: root.sendTransactionCommandButtonClicked()
         }
 
 
@@ -58,39 +58,7 @@ Popup {
             icon.color: Style.current.orange
             icon.name: "send"
             icon.rotation: 180
-            onClicked: RootStore.isWalletEnabled ? root.receiveTransactionCommandButtonClicked() : receiveConfirmationPopup.open()
-        }
-
-        ConfirmationDialog {
-            id: sendConfirmationPopup
-            showCancelButton: true
-            confirmationText: qsTr("This feature is experimental and is meant for testing purposes by core contributors and the community. It's not meant for real use and makes no claims of security or integrity of funds or data. Use at your own risk.")
-            confirmButtonLabel: qsTr("I understand")
-            onConfirmButtonClicked: {
-                RootStore.enableWallet();
-                close()
-                root.sendTransactionCommandButtonClicked()
-            }
-
-            onCancelButtonClicked: {
-                close()
-            }
-        }
-
-        ConfirmationDialog {
-            id: receiveConfirmationPopup
-            showCancelButton: true
-            confirmationText: qsTr("This feature is experimental and is meant for testing purposes by core contributors and the community. It's not meant for real use and makes no claims of security or integrity of funds or data. Use at your own risk.")
-            confirmButtonLabel: qsTr("I understand")
-            onConfirmButtonClicked: {
-                RootStore.enableWallet();
-                close()
-                root.receiveTransactionCommandButtonClicked()
-            }
-
-            onCancelButtonClicked: {
-                close()
-            }
+            onClicked: root.receiveTransactionCommandButtonClicked()
         }
     }
 }

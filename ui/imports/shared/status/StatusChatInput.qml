@@ -778,7 +778,7 @@ Rectangle {
         anchors.bottomMargin: 16
         icon.name: "chat-commands"
         type: StatusQ.StatusFlatRoundButton.Type.Tertiary
-        visible: !isEdit && control.chatType === Constants.chatType.oneToOne && !control.isStatusUpdateInput
+        visible: RootStore.isWalletEnabled && !isEdit && control.chatType === Constants.chatType.oneToOne && !control.isStatusUpdateInput
         enabled: !control.isContactBlocked
         onClicked: {
             chatCommandsPopup.opened ?
