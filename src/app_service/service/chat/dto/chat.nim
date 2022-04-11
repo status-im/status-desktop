@@ -36,6 +36,7 @@ type ChatMember* = object
   id*: string
   admin*: bool
   joined*: bool
+  roles*: seq[int]
 
 type ChatDto* = object
   id*: string # ID is the id of the chat, for public chats it is the name e.g. status,
@@ -146,6 +147,11 @@ proc toChatMember*(jsonObj: JsonNode): ChatMember =
   discard jsonObj.getProp("admin", result.admin)
   discard jsonObj.getProp("joined", result.joined)
 
+  var rolesObj: JsonNode
+  if(jsonObj.getProp("roles", rolesObj) and rolesObj.kind == JArray):
+    for role in rolesObj:
+      result.roles.add(role.getInt)
+
 proc toChatMember(jsonObj: JsonNode, memberId: string): ChatMember =
   # Mapping this DTO is not strightforward since only keys are used for id. We
   # handle it a bit different.
@@ -193,9 +199,13 @@ proc toChatDto*(jsonObj: JsonNode): ChatDto =
       result.chatType = ChatType(chatTypeInt)
 
   var membersObj: JsonNode
-  if(jsonObj.getProp("members", membersObj) and membersObj.kind == JArray):
-    for memberObj in membersObj:
-      result.members.add(toChatMember(memberObj))
+  if(jsonObj.getProp("members", membersObj)):
+    if(membersObj.kind == JArray):
+      for memberObj in membersObj:
+        result.members.add(toChatMember(memberObj))
+    elif(membersObj.kind == JObject):
+      for memberId, memberObj in membersObj:
+        result.members.add(toChatMember(memberObj, memberId))
 
   # Add community ID if needed
   if (result.communityId != "" and not result.id.contains(result.communityId)):
