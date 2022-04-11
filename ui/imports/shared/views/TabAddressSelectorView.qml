@@ -58,14 +58,14 @@ Item {
     StackLayout {
         id: stackLayout
         anchors.top: accountSelectionTabBar.bottom
-        height: stackLayout.childrenRect.height
+        height: currentIndex === 0 ? savedAddresses.height: currentIndex === 1 ? myAccounts.height : recents.height
         width: parent.width
         currentIndex: accountSelectionTabBar.currentIndex
 
         // To-do adapt to new design and make block white/balck once the list items etc support new color scheme
         Rectangle {
-            Layout.fillWidth: true
-            height: savedAddresses.height
+            Layout.maximumWidth: parent.width
+            Layout.maximumHeight : savedAddresses.height
             color: "transparent"
             radius: 8
 
@@ -82,7 +82,6 @@ Item {
                 headerPositioning: ListView.OverlayHeader
                 boundsBehavior: Flickable.StopAtBounds
                 delegate: StatusListItem {
-                    id: savedAddress
                     width: visible ? parent.width:  0
                     height: visible ? 64 : 0
                     title: name
@@ -123,8 +122,9 @@ Item {
             }
         }
         Rectangle {
-            Layout.fillWidth: true
-            height: myAccounts.height
+            id: myAccountsRect
+            Layout.maximumWidth: parent.width
+            Layout.maximumHeight : myAccounts.height
             color: "transparent"
             radius: 8
 
@@ -158,8 +158,8 @@ Item {
         }
 
         Rectangle {
-            Layout.fillWidth: true
-            height: recents.height
+            Layout.maximumWidth: parent.width
+            Layout.maximumHeight : recents.height
             color: "transparent"
             radius: 8
 
