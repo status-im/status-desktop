@@ -69,11 +69,6 @@ Item {
         onOpenChooseBrowserPopup: {
             Global.openPopup(chooseBrowserPopupComponent, {link: link});
         }
-        onOpenPopupRequested: {
-            const popup = popupComponent.createObject(appMain, params);
-            popup.open();
-            return popup;
-        }
         onOpenDownloadModalRequested: {
             const downloadPage = downloadPageComponent.createObject(appMain,
                 {

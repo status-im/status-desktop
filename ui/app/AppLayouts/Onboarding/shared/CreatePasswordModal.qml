@@ -22,6 +22,8 @@ ModalPopup {
     property string repeatPasswordValidationError: ""
     property bool storingPasswordModal: false
 
+    signal offerToStorePassword(string password, bool runStoreToKeychainPopup)
+
     id: popup
     title: storingPasswordModal?
                qsTr("Store password") :
@@ -171,7 +173,7 @@ ModalPopup {
                         passwordValidationError = qsTr("Incorrect password")
                     }
                     else {
-                        //Global.applicationWindow.prepareForStoring(repeatPasswordField.text, true)
+                        popup.offerToStorePassword(repeatPasswordField.text, true)
                         popup.close()
                     }
                 }
@@ -179,7 +181,7 @@ ModalPopup {
                 {
                     loading = true
                     OnboardingStore.onboardingModuleInst.storeSelectedAccountAndLogin(repeatPasswordField.text);
-                    //Global.applicationWindow.prepareForStoring(repeatPasswordField.text, false)
+                    popup.offerToStorePassword(repeatPasswordField.text, false)
                 }
             }
         }
