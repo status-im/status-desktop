@@ -7,6 +7,7 @@ import StatusQ.Popups 0.1
 
 StatusPopupMenu {
     id: root
+    dim: false
 
     property var searchPopup
     property var locationModel
@@ -79,6 +80,7 @@ StatusPopupMenu {
         id: subMenus
         StatusPopupMenu {
             id: menu
+            dim: false
             property var subItemsModel
             property string parentValue
             property string parentIconName
