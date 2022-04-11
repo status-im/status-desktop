@@ -23,7 +23,6 @@ QtObject {
     signal openImagePopup(var image, var contextMenu)
     signal openLinkInBrowser(string link)
     signal openChooseBrowserPopup(string link)
-    signal openPopupRequested(var popupComponent, var params)
     signal openDownloadModalRequested()
     signal settingsLoaded()
     signal openBackUpSeedPopup()
@@ -36,7 +35,9 @@ QtObject {
     }
 
     function openPopup(popupComponent, params = {}) {
-        root.openPopupRequested(popupComponent, params);
+        const popup = popupComponent.createObject(root.appMain, params);
+        popup.open();
+        return popup;
     }
 
     function openDownloadModal(){

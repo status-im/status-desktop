@@ -30,6 +30,14 @@ ModalPopup {
             neverBtn.checked = true
     }
 
+    function offerToStorePassword(password, runStoreToKeychainPopup) {
+        if(Qt.platform.os == "osx")
+        {
+            if(runStoreToKeychainPopup)
+                Global.openPopup(storeToKeychainConfirmationPopupComponent, { password: password })
+        }
+    }
+
     Column {
         anchors.top: parent.top
         anchors.bottom: parent.bottom
@@ -103,6 +111,51 @@ ModalPopup {
                 privacyStore: popup.privacyStore
                 storingPasswordModal: true
                 height: 350
+
+                onOfferToStorePassword: {
+                    popup.offerToStorePassword(password, runStoreToKeychainPopup)
+                }
+            }
+        }
+
+        Component {
+            id: storeToKeychainConfirmationPopupComponent
+            ConfirmationDialog {
+                id: storeToKeychainConfirmationPopup
+                property string password: ""
+                height: 200
+                confirmationText: qsTr("Would you like to store password to the Keychain?")
+                showRejectButton: true
+                showCancelButton: true
+                confirmButtonLabel: qsTr("Store")
+                rejectButtonLabel: qsTr("Not now")
+                cancelButtonLabel: qsTr("Never")
+
+                onClosed: {
+                    destroy()
+                }
+
+                function finish()
+                {
+                    password = ""
+                    storeToKeychainConfirmationPopup.close()
+                }
+
+                onConfirmButtonClicked: {
+                    localAccountSettings.storeToKeychainValue = Constants.storeToKeychainValueStore
+                    root.privacyStore.storeToKeyChain(password)
+                    finish()
+                }
+
+                onRejectButtonClicked: {
+                    localAccountSettings.storeToKeychainValue = Constants.storeToKeychainValueNotNow
+                    finish()
+                }
+
+                onCancelButtonClicked: {
+                    localAccountSettings.storeToKeychainValue = Constants.storeToKeychainValueNever
+                    finish()
+                }
             }
         }
     }
