@@ -42,7 +42,7 @@ OnboardingBasePage {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: parent.top
             fillMode: Image.PreserveAspectFit
-            source: Style.png("keys")
+            source: Style.png("onboarding/keys")
             width: 160
             height: 160
             mipmap: true
