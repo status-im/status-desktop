@@ -194,9 +194,6 @@ proc init*(self: Controller) =
 proc isConnected*(self: Controller): bool =
   return self.nodeService.isConnected()
 
-proc getJoinedCommunities*(self: Controller): seq[CommunityDto] =
-  return self.communityService.getJoinedCommunities()
-
 proc getChannelGroups*(self: Controller): seq[ChannelGroupDto] =
   return self.chatService.getChannelGroups()
 
