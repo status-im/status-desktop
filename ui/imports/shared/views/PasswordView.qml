@@ -15,7 +15,7 @@ Column {
     id: root
 
     property bool ready: newPswInput.text.length >= root.minPswLen && newPswInput.text === confirmPswInput.text && errorTxt.text === ""
-    property int minPswLen: 6
+    property int minPswLen: 10
     property bool createNewPsw: true
     property string title: qsTr("Create a password")
     property bool titleVisible: true
@@ -104,7 +104,7 @@ Column {
 
             // * Password too short
             else if(isTooShort())
-                errorTxt.text = qsTr("Password must be at least 6 characters long")
+                errorTxt.text = qsTr("Password must be at least %1 characters long").arg(root.minPswLen)
         }
 
         function isInPwndDatabase() {
