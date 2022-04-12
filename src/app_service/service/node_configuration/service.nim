@@ -113,8 +113,9 @@ proc getBloomLevel*(self: Service): string =
     else:
       return BLOOM_LEVEL_LIGHT
 
-proc setWakuVersion*(self: Service, wakuVersion: int): bool =
-  var newConfiguration = self.configuration
+
+proc setWakuConfig(configuration: NodeConfigDto, wakuVersion: int): NodeConfigDto =
+  var newConfiguration = configuration
   newConfiguration.RegisterTopics = @["whispermail"]
   newConfiguration.WakuConfig.Enabled = wakuVersion == WAKU_VERSION_1
   newConfiguration.WakuV2Config.Enabled = wakuVersion == WAKU_VERSION_2
@@ -128,6 +129,11 @@ proc setWakuVersion*(self: Service, wakuVersion: int): bool =
     newConfiguration.WakuV2Config.EnableDiscV5 = true
     newConfiguration.WakuV2Config.DiscoveryLimit = 20
     newConfiguration.WakuV2Config.Rendezvous = true
+
+  return newConfiguration
+
+proc setWakuVersion*(self: Service, wakuVersion: int): bool =
+  let newConfiguration = setWakuConfig(self.configuration, wakuVersion)
   return self.saveConfiguration(newConfiguration)
 
 method isCommunityHistoryArchiveSupportEnabled*(self: Service): bool =
@@ -200,6 +206,7 @@ proc setFleet*(self: Service, fleet: string): bool =
   newConfiguration.ClusterConfig.StaticNodes = self.fleetConfiguration.getNodes(fleetType, FleetNodes.Whisper)
   newConfiguration.ClusterConfig.RendezvousNodes = self.fleetConfiguration.getNodes(fleetType, FleetNodes.Rendezvous)
 
+  var wakuVersion = 2
   case fleetType:
     of Fleet.WakuV2Prod:
       newConfiguration.ClusterConfig.RelayNodes = @["enrtree://ANTL4SLG2COUILKAPE7EF2BYNL2SHSHVCHLRD5J7ZJLN5R3PRJD2Y@prod.waku.nodes.status.im"]
@@ -217,7 +224,7 @@ proc setFleet*(self: Service, fleet: string): bool =
       newConfiguration.ClusterConfig.FilterNodes = self.fleetConfiguration.getNodes(fleetType, FleetNodes.TCP_P2P_Waku)
       newConfiguration.ClusterConfig.LightpushNodes = self.fleetConfiguration.getNodes(fleetType, FleetNodes.TCP_P2P_Waku)
     else:
-      discard
+      wakuVersion = 1
 
   if fleetType == Fleet.StatusTest:
     newConfiguration.ClusterConfig.DiscV5BootstrapNodes = @[
@@ -236,8 +243,12 @@ proc setFleet*(self: Service, fleet: string): bool =
   # Disabling go-waku rendezvous
   # newConfiguration.ClusterConfig.WakuRendezvousNodes = self.fleetConfiguration.getNodes(Fleet.GoWakuTest, FleetNodes.LibP2P)
 
+  newConfiguration = setWakuConfig(newConfiguration, wakuVersion)
+
+
   try:
     discard status_node_config.switchFleet(fleet, newConfiguration.toJsonNode())
+    self.configuration = newConfiguration
     return true
   except:
     error "Could not switch fleet"
