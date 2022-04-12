@@ -372,6 +372,13 @@ ColumnLayout {
             Global.changeAppSectionBySectionType(Constants.appSection.chat)
             root.rootStore.chatCommunitySectionModule.createOneToOneChat("", chatId, ensName)
         }
+        onShowReplyArea: {
+            let obj = messageStore.getMessageByIdAsJson(messageId)
+            if (!obj) {
+                return
+            }
+            chatInput.showReplyArea(messageId, obj.senderDisplayName, obj.messageText, obj.senderIcon, obj.contentType, obj.messageImage, obj.sticker)
+        }
     }
 
     ColumnLayout {
