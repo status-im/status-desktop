@@ -69,6 +69,10 @@ StatusModal {
     }
 
     function validate() {
+        if (advancedSelection.expandableItem.addAccountType === SelectGeneratedAccount.AddAccountType.WatchOnly) {
+            return accountNameInput.valid
+        }
+
         if (passwordInput.text === "") {
             //% "You need to enter a password"
             passwordValidationError = qsTrId("you-need-to-enter-a-password")
@@ -78,6 +82,7 @@ StatusModal {
         } else {
             passwordValidationError = ""
         }
+
         return passwordValidationError === "" && accountNameInput.valid
     }
 
@@ -119,6 +124,7 @@ StatusModal {
             Item {
                 width: parent.width
                 height: passwordInput.height
+                visible: advancedSelection.expandableItem.addAccountType !== SelectGeneratedAccount.AddAccountType.WatchOnly
                 Input {
                     id: passwordInput
                     anchors.fill: parent
@@ -210,7 +216,15 @@ StatusModal {
                       //% "Add account"
                       qsTrId("add-account")
 
-            enabled: !loading && passwordInput.text !== "" && accountNameInput.text !== "" && advancedSelection.isValid
+            enabled: {
+                if (loading) {
+                    return false
+                }
+
+                return (advancedSelection.expandableItem.addAccountType === SelectGeneratedAccount.AddAccountType.WatchOnly || passwordInput.text !== "") && 
+                    accountNameInput.text !== "" && 
+                    advancedSelection.isValid
+            }
 
             MessageDialog {
                 id: accountError
