@@ -1,4 +1,4 @@
-import NimQml, Tables, chronicles, json, sequtils, strutils, strformat
+import NimQml, Tables, chronicles, json, sequtils, strutils, strformat, sugar
 
 import io_interface
 import ../io_interface as delegate_interface
@@ -35,11 +35,23 @@ type
     chatContentModules: OrderedTable[string, chat_content_module.AccessInterface]
     moduleLoaded: bool
 
+# Forward declaration
+proc buildChatSectionUI(self: Module,
+  channelGroup: ChannelGroupDto,
+  events: EventEmitter,
+  settingsService: settings_service.Service,
+  contactService: contact_service.Service,
+  chatService: chat_service.Service,
+  communityService: community_service.Service,
+  messageService: message_service.Service,
+  gifService: gif_service.Service,
+  mailserversService: mailservers_service.Service)
 
 proc newModule*(
     delegate: delegate_interface.AccessInterface,
     events: EventEmitter,
     sectionId: string,
+    # channels: seq[ChatDto],
     isCommunity: bool,
     settingsService: settings_service.Service,
     contactService: contact_service.Service,
@@ -96,91 +108,65 @@ proc removeSubmodule(self: Module, chatId: string) =
     return
   self.chatContentModules.del(chatId)
 
-proc buildChatUI(self: Module, events: EventEmitter,
-  settingsService: settings_service.Service,
-  contactService: contact_service.Service,
-  chatService: chat_service.Service,
-  communityService: community_service.Service,
-  messageService: message_service.Service,
-  gifService: gif_service.Service,
-  mailserversService: mailservers_service.Service) =
-  let types = @[ChatType.OneToOne, ChatType.Public, ChatType.PrivateGroupChat]
-  let chats = self.controller.getChatDetailsForChatTypes(types)
-
+proc buildChatSectionUI(
+    self: Module,
+    channelGroup: ChannelGroupDto,
+    events: EventEmitter,
+    settingsService: settings_service.Service,
+    contactService: contact_service.Service,
+    chatService: chat_service.Service,
+    communityService: community_service.Service,
+    messageService: message_service.Service,
+    gifService: gif_service.Service,
+    mailserversService: mailservers_service.Service) =
   var selectedItemId = ""
-  for c in chats:
-    let hasNotification = c.unviewedMessagesCount > 0 or c.unviewedMentionsCount > 0
-    let notificationsCount = c.unviewedMentionsCount
-    var chatName = c.name
+  var selectedSubItemId = ""
+  
+  # handle channels which don't belong to any category
+  for chatDto in channelGroup.chats:
+    if (chatDto.categoryId != ""):
+      continue
+    let hasNotification = chatDto.unviewedMessagesCount > 0 or chatDto.unviewedMentionsCount > 0
+    let notificationsCount = chatDto.unviewedMentionsCount
+
+    var chatName = chatDto.name
     var chatImage = ""
     var colorHash: ColorHashDto = @[]
     var colorId: int = 0
-    let isUsersListAvailable = (c.chatType != ChatType.OneToOne and c.chatType != ChatType.Public)
+    let isUsersListAvailable = (chatDto.chatType != ChatType.OneToOne and
+      chatDto.chatType != ChatType.Public)
     var blocked = false
-    if(c.chatType == ChatType.OneToOne):
-      let contactDetails = self.controller.getContactDetails(c.id)
+    let belongToCommunity = chatDto.communityId != ""
+    if(chatDto.chatType == ChatType.OneToOne):
+      let contactDetails = self.controller.getContactDetails(chatDto.id)
       chatName = contactDetails.displayName
       chatImage = contactDetails.icon
       blocked = contactDetails.details.isBlocked()
-      colorHash = self.controller.getColorHash(c.id)
-      colorId = self.controller.getColorId(c.id)
+      colorHash = self.controller.getColorHash(chatDto.id)
+      colorId = self.controller.getColorId(chatDto.id)
 
-    let amIChatAdmin = self.amIMarkedAsAdminUser(c.members)
+    let amIChatAdmin = self.amIMarkedAsAdminUser(chatDto.members)
 
-    let item = initItem(c.id, chatName, chatImage, c.color, c.emoji, c.description,
-      c.chatType.int, amIChatAdmin, hasNotification, notificationsCount, c.muted, blocked,
-      active=false, c.position, c.categoryId, colorId, colorHash)
-    self.view.chatsModel().appendItem(item)
-    self.addSubmodule(c.id, false, isUsersListAvailable, events, settingsService, contactService, chatService,
-    communityService, messageService, gifService, mailserversService)
-
-    # make the first Public chat active when load the app
-    if(selectedItemId.len == 0 and c.chatType == ChatType.Public):
-      selectedItemId = item.id
-
-  self.setActiveItemSubItem(selectedItemId, "")
-
-proc buildCommunityUI(self: Module, events: EventEmitter,
-  settingsService: settings_service.Service,
-  contactService: contact_service.Service,
-  chatService: chat_service.Service,
-  communityService: community_service.Service,
-  messageService: message_service.Service,
-  gifService: gif_service.Service,
-  mailserversService: mailservers_service.Service) =
-  var selectedItemId = ""
-  var selectedSubItemId = ""
-  let comm = self.controller.getMyCommunity()
-
-  # handle channels which don't belong to any category
-  let chats = self.controller.getChats(comm.id, "")
-  for c in chats:
-    let chatDto = self.controller.getChatDetails(comm.id, c.id)
-
-    let hasNotification = chatDto.unviewedMessagesCount > 0 or chatDto.unviewedMentionsCount > 0
-    let notificationsCount = chatDto.unviewedMentionsCount
-    let amIChatAdmin = comm.admin
-    let channelItem = initItem(chatDto.id, chatDto.name, chatDto.icon, chatDto.color,
+    let channelItem = initItem(chatDto.id, chatName, chatImage, chatDto.color,
       chatDto.emoji, chatDto.description, chatDto.chatType.int, amIChatAdmin, hasNotification,
-      notificationsCount, chatDto.muted, blocked=false, active = false, c.position, c.categoryId)
+      notificationsCount, chatDto.muted, blocked, chatDto.active, chatDto.position,
+      chatDto.categoryId, colorId, colorHash)
     self.view.chatsModel().appendItem(channelItem)
-    self.addSubmodule(chatDto.id, true, true, events, settingsService, contactService, chatService, communityService,
-    messageService, gifService, mailserversService)
+    self.addSubmodule(chatDto.id, belongToCommunity, isUsersListAvailable, events, settingsService,
+      contactService, chatService, communityService, messageService, gifService, mailserversService)
 
     # make the first channel which doesn't belong to any category active when load the app
     if(selectedItemId.len == 0):
       selectedItemId = channelItem.id
 
   # handle categories and channels for each category
-  let categories = self.controller.getCategories(comm.id)
-  for cat in categories:
+  for cat in channelGroup.categories:
     var hasNotificationPerCategory = false
     var notificationsCountPerCategory = 0
     var categoryChannels: seq[SubItem]
 
-    let categoryChats = self.controller.getChats(comm.id, cat.id)
-    for c in categoryChats:
-      let chatDto = self.controller.getChatDetails(comm.id, c.id)
+    let categoryChats = channelGroup.chats.filter(c => c.categoryId == cat.id)
+    for chatDto in categoryChats:
 
       let hasNotification = chatDto.unviewedMessagesCount > 0 or chatDto.unviewedMentionsCount > 0
       let notificationsCount = chatDto.unviewedMentionsCount
@@ -188,15 +174,16 @@ proc buildCommunityUI(self: Module, events: EventEmitter,
       hasNotificationPerCategory = hasNotificationPerCategory or hasNotification
       notificationsCountPerCategory += notificationsCount
 
-      let amIChatAdmin = comm.admin
+      let amIChatAdmin = channelGroup.admin
 
       let channelItem = initSubItem(chatDto.id, cat.id, chatDto.name, chatDto.icon,
         chatDto.color, chatDto.emoji, chatDto.description, chatDto.chatType.int,
         amIChatAdmin, hasNotification, notificationsCount, chatDto.muted, blocked=false,
-        active=false, c.position)
+        active=false, chatDto.position)
       categoryChannels.add(channelItem)
-      self.addSubmodule(chatDto.id, true, true, events, settingsService, contactService, chatService, communityService,
-      messageService, gifService, mailserversService)
+      self.addSubmodule(chatDto.id, belongToCommunity=true, isUsersListAvailable=true, events,
+        settingsService, contactService, chatService, communityService, messageService, gifService,
+        mailserversService)
 
       # in case there is no channels beyond categories,
       # make the first channel of the first category active when load the app
@@ -250,22 +237,27 @@ method initListOfMyContacts*(self: Module, pubKeys: string) =
 method clearListOfMyContacts*(self: Module) =
   self.view.listOfMyContacts().clear()
 
-method load*(self: Module, events: EventEmitter,
-  settingsService: settings_service.Service,
-  contactService: contact_service.Service,
-  chatService: chat_service.Service,
-  communityService: community_service.Service,
-  messageService: message_service.Service,
-  gifService: gif_service.Service,
-  mailserversService: mailservers_service.Service) =
+
+method load*(
+    self: Module,
+    channelGroup: ChannelGroupDto,
+    events: EventEmitter,
+    settingsService: settings_service.Service,
+    contactService: contact_service.Service,
+    chatService: chat_service.Service,
+    communityService: community_service.Service,
+    messageService: message_service.Service,
+    gifService: gif_service.Service,
+    mailserversService: mailservers_service.Service) =
   self.controller.init()
   self.view.load()
 
-  if(self.controller.isCommunity()):
-    self.buildCommunityUI(events, settingsService, contactService, chatService, communityService, messageService, gifService, mailserversService)
-  else:
-    self.buildChatUI(events, settingsService, contactService, chatService, communityService, messageService, gifService, mailserversService)
-    self.initContactRequestsModel() # we do this only in case of chat section (not in case of communities)
+  self.buildChatSectionUI(channelGroup, events, settingsService, contactService, chatService,
+    communityService, messageService, gifService, mailserversService)
+
+  if(not self.controller.isCommunity()):
+    # we do this only in case of chat section (not in case of communities)
+    self.initContactRequestsModel()
 
   for cModule in self.chatContentModules.values:
     cModule.load()

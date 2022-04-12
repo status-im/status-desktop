@@ -271,6 +271,9 @@ method load*[T](
     self.view.model().addItem(channelGroupItem)
     if(activeSectionId == channelGroupItem.id):
       activeSection = channelGroupItem
+    
+    self.channelGroupModules[channelGroup.id].load(channelGroup, events, settingsService,
+      contactsService, chatService, communityService, messageService, gifService, mailserversService)
 
   # Wallet Section
   let walletSectionItem = initItem(conf.WALLET_SECTION_ID, SectionType.Wallet, conf.WALLET_SECTION_NAME,
@@ -333,11 +336,6 @@ method load*[T](
   self.view.model().addItem(profileSettingsSectionItem)
   if(activeSectionId == profileSettingsSectionItem.id):
     activeSection = profileSettingsSectionItem
-
-  # Load all sections
-  for cModule in self.channelGroupModules.values:
-    cModule.load(events, settingsService, contactsService, chatService, communityService,
-      messageService, gifService, mailserversService)
 
   self.browserSectionModule.load()
   # self.nodeManagementSectionModule.load()
@@ -578,10 +576,10 @@ method communityJoined*[T](
       gifService,
       mailserversService
     )
-  self.channelGroupModules[community.id].load(events, settingsService, contactsService, chatService,
-    communityService, messageService, gifService, mailserversService)
-
   let channelGroup = community.toChannelGroupDto()
+  self.channelGroupModules[community.id].load(channelGroup, events, settingsService, contactsService,
+    chatService, communityService, messageService, gifService, mailserversService)
+
   let communitySectionItem = self.createChannelGroupItem(channelGroup)
   if (firstCommunityJoined):
     # If there are no other communities, add the first community after the Chat section in the model so that the order is respected
