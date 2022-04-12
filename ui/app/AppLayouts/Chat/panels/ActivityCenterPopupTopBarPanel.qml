@@ -108,7 +108,7 @@ Item {
             height: 32
             type: StatusFlatRoundButton.Type.Secondary
             onClicked: {
-                let p = moreActionsBtn.mapToItem(otherButtons, moreActionsBtn.x, moreActionsMenu.y)
+                let p = moreActionsBtn.mapToItem(otherButtons, moreActionsBtn.x, moreActionsBtn.y)
                 moreActionsMenu.popup(moreActionsBtn.width - moreActionsMenu.width, p.y + moreActionsBtn.height + 4)
             }
 
