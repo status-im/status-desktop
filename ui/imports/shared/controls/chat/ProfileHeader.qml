@@ -88,11 +88,12 @@ Item {
         EmojiHash {
             id: emojihash
             Layout.fillWidth: true
-            horizontalAlignment: Text.AlignHCenter
             publicKey: root.pubkey
             readonly property size finalSize: supersampling ? Qt.size(emojiSize.width * 2, emojiSize.height * 2) : emojiSize
             size: `${finalSize.width}x${finalSize.height}`
             scale: supersampling ? 0.5 : 1
+            columnPadding: 2
+            rowPadding: 2
         }
     }
 }
