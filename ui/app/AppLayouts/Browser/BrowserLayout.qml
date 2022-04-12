@@ -152,28 +152,28 @@ Rectangle {
             return _internal.accessDialogComponent.createObject(browserWindow)
         }
         createSendTransactionModalComponent: function(request) {
-            return _internal.sendTransactionModalComponent.createObject(browserWindow, {
-                                                                  trxData: request.payload.params[0].data || "",
-                                                                  selectedAccount: {
-                                                                      name: WalletStore.dappBrowserAccount.name,
-                                                                      address: request.payload.params[0].from,
-                                                                      iconColor: WalletStore.dappBrowserAccount.color,
-                                                                      assets: WalletStore.dappBrowserAccount.assets
-                                                                  },
-                                                                  selectedRecipient: {
-                                                                      address: request.payload.params[0].to,
-                                                                      identicon: "",
-                                                                      name: RootStore.activeChannelName,
-                                                                      type: RecipientSelector.Type.Address
-                                                                  },
-                                                                  selectedAsset: {
-                                                                      name: "ETH",
-                                                                      symbol: "ETH",
-                                                                      address: Constants.zeroAddress
-                                                                  },
-                                                                  selectedFiatAmount: "42", // TODO calculate that
-                                                                  selectedAmount: RootStore.getWei2Eth(request.payload.params[0].value, 18)
-                                                              })
+             browserWindow.sendTransactionModal.selectedAccount = {
+                name: WalletStore.dappBrowserAccount.name,
+                address: request.payload.params[0].from,
+                iconColor: WalletStore.dappBrowserAccount.color,
+                assets: WalletStore.dappBrowserAccount.assets
+            }
+            browserWindow.sendTransactionModal.selectedRecipient = {
+                address: request.payload.params[0].to,
+                identicon: "",
+                name: RootStore.activeChannelName,
+                type: RecipientSelector.Type.Address
+            }
+
+            browserWindow.sendTransactionModal.selectedAmountAsset = {
+                    name: "ETH",
+                    symbol: "ETH",
+                    address: Constants.zeroAddress
+                }
+            browserWindow.sendTransactionModal.selectedAmount = RootStore.getWei2Eth(request.payload.params[0].value, 18)
+
+
+            browserWindow.sendTransactionModal.open()
         }
         createSignMessageModalComponent: function(request) {
             return _internal.signMessageModalComponent.createObject(browserWindow, {
