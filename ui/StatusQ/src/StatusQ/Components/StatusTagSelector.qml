@@ -60,8 +60,9 @@ Item {
     id: root
 
     implicitWidth: 448
-    implicitHeight: 44 + ((userListView.count > 0) ? 44 + contactsLabel.height + contactsLabel.anchors.topMargin + ((((userListView.count * 64) > root.maxHeight)
-                    ? root.maxHeight : (userListView.count * 64))) :0)
+    implicitHeight: 44 + ((userListView.model.count > 0) ? 44 + contactsLabel.height + contactsLabel.anchors.topMargin +
+                    ((((userListView.model.count * 64) > root.maxHeight) ? root.maxHeight : (userListView.model.count * 64))) :0)
+
     /*!
         \qmlproperty real StatusTagSelector::maxHeight
         This property holds the maximum height of the component.
@@ -139,9 +140,9 @@ Item {
             for (var i = 0; i < inputModel.count; i++ ) {
                 var entry = inputModel.get(i);
                 if (entry.name.toLowerCase().includes(text.toLowerCase())) {
-                    sortedList.insert(sortedList.count, {"publicId": entry.publicId, "name": entry.name,
-                                          "icon": entry.icon, "isIdenticon": entry.isIdenticon,
-                                          "onlineStatus": entry.onlineStatus});
+                    sortedList.append({"publicId": entry.publicId, "name": entry.name,
+                                       "icon": entry.icon, "isIdenticon": entry.isIdenticon,
+                                       "onlineStatus": entry.onlineStatus});
                     userListView.model = sortedList;
                 }
             }
