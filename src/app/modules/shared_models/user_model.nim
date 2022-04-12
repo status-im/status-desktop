@@ -1,4 +1,4 @@
-import NimQml, Tables, strformat
+import NimQml, Tables, strformat, sequtils, sugar
 
 import user_item
 
@@ -221,3 +221,6 @@ QtObject:
       return
 
     self.removeItemWithIndex(ind)
+
+  proc getItemIds*(self: Model): seq[string] =
+    return self.items.map(i => i.id)

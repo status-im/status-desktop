@@ -115,10 +115,16 @@ method loggedInUserImageChanged*(self: Module) =
   self.view.model().setIcon(singletonInstance.userProfile.getPubKey(), singletonInstance.userProfile.getIcon())
 
 method addChatMember*(self: Module,  member: ChatMember) =
-  if(member.id == "" or self.view.model().isContactWithIdAdded(member.id)):
+  if member.id == "":
     return
 
-  if (not member.joined):
+  if not member.joined:
+    if self.view.model().isContactWithIdAdded(member.id):
+      # Member is no longer joined
+      self.view.model().removeItemById(member.id)
+    return
+
+  if self.view.model().isContactWithIdAdded(member.id):
     return
 
   let isMe = member.id == singletonInstance.userProfile.getPubKey()
@@ -151,6 +157,16 @@ method onChatMembersAdded*(self: Module,  ids: seq[string]) =
 method onChatUpdated*(self: Module,  chat: ChatDto) =
   for member in chat.members:
     self.addChatMember(self.controller.getChatMember(member.id))
+
+  let ids = self.view.model.getItemIds()
+  for id in ids:
+    var found = false
+    for member in chat.members:
+      if (member.id == id):
+        found = true
+        break
+    if (not found):
+      self.view.model().removeItemById(id)
 
 method onChatMemberRemoved*(self: Module, id: string) =
   self.view.model().removeItemById(id)
