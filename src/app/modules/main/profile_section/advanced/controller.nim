@@ -57,15 +57,6 @@ proc changeFleetTo*(self: Controller, fleet: string) =
     error "an error occurred, we couldn't set fleet"
     return
 
-  var wakuVersion = WAKU_VERSION_1
-  if (fleet == $Fleet.WakuV2Prod or fleet == $Fleet.WakuV2Test or fleet == $Fleet.StatusTest or fleet == $Fleet.StatusProd):
-    wakuVersion = WAKU_VERSION_2
-
-  if (not self.nodeConfigurationService.setWakuVersion(wakuVersion)):
-    # in the future we may do a call from here to show a popup about this error
-    error "an error occurred, we couldn't set waku version for the fleet"
-    return
-
   self.delegate.onFleetSet()
 
 proc getBloomLevel*(self: Controller): string =
