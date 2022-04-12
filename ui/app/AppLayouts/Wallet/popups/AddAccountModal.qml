@@ -26,6 +26,8 @@ StatusModal {
     property bool loading: false
     property var emojiPopup: null
 
+    closePolicy: Popup.CloseOnEscape
+
     signal afterAddAccount()
 
     //% "Generate an account"
