@@ -71,6 +71,11 @@ Item {
                                 root.collectibleClicked();
                             }
                         }
+                        onExpandedChanged: {
+                            if(expanded) {
+                               RootStore.fetchCollectionCollectiblesList(model.slug)
+                            }
+                        }
                     }
                 }
             }

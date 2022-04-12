@@ -20,8 +20,11 @@ Item {
     signal collectibleClicked()
 
     Connections {
-        target: RootStore.getCollectionCollectiblesList(root.slug)
-        onCountChanged: {
+        target: walletSectionCollectiblesCollectibles
+        onItemsLoaded: function(collectionSlug) {
+            if (collectionSlug !== slug) {
+                return
+            }
             root.collectiblesLoaded = true;
         }
     }
@@ -115,9 +118,5 @@ Item {
                 }
             }
         }
-    }
-
-    Component.onCompleted: {
-        RootStore.fetchCollectionCollectiblesList(root.slug)
     }
 }

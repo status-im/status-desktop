@@ -22,11 +22,14 @@ QtObject:
   proc load*(self: View) =
     self.delegate.viewDidLoad()
 
+  proc itemsLoaded*(self: View, collectionSlug: string)  {.signal.}
+
   proc setItems*(self: View, collectionSlug: string, items: seq[Item]) =
     if not self.models.hasKey(collectionSlug):
       self.models[collectionSlug] = newModel()
 
     self.models[collectionSlug].setItems(items)
+    self.itemsLoaded(collectionSlug)
 
   proc fetch*(self: View, collectionSlug: string) {.slot.} =
     self.delegate.fetch(collectionSlug)
