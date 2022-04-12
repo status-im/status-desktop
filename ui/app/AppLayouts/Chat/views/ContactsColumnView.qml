@@ -238,6 +238,12 @@ Item {
                                          chatDetails: chatContentModule.chatDetails
                                      })
                 }
+                onRenameGroupChat: {
+                    chatSectionModule.renameGroupChat(
+                        chatId,
+                        groupName
+                    )
+                }
             }
         }
 

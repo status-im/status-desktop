@@ -680,8 +680,8 @@ method addGroupMembers*(self: Module, chatId: string, pubKeys: string) =
 method removeMemberFromGroupChat*(self: Module, communityID: string, chatId: string, pubKey: string) =
   self.controller.removeMemberFromGroupChat(communityID, chatId, pubKey)
 
-method renameGroupChat*(self: Module, communityID: string, chatId: string, newName: string) =
-  self.controller.renameGroupChat(communityID, chatId, newName)
+method renameGroupChat*(self: Module, chatId: string, newName: string) =
+  self.controller.renameGroupChat(chatId, newName)
 
 method makeAdmin*(self: Module, communityID: string, chatId: string, pubKey: string) =
   self.controller.makeAdmin(communityID, chatId, pubKey)

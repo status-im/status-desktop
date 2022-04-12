@@ -39,6 +39,7 @@ StatusPopupMenu {
     signal deleteCommunityChat(string chatId)
     signal leaveChat(string chatId)
     signal leaveGroup(string chatId)
+    signal renameGroupChat(string chatId, string groupName)
 
     signal createCommunityChannel(string chatId, string newName, string newDescription, string newEmoji, string newColor)
     signal editCommunityChannel(string chatId, string newName, string newDescription, string newEmoji, string newColor, string newCategory)
@@ -71,15 +72,18 @@ StatusPopupMenu {
         }
     }
 
-    StatusMenuItem {
-        text: qsTr("Add / remove from group")
-        icon.name: "notification"
-        enabled: (root.chatType === Constants.chatType.privateGroupChat &&
-                 amIChatAdmin)
-        onTriggered: {
-            root.addRemoveGroupMember();
-        }
-    }
+    // TODO needs to be implemented
+    // This should open up the ad-hoc group chat creation view
+    // Design https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=417%3A243810
+    // StatusMenuItem {
+    //     text: qsTr("Add / remove from group")
+    //     icon.name: "notification"
+    //     enabled: (root.chatType === Constants.chatType.privateGroupChat &&
+    //              amIChatAdmin)
+    //     onTriggered: {
+    //         root.addRemoveGroupMember();
+    //     }
+    // }
 
     StatusMenuSeparator {
         visible: viewProfileMenuItem.enabled
@@ -99,17 +103,24 @@ StatusPopupMenu {
     }
 
     StatusMenuItem {
-        text: qsTr("Edit name and image")
+        text: qsTr("Edit name")
         icon.name: "edit"
         enabled: root.chatType === Constants.chatType.privateGroupChat
                  && root.amIChatAdmin
         onTriggered: {
-            Global.openPopup(editChannelPopup, {
-                isEdit: true,
-                channelName: root.chatName,
-                channelDescription: root.chatDescription,
-                categoryId: root.chatCategoryId
+            Global.openPopup(renameGroupPopupComponent, {
+                activeChannelName: root.chatName,
             });
+        }
+    }
+
+    Component {
+        id: renameGroupPopupComponent
+        RenameGroupPopup {
+            onDoRename: {
+                root.renameGroupChat(root.chatId, groupName)
+                close()
+            }
         }
     }
 

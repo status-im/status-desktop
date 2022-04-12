@@ -25,6 +25,7 @@ StatusModal {
     }
     property var chatSectionModule
     property var store
+    property var messageStore
     property bool addMembers: false
     property int currMemberCount: chatContentModule.usersModule.model.count
     property int memberCount: 1
@@ -170,39 +171,34 @@ StatusModal {
         spacing: Style.current.padding
 
         StatusSettingsLineButton {
-            // Not Refactored Yet
-            property int pinnedCount: 0 // popup.store.chatsModelInst.messageView.pinnedMessagesList.count
+            property int pinnedCount: popup.chatContentModule.pinnedMessagesModel.count
 
             id: pinnedMessagesBtn
             visible: pinnedCount > 0
             //% "Pinned messages"
             text: qsTrId("pinned-messages")
             currentValue: pinnedCount
-            onClicked: Global.openPopup(pinnedMessagesPopupComponent, {store: popup.store})
+            onClicked: {
+                popup.store.messageStore.messageModule = popup.chatContentModule.messagesModule
+                popup.store.messageStore.chatSectionModule = popup.chatSectionModule
+
+                Global.openPopup(pinnedMessagesPopupComponent, {
+                    store: popup.store,
+                    messageStore: popup.store.messageStore,
+                    pinnedMessagesModel: popup.chatContentModule.pinnedMessagesModel,
+                    messageToPin: ""
+                })
+            }
             iconSource: Style.svg("pin")
+            anchors.left: undefined
+            anchors.right: undefined
+            width: parent.width
         }
 
         Separator {
             id: separator2
             visible: pinnedMessagesBtn.visible
         }
-
-        // Not Refactored Yet
-//        Connections {
-//            target: popup.store.chatsModelInst.channelView
-//            onActiveChannelChanged: {
-//                if (popup.channelType === GroupInfoPopup.ChannelType.ActiveChannel) {
-//                    popup.channel = popup.store.chatsModelInst.channelView.activeChannel
-//                    resetSelectedMembers()
-//                }
-//            }
-//            onContextChannelChanged: {
-//                if (popup.channelType === GroupInfoPopup.ChannelType.ContextChannel) {
-//                    popup.channel = popup.store.chatsModelInst.channelView.contextChannel
-//                    resetSelectedMembers()
-//                }
-//            }
-//        }
 
         ListView {
             id: memberList
