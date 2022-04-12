@@ -194,7 +194,7 @@ method rejectAllContactRequests*(self: AccessInterface) {.base.} =
 method blockContact*(self: AccessInterface, publicKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method addGroupMembers*(self: AccessInterface, communityID: string, chatId: string, pubKeys: string) {.base.} =
+method addGroupMembers*(self: AccessInterface, chatId: string, pubKeys: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method removeMemberFromGroupChat*(self: AccessInterface, communityID: string, chatId: string, pubKey: string) {.base.} =

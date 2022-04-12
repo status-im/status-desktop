@@ -674,8 +674,8 @@ method onMeMentionedInEditedMessage*(self: Module, chatId: string, editedMessage
   var (sectionHasUnreadMessages, sectionNotificationCount) = self.view.chatsModel().getAllNotifications()
   self.updateBadgeNotifications(chatId, sectionHasUnreadMessages, sectionNotificationCount + 1)
 
-method addGroupMembers*(self: Module, communityID: string, chatId: string, pubKeys: string) =
-  self.controller.addGroupMembers(communityID, chatId, self.convertPubKeysToJson(pubKeys))
+method addGroupMembers*(self: Module, chatId: string, pubKeys: string) =
+  self.controller.addGroupMembers(chatId, self.convertPubKeysToJson(pubKeys))
 
 method removeMemberFromGroupChat*(self: Module, communityID: string, chatId: string, pubKey: string) =
   self.controller.removeMemberFromGroupChat(communityID, chatId, pubKey)
