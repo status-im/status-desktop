@@ -78,7 +78,7 @@ Popup {
         }
         onPreferencesClicked: {
             activityCenter.close()
-            Global.changeAppSection(Constants.profile, Constants.settingsSubsection.notifications);
+            Global.changeAppSectionBySectionType(Constants.appSection.profile, Constants.settingsSubsection.notifications);
         }
         onMarkAllReadClicked: {
             errorText = activityCenter.store.activityCenterModuleInst.markAllActivityCenterNotificationsRead()
