@@ -26,9 +26,6 @@ StatusAppThreePanelLayout {
     property var contactsStore
     property bool hasAddedContacts: root.contactsStore.myContactsModel.count > 0
 
-    // Not Refactored
-    property var messageStore
-
     property RootStore rootStore
 
     property Component pinnedMessagesListPopupComponent
