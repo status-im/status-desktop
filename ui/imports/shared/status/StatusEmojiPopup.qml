@@ -276,7 +276,6 @@ Popup {
             property int activeCategory: 0
 
             id: scrollView
-            topPadding: Style.current.smallPadding
             leftPadding: Style.current.smallPadding
             rightPadding: Style.current.smallPadding / 2
             Layout.fillWidth: true
@@ -307,7 +306,7 @@ Popup {
                 var totalHeight = 0
                 var categoryHeights = []
                 for (let i = 0; i < emojiSectionsRepeater.count; i++) {
-                    totalHeight += emojiSectionsRepeater.itemAt(i).height + Style.current.padding
+                    totalHeight += emojiSectionsRepeater.itemAt(i).height
                     categoryHeights.push(totalHeight)
                 }
                 var ratios = []
@@ -316,7 +315,7 @@ Popup {
                 })
 
                 categrorySectionHeightRatios = ratios
-                return totalHeight + Style.current.padding
+                return totalHeight
             }
 
             Repeater {
