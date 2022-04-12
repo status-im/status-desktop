@@ -19,7 +19,7 @@ Item {
     visible: emojis.length > 0 || !!(modelData && modelData.length && modelData[0].empty && searchString === "")
 
     anchors.top: index === 0 ? parent.top : parent.children[index - 1].bottom
-    anchors.topMargin: index === 0 ? 0 : Style.current.padding
+    anchors.topMargin: 0
 
     width: parent.width
     // childrenRect caused a binding loop here
