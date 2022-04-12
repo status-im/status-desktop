@@ -18,7 +18,9 @@ type
 method delete*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method load*(self: AccessInterface, events: EventEmitter,
+method load*(self: AccessInterface,
+  channelGroup: ChannelGroupDto,
+  events: EventEmitter,
   settingsService: settings_service.Service,
   contactService: contact_service.Service,
   chatService: chat_service.Service,
