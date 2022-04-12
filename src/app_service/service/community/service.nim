@@ -424,6 +424,14 @@ QtObject:
         error "error: ", procName="joinCommunity", errDesription = "result is nil"
         return
 
+      if not response.result.hasKey("communities") or response.result["communities"].kind != JArray or response.result["communities"].len == 0:
+        error "error: ", procName="joinCommunity", errDesription = "no 'communities' key in response"
+        return
+
+      if not response.result.hasKey("communitiesSettings") or response.result["communitiesSettings"].kind != JArray or response.result["communitiesSettings"].len == 0:
+        error "error: ", procName="joinCommunity", errDesription = "no 'communitiesSettings' key in response"
+        return
+        
       var updatedCommunity = response.result["communities"][0].toCommunityDto()
       let communitySettings = response.result["communitiesSettings"][0].toCommunitySettingsDto()
 
