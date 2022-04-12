@@ -17,13 +17,11 @@ QtObject:
 
   proc membersChanged*(self: ActiveSection) {.signal.}
   proc pendingRequestsToJoinChanged*(self: ActiveSection) {.signal.}
-  proc historyArchiveSupportEnabledChanged*(self: ActiveSection) {.signal.}
 
   proc setActiveSectionData*(self: ActiveSection, item: SectionItem) =
     self.item = item
     self.membersChanged()
     self.pendingRequestsToJoinChanged()
-    self.historyArchiveSupportEnabledChanged()
 
   proc getId*(self: ActiveSection): string {.slot.} =
     return self.item.id
