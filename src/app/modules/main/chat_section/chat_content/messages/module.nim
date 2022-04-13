@@ -389,7 +389,7 @@ method updateContactDetails*(self: Module, contactId: string) =
     if(item.senderId == contactId):
       item.senderDisplayName = updatedContact.displayName
       item.senderLocalName = updatedContact.details.localNickname
-      item.senderIcon = ""
+      item.senderIcon = updatedContact.icon
       item.senderIsAdded = updatedContact.details.added
     if(item.messageContainsMentions):
       let (m, _, err) = self.controller.getMessageDetails(item.id)
