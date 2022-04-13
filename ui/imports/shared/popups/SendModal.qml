@@ -182,7 +182,8 @@ StatusModal {
                     id: gasValidator
                     anchors.top: gasSelector.bottom
                     selectedAccount: advancedHeader.accountSelector.selectedAccount
-                    selectedAmount: parseFloat(advancedHeader.amountToSendInput.text)
+                    selectedAmount: advancedHeader.amountToSendInput.text === "" ? 0.0
+                                                                                 : parseFloat(advancedHeader.amountToSendInput.text)
                     selectedAsset: advancedHeader.assetSelector.selectedAsset
                     selectedGasEthValue: gasSelector.selectedGasEthValue
                 }

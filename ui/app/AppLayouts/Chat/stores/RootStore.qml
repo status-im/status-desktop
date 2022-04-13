@@ -493,7 +493,7 @@ QtObject {
     }
 
     function estimateGas(from_addr, to, assetAddress, value, data) {
-        return walletSectionTransactions.estimateGas(from_addr, to, assetAddress, value, data)
+        return walletSectionTransactions.estimateGas(from_addr, to, assetAddress, value === "" ? "0.00" : value, data)
     }
 
     function transferEth(from, to, amount, gasLimit, gasPrice, tipLimit, overallLimit, password, uuid) {
