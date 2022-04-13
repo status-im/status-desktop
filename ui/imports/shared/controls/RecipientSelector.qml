@@ -28,6 +28,7 @@ Item {
     height: inpAddress.height + txtLabel.height
     //% "Invalid ethereum address"
     readonly property string addressValidationError: qsTrId("invalid-ethereum-address")
+    property alias wrongInputValidationError: inpAddress.wrongInputValidationError
     property bool isValid: false
     property bool isSelectorVisible: true
     property bool addContactEnabled: true
