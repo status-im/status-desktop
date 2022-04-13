@@ -119,6 +119,8 @@ StatusAppTwoPanelLayout {
                 image: root.community.image
                 color: root.community.color
                 editable: root.community.amISectionAdmin
+                isCommunityHistoryArchiveSupportEnabled: root.rootStore.isCommunityHistoryArchiveSupportEnabled
+                historyArchiveSupportToggle: community.historyArchiveSupportEnabled
 
                 onEdited: {
                     root.chatCommunitySectionModule.editCommunity(
@@ -132,6 +134,7 @@ StatusAppTwoPanelLayout {
                         item.imageBx,
                         item.imageBy,
                         root.rootStore.isCommunityHistoryArchiveSupportEnabled,
+                        false /*TODO port the modal implementation*/
                     )
                 }
             }
