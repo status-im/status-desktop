@@ -188,7 +188,7 @@ QtObject:
     var items: seq[DerivedAddressItem] = @[]
     let (result, error) = self.delegate.getDerivedAddressList(password, derivedfrom, path, pageSize, pageNumber)
     for item in result:
-      items.add(initDerivedAddressItem(item.address, item.path, item.hasActivity))
+      items.add(initDerivedAddressItem(item.address, item.path, item.hasActivity, item.alreadyCreated))
     self.derivedAddresses.setItems(items)
     self.derivedAddressesChanged()
     return error
@@ -197,7 +197,7 @@ QtObject:
     var items: seq[DerivedAddressItem] = @[]
     let (result, error) = self.delegate.getDerivedAddressListForMnemonic(mnemonic, path, pageSize, pageNumber)
     for item in result:
-      items.add(initDerivedAddressItem(item.address, item.path, item.hasActivity))
+      items.add(initDerivedAddressItem(item.address, item.path, item.hasActivity, item.alreadyCreated))
     self.derivedAddresses.setItems(items)
     self.derivedAddressesChanged()
     return error
@@ -215,4 +215,10 @@ QtObject:
 
   proc getDerivedAddressHasActivityAtIndex*(self: View, index: int): bool {.slot.} =
     return self.derivedAddresses.getDerivedAddressHasActivityAtIndex(index)
+
+  proc getDerivedAddressAlreadyCreatedAtIndex*(self: View, index: int): bool {.slot.} =
+    return self.derivedAddresses.getDerivedAddressAlreadyCreatedAtIndex(index)
+
+  proc getNextSelectableDerivedAddressIndex*(self: View): int {.slot.} =
+    return self.derivedAddresses.getNextSelectableDerivedAddressIndex()
 

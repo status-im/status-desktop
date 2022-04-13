@@ -7,6 +7,7 @@ type
     Address = UserRole + 1,
     Path,
     HasActivity,
+    AlreadyCreated,
 
 QtObject:
   type
@@ -45,6 +46,7 @@ QtObject:
       ModelRole.Address.int: "address",
       ModelRole.Path.int: "path",
       ModelRole.HasActivity.int: "hasActivity",
+      ModelRole.AlreadyCreated.int: "alreadyCreated"
     }.toTable
 
   method data(self: DerivedAddressModel, index: QModelIndex, role: int): QVariant =
@@ -64,6 +66,8 @@ QtObject:
       result = newQVariant(item.getPath())
     of ModelRole.HasActivity:
       result = newQVariant(item.getHasActivity())
+    of ModelRole.AlreadyCreated:
+      result = newQVariant(item.getAlreadyCreated())
 
   proc setItems*(self: DerivedAddressModel, items: seq[DerivedAddressItem]) =
     self.beginResetModel()
@@ -90,5 +94,18 @@ QtObject:
       return
     let item = self.derivedWalletAddresses[index]
     result = item.getHasActivity()
+
+  proc getDerivedAddressAlreadyCreatedAtIndex*(self: DerivedAddressModel, index: int): bool =
+    if (index < 0 or index > self.getCount()):
+      return
+    let item = self.derivedWalletAddresses[index]
+    result = item.getAlreadyCreated()
+
+  proc getNextSelectableDerivedAddressIndex*(self: DerivedAddressModel): int =
+    for i in 0 ..< self.derivedWalletAddresses.len:
+      if(not self.derivedWalletAddresses[i].getAlreadyCreated()):
+        return i
+    return -1
+
 
 
