@@ -24,6 +24,8 @@ Column {
     property var messageContextMenu
     property string channelEmoji
 
+    property var emojiPopup
+
     // Once we redo qml we will know all section/chat related details in each message form the parent components
     // without an explicit need to fetch those details via message store/module.
     property bool isChatBlocked: false
@@ -344,6 +346,7 @@ Column {
             messageContextMenu: root.messageContextMenu
             contentType: root.messageContentType
             isChatBlocked: root.isChatBlocked
+            emojiPopup: root.emojiPopup
 
             communityId: root.communityId
             stickersLoaded: root.stickersLoaded

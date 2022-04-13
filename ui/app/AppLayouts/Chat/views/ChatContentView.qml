@@ -387,6 +387,7 @@ ColumnLayout {
             contactsStore: chatContentRoot.contactsStore
             messageContextMenuInst: contextmenu
             messageStore: messageStore
+            emojiPopup: chatContentRoot.emojiPopup
             usersStore: chatContentRoot.usersStore
             stickersLoaded: chatContentRoot.stickersLoaded
             isChatBlocked: chatContentRoot.isBlocked
