@@ -33,6 +33,8 @@ import StatusQ.Core.Theme 0.1
 */
 
 Item {
+    property int maxDuration: 2000
+
     id: wizardWrapper
     width: parent.width
     height: 56
@@ -65,8 +67,7 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.verticalCenterOffset: -12
                 from: 0
-                //TODO what is to: here?
-                to: 2000
+                to: wizardWrapper.maxDuration
                 value: loadingTime
                 backgroundColor: "transparent"
                 backgroundBorderColor: Theme.palette.primaryColor1
