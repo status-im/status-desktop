@@ -68,6 +68,7 @@ proc newController*(delegate: io_interface.AccessInterface,
   result.gifService = gifService
   result.privacyService = privacyService
   result.nodeService = nodeService
+  result.mailserversService = mailserversService
 
 proc delete*(self: Controller) =
   discard
