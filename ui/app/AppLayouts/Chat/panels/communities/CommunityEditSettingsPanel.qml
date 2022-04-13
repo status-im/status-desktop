@@ -28,6 +28,8 @@ Flickable {
     readonly property alias imageAy: imageCropperModal.aY
     readonly property alias imageBx: imageCropperModal.bX
     readonly property alias imageBy: imageCropperModal.bY
+    property bool isCommunityHistoryArchiveSupportEnabled: false
+    property alias historyArchiveSupportToggle: historyArchiveSupportToggle.checked
 
     contentWidth: layout.width
     contentHeight: layout.height
@@ -249,17 +251,10 @@ Flickable {
         }
 
         StatusListItem {
+            title: qsTr("Community history service")
+
             Layout.fillWidth: true
-
-            title: qsTr("History Archive Support")
-
             visible: root.isCommunityHistoryArchiveSupportEnabled
-
-            sensor.onClicked: {
-                if (root.isCommunityHistoryArchiveSupportEnabled) {
-                    historyArchiveSupportToggle.checked = !historyArchiveSupportToggle.checked
-                }
-            }
 
             components: [
                 StatusSwitch {
