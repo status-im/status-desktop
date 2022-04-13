@@ -36,6 +36,7 @@ StatusModal {
 
         StatusPopupMenu {
             id: contextMenu
+            width: 230
             StatusMenuItem {
                 icon.name: "download"
                 //% "Access existing community"
