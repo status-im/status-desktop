@@ -43,7 +43,8 @@ Item {
     ScrollView {
 
         anchors.top: banner.visible ? banner.bottom: parent.top
-        clip: true 
+        anchors.bottom: parent.bottom
+        clip: true
 
         StackLayout {
             id: stackContainer
