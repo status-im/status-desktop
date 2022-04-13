@@ -188,8 +188,8 @@ Item {
                 if (!selectedContact || !selAddressSource.selectedSource || !selectedContact.address || (selAddressSource.selectedSource && selAddressSource.selectedSource.value !== RecipientSelector.Type.Contact)) {
                     return
                 }
-                const { address, name, alias, isContact, ensVerified } = selectedContact
-                root.selectedRecipient = { address, name, alias, isContact, ensVerified, type: RecipientSelector.Type.Contact }
+                const { address, name, alias, pubKey, icon, isContact, ensVerified } = selectedContact
+                root.selectedRecipient = { address, name, alias, pubKey, icon, isContact, ensVerified, type: RecipientSelector.Type.Contact }
             }
             onIsValidChanged: root.validate()
         }

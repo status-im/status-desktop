@@ -333,7 +333,8 @@ Item {
                 return {
                     address: Constants.zeroAddress, // Setting as zero address since we don't have the address yet
                     alias: chatContentModule.chatDetails.name, // Do we need the alias for real or name works?
-                    identicon: chatContentModule.chatDetails.icon,
+                    pubKey: chatContentModule.chatDetails.id,
+                    icon: chatContentModule.chatDetails.icon,
                     name: chatContentModule.chatDetails.name,
                     type: RecipientSelector.Type.Contact,
                     ensVerified: true
@@ -367,7 +368,8 @@ Item {
                 return {
                     address: Constants.zeroAddress, // Setting as zero address since we don't have the address yet
                     alias: chatContentModule.chatDetails.name, // Do we need the alias for real or name works?
-                    identicon: chatContentModule.chatDetails.icon,
+                    pubKey: chatContentModule.chatDetails.id,
+                    icon: chatContentModule.chatDetails.icon,
                     name: chatContentModule.chatDetails.name,
                     type: RecipientSelector.Type.Contact
                 }

@@ -4,14 +4,16 @@ import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
 
 import StatusQ.Controls 0.1 as StatusQ
+import StatusQ.Components 0.1
+
 import utils 1.0
 
 import "../status"
 import "../panels"
 import "../controls"
 import "../popups"
+import shared.controls.chat 1.0
 
-import StatusQ.Components 0.1
 
 Item {
     id: root
@@ -161,7 +163,6 @@ Item {
                     }
                     PropertyChanges {
                         target: idtToContact
-                        image.source: root.toAccount.identicon
                         visible: true
                     }
                     PropertyChanges {
@@ -255,14 +256,15 @@ Item {
                 visible: false
                 source: imgToWallet
             }
-            StatusSmartIdenticon {
+            UserImage {
                 id: idtToContact
                 visible: false
                 anchors.right: toInvalid.visible ? toInvalid.left : parent.right
                 anchors.rightMargin: toInvalid.visible ? Style.current.halfPadding : 0
                 anchors.verticalCenter: parent.verticalCenter
-                image.width: 32
-                image.height: 32
+                name: root.toAccount.name
+                pubkey: root.toAccount.pubKey
+                image: root.toAccount.icon
             }
             SVGImage {
                 id: toInvalid
