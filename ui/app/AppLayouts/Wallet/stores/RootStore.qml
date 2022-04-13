@@ -192,6 +192,10 @@ QtObject {
         return walletSectionAccounts.getDerivedAddressHasActivityAtIndex(index)
     }
 
+    function getDerivedAddressAlreadyCreatedData(index) {
+        return walletSectionAccounts.getDerivedAddressAlreadyCreatedAtIndex(index)
+    }
+
     function getDerivedAddressListForMnemonic(mnemonic, path, pageSize , pageNumber) {
         return walletSectionAccounts.getDerivedAddressListForMnemonic(mnemonic, path, pageSize , pageNumber)
     }
@@ -202,5 +206,9 @@ QtObject {
 
     function vaildateMnemonic(mnemonic) {
         return onboardingModule.validateMnemonic(mnemonic)
+    }
+
+    function getNextSelectableDerivedAddressIndex() {
+        return walletSectionAccounts.getNextSelectableDerivedAddressIndex()
     }
 }

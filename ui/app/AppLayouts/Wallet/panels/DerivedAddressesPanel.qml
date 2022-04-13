@@ -17,6 +17,7 @@ Item {
     property string pathSubFix: ""
     function reset() {
         RootStore.resetDerivedAddressModel()
+        _internal.nextSelectableAddressIndex = 0
         selectedDerivedAddress.pathSubFix = 0
         selectedDerivedAddress.title = "---"
         selectedDerivedAddress.subTitle = qsTr("No activity")
@@ -28,6 +29,17 @@ Item {
         property int noOfPages: Math.ceil(RootStore.derivedAddressesList.count/pageSize)
         property int lastPageSize: RootStore.derivedAddressesList.count - ((noOfPages -1) * pageSize)
         property bool isLastPage: stackLayout.currentIndex == (noOfPages - 1)
+        property int nextSelectableAddressIndex: RootStore.getNextSelectableDerivedAddressIndex()
+
+        onNextSelectableAddressIndexChanged: {
+            stackLayout.currentIndex = nextSelectableAddressIndex/_internal.pageSize
+            if(nextSelectableAddressIndex >= 0 && nextSelectableAddressIndex < RootStore.derivedAddressesList.count) {
+                selectedDerivedAddress.title = RootStore.getDerivedAddressData(nextSelectableAddressIndex)
+                selectedDerivedAddress.subTitle = RootStore.getDerivedAddressHasActivityData(nextSelectableAddressIndex) ? qsTr("Has Activity"): qsTr("No Activity")
+                selectedDerivedAddress.enabled = !RootStore.getDerivedAddressAlreadyCreatedData(nextSelectableAddressIndex)
+                selectedDerivedAddress.pathSubFix = nextSelectableAddressIndex
+            }
+        }
 
         // dimensions
         property int popupWidth: 359
@@ -39,6 +51,8 @@ Item {
         onModelReset: {
             _internal.pageSize = 0
             _internal.pageSize = 6
+            _internal.nextSelectableAddressIndex = -1
+            _internal.nextSelectableAddressIndex = RootStore.getNextSelectableDerivedAddressIndex()
         }
     }
 
@@ -109,6 +123,7 @@ Item {
                                     statusListItemTitle.anchors.right: undefined
                                     title: RootStore.getDerivedAddressData(actualIndex)
                                     subTitle: RootStore.getDerivedAddressHasActivityData(actualIndex) ? qsTr("Has Activity"): qsTr("No Activity")
+                                    enabled: !RootStore.getDerivedAddressAlreadyCreatedData(actualIndex)
                                     components: [
                                         StatusBaseText {
                                             text: element.actualIndex
@@ -121,14 +136,6 @@ Item {
                                         selectedDerivedAddress.subTitle = subTitle
                                         selectedDerivedAddress.pathSubFix = actualIndex
                                         derivedAddressPopup.close()
-                                    }
-                                    Component.onCompleted: {
-                                        if(index === 0) {
-                                            selectedDerivedAddress.title = title
-                                            selectedDerivedAddress.subTitle = subTitle
-                                            selectedDerivedAddress.pathSubFix = actualIndex
-                                            stackLayout.currentIndex = 0
-                                        }
                                     }
                                 }
                             }
