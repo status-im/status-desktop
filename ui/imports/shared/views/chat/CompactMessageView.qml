@@ -21,6 +21,8 @@ Item {
     property var usersStore
     property var contactsStore
 
+    property var emojiPopup
+
     property var messageContextMenu
     property var container
     property int contentType
@@ -443,6 +445,7 @@ Item {
                     chatInputPlaceholder: qsTrId("type-a-message-")
                     chatType: messageStore.getChatType()
                     isEdit: true
+                    emojiPopup: root.emojiPopup
                     textInput.text: editMessageLoader.sourceText
                     messageContextMenu: root.messageContextMenu
                     onSendMessage: {
