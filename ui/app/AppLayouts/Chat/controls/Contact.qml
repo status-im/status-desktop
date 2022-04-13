@@ -54,7 +54,7 @@ Rectangle {
         id: usernameText
         text: name
         elide: Text.ElideRight
-        anchors.right: parent.right
+        anchors.right: assetCheck.visible ? assetCheck.left : parent.right
         anchors.rightMargin: Style.current.padding
         font.pixelSize: 17
         anchors.top: accountImage.top
