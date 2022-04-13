@@ -38,6 +38,7 @@ Item {
     property var pubKeys: ([])
     property bool hideCommunityMembers: false
     property bool addContactEnabled: true
+    property string wrongInputValidationError: qsTr("Enter a valid chat key or ENS username");
 
 
     property var resolveENS: Backpressure.debounce(root, 500, function (ensName) {
@@ -49,7 +50,7 @@ Item {
 
     function validate() {
         if (!Utils.isChatKey(chatKey.text) && !Utils.isValidETHNamePrefix(chatKey.text)) {
-            root.validationError = qsTr("Enter a valid chat key or ENS username");
+            root.validationError = wrongInputValidationError
             pubKey = ""
             ensUsername = "";
         } else if (RootStore.userProfileInst.pubKey === chatKey.text) {
@@ -223,11 +224,11 @@ Item {
         width: searchResultsWidth > 0 ? searchResultsWidth : parent.width
         addContactEnabled: root.addContactEnabled
         onResultClicked: {
+            chatKey.hasValidSearchResult = false
+            userClicked(pubKey, isAddedContact, username, searchResults.address)
             if (!validate()) {
                 return
             }
-            chatKey.hasValidSearchResult = false
-            userClicked(pubKey, isAddedContact, username, searchResults.address)
         }
         onAddToContactsButtonClicked: {
             root.contactsStore.addContact(pubKey)

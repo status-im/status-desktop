@@ -88,6 +88,7 @@ StatusModal {
                 accounts: RootStore.accounts
                 contactsStore: root.contactsStore
                 label: qsTr("Address")
+                input.placeholderText: qsTr("Enter ENS Name or Ethereum Address")
                 labelFont.pixelSize: 15
                 labelFont.weight: Font.Normal
                 input.implicitHeight: 56
@@ -97,6 +98,7 @@ StatusModal {
                     root.address = selectedRecipient.address
                 }
                 readOnly: root.edit
+                wrongInputValidationError: qsTr("Please enter a valid ENS name OR Ethereum Address")
             }
         }
     }

@@ -21,6 +21,7 @@ Item {
     property bool isResolvedAddress: false
     property int parentWidth
     property bool addContactEnabled: true
+    property alias wrongInputValidationError: contactFieldAndList.wrongInputValidationError
 
     height: contactFieldAndList.chatKey.height
 
