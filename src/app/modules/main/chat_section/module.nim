@@ -788,6 +788,7 @@ method addChatIfDontExist*(self: Module,
     return
 
   if self.doesCatOrChatExist(chat.id):
+    self.onChatRenamed(chat.id, chat.name)
     return
 
   self.addNewChat(chat, belongsToCommunity, events, settingsService, contactService, chatService,
