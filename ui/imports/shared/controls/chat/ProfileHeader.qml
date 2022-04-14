@@ -15,13 +15,9 @@ Item {
     property string pubkey
     property string icon
 
+    property bool compact: true
     property bool displayNameVisible: true
     property bool pubkeyVisible: true
-
-    property alias imageWidth: userImage.imageWidth
-    property alias imageHeight: userImage.imageHeight
-    property size emojiSize: Qt.size(14, 14)
-    property bool supersampling: true
 
     property alias imageOverlay: imageOverlay.sourceComponent
 
@@ -32,6 +28,8 @@ Item {
 
     ColumnLayout {
         id: contentContainer
+
+        spacing: root.compact ? 4 : 12
 
         anchors {
             left: parent.left
@@ -49,6 +47,8 @@ Item {
             pubkey: root.pubkey
             image: root.icon
             interactive: false
+            imageWidth: root.compact ? 36 : 80
+            imageHeight: imageWidth
 
             Loader {
                 id: imageOverlay
@@ -86,13 +86,12 @@ Item {
         }
 
         EmojiHash {
-            id: emojihash
-            Layout.fillWidth: true
-            horizontalAlignment: Text.AlignHCenter
+            id: emojiHash
+
+            Layout.alignment: Qt.AlignHCenter
+
             publicKey: root.pubkey
-            readonly property size finalSize: supersampling ? Qt.size(emojiSize.width * 2, emojiSize.height * 2) : emojiSize
-            size: `${finalSize.width}x${finalSize.height}`
-            scale: supersampling ? 0.5 : 1
+            size: root.compact ? 16 : 20
         }
     }
 }

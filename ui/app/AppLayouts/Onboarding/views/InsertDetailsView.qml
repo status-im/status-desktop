@@ -154,20 +154,30 @@ Item {
         Item {
             id: chainsChatKeyImg
             Layout.alignment: Qt.AlignHCenter
-            Layout.preferredWidth: 181
+            Layout.preferredWidth: 400
             Layout.preferredHeight: 84
             Image {
                 anchors.horizontalCenter: parent.horizontalCenter
                 source: Style.png("onboarding/chains")
             }
             EmojiHash {
-                anchors.bottom: parent.bottom
+                anchors {
+                    bottom: parent.bottom
+                    left: parent.left
+                    leftMargin: 80
+                }
+
                 publicKey: root.pubKey
             }
             StatusSmartIdenticon {
                 id: userImageCopy
-                anchors.bottom: parent.bottom
-                anchors.right: parent.right
+
+                anchors {
+                    bottom: parent.bottom
+                    right: parent.right
+                    rightMargin: 116
+                }
+
                 icon.width: 44
                 icon.height: 44
                 icon.color: "transparent"

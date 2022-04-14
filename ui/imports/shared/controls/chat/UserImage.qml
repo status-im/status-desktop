@@ -10,9 +10,8 @@ import StatusQ.Core.Theme 0.1
 Loader {
     id: root
 
-    property int imageHeight: compact ? 36 : 40
-    property int imageWidth: compact ? 36 : 40
-    property bool compact: true
+    property int imageHeight: 36
+    property int imageWidth: 36
 
     property string name
     property string pubkey
