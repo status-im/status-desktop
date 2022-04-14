@@ -89,6 +89,7 @@ Item {
         StatusIconTabButton {
             icon.name: "public-chat"
             checked: publicChatCommunityContextMenu.visible
+            highlighted: publicChatCommunityContextMenu.visible
             onClicked: { publicChatCommunityContextMenu.popup(); }
             StatusPopupMenu {
                  id: publicChatCommunityContextMenu
@@ -107,15 +108,26 @@ Item {
                      onTriggered: Global.openPopup(communitiesPopupComponent)
                      enabled: localAccountSensitiveSettings.communitiesEnabled
                  }
-             }
+            }
+
+            StatusToolTip {
+              text: qsTr("Public chats & communities")
+              visible: parent.hovered
+            }
         }
 
 
         StatusIconTabButton {
             icon.name: "edit"
             checked: root.store.openCreateChat
+            highlighted: root.store.openCreateChat
             onClicked: {
                 root.store.openCreateChat = !root.store.openCreateChat;
+            }
+
+            StatusToolTip {
+              text: qsTr("Start chat")
+              visible: parent.hovered
             }
         }
     }
