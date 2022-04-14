@@ -447,6 +447,10 @@ QtObject:
         error "error while renaming group chat", msg
         return
 
+      var chat = self.chats[chatID]
+      chat.name = name
+      self.updateOrAddChat(chat)
+
       self.events.emit(SIGNAL_CHAT_RENAMED, ChatRenameArgs(id: chatId, newName: name))
     except Exception as e:
       error "error while renaming group chat: ", msg = e.msg
