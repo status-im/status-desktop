@@ -25,10 +25,11 @@ StatusModal {
     readonly property alias bY: cropImageModal.bY
 
     property string selectedImage
+    property string currentProfileImg: ""
     property string croppedImg: ""
     property string uploadError
 
-    signal profileImageReady(string croppedImg)
+    signal setProfileImage(string image)
 
     onClosed: {
         popup.selectedImage = ""
@@ -43,7 +44,7 @@ StatusModal {
             height: 160
             anchors.verticalCenter: parent.verticalCenter
             anchors.horizontalCenter: parent.horizontalCenter
-            image.source: popup.croppedImg
+            image.source: popup.croppedImg || popup.currentProfileImg
             showLoadingIndicator: true
             border.width: 1
             border.color: Style.current.border
@@ -73,20 +74,31 @@ StatusModal {
         ImageCropperModal {
             id: cropImageModal
             ratio: "1:1"
+            selectedImage: popup.selectedImage
             onCropFinished: {
-                popup.croppedImg = OnboardingStore.uploadImage(selectedImage, aX, aY, bX, bY);
-                popup.selectedImage = ""
+                popup.croppedImg = OnboardingStore.generateImage(popup.selectedImage, aX, aY, bX, bY);
             }
         }
     }
 
     rightButtons: [
+        StatusFlatButton {
+            visible: !!popup.currentProfileImg
+            type: StatusBaseButton.Type.Danger
+            text: qsTr("Remove")
+            onClicked: {
+                OnboardingStore.clearImageProps()
+                popup.setProfileImage("")
+                close();
+            }
+        },
         StatusButton {
             id: uploadBtn
             text: popup.croppedImg? qsTr("Done") : qsTr("Upload")
             onClicked: {
                 if (popup.croppedImg) {
-                    popup.profileImageReady(popup.croppedImg)
+                    OnboardingStore.setImageProps(popup.selectedImage, aX, aY, bX, bY)
+                    popup.setProfileImage(popup.croppedImg)
                     close();
                 } else {
                     imageDialog.open();
@@ -101,7 +113,7 @@ StatusModal {
                 ]
                 onAccepted: {
                     if(imageDialog.fileUrls.length > 0) {
-                        cropImageModal.selectedImage = imageDialog.fileUrls[0];
+                        popup.selectedImage = imageDialog.fileUrls[0];
                         cropImageModal.open()
                     }
                 }
