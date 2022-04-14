@@ -48,14 +48,20 @@ QtObject {
         root.profileModule.upload(root.profImgUrl, root.profImgAX, root.profImgAY, root.profImgBX, root.profImgBY);
     }
 
-    function uploadImage(source, aX, aY, bX, bY) {
+    function setImageProps(source, aX, aY, bX, bY) {
         root.profImgUrl = source;
         root.profImgAX = aX;
         root.profImgAY = aY;
         root.profImgBX = bX;
         root.profImgBY = bY;
+    }
 
-        return root.generateImage(source, aX, aY, bX, bY)
+    function clearImageProps() {
+        root.profImgUrl = "";
+        root.profImgAX = 0.0;
+        root.profImgAY = 0.0;
+        root.profImgBX = 0.0;
+        root.profImgBY = 0.0;
     }
 
     function removeImage() {

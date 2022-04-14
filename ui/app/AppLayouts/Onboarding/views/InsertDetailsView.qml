@@ -100,7 +100,7 @@ Item {
                 type: StatusFlatRoundButton.Type.Secondary
                 icon.name: "add"
                 onClicked: {
-                    uploadProfilePicPopup.selectedImage = userImage.image.source
+                    uploadProfilePicPopup.currentProfileImg = userImage.image.source
                     uploadProfilePicPopup.open();
                 }
             }
@@ -188,8 +188,8 @@ Item {
         UploadProfilePicModal {
             id: uploadProfilePicPopup
             anchors.centerIn: parent
-            onProfileImageReady: {
-                userImage.image.source = croppedImg
+            onSetProfileImage: {
+                userImage.image.source = image
             }
         }
     }
