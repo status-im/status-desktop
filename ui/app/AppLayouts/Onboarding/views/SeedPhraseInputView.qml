@@ -1,5 +1,6 @@
 import QtQuick 2.12
 import QtGraphicalEffects 1.13
+import QtQuick.Dialogs 1.3
 
 import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
@@ -20,6 +21,28 @@ OnboardingBasePage {
     property string mnemonicString
 
     signal seedValidated()
+
+    Connections {
+        target: OnboardingStore.onboardingModuleInst
+        onAccountImportError: {
+            if (error === Constants.existingAccountError) {
+                importSeedError.title = qsTr("Keys for this account already exist")
+                importSeedError.text = qsTr("Keys for this account already exist and can't be added again. If you've lost your password, passcode or Keycard, uninstall the app, reinstall and access your keys by entering your seed phrase")
+            } else {
+                importSeedError.title = qsTr("Error importing seed")
+                importSeedError.text = error
+            }
+            importSeedError.open()
+        }
+        onAccountImportSuccess: {
+            root.seedValidated()
+        }
+    }
+    MessageDialog {
+        id: importSeedError
+        icon: StandardIcon.Critical
+        standardButtons: StandardButton.Ok
+    }
 
     Item {
         implicitWidth: 731
@@ -202,7 +225,6 @@ OnboardingBasePage {
                     }
                     if (Utils.isMnemonic(root.mnemonicString) && !OnboardingStore.validateMnemonic(root.mnemonicString)) {
                         OnboardingStore.importMnemonic(root.mnemonicString)
-                        root.seedValidated();
                         root.mnemonicString = "";
                         root.mnemonicInput = [];
                     } else {
