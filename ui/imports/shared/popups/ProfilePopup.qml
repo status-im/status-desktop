@@ -113,11 +113,7 @@ StatusModal {
 
                 displayNameVisible: false
                 pubkeyVisible: false
-                supersampling: true
-                emojiSize: Qt.size(20,20)
-
-                imageWidth: 80
-                imageHeight: 80
+                compact: false
 
                 imageOverlay: Item {
                     visible: popup.isCurrentUser

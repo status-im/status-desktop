@@ -76,11 +76,7 @@ SettingsContentBase {
 
             displayNameVisible: false
             pubkeyVisible: false
-
-            imageWidth: 80
-            imageHeight: 80
-            emojiSize: Qt.size(20,20)
-            supersampling: true
+            compact: false
 
             imageOverlay: Item {
                 StatusFlatRoundButton {
