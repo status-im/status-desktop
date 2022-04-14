@@ -41,7 +41,7 @@ If it doesn't map to an existing one, use a base control like `Item`.
 
 ## QML well-behaved components checklist
 
-### Sizing support
+### Positioning and sizing
 
 [Positioners and Layouts In QML](https://doc.qt.io/qt-6/qtquick-usecase-layouts.html)
 
@@ -65,6 +65,15 @@ If it doesn't map to an existing one, use a base control like `Item`.
 - If the control is not adaptable and makes sense only in its full size, define default sizes and make it work by default with positioners (`Row`, `Column`, `Grid`).
   - [Item Positioners in QML](https://doc.qt.io/qt-5/qtquick-positioning-layouts.html)
 - Don't mix hints with sizes, it will create binding loops
+
+### Quality
+
+Pixel miss-alignment for sensitive elements like icons and images with straight and thin lines can degrade the quality perceptibly.
+
+Dividing sizes and coordinates are the usual root cause of pixel miss-alignment. Correct subpixel division by rounding the result of the operation to a fixed value, e.g. `x: (width/2).toFixed()`
+
+- Example of pixel miss-alignment. The right control has a position offset of `Qt.pos(0.7, 0.4)` therefore, the image interpolation generates a blurred rendering.
+  - ![](https://user-images.githubusercontent.com/47554641/163448378-3a6ede2f-a922-4f35-bff7-93c6bfa840d5.png)
 
 ## Topics
 
