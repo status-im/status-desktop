@@ -62,11 +62,7 @@ method viewDidLoad*(self: Module) =
 method getModuleAsVariant*(self: Module): QVariant =
   return self.viewVariant
 
-method newMessagesLoaded*(self: Module, messages: seq[MessageDto]) =
-  let chat = self.controller.getChat()
-  if not chat.isPublicChat():
-    return
-
+method onNewMessagesLoaded*(self: Module, messages: seq[MessageDto]) =
   for m in messages:
     if(self.view.model().isContactWithIdAdded(m.`from`)):
       continue

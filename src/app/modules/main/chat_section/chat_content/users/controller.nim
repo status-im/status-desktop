@@ -21,6 +21,9 @@ type
     communityService: community_service.Service
     messageService: message_service.Service
 
+# Forward declaration
+proc getChat*(self: Controller): ChatDto
+
 proc newController*(
   delegate: io_interface.AccessInterface, events: EventEmitter, sectionId: string, chatId: string,
   belongsToCommunity: bool, isUsersListAvailable: bool, contactService: contact_service.Service,
@@ -58,30 +61,39 @@ proc handleCommunityOnlyConnections(self: Controller) =
       self.delegate.onChatMembersAdded(membersPubKeys)
 
 proc init*(self: Controller) =
-  if(self.isUsersListAvailable):
+  # Events that are needed for all chats because of mentions
+  self.events.on(SIGNAL_CONTACT_NICKNAME_CHANGED) do(e: Args):
+    let args = ContactArgs(e)
+    self.delegate.contactNicknameChanged(args.contactId)
+
+  self.events.on(SIGNAL_CONTACT_UPDATED) do(e: Args):
+    let args = ContactArgs(e)
+    self.delegate.contactUpdated(args.contactId)
+
+  self.events.on(SIGNAL_LOGGEDIN_USER_IMAGE_CHANGED) do(e: Args):
+    self.delegate.loggedInUserImageChanged()
+
+  let chat = self.getChat()
+
+  # Events only for public chats
+  if chat.isPublicChat():
     self.events.on(SIGNAL_MESSAGES_LOADED) do(e:Args):
       let args = MessagesLoadedArgs(e)
       if(self.chatId != args.chatId):
         return
-      self.delegate.newMessagesLoaded(args.messages)
+      self.delegate.onNewMessagesLoaded(args.messages)
 
     self.events.on(SIGNAL_NEW_MESSAGE_RECEIVED) do(e:Args):
       let args = MessagesArgs(e)
       if(self.chatId != args.chatId):
         return
-      self.delegate.newMessagesLoaded(args.messages)
+      self.delegate.onNewMessagesLoaded(args.messages)
 
-    self.events.on(SIGNAL_CONTACT_NICKNAME_CHANGED) do(e: Args):
-      let args = ContactArgs(e)
-      self.delegate.contactNicknameChanged(args.contactId)
-
+  # Events only for the user list, so not needed in public and one to one chats
+  if(self.isUsersListAvailable):
     self.events.on(SIGNAL_CONTACTS_STATUS_UPDATED) do(e: Args):
       let args = ContactsStatusUpdatedArgs(e)
       self.delegate.contactsStatusUpdated(args.statusUpdates)
-
-    self.events.on(SIGNAL_CONTACT_UPDATED) do(e: Args):
-      let args = ContactArgs(e)
-      self.delegate.contactUpdated(args.contactId)
 
     self.events.on(SIGNAL_CONTACT_ADDED) do(e: Args):
       let args = ContactArgs(e)
@@ -94,9 +106,6 @@ proc init*(self: Controller) =
     self.events.on(SIGNAL_CONTACT_BLOCKED) do(e: Args):
       let args = ContactArgs(e)
       self.delegate.contactUpdated(args.contactId)
-
-    self.events.on(SIGNAL_LOGGEDIN_USER_IMAGE_CHANGED) do(e: Args):
-      self.delegate.loggedInUserImageChanged()
 
     self.events.on(SIGNAL_CHAT_MEMBERS_ADDED) do(e: Args):
       let args = ChatMembersAddedArgs(e)
@@ -119,6 +128,7 @@ proc init*(self: Controller) =
       if (args.chatId == self.chatId):
         self.delegate.onChatMemberUpdated(args.id, args.admin, args.joined)
 
+    # Events only for community channel
     if (self.belongsToCommunity):
       self.handleCommunityOnlyConnections()
 
