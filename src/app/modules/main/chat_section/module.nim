@@ -115,10 +115,9 @@ proc buildChatUI(self: Module, events: EventEmitter,
     var chatImage = ""
     var colorHash: ColorHashDto = @[]
     var colorId: int = 0
-    var isUsersListAvailable = true
+    let isUsersListAvailable = (c.chatType != ChatType.OneToOne and c.chatType != ChatType.Public)
     var blocked = false
     if(c.chatType == ChatType.OneToOne):
-      isUsersListAvailable = false
       let contactDetails = self.controller.getContactDetails(c.id)
       chatName = contactDetails.displayName
       chatImage = contactDetails.icon

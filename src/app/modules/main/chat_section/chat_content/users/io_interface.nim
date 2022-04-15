@@ -19,7 +19,7 @@ method isLoaded*(self: AccessInterface): bool {.base.} =
 method getModuleAsVariant*(self: AccessInterface): QVariant {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method newMessagesLoaded*(self: AccessInterface, messages: seq[MessageDto]) {.base.} =
+method onNewMessagesLoaded*(self: AccessInterface, messages: seq[MessageDto]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method contactNicknameChanged*(self: AccessInterface, publicKey: string) {.base.} =

@@ -259,3 +259,6 @@ proc toChatDto*(jsonObj: JsonNode, communityId: string): ChatDto =
 
 proc isPublicChat*(chatDto: ChatDto): bool =
   return chatDto.chatType == ChatType.Public
+
+proc isOneToOneChat*(chatDto: ChatDto): bool =
+  return chatDto.chatType == ChatType.OneToOne
