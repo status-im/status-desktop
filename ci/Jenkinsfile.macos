@@ -50,21 +50,15 @@ pipeline {
       steps { 
         /* trigger fetching of git submodules */
         sh 'make check-pkg-target-macos'
-        /* avoid re-compiling Nim by using cache */
-        cache(maxCacheSize: 250, caches: [[
-          $class: 'ArbitraryFileCache',
-          includes: '**/*',
-          path: 'vendor/nimbus-build-system/vendor/Nim/bin'
-        ]]) {
-          withCredentials([
-            usernamePassword( /* For fetching HomeBrew bottles. */
-              credentialsId: "status-im-auto-pkgs",
-              usernameVariable: 'GITHUB_USER',
-              passwordVariable: 'GITHUB_TOKEN'
-            )
-          ]) {
-            sh 'make deps'
-          }
+        /* TODO: Re-add caching of Nim compiler. */
+        withCredentials([
+          usernamePassword( /* For fetching HomeBrew bottles. */
+            credentialsId: "status-im-auto-pkgs",
+            usernameVariable: 'GITHUB_USER',
+            passwordVariable: 'GITHUB_TOKEN'
+          )
+        ]) {
+          sh 'make deps'
         }
       }
     }
