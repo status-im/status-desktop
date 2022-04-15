@@ -59,9 +59,9 @@ Item {
             height: 32
             icon.width: 24
             icon.height: 24
-            icon.source: Style.svg("double-check")
+            icon.source: Style.svg("check-activity")
+            icon.color: model.read ? icon.disabledColor : "transparent"
             color: "transparent"
-            //% "Mark as Read"
             tooltip.text: !model.read ?
                 qsTr("Mark as Read") :
                 qsTr("Mark as Unread")
