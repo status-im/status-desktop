@@ -350,7 +350,8 @@ proc login*(self: Service, account: AccountDto, password: string): string =
         "DataDir": DEFAULT_TORRENT_CONFIG_DATADIR,
         "TorrentDir": DEFAULT_TORRENT_CONFIG_TORRENTDIR,
         "Port": DEFAULT_TORRENT_CONFIG_PORT
-      }
+      },
+      "Networks": NETWORKS,
     }
 
     let response = status_account.login(account.name, account.keyUid, hashedPassword, thumbnailImage,
