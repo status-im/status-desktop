@@ -5,19 +5,21 @@
 
 std::weak_ptr<QString> MonitorQtOutput::m_qtMessageOutputForSharing;
 std::mutex MonitorQtOutput::m_mutex;
+QtMessageHandler MonitorQtOutput::m_previousHandler = nullptr;
 
 
 MonitorQtOutput::MonitorQtOutput()
 {
     // Ensure only one instance registers a handler
-    // Warning: don't QT's call loger functions inside the critical section
+    // Warning: don't call QT's logger functions inside the critical section
     std::unique_lock<std::mutex> localLock(m_mutex);
     auto globalMsgOut = m_qtMessageOutputForSharing.lock();
+    auto prev = qInstallMessageHandler(qtMessageOutput);
+    if(prev != qtMessageOutput)
+        m_previousHandler = prev;
     if(!globalMsgOut) {
-        // Install message handler if not already done
         m_thisMessageOutput = std::make_shared<QString>();
         m_qtMessageOutputForSharing = m_thisMessageOutput;
-        qInstallMessageHandler(qtMessageOutput);
     }
     else {
         m_thisMessageOutput = globalMsgOut;
@@ -42,11 +44,25 @@ MonitorQtOutput::qtMessageOutput(QtMsgType type, const QMessageLogContext &conte
     auto globalMsgOut = m_qtMessageOutputForSharing.lock();
     assert(globalMsgOut != nullptr);
     globalMsgOut->append(msg + '\n');
+    // Also reproduce the default output
+    m_previousHandler(type, context, msg);
 }
 
 QString
 MonitorQtOutput::qtOuput()
 {
+    std::unique_lock<std::mutex> localLock(m_mutex);
     assert(m_thisMessageOutput->length() >= m_start);
     return m_thisMessageOutput->right(m_thisMessageOutput->length() - m_start);
+}
+
+void
+MonitorQtOutput::restartCapturing()
+{
+    std::unique_lock<std::mutex> localLock(m_mutex);
+    // Ensure the messageHandler is installed. Foun to be reset at test initializaiton
+    auto prev = qInstallMessageHandler(qtMessageOutput);
+    if(prev != qtMessageOutput)
+        m_previousHandler = prev;
+    m_start = m_thisMessageOutput->length();
 }

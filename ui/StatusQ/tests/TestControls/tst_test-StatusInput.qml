@@ -38,7 +38,8 @@ Item {
 
         //
         // Test guards
-        function initTestCase() {
+        function init() {
+            qtOuput.restartCapturing()
             mouseClick(statusInput)
         }
 

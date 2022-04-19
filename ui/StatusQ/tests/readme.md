@@ -5,18 +5,21 @@
 CMake
 
 ```sh
-cd StatusQ/tests/TestControls
+cd ./tests/
 cmake -B ./build/ -S .
 cmake --build ./build/
-./build/TestControls
+ctest --test-dir ./build/
 ```
 
 QtCreator
 
-- Open the StatusQ/tests/CMakeLists.txt
+- Open the `./tests/CMakeLists.txt`
 - Choose a QT kit to run the tests
-- In the `Test Results` panel choose Run All Tests
+- Set `%{sourceDir}/tests` as Working Directory for the TestStatusQ target
+- In the *Test Results* panel choose Run All Tests or just run the *TestStatusQ* target
 
 ## TODO
 
+- [ ] TestHelpers library
 - [ ] Consolidate and integrate with https://github.com/status-im/desktop-ui-tests
+- [ ] Separate projects per scope: TestControls, TestComponents
