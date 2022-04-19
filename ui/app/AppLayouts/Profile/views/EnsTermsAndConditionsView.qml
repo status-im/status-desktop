@@ -17,6 +17,7 @@ Item {
 
     property var ensUsernamesStore
     property var contactsStore
+    property var stickersStore
     property string username: ""
 
     signal backBtnClicked();
@@ -47,6 +48,8 @@ Item {
         sourceComponent: StatusSNTTransactionModal {
             store: root.ensUsernamesStore
             contactsStore: root.contactsStore
+            stickersStore: root.stickersStore
+            asyncGasEstimateTarget: root.stickersStore.stickersModule
             assetPrice: "10"
             contractAddress: root.ensUsernamesStore.getEnsRegisteredAddress()
             estimateGasFunction: function(selectedAccount, uuid) {
