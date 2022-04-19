@@ -74,8 +74,8 @@ method viewDidLoad*(self: Module) =
   self.moduleLoaded = true
   self.delegate.allTokensModuleDidLoad()
 
-method addCustomToken*(self: Module, chainId: int, address: string, name: string, symbol: string, decimals: int) =
-  self.controller.addCustomToken(chainId, address, name, symbol, decimals)
+method addCustomToken*(self: Module, chainId: int, address: string, name: string, symbol: string, decimals: int): string =
+  return self.controller.addCustomToken(chainId, address, name, symbol, decimals)
         
 method toggleVisible*(self: Module, chainId: int, address: string) =
   self.controller.toggleVisible(chainId, address)

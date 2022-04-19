@@ -112,9 +112,14 @@ QtObject:
         if token.isVisible:
           result.add(token)
 
-  proc addCustomToken*(self: Service, chainId: int, address: string, name: string, symbol: string, decimals: int) =
+  proc addCustomToken*(self: Service, chainId: int, address: string, name: string, symbol: string, decimals: int): string =
     # TODO(alaile): use chainId rather than first enabled network
     let networkWIP = self.networkService.getEnabledNetworks()[0]
+    let foundToken = self.findTokenByAddress(networkWIP, parseAddress(address))
+
+    if not foundToken.isNil:
+      return "token already exists"
+
     let backendToken = backend.Token(
       name: name, chainId: networkWIP.chainId, address: address, symbol: symbol, decimals: decimals, color: ""
     )
