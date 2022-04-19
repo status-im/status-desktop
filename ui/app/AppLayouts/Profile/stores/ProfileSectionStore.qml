@@ -1,6 +1,8 @@
 import QtQuick 2.13
 import utils 1.0
 
+import AppLayouts.Chat.stores 1.0
+
 QtObject {
     id: root
 
@@ -53,6 +55,10 @@ QtObject {
     property WalletStore walletStore: WalletStore {
     }
 
+    property var stickersModuleInst: stickersModule
+    property var stickersStore: StickersStore {
+        stickersModule: stickersModuleInst
+    }
 
     property bool browserMenuItemEnabled: localAccountSensitiveSettings.isBrowserEnabled
     property bool walletMenuItemEnabled: localAccountSensitiveSettings.isWalletEnabled

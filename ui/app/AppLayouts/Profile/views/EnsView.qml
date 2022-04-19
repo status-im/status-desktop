@@ -14,6 +14,7 @@ Item {
     property EnsUsernamesStore ensUsernamesStore
 
     property var contactsStore
+    property var stickersStore
 
     property int profileContentWidth
     property bool showSearchScreen: false
@@ -245,6 +246,7 @@ Item {
         EnsTermsAndConditionsView {
             ensUsernamesStore: ensView.ensUsernamesStore
             contactsStore: ensView.contactsStore
+            stickersStore: ensView.stickersStore
             username: selectedUsername
             onBackBtnClicked: back();
             onUsernameRegistered: done(userName);

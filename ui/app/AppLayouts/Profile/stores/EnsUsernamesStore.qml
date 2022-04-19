@@ -152,5 +152,13 @@ QtObject {
             return ""
         return ensUsernamesModule.getStatusToken()
     }
+
+    function isEIP1559Enabled() {
+        return walletSection.isEIP1559Enabled()
+    }
+
+    function suggestedFees() {
+        return JSON.parse(walletSectionTransactions.suggestedFees())
+    }
 }
 

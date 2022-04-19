@@ -66,6 +66,7 @@ StatusAppTwoPanelLayout {
             id: ensContainer
             ensUsernamesStore: profileView.store.ensUsernamesStore
             contactsStore: profileView.store.contactsStore
+            stickersStore: profileView.store.stickersStore
             profileContentWidth: _internal.profileContentWidth
         }
 

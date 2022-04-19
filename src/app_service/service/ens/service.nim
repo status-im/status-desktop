@@ -22,6 +22,7 @@ import ../transaction/service as transaction_service
 import ../network/service as network_service
 import ../token/service as token_service
 import ../eth/dto/coder
+import ../eth/dto/transaction
 
 
 logScope:
