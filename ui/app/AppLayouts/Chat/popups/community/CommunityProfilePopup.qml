@@ -130,6 +130,7 @@ StatusModal {
                 community: root.community
                 communitySectionModule: root.communitySectionModule
                 contactsStore: root.contactsStore
+                rootStore: root.store
 
                 contactListSearch.chatKey.text: ""
                 contactListSearch.pubKey: ""
