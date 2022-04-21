@@ -30,6 +30,9 @@ Column {
             icon.name: model.icon
             selected: Global.settingsSubsection === model.subsection
             onClicked: root.menuItemClicked(model)
+            visible: {
+                (model.subsection !== Constants.settingsSubsection.ensUsernames || root.walletMenuItemEnabled)
+            }
         }
     }
 
