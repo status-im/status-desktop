@@ -393,22 +393,6 @@ Item {
           //% "Register"
           qsTrId("ens-register")
         enabled: parseFloat(root.ensUsernamesStore.getSntBalance()) >= 10 && termsAndConditionsCheckbox.checked
-        onClicked: localAccountSensitiveSettings.isWalletEnabled ? transactionDialog.open() : confirmationPopup.open()
-    }
-
-    ConfirmationDialog {
-        id: confirmationPopup
-        showCancelButton: true
-        confirmationText: qsTr("This feature is experimental and is meant for testing purposes by core contributors and the community. It's not meant for real use and makes no claims of security or integrity of funds or data. Use at your own risk.")
-        confirmButtonLabel: qsTr("I understand")
-        onConfirmButtonClicked: {
-            localAccountSensitiveSettings.isWalletEnabled = true
-            close()
-            transactionDialog.open()
-        }
-
-        onCancelButtonClicked: {
-            close()
-        }
+        onClicked: transactionDialog.open()
     }
 }
