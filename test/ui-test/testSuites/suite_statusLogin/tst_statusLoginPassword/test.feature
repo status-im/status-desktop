@@ -17,23 +17,23 @@ Feature: Status Desktop login
 
     Scenario Outline: User tries to login with a valid password
 
-		Given A Status Desktop <account> and <password> with <languageType> as a preference language
+		Given A Status Desktop <account> and <password>
          When the user tries to login with valid credentials
          Then the user is able to login to Status Desktop application
  	Examples:
-            | account 					   | password   | languageType |
-            | Athletic Prime Springtail    | Test_1234  | english      |
-            | Nervous Pesky Serpent  	   | Test_1234  | english      |
-            | Granular Diligent Gorilla    | Test_1234  | english      |
+            | account 		   | password   |
+            | Athletic_Prime   | Test_1234  |
+            | Nervous_Pesky    | Test_1234  |
+            | Granular_Diligent| Test_1234  |
 
 
     Scenario Outline: User tries to login with an invalid password
 
-        Given A Status Desktop <account> and <password> with <languageType> as a preference language
+        Given A Status Desktop <account> and <password>
          When the user tries to login with invalid credentials
          Then the user is NOT able to login to Status Desktop application
 	Examples:
-             | account 					   | password    | languageType  |
-             | Athletic Prime Springtail   | Invalid34   | english       |
-             | Granular Diligent Gorilla   | Testpwd 	 | english  	 |
-             | Nervous Pesky Serpent  	   | WrongPSW    | english       |
+             | account 			  | password    |
+             | Athletic_Prime     | Invalid34   |
+             | Granular_Diligent  | Testpwd     |
+             | Nervous_Pesky      | WrongPSW    |

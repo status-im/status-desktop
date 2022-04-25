@@ -16,8 +16,8 @@
 from data.StatusAccount import StatusAccount 
 from processes.StatusLoginProcess import StatusLoginProcess    
 
-@Given("A Status Desktop |any| and |word| with |word| as a preference language")
-def step(context,account,password,languageType):
+@Given("A Status Desktop |any| and |word|")
+def step(context,account,password):
     
     # Create new data domain:
     accountObj = StatusAccount(account, password) 
@@ -28,7 +28,6 @@ def step(context,account,password,languageType):
     # Set needed context properties:  
     context.userData['process'] = process
     context.userData['account'] = accountObj
-    context.userData['languageType'] = languageType
     
     # Verify process can be executed:
     test.verify(process.can_execute_process(), "Not possible to start login process. Check if expected Login Screen is available.")
