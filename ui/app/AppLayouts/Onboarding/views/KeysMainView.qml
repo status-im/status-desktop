@@ -196,6 +196,10 @@ OnboardingBasePage {
 
             }
             PropertyChanges {
+                target: keysImg
+                source: Style.png("onboarding/seed-phrase")
+            }
+            PropertyChanges {
                 target: txtDesc
                 text: qsTr("Seed phrases are used to back up and restore your keys.\n
 Only use this option if you already have a seed phrase.")
