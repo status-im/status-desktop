@@ -97,7 +97,7 @@ Page {
             }
         }
 
-        StatusButton {
+        StatusFlatButton {
             id: btnExistingUser
             text: qsTr("I already use Status")
             anchors.top: btnNewUser.bottom
