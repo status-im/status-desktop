@@ -1,4 +1,5 @@
 import tables
+import algorithm
 import ./io_interface
 
 import ../../../../core/eventemitter
@@ -36,9 +37,19 @@ proc init*(self: Controller) =
     self.delegate.refreshTokens()
 
 proc getTokens*(self: Controller): seq[token_service.TokenDto] =
+  proc compare(x, y: token_service.TokenDto): int =
+    if x.name < y.name:
+      return -1
+    elif x.name > y.name:
+      return 1
+    
+    return 0
+
   for tokens in self.tokenService.getTokens().values:
     for token in tokens:
       result.add(token)
+
+  result.sort(compare)
 
 proc addCustomToken*(self: Controller, chainId: int, address: string, name: string, symbol: string, decimals: int): string =
   return self.tokenService.addCustomToken(chainId, address, name, symbol, decimals)
