@@ -25,9 +25,21 @@ OnboardingBasePage {
         implicitWidth: 731
         implicitHeight: 472
         anchors.centerIn: parent
+
+        StatusBaseText {
+            id: headlineText
+            font.pixelSize: 22
+            font.weight: Font.Bold
+            color: Theme.palette.directColor1
+            anchors.horizontalCenter: parent.horizontalCenter
+            text: qsTr("Enter seed phrase")
+        }
+
         StatusSwitchTabBar {
             id: switchTabBar
+            anchors.top: headlineText.bottom
             anchors.horizontalCenter: parent.horizontalCenter
+            anchors.topMargin: 24
             StatusSwitchTabButton {
                 text: qsTr("12 words")
             }
