@@ -122,17 +122,18 @@ StatusAppTwoPanelLayout {
 
                 onEdited: {
                     root.chatCommunitySectionModule.editCommunity(
-                            Utils.filterXSS(item.name),
-                            Utils.filterXSS(item.description),
-                            root.community.access,
-                            false, // FIXME
-                            item.color.toString().toUpperCase(),
-                            item.image === root.community.image ? "" : item.image,
-                            item.imageAx,
-                            item.imageAy,
-                            item.imageBx,
-                            item.imageBy,
-                            )
+                        Utils.filterXSS(item.name),
+                        Utils.filterXSS(item.description),
+                        root.community.access,
+                        false, // FIXME
+                        item.color.toString().toUpperCase(),
+                        item.image === root.community.image ? "" : item.image,
+                        item.imageAx,
+                        item.imageAy,
+                        item.imageBx,
+                        item.imageBy,
+                        root.rootStore.isCommunityHistoryArchiveSupportEnabled,
+                    )
                 }
             }
 
