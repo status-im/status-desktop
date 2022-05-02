@@ -114,22 +114,6 @@ Popup {
                     Qt.callLater(searchGif, searchBox.text);
                 }
             }
-
-            StatusFlatRoundButton {
-                id: clearBtn
-                implicitWidth: 14
-                implicitHeight: 14
-                anchors.right: searchBox.right
-                anchors.rightMargin: Style.current.padding
-                anchors.verticalCenter: searchBox.verticalCenter
-                icon.name: "clear"
-                visible: searchBox.text !== ""
-                icon.width: 14
-                icon.height: 14
-                type: StatusFlatRoundButton.Type.Tertiary
-                color: "transparent"
-                onClicked: toggleCategory(previousCategory)
-            }
         }
 
         StyledText {
