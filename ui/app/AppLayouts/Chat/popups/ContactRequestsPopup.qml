@@ -73,6 +73,7 @@ ModalPopup {
             onConfirmButtonClicked: {
                 popup.store.rejectAllContactRequests()
                 declineAllDialog.close()
+                popup.close()
             }
         }
 
@@ -85,6 +86,7 @@ ModalPopup {
             onConfirmButtonClicked: {
                 popup.store.acceptAllContactRequests()
                 acceptAllDialog.close()
+                popup.close()
             }
         }
 
