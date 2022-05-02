@@ -903,7 +903,7 @@ QtObject:
       error "Error importing the community: ", msg = e.msg
       # We should apply some notification mechanism on the application level which will deal with errors and
       # notify user about them. Till then we're using this way.
-      self.events.emit(SIGNAL_COMMUNITY_IMPORTED, CommunityArgs(error: e.msg))
+      self.events.emit(SIGNAL_COMMUNITY_IMPORTED, CommunityArgs(error: "Error while importing the community"))
 
   proc exportCommunity*(self: Service, communityId: string): string =
     try:
