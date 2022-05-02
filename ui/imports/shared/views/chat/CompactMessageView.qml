@@ -379,51 +379,6 @@ Item {
             anchors.right: parent.right
             anchors.rightMargin: chatHorizontalPadding
             height: (item !== null && typeof(item)!== 'undefined')? item.height: 0
-            property string sourceText
-
-            onActiveChanged: {
-                if (!active) {
-                    return
-                }
-
-                let mentionsMap = new Map()
-                let index = 0
-                while (true) {
-                    index = message.indexOf("<a href=", index)
-                    if (index < 0) {
-                        break
-                    }
-                    let startIndex = index
-                    let endIndex = message.indexOf("</a>", index) + 4
-                    if (endIndex < 0) {
-                        index += 8 // "<a href="
-                        continue
-                    }
-                    let addrIndex = message.indexOf("0x", index + 8)
-                    if (addrIndex < 0) {
-                        index += 8 // "<a href="
-                        continue
-                    }
-                    let addrEndIndex = message.indexOf('"', addrIndex)
-                    if (addrEndIndex < 0) {
-                        index += 8 // "<a href="
-                        continue
-                    }
-                    const mentionLink = message.substring(startIndex, endIndex)
-                    const linkTag = message.substring(index, endIndex)
-                    const linkText = linkTag.replace(/(<([^>]+)>)/ig,"").trim()
-                    const atSymbol = linkText.startsWith("@") ? '' : '@'
-                    const mentionTag = Constants.mentionSpanTag + atSymbol + linkText + '</span> '
-                    mentionsMap.set(mentionLink, mentionTag)
-                    index += linkTag.length
-                }
-
-                sourceText = message
-                for (let [key, value] of mentionsMap) {
-                    sourceText = sourceText.replace(new RegExp(key, 'g'), value)
-                }
-            }
-
             sourceComponent: Item {
                 id: editText
                 height: childrenRect.height
@@ -446,7 +401,6 @@ Item {
                     chatType: messageStore.getChatType()
                     isEdit: true
                     emojiPopup: root.emojiPopup
-                    textInput.text: editMessageLoader.sourceText
                     messageContextMenu: root.messageContextMenu
                     onSendMessage: {
                         saveBtn.clicked(null)
@@ -455,6 +409,47 @@ Item {
                         if (suggestions.visible) {
                             editText.suggestionsOpened = true
                         }
+                    }
+
+                    Component.onCompleted: {
+                        let mentionsMap = new Map()
+                        let index = 0
+                        while (true) {
+                            index = message.indexOf("<a href=", index)
+                            if (index < 0) {
+                                break
+                            }
+                            let startIndex = index
+                            let endIndex = message.indexOf("</a>", index) + 4
+                            if (endIndex < 0) {
+                                index += 8 // "<a href="
+                                continue
+                            }
+                            let addrIndex = message.indexOf("0x", index + 8)
+                            if (addrIndex < 0) {
+                                index += 8 // "<a href="
+                                continue
+                            }
+                            let addrEndIndex = message.indexOf('"', addrIndex)
+                            if (addrEndIndex < 0) {
+                                index += 8 // "<a href="
+                                continue
+                            }
+                            const mentionLink = message.substring(startIndex, endIndex)
+                            const linkTag = message.substring(index, endIndex)
+                            const linkText = linkTag.replace(/(<([^>]+)>)/ig,"").trim()
+                            const atSymbol = linkText.startsWith("@") ? '' : '@'
+                            const mentionTag = Constants.mentionSpanTag + atSymbol + linkText + '</span> '
+                            mentionsMap.set(mentionLink, mentionTag)
+                            index += linkTag.length
+                        }
+
+                        var text = message
+                        for (let [key, value] of mentionsMap) {
+                            text = text.replace(new RegExp(key, 'g'), value)
+                        }
+                        editTextInput.textInput.text = text
+                        editTextInput.textInput.cursorPosition = editTextInput.textInput.length
                     }
                 }
 
