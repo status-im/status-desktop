@@ -21,6 +21,10 @@ Page {
     property var rootStore
     property var emojiPopup: null
 
+    Keys.onEscapePressed: {
+        root.rootStore.openCreateChat = false;        
+    }
+
     ListView {
         id: contactsModelListView
         anchors.left: parent.left
