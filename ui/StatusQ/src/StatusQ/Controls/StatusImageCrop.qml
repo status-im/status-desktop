@@ -150,11 +150,15 @@ Item {
 
         The new rect will be adjusted to account for the zoom [1, StatusImageCrop::maxZoomScale]
 
+        \note the source image must be set and \c sourceSize valid otherwise, an error is logged to \c console
         \note If the new rect has a diferent area the crop window will adjust to the new AR
     */
     function setCropRect(newRect /*rect*/) {
         if(newRect.width === 0 || newRect.height === 0)
             return
+        if(root.sourceSize.width === 0 || root.sourceSize.height === 0)
+            console.error("Wrong source size. Ensure source is set")
+
         let n = newRect
         const s = root.sourceSize
         let nZoom = d.currentZoom(s, Qt.size(n.width, n.height))

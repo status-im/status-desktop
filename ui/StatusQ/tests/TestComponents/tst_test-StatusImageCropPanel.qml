@@ -7,6 +7,7 @@ import StatusQ.Controls 0.1
 import StatusQ.TestHelpers 0.1
 
 Item {
+    id: root
     width: 400
     height: 300
 
@@ -20,6 +21,8 @@ Item {
         }
     }
 
+    property url testImageUrl: `${Qt.resolvedUrl(".")}../../sandbox/demoapp/data/logo-test-image.png`
+
     Component {
         id: withSourceComponent
 
@@ -27,7 +30,7 @@ Item {
             anchors.fill: parent
 
             // TODO: generate test image and break the sandbox dependency
-            source: `${Qt.resolvedUrl(".")}../../sandbox/demoapp/data/logo-test-image.png`
+            source: root.testImageUrl
             windowStyle: StatusImageCrop.WindowStyle.Rectangular
             Component.onCompleted: setCropRect(Qt.rect(10, 0, sourceSize.width - 20, sourceSize.height))
         }
@@ -43,7 +46,7 @@ Item {
     TestCase {
         id: qmlWarningsTest
 
-        name: "CheckQmlWarnings"
+        name: "StatusImageCropPanel"
 
         when: windowShown
 
@@ -66,7 +69,6 @@ Item {
             testLoader.active = true
             verify(waitForRendering(testLoader.item))
             testLoader.active = false
-            wait(100)
             verify(qtOuput.qtOuput().length === 0, `No output expected. Found:\n"${qtOuput.qtOuput()}"\n`)
         }
 
@@ -75,7 +77,19 @@ Item {
             testLoader.active = true
             verify(waitForRendering(testLoader.item))
             testLoader.active = false
-            wait(100)
+            verify(qtOuput.qtOuput().length === 0, `No output expected. Found:\n"${qtOuput.qtOuput()}"\n`)
+        }
+
+        function test_setCrop_error_if_no_source_regression() {
+            testLoader.sourceComponent = noSourceComponent
+            testLoader.active = true
+            verify(waitForRendering(testLoader.item))
+            testLoader.item.setCropRect(Qt.rect(10, 10, 300, 300))
+            verify(qtOuput.qtOuput().length !== 0, `No output expected. Found:\n"${qtOuput.qtOuput()}"\n`)
+            qtOuput.restartCapturing()
+            testLoader.item.source = root.testImageUrl
+            verify(waitForRendering(testLoader.item))
+            testLoader.active = false
             verify(qtOuput.qtOuput().length === 0, `No output expected. Found:\n"${qtOuput.qtOuput()}"\n`)
         }
     }

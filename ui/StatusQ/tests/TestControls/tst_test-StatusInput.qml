@@ -91,7 +91,7 @@ Item {
     TestCase {
         id: qmlWarnTC
 
-        name: "CheckQmlWarnings"
+        name: "StatusInput"
 
         when: windowShown
 

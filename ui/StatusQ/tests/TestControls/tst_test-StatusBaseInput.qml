@@ -19,7 +19,7 @@ Item {
 
     TestCase {
         id: testCase
-        name: "CheckQmlWarnings"
+        name: "StatusBaseInput"
 
         when: windowShown
 

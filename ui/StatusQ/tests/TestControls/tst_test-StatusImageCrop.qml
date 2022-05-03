@@ -42,7 +42,7 @@ Item {
     TestCase {
         id: qmlWarningsTest
 
-        name: "CheckQmlWarnings"
+        name: "StatusImageCrop-CheckQmlWarnings"
 
         when: windowShown
 
@@ -65,7 +65,6 @@ Item {
             testLoader.active = true
             verify(waitForRendering(testLoader.item))
             testLoader.active = false
-            wait(100)
             verify(qtOuput.qtOuput().length === 0, `No output expected. Found:\n"${qtOuput.qtOuput()}"\n`)
         }
 
@@ -74,7 +73,6 @@ Item {
             testLoader.active = true
             verify(waitForRendering(testLoader.item))
             testLoader.active = false
-            wait(100)
             verify(qtOuput.qtOuput().length === 0, `No output expected. Found:\n"${qtOuput.qtOuput()}"\n`)
         }
     }
@@ -89,7 +87,7 @@ Item {
     }
 
     TestCase {
-        name: "TestFunctionality"
+        name: "StatusImageCrop-Functionality"
 
         //
         // Test guards
