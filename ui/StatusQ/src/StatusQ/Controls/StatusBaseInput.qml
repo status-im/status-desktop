@@ -296,11 +296,12 @@ Item {
 
         MouseArea {
             id: sensor
-            enabled: !edit.activeFocus
             hoverEnabled: true
             anchors.fill: parent
             cursorShape: Qt.IBeamCursor
             onClicked: {
+                if (edit.activeFocus)
+                    return;
                 edit.forceActiveFocus()
                 root.editClicked()
             }
