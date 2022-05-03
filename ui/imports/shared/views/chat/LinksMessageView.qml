@@ -241,14 +241,20 @@ Column {
     Component {
         id: unfurledLinkComponent
         MessageBorder {
-            width: linkImage.width + 2
-            height: linkImage.height + (Style.current.smallPadding * 2) + linkTitle.height + 2 + linkSite.height
+            width: linkImage.visible ? linkImage.width + 2 : 300
+            height: {
+                if (linkImage.visible) {
+                    return linkImage.height + (Style.current.smallPadding * 2) + linkTitle.height + 2 + linkSite.height
+                }
+                return (Style.current.smallPadding * 2) + linkTitle.height + 2 + linkSite.height
+            }
             isCurrentUser: root.isCurrentUser
 
             StatusChatImageLoader {
                 id: linkImage
                 container: root.container
                 source: linkData.thumbnailUrl
+                visible: linkData.thumbnailUrl.length
                 imageWidth: 300
                 isCurrentUser: root.isCurrentUser
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -256,18 +262,19 @@ Column {
                 anchors.topMargin: 1
                 playing: root.messageStore.playAnimation
             }
+
             StatusBaseText {
                 id: linkTitle
                 text: linkData.title
                 font.pixelSize: 13
                 font.weight: Font.Medium
-                elide: Text.ElideRight
+                wrapMode: Text.Wrap
+                anchors.top: linkImage.visible ? linkImage.bottom : parent.top
+                anchors.topMargin: Style.current.smallPadding
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.top: linkImage.bottom
-                anchors.rightMargin: Style.current.smallPadding
                 anchors.leftMargin: Style.current.smallPadding
-                anchors.topMargin: Style.current.smallPadding
+                anchors.rightMargin: Style.current.smallPadding
                 color: Theme.palette.directColor1
             }
 
@@ -284,9 +291,9 @@ Column {
             }
 
             MouseArea {
-                anchors.top: linkImage.top
-                anchors.left: linkImage.left
-                anchors.right: linkImage.right
+                anchors.top: linkImage.visible ? linkImage.top : linkTitle.top
+                anchors.left: linkImage.visible ? linkImage.left : linkTitle.left
+                anchors.right: linkImage.visible ? linkImage.right : linkTitle.right
                 anchors.bottom: linkSite.bottom
                 cursorShape: Qt.PointingHandCursor
                 onClicked:  {
