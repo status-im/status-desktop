@@ -18,7 +18,10 @@ OnboardingBasePage {
     id: root
 
     property string userPass
-    signal genKeysDone();
+
+    signal genKeysDone()
+
+    backButtonVisible: false
 
     Item {
         id: container
@@ -63,7 +66,7 @@ OnboardingBasePage {
             anchors.top: txtTitle.bottom
             anchors.topMargin: Style.current.padding
             color: Style.current.secondaryText
-            text: qsTrId("Would you like to use your TouchID to login to Status?")
+            text: qsTrId("Would you like to use your Touch ID to login to Status?")
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
             font.pixelSize: 15
@@ -76,7 +79,7 @@ OnboardingBasePage {
             StatusButton {
                 id: button
                 Layout.alignment: Qt.AlignHCenter
-                text: qsTr("Yes, use TouchID ")
+                text: qsTr("Yes, use Touch ID")
                 onClicked: {
                     OnboardingStore.accountSettings.storeToKeychainValue = Constants.storeToKeychainValueStore;
                     dimBackground.active = true;
@@ -87,7 +90,7 @@ OnboardingBasePage {
                 id: keycardLink
                 Layout.alignment: Qt.AlignHCenter
                 color: Theme.palette.primaryColor1
-                text: qsTr("I prefer to use my PIN")
+                text: qsTr("I prefer to use my password")
                 MouseArea {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor

@@ -7,6 +7,9 @@ import utils 1.0
 
 Page {
     id: root
+
+    property alias backButtonVisible: backButton.visible
+
     signal exit()
     signal backClicked()
 
@@ -15,6 +18,7 @@ Page {
     }
 
     StatusRoundButton {
+        id: backButton
         anchors.left: parent.left
         anchors.leftMargin: Style.current.padding
         anchors.bottom: parent.bottom
