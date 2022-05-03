@@ -24,27 +24,27 @@ GridLayout {
             id: languagePicker
             z: 100
             inputList: Models.languagePickerModel
-            searchText: qsTr("Search Languages")
+            placeholderSearchText: qsTr("Search Languages")
         }
 
         StatusListPicker {
             id: languagePicker2
             z: 100
             inputList: Models.languageNoImagePickerModel
-            searchText: qsTr("Search Languages")
+            placeholderSearchText: qsTr("Search Languages")
         }
 
         StatusListPicker {
             id: currencyPicker
             inputList: Models.currencyPickerModel
-            searchText: qsTr("Search Currencies")
+            placeholderSearchText: qsTr("Search Currencies")
             multiSelection: true
         }
 
         StatusListPicker {
             id: currencyPicker2
             inputList: Models.currencyPickerModel2
-            searchText: qsTr("Search Currencies")
+            placeholderSearchText: qsTr("Search Currencies")
             multiSelection: true
             printSymbol: true
             enableSelectableItem: false

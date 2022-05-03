@@ -73,9 +73,15 @@ Item {
 
     /*!
        \qmlproperty string StatusListPicker::searchText
+       This property holds the search text the searcher input displays by default.
+    */
+    property string searchText: ""
+
+    /*!
+       \qmlproperty string StatusListPicker::placeholderSearchText
        This property holds the placeholder text the searcher input displays by default.
     */
-    property string searchText: qsTr("Search")
+    property string placeholderSearchText: qsTr("Search")
 
     /*!
        \qmlproperty string StatusListPicker::multiSelection
@@ -113,7 +119,12 @@ Item {
             }
        \endqml
     */
-    function close() { picker.visible = false }
+    function close() {
+        picker.visible = false
+
+        // Reset searcher:
+        root.searchText = ""
+    }
 
     /*!
         \qmlsignal StatusListPicker::itemPickerChanged(string key, bool selected)
@@ -276,16 +287,20 @@ Item {
                     anchors.verticalCenter: parent.verticalCenter
                     topPadding: 8
                     bottomPadding: 0
-                    placeholderText: root.searchText
+                    placeholderText: root.placeholderSearchText
+                    text: root.searchText
                     icon.name: "search"
 
-                    onTextChanged: { d.applyFilter(text) }
+                    onTextChanged: {
+                        d.applyFilter(text)
+                        root.searchText = text
+                    }
                 }
             }// End of search input item
             delegate: StatusItemPicker {
                 width: content.itemWidth
                 height: content.itemHeight
-                color: mouseArea.containsMouse? Theme.palette.baseColor4 : "transparent"
+                color: mouseArea.containsMouse ? Theme.palette.baseColor4 : "transparent"
                 image: StatusImageSettings {
                     source: model.imageSource ? model.imageSource : ""
                     width: 15
@@ -319,7 +334,15 @@ Item {
                     anchors.fill: parent
                     cursorShape: root.enableSelectableItem ? Qt.PointingHandCursor : Qt.ArrowCursor
                     hoverEnabled: true
-                    onClicked: { selected = !selected }
+                    onClicked: {
+                        if(selectorType === StatusItemPicker.SelectorType.RadioButton) {
+                            // Just only allow to select, not unselect in case of single selection (radiobutton)
+                             if(!selected) selected = !selected
+                        }
+                        else
+                            // In case of multiple selections you can both select and unselect.
+                            selected = !selected
+                    }
                 }
             }
             section.property: "category"
