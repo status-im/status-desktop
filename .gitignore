@@ -54,6 +54,9 @@ _deps
 # QtCreator shadow builds
 build-*/
 
+# CMake builds
+build/
+
 # https://github.com/github/gitignore/blob/master/C%2B%2B.gitignore
 # Prerequisites
 *.d
