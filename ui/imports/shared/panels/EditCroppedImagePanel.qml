@@ -205,9 +205,9 @@ Item {
                         enabled: bannerCropper.sourceSize.width > 0 && bannerCropper.sourceSize.height > 0
 
                         onClicked: {
-                            bannerCropperModal.close()
-                            bannerPreview.setCropRect(bannerCropper.cropRect)
                             bannerPreview.source = bannerCropper.source
+                            bannerPreview.setCropRect(bannerCropper.cropRect)
+                            bannerCropperModal.close()
                             root.userSelectedImage = true
                         }
                     }
