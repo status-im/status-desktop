@@ -87,7 +87,6 @@ OnboardingBasePage {
         }
         TouchIDAuthView {
             userPass: d.newPassword
-            onBackClicked: { gotoKeysStack(GenKeyView.KeysStack.CONFRIM_PWD) }
             onGenKeysDone: { root.keysGenerated() }
         }
     }
