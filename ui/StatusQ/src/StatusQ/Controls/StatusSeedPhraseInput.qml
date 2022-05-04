@@ -98,6 +98,11 @@ Item {
     */
     signal editClicked()
 
+    function setWord(word) {
+        seedWordInput.ignoreTextChange = true
+        seedWordInput.input.edit.text = word
+    }
+
     onActiveFocusChanged: {
         if (root.activeFocus) {
             seedWordInput.input.edit.forceActiveFocus();
@@ -105,6 +110,8 @@ Item {
     }
 
     StatusInput {
+        property bool ignoreTextChange: false
+
         id: seedWordInput
         implicitWidth: parent.width
         implicitHeight: parent.height
@@ -117,18 +124,23 @@ Item {
                    Theme.palette.primaryColor1 : Theme.palette.baseColor1
             font.pixelSize: 15
         }
+        input.acceptReturn: true
         onTextChanged: {
+            if (ignoreTextChange) {
+                ignoreTextChange = false
+                return
+            }
             filteredList.clear();
             if (text !== "") {
-                for (var i = 0; i < inputList.count;i++) {
+                for (var i = 0; i < inputList.count; i++) {
                     if (inputList.get(i).seedWord.startsWith(text)) {
                         filteredList.insert(filteredList.count, {"seedWord": inputList.get(i).seedWord});
                     }
                 }
                 seedSuggestionsList.model = filteredList;
-                if ((text.length >= 3) && (filteredList.count === 1) &&
-                    ((input.edit.keyEvent !== Qt.Key_Backspace) && (input.edit.keyEvent !== Qt.Key_Delete))) {
-                    seedWordInput.text = filteredList.get(0).seedWord.trim();
+                if (filteredList.count === 1 && input.edit.keyEvent !== Qt.Key_Backspace
+                        && input.edit.keyEvent !== Qt.Key_Delete
+                        && filteredList.get(0).seedWord.trim() === seedWordInput.text) {
                     seedWordInput.input.edit.cursorPosition = seedWordInput.text.length;
                     seedSuggestionsList.model = 0;
                     root.doneInsertingWord(seedWordInput.text);
@@ -138,10 +150,18 @@ Item {
             }
         }
         onKeyPressed: {
-            if (input.edit.keyEvent === Qt.Key_Tab) {
-                if (text.length != 0){
-                    root.doneInsertingWord(seedWordInput.text);
+            if (input.edit.keyEvent === Qt.Key_Tab || input.edit.keyEvent === Qt.Key_Return || input.edit.keyEvent === Qt.Key_Enter) {
+                if (!!text && seedSuggestionsList.count > 0) {
+                    seedSuggestionsList.completeWordFill(filteredList.get(seedSuggestionsList.currentIndex).seedWord)
+                    event.accepted = true
+                    return
                 }
+            }
+            if (input.edit.keyEvent === Qt.Key_Down) {
+                seedSuggestionsList.incrementCurrentIndex()
+            }
+            if (input.edit.keyEvent === Qt.Key_Up) {
+                seedSuggestionsList.decrementCurrentIndex()
             }
             root.keyPressed(event);
         }
@@ -184,6 +204,16 @@ Item {
             anchors.topMargin: 8
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 8
+
+            onCountChanged: {
+                seedSuggestionsList.currentIndex = 0
+            }
+
+            function completeWordFill(seedWord) {
+                seedWordInput.input.edit.text = seedWord.trim();
+                seedWordInput.input.edit.cursorPosition = seedWordInput.text.length;
+            }
+
             clip: true
             ScrollBar.vertical: ScrollBar { }
             delegate: Item {
@@ -193,7 +223,8 @@ Item {
                 Rectangle {
                     width: seedSuggestionsList.width
                     height: parent.height
-                    color: mouseArea.containsMouse? Theme.palette.primaryColor1 : "transparent"
+                    color: mouseArea.containsMouse || index === seedSuggestionsList.currentIndex ?
+                        Theme.palette.primaryColor1 : "transparent"
                 }
                 StatusBaseText {
                     id: suggWord
@@ -212,10 +243,7 @@ Item {
                     cursorShape: Qt.PointingHandCursor
                     hoverEnabled: true
                     onClicked: {
-                        seedWordInput.input.edit.text = seedWord.trim();
-                        seedWordInput.input.edit.cursorPosition = seedWordInput.text.length;
-                        root.doneInsertingWord(seedWordInput.text);
-                        seedSuggestionsList.model = 0;
+                        seedSuggestionsList.completeWordFill(seedWord)
                     }
                 }
             }
