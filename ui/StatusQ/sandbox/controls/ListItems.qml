@@ -26,7 +26,7 @@ GridLayout {
         badge.value: 1
     }
     StatusNavigationListItem {
-        title: "Menu Item (selected)"
+        title: "Menu Item (selected) with very long text"
         selected: true
         icon.name: "info"
         badge.value: 1
@@ -421,9 +421,15 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
     }
 
     StatusMemberListItem {
+        nickName: "very-long-annoying-nickname.eth"
+        isOnline: false
+        trustIndicator: StatusContactVerificationIcons.TrustedType.Untrustworthy
+    }
+
+    StatusMemberListItem {
         nickName: "This girl I know from work"
         userName: "annabelle"
-        isOnline: true        
+        isOnline: true
     }
 
     StatusMemberListItem {

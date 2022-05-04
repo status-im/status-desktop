@@ -14,13 +14,13 @@ Rectangle {
     property string title: ""
     property string titleAsideText: ""
     property string subTitle: ""
-    property string tertiaryTitle: ""    
+    property string tertiaryTitle: ""
     property string label: ""
     property real leftPadding: 16
     property real rightPadding: 16
     property bool enabled: true
     property bool highlighted: false
-    property bool propagateTitleClicks: true 
+    property bool propagateTitleClicks: true
     property int type: StatusListItem.Type.Primary
     property list<Item> components
     property var bottomModel: []
@@ -169,26 +169,34 @@ Rectangle {
                 text: statusListItem.title
                 font.pixelSize: 15
                 height: visible ? contentHeight : 0
-                wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                elide: Text.ElideRight
                 anchors.left: parent.left
-                anchors.right: !statusListItem.titleAsideText && !titleIconsRow.sourceComponent ? parent.right : undefined
                 anchors.top: bottomModel.length === 0 ? undefined:  parent.top
                 anchors.topMargin: bottomModel.length === 0 ? undefined : 20
+                width: Math.min(implicitWidth, parent.width)
                 color: {
-                  if (!statusListItem.enabled) {
-                    return Theme.palette.baseColor1
-                  }
-                  switch (statusListItem.type) {
-                      case StatusListItem.Type.Primary:
-                          return Theme.palette.directColor1
-                      case StatusListItem.Type.Secondary:
-                          return Theme.palette.primaryColor1
-                      case StatusListItem.Type.Danger:
-                          return Theme.palette.dangerColor1
-                  }
+                    if (!statusListItem.enabled) {
+                        return Theme.palette.baseColor1
+                    }
+                    switch (statusListItem.type) {
+                        case StatusListItem.Type.Primary:
+                            return Theme.palette.directColor1
+                        case StatusListItem.Type.Secondary:
+                            return Theme.palette.primaryColor1
+                        case StatusListItem.Type.Danger:
+                            return Theme.palette.dangerColor1
+                    }
+                }
+
+                StatusToolTip {
+                    id: statusListItemTitleTooltip
+                    text: statusListItemTitle.text
+                    delay: 0
+                    visible: statusListItemTitle.truncated && statusListItemTitleMouseArea.containsMouse
                 }
 
                 MouseArea {
+                    id: statusListItemTitleMouseArea
                     anchors.fill: parent
                     enabled: statusListItem.enabled
                     cursorShape: sensor.enabled && containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
