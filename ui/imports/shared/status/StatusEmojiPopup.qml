@@ -60,6 +60,9 @@ Popup {
 
         // Add at the  start of the list
         let recentEmojis = localAccountSensitiveSettings.recentEmojis
+        if (recentEmojis === undefined) {
+            recentEmojis = []
+        }
         recentEmojis.unshift(emoji)
         // Remove duplicates
         recentEmojis = recentEmojis.filter(function (e, index) {
