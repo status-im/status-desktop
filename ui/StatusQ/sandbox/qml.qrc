@@ -16,7 +16,7 @@
         <file>pages/StatusTabSwitchPage.qml</file>
         <file>pages/StatusWalletColorButtonPage.qml</file>
         <file>pages/StatusWalletColorSelectPage.qml</file>
-		<file>pages/StatusPasswordStrengthIndicatorPage.qml</file>
+        <file>pages/StatusPasswordStrengthIndicatorPage.qml</file>
         <file>controls/Buttons.qml</file>
         <file>controls/Controls.qml</file>
         <file>controls/Icons.qml</file>
@@ -24,6 +24,8 @@
         <file>controls/ListItems.qml</file>
         <file>controls/Others.qml</file>
         <file>controls/Popups.qml</file>
+        <file>demoapp/ChatChannelView.qml</file>
+        <file>demoapp/CreateChatView.qml</file>
         <file>demoapp/DemoCommunityDetailModal.qml</file>
         <file>demoapp/DemoContactRequestsModal.qml</file>
         <file>demoapp/StatusAppChatView.qml</file>
@@ -31,5 +33,13 @@
         <file>demoapp/StatusAppProfileSettingsView.qml</file>
         <file>demoapp/data/Models.qml</file>
         <file>demoapp/data/qmldir</file>
+        <file>DemoApp.qml</file>
+        <file>ThemeSwitch.qml</file>
+        <file>pages/StatusColorSelectorGridPage.qml</file>
+        <file>pages/StatusListPickerPage.qml</file>
+        <file>pages/StatusPinInputPage.qml</file>
+        <file>pages/StatusTagSelectorPage.qml</file>
+        <file>pages/StatusToastMessagePage.qml</file>
+        <file>pages/StatusWizardStepperPage.qml</file>
     </qresource>
 </RCC>
