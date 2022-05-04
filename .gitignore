@@ -51,7 +51,8 @@ CTestTestfile.cmake
 _deps
 .cache/
 
-
+# QtCreator shadow builds
+build-*/
 
 # https://github.com/github/gitignore/blob/master/C%2B%2B.gitignore
 # Prerequisites
