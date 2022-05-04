@@ -172,8 +172,8 @@ Item {
 
         StatusChatList {
             id: channelList
-
             model: root.chatSectionModule.model
+            highlightItem: !root.store.openCreateChat
             onChatItemSelected: {
                 root.chatSectionModule.setActiveItem(id, "")
             }
