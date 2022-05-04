@@ -117,8 +117,7 @@ Flickable {
 
                     FileDialog {
                         id: imageDialog
-                        //% "Please choose an image"
-                        title: qsTrId("please-choose-an-image")
+                        title: qsTr("Please choose an image")
                         folder: shortcuts.pictures
                         nameFilters: [//% "Image files (*.jpg *.jpeg *.png)"
                             qsTrId("image-files----jpg---jpeg---png-")]
@@ -212,7 +211,7 @@ Flickable {
             spacing: 8
 
             StatusBaseText {
-                text: qsTrId("Community colour")
+                text: qsTr("Community colour")
                 font.pixelSize: 15
                 color: Theme.palette.directColor1
             }
@@ -247,6 +246,27 @@ Flickable {
                     }
                 }
             }
+        }
+
+        StatusListItem {
+            Layout.fillWidth: true
+
+            title: qsTr("History Archive Support")
+
+            visible: root.isCommunityHistoryArchiveSupportEnabled
+
+            sensor.onClicked: {
+                if (root.isCommunityHistoryArchiveSupportEnabled) {
+                    historyArchiveSupportToggle.checked = !historyArchiveSupportToggle.checked
+                }
+            }
+
+            components: [
+                StatusSwitch {
+                    id: historyArchiveSupportToggle
+                    enabled: root.isCommunityHistoryArchiveSupportEnabled
+                }
+            ]
         }
 
         Item {
