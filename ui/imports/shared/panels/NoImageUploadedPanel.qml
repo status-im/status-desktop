@@ -21,11 +21,14 @@ Item {
     ColumnLayout {
         id: mainLayout
 
-        SVGImage {
+        Image {
             id: imageImg
             source: Style.svg("images_icon")
             width: 20
             height: 18
+            sourceSize.width: width || undefined
+            sourceSize.height: height || undefined
+            fillMode: Image.PreserveAspectFit
             Layout.alignment: Qt.AlignVCenter | Qt.AlignHCenter
         }
 
