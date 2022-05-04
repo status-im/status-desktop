@@ -44,6 +44,13 @@ Item {
         This property indicates whether the StatusBaseInput allows multiline text. Default value is false.
     */
     property bool multiline: false
+
+    /*!
+        \qmlproperty bool StatusBaseInput::acceptReturn
+        This property indicates whether the StatusBaseInput allows pressing Enter or Return. 
+        This is used in case multiline is false and we still want to interact using Enter or Return. Default value is false.
+    */
+    property bool acceptReturn: false
     /*!
         \qmlproperty bool StatusBaseInput::clearable
         This property indicates whether the StatusBaseInput allows clearing all text. Default value is false.
@@ -371,8 +378,8 @@ Item {
                         color: Theme.palette.directColor1
                         wrapMode: root.multiline ? Text.WrapAtWordBoundaryOrAnywhere : TextEdit.NoWrap
 
-                        Keys.onReturnPressed: event.accepted = !multiline
-                        Keys.onEnterPressed: event.accepted = !multiline
+                        Keys.onReturnPressed: event.accepted = !multiline && !acceptReturn
+                        Keys.onEnterPressed: event.accepted = !multiline && !acceptReturn
                         Keys.forwardTo: [root]
                         KeyNavigation.priority: !!root.tabNavItem ? KeyNavigation.BeforeItem : KeyNavigation.AfterItem
                         KeyNavigation.tab: root.tabNavItem
