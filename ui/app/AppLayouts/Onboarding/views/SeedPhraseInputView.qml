@@ -9,6 +9,7 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import utils 1.0
 import shared.stores 1.0
+import shared.controls 1.0
 import "../controls"
 import "../stores"
 
@@ -22,6 +23,53 @@ OnboardingBasePage {
     property string mnemonicString
 
     signal seedValidated()
+
+    readonly property var tabs: ([12, 18, 24])
+
+    Timer {
+        id: timer
+    }
+
+    function pasteWords () {
+        const clipboardText = globalUtils.getFromClipboard()
+        // Split words separated by commas and or blank spaces (spaces, enters, tabs)
+        let words = clipboardText.split(/[, \s]+/)
+
+        let index = root.tabs.indexOf(words.length)
+        if (index === -1) {
+            return false
+        }
+        
+        let timeout = 0
+        if (switchTabBar.currentIndex !== index) {
+            switchTabBar.currentIndex = index
+            // Set the teimeout to 100 so the grid has time to generate the new items
+            timeout = 100
+        }
+
+        root.mnemonicInput = []
+        timer.setTimeout(function() {
+            // Populate mnemonicInput
+            for (let i = 0; i <  words.length; i++) {
+                grid.addWord(i + 1, words[i], true)
+            }
+            // Populate grid
+            for (let j = 0; j <  grid.count; j++) {
+                const item = grid.itemAtIndex(j)
+                if (!item || !item.leftComponentText) {
+                    // The grid has gaps in it and also sometimes doesn't return the item correctly when offscreen
+                    // in those cases, we just add the word in the array but not in the grid.
+                    // The button will still work and import correctly. The Grid itself will be partly empty, but offscreen
+                    // With the re-design of the grid, this should be fixed
+                    continue
+                }
+                let pos = parseInt(item.leftComponentText)
+                item.setWord(words[pos - 1])
+            }
+            submitButton.checkMnemonicLength()
+        }, timeout);
+        return true
+    }
 
     Connections {
         target: OnboardingStore.onboardingModuleInst
@@ -64,14 +112,11 @@ OnboardingBasePage {
             anchors.top: headlineText.bottom
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.topMargin: 24
-            StatusSwitchTabButton {
-                text: qsTr("12 words")
-            }
-            StatusSwitchTabButton {
-                text: qsTr("18 words")
-            }
-            StatusSwitchTabButton {
-                text: qsTr("24 words")
+            Repeater {
+                model: root.tabs
+                 StatusSwitchTabButton {
+                    text: qsTr("%1 words").arg(modelData )
+                }
             }
             onCurrentIndexChanged: {
                 root.mnemonicString = "";
@@ -98,11 +143,12 @@ OnboardingBasePage {
             cellHeight: 72
             interactive: false
             z: 100000
+            cacheBuffer: 9999
             model: switchTabBar.currentItem.text.substring(0,2) === "12" ? 12 :
                    switchTabBar.currentItem.text.substring(0,2) === "18" ? 20 : 24
 
             function addWord(pos, word, ignoreGoingNext) {
-                root.mnemonicInput.push({pos: pos, seed: word.replace(/\s/g, '')});
+                root.mnemonicInput.push({pos: parseInt(pos), seed: word.replace(/\s/g, '')});
                 for (var j = 0; j < mnemonicInput.length; j++) {
                     if (mnemonicInput[j].pos === pos && mnemonicInput[j].seed !== word) {
                         mnemonicInput[j].seed = word;
@@ -131,7 +177,7 @@ OnboardingBasePage {
                         }
 
                         grid.positionViewAtEnd();
-                        
+
                         if (grid.count === 20) {
                             grid.contentX = 1500;
                         }
@@ -147,9 +193,10 @@ OnboardingBasePage {
                 textEdit.input.anchors.leftMargin: 16
                 textEdit.input.anchors.rightMargin: 16
                 textEdit.text: {
+                    let pos = parseInt(seedWordInput.leftComponentText)
                     for (var i in root.mnemonicInput) {
                         let p = root.mnemonicInput[i]
-                        if (p.pos === seedWordInput.leftComponentText) {
+                        if (p.pos === pos) {
                             return p.seed
                         }
                     }
@@ -193,15 +240,10 @@ OnboardingBasePage {
                     }
 
                     if (event.matches(StandardKey.Paste)) {
-                        const clipboardText = globalUtils.getFromClipboard()
-                        event.accepted = true
-                        let words = clipboardText.split(' ')
-                        root.mnemonicInput = []
-                        for (let i = 0; i < words.length; i++) {
-                            grid.itemAtIndex(i).setWord(words[i])
-                            grid.addWord(i, words[i], true)
+                        if (root.pasteWords()) {
+                            // Paste was done by splitting the words
+                            event.accepted = true
                         }
-                        submitButton.checkMnemonicLength()
                         return
                     }
 
@@ -214,7 +256,7 @@ OnboardingBasePage {
                     }
 
                     if (event.key === Qt.Key_Delete || event.key === Qt.Key_Backspace) {
-                        var wordIndex = mnemonicInput.findIndex(x => x.pos === leftComponentText);
+                        var wordIndex = mnemonicInput.findIndex(x => x.pos === parseInt(leftComponentText));
                         if (wordIndex > -1) {
                             mnemonicInput.splice(wordIndex , 1);
                             submitButton.checkMnemonicLength()
@@ -223,7 +265,12 @@ OnboardingBasePage {
 
                     grid.currentIndex = index;
                 }
-                Component.onCompleted: { grid.itemAtIndex(0).textEdit.input.edit.forceActiveFocus(); }
+                Component.onCompleted: {
+                    let item = grid.itemAtIndex(0)
+                    if (item) {
+                        item.textEdit.input.edit.forceActiveFocus();
+                    }
+                }
             }
         }
 
@@ -246,13 +293,13 @@ OnboardingBasePage {
             property int gridCount: (grid.count === 20) ? 18 : grid.count
 
             function checkMnemonicLength() {
-                submitButton.enabled = (root.mnemonicInput.length === (grid.atXBeginning ? 12 : submitButton.gridCount));
+                submitButton.enabled = (root.mnemonicInput.length >= (grid.atXBeginning ? root.tabs[0] : submitButton.gridCount));
             }
 
             text: root.existingUser ? qsTr("Restore Status Profile") :
                   ((grid.count > 12) && grid.atXBeginning) ? qsTr("Next") : qsTr("Import")
             onClicked: {
-                if ((grid.count > 12) && grid.atXBeginning) {
+                if ((grid.count > 12) && grid.atXBeginning && root.mnemonicInput.length < gridCount) {
                     grid.positionViewAtEnd();
                     if (grid.count === 20) {
                         grid.contentX = 1500;
