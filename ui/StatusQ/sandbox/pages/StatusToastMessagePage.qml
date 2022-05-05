@@ -15,10 +15,11 @@ Item {
             width: parent.width
             height: childrenRect.height
             model: [
-                {"title":"anna.eth wants to verify your identity", "subTitle":"Provide the code in the letter I sent to you on February 1st.", "icon":"contact", "loading":false, "type":0,"url":""},
-                {"title":"Verification Request Sent", "subTitle":"", "icon":"checkmark-circle", "loading":false, "type":1,"url":""},
-                {"title":"Collectible is being minted...", "subTitle":"View on Etherscan", "icon":"", "loading":true, "type":0,"url":"http://google.com"},
-                {"title":"Contact request sent", "subTitle":"", "icon":"checkmark-circle", "loading":false, "type":1,"url":""}
+                {"title":"anna.eth wants to verify your identity", "subTitle":"Provide the code in the letter I sent to you on February 1st.", "icon":"contact", "loading":false, "type":0,"url":"", "duration":0},
+                {"title":"Verification Request Sent", "subTitle":"", "icon":"checkmark-circle", "loading":false, "type":1,"url":"", "duration":4000},
+                {"title":"Collectible is being minted...", "subTitle":"View on Etherscan", "icon":"", "loading":true, "type":0,"url":"http://google.com", "duration":0},
+                {"title":"Contact request sent", "subTitle":"", "icon":"checkmark-circle", "loading":false, "type":1,"url":"", "duration":4000},
+                {"title":"Test User", "subTitle":"Hello message...", "icon":"", "loading":false, "type":0,"url":"", "duration":4000}
             ]
             delegate: StatusToastMessage {
                 primaryText: modelData.title
@@ -27,12 +28,12 @@ Item {
                 loading: modelData.loading
                 type: modelData.type
                 linkUrl: modelData.url
+                duration: modelData.duration
                 onLinkActivated: {
                     Qt.openUrlExternally(link);
                 }
-                //simulate open
-                Component.onCompleted: {
-                    open = true;
+                onClose: {
+                    console.warn("toast closed: ", modelData.title)
                 }
             }
         }

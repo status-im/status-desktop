@@ -25,6 +25,7 @@ import StatusQ.Core.Theme 0.1
         loading: true
         type: 0
         linkUrl: "http://google.com"
+        duration: 5000
     }
     \endqml
 
@@ -44,7 +45,7 @@ Control {
         \qmlproperty bool StatusToastMessage::open
         This property represents all steps and their descriptions as provided by the user.
     */
-    property bool open: false
+    property bool open: true
     /*!
         \qmlproperty string StatusToastMessage::primaryText
         This property represents the title text of the ToastMessage.
@@ -65,6 +66,13 @@ Control {
         This property represents all steps and their descriptions as provided by the user.
     */
     property string linkUrl: ""
+
+    /*!
+        \qmlproperty int StatusToastMessage::duration
+        This property represents duration in milliseconds, for how long a toast will be visible. If 0 is set for
+        duration, that means a toast won't dissapear without user's interaction (click on close).
+    */
+    property int duration: 0
 
     /*!
         \qmlproperty StatusIconSettings StatusToastMessage::icon
@@ -119,7 +127,7 @@ Control {
 
     /*!
         \qmlsignal
-        This signal is emitted when the ToastMessage is closed.
+        This signal is emitted when the ToastMessage is closed (after animation).
     */
     signal close()
     /*!
@@ -129,9 +137,24 @@ Control {
     */
     signal linkActivated(var link)
 
+    QtObject {
+        id: d
+
+        readonly property string openedState: "opened"
+        readonly property string closedState: "closed"
+    }
+
+    Timer {
+        interval: root.duration
+        running: root.duration > 0
+        onTriggered: {
+            root.open = false;
+        }
+    }
+
     states: [
         State {
-            name: "opened"
+            name: d.openedState
             when: root.open
             PropertyChanges {
                 target: root
@@ -140,15 +163,12 @@ Control {
             }
         },
         State {
-            name: "closed"
+            name: d.closedState
             when: !root.open
             PropertyChanges {
                 target: root
                 anchors.rightMargin: -width
                 opacity: 0.0
-            }
-            StateChangeScript {
-                script: { root.close(); }
             }
         }
     ]
@@ -157,6 +177,12 @@ Control {
         Transition {
             to: "*"
             NumberAnimation { properties: "anchors.rightMargin,opacity"; duration: 400 }
+
+            onRunningChanged: {
+                if(!running && state == d.closedState) {
+                    root.close();
+                }
+            }
         }
     ]
 
@@ -199,9 +225,14 @@ Control {
                 radius: (root.width/2)
                 color: (root.type === StatusToastMessage.Type.Success) ?
                         Theme.palette.successColor2 : Theme.palette.primaryColor3
+                visible: loader.sourceComponent != undefined
                 Loader {
+                    id: loader
                     anchors.centerIn: parent
-                    sourceComponent: root.loading ? loadingInd : statusIcon
+                    sourceComponent: root.loading ? loadingInd :
+                                                    root.icon.name != ""? statusIcon :
+                                                                          undefined
+
                     Component {
                         id: loadingInd
                         StatusLoadingIndicator {
