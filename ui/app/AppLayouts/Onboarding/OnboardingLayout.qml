@@ -82,6 +82,12 @@ QtObject {
                     signal: Global.applicationWindow.navigateTo
                     guard: path === "LogIn"
                 }
+
+                DSM.SignalTransition {
+                    targetState: importSeedState
+                    signal: Global.applicationWindow.navigateTo
+                    guard: path === "ImportSeed"
+                }
             }
 
             DSM.State {
@@ -218,6 +224,7 @@ QtObject {
                 }
             }
             onSeedValidated: {
+                root.keysMainSetState = "importseed";
                 Global.applicationWindow.navigateTo("GenKey");
             }
         }
@@ -227,7 +234,10 @@ QtObject {
         id: genKey
         GenKeyView {
             onExit: {
-                if (LoginStore.currentAccount.username !== "") {
+                if (root.keysMainSetState === "importseed") {
+                    root.keysMainSetState = "connectkeys"
+                    Global.applicationWindow.navigateTo("ImportSeed");
+                } else if (LoginStore.currentAccount.username !== "") {
                     Global.applicationWindow.navigateTo("LogIn");
                 } else {
                     Global.applicationWindow.navigateTo("KeysMain");
