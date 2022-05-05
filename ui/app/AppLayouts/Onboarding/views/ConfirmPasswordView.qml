@@ -119,13 +119,6 @@ OnboardingBasePage {
                 onTextChanged: { errorTxt.text = "" }
                 Keys.onReturnPressed: { if(submitBtn.enabled) d.submit()}
 
-                onKeyPressed: {
-                    if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
-                        event.accepted = true
-                        submitBtn.clicked(null)
-                    }
-                }
-
                 StatusFlatRoundButton {
                     id: showHideCurrentIcon
                     visible: confPswInput.text !== ""
