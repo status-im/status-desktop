@@ -102,11 +102,7 @@ StatusAppThreePanelLayout {
         id: userListComponent
         UserListPanel {
             rootStore: root.rootStore
-            label: localAccountSensitiveSettings.communitiesEnabled &&
-                root.rootStore.chatCommunitySectionModule.isCommunity() ?
-                //% "Members"
-                qsTrId("members-label") :
-                qsTr("Last seen")
+            label: qsTrId("members-label")
             messageContextMenu: quickActionMessageOptionsMenu
             usersModule: {
                 let chatContentModule = root.rootStore.currentChatContentModule()
