@@ -204,6 +204,12 @@ StatusModal {
                     Layout.margins: Style.current.padding
                     Component.onCompleted: advancedSelection.isValid = Qt.binding(function(){return isValid})
                     onCalculateDerivedPath: _internal.getDerivedAddressList()
+                    onEnterPressed: {
+                        if (nextButton.enabled) {
+                            nextButton.clicked(null)
+                            return
+                        }
+                    }
                 }
             }
         }
