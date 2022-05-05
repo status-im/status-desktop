@@ -323,43 +323,52 @@ Item {
     Connections {
         target: ensView.ensUsernamesStore.ensUsernamesModule
         onTransactionWasSent: {
-            //% "Transaction pending..."
-            Global.toastMessage.title = qsTrId("ens-transaction-pending")
-            Global.toastMessage.source = Style.svg("loading")
-            Global.toastMessage.iconColor = Style.current.primary
-            Global.toastMessage.iconRotates = true
-            Global.toastMessage.link = `${ensView.ensUsernamesStore.getEtherscanLink()}/${txResult}`
-            Global.toastMessage.open()
+            let url = `${ensView.ensUsernamesStore.getEtherscanLink()}/${txResult}`;
+            Global.displayToastMessage(qsTr("Transaction pending..."),
+                                       "",
+                                       "",
+                                       true,
+                                       Constants.ephemeralNotificationType.normal,
+                                       url);
         }
         onTransactionCompleted: {
+            let title = ""
             switch(trxType){
-                case "RegisterENS":
-                    Global.toastMessage.title = !success ?
-                                         //% "ENS Registration failed"
-                                         qsTrId("ens-registration-failed")
-                                         :
-                                         //% "ENS Registration completed"
-                                         qsTrId("ens-registration-completed");
-                    break;
-                case "SetPubKey":
-                    Global.toastMessage.title = !success ?
-                                         //% "Updating ENS pubkey failed"
-                                         qsTrId("updating-ens-pubkey-failed")
-                                         :
-                                         //% "Updating ENS pubkey completed"
-                                         qsTrId("updating-ens-pubkey-completed");
-                    break;
+            case "RegisterENS":
+                title = !success ?
+                            //% "ENS Registration failed"
+                            qsTrId("ens-registration-failed")
+                          :
+                            //% "ENS Registration completed"
+                            qsTrId("ens-registration-completed");
+                break;
+            case "SetPubKey":
+                title = !success ?
+                            //% "Updating ENS pubkey failed"
+                            qsTrId("updating-ens-pubkey-failed")
+                          :
+                            //% "Updating ENS pubkey completed"
+                            qsTrId("updating-ens-pubkey-completed");
+                break;
+            default:
+                console.error("unknown transaction type: ", trxType);
+                return
             }
 
+            let icon = "block-icon";
+            let ephType = Constants.ephemeralNotificationType.normal;
             if (success) {
-                Global.toastMessage.source = Style.svg("check-circle")
-                Global.toastMessage.iconColor = Style.current.success
-            } else {
-                Global.toastMessage.source = Style.svg("block-icon")
-                Global.toastMessage.iconColor = Style.current.danger
+                icon = "check-circle";
+                ephType = Constants.ephemeralNotificationType.success;
             }
-            Global.toastMessage.link = `${ensView.ensUsernamesStore.getEtherscanLink()}/${txHash}`
-            Global.toastMessage.open()
+
+            let url = `${ensView.ensUsernamesStore.getEtherscanLink()}/${txHash}`;
+            Global.displayToastMessage(qsTr("Transaction pending..."),
+                                       "",
+                                       icon,
+                                       false,
+                                       ephType,
+                                       url)
         }
     }
 }

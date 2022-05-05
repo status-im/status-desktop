@@ -188,6 +188,10 @@ proc init*(self: Controller) =
     var args = ClickedNotificationArgs(e)
     self.delegate.osNotificationClicked(args.details)
 
+  self.events.on(SIGNAL_DISPLAY_APP_NOTIFICATION) do(e: Args):
+    var args = NotificationArgs(e)
+    self.delegate.displayEphemeralNotification(args.title, args.message, args.details)
+
   self.events.on(SIGNAL_NEW_REQUEST_TO_JOIN_COMMUNITY) do(e: Args):
     var args = CommunityRequestArgs(e)
     self.delegate.newCommunityMembershipRequestReceived(args.communityRequest)

@@ -363,14 +363,14 @@ StatusModal {
                 if(isARequest)
                     root.store.acceptRequestTransaction(transactionId, msgId, root.store.getPubkey() + transactionId.substr(2))
 
-                //% "Transaction pending..."
-                Global.toastMessage.title = qsTrId("ens-transaction-pending")
-                Global.toastMessage.source = Style.svg("loading")
-                Global.toastMessage.iconColor = Style.current.primary
-                Global.toastMessage.iconRotates = true
                 // Refactor this
-                // Global.toastMessage.link = `${walletModel.utilsView.etherscanLink}/${response.result}`
-                Global.toastMessage.open()
+                let url = "" //`${walletModel.utilsView.etherscanLink}/${response.result}`
+                Global.displayToastMessage(qsTr("Transaction pending..."),
+                                           "",
+                                           "",
+                                           true,
+                                           Constants.ephemeralNotificationType.normal,
+                                           url)
 
                 root.close()
             } catch (e) {

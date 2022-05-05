@@ -1,9 +1,10 @@
-import NimQml
+import NimQml, strutils
 import ../shared_models/section_model
 import ../shared_models/section_item
 import ../shared_models/active_section
 import io_interface
 import chat_search_model
+import ephemeral_notification_model
 
 QtObject:
   type
@@ -15,6 +16,8 @@ QtObject:
       activeSectionVariant: QVariant
       chatSearchModel: chat_search_model.Model
       chatSearchModelVariant: QVariant
+      ephemeralNotificationModel: ephemeralNotification_model.Model
+      ephemeralNotificationModelVariant: QVariant
       tmpCommunityId: string # shouldn't be used anywhere except in prepareCommunitySectionModuleForCommunityId/getCommunitySectionModule procs
 
   proc activeSectionChanged*(self:View) {.signal.}
@@ -26,6 +29,8 @@ QtObject:
     self.activeSectionVariant.delete
     self.chatSearchModel.delete
     self.chatSearchModelVariant.delete
+    self.ephemeralNotificationModel.delete
+    self.ephemeralNotificationModelVariant.delete
     self.QObject.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =
@@ -38,6 +43,8 @@ QtObject:
     result.activeSectionVariant = newQVariant(result.activeSection)
     result.chatSearchModel = chat_search_model.newModel()
     result.chatSearchModelVariant = newQVariant(result.chatSearchModel)
+    result.ephemeralNotificationModel = ephemeralNotification_model.newModel()
+    result.ephemeralNotificationModelVariant = newQVariant(result.ephemeralNotificationModel)
     signalConnect(result.model, "notificationsCountChanged()", result,
     "onNotificationsCountChanged()", 2)
 
@@ -66,20 +73,35 @@ QtObject:
   proc chatSearchModel*(self: View): chat_search_model.Model =
     return self.chatSearchModel
 
-  proc chatSearchModelChanged*(self: View) {.signal.}
-
-  proc getChatSearchModel(self: View): QVariant {.slot.} =
-    return self.chatSearchModelVariant
-
   proc rebuildChatSearchModel*(self: View) {.slot.} =
     self.delegate.rebuildChatSearchModel()
 
   proc onNotificationsCountChanged*(self: View) {.slot.} =
     self.delegate.meMentionedCountChanged(self.model.allMentionsCount())
 
+  proc chatSearchModelChanged*(self: View) {.signal.}
+  proc getChatSearchModel(self: View): QVariant {.slot.} =
+    return self.chatSearchModelVariant
   QtProperty[QVariant] chatSearchModel:
     read = getChatSearchModel
     notify = chatSearchModelChanged
+
+  proc ephemeralNotificationModel*(self: View): ephemeralNotification_model.Model =
+    return self.ephemeralNotificationModel
+
+  proc ephemeralNotificationModelChanged*(self: View) {.signal.}
+  proc getEphemeralNotificationModel(self: View): QVariant {.slot.} =
+    return self.ephemeralNotificationModelVariant
+  QtProperty[QVariant] ephemeralNotificationModel:
+    read = getEphemeralNotificationModel
+    notify = ephemeralNotificationModelChanged
+
+  proc displayEphemeralNotification*(self: View, title: string, subTitle: string, icon: string, loading: bool, 
+    ephNotifType: int, url: string) {.slot.} =
+    self.delegate.displayEphemeralNotification(title, subTitle, icon, loading, ephNotifType, url)
+
+  proc removeEphemeralNotification*(self: View, id: string) {.slot.} =
+    self.delegate.removeEphemeralNotification(id.parseInt)
 
   proc openStoreToKeychainPopup*(self: View) {.signal.}
 

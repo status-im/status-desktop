@@ -14,7 +14,6 @@ QtObject {
 
     property var mainModuleInst
     property var privacyModuleInst
-    property var toastMessage
     property bool profilePopupOpened: false
     property string currentNetworkId: ""
     property bool networkGuarded: root.currentNetworkId === Constants.networkMainnet ||
@@ -29,6 +28,7 @@ QtObject {
 
     signal openProfilePopupRequested(string publicKey, var parentPopup, bool openNicknamePopup)
     signal openChangeProfilePicPopup()
+    signal displayToastMessage(string title, string subTitle, string icon, bool loading, int ephNotifType, string url)
 
     function openProfilePopup(publicKey, parentPopup, openNicknamePopup){
         openProfilePopupRequested(publicKey, parentPopup, openNicknamePopup);

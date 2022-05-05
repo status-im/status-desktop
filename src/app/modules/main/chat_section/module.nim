@@ -620,6 +620,8 @@ method onContactUnblocked*(self: Module, publicKey: string) =
   self.view.chatsModel().blockUnblockItemOrSubItemById(publicKey, blocked=false)
 
 method onContactDetailsUpdated*(self: Module, publicKey: string) =
+  if(self.controller.isCommunity()):
+    return
   let contactDetails = self.controller.getContactDetails(publicKey)
   if (contactDetails.details.isContactRequestReceived() and
     not contactDetails.details.isContactRequestSent() and

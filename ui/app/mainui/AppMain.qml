@@ -97,6 +97,9 @@ Item {
             var popup = backupSeedModalComponent.createObject(appMain)
             popup.open()
         }
+        onDisplayToastMessage: {
+            appMain.rootStore.mainModuleInst.displayEphemeralNotification(title, subTitle, icon, loading, ephNotifType, url);
+        }
     }
 
     function changeAppSectionBySectionId(sectionId) {
@@ -742,14 +745,6 @@ Item {
             }
         }
 
-        ToastMessage {
-            id: toastMessage
-            Component.onCompleted: {
-                Global.toastMessage = this;
-            }
-        }
-
-
         DropArea {
             id: dragTarget
 
@@ -945,6 +940,34 @@ Item {
             onSelected: {
                 rootStore.setActiveSectionChat(modelData.sectionId, modelData.chatId)
                 close()
+            }
+        }
+    }
+
+    ListView {
+        id: toastArea
+        anchors.top: parent.top
+        anchors.topMargin: 60
+        anchors.right: parent.right
+        anchors.rightMargin: 8
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 60
+        spacing: 8
+        verticalLayoutDirection: ListView.BottomToTop
+        model: appMain.rootStore.mainModuleInst.ephemeralNotificationModel
+        delegate: StatusToastMessage {
+            primaryText: model.title
+            secondaryText: model.subTitle
+            icon.name: model.icon
+            loading: model.loading
+            type: model.ephNotifType
+            linkUrl: model.url
+            duration: model.durationInMs
+            onLinkActivated: {
+                Qt.openUrlExternally(link);
+            }
+            onClose: {
+                appMain.rootStore.mainModuleInst.removeEphemeralNotification(model.id)
             }
         }
     }
