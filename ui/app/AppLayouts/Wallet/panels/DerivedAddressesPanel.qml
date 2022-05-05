@@ -35,6 +35,7 @@ Item {
             stackLayout.currentIndex = nextSelectableAddressIndex/_internal.pageSize
             if(nextSelectableAddressIndex >= 0 && nextSelectableAddressIndex < RootStore.derivedAddressesList.count) {
                 selectedDerivedAddress.title = RootStore.getDerivedAddressData(nextSelectableAddressIndex)
+                selectedDerivedAddress.hasActivity = RootStore.getDerivedAddressHasActivityData(nextSelectableAddressIndex)
                 selectedDerivedAddress.subTitle = RootStore.getDerivedAddressHasActivityData(nextSelectableAddressIndex) ? qsTr("Has Activity"): qsTr("No Activity")
                 selectedDerivedAddress.enabled = !RootStore.getDerivedAddressAlreadyCreatedData(nextSelectableAddressIndex)
                 selectedDerivedAddress.pathSubFix = nextSelectableAddressIndex
@@ -70,12 +71,14 @@ Item {
         StatusListItem {
             id: selectedDerivedAddress
             property int pathSubFix: 0
+            property bool hasActivity: false
             implicitWidth: parent.width
             color: "transparent"
             border.width: 1
             border.color: Theme.palette.baseColor2
             title: "---"
-            subTitle: qsTr("No activity")
+            subTitle: selectedDerivedAddress.hasActivity ? qsTr("Has Activity"): qsTr("No Activity")
+            statusListItemSubTitle.color: selectedDerivedAddress.hasActivity ?  Theme.palette.primaryColor1 : Theme.palette.baseColor1
             statusListItemTitle.wrapMode: Text.NoWrap
             statusListItemTitle.width: _internal.maxAddressWidth
             statusListItemTitle.elide: Qt.ElideMiddle
@@ -115,6 +118,7 @@ Item {
                                 delegate: StatusListItem {
                                     id: element
                                     property int actualIndex: index + (stackLayout.currentIndex* _internal.pageSize)
+                                    property bool hasActivity: RootStore.getDerivedAddressHasActivityData(actualIndex)
                                     implicitWidth: derivedAddressPopup.width
                                     statusListItemTitle.wrapMode: Text.NoWrap
                                     statusListItemTitle.width: _internal.maxAddressWidth
@@ -122,19 +126,29 @@ Item {
                                     statusListItemTitle.anchors.left: undefined
                                     statusListItemTitle.anchors.right: undefined
                                     title: RootStore.getDerivedAddressData(actualIndex)
-                                    subTitle: RootStore.getDerivedAddressHasActivityData(actualIndex) ? qsTr("Has Activity"): qsTr("No Activity")
+                                    subTitle: element.hasActivity ? qsTr("Has Activity"): qsTr("No Activity")
+                                    statusListItemSubTitle.color: element.hasActivity ?  Theme.palette.primaryColor1 : Theme.palette.baseColor1
                                     enabled: !RootStore.getDerivedAddressAlreadyCreatedData(actualIndex)
                                     components: [
                                         StatusBaseText {
                                             text: element.actualIndex
                                             font.pixelSize: 15
                                             color: Theme.palette.baseColor1
+                                        },
+                                        Rectangle {
+                                            radius: width/2
+                                            height: 5
+                                            width: 5
+                                            color: Theme.palette.primaryColor1
+                                            visible: element.hasActivity
+                                            anchors.verticalCenter: parent.verticalCenter
                                         }
                                     ]
                                     onClicked: {
                                         selectedDerivedAddress.title = title
                                         selectedDerivedAddress.subTitle = subTitle
                                         selectedDerivedAddress.pathSubFix = actualIndex
+                                        selectedDerivedAddress.hasActivity = element.hasActivity
                                         derivedAddressPopup.close()
                                     }
                                 }

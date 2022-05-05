@@ -291,8 +291,8 @@ proc setDisplayName*(displayName: string): RpcResponse[JsonNode] {.raises: [Exce
 
 proc getDerivedAddressList*(password: string, derivedFrom: string, path: string, pageSize: int = 0, pageNumber: int = 6,): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [password, derivedFrom, path, pageSize, pageNumber ]
-  result = core.callPrivateRPC("accounts_getDerivedAddressesForPath", payload)
+  result = core.callPrivateRPC("wallet_getDerivedAddressesForPath", payload)
 
 proc getDerivedAddressListForMnemonic*(mnemonic: string, path: string, pageSize: int = 0, pageNumber: int = 6,): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [mnemonic, path, pageSize, pageNumber ]
-  result = core.callPrivateRPC("accounts_getDerivedAddressesForMenominicWithPath", payload)
+  result = core.callPrivateRPC("wallet_getDerivedAddressesForMenominicWithPath", payload)
