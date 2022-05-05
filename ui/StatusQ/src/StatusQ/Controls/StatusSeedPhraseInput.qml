@@ -131,19 +131,20 @@ Item {
                 return
             }
             filteredList.clear();
-            if (text !== "") {
+            let textToCheck = text.trim()
+            if (textToCheck !== "") {
                 for (var i = 0; i < inputList.count; i++) {
-                    if (inputList.get(i).seedWord.startsWith(text)) {
+                    if (inputList.get(i).seedWord.startsWith(textToCheck)) {
                         filteredList.insert(filteredList.count, {"seedWord": inputList.get(i).seedWord});
                     }
                 }
                 seedSuggestionsList.model = filteredList;
                 if (filteredList.count === 1 && input.edit.keyEvent !== Qt.Key_Backspace
                         && input.edit.keyEvent !== Qt.Key_Delete
-                        && filteredList.get(0).seedWord.trim() === seedWordInput.text) {
-                    seedWordInput.input.edit.cursorPosition = seedWordInput.text.length;
+                        && filteredList.get(0).seedWord.trim() === textToCheck) {
+                    seedWordInput.input.edit.cursorPosition = textToCheck.length;
                     seedSuggestionsList.model = 0;
-                    root.doneInsertingWord(seedWordInput.text);
+                    root.doneInsertingWord(textToCheck);
                 }
             } else {
                 seedSuggestionsList.model = 0;
@@ -211,6 +212,7 @@ Item {
 
             function completeWordFill(seedWord) {
                 seedWordInput.input.edit.text = seedWord.trim();
+                // Changing the text of the input triggers the onTextChanged, thus signalling doneInsertingWord if the condition passes 
                 seedWordInput.input.edit.cursorPosition = seedWordInput.text.length;
             }
 
