@@ -8,7 +8,7 @@ TabBar {
 
     background: Rectangle {
         implicitHeight: 36
-        color: Theme.palette.directColor7
+        color: Theme.palette.statusSwitchTab.barBackgroundColor
         radius: 8
     }
 }

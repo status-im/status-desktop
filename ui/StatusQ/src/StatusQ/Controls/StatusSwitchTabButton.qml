@@ -22,7 +22,9 @@ TabButton {
             StatusBaseText {
                 id: label
                 text: statusSwitchTabButton.text
-                color: Theme.palette.primaryColor1
+                color: statusSwitchTabButton.checked ?
+                    Theme.palette.statusSwitchTab.selectedTextColor :
+                    Theme.palette.statusSwitchTab.textColor
                 font.weight: Font.Medium
                 font.pixelSize: 15
                 horizontalAlignment: Text.AlignHCenter
@@ -36,7 +38,7 @@ TabButton {
         implicitHeight: 36
         implicitWidth: 148
         color: statusSwitchTabButton.checked ?
-            Theme.palette.statusSwitchTab.backgroundColor :
+            Theme.palette.statusSwitchTab.buttonBackgroundColor :
             "transparent"
         radius: 8
         layer.enabled: true

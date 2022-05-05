@@ -1,7 +1,7 @@
 import QtQuick 2.13
 
 QtObject {
-    
+
     id: theme
 
     property string name
@@ -156,7 +156,10 @@ QtObject {
     }
 
     property QtObject statusSwitchTab: QtObject {
-        property color backgroundColor
+        property color buttonBackgroundColor
+        property color barBackgroundColor
+        property color selectedTextColor
+        property color textColor
     }
 
     property QtObject statusSelect: QtObject {

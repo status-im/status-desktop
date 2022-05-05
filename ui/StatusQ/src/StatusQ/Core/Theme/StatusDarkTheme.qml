@@ -230,7 +230,10 @@ ThemePalette {
     }
 
     property QtObject statusSwitchTab: QtObject {
-        property color backgroundColor: baseColor3
+        property color buttonBackgroundColor: primaryColor1
+        property color barBackgroundColor: primaryColor3
+        property color selectedTextColor: white
+        property color textColor: primaryColor1
     }
 
     property QtObject statusSelect: QtObject {
