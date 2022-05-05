@@ -107,6 +107,23 @@ Item {
     */
     property bool enableSelectableItem: true
 
+    /*!
+       \qmlproperty string StatusListPicker::menuAlignment
+       This property holds the allignment of the menu in terms of the button
+    */
+    property int menuAlignment: StatusListPicker.MenuAlignment.Right
+
+    /*!
+       \qmlproperty enum StatusListPicker::MenuAlignment
+       This property holds the allignment of the menu in terms of the button
+       values can be Left, Right or Center
+    */
+    enum MenuAlignment {
+        Left,
+        Right,
+        Center
+    }
+
     /*
         \qmlmethod StatusListPicker::close()
         It can be used to force to close the drop-down picker list whenever the consumer needs it. For example by adding an outside MouseArea to close the picker when user clicks outsite the component:
@@ -240,7 +257,9 @@ Item {
 
         width: content.itemWidth
         height: Math.min(content.contentHeight + content.anchors.topMargin + content.anchors.bottomMargin, root.maxPickerHeight)
-        anchors.left: btn.left
+        anchors.left: root.menuAlignment === StatusListPicker.MenuAlignment.Left ? btn.left : undefined
+        anchors.right: root.menuAlignment === StatusListPicker.MenuAlignment.Right ? btn.right : undefined
+        anchors.horizontalCenter: root.menuAlignment === StatusListPicker.MenuAlignment.Center ? btn.horizontalCenter : undefined
         anchors.top: btn.bottom
         anchors.topMargin: 4
         visible: false
@@ -285,7 +304,7 @@ Item {
                     width: content.itemWidth - 2 * 18
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
-                    topPadding: 8
+                    topPadding: 0
                     bottomPadding: 0
                     placeholderText: root.placeholderSearchText
                     text: root.searchText

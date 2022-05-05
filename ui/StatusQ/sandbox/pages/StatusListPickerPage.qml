@@ -25,6 +25,7 @@ GridLayout {
             z: 100
             inputList: Models.languagePickerModel
             placeholderSearchText: qsTr("Search Languages")
+            menuAlignment: StatusListPicker.MenuAlignment.Left
         }
 
         StatusListPicker {
@@ -32,6 +33,7 @@ GridLayout {
             z: 100
             inputList: Models.languageNoImagePickerModel
             placeholderSearchText: qsTr("Search Languages")
+            menuAlignment: StatusListPicker.MenuAlignment.Center
         }
 
         StatusListPicker {
