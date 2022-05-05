@@ -15,6 +15,7 @@ GridView {
     property bool isValid: false
     property string mnemonicString: ""
     property int preferredHeight: (cellHeight * model/2) + footerItem.height
+    signal enterPressed()
 
     function reset() {
         _internal.errorString  = ""
@@ -94,20 +95,40 @@ GridView {
         }
     }
 
-    delegate: StatusSeedPhraseInput {
-        id: statusSeedInput
-        width: _internal.seedPhraseInputWidth
-        height: _internal.seedPhraseInputHeight
-        textEdit.errorMessageCmp.visible: false
-        textEdit.input.anchors.topMargin: 11
-        leftComponentText: index + 1
-        inputList: BIP39_en { }
-        property int itemIndex: index
-        z: (grid.currentIndex === index) ? 150000000 : 0
-        onDoneInsertingWord: {
-            _internal.mnemonicInput.push({"pos": leftComponentText, "seed": word.replace(/\s/g, '')});
+    function pasteWords () {
+        const clipboardText = globalUtils.getFromClipboard()
+        // Split words separated by commas and or blank spaces (spaces, enters, tabs)
+        let words = clipboardText.split(/[, \s]+/)
+
+        let timeout = 0
+        if ((grid.model === _internal.twelveWordsModel && words.length === _internal.twentyFourWordsModel) ||
+            (grid.model === _internal.twentyFourWordsModel && words.length === _internal.twelveWordsModel)) {
+            footerItem.pressButton()
+            // Set the teimeout to 100 so the grid has time to generate the new items
+            timeout = 100
+        } else if (words.length !== _internal.twentyFourWordsModel && words.length !== _internal.twelveWordsModel) {
+            return false
+        }
+
+        timer.setTimeout(function(){
+            _internal.mnemonicInput = []
+            for (let i = 0; i < words.length; i++) {
+                try {
+                    grid.itemAtIndex(i).setWord(words[i])
+                } catch (e) {
+                    // Getting items outside of the current view might not work
+                }
+                grid.addWord(i, words[i], true)
+            }
+        }, timeout);
+        
+        return true
+    }
+
+    function addWord(pos, word, ignoreGoingNext) {
+        _internal.mnemonicInput.push({"pos": pos, "seed": word.replace(/\s/g, '')});
             for (var j = 0; j < _internal.mnemonicInput.length; j++) {
-                if (_internal.mnemonicInput[j].pos === leftComponentText && _internal.mnemonicInput[j].seed !== word) {
+                if (_internal.mnemonicInput[j].pos === pos && _internal.mnemonicInput[j].seed !== word) {
                     _internal.mnemonicInput[j].seed = word;
                 }
             }
@@ -119,42 +140,73 @@ GridView {
                 }
                 return valueArr.indexOf(item) !== idx
             });
-            for (var i = !grid.atXBeginning ? 12 : 0; i < grid.count; i++) {
-                if (parseInt(grid.itemAtIndex(i).leftComponentText) === (parseInt(leftComponentText)+1)) {
-                    grid.currentIndex = grid.itemAtIndex(i).itemIndex;
-                    grid.itemAtIndex(i).textEdit.input.edit.forceActiveFocus();
-                    if (grid.currentIndex === 11) {
-                        grid.positionViewAtEnd();
-                        if (grid.count === 20) {
-                            grid.contentX = 1500;
+            if (!ignoreGoingNext) {
+                for (var i = !grid.atXBeginning ? 12 : 0; i < grid.count; i++) {
+                    if (parseInt(grid.itemAtIndex(i).leftComponentText) === (parseInt(pos)+1)) {
+                        grid.currentIndex = grid.itemAtIndex(i).itemIndex;
+                        grid.itemAtIndex(i).textEdit.input.edit.forceActiveFocus();
+                        if (grid.currentIndex === 11) {
+                            grid.positionViewAtEnd();
+                            if (grid.count === 20) {
+                                grid.contentX = 1500;
+                            }
                         }
                     }
                 }
             }
             grid.isValid = (_internal.mnemonicInput.length === grid.model);
+    }
+
+    delegate: StatusSeedPhraseInput {
+        id: statusSeedInput
+        width: _internal.seedPhraseInputWidth
+        height: _internal.seedPhraseInputHeight
+        textEdit.errorMessageCmp.visible: false
+        textEdit.input.anchors.topMargin: 11
+        leftComponentText: index + 1
+        inputList: BIP39_en { }
+        property int itemIndex: index
+        z: (grid.currentIndex === index) ? 150000000 : 0
+        onDoneInsertingWord: {
+            grid.addWord(leftComponentText, word)
         }
         onEditClicked: {
             grid.currentIndex = index;
             grid.itemAtIndex(index).textEdit.input.edit.forceActiveFocus();
         }
         onKeyPressed: {
-            if (event.key === Qt.Key_Tab || event.key === Qt.Key_Right) {
-                for (var i = !grid.atXBeginning ? 12 : 0; i < grid.count; i++) {
-                    if (parseInt(grid.itemAtIndex(i).leftComponentText) === ((parseInt(leftComponentText)+1) <= grid.count ? (parseInt(leftComponentText)+1) : grid.count)) {
-                        grid.itemAtIndex(i).textEdit.input.edit.forceActiveFocus();
-                        textEdit.input.tabNavItem = grid.itemAtIndex(i).textEdit.input.edit;
-                    }
-                }
-            } else if (event.key === Qt.Key_Left) {
+            if (event.key === Qt.Key_Backtab) {
                 for (var i = !grid.atXBeginning ? 12 : 0; i < grid.count; i++) {
                     if (parseInt(grid.itemAtIndex(i).leftComponentText) === ((parseInt(leftComponentText)-1) >= 0 ? (parseInt(leftComponentText)-1) : 0)) {
-                        grid.itemAtIndex(i).textEdit.input.edit.forceActiveFocus();
+                        grid.itemAtIndex(i).textEdit.input.edit.forceActiveFocus(Qt.TabFocusReason);
+                        textEdit.input.tabNavItem = grid.itemAtIndex(i).textEdit.input.edit;
+                        event.accepted = true
+                        break
                     }
                 }
-            } else if (event.key === Qt.Key_Down) {
-                grid.itemAtIndex((index+1 < grid.count) ? (index+1) : (grid.count-1)).textEdit.input.edit.forceActiveFocus();
-            } else if (event.key === Qt.Key_Up) {
-                grid.itemAtIndex((index-1 >= 0) ? (index-1) : 0).textEdit.input.edit.forceActiveFocus();
+            } else if (event.key === Qt.Key_Tab) {
+                for (var i = !grid.atXBeginning ? 12 : 0; i < grid.count; i++) {
+                    if (parseInt(grid.itemAtIndex(i).leftComponentText) === ((parseInt(leftComponentText)+1) <= grid.count ? (parseInt(leftComponentText)+1) : grid.count)) {
+                        grid.itemAtIndex(i).textEdit.input.edit.forceActiveFocus(Qt.TabFocusReason);
+                        textEdit.input.tabNavItem = grid.itemAtIndex(i).textEdit.input.edit;
+                        event.accepted = true
+                        break
+                    }
+                }
+            }
+
+            if (event.matches(StandardKey.Paste)) {
+                if (grid.pasteWords()) {
+                    // Paste was done by splitting the words
+                    event.accepted = true
+                }
+                return
+            }
+
+            if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
+                event.accepted = true
+                grid.enterPressed()
+                return
             }
 
             if (event.key === Qt.Key_Delete || event.key === Qt.Key_Backspace) {
@@ -169,8 +221,14 @@ GridView {
         }
     }
     footer: Item {
+        id: footerC
+
+        function pressButton() {
+            changeSeedNbWordsBtn.clicked(null)
+        }
+
         width: grid.width - Style.current.padding
-        height: button.height + errorMessage.height + Style.current.padding*2
+        height: changeSeedNbWordsBtn.height + errorMessage.height + Style.current.padding*2
         StatusBaseText {
             id: errorMessage
 
@@ -189,7 +247,7 @@ GridView {
             wrapMode: Text.WordWrap
         }
         StatusButton {
-            id: button
+            id: changeSeedNbWordsBtn
             anchors.top: errorMessage.bottom
             anchors.topMargin: Style.current.padding
             anchors.horizontalCenter: parent.horizontalCenter

@@ -29,6 +29,7 @@ ColumnLayout {
                            addAccountType === SelectGeneratedAccount.AddAccountType.WatchOnly ? (addressInput.text !== "" && addressInput.valid) : true
 
     signal calculateDerivedPath()
+    signal enterPressed()
 
     function reset() {
         //reset selectGeneratedAccount
@@ -121,6 +122,7 @@ ColumnLayout {
                 calculateDerivedPath()
             }
         }
+        onEnterPressed: advancedSection.enterPressed()
     }
 
     StatusInput {
