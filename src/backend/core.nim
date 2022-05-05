@@ -69,3 +69,15 @@ proc sendTransaction*(inputJSON: string, password: string): RpcResponse[JsonNode
   except RpcException as e:
     error "error sending tx", inputJSON, exception=e.msg
     raise newException(RpcException, e.msg)
+
+
+proc migrateKeyStoreDir*(account: string, password: string, oldKeystoreDir: string, multiaccountKeystoreDir: string)
+  {.raises: [RpcException, ValueError, Defect, SerializationError].} =
+  try:
+    var hashed_password = "0x" & $keccak_256.digest(password)
+    discard status_go.migrateKeyStoreDir(account, hashed_password, oldKeystoreDir, multiaccountKeystoreDir)
+  except RpcException as e:
+    error "error migrating keystore dir", account, exception=e.msg
+    raise newException(RpcException, e.msg)
+
+  

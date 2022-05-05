@@ -1,5 +1,4 @@
 import os, json, sequtils, strutils, uuids
->>>>>>> 8b5de1363 (fix(@general): keystore management)
 import json_serialization, chronicles
 import times as times
 
@@ -7,6 +6,7 @@ import ./dto/accounts as dto_accounts
 import ./dto/generated_accounts as dto_generated_accounts
 import ../../../backend/accounts as status_account
 import ../../../backend/general as status_general
+import ../../../backend/core as status_core
 
 import ../../../app/core/fleets/fleet_configuration
 import ../../common/[account_constants, network_constants, utils, string_utils]
@@ -49,49 +49,6 @@ proc getImportedAccount*(self: Service): GeneratedAccountDto =
 
 proc isFirstTimeAccountLogin*(self: Service): bool =
   return self.isFirstTimeAccountLogin
-
-# Remove extra copied keystore that are not needed (can be remove 1st jan 2023)
-proc deleteExtraKeyStoreFile*(self: Service) =
-  let accounts = status_account.getAccounts().result
-  var deleteCandidates: seq[string] = @[]
-  for path in walkFiles(self.keyStoreDir & "*"):
-    var found = false
-    for account in accounts.getElems():
-      let address = account{"address"}.getStr.replace("0x", "")
-      if path.endsWith(address):
-        found = true
-        break
-
-    if not found:
-      deleteCandidates.add(path)
-
-  if len(deleteCandidates) == 2:
-    return
-
-  let tz = times.utc()
-  let tf = times.initTimeFormat("yyyy-mm-dd'T'HH-mm-ss")
-  proc extractTime(path: string): DateTime =
-    return os.extractFilename(path).split("--")[1].split(".")[0].parse(tf, tz)
-
-  let interval = times.initDuration(seconds = 2)
-  var toDelete: seq[string] = @[]
-  for a in deleteCandidates:
-    let aTime = extractTime(a)
-    var found = false
-    for b in deleteCandidates:
-      let bTime = extractTime(b)
-
-      if aTime - bTime < interval:
-        found = true
-        break
-
-    if found:
-      continue
-    
-    toDelete.add(a)
-
-  for path in toDelete:
-    os.removeFile(path)
 
 proc setKeyStoreDir(self: Service, key: string) = 
   self.keyStoreDir = joinPath(main_constants.ROOTKEYSTOREDIR, key) & main_constants.sep
@@ -381,12 +338,12 @@ proc login*(self: Service, account: AccountDto, password: string): string =
       elif(img.imgType == "large"):
         largeImage = img.uri
 
-    # Copy old keystore file to new dir, this code can be remove 1st jan 2023    
     let keyStoreDir = joinPath(main_constants.ROOTKEYSTOREDIR, account.keyUid) & main_constants.sep
-    if not dirExists(self.keyStoreDir):
-      os.createDir(self.keyStoreDir)
-      for path in walkFiles(main_constants.ROOTKEYSTOREDIR & "*"):
-        os.copyFile(path, self.keyStoreDir & os.extractFilename(path))
+    if not dirExists(keyStoreDir):
+      os.createDir(keyStoreDir)
+      status_core.migrateKeyStoreDir($ %* {
+        "key-uid": account.keyUid
+      }, password, main_constants.ROOTKEYSTOREDIR, keyStoreDir)
 
     self.setKeyStoreDir(account.keyUid)
     # This is moved from `status-lib` here
@@ -420,8 +377,7 @@ proc login*(self: Service, account: AccountDto, password: string): string =
     }
 
     let response = status_account.login(account.name, account.keyUid, hashedPassword, thumbnailImage,
-    largeImage, $nodeCfg)
-
+      largeImage, $nodeCfg)
     var error = "response doesn't contain \"error\""
     if(response.result.contains("error")):
       error = response.result["error"].getStr
@@ -432,7 +388,7 @@ proc login*(self: Service, account: AccountDto, password: string): string =
     return error
 
   except Exception as e:
-    error "error: ", procName="setupAccount", errName = e.name, errDesription = e.msg
+    error "error: ", procName="login", errName = e.name, errDesription = e.msg
     return e.msg
 
 proc verifyAccountPassword*(self: Service, account: string, password: string): bool =

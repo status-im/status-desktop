@@ -56,7 +56,7 @@ let
   OPENURI* = desktopConfig.uri
   DATADIR* = baseDir & sep
   STATUSGODIR* = joinPath(baseDir, "data") & sep
-  ROOTKEYSTOREDIR* = joinPath(baseDir, "data", "keystore") & sep
+  ROOTKEYSTOREDIR* = joinPath(baseDir, "data", "keystore")
   TMPDIR* = joinPath(baseDir, "tmp") & sep
   LOGDIR* = joinPath(baseDir, "logs") & sep
 
