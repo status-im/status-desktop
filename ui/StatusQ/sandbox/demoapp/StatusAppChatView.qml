@@ -74,6 +74,7 @@ StatusAppThreePanelLayout {
             StatusChatList {
                 anchors.horizontalCenter: parent.horizontalCenter
                 model: Models.demoChatListItems
+                highlightItem: !root.createChat
                 onChatItemUnmuted: {
                     for (var i = 0; i < Models.demoChatListItems.count; i++) {
                         let item = Models.demoChatListItems.get(i);

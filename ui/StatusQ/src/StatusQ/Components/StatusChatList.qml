@@ -17,6 +17,7 @@ Column {
     property string categoryId: ""
     property var model: null
     property bool draggableItems: false
+    property bool highlightItem: true
 
     property alias statusChatListItems: statusChatListItems
 
@@ -102,7 +103,7 @@ Column {
                     hasUnreadMessages: model.hasUnreadMessages
                     notificationsCount: model.notificationsCount
                     highlightWhenCreated: !!model.highlight
-                    selected: model.active
+                    selected: (model.active && statusChatList.highlightItem)
 
                     icon.emoji: model.emoji
                     icon.color: !!model.color ? model.color : Theme.palette.userCustomizationColors[model.colorId]
