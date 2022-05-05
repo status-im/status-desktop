@@ -50,10 +50,8 @@ StatusModal {
     }
 
     header.title: isEdit ?
-            //% "Edit community"
-            qsTrId("edit-community") :
-            //% "New community"
-            qsTrId("new-community")
+            qsTr("Edit Community") :
+            qsTr("Create New Community")
 
     contentItem: ScrollView {
 
@@ -110,12 +108,13 @@ StatusModal {
 
             StatusInput {
                 id: descriptionTextArea
-                label: qsTr("Description")
+                label: qsTr("Give it a short description")
                 charLimit: maxCommunityDescLength
 
                 input.placeholderText: qsTr("What your community is about")
                 input.multiline: true
                 input.implicitHeight: 88
+                input.verticalAlignment: TextEdit.AlignTop
 
                 validators: [StatusMinLengthValidator {
                     minLength: 1
@@ -242,8 +241,7 @@ StatusModal {
             }
 
             StatusBaseText {
-                //% "Community colour"
-                text: qsTrId("community-color")
+                text: qsTr("Community colour")
                 font.pixelSize: 15
                 color: Theme.palette.directColor1
                 anchors.left: parent.left
@@ -267,8 +265,7 @@ StatusModal {
                     contentColor: colorDialog.colorSelected ? Theme.palette.indirectColor1 : Theme.palette.baseColor1
                     text: colorDialog.colorSelected ?
                         colorDialog.color.toString().toUpperCase() :
-                        //% "Pick a color"
-                        qsTrId("pick-a-color")
+                        qsTr("Pick a colour")
 
                     onClicked: colorDialog.open();
                     onTextChanged: {
