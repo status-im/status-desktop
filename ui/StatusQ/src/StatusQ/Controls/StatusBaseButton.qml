@@ -40,11 +40,9 @@ Rectangle {
               return 5
             case StatusBaseButton.Size.Small:
               return 10
-              break;
             case StatusBaseButton.Size.Large:
             default:
               return 11
-              break;
         }
     }
     property real defaultBottomPadding: {
@@ -53,11 +51,9 @@ Rectangle {
               return 5
             case StatusBaseButton.Size.Small:
               return 10
-              break;
             case StatusBaseButton.Size.Large:
             default:
               return 11
-              break;
         }
     }
 
@@ -138,6 +134,7 @@ Rectangle {
             Loader {
                 anchors.verticalCenter: parent.verticalCenter
                 active: loading
+                visible: loading
                 sourceComponent: StatusLoadingIndicator {
                     color: statusBaseButton.enabled ? textColor
                                                     : disabledTextColor
