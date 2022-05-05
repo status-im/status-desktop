@@ -44,75 +44,86 @@ OnboardingBasePage {
             StatusBaseText {
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: qsTr("You will never be able to recover your password if you lose it.")
-                font.pixelSize: 12
+                font.pixelSize: 15
                 color: Theme.palette.dangerColor1
             }
 
             StatusBaseText {
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: qsTr("If you need to, write it using pen and paper and keep in a safe place.")
-                font.pixelSize: 12
+                font.pixelSize: 15
                 color: Theme.palette.baseColor1
             }
 
             StatusBaseText {
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: qsTr("If you lose your password you will lose access to  your Status profile.")
-                font.pixelSize: 12
+                font.pixelSize: 15
                 color: Theme.palette.baseColor1
             }
         }
 
-        // TODO replace with StatusInput as soon as it supports password
-        Input {
-            id: confPswInput
-
-            property bool showPassword: false
-
+        Column {
+            anchors.horizontalCenter: parent.horizontalCenter
+            spacing: Style.current.padding
             width: parent.width
-            enabled: !submitBtn.loading
-            placeholderText: qsTr("Confirm you password (again)")
-            textField.echoMode: showPassword ? TextInput.Normal : TextInput.Password
-            textField.validator: RegExpValidator { regExp: /^[!-~]{0,64}$/ } // That incudes NOT extended ASCII printable characters less space and a maximum of 64 characters allowed
-            keepHeight: true
-            textField.rightPadding: showHideCurrentIcon.width + showHideCurrentIcon.anchors.rightMargin + Style.current.padding / 2
-            onTextChanged: {
-                errorTxt.text = ""
+
+            // TODO replace with StatusInput as soon as it supports password
+            Input {
+                id: confPswInput
+
+                property bool showPassword: false
+
+                width: parent.width
+                enabled: !submitBtn.loading
+                placeholderText: qsTr("Confirm you password (again)")
+                textField.echoMode: showPassword ? TextInput.Normal : TextInput.Password
+                textField.validator: RegExpValidator { regExp: /^[!-~]{0,64}$/ } // That incudes NOT extended ASCII printable characters less space and a maximum of 64 characters allowed
+                keepHeight: true
+                textField.rightPadding: showHideCurrentIcon.width + showHideCurrentIcon.anchors.rightMargin + Style.current.padding / 2
+                onTextChanged: {
+                    errorTxt.text = ""
+                }
+
+                StatusFlatRoundButton {
+                    id: showHideCurrentIcon
+                    visible: confPswInput.text !== ""
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.right: parent.right
+                    anchors.rightMargin: 16
+                    width: 24
+                    height: 24
+                    icon.name: confPswInput.showPassword ? "hide" : "show"
+                    icon.color: Theme.palette.baseColor1
+
+                    onClicked: confPswInput.showPassword = !confPswInput.showPassword
+                }
             }
 
-            StatusFlatRoundButton {
-                id: showHideCurrentIcon
-                visible: confPswInput.text !== ""
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.right: parent.right
-                anchors.rightMargin: 16
-                width: 24
-                height: 24
-                icon.name: confPswInput.showPassword ? "hide" : "show"
-                icon.color: Theme.palette.baseColor1
-
-                onClicked: confPswInput.showPassword = !confPswInput.showPassword
+            StatusBaseText {
+                id: errorTxt
+                anchors.horizontalCenter: parent.horizontalCenter
+                font.pixelSize: 12
+                color: Theme.palette.dangerColor1
+                onTextChanged: {
+                    if(text === "") filler.visible = true
+                    else filler.visible = false
+                }
             }
-        }
 
-        StatusBaseText {
-            id: errorTxt
-            font.pixelSize: 12
-            width: parent.width
-            horizontalAlignment: StatusBaseText.AlignHCenter
-            color: Theme.palette.dangerColor1
-        }
-
-        // Just a column filler to fit the design
-        Item {
-            height: Style.current.padding
-            width: parent.width
+            // Just a column filler to keep the component height althought errorTxt.text is ""
+            Item {
+                id: filler
+                width: root.width
+                visible: true
+                height: errorTxt.height
+            }
         }
 
         StatusButton {
             id: submitBtn
             anchors.horizontalCenter: parent.horizontalCenter
-            text: qsTr("Finalize Status Password Creation")
+            text: qsTr("Finalise Status Password Creation")
             enabled:!submitBtn.loading && confPswInput.text.length >= 6
 
             property Timer sim: Timer {
