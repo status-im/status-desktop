@@ -194,13 +194,13 @@ Rectangle {
         }
         showToastMessage: function(result) {
             // TODO: WIP under PR https://github.com/status-im/status-desktop/pull/4274
-            //% "Transaction pending..."
-            toastMessage.title = qsTrId("ens-transaction-pending")
-            toastMessage.source = Style.svg("loading")
-            toastMessage.iconColor = Style.current.primary
-            toastMessage.iconRotates = true
-            toastMessage.link = `${WalletStore.getEtherscanLink()}/${result}`
-            toastMessage.open()
+            let url = `${WalletStore.getEtherscanLink()}/${result}`;
+            Global.displayToastMessage(qsTr("Transaction pending..."),
+                                       "",
+                                       "",
+                                       true,
+                                       Constants.ephemeralNotificationType.normal,
+                                       url);
         }
     }
 

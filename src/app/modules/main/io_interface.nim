@@ -128,6 +128,17 @@ method mnemonicBackedUp*(self: AccessInterface) {.base.} =
 method osNotificationClicked*(self: AccessInterface, details: NotificationDetails) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method displayEphemeralNotification*(self: AccessInterface, title: string, subTitle: string, details: NotificationDetails) 
+  {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method displayEphemeralNotification*(self: AccessInterface, title: string, subTitle: string, icon: string, loading: bool, 
+    ephNotifType: int, url: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method removeEphemeralNotification*(self: AccessInterface, id: int64) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method newCommunityMembershipRequestReceived*(self: AccessInterface, membershipRequest: CommunityMembershipRequestDto)
   {.base.} =
   raise newException(ValueError, "No implementation available")

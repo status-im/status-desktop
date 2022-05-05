@@ -362,43 +362,37 @@ Item {
     Connections {
         target: root.store.communitiesModuleInst
         onImportingCommunityStateChanged: {
-            if (state !== Constants.communityImported &&
-                state !== Constants.communityImportingInProgress &&
-                state !== Constants.communityImportingError)
-            {
-                return
-            }
-
-            Global.toastMessage.close()
+            let title = ""
+            let loading = false
 
             if (state === Constants.communityImported)
             {
                 //% "Community imported"
-                Global.toastMessage.title = qsTrId("community-imported")
-                Global.toastMessage.source = ""
-                Global.toastMessage.iconRotates = false
-                Global.toastMessage.dissapearInMs = 4000
+                title = qsTrId("community-imported")
             }
             else if (state === Constants.communityImportingInProgress)
             {
                 //% "Importing community is in progress"
-                Global.toastMessage.title = qsTrId("importing-community-is-in-progress")
-                Global.toastMessage.source = Style.svg("loading")
-                Global.toastMessage.iconRotates = true
-                Global.toastMessage.dissapearInMs = -1
+                title = qsTrId("importing-community-is-in-progress")
+                loading = true
             }
             else if (state === Constants.communityImportingError)
             {
-                Global.toastMessage.title = errorMsg
-                Global.toastMessage.source = ""
-                Global.toastMessage.iconRotates = false
-                Global.toastMessage.dissapearInMs = 4000
+                title = errorMsg
             }
 
-            Global.toastMessage.displayCloseButton = false
-            Global.toastMessage.displayLink = false
-            Global.toastMessage.iconColor = Style.current.primary
-            Global.toastMessage.open()
+            if(title == "")
+            {
+                console.error("unknown state while importing community: ", state)
+                return
+            }
+
+            Global.displayToastMessage(title,
+                                       "",
+                                       "",
+                                       loading,
+                                       Constants.ephemeralNotificationType.normal,
+                                       "")
         }
     }
 

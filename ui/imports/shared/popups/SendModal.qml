@@ -275,13 +275,13 @@ StatusModal {
                     return sendingError.open()
                 }
 
-                // % "Transaction pending..."
-                Global.toastMessage.title = qsTrId("ens-transaction-pending")
-                Global.toastMessage.source = Style.svg("loading")
-                Global.toastMessage.iconColor = Style.current.primary
-                Global.toastMessage.iconRotates = true
-                Global.toastMessage.link = `${popup.store.getEtherscanLink()}/${response.result}`
-                Global.toastMessage.open()
+                let url = `${popup.store.getEtherscanLink()}/${response.result}`
+                Global.displayToastMessage(qsTr("Transaction pending..."),
+                                           "",
+                                           "",
+                                           true,
+                                           Constants.ephemeralNotificationType.normal,
+                                           url)
                 popup.close()
             } catch (e) {
                 console.error('Error parsing the response', e)
