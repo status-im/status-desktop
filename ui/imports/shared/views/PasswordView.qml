@@ -32,6 +32,8 @@ Column {
     property alias confirmationPswText: confirmPswInput.text
     property alias errorMsgText: errorTxt.text
 
+    signal returnPressed()
+
     function forceNewPswInputFocus() { newPswInput.forceActiveFocus(Qt.MouseFocusReason) }
 
     function reset() {
@@ -176,6 +178,7 @@ Column {
         textField.validator: d.validator
         keepHeight: true
         textField.rightPadding: showHideCurrentIcon.width + showHideCurrentIcon.anchors.rightMargin + Style.current.padding / 2
+        Keys.onReturnPressed: { root.returnPressed() }
 
         StatusFlatRoundButton {
             id: showHideCurrentIcon
@@ -220,6 +223,7 @@ Column {
                 // Update strength indicator:
                 strengthInditactor.strength = d.convertStrength(RootStore.getPasswordStrengthScore(newPswInput.text, root.onboarding))
             }
+            Keys.onReturnPressed: { root.returnPressed() }
 
             StatusFlatRoundButton {
                 id: showHideNewIcon
@@ -322,6 +326,7 @@ Column {
                 root.checkPasswordMatches(false)
             }
         }
+        Keys.onReturnPressed: { root.returnPressed() }
 
         StatusFlatRoundButton {
             id: showHideConfirmIcon

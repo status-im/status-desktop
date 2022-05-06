@@ -23,6 +23,41 @@ OnboardingBasePage {
     property string displayName
     function forcePswInputFocus() { confPswInput.forceActiveFocus(Qt.MouseFocusReason)}
 
+    QtObject {
+        id: d
+
+        function checkPasswordMatches() {
+            if (confPswInput.text !== root.password) {
+                errorTxt.text = qsTr("Passwords don't match")
+                return false
+            }
+            return true
+        }
+
+        function submit() {
+            if (!checkPasswordMatches()) {
+                return
+            }
+
+            if (OnboardingStore.accountCreated) {
+                if (root.password !== root.tmpPass) {
+                    OnboardingStore.changePassword(root.tmpPass, root.password)
+                    root.tmpPass = root.password
+                }
+                else {
+                    submitBtn.loading = false
+                    root.exit();
+                }
+            }
+            else {
+                root.tmpPass = root.password
+                submitBtn.loading = true
+                OnboardingStore.setCurrentAccountAndDisplayName(root.displayName)
+                pause.start()
+            }
+        }
+    }
+
     Column {
         id: view
         spacing: 4 * Style.current.padding
@@ -81,9 +116,8 @@ OnboardingBasePage {
                 textField.validator: RegExpValidator { regExp: /^[!-~]{0,64}$/ } // That incudes NOT extended ASCII printable characters less space and a maximum of 64 characters allowed
                 keepHeight: true
                 textField.rightPadding: showHideCurrentIcon.width + showHideCurrentIcon.anchors.rightMargin + Style.current.padding / 2
-                onTextChanged: {
-                    errorTxt.text = ""
-                }
+                onTextChanged: { errorTxt.text = "" }
+                Keys.onReturnPressed: { if(submitBtn.enabled) d.submit()}
 
                 StatusFlatRoundButton {
                     id: showHideCurrentIcon
@@ -134,22 +168,7 @@ OnboardingBasePage {
                 }
             }
 
-            onClicked: {
-                if (OnboardingStore.accountCreated) {
-                    if (root.password !== root.tmpPass) {
-                        OnboardingStore.changePassword(root.tmpPass, root.password);
-                        root.tmpPass = root.password;
-                    } else {
-                        submitBtn.loading = false
-                        root.exit();
-                    }
-                } else {
-                    root.tmpPass = root.password;
-                    submitBtn.loading = true
-                    OnboardingStore.setCurrentAccountAndDisplayName(root.displayName);
-                    pause.start();
-                }
-            }
+            onClicked: { d.submit() }
 
             Connections {
                 target: onboardingModule
