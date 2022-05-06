@@ -38,6 +38,15 @@ Rectangle {
         }
     }
 
+    Rectangle {
+        width: 70
+        height: 4
+        color: Style.current.secondaryMenuBackground
+        anchors.top: parent.top
+        anchors.topMargin: -2
+        anchors.horizontalCenter: parent.horizontalCenter
+    }
+
     SVGImage {
         anchors.top: parent.top
         anchors.topMargin: -6

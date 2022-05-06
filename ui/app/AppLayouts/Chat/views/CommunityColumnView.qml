@@ -29,9 +29,6 @@ Item {
     property var store
     property bool hasAddedContacts: false
     property var communityData: store.mainModuleInst ? store.mainModuleInst.activeSection || {} : {}
-    // TODO unhardcode
-    // Not Refactored Yet
-    //property int chatGroupsListViewCount: communityChatListAndCategories.chatList.count
     property Component pinnedMessagesPopupComponent
 
     signal infoButtonClicked
@@ -124,28 +121,18 @@ Item {
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
         clip: true
         contentHeight: communityChatListAndCategories.height
-                       + emptyViewAndSuggestionsLoader.height
-                       + backUpBannerLoader.height
-                       + 16
+                       + bannerColumn.height
+                       + Style.current.bigPadding
 
         StatusChatListAndCategories {
             id: communityChatListAndCategories
 
             anchors.horizontalCenter: parent.horizontalCenter
             width: root.width
-            height: {
-                if (!emptyViewAndSuggestionsLoader.active &&
-                    !backUpBannerLoader.active) {
-                    return implicitHeight > (root.height - 82) ? implicitHeight + 8 : root.height - 82
-                }
-                return implicitHeight
-            }
 
             draggableItems: communityData.amISectionAdmin
             draggableCategories: communityData.amISectionAdmin
-            //chatList.model: root.store.chatsModelInst.communities.activeCommunity.chats
 
-            //categoryList.model: root.store.chatsModelInst.communities.activeCommunity.categories
             model: root.communitySectionModule.model
             onChatItemSelected: {
                 if(categoryId === "")
@@ -156,10 +143,9 @@ Item {
 
             showCategoryActionButtons: communityData.amISectionAdmin
             showPopupMenu: communityData.amISectionAdmin && communityData.canManageUsers
-            //selectedChatId: root.store.chatsModelInst.channelView.activeChannel.id
 
-//            onChatItemSelected: root.store.chatsModelInst.channelView.setActiveChannel(id)
-//            onChatItemUnmuted: root.store.chatsModelInst.channelView.unmuteChatItem(id)
+            // onChatItemSelected: root.store.chatsModelInst.channelView.setActiveChannel(id)
+            // onChatItemUnmuted: root.store.chatsModelInst.channelView.unmuteChatItem(id)
             onChatItemReordered: function(categoryId, chatId, from, to){
                 root.store.reorderCommunityChat(categoryId, chatId, to)
             }
@@ -340,61 +326,103 @@ Item {
             }
         }
 
-        Loader {
-            id: emptyViewAndSuggestionsLoader
-            active: communityData.amISectionAdmin &&
-                     (!localAccountSensitiveSettings.hiddenCommunityWelcomeBanners ||
-                      !localAccountSensitiveSettings.hiddenCommunityWelcomeBanners.includes(communityData.id))
+        Column {
+            id: bannerColumn
             width: parent.width
-            height: {
-                // I dont know why, the binding doesn't work well if this isn't here
-                item && item.height
-                return this.active ? item.height : 0
-            }
             anchors.top: communityChatListAndCategories.bottom
-            anchors.topMargin: active ? Style.current.padding : 0
-            sourceComponent: Component {
-                CommunityWelcomeBannerPanel {
-                    activeCommunity: communityData
-                    store: root.store
-                    hasAddedContacts: root.hasAddedContacts
-                    communitySectionModule: root.communitySectionModule
-                    onManageCommunityClicked: root.manageButtonClicked()
+            anchors.topMargin: Style.current.padding
+            spacing: Style.current.bigPadding
+
+            Loader {
+                id: emptyViewAndSuggestionsLoader
+                active: communityData.amISectionAdmin &&
+                        (!localAccountSensitiveSettings.hiddenCommunityWelcomeBanners ||
+                        !localAccountSensitiveSettings.hiddenCommunityWelcomeBanners.includes(communityData.id))
+                width: parent.width
+                height: {
+                    // I dont know why, the binding doesn't work well if this isn't here
+                    item && item.height
+                    return this.active ? item.height : 0
+                }
+                sourceComponent: Component {
+                    CommunityWelcomeBannerPanel {
+                        activeCommunity: communityData
+                        store: root.store
+                        hasAddedContacts: root.hasAddedContacts
+                        communitySectionModule: root.communitySectionModule
+                        onManageCommunityClicked: root.manageButtonClicked()
+                    }
                 }
             }
-        }
 
-        Loader {
-            id: backUpBannerLoader
-            active: communityData.amISectionAdmin &&
-                        (!localAccountSensitiveSettings.hiddenCommunityBackUpBanners ||
-                         !localAccountSensitiveSettings.hiddenCommunityBackUpBanners.includes(communityData.id))
-            width: parent.width
-            height: active ? item.height : 0
-            anchors.top: emptyViewAndSuggestionsLoader.bottom
-            anchors.topMargin: active ? Style.current.padding : 0
-            sourceComponent: Component {
-                Item {
-                    width: parent.width
-                    height: backupBanner.height
+            Loader {
+                id: channelsAndCategoriesAdminBox
+                active: communityData.amISectionAdmin &&
+                        (!localAccountSensitiveSettings.hiddenCommunityChannelAndCategoriesBanners ||
+                        !localAccountSensitiveSettings.hiddenCommunityChannelAndCategoriesBanners.includes(communityData.id))
+                width: parent.width
+                height: {
+                    // I dont know why, the binding doesn't work well if this isn't here
+                    item && item.height
+                    return this.active ? item.height : 0
+                }
+                sourceComponent: Component {
+                    Item {
+                        width: parent.width
+                        height: channelsAndCategoriesBanner.height
 
-                    BackUpCommuntyBannerPanel {
-                        id: backupBanner
-                        activeCommunity: communityData
-                        onBackupButtonClicked: {
-                            Global.openPopup(transferOwnershipPopup, {
-                                privateKey: communitySectionModule.exportCommunity(communityData.id),
-                                store: root.store
-                            })
+                        CommunityChannelsAndCategoriesBannerPanel {
+                            id: channelsAndCategoriesBanner
+                            communityId: communityData.id
+                        }
+
+                        MouseArea {
+                            anchors.fill: channelsAndCategoriesBanner
+                            acceptedButtons: Qt.RightButton
+                            onClicked: {
+                                /* Prevents sending events to the component beneath
+                                if Right Mouse Button is clicked. */
+                                mouse.accepted = false;
+                            }
                         }
                     }
-                    MouseArea {
-                        anchors.fill: backupBanner
-                        acceptedButtons: Qt.RightButton
-                        onClicked: {
-                            /* Prevents sending events to the component beneath
-                               if Right Mouse Button is clicked. */
-                            mouse.accepted = false;
+                }
+            }
+
+            Loader {
+                id: backUpBannerLoader
+                active: communityData.amISectionAdmin &&
+                            (!localAccountSensitiveSettings.hiddenCommunityBackUpBanners ||
+                            !localAccountSensitiveSettings.hiddenCommunityBackUpBanners.includes(communityData.id))
+                width: parent.width
+                height: {
+                    // I dont know why, the binding doesn't work well if this isn't here
+                    item && item.height
+                    active ? item.height : 0
+                }
+                sourceComponent: Component {
+                    Item {
+                        width: parent.width
+                        height: backupBanner.height
+
+                        BackUpCommuntyBannerPanel {
+                            id: backupBanner
+                            communityId: communityData.id
+                            onBackupButtonClicked: {
+                                Global.openPopup(transferOwnershipPopup, {
+                                    privateKey: communitySectionModule.exportCommunity(communityData.id),
+                                    store: root.store
+                                })
+                            }
+                        }
+                        MouseArea {
+                            anchors.fill: backupBanner
+                            acceptedButtons: Qt.RightButton
+                            onClicked: {
+                                /* Prevents sending events to the component beneath
+                                if Right Mouse Button is clicked. */
+                                mouse.accepted = false;
+                            }
                         }
                     }
                 }
