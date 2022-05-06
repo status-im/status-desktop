@@ -384,6 +384,10 @@ Item {
                         onCursorRectangleChanged: flick.ensureVisible(cursorRectangle)
                         onActiveFocusChanged: if (root.pristine) root.pristine = false
                         onTextChanged: {
+                            if (previousText === text) {
+                                // Not sure why, but the textChanged event was triggered even if it didn't really
+                                return
+                            }
                             root.dirty = true
                             if (root.maximumLength > 0) {
                                 if (text.length > root.maximumLength) {
