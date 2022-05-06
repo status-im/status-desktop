@@ -1,4 +1,5 @@
 import QtQuick 2.13
+import QtQuick.Controls 2.13
 import QtGraphicalEffects 1.13
 
 import StatusQ.Core 0.1
@@ -6,12 +7,12 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 
+import shared.panels 1.0
+import shared.status 1.0
+
 import utils 1.0
 
 Rectangle {
-    property string communityId
-    signal backupButtonClicked(var mouse)
-
     id: root
     height: childrenRect.height + Style.current.padding
     anchors.left: parent.left
@@ -20,9 +21,11 @@ Rectangle {
     anchors.rightMargin: Style.current.padding
     border.color: Style.current.border
     radius: 16
-    color: "transparent"
+    color: Style.current.transparent
+    property string communityId
 
-    Rectangle {
+
+   Rectangle {
         width: 66
         height: 4
         color: Style.current.secondaryMenuBackground
@@ -37,7 +40,7 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         width: 40
         height: 40
-        icon.name: "objects"
+        icon.name: "channel"
     }
 
     StatusFlatRoundButton {
@@ -53,39 +56,45 @@ Rectangle {
         icon.name: "close-circle"
         type: StatusFlatRoundButton.Type.Tertiary
         onClicked: {
-            let hiddenBannerIds = localAccountSensitiveSettings.hiddenCommunityBackUpBanners || []
-            if (hiddenBannerIds.includes(root.communityId)) {
+            let hiddenBannerIds = localAccountSensitiveSettings.hiddenCommunityChannelAndCategoriesBanners || []
+            if (hiddenBannerIds.includes(communityId)) {
                 return
             }
-            hiddenBannerIds.push(root.communityId)
-            localAccountSensitiveSettings.hiddenCommunityBackUpBanners = hiddenBannerIds
+            hiddenBannerIds.push(communityId)
+            localAccountSensitiveSettings.hiddenCommunityChannelAndCategoriesBanners = hiddenBannerIds
         }
     }
 
     StatusBaseText {
-        id: backUpText
-        //% "Back up community key"
-        text: qsTrId("back-up-community-key")
+        id: descriptionText
+        text: qsTr("Expand your community by adding more channels and categories")
         anchors.top: parent.top
         anchors.topMargin: 48
         horizontalAlignment: Text.AlignHCenter
         font.pixelSize: 15
+        color: Theme.palette.directColor1
         wrapMode: Text.WordWrap
         anchors.right: parent.right
         anchors.rightMargin: Style.current.xlPadding
         anchors.left: parent.left
         anchors.leftMargin: Style.current.xlPadding
-        color: Theme.palette.directColor1
     }
 
     StatusButton {
-        id: backUpBtn
-        //% "Back up"
-        text: qsTrId("back-up")
+        id: addMembersBtn
+        text: qsTrId("Add channels")
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.top: backUpText.bottom
+        anchors.top: descriptionText.bottom
         anchors.topMargin: Style.current.padding
-        onClicked: root.backupButtonClicked(mouse)
+        onClicked: Global.openPopup(createChannelPopup)
+    }
+
+    StatusFlatButton {
+        id: manageBtn
+        text: qsTr("Add categories")
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.top: addMembersBtn.bottom
+
+        onClicked: Global.openPopup(createCategoryPopup)
     }
 }
-

@@ -32,6 +32,8 @@ const LSS_KEY_RECENT_EMOJIS* = "recentEmojis"
 const DEFAULT_RECENT_EMOJIS = ""
 const LSS_KEY_HIDDEN_COMMUNITY_WELCOME_BANNERS* = "hiddenCommunityWelcomeBanners"
 const DEFAULT_HIDDEN_COMMUNITY_WELCOME_BANNERS = ""
+const LSS_KEY_HIDDEN_COMMUNITY_CHANNELS_AND_CATEGORIES_BANNERS* = "hiddenCommunityChannelsAndCategoriesBanner"
+const DEFAULT_HIDDEN_COMMUNITY_CHANNELS_AND_CATEGORIES_BANNERS = ""
 const LSS_KEY_HIDDEN_COMMUNITY_BACKUP_BANNERS* = "hiddenCommunityBackUpBanners"
 const DEFAULT_HIDDEN_COMMUNITY_BACKUP_BANNERS = ""
 const LSS_KEY_VOLUME* = "volume"
@@ -363,6 +365,17 @@ QtObject:
     write = setHiddenCommunityWelcomeBanners
     notify = hiddenCommunityWelcomeBannersChanged
 
+  proc hiddenCommunityChannelAndCategoriesBannersChanged*(self: LocalAccountSensitiveSettings) {.signal.}
+  proc getHiddenCommunityChannelAndCategoriesBanners*(self: LocalAccountSensitiveSettings): QVariant {.slot.} =
+    getSettingsPropQVariant(self, LSS_KEY_HIDDEN_COMMUNITY_CHANNELS_AND_CATEGORIES_BANNERS, newQVariant(DEFAULT_HIDDEN_COMMUNITY_CHANNELS_AND_CATEGORIES_BANNERS))
+  proc setHiddenCommunityChannelAndCategoriesBanners*(self: LocalAccountSensitiveSettings, value: QVariant) {.slot.} =
+    setSettingsProp(self, LSS_KEY_HIDDEN_COMMUNITY_CHANNELS_AND_CATEGORIES_BANNERS, value):
+      self.hiddenCommunityChannelAndCategoriesBannersChanged()
+
+  QtProperty[QVariant] hiddenCommunityChannelAndCategoriesBanners:
+    read = getHiddenCommunityChannelAndCategoriesBanners
+    write = setHiddenCommunityChannelAndCategoriesBanners
+    notify = hiddenCommunityChannelAndCategoriesBannersChanged
 
   proc hiddenCommunityBackUpBannersChanged*(self: LocalAccountSensitiveSettings) {.signal.}
   proc getHiddenCommunityBackUpBanners*(self: LocalAccountSensitiveSettings): QVariant {.slot.} =
@@ -829,6 +842,7 @@ QtObject:
       of LSS_KEY_DISPLAY_CHAT_IMAGES: self.displayChatImagesChanged()
       of LSS_KEY_RECENT_EMOJIS: self.recentEmojisChanged()
       of LSS_KEY_HIDDEN_COMMUNITY_WELCOME_BANNERS: self.hiddenCommunityWelcomeBannersChanged()
+      of LSS_KEY_HIDDEN_COMMUNITY_CHANNELS_AND_CATEGORIES_BANNERS: self.hiddenCommunityChannelAndCategoriesBannersChanged()
       of LSS_KEY_HIDDEN_COMMUNITY_BACKUP_BANNERS: self.hiddenCommunityBackUpBannersChanged()
       of LSS_KEY_VOLUME: self.volumeChanged()
       of LSS_KEY_NOTIFICATION_SETTING: self.notificationSettingChanged()
