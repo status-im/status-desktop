@@ -33,6 +33,17 @@ StatusModal {
         submitBtn.loading = false
     }
 
+    QtObject {
+        id: d
+
+        function submit() {
+            submitBtn.loading = true
+            // ChangePassword operation blocks the UI so loading = true; will never have any affect until changePassword/createPassword is done.
+            // Getting around it with a small pause (timer) in order to get the desired behavior
+            pause.start()
+        }
+    }
+
     Connections {
         target: root.privacyStore.privacyModule
         onPasswordChanged: onChangePasswordResponse(success, errorMsg)
@@ -52,6 +63,7 @@ StatusModal {
         titleVisible: false
         introText: qsTr("Change password used to unlock Status on this device & sign transactions.")
         createNewPsw: false
+        onReturnPressed: if(submitBtn.enabled) d.submit()
     }
 
     rightButtons: [
@@ -69,12 +81,7 @@ StatusModal {
                 }
             }
 
-            onClicked: {
-                submitBtn.loading = true;
-                // ChangePassword operation blocks the UI so loading = true; will never have any affect until changePassword/createPassword is done.
-                // Getting around it with a small pause (timer) in order to get the desired behavior
-                pause.start();
-            }
+            onClicked: { d.submit() }
         }
     ]
 

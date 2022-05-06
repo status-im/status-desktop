@@ -20,6 +20,12 @@ OnboardingBasePage {
         id: d
         readonly property int zBehind: 1
         readonly property int zFront: 100
+
+        function submit() {
+            root.newPassword = view.newPswText
+            root.confirmationPassword = view.confirmationPswText
+            root.exit()
+        }
     }
 
     Column {
@@ -31,6 +37,7 @@ OnboardingBasePage {
             onboarding: true
             newPswText: root.newPassword
             confirmationPswText: root.confirmationPassword
+            onReturnPressed: { if(view.ready) d.submit() }
         }
         StatusButton {
             id: submitBtn
@@ -38,11 +45,7 @@ OnboardingBasePage {
             anchors.horizontalCenter: parent.horizontalCenter
             text: qsTr("Create password")
             enabled: view.ready
-            onClicked: {
-                root.newPassword = view.newPswText
-                root.confirmationPassword = view.confirmationPswText
-                root.exit()
-            }
+            onClicked: { d.submit() }
         }
     }
 
