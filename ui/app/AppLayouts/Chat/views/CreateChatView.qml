@@ -103,6 +103,7 @@ Page {
             Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
             Layout.leftMargin: 17
             maxHeight: root.height
+            nameCountLimit: 20
             listLabel: qsTr("Contacts")
             toLabelText: qsTr("To: ")
             warningText: qsTr("USER LIMIT REACHED")
