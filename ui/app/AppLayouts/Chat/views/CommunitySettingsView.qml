@@ -125,7 +125,6 @@ StatusAppTwoPanelLayout {
                         Utils.filterXSS(item.name),
                         Utils.filterXSS(item.description),
                         root.community.access,
-                        false, // FIXME
                         item.color.toString().toUpperCase(),
                         item.image === root.community.image ? "" : item.image,
                         item.imageAx,

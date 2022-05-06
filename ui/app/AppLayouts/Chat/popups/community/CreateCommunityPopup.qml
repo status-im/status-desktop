@@ -37,9 +37,9 @@ StatusModal {
             if (community.largeImage) {
                 contentItem.communityImage.selectedImage = community.largeImage
             }
-            membershipRequirementSettingPopup.checkedMembership = community.access
+            requestToJoinCheckbox.checked = community.access === Constants.communityChatOnRequestAccess
         }
-        contentItem.communityName.input.forceActiveFocus(Qt.MouseFocusReason)
+        contentItem.communityName.input.edit.forceActiveFocus()
     }
     onClosed: destroy()
 
@@ -303,104 +303,35 @@ StatusModal {
 
             StatusListItem {
                 anchors.horizontalCenter: parent.horizontalCenter
-                visible: !isEdit
-                //% "Membership requirement"
-                title: qsTrId("membership-title")
-                label: {
-                    switch (membershipRequirementSettingPopup.checkedMembership) {
-                        //% "Require invite from another member"
-                        case Constants.communityChatInvitationOnlyAccess: return qsTrId("membership-invite")
-                        //% "Require approval"
-                        case Constants.communityChatOnRequestAccess: return qsTrId("membership-approval")
-                        //% "No requirement"
-                        default: return qsTrId("membership-free")
+                visible: popup.store.isCommunityHistoryArchiveSupportEnabled
+                title: qsTr("Community history service")
+                sensor.onClicked: {
+                    if (popup.store.isCommunityHistoryArchiveSupportEnabled) {
+                        historyArchiveSupportToggle.checked = !historyArchiveSupportToggle.checked
                     }
                 }
-                sensor.onClicked: membershipRequirementSettingPopup.open()
                 components: [
-                    StatusIcon {
-                        icon: "chevron-down"
-                        rotation: 270
-                        color: Theme.palette.baseColor1
+                    StatusCheckBox {
+                        id: historyArchiveSupportToggle
+                        enabled: popup.store.isCommunityHistoryArchiveSupportEnabled
+                        checked: isEdit ? community.historyArchiveSupportEnabled : false
                     }
                 ]
-            }
-
-            StatusBaseText {
-                visible: !isEdit
-                height: visible ? implicitHeight : 0
-                wrapMode: Text.WordWrap
-                font.pixelSize: 13
-                color: Theme.palette.baseColor1
-                width: parent.width * 0.78
-                //% "You can require new members to meet certain criteria before they can join. This can be changed at any time"
-                text: qsTrId("membership-none-placeholder")
-                anchors.left: parent.left
-                anchors.leftMargin: 16
             }
 
             StatusListItem {
                 anchors.horizontalCenter: parent.horizontalCenter
-                visible: popup.store.isCommunityHistoryArchiveSupportEnabled
-                //% "Membership requirement"
-                title: qsTrId("History Archive Support")
+                title: qsTr("Request to join required")
                 sensor.onClicked: {
-                  if (popup.store.isCommunityHistoryArchiveSupportEnabled) {
-                    historyArchiveSupportToggle.checked = !historyArchiveSupportToggle.checked
-                  }
+                    requestToJoinCheckbox.checked = !requestToJoinCheckbox.checked
                 }
                 components: [
-                    StatusSwitch {
-                      id: historyArchiveSupportToggle
-                      enabled: popup.store.isCommunityHistoryArchiveSupportEnabled
-                      checked: isEdit ? community.historyArchiveSupportEnabled : false
+                    StatusCheckBox {
+                        id: requestToJoinCheckbox
+                        checked: false
                     }
                 ]
             }
-
-            // Feature commented temporarily
-            /*
-            StatusSettingsLineButton {
-                id: ensOnlySwitch
-                anchors.top: privateExplanation.bottom
-                anchors.topMargin: Style.current.padding
-                isEnabled: profileModel.profile.ensVerified
-                //% "Require ENS username"
-                text: qsTrId("membership-ens")
-                isSwitch: true
-                onClicked: switchChecked = checked
-
-                StatusToolTip {
-                    visible: !ensOnlySwitch.isEnabled && ensMouseArea.isHovered
-                    //% "You can only enable this setting if you have an ENS name"
-                    text: qsTrId("you-can-only-enable-this-setting-if-you-have-an-ens-name")
-                }
-
-                MouseArea {
-                    property bool isHovered: false
-
-                    id: ensMouseArea
-                    enabled: !ensOnlySwitch.isEnabled
-                    visible: enabled
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    onEntered: isHovered = true
-                    onExited: isHovered = false
-                }
-            }
-
-            StyledText {
-                visible: !isEdit
-                height: visible ? implicitHeight : 0
-                id: ensExplanation
-                anchors.top: ensOnlySwitch.bottom
-                wrapMode: Text.WordWrap
-                anchors.topMargin: isEdit ? 0 : Style.current.halfPadding
-                width: parent.width
-                //% "Your community requires an ENS username to be able to join"
-                text: qsTrId("membership-ens-description")
-            }
-            */
         }
 
     }
@@ -437,8 +368,7 @@ StatusModal {
                     error = communitySectionModule.editCommunity(
                         Utils.filterXSS(popup.contentItem.communityName.input.text),
                         Utils.filterXSS(popup.contentItem.communityDescription.input.text),
-                        membershipRequirementSettingPopup.checkedMembership,
-                        false,
+                        requestToJoinCheckbox.checked ? Constants.communityChatOnRequestAccess : Constants.communityChatPublicAccess,
                         popup.contentItem.communityColor.color.toString().toUpperCase(),
                         // to retain the existing image, pass "" for the image path
                         popup.contentItem.communityImage.selectedImage ===  community.largeImage ? "" :
@@ -453,8 +383,7 @@ StatusModal {
                     error = popup.store.createCommunity(
                         Utils.filterXSS(popup.contentItem.communityName.input.text),
                         Utils.filterXSS(popup.contentItem.communityDescription.input.text),
-                        membershipRequirementSettingPopup.checkedMembership,
-                        false, // ensOnlySwitch.switchChecked, // TODO:
+                        requestToJoinCheckbox.checked ? Constants.communityChatOnRequestAccess : Constants.communityChatPublicAccess,
                         popup.contentItem.communityColor.color.toString().toUpperCase(),
                         popup.contentItem.communityImage.selectedImage,
                         popup.contentItem.imageCropperModal.aX,
@@ -481,11 +410,6 @@ StatusModal {
         title: qsTrId("error-creating-the-community")
         icon: StandardIcon.Critical
         standardButtons: StandardButton.Ok
-    }
-
-    MembershipRequirementPopup {
-        anchors.centerIn: parent
-        id: membershipRequirementSettingPopup
     }
 }
 
