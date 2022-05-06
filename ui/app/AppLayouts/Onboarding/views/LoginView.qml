@@ -4,17 +4,21 @@ import QtQuick.Layouts 1.13
 import QtQuick.Dialogs 1.3
 import QtGraphicalEffects 1.13
 
+import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
+import StatusQ.Components 0.1
 import StatusQ.Controls 0.1 as StatusQControls
+import StatusQ.Popups 0.1
 
 import shared.panels 1.0
 import shared.popups 1.0
 import shared.status 1.0
 import shared.controls 1.0
 import shared.controls.chat 1.0
+import "../panels"
 import "../popups"
 import "../stores"
 
-import StatusQ.Components 0.1
 
 import utils 1.0
 
@@ -84,29 +88,28 @@ Item {
     Item {
         id: element
         width: 360
-        height: 200
+        height: childrenRect.height
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
 
-        UserImage {
-            id: userImage
-
+        Image {
+            id: statusIcon
+            width: 140
+            height: 140
+            fillMode: Image.PreserveAspectFit
+            source: Style.svg("status-logo-circle")
             anchors.horizontalCenter: parent.horizontalCenter
-
-            image: LoginStore.currentAccount.thumbnailImage
-            name: LoginStore.currentAccount.username
-            colorId: LoginStore.currentAccount.colorId
-            colorHash: LoginStore.currentAccount.colorHash
         }
 
-        StyledText {
-            id: usernameText
-            text: LoginStore.currentAccount.username
+        StatusBaseText {
+            id: welcomeBackText
+            text: qsTr("Welcome back")
             font.weight: Font.Bold
             font.pixelSize: 17
-            anchors.top: userImage.bottom
-            anchors.topMargin: 4
+            anchors.top: statusIcon.bottom
+            anchors.topMargin: 10
             anchors.horizontalCenter: parent.horizontalCenter
+            color: Theme.palette.directColor1
         }
 
         ConfirmAddExistingKeyModal {
@@ -127,57 +130,91 @@ Item {
             }
         }
 
-        Rectangle {
-            property bool isHovered: false
-            id: changeAccountBtn
-            width: 24
-            height: 24
-            anchors.left: usernameText.right
-            anchors.leftMargin: 4
-            anchors.verticalCenter: usernameText.verticalCenter
+        Item {
+          id: userInfo
+          height: userImage.height
+          anchors.top: welcomeBackText.bottom
+          anchors.topMargin: 64
+          width: 318
+          anchors.horizontalCenter: parent.horizontalCenter
 
-            color: isHovered ? Style.current.backgroundHover : Style.current.transparent
+          UserImage {
+              id: userImage
+              image: LoginStore.currentAccount.thumbnailImage
+              name: LoginStore.currentAccount.username
+              colorId: LoginStore.currentAccount.colorId
+              colorHash: LoginStore.currentAccount.colorHash
+              anchors.left: parent.left
+          }
 
-            radius: 4
+          StatusBaseText {
+              id: usernameText
+              text: LoginStore.currentAccount.username
+              font.pixelSize: 17
+              anchors.left: userImage.right
+              anchors.leftMargin: 16
+              anchors.verticalCenter: userImage.verticalCenter
+              color: Theme.palette.directColor1
+          }
 
-            SVGImage {
-                id: caretImg
-                width: 10
-                height: 6
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.horizontalCenter: parent.horizontalCenter
-                source: Style.svg("caret")
-                fillMode: Image.PreserveAspectFit
-            }
-            ColorOverlay {
-                anchors.fill: caretImg
-                source: caretImg
-                color: Style.current.secondaryText
-            }
-            MouseArea {
-                hoverEnabled: true
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-                onEntered: {
-                    changeAccountBtn.isHovered = true
-                }
-                onExited: {
-                    changeAccountBtn.isHovered = false
-                }
-                onClicked: {
-                    if (LoginStore.rowCount() > 1) {
-                        selectAnotherAccountModal.open()
-                    } else {
-                        confirmAddExstingKeyModal.open()
+          StatusQControls.StatusFlatRoundButton {
+              icon.name: "chevron-down"
+              type: StatusQControls.StatusFlatRoundButton.Type.Tertiary
+              width: 24
+              height: 24
+              id: changeAccountBtn
+              anchors.verticalCenter: usernameText.verticalCenter
+              anchors.right: parent.right
+
+
+              onClicked: {
+                  if (accountsPopup.opened) {
+                      accountsPopup.close()
+                  } else {
+                      accountsPopup.popup(width-userInfo.width-16, userInfo.height+4)
+                  }
+              }
+
+              StatusPopupMenu {
+                  id: accountsPopup
+                  closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+                  width: 346
+                  dim: false
+                  Repeater {
+                      id: accounts
+                      model: LoginStore.loginModuleInst.accountsModel
+                      delegate: AccountMenuItemPanel {
+                          label: model.username
+                          image: model.thumbnailImage
+                          colorId: model.colorId
+                          colorHash: model.colorHash
+                          onClicked: {
+                              LoginStore.setCurrentAccount(index)
+                              resetLogin()
+                              accountsPopup.close()
+                          }
+                      }
+                  }
+
+                  AccountMenuItemPanel {
+                    label: qsTr("Generate new account")
+                    onClicked: {
+                      accountsPopup.close()
+                      genKeyClicked();
                     }
-                }
-            }
+                  }
+              }
+          }
         }
 
         Input {
             id: txtPassword
-            anchors.top: changeAccountBtn.bottom
+            anchors.top: userInfo.bottom
             anchors.topMargin: Style.current.padding * 2
+            anchors.left: undefined
+            anchors.right: undefined
+            anchors.horizontalCenter: parent.horizontalCenter
+            width: 318
             enabled: !loading
             placeholderText: loading ?
                 //% "Connecting..."
@@ -185,7 +222,6 @@ Item {
                 //% "Enter password"
                 qsTrId("enter-password")
             textField.echoMode: TextInput.Password
-            textField.focus: true
             Keys.onReturnPressed: {
                 doLogin(textField.text)
             }
@@ -204,9 +240,9 @@ Item {
             icon.width: 18
             icon.height: 14
             opacity: (loading || txtPassword.text.length > 0) ? 1 : 0
-            anchors.left: txtPassword.visible? txtPassword.right : changeAccountBtn.right
+            anchors.left: txtPassword.right
             anchors.leftMargin: (loading || txtPassword.text.length > 0) ? Style.current.padding : Style.current.smallPadding
-            anchors.verticalCenter: txtPassword.visible? txtPassword.verticalCenter : changeAccountBtn.verticalCenter
+            anchors.verticalCenter: txtPassword.verticalCenter
             state: loading ? "pending" : "default"
             onClicked: {
                 doLogin(txtPassword.textField.text)
@@ -244,24 +280,12 @@ Item {
             }
         }
 
-        StatusQControls.StatusFlatButton {
-            id: generateKeysLinkText
-            //% "Generate new keys"
-            text: qsTrId("generate-new-keys")
-            anchors.top: txtPassword.visible? txtPassword.bottom : changeAccountBtn.bottom
-            anchors.topMargin: 16
-            anchors.horizontalCenter: parent.horizontalCenter
-            onClicked: {
-                genKeyClicked();
-            }
-        }
-
         StyledText {
             id: errMsg
             //% "Login failed. Please re-enter your password and try again."
             readonly property string incorrectPasswordMsg: qsTrId("login-failed--please-re-enter-your-password-and-try-again-")
-            anchors.top: generateKeysLinkText.bottom
-            anchors.topMargin: Style.current.smallPadding
+            anchors.top: txtPassword.bottom
+            anchors.topMargin: Style.current.padding
             anchors.horizontalCenter: parent.horizontalCenter
             visible: false
             text: incorrectPasswordMsg
