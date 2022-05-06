@@ -33,7 +33,6 @@ proc createCommunity*(
     name: string,
     description: string,
     access: int,
-    ensOnly: bool,
     color: string,
     imageUrl: string,
     aX: int, aY: int, bX: int, bY: int,
@@ -44,7 +43,7 @@ proc createCommunity*(
       "Membership": access,
       "name": name,
       "description": description,
-      "ensOnly": ensOnly,
+      "ensOnly": false, # TODO ensOnly is no longer supported. Remove this when we remove it in status-go
       "color": color,
       "image": imageUrl,
       "imageAx": aX,
@@ -59,7 +58,6 @@ proc editCommunity*(
     name: string,
     description: string,
     access: int,
-    ensOnly: bool,
     color: string,
     imageUrl: string,
     aX: int,
@@ -74,7 +72,7 @@ proc editCommunity*(
     "Membership": access,
     "name": name,
     "description": description,
-    "ensOnly": ensOnly,
+    "ensOnly": false, # TODO ensOnly is no longer supported. Remove this when we remove it in status-go
     "color": color,
     "image": imageUrl,
     "imageAx": aX,
