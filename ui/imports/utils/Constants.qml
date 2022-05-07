@@ -149,6 +149,11 @@ QtObject {
         ]
     }
 
+    readonly property QtObject settingsSection: QtObject {
+        readonly property int itemSpacing: 10
+        readonly property int mainHeaderFontSize: 28
+    }
+
     readonly property int communityImported: 0
     readonly property int communityImportingInProgress: 1
     readonly property int communityImportingError: 2

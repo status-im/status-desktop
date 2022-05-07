@@ -10,26 +10,21 @@ import utils 1.0
 import shared 1.0
 import shared.status 1.0
 
-Item {
+SettingsContentBase {
     id: root
-    Layout.fillHeight: true
-    Layout.fillWidth: true
-    clip: true
 
     property var store
     property var globalStore
-    property int profileContentWidth
 
-    Column {
-        id: generalColumn
-        spacing: Style.current.bigPadding
-        anchors.top: parent.top
-        anchors.topMargin: 46
-        width: profileContentWidth
-        anchors.horizontalCenter: parent.horizontalCenter
+    ColumnLayout {
+        spacing: Constants.settingsSection.itemSpacing
+        width: root.contentWidth
 
         // TODO: replace with StatusListItem
         StatusSectionDescItem {
+            Layout.fillWidth: true
+            Layout.leftMargin: Style.current.padding
+            Layout.rightMargin: Style.current.padding
             //% "App version"
             name: qsTrId("version")
             //% "Version: %1"
@@ -40,6 +35,9 @@ Item {
 
         // TODO: replace with StatusListItem
         StatusSectionDescItem {
+            Layout.fillWidth: true
+            Layout.leftMargin: Style.current.padding
+            Layout.rightMargin: Style.current.padding
             //% "Node version "
             name: qsTrId("node-version-")
             description: root.store.nodeVersion()
@@ -47,16 +45,20 @@ Item {
         }
 
         StatusFlatButton {
+            Layout.fillWidth: true
+            leftPadding: Style.current.padding
+            rightPadding: Style.current.padding
             //% "Check for updates"
             text: qsTrId("check-for-updates")
             loading: root.store.fetchingUpdate
             onClicked: root.store.checkForUpdates()
             icon.width: 0
-            anchors.left: parent.left
-            anchors.leftMargin: -leftPadding
         }
 
         StatusBaseText {
+            Layout.fillWidth: true
+            Layout.leftMargin: Style.current.padding
+            Layout.rightMargin: Style.current.padding
             //% "Privacy Policy"
             text: qsTrId("privacy-policy")
             font.pixelSize: 15

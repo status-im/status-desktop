@@ -17,22 +17,14 @@ import "../popups"
 import "../panels"
 import "./"
 
-ScrollView {
+SettingsContentBase {
     id: root
 
     property NotificationsStore notificationsStore
 
-    property int profileContentWidth
-
-    height: parent.height
-    width: parent.width
-    contentHeight: notificationsContainer.height
-    clip: true
-
     Item {
         id: notificationsContainer
-        width: profileContentWidth
-        anchors.horizontalCenter: parent.horizontalCenter
+        width: root.contentWidth
         height: this.childrenRect.height + 100
 
         property Component mutedChatsModalComponent: MutedChatsModal {}
@@ -50,23 +42,15 @@ ScrollView {
             id: messageSetting
         }
 
-        StatusSectionHeadline {
-            id: sectionHeadlineNotifications
-            //% "Notification preferences"
-            text: qsTrId("notifications-preferences")
-            anchors.top: parent.top
-            anchors.left: parent.left
-            anchors.right: parent.right
-        }
-
         Column {
             id: column
-            anchors.top: sectionHeadlineNotifications.bottom
-            anchors.topMargin: Style.current.smallPadding
+            anchors.top: parent.top
             anchors.left: parent.left
             anchors.right: parent.right
 
             RadioButtonSelector {
+                anchors.leftMargin: 0
+                anchors.rightMargin: 0
                 //% "All messages"
                 title: qsTrId("all-messages")
                 buttonGroup: notificationSetting
@@ -79,6 +63,8 @@ ScrollView {
             }
 
             RadioButtonSelector {
+                anchors.leftMargin: 0
+                anchors.rightMargin: 0
                 //% "Just @mentions"
                 title: qsTrId("just--mentions")
                 buttonGroup: notificationSetting
@@ -91,6 +77,8 @@ ScrollView {
             }
 
             RadioButtonSelector {
+                anchors.leftMargin: 0
+                anchors.rightMargin: 0
                 //% "Nothing"
                 title: qsTrId("nothing")
                 buttonGroup: notificationSetting
@@ -108,9 +96,7 @@ ScrollView {
             anchors.top: column.bottom
             anchors.topMargin: Style.current.bigPadding
             anchors.left: parent.left
-            anchors.leftMargin: -Style.current.padding
             anchors.right: parent.right
-            anchors.rightMargin: -Style.current.padding
         }
 
         StatusSectionHeadline {
@@ -120,6 +106,8 @@ ScrollView {
             anchors.top: separator.bottom
             anchors.left: parent.left
             anchors.right: parent.right
+            anchors.leftMargin: Style.current.padding
+            anchors.rightMargin: Style.current.padding
         }
 
         Column {
@@ -132,6 +120,8 @@ ScrollView {
 
             // TODO: replace with StatusListItem
             StatusSettingsLineButton {
+                anchors.leftMargin: 0
+                anchors.rightMargin: 0
                 //% "Play a sound when receiving a notification"
                 text: qsTrId("play-a-sound-when-receiving-a-notification")
                 isSwitch: true
@@ -143,6 +133,8 @@ ScrollView {
 
             // TODO: replace with StatusListItem
             StatusSettingsLineButton {
+                anchors.leftMargin: 0
+                anchors.rightMargin: 0
                 //% "Use your operating system's notifications"
                 text: qsTrId("use-your-operating-system-s-notifications")
                 isSwitch: true
@@ -181,12 +173,13 @@ ScrollView {
                 font.pixelSize: 15
                 anchors.left: parent.left
                 anchors.right: parent.right
+                anchors.leftMargin: Style.current.padding
+                anchors.rightMargin: Style.current.padding
                 color: Theme.palette.directColor1
             }
 
             Column {
                 anchors.left: parent.left
-                anchors.leftMargin: -Style.current.padding
                 anchors.right: parent.right
                 spacing: 10
 
@@ -241,6 +234,8 @@ ScrollView {
                 text: qsTrId("no-preview-or-advanced--go-to-notification-center")
                 font.pixelSize: 15
                 anchors.left: parent.left
+                anchors.leftMargin: Style.current.padding
+                anchors.rightMargin: Style.current.padding
                 color: Theme.palette.directColor1
             }
         }
@@ -250,9 +245,7 @@ ScrollView {
             anchors.top: column3.bottom
             anchors.topMargin: Style.current.bigPadding
             anchors.left: parent.left
-            anchors.leftMargin: -Style.current.padding
             anchors.right: parent.right
-            anchors.rightMargin: -Style.current.padding
         }
 
         StatusSectionHeadline {
@@ -262,6 +255,8 @@ ScrollView {
             anchors.top: separator2.bottom
             anchors.left: parent.left
             anchors.right: parent.right
+            anchors.leftMargin: Style.current.padding
+            anchors.rightMargin: Style.current.padding
         }
 
         Column {
@@ -274,6 +269,8 @@ ScrollView {
 
             // TODO: replace with StatusListItem
             StatusSettingsLineButton {
+                anchors.leftMargin: 0
+                anchors.rightMargin: 0
                 //% "Notify on new requests"
                 text: qsTrId("notify-on-new-requests")
                 isSwitch: true
@@ -285,6 +282,8 @@ ScrollView {
 
             // TODO: replace with StatusListItem
             StatusSettingsLineButton {
+                anchors.leftMargin: 0
+                anchors.rightMargin: 0
                 //% "Muted users"
                 text: qsTrId("muted-users")
                 currentValue: root.notificationsStore.mutedContactsModel.count > 0 ?
@@ -309,6 +308,8 @@ ScrollView {
 
             // TODO: replace with StatusListItem
             StatusSettingsLineButton {
+                anchors.leftMargin: 0
+                anchors.rightMargin: 0
                 //% "Muted chats"
                 text: qsTrId("muted-chats")
                 currentValue: root.notificationsStore.mutedChatsModel.count > 0 ?
@@ -350,9 +351,7 @@ ScrollView {
             anchors.top: column4.bottom
             anchors.topMargin: Style.current.bigPadding
             anchors.left: parent.left
-            anchors.leftMargin: -Style.current.padding
             anchors.right: parent.right
-            anchors.rightMargin: -Style.current.padding
         }
 
         Column {
@@ -365,6 +364,10 @@ ScrollView {
             width: parent.width
 
             StatusBaseText {
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: Style.current.padding
+                anchors.rightMargin: Style.current.padding
                 //% "Reset notification settings"
                 text: qsTrId("reset-notification-settings")
                 font.pixelSize: 15
@@ -389,6 +392,10 @@ ScrollView {
             }
 
             StatusBaseText {
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: Style.current.padding
+                anchors.rightMargin: Style.current.padding
                 //% "Restore default notification settings and unmute all chats and users"
                 text: qsTrId("restore-default-notification-settings-and-unmute-all-chats-and-users")
                 font.pixelSize: 15

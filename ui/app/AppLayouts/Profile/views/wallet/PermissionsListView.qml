@@ -13,8 +13,6 @@ Column {
 
     property WalletStore walletStore
 
-    width: 560
-
     Repeater {
         id: permissionsList
         model: walletStore.dappList

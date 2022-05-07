@@ -36,6 +36,7 @@ Item {
         id: title
         anchors.top: parent.top
         anchors.left: parent.left
+        anchors.leftMargin: Style.current.padding
         visible: contactListRoot.title !== ""
         text: contactListRoot.title
         font.weight: Font.Medium

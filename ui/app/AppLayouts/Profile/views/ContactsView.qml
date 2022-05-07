@@ -20,75 +20,42 @@ import "../popups"
 // TODO remove this import when the ContactRequestPanel is moved to the the Profile completely
 import "../../Chat/panels"
 
-Item {
+SettingsContentBase {
     id: root
 
     property ContactsStore contactsStore
-    property int profileContentWidth
 
     property alias searchStr: searchBox.text
     property bool isPending: false
-    height: parent.height
-    Layout.fillWidth: true
-    clip: true
 
-    Item {
-        height: parent.height
-        width: profileContentWidth
-
-        anchors.horizontalCenter: parent.horizontalCenter
-
-        StatusFlatButton {
-            icon.name: "arrow-left"
-            icon.width: 20
-            icon.height: 20
-            text: qsTr("Messaging")
-            size: StatusBaseButton.Size.Large
-            anchors.top: parent.top
-            anchors.topMargin: 8
-            anchors.left: parent.left
-            anchors.leftMargin: -40
-            onClicked: Global.changeAppSectionBySectionType(Constants.appSection.profile,
-                                                            Constants.settingsSubsection.messaging)
-        }
-
-        RowLayout {
-            id: contactsHeader
-            anchors.top: parent.top
-            anchors.topMargin: 56
-            anchors.left: parent.left
-            anchors.right: parent.right
-
-            StatusBaseText {
-                Layout.fillWidth: true
-                text: qsTr("Contacts")
-                font.weight: Font.Bold
-                font.pixelSize: 28
-                color: Theme.palette.directColor1
-            }
-
-            StatusButton {
-                text: qsTr("Send contact request to chat key")
-                onClicked: {
-                    sendContactRequest.open()
-                }
+    headerComponents: [
+        StatusButton {
+            text: qsTr("Send contact request to chat key")
+            onClicked: {
+                sendContactRequest.open()
             }
         }
+    ]
+
+    ColumnLayout {
+        spacing: 0
+        width: root.contentWidth
 
         SearchBox {
             id: searchBox
-            anchors.top: contactsHeader.bottom
-            anchors.topMargin: 32
-            width: parent.width
+            Layout.fillWidth: true
+            Layout.leftMargin: Style.current.padding
+            Layout.rightMargin: Style.current.padding
             input.implicitHeight: 44
             input.placeholderText: qsTr("Search by a display name or chat key")
         }
 
         TabBar {
             id: contactsTabBar
-            width: parent.width
-            anchors.top: searchBox.bottom
-            anchors.topMargin: Style.current.padding
+            Layout.fillWidth: true
+            Layout.leftMargin: Style.current.padding
+            Layout.rightMargin: Style.current.padding
+            Layout.topMargin: Style.current.padding
             height: contactsBtn.height
             background: Rectangle {
                 color: Style.current.transparent
@@ -107,13 +74,13 @@ Item {
                 badge.value: contactList.count
             }
             // Temporary commented until we provide appropriate flags on the `status-go` side to cover all sections.
-//            StatusTabButton {
-//                id: rejectedRequestsBtn
-//                addToWidth: Style.current.bigPadding
-//                enabled: root.contactsStore.receivedButRejectedContactRequestsModel.count > 0 ||
-//                         root.contactsStore.sentButRejectedContactRequestsModel.count > 0
-//                btnText: qsTr("Rejected Requests")
-//            }
+            //            StatusTabButton {
+            //                id: rejectedRequestsBtn
+            //                addToWidth: Style.current.bigPadding
+            //                enabled: root.contactsStore.receivedButRejectedContactRequestsModel.count > 0 ||
+            //                         root.contactsStore.sentButRejectedContactRequestsModel.count > 0
+            //                btnText: qsTr("Rejected Requests")
+            //            }
             StatusTabButton {
                 id: blockedBtn
                 addToWidth: Style.current.bigPadding
@@ -124,10 +91,8 @@ Item {
 
         StackLayout {
             id: stackLayout
-            width: parent.width
-            anchors.bottom: parent.bottom
-            anchors.top: contactsTabBar.bottom
-            anchors.topMargin: Style.current.padding
+            Layout.fillWidth: true
+            Layout.fillHeight: true
             currentIndex: contactsTabBar.currentIndex
 
             // CONTACTS
@@ -140,7 +105,7 @@ Item {
 
                     ContactsListPanel {
                         Layout.fillWidth: true
-                        Layout.preferredHeight: parent.height * 0.5
+                        Layout.preferredHeight: root.height * 0.5
                         contactsModel: root.contactsStore.myContactsModel
                         clip: true
                         title: qsTr("Identity Verified Contacts")
@@ -162,7 +127,7 @@ Item {
 
                     ContactsListPanel {
                         Layout.fillWidth: true
-                        Layout.preferredHeight: parent.height * 0.5
+                        Layout.preferredHeight: root.height * 0.5
                         contactsModel: root.contactsStore.myContactsModel
                         clip: true
                         title: qsTr("Contacts")
@@ -207,7 +172,7 @@ Item {
 
                     ContactsListPanel {
                         Layout.fillWidth: true
-                        Layout.preferredHeight: parent.height * 0.5
+                        Layout.preferredHeight: root.height * 0.5
                         clip: true
                         title: qsTr("Received")
                         searchString: searchBox.text
@@ -233,7 +198,7 @@ Item {
 
                     ContactsListPanel {
                         Layout.fillWidth: true
-                        Layout.preferredHeight: parent.height * 0.5
+                        Layout.preferredHeight: root.height * 0.5
                         clip: true
                         title: qsTr("Sent")
                         searchString: searchBox.text
@@ -257,60 +222,60 @@ Item {
             }
 
             // Temporary commented until we provide appropriate flags on the `status-go` side to cover all sections.
-//            // REJECTED REQUESTS
-//            Item {
-//                Layout.fillWidth: true
-//                Layout.fillHeight: true
+            //            // REJECTED REQUESTS
+            //            Item {
+            //                Layout.fillWidth: true
+            //                Layout.fillHeight: true
 
-//                ColumnLayout {
-//                    anchors.fill: parent
+            //                ColumnLayout {
+            //                    anchors.fill: parent
 
-//                    ContactsListPanel {
-//                        Layout.fillWidth: true
-//                        Layout.preferredHeight: parent.height * 0.5
-//                        clip: true
-//                        title: qsTr("Received")
-//                        searchString: searchBox.text
-//                        contactsModel: root.contactsStore.receivedButRejectedContactRequestsModel
-//                        panelUsage: Constants.contactsPanelUsage.rejectedReceivedContactRequest
+            //                    ContactsListPanel {
+            //                        Layout.fillWidth: true
+            //                        Layout.preferredHeight: root.height * 0.5
+            //                        clip: true
+            //                        title: qsTr("Received")
+            //                        searchString: searchBox.text
+            //                        contactsModel: root.contactsStore.receivedButRejectedContactRequestsModel
+            //                        panelUsage: Constants.contactsPanelUsage.rejectedReceivedContactRequest
 
-//                        onOpenProfilePopup: {
-//                            Global.openProfilePopup(publicKey)
-//                        }
+            //                        onOpenProfilePopup: {
+            //                            Global.openProfilePopup(publicKey)
+            //                        }
 
-//                        onOpenChangeNicknamePopup: {
-//                            Global.openProfilePopup(publicKey, null, true)
-//                        }
+            //                        onOpenChangeNicknamePopup: {
+            //                            Global.openProfilePopup(publicKey, null, true)
+            //                        }
 
-//                        onRejectionRemoved: {
-//                            root.contactsStore.removeContactRequestRejection(publicKey)
-//                        }
-//                    }
+            //                        onRejectionRemoved: {
+            //                            root.contactsStore.removeContactRequestRejection(publicKey)
+            //                        }
+            //                    }
 
-//                    ContactsListPanel {
-//                        Layout.fillWidth: true
-//                        Layout.preferredHeight: parent.height * 0.5
-//                        clip: true
-//                        title: qsTr("Sent")
-//                        searchString: searchBox.text
-//                        contactsModel: root.contactsStore.sentButRejectedContactRequestsModel
-//                        panelUsage: Constants.contactsPanelUsage.rejectedSentContactRequest
+            //                    ContactsListPanel {
+            //                        Layout.fillWidth: true
+            //                        Layout.preferredHeight: root.height * 0.5
+            //                        clip: true
+            //                        title: qsTr("Sent")
+            //                        searchString: searchBox.text
+            //                        contactsModel: root.contactsStore.sentButRejectedContactRequestsModel
+            //                        panelUsage: Constants.contactsPanelUsage.rejectedSentContactRequest
 
-//                        onOpenProfilePopup: {
-//                            Global.openProfilePopup(publicKey)
-//                        }
+            //                        onOpenProfilePopup: {
+            //                            Global.openProfilePopup(publicKey)
+            //                        }
 
-//                        onOpenChangeNicknamePopup: {
-//                            Global.openProfilePopup(publicKey, null, true)
-//                        }
-//                    }
+            //                        onOpenChangeNicknamePopup: {
+            //                            Global.openProfilePopup(publicKey, null, true)
+            //                        }
+            //                    }
 
-//                    Item {
-//                        Layout.fillWidth: true
-//                        Layout.fillHeight: true
-//                    }
-//                }
-//            }
+            //                    Item {
+            //                        Layout.fillWidth: true
+            //                        Layout.fillHeight: true
+            //                    }
+            //                }
+            //            }
 
             // BLOCKED
             ContactsListPanel {
@@ -335,51 +300,51 @@ Item {
                 height: 12
             }
         }
-    }
 
-    // TODO: Make BlockContactConfirmationDialog a dynamic component on a future refactor
-    BlockContactConfirmationDialog {
-        id: blockContactConfirmationDialog
-        onBlockButtonClicked: {
-            root.contactsStore.blockContact(blockContactConfirmationDialog.contactAddress)
-            blockContactConfirmationDialog.close()
-        }
-    }
-
-
-    // TODO: Make ConfirmationDialog a dynamic component on a future refactor
-    ConfirmationDialog {
-        id: removeContactConfirmationDialog
-        //% "Remove contact"
-        header.title: qsTrId("remove-contact")
-        //% "Are you sure you want to remove this contact?"
-        confirmationText: qsTrId("are-you-sure-you-want-to-remove-this-contact-")
-        onConfirmButtonClicked: {
-            if (Utils.getContactDetailsAsJson(removeContactConfirmationDialog.value).isContact) {
-                root.contactsStore.removeContact(removeContactConfirmationDialog.value);
+        // TODO: Make BlockContactConfirmationDialog a dynamic component on a future refactor
+        BlockContactConfirmationDialog {
+            id: blockContactConfirmationDialog
+            onBlockButtonClicked: {
+                root.contactsStore.blockContact(blockContactConfirmationDialog.contactAddress)
+                blockContactConfirmationDialog.close()
             }
-            removeContactConfirmationDialog.close()
-        }
-    }
-
-    Loader {
-        id: sendContactRequest
-        active: false
-
-        function open() {
-            active = true
-            sendContactRequest.item.open()
-        }
-        function close() {
-            active = false
         }
 
-        sourceComponent: SendContactRequestModal {
-            anchors.centerIn: parent
-            contactsStore: root.contactsStore
 
-            onClosed: {
-                sendContactRequest.close();
+        // TODO: Make ConfirmationDialog a dynamic component on a future refactor
+        ConfirmationDialog {
+            id: removeContactConfirmationDialog
+            //% "Remove contact"
+            header.title: qsTrId("remove-contact")
+            //% "Are you sure you want to remove this contact?"
+            confirmationText: qsTrId("are-you-sure-you-want-to-remove-this-contact-")
+            onConfirmButtonClicked: {
+                if (Utils.getContactDetailsAsJson(removeContactConfirmationDialog.value).isContact) {
+                    root.contactsStore.removeContact(removeContactConfirmationDialog.value);
+                }
+                removeContactConfirmationDialog.close()
+            }
+        }
+
+        Loader {
+            id: sendContactRequest
+            active: false
+
+            function open() {
+                active = true
+                sendContactRequest.item.open()
+            }
+            function close() {
+                active = false
+            }
+
+            sourceComponent: SendContactRequestModal {
+                anchors.centerIn: root
+                contactsStore: root.contactsStore
+
+                onClosed: {
+                    sendContactRequest.close();
+                }
             }
         }
     }

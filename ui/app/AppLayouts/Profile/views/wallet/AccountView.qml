@@ -19,28 +19,13 @@ Item {
     property WalletStore walletStore
     property var emojiPopup
 
-    StatusFlatButton {
-        id: backButton
-        anchors.top: parent.top
-        anchors.topMargin: Style.current.bigPadding
-        anchors.left: parent.left
-        anchors.leftMargin: Style.current.bigPadding
-        icon.name: "arrow-left"
-        icon.height: 13.5
-        icon.width: 17.5
-        text: qsTr("Wallet")
-        onClicked: {
-            root.goBack()
-        }
-    }
-
     Column {
         id: column
-        anchors.topMargin: Style.current.xlPadding
-        anchors.top: backButton.bottom
-        anchors.leftMargin: Style.current.xlPadding * 2
-        anchors.left: root.left
-        width: 560
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.leftMargin: Style.current.padding
+        anchors.rightMargin: Style.current.padding
 
         Row {
             id: header

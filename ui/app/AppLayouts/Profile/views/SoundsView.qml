@@ -8,27 +8,18 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 
-Item {
-    id: soundsContainer
+SettingsContentBase {
+    id: root
 
-    property var store
-    property int profileContentWidth
-
-    Layout.fillHeight: true
-    Layout.fillWidth: true
-    clip: true
-
-    Item {
-        width: profileContentWidth
-
-        anchors.horizontalCenter: parent.horizontalCenter
+    ColumnLayout {
+        spacing: Constants.settingsSection.itemSpacing
+        width: root.contentWidth
 
         StatusBaseText {
             id: labelVolume
-            anchors.top: parent.top
-            anchors.topMargin: 24
-            anchors.left: parent.left
-            anchors.leftMargin: 24
+            Layout.fillWidth: true
+            Layout.leftMargin: Style.current.padding
+            Layout.rightMargin: Style.current.padding
             //% "Sound volume"
             text: qsTrId("sound-volume") + " " + volume.value.toPrecision(1)
             font.pixelSize: 15
@@ -37,10 +28,9 @@ Item {
 
         StatusSlider {
             id: volume
-            anchors.top: labelVolume.bottom
-            anchors.topMargin: Style.current.padding
-            anchors.left: parent.left
-            anchors.leftMargin: 24
+            Layout.fillWidth: true
+            Layout.leftMargin: Style.current.padding
+            Layout.rightMargin: Style.current.padding
             from: 0.0
             to: 1.0
             stepSize: 0.1
