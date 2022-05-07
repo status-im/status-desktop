@@ -139,4 +139,33 @@ QtObject {
     function checkForUpdates() {
         aboutModuleInst.checkForUpdates()
     }
+
+    function getNameForSubsection(subsection) {
+        let i = 0;
+        for (; i < mainMenuItems.count; i++) {
+            let elem = mainMenuItems.get(i)
+            if(elem.subsection === subsection)
+                return elem.text
+        }
+
+        for (i=0; i < appsMenuItems.count; i++) {
+            let elem = appsMenuItems.get(i)
+            if(elem.subsection === subsection)
+                return elem.text
+        }
+
+        for (i=0; i < settingsMenuItems.count; i++) {
+            let elem = settingsMenuItems.get(i)
+            if(elem.subsection === subsection)
+                return elem.text
+        }
+
+        for (i=0; i < extraMenuItems.count; i++) {
+            let elem = extraMenuItems.get(i)
+            if(elem.subsection === subsection)
+                return elem.text
+        }
+
+        return ""
+    }
 }

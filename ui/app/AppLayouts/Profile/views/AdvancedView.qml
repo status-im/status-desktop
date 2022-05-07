@@ -14,33 +14,26 @@ import "../controls"
 import "../popups"
 import "../panels"
 
-ScrollView {
+SettingsContentBase {
     id: root
-
-    property int profileContentWidth
-
-    height: parent.height
-    width: parent.width
-    contentHeight: advancedContainer.height + 100
-    clip: true
 
     property AdvancedStore advancedStore
 
     Item {
         id: advancedContainer
-        width: profileContentWidth
-        anchors.horizontalCenter: parent.horizontalCenter
+        width: root.contentWidth
         height: generalColumn.height
 
         Column {
             id: generalColumn
             anchors.top: parent.top
-            anchors.topMargin: 64
             anchors.left: parent.left
-            anchors.right: parent.right
+            width: root.contentWidth
 
             // TODO: replace with StatusQ component
             StatusSettingsLineButton {
+                anchors.leftMargin: 0
+                anchors.rightMargin: 0
                 //% "Network"
                 text: qsTrId("network")
                 visible: !localAccountSensitiveSettings.isMultiNetworkEnabled
@@ -50,6 +43,8 @@ ScrollView {
 
             // TODO: replace with StatusQ component
             StatusSettingsLineButton {
+                anchors.leftMargin: 0
+                anchors.rightMargin: 0
                 //% "Fleet"
                 text: qsTrId("fleet")
                 currentValue: root.advancedStore.fleet
@@ -58,6 +53,8 @@ ScrollView {
 
             // TODO: replace with StatusQ component
             StatusSettingsLineButton {
+                anchors.leftMargin: 0
+                anchors.rightMargin: 0
                 //% "Minimize on close"
                 text: qsTrId("minimize-on-close")
                 isSwitch: true
@@ -69,6 +66,10 @@ ScrollView {
 
             // TODO: replace with StatusQ component
             StyledText {
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: Style.current.padding
+                anchors.rightMargin: Style.current.padding
                 //% "Application Logs"
                 text: qsTr("Application Logs")
                 font.pixelSize: 15
@@ -94,14 +95,14 @@ ScrollView {
             }
 
             Separator {
-                anchors.topMargin: Style.current.bigPadding
-                anchors.left: parent.left
-                anchors.leftMargin: -Style.current.padding
-                anchors.right: parent.right
-                anchors.rightMargin: -Style.current.padding
+                width: parent.width
             }
 
             StatusSectionHeadline {
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: Style.current.padding
+                anchors.rightMargin: Style.current.padding
                 //% "Experimental features"
                 text: qsTrId("experimental-features")
                 topPadding: Style.current.bigPadding
@@ -110,6 +111,8 @@ ScrollView {
 
             // TODO: replace with StatusQ component
             StatusSettingsLineButton {
+                anchors.leftMargin: 0
+                anchors.rightMargin: 0
                 //% "Wallet"
                 text: qsTrId("wallet")
                 isSwitch: true
@@ -126,6 +129,8 @@ ScrollView {
 
             // TODO: replace with StatusQ component
             StatusSettingsLineButton {
+                anchors.leftMargin: 0
+                anchors.rightMargin: 0
                 //% "Dapp Browser"
                 text: qsTrId("dapp-browser")
                 isSwitch: true
@@ -142,6 +147,8 @@ ScrollView {
 
             // TODO: replace with StatusQ component
             StatusSettingsLineButton {
+                anchors.leftMargin: 0
+                anchors.rightMargin: 0
                 //% "Communities"
                 text: qsTrId("communities")
                 isSwitch: true
@@ -157,6 +164,8 @@ ScrollView {
             }
 
             StatusSettingsLineButton {
+                anchors.leftMargin: 0
+                anchors.rightMargin: 0
                 //% "Communities"
                 text: qsTrId("Community History Archive Protocol")
                 isSwitch: true
@@ -173,6 +182,8 @@ ScrollView {
 
             // TODO: replace with StatusQ component
             StatusSettingsLineButton {
+                anchors.leftMargin: 0
+                anchors.rightMargin: 0
                 //% "Activity Center"
                 text: qsTrId("activity-center")
                 isSwitch: true
@@ -189,6 +200,8 @@ ScrollView {
 
             // TODO: replace with StatusQ component
             StatusSettingsLineButton {
+                anchors.leftMargin: 0
+                anchors.rightMargin: 0
                 //% "Node Management"
                 text: qsTrId("node-management")
                 isSwitch: true
@@ -205,6 +218,8 @@ ScrollView {
 
             // TODO: replace with StatusQ component
             StatusSettingsLineButton {
+                anchors.leftMargin: 0
+                anchors.rightMargin: 0
                 text: qsTr("Multi network")
                 isSwitch: true
                 switchChecked: localAccountSensitiveSettings.isMultiNetworkEnabled
@@ -220,6 +235,8 @@ ScrollView {
 
             // TODO: replace with StatusQ component
             StatusSettingsLineButton {
+                anchors.leftMargin: 0
+                anchors.rightMargin: 0
                 //% "Keycard"
                 text: qsTr("Keycard")
                 isSwitch: true
@@ -230,6 +247,10 @@ ScrollView {
             }
 
             StatusSectionHeadline {
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: Style.current.padding
+                anchors.rightMargin: Style.current.padding
                 visible: !root.advancedStore.isWakuV2
                 //% "Bloom filter level"
                 text: qsTrId("bloom-filter-level")
@@ -238,6 +259,10 @@ ScrollView {
             }
 
             Row {
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: Style.current.padding
+                anchors.rightMargin: Style.current.padding
                 visible: !root.advancedStore.isWakuV2
                 spacing: 11
 
@@ -316,6 +341,10 @@ ScrollView {
             }
 
             StatusSectionHeadline {
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: Style.current.padding
+                anchors.rightMargin: Style.current.padding
                 visible: root.advancedStore.isWakuV2
                 text: qsTr("WakuV2 mode")
                 topPadding: Style.current.bigPadding
@@ -323,6 +352,10 @@ ScrollView {
             }
 
             Row {
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: Style.current.padding
+                anchors.rightMargin: Style.current.padding
                 spacing: 11
                 visible: root.advancedStore.isWakuV2
                 Component {
@@ -382,21 +415,23 @@ ScrollView {
                 }
             }
 
-             StatusSectionHeadline {
+            StatusSectionHeadline {
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: Style.current.padding
+                anchors.rightMargin: Style.current.padding
                 text: qsTr("Developer features")
                 topPadding: Style.current.bigPadding
                 bottomPadding: Style.current.padding
             }
 
             Separator {
-                anchors.topMargin: Style.current.bigPadding
-                anchors.left: parent.left
-                anchors.leftMargin: -Style.current.padding
-                anchors.right: parent.right
-                anchors.rightMargin: -Style.current.padding
+                width: parent.width
             }
 
             StatusSettingsLineButton {
+                anchors.leftMargin: 0
+                anchors.rightMargin: 0
                 text: qsTr("Full developer mode")
                 isEnabled: {
                     return !localAccountSensitiveSettings.downloadChannelMessagesEnabled ||
@@ -410,15 +445,13 @@ ScrollView {
             }
 
             Separator {
-                anchors.topMargin: Style.current.bigPadding
-                anchors.left: parent.left
-                anchors.leftMargin: -Style.current.padding
-                anchors.right: parent.right
-                anchors.rightMargin: -Style.current.padding
+                width: parent.width
             }
 
             // TODO: replace with StatusQ component
             StatusSettingsLineButton {
+                anchors.leftMargin: 0
+                anchors.rightMargin: 0
                 text: qsTr("Download messages")
                 isSwitch: true
                 switchChecked: localAccountSensitiveSettings.downloadChannelMessagesEnabled
@@ -429,6 +462,8 @@ ScrollView {
 
             // TODO: replace with StatusQ component
             StatusSettingsLineButton {
+                anchors.leftMargin: 0
+                anchors.rightMargin: 0
                 text: qsTr("Telemetry")
                 isSwitch: true
                 switchChecked: root.advancedStore.isTelemetryEnabled
@@ -439,6 +474,8 @@ ScrollView {
 
             // TODO: replace with StatusQ component
             StatusSettingsLineButton {
+                anchors.leftMargin: 0
+                anchors.rightMargin: 0
                 text: qsTr("Debug")
                 isSwitch: true
                 switchChecked: root.advancedStore.isDebugEnabled
@@ -449,6 +486,8 @@ ScrollView {
 
             // TODO: replace with StatusQ component
             StatusSettingsLineButton {
+                anchors.leftMargin: 0
+                anchors.rightMargin: 0
                 text: qsTr("Auto message")
                 isSwitch: true
                 switchChecked: root.advancedStore.isAutoMessageEnabled
@@ -459,6 +498,8 @@ ScrollView {
 
             // TODO: replace with StatusQ component
             StatusSettingsLineButton {
+                anchors.leftMargin: 0
+                anchors.rightMargin: 0
                 text: qsTr("Stickers/ENS on ropsten")
                 visible: root.advancedStore.currentNetworkId === Constants.networkRopsten
                 isSwitch: true

@@ -1,7 +1,6 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.13
-import QtGraphicalEffects 1.13
 
 import utils 1.0
 import shared 1.0
@@ -17,170 +16,168 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 
-ColumnLayout {
+SettingsContentBase {
     id: root
 
     property ProfileStore profileStore
-    property int profileContentWidth
 
-    clip: true
-    spacing: 16
+    ColumnLayout {
+        spacing: Constants.settingsSection.itemSpacing
+        width: root.contentWidth
 
-    Item {
-        Layout.preferredHeight: 32
-        Layout.fillWidth: true
-    }
+        RowLayout {
+            Layout.fillWidth: true
+            Layout.leftMargin: Style.current.padding
+            Layout.rightMargin: Style.current.padding
 
-    RowLayout {
-        Layout.alignment: Qt.AlignHCenter
-        Layout.maximumWidth: root.profileContentWidth
+            StatusBaseText {
+                id: profileName
+                text: root.profileStore.name
+                font.weight: Font.Bold
+                font.pixelSize: 20
+                color: Theme.palette.directColor1
+            }
 
-        StatusBaseText {
-            id: profileName
+            StatusButton {
+                text: "Edit"
+                onClicked: Global.openPopup(displayNamePopupComponent)
+            }
 
-            text: root.profileStore.name
-            font.weight: Font.Bold
-            font.pixelSize: 20
-            color: Theme.palette.directColor1
+            Item {
+                Layout.fillWidth: true
+            }
+
+            StatusFlatRoundButton {
+                id: qrCodeButton
+
+                Layout.preferredWidth: 32
+                Layout.preferredHeight: 32
+
+                icon.name: "qr"
+                type: StatusFlatRoundButton.Type.Quaternary
+                onClicked: qrCodePopup.open()
+            }
         }
 
-        StatusButton {
-            text: "Edit"
-            onClicked: Global.openPopup(displayNamePopupComponent)
-        }
-
-        Item {
+        Separator {
             Layout.fillWidth: true
         }
 
-        StatusFlatRoundButton {
-            id: qrCodeButton
+        ProfileHeader {
+            id: profileImgNameContainer
 
-            Layout.preferredWidth: 32
-            Layout.preferredHeight: 32
+            Layout.fillWidth: true
+            Layout.leftMargin: Style.current.padding
+            Layout.rightMargin: Style.current.padding
 
-            icon.name: "qr"
-            type: StatusFlatRoundButton.Type.Quaternary
-            onClicked: qrCodePopup.open()
-        }
-    }
+            displayName: profileStore.name
+            pubkey: profileStore.pubkey
+            icon: profileStore.icon
 
-    Separator {
-        Layout.alignment: Qt.AlignHCenter
-        Layout.preferredWidth: root.profileContentWidth
-    }
+            displayNameVisible: false
+            pubkeyVisible: false
 
-    ProfileHeader {
-        id: profileImgNameContainer
+            imageWidth: 80
+            imageHeight: 80
+            emojiSize: Qt.size(20,20)
+            supersampling: true
 
-        Layout.alignment: Qt.AlignHCenter
-        Layout.preferredWidth: root.profileContentWidth
+            imageOverlay: Item {
+                StatusFlatRoundButton {
+                    width: 24
+                    height: 24
 
-        displayName: profileStore.name
-        pubkey: profileStore.pubkey
-        icon: profileStore.icon
+                    anchors {
+                        right: parent.right
+                        bottom: parent.bottom
+                        rightMargin: -8
+                    }
 
-        displayNameVisible: false
-        pubkeyVisible: false
+                    type: StatusFlatRoundButton.Type.Secondary
+                    icon.name: "pencil"
+                    icon.color: Theme.palette.directColor1
+                    icon.width: 12.5
+                    icon.height: 12.5
 
-        imageWidth: 80
-        imageHeight: 80
-        emojiSize: Qt.size(20,20)
-        supersampling: true
-
-        imageOverlay: Item {
-            StatusFlatRoundButton {
-                width: 24
-                height: 24
-
-                anchors {
-                    right: parent.right
-                    bottom: parent.bottom
-                    rightMargin: -8
+                    onClicked: Global.openChangeProfilePicPopup()
                 }
+            }
+        }
 
-                type: StatusFlatRoundButton.Type.Secondary
-                icon.name: "pencil"
-                icon.color: Theme.palette.directColor1
-                icon.width: 12.5
-                icon.height: 12.5
+        StatusDescriptionListItem {
+            Layout.fillWidth: true
+            Layout.leftMargin: Style.current.padding
+            Layout.rightMargin: Style.current.padding
 
-                onClicked: Global.openChangeProfilePicPopup()
+            title: qsTr("ENS username")
+            subTitle: root.profileStore.ensName
+            tooltip.text: qsTr("Copy to clipboard")
+            icon.name: "copy"
+            visible: !!root.profileStore.ensName
+            iconButton.onClicked: {
+                root.profileStore.copyToClipboard(root.profileStore.ensName)
+                tooltip.visible = !tooltip.visible
+            }
+        }
+
+        StatusDescriptionListItem {
+            Layout.fillWidth: true
+            Layout.leftMargin: Style.current.padding
+            Layout.rightMargin: Style.current.padding
+
+            title: qsTr("Chat key")
+            subTitle: Utils.getCompressedPk(root.profileStore.pubkey)
+            subTitleComponent.elide: Text.ElideMiddle
+            subTitleComponent.width: 320
+            subTitleComponent.font.family: Theme.palette.monoFont.name
+            tooltip.text: qsTr("Copy to clipboard")
+            icon.name: "copy"
+            iconButton.onClicked: {
+                root.profileStore.copyToClipboard(subTitle)
+                tooltip.visible = !tooltip.visible
+            }
+        }
+
+        StatusDescriptionListItem {
+            Layout.fillWidth: true
+            Layout.leftMargin: Style.current.padding
+            Layout.rightMargin: Style.current.padding
+
+            title: qsTr("Share Profile URL")
+            subTitle: `${Constants.userLinkPrefix}${root.profileStore.ensName !== "" ? root.profileStore.ensName : (root.profileStore.pubkey.substring(0, 5) + "..." + root.profileStore.pubkey.substring(root.profileStore.pubkey.length - 5))}`
+            tooltip.text: qsTr("Copy to clipboard")
+            icon.name: "copy"
+            iconButton.onClicked: {
+                root.profileStore.copyToClipboard(Constants.userLinkPrefix + (root.profileStore.ensName !== "" ? root.profileStore.ensName : root.profileStore.pubkey))
+                tooltip.visible = !tooltip.visible
+            }
+        }
+
+        Component {
+            id: displayNamePopupComponent
+            DisplayNamePopup {
+                profileStore: root.profileStore
+                anchors.centerIn: Overlay.overlay
+                onClosed: { destroy() }
+            }
+        }
+
+        ModalPopup {
+            id: qrCodePopup
+            width: 420
+            height: 420
+            Image {
+                asynchronous: true
+                fillMode: Image.PreserveAspectFit
+                source: root.profileStore.getQrCodeSource(root.profileStore.pubkey)
+                anchors.verticalCenterOffset: 20
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+                height: 312
+                width: 312
+                mipmap: true
+                smooth: false
             }
         }
     }
-
-    StatusDescriptionListItem {
-        Layout.alignment: Qt.AlignHCenter
-        Layout.preferredWidth: root.profileContentWidth
-
-        title: qsTr("ENS username")
-        subTitle: root.profileStore.ensName
-        tooltip.text: qsTr("Copy to clipboard")
-        icon.name: "copy"
-        visible: !!root.profileStore.ensName
-        iconButton.onClicked: {
-            root.profileStore.copyToClipboard(root.profileStore.ensName)
-            tooltip.visible = !tooltip.visible
-        }
-    }
-
-    StatusDescriptionListItem {
-        Layout.alignment: Qt.AlignHCenter
-        Layout.preferredWidth: root.profileContentWidth
-
-        title: qsTr("Chat key")
-        subTitle: Utils.getCompressedPk(root.profileStore.pubkey)
-        subTitleComponent.elide: Text.ElideMiddle
-        subTitleComponent.width: 320
-        subTitleComponent.font.family: Theme.palette.monoFont.name
-        tooltip.text: qsTr("Copy to clipboard")
-        icon.name: "copy"
-        iconButton.onClicked: {
-            root.profileStore.copyToClipboard(subTitle)
-            tooltip.visible = !tooltip.visible
-        }
-    }
-
-    StatusDescriptionListItem {
-        Layout.alignment: Qt.AlignHCenter
-        Layout.preferredWidth: root.profileContentWidth
-
-        title: qsTr("Share Profile URL")
-        subTitle: `${Constants.userLinkPrefix}${root.profileStore.ensName !== "" ? root.profileStore.ensName : (root.profileStore.pubkey.substring(0, 5) + "..." + root.profileStore.pubkey.substring(root.profileStore.pubkey.length - 5))}`
-        tooltip.text: qsTr("Copy to clipboard")
-        icon.name: "copy"
-        iconButton.onClicked: {
-            root.profileStore.copyToClipboard(Constants.userLinkPrefix + (root.profileStore.ensName !== "" ? root.profileStore.ensName : root.profileStore.pubkey))
-            tooltip.visible = !tooltip.visible
-        }
-    }
-
-    Component {
-        id: displayNamePopupComponent
-        DisplayNamePopup {
-            profileStore: root.profileStore
-            anchors.centerIn: Overlay.overlay
-            onClosed: { destroy() }
-        }
-    }
-
-    ModalPopup {
-        id: qrCodePopup
-        width: 420
-        height: 420
-        Image {
-            asynchronous: true
-            fillMode: Image.PreserveAspectFit
-            source: root.profileStore.getQrCodeSource(root.profileStore.pubkey)
-            anchors.verticalCenterOffset: 20
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
-            height: 312
-            width: 312
-            mipmap: true
-            smooth: false
-        }
-    }
 }
-

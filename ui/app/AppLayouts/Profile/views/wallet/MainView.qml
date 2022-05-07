@@ -20,19 +20,6 @@ Column {
     signal goToAccountView(address: string)
     signal goToDappPermissionsView()
 
-    StatusBaseText {
-        id: titleText
-        text: qsTr("Wallet")
-        font.weight: Font.Bold
-        font.pixelSize: 28
-        color: Theme.palette.directColor1
-    }
-
-    Item {
-        height: Style.current.bigPadding
-        width: parent.width
-    }
-
     StatusListItem {
         title: qsTr("Manage Assets & List")
         height: 64

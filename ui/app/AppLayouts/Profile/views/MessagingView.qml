@@ -20,23 +20,15 @@ import "../controls"
 import "../popups"
 import "../panels"
 
-ScrollView {
+SettingsContentBase {
     id: root
-
-    property int profileContentWidth
-
-    height: parent.height
-    width: parent.width
-    contentHeight: advancedContainer.height + 100
-    clip: true
 
     property MessagingStore messagingStore
 
-    Item {
-        id: advancedContainer
-        width: profileContentWidth
-        anchors.horizontalCenter: parent.horizontalCenter
-        height: generalColumn.height
+    ColumnLayout {
+        id: generalColumn
+        spacing: Constants.settingsSection.itemSpacing
+        width: root.contentWidth
 
         ButtonGroup {
             id: showProfilePictureToGroup
@@ -50,395 +42,406 @@ ScrollView {
             id: browserGroup
         }
 
+        StatusListItem {
+            id: allowNewContactRequest
+
+            Layout.fillWidth: true
+            implicitHeight: 64
+
+            //% "Allow new contact requests"
+            title: qsTrId("allow-new-contact-requests")
+
+            components: [
+                StatusSwitch {
+                    id: switch3
+                    checked: !root.messagingStore.privacyModule.messagesFromContactsOnly
+                    onCheckedChanged: {
+                        // messagesFromContactsOnly needs to be accessed from the module (view),
+                        // because otherwise doing `messagesFromContactsOnly = value` only changes the bool property on QML
+                        if (root.messagingStore.privacyModule.messagesFromContactsOnly === checked) {
+                            root.messagingStore.privacyModule.messagesFromContactsOnly = !checked
+                        }
+                    }
+                }
+            ]
+            sensor.onClicked: {
+                switch3.checked = !switch3.checked
+            }
+        }
+
+        // SHOW PROFILE PICTURE TO
+        StatusBaseText {
+            Layout.fillWidth: true
+            Layout.leftMargin: Style.current.padding
+            Layout.rightMargin: Style.current.padding
+            text: qsTr("Show My Profile Picture To")
+            font.pixelSize: 15
+            color: Theme.palette.directColor1
+        }
+
+        SettingsRadioButton {
+            Layout.fillWidth: true
+            Layout.leftMargin: Style.current.padding
+            Layout.rightMargin: Style.current.padding
+            label: qsTr("Everyone")
+            group: showProfilePictureToGroup
+            checked: root.messagingStore.profilePicturesShowTo ===
+                     Constants.profilePicturesShowTo.everyone
+            onClicked: root.messagingStore.setProfilePicturesShowTo(
+                           Constants.profilePicturesShowTo.everyone
+                           )
+        }
+
+        SettingsRadioButton {
+            Layout.fillWidth: true
+            Layout.leftMargin: Style.current.padding
+            Layout.rightMargin: Style.current.padding
+            label: qsTr("Contacts")
+            group: showProfilePictureToGroup
+            checked: root.messagingStore.profilePicturesShowTo ===
+                     Constants.profilePicturesShowTo.contactsOnly
+            onClicked: root.messagingStore.setProfilePicturesShowTo(
+                           Constants.profilePicturesShowTo.contactsOnly
+                           )
+        }
+
+        SettingsRadioButton {
+            Layout.fillWidth: true
+            Layout.leftMargin: Style.current.padding
+            Layout.rightMargin: Style.current.padding
+            label: qsTr("No One")
+            group: showProfilePictureToGroup
+            checked: root.messagingStore.profilePicturesShowTo ===
+                     Constants.profilePicturesShowTo.noOne
+            onClicked: root.messagingStore.setProfilePicturesShowTo(
+                           Constants.profilePicturesShowTo.noOne
+                           )
+        }
+
+        Item {
+            id: spacer1
+            Layout.fillWidth: true
+            Layout.preferredHeight: 6
+        }
+
+        // SEE PROFILTE PICTURES FROM
+        StatusBaseText {
+            Layout.fillWidth: true
+            Layout.leftMargin: Style.current.padding
+            Layout.rightMargin: Style.current.padding
+            text: qsTr("See Profile Pictures From")
+            font.pixelSize: 15
+            color: Theme.palette.directColor1
+        }
+
+        SettingsRadioButton {
+            Layout.fillWidth: true
+            Layout.leftMargin: Style.current.padding
+            Layout.rightMargin: Style.current.padding
+            label: qsTr("Everyone")
+            group: seeProfilePicturesFromGroup
+            checked: root.messagingStore.profilePicturesVisibility ===
+                     Constants.profilePicturesVisibility.everyone
+            onClicked: root.messagingStore.setProfilePicturesVisibility(
+                           Constants.profilePicturesVisibility.everyone
+                           )
+        }
+
+        SettingsRadioButton {
+            Layout.fillWidth: true
+            Layout.leftMargin: Style.current.padding
+            Layout.rightMargin: Style.current.padding
+            label: qsTr("Contacts")
+            group: seeProfilePicturesFromGroup
+            checked: root.messagingStore.profilePicturesVisibility ===
+                     Constants.profilePicturesVisibility.contactsOnly
+            onClicked: root.messagingStore.setProfilePicturesVisibility(
+                           Constants.profilePicturesVisibility.contactsOnly
+                           )
+        }
+
+        SettingsRadioButton {
+            Layout.fillWidth: true
+            Layout.leftMargin: Style.current.padding
+            Layout.rightMargin: Style.current.padding
+            label: qsTr("No One")
+            group: seeProfilePicturesFromGroup
+            checked: root.messagingStore.profilePicturesVisibility ===
+                     Constants.profilePicturesVisibility.noOne
+            onClicked: root.messagingStore.setProfilePicturesVisibility(
+                           Constants.profilePicturesVisibility.noOne
+                           )
+        }
+
+        Item {
+            id: spacer2
+            Layout.fillWidth: true
+            Layout.preferredHeight: 6
+        }
+
+        // Open Message Links With
+        StatusBaseText {
+            Layout.fillWidth: true
+            Layout.leftMargin: Style.current.padding
+            Layout.rightMargin: Style.current.padding
+            text: qsTr("Open Message Links With")
+            font.pixelSize: 15
+            color: Theme.palette.directColor1
+        }
+
+        SettingsRadioButton {
+            Layout.fillWidth: true
+            Layout.leftMargin: Style.current.padding
+            Layout.rightMargin: Style.current.padding
+            label: qsTr("Status Browser")
+            group: browserGroup
+            checked: localAccountSensitiveSettings.openLinksInStatus
+            onClicked: {
+                localAccountSensitiveSettings.openLinksInStatus = true
+            }
+        }
+
+        SettingsRadioButton {
+            Layout.fillWidth: true
+            Layout.leftMargin: Style.current.padding
+            Layout.rightMargin: Style.current.padding
+            label: qsTr("System Default Browser")
+            group: browserGroup
+            checked: !localAccountSensitiveSettings.openLinksInStatus
+            onClicked: {
+                localAccountSensitiveSettings.openLinksInStatus = false
+            }
+        }
+
+        Separator {
+            id: separator1
+            Layout.fillWidth: true
+        }
+
+        // CONTACTS SECTION
+        StatusContactRequestsIndicatorListItem {
+            Layout.fillWidth: true
+            title: qsTr("Contacts, Requests, and Blocked Users")
+            requestsCount: root.messagingStore.contactRequestsModel.count
+            sensor.onClicked: Global.changeAppSectionBySectionType(Constants.appSection.profile,
+                                                                   Constants.settingsSubsection.contacts)
+        }
+
+        Separator {
+            id: separator2
+            Layout.fillWidth: true
+        }
+
+        // MESSAGE LINK PREVIEWS
+        StatusListItem {
+            Layout.fillWidth: true
+            title: qsTr("Display Message Link Previews")
+            implicitHeight: 64
+            components: [
+                StatusSwitch {
+                    id: showMessageLinksSwitch
+                    checked: false
+                    onCheckedChanged: {
+                        if (checked === false) {
+                            // Switch all the whitelists to false
+                            imageSwitch.checked = false
+                            for (let i = 0; i < sitesListView.count; i++) {
+                                let item = sitesListView.itemAt(i)
+                                item.whitelistSwitch.checked = false
+                            }
+                        }
+                    }
+                }
+            ]
+            sensor.onClicked: {
+                showMessageLinksSwitch.checked = !showMessageLinksSwitch.checked
+            }
+        }
+
+        function populatePreviewableSites() {
+            let whitelistAsString = root.messagingStore.getLinkPreviewWhitelist()
+            if(whitelistAsString == "")
+                return
+            let whitelist = JSON.parse(whitelistAsString)
+            if (!localAccountSensitiveSettings.whitelistedUnfurlingSites) {
+                localAccountSensitiveSettings.whitelistedUnfurlingSites = {}
+            }
+            previewableSites.clear()
+            var oneEntryIsActive = false
+            whitelist.forEach(entry => {
+                                  entry.isWhitelisted = localAccountSensitiveSettings.whitelistedUnfurlingSites[entry.address] || false
+                                  if (entry.isWhitelisted) {
+                                      oneEntryIsActive = true
+                                  }
+                                  previewableSites.append(entry)
+                              })
+            if (oneEntryIsActive) {
+                showMessageLinksSwitch.checked = true
+            }
+        }
+
+        Component.onCompleted: {
+            populatePreviewableSites()
+        }
+
+        StatusSectionHeadline {
+            id: labelWebsites
+            visible: showMessageLinksSwitch.checked
+            Layout.fillWidth: true
+            Layout.leftMargin: Style.current.padding
+            Layout.rightMargin: Style.current.padding
+            text: qsTr("Fine tune which sites to allow link previews")
+        }
+
         Column {
-            id: generalColumn
-            spacing: 18
-            anchors.top: parent.top
-            anchors.topMargin: 24
-            anchors.left: parent.left
-            anchors.right: parent.right
+            id: siteColumn
+            visible: showMessageLinksSwitch.checked
+            Layout.fillWidth: true
 
-            StatusBaseText {
-                id: titleText
-                text: qsTr("Messaging")
-                font.weight: Font.Bold
-                font.pixelSize: 28
-                color: Theme.palette.directColor1
+            ListModel {
+                id: previewableSites
             }
 
+            Connections {
+                target: Global
+                onSettingsLoaded: {
+                    generalColumn.populatePreviewableSites()
+                }
+            }
+
+            // Manually add switch for the image unfurling
             StatusListItem {
-                anchors.left: parent.left
-                anchors.leftMargin: -Style.current.padding
-                anchors.right: parent.right
-                anchors.rightMargin: -Style.current.padding
-                //% "Allow new contact requests"
-                title: qsTrId("allow-new-contact-requests")
+                width: parent.width
                 implicitHeight: 64
+                title: qsTr("Image unfurling")
+                subTitle: qsTr("All images (links that contain an image extension) will be downloaded and displayed")
+                // TODO find a better icon for this
+                image.source: Style.svg('globe')
+                Component.onCompleted: {
+                    if (localAccountSensitiveSettings.displayChatImages) {
+                        showMessageLinksSwitch.checked = true
+                    }
+                }
                 components: [
                     StatusSwitch {
-                        id: switch3
-                        checked: !root.messagingStore.privacyModule.messagesFromContactsOnly
+                        id: imageSwitch
+                        checked: localAccountSensitiveSettings.displayChatImages
                         onCheckedChanged: {
-                            // messagesFromContactsOnly needs to be accessed from the module (view),
-                            // because otherwise doing `messagesFromContactsOnly = value` only changes the bool property on QML
-                            if (root.messagingStore.privacyModule.messagesFromContactsOnly === checked) {
-                                root.messagingStore.privacyModule.messagesFromContactsOnly = !checked
+                            if (localAccountSensitiveSettings.displayChatImages !== checked) {
+                                localAccountSensitiveSettings.displayChatImages = checked
                             }
                         }
                     }
                 ]
                 sensor.onClicked: {
-                    switch3.checked = !switch3.checked
+                    imageSwitch.checked = !imageSwitch.checked
                 }
             }
 
-            // SHOW PROFILE PICTURE TO
-            StatusBaseText {
-                text: qsTr("Show My Profile Picture To")
-                font.pixelSize: 15
-                color: Theme.palette.directColor1
-            }
+            Repeater {
+                id: sitesListView
+                model: previewableSites
 
-            SettingsRadioButton {
-                label: qsTr("Everyone")
-                group: showProfilePictureToGroup
-                checked: root.messagingStore.profilePicturesShowTo ===
-                    Constants.profilePicturesShowTo.everyone
-                onClicked: root.messagingStore.setProfilePicturesShowTo(
-                        Constants.profilePicturesShowTo.everyone
-                    )
-            }
-
-            SettingsRadioButton {
-                label: qsTr("Contacts")
-                group: showProfilePictureToGroup
-                checked: root.messagingStore.profilePicturesShowTo ===
-                    Constants.profilePicturesShowTo.contactsOnly
-                onClicked: root.messagingStore.setProfilePicturesShowTo(
-                        Constants.profilePicturesShowTo.contactsOnly
-                    )
-            }
-
-            SettingsRadioButton {
-                label: qsTr("No One")
-                group: showProfilePictureToGroup
-                checked: root.messagingStore.profilePicturesShowTo ===
-                    Constants.profilePicturesShowTo.noOne
-                onClicked: root.messagingStore.setProfilePicturesShowTo(
-                        Constants.profilePicturesShowTo.noOne
-                    )
-            }
-
-            Item {
-                id: spacer1
-                width: parent.width
-                height: 6
-            }
-
-            // SEE PROFILTE PICTURES FROM
-            StatusBaseText {
-                text: qsTr("See Profile Pictures From")
-                font.pixelSize: 15
-                color: Theme.palette.directColor1
-            }
-
-            SettingsRadioButton {
-                label: qsTr("Everyone")
-                group: seeProfilePicturesFromGroup
-                checked: root.messagingStore.profilePicturesVisibility ===
-                    Constants.profilePicturesVisibility.everyone
-                onClicked: root.messagingStore.setProfilePicturesVisibility(
-                        Constants.profilePicturesVisibility.everyone
-                    )
-            }
-
-            SettingsRadioButton {
-                label: qsTr("Contacts")
-                group: seeProfilePicturesFromGroup
-                checked: root.messagingStore.profilePicturesVisibility ===
-                    Constants.profilePicturesVisibility.contactsOnly
-                onClicked: root.messagingStore.setProfilePicturesVisibility(
-                        Constants.profilePicturesVisibility.contactsOnly
-                    )
-            }
-
-            SettingsRadioButton {
-                label: qsTr("No One")
-                group: seeProfilePicturesFromGroup
-                checked: root.messagingStore.profilePicturesVisibility ===
-                    Constants.profilePicturesVisibility.noOne
-                onClicked: root.messagingStore.setProfilePicturesVisibility(
-                        Constants.profilePicturesVisibility.noOne
-                    )
-            }
-
-            Item {
-                id: spacer2
-                width: parent.width
-                height: 6
-            }
-
-            // Open Message Links With
-            StatusBaseText {
-                text: qsTr("Open Message Links With")
-                font.pixelSize: 15
-                color: Theme.palette.directColor1
-            }
-
-            SettingsRadioButton {
-                label: qsTr("Status Browser")
-                group: browserGroup
-                checked: localAccountSensitiveSettings.openLinksInStatus
-                onClicked: {
-                     localAccountSensitiveSettings.openLinksInStatus = true
-                }
-            }
-
-            SettingsRadioButton {
-                label: qsTr("System Default Browser")
-                group: browserGroup
-                checked: !localAccountSensitiveSettings.openLinksInStatus
-                onClicked: {
-                     localAccountSensitiveSettings.openLinksInStatus = false
-                }
-            }
-
-            Separator {
-                id: separator1
-            }
-
-            // CONTACTS SECTION
-            StatusContactRequestsIndicatorListItem {
-                title: qsTr("Contacts, Requests, and Blocked Users")
-                requestsCount: root.messagingStore.contactRequestsModel.count
-                anchors.left: parent.left
-                anchors.leftMargin: -Style.current.padding
-                anchors.right: parent.right
-                anchors.rightMargin: -Style.current.padding
-                sensor.onClicked: Global.changeAppSectionBySectionType(Constants.appSection.profile,
-                        Constants.settingsSubsection.contacts)
-            }
-
-            Separator {
-                id: separator2
-            }
-
-            // MESSAGE LINK PREVIEWS
-            StatusListItem {
-                anchors.left: parent.left
-                anchors.leftMargin: -Style.current.padding
-                anchors.right: parent.right
-                anchors.rightMargin: -Style.current.padding
-                title: qsTr("Display Message Link Previews")
-                implicitHeight: 64
-                components: [
-                    StatusSwitch {
-                        id: showMessageLinksSwitch
-                        checked: false
-                        onCheckedChanged: {
-                            if (checked === false) {
-                                // Switch all the whitelists to false
-                                imageSwitch.checked = false
-                                for (let i = 0; i < sitesListView.count; i++) {
-                                    let item = sitesListView.itemAt(i)
-                                    item.whitelistSwitch.checked = false
-                                }
+                delegate: Component {
+                    StatusListItem {
+                        property alias whitelistSwitch: siteSwitch
+                        width: parent.width
+                        implicitHeight: 64
+                        title: model.title
+                        subTitle: model.address
+                        image.source:  {
+                            let filename;
+                            switch (model.title.toLowerCase()) {
+                            case "youtube":
+                            case "youtube shortener":
+                                filename = "youtube"; break;
+                            case "github":
+                                filename = "github"; break;
+                            case "medium":
+                                filename = "medium"; break;
+                            case "tenor gifs":
+                                filename = "tenor"; break;
+                            case "giphy gifs":
+                            case "giphy gifs shortener":
+                            case "giphy gifs subdomain":
+                                filename = "giphy"; break;
+                            case "github":
+                                filename = "github"; break;
+                            case "status":
+                                filename = "status"; break;
+                                // TODO get a good default icon
+                            default: filename = "../globe"
                             }
+                            return Style.svg(`linkPreviewThumbnails/${filename}`)
                         }
-                    }
-                ]
-                sensor.onClicked: {
-                    showMessageLinksSwitch.checked = !showMessageLinksSwitch.checked
-                }
-            }
+                        components: [
+                            StatusSwitch {
+                                id: siteSwitch
+                                checked: !!model.isWhitelisted
+                                onCheckedChanged: {
+                                    let settings = localAccountSensitiveSettings.whitelistedUnfurlingSites
 
-            function populatePreviewableSites() {
-                let whitelistAsString = root.messagingStore.getLinkPreviewWhitelist()
-                if(whitelistAsString == "")
-                    return
-                let whitelist = JSON.parse(whitelistAsString)
-                if (!localAccountSensitiveSettings.whitelistedUnfurlingSites) {
-                    localAccountSensitiveSettings.whitelistedUnfurlingSites = {}
-                }
-                previewableSites.clear()
-                var oneEntryIsActive = false
-                whitelist.forEach(entry => {
-                    entry.isWhitelisted = localAccountSensitiveSettings.whitelistedUnfurlingSites[entry.address] || false
-                    if (entry.isWhitelisted) {
-                        oneEntryIsActive = true
-                    }
-                    previewableSites.append(entry)
-                })
-                if (oneEntryIsActive) {
-                    showMessageLinksSwitch.checked = true
-                }
-            }
-
-            Component.onCompleted: {
-                populatePreviewableSites()
-            }
-
-            Column {
-                id: siteColumn
-                visible: showMessageLinksSwitch.checked
-                width: parent.width
-
-                StatusSectionHeadline {
-                    id: labelWebsites
-                    text: qsTr("Fine tune which sites to allow link previews")
-                    width: parent.width
-                }
-
-                ListModel {
-                    id: previewableSites
-                }
-
-                Connections {
-                    target: Global
-                    onSettingsLoaded: {
-                        generalColumn.populatePreviewableSites()
-                    }
-                }
-
-                // Manually add switch for the image unfurling
-                StatusListItem {
-                    anchors.left: parent.left
-                    anchors.leftMargin: -Style.current.padding
-                    anchors.right: parent.right
-                    anchors.rightMargin: -Style.current.padding
-                    implicitHeight: 64
-                    title: qsTr("Image unfurling")
-                    subTitle: qsTr("All images (links that contain an image extension) will be downloaded and displayed")
-                    // TODO find a better icon for this
-                    image.source: Style.svg('globe')
-                    Component.onCompleted: {
-                        if (localAccountSensitiveSettings.displayChatImages) {
-                            showMessageLinksSwitch.checked = true
-                        }
-                    }
-                    components: [
-                        StatusSwitch {
-                            id: imageSwitch
-                            checked: localAccountSensitiveSettings.displayChatImages
-                            onCheckedChanged: {
-                                if (localAccountSensitiveSettings.displayChatImages !== checked) {
-                                    localAccountSensitiveSettings.displayChatImages = checked
-                                }
-                            }
-                        }
-                    ]
-                    sensor.onClicked: {
-                        imageSwitch.checked = !imageSwitch.checked
-                    }
-                }
-
-                Repeater {
-                    id: sitesListView
-                    model: previewableSites
-
-                    delegate: Component {
-                        StatusListItem {
-                            property alias whitelistSwitch: siteSwitch
-                            anchors.left: parent.left
-                            anchors.leftMargin: -Style.current.padding
-                            anchors.right: parent.right
-                            anchors.rightMargin: -Style.current.padding
-                            implicitHeight: 64
-                            title: model.title
-                            subTitle: model.address
-                            image.source:  {
-                                let filename;
-                                switch (model.title.toLowerCase()) {
-                                    case "youtube":
-                                    case "youtube shortener":
-                                        filename = "youtube"; break;
-                                    case "github":
-                                        filename = "github"; break;
-                                    case "medium":
-                                        filename = "medium"; break;
-                                    case "tenor gifs":
-                                        filename = "tenor"; break;
-                                    case "giphy gifs":
-                                    case "giphy gifs shortener":
-                                    case "giphy gifs subdomain":
-                                        filename = "giphy"; break;
-                                    case "github":
-                                        filename = "github"; break;
-                                    case "status":
-                                        filename = "status"; break;
-                                        // TODO get a good default icon
-                                    default: filename = "../globe"
-                                }
-                                return Style.svg(`linkPreviewThumbnails/${filename}`)
-                            }
-                            components: [
-                                StatusSwitch {
-                                    id: siteSwitch
-                                    checked: !!model.isWhitelisted
-                                    onCheckedChanged: {
-                                        let settings = localAccountSensitiveSettings.whitelistedUnfurlingSites
-
-                                        if (!settings) {
-                                            settings = {}
-                                        }
-
-                                        if (settings[address] === this.checked) {
-                                            return
-                                        }
-
-                                        settings[address] = this.checked
-                                        localAccountSensitiveSettings.whitelistedUnfurlingSites = settings
+                                    if (!settings) {
+                                        settings = {}
                                     }
+
+                                    if (settings[address] === this.checked) {
+                                        return
+                                    }
+
+                                    settings[address] = this.checked
+                                    localAccountSensitiveSettings.whitelistedUnfurlingSites = settings
                                 }
-                            ]
-                            sensor.onClicked: {
-                                siteSwitch.checked = !siteSwitch.checked
                             }
+                        ]
+                        sensor.onClicked: {
+                            siteSwitch.checked = !siteSwitch.checked
                         }
                     }
                 }
-            } // Site Column
-
-            Separator {
-                id: separator3
-                visible: siteColumn.visible 
             }
+        } // Site Column
 
-            // SYNC WAKU SECTION
-            StatusSectionHeadline {
-                text: qsTr("Message syncing")
-                width: parent.width
-            }
+        Separator {
+            id: separator3
+            visible: siteColumn.visible
+            Layout.fillWidth: true
+        }
 
-            StatusListItem {
-                anchors.left: parent.left
-                anchors.leftMargin: -Style.current.padding
-                anchors.right: parent.right
-                anchors.rightMargin: -Style.current.padding
-                title: qsTr("Waku nodes")
-                label: root.messagingStore.getMailserverNameForNodeAddress(root.messagingStore.activeMailserver)
-                components: [
-                    StatusIcon {
-                        icon: "chevron-down"
-                        rotation: 270
-                        color: Theme.palette.baseColor1
-                    }
-                ]
-                sensor.onClicked: Global.openPopup(wakuNodeModalComponent)
-            }
+        // SYNC WAKU SECTION
+        StatusSectionHeadline {
+            Layout.fillWidth: true
+            Layout.leftMargin: Style.current.padding
+            Layout.rightMargin: Style.current.padding
+            text: qsTr("Message syncing")
+        }
 
-            Component {
-                id: wakuNodeModalComponent
-                WakuNodesModal {
-                    messagingStore: root.messagingStore
+        StatusListItem {
+            Layout.fillWidth: true
+            title: qsTr("Waku nodes")
+            label: root.messagingStore.getMailserverNameForNodeAddress(root.messagingStore.activeMailserver)
+            components: [
+                StatusIcon {
+                    icon: "chevron-down"
+                    rotation: 270
+                    color: Theme.palette.baseColor1
                 }
-            }
+            ]
+            sensor.onClicked: Global.openPopup(wakuNodeModalComponent)
+        }
 
-            StatusSectionHeadline {
-                text: qsTr("For security reasons, private chat history won't be synced.")
-                width: parent.width
+        Component {
+            id: wakuNodeModalComponent
+            WakuNodesModal {
+                messagingStore: root.messagingStore
             }
-            
-        } // Column
-    } // Item
-} // ScrollView
+        }
+
+        StatusSectionHeadline {
+            Layout.fillWidth: true
+            Layout.leftMargin: Style.current.padding
+            Layout.rightMargin: Style.current.padding
+            text: qsTr("For security reasons, private chat history won't be synced.")
+        }
+    }
+}

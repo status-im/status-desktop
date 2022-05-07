@@ -10,6 +10,7 @@ import "popups"
 import "views"
 
 import StatusQ.Layout 0.1
+import StatusQ.Controls 0.1
 
 StatusAppTwoPanelLayout {
     id: profileView
@@ -24,10 +25,14 @@ StatusAppTwoPanelLayout {
     }
 
     QtObject {
-        id: _internal
-        readonly property int contentMaxWidth: 624
-        readonly property int contentMinWidth: 450
-        property int profileContentWidth: Math.max(contentMinWidth, Math.min(profileContainer.width * 0.8, contentMaxWidth))
+        id: d
+
+        readonly property int topMargin: 0
+        readonly property int bottomMargin: 56
+        readonly property int leftMargin: 48
+        readonly property int rightMargin: 48
+
+        readonly property int contentWidth: 560
     }
 
     leftPanel: LeftTabView {
@@ -36,100 +41,194 @@ StatusAppTwoPanelLayout {
         anchors.fill: parent
     }
 
-    rightPanel: StackLayout {
-        id: profileContainer
-
+    rightPanel: Item {
         anchors.fill: parent
 
-        currentIndex: Global.settingsSubsection
-
-        onCurrentIndexChanged: {
-            if(visibleChildren[0] === ensContainer){
-                ensContainer.goToStart();
+        StatusBanner {
+            id: banner
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
+            visible: profileContainer.currentIndex === Constants.settingsSubsection.wallet &&
+                     profileView.store.walletStore.areTestNetworksEnabled
+            type: StatusBanner.Type.Danger
+            statusText: {
+                if(profileContainer.currentIndex === Constants.settingsSubsection.wallet &&
+                        profileView.store.walletStore.areTestNetworksEnabled)
+                    return qsTr("Testnet mode is enabled. All balances, transactions and dApp interactions will be on testnets.")
+                return ""
             }
         }
 
-        MyProfileView {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
+        StackLayout {
+            id: profileContainer
 
-            profileStore: profileView.store.profileStore
-            profileContentWidth: _internal.profileContentWidth
-        }
+            anchors.top: banner.visible? banner.bottom : parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
+            anchors.topMargin: d.topMargin
+            anchors.bottomMargin: d.bottomMargin
+            anchors.leftMargin: d.leftMargin
+            anchors.rightMargin: d.rightMargin
 
-        ContactsView {
-            contactsStore: profileView.store.contactsStore
-            profileContentWidth: _internal.profileContentWidth
-        }
+            currentIndex: Global.settingsSubsection
 
-        EnsView {
-            id: ensContainer
-            ensUsernamesStore: profileView.store.ensUsernamesStore
-            contactsStore: profileView.store.contactsStore
-            stickersStore: profileView.store.stickersStore
-            profileContentWidth: _internal.profileContentWidth
-        }
+            onCurrentIndexChanged: {
+                if(visibleChildren[0] === ensContainer){
+                    ensContainer.goToStart();
+                }
+            }
 
-        MessagingView {
-            id: messagingView
-            messagingStore: profileView.store.messagingStore
-            profileContentWidth: _internal.profileContentWidth
-        }
+            MyProfileView {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
 
-        WalletView {
-            id: walletView
-            walletStore: profileView.store.walletStore
-            emojiPopup: profileView.emojiPopup
-        }
+                profileStore: profileView.store.profileStore
+                sectionTitle: profileView.store.getNameForSubsection(Constants.settingsSubsection.profile)
+                contentWidth: d.contentWidth
+            }
 
-        PrivacyView {
-            privacyStore: profileView.store.privacyStore
-            profileContentWidth: _internal.profileContentWidth
-        }
+            ContactsView {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
 
-        AppearanceView {
-            appearanceStore: profileView.store.appearanceStore
-            profileContentWidth: _internal.profileContentWidth
-            systemPalette: profileView.systemPalette
-        }
+                contactsStore: profileView.store.contactsStore
+                sectionTitle: qsTr("Contacts")
+                contentWidth: d.contentWidth
 
-        SoundsView {
-            profileContentWidth: _internal.profileContentWidth
-        }
+                backButtonName: profileView.store.getNameForSubsection(Constants.settingsSubsection.messaging)
 
-        LanguageView {
-            languageStore: profileView.store.languageStore
-            currencyStore: profileView.store.walletStore.currencyStore
-            profileContentWidth: _internal.profileContentWidth
-        }
+                onBackButtonClicked: {
+                    Global.changeAppSectionBySectionType(Constants.appSection.profile, Constants.settingsSubsection.messaging)
+                }
+            }
 
-        NotificationsView {
-            notificationsStore: profileView.store.notificationsStore
-            profileContentWidth: _internal.profileContentWidth
-        }
+            EnsView {
+                // TODO: we need to align structure for the entire this part using `SettingsContentBase` as root component
 
-        DevicesView {
-            devicesStore: profileView.store.devicesStore
-        }
+                // TODO: handle structure for this subsection to match style used in onther sections
+                // using `SettingsContentBase` component as base.
+                id: ensContainer
+                Layout.fillWidth: true
+                Layout.fillHeight: true
 
-        BrowserView {
-            store: profileView.store
-            profileContentWidth: _internal.profileContentWidth
-        }
+                ensUsernamesStore: profileView.store.ensUsernamesStore
+                contactsStore: profileView.store.contactsStore
+                stickersStore: profileView.store.stickersStore
 
-        AdvancedView {
-            advancedStore: profileView.store.advancedStore
-            profileContentWidth: _internal.profileContentWidth
-        }
+                profileContentWidth: d.contentWidth
+            }
 
-        HelpView {
-            profileContentWidth: _internal.profileContentWidth
-        }
+            MessagingView {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
 
-        AboutView {
-            store: profileView.store
-            globalStore: profileView.globalStore
-            profileContentWidth: _internal.profileContentWidth
+                messagingStore: profileView.store.messagingStore
+                sectionTitle: profileView.store.getNameForSubsection(Constants.settingsSubsection.messaging)
+                contentWidth: d.contentWidth
+            }
+
+            WalletView {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+
+                walletStore: profileView.store.walletStore
+                emojiPopup: profileView.emojiPopup
+                sectionTitle: profileView.store.getNameForSubsection(Constants.settingsSubsection.wallet)
+                contentWidth: d.contentWidth
+            }
+
+            PrivacyView {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+
+                privacyStore: profileView.store.privacyStore
+                sectionTitle: profileView.store.getNameForSubsection(Constants.settingsSubsection.privacyAndSecurity)
+                contentWidth: d.contentWidth
+            }
+
+            AppearanceView {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+
+                appearanceStore: profileView.store.appearanceStore
+                sectionTitle: profileView.store.getNameForSubsection(Constants.settingsSubsection.appearance)
+                contentWidth: d.contentWidth
+                systemPalette: profileView.systemPalette
+            }
+
+            SoundsView {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+
+                sectionTitle: profileView.store.getNameForSubsection(Constants.settingsSubsection.sound)
+                contentWidth: d.contentWidth
+            }
+
+            LanguageView {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+
+                languageStore: profileView.store.languageStore
+                currencyStore: profileView.store.walletStore.currencyStore
+                sectionTitle: profileView.store.getNameForSubsection(Constants.settingsSubsection.language)
+                contentWidth: d.contentWidth
+            }
+
+            NotificationsView {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+
+                notificationsStore: profileView.store.notificationsStore
+                sectionTitle: profileView.store.getNameForSubsection(Constants.settingsSubsection.notifications)
+                contentWidth: d.contentWidth
+            }
+
+            DevicesView {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+
+                devicesStore: profileView.store.devicesStore
+                sectionTitle: profileView.store.getNameForSubsection(Constants.settingsSubsection.devicesSettings)
+                contentWidth: d.contentWidth
+            }
+
+            BrowserView {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+
+                store: profileView.store
+                sectionTitle: profileView.store.getNameForSubsection(Constants.settingsSubsection.browserSettings)
+                contentWidth: d.contentWidth
+            }
+
+            AdvancedView {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+
+                advancedStore: profileView.store.advancedStore
+                sectionTitle: profileView.store.getNameForSubsection(Constants.settingsSubsection.advanced)
+                contentWidth: d.contentWidth
+            }
+
+            HelpView {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+
+                sectionTitle: profileView.store.getNameForSubsection(Constants.settingsSubsection.needHelp)
+                contentWidth: d.contentWidth
+            }
+
+            AboutView {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+
+                store: profileView.store
+                globalStore: profileView.globalStore
+                sectionTitle: profileView.store.getNameForSubsection(Constants.settingsSubsection.about)
+                contentWidth: d.contentWidth
+            }
         }
     }
 }

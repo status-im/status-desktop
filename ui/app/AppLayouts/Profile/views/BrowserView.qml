@@ -17,52 +17,38 @@ import "../stores"
 import "browser"
 import "wallet"
 
-ScrollView {
+SettingsContentBase {
     id: root
-    Layout.fillHeight: true
-    Layout.fillWidth: true
-    clip: true
 
     property ProfileSectionStore store
-    property real profileContentWidth
 
     property Component searchEngineModal: SearchEngineModal {}
 
-    contentHeight: rootItem.height
-
     Item {
         id: rootItem
-        width: parent.width
+        width: root.contentWidth
         height: childrenRect.height
 
         Column {
             id: layout
             anchors.top: parent.top
-            anchors.topMargin: 24
             anchors.left: parent.left
-            anchors.leftMargin: 48
-            width: profileContentWidth
+            width: parent.width
             spacing: 10
-            StatusBaseText {
-                id: titleText
-                text: qsTr("Browser")
-                font.weight: Font.Bold
-                font.pixelSize: 28
-                color: Theme.palette.directColor1
-            }
-
-            Item {
-                height: 25
-                width: 1
-            }
 
             HomePageView {
                 id: homePageView
                 homepage: localAccountSensitiveSettings.browserHomepage
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: Style.current.padding
+                anchors.rightMargin: Style.current.padding
             }
 
             // TODO: Replace with StatusQ StatusListItem component
             StatusSettingsLineButton {
+                anchors.leftMargin: 0
+                anchors.rightMargin: 0
                 //% "Search engine used in the address bar"
                 text: qsTrId("search-engine-used-in-the-address-bar")
                 currentValue: {
@@ -80,12 +66,15 @@ ScrollView {
 
             DefaultDAppExplorerView {
                 id: dAppExplorerView
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: Style.current.padding
+                anchors.rightMargin: Style.current.padding
             }
 
             StatusListItem {
                 id: showFavouritesItem
-                anchors.horizontalCenter: parent.horizontalCenter
-                width: parent.width + Style.current.padding * 2
+                width: parent.width
                 title: qsTr("Show Favorites Bar")
                 components: [
                     StatusSwitch {
@@ -99,22 +88,26 @@ ScrollView {
 
             Separator {
                 id: separator1
-                anchors.left: parent.left
-                anchors.leftMargin: -Style.current.padding
-                anchors.right: parent.right
-                anchors.rightMargin: -Style.current.padding
+                width: parent.width
             }
 
             StatusBaseText {
                 text: qsTr("Connected DApps")
                 font.pixelSize: 15
                 color: Theme.palette.baseColor1
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: Style.current.padding
+                anchors.rightMargin: Style.current.padding
             }
 
             PermissionsListView {
                 id: permissionListView
-                width: parent.width
                 walletStore: root.store.walletStore
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.leftMargin: Style.current.padding
+                anchors.rightMargin: Style.current.padding
             }
         } // Column
     } // Item

@@ -17,82 +17,96 @@ import "../popups"
 import "../panels"
 import "./wallet"
 
-Item {
+SettingsContentBase {
     id: root
 
     property var emojiPopup
     property WalletStore walletStore
-
-    anchors.fill: parent
 
     readonly property int mainViewIndex: 0;
     readonly property int networksViewIndex: 1;
     readonly property int accountViewIndex: 2;
     readonly property int dappPermissionViewIndex: 3;
 
-    StatusBanner {
-        id: banner
-        anchors.left: parent.left
-        anchors.top: parent.top
-        anchors.right: parent.right
-        visible: walletStore.areTestNetworksEnabled
-        type: StatusBanner.Type.Danger
-        statusText: qsTr("Testnet mode is enabled. All balances, transactions and dApp interactions will be on testnets.")
+    onBackButtonClicked: {
+        stackContainer.currentIndex = mainViewIndex
     }
 
-    ScrollView {
+    StackLayout {
+        id: stackContainer
 
-        anchors.top: banner.visible ? banner.bottom: parent.top
-        anchors.bottom: parent.bottom
-        clip: true
+        width: root.contentWidth
+        currentIndex: mainViewIndex
 
-        StackLayout {
-            id: stackContainer
+        onCurrentIndexChanged: {
+            root.backButtonName = ""
+            root.sectionTitle = qsTr("Wallet")
+            root.titleRowComponentLoader.sourceComponent = undefined
 
-            anchors.fill: parent
-            currentIndex: mainViewIndex
+            if(currentIndex == root.networksViewIndex) {
+                root.backButtonName = qsTr("Wallet")
+                root.sectionTitle = qsTr("Networks")
 
-            MainView {
-                id: main
-                Layout.preferredWidth: 560
-                leftPadding: 64
-                topPadding: 64
-                walletStore: root.walletStore
+                root.titleRowComponentLoader.sourceComponent = testnetModeSwitchComponent
+            }
+            else if(currentIndex == root.accountViewIndex) {
+                root.backButtonName = qsTr("Wallet")
+                root.sectionTitle = ""
+            }
+            else if(currentIndex == root.dappPermissionViewIndex) {
+                root.backButtonName = qsTr("Wallet")
+                root.sectionTitle = qsTr("DApp Permissions")
+            }
+        }
 
-                onGoToNetworksView: {
-                    stackContainer.currentIndex = networksViewIndex
-                }
+        MainView {
+            id: main
 
-                onGoToAccountView: {
-                    root.walletStore.switchAccountByAddress(address)
-                    stackContainer.currentIndex = accountViewIndex
-                }
+            Layout.fillWidth: true
 
-                onGoToDappPermissionsView: {
-                    stackContainer.currentIndex = dappPermissionViewIndex
-                }
+            walletStore: root.walletStore
+
+            onGoToNetworksView: {
+                stackContainer.currentIndex = networksViewIndex
             }
 
-            NetworksView {
-                walletStore: root.walletStore
-                onGoBack: {
-                    stackContainer.currentIndex = mainViewIndex
-                }
+            onGoToAccountView: {
+                root.walletStore.switchAccountByAddress(address)
+                stackContainer.currentIndex = accountViewIndex
             }
 
-            AccountView {
-                walletStore: root.walletStore
-                emojiPopup: root.emojiPopup
-                onGoBack: {
-                    stackContainer.currentIndex = mainViewIndex
-                }
+            onGoToDappPermissionsView: {
+                stackContainer.currentIndex = dappPermissionViewIndex
             }
+        }
 
-            DappPermissionsView {
-                walletStore: root.walletStore
-                onGoBack: {
-                    stackContainer.currentIndex = mainViewIndex
-                }
+        NetworksView {
+            walletStore: root.walletStore
+
+            onGoBack: {
+                stackContainer.currentIndex = mainViewIndex
+            }
+        }
+
+        AccountView {
+            walletStore: root.walletStore
+            emojiPopup: root.emojiPopup
+
+            onGoBack: {
+                stackContainer.currentIndex = mainViewIndex
+            }
+        }
+
+        DappPermissionsView {
+            walletStore: root.walletStore
+        }
+
+        Component {
+            id: testnetModeSwitchComponent
+            StatusSwitch {
+                text: qsTr("Testnet Mode")
+                checked: walletStore.areTestNetworksEnabled
+                onClicked: walletStore.toggleTestNetworksEnabled()
             }
         }
     }

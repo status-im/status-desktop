@@ -16,17 +16,12 @@ import StatusQ.Controls 0.1 as StatusQ
 import "../popups"
 import "../stores"
 
-ScrollView {
+SettingsContentBase {
     id: appearanceView
-    height: parent.height
-    width: parent.width
-    contentHeight: appearanceContainer.height
-    clip: true
 
     property AppearanceStore appearanceStore
 
     property var systemPalette
-    property int profileContentWidth
 
     enum Theme {
         Light,
@@ -49,9 +44,9 @@ ScrollView {
 
     Item {
         id: appearanceContainer
-        width: profileContentWidth
-
-        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.left: parent.left
+        anchors.leftMargin: Style.current.padding
+        width: appearanceView.contentWidth - 2 * Style.current.padding
         height: this.childrenRect.height + 100
 
         ButtonGroup {
@@ -69,6 +64,7 @@ ScrollView {
             anchors.top: parent.top
             anchors.left: parent.left
             anchors.right: parent.right
+            anchors.topMargin: 0
         }
 
         Rectangle {
@@ -76,9 +72,7 @@ ScrollView {
             anchors.top: sectionHeadlinePreview.bottom
             anchors.topMargin: Style.current.smallPadding
             anchors.left: parent.left
-            anchors.leftMargin: -Style.current.padding
             anchors.right: parent.right
-            anchors.rightMargin: -Style.current.padding
             height: paceholderMessage.height + Style.current.padding*4
             radius: Style.current.radius
             border.color: Style.current.border
@@ -313,9 +307,7 @@ ScrollView {
             anchors.top: sectionHeadlineAppearance.bottom
             anchors.topMargin: Style.current.padding
             anchors.left: parent.left
-            anchors.leftMargin: -Style.current.padding
             anchors.right: parent.right
-            anchors.rightMargin: -Style.current.padding
 
             StatusImageRadioButton {
                 padding: Style.current.smallPadding

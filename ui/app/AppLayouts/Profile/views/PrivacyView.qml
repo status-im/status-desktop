@@ -15,37 +15,18 @@ import StatusQ.Controls 0.1 as StatusQControls
 import "../popups"
 import "../stores"
 
-Item {
+SettingsContentBase {
     id: root
-    Layout.fillHeight: true
-    Layout.fillWidth: true
-    clip: true
 
     property PrivacyStore privacyStore
 
-    property int profileContentWidth
-
-    Column {
-        id: containerColumn
-        anchors.top: parent.top
-        anchors.topMargin: 64
-        width: profileContentWidth
-
-        anchors.horizontalCenter: parent.horizontalCenter
-
-        StatusSectionHeadline {
-            id: labelSecurity
-            //% "Security"
-            text: qsTrId("security")
-            bottomPadding: Style.current.halfPadding
-        }
+    ColumnLayout {
+        spacing: Constants.settingsSection.itemSpacing
+        width: root.contentWidth
 
         StatusListItem {
             id: backupSeedPhrase
-            anchors.left: parent.left
-            anchors.leftMargin: -Style.current.padding
-            anchors.right: parent.right
-            anchors.rightMargin: -Style.current.padding
+            Layout.fillWidth: true
             //% "Backup Seed Phrase"
             title: qsTrId("backup-seed-phrase")
             enabled: !root.privacyStore.mnemonicBackedUp
@@ -66,10 +47,7 @@ Item {
         }
 
         StatusListItem {
-            anchors.left: parent.left
-            anchors.leftMargin: -Style.current.padding
-            anchors.right: parent.right
-            anchors.rightMargin: -Style.current.padding
+            Layout.fillWidth: true
             title: qsTr("Change password")
             implicitHeight: 52
             components: [
@@ -83,10 +61,7 @@ Item {
         }
 
         StatusListItem {
-            anchors.left: parent.left
-            anchors.leftMargin: -Style.current.padding
-            anchors.right: parent.right
-            anchors.rightMargin: -Style.current.padding
+            Layout.fillWidth: true
             title: qsTr("Store pass to Keychain")
             implicitHeight: 52
             visible: Qt.platform.os == "osx" // For now, this is available only on MacOS
