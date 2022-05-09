@@ -16,6 +16,7 @@ Popup {
     property var categories: []
     property alias searchString: searchBox.text
     property var skinColors: ["1f3fb", "1f3fc", "1f3fd", "1f3fe", "1f3ff"]
+    property string emojiSize: ""
 
     signal emojiSelected(string emoji, bool atCu)
 
@@ -77,7 +78,8 @@ Popup {
         emojiSectionsRepeater.itemAt(0).allEmojis = recentEmojis
         localAccountSensitiveSettings.recentEmojis = recentEmojis
 
-        popup.emojiSelected(StatusQUtils.Emoji.parse(encodedIcon) + ' ', true) // Adding a space because otherwise, some emojis would fuse since emoji is just a string
+        // Adding a space because otherwise, some emojis would fuse since emoji is just a string
+        popup.emojiSelected(StatusQUtils.Emoji.parse(encodedIcon, popup.emojiSize || undefined) + ' ', true)
         popup.close()
     }
 
@@ -200,6 +202,10 @@ Popup {
         searchBox.text = ""
         searchBox.forceActiveFocus(Qt.MouseFocusReason)
         Qt.callLater(populateCategories);
+    }
+
+    onClosed: {
+        popup.emojiSize = ""
     }
 
     contentItem: ColumnLayout {

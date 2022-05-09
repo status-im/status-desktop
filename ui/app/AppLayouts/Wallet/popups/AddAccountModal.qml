@@ -91,7 +91,7 @@ StatusModal {
         passwordInput.text = "";
         accountNameInput.text = "";
         accountNameInput.reset()
-        accountNameInput.input.icon.emoji = StatusQUtils.Emoji.getRandomEmoji()
+        accountNameInput.input.icon.emoji = StatusQUtils.Emoji.getRandomEmoji(StatusQUtils.Emoji.size.verySmall)
         colorSelectionGrid.selectedColorIndex = Math.floor(Math.random() * colorSelectionGrid.model.length)
         advancedSelection.expanded = false
         advancedSelection.reset()
@@ -154,8 +154,10 @@ StatusModal {
                 label: qsTrId("account-name")
                 input.isIconSelectable: true
                 input.icon.color: colorSelectionGrid.selectedColor ? colorSelectionGrid.selectedColor : Theme.palette.directColor1
+                input.leftPadding: 16
                 onIconClicked: {
                     popup.emojiPopup.open()
+                    popup.emojiPopup.emojiSize = StatusQUtils.Emoji.size.verySmall
                     popup.emojiPopup.x = popup.x + accountNameInput.x + Style.current.padding
                     popup.emojiPopup.y = popup.y + contentItem.y + accountNameInput.y + accountNameInput.height +  Style.current.halfPadding
                 }
