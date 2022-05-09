@@ -19,9 +19,9 @@ import StatusQ.Controls.Validators 0.1
         StatusInput {
             label: "Label"
             charLimit: 30
-            errorMessage: "Input doesn't match validator"
+            errorMessage: qsTr("Input doesn't match validator")
             input.clearable: true
-            input.placeholderText: "Placeholder text"
+            input.placeholderText: qsTr("Placeholder text")
         }
    \endqml
 

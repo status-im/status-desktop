@@ -39,21 +39,21 @@ StatusListItem {
             id: addButton
             icon.name: "add"
             icon.width: 20
-            visible: statusChatListCategoryItem.showAddButton && 
+            visible: statusChatListCategoryItem.showAddButton &&
                 (statusChatListCategoryItem.highlighted ||
                 statusChatListCategoryItem.sensor.containsMouse)
             onClicked: statusChatListCategoryItem.addButtonClicked(mouse)
-            tooltip.text: "Add channel inside category"
+            tooltip.text: qsTr("Add channel inside category")
         },
         StatusChatListCategoryItemButton {
             id: menuButton
             icon.name: "more"
             icon.width: 21
-            visible: statusChatListCategoryItem.showMenuButton && 
+            visible: statusChatListCategoryItem.showMenuButton &&
                 (statusChatListCategoryItem.highlighted ||
                 statusChatListCategoryItem.sensor.containsMouse)
             onClicked: statusChatListCategoryItem.menuButtonClicked(mouse)
-            tooltip.text: "More"
+            tooltip.text: qsTr("More")
         },
         StatusChatListCategoryItemButton {
             id: toggleButton

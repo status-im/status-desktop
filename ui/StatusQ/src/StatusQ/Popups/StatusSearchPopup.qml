@@ -18,8 +18,8 @@ StatusModal {
     showFooter: false
 
     property string searchText: contentItem.searchText
-    property string noResultsLabel: "No results"
-    property string defaultSearchLocationText: "Anywhere"
+    property string noResultsLabel: qsTr("No results")
+    property string defaultSearchLocationText: qsTr("Anywhere")
     property bool loading: false
     property Menu searchOptionsPopupMenu: Menu { }
     property var searchResults: [ ]
@@ -121,7 +121,7 @@ StatusModal {
                         root.searchSelectionButton = searchOptionsMenuButton
                     }
 
-                    property string prefixText: "In"
+                    property string prefixText: qsTr("In")
                     property string primaryText: ""
                     property string secondaryText: ""
                     property StatusIconSettings iconSettings: StatusIconSettings {

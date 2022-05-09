@@ -5,7 +5,7 @@ Item {
     id: statusAsyncValidator
 
     property string name: ""
-    property string errorMessage: "invalid input"
+    property string errorMessage: qsTr("invalid input")
     signal asyncComplete(var result)
     signal validationComplete(var value, bool valid)
 

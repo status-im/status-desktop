@@ -20,8 +20,8 @@ import StatusQ.Core.Theme 0.1
 
     \qml
     StatusToastMessage {
-        primaryText: "Collectible is being minted..."
-        secondaryText: "View on Etherscan"
+        primaryText: qsTr("Collectible is being minted...")
+        secondaryText: qsTr("View on Etherscan")
         loading: true
         type: 0
         linkUrl: "http://google.com"
@@ -109,7 +109,7 @@ Control {
         MouseArea {
             anchors.fill: parent
             onClicked: {
-                toastMessage.open("Verification Request Sent", "", "checkmark-circle", 1, false,"");
+                toastMessage.open(qsTr("Verification Request Sent"), "", "checkmark-circle", 1, false,"");
             }
         }
     \endqml

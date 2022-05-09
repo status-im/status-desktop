@@ -14,7 +14,7 @@ import StatusQ.Core.Theme 0.1
    \qml
        StatusBaseText {
            width: 240
-           text: "Hello World!"
+           text: qsTr("Hello World!")
            font.pixelSize: 24
            color: Theme.pallete.directColor1
        }

@@ -45,7 +45,7 @@ StatusValidator {
     property real top
 
     name: "floatValidator"
-    errorMessage: "Please enter a valid numeric value."
+    errorMessage: qsTr("Please enter a valid numeric value.")
 
     validate: function (t) {
         return !isNaN(t) && t >= bottom && t <= top  ? true : {

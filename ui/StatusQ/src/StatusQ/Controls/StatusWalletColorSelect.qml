@@ -10,7 +10,7 @@ import StatusQ.Controls 0.1
 Item {
     id: control
     property string selectedColor
-    property string label: "Account color"
+    property string label: qsTr("Account color")
     property var model
     property bool enabled: true
 

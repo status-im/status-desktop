@@ -32,7 +32,7 @@ Rectangle {
         anchors.centerIn: parent
         text: {
             if (statusBadge.value > 99) {
-                return "99+";
+                return qsTr("99+");
             }
             return statusBadge.value;
         }

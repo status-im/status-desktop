@@ -10,7 +10,7 @@ Rectangle {
     id: root
     property string chatId: ""
     property string name: "channelName"
-    property string message: "My latest message\n with a return"
+    property string message: qsTr("My latest message\n with a return")
     property string identicon: ""
 
     // TODO: what about dark theme?
@@ -22,7 +22,7 @@ Rectangle {
 
     Loader {
         id: identicon
-        sourceComponent: root.identicon === "" ?  statusIdenticon : userOrChannelIdenticon 
+        sourceComponent: root.identicon === "" ?  statusIdenticon : userOrChannelIdenticon
         anchors.left: parent.left
         anchors.leftMargin: 16
         anchors.verticalCenter: parent.verticalCenter
@@ -120,7 +120,7 @@ Rectangle {
             font.pixelSize: 14
             anchors.verticalCenter: parent.verticalCenter
             anchors.horizontalCenter: parent.horizontalCenter
-            text: "Open"
+            text: qsTr("Open")
             color: "black"
         }
     }

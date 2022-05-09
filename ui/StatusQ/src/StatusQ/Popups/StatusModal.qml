@@ -39,10 +39,10 @@ import "statusModal" as Spares
             ]
             rightButtons: [
                 StatusButton {
-                    text: "Button"
+                    text: qsTr("Button")
                 },
                 StatusButton {
-                    text: "Button"
+                    text: qsTr("Button")
                 }
             ]
         }
@@ -87,7 +87,7 @@ QC.Popup {
                     border.width: 1
                     StatusBaseText {
                         anchors.centerIn: parent
-                        text: "Add any header here"
+                        text: qsTr("Add any header here")
                         font.pixelSize: 15
                         color: Theme.palette.directColor1
                     }
@@ -115,7 +115,7 @@ QC.Popup {
                     border.width: 1
                     StatusBaseText {
                         anchors.centerIn: parent
-                        text: "Add any footer here"
+                        text: qsTr("Add any footer here")
                         font.pixelSize: 15
                         color: Theme.palette.directColor1
                     }
@@ -137,7 +137,7 @@ QC.Popup {
         This property exposes the different properties of the standard header.
         \endqml
     */
-    property StatusModalHeaderSettings header: StatusModalHeaderSettings {}    
+    property StatusModalHeaderSettings header: StatusModalHeaderSettings {}
     /*!
        \qmlproperty rightButtons
         This property helps user assign the right buttons on the footer.

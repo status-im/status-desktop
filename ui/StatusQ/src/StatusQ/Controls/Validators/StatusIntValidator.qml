@@ -47,7 +47,7 @@ StatusValidator {
     property int top
 
     name: "intValidator"
-    errorMessage: "Please enter a valid numeric value."
+    errorMessage: qsTr("Please enter a valid numeric value.")
     validatorObj: IntValidator { bottom: root.bottom; locale: root.locale; top: root.top }
 
     validate: function (t) {

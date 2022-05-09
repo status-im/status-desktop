@@ -14,10 +14,10 @@ Item {
     implicitWidth: chatListsAndCategories.width
 
     property StatusTooltipSettings categoryAddButtonToolTip: StatusTooltipSettings {
-        text: "Add channel inside category"
+        text: qsTr("Add channel inside category")
     }
     property StatusTooltipSettings categoryMenuButtonToolTip: StatusTooltipSettings {
-        text: "More"
+        text: qsTr("More")
     }
 
     property var model: []

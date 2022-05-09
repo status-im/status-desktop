@@ -58,7 +58,7 @@ Rectangle {
             onClicked: statusChatToolBar.searchButtonClicked()
 
             // initializing the tooltip
-            tooltip.text: "Search"
+            tooltip.text: qsTr("Search")
             tooltip.orientation: StatusToolTip.Orientation.Bottom
             tooltip.y: parent.height + 12
         }
@@ -72,7 +72,7 @@ Rectangle {
             onClicked: statusChatToolBar.membersButtonClicked()
 
             // initializing the tooltip
-            tooltip.text: "Members"
+            tooltip.text: qsTr("Members")
             tooltip.orientation: StatusToolTip.Orientation.Bottom
             tooltip.y: parent.height + 12
         }
@@ -87,7 +87,7 @@ Rectangle {
 
             // initializing the tooltip
             tooltip.visible: !!tooltip.text && menuButton.hovered && !popupMenuSlot.item.opened
-            tooltip.text: "More"
+            tooltip.text: qsTr("More")
             tooltip.orientation: StatusToolTip.Orientation.Bottom
             tooltip.y: parent.height + 12
 
@@ -141,7 +141,7 @@ Rectangle {
             type: StatusFlatRoundButton.Type.Secondary
 
             // initializing the tooltip
-            tooltip.text: "Activity"
+            tooltip.text: qsTr("Activity")
             tooltip.orientation: StatusToolTip.Orientation.Bottom
             tooltip.y: parent.height + 12
 

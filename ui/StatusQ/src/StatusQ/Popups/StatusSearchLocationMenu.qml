@@ -16,7 +16,7 @@ StatusPopupMenu {
     signal itemClicked(string firstLevelItemValue, string secondLevelItemValue)
 
     StatusMenuItem {
-        text: "Anywhere"
+        text: qsTr("Anywhere")
         onTriggered: {
             searchPopup.resetSearchSelection();
             root.itemClicked("", "");

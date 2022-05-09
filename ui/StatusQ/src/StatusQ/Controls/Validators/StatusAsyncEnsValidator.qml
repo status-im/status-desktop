@@ -6,7 +6,7 @@ StatusAsyncValidator {
 
     name: "asyncEns"
 
-    errorMessage: "ENS name could not be resolved in to an address"
+    errorMessage: qsTr("ENS name could not be resolved in to an address")
 
     validate: function (asyncResult) {
         return Utils.isValidAddress(asyncResult)

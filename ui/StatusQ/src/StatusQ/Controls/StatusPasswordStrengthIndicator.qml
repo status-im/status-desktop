@@ -60,35 +60,35 @@ StatusProgressBar {
 
        Default value: "Very weak"
     */
-    property string labelVeryWeak: "Very weak"
+    property string labelVeryWeak: qsTr("Very weak")
     /*!
        \qmlproperty string StatusPasswordStrengthIndicator::labelWeak
        This property holds the text shown when the strength is StatusPasswordStrengthIndicator.Strength.Weak.
 
        Default value: "Weak"
     */
-    property string labelWeak: "Weak"
+    property string labelWeak: qsTr("Weak")
     /*!
        \qmlproperty string StatusPasswordStrengthIndicator::labelSoso
        This property holds the text shown when the strength is StatusPasswordStrengthIndicator.Strength.SoSo.
 
        Default value: "So-so"
     */
-    property string labelSoso: "So-so"
+    property string labelSoso: qsTr("So-so")
     /*!
        \qmlproperty string StatusPasswordStrengthIndicator::labelGood
        This property holds the text shown when the strength is StatusPasswordStrengthIndicator.Strength.Good.
 
        Default value: "Good"
     */
-    property string labelGood: "Good"
+    property string labelGood: qsTr("Good")
     /*!
        \qmlproperty string StatusPasswordStrengthIndicator::labelGreat
        This property holds the text shown when the strength is StatusPasswordStrengthIndicator.Strength.Great.
 
        Default value: "Great"
     */
-    property string labelGreat: "Great"
+    property string labelGreat: qsTr("Great")
 
     enum Strength {
         None, // 0

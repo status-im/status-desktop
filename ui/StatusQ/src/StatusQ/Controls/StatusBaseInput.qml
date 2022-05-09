@@ -26,7 +26,7 @@ import StatusQ.Core.Theme 0.1
         topPadding: 8
         bottomPadding: 8
         clearable: true
-        placeholderText: "Search"
+        placeholderText: qsTr("Search")
         icon.name: "search"
       }
       \endqml
@@ -47,7 +47,7 @@ Item {
 
     /*!
         \qmlproperty bool StatusBaseInput::acceptReturn
-        This property indicates whether the StatusBaseInput allows pressing Enter or Return. 
+        This property indicates whether the StatusBaseInput allows pressing Enter or Return.
         This is used in case multiline is false and we still want to interact using Enter or Return. Default value is false.
     */
     property bool acceptReturn: false

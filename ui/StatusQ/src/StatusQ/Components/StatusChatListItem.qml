@@ -180,7 +180,7 @@ Rectangle {
             }
 
             StatusToolTip {
-                text: "Unmute"
+                text: qsTr("Unmute")
                 visible: mutedIconSensor.containsMouse
             }
         }
