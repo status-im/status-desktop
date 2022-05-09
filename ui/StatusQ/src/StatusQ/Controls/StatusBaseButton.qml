@@ -105,6 +105,17 @@ Rectangle {
         hoverEnabled: !loading
         enabled: !loading
 
+
+        Loader {
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            active: loading
+            sourceComponent: StatusLoadingIndicator {
+                color: statusBaseButton.enabled ? textColor
+                                                : disabledTextColor
+            } // Indicator
+        } // Loader
+
         Row {
             id: layout
             anchors.left: parent.left
@@ -117,29 +128,20 @@ Rectangle {
                 height: statusBaseButton.icon.height
                 icon: statusBaseButton.icon.name
                 anchors.verticalCenter: parent.verticalCenter
-                visible: !loading && statusBaseButton.icon.name !== ""
+                opacity: !loading && statusBaseButton.icon.name !== ""
+                visible: statusBaseButton.icon.name !== ""
                 color: statusBaseButton.enabled ? textColor
                                                 : disabledTextColor
             } // Icon
             StatusBaseText {
                 id: label
-                visible: !loading
+                opacity: !loading
                 anchors.verticalCenter: parent.verticalCenter
                 font.pixelSize: size === StatusBaseButton.Size.Large ? 15 : 13 // by design
 
                 color: statusBaseButton.enabled ? textColor
                                                 : disabledTextColor
             } // Text
-
-            Loader {
-                anchors.verticalCenter: parent.verticalCenter
-                active: loading
-                visible: loading
-                sourceComponent: StatusLoadingIndicator {
-                    color: statusBaseButton.enabled ? textColor
-                                                    : disabledTextColor
-                } // Indicator
-            } // Loader
         } // Ro
 
 
