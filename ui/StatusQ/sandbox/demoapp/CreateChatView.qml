@@ -33,7 +33,10 @@ Page {
             onTextChanged: {
                 sortModel(root.contactsModel);
             }
-            Component.onCompleted: { sortModel(root.contactsModel); }
+            Component.onCompleted: {
+                textEdit.forceActiveFocus();
+                sortModel(root.contactsModel);
+            }
         }
 
         StatusButton {

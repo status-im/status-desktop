@@ -235,7 +235,7 @@ Item {
                 }
             }
 
-            TextEdit {
+            TextInput {
                 id: edit
                 Layout.fillWidth: true
                 Layout.preferredHeight: 44
@@ -244,7 +244,7 @@ Item {
                 enabled: visible
                 focus: true
                 font.pixelSize: 15
-                wrapMode: TextEdit.WrapAnywhere
+                wrapMode: TextEdit.NoWrap
                 font.family: Theme.palette.baseFont.name
                 color: Theme.palette.directColor1
                 Keys.onPressed: {
@@ -254,7 +254,12 @@ Item {
                         removeMember(namesModel.get(namesList.count-1).publicId);
                         namesModel.remove((namesList.count-1), 1);
                     }
+                    if ((event.key === Qt.Key_Return || event.key === Qt.Key_Enter) && (sortedList.count > 0)) {
+                        root.insertTag(sortedList.get(userListView.currentIndex).name, sortedList.get(userListView.currentIndex).publicId);
+                    }
                 }
+                Keys.onUpPressed: { userListView.decrementCurrentIndex(); }
+                Keys.onDownPressed: { userListView.incrementCurrentIndex(); }
             }
 
             StatusBaseText {
@@ -324,12 +329,14 @@ Item {
                 policy: ScrollBar.AsNeeded
             }
             boundsBehavior: Flickable.StopAtBounds
+            onCountChanged: {
+                userListView.currentIndex = 0;
+            }
             delegate: Item {
                 id: wrapper
                 anchors.right: parent.right
                 anchors.left: parent.left
                 height: 64
-                property bool hovered: false
                 Rectangle {
                     id: rectangle
                     anchors.fill: parent
@@ -337,7 +344,7 @@ Item {
                     anchors.leftMargin: 8
                     radius: 8
                     visible: (root.sortedList.count > 0)
-                    color: (wrapper.hovered) ? Theme.palette.baseColor2 : "transparent"
+                    color: (userListView.currentIndex === index) ? Theme.palette.baseColor2 : "transparent"
                 }
 
                 StatusSmartIdenticon {
@@ -379,10 +386,7 @@ Item {
                     anchors.fill: parent
                     hoverEnabled: true
                     onEntered: {
-                        wrapper.hovered = true;
-                    }
-                    onExited: {
-                        wrapper.hovered = false;
+                        userListView.currentIndex = index;
                     }
                     onClicked: {
                         root.insertTag(model.name, model.publicId);
