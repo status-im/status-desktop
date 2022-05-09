@@ -313,10 +313,10 @@ SettingsContentBase {
                 padding: Style.current.smallPadding
                 width: 208
                 height: 184
-                image.source: Style.svg("appearance-normal-light")
+                image.source: Style.png("appearance-light")
                 image.height: 128
                 //% "Light"
-                control.text: qsTrId("light")
+                control.text: qsTrId("Light")
                 control.checked: localAppSettings.theme === Universal.Light
                 onRadioCheckedChanged: {
                     if (checked) {
@@ -329,7 +329,7 @@ SettingsContentBase {
                 padding: Style.current.smallPadding
                 width: 208
                 height: 184
-                image.source: Style.svg("appearance-normal-dark")
+                image.source: Style.png("appearance-dark")
                 image.height: 128
                 //% "Dark"
                 control.text: qsTrId("dark")
@@ -345,7 +345,7 @@ SettingsContentBase {
                 padding: Style.current.smallPadding
                 width: 208
                 height: 184
-                image.source: Style.svg("appearance-normal-system")
+                image.source: Style.png("appearance-system")
                 image.height: 128
                 //% "System"
                 control.text: qsTrId("system")
