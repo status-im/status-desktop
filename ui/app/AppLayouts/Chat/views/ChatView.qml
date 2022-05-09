@@ -102,7 +102,7 @@ StatusAppThreePanelLayout {
         id: userListComponent
         UserListPanel {
             rootStore: root.rootStore
-            label: qsTrId("members-label")
+            label: qsTr("Members")
             messageContextMenu: quickActionMessageOptionsMenu
             usersModule: {
                 let chatContentModule = root.rootStore.currentChatContentModule()
