@@ -40,7 +40,7 @@ StatusModal {
     onOpened: {
         contentItem.channelName.input.text = ""
         contentItem.channelName.input.icon.emoji = ""
-        contentItem.channelName.input.forceActiveFocus(Qt.MouseFocusReason)
+        contentItem.channelName.input.edit.forceActiveFocus(Qt.MouseFocusReason)
         if (isEdit) {
             //% "Edit #%1"
             header.title = qsTrId("edit---1").arg(popup.channelName);
@@ -50,12 +50,13 @@ StatusModal {
                 contentItem.channelName.input.icon.emoji = popup.channelEmoji
             } else {
                 // Assign a random emoji to channels who down't have one (from old versions)
-                contentItem.channelName.input.icon.emoji = StatusQUtils.Emoji.getRandomEmoji()
+                contentItem.channelName.input.icon.emoji =
+                    StatusQUtils.Emoji.getRandomEmoji(StatusQUtils.Emoji.size.verySmall)
             }
             scrollView.channelColorDialog.color = popup.channelColor
-        }
-        else {
-            contentItem.channelName.input.icon.emoji = StatusQUtils.Emoji.getRandomEmoji()
+        } else {
+            contentItem.channelName.input.icon.emoji =
+                StatusQUtils.Emoji.getRandomEmoji(StatusQUtils.Emoji.size.verySmall)
         }
     }
 
@@ -66,7 +67,7 @@ StatusModal {
         target: emojiPopup
 
         onEmojiSelected: function (emojiText, atCursor) {
-            scrollView.channelName.input.icon.emoji  = emojiText
+            scrollView.channelName.input.icon.emoji = emojiText
         }
         onClosed: {
             popup.emojiPopupOpened = false
@@ -116,9 +117,11 @@ StatusModal {
                 }
                 input.isIconSelectable: true
                 input.icon.color: colorDialog.color.toString()
+                input.leftPadding: 16
                 onIconClicked: {
                     popup.emojiPopupOpened = true
                     popup.emojiPopup.open()
+                    popup.emojiPopup.emojiSize = StatusQUtils.Emoji.size.verySmall
                     popup.emojiPopup.x = popup.x + Style.current.padding
                     popup.emojiPopup.y = popup.y + nameInput.height + 2*Style.current.xlPadding
                 }
@@ -138,11 +141,17 @@ StatusModal {
             }
 
             StatusBaseText {
-                text: qsTr("Channel  colour")
+                text: qsTr("Channel colour")
                 font.pixelSize: 15
                 color: Theme.palette.directColor1
                 anchors.left: parent.left
                 anchors.leftMargin: 16
+            }
+
+            Item {
+                id: spacer2
+                height: 8
+                width: parent.width
             }
 
             Item {
