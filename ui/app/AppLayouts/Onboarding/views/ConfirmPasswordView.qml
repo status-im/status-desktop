@@ -110,21 +110,19 @@ OnboardingBasePage {
                     else filler.visible = false
                 }
             }
+        }
 
-            // Just a column filler to keep the component height althought errorTxt.text is ""
-            Item {
-                id: filler
-                width: root.width
-                visible: true
-                height: errorTxt.height
-            }
+        // Just a column filler to fit the design
+        Item {
+            height: Style.current.padding
+            width: parent.width
         }
 
         StatusButton {
             id: submitBtn
             anchors.horizontalCenter: parent.horizontalCenter
             text: qsTr("Finalise Status Password Creation")
-            enabled:!submitBtn.loading && confPswInput.text.length >= 6
+            enabled: !submitBtn.loading && (confPswInput.text === root.password)
 
             property Timer sim: Timer {
                 id: pause
@@ -136,19 +134,7 @@ OnboardingBasePage {
                 }
             }
 
-            function checkPasswordMatches() {
-                if (confPswInput.text !== root.password) {
-                    errorTxt.text = qsTr("Passwords don't match")
-                    return false
-                }
-                return true
-            }
-
             onClicked: {
-                if (!checkPasswordMatches()) {
-                    return
-                }
-
                 if (OnboardingStore.accountCreated) {
                     if (root.password !== root.tmpPass) {
                         OnboardingStore.changePassword(root.tmpPass, root.password);
