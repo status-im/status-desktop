@@ -23,7 +23,7 @@ StatusModal {
 
     property bool isEdit: false
 
-    readonly property int maxCategoryNameLength: 30
+    readonly property int maxCategoryNameLength: 24
     readonly property var categoryNameValidator: Utils.Validate.NoEmpty
                                                  | Utils.Validate.TextLength
 

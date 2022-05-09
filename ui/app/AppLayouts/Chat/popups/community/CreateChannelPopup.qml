@@ -26,7 +26,7 @@ StatusModal {
     readonly property var communityColorValidator: Utils.Validate.NoEmpty
                                                    | Utils.Validate.TextHexColor
 
-    readonly property int maxChannelNameLength: 30
+    readonly property int maxChannelNameLength: 24
     readonly property int maxChannelDescLength: 140
 
     signal createCommunityChannel(string chName, string chDescription, string chEmoji,
@@ -109,7 +109,7 @@ StatusModal {
                 id: nameInput
                 label: qsTr("Channel name")
                 charLimit: popup.maxChannelNameLength
-                input.placeholderText: qsTr("Name the channel")
+                input.placeholderText: qsTr("# Name the channel")
                 input.onTextChanged: {
                     input.text = Utils.convertSpacesToDashesAndUpperToLowerCase(input.text);
                     input.cursorPosition = input.text.length
@@ -123,10 +123,12 @@ StatusModal {
                     popup.emojiPopup.y = popup.y + nameInput.height + 2*Style.current.xlPadding
                 }
                 validationMode: StatusInput.ValidationMode.Always
-                validators: [StatusMinLengthValidator {
-                    minLength: 1
-                    errorMessage: Utils.getErrorMessage(nameInput.errors, qsTr("channel name"))
-                }]
+                validators: [
+                    StatusMinLengthValidator {
+                        minLength: 1
+                        errorMessage: Utils.getErrorMessage(nameInput.errors, qsTr("channel name"))
+                    }
+                ]
             }
 
             Item {
