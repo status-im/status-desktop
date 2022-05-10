@@ -129,19 +129,18 @@ StatusAppThreePanelLayout {
     centerPanel: Loader {
         anchors.fill: parent
         sourceComponent: root.createChat ? createChatView : chatChannelView
-    }
-
-    Component {
-        id: createChatView
-        CreateChatView {
-            contactsModel: Models.dummyContactsModel
+        Component {
+            id: createChatView
+            CreateChatView {
+                contactsModel: Models.dummyContactsModel
+            }
         }
-    }
 
-    Component {
-        id: chatChannelView
-        ChatChannelView {
-            model: Models.chatMessagesModel
+        Component {
+            id: chatChannelView
+            ChatChannelView {
+                model: Models.chatMessagesModel
+            }
         }
     }
 

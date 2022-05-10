@@ -60,14 +60,14 @@ Item {
     id: root
 
     implicitWidth: 448
-    implicitHeight: 44 + ((userListView.model.count > 0) ? 44 + contactsLabel.height + contactsLabel.anchors.topMargin +
-                    ((((userListView.model.count * 64) > root.maxHeight) ? root.maxHeight : (userListView.model.count * 64))) :0)
+    implicitHeight: (104 + contactsLabel.height + contactsLabel.anchors.topMargin + (userListView.model.count * 64)) > root.maxHeight ? root.maxHeight :
+                    (104 + contactsLabel.height + contactsLabel.anchors.topMargin + (userListView.model.count * 64))
 
     /*!
         \qmlproperty real StatusTagSelector::maxHeight
         This property holds the maximum height of the component.
     */
-    property real maxHeight
+    property real maxHeight: (488 + contactsLabel.height + contactsLabel.anchors.topMargin) //default min
     /*!
         \qmlproperty alias StatusTagSelector::textEdit
         This property holds a reference to the TextEdit component.
@@ -169,7 +169,6 @@ Item {
         height: 44
         radius: 8
         color: Theme.palette.baseColor2
-
         RowLayout {
             anchors.fill: parent
             anchors.leftMargin: 16
@@ -183,8 +182,8 @@ Item {
             }
 
             ScrollView {
-                Layout.preferredWidth: (namesList.contentWidth > (parent.width - 142)) ?
-                                       (parent.width - 142) : namesList.contentWidth
+                Layout.preferredWidth: (namesList.contentWidth > (parent.width - 177)) ?
+                                       (parent.width - 177) : namesList.contentWidth
                 implicitHeight: 30
                 Layout.alignment: Qt.AlignVCenter
                 visible: (namesList.count > 0)
@@ -198,9 +197,13 @@ Item {
                     model: namesModel
                     orientation: ListView.Horizontal
                     spacing: 8
-                    onCountChanged: {
-                        contentX = contentWidth;
+                    function scrollToEnd() {
+                        if (contentWidth > width) {
+                            contentX = contentWidth;
+                        }
                     }
+                    onWidthChanged: { scrollToEnd(); }
+                    onCountChanged: { scrollToEnd(); }
                     delegate: Rectangle {
                         id: nameDelegate
                         width: (nameText.contentWidth + 34)
@@ -238,8 +241,6 @@ Item {
             TextInput {
                 id: edit
                 verticalAlignment: Text.AlignVCenter
-                visible: (namesModel.count < 5)
-                enabled: visible
                 focus: true
                 color: Theme.palette.directColor1
                 clip: true
@@ -248,7 +249,6 @@ Item {
                 font.family: Theme.palette.baseFont.name
                 Layout.fillWidth: true
                 Layout.preferredHeight: 44
-
                 Keys.onPressed: {
                     if ((event.key === Qt.Key_Backspace || event.key === Qt.Key_Escape)
                             && getText(cursorPosition, (cursorPosition-1)) === ""
@@ -267,7 +267,7 @@ Item {
             StatusBaseText {
                 id: warningTextLabel
                 visible: (namesModel.count === root.nameCountLimit)
-                Layout.preferredWidth: 120
+                Layout.preferredWidth: visible ? 120 : 0
                 Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
                 font.pixelSize: 10
                 color: Theme.palette.dangerColor1
@@ -294,10 +294,11 @@ Item {
         width: 360
         anchors {
             top: (root.sortedList.count > 0) ? tagSelectorRect.bottom : contactsLabel.bottom
-            topMargin: 8//Style.current.padding
+            topMargin: 8//Style.current.halfPadding
             bottom: parent.bottom
-            bottomMargin: 20//Style.current.bigPadding
+            bottomMargin: 16//Style.current.padding
         }
+        clip: true
         visible: ((edit.text === "") || (root.sortedList.count > 0))
         x: ((root.namesModel.count > 0) && (root.sortedList.count > 0) && ((edit.x + 8) <= (root.width - suggestionsContainer.width)))
            ? (edit.x + 8) : 0
