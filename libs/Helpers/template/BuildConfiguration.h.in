@@ -1,0 +1,19 @@
+// Cross platform and environment build definition
+#if defined(_MSC_VER)
+    // The microsoft compiler sets _DEBUG appropriately when targeting a debug build.
+    #if _DEBUG
+        #define BUILD_DEBUG 1
+    #else
+        #define BUILD_RELEASE 1
+    #endif
+#elif defined(__apple_build_version__)
+    // Xcode might set DEBUG when targeting debug, maybe.
+    #if DEBUG
+        #define BUILD_DEBUG 1
+    #else
+        #define BUILD_RELEASE 1
+    #endif
+#else
+    #cmakedefine BUILD_DEBUG 1
+    #cmakedefine BUILD_RELEASE 1
+#endif
