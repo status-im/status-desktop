@@ -111,10 +111,7 @@ Item {
                 wrapper.hovered = false
             }
             onClicked: {
-                if (mouse.button === Qt.LeftButton) {
-                    Global.openProfilePopup(wrapper.publicKey);
-                }
-                 else if (mouse.button === Qt.RightButton && !!messageContextMenu) {
+                if (mouse.button === Qt.RightButton) {
                     // Set parent, X & Y positions for the messageContextMenu
                     messageContextMenu.parent = rectangle
                     messageContextMenu.setXPosition = function() { return 0}
@@ -126,6 +123,8 @@ Item {
                     messageContextMenu.selectedUserDisplayName = wrapper.name
                     messageContextMenu.selectedUserIcon = wrapper.iconToShow
                     messageContextMenu.popup()
+                } else if (mouse.button === Qt.LeftButton && !!messageContextMenu) {
+                    Global.openProfilePopup(wrapper.publicKey);
                 }
             }
         }
