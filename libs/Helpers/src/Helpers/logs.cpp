@@ -1,9 +1,23 @@
+#include "helpers.h"
+
 #include <QDateTime>
 #include <QDebug>
 #include <QString>
 
+#include <iostream>
+
+#include <Helpers/BuildConfiguration.h>
+
+namespace Status::Helpers {
+
 void logFormatter(QtMsgType type, const QMessageLogContext& context, const QString& msg)
 {
+    // TODO: Refactor it into development-tools app
+    //if(isDebugBuild()) {
+        std::cout << msg.toLocal8Bit().data() << std::endl;
+        return;
+    //}
+
     QByteArray localMsg = msg.toLocal8Bit();
     const char* file = context.file ? context.file : "";
     QByteArray function =
@@ -22,5 +36,8 @@ void logFormatter(QtMsgType type, const QMessageLogContext& context, const QStri
     case QtCriticalMsg: log = "\033[0;91mCRT \033[0m%s \033[1;91m%s \033[0;33mfile=\033[94m%s:%u %s\n"; break;
     case QtFatalMsg: log = "\033[0;31m!!! \033[0m%s \033[1m%s \033[0;33mfile=\033[94m%s:%u %s\n"; break;
     }
-    fprintf(stderr, log, timestamp.constData(), localMsg.constData(), file, context.line, function.constData());
+    fprintf(type == QtCriticalMsg || type == QtFatalMsg ? stderr : stdout,
+            log, timestamp.constData(), localMsg.constData(), file, context.line, function.constData());
 }
+
+}   // namespace
