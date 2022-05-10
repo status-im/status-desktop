@@ -98,7 +98,7 @@ QtObject {
         return undefined
     }
 
-    function getRandomEmoji() {
+    function getRandomEmoji(size) {
         var randomEmoji = EmojiJSON.emoji_json[Math.floor(Math.random() * EmojiJSON.emoji_json.length)]
 
         const extenstionIndex = randomEmoji.unicode.lastIndexOf('.');
@@ -115,6 +115,7 @@ QtObject {
         })
         const encodedIcon = String.fromCodePoint(...codePointParts);
 
-        return Emoji.parse(encodedIcon) + ' '
+        // Adding a space because otherwise, some emojis would fuse since emoji is just a string
+        return Emoji.parse(encodedIcon, size || undefined) + ' '
     }
 }
