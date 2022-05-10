@@ -64,8 +64,9 @@ Popup {
 
     ActivityCenterPopupTopBarPanel {
         id: activityCenterTopBar
-        repliesBtnEnabled: hasReplies
-        mentionsBtnEnabled: hasMentions
+        hasReplies: activityCenter.hasReplies
+        hasMentions: activityCenter.hasMentions
+        hideReadNotifications: activityCenter.hideReadNotifications
         allBtnHighlighted: activityCenter.currentFilter === ActivityCenterPopup.Filter.All
         mentionsBtnHighlighted: activityCenter.currentFilter === ActivityCenterPopup.Filter.Mentions
         repliesBtnHighlighted: activityCenter.currentFilter === ActivityCenterPopup.Filter.Replies
@@ -211,14 +212,17 @@ Popup {
                         ActivityCenterMessageComponentView {
                             id: activityCenterMessageView
                             store: activityCenter.store
+                            acCurrentFilter: activityCenter.currentFilter
                             chatSectionModule: activityCenter.chatSectionModule
                             messageContextMenu: activityCenter.messageContextMenu
-
+                            hideReadNotifications: activityCenter.hideReadNotifications
                             Connections {
                                 target: activityCenter
                                 onOpened: activityCenterMessageView.reevaluateItemBadge()
                             }
-
+                            onActivityCenterClose: {
+                                activityCenter.close();
+                            }
                             Component.onCompleted: {
                                 activityCenterMessageView.reevaluateItemBadge()
                             }
@@ -230,6 +234,8 @@ Popup {
 
                         ActivityCenterGroupRequest {
                             store: activityCenter.store
+                            hideReadNotifications: activityCenter.hideReadNotifications
+                            acCurrentFilterAll: activityCenter.currentFilter === ActivityCenter.Filter.All
                         }
                     }
                 }

@@ -33,7 +33,6 @@ StatusModal {
     property int channelType: GroupInfoPopup.ChannelType.ActiveChannel
     property var chatDetails
     property bool isAdmin: popup.chatSectionModule.activeItem.amIChatAdmin
-    property Component pinnedMessagesPopupComponent
 
     property var chatContentModule
 
@@ -176,7 +175,7 @@ StatusModal {
                 popup.store.messageStore.messageModule = popup.chatContentModule.messagesModule
                 popup.store.messageStore.chatSectionModule = popup.chatSectionModule
 
-                Global.openPopup(pinnedMessagesPopupComponent, {
+                Global.openPopup(Global.pinnedMessagesPopup, {
                     store: popup.store,
                     messageStore: popup.store.messageStore,
                     pinnedMessagesModel: popup.chatContentModule.pinnedMessagesModel,

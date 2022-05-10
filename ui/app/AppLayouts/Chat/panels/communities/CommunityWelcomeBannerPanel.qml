@@ -100,7 +100,7 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: manageBtn.top
         anchors.bottomMargin: Style.current.halfPadding
-        onClicked: Global.openPopup(inviteFriendsToCommunityPopup, {
+        onClicked: Global.openPopup(Global.inviteFriendsToCommunityPopup, {
             community: root.activeCommunity,
             hasAddedContacts: root.hasAddedContacts,
             communitySectionModule: root.communitySectionModule

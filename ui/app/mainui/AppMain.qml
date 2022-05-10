@@ -182,18 +182,27 @@ Item {
         id: sendMessageSound
         store: rootStore
         track: Qt.resolvedUrl("../imports/assets/audio/send_message.wav")
+        Component.onCompleted: {
+            Global.sendMessageSound = this;
+        }
     }
 
     Audio {
         id: notificationSound
         store: rootStore
         track: Qt.resolvedUrl("../imports/assets/audio/notification.wav")
+        Component.onCompleted: {
+            Global.notificationSound = this;
+        }
     }
 
     Audio {
         id: errorSound
         track: Qt.resolvedUrl("../imports/assets/audio/error.mp3")
         store: rootStore
+        Component.onCompleted: {
+            Global.errorSound = this;
+        }
     }
 
     AppSearch {
@@ -509,6 +518,14 @@ Item {
 
                         chatView.onOpenAppSearch: {
                             appSearch.openSearchPopup()
+                        }
+
+                        onImportCommunityClicked: {
+                            Global.openPopup(communitiesPortalLayoutContainer.importCommunitiesPopup);
+                        }
+
+                        onCreateCommunityClicked: {
+                            Global.openPopup(communitiesPortalLayoutContainer.createCommunitiesPopup);
                         }
 
                         Component.onCompleted: {
@@ -980,6 +997,9 @@ Item {
 
     Component.onCompleted: {
         Global.appMain = this;
+        Global.pinnedMessagesPopup = pinnedMessagesPopupComponent;
+        Global.communityProfilePopup = communityProfilePopup;
+        Global.inviteFriendsToCommunityPopup = inviteFriendsToCommunityPopup;
         const whitelist = appMain.rootStore.messagingStore.getLinkPreviewWhitelist()
         try {
             const whiteListedSites = JSON.parse(whitelist)

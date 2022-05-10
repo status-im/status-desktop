@@ -23,7 +23,7 @@ StatusAppTwoPanelLayout {
     id: root
 
     // TODO: get this model from backend?
-    property var model: [{name: qsTr("Overview"), icon: "help"},
+    property var settingsMenuModel: [{name: qsTr("Overview"), icon: "help"},
                         {name: qsTr("Members"), icon: "group-chat"},
 //                        {name: qsTr("Permissions"), icon: "objects"},
 //                        {name: qsTr("Tokens"), icon: "token"},
@@ -73,7 +73,7 @@ StatusAppTwoPanelLayout {
             Layout.fillWidth: true
             implicitHeight: contentItem.childrenRect.height
 
-            model: root.model
+            model: root.settingsMenuModel
             delegate: StatusNavigationListItem {
                 width: listView.width
                 title: modelData.name
@@ -253,17 +253,6 @@ StatusAppTwoPanelLayout {
             onSendInvites: {
                 const error = root.communitySectionModule.inviteUsersToCommunity(JSON.stringify(pubKeys))
                 processInviteResult(error)
-            }
-        }
-    }
-
-    Component {
-        id: membershipRequestPopup
-        MembershipRequestsPopup {
-            anchors.centerIn: parent
-            store: root.rootStore
-            onClosed: {
-                destroy()
             }
         }
     }

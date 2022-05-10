@@ -61,10 +61,8 @@ StatusModal {
                     anchors.horizontalCenter: parent.horizontalCenter
                     property var contactDetails: Utils.getContactDetailsAsJson(model.pubKey)
 
-                    property string displayName: contactDetails.displayName || root.store.generateAlias(model.pubKey)
-
+                    property string displayName: contactDetails.displayName || popup.store.generateAlias(model.pubKey)
                     image.source: contactDetails.thumbnailImage
-
                     title: displayName
 
                     components: [

@@ -17,6 +17,8 @@ StatusScrollView {
     id: root
 
     property CommunitiesStore communitiesStore: CommunitiesStore {}
+    property var importCommunitiesPopup: importCommunitiesPopupComponent
+    property var createCommunitiesPopup: createCommunitiesPopupComponent
 
     QtObject {
         id: d

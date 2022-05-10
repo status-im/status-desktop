@@ -18,6 +18,8 @@ QtObject {
     property string createChatStickerHashId: ""
     property string createChatStickerPackId: ""
 
+    property var groupInfoPopupComponent
+    property var membershipRequestPopup
     property var contactsModel: root.contactsStore.myContactsModel
 
     // Important:

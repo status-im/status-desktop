@@ -10,11 +10,18 @@ QtObject {
     property var appMain
     property bool popupOpened: false
     property int settingsSubsection: Constants.settingsSubsection.profile
-    property var errorSound
 
     property var mainModuleInst
     property var privacyModuleInst
+    property var toastMessage
+    property var pinnedMessagesPopup
+    property var communityProfilePopup
+    property var inviteFriendsToCommunityPopup
     property bool profilePopupOpened: false
+
+    property var sendMessageSound
+    property var notificationSound
+    property var errorSound
 
     signal openImagePopup(var image, var contextMenu)
     signal openLinkInBrowser(string link)

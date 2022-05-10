@@ -12,12 +12,7 @@ import StatusQ.Core.Utils 0.1 as StatusQUtils
 Item {
     id: replyComponent
 
-    property int repliedMessageId: wrapper.repliedMessageId
-    property string repliedMessageContent: wrapper.repliedMessageContent
-
-    onRepliedMessageIdChanged: {
-        wrapper.visible = (repliedMessageId.length > 0)
-    }
+    property string repliedMessageContent
 
     SVGImage {
         id: replyIcon

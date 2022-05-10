@@ -24,15 +24,17 @@ Item {
         if (hideReadNotifications && model.read) {
             return false
         }
-        return activityCenter.currentFilter === ActivityCenterPopup.Filter.All ||
-                (model.notificationType === Constants.activityCenterNotificationTypeMention && activityCenter.currentFilter === ActivityCenterPopup.Filter.Mentions) ||
-                (model.notificationType === Constants.activityCenterNotificationTypeOneToOne && activityCenter.currentFilter === ActivityCenterPopup.Filter.ContactRequests) ||
-                (model.notificationType === Constants.activityCenterNotificationTypeReply && activityCenter.currentFilter === ActivityCenterPopup.Filter.Replies)
+        return  acCurrentFilter === ActivityCenterPopup.Filter.All ||
+                (model.notificationType === Constants.activityCenterNotificationTypeMention && acCurrentFilter === ActivityCenterPopup.Filter.Mentions) ||
+                (model.notificationType === Constants.activityCenterNotificationTypeOneToOne && acCurrentFilter === ActivityCenterPopup.Filter.ContactRequests) ||
+                (model.notificationType === Constants.activityCenterNotificationTypeReply && acCurrentFilter === ActivityCenterPopup.Filter.Replies)
     }
 
     property var store
+    property int acCurrentFilter
     property var chatSectionModule
     property int previousNotificationIndex
+    property bool hideReadNotifications
     property string previousNotificationTimestamp
     // Not Refactored Yet
     property int communityIndex: -1 //root.store.chatsModelInst.communities.joinedCommunities.getCommunityIndex(model.message.communityId)
@@ -40,6 +42,7 @@ Item {
     function openProfile() {
         Global.openProfilePopup(model.author)
     }
+    signal activityCenterClose()
 
     function reevaluateItemBadge() {
         let details = root.store.getBadgeDetails(model.sectionId, model.chatId)
@@ -145,7 +148,7 @@ Item {
                     return Global.openProfilePopup(model.message.senderId);
                 }
 
-                activityCenter.close()
+                activityCenterClose()
                 root.store.activityCenterModuleInst.switchTo(model.sectionId, model.chatId, model.id)
             }
             prevMessageIndex: root.previousNotificationIndex
@@ -191,11 +194,11 @@ Item {
 
             onCommunityNameClicked: {
                 root.store.activityCenterModuleInst.switchTo(model.sectionId, "", "")
-                activityCenter.close()
+                activityCenterClose();
             }
             onChannelNameClicked: {
                 root.store.activityCenterModuleInst.switchTo(model.sectionId, model.chatId, "")
-                activityCenter.close()
+                activityCenterClose();
             }
         }
     }

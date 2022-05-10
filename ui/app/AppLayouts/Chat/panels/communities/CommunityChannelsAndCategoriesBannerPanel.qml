@@ -14,6 +14,11 @@ import utils 1.0
 
 Rectangle {
     id: root
+
+    property string communityId
+    signal addMembersClicked()
+    signal addCategoriesClicked()
+
     height: childrenRect.height + Style.current.padding
     anchors.left: parent.left
     anchors.leftMargin: Style.current.padding
@@ -22,8 +27,6 @@ Rectangle {
     border.color: Style.current.border
     radius: 16
     color: Style.current.transparent
-    property string communityId
-
 
    Rectangle {
         width: 66
@@ -86,7 +89,9 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: descriptionText.bottom
         anchors.topMargin: Style.current.padding
-        onClicked: Global.openPopup(createChannelPopup)
+        onClicked: {
+            root.addMembersClicked();
+        }
     }
 
     StatusFlatButton {
@@ -95,6 +100,8 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: addMembersBtn.bottom
 
-        onClicked: Global.openPopup(createCategoryPopup)
+        onClicked: {
+            root.addCategoriesClicked();
+        }
     }
 }

@@ -207,7 +207,7 @@ Item {
                     text: qsTr("Invite people")
                     icon.name: "share-ios"
                     enabled: communityData.canManageUsers
-                    onTriggered: Global.openPopup(inviteFriendsToCommunityPopup, {
+                    onTriggered: Global.openPopup(Global.inviteFriendsToCommunityPopup, {
                         community: communityData,
                         hasAddedContacts: root.hasAddedContacts,
                         communitySectionModule: root.communitySectionModule
@@ -341,7 +341,7 @@ Item {
                 onDisplayGroupInfoPopup: {
                 communitySectionModule.prepareChatContentModuleForChatId(chatId)
                 let chatContentModule = communitySectionModule.getChatContentModule()
-                Global.openPopup(groupInfoPopupComponent, {
+                Global.openPopup(root.store.groupInfoPopupComponent, {
                                      chatContentModule: chatContentModule,
                                      chatDetails: chatContentModule.chatDetails
                                  })
@@ -409,6 +409,12 @@ Item {
                         CommunityChannelsAndCategoriesBannerPanel {
                             id: channelsAndCategoriesBanner
                             communityId: communityData.id
+                            onAddMembersClicked: {
+                                Global.openPopup(createChannelPopup);
+                            }
+                            onAddCategoriesClicked: {
+                                Global.openPopup(createCategoryPopup);
+                            }
                         }
 
                         MouseArea {
