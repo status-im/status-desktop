@@ -130,17 +130,17 @@ proc init*(self: Controller) =
 proc getChat*(self: Controller): ChatDto =
   return self.chatService.getChatById(self.chatId)
 
-proc getChatMember*(self: Controller, id: string): ChatMember =
-  let chat = self.getChat()
-  for member in chat.members:
-    if (member.id == id):
-      return member
-
 proc getChatMembers*(self: Controller): seq[ChatMember] =
   var communityId = ""
   if (self.belongsToCommunity):
     communityId = self.sectionId
   return self.chatService.getMembers(communityId, self.chatId)
+
+proc getChatMember*(self: Controller, id: string): ChatMember =
+  let members = self.getChatMembers()
+  for member in members:
+    if (member.id == id):
+      return member
 
 proc getMembersPublicKeys*(self: Controller): seq[string] =
   if(self.belongsToCommunity):
