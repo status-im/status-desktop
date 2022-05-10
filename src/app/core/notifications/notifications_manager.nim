@@ -3,6 +3,7 @@ import NimQml, json, chronicles
 import ../../global/app_signals
 import ../../global/global_singleton
 import ../eventemitter
+import ../../../app_service/service/settings/service as settings_service
 import details
 
 export details
@@ -39,15 +40,17 @@ type
 QtObject:
   type NotificationsManager* = ref object of QObject
     events: EventEmitter
+    settingsService: settings_service.Service
     osNotification: StatusOSNotification
     soundManager: StatusSoundManager
     notificationSetUp: bool
 
   proc processNotification(self: NotificationsManager, title: string, message: string, details: NotificationDetails)
 
-  proc setup(self: NotificationsManager, events: EventEmitter) =
+  proc setup(self: NotificationsManager, events: EventEmitter, settingsService: settings_service.Service) =
     self.QObject.setup
     self.events = events
+    self.settingsService = settingsService
 
   proc delete*(self: NotificationsManager) =
     if self.notificationSetUp:
@@ -55,9 +58,9 @@ QtObject:
       self.soundManager.delete
     self.QObject.delete
 
-  proc newNotificationsManager*(events: EventEmitter): NotificationsManager =
+  proc newNotificationsManager*(events: EventEmitter, settingsService: settings_service.Service): NotificationsManager =
     new(result, delete)
-    result.setup(events)
+    result.setup(events, settingsService)
 
   proc init*(self: NotificationsManager) =
     self.osNotification = newStatusOSNotification()
@@ -145,27 +148,6 @@ QtObject:
     sectionId: sectionId)
     self.processNotification(title, message, details)
 
-  proc getExemptions(self: NotificationsManager, id: string): JsonNode =
-    # This proc returns exemptions as json object for the passed `id` if there are no set exemptions,
-    # json object with the default values will be returned.
-    let allExemptions = singletonInstance.localAccountSensitiveSettings.getNotifSettingExemptionsAsJson()
-    result = %* {
-      EXEMPTION_KEY_MUTE_ALL_MESSAGES: false,
-      EXEMPTION_KEY_PERSONAL_MENTIONS: LSS_VALUE_NOTIF_SEND_ALERTS, 
-      EXEMPTION_KEY_GLOBAL_MENTIONS: LSS_VALUE_NOTIF_SEND_ALERTS,
-      EXEMPTION_KEY_OTHER_MESSAGES: LSS_VALUE_NOTIF_SEND_TURN_OFF
-    }
-    if(allExemptions.contains(id)):
-      let obj = allExemptions[id]
-      if(obj.contains(EXEMPTION_KEY_MUTE_ALL_MESSAGES)):
-        result[EXEMPTION_KEY_MUTE_ALL_MESSAGES] = obj[EXEMPTION_KEY_MUTE_ALL_MESSAGES]
-      if(obj.contains(EXEMPTION_KEY_PERSONAL_MENTIONS)):
-        result[EXEMPTION_KEY_PERSONAL_MENTIONS] = obj[EXEMPTION_KEY_PERSONAL_MENTIONS]
-      if(obj.contains(EXEMPTION_KEY_GLOBAL_MENTIONS)):
-        result[EXEMPTION_KEY_GLOBAL_MENTIONS] = obj[EXEMPTION_KEY_GLOBAL_MENTIONS]
-      if(obj.contains(EXEMPTION_KEY_OTHER_MESSAGES)):
-        result[EXEMPTION_KEY_OTHER_MESSAGES] = obj[EXEMPTION_KEY_OTHER_MESSAGES]
-
   proc notificationCheck(self: NotificationsManager, title: string, message: string, details: NotificationDetails,
     notificationWay: string) =
     var data = NotificationArgs(title: title, message: message, details: details)
@@ -183,7 +165,7 @@ QtObject:
       details.notificationType == NotificationType.NewContactRequest or 
       details.notificationType == NotificationType.IdentityVerificationRequest):
 
-      if(notificationWay == LSS_VALUE_NOTIF_SEND_DELIVER_QUIETLY):
+      if(notificationWay == VALUE_NOTIF_DELIVER_QUIETLY):
         return
 
       if((details.notificationType == NotificationType.NewMessage or 
@@ -200,17 +182,17 @@ QtObject:
     
     if(not appIsActive or details.notificationType == NotificationType.TestNotification):
       # Check anonymity level
-      if(singletonInstance.localAccountSensitiveSettings.getNotificationMessagePreviewSetting() == PREVIEW_ANONYMOUS):
+      if(self.settingsService.getNotificationMessagePreview() == PREVIEW_ANONYMOUS):
         data.title = "Status"
         data.message = "You have a new message"
-      elif(singletonInstance.localAccountSensitiveSettings.getNotificationMessagePreviewSetting() == PREVIEW_NAME_ONLY):
+      elif(self.settingsService.getNotificationMessagePreview() == PREVIEW_NAME_ONLY):
         data.message = "You have a new message"
       let identifier = $(details.toJsonNode())
       debug "Add OS notification", title=data.title, message=data.message, identifier=identifier
       self.showOSNotification(data.title, data.message, identifier)  
       
-    if(singletonInstance.localAccountSensitiveSettings.getNotificationSoundsEnabled()):
-      self.soundManager.setPlayerVolume(singletonInstance.localAccountSensitiveSettings.getVolume())
+    if(self.settingsService.getNotificationSoundsEnabled()):
+      self.soundManager.setPlayerVolume(self.settingsService.getNotificationVolume())
       self.soundManager.playSound(NOTIFICATION_SOUND)
 
   proc processNotification(self: NotificationsManager, title: string, message: string, details: NotificationDetails) =
@@ -225,76 +207,76 @@ QtObject:
     # - https://drive.google.com/file/d/1L_9c2CMObcDcSuhVUu97s9-_26gtutES/view
     # - https://drive.google.com/file/d/1KmG7lJDJIx6R_HJWeFvMYT2wk32RoTJQ/view
 
-    if(not singletonInstance.localAccountSensitiveSettings.getNotifSettingAllowNotifications()):
+    if(not self.settingsService.getNotifSettingAllowNotifications()):
       return
 
     # In case of contact request
     if(details.notificationType == NotificationType.NewContactRequest):
-      if(singletonInstance.localAccountSensitiveSettings.getNotifSettingContactRequests() != LSS_VALUE_NOTIF_SEND_TURN_OFF):
-        self.notificationCheck(title, message, details, singletonInstance.localAccountSensitiveSettings.getNotifSettingContactRequests())
+      if(self.settingsService.getNotifSettingContactRequests() != VALUE_NOTIF_TURN_OFF):
+        self.notificationCheck(title, message, details, self.settingsService.getNotifSettingContactRequests())
         return     
 
     # In case of identity verification request
     elif(details.notificationType == NotificationType.IdentityVerificationRequest):
-      if(singletonInstance.localAccountSensitiveSettings.getNotifSettingIdentityVerificationRequests() != LSS_VALUE_NOTIF_SEND_TURN_OFF):
-        self.notificationCheck(title, message, details, singletonInstance.localAccountSensitiveSettings.getNotifSettingIdentityVerificationRequests())
+      if(self.settingsService.getNotifSettingIdentityVerificationRequests() != VALUE_NOTIF_TURN_OFF):
+        self.notificationCheck(title, message, details, self.settingsService.getNotifSettingIdentityVerificationRequests())
         return
 
     # In case of new message (regardless it's message with mention or not)    
     elif(details.notificationType == NotificationType.NewMessage or 
       details.notificationType == NotificationType.NewMessageWithPersonalMention or
       details.notificationType == NotificationType.NewMessageWithGlobalMention):
-      if(singletonInstance.localAccountSensitiveSettings.getNotifSettingAllMessages() != LSS_VALUE_NOTIF_SEND_TURN_OFF):
-        self.notificationCheck(title, message, details, singletonInstance.localAccountSensitiveSettings.getNotifSettingAllMessages())
+      if(self.settingsService.getNotifSettingAllMessages() != VALUE_NOTIF_TURN_OFF):
+        self.notificationCheck(title, message, details, self.settingsService.getNotifSettingAllMessages())
         return
 
       let messageBelongsToCommunity = details.isCommunitySection
       if(messageBelongsToCommunity):
-        let exemptionObj = self.getExemptions(details.sectionId)
-        if(exemptionObj[EXEMPTION_KEY_MUTE_ALL_MESSAGES].getBool):
+        let exemptions = self.settingsService.getNotifSettingExemptions(details.sectionId)
+        if(exemptions.muteAllMessages):
           return
 
         if(details.notificationType == NotificationType.NewMessageWithPersonalMention and 
-          exemptionObj[EXEMPTION_KEY_PERSONAL_MENTIONS].getStr != LSS_VALUE_NOTIF_SEND_TURN_OFF):
-          self.notificationCheck(title, message, details, exemptionObj[EXEMPTION_KEY_PERSONAL_MENTIONS].getStr)
+          exemptions.personalMentions != VALUE_NOTIF_TURN_OFF):
+          self.notificationCheck(title, message, details, exemptions.personalMentions)
           return
 
         if(details.notificationType == NotificationType.NewMessageWithGlobalMention and 
-          exemptionObj[EXEMPTION_KEY_GLOBAL_MENTIONS].getStr != LSS_VALUE_NOTIF_SEND_TURN_OFF):
-          self.notificationCheck(title, message, details, exemptionObj[EXEMPTION_KEY_GLOBAL_MENTIONS].getStr)
+          exemptions.globalMentions != VALUE_NOTIF_TURN_OFF):
+          self.notificationCheck(title, message, details, exemptions.globalMentions)
           return
 
         if(details.notificationType == NotificationType.NewMessage and 
-          exemptionObj[EXEMPTION_KEY_OTHER_MESSAGES].getStr != LSS_VALUE_NOTIF_SEND_TURN_OFF):
-          self.notificationCheck(title, message, details, exemptionObj[EXEMPTION_KEY_OTHER_MESSAGES].getStr)
+          exemptions.otherMessages != VALUE_NOTIF_TURN_OFF):
+          self.notificationCheck(title, message, details, exemptions.otherMessages)
           return
 
         return
       else:
         if(details.isOneToOne or details.isGroupChat):
-          let exemptionObj = self.getExemptions(details.chatId)
-          if(exemptionObj[EXEMPTION_KEY_MUTE_ALL_MESSAGES].getBool):
+          let exemptions = self.settingsService.getNotifSettingExemptions(details.chatId)
+          if(exemptions.muteAllMessages):
             return
 
         if(details.notificationType == NotificationType.NewMessageWithPersonalMention and 
-          singletonInstance.localAccountSensitiveSettings.getNotifSettingPersonalMentions() != LSS_VALUE_NOTIF_SEND_TURN_OFF):
-          self.notificationCheck(title, message, details, singletonInstance.localAccountSensitiveSettings.getNotifSettingPersonalMentions())
+          self.settingsService.getNotifSettingPersonalMentions() != VALUE_NOTIF_TURN_OFF):
+          self.notificationCheck(title, message, details, self.settingsService.getNotifSettingPersonalMentions())
           return
 
         if(details.notificationType == NotificationType.NewMessageWithGlobalMention and 
-          singletonInstance.localAccountSensitiveSettings.getNotifSettingGlobalMentions() != LSS_VALUE_NOTIF_SEND_TURN_OFF):
-          self.notificationCheck(title, message, details, singletonInstance.localAccountSensitiveSettings.getNotifSettingGlobalMentions())
+          self.settingsService.getNotifSettingGlobalMentions() != VALUE_NOTIF_TURN_OFF):
+          self.notificationCheck(title, message, details, self.settingsService.getNotifSettingGlobalMentions())
           return
           
         if(details.notificationType == NotificationType.NewMessage):
           if(details.isOneToOne and
-            singletonInstance.localAccountSensitiveSettings.getNotifSettingOneToOneChats() != LSS_VALUE_NOTIF_SEND_TURN_OFF):
-            self.notificationCheck(title, message, details, singletonInstance.localAccountSensitiveSettings.getNotifSettingOneToOneChats())
+            self.settingsService.getNotifSettingOneToOneChats() != VALUE_NOTIF_TURN_OFF):
+            self.notificationCheck(title, message, details, self.settingsService.getNotifSettingOneToOneChats())
             return
 
           if(details.isGroupChat and
-            singletonInstance.localAccountSensitiveSettings.getNotifSettingGroupChats() != LSS_VALUE_NOTIF_SEND_TURN_OFF):
-            self.notificationCheck(title, message, details, singletonInstance.localAccountSensitiveSettings.getNotifSettingGroupChats())
+            self.settingsService.getNotifSettingGroupChats() != VALUE_NOTIF_TURN_OFF):
+            self.notificationCheck(title, message, details, self.settingsService.getNotifSettingGroupChats())
             return
 
     # In all other cases (TestNotification, AcceptedContactRequest, JoinCommunityRequest,  MyRequestToJoinCommunityAccepted,

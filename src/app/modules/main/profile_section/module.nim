@@ -84,7 +84,7 @@ proc newModule*(delegate: delegate_interface.AccessInterface,
   result.advancedModule = advanced_module.newModule(result, events, settingsService, stickersService, nodeConfigurationService)
   result.devicesModule = devices_module.newModule(result, events, settingsService, devicesService)
   result.syncModule = sync_module.newModule(result, events, settingsService, mailserversService)
-  result.notificationsModule = notifications_module.newModule(result, events, chatService, contactsService)
+  result.notificationsModule = notifications_module.newModule(result, events, settingsService, chatService, contactsService)
   result.ensUsernamesModule = ens_usernames_module.newModule(
     result, events, settingsService, ensService, walletAccountService
   )

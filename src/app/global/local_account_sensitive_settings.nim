@@ -36,12 +36,6 @@ const LSS_KEY_HIDDEN_COMMUNITY_CHANNELS_AND_CATEGORIES_BANNERS* = "hiddenCommuni
 const DEFAULT_HIDDEN_COMMUNITY_CHANNELS_AND_CATEGORIES_BANNERS = ""
 const LSS_KEY_HIDDEN_COMMUNITY_BACKUP_BANNERS* = "hiddenCommunityBackUpBanners"
 const DEFAULT_HIDDEN_COMMUNITY_BACKUP_BANNERS = ""
-const LSS_KEY_VOLUME* = "volume"
-const DEFAULT_VOLUME = 50
-const LSS_KEY_NOTIFICATION_SOUNDS_ENABLED* = "notificationSoundsEnabled"
-const DEFAULT_NOTIFICATION_SOUNDS_ENABLED = true
-const LSS_KEY_NOTIFICATION_MESSAGE_PREVIEW_SETTING* = "notificationMessagePreviewSetting"
-const DEFAULT_NOTIFICATION_MESSAGE_PREVIEW_SETTING = 2 #notificationPreviewNameAndMessage from qml
 const LSS_KEY_WITHLISTED_UNFURLING_SITES* = "whitelistedUnfurlingSites"
 const DEFAULT_WITHLISTED_UNFURLING_SITES = ""
 const LSS_KEY_NEVER_ASK_ABOUT_UNFURLING_AGAIN* = "neverAskAboutUnfurlingAgain"
@@ -101,36 +95,6 @@ const DEFAULT_IS_DDMMYY_DATE_FORMAT = false
 const LSS_KEY_IS_24H_TIME_FORMAT* = "is_24h_time_format"
 const DEFAULT_IS_24H_TIME_FORMAT = false
 
-# Exemption Keys
-const EXEMPTION_KEY_MUTE_ALL_MESSAGES* = "muteAllMessages"
-const EXEMPTION_KEY_PERSONAL_MENTIONS* = "personalMentions"
-const EXEMPTION_KEY_GLOBAL_MENTIONS* = "globalMentions"
-const EXEMPTION_KEY_OTHER_MESSAGES* = "otherMessages"
-
-# Exemption Values
-const LSS_VALUE_NOTIF_SEND_ALERTS* = "sendAlerts"
-const LSS_VALUE_NOTIF_SEND_DELIVER_QUIETLY* = "deliverQuietly"
-const LSS_VALUE_NOTIF_SEND_TURN_OFF* = "turnOff"
-
-# Notifications
-const LSS_KEY_NOTIF_SETTING_ALLOW_NOTIFICATIONS* = "allowNotifications"
-const DEFAULT_NOTIF_SETTING_ALLOW_NOTIFICATIONS = true
-const LSS_KEY_NOTIF_SETTING_ONE_TO_ONE_CHATS* = "notifSettingOneToOneChats"
-const DEFAULT_NOTIF_SETTING_ONE_TO_ONE_CHATS = LSS_VALUE_NOTIF_SEND_ALERTS
-const LSS_KEY_NOTIF_SETTING_GROUP_CHATS* = "notifSettingGroupChats"
-const DEFAULT_NOTIF_SETTING_GROUP_CHATS = LSS_VALUE_NOTIF_SEND_ALERTS
-const LSS_KEY_NOTIF_SETTING_PERSONAL_MENTIONS* = "notifSettingPersonalMentions"
-const DEFAULT_NOTIF_SETTING_PERSONAL_MENTIONS = LSS_VALUE_NOTIF_SEND_ALERTS
-const LSS_KEY_NOTIF_SETTING_GLOBAL_MENTIONS* = "notifSettingGlobalMentions"
-const DEFAULT_NOTIF_SETTING_GLOBAL_MENTIONS = LSS_VALUE_NOTIF_SEND_ALERTS
-const LSS_KEY_NOTIF_SETTING_ALL_MESSAGES* = "notifSettingAllMessages"
-const DEFAULT_NOTIF_SETTING_ALL_MESSAGES = LSS_VALUE_NOTIF_SEND_TURN_OFF
-const LSS_KEY_NOTIF_SETTING_CONTACT_REQUESTS* = "notifSettingContactRequests"
-const DEFAULT_NOTIF_SETTING_CONTACT_REQUESTS = LSS_VALUE_NOTIF_SEND_ALERTS
-const LSS_KEY_NOTIF_SETTING_IDENTITY_VERIF_REQUESTS* = "notifSettingIdentityVerificationRequests"
-const DEFAULT_NOTIF_SETTING_IDENTITY_VERIF_REQUESTS = LSS_VALUE_NOTIF_SEND_ALERTS
-const LSS_KEY_NOTIF_SETTING_EXEMPTIONS* = "notificationsExemptions"
-const DEFAULT_NOTIF_SETTING_EXEMPTIONS = "" 
 
 logScope:
   topics = "la-sensitive-settings"
@@ -420,44 +384,6 @@ QtObject:
     read = getHiddenCommunityBackUpBanners
     write = setHiddenCommunityBackUpBanners
     notify = hiddenCommunityBackUpBannersChanged
-
-
-  proc volumeChanged*(self: LocalAccountSensitiveSettings) {.signal.}
-  proc getVolume*(self: LocalAccountSensitiveSettings): int {.slot.} =
-    getSettingsProp[int](self, LSS_KEY_VOLUME, newQVariant(DEFAULT_VOLUME))
-  proc setVolume*(self: LocalAccountSensitiveSettings, value: int) {.slot.} =
-    setSettingsProp(self, LSS_KEY_VOLUME, newQVariant(value)):
-      self.volumeChanged()
-  QtProperty[int] volume:
-    read = getVolume
-    write = setVolume
-    notify = volumeChanged
-
-
-  proc notificationSoundsEnabledChanged*(self: LocalAccountSensitiveSettings) {.signal.}
-  proc getNotificationSoundsEnabled*(self: LocalAccountSensitiveSettings): bool {.slot.} =
-    getSettingsProp[bool](self, LSS_KEY_NOTIFICATION_SOUNDS_ENABLED, newQVariant(DEFAULT_NOTIFICATION_SOUNDS_ENABLED))
-  proc setNotificationSoundsEnabled*(self: LocalAccountSensitiveSettings, value: bool) {.slot.} =
-    setSettingsProp(self, LSS_KEY_NOTIFICATION_SOUNDS_ENABLED, newQVariant(value)):
-      self.notificationSoundsEnabledChanged()
-
-  QtProperty[bool] notificationSoundsEnabled:
-    read = getNotificationSoundsEnabled
-    write = setNotificationSoundsEnabled
-    notify = notificationSoundsEnabledChanged
-
-
-  proc notificationMessagePreviewSettingChanged*(self: LocalAccountSensitiveSettings) {.signal.}
-  proc getNotificationMessagePreviewSetting*(self: LocalAccountSensitiveSettings): int {.slot.} =
-    getSettingsProp[int](self, LSS_KEY_NOTIFICATION_MESSAGE_PREVIEW_SETTING, newQVariant(DEFAULT_NOTIFICATION_MESSAGE_PREVIEW_SETTING))
-  proc setNotificationMessagePreviewSetting*(self: LocalAccountSensitiveSettings, value: int) {.slot.} =
-    setSettingsProp(self, LSS_KEY_NOTIFICATION_MESSAGE_PREVIEW_SETTING, newQVariant(value)):
-      self.notificationMessagePreviewSettingChanged()
-
-  QtProperty[int] notificationMessagePreviewSetting:
-    read = getNotificationMessagePreviewSetting
-    write = setNotificationMessagePreviewSetting
-    notify = notificationMessagePreviewSettingChanged
 
 
   proc whitelistedUnfurlingSitesChanged*(self: LocalAccountSensitiveSettings) {.signal.}
@@ -835,117 +761,6 @@ QtObject:
     write = setIs24hTimeFormat
     notify = is24hTimeFormatChanged
 
-  proc notifSettingAllowNotificationsChanged*(self: LocalAccountSensitiveSettings) {.signal.}
-  proc getNotifSettingAllowNotifications*(self: LocalAccountSensitiveSettings): bool {.slot.} =
-    getSettingsProp[bool](self, LSS_KEY_NOTIF_SETTING_ALLOW_NOTIFICATIONS, newQVariant(DEFAULT_NOTIF_SETTING_ALLOW_NOTIFICATIONS))
-  proc setNotifSettingAllowNotifications*(self: LocalAccountSensitiveSettings, value: bool) {.slot.} =
-    setSettingsProp(self, LSS_KEY_NOTIF_SETTING_ALLOW_NOTIFICATIONS, newQVariant(value)):
-      self.notifSettingAllowNotificationsChanged()
-  QtProperty[bool] notifSettingAllowNotifications:
-    read = getNotifSettingAllowNotifications
-    write = setNotifSettingAllowNotifications
-    notify = notifSettingAllowNotificationsChanged
-
-  proc notifSettingOneToOneChatsChanged*(self: LocalAccountSensitiveSettings) {.signal.}
-  proc getNotifSettingOneToOneChats*(self: LocalAccountSensitiveSettings): string {.slot.} =
-    getSettingsProp[string](self, LSS_KEY_NOTIF_SETTING_ONE_TO_ONE_CHATS, newQVariant(DEFAULT_NOTIF_SETTING_ONE_TO_ONE_CHATS))
-  proc setNotifSettingOneToOneChats*(self: LocalAccountSensitiveSettings, value: string) {.slot.} =
-    setSettingsProp(self, LSS_KEY_NOTIF_SETTING_ONE_TO_ONE_CHATS, newQVariant(value)):
-      self.notifSettingOneToOneChatsChanged()
-  QtProperty[string] notifSettingOneToOneChats:
-    read = getNotifSettingOneToOneChats
-    write = setNotifSettingOneToOneChats
-    notify = notifSettingOneToOneChatsChanged
-
-  proc notifSettingGroupChatsChanged*(self: LocalAccountSensitiveSettings) {.signal.}
-  proc getNotifSettingGroupChats*(self: LocalAccountSensitiveSettings): string {.slot.} =
-    getSettingsProp[string](self, LSS_KEY_NOTIF_SETTING_GROUP_CHATS, newQVariant(DEFAULT_NOTIF_SETTING_GROUP_CHATS))
-  proc setNotifSettingGroupChats*(self: LocalAccountSensitiveSettings, value: string) {.slot.} =
-    setSettingsProp(self, LSS_KEY_NOTIF_SETTING_GROUP_CHATS, newQVariant(value)):
-      self.notifSettingGroupChatsChanged()
-  QtProperty[string] notifSettingGroupChats:
-    read = getNotifSettingGroupChats
-    write = setNotifSettingGroupChats
-    notify = notifSettingGroupChatsChanged
-
-  proc notifSettingPersonalMentionsChanged*(self: LocalAccountSensitiveSettings) {.signal.}
-  proc getNotifSettingPersonalMentions*(self: LocalAccountSensitiveSettings): string {.slot.} =
-    getSettingsProp[string](self, LSS_KEY_NOTIF_SETTING_PERSONAL_MENTIONS, newQVariant(DEFAULT_NOTIF_SETTING_PERSONAL_MENTIONS))
-  proc setNotifSettingPersonalMentions*(self: LocalAccountSensitiveSettings, value: string) {.slot.} =
-    setSettingsProp(self, LSS_KEY_NOTIF_SETTING_PERSONAL_MENTIONS, newQVariant(value)):
-      self.notifSettingPersonalMentionsChanged()
-  QtProperty[string] notifSettingPersonalMentions:
-    read = getNotifSettingPersonalMentions
-    write = setNotifSettingPersonalMentions
-    notify = notifSettingPersonalMentionsChanged
-
-  proc notifSettingGlobalMentionsChanged*(self: LocalAccountSensitiveSettings) {.signal.}
-  proc getNotifSettingGlobalMentions*(self: LocalAccountSensitiveSettings): string {.slot.} =
-    getSettingsProp[string](self, LSS_KEY_NOTIF_SETTING_GLOBAL_MENTIONS, newQVariant(DEFAULT_NOTIF_SETTING_GLOBAL_MENTIONS))
-  proc setNotifSettingGlobalMentions*(self: LocalAccountSensitiveSettings, value: string) {.slot.} =
-    setSettingsProp(self, LSS_KEY_NOTIF_SETTING_GLOBAL_MENTIONS, newQVariant(value)):
-      self.notifSettingGlobalMentionsChanged()
-  QtProperty[string] notifSettingGlobalMentions:
-    read = getNotifSettingGlobalMentions
-    write = setNotifSettingGlobalMentions
-    notify = notifSettingGlobalMentionsChanged
-
-  proc notifSettingAllMessagesChanged*(self: LocalAccountSensitiveSettings) {.signal.}
-  proc getNotifSettingAllMessages*(self: LocalAccountSensitiveSettings): string {.slot.} =
-    getSettingsProp[string](self, LSS_KEY_NOTIF_SETTING_ALL_MESSAGES, newQVariant(DEFAULT_NOTIF_SETTING_ALL_MESSAGES))
-  proc setNotifSettingAllMessages*(self: LocalAccountSensitiveSettings, value: string) {.slot.} =
-    setSettingsProp(self, LSS_KEY_NOTIF_SETTING_ALL_MESSAGES, newQVariant(value)):
-      self.notifSettingAllMessagesChanged()
-  QtProperty[string] notifSettingAllMessages:
-    read = getNotifSettingAllMessages
-    write = setNotifSettingAllMessages
-    notify = notifSettingAllMessagesChanged
-
-  proc notifSettingContactRequestsChanged*(self: LocalAccountSensitiveSettings) {.signal.}
-  proc getNotifSettingContactRequests*(self: LocalAccountSensitiveSettings): string {.slot.} =
-    getSettingsProp[string](self, LSS_KEY_NOTIF_SETTING_CONTACT_REQUESTS, newQVariant(DEFAULT_NOTIF_SETTING_CONTACT_REQUESTS))
-  proc setNotifSettingContactRequests*(self: LocalAccountSensitiveSettings, value: string) {.slot.} =
-    setSettingsProp(self, LSS_KEY_NOTIF_SETTING_CONTACT_REQUESTS, newQVariant(value)):
-      self.notifSettingContactRequestsChanged()
-  QtProperty[string] notifSettingContactRequests:
-    read = getNotifSettingContactRequests
-    write = setNotifSettingContactRequests
-    notify = notifSettingContactRequestsChanged
-
-  proc notifSettingIdentityVerificationRequestsChanged*(self: LocalAccountSensitiveSettings) {.signal.}
-  proc getNotifSettingIdentityVerificationRequests*(self: LocalAccountSensitiveSettings): string {.slot.} =
-    getSettingsProp[string](self, LSS_KEY_NOTIF_SETTING_IDENTITY_VERIF_REQUESTS, newQVariant(DEFAULT_NOTIF_SETTING_IDENTITY_VERIF_REQUESTS))
-  proc setNotifSettingIdentityVerificationRequests*(self: LocalAccountSensitiveSettings, value: string) {.slot.} =
-    setSettingsProp(self, LSS_KEY_NOTIF_SETTING_IDENTITY_VERIF_REQUESTS, newQVariant(value)):
-      self.notifSettingIdentityVerificationRequestsChanged()
-  QtProperty[string] notifSettingIdentityVerificationRequests:
-    read = getNotifSettingIdentityVerificationRequests
-    write = setNotifSettingIdentityVerificationRequests
-    notify = notifSettingIdentityVerificationRequestsChanged
-
-  proc notifSettingExemptionsChanged*(self: LocalAccountSensitiveSettings) {.signal.}
-  proc getNotifSettingExemptions*(self: LocalAccountSensitiveSettings): string {.slot.} =
-    getSettingsProp[string](self, LSS_KEY_NOTIF_SETTING_EXEMPTIONS, newQVariant(DEFAULT_NOTIF_SETTING_EXEMPTIONS))
-  proc setNotifSettingExemptions*(self: LocalAccountSensitiveSettings, value: string) {.slot.} =
-    setSettingsProp(self, LSS_KEY_NOTIF_SETTING_EXEMPTIONS, newQVariant(value)):
-      self.notifSettingExemptionsChanged()
-  QtProperty[string] notifSettingExemptions:
-    read = getNotifSettingExemptions
-    write = setNotifSettingExemptions
-    notify = notifSettingExemptionsChanged
-
-  proc getNotifSettingExemptionsAsJson*(self: LocalAccountSensitiveSettings): JsonNode =
-    var allExemptions = newJObject()
-    let exemptions = self.getNotifSettingExemptions()
-    if(exemptions.len == 0):
-      return allExemptions
-    try:
-      let exemptionsObj = exemptions.parseJson
-      allExemptions = exemptionsObj
-    except Exception as e:
-      error "stored exemptions are corrupted, will be overwritten", msg=e.msg
-    return allExemptions
-
   proc removeKey*(self: LocalAccountSensitiveSettings, key: string) =
     if(self.settings.isNil):
       return
@@ -971,9 +786,6 @@ QtObject:
       of LSS_KEY_HIDDEN_COMMUNITY_WELCOME_BANNERS: self.hiddenCommunityWelcomeBannersChanged()
       of LSS_KEY_HIDDEN_COMMUNITY_CHANNELS_AND_CATEGORIES_BANNERS: self.hiddenCommunityChannelAndCategoriesBannersChanged()
       of LSS_KEY_HIDDEN_COMMUNITY_BACKUP_BANNERS: self.hiddenCommunityBackUpBannersChanged()
-      of LSS_KEY_VOLUME: self.volumeChanged()
-      of LSS_KEY_NOTIFICATION_SOUNDS_ENABLED: self.notificationSoundsEnabledChanged()
-      of LSS_KEY_NOTIFICATION_MESSAGE_PREVIEW_SETTING: self.notificationMessagePreviewSettingChanged()
       of LSS_KEY_WITHLISTED_UNFURLING_SITES: self.whitelistedUnfurlingSitesChanged()
       of LSS_KEY_NEVER_ASK_ABOUT_UNFURLING_AGAIN: self.neverAskAboutUnfurlingAgainChanged()
       of LSS_KEY_HIDE_CHANNEL_SUGGESTIONS: self.hideChannelSuggestionsChanged()
@@ -1003,12 +815,3 @@ QtObject:
       of LSS_KEY_STICKERS_ENS_ROPSTEN: self.stickersEnsRopstenChanged()
       of LSS_KEY_IS_DDMMYY_DATE_FORMAT: self.isDDMMYYDateFormatChanged()
       of LSS_KEY_IS_24H_TIME_FORMAT: self.is24hTimeFormatChanged()
-      of LSS_KEY_NOTIF_SETTING_ALLOW_NOTIFICATIONS: self.notifSettingAllowNotificationsChanged()
-      of LSS_KEY_NOTIF_SETTING_ONE_TO_ONE_CHATS: self.notifSettingOneToOneChatsChanged()
-      of LSS_KEY_NOTIF_SETTING_GROUP_CHATS: self.notifSettingGroupChatsChanged()
-      of LSS_KEY_NOTIF_SETTING_PERSONAL_MENTIONS: self.notifSettingPersonalMentionsChanged()
-      of LSS_KEY_NOTIF_SETTING_GLOBAL_MENTIONS: self.notifSettingGlobalMentionsChanged()
-      of LSS_KEY_NOTIF_SETTING_ALL_MESSAGES: self.notifSettingAllMessagesChanged()
-      of LSS_KEY_NOTIF_SETTING_CONTACT_REQUESTS: self.notifSettingContactRequestsChanged()
-      of LSS_KEY_NOTIF_SETTING_IDENTITY_VERIF_REQUESTS: self.notifSettingIdentityVerificationRequestsChanged()
-      of LSS_KEY_NOTIF_SETTING_EXEMPTIONS: self.notifSettingExemptionsChanged()

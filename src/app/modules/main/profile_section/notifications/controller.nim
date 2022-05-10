@@ -1,8 +1,9 @@
-import Tables, chronicles
+import Tables, chronicles, json
 import io_interface
 
 import ../../../../global/app_signals
 import ../../../../core/eventemitter
+import ../../../../../app_service/service/settings/service as settings_service
 import ../../../../../app_service/service/chat/service as chat_service
 import ../../../../../app_service/service/contacts/service as contact_service
 import ../../../../../app_service/service/community/service as community_service
@@ -14,16 +15,19 @@ type
   Controller* = ref object of RootObj
     delegate: io_interface.AccessInterface
     events: EventEmitter
+    settingsService: settings_service.Service
     chatService: chat_service.Service
     contactService: contact_service.Service
 
 proc newController*(delegate: io_interface.AccessInterface,
   events: EventEmitter,
+  settingsService: settings_service.Service,
   chatService: chat_service.Service,
   contactService: contact_service.Service): Controller =
   result = Controller()
   result.delegate = delegate
   result.events = events
+  result.settingsService = settingsService
   result.chatService = chatService
   result.contactService = contactService
 
@@ -87,6 +91,15 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_CHAT_SWITCH_TO_OR_CREATE_1_1_CHAT) do(e:Args):
     let args = ChatExtArgs(e)
     self.delegate.addChat(args.chatId)
+
+proc getNotifSettingExemptions*(self: Controller, id: string): NotificationsExemptions =
+  return self.settingsService.getNotifSettingExemptions(id)
+
+proc setNotifSettingExemptions*(self: Controller, id: string, exemptions: NotificationsExemptions): bool =
+  return self.settingsService.setNotifSettingExemptions(id, exemptions)
+
+proc removeNotifSettingExemptions*(self: Controller, id: string): bool =
+  return self.settingsService.removeNotifSettingExemptions(id)
 
 proc getChannelGroups*(self: Controller): seq[ChannelGroupDto] =
   return self.chatService.getChannelGroups()

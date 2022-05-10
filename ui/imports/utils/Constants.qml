@@ -168,9 +168,9 @@ QtObject {
         }
 
         readonly property QtObject notifications: QtObject {
-            readonly property string sendAlertsValue: "sendAlerts"
-            readonly property string deliverQuietlyValue: "deliverQuietly"
-            readonly property string turnOffValue: "turnOff"
+            readonly property string sendAlertsValue: "SendAlerts"
+            readonly property string deliverQuietlyValue: "DeliverQuietly"
+            readonly property string turnOffValue: "TurnOff"
         }
 
         readonly property QtObject exemptions: QtObject {
