@@ -211,9 +211,11 @@ Item {
             }
 
             function completeWordFill(seedWord) {
-                seedWordInput.input.edit.text = seedWord.trim();
-                // Changing the text of the input triggers the onTextChanged, thus signalling doneInsertingWord if the condition passes 
+                let seedWordTrimmed = seedWord.trim();
+                root.setWord(seedWordTrimmed);
                 seedWordInput.input.edit.cursorPosition = seedWordInput.text.length;
+                seedSuggestionsList.model = 0;
+                root.doneInsertingWord(seedWordTrimmed);
             }
 
             clip: true
