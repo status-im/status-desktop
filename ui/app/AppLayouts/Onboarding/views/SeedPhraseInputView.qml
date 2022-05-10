@@ -1,4 +1,5 @@
 import QtQuick 2.12
+import QtQuick.Controls 2.14
 import QtGraphicalEffects 1.13
 import QtQuick.Dialogs 1.3
 
@@ -99,6 +100,46 @@ OnboardingBasePage {
             z: 100000
             model: switchTabBar.currentItem.text.substring(0,2) === "12" ? 12 :
                    switchTabBar.currentItem.text.substring(0,2) === "18" ? 20 : 24
+
+            function addWord(pos, word, ignoreGoingNext) {
+                root.mnemonicInput.push({pos: pos, seed: word.replace(/\s/g, '')});
+                for (var j = 0; j < mnemonicInput.length; j++) {
+                    if (mnemonicInput[j].pos === pos && mnemonicInput[j].seed !== word) {
+                        mnemonicInput[j].seed = word;
+                        break;
+                    }
+                }
+                //remove duplicates
+                var valueArr = mnemonicInput.map(function(item){ return item.pos });
+                var isDuplicate = valueArr.some(function(item, idx){
+                    if (valueArr.indexOf(item) !== idx) {
+                        root.mnemonicInput.splice(idx, 1);
+                    }
+                    return valueArr.indexOf(item) !== idx
+                });
+                if (!ignoreGoingNext) {
+                    for (var i = !grid.atXBeginning ? 12 : 0; i < grid.count; i++) {
+                        if (parseInt(grid.itemAtIndex(i).leftComponentText) !== (parseInt(pos)+1)) {
+                            continue
+                        }
+
+                        grid.currentIndex = grid.itemAtIndex(i).itemIndex;
+                        grid.itemAtIndex(i).textEdit.input.edit.forceActiveFocus();
+
+                        if (grid.currentIndex !== 12) {
+                            continue
+                        }
+
+                        grid.positionViewAtEnd();
+                        
+                        if (grid.count === 20) {
+                            grid.contentX = 1500;
+                        }
+                    }
+                }
+                submitButton.checkMnemonicLength()
+            }
+
             delegate: StatusSeedPhraseInput {
                 id: seedWordInput
                 width: (grid.cellWidth - 24)
@@ -124,63 +165,59 @@ OnboardingBasePage {
                     invalidSeedTxt.visible = false;
                 }
                 onDoneInsertingWord: {
-                    root.mnemonicInput.push({"pos": leftComponentText, "seed": word.replace(/\s/g, '')});
-                    for (var j = 0; j < mnemonicInput.length; j++) {
-                        if (mnemonicInput[j].pos === leftComponentText && mnemonicInput[j].seed !== word) {
-                            mnemonicInput[j].seed = word;
-                        }
-                    }
-                    //remove duplicates
-                    var valueArr = mnemonicInput.map(function(item){ return item.pos });
-                    var isDuplicate = valueArr.some(function(item, idx){
-                        if (valueArr.indexOf(item) !== idx) {
-                            root.mnemonicInput.splice(idx, 1);
-                        }
-                        return valueArr.indexOf(item) !== idx
-                    });
-                    for (var i = !grid.atXBeginning ? 12 : 0; i < grid.count; i++) {
-                        if (parseInt(grid.itemAtIndex(i).leftComponentText) === (parseInt(leftComponentText)+1)) {
-                            grid.currentIndex = grid.itemAtIndex(i).itemIndex;
-                            grid.itemAtIndex(i).textEdit.input.edit.forceActiveFocus();
-                            if (grid.currentIndex === 12) {
-                                grid.positionViewAtEnd();
-                                if (grid.count === 20) {
-                                    grid.contentX = 1500;
-                                }
-                            }
-                        }
-                    }
-                    submitButton.enabled = (root.mnemonicInput.length === (grid.atXBeginning ? 12 : submitButton.gridCount));
+                    grid.addWord(leftComponentText, word)
                 }
                 onEditClicked: {
                     grid.currentIndex = index;
                     grid.itemAtIndex(index).textEdit.input.edit.forceActiveFocus();
                 }
                 onKeyPressed: {
-                    if (event.key === Qt.Key_Tab || event.key === Qt.Key_Right) {
-                        for (var i = !grid.atXBeginning ? 12 : 0; i < grid.count; i++) {
-                            if (parseInt(grid.itemAtIndex(i).leftComponentText) === ((parseInt(leftComponentText)+1) <= grid.count ? (parseInt(leftComponentText)+1) : grid.count)) {
-                                grid.itemAtIndex(i).textEdit.input.edit.forceActiveFocus();
-                                textEdit.input.tabNavItem = grid.itemAtIndex(i).textEdit.input.edit;
-                            }
-                        }
-                    } else if (event.key === Qt.Key_Left) {
+                    if (event.key === Qt.Key_Backtab) {
                         for (var i = !grid.atXBeginning ? 12 : 0; i < grid.count; i++) {
                             if (parseInt(grid.itemAtIndex(i).leftComponentText) === ((parseInt(leftComponentText)-1) >= 0 ? (parseInt(leftComponentText)-1) : 0)) {
-                                grid.itemAtIndex(i).textEdit.input.edit.forceActiveFocus();
+                                grid.itemAtIndex(i).textEdit.input.edit.forceActiveFocus(Qt.TabFocusReason);
+                                textEdit.input.tabNavItem = grid.itemAtIndex(i).textEdit.input.edit;
+                                event.accepted = true
+                                break
                             }
                         }
-                    } else if (event.key === Qt.Key_Down) {
-                        grid.itemAtIndex((index+1 < grid.count) ? (index+1) : (grid.count-1)).textEdit.input.edit.forceActiveFocus();
-                    } else if (event.key === Qt.Key_Up) {
-                        grid.itemAtIndex((index-1 >= 0) ? (index-1) : 0).textEdit.input.edit.forceActiveFocus();
+                    } else if (event.key === Qt.Key_Tab) {
+                        for (var i = !grid.atXBeginning ? 12 : 0; i < grid.count; i++) {
+                            if (parseInt(grid.itemAtIndex(i).leftComponentText) === ((parseInt(leftComponentText)+1) <= grid.count ? (parseInt(leftComponentText)+1) : grid.count)) {
+                                grid.itemAtIndex(i).textEdit.input.edit.forceActiveFocus(Qt.TabFocusReason);
+                                textEdit.input.tabNavItem = grid.itemAtIndex(i).textEdit.input.edit;
+                                event.accepted = true
+                                break
+                            }
+                        }
+                    }
+
+                    if (event.matches(StandardKey.Paste)) {
+                        const clipboardText = globalUtils.getFromClipboard()
+                        event.accepted = true
+                        let words = clipboardText.split(' ')
+                        root.mnemonicInput = []
+                        for (let i = 0; i < words.length; i++) {
+                            grid.itemAtIndex(i).setWord(words[i])
+                            grid.addWord(i, words[i], true)
+                        }
+                        submitButton.checkMnemonicLength()
+                        return
+                    }
+
+                    if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
+                        event.accepted = true
+                        if (submitButton.enabled) {
+                            submitButton.clicked(null)
+                            return
+                        }
                     }
 
                     if (event.key === Qt.Key_Delete || event.key === Qt.Key_Backspace) {
                         var wordIndex = mnemonicInput.findIndex(x => x.pos === leftComponentText);
                         if (wordIndex > -1) {
                             mnemonicInput.splice(wordIndex , 1);
-                            submitButton.enabled = (root.mnemonicInput.length === (grid.atXBeginning ? 12 : submitButton.gridCount));
+                            submitButton.checkMnemonicLength()
                         }
                     }
 
@@ -207,6 +244,11 @@ OnboardingBasePage {
             anchors.topMargin: 24
             enabled: false
             property int gridCount: (grid.count === 20) ? 18 : grid.count
+
+            function checkMnemonicLength() {
+                submitButton.enabled = (root.mnemonicInput.length === (grid.atXBeginning ? 12 : submitButton.gridCount));
+            }
+
             text: root.existingUser ? qsTr("Restore Status Profile") :
                   ((grid.count > 12) && grid.atXBeginning) ? qsTr("Next") : qsTr("Import")
             onClicked: {
