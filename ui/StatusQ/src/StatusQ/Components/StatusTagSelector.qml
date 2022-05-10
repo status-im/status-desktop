@@ -237,16 +237,18 @@ Item {
 
             TextInput {
                 id: edit
-                Layout.fillWidth: true
-                Layout.preferredHeight: 44
                 verticalAlignment: Text.AlignVCenter
                 visible: (namesModel.count < 5)
                 enabled: visible
                 focus: true
+                color: Theme.palette.directColor1
+                clip: true
                 font.pixelSize: 15
                 wrapMode: TextEdit.NoWrap
                 font.family: Theme.palette.baseFont.name
-                color: Theme.palette.directColor1
+                Layout.fillWidth: true
+                Layout.preferredHeight: 44
+
                 Keys.onPressed: {
                     if ((event.key === Qt.Key_Backspace || event.key === Qt.Key_Escape)
                             && getText(cursorPosition, (cursorPosition-1)) === ""
