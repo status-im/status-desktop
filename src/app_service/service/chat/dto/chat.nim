@@ -88,6 +88,7 @@ type ChannelGroupDto* = object
   color*: string
   muted*: bool
   historyArchiveSupportEnabled*: bool
+  pinMessageAllMembersEnabled*: bool
 
 proc `$`*(self: ChatDto): string =
   result = fmt"""ChatDto(

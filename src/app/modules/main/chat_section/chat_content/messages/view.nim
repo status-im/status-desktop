@@ -71,6 +71,9 @@ QtObject:
   proc amIChatAdmin*(self: View): bool {.slot.} =
     return self.delegate.amIChatAdmin()
 
+  proc pinMessageAllowedForMembers*(self: View): bool {.slot.} =
+    return self.delegate.pinMessageAllowedForMembers()
+
   proc getNumberOfPinnedMessages*(self: View): int {.slot.} =
     return self.delegate.getNumberOfPinnedMessages()
 

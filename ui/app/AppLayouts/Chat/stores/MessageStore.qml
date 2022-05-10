@@ -100,6 +100,13 @@ QtObject {
         return messageModule.amIChatAdmin()
     }
 
+    function pinMessageAllowedForMembers() {
+        if(!messageModule)
+            return false
+
+        return messageModule.pinMessageAllowedForMembers()
+    }
+
     function getNumberOfPinnedMessages () {
         if(!messageModule)
             return 0

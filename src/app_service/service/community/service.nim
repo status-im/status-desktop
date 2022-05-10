@@ -532,7 +532,8 @@ QtObject:
       color: string,
       imageUrl: string,
       aX: int, aY: int, bX: int, bY: int,
-      historyArchiveSupportEnabled: bool) =
+      historyArchiveSupportEnabled: bool,
+      pinMessageAllMembersEnabled: bool) =
     try:
       var image = singletonInstance.utils.formatImagePath(imageUrl)
       let response = status_go.createCommunity(
@@ -542,7 +543,8 @@ QtObject:
         color,
         image,
         aX, aY, bX, bY,
-        historyArchiveSupportEnabled)
+        historyArchiveSupportEnabled,
+        pinMessageAllMembersEnabled)
 
       if response.error != nil:
         let error = Json.decode($response.error, RpcError)
@@ -570,7 +572,8 @@ QtObject:
       color: string,
       imageUrl: string,
       aX: int, aY: int, bX: int, bY: int,
-      historyArchiveSupportEnabled: bool) =
+      historyArchiveSupportEnabled: bool,
+      pinMessageAllMembersEnabled: bool) =
     try:
       var image = singletonInstance.utils.formatImagePath(imageUrl)
       let response = status_go.editCommunity(
@@ -581,7 +584,8 @@ QtObject:
         color,
         image,
         aX, aY, bX, bY,
-        historyArchiveSupportEnabled)
+        historyArchiveSupportEnabled,
+        pinMessageAllMembersEnabled)
 
       if response.error != nil:
         let error = Json.decode($response.error, RpcError)

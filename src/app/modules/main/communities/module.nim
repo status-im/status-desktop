@@ -149,8 +149,9 @@ method createCommunity*(self: Module, name: string, description: string,
                         access: int, color: string,
                         imagePath: string,
                         aX: int, aY: int, bX: int, bY: int,
-                        historyArchiveSupportEnabled: bool) =
-  self.controller.createCommunity(name, description, access, color, imagePath, aX, aY, bX, bY, historyArchiveSupportEnabled)
+                        historyArchiveSupportEnabled: bool,
+                        pinMessageAllMembersEnabled: bool) =
+  self.controller.createCommunity(name, description, access, color, imagePath, aX, aY, bX, bY, historyArchiveSupportEnabled, pinMessageAllMembersEnabled)
 
 method deleteCommunityCategory*(self: Module, communityId: string, categoryId: string) =
   self.controller.deleteCommunityCategory(communityId, categoryId)

@@ -131,6 +131,12 @@ QtObject:
   QtProperty[bool] historyArchiveSupportEnabled:
     read = historyArchiveSupportEnabled
 
+  proc pinMessageAllMembersEnabled(self: ActiveSection): bool {.slot.} =
+    return self.item.pinMessageAllMembersEnabled
+
+  QtProperty[bool] pinMessageAllMembersEnabled:
+    read = pinMessageAllMembersEnabled
+
   proc members(self: ActiveSection): QVariant {.slot.} =
     if (self.item.id == ""):
       # FIXME (Jo) I don't know why but the Item is sometimes empty and doing anything here crashes the app

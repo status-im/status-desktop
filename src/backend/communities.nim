@@ -36,7 +36,8 @@ proc createCommunity*(
     color: string,
     imageUrl: string,
     aX: int, aY: int, bX: int, bY: int,
-    historyArchiveSupportEnabled: bool
+    historyArchiveSupportEnabled: bool,
+    pinMessageAllMembersEnabled: bool
     ): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = callPrivateRPC("createCommunity".prefix, %*[{
       # TODO this will need to be renamed membership (small m)
@@ -51,6 +52,7 @@ proc createCommunity*(
       "imageBx": bX,
       "imageBy": bY,
       "historyArchiveSupportEnabled": historyArchiveSupportEnabled,
+      "pinMessageAllMembersEnabled": pinMessageAllMembersEnabled
     }])
 
 proc editCommunity*(
@@ -64,7 +66,8 @@ proc editCommunity*(
     aY: int,
     bX: int,
     bY: int,
-    historyArchiveSupportEnabled: bool
+    historyArchiveSupportEnabled: bool,
+    pinMessageAllMembersEnabled: bool
     ): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = callPrivateRPC("editCommunity".prefix, %*[{
     # TODO this will need to be renamed membership (small m)
@@ -79,7 +82,8 @@ proc editCommunity*(
     "imageAy": aY,
     "imageBx": bX,
     "imageBy": bY,
-    "historyArchiveSupportEnabled": historyArchiveSupportEnabled
+    "historyArchiveSupportEnabled": historyArchiveSupportEnabled,
+    "pinMessageAllMembersEnabled": pinMessageAllMembersEnabled
   }])
 
 proc createCommunityChannel*(

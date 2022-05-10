@@ -28,6 +28,7 @@ type
     MembersModel
     PendingRequestsToJoinModel
     HistoryArchiveSupportEnabled
+    PinMessageAllMembersEnabled
 
 QtObject:
   type
@@ -87,6 +88,7 @@ QtObject:
       ModelRole.MembersModel.int:"members",
       ModelRole.PendingRequestsToJoinModel.int:"pendingRequestsToJoin",
       ModelRole.HistoryArchiveSupportEnabled.int:"historyArchiveSupportEnabled",
+      ModelRole.PinMessageAllMembersEnabled.int:"pinMessageAllMembersEnabled",
     }.toTable
 
   method data(self: SectionModel, index: QModelIndex, role: int): QVariant =
@@ -144,6 +146,8 @@ QtObject:
       result = newQVariant(item.pendingRequestsToJoin)
     of ModelRole.HistoryArchiveSupportEnabled:
       result = newQVariant(item.historyArchiveSupportEnabled)
+    of ModelRole.PinMessageAllMembersEnabled:
+      result = newQVariant(item.pinMessageAllMembersEnabled)
 
   proc isItemExist(self: SectionModel, id: string): bool =
     for it in self.items:
@@ -216,7 +220,8 @@ QtObject:
       ModelRole.Joined.int,
       ModelRole.MembersModel.int,
       ModelRole.PendingRequestsToJoinModel.int,
-      ModelRole.HistoryArchiveSupportEnabled.int
+      ModelRole.HistoryArchiveSupportEnabled.int,
+      ModelRole.PinMessageAllMembersEnabled.int
       ])
 
   proc getItemById*(self: SectionModel, id: string): SectionItem =
