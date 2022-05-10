@@ -328,6 +328,13 @@ Column {
         }
         Keys.onReturnPressed: { root.returnPressed() }
 
+        onKeyPressed: {
+            if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
+                event.accepted = true
+                root.submit()
+            }
+        }
+
         StatusFlatRoundButton {
             id: showHideConfirmIcon
             visible: confirmPswInput.text !== ""

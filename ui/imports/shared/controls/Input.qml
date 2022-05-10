@@ -47,6 +47,7 @@ Item {
     property alias validator: inputValue.validator
     signal editingFinished(string inputValue)
     signal textEdited(string inputValue)
+    signal keyPressed(var event)
 
     implicitHeight: inputRectangle.height +
                     (hasLabel ? inputLabel.height + labelMargin : 0) +
@@ -115,6 +116,10 @@ Item {
             }
             onEditingFinished: inputBox.editingFinished(inputBox.text)
             onTextEdited: inputBox.textEdited(inputBox.text)
+
+            Keys.onPressed: {
+                inputBox.keyPressed(event);
+            }
 
             MouseArea {
                 anchors.fill: parent

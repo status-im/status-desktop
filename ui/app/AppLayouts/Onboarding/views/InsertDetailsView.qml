@@ -27,6 +27,7 @@ Item {
             root.address = OnboardingStore.onboardingModuleInst.importedAccountAddress ;
             root.pubKey = OnboardingStore.onboardingModuleInst.importedAccountPubKey;
         }
+        nameInput.input.edit.forceActiveFocus();
     }
 
     Loader {
@@ -131,6 +132,13 @@ Item {
             onTextChanged: {
                 userImage.name = text;
             }
+            input.acceptReturn: true  
+            onKeyPressed: {
+                if (input.edit.keyEvent === Qt.Key_Return || input.edit.keyEvent === Qt.Key_Enter) {
+                    event.accepted = true
+                    nextBtn.clicked(null)
+                }
+            }
         }
 
         StyledText {
@@ -167,6 +175,7 @@ Item {
             }
         }
         StatusButton {
+            id: nextBtn
             Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
             Layout.topMargin: 125
             enabled: !!nameInput.text && nameInput.valid
