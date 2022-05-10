@@ -35,6 +35,7 @@ type
     membersModel: user_model.Model
     pendingRequestsToJoinModel: PendingRequestModel
     historyArchiveSupportEnabled: bool
+    pinMessageAllMembersEnabled: bool
 
 proc initItem*(
     id: string,
@@ -58,7 +59,8 @@ proc initItem*(
     ensOnly = false,
     members: seq[user_item.Item] = @[],
     pendingRequestsToJoin: seq[PendingRequestItem] = @[],
-    historyArchiveSupportEnabled = false
+    historyArchiveSupportEnabled = false,
+    pinMessageAllMembersEnabled = false
     ): SectionItem =
   result.id = id
   result.sectionType = sectionType
@@ -84,6 +86,7 @@ proc initItem*(
   result.pendingRequestsToJoinModel = newPendingRequestModel()
   result.pendingRequestsToJoinModel.setItems(pendingRequestsToJoin)
   result.historyArchiveSupportEnabled = historyArchiveSupportEnabled
+  result.pinMessageAllMembersEnabled = pinMessageAllMembersEnabled
 
 proc isEmpty*(self: SectionItem): bool =
   return self.id.len == 0
@@ -111,6 +114,7 @@ proc `$`*(self: SectionItem): string =
     ensOnly:{self.ensOnly},
     members:{self.membersModel},
     historyArchiveSupportEnabled:{self.historyArchiveSupportEnabled},
+    pinMessageAllMembersEnabled:{self.pinMessageAllMembersEnabled},
     ]"""
 
 proc id*(self: SectionItem): string {.inline.} =
@@ -203,3 +207,6 @@ proc pendingRequestsToJoin*(self: SectionItem): PendingRequestModel {.inline.} =
 
 proc historyArchiveSupportEnabled*(self: SectionItem): bool {.inline.} =
   self.historyArchiveSupportEnabled
+
+proc pinMessageAllMembersEnabled*(self: SectionItem): bool {.inline.} =
+  self.pinMessageAllMembersEnabled

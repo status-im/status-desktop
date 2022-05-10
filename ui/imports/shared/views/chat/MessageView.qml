@@ -171,6 +171,7 @@ Column {
 
         messageContextMenu.myPublicKey = userProfile.pubKey
         messageContextMenu.amIChatAdmin = messageStore.amIChatAdmin()
+        messageContextMenu.pinMessageAllowedForMembers = messageStore.pinMessageAllowedForMembers()
         messageContextMenu.chatType = messageStore.getChatType()
 
         messageContextMenu.messageId = root.messageId

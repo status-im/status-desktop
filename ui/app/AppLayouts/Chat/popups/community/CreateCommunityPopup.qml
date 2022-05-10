@@ -65,6 +65,7 @@ StatusModal {
         property alias communityImage: addImageButton
         property alias imageCropperModal: imageCropperModal
         property alias historyArchiveSupportToggle: historyArchiveSupportToggle
+        property alias pinMessagesAllMembersCheckbox: pinMessagesAllMembersCheckbox
 
         contentHeight: content.height
         bottomPadding: 8
@@ -329,6 +330,20 @@ StatusModal {
                     }
                 ]
             }
+
+            StatusListItem {
+                anchors.horizontalCenter: parent.horizontalCenter
+                title: qsTr("Any member can pin a message")
+                sensor.onClicked: {
+                    pinMessagesAllMembersCheckbox.checked = !pinMessagesAllMembersCheckbox.checked
+                }
+                components: [
+                    StatusCheckBox {
+                        id: pinMessagesAllMembersCheckbox
+                        checked: isEdit ? community.pinMessageAllMembersEnabled : false
+                    }
+               ]
+            }
         }
 
     }
@@ -374,7 +389,8 @@ StatusModal {
                         popup.contentItem.imageCropperModal.aY,
                         popup.contentItem.imageCropperModal.bX,
                         popup.contentItem.imageCropperModal.bY,
-                        popup.contentItem.historyArchiveSupportToggle.checked
+                        popup.contentItem.historyArchiveSupportToggle.checked,
+                        popup.contentItem.pinMessagesAllMembersCheckbox.checked
                   )
                 } else {
                     error = popup.store.createCommunity(
@@ -387,7 +403,8 @@ StatusModal {
                         popup.contentItem.imageCropperModal.aY,
                         popup.contentItem.imageCropperModal.bX,
                         popup.contentItem.imageCropperModal.bY,
-                        popup.contentItem.historyArchiveSupportToggle.checked
+                        popup.contentItem.historyArchiveSupportToggle.checked,
+                        popup.contentItem.pinMessagesAllMembersCheckbox.checked
                     )
                 }
 

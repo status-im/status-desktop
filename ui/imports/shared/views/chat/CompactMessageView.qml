@@ -54,7 +54,7 @@ Item {
         case Constants.chatType.publicChat:
             return amISender
         case Constants.chatType.communityChat:
-            return messageStore.amIChatAdmin() || amISender
+            return messageStore.amIChatAdmin() || amISender || messageStore.pinMessageAllowedForMembers()
         case Constants.chatType.profile:
             return false
         default:

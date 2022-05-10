@@ -380,6 +380,12 @@ method amIChatAdmin*(self: Module): bool =
     let communityDto = self.controller.getCommunityDetails()
     return communityDto.admin
 
+method pinMessageAllowedForMembers*(self: Module): bool =
+  if(self.controller.belongsToCommunity()):
+    let communityDto = self.controller.getCommunityDetails()
+    return communityDto.adminSettings.pinMessageAllMembersEnabled
+  return false
+
 method getNumberOfPinnedMessages*(self: Module): int =
   return self.controller.getNumOfPinnedMessages()
 

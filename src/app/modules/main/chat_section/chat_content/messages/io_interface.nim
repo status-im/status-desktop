@@ -88,6 +88,9 @@ method getChatColor*(self: AccessInterface): string {.base.} =
 method amIChatAdmin*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method pinMessageAllowedForMembers*(self: AccessInterface): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method getNumberOfPinnedMessages*(self: AccessInterface): int {.base.} =
   raise newException(ValueError, "No implementation available")
 

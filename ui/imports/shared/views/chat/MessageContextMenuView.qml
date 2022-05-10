@@ -24,6 +24,7 @@ StatusPopupMenu {
 
     property string myPublicKey: ""
     property bool amIChatAdmin: false
+    property bool pinMessageAllowedForMembers: false
     property bool isMyMessage: {
         return root.messageSenderId !== "" && root.messageSenderId == root.myPublicKey
     }
@@ -261,7 +262,7 @@ StatusPopupMenu {
             case Constants.chatType.privateGroupChat:
                 return root.amIChatAdmin
             case Constants.chatType.communityChat:
-                return root.amIChatAdmin
+                return root.amIChatAdmin || root.pinMessageAllowedForMembers
             default:
                 return false
             }

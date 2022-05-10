@@ -227,7 +227,8 @@ proc createChannelGroupItem[T](self: Module[T], c: ChannelGroupDto): SectionItem
       x.state,
       x.our
     )) else: @[],
-    communityDetails.settings.historyArchiveSupportEnabled
+    communityDetails.settings.historyArchiveSupportEnabled,
+    communityDetails.adminSettings.pinMessageAllMembersEnabled
   )
 
 

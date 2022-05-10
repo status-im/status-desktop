@@ -39,6 +39,9 @@ type CommunitySettingsDto* = object
   id*: string
   historyArchiveSupportEnabled*: bool
 
+type CommunityAdminSettingsDto* = object
+  pinMessageAllMembersEnabled*: bool
+
 type CommunityDto* = object
   id*: string
   admin*: bool
@@ -61,6 +64,11 @@ type CommunityDto* = object
   muted*: bool
   pendingRequestsToJoin*: seq[CommunityMembershipRequestDto]
   settings*: CommunitySettingsDto
+  adminSettings*: CommunityAdminSettingsDto
+
+proc toCommunityAdminSettingsDto*(jsonObj: JsonNode): CommunityAdminSettingsDto =
+  result = CommunityAdminSettingsDto()
+  discard jsonObj.getProp("pinMessageAllMembersEnabled", result.pinMessageAllMembersEnabled)
 
 proc toCommunityDto*(jsonObj: JsonNode): CommunityDto =
   result = CommunityDto()
@@ -89,6 +97,10 @@ proc toCommunityDto*(jsonObj: JsonNode): CommunityDto =
   var permissionObj: JsonNode
   if(jsonObj.getProp("permissions", permissionObj)):
     result.permissions = toPermission(permissionObj)
+
+  var adminSettingsObj: JsonNode
+  if(jsonObj.getProp("adminSettings", adminSettingsObj)):
+    result.adminSettings = toCommunityAdminSettingsDto(adminSettingsObj)
 
   var membersObj: JsonNode
   if(jsonObj.getProp("members", membersObj) and membersObj.kind == JObject):
