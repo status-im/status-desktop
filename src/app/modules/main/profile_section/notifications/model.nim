@@ -1,7 +1,7 @@
 import NimQml, Tables
 import item
 
-import ../../../../global/local_account_sensitive_settings
+import ../../../../../app_service/service/settings/dto/settings
 
 type
   ModelRole {.pure.} = enum
@@ -145,8 +145,8 @@ QtObject:
     for i in 0 ..< self.items.len:
       yield self.items[i]
 
-  proc updateExemptions*(self: Model, id: string, muteAllMessages = false, personalMentions = LSS_VALUE_NOTIF_SEND_ALERTS, 
-    globalMentions = LSS_VALUE_NOTIF_SEND_ALERTS, otherMessages = LSS_VALUE_NOTIF_SEND_TURN_OFF) =
+  proc updateExemptions*(self: Model, id: string, muteAllMessages = false, personalMentions = VALUE_NOTIF_SEND_ALERTS, 
+    globalMentions = VALUE_NOTIF_SEND_ALERTS, otherMessages = VALUE_NOTIF_TURN_OFF) =
     let ind = self.findIndexForItemId(id)
     if(ind == -1):
       return

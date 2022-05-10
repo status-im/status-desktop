@@ -6,6 +6,7 @@ import view, controller, model, item
 import ../../../../global/app_signals
 import ../../../../global/global_singleton
 import ../../../../core/eventemitter
+import ../../../../../app_service/service/settings/service as settings_service
 import ../../../../../app_service/service/chat/service as chat_service
 import ../../../../../app_service/service/contacts/service as contact_service
 from ../../../../../app_service/service/community/dto/community import CommunityDto
@@ -25,13 +26,14 @@ type
 
 proc newModule*(delegate: delegate_interface.AccessInterface,
   events: EventEmitter,
+  settingsService: settings_service.Service,
   chatService: chat_service.Service,
   contactService: contact_service.Service): Module =
   result = Module()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, chatService, contactService)
+  result.controller = controller.newController(result, events, settingsService, chatService, contactService)
   result.moduleLoaded = false
 
 method delete*(self: Module) =
@@ -52,18 +54,9 @@ method isLoaded*(self: Module): bool =
   return self.moduleLoaded
 
 proc createItem(self: Module, id, name, image, color: string, joinedTimestamp: int64, itemType: Type): Item =
-  let allExemptions = singletonInstance.localAccountSensitiveSettings.getNotifSettingExemptionsAsJson()
-  var item = initItem(id, name, image, color, joinedTimestamp, itemType)
-  if(allExemptions.contains(id)):
-    let obj = allExemptions[id]
-    if(obj.contains(EXEMPTION_KEY_MUTE_ALL_MESSAGES)):
-      item.muteAllMessages = obj[EXEMPTION_KEY_MUTE_ALL_MESSAGES].getBool
-    if(obj.contains(EXEMPTION_KEY_PERSONAL_MENTIONS)):
-      item.personalMentions = obj[EXEMPTION_KEY_PERSONAL_MENTIONS].getStr
-    if(obj.contains(EXEMPTION_KEY_GLOBAL_MENTIONS)):
-      item.globalMentions = obj[EXEMPTION_KEY_GLOBAL_MENTIONS].getStr
-    if(obj.contains(EXEMPTION_KEY_OTHER_MESSAGES)):
-      item.otherMessages = obj[EXEMPTION_KEY_OTHER_MESSAGES].getStr
+  let exemptions = self.controller.getNotifSettingExemptions(id)
+  var item = initItem(id, name, image, color, joinedTimestamp, itemType, exemptions.muteAllMessages,
+  exemptions.personalMentions, exemptions.globalMentions, exemptions.otherMessages)
   return item
 
 proc createChatItem(self: Module, chatDto: ChatDto): Item =
@@ -111,17 +104,12 @@ method sendTestNotification*(self: Module, title: string, message: string) =
 
 method saveExemptions*(self: Module, itemId: string, muteAllMessages: bool, personalMentions: string, 
   globalMentions: string, otherMessages: string) =
-  var allExemptions = singletonInstance.localAccountSensitiveSettings.getNotifSettingExemptionsAsJson()
-  allExemptions[itemId] = %* {
-    EXEMPTION_KEY_MUTE_ALL_MESSAGES: muteAllMessages,
-    EXEMPTION_KEY_PERSONAL_MENTIONS: personalMentions, 
-    EXEMPTION_KEY_GLOBAL_MENTIONS: globalMentions,
-    EXEMPTION_KEY_OTHER_MESSAGES: otherMessages
-  }
-  
-  self.view.exemptionsModel().updateExemptions(itemId, muteAllMessages, personalMentions, globalMentions, otherMessages)
-  
-  singletonInstance.localAccountSensitiveSettings.setNotifSettingExemptions($allExemptions)
+  let exemptions = NotificationsExemptions(muteAllMessages: muteAllMessages, 
+    personalMentions: personalMentions,
+    globalMentions: globalMentions, 
+    otherMessages: otherMessages)
+  if(self.controller.setNotifSettingExemptions(itemId, exemptions)):
+    self.view.exemptionsModel().updateExemptions(itemId, muteAllMessages, personalMentions, globalMentions, otherMessages)  
 
 method onToggleSection*(self: Module, sectionType: SectionType) =
   if(sectionType != SectionType.Community):
@@ -137,14 +125,9 @@ method onToggleSection*(self: Module, sectionType: SectionType) =
         let item = self.createItem(cg.id, cg.name, cg.images.thumbnail, cg.color, joinedTimestamp = 0, item.Type.Community)
         self.view.exemptionsModel().addItem(item)
   else:
-    var allExemptions = singletonInstance.localAccountSensitiveSettings.getNotifSettingExemptionsAsJson()
     for item in self.view.exemptionsModel().modelIterator():
-      if(item.itemType != Type.Community):
-        continue
-      if(allExemptions.contains(item.id)):
-        allExemptions.delete(item.id)
-      self.view.exemptionsModel().removeItemById(item.id)
-    singletonInstance.localAccountSensitiveSettings.setNotifSettingExemptions($allExemptions)
+      if(item.itemType == Type.Community and self.controller.removeNotifSettingExemptions(item.id)):
+          self.view.exemptionsModel().removeItemById(item.id)
   
 method addCommunity*(self: Module, communityDto: CommunityDto) =
   let ind = self.view.exemptionsModel().findIndexForItemId(communityDto.id)
@@ -161,11 +144,8 @@ method editCommunity*(self: Module, communityDto: CommunityDto) =
   self.view.exemptionsModel().addItem(item)
 
 method removeItemWithId*(self: Module, itemId: string) =
-  var allExemptions = singletonInstance.localAccountSensitiveSettings.getNotifSettingExemptionsAsJson()
-  if(allExemptions.contains(itemId)):
-    allExemptions.delete(itemId)
-  singletonInstance.localAccountSensitiveSettings.setNotifSettingExemptions($allExemptions)
-  self.view.exemptionsModel().removeItemById(itemId)
+  if(self.controller.removeNotifSettingExemptions(itemId)):
+    self.view.exemptionsModel().removeItemById(itemId)
   
 method addChat*(self: Module, chatDto: ChatDto) =
   if chatDto.chatType != ChatType.OneToOne and chatDto.chatType != ChatType.PrivateGroupChat:

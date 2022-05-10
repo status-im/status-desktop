@@ -47,6 +47,7 @@ type
     notificationsManager*: NotificationsManager
 
     # Global
+    appSettingsVariant: QVariant
     localAppSettingsVariant: QVariant
     localAccountSettingsVariant: QVariant
     localAccountSensitiveSettingsVariant: QVariant
@@ -111,18 +112,21 @@ proc connect(self: AppController) =
 proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result = AppController()
   result.statusFoundation = statusFoundation
-  result.notificationsManager = newNotificationsManager(statusFoundation.events)
+  
+  # Preparing settings service to be exposed later as global QObject
+  result.settingsService = settings_service.newService()
+  result.appSettingsVariant = newQVariant(result.settingsService)
+  result.notificationsManager = newNotificationsManager(statusFoundation.events, result.settingsService)
 
   # Global
   result.localAppSettingsVariant = newQVariant(singletonInstance.localAppSettings)
   result.localAccountSettingsVariant = newQVariant(singletonInstance.localAccountSettings)
   result.localAccountSensitiveSettingsVariant = newQVariant(singletonInstance.localAccountSensitiveSettings)
   result.userProfileVariant = newQVariant(singletonInstance.userProfile)
-  result.globalUtilsVariant = newQVariant(singletonInstance.utils)
+  result.globalUtilsVariant = newQVariant(singletonInstance.utils)  
 
   # Services
-  result.generalService = general_service.newService()
-  result.settingsService = settings_service.newService()
+  result.generalService = general_service.newService()  
   result.nodeConfigurationService = node_configuration_service.newService(statusFoundation.fleetConfiguration,
   result.settingsService)
   result.keychainService = keychain_service.newService(statusFoundation.events)
@@ -237,6 +241,7 @@ proc delete*(self: AppController) =
   self.mainModule.delete
   self.languageService.delete
 
+  self.appSettingsVariant.delete
   self.localAppSettingsVariant.delete
   self.localAccountSettingsVariant.delete
   self.localAccountSensitiveSettingsVariant.delete
@@ -314,11 +319,9 @@ proc load(self: AppController) =
   self.ensService.init()
   self.gifService.init()
 
+  # Accessible after user login
+  singletonInstance.engine.setRootContextProperty("appSettings", self.appSettingsVariant)
   singletonInstance.engine.setRootContextProperty("globalUtils", self.globalUtilsVariant)
-
-  let pubKey = self.settingsService.getPublicKey()
-  singletonInstance.localAccountSensitiveSettings.setFileName(pubKey)
-  singletonInstance.engine.setRootContextProperty("localAccountSensitiveSettings", self.localAccountSensitiveSettingsVariant)
 
   self.buildAndRegisterLocalAccountSensitiveSettings()
   self.buildAndRegisterUserProfile()

@@ -47,9 +47,20 @@ const KEY_GIF_API_KEY* = "gifs/api-key"
 const KEY_DISPLAY_NAME* = "display-name"
 const KEY_TEST_NETWORKS_ENABLED* = "test-networks-enabled?"
 
+# Notifications Settings Values
+const VALUE_NOTIF_SEND_ALERTS* = "SendAlerts"
+const VALUE_NOTIF_DELIVER_QUIETLY* = "DeliverQuietly"
+const VALUE_NOTIF_TURN_OFF* = "TurnOff"
+
 const PROFILE_PICTURES_VISIBILITY_CONTACTS_ONLY* = 1
 const PROFILE_PICTURES_VISIBILITY_EVERYONE* = 2
 const PROFILE_PICTURES_VISIBILITY_NO_ONE* = 3
+
+type NotificationsExemptions* = object
+  muteAllMessages*: bool
+  personalMentions*: string
+  globalMentions*: string
+  otherMessages*: string
 
 type UpstreamConfig* = object
   Enabled*: bool

@@ -245,9 +245,9 @@ SettingsContentBase {
                         components: [
                             StatusSwitch {
                                 id: allowNotifSwitch
-                                checked: localAccountSensitiveSettings.notifSettingAllowNotifications
+                                checked: appSettings.notifSettingAllowNotifications
                                 onClicked: {
-                                    localAccountSensitiveSettings.notifSettingAllowNotifications = !localAccountSensitiveSettings.notifSettingAllowNotifications
+                                    appSettings.notifSettingAllowNotifications = !appSettings.notifSettingAllowNotifications
                                 }
                             }
                         ]
@@ -269,10 +269,10 @@ SettingsContentBase {
                         title: qsTr("1:1 Chats")
                         components: [
                             NotificationSelect {
-                                selected: localAccountSensitiveSettings.notifSettingOneToOneChats
-                                onSendAlertsClicked: localAccountSensitiveSettings.notifSettingOneToOneChats = Constants.settingsSection.notifications.sendAlertsValue
-                                onDeliverQuietlyClicked: localAccountSensitiveSettings.notifSettingOneToOneChats = Constants.settingsSection.notifications.deliverQuietlyValue
-                                onTurnOffClicked: localAccountSensitiveSettings.notifSettingOneToOneChats = Constants.settingsSection.notifications.turnOffValue
+                                selected: appSettings.notifSettingOneToOneChats
+                                onSendAlertsClicked: appSettings.notifSettingOneToOneChats = Constants.settingsSection.notifications.sendAlertsValue
+                                onDeliverQuietlyClicked: appSettings.notifSettingOneToOneChats = Constants.settingsSection.notifications.deliverQuietlyValue
+                                onTurnOffClicked: appSettings.notifSettingOneToOneChats = Constants.settingsSection.notifications.turnOffValue
                             }
                         ]
                     }
@@ -282,10 +282,10 @@ SettingsContentBase {
                         title: qsTr("Group Chats")
                         components: [
                             NotificationSelect {
-                                selected: localAccountSensitiveSettings.notifSettingGroupChats
-                                onSendAlertsClicked: localAccountSensitiveSettings.notifSettingGroupChats = Constants.settingsSection.notifications.sendAlertsValue
-                                onDeliverQuietlyClicked: localAccountSensitiveSettings.notifSettingGroupChats = Constants.settingsSection.notifications.deliverQuietlyValue
-                                onTurnOffClicked: localAccountSensitiveSettings.notifSettingGroupChats = Constants.settingsSection.notifications.turnOffValue
+                                selected: appSettings.notifSettingGroupChats
+                                onSendAlertsClicked: appSettings.notifSettingGroupChats = Constants.settingsSection.notifications.sendAlertsValue
+                                onDeliverQuietlyClicked: appSettings.notifSettingGroupChats = Constants.settingsSection.notifications.deliverQuietlyValue
+                                onTurnOffClicked: appSettings.notifSettingGroupChats = Constants.settingsSection.notifications.turnOffValue
                             }
                         ]
                     }
@@ -296,10 +296,10 @@ SettingsContentBase {
                         tertiaryTitle: qsTr("Messages containing @%1").arg(userProfile.name)
                         components: [
                             NotificationSelect {
-                                selected: localAccountSensitiveSettings.notifSettingPersonalMentions
-                                onSendAlertsClicked: localAccountSensitiveSettings.notifSettingPersonalMentions = Constants.settingsSection.notifications.sendAlertsValue
-                                onDeliverQuietlyClicked: localAccountSensitiveSettings.notifSettingPersonalMentions = Constants.settingsSection.notifications.deliverQuietlyValue
-                                onTurnOffClicked: localAccountSensitiveSettings.notifSettingPersonalMentions = Constants.settingsSection.notifications.turnOffValue
+                                selected: appSettings.notifSettingPersonalMentions
+                                onSendAlertsClicked: appSettings.notifSettingPersonalMentions = Constants.settingsSection.notifications.sendAlertsValue
+                                onDeliverQuietlyClicked: appSettings.notifSettingPersonalMentions = Constants.settingsSection.notifications.deliverQuietlyValue
+                                onTurnOffClicked: appSettings.notifSettingPersonalMentions = Constants.settingsSection.notifications.turnOffValue
                             }
                         ]
                     }
@@ -310,10 +310,10 @@ SettingsContentBase {
                         tertiaryTitle: qsTr("Messages containing @here and @channel")
                         components: [
                             NotificationSelect {
-                                selected: localAccountSensitiveSettings.notifSettingGlobalMentions
-                                onSendAlertsClicked: localAccountSensitiveSettings.notifSettingGlobalMentions = Constants.settingsSection.notifications.sendAlertsValue
-                                onDeliverQuietlyClicked: localAccountSensitiveSettings.notifSettingGlobalMentions = Constants.settingsSection.notifications.deliverQuietlyValue
-                                onTurnOffClicked: localAccountSensitiveSettings.notifSettingGlobalMentions = Constants.settingsSection.notifications.turnOffValue
+                                selected: appSettings.notifSettingGlobalMentions
+                                onSendAlertsClicked: appSettings.notifSettingGlobalMentions = Constants.settingsSection.notifications.sendAlertsValue
+                                onDeliverQuietlyClicked: appSettings.notifSettingGlobalMentions = Constants.settingsSection.notifications.deliverQuietlyValue
+                                onTurnOffClicked: appSettings.notifSettingGlobalMentions = Constants.settingsSection.notifications.turnOffValue
                             }
                         ]
                     }
@@ -323,10 +323,10 @@ SettingsContentBase {
                         title: qsTr("All Messages")
                         components: [
                             NotificationSelect {
-                                selected: localAccountSensitiveSettings.notifSettingAllMessages
-                                onSendAlertsClicked: localAccountSensitiveSettings.notifSettingAllMessages = Constants.settingsSection.notifications.sendAlertsValue
-                                onDeliverQuietlyClicked: localAccountSensitiveSettings.notifSettingAllMessages = Constants.settingsSection.notifications.deliverQuietlyValue
-                                onTurnOffClicked: localAccountSensitiveSettings.notifSettingAllMessages = Constants.settingsSection.notifications.turnOffValue
+                                selected: appSettings.notifSettingAllMessages
+                                onSendAlertsClicked: appSettings.notifSettingAllMessages = Constants.settingsSection.notifications.sendAlertsValue
+                                onDeliverQuietlyClicked: appSettings.notifSettingAllMessages = Constants.settingsSection.notifications.deliverQuietlyValue
+                                onTurnOffClicked: appSettings.notifSettingAllMessages = Constants.settingsSection.notifications.turnOffValue
                             }
                         ]
                     }
@@ -344,10 +344,10 @@ SettingsContentBase {
                         title: qsTr("Contact Requests")
                         components: [
                             NotificationSelect {
-                                selected: localAccountSensitiveSettings.notifSettingContactRequests
-                                onSendAlertsClicked: localAccountSensitiveSettings.notifSettingContactRequests = Constants.settingsSection.notifications.sendAlertsValue
-                                onDeliverQuietlyClicked: localAccountSensitiveSettings.notifSettingContactRequests = Constants.settingsSection.notifications.deliverQuietlyValue
-                                onTurnOffClicked: localAccountSensitiveSettings.notifSettingContactRequests = Constants.settingsSection.notifications.turnOffValue
+                                selected: appSettings.notifSettingContactRequests
+                                onSendAlertsClicked: appSettings.notifSettingContactRequests = Constants.settingsSection.notifications.sendAlertsValue
+                                onDeliverQuietlyClicked: appSettings.notifSettingContactRequests = Constants.settingsSection.notifications.deliverQuietlyValue
+                                onTurnOffClicked: appSettings.notifSettingContactRequests = Constants.settingsSection.notifications.turnOffValue
                             }
                         ]
                     }
@@ -357,10 +357,10 @@ SettingsContentBase {
                         title: qsTr("Identity Verification Requests")
                         components: [
                             NotificationSelect {
-                                selected: localAccountSensitiveSettings.notifSettingIdentityVerificationRequests
-                                onSendAlertsClicked: localAccountSensitiveSettings.notifSettingIdentityVerificationRequests = Constants.settingsSection.notifications.sendAlertsValue
-                                onDeliverQuietlyClicked: localAccountSensitiveSettings.notifSettingIdentityVerificationRequests = Constants.settingsSection.notifications.deliverQuietlyValue
-                                onTurnOffClicked: localAccountSensitiveSettings.notifSettingIdentityVerificationRequests = Constants.settingsSection.notifications.turnOffValue
+                                selected: appSettings.notifSettingIdentityVerificationRequests
+                                onSendAlertsClicked: appSettings.notifSettingIdentityVerificationRequests = Constants.settingsSection.notifications.sendAlertsValue
+                                onDeliverQuietlyClicked: appSettings.notifSettingIdentityVerificationRequests = Constants.settingsSection.notifications.deliverQuietlyValue
+                                onTurnOffClicked: appSettings.notifSettingIdentityVerificationRequests = Constants.settingsSection.notifications.turnOffValue
                             }
                         ]
                     }
@@ -386,10 +386,10 @@ SettingsContentBase {
                         notificationTitle: "Vitalik Buterin"
                         notificationMessage: qsTr("Hi there! So EIP-1559 will defini...")
                         buttonGroup: messageSetting
-                        checked: localAccountSensitiveSettings.notificationMessagePreviewSetting === Constants.settingsSection.notificationsBubble.previewNameAndMessage
+                        checked: appSettings.notificationMessagePreview === Constants.settingsSection.notificationsBubble.previewNameAndMessage
                         onRadioCheckedChanged: {
                             if (checked) {
-                                localAccountSensitiveSettings.notificationMessagePreviewSetting = Constants.settingsSection.notificationsBubble.previewNameAndMessage
+                                appSettings.notificationMessagePreview = Constants.settingsSection.notificationsBubble.previewNameAndMessage
                             }
                         }
                     }
@@ -401,10 +401,10 @@ SettingsContentBase {
                         notificationTitle: "Vitalik Buterin"
                         notificationMessage: qsTr("You have a new message")
                         buttonGroup: messageSetting
-                        checked: localAccountSensitiveSettings.notificationMessagePreviewSetting === Constants.settingsSection.notificationsBubble.previewNameOnly
+                        checked: appSettings.notificationMessagePreview === Constants.settingsSection.notificationsBubble.previewNameOnly
                         onRadioCheckedChanged: {
                             if (checked) {
-                                localAccountSensitiveSettings.notificationMessagePreviewSetting = Constants.settingsSection.notificationsBubble.previewNameOnly
+                                appSettings.notificationMessagePreview = Constants.settingsSection.notificationsBubble.previewNameOnly
                             }
                         }
                     }
@@ -416,10 +416,10 @@ SettingsContentBase {
                         notificationTitle: "Status"
                         notificationMessage: qsTr("You have a new message")
                         buttonGroup: messageSetting
-                        checked: localAccountSensitiveSettings.notificationMessagePreviewSetting === Constants.settingsSection.notificationsBubble.previewAnonymous
+                        checked: appSettings.notificationMessagePreview === Constants.settingsSection.notificationsBubble.previewAnonymous
                         onRadioCheckedChanged: {
                             if (checked) {
-                                localAccountSensitiveSettings.notificationMessagePreviewSetting = Constants.settingsSection.notificationsBubble.previewAnonymous
+                                appSettings.notificationMessagePreview = Constants.settingsSection.notificationsBubble.previewAnonymous
                             }
                         }
                     }
@@ -430,9 +430,9 @@ SettingsContentBase {
                         components: [
                             StatusSwitch {
                                 id: soundSwitch
-                                checked: localAccountSensitiveSettings.notificationSoundsEnabled
+                                checked: appSettings.notificationSoundsEnabled
                                 onClicked: {
-                                    localAccountSensitiveSettings.notificationSoundsEnabled = !localAccountSensitiveSettings.notificationSoundsEnabled
+                                    appSettings.notificationSoundsEnabled = !appSettings.notificationSoundsEnabled
                                 }
                             }
                         ]
@@ -466,11 +466,11 @@ SettingsContentBase {
                             stepSize: 1
 
                             onValueChanged: {
-                                localAccountSensitiveSettings.volume = value
+                                appSettings.volume = value
                             }
 
                             Component.onCompleted: {
-                                value = localAccountSensitiveSettings.volume
+                                value = appSettings.volume
                             }
                         }
 
