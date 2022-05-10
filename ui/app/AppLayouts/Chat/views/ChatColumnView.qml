@@ -34,7 +34,6 @@ Item {
     property var contactsStore
     property var emojiPopup
 
-    property Component pinnedMessagesPopupComponent
     // Not Refactored Yet
     //property int chatGroupsListViewCount: 0
     property bool isReply: false
@@ -57,6 +56,7 @@ Item {
     property var contactDetails: Utils.getContactDetailsAsJson(root.activeChatId)
     property bool isUserAdded: root.contactDetails.isAdded
     property bool contactRequestReceived: root.contactDetails.requestReceived
+    property Component pinnedMessagesListPopupComponent
 
     signal openAppSearch()
     signal openStickerPackPopup(string stickerPackId)
@@ -224,18 +224,29 @@ Item {
                             rootStore: root.rootStore
                             contactsStore: root.contactsStore
                             emojiPopup: root.emojiPopup
+                            isConnected: root.isConnected
                             sendTransactionNoEnsModal: cmpSendTransactionNoEns
                             receiveTransactionModal: cmpReceiveTransaction
                             sendTransactionWithEnsModal: cmpSendTransactionWithEns
                             stickersLoaded: root.stickersLoaded
                             isBlocked: model.blocked
                             isActiveChannel: categoryChatLoader.isActiveChannel
+                            activityCenterVisible: activityCenter.visible
+                            activityCenterNotificationsCount: activityCenter.unreadNotificationsCount
+                            pinnedMessagesPopupComponent: root.pinnedMessagesListPopupComponent
                             onOpenStickerPackPopup: {
                                 root.openStickerPackPopup(stickerPackId)
+                            }
+                            onNotificationButtonClicked: {
+                                activityCenter.open();
+                            }
+                            onOpenAppSearch: {
+                                root.openAppSearch();
                             }
                             Component.onCompleted: {
                                 parentModule.prepareChatContentModuleForChatId(model.itemId)
                                 chatContentModule = parentModule.getChatContentModule()
+                                chatSectionModule = root.chatSectionModule;
                             }
                         }
                     }
@@ -269,6 +280,7 @@ Item {
                         clip: true
                         rootStore: root.rootStore
                         contactsStore: root.contactsStore
+                        isConnected: root.isConnected
                         emojiPopup: root.emojiPopup
                         sendTransactionNoEnsModal: cmpSendTransactionNoEns
                         receiveTransactionModal: cmpReceiveTransaction
@@ -276,12 +288,22 @@ Item {
                         stickersLoaded: root.stickersLoaded
                         isBlocked: model.blocked
                         isActiveChannel: chatLoader.isActiveChannel
+                        activityCenterVisible: activityCenter.visible
+                        activityCenterNotificationsCount: activityCenter.unreadNotificationsCount
+                        pinnedMessagesPopupComponent: root.pinnedMessagesListPopupComponent
                         onOpenStickerPackPopup: {
                             root.openStickerPackPopup(stickerPackId)
+                        }
+                        onNotificationButtonClicked: {
+                            activityCenter.open();
+                        }
+                        onOpenAppSearch: {
+                            root.openAppSearch();
                         }
                         Component.onCompleted: {
                             parentModule.prepareChatContentModuleForChatId(model.itemId)
                             chatContentModule = parentModule.getChatContentModule()
+                            chatSectionModule = root.chatSectionModule;
                             root.checkForCreateChatOptions(model.itemId)
                         }
                     }

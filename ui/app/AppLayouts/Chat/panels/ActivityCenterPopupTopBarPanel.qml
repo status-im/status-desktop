@@ -15,17 +15,19 @@ Item {
     width: parent.width
     height: 64
 
+    property bool hasMentions: false
+    property bool hasReplies: false
+    property bool hideReadNotifications: false
     property bool allBtnHighlighted: false
     property bool repliesBtnHighlighted: false
     property bool mentionsBtnHighlighted: false
-    property alias repliesBtnEnabled: repliesbtn.enabled
-    property alias mentionsBtnEnabled: mentionsBtn.enabled
     property alias errorText: errorText.text
     signal allBtnClicked()
     signal repliesBtnClicked()
     signal mentionsBtnClicked()
     signal preferencesClicked()
     signal markAllReadClicked()
+    signal hideReadNotificationsTriggered()
 
     Row {
         id: filterButtons

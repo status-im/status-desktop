@@ -21,6 +21,8 @@ Item {
     property var store
     property int previousNotificationIndex
     property string previousNotificationTimestamp
+    property bool hideReadNotifications: false
+    property bool acCurrentFilterAll: false
 
     DateGroup {
         id: dateGroupLbl
@@ -40,7 +42,7 @@ Item {
                 return false
             }
 
-            return activityCenter.currentFilter === ActivityCenter.Filter.All
+            return acCurrentFilterAll;
         }
         width: parent.width
         height: visible ? 60 : 0

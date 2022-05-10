@@ -35,6 +35,8 @@ Item {
     //property int chatGroupsListViewCount: channelList.model.count
     signal openProfileClicked()
     signal openAppSearch()
+    signal importCommunityClicked()
+    signal createCommunityClicked()
 
     // main layout
     ColumnLayout {
@@ -212,7 +214,6 @@ Item {
                     onDownloadMessages: {
                         root.chatSectionModule.downloadMessages(chatId, file)
                     }
-
                     onDisplayProfilePopup: {
                         Global.openProfilePopup(publicKey)
                     }
@@ -222,7 +223,7 @@ Item {
                     onDisplayGroupInfoPopup: {
                         chatSectionModule.prepareChatContentModuleForChatId(chatId)
                         let chatContentModule = chatSectionModule.getChatContentModule()
-                        Global.openPopup(groupInfoPopupComponent, {
+                        Global.openPopup(root.store.groupInfoPopupComponent, {
                                              chatContentModule: chatContentModule,
                                              chatDetails: chatContentModule.chatDetails
                                          })
@@ -296,6 +297,15 @@ Item {
             onClosed: {
                 destroy()
             }
+            onOpenCommunityDetail: {
+                Global.openPopup(communityDetailPopup);
+            }
+            onImportCommunityClicked: {
+                root.importCommunityClicked();
+            }
+            onCreateCommunityClicked: {
+                root.createCommunityClicked();
+            }
         }
     }
 
@@ -305,6 +315,7 @@ Item {
             anchors.centerIn: parent
             store: root.store
             onClosed: {
+                Global.openPopup(communitiesPopupComponent)
                 destroy()
             }
         }

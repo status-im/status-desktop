@@ -37,6 +37,8 @@ StatusAppThreePanelLayout {
     signal communityManageButtonClicked()
     signal profileButtonClicked()
     signal openAppSearch()
+    signal importCommunityClicked()
+    signal createCommunityClicked()
 
     Connections {
         target: root.rootStore.stickersStore.stickersModule
@@ -72,7 +74,7 @@ StatusAppThreePanelLayout {
         parentModule: root.rootStore.chatCommunitySectionModule
         rootStore: root.rootStore
         contactsStore: root.contactsStore
-        pinnedMessagesPopupComponent: root.pinnedMessagesListPopupComponent
+        pinnedMessagesListPopupComponent: root.pinnedMessagesListPopupComponent
         stickersLoaded: root.stickersLoaded
         emojiPopup: root.emojiPopup
         onOpenStickerPackPopup: {
@@ -134,6 +136,12 @@ StatusAppThreePanelLayout {
             onOpenAppSearch: {
                 root.openAppSearch()
             }
+            onImportCommunityClicked: {
+                root.importCommunityClicked();
+            }
+            onCreateCommunityClicked: {
+                root.createCommunityClicked();
+            }
         }
     }
 
@@ -156,7 +164,6 @@ StatusAppThreePanelLayout {
         GroupInfoPopup {
             chatSectionModule: root.rootStore.chatCommunitySectionModule
             store: root.rootStore
-            pinnedMessagesPopupComponent: root.pinnedMessagesListPopupComponent
         }
     }
 
@@ -196,5 +203,9 @@ StatusAppThreePanelLayout {
             Global.changeAppSectionBySectionType(Constants.appSection.chat)
             root.rootStore.chatCommunitySectionModule.createOneToOneChat(communityId, chatId, ensName)
         }
+    }
+
+    Component.onCompleted: {
+        rootStore.groupInfoPopupComponent = groupInfoPopupComponent;
     }
 }

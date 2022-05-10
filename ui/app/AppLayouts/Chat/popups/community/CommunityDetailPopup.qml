@@ -141,7 +141,6 @@ StatusModal {
             icon.width: 20
             rotation: 180
             onClicked: {
-                Global.openPopup(communitiesPopupComponent)
                 root.close()
             }
         }
