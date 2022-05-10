@@ -369,12 +369,10 @@ proc buildAndRegisterUserProfile(self: AppController) =
     elif(img.imgType == "thumbnail"):
       thumbnail = img.uri
 
-  let meAsContact = self.contactsService.getContactById(pubKey)
-
   singletonInstance.userProfile.setFixedData(loggedInAccount.name, loggedInAccount.keyUid, pubKey)
   singletonInstance.userProfile.setDisplayName(displayName)
   singletonInstance.userProfile.setPreferredName(preferredName)
-  singletonInstance.userProfile.setEnsName(meAsContact.name)
+  singletonInstance.userProfile.setEnsName(firstEnsName)
   singletonInstance.userProfile.setFirstEnsName(firstEnsName)
   singletonInstance.userProfile.setThumbnailImage(thumbnail)
   singletonInstance.userProfile.setLargeImage(large)
