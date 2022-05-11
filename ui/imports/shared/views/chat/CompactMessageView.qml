@@ -501,14 +501,7 @@ Item {
             ChatTextView {
                 id: chatText
                 readonly property int leftPadding: chatImage.anchors.leftMargin + chatImage.width + chatHorizontalPadding
-                visible: {
-                    const urls = linkUrls.split(" ")
-                    if (urls.length === 1 && Utils.hasImageExtension(urls[0]) && localAccountSensitiveSettings.displayChatImages) {
-                        return false
-                    }
-
-                    return isText || isEmoji
-                }
+                visible: isText || isEmoji || isImage
 
                 anchors.top: parent.top
                 anchors.topMargin: isEmoji ? 2 : 0
