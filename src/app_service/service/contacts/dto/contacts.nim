@@ -120,7 +120,7 @@ proc isBlocked*(self: ContactsDto): bool =
 proc isMutualContact*(self: ContactsDto): bool =
   # TODO not implemented in `status-go` yet
   # But for now we consider that contact is mutual contact if I added him and he added me.
-  return self.hasAddedUs and self.added
+  return self.hasAddedUs and self.added and not self.removed and not self.blocked
 
 proc isContactVerified*(self: ContactsDto): bool =
   # TODO not implemented in `status-go` yet

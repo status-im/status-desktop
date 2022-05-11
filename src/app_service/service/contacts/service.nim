@@ -197,9 +197,7 @@ QtObject:
     elif (group == ContactsGroup.MyMutualContacts):
       # we need to revise this when we introduce "identity verification" feature
       return contacts.filter(x => x.id != myPubKey and 
-        x.isMutualContact() and
-        not x.isContactRemoved() and
-        not x.isBlocked())
+        x.isMutualContact())
     elif (group == ContactsGroup.AllKnownContacts):
       return contacts
 
@@ -322,6 +320,7 @@ QtObject:
 
       var contact = self.getContactById(publicKey)
       contact.added = true
+      contact.removed = false
       self.saveContact(contact)
       self.events.emit(SIGNAL_CONTACT_ADDED, ContactArgs(contactId: contact.id))
 

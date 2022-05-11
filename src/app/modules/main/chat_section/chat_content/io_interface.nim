@@ -111,3 +111,6 @@ method amIChatAdmin*(self: AccessInterface): bool {.base.} =
 
 method downloadMessages*(self: AccessInterface, filePath: string) =
   raise newException(ValueError, "No implementation available")
+
+method onMutualContactChanged*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
