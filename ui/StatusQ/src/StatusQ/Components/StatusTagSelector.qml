@@ -139,7 +139,8 @@ Item {
         if (text !== "") {
             for (var i = 0; i < inputModel.count; i++ ) {
                 var entry = inputModel.get(i);
-                if (entry.name.toLowerCase().includes(text.toLowerCase())) {
+                if (entry.name.toLowerCase().includes(text.toLowerCase()) &&
+                    !find(namesModel, function(item) { return item.name === entry.name })) {
                     sortedList.append({"publicId": entry.publicId, "name": entry.name,
                                        "icon": entry.icon, "isIdenticon": entry.isIdenticon,
                                        "onlineStatus": entry.onlineStatus});
