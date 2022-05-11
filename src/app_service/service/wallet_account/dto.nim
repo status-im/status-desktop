@@ -18,6 +18,7 @@ type
   WalletAccountDto* = ref object of RootObj
     name*: string
     address*: string
+    mixedcaseAddress*: string
     path*: string
     color*: string
     publicKey*: string
@@ -57,6 +58,7 @@ proc toWalletAccountDto*(jsonObj: JsonNode): WalletAccountDto =
   result = WalletAccountDto()
   discard jsonObj.getProp("name", result.name)
   discard jsonObj.getProp("address", result.address)
+  discard jsonObj.getProp("mixedcase-address", result.mixedcaseAddress)
   discard jsonObj.getProp("path", result.path)
   discard jsonObj.getProp("color", result.color)
   discard jsonObj.getProp("wallet", result.isWallet)
