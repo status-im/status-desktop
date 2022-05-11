@@ -9,6 +9,7 @@ QtObject {
     id: root
     property bool hasAccounts
     property string keysMainSetState: ""
+    property string prevState: ""
 
     signal loadApp()
     signal onBoardingStepChanged(var view, string state)
@@ -197,7 +198,7 @@ QtObject {
                 Global.applicationWindow.navigateTo("ImportSeed");
             }
             onBackClicked: {
-                if (root.keysMainSetState === "connectkeys" && LoginStore.currentAccount.username !== "") {
+                if ((root.keysMainSetState === "connectkeys" && LoginStore.currentAccount.username !== "") || root.prevState === "LogIn") {
                     Global.applicationWindow.navigateTo("LogIn");
                 } else {
                     Global.applicationWindow.navigateTo("Welcome");
@@ -255,11 +256,14 @@ QtObject {
     property var loginComponent: Component {
         id: login
         LoginView {
-            onGenKeyClicked: {
-                Global.applicationWindow.navigateTo("GenKey");
+            onAddNewUserClicked: {
+                root.keysMainSetState = "getkeys";
+                root.prevState = "LogIn"
+                Global.applicationWindow.navigateTo("KeysMain");
             }
             onAddExistingKeyClicked: {
                 root.keysMainSetState = "connectkeys";
+                root.prevState = "LogIn"
                 Global.applicationWindow.navigateTo("KeysMain");
             }
         }

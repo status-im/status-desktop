@@ -24,7 +24,7 @@ import utils 1.0
 
 Item {
     property bool loading: false
-    signal genKeyClicked()
+    signal addNewUserClicked()
     signal addExistingKeyClicked()
 
     id: loginView
@@ -197,10 +197,19 @@ Item {
                   }
 
                   AccountMenuItemPanel {
-                    label: qsTr("Generate new account")
+                    label: qsTr("Add new user")
                     onClicked: {
                       accountsPopup.close()
-                      genKeyClicked();
+                      addNewUserClicked();
+                    }
+                  }
+
+                  AccountMenuItemPanel {
+                    label: qsTr("Add existing Status user")
+                    iconSettings.name: "wallet"
+                    onClicked: {
+                      accountsPopup.close()
+                      addExistingKeyClicked();
                     }
                   }
               }

@@ -17,6 +17,9 @@ MenuItem {
     property string colorId: ""
     property var colorHash
     property url image: ""
+    property StatusIconSettings iconSettings: StatusIconSettings {
+      name: "add"
+    }
     signal clicked()
 
     width: parent.width
@@ -43,7 +46,7 @@ MenuItem {
     Component {
         id: addIcon
         StatusRoundIcon {
-            icon.name: "add"
+            icon.name: root.iconSettings.name
         }
     }
 
