@@ -48,7 +48,11 @@ Column {
             currentPswInput.forceActiveFocus(Qt.MouseFocusReason)
     }
 
-    function checkPasswordMatches() {
+    function checkPasswordMatches(onlyIfConfirmPasswordHasFocus = true) {
+        if (onlyIfConfirmPasswordHasFocus && !confirmPswInput.textField.focus) {
+            return
+        }
+
         if(newPswInput.text.length >= root.minPswLen) {
             errorTxt.text = ""
             if(confirmPswInput.text !== newPswInput.text) {
@@ -300,10 +304,13 @@ Column {
         onTextChanged: { if(textField.text.length === newPswInput.text.length) root.checkPasswordMatches() }
         textField.onFocusChanged: {
             // When clicking into the confirmation input, validate if new password:
-            if(textField.focus) d.passwordValidation()
-
+            if(textField.focus) {
+                d.passwordValidation()
+            }
             // When leaving the confirmation input because of the button or other input component is focused, check if password matches
-            else root.checkPasswordMatches(true)
+            else {
+                root.checkPasswordMatches(false)
+            }
         }
 
         StatusFlatRoundButton {
