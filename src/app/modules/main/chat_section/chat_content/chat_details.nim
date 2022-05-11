@@ -17,6 +17,7 @@ QtObject:
     notificationsCount: int
     muted: bool
     position: int
+    isMutualContact: bool
 
   proc delete*(self: ChatDetails) =
     self.QObject.delete
@@ -26,8 +27,9 @@ QtObject:
     result.QObject.setup
 
   proc setChatDetails*(self: ChatDetails, id: string, `type`: int, belongsToCommunity,
-    isUsersListAvailable: bool, name, icon: string, color, description,
-    emoji: string, hasUnreadMessages: bool, notificationsCount: int, muted: bool, position: int) =
+      isUsersListAvailable: bool, name, icon: string, color, description,
+      emoji: string, hasUnreadMessages: bool, notificationsCount: int, muted: bool, position: int,
+      isMutualContact: bool = false) =
     self.id = id
     self.`type` = `type`
     self.belongsToCommunity = belongsToCommunity
@@ -41,6 +43,7 @@ QtObject:
     self.notificationsCount = notificationsCount
     self.muted = muted
     self.position = position
+    self.isMutualContact = isMutualContact
 
   proc getId(self: ChatDetails): string {.slot.} =
     return self.id
@@ -160,3 +163,14 @@ QtObject:
   proc setPotion*(self: ChatDetails, value: int) = # this is not a slot
     self.position = value
     self.positionChanged()
+
+  proc isMutualContactChanged(self: ChatDetails) {.signal.}
+  proc getIsMutualContact(self: ChatDetails): bool {.slot.} =
+    return self.isMutualContact
+  QtProperty[bool] isMutualContact:
+    read = getIsMutualContact
+    notify = isMutualContactChanged
+
+  proc setIsMutualContact*(self: ChatDetails, value: bool) = # this is not a slot
+    self.isMutualContact = value
+    self.isMutualContactChanged()

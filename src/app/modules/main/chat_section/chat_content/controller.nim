@@ -30,6 +30,9 @@ type
     communityService: community_service.Service
     messageService: message_service.Service
 
+# Forward declaration
+proc getChatDetails*(self: Controller): ChatDto
+
 proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter, sectionId: string, chatId: string,
   belongsToCommunity: bool, isUsersListAvailable: bool, settingsService: settings_service.Service,
   contactService: contact_service.Service, chatService: chat_service.Service,
@@ -106,6 +109,30 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_CONTACT_UPDATED) do(e: Args):
     var args = ContactArgs(e)
     self.delegate.onContactDetailsUpdated(args.contactId)
+    if (args.contactId == self.chatId):
+      self.delegate.onMutualContactChanged()
+
+  let chatDto = self.getChatDetails()
+  if(chatDto.chatType == ChatType.OneToOne):
+    self.events.on(SIGNAL_CONTACT_ADDED) do(e: Args):
+      var args = ContactArgs(e)
+      if (args.contactId == self.chatId):
+        self.delegate.onMutualContactChanged()
+
+    self.events.on(SIGNAL_CONTACT_REMOVED) do(e: Args):
+      var args = ContactArgs(e)
+      if (args.contactId == self.chatId):
+        self.delegate.onMutualContactChanged()
+
+    self.events.on(SIGNAL_CONTACT_BLOCKED) do(e: Args):
+      var args = ContactArgs(e)
+      if (args.contactId == self.chatId):
+        self.delegate.onMutualContactChanged()
+
+    self.events.on(SIGNAL_CONTACT_UNBLOCKED) do(e: Args):
+      var args = ContactArgs(e)
+      if (args.contactId == self.chatId):
+        self.delegate.onMutualContactChanged()
 
   self.events.on(SIGNAL_MESSAGE_DELETION) do(e: Args):
     let args = MessageDeletedArgs(e)

@@ -31,10 +31,10 @@ QtObject:
     result.chatDetailsVariant = newQVariant(result.chatDetails)
 
   proc load*(self: View, id: string, `type`: int, belongsToCommunity, isUsersListAvailable: bool,
-      name, icon: string, color, description, emoji: string,
-      hasUnreadMessages: bool, notificationsCount: int, muted: bool, position: int) =
+      name, icon: string, color, description, emoji: string, hasUnreadMessages: bool,
+      notificationsCount: int, muted: bool, position: int, isMutualContact: bool) =
     self.chatDetails.setChatDetails(id, `type`, belongsToCommunity, isUsersListAvailable, name, icon,
-      color, description, emoji, hasUnreadMessages, notificationsCount, muted, position)
+      color, description, emoji, hasUnreadMessages, notificationsCount, muted, position, isMutualContact)
     self.delegate.viewDidLoad()
     self.chatDetailsChanged()
 
@@ -122,6 +122,9 @@ QtObject:
   proc updateChatDetailsName*(self: View, name: string) =
     self.chatDetails.setName(name)
     self.chatDetailsChanged()
+
+  proc onMutualContactChanged*(self: View, value: bool) =
+    self.chatDetails.setIsMutualContact(value)
 
   proc downloadMessages*(self: View, filePath: string) {.slot.} =
     self.delegate.downloadMessages(filePath)
