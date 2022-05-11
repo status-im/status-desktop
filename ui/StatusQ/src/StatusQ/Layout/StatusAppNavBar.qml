@@ -21,6 +21,7 @@ Rectangle {
     property int communityTypeValue: -1
     property int navBarButtonSpacing: 12
 
+    property StatusNavBarTabButton navBarCameraButton 
     property StatusNavBarTabButton navBarProfileButton
     property Component regularNavBarButton
     property Component communityNavBarButton
@@ -34,6 +35,12 @@ Rectangle {
     onNavBarProfileButtonChanged: {
         if (!!navBarProfileButton) {
             navBarProfileButton.parent = navBarProfileButtonSlot
+        }
+    }
+
+    onNavBarCameraButtonChanged: {
+        if (!!navBarCameraButton) {
+            navBarCameraButton.parent = navBarCameraButtonSlot
         }
     }
 
@@ -161,6 +168,17 @@ Rectangle {
 
         model: navBarModel
     }
+
+    Item {
+        id: navBarCameraButtonSlot
+        anchors.horizontalCenter: parent.horizontalCenter
+        height: visible? statusAppNavBar.navBarProfileButton.height : 0
+        width: visible? statusAppNavBar.navBarProfileButton.width : 0
+        visible: !!statusAppNavBar.navBarCameraButton
+        anchors.bottom: navBarProfileButtonSlot.visible ? navBarProfileButtonSlot.top : parent.bottom
+        anchors.bottomMargin: visible ? 12 : 0
+    }
+
 
     Item {
         id: navBarProfileButtonSlot
