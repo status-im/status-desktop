@@ -6,19 +6,28 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 
+/*!
+  /note beware, the slider processes the mouse events only in its control space. So it must be at least as high
+  as the /c handle so user can grab it fully.
+ */
 Slider {
     id: statusSlider
 
     implicitWidth: 360
-    implicitHeight: 4
+    implicitHeight: Math.max(handle.implicitHeight, background.implicitHeight)
 
     leftPadding: 0
 
     background: Rectangle {
         id: bgRect
+
+        x: statusSlider.leftPadding
+        y: statusSlider.topPadding + statusSlider.availableHeight / 2 - height / 2
         implicitWidth: 100
         implicitHeight: 4
+        width: statusSlider.availableWidth
         height: implicitHeight
+
         color: {
             if (statusSlider.value === statusSlider.to) {
                 return Theme.palette.primaryColor1

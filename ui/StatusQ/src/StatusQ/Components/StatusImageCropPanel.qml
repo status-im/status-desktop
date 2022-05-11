@@ -257,7 +257,6 @@ Item {
             }
             StatusSlider {
                 Layout.fillWidth: true
-                Layout.preferredHeight: 5
                 Layout.topMargin: 20
                 Layout.bottomMargin: 25
                 Layout.alignment: Qt.AlignVCenter
