@@ -95,6 +95,21 @@ Item {
     property real wallTransparency: 0.7
 
     /*!
+        \qmlproperty bool StatusImageCrop::allowZoomToFitAllContent
+
+        \c true to limit the content to fit at minimum zoom; that's it, the user will see the entire image
+            in the crop window, in case of aspect-ratio mismatch, allowing transparent/no-content borders in the crop window.
+        \c false to limit the content to fill at minimum zoom; that's it, the user will see only part of the image
+            in the crop window in case of aspect-ratio mismatch. This way, we don't allow transparent/no-content space
+    */
+    property bool allowZoomToFitAllContent: false
+    /*!
+        \qmlproperty real StatusImageCrop::minZoomScale
+        Minimum allowed zoom. This is 1 if \c allowZoomToFitAllContent is true else depends on the
+        source aspect ratio.
+    */
+    readonly property real minZoomScale: allowZoomToFitAllContent ? 1 : d.zoomToFill
+    /*!
         \qmlproperty real StatusImageCrop::maxZoomScale
         Don't allow to zoom in more than maxZoomScale factor
     */
@@ -166,8 +181,8 @@ Item {
             nZoom = root.maxZoomScale
             n = root.getZoomRect(nZoom)
         }
-        else if(nZoom < 1) {
-            nZoom = 1
+        else if(nZoom < root.minZoomScale) {
+            nZoom = root.minZoomScale
             n = root.getZoomRect(nZoom)
         }
 
@@ -248,8 +263,14 @@ Item {
     QtObject {
         id: d
 
-        property rect cropRect: fillContentInSquaredWindow(sourceSize)
+        property rect cropRect: fillContentInSquaredWindow(root.sourceSize)
         onCropRectChanged: windowRect.requestPaint()
+
+        readonly property real zoomToFill: {
+            const rectangle = fillContentInSquaredWindow(root.sourceSize)
+            return d.currentZoom(root.sourceSize, Qt.size(rectangle.width, rectangle.height))
+        }
+
         property rect cropWindow
         // Probably called from render thread, run async
         signal updateCropWindow(rect newRect)

@@ -264,12 +264,11 @@ Item {
 
                 enabled: root.interactive
 
-                from: 1
+                from: cropEditor.minZoomScale
+                to: cropEditor.maxZoomScale
                 value: cropEditor.zoomScale
                 live: false
                 onMoved: cropEditor.setCropRect(cropEditor.getZoomRect(valueAt(visualPosition)))
-
-                to: 10
             }
             StatusIcon {
                 icon: "add-circle"
