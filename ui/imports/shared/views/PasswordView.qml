@@ -49,6 +49,11 @@ Column {
     }
 
     function checkPasswordMatches(onlyIfConfirmPasswordHasFocus = true) {
+        if (confirmPswInput.textField.text.length === 0) {
+            errorTxt.text = ""
+            return
+        }
+
         if (onlyIfConfirmPasswordHasFocus && !confirmPswInput.textField.focus) {
             return
         }
@@ -301,7 +306,12 @@ Column {
         keepHeight: true
         textField.rightPadding: showHideConfirmIcon.width + showHideConfirmIcon.anchors.rightMargin + Style.current.padding / 2
 
-        onTextChanged: { if(textField.text.length === newPswInput.text.length) root.checkPasswordMatches() }
+        onTextChanged: {
+            if(textField.text.length === newPswInput.text.length || textField.text.length === 0) {
+                root.checkPasswordMatches()
+            }
+        }
+
         textField.onFocusChanged: {
             // When clicking into the confirmation input, validate if new password:
             if(textField.focus) {
