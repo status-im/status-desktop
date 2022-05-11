@@ -40,6 +40,7 @@ SettingsContentBase {
     ColumnLayout {
         spacing: 0
         width: root.contentWidth
+        height: root.height
 
         SearchBox {
             id: searchBox
