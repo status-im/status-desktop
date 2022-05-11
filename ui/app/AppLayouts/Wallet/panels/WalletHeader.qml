@@ -61,7 +61,7 @@ Item {
 
     StatusExpandableAddress {
         id: walletAddress
-        address: currentAccount.address
+        address: currentAccount.mixedcaseAddress
         anchors.top: title.bottom
         anchors.left: title.left
         addressWidth: 180

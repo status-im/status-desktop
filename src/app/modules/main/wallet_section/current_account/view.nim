@@ -11,6 +11,7 @@ QtObject:
       delegate: io_interface.AccessInterface
       name: string
       address: string
+      mixedcaseAddress: string
       path: string
       color: string
       publicKey: string
@@ -45,12 +46,17 @@ QtObject:
 
   proc getAddress(self: View): QVariant {.slot.} =
     return newQVariant(self.address)
-
   proc addressChanged(self: View) {.signal.}
-
   QtProperty[QVariant] address:
     read = getAddress
     notify = addressChanged
+
+  proc getMixedcaseAddress(self: View): string {.slot.} =
+    return self.mixedcaseAddress
+  proc mixedcaseAddressChanged(self: View) {.signal.}
+  QtProperty[string] mixedcaseAddress:
+    read = getMixedcaseAddress
+    notify = mixedcaseAddressChanged
 
   proc getPath(self: View): QVariant {.slot.} =
     return newQVariant(self.path)
@@ -127,25 +133,37 @@ QtObject:
   proc update(self: View, address: string, accountName: string, color: string, emoji: string) {.slot.} =
     self.delegate.update(address, accountName, color, emoji)
 
-proc setData*(self: View, dto: wallet_account_service.WalletAccountDto) =
-    self.name = dto.name
-    self.nameChanged()
-    self.address = dto.address
-    self.addressChanged()
-    self.path = dto.path
-    self.pathChanged()
-    self.color = dto.color
-    self.colorChanged()
-    self.publicKey = dto.publicKey
-    self.publicKeyChanged()
-    self.walletType = dto.walletType
-    self.walletTypeChanged()
-    self.isChat = dto.isChat
-    self.isChatChanged()
-    self.currencyBalance = dto.getCurrencyBalance()
-    self.currencyBalanceChanged()
-    self.emoji = dto.emoji
-    self.emojiChanged()
+  proc setData*(self: View, dto: wallet_account_service.WalletAccountDto) =
+    if(self.name != dto.name):
+      self.name = dto.name
+      self.nameChanged()
+    if(self.address != dto.address):
+      self.address = dto.address
+      self.addressChanged()
+    if(self.mixedcaseAddress != dto.mixedcaseAddress):
+      self.mixedcaseAddress = dto.mixedcaseAddress
+      self.mixedcaseAddressChanged()
+    if(self.path != dto.path):
+      self.path = dto.path
+      self.pathChanged()
+    if(self.color != dto.color):
+      self.color = dto.color
+      self.colorChanged()
+    if(self.publicKey != dto.publicKey):
+      self.publicKey = dto.publicKey
+      self.publicKeyChanged()
+    if(self.walletType != dto.walletType):
+      self.walletType = dto.walletType
+      self.walletTypeChanged()
+    if(self.isChat != dto.isChat):
+      self.isChat = dto.isChat
+      self.isChatChanged()
+    if(self.currencyBalance != dto.getCurrencyBalance()):
+      self.currencyBalance = dto.getCurrencyBalance()
+      self.currencyBalanceChanged()
+    if(self.emoji != dto.emoji):
+      self.emoji = dto.emoji
+      self.emojiChanged()
 
     let assets = token_model.newModel()
 
