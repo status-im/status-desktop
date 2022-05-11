@@ -22,3 +22,4 @@ ProfilePopup 1.0 ProfilePopup.qml
 ImageCropWorkflow 1.0 ImageCropWorkflow.qml
 ImportCommunityPopup 1.0 ImportCommunityPopup.qml
 DisplayNamePopup 1.0 DisplayNamePopup.qml
+QrScanPopup 1.0 QrScanPopup.qml

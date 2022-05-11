@@ -34,6 +34,7 @@ QtObject {
         readonly property string keycard: "keycard"
         readonly property string communityHistoryArchiveSupport: "communityHistoryArchiveSupport"
         readonly property string communitiesPortal: "communitiesPortal"
+        readonly property string qrScan: "qrScan"
     }
 
     function logDir() {
@@ -134,6 +135,8 @@ QtObject {
         else if (feature === experimentalFeatures.keycard) {
             localAccountSettings.isKeycardEnabled = !localAccountSettings.isKeycardEnabled
         }
-        
+        else if (feature === experimentalFeatures.qrScan) {
+            localAccountSensitiveSettings.qrScanEnabled = !localAccountSensitiveSettings.qrScanEnabled
+        }
     }
 }

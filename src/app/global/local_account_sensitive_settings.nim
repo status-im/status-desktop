@@ -14,6 +14,8 @@ const LSS_KEY_IS_BROWSER_ENABLED* = "isExperimentalBrowserEnabled"
 const DEFAULT_IS_BROWSER_ENABLED = false
 const LSS_KEY_SHOW_ONLINE_USERS* = "showOnlineUsers"
 const DEFAULT_SHOW_ONLINE_USERS = true
+const LSS_KEY_QR_SCAN_ENABLED* = "qrScanEnabled"
+const DEFAULT_QR_SCAN_ENABLED = false
 const LSS_KEY_EXPAND_USERS_LIST* = "expandUsersList"
 const DEFAULT_EXPAND_USERS_LIST = true
 const LSS_KEY_IS_GIF_WIDGET_ENABLED* = "isGifWidgetEnabled"
@@ -240,6 +242,18 @@ QtObject:
     write = setShowOnlineUsers
     notify = showOnlineUsersChanged
 
+
+  proc qrScanEnabledChanged*(self: LocalAccountSensitiveSettings) {.signal.}
+  proc getQrScanEnabled*(self: LocalAccountSensitiveSettings): bool {.slot.} =
+    getSettingsProp[bool](self, LSS_KEY_QR_SCAN_ENABLED, newQVariant(DEFAULT_QR_SCAN_ENABLED))
+  proc setQrScanEnabled*(self: LocalAccountSensitiveSettings, value: bool) {.slot.} =
+    setSettingsProp(self, LSS_KEY_QR_SCAN_ENABLED, newQVariant(value)):
+      self.qrScanEnabledChanged()
+
+  QtProperty[bool] qrScanEnabled:
+    read = getQrScanEnabled
+    write = setQrScanEnabled
+    notify = qrScanEnabledChanged
 
   proc expandUsersListChanged*(self: LocalAccountSensitiveSettings) {.signal.}
   proc getExpandUsersList*(self: LocalAccountSensitiveSettings): bool {.slot.} =

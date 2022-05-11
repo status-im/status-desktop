@@ -154,8 +154,9 @@ ifneq ($(detected_OS),Windows)
  endif
  DOTHERSIDE := vendor/DOtherSide/build/lib/libDOtherSideStatic.a
  DOTHERSIDE_CMAKE_PARAMS := -DENABLE_DYNAMIC_LIBS=OFF -DENABLE_STATIC_LIBS=ON
+ ZXING_LIB:= vendor/DOtherSide/build/lib/zxing-cpp/core/libZXing.a
  # order matters here, due to "-Wl,-as-needed"
- NIM_PARAMS += --passL:"$(DOTHERSIDE)" --passL:"$(shell PKG_CONFIG_PATH="$(QT5_PCFILEDIR)" pkg-config --libs Qt5Core Qt5Qml Qt5Gui Qt5Quick Qt5QuickControls2 Qt5Widgets Qt5Svg Qt5Multimedia)"
+ NIM_PARAMS += --passL:"$(DOTHERSIDE)" --passL:"$(ZXING_LIB)" --passL:"$(shell PKG_CONFIG_PATH="$(QT5_PCFILEDIR)" pkg-config --libs Qt5Core Qt5Qml Qt5Gui Qt5Quick Qt5QuickControls2 Qt5Widgets Qt5Svg Qt5Multimedia)"
 else
  DOTHERSIDE := vendor/DOtherSide/build/lib/Release/DOtherSide.dll
  DOTHERSIDE_CMAKE_PARAMS := -T"v141" -A x64 -DENABLE_DYNAMIC_LIBS=ON -DENABLE_STATIC_LIBS=OFF

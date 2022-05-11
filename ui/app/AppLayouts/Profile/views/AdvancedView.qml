@@ -175,6 +175,23 @@ SettingsContentBase {
                 }
             }
 
+            // TODO: replace with StatusQ component
+            StatusSettingsLineButton {
+                anchors.leftMargin: 0
+                anchors.rightMargin: 0
+                text: qsTr("QR Scan")
+                isSwitch: true
+                switchChecked: localAccountSensitiveSettings.qrScanEnabled
+                onClicked: {
+                    if (!localAccountSensitiveSettings.qrScanEnabled) {
+                        confirmationPopup.experimentalFeature = root.advancedStore.experimentalFeatures.qrScan
+                        confirmationPopup.open()
+                    } else {
+                        root.advancedStore.toggleExperimentalFeature(root.advancedStore.experimentalFeatures.qrScan)
+                    }
+                }
+            }
+
             StatusSectionHeadline {
                 anchors.left: parent.left
                 anchors.right: parent.right

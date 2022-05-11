@@ -338,6 +338,24 @@ Item {
                 }
             }
 
+            navBarCameraButton: StatusNavBarTabButton {
+                icon.name: "qr-scan"
+                width: 32
+                visible: localAccountSensitiveSettings.qrScanEnabled
+
+                onClicked: {
+                    qrScanPopup.opened ?
+                        qrScanPopup.close() :
+                        qrScanPopup.open()
+                }
+
+                QrScanPopup {
+                    id: qrScanPopup
+                    anchors.centerIn: parent
+                }
+            }
+
+
             navBarProfileButton: StatusNavBarTabButton {
                 id: profileButton
                 property bool opened: false
