@@ -204,6 +204,13 @@ QtObject:
 
     let prev_community = self.joinedCommunities[community.id]
 
+    # If there's settings without `id` it means the original
+    # signal didn't include actual communitySettings, hence we
+    # assign the settings we already have, otherwise we risk our
+    # settings to be overridden with wrong defaults.
+    if community.settings.id == "":
+      community.settings = prev_community.settings
+
     # category was added
     if(community.categories.len > prev_community.categories.len):
       for category in community.categories:
