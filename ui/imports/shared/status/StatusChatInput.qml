@@ -738,11 +738,11 @@ Rectangle {
         x: parent.width - width - Style.current.halfPadding
         y: -height
         gifSelected: function (event, url) {
-            messageInputField.text = url
+            messageInputField.text += "\n" + url
             control.sendMessage(event)
             gifBtn.highlighted = false
             messageInputField.forceActiveFocus()
-            if(control.closeGifPopupAfterSelection)
+            if (control.closeGifPopupAfterSelection)
                 gifPopup.close()
         }
         onClosed: {
