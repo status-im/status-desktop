@@ -23,7 +23,7 @@ SettingsContentBase {
 
     Item {
         width: root.contentWidth
-        height: this.childrenRect.height
+        height: parent.height
 
         Item {
             id: firstTimeSetup
@@ -142,17 +142,15 @@ SettingsContentBase {
             }
         }
 
-
         Item {
             id: deviceListItem
-            anchors.left: root.left
+            anchors.left: parent.left
             anchors.leftMargin: Style.current.padding
             anchors.top: advertiseDeviceItem.visible ? advertiseDeviceItem.bottom : parent.top
             anchors.topMargin: Style.current.padding * 2
-            anchors.bottom: syncAllBtn.top
-            anchors.bottomMargin: Style.current.padding
-            anchors.right: root.right
+            anchors.right: parent.right
             anchors.rightMargin: Style.current.padding
+            height: childrenRect.height
             visible: root.devicesStore.isDeviceSetup
 
             StatusBaseText {
@@ -166,24 +164,24 @@ SettingsContentBase {
 
             ListView {
                 id: listView
-                anchors.bottom: parent.bottom
                 anchors.top: deviceListLbl.bottom
                 anchors.topMargin: Style.current.padding
+                // This is a placeholder fix to the display. This whole page will be redesigned
+                height: 300
                 spacing: 5
-                anchors.right: parent.right
-                anchors.left: parent.left
+                width: parent.width
                 // TODO: replace with StatusQ component
                 delegate: Item {
                     height: childrenRect.height
                     SVGImage {
                         id: enabledIcon
-                        source: Style.svg(devicePairedSwitch.checked ? "messageActive" : "message")
+                        source: Style.svg("messageActive")
                         height: 24
                         width: 24
                         ColorOverlay {
                             anchors.fill: parent
                             source: parent
-                            color: Style.current.blue
+                            color: devicePairedSwitch.checked ? Style.current.blue : Style.current.darkGrey
                         }
                     }
                     StatusBaseText {
@@ -214,26 +212,29 @@ SettingsContentBase {
                 }
                 model: root.devicesStore.devicesModel
             }
-        }
+            
+            StatusButton {
+                id: syncAllBtn
+                anchors.top: listView.bottom
+                anchors.topMargin: Style.current.padding
+                // anchors.bottom: parent.bottom
+                // anchors.bottomMargin: Style.current.padding
+                anchors.horizontalCenter: listView.horizontalCenter
 
-        StatusButton {
-            id: syncAllBtn
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: Style.current.padding
-            anchors.horizontalCenter: parent.horizontalCenter
-            text: isSyncing ?
-                      //% "Syncing..."
-                      qsTrId("sync-in-progress") :
-                      //% "Sync all devices"
-                      qsTrId("sync-all-devices")
-            enabled: !isSyncing
-            onClicked : {
-                isSyncing = true;
-                root.devicesStore.syncAll()
-                // Currently we don't know how long it takes, so we just disable for 10s, to avoid spamming
-                timer.setTimeout(function(){
-                    isSyncing = false
-                }, 10000);
+                text: isSyncing ?
+                        //% "Syncing..."
+                        qsTrId("sync-in-progress") :
+                        //% "Sync all devices"
+                        qsTrId("sync-all-devices")
+                enabled: !isSyncing
+                onClicked : {
+                    isSyncing = true;
+                    root.devicesStore.syncAll()
+                    // Currently we don't know how long it takes, so we just disable for 10s, to avoid spamming
+                    timer.setTimeout(function(){
+                        isSyncing = false
+                    }, 10000);
+                }
             }
         }
 
