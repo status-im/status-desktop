@@ -778,6 +778,14 @@ QtObject {
         );
     }
 
+    function isInvalidPath(msg) {
+        return msg.includes("error parsing derivation path")
+    }
+
+    function accountAlreadyExistsError(msg) {
+        return msg.includes("account already exists")
+    }
+
     // Leave this function at the bottom of the file as QT Creator messes up the code color after this
     function isPunct(c) {
         return /(!|\@|#|\$|%|\^|&|\*|\(|\)|_|\+|\||-|=|\\|{|}|[|]|"|;|'|<|>|\?|,|\.|\/)/.test(c)

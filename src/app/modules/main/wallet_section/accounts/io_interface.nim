@@ -31,10 +31,13 @@ method deleteAccount*(self: AccessInterface, address: string) {.base.} =
 method refreshWalletAccounts*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getDerivedAddressList*(self: AccessInterface, password: string, derivedFrom: string, path: string, pageSize: int, pageNumber: int): (seq[wallet_account_service.DerivedAddressDto], string) {.base.} =
+method getDerivedAddressList*(self: AccessInterface, password: string, derivedFrom: string, path: string, pageSize: int, pageNumber: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method getDerivedAddressListForMnemonic*(self: AccessInterface, mnemonic: string, path: string, pageSize: int, pageNumber: int): (seq[wallet_account_service.DerivedAddressDto], string) {.base.} =
+method getDerivedAddressListForMnemonic*(self: AccessInterface, mnemonic: string, path: string, pageSize: int, pageNumber: int) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getDerivedAddressForPrivateKey*(self: AccessInterface, privateKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 # View Delegate Interface

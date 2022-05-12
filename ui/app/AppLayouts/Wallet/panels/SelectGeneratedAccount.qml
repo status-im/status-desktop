@@ -38,7 +38,7 @@ StatusSelect {
     QtObject {
         id: _internal
         property string importSeedPhraseString : qsTr("Import new Seed Phrase")
-        property string importPrivateKeyString : qsTr("Import new Private Key")        
+        property string importPrivateKeyString : qsTr("Generate from Private key")
         //% "Add a watch-only address"
         property string addWatchOnlyAccountString : qsTrId("add-a-watch-account")
 
