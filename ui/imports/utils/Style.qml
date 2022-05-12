@@ -52,4 +52,7 @@ QtObject {
     function lottie(name) {
         return assetPath + "lottie/" + name + ".json";
     }
+    function gif(name) {
+        return assetPath + "gif/" + name + ".gif";
+    }
 }
