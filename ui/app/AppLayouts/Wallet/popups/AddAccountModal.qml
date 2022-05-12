@@ -45,14 +45,20 @@ StatusModal {
                 if(advancedSelection.expandableItem.addAccountType === SelectGeneratedAccount.AddAccountType.ImportSeedPhrase &&
                         !!advancedSelection.expandableItem.path &&
                         !!advancedSelection.expandableItem.mnemonicText) {
-                    errMessage = RootStore.getDerivedAddressListForMnemonic(advancedSelection.expandableItem.mnemonicText, advancedSelection.expandableItem.path, numOfItems, pageNumber)
-                    _internal.showPasswordError(errMessage)
+                    RootStore.getDerivedAddressListForMnemonic(advancedSelection.expandableItem.mnemonicText, advancedSelection.expandableItem.path, numOfItems, pageNumber)
                 }
                 else if(!!advancedSelection.expandableItem.path && !!advancedSelection.expandableItem.derivedFromAddress && (passwordInput.text.length >= 6)) {
-                    errMessage = RootStore.getDerivedAddressList(passwordInput.text, advancedSelection.expandableItem.derivedFromAddress, advancedSelection.expandableItem.path, numOfItems, pageNumber)
-                    _internal.showPasswordError(errMessage)
+                    RootStore.getDerivedAddressList(passwordInput.text, advancedSelection.expandableItem.derivedFromAddress, advancedSelection.expandableItem.path, numOfItems, pageNumber)
                 }
             }
+        }
+
+        property string derivedPathError: RootStore.derivedAddressesError
+
+        onDerivedPathErrorChanged: {
+            if(Utils.isInvalidPasswordMessage(derivedPathError))
+                //% "Wrong password"
+                popup.passwordValidationError = qsTrId("wrong-password")
         }
 
         function showPasswordError(errMessage) {
@@ -64,6 +70,14 @@ StatusModal {
                     accountError.text = errMessage;
                     accountError.open();
                 }
+            }
+        }
+
+        property var waitTimer: Timer {
+            interval: 1000
+            running: false
+            onTriggered: {
+                _internal.getDerivedAddressList()
             }
         }
     }
@@ -141,7 +155,7 @@ StatusModal {
                     inputLabel.font.weight: Font.Normal
                     onTextChanged: {
                         popup.passwordValidationError = ""
-                        _internal.getDerivedAddressList()
+                        _internal.waitTimer.restart()
                     }
                 }
             }

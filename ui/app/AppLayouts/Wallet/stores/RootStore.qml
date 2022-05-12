@@ -81,6 +81,9 @@ QtObject {
         }
     }
 
+    property bool derivedAddressesLoading: walletSectionAccounts.derivedAddressesLoading
+    property string derivedAddressesError: walletSectionAccounts.derivedAddressesError
+
     function setHideSignPhraseModal(value) {
         localAccountSensitiveSettings.hideSignPhraseModal = value;
     }
@@ -177,7 +180,7 @@ QtObject {
     }
 
     function getDerivedAddressList(password, derivedFrom, path, pageSize , pageNumber) {
-        return walletSectionAccounts.getDerivedAddressList(password, derivedFrom, path, pageSize , pageNumber)
+        walletSectionAccounts.getDerivedAddressList(password, derivedFrom, path, pageSize , pageNumber)
     }
 
     function getDerivedAddressData(index) {
@@ -197,7 +200,11 @@ QtObject {
     }
 
     function getDerivedAddressListForMnemonic(mnemonic, path, pageSize , pageNumber) {
-        return walletSectionAccounts.getDerivedAddressListForMnemonic(mnemonic, path, pageSize , pageNumber)
+        walletSectionAccounts.getDerivedAddressListForMnemonic(mnemonic, path, pageSize , pageNumber)
+    }
+
+    function getDerivedAddressForPrivateKey(privateKey) {
+        walletSectionAccounts.getDerivedAddressForPrivateKey(privateKey)
     }
 
     function resetDerivedAddressModel() {

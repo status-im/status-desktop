@@ -1,5 +1,7 @@
 import NimQml, sequtils, strutils, sugar
 
+import ../../../../../app_service/service/wallet_account/service as wallet_account_service
+
 import ./model
 import ./item
 import ./io_interface
@@ -23,6 +25,8 @@ QtObject:
       imported: Model
       generatedAccounts: GeneratedWalletModel
       derivedAddresses: DerivedAddressModel
+      derivedAddressesLoading: bool
+      derivedAddressesError: string
       modelVariant: QVariant
       generatedVariant: QVariant
       importedVariant: QVariant
@@ -61,6 +65,8 @@ QtObject:
     result.generatedAccounts = newGeneratedWalletModel()
     result.generatedAccountsVariant = newQVariant(result.generatedAccounts)
     result.derivedAddresses = newDerivedAddressModel()
+    result.derivedAddressesLoading = false
+    result.derivedAddressesError = ""
     result.derivedAddressesVariant = newQVariant(result.derivedAddresses)
 
   proc load*(self: View) =
@@ -119,6 +125,35 @@ QtObject:
   QtProperty[QVariant] derivedAddresses:
     read = getDerivedAddresses
     notify = derivedAddressesChanged
+
+  proc derivedAddressesLoadingChanged*(self: View) {.signal.}
+
+  proc getDerivedAddressesLoading(self: View): bool {.slot.} =
+    return self.derivedAddressesLoading
+
+  proc setDerivedAddressesLoading*(self: View, loading: bool) {.slot.} =
+    if self.derivedAddressesLoading != loading:
+      self.derivedAddressesLoading = loading
+      self.derivedAddressesLoadingChanged()
+
+  QtProperty[bool] derivedAddressesLoading:
+    read = getDerivedAddressesLoading
+    write = setDerivedAddressesLoading
+    notify = derivedAddressesLoadingChanged
+
+  proc derivedAddressErrorChanged*(self: View) {.signal.}
+
+  proc getDerivedAddressesError(self: View): string {.slot.} =
+    return self.derivedAddressesError
+
+  proc setDerivedAddressesError(self: View, error: string) {.slot.} =
+    self.derivedAddressesError = error
+    self.derivedAddressErrorChanged()
+
+  QtProperty[string] derivedAddressesError:
+    read = getDerivedAddressesError
+    write = setDerivedAddressesError
+    notify = derivedAddressErrorChanged
 
   proc setItems*(self: View, items: seq[Item]) =
     self.model.setItems(items)
@@ -184,23 +219,29 @@ QtObject:
   proc getAccountAssetsByAddress*(self: View): QVariant {.slot.} =
     return self.model.getAccountAssetsByAddress(self.tmpAddress)
 
-  proc getDerivedAddressList*(self: View, password: string, derivedFrom: string, path: string, pageSize: int, pageNumber: int): string {.slot.} =
+  proc setDerivedAddresses*(self: View, derivedAddresses: seq[wallet_account_service.DerivedAddressDto], error: string) =
     var items: seq[DerivedAddressItem] = @[]
-    let (result, error) = self.delegate.getDerivedAddressList(password, derivedfrom, path, pageSize, pageNumber)
-    for item in result:
+    for item in derivedAddresses:
       items.add(initDerivedAddressItem(item.address, item.path, item.hasActivity, item.alreadyCreated))
     self.derivedAddresses.setItems(items)
+    self.setDerivedAddressesError(error)
+    self.setDerivedAddressesLoading(false)
     self.derivedAddressesChanged()
-    return error
 
-  proc getDerivedAddressListForMnemonic*(self: View, mnemonic: string, path: string, pageSize: int, pageNumber: int): string {.slot.} =
-    var items: seq[DerivedAddressItem] = @[]
-    let (result, error) = self.delegate.getDerivedAddressListForMnemonic(mnemonic, path, pageSize, pageNumber)
-    for item in result:
-      items.add(initDerivedAddressItem(item.address, item.path, item.hasActivity, item.alreadyCreated))
-    self.derivedAddresses.setItems(items)
-    self.derivedAddressesChanged()
-    return error
+  proc getDerivedAddressList*(self: View, password: string, derivedFrom: string, path: string, pageSize: int, pageNumber: int) {.slot.} =
+    self.setDerivedAddressesLoading(true)
+    self.setDerivedAddressesError("")
+    self.delegate.getDerivedAddressList(password, derivedfrom, path, pageSize, pageNumber)
+
+  proc getDerivedAddressListForMnemonic*(self: View, mnemonic: string, path: string, pageSize: int, pageNumber: int) {.slot.} =
+    self.setDerivedAddressesLoading(true)
+    self.setDerivedAddressesError("")
+    self.delegate.getDerivedAddressListForMnemonic(mnemonic, path, pageSize, pageNumber)
+
+  proc getDerivedAddressForPrivateKey*(self: View, privateKey: string) {.slot.} =
+    self.setDerivedAddressesLoading(true)
+    self.setDerivedAddressesError("")
+    self.delegate.getDerivedAddressForPrivateKey(privateKey)
 
   proc resetDerivedAddressModel*(self: View) {.slot.} =
     var items: seq[DerivedAddressItem] = @[]

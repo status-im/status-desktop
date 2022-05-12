@@ -91,6 +91,10 @@ method load*(self: Module) =
   self.events.on(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED) do(e:Args):
     self.refreshWalletAccounts()
 
+  self.events.on(SIGNAL_WALLET_ACCOUNT_DERIVED_ADDRESS_READY) do(e:Args):
+    var args = DerivedAddressesArgs(e)
+    self.view.setDerivedAddresses(args.derivedAddresses, args.error)
+
   self.controller.init()
   self.view.load()
 
@@ -117,11 +121,15 @@ method addWatchOnlyAccount*(self: Module, address: string, accountName: string, 
 method deleteAccount*(self: Module, address: string) =
   self.controller.deleteAccount(address)
 
-method getDerivedAddressList*(self: Module, password: string, derivedFrom: string, path: string, pageSize: int, pageNumber: int): (seq[DerivedAddressDto], string) =
-  return self.controller.getDerivedAddressList(password, derivedFrom, path, pageSize, pageNumber)
+method getDerivedAddressList*(self: Module, password: string, derivedFrom: string, path: string, pageSize: int, pageNumber: int) =
+  self.controller.getDerivedAddressList(password, derivedFrom, path, pageSize, pageNumber)
 
-method getDerivedAddressListForMnemonic*(self: Module, mnemonic: string, path: string, pageSize: int, pageNumber: int): (seq[wallet_account_service.DerivedAddressDto], string) =
-  return self.controller.getDerivedAddressListForMnemonic(mnemonic, path, pageSize, pageNumber)
+method getDerivedAddressListForMnemonic*(self: Module, mnemonic: string, path: string, pageSize: int, pageNumber: int) =
+  self.controller.getDerivedAddressListForMnemonic(mnemonic, path, pageSize, pageNumber)
+
+method getDerivedAddressForPrivateKey*(self: Module, privateKey: string) =
+  self.controller.getDerivedAddressForPrivateKey(privateKey)
+
 
 
 

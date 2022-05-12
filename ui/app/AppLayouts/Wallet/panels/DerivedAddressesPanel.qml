@@ -15,12 +15,29 @@ Item {
     id: derivedAddresses
 
     property string pathSubFix: ""
+    property bool isLoading: RootStore.derivedAddressesLoading
+    property bool pathError: Utils.isInvalidPath(RootStore.derivedAddressesError)
+
     function reset() {
         RootStore.resetDerivedAddressModel()
         _internal.nextSelectableAddressIndex = 0
         selectedDerivedAddress.pathSubFix = 0
         selectedDerivedAddress.title = "---"
         selectedDerivedAddress.subTitle = qsTr("No activity")
+    }
+
+    onIsLoadingChanged:  {
+        if(isLoading) {
+            selectedDerivedAddress.title =  qsTr("Pending")
+            selectedDerivedAddress.subTitle = ""
+        }
+    }
+
+    onPathErrorChanged: {
+        if(pathError) {
+            selectedDerivedAddress.title = qsTr("Invalid path")
+            selectedDerivedAddress.subTitle =  ""
+        }
     }
 
     QtObject {
@@ -90,9 +107,13 @@ Item {
                     height: 24
                     icon: "chevron-down"
                     color: Theme.palette.baseColor1
+                    visible: RootStore.derivedAddressesList.count > 1
                 }
             ]
-            onClicked: derivedAddressPopup.popup(derivedAddresses.x - layout.width - Style.current.bigPadding , derivedAddresses.y + layout.height + 8)
+            onClicked: {
+                if(RootStore.derivedAddressesList.count  > 0 && RootStore.derivedAddressesList.count !== 1)
+                    derivedAddressPopup.popup(derivedAddresses.x - layout.width - Style.current.bigPadding , derivedAddresses.y + layout.height + 8)
+            }
             enabled: RootStore.derivedAddressesList.count > 0
             Component.onCompleted: derivedAddresses.pathSubFix = Qt.binding(function() { return pathSubFix})
         }
@@ -118,17 +139,32 @@ Item {
                                 delegate: StatusListItem {
                                     id: element
                                     property int actualIndex: index + (stackLayout.currentIndex* _internal.pageSize)
-                                    property bool hasActivity: RootStore.getDerivedAddressHasActivityData(actualIndex)
+                                    property bool hasActivity: {
+                                        if(actualIndex >= 0 && actualIndex < RootStore.derivedAddressesList.count) {
+                                            return RootStore.getDerivedAddressHasActivityData(actualIndex)
+                                        }
+                                        return false
+                                    }
                                     implicitWidth: derivedAddressPopup.width
                                     statusListItemTitle.wrapMode: Text.NoWrap
                                     statusListItemTitle.width: _internal.maxAddressWidth
                                     statusListItemTitle.elide: Qt.ElideMiddle
                                     statusListItemTitle.anchors.left: undefined
                                     statusListItemTitle.anchors.right: undefined
-                                    title: RootStore.getDerivedAddressData(actualIndex)
+                                    title: {
+                                        if(actualIndex >= 0 && actualIndex < RootStore.derivedAddressesList.count) {
+                                            return RootStore.getDerivedAddressData(actualIndex)
+                                        }
+                                        return ""
+                                    }
                                     subTitle: element.hasActivity ? qsTr("Has Activity"): qsTr("No Activity")
                                     statusListItemSubTitle.color: element.hasActivity ?  Theme.palette.primaryColor1 : Theme.palette.baseColor1
-                                    enabled: !RootStore.getDerivedAddressAlreadyCreatedData(actualIndex)
+                                    enabled: {
+                                        if(actualIndex >= 0 && actualIndex < RootStore.derivedAddressesList.count) {
+                                            return !RootStore.getDerivedAddressAlreadyCreatedData(actualIndex)
+                                        }
+                                        return true
+                                    }
                                     components: [
                                         StatusBaseText {
                                             text: element.actualIndex
@@ -150,6 +186,15 @@ Item {
                                         selectedDerivedAddress.pathSubFix = actualIndex
                                         selectedDerivedAddress.hasActivity = element.hasActivity
                                         derivedAddressPopup.close()
+                                    }                                    
+                                    Component.onCompleted: {
+                                        if(RootStore.derivedAddressesList.count === 1 && index === 0) {
+                                            selectedDerivedAddress.title = title
+                                            selectedDerivedAddress.subTitle = subTitle
+                                            selectedDerivedAddress.pathSubFix = actualIndex
+                                            selectedDerivedAddress.hasActivity = element.hasActivity
+                                            selectedDerivedAddress.enabled = !RootStore.getDerivedAddressAlreadyCreatedData(index)
+                                        }
                                     }
                                 }
                             }

@@ -1,4 +1,4 @@
-import Tables, json, sequtils, sugar, chronicles, strformat, stint, httpclient, net, strutils
+import Tables, NimQml, json, sequtils, sugar, chronicles, strformat, stint, httpclient, net, strutils
 import web3/[ethtypes, conversions]
 
 import ../settings/service as settings_service
@@ -11,6 +11,7 @@ import dto
 import derived_address
 
 import ../../../app/core/eventemitter
+import ../../../app/core/tasks/[qt, threadpool]
 import ../../../backend/accounts as status_go_accounts
 import ../../../backend/backend as backend
 import ../../../backend/eth as status_go_eth
@@ -22,12 +23,15 @@ export derived_address
 logScope:
   topics = "wallet-account-service"
 
+include async_tasks
+
 const SIGNAL_WALLET_ACCOUNT_SAVED* = "walletAccount/accountSaved"
 const SIGNAL_WALLET_ACCOUNT_DELETED* = "walletAccount/accountDeleted"
 const SIGNAL_WALLET_ACCOUNT_CURRENCY_UPDATED* = "walletAccount/currencyUpdated"
 const SIGNAL_WALLET_ACCOUNT_TOKEN_VISIBILITY_UPDATED* = "walletAccount/tokenVisibilityUpdated"
 const SIGNAL_WALLET_ACCOUNT_UPDATED* = "walletAccount/walletAccountUpdated"
 const SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED* = "walletAccount/networkEnabledUpdated"
+const SIGNAL_WALLET_ACCOUNT_DERIVED_ADDRESS_READY* = "walletAccount/derivedAddressesReady"
 
 var
   balanceCache {.threadvar.}: Table[string, float64]
@@ -80,298 +84,332 @@ type NetwordkEnabledToggled = ref object of Args
 type WalletAccountUpdated = ref object of Args
   account: WalletAccountDto
 
-type
-  Service* = ref object of RootObj
-    events: EventEmitter
-    settingsService: settings_service.Service
-    accountsService: accounts_service.Service
-    tokenService: token_service.Service
-    networkService: network_service.Service
-    accounts: OrderedTable[string, WalletAccountDto]
+type DerivedAddressesArgs* = ref object of Args
+  derivedAddresses*: seq[DerivedAddressDto]
+  error*: string
 
-    priceCache: TimedCache
+QtObject:
+  type Service* = ref object of QObject
+      events: EventEmitter
+      threadpool: ThreadPool
+      settingsService: settings_service.Service
+      accountsService: accounts_service.Service
+      tokenService: token_service.Service
+      networkService: network_service.Service
+      accounts: OrderedTable[string, WalletAccountDto]
+
+      priceCache: TimedCache
 
 
-proc delete*(self: Service) =
-  discard
+  proc delete*(self: Service) =
+    self.QObject.delete
 
-proc newService*(
-  events: EventEmitter, 
-  settingsService: settings_service.Service,
-  accountsService: accounts_service.Service,
-  tokenService: token_service.Service,
-  networkService: network_service.Service,
-): Service =
-  result = Service()
-  result.events = events
-  result.settingsService = settingsService
-  result.accountsService = accountsService
-  result.tokenService = tokenService
-  result.networkService = networkService
-  result.accounts = initOrderedTable[string, WalletAccountDto]()
-  result.priceCache = newTimedCache()
+  proc newService*(
+    events: EventEmitter,
+    threadpool: ThreadPool,
+    settingsService: settings_service.Service,
+    accountsService: accounts_service.Service,
+    tokenService: token_service.Service,
+    networkService: network_service.Service,
+  ): Service =
+    new(result, delete)
+    result.QObject.setup
+    result.events = events
+    result.threadpool = threadpool
+    result.settingsService = settingsService
+    result.accountsService = accountsService
+    result.tokenService = tokenService
+    result.networkService = networkService
+    result.accounts = initOrderedTable[string, WalletAccountDto]()
+    result.priceCache = newTimedCache()
 
-proc buildTokens(
-  self: Service,
-  account: WalletAccountDto,
-  prices: Table[string, float],
-  balances: JsonNode
-): seq[WalletTokenDto] =
-  for network in self.networkService.getEnabledNetworks():
-    let balance = fetchNativeChainBalance(network, account.address)
-    result.add(WalletTokenDto(
-      name: network.chainName,
-      address: "0x0000000000000000000000000000000000000000",
-      symbol: network.nativeCurrencySymbol,
-      decimals: network.nativeCurrencyDecimals,
-      hasIcon: true,
-      color: "blue",
-      isCustom: false,
-      balance: balance,
-      currencyBalance: balance * prices[network.nativeCurrencySymbol]
-    ))
-
-  for token in self.tokenService.getVisibleTokens():
-    let balance = parsefloat(hex2Balance(balances{token.addressAsString()}.getStr, token.decimals))
-    result.add(
-      WalletTokenDto(
-        name: token.name,
-        address: $token.address,
-        symbol: token.symbol,
-        decimals: token.decimals,
-        hasIcon: token.hasIcon,
-        color: token.color,
-        isCustom: token.isCustom,
+  proc buildTokens(
+    self: Service,
+    account: WalletAccountDto,
+    prices: Table[string, float],
+    balances: JsonNode
+  ): seq[WalletTokenDto] =
+    for network in self.networkService.getEnabledNetworks():
+      let balance = fetchNativeChainBalance(network, account.address)
+      result.add(WalletTokenDto(
+        name: network.chainName,
+        address: "0x0000000000000000000000000000000000000000",
+        symbol: network.nativeCurrencySymbol,
+        decimals: network.nativeCurrencyDecimals,
+        hasIcon: true,
+        color: "blue",
+        isCustom: false,
         balance: balance,
-        currencyBalance: balance * prices[token.symbol]
+        currencyBalance: balance * prices[network.nativeCurrencySymbol]
+      ))
+
+    for token in self.tokenService.getVisibleTokens():
+      let balance = parsefloat(hex2Balance(balances{token.addressAsString()}.getStr, token.decimals))
+      result.add(
+        WalletTokenDto(
+          name: token.name,
+          address: $token.address,
+          symbol: token.symbol,
+          decimals: token.decimals,
+          hasIcon: token.hasIcon,
+          color: token.color,
+          isCustom: token.isCustom,
+          balance: balance,
+          currencyBalance: balance * prices[token.symbol]
+        )
       )
-    )
 
-proc getPrice*(self: Service, crypto: string, fiat: string): float64 =
-  let cacheKey = crypto & fiat
-  if self.priceCache.isCached(cacheKey):
-    return parseFloat(self.priceCache.get(cacheKey))
-  var prices = initTable[string, float]()
+  proc getPrice*(self: Service, crypto: string, fiat: string): float64 =
+    let cacheKey = crypto & fiat
+    if self.priceCache.isCached(cacheKey):
+      return parseFloat(self.priceCache.get(cacheKey))
+    var prices = initTable[string, float]()
 
-  try:
-    let response = backend.fetchPrices(@[crypto], fiat)
-    for (symbol, value) in response.result.pairs:
-      prices[symbol] = value.getFloat
-      self.priceCache.set(cacheKey, $value.getFloat)
+    try:
+      let response = backend.fetchPrices(@[crypto], fiat)
+      for (symbol, value) in response.result.pairs:
+        prices[symbol] = value.getFloat
+        self.priceCache.set(cacheKey, $value.getFloat)
 
-    return prices[crypto]
-  except Exception as e:
-    let errDesription = e.msg
-    error "error: ", errDesription
-    return 0.0
-  
+      return prices[crypto]
+    except Exception as e:
+      let errDesription = e.msg
+      error "error: ", errDesription
+      return 0.0
 
-proc fetchPrices(self: Service): Table[string, float] =
-  let currency = self.settingsService.getCurrency()
 
-  var symbols: seq[string] = @[]
+  proc fetchPrices(self: Service): Table[string, float] =
+    let currency = self.settingsService.getCurrency()
 
-  for network in self.networkService.getEnabledNetworks():
-    symbols.add(network.nativeCurrencySymbol)
+    var symbols: seq[string] = @[]
 
-  for token in self.tokenService.getVisibleTokens():
-    symbols.add(token.symbol)
+    for network in self.networkService.getEnabledNetworks():
+      symbols.add(network.nativeCurrencySymbol)
 
-  var prices = initTable[string, float]()
-  try:
-    let response = backend.fetchPrices(symbols, currency)
-    for (symbol, value) in response.result.pairs:
-      prices[symbol] = value.getFloat
+    for token in self.tokenService.getVisibleTokens():
+      symbols.add(token.symbol)
 
-  except Exception as e:
-    let errDesription = e.msg
-    error "error: ", errDesription
-  
-  return prices
+    var prices = initTable[string, float]()
+    try:
+      let response = backend.fetchPrices(symbols, currency)
+      for (symbol, value) in response.result.pairs:
+        prices[symbol] = value.getFloat
 
-proc fetchBalances(self: Service, accounts: seq[string]): JsonNode =
-  let visibleTokens = self.tokenService.getVisibleTokens()
-  let tokens = visibleTokens.map(t => t.addressAsString())
-  let chainIds = visibleTokens.map(t => t.chainId)
-  return backend.getTokensBalancesForChainIDs(chainIds, accounts, tokens).result
+    except Exception as e:
+      let errDesription = e.msg
+      error "error: ", errDesription
 
-proc refreshBalances(self: Service) =
-  let prices = self.fetchPrices()
-  let accounts = toSeq(self.accounts.keys)
-  let balances = self.fetchBalances(accounts)
+    return prices
 
-  for account in toSeq(self.accounts.values):
-    account.tokens = self.buildTokens(account, prices, balances{account.address})
+  proc fetchBalances(self: Service, accounts: seq[string]): JsonNode =
+    let visibleTokens = self.tokenService.getVisibleTokens()
+    let tokens = visibleTokens.map(t => t.addressAsString())
+    let chainIds = visibleTokens.map(t => t.chainId)
+    return backend.getTokensBalancesForChainIDs(chainIds, accounts, tokens).result
 
-proc init*(self: Service) =
-  try:
+  proc refreshBalances(self: Service) =
+    let prices = self.fetchPrices()
+    let accounts = toSeq(self.accounts.keys)
+    let balances = self.fetchBalances(accounts)
+
+    for account in toSeq(self.accounts.values):
+      account.tokens = self.buildTokens(account, prices, balances{account.address})
+
+  proc init*(self: Service) =
+    try:
+      let accounts = fetchAccounts()
+
+      for account in accounts:
+        self.accounts[account.address] = account
+
+      self.refreshBalances()
+    except Exception as e:
+      let errDesription = e.msg
+      error "error: ", errDesription
+      return
+
+  proc getAccountByAddress*(self: Service, address: string): WalletAccountDto =
+    if not self.accounts.hasKey(address):
+      return
+
+    return self.accounts[address]
+
+  proc getWalletAccounts*(self: Service): seq[WalletAccountDto] =
+    return toSeq(self.accounts.values)
+
+  proc getWalletAccount*(self: Service, accountIndex: int): WalletAccountDto =
+    if(accountIndex < 0 or accountIndex >= self.getWalletAccounts().len):
+      return
+    return self.getWalletAccounts()[accountIndex]
+
+  proc getIndex*(self: Service, address: string): int =
+    let accounts = self.getWalletAccounts()
+    for i in 0..accounts.len:
+      if(accounts[i].address == address):
+        return i
+
+  proc getCurrencyBalance*(self: Service): float64 =
+    return self.getWalletAccounts().map(a => a.getCurrencyBalance()).foldl(a + b, 0.0)
+
+  proc addNewAccountToLocalStore(self: Service) =
     let accounts = fetchAccounts()
+    let prices = self.fetchPrices()
 
+    var newAccount = accounts[0]
     for account in accounts:
-      self.accounts[account.address] = account
+      if not self.accounts.haskey(account.address):
+        newAccount = account
+        break
 
+    let balances = self.fetchBalances(@[newAccount.address])
+    newAccount.tokens = self.buildTokens(newAccount, prices, balances{newAccount.address})
+    self.accounts[newAccount.address] = newAccount
+    self.events.emit(SIGNAL_WALLET_ACCOUNT_SAVED, AccountSaved(account: newAccount))
+
+  proc generateNewAccount*(self: Service, password: string, accountName: string, color: string, emoji: string, path: string, derivedFrom: string): string =
+    try:
+      discard backend.generateAccountWithDerivedPath(
+        hashPassword(password),
+        accountName,
+        color,
+        emoji,
+        path,
+        derivedFrom)
+    except Exception as e:
+      return fmt"Error generating new account: {e.msg}"
+
+    self.addNewAccountToLocalStore()
+
+  proc addAccountsFromPrivateKey*(self: Service, privateKey: string, password: string, accountName: string, color: string, emoji: string): string =
+    try:
+      discard backend.addAccountWithPrivateKey(
+        privateKey,
+        hashPassword(password),
+        accountName,
+        color,
+        emoji)
+    except Exception as e:
+      return fmt"Error adding account with private key: {e.msg}"
+
+    self.addNewAccountToLocalStore()
+
+  proc addAccountsFromSeed*(self: Service, mnemonic: string, password: string, accountName: string, color: string, emoji: string, path: string): string =
+    try:
+      discard backend.addAccountWithMnemonicAndPath(
+        mnemonic,
+        hashPassword(password),
+        accountName,
+        color,
+        emoji,
+        path
+      )
+    except Exception as e:
+      return fmt"Error adding account with mnemonic: {e.msg}"
+
+    self.addNewAccountToLocalStore()
+
+  proc addWatchOnlyAccount*(self: Service, address: string, accountName: string, color: string, emoji: string): string =
+    try:
+      discard backend.addAccountWatch(
+        address,
+        accountName,
+        color,
+        emoji
+      )
+    except Exception as e:
+      return fmt"Error adding account with mnemonic: {e.msg}"
+
+    self.addNewAccountToLocalStore()
+
+  proc deleteAccount*(self: Service, address: string) =
+    discard status_go_accounts.deleteAccount(address)
+    let accountDeleted = self.accounts[address]
+    self.accounts.del(address)
+
+    self.events.emit(SIGNAL_WALLET_ACCOUNT_DELETED, AccountDeleted(account: accountDeleted))
+
+  proc updateCurrency*(self: Service, newCurrency: string) =
+    discard self.settingsService.saveCurrency(newCurrency)
     self.refreshBalances()
-  except Exception as e:
-    let errDesription = e.msg
-    error "error: ", errDesription
-    return
+    self.events.emit(SIGNAL_WALLET_ACCOUNT_CURRENCY_UPDATED, CurrencyUpdated())
 
-proc getAccountByAddress*(self: Service, address: string): WalletAccountDto =
-  if not self.accounts.hasKey(address):
-    return
+  proc toggleTokenVisible*(self: Service, chainId: int, address: string) =
+    self.tokenService.toggleVisible(chainId, address)
+    self.refreshBalances()
+    self.events.emit(SIGNAL_WALLET_ACCOUNT_TOKEN_VISIBILITY_UPDATED, TokenVisibilityToggled())
 
-  return self.accounts[address]
+  proc toggleNetworkEnabled*(self: Service, chainId: int) =
+    self.networkService.toggleNetwork(chainId)
+    self.tokenService.init()
+    self.refreshBalances()
+    self.events.emit(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED, NetwordkEnabledToggled())
 
-proc getWalletAccounts*(self: Service): seq[WalletAccountDto] =
-  return toSeq(self.accounts.values)
+  method toggleTestNetworksEnabled*(self: Service) =
+    discard self.settings_service.toggleTestNetworksEnabled()
+    self.tokenService.init()
+    self.refreshBalances()
+    self.events.emit(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED, NetwordkEnabledToggled())
 
-proc getWalletAccount*(self: Service, accountIndex: int): WalletAccountDto =
-  if(accountIndex < 0 or accountIndex >= self.getWalletAccounts().len):
-    return
-  return self.getWalletAccounts()[accountIndex]
-
-proc getIndex*(self: Service, address: string): int =
-  let accounts = self.getWalletAccounts()
-  for i in 0..accounts.len:
-    if(accounts[i].address == address):
-      return i
-  
-proc getCurrencyBalance*(self: Service): float64 =
-  return self.getWalletAccounts().map(a => a.getCurrencyBalance()).foldl(a + b, 0.0)
-
-proc addNewAccountToLocalStore(self: Service) =
-  let accounts = fetchAccounts()
-  let prices = self.fetchPrices()
-
-  var newAccount = accounts[0]
-  for account in accounts:
-    if not self.accounts.haskey(account.address):
-      newAccount = account
-      break
-
-  let balances = self.fetchBalances(@[newAccount.address])
-  newAccount.tokens = self.buildTokens(newAccount, prices, balances{newAccount.address})
-  self.accounts[newAccount.address] = newAccount
-  self.events.emit(SIGNAL_WALLET_ACCOUNT_SAVED, AccountSaved(account: newAccount))
-
-proc generateNewAccount*(self: Service, password: string, accountName: string, color: string, emoji: string, path: string, derivedFrom: string): string =
-  try:
-    discard backend.generateAccountWithDerivedPath(
-      hashPassword(password),
+  proc updateWalletAccount*(self: Service, address: string, accountName: string, color: string, emoji: string) =
+    let account = self.accounts[address]
+    status_go_accounts.updateAccount(
       accountName,
-      color,
-      emoji,
-      path,
-      derivedFrom)
-  except Exception as e:
-    return fmt"Error generating new account: {e.msg}"
-
-  self.addNewAccountToLocalStore()
-
-proc addAccountsFromPrivateKey*(self: Service, privateKey: string, password: string, accountName: string, color: string, emoji: string): string =
-  try:
-    discard backend.addAccountWithPrivateKey(
-      privateKey,
-      hashPassword(password),
-      accountName,
-      color,
-      emoji)
-  except Exception as e:
-    return fmt"Error adding account with private key: {e.msg}"
-
-  self.addNewAccountToLocalStore()
-
-proc addAccountsFromSeed*(self: Service, mnemonic: string, password: string, accountName: string, color: string, emoji: string, path: string): string =
-  try:
-    discard backend.addAccountWithMnemonicAndPath(
-      mnemonic,
-      hashPassword(password),
-      accountName,
-      color,
-      emoji,
-      path
-    )
-  except Exception as e:
-    return fmt"Error adding account with mnemonic: {e.msg}"
-
-  self.addNewAccountToLocalStore()
-
-proc addWatchOnlyAccount*(self: Service, address: string, accountName: string, color: string, emoji: string): string =
-  try:
-    discard backend.addAccountWatch(
-      address,
-      accountName,
+      account.address,
+      account.publicKey,
+      account.walletType,
       color,
       emoji
     )
-  except Exception as e:
-    return fmt"Error adding account with mnemonic: {e.msg}"
+    account.name = accountName
+    account.color = color
+    account.emoji = emoji
 
-  self.addNewAccountToLocalStore()
+    self.events.emit(SIGNAL_WALLET_ACCOUNT_UPDATED, WalletAccountUpdated(account: account))
 
-proc deleteAccount*(self: Service, address: string) =
-  discard status_go_accounts.deleteAccount(address)
-  let accountDeleted = self.accounts[address]
-  self.accounts.del(address)
+  proc getDerivedAddressList*(self: Service, password: string, derivedFrom: string, path: string, pageSize: int, pageNumber: int)=
+    let arg = GetDerivedAddressesTaskArg(
+      password: hashPassword(password),
+      derivedFrom: derivedFrom,
+      path: path,
+      pageSize: pageSize,
+      pageNumber: pageNumber,
+      tptr: cast[ByteAddress](getDerivedAddressesTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "setDerivedAddresses",
+    )
+    self.threadpool.start(arg)
 
-  self.events.emit(SIGNAL_WALLET_ACCOUNT_DELETED, AccountDeleted(account: accountDeleted))
+  proc getDerivedAddressListForMnemonic*(self: Service, mnemonic: string, path: string, pageSize: int, pageNumber: int) =
+    let arg = GetDerivedAddressesForMnemonicTaskArg(
+      mnemonic: mnemonic,
+      path: path,
+      pageSize: pageSize,
+      pageNumber: pageNumber,
+      tptr: cast[ByteAddress](getDerivedAddressesForMnemonicTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "setDerivedAddresses",
+    )
+    self.threadpool.start(arg)
 
-proc updateCurrency*(self: Service, newCurrency: string) =
-  discard self.settingsService.saveCurrency(newCurrency)
-  self.refreshBalances()
-  self.events.emit(SIGNAL_WALLET_ACCOUNT_CURRENCY_UPDATED, CurrencyUpdated())
+  proc getDerivedAddressForPrivateKey*(self: Service, privateKey: string) =
+    let arg = GetDerivedAddressForPrivateKeyTaskArg(
+      privateKey: privateKey,
+      tptr: cast[ByteAddress](getDerivedAddressForPrivateKeyTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "setDerivedAddresses",
+    )
+    self.threadpool.start(arg)
 
-proc toggleTokenVisible*(self: Service, chainId: int, address: string) =
-  self.tokenService.toggleVisible(chainId, address)
-  self.refreshBalances()
-  self.events.emit(SIGNAL_WALLET_ACCOUNT_TOKEN_VISIBILITY_UPDATED, TokenVisibilityToggled())
+  proc setDerivedAddresses*(self: Service, derivedAddressesJson: string) {.slot.} =
+    let response = parseJson(derivedAddressesJson)
+    var derivedAddress: seq[DerivedAddressDto] = @[]
+    derivedAddress = response["derivedAddresses"].getElems().map(x => x.toDerivedAddressDto())
+    let error = response["error"].getStr()
 
-proc toggleNetworkEnabled*(self: Service, chainId: int) = 
-  self.networkService.toggleNetwork(chainId)
-  self.tokenService.init()
-  self.refreshBalances()
-  self.events.emit(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED, NetwordkEnabledToggled())
-
-method toggleTestNetworksEnabled*(self: Service) = 
-  discard self.settings_service.toggleTestNetworksEnabled()
-  self.tokenService.init()
-  self.refreshBalances()
-  self.events.emit(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED, NetwordkEnabledToggled())
-
-proc updateWalletAccount*(self: Service, address: string, accountName: string, color: string, emoji: string) =
-  let account = self.accounts[address]
-  status_go_accounts.updateAccount(
-    accountName,
-    account.address,
-    account.publicKey,
-    account.walletType,
-    color,
-    emoji
-  )
-  account.name = accountName
-  account.color = color
-  account.emoji = emoji
-
-  self.events.emit(SIGNAL_WALLET_ACCOUNT_UPDATED, WalletAccountUpdated(account: account))
-
-proc getDerivedAddressList*(self: Service, password: string, derivedFrom: string, path: string, pageSize: int, pageNumber: int): (seq[DerivedAddressDto], string) =
-  var derivedAddress: seq[DerivedAddressDto] = @[]
-  var error: string = ""
-  try:
-    let response = status_go_accounts.getDerivedAddressList(hashPassword(password), derivedFrom, path, pageSize, pageNumber)
-    derivedAddress = response.result.getElems().map(x => x.toDerivedAddressDto())
-  except Exception as e:
-    error = fmt"Error getting derived address list: {e.msg}"
-  return (derivedAddress, error)
-
-proc getDerivedAddressListForMnemonic*(self: Service, mnemonic: string, path: string, pageSize: int, pageNumber: int): (seq[DerivedAddressDto], string) =
-  var derivedAddress: seq[DerivedAddressDto] = @[]
-  var error: string = ""
-  try:
-    let response = status_go_accounts.getDerivedAddressListForMnemonic(mnemonic, path, pageSize, pageNumber)
-    derivedAddress = response.result.getElems().map(x => x.toDerivedAddressDto())
-  except Exception as e:
-    error = fmt"Error getting derived address list for mnemonic: {e.msg}"
-  return (derivedAddress, error)
+    # emit event
+    self.events.emit(SIGNAL_WALLET_ACCOUNT_DERIVED_ADDRESS_READY, DerivedAddressesArgs(
+      derivedAddresses: derivedAddress,
+      error: error
+    ))
 
 

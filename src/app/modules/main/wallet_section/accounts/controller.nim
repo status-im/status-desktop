@@ -38,10 +38,13 @@ proc addWatchOnlyAccount*(self: Controller, address: string, accountName: string
 proc deleteAccount*(self: Controller, address: string) =
   self.walletAccountService.deleteAccount(address)
 
-method getDerivedAddressList*(self: Controller, password: string, derivedFrom: string, path: string, pageSize: int, pageNumber: int): (seq[wallet_account_service.DerivedAddressDto], string) =
-  return self.walletAccountService.getDerivedAddressList(password, derivedFrom, path, pageSize, pageNumber)
+method getDerivedAddressList*(self: Controller, password: string, derivedFrom: string, path: string, pageSize: int, pageNumber: int)=
+  self.walletAccountService.getDerivedAddressList(password, derivedFrom, path, pageSize, pageNumber)
 
-method getDerivedAddressListForMnemonic*(self: Controller, mnemonic: string, path: string, pageSize: int, pageNumber: int): (seq[wallet_account_service.DerivedAddressDto], string) =
-  return self.walletAccountService.getDerivedAddressListForMnemonic(mnemonic, path, pageSize, pageNumber)
+method getDerivedAddressListForMnemonic*(self: Controller, mnemonic: string, path: string, pageSize: int, pageNumber: int) =
+  self.walletAccountService.getDerivedAddressListForMnemonic(mnemonic, path, pageSize, pageNumber)
+
+method getDerivedAddressForPrivateKey*(self: Controller, privateKey: string) =
+  self.walletAccountService.getDerivedAddressForPrivateKey(privateKey)
 
 
