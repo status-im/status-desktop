@@ -2,6 +2,7 @@ import QtQuick 2.12
 import QtQuick.Controls 2.3
 import QtQuick.Dialogs 1.3
 import utils 1.0
+import shared.panels 1.0
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -48,15 +49,10 @@ StatusModal {
             contentItem.channelDescription.input.text = popup.channelDescription
             if (popup.channelEmoji) {
                 contentItem.channelName.input.icon.emoji = popup.channelEmoji
-            } else {
-                // Assign a random emoji to channels who down't have one (from old versions)
-                contentItem.channelName.input.icon.emoji =
-                    StatusQUtils.Emoji.getRandomEmoji(StatusQUtils.Emoji.size.verySmall)
             }
             scrollView.channelColorDialog.color = popup.channelColor
         } else {
-            contentItem.channelName.input.icon.emoji =
-                StatusQUtils.Emoji.getRandomEmoji(StatusQUtils.Emoji.size.verySmall)
+            contentItem.channelName.input.icon.isLetterIdenticon = true;
         }
     }
 
@@ -67,6 +63,7 @@ StatusModal {
         target: emojiPopup
 
         onEmojiSelected: function (emojiText, atCursor) {
+            contentItem.channelName.input.icon.isLetterIdenticon = false;
             scrollView.channelName.input.icon.emoji = emojiText
         }
         onClosed: {
@@ -114,16 +111,25 @@ StatusModal {
                 input.onTextChanged: {
                     input.text = Utils.convertSpacesToDashesAndUpperToLowerCase(input.text);
                     input.cursorPosition = input.text.length
+                    if (popup.channelEmoji === "") {
+                        input.letterIconName = text;
+                    }
                 }
-                input.isIconSelectable: true
                 input.icon.color: colorDialog.color.toString()
                 input.leftPadding: 16
-                onIconClicked: {
-                    popup.emojiPopupOpened = true
-                    popup.emojiPopup.open()
-                    popup.emojiPopup.emojiSize = StatusQUtils.Emoji.size.verySmall
-                    popup.emojiPopup.x = popup.x + Style.current.padding
-                    popup.emojiPopup.y = popup.y + nameInput.height + 2*Style.current.xlPadding
+                input.rightComponent: StatusRoundButton {
+                    implicitWidth: 20
+                    implicitHeight: 20
+                    icon.width: implicitWidth
+                    icon.height: implicitHeight
+                    icon.name: "smiley"
+                    onClicked: {
+                        popup.emojiPopupOpened = true;
+                        popup.emojiPopup.open();
+                        popup.emojiPopup.emojiSize = StatusQUtils.Emoji.size.verySmall;
+                        popup.emojiPopup.x = popup.width - 2*Style.current.xlPadding;
+                        popup.emojiPopup.y = popup.y + nameInput.height + 2*Style.current.xlPadding;
+                    }
                 }
                 validationMode: StatusInput.ValidationMode.Always
                 validators: [
