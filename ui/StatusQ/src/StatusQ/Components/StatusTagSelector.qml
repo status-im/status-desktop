@@ -340,7 +340,15 @@ Item {
                 id: wrapper
                 anchors.right: parent.right
                 anchors.left: parent.left
-                height: 64
+                height: visible ? 64 : 0
+                visible: {
+                    for (let i = 0; i < namesModel.count; i++) {
+                        if (namesModel.get(i).publicId === model.publicId) {
+                            return false
+                        }
+                    }
+                    return true
+                }
                 Rectangle {
                     id: rectangle
                     anchors.fill: parent
