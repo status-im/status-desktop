@@ -1,7 +1,7 @@
 import QtQuick 2.12
 
 import utils 1.0
-//import Qt.labs.lottieqt 1.0
+// import Qt.labs.lottieqt 1.0
 
 Item {
     id: root
@@ -17,24 +17,19 @@ Item {
         }
     }
 
-    Image {
-        width: 150
-        height: 150
-        fillMode: Image.PreserveAspectFit
+    AnimatedImage {
+        id: splashLogo
         anchors.centerIn: parent
-        source: Style.svg("status-logo-circle")
+        scale: 0.5
+        source: Style.gif("status_splash")
     }
 
-//    LottieAnimation {
-//        anchors.centerIn: parent
-//        autoPlay: false
-//        loops: LottieAnimation.Infinite
-//        quality: LottieAnimation.MediumQuality
-//        source: Style.lottie("status_splash")
-//        onStatusChanged: {
-//            if (status === LottieAnimation.Ready) {
-//                start();
-//            }
-//        }
-//    }
+    // NOTE: keep it if we will decide to switch on lottie
+    // LottieAnimation {
+    //     anchors.centerIn: parent
+    //     autoPlay: true
+    //     loops: LottieAnimation.Infinite
+    //     quality: LottieAnimation.HighQuality
+    //     source: Style.lottie("status_splash")
+    // }
 }
