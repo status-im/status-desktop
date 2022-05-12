@@ -21,7 +21,7 @@ Column {
     property bool titleVisible: true
     property string introText: qsTr("Create a password to unlock Status on this device & sign transactions.")
     property string recoverText: qsTr("You will not be able to recover this password if it is lost.")
-    property string strengthenText: qsTr("Minimum 6 characters. To strengthen your password consider including:")
+    property string strengthenText: qsTr("Minimum %1 characters. To strengthen your password consider including:").arg(minPswLen)
     property bool onboarding: false
 
     readonly property int zBehind: 1
@@ -244,7 +244,7 @@ Column {
             id: strengthInditactor
             width: parent.width
             anchors.horizontalCenter: parent.horizontalCenter
-            value: newPswInput.text.length > root.minPswLen ? root.minPswLen : newPswInput.text.length
+            value: Math.min(root.minPswLen, newPswInput.text.length)
             from: 0
             to: root.minPswLen
             labelVeryWeak: qsTr("Very weak")
