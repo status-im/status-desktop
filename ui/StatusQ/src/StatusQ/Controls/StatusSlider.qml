@@ -27,25 +27,14 @@ Slider {
         implicitHeight: 4
         width: statusSlider.availableWidth
         height: implicitHeight
-
-        color: {
-            if (statusSlider.value === statusSlider.to) {
-                return Theme.palette.primaryColor1
-            }
-            return Theme.palette.primaryColor3
-        }
+        color: Theme.palette.primaryColor3
         radius: 2
+
         Rectangle {
+            width: statusSlider.visualPosition * parent.width
+            height: parent.height
+            color: Theme.palette.primaryColor1
             radius: 2
-            anchors.fill: parent
-            visible: statusSlider.value > statusSlider.from && statusSlider.value < statusSlider.to
-            gradient: Gradient {
-                GradientStop { color: Theme.palette.primaryColor1 ; position: 0 }
-                GradientStop { color: Theme.palette.primaryColor3 ; position: (((statusSlider.value - statusSlider.from) * 100) / (statusSlider.to - statusSlider.from) / 100).toFixed(2) }
-                GradientStop { color: Theme.palette.primaryColor1 ; position: (((statusSlider.value - statusSlider.from) * 100) / (statusSlider.to - statusSlider.from) / 100).toFixed(2) }
-                GradientStop { color: Theme.palette.primaryColor3 ; position: 1 }
-                orientation: Gradient.Horizontal
-            }
         }
     } // background
 
