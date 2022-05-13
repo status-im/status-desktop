@@ -51,6 +51,13 @@ Item {
         This property holds a reference to the TextEdit component.
     */
     property alias input: statusBaseInput
+
+    /*!
+        \qmlproperty string StatusInput::letterIconName
+        This property holds a reference to the StatusBaseInput's letterIconName property.
+    */
+    property alias letterIconName: statusBaseInput.letterIconName
+
     /*!
         \qmlproperty alias StatusInput::valid
         This property holds a reference to the TextEdit's valid property.

@@ -241,6 +241,11 @@ Item {
     }
 
     /*!
+        \qmlproperty string StatusBaseInput::letterIconName
+        This property holds the letter that should be displayed in the letter identicon component.
+    */
+    property string letterIconName: ""
+    /*!
         \qmlproperty Component StatusBaseInput::leftComponent
         This property sets the left component to be displayed inside the input.
     */
@@ -327,7 +332,7 @@ Item {
                     sourceComponent: {
                         if (root.leftComponent) return root.leftComponent
                         if (!root.leftIcon) return undefined
-                        if (root.icon.emoji) return identiconComponent
+                        if (root.icon.emoji || root.icon.isLetterIdenticon) return identiconComponent
                         if (root.icon.name) return isIconSelectable ? identiconComponent : iconComponent
                         return undefined
                     }
@@ -479,13 +484,15 @@ Item {
         StatusSmartIdenticon {
             id: identicon
 
-            icon.width: !root.icon.emoji ? 20 : 24
-            icon.height: !root.icon.emoji ? 20 : 24
+            icon.width: 24
+            icon.height: 24
             icon.background: root.icon.background
             icon.color: root.icon.color
             icon.letterSize: root.icon.letterSize
             icon.emoji: root.icon.emoji
             icon.name: !root.icon.emoji ? root.icon.name : ""
+            icon.isLetterIdenticon: root.icon.isLetterIdenticon
+            name: root.letterIconName
 
             MouseArea {
                 cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
