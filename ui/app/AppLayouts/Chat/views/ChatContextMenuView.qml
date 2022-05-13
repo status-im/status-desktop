@@ -46,6 +46,8 @@ StatusPopupMenu {
     signal fetchMoreMessages(int timeFrame)
     signal addRemoveGroupMember()
 
+    width: root.amIChatAdmin && (root.chatType === Constants.chatType.privateGroupChat) ? 207 : implicitWidth
+
     StatusMenuItem {
         id: viewProfileMenuItem
         text: {
@@ -72,18 +74,12 @@ StatusPopupMenu {
         }
     }
 
-    // TODO needs to be implemented
-    // This should open up the ad-hoc group chat creation view
-    // Design https://www.figma.com/file/17fc13UBFvInrLgNUKJJg5/Kuba%E2%8E%9CDesktop?node-id=417%3A243810
-    // StatusMenuItem {
-    //     text: qsTr("Add / remove from group")
-    //     icon.name: "notification"
-    //     enabled: (root.chatType === Constants.chatType.privateGroupChat &&
-    //              amIChatAdmin)
-    //     onTriggered: {
-    //         root.addRemoveGroupMember();
-    //     }
-    // }
+    StatusMenuItem {
+        text: qsTr("Add / remove from group")
+        icon.name: "add-to-dm"
+        enabled: root.amIChatAdmin && (root.chatType === Constants.chatType.privateGroupChat)
+        onTriggered: { root.addRemoveGroupMember() }
+    }
 
     StatusMenuSeparator {
         visible: viewProfileMenuItem.enabled

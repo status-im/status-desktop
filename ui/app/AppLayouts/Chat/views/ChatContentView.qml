@@ -57,95 +57,120 @@ ColumnLayout {
         if(chatContentRoot.height > 0) {
             chatInput.forceInputActiveFocus()
         }
+    }  
+
+    Keys.onEscapePressed: { topBar.toolbarComponent = statusChatInfoButton }
+
+    // Chat toolbar content option 1:
+    Component {
+        id: statusChatInfoButton
+
+        StatusChatInfoButton {
+            width: Math.min(implicitWidth, parent.width)
+            title: chatContentModule? chatContentModule.chatDetails.name : ""
+            subTitle: {
+                if(!chatContentModule)
+                    return ""
+
+                // In some moment in future this should be part of the backend logic.
+                // (once we add transaltion on the backend side)
+                switch (chatContentModule.chatDetails.type) {
+                case Constants.chatType.oneToOne:
+                    return (chatContentModule.isMyContact(chatContentModule.chatDetails.id) ?
+                                //% "Contact"
+                                qsTrId("chat-is-a-contact") :
+                                //% "Not a contact"
+                                qsTrId("chat-is-not-a-contact"))
+                case Constants.chatType.publicChat:
+                    //% "Public chat"
+                    return qsTrId("public-chat")
+                case Constants.chatType.privateGroupChat:
+                    let cnt = chatContentRoot.usersStore.usersModule.model.count
+                    //% "%1 members"
+                    if(cnt > 1) return qsTrId("-1-members").arg(cnt);
+                    //% "1 member"
+                    return qsTrId("1-member");
+                case Constants.chatType.communityChat:
+                    return Utils.linkifyAndXSS(chatContentModule.chatDetails.description).trim()
+                default:
+                    return ""
+                }
+            }
+            image.source: chatContentModule? chatContentModule.chatDetails.icon : ""
+            ringSettings.ringSpecModel: chatContentModule && chatContentModule.chatDetails.type === Constants.chatType.oneToOne ?
+                                                           Utils.getColorHashAsJson(chatContentModule.chatDetails.id) : ""
+            icon.color: chatContentModule?
+                                            chatContentModule.chatDetails.type === Constants.chatType.oneToOne ?
+                                                Utils.colorForPubkey(chatContentModule.chatDetails.id)
+                                                : chatContentModule.chatDetails.color
+                                            : ""
+            icon.emoji: chatContentModule? chatContentModule.chatDetails.emoji : ""
+            icon.emojiSize: "24x24"
+            type: chatContentModule? chatContentModule.chatDetails.type : Constants.chatType.unknown
+            pinnedMessagesCount: chatContentModule? chatContentModule.pinnedMessagesModel.count : 0
+            muted: chatContentModule? chatContentModule.chatDetails.muted : false
+
+            onPinnedMessagesCountClicked: {
+                if(!chatContentModule) {
+                    console.debug("error on open pinned messages - chat content module is not set")
+                    return
+                }
+                Global.openPopup(pinnedMessagesPopupComponent, {
+                                     store: rootStore,
+                                     messageStore: messageStore,
+                                     pinnedMessagesModel: chatContentModule.pinnedMessagesModel,
+                                     messageToPin: ""
+                                 })
+            }
+            onUnmute: {
+                if(!chatContentModule) {
+                    console.debug("error on unmute chat - chat content module is not set")
+                    return
+                }
+                chatContentModule.unmuteChat()
+            }
+
+            sensor.enabled: {
+                if(!chatContentModule)
+                    return false
+
+                return chatContentModule.chatDetails.type !== Constants.chatType.publicChat &&
+                        chatContentModule.chatDetails.type !== Constants.chatType.communityChat
+            }
+            onClicked: {
+                switch (chatContentModule.chatDetails.type) {
+                case Constants.chatType.privateGroupChat:
+                    Global.openPopup(groupInfoPopupComponent, {
+                                         chatContentModule: chatContentModule,
+                                         chatDetails: chatContentModule.chatDetails
+                                     })
+                    break;
+                case Constants.chatType.oneToOne:
+                    Global.openProfilePopup(chatContentModule.chatDetails.id)
+                    break;
+                }
+            }
+        }
+    }
+
+    // Chat toolbar content option 2:
+    Component {
+        id: contactsSelector
+        GroupChatPanel {
+            sectionModule: chatSectionModule
+            chatContentModule: chatContentRoot.chatContentModule
+            rootStore: chatContentRoot.rootStore
+            maxHeight: chatContentRoot.height
+
+            onPanelClosed: topBar.toolbarComponent = statusChatInfoButton
+        }
     }
 
     StatusChatToolBar {
         id: topBar
+        z: parent.z + 1
         Layout.fillWidth: true
-
-        chatInfoButton.title: chatContentModule? chatContentModule.chatDetails.name : ""
-        chatInfoButton.subTitle: {
-            if(!chatContentModule)
-                return ""
-
-            // In some moment in future this should be part of the backend logic.
-            // (once we add transaltion on the backend side)
-            switch (chatContentModule.chatDetails.type) {
-            case Constants.chatType.oneToOne:
-                return (chatContentModule.isMyContact(chatContentModule.chatDetails.id) ?
-                            //% "Contact"
-                            qsTrId("chat-is-a-contact") :
-                            //% "Not a contact"
-                            qsTrId("chat-is-not-a-contact"))
-            case Constants.chatType.publicChat:
-                //% "Public chat"
-                return qsTrId("public-chat")
-            case Constants.chatType.privateGroupChat:
-                let cnt = chatContentRoot.usersStore.usersModule.model.count
-                //% "%1 members"
-                if(cnt > 1) return qsTrId("-1-members").arg(cnt);
-                //% "1 member"
-                return qsTrId("1-member");
-            case Constants.chatType.communityChat:
-                return Utils.linkifyAndXSS(chatContentModule.chatDetails.description).trim()
-            default:
-                return ""
-            }
-        }
-        chatInfoButton.image.source: chatContentModule? chatContentModule.chatDetails.icon : ""
-        chatInfoButton.ringSettings.ringSpecModel: chatContentModule && chatContentModule.chatDetails.type === Constants.chatType.oneToOne ?
-                                                       Utils.getColorHashAsJson(chatContentModule.chatDetails.id) : ""
-        chatInfoButton.icon.color: chatContentModule?
-                                        chatContentModule.chatDetails.type === Constants.chatType.oneToOne ?
-                                            Utils.colorForPubkey(chatContentModule.chatDetails.id)
-                                            : chatContentModule.chatDetails.color
-                                        : ""
-        chatInfoButton.icon.emoji: chatContentModule? chatContentModule.chatDetails.emoji : ""
-        chatInfoButton.icon.emojiSize: "24x24"
-        chatInfoButton.type: chatContentModule? chatContentModule.chatDetails.type : Constants.chatType.unknown
-        chatInfoButton.pinnedMessagesCount: chatContentModule? chatContentModule.pinnedMessagesModel.count : 0
-        chatInfoButton.muted: chatContentModule? chatContentModule.chatDetails.muted : false
-
-        chatInfoButton.onPinnedMessagesCountClicked: {
-            if(!chatContentModule) {
-                console.debug("error on open pinned messages - chat content module is not set")
-                return
-            }
-            Global.openPopup(pinnedMessagesPopupComponent, {
-                                 store: rootStore,
-                                 messageStore: messageStore,
-                                 pinnedMessagesModel: chatContentModule.pinnedMessagesModel,
-                                 messageToPin: ""
-                             })
-        }
-        chatInfoButton.onUnmute: {
-            if(!chatContentModule) {
-                console.debug("error on unmute chat - chat content module is not set")
-                return
-            }
-            chatContentModule.unmuteChat()
-        }
-
-        chatInfoButton.sensor.enabled: {
-            if(!chatContentModule)
-                return false
-
-            return chatContentModule.chatDetails.type !== Constants.chatType.publicChat &&
-                    chatContentModule.chatDetails.type !== Constants.chatType.communityChat
-        }
-        chatInfoButton.onClicked: {
-            switch (chatContentModule.chatDetails.type) {
-            case Constants.chatType.privateGroupChat:
-                Global.openPopup(groupInfoPopupComponent, {
-                                     chatContentModule: chatContentModule,
-                                     chatDetails: chatContentModule.chatDetails
-                                 })
-                break;
-            case Constants.chatType.oneToOne:
-                Global.openProfilePopup(chatContentModule.chatDetails.id)
-                break;
-            }
-        }
+        toolbarComponent: statusChatInfoButton
 
         membersButton.visible: {
             if(!chatContentModule || chatContentModule.chatDetails.type === Constants.chatType.publicChat)
@@ -258,7 +283,7 @@ ColumnLayout {
                 )
             }
             onAddRemoveGroupMember: {
-                chatContentRoot.rootStore.addRemoveGroupMember();
+                topBar.toolbarComponent = contactsSelector
             }
             onFetchMoreMessages: {
                 chatContentRoot.rootStore.messageStore.requestMoreMessages();
@@ -298,7 +323,7 @@ ColumnLayout {
         Connections {
             target: mainModule
             onOnlineStatusChanged: {
-                if (connected == isConnected) return;
+                if (connected === isConnected) return;
                 isConnected = connected;
                 if(isConnected){
                     timer.setTimeout(function(){

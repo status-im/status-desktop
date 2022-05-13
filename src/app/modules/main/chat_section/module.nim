@@ -677,6 +677,9 @@ method addGroupMembers*(self: Module, chatId: string, pubKeys: string) =
 method removeMemberFromGroupChat*(self: Module, communityID: string, chatId: string, pubKey: string) =
   self.controller.removeMemberFromGroupChat(communityID, chatId, pubKey)
 
+method removeMembersFromGroupChat*(self: Module, communityID: string, chatId: string, pubKeys: string) =
+  self.controller.removeMembersFromGroupChat(communityID, chatId, self.convertPubKeysToJson(pubKeys))
+
 method renameGroupChat*(self: Module, chatId: string, newName: string) =
   self.controller.renameGroupChat(chatId, newName)
 

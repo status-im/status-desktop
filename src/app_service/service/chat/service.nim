@@ -464,6 +464,12 @@ QtObject:
     except Exception as e:
       error "error while removing member from group: ", msg = e.msg
 
+  proc removeMembersFromGroupChat*(self: Service, communityID: string, chatID: string, members: seq[string]) =
+      try:
+        for member in members:
+          self.removeMemberFromGroupChat(communityID, chatID, member)
+      except Exception as e:
+        error "error while removing members from group: ", msg = e.msg
 
   proc renameGroupChat*(self: Service, communityID: string, chatID: string, name: string) =
     try:

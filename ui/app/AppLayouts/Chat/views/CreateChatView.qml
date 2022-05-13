@@ -88,6 +88,7 @@ Page {
         color: Theme.palette.statusAppLayout.rightPanelBackgroundColor
     }
 
+    // TODO: Could it be replaced to `GroupChatPanel`?
     header: RowLayout {
         id: headerRow
         width: parent.width

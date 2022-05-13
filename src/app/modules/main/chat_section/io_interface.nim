@@ -202,6 +202,9 @@ method addGroupMembers*(self: AccessInterface, chatId: string, pubKeys: string) 
 method removeMemberFromGroupChat*(self: AccessInterface, communityID: string, chatId: string, pubKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method removeMembersFromGroupChat*(self: AccessInterface, communityID: string, chatId: string, pubKeys: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method renameGroupChat*(self: AccessInterface, chatId: string, newName: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
