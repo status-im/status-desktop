@@ -229,6 +229,7 @@ Item {
                             clip: true
                             rootStore: root.rootStore
                             contactsStore: root.contactsStore
+                            emojiPopup: root.emojiPopup
                             sendTransactionNoEnsModal: cmpSendTransactionNoEns
                             receiveTransactionModal: cmpReceiveTransaction
                             sendTransactionWithEnsModal: cmpSendTransactionWithEns
@@ -271,9 +272,6 @@ Item {
                         visible: !root.rootStore.openCreateChat
                         width: parent.width
                         height: parent.height
-                        onHeightChanged: {
-
-                        }
                         clip: true
                         rootStore: root.rootStore
                         contactsStore: root.contactsStore
