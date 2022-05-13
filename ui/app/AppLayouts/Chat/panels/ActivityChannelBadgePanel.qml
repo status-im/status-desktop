@@ -20,7 +20,7 @@ Rectangle {
     property string communityName: ""
     property string communityColor: ""
     property string communityThumbnailImage: ""
-    property int replyMessageIndex: -1
+    property string repliedMessageId: ""
     property string repliedMessageContent: ""
     property int notificationType
     property string profileImage: ""
@@ -56,7 +56,7 @@ Rectangle {
         ActivityCenter.ReplyComponent {
             width: childrenRect.width
             height: parent.height
-            replyMessageIndex: wrapper.replyMessageIndex
+            repliedMessageId: wrapper.repliedMessageId
             repliedMessageContent: wrapper.repliedMessageContent
         }
     }

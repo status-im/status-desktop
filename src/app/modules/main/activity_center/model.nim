@@ -14,6 +14,7 @@ type
     Dismissed
     Accepted
     Author
+    RepliedMessage
 
 QtObject:
   type
@@ -80,6 +81,7 @@ QtObject:
       of NotifRoles.Read: result = newQVariant(acitivityNotificationItem.read.bool)
       of NotifRoles.Dismissed: result = newQVariant(acitivityNotificationItem.dismissed.bool)
       of NotifRoles.Accepted: result = newQVariant(acitivityNotificationItem.accepted.bool)
+      of NotifRoles.RepliedMessage: result = newQVariant(acitivityNotificationItem.repliedMessageItem)
 
   proc getNotificationData(self: Model, index: int, data: string): string {.slot.} =
     if index < 0 or index >= self.activityCenterNotifications.len: return ("")
@@ -110,7 +112,8 @@ QtObject:
       NotifRoles.Timestamp.int: "timestamp",
       NotifRoles.Read.int: "read",
       NotifRoles.Dismissed.int: "dismissed",
-      NotifRoles.Accepted.int: "accepted"
+      NotifRoles.Accepted.int: "accepted",
+      NotifRoles.RepliedMessage.int: "repliedMessage"
     }.toTable
 
   proc reduceUnreadCount(self: Model, numberNotifs: int) =

@@ -43,7 +43,7 @@ Item {
 
     function reevaluateItemBadge() {
         let details = root.store.getBadgeDetails(model.sectionId, model.chatId)
-        badge.isCommunity = details.sType == "community"
+        badge.isCommunity = (details.sType === "community")
         badge.name = details.cName
         badge.channelName = details.cName
         badge.communityName = details.sName
@@ -185,6 +185,8 @@ Item {
             visible: model.notificationType !== Constants.activityCenterNotificationTypeOneToOne
             notificationType: model.notificationType
             profileImage: realChatType === Constants.chatType.oneToOne ? Global.getProfileImage(chatId) || ""  : ""
+            repliedMessageContent: model.repliedMessage.messageText
+            repliedMessageId: model.message.responseToMessageWithId
 
             onCommunityNameClicked: {
                 root.store.activityCenterModuleInst.switchTo(model.sectionId, "", "")
