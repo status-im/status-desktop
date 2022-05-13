@@ -4,9 +4,11 @@ import QtQuick.Dialogs 1.2
 import QtGraphicalEffects 1.13
 import QtQuick.Layouts 1.13
 
+import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
+import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 import StatusQ.Popups 0.1
-
 
 import utils 1.0
 import shared 1.0
@@ -35,56 +37,49 @@ Item {
     signal infoButtonClicked
     signal manageButtonClicked
 
-    StatusChatInfoToolBar {
+    StatusChatInfoButton {
         id: communityHeader
-        anchors.top: parent.top
-        anchors.horizontalCenter: parent.horizontalCenter
-
-        chatInfoButton.title: communityData.name
-        chatInfoButton.subTitle: communityData.members.count <= 1 ?
+        title: communityData.name
+        subTitle: communityData.members.count <= 1 ?
                                      //% "1 Member"
                                      qsTrId("1-member") :
                                      //% "%1 Members"
                                      qsTrId("-1-members").arg(communityData.members.count)
+        image.source: communityData.image
+        icon.color: communityData.color
+        onClicked: root.infoButtonClicked()
+        anchors.top: parent.top
+        anchors.topMargin: 5
+        anchors.left: parent.left
+        anchors.leftMargin: Style.current.halfPadding
+        anchors.right: (implicitWidth > parent.width - 50) ? adHocChatButton.left : undefined
+        anchors.rightMargin: Style.current.halfPadding
+        type: StatusChatInfoButton.Type.OneToOneChat
+    }
 
-        chatInfoButton.image.source: communityData.image
-        chatInfoButton.icon.color: communityData.color
-        menuButton.visible: communityData.amISectionAdmin && communityData.canManageUsers
-        chatInfoButton.onClicked: root.infoButtonClicked()
-
-        popupMenu: StatusPopupMenu {
-            StatusMenuItem {
-                //% "Create channel"
-                text: qsTrId("create-channel")
-                icon.name: "channel"
-                enabled: communityData.amISectionAdmin
-                onTriggered: Global.openPopup(createChannelPopup)
-            }
-
-            StatusMenuItem {
-                //% "Create category"
-                text: qsTrId("create-category")
-                icon.name: "channel-category"
-                enabled: communityData.amISectionAdmin
-                onTriggered: Global.openPopup(createCategoryPopup)
-            }
-
-           StatusMenuSeparator {}
-
-            StatusMenuItem {
-                //% "Invite people"
-                text: qsTrId("invite-people")
-                icon.name: "share-ios"
-                enabled: communityData.canManageUsers
-                onTriggered: Global.openPopup(inviteFriendsToCommunityPopup, {
-                    community: communityData,
-                    hasAddedContacts: root.hasAddedContacts,
-                    communitySectionModule: root.communitySectionModule
-                })
+    StatusIconTabButton {
+        id: adHocChatButton
+        icon.name: "edit"
+        anchors.verticalCenter: communityHeader.verticalCenter
+        anchors.right: parent.right
+        anchors.rightMargin: 14
+        checked: root.store.openCreateChat
+        highlighted: root.store.openCreateChat
+        onClicked: {
+            root.store.openCreateChat = !root.store.openCreateChat;
+            if (!root.store.openCreateChat) {
+                Global.closeCreateChatView()
+            } else {
+                Global.openCreateChatView()
             }
         }
 
+        StatusToolTip {
+            text: qsTr("Start chat")
+            visible: parent.hovered
+        }
     } // StatusChatInfoToolBar
+
     Loader {
         id: membershipRequests
 
@@ -111,7 +106,9 @@ Item {
     ScrollView {
         id: chatGroupsContainer
         anchors.top: membershipRequests.bottom
-        anchors.bottom: parent.bottom
+        anchors.topMargin: Style.current.padding
+        anchors.bottom: createChatOrCommunity.top
+        anchors.horizontalCenter: parent.horizontalCenter
 
         topPadding: Style.current.padding
 
@@ -465,6 +462,53 @@ Item {
             } // Loader
         } // Column
     } // ScrollView
+
+    Loader {
+        id: createChatOrCommunity
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: Style.current.padding
+        active: communityData.amISectionAdmin
+        sourceComponent: Component {
+            StatusBaseText {
+                color: Theme.palette.baseColor1
+                height: visible ? implicitHeight : 0
+                text: qsTr("Create channel or category")
+                font.underline: true
+                font.pixelSize: 13
+                textFormat: Text.RichText
+
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: {
+                        if (createChatOrCatMenu.opened) {
+                            createChatOrCatMenu.close()
+                            return
+                        }
+                        createChatOrCatMenu.open()
+                        createChatOrCatMenu.y = - createChatOrCatMenu.height - 5
+                    }
+                }
+
+                StatusPopupMenu {
+                    id: createChatOrCatMenu
+                    closePolicy: Popup.CloseOnPressOutsideParent
+                    StatusMenuItem {
+                        text: qsTr("Create channel")
+                        icon.name: "channel"
+                        onTriggered: Global.openPopup(createChannelPopup)
+                    }
+
+                    StatusMenuItem {
+                        text: qsTrId("Create category")
+                        icon.name: "channel-category"
+                        onTriggered: Global.openPopup(createCategoryPopup)
+                    }
+                }
+            }
+        }
+    }
 
     Component {
         id: createChannelPopup

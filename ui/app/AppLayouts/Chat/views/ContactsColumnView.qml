@@ -120,6 +120,11 @@ Item {
             highlighted: root.store.openCreateChat
             onClicked: {
                 root.store.openCreateChat = !root.store.openCreateChat;
+                if (!root.store.openCreateChat) {
+                    Global.closeCreateChatView()
+                } else {
+                    Global.openCreateChatView()
+                }
             }
 
             StatusToolTip {

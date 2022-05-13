@@ -11,6 +11,7 @@ import AppLayouts.Node 1.0
 import AppLayouts.Browser 1.0
 import AppLayouts.Chat 1.0
 import AppLayouts.Chat.popups 1.0
+import AppLayouts.Chat.views 1.0
 import AppLayouts.Profile 1.0
 import AppLayouts.Profile.popups 1.0
 import AppLayouts.CommunitiesPortal 1.0
@@ -440,198 +441,233 @@ Item {
                 }
             }
 
-            StackLayout {
-                id: appView
+            
+            Item {
                 width: parent.width
-
                 Layout.fillHeight: true
 
-                currentIndex: {
-                    if(mainModule.activeSection.sectionType === Constants.appSection.chat) {
-                        return Constants.appViewStackIndex.chat
-                    }
-                    else if(mainModule.activeSection.sectionType === Constants.appSection.community) {
+                StackLayout {
+                    id: appView
 
-                        for(let i = this.children.length - 1; i >=0; i--)
-                        {
-                            var obj = this.children[i];
-                            if(obj && obj.sectionId && obj.sectionId == mainModule.activeSection.id)
+                    anchors.fill: parent
+
+                    currentIndex: {
+                        if(mainModule.activeSection.sectionType === Constants.appSection.chat) {
+                            return Constants.appViewStackIndex.chat
+                        }
+                        else if(mainModule.activeSection.sectionType === Constants.appSection.community) {
+
+                            for(let i = this.children.length - 1; i >=0; i--)
                             {
-                                return i
+                                var obj = this.children[i];
+                                if(obj && obj.sectionId && obj.sectionId == mainModule.activeSection.id)
+                                {
+                                    return i
+                                }
                             }
+
+                            // Should never be here, correct index must be returned from the for loop above
+                            console.error("Wrong section type: ", mainModule.activeSection.sectionType,
+                                        " or section id: ", mainModule.activeSection.id)
+                            return Constants.appViewStackIndex.community
+                        }
+                        else if(mainModule.activeSection.sectionType === Constants.appSection.communitiesPortal) {
+                            return Constants.appViewStackIndex.communitiesPortal
+                        }
+                        else if(mainModule.activeSection.sectionType === Constants.appSection.wallet) {
+                            return Constants.appViewStackIndex.wallet
+                        }
+                        else if(mainModule.activeSection.sectionType === Constants.appSection.browser) {
+                            return Constants.appViewStackIndex.browser
+                        }
+                        else if(mainModule.activeSection.sectionType === Constants.appSection.profile) {
+                            return Constants.appViewStackIndex.profile
+                        }
+                        else if(mainModule.activeSection.sectionType === Constants.appSection.node) {
+                            return Constants.appViewStackIndex.node
                         }
 
-                        // Should never be here, correct index must be returned from the for loop above
-                        console.error("Wrong section type: ", mainModule.activeSection.sectionType,
-                                      " or section id: ", mainModule.activeSection.id)
-                        return Constants.appViewStackIndex.community
-                    }
-                    else if(mainModule.activeSection.sectionType === Constants.appSection.communitiesPortal) {
-                        return Constants.appViewStackIndex.communitiesPortal
-                    }
-                    else if(mainModule.activeSection.sectionType === Constants.appSection.wallet) {
-                        return Constants.appViewStackIndex.wallet
-                    }
-                    else if(mainModule.activeSection.sectionType === Constants.appSection.browser) {
-                        return Constants.appViewStackIndex.browser
-                    }
-                    else if(mainModule.activeSection.sectionType === Constants.appSection.profile) {
-                        return Constants.appViewStackIndex.profile
-                    }
-                    else if(mainModule.activeSection.sectionType === Constants.appSection.node) {
-                        return Constants.appViewStackIndex.node
+                        // We should never end up here
+                        console.error("Unknown section type")
                     }
 
-                    // We should never end up here
-                    console.error("Unknown section type")
-                }
+                    onCurrentIndexChanged: {
+                        var obj = this.children[currentIndex];
+                        if(!obj)
+                            return
 
-                onCurrentIndexChanged: {
-                    var obj = this.children[currentIndex];
-                    if(!obj)
-                        return
+                        if (obj.onActivated && typeof obj.onActivated === "function") {
+                            this.children[currentIndex].onActivated()
+                        }
 
-                    if (obj.onActivated && typeof obj.onActivated === "function") {
-                        this.children[currentIndex].onActivated()
+                        if(obj === browserLayoutContainer && browserLayoutContainer.active == false){
+                            browserLayoutContainer.active = true;
+                        }
+
+                        if(obj === walletLayoutContainer){
+                            walletLayoutContainer.showSigningPhrasePopup();
+                        }
                     }
 
-                    if(obj === browserLayoutContainer && browserLayoutContainer.active == false){
-                        browserLayoutContainer.active = true;
+                    // NOTE:
+                    // If we ever change stack layout component order we need to updade
+                    // Constants.appViewStackIndex accordingly
+
+                    ChatLayout {
+                        id: chatLayoutContainer
+                        Layout.fillWidth: true
+                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+                        Layout.fillHeight: true
+
+                        chatView.pinnedMessagesListPopupComponent: pinnedMessagesPopupComponent
+                        chatView.emojiPopup: statusEmojiPopup
+
+                        contactsStore: appMain.rootStore.contactStore
+                        rootStore.emojiReactionsModel: appMain.rootStore.emojiReactionsModel
+
+                        chatView.onProfileButtonClicked: {
+                            Global.changeAppSectionBySectionType(Constants.appSection.profile);
+                        }
+
+                        chatView.onOpenAppSearch: {
+                            appSearch.openSearchPopup()
+                        }
+
+                        Component.onCompleted: {
+                            rootStore.chatCommunitySectionModule = mainModule.getChatSectionModule()
+                        }
                     }
 
-                    if(obj === walletLayoutContainer){
-                        walletLayoutContainer.showSigningPhrasePopup();
-                    }
-                }
-
-                // NOTE:
-                // If we ever change stack layout component order we need to updade
-                // Constants.appViewStackIndex accordingly
-
-                ChatLayout {
-                    id: chatLayoutContainer
-                    Layout.fillWidth: true
-                    Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                    Layout.fillHeight: true
-
-                    chatView.pinnedMessagesListPopupComponent: pinnedMessagesPopupComponent
-                    chatView.emojiPopup: statusEmojiPopup
-
-                    contactsStore: appMain.rootStore.contactStore
-                    rootStore.emojiReactionsModel: appMain.rootStore.emojiReactionsModel
-
-                    chatView.onProfileButtonClicked: {
-                        Global.changeAppSectionBySectionType(Constants.appSection.profile);
+                    CommunitiesPortalLayout {
+                        id: communitiesPortalLayoutContainer
+                        Layout.fillWidth: true
+                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+                        Layout.fillHeight: true
                     }
 
-                    chatView.onOpenAppSearch: {
-                        appSearch.openSearchPopup()
+                    WalletLayout {
+                        id: walletLayoutContainer
+                        Layout.fillWidth: true
+                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+                        Layout.fillHeight: true
+                        store: appMain.rootStore
+                        contactsStore: appMain.rootStore.profileSectionStore.contactsStore
+                        emojiPopup: statusEmojiPopup
+                        sendModal: sendModal
                     }
 
-                    Component.onCompleted: {
-                        rootStore.chatCommunitySectionModule = mainModule.getChatSectionModule()
+                    Component {
+                        id: browserLayoutComponent
+                        BrowserLayout {
+                            globalStore: appMain.rootStore
+                            sendTransactionModal: sendModal
+                        }
                     }
-                }
 
-                CommunitiesPortalLayout {
-                    id: communitiesPortalLayoutContainer
-                    Layout.fillWidth: true
-                    Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                    Layout.fillHeight: true
-                }
+                    Loader {
+                        id: browserLayoutContainer
+                        sourceComponent: browserLayoutComponent
+                        active: false
+                        Layout.fillWidth: true
+                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+                        Layout.fillHeight: true
+                        // Loaders do not have access to the context, so props need to be set
+                        // Adding a "_" to avoid a binding loop
+                        // Not Refactored Yet
+                        //                property var _chatsModel: chatsModel.messageView
+                        // Not Refactored Yet
+                        //                property var _walletModel: walletModel
+                        // Not Refactored Yet
+                        //                property var _utilsModel: utilsModel
+                        property var _web3Provider: BrowserStores.Web3ProviderStore.web3ProviderInst
+                    }
 
-                WalletLayout {
-                    id: walletLayoutContainer
-                    Layout.fillWidth: true
-                    Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                    Layout.fillHeight: true
-                    store: appMain.rootStore
-                    contactsStore: appMain.rootStore.profileSectionStore.contactsStore
-                    emojiPopup: statusEmojiPopup
-                    sendModal: sendModal
-                }
+                    ProfileLayout {
+                        id: profileLayoutContainer
+                        Layout.fillWidth: true
+                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+                        Layout.fillHeight: true
 
-                Component {
-                    id: browserLayoutComponent
-                    BrowserLayout {
+                        store: appMain.rootStore.profileSectionStore
                         globalStore: appMain.rootStore
-                        sendTransactionModal: sendModal
+                        systemPalette: appMain.sysPalette
+                        emojiPopup: statusEmojiPopup
                     }
 
-                }
+                    NodeLayout {
+                        id: nodeLayoutContainer
+                        Layout.fillWidth: true
+                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+                        Layout.fillHeight: true
+                    }
 
-                Loader {
-                    id: browserLayoutContainer
-                    sourceComponent: browserLayoutComponent
-                    active: false
-                    Layout.fillWidth: true
-                    Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                    Layout.fillHeight: true
-                    // Loaders do not have access to the context, so props need to be set
-                    // Adding a "_" to avoid a binding loop
-                    // Not Refactored Yet
-                    //                property var _chatsModel: chatsModel.messageView
-                    // Not Refactored Yet
-                    //                property var _walletModel: walletModel
-                    // Not Refactored Yet
-                    //                property var _utilsModel: utilsModel
-                    property var _web3Provider: BrowserStores.Web3ProviderStore.web3ProviderInst
-                }
+                    Repeater {
+                        model: mainModule.sectionsModel
 
-                ProfileLayout {
-                    id: profileLayoutContainer
-                    Layout.fillWidth: true
-                    Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                    Layout.fillHeight: true
+                        delegate: DelegateChooser {
+                            id: delegateChooser
+                            role: "sectionType"
+                            DelegateChoice {
+                                roleValue: Constants.appSection.community
+                                delegate: ChatLayout {
+                                    property string sectionId: model.id
+                                    Layout.fillWidth: true
+                                    Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+                                    Layout.fillHeight: true
 
-                    store: appMain.rootStore.profileSectionStore
-                    globalStore: appMain.rootStore
-                    systemPalette: appMain.sysPalette
-                    emojiPopup: statusEmojiPopup
-                }
+                                    chatView.pinnedMessagesListPopupComponent: pinnedMessagesPopupComponent
+                                    chatView.emojiPopup: statusEmojiPopup
 
-                NodeLayout {
-                    id: nodeLayoutContainer
-                    Layout.fillWidth: true
-                    Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                    Layout.fillHeight: true
-                }
+                                    contactsStore: appMain.rootStore.contactStore
+                                    rootStore.emojiReactionsModel: appMain.rootStore.emojiReactionsModel
 
-                Repeater {
-                    model: mainModule.sectionsModel
+                                    chatView.onProfileButtonClicked: {
+                                        Global.changeAppSectionBySectionType(Constants.appSection.profile);
+                                    }
 
-                    delegate: DelegateChooser {
-                        id: delegateChooser
-                        role: "sectionType"
-                        DelegateChoice {
-                            roleValue: Constants.appSection.community
-                            delegate: ChatLayout {
-                                property string sectionId: model.id
-                                Layout.fillWidth: true
-                                Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-                                Layout.fillHeight: true
+                                    chatView.onOpenAppSearch: {
+                                        appSearch.openSearchPopup()
+                                    }
 
-                                chatView.pinnedMessagesListPopupComponent: pinnedMessagesPopupComponent
-                                chatView.emojiPopup: statusEmojiPopup
-
-                                contactsStore: appMain.rootStore.contactStore
-                                rootStore.emojiReactionsModel: appMain.rootStore.emojiReactionsModel
-
-                                chatView.onProfileButtonClicked: {
-                                    Global.changeAppSectionBySectionType(Constants.appSection.profile);
-                                }
-
-                                chatView.onOpenAppSearch: {
-                                    appSearch.openSearchPopup()
-                                }
-
-                                Component.onCompleted: {
-                                    // we cannot return QVariant if we pass another parameter in a function call
-                                    // that's why we're using it this way
-                                    mainModule.prepareCommunitySectionModuleForCommunityId(model.id)
-                                    rootStore.chatCommunitySectionModule = mainModule.getCommunitySectionModule()
+                                    Component.onCompleted: {
+                                        // we cannot return QVariant if we pass another parameter in a function call
+                                        // that's why we're using it this way
+                                        mainModule.prepareCommunitySectionModuleForCommunityId(model.id)
+                                        rootStore.chatCommunitySectionModule = mainModule.getCommunitySectionModule()
+                                    }
                                 }
                             }
+                        }
+                    }
+                }
+
+                CreateChatView {
+                    property bool opened: false
+
+                    id: createChatView
+                    rootStore: chatLayoutContainer.rootStore
+                    emojiPopup: statusEmojiPopup
+                    anchors.top: parent.top
+                    anchors.topMargin: 8
+                    anchors.rightMargin: 8
+                    anchors.bottom: parent.bottom
+                    anchors.right: parent.right
+                    width: chatLayoutContainer.chatView.width - chatLayoutContainer.chatView.leftPanel.width - anchors.rightMargin - anchors.leftMargin
+                    visible: createChatView.opened
+                    
+                    Connections {
+                        target: Global
+                        onOpenCreateChatView: {
+                            createChatView.opened = true
+                        }
+                        onCloseCreateChatView: {
+                            createChatView.opened = false
+                        }
+                    }
+                    Connections {
+                        target: mainModule
+                        onActiveSectionChanged: {
+                            Global.closeCreateChatView()
                         }
                     }
                 }

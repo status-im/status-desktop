@@ -185,7 +185,7 @@ QtObject:
 
       let (chats, messages) = self.chatService.parseChatResponse(response)
       self.events.emit(chat_service.SIGNAL_CHAT_UPDATE,
-        ChatUpdateArgsNew(messages: messages, chats: chats))
+        ChatUpdateArgs(messages: messages, chats: chats))
 
     except Exception as e:
       error "Error marking as accepted", msg = e.msg

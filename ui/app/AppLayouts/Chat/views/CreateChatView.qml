@@ -14,7 +14,6 @@ import shared.status 1.0
 
 Page {
     id: root
-    anchors.fill: parent
     Behavior on anchors.bottomMargin { NumberAnimation { duration: 30 }}
 
     property ListModel contactsModel: ListModel { }
@@ -22,6 +21,7 @@ Page {
     property var emojiPopup: null
 
     Keys.onEscapePressed: {
+        Global.closeCreateChatView()
         root.rootStore.openCreateChat = false;
     }
 
@@ -37,21 +37,18 @@ Page {
         }
     }
 
-    Connections {
-        target: rootStore
-        onOpenCreateChatChanged: {
-            if (root.rootStore.openCreateChat) {
-                for (var i = 0; i < contactsModelListView.count; i ++) {
-                    var entry = contactsModelListView.itemAtIndex(i);
-                    contactsModel.insert(contactsModel.count,
-                    {"pubKey": entry.pubKey, "displayName": entry.displayName,
-                     "icon": entry.icon});
-                }
-                tagSelector.sortModel(root.contactsModel);
-            } else {
-                contactsModel.clear();
-                tagSelector.namesModel.clear();
+    onVisibleChanged: {
+        if (visible) {
+            for (var i = 0; i < contactsModelListView.count; i ++) {
+                var entry = contactsModelListView.itemAtIndex(i);
+                contactsModel.insert(contactsModel.count,
+                {"pubKey": entry.pubKey, "displayName": entry.displayName,
+                    "icon": entry.icon});
             }
+            tagSelector.sortModel(root.contactsModel);
+        } else {
+            contactsModel.clear();
+            tagSelector.namesModel.clear();
         }
     }
 
@@ -66,22 +63,15 @@ Page {
                 groupName += (tagSelector.namesModel.get(i).name + (i === tagSelector.namesModel.count - 1 ? "" : "&"));
                 pubKeys.push(tagSelector.namesModel.get(i).pubKey);
             }
-            root.rootStore.chatCommunitySectionModule.createGroupChat("",groupName, JSON.stringify(pubKeys));
+            root.rootStore.chatCommunitySectionModule.createGroupChat("", groupName, JSON.stringify(pubKeys));
         }
 
         chatInput.textInput.clear();
         chatInput.textInput.textFormat = TextEdit.PlainText;
         chatInput.textInput.textFormat = TextEdit.RichText;
+        Global.changeAppSectionBySectionType(Constants.appSection.chat)
     }
 
-    visible: (opacity > 0.01)
-    onVisibleChanged: {
-        if (!visible) {
-            tagSelector.namesModel.clear();
-        }
-    }
-
-    opacity: (root.rootStore.openCreateChat) ? 1.0 : 0.0
     Behavior on opacity { NumberAnimation {}}
     background: Rectangle {
         anchors.fill: parent
@@ -95,8 +85,6 @@ Page {
         height: tagSelector.height
         anchors.top: parent.top
         anchors.topMargin: 8
-        anchors.right: parent.right
-        anchors.rightMargin: 8
         clip: true
         StatusTagSelector {
             id: tagSelector

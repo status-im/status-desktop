@@ -53,6 +53,13 @@ StatusAppThreePanelLayout {
         }
     }
 
+    Connections {
+        target: Global
+        onCloseCreateChatView: {
+            root.rootStore.openCreateChat = false
+        }
+    }
+
     leftPanel: Loader {
         id: contactColumnLoader
         sourceComponent: root.rootStore.chatCommunitySectionModule.isCommunity()?
@@ -65,7 +72,6 @@ StatusAppThreePanelLayout {
         parentModule: root.rootStore.chatCommunitySectionModule
         rootStore: root.rootStore
         contactsStore: root.contactsStore
-        chatSectionModule: root.rootStore.chatCommunitySectionModule
         pinnedMessagesPopupComponent: root.pinnedMessagesListPopupComponent
         stickersLoaded: root.stickersLoaded
         emojiPopup: root.emojiPopup

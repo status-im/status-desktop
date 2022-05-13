@@ -125,7 +125,7 @@ proc init*(self: Controller) =
     self.delegate.onChatRenamed(args.newName)
 
   self.events.on(SIGNAL_CHAT_UPDATE) do(e: Args):
-    var args = ChatUpdateArgsNew(e)
+    var args = ChatUpdateArgs(e)
     for chat in args.chats:
       if self.chatId == chat.id:
         self.delegate.onChatEdited(chat)
