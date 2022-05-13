@@ -293,6 +293,9 @@ proc addGroupMembers*(self: Controller, chatId: string, pubKeys: seq[string]) =
 proc removeMemberFromGroupChat*(self: Controller, communityID: string, chatId: string, pubKey: string) =
    self.chatService.removeMemberFromGroupChat(communityID, chatId, pubKey)
 
+proc removeMembersFromGroupChat*(self: Controller, communityID: string, chatId: string, pubKeys: seq[string]) =
+   self.chatService.removeMembersFromGroupChat(communityID, chatId, pubKeys)
+
 proc renameGroupChat*(self: Controller, chatId: string, newName: string) =
   let communityId = if self.isCommunitySection: self.sectionId else: ""
   self.chatService.renameGroupChat(communityId, chatId, newName)
