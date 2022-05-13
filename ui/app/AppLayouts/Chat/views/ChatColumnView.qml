@@ -32,7 +32,6 @@ Item {
 
     property var rootStore
     property var contactsStore
-    property var chatSectionModule
     property var emojiPopup
 
     property Component pinnedMessagesPopupComponent
@@ -166,12 +165,6 @@ Item {
         onShareChatKeyClicked: Global.openProfilePopup(userProfile.pubKey);
     }
 
-    CreateChatView {
-        rootStore: root.rootStore
-        emojiPopup: root.emojiPopup
-        visible: mainModule.activeSection.sectionType === Constants.appSection.chat && root.rootStore.openCreateChat
-    }
-
     // This is kind of a solution for applying backend refactored changes with the minimal qml changes.
     // The best would be if we made qml to follow the struct we have on the backend side.
     Repeater {
@@ -288,7 +281,6 @@ Item {
                         Component.onCompleted: {
                             parentModule.prepareChatContentModuleForChatId(model.itemId)
                             chatContentModule = parentModule.getChatContentModule()
-
                             root.checkForCreateChatOptions(model.itemId)
                         }
                     }
@@ -409,7 +401,7 @@ Item {
         height: root.height - 56 * 2 // TODO get screen size // Taken from old code top bar height was fixed there to 56
         y: 56
         store: root.rootStore
-        chatSectionModule: root.chatSectionModule
+        chatSectionModule: root.parentModule
         messageContextMenu: contextmenu
     }
 

@@ -75,7 +75,7 @@ proc init*(self: Controller) =
     self.delegate.removeItemWithId(args.chatId)
 
   self.events.on(SIGNAL_CHAT_UPDATE) do(e: Args):
-    var args = ChatUpdateArgsNew(e)
+    var args = ChatUpdateArgs(e)
     for chat in args.chats:
       let belongsToCommunity = chat.communityId.len > 0
       self.delegate.addChat(chat)

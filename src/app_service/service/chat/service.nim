@@ -24,8 +24,7 @@ logScope:
 include ../../common/json_utils
 
 type
-  # TODO remove New when refactored
-  ChatUpdateArgsNew* = ref object of Args
+  ChatUpdateArgs* = ref object of Args
     chats*: seq[ChatDto]
     messages*: seq[MessageDto]
     # TODO refactor that part
@@ -36,6 +35,9 @@ type
     activityCenterNotifications*: seq[ActivityCenterNotificationDto]
     # statusUpdates*: seq[StatusUpdate]
     # deletedMessages*: seq[RemovedMessage]
+
+  CreatedChatArgs* = ref object of Args
+    chat*: ChatDto
 
   ChatArgs* = ref object of Args
     communityId*: string # This param should be renamed to `sectionId`, that will avoid some confusions one may have.
@@ -86,6 +88,7 @@ const SIGNAL_CHAT_MEMBER_REMOVED* = "chatMemberRemoved"
 const SIGNAL_CHAT_MEMBER_UPDATED* = "chatMemberUpdated"
 const SIGNAL_CHAT_SWITCH_TO_OR_CREATE_1_1_CHAT* = "switchToOrCreateOneToOneChat"
 const SIGNAL_CHAT_ADDED_OR_UPDATED* = "chatAddedOrUpdated"
+const SIGNAL_CHAT_CREATED* = "chatCreated"
 
 QtObject:
   type Service* = ref object of QObject
@@ -117,7 +120,7 @@ QtObject:
           if (chatDto.active):
             chats.add(chatDto)
             self.updateOrAddChat(chatDto)
-        self.events.emit(SIGNAL_CHAT_UPDATE, ChatUpdateArgsNew(messages: receivedData.messages, chats: chats))
+        self.events.emit(SIGNAL_CHAT_UPDATE, ChatUpdateArgs(messages: receivedData.messages, chats: chats))
 
       if (receivedData.clearedHistories.len > 0):
         for clearedHistoryDto in receivedData.clearedHistories:
@@ -227,7 +230,7 @@ QtObject:
 
   proc emitUpdate(self: Service, response: RpcResponse[JsonNode]) =
     var (chats, messages) = self.parseChatResponse(response)
-    self.events.emit(SIGNAL_CHAT_UPDATE, ChatUpdateArgsNew(messages: messages, chats: chats))
+    self.events.emit(SIGNAL_CHAT_UPDATE, ChatUpdateArgs(messages: messages, chats: chats))
 
   proc getAllChats*(self: Service): seq[ChatDto] =
     return toSeq(self.chats.values)
@@ -283,6 +286,8 @@ QtObject:
 
       let response =  status_group_chat.createOneToOneChat(communityID, chatId, ensName)
       result = self.createChatFromResponse(response)
+      if result.success:
+        self.events.emit(SIGNAL_CHAT_CREATED, CreatedChatArgs(chat: result.chatDto))
     except Exception as e:
       let errDesription = e.msg
       error "error: ", errDesription
@@ -517,6 +522,8 @@ QtObject:
     try:
       let response = status_group_chat.createGroupChat(communityID, name, members)
       result = self.createChatFromResponse(response)
+      if result.success:
+        self.events.emit(SIGNAL_CHAT_CREATED, CreatedChatArgs(chat: result.chatDto))
     except Exception as e:
       error "error while creating group chat", msg = e.msg
 

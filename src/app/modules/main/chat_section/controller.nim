@@ -105,12 +105,19 @@ proc init*(self: Controller) =
     self.delegate.onContactUnblocked(args.contactId)
 
   self.events.on(SIGNAL_CHAT_UPDATE) do(e: Args):
-    var args = ChatUpdateArgsNew(e)
+    var args = ChatUpdateArgs(e)
     for chat in args.chats:
       let belongsToCommunity = chat.communityId.len > 0
       self.delegate.addChatIfDontExist(chat, belongsToCommunity, self.events, self.settingsService,
         self.contactService, self.chatService, self.communityService, self.messageService, self.gifService,
         self.mailserversService, setChatAsActive = false)
+
+  self.events.on(SIGNAL_CHAT_CREATED) do(e: Args):
+    var args = CreatedChatArgs(e)
+    let belongsToCommunity = args.chat.communityId.len > 0
+    self.delegate.addChatIfDontExist(args.chat, belongsToCommunity, self.events, self.settingsService,
+      self.contactService, self.chatService, self.communityService, self.messageService, self.gifService,
+      self.mailserversService, setChatAsActive = true)
 
   if (self.isCommunitySection):
     self.events.on(SIGNAL_COMMUNITY_CHANNEL_CREATED) do(e:Args):

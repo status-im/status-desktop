@@ -796,16 +796,14 @@ method addChatIfDontExist*(self: Module,
     gifService: gif_service.Service,
     mailserversService: mailservers_service.Service,
     setChatAsActive: bool = true) =
-
   let sectionId = self.controller.getMySectionId()
   if(belongsToCommunity and sectionId != chat.communityId or
     not belongsToCommunity and sectionId != singletonInstance.userProfile.getPubKey()):
     return
 
   if self.doesCatOrChatExist(chat.id):
-    if chat.chatType != ChatType.OneToOne:
+    if(chat.chatType != ChatType.OneToOne):
       self.onChatRenamed(chat.id, chat.name)
     return
-
   self.addNewChat(chat, belongsToCommunity, events, settingsService, contactService, chatService,
     communityService, messageService, gifService, mailserversService, setChatAsActive)

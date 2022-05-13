@@ -26,6 +26,8 @@ QtObject {
     signal openDownloadModalRequested()
     signal settingsLoaded()
     signal openBackUpSeedPopup()
+    signal openCreateChatView()
+    signal closeCreateChatView()
 
     signal openProfilePopupRequested(string publicKey, var parentPopup, bool openNicknamePopup)
     signal openChangeProfilePicPopup()
