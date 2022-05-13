@@ -247,7 +247,7 @@ Popup {
                     delegate: SVGImage {
                         width: 22
                         height: 22
-                        source: Style.emoji("72x72/" + modelData)
+                        source: Style.emoji(modelData)
                         MouseArea {
                             cursorShape: Qt.PointingHandCursor
                             anchors.fill: parent
@@ -268,7 +268,7 @@ Popup {
                 anchors.right: parent.right
                 anchors.rightMargin: emojiHeader.headerMargin
                 visible: !skinToneEmoji.expandSkinColorOptions
-                source: Style.emoji("72x72/1f590" + ((localAccountSensitiveSettings.skinColor !== "" && visible) ? ("-" + localAccountSensitiveSettings.skinColor) : ""))
+                source: Style.emoji("1f590" + ((localAccountSensitiveSettings.skinColor !== "" && visible) ? ("-" + localAccountSensitiveSettings.skinColor) : ""))
                 MouseArea {
                     cursorShape: Qt.PointingHandCursor
                     anchors.fill: parent
