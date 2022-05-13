@@ -28,8 +28,7 @@ Item {
             SVGImage {
                 width: root.size
                 height: root.size
-
-                source: StatusQUtils.Emoji.parse(modelData).match('src="(.*\\.svg)')[1]
+                source: Style.emoji(StatusQUtils.Emoji.iconId(modelData))
             }
         }
     }

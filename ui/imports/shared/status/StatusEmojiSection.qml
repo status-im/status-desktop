@@ -92,8 +92,7 @@ Item {
                 SVGImage {
                     width: emojiSection.imageWidth
                     height: emojiSection.imageWidth
-                    //TODO EMOJI SVG?
-                    source: "qrc:/StatusQ/src/assets/twemoji/svg/" + modelData.filename + "?22x22"
+                    source: Style.emoji(modelData.filename)
 
                     MouseArea {
                         cursorShape: Qt.PointingHandCursor
