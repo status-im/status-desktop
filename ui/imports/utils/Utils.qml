@@ -301,8 +301,8 @@ QtObject {
         const formatDDMMYY = "dddd d MMMM yyyy"
         const formatMMDDYY = "dddd, MMMM d, yyyy"
         const currentFormat = isDDMMYYDateFormat ? formatDDMMYY : formatMMDDYY
-        return !!value ? Qt.formatDate(new Date(), currentFormat) :
-                         Qt.formatDate(new Date(value), currentFormat)
+        return !value ? Qt.formatDate(new Date(), currentFormat) :
+                        Qt.formatDate(new Date(value), currentFormat)
     }
 
     function formatLongDateTime(value, isDDMMYYDateFormat, is24hTimeFormat) {
