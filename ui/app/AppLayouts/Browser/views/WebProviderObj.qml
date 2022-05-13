@@ -117,6 +117,7 @@ QtObject {
             signDialog.signMessage = function (enteredPassword) {
                 signDialog.interactedWith = true;
                 request.payload.password = enteredPassword;
+                request.payload.from = WalletStore.dappBrowserAccount.address;
                 switch(request.payload.method){
                     case Constants.personal_sign:
                         request.payload.params[0] = signValue(request.payload.params[0]);
