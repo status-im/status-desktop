@@ -14,17 +14,26 @@ QtObject {
         "small": "18x18",
         "verySmall": "16x16"
     }
+    readonly property var format: {
+        "png": "png",
+        "svg": "svg"
+    }
     property string base: Qt.resolvedUrl("../../../assets/twemoji/")
-    function parse(text, renderSize = size.small) {
+
+    function parse(text, renderSize = size.small, renderFormat = format.svg) {
         const renderSizes = renderSize.split("x");
         if (!renderSize.includes("x") || renderSizes.length !== 2) {
             throw new Error("Invalid value for 'renderSize' parameter: ", renderSize);
         }
 
-        Twemoji.twemoji.base = base
-        Twemoji.twemoji.ext = ".svg"
-        Twemoji.twemoji.size = "svg"
+        const path = renderFormat == format.svg ? "svg/" : "72x72/"
+        Twemoji.twemoji.base = base + path
+        Twemoji.twemoji.ext = `.${renderFormat}`
+
         return Twemoji.twemoji.parse(text, {
+            callback: (iconId, options) => {
+                return options.base + iconId + options.ext;
+            },
             attributes: function() {
               return {
                 width: renderSizes[0],
@@ -33,6 +42,10 @@ QtObject {
               }
             }
         })
+    }
+    function iconId(text) {
+        const parsed = parse(text);
+        return parsed.match('src=".*\/(.+?).svg')[1]
     }
     function fromCodePoint(value) {
         return Twemoji.twemoji.convert.fromCodePoint(value)
