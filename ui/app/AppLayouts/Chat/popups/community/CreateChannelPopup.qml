@@ -110,7 +110,7 @@ StatusModal {
                 id: nameInput
                 label: qsTr("Channel name")
                 charLimit: popup.maxChannelNameLength
-                input.placeholderText: qsTr("# Name the channel")
+                input.placeholderText: qsTr("Name the channel")
                 input.onTextChanged: {
                     input.text = Utils.convertSpacesToDashesAndUpperToLowerCase(input.text);
                     input.cursorPosition = input.text.length
