@@ -117,3 +117,9 @@ proc getChannelGroups*(self: Controller): seq[ChannelGroupDto] =
 
 proc getOneToOneChatNameAndImage*(self: Controller, chatId: string): tuple[name: string, image: string] =
   return self.chatService.getOneToOneChatNameAndImage(chatId)
+
+proc getMessageById*(self: Controller, chatId, messageId: string): MessageDto =
+  let (message, _, err) = self.messageService.getDetailsForMessage(chatId, messageId)
+  if(err.len > 0):
+    return MessageDto()
+  return message

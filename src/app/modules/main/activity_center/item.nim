@@ -13,6 +13,7 @@ type Item* = ref object
   dismissed: bool
   accepted: bool
   messageItem: MessageItem
+  repliedMessageItem: MessageItem
 
 proc initItem*(
   id: string,
@@ -25,7 +26,8 @@ proc initItem*(
   read: bool,
   dismissed: bool,
   accepted: bool,
-  messageItem: MessageItem
+  messageItem: MessageItem,
+  repliedMessageItem: MessageItem
 ): Item =
   result = Item()
   result.id = id
@@ -39,6 +41,7 @@ proc initItem*(
   result.dismissed = dismissed
   result.accepted = accepted
   result.messageItem = messageItem
+  result.repliedMessageItem = repliedMessageItem
 
 proc `$`*(self: Item): string =
   result = fmt"""StickerItem(
@@ -53,6 +56,7 @@ proc `$`*(self: Item): string =
     dismissed: {$self.dismissed},
     accepted: {$self.accepted},
     # messageItem: {$self.messageItem},
+    # repliedMessageItem: {$self.repliedMessageItem},
     ]"""
 
 proc id*(self: Item): string =
@@ -90,3 +94,6 @@ proc accepted*(self: Item): bool =
 
 proc messageItem*(self: Item): MessageItem =
   return self.messageItem
+
+proc repliedMessageItem*(self: Item): MessageItem =
+  return self.repliedMessageItem

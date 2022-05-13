@@ -12,11 +12,11 @@ import StatusQ.Core.Utils 0.1 as StatusQUtils
 Item {
     id: replyComponent
 
-    property int replyMessageIndex: wrapper.replyMessageIndex
+    property int repliedMessageId: wrapper.repliedMessageId
     property string repliedMessageContent: wrapper.repliedMessageContent
 
-    onReplyMessageIndexChanged: {
-        wrapper.visible = replyMessageIndex > -1
+    onRepliedMessageIdChanged: {
+        wrapper.visible = (repliedMessageId.length > 0)
     }
 
     SVGImage {
