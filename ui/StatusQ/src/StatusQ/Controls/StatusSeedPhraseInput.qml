@@ -237,7 +237,7 @@ Item {
                     anchors.leftMargin: 14
                     anchors.verticalCenter: parent.verticalCenter
                     text: seedWord
-                    color: mouseArea.containsMouse ? Theme.palette.indirectColor1 : Theme.palette.directColor1
+                    color: mouseArea.containsMouse || index === seedSuggestionsList.currentIndex ? Theme.palette.indirectColor1 : Theme.palette.directColor1
                     font.pixelSize: 13
                     elide: Text.ElideRight
                 }
