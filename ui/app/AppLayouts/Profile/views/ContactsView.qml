@@ -329,6 +329,8 @@ SettingsContentBase {
 
         Loader {
             id: sendContactRequest
+            width: parent.width
+            height: parent.height
             active: false
 
             function open() {
@@ -340,9 +342,8 @@ SettingsContentBase {
             }
 
             sourceComponent: SendContactRequestModal {
-                anchors.centerIn: root
+                anchors.centerIn: parent
                 contactsStore: root.contactsStore
-
                 onClosed: {
                     sendContactRequest.close();
                 }
