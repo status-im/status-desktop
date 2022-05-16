@@ -19,7 +19,8 @@ StatusModal {
     property var store
 
     function validate(communityKey) {
-        return communityKey.trim() !== ""
+        const bytes32Len = 66;
+        return communityKey.length === bytes32Len && Utils.isHex(communityKey) && Utils.startsWith0x(communityKey)
     }
 
     //% "Access existing community"
