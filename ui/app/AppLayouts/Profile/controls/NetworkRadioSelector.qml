@@ -20,7 +20,7 @@ RadioButtonSelector {
 
     onCheckedChanged: {
         if (checked) {
-            if (root.advancedStore.currentNetworkName === root.network)
+            if (root.advancedStore.currentNetworkName === root.title)
                 return
 
             root.newNetwork = root.network;

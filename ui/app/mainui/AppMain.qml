@@ -28,6 +28,8 @@ import StatusQ.Layout 0.1
 import StatusQ.Popups 0.1
 import StatusQ.Core 0.1
 
+import AppLayouts.Browser.stores 1.0 as BrowserStores
+
 import AppLayouts.stores 1.0
 
 Item {

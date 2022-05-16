@@ -128,8 +128,10 @@ SettingsContentBase {
             stepSize: 1
             value: localAccountSensitiveSettings.fontSize
             onValueChanged: {
-                localAccountSensitiveSettings.fontSize = value
-                appearanceView.updateFontSize(value)
+                if (localAccountSensitiveSettings.fontSize !== value) {
+                    localAccountSensitiveSettings.fontSize = value
+                    appearanceView.updateFontSize(value)
+                }
             }
 
             RowLayout {

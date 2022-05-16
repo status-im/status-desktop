@@ -74,7 +74,7 @@ QtObject:
       self, "onNewCommunityMembershipRequestNotification(QString, QString, QString)", 2)
     signalConnect(singletonInstance.globalEvents, "myRequestToJoinCommunityAcccepted(QString, QString, QString)", 
       self, "onMyRequestToJoinCommunityAcccepted(QString, QString, QString)", 2)
-    signalConnect(singletonInstance.globalEvents, "myRequestToJoinCommunityHasBeenRejected(QString, QString, QString)", 
+    signalConnect(singletonInstance.globalEvents, "myRequestToJoinCommunityRejected(QString, QString, QString)", 
       self, "onMyRequestToJoinCommunityRejected(QString, QString, QString)", 2)
     self.notificationSetUp = true
 

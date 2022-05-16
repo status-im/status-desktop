@@ -80,7 +80,9 @@ SettingsContentBase {
                     StatusSwitch {
                         checked: localAccountSensitiveSettings.shouldShowFavoritesBar
                         onCheckedChanged: {
-                            localAccountSensitiveSettings.shouldShowFavoritesBar = checked
+                            if (localAccountSensitiveSettings.shouldShowFavoritesBar !== checked) {
+                                localAccountSensitiveSettings.shouldShowFavoritesBar = checked
+                            }
                         }
                     }
                 ]

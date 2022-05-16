@@ -49,7 +49,7 @@ ColumnLayout {
         checked: localAccountSensitiveSettings.useBrowserEthereumExplorer === Constants.browserEthereumExplorerEtherscan
         text: "etherscan.io"
         onCheckedChanged: {
-            if (checked) {
+            if (checked && localAccountSensitiveSettings.useBrowserEthereumExplorer !== Constants.browserEthereumExplorerEtherscan) {
                 localAccountSensitiveSettings.useBrowserEthereumExplorer = Constants.browserEthereumExplorerEtherscan
             }
         }
