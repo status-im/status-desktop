@@ -54,10 +54,12 @@ StatusSelect {
             if(generatedAccountsModel) {
                 generatedAccountsModel.clear()
                 for (var row = 0; row < _internal.delegateModel.model.count; row++) {
-                    var item = _internal.delegateModel.items.get(row).model;
-                    generatedAccountsModel.append({"name": item.name, "iconName": item.iconName, "generatedModel": item.generatedModel, "derivedfrom": item.derivedfrom, "isHeader": false})
-                    if(row === 0 && _internal.delegateModel.model.count > 1) {
-                        generatedAccountsModel.append({"name": qsTr("Imported"), "iconName": "", "derivedfrom": "", "isHeader": true})
+                    if (_internal.delegateModel.items.count > 0) {
+                        var item = _internal.delegateModel.items.get(row).model;
+                        generatedAccountsModel.append({"name": item.name, "iconName": item.iconName, "generatedModel": item.generatedModel, "derivedfrom": item.derivedfrom, "isHeader": false})
+                        if (row === 0 && _internal.delegateModel.model.count > 1) {
+                            generatedAccountsModel.append({"name": qsTr("Imported"), "iconName": "", "derivedfrom": "", "isHeader": true})
+                        }
                     }
                 }
                 generatedAccountsModel.append({"name": qsTr("Add new"), "iconName": "", "derivedfrom": "", "isHeader": true})

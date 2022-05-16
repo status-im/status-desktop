@@ -404,7 +404,7 @@ Rectangle {
     property string copiedTextFormatted: ""
     ListView {
         id: dummyContactList
-        model: control.usersStore.usersModel
+        model: control.usersStore ? control.usersStore.usersModel : []
         delegate: Item {
             property string contactName: model.name
         }
@@ -631,6 +631,7 @@ Rectangle {
     Connections {
         enabled: control.isActiveChannel
         target: Global.appMain.dragAndDrop
+        ignoreUnknownSignals: true
         onDroppedOnValidScreen: (drop) => {
                                     let validImages = validateImages(drop.urls)
                                     if (validImages.length > 0) {
@@ -690,7 +691,7 @@ Rectangle {
 
     SuggestionBoxPanel {
         id: suggestionsBox
-        model: control.usersStore.usersModel
+        model: control.usersStore ? control.usersStore.usersModel : []
         x : messageInput.x
         y: -height - Style.current.smallPadding
         width: messageInput.width

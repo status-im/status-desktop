@@ -125,8 +125,10 @@ SettingsContentBase {
             model: [ qsTr("XS"), qsTr("S"), qsTr("M"), qsTr("L"), qsTr("XL"), qsTr("XXL") ]
             value: localAccountSensitiveSettings.fontSize
             onValueChanged: {
-                localAccountSensitiveSettings.fontSize = value
-                appearanceView.updateFontSize(value)
+                if (localAccountSensitiveSettings.fontSize !== value) {
+                    localAccountSensitiveSettings.fontSize = value
+                    appearanceView.updateFontSize(value)
+                }
             }
         }
 

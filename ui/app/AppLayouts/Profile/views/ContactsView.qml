@@ -72,7 +72,7 @@ SettingsContentBase {
                 enabled: root.contactsStore.receivedContactRequestsModel.count > 0 ||
                          root.contactsStore.sentContactRequestsModel.count > 0
                 btnText: qsTr("Pending Requests")
-                badge.value: contactList.count
+                badge.value: root.contactsStore.receivedContactRequestsModel.count
             }
             // Temporary commented until we provide appropriate flags on the `status-go` side to cover all sections.
             //            StatusTabButton {

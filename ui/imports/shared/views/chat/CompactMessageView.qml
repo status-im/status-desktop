@@ -87,7 +87,7 @@ Item {
             + (dateGroupLbl.visible ? dateGroupLbl.height + dateGroupLbl.anchors.topMargin : 0)
 
     Connections {
-        target: root.messageStore.messageModule? root.messageStore.messageModule : null
+        target: !!root.messageStore && root.messageStore.messageModule? root.messageStore.messageModule : null
         enabled: responseTo !== ""
         onRefreshAMessageUserRespondedTo: {
             if(msgId === messageId)

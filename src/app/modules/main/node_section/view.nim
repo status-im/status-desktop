@@ -49,12 +49,15 @@ QtObject:
 
   proc receivedMessage*(self: View, lastMessage: string) {.signal.}
 
+  proc getLastMessage*(self: View): string {.slot.} =
+    return self.lastMessage
+
   proc setLastMessage*(self: View, lastMessage: string) =
     self.lastMessage = lastMessage
     self.receivedMessage(lastMessage)
 
   QtProperty[string] lastMessage:
-    read = lastMessage
+    read = getLastMessage
     notify = receivedMessage
 
   proc getWakuBloomFilterMode*(self: View): bool {.slot.} =

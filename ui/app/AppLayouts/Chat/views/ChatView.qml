@@ -46,6 +46,7 @@ StatusAppThreePanelLayout {
 
     Connections {
         target: root.rootStore.chatCommunitySectionModule
+        ignoreUnknownSignals: true
         onActiveItemChanged: {
             root.rootStore.openCreateChat = false;
         }
