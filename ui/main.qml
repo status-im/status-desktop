@@ -28,8 +28,6 @@ StatusWindow {
     objectName: "mainWindow"
     minimumWidth: 900
     minimumHeight: 600
-    width: localAppSettings.appWidth
-    height: localAppSettings.appHeight
     color: Style.current.background
     title: {
         // Set application settings
@@ -41,20 +39,51 @@ StatusWindow {
     }
     visible: true
 
-    function storeWidth() {
-        if(!applicationWindow.appIsReady)
-            return
-        localAppSettings.appWidth = width
+    function restoreAppState() {
+        let geometry = localAppSettings.geometry;
+        let visibility = localAppSettings.visibility;
+
+        if (visibility !== Window.Windowed &&
+            visibility !== Window.Maximized &&
+            visibility !== Window.FullScreen) {
+            visibility = Window.Windowed;
+        }
+
+        if (geometry === undefined) {
+            let screen = Qt.application.screens[0];
+
+            geometry = Qt.rect(0,
+                               0,
+                               Math.min(Screen.desktopAvailableWidth - 125, 1400),
+                               Math.min(Screen.desktopAvailableHeight - 125, 840));
+            geometry.x = (screen.width - geometry.width) / 2;
+            geometry.y = (screen.height - geometry.height) / 2;
+        }
+
+        applicationWindow.visibility = visibility;
+        if (visibility == Window.Windowed) {
+            applicationWindow.x = geometry.x;
+            applicationWindow.y = geometry.y;
+            applicationWindow.width = geometry.width;
+            applicationWindow.height = geometry.height;
+        }
     }
 
-    function storeHeight() {
-        if(!applicationWindow.appIsReady)
-            return
-        localAppSettings.appHeight = height
+    function storeAppState() {
+        if (!applicationWindow.appIsReady)
+            return;
+
+        localAppSettings.visibility = applicationWindow.visibility;
+        if (applicationWindow.visibility == Window.Windowed) {
+            localAppSettings.geometry = Qt.rect(applicationWindow.x, applicationWindow.y,
+                                                applicationWindow.width, applicationWindow.height);
+        }
     }
 
-    onWidthChanged: Qt.callLater(storeWidth)
-    onHeightChanged: Qt.callLater(storeHeight)
+    onXChanged: Qt.callLater(storeAppState)
+    onYChanged: Qt.callLater(storeAppState)
+    onWidthChanged: Qt.callLater(storeAppState)
+    onHeightChanged: Qt.callLater(storeAppState)
 
     Action {
         shortcut: StandardKey.FullScreen
@@ -98,9 +127,8 @@ StatusWindow {
         target: startupModule
 
         onStartUpUIRaised: {
-            applicationWindow.appIsReady = true
-            applicationWindow.storeWidth()
-            applicationWindow.storeHeight()
+            applicationWindow.appIsReady = true;
+            applicationWindow.storeAppState();
         }
 
         onAppStateChanged: {
@@ -184,18 +212,9 @@ StatusWindow {
 
     Component.onCompleted: {
         Global.applicationWindow = this;
-        Style.changeTheme(localAppSettings.theme, systemPalette.isCurrentSystemThemeDark())
+        Style.changeTheme(localAppSettings.theme, systemPalette.isCurrentSystemThemeDark());
 
-        if (!localAppSettings.appSizeInitialized) {
-            width = Math.min(Screen.desktopAvailableWidth - 125, 1400)
-            height =  Math.min(Screen.desktopAvailableHeight - 125, 840)
-            localAppSettings.appSizeInitialized = true
-        }
-
-        setX(Qt.application.screens[0].width / 2 - width / 2);
-        setY(Qt.application.screens[0].height / 2 - height / 2);
-
-        applicationWindow.updatePosition();
+        restoreAppState();
     }
 
     signal navigateTo(string path)
