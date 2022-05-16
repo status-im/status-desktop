@@ -125,7 +125,7 @@ Item {
                 anchors.fill: parent
                 acceptedButtons: Qt.RightButton | Qt.LeftButton
                 onClicked: {
-                    if((mouse.button === Qt.RightButton) && inputValue.canPaste) {
+                    if((mouse.button === Qt.RightButton) && inputValue.canPaste && inputValue.echoMode !== TextInput.Password) {
                         rightClickContextMenu.popup()
                     }
                     else {
