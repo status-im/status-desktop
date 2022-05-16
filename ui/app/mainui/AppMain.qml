@@ -848,9 +848,6 @@ Item {
                 this.active = false
             }
             property var selectedAccount
-            property var selectedRecipient
-            property var selectedAmount
-            property var selectedAmountAsset
             sourceComponent: SendModal {
                 anchors.centerIn: parent
                 store: appMain.rootStore
@@ -866,15 +863,6 @@ Item {
             onLoaded: {
                 if (!!sendModal.selectedAccount) {
                     item.preSelectedAccount = sendModal.selectedAccount
-                }
-                if (!!sendModal.selectedRecipient) {
-                    item.preSelectedRecipient = sendModal.selectedRecipient
-                }
-                if (!!sendModal.selectedAmount) {
-                    item.advancedHeader.amountToSendInput.text = sendModal.selectedAmount
-                }
-                if (!!sendModal.selectedAmountAsset) {
-                    item.advancedHeader.assetSelector.selectedAsset = sendModal.selectedAmountAsset
                 }
             }
         }
