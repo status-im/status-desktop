@@ -256,6 +256,8 @@ proc toChatDto*(jsonObj: JsonNode, communityId: string): ChatDto =
   result = jsonObj.toChatDto()
   result.chatType = ChatType.CommunityChat
   result.communityId = communityId
+  if communityId != "":
+    result.id = communityId & result.id.replace(communityId, "") # Adding communityID prefix in case it's not available
 
 proc isPublicChat*(chatDto: ChatDto): bool =
   return chatDto.chatType == ChatType.Public
