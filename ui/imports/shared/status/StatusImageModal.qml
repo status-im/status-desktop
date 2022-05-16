@@ -47,7 +47,7 @@ Popup {
         root.open();
     }
 
-    contentItem: Image {
+    contentItem: AnimatedImage {
         id: messageImage
         asynchronous: true
         fillMode: Image.PreserveAspectFit
@@ -56,6 +56,7 @@ Popup {
         mipmap: true
         smooth: false
 
+        onStatusChanged: playing = (status == AnimatedImage.Ready)
         MouseArea {
             anchors.fill: parent
             acceptedButtons: Qt.LeftButton | Qt.RightButton
