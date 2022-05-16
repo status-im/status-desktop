@@ -156,7 +156,7 @@ ColumnLayout {
         }
         membersButton.highlighted: localAccountSensitiveSettings.expandUsersList
         notificationButton.visible: localAccountSensitiveSettings.isActivityCenterEnabled
-        notificationButton.tooltip.offset: localAccountSensitiveSettings.expandUsersList ? 0 : 14
+        notificationButton.tooltip.offset: localAccountSensitiveSettings.expandUsersList && membersButton.visible ? 0 : 14
 
         notificationCount: {
             if(!chatContentModule)
