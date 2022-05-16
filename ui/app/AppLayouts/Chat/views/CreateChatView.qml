@@ -107,6 +107,12 @@ Page {
             listLabel: qsTr("Contacts")
             toLabelText: qsTr("To: ")
             warningText: qsTr("USER LIMIT REACHED")
+            ringSpecModelGetter: function(pubKey) {
+                return Utils.getColorHashAsJson(pubKey);
+            }
+            compressedKeyGetter: function(pubKey) {
+                return Utils.getCompressedPk(pubKey);
+            }
             onTextChanged: {
                 sortModel(root.contactsModel);
             }
