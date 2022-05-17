@@ -87,7 +87,7 @@ proc sendImages*(chatId: string, images: var seq[string]): RpcResponse[JsonNode]
         "imagePath": image,
         # TODO is this still needed
         # "ensName": preferredUsername,
-        "text": "Update to latest version to see a nice image here!"
+        "text": ""
       }
     )
   callPrivateRPC("sendChatMessages".prefix, %* [imagesJson])
