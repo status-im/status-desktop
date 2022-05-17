@@ -83,14 +83,6 @@ Column {
         }
     }
 
-    function setMessageActive(messageId, active) {
-        if (active) {
-            activeMessage = messageId;
-        } else if (activeMessage === messageId) {
-            activeMessage = "";
-        }
-    }
-
     // Legacy
     property string responseTo: responseToMessageWithId
     property bool isCurrentUser: amISender
@@ -159,7 +151,7 @@ Column {
                                         isSticker = false,
                                         isImage = false,
                                         image = null,
-                                        emojiOnly = false,
+                                        isEmoji = false,
                                         hideEmojiPicker = false,
                                         isReply = false,
                                         isRightClickOnImage = false,
@@ -187,7 +179,7 @@ Column {
 
         messageContextMenu.isProfile = !!isProfileClick
         messageContextMenu.isRightClickOnImage = isRightClickOnImage
-        messageContextMenu.emojiOnly = emojiOnly
+        messageContextMenu.isEmoji = isEmoji
         messageContextMenu.hideEmojiPicker = hideEmojiPicker
 
         if(isReply){
@@ -363,11 +355,11 @@ Column {
             transactionParams: root.transactionParams
 
             onAddEmoji: {
-                root.clickMessage(isProfileClick, isSticker, isImage , image, emojiOnly, hideEmojiPicker)
+                root.clickMessage(isProfileClick, isSticker, isImage , image, isEmoji, hideEmojiPicker)
             }
 
             onClickMessage: {
-                root.clickMessage(isProfileClick, isSticker, isImage, image, emojiOnly, hideEmojiPicker, isReply, isRightClickOnImage, imageSource)
+                root.clickMessage(isProfileClick, isSticker, isImage, image, isEmoji, hideEmojiPicker, isReply, isRightClickOnImage, imageSource)
             }
 
             onOpenStickerPackPopup: {

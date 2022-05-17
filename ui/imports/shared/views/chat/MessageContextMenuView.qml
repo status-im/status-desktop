@@ -41,7 +41,7 @@ StatusPopupMenu {
     property bool isRightClickOnImage: false
     property bool pinnedPopup: false
     property bool isDebugEnabled: false
-    property bool emojiOnly: false
+    property bool isEmoji: false
     property bool hideEmojiPicker: true
     property bool pinnedMessage: false
     property bool canPin: false
@@ -83,7 +83,7 @@ StatusPopupMenu {
         /* // copy link feature not ready yet
         const numLinkUrls = root.linkUrls.split(" ").length
         copyLinkMenu.enabled = numLinkUrls > 1
-        copyLinkAction.enabled = !!root.linkUrls && numLinkUrls === 1 && !emojiOnly && !root.isProfile
+        copyLinkAction.enabled = !!root.linkUrls && numLinkUrls === 1 && !isEmoji && !root.isProfile
         */
         popup()
     }
@@ -92,13 +92,13 @@ StatusPopupMenu {
         id: emojiContainer
         width: emojiRow.width
         height: visible ? emojiRow.height : 0
-        visible: !root.hideEmojiPicker && (root.emojiOnly || !root.isProfile) && !root.pinnedPopup
+        visible: !root.hideEmojiPicker && (root.isEmoji || !root.isProfile) && !root.pinnedPopup
         Row {
             id: emojiRow
             spacing: Style.current.halfPadding
             leftPadding: Style.current.halfPadding
             rightPadding: Style.current.halfPadding
-            bottomPadding: root.emojiOnly ? 0 : Style.current.padding
+            bottomPadding: root.isEmoji ? 0 : Style.current.padding
 
             Repeater {
                 model: root.reactionModel
@@ -131,7 +131,7 @@ StatusPopupMenu {
 
     Separator {
         anchors.bottom: viewProfileAction.top
-        visible: !root.emojiOnly && !root.hideEmojiPicker && !pinnedPopup
+        visible: !root.isEmoji && !root.hideEmojiPicker && !pinnedPopup
     }
 
     StatusMenuItem {
@@ -188,7 +188,7 @@ StatusPopupMenu {
         icon.name: "chat"
         enabled: root.isProfile && root.store.contactsStore.isMyMutualContact(root.selectedUserPublicKey) ||
                  (!root.hideEmojiPicker &&
-                  !root.emojiOnly &&
+                  !root.isEmoji &&
                   !root.isProfile &&
                   !root.pinnedPopup &&
                   !root.isRightClickOnImage)
@@ -204,7 +204,7 @@ StatusPopupMenu {
         icon.name: "edit"
         enabled: root.isMyMessage &&
                  !root.hideEmojiPicker &&
-                 !root.emojiOnly &&
+                 !root.isEmoji &&
                  !root.isProfile &&
                  !root.pinnedPopup &&
                  !root.isRightClickOnImage
@@ -248,7 +248,7 @@ StatusPopupMenu {
         }
         icon.name: "pin"
         enabled: {
-            if(root.isProfile || root.emojiOnly || root.isRightClickOnImage)
+            if(root.isProfile || root.isEmoji || root.isRightClickOnImage)
                 return false
 
             switch (root.chatType) {
@@ -280,7 +280,7 @@ StatusPopupMenu {
         id: deleteMessageAction
         enabled: root.isMyMessage &&
                  !root.isProfile &&
-                 !root.emojiOnly &&
+                 !root.isEmoji &&
                  !root.pinnedPopup &&
                  !root.isRightClickOnImage &&
                  (root.messageContentType === Constants.messageContentType.messageType ||
