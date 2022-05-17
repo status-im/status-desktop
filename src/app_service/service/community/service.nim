@@ -621,7 +621,7 @@ QtObject:
         raise newException(RpcException, fmt"createCommunityChannel; there is no `chats` key in the response for community id: {communityId}")
 
       for chatObj in chatsJArr:
-        var chatDto = chatObj.toChatDto(communityId)
+        var chatDto = chatObj.communityChatToChatDto(communityId)
         self.chatService.updateOrAddChat(chatDto)
         let data = CommunityChatArgs(chat: chatDto)
         self.events.emit(SIGNAL_COMMUNITY_CHANNEL_CREATED, data)
@@ -661,7 +661,7 @@ QtObject:
         raise newException(RpcException, fmt"editCommunityChannel; there is no `chats` key in the response for community id: {communityId}")
 
       for chatObj in chatsJArr:
-        var chatDto = chatObj.toChatDto(communityId)
+        var chatDto = chatObj.communityChatToChatDto(communityId)
 
         self.chatService.updateOrAddChat(chatDto) # we have to update chats stored in the chat service.
 
@@ -892,7 +892,7 @@ QtObject:
       self.joinedCommunities[communityDto.id] = communityDto
 
       for chatObj in chatsJArr:
-        let chatDto = chatObj.toChatDto(communityDto.id)
+        let chatDto = chatObj.communityChatToChatDto(communityDto.id)
         self.chatService.updateOrAddChat(chatDto) # we have to update chats stored in the chat service.
 
       for chat in communityDto.chats:

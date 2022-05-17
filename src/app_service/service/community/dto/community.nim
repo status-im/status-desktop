@@ -75,7 +75,7 @@ proc toCommunityDto*(jsonObj: JsonNode): CommunityDto =
   var chatsObj: JsonNode
   if(jsonObj.getProp("chats", chatsObj)):
     for _, chatObj in chatsObj:
-      result.chats.add(chatObj.toChatDto(result.id))
+      result.chats.add(chatObj.communityChatToChatDto(result.id))
 
   var categoriesObj: JsonNode
   if(jsonObj.getProp("categories", categoriesObj)):

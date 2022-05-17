@@ -252,10 +252,12 @@ proc toChannelGroupDto*(jsonObj: JsonNode): ChannelGroupDto =
   discard jsonObj.getProp("muted", result.muted)
 
 # To parse Community chats to ChatDto, we need to add the commuity ID and type
-proc toChatDto*(jsonObj: JsonNode, communityId: string): ChatDto =
+proc communityChatToChatDto*(jsonObj: JsonNode, communityId: string): ChatDto =
+  jsonObj["communityId"] = %* communityId
+  jsonObj["chatType"] = %* 6
+  # It's very important to update jsonNode properly before `toChatDto` proc call.
+  # `chatId` should be composed of `communityId` + `chatId` and used in that form across the app.
   result = jsonObj.toChatDto()
-  result.chatType = ChatType.CommunityChat
-  result.communityId = communityId
 
 proc isPublicChat*(chatDto: ChatDto): bool =
   return chatDto.chatType == ChatType.Public
