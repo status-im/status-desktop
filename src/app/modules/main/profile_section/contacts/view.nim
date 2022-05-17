@@ -126,6 +126,9 @@ QtObject:
   proc addContact*(self: View, publicKey: string) {.slot.} =
     self.delegate.addContact(publicKey)
 
+  proc switchToOrCreateOneToOneChat*(self: View, publicKey: string) {.slot.} =
+    self.delegate.switchToOrCreateOneToOneChat(publicKey)
+
   proc rejectContactRequest*(self: View, publicKey: string) {.slot.} =
     self.delegate.rejectContactRequest(publicKey)
 

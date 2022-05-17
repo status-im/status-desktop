@@ -38,7 +38,7 @@ QtObject {
 
     function joinPrivateChat(pubKey) {
         Global.changeAppSectionBySectionType(Constants.appSection.chat)
-        root.contactsModule.addContact(pubKey)
+        root.contactsModule.switchToOrCreateOneToOneChat(pubKey)
     }
 
     function addContact(pubKey) {

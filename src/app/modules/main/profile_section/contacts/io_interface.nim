@@ -25,6 +25,9 @@ method viewDidLoad*(self: AccessInterface) {.base.} =
 method addContact*(self: AccessInterface, publicKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method switchToOrCreateOneToOneChat*(self: AccessInterface, publicKey: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method acceptContactRequests*(self: AccessInterface, publicKeysJSON: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 

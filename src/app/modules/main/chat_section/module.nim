@@ -591,7 +591,6 @@ method acceptContactRequest*(self: Module, publicKey: string) =
 method onContactAccepted*(self: Module, publicKey: string) =
   self.view.contactRequestsModel().removeItemWithPubKey(publicKey)
   self.updateParentBadgeNotifications()
-  self.createOneToOneChat(communityID = "" , publicKey, ensName = "")
 
 method acceptAllContactRequests*(self: Module) =
   let pubKeys = self.view.contactRequestsModel().getPublicKeys()

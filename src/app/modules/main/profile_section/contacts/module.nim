@@ -8,6 +8,7 @@ import ../../../../global/global_singleton
 
 import ../../../../core/eventemitter
 import ../../../../../app_service/service/contacts/service as contacts_service
+import ../../../../../app_service/service/chat/service as chat_service
 
 export io_interface
 
@@ -24,13 +25,14 @@ type
 
 proc newModule*(delegate: delegate_interface.AccessInterface,
   events: EventEmitter,
-  contactsService: contacts_service.Service):
+  contactsService: contacts_service.Service,
+  chatService: chat_service.Service):
   Module =
   result = Module()
   result.delegate = delegate
   result.view = newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, contactsService)
+  result.controller = controller.newController(result, events, contactsService, chatService)
   result.moduleLoaded = false
 
 method delete*(self: Module) =
@@ -76,6 +78,9 @@ method getModuleAsVariant*(self: Module): QVariant =
 
 method addContact*(self: Module, publicKey: string) =
   self.controller.addContact(publicKey)
+
+method switchToOrCreateOneToOneChat*(self: Module, publicKey: string) =
+  self.controller.switchToOrCreateOneToOneChat(publicKey)
 
 method rejectContactRequest*(self: Module, publicKey: string) =
   self.controller.rejectContactRequest(publicKey)
