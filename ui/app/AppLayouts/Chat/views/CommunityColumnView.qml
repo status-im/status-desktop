@@ -111,12 +111,8 @@ Item {
         anchors.top: membershipRequests.bottom
         anchors.topMargin: Style.current.padding
         anchors.bottom: parent.bottom
-        anchors.horizontalCenter: parent.horizontalCenter
 
         width: parent.width
-
-        leftPadding: Style.current.halfPadding
-        rightPadding: Style.current.halfPadding
 
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
         clip: true
@@ -126,10 +122,7 @@ Item {
 
         StatusChatListAndCategories {
             id: communityChatListAndCategories
-
             anchors.horizontalCenter: parent.horizontalCenter
-            width: root.width
-
             draggableItems: communityData.amISectionAdmin
             draggableCategories: communityData.amISectionAdmin
 

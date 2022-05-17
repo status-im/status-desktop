@@ -60,19 +60,16 @@ Item {
 
     RowLayout {
         id: searchInputWrapper
-        width: parent.width
+        width: 288
         height: searchInput.height
         anchors.top: headline.bottom
         anchors.topMargin: 16
-        anchors.right: parent.right
-        anchors.rightMargin: 8
-
+        anchors.horizontalCenter: parent.horizontalCenter
 
         StatusBaseInput {
             id: searchInput
             Layout.fillWidth: true
-            Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
-            Layout.leftMargin: 17
+            Layout.alignment: Qt.AlignVCenter
             implicitHeight: 36
             topPadding: 9
             //% "Search"
@@ -161,10 +158,6 @@ Item {
         anchors.topMargin: Style.current.padding
         anchors.bottom: root.bottom
         contentHeight: channelList.childrenRect.height + emptyViewAndSuggestions.childrenRect.height
-        anchors.horizontalCenter: parent.horizontalCenter
-
-        leftPadding: Style.current.halfPadding
-        rightPadding: Style.current.halfPadding
 
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
@@ -172,6 +165,7 @@ Item {
 
         StatusChatList {
             id: channelList
+            anchors.horizontalCenter: parent.horizontalCenter
             model: root.chatSectionModule.model
             highlightItem: !root.store.openCreateChat
             onChatItemSelected: {
