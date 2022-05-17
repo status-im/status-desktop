@@ -42,6 +42,7 @@ StatusPopupMenu {
     property bool pinnedPopup: false
     property bool isDebugEnabled: false
     property bool isEmoji: false
+    property bool isSticker: false
     property bool hideEmojiPicker: true
     property bool pinnedMessage: false
     property bool canPin: false
@@ -205,6 +206,7 @@ StatusPopupMenu {
         enabled: root.isMyMessage &&
                  !root.hideEmojiPicker &&
                  !root.isEmoji &&
+                 !root.isSticker &&
                  !root.isProfile &&
                  !root.pinnedPopup &&
                  !root.isRightClickOnImage
