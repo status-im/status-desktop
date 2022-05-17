@@ -522,7 +522,7 @@ Item {
             Loader {
                 id: chatImageContent
                 active: isImage
-                anchors.top: parent.top
+                anchors.top: chatText.visible ? chatText.bottom : parent.top
                 anchors.topMargin: active ? 6 : 0
                 z: 51
                 sourceComponent: Component {
