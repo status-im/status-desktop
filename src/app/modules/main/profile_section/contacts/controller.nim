@@ -2,20 +2,24 @@ import io_interface
 
 import ../../../../core/eventemitter
 import ../../../../../app_service/service/contacts/service as contacts_service
+import ../../../../../app_service/service/chat/service as chat_service
 
 type
   Controller* = ref object of RootObj
     delegate: io_interface.AccessInterface
     events: EventEmitter
     contactsService: contacts_service.Service
+    chatService: chat_service.Service
 
 proc newController*(delegate: io_interface.AccessInterface,
   events: EventEmitter,
-  contactsService: contacts_service.Service): Controller =
+  contactsService: contacts_service.Service,
+  chatService: chat_service.Service): Controller =
   result = Controller()
   result.delegate = delegate
   result.events = events
   result.contactsService = contactsService
+  result.chatService = chatService
 
 proc delete*(self: Controller) =
   discard
@@ -79,3 +83,6 @@ proc rejectContactRequest*(self: Controller, publicKey: string) =
 
 proc removeContactRequestRejection*(self: Controller, publicKey: string) =
   self.contactsService.removeContactRequestRejection(publicKey)
+
+proc switchToOrCreateOneToOneChat*(self: Controller, chatId: string) =
+  self.chatService.switchToOrCreateOneToOneChat(chatId, "")
