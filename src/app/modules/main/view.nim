@@ -94,6 +94,11 @@ QtObject:
   proc emitStoringPasswordSuccess*(self: View) =
     self.storingPasswordSuccess()
 
+  proc mailserverNotWorking*(self:View) {.signal.}
+
+  proc emitMailservernotWorking*(self: View) =
+    self.mailserverNotWorking()
+
   proc activeSection*(self: View): ActiveSection =
     return self.activeSection
 

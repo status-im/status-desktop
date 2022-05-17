@@ -29,6 +29,7 @@ type SignalType* {.pure.} = enum
   KeycardConnected = "keycard.connected"
   MailserverAvailable = "mailserver.available"
   MailserverChanged = "mailserver.changed"
+  MailserverNotWorking = "mailserver.not.working"
   HistoryArchivesProtocolEnabled = "community.historyArchivesProtocolEnabled"
   HistoryArchivesProtocolDisabled = "community.historyArchivesProtocolDisabled"
   CreatingHistoryArchives = "community.creatingHistoryArchives"

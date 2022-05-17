@@ -626,7 +626,55 @@ Item {
                     }
                 }
             }
+
+            Connections {
+                target: rootStore.mainModuleInst
+                onMailserverNotWorking: {
+                    Global.openPopup(mailserverNotWorkingPopupComponent);
+                }
+            }
         }
+
+        Component {
+            id: mailserverNotWorkingPopupComponent
+            StatusModal {
+                id: msNotWorkingPopup
+                anchors.centerIn: parent
+                header.title: qsTr("Can not connect to mailserver")
+                onClosed: {
+                    destroy()
+                }
+
+                contentItem: Item {
+                    width: msNotWorkingPopup.width
+                    implicitHeight: 100
+
+                    StatusBaseText {
+                      text: qsTr("The mailserver you're connecting to is unavailable.")
+                      color: Theme.palette.directColor1
+                      anchors.centerIn: parent
+                    }
+                }
+
+                rightButtons: [
+                    StatusButton {
+                      text: qsTr("Pick another")
+                      onClicked: {
+                          Global.changeAppSectionBySectionType(Constants.appSection.profile, Constants.settingsSubsection.messaging)
+                          msNotWorkingPopup.close()
+                      }
+                    },
+                    StatusButton {
+                      text: qsTr("Retry")
+                      onClicked: {
+                        // Retrying already happens automatically, so doing nothing
+                        // here is the same as retrying...
+                        msNotWorkingPopup.close()
+                      }
+                    }
+                ]
+            }
+          }
 
         Component {
             id: chooseBrowserPopupComponent
