@@ -154,15 +154,16 @@ method onChatUpdated*(self: Module,  chat: ChatDto) =
   for member in chat.members:
     self.addChatMember(self.controller.getChatMember(member.id))
 
-  let ids = self.view.model.getItemIds()
-  for id in ids:
-    var found = false
-    for member in chat.members:
-      if (member.id == id):
-        found = true
-        break
-    if (not found):
-      self.view.model().removeItemById(id)
+  if chat.members.len > 0:
+    let ids = self.view.model.getItemIds()
+    for id in ids:
+      var found = false
+      for member in chat.members:
+        if (member.id == id):
+          found = true
+          break
+      if (not found):
+        self.view.model().removeItemById(id)
 
 method onChatMemberRemoved*(self: Module, id: string) =
   self.view.model().removeItemById(id)
