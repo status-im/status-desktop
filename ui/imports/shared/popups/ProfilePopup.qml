@@ -174,7 +174,7 @@ StatusModal {
                 tooltip.text: qsTr("Copy to clipboard")
                 icon.name: "copy"
                 iconButton.onClicked: {
-                    globalUtils.copyToClipboard(subTitle)
+                    globalUtils.copyToClipboard(userPublicKey)
                     tooltip.visible = !tooltip.visible
                 }
                 width: parent.width

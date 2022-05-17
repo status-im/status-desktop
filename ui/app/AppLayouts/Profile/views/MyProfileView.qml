@@ -129,7 +129,7 @@ SettingsContentBase {
             tooltip.text: qsTr("Copy to clipboard")
             icon.name: "copy"
             iconButton.onClicked: {
-                root.profileStore.copyToClipboard(subTitle)
+                root.profileStore.copyToClipboard(root.profileStore.pubkey)
                 tooltip.visible = !tooltip.visible
             }
         }
