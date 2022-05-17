@@ -23,7 +23,7 @@ Rectangle {
     signal replyClicked(string messageId, string author)
     signal hoverChanged(bool hovered)
     signal setMessageActive(string messageId, bool active)
-    signal clickMessage(bool isProfileClick, bool isSticker, bool isImage, var image, bool emojiOnly, bool hideEmojiPicker)
+    signal clickMessage(bool isProfileClick, bool isSticker, bool isImage, var image, bool isEmoji, bool hideEmojiPicker)
 
     visible: !buttonsContainer.isChatBlocked &&
              !buttonsContainer.placeholderMsg && !buttonsContainer.activityCenterMsg &&

@@ -67,10 +67,20 @@ Item {
     property var transactionParams
 
     signal openStickerPackPopup(string stickerPackId)
-    signal addEmoji(bool isProfileClick, bool isSticker, bool isImage , var image, bool emojiOnly, bool hideEmojiPicker)
-    signal clickMessage(bool isProfileClick, bool isSticker, bool isImage, var image, bool emojiOnly, bool hideEmojiPicker, bool isReply, bool isRightClickOnImage, string imageSource)
+    signal addEmoji(bool isProfileClick, bool isSticker, bool isImage , var image, bool isEmoji, bool hideEmojiPicker)
+    signal clickMessage(bool isProfileClick, bool isSticker, bool isImage, var image, bool isEmoji, bool hideEmojiPicker, bool isReply, bool isRightClickOnImage, string imageSource)
     signal replyClicked(string messageId, string author)
     signal imageClicked(var image)
+
+
+    function setMessageActive(messageId, active) {
+        if (active) {
+            activeMessage = messageId;
+        } else if (activeMessage === messageId) {
+            activeMessage = "";
+        }
+    }
+
 
     width: parent.width
     height: messageContainer.height + messageContainer.anchors.topMargin
@@ -104,7 +114,7 @@ Item {
         isActivityCenterMessage: activityCenterMessage
         stickersLoaded: root.stickersLoaded
         onClickMessage: {
-            root.clickMessage(isProfileClick, isSticker, isImage, null, false, false, false, false, "");
+            root.clickMessage(isProfileClick, isSticker, isImage, null, isEmoji, false, false, false, "");
         }
     }
 
@@ -128,7 +138,7 @@ Item {
         activityCenterMsg: activityCenterMessage
         placeholderMsg: placeholderMessage
         onClickMessage: {
-            root.clickMessage(isProfileClick, isSticker, isImage, image, emojiOnly, hideEmojiPicker, false, false, "");
+            root.clickMessage(isProfileClick, isSticker, isImage, image, isEmoji, hideEmojiPicker, false, false, "");
         }
         onReplyClicked: {
             root.replyClicked(messageId, author)
@@ -141,7 +151,7 @@ Item {
             Connections {
                 enabled: isMessageActive
                 target: root.messageContextMenu
-                onClosed: setMessageActive(messageId, false)
+                onClosed: root.setMessageActive(messageId, false)
             }
         }
     }
@@ -322,7 +332,7 @@ Item {
             }
 
             onClickMessage: {
-                root.clickMessage(isProfileClick, isSticker, isImage, image, emojiOnly, hideEmojiPicker, isReply, false, "")
+                root.clickMessage(isProfileClick, isSticker, isImage, image, isEmoji, hideEmojiPicker, isReply, false, "")
             }
         }
 
@@ -600,7 +610,7 @@ Item {
                 }
 
                 onSetMessageActive: {
-                    setMessageActive(messageId, active);
+                    root.setMessageActive(messageId, active);
                 }
             }
 
@@ -749,7 +759,7 @@ Item {
                 }
 
                 onSetMessageActive: {
-                    setMessageActive(messageId, active);;
+                    root.setMessageActive(messageId, active);
                 }
             }
         }

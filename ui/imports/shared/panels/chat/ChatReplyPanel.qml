@@ -34,7 +34,7 @@ Loader {
     property int chatHorizontalPadding
     property string stickerData
 
-    signal clickMessage(bool isProfileClick, bool isSticker, bool isImage, var image, bool emojiOnly, bool hideEmojiPicker, bool isReply)
+    signal clickMessage(bool isProfileClick, bool isSticker, bool isImage, var image, bool isEmoji, bool hideEmojiPicker, bool isReply)
     signal scrollToBottom(bool isit, var container)
 
     sourceComponent: Component {

@@ -131,7 +131,7 @@ QtObject {
             return []
         }
     }
-    property var clickMessage: function(isProfileClick, isSticker = false, isImage = false, image = null, emojiOnly = false, hideEmojiPicker = false, isReply = false, isRightClickOnImage = false, imageSource = "") {
+    property var clickMessage: function(isProfileClick, isSticker = false, isImage = false, image = null, isEmoji = false, hideEmojiPicker = false, isReply = false, isRightClickOnImage = false, imageSource = "") {
         if (placeholderMessage || activityCenterMessage) {
             return
         }
@@ -147,7 +147,7 @@ QtObject {
         messageContextMenu.isCurrentUser = isCurrentUser
         messageContextMenu.isText = isText
         messageContextMenu.isSticker = isSticker;
-        messageContextMenu.emojiOnly = emojiOnly;
+        messageContextMenu.isEmoji = isEmoji;
         messageContextMenu.hideEmojiPicker = hideEmojiPicker;
         messageContextMenu.pinnedMessage = pinnedMessage;
         messageContextMenu.isCurrentUser = isCurrentUser;
