@@ -10,6 +10,7 @@ StatusChatListCategoryItem 0.1 StatusChatListCategoryItem.qml
 StatusChatListAndCategories 0.1 StatusChatListAndCategories.qml
 StatusChatToolBar 0.1 StatusChatToolBar.qml
 StatusContactRequestsIndicatorListItem 0.1 StatusContactRequestsIndicatorListItem.qml
+StatusEmoji 0.1 StatusEmoji.qml
 StatusContactVerificationIcons 0.1 StatusContactVerificationIcons.qml
 StatusDescriptionListItem 0.1 StatusDescriptionListItem.qml
 StatusLetterIdenticon 0.1 StatusLetterIdenticon.qml

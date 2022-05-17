@@ -13,6 +13,7 @@
         <file>src/StatusQ/Components/StatusChatToolBar.qml</file>
         <file>src/StatusQ/Components/StatusContactRequestsIndicatorListItem.qml</file>
         <file>src/StatusQ/Components/StatusContactVerificationIcons.qml</file>
+        <file>src/StatusQ/Components/StatusEmoji.qml</file>
         <file>src/StatusQ/Components/StatusDescriptionListItem.qml</file>
         <file>src/StatusQ/Components/StatusExpandableItem.qml</file>
         <file>src/StatusQ/Components/StatusLetterIdenticon.qml</file>

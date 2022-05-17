@@ -45,7 +45,8 @@ QtObject {
     }
     function iconId(text) {
         const parsed = parse(text);
-        return parsed.match('src=".*\/(.+?).svg')[1]
+        const match = parsed.match('src=".*\/(.+?).svg');
+        return (match && match.length >= 2) ? match[1] : undefined;
     }
     function fromCodePoint(value) {
         return Twemoji.twemoji.convert.fromCodePoint(value)

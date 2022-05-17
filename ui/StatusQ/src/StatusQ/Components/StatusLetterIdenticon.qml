@@ -18,9 +18,18 @@ Rectangle {
     height: 40
     radius: width / 2
 
+    StatusEmoji {
+        visible: root.emoji
+        anchors.centerIn: parent
+        width: Math.round(parent.width / 2)
+        height: Math.round(parent.height / 2)
+        emojiId: Emoji.iconId(root.emoji, root.emojiSize) || ""
+    }
+    
     StatusBaseText {
         id: identiconText
 
+        visible: !root.emoji
         anchors.alignWhenCentered: false
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
@@ -32,16 +41,8 @@ Rectangle {
         color: d.luminance(root.color) > 0.5 ? Qt.rgba(0, 0, 0, 0.5) : Qt.rgba(255, 255, 255, 0.7)
 
         text: {
-            if (emoji) {
-                if(Utils.isHtml(emoji))
-                    return emoji
-                else
-                    return Emoji.parse(root.emoji, emojiSize)
-            }
-
             const shift = (root.name.charAt(0) === "#") ||
                           (root.name.charAt(0) === "@")
-
             return root.name.substring(shift, shift + charactersLen).toUpperCase()
         }
     }
