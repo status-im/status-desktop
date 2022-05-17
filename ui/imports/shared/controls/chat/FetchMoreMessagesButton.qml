@@ -11,8 +11,10 @@ Item {
     height: childrenRect.height + Style.current.smallPadding * 2
     anchors.left: parent.left
     anchors.right: parent.right
+
     property int nextMessageIndex
     property string nextMsgTimestamp
+    
     signal clicked()
     signal timerTriggered()
 
@@ -80,7 +82,9 @@ Item {
         horizontalAlignment: Text.AlignHCenter
         color: Style.current.secondaryText
         text: qsTr("before--%1").arg(d.formattedDate)
+        visible: d.formattedDate
     }
+
     Separator {
         anchors.top: fetchDate.bottom
         anchors.topMargin: Style.current.smallPadding
