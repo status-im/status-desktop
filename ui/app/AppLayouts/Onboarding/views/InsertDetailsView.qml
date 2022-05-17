@@ -113,7 +113,6 @@ Item {
             Layout.preferredHeight: 78
             Layout.alignment: Qt.AlignHCenter
             input.placeholderText: qsTr("Display name")
-            input.edit.font.capitalization: Font.Capitalize
             input.rightComponent: RoundedIcon {
                 width: 14
                 height: 14
