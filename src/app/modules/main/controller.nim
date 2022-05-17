@@ -81,6 +81,9 @@ proc init*(self: Controller) =
     # requestAllHistoricMessagesResult
     # requestMissingCommunityInfos
 
+  self.events.on(SIGNAL_MAILSERVER_NOT_WORKING) do(e: Args):
+    self.delegate.emitMailserverNotWorking()
+
   if(defined(macosx)):
     let account = self.accountsService.getLoggedInAccount()
     singletonInstance.localAccountSettings.setFileName(account.name)

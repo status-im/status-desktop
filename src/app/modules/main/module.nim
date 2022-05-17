@@ -443,6 +443,9 @@ method emitStoringPasswordError*[T](self: Module[T], errorDescription: string) =
 method emitStoringPasswordSuccess*[T](self: Module[T]) =
   self.view.emitStoringPasswordSuccess()
 
+method emitMailserverNotWorking*[T](self: Module[T]) =
+  self.view.emitMailserverNotWorking()
+
 method getActiveSectionId*[T](self: Module[T]): string =
   return self.controller.getActiveSectionId()
 

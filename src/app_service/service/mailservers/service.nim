@@ -28,6 +28,7 @@ type
 # Signals which may be emitted by this service:
 const SIGNAL_ACTIVE_MAILSERVER_CHANGED* = "activeMailserverChanged"
 const SIGNAL_MAILSERVER_AVAILABLE* = "mailserverAvailable"
+const SIGNAL_MAILSERVER_NOT_WORKING* = "mailserverNotWorking"
 
 const requestMoreMessagesTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[RequestMoreMessagesTaskArg](argEncoded)
@@ -108,6 +109,10 @@ QtObject:
       info "mailserver available"
       let data = MailserverAvailableArgs()
       self.events.emit(SIGNAL_MAILSERVER_AVAILABLE, data)
+
+    self.events.on(SignalType.MailserverNotWorking.event) do(e: Args):
+      info "mailserver not working"
+      self.events.emit(SIGNAL_MAILSERVER_NOT_WORKING, Args())
 
     self.events.on(SignalType.HistoryRequestStarted.event) do(e: Args):
       let h = HistoryRequestStartedSignal(e)
