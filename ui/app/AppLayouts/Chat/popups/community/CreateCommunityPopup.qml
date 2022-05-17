@@ -325,7 +325,7 @@ StatusModal {
                 components: [
                     StatusCheckBox {
                         id: requestToJoinCheckbox
-                        checked: false
+                        checked: true
                     }
                 ]
             }
