@@ -111,8 +111,9 @@ QtObject:
   proc amIChatAdmin*(self: View): bool {.slot.} =
     return self.delegate.amIChatAdmin()
 
-  proc updateChatDetails*(self: View, name, description, emoji, color: string) =
-    self.chatDetails.setName(name)
+  proc updateChatDetails*(self: View, name, description, emoji, color: string, ignoreName: bool) =
+    if not ignoreName:
+      self.chatDetails.setName(name)
     self.chatDetails.setDescription(description)
     self.chatDetails.setEmoji(emoji)
     self.chatDetails.setColor(color)

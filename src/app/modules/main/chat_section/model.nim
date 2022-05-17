@@ -269,7 +269,7 @@ QtObject:
 
   proc renameItem*(self: Model, id: string, name: string) =
     for i in 0 ..< self.items.len:
-      if(self.items[i].id == id):
+      if self.items[i].id == id:
         self.items[i].BaseItem.name = name
         let index = self.createIndex(i, 0, nil)
         self.dataChanged(index, index, @[ModelRole.Name.int])
