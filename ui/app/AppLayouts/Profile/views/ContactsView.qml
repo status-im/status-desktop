@@ -131,7 +131,6 @@ SettingsContentBase {
                         Layout.preferredHeight: root.height * 0.5
                         contactsModel: root.contactsStore.myContactsModel
                         clip: true
-                        title: qsTr("Contacts")
                         searchString: searchBox.text
                         panelUsage: Constants.contactsPanelUsage.mutualContacts
 
