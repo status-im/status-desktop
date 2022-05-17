@@ -180,6 +180,7 @@ Column {
         messageContextMenu.isProfile = !!isProfileClick
         messageContextMenu.isRightClickOnImage = isRightClickOnImage
         messageContextMenu.isEmoji = isEmoji
+        messageContextMenu.isSticker = isSticker
         messageContextMenu.hideEmojiPicker = hideEmojiPicker
 
         if(isReply){
