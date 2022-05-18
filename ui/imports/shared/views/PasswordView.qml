@@ -311,7 +311,8 @@ Column {
         textField.rightPadding: showHideConfirmIcon.width + showHideConfirmIcon.anchors.rightMargin + Style.current.padding / 2
 
         onTextChanged: {
-            if(textField.text.length === newPswInput.text.length || textField.text.length === 0) {
+            d.passwordValidation();
+            if(textField.text.length === newPswInput.text.length) {
                 root.checkPasswordMatches()
             }
         }
