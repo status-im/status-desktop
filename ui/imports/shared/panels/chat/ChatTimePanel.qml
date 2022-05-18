@@ -12,7 +12,7 @@ StyledText {
     property string timestamp
 
     color: Style.current.secondaryText
-    text: Utils.formatShortTime(chatTime.timestamp, RootStore.accountSensitiveSettings.is24hTimeFormat)
+    text: Utils.formatShortTime(parseInt(chatTime.timestamp, 10), RootStore.accountSensitiveSettings.is24hTimeFormat)
     font.pixelSize: Style.current.asideTextFontSize
 
     StatusQ.StatusToolTip {
