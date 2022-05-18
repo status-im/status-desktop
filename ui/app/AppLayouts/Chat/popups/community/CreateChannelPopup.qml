@@ -185,14 +185,15 @@ StatusModal {
                             validationError = Utils.validateAndReturnError(text, communityColorValidator)
                         }
                     }
+                }
 
-                    ColorDialog {
-                        id: colorDialog
-                        property bool colorSelected: popup.isEdit && popup.channelColor
-                        color: popup.isEdit && popup.channelColor ? popup.channelColor :
-                            Theme.palette.primaryColor1
-                        onAccepted: colorSelected = true
-                    }
+                StatusColorDialog {
+                    id: colorDialog
+                    anchors.centerIn: parent
+                    property bool colorSelected: popup.isEdit && popup.channelColor
+                    color: popup.isEdit && popup.channelColor ? popup.channelColor :
+                        Theme.palette.primaryColor1
+                    onAccepted: colorSelected = true
                 }
 
                 StatusBaseText {
