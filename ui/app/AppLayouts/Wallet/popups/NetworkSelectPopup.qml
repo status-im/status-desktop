@@ -59,6 +59,13 @@ Popup {
                 delegate: chainItem
             }
 
+            StatusBaseText {
+                font.pixelSize: Style.current.primaryTextFontSize
+                color: Theme.palette.baseColor1
+                text: qsTr("Layer 2")
+                visible: chainRepeater2.count > 0
+            }
+
             Repeater {
                 id: chainRepeater2
                 model: popup.layer2Networks
@@ -77,29 +84,24 @@ Popup {
 
     Component {
         id: chainItem
-        Item {
-            width: content.width
-            height: 40
-            StatusBaseText {
-                anchors.left: parent.left
-                anchors.leftMargin: Style.current.bigPadding
-                anchors.verticalCenter: parent.verticalCenter
-                font.pixelSize: Style.current.primaryTextFontSize
-                text: model.chainName
-                color: Theme.palette.directColor1
+        StatusListItem {
+            implicitWidth: scrollView.width
+            title: model.chainName
+            image.source: Style.png(model.iconUrl)
+            onClicked:  {
+                checkBox.checked = !checkBox.checked
             }
-
-            StatusCheckBox {
-                anchors.right: parent.right
-                anchors.rightMargin: Style.current.bigPadding
-                anchors.verticalCenter: parent.verticalCenter
-                checked: model.isEnabled
-                onCheckedChanged: {
-                    if (model.isEnabled !== checked) {
-                        popup.toggleNetwork(model.chainId)
+            components: [
+                StatusCheckBox {
+                    id: checkBox
+                    checked: model.isEnabled
+                    onCheckedChanged: {
+                        if (model.isEnabled !== checked) {
+                            popup.toggleNetwork(model.chainId)
+                        }
                     }
                 }
-            }
+            ]
         }
     }
 }

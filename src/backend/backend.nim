@@ -38,7 +38,8 @@ type
     nativeCurrencySymbol* {.serializedFieldName("nativeCurrencySymbol").}: string
     isTest* {.serializedFieldName("isTest").}: bool
     enabled* {.serializedFieldName("enabled").}: bool
-
+    chainColor* {.serializedFieldName("chainColor").}: string
+    shortName* {.serializedFieldName("shortName").}: string
 
 rpc(clientVersion, "web3"):
   discard

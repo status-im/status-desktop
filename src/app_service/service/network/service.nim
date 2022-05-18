@@ -69,6 +69,8 @@ proc upsertNetwork*(self: Service, network: NetworkDto) =
     nativeCurrencySymbol: network.nativeCurrencySymbol,
     isTest: network.isTest,
     enabled: network.enabled,
+    chainColor: network.chainColor,
+    shortName: network.shortName,
   ))
   self.dirty.store(true)
 
