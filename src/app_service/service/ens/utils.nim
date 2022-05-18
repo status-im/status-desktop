@@ -46,9 +46,7 @@ proc addDomain*(username: string): string =
 proc publicKeyOf*(chainId: int, username: string): string =
   try:
     let res = status_ens.publicKeyOf(chainId, addDomain(username))
-    var key = res.result.getStr
-    key.removePrefix("0x")
-    return "0x04" & key
+    return res.result.getStr
   except:
     return ""
 
