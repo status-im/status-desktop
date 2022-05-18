@@ -27,18 +27,16 @@ StatusAppThreePanelLayout {
 
         RowLayout {
             id: searchInputWrapper
-            width: parent.width
+            width: 288
             height: searchInput.height
             anchors.top: headline.bottom
             anchors.topMargin: 16
-            anchors.right: parent.right
-            anchors.rightMargin: 8
+            anchors.horizontalCenter: parent.horizontalCenter
 
             StatusBaseInput {
                 id: searchInput
                 Layout.fillWidth: true
-                Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
-                Layout.leftMargin: 17
+                Layout.alignment: Qt.AlignVCenter
                 implicitHeight: 36
                 topPadding: 8
                 bottomPadding: 8
@@ -61,7 +59,7 @@ StatusAppThreePanelLayout {
         Column {
             anchors.top: searchInputWrapper.bottom
             anchors.topMargin: 16
-            width: parent.width
+            anchors.horizontalCenter: parent.horizontalCenter
             spacing: 8
 
             StatusContactRequestsIndicatorListItem {
@@ -72,7 +70,6 @@ StatusAppThreePanelLayout {
             }
 
             StatusChatList {
-                anchors.horizontalCenter: parent.horizontalCenter
                 model: Models.demoChatListItems
                 highlightItem: !root.createChat
                 onChatItemUnmuted: {

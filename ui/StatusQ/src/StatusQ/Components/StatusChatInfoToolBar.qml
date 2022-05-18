@@ -27,7 +27,6 @@ Item {
         id: statusChatInfoButton
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
-        anchors.leftMargin: 5
         anchors.right: (implicitWidth > parent.width - 50) ? statusMenuButton.left : undefined
         anchors.rightMargin: 5
         type: StatusChatInfoButton.Type.OneToOneChat
@@ -37,7 +36,6 @@ Item {
     StatusRoundButton {
         id: statusMenuButton
         anchors.right: parent.right
-        anchors.rightMargin: 8
         anchors.verticalCenter: parent.verticalCenter
 
         visible: popupMenuSlot.active
@@ -104,5 +102,4 @@ Item {
             }
         }
     }
-
 }
