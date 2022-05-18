@@ -158,21 +158,6 @@ QtObject:
     # if (not chats[0].active):
     #   return
 
-    let sectionId = if chats[0].communityId.len > 0: chats[0].communityId else: singletonInstance.userProfile.getPubKey()
-    let chatId = chats[0].id
-    let chatType = chats[0].chatType
-    let unviewedMessagesCount = chats[0].unviewedMessagesCount
-    let unviewedMentionsCount = chats[0].unviewedMentionsCount
-    if(chatType == ChatType.Unknown):
-      error "error: new message with an unknown chat type received for chat id ", chatId
-      return
-
-    # Handling edited message update
-    if(messages.len == 1 and messages[0].editedAt > 0):
-      # this is an update for an edited message
-      let data = MessageEditedArgs(chatId: chatId, message: messages[0])
-      self.events.emit(SIGNAL_MESSAGE_EDITED, data)
-      return
 
     # In case of reply to a message we're receiving 2 messages in the `messages` array (replied message
     # and a message one replied to) but we actually need only a new replied message, that's why we need to filter
@@ -181,22 +166,39 @@ QtObject:
     # the same (once we may have replied messages before once after the messages one replied to), that's why we are
     # covering the most general case here.
     var messagesOneRepliedTo: seq[string]
-    for m in messages:
-      if m.responseTo.len > 0:
-        messagesOneRepliedTo.add(m.responseTo)
+
+    for msg in messages:
+      if(msg.editedAt > 0):
+        let data = MessageEditedArgs(chatId: msg.chatId, message: msg)
+        self.events.emit(SIGNAL_MESSAGE_EDITED, data)
+      if msg.responseTo.len > 0:
+        messagesOneRepliedTo.add(msg.responseTo)
 
     for msgId in messagesOneRepliedTo:
       removeMessageWithId(messages, msgId)
 
-    let data = MessagesArgs(
-      sectionId: sectionId,
-      chatId: chatId,
-      chatType: chatType,
-      unviewedMessagesCount: unviewedMessagesCount,
-      unviewedMentionsCount: unviewedMentionsCount,
-      messages: messages
-    )
-    self.events.emit(SIGNAL_NEW_MESSAGE_RECEIVED, data)
+    for i in 0 ..< chats.len:
+      if(chats[i].chatType == ChatType.Unknown):
+        error "error: new message with an unknown chat type received", chatId=chats[i].id
+        continue
+
+      var chatMessages: seq[MessageDto]
+      for msg in messages:
+        if (msg.chatId == chats[i].id):
+          chatMessages.add(msg)
+      
+      if chats[i].communityId.len == 0:
+        chats[i].communityId = singletonInstance.userProfile.getPubKey()
+
+      let data = MessagesArgs(
+        sectionId: chats[i].communityId,
+        chatId: chats[i].id,
+        chatType: chats[i].chatType,
+        unviewedMessagesCount: chats[i].unviewedMessagesCount,
+        unviewedMentionsCount: chats[i].unviewedMentionsCount,
+        messages: chatMessages
+      )
+      self.events.emit(SIGNAL_NEW_MESSAGE_RECEIVED, data)
 
   proc getNumOfPinnedMessages*(self: Service, chatId: string): int =
     if(self.numOfPinnedMessagesPerChat.hasKey(chatId)):
