@@ -477,7 +477,7 @@ method onCommunityCategoryDeleted*(self: Module, cat: Category) =
   for c in chats:
     if (c.categoryId != cat.id or self.doesTopLevelChatExist(self.controller.getMySectionId() & c.id)):
       continue
-    let chatDto = self.controller.getChatDetails(self.controller.getMySectionId(), c.id)
+    let chatDto = self.controller.getChatDetails(c.id)
     let hasNotification = chatDto.unviewedMessagesCount > 0 or chatDto.unviewedMentionsCount > 0
     let notificationsCount = chatDto.unviewedMentionsCount
     let amIChatAdmin = self.controller.getMyCommunity().admin
@@ -743,15 +743,14 @@ method prepareEditCategoryModel*(self: Module, categoryId: string) =
   let communityId = self.controller.getMySectionId()
   let chats = self.controller.getChats(communityId, "")
   for chat in chats:
-    let c = self.controller.getChatDetails(communityId, chat.id)
+    let c = self.controller.getChatDetails(chat.id)
     let item = initItem(c.id, c.name, icon="", c.color, c.emoji, c.description,
       c.chatType.int, amIChatAdmin=false, hasUnreadMessages=false, notificationsCount=0, c.muted,
       blocked=false, active=false, c.position, categoryId="")
-
     self.view.editCategoryChannelsModel().appendItem(item)
   let catChats = self.controller.getChats(communityId, categoryId)
   for chat in catChats:
-    let c = self.controller.getChatDetails(communityId, chat.id)
+    let c = self.controller.getChatDetails(chat.id)
     let item = initItem(c.id, c.name, icon="", c.color, c.emoji, c.description,
       c.chatType.int, amIChatAdmin=false, hasUnreadMessages=false, notificationsCount=0, c.muted,
       blocked=false, active=false, c.position, categoryId)
