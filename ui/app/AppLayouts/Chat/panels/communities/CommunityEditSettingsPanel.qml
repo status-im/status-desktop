@@ -12,15 +12,17 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Layout 0.1
 import StatusQ.Components 0.1
+import StatusQ.Popups 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Controls.Validators 0.1
 
 Flickable {
     id: root
 
+    property color color: Theme.palette.primaryColor1
+
     property alias name: nameInput.text
     property alias description: descriptionTextInput.text
-    property alias color: colorDialog.color
     property alias image: addImageButton.selectedImage
     readonly property alias imageAx: imageCropperModal.aX
     readonly property alias imageAy: imageCropperModal.aY
@@ -220,25 +222,29 @@ Flickable {
 
                 property string validationError: ""
 
-                bgColor: colorDialog.colorSelected ? colorDialog.color : Theme.palette.baseColor2
-                contentColor: colorDialog.colorSelected ? Theme.palette.indirectColor1 : Theme.palette.baseColor1
-                text: colorDialog.colorSelected ? colorDialog.color.toString(
-                                                      ).toUpperCase() : qsTr("Pick a color")
+                bgColor: root.color
+                contentColor: Theme.palette.indirectColor1
+                text: root.color.toString()
 
-                onClicked: colorDialog.open()
+                onClicked: {
+                    colorDialog.color = root.color;
+                    colorDialog.open();
+                }
                 onTextChanged: {
-                    if (colorDialog.colorSelected) {
-                        validationError = Utils.validateAndReturnError(
-                                    text,
-                                    Utils.Validate.NoEmpty | Utils.Validate.TextHexColor)
-                    }
+                    validationError = Utils.validateAndReturnError(text,
+                                          Utils.Validate.NoEmpty |
+                                          Utils.Validate.TextHexColor);
                 }
 
-                ColorDialog {
+                StatusColorDialog {
                     id: colorDialog
-                    property bool colorSelected: true
-                    color: Theme.palette.primaryColor1
-                    onAccepted: colorSelected = true
+                    anchors.centerIn: parent
+                    header.title: qsTr("Community Colour")
+                    previewText: qsTr("White text should be legable on top of this colour")
+                    acceptText: qsTr("Select Community Colour")
+                    onAccepted: {
+                        root.color = color;
+                    }
                 }
             }
         }
