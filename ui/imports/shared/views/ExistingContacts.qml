@@ -46,12 +46,12 @@ Item {
                 showCheckbox: root.showCheckbox
                 isChecked: root.pubKeys.indexOf(model.pubKey) > -1
                 pubKey: model.pubKey
-                isContact: model.isContact
+                isContact: model.isMutualContact
                 isUser: false
                 name: model.name
                 image: model.icon
                 isVisible: {
-                    return model.isContact && !model.isBlocked && (root.filterText === "" ||
+                    return model.isMutualContact && !model.isBlocked && (root.filterText === "" ||
                     root.matchesAlias(model.name.toLowerCase(), root.filterText.toLowerCase()) ||
                     model.name.toLowerCase().includes(root.filterText.toLowerCase()) ||
                     model.pubKey.toLowerCase().includes(root.filterText.toLowerCase())) &&
