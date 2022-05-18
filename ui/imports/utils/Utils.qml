@@ -225,13 +225,21 @@ QtObject {
         return Qt.hsla(color.hslHue, color.hslSaturation, color.hslLightness, alpha)
     }
 
+    function checkTimestamp(value, errorLocation) {
+        if(Number.isInteger(value) && value > 0) {
+            return true;
+        }
+        console.error(qsTr("timestamp must be type of int and greater than 0 (%1)").arg(errorLocation));
+        return false;
+    }
+
     function formatTime(value, is24hTimeFormat) {
         const format24h = "hh:mm:ss t"
         const format12h = "h:mm:ss AP t"
         const currentTimeFormat = is24hTimeFormat ? format24h : format12h
 
-        return !!value ? Qt.formatTime(new Date(), currentTimeFormat) :
-                         Qt.formatTime(new Date(value), currentTimeFormat)
+        return checkTimestamp(value, "formatTime") ? Qt.formatTime(new Date(value), currentTimeFormat) :
+                         Qt.formatTime(new Date(), currentTimeFormat)
     }
 
     function formatShortTime(value, is24hTimeFormat) {
@@ -239,8 +247,8 @@ QtObject {
         const format12h = "h:mm AP"
         const currentTimeFormat = is24hTimeFormat ? format24h : format12h
 
-        return !!value ? Qt.formatTime(new Date(), currentTimeFormat) :
-                         Qt.formatTime(new Date(value), currentTimeFormat)
+        return checkTimestamp(value, "formatShortTime") ? Qt.formatTime(new Date(value), currentTimeFormat) :
+                         Qt.formatTime(new Date(), currentTimeFormat)
     }
 
     function formatShortDateStr(longStr) {
@@ -301,8 +309,8 @@ QtObject {
         const formatDDMMYY = "dddd d MMMM yyyy"
         const formatMMDDYY = "dddd, MMMM d, yyyy"
         const currentFormat = isDDMMYYDateFormat ? formatDDMMYY : formatMMDDYY
-        return !value ? Qt.formatDate(new Date(), currentFormat) :
-                        Qt.formatDate(new Date(value), currentFormat)
+        return checkTimestamp(value, "formatLongDate") ? Qt.formatDate(new Date(value), currentFormat) :
+                         Qt.formatDate(new Date(), currentFormat)
     }
 
     function formatLongDateTime(value, isDDMMYYDateFormat, is24hTimeFormat) {
@@ -312,8 +320,8 @@ QtObject {
         const format12h = "h:mm:ss AP t"
         const currentDateFormat = isDDMMYYDateFormat ? formatDDMMYY : formatMMDDYY
         const currentTimeFormat = is24hTimeFormat ? format24h : format12h
-        return !!value ? Qt.formatDateTime(new Date(), currentDateFormat + " " + currentTimeFormat) :
-                         Qt.formatDateTime(new Date(value), currentDateFormat + " " + currentTimeFormat)
+        return checkTimestamp(value, "formatLongDateTime") ? Qt.formatDateTime(new Date(value), currentDateFormat + " " + currentTimeFormat) :
+                         Qt.formatDateTime(new Date(), currentDateFormat + " " + currentTimeFormat)
     }
 
      // WARN: It is not used!! TO BE REMOVE??
