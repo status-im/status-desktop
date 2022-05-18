@@ -80,6 +80,9 @@ QtObject:
       n.nativeCurrencySymbol,
       n.isTest,
       n.enabled,
+      n.iconUrl,
+      n.chainColor,
+      n.shortName,
     ))
     self.layer1.setItems(items.filter(i => i.getLayer() == 1))
     self.layer2.setItems(items.filter(i => i.getLayer() == 2))
