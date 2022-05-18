@@ -236,7 +236,7 @@ QtObject:
       if (showWarning):
         warn "trying to get chat data for an unexisting chat id", chatId
       return
-
+    
     return self.chats[chatId]
 
   proc getOneToOneChatNameAndImage*(self: Service, chatId: string):

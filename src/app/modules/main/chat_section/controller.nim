@@ -213,9 +213,8 @@ proc getCategories*(self: Controller, communityId: string): seq[Category] =
 proc getChats*(self: Controller, communityId: string, categoryId: string): seq[ChatDto] =
   return self.communityService.getChats(communityId, categoryId)
 
-proc getChatDetails*(self: Controller, communityId, chatId: string): ChatDto =
-  let fullId = communityId & chatId
-  return self.chatService.getChatById(fullId)
+proc getChatDetails*(self: Controller, chatId: string): ChatDto =
+  return self.chatService.getChatById(chatId)
 
 proc getChatDetailsForChatTypes*(self: Controller, types: seq[ChatType]): seq[ChatDto] =
   return self.chatService.getChatsOfChatTypes(types)
