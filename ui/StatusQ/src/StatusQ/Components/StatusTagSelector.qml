@@ -355,8 +355,8 @@ Item {
                     anchors.rightMargin: 8
                     anchors.leftMargin: 8
                     radius: 8
-                    visible: (root.sortedList.count > 0)
-                    color: (userListView.currentIndex === index) ? Theme.palette.baseColor2 : "transparent"
+                    visible: wrapper.ListView.isCurrentItem
+                    color: Theme.palette.baseColor2
                 }
 
                 StatusSmartIdenticon {
@@ -393,12 +393,14 @@ Item {
                 }
 
                 MouseArea {
+                    id: sensor
                     cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
                     acceptedButtons: Qt.LeftButton | Qt.RightButton
                     anchors.fill: parent
                     hoverEnabled: true
-                    onEntered: {
-                        userListView.currentIndex = index;
+                    onContainsMouseChanged: {
+                        if (containsMouse)
+                            userListView.currentIndex = index;
                     }
                     onClicked: {
                         root.insertTag(model.name, model.publicId);
