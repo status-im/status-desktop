@@ -484,7 +484,7 @@ ColumnLayout {
                 onStickerSelected: {
                     chatContentRoot.rootStore.sendSticker(chatContentModule.getMyChatId(),
                                                           hashId,
-                                                          chatInput.isReply ? SelectedMessage.messageId : "",
+                                                          chatInput.isReply ? chatInput.replyMessageId : "",
                                                           packId)
                 }
 
