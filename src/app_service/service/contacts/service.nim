@@ -228,7 +228,8 @@ QtObject:
       # If we try to get the contact details of ourselves, just return our own info
       return ContactsDto(
         id: singletonInstance.userProfile.getPubKey(),
-        name: singletonInstance.userProfile.getName(),
+        displayName: singletonInstance.userProfile.getDisplayName(),
+        name: singletonInstance.userProfile.getEnsName(),
         alias: singletonInstance.userProfile.getUsername(),
         ensVerified: singletonInstance.userProfile.getEnsName().len > 0,
         added: true,

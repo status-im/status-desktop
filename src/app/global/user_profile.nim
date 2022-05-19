@@ -115,6 +115,8 @@ QtObject:
     notify = nameChanged
 
   proc setDisplayName*(self: UserProfile, displayName: string) = # Not a slot
+    if(self.displayName == displayName):
+      return
     self.displayName = displayName
     self.nameChanged()
 

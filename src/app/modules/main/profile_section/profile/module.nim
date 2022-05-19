@@ -50,25 +50,11 @@ method viewDidLoad*(self: Module) =
 method storeIdentityImage*(self: Module, imageUrl: string, aX: int, aY: int, bX: int, bY: int) =
   let address = singletonInstance.userProfile.getAddress()
   let image = singletonInstance.utils.formatImagePath(imageUrl)
-  let storedImages = self.controller.storeIdentityImage(address, image, aX, aY, bX, bY)
-  if(storedImages.len == 0):
-    error "error: array of stored images is empty"
-    return
-
-  for img in storedImages:
-    if(img.imgType == "large"):
-      singletonInstance.userProfile.setLargeImage(img.uri)
-    elif(img.imgType == "thumbnail"):
-      singletonInstance.userProfile.setThumbnailImage(img.uri)
+  self.controller.storeIdentityImage(address, image, aX, aY, bX, bY)
 
 method deleteIdentityImage*(self: Module) =
   let address = singletonInstance.userProfile.getAddress()
   self.controller.deleteIdentityImage(address)
-  singletonInstance.userProfile.setLargeImage("")
-  singletonInstance.userProfile.setThumbnailImage("")
 
 method setDisplayName*(self: Module, displayName: string) =
-  if self.controller.setDisplayName(displayName):
-    singletonInstance.userProfile.setDisplayName(displayName)
-  else:
-    error "could not set display name"
+  self.controller.setDisplayName(displayName)

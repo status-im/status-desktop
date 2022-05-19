@@ -19,11 +19,11 @@ proc delete*(self: Controller) =
 proc init*(self: Controller) =
   discard
 
-proc storeIdentityImage*(self: Controller, address: string, image: string, aX: int, aY: int, bX: int, bY: int): seq[Image] =
-  return self.profileService.storeIdentityImage(address, image, aX, aY, bX, bY)
+proc storeIdentityImage*(self: Controller, address: string, image: string, aX: int, aY: int, bX: int, bY: int) =
+  self.profileService.storeIdentityImage(address, image, aX, aY, bX, bY)
 
 proc deleteIdentityImage*(self: Controller, address: string) =
   self.profileService.deleteIdentityImage(address)
 
-proc setDisplayName*(self: Controller, displayName: string): bool =
+proc setDisplayName*(self: Controller, displayName: string) =
   self.profileService.setDisplayName(displayName)

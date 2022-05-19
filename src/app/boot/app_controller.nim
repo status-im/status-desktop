@@ -1,4 +1,4 @@
-import NimQml
+import NimQml, chronicles
 
 import ../../app_service/service/general/service as general_service
 import ../../app_service/service/keychain/service as keychain_service
@@ -37,6 +37,9 @@ import ../core/notifications/notifications_manager
 import ../global/global_singleton
 
 import ../core/[main]
+
+logScope:
+  topics = "app-controller"
 
 type
   AppController* = ref object of RootObj
@@ -147,7 +150,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.transactionService = transaction_service.newService(statusFoundation.events, statusFoundation.threadpool,
   result.walletAccountService, result.networkService, result.settingsService, result.tokenService)
   result.bookmarkService = bookmark_service.newService()
-  result.profileService = profile_service.newService()
+  result.profileService = profile_service.newService(result.contactsService, result.settingsService)
   result.stickersService = stickers_service.newService(
     statusFoundation.events,
     statusFoundation.threadpool,
@@ -353,8 +356,9 @@ proc buildAndRegisterLocalAccountSensitiveSettings(self: AppController) =
 
 proc buildAndRegisterUserProfile(self: AppController) =
   let pubKey = self.settingsService.getPublicKey()
+  let alias = self.settingsService.getName()
   let preferredName = self.settingsService.getPreferredName()
-  let displayName = self.settingsService.getDisplayName()
+  var displayName = self.settingsService.getDisplayName()
   let ensUsernames = self.settingsService.getEnsUsernames()
   let firstEnsName = if (ensUsernames.len > 0): ensUsernames[0] else: ""
   let sendUserStatus = self.settingsService.getSendStatusUpdates()
@@ -369,7 +373,12 @@ proc buildAndRegisterUserProfile(self: AppController) =
     elif(img.imgType == "thumbnail"):
       thumbnail = img.uri
 
-  singletonInstance.userProfile.setFixedData(loggedInAccount.name, loggedInAccount.keyUid, pubKey)
+  # loggedInAccount.name and displayName must be the same, if not, we are using loggedInAccount.name
+  if (loggedInAccount.name != displayName):
+    info "login account name and display name stored in settings differ"
+    displayName = loggedInAccount.name
+
+  singletonInstance.userProfile.setFixedData(alias, loggedInAccount.keyUid, pubKey)
   singletonInstance.userProfile.setDisplayName(displayName)
   singletonInstance.userProfile.setPreferredName(preferredName)
   singletonInstance.userProfile.setEnsName(firstEnsName)
