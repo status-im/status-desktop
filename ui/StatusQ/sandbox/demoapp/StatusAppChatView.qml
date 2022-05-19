@@ -129,7 +129,7 @@ StatusAppThreePanelLayout {
         Component {
             id: createChatView
             CreateChatView {
-                contactsModel: Models.dummyContactsModel
+                contactsModel: Models.membersListModel
             }
         }
 

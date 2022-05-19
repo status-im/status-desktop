@@ -4,58 +4,6 @@ import StatusQ.Components 0.1
 
 QtObject {
 
-    property ListModel dummyContactsModel: ListModel {
-        ListElement {
-            publicId: "0x0"
-            name: "Maria"
-            icon: ""
-            isIdenticon: false
-            onlineStatus: 3
-        }
-        ListElement {
-            publicId: "0x1"
-            name: "James"
-            icon: "https://pbs.twimg.com/profile_images/1369221718338895873/T_5fny6o_400x400.jpg"
-            isIdenticon: false
-            onlineStatus: 1
-        }
-        ListElement {
-            publicId: "0x2"
-            name: "Paul"
-            icon: ""
-            isIdenticon: false
-            onlineStatus: 2
-        }
-        ListElement {
-            publicId: "0x3"
-            name: "Tracy"
-            icon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAlklEQVR4nOzW0QmDQBAG4SSkl7SUQlJGCrElq9F3QdjjVhh/5nv3cFhY9vUIYQiNITSG0BhCExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2ImYgiNITTlTdG1nUZ5a92VITQxITFiJmIIjSE0htAYQrMHAAD//+wwFVpz+yqXAAAAAElFTkSuQmCC"
-            isIdenticon: true
-            onlineStatus: 3
-        }
-        ListElement {
-            publicId: "0x4"
-            name: "Nick"
-            icon: ""
-            isIdenticon: false
-            onlineStatus: 3
-        }
-        ListElement {
-            publicId: "0x5"
-            name: "Steven"
-            icon: ""
-            isIdenticon: false
-            onlineStatus: 2
-        }
-        ListElement {
-            publicId: "0x6"
-            name: "Helen"
-            icon: ""
-            isIdenticon: false
-            onlineStatus: 3
-        }
-    }
-
     property var demoChatListItems: ListModel {
         id: demoChatListItems
         ListElement {
@@ -896,12 +844,12 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
         id: membersList
         ListElement {
             nickName: "This is an example"
-            userName: "annabelle"
-            chatKey: "0x043a7ed0e8752236a4688563652fd0296453cef00a5dcddbe252dc74f72cc1caa97a2b65e4a1a52d9c30a84c9966beaaaf6b333d659cbdd2e486b443ed1012cf04"
+            name: "Maria"
+            publicId: "0x043a7ed0e8752236a4688563652fd0296453cef00a5dcddbe252dc74f72cc1caa97a2b65e4a1a52d9c30a84c9966beaaaf6b333d659cbdd2e486b443ed1012cf04"
             trustIndicator: StatusContactVerificationIcons.TrustedType.Verified
             isMutualContact: true
-            isOnline: true
-            source: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAlklEQVR4nOzW0QmDQBAG4SSkl7SUQlJGCrElq9F3QdjjVhh/5nv3cFhY9vUIYQiNITSG0BhCExPynn1gWf9bx498P7/
+            onlineStatus: true
+            icon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAlklEQVR4nOzW0QmDQBAG4SSkl7SUQlJGCrElq9F3QdjjVhh/5nv3cFhY9vUIYQiNITSG0BhCExPynn1gWf9bx498P7/
                             nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2ImYgiNITTlTdG1nUZ5a92VITQxITFiJmIIjSE0htAYQrMHAAD//+wwFVpz+yqXAAAAAElFTkSuQmCC"
             isIdenticon: true
             ringSpecModel: [ ListElement {colorId: 13; segmentLength: 5},
@@ -913,23 +861,23 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
                              ListElement {colorId: 28; segmentLength: 3} ]
         }
         ListElement {
-            nickName: "carmen.eth"
-            userName: ""
-            chatKey: ""
+            nickName: ""
+            name: "carmen.eth"
+            publicId: "0x043a7ed78362567894688563652fd0296453cef00a5dcddbe252dc74f72cc1caa97a2b65e4a1a52d9c30a84c9966beaaaf6b333d659cbdd2e486b443ed1012cf04"
             trustIndicator: StatusContactVerificationIcons.TrustedType.Untrustworthy
             isMutualContact: false
-            isOnline: false
-            source: ""
+            onlineStatus: false
+            icon: ""
             isIdenticon: false            
         }
         ListElement {
             nickName: "This girl I know from work"
-            userName:  "annabelle"
-            chatKey: ""
+            name: "annabelle"
+            publicId: "0x043a7ed0e8752236a4688563652fd0296453cef00a5dcddbe252dc74f72cc1caa97a2b65e4a1a52d9c30a84c9966beaaaf6b333d659cbdd2e486dsfkjghyu2cf04"
             trustIndicator: StatusContactVerificationIcons.TrustedType.None
             isMutualContact: false
-            isOnline: true
-            source: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAiElEQVR4nOzXUQpAQBRGYWQvLNAyLJDV8C5qpiGnv/M9al5Ot27X0IUwhMYQGkNoDKGJCRlLH67bftx9X+ap/+P9VcxEDK
+            onlineStatus: true
+            icon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAiElEQVR4nOzXUQpAQBRGYWQvLNAyLJDV8C5qpiGnv/M9al5Ot27X0IUwhMYQGkNoDKGJCRlLH67bftx9X+ap/+P9VcxEDK
                      ExhKZ4a9Uq3TZviZmIITSG0DRvlqcbqVbrlouZiCE0htD4h0hjCI0hNN5aNIbQGKKPxEzEEBpDaAyhMYTmDAAA//+gYCErzmCpCQAAAABJRU5ErkJggg=="
             isIdenticon: true
             ringSpecModel: [ ListElement {colorId: 11; segmentLength: 1},
@@ -942,12 +890,12 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
         }
         ListElement {
             nickName: "Mark Cuban"
-            userName: "annabelle"
-            chatKey: "0x043a7ed0e8752236a4688563652fd0296453cef00a5dcddbe252dc74f72cc1caa97a2b65e4a1a52d9c30a84c9966beaaaf6b333d659cbdd2e486b443ed1012cf04"
+            name: "mark.eth"
+            publicId: "0x043a7ed0e8752236a4688563652fd0296453cef00a5dcddbe252dc79872cc1caa97a2b65e4a1a52d9c30a84c9966beaaaf6b333d659cbdd2e486b443ed1012cf04"
             trustIndicator: StatusContactVerificationIcons.TrustedType.Untrustworthy
             isMutualContact: true
-            isOnline: false
-            source: ""
+            onlineStatus: false
+            icon: ""
             isIdenticon: false
             ringSpecModel: [ ListElement {colorId: 0; segmentLength: 1},
                              ListElement {colorId: 28; segmentLength: 1},

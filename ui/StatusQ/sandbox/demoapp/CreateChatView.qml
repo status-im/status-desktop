@@ -30,6 +30,34 @@ Page {
             toLabelText: qsTr("To: ")
             warningText: qsTr("USER LIMIT REACHED")
             listLabel: qsTr("Contacts")
+            ringSpecModelGetter: function(pubKey) {
+                //for simulation purposes only, in real app
+                //this would be Utils.getColorHashAsJson(pubKey)
+                var index = -1;
+                if (!!contactsModel) {
+                    for (var i = 0; i < contactsModel.count; i++) {
+                        if (contactsModel.get(i).publicId === pubKey) {
+                            index = i;
+                        }
+                    }
+                    return contactsModel.get(index).ringSpecModel;
+                } else {
+                    return null;
+                }
+            }
+            compressedKeyGetter: function(pubKey) {
+                //for simulation purposes only, in real app
+                //this would be Utils.getCompressedPk(pubKey);
+                var possibleCharacters = pubKey.split('');
+                var randomStringLength = 12; // assuming you want random strings of 12 characters
+                var randomString = [];
+                for (var i=0; i<randomStringLength; ++i) {
+                    var index = (Math.random() * possibleCharacters.length).toFixed(0);
+                    var nextChar = possibleCharacters[index];
+                    randomString.push(nextChar);
+                }
+                return randomString.join().toString().replace(/,/g, '');
+            }
             onTextChanged: {
                 sortModel(root.contactsModel);
             }

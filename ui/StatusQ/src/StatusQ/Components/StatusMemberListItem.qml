@@ -79,7 +79,7 @@ StatusListItem {
         // Subtitle composition:
         function composeSubtitile() {
             var compose = ""
-            if(root.userName !== "")
+            if(root.userName !== "" && root.nickName !== "")
                 compose = "(" + root.userName + ")"
 
             if(compose !== "" && root.chatKey !== "")
@@ -99,7 +99,7 @@ StatusListItem {
     }
 
     // root object settings:
-    title: root.nickName
+    title: (root.nickName === "") ? root.userName : root.nickName
     statusListItemTitleIcons.sourceComponent: StatusContactVerificationIcons {
         isMutualContact: root.isMutualContact
         trustIndicator: root.trustIndicator

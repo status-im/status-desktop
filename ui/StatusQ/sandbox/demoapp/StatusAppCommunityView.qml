@@ -259,15 +259,14 @@ StatusAppThreePanelLayout {
             delegate: StatusMemberListItem {
                 implicitWidth: parent.width
                 nickName: model.nickName
-                userName: model.userName
-                chatKey: model.chatKey
+                userName: model.name
+                chatKey: model.publicId
                 trustIndicator: model.trustIndicator
                 isMutualContact: model.isMutualContact
-                image.source: model.source
+                image.source: model.icon
                 image.isIdenticon: model.isIdenticon
-                isOnline: model.isOnline
+                isOnline: model.onlineStatus
                 ringSettings.ringSpecModel: model.ringSpecModel
-                ringSettings.distinctiveColors: Theme.palette.identiconRingColors
             }
         }
     }

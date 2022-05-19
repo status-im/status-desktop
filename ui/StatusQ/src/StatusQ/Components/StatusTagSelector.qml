@@ -98,6 +98,21 @@ Item {
         This property sets the tags count limit.
     */
     property int nameCountLimit: 5
+
+    /*!
+        \qmlproperty var StatusTagSelector::ringSpecModel
+        This property holds the function to calculate the ring spec model
+        based on the public key.
+    */
+    property var ringSpecModelGetter: (pubKey) => { /*return ringSpecModel*/ }
+
+    /*!
+        \qmlproperty var StatusTagSelector::compressKey
+        This property holds the function to calculate the compressed
+        key based on the public key.
+    */
+    property var compressedKeyGetter: (pubKey) => { /*return compressed key;*/ }
+
     /*!
         \qmlproperty ListModel StatusTagSelector::sortedList
         This property holds the sorted list model.
@@ -142,6 +157,8 @@ Item {
                 if (entry.name.toLowerCase().includes(text.toLowerCase()) &&
                     !find(namesModel, function(item) { return item.name === entry.name })) {
                     sortedList.append({"publicId": entry.publicId, "name": entry.name,
+                                       "nickName": entry.nickName, "trustIndicator": entry.trustIndicator,
+                                       "isMutualContact": entry.isMutualContact, "ringSpecModel": entry.ringSpecModel,
                                        "icon": entry.icon, "isIdenticon": entry.isIdenticon,
                                        "onlineStatus": entry.onlineStatus});
                     userListView.model = sortedList;
@@ -306,14 +323,12 @@ Item {
         background: Rectangle {
             id: bgRect
             anchors.fill: parent
+            anchors.margins: 8
             visible: (root.sortedList.count > 0)
             color: Theme.palette.statusPopupMenu.backgroundColor
             radius: 8
             layer.enabled: true
             layer.effect: DropShadow {
-                width: bgRect.width
-                height: bgRect.height
-                x: bgRect.x
                 source: bgRect
                 horizontalOffset: 0
                 verticalOffset: 4
@@ -325,10 +340,12 @@ Item {
         }
         contentItem: ListView {
             id: userListView
-            anchors.fill: parent
-            anchors.topMargin: 8
-            anchors.bottomMargin: 8
-            clip: true
+            anchors {
+                fill: parent
+                topMargin: 16
+                leftMargin: 8
+                rightMargin: 8
+            }
             ScrollBar.vertical: ScrollBar {
                 policy: ScrollBar.AsNeeded
             }
@@ -336,10 +353,11 @@ Item {
             onCountChanged: {
                 userListView.currentIndex = 0;
             }
-            delegate: Item {
-                id: wrapper
-                anchors.right: parent.right
+            delegate: StatusMemberListItem {
                 anchors.left: parent.left
+                anchors.leftMargin: bgRect.visible ? 8 : 0
+                anchors.right: parent.right
+                anchors.rightMargin: bgRect.visible ? 8 : 0
                 height: visible ? 64 : 0
                 visible: {
                     for (let i = 0; i < namesModel.count; i++) {
@@ -349,62 +367,19 @@ Item {
                     }
                     return true
                 }
-                Rectangle {
-                    id: rectangle
-                    anchors.fill: parent
-                    anchors.rightMargin: 8
-                    anchors.leftMargin: 8
-                    radius: 8
-                    visible: wrapper.ListView.isCurrentItem
-                    color: Theme.palette.baseColor2
-                }
-
-                StatusSmartIdenticon {
-                    id: contactImage
-                    anchors.left: parent.left
-                    anchors.leftMargin: 16//Style.current.padding
-                    anchors.verticalCenter: parent.verticalCenter
-                    name: model.name
-                    icon: StatusIconSettings {
-                        width: 40
-                        height: 40
-                        letterSize: 15
-                    }
-                    image: StatusImageSettings {
-                        width: 40
-                        height: 40
-                        source: model.icon
-                        isIdenticon: model.isIdenticon
-                    }
-                }
-
-                StatusBaseText {
-                    id: contactInfo
-                    text: model.name
-                    anchors.right: parent.right
-                    anchors.rightMargin: 8
-                    anchors.left: contactImage.right
-                    anchors.leftMargin: 16
-                    anchors.verticalCenter: parent.verticalCenter
-                    elide: Text.ElideRight
-                    color: Theme.palette.directColor1
-                    font.weight: Font.Medium
-                    font.pixelSize: 15
-                }
-
-                MouseArea {
-                    id: sensor
-                    cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
-                    acceptedButtons: Qt.LeftButton | Qt.RightButton
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    onContainsMouseChanged: {
-                        if (containsMouse)
-                            userListView.currentIndex = index;
-                    }
-                    onClicked: {
-                        root.insertTag(model.name, model.publicId);
-                    }
+                nickName: model.nickName
+                userName: model.name
+                chatKey: root.compressedKeyGetter(model.publicId)
+                trustIndicator: model.trustIndicator
+                isMutualContact: model.isMutualContact
+                image.source: model.icon
+                image.isIdenticon: model.isIdenticon
+                isOnline: model.onlineStatus
+                statusListItemIcon.badge.border.color: sensor.containsMouse ? Theme.palette.baseColor2 : Theme.palette.baseColor4
+                ringSettings.ringSpecModel: root.ringSpecModelGetter(publicId)
+                color: (sensor.containsMouse || highlighted) ? Theme.palette.baseColor2 : "transparent"
+                onClicked: {
+                    root.insertTag(model.name, model.publicId);
                 }
             }
         }
