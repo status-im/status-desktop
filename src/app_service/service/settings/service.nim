@@ -121,6 +121,12 @@ proc getPreferredName*(self: Service): string =
 proc getDisplayName*(self: Service): string =
   return self.settings.displayName
 
+proc saveDisplayName*(self: Service, value: string): bool =
+  if(self.saveSetting(KEY_DISPLAY_NAME, value)):
+    self.settings.displayName = value
+    return true
+  return false
+
 proc saveNewEnsUsername*(self: Service, username: string): bool =
   var newEnsUsernames = self.settings.ensUsernames
   newEnsUsernames.add(username)

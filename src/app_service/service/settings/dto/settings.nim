@@ -44,7 +44,7 @@ const KEY_AUTO_MESSAGE_ENABLED* = "auto-message-enabled?"
 const KEY_GIF_FAVORITES* = "gifs/favorite-gifs"
 const KEY_GIF_RECENTS* = "gifs/recent-gifs"
 const KEY_GIF_API_KEY* = "gifs/api-key"
-const KEY_DISPLAY_NAME = "display-name"
+const KEY_DISPLAY_NAME* = "display-name"
 const KEY_TEST_NETWORKS_ENABLED* = "test-networks-enabled?"
 
 const PROFILE_PICTURES_VISIBILITY_CONTACTS_ONLY* = 1
