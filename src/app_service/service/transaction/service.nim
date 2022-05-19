@@ -57,6 +57,11 @@ type SuggestedFees = object
   maxFeePerGasL: float 
   maxFeePerGasM: float
   maxFeePerGasH: float
+  eip1559Enabled: bool
+
+# Initial version of suggested routes is a list of network where the tx is possible
+type SuggestedRoutes = object
+  networks: seq[NetworkDto]
 
 QtObject:
   type Service* = ref object of QObject
@@ -213,56 +218,56 @@ QtObject:
       loadMore: loadMore
     )
     self.threadpool.start(arg)
-
+    
   proc estimateGas*(
     self: Service,
     from_addr: string,
     to: string,
-    assetAddress: string,
+    assetSymbol: string,
     value: string,
-    data: string = ""
+    chainId: string,
+    data: string = "",
   ): string {.slot.} =
     var response: RpcResponse[JsonNode]
+    var success: bool
     # TODO make this async
-    if assetAddress != ZERO_ADDRESS and not assetAddress.isEmptyOrWhitespace:
-      var tx = buildTokenTransaction(
+    let network = self.networkService.getNetwork(parseInt(chainId))
+
+    if network.nativeCurrencySymbol == assetSymbol:
+      var tx = ens_utils.buildTransaction(
         parseAddress(from_addr),
-        parseAddress(assetAddress)
+        eth2Wei(parseFloat(value), 18),
+        data = data
       )
-      let networkType = self.settingsService.getCurrentNetwork().toNetworkType()
-      let network = self.networkService.getNetwork(networkType)
-      let token = self.tokenService.findTokenByAddress(network, parseAddress(assetAddress))
-
-      if token == nil:
-        raise newException(ValueError, fmt"Could not find ERC-20 contract with address '{assetAddress}' for the current network")
-
-      let transfer = Transfer(to: parseAddress(to), value: conversion.eth2Wei(parseFloat(value), token.decimals))
-      let transferproc = ERC20_procS.toTable["transfer"]
-      var success: bool
+      tx.to = parseAddress(to).some
       try:
-        let gas = transferproc.estimateGas(tx, transfer, success)
-
-        let res = fromHex[int](gas)
-        return $(%* { "result": res, "success": success })
+        response = eth.estimateGas(parseInt(chainId), %*[%tx])
+        let res = fromHex[int](response.result.getStr)
+        return $(%* { "result": res, "success": true })
       except Exception as e:
         error "Error estimating gas", msg = e.msg
         return $(%* { "result": "-1", "success": false, "error": { "message": e.msg } })
 
-    var tx = ens_utils.buildTransaction(
+    let token = self.tokenService.findTokenBySymbol(network, assetSymbol)
+    if token == nil:
+      raise newException(ValueError, fmt"Could not find ERC-20 contract with symbol '{assetSymbol}' for the current network")
+
+    var tx = buildTokenTransaction(
       parseAddress(from_addr),
-      eth2Wei(parseFloat(value), 18),
-      data = data
+      token.address,
     )
-    tx.to = parseAddress(to).some
+          
+    let transfer = Transfer(to: parseAddress(to), value: conversion.eth2Wei(parseFloat(value), token.decimals))
+    let transferproc = ERC20_procS.toTable["transfer"]
     try:
-      response = eth.estimateGas(%*[%tx])
-      let res = fromHex[int](response.result.getStr)
+      let gas = transferproc.estimateGas(parseInt(chainId), tx, transfer, success)
+      let res = fromHex[int](gas)
+      return $(%* { "result": res, "success": success })
     except Exception as e:
       error "Error estimating gas", msg = e.msg
-      return $(%* { "result": "-1", "success": false })
-    
+      return $(%* { "result": "-1", "success": false, "error": { "message": e.msg } })    
 
-  proc transferEth*(
+  proc transferEth(
       self: Service,
       from_addr: string,
       to_addr: string,
@@ -272,10 +277,11 @@ QtObject:
       maxPriorityFeePerGas: string,
       maxFeePerGas: string,
       password: string,
-      uuid: string
-    ): bool {.slot.} =
+      chainId: string,
+      uuid: string,
+      eip1559Enabled: bool,
+  ): bool {.slot.} =
     try:
-      let eip1559Enabled = self.networkService.isEIP1559Enabled()
       eth_utils.validateTransactionInput(from_addr, to_addr, assetAddress = "", value, gas,
         gasPrice, data = "", eip1559Enabled, maxPriorityFeePerGas, maxFeePerGas, uuid)
 
@@ -285,8 +291,7 @@ QtObject:
       tx.to = parseAddress(to_addr).some
 
       let json: JsonNode = %tx
-      let response = eth.sendTransaction($json, password)
-
+      let response = eth.sendTransaction(parseInt(chainId), $json, password)
       let output = %* { "result": response.result.getStr,  "success": %(response.error.isNil), "uuid": %uuid }
       self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(result: $output))
 
@@ -298,34 +303,35 @@ QtObject:
     return true
 
   proc transferTokens*(
-      self: Service,
-      from_addr: string,
-      to_addr: string,
-      assetAddress: string,
-      value: string,
-      gas: string,
-      gasPrice: string,
-      maxPriorityFeePerGas: string,
-      maxFeePerGas: string,
-      password: string,
-      uuid: string
-      ): bool =
+    self: Service,
+    from_addr: string,
+    to_addr: string,
+    tokenSymbol: string,
+    value: string,
+    gas: string,
+    gasPrice: string,
+    maxPriorityFeePerGas: string,
+    maxFeePerGas: string,
+    password: string,
+    chainId: string,
+    uuid: string,
+    eip1559Enabled: bool,
+  ): bool =
+    # TODO move this to another thread
     try:
-      let eip1559Enabled = self.networkService.isEIP1559Enabled()
-      eth_utils.validateTransactionInput(from_addr, to_addr, assetAddress, value, gas,
-        gasPrice, data = "", eip1559Enabled, maxPriorityFeePerGas, maxFeePerGas, uuid)
+      let network = self.networkService.getNetwork(parseInt(chainId))
+      let token = self.tokenService.findTokenBySymbol(network, tokenSymbol)
 
-      # TODO move this to another thread
-      let networkType = self.settingsService.getCurrentNetwork().toNetworkType()
-      let network = self.networkService.getNetwork(networkType)
-      let token = self.tokenService.findTokenByAddress(network, parseAddress(assetAddress))
-      var tx = ens_utils.buildTokenTransaction(parseAddress(from_addr), parseAddress(assetAddress),
+      eth_utils.validateTransactionInput(from_addr, to_addr, token.addressAsString(), value, gas,
+        gasPrice, data = "", eip1559Enabled, maxPriorityFeePerGas, maxFeePerGas, uuid)
+      
+      var tx = ens_utils.buildTokenTransaction(parseAddress(from_addr), token.address,
         gas, gasPrice, eip1559Enabled, maxPriorityFeePerGas, maxFeePerGas)
       var success: bool
       let transfer = Transfer(to: parseAddress(to_addr),
         value: conversion.eth2Wei(parseFloat(value), token.decimals))
       let transferproc = ERC20_procS.toTable["transfer"]
-      let response = transferproc.send(tx, transfer, password, success)
+      let response = transferproc.send(parseInt(chainId), tx, transfer, password, success)
       let txHash = response.result.getStr
       let output = %* { "result": txHash, "success": %success, "uuid": %uuid }
       self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(result: $output))
@@ -337,19 +343,45 @@ QtObject:
       return false
     return true
 
-  proc suggestedFees*(self: Service): SuggestedFees =
-    let networkType = self.settingsService.getCurrentNetwork().toNetworkType()
-    let network = self.networkService.getNetwork(networkType)
-    let response = eth.suggestedFees(network.chainId).result
+  proc transfer*(
+    self: Service,
+    from_addr: string,
+    to_addr: string,
+    assetSymbol: string,
+    value: string,
+    gas: string,
+    gasPrice: string,
+    maxPriorityFeePerGas: string,
+    maxFeePerGas: string,
+    password: string,
+    chainId: string,
+    uuid: string,
+    eip1559Enabled: bool,
+  ): bool =
+    let network = self.networkService.getNetwork(parseInt(chainId))
 
+    if network.nativeCurrencySymbol == assetSymbol:
+      return self.transferEth(from_addr, to_addr, value, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password, chainId, uuid, eip1559Enabled)
+
+    return self.transferTokens(from_addr, to_addr, assetSymbol, value, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password, chainId, uuid, eip1559Enabled)
+
+  proc suggestedFees*(self: Service, chainId: int): SuggestedFees =
+    let response = eth.suggestedFees(chainId).result
     return SuggestedFees(
       gasPrice: parseFloat(response{"gasPrice"}.getStr),
       baseFee: parseFloat(response{"baseFee"}.getStr),
       maxPriorityFeePerGas: parseFloat(response{"maxPriorityFeePerGas"}.getStr),
       maxFeePerGasL: parseFloat(response{"maxFeePerGasLow"}.getStr),
       maxFeePerGasM: parseFloat(response{"maxFeePerGasMedium"}.getStr),
-      maxFeePerGasH: parseFloat(response{"maxFeePerGasHigh"}.getStr)
-    ) 
+      maxFeePerGasH: parseFloat(response{"maxFeePerGasHigh"}.getStr),
+      eip1559Enabled: response{"eip1559Enabled"}.getbool,
+    )
+
+  proc suggestedRoutes*(self: Service, account: string, amount: float64, token: string): SuggestedRoutes = 
+    let response = eth.suggestedRoutes(account, amount, token)
+    return SuggestedRoutes(
+      networks: Json.decode($response.result{"networks"}, seq[NetworkDto])
+    )
 
   proc fetchCryptoServices*(self: Service): seq[CryptoRampDto] =
     try:

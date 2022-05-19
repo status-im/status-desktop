@@ -5,18 +5,21 @@ include  ../../common/json_utils
 type BalanceDto* = object
   balance*: float64
   currencyBalance*: float64
+  address*: string
+  chainId*: int
 
 type
   WalletTokenDto* = object
     name*: string
-    address*: string
     symbol*: string
     decimals*: int
     hasIcon*: bool
     color*: string
     isCustom*: bool
     totalBalance*: BalanceDto
+    enabledNetworkBalance*: BalanceDto
     balancesPerChain*: Table[int, BalanceDto]
+    visible*: bool
 
 type
   WalletAccountDto* = ref object of RootObj
@@ -79,20 +82,26 @@ proc toBalanceDto*(jsonObj: JsonNode): BalanceDto =
   result = BalanceDto()
   discard jsonObj.getProp("balance", result.balance)
   discard jsonObj.getProp("currencyBalance", result.currencyBalance)
+  discard jsonObj.getProp("address", result.address)
+  discard jsonObj.getProp("chainId", result.chainId)
 
 proc toWalletTokenDto*(jsonObj: JsonNode): WalletTokenDto =
   result = WalletTokenDto()
   discard jsonObj.getProp("name", result.name)
-  discard jsonObj.getProp("address", result.address)
   discard jsonObj.getProp("symbol", result.symbol)
   discard jsonObj.getProp("decimals", result.decimals)
   discard jsonObj.getProp("hasIcon", result.hasIcon)
   discard jsonObj.getProp("color", result.color)
   discard jsonObj.getProp("isCustom", result.isCustom)
+  discard jsonObj.getProp("visible", result.visible)
 
   var totalBalanceObj: JsonNode
   if(jsonObj.getProp("totalBalance", totalBalanceObj)):
     result.totalBalance = toBalanceDto(totalBalanceObj)
+  
+  var enabledNetworkBalanceObj: JsonNode
+  if(jsonObj.getProp("enabledNetworkBalance", enabledNetworkBalanceObj)):
+    result.enabledNetworkBalance = toBalanceDto(enabledNetworkBalanceObj)
     
   var balancesPerChainObj: JsonNode
   if(jsonObj.getProp("balancesPerChain", balancesPerChainObj)):
@@ -106,12 +115,13 @@ proc walletTokenDtoToJson*(dto: WalletTokenDto): JsonNode =
 
   result = %* {
     "name": dto.name,
-    "address": dto.address,
     "symbol": dto.symbol,
     "decimals": dto.decimals,
     "hasIcon": dto.hasIcon,
     "color": dto.color,
     "isCustom": dto.isCustom,
     "totalBalance": %* dto.totalBalance,
-    "balancesPerChain": balancesPerChainJsonObj
+    "enabledNetworkBalance": %* dto.enabledNetworkBalance,
+    "balancesPerChain": balancesPerChainJsonObj,
+    "visible": dto.visible
   }

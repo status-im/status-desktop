@@ -94,12 +94,8 @@ QtObject {
                 // TODO: use bignumber instead of floats
                 trx.value = RootStore.getEth2Hex(parseFloat(value))
                 trx.gas = "0x" + parseInt(selectedGasLimit, 10).toString(16)
-                if (WalletStore.isEIP1559Enabled()) {
-                    trx.maxPriorityFeePerGas = RootStore.getGwei2Hex(parseFloat(selectedTipLimit))
-                    trx.maxFeePerGas = RootStore.getGwei2Hex(parseFloat(selectedOverallLimit))
-                } else {
-                    trx.gasPrice = RootStore.getGwei2Hex(parseFloat(selectedGasPrice))
-                }
+                trx.maxPriorityFeePerGas = RootStore.getGwei2Hex(parseFloat(selectedTipLimit))
+                trx.maxFeePerGas = RootStore.getGwei2Hex(parseFloat(selectedOverallLimit))
 
                 request.payload.password = enteredPassword
                 request.payload.params[0] = trx
@@ -110,7 +106,6 @@ QtObject {
             }
 
             sendDialog.open();
-            WalletStore.getGasPrice()
         } else if (requestType === Constants.web3SendAsyncReadOnly && ["eth_sign", "personal_sign", "eth_signTypedData", "eth_signTypedData_v3"].indexOf(request.payload.method) > -1) {
             const signDialog = createSignMessageModalComponent(request)
             signDialog.web3Response = web3Response

@@ -6,15 +6,7 @@ QtObject {
 
     property var stickersModule
 
-    property string gasPrice: root.stickersModule ? stickersModule.gasPrice : "0"
-
     property var walletAccounts: walletSectionAccounts.model
-
-    function fetchGasPrice() {
-        if(!root.stickersModule)
-            return "0"
-        stickersModule.fetchGasPrice()
-    }
 
     function getSigningPhrase() {
         if(!root.stickersModule)
@@ -70,10 +62,14 @@ QtObject {
         return stickersModule.estimate(packId, selectedAccount, price, uuid)
     }
 
-    function buy(packId, address, price, gasLimit, gasPrice, tipLimit, overallLimit, password) {
+    function buy(packId, address, price, gasLimit, gasPrice, tipLimit, overallLimit, password, eip1559Enabled) {
         if(!root.stickersModule)
             return ""
-        return stickersModule.buy(packId, address, price, gasLimit, gasPrice, tipLimit, overallLimit, password)
+        return stickersModule.buy(packId, address, price, gasLimit, gasPrice, tipLimit, overallLimit, password, eip1559Enabled)
+    }
+
+    function getChainIdForStickers() {
+        return stickersModule.getChainIdForStickers()
     }
 }
 

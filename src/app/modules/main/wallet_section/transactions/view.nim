@@ -1,4 +1,4 @@
-import NimQml, tables, stint, json, strformat, sequtils
+import NimQml, tables, stint, json, strformat, sequtils, strutils
 
 import ./item
 import ./model
@@ -108,25 +108,35 @@ QtObject:
     read = getIsNonArchivalNode
     notify = isNonArchivalNodeChanged
 
-  proc estimateGas*(self: View, from_addr: string, to: string, assetAddress: string, value: string, data: string): string {.slot.} =
-    result = self.delegate.estimateGas(from_addr, to, assetAddress, value, data)
+  proc estimateGas*(self: View, from_addr: string, to: string, assetSymbol: string, value: string, data: string): string {.slot.} =
+    result = self.delegate.estimateGas(from_addr, to, assetSymbol, value, data)
 
   proc transactionSent*(self: View, txResult: string) {.signal.}
 
   proc transactionWasSent*(self: View,txResult: string) {.slot} =
     self.transactionSent(txResult)
 
-  proc transferEth*(self: View, from_addr: string, to_addr: string, value: string, gas: string,
-      gasPrice: string, maxPriorityFeePerGas: string, maxFeePerGas: string, password: string,
-      uuid: string): bool {.slot.} =
-    result = self.delegate.transferEth(from_addr, to_addr, value, gas, gasPrice,
-      maxPriorityFeePerGas, maxFeePerGas, password, uuid)
-
-  proc transferTokens*(self: View, from_addr: string, to_addr: string, contractAddress: string,
+  proc transfer*(self: View, from_addr: string, to_addr: string, tokenSymbol: string,
       value: string, gas: string, gasPrice: string, maxPriorityFeePerGas: string,
-      maxFeePerGas: string, password: string, uuid: string): bool {.slot.} =
-    result = self.delegate.transferTokens(from_addr, to_addr, contractAddress, value, gas, gasPrice,
-      maxPriorityFeePerGas, maxFeePerGas, password, uuid)
+      maxFeePerGas: string, password: string, chainId: string, uuid: string, eip1559Enabled: bool): bool {.slot.} =
+    result = self.delegate.transfer(from_addr, to_addr, tokenSymbol, value, gas, gasPrice,
+      maxPriorityFeePerGas, maxFeePerGas, password, chainId, uuid, eip1559Enabled)
 
-  proc suggestedFees*(self: View): string {.slot.} =
-    return self.delegate.suggestedFees()
+  proc suggestedFees*(self: View, chainId: int): string {.slot.} =
+    return self.delegate.suggestedFees(chainId)
+
+  proc suggestedRoutes*(self: View, account: string, amount: string, token: string): string {.slot.} =
+    var parsedAmount = 0.0
+
+    try:
+      parsedAmount = parsefloat(amount)
+    except:
+      discard
+
+    return self.delegate.suggestedRoutes(account, parsedAmount, token)
+  
+  proc getChainIdForChat*(self: View): int {.slot.} =
+    return self.delegate.getChainIdForChat()
+
+  proc getChainIdForBrowser*(self: View): int {.slot.} =
+    return self.delegate.getChainIdForBrowser()

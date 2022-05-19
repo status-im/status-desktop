@@ -78,4 +78,5 @@ QtObject {
     function copyToClipboard(text) {
         globalUtils.copyToClipboard(text)
     }
+
 }

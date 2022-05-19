@@ -5,6 +5,7 @@ import ../../../global/global_singleton
 import ../../../core/eventemitter
 import ../../../../app_service/service/stickers/service as stickers_service
 import ../../../../app_service/service/settings/service as settings_service
+import ../../../../app_service/service/network/service as network_service
 import ../../../../app_service/common/conversion as service_conversion
 import ../../../../app_service/service/wallet_account/service as wallet_account_service
 
@@ -19,17 +20,18 @@ type
     moduleLoaded: bool
 
 proc newModule*(
-    delegate: delegate_interface.AccessInterface,
-    events: EventEmitter,
-    stickersService: stickers_service.Service,
-    settingsService: settings_Service.Service,
-    walletAccountService: wallet_account_service.Service
-    ): Module =
+  delegate: delegate_interface.AccessInterface,
+  events: EventEmitter,
+  stickersService: stickers_service.Service,
+  settingsService: settings_Service.Service,
+  walletAccountService: wallet_account_service.Service,
+  networkService: network_service.Service,
+): Module =
   result = Module()
   result.delegate = delegate
   result.view = newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, stickersService, settingsService, walletAccountService)
+  result.controller = controller.newController(result, events, stickersService, settingsService, walletAccountService, networkService)
   result.moduleLoaded = false
 
   singletonInstance.engine.setRootContextProperty("stickersModule", result.viewVariant)
@@ -50,8 +52,8 @@ method viewDidLoad*(self: Module) =
   self.moduleLoaded = true
   self.delegate.stickersDidLoad()
 
-method buy*(self: Module, packId: string, address: string, gas: string, gasPrice: string, maxPriorityFeePerGas: string, maxFeePerGas: string, password: string): tuple[response: string, success: bool] =
-  return self.controller.buy(packId, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password)
+method buy*(self: Module, packId: string, address: string, gas: string, gasPrice: string, maxPriorityFeePerGas: string, maxFeePerGas: string, password: string, eip1559Enabled: bool): tuple[response: string, success: bool] =
+  return self.controller.buy(packId, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password, eip1559Enabled)
 
 method getInstalledStickerPacks*(self: Module): Table[string, StickerPackDto] =
   self.controller.getInstalledStickerPacks()
@@ -167,11 +169,8 @@ method getGasEthValue*(self: Module, gweiValue: string, gasLimit: string): strin
 method getStatusToken*(self: Module): string =
   return self.controller.getStatusToken()
 
-method fetchGasPrice*(self: Module) =
-  self.controller.fetchGasPrice()
-
-method gasPriceFetched*(self: Module, gasPrice: string) =
-  self.view.setGasPrice(gasPrice)
+method getChainIdForStickers*(self: Module): int =
+  return self.controller.getChainIdForStickers()
 
 method stickerTransactionConfirmed*(self: Module, trxType: string, packID: string, transactionHash: string) =
   self.view.stickerPacks.updateStickerPackInList(packID, true, false)

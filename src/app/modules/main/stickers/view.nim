@@ -13,7 +13,6 @@ QtObject:
       recentStickers*: StickerList
       signingPhrase: string
       stickersMarketAddress: string
-      gasPrice: string
 
   proc delete*(self: View) =
     self.QObject.delete
@@ -28,7 +27,6 @@ QtObject:
   proc load*(self: View, signingPhrase: string, stickersMarketAddress: string) =
     self.signingPhrase = signingPhrase
     self.stickersMarketAddress = stickersMarketAddress
-    self.gasPrice = "0"
     self.delegate.viewDidLoad()
 
   proc addStickerPackToList*(self: View, stickerPack: PackItem, isInstalled, isBought, isPending: bool) =
@@ -63,8 +61,8 @@ QtObject:
 
   proc gasEstimateReturned*(self: View, estimate: int, uuid: string) {.signal.}
 
-  proc buy*(self: View, packId: string, address: string, gas: string, gasPrice: string, maxPriorityFeePerGas: string, maxFeePerGas: string, password: string): string {.slot.} =
-    let responseTuple = self.delegate.buy(packId, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password)
+  proc buy*(self: View, packId: string, address: string, gas: string, gasPrice: string, maxPriorityFeePerGas: string, maxFeePerGas: string, password: string, eip1559Enabled: bool): string {.slot.} =
+    let responseTuple = self.delegate.buy(packId, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password, eip1559Enabled)
     let response = responseTuple.response
     let success = responseTuple.success
     if success:
@@ -139,6 +137,9 @@ QtObject:
   proc getSNTBalance*(self: View): string {.slot.} =
     return self.delegate.getSNTBalance()
 
+  proc getChainIdForStickers*(self: View): int {.slot.} =
+    return self.delegate.getChainIdForStickers()
+  
   proc getWalletDefaultAddress*(self: View): string {.slot.} =
     return self.delegate.getWalletDefaultAddress()
 
@@ -153,21 +154,6 @@ QtObject:
 
   proc getStatusToken*(self: View): string {.slot.} =
     return self.delegate.getStatusToken()
-
-  proc fetchGasPrice*(self: View) {.slot.} =
-    self.delegate.fetchGasPrice()
-
-  proc gasPriceChanged(self: View) {.signal.}
-  proc getGasPrice(self: View): string {.slot.} =
-    return self.gasPrice
-
-  QtProperty[string] gasPrice:
-    read = getGasPrice
-    notify = gasPriceChanged
-
-  proc setGasPrice*(self: View, gasPrice: string) = # this is not a slot
-    self.gasPrice = gasPrice
-    self.gasPriceChanged()
 
   proc transactionCompleted(self: View, success: bool, txHash: string, packID: string, trxType: string,
     revertReason: string) {.signal.}

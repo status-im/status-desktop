@@ -244,7 +244,7 @@ Item {
                 selectedRecipient: root.selectedRecipient
                 selectedFiatAmount: root.fiatValue
                 selectedType: RecipientSelector.Type.Contact
-                onOpened: root.store.fetchGasPrice()
+                chainId: root.store.getChainIdForChat()
                 onClosed: destroy()
                 msgId: messageId
             }

@@ -384,10 +384,6 @@ Item {
             anchors.centerIn: parent
             store: root.rootStore
             contactsStore: root.contactsStore
-            onOpened: {
-                // Not Refactored Yet
-//                    root.rootStore.walletModelInst.gasView.getGasPrice()
-            }
             onClosed: {
                 destroy()
             }

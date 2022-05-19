@@ -14,12 +14,10 @@ Item {
     height:  visible ? Style.current.smallPadding + prioritytext.height +
              (advancedMode ? advancedModeItemGroup.height : selectorButtons.height) : 0
 
-    property double gasPrice: 0
 
-
-    property bool isEIP1559Enabled: true
-
-    property var suggestedFees: ""
+    property var suggestedFees: ({
+        eip1559Enabled: true
+    })
     property var getGasGweiValue: function () {}
     property var getGasEthValue: function () {}
     property var getFiatValue: function () {}
@@ -62,8 +60,10 @@ Item {
         // causes error on application load without this null check
         if (!inputGasPrice || !inputGasLimit) {
             return
+
         }
         let ethValue = root.getGasEthValue(inputGasPrice.text, inputGasLimit.text)
+
         let fiatValue = root.getFiatValue(ethValue, "ETH", root.defaultCurrency)
         selectedGasEthValue = ethValue
         selectedGasFiatValue = fiatValue
@@ -75,7 +75,7 @@ Item {
 
 
     function checkLimits(){
-        if(!isEIP1559Enabled) return;
+        if(!root.suggestedFees.eip1559Enabled) return;
 
         let inputTipLimit = parseFloat(inputPerGasTipLimit.text || "0.00")
         let inputOverallLimit = parseFloat(inputGasPrice.text || "0.00")
@@ -105,9 +105,10 @@ Item {
 
     }
 
-    Component.onCompleted: {
-        updateGasEthValue()
-        checkLimits()
+    function checkOptimal() {
+        if (!optimalGasButton.gasRadioBtn.checked) {
+            optimalGasButton.gasRadioBtn.toggle()
+        }
     }
 
     function validate() {
@@ -132,7 +133,7 @@ Item {
             inputGasPrice.validationError = root.noInputErrorMessage
         }
 
-        if (isEIP1559Enabled && noPerGasTip) {
+        if (root.suggestedFees.eip1559Enabled && noPerGasTip) {
             inputPerGasTipLimit.validationError = root.noInputErrorMessage
         }
 
@@ -143,7 +144,7 @@ Item {
             inputGasPrice.validationError = invalidInputErrorMessage
         }
 
-        if (isEIP1559Enabled && isNaN(inputPerGasTipLimit.text)) {
+        if (root.suggestedFees.eip1559Enabled && isNaN(inputPerGasTipLimit.text)) {
             inputPerGasTipLimit.validationError = invalidInputErrorMessage
         }
 
@@ -158,11 +159,10 @@ Item {
         if (inputPrice <= 0.00) {
             inputGasPrice.validationError = root.greaterThan0ErrorMessage
         }
-        if (isEIP1559Enabled && inputTipLimit <= 0.00) {
+        if (root.suggestedFees.eip1559Enabled && inputTipLimit <= 0.00) {
             inputPerGasTipLimit.validationError = root.greaterThan0ErrorMessage
         }
-        const isInputValid = inputGasLimit.validationError === "" && inputGasPrice.validationError === "" && (!isEIP1559Enabled  || (isEIP1559Enabled && inputPerGasTipLimit.validationError === ""))
-        
+        const isInputValid = inputGasLimit.validationError === "" && inputGasPrice.validationError === "" && (!root.suggestedFees.eip1559Enabled  || (root.suggestedFees.eip1559Enabled && inputPerGasTipLimit.validationError === ""))
         return isInputValid
     }
 
@@ -171,8 +171,7 @@ Item {
         id: prioritytext
         anchors.top: parent.top
         anchors.left: parent.left
-        //% "Priority"
-        text: qsTrId("priority")
+        text: root.suggestedFees.eip1559Enabled ? qsTr("Priority") : qsTr("Gas Price")
         font.weight: Font.Medium
         font.pixelSize: 13
         color: Style.current.textColor
@@ -180,7 +179,7 @@ Item {
 
     StyledText {
         id: baseFeeText
-        visible: isEIP1559Enabled && advancedMode
+        visible: root.suggestedFees.eip1559Enabled && advancedMode
         anchors.top: parent.top
         anchors.left: prioritytext.right
         anchors.leftMargin: Style.current.smallPadding
@@ -194,6 +193,7 @@ Item {
         id: buttonAdvanced
         anchors.verticalCenter: prioritytext.verticalCenter
         anchors.right: parent.right
+        visible: root.suggestedFees.eip1559Enabled
         text: advancedMode ?
             //% "Use suggestions"
             qsTrId("use-suggestions") :
@@ -205,7 +205,7 @@ Item {
 
     Row {
         id: selectorButtons
-        visible: !advancedMode
+        visible: root.suggestedFees.eip1559Enabled && !advancedMode
         anchors.top: prioritytext.bottom
         anchors.topMargin: Style.current.halfPadding
         spacing: 11
@@ -216,10 +216,11 @@ Item {
         }
 
         GasSelectorButton {
+            id: lowGasButton
             buttonGroup: gasGroup
             text: qsTr("Low")
             price: {
-                if (!isEIP1559Enabled) return gasPrice;
+                if (!root.suggestedFees.eip1559Enabled) return root.suggestedFees.gasPrice;
                 return formatDec(root.suggestedFees.maxFeePerGasL, 6)
             }
             gasLimit: inputGasLimit ? inputGasLimit.text : ""
@@ -227,7 +228,7 @@ Item {
             getFiatValue: root.getFiatValue
             defaultCurrency: root.defaultCurrency
             onChecked: {
-                if (isEIP1559Enabled){
+                if (root.suggestedFees.eip1559Enabled){
                     inputPerGasTipLimit.text = formatDec(root.suggestedFees.maxPriorityFeePerGas, 2);
                     inputGasPrice.text = formatDec(root.suggestedFees.maxFeePerGasL, 2);
                 } else {
@@ -240,14 +241,13 @@ Item {
         GasSelectorButton {
             id: optimalGasButton
             buttonGroup: gasGroup
-            checkedByDefault: true
             //% "Optimal"
             text: qsTrId("optimal")
             price: {
-                if (!isEIP1559Enabled) {
+                if (!root.suggestedFees.eip1559Enabled) {
                     // Setting the gas price field here because the binding didn't work
-                    inputGasPrice.text = root.gasPrice
-                    return root.gasPrice
+                    inputGasPrice.text = root.suggestedFees.gasPrice
+                    return root.suggestedFees.gasPrice
                 }
 
                 return formatDec(root.suggestedFees.maxFeePerGasM, 6)
@@ -257,11 +257,11 @@ Item {
             getFiatValue: root.getFiatValue
             defaultCurrency: root.defaultCurrency
             onChecked: {
-                if (isEIP1559Enabled){
+                if (root.suggestedFees.eip1559Enabled){
                     inputPerGasTipLimit.text = formatDec(root.suggestedFees.maxPriorityFeePerGas, 2);
                     inputGasPrice.text = formatDec(root.suggestedFees.maxFeePerGasM, 2);
                 } else {
-                    inputGasPrice.text = root.gasPrice
+                    inputGasPrice.text = root.suggestedFees.gasPrice
                 }
                 root.updateGasEthValue()
                 root.checkLimits()
@@ -269,10 +269,11 @@ Item {
         }
 
         GasSelectorButton {
+            id: highGasButton
             buttonGroup: gasGroup
             text: qsTr("High")
             price: {
-                if (!isEIP1559Enabled) return gasPrice;
+                if (!root.suggestedFees.eip1559Enabled) return root.suggestedFees.gasPrice;
                 return formatDec(root.suggestedFees.maxFeePerGasH,6);
             }
             gasLimit: inputGasLimit ? inputGasLimit.text : ""
@@ -280,7 +281,7 @@ Item {
             getFiatValue: root.getFiatValue
             defaultCurrency: root.defaultCurrency
             onChecked: {
-                if (isEIP1559Enabled){
+                if (root.suggestedFees.eip1559Enabled){
                     inputPerGasTipLimit.text = formatDec(root.suggestedFees.maxPriorityFeePerGas, 2);
                     inputGasPrice.text = formatDec(root.suggestedFees.maxFeePerGasH, 2);
                 } else {
@@ -296,7 +297,7 @@ Item {
         id: advancedModeItemGroup
         anchors.top: prioritytext.bottom
         anchors.topMargin: 14
-        visible: root.advancedMode
+        visible: !root.suggestedFees.eip1559Enabled || root.advancedMode
         width: parent.width
         height: childrenRect.height
 
@@ -309,7 +310,7 @@ Item {
             customHeight: 56
             anchors.top: parent.top
             anchors.left: parent.left
-            anchors.right: isEIP1559Enabled ? inputPerGasTipLimit.left : inputGasPrice.left
+            anchors.right: root.suggestedFees.eip1559Enabled ? inputPerGasTipLimit.left : inputGasPrice.left
             anchors.rightMargin: Style.current.padding
             placeholderText: "21000"
             validator: IntValidator{
@@ -333,7 +334,7 @@ Item {
             anchors.right: inputGasPrice.left
             anchors.rightMargin: Style.current.padding
             anchors.left: undefined
-            visible: isEIP1559Enabled
+            visible: root.suggestedFees.eip1559Enabled
             width: 125
             customHeight: 56
             text: formatDec(root.suggestedFees.maxPriorityFeePerGas, 2);
@@ -350,7 +351,7 @@ Item {
             color: Style.current.secondaryText
             //% "Gwei"
             text: qsTrId("gwei")
-            visible: isEIP1559Enabled
+            visible: root.suggestedFees.eip1559Enabled
             anchors.top: parent.top
             anchors.topMargin: 42
             anchors.right: inputPerGasTipLimit.right
@@ -405,6 +406,7 @@ Item {
         StyledText {
             id: maxPriorityFeeText
             anchors.left: parent.left
+            visible: root.suggestedFees.eip1559Enabled
             //% "Maximum priority fee: %1 ETH"
             text: {
                 let v = selectedGasEthValue > 0.00009 ? selectedGasEthValue :
@@ -420,6 +422,7 @@ Item {
         StyledText {
             id: maxPriorityFeeFiatText
             text: root.maxFiatFees
+            visible: root.suggestedFees.eip1559Enabled
             anchors.verticalCenter: maxPriorityFeeText.verticalCenter
             anchors.left: maxPriorityFeeText.right
             anchors.leftMargin: 6
@@ -432,6 +435,7 @@ Item {
             id: maxPriorityFeeDetailsText
             //% "Maximum overall price for the transaction. If the block base fee exceeds this, it will be included in a following block with a lower base fee."
             text: qsTrId("maximum-overall-price-for-the-transaction--if-the-block-base-fee-exceeds-this--it-will-be-included-in-a-following-block-with-a-lower-base-fee-")
+            visible: root.suggestedFees.eip1559Enabled
             width: parent.width
             anchors.top: maxPriorityFeeText.bottom
             anchors.topMargin: Style.current.smallPadding

@@ -134,7 +134,7 @@ let NETWORKS* = %* [
     "nativeCurrencyDecimals": 18,
     "isTest": true,
     "layer": 1,
-    "enabled": false,
+    "enabled": true,
   },
   {
     "chainId": 4,

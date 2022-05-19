@@ -56,7 +56,6 @@ const SIGNAL_STICKER_PACK_LOADED* = "stickerPackLoaded"
 const SIGNAL_ALL_STICKER_PACKS_LOADED* = "allStickerPacksLoaded"
 const SIGNAL_STICKER_GAS_ESTIMATED* = "stickerGasEstimated"
 const SIGNAL_INSTALLED_STICKER_PACKS_LOADED* = "installedStickerPacksLoaded"
-const SIGNAL_GAS_PRICE_FETCHED* = "stickersGasPriceFetched"
 const SIGNAL_STICKER_TRANSACTION_CONFIRMED* = "stickerTransactionConfirmed"
 const SIGNAL_STICKER_TRANSACTION_REVERTED* = "stickerTransactionReverted"
 
@@ -113,7 +112,7 @@ QtObject:
     
   proc getStickerMarketAddress*(self: Service): string =
     try:
-      let chainId = self.settingsService.getCurrentNetworkId()
+      let chainId = self.networkService.getNetworkForStickers().chainId
       let response = status_stickers.stickerMarketAddress(chainId)
       return response.result.getStr()
     except RpcException:
@@ -196,16 +195,13 @@ QtObject:
       result.gasPrice = (if gasPrice.isEmptyOrWhitespace: int.none else: gwei2Wei(parseFloat(gasPrice)).truncate(int).some)
 
   proc getStatusToken*(self: Service): TokenDto =
-    let networkType = self.settingsService.getCurrentNetwork().toNetworkType()
-    let networkDto = self.networkService.getNetwork(networkType)
+    let networkDto = self.networkService.getNetworkForStickers()
 
-    return self.tokenService.findTokenBySymbol(networkDto, networkType.sntSymbol())
+    return self.tokenService.findTokenBySymbol(networkDto, networkDto.sntSymbol())
 
   proc buyPack*(self: Service, packId: string, address, gas, gasPrice: string, eip1559Enabled: bool, maxPriorityFeePerGas: string, maxFeePerGas: string, password: string, success: var bool): tuple[txHash: string, error: string] =
     let
-      networkType = self.settingsService.getCurrentNetwork().toNetworkType()
-      network = self.networkService.getNetwork(networkType)
-      chainId = network.chainId
+      chainId = self.networkService.getNetworkForStickers().chainId
       txData = buildTransaction(parseAddress(address), gas, gasPrice, eip1559Enabled, maxPriorityFeePerGas, maxFeePerGas)
 
     try:
@@ -230,8 +226,7 @@ QtObject:
     except RpcException:
       error "Error sending transaction", message = getCurrentExceptionMsg()
 
-  proc buy*(self: Service, packId: string, address: string, gas: string, gasPrice: string, maxPriorityFeePerGas: string, maxFeePerGas: string, password: string): tuple[response: string, success: bool] =
-    let eip1559Enabled = self.networkService.isEIP1559Enabled()
+  proc buy*(self: Service, packId: string, address: string, gas: string, gasPrice: string, maxPriorityFeePerGas: string, maxFeePerGas: string, password: string, eip1559Enabled: bool): tuple[response: string, success: bool] =
     try:
       status_utils.validateTransactionInput(address, address, "", "0", gas, gasPrice, "", eip1559Enabled, maxPriorityFeePerGas, maxFeePerGas, "ok")
     except Exception as e:
@@ -264,7 +259,7 @@ QtObject:
       ))
 
 
-    let chainId = self.settingsService.getCurrentNetworkId()
+    let chainId = self.networkService.getNetworkForStickers().chainId
     let pendingStickerPacksResponse = status_stickers.pending() 
     for (packID, stickerPackJson) in pendingStickerPacksResponse.result.pairs():
         if self.marketStickerPacks.contains(packID): continue
@@ -278,7 +273,7 @@ QtObject:
     self.events.emit(SIGNAL_ALL_STICKER_PACKS_LOADED, Args())
 
   proc obtainMarketStickerPacks*(self: Service) =
-    let chainId = self.settingsService.getCurrentNetworkId()
+    let chainId = self.networkService.getNetworkForStickers().chainId
 
     let arg = ObtainMarketStickerPacksTaskArg(
       tptr: cast[ByteAddress](obtainMarketStickerPacksTask),
@@ -297,7 +292,7 @@ QtObject:
   # definition so we'll need to setup the type, task, and helper outside of body
   # passed to `QtObject:`
   proc estimate*(self: Service, packId: string, address: string, price: string, uuid: string) =
-    let chainId = self.settingsService.getCurrentNetworkId()
+    let chainId = self.networkService.getNetworkForStickers().chainId
 
     let arg = EstimateTaskArg(
       tptr: cast[ByteAddress](estimateTask),
@@ -339,7 +334,7 @@ QtObject:
     return 0
 
   proc installStickerPack*(self: Service, packId: string) =
-    let chainId = self.settingsService.getCurrentNetworkId()
+    let chainId = self.networkService.getNetworkForStickers().chainId
     if not self.marketStickerPacks.hasKey(packId):
       return
     let installResponse = status_stickers.install(chainId, packId)
@@ -380,36 +375,7 @@ QtObject:
   proc getSNTBalance*(self: Service): string =
     let token = self.getStatusToken()
     let account = self.walletAccountService.getWalletAccount(0).address
-    let networkType = self.settingsService.getCurrentNetwork().toNetworkType()
-    let network = self.networkService.getNetwork(networkType)
+    let network = self.networkService.getNetworkForStickers()
 
     let balances = status_go_backend.getTokensBalancesForChainIDs(@[network.chainId], @[account], @[token.addressAsString()]).result
     return ens_utils.hex2Token(balances{account}{token.addressAsString()}.getStr, token.decimals)
-
-  proc onGasPriceFetched*(self: Service, response: string) {.slot.} =
-    let responseObj = response.parseJson
-    if (responseObj.kind != JObject):
-      info "expected response is not a json object", procName="onGasPriceFetched"
-      # notify view, this is important
-      self.events.emit(SIGNAL_GAS_PRICE_FETCHED, GasPriceArgs(gasPrice: "0"))
-      return
-
-    var gasPriceHex: string
-    if(not responseObj.getProp("gasPrice", gasPriceHex)):
-      info "expected response doesn't contain gas price", procName="onGasPriceFetched"
-      # notify view, this is important
-      self.events.emit(SIGNAL_GAS_PRICE_FETCHED, GasPriceArgs(gasPrice: "0"))
-      return
-
-    let gasPrice = $fromHex(Stuint[256], gasPriceHex)
-    let parsedGasPrice = parseFloat(wei2gwei(gasPrice))
-    var data = GasPriceArgs(gasPrice: fmt"{parsedGasPrice:.3f}")
-    self.events.emit(SIGNAL_GAS_PRICE_FETCHED, data)
-
-  proc fetchGasPrice*(self: Service) =
-    let arg = QObjectTaskArg(
-      tptr: cast[ByteAddress](fetchGasPriceTask),
-      vptr: cast[ByteAddress](self.vptr),
-      slot: "onGasPriceFetched"
-    )
-    self.threadpool.start(arg)

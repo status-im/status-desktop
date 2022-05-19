@@ -22,13 +22,13 @@ ModalPopup {
     readonly property var asset: JSON.parse(root.stickersStore.getStatusToken())
     property string assetPrice
     property string contractAddress
+    property int chainId
     property var estimateGasFunction: (function(userAddress, uuid) { return 0; })
-    property var onSendTransaction: (function(userAddress, gasLimit, gasPrice, tipLimit, overallLimit, password){ return ""; })
+    property var onSendTransaction: (function(userAddress, gasLimit, gasPrice, tipLimit, overallLimit, password, eip1559Enabled){ return ""; })
     property var onSuccess: (function(){})
     property var asyncGasEstimateTarget
 
     Component.onCompleted: {
-        root.stickersStore.fetchGasPrice();
         gasSelector.estimateGas();
     }
 
@@ -56,10 +56,11 @@ ModalPopup {
     function sendTransaction() {
         let responseStr = onSendTransaction(selectFromAccount.selectedAccount.address,
                                          gasSelector.selectedGasLimit,
-                                         gasSelector.isEIP1559Enabled ? "" : gasSelector.selectedGasPrice,
+                                         gasSelector.suggestedFees.eip1559Enabled ? "" : gasSelector.selectedGasPrice,
                                          gasSelector.selectedTipLimit,
                                          gasSelector.selectedOverallLimit,
-                                         transactionSigner.enteredPassword);
+                                         transactionSigner.enteredPassword,
+                                         gasSelector.suggestedFees.eip1559Enabled);
 
         let response = JSON.parse(responseStr)
         if (!response.success) {
@@ -74,6 +75,11 @@ ModalPopup {
 
         onSuccess();
         root.close();
+    }
+
+    onOpened: {
+        gasSelector.suggestedFees = root.store.suggestedFees(root.chainId)
+        gasSelector.checkOptimal()
     }
 
     TransactionStackView {
@@ -111,6 +117,7 @@ ModalPopup {
                 label: qsTrId("choose-account")
                 showBalanceForAssetSymbol: root.asset.symbol
                 minRequiredAssetBalance: root.assetPrice
+                chainId: root.chainId
                 onSelectedAccountChanged: if (isValid) { gasSelector.estimateGas() }
             }
             RecipientSelector {
@@ -134,12 +141,9 @@ ModalPopup {
                 id: gasSelector
                 anchors.top: selectFromAccount.bottom
                 anchors.topMargin: Style.current.padding
-                gasPrice: parseFloat(root.stickersStore.gasPrice)
                 getGasEthValue: root.stickersStore.getGasEthValue
                 getFiatValue: root.stickersStore.getFiatValue
                 defaultCurrency: root.stickersStore.getCurrentCurrency()
-                isEIP1559Enabled: root.store.isEIP1559Enabled()
-                suggestedFees: root.store.suggestedFees()
                 width: stack.width
 
                 property var estimateGas: Backpressure.debounce(gasSelector, 600, function() {
@@ -243,7 +247,7 @@ ModalPopup {
                         return root.sendTransaction()
                     }
 
-                    if(gasSelector.isEIP1559Enabled && stack.currentGroup === group2 && gasSelector.advancedMode){
+                    if(gasSelector.suggestedFees.eip1559Enabled && stack.currentGroup === group2 && gasSelector.advancedMode){
                         if(gasSelector.showPriceLimitWarning || gasSelector.showTipLimitWarning){
                             Global.openPopup(transactionSettingsConfirmationPopupComponent, {
                                 currentBaseFee: gasSelector.suggestedFees.baseFee,

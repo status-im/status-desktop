@@ -14,22 +14,23 @@ proc getNativeChainBalance*(chainId: int, address: string): RpcResponse[JsonNode
   let payload = %* [address, "latest"]
   return core.callPrivateRPCWithChainId("eth_getBalance", chainId, payload)
 
-proc sendTransaction*(transactionData: string, password: string): RpcResponse[JsonNode] {.raises: [Exception].} =
-  core.sendTransaction(transactionData, password)
+proc sendTransaction*(chainId: int, transactionData: string, password: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  core.sendTransaction(chainId, transactionData, password)
 
 # This is the replacement of the `call` function
 proc doEthCall*(payload = %* []): RpcResponse[JsonNode] {.raises: [Exception].} =
   core.callPrivateRPC("eth_call", payload)
 
-proc estimateGas*(payload = %* []): RpcResponse[JsonNode] {.raises: [Exception].} =
-  core.callPrivateRPC("eth_estimateGas", payload)
+proc estimateGas*(chainId: int, payload = %* []): RpcResponse[JsonNode] {.raises: [Exception].} =
+  core.callPrivateRPCWithChainId("eth_estimateGas", chainId, payload)
 
 proc getEthAccounts*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   return core.callPrivateRPC("eth_accounts")
 
-proc getGasPrice*(payload = %* []): RpcResponse[JsonNode] {.raises: [Exception].} =
-  return core.callPrivateRPC("eth_gasPrice", payload)
-
 proc suggestedFees*(chainId: int): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [chainId]
   return core.callPrivateRPC("wallet_getSuggestedFees", payload)
+
+proc suggestedRoutes*(account: string, amount: float64, token: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [account, amount, token]
+  return core.callPrivateRPC("wallet_getSuggestedRoutes", payload)

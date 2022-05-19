@@ -19,7 +19,7 @@ method isLoaded*(self: AccessInterface): bool {.base.} =
 method viewDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method buy*(self: AccessInterface, packId: string, address: string, gas: string, gasPrice: string, maxPriorityFeePerGas: string, maxFeePerGas: string, password: string): tuple[response: string, success: bool] {.base.} =
+method buy*(self: AccessInterface, packId: string, address: string, gas: string, gasPrice: string, maxPriorityFeePerGas: string, maxFeePerGas: string, password: string, eip1559Enabled: bool): tuple[response: string, success: bool] {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getInstalledStickerPacks*(self: AccessInterface): Table[string, StickerPackDto] {.base.} =
@@ -89,10 +89,7 @@ method getGasEthValue*(self: AccessInterface, gweiValue: string, gasLimit: strin
 method getStatusToken*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method fetchGasPrice*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method gasPriceFetched*(self: AccessInterface, gasPrice: string) {.base.} =
+method getChainIdForStickers*(self: AccessInterface): int {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method stickerTransactionConfirmed*(self: AccessInterface, trxType: string, packID: string, transactionHash: string) {.base.} =

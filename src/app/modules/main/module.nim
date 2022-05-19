@@ -152,9 +152,10 @@ proc newModule*[T](
   result.profileSectionModule = profile_section_module.newModule(
     result, events, accountsService, settingsService, stickersService,
     profileService, contactsService, aboutService, languageService, privacyService, nodeConfigurationService,
-    devicesService, mailserversService, chatService, ensService, walletAccountService, generalService, communityService
+    devicesService, mailserversService, chatService, ensService, walletAccountService, generalService, communityService,
+    networkService,
   )
-  result.stickersModule = stickers_module.newModule(result, events, stickersService, settingsService, walletAccountService)
+  result.stickersModule = stickers_module.newModule(result, events, stickersService, settingsService, walletAccountService, networkService)
   result.activityCenterModule = activity_center_module.newModule(result, events, activityCenterService, contactsService,
   messageService, chatService)
   result.communitiesModule = communities_module.newModule(result, events, communityService, contactsService)

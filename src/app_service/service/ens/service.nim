@@ -62,7 +62,6 @@ type
 # Signals which may be emitted by this service:
 const SIGNAL_ENS_USERNAME_AVAILABILITY_CHECKED* = "ensUsernameAvailabilityChecked"
 const SIGNAL_ENS_USERNAME_DETAILS_FETCHED* = "ensUsernameDetailsFetched"
-const SIGNAL_GAS_PRICE_FETCHED* = "ensGasPriceFetched"
 const SIGNAL_ENS_TRANSACTION_CONFIRMED* = "ensTransactionConfirmed"
 const SIGNAL_ENS_TRANSACTION_REVERTED* = "ensTransactionReverted"
 
@@ -183,7 +182,7 @@ QtObject:
         vptr: cast[ByteAddress](self.vptr),
         slot: "onEnsUsernameAvailabilityChecked",
         ensUsername: ensUsername,
-        chainId: self.settingsService.getCurrentNetworkId(),
+        chainId: self.networkService.getNetworkForEns().chainId,
         isStatus: isStatus,
         myPublicKey: self.settingsService.getPublicKey(),
         myWalletAddress: self.walletAccountService.getWalletAccount(0).address
@@ -220,36 +219,8 @@ QtObject:
       vptr: cast[ByteAddress](self.vptr),
       slot: "onEnsUsernameDetailsFetched",
       ensUsername: ensUsername,
-      chainId: self.settingsService.getCurrentNetworkId(),
+      chainId: self.networkService.getNetworkForEns().chainId,
       isStatus: isStatus
-    )
-    self.threadpool.start(arg)
-
-  proc onGasPriceFetched*(self: Service, response: string) {.slot.} =
-    let responseObj = response.parseJson
-    if (responseObj.kind != JObject):
-      info "expected response is not a json object", procName="onGasPriceFetched"
-      # notify view, this is important
-      self.events.emit(SIGNAL_GAS_PRICE_FETCHED, GasPriceArgs(gasPrice: "0"))
-      return
-
-    var gasPriceHex: string
-    if(not responseObj.getProp("gasPrice", gasPriceHex)):
-      info "expected response doesn't contain gas price", procName="onGasPriceFetched"
-      # notify view, this is important
-      self.events.emit(SIGNAL_GAS_PRICE_FETCHED, GasPriceArgs(gasPrice: "0"))
-      return
-
-    let gasPrice = $fromHex(Stuint[256], gasPriceHex)
-    let parsedGasPrice = parseFloat(wei2gwei(gasPrice))
-    var data = GasPriceArgs(gasPrice: fmt"{parsedGasPrice:.3f}")
-    self.events.emit(SIGNAL_GAS_PRICE_FETCHED, data)
-
-  proc fetchGasPrice*(self: Service) =
-    let arg = QObjectTaskArg(
-      tptr: cast[ByteAddress](fetchGasPriceTask),
-      vptr: cast[ByteAddress](self.vptr),
-      slot: "onGasPriceFetched"
     )
     self.threadpool.start(arg)
 
@@ -259,7 +230,7 @@ QtObject:
   proc setPubKeyGasEstimate*(self: Service, ensUsername: string, address: string): int = 
     try:
       let
-        chainId = self.settingsService.getCurrentNetworkId()
+        chainId = self.networkService.getNetworkForEns().chainId
         txData = ens_utils.buildTransaction(parseAddress(address), 0.u256)
 
       let resp = status_ens.setPubKeyEstimate(chainId, %txData, ensUsername,
@@ -277,12 +248,12 @@ QtObject:
       gasPrice: string, 
       maxPriorityFeePerGas: string,
       maxFeePerGas: string,
-      password: string
+      password: string,
+      eip1559Enabled: bool,
     ): string =    
     try:
       let
-        chainId = self.settingsService.getCurrentNetworkId()
-        eip1559Enabled = self.networkService.isEIP1559Enabled()
+        chainId = self.networkService.getNetworkForEns().chainId
         txData = ens_utils.buildTransaction(parseAddress(address), 0.u256, gas, gasPrice,
           eip1559Enabled, maxPriorityFeePerGas, maxFeePerGas)
 
@@ -303,7 +274,7 @@ QtObject:
   proc releaseEnsEstimate*(self: Service, ensUsername: string, address: string): int =
     try:
       let
-        chainId = self.settingsService.getCurrentNetworkId()
+        chainId = self.networkService.getNetworkForEns().chainId
         txData = ens_utils.buildTransaction(parseAddress(address), 0.u256)
 
       let resp = status_ens.releaseEstimate(chainId, %txData, ensUsername)
@@ -313,8 +284,7 @@ QtObject:
       result = 100000
 
   proc getEnsRegisteredAddress*(self: Service): string =
-    let networkType = self.settingsService.getCurrentNetwork().toNetworkType()
-    let networkDto = self.networkService.getNetwork(networkType)
+    let networkDto = self.networkService.getNetworkForEns()
 
     return status_ens.getRegistrarAddress(networkDto.chainId).result.getStr
 
@@ -328,7 +298,7 @@ QtObject:
     ): string =    
     try:
       let
-        chainId = self.settingsService.getCurrentNetworkId()
+        chainId = self.networkService.getNetworkForEns().chainId
         txData = ens_utils.buildTransaction(parseAddress(address), 0.u256, gas, gasPrice)
 
       let resp = status_ens.release(chainId, %txData, password, ensUsername)
@@ -347,7 +317,7 @@ QtObject:
   proc registerENSGasEstimate*(self: Service, ensUsername: string, address: string): int =
     try:
       let
-        chainId = self.settingsService.getCurrentNetworkId()
+        chainId = self.networkService.getNetworkForEns().chainId
         txData = ens_utils.buildTransaction(parseAddress(address), 0.u256)
 
       let resp = status_ens.registerEstimate(chainId, %txData, ensUsername,
@@ -358,10 +328,9 @@ QtObject:
       error "error occurred", procName="registerENSGasEstimate", msg = e.msg
 
   proc getStatusToken*(self: Service): TokenDto =
-    let networkType = self.settingsService.getCurrentNetwork().toNetworkType()
-    let networkDto = self.networkService.getNetwork(networkType)
+    let networkDto = self.networkService.getNetworkForEns()
 
-    return self.tokenService.findTokenBySymbol(networkDto, networkType.sntSymbol())
+    return self.tokenService.findTokenBySymbol(networkDto, networkDto.sntSymbol())
 
   proc registerEns*(
       self: Service,
@@ -371,14 +340,12 @@ QtObject:
       gasPrice: string, 
       maxPriorityFeePerGas: string,
       maxFeePerGas: string,
-      password: string
+      password: string,
+      eip1559Enabled: bool,
     ): string =    
     try:
       let
-        networkType = self.settingsService.getCurrentNetwork().toNetworkType()
-        network = self.networkService.getNetwork(networkType)
-        chainId = network.chainId
-        eip1559Enabled = self.networkService.isEIP1559Enabled()
+        chainId = self.networkService.getNetworkForEns().chainId
         txData = ens_utils.buildTransaction(parseAddress(address), 0.u256, gas, gasPrice,
           eip1559Enabled, maxPriorityFeePerGas, maxFeePerGas)
 
@@ -399,15 +366,14 @@ QtObject:
   proc getSNTBalance*(self: Service): string =
     let token = self.getStatusToken()
     let account = self.walletAccountService.getWalletAccount(0).address
-    let networkType = self.settingsService.getCurrentNetwork().toNetworkType()
-    let network = self.networkService.getNetwork(networkType)
+    let networkDto = self.networkService.getNetworkForEns()
 
-    let balances = status_go_backend.getTokensBalancesForChainIDs(@[network.chainId], @[account], @[token.addressAsString()]).result
+    let balances = status_go_backend.getTokensBalancesForChainIDs(@[networkDto.chainId], @[account], @[token.addressAsString()]).result
     return ens_utils.hex2Token(balances{account}{token.addressAsString()}.getStr, token.decimals)
 
   proc resourceUrl*(self: Service, username: string): (string, string, string) =
     try:
-      let chainId = self.settingsService.getCurrentNetworkId()
+      let chainId = self.networkService.getNetworkForEns().chainId
       let response = status_ens.resourceURL(chainId, username)
       return (response.result{"Scheme"}.getStr, response.result{"Host"}.getStr, response.result{"Path"}.getStr)
     except Exception as e:

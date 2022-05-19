@@ -63,9 +63,7 @@ Item {
         StatusETHTransactionModal {
             ensUsernamesStore: root.ensUsernamesStore
             contactsStore: root.contactsStore
-            onOpened: {
-                root.ensUsernamesStore.fetchGasPrice()
-            }
+            chainId: root.ensUsernamesStore.getChainIdForEns()
             title: qsTr("Connect username with your pubkey")
             onClosed: {
                 destroy()
@@ -74,14 +72,15 @@ Item {
                 if (ensUsername.text === "" || !selectedAccount) return 80000;
                 return root.ensUsernamesStore.setPubKeyGasEstimate(ensUsername.text + (isStatus ? ".stateofus.eth" : "" ), selectedAccount.address)
             }
-            onSendTransaction: function(selectedAddress, gasLimit, gasPrice, password) {
+            onSendTransaction: function(selectedAddress, gasLimit, gasPrice, password, eip1559Enabled) {
                 return root.ensUsernamesStore.setPubKey(ensUsername.text + (isStatus ? ".stateofus.eth" : "" ),
                                                         selectedAddress,
                                                         gasLimit,
                                                         gasPrice,
                                                         "",
                                                         "",
-                                                        password)
+                                                        password,
+                                                        eip1559Enabled)
             }
             onSuccess: function(){
                 usernameUpdated(ensUsername.text);

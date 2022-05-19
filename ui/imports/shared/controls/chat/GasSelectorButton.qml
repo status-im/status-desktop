@@ -20,6 +20,7 @@ Rectangle {
     property var getGasEthValue: function () {}
     property var getFiatValue: function () {}
 
+    property alias gasRadioBtn: gasRadioBtn
 
     function formatDec(num, dec){
        return Math.round((num + Number.EPSILON) * Math.pow(10, dec)) / Math.pow(10, dec)

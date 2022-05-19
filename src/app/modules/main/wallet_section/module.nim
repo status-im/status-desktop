@@ -63,7 +63,7 @@ proc newModule*(
   result.allTokensModule = all_tokens_module.newModule(result, events, tokenService, walletAccountService)
   result.collectiblesModule = collectibles_module.newModule(result, events, collectibleService, walletAccountService)
   result.currentAccountModule = current_account_module.newModule(result, events, walletAccountService)
-  result.transactionsModule = transactions_module.newModule(result, events, transactionService, walletAccountService)
+  result.transactionsModule = transactions_module.newModule(result, events, transactionService, walletAccountService, networkService)
   result.savedAddressesModule = saved_addresses_module.newModule(result, events, savedAddressService)
   result.buySellCryptoModule = buy_sell_crypto_module.newModule(result, events, transactionService)
 
@@ -92,9 +92,6 @@ method switchAccountByAddress*(self: Module, address: string) =
 
 method setTotalCurrencyBalance*(self: Module) =
   self.view.setTotalCurrencyBalance(self.controller.getCurrencyBalance())
-
-method isEIP1559Enabled*(self: Module): bool =
-  return self.controller.isEIP1559Enabled()
 
 method load*(self: Module) =
   singletonInstance.engine.setRootContextProperty("walletSection", newQVariant(self.view))

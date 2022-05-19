@@ -25,11 +25,10 @@ proc newTokenDto*(
     name: name, chainId: chainId, address: address, symbol: symbol, decimals: decimals, hasIcon: hasIcon, isCustom: isCustom
   )
 
-proc toTokenDto*(jsonObj: JsonNode, activeTokenSymbols: seq[string], hasIcon: bool = false, isCustom: bool = true): TokenDto =
+proc toTokenDto*(jsonObj: JsonNode, isVisible: bool, hasIcon: bool = false, isCustom: bool = true): TokenDto =
   result = TokenDto()
   result.isCustom = isCustom
   result.hasIcon = hasIcon
-  result.isVisible = false
 
   discard jsonObj.getProp("name", result.name)
   discard jsonObj.getProp("chainId", result.chainId)
@@ -38,8 +37,7 @@ proc toTokenDto*(jsonObj: JsonNode, activeTokenSymbols: seq[string], hasIcon: bo
   discard jsonObj.getProp("decimals", result.decimals)
   discard jsonObj.getProp("color", result.color)
 
-  if activeTokenSymbols.contains(result.symbol):
-    result.isVisible = true
+  result.isVisible = isVisible
 
 proc addressAsString*(self: TokenDto): string =
   return $self.address

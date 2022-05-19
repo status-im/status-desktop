@@ -66,16 +66,3 @@ const ensUsernameDetailsTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.
     "expirationTime": expirationTime
   }
   arg.finish(responseJson)
-
-
-#################################################
-# Async fetch gas price
-#################################################
-
-const fetchGasPriceTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
-  let arg = decode[QObjectTaskArg](argEncoded)
-  let response = status_eth.getGasPrice()
-  let responseJson = %* {
-    "gasPrice": response.result.getStr
-  }
-  arg.finish(responseJson)

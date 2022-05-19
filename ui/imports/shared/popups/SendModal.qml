@@ -39,31 +39,40 @@ StatusModal {
     function sendTransaction() {
         stack.currentGroup.isPending = true
         let success = false
-        if(advancedHeader.assetSelector.selectedAsset.address === "" || advancedHeader.assetSelector.selectedAsset.address === Constants.zeroAddress){
-            success = popup.store.transferEth(
-                        advancedHeader.accountSelector.selectedAccount.address,
-                        advancedHeader.recipientSelector.selectedRecipient.address,
-                        advancedHeader.amountToSendInput.text,
-                        gasSelector.selectedGasLimit,
-                        gasSelector.isEIP1559Enabled ? "" : gasSelector.selectedGasPrice,
-                        gasSelector.selectedTipLimit,
-                        gasSelector.selectedOverallLimit,
-                        transactionSigner.enteredPassword,
-                        stack.uuid)
-        } else {
-            success = popup.store.transferTokens(
-                        advancedHeader.accountSelector.selectedAccount.address,
-                        advancedHeader.recipientSelector.selectedRecipient.address,
-                        advancedHeader.assetSelector.selectedAsset.address,
-                        advancedHeader.amountToSendInput.text,
-                        gasSelector.selectedGasLimit,
-                        gasSelector.isEIP1559Enabled ? "" : gasSelector.selectedGasPrice,
-                        gasSelector.selectedTipLimit,
-                        gasSelector.selectedOverallLimit,
-                        transactionSigner.enteredPassword,
-                        stack.uuid)
-        }
+        success = popup.store.transfer(
+            advancedHeader.accountSelector.selectedAccount.address,
+            advancedHeader.recipientSelector.selectedRecipient.address,
+            advancedHeader.assetSelector.selectedAsset.symbol,
+            advancedHeader.amountToSendInput.text,
+            gasSelector.selectedGasLimit,
+            gasSelector.suggestedFees.eip1559Enabled ? "" : gasSelector.selectedGasPrice,
+            gasSelector.selectedTipLimit,
+            gasSelector.selectedOverallLimit,
+            transactionSigner.enteredPassword,
+            networkSelector.selectedNetwork.chainId || Global.currentChainId,
+            stack.uuid,
+            gasSelector.suggestedFees.eip1559Enabled,
+        )
     }
+
+    property var recalculateRoutesAndFees: Backpressure.debounce(popup, 600, function() {
+        if (!popup.store.isMultiNetworkEnabled) {
+            return
+        }
+
+        networkSelector.suggestedRoutes = popup.store.suggestedRoutes(
+            advancedHeader.accountSelector.selectedAccount.address, advancedHeader.amountToSendInput.text, advancedHeader.assetSelector.selectedAsset.symbol
+        )
+        if (networkSelector.suggestedRoutes.length) {
+            networkSelector.selectedNetwork = networkSelector.suggestedRoutes[0]
+            gasSelector.suggestedFees = popup.store.suggestedFees(networkSelector.suggestedRoutes[0].chainId)
+            gasSelector.checkOptimal()
+            gasSelector.visible = true
+        } else {
+            networkSelector.selectedNetwork = ""
+            gasSelector.visible = false
+        }
+    })
 
     width: 556
     // To-Do as per design once the account selector become floating the heigth can be as defined in design as 595
@@ -81,12 +90,21 @@ StatusModal {
                 advancedHeader.recipientSelector.selectedType = RecipientSelector.Type.Contact
                 advancedHeader.recipientSelector.readOnly = true
                 advancedHeader.recipientSelector.selectedRecipient = popup.preSelectedRecipient
+                
             }
             if(popup.preSelectedAccount) {
                 advancedHeader.accountSelector.selectedAccount = popup.preSelectedAccount
             }
         }
+
+        if (popup.store.isMultiNetworkEnabled) {
+            popup.recalculateRoutesAndFees()
+        } else {
+            gasSelector.suggestedFees = popup.store.suggestedFees(Global.currentChainId)
+            gasSelector.checkOptimal()
+        }
     }
+
 
     advancedHeaderComponent: SendModalHeader {
         store: popup.store
@@ -94,6 +112,18 @@ StatusModal {
         estimateGas: function() {
             if(popup.contentItem.currentGroup.isValid)
                 gasSelector.estimateGas()
+        }
+
+        onAssetChanged: function() {
+            popup.recalculateRoutesAndFees()
+        }
+
+        onSelectedAccountChanged: function() {
+            popup.recalculateRoutesAndFees()
+        }
+
+        onAmountToSendChanged: function() {
+            popup.recalculateRoutesAndFees()
         }
     }
 
@@ -115,7 +145,7 @@ StatusModal {
 
                 ScrollBar.vertical.policy: ScrollBar.AlwaysOff
                 ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-                contentHeight: addressSelector.height + networkAndFeesSelector.height + gasSelector.height + gasValidator.height
+                contentHeight: addressSelector.height + networkSelector.height + gasSelector.height + gasValidator.height
                 clip: true
 
                 TabAddressSelectorView {
@@ -130,45 +160,45 @@ StatusModal {
                     }
                 }
 
-                TabNetworkAndFees {
-                    id: networkAndFeesSelector
+                NetworkSelector {
+                    id: networkSelector
                     anchors.top: addressSelector.bottom
                     anchors.right: parent.right
                     anchors.left: parent.left
                     visible: popup.store.isMultiNetworkEnabled
+                    onNetworkChanged: function(chainId) {
+                        gasSelector.suggestedFees = popup.store.suggestedFees(chainId)
+                    }
                 }
 
                 GasSelector {
                     id: gasSelector
-                    anchors.top: networkAndFeesSelector.visible ? networkAndFeesSelector.bottom : addressSelector.bottom
-                    gasPrice: parseFloat(popup.store.gasPrice)
+                    anchors.top: networkSelector.bottom
                     getGasEthValue: popup.store.getGasEthValue
                     getFiatValue: popup.store.getFiatValue
                     defaultCurrency: popup.store.currentCurrency
-                    isEIP1559Enabled: popup.store.isEIP1559Enabled()
-                    suggestedFees: popup.store.suggestedFees()
-
-                    visible: !popup.store.isMultiNetworkEnabled
 
                     width: stack.width
                     property var estimateGas: Backpressure.debounce(gasSelector, 600, function() {
                         if (!(advancedHeader.accountSelector.selectedAccount && advancedHeader.accountSelector.selectedAccount.address &&
-                              advancedHeader.recipientSelector.selectedRecipient && advancedHeader.recipientSelector.selectedRecipient.address &&
-                              advancedHeader.assetSelector.selectedAsset && advancedHeader.assetSelector.selectedAsset.address &&
-                              advancedHeader.amountToSendInput.text)) {
+                            advancedHeader.recipientSelector.selectedRecipient && advancedHeader.recipientSelector.selectedRecipient.address &&
+                            advancedHeader.assetSelector.selectedAsset && advancedHeader.assetSelector.selectedAsset.symbol &&
+                            advancedHeader.amountToSendInput.text)) {
                             selectedGasLimit = 250000
                             defaultGasLimit = selectedGasLimit
                             return
                         }
 
                         let gasEstimate = JSON.parse(popup.store.estimateGas(
-                                                         advancedHeader.accountSelector.selectedAccount.address,
-                                                         advancedHeader.recipientSelector.selectedRecipient.address,
-                                                         advancedHeader.assetSelector.selectedAsset.address,
-                                                         advancedHeader.amountToSendInput.text,
-                                                         ""))
+                                                        advancedHeader.accountSelector.selectedAccount.address,
+                                                        advancedHeader.recipientSelector.selectedRecipient.address,
+                                                        advancedHeader.assetSelector.selectedAsset.symbol,
+                                                        advancedHeader.amountToSendInput.text,
+                                                        networkSelector.selectedNetwork.chainId || Global.currentChainId,
+                                                        ""))
 
                         if (!gasEstimate.success) {
+                            
                             //% "Error estimating gas: %1"
                             console.warn(qsTrId("error-estimating-gas---1").arg(gasEstimate.error.message))
                             return
@@ -178,6 +208,7 @@ StatusModal {
                         defaultGasLimit = selectedGasLimit
                     })
                 }
+                
                 GasValidator {
                     id: gasValidator
                     anchors.top: gasSelector.bottom
@@ -186,6 +217,7 @@ StatusModal {
                                                                                  : parseFloat(advancedHeader.amountToSendInput.text)
                     selectedAsset: advancedHeader.assetSelector.selectedAsset
                     selectedGasEthValue: gasSelector.selectedGasEthValue
+                    selectedNetwork: networkSelector.selectedNetwork
                 }
             }
         }
@@ -217,7 +249,7 @@ StatusModal {
                     return popup.sendTransaction()
                 }
 
-                if(gasSelector.isEIP1559Enabled && popup.contentItem.currentGroup === group1 && gasSelector.advancedMode){
+                if(gasSelector.suggestedFees.eip1559Enabled && popup.contentItem.currentGroup === group1 && gasSelector.advancedMode){
                     if(gasSelector.showPriceLimitWarning || gasSelector.showTipLimitWarning){
                         Global.openPopup(transactionSettingsConfirmationPopupComponent, {
                                              currentBaseFee: gasSelector.suggestedFees.baseFee,
@@ -277,7 +309,7 @@ StatusModal {
 
                 let url = `${popup.store.getEtherscanLink()}/${response.result}`
                 Global.displayToastMessage(qsTr("Transaction pending..."),
-                                           "",
+                                           qsTr("View on etherscan"),
                                            "",
                                            true,
                                            Constants.ephemeralNotificationType.normal,

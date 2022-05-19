@@ -16,8 +16,9 @@ QtObject {
     property var privacyModuleInst
     property bool profilePopupOpened: false
     property string currentNetworkId: ""
-    property bool networkGuarded: root.currentNetworkId === Constants.networkMainnet ||
-        (root.currentNetworkId === Constants.networkRopsten && localAccountSensitiveSettings.stickersEnsRopsten)
+    property int currentChainId: 0
+    property bool networkGuarded: localAccountSensitiveSettings.isMultiNetworkEnabled || (root.currentNetworkId === Constants.networkMainnet ||
+        (root.currentNetworkId === Constants.networkRopsten && localAccountSensitiveSettings.stickersEnsRopsten))
 
     signal openImagePopup(var image, var contextMenu)
     signal openLinkInBrowser(string link)

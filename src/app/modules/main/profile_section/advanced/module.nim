@@ -63,6 +63,9 @@ method getCurrentNetworkName*(self: Module): string =
 method getCurrentNetworkId*(self: Module): string =
   return self.controller.getCurrentNetworkDetails().id
 
+method getCurrentChainId*(self: Module): int =
+  return self.controller.getCurrentNetworkDetails().config.NetworkId
+
 method setCurrentNetwork*(self: Module, network: string) =
   self.controller.changeCurrentNetworkTo(network)
 

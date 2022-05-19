@@ -12,6 +12,7 @@ Column {
     visible: !isValid
     spacing: 5
 
+    property int chainId
     property var account
     property double amount
     property var asset
@@ -27,7 +28,7 @@ Column {
         if (!(account && account.assets && asset && amount >= 0)) {
             return root.isValid
         }
-        const currAcctAsset = Utils.findAssetBySymbol(account.assets, asset.symbol)
+        const currAcctAsset = Utils.findAssetByChainAndSymbol(root.chainId, account.assets, asset.symbol)
 
         if (currAcctAsset && currAcctAsset.value < amount) {
             isValid = false

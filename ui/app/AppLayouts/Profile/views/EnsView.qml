@@ -325,7 +325,7 @@ Item {
         onTransactionWasSent: {
             let url = `${ensView.ensUsernamesStore.getEtherscanLink()}/${txResult}`;
             Global.displayToastMessage(qsTr("Transaction pending..."),
-                                       "",
+                                       qsTr("View on etherscan"),
                                        "",
                                        true,
                                        Constants.ephemeralNotificationType.normal,
@@ -364,7 +364,7 @@ Item {
 
             let url = `${ensView.ensUsernamesStore.getEtherscanLink()}/${txHash}`;
             Global.displayToastMessage(qsTr("Transaction pending..."),
-                                       "",
+                                       qsTr("View on etherscan"),
                                        icon,
                                        false,
                                        ephType,

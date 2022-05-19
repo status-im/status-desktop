@@ -7,6 +7,7 @@ import ../../../../app_service/service/node/service as node_service
 import ../../../../app_service/service/stickers/service as stickers_service
 import ../../../../app_service/service/token/service
 import ../../../../app_service/service/settings/service as settings_service
+import ../../../../app_service/service/network/service as network_service
 import ../../../../app_service/service/eth/utils as eth_utils
 import ../../../../app_service/service/wallet_account/service as wallet_account_service
 
@@ -17,6 +18,7 @@ type
     events: EventEmitter
     stickerService: stickers_service.Service
     settingsService: settings_service.Service
+    networkService: network_service.Service
     walletAccountService: wallet_account_service.Service
     disconnected: bool
 
@@ -29,13 +31,15 @@ proc newController*(
     events: EventEmitter,
     stickerService: stickers_service.Service,
     settingsService: settings_service.Service,
-    walletAccountService: wallet_account_service.Service
+    walletAccountService: wallet_account_service.Service,
+    networkService: network_service.Service,
     ): Controller =
   result = Controller()
   result.delegate = delegate
   result.events = events
   result.stickerService = stickerService
   result.settingsService = settingsService
+  result.networkService = networkService
   result.walletAccountService = walletAccountService
   result.disconnected = false
 
@@ -76,10 +80,6 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_ALL_STICKER_PACKS_LOADED) do(e: Args):
     self.delegate.allPacksLoaded()
 
-  self.events.on(SIGNAL_GAS_PRICE_FETCHED) do(e:Args):
-    let args = GasPriceArgs(e)
-    self.delegate.gasPriceFetched(args.gasPrice)
-
   self.events.on(SIGNAL_STICKER_GAS_ESTIMATED) do(e: Args):
     let args = StickerGasEstimatedArgs(e)
     self.delegate.gasEstimateReturned(args.estimate, args.uuid)
@@ -92,8 +92,8 @@ proc init*(self: Controller) =
     let args = StickerTransactionArgs(e)
     self.delegate.stickerTransactionReverted(args.transactionType, args.packID, args.transactionHash, args.revertReason)
 
-proc buy*(self: Controller, packId: string, address: string, gas: string, gasPrice: string, maxPriorityFeePerGas: string, maxFeePerGas: string, password: string): tuple[response: string, success: bool] =
-  self.stickerService.buy(packId, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password)
+proc buy*(self: Controller, packId: string, address: string, gas: string, gasPrice: string, maxPriorityFeePerGas: string, maxFeePerGas: string, password: string, eip1559Enabled: bool): tuple[response: string, success: bool] =
+  self.stickerService.buy(packId, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password, eip1559Enabled)
 
 proc estimate*(self: Controller, packId: string, address: string, price: string, uuid: string) =
   self.stickerService.estimate(packId, address, price, uuid)
@@ -148,6 +148,9 @@ proc getCurrentCurrency*(self: Controller): string =
 proc getPrice*(self: Controller, crypto: string, fiat: string): float64 =
   return self.walletAccountService.getPrice(crypto, fiat)
 
+proc getChainIdForStickers*(self: Controller): int =
+  return self.networkService.getNetworkForStickers().chainId
+
 proc getStatusToken*(self: Controller): string =
   let token = self.stickerService.getStatusToken()
 
@@ -157,6 +160,3 @@ proc getStatusToken*(self: Controller): string =
     "address": token.addressAsString()
   }
   return $jsonObj
-
-proc fetchGasPrice*(self: Controller) =
-  self.stickerService.fetchGasPrice()

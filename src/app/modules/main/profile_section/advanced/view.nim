@@ -44,6 +44,12 @@ QtObject:
     read = getCurrentNetworkId
     notify = currentNetworkChanged
 
+  proc getCurrentChainId*(self: View): int {.slot.} =
+    return self.delegate.getCurrentChainId()
+  QtProperty[int] currentChainId:
+    read = getCurrentChainId
+    notify = currentNetworkChanged
+
   proc fleetChanged*(self: View) {.signal.}
   proc getFleet*(self: View): string {.slot.} =
     return self.delegate.getFleet()

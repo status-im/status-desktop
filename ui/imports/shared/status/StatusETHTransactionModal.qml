@@ -20,6 +20,7 @@ ModalPopup {
     property var contactsStore
     property string ensUsername
 
+    property int chainId
     readonly property var asset: {"name": "Ethereum", "symbol": "ETH"}
 
     title: qsTr("Contract interaction")
@@ -35,10 +36,11 @@ ModalPopup {
             let responseStr = root.ensUsernamesStore.setPubKey(root.ensUsername,
                                                         selectFromAccount.selectedAccount.address,
                                                         gasSelector.selectedGasLimit,
-                                                        gasSelector.isEIP1559Enabled ? "" : gasSelector.selectedGasPrice,
+                                                        gasSelector.suggestedFees.eip1559Enabled ? "" : gasSelector.selectedGasPrice,
                                                         gasSelector.selectedTipLimit,
                                                         gasSelector.selectedOverallLimit,
-                                                        transactionSigner.enteredPassword)
+                                                        transactionSigner.enteredPassword,
+                                                        gasSelector.suggestedFees.eip1559Enabled)
             let response = JSON.parse(responseStr)
 
             if (!response.success) {
@@ -58,6 +60,11 @@ ModalPopup {
             sendingError.text = "Error sending the transaction: " + e.message;
             return sendingError.open()
         }
+    }
+
+    onOpened: {
+        gasSelector.suggestedFees = root.ensUsernamesStore.suggestedFees(root.chainId)
+        gasSelector.checkOptimal()
     }
 
     property MessageDialog sendingError: MessageDialog {
@@ -96,6 +103,7 @@ ModalPopup {
                 }
                 currency: root.ensUsernamesStore.getCurrentCurrency()
                 width: stack.width
+                chainId: root.chainId
                 //% "Choose account"
                 label: qsTrId("choose-account")
                 showBalanceForAssetSymbol: "ETH"
@@ -116,12 +124,9 @@ ModalPopup {
                 visible: true
                 anchors.top: selectFromAccount.bottom
                 anchors.topMargin: Style.current.padding
-                gasPrice: parseFloat(root.ensUsernamesStore.gasPrice)
                 getGasEthValue: root.ensUsernamesStore.getGasEthValue
                 getFiatValue: root.ensUsernamesStore.getFiatValue
                 defaultCurrency: root.ensUsernamesStore.getCurrentCurrency()
-                isEIP1559Enabled: root.ensUsernamesStore.isEIP1559Enabled()
-                suggestedFees: root.ensUsernamesStore.suggestedFees()
                 
                 property var estimateGas: Backpressure.debounce(gasSelector, 600, function() {
                     let estimatedGas = root.estimateGasFunction(selectFromAccount.selectedAccount);
@@ -217,7 +222,7 @@ ModalPopup {
                         return root.sendTransaction()
                     }
 
-                    if(gasSelector.isEIP1559Enabled && stack.currentGroup === group3 && gasSelector.advancedMode){
+                    if(gasSelector.suggestedFees.eip1559Enabled && stack.currentGroup === group3 && gasSelector.advancedMode){
                         if(gasSelector.showPriceLimitWarning || gasSelector.showTipLimitWarning){
                             Global.openPopup(transactionSettingsConfirmationPopupComponent, {
                                 currentBaseFee: gasSelector.suggestedFees.baseFee,

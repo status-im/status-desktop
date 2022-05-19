@@ -63,22 +63,20 @@ QtObject:
   proc init*(self: Service) =
     try:
       self.tokens = initTable[NetworkDto, seq[TokenDto]]()
-      let networks = self.networkService.getEnabledNetworks()
+      let networks = self.networkService.getNetworks()
       let chainIds = networks.map(n => n.chainId)
-      let visibleTokens = backend.getVisibleTokens(chainIds).result
       let responseCustomTokens = backend.getCustomTokens()
 
       for network in networks:
-        let activeTokenSymbols = visibleTokens[$network.chainId].getElems().map(n => n["symbol"].getStr)
         let responseTokens = backend.getTokens(network.chainId)
         let default_tokens = map(
           responseTokens.result.getElems(), 
-          proc(x: JsonNode): TokenDto = x.toTokenDto(activeTokenSymbols, hasIcon=true, isCustom=false)
+          proc(x: JsonNode): TokenDto = x.toTokenDto(network.enabled, hasIcon=true, isCustom=false)
         )
 
         self.tokens[network] = concat(
           default_tokens,
-          map(responseCustomTokens.result.getElems(), proc(x: JsonNode): TokenDto = x.toTokenDto(activeTokenSymbols))
+          map(responseCustomTokens.result.getElems(), proc(x: JsonNode): TokenDto = x.toTokenDto(network.enabled))
         ).filter(
           proc(x: TokenDto): bool = x.chainId == network.chainId
         )
@@ -106,15 +104,9 @@ QtObject:
       if token.address == address:
         return token
 
-  proc getVisibleTokens*(self: Service): seq[TokenDto] =
-    for tokens in self.getTokens().values:
-      for token in tokens:
-        if token.isVisible:
-          result.add(token)
-
   proc addCustomToken*(self: Service, chainId: int, address: string, name: string, symbol: string, decimals: int): string =
     # TODO(alaile): use chainId rather than first enabled network
-    let networkWIP = self.networkService.getEnabledNetworks()[0]
+    let networkWIP = self.networkService.getNetworks()[0]
     let foundToken = self.findTokenByAddress(networkWIP, parseAddress(address))
 
     if not foundToken.isNil:

@@ -305,7 +305,7 @@ QtObject:
 
   proc getTransactionDetails*(self: Service, message: MessageDto): (string, string) =
     # TODO(alaibe): handle multi network
-    let networkDto = self.networkService.getEnabledNetworks()[0]
+    let networkDto = self.networkService.getNetworks()[0]
     let ethereum = newTokenDto("Ethereum", networkDto.chainId, parseAddress(ZERO_ADDRESS), "ETH", 18, true)
     let tokenContract = if message.transactionParameters.contract == "" : ethereum else: self.tokenService.findTokenByAddress(networkDto, parseAddress(message.transactionParameters.contract))
     let tokenContractStr = if tokenContract == nil: "{}" else: $(Json.encode(tokenContract))

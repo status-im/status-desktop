@@ -14,7 +14,7 @@ Item {
     anchors.right: parent.right
 
     anchors.left: parent.left
-    visible: balance > 0
+    visible: networkVisible && enabledNetworkBalance > 0
     height: visible ? 40 + 2 * Style.current.padding : 0
 
 
@@ -52,7 +52,7 @@ Item {
     }
     StyledText {
         id: assetBalance
-        text: Utils.toLocaleString(balance, locale) + " " + symbol.toUpperCase()
+        text: Utils.toLocaleString(enabledNetworkBalance, locale) + " " + symbol.toUpperCase()
         anchors.top: assetInfoImage.top
         anchors.topMargin: 0
         anchors.right: parent.right
@@ -63,7 +63,7 @@ Item {
     StyledText {
         id: assetCurrencyBalance
         color: Style.current.secondaryText
-        text: Utils.toLocaleString(currencyBalance.toFixed(2), locale) + " " + assetDelegate.currency.toUpperCase()
+        text: Utils.toLocaleString(enabledNetworkCurrencyBalance.toFixed(2), locale) + " " + assetDelegate.currency.toUpperCase()
         anchors.right: parent.right
         anchors.rightMargin: 0
         anchors.top: assetBalance.bottom

@@ -132,8 +132,6 @@ QtObject {
 
     property string channelEmoji: chatCommunitySectionModule && chatCommunitySectionModule.emoji ? chatCommunitySectionModule.emoji : ""
 
-    property string gasPrice: profileSectionModule.ensUsernamesModule.gasPrice
-
     property ListModel addToGroupContacts: ListModel {}
 
     property var walletSectionTransactionsInst: walletSectionTransactions
@@ -513,18 +511,16 @@ QtObject {
         return profileSectionModule.ensUsernamesModule.getGasEthValue(gweiValue, gasLimit)
     }
 
-    function estimateGas(from_addr, to, assetAddress, value, data) {
-        return walletSectionTransactions.estimateGas(from_addr, to, assetAddress, value === "" ? "0.00" : value, data)
+    function estimateGas(from_addr, to, assetSymbol, value, chainId, data) {
+        return walletSectionTransactions.estimateGas(from_addr, to, assetSymbol, value === "" ? "0.00" : value, chainId, data)
     }
 
-    function transferEth(from, to, amount, gasLimit, gasPrice, tipLimit, overallLimit, password, uuid) {
-        return walletSectionTransactions.transferEth(from, to, amount, gasLimit, gasPrice, tipLimit,
-                                                     overallLimit, password, uuid);
-    }
-
-    function transferTokens(from, to, address, amount, gasLimit, gasPrice, tipLimit, overallLimit, password, uuid) {
-        return walletSectionTransactions.transferTokens(from, to, address, amount, gasLimit,
-                                                        gasPrice, tipLimit, overallLimit, password, uuid);
+    function transfer(from, to, address, tokenSymbol, amount, gasLimit, gasPrice, tipLimit, overallLimit, password, chainId, uuid, eip1559Enabled) {
+        return walletSectionTransactions.transfer(
+            from, to, address, tokenSymbol, amount, gasLimit,
+            gasPrice, tipLimit, overallLimit, password, chainId, uuid,
+            eip1559Enabled
+        );
     }
 
     function getAccountNameByAddress(address) {
@@ -540,15 +536,11 @@ QtObject {
         return walletSectionAccounts.getAccountAssetsByAddress()
     }
 
-    function fetchGasPrice() {
-        profileSectionModule.ensUsernamesModule.fetchGasPrice()
+    function suggestedFees(chainId) {
+        return JSON.parse(walletSectionTransactions.suggestedFees(chainId))
     }
 
-    function isEIP1559Enabled() {
-        return walletSection.isEIP1559Enabled()
-    }
-
-    function suggestedFees() {
-        return JSON.parse(walletSectionTransactions.suggestedFees())
+    function suggestedRoutes(account, amount, token) {
+        return JSON.parse(walletSectionTransactions.suggestedRoutes(account, amount, token)).networks
     }
 }
