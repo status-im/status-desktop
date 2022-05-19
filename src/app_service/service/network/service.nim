@@ -56,18 +56,6 @@ proc getNetworks*(self: Service): seq[NetworkDto] =
     if not testNetworksEnabled and not network.isTest:
       result.add(network)
 
-proc getEnabledNetworks*(self: Service): seq[NetworkDto] =
-  if not singletonInstance.localAccountSensitiveSettings.getIsMultiNetworkEnabled():
-    let currentNetworkType = self.settingsService.getCurrentNetwork().toNetworkType()
-    for network in self.fetchNetworks():
-      if currentNetworkType.toChainId() == network.chainId:
-        return @[network]
-
-  let networks = self.getNetworks()
-  for network in networks:
-    if network.enabled:
-      result.add(network)  
-
 proc upsertNetwork*(self: Service, network: NetworkDto) =
   discard backend.addEthereumChain(backend.Network(
     chainId: network.chainId,
@@ -107,13 +95,31 @@ proc toggleNetwork*(self: Service, chainId: int) =
   network.enabled = not network.enabled
   self.upsertNetwork(network)
 
-proc isEIP1559Enabled*(self: Service): bool =
-  # TODO: Assume multi network is not enabled
-  # TODO: add block number chain for other chains
-  let network = self.getEnabledNetworks()[0]
-  case network.chainId:
-    of 3: return true
-    of 4: return true
-    of 5: return true
-    of 1: return true
-    else: return false
+proc getNetworkForEns*(self: Service): NetworkDto =
+  if not singletonInstance.localAccountSensitiveSettings.getIsMultiNetworkEnabled():
+    let networkType = self.settingsService.getCurrentNetwork().toNetworkType()
+    return self.getNetwork(networkType)
+
+  if self.settingsService.areTestNetworksEnabled():
+    return self.getNetwork(Ropsten)
+
+  return self.getNetwork(Mainnet)
+
+proc getNetworkForStickers*(self: Service): NetworkDto =
+    return self.getNetworkForEns()
+
+proc getNetworkForBrowser*(self: Service): NetworkDto =
+    return self.getNetworkForEns()
+
+proc getNetworkForChat*(self: Service): NetworkDto =
+    return self.getNetworkForEns()
+
+proc getNetworkForCollectibles*(self: Service): NetworkDto =
+  if not singletonInstance.localAccountSensitiveSettings.getIsMultiNetworkEnabled():
+    let networkType = self.settingsService.getCurrentNetwork().toNetworkType()
+    return self.getNetwork(networkType)
+
+  if self.settingsService.areTestNetworksEnabled():
+    return self.getNetwork(Rinkeby)
+
+  return self.getNetwork(Mainnet)

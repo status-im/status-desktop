@@ -105,7 +105,7 @@ Item {
             contactsStore: root.contactsStore
             msgId: messageId
             isARequest: true
-            onOpened: root.store.fetchGasPrice()
+            chainId: root.store.getChainIdForChat()
             onClosed: destroy()
             onOpenGasEstimateErrorPopup: {
                 gasEstimateErrorPopup.confirmationText = message + qsTrId("--the-transaction-will-probably-fail-");

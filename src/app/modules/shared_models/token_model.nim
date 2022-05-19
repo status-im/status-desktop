@@ -6,9 +6,12 @@ type
   ModelRole {.pure.} = enum
     Name = UserRole + 1,
     Symbol
-    Balance
-    Address
-    CurrencyBalance
+    TotalBalance
+    TotalCurrencyBalance
+    EnabledNetworkCurrencyBalance
+    EnabledNetworkBalance
+    NetworkVisible
+    Balances
 
 QtObject:
   type
@@ -46,9 +49,12 @@ QtObject:
     {
       ModelRole.Name.int:"name",
       ModelRole.Symbol.int:"symbol",
-      ModelRole.Balance.int:"balance",
-      ModelRole.Address.int:"address",
-      ModelRole.CurrencyBalance.int:"currencyBalance",
+      ModelRole.TotalBalance.int:"totalBalance",
+      ModelRole.TotalCurrencyBalance.int:"totalCurrencyBalance",
+      ModelRole.EnabledNetworkCurrencyBalance.int:"enabledNetworkCurrencyBalance",
+      ModelRole.EnabledNetworkBalance.int:"enabledNetworkBalance",
+      ModelRole.NetworkVisible.int:"networkVisible",
+      ModelRole.Balances.int:"balances",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -66,12 +72,18 @@ QtObject:
       result = newQVariant(item.getName())
     of ModelRole.Symbol:
       result = newQVariant(item.getSymbol())
-    of ModelRole.Balance:
-      result = newQVariant(item.getBalance())
-    of ModelRole.Address:
-      result = newQVariant(item.getAddress())
-    of ModelRole.CurrencyBalance:
-      result = newQVariant(item.getCurrencyBalance())
+    of ModelRole.TotalBalance:
+      result = newQVariant(item.getTotalBalance())
+    of ModelRole.TotalCurrencyBalance:
+      result = newQVariant(item.getTotalCurrencyBalance())
+    of ModelRole.EnabledNetworkCurrencyBalance:
+      result = newQVariant(item.getEnabledNetworkCurrencyBalance())
+    of ModelRole.EnabledNetworkBalance:
+      result = newQVariant(item.getEnabledNetworkBalance())
+    of ModelRole.NetworkVisible:
+      result = newQVariant(item.getNetworkVisible())
+    of ModelRole.Balances:
+      result = newQVariant(item.getBalances())
 
   proc rowData(self: Model, index: int, column: string): string {.slot.} =
     if (index >= self.items.len):
@@ -80,12 +92,22 @@ QtObject:
     case column:
       of "name": result = $item.getName()
       of "symbol": result = $item.getSymbol()
-      of "balance": result = $item.getBalance()
-      of "address": result = $item.getAddress()
-      of "currencyBalance": result = $item.getCurrencyBalance()
+      of "totalBalance": result = $item.getTotalBalance()
+      of "totalCurrencyBalance": result = $item.getTotalCurrencyBalance()
+      of "enabledNetworkCurrencyBalance": result = $item.getEnabledNetworkCurrencyBalance()
+      of "enabledNetworkBalance": result = $item.getEnabledNetworkBalance()
+      of "networkVisible": result = $item.getNetworkVisible()
 
   proc setItems*(self: Model, items: seq[Item]) =
     self.beginResetModel()
     self.items = items
     self.endResetModel()
     self.countChanged()
+
+  proc hasChain*(self: Model, index: int, chainId: int): bool {.slot.} =
+    let item = self.items[index]
+    for balance in item.getBalances().items:
+      if (balance.chainId == chainId):
+        return true
+
+    return false

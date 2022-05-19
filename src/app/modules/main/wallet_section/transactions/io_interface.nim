@@ -40,24 +40,28 @@ method setHistoryFetchState*(self: AccessInterface, addresses: seq[string], isFe
 method setIsNonArchivalNode*(self: AccessInterface, isNonArchivalNode: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method estimateGas*(self: AccessInterface, from_addr: string, to: string, assetAddress: string, value: string, data: string): string {.base.} =
+method estimateGas*(self: AccessInterface, from_addr: string, to: string, assetSymbol: string, value: string, data: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method transferEth*(self: AccessInterface, from_addr: string, to_addr: string, value: string,
-    gas: string, gasPrice: string, maxPriorityFeePerGas: string, maxFeePerGas: string,
-    password: string, uuid: string): bool {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method transferTokens*(self: AccessInterface, from_addr: string, to_addr: string,
-    contractAddress: string, value: string, gas: string, gasPrice: string,
+method transfer*(self: AccessInterface, from_addr: string, to_addr: string,
+    tokenSymbol: string, value: string, gas: string, gasPrice: string,
     maxPriorityFeePerGas: string, maxFeePerGas: string, password: string,
-    uuid: string): bool {.base.} =
+    chainId: string, uuid: string, eip1559Enabled: bool): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method transactionWasSent*(self: AccessInterface, result: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method suggestedFees*(self: AccessInterface): string {.base.} = 
+method suggestedFees*(self: AccessInterface, chainId: int): string {.base.} = 
+  raise newException(ValueError, "No implementation available")
+
+method suggestedRoutes*(self: AccessInterface, account: string, amount: float64, token: string): string {.base.} = 
+  raise newException(ValueError, "No implementation available")
+
+method getChainIdForChat*(self: AccessInterface): int =
+  raise newException(ValueError, "No implementation available")
+
+method getChainIdForBrowser*(self: AccessInterface): int =
   raise newException(ValueError, "No implementation available")
 
 # View Delegate Interface

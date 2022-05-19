@@ -51,12 +51,13 @@ Item {
             stickersStore: root.stickersStore
             asyncGasEstimateTarget: root.stickersStore.stickersModule
             assetPrice: "10"
+            chainId: root.ensUsernamesStore.getChainIdForEns()
             contractAddress: root.ensUsernamesStore.getEnsRegisteredAddress()
             estimateGasFunction: function(selectedAccount, uuid) {
                 if (username === "" || !selectedAccount) return 380000;
                 return root.ensUsernamesStore.registerEnsGasEstimate(username, selectedAccount.address)
             }
-            onSendTransaction: function(selectedAddress, gasLimit, gasPrice, tipLimit, overallLimit, password) {
+            onSendTransaction: function(selectedAddress, gasLimit, gasPrice, tipLimit, overallLimit, password, eip1559Enabled) {
                 return root.ensUsernamesStore.registerEns(
                     username,
                     selectedAddress,
@@ -64,7 +65,8 @@ Item {
                     gasPrice,
                     tipLimit,
                     overallLimit,
-                    password
+                    password, 
+                    eip1559Enabled,
                 )
             }
             onSuccess: function(){

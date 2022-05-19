@@ -75,6 +75,3 @@ QtObject:
     self.signingPhrase = signingPhrase
     self.isMnemonicBackedUp = mnemonicBackedUp
     self.currentCurrencyChanged()
-
-  proc isEIP1559Enabled*(self: View): QVariant {.slot.} =
-    return newQVariant(self.delegate.isEIP1559Enabled())

@@ -387,17 +387,17 @@ QtObject {
         return qsTrId("-1d").arg(diffDay)
     }
 
-    function findAssetBySymbol(assets, symbolToFind) {
+    function findAssetByChainAndSymbol(chainIdToFind, assets, symbolToFind) {
         for(var i=0; i<assets.rowCount(); i++) {
             const symbol = assets.rowData(i, "symbol")
-            if (symbol.toLowerCase() === symbolToFind.toLowerCase()) {
+            if (symbol.toLowerCase() === symbolToFind.toLowerCase() && assets.hasChain(i, parseInt(chainIdToFind))) {
                 return {
                     name: assets.rowData(i, "name"),
                     symbol,
-                    value: assets.rowData(i, "balance"),
-                    fiatBalanceDisplay: assets.rowData(i, "currencyBalance"),
-                    address: assets.rowData(i, "address"),
-                    fiatBalance: assets.rowData(i, "currencyBalance")
+                    totalBalance: assets.rowData(i, "totalBalance"),
+                    totalCurrencyBalance: assets.rowData(i, "totalCurrencyBalance"),
+                    fiatBalance: assets.rowData(i, "totalCurrencyBalance"),
+                    chainId: chainIdToFind,
                 }
             }
         }

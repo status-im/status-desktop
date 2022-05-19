@@ -13,7 +13,6 @@ QtObject {
     property string preferredUsername: userProfile.preferredName
 
     property string username: userProfile.username
-    property string gasPrice: root.ensUsernamesModule ? ensUsernamesModule.gasPrice : "0"
 
     property var walletAccounts: walletSectionAccounts.model
 
@@ -41,22 +40,16 @@ QtObject {
         ensUsernamesModule.fetchDetailsForEnsUsername(ensUsername)
     }
 
-    function fetchGasPrice() {
-        if(!root.ensUsernamesModule)
-            return "0"
-        ensUsernamesModule.fetchGasPrice()
-    }
-
     function setPubKeyGasEstimate(ensUsername, address) {
         if(!root.ensUsernamesModule)
             return 0
         return ensUsernamesModule.setPubKeyGasEstimate(ensUsername, address)
     }
 
-    function setPubKey(ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password) {
+    function setPubKey(ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password, eip1559Enabled) {
         if(!root.ensUsernamesModule)
             return ""
-        return ensUsernamesModule.setPubKey(ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password)
+        return ensUsernamesModule.setPubKey(ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password, eip1559Enabled)
     }
 
     function getEtherscanLink() {
@@ -105,10 +98,10 @@ QtObject {
         return ensUsernamesModule.registerEnsGasEstimate(ensUsername, address)
     }
 
-    function registerEns(ensUsername, address, gasLimit, gasPrice, tipLimit, overallLimit, password) {
+    function registerEns(ensUsername, address, gasLimit, gasPrice, tipLimit, overallLimit, password, eip1559Enabled) {
         if(!root.ensUsernamesModule)
             return ""
-        return ensUsernamesModule.registerEns(ensUsername, address, gasLimit, gasPrice, tipLimit, overallLimit, password)
+        return ensUsernamesModule.registerEns(ensUsername, address, gasLimit, gasPrice, tipLimit, overallLimit, password, eip1559Enabled)
     }
 
     function getEnsRegistry() {
@@ -153,12 +146,18 @@ QtObject {
         return ensUsernamesModule.getStatusToken()
     }
 
-    function isEIP1559Enabled() {
-        return walletSection.isEIP1559Enabled()
+    function suggestedFees(chainId) {
+        return JSON.parse(walletSectionTransactions.suggestedFees(chainId))
     }
 
-    function suggestedFees() {
-        return JSON.parse(walletSectionTransactions.suggestedFees())
+    function getChainIdForEns() {
+        if(!root.ensUsernamesModule)
+            return ""
+        return ensUsernamesModule.getChainIdForEns()
+    }
+
+    function suggestedRoutes(account, amount, token) {
+        return JSON.parse(walletSectionTransactions.suggestedRoutes(account, amount, token)).networks
     }
 }
 

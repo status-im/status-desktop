@@ -1,4 +1,4 @@
-import NimQml, Tables
+import NimQml, Tables, sequtils
 
 import ../../../../global/global_singleton
 import ../../../../core/eventemitter
@@ -72,9 +72,18 @@ proc setAssetsAndBalance(self: Module, tokens: seq[WalletTokenDto]) =
   var totalCurrencyBalanceForAllAssets = 0.0
   var items: seq[Item]
   for t in tokens:
-    let item = token_item.initItem(t.name, t.symbol, t.totalBalance.balance, t.address, t.totalBalance.currencyBalance)
+    let item = token_item.initItem(
+      t.name,
+      t.symbol,
+      t.totalBalance.balance,
+      t.totalBalance.currencyBalance,
+      t.enabledNetworkBalance.balance,
+      t.enabledNetworkBalance.currencybalance,
+      t.visible,
+      toSeq(t.balancesPerChain.values),
+    )
     items.add(item)
-    totalCurrencyBalanceForAllAssets += t.totalBalance.currencyBalance
+    totalCurrencyBalanceForAllAssets += t.enabledNetworkBalance.currencybalance
     
   self.view.getAssetsModel().setItems(items)
   self.view.setCurrencyBalance(totalCurrencyBalanceForAllAssets)

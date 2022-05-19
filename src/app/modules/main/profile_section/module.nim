@@ -16,6 +16,7 @@ import ../../../../app_service/service/mailservers/service as mailservers_servic
 import ../../../../app_service/service/chat/service as chat_service
 import ../../../../app_service/service/stickers/service as stickersService
 import ../../../../app_service/service/ens/service as ens_service
+import ../../../../app_service/service/network/service as network_service
 import ../../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../../app_service/service/general/service as general_service
 import ../../../../app_service/service/community/service as community_service
@@ -72,7 +73,8 @@ proc newModule*(delegate: delegate_interface.AccessInterface,
   ensService: ens_service.Service,
   walletAccountService: wallet_account_service.Service,
   generalService: general_service.Service,
-  communityService: community_service.Service
+  communityService: community_service.Service,
+  networkService: network_service.Service,
 ): Module =
   result = Module()
   result.delegate = delegate
@@ -91,7 +93,7 @@ proc newModule*(delegate: delegate_interface.AccessInterface,
   result.syncModule = sync_module.newModule(result, events, settingsService, mailserversService)
   result.notificationsModule = notifications_module.newModule(result, events, settingsService, chatService, contactsService)
   result.ensUsernamesModule = ens_usernames_module.newModule(
-    result, events, settingsService, ensService, walletAccountService
+    result, events, settingsService, ensService, walletAccountService, networkService
   )
   result.communitiesModule = communities_module.newModule(result, communityService)
 

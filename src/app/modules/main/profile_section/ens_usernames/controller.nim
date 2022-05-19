@@ -5,6 +5,7 @@ import ../../../../global/global_singleton
 import ../../../../core/eventemitter
 import ../../../../../app_service/service/settings/service as settings_service
 import ../../../../../app_service/service/ens/service as ens_service
+import ../../../../../app_service/service/network/service as network_service
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../../../app_service/service/token/dto
 
@@ -17,17 +18,21 @@ type
     events: EventEmitter
     settingsService: settings_service.Service
     ensService: ens_service.Service
+    networkService: network_service.Service
     walletAccountService: wallet_account_service.Service
 
-proc newController*(delegate: io_interface.AccessInterface, events: EventEmitter,
+proc newController*(
+  delegate: io_interface.AccessInterface, events: EventEmitter,
   settingsService: settings_service.Service, ensService: ens_service.Service,
-  walletAccountService: wallet_account_service.Service): Controller =
+  walletAccountService: wallet_account_service.Service, networkService: network_service.Service,
+): Controller =
   result = Controller()
   result.delegate = delegate
   result.events = events
   result.settingsService = settingsService
   result.ensService = ensService
   result.walletAccountService = walletAccountService
+  result.networkService = networkService
 
 proc delete*(self: Controller) =
   discard
@@ -40,10 +45,6 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_ENS_USERNAME_DETAILS_FETCHED) do(e:Args):
     let args = EnsUsernameDetailsArgs(e)
     self.delegate.onDetailsForEnsUsername(args.ensUsername, args.address, args.pubkey, args.isStatus, args.expirationTime)
-
-  self.events.on(SIGNAL_GAS_PRICE_FETCHED) do(e:Args):
-    let args = GasPriceArgs(e)
-    self.delegate.gasPriceFetched(args.gasPrice)
 
   self.events.on(SIGNAL_ENS_TRANSACTION_CONFIRMED) do(e:Args):
     let args = EnsTransactionArgs(e)
@@ -65,15 +66,12 @@ proc getAllMyEnsUsernames*(self: Controller, includePendingEnsUsernames: bool): 
 proc fetchDetailsForEnsUsername*(self: Controller, ensUsername: string) =
   self.ensService.fetchDetailsForEnsUsername(ensUsername)
 
-proc fetchGasPrice*(self: Controller) =
-  self.ensService.fetchGasPrice()
-
 proc setPubKeyGasEstimate*(self: Controller, ensUsername: string, address: string): int =
   return self.ensService.setPubKeyGasEstimate(ensUsername, address)
 
 proc setPubKey*(self: Controller, ensUsername: string, address: string, gas: string, gasPrice: string,
-  maxPriorityFeePerGas: string, maxFeePerGas: string, password: string): string =
-  return self.ensService.setPubKey(ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password)
+  maxPriorityFeePerGas: string, maxFeePerGas: string, password: string, eip1559Enabled: bool): string =
+  return self.ensService.setPubKey(ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password, eip1559Enabled)
 
 proc getCurrentNetworkDetails*(self: Controller): Network =
   return self.settingsService.getCurrentNetworkDetails()
@@ -107,8 +105,8 @@ proc registerEnsGasEstimate*(self: Controller, ensUsername: string, address: str
   return self.ensService.registerEnsGasEstimate(ensUsername, address)
 
 proc registerEns*(self: Controller, ensUsername: string, address: string, gas: string, gasPrice: string,
-  maxPriorityFeePerGas: string, maxFeePerGas: string, password: string): string =
-  return self.ensService.registerEns(ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password)
+  maxPriorityFeePerGas: string, maxFeePerGas: string, password: string, eip1559Enabled: bool): string =
+  return self.ensService.registerEns(ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password, eip1559Enabled)
 
 proc getSNTBalance*(self: Controller): string =
   return self.ensService.getSNTBalance()
@@ -131,3 +129,6 @@ proc getStatusToken*(self: Controller): string =
     "address": token.addressAsString()
   }
   return $jsonObj
+
+proc getChainIdForEns*(self: Controller): int =
+  return self.networkService.getNetworkForEns().chainId

@@ -27,9 +27,13 @@ Rectangle {
     property var estimateGas: function() {}
     property bool isReady: amountToSendInput.valid && !amountToSendInput.pending && recipientSelector.isValid && !recipientSelector.isPending
 
+    signal assetChanged()
+    signal selectedAccountChanged()
+    signal amountToSendChanged()
+
     QtObject {
         id: _internal
-        property string maxFiatBalance: Utils.stripTrailingZeros(parseFloat(assetSelector.selectedAsset.balance).toFixed(4))
+        property string maxFiatBalance: Utils.stripTrailingZeros(parseFloat(assetSelector.selectedAsset.totalBalance).toFixed(4))
         //% "Please enter a valid amount"
         property string sendAmountInputErrorMessage: qsTr("Please enter a valid amount")
         //% "Max:"
@@ -86,6 +90,7 @@ Rectangle {
                     }
                 })
                 if (isValid) { estimateGas() }
+                header.selectedAccountChanged()
             }
             showAccountDetails: false
             selectField.select.height: 32
@@ -103,7 +108,7 @@ Rectangle {
                 }
                 StatusListItemTag {
                     //% "No balances active"
-                    title: assetSelector.selectedAsset.balance > 0 ? _internal.maxString + (assetSelector.selectedAsset ? _internal.maxFiatBalance : "0.00") : qsTr("No balances active")
+                    title: assetSelector.selectedAsset.totalBalance > 0 ? _internal.maxString + (assetSelector.selectedAsset ? _internal.maxFiatBalance : "0.00") : qsTr("No balances active")
                     closeButtonVisible: false
                     titleText.font.pixelSize: 12
                     height: 22
@@ -139,6 +144,7 @@ Rectangle {
                             txtFiatBalance.text = header.store.getFiatValue(amount, assetSelector.selectedAsset.symbol, header.store.currentCurrency)
                         }
                         estimateGas()
+                        header.amountToSendChanged()
                     }
                 }
                 StatusAssetSelector {
@@ -161,6 +167,7 @@ Rectangle {
                         }
                         txtFiatBalance.text = header.store.getFiatValue(amountToSendInput.text, assetSelector.selectedAsset.symbol, header.store.currentCurrency)
                         estimateGas()
+                        header.assetChanged()
                     }
                 }
             }

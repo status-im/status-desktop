@@ -59,6 +59,7 @@ Rectangle {
             anchors.centerIn: parent
             store: browserWindow.globalStore
             contactsStore: browserWindow.globalStore.profileSectionStore.contactsStore
+            chainId: browserWindow.globalStore.getChainIdForBrowser()
         }
 
         property Component signMessageModalComponent: SignMessageModal {}
@@ -196,7 +197,7 @@ Rectangle {
             // TODO: WIP under PR https://github.com/status-im/status-desktop/pull/4274
             let url = `${WalletStore.getEtherscanLink()}/${result}`;
             Global.displayToastMessage(qsTr("Transaction pending..."),
-                                       "",
+                                       qsTr("View on etherscan"),
                                        "",
                                        true,
                                        Constants.ephemeralNotificationType.normal,

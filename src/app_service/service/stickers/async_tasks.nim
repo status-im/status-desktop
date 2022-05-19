@@ -50,15 +50,3 @@ const obtainMarketStickerPacksTask: Task = proc(argEncoded: string) {.gcsafe, ni
   for packId, stickerPack in marketStickerPacks.pairs:
     packs.add(stickerPack)
   arg.finish(%*(packs))
-
-#################################################
-# Async fetch gas price
-#################################################
-
-const fetchGasPriceTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
-  let arg = decode[QObjectTaskArg](argEncoded)
-  let response = status_eth.getGasPrice()
-  let responseJson = %* {
-    "gasPrice": response.result.getStr
-  }
-  arg.finish(responseJson)

@@ -1,6 +1,7 @@
 import NimQml, json, json_serialization, stint, tables, sugar, sequtils
 import io_interface
 import ../../../../../app_service/service/transaction/service as transaction_service
+import ../../../../../app_service/service/network/service as network_service
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 
 import ../../../../core/[main]
@@ -11,6 +12,7 @@ type
     delegate: io_interface.AccessInterface
     events: EventEmitter
     transactionService: transaction_service.Service
+    networkService: network_service.Service
     walletAccountService: wallet_account_service.Service
 
 # Forward declaration
@@ -21,13 +23,15 @@ proc newController*(
   delegate: io_interface.AccessInterface,
   events: EventEmitter,
   transactionService: transaction_service.Service,
-  walletAccountService: wallet_account_service.Service
+  walletAccountService: wallet_account_service.Service,
+  networkService: network_service.Service,
 ): Controller =
   result = Controller()
   result.events = events
   result.delegate = delegate
   result.transactionService = transactionService
   result.walletAccountService = walletAccountService
+  result.networkService = networkService
 
 proc delete*(self: Controller) =
   discard
@@ -79,22 +83,26 @@ proc getAccountByAddress*(self: Controller, address: string): WalletAccountDto =
 proc loadTransactions*(self: Controller, address: string, toBlock: Uint256, limit: int = 20, loadMore: bool = false) =
   self.transactionService.loadTransactions(address, toBlock, limit, loadMore)
 
-proc estimateGas*(self: Controller, from_addr: string, to: string, assetAddress: string, value: string, data: string): string =
-  result = self.transactionService.estimateGas(from_addr, to, assetAddress, value, data)
+proc estimateGas*(self: Controller, from_addr: string, to: string, assetSymbol: string, value: string, data: string): string =
+  result = self.transactionService.estimateGas(from_addr, to, assetSymbol, value, data)
 
-proc transferEth*(self: Controller, from_addr: string, to_addr: string, value: string,
-  gas: string, gasPrice: string, maxPriorityFeePerGas: string, maxFeePerGas: string,
-  password: string, uuid: string): bool =
-  result = self.transactionService.transferEth(from_addr, to_addr, value, gas, gasPrice,
-    maxPriorityFeePerGas, maxFeePerGas, password, uuid)
-
-proc transferTokens*(self: Controller, from_addr: string, to_addr: string, contractAddress: string,
+proc transfer*(self: Controller, from_addr: string, to_addr: string, tokenSymbol: string,
     value: string, gas: string, gasPrice: string, maxPriorityFeePerGas: string,maxFeePerGas: string,
-    password: string, uuid: string
+    password: string, chainId: string, uuid: string, eip1559Enabled: bool,
 ): bool =
-  result = self.transactionService.transferTokens(from_addr, to_addr, contractAddress, value, gas,
-    gasPrice, maxPriorityFeePerGas, maxFeePerGas, password, uuid)
+  result = self.transactionService.transfer(from_addr, to_addr, tokenSymbol, value, gas,
+    gasPrice, maxPriorityFeePerGas, maxFeePerGas, password, chainId, uuid, eip1559Enabled)
 
-proc suggestedFees*(self: Controller): string = 
-  let suggestedFees = self.transactionService.suggestedFees()
+proc suggestedFees*(self: Controller, chainId: int): string = 
+  let suggestedFees = self.transactionService.suggestedFees(chainId)
   return suggestedFees.toJson()
+
+proc suggestedRoutes*(self: Controller, account: string, amount: float64, token: string): string = 
+  let suggestedRoutes = self.transactionService.suggestedRoutes(account, amount, token)
+  return suggestedRoutes.toJson()
+
+proc getChainIdForChat*(self: Controller): int =
+  return self.networkService.getNetworkForChat().chainId
+
+proc getChainIdForBrowser*(self: Controller): int =
+  return self.networkService.getNetworkForBrowser().chainId

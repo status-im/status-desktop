@@ -1,7 +1,7 @@
 import chronicles, sequtils, json
 
 import dto
-import ../settings/service as settings_service
+import ../network/service as network_service
 
 import ../../../backend/backend
 
@@ -14,22 +14,22 @@ const limit = 200
 
 type
   Service* = ref object of RootObj
-    settingsService: settings_service.Service
+    networkService: network_service.Service
 
 proc delete*(self: Service) =
   discard
 
-proc newService*(settingsService: settings_service.Service): Service =
+proc newService*(networkService: network_service.Service): Service =
   result = Service()
-  result.settingsService = settingsService
+  result.networkService = networkService
 
 proc init*(self: Service) =
   discard
 
 proc getCollections*(self: Service, address: string): seq[CollectionDto] =
   try:
-    let networkId = self.settingsService.getCurrentNetworkId()
-    let response = backend.getOpenseaCollectionsByOwner(networkId, address)
+    let chainId = self.networkService.getNetworkForCollectibles().chainId
+    let response = backend.getOpenseaCollectionsByOwner(chainId, address)
     return map(response.result.getElems(), proc(x: JsonNode): CollectionDto = x.toCollectionDto())
   except Exception as e:
     let errDesription = e.msg
@@ -38,8 +38,8 @@ proc getCollections*(self: Service, address: string): seq[CollectionDto] =
 
 proc getCollectibles*(self: Service, address: string, collectionSlug: string): seq[CollectibleDto] =
   try:
-    let networkId = self.settingsService.getCurrentNetworkId()
-    let response = backend.getOpenseaAssetsByOwnerAndCollection(networkId, address, collectionSlug, limit)
+    let chainId = self.networkService.getNetworkForCollectibles().chainId
+    let response = backend.getOpenseaAssetsByOwnerAndCollection(chainId, address, collectionSlug, limit)
     return map(response.result.getElems(), proc(x: JsonNode): CollectibleDto = x.toCollectibleDto())
   except Exception as e:
     let errDesription = e.msg

@@ -1,4 +1,4 @@
-import NimQml, sequtils, sugar
+import tables, NimQml, sequtils, sugar
 
 import ./io_interface, ./view, ./item, ./controller
 import ../io_interface as delegate_interface
@@ -47,8 +47,11 @@ method refreshWalletAccounts*(self: Module) =
           t.name,
           t.symbol,
           t.totalBalance.balance,
-          t.address,
           t.totalBalance.currencyBalance,
+          t.enabledNetworkBalance.balance,
+          t.enabledNetworkBalance.currencyBalance,
+          t.visible,
+          toSeq(t.balancesPerChain.values),
         ))
     )
 

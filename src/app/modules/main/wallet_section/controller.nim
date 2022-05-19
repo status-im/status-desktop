@@ -43,8 +43,5 @@ proc getCurrencyBalance*(self: Controller): float64 =
 proc updateCurrency*(self: Controller, currency: string) =
   self.walletAccountService.updateCurrency(currency)
 
-proc isEIP1559Enabled*(self: Controller): bool =
-  return self.networkService.isEIP1559Enabled()
-
 proc getIndex*(self: Controller, address: string): int =
   return self.walletAccountService.getIndex(address)

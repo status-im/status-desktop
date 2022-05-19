@@ -44,9 +44,3 @@ proc toChainId*(self: NetworkType): int =
     of NetworkType.XDai: result = XDai
     of NetworkType.Poa: result = 99
     of NetworkType.Other: result = -1
-
-proc sntSymbol*(networkType: NetworkType): string =
-  if networkType == NetworkType.Mainnet:
-    return "SNT"
-  else:
-    return "STT"

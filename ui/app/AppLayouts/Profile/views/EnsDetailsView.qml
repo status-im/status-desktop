@@ -106,9 +106,7 @@ Item {
             ensUsernamesStore: root.ensUsernamesStore
             contactsStore: root.contactsStore
             ensUsername: root.username
-            onOpened: {
-                root.ensUsernamesStore.fetchGasPrice()
-            }
+            chainId: root.ensUsernamesStore.getChainIdForEns()
             title: qsTr("Connect username with your pubkey")
             onClosed: {
                 destroy()

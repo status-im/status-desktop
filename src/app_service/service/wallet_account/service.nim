@@ -394,7 +394,7 @@ QtObject:
       slot: "onAllTokensBuilt",
       walletAddresses: walletAddresses,
       currency: self.settingsService.getCurrency(),
-      networks: self.networkService.getEnabledNetworks()
+      networks: self.networkService.getNetworks()
     )
     self.threadpool.start(arg)
 

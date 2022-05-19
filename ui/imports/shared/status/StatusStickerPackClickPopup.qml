@@ -68,18 +68,20 @@ ModalPopup {
                 contactsStore: stickerPackDetailsPopup.store.contactsStore
                 contractAddress: root.store.stickersStore.getStickersMarketAddress()
                 assetPrice: price
+                chainId: root.store.stickersStore.getChainIdForStickers()
                 estimateGasFunction: function(selectedAccount, uuid) {
                     if (packId < 0  || !selectedAccount || !price) return 325000
                         return stickerPackDetailsPopup.store.stickersStore.estimate(packId, selectedAccount.address, price, uuid)
                 }
-                onSendTransaction: function(selectedAddress, gasLimit, gasPrice, tipLimit, overallLimit, password) {
+                onSendTransaction: function(selectedAddress, gasLimit, gasPrice, tipLimit, overallLimit, password, eip1559Enabled) {
                     return root.store.stickersStore.buy(packId,
                                                        selectedAddress,
                                                        gasLimit,
                                                        gasPrice,
                                                        tipLimit,
                                                        overallLimit,
-                                                       password)
+                                                       password, 
+                                                       eip1559Enabled)
                 }
                 onClosed: {
                     destroy()

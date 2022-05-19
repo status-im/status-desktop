@@ -60,11 +60,11 @@ proc signMessage*(rpcParams: string): string =
 proc signTypedData*(data: string, address: string, password: string): string =
   return $status_go.signTypedData(data, address, password)
 
-proc sendTransaction*(inputJSON: string, password: string): RpcResponse[JsonNode]
+proc sendTransaction*(chainId: int, inputJSON: string, password: string): RpcResponse[JsonNode]
   {.raises: [RpcException, ValueError, Defect, SerializationError].} =
   try:
     var hashed_password = "0x" & $keccak_256.digest(password)
-    let rpcResponseRaw = status_go.sendTransaction(inputJSON, hashed_password)
+    let rpcResponseRaw = status_go.sendTransactionWithChainId(chainId, inputJSON, hashed_password)
     result = Json.decode(rpcResponseRaw, RpcResponse[JsonNode])
   except RpcException as e:
     error "error sending tx", inputJSON, exception=e.msg

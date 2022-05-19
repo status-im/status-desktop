@@ -48,8 +48,5 @@ method transactionsModuleDidLoad*(self: AccessInterface) {.base.} =
 method savedAddressesModuleDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method isEIP1559Enabled*(self: AccessInterface): bool {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method buySellCryptoModuleDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")

@@ -9,6 +9,7 @@ QtObject {
     // Advanced Module Properties
     property string currentNetworkName: advancedModule? advancedModule.currentNetworkName : ""
     property string currentNetworkId: advancedModule? advancedModule.currentNetworkId : ""
+    property string currentChainId: advancedModule? advancedModule.currentChainId : 0
     property string fleet: advancedModule? advancedModule.fleet : ""
     property string bloomLevel: advancedModule? advancedModule.bloomLevel : ""
     property bool wakuV2LightClientEnabled: advancedModule? advancedModule.wakuV2LightClientEnabled : false
@@ -40,10 +41,13 @@ QtObject {
 
     function setGlobalNetworkId() {
         Global.currentNetworkId = currentNetworkId
+        Global.currentChainId = currentChainId
     }
+
     Component.onCompleted: {
         setGlobalNetworkId()
     }
+    
     onCurrentNetworkIdChanged: {
         setGlobalNetworkId()
     }

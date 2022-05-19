@@ -852,10 +852,6 @@ Item {
                 anchors.centerIn: parent
                 store: appMain.rootStore
                 contactsStore: appMain.rootStore.profileSectionStore.contactsStore
-                onOpened: {
-                    // Not Refactored Yet
-//                    walletModel.gasView.getGasPrice()
-                }
                 onClosed: {
                     sendModal.closed()
                 }

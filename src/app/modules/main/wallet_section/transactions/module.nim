@@ -6,6 +6,7 @@ import ../../../../global/global_singleton
 import ../../../../core/eventemitter
 import ../../../../../app_service/service/transaction/service as transaction_service
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
+import ../../../../../app_service/service/network/service as network_service
 
 export io_interface
 
@@ -25,12 +26,13 @@ proc newModule*(
   delegate: delegate_interface.AccessInterface,
   events: EventEmitter,
   transactionService: transaction_service.Service,
-  walletAccountService: wallet_account_service.Service
+  walletAccountService: wallet_account_service.Service,
+  networkService: network_service.Service,
 ): Module =
   result = Module()
   result.delegate = delegate
   result.view = newView(result)
-  result.controller = controller.newController(result, events, transactionService, walletAccountService)
+  result.controller = controller.newController(result, events, transactionService, walletAccountService, networkService)
   result.moduleLoaded = false
 
 method delete*(self: Module) =
@@ -82,26 +84,29 @@ method setTrxHistoryResult*(self: Module, transactions: seq[TransactionDto], add
 method setHistoryFetchState*(self: Module, addresses: seq[string], isFetching: bool) =
   self.view.setHistoryFetchStateForAccounts(addresses, isFetching)
 
-method estimateGas*(self: Module, from_addr: string, to: string, assetAddress: string, value: string, data: string): string =
-  result = self.controller.estimateGas(from_addr, to, assetAddress, value, data)
+method estimateGas*(self: Module, from_addr: string, to: string, assetSymbol: string, value: string, data: string): string =
+  result = self.controller.estimateGas(from_addr, to, assetSymbol, value, data)
 
 method setIsNonArchivalNode*(self: Module, isNonArchivalNode: bool) =
   self.view.setIsNonArchivalNode(isNonArchivalNode)
 
-method transferEth*(self: Module, from_addr: string, to_addr: string, value: string, gas: string,
-    gasPrice: string, maxPriorityFeePerGas: string, maxFeePerGas: string, password: string,
-    uuid: string): bool =
-  result = self.controller.transferEth(from_addr, to_addr, value, gas, gasPrice,
-    maxPriorityFeePerGas, maxFeePerGas, password, uuid)
-
-method transferTokens*(self: Module, from_addr: string, to_addr: string, contractAddress: string,
+method transfer*(self: Module, from_addr: string, to_addr: string, tokenSymbol: string,
     value: string, gas: string, gasPrice: string, maxPriorityFeePerGas: string,
-    maxFeePerGas: string, password: string, uuid: string): bool =
-  result = self.controller.transferTokens(from_addr, to_addr, contractAddress, value, gas, gasPrice,
-    maxPriorityFeePerGas, maxFeePerGas, password, uuid)
+    maxFeePerGas: string, password: string, chainId: string, uuid: string, eip1559Enabled: bool): bool =
+  result = self.controller.transfer(from_addr, to_addr, tokenSymbol, value, gas, gasPrice,
+    maxPriorityFeePerGas, maxFeePerGas, password, chainId, uuid, eip1559Enabled)
 
 method transactionWasSent*(self: Module, result: string) =
   self.view.transactionWasSent(result)
 
-method suggestedFees*(self: Module): string = 
-  return self.controller.suggestedFees()
+method suggestedFees*(self: Module, chainId: int): string = 
+  return self.controller.suggestedFees(chainId)
+
+method suggestedRoutes*(self: Module, account: string, amount: float64, token: string): string =
+  return self.controller.suggestedRoutes(account, amount, token)
+
+method getChainIdForChat*(self: Module): int =
+  return self.controller.getChainIdForChat()
+
+method getChainIdForBrowser*(self: Module): int =
+  return self.controller.getChainIdForBrowser()

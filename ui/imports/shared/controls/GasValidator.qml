@@ -19,12 +19,14 @@ Column {
     property double selectedAmount
     property var selectedAsset
     property double selectedGasEthValue
+    property var selectedNetwork
     property bool isValid: false
 
     onSelectedAccountChanged: validate()
     onSelectedAmountChanged: validate()
     onSelectedAssetChanged: validate()
     onSelectedGasEthValueChanged: validate()
+    onSelectedNetworkChanged: validate()
 
     function validate() {
         let isValid = true
@@ -36,8 +38,10 @@ Column {
         if (selectedAsset && selectedAsset.symbol && selectedAsset.symbol.toUpperCase() === "ETH") {
             gasTotal += selectedAmount
         }
-        const currAcctGasAsset = Utils.findAssetBySymbol(selectedAccount.assets, "ETH")
-        if (currAcctGasAsset && currAcctGasAsset.value < gasTotal) {
+        const chainId = (selectedNetwork && selectedNetwork.chainId) || Global.currentChainId
+
+        const currAcctGasAsset = Utils.findAssetByChainAndSymbol(chainId, selectedAccount.assets, "ETH")
+        if (currAcctGasAsset && currAcctGasAsset.totalBalance < gasTotal) {
             isValid = false
         }
         root.isValid = isValid

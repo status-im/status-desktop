@@ -8,6 +8,7 @@ import ../../../../core/eventemitter
 import ../../../../../app_service/common/conversion as service_conversion
 import ../../../../../app_service/service/settings/service as settings_service
 import ../../../../../app_service/service/ens/service as ens_service
+import ../../../../../app_service/service/network/service as network_service
 import ../../../../../app_service/service/ens/utils as ens_utils
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 
@@ -26,14 +27,17 @@ type
     controller: Controller
     moduleLoaded: bool
 
-proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter,
+proc newModule*(
+  delegate: delegate_interface.AccessInterface, events: EventEmitter,
   settingsService: settings_service.Service, ensService: ens_service.Service,
-  walletAccountService: wallet_account_service.Service): Module =
+  walletAccountService: wallet_account_service.Service,
+  networkService: network_service.Service,
+): Module =
   result = Module()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
-  result.controller = controller.newController(result, events, settingsService, ensService, walletAccountService)
+  result.controller = controller.newController(result, events, settingsService, ensService, walletAccountService, networkService)
   result.moduleLoaded = false
 
 method delete*(self: Module) =
@@ -53,7 +57,6 @@ method isLoaded*(self: Module): bool =
   return self.moduleLoaded
 
 method viewDidLoad*(self: Module) =
-  self.fetchGasPrice()
   # add registered ens usernames
   let registeredEnsUsernames = self.controller.getAllMyEnsUsernames(includePendingEnsUsernames = false)
   for u in registeredEnsUsernames:
@@ -85,18 +88,12 @@ method onDetailsForEnsUsername*(self: Module, ensUsername: string, address: stri
   expirationTime: int) =
   self.view.setDetailsForEnsUsername(ensUsername, address, pubkey, isStatus, expirationTime)
 
-method fetchGasPrice*(self: Module) =
-  self.controller.fetchGasPrice()
-
-method gasPriceFetched*(self: Module, gasPrice: string) =
-  self.view.setGasPrice(gasPrice)
-
 method setPubKeyGasEstimate*(self: Module, ensUsername: string, address: string): int =
   return self.controller.setPubKeyGasEstimate(ensUsername, address)
 
 method setPubKey*(self: Module, ensUsername: string, address: string, gas: string, gasPrice: string,
-  maxPriorityFeePerGas: string, maxFeePerGas: string, password: string): string =
-  let response = self.controller.setPubKey(ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password)
+  maxPriorityFeePerGas: string, maxFeePerGas: string, password: string, eip1559Enabled: bool): string =
+  let response = self.controller.setPubKey(ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password, eip1559Enabled)
   if(response.len == 0):
     info "expected response is empty", methodName="setPubKey"
     return
@@ -182,8 +179,8 @@ method registerEnsGasEstimate*(self: Module, ensUsername: string, address: strin
   return self.controller.registerEnsGasEstimate(ensUsername, address)
 
 method registerEns*(self: Module, ensUsername: string, address: string, gas: string, gasPrice: string,
-  maxPriorityFeePerGas: string, maxFeePerGas: string, password: string): string =
-  let response = self.controller.registerEns(ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password)
+  maxPriorityFeePerGas: string, maxFeePerGas: string, password: string, eip1559Enabled: bool): string =
+  let response = self.controller.registerEns(ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password, eip1559Enabled)
 
   let responseObj = response.parseJson
   if (responseObj.kind != JObject):
@@ -237,6 +234,9 @@ method getGasEthValue*(self: Module, gweiValue: string, gasLimit: string): strin
 
 method getStatusToken*(self: Module): string =
   return self.controller.getStatusToken()
+
+method getChainIdForEns*(self: Module): int =
+  return self.controller.getChainIdForEns()
 
 method setPrefferedEnsUsername*(self: Module, ensUsername: string) =
   self.controller.setPreferredName(ensUsername)

@@ -98,19 +98,27 @@ type
 proc getCustomTokens(): seq[TokenDto] =
   try:
     let responseCustomTokens = backend.getCustomTokens()
-    result = map(responseCustomTokens.result.getElems(), proc(x: JsonNode): TokenDto = x.toTokenDto(@[]))
+    result = map(responseCustomTokens.result.getElems(), proc(x: JsonNode): TokenDto = x.toTokenDto(true))
   except Exception as e:
     error "error fetching custom tokens: ", message = e.msg
 
-proc getTokensForChainId(chainId: int): seq[TokenDto] =
+proc getTokensForChainId(network: NetworkDto): seq[TokenDto] =
   try:
-    let responseTokens = backend.getTokens(chainId)
-    let defaultTokens = map(responseTokens.result.getElems(), 
-      proc(x: JsonNode): TokenDto = x.toTokenDto(@[], hasIcon=true, isCustom=false)
-      )
+    let responseTokens = backend.getTokens(network.chainId)
+    let defaultTokens = map(
+      responseTokens.result.getElems(), 
+      proc(x: JsonNode): TokenDto = x.toTokenDto(network.enabled, hasIcon=true, isCustom=false)
+    )
     result.add(defaultTokens)
   except Exception as e:
-    error "error fetching tokens: ", message = e.msg, chainId=chainId
+    error "error fetching tokens: ", message = e.msg, chainId=network.chainId
+
+proc isNetworkEnabledForChainId(networks: seq[NetworkDto], chainId: int): bool =
+  for network in networks:
+    if network.chainId == chainId:
+      return network.enabled
+
+  return false
 
 proc prepareSymbols(networkSymbols: seq[string], allTokens: seq[TokenDto]): seq[seq[string]] =
   # we have to use up to 300 characters in a single request when we're fetching prices
@@ -151,6 +159,9 @@ proc fetchNativeChainBalance(chainId: int, nativeCurrencyDecimals: int, accountA
 proc fetchPrices(networkSymbols: seq[string], allTokens: seq[TokenDto], currency: string): Table[string, float] =
   let allSymbols = prepareSymbols(networkSymbols, allTokens)
   for symbols in allSymbols:
+    if symbols.len == 0:
+      continue
+    
     try:
       let response = backend.fetchPrices(symbols, currency)
       for (symbol, value) in response.result.pairs:
@@ -197,15 +208,13 @@ const prepareTokensTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
   let arg = decode[BuildTokensTaskArg](argEncoded)
 
   var networkSymbols: seq[string]
-  var chainIdsFromSettings: seq[int]
+  var allTokens: seq[TokenDto]
+
   for network in arg.networks:
     networkSymbols.add(network.nativeCurrencySymbol)
-    chainIdsFromSettings.add(network.chainId)
-
-  var allTokens: seq[TokenDto]
+    allTokens.add(getTokensForChainId(network))
+  
   allTokens.add(getCustomTokens())
-  for chainId in chainIdsFromSettings:
-    allTokens.add(getTokensForChainId(chainId))
   allTokens = deduplicate(allTokens)
 
   var prices = fetchPrices(networkSymbols, allTokens, arg.currency)
@@ -216,55 +225,80 @@ const prepareTokensTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
     var builtTokens: seq[WalletTokenDto]
 
     let groupedNetworks = groupNetworksBySymbol(arg.networks)
+    var enabledNetworkBalance = BalanceDto(
+      balance: 0.0,
+      currencyBalance: 0.0
+    )
     for networkNativeCurrencySymbol, networks in groupedNetworks.pairs:
       var balancesPerChain = initTable[int, BalanceDto]()
       for network in networks:
         let chainBalance = fetchNativeChainBalance(network.chainId, network.nativeCurrencyDecimals, address)
         balancesPerChain[network.chainId] = BalanceDto(
           balance: chainBalance,
-          currencyBalance: chainBalance * prices[network.nativeCurrencySymbol]  
+          currencyBalance: chainBalance * prices[network.nativeCurrencySymbol],
+          chainId: network.chainId,
+          address: "0x0000000000000000000000000000000000000000"
         )
+        if network.enabled:
+          enabledNetworkBalance.balance += balancesPerChain[network.chainId].balance
+          enabledNetworkBalance.currencyBalance += balancesPerChain[network.chainId].currencyBalance
+
       let networkDto = getNetworkByCurrencySymbol(arg.networks, networkNativeCurrencySymbol)
       var totalTokenBalance: BalanceDto
       totalTokenBalance.balance = toSeq(balancesPerChain.values).map(x => x.balance).foldl(a + b)
       totalTokenBalance.currencyBalance = totalTokenBalance.balance * prices[networkDto.nativeCurrencySymbol]
       builtTokens.add(WalletTokenDto(
           name: networkDto.nativeCurrencyName,
-          address: "0x0000000000000000000000000000000000000000",
           symbol: networkDto.nativeCurrencySymbol,
           decimals: networkDto.nativeCurrencyDecimals,
           hasIcon: true,
           color: "blue",
           isCustom: false,
           totalBalance: totalTokenBalance,
-          balancesPerChain: balancesPerChain
+          enabledNetworkBalance: enabledNetworkBalance,
+          balancesPerChain: balancesPerChain,
+          visible: networkDto.enabled,
         )
       )
 
     let groupedTokens = groupTokensBySymbol(allTokens)
+    enabledNetworkBalance = BalanceDto(
+      balance: 0.0,
+      currencyBalance: 0.0
+    )
     for symbol, tokens in groupedTokens.pairs:
       var balancesPerChain = initTable[int, BalanceDto]()
+      var visible = false
+      
       for token in tokens:
         let balanceForToken = tokenBalances{address}{token.addressAsString()}.getStr
         let chainBalanceForToken = parsefloat(hex2Balance(balanceForToken, token.decimals))
         balancesPerChain[token.chainId] = BalanceDto(
           balance: chainBalanceForToken,
-          currencyBalance: chainBalanceForToken * prices[token.symbol]
+          currencyBalance: chainBalanceForToken * prices[token.symbol],
+          chainId: token.chainId,
+          address: $token.address
         )
+        if isNetworkEnabledForChainId(arg.networks, token.chainId):
+          visible = true
+          enabledNetworkBalance.balance += balancesPerChain[token.chainId].balance
+          enabledNetworkBalance.currencyBalance += balancesPerChain[token.chainId].currencyBalance
+
       let tokenDto = getTokenForSymbol(allTokens, symbol)
       var totalTokenBalance: BalanceDto
       totalTokenBalance.balance = toSeq(balancesPerChain.values).map(x => x.balance).foldl(a + b)
       totalTokenBalance.currencyBalance = totalTokenBalance.balance * prices[tokenDto.symbol]
       builtTokens.add(WalletTokenDto(
           name: tokenDto.name,
-          address: $tokenDto.address,
           symbol: tokenDto.symbol,
           decimals: tokenDto.decimals,
           hasIcon: tokenDto.hasIcon,
           color: tokenDto.color,
           isCustom: tokenDto.isCustom,
           totalBalance: totalTokenBalance,
-          balancesPerChain: balancesPerChain
+          balancesPerChain: balancesPerChain,
+          enabledNetworkBalance: enabledNetworkBalance,
+          visible: visible
         )
       )
 
@@ -272,6 +306,6 @@ const prepareTokensTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
     for wtDto in builtTokens:
       tokensJarray.add(walletTokenDtoToJson(wtDto))
     builtTokensPerAccount[address] = tokensJArray
- 
+
   arg.finish(builtTokensPerAccount)
 

@@ -53,6 +53,9 @@ method getCurrentNetworkName*(self: AccessInterface): string {.base.} =
 method getCurrentNetworkId*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method getCurrentChainId*(self: AccessInterface): int {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method setCurrentNetwork*(self: AccessInterface, network: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 

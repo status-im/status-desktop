@@ -11,7 +11,6 @@ QtObject:
       modelVariant: QVariant
       etherscanLink: string
       signingPhrase: string
-      gasPrice: string
 
   proc delete*(self: View) =
     self.model.delete
@@ -24,7 +23,6 @@ QtObject:
     result.model = newModel()
     result.modelVariant = newQVariant(result.model)
     result.delegate = delegate
-    result.gasPrice = "0"
 
   proc load*(self: View, link: string, signingPhrase: string) =
     self.etherscanLink = link
@@ -66,9 +64,6 @@ QtObject:
     self.loading(false)
     self.detailsObtained(ensUsername, address, pubkey, isStatus, expirationTime)
 
-  proc fetchGasPrice*(self: View) {.slot.} =
-    self.delegate.fetchGasPrice()
-
   proc transactionWasSent(self: View, txResult: string) {.signal.}
   proc emitTransactionWasSentSignal*(self: View, txResult: string) =
     self.transactionWasSent(txResult)
@@ -77,25 +72,14 @@ QtObject:
     return self.delegate.setPubKeyGasEstimate(ensUsername, address)
 
   proc setPubKey*(self: View, ensUsername: string, address: string, gas: string, gasPrice: string,
-    maxPriorityFeePerGas: string, maxFeePerGas: string, password: string): string {.slot.} =
-    return self.delegate.setPubKey(ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password)
+    maxPriorityFeePerGas: string, maxFeePerGas: string, password: string, eip1559Enabled: bool): string {.slot.} =
+    return self.delegate.setPubKey(ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password, eip1559Enabled)
 
   proc getEtherscanLink*(self: View): string {.slot.} =
     return self.etherscanLink
 
   proc getSigningPhrase*(self: View): string {.slot.} =
     return self.signingPhrase
-
-  proc gasPriceChanged(self: View) {.signal.}
-  proc getGasPrice(self: View): string {.slot.} =
-    return self.gasPrice
-  QtProperty[string] gasPrice:
-    read = getGasPrice
-    notify = gasPriceChanged
-
-  proc setGasPrice*(self: View, gasPrice: string) = # this is not a slot
-    self.gasPrice = gasPrice
-    self.gasPriceChanged()
 
   proc usernameConfirmed(self: View, username: string) {.signal.}
   proc emitUsernameConfirmedSignal*(self: View, ensUsername: string) =
@@ -124,8 +108,8 @@ QtObject:
     return self.delegate.registerEnsGasEstimate(ensUsername, address)
 
   proc registerEns*(self: View, ensUsername: string, address: string, gas: string, gasPrice: string,
-    maxPriorityFeePerGas: string, maxFeePerGas: string, password: string): string {.slot.} =
-    return self.delegate.registerEns(ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password)
+    maxPriorityFeePerGas: string, maxFeePerGas: string, password: string, eip1559Enabled: bool): string {.slot.} =
+    return self.delegate.registerEns(ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password, eip1559Enabled)
 
   proc getSNTBalance*(self: View): string {.slot.} =
     return self.delegate.getSNTBalance()
@@ -144,6 +128,9 @@ QtObject:
 
   proc getStatusToken*(self: View): string {.slot.} =
     return self.delegate.getStatusToken()
+
+  proc getChainIdForEns*(self: View): int {.slot.} =
+    return self.delegate.getChainIdForEns()
 
   proc setPrefferedEnsUsername*(self: View, ensUsername: string) {.slot.} =
     self.delegate.setPrefferedEnsUsername(ensUsername)

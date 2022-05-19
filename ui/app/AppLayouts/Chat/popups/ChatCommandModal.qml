@@ -177,7 +177,7 @@ StatusModal {
                     if (stack.isLastGroup) {
                         root.sendChatCommand(selectFromAccount.selectedAccount.address,
                                                     txtAmount.selectedAmount,
-                                                    txtAmount.selectedAsset.address,
+                                                    txtAmount.selectedAsset.symbol,
                                                     txtAmount.selectedAsset.decimals)
                         return root.close()
                     }

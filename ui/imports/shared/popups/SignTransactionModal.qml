@@ -33,37 +33,27 @@ StatusModal {
     property bool isARequest: false
     property string msgId: ""
     property string trxData: ""
+    property int chainId
 
     property alias transactionSigner: transactionSigner
 
     property var sendTransaction: function() {
         stack.currentGroup.isPending = true
         let success = false
-        if(root.selectedAsset.address === "" || root.selectedAsset.address === Constants.zeroAddress){
-            success = root.store.transferEth(
-                        selectFromAccount.selectedAccount.address,
-                        selectRecipient.selectedRecipient.address,
-                        root.selectedAmount,
-                        gasSelector.selectedGasLimit,
-                        gasSelector.isEIP1559Enabled ? "" : gasSelector.selectedGasPrice,
-                        gasSelector.selectedTipLimit,
-                        gasSelector.selectedOverallLimit,
-                        transactionSigner.enteredPassword,
-                        stack.uuid)
-        } else {
-            success = root.store.transferTokens(
-                        selectFromAccount.selectedAccount.address,
-                        selectRecipient.selectedRecipient.address,
-                        root.selectedAsset.address,
-                        root.selectedAmount,
-                        gasSelector.selectedGasLimit,
-                        gasSelector.isEIP1559Enabled ? "" : gasSelector.selectedGasPrice,
-                        gasSelector.selectedTipLimit,
-                        gasSelector.selectedOverallLimit,
-                        transactionSigner.enteredPassword,
-                        stack.uuid)
-        }
-
+        success = root.store.transfer(
+            selectFromAccount.selectedAccount.address,
+            selectRecipient.selectedRecipient.address,
+            root.selectedAsset.symbol,
+            root.selectedAmount,
+            gasSelector.selectedGasLimit,
+            gasSelector.suggestedFees.eip1559Enabled ? "" : gasSelector.selectedGasPrice,
+            gasSelector.selectedTipLimit,
+            gasSelector.selectedOverallLimit,
+            transactionSigner.enteredPassword,
+            root.chainId,
+            stack.uuid,
+            gasSelector.suggestedFees.eip1559Enabled,
+        )
         // TODO remove this else once the thread and connection are back
 //        if(!success){
 //            //% "Invalid transaction parameters"
@@ -83,6 +73,11 @@ StatusModal {
 
     onClosed: {
         stack.pop(groupPreview, StackView.Immediate)
+    }
+
+    onOpened: {
+        gasSelector.suggestedFees = root.store.suggestedFees(root.chainId)
+        gasSelector.checkOptimal()
     }
 
     contentItem: Item {
@@ -127,6 +122,7 @@ StatusModal {
                     //% "Choose account"
                     label: qsTrId("choose-account")
                     showBalanceForAssetSymbol: root.selectedAsset.symbol
+                    chainId: root.chainId
                     minRequiredAssetBalance: parseFloat(root.selectedAmount)
                     onSelectedAccountChanged: if (isValid) { gasSelector.estimateGas() }
                 }
@@ -152,18 +148,15 @@ StatusModal {
                 GasSelector {
                     id: gasSelector
                     anchors.topMargin: Style.current.padding
-                    gasPrice: parseFloat(root.store.gasPrice)
                     getGasEthValue: root.store.getGasEthValue
                     getFiatValue: root.store.getFiatValue
                     defaultCurrency: root.store.currentCurrency
-                    isEIP1559Enabled: root.store.isEIP1559Enabled()
-                    suggestedFees: root.store.suggestedFees()
                     width: stack.width
 
                     property var estimateGas: Backpressure.debounce(gasSelector, 600, function() {
                        if (!(selectFromAccount.selectedAccount && selectFromAccount.selectedAccount.address &&
                            selectRecipient.selectedRecipient && selectRecipient.selectedRecipient.address &&
-                           root.selectedAsset && root.selectedAsset.address &&
+                           root.selectedAsset && root.selectedAsset.symbol &&
                            root.selectedAmount)) {
                            selectedGasLimit = 250000
                            defaultGasLimit = selectedGasLimit
@@ -173,9 +166,11 @@ StatusModal {
                        let gasEstimate = JSON.parse(root.store.estimateGas(
                            selectFromAccount.selectedAccount.address,
                            selectRecipient.selectedRecipient.address,
-                           root.selectedAsset.address,
+                           root.selectedAsset.symbol,
                            root.selectedAmount,
-                           trxData))
+                           root.chainId,
+                           trxData
+                        ))
 
                        if (!gasEstimate.success) {
                            let message = qsTr("Error estimating gas: %1").arg(gasEstimate.error.message)
@@ -235,6 +230,7 @@ StatusModal {
                     anchors.horizontalCenter: parent.horizontalCenter
                     account: selectFromAccount.selectedAccount
                     amount: !!root.selectedAmount ? parseFloat(root.selectedAmount) : 0.0
+                    chainId: root.chainId
                     asset: root.selectedAsset
                 }
                 GasValidator {
@@ -297,13 +293,13 @@ StatusModal {
                 if (validity.isValid && !validity.isPending) {
                     if (stack.isLastGroup) {
                         return root.sendTransaction(gasSelector.selectedGasLimit,
-                                                    gasSelector.isEIP1559Enabled ? "" : gasSelector.selectedGasPrice,
+                                                    gasSelector.suggestedFees.eip1559Enabled ? "" : gasSelector.selectedGasPrice,
                                                     gasSelector.selectedTipLimit,
                                                     gasSelector.selectedOverallLimit,
                                                     transactionSigner.enteredPassword)
                     }
 
-                    if(gasSelector.isEIP1559Enabled && stack.currentGroup === groupSelectGas && gasSelector.advancedMode){
+                    if(gasSelector.suggestedFees.eip1559Enabled && stack.currentGroup === groupSelectGas && gasSelector.advancedMode){
                         if(gasSelector.showPriceLimitWarning || gasSelector.showTipLimitWarning){
                             Global.openPopup(transactionSettingsConfirmationPopupComponent, {
                                 currentBaseFee: gasSelector.suggestedFees.baseFee,
@@ -366,7 +362,7 @@ StatusModal {
                 // Refactor this
                 let url = "" //`${walletModel.utilsView.etherscanLink}/${response.result}`
                 Global.displayToastMessage(qsTr("Transaction pending..."),
-                                           "",
+                                           qsTr("View on etherscan"),
                                            "",
                                            true,
                                            Constants.ephemeralNotificationType.normal,

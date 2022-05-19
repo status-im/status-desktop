@@ -518,7 +518,7 @@ SettingsContentBase {
                 anchors.leftMargin: 0
                 anchors.rightMargin: 0
                 text: qsTr("Stickers/ENS on ropsten")
-                visible: root.advancedStore.currentNetworkId === Constants.networkRopsten
+                visible: !localAccountSensitiveSettings.isMultiNetworkEnabled && root.advancedStore.currentNetworkId === Constants.networkRopsten
                 isSwitch: true
                 switchChecked: localAccountSensitiveSettings.stickersEnsRopsten
                 onClicked: {
