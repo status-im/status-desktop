@@ -39,11 +39,6 @@ proc makeAdmin*(communityID: string, chatID: string, member: string): RpcRespons
 
   return core.callPrivateRPC("chat_makeAdmin", payload)
 
-proc confirmJoiningGroup*(communityID: string, chatID: string): RpcResponse[JsonNode] {.raises: [Exception].} =
-  let payload = %* [communityID, chatID]
-
-  return core.callPrivateRPC("chat_confirmJoiningGroup", payload)
-
 proc renameChat*(communityID: string, chatID: string, name: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [communityID, chatID, name]
 

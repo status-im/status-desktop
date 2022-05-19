@@ -21,10 +21,6 @@ Column {
     property string chatColor: ""
     property string chatEmoji: ""
     property string chatIcon: ""
-    property bool didIJoinedChat: true
-
-    signal joinChatClicked()
-    signal rejectJoiningChatClicked()
 
     StatusSmartIdenticon {
         anchors.horizontalCenter: parent.horizontalCenter
@@ -74,49 +70,5 @@ Column {
         color: Style.current.secondaryText
         horizontalAlignment: Text.AlignHCenter
         textFormat: Text.RichText
-    }
-
-    Item {
-        id: joinOrDecline
-        visible: root.chatType === Constants.chatType.privateGroupChat && !root.amIChatAdmin && !root.didIJoinedChat
-        anchors.horizontalCenter: parent.horizontalCenter
-        width: visible ? joinChat.width : 0
-        height: visible ? 100 : 0
-
-        StyledText {
-            id: joinChat
-            //% "Join chat"
-            text: qsTrId("join-chat")
-            font.pixelSize: 20
-            color: Style.current.blue
-            anchors.horizontalCenter: parent.horizontalCenter
-
-            MouseArea {
-                cursorShape: Qt.PointingHandCursor
-                anchors.fill: parent
-                onClicked: {
-                    root.joinChatClicked()
-                    joinOrDecline.visible = false // Once we start getting member `joined` updates from `status-go` we can remove this
-                }
-            }
-        }
-
-        StyledText {
-            //% "Decline invitation"
-            text: qsTrId("group-chat-decline-invitation")
-            font.pixelSize: 20
-            color: Style.current.blue
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: joinChat.bottom
-            anchors.topMargin: Style.current.padding
-            MouseArea {
-                cursorShape: Qt.PointingHandCursor
-                anchors.fill: parent
-                onClicked: {
-                    root.rejectJoiningChatClicked()
-                    joinOrDecline.visible = false // Once we start getting member `joined` updates from `status-go` we can remove this
-                }
-            }
-        }
     }
 }

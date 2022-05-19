@@ -310,9 +310,6 @@ proc createGroupChat*(self: Controller, communityID: string, groupName: string, 
       self.contactService, self.chatService, self.communityService, self.messageService,
       self.gifService, self.mailserversService)
 
-proc confirmJoiningGroup*(self: Controller, communityID: string, chatID: string) =
-  self.chatService.confirmJoiningGroup(communityID, self.getActiveChatId())
-
 proc joinGroupChatFromInvitation*(self: Controller, groupName: string, chatId: string, adminPK: string) =
   let response = self.chatService.createGroupChatFromInvitation(groupName, chatId, adminPK)
   if(response.success):
