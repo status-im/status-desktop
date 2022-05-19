@@ -184,6 +184,7 @@ QtObject:
 
     if (addToCount and not activityCenterNotification.read):
       self.nbUnreadNotifications = self.nbUnreadNotifications + 1
+      self.unreadCountChanged()
 
   proc updateUnreadCount*(self: Model, count: int) =
     self.nbUnreadNotifications = count

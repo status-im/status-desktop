@@ -158,12 +158,7 @@ ColumnLayout {
         notificationButton.visible: localAccountSensitiveSettings.isActivityCenterEnabled
         notificationButton.tooltip.offset: localAccountSensitiveSettings.expandUsersList && membersButton.visible ? 0 : 14
 
-        notificationCount: {
-            if(!chatContentModule)
-                return 0
-
-            return chatContentModule.chatDetails.notificationCount
-        }
+        notificationCount: activityCenter.unreadNotificationsCount
 
         onSearchButtonClicked: root.openAppSearch()
 
