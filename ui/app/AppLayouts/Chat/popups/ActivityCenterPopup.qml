@@ -28,6 +28,8 @@ Popup {
     property var chatSectionModule
     property var messageContextMenu
 
+    readonly property int unreadNotificationsCount : activityCenter.store.activityCenterList.unreadCount
+
     id: activityCenter
     modal: false
 
