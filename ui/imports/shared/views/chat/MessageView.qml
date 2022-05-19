@@ -290,10 +290,6 @@ Column {
             chatEmoji: root.channelEmoji
             amIChatAdmin: root.messageStore.amIChatAdmin()
             chatIcon: root.senderIcon
-            didIJoinedChat: root.messageStore.didIJoinedChat()
-
-            onJoinChatClicked: root.messageStore.joinGroupChat()
-            onRejectJoiningChatClicked: root.messageStore.leaveChat()
         }
     }
 

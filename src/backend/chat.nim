@@ -124,10 +124,6 @@ proc createGroupChat*(communityID: string, groupName: string, pubKeys: seq[strin
   let payload = %* [nil, communityID, groupName, pubKeys]
   result = callPrivateRPC("createGroupChatWithMembers".prefix, payload)
 
-proc confirmJoiningGroup*(communityID: string, chatId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
-  let payload = %* [communityID, chatId]
-  result = callPrivateRPC("confirmJoiningGroup".prefix, payload)
-
 proc createGroupChatFromInvitation*(groupName: string, chatId: string, adminPK: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [groupName, chatId, adminPK]
   result = callPrivateRPC("createGroupChatFromInvitation".prefix, payload)

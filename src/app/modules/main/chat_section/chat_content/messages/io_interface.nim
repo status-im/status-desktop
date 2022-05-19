@@ -118,9 +118,6 @@ method requestMoreMessages*(self: AccessInterface) {.base.} =
 method fillGaps*(self: AccessInterface, messageId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method joinGroupChat*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method leaveChat*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
