@@ -117,81 +117,16 @@ SettingsContentBase {
             color: Theme.palette.directColor1
         }
 
-        StatusQ.StatusSlider {
+        StatusQ.StatusLabeledSlider {
             id: fontSizeSlider
             anchors.top: labelFontSize.bottom
             anchors.topMargin: Style.current.padding
             width: parent.width
-            height: 40
-            from: 0
-            to: 5
-            stepSize: 1
+            model: [ qsTr("XS"), qsTr("S"), qsTr("M"), qsTr("L"), qsTr("XL"), qsTr("XXL") ]
             value: localAccountSensitiveSettings.fontSize
             onValueChanged: {
                 localAccountSensitiveSettings.fontSize = value
                 appearanceView.updateFontSize(value)
-            }
-
-            RowLayout {
-                id: fontSizeSliderLegend
-                anchors.bottom: parent.bottom
-                anchors.topMargin: Style.current.padding
-                anchors.left: parent.left
-                anchors.right: parent.right
-                spacing: Style.current.smallPadding
-
-                StatusBaseText {
-                    font.pixelSize: 15
-                    //% "XS"
-                    text: qsTrId("xs")
-                    Layout.preferredWidth: fontSizeSlider.width/6
-                    color: Theme.palette.directColor1
-                }
-
-                StatusBaseText {
-                    font.pixelSize: 15
-                    //% "S"
-                    text: qsTrId("s")
-                    Layout.preferredWidth: fontSizeSlider.width/6
-                    Layout.leftMargin: 2
-                    color: Theme.palette.directColor1
-                }
-
-                StatusBaseText {
-                    font.pixelSize: 15
-                    //% "M"
-                    text: qsTrId("m")
-                    Layout.preferredWidth: fontSizeSlider.width/6
-                    Layout.leftMargin: 2
-                    color: Theme.palette.directColor1
-                }
-
-                StatusBaseText {
-                    font.pixelSize: 15
-                    //% "L"
-                    text: qsTrId("l")
-                    Layout.preferredWidth: fontSizeSlider.width/6
-                    Layout.leftMargin: 2
-                    color: Theme.palette.directColor1
-                }
-
-                StatusBaseText {
-                    font.pixelSize: 15
-                    //% "XL"
-                    text: qsTrId("xl")
-                    Layout.preferredWidth: fontSizeSlider.width/6
-                    Layout.leftMargin: 0
-                    color: Theme.palette.directColor1
-                }
-
-                StatusBaseText {
-                    font.pixelSize: 15
-                    //% "XXL"
-                    text: qsTrId("xxl")
-                    Layout.alignment: Qt.AlignRight
-                    Layout.leftMargin: -Style.current.smallPadding
-                    color: Theme.palette.directColor1
-                }
             }
         }
 
@@ -205,7 +140,7 @@ SettingsContentBase {
             color: Theme.palette.directColor1
         }
 
-        StatusQ.StatusSlider {
+        StatusQ.StatusLabeledSlider {
             id: zoomSlider
             readonly property int initialValue: {
                 let scaleFactorStr = appearanceView.appearanceStore.readTextFile(uiScaleFilePath)
@@ -221,10 +156,10 @@ SettingsContentBase {
             anchors.top: labelZoom.bottom
             anchors.topMargin: Style.current.padding
             width: parent.width
-            height: 40
             from: 50
             to: 200
             stepSize: 50
+            model: [ qsTr("50%"), qsTr("100%"), qsTr("150%"), qsTr("200%") ]
             value: initialValue
             onValueChanged: {
                 if (value !== initialValue) {
@@ -241,52 +176,6 @@ SettingsContentBase {
                 id: confirmAppRestartModal
                 onClosed: {
                     zoomSlider.value = zoomSlider.initialValue
-                }
-            }
-
-
-            RowLayout {
-                id: zoomSliderLegend
-                anchors.bottom: parent.bottom
-                anchors.topMargin: Style.current.padding
-                anchors.left: parent.left
-                anchors.right: parent.right
-                spacing: 0
-                StatusBaseText {
-                    font.pixelSize: 15
-                    text: "50%"
-                    color: Theme.palette.directColor1
-                }
-
-                Item {
-                    Layout.fillWidth: true
-                }
-
-                StatusBaseText {
-                    font.pixelSize: 15
-                    Layout.leftMargin: width / 2
-                    text: "100%"
-                    color: Theme.palette.directColor1
-                }
-
-                Item {
-                    Layout.fillWidth: true
-                }
-                StatusBaseText {
-                    font.pixelSize: 15
-                    Layout.leftMargin: width / 2
-                    text: "150%"
-                    color: Theme.palette.directColor1
-                }
-
-                Item {
-                    Layout.fillWidth: true
-                }
-
-                StatusBaseText {
-                    font.pixelSize: 15
-                    text: "200%"
-                    color: Theme.palette.directColor1
                 }
             }
         }
