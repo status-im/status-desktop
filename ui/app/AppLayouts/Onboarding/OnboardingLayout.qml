@@ -21,7 +21,18 @@ QtObject {
 
         DSM.State {
             id: onboardingState
-            initialState: root.hasAccounts ? stateLogin : welcomeMainState
+            initialState: root.hasAccounts ? stateLogin : (Qt.platform.os === "osx" ? allowNotificationsState : welcomeMainState)
+
+            DSM.State {
+                id: allowNotificationsState
+                onEntered: { onBoardingStepChanged(allowNotificationsMain, ""); }
+
+                DSM.SignalTransition {
+                    targetState: welcomeMainState
+                    signal: Global.applicationWindow.navigateTo
+                    guard: path === "WelcomeMain"
+                }
+            }
 
             DSM.State {
                 id: welcomeMainState
@@ -167,6 +178,15 @@ QtObject {
             DSM.SignalTransition {
                 targetState: stateLogin
                 signal: startupModule.logOut
+            }
+        }
+    }
+
+    property var allowNotificationsComponent: Component {
+        id: allowNotificationsMain
+        AllowNotificationsView {
+            onBtnOkClicked: {
+                Global.applicationWindow.navigateTo("WelcomeMain");
             }
         }
     }
