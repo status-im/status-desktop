@@ -1,5 +1,6 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
+import StatusQ.Components 0.1
 import shared 1.0
 import shared.panels 1.0
 import shared.status 1.0
@@ -54,17 +55,48 @@ Item {
         }
         boundsBehavior: Flickable.StopAtBounds
         model: usersModule.model
-        delegate: UserDelegate {
-            publicKey: model.id
-            name: model.name
-            icon: model.icon
-            isAdded: model.isAdded
-            userStatus: model.onlineStatus
-            messageContextMenu: root.messageContextMenu
-            isCurrentUser: rootStore.isCurrentUser(model.id)
-        }
         section.property: "onlineStatus"
         section.delegate: (root.width > 58) ? sectionDelegateComponent : null
+        delegate: StatusMemberListItem {
+            anchors.left: parent.left
+            anchors.leftMargin: 8
+            anchors.right: parent.right
+            anchors.rightMargin: 8
+            nickName: model.localNickname
+            userName: model.name
+            chatKey: model.id
+            trustIndicator: model.trustIndicator
+            isMutualContact: model.isMutualContact
+            image.source: {
+                if ((!model.isAdded &&
+                    Global.privacyModuleInst.profilePicturesVisibility !==
+                    Constants.profilePicturesVisibility.everyone)) {
+                    return "";
+                }
+                return model.icon;
+            }
+            image.isIdenticon: model.isIdenticon
+
+            isOnline: model.onlineStatus
+            icon.color: Theme.palette.userCustomizationColors[Utils.colorIdForPubkey(model.id)]
+            ringSettings.ringSpecModel: Utils.getColorHashAsJson(model.id)
+            onClicked: {
+                if (mouse.button === Qt.RightButton) {
+                    // Set parent, X & Y positions for the messageContextMenu
+                    messageContextMenu.parent = this
+                    messageContextMenu.setXPosition = function() { return 0; }
+                    messageContextMenu.setYPosition = function() { return mouse.y + (Style.current.halfPadding/2); }
+                    messageContextMenu.isProfile = true
+                    messageContextMenu.myPublicKey = userProfile.pubKey
+                    messageContextMenu.selectedUserPublicKey = model.id
+                    messageContextMenu.selectedUserDisplayName = model.name
+                    messageContextMenu.selectedUserIcon = image.source
+                    messageContextMenu.popup()
+                } else if (mouse.button === Qt.LeftButton && !!messageContextMenu) {
+                    Global.openProfilePopup(model.id);
+                }
+            }
+        }
     }
 
     Component {
