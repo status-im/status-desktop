@@ -124,12 +124,6 @@ Item {
     */
     readonly property rect cropRect: d.cropRect
     /*!
-        \qmlproperty rect StatusImageCrop::cropRect
-
-        The position and zis of the crop rectangle in item's space; without extra spacing
-    */
-    readonly property alias cropWindow: d.cropWindow
-    /*!
         \qmlproperty real StatusImageCrop::aspectRatio
     */
     readonly property real aspectRatio: d.cropRect.height !== 0 ? d.cropRect.width/d.cropRect.height : 0
@@ -146,7 +140,7 @@ Item {
 
         \sa StatusImageCrop::source
     */
-    readonly property size sourceSize: mainImage.sourceSize
+    readonly property alias sourceSize: mainImage.sourceSize
     /*!
         \qmlproperty real StatusImageCrop::scrToImgScale
 
@@ -218,7 +212,7 @@ Item {
 
     function getZoomRect(scale /*real*/) {
         const oldCenter = root.rectCenter(root.cropRect)
-        const inflatedRect = root.inflateRectBy(root.minimumCropRect(), 1/scale)
+        const inflatedRect = root.inflateRectBy(d.minimumCropRect(), 1/scale)
         return root.recenterRect(inflatedRect, oldCenter);
     }
 
@@ -248,44 +242,34 @@ Item {
         return Qt.rect(newCenter.x - target.width/2 , newCenter.y - target.height/2, target.width, target.height)
     }
 
-    //> cropRect for minimum zoom: 1.0
-    function minimumCropRect() {
-        const sourceAR = root.sourceSize.width/root.sourceSize.height
-        const widthBound =  sourceAR > root.aspectRatio
-        const minCropSize = widthBound ? Qt.size(root.sourceSize.width, root.sourceSize.width/root.aspectRatio)
-                                       : Qt.size(root.sourceSize.height * root.aspectRatio, root.sourceSize.height)
-        let res = Qt.rect(widthBound ? 0 : -(root.sourceSize.width - minCropSize.width)/2,    // x
-                       widthBound ? -(root.sourceSize.height - minCropSize.height)/2 : 0,  // y
-                       minCropSize.width, minCropSize.height)
-        return res
+    function fillContentInWindow(contentSize /*size*/, windowSize /*size*/) {
+        const contentAR = contentSize.width/contentSize.height
+        const windowAR = windowSize.width/windowSize.height
+        const heightBound = contentAR > windowAR
+        if(heightBound) {
+            const wWidth = contentSize.height * windowAR
+            const horizontalBorder = (contentSize.width - wWidth)/2
+            return Qt.rect(horizontalBorder, 0, wWidth, contentSize.height)
+        }
+        else {
+            const wHeight = contentSize.width / windowAR
+            const verticalBorder = (contentSize.height - wHeight)/2
+            return Qt.rect(0, verticalBorder, contentSize.width, wHeight)
+        }
     }
 
     QtObject {
         id: d
 
-        property rect cropRect: fillContentInSquaredWindow(root.sourceSize)
+        property rect cropRect
         onCropRectChanged: windowRect.requestPaint()
 
         readonly property real zoomToFill: {
-            const rectangle = fillContentInSquaredWindow(root.sourceSize)
+            const rectangle = root.fillContentInWindow(root.sourceSize, d.cropWindowSize)
             return d.currentZoom(root.sourceSize, Qt.size(rectangle.width, rectangle.height))
         }
 
-        property rect cropWindow
-        // Probably called from render thread, run async
-        signal updateCropWindow(rect newRect)
-        onUpdateCropWindow: cropWindow = newRect
-
-        function fillContentInSquaredWindow(c /*size*/) {
-            if(c.width > c.height) {
-                const border = (c.width - c.height)/2
-                return Qt.rect(border, 0, c.height, c.height)
-            }
-            else {
-                const border = (c.height - c.width)/2
-                return Qt.rect(0, border, c.width, c.width)
-            }
-        }
+        property size cropWindowSize: Qt.size(d.cropRect.width, d.cropRect.height)
 
         //> 1.0 is the content represented by w fully inscribed in c
         function currentZoom(c /*size*/, w /*size*/) {
@@ -293,10 +277,26 @@ Item {
             const hScale = c.height/w.height
             return Math.max(wScale, hScale)
         }
+
+        //> cropRect for minimum zoom: 1.0
+        function minimumCropRect() {
+            const sourceAR = root.sourceSize.width/root.sourceSize.height
+            const widthBound =  sourceAR > root.aspectRatio
+            const minCropSize = widthBound ? Qt.size(root.sourceSize.width, root.sourceSize.width/root.aspectRatio)
+                                           : Qt.size(root.sourceSize.height * root.aspectRatio, root.sourceSize.height)
+            let res = Qt.rect(widthBound ? 0 : -(root.sourceSize.width - minCropSize.width)/2,    // x
+                           widthBound ? -(root.sourceSize.height - minCropSize.height)/2 : 0,  // y
+                           minCropSize.width, minCropSize.height)
+            return res
+        }
     }
 
     onWindowStyleChanged: windowRect.requestPaint()
-    onSourceSizeChanged: d.cropRect = d.fillContentInSquaredWindow(sourceSize)
+    onRadiusChanged: windowRect.requestPaint()
+    onSourceSizeChanged: {
+        if(d.cropWindowSize.width > 0 && d.cropWindowSize.height > 0)
+            d.cropRect = root.fillContentInWindow(sourceSize, d.cropWindowSize)
+    }
 
     Canvas {
         id: windowRect
@@ -330,7 +330,6 @@ Item {
                 ctx.roundedRect(cW.x, cW.y, cW.width, cW.height, root.radius, root.radius)
             ctx.fill()
             ctx.restore()
-            d.updateCropWindow(cW)
         }
     }
 

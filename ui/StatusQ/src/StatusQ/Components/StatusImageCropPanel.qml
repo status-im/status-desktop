@@ -82,12 +82,7 @@ Item {
         \qmlproperty rect StatusImageCropPanel::cropRect
         \sa StatusImageCrop::cropRect
     */
-    property alias cropRect: cropEditor.cropRect
-    /*!
-        \qmlproperty rect StatusImageCropPanel::cropRect
-        \sa StatusImageCrop::cropRect
-    */
-    readonly property alias cropWindow: cropEditor.cropWindow
+    readonly property alias cropRect: cropEditor.cropRect
     /*!
         \qmlproperty real StatusImageCrop::scrollZoomFactor
         How fast is image scaled (zoomed) when using mouse scroll
@@ -116,16 +111,11 @@ Item {
     QtObject {
         id: d
 
+        readonly property int referenceWindowWidth: 1000
         function updateAspectRatio(newAR) {
-            // Keep width and adjust height
-            const eW = cropEditor.cropRect.width
-            const w = (eW <= 0) ? cropEditor.sourceSize.width : eW
-            const h = w/newAR
-            const c = (eW <= 0)
-                    ? Qt.point(cropEditor.sourceSize.width/2, cropEditor.sourceSize.height/2)
-                    : Qt.point(cropEditor.cropRect.x + w/2, cropEditor.cropRect.y + cropEditor.cropRect.height/2)
-            const nR = Qt.rect(c.x - w/2, c.y-h/2, w, h)
-            cropEditor.setCropRect(nR)
+            if(root.sourceSize.width === 0 || root.sourceSize.height === 0)
+                return
+            cropEditor.setCropRect(cropEditor.fillContentInWindow(root.sourceSize, Qt.size(referenceWindowWidth, referenceWindowWidth / root.aspectRatio)))
         }
     }
 
