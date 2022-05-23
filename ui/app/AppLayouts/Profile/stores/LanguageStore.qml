@@ -28,6 +28,10 @@ QtObject {
         ListElement {key: "ur"; shortName: "اُردُو"; name: "Urdu"; category: "Beta Languages"; imageSource: "../../assets/twemoji/26x26/1f1f5-1f1f0.png"; selected: false}
     }
 
+    onLocaleChanged: {
+        initializeLanguageModel()
+    }
+
     // TODO: That logic should be moved to backend.
     function initializeLanguageModel() {
         var isSelected = false
