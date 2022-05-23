@@ -131,17 +131,25 @@ method onToggleSection*(self: Module, sectionType: SectionType) =
     let channelGroups = self.controller.getChannelGroups()
     for cg in channelGroups:
       if cg.channelGroupType == ChannelGroupType.Community:
+        let ind = self.view.exemptionsModel().findIndexForItemId(cg.id)
+        if(ind != -1):
+          continue
         let item = self.createItem(cg.id, cg.name, cg.images.thumbnail, cg.color, joinedTimestamp = 0, item.Type.Community)
         self.view.exemptionsModel().addItem(item)
   else:
-    let allExemptions = singletonInstance.localAccountSensitiveSettings.getNotifSettingExemptionsAsJson()
+    var allExemptions = singletonInstance.localAccountSensitiveSettings.getNotifSettingExemptionsAsJson()
     for item in self.view.exemptionsModel().modelIterator():
+      if(item.itemType != Type.Community):
+        continue
       if(allExemptions.contains(item.id)):
         allExemptions.delete(item.id)
+      self.view.exemptionsModel().removeItemById(item.id)
     singletonInstance.localAccountSensitiveSettings.setNotifSettingExemptions($allExemptions)
-    self.view.exemptionsModel().removeItemsByType(item.Type.Community)
   
 method addCommunity*(self: Module, communityDto: CommunityDto) =
+  let ind = self.view.exemptionsModel().findIndexForItemId(communityDto.id)
+  if(ind != -1):
+    return
   let item = self.createItem(communityDto.id, communityDto.name, communityDto.images.thumbnail, communityDto.color, 
     joinedTimestamp = 0, item.Type.Community)
   self.view.exemptionsModel().addItem(item)
@@ -160,6 +168,8 @@ method removeItemWithId*(self: Module, itemId: string) =
   self.view.exemptionsModel().removeItemById(itemId)
   
 method addChat*(self: Module, chatDto: ChatDto) =
+  if chatDto.chatType != ChatType.OneToOne and chatDto.chatType != ChatType.PrivateGroupChat:
+    return
   let ind = self.view.exemptionsModel().findIndexForItemId(chatDto.id)
   if(ind != -1):
     return
@@ -171,6 +181,8 @@ method addChat*(self: Module, itemId: string) =
   if(ind != -1):
     return
   let chatDto = self.controller.getChatDetails(itemId)
+  if chatDto.chatType != ChatType.OneToOne and chatDto.chatType != ChatType.PrivateGroupChat:
+    return
   self.addChat(chatDto)
 
 method setName*(self: Module, itemId: string, name: string) =
