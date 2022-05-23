@@ -20,7 +20,7 @@ Item {
 
     property alias source: bannerPreview.source
     property alias cropRect: bannerPreview.cropRect
-    /*required*/ property alias aspectRatio: bannerPreview.aspectRatio
+    /*required*/ property alias aspectRatio: bannerCropper.aspectRatio
 
     property bool roundedImage: true
 
@@ -58,6 +58,7 @@ Item {
         readonly property string dataImageState: "dataImage"
         readonly property string noImageState: "noImage"
         readonly property string imageSelectedState: "imageSelected"
+        readonly property int buttonsInsideOffset: 5
     }
 
     ColumnLayout {
@@ -72,8 +73,6 @@ Item {
             visible: !bannerEditor.visible
 
             StatusRoundedImage {
-                id: profilePic
-
                 anchors.fill: parent
 
                 visible: root.state === d.dataImageState
@@ -82,22 +81,18 @@ Item {
                 showLoadingIndicator: true
                 border.width: 1
                 border.color: Style.current.border
+                radius: root.roundedImage ? width/2 : bannerPreview.radius
             }
 
-            StatusImageCropPanel
-            {
+            StatusImageCrop {
                 id: bannerPreview
-
                 anchors.fill: parent
 
                 visible: root.state === d.imageSelectedState
-
-                interactive: false
+                windowStyle: bannerCropper.windowStyle
                 wallColor: Theme.palette.statusAppLayout.backgroundColor
                 wallTransparency: 1
-                margins: 0
-
-                windowStyle: roundedImage ? StatusImageCrop.WindowStyle.Rounded : StatusImageCrop.WindowStyle.Rectangular
+                clip:true
             }
 
             StatusRoundButton {
@@ -105,14 +100,23 @@ Item {
 
                 icon.name: "edit"
 
-                // bottom-right corner
-                x: root.userSelectedImage
-                    ? bannerPreview.cropWindow.x + bannerPreview.cropWindow.width - (roundedImage ? editButton.width : editButton.width/2 + bannerPreview.radius)
-                    : parent.width - editButton.width
-                y: (root.userSelectedImage
-                    ? bannerPreview.cropWindow.y + bannerPreview.cropWindow.height - (roundedImage ? editButton.height + Style.current.smallPadding : editButton.height/2)
-                    : parent.width - editButton.height) - Style.current.smallPadding
-
+                readonly property real rotationRadius: roundedImage ? parent.width/2 : bannerEditor.radius
+                transform: [
+                    Translate {
+                        x: -editButton.width/2 - d.buttonsInsideOffset
+                        y: -editButton.height/2 - d.buttonsInsideOffset
+                    },
+                    Rotation { angle: -editRotationTransform.angle },
+                    Rotation {
+                        id: editRotationTransform
+                        angle: 225
+                        origin.x: editButton.rotationRadius
+                    },
+                    Translate {
+                        x: root.roundedImage ? 0 : editButton.parent.width - 2 * editButton.rotationRadius
+                        y: (root.roundedImage ? 0 : editButton.parent.height - 2 * editButton.rotationRadius) + editButton.rotationRadius
+                    }
+                ]
                 type: StatusRoundButton.Type.Secondary
 
                 onClicked: bannerCropperModal.chooseImageToCrop()
@@ -135,9 +139,23 @@ Item {
 
                 icon.name: "add"
 
-                // top-right corner
-                x: parent.width - (roundedImage ? editButton.width : editButton.width/2 + bannerEditor.radius)
-                y: roundedImage ? addButton.height/2 : -addButton.height/2 + bannerEditor.radius
+                readonly property real rotationRadius: root.roundedImage ? parent.width/2 : bannerEditor.radius
+                transform: [
+                    Translate {
+                        x: -addButton.width/2 - d.buttonsInsideOffset
+                        y: -addButton.height/2 + d.buttonsInsideOffset
+                    },
+                    Rotation { angle: -addRotationTransform.angle },
+                    Rotation {
+                        id: addRotationTransform
+                        angle: 135
+                        origin.x: addButton.rotationRadius
+                    },
+                    Translate {
+                        x: root.roundedImage ? 0 : addButton.parent.width - 2 * addButton.rotationRadius
+                        y: addButton.rotationRadius
+                    }
+                ]
 
                 type: StatusRoundButton.Type.Secondary
 
