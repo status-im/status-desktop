@@ -108,6 +108,7 @@ OnboardingBasePage {
                 id: seedLink
                 Layout.alignment: Qt.AlignHCenter
                 color: Theme.palette.primaryColor1
+                font.pixelSize: 15
                 MouseArea {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
