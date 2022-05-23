@@ -51,42 +51,39 @@ SettingsContentBase {
             input.placeholderText: qsTr("Search by a display name or chat key")
         }
 
-        TabBar {
+        StatusTabBar {
             id: contactsTabBar
             Layout.fillWidth: true
             Layout.leftMargin: Style.current.padding
             Layout.rightMargin: Style.current.padding
             Layout.topMargin: 2 * Style.current.padding
-            height: contactsBtn.height
-            background: Rectangle {
-                color: Style.current.transparent
-            }
+            
             StatusTabButton {
                 id: contactsBtn
-                addToWidth: Style.current.bigPadding
-                btnText: qsTr("Contacts")
+                width: implicitWidth
+                text: qsTr("Contacts")
             }
             StatusTabButton {
                 id: pendingRequestsBtn
-                addToWidth: Style.current.bigPadding
+                width: implicitWidth
                 enabled: root.contactsStore.receivedContactRequestsModel.count > 0 ||
                          root.contactsStore.sentContactRequestsModel.count > 0
-                btnText: qsTr("Pending Requests")
+                text: qsTr("Pending Requests")
                 badge.value: root.contactsStore.receivedContactRequestsModel.count
             }
             // Temporary commented until we provide appropriate flags on the `status-go` side to cover all sections.
             //            StatusTabButton {
             //                id: rejectedRequestsBtn
-            //                addToWidth: Style.current.bigPadding
+            //                width: implicitWidth
             //                enabled: root.contactsStore.receivedButRejectedContactRequestsModel.count > 0 ||
             //                         root.contactsStore.sentButRejectedContactRequestsModel.count > 0
             //                btnText: qsTr("Rejected Requests")
             //            }
             StatusTabButton {
                 id: blockedBtn
-                addToWidth: Style.current.bigPadding
+                width: implicitWidth
                 enabled: root.contactsStore.blockedContactsModel.count > 0
-                btnText: qsTr("Blocked")
+                text: qsTr("Blocked")
             }
         }
 

@@ -3,6 +3,8 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
 
+import StatusQ.Controls 0.1
+
 import utils 1.0
 
 import shared 1.0
@@ -40,7 +42,7 @@ Item {
             Layout.fillHeight: true
             Layout.fillWidth: true
 
-            TabBar {
+            StatusTabBar {
                 id: walletTabBar
                 anchors.right: parent.right
                 anchors.rightMargin: Style.current.bigPadding
@@ -48,28 +50,24 @@ Item {
                 anchors.leftMargin: Style.current.bigPadding
                 anchors.top: parent.top
                 anchors.topMargin: Style.current.padding
-                height: assetBtn.height
-                background: Rectangle {
-                    color: Style.current.transparent
-                }
+                
                 StatusTabButton {
                     id: assetBtn
                     //% "Assets"
-                    btnText: qsTrId("wallet-assets")
+                    width: implicitWidth
+                    text: qsTrId("wallet-assets")
                 }
                 StatusTabButton {
                     id: collectiblesBtn
-                    anchors.left: assetBtn.right
-                    anchors.leftMargin: 32
                     //% "Collectibles"
-                    btnText: qsTrId("wallet-collectibles")
+                    width: implicitWidth
+                    text: qsTrId("wallet-collectibles")
                 }
                 StatusTabButton {
                     id: historyBtn
-                    anchors.left: collectiblesBtn.right
-                    anchors.leftMargin: 32
                     //% "History"
-                    btnText: qsTrId("history")
+                    width: implicitWidth
+                    text: qsTrId("history")
                 }
             }
 

@@ -25,33 +25,29 @@ Item {
 
     signal contactSelected(string address, int type)
 
-    TabBar {
+    StatusTabBar {
         id: accountSelectionTabBar
         anchors.top: parent.top
         anchors.topMargin: 20
         width: parent.width
-        height: assetBtn.height
-        background: Rectangle {
-            color: Style.current.transparent
-        }
+        
         StatusTabButton {
             id: assetBtn
             //% "Saved"
-            btnText: qsTr("Saved")
+            width: implicitWidth
+            text: qsTr("Saved")
         }
         StatusTabButton {
             id: collectiblesBtn
-            anchors.left: assetBtn.right
-            anchors.leftMargin: 32
             //% "My Accounts"
-            btnText: qsTr("My Accounts")
+            width: implicitWidth
+            text: qsTr("My Accounts")
         }
         StatusTabButton {
             id: historyBtn
-            anchors.left: collectiblesBtn.right
-            anchors.leftMargin: 32
             //% "Recent"
-            btnText: qsTr("Recent")
+            width: implicitWidth
+            text: qsTr("Recent")
         }
     }
 

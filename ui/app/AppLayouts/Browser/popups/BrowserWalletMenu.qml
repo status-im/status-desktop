@@ -71,12 +71,9 @@ Popup {
             id: networkText
             text: {
                 switch (Web3ProviderStore.currentNetwork) {
-                //% "Mainnet"
-                case Constants.networkMainnet: return qsTrId("mainnet");
-                //% "Ropsten"
-                case Constants.networkRopsten: return qsTrId("ropsten");
-                //% "Unknown"
-                default: return qsTrId("active-unknown")
+                case Constants.networkMainnet: return qsTr("Mainnet");
+                case Constants.networkRopsten: return qsTr("Ropsten");
+                default: return qsTrId("Unknown")
                 }
             }
             font.pixelSize: 15
@@ -87,8 +84,7 @@ Popup {
 
         StatusBaseText {
             id: disconectBtn
-            //% "Disconnect"
-            text: qsTrId("disconnect")
+            text: qsTr("Disconnect")
             font.pixelSize: 15
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
@@ -181,29 +177,20 @@ Popup {
         anchors.topMargin: Style.current.bigPadding
         anchors.bottom: parent.bottom
 
-        TabBar {
+        StatusTabBar {
             id: walletTabBar
             width: parent.width
             anchors.top: parent.top
-            height: assetBtn.height
-            background: Rectangle {
-                color: Style.current.transparent
-                border.width: 0
-            }
 
             StatusTabButton {
                 id: assetBtn
-                //% "Assets"
-                btnText: qsTrId("wallet-assets")
-                anchors.top: parent.top
+                width: implicitWidth
+                text: qsTr("Assets")
             }
             StatusTabButton {
                 id: historyBtn
-                anchors.top: parent.top
-                anchors.left: assetBtn.right
-                anchors.leftMargin: 32
-                //% "History"
-                btnText: qsTrId("history")
+                width: implicitWidth
+                text: qsTrId("History")
             }
         }
 

@@ -17,7 +17,6 @@ SearchBox 1.0 SearchBox.qml
 SeedPhraseTextArea 1.0 SeedPhraseTextArea.qml
 SendToContractWarning 1.0 SendToContractWarning.qml
 SettingsRadioButton 1.0 SettingsRadioButton.qml
-StatusTabButton 1.0 StatusTabButton.qml
 StyledButton 1.0 StyledButton.qml
 StyledTextArea 1.0 StyledTextArea.qml
 StyledTextEdit 1.0 StyledTextEdit.qml

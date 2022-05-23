@@ -20,6 +20,7 @@ Item {
     property string title: ""
     property string searchString: ""
     property string lowerCaseSearchString: searchString.toLowerCase()
+    readonly property int count: contactsList.count
 
     signal contactClicked(string publicKey)
     signal openProfilePopup(string publicKey)
