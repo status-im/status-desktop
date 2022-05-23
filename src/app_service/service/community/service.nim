@@ -25,6 +25,9 @@ type
     community*: CommunityDto
     error*: string
     fromUserAction*: bool
+  
+  CuratedCommunityArgs* = ref object of Args
+    curatedCommunity*: CuratedCommunity
 
   CommunitiesArgs* = ref object of Args
     communities*: seq[CommunityDto]
@@ -84,6 +87,7 @@ const SIGNAL_COMMUNITY_CATEGORY_REORDERED* = "communityCategoryReordered"
 const SIGNAL_COMMUNITY_MEMBER_APPROVED* = "communityMemberApproved"
 const SIGNAL_COMMUNITY_MEMBER_REMOVED* = "communityMemberRemoved"
 const SIGNAL_NEW_REQUEST_TO_JOIN_COMMUNITY* = "newRequestToJoinCommunity"
+const SIGNAL_CURATED_COMMUNITY_FOUND* = "curatedCommunityFound"
 
 QtObject:
   type
@@ -92,12 +96,14 @@ QtObject:
       events: EventEmitter
       chatService: chat_service.Service
       joinedCommunities: Table[string, CommunityDto] # [community_id, CommunityDto]
+      curatedCommunities: Table[string, CuratedCommunity] # [community_id, CuratedCommunity]
       allCommunities: Table[string, CommunityDto] # [community_id, CommunityDto]
       myCommunityRequests*: seq[CommunityMembershipRequestDto]
 
   # Forward declaration
   proc loadAllCommunities(self: Service): seq[CommunityDto]
   proc loadJoinedComunities(self: Service): seq[CommunityDto]
+  proc loadCuratedCommunities(self: Service): seq[CuratedCommunity]
   proc loadCommunitiesSettings(self: Service): seq[CommunitySettingsDto]
   proc loadMyPendingRequestsToJoin*(self: Service)
   proc handleCommunityUpdates(self: Service, communities: seq[CommunityDto], updatedChats: seq[ChatDto])
@@ -116,6 +122,7 @@ QtObject:
     result.threadpool = threadpool
     result.chatService = chatService
     result.joinedCommunities = initTable[string, CommunityDto]()
+    result.curatedCommunities = initTable[string, CuratedCommunity]()
     result.allCommunities = initTable[string, CommunityDto]()
     result.myCommunityRequests = @[]
 
@@ -124,6 +131,13 @@ QtObject:
       var receivedData = CommunitySignal(e)
       self.allCommunities[receivedData.community.id] = receivedData.community
       self.events.emit(SIGNAL_COMMUNITY_DATA_IMPORTED, CommunityArgs(community: receivedData.community))
+
+      if self.curatedCommunities.contains(receivedData.community.id) and not self.curatedCommunities[receivedData.community.id].available:
+        let curatedCommunity = CuratedCommunity(available: true,
+                                                communityId: receivedData.community.id,
+                                                community: receivedData.community)
+        self.curatedCommunities[receivedData.community.id] = curatedCommunity
+        self.events.emit(SIGNAL_CURATED_COMMUNITY_FOUND, CuratedCommunityArgs(curatedCommunity: curatedCommunity))
 
     self.events.on(SignalType.Message.event) do(e: Args):
       var receivedData = MessageSignal(e)
@@ -196,6 +210,10 @@ QtObject:
       self.events.emit(SIGNAL_COMMUNITY_ADDED, CommunityArgs(community: community))
     # add or update community
     self.allCommunities[community.id] = community
+
+    if(self.curatedCommunities.hasKey(community.id)):
+      self.curatedCommunities[community.id].available = true
+      self.curatedCommunities[community.id].community = community
 
     if(not self.joinedCommunities.hasKey(community.id)):
       if (community.joined and community.isMember):
@@ -300,6 +318,10 @@ QtObject:
         if (community.admin):
           self.joinedCommunities[community.id].pendingRequestsToJoin = self.pendingRequestsToJoinForCommunity(community.id)
 
+      let curatedCommunities = self.loadCuratedCommunities()
+      for curatedCommunity in curatedCommunities:
+        self.curatedCommunities[curatedCommunity.communityId] = curatedCommunity
+
       let allCommunities = self.loadAllCommunities()
       for community in allCommunities:
         self.allCommunities[community.id] = community
@@ -326,6 +348,10 @@ QtObject:
     let response = status_go.getJoinedComunities()
     return parseCommunities(response)
 
+  proc loadCuratedCommunities(self: Service): seq[CuratedCommunity] =
+    let response = status_go.getCuratedCommunities()
+    return parseCuratedCommunities(response)
+
   proc loadCommunitiesSettings(self: Service): seq[CommunitySettingsDto] =
     let response = status_go.getCommunitiesSettings()
     return parseCommunitiesSettings(response)
@@ -335,6 +361,9 @@ QtObject:
 
   proc getAllCommunities*(self: Service): seq[CommunityDto] =
     return toSeq(self.allCommunities.values)
+
+  proc getCuratedCommunities*(self: Service): seq[CuratedCommunity] =
+    return toSeq(self.curatedCommunities.values)
 
   proc getCommunityById*(self: Service, communityId: string): CommunityDto =
     if(not self.joinedCommunities.hasKey(communityId)):

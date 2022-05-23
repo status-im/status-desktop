@@ -37,6 +37,10 @@ proc init*(self: Controller) =
     let args = CommunityArgs(e)
     self.delegate.communityAdded(args.community)
 
+  self.events.on(SIGNAL_CURATED_COMMUNITY_FOUND) do(e:Args):
+    let args = CuratedCommunityArgs(e)
+    self.delegate.curatedCommunityAdded(args.curatedCommunity)
+
   self.events.on(SIGNAL_COMMUNITY_ADDED) do(e:Args):
     let args = CommunityArgs(e)
     self.delegate.communityAdded(args.community)
@@ -52,9 +56,13 @@ proc init*(self: Controller) =
     let args = CommunitiesArgs(e)
     for community in args.communities:
       self.delegate.communityEdited(community)
+      self.delegate.curatedCommunityEdited(CuratedCommunity(communityId: community.id, available: true, community:community))
 
 proc getAllCommunities*(self: Controller): seq[CommunityDto] =
   result = self.communityService.getAllCommunities()
+
+proc getCuratedCommunities*(self: Controller): seq[CuratedCommunity] =
+  result = self.communityService.getCuratedCommunities()
 
 proc joinCommunity*(self: Controller, communityId: string): string =
   self.communityService.joinCommunity(communityId)

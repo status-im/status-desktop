@@ -174,6 +174,19 @@ let NETWORKS* = %* [
     "isTest":  false,
     "layer":   2,
     "enabled": true,
+  },
+  {
+    "chainId": 69,
+    "chainName": "Optimistic Ethereum (Kovan)",
+    "rpcUrl": "https://kovan.optimism.io",
+    "blockExplorerUrl": "https://kovan-optimistic.etherscan.io/",
+    "iconUrl": "",
+    "nativeCurrencyName": "Ether",
+    "nativeCurrencySymbol": "ETH",
+    "nativeCurrencyDecimals": 18,
+    "isTest":  true,
+    "layer":   2,
+    "enabled": true,
   }
 ]
 
