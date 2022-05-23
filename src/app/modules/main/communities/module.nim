@@ -75,6 +75,7 @@ method getCommunityItem(self: Module, c: CommunityDto): SectionItem =
       c.admin,
       c.description,
       c.images.thumbnail,
+      c.images.banner,
       icon = "",
       c.color,
       hasNotification = false,

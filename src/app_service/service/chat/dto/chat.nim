@@ -31,6 +31,7 @@ type
   Images* = object
     thumbnail*: string
     large*: string
+    banner*: string
 
 type ChatMember* = object
   id*: string
@@ -135,6 +136,10 @@ proc toImages*(jsonObj: JsonNode): Images =
   var thumbnailObj: JsonNode
   if(jsonObj.getProp("thumbnail", thumbnailObj)):
     discard thumbnailObj.getProp("uri", result.thumbnail)
+
+  var bannerObj: JsonNode
+  if(jsonObj.getProp("banner", bannerObj)):
+    discard bannerObj.getProp("uri", result.banner)
 
 proc toCategory*(jsonObj: JsonNode): Category =
   result = Category()
