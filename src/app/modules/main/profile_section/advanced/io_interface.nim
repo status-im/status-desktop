@@ -99,6 +99,9 @@ method addCustomNetwork*(self: AccessInterface, name: string, endpoint: string, 
   {.slot.} =
   raise newException(ValueError, "No implementation available")
 
+method toggleCommunitiesPortalSection*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method toggleWalletSection*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 

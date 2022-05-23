@@ -169,3 +169,6 @@ QtObject:
 
   proc enableDeveloperFeatures*(self: View) {.slot.} =
     self.delegate.enableDeveloperFeatures()
+
+  proc toggleCommunitiesPortalSection*(self: View) {.slot.} =
+    self.delegate.toggleCommunitiesPortalSection()

@@ -35,6 +35,7 @@ QtObject {
         readonly property string keycard: "keycard"
         readonly property string multiNetwork: "multiNetwork"
         readonly property string communityHistoryArchiveSupport: "communityHistoryArchiveSupport"
+        readonly property string communitiesPortal: "communitiesPortal"
     }
 
     function setGlobalNetworkId() {
@@ -130,6 +131,9 @@ QtObject {
         else if (feature === experimentalFeatures.communities) {
             advancedModule.toggleCommunitySection()
         }
+        else if (feature === experimentalFeatures.communitiesPortal) {
+            advancedModule.toggleCommunitiesPortalSection()
+        }
         else if (feature === experimentalFeatures.communityHistoryArchiveSupport) {
           // toggle history archive support
           advancedModule.toggleCommunityHistoryArchiveSupport()
@@ -152,5 +156,6 @@ QtObject {
         else if (feature === experimentalFeatures.multiNetwork) {
             localAccountSensitiveSettings.isMultiNetworkEnabled = !localAccountSensitiveSettings.isMultiNetworkEnabled
         }
+        
     }
 }

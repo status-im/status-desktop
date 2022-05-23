@@ -66,6 +66,11 @@ type CommunityDto* = object
   settings*: CommunitySettingsDto
   adminSettings*: CommunityAdminSettingsDto
 
+type CuratedCommunity* = object
+    available*: bool
+    communityId*: string
+    community*: CommunityDto
+
 proc toCommunityAdminSettingsDto*(jsonObj: JsonNode): CommunityAdminSettingsDto =
   result = CommunityAdminSettingsDto()
   discard jsonObj.getProp("pinMessageAllMembersEnabled", result.pinMessageAllMembersEnabled)
@@ -133,6 +138,21 @@ proc parseCommunities*(response: RpcResponse[JsonNode]): seq[CommunityDto] =
   result = map(response.result.getElems(),
     proc(x: JsonNode): CommunityDto = x.toCommunityDto())
 
+proc parseCuratedCommunities*(response: RpcResponse[JsonNode]): seq[CuratedCommunity] =
+  if (response.result["communities"].kind == JObject):
+    for (communityId, communityJson) in response.result["communities"].pairs():
+      result.add(CuratedCommunity(
+        available: true,
+        communityId: communityId,
+        community: communityJson.toCommunityDto()
+      ))
+  if (response.result["unknownCommunities"].kind == JArray):
+    for communityId in response.result["unknownCommunities"].items():
+      result.add(CuratedCOmmunity(
+        available: false,
+        communityId: communityId.getStr()
+      ))
+  
 proc contains(arrayToSearch: seq[int], searched: int): bool =
   for element in arrayToSearch:
     if element == searched:
