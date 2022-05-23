@@ -91,6 +91,7 @@ OnboardingBasePage {
                 Layout.alignment: Qt.AlignHCenter
                 color: Theme.palette.primaryColor1
                 text: qsTr("I prefer to use my password")
+                font.pixelSize: 15
                 MouseArea {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
