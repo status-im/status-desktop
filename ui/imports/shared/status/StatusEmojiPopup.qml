@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.3
 import QtGraphicalEffects 1.0
 
 import StatusQ.Controls 0.1
+import StatusQ.Components 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
 
 import utils 1.0
@@ -244,10 +245,10 @@ Popup {
                 Repeater {
                     id: skinColorEmojiRepeater
                     model: ["1f590-1f3fb", "1f590-1f3fc", "1f590-1f3fd", "1f590-1f3fe", "1f590-1f3ff", "1f590"]
-                    delegate: SVGImage {
+                    delegate: StatusEmoji {
                         width: 22
                         height: 22
-                        source: Style.emoji(modelData)
+                        emojiId: modelData
                         MouseArea {
                             cursorShape: Qt.PointingHandCursor
                             anchors.fill: parent
@@ -261,14 +262,14 @@ Popup {
                 }
             }
 
-            SVGImage {
+            StatusEmoji {
                 width: 22
                 height: 22
                 anchors.verticalCenter: searchBox.verticalCenter
                 anchors.right: parent.right
                 anchors.rightMargin: emojiHeader.headerMargin
                 visible: !skinToneEmoji.expandSkinColorOptions
-                source: Style.emoji("1f590" + ((localAccountSensitiveSettings.skinColor !== "" && visible) ? ("-" + localAccountSensitiveSettings.skinColor) : ""))
+                emojiId: "1f590" + ((localAccountSensitiveSettings.skinColor !== "" && visible) ? ("-" + localAccountSensitiveSettings.skinColor) : "")
                 MouseArea {
                     cursorShape: Qt.PointingHandCursor
                     anchors.fill: parent

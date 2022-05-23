@@ -5,6 +5,7 @@ import utils 1.0
 import shared 1.0
 import shared.panels 1.0
 
+import StatusQ.Components 0.1
 
 Item {
     id: emojiSection
@@ -89,10 +90,10 @@ Item {
                 anchors.topMargin: emojiSection.imageMargin
                 anchors.leftMargin: emojiSection.imageMargin
 
-                SVGImage {
+                StatusEmoji {
                     width: emojiSection.imageWidth
                     height: emojiSection.imageWidth
-                    source: Style.emoji(modelData.filename)
+                    emojiId: modelData.filename
 
                     MouseArea {
                         cursorShape: Qt.PointingHandCursor
