@@ -79,6 +79,7 @@
         <file>src/StatusQ/Controls/StatusSwitchTabBar.qml</file>
         <file>src/StatusQ/Controls/StatusSwitchTabButton.qml</file>
         <file>src/StatusQ/Controls/StatusTabBarIconButton.qml</file>
+        <file>src/StatusQ/Controls/StatusTabButton.qml</file>
         <file>src/StatusQ/Controls/StatusTokenInlineSelector.qml</file>
         <file>src/StatusQ/Controls/StatusToolTip.qml</file>
         <file>src/StatusQ/Controls/StatusWalletColorButton.qml</file>
@@ -10496,5 +10497,6 @@
         <file>src/assets/twemoji/svg/ae.svg</file>
         <file>src/assets/twemoji/svg/e50a.svg</file>
         <file>src/assets/twemoji/LICENSE</file>
+        <file>src/StatusQ/Controls/StatusTabBar.qml</file>
     </qresource>
 </RCC>

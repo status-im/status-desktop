@@ -42,5 +42,6 @@
         <file>pages/StatusTagSelectorPage.qml</file>
         <file>pages/StatusToastMessagePage.qml</file>
         <file>pages/StatusWizardStepperPage.qml</file>
+        <file>pages/StatusTabBarButtonPage.qml</file>
     </qresource>
 </RCC>
