@@ -141,12 +141,6 @@ QtObject:
 
     self.countChanged()
 
-  proc removeItemsByType*(self: Model, itemType: Type) =
-    let items = self.items
-    for i in items:
-      if(i.itemType == itemType):
-        self.removeItemById(i.id)
-
   iterator modelIterator*(self: Model): Item =
     for i in 0 ..< self.items.len:
       yield self.items[i]
