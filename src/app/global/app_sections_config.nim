@@ -1,6 +1,10 @@
 const CHAT_SECTION_NAME* = "Chat"
 const CHAT_SECTION_ICON* = "chat"
 
+const COMMUNITIESPORTAL_SECTION_ID* = "communitiesPortal"
+const COMMUNITIESPORTAL_SECTION_NAME* = "Communities Portal"
+const COMMUNITIESPORTAL_SECTION_ICON* = "communities"
+
 const WALLET_SECTION_ID* = "wallet"
 const WALLET_SECTION_NAME* = "Wallet"
 const WALLET_SECTION_ICON* = "wallet"

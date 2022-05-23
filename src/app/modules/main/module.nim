@@ -278,6 +278,21 @@ method load*[T](
     self.channelGroupModules[channelGroup.id].load(channelGroup, events, settingsService,
       contactsService, chatService, communityService, messageService, gifService, mailserversService)
 
+  # Communities Portal Section
+  let communitiesPortalSectionItem = initItem(conf.COMMUNITIESPORTAL_SECTION_ID, SectionType.CommunitiesPortal, conf.COMMUNITIESPORTAL_SECTION_NAME,
+  amISectionAdmin = false,
+  description = "",
+  image = "",
+  conf.COMMUNITIESPORTAL_SECTION_ICON,
+  color = "",
+  hasNotification = false,
+  notificationsCount = 0,
+  active = false,
+  enabled = true) #singletonInstance.localAccountSensitiveSettings.getIsCommunitiesPortalEnabled())
+  self.view.model().addItem(communitiesPortalSectionItem)
+  if(activeSectionId == communitiesPortalSectionItem.id):
+    activeSection = communitiesPortalSectionItem
+
   # Wallet Section
   let walletSectionItem = initItem(conf.WALLET_SECTION_ID, SectionType.Wallet, conf.WALLET_SECTION_NAME,
   amISectionAdmin = false,
@@ -351,6 +366,7 @@ method load*[T](
   self.nodeSectionModule.load()
   # Load wallet last as it triggers events that are listened by other modules
   self.walletSectionModule.load()
+  #self.communitiesPortalSectionModule.load()
 
   # Set active section on app start
   self.setActiveSection(activeSection)
@@ -362,6 +378,9 @@ proc checkIfModuleDidLoad [T](self: Module[T]) =
   for cModule in self.channelGroupModules.values:
     if(not cModule.isLoaded()):
       return
+
+#  if (not self.communitiesPortalSectionModule.isLoaded()):
+#    return
 
   if (not self.walletSectionModule.isLoaded()):
     return
@@ -410,6 +429,9 @@ method activityCenterDidLoad*[T](self: Module[T]) =
 
 method communitiesModuleDidLoad*[T](self: Module[T]) =
   self.checkIfModuleDidLoad()
+
+#method communitiesPortalSectionDidLoad*[T](self: Module[T]) =
+#  self.checkIfModuleDidLoad()
 
 method walletSectionDidLoad*[T](self: Module[T]) =
   self.checkIfModuleDidLoad()
@@ -482,6 +504,10 @@ proc setSectionAvailability[T](self: Module[T], sectionType: SectionType, availa
     self.view.model().disableSection(sectionType)
 
 method toggleSection*[T](self: Module[T], sectionType: SectionType) =
+  #if (sectionType == SectionType.CommunitiesPortal):
+  #  let enabled = true #singletonInstance.localAccountSensitiveSettings.getIsCommunitiesPortalEnabled()
+  #  self.setSectionAvailability(sectionType, not enabled)
+  #  singletonInstance.localAccountSensitiveSettings.setIsWalletEnabled(not enabled)
   if (sectionType == SectionType.Wallet):
     let enabled = singletonInstance.localAccountSensitiveSettings.getIsWalletEnabled()
     self.setSectionAvailability(sectionType, not enabled)

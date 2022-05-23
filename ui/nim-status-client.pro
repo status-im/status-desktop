@@ -31,6 +31,7 @@ SOURCES = *.qml \
           app/AppLayouts/Chat/ChatColumn/ChatComponents/*.qml \
           app/AppLayouts/Chat/ChatColumn/MessageComponents/*.qml \
           app/AppLayouts/Chat/ChatColumn/MessageComponents/TransactionComponents/*.qml \
+          app/AppLayouts/CommunitiesPortalLayout/*.qml \
           app/AppLayouts/Chat/ContactsColumn/*.qml \
           app/AppLayouts/Chat/components/*.qml \
           app/AppLayouts/Node/*.qml \
@@ -46,7 +47,7 @@ SOURCES = *.qml \
           app/AppLayouts/Wallet/*.qml \
           app/AppLayouts/Wallet/components/*.qml \
           app/AppLayouts/Wallet/components/collectiblesComponents/*.qml \
-          app/AppLayouts/Wallet/data/Currencies.qml \
+          app/AppLayouts/Wallet/data/Currencies.qml \          
 }
 
 TRANSLATIONS += \

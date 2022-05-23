@@ -13,6 +13,7 @@ import AppLayouts.Chat 1.0
 import AppLayouts.Chat.popups 1.0
 import AppLayouts.Profile 1.0
 import AppLayouts.Profile.popups 1.0
+import AppLayouts.CommunitiesPortal 1.0
 
 import utils 1.0
 import shared 1.0
@@ -466,6 +467,9 @@ Item {
                                       " or section id: ", mainModule.activeSection.id)
                         return Constants.appViewStackIndex.community
                     }
+                    else if(mainModule.activeSection.sectionType === Constants.appSection.communitiesPortal) {
+                        return Constants.appViewStackIndex.communitiesPortal
+                    }
                     else if(mainModule.activeSection.sectionType === Constants.appSection.wallet) {
                         return Constants.appViewStackIndex.wallet
                     }
@@ -528,6 +532,13 @@ Item {
                     Component.onCompleted: {
                         rootStore.chatCommunitySectionModule = mainModule.getChatSectionModule()
                     }
+                }
+
+                CommunitiesPortalLayout {
+                    id: communitiesPortalLayoutContainer
+                    Layout.fillWidth: true
+                    Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+                    Layout.fillHeight: true
                 }
 
                 WalletLayout {
