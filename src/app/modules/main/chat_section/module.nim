@@ -207,9 +207,11 @@ proc createItemFromPublicKey(self: Module, publicKey: string): contacts_item.Ite
   return contacts_item.initItem(
     contactDetails.details.id,
     contactDetails.displayName,
+    contactDetails.details.localNickname,
     contactDetails.icon,
     contactDetails.details.isMutualContact(),
     contactDetails.details.isBlocked(),
+    false, # TODO: online status
     contactDetails.details.isContactVerified(),
     contactDetails.details.isContactUntrustworthy()
   )

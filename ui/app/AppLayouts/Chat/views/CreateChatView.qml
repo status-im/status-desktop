@@ -33,7 +33,9 @@ Page {
         delegate: Item {
             property string publicId: model.pubKey
             property string name: model.name
+            property string nickName: model.nickName
             property string icon: model.icon
+            property bool onlineStatus: model.onlineStatus
         }
     }
 
@@ -44,8 +46,12 @@ Page {
                 for (var i = 0; i < contactsModelListView.count; i ++) {
                     var entry = contactsModelListView.itemAtIndex(i);
                     contactsModel.insert(contactsModel.count,
-                    {"publicId": entry.publicId, "name": entry.name,
-                     "icon": entry.icon});
+                    {"publicId": entry.publicId,
+                     "name": entry.name,
+                     "icon": entry.icon,
+                     "nickName": entry.nickName,
+                     "onlineStatus": entry.onlineStatus
+                     });
                 }
                 tagSelector.sortModel(root.contactsModel);
             } else {

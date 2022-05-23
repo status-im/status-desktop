@@ -5,7 +5,9 @@ type
   ModelRole {.pure.} = enum
     PubKey = UserRole + 1
     Name
+    NickName
     Icon
+    OnlineStatus
     IsMutualContact
     IsBlocked
     VerificationState
@@ -39,7 +41,9 @@ QtObject:
     {
       ModelRole.PubKey.int:"pubKey",
       ModelRole.Name.int:"name",
+      ModelRole.NickName.int:"nickName",
       ModelRole.Icon.int:"icon",
+      ModelRole.OnlineStatus.int:"onlineStatus",
       ModelRole.IsMutualContact.int:"isMutualContact",
       ModelRole.IsBlocked.int:"isBlocked",
       ModelRole.VerificationState.int:"verificationState"
@@ -58,8 +62,12 @@ QtObject:
         result = newQVariant(item.pubKey)
       of ModelRole.Name:
         result = newQVariant(item.name)
+      of ModelRole.NickName:
+        result = newQVariant(item.localNickname)
       of ModelRole.Icon:
         result = newQVariant(item.icon)
+      of ModelRole.OnlineStatus:
+        result = newQVariant(item.onlineStatus)
       of ModelRole.IsMutualContact:
         result = newQVariant(item.isMutualContact)
       of ModelRole.IsBlocked:
@@ -124,7 +132,9 @@ QtObject:
 
     self.dataChanged(index, index, @[
       ModelRole.Name.int,
+      ModelRole.NickName.int,
       ModelRole.Icon.int,
+      ModelRole.OnlineStatus.int,
       ModelRole.IsMutualContact.int,
       ModelRole.IsBlocked.int,
       ModelRole.VerificationState.int

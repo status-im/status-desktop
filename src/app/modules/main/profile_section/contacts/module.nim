@@ -42,8 +42,8 @@ proc createItemFromPublicKey(self: Module, publicKey: string): Item =
   let contact =  self.controller.getContact(publicKey)
   let (name, image) = self.controller.getContactNameAndImage(contact.id)
 
-  return initItem(contact.id, name, image, contact.isMutualContact(), contact.isBlocked(),
-  contact.isContactVerified(), contact.isContactUntrustworthy())
+  return initItem(contact.id, contact.userNameOrAlias(), contact.localNickname, image, contact.isMutualContact(), 
+                  contact.isBlocked(), false, contact.isContactVerified(), contact.isContactUntrustworthy()) # TODO: online status
 
 proc buildModel(self: Module, model: Model, group: ContactsGroup) =
   var items: seq[Item]
