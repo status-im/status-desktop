@@ -89,11 +89,11 @@ Column {
         function convertStrength(score) {
             var strength = StatusPasswordStrengthIndicator.Strength.None
             switch(score) {
-                case 0: strength = StatusPasswordStrengthIndicator.Strength.VeryWeak; break
-                case 1: strength = StatusPasswordStrengthIndicator.Strength.Weak; break
-                case 2: strength = StatusPasswordStrengthIndicator.Strength.SoSo; break
-                case 3: strength = StatusPasswordStrengthIndicator.Strength.Good; break
-                case 4: strength = StatusPasswordStrengthIndicator.Strength.Great; break
+            case 0: strength = StatusPasswordStrengthIndicator.Strength.VeryWeak; break
+            case 1: strength = StatusPasswordStrengthIndicator.Strength.Weak; break
+            case 2: strength = StatusPasswordStrengthIndicator.Strength.SoSo; break
+            case 3: strength = StatusPasswordStrengthIndicator.Strength.Good; break
+            case 4: strength = StatusPasswordStrengthIndicator.Strength.Great; break
             }
             if(strength > 4)
                 strength = StatusPasswordStrengthIndicator.Strength.Great
@@ -128,7 +128,7 @@ Column {
             return false
         }
 
-        function isTooShort() { return newPswInput.text.length < root.minPswLen }        
+        function isTooShort() { return newPswInput.text.length < root.minPswLen }
     }
 
     spacing: 3 * Style.current.padding / 2
@@ -222,6 +222,9 @@ Column {
 
                 // Update strength indicator:
                 strengthInditactor.strength = d.convertStrength(RootStore.getPasswordStrengthScore(newPswInput.text, root.onboarding))
+                if (textField.text.length === confirmPswInput.text.length) {
+                    root.checkPasswordMatches(false)
+                }
             }
             Keys.onReturnPressed: { root.returnPressed() }
 
