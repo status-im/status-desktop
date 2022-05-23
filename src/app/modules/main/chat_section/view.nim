@@ -244,8 +244,8 @@ QtObject:
   proc banUserFromCommunity*(self: View, pubKey: string) {.slot.} =
     self.delegate.banUserFromCommunity(pubKey)
 
-  proc editCommunity*(self: View, name: string, description: string, access: int, color: string, imagePath: string, aX: int, aY: int, bX: int, bY: int, historyArchiveSupportEnabled: bool, pinMessageAllMembersEnabled: bool) {.slot.} =
-    self.delegate.editCommunity(name, description, access, color, imagePath, aX, aY, bX, bY, historyArchiveSupportEnabled, pinMessageAllMembersEnabled)
+  proc editCommunity*(self: View, name: string, description: string, access: int, color: string, imagePath: string, aX: int, aY: int, bX: int, bY: int, bannerJsonData: string, historyArchiveSupportEnabled: bool, pinMessageAllMembersEnabled: bool) {.slot.} =
+    self.delegate.editCommunity(name, description, access, color, imagePath, aX, aY, bX, bY, bannerJsonData, historyArchiveSupportEnabled, pinMessageAllMembersEnabled)
 
   proc exportCommunity*(self: View): string {.slot.} =
     self.delegate.exportCommunity()

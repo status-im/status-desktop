@@ -19,6 +19,7 @@ type
     amISectionAdmin: bool
     description: string
     image: string
+    bannerImageData: string
     icon: string
     color: string
     hasNotification: bool
@@ -44,6 +45,7 @@ proc initItem*(
     amISectionAdmin = false,
     description = "",
     image = "",
+    bannerImageData = "",
     icon = "",
     color = "",
     hasNotification = false,
@@ -68,6 +70,7 @@ proc initItem*(
   result.amISectionAdmin = amISectionAdmin
   result.description = description
   result.image = image
+  result.bannerImageData = bannerImageData
   result.icon = icon
   result.color = color
   result.hasNotification = hasNotification
@@ -99,6 +102,7 @@ proc `$`*(self: SectionItem): string =
     amISectionAdmin: {self.amISectionAdmin},
     description: {self.description},
     image: {self.image},
+    bannerImageData: {self.bannerImageData},
     icon: {self.icon},
     color: {self.color},
     hasNotification: {self.hasNotification},
@@ -134,6 +138,9 @@ proc description*(self: SectionItem): string {.inline.} =
 
 proc image*(self: SectionItem): string {.inline.} =
   self.image
+
+proc bannerImageData*(self: SectionItem): string {.inline.} =
+  self.bannerImageData
 
 proc icon*(self: SectionItem): string {.inline.} =
   self.icon

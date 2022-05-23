@@ -10,23 +10,26 @@ import StatusQ.Components 0.1
 import "../../layouts"
 
 /*! TODO: very confusing to be refactored
-    The "API" properties are just for input purpose to and to track the inital state
-        that will be used in evaluating the dirty flag. They should not be updated based
-        on the user input. The final values are accessed through the \c item member of \c edit property
+
+    The "API" properties are just for input purposes and to track the initial state
+    used in evaluating the dirty flag. They should not be updated based
+    on user input. The final relevant values are accessed through the \c item member of \c edit property
  */
 StackLayout {
     id: root
 
     property string name
     property string description
-    property string image
+    property string logoImageData
+    property string bannerImageData
+    property rect bannerCropRect
     property color color
     property bool editable: false
     property bool owned: false
     property bool isCommunityHistoryArchiveSupportEnabled: false
     property bool historyArchiveSupportToggle: false
 
-    signal edited(Item item) // item containing edited fields (name, description, image, color)
+    signal edited(Item item) // item containing edited fields (name, description, logoImagePath, bannerPath, bannerCropRect, color)
 
     clip: true
 
@@ -47,7 +50,7 @@ StackLayout {
                     icon {
                         width: 80
                         height: 80
-                        isLetterIdenticon: !root.image
+                        isLetterIdenticon: !root.logoImageData
                         color: root.color
                         letterSize: width / 2.4
                     }
@@ -55,7 +58,7 @@ StackLayout {
                     image {
                         width: 80
                         height: 80
-                        source: root.image
+                        source: root.logoImageData
                     }
                 }
 
@@ -132,19 +135,24 @@ StackLayout {
             name: root.name
             description: root.description
             color: root.color
-            image: root.image
+            logoImageData: root.logoImageData
+            bannerImageData: root.bannerImageData
             isCommunityHistoryArchiveSupportEnabled: root.isCommunityHistoryArchiveSupportEnabled
             historyArchiveSupportToggle: root.historyArchiveSupportToggle
 
             Component.onCompleted: {
                 editCommunityPage.dirty =
                         Qt.binding(() => {
-                                       return root.name != name ||
-                                              root.description != description ||
-                                              root.image != image ||
-                                              root.color != color ||
+                                       return root.name !== name ||
+                                              root.description !== description ||
+                                              logoImagePath.length > 0 ||
+                                              root.color !== color ||
+                                              bannerPath.length > 0 ||
+                                              isValidRect(bannerCropRect) ||
                                               root.historyArchiveSupportToggle !== historyArchiveSupportToggle
                                    })
+
+                function isValidRect(r /*rect*/) { return r.width !== 0 && r.height !== 0 }
             }
         }
 

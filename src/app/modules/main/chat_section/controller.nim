@@ -378,6 +378,7 @@ proc editCommunity*(
     color: string,
     imageUrl: string,
     aX: int, aY: int, bX: int, bY: int,
+    bannerJsonStr: string,
     historyArchiveSupportEnabled: bool,
     pinMessageAllMembersEnabled: bool) =
   self.communityService.editCommunity(
@@ -388,6 +389,7 @@ proc editCommunity*(
     color,
     imageUrl,
     aX, aY, bX, bY,
+    bannerJsonStr,
     historyArchiveSupportEnabled,
     pinMessageAllMembersEnabled)
 

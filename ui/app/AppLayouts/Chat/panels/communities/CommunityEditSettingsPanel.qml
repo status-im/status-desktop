@@ -23,11 +23,15 @@ Flickable {
 
     property alias name: nameInput.text
     property alias description: descriptionTextInput.text
-    property alias image: addImageButton.selectedImage
+    property alias logoImagePath: addImageButton.selectedImage
+    property string logoImageData: ""
     readonly property alias imageAx: imageCropperModal.aX
     readonly property alias imageAy: imageCropperModal.aY
     readonly property alias imageBx: imageCropperModal.bX
     readonly property alias imageBy: imageCropperModal.bY
+    property string bannerImageData: ""
+    property alias bannerPath: bannerEditor.source
+    property alias bannerCropRect: bannerEditor.cropRect
     property bool isCommunityHistoryArchiveSupportEnabled: false
     property alias historyArchiveSupportToggle: historyArchiveSupportToggle.checked
 
@@ -91,12 +95,10 @@ Flickable {
         }
 
         ColumnLayout {
-            Layout.fillWidth: true
             spacing: 8
 
             StatusBaseText {
-                //% "Thumbnail image"
-                text: qsTrId("thumbnail-image")
+                text: qsTr("Community logo")
                 font.pixelSize: 15
                 color: Theme.palette.directColor1
             }
@@ -121,11 +123,12 @@ Flickable {
                         id: imageDialog
                         title: qsTr("Please choose an image")
                         folder: shortcuts.pictures
-                        nameFilters: [//% "Image files (*.jpg *.jpeg *.png)"
-                            qsTrId("image-files----jpg---jpeg---png-")]
+                        nameFilters: [qsTr("Image files (*.jpg *.jpeg *.png)")]
                         onAccepted: {
-                            addImageButton.selectedImage = imageDialog.fileUrls[0]
-                            imageCropperModal.open()
+                            if(imageDialog.fileUrls.length > 0) {
+                                addImageButton.selectedImage = imageDialog.fileUrls[0]
+                                imageCropperModal.open()
+                            }
                         }
                     }
 
@@ -135,12 +138,14 @@ Flickable {
                         width: parent.width
                         height: parent.height
                         radius: parent.width / 2
-                        visible: !!addImageButton.selectedImage
+                        visible: !!addImageButton.selectedImage || !!root.logoImageData
 
                         Image {
                             id: imagePreview
-                            visible: !!addImageButton.selectedImage
+                            visible: !!addImageButton.selectedImage || !!root.logoImageData
                             source: addImageButton.selectedImage
+                                        ? addImageButton.selectedImage
+                                        : root.logoImageData
                             fillMode: Image.PreserveAspectFit
                             width: parent.width
                             height: parent.height
@@ -156,30 +161,10 @@ Flickable {
                         }
                     }
 
-                    Item {
-                        id: addImageCenter
-                        visible: !imagePreview.visible
-                        width: uploadText.width
-                        height: childrenRect.height
+                    NoImageUploadedPanel {
                         anchors.centerIn: parent
 
-                        SVGImage {
-                            id: imageImg
-                            source: Style.svg("images_icon")
-                            width: 20
-                            height: 18
-                            anchors.horizontalCenter: parent.horizontalCenter
-                        }
-
-                        StatusBaseText {
-                            id: uploadText
-                            //% "Upload"
-                            text: qsTrId("upload")
-                            anchors.top: imageImg.bottom
-                            anchors.topMargin: 5
-                            font.pixelSize: 15
-                            color: Theme.palette.baseColor1
-                        }
+                        visible: !imagePreview.visible
                     }
 
                     StatusRoundButton {
@@ -205,6 +190,43 @@ Flickable {
                         ratio: "1:1"
                     }
                 }
+            }
+
+            // Banner
+            //
+            StatusBaseText {
+                text: qsTr("Community banner")
+
+                font.pixelSize: 15
+                color: Theme.palette.directColor1
+            }
+
+            EditCroppedImagePanel {
+                id: bannerEditor
+
+                Layout.preferredWidth: 475
+                Layout.preferredHeight: Layout.preferredWidth / aspectRatio
+                Layout.alignment: Qt.AlignHCenter
+
+                imageFileDialogTitle: qsTr("Choose an image for banner")
+                title: qsTr("Community banner")
+                acceptButtonText: qsTr("Make this my Community banner")
+
+                roundedImage: false
+                aspectRatio: 375/184
+
+                dataImage: root.bannerImageData
+
+                NoImageUploadedPanel {
+                    anchors.centerIn: parent
+
+                    visible: !bannerEditor.userSelectedImage && !root.bannerImageData
+                    showARHint: true
+                }
+            }
+
+            Rectangle {
+                Layout.fillWidth: true
             }
         }
 

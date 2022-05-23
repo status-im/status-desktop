@@ -12,6 +12,7 @@ type
     AmISectionAdmin
     Description
     Image
+    BannerImageData
     Icon
     Color
     HasNotification
@@ -72,6 +73,7 @@ QtObject:
       ModelRole.AmISectionAdmin.int: "amISectionAdmin",
       ModelRole.Description.int:"description",
       ModelRole.Image.int:"image",
+      ModelRole.BannerImageData.int:"bannerImageData",
       ModelRole.Icon.int:"icon",
       ModelRole.Color.int:"color",
       ModelRole.HasNotification.int:"hasNotification",
@@ -114,6 +116,8 @@ QtObject:
       result = newQVariant(item.description)
     of ModelRole.Image:
       result = newQVariant(item.image)
+    of ModelRole.BannerImageData:
+      result = newQVariant(item.bannerImageData)
     of ModelRole.Icon:
       result = newQVariant(item.icon)
     of ModelRole.Color:
@@ -211,6 +215,7 @@ QtObject:
       ModelRole.Name.int,
       ModelRole.Description.int,
       ModelRole.Image.int,
+      ModelRole.BannerImageData.int,
       ModelRole.Icon.int,
       ModelRole.Color.int,
       ModelRole.HasNotification.int,
@@ -312,6 +317,7 @@ QtObject:
           "amISectionAdmin": item.amISectionAdmin,
           "description": item.description,
           "image": item.image,
+          "bannerImageData": item.bannerImageData,
           "icon": item.icon,
           "color": item.color,
           "hasNotification": item.hasNotification,

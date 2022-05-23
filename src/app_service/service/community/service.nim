@@ -572,6 +572,7 @@ QtObject:
       color: string,
       imageUrl: string,
       aX: int, aY: int, bX: int, bY: int,
+      bannerJsonStr: string,
       historyArchiveSupportEnabled: bool,
       pinMessageAllMembersEnabled: bool) =
     try:
@@ -584,6 +585,7 @@ QtObject:
         color,
         image,
         aX, aY, bX, bY,
+        bannerJsonStr,
         historyArchiveSupportEnabled,
         pinMessageAllMembersEnabled)
 

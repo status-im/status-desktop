@@ -197,6 +197,7 @@ proc createChannelGroupItem[T](self: Module[T], c: ChannelGroupDto): SectionItem
     c.admin,
     c.description,
     c.images.thumbnail,
+    c.images.banner,
     icon = if (isCommunity): "" else: conf.CHAT_SECTION_ICON,
     c.color,
     hasNotification,

@@ -116,7 +116,8 @@ StatusAppTwoPanelLayout {
             CommunityOverviewSettingsPanel {
                 name: root.community.name
                 description: root.community.description
-                image: root.community.image
+                logoImageData: root.community.image
+                bannerImageData: root.community.bannerImageData
                 color: root.community.color
                 editable: root.community.amISectionAdmin
                 isCommunityHistoryArchiveSupportEnabled: root.rootStore.isCommunityHistoryArchiveSupportEnabled
@@ -128,12 +129,13 @@ StatusAppTwoPanelLayout {
                         Utils.filterXSS(item.description),
                         root.community.access,
                         item.color.toString().toUpperCase(),
-                        item.image === root.community.image ? "" : item.image,
+                        item.logoImagePath,
                         item.imageAx,
                         item.imageAy,
                         item.imageBx,
                         item.imageBy,
-                        root.rootStore.isCommunityHistoryArchiveSupportEnabled,
+                        JSON.stringify({imagePath: String(item.bannerPath).replace("file://", ""), cropRect: item.bannerCropRect}),
+                        item.historyArchiveSupportToggle,
                         false /*TODO port the modal implementation*/
                     )
                 }

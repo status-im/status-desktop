@@ -59,6 +59,12 @@ QtObject:
   QtProperty[string] image:
     read = getImage
 
+  proc getBannerImageData(self: ActiveSection): string {.slot.} =
+    return self.item.bannerImageData
+
+  QtProperty[string] bannerImageData:
+    read = getBannerImageData
+
   proc getIcon(self: ActiveSection): string {.slot.} =
     return self.item.icon
 
