@@ -4,6 +4,8 @@ import ./io_interface
 import ../../shared_models/section_model
 import ../../shared_models/section_item
 import ../../shared_models/active_section
+import ./models/curated_community_item
+import ./models/curated_community_model
 
 QtObject:
   type
@@ -12,11 +14,15 @@ QtObject:
       model: SectionModel
       modelVariant: QVariant
       observedItem: ActiveSection
+      curatedCommunitiesModel: CuratedCommunityModel
+      curatedCommunitiesModelVariant: QVariant
 
   proc delete*(self: View) =
     self.model.delete
     self.modelVariant.delete
     self.observedItem.delete
+    self.curatedCommunitiesModel.delete
+    self.curatedCommunitiesModelVariant.delete
     self.QObject.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =
@@ -25,6 +31,8 @@ QtObject:
     result.delegate = delegate
     result.model = newModel()
     result.modelVariant = newQVariant(result.model)
+    result.curatedCommunitiesModel = newCuratedCommunityModel()
+    result.curatedCommunitiesModelVariant = newQVariant(result.curatedCommunitiesModel)
     result.observedItem = newActiveSection()
 
   proc load*(self: View) =
@@ -45,6 +53,15 @@ QtObject:
 
   QtProperty[QVariant] model:
     read = getModel
+
+  proc curatedCommunitiesModel*(self: View): CuratedCommunityModel =
+    result = self.curatedCommunitiesModel
+
+  proc getCuratedCommunitiesModel(self: View): QVariant {.slot.} =
+    return self.curatedCommunitiesModelVariant
+
+  QtProperty[QVariant] curatedCommunities:
+    read = getCuratedCommunitiesModel
 
   proc observedItemChanged*(self:View) {.signal.}
 

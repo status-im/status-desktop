@@ -10,6 +10,10 @@ proc getJoinedComunities*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* []
   result = callPrivateRPC("joinedCommunities".prefix, payload)
 
+proc getCuratedCommunities*(): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* []
+  result = callPrivateRPC("curatedCommunities".prefix, payload)
+
 proc getAllCommunities*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = callPrivateRPC("communities".prefix)
 

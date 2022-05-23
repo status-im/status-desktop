@@ -160,6 +160,9 @@ proc addCustomNetwork*(self: Controller, network: settings_service.Network) =
 
   self.delegate.onCustomNetworkAdded(network)
 
+proc toggleCommunitiesPortalSection*(self: Controller) =
+  self.events.emit(TOGGLE_SECTION, ToggleSectionArgs(sectionType: SectionType.CommunitiesPortal))
+
 proc toggleWalletSection*(self: Controller) =
   self.events.emit(TOGGLE_SECTION, ToggleSectionArgs(sectionType: SectionType.Wallet))
 

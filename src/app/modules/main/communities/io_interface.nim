@@ -16,6 +16,9 @@ method isLoaded*(self: AccessInterface): bool {.base.} =
 method setAllCommunities*(self: AccessInterface, communities: seq[CommunityDto]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method setCuratedCommunities*(self: AccessInterface, curatedCommunities: seq[CommunityDto]) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method getCommunityItem*(self: AccessInterface, community: CommunityDto): SectionItem {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -80,6 +83,12 @@ method communityEdited*(self: AccessInterface, community: CommunityDto) {.base.}
   raise newException(ValueError, "No implementation available")
 
 method communityAdded*(self: AccessInterface, community: CommunityDto) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method curatedCommunityAdded*(self: AccessInterface, community: CuratedCommunity) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method curatedCommunityEdited*(self: AccessInterface, community: CuratedCommunity) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method communityImported*(self: AccessInterface, community: CommunityDto) {.base.} =

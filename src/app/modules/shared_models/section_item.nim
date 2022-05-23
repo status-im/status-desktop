@@ -5,11 +5,12 @@ import ../main/communities/models/[pending_request_item, pending_request_model]
 type
   SectionType* {.pure.} = enum
     Chat = 0
-    Community,
+    Community,    
     Wallet,
     Browser,
     ProfileSettings,
-    NodeManagement
+    NodeManagement,
+    CommunitiesPortal
 
 type
   SectionItem* = object

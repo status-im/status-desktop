@@ -3,6 +3,8 @@ import NimQml, json, sequtils, sugar
 import ./io_interface
 import ../io_interface as delegate_interface
 import ./view, ./controller
+import ./models/curated_community_item
+import ./models/curated_community_model
 import ../../shared_models/section_item
 import ../../shared_models/[user_item, user_model, section_model]
 import ../../../global/global_singleton
@@ -29,6 +31,7 @@ type
 
 # Forward declaration
 method setAllCommunities*(self: Module, communities: seq[CommunityDto])
+method setCuratedCommunities*(self: Module, curatedCommunities: seq[CuratedCommunity])
 
 proc newModule*(
     delegate: delegate_interface.AccessInterface,
@@ -64,6 +67,7 @@ method viewDidLoad*(self: Module) =
   self.moduleLoaded = true
 
   self.setAllCommunities(self.controller.getAllCommunities())
+  self.setCuratedCommunities(self.controller.getCuratedCommunities())
 
   self.delegate.communitiesModuleDidLoad()
 
@@ -104,6 +108,16 @@ method getCommunityItem(self: Module, c: CommunityDto): SectionItem =
       historyArchiveSupportEnabled = c.settings.historyArchiveSupportEnabled
     )
 
+method getCuratedCommunityItem(self: Module, c: CuratedCommunity): CuratedCommunityItem =
+  return initCuratedCommunityItem(
+      c.communityId,
+      c.community.name,
+      c.community.description,
+      c.available,
+      c.community.images.thumbnail,
+      c.community.color,
+      len(c.community.members))
+
 method setAllCommunities*(self: Module, communities: seq[CommunityDto]) =
   for community in communities:
     self.view.addItem(self.getCommunityItem(community))
@@ -117,6 +131,16 @@ method joinCommunity*(self: Module, communityId: string): string =
 method communityEdited*(self: Module, community: CommunityDto) =
   self.view.model().editItem(self.getCommunityItem(community))
   self.view.communityChanged(community.id)
+
+method setCuratedCommunities*(self: Module, curatedCommunities: seq[CuratedCommunity]) =
+  for community in curatedCommunities:
+    self.view.curatedCommunitiesModel().addItem(self.getCuratedCommunityItem(community))
+
+method curatedCommunityAdded*(self: Module, community: CuratedCommunity) =
+  self.view.curatedCommunitiesModel().addItem(self.getCuratedCommunityItem(community))
+
+method curatedCommunityEdited*(self: Module, community: CuratedCommunity) =
+  self.view.curatedCommunitiesModel().addItem(self.getCuratedCommunityItem(community))
 
 method requestAdded*(self: Module) =
   # TODO to model or view

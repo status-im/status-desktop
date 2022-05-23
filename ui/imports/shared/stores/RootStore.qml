@@ -24,6 +24,7 @@ QtObject {
     property bool isGifWidgetEnabled: !!accountSensitiveSettings ? accountSensitiveSettings.isGifWidgetEnabled : false
     property bool isTenorWarningAccepted: !!accountSensitiveSettings ? accountSensitiveSettings.isTenorWarningAccepted : false
     property bool displayChatImages: !!accountSensitiveSettings ? accountSensitiveSettings.displayChatImages : false
+    property bool isCommunitiesPortalEnabled: !!accountSensitiveSettings ? accountSensitiveSettings.isCommunitiesPortalEnabled : false
 
     property string locale: !!appSettings ? appSettings.locale : ""
 //    property string signingPhrase: !!walletModelInst ? walletModelInst.utilsView.signingPhrase : ""
