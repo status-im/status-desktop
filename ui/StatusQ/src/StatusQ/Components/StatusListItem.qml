@@ -75,7 +75,7 @@ Rectangle {
     property alias statusListItemTagsSlot: statusListItemTagsSlot
     property alias statusListItemInlineTagsSlot: statusListItemTagsSlotInline
 
-    signal clicked(string itemId)
+    signal clicked(string itemId, var mouse)
     signal titleClicked(string titleId)
 
     enum Type {
@@ -125,7 +125,7 @@ Rectangle {
         preventStealing: true
 
         onClicked: {
-            statusListItem.clicked(statusListItem.itemId)
+            statusListItem.clicked(statusListItem.itemId, mouse)
         }
 
         StatusSmartIdenticon {
