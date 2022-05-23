@@ -20,7 +20,6 @@ OnboardingBasePage {
 
     property bool existingUser: (root.state === "existingUser")
     property var mnemonicInput: []
-    property string mnemonicString
 
     signal seedValidated()
 
@@ -121,9 +120,10 @@ OnboardingBasePage {
                 }
             }
             onCurrentIndexChanged: {
-                root.mnemonicString = "";
-                root.mnemonicInput = [];
-                submitButton.enabled = false;
+                root.mnemonicInput = root.mnemonicInput.filter(function(value) {
+                    return value.pos <= root.tabs[switchTabBar.currentIndex]
+                })
+                submitButton.checkMnemonicLength()
             }
         }
         clip: true
@@ -292,20 +292,19 @@ OnboardingBasePage {
             anchors.topMargin: 24
             enabled: false
             function checkMnemonicLength() {
-                submitButton.enabled = (root.mnemonicInput.length >= grid.count);
+                submitButton.enabled = (root.mnemonicInput.length === root.tabs[switchTabBar.currentIndex])
             }
             text: root.existingUser ? qsTr("Restore Status Profile") : qsTr("Import")
             onClicked: {
-                root.mnemonicString = "";
+                let mnemonicString = "";
                 var sortTable = mnemonicInput.sort(function (a, b) {
                     return a.pos - b.pos;
                 });
                 for (var i = 0; i < mnemonicInput.length; i++) {
-                    root.mnemonicString += sortTable[i].seed + ((i === (grid.count-1)) ? "" : " ");
+                    mnemonicString += sortTable[i].seed + ((i === (grid.count-1)) ? "" : " ");
                 }
-                if (Utils.isMnemonic(root.mnemonicString) && !OnboardingStore.validateMnemonic(root.mnemonicString)) {
-                    OnboardingStore.importMnemonic(root.mnemonicString)
-                    root.mnemonicString = "";
+                if (Utils.isMnemonic(mnemonicString) && !OnboardingStore.validateMnemonic(mnemonicString)) {
+                    OnboardingStore.importMnemonic(mnemonicString)
                     root.mnemonicInput = [];
                 } else {
                     invalidSeedTxt.visible = true;
@@ -316,7 +315,6 @@ OnboardingBasePage {
     }
 
     onBackClicked: {
-        root.mnemonicString = "";
         root.mnemonicInput = [];
         root.exit();
     }
