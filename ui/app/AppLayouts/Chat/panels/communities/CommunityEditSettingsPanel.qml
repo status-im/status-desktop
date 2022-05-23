@@ -23,12 +23,9 @@ Flickable {
 
     property alias name: nameInput.text
     property alias description: descriptionTextInput.text
-    property alias logoImagePath: addImageButton.selectedImage
     property string logoImageData: ""
-    readonly property alias imageAx: imageCropperModal.aX
-    readonly property alias imageAy: imageCropperModal.aY
-    readonly property alias imageBx: imageCropperModal.bX
-    readonly property alias imageBy: imageCropperModal.bY
+    property alias logoImagePath: logoEditor.source
+    property alias logoCropRect: logoEditor.cropRect
     property string bannerImageData: ""
     property alias bannerPath: bannerEditor.source
     property alias bannerCropRect: bannerEditor.cropRect
@@ -97,98 +94,31 @@ Flickable {
         ColumnLayout {
             spacing: 8
 
+            // Logo
+            //
             StatusBaseText {
                 text: qsTr("Community logo")
                 font.pixelSize: 15
                 color: Theme.palette.directColor1
             }
 
-            Item {
-                Layout.fillWidth: true
+            EditCroppedImagePanel {
+                id: logoEditor
 
-                implicitHeight: addImageButton.height + 32
+                Layout.preferredWidth: 128
+                Layout.preferredHeight: Layout.preferredWidth / aspectRatio
+                Layout.alignment: Qt.AlignHCenter
 
-                Rectangle {
-                    id: addImageButton
+                imageFileDialogTitle: qsTr("Choose an image as logo")
+                title: qsTr("Community logo")
+                acceptButtonText: qsTr("Make this my Community logo")
 
-                    property string selectedImage: ""
+                dataImage: root.logoImageData
 
+                NoImageUploadedPanel {
                     anchors.centerIn: parent
-                    color: imagePreview.visible ? "transparent" : Style.current.inputBackground
-                    width: 128
-                    height: width
-                    radius: width / 2
 
-                    FileDialog {
-                        id: imageDialog
-                        title: qsTr("Please choose an image")
-                        folder: shortcuts.pictures
-                        nameFilters: [qsTr("Image files (*.jpg *.jpeg *.png)")]
-                        onAccepted: {
-                            if(imageDialog.fileUrls.length > 0) {
-                                addImageButton.selectedImage = imageDialog.fileUrls[0]
-                                imageCropperModal.open()
-                            }
-                        }
-                    }
-
-                    Rectangle {
-                        id: imagePreviewCropper
-                        clip: true
-                        width: parent.width
-                        height: parent.height
-                        radius: parent.width / 2
-                        visible: !!addImageButton.selectedImage || !!root.logoImageData
-
-                        Image {
-                            id: imagePreview
-                            visible: !!addImageButton.selectedImage || !!root.logoImageData
-                            source: addImageButton.selectedImage
-                                        ? addImageButton.selectedImage
-                                        : root.logoImageData
-                            fillMode: Image.PreserveAspectFit
-                            width: parent.width
-                            height: parent.height
-                        }
-                        layer.enabled: true
-                        layer.effect: OpacityMask {
-                            maskSource: Rectangle {
-                                anchors.centerIn: parent
-                                width: imageCropperModal.width
-                                height: imageCropperModal.height
-                                radius: width / 2
-                            }
-                        }
-                    }
-
-                    NoImageUploadedPanel {
-                        anchors.centerIn: parent
-
-                        visible: !imagePreview.visible
-                    }
-
-                    StatusRoundButton {
-                        type: StatusRoundButton.Type.Secondary
-                        icon.name: "add"
-                        anchors.top: parent.top
-                        anchors.right: parent.right
-                        anchors.rightMargin: Style.current.halfPadding
-                        highlighted: sensor.containsMouse
-                    }
-
-                    MouseArea {
-                        id: sensor
-                        hoverEnabled: true
-                        anchors.fill: parent
-                        cursorShape: Qt.PointingHandCursor
-                        onClicked: imageDialog.open()
-                    }
-
-                    ImageCropperModal {
-                        id: imageCropperModal
-                        selectedImage: addImageButton.selectedImage
-                        ratio: "1:1"
-                    }
+                    visible: !logoEditor.userSelectedImage && !root.logoImageData
                 }
             }
 

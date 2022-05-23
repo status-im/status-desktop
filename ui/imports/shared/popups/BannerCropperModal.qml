@@ -52,7 +52,7 @@ Item {
         StatusImageCropPanel {
             id: bannerCropper
 
-            implicitHeight: 350
+            implicitHeight: root.roundedImage ? 350 : 370
 
             anchors {
                  fill: parent
