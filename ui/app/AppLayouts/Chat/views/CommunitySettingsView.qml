@@ -129,11 +129,7 @@ StatusAppTwoPanelLayout {
                         Utils.filterXSS(item.description),
                         root.community.access,
                         item.color.toString().toUpperCase(),
-                        item.logoImagePath,
-                        item.imageAx,
-                        item.imageAy,
-                        item.imageBx,
-                        item.imageBy,
+                        JSON.stringify({imagePath: String(item.logoImagePath).replace("file://", ""), cropRect: item.logoCropRect}),
                         JSON.stringify({imagePath: String(item.bannerPath).replace("file://", ""), cropRect: item.bannerCropRect}),
                         item.historyArchiveSupportToggle,
                         false /*TODO port the modal implementation*/

@@ -146,6 +146,7 @@ StackLayout {
                                        return root.name !== name ||
                                               root.description !== description ||
                                               logoImagePath.length > 0 ||
+                                              isValidRect(logoCropRect) ||
                                               root.color !== color ||
                                               bannerPath.length > 0 ||
                                               isValidRect(bannerCropRect) ||

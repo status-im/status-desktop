@@ -376,8 +376,7 @@ proc editCommunity*(
     description: string,
     access: int,
     color: string,
-    imageUrl: string,
-    aX: int, aY: int, bX: int, bY: int,
+    logoJsonStr: string,
     bannerJsonStr: string,
     historyArchiveSupportEnabled: bool,
     pinMessageAllMembersEnabled: bool) =
@@ -387,8 +386,7 @@ proc editCommunity*(
     description,
     access,
     color,
-    imageUrl,
-    aX, aY, bX, bY,
+    logoJsonStr,
     bannerJsonStr,
     historyArchiveSupportEnabled,
     pinMessageAllMembersEnabled)
