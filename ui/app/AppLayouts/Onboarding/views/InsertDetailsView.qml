@@ -1,16 +1,24 @@
 import QtQuick 2.13
 import QtQuick.Layouts 1.12
+import QtQuick.Controls 2.14
+import QtQuick.Dialogs 1.3
+
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Popups 0.1
+
 
 import shared.panels 1.0
+import shared 1.0
+import shared.popups 1.0
 
 import utils 1.0
 import shared.controls 1.0
 import "../popups"
 import "../stores"
+import "../shared"
 
 Item {
     id: root
@@ -101,8 +109,7 @@ Item {
                 type: StatusFlatRoundButton.Type.Secondary
                 icon.name: "add"
                 onClicked: {
-                    uploadProfilePicPopup.currentProfileImg = userImage.image.source
-                    uploadProfilePicPopup.open();
+                    cropperModal.chooseImageToCrop()
                 }
             }
         }
@@ -131,7 +138,7 @@ Item {
             onTextChanged: {
                 userImage.name = text;
             }
-            input.acceptReturn: true  
+            input.acceptReturn: true
             onKeyPressed: {
                 if (input.edit.keyEvent === Qt.Key_Return || input.edit.keyEvent === Qt.Key_Enter) {
                     event.accepted = true
@@ -203,10 +210,14 @@ Item {
             }
         }
 
-        UploadProfilePicModal {
-            id: uploadProfilePicPopup
-            anchors.centerIn: parent
-            onSetProfileImage: {
+        BannerCropperModal {
+            id: cropperModal
+            onImageCropped: {
+                const croppedImg = OnboardingStore.generateImage(image,
+                                              cropRect.x.toFixed(),
+                                              cropRect.y.toFixed(),
+                                              (cropRect.x + cropRect.width).toFixed(),
+                                              (cropRect.y + cropRect.height).toFixed())
                 userImage.image.source = image
             }
         }

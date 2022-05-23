@@ -115,7 +115,7 @@ Item {
 
                 type: StatusRoundButton.Type.Secondary
 
-                onClicked: bannerFileDialog.open()
+                onClicked: bannerCropperModal.chooseImageToCrop()
             }
         }
 
@@ -145,73 +145,13 @@ Item {
                 z: bannerEditor.z + 1
             }
 
-            FileDialog {
-                id: bannerFileDialog
-
-                title: root.imageFileDialogTitle
-                folder: root.userSelectedImage ? bannerCropper.source.substr(0, bannerCropper.source.lastIndexOf("/")) : shortcuts.pictures
-                nameFilters: [qsTr("Image files (*.jpg *.jpeg, *.jfif, *.png *.tiff *.heif)")]
-                onAccepted: {
-                    if(bannerFileDialog.fileUrls.length > 0) {
-                        bannerCropper.source = bannerFileDialog.fileUrls[0]
-                        bannerCropperModal.open()
-                    }
-                }
-                onRejected: {
-                    if(root.userSelectedImage)
-                        bannerCropperModal.open()
-                }
-            }
-
-            StatusModal {
+            BannerCropperModal {
                 id: bannerCropperModal
-
-                header.title: root.title
-
-                anchors.centerIn: Overlay.overlay
-
-                Item {
-                    implicitWidth: 480
-                    implicitHeight: 350
-
-                    anchors.fill: parent
-
-                    ColumnLayout {
-                        anchors.fill: parent
-
-                        StatusImageCropPanel {
-                            id: bannerCropper
-
-                            Layout.fillWidth: true
-                            Layout.fillHeight: true
-                            Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
-                            Layout.leftMargin: Style.current.padding * 2
-                            Layout.topMargin: Style.current.bigPadding
-                            Layout.rightMargin: Layout.leftMargin
-                            Layout.bottomMargin: Layout.topMargin
-
-                            windowStyle: bannerPreview.windowStyle
-                            aspectRatio: bannerPreview.aspectRatio
-
-                            enableCheckers: true
-                        }
-                    }
+                onImageCropped: {
+                    bannerPreview.source = image
+                    bannerPreview.setCropRect(cropRect)
+                    root.userSelectedImage = true
                 }
-
-                rightButtons: [
-                    StatusButton {
-                        text: root.acceptButtonText
-
-                        enabled: bannerCropper.sourceSize.width > 0 && bannerCropper.sourceSize.height > 0
-
-                        onClicked: {
-                            bannerPreview.source = bannerCropper.source
-                            bannerPreview.setCropRect(bannerCropper.cropRect)
-                            bannerCropperModal.close()
-                            root.userSelectedImage = true
-                        }
-                    }
-                ]
             }
         }
     }
