@@ -87,6 +87,19 @@ ScrollView {
             }
         }
 
+        Row {
+            width: 1234
+            Text {
+                text: "CURATED COMMUNITY LIST ========="
+            }
+            Repeater {
+                model: root.communitiesStore.curatedCommunitiesModel
+                delegate:  Text {
+                    text: model.name + " " + model.description + " " + model.icon + " " + model.available
+                }
+            }
+        }
+
         // Tags definition - Now hidden - Out of scope
         // TODO: Replace by `StatusListItemTagRow`
         Row {

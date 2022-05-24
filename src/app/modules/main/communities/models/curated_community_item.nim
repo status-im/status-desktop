@@ -6,17 +6,20 @@ type
     name: string
     description: string
     available: bool
+    icon: string
     
 proc initCuratedCommunityItem*(
   id: string,
   name: string,
   description: string,
-  available: bool
+  available: bool,
+  icon: string
 ): CuratedCommunityItem =
   result.id = id
   result.name = name
   result.description = description
   result.available = available
+  result.icon = icon
 
 proc `$`*(self: CuratedCommunityItem): string =
   result = fmt"""CuratedCommunityItem(
@@ -37,3 +40,6 @@ proc getDescription*(self: CuratedCommunityItem): string =
 
 proc isAvailable*(self: CuratedCommunityItem): bool =
   return self.available
+
+proc getIcon*(self: CuratedCommunityItem): string =
+  return self.icon

@@ -112,7 +112,8 @@ method getCuratedCommunityItem(self: Module, c: CuratedCommunity): CuratedCommun
       c.communityId,
       c.community.name,
       c.community.description,
-      c.available)
+      c.available,
+      c.community.images.thumbnail)
 
 method setAllCommunities*(self: Module, communities: seq[CommunityDto]) =
   for community in communities:

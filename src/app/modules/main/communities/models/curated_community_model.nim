@@ -7,6 +7,7 @@ type
     Available
     Name
     Description
+    Icon
 
 QtObject:
   type CuratedCommunityModel* = ref object of QAbstractListModel
@@ -45,7 +46,8 @@ QtObject:
       ModelRole.Id.int:"id",
       ModelRole.Name.int:"name",
       ModelRole.Available.int:"available",
-      ModelRole.Description.int:"description"
+      ModelRole.Description.int:"description",
+      ModelRole.Icon.int:"icon"
     }.toTable
 
   method data(self: CuratedCommunityModel, index: QModelIndex, role: int): QVariant =
@@ -55,7 +57,6 @@ QtObject:
       return
     let item = self.items[index.row]
     let enumRole = role.ModelRole
-
     case enumRole:
       of ModelRole.Id:
         result = newQVariant(item.getId())
@@ -65,6 +66,8 @@ QtObject:
         result = newQVariant(item.getDescription())
       of ModelRole.Available:
         result = newQVariant(item.isAvailable())
+      of ModelRole.Icon:
+        result = newQVariant(item.getIcon())
 
   proc findIndexById(self: CuratedCommunityModel, id: string): int =
     for i in 0 ..< self.items.len:
