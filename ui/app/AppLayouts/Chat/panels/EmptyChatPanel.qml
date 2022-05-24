@@ -20,7 +20,7 @@ Item {
         id: walkieTalkieImage
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
-        source: Style.png("onboarding/chat@2x")
+        source: Style.png("chat/chat@2x")
     }
 
     Item {

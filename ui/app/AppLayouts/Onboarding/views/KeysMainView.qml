@@ -39,12 +39,12 @@ OnboardingBasePage {
 
         Image {
             id: keysImg
+            width: 160
+            height: 160
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: parent.top
             fillMode: Image.PreserveAspectFit
             source: Style.png("onboarding/keys")
-            width: 160
-            height: 160
             mipmap: true
         }
 
@@ -197,6 +197,8 @@ OnboardingBasePage {
             }
             PropertyChanges {
                 target: keysImg
+                width: 257
+                height: 257
                 source: Style.png("onboarding/seed-phrase")
             }
             PropertyChanges {
