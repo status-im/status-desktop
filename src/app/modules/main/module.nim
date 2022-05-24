@@ -602,6 +602,9 @@ method communityJoined*[T](
 
   if setActive:
     self.setActiveSection(communitySectionItem)
+    if(channelGroup.chats.len > 0):
+      let chatId = channelGroup.chats[0].id
+      self.channelGroupModules[community.id].setActiveItemSubItem(chatId, "")
 
 method communityLeft*[T](self: Module[T], communityId: string) =
   if(not self.channelGroupModules.contains(communityId)):
