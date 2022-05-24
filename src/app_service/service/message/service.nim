@@ -169,7 +169,7 @@ QtObject:
 
     for msg in messages:
       if(msg.editedAt > 0):
-        let data = MessageEditedArgs(chatId: msg.chatId, message: msg)
+        let data = MessageEditedArgs(chatId: msg.localChatId, message: msg)
         self.events.emit(SIGNAL_MESSAGE_EDITED, data)
       if msg.responseTo.len > 0:
         messagesOneRepliedTo.add(msg.responseTo)
@@ -184,7 +184,7 @@ QtObject:
 
       var chatMessages: seq[MessageDto]
       for msg in messages:
-        if (msg.chatId == chats[i].id):
+        if (msg.localChatId == chats[i].id):
           chatMessages.add(msg)
       
       if chats[i].communityId.len == 0:
