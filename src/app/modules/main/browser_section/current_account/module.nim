@@ -1,8 +1,10 @@
-import NimQml
+import NimQml, Tables
 
 import ../../../../global/global_singleton
 import ../../../../core/eventemitter
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
+import ../../../shared_models/token_model as token_model
+import ../../../shared_models/token_item as token_item
 
 import ./io_interface, ./view, ./controller
 import ../io_interface as delegate_interface
@@ -17,6 +19,8 @@ type
     controller: Controller
     moduleLoaded: bool
     currentAccountIndex: int
+
+proc onTokensRebuilt(self: Module, accountsTokens: OrderedTable[string, seq[WalletTokenDto]])
 
 proc newModule*(
   delegate: delegate_interface.AccessInterface,
@@ -34,10 +38,21 @@ proc newModule*(
 method delete*(self: Module) =
   self.view.delete
 
+proc setAssets(self: Module, tokens: seq[WalletTokenDto]) =
+  var items: seq[Item]
+  for t in tokens:
+    if(t.totalBalance.balance == 0):
+      continue
+    let item = token_item.initItem(t.name, t.symbol, t.totalBalance.balance, t.address, t.totalBalance.currencyBalance)
+    items.add(item)
+    
+  self.view.getAssetsModel().setItems(items)
+
 method switchAccount*(self: Module, accountIndex: int) =
   self.currentAccountIndex = accountIndex
   let walletAccount = self.controller.getWalletAccount(accountIndex)
   self.view.setData(walletAccount)
+  self.setAssets(walletAccount.tokens)
 
 method load*(self: Module) =
   singletonInstance.engine.setRootContextProperty("browserSectionCurrentAccount", newQVariant(self.view))
@@ -46,6 +61,10 @@ method load*(self: Module) =
     if(self.view.isAddressCurrentAccount(AccountDeleted(e).account.address)):
       self.switchAccount(0)
       self.view.connectedAccountDeleted()
+
+  self.events.on(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e:Args):
+    let arg = TokensPerAccountArgs(e)
+    self.onTokensRebuilt(arg.accountsTokens)
 
   self.controller.init()
   self.view.load()
@@ -60,3 +79,9 @@ method viewDidLoad*(self: Module) =
 method switchAccountByAddress*(self: Module, address: string) =
   let accountIndex = self.controller.getIndex(address)
   self.switchAccount(accountIndex)
+
+proc onTokensRebuilt(self: Module, accountsTokens: OrderedTable[string, seq[WalletTokenDto]]) =
+  let walletAccount = self.controller.getWalletAccount(self.currentAccountIndex)
+  if not accountsTokens.contains(walletAccount.address):
+    return
+  self.setAssets(accountsTokens[walletAccount.address])
