@@ -19,9 +19,10 @@ Item {
 
     AnimatedImage {
         id: splashLogo
+        width: 127.88
+        height: 127.88
         anchors.centerIn: parent
-        scale: 0.5
-        source: Style.gif("status_splash")
+        source: Style.gif("status_splash_"+(Style.current.name))
     }
 
     // NOTE: keep it if we will decide to switch on lottie
