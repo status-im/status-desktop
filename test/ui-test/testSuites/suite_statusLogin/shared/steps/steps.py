@@ -3,7 +3,7 @@
 #******************************************************************************
 # Status.im
 #*****************************************************************************/
-#/**
+# /**
 # * \file    steps.py
 # *
 # * \test    Status Desktop - Login
@@ -14,10 +14,15 @@
 # *          with a pattern which is matched against the steps being executed.
 # *****************************************************************************
 from data.StatusAccount import StatusAccount 
-from processes.StatusLoginProcess import StatusLoginProcess    
+from processes.StatusLoginProcess import StatusLoginProcess
+from screens.StatusWelcomeScreen import StatusWelcomeScreen 
+from screens.StatusChatScreen import StatusChatScreen 
+
+welcomeScreen = StatusWelcomeScreen()  
+
 
 @Given("A Status Desktop |any| and |word|")
-def step(context,account,password):
+def step(context, account, password):
     
     # Create new data domain:
     accountObj = StatusAccount(account, password) 
@@ -31,6 +36,7 @@ def step(context,account,password):
     
     # Verify process can be executed:
     test.verify(process.can_execute_process(), "Not possible to start login process. Check if expected Login Screen is available.")
+
     
 @When("the user tries to login with valid credentials")
 def step(context):
@@ -39,6 +45,7 @@ def step(context):
     # Check valid process behavior:
     loginProcess.execute_process(True)
 
+
 @When("the user tries to login with invalid credentials")
 def step(context):
     loginProcess = context.userData['process']
@@ -46,16 +53,35 @@ def step(context):
     # Check invalid process behavior:
     loginProcess.execute_process(False)
 
+
 @Then("the user is able to login to Status Desktop application")
 def step(context):
     get_process_result(context)
+
     
 @Then("the user is NOT able to login to Status Desktop application")
 def step(context):
     get_process_result(context)
-  
+    
+
+@Given("A first time user lands on the status desktop and generates new key") 
+def step(context):
+    welcomeScreen.agree_terms_conditions_and_generate_new_key()
+
+    
+@When("user inputs username |any| and password |any|") 
+def step(context, username, password):
+    welcomeScreen.input_username_and_password_and_finalize_sign_up(username, password)
+
+    
+@Then("the user lands on the signed in app") 
+def step(context):
+    StatusChatScreen()
+    
+
 # Common:
 def get_process_result(context):
     loginProcess = context.userData['process']
     result, description = loginProcess.get_process_result()
     test.verify(result, description)
+    
