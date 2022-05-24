@@ -19,6 +19,8 @@ type
     name: string
     amISectionAdmin: bool
     description: string
+    introMessage: string
+    outroMessage: string
     image: string
     bannerImageData: string
     icon: string
@@ -46,6 +48,8 @@ proc initItem*(
     name: string,
     amISectionAdmin = false,
     description = "",
+    introMessage = "",
+    outroMessage = "",
     image = "",
     bannerImageData = "",
     icon = "",
@@ -72,6 +76,8 @@ proc initItem*(
   result.name = name
   result.amISectionAdmin = amISectionAdmin
   result.description = description
+  result.introMessage = introMessage
+  result.outroMessage = outroMessage
   result.image = image
   result.bannerImageData = bannerImageData
   result.icon = icon
@@ -105,6 +111,8 @@ proc `$`*(self: SectionItem): string =
     name: {self.name},
     amISectionAdmin: {self.amISectionAdmin},
     description: {self.description},
+    introMessage: {self.introMessage},
+    outroMessage: {self.outroMessage},
     image: {self.image},
     bannerImageData: {self.bannerImageData},
     icon: {self.icon},
@@ -140,6 +148,12 @@ proc amISectionAdmin*(self: SectionItem): bool {.inline.} =
 
 proc description*(self: SectionItem): string {.inline.} =
   self.description
+
+proc introMessage*(self: SectionItem): string {.inline.} =
+  self.introMessage
+
+proc outroMessage*(self: SectionItem): string {.inline.} =
+  self.outroMessage
 
 proc image*(self: SectionItem): string {.inline.} =
   self.image

@@ -53,6 +53,18 @@ QtObject:
   QtProperty[string] description:
     read = description
 
+  proc introMessage(self: ActiveSection): string {.slot.} =
+    return self.item.introMessage
+
+  QtProperty[string] introMessage:
+    read = introMessage
+
+  proc outroMessage(self: ActiveSection): string {.slot.} =
+    return self.item.outroMessage
+
+  QtProperty[string] outroMessage:
+    read = outroMessage
+
   proc getImage(self: ActiveSection): string {.slot.} =
     return self.item.image
 

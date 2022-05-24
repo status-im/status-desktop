@@ -78,6 +78,8 @@ method getCommunityItem(self: Module, c: CommunityDto): SectionItem =
       c.name,
       c.admin,
       c.description,
+      c.introMessage,
+      c.outroMessage,
       c.images.thumbnail,
       c.images.banner,
       icon = "",
@@ -171,13 +173,14 @@ method communityCategoryDeleted*(self: Module) =
    # TODO to model or view
   discard
 
-method createCommunity*(self: Module, name: string, description: string,
+method createCommunity*(self: Module, name: string,
+                        description, introMessage: string, outroMessage: string,
                         access: int, color: string,
                         imagePath: string,
                         aX: int, aY: int, bX: int, bY: int,
                         historyArchiveSupportEnabled: bool,
                         pinMessageAllMembersEnabled: bool) =
-  self.controller.createCommunity(name, description, access, color, imagePath, aX, aY, bX, bY, historyArchiveSupportEnabled, pinMessageAllMembersEnabled)
+  self.controller.createCommunity(name, description, introMessage, outroMessage, access, color, imagePath, aX, aY, bX, bY, historyArchiveSupportEnabled, pinMessageAllMembersEnabled)
 
 method deleteCommunityCategory*(self: Module, communityId: string, categoryId: string) =
   self.controller.deleteCommunityCategory(communityId, categoryId)

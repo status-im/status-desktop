@@ -11,6 +11,8 @@ type
     Name
     AmISectionAdmin
     Description
+    IntroMessage
+    OutroMessage
     Image
     BannerImageData
     Icon
@@ -73,6 +75,8 @@ QtObject:
       ModelRole.Name.int:"name",
       ModelRole.AmISectionAdmin.int: "amISectionAdmin",
       ModelRole.Description.int:"description",
+      ModelRole.IntroMessage.int:"introMessage",
+      ModelRole.OutroMessage.int:"outroMessage",
       ModelRole.Image.int:"image",
       ModelRole.BannerImageData.int:"bannerImageData",
       ModelRole.Icon.int:"icon",
@@ -116,6 +120,10 @@ QtObject:
       result = newQVariant(item.amISectionAdmin)
     of ModelRole.Description:
       result = newQVariant(item.description)
+    of ModelRole.IntroMessage:
+      result = newQVariant(item.introMessage)
+    of ModelRole.OutroMessage:
+      result = newQVariant(item.outroMessage)
     of ModelRole.Image:
       result = newQVariant(item.image)
     of ModelRole.BannerImageData:
@@ -243,6 +251,8 @@ QtObject:
     self.dataChanged(dataIndex, dataIndex, @[
       ModelRole.Name.int,
       ModelRole.Description.int,
+      ModelRole.IntroMessage.int,
+      ModelRole.OutroMessage.int,
       ModelRole.Image.int,
       ModelRole.BannerImageData.int,
       ModelRole.Icon.int,
@@ -346,6 +356,8 @@ QtObject:
           "name": item.name,
           "amISectionAdmin": item.amISectionAdmin,
           "description": item.description,
+          "introMessage": item.introMessage,
+          "outroMessage": item.outroMessage,
           "image": item.image,
           "bannerImageData": item.bannerImageData,
           "icon": item.icon,
