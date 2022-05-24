@@ -120,11 +120,7 @@ OnboardingBasePage {
                         parent.font.underline = false
                     }
                     onClicked: {
-                        if (root.state === "getkeys") {
-                            root.state = "importseed";
-                        } else {
-                            root.seedLinkClicked();
-                        }
+                        root.seedLinkClicked();
                     }
                 }
             }
@@ -181,7 +177,6 @@ OnboardingBasePage {
 //            PropertyChanges {
 //                target: keycardLink
 //                text: qsTr("Generate keys for a new Keycard")
-
 //            }
             PropertyChanges {
                 target: seedLink
@@ -194,7 +189,6 @@ OnboardingBasePage {
             PropertyChanges {
                 target: txtTitle
                 text: qsTr("Import a seed phrase")
-
             }
             PropertyChanges {
                 target: keysImg
@@ -209,12 +203,10 @@ Only use this option if you already have a seed phrase.")
             PropertyChanges {
                 target: button
                 text: qsTr("Import a seed phrase")
-
             }
 //            PropertyChanges {
 //                target: keycardLink
 //                text: qsTr("Import a seed phrase into a new Keycard")
-
 //            }
             PropertyChanges {
                 target: seedLink

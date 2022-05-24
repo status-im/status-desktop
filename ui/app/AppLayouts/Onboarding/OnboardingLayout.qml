@@ -190,9 +190,10 @@ QtObject {
         KeysMainView {
             onButtonClicked: {
                 if (state === "importseed") {
-                    importSeedState.seedInputState = "newUser";
+                    importSeedState.seedInputState = "existingUser";
                     Global.applicationWindow.navigateTo("ImportSeed");
                 } else {
+                    importSeedState.seedInputState = "newUser";
                     Global.applicationWindow.navigateTo("GenKey");
                 }
             }
@@ -200,11 +201,19 @@ QtObject {
                 Global.applicationWindow.navigateTo("KeycardFlowSelection");
             }
             onSeedLinkClicked: {
-                importSeedState.seedInputState = "existingUser";
-                Global.applicationWindow.navigateTo("ImportSeed");
+                if (state === "getkeys") {
+                    importSeedState.seedInputState = "newUser";
+                    state = "importseed";
+                } else {
+                    importSeedState.seedInputState = "existingUser";
+                    Global.applicationWindow.navigateTo("ImportSeed");
+                }
             }
             onBackClicked: {
-                if ((root.keysMainSetState === "connectkeys" && LoginStore.currentAccount.username !== "") || root.prevState === "LogIn") {
+                if (state === "importseed") {
+                    state = "getkeys";
+                } else if (((root.keysMainSetState === "connectkeys") && (LoginStore.currentAccount.username !== ""))
+                          || (root.prevState === "LogIn") || (state === "getkeys")) {
                     Global.applicationWindow.navigateTo("LogIn");
                 } else {
                     Global.applicationWindow.navigateTo("Welcome");
@@ -217,12 +226,10 @@ QtObject {
         id: seedPhrase
         SeedPhraseInputView {
             onExit: {
-                if (root.keysMainSetState === "connectkeys") {
-                    Global.applicationWindow.navigateTo("KeyMain");
-                } else {
+                if (root.keysMainSetState !== "connectkeys") {
                     root.keysMainSetState = "importseed";
-                    Global.applicationWindow.navigateTo("KeyMain");
                 }
+                Global.applicationWindow.navigateTo("KeyMain");
             }
             onSeedValidated: {
                 root.keysMainSetState = "importseed";
@@ -238,7 +245,7 @@ QtObject {
                 if (root.keysMainSetState === "importseed") {
                     root.keysMainSetState = "connectkeys"
                     Global.applicationWindow.navigateTo("ImportSeed");
-                } else if (LoginStore.currentAccount.username !== "") {
+                } else if (LoginStore.currentAccount.username !== "" && importSeedState.seedInputState === "existingUser") {
                     Global.applicationWindow.navigateTo("LogIn");
                 } else {
                     Global.applicationWindow.navigateTo("KeysMain");
@@ -253,7 +260,7 @@ QtObject {
     property var keycardFlowSelectionComponent: Component {
         id: keycardFlowSelection
         KeycardFlowSelectionView {
-            onClosed: function () {
+            onClosed: {
                 if (root.hasAccounts) {
                     Global.applicationWindow.navigateTo("InitialState")
                 } else {
