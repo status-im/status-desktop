@@ -34,3 +34,4 @@ StatusTagSelector 0.1 StatusTagSelector.qml
 StatusToastMessage 0.1 StatusToastMessage.qml
 StatusWizardStepper 0.1 StatusWizardStepper.qml
 StatusImageCropPanel 0.1 StatusImageCropPanel.qml
+StatusColorSpace 0.0 StatusColorSpace.qml

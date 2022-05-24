@@ -10,21 +10,24 @@ Column {
 
     property alias titleText: title.text
     property alias title: title
+    property alias columns: grid.columns
 
     property int selectedColorIndex: 0
     property string selectedColor: ""
-    property var model: [StatusColors.colors['black'],
-        StatusColors.colors['grey'],
-        StatusColors.colors['blue2'],
-        StatusColors.colors['purple'],
-        StatusColors.colors['cyan'],
-        StatusColors.colors['violet'],
-        StatusColors.colors['red2'],
-        StatusColors.colors['yellow'],
-        StatusColors.colors['green2'],
-        StatusColors.colors['moss'],
-        StatusColors.colors['brown'],
-        StatusColors.colors['brown2']]
+    property var model:[ StatusColors.colors['black'],
+                         StatusColors.colors['grey'],
+                         StatusColors.colors['blue2'],
+                         StatusColors.colors['purple'],
+                         StatusColors.colors['cyan'],
+                         StatusColors.colors['violet'],
+                         StatusColors.colors['red2'],
+                         StatusColors.colors['yellow'],
+                         StatusColors.colors['green2'],
+                         StatusColors.colors['moss'],
+                         StatusColors.colors['brown'],
+                         StatusColors.colors['brown2'] ]
+
+    signal colorSelected(color color)
 
     spacing: 16
 
@@ -36,6 +39,7 @@ Column {
     }
 
     Grid {
+        id: grid
         columns: 6
         rowSpacing: 16
         columnSpacing: 32
@@ -45,9 +49,10 @@ Column {
                 checked: index === selectedColorIndex
                 radioButtonColor: root.model[index] || "transparent"
                 onCheckedChanged: {
-                    if(checked) {
-                        selectedColorIndex = index
-                        selectedColor = root.model[index]
+                    if (checked) {
+                        selectedColorIndex = index;
+                        selectedColor = root.model[index];
+                        root.colorSelected(selectedColor);
                     }
                 }
             }

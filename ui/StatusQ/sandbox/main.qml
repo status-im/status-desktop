@@ -149,36 +149,36 @@ StatusWindow {
                         spacing: 0
 
                         StatusListSectionHeadline { text: "StatusQ.Core" }
-                        StatusNavigationListItem { 
+                        StatusNavigationListItem {
                             title: "Icons"
                             selected: viewLoader.source.toString().includes(title)
                             onClicked: mainPageView.control(title);
                         }
 
                         StatusListSectionHeadline { text: "StatusQ.Layout" }
-                        StatusNavigationListItem { 
+                        StatusNavigationListItem {
                             title: "Layouts"
                             selected: viewLoader.source.toString().includes(title)
                             onClicked: mainPageView.control(title.substring(0, title.length - 1));
                         }
 
                         StatusListSectionHeadline { text: "StatusQ.Controls" }
-                        StatusNavigationListItem { 
+                        StatusNavigationListItem {
                             title: "Buttons"
                             selected: viewLoader.source.toString().includes(title)
                             onClicked: mainPageView.control(title);
                         }
-                        StatusNavigationListItem { 
+                        StatusNavigationListItem {
                             title: "StatusSwitchTab"
                             selected: viewLoader.source.toString().includes(title)
                             onClicked: mainPageView.page("StatusTabSwitch");
                         }
-                        StatusNavigationListItem { 
+                        StatusNavigationListItem {
                             title: "StatusChatCommandButton"
                             selected: viewLoader.source.toString().includes(title)
                             onClicked: mainPageView.page(title);
                         }
-                        StatusNavigationListItem { 
+                        StatusNavigationListItem {
                             title: "Controls"
                             selected: viewLoader.source.toString().includes(title)
                             onClicked: mainPageView.control(title);
@@ -193,37 +193,37 @@ StatusWindow {
                             selected: viewLoader.source.toString().includes(title)
                             onClicked: mainPageView.page(title);
                         }
-                        StatusNavigationListItem { 
+                        StatusNavigationListItem {
                             title: "StatusInput"
                             selected: viewLoader.source.toString().includes(title)
                             onClicked: mainPageView.page(title);
                         }
-                        StatusNavigationListItem { 
+                        StatusNavigationListItem {
                             title: "StatusSelect"
                             selected: viewLoader.source.toString().includes(title)
                             onClicked: mainPageView.page(title);
                         }
-                        StatusNavigationListItem { 
+                        StatusNavigationListItem {
                             title: "StatusAccountSelector"
                             selected: viewLoader.source.toString().includes(title)
                             onClicked: mainPageView.page(title);
                         }
-                        StatusNavigationListItem { 
+                        StatusNavigationListItem {
                             title: "StatusAssetSelector"
                             selected: viewLoader.source.toString().includes(title)
                             onClicked: mainPageView.page(title);
                         }
-                        StatusNavigationListItem { 
+                        StatusNavigationListItem {
                             title: "StatusColorSelector"
                             selected: viewLoader.source.toString().includes(title)
                             onClicked: mainPageView.page(title);
                         }
-                        StatusNavigationListItem { 
+                        StatusNavigationListItem {
                             title: "StatusWalletColorButton"
                             selected: viewLoader.source.toString().includes(title)
                             onClicked: mainPageView.page(title);
                         }
-                        StatusNavigationListItem { 
+                        StatusNavigationListItem {
                             title: "StatusWalletColorSelect"
                             selected: viewLoader.source.toString().includes(title)
                             onClicked: mainPageView.page(title);
@@ -239,22 +239,22 @@ StatusWindow {
                             onClicked: mainPageView.page(title);
                         }
                         StatusListSectionHeadline { text: "StatusQ.Components" }
-                        StatusNavigationListItem { 
+                        StatusNavigationListItem {
                             title: "StatusAddress"
                             selected: viewLoader.source.toString().includes(title)
                             onClicked: mainPageView.page(title);
                         }
-                        StatusNavigationListItem { 
+                        StatusNavigationListItem {
                             title: "List Items"
                             selected: viewLoader.source.toString().includes(title.replace(/\s+/g, ''))
                             onClicked: mainPageView.control(title.replace(/\s+/g, ''));
                         }
-                        StatusNavigationListItem { 
+                        StatusNavigationListItem {
                             title: "StatusChatInfoToolBar"
                             selected: viewLoader.source.toString().includes(title)
                             onClicked: mainPageView.page(title);
                         }
-                        StatusNavigationListItem { 
+                        StatusNavigationListItem {
                             title: "Others"
                             selected: viewLoader.source.toString().includes(title)
                             onClicked: mainPageView.control(title);
@@ -285,7 +285,7 @@ StatusWindow {
                             onClicked: mainPageView.page(title);
                         }
                         StatusListSectionHeadline { text: "StatusQ.Popup" }
-                        StatusNavigationListItem { 
+                        StatusNavigationListItem {
                             title: "StatusPopupMenu"
                             selected: viewLoader.source.toString().includes(title)
                             onClicked: mainPageView.page(title);
@@ -309,6 +309,11 @@ StatusWindow {
                         }
                         StatusNavigationListItem {
                             title: "StatusImageCropPanel"
+                            selected: viewLoader.source.toString().includes(title)
+                            onClicked: mainPageView.page(title, true);
+                        }
+                        StatusNavigationListItem {
+                            title: "StatusColorSpace"
                             selected: viewLoader.source.toString().includes(title)
                             onClicked: mainPageView.page(title, true);
                         }

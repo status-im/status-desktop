@@ -34,6 +34,7 @@
         <file>src/StatusQ/Components/StatusTagSelector.qml</file>
         <file>src/StatusQ/Components/StatusToastMessage.qml</file>
         <file>src/StatusQ/Components/StatusWizardStepper.qml</file>
+        <file>src/StatusQ/Components/StatusColorSpace.qml</file>
         <file>src/StatusQ/Components/private/statusMessage/StatusAudioMessage.qml</file>
         <file>src/StatusQ/Components/private/statusMessage/StatusEditMessage.qml</file>
         <file>src/StatusQ/Components/private/statusMessage/StatusImageMessage.qml</file>
@@ -138,6 +139,7 @@
         <file>src/StatusQ/Popups/StatusSearchPopup.qml</file>
         <file>src/StatusQ/Popups/StatusSearchPopupMenuItem.qml</file>
         <file>src/StatusQ/Popups/StatusSpellcheckingMenuItems.qml</file>
+        <file>src/StatusQ/Popups/StatusColorDialog.qml</file>
         <file>src/StatusQ/Popups/statusModal/StatusImageWithTitle.qml</file>
         <file>src/StatusQ/Popups/statusModal/StatusModalFooter.qml</file>
         <file>src/StatusQ/Popups/statusModal/StatusModalHeader.qml</file>

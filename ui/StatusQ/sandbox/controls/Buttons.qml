@@ -3,8 +3,8 @@ import QtQuick.Layouts 1.14
 import QtQuick.Dialogs 1.3
 
 import StatusQ.Controls 0.1
+import StatusQ.Popups 0.1
 import StatusQ.Core.Theme 0.1
-
 
 Column {
     spacing: 10
@@ -307,12 +307,14 @@ Column {
         onClicked: {
             colorDialog.open();
         }
-        ColorDialog {
-            id: colorDialog
-            property bool colorSelected: false
-            onAccepted: {
-                colorSelected = true;
-            }
+    }
+
+    StatusColorDialog {
+        id: colorDialog
+        anchors.centerIn: parent
+        property bool colorSelected: false
+        onAccepted: {
+            colorSelected = true;
         }
     }
 }
