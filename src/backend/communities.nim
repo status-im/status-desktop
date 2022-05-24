@@ -38,6 +38,8 @@ proc leaveCommunity*(communityId: string): RpcResponse[JsonNode] {.raises: [Exce
 proc createCommunity*(
     name: string,
     description: string,
+    introMessage: string,
+    outroMessage: string,
     access: int,
     color: string,
     imageUrl: string,
@@ -50,6 +52,8 @@ proc createCommunity*(
       "Membership": access,
       "name": name,
       "description": description,
+      "introMessage": introMessage,
+      "outroMessage": outroMessage,
       "ensOnly": false, # TODO ensOnly is no longer supported. Remove this when we remove it in status-go
       "color": color,
       "image": imageUrl,
@@ -65,6 +69,8 @@ proc editCommunity*(
     communityId: string,
     name: string,
     description: string,
+    introMessage: string,
+    outroMessage: string,
     access: int,
     color: string,
     imageUrl: string,
@@ -83,6 +89,8 @@ proc editCommunity*(
     "Membership": access,
     "name": name,
     "description": description,
+    "introMessage": introMessage,
+    "outroMessage": outroMessage,
     "ensOnly": false, # TODO ensOnly is no longer supported. Remove this when we remove it in status-go
     "color": color,
     "image": imageUrl,

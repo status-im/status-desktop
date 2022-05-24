@@ -80,6 +80,8 @@ type ChannelGroupDto* = object
   name*: string
   ensName*: string
   description*: string
+  introMessage*: string
+  outroMessage*: string
   chats*: seq[ChatDto]
   categories*: seq[Category]
   images*: Images
@@ -224,6 +226,8 @@ proc toChannelGroupDto*(jsonObj: JsonNode): ChannelGroupDto =
   discard jsonObj.getProp("verified", result.verified)
   discard jsonObj.getProp("name", result.name)
   discard jsonObj.getProp("description", result.description)
+  discard jsonObj.getProp("introMessage", result.introMessage)
+  discard jsonObj.getProp("outroMessage", result.outroMessage)
 
   result.channelGroupType = ChannelGroupType.Unknown
   var channelGroupTypeString: string

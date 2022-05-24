@@ -78,6 +78,8 @@ proc createCommunity*(
     self: Controller,
     name: string,
     description: string,
+    introMessage: string,
+    outroMessage: string,
     access: int,
     color: string,
     imageUrl: string,
@@ -87,6 +89,8 @@ proc createCommunity*(
   self.communityService.createCommunity(
     name,
     description,
+    introMessage,
+    outroMessage,
     access,
     color,
     imageUrl,

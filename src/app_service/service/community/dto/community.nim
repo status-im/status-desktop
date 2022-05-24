@@ -50,6 +50,8 @@ type CommunityDto* = object
   requestedAccessAt: int64
   name*: string
   description*: string
+  introMessage*: string
+  outroMessage*: string
   chats*: seq[ChatDto]
   categories*: seq[Category]
   images*: Images
@@ -84,6 +86,8 @@ proc toCommunityDto*(jsonObj: JsonNode): CommunityDto =
   discard jsonObj.getProp("requestedAccessAt", result.requestedAccessAt)
   discard jsonObj.getProp("name", result.name)
   discard jsonObj.getProp("description", result.description)
+  discard jsonObj.getProp("introMessage", result.introMessage)
+  discard jsonObj.getProp("outroMessage", result.outroMessage)
 
   var chatsObj: JsonNode
   if(jsonObj.getProp("chats", chatsObj)):
@@ -172,6 +176,8 @@ proc toChannelGroupDto*(communityDto: CommunityDto): ChannelGroupDto =
     admin: communityDto.admin,
     verified: communityDto.verified,
     description: communityDto.description,
+    introMessage: communityDto.introMessage,
+    outroMessage: communityDto.outroMessage,
     color: communityDto.color,
     permissions: communityDto.permissions,
     members: communityDto.members.map(m => ChatMember(
