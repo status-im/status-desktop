@@ -46,9 +46,9 @@ method refreshWalletAccounts*(self: Module) =
       w.tokens.map(t => token_item.initItem(
           t.name,
           t.symbol,
-          t.balance.chainBalance,
+          t.totalBalance.balance,
           t.address,
-          t.balance.currencyBalance,
+          t.totalBalance.currencyBalance,
         ))
     )
 

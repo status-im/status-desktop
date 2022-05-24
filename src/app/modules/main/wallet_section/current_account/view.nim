@@ -25,12 +25,14 @@ QtObject:
     self.QObject.setup
 
   proc delete*(self: View) =
+    self.assets.delete
     self.QObject.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
-    result.delegate = delegate
     result.setup()
+    result.delegate = delegate
+    result.assets = token_model.newModel()
 
   proc load*(self: View) =
     self.delegate.viewDidLoad()
@@ -103,20 +105,22 @@ QtObject:
     read = getIsChat
     notify = isChatChanged
 
-  proc getCurrencyBalance(self: View): QVariant {.slot.} =
-    return newQVariant(self.currencyBalance)
-
   proc currencyBalanceChanged(self: View) {.signal.}
-
+  proc getCurrencyBalance*(self: View): QVariant {.slot.} =
+    return newQVariant(self.currencyBalance)
+  proc setCurrencyBalance*(self: View, value: float) =
+    self.currencyBalance = value
+    self.currencyBalanceChanged()
   QtProperty[QVariant] currencyBalance:
     read = getCurrencyBalance
     notify = currencyBalanceChanged
 
-  proc getAssets(self: View): QVariant {.slot.} =
-    return newQVariant(self.assets)
+  proc getAssetsModel*(self: View): token_model.Model =
+    return self.assets
 
   proc assetsChanged(self: View) {.signal.}
-
+  proc getAssets*(self: View): QVariant {.slot.} =
+    return newQVariant(self.assets)
   QtProperty[QVariant] assets:
     read = getAssets
     notify = assetsChanged
@@ -158,23 +162,6 @@ QtObject:
     if(self.isChat != dto.isChat):
       self.isChat = dto.isChat
       self.isChatChanged()
-    if(self.currencyBalance != dto.getCurrencyBalance()):
-      self.currencyBalance = dto.getCurrencyBalance()
-      self.currencyBalanceChanged()
     if(self.emoji != dto.emoji):
       self.emoji = dto.emoji
       self.emojiChanged()
-
-    let assets = token_model.newModel()
-
-    assets.setItems(
-      dto.tokens.map(t => token_item.initItem(
-          t.name,
-          t.symbol,
-          t.balance.chainBalance,
-          t.address,
-          t.balance.currencyBalance,
-        ))
-    )
-    self.assets = assets
-    self.assetsChanged()

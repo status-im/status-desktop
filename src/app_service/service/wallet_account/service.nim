@@ -1,4 +1,4 @@
-import Tables, NimQml, json, sequtils, sugar, chronicles, strformat, stint, httpclient, net, strutils
+import NimQml, Tables, json, sequtils, sugar, chronicles, strformat, stint, httpclient, net, strutils, os
 import web3/[ethtypes, conversions]
 
 import ../settings/service as settings_service
@@ -6,6 +6,7 @@ import ../accounts/service as accounts_service
 import ../token/service as token_service
 import ../network/service as network_service
 import ../../common/account_constants
+import ../../../app/global/global_singleton
 
 import dto
 import derived_address
@@ -23,8 +24,6 @@ export derived_address
 logScope:
   topics = "wallet-account-service"
 
-include async_tasks
-
 const SIGNAL_WALLET_ACCOUNT_SAVED* = "walletAccount/accountSaved"
 const SIGNAL_WALLET_ACCOUNT_DELETED* = "walletAccount/accountDeleted"
 const SIGNAL_WALLET_ACCOUNT_CURRENCY_UPDATED* = "walletAccount/currencyUpdated"
@@ -32,6 +31,7 @@ const SIGNAL_WALLET_ACCOUNT_TOKEN_VISIBILITY_UPDATED* = "walletAccount/tokenVisi
 const SIGNAL_WALLET_ACCOUNT_UPDATED* = "walletAccount/walletAccountUpdated"
 const SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED* = "walletAccount/networkEnabledUpdated"
 const SIGNAL_WALLET_ACCOUNT_DERIVED_ADDRESS_READY* = "walletAccount/derivedAddressesReady"
+const SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT* = "walletAccount/tokensRebuilt"
 
 var
   balanceCache {.threadvar.}: Table[string, float64]
@@ -56,19 +56,6 @@ proc fetchAccounts(): seq[WalletAccountDto] =
     x => x.toWalletAccountDto()
   ).filter(a => not a.isChat)
 
-proc fetchNativeChainBalance(network: NetworkDto, accountAddress: string): float64 =
-  let key = "0x0" & accountAddress & $network.chainId
-  if balanceCache.hasKey(key):
-    return balanceCache[key]
-
-  try:
-    let nativeBalanceResponse = status_go_eth.getNativeChainBalance(network.chainId, accountAddress)
-    result = parsefloat(hex2Balance(nativeBalanceResponse.result.getStr, network.nativeCurrencyDecimals))
-    balanceCache[key] = result
-  except Exception as e:
-    error "Error getting balance", message = e.msg
-    result = 0.0
-
 type AccountSaved = ref object of Args
   account: WalletAccountDto
 
@@ -88,20 +75,33 @@ type DerivedAddressesArgs* = ref object of Args
   derivedAddresses*: seq[DerivedAddressDto]
   error*: string
 
+type TokensPerAccountArgs* = ref object of Args
+  accountsTokens*: OrderedTable[string, seq[WalletTokenDto]] # [wallet address, list of tokens]
+
+const CheckBalanceIntervalInMilliseconds = 15 * 60 * 1000 # 15 mins
+
+include async_tasks
+include  ../../common/json_utils
+
 QtObject:
   type Service* = ref object of QObject
-      events: EventEmitter
-      threadpool: ThreadPool
-      settingsService: settings_service.Service
-      accountsService: accounts_service.Service
-      tokenService: token_service.Service
-      networkService: network_service.Service
-      accounts: OrderedTable[string, WalletAccountDto]
+    closingApp: bool
+    ignoreTimeInitiatedTokensBuild: bool
+    events: EventEmitter
+    threadpool: ThreadPool
+    settingsService: settings_service.Service
+    accountsService: accounts_service.Service
+    tokenService: token_service.Service
+    networkService: network_service.Service
+    walletAccounts: OrderedTable[string, WalletAccountDto]
 
-      priceCache: TimedCache
+    priceCache: TimedCache
 
+  # Forward declaration
+  proc buildAllTokens(self: Service, calledFromTimerOrInit = false)
 
   proc delete*(self: Service) =
+    self.closingApp = true
     self.QObject.delete
 
   proc newService*(
@@ -114,87 +114,16 @@ QtObject:
   ): Service =
     new(result, delete)
     result.QObject.setup
+    result.closingApp = false
+    result.ignoreTimeInitiatedTokensBuild = false
     result.events = events
     result.threadpool = threadpool
     result.settingsService = settingsService
     result.accountsService = accountsService
     result.tokenService = tokenService
     result.networkService = networkService
-    result.accounts = initOrderedTable[string, WalletAccountDto]()
+    result.walletAccounts = initOrderedTable[string, WalletAccountDto]()
     result.priceCache = newTimedCache()
-
-  proc buildTokens(
-    self: Service,
-    account: WalletAccountDto,
-    prices: Table[string, float],
-    tokenBalances: JsonNode
-  ): seq[WalletTokenDto] =
-    var groupedNetwork = initTable[string, seq[NetworkDto]]()
-    for network in self.networkService.getEnabledNetworks():
-      if not groupedNetwork.hasKey(network.nativeCurrencyName):
-        groupedNetwork[network.nativeCurrencyName] = @[]
-
-      groupedNetwork[network.nativeCurrencyName].add(network)
-    for currencyName, networks in groupedNetwork.pairs:
-      var balances = initTable[int, BalanceDto]()
-      for network in networks:
-        let chainBalance = fetchNativeChainBalance(network, account.address)
-        balances[network.chainId] = BalanceDto(
-          chainBalance: chainBalance,
-          currencyBalance: chainBalance * prices[network.nativeCurrencySymbol]  
-        )
-      
-      let totalChainBalance = toSeq(balances.values).map(x => x.chainBalance).foldl(a + b)
-      let balance = BalanceDto(
-        chainBalance: totalChainBalance,
-        currencyBalance: totalChainBalance * prices[networks[0].nativeCurrencySymbol]
-      )
-      result.add(WalletTokenDto(
-        name: currencyName,
-        address: "0x0000000000000000000000000000000000000000",
-        symbol: networks[0].nativeCurrencySymbol,
-        decimals: networks[0].nativeCurrencyDecimals,
-        hasIcon: true,
-        color: "blue",
-        isCustom: false,
-        balance: balance,
-        balances: balances
-      ))
-
-    var groupedToken = initTable[string, seq[TokenDto]]()
-    for token in self.tokenService.getVisibleTokens():
-      if not groupedToken.hasKey(token.symbol):
-        groupedToken[token.symbol] = @[]
-      groupedToken[token.symbol].add(token)
-
-    for symbol, tokens in groupedToken.pairs:
-      var balances = initTable[int, BalanceDto]()
-      for token in tokens:
-        let chainBalance = parsefloat(hex2Balance(tokenBalances{token.addressAsString()}.getStr, token.decimals))
-        balances[token.chainId] = BalanceDto(
-          chainBalance: chainBalance,
-          currencyBalance: chainBalance * prices[symbol]  
-        )
-      
-      let totalChainBalance = toSeq(balances.values).map(x => x.chainBalance).foldl(a + b)
-      let balance = BalanceDto(
-        chainBalance: totalChainBalance,
-        currencyBalance: totalChainBalance * prices[symbol]
-      )
-      
-      result.add(
-        WalletTokenDto(
-          name: tokens[0].name,
-          address: $tokens[0].address,
-          symbol: symbol,
-          decimals: tokens[0].decimals,
-          hasIcon: tokens[0].hasIcon,
-          color: tokens[0].color,
-          isCustom: tokens[0].isCustom,
-          balance: balance,
-          balances: balances
-        )
-      )
 
   proc getPrice*(self: Service, crypto: string, fiat: string): float64 =
     let cacheKey = crypto & fiat
@@ -214,68 +143,27 @@ QtObject:
       error "error: ", errDesription
       return 0.0
 
-
-  proc fetchPrices(self: Service): Table[string, float] =
-    let currency = self.settingsService.getCurrency()
-
-    var symbols: seq[string] = @[]
-
-    for network in self.networkService.getEnabledNetworks():
-      symbols.add(network.nativeCurrencySymbol)
-
-    for token in self.tokenService.getVisibleTokens():
-      symbols.add(token.symbol)
-
-    var prices = initTable[string, float]()
-    if symbols.len == 0:
-      return prices
-
-    try:
-      let response = backend.fetchPrices(symbols, currency)
-      for (symbol, value) in response.result.pairs:
-        prices[symbol] = value.getFloat
-
-    except Exception as e:
-      let errDesription = e.msg
-      error "error: ", errDesription
-
-    return prices
-
-  proc fetchBalances(self: Service, accounts: seq[string]): JsonNode =
-    let visibleTokens = self.tokenService.getVisibleTokens()
-    let tokens = visibleTokens.map(t => t.addressAsString())
-    let chainIds = visibleTokens.map(t => t.chainId)
-    return backend.getTokensBalancesForChainIDs(chainIds, accounts, tokens).result
-
-  proc refreshBalances(self: Service) =
-    let prices = self.fetchPrices()
-    let accounts = toSeq(self.accounts.keys)
-    let balances = self.fetchBalances(accounts)
-
-    for account in toSeq(self.accounts.values):
-      account.tokens = self.buildTokens(account, prices, balances{account.address})
-
   proc init*(self: Service) =
+    signalConnect(singletonInstance.localAccountSensitiveSettings, "isWalletEnabledChanged()", self, "onIsWalletEnabledChanged()", 2)
+    
     try:
       let accounts = fetchAccounts()
-
       for account in accounts:
-        self.accounts[account.address] = account
+        self.walletAccounts[account.address] = account
 
-      self.refreshBalances()
+      self.buildAllTokens(true)
     except Exception as e:
       let errDesription = e.msg
       error "error: ", errDesription
       return
 
   proc getAccountByAddress*(self: Service, address: string): WalletAccountDto =
-    if not self.accounts.hasKey(address):
+    if not self.walletAccounts.hasKey(address):
       return
-
-    return self.accounts[address]
+    return self.walletAccounts[address]
 
   proc getWalletAccounts*(self: Service): seq[WalletAccountDto] =
-    return toSeq(self.accounts.values)
+    return toSeq(self.walletAccounts.values)
 
   proc getWalletAccount*(self: Service, accountIndex: int): WalletAccountDto =
     if(accountIndex < 0 or accountIndex >= self.getWalletAccounts().len):
@@ -293,17 +181,13 @@ QtObject:
 
   proc addNewAccountToLocalStore(self: Service) =
     let accounts = fetchAccounts()
-    let prices = self.fetchPrices()
-
     var newAccount = accounts[0]
     for account in accounts:
-      if not self.accounts.haskey(account.address):
+      if not self.walletAccounts.haskey(account.address):
         newAccount = account
         break
-
-    let balances = self.fetchBalances(@[newAccount.address])
-    newAccount.tokens = self.buildTokens(newAccount, prices, balances{newAccount.address})
-    self.accounts[newAccount.address] = newAccount
+    self.walletAccounts[newAccount.address] = newAccount
+    self.buildAllTokens()
     self.events.emit(SIGNAL_WALLET_ACCOUNT_SAVED, AccountSaved(account: newAccount))
 
   proc generateNewAccount*(self: Service, password: string, accountName: string, color: string, emoji: string, path: string, derivedFrom: string): string =
@@ -363,35 +247,35 @@ QtObject:
 
   proc deleteAccount*(self: Service, address: string) =
     discard status_go_accounts.deleteAccount(address)
-    let accountDeleted = self.accounts[address]
-    self.accounts.del(address)
+    let accountDeleted = self.walletAccounts[address]
+    self.walletAccounts.del(address)
 
     self.events.emit(SIGNAL_WALLET_ACCOUNT_DELETED, AccountDeleted(account: accountDeleted))
 
   proc updateCurrency*(self: Service, newCurrency: string) =
     discard self.settingsService.saveCurrency(newCurrency)
-    self.refreshBalances()
+    self.buildAllTokens()
     self.events.emit(SIGNAL_WALLET_ACCOUNT_CURRENCY_UPDATED, CurrencyUpdated())
 
   proc toggleTokenVisible*(self: Service, chainId: int, address: string) =
     self.tokenService.toggleVisible(chainId, address)
-    self.refreshBalances()
+    self.buildAllTokens()
     self.events.emit(SIGNAL_WALLET_ACCOUNT_TOKEN_VISIBILITY_UPDATED, TokenVisibilityToggled())
 
   proc toggleNetworkEnabled*(self: Service, chainId: int) =
     self.networkService.toggleNetwork(chainId)
     self.tokenService.init()
-    self.refreshBalances()
+    self.buildAllTokens()
     self.events.emit(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED, NetwordkEnabledToggled())
 
   method toggleTestNetworksEnabled*(self: Service) =
-    discard self.settings_service.toggleTestNetworksEnabled()
+    discard self.settingsService.toggleTestNetworksEnabled()
     self.tokenService.init()
-    self.refreshBalances()
+    self.buildAllTokens()
     self.events.emit(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED, NetwordkEnabledToggled())
 
   proc updateWalletAccount*(self: Service, address: string, accountName: string, color: string, emoji: string) =
-    let account = self.accounts[address]
+    let account = self.walletAccounts[address]
     status_go_accounts.updateAccount(
       accountName,
       account.address,
@@ -452,4 +336,67 @@ QtObject:
       error: error
     ))
 
+  proc onStartBuildingTokensTimer*(self: Service, response: string) {.slot.} =
+    if self.ignoreTimeInitiatedTokensBuild:
+      self.ignoreTimeInitiatedTokensBuild = false
+      return
 
+    self.buildAllTokens(true)
+
+  proc startBuildingTokensTimer(self: Service) =
+    if(self.closingApp):
+      return
+
+    let arg = TimerTaskArg(
+      tptr: cast[ByteAddress](timerTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onStartBuildingTokensTimer",
+      timeoutInMilliseconds: CheckBalanceIntervalInMilliseconds
+    )
+    self.threadpool.start(arg)
+
+  proc onAllTokensBuilt*(self: Service, response: string) {.slot.} =
+    let responseObj = response.parseJson
+    if (responseObj.kind != JObject):
+      info "prepared tokens are not a json object"
+      return
+
+    var data = TokensPerAccountArgs()
+    let walletAddresses = toSeq(self.walletAccounts.keys)
+    for wAddress in walletAddresses:
+      var tokensArr: JsonNode
+      var tokens: seq[WalletTokenDto]
+      if(responseObj.getProp(wAddress, tokensArr)):
+        tokens = map(tokensArr.getElems(), proc(x: JsonNode): WalletTokenDto = x.toWalletTokenDto())
+      self.walletAccounts[wAddress].tokens = tokens
+      data.accountsTokens[wAddress] = tokens
+
+    self.events.emit(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT, data)
+
+    # run timer again...
+    self.startBuildingTokensTimer()
+
+  proc buildAllTokens(self: Service, calledFromTimerOrInit = false) =
+    if(self.closingApp or not singletonInstance.localAccountSensitiveSettings.getIsWalletEnabled()):
+      return
+
+    # Since we don't have a way to re-run TimerTaskArg (to stop it and run again), we introduced some flags which will
+    # just ignore buildAllTokens in case that proc is called by some action in the time window between two successive calls
+    # initiated by TimerTaskArg.
+    if not calledFromTimerOrInit:
+      self.ignoreTimeInitiatedTokensBuild = true
+
+    let walletAddresses = toSeq(self.walletAccounts.keys)
+
+    let arg = BuildTokensTaskArg(
+      tptr: cast[ByteAddress](prepareTokensTask),
+      vptr: cast[ByteAddress](self.vptr),
+      slot: "onAllTokensBuilt",
+      walletAddresses: walletAddresses,
+      currency: self.settingsService.getCurrency(),
+      networks: self.networkService.getEnabledNetworks()
+    )
+    self.threadpool.start(arg)
+
+  proc onIsWalletEnabledChanged*(self: Service) {.slot.} =
+    self.buildAllTokens()

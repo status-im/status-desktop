@@ -1,6 +1,5 @@
 import os, json, sequtils, strutils, uuids
 import json_serialization, chronicles
-import times as times
 
 import ./dto/accounts as dto_accounts
 import ./dto/generated_accounts as dto_generated_accounts
