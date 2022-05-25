@@ -3,8 +3,10 @@ import chronicles, json, strutils, sequtils, tables, sugar
 import ../../common/[network_constants]
 import ../../../app/core/fleets/fleet_configuration
 import ../../../backend/settings as status_settings
+import ../../../backend/status_update as status_update
 
 import ./dto/settings as settings_dto
+import ../contacts/dto/status_update as status_update_dto
 import ../stickers/dto/stickers as stickers_dto
 import ../../../app/core/fleets/fleet_configuration
 
@@ -288,10 +290,18 @@ proc getWalletRootAddress*(self: Service): string =
   return self.settings.walletRootAddress
 
 proc saveSendStatusUpdates*(self: Service, value: bool): bool =
-  if(self.saveSetting(KEY_SEND_STATUS_UPDATES, value)):
-    self.settings.sendStatusUpdates = value
-    return true
-  return false
+  var newStatus = StatusType.Online
+  if not value:
+    newStatus = StatusType.Offline
+
+  try:
+    let r = status_update.setUserStatus(int(newStatus))
+    if(self.saveSetting(KEY_SEND_STATUS_UPDATES, value)):
+      self.settings.sendStatusUpdates = value
+      return true
+    return false
+  except:
+    return false
 
 proc getSendStatusUpdates*(self: Service): bool =
   self.settings.sendStatusUpdates

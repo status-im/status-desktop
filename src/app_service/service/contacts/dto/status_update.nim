@@ -1,8 +1,8 @@
 import json
 include ../../../common/json_utils
 
-type StatusType* {.pure.}= enum
-  Offline = 0,
+type StatusType* {.pure.} = enum
+  Offline = 0
   Online
   DoNotDisturb
   Idle
