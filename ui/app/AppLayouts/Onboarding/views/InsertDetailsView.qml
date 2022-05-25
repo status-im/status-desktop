@@ -54,6 +54,7 @@ Item {
     }
 
     ColumnLayout {
+        height: 461
         anchors.centerIn: parent
         spacing: Style.current.padding
 
@@ -83,14 +84,14 @@ Item {
             StatusSmartIdenticon {
                 id: userImage
                 image {
-                    width: 80
-                    height: 80
+                    width: 86
+                    height: 86
                     isIdenticon: false
                 }
 
                 icon {
-                    width: 80
-                    height: 80
+                    width: 86
+                    height: 86
                     letterSize: 32
                     color: Theme.palette.miscColor5
                     charactersLen: 2
@@ -117,7 +118,7 @@ Item {
         StatusInput {
             id: nameInput
             implicitWidth: 328
-            Layout.preferredHeight: 78
+            Layout.preferredHeight: 44
             Layout.alignment: Qt.AlignHCenter
             input.placeholderText: qsTr("Display name")
             input.rightComponent: RoundedIcon {
@@ -149,6 +150,7 @@ Item {
 
         StyledText {
             id: chatKeyTxt
+            Layout.preferredHeight: 44
             color: Style.current.secondaryText
             text: qsTr("Chatkey:") + " " + Utils.getCompressedPk(root.pubKey)
             horizontalAlignment: Text.AlignHCenter
@@ -193,7 +195,6 @@ Item {
         StatusButton {
             id: nextBtn
             Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
-            Layout.topMargin: 125
             enabled: !!nameInput.text && nameInput.valid
             text: qsTr("Next")
             onClicked: {
@@ -245,15 +246,15 @@ Item {
             }
             PropertyChanges {
                 target: chainsChatKeyImg
-                visible: false
+                opacity: 0.0
             }
             PropertyChanges {
                 target: userImageCopy
-                visible: false
+                opacity: 0.0
             }
             PropertyChanges {
                 target: updatePicButton
-                visible: true
+                opacity: 1.0
             }
             PropertyChanges {
                 target: nameInput
@@ -276,15 +277,15 @@ Item {
             }
             PropertyChanges {
                 target: chainsChatKeyImg
-                visible: true
+                opacity: 1.0
             }
             PropertyChanges {
                 target: userImageCopy
-                visible: true
+                opacity: 1.0
             }
             PropertyChanges {
                 target: updatePicButton
-                visible: false
+                opacity: 0.0
             }
             PropertyChanges {
                 target: nameInput
