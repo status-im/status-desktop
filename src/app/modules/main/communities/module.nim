@@ -137,9 +137,7 @@ method curatedCommunityAdded*(self: Module, community: CuratedCommunity) =
   self.view.curatedCommunitiesModel().addItem(self.getCuratedCommunityItem(community))
 
 method curatedCommunityEdited*(self: Module, community: CuratedCommunity) =
-  if self.view.curatedCommunitiesModel().containsItemWithId(community.communityId):
-    self.view.curatedCommunitiesModel().removeItemWithId(community.communityId)
-    self.view.curatedCommunitiesModel().addItem(self.getCuratedCommunityItem(community))
+  self.view.curatedCommunitiesModel().addItem(self.getCuratedCommunityItem(community))
 
 method requestAdded*(self: Module) =
   # TODO to model or view

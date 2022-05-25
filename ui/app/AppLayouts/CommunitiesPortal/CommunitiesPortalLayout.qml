@@ -92,10 +92,14 @@ ScrollView {
             Text {
                 text: "CURATED COMMUNITY LIST ========="
             }
-            Repeater {
-                model: root.communitiesStore.curatedCommunitiesModel
-                delegate:  Text {
-                    text: model.name + " " + model.description + " " + model.icon + " " + model.available
+            ColumnLayout {
+                Repeater {
+                    model: root.communitiesStore.curatedCommunitiesModel
+                    delegate:  Row {
+                        Text {
+                            text: model.name + " " + model.description + " " + model.icon + " " + model.available
+                        }
+                    }
                 }
             }
         }

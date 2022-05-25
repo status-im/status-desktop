@@ -75,28 +75,6 @@ QtObject:
         return i
     return -1
 
-  proc addItems*(self: CuratedCommunityModel, items: seq[CuratedCommunityItem]) =
-    if(items.len == 0):
-      return
-
-    let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
-
-    let first = self.items.len
-    let last = first + items.len - 1
-    self.beginInsertRows(parentModelIndex, first, last)
-    self.items.add(items)
-    self.endInsertRows()
-    self.countChanged()
-
-  proc addItem*(self: CuratedCommunityModel, item: CuratedCommunityItem) =
-    let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
-    self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
-    self.items.add(item)
-    self.endInsertRows()
-    self.countChanged()
-
   proc containsItemWithId*(self: CuratedCommunityModel, id: string): bool =
     return self.findIndexById(id) != -1
 
@@ -111,4 +89,15 @@ QtObject:
     self.beginRemoveRows(parentModelIndex, ind, ind)
     self.items.delete(ind)
     self.endRemoveRows()
+    self.countChanged()
+
+
+  proc addItem*(self: CuratedCommunityModel, item: CuratedCommunityItem) =
+    self.removeItemWithId(item.getId())
+
+    let parentModelIndex = newQModelIndex()
+    defer: parentModelIndex.delete
+    self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
+    self.items.add(item)
+    self.endInsertRows()
     self.countChanged()
