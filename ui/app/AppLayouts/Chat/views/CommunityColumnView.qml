@@ -82,7 +82,8 @@ Item {
                 })
             }
         }
-    }
+
+    } // StatusChatInfoToolBar
     Loader {
         id: membershipRequests
 
@@ -109,8 +110,9 @@ Item {
     ScrollView {
         id: chatGroupsContainer
         anchors.top: membershipRequests.bottom
-        anchors.topMargin: Style.current.padding
         anchors.bottom: parent.bottom
+
+        topPadding: Style.current.padding
 
         width: parent.width
 
@@ -119,6 +121,44 @@ Item {
         contentHeight: communityChatListAndCategories.height
                        + bannerColumn.height
                        + Style.current.bigPadding
+
+        background: MouseArea {
+            acceptedButtons: Qt.RightButton
+            onClicked: {
+                popup.x = mouse.x + 4
+                popup.y = mouse.y + 4
+                popup.open()
+            }
+
+        property var popup: StatusPopupMenu {
+            StatusMenuItem {
+                text: qsTr("Create channel")
+                icon.name: "channel"
+                enabled: communityData.amISectionAdmin
+                onTriggered: Global.openPopup(createChannelPopup)
+            }
+
+            StatusMenuItem {
+                text: qsTr("Create category")
+                icon.name: "channel-category"
+                enabled: communityData.amISectionAdmin
+                onTriggered: Global.openPopup(createCategoryPopup)
+            }
+
+            StatusMenuSeparator {}
+
+            StatusMenuItem {
+                text: qsTr("Invite people")
+                icon.name: "share-ios"
+                enabled: communityData.canManageUsers
+                onTriggered: Global.openPopup(inviteFriendsToCommunityPopup, {
+                                                  community: communityData,
+                                                  hasAddedContacts: root.hasAddedContacts,
+                                                  communitySectionModule: root.communitySectionModule
+                                              })
+            }
+        }
+    } // MouseArea
 
         StatusChatListAndCategories {
             id: communityChatListAndCategories
@@ -346,7 +386,7 @@ Item {
                         onManageCommunityClicked: root.manageButtonClicked()
                     }
                 }
-            }
+            } // Loader
 
             Loader {
                 id: channelsAndCategoriesAdminBox
@@ -372,6 +412,7 @@ Item {
                         MouseArea {
                             anchors.fill: channelsAndCategoriesBanner
                             acceptedButtons: Qt.RightButton
+                            propagateComposedEvents: true
                             onClicked: {
                                 /* Prevents sending events to the component beneath
                                 if Right Mouse Button is clicked. */
@@ -380,7 +421,7 @@ Item {
                         }
                     }
                 }
-            }
+            } // Loader
 
             Loader {
                 id: backUpBannerLoader
@@ -411,6 +452,7 @@ Item {
                         MouseArea {
                             anchors.fill: backupBanner
                             acceptedButtons: Qt.RightButton
+                            propagateComposedEvents: true
                             onClicked: {
                                 /* Prevents sending events to the component beneath
                                 if Right Mouse Button is clicked. */
@@ -419,9 +461,9 @@ Item {
                         }
                     }
                 }
-            }
-        }
-    }
+            } // Loader
+        } // Column
+    } // ScrollView
 
     Component {
         id: createChannelPopup
