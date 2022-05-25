@@ -127,35 +127,72 @@ QtObject:
     self: Service,
     account: WalletAccountDto,
     prices: Table[string, float],
-    balances: JsonNode
+    tokenBalances: JsonNode
   ): seq[WalletTokenDto] =
+    var groupedNetwork = initTable[string, seq[NetworkDto]]()
     for network in self.networkService.getEnabledNetworks():
-      let balance = fetchNativeChainBalance(network, account.address)
+      if not groupedNetwork.hasKey(network.nativeCurrencyName):
+        groupedNetwork[network.nativeCurrencyName] = @[]
+
+      groupedNetwork[network.nativeCurrencyName].add(network)
+    for currencyName, networks in groupedNetwork.pairs:
+      var balances = initTable[int, BalanceDto]()
+      for network in networks:
+        let chainBalance = fetchNativeChainBalance(network, account.address)
+        balances[network.chainId] = BalanceDto(
+          chainBalance: chainBalance,
+          currencyBalance: chainBalance * prices[network.nativeCurrencySymbol]  
+        )
+      
+      let totalChainBalance = toSeq(balances.values).map(x => x.chainBalance).foldl(a + b)
+      let balance = BalanceDto(
+        chainBalance: totalChainBalance,
+        currencyBalance: totalChainBalance * prices[networks[0].nativeCurrencySymbol]
+      )
       result.add(WalletTokenDto(
-        name: network.chainName,
+        name: currencyName,
         address: "0x0000000000000000000000000000000000000000",
-        symbol: network.nativeCurrencySymbol,
-        decimals: network.nativeCurrencyDecimals,
+        symbol: networks[0].nativeCurrencySymbol,
+        decimals: networks[0].nativeCurrencyDecimals,
         hasIcon: true,
         color: "blue",
         isCustom: false,
         balance: balance,
-        currencyBalance: balance * prices[network.nativeCurrencySymbol]
+        balances: balances
       ))
 
+    var groupedToken = initTable[string, seq[TokenDto]]()
     for token in self.tokenService.getVisibleTokens():
-      let balance = parsefloat(hex2Balance(balances{token.addressAsString()}.getStr, token.decimals))
+      if not groupedToken.hasKey(token.symbol):
+        groupedToken[token.symbol] = @[]
+      groupedToken[token.symbol].add(token)
+
+    for symbol, tokens in groupedToken.pairs:
+      var balances = initTable[int, BalanceDto]()
+      for token in tokens:
+        let chainBalance = parsefloat(hex2Balance(tokenBalances{token.addressAsString()}.getStr, token.decimals))
+        balances[token.chainId] = BalanceDto(
+          chainBalance: chainBalance,
+          currencyBalance: chainBalance * prices[symbol]  
+        )
+      
+      let totalChainBalance = toSeq(balances.values).map(x => x.chainBalance).foldl(a + b)
+      let balance = BalanceDto(
+        chainBalance: totalChainBalance,
+        currencyBalance: totalChainBalance * prices[symbol]
+      )
+      
       result.add(
         WalletTokenDto(
-          name: token.name,
-          address: $token.address,
-          symbol: token.symbol,
-          decimals: token.decimals,
-          hasIcon: token.hasIcon,
-          color: token.color,
-          isCustom: token.isCustom,
+          name: tokens[0].name,
+          address: $tokens[0].address,
+          symbol: symbol,
+          decimals: tokens[0].decimals,
+          hasIcon: tokens[0].hasIcon,
+          color: tokens[0].color,
+          isCustom: tokens[0].isCustom,
           balance: balance,
-          currencyBalance: balance * prices[token.symbol]
+          balances: balances
         )
       )
 
@@ -190,6 +227,9 @@ QtObject:
       symbols.add(token.symbol)
 
     var prices = initTable[string, float]()
+    if symbols.len == 0:
+      return prices
+
     try:
       let response = backend.fetchPrices(symbols, currency)
       for (symbol, value) in response.result.pairs:

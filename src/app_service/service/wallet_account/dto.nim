@@ -1,6 +1,10 @@
-import json, sequtils, sugar
+import tables, json, sequtils, sugar
 
 include  ../../common/json_utils
+
+type BalanceDto* = ref object of RootObj
+  chainBalance*: float64
+  currencyBalance*: float64
 
 type
   WalletTokenDto* = ref object of RootObj
@@ -11,8 +15,8 @@ type
     hasIcon*: bool
     color*: string
     isCustom*: bool
-    balance*: float64
-    currencyBalance*: float64
+    balance*: BalanceDto
+    balances*: Table[int, BalanceDto]
 
 type
   WalletAccountDto* = ref object of RootObj
@@ -69,4 +73,4 @@ proc toWalletAccountDto*(jsonObj: JsonNode): WalletAccountDto =
   discard jsonObj.getProp("derived-from", result.derivedfrom)
 
 proc getCurrencyBalance*(self: WalletAccountDto): float64 =
-  return self.tokens.map(t => t.currencyBalance).foldl(a + b, 0.0)
+  return self.tokens.map(t => t.balance.currencyBalance).foldl(a + b, 0.0)
