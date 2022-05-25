@@ -31,6 +31,7 @@ Rectangle {
     MouseArea {
         anchors.fill: parent
         acceptedButtons: Qt.RightButton
+        propagateComposedEvents: true
         onClicked: {
             /* Prevents sending events to the component beneath
                if Right Mouse Button is clicked. */
