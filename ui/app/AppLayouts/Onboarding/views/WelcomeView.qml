@@ -37,27 +37,18 @@ Page {
     Item {
         id: container
         width: 425
-        height: {
-            let h = 0
-            const children = this.children
-            Object.keys(children).forEach(function (key) {
-                const child = children[key]
-                h += child.height + Style.current.padding
-            })
-            return h
-        }
-
-        anchors.verticalCenter: parent.verticalCenter
+        height: 513
         anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 143
 
         Image {
             id: keysImg
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: parent.top
-            fillMode: Image.PreserveAspectFit
-            source: Style.png("onboarding/welcome")
             width: 256
             height: 256
+            anchors.horizontalCenter: parent.horizontalCenter
+            fillMode: Image.PreserveAspectFit
+            source: Style.png("onboarding/welcome")
             mipmap: true
         }
 
@@ -76,7 +67,7 @@ Page {
         StyledText {
             id: txtDesc1
             color: Style.current.secondaryText
-            text: qsTr("Your fully decentralized gateway to Ethereum and Web3.\nCrypto wallet, privacy first group chat, and dApp browser.")
+            text: qsTr("Your fully decentralized gateway to Ethereum and Web3. Crypto wallet, privacy first group chat, and dApp browser.")
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
             anchors.right: parent.right

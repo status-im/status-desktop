@@ -24,85 +24,85 @@ OnboardingBasePage {
     Item {
         id: container
         width: 425
-        height: {
-            let h = 0
-            const children = this.children
-            Object.keys(children).forEach(function (key) {
-                const child = children[key]
-                h += child.height + Style.current.padding
-            })
-            return h
-        }
-
-        anchors.verticalCenter: parent.verticalCenter
+        height: 513
         anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 143
 
-        Image {
-            id: keysImg
-            width: 160
-            height: 160
+        Item {
+            id: keysImgWrapperItem
+            width: 257
+            height: 257
             anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: parent.top
-            fillMode: Image.PreserveAspectFit
-            source: Style.png("onboarding/keys")
-            mipmap: true
+            Image {
+                id: keysImg
+                width: 257
+                height: 257
+                anchors.bottom: parent.bottom
+                anchors.horizontalCenter: parent.horizontalCenter
+                source: Style.png("onboarding/keys")
+                mipmap: true
+            }
         }
 
         StyledText {
             id: txtTitle
             text: qsTrId("intro-wizard-title1")
-            anchors.topMargin: Style.current.padding
             font.bold: true
             anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: keysImg.bottom
+            anchors.top: keysImgWrapperItem.bottom
+            anchors.topMargin: Style.current.padding
             font.letterSpacing: -0.2
             font.pixelSize: 22
         }
 
         StyledText {
             id: txtDesc
-            color: Style.current.secondaryText
-            text: qsTrId("a-set-of-keys-controls-your-account.-your-keys-live-on-your-device,-so-only-you-can-use-them.")
-            horizontalAlignment: Text.AlignHCenter
-            wrapMode: Text.WordWrap
+            height: 44
             anchors.right: parent.right
             anchors.left: parent.left
             anchors.top: txtTitle.bottom
             anchors.topMargin: Style.current.padding
+            color: Style.current.secondaryText
+            text: qsTrId("a-set-of-keys-controls-your-account.-your-keys-live-on-your-device,-so-only-you-can-use-them.")
+            horizontalAlignment: Text.AlignHCenter
+            wrapMode: Text.WordWrap
             font.pixelSize: 15
         }
+
         ColumnLayout {
-            anchors.topMargin: 40
-            anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: txtDesc.bottom
+            anchors.topMargin: 32
+            anchors.horizontalCenter: parent.horizontalCenter
             spacing: Style.current.bigPadding
             StatusButton {
                 id: button
+                enabled: (opacity > 0.1)
                 Layout.alignment: Qt.AlignHCenter
                 onClicked: {
                     root.buttonClicked();
                 }
             }
 
-//            StatusBaseText {
-//                id: keycardLink
-//                Layout.alignment: Qt.AlignHCenter
-//                color: Theme.palette.primaryColor1
-//                MouseArea {
-//                    anchors.fill: parent
-//                    cursorShape: Qt.PointingHandCursor
-//                    hoverEnabled: true
-//                    onEntered: {
-//                        parent.font.underline = true
-//                    }
-//                    onExited: {
-//                        parent.font.underline = false
-//                    }
-//                    onClicked: {
-//                        root.keycardLinkClicked();
-//                    }
-//                }
-//            }
+            StatusBaseText {
+                id: keycardLink
+                Layout.alignment: Qt.AlignHCenter
+                color: Theme.palette.primaryColor1
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    hoverEnabled: true
+                    onEntered: {
+                        parent.font.underline = true
+                    }
+                    onExited: {
+                        parent.font.underline = false
+                    }
+                    onClicked: {
+                        root.keycardLinkClicked();
+                    }
+                }
+            }
 
             StatusBaseText {
                 id: seedLink
@@ -131,48 +131,53 @@ OnboardingBasePage {
         State {
             name: "connectkeys"
             PropertyChanges {
+                target: keysImg
+                width: 160
+                height: 160
+            }
+            PropertyChanges {
                 target: txtTitle
                 text: qsTr("Connect your keys")
-
             }
             PropertyChanges {
                 target: txtDesc
                 text: qsTr("Use your existing Status keys to login to this device.")
-
             }
             PropertyChanges {
                 target: button
-                visible: false
-                //text: qsTr("Scan sync code")
+//                text: qsTr("Scan sync code")
+                //TODO remove when sync code is implemented
+                opacity: 0.0
             }
-
 //            PropertyChanges {
 //                target: keycardLink
 //                text: qsTr("Login with Keycard")
-
 //            }
             PropertyChanges {
                 target: seedLink
                 text: qsTr("Enter a seed phrase")
-
             }
         },
         State {
             name: "getkeys"
             PropertyChanges {
+                target: keysImg
+                width: 160
+                height: 160
+            }
+            PropertyChanges {
                 target: txtTitle
                 text: qsTr("Get your keys")
-
             }
             PropertyChanges {
                 target: txtDesc
                 text: qsTr("A set of keys controls your account. Your keys live on your\ndevice, so only you can use them.")
-
             }
             PropertyChanges {
                 target: button
                 text: qsTr("Generate new keys")
-
+                //TODO remove when sync code is implemented
+                opacity: 1.0
             }
 //            PropertyChanges {
 //                target: keycardLink
@@ -181,11 +186,15 @@ OnboardingBasePage {
             PropertyChanges {
                 target: seedLink
                 text: qsTr("Import a seed phrase")
-
             }
         },
         State {
             name: "importseed"
+            PropertyChanges {
+                target: keysImg
+                width: 257
+                height: 257
+            }
             PropertyChanges {
                 target: txtTitle
                 text: qsTr("Import a seed phrase")
@@ -198,13 +207,14 @@ OnboardingBasePage {
             }
             PropertyChanges {
                 target: txtDesc
-                text: qsTr("Seed phrases are used to back up and restore your keys.\n
-Only use this option if you already have a seed phrase.")
+                text: qsTr("Seed phrases are used to back up and restore your keys. Only use this option if you already have a seed phrase.")
 
             }
             PropertyChanges {
                 target: button
                 text: qsTr("Import a seed phrase")
+                //TODO remove when sync code is implemented
+                opacity: 1.0
             }
 //            PropertyChanges {
 //                target: keycardLink
