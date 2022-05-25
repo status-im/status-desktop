@@ -125,13 +125,15 @@ StatusAppTwoPanelLayout {
                         Utils.filterXSS(item.name),
                         Utils.filterXSS(item.description),
                         root.community.access,
-                        item.color.toString().toUpperCase(),
+                        item.colorString,
+                        // to retain the existing image, pass "" for the image path
                         item.image === root.community.image ? "" : item.image,
                         item.imageAx,
                         item.imageAy,
                         item.imageBx,
                         item.imageBy,
                         root.rootStore.isCommunityHistoryArchiveSupportEnabled,
+                        true // FIXME: pinMessagesAllMembers
                     )
                 }
             }
