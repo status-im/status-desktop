@@ -113,9 +113,6 @@ QtObject {
 
     property ListModel extraMenuItems: ListModel {
         Component.onCompleted: {
-            append({subsection: Constants.settingsSubsection.needHelp,
-                       text: qsTr("Help & Glossary"),
-                       icon: "help"})
             append({subsection: Constants.settingsSubsection.about,
                        text: qsTr("About"),
                        icon: "info"})
