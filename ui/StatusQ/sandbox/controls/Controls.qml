@@ -189,6 +189,16 @@ GridLayout {
         value: 40
     }
 
+    StatusLabeledSlider {
+        width: 360
+        model: [ qsTr("XS"), qsTr("S"), qsTr("M"), qsTr("L"), qsTr("XL"), qsTr("XXL")]
+    }
+
+    StatusLabeledSlider {
+        width: 360
+        model: [ qsTr("50%"), qsTr("100%"), qsTr("150%"), qsTr("200%")]
+    }
+
     StatusBanner {
         id: banner
         width: 360
@@ -198,7 +208,7 @@ GridLayout {
     }
 
     StatusProgressBar {
-        id: progressBar        
+        id: progressBar
         text: "Weak"
         value: 0.5
         fillColor : Theme.palette.pinColor1

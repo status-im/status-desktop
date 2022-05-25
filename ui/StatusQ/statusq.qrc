@@ -76,6 +76,7 @@
         <file>src/StatusQ/Controls/StatusSelect.qml</file>
         <file>src/StatusQ/Controls/StatusSelectableText.qml</file>
         <file>src/StatusQ/Controls/StatusSlider.qml</file>
+        <file>src/StatusQ/Controls/StatusLabeledSlider.qml</file>
         <file>src/StatusQ/Controls/StatusSwitch.qml</file>
         <file>src/StatusQ/Controls/StatusSwitchTabBar.qml</file>
         <file>src/StatusQ/Controls/StatusSwitchTabButton.qml</file>

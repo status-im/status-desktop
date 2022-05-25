@@ -11,40 +11,55 @@ import StatusQ.Controls 0.1
   as the /c handle so user can grab it fully.
  */
 Slider {
-    id: statusSlider
+    id: root
+
+    property int handleSize: 28
+    property int bgHeight: 4
+    property color handleColor: Theme.palette.white
+    property color bgColor: Theme.palette.baseColor2
+    property color fillColor: Theme.palette.primaryColor1
+
+    property alias decoration: decorationContainer.sourceComponent
 
     implicitWidth: 360
-    implicitHeight: Math.max(handle.implicitHeight, background.implicitHeight)
+    implicitHeight: Math.max(handle.implicitHeight,
+                             background.implicitHeight + decorationContainer.height)
 
     leftPadding: 0
 
     background: Rectangle {
         id: bgRect
 
-        x: statusSlider.leftPadding
-        y: statusSlider.topPadding + statusSlider.availableHeight / 2 - height / 2
+        x: root.leftPadding
+        y: root.topPadding
         implicitWidth: 100
-        implicitHeight: 4
-        width: statusSlider.availableWidth
+        implicitHeight: bgHeight
+        width: root.availableWidth
         height: implicitHeight
-        color: Theme.palette.primaryColor3
+        color: root.bgColor
         radius: 2
 
+        Loader {
+            id: decorationContainer
+            anchors.top: parent.top
+            width: parent.height
+        }
+
         Rectangle {
-            width: statusSlider.visualPosition * parent.width
+            width: root.visualPosition * parent.width
             height: parent.height
-            color: Theme.palette.primaryColor1
+            color: root.fillColor
             radius: 2
         }
     } // background
 
     handle: Rectangle {
-        x: statusSlider.leftPadding + statusSlider.visualPosition * (statusSlider.availableWidth - width / 2)
+        x: root.leftPadding + root.visualPosition * (root.availableWidth - width / 2)
         anchors.verticalCenter: bgRect.verticalCenter
-        color: Theme.palette.white
-        implicitWidth: 28
-        implicitHeight: 28
-        radius: 14
+        color: root.handleColor
+        implicitWidth: root.handleSize
+        implicitHeight: root.handleSize
+        radius: root.handleSize / 2
         layer.enabled: true
         layer.effect: DropShadow {
             width: parent.width
