@@ -79,7 +79,17 @@ GridView {
 
     onModelChanged: {
         mnemonicString = "";
-        _internal.mnemonicInput = [];
+        let menmonicInputTemp = _internal.mnemonicInput.filter(function(value) {
+                        return value.pos <= grid.count
+                    })
+        _internal.mnemonicInput = []
+        for (let i = 0; i < menmonicInputTemp.length; i++) {
+            // .pos starts with 1
+            grid.itemAtIndex(menmonicInputTemp[i].pos - 1).setWord(menmonicInputTemp[i].seed)
+            grid.addWord(menmonicInputTemp[i].pos,
+                         menmonicInputTemp[i].seed,
+                         true)
+        }
     }
 
 
@@ -162,7 +172,6 @@ GridView {
         width: _internal.seedPhraseInputWidth
         height: _internal.seedPhraseInputHeight
         textEdit.errorMessageCmp.visible: false
-        textEdit.input.anchors.topMargin: 11
         leftComponentText: index + 1
         inputList: BIP39_en { }
         property int itemIndex: index
