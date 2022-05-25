@@ -157,9 +157,9 @@ proc setData*(self: View, dto: wallet_account_service.WalletAccountDto) =
       dto.tokens.map(t => token_item.initItem(
           t.name,
           t.symbol,
-          t.balance,
+          t.balance.chainBalance,
           t.address,
-          t.currencyBalance,
+          t.balance.currencyBalance,
         ))
     )
     self.assets = assets
