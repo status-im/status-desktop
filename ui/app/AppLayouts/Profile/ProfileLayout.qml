@@ -204,14 +204,6 @@ StatusAppTwoPanelLayout {
                 contentWidth: d.contentWidth
             }
 
-            HelpView {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-
-                sectionTitle: profileView.store.getNameForSubsection(Constants.settingsSubsection.needHelp)
-                contentWidth: d.contentWidth
-            }
-
             AboutView {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
