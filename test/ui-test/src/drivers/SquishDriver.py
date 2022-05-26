@@ -18,6 +18,7 @@ import test
 
 
 _MAX_WAIT_OBJ_TIMEOUT = 5000
+_MIN_WAIT_OBJ_TIMEOUT = 500
 
 
 def is_loaded_visible_and_enabled(objName, timeout=_MAX_WAIT_OBJ_TIMEOUT):
@@ -32,6 +33,11 @@ def is_loaded_visible_and_enabled(objName, timeout=_MAX_WAIT_OBJ_TIMEOUT):
 def verify_screen_is_loaded(objName, timeout=_MAX_WAIT_OBJ_TIMEOUT):
 	result = is_loaded_visible_and_enabled(objName, timeout)
 	test.verify(result, True)
+	
+	
+def verify_object_not_enabled(objName, timeout=_MIN_WAIT_OBJ_TIMEOUT):
+	result = is_loaded_visible_and_enabled(objName, timeout)
+	test.verify(result, False)
 
 
 def is_loaded(objName):
