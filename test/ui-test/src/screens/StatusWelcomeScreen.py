@@ -7,6 +7,8 @@
 # * \date    May 2022
 # * \brief   Sign Up and Login for new users to the app.
 # *****************************************************************************/
+from enum import Enum
+from drivers.SquishDriver import *
 
 
 class AgreementPopUp(Enum):
@@ -37,7 +39,6 @@ class StatusWelcomeScreen():
         verify_screen_is_loaded(AgreementPopUp.ACKNOWLEDGE_CHECKBOX.value)
     
     def agree_terms_conditions_and_generate_new_key(self): 
-        verify_text(AgreementPopUp.ACKNOWLEDGE_CHECKBOX.value, "I acknowledge that Status Desktop is in Beta and by using it, I take the full responsibility for all risks concerning my data and funds.")
         click_obj_by_name(AgreementPopUp.ACKNOWLEDGE_CHECKBOX.value)
         check_obj_by_name(AgreementPopUp.TERMS_OF_USE_CHECK_BOX.value)
         click_obj_by_name(AgreementPopUp.GET_STARTED_BUTTON.value)
