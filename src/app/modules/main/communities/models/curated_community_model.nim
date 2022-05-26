@@ -8,6 +8,10 @@ type
     Name
     Description
     Icon
+    Featured
+    Members
+    Popularity
+    Color
 
 QtObject:
   type CuratedCommunityModel* = ref object of QAbstractListModel
@@ -47,7 +51,11 @@ QtObject:
       ModelRole.Name.int:"name",
       ModelRole.Available.int:"available",
       ModelRole.Description.int:"description",
-      ModelRole.Icon.int:"icon"
+      ModelRole.Icon.int:"icon",
+      ModelRole.Featured.int:"featured",
+      ModelRole.Members.int:"members",
+      ModelRole.Color.int:"color",
+      ModelRole.Popularity.int:"popularity"
     }.toTable
 
   method data(self: CuratedCommunityModel, index: QModelIndex, role: int): QVariant =
@@ -68,6 +76,19 @@ QtObject:
         result = newQVariant(item.isAvailable())
       of ModelRole.Icon:
         result = newQVariant(item.getIcon())
+      of ModelRole.Members:
+        result = newQVariant(item.getMembers())
+      of ModelRole.Color:
+        result = newQVariant(item.getColor())
+      of ModelRole.Popularity:
+        # TODO: replace this with a real value
+        result = newQVariant(index.row)
+      of ModelRole.Featured:
+        # TODO: replace this with a real value
+        var featured = false
+        if index.row < 3:
+          featured = true
+        result = newQVariant(featured)
 
   proc findIndexById(self: CuratedCommunityModel, id: string): int =
     for i in 0 ..< self.items.len:
