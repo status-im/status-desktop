@@ -6,7 +6,7 @@ QtObject {
 
     property var communitiesModuleInst: communitiesModule
     property var curatedCommunitiesModel: root.communitiesModuleInst.curatedCommunities
-    property var locale: appSettings.locale
+    property var locale: localAppSettings.locale
 
     // TODO: Could the backend provide directly 2 filtered models??
     //property var featuredCommunitiesModel: root.communitiesModuleInst.curatedFeaturedCommunities
