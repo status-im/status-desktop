@@ -166,8 +166,7 @@ SettingsContentBase {
             StatusSettingsLineButton {
                 anchors.leftMargin: 0
                 anchors.rightMargin: 0
-                //% "Communities"
-                text: qsTrId("Community History Archive Protocol")
+                text: qsTr("Community History Archive Protocol")
                 isSwitch: true
                 switchChecked: root.advancedStore.isCommunityHistoryArchiveSupportEnabled
                 onClicked: {
