@@ -212,8 +212,7 @@ QtObject {
             onBackClicked: {
                 if (state === "importseed") {
                     state = "getkeys";
-                } else if (((root.keysMainSetState === "connectkeys") && (LoginStore.currentAccount.username !== ""))
-                          || (root.prevState === "LogIn") || (state === "getkeys")) {
+                } else if ((root.keysMainSetState === "connectkeys" && LoginStore.currentAccount.username !== "") || root.prevState === "LogIn") {
                     Global.applicationWindow.navigateTo("LogIn");
                 } else {
                     Global.applicationWindow.navigateTo("Welcome");
