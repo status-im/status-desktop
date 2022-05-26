@@ -65,6 +65,9 @@ QtObject {
 
     property ListModel mainMenuItems: ListModel {
         Component.onCompleted: {
+            append({subsection: Constants.settingsSubsection.backUpSeed,
+                       text: qsTr("Back up seed phrase"),
+                       icon: "seed-phrase"})
             append({subsection: Constants.settingsSubsection.profile,
                        text: qsTr("Profile"),
                        icon: "profile"})
@@ -96,12 +99,12 @@ QtObject {
             append({subsection: Constants.settingsSubsection.appearance,
                        text: qsTr("Appearance"),
                        icon: "appearance"})
-            append({subsection: Constants.settingsSubsection.language,
-                       text: qsTr("Language & Currency"),
-                       icon: "language"})
             append({subsection: Constants.settingsSubsection.notifications,
                        text: qsTr("Notifications & Sounds"),
                        icon: "notification"})
+            append({subsection: Constants.settingsSubsection.language,
+                       text: qsTr("Language & Currency"),
+                       icon: "language"})
             append({subsection: Constants.settingsSubsection.devicesSettings,
                        text: qsTr("Devices settings"),
                        icon: "mobile"})

@@ -98,7 +98,7 @@ Item {
             var popup = changeProfilePicComponent.createObject(appMain);
             popup.open();
         }
-        onOpenBackUpSeedPopup : {
+        onOpenBackUpSeedPopup: {
             var popup = backupSeedModalComponent.createObject(appMain)
             popup.open()
         }
@@ -145,6 +145,7 @@ Item {
 
     property Component backupSeedModalComponent: BackupSeedModal {
         id: backupSeedModal
+        anchors.centerIn: parent
         privacyStore: appMain.rootStore.profileSectionStore.privacyStore
     }
 

@@ -25,28 +25,6 @@ SettingsContentBase {
         width: root.contentWidth
 
         StatusListItem {
-            id: backupSeedPhrase
-            Layout.fillWidth: true
-            //% "Backup Seed Phrase"
-            title: qsTrId("backup-seed-phrase")
-            enabled: !root.privacyStore.mnemonicBackedUp
-            implicitHeight: 52
-            components: [
-                StatusBadge {
-                    value: !root.privacyStore.mnemonicBackedUp
-                    visible: !root.privacyStore.mnemonicBackedUp
-                    anchors.verticalCenter: parent.verticalCenter
-                },
-                StatusIcon {
-                    icon: "chevron-down"
-                    rotation: 270
-                    color: Theme.palette.baseColor1
-                }
-            ]
-            sensor.onClicked: Global.openBackUpSeedPopup()
-        }
-
-        StatusListItem {
             Layout.fillWidth: true
             title: qsTr("Change password")
             implicitHeight: 52

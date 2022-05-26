@@ -30,8 +30,21 @@ Column {
             icon.name: model.icon
             selected: Global.settingsSubsection === model.subsection
             onClicked: root.menuItemClicked(model)
+            badge.value: {
+                switch (model.subsection) {
+                    case Constants.settingsSubsection.backUpSeed:
+                        return !root.privacyStore.mnemonicBackedUp
+                    default: return "";
+                }
+            }
             visible: {
-                (model.subsection !== Constants.settingsSubsection.ensUsernames || root.walletMenuItemEnabled)
+                switch (model.subsection) {
+                case Constants.settingsSubsection.ensUsernames:
+                    return root.walletMenuItemEnabled;
+                case Constants.settingsSubsection.backUpSeed:
+                    return !root.privacyStore.mnemonicBackedUp;
+                default: return true;
+                }
             }
         }
     }
@@ -76,13 +89,6 @@ Column {
             selected: Global.settingsSubsection === model.subsection
             onClicked: root.menuItemClicked(model)
             visible: model.subsection !== Constants.settingsSubsection.browserSettings || root.browserMenuItemEnabled
-            badge.value: {
-                switch (model.subsection) {
-                    case Constants.settingsSubsection.privacyAndSecurity:
-                        return !root.privacyStore.mnemonicBackedUp
-                    default: return ""
-                }
-            }
         }
     }
 
