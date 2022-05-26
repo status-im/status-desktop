@@ -15,9 +15,24 @@ Feature: Status Desktop Sign Up
 
     The following scenarios cover Sign up process.
 
-    Scenario: User signs up with password
+    Scenario: User signs up and signs in with password
 
         Given A first time user lands on the status desktop and generates new key
         When user inputs username tester123 and password TesTEr16843/!@00
         Then the user lands on the signed in app
+
+
+    Scenario Outline: User cannot sign up with wrong username format
+
+        Given A first time user lands on the status desktop and generates new key
+        When user inputs the following <username> with object locator mainWindow_edit_TextEdit
+        Then the following object locator mainWindow_Next_StatusBaseText is not enabled
+
+     Examples:
+            | username 		|
+            | Athl          |
+            | Nervo         |
+            | Gra           |
+            |tester3@       |
+
 
