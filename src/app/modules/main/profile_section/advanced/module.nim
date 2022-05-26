@@ -156,6 +156,9 @@ method toggleBrowserSection*(self: Module) =
 method toggleCommunitySection*(self: Module) =
   self.controller.toggleCommunitySection()
 
+method toggleCommunitiesPortalSection*(self: Module) =
+  self.controller.toggleCommunitiesPortalSection()
+
 method toggleNodeManagementSection*(self: Module) =
   self.controller.toggleNodeManagementSection()
 

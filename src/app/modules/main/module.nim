@@ -288,7 +288,7 @@ method load*[T](
   hasNotification = false,
   notificationsCount = 0,
   active = false,
-  enabled = true) #singletonInstance.localAccountSensitiveSettings.getIsCommunitiesPortalEnabled())
+  enabled = singletonInstance.localAccountSensitiveSettings.getIsCommunitiesPortalEnabled())
   self.view.model().addItem(communitiesPortalSectionItem)
   if(activeSectionId == communitiesPortalSectionItem.id):
     activeSection = communitiesPortalSectionItem
@@ -524,6 +524,10 @@ method toggleSection*[T](self: Module[T], sectionType: SectionType) =
     let enabled = singletonInstance.localAccountSensitiveSettings.getNodeManagementEnabled()
     self.setSectionAvailability(sectionType, not enabled)
     singletonInstance.localAccountSensitiveSettings.setNodeManagementEnabled(not enabled)
+  elif (sectionType == SectionType.CommunitiesPortal):
+    let enabled = singletonInstance.localAccountSensitiveSettings.getIsCommunitiesPortalEnabled()
+    self.setSectionAvailability(sectionType, not enabled)
+    singletonInstance.localAccountSensitiveSettings.setIsCommunitiesPortalEnabled(not enabled)
 
 method setUserStatus*[T](self: Module[T], status: bool) =
   self.controller.setUserStatus(status)
