@@ -27,7 +27,7 @@ SettingsContentBase {
 
     ColumnLayout {
         id: generalColumn
-        spacing: Constants.settingsSection.itemSpacing
+        spacing: 2 * Constants.settingsSection.itemSpacing
         width: root.contentWidth
 
         ButtonGroup {
@@ -118,14 +118,9 @@ SettingsContentBase {
                            )
         }
 
-        Item {
-            id: spacer1
-            Layout.fillWidth: true
-            Layout.preferredHeight: 6
-        }
-
         // SEE PROFILTE PICTURES FROM
         StatusBaseText {
+            Layout.topMargin: Constants.settingsSection.itemSpacing
             Layout.fillWidth: true
             Layout.leftMargin: Style.current.padding
             Layout.rightMargin: Style.current.padding
@@ -173,14 +168,9 @@ SettingsContentBase {
                            )
         }
 
-        Item {
-            id: spacer2
-            Layout.fillWidth: true
-            Layout.preferredHeight: 6
-        }
-
         // Open Message Links With
         StatusBaseText {
+            Layout.topMargin: Constants.settingsSection.itemSpacing
             Layout.fillWidth: true
             Layout.leftMargin: Style.current.padding
             Layout.rightMargin: Style.current.padding
@@ -202,6 +192,7 @@ SettingsContentBase {
         }
 
         SettingsRadioButton {
+            Layout.topMargin: Constants.settingsSection.itemSpacing / 2
             Layout.fillWidth: true
             Layout.leftMargin: Style.current.padding
             Layout.rightMargin: Style.current.padding
@@ -215,6 +206,7 @@ SettingsContentBase {
 
         Separator {
             id: separator1
+            Layout.topMargin: Constants.settingsSection.itemSpacing
             Layout.fillWidth: true
         }
 
