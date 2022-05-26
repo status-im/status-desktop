@@ -48,14 +48,20 @@ StatusModal {
             qsTrId("new-category")
 
     contentItem: Column {
+        property alias categoryName: nameInput
 
         width: root.width
-        property alias categoryName: nameInput
+        topPadding: 16
 
         StatusInput {
             id: nameInput
+
+            anchors.left: parent.left
+            anchors.leftMargin: 16
+
+            label: qsTr("Category title")
             charLimit: maxCategoryNameLength
-            input.placeholderText: qsTr("Category title")
+            input.placeholderText: qsTr("Name the category")
             validators: [StatusMinLengthValidator {
                 minLength: 1
                 errorMessage: Utils.getErrorMessage(nameInput.errors, qsTr("category name"))

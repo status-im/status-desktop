@@ -230,8 +230,8 @@ QtObject {
     // Not Refactored Yet
     property var activeCommunityChatsModel: "" //chatsModelInst.communities.activeCommunity.chats
 
-    function createCommunity(communityName, communityDescription, checkedMembership, communityColor, communityImage, imageCropperModalaX, imageCropperModalaY, imageCropperModalbX, imageCropperModalbY, historyArchiveSupportEnabled, pinMessagesAllowedForMembers) {
-        communitiesModuleInst.createCommunity(communityName, communityDescription, checkedMembership, communityColor, communityImage, imageCropperModalaX, imageCropperModalaY, imageCropperModalbX, imageCropperModalbY, historyArchiveSupportEnabled, pinMessagesAllowedForMembers);
+    function createCommunity(name, description, introMessage, outroMessage, checkedMembership, color, image, imageAX, imageAY, imageBX, imageBY, historyArchiveSupportEnabled, pinMessagesAllowedForMembers) {
+        communitiesModuleInst.createCommunity(name, description, introMessage, outroMessage, checkedMembership, color, image, imageAX, imageAY, imageBX, imageBY, historyArchiveSupportEnabled, pinMessagesAllowedForMembers);
     }
 
     function importCommunity(communityKey) {

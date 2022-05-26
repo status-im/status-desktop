@@ -20,7 +20,6 @@ Column {
 
     signal membersListButtonClicked()
     signal notificationsButtonClicked(bool checked)
-    signal editButtonClicked()
     signal transferOwnershipButtonClicked()
     signal leaveButtonClicked()
     signal copyToClipboard(string link)
@@ -109,16 +108,6 @@ Column {
     StatusModalDivider {
         topPadding: 8
         bottomPadding: 8
-    }
-
-    StatusListItem {
-        anchors.horizontalCenter: parent.horizontalCenter
-        visible: root.community.amISectionAdmin
-        //% "Edit community"
-        title: qsTrId("edit-community")
-        icon.name: "edit"
-        type: StatusListItem.Type.Secondary
-        sensor.onClicked: root.editButtonClicked()
     }
 
     StatusListItem {

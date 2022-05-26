@@ -337,18 +337,6 @@ Item {
                         })
                     }
 
-                    StatusMenuItem {
-                        enabled: model.amISectionAdmin
-                        //% "Edit Community"
-                        text: qsTrId("edit-community")
-                        icon.name: "edit"
-                        onTriggered: Global.openPopup(editCommunityPopup, {
-                            store: appMain.rootStore,
-                            community: model,
-                            communitySectionModule: communityContextMenu.chatCommunitySectionModule
-                        })
-                    }
-
                     StatusMenuSeparator {}
 
                     StatusMenuItem {
@@ -732,17 +720,6 @@ Item {
                 contactsStore: appMain.rootStore.contactStore
                 hasAddedContacts: appMain.rootStore.hasAddedContacts
 
-                onClosed: {
-                    destroy()
-                }
-            }
-        }
-
-        Component {
-            id: editCommunityPopup
-            CreateCommunityPopup {
-                anchors.centerIn: parent
-                isEdit: true
                 onClosed: {
                     destroy()
                 }

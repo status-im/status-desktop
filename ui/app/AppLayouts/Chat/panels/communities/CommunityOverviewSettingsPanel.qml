@@ -9,27 +9,26 @@ import StatusQ.Components 0.1
 
 import "../../layouts"
 
-/*! TODO: very confusing to be refactored
-
-    The "API" properties are just for input purposes and to track the initial state
-    used in evaluating the dirty flag. They should not be updated based
-    on user input. The final relevant values are accessed through the \c item member of \c edit property
- */
 StackLayout {
     id: root
 
     property string name
     property string description
+    property string introMessage
+    property string outroMessage
     property string logoImageData
     property string bannerImageData
     property rect bannerCropRect
     property color color
+    property bool archiveSupportEnabled
+    property bool requestToJoinEnabled
+    property bool pinMessagesEnabled
+
+    property bool archiveSupportOptionVisible: false
     property bool editable: false
     property bool owned: false
-    property bool isCommunityHistoryArchiveSupportEnabled: false
-    property bool historyArchiveSupportToggle: false
 
-    signal edited(Item item) // item containing edited fields (name, description, logoImagePath, bannerPath, bannerCropRect, color)
+    signal edited(Item item) // item containing edited fields (name, description, logoImagePath, color, options, etc..)
 
     clip: true
 
@@ -128,31 +127,39 @@ StackLayout {
 
         previousPage: qsTr("Overview")
         title: qsTr("Edit Community")
+        editable: true
 
         content: CommunityEditSettingsPanel {
-            id: communityEditSettingsPanel
-
             name: root.name
             description: root.description
+            introMessage: root.introMessage
+            outroMessage: root.outroMessage
             color: root.color
             logoImageData: root.logoImageData
             bannerImageData: root.bannerImageData
-            isCommunityHistoryArchiveSupportEnabled: root.isCommunityHistoryArchiveSupportEnabled
-            historyArchiveSupportToggle: root.historyArchiveSupportToggle
+            options {
+                archiveSupportOptionVisible: root.archiveSupportOptionVisible
+                archiveSupportEnabled: root.archiveSupportEnabled
+                requestToJoinEnabled: root.requestToJoinEnabled
+                pinMessagesEnabled: root.pinMessagesEnabled
+            }
 
             Component.onCompleted: {
                 editCommunityPage.dirty =
                         Qt.binding(() => {
-                                       return root.name !== name ||
-                                              root.description !== description ||
+                                       return root.name != name ||
+                                              root.description != description ||
+                                              root.introMessage != introMessage ||
+                                              root.outroMessage != outroMessage ||
+                                              root.archiveSupportEnabled != options.archiveSupportEnabled ||
+                                              root.requestToJoinEnabled != options.requestToJoinEnabled ||
+                                              root.pinMessagesEnabled != options.pinMessagesEnabled ||
+                                              root.color != color ||
                                               logoImagePath.length > 0 ||
                                               isValidRect(logoCropRect) ||
-                                              root.color !== color ||
                                               bannerPath.length > 0 ||
-                                              isValidRect(bannerCropRect) ||
-                                              root.historyArchiveSupportToggle !== historyArchiveSupportToggle
+                                              isValidRect(bannerCropRect)
                                    })
-
                 function isValidRect(r /*rect*/) { return r.width !== 0 && r.height !== 0 }
             }
         }
