@@ -44,6 +44,7 @@ QtObject {
         property int advanced: 11
         property int about: 12
         property int signout: 13
+        property int backUpSeed: 14
     }
 
     readonly property QtObject userStatus: QtObject{

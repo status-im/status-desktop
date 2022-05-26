@@ -41,12 +41,15 @@ Item {
             appsMenuItems: store.appsMenuItems
             browserMenuItemEnabled: store.browserMenuItemEnabled
             walletMenuItemEnabled: store.walletMenuItemEnabled
-            
             onMenuItemClicked: {
-                if (menu_item.subsection === Constants.settingsSubsection.signout) {
-                    return confirmDialog.open()
+                if (menu_item.subsection === Constants.settingsSubsection.backUpSeed) {
+                    Global.openBackUpSeedPopup();
+                } else {
+                    if (menu_item.subsection === Constants.settingsSubsection.signout) {
+                        return confirmDialog.open();
+                    }
+                    Global.settingsSubsection = menu_item.subsection;
                 }
-                Global.settingsSubsection = menu_item.subsection
             }
         }
     }
