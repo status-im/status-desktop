@@ -13,13 +13,11 @@ import "stores"
 ScrollView {
     id: root
 
-    property CommunitiesStore communitiesStore: CommunitiesStore {}        
+    property CommunitiesStore communitiesStore: CommunitiesStore {}
 
     QtObject {
         id: d
 
-        property ListModel featuredCommunitiesModel: root.communitiesStore.featuredCommunitiesModel
-        property ListModel popularCommunitiesModel: root.communitiesStore.popularCommunitiesModel
         property ListModel tagsModel: root.communitiesStore.tagsModel
 
         property string searchText: ""
@@ -87,23 +85,6 @@ ScrollView {
             }
         }
 
-        Row {
-            width: 1234
-            Text {
-                text: "CURATED COMMUNITY LIST ========="
-            }
-            ColumnLayout {
-                Repeater {
-                    model: root.communitiesStore.curatedCommunitiesModel
-                    delegate:  Row {
-                        Text {
-                            text: model.name + " " + model.description + " " + model.icon + " " + model.available
-                        }
-                    }
-                }
-            }
-        }
-
         // Tags definition - Now hidden - Out of scope
         // TODO: Replace by `StatusListItemTagRow`
         Row {
@@ -153,10 +134,11 @@ ScrollView {
             rowSpacing: Style.current.padding
 
             Repeater {
-                model: d.featuredCommunitiesModel
+                model: root.communitiesStore.curatedCommunitiesModel
                 delegate: StatusCommunityCard {
+                    visible: model.featured
                     locale: communitiesStore.locale
-                    communityId: model.communityId
+                    communityId: model.id
                     loaded: model.available
                     logo: model.icon
                     name: model.name
@@ -186,10 +168,11 @@ ScrollView {
             rowSpacing: Style.current.padding
 
             Repeater {
-                model: d.popularCommunitiesModel
+                model: root.communitiesStore.curatedCommunitiesModel
                 delegate: StatusCommunityCard {
+                    visible: !model.featured
                     locale: communitiesStore.locale
-                    communityId: model.communityId
+                    communityId: model.id
                     loaded: model.available
                     logo: model.icon
                     name: model.name
