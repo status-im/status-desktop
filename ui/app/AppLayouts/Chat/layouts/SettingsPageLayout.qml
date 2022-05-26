@@ -17,6 +17,7 @@ Item {
     // optional
     property string previousPage
     property bool dirty: false
+    property bool editable: false
 
     readonly property Item contentItem: contentLoader.item
 
@@ -30,7 +31,8 @@ Item {
     }
 
     function notifyDirty() {
-        toastAnimation.running = true
+        cancelChangesButtonAnimation.running = true
+        saveChangesButtonAnimation.running = true
         saveChangesButton.forceActiveFocus()
     }
 
@@ -74,76 +76,73 @@ Item {
             id: contentLoader
             Layout.fillWidth: true
             Layout.fillHeight: true
+            Layout.leftMargin: 24
+            Layout.rightMargin: 24
 
             sourceComponent: root.content
         }
-    }
 
-    Rectangle {
-        id: toastMessage
+        Rectangle {
+            Layout.fillWidth: true
 
-        anchors {
-            bottom: parent.bottom
-            horizontalCenter: parent.horizontalCenter
-            bottomMargin: 16
-        }
+            implicitHeight: buttonsLayout.implicitHeight
 
-        height: toastContent.height + 16
-        width: toastContent.width + 16
+            color: Theme.palette.statusToastMessage.backgroundColor
+            visible: root.editable
 
-        opacity: root.dirty ? 1 : 0
-        color: Theme.palette.statusToastMessage.backgroundColor
-        radius: 8
-        border.color: Theme.palette.dangerColor2
-        border.width: 2
-        layer.enabled: true
-        layer.effect: DropShadow {
-            verticalOffset: 3
-            radius: 8
-            samples: 15
-            fast: true
-            cached: true
-            color: Theme.palette.dangerColor2
-            spread: 0.1
-        }
+            RowLayout {
+                id: buttonsLayout
 
-        NumberAnimation on border.width {
-            id: toastAnimation
-            from: 0
-            to: 4
-            loops: 2
-            duration: 600
+                anchors.fill: parent
+                enabled: root.dirty
 
-            onFinished: toastMessage.border.width = 2
-        }
+                Item {
+                    Layout.fillWidth: true
+                }
 
-        RowLayout {
-            id: toastContent
+                StatusButton {
+                    id: cancelChangesButton
 
-            x: 8
-            y: 8
+                    text: qsTr("Cancel changes")
+                    type: StatusBaseButton.Type.Danger
 
-            StatusBaseText {
-                text: qsTr("Changes detected!")
-                color: Theme.palette.directColor1
+                    border.color: textColor
+                    border.width: 0
+
+                    onClicked: root.resetChangesClicked()
+
+                    NumberAnimation on border.width {
+                        id: cancelChangesButtonAnimation
+                        from: 0
+                        to: 2
+                        loops: 2
+                        duration: 600
+
+                        onFinished: cancelChangesButton.border.width = 0
+                    }
+                }
+
+                StatusButton {
+                    id: saveChangesButton
+
+                    text: qsTr("Save changes")
+
+                    border.color: textColor
+                    border.width: 0
+
+                    onClicked: root.saveChangesClicked()
+
+                    NumberAnimation on border.width {
+                        id: saveChangesButtonAnimation
+                        from: 0
+                        to: 2
+                        loops: 2
+                        duration: 600
+
+                        onFinished: saveChangesButton.border.width = 0
+                    }
+                }
             }
-
-            StatusButton {
-                text: qsTr("Cancel")
-                type: StatusBaseButton.Type.Danger
-                onClicked: root.resetChangesClicked()
-            }
-
-            StatusButton {
-                id: saveChangesButton
-
-                text: qsTr("Save changes")
-                onClicked: root.saveChangesClicked()
-            }
-        }
-
-        Behavior on opacity {
-            NumberAnimation {}
         }
     }
 }

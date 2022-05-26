@@ -75,6 +75,21 @@ Item {
         }
     }
 
+    Component {
+        id: communityIntroDialog
+
+        CommunityIntroDialog {
+            anchors.centerIn: parent
+
+            property var joinMethod: () => {}
+
+            name: root.invitedCommunity ? root.invitedCommunity.name : ""
+            introMessage: root.invitedCommunity ? root.invitedCommunity.introMessage : ""
+            imageSrc: root.invitedCommunity ? root.invitedCommunity.image : ""
+
+            onJoined: joinMethod()
+        }
+    }
 
     Loader {
         id: rectangleBubbleLoader
@@ -297,6 +312,7 @@ Item {
                         //% "Unsupported state"
                         text: qsTrId("unsupported-state")
                         onClicked: {
+
                             let onBtnClick = function(){
                                 let error
 
@@ -304,19 +320,20 @@ Item {
                                     root.store.setActiveCommunity(communityId);
                                     return
                                 } else if (rectangleBubble.state === "unjoined") {
-                                    error = root.store.joinCommunity(communityId)
+                                    Global.openPopup(communityIntroDialog, { joinMethod: () => {
+                                                             let error = root.store.joinCommunity(communityId)
+                                                             if (error) joiningError.showError(error)
+                                                         } });
                                 }
                                 else if (rectangleBubble.state === "requestToJoin") {
-                                    error = root.store.requestToJoinCommunity(communityId, userProfile.name)
-                                    if (!error) {
-                                        rectangleBubble.isPendingRequest = root.store.isCommunityRequestPending(communityId)
-                                    }
+                                    Global.openPopup(communityIntroDialog, { joinMethod: () => {
+                                                             let error = root.store.requestToJoinCommunity(communityId, userProfile.name)
+                                                             if (error) joiningError.showError(error)
+                                                             else rectangleBubble.isPendingRequest = root.store.isCommunityRequestPending(communityId)
+                                                         } });
                                 }
 
-                                if (error) {
-                                    joiningError.text = error
-                                    return joiningError.open()
-                                }
+                                if (error) joiningError.showError(error)
                             }
 
                             if (localAccountSensitiveSettings.communitiesEnabled) {
@@ -328,6 +345,12 @@ Item {
 
                         MessageDialog {
                             id: joiningError
+
+                            function showError(error) {
+                                joiningError.text = error
+                                joiningError.open()
+                            }
+
                             //% "Error joining the community"
                             title: qsTrId("error-joining-the-community")
                             icon: StandardIcon.Critical

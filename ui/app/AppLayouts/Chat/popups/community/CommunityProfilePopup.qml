@@ -64,12 +64,6 @@ StatusModal {
 
                 onMembersListButtonClicked: root.contentItem.push(membersList)
                 onNotificationsButtonClicked: root.communitySectionModule.setCommunityMuted(checked)
-                onEditButtonClicked: Global.openPopup(editCommunityroot, {
-                    store: root.store,
-                    community: root.community,
-                    communitySectionModule: root.communitySectionModule,
-                    onSave: root.close
-                })
                 onTransferOwnershipButtonClicked: Global.openPopup(transferOwnershiproot, {
                     privateKey: communitySectionModule.exportCommunity(root.community.id),
                     store: root.store
@@ -88,18 +82,6 @@ StatusModal {
             id: transferOwnershiproot
             TransferOwnershipPopup {
                 anchors.centerIn: parent
-                onClosed: {
-                    destroy()
-                }
-            }
-        }
-
-        Component {
-            id: editCommunityroot
-            CreateCommunityPopup {
-                anchors.centerIn: parent
-                store: root.store
-                isEdit: true
                 onClosed: {
                     destroy()
                 }

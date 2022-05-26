@@ -101,10 +101,15 @@ StatusModal {
 
         Column {
             id: content
-            width: popup.width           
+            width: popup.width
+            topPadding: 16
 
             StatusInput {
                 id: nameInput
+
+                anchors.left: parent.left
+                anchors.leftMargin: 16
+
                 label: qsTr("Channel name")
                 charLimit: popup.maxChannelNameLength
                 input.placeholderText: qsTr("Name the channel")
@@ -208,6 +213,10 @@ StatusModal {
 
             StatusInput {
                 id: descriptionTextArea
+
+                anchors.left: parent.left
+                anchors.leftMargin: 16
+
                 label: qsTr("Description")
                 charLimit: 140
 

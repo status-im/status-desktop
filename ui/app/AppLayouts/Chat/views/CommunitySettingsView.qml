@@ -116,24 +116,35 @@ StatusAppTwoPanelLayout {
             CommunityOverviewSettingsPanel {
                 name: root.community.name
                 description: root.community.description
+                introMessage: root.community.introMessage
+                outroMessage: root.community.outroMessage
                 logoImageData: root.community.image
                 bannerImageData: root.community.bannerImageData
                 color: root.community.color
+                archiveSupportEnabled: root.community.historyArchiveSupportEnabled
+                requestToJoinEnabled: root.community.access === Constants.communityChatOnRequestAccess
+                pinMessagesEnabled: root.community.pinMessageAllMembersEnabled
+
+                archiveSupportOptionVisible: root.rootStore.isCommunityHistoryArchiveSupportEnabled
                 editable: root.community.amISectionAdmin
-                isCommunityHistoryArchiveSupportEnabled: root.rootStore.isCommunityHistoryArchiveSupportEnabled
-                historyArchiveSupportToggle: community.historyArchiveSupportEnabled
 
                 onEdited: {
-                    root.chatCommunitySectionModule.editCommunity(
+                    let error = root.chatCommunitySectionModule.editCommunity(
                         Utils.filterXSS(item.name),
                         Utils.filterXSS(item.description),
-                        root.community.access,
+                        Utils.filterXSS(item.introMessage),
+                        Utils.filterXSS(item.outroMessage),
+                        item.options.requestToJoinEnabled ? Constants.communityChatOnRequestAccess : Constants.communityChatPublicAccess,
                         item.color.toString().toUpperCase(),
                         JSON.stringify({imagePath: String(item.logoImagePath).replace("file://", ""), cropRect: item.logoCropRect}),
                         JSON.stringify({imagePath: String(item.bannerPath).replace("file://", ""), cropRect: item.bannerCropRect}),
-                        item.historyArchiveSupportToggle,
-                        false /*TODO port the modal implementation*/
+                        item.options.archiveSupportEnabled,
+                        item.options.pinMessagesEnabled
                     )
+                    if (error) {
+                        errorDialog.text = error.error
+                        errorDialog.open()
+                    }
                 }
             }
 
@@ -180,5 +191,12 @@ StatusAppTwoPanelLayout {
     QtObject {
         id: d
         property int currentIndex: 0
+    }
+
+    MessageDialog {
+        id: errorDialog
+        title: qsTr("Error editing the community")
+        icon: StandardIcon.Critical
+        standardButtons: StandardButton.Ok
     }
 }
