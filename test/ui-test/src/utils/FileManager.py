@@ -3,7 +3,7 @@ import os.path as path
   
       
 def erase_directory(dir):
-    directory = path.abspath(path.join(__file__ , "../../../../../" + dir)) 
+    directory = path.abspath(path.join(__file__ , dir)) 
     if (os.path.isdir(directory)):
         print(directory)
         try:

@@ -12,7 +12,7 @@ _appClosureTimeout = 2 #[seconds]
 
 @OnScenarioStart
 def hook(context):
-    erase_directory("Status/data")
+    erase_directory("../../../../../Status/data")
     startApplication(_statusDektopAppName)
     context.userData = {}
 
