@@ -112,13 +112,24 @@ QtObject:
     self.endRemoveRows()
     self.countChanged()
 
-
   proc addItem*(self: CuratedCommunityModel, item: CuratedCommunityItem) =
-    self.removeItemWithId(item.getId())
-
-    let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
-    self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
-    self.items.add(item)
-    self.endInsertRows()
-    self.countChanged()
+    let idx = self.findIndexById(item.getId())
+    if idx > -1:
+      let index = self.createIndex(idx, 0, nil)
+      self.items[idx] = item
+      self.dataChanged(index, index, @[ModelRole.Name.int,
+                                       ModelRole.Available.int,
+                                       ModelRole.Description.int,
+                                       ModelRole.Icon.int,
+                                       ModelRole.Featured.int,
+                                       ModelRole.Members.int,
+                                       ModelRole.Color.int,
+                                       ModelRole.Popularity.int])
+    else:
+      let parentModelIndex = newQModelIndex()
+      defer: parentModelIndex.delete
+      self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
+      self.items.add(item)
+      self.endInsertRows()
+      self.countChanged()
+    
