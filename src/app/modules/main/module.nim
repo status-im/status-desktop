@@ -378,7 +378,11 @@ method load*[T](
   #self.communitiesPortalSectionModule.load()
 
   # Set active section on app start
-  self.setActiveSection(activeSection)
+  # If section is profile then open chat by default
+  if activeSection.sectionType == SectionType.ProfileSettings:
+    self.setActiveSection(self.view.model().getItemBySectionType(SectionType.Chat))
+  else:
+    self.setActiveSection(activeSection)
 
 proc checkIfModuleDidLoad [T](self: Module[T]) =
   if self.moduleLoaded:

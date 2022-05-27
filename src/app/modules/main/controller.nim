@@ -239,7 +239,8 @@ proc getActiveSectionId*(self: Controller): string =
 
 proc setActiveSection*(self: Controller, sectionId: string) =
   self.activeSectionId = sectionId
-  singletonInstance.localAccountSensitiveSettings.setActiveSection(self.activeSectionId)
+  let sectionIdToSave = if (sectionId == conf.SETTINGS_SECTION_ID): "" else: sectionId
+  singletonInstance.localAccountSensitiveSettings.setActiveSection(sectionIdToSave)
   self.delegate.activeSectionSet(self.activeSectionId)
 
 proc getNumOfNotificaitonsForChat*(self: Controller): tuple[unviewed:int, mentions:int] =
