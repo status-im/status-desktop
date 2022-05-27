@@ -134,6 +134,19 @@ Page {
                 root.createChat();
             }
         }
+
+        Item {
+            Layout.alignment: Qt.AlignTop
+            implicitHeight: 44
+            implicitWidth: 44
+
+            StatusActivityCenterButton {
+                id: notificationButton
+                anchors.centerIn: parent
+                unreadNotificationsCount: activityCenter.unreadNotificationsCount
+                onClicked: activityCenter.open()
+            }
+        }
     }
 
     contentItem: Item {
