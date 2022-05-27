@@ -63,9 +63,6 @@ proc getContactNameAndImage*(self: Controller, contactId: string):
   tuple[name: string, image: string] =
   return self.contactsService.getContactNameAndImage(contactId)
 
-proc addContact*(self: Controller, publicKey: string) =
-  self.contactsService.addContact(publicKey)
-
 proc unblockContact*(self: Controller, publicKey: string) =
   self.contactsService.unblockContact(publicKey)
 
@@ -78,8 +75,14 @@ proc removeContact*(self: Controller, publicKey: string) =
 proc changeContactNickname*(self: Controller, publicKey: string, nickname: string) =
   self.contactsService.changeContactNickname(publicKey, nickname)
 
-proc rejectContactRequest*(self: Controller, publicKey: string) =
-  self.contactsService.rejectContactRequest(publicKey)
+proc sendContactRequest*(self: Controller, publicKey: string, message: string) =
+  self.contactsService.sendContactRequest(publicKey, message)
+
+proc acceptContactRequest*(self: Controller, publicKey: string) =
+  self.contactsService.acceptContactRequest(publicKey)
+
+proc dismissContactRequest*(self: Controller, publicKey: string) =
+  self.contactsService.dismissContactRequest(publicKey)
 
 proc removeContactRequestRejection*(self: Controller, publicKey: string) =
   self.contactsService.removeContactRequestRejection(publicKey)

@@ -10,8 +10,9 @@ type ActivityCenterNotificationType* {.pure.}= enum
   Unknown = 0,
   NewOneToOne = 1,
   NewPrivateGroupChat = 2,
-  Mention = 3
-  Reply = 4
+  Mention = 3,
+  Reply = 4,
+  ContactRequest = 5
 
 type ActivityCenterNotificationDto* = ref object of RootObj
   id*: string # ID is the id of the chat, for public chats it is the name e.g. status, for one-to-one is the hex encoded public key and for group chats is a random uuid appended with the hex encoded pk of the creator of the chat

@@ -41,10 +41,6 @@ QtObject {
         root.contactsModule.switchToOrCreateOneToOneChat(pubKey)
     }
 
-    function addContact(pubKey) {
-        root.contactsModule.addContact(pubKey)
-    }
-
     function unblockContact(pubKey) {
         root.contactsModule.unblockContact(pubKey)
     }
@@ -60,13 +56,17 @@ QtObject {
     function changeContactNickname(pubKey, nickname) {
         root.contactsModule.changeContactNickname(pubKey, nickname)
     }
-    
-    function acceptContactRequest(pubKey) {
-        root.contactsModule.addContact(pubKey)
+
+    function sendContactRequest(pubKey, message) {
+        root.contactsModule.sendContactRequest(pubKey, message)
     }
 
-    function rejectContactRequest(pubKey) {
-        root.contactsModule.rejectContactRequest(pubKey)
+    function acceptContactRequest(pubKey) {
+        root.contactsModule.acceptContactRequest(pubKey)
+    }
+
+    function dismissContactRequest(pubKey) {
+        root.contactsModule.dismissContactRequest(pubKey)
     }
 
     function removeContactRequestRejection(pubKey) {

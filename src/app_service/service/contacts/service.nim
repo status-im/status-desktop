@@ -202,7 +202,7 @@ QtObject:
         not x.isBlocked())
     elif (group == ContactsGroup.AllKnownContacts):
       return contacts
-      
+
   proc fetchContact(self: Service, id: string): ContactsDto =
     try:
       let response = status_contacts.getContactByID(id)
@@ -288,34 +288,53 @@ QtObject:
     # we must keep local contacts updated
     self.contacts[contact.id] = contact
 
-  proc addContact*(self: Service, chatKey: string) =
+  proc sendContactRequest*(self: Service, chatKey: string, message: string) =
     try:
       let publicKey = status_accounts.decompressPk(chatKey).result
+
+      let response = status_contacts.sendContactRequest(publicKey, message)
+      if(not response.error.isNil):
+        let msg = response.error.message
+        error "error sending contact request", msg
+        return
+
       var contact = self.getContactById(publicKey)
       if not contact.added:
         contact.added = true
       else:
         contact.blocked = false
-
-      let response = status_contacts.addContact(contact.id, contact.name)
-      if(not response.error.isNil):
-        let msg = response.error.message
-        error "error adding contact ", msg
-        return
       self.saveContact(contact)
       self.events.emit(SIGNAL_CONTACT_ADDED, ContactArgs(contactId: contact.id))
     except Exception as e:
-      error "an error occurred while edding contact ", msg=e.msg
+      error "an error occurred while sending contact request", msg=e.msg
 
-  proc rejectContactRequest*(self: Service, publicKey: string) =
-    var contact = self.getContactById(publicKey)
-    contact.removed = true
+  proc acceptContactRequest*(self: Service, publicKey: string) =
+    try:
+      # NOTE: publicKey used for accepting last request
+      let response = status_contacts.acceptLatestContactRequestForContact(publicKey)
+      if(not response.error.isNil):
+        let msg = response.error.message
+        error "error accepting contact request", msg
+        return
 
-    let response = status_contacts.rejectContactRequest(contact.id)
+      var contact = self.getContactById(publicKey)
+      contact.added = true
+      self.saveContact(contact)
+      self.events.emit(SIGNAL_CONTACT_ADDED, ContactArgs(contactId: contact.id))
+
+    except Exception as e:
+      error "an error occurred while accepting contact request", msg=e.msg
+
+  proc dismissContactRequest*(self: Service, publicKey: string) =
+    # NOTE: publicKey used for dismissing last request
+    let response = status_contacts.dismissLatestContactRequestForContact(publicKey)
     if(not response.error.isNil):
       let msg = response.error.message
-      error "error rejecting contact ", msg
+      error "error dismissing contact ", msg
       return
+
+    var contact = self.getContactById(publicKey)
+    contact.removed = true
     self.saveContact(contact)
     self.events.emit(SIGNAL_CONTACT_REMOVED, ContactArgs(contactId: contact.id))
 
