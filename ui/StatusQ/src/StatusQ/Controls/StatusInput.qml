@@ -1,4 +1,5 @@
 import QtQuick 2.14
+import QtQuick.Layouts 1.14
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Backpressure 1.0
@@ -29,23 +30,7 @@ import StatusQ.Controls.Validators 0.1
 */
 Item {
     id: root
-    implicitWidth: 480
-    implicitHeight: (label.visible ?
-                      label.anchors.topMargin +
-                      label.height :
-                  charLimitLabel.visible ?
-                      charLimitLabel.anchors.topMargin +
-                      charLimitLabel.height :
-                  0) +
-                statusBaseInput.anchors.topMargin +
-                statusBaseInput.height +
-                (errorMessage.visible ?
-                      errorMessage.anchors.topMargin +
-                      errorMessage.height :
-                      0) + 8
 
-    height: implicitHeight
-    width: implicitWidth
     /*!
         \qmlproperty alias StatusInput::input
         This property holds a reference to the TextEdit component.
@@ -320,92 +305,83 @@ Item {
         root.valid = Object.values(asyncErrors).length == 0
     }
 
+    implicitWidth: inputLayout.implicitWidth
+    implicitHeight: inputLayout.implicitHeight
+    height: implicitHeight
+    width: implicitWidth
+
     Component.onCompleted: validate()
 
-    Row {
-        id: labelRow
-        anchors.top: parent.top
-        anchors.left: parent.left
-        anchors.topMargin: visible ? 8 : 0
-        anchors.leftMargin: root.leftPadding
-        anchors.right: (charLimitLabel.visible ? charLimitLabel.right : parent.right)
-        anchors.rightMargin: root.rightPadding
-        height: visible ? 17 : 0
-        visible: !!root.label
-        spacing: 5
-        StatusBaseText {
-            id: label
-            elide: Text.ElideRight
-            text: root.label
-            font.pixelSize: 15
-            color: statusBaseInput.enabled ? Theme.palette.directColor1 : Theme.palette.baseColor1
+    ColumnLayout {
+        id: inputLayout
+
+        anchors.fill: parent
+
+        RowLayout {
+            Layout.fillWidth: true
+
+            StatusBaseText {
+                id: label
+                visible: !!root.label
+                elide: Text.ElideRight
+                text: root.label
+                font.pixelSize: 15
+                color: statusBaseInput.enabled ? Theme.palette.directColor1 : Theme.palette.baseColor1
+            }
+
+            StatusBaseText {
+                id: secondaryLabel
+                visible: !!root.secondaryLabel
+                elide: Text.ElideRight
+                text: root.secondaryLabel
+                font.pixelSize: 15
+                color: Theme.palette.baseColor1
+            }
+
+            Item {
+                Layout.fillWidth: true
+            }
+
+            StatusBaseText {
+                id: charLimitLabel
+
+                visible: root.charLimit > 0
+
+                text: "%1 / %2".arg(statusBaseInput.text.length).arg(root.charLimit)
+                font.pixelSize: 12
+                color: statusBaseInput.enabled ? Theme.palette.baseColor1 : Theme.palette.directColor6
+            }
+        }
+
+        StatusBaseInput {
+            id: statusBaseInput
+
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+
+            maximumLength: root.charLimit
+            onTextChanged: root.validate()
+
+            Keys.forwardTo: [root]
+            onIconClicked: root.iconClicked()
+            onKeyPressed: {
+                root.keyPressed(event);
+            }
+            onEditChanged: {
+                root.editClicked();
+            }
         }
 
         StatusBaseText {
-            id: secondaryLabel
-            height: visible ? 17 : 0
-            visible: !!root.secondaryLabel
-            elide: Text.ElideRight
-            text: root.secondaryLabel
-            font.pixelSize: 15
-            color: Theme.palette.baseColor1
+            id: errorMessage
+
+            visible: !!text && !statusBaseInput.valid
+
+            font.pixelSize: 12
+            color: Theme.palette.dangerColor1
+
+            horizontalAlignment: Text.AlignRight
+            wrapMode: Text.WordWrap
         }
-    }
-
-    StatusBaseText {
-        id: charLimitLabel
-        height: visible ? implicitHeight : 0
-        anchors.top: parent.top
-        anchors.right: parent.right
-        anchors.topMargin: visible ? 11 : 0
-        anchors.rightMargin: root.rightPadding
-        visible: root.charLimit > 0
-
-        text: "%1 / %2".arg(statusBaseInput.text.length).arg(root.charLimit)
-        font.pixelSize: 12
-        color: statusBaseInput.enabled ? Theme.palette.baseColor1 : Theme.palette.directColor6
-    }
-
-    StatusBaseInput {
-        id: statusBaseInput
-        anchors.top:  labelRow.visible ? labelRow.bottom :
-                charLimitLabel.visible ? charLimitLabel.bottom : parent.top
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.topMargin: charLimitLabel.visible ? 11 : 8
-        anchors.leftMargin: root.leftPadding
-        anchors.rightMargin: root.rightPadding
-        maximumLength: root.charLimit
-        onTextChanged: root.validate()
-
-        Keys.forwardTo: [root]
-        onIconClicked: root.iconClicked()
-        onKeyPressed: {
-            root.keyPressed(event);
-        }
-        onEditChanged: {
-            root.editClicked();
-        }
-    }
-
-    StatusBaseText {
-        id: errorMessage
-
-        anchors.top: statusBaseInput.bottom
-        anchors.topMargin: 11
-        anchors.right: parent.right
-        anchors.rightMargin: root.rightPadding
-        anchors.left: parent.left
-        anchors.leftMargin: root.leftPadding
-
-        height: visible ? implicitHeight : 0
-        visible: !!text && !statusBaseInput.valid
-
-        font.pixelSize: 12
-        color: Theme.palette.dangerColor1
-
-
-        horizontalAlignment: Text.AlignRight
-        wrapMode: Text.WordWrap
     }
 }
