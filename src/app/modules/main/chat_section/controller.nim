@@ -277,11 +277,11 @@ proc getContacts*(self: Controller, group: ContactsGroup): seq[ContactsDto] =
 proc getContactDetails*(self: Controller, id: string): ContactDetails =
   return self.contactService.getContactDetails(id)
 
-proc addContact*(self: Controller, publicKey: string) =
-  self.contactService.addContact(publicKey)
+proc acceptContactRequest*(self: Controller, publicKey: string) =
+  self.contactService.acceptContactRequest(publicKey)
 
-proc rejectContactRequest*(self: Controller, publicKey: string) =
-  self.contactService.rejectContactRequest(publicKey)
+proc dismissContactRequest*(self: Controller, publicKey: string) =
+  self.contactService.dismissContactRequest(publicKey)
 
 proc blockContact*(self: Controller, publicKey: string) =
   self.contactService.blockContact(publicKey)

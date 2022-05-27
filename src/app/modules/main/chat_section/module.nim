@@ -596,7 +596,7 @@ method getCurrentFleet*(self: Module): string =
   return self.controller.getCurrentFleet()
 
 method acceptContactRequest*(self: Module, publicKey: string) =
-  self.controller.addContact(publicKey)
+  self.controller.acceptContactRequest(publicKey)
 
 method onContactAccepted*(self: Module, publicKey: string) =
   self.view.contactRequestsModel().removeItemById(publicKey)
@@ -607,17 +607,17 @@ method acceptAllContactRequests*(self: Module) =
   for pk in pubKeys:
     self.acceptContactRequest(pk)
 
-method rejectContactRequest*(self: Module, publicKey: string) =
-  self.controller.rejectContactRequest(publicKey)
+method dismissContactRequest*(self: Module, publicKey: string) =
+  self.controller.dismissContactRequest(publicKey)
 
 method onContactRejected*(self: Module, publicKey: string) =
   self.view.contactRequestsModel().removeItemById(publicKey)
   self.updateParentBadgeNotifications()
 
-method rejectAllContactRequests*(self: Module) =
+method dismissAllContactRequests*(self: Module) =
   let pubKeys = self.view.contactRequestsModel().getItemIds()
   for pk in pubKeys:
-    self.rejectContactRequest(pk)
+    self.dismissContactRequest(pk)
 
 method blockContact*(self: Module, publicKey: string) =
   self.controller.blockContact(publicKey)

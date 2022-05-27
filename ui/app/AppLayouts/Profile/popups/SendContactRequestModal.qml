@@ -19,10 +19,12 @@ StatusModal {
 
     QtObject {
         id: d
+
         readonly property int maxMsgLength: 280
-        readonly property int minMsgLength: 0 //TODO: update this to 1 later, when we introduce "say who you are" feature
+        readonly property int minMsgLength: 1
         readonly property int msgHeight: 152
-        readonly property int contentSpacing: 0
+        readonly property int contentSpacing: 5
+        readonly property int contentMargins: 16
 
         property int minChatKeyLength: 4 // ens or chat key
         property string realChatKey: ""
@@ -83,7 +85,9 @@ StatusModal {
     contentItem: Item {
         Column {
             id: content
-            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.margins: d.contentMargins
             spacing: d.contentSpacing
 
             StatusInput {
@@ -143,7 +147,7 @@ StatusModal {
             enabled: d.validChatKey && messageInput.valid
             text: qsTr("Send Contact Request")
             onClicked: {
-                root.contactsStore.addContact(d.realChatKey)
+                root.contactsStore.sendContactRequest(d.realChatKey, messageInput.text)
                 root.close()
             }
         }

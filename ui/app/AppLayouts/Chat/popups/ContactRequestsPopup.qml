@@ -47,7 +47,7 @@ ModalPopup {
                 popup.store.acceptContactRequest(model.pubKey)
             }
             onDeclineClicked: {
-                popup.store.rejectContactRequest(model.pubKey)
+                popup.store.dismissContactRequest(model.pubKey)
             }
         }
     }
@@ -71,7 +71,7 @@ ModalPopup {
             //% "Are you sure you want to decline all these contact requests"
             confirmationText: qsTrId("are-you-sure-you-want-to-decline-all-these-contact-requests")
             onConfirmButtonClicked: {
-                popup.store.rejectAllContactRequests()
+                popup.store.dismissAllContactRequests()
                 declineAllDialog.close()
                 popup.close()
             }

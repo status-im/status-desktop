@@ -331,7 +331,7 @@ StatusModal {
             text: qsTr("Add to contacts")
             visible: !userIsBlocked && !isAddedContact
             onClicked: {
-                popup.contactsStore.addContact(userPublicKey);
+                popup.contactsStore.sendContactRequest(userPublicKey);
                 popup.contactAdded(userPublicKey);
                 popup.close();
             }

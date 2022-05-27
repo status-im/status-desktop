@@ -123,14 +123,14 @@ QtObject:
   proc isMyMutualContact*(self: View, publicKey: string): bool {.slot.} =
     return self.myMutualContactsModel.isContactWithIdAdded(publicKey)
 
-  proc addContact*(self: View, publicKey: string) {.slot.} =
-    self.delegate.addContact(publicKey)
+  proc sendContactRequest*(self: View, publicKey: string, message: string) {.slot.} =
+    self.delegate.sendContactRequest(publicKey, message)
 
   proc switchToOrCreateOneToOneChat*(self: View, publicKey: string) {.slot.} =
     self.delegate.switchToOrCreateOneToOneChat(publicKey)
 
-  proc rejectContactRequest*(self: View, publicKey: string) {.slot.} =
-    self.delegate.rejectContactRequest(publicKey)
+  proc dismissContactRequest*(self: View, publicKey: string) {.slot.} =
+    self.delegate.dismissContactRequest(publicKey)
 
   proc changeContactNickname*(self: View, publicKey: string, nickname: string) {.slot.} =
     self.delegate.changeContactNickname(publicKey, nickname)

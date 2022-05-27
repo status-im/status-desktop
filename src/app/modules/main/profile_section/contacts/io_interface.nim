@@ -22,19 +22,19 @@ method isLoaded*(self: AccessInterface): bool {.base.} =
 method viewDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method addContact*(self: AccessInterface, publicKey: string) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method switchToOrCreateOneToOneChat*(self: AccessInterface, publicKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method acceptContactRequests*(self: AccessInterface, publicKeysJSON: string) {.base.} =
+method sendContactRequest*(self: AccessInterface, publicKey: string, message: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method rejectContactRequest*(self: AccessInterface, publicKey: string) {.base.} =
+method acceptContactRequest*(self: AccessInterface, publicKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method rejectContactRequests*(self: AccessInterface, publicKeysJSON: string) {.base.} =
+method dismissContactRequest*(self: AccessInterface, publicKey: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method dismissContactRequests*(self: AccessInterface, publicKeysJSON: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method changeContactNickname*(self: AccessInterface, publicKey: string, nickname: string) {.base.} =
