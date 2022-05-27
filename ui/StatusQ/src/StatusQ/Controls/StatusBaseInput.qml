@@ -308,8 +308,9 @@ Item {
 
         MouseArea {
             id: sensor
-            hoverEnabled: true
             anchors.fill: parent
+            enabled: edit.enabled
+            hoverEnabled: enabled
             cursorShape: Qt.IBeamCursor
             onClicked: {
                 if (edit.activeFocus)
