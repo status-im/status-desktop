@@ -129,6 +129,11 @@ Item {
     */
     property alias horizontalAlignment: edit.horizontalAlignment
     /*!
+        \qmlproperty alias StatusBaseInput::placeholder
+        This property holds a reference to the placeholder component.
+    */
+    property alias placeholder: placeholder
+    /*!
         \qmlproperty alias StatusBaseInput::placeholderText
         This property holds a reference to the placeholder component's placeholderText property.
     */
