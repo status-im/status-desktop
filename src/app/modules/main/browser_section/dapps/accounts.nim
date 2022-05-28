@@ -6,6 +6,7 @@ type
     Name = UserRole + 1
     Address
     Color
+    Emoji
 
 QtObject:
   type
@@ -47,6 +48,7 @@ QtObject:
       ModelRole.Name.int:"name",
       ModelRole.Address.int:"address",
       ModelRole.Color.int:"color",
+      ModelRole.Emoji.int:"emoji"
     }.toTable
 
   method data(self: AccountsModel, index: QModelIndex, role: int): QVariant =
@@ -66,6 +68,8 @@ QtObject:
       result = newQVariant(item.address)
     of ModelRole.Color:
       result = newQVariant(item.color)
+    of ModelRole.Emoji:
+      result = newQVariant(item.emoji)
 
   proc addItem*(self: AccountsModel, item: WalletAccountDto) =
     let parentModelIndex = newQModelIndex()

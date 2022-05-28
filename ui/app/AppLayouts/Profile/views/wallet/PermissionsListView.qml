@@ -1,4 +1,5 @@
 import QtQuick 2.14
+import QtWebEngine 1.10
 import shared.status 1.0
 import StatusQ.Controls 0.1
 import StatusQ.Core 0.1
@@ -19,10 +20,16 @@ Column {
         delegate: Item {
             width: parent.width
             height: listItem.height + spacer.height
+            WebEngineView {
+                id: webView
+                url: model.name.startsWith("http")? model.name : "http://%1".arg(model.name)
+                visible: false
+            }
             StatusListItem {
                 id: listItem
-                title: model.name
-                icon.isLetterIdenticon: true
+                title: webView.title !== ""? webView.title : model.name
+                subTitle: model.name
+                image.source: webView.icon != ""? webView.icon : Style.svg("compassActive")
                 width: parent.width
                 highlighted: true
                 sensor.enabled: false
@@ -41,8 +48,13 @@ Column {
                     property int outerIndex: listItem.index
 
                     title: model.name
-                    icon.isLetterIdenticon: true
+
+                    icon.emoji: !!model.emoji ? model.emoji: ""
                     icon.color: model.color
+                    icon.name: !model.emoji ? "filled-account": ""
+                    icon.letterSize: 14
+                    icon.isLetterIdenticon: !!model.emoji
+                    icon.background.color: Theme.palette.indirectColor1
                     onClicked: {
                         const dappName = walletStore.dappList.rowData(outerIndex, 'name')
                         walletStore.disconnectAddress(dappName, model.address)
