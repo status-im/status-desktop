@@ -27,11 +27,19 @@ target_link_libraries(${PROJECT_NAME}
 
 # Copy status-go lib close to the executable
 # Temporary workaround; TODO: see a better alternative that doesn't depend on target order (dedicated dependencies dir?)
+# and current directory (on mac). Use bundle or set rpath relative to executable
 get_target_property(STATUSGO_LIBRARY_PATH statusgo_shared IMPORTED_LOCATION)
-configure_file(${STATUSGO_LIBRARY_PATH} ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
-
-install(
-    TARGETS
+add_custom_command(
+    TARGET
         ${PROJECT_NAME}
-    RUNTIME
+    POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+            $<TARGET_FILE:statusgo_shared>
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>
+        COMMENT "Copying status-go lib near ${PROJECT_NAME}"
+)
+    
+install(
+    IMPORTED_RUNTIME_ARTIFACTS
+        statusgo_shared
 )
