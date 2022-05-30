@@ -932,19 +932,17 @@ QtObject:
       if(communitiesSettingsJArr.len == 0):
         raise newException(RpcException, fmt"`communitiesSettings` array is empty in the response for community id: {communityKey}")
 
-      var chatsJArr: JsonNode
-      if(not response.result.getProp("chats", chatsJArr)):
-        raise newException(RpcException, fmt"there is no `chats` key in the response for community id: {communityKey}")
-
       var communityDto = communityJArr[0].toCommunityDto()
       let communitySettingsDto = communitiesSettingsJArr[0].toCommunitySettingsDto()
 
       communityDto.settings = communitySettingsDto
       self.joinedCommunities[communityDto.id] = communityDto
 
-      for chatObj in chatsJArr:
-        let chatDto = chatObj.toChatDto(communityDto.id)
-        self.chatService.updateOrAddChat(chatDto) # we have to update chats stored in the chat service.
+      var chatsJArr: JsonNode
+      if(response.result.getProp("chats", chatsJArr)):
+        for chatObj in chatsJArr:
+          let chatDto = chatObj.toChatDto(communityDto.id)
+          self.chatService.updateOrAddChat(chatDto) # we have to update chats stored in the chat service.
 
       for chat in communityDto.chats:
         let fullChatId = communityDto.id & chat.id
