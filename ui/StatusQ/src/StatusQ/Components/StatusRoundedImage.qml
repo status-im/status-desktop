@@ -28,11 +28,19 @@ Rectangle {
         id: image
         width: statusRoundImage.width
         height: statusRoundImage.height
-        sourceSize.width: parent.width * 2
-        sourceSize.height: parent.height * 2
         fillMode: Image.PreserveAspectFit
         anchors.centerIn: parent
-        cache: true
+
+        onSourceChanged: {
+            if (sourceSize.width < width || sourceSize.height < height) {
+                sourceSize = Qt.binding(function() {
+                    return Qt.size(width * 2, height * 2)
+                })
+            }
+            else {
+                sourceSize = undefined
+            }
+        }
     }
 
     Loader {
