@@ -104,7 +104,7 @@ QtObject {
     function getReplyMessageStyle(msg, isCurrentUser) {
         return `<style type="text/css">`+
                     `a {`+
-                        `color: ${isCurrentUser? Style.current.white : Style.current.textColor};`+
+                        `color: ${Style.current.textColor};`+
                     `}`+
                     `a.mention {`+
                         `color: ${isCurrentUser ? Style.current.mentionColor : Style.current.turquoise};`+
