@@ -112,7 +112,7 @@ let DEFAULT_NETWORKS* = %* [
 let NETWORKS* = %* [
   {
     "chainId": 1,
-    "chainName": "Ethereum Mainnet",
+    "chainName": "Mainnet",
     "rpcUrl": "https://mainnet.infura.io/v3/" & INFURA_TOKEN_RESOLVED,
     "blockExplorerUrl": "https://etherscan.io/",
     "iconUrl": "",
@@ -125,7 +125,7 @@ let NETWORKS* = %* [
   },
   {
     "chainId": 3,
-    "chainName": "Ethereum Ropsten",
+    "chainName": "Ropsten",
     "rpcUrl": "https://ropsten.infura.io/v3/" & INFURA_TOKEN_RESOLVED,
     "blockExplorerUrl": "https://ropsten.etherscan.io/",
     "iconUrl": "",
@@ -138,7 +138,7 @@ let NETWORKS* = %* [
   },
   {
     "chainId": 4,
-    "chainName": "Ethereum Rinkeby",
+    "chainName": "Rinkeby",
     "rpcUrl": "https://rinkeby.infura.io/v3/" & INFURA_TOKEN_RESOLVED,
     "blockExplorerUrl": "https://rinkeby.etherscan.io/",
     "iconUrl": "",
@@ -151,7 +151,7 @@ let NETWORKS* = %* [
   },
   {
     "chainId": 5,
-    "chainName": "Ethereum Goerli",
+    "chainName": "Goerli",
     "rpcUrl": "http://goerli.blockscout.com/",
     "blockExplorerUrl": "https://goerli.etherscan.io/",
     "iconUrl": "",
@@ -164,7 +164,7 @@ let NETWORKS* = %* [
   },
   {
     "chainId": 10,
-    "chainName": "Optimistic Ethereum",
+    "chainName": "Optimism",
     "rpcUrl": "https://optimism-mainnet.infura.io/v3/" & INFURA_TOKEN_RESOLVED,
     "blockExplorerUrl": "https://optimistic.etherscan.io",
     "iconUrl": "",
@@ -190,7 +190,7 @@ let NETWORKS* = %* [
   },
   {
     "chainId": 42161,
-    "chainName": "Arbitrum Mainnet",
+    "chainName": "Arbitrum",
     "rpcUrl": "https://arbitrum-mainnet.infura.io/v3/" & INFURA_TOKEN_RESOLVED,
     "blockExplorerUrl": "https://arbiscan.io/",
     "iconUrl": "",
@@ -203,7 +203,7 @@ let NETWORKS* = %* [
   },
   {
     "chainId": 421611,
-    "chainName": "Arbitrum Testnet",
+    "chainName": "Arbitrum Rinkeby",
     "rpcUrl": "https://arbitrum-rinkeby.infura.io/v3/" & INFURA_TOKEN_RESOLVED,
     "blockExplorerUrl": " https://testnet.arbiscan.io",
     "iconUrl": "",
