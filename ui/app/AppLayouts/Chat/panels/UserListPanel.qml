@@ -67,6 +67,7 @@ Item {
             chatKey: model.id
             trustIndicator: model.trustIndicator
             isMutualContact: model.isMutualContact
+            isAdmin: model.isAdmin
             image.source: {
                 if ((!model.isAdded &&
                     Global.privacyModuleInst.profilePicturesVisibility !==
