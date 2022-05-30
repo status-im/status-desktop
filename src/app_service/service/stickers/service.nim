@@ -113,7 +113,7 @@ QtObject:
     
   proc getStickerMarketAddress*(self: Service): string =
     try:
-      let chainId = self.settingsService.getCurrentNetworkId()
+      let chainId = self.networkService.getNetworkForStickers().chainId
       let response = status_stickers.stickerMarketAddress(chainId)
       return response.result.getStr()
     except RpcException:
@@ -196,15 +196,13 @@ QtObject:
       result.gasPrice = (if gasPrice.isEmptyOrWhitespace: int.none else: gwei2Wei(parseFloat(gasPrice)).truncate(int).some)
 
   proc getStatusToken*(self: Service): TokenDto =
-    let networkType = self.settingsService.getCurrentNetwork().toNetworkType()
-    let networkDto = self.networkService.getNetwork(networkType)
+    let networkDto = self.networkService.getNetworkForStickers()
 
-    return self.tokenService.findTokenBySymbol(networkDto, networkType.sntSymbol())
+    return self.tokenService.findTokenBySymbol(networkDto, networkDto.sntSymbol())
 
   proc buyPack*(self: Service, packId: string, address, gas, gasPrice: string, eip1559Enabled: bool, maxPriorityFeePerGas: string, maxFeePerGas: string, password: string, success: var bool): tuple[txHash: string, error: string] =
     let
-      networkType = self.settingsService.getCurrentNetwork().toNetworkType()
-      network = self.networkService.getNetwork(networkType)
+      network = self.networkService.getNetworkForStickers()
       chainId = network.chainId
       txData = buildTransaction(parseAddress(address), gas, gasPrice, eip1559Enabled, maxPriorityFeePerGas, maxFeePerGas)
 
@@ -264,7 +262,6 @@ QtObject:
       ))
 
 
-    let chainId = self.settingsService.getCurrentNetworkId()
     let pendingStickerPacksResponse = status_stickers.pending() 
     for (packID, stickerPackJson) in pendingStickerPacksResponse.result.pairs():
         if self.marketStickerPacks.contains(packID): continue
@@ -278,7 +275,7 @@ QtObject:
     self.events.emit(SIGNAL_ALL_STICKER_PACKS_LOADED, Args())
 
   proc obtainMarketStickerPacks*(self: Service) =
-    let chainId = self.settingsService.getCurrentNetworkId()
+    let chainId = self.networkService.getNetworkForStickers().chainId
 
     let arg = ObtainMarketStickerPacksTaskArg(
       tptr: cast[ByteAddress](obtainMarketStickerPacksTask),
@@ -297,7 +294,7 @@ QtObject:
   # definition so we'll need to setup the type, task, and helper outside of body
   # passed to `QtObject:`
   proc estimate*(self: Service, packId: string, address: string, price: string, uuid: string) =
-    let chainId = self.settingsService.getCurrentNetworkId()
+    let chainId = self.networkService.getNetworkForStickers().chainId
 
     let arg = EstimateTaskArg(
       tptr: cast[ByteAddress](estimateTask),
@@ -339,7 +336,7 @@ QtObject:
     return 0
 
   proc installStickerPack*(self: Service, packId: string) =
-    let chainId = self.settingsService.getCurrentNetworkId()
+    let chainId = self.networkService.getNetworkForStickers().chainId
     if not self.marketStickerPacks.hasKey(packId):
       return
     let installResponse = status_stickers.install(chainId, packId)
@@ -380,8 +377,7 @@ QtObject:
   proc getSNTBalance*(self: Service): string =
     let token = self.getStatusToken()
     let account = self.walletAccountService.getWalletAccount(0).address
-    let networkType = self.settingsService.getCurrentNetwork().toNetworkType()
-    let network = self.networkService.getNetwork(networkType)
+    let network = self.networkService.getNetworkForStickers()
 
     let balances = status_go_backend.getTokensBalancesForChainIDs(@[network.chainId], @[account], @[token.addressAsString()]).result
     return ens_utils.hex2Token(balances{account}{token.addressAsString()}.getStr, token.decimals)

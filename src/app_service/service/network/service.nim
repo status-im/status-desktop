@@ -112,8 +112,31 @@ proc isEIP1559Enabled*(self: Service): bool =
   # TODO: add block number chain for other chains
   let network = self.getEnabledNetworks()[0]
   case network.chainId:
-    of 3: return true
-    of 4: return true
-    of 5: return true
-    of 1: return true
+    of Ropsten: return true
+    of Rinkeby: return true
+    of Goerli: return true
+    of Mainnet: return true
     else: return false
+
+proc getNetworkForEns*(self: Service): NetworkDto =
+  if not singletonInstance.localAccountSensitiveSettings.getIsMultiNetworkEnabled():
+    let networkType = self.settingsService.getCurrentNetwork().toNetworkType()
+    return self.getNetwork(networkType)
+
+  if self.settingsService.areTestNetworksEnabled():
+    return self.getNetwork(Ropsten)
+
+  return self.getNetwork(Mainnet)
+
+proc getNetworkForStickers*(self: Service): NetworkDto =
+    return self.getNetworkForEns()
+
+proc getNetworkForCollectibles*(self: Service): NetworkDto =
+  if not singletonInstance.localAccountSensitiveSettings.getIsMultiNetworkEnabled():
+    let networkType = self.settingsService.getCurrentNetwork().toNetworkType()
+    return self.getNetwork(networkType)
+
+  if self.settingsService.areTestNetworksEnabled():
+    return self.getNetwork(Rinkeby)
+
+  return self.getNetwork(Mainnet)
