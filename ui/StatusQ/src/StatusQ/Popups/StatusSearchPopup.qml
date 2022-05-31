@@ -40,14 +40,19 @@ StatusModal {
                                 imageSource = "",
                                 isIdenticon = "",
                                 iconName = "",
-                                iconColor = "") {
+                                iconColor = "",
+                                isUserIcon = false,
+                                colorId = 0,
+                                colorHash = "") {
         searchSelectionButton.primaryText = text
         searchSelectionButton.secondaryText = secondaryText
         searchSelectionButton.image.source = imageSource
         searchSelectionButton.image.isIdenticon = isIdenticon
         searchSelectionButton.iconSettings.name = iconName
-        searchSelectionButton.iconSettings.color = iconColor !== ""? iconColor : Theme.palette.primaryColor1
+        searchSelectionButton.iconSettings.color = isUserIcon ? Theme.palette.userCustomizationColors[colorId] : iconColor
         searchSelectionButton.iconSettings.isLetterIdenticon = !iconName && !imageSource
+        searchSelectionButton.iconSettings.charactersLen = isUserIcon ? 2 : 1
+        searchSelectionButton.ringSettings.ringSpecModel = !!colorHash ? JSON.parse(colorHash) : {}
     }
 
     function resetSearchSelection() {
@@ -129,7 +134,7 @@ StatusModal {
                         height: 16
                         name: ""
                         isLetterIdenticon: false
-                        letterSize: 11
+                        letterSize: charactersLen > 1 ? 8 : 11
                     }
 
                     property StatusImageSettings image: StatusImageSettings {
@@ -138,6 +143,8 @@ StatusModal {
                         source: ""
                         isIdenticon: false
                     }
+
+                    property alias ringSettings: identicon.ringSettings
 
                     anchors.left: parent.left
                     anchors.leftMargin: 16
@@ -270,7 +277,8 @@ StatusModal {
                         statusListItemSubTitle.elide: Text.ElideRight
                         statusListItemSubTitle.color: Theme.palette.directColor1
                         icon.isLetterIdenticon: (model.image === "")
-                        icon.background.color: model.color
+                        icon.color: model.isUserIcon ? Theme.palette.userCustomizationColors[model.colorId] : model.color
+                        icon.charactersLen: model.isUserIcon ? 2 : 1
                         titleAsideText: root.formatTimestampFn(model.time)
                         image.source: model.image
                         badge.primaryText: model.badgePrimaryText
@@ -278,6 +286,7 @@ StatusModal {
                         badge.image.source: model.badgeImage
                         badge.icon.isLetterIdenticon: model.badgeIsLetterIdenticon
                         badge.icon.color: model.badgeIconColor
+                        ringSettings.ringSpecModel: model.colorHash
 
                         onClicked: {
                             root.resultItemClicked(itemId)

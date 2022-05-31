@@ -16,6 +16,7 @@ MenuItem {
         width: 16
         isIdenticon: false
     }
+
     property StatusIconSettings iconSettings: StatusIconSettings {
         height: 16
         width: 16
@@ -23,8 +24,10 @@ MenuItem {
                             && root.iconSettings.name.toString() === "")
         background: StatusIconBackgroundSettings {}
         color: (name === "channel") ? Theme.palette.directColor1 : "transparent"
-        letterSize: 11
+        letterSize: charactersLen > 1 ? 8 : 11
     }
+
+    property alias ringSettings: identicon.ringSettings
 
     background: Rectangle {
         color: root.hovered ? Theme.palette.statusPopupMenu.hoverBackgroundColor : "transparent"
@@ -43,6 +46,7 @@ MenuItem {
                 image: root.image
                 icon: root.iconSettings
                 name: root.text
+                ringSettings: root.ringSettings
             }
         }
         StatusBaseText {

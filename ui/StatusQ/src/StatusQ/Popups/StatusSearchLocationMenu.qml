@@ -103,7 +103,9 @@ StatusPopupMenu {
                         text: model.text
                         image.source: model.imageSource
                         iconSettings.name: model.iconName
-                        iconSettings.color: model.iconColor
+                        iconSettings.color: model.isUserIcon ? Theme.palette.userCustomizationColors[model.colorId] : model.iconColor
+                        iconSettings.charactersLen: model.isUserIcon ? 2 : 1
+                        ringSettings.ringSpecModel: model.colorHash
                         onTriggered: {
                             searchPopup.resetSearchSelection()
                             if (menuLoader.parentTitleText === "Chat") {
@@ -112,7 +114,10 @@ StatusPopupMenu {
                                                                model.imageSource,
                                                                model.isIdenticon,
                                                                model.iconName,
-                                                               model.iconColor)
+                                                               model.iconColor,
+                                                               model.isUserIcon,
+                                                               model.colorId,
+                                                               model.colorHash.toJson())
                             } else {
                                 searchPopup.setSearchSelection(menuLoader.parentTitleText,
                                                    model.text,
