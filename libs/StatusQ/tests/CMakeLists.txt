@@ -35,10 +35,12 @@ target_include_directories(${PROJECT_NAME}
         ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-add_subdirectory(src)
+add_subdirectory(TestHelpers)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
     Qt6::QuickTest
     Qt6::Qml
     Qt6::Quick
+
+    Status::TestHelpers
 )

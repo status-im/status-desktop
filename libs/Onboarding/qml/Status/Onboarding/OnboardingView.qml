@@ -2,6 +2,9 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
 
+import Status.Containers
+import Status.Controls.Navigation
+
 Item {
     id: root
 
@@ -15,7 +18,11 @@ Item {
 
         anchors.fill: parent
 
-        RowLayout {}
+        MacTrafficLights {
+            Layout.margins: 13
+        }
+
+        LayoutSpacer {}
         Label {
             Layout.alignment: Qt.AlignHCenter
             text: "TODO OnboardingWorkflow"
@@ -25,6 +32,6 @@ Item {
             Layout.alignment: Qt.AlignHCenter
             onClicked: root.userLoggedIn()
         }
-        RowLayout {}
+        LayoutSpacer {}
     }
 }

@@ -12,17 +12,26 @@ qt6_add_executable(${PROJECT_NAME} "")
 qt6_add_qml_module(${PROJECT_NAME}
     URI Status.Application
     VERSION 1.0
+
     QML_FILES
         qml/main.qml
-        qml/Status/Application/StatusWindow.qml
-        qml/Status/Application/StatusContentView.qml
-        qml/Status/Application/MainShortcuts.qml
+        qml/Status/Application/Decorators/SplashScreen.qml
 
         qml/Status/Application/MainView/MainView.qml
+        qml/Status/Application/MainView/StatusApplicationSections.qml
+
+        qml/Status/Application/MainView/StatusApplicationSections/Wallet/WalletNavBarSection.qml
+
+        qml/Status/Application/Settings/ApplicationSettings.qml
 
         qml/Status/Application/System/StatusTrayIcon.qml
 
-        qml/Status/Application/Decorators/SplashScreen.qml
+        qml/Status/Application/Workflows/CloseApplicationHandler.qml
+
+        qml/Status/Application/StatusContentView.qml
+        qml/Status/Application/MainShortcuts.qml
+        qml/Status/Application/StatusWindow.qml
+
     OUTPUT_DIRECTORY
         ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Status/Application
 )
@@ -37,6 +46,7 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE BUILD_BINARY_DIR=${CMAKE_BINA
 target_compile_definitions(${PROJECT_NAME} PRIVATE BUILD_SOURCE_DIR=${CMAKE_SOURCE_DIR})
 
 add_subdirectory(qml)
+add_subdirectory(qml/Status/Application/Navigation)
 add_subdirectory(src)
 add_subdirectory(res)
 
@@ -53,11 +63,14 @@ target_link_libraries(${PROJECT_NAME}
     PRIVATE
         Qt6::Quick
 
+        StatusQ_Application_Navigation
+
         # TODO: Use Status:: namespace
         #Core
         Helpers
         Onboarding
         Assets
+        StatusQ
 )
 
 # QtCreator needs this

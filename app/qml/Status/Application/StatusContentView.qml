@@ -5,9 +5,15 @@ import QtQuick.Controls
 import Status.Application
 import Status.Onboarding
 
-/// Has entry responsibility for the main workflows
+import Status.Controls.Navigation
+
+/*! Has entry responsibility for the main workflows
+  */
 Item {
     id: root
+
+    required property ApplicationState appState
+    required property ApplicationController appController
 
     implicitWidth: d.isViewLoaded ? d.loadedView.implicitWidth : 800
     implicitHeight: d.isViewLoaded ? d.loadedView.implicitHeight : 600
@@ -35,6 +41,7 @@ Item {
 
         MainView {
             onReady: splashScreenPopup.close()
+            appController: root.appController
         }
     }
 

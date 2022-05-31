@@ -2,11 +2,20 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
 
+import Status.Application
+
+import Status.Containers
+import Status.Controls
+
+import Status.Application.Navigation
+
 /// Responsible for setup of user workflows after onboarding
 Item {
     id: root
 
-    /// Emited when everything is loaded and UX ready
+    required property ApplicationController appController
+
+    /// Emitted when everything is loaded and UX ready
     signal ready()
 
     Component.onCompleted: root.ready()
@@ -14,22 +23,40 @@ Item {
     implicitWidth: mainLayout.implicitWidth
     implicitHeight: mainLayout.implicitHeight
 
-    ColumnLayout {
+    RowLayout {
         id: mainLayout
 
         anchors.fill: parent
 
-        RowLayout {}
-        Label {
-            Layout.alignment: Qt.AlignHCenter
-            text: "TODO MainView"
-        }
-        Button {
-            text: "Quit"
-            Layout.alignment: Qt.AlignHCenter
-            onClicked: Qt.quit()
+        StatusNavigationBar {
+            id: navBar
+
+            Layout.fillHeight: true
+
+            sections: appSections.sectionsList
         }
 
-        RowLayout {}
+        ColumnLayout {
+            // Not visible all the time
+            StatusBanner {
+                Layout.fillWidth: true
+
+                //statusText:   // TODO: appController.bannerController.text
+                //type:         // TODO: appController.bannerController.type
+                visible: false  // TODO: appController.bannerController.visible
+            }
+            Loader {
+                id: mainLoader
+
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+            }
+        }
+    }
+
+    StatusApplicationSections {
+        id: appSections
+        // Chat ...
+        // Wallet ...
     }
 }
