@@ -25,10 +25,11 @@ Rectangle {
         id: appSectionType
         readonly property int chat: 0
         readonly property int community: 1
-        readonly property int wallet: 2
+        readonly property int communitiesPortal: 2
+        readonly property int wallet: 3
         readonly property int browser: 3
-        readonly property int nodeManagement: 4
-        readonly property int profileSettings: 5
+        readonly property int nodeManagement: 5
+        readonly property int profileSettings: 6
         readonly property int apiDocumentation: 100
         readonly property int demoApp: 101
     }
@@ -118,6 +119,11 @@ Rectangle {
                         appView.sourceComponent = statusAppChatView
                         demoApp.setActiveItem(model.sectionId)
                     }
+                    else if(model.sectionType === appSectionType.communitiesPortal)
+                    {
+                        appView.sourceComponent = statusCommunityPortalView
+                        demoApp.setActiveItem(model.sectionId)
+                    }
                     else if(model.sectionType === appSectionType.profileSettings)
                     {
                         appView.sourceComponent = statusAppProfileSettingsView
@@ -203,6 +209,11 @@ Rectangle {
     Component {
         id: statusAppProfileSettingsView
         StatusAppProfileSettingsView { }
+    }
+
+    Component {
+        id: statusCommunityPortalView
+        StatusAppCommunitiesPortalView { }
     }
 
     DemoContactRequestsModal {

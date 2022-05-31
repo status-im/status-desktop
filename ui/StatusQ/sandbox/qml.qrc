@@ -44,5 +44,14 @@
         <file>pages/StatusWizardStepperPage.qml</file>
         <file>pages/StatusTabBarButtonPage.qml</file>
         <file>pages/StatusColorSpacePage.qml</file>
+        <file>images/CryptoKitties.png</file>
+        <file>images/CryptoPunks.png</file>
+        <file>images/Dragonerum.png</file>
+        <file>images/FriendsBenefits.png</file>
+        <file>images/logo-test-image.png</file>
+        <file>images/P2PCrypto.png</file>
+        <file>images/SNT.png</file>
+        <file>images/Socks.png</file>
+        <file>images/StatusPunks.png</file>
     </qresource>
 </RCC>

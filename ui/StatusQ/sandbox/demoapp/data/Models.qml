@@ -968,8 +968,19 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             notificationsCount: 0
         }
         ListElement {
-            sectionId: "wallet"
+            sectionId: "communitiesPortal"
             sectionType: 2
+            name: "Communities Portal"
+            active: false
+            image: ""
+            icon: "communities"
+            color: ""
+            hasNotification: false
+            notificationsCount: 0
+        }
+        ListElement {
+            sectionId: "wallet"
+            sectionType: 3
             name: "Wallet"
             active: false
             image: ""
@@ -980,7 +991,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
         }
         ListElement {
             sectionId: "browser"
-            sectionType: 3
+            sectionType: 4
             name: "Browser"
             active: false
             image: ""
@@ -988,7 +999,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             color: ""
             hasNotification: false
             notificationsCount: 0
-        }
+        }        
         ListElement {
             sectionId: "profile"
             sectionType: 6
@@ -1305,5 +1316,146 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             category: "Beta Languages"
             selected: false
         }
+    }    
+
+    property ListModel featuredCommunitiesModel : ListModel {
+        ListElement {
+            name: "CryptoKitties";
+            description: "A community of cat lovers, meow!";
+            icon:"qrc:/images/CryptoKitties.png";
+            members: 1045;
+            categories: [];
+            communityId: "341";
+            available: true;
+            popularity: 1
+        }
+        ListElement {
+            name: "Friends with Benefits";
+            description: "A group chat full of out favorite thinkers and creators.";
+            icon:"qrc:/images/FriendsBenefits.png";
+            members: 452;
+            categories: [];
+            communityId: "232";
+            available: true;
+            popularity: 2
+        }
+        ListElement {
+            name: "Status Hi!!";
+            description: "A new community description with long long long and repetitive repetitive repetitive repetitive explanation!!";
+            icon:"qrc:/images/SNT.png";
+            members: 89;
+            categories: [];
+            communityId: "223";
+            available: true;
+            popularity: 3
+        }
+    }
+
+    property ListModel curatedCommunitiesModel : ListModel {
+        ListElement {
+            name: "CryptoKitties";
+            description: "A community of cat lovers, meow!";
+            icon:"qrc:/images/CryptoKitties.png";
+            members: 1000;
+            categories: [];
+            communityId: "1";
+            available: true;
+            popularity: 1
+        }
+        ListElement {
+            name: "Friends with Benefits";
+            description: "A group chat full of out favorite thinkers and creators.";
+            icon:"qrc:/images/FriendsBenefits.png";
+            members: 452;
+            categories: [];
+            communityId: "2";
+            available: true;
+            popularity: 2
+        }
+        ListElement {
+            name: "Teller";
+            description: "A community of P2P crypto trades";
+            icon:"qrc:/images/P2PCrypto.png";
+            members: 50;
+            categories: [];
+            communityId: "3";
+            available: true;
+            popularity: 3
+        }
+        ListElement {
+            name: "Status";
+            description: "Community description goes here.";
+            icon:"qrc:/images/SNT.png";
+            members: 5288;
+            categories: [];
+            communityId: "4";
+            available: true;
+            popularity: 4
+        }
+        ListElement {
+            name: "Status Punks";
+            description: "Community description goes here.Community description goes here. Community description goes here. Community description goes here.";
+            icon:"qrc:/images/StatusPunks.png";
+            members: 4125;
+            categories: [];
+            communityId: "5";
+            available: false;
+            popularity: 5
+        }
+        ListElement {
+            name: "Uniswap";
+            description: "Community description goes here.";
+            icon:"qrc:/images/CryptoKitties.png";
+            members: 45;
+            categories: [];
+            communityId: "6";
+            available: false;
+            popularity: 6
+        }
+        ListElement {
+            name: "Dragonereum";
+            description: "Community description goes here.";
+            icon:"qrc:/images/Dragonerum.png";
+            members: 968;
+            categories: [];
+            communityId: "7";
+            available: true;
+            popularity: 7
+        }
+        ListElement {
+            name: "CryptoPunks";
+            description: "Community description goes here. Community description goes here. Community description goes here. Community description goes here. Community description goes here. Community description goes here.";
+            icon:"qrc:/images/CryptoPunks.png";
+            members: 4200;
+            categories: [];
+            communityId: "8";
+            available: true;
+            popularity: 8
+        }
+        ListElement {
+            name: "Socks";
+            description: "Community description goes here.";
+            icon:"qrc:/images/Socks.png"
+            members: 12;
+            categories: [];
+            communityId: "9";
+            available: true;
+            popularity: 9
+        }
+    }
+
+    property ListModel tagsModel : ListModel {
+        ListElement { name: "gaming"; emoji: "🎮"}
+        ListElement { name: "art"; emoji: "🖼️️"}
+        ListElement { name: "crypto"; emoji: "💸"}
+        ListElement { name: "nsfw"; emoji: "🍆"}
+        ListElement { name: "markets"; emoji: "💎"}
+        ListElement { name: "defi"; emoji: "📈"}
+        ListElement { name: "travel"; emoji: "🚁"}
+        ListElement { name: "web3"; emoji: "🗺"}
+        ListElement { name: "sport"; emoji: "🎾"}
+        ListElement { name: "food"; emoji: "🥑"}
+        ListElement { name: "enviroment"; emoji: "☠️"}
+        ListElement { name: "privacy"; emoji: "👻"}
     }
 }
