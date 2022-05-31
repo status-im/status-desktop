@@ -114,6 +114,9 @@ Page {
             compressedKeyGetter: function(pubKey) {
                 return Utils.getCompressedPk(pubKey);
             }
+            colorIdForPubkeyGetter: function (pubKey) {
+                return Utils.colorIdForPubkey(pubKey);
+            }
             onTextChanged: {
                 sortModel(root.contactsModel);
             }
