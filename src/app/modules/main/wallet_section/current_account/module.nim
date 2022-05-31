@@ -72,8 +72,6 @@ proc setAssetsAndBalance(self: Module, tokens: seq[WalletTokenDto]) =
   var totalCurrencyBalanceForAllAssets = 0.0
   var items: seq[Item]
   for t in tokens:
-    if(t.totalBalance.balance == 0):
-      continue
     let item = token_item.initItem(t.name, t.symbol, t.totalBalance.balance, t.address, t.totalBalance.currencyBalance)
     items.add(item)
     totalCurrencyBalanceForAllAssets += t.totalBalance.currencyBalance
