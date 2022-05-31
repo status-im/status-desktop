@@ -1,6 +1,9 @@
-import NimQml, Tables
+import NimQml, Tables, json
 
 import color_hash_item
+
+type
+  ColorHashSegment* = tuple[len, colorIdx: int]
 
 type
   ModelRole {.pure.} = enum
@@ -27,6 +30,12 @@ QtObject:
     self.beginResetModel()
     self.items = items
     self.endResetModel()
+
+  proc toJson*(self: Model): string {.slot.} =
+    let json = newJArray()
+    for item in self.items:
+      json.add(%* {"segmentLength": item.segmentLength(), "colorId": item.colorId()})
+    return $json
 
   method rowCount(self: Model, index: QModelIndex = nil): int =
     return self.items.len

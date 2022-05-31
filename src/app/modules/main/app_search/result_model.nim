@@ -17,6 +17,9 @@ type
     BadgeImage
     BadgeIconColor
     BadgeIsLetterIdenticon
+    IsUserIcon
+    ColorId
+    ColorHash
 
 QtObject:
   type
@@ -63,7 +66,10 @@ QtObject:
       ModelRole.BadgeSecondaryText.int:"badgeSecondaryText",
       ModelRole.BadgeImage.int:"badgeImage",
       ModelRole.BadgeIconColor.int:"badgeIconColor",
-      ModelRole.BadgeIsLetterIdenticon.int:"badgeIsLetterIdenticon"
+      ModelRole.BadgeIsLetterIdenticon.int:"badgeIsLetterIdenticon",
+      ModelRole.IsUserIcon.int:"isUserIcon",
+      ModelRole.ColorId.int:"colorId",
+      ModelRole.ColorHash.int:"colorHash"
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -103,6 +109,12 @@ QtObject:
       result = newQVariant(item.badgeIconColor)
     of ModelRole.BadgeIsLetterIdenticon:
       result = newQVariant(item.badgeIsLetterIdentIcon)
+    of ModelRole.IsUserIcon:
+      result = newQVariant(item.isUserIcon)
+    of ModelRole.ColorId:
+      result = newQVariant(item.colorId)
+    of ModelRole.ColorHash:
+      result = newQVariant(item.colorHash)
 
   proc add*(self: Model, item: Item) =
     self.beginInsertRows(newQModelIndex(), self.resultList.len, self.resultList.len)

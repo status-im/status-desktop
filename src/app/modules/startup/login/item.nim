@@ -4,9 +4,6 @@ import sequtils, sugar
 import ../../shared_models/[color_hash_item, color_hash_model]
 
 type
-  ColorHashSegment* = tuple[len, colorIdx: int]
-
-type
   Item* = object
     name: string
     thumbnailImage: string

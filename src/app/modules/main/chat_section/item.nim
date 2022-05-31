@@ -1,5 +1,6 @@
 import strformat, json
 import base_item, sub_model, sub_item
+import ../../shared_models/color_hash_model
 
 type
   Item* = ref object of BaseItem

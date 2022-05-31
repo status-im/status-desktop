@@ -15,6 +15,7 @@ import ../../../../app_service/service/contacts/service as contact_service
 import ../../../../app_service/service/chat/service as chat_service
 import ../../../../app_service/service/community/service as community_service
 import ../../../../app_service/service/message/service as message_service
+import ../../../../app_service/service/visual_identity/service as visual_identity
 
 export io_interface
 
@@ -80,14 +81,22 @@ proc buildLocationMenuForChannelGroup(self: Module, channelGroup: ChannelGroupDt
   for chatDto in channelGroup.chats:
     var chatName = chatDto.name
     var chatImage = chatDto.icon
-    if(chatDto.chatType == ChatType.OneToOne):
+    var colorHash: ColorHashDto = @[]
+    var colorId: int = 0
+    let isOneToOneChat = chatDto.chatType == ChatType.OneToOne
+    if(isOneToOneChat):
       (chatName, chatImage) = self.controller.getOneToOneChatNameAndImage(chatDto.id)
+      colorHash = self.controller.getColorHash(chatDto.id)
+      colorId = self.controller.getColorId(chatDto.id)
     let subItem = location_menu_sub_item.initSubItem(
       chatDto.id,
       chatName,
       chatImage,
       "",
-      chatDto.color)
+      chatDto.color,
+      isOneToOneChat,
+      colorId,
+      colorHash)
     subItems.add(subItem)
 
   item.setSubItems(subItems)
@@ -176,8 +185,13 @@ method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
       for chatDto in channelGroup.chats:
         var chatName = chatDto.name
         var chatImage = chatDto.icon
-        if(chatDto.chatType == ChatType.OneToOne):
+        var colorHash: ColorHashDto = @[]
+        var colorId: int = 0
+        let isOneToOneChat = chatDto.chatType == ChatType.OneToOne
+        if(isOneToOneChat):
           (chatName, chatImage) = self.controller.getOneToOneChatNameAndImage(chatDto.id)
+          colorHash = self.controller.getColorHash(chatDto.id)
+          colorId = self.controller.getColorId(chatDto.id)
 
         var rawChatName = chatName
         if(chatName.startsWith("@")):
@@ -200,7 +214,10 @@ method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
             badgeSecondaryText="",
             chatImage,
             chatDto.color,
-            false)
+            false,
+            isOneToOneChat,
+            colorId,
+            colorHash)
 
           self.controller.addResultItemDetails(chatDto.id, channelGroup.id, chatDto.id)
           channels.add(item)
@@ -219,6 +236,8 @@ method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
       senderName = "You"
 
     let renderedMessageText = self.controller.getRenderedText(m.parsedText)
+    let colorHash = self.controller.getColorHash(m.`from`)
+    let colorId = self.controller.getColorId(m.`from`)
 
     if(chatDto.communityId.len == 0):
       var chatName = chatDto.name
@@ -227,7 +246,7 @@ method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
         (chatName, chatImage) = self.controller.getOneToOneChatNameAndImage(chatDto.id)
       let item = result_item.initItem(m.id, renderedMessageText, $m.timestamp, m.`from`, senderName,
         SEARCH_RESULT_MESSAGES_SECTION_NAME, senderImage, chatDto.color, chatName, "", chatImage,
-        chatDto.color, false)
+        chatDto.color, false, true, colorId, colorHash)
 
       self.controller.addResultItemDetails(m.id, singletonInstance.userProfile.getPubKey(),
         chatDto.id, m.id)
@@ -238,7 +257,7 @@ method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
 
       let item = result_item.initItem(m.id, renderedMessageText, $m.timestamp, m.`from`, senderName,
         SEARCH_RESULT_MESSAGES_SECTION_NAME, senderImage, chatDto.color, community.name,
-        channelName, community.images.thumbnail, community.color, false)
+        channelName, community.images.thumbnail, community.color, false, true, colorId, colorHash)
 
       self.controller.addResultItemDetails(m.id, chatDto.communityId, chatDto.id, m.id)
       items.add(item)
