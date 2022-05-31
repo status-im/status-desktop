@@ -35,15 +35,13 @@ QtObject:
     self.QObject.delete
 
   proc newService*(
-      events: EventEmitter,
-      threadpool: ThreadPool,
-      settingsService: settings_service.Service
-      ): Service =
+    events: EventEmitter,
+    threadpool: ThreadPool,
+  ): Service =
     new(result, delete)
     result.QObject.setup
     result.events = events
     result.threadpool = threadpool
-    result.settingsService = settingsService
 
   proc init*(self: Service) =
     # TODO uncomment this once the latest version calls is fixed
@@ -64,18 +62,6 @@ QtObject:
     self.events.emit(SIGNAL_VERSION_FETCHED, VersionArgs(version: $versionJsonObj))
 
   proc asyncRequestLatestVersion(self: Service) =
-    let networkType = self.settingsService.getCurrentNetwork().toNetworkType()
-    if networkType != NetworkType.Mainnet:
-      # Seems that we return that there is no updates for all but the `Mainnet` network type,
-      # not sure why, but that's how it was in the old code.
-      let emptyJsonObj = %*{
-        "version": "",
-        "url": "",
-        "available": false
-      }
-      self.emitSignal(emptyJsonObj)
-      return
-
     let arg = QObjectTaskArg(
       tptr: cast[ByteAddress](checkForUpdatesTask),
       vptr: cast[ByteAddress](self.vptr),
