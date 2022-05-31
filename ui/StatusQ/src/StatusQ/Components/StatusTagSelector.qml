@@ -59,10 +59,6 @@ import StatusQ.Core.Theme 0.1
 Item {
     id: root
 
-    implicitWidth: 448
-    implicitHeight: (104 + contactsLabel.height + contactsLabel.anchors.topMargin + (userListView.model.count * 64)) > root.maxHeight ? root.maxHeight :
-                    (104 + contactsLabel.height + contactsLabel.anchors.topMargin + (userListView.model.count * 64))
-
     /*!
         \qmlproperty real StatusTagSelector::maxHeight
         This property holds the maximum height of the component.
@@ -123,6 +119,12 @@ Item {
         This property holds the asorted names model.
     */
     property ListModel namesModel: ListModel { }
+    /*!
+        \qmlproperty bool StatusTagSelector::showSortedListOnlyWhenText
+        This property will decide if the sorted list view info is displayed before entering some text in the input or after.
+        By default is set to false.
+    */
+    property bool showSortedListOnlyWhenText: false
 
     /*!
         \qmlmethod
@@ -180,6 +182,19 @@ Item {
         This signal is emitted when a tag is removed.
     */
     signal removeMember(string memberId)
+
+    QtObject {
+        id: d
+
+        property real suggestionContainerHeight: suggestionsContainer.visible ? contactsLabel.height + contactsLabel.anchors.topMargin +
+                                                                                suggestionsContainer.anchors.topMargin + suggestionsContainer.anchors.bottomMargin +
+                                                                                2 * bgRect.anchors.margins +
+                                                                                userListView.anchors.topMargin + userListView.anchors.bottomMargin +
+                                                                                (userListView.model.count * 64): 0
+    }
+
+    implicitWidth: 448
+    implicitHeight: (tagSelectorRect.height + d.suggestionContainerHeight) > root.maxHeight ? root.maxHeight : (tagSelectorRect.height + d.suggestionContainerHeight)
 
     Rectangle {
         id: tagSelectorRect
@@ -317,7 +332,8 @@ Item {
             bottomMargin: 16//Style.current.padding
         }
         clip: true
-        visible: ((edit.text === "") || (root.sortedList.count > 0))
+        visible: (!root.showSortedListOnlyWhenText && ((root.sortedList.count > 0) || (edit.text === ""))) ||
+                 ((edit.text !== "") && (root.sortedList.count > 0))
         x: ((root.namesModel.count > 0) && (root.sortedList.count > 0) && ((edit.x + 8) <= (root.width - suggestionsContainer.width)))
            ? (edit.x + 8) : 0
         background: Rectangle {
