@@ -103,9 +103,47 @@ SettingsContentBase {
                 anchors.rightMargin: Style.current.padding
             }
 
+            Rectangle {
+                width: parent.width
+                implicitHeight: col1.height + 2 * Style.current.padding
+                visible: root.store.walletStore.dappList.count === 0
+                radius: Constants.settingsSection.radius
+                color: Theme.palette.baseColor4
+
+                ColumnLayout {
+                    id: col1
+                    width: parent.width - 2 * (Style.current.padding + Style.current.xlPadding)
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    spacing: Constants.settingsSection.infoSpacing
+
+                    StatusBaseText {
+                        Layout.preferredWidth: parent.width
+                        horizontalAlignment: Text.AlignHCenter
+                        text: qsTr("No connected dApps")
+                        font.pixelSize: 15
+                        lineHeight: Constants.settingsSection.infoLineHeight
+                        lineHeightMode: Text.FixedHeight
+                        color: Theme.palette.baseColor1
+                    }
+
+                    StatusBaseText {
+                        Layout.preferredWidth: parent.width
+                        horizontalAlignment: Text.AlignHCenter
+                        text: qsTr("Connecting a dApp grants it permission to view your address and balances,"+
+                                   " and to send you transaction requests")
+                        lineHeight: Constants.settingsSection.infoLineHeight
+                        lineHeightMode: Text.FixedHeight
+                        color: Theme.palette.baseColor1
+                        wrapMode: Text.WordWrap
+                    }
+                }
+            }
+
             PermissionsListView {
                 id: permissionListView
                 walletStore: root.store.walletStore
+                visible: root.store.walletStore.dappList.count > 0
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.leftMargin: Style.current.padding
