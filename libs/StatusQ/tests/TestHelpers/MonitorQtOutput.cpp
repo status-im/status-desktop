@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+namespace Status::Testing {
+
 std::weak_ptr<QString> MonitorQtOutput::m_qtMessageOutputForSharing;
 std::mutex MonitorQtOutput::m_mutex;
 QtMessageHandler MonitorQtOutput::m_previousHandler = nullptr;
@@ -65,4 +67,6 @@ MonitorQtOutput::restartCapturing()
     if(prev != qtMessageOutput)
         m_previousHandler = prev;
     m_start = m_thisMessageOutput->length();
+}
+
 }

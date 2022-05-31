@@ -14,4 +14,7 @@ QtObject {
     function gif(name) {
         return assetPath + "/gif/" + name + ".gif";
     }
+    function png(name) {
+        return assetPath + "/png/" + name + ".png";
+    }
 }

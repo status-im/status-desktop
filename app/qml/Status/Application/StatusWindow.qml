@@ -5,7 +5,12 @@ import Qt.labs.settings
 
 import Status.Application
 
-/** Administrative scope
+import Status.Controls.Navigation
+import Status.Core.Theme
+
+import "Workflows"
+
+/*! Administrative scope
  */
 Window {
     id: root
@@ -14,35 +19,73 @@ Window {
     minimumHeight: 600
 
     Component.onCompleted: {
-        width: mainLayout.implicitWidth
-        height: mainLayout.implicitHeight
+        width: contentView.implicitWidth
+        height: contentView.implicitHeight
     }
 
     visible: true
     title: qsTr(Qt.application.name)
 
     flags: Qt.FramelessWindowHint
-
-    ColumnLayout {
-        id: mainLayout
-
-        anchors.fill: parent
-
-        // TODO: nav-bar?
-//        StatusAppNavBar {
-//        }
-
-        StatusContentView {
-           Layout.fillWidth: true
-           Layout.fillHeight: true
-        }
-    }
+    color: "transparent"
 
     ApplicationController {
         id: appController
     }
 
-    Settings {
+    Rectangle {
+        id: windowBackground
+        anchors.fill: parent
+        radius: Style.geometry.appCornersRadius
+        color: Theme.palette.appBackgroundColor
+
+        StatusContentView {
+            id: contentView
+
+            anchors.fill: parent
+
+            appState: appState
+            appController: appController
+        }
+    }
+
+    // Title gestures handler
+    MouseArea {
+        id: dragArea
+        anchors.left: parent.left
+        anchors.top: parent.top
+        anchors.right: parent.right
+        height: Style.geometry.titleBarHeight
+        // lower than contentView to not steal events from user controls
+        z: contentView.z - 1
+
+        onDoubleClicked: root.visibility === Window.Maximized ? Window.window.showNormal() : Window.window.showMaximized()
+
+        property point prevMousePoint
+        onPressed: (mouse) => prevMousePoint = Qt.point(mouse.x, mouse.y)
+        onMouseXChanged: root.x += mouseX - prevMousePoint.x
+        onMouseYChanged: root.y += mouseY - prevMousePoint.y
+    }
+
+    ApplicationState {
+        id: appState
+    }
+
+    onClosing: function(close) {
+        close.accepted = closeHandler.canApplicationClose()
+    }
+
+    CloseApplicationHandler {
+        id: closeHandler
+
+        quitOnClose: appSettings.quitOnClose
+
+        onHideApplication: root.visible = false
+    }
+
+    ApplicationSettings {
+        id: appSettings
+
         property alias x: root.x
         property alias y: root.y
         property alias width: root.width

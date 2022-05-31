@@ -1,10 +1,5 @@
-# Base library. Expect most of the module libraries to depend on it
-#
-cmake_minimum_required(VERSION 3.21)
-
-project(Core
-    VERSION 0.1.0
-    LANGUAGES CXX)
+# QML generic elements used by the other components
+project(StatusQ_Core)
 
 set(QT_NO_CREATE_VERSIONLESS_FUNCTIONS true)
 
@@ -17,24 +12,19 @@ qt6_add_qml_module(${PROJECT_NAME}
 
     # TODO: temporary until we make qt_target_qml_sources work
     QML_FILES
-        qml/Status/Core/DevTest.qml
+        StatusBaseText.qml
 
     # Required to suppress "qmllint may not work" warning
     OUTPUT_DIRECTORY
         ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Status/Core
 )
 
-add_subdirectory(qml/Status/Core)
-add_subdirectory(src)
+add_subdirectory(Theme)
 
 target_link_libraries(${PROJECT_NAME}
     PRIVATE
         Qt6::Quick
         Qt6::Qml
-)
 
-install(
-    TARGETS
-        ${PROJECT_NAME}
-    RUNTIME
+        StatusQ_Core_Theme
 )

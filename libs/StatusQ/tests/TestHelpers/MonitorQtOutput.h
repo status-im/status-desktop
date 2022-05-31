@@ -6,6 +6,8 @@
 #include <memory>
 #include <mutex>
 
+namespace Status::Testing {
+
 ///
 /// \brief Monitor output for tests and declaratively control message handler availability
 ///
@@ -41,3 +43,5 @@ private:
     std::shared_ptr<QString> m_thisMessageOutput;
     int m_start = 0;
 };
+
+}
