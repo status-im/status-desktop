@@ -13,6 +13,13 @@ import utils 1.0
 Item {
     id: root
 
+    property alias aspectRatio: bannerCropper.aspectRatio
+    property alias windowStyle: bannerCropper.windowStyle
+    /*required*/ property string imageFileDialogTitle: ""
+    /*required*/ property string title: ""
+    /*required*/ property string acceptButtonText: ""
+    property bool roundedImage: true
+
     signal imageCropped(var image, var cropRect)
 
     function chooseImageToCrop() {
@@ -22,9 +29,9 @@ Item {
     FileDialog {
         id: fileDialog
 
-        title: qsTr("Choose an image for profile picture")
-        folder: shortcuts.pictures
-        nameFilters: [qsTr("Supported image formats (%1)").arg("*.jpg, *.jpeg, *.jfif, *.png *.tiff *.heif")]
+        title: root.imageFileDialogTitle
+        folder: root.userSelectedImage ? bannerCropper.source.substr(0, bannerCropper.source.lastIndexOf("/")) : shortcuts.pictures
+        nameFilters: [qsTr("Supported image formats (%1)").arg("*.jpg *.jpeg *.jfif *.webp *.png *.heif")]
         onAccepted: {
             if (fileDialog.fileUrls.length > 0) {
                 bannerCropper.source = fileDialog.fileUrls[0]
@@ -36,14 +43,15 @@ Item {
     StatusModal {
         id: imageCropperModal
 
-        header.title: qsTr("Profile picture")
+        header.title: root.title
 
         anchors.centerIn: Overlay.overlay
+
+        width: root.roundedImage ? 480 : 580
 
         StatusImageCropPanel {
             id: bannerCropper
 
-            implicitWidth: 480
             implicitHeight: 350
 
             anchors {
@@ -52,16 +60,16 @@ Item {
                  rightMargin: Style.current.padding * 2
                  topMargin: Style.current.bigPadding
                  bottomMargin: Style.current.bigPadding
-             }
+            }
 
-            aspectRatio: 1
-
+            margins: root.roundedImage ? 10 : 20
+            windowStyle: root.roundedImage ? StatusImageCrop.WindowStyle.Rounded : StatusImageCrop.WindowStyle.Rectangular
             enableCheckers: true
         }
 
         rightButtons: [
             StatusButton {
-                text: qsTr("Make this my profile picture")
+                text: root.acceptButtonText
 
                 enabled: bannerCropper.sourceSize.width > 0 && bannerCropper.sourceSize.height > 0
 

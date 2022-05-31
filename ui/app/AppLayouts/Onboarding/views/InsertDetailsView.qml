@@ -212,13 +212,18 @@ Item {
 
         BannerCropperModal {
             id: cropperModal
+
+            imageFileDialogTitle: qsTr("Choose an image for profile picture")
+            title: qsTr("Profile picture")
+            acceptButtonText: qsTr("Make this my profile picture")
+
             onImageCropped: {
                 const croppedImg = OnboardingStore.generateImage(image,
                                               cropRect.x.toFixed(),
                                               cropRect.y.toFixed(),
                                               (cropRect.x + cropRect.width).toFixed(),
                                               (cropRect.y + cropRect.height).toFixed())
-                userImage.image.source = image
+                userImage.image.source = croppedImg
             }
         }
     }
