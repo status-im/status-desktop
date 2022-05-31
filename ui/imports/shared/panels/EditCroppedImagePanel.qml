@@ -20,13 +20,13 @@ Item {
 
     property alias source: bannerPreview.source
     property alias cropRect: bannerPreview.cropRect
-    /*required*/ property alias aspectRatio: bannerCropper.aspectRatio
+    /*required*/ property alias aspectRatio: bannerCropperModal.aspectRatio
 
-    property bool roundedImage: true
+    property alias roundedImage: bannerCropperModal.roundedImage
 
-    /*required*/ property string imageFileDialogTitle: ""
-    /*required*/ property string title: ""
-    /*required*/ property string acceptButtonText: ""
+    /*required*/ property alias imageFileDialogTitle: bannerCropperModal.imageFileDialogTitle
+    /*required*/ property alias title: bannerCropperModal.title
+    /*required*/ property alias acceptButtonText: bannerCropperModal.acceptButtonText
 
     property string dataImage: ""
 
@@ -89,7 +89,7 @@ Item {
                 anchors.fill: parent
 
                 visible: root.state === d.imageSelectedState
-                windowStyle: bannerCropper.windowStyle
+                windowStyle: bannerCropperModal.windowStyle
                 wallColor: Theme.palette.statusAppLayout.backgroundColor
                 wallTransparency: 1
                 clip:true
@@ -165,6 +165,7 @@ Item {
 
             BannerCropperModal {
                 id: bannerCropperModal
+
                 onImageCropped: {
                     bannerPreview.source = image
                     bannerPreview.setCropRect(cropRect)
