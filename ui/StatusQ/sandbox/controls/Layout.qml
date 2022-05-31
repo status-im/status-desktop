@@ -83,6 +83,8 @@ Column {
                         icon: ""
                         isIdenticon: false
                         onlineStatus: 3
+                        isReadonly: true
+                        tagIcon: "crown"
                     }
                     ListElement {
                         publicId: "0x1"
@@ -90,6 +92,8 @@ Column {
                         icon: ""
                         isIdenticon: false
                         onlineStatus: 1
+                        isReadonly: false
+                        tagIcon: ""
                     }
                 }
                 toLabelText: qsTr("To: ")

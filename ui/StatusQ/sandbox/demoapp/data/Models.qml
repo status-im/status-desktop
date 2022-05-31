@@ -852,6 +852,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             icon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAlklEQVR4nOzW0QmDQBAG4SSkl7SUQlJGCrElq9F3QdjjVhh/5nv3cFhY9vUIYQiNITSG0BhCExPynn1gWf9bx498P7/
                             nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2ImYgiNITTlTdG1nUZ5a92VITQxITFiJmIIjSE0htAYQrMHAAD//+wwFVpz+yqXAAAAAElFTkSuQmCC"
             isIdenticon: true
+            isAdmin: false
             ringSpecModel: [ ListElement {colorId: 13; segmentLength: 5},
                              ListElement {colorId: 31; segmentLength: 5},
                              ListElement {colorId: 10; segmentLength: 1},
@@ -868,6 +869,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             isMutualContact: false
             onlineStatus: false
             icon: ""
+            isAdmin: false
             isIdenticon: false            
         }
         ListElement {
@@ -877,6 +879,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             trustIndicator: StatusContactVerificationIcons.TrustedType.None
             isMutualContact: false
             onlineStatus: true
+            isAdmin: false
             icon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAiElEQVR4nOzXUQpAQBRGYWQvLNAyLJDV8C5qpiGnv/M9al5Ot27X0IUwhMYQGkNoDKGJCRlLH67bftx9X+ap/+P9VcxEDK
                      ExhKZ4a9Uq3TZviZmIITSG0DRvlqcbqVbrlouZiCE0htD4h0hjCI0hNN5aNIbQGKKPxEzEEBpDaAyhMYTmDAAA//+gYCErzmCpCQAAAABJRU5ErkJggg=="
             isIdenticon: true
@@ -897,6 +900,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             onlineStatus: false
             icon: ""
             isIdenticon: false
+            isAdmin: false
             ringSpecModel: [ ListElement {colorId: 0; segmentLength: 1},
                              ListElement {colorId: 28; segmentLength: 1},
                              ListElement {colorId: 31; segmentLength: 1},

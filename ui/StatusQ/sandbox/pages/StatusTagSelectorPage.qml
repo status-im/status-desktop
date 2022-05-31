@@ -9,17 +9,21 @@ Item {
     property ListModel asortedContacts: ListModel {
         ListElement {
             publicId: "0x0"
-            name: "Maria"
+            name: "emily.eth"
             icon: ""
             isIdenticon: false
             onlineStatus: 3
+            isReadonly: false
+            tagIcon: ""
         }
         ListElement {
             publicId: "0x1"
-            name: "James"
+            name: "vitalikbuterin"
             icon: "https://pbs.twimg.com/profile_images/1369221718338895873/T_5fny6o_400x400.jpg"
             isIdenticon: false
             onlineStatus: 1
+            isReadonly: false
+            tagIcon: ""
         }
         ListElement {
             publicId: "0x2"
@@ -27,13 +31,17 @@ Item {
             icon: ""
             isIdenticon: false
             onlineStatus: 2
+            isReadonly: false
+            tagIcon: ""
         }
         ListElement {
             publicId: "0x3"
-            name: "Tracy"
+            name: "carmen.eth"
             icon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAlklEQVR4nOzW0QmDQBAG4SSkl7SUQlJGCrElq9F3QdjjVhh/5nv3cFhY9vUIYQiNITSG0BhCExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2ImYgiNITTlTdG1nUZ5a92VITQxITFiJmIIjSE0htAYQrMHAAD//+wwFVpz+yqXAAAAAElFTkSuQmCC"
             isIdenticon: true
             onlineStatus: 3
+            isReadonly: true
+            tagIcon: "crown"
         }
         ListElement {
             publicId: "0x4"
@@ -41,6 +49,8 @@ Item {
             icon: ""
             isIdenticon: false
             onlineStatus: 3
+            isReadonly: false
+            tagIcon: ""
         }
     }
 

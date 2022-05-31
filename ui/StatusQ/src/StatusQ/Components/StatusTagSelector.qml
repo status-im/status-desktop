@@ -132,6 +132,12 @@ Item {
         By default is set to false.
     */
     property bool showSortedListOnlyWhenText: false
+    /*!
+        \qmlproperty bool StatusTagSelector::orderByReadonly
+        This property will decide if the displayed tag names will be ordered from left to right starting with the items that are marked as `isReadonly`.
+        By default is set to true (readonly names at left).
+    */
+    property bool orderByReadonly: true
 
     /*!
         \qmlmethod
@@ -146,9 +152,12 @@ Item {
         \qmlmethod
         This function is used to insert a new tag.
     */
-    function insertTag(name, id) {
+    function insertTag(name, id, isReadonly, tagIcon) {
         if (!find(namesModel, function(item) { return item.publicId === id }) && namesModel.count < root.nameCountLimit) {
-            namesModel.insert(namesModel.count, {"name": name, "publicId": id});
+            if(orderByReadonly && isReadonly)
+                namesModel.insert(0, {"name": name, "publicId": id, "isReadonly": !!isReadonly, "tagIcon": tagIcon ? tagIcon : ""});
+            else
+                namesModel.insert(namesModel.count, {"name": name, "publicId": id, "isReadonly": !!isReadonly, "tagIcon": tagIcon ? tagIcon : ""});
             addMember(id);
             edit.clear();
         }
@@ -165,11 +174,17 @@ Item {
                 var entry = inputModel.get(i);
                 if (entry.name.toLowerCase().includes(text.toLowerCase()) &&
                     !find(namesModel, function(item) { return item.name === entry.name })) {
-                    sortedList.append({"publicId": entry.publicId, "name": entry.name,
-                                       "nickName": entry.nickName, "trustIndicator": entry.trustIndicator,
-                                       "isMutualContact": entry.isMutualContact, "ringSpecModel": entry.ringSpecModel,
-                                       "icon": entry.icon, "isIdenticon": entry.isIdenticon,
-                                       "onlineStatus": entry.onlineStatus});
+                    sortedList.append({"publicId": entry.publicId,
+                                       "name": entry.name,
+                                       "nickName": entry.nickName,
+                                       "trustIndicator": entry.trustIndicator,
+                                       "isMutualContact": entry.isMutualContact,
+                                       "ringSpecModel": entry.ringSpecModel,
+                                       "icon": entry.icon,
+                                       "isIdenticon": entry.isIdenticon,
+                                       "onlineStatus": entry.onlineStatus,
+                                       "tagIcon": entry.tagIcon ? entry.tagIcon : "",
+                                       "isReadonly": !!entry.isReadonly});
                     userListView.model = sortedList;
                 }
             }
@@ -198,10 +213,27 @@ Item {
                                                                                 2 * bgRect.anchors.margins +
                                                                                 userListView.anchors.topMargin + userListView.anchors.bottomMargin +
                                                                                 (userListView.model.count * 64): 0
+
+        function orderNamesModel() {
+            if(root.orderByReadonly) {
+                for(var i = 0; i < namesModel.count; i++) {
+                    var entry = namesModel.get(i)
+                    if(entry.isReadonly) {
+                        namesModel.move(i, 0, 1)
+                    }
+                }
+            }
+        }
     }
 
     implicitWidth: 448
     implicitHeight: (tagSelectorRect.height + d.suggestionContainerHeight) > root.maxHeight ? root.maxHeight : (tagSelectorRect.height + d.suggestionContainerHeight)
+
+    onOrderByReadonlyChanged: { d.orderNamesModel() }
+    Component.onCompleted: {
+        // Component initialization:
+        d.orderNamesModel()
+    }
 
     Rectangle {
         id: tagSelectorRect
@@ -247,29 +279,63 @@ Item {
                     onCountChanged: { scrollToEnd(); }
                     delegate: Rectangle {
                         id: nameDelegate
-                        width: (nameText.contentWidth + 34)
+
+                        property int tagMargins: 8
+                        property int tagIconsSize: 20
+                        function getTagColor(isReadonly) {
+                            if(isReadonly) {
+                                return Theme.palette.baseColor1
+                            }
+                            else {
+                                return mouseArea.containsMouse ? Theme.palette.miscColor1 : Theme.palette.primaryColor1
+                            }
+                        }
+
+                        width: tagRow.implicitWidth + 2 * nameDelegate.tagMargins
                         height: 30
-                        color: mouseArea.containsMouse ? Theme.palette.miscColor1 : Theme.palette.primaryColor1
+                        color: getTagColor(model.isReadonly)
                         radius: 8
-                        StatusBaseText {
-                            id: nameText
+                        Row {
+                            id: tagRow
+                            height: parent.height
                             anchors.left: parent.left
-                            anchors.leftMargin: 8
-                            anchors.verticalCenter: parent.verticalCenter
-                            color: Theme.palette.indirectColor1
-                            text: name
+                            anchors.leftMargin: nameDelegate.tagMargins
+                            anchors.rightMargin: nameDelegate.tagMargins
+                            spacing: 2
+
+                            StatusIcon {
+                                visible: model.tagIcon
+                                anchors.verticalCenter: parent.verticalCenter
+                                color: Theme.palette.indirectColor1
+                                width: model.tagIcon ? nameDelegate.tagIconsSize : 0
+                                height: nameDelegate.tagIconsSize
+                                icon: model.tagIcon
+                            }
+                            StatusBaseText {
+                                id: nameText
+                                anchors.verticalCenter: parent.verticalCenter
+                                color: Theme.palette.indirectColor1
+                                font.pixelSize: 15
+                                text: name
+                            }
+                            StatusIcon {
+                                id: closeIcon
+                                visible: !model.isReadonly
+                                anchors.leftMargin: nameDelegate.tagMargins
+                                anchors.verticalCenter: parent.verticalCenter
+                                color: Theme.palette.indirectColor1
+                                width: nameDelegate.tagIconsSize
+                                height: nameDelegate.tagIconsSize
+                                icon: "close"
+                            }
                         }
-                        StatusIcon {
-                            anchors.left: nameText.right
-                            anchors.verticalCenter: parent.verticalCenter
-                            color: Theme.palette.indirectColor1
-                            icon: "close"
-                        }
+
                         MouseArea {
                             id: mouseArea
+                            enabled: !model.isReadonly
                             anchors.fill: parent
                             hoverEnabled: true
-                            cursorShape: Qt.PointingHandCursor
+                            cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
                             onClicked: {
                                 removeMember(publicId);
                                 namesModel.remove(index, 1);
@@ -299,8 +365,11 @@ Item {
                         namesModel.remove((namesList.count-1), 1);
                     }
                     if ((event.key === Qt.Key_Return || event.key === Qt.Key_Enter) && (sortedList.count > 0)) {
-                        root.insertTag(sortedList.get(userListView.currentIndex).name, sortedList.get(userListView.currentIndex).publicId);
-                    }
+                        root.insertTag(sortedList.get(userListView.currentIndex).name,
+                                       sortedList.get(userListView.currentIndex).publicId,
+                                       sortedList.get(userListView.currentIndex).isReadonly,
+                                       sortedList.get(userListView.currentIndex).tagIcon);
+                    }                    
                 }
                 Keys.onUpPressed: { userListView.decrementCurrentIndex(); }
                 Keys.onDownPressed: { userListView.incrementCurrentIndex(); }
@@ -405,7 +474,7 @@ Item {
                 ringSettings.ringSpecModel: root.ringSpecModelGetter(publicId)
                 color: (sensor.containsMouse || highlighted) ? Theme.palette.baseColor2 : "transparent"
                 onClicked: {
-                    root.insertTag(model.name, model.publicId);
+                    root.insertTag(model.name, model.publicId, model.isAdmin, model.isAdmin ? "crown" : "");
                 }
             }
         }
