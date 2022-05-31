@@ -41,8 +41,6 @@ method delete*(self: Module) =
 proc setAssets(self: Module, tokens: seq[WalletTokenDto]) =
   var items: seq[Item]
   for t in tokens:
-    if(t.totalBalance.balance == 0):
-      continue
     let item = token_item.initItem(t.name, t.symbol, t.totalBalance.balance, t.address, t.totalBalance.currencyBalance)
     items.add(item)
     

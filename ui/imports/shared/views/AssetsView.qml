@@ -22,7 +22,6 @@ Item {
 
         ListView {
             id: assetListView
-            spacing: Style.current.padding * 2
             anchors.fill: parent
             model: account.assets
             delegate: AssetDelegate {
