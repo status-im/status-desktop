@@ -20,9 +20,8 @@ Item {
     }
 
     ScrollView {
-        ScrollBar.horizontal.policy: Qt.ScrollBarAlwaysOff
+        contentWidth: availableWidth
         contentHeight: profileMenu.height + 24
-        clip: true
         anchors.right: parent.right
         anchors.rightMargin: Style.current.smallPadding
         anchors.left: parent.left
@@ -30,6 +29,8 @@ Item {
         anchors.top: title.bottom
         anchors.topMargin: Style.current.padding
         anchors.bottom: parent.bottom
+        clip: true
+        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
         MenuPanel {
             id: profileMenu
