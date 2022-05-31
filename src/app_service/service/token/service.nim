@@ -170,13 +170,12 @@ QtObject:
     ))
     
   proc getTokenDetails*(self: Service, address: string) =
-    # TODO: use multi network rather than first enabled network
-    let chainId = self.networkService.getEnabledNetworks()[0].chainId
+    let chainIds = self.networkService.getNetworks().map(n => n.chainId)
     let arg = GetTokenDetailsTaskArg(
       tptr: cast[ByteAddress](getTokenDetailsTask),
       vptr: cast[ByteAddress](self.vptr),
       slot: "tokenDetailsResolved",
-      chainId: chainId,
+      chainIds: chainIds,
       address: address
     )
     self.threadpool.start(arg)
