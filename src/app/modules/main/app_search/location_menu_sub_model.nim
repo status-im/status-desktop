@@ -9,6 +9,9 @@ type
     Image
     Icon
     IconColor
+    IsUserIcon
+    ColorId
+    ColorHash
 
 QtObject:
   type
@@ -53,6 +56,9 @@ QtObject:
       SubModelRole.Image.int:"imageSource",
       SubModelRole.Icon.int:"iconName",
       SubModelRole.IconColor.int:"iconColor",
+      SubModelRole.IsUserIcon.int:"isUserIcon",
+      SubModelRole.ColorId.int:"colorId",
+      SubModelRole.ColorHash.int:"colorHash"
     }.toTable
 
   method data(self: SubModel, index: QModelIndex, role: int): QVariant =
@@ -76,6 +82,12 @@ QtObject:
       result = newQVariant(item.icon)
     of SubModelRole.IconColor:
       result = newQVariant(item.iconColor)
+    of SubModelRole.IsUserIcon:
+      result = newQVariant(item.isUserIcon)
+    of SubModelRole.ColorId:
+      result = newQVariant(item.colorId)
+    of SubModelRole.ColorHash:
+      result = newQVariant(item.colorHash)
 
   proc setItems*(self: SubModel, items: seq[SubItem]) =
     self.beginResetModel()

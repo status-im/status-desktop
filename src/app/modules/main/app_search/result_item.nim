@@ -1,4 +1,6 @@
-import strformat
+import strformat, sequtils, sugar
+
+import ../../shared_models/[color_hash_item, color_hash_model]
 
 type Item* = object
   itemId: string
@@ -14,10 +16,13 @@ type Item* = object
   badgeImage: string
   badgeIconColor: string
   badgeIsLetterIdenticon: bool
+  isUserIcon: bool
+  colorId: int
+  colorHash: color_hash_model.Model
 
 proc initItem*(itemId, content, time, titleId, title, sectionName: string, image, color,
-  badgePrimaryText, badgeSecondaryText, badgeImage, badgeIconColor: string,
-  badgeIsLetterIdenticon: bool):
+  badgePrimaryText, badgeSecondaryText, badgeImage, badgeIconColor: string, badgeIsLetterIdenticon: bool, 
+  isUserIcon: bool = false, colorId: int = 0, colorHash: seq[ColorHashSegment] = @[]):
   Item =
 
   result.itemId = itemId
@@ -33,6 +38,10 @@ proc initItem*(itemId, content, time, titleId, title, sectionName: string, image
   result.badgeImage = badgeImage
   result.badgeIconColor = badgeIconColor
   result.badgeIsLetterIdenticon = badgeIsLetterIdenticon
+  result.isUserIcon = isUserIcon
+  result.colorId = colorId
+  result.colorHash = color_hash_model.newModel()
+  result.colorHash.setItems(map(colorHash, x => color_hash_item.initItem(x.len, x.colorIdx)))
 
 proc `$`*(self: Item): string =
   result = "SearchResultItem("
@@ -89,3 +98,12 @@ proc badgeIconColor*(self: Item): string =
 
 proc badgeIsLetterIdenticon*(self: Item): bool =
   return self.badgeIsLetterIdenticon
+
+proc isUserIcon*(self: Item): bool =
+  return self.isUserIcon
+
+proc colorId*(self: Item): int =
+  return self.colorId
+
+proc colorHash*(self: Item): color_hash_model.Model =
+  return self.colorHash

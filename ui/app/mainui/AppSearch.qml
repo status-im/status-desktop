@@ -106,7 +106,10 @@ Item {
                                                    obj.subLocation.imageSource,
                                                    false,
                                                    obj.subLocation.iconName,
-                                                   obj.subLocation.identiconColor)
+                                                   obj.subLocation.identiconColor,
+                                                   obj.subLocation.isUserIcon,
+                                                   obj.subLocation.colorId,
+                                                   obj.subLocation.colorHash)
 
                     appSearch.store.setSearchLocation(obj.location.value, obj.subLocation.value)
                 }

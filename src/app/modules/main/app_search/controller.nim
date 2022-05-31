@@ -7,6 +7,7 @@ import ../../../../app_service/service/contacts/service as contact_service
 import ../../../../app_service/service/chat/service as chat_service
 import ../../../../app_service/service/community/service as community_service
 import ../../../../app_service/service/message/service as message_service
+import ../../../../app_service/service/visual_identity/service as procs_from_visual_identity_service
 
 import ../../../core/signals/types
 import ../../../core/eventemitter
@@ -153,3 +154,9 @@ proc resultItemClicked*(self: Controller, itemId: string) =
 
 proc getRenderedText*(self: Controller, parsedTextArray: seq[ParsedText]): string =
   return self.messageService.getRenderedText(parsedTextArray)
+
+proc getColorHash*(self: Controller, pubkey: string): ColorHashDto =
+  procs_from_visual_identity_service.colorHashOf(pubkey)
+
+proc getColorId*(self: Controller, pubkey: string): int =
+  procs_from_visual_identity_service.colorIdOf(pubkey)

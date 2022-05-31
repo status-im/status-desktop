@@ -3,9 +3,6 @@ import sequtils, sugar
 import ../../shared_models/[color_hash_item, color_hash_model]
 
 type
-  ColorHashSegment* = tuple[len, colorIdx: int]
-
-type
   BaseItem* {.pure inheritable.} = ref object of RootObj
     id: string
     name: string
