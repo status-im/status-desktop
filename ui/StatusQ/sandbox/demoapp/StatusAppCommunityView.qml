@@ -166,13 +166,10 @@ StatusAppThreePanelLayout {
     centerPanel: Item {
         StatusChatToolBar {
             id: statusChatToolBar
-            anchors.top: parent.top
-            width: parent.width
 
-            chatInfoButton.title: "general"
-            chatInfoButton.subTitle: "Community Chat"
-            chatInfoButton.icon.color: Theme.palette.miscColor6
-            chatInfoButton.type: StatusChatInfoButton.Type.CommunityChat
+            width: parent.width
+            toolbarComponent: statusChatInfoButton
+
             onSearchButtonClicked: {
                 searchButton.highlighted = !searchButton.highlighted;
                 searchPopup.setSearchSelection(communityDetailModalTitle,
@@ -183,6 +180,18 @@ StatusAppThreePanelLayout {
             membersButton.onClicked: membersButton.highlighted = !membersButton.highlighted
             onMembersButtonClicked: {
                 root.showRightPanel = !root.showRightPanel;
+            }
+
+            Component {
+                id: statusChatInfoButton
+
+                StatusChatInfoButton {
+                   width: Math.min(implicitWidth, parent.width)
+                   title: "general"
+                   subTitle: "Community Chat"
+                   icon.color: Theme.palette.miscColor6
+                   type: StatusChatInfoButton.Type.CommunityChat
+                }
             }
         }
 

@@ -145,15 +145,8 @@ StatusAppThreePanelLayout {
         anchors.fill: parent
 
         StatusChatToolBar {
-            anchors.top: parent.top
             width: parent.width
-
-            chatInfoButton.title: "Amazing Funny Squirrel"
-            chatInfoButton.subTitle: "Contact"
-            chatInfoButton.icon.color: Theme.palette.miscColor7
-            chatInfoButton.type: StatusChatInfoButton.Type.OneToOneChat
-            chatInfoButton.pinnedMessagesCount: 1
-
+            toolbarComponent: statusChatInfoButton
             searchButton.visible: false
             membersButton.visible: false
             notificationCount: 1
@@ -184,6 +177,19 @@ StatusAppThreePanelLayout {
                     icon.width: 14
                     iconRotation: 180
                     type: StatusMenuItem.Type.Danger
+                }
+            }
+
+            Component {
+                id: statusChatInfoButton
+
+                StatusChatInfoButton {
+                   width: Math.min(implicitWidth, parent.width)
+                   title: "Amazing Funny Squirrel"
+                   subTitle: "Contact"
+                   icon.color: Theme.palette.miscColor7
+                   type: StatusChatInfoButton.Type.OneToOneChat
+                   pinnedMessagesCount: 1
                 }
             }
         }

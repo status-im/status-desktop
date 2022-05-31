@@ -10,31 +10,92 @@ import StatusQ.Layout 0.1
 import StatusQ.Popups 0.1
 
 Column {
-    spacing: 5
+    spacing: 10
 
     StatusChatToolBar {
-        chatInfoButton.title: "Some contact"        
-        chatInfoButton.subTitle: "Contact"
-        chatInfoButton.icon.color: Theme.palette.miscColor7
-        chatInfoButton.type: StatusChatInfoButton.Type.OneToOneChat
+        toolbarComponent: chatInfoButton1
+        width: 518
+
+        Component {
+            id: chatInfoButton1
+
+            StatusChatInfoButton {
+                width: Math.min(implicitWidth, parent.width)
+                title: "Some contact"
+                subTitle: "Contact"
+                icon.color: Theme.palette.miscColor7
+                type: StatusChatInfoButton.Type.OneToOneChat
+             }
+        }
     }
 
     StatusChatToolBar {
-        chatInfoButton.title: "Some contact"        
-        chatInfoButton.subTitle: "Contact"
-        chatInfoButton.icon.color: Theme.palette.miscColor7
-        chatInfoButton.type: StatusChatInfoButton.Type.PublicChat
-        chatInfoButton.pinnedMessagesCount: 1
-        chatInfoButton.muted: true
+        toolbarComponent: chatInfoButton2
+        width: 518
+
+        Component {
+            id: chatInfoButton2
+            StatusChatInfoButton {
+                width: Math.min(implicitWidth, parent.width)
+                title: "Some contact"
+                subTitle: "Contact"
+                icon.color: Theme.palette.miscColor7
+                type: StatusChatInfoButton.Type.PublicChat
+                pinnedMessagesCount: 1
+                muted: true
+             }
+        }
     }
 
+
     StatusChatToolBar {
-        chatInfoButton.title: "Some contact"        
-        chatInfoButton.subTitle: "Contact"
-        chatInfoButton.icon.color: Theme.palette.miscColor7
-        chatInfoButton.type: StatusChatInfoButton.Type.OneToOneChat
-        chatInfoButton.pinnedMessagesCount: 1
         notificationCount: 1
+        toolbarComponent: chatInfoButton3
+        width: 518
+
+        Component {
+            id: chatInfoButton3
+
+            StatusChatInfoButton {
+                width: Math.min(implicitWidth, parent.width)
+                title: "Some contact"
+                subTitle: "Contact"
+                icon.color: Theme.palette.miscColor7
+                type: StatusChatInfoButton.Type.OneToOneChat
+                pinnedMessagesCount: 1
+             }
+        }
+    }
+
+    StatusChatToolBar {
+        notificationCount: 1
+        toolbarComponent: tagSelector
+        width: 518
+
+        Component {
+            id: tagSelector
+
+            StatusTagSelector {
+                namesModel: ListModel {
+                    ListElement {
+                        publicId: "0x0"
+                        name: "Maria"
+                        icon: ""
+                        isIdenticon: false
+                        onlineStatus: 3
+                    }
+                    ListElement {
+                        publicId: "0x1"
+                        name: "James"
+                        icon: ""
+                        isIdenticon: false
+                        onlineStatus: 1
+                    }
+                }
+                toLabelText: qsTr("To: ")
+                warningText: qsTr("USER LIMIT REACHED")
+            }
+        }
     }
 
     Row {
