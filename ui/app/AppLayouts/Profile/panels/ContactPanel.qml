@@ -53,7 +53,7 @@ StatusListItem {
             width: visible ? 32 : 0
             height: visible ? 32 : 0
             icon.name: "chat"
-            type: StatusFlatRoundButton.Type.Secondary
+            icon.color: Theme.palette.directColor1
             onClicked: container.sendMessageActionTriggered(container.publicKey)
         },
         StatusFlatRoundButton {
@@ -100,7 +100,7 @@ StatusListItem {
             width: 32
             height: 32
             icon.name: "more"
-            type: StatusFlatRoundButton.Type.Secondary
+            icon.color: Theme.palette.directColor1
             onClicked: {
                 highlighted = true
                 contactContextMenu.popup(-contactContextMenu.width+menuButton.width, menuButton.height + 4)
