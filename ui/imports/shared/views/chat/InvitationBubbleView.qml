@@ -262,7 +262,7 @@ Item {
                                 }
                                 if (rectangleBubble.state === "unjoined") {
                                     Global.openPopup(communityIntroDialog, { joinMethod: () => {
-                                                                let error = root.store.joinCommunity(communityId)
+                                                                let error = root.store.joinCommunity(communityId, userProfile.name)
                                                                 if (error) joiningError.showError(error)
                                                             } });
                                 }

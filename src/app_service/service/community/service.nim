@@ -1072,11 +1072,13 @@ QtObject:
       var pubKeys: seq[string] = @[]
       for pubKey in pubKeysParsed:
         pubKeys.add(pubKey.getStr)
-      let response =  status_go.inviteUsersToCommunity(communityId, pubKeys)
+      # We no longer send invites, but merely share the community so 
+      # users can request access (with automatic acception)
+      let response =  status_go.shareCommunityToUsers(communityId, pubKeys)
       discard self.chatService.processMessageUpdateAfterSend(response)
     except Exception as e:
-      error "Error inviting to community", msg = e.msg
-      result = "Error exporting community: " & e.msg
+      error "Error sharing community", msg = e.msg
+      result = "Error sharing community: " & e.msg
 
   proc muteCategory*(self: Service, communityId: string, categoryId: string) =
     try:
