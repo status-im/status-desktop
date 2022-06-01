@@ -1326,125 +1326,164 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
         ListElement {
             name: "CryptoKitties";
             description: "A community of cat lovers, meow!";
-            icon:"qrc:/images/CryptoKitties.png";
+            logo:"qrc:/images/CryptoKitties.png";
             members: 1045;
             categories: [];
             communityId: "341";
             available: true;
-            popularity: 1
+            popularity: 1;
+            communityColor: "pink"
         }
         ListElement {
             name: "Friends with Benefits";
             description: "A group chat full of out favorite thinkers and creators.";
-            icon:"qrc:/images/FriendsBenefits.png";
+            logo:"qrc:/images/FriendsBenefits.png";
             members: 452;
             categories: [];
             communityId: "232";
             available: true;
-            popularity: 2
+            popularity: 2;
+            communityColor: "grey"
         }
         ListElement {
             name: "Status Hi!!";
             description: "A new community description with long long long and repetitive repetitive repetitive repetitive explanation!!";
-            icon:"qrc:/images/SNT.png";
+            logo:"qrc:/images/SNT.png";
             members: 89;
             categories: [];
             communityId: "223";
             available: true;
             popularity: 3
+            communityColor: "blue"
         }
     }
 
     property ListModel curatedCommunitiesModel : ListModel {
         ListElement {
-            name: "CryptoKitties";
-            description: "A community of cat lovers, meow!";
-            icon:"qrc:/images/CryptoKitties.png";
-            members: 1000;
+            name: "Status.im";
+            description: "Your portal to Web3. Secure wallet. dApp browser. Private messaging. All-in-one.";
+            logo: "qrc:/images/SNT.png";
+            banner: "qrc:/images/CommunityBanner1.png";
+            members: 299500;
+            activeUsers: 71400;
             categories: [];
             communityId: "1";
             available: true;
             popularity: 1
+            isPrivate: true
+            tokenLogo: "qrc:/images/SNT.png";
         }
         ListElement {
-            name: "Friends with Benefits";
-            description: "A group chat full of out favorite thinkers and creators.";
-            icon:"qrc:/images/FriendsBenefits.png";
-            members: 452;
+            name: "SuperRare";
+            description: "The future of CryptoArt markets—a network governed by artists, collectors and curators.";
+            logo:"qrc:/images/SR.png";
+            banner: "qrc:/images/SuperRareCommunityBanner.png";
+            members: 299500;
+            activeUsers: 71400;
             categories: [];
             communityId: "2";
             available: true;
             popularity: 2
+            isPrivate: true
+            tokenLogo: "qrc:/images/SRToken.png";
         }
         ListElement {
-            name: "Teller";
-            description: "A community of P2P crypto trades";
-            icon:"qrc:/images/P2PCrypto.png";
-            members: 50;
+            name: "Coinbase";
+            description: "Jump start your crypto portfolio with the easiest place to buy and sell crypto. ";
+            logo:"qrc:/images/Coinbase.png";
+            banner: "qrc:/images/CoinBaseCommunityBanner.png";
+            members: 4900000;
+            activeUsers: 245600;
             categories: [];
             communityId: "3";
             available: true;
             popularity: 3
+            isPrivate: false
+            tokenLogo: "";
         }
         ListElement {
-            name: "Status";
-            description: "Community description goes here.";
-            icon:"qrc:/images/SNT.png";
-            members: 5288;
+            name: "Rarible";
+            description: "Multichain community-centric NFT marketplace. Create, sell and collect NFTs.";
+            logo:"qrc:/images/Rarible.png";
+            banner: "qrc:/images/RaribleCommunityBanner.png";
+            members: 629200;
+            activeUsers: 112100;
             categories: [];
             communityId: "4";
             available: true;
             popularity: 4
+            isPrivate: true
+            tokenLogo: "qrc:/images/RARI.png";
         }
         ListElement {
-            name: "Status Punks";
-            description: "Community description goes here.Community description goes here. Community description goes here. Community description goes here.";
-            icon:"qrc:/images/StatusPunks.png";
-            members: 4125;
+            name: "Spotify";
+            description: "Listening is everything";
+            logo:"qrc:/images/Spotify.png";
+            banner: "qrc:/images/SpotifyCommunityBanner.png";
+            members: 207500;
+            activeUsers: 52200;
             categories: [];
             communityId: "5";
-            available: false;
+            available: true;
             popularity: 5
+            isPrivate: false
+            tokenLogo: "";
         }
         ListElement {
-            name: "Uniswap";
-            description: "Community description goes here.";
-            icon:"qrc:/images/CryptoKitties.png";
-            members: 45;
+            name: "Dribbble";
+            description: "Open source platform to write and distribute decentralized applications..";
+            logo:"qrc:/images/Fluff.png";
+            banner: "qrc:/images/DribbbleCommunityBanner.png";
+            members: 2300000;
+            activeUsers: 112100;
             categories: [];
             communityId: "6";
-            available: false;
+            available: true;
             popularity: 6
+            isPrivate: false
+            tokenLogo: "";
         }
         ListElement {
-            name: "Dragonereum";
-            description: "Community description goes here.";
-            icon:"qrc:/images/Dragonerum.png";
-            members: 968;
+            name: "Status.im";
+            description: "Your portal to Web3. Secure wallet. dApp browser. Private messaging. All-in-one.";
+            logo:"qrc:/images/SNT.png";
+            banner: ""
+            members: 299500;
+            activeUsers: 71400;
             categories: [];
             communityId: "7";
             available: true;
-            popularity: 7
+            popularity: 1
+            isPrivate: false
+            tokenLogo: "";
         }
         ListElement {
             name: "CryptoPunks";
             description: "Community description goes here. Community description goes here. Community description goes here. Community description goes here. Community description goes here. Community description goes here.";
-            icon:"qrc:/images/CryptoPunks.png";
-            members: 4200;
+            logo:"qrc:/images/CryptoPunks.png";
+            banner: "";
+            members: 4900;
+            activeUsers: 245600;
             categories: [];
             communityId: "8";
-            available: true;
+            available: false;
             popularity: 8
+            isPrivate: false
+            tokenLogo: "";
         }
         ListElement {
             name: "Socks";
             description: "Community description goes here.";
-            icon:"qrc:/images/Socks.png"
-            members: 12;
+            logo:"qrc:/images/Socks.png";
+            banner: "";
+            members: 4900;
+            activeUsers: 245600;
             categories: [];
             communityId: "9";
-            available: true;
+            available: false;
             popularity: 9
+            isPrivate: false
+            tokenLogo: "";
         }
     }
 

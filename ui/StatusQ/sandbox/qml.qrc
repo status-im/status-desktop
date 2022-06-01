@@ -53,5 +53,20 @@
         <file>images/SNT.png</file>
         <file>images/Socks.png</file>
         <file>images/StatusPunks.png</file>
+        <file>images/CommunityBanner1.png</file>
+        <file>images/Coinbase.png</file>
+        <file>images/CoinBaseCommunityBanner.png</file>
+        <file>images/DribbbleCommunityBanner.png</file>
+        <file>images/Ethereum.png</file>
+        <file>images/EthereumCommunityBanner.png</file>
+        <file>images/Fluff.png</file>
+        <file>images/Rarible.png</file>
+        <file>images/RaribleCommunityBanner.png</file>
+        <file>images/Spotify.png</file>
+        <file>images/SpotifyCommunityBanner.png</file>
+        <file>images/SR.png</file>
+        <file>images/SuperRareCommunityBanner.png</file>
+        <file>images/RARI.png</file>
+        <file>images/SRToken.png</file>
     </qresource>
 </RCC>

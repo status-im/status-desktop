@@ -100,11 +100,12 @@ ScrollView {
                     locale: "es"
                     communityId: model.communityId
                     loaded: model.available
-                    logo: model.icon
+                    logo: model.logo
                     name: model.name
                     description: model.description
                     members: model.members
                     popularity: model.popularity
+                    communityColor: model.communityColor
                     categories: ListModel {
                         ListElement { name: "sport"; emoji: "🎾"}
                         ListElement { name: "food"; emoji: "🥑"}
@@ -137,11 +138,15 @@ ScrollView {
                     locale: "es"
                     communityId: model.communityId
                     loaded: model.available
-                    logo: model.icon
+                    logo: model.logo
                     name: model.name
                     description: model.description
                     members: model.members
+                    activeUsers: model.activeUsers
                     popularity: model.popularity
+                    tokenLogo: model.tokenLogo
+                    isPrivate: model.isPrivate
+                    banner: model.banner
 
                     onClicked: { d.navigateToCommunity(communityId) }
                 }

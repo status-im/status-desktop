@@ -17,8 +17,8 @@ GridLayout {
 
     Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
     columns: 2
-    columnSpacing: 16
-    rowSpacing: 16
+    columnSpacing: 28
+    rowSpacing: 28
 
     Repeater {
         model: Models.curatedCommunitiesModel
@@ -26,15 +26,19 @@ GridLayout {
             locale: "en"
             communityId: model.communityId
             loaded: model.available
-            logo: model.icon
+            logo: model.logo
+            banner: model.banner
             name: model.name
             description: model.description
             members: model.members
+            activeUsers: model.activeUsers
             popularity: model.popularity
+            isPrivate: model.isPrivate
+            tokenLogo: model.tokenLogo
             categories: ListModel {
-                ListElement { name: "sport"; emoji: "🎾"}
-                ListElement { name: "food"; emoji: "🥑"}
-                ListElement { name: "privacy"; emoji: "👻"}
+                ListElement { name: "Crypto"; emoji: "🔗"}
+                ListElement { name: "Privacy"; emoji: "👻"}
+                ListElement { name: "Social"; emoji: "☕"}
             }
 
             onClicked: { d.navigateToCommunity(communityId) }

@@ -1,5 +1,6 @@
 import QtQuick 2.13
 import QtQuick.Layouts 1.14
+import QtGraphicalEffects 1.0
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -67,6 +68,11 @@ Rectangle {
     */
     property int members: 0
     /*!
+       \qmlproperty int StatusCommunityCard::activeUsers
+       This property holds the community active users value.
+    */
+    property int activeUsers: 0
+    /*!
        \qmlproperty int StatusCommunityCard::popularity
        This property holds the community popularity (community rate).
     */
@@ -93,6 +99,28 @@ Rectangle {
        If not provided, default value is "en".
     */
     property string locale: "en"
+    /*!
+       \qmlproperty url StatusCommunityCard::banner
+       This property holds the community banner image url.
+    */
+    property url banner: ""
+    /*!
+       \qmlproperty color StatusCommunityCard::communityColor
+       This property holds the community color.
+       If not provided, default value in Light Theme is "#4360DF" and in Dark Theme is "#88B0FF".
+    */
+    property color communityColor: Theme.palette.primaryColor1
+    /*!
+       \qmlproperty bool StatusCommunityCard::isPrivate
+       This property holds if the community is private.
+       If not provided, default value is false.
+    */
+    property bool isPrivate: false
+    /*!
+       \qmlproperty url StatusCommunityCard::tokenLogo
+       This property holds the image of the token needed if the community is private.
+    */
+    property url tokenLogo: ""
 
     /*!
         \qmlsignal StatusCommunityCard::clicked(string communityId)
@@ -102,180 +130,330 @@ Rectangle {
 
     QtObject {
         id: d
-        property int dMargins: 12
+        property int cardWidth: 335
+        property int bannerHeigth: 64
+        property int cardHeigth: 190
+        property int totalHeigth: 230
+        property int margins: 12
+        property int bannerRadius: 20
+        property int cardRadius: 16
+        property color cardColor: Theme.palette.indirectColor1
+        property color fontColor: Theme.palette.directColor1
+        property color loadingColor1: Theme.palette.baseColor5
+        property color loadingColor2: Theme.palette.baseColor4
+
+        function numberFormat(number) {
+            var res = number
+            const million = 1000000
+            const ks = 1000
+            if(number > million) {
+                res = number / million
+                res = Number(number / million).toLocaleString(Qt.locale(root.locale), 'f', 1) + 'M'
+            }
+            else if(number > ks) {
+                res = number / ks
+                res = Number(number / ks).toLocaleString(Qt.locale(root.locale), 'f', 1) + 'K'
+            }
+            else
+                res = Number(number).toLocaleString(Qt.locale(root.locale), 'f', 0)
+            return res
+        }
     }
 
-    width: 400 // by design
-    height: 230 // by design
-    border.color: Theme.palette.baseColor2
-    color: sensor.containsMouse ? Theme.palette.baseColor4 : "transparent"
-    radius: 8
-    clip: true
+    width: d.cardWidth
+    height: d.totalHeigth
+    radius: d.bannerRadius
+    color: "transparent"
+    layer.enabled: true
+    layer.effect: DropShadow {
+        source: root
+        horizontalOffset: 0
+        verticalOffset: 2
+        radius: sensor.containsMouse ? 30 : d.bannerRadius
+        samples: 25
+        spread: 0
+        color: sensor.containsMouse ? Theme.palette.backdropColor : Theme.palette.dropShadow
+    }
 
-    // Community Card:
-    ColumnLayout {
-        visible: root.loaded
-        anchors.fill: parent
-        anchors.margins: d.dMargins
-        clip: true
-        spacing: 4       
+    // Community banner:
+    Item {
+        id: banner
+        anchors.top: parent.top
+        width: d.cardWidth
+        height: d.bannerHeigth
+        Rectangle {
+            id: mask
+            anchors.fill: parent
+            radius: d.bannerRadius
+            color: root.loaded ? root.communityColor : d.loadingColor2
+        }
+        Image {
+            id: image
+            source: root.banner
+            anchors.fill: parent
+            anchors.centerIn: parent
+            fillMode: Image.PreserveAspectFit
+            smooth: true
+            visible: !root.loaded || !root.banner
+        }
+        OpacityMask {
+            anchors.fill: image
+            source: image
+            maskSource: mask
+        }
+    }
+
+    // Community logo:
+    Rectangle {
+        z: parent.z + 1
+        anchors.top: parent.top
+        anchors.topMargin: 16
+        anchors.left: parent.left
+        anchors.leftMargin: 12
+        width: 48
+        height: width
+        radius: width / 2
+        color: root.loaded ? d.cardColor : d.loadingColor1
 
         StatusRoundedImage {
-            width: 40
-            height: 40
+            visible: root.loaded
+            anchors.centerIn: parent
+            width: parent.width - 4
+            height: width
             image.source: root.logo
             color: "transparent"
         }
+    } // End of community logo
 
-        // TODO: Add here new component for community permissions / restrictions
-        // ...
-
-        RowLayout {
-            Layout.topMargin: 8
-
+    // Content card
+    Rectangle {
+        visible: root.loaded
+        anchors.top: parent.top
+        anchors.topMargin: 40
+        width: d.cardWidth
+        height: d.cardHeigth
+        color: d.cardColor
+        radius: d.cardRadius
+        clip: true
+        // Community restriccions
+        Rectangle {
+            visible: root.isPrivate
+            anchors.top: parent.top
+            anchors.topMargin: 8
+            anchors.right: parent.right
+            anchors.rightMargin: anchors.topMargin
+            width: 48
+            height: 24
+            color: d.loadingColor2
+            radius: 200
+            StatusIcon {
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.leftMargin: 6
+                anchors.left: parent.left
+                icon: "tiny/unlocked"
+                width: 16
+                height: 16
+                color: Theme.palette.baseColor1
+            }
+            StatusRoundedImage {
+                anchors.rightMargin: 2
+                anchors.right: parent.right
+                anchors.verticalCenter: parent.verticalCenter
+                width: 20
+                height: width
+                image.source: root.tokenLogo
+                color: "transparent"
+            }
+        }
+        // Community info
+        ColumnLayout {
+            anchors.fill: parent
+            anchors.topMargin: 32
+            anchors.leftMargin: d.margins
+            anchors.rightMargin: d.margins
+            anchors.bottomMargin: d.margins
+            clip: true
+            spacing: 6
             StatusBaseText {
                 Layout.alignment: Qt.AlignVCenter
                 text: root.name
                 font.weight: Font.Bold
-                font.pixelSize: 17
-                color: Theme.palette.directColor1
+                font.pixelSize: 19
+                color: d.fontColor
             }
-
-            StatusIcon {
-                Layout.alignment: Qt.AlignVCenter
-                Layout.leftMargin: 6
-                icon: "tiny/tiny-contact"
-                width: 10
-                height: 10
-                color: Theme.palette.baseColor1
-            }
-
             StatusBaseText {
-                Layout.alignment: Qt.AlignVCenter
-                text: Number(root.members).toLocaleString(Qt.locale(locale), 'f', 0)
-                font.pixelSize: 13
-                color: Theme.palette.directColor1
-                horizontalAlignment: Text.AlignLeft
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                text: root.description
+                font.pixelSize: 15
+                lineHeight: 1.2
+                color: d.fontColor
+                maximumLineCount: 2
+                wrapMode: Text.WordWrap
+                elide: Text.ElideRight
+                clip: true
             }
         }
-
-        StatusBaseText {
-            Layout.fillHeight: true
-            Layout.fillWidth: true
-            text: root.description
-            font.pixelSize: 15
-            color: Theme.palette.directColor1
-            wrapMode: Text.WordWrap
-            elide: Text.ElideRight
+        ColumnLayout {
+            anchors.fill: parent
+            anchors.topMargin: 116
+            anchors.leftMargin: d.margins
+            anchors.rightMargin: d.margins
+            anchors.bottomMargin: d.margins
             clip: true
-        }
+            spacing: 18
+            Row {
+                Layout.alignment: Qt.AlignVCenter
+                spacing: 20
+                // Members
+                Row {
+                    height: membersTxt.height
+                    spacing: 4
+                    StatusIcon {
+                        anchors.verticalCenter: parent.verticalCenter
+                        icon: "tiny/members"
+                        width: 16
+                        height: 16
+                    }
+                    StatusBaseText {
+                        id: membersTxt
+                        Layout.alignment: Qt.AlignVCenter
+                        text: d.numberFormat(root.members)
+                        font.pixelSize: 15
+                        color: d.fontColor
+                    }
+                }
+                // Active users:
+                Row {
+                    height: activeUsersTxt.height
+                    spacing: 4
+                    StatusIcon {
+                        anchors.verticalCenter: parent.verticalCenter
+                        icon: "tiny/flash"
+                        width: 14
+                        height: 14
+                    }
+                    StatusBaseText {
+                        id: activeUsersTxt
+                        Layout.alignment: Qt.AlignVCenter
+                        text: d.numberFormat(root.activeUsers)
+                        font.pixelSize: 15
+                        color: d.fontColor
+                    }
+                }
+            }
+            // TODO: Replace by `StatusListItemTagRow` - To be done!
+            Row {
+                visible: root.categories.count > 0
+                Layout.alignment: Qt.AlignVCenter
+                Layout.fillWidth: true
+                spacing: 8
+                clip: true
 
-        // TODO: Replace by `StatusListItemTagRow` - To be done!
-        Row {
-            visible: root.categories.count > 0
-            Layout.bottomMargin: 4
-            width: 324 // by design
-            spacing: 8
-            clip: true
-
-            Repeater {
-                model: root.categories
-                delegate: StatusListItemTag {
-                    border.color: Theme.palette.baseColor2
-                    color: "transparent"
-                    height: 32
-                    radius: 36
-                    closeButtonVisible: false
-                    icon.emoji: model.emoji
-                    icon.height: 32
-                    icon.width: icon.height
-                    icon.color: "transparent"
-                    icon.isLetterIdenticon: true
-                    title: model.name
-                    titleText.font.pixelSize: 15
-                    titleText.color: Theme.palette.primaryColor1
+                Repeater {
+                    model: root.categories
+                    delegate: StatusListItemTag {
+                        border.color: Theme.palette.baseColor2
+                        color: "transparent"
+                        height: 24
+                        radius: 20
+                        closeButtonVisible: false
+                        icon.emoji: model.emoji
+                        icon.height: 24
+                        icon.width: icon.height
+                        icon.color: "transparent"
+                        icon.isLetterIdenticon: true
+                        title: model.name
+                        titleText.font.pixelSize: 13
+                        titleText.color: d.fontColor
+                    }
                 }
             }
         }
-    }
+    } // End of content card
 
-    // Loading Card
-    ColumnLayout {
+    // Loading card
+    Rectangle {
         visible: !root.loaded
-        anchors.fill: parent
-        anchors.margins: d.dMargins
+        anchors.top: parent.top
+        anchors.topMargin: 40
+        width: d.cardWidth
+        height: d.cardHeigth
+        color: d.cardColor
+        radius: d.cardRadius
         clip: true
-        spacing: 9
-
         Rectangle {
-            width: 40
-            height: 40
-            color: Theme.palette.baseColor2
-            radius: width / 2
+            anchors.top: parent.top
+            anchors.topMargin: 8
+            anchors.right: parent.right
+            anchors.rightMargin: anchors.topMargin
+            width: 48
+            height: 24
+            color: d.loadingColor2
+            radius: 200
         }
-
-        RowLayout {
-            Layout.topMargin: 8
+        ColumnLayout {
+            anchors.fill: parent
+            anchors.topMargin: 32
+            anchors.margins: d.margins
+            clip: true
+            spacing: 9
             Rectangle {
-                Layout.alignment: Qt.AlignBottom
-                Layout.topMargin: 8
                 width: 84
                 height: 16
-                color: Theme.palette.baseColor2
+                color: d.loadingColor1
                 radius: 5
             }
-
             Rectangle {
-                Layout.leftMargin: 8
-                Layout.alignment: Qt.AlignBottom
-                width: 14
-                height: 14
-                color: Theme.palette.baseColor2
-                radius: width / 2
-            }
-
-            Rectangle {
-                Layout.alignment: Qt.AlignBottom
-                width: 50
-                height: 12
-                color: Theme.palette.baseColor2
+                width: 311
+                height: 16
+                color: d.loadingColor1
                 radius: 5
             }
-        }
-
-        Rectangle {
-            width: 311
-            height: 16
-            color: Theme.palette.baseColor2
-            radius: 5
-        }
-
-        Rectangle {
-            width: 271
-            height: 16
-            color: Theme.palette.baseColor2
-            radius: 5
-        }
-
-        // Filler
-        Item { Layout.fillHeight: true }
-
-        Row {
-            Layout.bottomMargin: 4
-            spacing: 8
-
-            Repeater {
-                model: 3
-                delegate:
-                Rectangle {
-                    width: 76
-                    height: 24
-                    color: Theme.palette.baseColor2
-                    radius: 20
+            Rectangle {
+                width: 271
+                height: 16
+                color: d.loadingColor1
+                radius: 5
+            }
+            Row {
+                Layout.topMargin: 22 - 9
+                spacing: 16
+                Repeater {
+                    model: 2
+                    delegate: Row {
+                        spacing: 4
+                        Rectangle {
+                            width: 14
+                            height: 14
+                            color: d.loadingColor1
+                            radius: width / 2
+                        }
+                        Rectangle {
+                            width: 50
+                            height: 12
+                            color: d.loadingColor2
+                            radius: 5
+                        }
+                    }
+                }
+            }
+            Row {
+                Layout.topMargin: 21 - 9
+                spacing: 8
+                Repeater {
+                    model: 3
+                    delegate:
+                    Rectangle {
+                        width: 76
+                        height: 24
+                        color: d.loadingColor2
+                        radius: 20
+                    }
                 }
             }
         }
-    }
+    } // End of loading card
 
     MouseArea {
         id: sensor
