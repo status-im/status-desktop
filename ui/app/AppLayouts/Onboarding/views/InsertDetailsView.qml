@@ -55,8 +55,9 @@ Item {
 
     ColumnLayout {
         height: 461
-        anchors.centerIn: parent
-        spacing: Style.current.padding
+        anchors.top: parent.top
+        anchors.topMargin: 185
+        anchors.horizontalCenter: parent.horizontalCenter
 
         StyledText {
             id: usernameText
@@ -69,26 +70,29 @@ Item {
         StyledText {
             id: txtDesc
             Layout.preferredWidth: (root.state === "username") ? 338 : 643
+            Layout.preferredHeight: 44
+            Layout.alignment: Qt.AlignTop | Qt.AlignHCenter
+            Layout.topMargin: Style.current.padding
             color: Style.current.secondaryText
             text: qsTr("Longer and unusual names are better as they are less likely to be used by someone else.")
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
-            Layout.alignment: Qt.AlignHCenter
             font.pixelSize: 15
         }
 
         Item {
-            implicitWidth: 100
-            implicitHeight: 100
-            Layout.alignment: Qt.AlignHCenter
+            implicitWidth: 80
+            implicitHeight: 80
+            Layout.alignment: Qt.AlignTop | Qt.AlignHCenter
+            Layout.topMargin: 27
             StatusSmartIdenticon {
+                anchors.left: parent.left
                 id: userImage
                 image {
                     width: 86
                     height: 86
                     isIdenticon: false
                 }
-
                 icon {
                     width: 86
                     height: 86
@@ -96,7 +100,6 @@ Item {
                     color: Theme.palette.miscColor5
                     charactersLen: 2
                 }
-
                 ringSettings {
                     ringSpecModel: Utils.getColorHashAsJson(root.pubKey)
                 }
@@ -107,43 +110,49 @@ Item {
                 height: 40
                 anchors.top: parent.top
                 anchors.right: parent.right
+                anchors.rightMargin: -20
                 type: StatusFlatRoundButton.Type.Secondary
                 icon.name: "add"
                 onClicked: {
-                    cropperModal.chooseImageToCrop()
+                    cropperModal.chooseImageToCrop();
                 }
             }
         }
 
-        StatusInput {
-            id: nameInput
+        Item {
+            id: nameInputItem
             implicitWidth: 328
-            Layout.preferredHeight: 44
-            Layout.alignment: Qt.AlignHCenter
-            input.placeholderText: qsTr("Display name")
-            input.rightComponent: RoundedIcon {
-                width: 14
-                height: 14
-                iconWidth: 14
-                iconHeight: 14
-                visible: (nameInput.input.text.length > 0)
-                color: "transparent"
-                source: Style.svg("close-filled")
-                onClicked: {
-                    nameInput.input.edit.clear();
+            Layout.preferredHeight: 69
+            Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
+            Layout.topMargin: 37
+            StatusInput {
+                id: nameInput
+                width: parent.width
+                input.placeholderText: qsTr("Display name")
+                input.rightComponent: RoundedIcon {
+                    width: 14
+                    height: 14
+                    iconWidth: 14
+                    iconHeight: 14
+                    visible: (nameInput.input.text.length > 0)
+                    color: "transparent"
+                    source: Style.svg("close-filled")
+                    onClicked: {
+                        nameInput.input.edit.clear();
+                    }
                 }
-            }
-            errorMessageCmp.wrapMode: Text.NoWrap
-            errorMessageCmp.horizontalAlignment: Text.AlignHCenter
-            validators: Constants.validators.displayName
-            onTextChanged: {
-                userImage.name = text;
-            }
-            input.acceptReturn: true
-            onKeyPressed: {
-                if (input.edit.keyEvent === Qt.Key_Return || input.edit.keyEvent === Qt.Key_Enter) {
-                    event.accepted = true
-                    nextBtn.clicked(null)
+                errorMessageCmp.wrapMode: Text.NoWrap
+                errorMessageCmp.horizontalAlignment: Text.AlignHCenter
+                validators: Constants.validators.displayName
+                onTextChanged: {
+                    userImage.name = text;
+                }
+                input.acceptReturn: true
+                onKeyPressed: {
+                    if (input.edit.keyEvent === Qt.Key_Return || input.edit.keyEvent === Qt.Key_Enter) {
+                        event.accepted = true
+                        nextBtn.clicked(null)
+                    }
                 }
             }
         }
@@ -155,46 +164,51 @@ Item {
             text: qsTr("Chatkey:") + " " + Utils.getCompressedPk(root.pubKey)
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
-            Layout.alignment: Qt.AlignHCenter
+            Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
+            Layout.topMargin: 13
             font.pixelSize: 15
         }
 
         Item {
             id: chainsChatKeyImg
             Layout.alignment: Qt.AlignHCenter
-            Layout.preferredWidth: 400
-            Layout.preferredHeight: 84
+            Layout.topMargin: Style.current.padding
+            Layout.preferredWidth: 215
+            Layout.preferredHeight: 77
             Image {
+                id: imgChains
                 anchors.horizontalCenter: parent.horizontalCenter
-                source: Style.png("onboarding/chains")
+                source: Style.svg("onboarding/chains")
             }
             EmojiHash {
                 anchors {
                     bottom: parent.bottom
                     left: parent.left
-                    leftMargin: 80
                 }
-
                 publicKey: root.pubKey
             }
             StatusSmartIdenticon {
                 id: userImageCopy
-
                 anchors {
                     bottom: parent.bottom
                     right: parent.right
-                    rightMargin: 116
+                    rightMargin: 25
                 }
-
                 icon.width: 44
                 icon.height: 44
                 icon.color: "transparent"
                 ringSettings { ringSpecModel: Utils.getColorHashAsJson(root.pubKey) }
             }
         }
+
+        Item {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+        }
+
         StatusButton {
             id: nextBtn
-            Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
+            Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
             enabled: !!nameInput.text && nameInput.valid
             text: qsTr("Next")
             onClicked: {
@@ -202,7 +216,7 @@ Item {
                     if (OnboardingStore.accountCreated) {
                         OnboardingStore.updatedDisplayName(nameInput.text);
                     }
-                    OnboardingStore.displayName = nameInput.text
+                    OnboardingStore.displayName = nameInput.text;
                     root.displayName = nameInput.text;
                     root.state = "chatkey";
                 } else {
@@ -213,18 +227,16 @@ Item {
 
         ImageCropWorkflow {
             id: cropperModal
-
             imageFileDialogTitle: qsTr("Choose an image for profile picture")
             title: qsTr("Profile picture")
             acceptButtonText: qsTr("Make this my profile picture")
-
             onImageCropped: {
                 const croppedImg = OnboardingStore.generateImage(image,
-                                              cropRect.x.toFixed(),
-                                              cropRect.y.toFixed(),
-                                              (cropRect.x + cropRect.width).toFixed(),
-                                              (cropRect.y + cropRect.height).toFixed())
-                userImage.image.source = croppedImg
+                                                                 cropRect.x.toFixed(),
+                                                                 cropRect.y.toFixed(),
+                                                                 (cropRect.x + cropRect.width).toFixed(),
+                                                                 (cropRect.y + cropRect.height).toFixed());
+                userImage.image.source = croppedImg;
             }
         }
     }
@@ -257,7 +269,7 @@ Item {
                 opacity: 1.0
             }
             PropertyChanges {
-                target: nameInput
+                target: nameInputItem
                 visible: true
             }
         },
@@ -288,7 +300,7 @@ Item {
                 opacity: 0.0
             }
             PropertyChanges {
-                target: nameInput
+                target: nameInputItem
                 visible: false
             }
         }
