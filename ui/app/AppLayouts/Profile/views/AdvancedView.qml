@@ -165,24 +165,6 @@ SettingsContentBase {
             StatusSettingsLineButton {
                 anchors.leftMargin: 0
                 anchors.rightMargin: 0
-                //% "Activity Center"
-                text: qsTrId("activity-center")
-                isSwitch: true
-                switchChecked: localAccountSensitiveSettings.isActivityCenterEnabled
-                onClicked: {
-                    if (!localAccountSensitiveSettings.isActivityCenterEnabled) {
-                        confirmationPopup.experimentalFeature = root.advancedStore.experimentalFeatures.activityCenter
-                        confirmationPopup.open()
-                    } else {
-                        root.advancedStore.toggleExperimentalFeature(root.advancedStore.experimentalFeatures.activityCenter)
-                    }
-                }
-            }
-
-            // TODO: replace with StatusQ component
-            StatusSettingsLineButton {
-                anchors.leftMargin: 0
-                anchors.rightMargin: 0
                 //% "Node Management"
                 text: qsTrId("node-management")
                 isSwitch: true

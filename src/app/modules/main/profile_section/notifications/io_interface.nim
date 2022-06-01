@@ -28,9 +28,6 @@ method saveExemptions*(self: AccessInterface, itemId: string, muteAllMessages: b
   globalMentions: string, allMessages: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onToggleSection*(self: AccessInterface, sectionType: SectionType) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method addCommunity*(self: AccessInterface, communityDto: CommunityDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 

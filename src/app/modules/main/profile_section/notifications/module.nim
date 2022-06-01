@@ -108,19 +108,6 @@ method saveExemptions*(self: Module, itemId: string, muteAllMessages: bool, pers
     otherMessages: otherMessages)
   if(self.controller.setNotifSettingExemptions(itemId, exemptions)):
     self.view.exemptionsModel().updateExemptions(itemId, muteAllMessages, personalMentions, globalMentions, otherMessages)  
-
-method onToggleSection*(self: Module, sectionType: SectionType) =
-  if(sectionType != SectionType.Community):
-    return
-
-  let channelGroups = self.controller.getChannelGroups()
-  for cg in channelGroups:
-    if cg.channelGroupType == ChannelGroupType.Community:
-      let ind = self.view.exemptionsModel().findIndexForItemId(cg.id)
-      if(ind != -1):
-        continue
-      let item = self.createItem(cg.id, cg.name, cg.images.thumbnail, cg.color, joinedTimestamp = 0, item.Type.Community)
-      self.view.exemptionsModel().addItem(item)
   
 method addCommunity*(self: Module, communityDto: CommunityDto) =
   let ind = self.view.exemptionsModel().findIndexForItemId(communityDto.id)

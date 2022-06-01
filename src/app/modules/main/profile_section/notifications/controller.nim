@@ -35,10 +35,6 @@ proc delete*(self: Controller) =
   discard
 
 proc init*(self: Controller) =
-  self.events.on(TOGGLE_SECTION) do(e:Args):
-    let args = ToggleSectionArgs(e)
-    self.delegate.onToggleSection(args.sectionType)
-
   self.events.on(SIGNAL_COMMUNITY_JOINED) do(e:Args):
     let args = CommunityArgs(e)
     if(args.error.len > 0):

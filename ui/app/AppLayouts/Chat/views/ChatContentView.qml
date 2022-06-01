@@ -180,7 +180,6 @@ ColumnLayout {
                     chatContentModule.chatDetails.isUsersListAvailable
         }
         membersButton.highlighted: localAccountSensitiveSettings.expandUsersList
-        notificationButton.visible: localAccountSensitiveSettings.isActivityCenterEnabled
         notificationButton.tooltip.offset: localAccountSensitiveSettings.expandUsersList && membersButton.visible ? 0 : 14
 
         notificationCount: activityCenter.unreadNotificationsCount
