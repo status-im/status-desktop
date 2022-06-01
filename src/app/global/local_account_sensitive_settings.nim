@@ -6,8 +6,6 @@ import ../../constants
 const LSS_KEY_CHAT_SPLIT_VIEW* = "chatSplitView"
 const LSS_KEY_WALLET_SPLIT_VIEW* = "walletSplitView"
 const LSS_KEY_PROFILE_SPLIT_VIEW* = "profileSplitView"
-const LSS_KEY_COMMUNITIES_ENABLED* = "communitiesEnabled"
-const DEFAULT_COMMUNITIES_ENABLED = false
 const LSS_KEY_IS_WALLET_ENABLED* = "isExperimentalWalletEnabled"
 const DEFAULT_IS_WALLET_ENABLED = false
 const LSS_KEY_NODE_MANAGEMENT_ENABLED* = "nodeManagementEnabled"
@@ -195,20 +193,6 @@ QtObject:
     read = getProfileSplitView
     write = setProfileSplitView
     notify = profileSplitViewChanged
-
-
-  proc communitiesEnabledChanged*(self: LocalAccountSensitiveSettings) {.signal.}
-  proc getCommunitiesEnabled*(self: LocalAccountSensitiveSettings): bool {.slot.} =
-    getSettingsProp[bool](self, LSS_KEY_COMMUNITIES_ENABLED, newQVariant(DEFAULT_COMMUNITIES_ENABLED))
-  proc setCommunitiesEnabled*(self: LocalAccountSensitiveSettings, value: bool) {.slot.} =
-    setSettingsProp(self, LSS_KEY_COMMUNITIES_ENABLED, newQVariant(value)):
-      self.communitiesEnabledChanged()
-
-  QtProperty[bool] communitiesEnabled:
-    read = getCommunitiesEnabled
-    write = setCommunitiesEnabled
-    notify = communitiesEnabledChanged
-
 
   proc isWalletEnabledChanged*(self: LocalAccountSensitiveSettings) {.signal.}
   proc getIsWalletEnabled*(self: LocalAccountSensitiveSettings): bool {.slot.} =
@@ -785,7 +769,6 @@ QtObject:
       of LSS_KEY_CHAT_SPLIT_VIEW: self.chatSplitViewChanged()
       of LSS_KEY_WALLET_SPLIT_VIEW: self.walletSplitViewChanged()
       of LSS_KEY_PROFILE_SPLIT_VIEW: self.profileSplitViewChanged()
-      of LSS_KEY_COMMUNITIES_ENABLED: self.communitiesEnabledChanged()
       of LSS_KEY_IS_WALLET_ENABLED: self.isWalletEnabledChanged()
       of LSS_KEY_NODE_MANAGEMENT_ENABLED: self.nodeManagementEnabledChanged()
       of LSS_KEY_IS_BROWSER_ENABLED: self.isBrowserEnabledChanged()

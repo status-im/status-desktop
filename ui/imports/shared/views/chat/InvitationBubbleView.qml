@@ -62,7 +62,6 @@ Item {
             //% "I understand"
             confirmButtonLabel: qsTrId("i-understand")
             onConfirmButtonClicked: {
-                localAccountSensitiveSettings.communitiesEnabled = true
                 onConfirmed()
                 close()
             }
@@ -206,7 +205,6 @@ Item {
                         Layout.leftMargin: root.innerMargin
                         font.pixelSize: 13
                     }
-
                     StatusBaseText {
                         id: invitedYou
                         visible: text != ""

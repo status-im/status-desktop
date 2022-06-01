@@ -104,7 +104,6 @@ Item {
                      text: qsTrId("communities")
                      icon.name: "communities"
                      onTriggered: Global.openPopup(communitiesPopupComponent)
-                     enabled: localAccountSensitiveSettings.communitiesEnabled
                  }
             }
 

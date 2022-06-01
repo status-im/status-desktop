@@ -211,8 +211,7 @@ proc createChannelGroupItem[T](self: Module[T], c: ChannelGroupDto): SectionItem
     hasNotification,
     notificationsCount,
     active,
-    enabled = (not isCommunity or 
-      singletonInstance.localAccountSensitiveSettings.getCommunitiesEnabled()),
+    enabled = true,
     if (isCommunity): communityDetails.joined else: true,
     if (isCommunity): communityDetails.canJoin else: true,
     c.canManageUsers,
@@ -540,10 +539,6 @@ method toggleSection*[T](self: Module[T], sectionType: SectionType) =
     let enabled = singletonInstance.localAccountSensitiveSettings.getIsBrowserEnabled()
     self.setSectionAvailability(sectionType, not enabled)
     singletonInstance.localAccountSensitiveSettings.setIsBrowserEnabled(not enabled)
-  elif (sectionType == SectionType.Community):
-    let enabled = singletonInstance.localAccountSensitiveSettings.getCommunitiesEnabled()
-    self.setSectionAvailability(sectionType, not enabled)
-    singletonInstance.localAccountSensitiveSettings.setCommunitiesEnabled(not enabled)
   elif (sectionType == SectionType.NodeManagement):
     let enabled = singletonInstance.localAccountSensitiveSettings.getNodeManagementEnabled()
     self.setSectionAvailability(sectionType, not enabled)

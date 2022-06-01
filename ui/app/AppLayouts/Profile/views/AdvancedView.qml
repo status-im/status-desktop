@@ -145,24 +145,6 @@ SettingsContentBase {
                 }
             }
 
-            // TODO: replace with StatusQ component
-            StatusSettingsLineButton {
-                anchors.leftMargin: 0
-                anchors.rightMargin: 0
-                //% "Communities"
-                text: qsTrId("communities")
-                isSwitch: true
-                switchChecked: localAccountSensitiveSettings.communitiesEnabled
-                onClicked: {
-                    if (!localAccountSensitiveSettings.communitiesEnabled) {
-                        confirmationPopup.experimentalFeature = root.advancedStore.experimentalFeatures.communities
-                        confirmationPopup.open()
-                    } else {
-                        root.advancedStore.toggleExperimentalFeature(root.advancedStore.experimentalFeatures.communities)
-                    }
-                }
-            }
-
             StatusSettingsLineButton {
                 anchors.leftMargin: 0
                 anchors.rightMargin: 0
