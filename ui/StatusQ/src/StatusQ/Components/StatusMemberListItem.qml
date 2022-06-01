@@ -72,6 +72,11 @@ StatusListItem {
        This property holds the connectivity status of the member represented.
     */
     property bool isOnline: false
+    /*!
+       \qmlproperty string StatusMemberListItem::isAdmin
+       This property holds the admin status of the member represented.
+    */
+    property bool isAdmin: false
 
     QtObject {
         id: d
@@ -124,4 +129,12 @@ StatusListItem {
     statusListItemIcon.badge.border.width: 2
     statusListItemIcon.badge.implicitHeight: 12 // 8 px + 2 px * 2 borders
     statusListItemIcon.badge.implicitWidth: 12 // 8 px + 2 px * 2 borders
+    components: [
+        StatusIcon {
+            anchors.verticalCenter: parent.verticalCenter
+            visible: root.isAdmin
+            icon: "crown"
+            color: Theme.palette.directColor1
+        }
+    ]
 }

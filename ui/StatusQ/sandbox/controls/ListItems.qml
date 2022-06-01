@@ -441,4 +441,11 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
                        nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2ImYgiNITTlTdG1nUZ5a92VITQxITFiJmIIjSE0htAYQrMHAAD//+wwFVpz+yqXAAAAAElFTkSuQmCC"
         image.isIdenticon: true
     }
+
+    StatusMemberListItem {
+        nickName: "admin.guy"
+        isOnline: false
+        isAdmin: true
+        trustIndicator: StatusContactVerificationIcons.TrustedType.Untrustworthy
+    }
 }
