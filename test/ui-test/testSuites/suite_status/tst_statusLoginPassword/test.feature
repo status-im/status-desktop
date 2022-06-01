@@ -30,13 +30,16 @@ Feature: Status Desktop login
             | Granular_Diligent| TesTEr16843/!@22  |
 
 
-    #Scenario Outline: User tries to login with an invalid password
+    Scenario Outline: User tries to login with an invalid password
 
-        #Given A Status Desktop <account> and <password>
-        # When the user tries to login with invalid credentials
-        # Then the user is NOT able to login to Status Desktop application
-	#Examples:
-            # | account 			  | password    |
-             #| Athletic_Prime     | Invalid34   |
-             #| Granular_Diligent  | Testpwd     |
-             #| Nervous_Pesky      | WrongPSW    |
+        Given A first time user lands on the status desktop and generates new key
+        When user inputs username <account> and password <password>
+        Given the application is restarted
+        Given A Status Desktop <account> and <wrongpassword>
+        When the user tries to login with invalid credentials
+        Then the user is NOT able to login to Status Desktop application
+	Examples:
+             | account 			  | password           |  wrongpassword    |
+             | Athletic_Prime     | TesTEr16843/!@00   |  Invalid34        |
+             | Granular_Diligent  | TesTEr16843/!@11   |  Testpwd          |
+             | Nervous_Pesky      | TesTEr16843/!@22   |  WrongPSW         |
