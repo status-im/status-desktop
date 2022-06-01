@@ -1,6 +1,6 @@
-#******************************************************************************
+# ******************************************************************************
 # Status.im
-#*****************************************************************************/
+# *****************************************************************************/
 # /**
 # * \file    StatusWelcomeScreen.py
 # *
@@ -33,32 +33,41 @@ class SignUpComponents(Enum):
     PASSWORD_PREFERENCE = "mainWindow_I_prefer_to_use_my_password_StatusBaseText"
 
 
-class StatusWelcomeScreen():
-    
+class StatusWelcomeScreen:
+
     def __init__(self):
         verify_screen_is_loaded(AgreementPopUp.ACKNOWLEDGE_CHECKBOX.value)
-    
-    def agree_terms_conditions_and_generate_new_key(self): 
+
+    def agree_terms_conditions_and_generate_new_key(self):
         click_obj_by_name(AgreementPopUp.ACKNOWLEDGE_CHECKBOX.value)
         check_obj_by_name(AgreementPopUp.TERMS_OF_USE_CHECK_BOX.value)
         click_obj_by_name(AgreementPopUp.GET_STARTED_BUTTON.value)
         click_obj_by_name(SignUpComponents.NEW_TO_STATUS.value)
         click_obj_by_name(SignUpComponents.GENERATE_NEW_KEYS.value)
-        
+
     def input_username_and_password_and_finalize_sign_up(self, username, password):
+        self.input_username(username)
+
+        self.input_password(password)
+
+        self.input_confirmation_password(password)
+
+        self.input_password_again(password)
+
+        click_obj_by_name(SignUpComponents.PASSWORD_PREFERENCE.value)
+
+    def input_username(self, username):
         type(SignUpComponents.USERNAME_INPUT.value, username)
         click_obj_by_name(SignUpComponents.NEXT_BUTTON.value)
         click_obj_by_name(SignUpComponents.NEXT_STATUS_BUTTON.value)
-        
-        click_obj_by_name(SignUpComponents.NEW_PASSWORD_BUTTON.value)
+
+    def input_password(self, password):
         type(SignUpComponents.PASSWORD_INPUT.value, password)
-        click_obj_by_name(SignUpComponents.CONFIRM_PASSWORD.value)
+
+    def input_confirmation_password(self, password):
         type(SignUpComponents.PASSWORD_CONFIRM_INPUT.value, password)
         click_obj_by_name(SignUpComponents.CREATE_PASSWORD.value)
-        
-        click_obj_by_name(SignUpComponents.CONFIRM_PASSWORD_AGAIN.value)
+
+    def input_password_again(self, password):
         type(SignUpComponents.PASSWORD_INPUT.value, password)
-        
         click_obj_by_name(SignUpComponents.FINALIZE_PASSWORD_STEP.value)
-        click_obj_by_name(SignUpComponents.PASSWORD_PREFERENCE.value)
-        

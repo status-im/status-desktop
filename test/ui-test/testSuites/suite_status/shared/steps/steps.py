@@ -22,11 +22,16 @@ def step(context):
     startApplication("nim_status_client")
   
     
-@When("user inputs the following |any| with object locator |any|")
+@When("user inputs the following |any| with ui-component |any|")
 def step(context, text, obj):
     input_text(text, obj)
+    
+
+@When("user clicks on the following ui-component |any|")
+def step(context, obj):
+    click_on_an_object(obj)
 
 
-@Then("the following object locator |any| is not enabled")
+@Then("the following ui-component |any| is not enabled")
 def step(context, obj):
     object_not_enabled(obj)
