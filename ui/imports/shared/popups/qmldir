@@ -15,4 +15,4 @@ UserStatusContextMenu 1.0 UserStatusContextMenu.qml
 SignTransactionModal 1.0 SignTransactionModal.qml
 SelectAccountModal 1.0 SelectAccountModal.qml
 ProfilePopup 1.0 ProfilePopup.qml
-BannerCropperModal 1.0 BannerCropperModal.qml
+ImageCropWorkflow 1.0 ImageCropWorkflow.qml

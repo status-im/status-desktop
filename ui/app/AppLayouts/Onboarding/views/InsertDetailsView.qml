@@ -210,7 +210,7 @@ Item {
             }
         }
 
-        BannerCropperModal {
+        ImageCropWorkflow {
             id: cropperModal
 
             imageFileDialogTitle: qsTr("Choose an image for profile picture")
