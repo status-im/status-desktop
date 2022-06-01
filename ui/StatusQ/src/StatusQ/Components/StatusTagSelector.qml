@@ -96,18 +96,25 @@ Item {
     property int nameCountLimit: 5
 
     /*!
-        \qmlproperty var StatusTagSelector::ringSpecModel
+        \qmlproperty var StatusTagSelector::ringSpecModelGetter
         This property holds the function to calculate the ring spec model
         based on the public key.
     */
     property var ringSpecModelGetter: (pubKey) => { /*return ringSpecModel*/ }
 
     /*!
-        \qmlproperty var StatusTagSelector::compressKey
+        \qmlproperty var StatusTagSelector::compressKeyGetter
         This property holds the function to calculate the compressed
         key based on the public key.
     */
     property var compressedKeyGetter: (pubKey) => { /*return compressed key;*/ }
+
+    /*!
+        \qmlproperty var StatusTagSelector::colorIdForPubkeyGetter
+        This property holds the function to calculate the color Id
+        based on the public key.
+    */
+    property var colorIdForPubkeyGetter: (pubKey) => { /*return color Id;*/ }
 
     /*!
         \qmlproperty ListModel StatusTagSelector::sortedList
@@ -390,6 +397,7 @@ Item {
                 isMutualContact: model.isMutualContact
                 image.source: model.icon
                 image.isIdenticon: model.isIdenticon
+                icon.color: Theme.palette.userCustomizationColors[root.colorIdForPubkeyGetter(model.publicId)]
                 isOnline: model.onlineStatus
                 statusListItemIcon.badge.border.color: sensor.containsMouse ? Theme.palette.baseColor2 : Theme.palette.baseColor4
                 ringSettings.ringSpecModel: root.ringSpecModelGetter(publicId)

@@ -58,6 +58,11 @@ Page {
                 }
                 return randomString.join().toString().replace(/,/g, '');
             }
+            colorIdForPubkeyGetter: function (pubKey) {
+                //for simulation purposes only, in real app
+                //this would be Utils.colorIdForPubkey(pubKey);
+                return Math.floor(Math.random() * 10);
+            }
             onTextChanged: {
                 sortModel(root.contactsModel);
             }
