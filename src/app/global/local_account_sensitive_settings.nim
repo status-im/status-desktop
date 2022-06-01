@@ -12,8 +12,6 @@ const LSS_KEY_NODE_MANAGEMENT_ENABLED* = "nodeManagementEnabled"
 const DEFAULT_NODE_MANAGEMENT_ENABLED = false
 const LSS_KEY_IS_BROWSER_ENABLED* = "isExperimentalBrowserEnabled"
 const DEFAULT_IS_BROWSER_ENABLED = false
-const LSS_KEY_IS_ACTIVITY_CENTER_ENABLED* = "isActivityCenterEnabled"
-const DEFAULT_IS_ACTIVITY_CENTER_ENABLED = false
 const LSS_KEY_SHOW_ONLINE_USERS* = "showOnlineUsers"
 const DEFAULT_SHOW_ONLINE_USERS = true
 const LSS_KEY_EXPAND_USERS_LIST* = "expandUsersList"
@@ -230,20 +228,6 @@ QtObject:
     read = getIsBrowserEnabled
     write = setIsBrowserEnabled
     notify = isBrowserEnabledChanged
-
-
-  proc isActivityCenterEnabledChanged*(self: LocalAccountSensitiveSettings) {.signal.}
-  proc getIsActivityCenterEnabled*(self: LocalAccountSensitiveSettings): bool {.slot.} =
-    getSettingsProp[bool](self, LSS_KEY_IS_ACTIVITY_CENTER_ENABLED, newQVariant(DEFAULT_IS_ACTIVITY_CENTER_ENABLED))
-  proc setIsActivityCenterEnabled*(self: LocalAccountSensitiveSettings, value: bool) {.slot.} =
-    setSettingsProp(self, LSS_KEY_IS_ACTIVITY_CENTER_ENABLED, newQVariant(value)):
-      self.isActivityCenterEnabledChanged()
-
-  QtProperty[bool] isActivityCenterEnabled:
-    read = getIsActivityCenterEnabled
-    write = setIsActivityCenterEnabled
-    notify = isActivityCenterEnabledChanged
-
 
   proc showOnlineUsersChanged*(self: LocalAccountSensitiveSettings) {.signal.}
   proc getShowOnlineUsers*(self: LocalAccountSensitiveSettings): bool {.slot.} =
@@ -772,7 +756,6 @@ QtObject:
       of LSS_KEY_IS_WALLET_ENABLED: self.isWalletEnabledChanged()
       of LSS_KEY_NODE_MANAGEMENT_ENABLED: self.nodeManagementEnabledChanged()
       of LSS_KEY_IS_BROWSER_ENABLED: self.isBrowserEnabledChanged()
-      of LSS_KEY_IS_ACTIVITY_CENTER_ENABLED: self.isActivityCenterEnabledChanged()
       of LSS_KEY_SHOW_ONLINE_USERS: self.showOnlineUsersChanged()
       of LSS_KEY_EXPAND_USERS_LIST: self.expandUsersListChanged()
       of LSS_KEY_IS_GIF_WIDGET_ENABLED: self.isGifWidgetEnabledChanged()

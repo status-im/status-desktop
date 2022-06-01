@@ -829,16 +829,16 @@ method onStatusUrlRequested*[T](self: Module[T], action: StatusUrlAction, commun
       i.inc
       self.resolveENS(id, "", STATUS_URL_ENS_RESOLVE_REASON & $StatusUrlAction.OpenOrCreateGroupChat)
   
-  elif(action == StatusUrlAction.RequestToJoinCommunity and singletonInstance.localAccountSensitiveSettings.getCommunitiesEnabled()):
+  elif(action == StatusUrlAction.RequestToJoinCommunity):
     let item = self.view.model().getItemById(singletonInstance.userProfile.getPubKey())
     self.setActiveSection(item)
     self.communitiesModule.requestToJoinCommunity(communityId, singletonInstance.userProfile.getName())
 
-  elif(action == StatusUrlAction.OpenCommunity and singletonInstance.localAccountSensitiveSettings.getCommunitiesEnabled()):
+  elif(action == StatusUrlAction.OpenCommunity):
     let item = self.view.model().getItemById(communityId)
     self.setActiveSection(item)
 
-  elif(action == StatusUrlAction.OpenCommunityChannel and singletonInstance.localAccountSensitiveSettings.getCommunitiesEnabled()):
+  elif(action == StatusUrlAction.OpenCommunityChannel):
     for cId, cModule in self.channelGroupModules.pairs:
       if(cId == singletonInstance.userProfile.getPubKey()):
         continue
