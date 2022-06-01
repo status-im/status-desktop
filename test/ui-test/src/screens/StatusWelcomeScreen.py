@@ -9,6 +9,7 @@
 # *****************************************************************************/
 from enum import Enum
 from drivers.SquishDriver import *
+from drivers.SquishDriverVerification import *
 
 
 class AgreementPopUp(Enum):
@@ -52,7 +53,8 @@ class StatusWelcomeScreen:
 
         self.input_confirmation_password(password)
 
-        self.input_password_again(password)
+        self.input_password(password)
+        click_obj_by_name(SignUpComponents.FINALIZE_PASSWORD_STEP.value)
 
         click_obj_by_name(SignUpComponents.PASSWORD_PREFERENCE.value)
 
@@ -68,6 +70,4 @@ class StatusWelcomeScreen:
         type(SignUpComponents.PASSWORD_CONFIRM_INPUT.value, password)
         click_obj_by_name(SignUpComponents.CREATE_PASSWORD.value)
 
-    def input_password_again(self, password):
-        type(SignUpComponents.PASSWORD_INPUT.value, password)
-        click_obj_by_name(SignUpComponents.FINALIZE_PASSWORD_STEP.value)
+
