@@ -18,15 +18,15 @@ import StatusQ.Popups 0.1
 Item {
     id: root
 
-    property alias source: bannerPreview.source
-    property alias cropRect: bannerPreview.cropRect
-    /*required*/ property alias aspectRatio: bannerCropperModal.aspectRatio
+    property alias source: croppedPreview.source
+    property alias cropRect: croppedPreview.cropRect
+    /*required*/ property alias aspectRatio: imageCropWorkflow.aspectRatio
 
-    property alias roundedImage: bannerCropperModal.roundedImage
+    property alias roundedImage: imageCropWorkflow.roundedImage
 
-    /*required*/ property alias imageFileDialogTitle: bannerCropperModal.imageFileDialogTitle
-    /*required*/ property alias title: bannerCropperModal.title
-    /*required*/ property alias acceptButtonText: bannerCropperModal.acceptButtonText
+    /*required*/ property alias imageFileDialogTitle: imageCropWorkflow.imageFileDialogTitle
+    /*required*/ property alias title: imageCropWorkflow.title
+    /*required*/ property alias acceptButtonText: imageCropWorkflow.acceptButtonText
 
     property string dataImage: ""
 
@@ -70,7 +70,7 @@ Item {
             Layout.fillWidth: true
             Layout.fillHeight: true
 
-            visible: !bannerEditor.visible
+            visible: !imageCropEditor.visible
 
             StatusRoundedImage {
                 anchors.fill: parent
@@ -81,15 +81,15 @@ Item {
                 showLoadingIndicator: true
                 border.width: 1
                 border.color: Style.current.border
-                radius: root.roundedImage ? width/2 : bannerPreview.radius
+                radius: root.roundedImage ? width/2 : croppedPreview.radius
             }
 
             StatusImageCrop {
-                id: bannerPreview
+                id: croppedPreview
                 anchors.fill: parent
 
                 visible: root.state === d.imageSelectedState
-                windowStyle: bannerCropperModal.windowStyle
+                windowStyle: imageCropWorkflow.windowStyle
                 wallColor: Theme.palette.statusAppLayout.backgroundColor
                 wallTransparency: 1
                 clip:true
@@ -100,7 +100,7 @@ Item {
 
                 icon.name: "edit"
 
-                readonly property real rotationRadius: roundedImage ? parent.width/2 : bannerEditor.radius
+                readonly property real rotationRadius: roundedImage ? parent.width/2 : imageCropEditor.radius
                 transform: [
                     Translate {
                         x: -editButton.width/2 - d.buttonsInsideOffset
@@ -119,19 +119,19 @@ Item {
                 ]
                 type: StatusRoundButton.Type.Secondary
 
-                onClicked: bannerCropperModal.chooseImageToCrop()
+                onClicked: imageCropWorkflow.chooseImageToCrop()
             }
         }
 
         Rectangle {
-            id: bannerEditor
+            id: imageCropEditor
 
             Layout.fillWidth: true
             Layout.fillHeight: true
 
             visible: root.state === d.noImageState
 
-            radius: roundedImage ? Math.max(width, height)/2 : bannerPreview.radius
+            radius: roundedImage ? Math.max(width, height)/2 : croppedPreview.radius
             color: Style.current.inputBackground
 
             StatusRoundButton {
@@ -139,7 +139,7 @@ Item {
 
                 icon.name: "add"
 
-                readonly property real rotationRadius: root.roundedImage ? parent.width/2 : bannerEditor.radius
+                readonly property real rotationRadius: root.roundedImage ? parent.width/2 : imageCropEditor.radius
                 transform: [
                     Translate {
                         x: -addButton.width/2 - d.buttonsInsideOffset
@@ -159,16 +159,16 @@ Item {
 
                 type: StatusRoundButton.Type.Secondary
 
-                onClicked: bannerFileDialog.open()
-                z: bannerEditor.z + 1
+                onClicked: imageCropWorkflow.chooseImageToCrop()
+                z: imageCropEditor.z + 1
             }
 
-            BannerCropperModal {
-                id: bannerCropperModal
+            ImageCropWorkflow {
+                id: imageCropWorkflow
 
                 onImageCropped: {
-                    bannerPreview.source = image
-                    bannerPreview.setCropRect(cropRect)
+                    croppedPreview.source = image
+                    croppedPreview.setCropRect(cropRect)
                     root.userSelectedImage = true
                 }
             }

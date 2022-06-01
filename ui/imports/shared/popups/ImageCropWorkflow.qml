@@ -13,8 +13,8 @@ import utils 1.0
 Item {
     id: root
 
-    property alias aspectRatio: bannerCropper.aspectRatio
-    property alias windowStyle: bannerCropper.windowStyle
+    property alias aspectRatio: imageCropper.aspectRatio
+    property alias windowStyle: imageCropper.windowStyle
     /*required*/ property string imageFileDialogTitle: ""
     /*required*/ property string title: ""
     /*required*/ property string acceptButtonText: ""
@@ -30,11 +30,11 @@ Item {
         id: fileDialog
 
         title: root.imageFileDialogTitle
-        folder: root.userSelectedImage ? bannerCropper.source.substr(0, bannerCropper.source.lastIndexOf("/")) : shortcuts.pictures
+        folder: root.userSelectedImage ? imageCropper.source.substr(0, imageCropper.source.lastIndexOf("/")) : shortcuts.pictures
         nameFilters: [qsTr("Supported image formats (%1)").arg("*.jpg *.jpeg *.jfif *.webp *.png *.heif")]
         onAccepted: {
             if (fileDialog.fileUrls.length > 0) {
-                bannerCropper.source = fileDialog.fileUrls[0]
+                imageCropper.source = fileDialog.fileUrls[0]
                 imageCropperModal.open()
             }
         }
@@ -50,7 +50,7 @@ Item {
         width: root.roundedImage ? 480 : 580
 
         StatusImageCropPanel {
-            id: bannerCropper
+            id: imageCropper
 
             implicitHeight: root.roundedImage ? 350 : 370
 
@@ -71,10 +71,10 @@ Item {
             StatusButton {
                 text: root.acceptButtonText
 
-                enabled: bannerCropper.sourceSize.width > 0 && bannerCropper.sourceSize.height > 0
+                enabled: imageCropper.sourceSize.width > 0 && imageCropper.sourceSize.height > 0
 
                 onClicked: {
-                    root.imageCropped(bannerCropper.source, bannerCropper.cropRect)
+                    root.imageCropped(imageCropper.source, imageCropper.cropRect)
                     imageCropperModal.close()
                 }
             }
