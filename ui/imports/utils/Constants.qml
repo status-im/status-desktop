@@ -306,7 +306,7 @@ QtObject {
     readonly property var acceptedImageExtensions: [".png", ".jpg", ".jpeg", ".svg", ".gif"]
     readonly property var acceptedDragNDropImageExtensions: [".png", ".jpg", ".jpeg", ".heif", "tif", ".tiff"]
 
-    readonly property string mentionSpanTag: `<span style="color:${Style.current.mentionColor}; background-color: ${Style.current.mentionBgColor};"><a style="text-decoration:none" href='http://'>`
+    readonly property string mentionSpanTag: `<span style="background-color: ${Style.current.mentionBgColor};"><a style="color:${Style.current.mentionColor};text-decoration:none" href='http://'>`
 
     readonly property string ens_taken: "taken"
     readonly property string ens_taken_custom: "taken-custom"
