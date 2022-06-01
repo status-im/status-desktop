@@ -34,16 +34,6 @@ def is_loaded_visible_and_enabled(objName, timeout=_MAX_WAIT_OBJ_TIMEOUT):
 	except LookupError:
 		return False, obj
 
-	
-def verify_screen_is_loaded(objName, timeout=_MAX_WAIT_OBJ_TIMEOUT):
-	result = is_loaded_visible_and_enabled(objName, timeout)
-	test.verify(result, True)
-	
-	
-def verify_object_not_enabled(objName, timeout=_MIN_WAIT_OBJ_TIMEOUT):
-	result = is_loaded_visible_and_enabled(objName, timeout)
-	test.verify(result, False)
-
 # Waits for the given object is loaded and might be not visible and/or not enabled:
 # It returns a tuple: True in case it is found. Otherwise, false. And the object itself.
 def is_loaded(objName):
@@ -92,7 +82,7 @@ def check_obj_by_name(objName):
 		return False
 
 
-def verify_text(objName, text):
+def is_text_matching(objName, text):
 	try:
 		obj = squish.waitForObject(getattr(names, objName))
 		test.compare(obj.text, text, "Found the following text " + text)
