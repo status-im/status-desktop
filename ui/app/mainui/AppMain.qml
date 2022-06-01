@@ -635,10 +635,13 @@ Item {
             Connections {
                 target: rootStore.mainModuleInst
                 onMailserverNotWorking: {
-                    Global.openPopup(mailserverNotWorkingPopupComponent);
+                    if (!appLayout.mailserverNotWorkingPopup) {
+                        appLayout.mailserverNotWorkingPopup = Global.openPopup(mailserverNotWorkingPopupComponent);
+                    }
                 }
             }
-        }
+        } // ColumnLayout
+        property var mailserverNotWorkingPopup: null
 
         Component {
             id: mailserverNotWorkingPopupComponent
@@ -647,6 +650,7 @@ Item {
                 anchors.centerIn: parent
                 header.title: qsTr("Can not connect to mailserver")
                 onClosed: {
+                    appLayout.mailserverNotWorkingPopup = null
                     destroy()
                 }
 
