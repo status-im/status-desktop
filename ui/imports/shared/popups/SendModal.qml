@@ -176,6 +176,7 @@ StatusModal {
                     anchors.top: networkSelector.bottom
                     getGasEthValue: popup.store.getGasEthValue
                     getFiatValue: popup.store.getFiatValue
+                    getEstimatedTime: popup.store.getEstimatedTime
                     defaultCurrency: popup.store.currentCurrency
 
                     width: stack.width
@@ -239,6 +240,7 @@ StatusModal {
 
     advancedFooterComponent: SendModalFooter {
         maxFiatFees: gasSelector.maxFiatFees
+        estimatedTxTimeFlag: gasSelector.estimatedTxTimeFlag
         currentGroupPending: popup.contentItem.currentGroup.isPending
         currentGroupValid: popup.contentItem.currentGroup.isValid
         isLastGroup: popup.contentItem.isLastGroup

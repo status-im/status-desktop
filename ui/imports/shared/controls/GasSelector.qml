@@ -21,11 +21,13 @@ Item {
     property var getGasGweiValue: function () {}
     property var getGasEthValue: function () {}
     property var getFiatValue: function () {}
+    property var getEstimatedTime: function () {}
     property string defaultCurrency: "USD"
     property alias selectedGasPrice: inputGasPrice.text
     property alias selectedGasLimit: inputGasLimit.text
     property string defaultGasLimit: "0"
     property string maxFiatFees: selectedGasFiatValue + root.defaultCurrency.toUpperCase()
+    property int estimatedTxTimeFlag: Constants.transactionEstimatedTime.unknown
 
 
     property alias selectedTipLimit: inputPerGasTipLimit.text
@@ -62,11 +64,15 @@ Item {
             return
 
         }
+
+        Qt.callLater(function () {
         let ethValue = root.getGasEthValue(inputGasPrice.text, inputGasLimit.text)
 
         let fiatValue = root.getFiatValue(ethValue, "ETH", root.defaultCurrency)
         selectedGasEthValue = ethValue
         selectedGasFiatValue = fiatValue
+        root.estimatedTxTimeFlag = root.getEstimatedTime(inputPerGasTipLimit.text, inputGasPrice.text)
+        })
     }
 
     function appendError(accum, error, nonBlocking = false) {
@@ -109,6 +115,11 @@ Item {
         if (!optimalGasButton.gasRadioBtn.checked) {
             optimalGasButton.gasRadioBtn.toggle()
         }
+    }
+
+    Component.onCompleted: {
+        updateGasEthValue()
+        checkLimits()
     }
 
     function validate() {

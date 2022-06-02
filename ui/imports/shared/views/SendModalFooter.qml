@@ -12,14 +12,17 @@ import StatusQ.Core.Theme 0.1
 Rectangle {
     id: footer
 
-    //% "Unknown"
-    property string estimatedTime: qsTr("Unknown")
     property string maxFiatFees: ""
+    property int estimatedTxTimeFlag: Constants.transactionEstimatedTime.unknown
     property bool currentGroupPending: true
     property bool currentGroupValid: false
     property bool isLastGroup: false
 
     signal nextButtonClicked()
+
+    onEstimatedTxTimeFlagChanged: {
+        estimatedTime.text = Utils.getLabelForEstimatedTxTime(estimatedTxTimeFlag)
+    }
 
     width: parent.width
     height: 82
@@ -55,9 +58,9 @@ Rectangle {
             }
             // To-do not implemented yet
             StatusBaseText {
+                id: estimatedTime
                 font.pixelSize: 15
                 color: Theme.palette.directColor1
-                text: estimatedTime
                 wrapMode: Text.WordWrap
             }
         }
@@ -79,6 +82,7 @@ Rectangle {
                     wrapMode: Text.WordWrap
                 }
                 StatusBaseText {
+                    id: fiatFees
                     font.pixelSize: 15
                     color: Theme.palette.directColor1
                     text: maxFiatFees

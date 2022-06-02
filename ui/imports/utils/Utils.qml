@@ -618,6 +618,19 @@ QtObject {
 
     /* Validation section end */
 
+    function getLabelForEstimatedTxTime(estimatedFlag) {
+        if (estimatedFlag === Constants.transactionEstimatedTime.lessThanOneMin) {
+            return qsTr("< 1 min")
+        }
+        if (estimatedFlag === Constants.transactionEstimatedTime.lessThanThreeMins) {
+            return qsTr("< 3 mins")
+        }
+        if (estimatedFlag === Constants.transactionEstimatedTime.lessThanFiveMins) {
+                return qsTr("< 5 mins")
+        }
+
+        return qsTr("> 5 mins")
+    }
 
     function getContactDetailsAsJson(publicKey) {
         let jsonObj = mainModule.getContactDetailsAsJson(publicKey)

@@ -110,3 +110,6 @@ method getChainIdForChat*(self: Module): int =
 
 method getChainIdForBrowser*(self: Module): int =
   return self.controller.getChainIdForBrowser()
+
+method getEstimatedTime*(self: Module, priorityFeePerGas: string, maxFeePerGas: string): int = 
+  return self.controller.getEstimatedTime(priorityFeePerGas, maxFeePerGas).int
