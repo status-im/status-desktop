@@ -140,3 +140,6 @@ QtObject:
 
   proc getChainIdForBrowser*(self: View): int {.slot.} =
     return self.delegate.getChainIdForBrowser()
+
+  proc getEstimatedTime*(self: View, priorityFeePerGas: string, maxFeePerGas: string): int {.slot.} =
+    return self.delegate.getEstimatedTime(priorityFeePerGas, maxFeePerGas)

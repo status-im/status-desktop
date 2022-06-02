@@ -34,6 +34,13 @@ const SIGNAL_TRANSACTIONS_LOADED* = "transactionsLoaded"
 const SIGNAL_TRANSACTION_SENT* = "transactionSent"
 
 type
+  EstimatedTime* {.pure.} = enum
+    Unknown = -1
+    LessThanOneMin
+    LessThanThreeMins
+    LessThanFiveMins
+
+type
   TransactionMinedArgs* = ref object of Args
     data*: string
     transactionHash*: string
@@ -394,3 +401,69 @@ QtObject:
     except Exception as e:
       error "Error fetching crypto services", message = e.msg
       return @[]
+
+  proc addToAllTransactionsAndSetNewMinMax(self: Service, myTip: float, numOfTransactionWithTipLessThanMine: var int, 
+    transactions: JsonNode) =
+    if transactions.kind != JArray:
+      return
+    for t in transactions:
+      let gasPriceUnparsed = $fromHex(Stuint[256], t{"gasPrice"}.getStr)
+      let gasPrice = parseFloat(wei2gwei(gasPriceUnparsed))
+      if gasPrice < myTip:
+        numOfTransactionWithTipLessThanMine.inc
+
+  proc getEstimatedTime*(self: Service, priorityFeePerGas: string, maxFeePerGas: string): EstimatedTime = 
+    let priorityFeePerGasF = priorityFeePerGas.parseFloat
+    let maxFeePerGasF = maxFeePerGas.parseFloat
+    var transactionsProcessed = 0
+    var numOfTransactionWithTipLessThanMine = 0
+    var latestBlockNumber: Option[Uint256]
+    var expectedBaseFeeForNextBlock: float
+    try:
+      let response = eth.getBlockByNumber("latest", true)
+      if response.error.isNil:
+        let transactionsJson = response.result{"transactions"}
+        self.addToAllTransactionsAndSetNewMinMax(priorityFeePerGasF, numOfTransactionWithTipLessThanMine, transactionsJson)
+        transactionsProcessed = transactionsJson.len
+        latestBlockNumber = some(stint.fromHex(Uint256, response.result{"number"}.getStr))
+        let latestBlockBaseFeePerGasUnparsed = $fromHex(Stuint[256], response.result{"baseFeePerGas"}.getStr)
+        let latestBlockBaseFeePerGas = parseFloat(wei2gwei(latestBlockBaseFeePerGasUnparsed))
+        let latestBlockGasUsedUnparsed = $fromHex(Stuint[256], response.result{"gasUsed"}.getStr)
+        let latestBlockGasUsed = parseFloat(wei2gwei(latestBlockGasUsedUnparsed))
+        let latestBlockGasLimitUnparsed = $fromHex(Stuint[256], response.result{"gasLimit"}.getStr)
+        let latestBlockGasLimit = parseFloat(wei2gwei(latestBlockGasLimitUnparsed))
+
+        let ratio = latestBlockGasUsed / latestBlockGasLimit * 0.01
+        let maxFeeChange = latestBlockBaseFeePerGas * 0.125
+        if(ratio > 50):
+          expectedBaseFeeForNextBlock = latestBlockBaseFeePerGas + maxFeeChange * (ratio - 50) * 0.01
+        else:
+          expectedBaseFeeForNextBlock = latestBlockBaseFeePerGas - maxFeeChange * (50 - ratio) * 0.01
+    except Exception as e:
+      error "error fetching latest block", msg=e.msg
+
+    if latestBlockNumber.isNone or
+      priorityFeePerGasF + expectedBaseFeeForNextBlock > maxFeePerGasF:
+      return EstimatedTime.Unknown
+
+    var blockNumber = latestBlockNumber.get
+    while (transactionsProcessed < 100 and latestBlockNumber.get < blockNumber + 10):
+      blockNumber = blockNumber - 1
+      try:
+        let hexPrevNum = "0x" & stint.toHex(blockNumber)
+        let response = getBlockByNumber(hexPrevNum, true)
+        let transactionsJson = response.result{"transactions"}
+        self.addToAllTransactionsAndSetNewMinMax(priorityFeePerGasF, numOfTransactionWithTipLessThanMine, transactionsJson)
+        transactionsProcessed += transactionsJson.len
+      except Exception as e:
+        error "error fetching block number", blockNumber=blockNumber, msg=e.msg
+
+    let p = numOfTransactionWithTipLessThanMine / transactionsProcessed
+    if p > 0.5:
+      return EstimatedTime.LessThanOneMin
+    elif p > 0.35:
+      return EstimatedTime.LessThanThreeMins
+    elif p > 0.15:
+      return EstimatedTime.LessThanFiveMins
+    else:
+      return EstimatedTime.Unknown

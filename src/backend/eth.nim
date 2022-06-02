@@ -6,8 +6,8 @@ export response_type
 proc getAccounts*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   return core.callPrivateRPC("eth_accounts")
 
-proc getBlockByNumber*(blockNumber: string): RpcResponse[JsonNode] {.raises: [Exception].} =
-  let payload = %* [blockNumber, false]
+proc getBlockByNumber*(blockNumber: string, fullTransactionObject = false): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [blockNumber, fullTransactionObject]
   return core.callPrivateRPC("eth_getBlockByNumber", payload)
 
 proc getNativeChainBalance*(chainId: int, address: string): RpcResponse[JsonNode] {.raises: [Exception].} =

@@ -64,6 +64,9 @@ method getChainIdForChat*(self: AccessInterface): int =
 method getChainIdForBrowser*(self: AccessInterface): int =
   raise newException(ValueError, "No implementation available")
 
+method getEstimatedTime*(self: AccessInterface, priorityFeePerGas: string, maxFeePerGas: string): int {.base.} = 
+  raise newException(ValueError, "No implementation available")
+
 # View Delegate Interface
 # Delegate for the view must be declared here due to use of QtObject and multi
 # inheritance, which is not well supported in Nim.
