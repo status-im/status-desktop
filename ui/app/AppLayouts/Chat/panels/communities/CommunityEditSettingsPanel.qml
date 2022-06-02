@@ -41,8 +41,8 @@ Flickable {
     interactive: contentHeight > height
     flickableDirection: Flickable.VerticalFlick
 
-    implicitWidth: 600
-    implicitHeight: 800
+    implicitWidth: layout.implicitWidth
+    implicitHeight: layout.implicitHeight
 
     ColumnLayout {
         id: layout

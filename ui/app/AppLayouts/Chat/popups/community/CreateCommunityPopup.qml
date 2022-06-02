@@ -149,21 +149,25 @@ StatusModal {
         id: d
 
         function createCommunity() {
-            let error = store.createCommunity(
-                Utils.filterXSS(nameInput.input.text),
-                Utils.filterXSS(descriptionTextInput.input.text),
-                Utils.filterXSS(introMessageInput.input.text),
-                Utils.filterXSS(outroMessageInput.input.text),
-                options.requestToJoinEnabled ? Constants.communityChatOnRequestAccess : Constants.communityChatPublicAccess,
-                colorPicker.color.toString().toUpperCase(),
-                logoPicker.source,
-                logoPicker.cropRect.x,
-                logoPicker.cropRect.y,
-                logoPicker.cropRect.x + logoPicker.cropRect.width,
-                logoPicker.cropRect.y + logoPicker.cropRect.height,
-                options.archiveSupportEnabled,
-                options.pinMessagesEnabled
-            )
+            const error = store.createCommunity({
+                    name: Utils.filterXSS(nameInput.input.text),
+                    description: Utils.filterXSS(descriptionTextInput.input.text),
+                    introMessage: Utils.filterXSS(introMessageInput.input.text),
+                    outroMessage: Utils.filterXSS(outroMessageInput.input.text),
+                    color: colorPicker.color.toString().toUpperCase(),
+                    image: {
+                        src: logoPicker.source,
+                        AX: logoPicker.cropRect.x,
+                        AY: logoPicker.cropRect.y,
+                        BX: logoPicker.cropRect.x + logoPicker.cropRect.width,
+                        BY: logoPicker.cropRect.y + logoPicker.cropRect.height,
+                    },
+                    options: {
+                        historyArchiveSupportEnabled: options.archiveSupportEnabled,
+                        checkedMembership: options.requestToJoinEnabled ? Constants.communityChatOnRequestAccess : Constants.communityChatPublicAccess,
+                        pinMessagesAllowedForMembers: options.pinMessagesEnabled
+                    }
+            })
             if (error) {
                 errorDialog.text = error.error
                 errorDialog.open()

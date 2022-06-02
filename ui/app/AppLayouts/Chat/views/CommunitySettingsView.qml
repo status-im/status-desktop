@@ -129,7 +129,7 @@ StatusAppTwoPanelLayout {
                 editable: root.community.amISectionAdmin
 
                 onEdited: {
-                    let error = root.chatCommunitySectionModule.editCommunity(
+                    const error = root.chatCommunitySectionModule.editCommunity(
                         Utils.filterXSS(item.name),
                         Utils.filterXSS(item.description),
                         Utils.filterXSS(item.introMessage),

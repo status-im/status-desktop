@@ -309,8 +309,7 @@ Item {
                         width: parent.width
                         height: 54
                         enabled: true
-                        //% "Unsupported state"
-                        text: qsTrId("unsupported-state")
+                        text: qsTr("Unsupported state")
                         onClicked: {
 
                             let onBtnClick = function(){
@@ -319,7 +318,8 @@ Item {
                                 if (rectangleBubble.state === "joined") {
                                     root.store.setActiveCommunity(communityId);
                                     return
-                                } else if (rectangleBubble.state === "unjoined") {
+                                }
+                                if (rectangleBubble.state === "unjoined") {
                                     Global.openPopup(communityIntroDialog, { joinMethod: () => {
                                                              let error = root.store.joinCommunity(communityId)
                                                              if (error) joiningError.showError(error)
