@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.13
 
 import utils 1.0
 import shared 1.0
+import shared.panels 1.0
 
 import "stores"
 import "popups"
@@ -27,7 +28,7 @@ StatusAppTwoPanelLayout {
     QtObject {
         id: d
 
-        readonly property int topMargin: 0
+        readonly property int topMargin: secureYourSeedPhrase.visible ? secureYourSeedPhrase.height : 0
         readonly property int bottomMargin: 56
         readonly property int leftMargin: 48
         readonly property int rightMargin: 48
@@ -39,6 +40,7 @@ StatusAppTwoPanelLayout {
         id: leftTab
         store: profileView.store
         anchors.fill: parent
+        anchors.topMargin: d.topMargin
     }
 
     rightPanel: Item {
@@ -225,5 +227,24 @@ StatusAppTwoPanelLayout {
                 contentWidth: d.contentWidth
             }
         }
+    } // Item
+    ModuleWarning {
+        id: secureYourSeedPhrase
+        width: parent.width
+        visible: profileContainer.currentIndex === Constants.settingsSubsection.profile &&
+                 !profileView.store.profileStore.userDeclinedBackupBanner
+        color: Style.current.red
+        btnWidth: 100
+        text: qsTr("Secure your seed phrase")
+        btnText: qsTr("Back up now")
+
+        onClick: function(){
+            Global.openBackUpSeedPopup();
+        }
+
+        onClosed: {
+            profileView.store.profileStore.userDeclinedBackupBanner = true
+        }
+
     }
-}
+} // StatusAppTwoPanelLayout

@@ -92,6 +92,8 @@ const LSS_KEY_IS_DDMMYY_DATE_FORMAT* = "is_DDMMYY_date_format"
 const DEFAULT_IS_DDMMYY_DATE_FORMAT = false
 const LSS_KEY_IS_24H_TIME_FORMAT* = "is_24h_time_format"
 const DEFAULT_IS_24H_TIME_FORMAT = false
+const LSS_KEY_USER_DECLINED_BACKUP_BANNER* = "userDeclinedBackupBanner"
+const DEFAULT_USER_DECLINED_BACKUP_BANNER = false
 
 
 logScope:
@@ -742,6 +744,18 @@ QtObject:
     read = getIs24hTimeFormat
     write = setIs24hTimeFormat
     notify = is24hTimeFormatChanged
+  
+  proc userDeclinedBackupBannerChanged*(self: LocalAccountSensitiveSettings) {.signal.}
+  proc getUserDeclinedBackupBanner*(self: LocalAccountSensitiveSettings): bool {.slot.} =
+    getSettingsProp[bool](self, LSS_KEY_USER_DECLINED_BACKUP_BANNER, newQVariant(DEFAULT_USER_DECLINED_BACKUP_BANNER))
+  proc setUserDeclinedBackupBanner*(self: LocalAccountSensitiveSettings, value: bool) {.slot.} =
+    setSettingsProp(self, LSS_KEY_USER_DECLINED_BACKUP_BANNER, newQVariant(value)):
+      self.userDeclinedBackupBannerChanged()
+
+  QtProperty[bool] userDeclinedBackupBanner:
+    read = getUserDeclinedBackupBanner
+    write = setUserDeclinedBackupBanner
+    notify = userDeclinedBackupBannerChanged
 
   proc removeKey*(self: LocalAccountSensitiveSettings, key: string) =
     if(self.settings.isNil):
@@ -796,3 +810,4 @@ QtObject:
       of LSS_KEY_STICKERS_ENS_ROPSTEN: self.stickersEnsRopstenChanged()
       of LSS_KEY_IS_DDMMYY_DATE_FORMAT: self.isDDMMYYDateFormatChanged()
       of LSS_KEY_IS_24H_TIME_FORMAT: self.is24hTimeFormatChanged()
+      of LSS_KEY_USER_DECLINED_BACKUP_BANNER: self.userDeclinedBackupBannerChanged()

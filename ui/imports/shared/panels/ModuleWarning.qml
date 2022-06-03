@@ -22,6 +22,8 @@ Rectangle {
         closeBtn.clicked(null)
     }
 
+    signal closed
+
     Row {
         spacing: Style.current.halfPadding
         anchors.horizontalCenter: parent.horizontalCenter
@@ -90,6 +92,7 @@ Rectangle {
         onClicked: ParallelAnimation {
             PropertyAnimation { target: root; property: "visible"; to: false; }
             PropertyAnimation { target: root; property: "y"; to: -1 * root.height }
+            onFinished: root.closed()
         }
     }
 }
