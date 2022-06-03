@@ -17,6 +17,7 @@ type MessageSignal* = ref object of Signal
   devices*: seq[DeviceDto]
   emojiReactions*: seq[ReactionDto]
   communities*: seq[CommunityDto]
+  communitiesSettings*: seq[CommunitySettingsDto]
   membershipRequests*: seq[CommunityMembershipRequestDto]
   activityCenterNotifications*: seq[ActivityCenterNotificationDto]
   statusUpdates*: seq[StatusUpdateDto]
@@ -57,6 +58,10 @@ proc fromEvent*(T: type MessageSignal, event: JsonNode): MessageSignal =
   if event["event"]{"communities"} != nil:
     for jsonCommunity in event["event"]["communities"]:
       signal.communities.add(jsonCommunity.toCommunityDto())
+
+  if event["event"]{"communitiesSettings"} != nil:
+    for jsonCommunitySettings in event["event"]["communitiesSettings"]:
+      signal.communitiesSettings.add(jsonCommunitySettings.toCommunitySettingsDto())
 
   if event["event"]{"requestsToJoinCommunity"} != nil:
     for jsonCommunity in event["event"]["requestsToJoinCommunity"]:

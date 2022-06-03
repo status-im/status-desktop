@@ -112,6 +112,7 @@ QtObject:
   proc loadCommunitiesSettings(self: Service): seq[CommunitySettingsDto]
   proc loadMyPendingRequestsToJoin*(self: Service)
   proc handleCommunityUpdates(self: Service, communities: seq[CommunityDto], updatedChats: seq[ChatDto])
+  proc handleCommunitiesSettingsUpdates(self: Service, communitiesSettings: seq[CommunitySettingsDto])
   proc pendingRequestsToJoinForCommunity*(self: Service, communityId: string): seq[CommunityMembershipRequestDto]
 
   proc delete*(self: Service) =
@@ -151,6 +152,9 @@ QtObject:
       if (receivedData.communities.len > 0):
         # Channel added removed is notified in the chats param
         self.handleCommunityUpdates(receivedData.communities, receivedData.chats)
+
+      if (receivedData.communitiesSettings.len > 0):
+        self.handleCommunitiesSettingsUpdates(receivedData.communitiesSettings)
 
       # Handling membership requests
       if(receivedData.membershipRequests.len > 0):
@@ -207,6 +211,14 @@ QtObject:
         let fullChatId = community.id & chat.id
         var chatDetails = self.chatService.getChatById(fullChatId)
         result.add(chatDetails)
+
+  proc handleCommunitiesSettingsUpdates(self: Service, communitiesSettings: seq[CommunitySettingsDto]) =
+    for settings in communitiesSettings:
+      if self.allCommunities.hasKey(settings.id):
+        self.allCommunities[settings.id].settings = settings
+      if self.joinedCommunities.hasKey(settings.id):
+        self.joinedCommunities[settings.id].settings = settings
+        self.events.emit(SIGNAL_COMMUNITY_EDITED, CommunityArgs(community: self.joinedCommunities[settings.id]))
 
   proc handleCommunityUpdates(self: Service, communities: seq[CommunityDto], updatedChats: seq[ChatDto]) =
     var community = communities[0]
