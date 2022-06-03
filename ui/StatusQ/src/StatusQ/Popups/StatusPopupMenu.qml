@@ -20,7 +20,7 @@ Menu {
     property var openHandler
     property var closeHandler
 
-    dim: true
+    dim: false
 
     signal menuItemClicked(int menuIndex)
 
