@@ -1,5 +1,5 @@
 import NimQml
-import ../../../../shared_models/user_model
+import ../../../../shared_models/member_model
 import io_interface
 
 QtObject:
@@ -32,9 +32,9 @@ QtObject:
   proc getModel(self: View): QVariant {.slot.} =
     return self.modelVariant
 
-  QtProperty[QVariant] model:
+  QtProperty[QVariant]model:
     read = getModel
     notify = modelChanged
-  
+
   proc getMembersPublicKeys*(self: View): string {.slot.} =
     return self.delegate.getMembersPublicKeys()

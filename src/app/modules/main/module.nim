@@ -3,7 +3,7 @@ import NimQml, tables, json, sugar, sequtils, strformat, marshal, times
 import io_interface, view, controller, chat_search_item, chat_search_model
 import ephemeral_notification_item, ephemeral_notification_model
 import ./communities/models/[pending_request_item, pending_request_model]
-import ../shared_models/[user_item, user_model, section_item, section_model, active_section]
+import ../shared_models/[member_item, member_model, section_item, section_model, active_section]
 import ../../global/app_sections_config as conf
 import ../../global/app_signals
 import ../../global/global_singleton
@@ -221,17 +221,17 @@ proc createChannelGroupItem[T](self: Module[T], c: ChannelGroupDto): SectionItem
     c.permissions.access,
     c.permissions.ensOnly,
     c.muted,
-    c.members.map(proc(member: ChatMember): user_item.Item =
+    c.members.map(proc(member: ChatMember): MemberItem =
       let contactDetails = self.controller.getContactDetails(member.id)
-      result = user_item.initItem(
-        member.id,
-        contactDetails.displayName,
-        contactDetails.details.name,
-        contactDetails.details.localNickname,
-        contactDetails.details.alias,
-        OnlineStatus.Offline,
-        contactDetails.icon,
-        contactDetails.details.added
+      result = initMemberItem(
+        pubKey = member.id,
+        displayName = contactDetails.displayName,
+        ensName = contactDetails.details.name,
+        localNickname = contactDetails.details.localNickname,
+        alias = contactDetails.details.alias,
+        icon = contactDetails.icon,
+        onlineStatus = OnlineStatus.Offline,
+        isContact = contactDetails.details.added # FIXME
         )),
     if (isCommunity): communityDetails.pendingRequestsToJoin.map(x => pending_request_item.initItem(
       x.id,

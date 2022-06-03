@@ -1,6 +1,8 @@
 import NimQml, Tables, strformat, sequtils, sugar
 
-import user_item
+# TODO: use generics to remove duplication between user_model and member_model
+
+import member_item
 
 type
   ModelRole {.pure.} = enum
@@ -20,11 +22,13 @@ type
     ContactRequest
     IncomingVerification
     OutcomingVerification
+    IsAdmin
+    Joined
 
 QtObject:
   type
     Model* = ref object of QAbstractListModel
-      items: seq[UserItem]
+      items: seq[MemberItem]
 
   proc delete(self: Model) =
     self.items = @[]
@@ -39,7 +43,7 @@ QtObject:
 
   proc countChanged(self: Model) {.signal.}
 
-  proc setItems*(self: Model, items: seq[UserItem]) =
+  proc setItems*(self: Model, items: seq[MemberItem]) =
     self.beginResetModel()
     self.items = items
     self.endResetModel()
@@ -47,11 +51,13 @@ QtObject:
 
   proc `$`*(self: Model): string =
     for i in 0 ..< self.items.len:
-      result &= fmt"""User Model:
+      result &= fmt"""Member Model:
       [{i}]:({$self.items[i]})
       """
+
   proc getCount*(self: Model): int {.slot.} =
     self.items.len
+
   QtProperty[int]count:
     read = getCount
     notify = countChanged
@@ -77,6 +83,8 @@ QtObject:
       ModelRole.ContactRequest.int: "contactRequest",
       ModelRole.IncomingVerification.int: "incomingVerification",
       ModelRole.OutcomingVerification.int: "outcomingVerification",
+      ModelRole.IsAdmin.int: "isAdmin",
+      ModelRole.Joined.int: "joined",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -122,22 +130,12 @@ QtObject:
       result = newQVariant(item.incomingVerification.int)
     of ModelRole.OutcomingVerification:
       result = newQVariant(item.outcomingVerification.int)
+    of ModelRole.IsAdmin:
+      result = newQVariant(item.isAdmin)
+    of ModelRole.Joined:
+      result = newQVariant(item.joined)
 
-  proc addItems*(self: Model, items: seq[UserItem]) =
-    if(items.len == 0):
-      return
-
-    let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
-
-    let first = self.items.len
-    let last = first + items.len - 1
-    self.beginInsertRows(parentModelIndex, first, last)
-    self.items.add(items)
-    self.endInsertRows()
-    self.countChanged()
-
-  proc addItem*(self: Model, item: UserItem) =
+  proc addItem*(self: Model, item: MemberItem) =
     # we need to maintain online contact on top, that means
     # if we add an item online status we add it as the last online item (before the first offline item)
     # if we add an item with offline status we add it as the first offline item (after the last online item)
@@ -158,12 +156,6 @@ QtObject:
     self.endInsertRows()
     self.countChanged()
 
-  proc clear*(self: Model) =
-     self.beginResetModel()
-     self.items = @[]
-     self.endResetModel()
-
-# TODO: rename to `findIndexForMessagePubkey`
   proc findIndexForMessageId(self: Model, pubKey: string): int =
     for i in 0 ..< self.items.len:
       if(self.items[i].pubKey == pubKey):
@@ -180,7 +172,6 @@ QtObject:
     self.endRemoveRows()
     self.countChanged()
 
-# TODO: rename to `containsItem`
   proc isContactWithIdAdded*(self: Model, id: string): bool =
     return self.findIndexForMessageId(id) != -1
 
@@ -211,6 +202,7 @@ QtObject:
     let index = self.createIndex(ind, 0, nil)
     self.dataChanged(index, index, @[ModelRole.Icon.int])
 
+# FIXME: remove defaults
   proc updateItem*(
       self: Model,
       pubKey: string,
@@ -218,7 +210,10 @@ QtObject:
       ensName: string,
       localNickname: string,
       alias: string,
-      icon: string
+      icon: string,
+      isContact: bool = false,
+      isAdmin: bool = false,
+      joined: bool = false
       ) =
     let ind = self.findIndexForMessageId(pubKey)
     if(ind == -1):
@@ -229,6 +224,9 @@ QtObject:
     self.items[ind].localNickname = localNickname
     self.items[ind].alias = alias
     self.items[ind].icon = icon
+    self.items[ind].isContact = isContact
+    self.items[ind].isAdmin = isAdmin
+    self.items[ind].joined = joined
 
     let index = self.createIndex(ind, 0, nil)
     self.dataChanged(index, index, @[
@@ -237,22 +235,9 @@ QtObject:
       ModelRole.LocalNickname.int,
       ModelRole.Alias.int,
       ModelRole.Icon.int,
-    ])
-  
-  proc updateName*(
-    self: Model,
-    pubKey: string,
-    displayName: string
-  ) =
-    let ind = self.findIndexForMessageId(pubKey)
-    if(ind == -1):
-      return
-
-    self.items[ind].displayName = displayName
-
-    let index = self.createIndex(ind, 0, nil)
-    self.dataChanged(index, index, @[
-      ModelRole.DisplayName.int
+      ModelRole.IsContact.int,
+      ModelRole.IsAdmin.int,
+      ModelRole.Joined.int,
     ])
 
   proc setOnlineStatus*(self: Model, pubKey: string,

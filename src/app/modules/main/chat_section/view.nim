@@ -1,7 +1,7 @@
 import NimQml, json, sequtils
 import model as chats_model
 import item, sub_item, active_item
-import ../../shared_models/contacts_model as contacts_model
+import ../../shared_models/user_model as user_model
 import io_interface
 
 QtObject:
@@ -13,9 +13,9 @@ QtObject:
       activeItem: ActiveItem
       activeItemVariant: QVariant
       tmpChatId: string # shouldn't be used anywhere except in prepareChatContentModuleForChatId/getChatContentModule procs
-      contactRequestsModel: contacts_model.Model
+      contactRequestsModel: user_model.Model
       contactRequestsModelVariant: QVariant
-      listOfMyContacts: contacts_model.Model
+      listOfMyContacts: user_model.Model
       listOfMyContactsVariant: QVariant
       editCategoryChannelsModel: chats_model.Model
       editCategoryChannelsVariant: QVariant
@@ -44,9 +44,9 @@ QtObject:
     result.editCategoryChannelsVariant = newQVariant(result.editCategoryChannelsModel)
     result.activeItem = newActiveItem()
     result.activeItemVariant = newQVariant(result.activeItem)
-    result.contactRequestsModel = contacts_model.newModel()
+    result.contactRequestsModel = user_model.newModel()
     result.contactRequestsModelVariant = newQVariant(result.contactRequestsModel)
-    result.listOfMyContacts = contacts_model.newModel()
+    result.listOfMyContacts = user_model.newModel()
     result.listOfMyContactsVariant = newQVariant(result.listOfMyContacts)
     result.loadingHistoryMessagesInProgress = false
 
@@ -77,7 +77,7 @@ QtObject:
   QtProperty[QVariant] editCategoryChannelsModel:
     read = getEditCategoryChannels
 
-  proc contactRequestsModel*(self: View): contacts_model.Model =
+  proc contactRequestsModel*(self: View): user_model.Model =
     return self.contactRequestsModel
 
   proc getContactRequestsModel(self: View): QVariant {.slot.} =
@@ -95,7 +95,7 @@ QtObject:
     self.delegate.clearListOfMyContacts()
     self.listOfMyContactsChanged()
 
-  proc listOfMyContacts*(self: View): contacts_model.Model =
+  proc listOfMyContacts*(self: View): user_model.Model =
     return self.listOfMyContacts
 
   proc getListOfMyContacts(self: View): QVariant {.slot.} =

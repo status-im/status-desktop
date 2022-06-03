@@ -4,8 +4,8 @@ import io_interface
 import ../io_interface as delegate_interface
 import view, controller, item, sub_item, sub_model, base_item
 import model as chats_model
-import ../../shared_models/contacts_item as contacts_item
-import ../../shared_models/contacts_model as contacts_model
+import ../../shared_models/user_item as user_item
+import ../../shared_models/user_model as user_model
 
 import chat_content/module as chat_content_module
 
@@ -201,21 +201,21 @@ proc buildChatSectionUI(
 
   self.setActiveItemSubItem(selectedItemId, selectedSubItemId)
 
-proc createItemFromPublicKey(self: Module, publicKey: string): contacts_item.Item =
+proc createItemFromPublicKey(self: Module, publicKey: string): UserItem =
   let contactDetails = self.controller.getContactDetails(publicKey)
 
-  return contacts_item.initItem(
-    contactDetails.details.id,
-    contactDetails.displayName,
-    contactDetails.icon,
-    contactDetails.details.isMutualContact(),
-    contactDetails.details.isBlocked(),
-    contactDetails.details.isContactVerified(),
-    contactDetails.details.isContactUntrustworthy()
+  return initUserItem(
+    pubKey = contactDetails.details.id,
+    displayName = contactDetails.displayName,
+    icon = contactDetails.icon,
+    isContact = contactDetails.details.isMutualContact(),
+    isVerified = contactDetails.details.isContactVerified(),
+    isUntrustworthy = contactDetails.details.isContactUntrustworthy(),
+    isBlocked = contactDetails.details.isBlocked()
   )
 
 proc initContactRequestsModel(self: Module) =
-  var contactsWhoAddedMe: seq[contacts_item.Item]
+  var contactsWhoAddedMe: seq[UserItem]
   let contacts =  self.controller.getContacts(ContactsGroup.IncomingPendingContactRequests)
   for c in contacts:
     let item = self.createItemFromPublicKey(c.id)
@@ -227,7 +227,7 @@ proc convertPubKeysToJson(self: Module, pubKeys: string): seq[string] =
   return map(parseJson(pubKeys).getElems(), proc(x:JsonNode):string = x.getStr)
 
 method initListOfMyContacts*(self: Module, pubKeys: string) =
-  var myContacts: seq[contacts_item.Item]
+  var myContacts: seq[UserItem]
   let contacts =  self.controller.getContacts(ContactsGroup.MyMutualContacts)
   for c in contacts:
     let item = self.createItemFromPublicKey(c.id)
@@ -598,11 +598,11 @@ method acceptContactRequest*(self: Module, publicKey: string) =
   self.controller.addContact(publicKey)
 
 method onContactAccepted*(self: Module, publicKey: string) =
-  self.view.contactRequestsModel().removeItemWithPubKey(publicKey)
+  self.view.contactRequestsModel().removeItemById(publicKey)
   self.updateParentBadgeNotifications()
 
 method acceptAllContactRequests*(self: Module) =
-  let pubKeys = self.view.contactRequestsModel().getPublicKeys()
+  let pubKeys = self.view.contactRequestsModel().getItemIds()
   for pk in pubKeys:
     self.acceptContactRequest(pk)
 
@@ -610,11 +610,11 @@ method rejectContactRequest*(self: Module, publicKey: string) =
   self.controller.rejectContactRequest(publicKey)
 
 method onContactRejected*(self: Module, publicKey: string) =
-  self.view.contactRequestsModel().removeItemWithPubKey(publicKey)
+  self.view.contactRequestsModel().removeItemById(publicKey)
   self.updateParentBadgeNotifications()
 
 method rejectAllContactRequests*(self: Module) =
-  let pubKeys = self.view.contactRequestsModel().getPublicKeys()
+  let pubKeys = self.view.contactRequestsModel().getItemIds()
   for pk in pubKeys:
     self.rejectContactRequest(pk)
 
@@ -622,7 +622,7 @@ method blockContact*(self: Module, publicKey: string) =
   self.controller.blockContact(publicKey)
 
 method onContactBlocked*(self: Module, publicKey: string) =
-  self.view.contactRequestsModel().removeItemWithPubKey(publicKey)
+  self.view.contactRequestsModel().removeItemById(publicKey)
   self.view.chatsModel().blockUnblockItemOrSubItemById(publicKey, blocked=true)
 
 method onContactUnblocked*(self: Module, publicKey: string) =
@@ -635,7 +635,7 @@ method onContactDetailsUpdated*(self: Module, publicKey: string) =
   if (contactDetails.details.isContactRequestReceived() and
     not contactDetails.details.isContactRequestSent() and
     not contactDetails.details.isBlocked() and
-    not self.view.contactRequestsModel().containsItemWithPubKey(publicKey)):
+    not self.view.contactRequestsModel().isContactWithIdAdded(publicKey)):
       let item = self.createItemFromPublicKey(publicKey)
       self.view.contactRequestsModel().addItem(item)
       self.updateParentBadgeNotifications()

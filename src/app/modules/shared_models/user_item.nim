@@ -8,110 +8,218 @@ type
     Idle
     Invisible
 
-# TODO add role when it is needed
+  ContactRequest* {.pure.} = enum
+    None = 0
+    IncomingPending
+    IncomingRejected
+    OutcomingPending
+    OutcomingRejected
+
+  VerificationRequest* {.pure.} = enum
+    None = 0
+    Pending
+    Answered
+
 type
-  Item* = ref object
-    id: string
+  UserItem* = ref object of RootObj
+    pubKey: string
     displayName: string
     ensName: string
     localNickname: string
     alias: string
-    onlineStatus: OnlineStatus
     icon: string
-    isAdded: bool
-    isAdmin: bool
-    joined: bool
+    colorId: int
+    colorHash: string
+    onlineStatus: OnlineStatus
+    isContact: bool
+    isVerified: bool
+    isUntrustworthy: bool
+    isBlocked: bool
+    contactRequest: ContactRequest
+    incomingVerification: VerificationRequest
+    outcomingVerification: VerificationRequest
 
-proc initItem*(
-  id: string,
+proc setup*(self: UserItem,
+  pubKey: string,
   displayName: string,
   ensName: string,
   localNickname: string,
   alias: string,
-  onlineStatus: OnlineStatus,
   icon: string,
-  isAdded: bool = false,
-  isAdmin: bool = false,
-  joined: bool = false,
-): Item =
-  result = Item()
-  result.id = id
-  result.displayName = displayName
-  result.ensName = ensName
-  result.localNickname = localNickname
-  result.alias = alias
-  result.onlineStatus = onlineStatus
-  result.icon = icon
-  result.isAdded = isAdded
-  result.isAdmin = isAdmin
-  result.joined = joined
+  colorId: int,
+  colorHash: string,
+  onlineStatus: OnlineStatus,
+  isContact: bool,
+  isVerified: bool,
+  isUntrustworthy: bool,
+  isBlocked: bool,
+  contactRequest: ContactRequest,
+  incomingVerification: VerificationRequest,
+  outcomingVerification: VerificationRequest) =
+  self.pubKey = pubKey
+  self.displayName = displayName
+  self.ensName = ensName
+  self.localNickname = localNickname
+  self.alias = alias
+  self.icon = icon
+  self.colorId = colorId
+  self.colorHash = colorHash
+  self.onlineStatus = onlineStatus
+  self.isContact = isContact
+  self.isVerified = isVerified
+  self.isUntrustworthy = isUntrustworthy
+  self.isBlocked = isBlocked
+  self.contactRequest = contactRequest
+  self.incomingVerification = incomingVerification
+  self.outcomingVerification = outcomingVerification
 
-proc `$`*(self: Item): string =
+# FIXME: remove defaults
+proc initUserItem*(
+  pubKey: string,
+  displayName: string,
+  ensName: string = "",
+  localNickname: string = "",
+  alias: string = "",
+  icon: string,
+  colorId: int = 0,
+  colorHash: string = "",
+  onlineStatus: OnlineStatus = OnlineStatus.Offline,
+  isContact: bool,
+  isVerified: bool,
+  isUntrustworthy: bool,
+  isBlocked: bool,
+  contactRequest: ContactRequest = ContactRequest.None,
+  incomingVerification: VerificationRequest = VerificationRequest.None,
+  outcomingVerification: VerificationRequest = VerificationRequest.None
+): UserItem =
+  result = UserItem()
+  result.setup(
+    pubKey = pubKey,
+    displayName = displayName,
+    ensName = ensName,
+    localNickname = localNickname,
+    alias = alias,
+    icon = icon,
+    colorId = colorId,
+    colorHash = colorHash,
+    onlineStatus = onlineStatus,
+    isContact = isContact,
+    isVerified = isVerified,
+    isUntrustworthy = isUntrustworthy,
+    isBlocked = isBlocked,
+    contactRequest = contactRequest,
+    incomingVerification = incomingVerification,
+    outcomingVerification = outcomingVerification)
+
+proc `$`*(self: UserItem): string =
   result = fmt"""User Item(
-    id: {self.id},
+    pubKey: {self.pubkey},
     displayName: {self.displayName},
+    ensName: {self.ensName},
     localNickname: {self.localNickname},
     alias: {self.alias},
-    onlineStatus: {$self.onlineStatus.int},
     icon: {self.icon},
-    isAdded: {$self.isAdded},
-    isAdmin: {$self.isAdmin},
-    joined: {$self.joined},
+    colorId: {self.colorId},
+    colorHash: {self.colorHash},
+    onlineStatus: {$self.onlineStatus.int},
+    isContact: {self.isContact},
+    isVerified: {self.isVerified},
+    isUntrustworthy: {self.isUntrustworthy},
+    isBlocked: {self.isBlocked},
+    contactRequest: {$self.contactRequest.int},
+    incomingVerification: {$self.incomingVerification.int},
+    outcomingVerification: {$self.outcomingVerification.int},
     ]"""
 
-proc id*(self: Item): string {.inline.} =
-  self.id
+proc pubKey*(self: UserItem): string {.inline.} =
+  self.pubKey
 
-proc name*(self: Item): string {.inline.} =
+proc displayName*(self: UserItem): string {.inline.} =
   self.displayName
 
-proc `name=`*(self: Item, value: string) {.inline.} =
+proc `displayName=`*(self: UserItem, value: string) {.inline.} =
   self.displayName = value
 
-proc ensName*(self: Item): string {.inline.} =
+proc ensName*(self: UserItem): string {.inline.} =
   self.ensName
 
-proc `ensName=`*(self: Item, value: string) {.inline.} =
+proc `ensName=`*(self: UserItem, value: string) {.inline.} =
   self.ensName = value
 
-proc localNickname*(self: Item): string {.inline.} =
+proc localNickname*(self: UserItem): string {.inline.} =
   self.localNickname
 
-proc `localNickname=`*(self: Item, value: string) {.inline.} =
+proc `localNickname=`*(self: UserItem, value: string) {.inline.} =
   self.localNickname = value
 
-proc alias*(self: Item): string {.inline.} =
+proc alias*(self: UserItem): string {.inline.} =
   self.alias
 
-proc `alias=`*(self: Item, value: string) {.inline.} =
+proc `alias=`*(self: UserItem, value: string) {.inline.} =
   self.alias = value
 
-proc onlineStatus*(self: Item): OnlineStatus {.inline.} =
-  self.onlineStatus
-
-proc `onlineStatus=`*(self: Item, value: OnlineStatus) {.inline.} =
-  self.onlineStatus = value
-
-proc icon*(self: Item): string {.inline.} =
+proc icon*(self: UserItem): string {.inline.} =
   self.icon
 
-proc `icon=`*(self: Item, value: string) {.inline.} =
+proc `icon=`*(self: UserItem, value: string) {.inline.} =
   self.icon = value
 
-proc isAdmin*(self: Item): bool {.inline.} =
-  self.isAdmin
+proc colorId*(self: UserItem): int {.inline.} =
+  self.colorId
 
-proc `isAdmin=`*(self: Item, value: bool) {.inline.} =
-  self.isAdmin = value
+proc `colorId=`*(self: UserItem, value: int) {.inline.} =
+  self.colorId = value
 
-proc isAdded*(self: Item): bool {.inline.} =
-  self.isAdded
+proc colorHash*(self: UserItem): string {.inline.} =
+  self.colorHash
 
-proc `isAdded=`*(self: Item, value: bool) {.inline.} =
-  self.isAdded = value
+proc `colorHash=`*(self: UserItem, value: string) {.inline.} =
+  self.colorHash = value
 
-proc joined*(self: Item): bool {.inline.} =
-  self.joined
+proc onlineStatus*(self: UserItem): OnlineStatus {.inline.} =
+  self.onlineStatus
 
-proc `joined=`*(self: Item, value: bool) {.inline.} =
-  self.joined = value
+proc `onlineStatus=`*(self: UserItem, value: OnlineStatus) {.inline.} =
+  self.onlineStatus = value
+
+proc isContact*(self: UserItem): bool {.inline.} =
+  self.isContact
+
+proc `isContact=`*(self: UserItem, value: bool) {.inline.} =
+  self.isContact = value
+
+proc isVerified*(self: UserItem): bool {.inline.} =
+  self.isVerified
+
+proc `isVerified=`*(self: UserItem, value: bool) {.inline.} =
+  self.isVerified = value
+
+proc isUntrustworthy*(self: UserItem): bool {.inline.} =
+  self.isUntrustworthy
+
+proc `isUntrustworthy=`*(self: UserItem, value: bool) {.inline.} =
+  self.isUntrustworthy = value
+
+proc isBlocked*(self: UserItem): bool {.inline.} =
+  self.isBlocked
+
+proc `isBlocked=`*(self: UserItem, value: bool) {.inline.} =
+  self.isBlocked = value
+
+proc contactRequest*(self: UserItem): ContactRequest {.inline.} =
+  self.contactRequest
+
+proc `contactRequest=`*(self: UserItem, value: ContactRequest) {.inline.} =
+  self.contactRequest = value
+
+proc incomingVerification*(self: UserItem): VerificationRequest {.inline.} =
+  self.incomingVerification
+
+proc `incomingVerification=`*(self: UserItem, value: VerificationRequest) {.inline.} =
+  self.incomingVerification = value
+
+proc outcomingVerification*(self: UserItem): VerificationRequest {.inline.} =
+  self.outcomingVerification
+
+proc `outcomingVerification=`*(self: UserItem, value: VerificationRequest) {.inline.} =
+  self.outcomingVerification = value

@@ -2,7 +2,7 @@ import NimQml, Tables, strutils, strformat
 
 import json, json_serialization
 
-import section_item, user_model
+import section_item, member_model
 
 type
   ModelRole {.pure.} = enum

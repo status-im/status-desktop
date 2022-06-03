@@ -52,11 +52,11 @@ Item {
             for (var i = 0; i < items.count; ++i) {
                 var item = items.get(i);
                 if (panelUsage === Constants.contactsPanelUsage.verifiedMutualContacts) {
-                    if(item.model.verificationState === Constants.contactVerificationState.verified)
+                    if(item.model.isVerified)
                         visible.push(item);
                 }
-                else if (panelUsage === Constants.contactsPanelUsage.mutualContacts) {
-                    if(item.model.verificationState !== Constants.contactVerificationState.verified)
+                else if(panelUsage === Constants.contactsPanelUsage.mutualContacts) {
+                    if(!item.model.isVerified)
                         visible.push(item);
                 }
                 else {
@@ -101,16 +101,17 @@ Item {
 
         ContactPanel {
             id: panelDelegate
-            name: model.name
+            name: model.displayName
             publicKey: model.pubKey
             icon: model.icon
-            isMutualContact: model.isMutualContact
+            isMutualContact: model.isContact
             isBlocked: model.isBlocked
-            verificationState: model.verificationState
+            isVerified: model.isVerified
+            isUntrustworthy: model.isUntrustworthy
 
             searchStr: contactListRoot.searchString
 
-            showSendMessageButton: model.isMutualContact
+            showSendMessageButton: model.isContact
             showRejectContactRequestButton: {
                 if (contactListRoot.panelUsage === Constants.contactsPanelUsage.receivedContactRequest) {
                     return true
