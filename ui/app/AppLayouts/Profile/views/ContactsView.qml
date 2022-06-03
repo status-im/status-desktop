@@ -22,7 +22,8 @@ import "../../Chat/panels"
 
 SettingsContentBase {
     id: root
-
+    onWidthChanged: { contentItem.width = width; }
+    onHeightChanged: { contentItem.height = height; }
     property ContactsStore contactsStore
 
     property alias searchStr: searchBox.text
@@ -37,26 +38,23 @@ SettingsContentBase {
         }
     ]
 
-    ColumnLayout {
-        spacing: 0
-        width: root.contentWidth
-        height: root.height
+    Item {
+        id: contentItem
 
         SearchBox {
             id: searchBox
-            Layout.fillWidth: true
-            Layout.leftMargin: Style.current.padding
-            Layout.rightMargin: Style.current.padding
+            anchors.left: parent.left
+            anchors.right: parent.right
             input.implicitHeight: 44
             input.placeholderText: qsTr("Search by a display name or chat key")
         }
 
         StatusTabBar {
             id: contactsTabBar
-            Layout.fillWidth: true
-            Layout.leftMargin: Style.current.padding
-            Layout.rightMargin: Style.current.padding
-            Layout.topMargin: 2 * Style.current.padding
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.top: searchBox.bottom
+            anchors.topMargin: (2 * Style.current.padding)
             
             StatusTabButton {
                 id: contactsBtn
@@ -89,131 +87,120 @@ SettingsContentBase {
 
         StackLayout {
             id: stackLayout
-            Layout.fillWidth: true
-            Layout.fillHeight: true
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.top: contactsTabBar.bottom
+            anchors.bottom: parent.bottom
             currentIndex: contactsTabBar.currentIndex
-
             // CONTACTS
-            Item {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-
-                ColumnLayout {
-                    anchors.fill: parent
-
-                    ContactsListPanel {
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: root.height * 0.5
-                        contactsModel: root.contactsStore.myContactsModel
-                        clip: true
-                        title: qsTr("Identity Verified Contacts")
-                        searchString: searchBox.text
-                        panelUsage: Constants.contactsPanelUsage.verifiedMutualContacts
-
-                        onOpenProfilePopup: {
-                            Global.openProfilePopup(publicKey)
-                        }
-
-                        onSendMessageActionTriggered: {
-                            root.contactsStore.joinPrivateChat(publicKey)
-                        }
-
-                        onOpenChangeNicknamePopup: {
-                            Global.openProfilePopup(publicKey, null, "openNickname")
-                        }
+            Column {
+                ContactsListPanel {
+                    id: verifiedContacts
+                    width: parent.width
+                    height: ((contactsListHeight < (stackLayout.height/2)) ? contactsListHeight :
+                            (stackLayout.height-mutualContacts.contactsListHeight))
+                    scrollbarOn: mutualContacts.contactsListHeight > (stackLayout.height/2) ?
+                                 (contactsListHeight > (stackLayout.height/2)) : (contactsListHeight > parent.height)
+                    title: qsTr("Identity Verified Contacts")
+                    contactsModel: root.contactsStore.myContactsModel
+                    searchString: searchBox.text
+                    panelUsage: Constants.contactsPanelUsage.verifiedMutualContacts
+                    onOpenProfilePopup: {
+                        Global.openProfilePopup(publicKey)
+                    }
+                    onSendMessageActionTriggered: {
+                        root.contactsStore.joinPrivateChat(publicKey)
                     }
 
-                    ContactsListPanel {
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: root.height * 0.5
-                        contactsModel: root.contactsStore.myContactsModel
-                        clip: true
-                        searchString: searchBox.text
-                        panelUsage: Constants.contactsPanelUsage.mutualContacts
-
-                        onOpenProfilePopup: {
-                            Global.openProfilePopup(publicKey)
-                        }
-
-                        onSendMessageActionTriggered: {
-                            root.contactsStore.joinPrivateChat(publicKey)
-                        }
-
-                        onOpenChangeNicknamePopup: {
-                            Global.openProfilePopup(publicKey, null, "openNickname")
-                        }
-                    }
-
-                    Item {
-                        Layout.fillWidth: true
-                        Layout.fillHeight: true
+                    onOpenChangeNicknamePopup: {
+                        Global.openProfilePopup(publicKey, null, "openNickname")
                     }
                 }
 
-                NoFriendsRectangle {
-                    visible: root.contactsStore.myContactsModel.count === 0
-                    //% "You don’t have any contacts yet"
-                    text: qsTrId("you-don-t-have-any-contacts-yet")
+                ContactsListPanel {
+                    id: mutualContacts
                     width: parent.width
-                    anchors.centerIn: parent
+                    height: (contactsListHeight+50)
+                    scrollbarOn: verifiedContacts.contactsListHeight > (stackLayout.height/2) ?
+                                 (contactsListHeight > (stackLayout.height/2)) : (contactsListHeight > parent.height)
+                    title: qsTr("Contacts")
+                    contactsModel: root.contactsStore.myContactsModel
+                    searchString: searchBox.text
+                    panelUsage: Constants.contactsPanelUsage.mutualContacts
+                    onOpenProfilePopup: {
+                        Global.openProfilePopup(publicKey)
+                    }
+
+                    onSendMessageActionTriggered: {
+                        root.contactsStore.joinPrivateChat(publicKey)
+                    }
+
+                    onOpenChangeNicknamePopup: {
+                        Global.openProfilePopup(publicKey, null, "openNickname")
+                    }
+                }
+                Item {
+                    width: parent.width
+                    height: parent.height
+                    NoFriendsRectangle {
+                        anchors.centerIn: parent
+                        visible: root.contactsStore.myContactsModel.count === 0
+                        //% "You don’t have any contacts yet"
+                        text: qsTrId("you-don-t-have-any-contacts-yet")
+                    }
                 }
             }
 
             // PENDING REQUESTS
-            Item {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
+            Column {
+                ContactsListPanel {
+                    id: receivedRequests
+                    width: parent.width
+                    height: ((contactsListHeight < (stackLayout.height/2)) ? contactsListHeight :
+                            (stackLayout.height-sentRequests.contactsListHeight))
+                    scrollbarOn: (sentRequests.contactsListHeight > (stackLayout.height/2)) ?
+                                 (contactsListHeight > (stackLayout.height/2)) :
+                                 (contactsListHeight > (stackLayout.height - sentRequests.contactsListHeight))
+                    title: qsTr("Received")
+                    searchString: searchBox.text
+                    contactsModel: root.contactsStore.receivedContactRequestsModel
+                    panelUsage: Constants.contactsPanelUsage.receivedContactRequest
 
-                ColumnLayout {
-                    anchors.fill: parent
-
-                    ContactsListPanel {
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: root.height * 0.5
-                        clip: true
-                        title: qsTr("Received")
-                        searchString: searchBox.text
-                        contactsModel: root.contactsStore.receivedContactRequestsModel
-                        panelUsage: Constants.contactsPanelUsage.receivedContactRequest
-
-                        onOpenProfilePopup: {
-                            Global.openProfilePopup(publicKey)
-                        }
-
-                        onOpenChangeNicknamePopup: {
-                            Global.openProfilePopup(publicKey, null, "openNickname")
-                        }
-
-                        onContactRequestAccepted: {
-                            root.contactsStore.acceptContactRequest(publicKey)
-                        }
-
-                        onContactRequestRejected: {
-                            root.contactsStore.dismissContactRequest(publicKey)
-                        }
+                    onOpenProfilePopup: {
+                        Global.openProfilePopup(publicKey)
                     }
 
-                    ContactsListPanel {
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: root.height * 0.5
-                        clip: true
-                        title: qsTr("Sent")
-                        searchString: searchBox.text
-                        contactsModel: root.contactsStore.sentContactRequestsModel
-                        panelUsage: Constants.contactsPanelUsage.sentContactRequest
-
-                        onOpenProfilePopup: {
-                            Global.openProfilePopup(publicKey)
-                        }
-
-                        onOpenChangeNicknamePopup: {
-                            Global.openProfilePopup(publicKey, null, "openNickname")
-                        }
+                    onOpenChangeNicknamePopup: {
+                        Global.openProfilePopup(publicKey, null, "openNickname")
                     }
 
-                    Item {
-                        Layout.fillWidth: true
-                        Layout.fillHeight: true
+                    onContactRequestAccepted: {
+                        root.contactsStore.acceptContactRequest(publicKey)
+                    }
+
+                    onContactRequestRejected: {
+                        root.contactsStore.rejectContactRequest(publicKey)
+                    }
+                }
+
+                ContactsListPanel {
+                    id: sentRequests
+                    width: parent.width
+                    height: (contactsListHeight+50)
+                    scrollbarOn: (receivedRequests.contactsListHeight > (stackLayout.height/2)) ?
+                                 (contactsListHeight > (stackLayout.height/2)) :
+                                 (contactsListHeight > (stackLayout.height - receivedRequests.contactsListHeight))
+                    title: qsTr("Sent")
+                    searchString: searchBox.text
+                    contactsModel: root.contactsStore.sentContactRequestsModel
+                    panelUsage: Constants.contactsPanelUsage.sentContactRequest
+
+                    onOpenProfilePopup: {
+                        Global.openProfilePopup(publicKey)
+                    }
+
+                    onOpenChangeNicknamePopup: {
+                        Global.openProfilePopup(publicKey, null, "openNickname")
                     }
                 }
             }
@@ -222,10 +209,10 @@ SettingsContentBase {
             //            // REJECTED REQUESTS
             //            Item {
             //                Layout.fillWidth: true
-            //                Layout.fillHeight: true
+            //                //Layout.fillHeight: true
 
             //                ColumnLayout {
-            //                    anchors.fill: parent
+            //                    //anchors.fill: parent
 
             //                    ContactsListPanel {
             //                        Layout.fillWidth: true
@@ -276,14 +263,11 @@ SettingsContentBase {
 
             // BLOCKED
             ContactsListPanel {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-
-                clip: true
+                width: parent.width
+                height: (contactsListHeight+50)
                 searchString: searchBox.text
                 contactsModel: root.contactsStore.blockedContactsModel
                 panelUsage: Constants.contactsPanelUsage.blockedContacts
-
                 onOpenProfilePopup: {
                     Global.openProfilePopup(publicKey)
                 }

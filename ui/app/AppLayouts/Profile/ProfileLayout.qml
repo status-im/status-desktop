@@ -83,8 +83,8 @@ StatusAppTwoPanelLayout {
             }
 
             MyProfileView {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
+                implicitWidth: parent.width
+                implicitHeight: parent.height
 
                 profileStore: profileView.store.profileStore
                 sectionTitle: profileView.store.getNameForSubsection(Constants.settingsSubsection.profile)
@@ -92,13 +92,11 @@ StatusAppTwoPanelLayout {
             }
 
             ContactsView {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-
+                implicitWidth: parent.width
+                implicitHeight: parent.height
                 contactsStore: profileView.store.contactsStore
                 sectionTitle: qsTr("Contacts")
                 contentWidth: d.contentWidth
-
                 backButtonName: profileView.store.getNameForSubsection(Constants.settingsSubsection.messaging)
 
                 onBackButtonClicked: {
@@ -111,8 +109,8 @@ StatusAppTwoPanelLayout {
                 // TODO: handle structure for this subsection to match style used in onther sections
                 // using `SettingsContentBase` component as base.
                 id: ensContainer
-                Layout.fillWidth: true
-                Layout.fillHeight: true
+                implicitWidth: parent.width
+                implicitHeight: parent.height
 
                 ensUsernamesStore: profileView.store.ensUsernamesStore
                 contactsStore: profileView.store.contactsStore
@@ -122,8 +120,8 @@ StatusAppTwoPanelLayout {
             }
 
             MessagingView {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
+                implicitWidth: parent.width
+                implicitHeight: parent.height
 
                 messagingStore: profileView.store.messagingStore
                 sectionTitle: profileView.store.getNameForSubsection(Constants.settingsSubsection.messaging)
@@ -131,8 +129,8 @@ StatusAppTwoPanelLayout {
             }
 
             WalletView {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
+                implicitWidth: parent.width
+                implicitHeight: parent.height
 
                 walletStore: profileView.store.walletStore
                 emojiPopup: profileView.emojiPopup
@@ -141,8 +139,8 @@ StatusAppTwoPanelLayout {
             }
 
             PrivacyView {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
+                implicitWidth: parent.width
+                implicitHeight: parent.height
 
                 privacyStore: profileView.store.privacyStore
                 sectionTitle: profileView.store.getNameForSubsection(Constants.settingsSubsection.privacyAndSecurity)
@@ -150,8 +148,8 @@ StatusAppTwoPanelLayout {
             }
 
             AppearanceView {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
+                implicitWidth: parent.width
+                implicitHeight: parent.height
 
                 appearanceStore: profileView.store.appearanceStore
                 sectionTitle: profileView.store.getNameForSubsection(Constants.settingsSubsection.appearance)
@@ -160,8 +158,8 @@ StatusAppTwoPanelLayout {
             }
 
             LanguageView {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
+                implicitWidth: parent.width
+                implicitHeight: parent.height
 
                 languageStore: profileView.store.languageStore
                 currencyStore: profileView.store.walletStore.currencyStore
@@ -170,8 +168,8 @@ StatusAppTwoPanelLayout {
             }
 
             NotificationsView {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
+                implicitWidth: parent.width
+                implicitHeight: parent.height
 
                 notificationsStore: profileView.store.notificationsStore
                 devicesStore: profileView.store.devicesStore
@@ -180,8 +178,8 @@ StatusAppTwoPanelLayout {
             }
 
             DevicesView {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
+                implicitWidth: parent.width
+                implicitHeight: parent.height
 
                 devicesStore: profileView.store.devicesStore
                 sectionTitle: profileView.store.getNameForSubsection(Constants.settingsSubsection.devicesSettings)
@@ -189,8 +187,8 @@ StatusAppTwoPanelLayout {
             }
 
             BrowserView {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
+                implicitWidth: parent.width
+                implicitHeight: parent.height
 
                 store: profileView.store
                 sectionTitle: profileView.store.getNameForSubsection(Constants.settingsSubsection.browserSettings)
@@ -198,8 +196,8 @@ StatusAppTwoPanelLayout {
             }
 
             AdvancedView {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
+                implicitWidth: parent.width
+                implicitHeight: parent.height
 
                 advancedStore: profileView.store.advancedStore
                 sectionTitle: profileView.store.getNameForSubsection(Constants.settingsSubsection.advanced)
@@ -207,8 +205,8 @@ StatusAppTwoPanelLayout {
             }
 
             AboutView {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
+                implicitWidth: parent.width
+                implicitHeight: parent.height
 
                 store: profileView.store
                 globalStore: profileView.globalStore
@@ -217,8 +215,8 @@ StatusAppTwoPanelLayout {
             }
 
             CommunitiesView {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
+                implicitWidth: parent.width
+                implicitHeight: parent.height
 
                 profileSectionStore: profileView.store
                 rootStore: profileView.globalStore
