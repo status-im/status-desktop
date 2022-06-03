@@ -16,6 +16,8 @@ Item {
 
     property var contactsModel
     property int panelUsage: Constants.contactsPanelUsage.unknownPosition
+    property int contactsListHeight: ((contactsList.count * contactsList.itemAtIndex(0).implicitHeight)+title.height)
+    property bool scrollbarOn: false
 
     property string title: ""
     property string searchString: ""
@@ -35,7 +37,6 @@ Item {
 
     StyledText {
         id: title
-        anchors.top: parent.top
         anchors.left: parent.left
         anchors.leftMargin: Style.current.padding
         visible: contactListRoot.title !== ""
@@ -93,7 +94,11 @@ Item {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
-
+        interactive: false
+        clip: true
+        ScrollBar.vertical: ScrollBar {
+            policy: contactListRoot.scrollbarOn ? ScrollBar.AlwaysOn : ScrollBar.AsNeeded
+        }
         model: delegateModel
     }
 
@@ -102,6 +107,7 @@ Item {
 
         ContactPanel {
             id: panelDelegate
+            width: (parent.width-10)
             name: model.displayName
             publicKey: model.pubKey
             icon: model.icon

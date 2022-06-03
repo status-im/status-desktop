@@ -8,7 +8,7 @@ import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Core.Theme 0.1
 
-MouseArea {
+Item {
     id: root
 
     property string sectionTitle
@@ -30,7 +30,10 @@ MouseArea {
         readonly property int titleRowHeight: 56
     }
 
-    onClicked: { root.baseAreaClicked() }
+    MouseArea {
+        anchors.fill: parent
+        onClicked: { root.baseAreaClicked() }
+    }
 
     Component.onCompleted: {
         content.parent = contentWrapper
@@ -93,9 +96,8 @@ MouseArea {
         anchors.right: parent.right
         anchors.topMargin: Style.current.bigPadding
         contentWidth: Math.max(contentWrapper.implicitWidth, width)
-        contentHeight: Math.max(contentWrapper.implicitHeight, height)
+        contentHeight: Math.max(contentWrapper.implicitHeight, height)+anchors.topMargin
         clip: true
-
         MouseArea {
             anchors.fill: parent
             onClicked: { root.baseAreaClicked() }
