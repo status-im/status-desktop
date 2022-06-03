@@ -1,6 +1,6 @@
 import NimQml
 
-import ../../../shared_models/contacts_model
+import ../../../shared_models/user_model
 import ./io_interface
 
 QtObject:
@@ -121,7 +121,7 @@ QtObject:
   #   notify = sentButRejectedContactRequestsModelChanged
 
   proc isMyMutualContact*(self: View, publicKey: string): bool {.slot.} =
-    return self.myMutualContactsModel.containsItemWithPubKey(publicKey)
+    return self.myMutualContactsModel.isContactWithIdAdded(publicKey)
 
   proc addContact*(self: View, publicKey: string) {.slot.} =
     self.delegate.addContact(publicKey)

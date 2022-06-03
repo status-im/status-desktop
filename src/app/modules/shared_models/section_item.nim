@@ -1,5 +1,5 @@
 import strformat
-import ./user_model, ./user_item
+import ./member_model, ./member_item
 import ../main/communities/models/[pending_request_item, pending_request_model]
 
 type
@@ -37,7 +37,7 @@ type
     access: int
     ensOnly: bool
     muted: bool
-    membersModel: user_model.Model
+    membersModel: member_model.Model
     pendingRequestsToJoinModel: PendingRequestModel
     historyArchiveSupportEnabled: bool
     pinMessageAllMembersEnabled: bool
@@ -66,7 +66,7 @@ proc initItem*(
     access: int = 0,
     ensOnly = false,
     muted = false,
-    members: seq[user_item.Item] = @[],
+    members: seq[MemberItem] = @[],
     pendingRequestsToJoin: seq[PendingRequestItem] = @[],
     historyArchiveSupportEnabled = false,
     pinMessageAllMembersEnabled = false
@@ -218,7 +218,7 @@ proc muted*(self: SectionItem): bool {.inline.} =
 proc `muted=`*(self: var SectionItem, value: bool) {.inline.} = 
   self.muted = value
 
-proc members*(self: SectionItem): user_model.Model {.inline.} =
+proc members*(self: SectionItem): member_model.Model {.inline.} =
   self.membersModel
 
 proc hasMember*(self: SectionItem, pubkey: string): bool =

@@ -28,7 +28,8 @@ StatusListItem {
     property string icon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
     property bool isMutualContact: false
     property bool isBlocked: false
-    property int verificationState: Constants.contactVerificationState.notMarked
+    property bool isVerified: false
+    property bool isUntrustworthy: false
 
     property string searchStr: ""
 

@@ -1,8 +1,8 @@
 import NimQml, chronicles
 
 import io_interface, view, controller
-import ../../../shared_models/contacts_item
-import ../../../shared_models/contacts_model
+import ../../../shared_models/user_item
+import ../../../shared_models/user_model
 import ../io_interface as delegate_interface
 import ../../../../global/global_singleton
 
@@ -38,15 +38,22 @@ proc newModule*(delegate: delegate_interface.AccessInterface,
 method delete*(self: Module) =
   self.view.delete
 
-proc createItemFromPublicKey(self: Module, publicKey: string): Item =
+proc createItemFromPublicKey(self: Module, publicKey: string): UserItem =
   let contact =  self.controller.getContact(publicKey)
   let (name, image) = self.controller.getContactNameAndImage(contact.id)
 
-  return initItem(contact.id, name, image, contact.isMutualContact(), contact.isBlocked(),
-  contact.isContactVerified(), contact.isContactUntrustworthy())
+  return initUserItem(
+    pubKey = contact.id,
+    displayName = name,
+    icon = image,
+    isContact = contact.isMutualContact(),
+    isBlocked = contact.isBlocked(),
+    isVerified = contact.isContactVerified(),
+    isUntrustworthy = contact.isContactUntrustworthy()
+  )
 
 proc buildModel(self: Module, model: Model, group: ContactsGroup) =
-  var items: seq[Item]
+  var items: seq[UserItem]
   let contacts =  self.controller.getContacts(group)
   for c in contacts:
     let item = self.createItemFromPublicKey(c.id)
@@ -100,7 +107,7 @@ method changeContactNickname*(self: Module, publicKey: string, nickname: string)
 method removeContactRequestRejection*(self: Module, publicKey: string) =
   self.controller.removeContactRequestRejection(publicKey)
 
-proc addItemToAppropriateModel(self: Module, item: Item) =
+proc addItemToAppropriateModel(self: Module, item: UserItem) =
   if(singletonInstance.userProfile.getPubKey() == item.pubKey):
     return
   let contact = self.controller.getContact(item.pubKey())
@@ -122,13 +129,13 @@ proc addItemToAppropriateModel(self: Module, item: Item) =
     #   self.view.sentButRejectedContactRequestsModel().addItem(item)
 
 proc removeItemWithPubKeyFromAllModels(self: Module, publicKey: string) =
-  self.view.myMutualContactsModel().removeItemWithPubKey(publicKey)
-  self.view.receivedContactRequestsModel().removeItemWithPubKey(publicKey)
-  self.view.sentContactRequestsModel().removeItemWithPubKey(publicKey)
+  self.view.myMutualContactsModel().removeItemById(publicKey)
+  self.view.receivedContactRequestsModel().removeItemById(publicKey)
+  self.view.sentContactRequestsModel().removeItemById(publicKey)
   # Temporary commented until we provide appropriate flags on the `status-go` side to cover all sections.
-  # self.view.receivedButRejectedContactRequestsModel().removeItemWithPubKey(publicKey)
-  # self.view.sentButRejectedContactRequestsModel().removeItemWithPubKey(publicKey)
-  self.view.blockedContactsModel().removeItemWithPubKey(publicKey)
+  # self.view.receivedButRejectedContactRequestsModel().removeItemById(publicKey)
+  # self.view.sentButRejectedContactRequestsModel().removeItemById(publicKey)
+  self.view.blockedContactsModel().removeItemById(publicKey)
 
 method removeIfExistsAndAddToAppropriateModel*(self: Module, publicKey: string) =
   self.removeItemWithPubKeyFromAllModels(publicKey)

@@ -94,7 +94,7 @@ SettingsPageLayout {
             delegate: StatusListItem {
                 id: memberItem
 
-                readonly property bool itsMe: model.id.toLowerCase() === userProfile.pubKey.toLowerCase()
+                readonly property bool itsMe: model.pubKey.toLowerCase() === userProfile.pubKey.toLowerCase()
                 readonly property bool isOnline: model.onlineStatus === Constants.userStatus.online
 
                 width: memberList.width
@@ -108,12 +108,12 @@ SettingsPageLayout {
                         //% "You"
                         return qsTrId("You")
                     }
-                    return !model.name.endsWith(".eth") ? model.name : Utils.removeStatusEns(model.name)
+                    return !model.displayName.endsWith(".eth") ? model.displayName : Utils.removeStatusEns(model.displayName)
                 }
-                subTitle: Utils.getElidedCompressedPk(model.id)
+                subTitle: Utils.getElidedCompressedPk(model.pubKey)
 
                 statusListItemIcon {
-                    name: model.name
+                    name: model.displayName
                     badge {
                         visible: true
                         color: memberItem.isOnline ? Theme.palette.successColor1 : Theme.palette.baseColor1
@@ -129,18 +129,18 @@ SettingsPageLayout {
                 icon {
                     width: 40
                     height: 40
-                    color: Utils.colorForPubkey(model.id)
+                    color: Utils.colorForPubkey(model.pubKey)
                     letterSize: Math.max(4, root.imageWidth / 2.4)
                     charactersLen: 2
                     isLetterIdenticon: true
                 }
 
                 ringSettings {
-                    ringSpecModel: Utils.getColorHashAsJson(model.id)
+                    ringSpecModel: Utils.getColorHashAsJson(model.pubKey)
                     ringPxSize: Math.max(icon.width / 24.0)
                 }
 
-                onClicked: root.userProfileClicked(model.id)
+                onClicked: root.userProfileClicked(model.pubKey)
 
                 components: [
                     StatusButton {
@@ -149,7 +149,7 @@ SettingsPageLayout {
                         type: StatusBaseButton.Type.Danger
                         size: StatusBaseButton.Size.Tiny
 
-                        onClicked: root.banUserClicked(model.id)
+                        onClicked: root.banUserClicked(model.pubKey)
                     },
 
                     StatusButton {
@@ -158,7 +158,7 @@ SettingsPageLayout {
                         type: StatusBaseButton.Type.Danger
                         size: StatusBaseButton.Size.Tiny
 
-                        onClicked: root.kickUserClicked(model.id)
+                        onClicked: root.kickUserClicked(model.pubKey)
                     }
                 ]
             }

@@ -6,7 +6,7 @@ import ./view, ./controller
 import ./models/curated_community_item
 import ./models/curated_community_model
 import ../../shared_models/section_item
-import ../../shared_models/[user_item, user_model, section_model]
+import ../../shared_models/[member_item, member_model, section_model]
 import ../../../global/global_singleton
 import ../../../core/eventemitter
 import ../../../../app_service/service/community/service as community_service
@@ -96,17 +96,17 @@ method getCommunityItem(self: Module, c: CommunityDto): SectionItem =
       c.permissions.access,
       c.permissions.ensOnly,
       c.muted, 
-      c.members.map(proc(member: Member): user_item.Item =
+      c.members.map(proc(member: Member): MemberItem =
         let contactDetails = self.controller.getContactDetails(member.id)
-        result = user_item.initItem(
-          member.id,
-          contactDetails.displayName,
-          contactDetails.details.name,
-          contactDetails.details.localNickname,
-          contactDetails.details.alias,
-          OnlineStatus.Offline, # TODO get the actual status?
-          contactDetails.icon,
-          contactDetails.details.added,
+        result = initMemberItem(
+          pubKey = member.id,
+          displayName = contactDetails.displayName,
+          ensName = contactDetails.details.name,
+          localNickname = contactDetails.details.localNickname,
+          alias = contactDetails.details.alias,
+          icon = contactDetails.icon,
+          onlineStatus = OnlineStatus.Offline, # TODO get the actual status?
+          isContact = contactDetails.details.added, # FIXME
           )),
       historyArchiveSupportEnabled = c.settings.historyArchiveSupportEnabled
     )

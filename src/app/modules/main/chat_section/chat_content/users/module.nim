@@ -2,7 +2,7 @@ import NimQml, strutils
 import io_interface
 import ../io_interface as delegate_interface
 import view, controller
-import ../../../../shared_models/[user_model, user_item]
+import ../../../../shared_models/[member_model, member_item]
 import ../../../../../global/global_singleton
 import ../../../../../core/eventemitter
 import ../../../../../../app_service/service/contacts/service as contact_service
@@ -70,16 +70,17 @@ method onNewMessagesLoaded*(self: Module, messages: seq[MessageDto]) =
     let contactDetails = self.controller.getContactDetails(m.`from`)
     let statusUpdateDto = self.controller.getStatusForContact(m.`from`)
     let status = statusUpdateDto.statusType.int.OnlineStatus
-    self.view.model().addItem(initItem(
-      m.`from`,
-      contactDetails.displayName,
-      contactDetails.details.name,
-      contactDetails.details.localNickname,
-      contactDetails.details.alias,
-      status,
-      contactDetails.icon,
-      contactDetails.details.added,
-      ))
+    self.view.model().addItem(initMemberItem(
+      pubKey = m.`from`,
+      displayName = contactDetails.displayName,
+      ensName = contactDetails.details.name, # is it correct?
+      localNickname = contactDetails.details.localNickname,
+      alias = contactDetails.details.alias,
+      icon = contactDetails.icon,
+      onlineStatus = status,
+      isContact = contactDetails.details.added,
+      )
+    )
 
 method contactNicknameChanged*(self: Module, publicKey: string) =
   let contactDetails = self.controller.getContactDetails(publicKey)
@@ -98,13 +99,13 @@ method contactsStatusUpdated*(self: Module, statusUpdates: seq[StatusUpdateDto])
 method contactUpdated*(self: Module, publicKey: string) =
   let contactDetails = self.controller.getContactDetails(publicKey)
   self.view.model().updateItem(
-    publicKey,
-    contactDetails.displayName,
-    contactDetails.details.name,
-    contactDetails.details.localNickname,
-    contactDetails.details.alias,
-    contactDetails.icon,
-    contactDetails.details.added,
+    pubKey = publicKey,
+    displayName = contactDetails.displayName,
+    ensName = contactDetails.details.name,
+    localNickname = contactDetails.details.localNickname,
+    alias = contactDetails.details.alias,
+    icon = contactDetails.icon,
+    isContact = contactDetails.details.added, #FIXME
   )
 
 method loggedInUserImageChanged*(self: Module) =
@@ -126,25 +127,25 @@ method addChatMember*(self: Module,  member: ChatMember) =
   let isMe = member.id == singletonInstance.userProfile.getPubKey()
   let contactDetails = self.controller.getContactDetails(member.id)
   var status = OnlineStatus.Online
-  if (not isMe):
+  var displayName = contactDetails.displayName
+  if (isMe):
+    displayName = displayName & " (You)"
+  else:
     let statusUpdateDto = self.controller.getStatusForContact(member.id)
     status = statusUpdateDto.statusType.int.OnlineStatus
   
-  self.view.model().addItem(initItem(
-    member.id,
-    if (isMe):
-      contactDetails.displayName & " (You)"
-    else:
-      contactDetails.displayName,
-    contactDetails.details.name,
-    contactDetails.details.localNickname,
-    contactDetails.details.alias,
-    status,
-    contactDetails.icon,
-    contactDetails.details.added,
-    member.admin,
-    member.joined
-    ))
+  self.view.model().addItem(initMemberItem(
+    pubKey = member.id,
+    displayName = displayName,
+    ensName = contactDetails.details.name,
+    localNickname = contactDetails.details.localNickname,
+    alias = contactDetails.details.alias,
+    icon = contactDetails.icon,
+    onlineStatus = status,
+    isContact = contactDetails.details.added, #FIXME
+    isAdmin = member.admin,
+    joined = member.joined)
+  )
 
 method onChatMembersAdded*(self: Module,  ids: seq[string]) =
   for id in ids:
@@ -171,15 +172,15 @@ method onChatMemberRemoved*(self: Module, id: string) =
 method onChatMemberUpdated*(self: Module, publicKey: string, admin: bool, joined: bool) =
   let contactDetails = self.controller.getContactDetails(publicKey)
   self.view.model().updateItem(
-    publicKey,
-    contactDetails.displayName,
-    contactDetails.details.name,
-    contactDetails.details.localNickname,
-    contactDetails.details.alias,
-    contactDetails.icon,
-    contactDetails.details.added,
-    admin,
-    joined)
+    pubKey = publicKey,
+    displayName = contactDetails.displayName,
+    ensName = contactDetails.details.name,
+    localNickname = contactDetails.details.localNickname,
+    alias = contactDetails.details.alias,
+    icon = contactDetails.icon,
+    isContact = contactDetails.details.added,
+    isAdmin = admin,
+    joined = joined)
 
 method getMembersPublicKeys*(self: Module): string =
   let publicKeys = self.controller.getMembersPublicKeys()

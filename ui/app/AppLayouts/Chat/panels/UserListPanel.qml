@@ -63,24 +63,25 @@ Item {
             anchors.right: parent.right
             anchors.rightMargin: 8
             nickName: model.localNickname
-            userName: model.name
-            chatKey: model.id
-            trustIndicator: model.trustIndicator
-            isMutualContact: model.isMutualContact
+            userName: model.displayName
+            pubKey: model.pubKey
+            isContact: model.isContact
+            isVerified: model.isVerified
+            isUntrustworthy: model.isUntrustworthy
             isAdmin: model.isAdmin
             image.source: {
-                if ((!model.isAdded &&
+                if ((!model.isContact &&
                     Global.privacyModuleInst.profilePicturesVisibility !==
                     Constants.profilePicturesVisibility.everyone)) {
                     return "";
                 }
                 return model.icon;
             }
-            image.isIdenticon: model.isIdenticon
+            image.isIdenticon: false
 
-            isOnline: model.onlineStatus
-            icon.color: Theme.palette.userCustomizationColors[Utils.colorIdForPubkey(model.id)]
-            ringSettings.ringSpecModel: Utils.getColorHashAsJson(model.id)
+            status: model.onlineStatus
+            icon.color: Theme.palette.userCustomizationColors[Utils.colorIdForPubkey(model.pubKey)] // FIXME: use model.colorId
+            ringSettings.ringSpecModel: Utils.getColorHashAsJson(model.pubKey) // FIXME: use model.colorHash
             onClicked: {
                 if (mouse.button === Qt.RightButton) {
                     // Set parent, X & Y positions for the messageContextMenu
@@ -89,12 +90,12 @@ Item {
                     messageContextMenu.setYPosition = function() { return mouse.y + (Style.current.halfPadding/2); }
                     messageContextMenu.isProfile = true
                     messageContextMenu.myPublicKey = userProfile.pubKey
-                    messageContextMenu.selectedUserPublicKey = model.id
-                    messageContextMenu.selectedUserDisplayName = model.name
+                    messageContextMenu.selectedUserPublicKey = model.pubKey
+                    messageContextMenu.selectedUserDisplayName = model.displayName
                     messageContextMenu.selectedUserIcon = image.source
                     messageContextMenu.popup()
                 } else if (mouse.button === Qt.LeftButton && !!messageContextMenu) {
-                    Global.openProfilePopup(model.id);
+                    Global.openProfilePopup(model.pubKey);
                 }
             }
         }

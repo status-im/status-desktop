@@ -27,13 +27,13 @@ Item {
         visible: false
         model: suggestionsPanelRoot.sourceModel
         delegate: Item {
-            property string publicKey: model.id
-            property string name: model.name
-            property string nickname: model.nickname
+            property string publicKey: model.pubKey
+            property string name: model.displayName
+            property string nickname: model.localNickname
             property string alias: model.alias
             property string ensName: model.ensName
             property string icon: model.icon
-            property bool isAdded: model.isAdded
+            property bool isAdded: model.isContact
         }
     }
 
