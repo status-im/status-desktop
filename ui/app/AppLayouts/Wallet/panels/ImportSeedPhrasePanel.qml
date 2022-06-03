@@ -56,8 +56,7 @@ GridView {
         property int seedPhraseInputWidth: 220
         property var mnemonicInput: []
         property string errorString:  ""
-        readonly property int twelveWordsModel: 12
-        readonly property int twentyFourWordsModel: 24
+        readonly property var seedPhraseWordsOptions: ([12, 18, 24])
 
         function getSeedPhraseString() {
             var seedPhrase = ""
@@ -74,8 +73,6 @@ GridView {
     cellWidth: _internal.seedPhraseInputWidth + Style.current.halfPadding
     interactive: false
     z: 100000
-
-    model: _internal.twelveWordsModel
 
     onModelChanged: {
         mnemonicString = "";
@@ -111,14 +108,12 @@ GridView {
         let words = clipboardText.split(/[, \s]+/)
 
         let timeout = 0
-        if ((grid.model === _internal.twelveWordsModel && words.length === _internal.twentyFourWordsModel) ||
-            (grid.model === _internal.twentyFourWordsModel && words.length === _internal.twelveWordsModel)) {
-            footerItem.pressButton()
-            // Set the teimeout to 100 so the grid has time to generate the new items
-            timeout = 100
-        } else if (words.length !== _internal.twentyFourWordsModel && words.length !== _internal.twelveWordsModel) {
+        let indexOfWordsOption = _internal.seedPhraseWordsOptions.indexOf(words.length)
+        if(indexOfWordsOption == -1) {
             return false
         }
+        footerItem.switchToIndex(indexOfWordsOption)
+        timeout = 100
 
         timer.setTimeout(function(){
             _internal.mnemonicInput = []
@@ -232,12 +227,12 @@ GridView {
     footer: Item {
         id: footerC
 
-        function pressButton() {
-            changeSeedNbWordsBtn.clicked(null)
+        function switchToIndex(index) {
+            changeSeedNbWordsTabBar.currentIndex = index
         }
 
         width: grid.width - Style.current.padding
-        height: changeSeedNbWordsBtn.height + errorMessage.height + Style.current.padding*2
+        height: changeSeedNbWordsTabBar.height + errorMessage.height + Style.current.padding*2
         StatusBaseText {
             id: errorMessage
 
@@ -255,20 +250,19 @@ GridView {
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
         }
-        StatusButton {
-            id: changeSeedNbWordsBtn
+        StatusSwitchTabBar {
+            id: changeSeedNbWordsTabBar
             anchors.top: errorMessage.bottom
             anchors.topMargin: Style.current.padding
             anchors.horizontalCenter: parent.horizontalCenter
-            text: grid.model === _internal.twelveWordsModel ? qsTr("Use 24 word seed phrase"):
-                                                              qsTr("Use 12 word seed phrase")
-            onClicked: {
-                if(grid.model === _internal.twelveWordsModel) {
-                    grid.model = _internal.twentyFourWordsModel
+            Repeater {
+                model: _internal.seedPhraseWordsOptions
+                 StatusSwitchTabButton {
+                    text: qsTr("%1 words").arg(modelData)
                 }
-                else {
-                    grid.model = _internal.twelveWordsModel
-                }
+            }
+            onCurrentIndexChanged: {
+                grid.model = _internal.seedPhraseWordsOptions[changeSeedNbWordsTabBar.currentIndex]
             }
         }
     }
