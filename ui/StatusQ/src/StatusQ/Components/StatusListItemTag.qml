@@ -6,7 +6,7 @@ import StatusQ.Core.Theme 0.1
 
 Rectangle {
     id: root
-    width: layout.width
+    width: layout.width + layout.anchors.margins
     height: 30
     color: Theme.palette.primaryColor3
     radius: 15
@@ -39,13 +39,12 @@ Rectangle {
 
     RowLayout {
         id: layout
-
         height: parent.height
-        spacing: 5
+        anchors.margins: 6
 
         StatusSmartIdenticon {
             id: iconOrImage
-            Layout.leftMargin: 5
+            Layout.leftMargin: 4
             image: root.image
             icon: root.icon
             name: root.title
@@ -66,7 +65,6 @@ Rectangle {
             color: Theme.palette.primaryColor1
             icon: "close-circle"
             visible: closeButtonVisible
-            Layout.rightMargin: 5
             MouseArea {
                 id: mouseArea
                 anchors.fill: parent
