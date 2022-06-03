@@ -23,7 +23,6 @@ StatusModal {
     property var store
 
     width: 640
-    height: 720
 
     // Code below is needed because StatusModal content padding is messed up
     // FIXME: when StatusModal is reworked
@@ -68,6 +67,8 @@ StatusModal {
         id: stackLayout
 
         anchors.fill: parent
+
+        implicitHeight: 720
 
         Flickable {
             id: generalView
