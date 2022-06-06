@@ -50,7 +50,6 @@ Page {
                 tagSelector.sortModel(root.contactsModel);
             } else {
                 tagSelector.namesModel.clear();
-                contactsModel.clear();
             }
         }
     }

@@ -32,6 +32,15 @@ RowLayout {
              removedMembersIds = []
              tagSelector.namesModel.clear()
          }
+
+         function find(val, array) {
+             for(var i = 0; i < array.length; i++) {
+                 if(array[i] === val) {
+                     return true
+                 }
+             }
+             return false
+         }
      }
 
      ListView {
@@ -80,7 +89,7 @@ RowLayout {
              var entry2 = contactsModelListView.itemAtIndex(j)
              d.contactsModel.insert(d.contactsModel.count,
                                 {"pubKey": entry2.pubKey,
-                                 "name": entry2.name,
+                                 "displayName": entry2.name,
                                  "icon": entry2.icon,
                                  "isIdenticon": false,
                                  "onlineStatus": false})
@@ -105,17 +114,8 @@ RowLayout {
              return exists
          }
 
-         function find(val, array) {
-             for(var i = 0; i < array.length; i++) {
-                 if(array[i] === val) {
-                     return true
-                 }
-             }
-             return false
-         }
-
          function addNewMember(memberId) {
-            if(find(memberId, d.addedMembersIds)) {
+            if(d.find(memberId, d.addedMembersIds)) {
                 return
             }
 
@@ -123,13 +123,13 @@ RowLayout {
                  d.addedMembersIds.push(memberId)
              }
 
-             if(memberExists(memberId) && find(memberId, d.removedMembersIds)) {
+             if(memberExists(memberId) && d.find(memberId, d.removedMembersIds)) {
                  d.removedMembersIds.pop(memberId)
              }
          }
 
          function removeExistingMember(memberId) {
-             if(find(memberId, d.removedMembersIds)) {
+             if(d.find(memberId, d.removedMembersIds)) {
                  return
              }
 
@@ -137,7 +137,7 @@ RowLayout {
                  d.removedMembersIds.push(memberId)
              }
 
-             if(!memberExists(memberId) && find(memberId, d.addedMembersIds)) {
+             if(!memberExists(memberId) && d.find(memberId, d.addedMembersIds)) {
                  d.addedMembersIds.pop(memberId)
              }
          }
