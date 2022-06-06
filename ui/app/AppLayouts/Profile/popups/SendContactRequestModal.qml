@@ -80,58 +80,60 @@ StatusModal {
         }
     }
 
-    contentItem: Column {
-        id: content
-        width: root.width
-        spacing: d.contentSpacing
+    contentItem: Item {
+        Column {
+            id: content
+            anchors.horizontalCenter: parent.horizontalCenter
+            spacing: d.contentSpacing
 
-        StatusInput {
-            id: chatKeyInput
+            StatusInput {
+                id: chatKeyInput
 
-            input.placeholderText: qsTr("Enter chat key here")
-            input.text: input.edit.focus? d.realChatKey : d.elidedChatKey
-            input.rightComponent: {
-                if(d.showPasteButton)
-                    return pasteButtonComponent
-                else if(d.showChatKeyValidationIndicator)
-                    return chatKeyValidationIndicator
-                else
-                    return null
-            }
-            input.onTextChanged: {
-                if(input.edit.focus)
-                {
-                    d.realChatKey = text
+                input.placeholderText: qsTr("Enter chat key here")
+                input.text: input.edit.focus? d.realChatKey : d.elidedChatKey
+                input.rightComponent: {
+                    if(d.showPasteButton)
+                        return pasteButtonComponent
+                    else if(d.showChatKeyValidationIndicator)
+                        return chatKeyValidationIndicator
+                    else
+                        return null
+                }
+                input.onTextChanged: {
+                    if(input.edit.focus)
+                    {
+                        d.realChatKey = text
 
-                    if(d.realChatKey === "") {
-                        d.showPasteButton = true
-                        d.showChatKeyValidationIndicator = false
+                        if(d.realChatKey === "") {
+                            d.showPasteButton = true
+                            d.showChatKeyValidationIndicator = false
+                        }
+
+                        if (text.length < d.minChatKeyLength) {
+                            d.validChatKey = false
+                            return
+                        }
+
+                        Qt.callLater(d.lookupContact, text);
                     }
-
-                    if (text.length < d.minChatKeyLength) {
-                        d.validChatKey = false
-                        return
-                    }
-
-                    Qt.callLater(d.lookupContact, text);
                 }
             }
-        }
 
-        StatusInput {
-            id: messageInput
-            charLimit: d.maxMsgLength
+            StatusInput {
+                id: messageInput
+                charLimit: d.maxMsgLength
 
-            input.placeholderText: qsTr("Say who you are / why you want to become a contact...")
-            input.multiline: true
-            input.implicitHeight: d.msgHeight
-            input.verticalAlignment: TextEdit.AlignTop
+                input.placeholderText: qsTr("Say who you are / why you want to become a contact...")
+                input.multiline: true
+                input.implicitHeight: d.msgHeight
+                input.verticalAlignment: TextEdit.AlignTop
 
-            validators: [StatusMinLengthValidator {
-                    minLength: d.minMsgLength
-                    errorMessage: Utils.getErrorMessage(messageInput.errors, qsTr("who are you"))
-                }]
-            validationMode: StatusInput.ValidationMode.Always
+                validators: [StatusMinLengthValidator {
+                        minLength: d.minMsgLength
+                        errorMessage: Utils.getErrorMessage(messageInput.errors, qsTr("who are you"))
+                    }]
+                validationMode: StatusInput.ValidationMode.Always
+            }
         }
     }
 

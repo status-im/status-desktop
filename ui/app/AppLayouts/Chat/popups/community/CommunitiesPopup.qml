@@ -46,94 +46,98 @@ StatusModal {
         }
     }
 
-    contentItem: Column {
-        width: popup.width
-        property alias searchBox: searchBox
+    contentItem: Item {
+        Column {
+            id: contentItem
+            anchors.horizontalCenter: parent.horizontalCenter
+            property alias searchBox: searchBox
 
-        Item {
-            height: 8
-            width: parent.width
-        }
-
-        StatusInput {
-            id: searchBox
-            input.placeholderText: qsTr("Search for communities or topics")
-            input.icon.name: "search"
-        }
-
-        StatusModalDivider { topPadding: 8 }
-
-        ScrollView {
-            width: parent.width
-            ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-            topPadding: 8
-            bottomPadding: 8
-            height: 400
-            clip: true
-
-            ListView {
-                anchors.fill: parent
-                model: communitiesDelegateModel
-                spacing: 4
-                clip: true
-                id: communitiesList
-
-                section.property: "name"
-                section.criteria: ViewSection.FirstCharacter
-                section.delegate: Column {
-
-                    StatusBaseText {
-                        anchors.left: parent.left
-                        anchors.leftMargin: 16
-                        text: section.toUpperCase()
-                        font.pixelSize: 15
-                        font.weight: Font.Medium
-                        color: Theme.palette.directColor1
-                    }
-
-                    StatusModalDivider {
-                        bottomPadding: 8
-                    }
-                }
+            Item {
+                height: 8
+                width: parent.width
             }
 
-            DelegateModelGeneralized {
-                id: communitiesDelegateModel
-                lessThan: [
-                    function(left, right) {
-                        return left.name.toLowerCase() < right.name.toLowerCase()
-                    }
-                ]
+            StatusInput {
+                id: searchBox
+                anchors.horizontalCenter: parent.horizontalCenter
+                input.placeholderText: qsTr("Search for communities or topics")
+                input.icon.name: "search"
+            }
 
-                model: popup.communitiesList
-                delegate: StatusListItem {
-                    visible: {
-                        if (!searchBox.input.text) {
-                            return true
-                        }
-                        const lowerCaseSearchStr = searchBox.input.text.toLowerCase()
-                        return model.name.toLowerCase().includes(lowerCaseSearchStr) || model.description.toLowerCase().includes(lowerCaseSearchStr)
-                    }
-                    height: visible ? implicitHeight : 0
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    title: model.name
-                    subTitle: model.description
-                    //% "%1 members"
-                    tertiaryTitle: qsTrId("-1-members").arg(model.members.count)
-                    statusListItemTitle.font.weight: Font.Bold
-                    statusListItemTitle.font.pixelSize: 17
-                    image.source: model.image
-                    icon.isLetterIdenticon: !model.image
-                    icon.background.color: model.color || Theme.palette.primaryColor1
+            StatusModalDivider { topPadding: 8 }
 
-                    sensor.onClicked: {
-                        if (model.joined && model.isMember) {
-                            popup.setActiveCommunity(model.id);
-                        } else {
-                            popup.setObservedCommunity(model.id);
-                            Global.openPopup(communityDetailPopup)
+            ScrollView {
+                width: parent.width
+                ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+                topPadding: 8
+                bottomPadding: 8
+                height: 400
+                clip: true
+
+                ListView {
+                    anchors.fill: parent
+                    model: communitiesDelegateModel
+                    spacing: 4
+                    clip: true
+                    id: communitiesList
+
+                    section.property: "name"
+                    section.criteria: ViewSection.FirstCharacter
+                    section.delegate: Column {
+
+                        StatusBaseText {
+                            anchors.left: parent.left
+                            anchors.leftMargin: 16
+                            text: section.toUpperCase()
+                            font.pixelSize: 15
+                            font.weight: Font.Medium
+                            color: Theme.palette.directColor1
                         }
-                        popup.close()
+
+                        StatusModalDivider {
+                            bottomPadding: 8
+                        }
+                    }
+                }
+
+                DelegateModelGeneralized {
+                    id: communitiesDelegateModel
+                    lessThan: [
+                        function(left, right) {
+                            return left.name.toLowerCase() < right.name.toLowerCase()
+                        }
+                    ]
+
+                    model: popup.communitiesList
+                    delegate: StatusListItem {
+                        visible: {
+                            if (!searchBox.input.text) {
+                                return true
+                            }
+                            const lowerCaseSearchStr = searchBox.input.text.toLowerCase()
+                            return model.name.toLowerCase().includes(lowerCaseSearchStr) || model.description.toLowerCase().includes(lowerCaseSearchStr)
+                        }
+                        height: visible ? implicitHeight : 0
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        title: model.name
+                        subTitle: model.description
+                        //% "%1 members"
+                        tertiaryTitle: qsTrId("-1-members").arg(model.members.count)
+                        statusListItemTitle.font.weight: Font.Bold
+                        statusListItemTitle.font.pixelSize: 17
+                        image.source: model.image
+                        icon.isLetterIdenticon: !model.image
+                        icon.background.color: model.color || Theme.palette.primaryColor1
+
+                        sensor.onClicked: {
+                            if (model.joined && model.isMember) {
+                                popup.setActiveCommunity(model.id);
+                            } else {
+                                popup.setObservedCommunity(model.id);
+                                Global.openPopup(communityDetailPopup)
+                            }
+                            popup.close()
+                        }
                     }
                 }
             }
