@@ -6,6 +6,10 @@ QtObject {
     property var loginModuleInst: loginModule
     property var currentAccount: loginModuleInst.selectedAccount
 
+    property KeycardStore keycardStore: KeycardStore {
+        keycardModule: loginModuleInst.keycardModule
+    }
+
     function login(password) {
         loginModuleInst.login(password)
     }

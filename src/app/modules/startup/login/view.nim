@@ -77,3 +77,8 @@ QtObject:
 
   proc emitObtainingPasswordSuccess*(self: View, password: string) =
     self.obtainingPasswordSuccess(password)
+
+  proc getKeycardModule(self: View): QVariant {.slot.} =
+    return self.delegate.getKeycardModule()
+  QtProperty[QVariant] keycardModule:
+    read = getKeycardModule

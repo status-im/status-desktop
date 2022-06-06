@@ -98,3 +98,8 @@ QtObject:
 
   proc generateImage*(self: View, imageUrl: string, aX: int, aY: int, bX: int, bY: int): string {.slot.} =
     self.delegate.generateImage(imageUrl, aX, aY, bX, bY)
+
+  proc getKeycardModule(self: View): QVariant {.slot.} =
+    return self.delegate.getKeycardModule()
+  QtProperty[QVariant] keycardModule:
+    read = getKeycardModule

@@ -1,3 +1,4 @@
+import NimQml
 import ../../../../app_service/service/accounts/service
 
 type
@@ -48,4 +49,7 @@ method getPasswordStrengthScore*(self: AccessInterface, password: string, userNa
   raise newException(ValueError, "No implementation available")
 
 method generateImage*(self: AccessInterface, imageUrl: string, aX: int, aY: int, bX: int, bY: int): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getKeycardModule*(self: AccessInterface): QVariant {.base.} =
   raise newException(ValueError, "No implementation available")

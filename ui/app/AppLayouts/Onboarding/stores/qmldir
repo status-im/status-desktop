@@ -1,3 +1,2 @@
 singleton OnboardingStore 1.0 OnboardingStore.qml
 singleton LoginStore 1.0 LoginStore.qml
-singleton KeycardStore 1.0 KeycardStore.qml

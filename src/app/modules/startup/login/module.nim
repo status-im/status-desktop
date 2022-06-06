@@ -6,6 +6,9 @@ import ../../../global/global_singleton
 import ../../../core/eventemitter
 import ../../../../app_service/service/keychain/service as keychain_service
 import ../../../../app_service/service/accounts/service as accounts_service
+import ../../../../app_service/service/keycard/service as keycard_service
+
+import ../../shared_modules/keycard/module as keycard_module
 
 export io_interface
 
@@ -16,10 +19,12 @@ type
     viewVariant: QVariant
     controller: Controller
     moduleLoaded: bool
+    keycardModule: keycard_module.Module
 
 proc newModule*(delegate: delegate_interface.AccessInterface,
   events: EventEmitter,
   keychainService: keychain_service.Service,
+  keycardService: keycard_service.Service,
   accountsService: accounts_service.Service):
   Module =
   result = Module()
@@ -30,10 +35,13 @@ proc newModule*(delegate: delegate_interface.AccessInterface,
   accountsService)
   result.moduleLoaded = false
 
+  result.keycardModule = keycard_module.newModule(events, keycardService, accountsService)
+
 method delete*(self: Module) =
   self.view.delete
   self.viewVariant.delete
   self.controller.delete
+  self.keycardModule.delete
 
 proc extractImages(self: Module, account: AccountDto, thumbnailImage: var string,
   largeImage: var string) =
@@ -46,6 +54,7 @@ proc extractImages(self: Module, account: AccountDto, thumbnailImage: var string
 method load*(self: Module) =
   singletonInstance.engine.setRootContextProperty("loginModule", self.viewVariant)
   self.controller.init()
+  self.keycardModule.init()
   self.view.load()
 
   let openedAccounts = self.controller.getOpenedAccounts()
@@ -86,3 +95,6 @@ method emitObtainingPasswordError*(self: Module, errorDescription: string) =
 
 method emitObtainingPasswordSuccess*(self: Module, password: string) =
   self.view.emitObtainingPasswordSuccess(password)
+
+method getKeycardModule*(self: Module): QVariant =
+  self.keycardModule.getModuleAsVariant()

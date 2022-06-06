@@ -49,8 +49,6 @@ proc prepareLogging() =
         try:
           if signalsManagerQObjPointer != nil:
             signal_handler(signalsManagerQObjPointer, ($(%* {"type": "chronicles-log", "event": msg})).cstring, "receiveSignal")
-          if keycardServiceQObjPointer != nil:
-            signal_handler(keycardServiceQObjPointer, ($(%* {"type": "chronicles-log", "event": msg})).cstring, "receiveKeycardSignal")
         except:
           logLoggingFailure(cstring(msg), getCurrentException())
 

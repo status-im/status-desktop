@@ -1,6 +1,4 @@
 import NimQml, chronicles
-import keycard_go
-import ../../constants as status_const
 
 import ../../app_service/service/general/service as general_service
 import ../../app_service/service/keychain/service as keychain_service
@@ -131,7 +129,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
 
   # Services
   result.generalService = general_service.newService()
-  result.keycardService = keycard_service.newService(statusFoundation.events)
+  result.keycardService = keycard_service.newService(statusFoundation.events, statusFoundation.threadpool)
   result.nodeConfigurationService = node_configuration_service.newService(statusFoundation.fleetConfiguration,
   result.settingsService)
   result.keychainService = keychain_service.newService(statusFoundation.events)
@@ -192,6 +190,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     result,
     statusFoundation.events,
     result.keychainService,
+    result.keycardService,
     result.accountsService,
     result.generalService
   )

@@ -1,20 +1,51 @@
-pragma Singleton
-
 import QtQuick 2.13
 
 QtObject {
-    // Not Refactored Yet
-//    property var keycardModelInst: keycardModel
+    id: root
 
-    function startConnection() {
-//        keycardModel.startConnection()
+    property var keycardModule
+
+    function startOnboardingKeycardFlow() {
+        root.keycardModule.startOnboardingKeycardFlow()
     }
 
-    function init(pin) {
-//        keycardModel.init(pin)
+    function cancelFlow() {
+        root.keycardModule.cancelFlow()
     }
 
-    function recoverAccount() {
-//        keycardModel.recoverAccount()
+    function checkKeycardPin(pin) {
+        return root.keycardModule.checkKeycardPin(pin)
+    }
+
+    function checkRepeatedKeycardPinCurrent(pin) {
+        return root.keycardModule.checkRepeatedKeycardPinCurrent(pin)
+    }
+
+    function checkRepeatedKeycardPin(pin) {
+        return root.keycardModule.checkRepeatedKeycardPin(pin)
+    }
+
+    function shouldExitKeycardFlow() {
+        return root.keycardModule.shouldExitKeycardFlow()
+    }
+
+    function backClicked() {
+        root.keycardModule.backClicked()
+    }
+
+    function getSeedPhrase() {
+        return root.keycardModule.getSeedPhrase()
+    }
+
+    function nextState() {
+        return root.keycardModule.nextState()
+    }
+
+    function factoryReset() {
+        return root.keycardModule.factoryReset()
+    }
+
+    function switchCard() {
+        return root.keycardModule.switchCard()
     }
 }

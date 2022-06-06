@@ -1,5 +1,6 @@
 import QtQuick 2.12
 import QtQml.StateMachine 1.14 as DSM
+import QtQuick.Dialogs 1.3
 import utils 1.0
 
 import "views"
@@ -100,6 +101,12 @@ QtObject {
                     signal: Global.applicationWindow.navigateTo
                     guard: path === "ImportSeed"
                 }
+
+                DSM.SignalTransition {
+                    targetState: keycardState
+                    signal: Global.applicationWindow.navigateTo
+                    guard: path === "KeycardFlow"
+                }
             }
 
             DSM.State {
@@ -122,12 +129,12 @@ QtObject {
 
             DSM.State {
                 id: keycardState
-                onEntered: { onBoardingStepChanged(keycardFlowSelection, ""); }
+                onEntered: { onBoardingStepChanged(keycardFlowComponent, ""); }
 
                 DSM.SignalTransition {
-                    targetState: appState
-                    signal: startupModule.appStateChanged
-                    guard: state === Constants.appState.main
+                    targetState: genKeyState
+                    signal: Global.applicationWindow.navigateTo
+                    guard: path === "GenKey"
                 }
             }
 
@@ -163,7 +170,7 @@ QtObject {
             DSM.SignalTransition {
                 targetState: keycardState
                 signal: Global.applicationWindow.navigateTo
-                guard: path === "KeycardFlowSelection"
+                guard: path === "KeycardFlow"
             }
 
             DSM.FinalState {
@@ -218,7 +225,7 @@ QtObject {
                 }
             }
             onKeycardLinkClicked: {
-                Global.applicationWindow.navigateTo("KeycardFlowSelection");
+                Global.applicationWindow.navigateTo("KeycardFlow");
             }
             onSeedLinkClicked: {
                 if (state === "getkeys") {
@@ -261,7 +268,10 @@ QtObject {
         id: genKey
         GenKeyView {
             onExit: {
-                if (root.keysMainSetState === "importseed") {
+                if(OnboardingStore.keycardStore.keycardModule.flowState === Constants.keycard.state.yourProfileState) {
+                    Global.applicationWindow.navigateTo("KeycardFlow");
+                }
+                else if (root.keysMainSetState === "importseed") {
                     root.keysMainSetState = "connectkeys"
                     Global.applicationWindow.navigateTo("ImportSeed");
                 } else if (LoginStore.currentAccount.username !== "" && importSeedState.seedInputState === "existingUser") {
@@ -276,15 +286,61 @@ QtObject {
         }
     }
 
-    property var keycardFlowSelectionComponent: Component {
-        id: keycardFlowSelection
-        KeycardFlowSelectionView {
-            onClosed: {
-                if (root.hasAccounts) {
-                    Global.applicationWindow.navigateTo("InitialState")
-                } else {
+    property var keycardFlowComponent: Component {
+        KeycardFlowView {
+            id: keycardFlowView
+
+            keycardStore: OnboardingStore.keycardStore
+
+            onBackClicked: {
+                if(keycardStore.shouldExitKeycardFlow()) {
+                    keycardStore.cancelFlow()
                     Global.applicationWindow.navigateTo("KeysMain")
+                    return
                 }
+                keycardStore.backClicked()
+            }
+
+            Connections {
+                target: keycardFlowView.keycardStore.keycardModule
+
+                onContinueWithCreatingProfile: {
+                    console.warn("-----IMPORT ON KEYCARD")
+                    OnboardingStore.importMnemonic(seedPhrase)
+                }
+//                onFlowStateChanged: {
+//                    if(keycardFlowView.keycardStore.keycardModule.flowState === Constants.keycard.state.yourProfileState) {
+//                        root.keysMainSetState = "importseed";
+//                        Global.applicationWindow.navigateTo("GenKey");
+
+//                        root.keysMainSetState = "importseed";
+//                        Global.applicationWindow.navigateTo("GenKey");
+//                    }
+//                }
+            }
+
+            Connections {
+                target: OnboardingStore.onboardingModuleInst
+                onAccountImportError: {
+                    if (error === Constants.existingAccountError) {
+                        importSeedError.title = qsTr("Keys for this account already exist")
+                        importSeedError.text = qsTr("Keys for this account already exist and can't be added again. If you've lost your password, passcode or Keycard, uninstall the app, reinstall and access your keys by entering your seed phrase")
+                    } else {
+                        importSeedError.title = qsTr("Error importing seed")
+                        importSeedError.text = error
+                    }
+                    importSeedError.open()
+                }
+                onAccountImportSuccess: {
+                    root.keysMainSetState = "importseed";
+                    Global.applicationWindow.navigateTo("GenKey");
+                }
+            }
+
+            MessageDialog {
+                id: importSeedError
+                icon: StandardIcon.Critical
+                standardButtons: StandardButton.Ok
             }
         }
     }

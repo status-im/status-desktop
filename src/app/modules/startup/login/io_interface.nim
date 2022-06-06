@@ -1,4 +1,4 @@
-import item
+import NimQml, item
 
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -30,4 +30,7 @@ method setSelectedAccount*(self: AccessInterface, item: Item) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method login*(self: AccessInterface, password: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getKeycardModule*(self: AccessInterface): QVariant {.base.} =
   raise newException(ValueError, "No implementation available")

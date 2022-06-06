@@ -211,6 +211,36 @@ QtObject {
         readonly property int moreThanFiveMins: 4
     }
 
+    readonly property QtObject keycard: QtObject {
+
+        readonly property QtObject general: QtObject {
+            readonly property int footerWrapperHeight: 125
+            readonly property int keycardPinLength: 6
+            readonly property int titleFontSize1: 22
+            readonly property int titleFontSize2: 15
+            readonly property int infoFontSize: 12
+            readonly property int seedPhraseCellWidth: 193
+            readonly property int seedPhraseCellHeight: 60
+            readonly property int seedPhraseCellNumberWidth: 24
+            readonly property int seedPhraseCellFontSize: 12
+            readonly property int buttonFontSize: 15
+        }
+
+        readonly property QtObject state: QtObject {
+            readonly property string pluginKeycardState: "pluginKeycardState"
+            readonly property string insertKeycardState: "insertKeycardState"
+            readonly property string readingKeycardState: "readingKeycardState"
+            readonly property string createKeycardPinState: "createKeycardPinState"
+            readonly property string repeatKeycardPinState: "repeatKeycardPinState"
+            readonly property string keycardPinSetState: "keycardPinSetState"
+            readonly property string displaySeedPhraseState: "displaySeedPhraseState"
+            readonly property string enterSeedPhraseWordsState: "enterSeedPhraseWordsState"
+            readonly property string yourProfileState: "yourProfileState"
+            readonly property string keycardNotEmpty: "keycardNotEmpty"
+            readonly property string keycardLocked: "keycardLocked"
+        }
+    }
+
     readonly property int communityImported: 0
     readonly property int communityImportingInProgress: 1
     readonly property int communityImportingError: 2

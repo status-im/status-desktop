@@ -6,6 +6,9 @@ import ../../../global/global_singleton
 import ../../../core/eventemitter
 import ../../../../app_service/service/accounts/service as accounts_service
 import ../../../../app_service/service/general/service as general_service
+import ../../../../app_service/service/keycard/service as keycard_service
+
+import ../../shared_modules/keycard/module as keycard_module
 
 export io_interface
 
@@ -16,8 +19,10 @@ type
     viewVariant: QVariant
     controller: Controller
     moduleLoaded: bool
+    keycardModule: keycard_module.Module
 
 proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter,
+  keycardService: keycard_service.Service,
   accountsService: accounts_service.Service,
   generalService: general_service.Service):
   Module =
@@ -28,14 +33,18 @@ proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitt
   result.controller = controller.newController(result, events, accountsService, generalService)
   result.moduleLoaded = false
 
+  result.keycardModule = keycard_module.newModule(events, keycardService, accountsService)
+
 method delete*(self: Module) =
   self.view.delete
   self.viewVariant.delete
   self.controller.delete
+  self.keycardModule.delete
 
 method load*(self: Module) =
   singletonInstance.engine.setRootContextProperty("onboardingModule", self.viewVariant)
   self.controller.init()
+  self.keycardModule.init()
   self.view.load()
 
   let generatedAccounts = self.controller.getGeneratedAccounts()
@@ -91,3 +100,6 @@ method generateImage*(self: Module, imageUrl: string, aX: int, aY: int, bX: int,
   for img in images:
     if(img.imgType == "large"):
       return img.uri
+
+method getKeycardModule*(self: Module): QVariant =
+  self.keycardModule.getModuleAsVariant()
