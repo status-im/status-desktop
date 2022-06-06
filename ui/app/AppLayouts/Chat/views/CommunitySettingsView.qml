@@ -16,6 +16,7 @@ import StatusQ.Controls 0.1
 import StatusQ.Controls.Validators 0.1
 
 import "../panels/communities"
+import "../popups/community"
 import "../layouts"
 
 StatusAppTwoPanelLayout {
@@ -34,6 +35,7 @@ StatusAppTwoPanelLayout {
     property var rootStore
     property var community
     property var chatCommunitySectionModule
+    property bool hasAddedContacts: false
 
     signal backToCommunityClicked
     signal openLegacyPopupClicked // TODO: remove me when migration to new settings is done
@@ -114,6 +116,7 @@ StatusAppTwoPanelLayout {
             currentIndex: d.currentIndex
 
             CommunityOverviewSettingsPanel {
+                communityId: root.community.id
                 name: root.community.name
                 description: root.community.description
                 introMessage: root.community.introMessage
@@ -145,6 +148,22 @@ StatusAppTwoPanelLayout {
                         errorDialog.text = error.error
                         errorDialog.open()
                     }
+                }
+
+                onInviteNewPeopleClicked: {
+                    Global.openPopup(inviteFriendsToCommunityPopup, {
+                                         community: root.community,
+                                         hasAddedContacts: root.hasAddedContacts,
+                                         communitySectionModule: root.chatCommunitySectionModule
+                                     })
+                }
+
+                onAirdropTokensClicked: { /* TODO in future */ }
+                onBackUpClicked: {
+                    Global.openPopup(transferOwnershipPopup, {
+                        privateKey: root.chatCommunitySectionModule.exportCommunity(root.communityId),
+                        store: root.store
+                    })
                 }
             }
 
@@ -198,5 +217,29 @@ StatusAppTwoPanelLayout {
         title: qsTr("Error editing the community")
         icon: StandardIcon.Critical
         standardButtons: StandardButton.Ok
+    }
+
+    Component {
+        id: transferOwnershipPopup
+        TransferOwnershipPopup {
+            anchors.centerIn: parent
+        }
+    }
+
+    Component {
+        id: inviteFriendsToCommunityPopup
+        InviteFriendsToCommunityPopup {
+            anchors.centerIn: parent
+            rootStore: root.rootStore
+            contactsStore: root.rootStore.contactStore
+            onClosed: {
+                destroy()
+            }
+
+            onSendInvites: {
+                const error = root.communitySectionModule.inviteUsersToCommunity(JSON.stringify(pubKeys))
+                processInviteResult(error)
+            }
+        }
     }
 }

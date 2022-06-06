@@ -1,4 +1,4 @@
-import QtQuick 2.14
+﻿import QtQuick 2.14
 import QtQuick.Layouts 1.14
 import QtQuick.Controls 2.14
 
@@ -9,9 +9,12 @@ import StatusQ.Components 0.1
 
 import "../../layouts"
 
+import utils 1.0
+
 StackLayout {
     id: root
 
+    property string communityId
     property string name
     property string description
     property string introMessage
@@ -29,6 +32,10 @@ StackLayout {
     property bool owned: false
 
     signal edited(Item item) // item containing edited fields (name, description, logoImagePath, color, options, etc..)
+
+    signal inviteNewPeopleClicked
+    signal airdropTokensClicked
+    signal backUpClicked
 
     clip: true
 
@@ -118,6 +125,35 @@ StackLayout {
 
             Item {
                 Layout.fillHeight: true
+            }
+
+            RowLayout {
+                CommunityBanner {
+                    text: qsTr("Welcome to your community!")
+                    buttonText: qsTr("Invite new people")
+                    icon: Style.svg("chatEmptyHeader")
+                    onButtonClicked: root.inviteNewPeopleClicked()
+                }
+                Item {
+                   Layout.fillWidth: true
+                }
+                CommunityBanner {
+                    text: qsTr("Try an airdrop to reward your community for engagement!")
+                    buttonText: qsTr("Airdrop Tokens")
+                    icon: Style.svg("communities/airdrop")
+                    onButtonClicked: root.airdropTokensClicked()
+                }
+
+                Item {
+                   Layout.fillWidth: true
+                }
+
+                CommunityBanner {
+                    text: qsTr("Back up community key")
+                    buttonText: qsTr("Back up")
+                    icon: Style.svg("communities/backup-community")
+                    onButtonClicked: root.backUpClicked()
+                }
             }
         }
     }
