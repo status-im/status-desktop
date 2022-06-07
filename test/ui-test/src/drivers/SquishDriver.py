@@ -1,6 +1,6 @@
-#******************************************************************************
+# ******************************************************************************
 # Status.im
-#*****************************************************************************/
+# *****************************************************************************/
 # /**
 # * \file    SquishDriver.py
 # *
@@ -16,7 +16,6 @@ import object
 import names
 import test
 
-
 # The default maximum timeout to find ui object
 _MAX_WAIT_OBJ_TIMEOUT = 5000
 
@@ -27,74 +26,84 @@ _MIN_WAIT_OBJ_TIMEOUT = 500
 # Waits for the given object is loaded, visible and enabled.
 # It returns a tuple: True in case it is found. Otherwise, false. And the object itself.
 def is_loaded_visible_and_enabled(objName, timeout=_MAX_WAIT_OBJ_TIMEOUT):
-	obj = None
-	try:
-		obj = squish.waitForObject(getattr(names, objName), timeout)
-		return True, obj
-	except LookupError:
-		return False, obj
+    obj = None
+    try:
+        obj = squish.waitForObject(getattr(names, objName), timeout)
+        return True, obj
+    except LookupError:
+        return False, obj
+
 
 # Waits for the given object is loaded and might be not visible and/or not enabled:
 # It returns a tuple: True in case it is found. Otherwise, false. And the object itself.
 def is_loaded(objName):
-	obj = None
-	try:
-		obj = squish.findObject(getattr(names, objName))
-		return True, obj
-	except LookupError:
-		return False, obj
+    obj = None
+    try:
+        obj = squish.findObject(getattr(names, objName))
+        return True, obj
+    except LookupError:
+        return False, obj
 
-# It checks if the given object is visible and enabled.		
+
+# It checks if the given object is visible and enabled.
 def is_visible_and_enabled(obj):
-	return obj.visible and obj.enabled
+    return obj.visible and obj.enabled
+
 
 # Given a specific object, get a specific child.
 def get_child(obj, child_index=None):
-	if None == child_index:
-		return object.children(obj)
-	else:
-		return object.children(obj)[child_index]
+    if None == child_index:
+        return object.children(obj)
+    else:
+        return object.children(obj)[child_index]
+
 
 # It executes the click action into the given object:
 def click_obj(obj):
-	try:
-		squish.mouseClick(obj, squish.Qt.LeftButton)
-		return True
-	except LookupError:
-		return False
+    try:
+        squish.mouseClick(obj, squish.Qt.LeftButton)
+        return True
+    except LookupError:
+        return False
+
 
 # It executes the click action into object with given object name:
 def click_obj_by_name(objName):
-	try:
-		obj = squish.waitForObject(getattr(names, objName))
-		squish.mouseClick(obj, squish.Qt.LeftButton)
-		return True
-	except LookupError:
-		return False
-	
+    try:
+        obj = squish.waitForObject(getattr(names, objName))
+        squish.mouseClick(obj, squish.Qt.LeftButton)
+        return True
+    except LookupError:
+        return False
+
 
 def check_obj_by_name(objName):
-	try:
-		obj = squish.waitForObject(getattr(names, objName))
-		obj.checked = True
-		return True
-	except LookupError:
-		return False
+    try:
+        obj = squish.waitForObject(getattr(names, objName))
+        obj.checked = True
+        return True
+    except LookupError:
+        return False
 
 
 def is_text_matching(objName, text):
-	try:
-		obj = squish.waitForObject(getattr(names, objName))
-		test.compare(obj.text, text, "Found the following text " + text)
-		return True
-	except LookupError:
-		return False
+    try:
+        obj = squish.waitForObject(getattr(names, objName))
+        test.compare(obj.text, text, "Found the following text " + text)
+        return True
+    except LookupError:
+        return False
+
 
 # It types the specified text into the given object (as if the user had used the keyboard):
 def type(objName, text):
-	try:
-		obj = squish.findObject(getattr(names, objName))
-		squish.type(obj, text)
-		return True
-	except LookupError:
-		return False
+    try:
+        obj = squish.findObject(getattr(names, objName))
+        squish.type(obj, text)
+        return True
+    except LookupError:
+        return False
+
+
+def press_enter(objName):
+    type(objName, "<Return>")

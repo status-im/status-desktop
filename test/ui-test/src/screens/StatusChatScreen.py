@@ -5,7 +5,7 @@
 # * \file    StatusChatScreen.py
 # *
 # * \date    June 2022
-# * \brief   Chat Main Screen.
+# * \brief   Chat Screen.
 # *****************************************************************************/
 
 
@@ -15,23 +15,17 @@ from drivers.SquishDriverVerification import *
 
 
 class ChatComponents(Enum):
-    StatusIcon = "statusIcon_StatusIcon_2"
-    PUBLIC_CHAT_ICON = "mainWindow_dropRectangle_Rectangle"
-    JOIN_PUBLIC_CHAT = "join_public_chat_StatusMenuItemDelegate"
-
-class ChatNamePopUp(Enum):
-    CHAT_NAME_TEXT = "chat_name_PlaceholderText"
-
+    TYPE_A_MESSAGE_PLACE_HOLDER = "scrollView_Type_a_message_PlaceholderText"
+    MESSAGE_INPUT = "scrollView_messageInputField_TextArea"
 
 
 class StatusChatScreen:
 
     def __init__(self):
-        verify_screen_is_loaded(MainScreenComponents.SEARCH_TEXT_FIELD.value)
+        verify_screen_is_loaded(ChatComponents.TYPE_A_MESSAGE_PLACE_HOLDER.value)
 
 
-    def joinChatRoom(self, room):
-        click_obj_by_name(MainScreenComponents.PUBLIC_CHAT_ICON.value)
-        click_obj_by_name(MainScreenComponents.JOIN_PUBLIC_CHAT.value)
-        type(ChatNamePopUp.CHAT_NAME_TEXT.value, room)
+    def sendMessage(self, message):
+        type(ChatComponents.MESSAGE_INPUT.value, message)
+        press_enter(ChatComponents.MESSAGE_INPUT.value)
 
