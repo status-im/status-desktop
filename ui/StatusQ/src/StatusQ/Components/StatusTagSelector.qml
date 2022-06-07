@@ -5,6 +5,7 @@ import QtGraphicalEffects 1.0
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Controls 0.1
 
 /*!
      \qmltype StatusTagSelector
@@ -277,69 +278,14 @@ Item {
                     }
                     onWidthChanged: { scrollToEnd(); }
                     onCountChanged: { scrollToEnd(); }
-                    delegate: Rectangle {
-                        id: nameDelegate
+                    delegate: StatusTagItem {
+                        isReadonly: model.isReadonly
+                        text: model.name
+                        icon: model.tagIcon
 
-                        property int tagMargins: 8
-                        property int tagIconsSize: 20
-                        function getTagColor(isReadonly) {
-                            if(isReadonly) {
-                                return Theme.palette.baseColor1
-                            }
-                            else {
-                                return mouseArea.containsMouse ? Theme.palette.miscColor1 : Theme.palette.primaryColor1
-                            }
-                        }
-
-                        width: tagRow.implicitWidth + 2 * nameDelegate.tagMargins
-                        height: 30
-                        color: getTagColor(model.isReadonly)
-                        radius: 8
-                        Row {
-                            id: tagRow
-                            height: parent.height
-                            anchors.left: parent.left
-                            anchors.leftMargin: nameDelegate.tagMargins
-                            anchors.rightMargin: nameDelegate.tagMargins
-                            spacing: 2
-
-                            StatusIcon {
-                                visible: model.tagIcon
-                                anchors.verticalCenter: parent.verticalCenter
-                                color: Theme.palette.indirectColor1
-                                width: model.tagIcon ? nameDelegate.tagIconsSize : 0
-                                height: nameDelegate.tagIconsSize
-                                icon: model.tagIcon
-                            }
-                            StatusBaseText {
-                                id: nameText
-                                anchors.verticalCenter: parent.verticalCenter
-                                color: Theme.palette.indirectColor1
-                                font.pixelSize: 15
-                                text: name
-                            }
-                            StatusIcon {
-                                id: closeIcon
-                                visible: !model.isReadonly
-                                anchors.leftMargin: nameDelegate.tagMargins
-                                anchors.verticalCenter: parent.verticalCenter
-                                color: Theme.palette.indirectColor1
-                                width: nameDelegate.tagIconsSize
-                                height: nameDelegate.tagIconsSize
-                                icon: "close"
-                            }
-                        }
-
-                        MouseArea {
-                            id: mouseArea
-                            enabled: !model.isReadonly
-                            anchors.fill: parent
-                            hoverEnabled: true
-                            cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
-                            onClicked: {
-                                removeMember(publicId);
-                                namesModel.remove(index, 1);
-                            }
+                        onClicked: {
+                            removeMember(model.publicId);
+                            namesModel.remove(index, 1);
                         }
                     }
                 }
