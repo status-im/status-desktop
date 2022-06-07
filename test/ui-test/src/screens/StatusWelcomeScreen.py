@@ -7,12 +7,14 @@
 # * \date    May 2022
 # * \brief   Sign Up and Login for new users to the app.
 # *****************************************************************************/
+
 from enum import Enum
 from drivers.SquishDriver import *
 from drivers.SquishDriverVerification import *
 
 
 class AgreementPopUp(Enum):
+    OK_GOT_IT_BUTTON = "mainWindow_Ok_got_it_StatusBaseText"
     ACKNOWLEDGE_CHECKBOX = "acknowledge_checkbox"
     TERMS_OF_USE_CHECK_BOX = "termsOfUseCheckBox_StatusCheckBox"
     GET_STARTED_BUTTON = "getStartedStatusButton_StatusButton"
@@ -37,9 +39,10 @@ class SignUpComponents(Enum):
 class StatusWelcomeScreen:
 
     def __init__(self):
-        verify_screen_is_loaded(AgreementPopUp.ACKNOWLEDGE_CHECKBOX.value)
+        verify_screen_is_loaded(AgreementPopUp.OK_GOT_IT_BUTTON.value)
 
     def agree_terms_conditions_and_generate_new_key(self):
+        click_obj_by_name(AgreementPopUp.OK_GOT_IT_BUTTON.value)
         click_obj_by_name(AgreementPopUp.ACKNOWLEDGE_CHECKBOX.value)
         check_obj_by_name(AgreementPopUp.TERMS_OF_USE_CHECK_BOX.value)
         click_obj_by_name(AgreementPopUp.GET_STARTED_BUTTON.value)
