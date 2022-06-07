@@ -10,14 +10,14 @@ Feature: Status Desktop Chat
 
     Background:
          Given A first time user lands on the status desktop and generates new key
-    	 When user inputs username tester123 and password 'TesTEr16843/!@00'
+    	 When user inputs username tester123 and password TesTEr16843/!@00
     	 Then the user lands on the signed in app
 
     Scenario: User joins a room and chats
 		 When user joins chat room test
 		 Then user is able to send chat message
-		 | message  			  |
-		 | Hello    			  |
-		 | How are you    		  |
-		 | I am from status   	  |
-		 | tell me how you do?    |
+		 | message  			 |
+		 | Hello    			 |
+		 | How are you    		 |
+		 | I am from status   	 |
+		 | tell me how you do?   |
