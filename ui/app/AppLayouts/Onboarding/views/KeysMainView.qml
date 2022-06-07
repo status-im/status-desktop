@@ -75,6 +75,7 @@ OnboardingBasePage {
             anchors.topMargin: 32
             anchors.horizontalCenter: parent.horizontalCenter
             spacing: Style.current.bigPadding
+
             StatusButton {
                 id: button
                 enabled: (opacity > 0.1)
@@ -145,9 +146,7 @@ OnboardingBasePage {
             }
             PropertyChanges {
                 target: button
-//                text: qsTr("Scan sync code")
-                //TODO remove when sync code is implemented
-                opacity: 0.0
+                text: qsTr("Scan sync code")
             }
 //            PropertyChanges {
 //                target: keycardLink

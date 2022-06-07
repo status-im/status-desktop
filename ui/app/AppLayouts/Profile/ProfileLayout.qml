@@ -177,7 +177,7 @@ StatusAppTwoPanelLayout {
                 contentWidth: d.contentWidth
             }
 
-            DevicesView {
+            SyncingView {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
 

@@ -2,6 +2,7 @@ import NimQml, chronicles
 import io_interface
 import ../io_interface as delegate_interface
 import view, controller, model, item
+import logging
 
 import ../../../../core/eventemitter
 import ../../../../../app_service/service/settings/service as settings_service
@@ -50,7 +51,10 @@ proc isMyDevice(self: Module, installationId: string): bool =
 proc initModel(self: Module) =
   var items: seq[Item]
   let allDevices = self.controller.getAllDevices()
+  var logger = newConsoleLogger()
+  logger.log(lvlInfo, "<-- Listing all devices:")
   for d in allDevices:
+    logger.log(lvlInfo, d)
     let item = initItem(d.id, d.metadata.name, d.enabled, self.isMyDevice(d.id))
     items.add(item)
 

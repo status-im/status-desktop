@@ -72,11 +72,18 @@ QtObject {
                     signal: Global.applicationWindow.navigateTo
                     guard: path === "LogIn"
                 }
+
+                DSM.SignalTransition {
+                    targetState: syncDeviceState
+                    signal: Global.applicationWindow.navigateTo
+                    guard: path === "SyncDevice"
+                }
             }
 
             DSM.State {
                 id: genKeyState
                 onEntered: { onBoardingStepChanged(genKey, ""); }
+
                 DSM.SignalTransition {
                     targetState: welcomeMainState
                     signal: Global.applicationWindow.navigateTo
@@ -99,6 +106,17 @@ QtObject {
                     targetState: importSeedState
                     signal: Global.applicationWindow.navigateTo
                     guard: path === "ImportSeed"
+                }
+            }
+
+            DSM.State {
+                id: syncDeviceState
+                onEntered: { onBoardingStepChanged(syncDevice, ""); }
+
+                DSM.SignalTransition {
+                    targetState: keysMainState
+                    signal: Global.applicationWindow.navigateTo
+                    guard: path === "KeyMain"
                 }
             }
 
@@ -209,10 +227,16 @@ QtObject {
         id: keysMain
         KeysMainView {
             onButtonClicked: {
-                if (state === "importseed") {
+                switch (state) {
+                case "importseed":
                     importSeedState.seedInputState = "existingUser";
                     Global.applicationWindow.navigateTo("ImportSeed");
-                } else {
+                    break;
+                case "connectkeys":
+                    importSeedState.seedInputState = "syncDevice";
+                    Global.applicationWindow.navigateTo("SyncDevice");
+                    break;
+                default:
                     importSeedState.seedInputState = "newUser";
                     Global.applicationWindow.navigateTo("GenKey");
                 }
@@ -253,6 +277,19 @@ QtObject {
             onSeedValidated: {
                 root.keysMainSetState = "importseed";
                 Global.applicationWindow.navigateTo("GenKey");
+            }
+        }
+    }
+
+    property var syncDeviceInputComponent: Component {
+        id: syncDevice
+
+        SyncDeviceView {
+            onUserValidated: {
+                Global.applicationWindow.navigateTo("GenKey");
+            }
+            onBackClicked: {
+                Global.applicationWindow.navigateTo("KeyMain");
             }
         }
     }

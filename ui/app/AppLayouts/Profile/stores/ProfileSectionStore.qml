@@ -80,6 +80,9 @@ QtObject {
             append({subsection: Constants.settingsSubsection.ensUsernames,
                        text: qsTr("ENS usernames"),
                        icon: "username"})
+            append({subsection: Constants.settingsSubsection.devicesSettings,
+                       text: qsTr("Syncing"),
+                       icon: "rotate"})
         }
     }
 
@@ -114,9 +117,6 @@ QtObject {
             append({subsection: Constants.settingsSubsection.language,
                        text: qsTr("Language & Currency"),
                        icon: "language"})
-            append({subsection: Constants.settingsSubsection.devicesSettings,
-                       text: qsTr("Devices settings"),
-                       icon: "mobile"})
             append({subsection: Constants.settingsSubsection.advanced,
                        text: qsTr("Advanced"),
                        icon: "settings"})
