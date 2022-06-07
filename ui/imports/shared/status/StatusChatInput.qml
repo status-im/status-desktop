@@ -1138,7 +1138,7 @@ Rectangle {
             Shortcut {
                 enabled: messageInputField.activeFocus
                 sequence: "Ctrl+Meta+Space"
-                onActivated: emojiBtn.clicked()
+                onActivated: emojiBtn.clicked(null)
             }
 
         }
