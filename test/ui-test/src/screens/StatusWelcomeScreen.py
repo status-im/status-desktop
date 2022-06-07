@@ -72,5 +72,3 @@ class StatusWelcomeScreen:
     def input_confirmation_password(self, password):
         type(SignUpComponents.PASSWORD_CONFIRM_INPUT.value, password)
         click_obj_by_name(SignUpComponents.CREATE_PASSWORD.value)
-
-
