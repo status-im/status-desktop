@@ -35,6 +35,7 @@ StatusSwitchTabBar 0.1 StatusSwitchTabBar.qml
 StatusSelectableText 0.1 StatusSelectableText.qml
 StatusTabBar 0.1 StatusTabBar.qml
 StatusTabButton 0.1 StatusTabButton.qml
+StatusTagItem 0.1 StatusTagItem.qml
 StatusTokenInlineSelector 0.1 StatusTokenInlineSelector.qml
 StatusWalletColorButton 0.1 StatusWalletColorButton.qml
 StatusWalletColorSelect 0.1 StatusWalletColorSelect.qml

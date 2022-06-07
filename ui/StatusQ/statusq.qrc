@@ -10501,5 +10501,6 @@
         <file>src/assets/twemoji/svg/e50a.svg</file>
         <file>src/assets/twemoji/LICENSE</file>
         <file>src/StatusQ/Controls/StatusTabBar.qml</file>
+        <file>src/StatusQ/Controls/StatusTagItem.qml</file>
     </qresource>
 </RCC>
