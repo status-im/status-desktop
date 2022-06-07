@@ -409,13 +409,14 @@ Item {
                 }
                 nickName: model.nickName
                 userName: model.name
-                chatKey: root.compressedKeyGetter(model.publicId)
-                trustIndicator: model.trustIndicator
-                isMutualContact: model.isMutualContact
+                pubKey: root.compressedKeyGetter(model.publicId)
+                isVerified: false // FIXME
+                isUntrustworthy: false // FIXME
+                isContact: model.isMutualContact
                 image.source: model.icon
                 image.isIdenticon: model.isIdenticon
                 icon.color: Theme.palette.userCustomizationColors[root.colorIdForPubkeyGetter(model.publicId)]
-                isOnline: model.onlineStatus
+                status: model.onlineStatus
                 statusListItemIcon.badge.border.color: sensor.containsMouse ? Theme.palette.baseColor2 : Theme.palette.baseColor4
                 ringSettings.ringSpecModel: root.ringSpecModelGetter(publicId)
                 color: (sensor.containsMouse || highlighted) ? Theme.palette.baseColor2 : "transparent"
