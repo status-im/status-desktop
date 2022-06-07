@@ -54,3 +54,5 @@ start_chat_StatusBaseText = {"container": statusDesktop_mainWindow_overlay, "tex
 mainWindow_scrollView_ScrollView = {"container": statusDesktop_mainWindow, "id": "scrollView", "type": "ScrollView", "unnamed": 1, "visible": True}
 scrollView_messageInputField_TextArea = {"container": mainWindow_scrollView_ScrollView, "id": "messageInputField", "type": "TextArea", "unnamed": 1, "visible": True}
 reactionImage_SVGImage = {"container": statusDesktop_mainWindow_overlay, "id": "reactionImage", "source": "qrc:/imports/assets/icons/emojiReactions/heart.svg", "type": "SVGImage", "unnamed": 1, "visible": True}
+mainWindow_statusIcon_StatusIcon_2 = {"container": statusDesktop_mainWindow, "id": "statusIcon", "source": "qrc:/StatusQ/src/assets/img/icons/public-chat.svg", "type": "StatusIcon", "unnamed": 1, "visible": True}
+scrollView_Type_a_message_PlaceholderText = {"container": mainWindow_scrollView_ScrollView, "text": "Type a message.", "type": "PlaceholderText", "unnamed": 1, "visible": True}
