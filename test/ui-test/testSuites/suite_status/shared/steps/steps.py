@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-#******************************************************************************
+# ******************************************************************************
 # Status.im
-#*****************************************************************************/
+# *****************************************************************************/
 # /**
 # * \file    steps.py
 # *
@@ -15,17 +15,17 @@
 # *****************************************************************************
 from common.Common import *
 
-   
+
 @Given("the application is restarted")
 def step(context):
     currentApplicationContext().detach()
     startApplication("nim_status_client")
-  
-    
+
+
 @When("user inputs the following |any| with ui-component |any|")
 def step(context, text, obj):
     input_text(text, obj)
-    
+
 
 @When("user clicks on the following ui-component |any|")
 def step(context, obj):
