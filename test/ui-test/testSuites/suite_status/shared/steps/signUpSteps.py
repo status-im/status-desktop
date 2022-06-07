@@ -1,6 +1,6 @@
 
 from screens.StatusWelcomeScreen import StatusWelcomeScreen
-from screens.StatusChatScreen import StatusChatScreen
+from screens.StatusMainScreen import StatusMainScreen
 
 _welcomeScreen = StatusWelcomeScreen() 
 
@@ -22,4 +22,4 @@ def step(context, username):
 
 @Then("the user lands on the signed in app")
 def step(context):
-    StatusChatScreen()
+    StatusMainScreen()
