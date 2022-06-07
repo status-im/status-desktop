@@ -114,11 +114,6 @@ Item {
 
         id: seedWordInput
         implicitWidth: parent.width
-        implicitHeight: parent.height
-        input.anchors.topMargin: 0
-        input.anchors.leftMargin: 0
-        input.anchors.rightMargin: 0
-        input.anchors.bottom: input.parent.bottom
         input.leftComponent: StatusBaseText {
             text: root.leftComponentText
             color: seedWordInput.input.edit.activeFocus ?
