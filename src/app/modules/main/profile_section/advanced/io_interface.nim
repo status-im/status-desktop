@@ -1,7 +1,5 @@
 import NimQml
 
-import ../../../../../app_service/service/settings/dto/settings as settings_service_type
-
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
 
@@ -15,9 +13,6 @@ method isLoaded*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getModuleAsVariant*(self: AccessInterface): QVariant {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method onCurrentNetworkSet*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onFleetSet*(self: AccessInterface) {.base.} =
@@ -41,22 +36,7 @@ method onAutoMessageToggled*(self: AccessInterface) {.base.} =
 method onDebugToggled*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onCustomNetworkAdded*(self: AccessInterface, network: settings_service_type.Network) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method viewDidLoad*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method getCurrentNetworkName*(self: AccessInterface): string {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method getCurrentNetworkId*(self: AccessInterface): string {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method getCurrentChainId*(self: AccessInterface): int {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method setCurrentNetwork*(self: AccessInterface, network: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getFleet*(self: AccessInterface): string {.base.} =
@@ -96,10 +76,6 @@ method isDebugEnabled*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method toggleDebug*(self: AccessInterface) {.base.} =
-  raise newException(ValueError, "No implementation available")
-
-method addCustomNetwork*(self: AccessInterface, name: string, endpoint: string, networkId: int, networkType: string)
-  {.slot.} =
   raise newException(ValueError, "No implementation available")
 
 method toggleCommunitiesPortalSection*(self: AccessInterface) {.base.} =

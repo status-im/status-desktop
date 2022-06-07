@@ -29,6 +29,7 @@ type
     value*: string
     fromAddress*: string
     to*: string
+    chainId*: int
 
 proc toTransactionDto*(jsonObj: JsonNode): TransactionDto =
   result = TransactionDto()
@@ -47,6 +48,8 @@ proc toTransactionDto*(jsonObj: JsonNode): TransactionDto =
   discard jsonObj.getProp("value", result.value)
   discard jsonObj.getProp("from", result.fromAddress)
   discard jsonObj.getProp("to", result.to)
+  discard jsonObj.getProp("networkId", result.chainId)
+
 
 proc cmpTransactions*(x, y: TransactionDto): int =
   # Sort proc to compare transactions from a single account.

@@ -10,8 +10,8 @@ QtObject {
     property var web3ProviderInst: providerModule
     property var urlENSDictionary: ({})
 
-    property int networkId: providerModule.networkId
-    property string currentNetwork: providerModule.currentNetwork
+    property int chainId: providerModule.chainId
+    property string chainName: providerModule.chainName
 
     function disconnectAddress(dappName, address){
         dappPermissionsModule.disconnectAddress(dappName, address)

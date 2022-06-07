@@ -7,8 +7,6 @@ QtObject {
     property var advancedModule
 
     // Advanced Module Properties
-    property string currentNetworkName: advancedModule? advancedModule.currentNetworkName : ""
-    property string currentNetworkId: advancedModule? advancedModule.currentNetworkId : ""
     property string currentChainId: advancedModule? advancedModule.currentChainId : 0
     property string fleet: advancedModule? advancedModule.fleet : ""
     property string bloomLevel: advancedModule? advancedModule.bloomLevel : ""
@@ -34,22 +32,8 @@ QtObject {
         readonly property string onlineUsers: "onlineUsers"
         readonly property string gifWidget: "gifWidget"
         readonly property string keycard: "keycard"
-        readonly property string multiNetwork: "multiNetwork"
         readonly property string communityHistoryArchiveSupport: "communityHistoryArchiveSupport"
         readonly property string communitiesPortal: "communitiesPortal"
-    }
-
-    function setGlobalNetworkId() {
-        Global.currentNetworkId = currentNetworkId
-        Global.currentChainId = currentChainId
-    }
-
-    Component.onCompleted: {
-        setGlobalNetworkId()
-    }
-    
-    onCurrentNetworkIdChanged: {
-        setGlobalNetworkId()
     }
 
     function logDir() {
@@ -115,13 +99,6 @@ QtObject {
         root.advancedModule.enableDeveloperFeatures()
     }
 
-    function addCustomNetwork(name, endpoint, networkId, networkType) {
-        if(!root.advancedModule)
-            return
-
-        root.advancedModule.addCustomNetwork(name, endpoint, networkId, networkType)
-    }
-
     function toggleExperimentalFeature(feature) {
         if(!root.advancedModule)
             return
@@ -156,9 +133,6 @@ QtObject {
         }
         else if (feature === experimentalFeatures.keycard) {
             localAccountSettings.isKeycardEnabled = !localAccountSettings.isKeycardEnabled
-        }
-        else if (feature === experimentalFeatures.multiNetwork) {
-            localAccountSensitiveSettings.isMultiNetworkEnabled = !localAccountSensitiveSettings.isMultiNetworkEnabled
         }
         
     }

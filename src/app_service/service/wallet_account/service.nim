@@ -16,6 +16,7 @@ import ../../../app/core/tasks/[qt, threadpool]
 import ../../../backend/accounts as status_go_accounts
 import ../../../backend/backend as backend
 import ../../../backend/eth as status_go_eth
+import ../../../backend/transactions as status_go_transactions
 import ../../../backend/cache
 
 export dto
@@ -178,6 +179,16 @@ QtObject:
       if(accounts[i].address == address):
         return i
 
+  proc checkRecentHistory*(self: Service) =
+    try:
+      let addresses = self.getWalletAccounts().map(a => a.address)
+      let chainIds = self.networkService.getNetworks().map(a => a.chainId)
+      status_go_transactions.checkRecentHistory(chainIds, addresses)
+    except Exception as e:
+      let errDescription = e.msg
+      error "error: ", errDescription
+      return
+
   proc getCurrencyBalance*(self: Service): float64 =
     return self.getWalletAccounts().map(a => a.getCurrencyBalance()).foldl(a + b, 0.0)
 
@@ -274,6 +285,7 @@ QtObject:
     discard self.settingsService.toggleTestNetworksEnabled()
     self.tokenService.init()
     self.buildAllTokens()
+    self.checkRecentHistory()
     self.events.emit(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED, NetwordkEnabledToggled())
 
   proc updateWalletAccount*(self: Service, address: string, accountName: string, color: string, emoji: string) =

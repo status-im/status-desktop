@@ -107,7 +107,6 @@ StatusModal {
             }
             StatusSwitchTabButton {
                 text: qsTr("Multichain")
-                enabled: localAccountSensitiveSettings.isMultiNetworkEnabled
             }
         }
 

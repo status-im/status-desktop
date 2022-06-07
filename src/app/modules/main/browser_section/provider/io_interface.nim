@@ -1,3 +1,5 @@
+import ../../../../../app_service/service/network/service
+
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
 
@@ -29,4 +31,7 @@ method onPostMessage*(self: AccessInterface, payloadMethod: string, result: stri
   raise newException(ValueError, "No implementation available")
 
 method viewDidLoad*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method updateNetwork*(self: AccessInterface, network: NetworkDto) {.base.} =
   raise newException(ValueError, "No implementation available")

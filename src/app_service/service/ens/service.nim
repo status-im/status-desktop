@@ -262,8 +262,10 @@ QtObject:
       let hash = resp.result.getStr
 
       let resolverAddress = status_ens.resolver(chainId, ensUsername.addDomain()).result.getStr
-      self.transactionService.trackPendingTransaction(hash, $address, resolverAddress,
-        $PendingTransactionTypeDto.SetPubKey, ensUsername)
+      self.transactionService.trackPendingTransaction(
+        hash, $address, resolverAddress,
+        $PendingTransactionTypeDto.SetPubKey, ensUsername, chainId
+      )
       self.pendingEnsUsernames.incl(ensUsername)
 
       result = $(%* { "result": hash, "success": true })
@@ -305,8 +307,10 @@ QtObject:
       let hash = resp.result.getStr
 
       let ensUsernamesAddress = self.getEnsRegisteredAddress()
-      self.transactionService.trackPendingTransaction(hash, address, ensUsernamesAddress,
-        $PendingTransactionTypeDto.ReleaseENS, ensUsername)
+      self.transactionService.trackPendingTransaction(
+        hash, address, ensUsernamesAddress,
+        $PendingTransactionTypeDto.ReleaseENS, ensUsername, chainId
+      )
       self.pendingEnsUsernames.excl(ensUsername)
 
       result = $(%* { "result": hash, "success": true })
@@ -354,8 +358,11 @@ QtObject:
       let hash = resp.result.getStr
       let sntContract = self.getStatusToken()
       let ensUsername = self.formatUsername(username, true)
-      self.transactionService.trackPendingTransaction(hash, address, $sntContract.address,
-        $PendingTransactionTypeDto.RegisterEns, ensUsername)
+      self.transactionService.trackPendingTransaction(
+        hash, address, $sntContract.address,
+        $PendingTransactionTypeDto.RegisterEns, ensUsername,
+        chainId
+      )
 
       self.pendingEnsUsernames.incl(ensUsername)
       result = $(%* { "result": hash, "success": true })

@@ -35,19 +35,6 @@ proc delete*(self: Controller) =
 proc init*(self: Controller) =
   discard
 
-proc getCurrentNetworkDetails*(self: Controller): settings_service.Network =
-  self.settingsService.getCurrentNetworkDetails()
-
-proc changeCurrentNetworkTo*(self: Controller, network: string) =
-  if (not self.nodeConfigurationService.setNetwork(network)):
-    # in the future we may do a call from here to show a popup about this error
-    error "an error occurred, we couldn't change network"
-    return
-
-  self.stickersService.clearRecentStickers()
-
-  self.delegate.onCurrentNetworkSet()
-
 proc getFleet*(self: Controller): string =
   self.settingsService.getFleetAsString()
 
@@ -148,17 +135,6 @@ proc toggleDebug*(self: Controller) =
     return
 
   self.delegate.onDebugToggled()
-
-proc getCustomNetworks*(self: Controller): seq[settings_service.Network] =
-  return self.settingsService.getAvailableCustomNetworks()
-
-proc addCustomNetwork*(self: Controller, network: settings_service.Network) =
-  if (not self.settingsService.addCustomNetwork(network)):
-    # in the future we may do a call from here to show a popup about this error
-    error "an error occurred, we couldn't add a custom network"
-    return
-
-  self.delegate.onCustomNetworkAdded(network)
 
 proc toggleCommunitiesPortalSection*(self: Controller) =
   self.events.emit(TOGGLE_SECTION, ToggleSectionArgs(sectionType: SectionType.CommunitiesPortal))

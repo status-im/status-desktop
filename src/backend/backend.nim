@@ -97,8 +97,8 @@ rpc(discoverToken, "wallet"):
   chainId: int
   address: string
 
-rpc(getPendingTransactions, "wallet"):
-  discard
+rpc(getPendingTransactionsByChainIDs, "wallet"):
+  chainIds: seq[int]
 
 rpc(toggleVisibleToken, "wallet"):
   chainId: int

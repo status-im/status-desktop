@@ -854,7 +854,7 @@ You may add additional accurate notices of copyright ownership.
       backend.web3Response.connect(onMessage);
     
       window.ethereum.on("connected", () => {}); // TODO: Dummy event. Will need to be replaced once connecte/disconnected provider logic is implemented in status-go
-      window.ethereum.emit("connected", {"chainId": backend.networkId.toString()});
+      window.ethereum.emit("connected", {"chainId": backend.chainId.toString()});
       window.ethereum.on("accountsChanged", () => {});
     });
 
@@ -958,9 +958,9 @@ You may add additional accurate notices of copyright ownership.
         } else if (payload.method == "eth_coinbase" && (typeof window.statusAppcurrentAccountAddress !== "undefined")) {
             return web3Response(payload, window.statusAppcurrentAccountAddress)
         } else if (payload.method == "net_version"){
-            return web3Response(payload, backend.networkId.toString())
+            return web3Response(payload, backend.chainId.toString())
         } else if (payload.method == "eth_chainId"){
-            return web3Response(payload, "0x" + backend.networkId.toString(16))
+            return web3Response(payload, "0x" + backend.chainId.toString(16))
         } else if (payload.method == "eth_uninstallFilter"){
             return web3Response(payload, true);
         } else {

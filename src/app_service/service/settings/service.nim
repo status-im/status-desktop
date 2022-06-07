@@ -15,7 +15,6 @@ export settings_dto
 export stickers_dto
 
 # Default values:
-const DEFAULT_CURRENT_NETWORK* = "mainnet_rpc"
 const DEFAULT_CURRENCY* = "usd"
 const DEFAULT_TELEMETRY_SERVER_URL* = "https://telemetry.status.im"
 const DEFAULT_FLEET* = $Fleet.Prod
@@ -107,18 +106,6 @@ QtObject:
       self.settings.currency = DEFAULT_CURRENCY
 
     return self.settings.currency
-
-  proc saveCurrentNetwork*(self: Service, value: string): bool =
-    if(self.saveSetting(KEY_NETWORKS_CURRENT_NETWORK, value)):
-      self.settings.currentNetwork = value
-      return true
-    return false
-
-  proc getCurrentNetwork*(self: Service): string =
-    if(self.settings.currentNetwork.len == 0):
-      self.settings.currentNetwork = DEFAULT_CURRENT_NETWORK
-
-    return self.settings.currentNetwork
 
   proc saveDappsAddress*(self: Service, value: string): bool =
     if(self.saveSetting(KEY_DAPPS_ADDRESS, value)):
@@ -377,33 +364,6 @@ QtObject:
     let fleetAsString = self.getFleetAsString()
     let fleet = parseEnum[Fleet](fleetAsString)
     return fleet
-
-  proc getAvailableNetworks*(self: Service): seq[Network] =
-    return self.settings.availableNetworks
-
-  proc getAvailableCustomNetworks*(self: Service): seq[Network] =
-    return self.settings.availableNetworks.filterIt(it.id notin DEFAULT_NETWORKS_IDS)
-
-  proc getCurrentNetworkDetails*(self: Service): Network =
-    for n in self.settings.availableNetworks:
-      if(n.id == self.getCurrentNetwork()):
-        return n
-
-    # we should never be here
-    error "error: current network is not among available networks"
-
-  proc addCustomNetwork*(self: Service, network: Network): bool =
-    var newAvailableNetworks = self.settings.availableNetworks
-    newAvailableNetworks.add(network)
-    let availableNetworksAsJson = availableNetworksToJsonNode(newAvailableNetworks)
-
-    if(self.saveSetting(KEY_NETWORKS_ALL_NETWORKS, availableNetworksAsJson)):
-      self.settings.availableNetworks = newAvailableNetworks
-      return true
-    return false
-
-  proc getCurrentNetworkId*(self: Service): int =
-    self.getCurrentNetworkDetails().config.NetworkId
 
   proc getCurrentUserStatus*(self: Service): CurrentUserStatus =
     self.settings.currentUserStatus

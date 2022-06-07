@@ -6,7 +6,6 @@ QtObject {
     id: root
 
     property var accountSensitiveSettings: localAccountSensitiveSettings
-    property bool isMultiNetworkEnabled: accountSensitiveSettings.isMultiNetworkEnabled
 
     property var areTestNetworksEnabled: networksModule.areTestNetworksEnabled
     property var layer1Networks: networksModule.layer1

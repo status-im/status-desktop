@@ -44,6 +44,7 @@ type
   TransactionMinedArgs* = ref object of Args
     data*: string
     transactionHash*: string
+    chainId*: int
     success*: bool
     revertReason*: string
 
@@ -74,7 +75,6 @@ QtObject:
   type Service* = ref object of QObject
     events: EventEmitter
     threadpool: ThreadPool
-    walletAccountService: wallet_account_service.Service
     networkService: network_service.Service
     settingsService: settings_service.Service
     tokenService: token_service.Service
@@ -89,7 +89,6 @@ QtObject:
   proc newService*(
       events: EventEmitter,
       threadpool: ThreadPool,
-      walletAccountService: wallet_account_service.Service,
       networkService: network_service.Service,
       settingsService: settings_service.Service,
       tokenService: token_service.Service,
@@ -98,7 +97,6 @@ QtObject:
     result.QObject.setup
     result.events = events
     result.threadpool = threadpool
-    result.walletAccountService = walletAccountService
     result.networkService = networkService
     result.settingsService = settingsService
     result.tokenService = tokenService
@@ -112,39 +110,31 @@ QtObject:
 
   proc init*(self: Service) =
     self.doConnect()
-
-  proc checkRecentHistory*(self: Service) =
-    try:
-      let addresses = self.walletAccountService.getWalletAccounts().map(a => a.address)
-      transactions.checkRecentHistory(addresses)
-    except Exception as e:
-      let errDescription = e.msg
-      error "error: ", errDescription
-      return
   
-  proc getTransactionReceipt*(self: Service, transactionHash: string): JsonNode =
+  proc getTransactionReceipt*(self: Service, chainId: int, transactionHash: string): JsonNode =
     try:
-      let response = transactions.getTransactionReceipt(transactionHash)
-      result =  response.result
+      let response = transactions.getTransactionReceipt(chainId, transactionHash)
+      result = response.result
     except Exception as e:
       let errDescription = e.msg
       error "error getting transaction receipt: ", errDescription
   
-  proc deletePendingTransaction*(self: Service, transactionHash: string) =
+  proc deletePendingTransaction*(self: Service, chainId: int, transactionHash: string) =
     try:
-      discard transactions.deletePendingTransaction(transactionHash)
+      discard transactions.deletePendingTransaction(chainId, transactionHash)
     except Exception as e:
       let errDescription = e.msg
       error "error deleting pending transaction: ", errDescription
   
   proc confirmTransactionStatus(self: Service, pendingTransactions: JsonNode) =
     for trx in pendingTransactions.getElems():
-      let transactionReceipt = self.getTransactionReceipt(trx["hash"].getStr)
+      let transactionReceipt = self.getTransactionReceipt(trx["network_id"].getInt, trx["hash"].getStr)
       if transactionReceipt.kind != JNull:
-        self.deletePendingTransaction(trx["hash"].getStr)
+        self.deletePendingTransaction(trx["network_id"].getInt, trx["hash"].getStr)
         let ev = TransactionMinedArgs(
                   data: trx["additionalData"].getStr,
                   transactionHash: trx["hash"].getStr,
+                  chainId: trx["network_id"].getInt,
                   success: transactionReceipt{"status"}.getStr == "0x1",
                   revertReason: ""
                 )
@@ -152,9 +142,8 @@ QtObject:
 
   proc getPendingTransactions*(self: Service): JsonNode =
     try:
-      # this may be improved (need to add some checkings) but due to removing `status-lib` dependencies, channges made
-      # in this go are as minimal as possible
-      let response = backend.getPendingTransactions()
+      let chainIds = self.networkService.getNetworks().map(a => a.chainId)
+      let response = backend.getPendingTransactionsByChainIDs(chainIds)
       return response.result
     except Exception as e:
       let errDescription = e.msg
@@ -163,7 +152,8 @@ QtObject:
 
   proc getPendingOutboundTransactionsByAddress*(self: Service, address: string): JsonNode =
     try:
-      result = transactions.getPendingOutboundTransactionsByAddress(address).result
+      let chainIds = self.networkService.getNetworks().map(a => a.chainId)
+      result = transactions.getPendingOutboundTransactionsByAddress(chainIds, address).result
     except Exception as e:
       let errDescription = e.msg
       error "error getting pending txs by address: ", errDescription, address
@@ -178,26 +168,12 @@ QtObject:
     self.confirmTransactionStatus(self.getPendingOutboundTransactionsByAddress(address))
 
   proc trackPendingTransaction*(self: Service, hash: string, fromAddress: string, toAddress: string, trxType: string, 
-    data: string) =
+    data: string, chainId: int) =
     try:
-      discard transactions.trackPendingTransaction(hash, fromAddress, toAddress, trxType, data)
+      discard transactions.trackPendingTransaction(hash, fromAddress, toAddress, trxType, data, chainId)
     except Exception as e:
       let errDescription = e.msg
       error "error: ", errDescription
-
-  proc getTransfersByAddress*(self: Service, address: string, toBlock: Uint256, limit: int, loadMore: bool = false): seq[TransactionDto] =
-    try:
-      let limitAsHex = "0x" & eth_utils.stripLeadingZeros(limit.toHex)
-      let response = transactions.getTransfersByAddress(address, toBlock, limitAsHex, loadMore)
-
-      result = map(
-        response.result.getElems(),
-        proc(x: JsonNode): TransactionDto = x.toTransactionDto()
-      )
-    except Exception as e:
-      let errDescription = e.msg
-      error "error: ", errDescription
-      return
 
   proc setTrxHistoryResult*(self: Service, historyJSON: string) {.slot.} =
     let historyData = parseJson(historyJSON)
@@ -215,17 +191,19 @@ QtObject:
     ))
 
   proc loadTransactions*(self: Service, address: string, toBlock: Uint256, limit: int = 20, loadMore: bool = false) =
-    let arg = LoadTransactionsTaskArg(
-      address: address,
-      tptr: cast[ByteAddress](loadTransactionsTask),
-      vptr: cast[ByteAddress](self.vptr),
-      slot: "setTrxHistoryResult",
-      toBlock: toBlock,
-      limit: limit,
-      loadMore: loadMore
-    )
-    self.threadpool.start(arg)
-    
+    for networks in self.networkService.getNetworks():
+      let arg = LoadTransactionsTaskArg(
+        address: address,
+        tptr: cast[ByteAddress](loadTransactionsTask),
+        vptr: cast[ByteAddress](self.vptr),
+        slot: "setTrxHistoryResult",
+        toBlock: toBlock,
+        limit: limit,
+        loadMore: loadMore,
+        chainId: networks.chainId,
+      )
+      self.threadpool.start(arg)
+
   proc estimateGas*(
     self: Service,
     from_addr: string,
@@ -302,8 +280,11 @@ QtObject:
       let output = %* { "result": response.result.getStr,  "success": %(response.error.isNil), "uuid": %uuid }
       self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(result: $output))
 
-      self.trackPendingTransaction(response.result.getStr, from_addr, to_addr,
-        $PendingTransactionTypeDto.WalletTransfer, data = "")
+      # TODO ADD READ CHAIN
+      self.trackPendingTransaction(
+        response.result.getStr, from_addr, to_addr,
+        $PendingTransactionTypeDto.WalletTransfer, data = "", 1
+      )
     except Exception as e:
       error "Error sending eth transfer transaction", msg = e.msg
       return false
@@ -343,8 +324,11 @@ QtObject:
       let output = %* { "result": txHash, "success": %success, "uuid": %uuid }
       self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(result: $output))
 
-      self.trackPendingTransaction(txHash, from_addr, to_addr,
-        $PendingTransactionTypeDto.WalletTransfer, data = "")
+      self.trackPendingTransaction(
+        txHash, from_addr, to_addr,
+        $PendingTransactionTypeDto.WalletTransfer, data = "",
+        network.chainId
+      )
     except Exception as e:
       error "Error sending token transfer transaction", msg = e.msg
       return false
@@ -412,7 +396,7 @@ QtObject:
       if gasPrice < myTip:
         numOfTransactionWithTipLessThanMine.inc
 
-  proc getEstimatedTime*(self: Service, priorityFeePerGas: string, maxFeePerGas: string): EstimatedTime = 
+  proc getEstimatedTime*(self: Service, chainId: int, priorityFeePerGas: string, maxFeePerGas: string): EstimatedTime = 
     let priorityFeePerGasF = priorityFeePerGas.parseFloat
     let maxFeePerGasF = maxFeePerGas.parseFloat
     var transactionsProcessed = 0
@@ -420,7 +404,7 @@ QtObject:
     var latestBlockNumber: Option[Uint256]
     var expectedBaseFeeForNextBlock: float
     try:
-      let response = eth.getBlockByNumber("latest", true)
+      let response = eth.getBlockByNumber(chainId, "latest", true)
       if response.error.isNil:
         let transactionsJson = response.result{"transactions"}
         self.addToAllTransactionsAndSetNewMinMax(priorityFeePerGasF, numOfTransactionWithTipLessThanMine, transactionsJson)
@@ -451,7 +435,7 @@ QtObject:
       blockNumber = blockNumber - 1
       try:
         let hexPrevNum = "0x" & stint.toHex(blockNumber)
-        let response = getBlockByNumber(hexPrevNum, true)
+        let response = getBlockByNumber(chainId, hexPrevNum, true)
         let transactionsJson = response.result{"transactions"}
         self.addToAllTransactionsAndSetNewMinMax(priorityFeePerGasF, numOfTransactionWithTipLessThanMine, transactionsJson)
         transactionsProcessed += transactionsJson.len
