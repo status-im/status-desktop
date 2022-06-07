@@ -1253,7 +1253,7 @@ Rectangle {
                 anchors.bottom: parent.bottom
                 icon.name: "stickers"
                 type: StatusQ.StatusFlatRoundButton.Type.Tertiary
-                visible: !isEdit && Global.networkGuarded && emojiBtn.visible
+                visible: !isEdit && emojiBtn.visible
                 color: "transparent"
                 onClicked: togglePopup(stickersPopup, stickersBtn)
             }

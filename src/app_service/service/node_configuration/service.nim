@@ -31,11 +31,7 @@ proc newService*(fleetConfiguration: FleetConfiguration, settingsService: settin
   result.settingsService = settingsService
 
 proc adaptNodeSettingsForTheAppNeed(self: Service) =
-  let currentNetworkDetails = self.settingsService.getCurrentNetworkDetails()
-  var dataDir = currentNetworkDetails.config.DataDir
-  dataDir.removeSuffix("_rpc")
-
-  self.configuration.DataDir = dataDir
+  self.configuration.DataDir = "./ethereum"
   self.configuration.KeyStoreDir = "./keystore"
   self.configuration.LogFile = "./geth.log"
   self.configuration.ShhextConfig.BackupDisabledDataDir = "./"
@@ -138,22 +134,6 @@ proc setWakuVersion*(self: Service, wakuVersion: int): bool =
 
 method isCommunityHistoryArchiveSupportEnabled*(self: Service): bool =
   return self.configuration.TorrentConfig.Enabled
-
-proc setNetwork*(self: Service, network: string): bool =
-  if(not self.settingsService.saveCurrentNetwork(network)):
-    error "error saving network ", network, procName="setNetwork"
-    return false
-
-  let currentNetworkDetails = self.settingsService.getCurrentNetworkDetails()
-  var dataDir = currentNetworkDetails.config.DataDir
-  dataDir.removeSuffix("_rpc")
-
-  var newConfiguration = self.configuration
-  newConfiguration.NetworkId = currentNetworkDetails.config.NetworkId
-  newConfiguration.DataDir = dataDir
-  newConfiguration.UpstreamConfig.Enabled = currentNetworkDetails.config.UpstreamConfig.Enabled
-  newConfiguration.UpstreamConfig.URL = currentNetworkDetails.config.UpstreamConfig.URL
-  return self.saveConfiguration(newConfiguration)
 
 proc setBloomFilterMode*(self: Service, bloomFilterMode: bool): bool =
   if(not self.settingsService.saveWakuBloomFilterMode(bloomFilterMode)):

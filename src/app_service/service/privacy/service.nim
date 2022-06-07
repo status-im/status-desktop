@@ -59,7 +59,7 @@ QtObject:
 
   proc getDefaultAccount(self: Service): string =
     try:
-      let response = status_eth.getEthAccounts()
+      let response = status_eth.getAccounts()
 
       if(response.result.kind != JArray):
         error "error: ", procName="getDefaultAccount", errDesription = "response is not an array"

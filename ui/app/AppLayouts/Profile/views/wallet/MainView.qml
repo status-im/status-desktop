@@ -85,7 +85,6 @@ Column {
 
     Separator {
         height: 17
-        visible: root.walletStore.isMultiNetworkEnabled
     }
 
     StatusDescriptionListItem {

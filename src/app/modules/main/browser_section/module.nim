@@ -10,6 +10,7 @@ import dapps/module as dapps_module
 import current_account/module as current_account_module
 import ../../../../app_service/service/bookmarks/service as bookmark_service
 import ../../../../app_service/service/settings/service as settings_service
+import ../../../../app_service/service/network/service as network_service
 import ../../../../app_service/service/dapp_permissions/service as dapp_permissions_service
 import ../../../../app_service/service/provider/service as provider_service
 import ../../../../app_service/service/wallet_account/service as wallet_account_service
@@ -32,6 +33,7 @@ proc newModule*(delegate: delegate_interface.AccessInterface,
     events: EventEmitter,
     bookmarkService: bookmark_service.Service,
     settingsService: settings_service.Service,
+    networkService: network_service.Service,
     dappPermissionsService: dapp_permissions_service.Service,
     providerService: provider_service.Service,
     walletAccountService: wallet_account_service.Service): Module =
@@ -41,7 +43,7 @@ proc newModule*(delegate: delegate_interface.AccessInterface,
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
   result.moduleLoaded = false
-  result.providerModule = provider_module.newModule(result, events, settingsService, providerService)
+  result.providerModule = provider_module.newModule(result, events, settingsService, networkService, providerService)
   result.bookmarkModule = bookmark_module.newModule(result, events, bookmarkService)
   result.dappsModule = dapps_module.newModule(result, dappPermissionsService, walletAccountService)
   result.currentAccountModule = current_account_module.newModule(result, events, walletAccountService)

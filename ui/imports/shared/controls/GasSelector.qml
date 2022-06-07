@@ -28,6 +28,7 @@ Item {
     property string defaultGasLimit: "0"
     property string maxFiatFees: selectedGasFiatValue + root.defaultCurrency.toUpperCase()
     property int estimatedTxTimeFlag: Constants.transactionEstimatedTime.unknown
+    property int chainId: 1
 
 
     property alias selectedTipLimit: inputPerGasTipLimit.text
@@ -66,12 +67,11 @@ Item {
         }
 
         Qt.callLater(function () {
-        let ethValue = root.getGasEthValue(inputGasPrice.text, inputGasLimit.text)
-
-        let fiatValue = root.getFiatValue(ethValue, "ETH", root.defaultCurrency)
-        selectedGasEthValue = ethValue
-        selectedGasFiatValue = fiatValue
-        root.estimatedTxTimeFlag = root.getEstimatedTime(inputPerGasTipLimit.text, inputGasPrice.text)
+            let ethValue = root.getGasEthValue(inputGasPrice.text, inputGasLimit.text)
+            let fiatValue = root.getFiatValue(ethValue, "ETH", root.defaultCurrency)
+            selectedGasEthValue = ethValue
+            selectedGasFiatValue = fiatValue
+            root.estimatedTxTimeFlag = root.getEstimatedTime(root.chainId, inputPerGasTipLimit.text, inputGasPrice.text)
         })
     }
 
@@ -115,11 +115,6 @@ Item {
         if (!optimalGasButton.gasRadioBtn.checked) {
             optimalGasButton.gasRadioBtn.toggle()
         }
-    }
-
-    Component.onCompleted: {
-        updateGasEthValue()
-        checkLimits()
     }
 
     function validate() {
@@ -173,8 +168,7 @@ Item {
         if (root.suggestedFees.eip1559Enabled && inputTipLimit <= 0.00) {
             inputPerGasTipLimit.validationError = root.greaterThan0ErrorMessage
         }
-        const isInputValid = inputGasLimit.validationError === "" && inputGasPrice.validationError === "" && (!root.suggestedFees.eip1559Enabled  || (root.suggestedFees.eip1559Enabled && inputPerGasTipLimit.validationError === ""))
-        return isInputValid
+        return inputGasLimit.validationError === "" && inputGasPrice.validationError === "" && (!root.suggestedFees.eip1559Enabled  || (root.suggestedFees.eip1559Enabled && inputPerGasTipLimit.validationError === ""))
     }
 
 

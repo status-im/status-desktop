@@ -6,6 +6,7 @@ import ../../../../core/eventemitter
 
 import ../io_interface as delegate_interface
 import ../../../../../app_service/service/settings/service as settings_service
+import ../../../../../app_service/service/network/service as network_service
 import ../../../../../app_service/service/provider/service as provider_service
 import ../../../../global/global_singleton
 export io_interface
@@ -22,6 +23,7 @@ proc newModule*(
   delegate: delegate_interface.AccessInterface,
   events: EventEmitter,
   settingsService: settings_service.Service,
+  networkService: network_service.Service,
   providerService: provider_service.Service
 ): Module =
   result = Module()
@@ -29,7 +31,7 @@ proc newModule*(
   result.view = newView(result)
   result.viewVariant = newQVariant(result.view)
   result.moduleLoaded = false
-  result.controller = controller.newController(result, events, settingsService, providerService)
+  result.controller = controller.newController(result, events, settingsService, networkService, providerService)
 
 method delete*(self: Module) =
   self.controller.delete
@@ -39,8 +41,9 @@ method delete*(self: Module) =
 method load*(self: Module) =
   singletonInstance.engine.setRootContextProperty("providerModule", self.viewVariant)
   self.view.dappsAddress = self.controller.getDappsAddress()
-  self.view.networkId = self.controller.getCurrentNetworkId()
-  self.view.currentNetwork = self.controller.getCurrentNetwork()
+  let network = self.controller.getNetwork()
+  self.view.chainId = network.chainId
+  self.view.chainName = network.chainName
   self.view.load()
   self.controller.init()
 
@@ -65,3 +68,7 @@ method onPostMessage*(self: Module, payloadMethod: string, result: string) =
 
 method ensResourceURL*(self: Module, ens: string, url: string): (string, string, string, string, bool) =
   return self.controller.ensResourceURL(ens, url)
+
+method updateNetwork*(self: Module, network: NetworkDto) =
+  self.view.chainId = network.chainId
+  self.view.chainName = network.chainName

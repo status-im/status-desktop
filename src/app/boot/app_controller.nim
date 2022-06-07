@@ -133,7 +133,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.accountsService = accounts_service.newService(statusFoundation.fleetConfiguration)
   result.networkService = network_service.newService(statusFoundation.events, result.settingsService)
   result.contactsService = contacts_service.newService(
-    statusFoundation.events, statusFoundation.threadpool, result.settingsService
+    statusFoundation.events, statusFoundation.threadpool, result.networkService
   )
   result.chatService = chat_service.newService(statusFoundation.events, result.contactsService)
   result.communityService = community_service.newService(statusFoundation.events,
@@ -151,8 +151,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.messageService = message_service.newService(
     statusFoundation.events, statusFoundation.threadpool, result.contactsService, result.tokenService, result.walletAccountService, result.networkService
   )
-  result.transactionService = transaction_service.newService(statusFoundation.events, statusFoundation.threadpool,
-  result.walletAccountService, result.networkService, result.settingsService, result.tokenService)
+  result.transactionService = transaction_service.newService(statusFoundation.events, statusFoundation.threadpool, result.networkService, result.settingsService, result.tokenService)
   result.bookmarkService = bookmark_service.newService(statusFoundation.events)
   result.profileService = profile_service.newService(result.contactsService, result.settingsService)
   result.stickersService = stickers_service.newService(

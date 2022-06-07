@@ -1,4 +1,4 @@
-import json, os, chronicles, utils
+import json, os, chronicles
 import ../../constants as main_constants
 
 # set via `nim c` param `-d:INFURA_TOKEN:[token]`; should be set in CI/release builds
@@ -26,88 +26,6 @@ let DEFAULT_TORRENT_CONFIG_PORT* = 9025
 let DEFAULT_TORRENT_CONFIG_DATADIR* = joinPath(main_constants.defaultDataDir(), "data", "archivedata")
 let DEFAULT_TORRENT_CONFIG_TORRENTDIR* = joinPath(main_constants.defaultDataDir(), "data", "torrents")
 
-
-const DEFAULT_NETWORK_NAME* = "mainnet_rpc"
-const DEFAULT_NETWORKS_IDS* = @["mainnet_rpc", "testnet_rpc", "rinkeby_rpc", "goerli_rpc", "xdai_rpc", "poa_rpc" ]
-
-let DEFAULT_NETWORKS* = %* [
-  {
-    "id": "testnet_rpc",
-    "etherscan-link": "https://ropsten.etherscan.io/address/",
-    "name": "Ropsten with upstream RPC",
-    "config": {
-      "NetworkId": 3,
-      "DataDir": "/ethereum/testnet_rpc",
-      "UpstreamConfig": {
-        "Enabled": true,
-        "URL": "https://ropsten.infura.io/v3/" & INFURA_TOKEN_RESOLVED
-      }
-    }
-  },
-  {
-    "id": "rinkeby_rpc",
-    "etherscan-link": "https://rinkeby.etherscan.io/address/",
-    "name": "Rinkeby with upstream RPC",
-    "config": {
-      "NetworkId": 4,
-      "DataDir": "/ethereum/rinkeby_rpc",
-      "UpstreamConfig": {
-        "Enabled": true,
-        "URL": "https://rinkeby.infura.io/v3/" & INFURA_TOKEN_RESOLVED
-      }
-    }
-  },
-  {
-    "id": "goerli_rpc",
-    "etherscan-link": "https://goerli.etherscan.io/address/",
-    "name": "Goerli with upstream RPC",
-    "config": {
-      "NetworkId": 5,
-      "DataDir": "/ethereum/goerli_rpc",
-      "UpstreamConfig": {
-        "Enabled": true,
-        "URL": "https://goerli.blockscout.com/"
-      }
-    }
-  },
-  {
-    "id": "mainnet_rpc",
-    "etherscan-link": "https://etherscan.io/address/",
-    "name": "Mainnet with upstream RPC",
-    "config": {
-      "NetworkId": 1,
-      "DataDir": "/ethereum/mainnet_rpc",
-      "UpstreamConfig": {
-        "Enabled": true,
-        "URL": "https://mainnet.infura.io/v3/" & INFURA_TOKEN_RESOLVED
-      }
-    }
-  },
-  {
-    "id": "xdai_rpc",
-    "name": "xDai Chain",
-    "config": {
-      "NetworkId": 100,
-      "DataDir": "/ethereum/xdai_rpc",
-      "UpstreamConfig": {
-        "Enabled": true,
-        "URL": "https://dai.poa.network"
-      }
-    }
-  },
-  {
-    "id": "poa_rpc",
-    "name": "POA Network",
-    "config": {
-      "NetworkId": 99,
-      "DataDir": "/ethereum/poa_rpc",
-      "UpstreamConfig": {
-        "Enabled": true,
-        "URL": "https://core.poa.network"
-      }
-    }
-  }
-]
 
 let NETWORKS* = %* [
   {
@@ -323,6 +241,3 @@ var NODE_CONFIG* = %* {
     "TorrentDir": DEFAULT_TORRENT_CONFIG_TORRENTDIR
   }
 }
-
-proc getNetworkConfig*(currentNetwork: string): JsonNode =
-  result = DEFAULT_NETWORKS.first("id", currentNetwork)

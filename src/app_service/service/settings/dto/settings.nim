@@ -1,4 +1,4 @@
-import Tables, json, options, tables, strutils, marshal
+import Tables, json, options, tables, strutils
 import ../../stickers/dto/stickers
 
 include  ../../../common/json_utils
@@ -6,8 +6,6 @@ include  ../../../common/json_utils
 # Setting keys:
 const KEY_ADDRESS* = "address"
 const KEY_CURRENCY* = "currency"
-const KEY_NETWORKS_CURRENT_NETWORK* = "networks/current-network"
-const KEY_NETWORKS_ALL_NETWORKS* = "networks/networks"
 const KEY_DAPPS_ADDRESS* = "dapps-address"
 const KEY_EIP1581_ADDRESS* = "eip1581-address"
 const KEY_INSTALLATION_ID* = "installation-id"
@@ -32,7 +30,6 @@ const KEY_USE_MAILSERVERS* = "use-mailservers?"
 const KEY_WALLET_ROOT_ADDRESS* = "wallet-root-address"
 const KEY_SEND_STATUS_UPDATES* = "send-status-updates?"
 const KEY_TELEMETRY_SERVER_URL* = "telemetry-server-url"
-const KEY_WALLET_VISIBLE_TOKENS* = "wallet/visible-tokens"
 const KEY_PINNED_MAILSERVERS* = "pinned-mailservers"
 const KEY_CURRENT_USER_STATUS* = "current-user-status"
 const KEY_RECENT_STICKERS* = "stickers/recent-stickers"
@@ -66,17 +63,6 @@ type UpstreamConfig* = object
   Enabled*: bool
   URL*: string
 
-type Config* = object
-  NetworkId*: int
-  DataDir*: string
-  UpstreamConfig*: UpstreamConfig
-
-type Network* = object
-  id*: string
-  etherscanLink*: string
-  name*: string
-  config*: Config
-
 type PinnedMailserver* = object
   ethProd*: string
   ethStaging*: string
@@ -101,8 +87,6 @@ type
   SettingsDto* = object # There is no point to keep all these info as settings, but we must follow status-go response
     address*: string
     currency*: string
-    currentNetwork*: string
-    availableNetworks*: seq[Network]
     dappsAddress*: string
     eip1581Address*: string
     installationId*: string
@@ -138,27 +122,6 @@ type
     gifFavorites*: JsonNode
     testNetworksEnabled*: bool
 
-proc toUpstreamConfig*(jsonObj: JsonNode): UpstreamConfig =
-  discard jsonObj.getProp("Enabled", result.Enabled)
-  discard jsonObj.getProp("URL", result.URL)
-
-proc toConfig*(jsonObj: JsonNode): Config =
-  discard jsonObj.getProp("NetworkId", result.NetworkId)
-  discard jsonObj.getProp("DataDir", result.DataDir)
-
-  var upstreamConfigObj: JsonNode
-  if(jsonObj.getProp("UpstreamConfig", upstreamConfigObj)):
-    result.UpstreamConfig = toUpstreamConfig(upstreamConfigObj)
-
-proc toNetwork*(jsonObj: JsonNode): Network =
-  discard jsonObj.getProp("id", result.id)
-  discard jsonObj.getProp("etherscan-link", result.etherscanLink)
-  discard jsonObj.getProp("name", result.name)
-
-  var configObj: JsonNode
-  if(jsonObj.getProp("config", configObj)):
-    result.config = toConfig(configObj)
-
 proc toPinnedMailserver*(jsonObj: JsonNode): PinnedMailserver =
   # we maintain pinned mailserver per fleet
   discard jsonObj.getProp("eth.prod", result.ethProd)
@@ -189,14 +152,6 @@ proc toSettingsFieldDto*(jsonObj: JsonNode): SettingsFieldDto =
 proc toSettingsDto*(jsonObj: JsonNode): SettingsDto =
   discard jsonObj.getProp(KEY_ADDRESS, result.address)
   discard jsonObj.getProp(KEY_CURRENCY, result.currency)
-  discard jsonObj.getProp(KEY_NETWORKS_CURRENT_NETWORK, result.currentNetwork)
-
-  var networksArr: JsonNode
-  if(jsonObj.getProp(KEY_NETWORKS_ALL_NETWORKS, networksArr)):
-    if(networksArr.kind == JArray):
-      for networkObj in networksArr:
-        result.availableNetworks.add(toNetwork(networkObj))
-
   discard jsonObj.getProp(KEY_DAPPS_ADDRESS, result.dappsAddress)
   discard jsonObj.getProp(KEY_EIP1581_ADDRESS, result.eip1581Address)
   discard jsonObj.getProp(KEY_INSTALLATION_ID, result.installationId)
@@ -243,26 +198,6 @@ proc toSettingsDto*(jsonObj: JsonNode): SettingsDto =
     if(usernamesArr.kind == JArray):
       for username in usernamesArr:
         result.ensUsernames.add(username.getStr)
-
-proc configToJsonNode*(config: Config): JsonNode =
-  let configAsString = $$config
-  result = parseJson(configAsString)
-
-proc networkToJsonNode*(network: Network): JsonNode =
-  ## we cannot use the same technique as we did for `configToJsonNode` cause we cannot have
-  ## variable name with a dash in order to map `etherscan-link` appropriatelly
-  return %*{
-    "id": network.id,
-    "etherscan-link": network.etherscanLink,
-    "name": network.name,
-    "config": configToJsonNode(network.config)
-  }
-
-proc availableNetworksToJsonNode*(networks: seq[Network]): JsonNode =
-  var availableNetworksAsJson = newJArray()
-  for n in networks:
-    availableNetworksAsJson.add(networkToJsonNode(n))
-  return availableNetworksAsJson
 
 proc pinnedMailserverToJsonNode*(mailserver: PinnedMailserver): JsonNode =
   return %*{
