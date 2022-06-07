@@ -37,3 +37,9 @@ target_link_libraries(${PROJECT_NAME}
 # QtCreator needs this
 set(QML_IMPORT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/qml;${QML_IMPORT_PATH} CACHE STRING "For QtCreator" FORCE)
 list(REMOVE_DUPLICATES QML_IMPORT_PATH)
+
+install(
+    TARGETS
+        ${PROJECT_NAME}
+    RUNTIME
+)

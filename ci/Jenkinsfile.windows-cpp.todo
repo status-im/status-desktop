@@ -1,0 +1,76 @@
+library 'status-jenkins-lib@v1.3.4'
+
+pipeline {
+  agent {
+    docker {
+      label 'linux'
+      image 'stateoftheartio/qt6:6.3-mingw-aqt'
+    }
+  }
+
+  parameters {
+    booleanParam(
+      name: 'RELEASE',
+      description: 'Decides whether binaries are built with debug symbols.',
+      defaultValue: params.RELEASE ?: false
+    )
+  }
+
+  options {
+    timestamps()
+    /* Prevent Jenkins jobs from running forever */
+    timeout(time: 20, unit: 'MINUTES')
+    /* manage how many builds we keep */
+    buildDiscarder(logRotator(
+      numToKeepStr: '10',
+      daysToKeepStr: '30',
+      artifactNumToKeepStr: '3',
+    ))
+  }
+
+  environment {
+    TARGET = 'windows-cpp'
+    /* Control output the filename */
+    STATUS_CLIENT_ZIP = "pkg/${utils.pkgFilename(ext: 'zip')}"
+  }
+
+  // TODO: Move all stages to the Makefile as targets "*-windows-using-docker"
+  stages {
+    stage('CMake Build') {
+      steps {
+        sh "qt-cmake ${env.WORKSPACE} -G Ninja -B ${env.WORKSPACE}/build -DCMAKE_BUILD_TYPE=Release"
+        sh "cmake --build ${env.WORKSPACE}/build"
+      }
+    }
+
+    stage('Package') {
+      steps {
+        sh "windeployqt --qmldir ${env.WORKSPACE} --dir ${env.WORKSPACE}/build/deploy --libdir ${env.WORKSPACE}/build/deploy/libs --plugindir ${env.WORKSPACE}/build/deploy/plugins ${env.WORKSPACE}/build/*.exe"
+        sh "zip -r ${STATUS_CLIENT_ZIP} build/deploy/"
+      }
+    }
+
+    stage('Parallel Upload') {
+      parallel {
+        stage('Upload') {
+          steps { script {
+            exe_url = s3.uploadArtifact(env.STATUS_CLIENT_ZIP)
+            env.PKG_URL = exe_url
+            jenkins.setBuildDesc(Zip: zip_url, Exe: exe_url)
+          } }
+        }
+        stage('Archive') {
+          steps { script {
+            archiveArtifacts(env.STATUS_CLIENT_ZIP)
+          } }
+        }
+      }
+    }
+  }
+
+  post {
+    success { script { github.notifyPR(true) } }
+    failure { script { github.notifyPR(false) } }
+    always { cleanWs() }
+  }
+}
