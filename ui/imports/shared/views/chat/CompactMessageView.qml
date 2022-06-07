@@ -64,6 +64,8 @@ Item {
     property bool editModeOn: false
     property string linkUrls: ""
 
+    property string message: ""
+
     property var transactionParams
 
     signal openStickerPackPopup(string stickerPackId)
@@ -513,6 +515,7 @@ Item {
                 readonly property int leftPadding: chatImage.anchors.leftMargin + chatImage.width + chatHorizontalPadding
                 visible: isText || isEmoji || isImage
 
+                message: Utils.removeGifUrls(root.message)
                 anchors.top: parent.top
                 anchors.topMargin: isEmoji ? 2 : 0
                 anchors.left: parent.left
