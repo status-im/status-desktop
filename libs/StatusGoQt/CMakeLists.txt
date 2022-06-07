@@ -29,3 +29,9 @@ target_link_libraries(${PROJECT_NAME}
 # Temporary workaround; TODO: see a better alternative that doesn't depend on target order (dedicated dependencies dir?)
 get_target_property(STATUSGO_LIBRARY_PATH statusgo_shared IMPORTED_LOCATION)
 configure_file(${STATUSGO_LIBRARY_PATH} ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
+
+install(
+    TARGETS
+        ${PROJECT_NAME}
+    RUNTIME
+)

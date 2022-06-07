@@ -1,0 +1,75 @@
+library 'status-jenkins-lib@v1.3.4'
+
+pipeline {
+  agent {
+    docker {
+      label 'linux'
+      image 'stateoftheartio/qt6:6.3-macos-aqt'
+    }
+  }
+
+  parameters {
+    booleanParam(
+      name: 'RELEASE',
+      description: 'Decides whether binaries are built with debug symbols.',
+      defaultValue: params.RELEASE ?: false
+    )
+  }
+
+  options {
+    timestamps()
+    /* Prevent Jenkins jobs from running forever */
+    timeout(time: 20, unit: 'MINUTES')
+    /* manage how many builds we keep */
+    buildDiscarder(logRotator(
+      numToKeepStr: '10',
+      daysToKeepStr: '30',
+      artifactNumToKeepStr: '3',
+    ))
+  }
+
+  environment {
+    TARGET = 'macos-cpp'
+    /* Control output the filename */
+    STATUS_CLIENT_DMG = "pkg/${utils.pkgFilename(ext: 'dmg')}"
+  }
+
+  // TODO: Move all stages to the Makefile as targets "*-mac-using-docker"
+  stages {
+    stage('CMake Build') {
+      steps {
+        sh "qt-cmake ${env.WORKSPACE} -G Ninja -B ${env.WORKSPACE}/build -DCMAKE_BUILD_TYPE=Release"
+        sh "cmake --build ${env.WORKSPACE}/build"
+      }
+    }
+
+    stage('Package') {
+      steps {
+        sh "macdeployqt ${env.WORKSPACE}/build/*.app -verbose=1 -dmg -qmldir=${env.WORKSPACE}"
+        sh "mkdir pkg && cp \"\$(find ${env.WORKSPACE}/build -maxdepth 2 -type f -iname \"*.dmg\")\" ${env.STATUS_CLIENT_DMG}"
+      }
+    }
+
+    stage('Parallel Upload') {
+      parallel {
+        stage('Upload') {
+          steps { script {
+            env.PKG_URL = s3.uploadArtifact(env.STATUS_CLIENT_DMG)
+            jenkins.setBuildDesc(Dmg: env.PKG_URL)
+          } }
+        }
+        stage('Archive') {
+          steps { script {
+            archiveArtifacts(env.STATUS_CLIENT_DMG)
+          } }
+        }
+      }
+    }
+  }
+
+  post {
+    success { script { github.notifyPR(true) } }
+    failure { script { github.notifyPR(false) } }
+    always { cleanWs() }
+  }
+}

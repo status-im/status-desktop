@@ -30,3 +30,9 @@ target_link_libraries(${PROJECT_NAME}
         Qt6::Quick
         Qt6::Qml
 )
+
+install(
+    TARGETS
+        ${PROJECT_NAME}
+    RUNTIME
+)
