@@ -110,7 +110,7 @@ Item {
 
         Initializes pin input bringing it to its initial state.
 
-        It is directly called in Component.onCompleted slot and can be called whenever you need resetting it.
+        It can be called whenever you need resetting it.
     */
     function statesInitialization() {
         d.currentPinIndex = 0
@@ -118,12 +118,41 @@ Item {
         for (var i = 1; i < root.pinLen; i++) {
             repeater.itemAt(i).innerState = "EMPTY"
         }
+        inputText.text = ""
     }
 
-    width: (root.circleDiameter + root.circleSpacing) * root.pinLen
-    height: root.circleDiameter
+    /*
+        \qmlmethod StatusPinInput::forceFocus()
 
-    Component.onCompleted: { statesInitialization() }
+        Convenient method to force active focus in case it gets stolen by any other component.
+    */
+    function forceFocus() {
+        inputText.forceActiveFocus()
+        d.activateBlink()
+    }
+
+    /*
+        \qmlmethod StatusPinInput::setPin(pin)
+
+        Sets the pin input, setting state of each digit to "FILLED".
+
+        It won't do anything if pin length is different from the set `pinLen`.
+    */
+    function setPin(pin) {
+        if(pin.length !== root.pinLen)
+            return
+
+        d.currentPinIndex = root.pinLen - 1
+        inputText.text = pin
+
+        for (var i = 0; i < root.pinLen; i++) {
+            const currItem = repeater.itemAt(i)
+            currItem.innerState = "FILLED"
+        }
+    }
+
+    width: (root.circleDiameter + root.circleSpacing) * root.pinLen - root.circleSpacing
+    height: root.circleDiameter
 
     // Pin input data management object:
     TextInput {
@@ -147,7 +176,8 @@ Item {
             else if (text.length <= (d.currentPinIndex + 1)) {
                 if(d.currentPinIndex < root.pinLen)
                     repeater.itemAt(d.currentPinIndex).innerState = "EMPTY"
-                d.currentPinIndex--
+                if(d.currentPinIndex > 0)
+                    d.currentPinIndex--
                 repeater.itemAt(d.currentPinIndex).innerState = "NEXT"
             }
 
@@ -226,10 +256,7 @@ Item {
         hoverEnabled: true
 
         // MouseArea behavior:
-        onClicked:  {
-            inputText.forceActiveFocus()
-            d.activateBlink ()
-        }
+        onClicked: forceFocus()
         onContainsMouseChanged: { if(containsMouse) { cursorShape = Qt.PointingHandCursor } }
     }
 }
