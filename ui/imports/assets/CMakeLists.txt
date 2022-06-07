@@ -38,3 +38,9 @@ target_link_libraries(${PROJECT_NAME}
     PRIVATE
         Qt6::Qml
 )
+
+install(
+    TARGETS
+        ${PROJECT_NAME}
+    RUNTIME
+)
