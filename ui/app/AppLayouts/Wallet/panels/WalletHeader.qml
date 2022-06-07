@@ -72,7 +72,6 @@ Item {
 
     NetworkFilter {
         id: networkFilter
-        visible: walletHeader.walletStore.isMultiNetworkEnabled 
         anchors.top: parent.top
         anchors.topMargin: 56
         anchors.right: parent.right

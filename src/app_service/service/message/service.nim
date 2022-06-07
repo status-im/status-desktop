@@ -290,14 +290,22 @@ QtObject:
     return self.pinnedMsgCursor[chatId]
 
   proc getTransactionDetails*(self: Service, message: MessageDto): (string, string) =
-    # TODO(alaibe): handle multi network
-    let networkDto = self.networkService.getNetworks()[0]
-    let ethereum = newTokenDto("Ethereum", networkDto.chainId, parseAddress(ZERO_ADDRESS), "ETH", 18, true)
-    let tokenContract = if message.transactionParameters.contract == "" : ethereum else: self.tokenService.findTokenByAddress(networkDto, parseAddress(message.transactionParameters.contract))
-    let tokenContractStr = if tokenContract == nil: "{}" else: $(Json.encode(tokenContract))
-    var weiStr = if tokenContract == nil: "0" else: service_conversion.wei2Eth(message.transactionParameters.value, tokenContract.decimals)
+    let networksDto = self.networkService.getNetworks()
+    var token = newTokenDto(networksDto[0].nativeCurrencyName, networksDto[0].chainId, parseAddress(ZERO_ADDRESS), networksDto[0].nativeCurrencySymbol, networksDto[0].nativeCurrencyDecimals, true)
+    
+    if message.transactionParameters.contract != "":
+      for networkDto in networksDto:
+        let tokenFound = self.tokenService.findTokenByAddress(networkDto, parseAddress(message.transactionParameters.contract))
+        if tokenFound == nil:
+          continue
+
+        token = tokenFound
+        break
+    
+    let tokenStr = $(Json.encode(token))
+    var weiStr = service_conversion.wei2Eth(message.transactionParameters.value, token.decimals)
     weiStr.trimZeros()
-    return (tokenContractStr, weiStr)
+    return (tokenStr, weiStr)
 
   proc onAsyncLoadMoreMessagesForChat*(self: Service, response: string) {.slot.} =
     let responseObj = response.parseJson

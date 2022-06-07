@@ -34,17 +34,6 @@ SettingsContentBase {
             StatusSettingsLineButton {
                 anchors.leftMargin: 0
                 anchors.rightMargin: 0
-                //% "Network"
-                text: qsTrId("network")
-                visible: !localAccountSensitiveSettings.isMultiNetworkEnabled
-                currentValue: root.advancedStore.currentNetworkName
-                onClicked: networksModal.open()
-            }
-
-            // TODO: replace with StatusQ component
-            StatusSettingsLineButton {
-                anchors.leftMargin: 0
-                anchors.rightMargin: 0
                 //% "Fleet"
                 text: qsTrId("fleet")
                 currentValue: root.advancedStore.fleet
@@ -175,23 +164,6 @@ SettingsContentBase {
                         confirmationPopup.open()
                     } else {
                         root.advancedStore.toggleExperimentalFeature(root.advancedStore.experimentalFeatures.nodeManagement)
-                    }
-                }
-            }
-
-            // TODO: replace with StatusQ component
-            StatusSettingsLineButton {
-                anchors.leftMargin: 0
-                anchors.rightMargin: 0
-                text: qsTr("Multi network")
-                isSwitch: true
-                switchChecked: localAccountSensitiveSettings.isMultiNetworkEnabled
-                onClicked: {
-                    if (localAccountSensitiveSettings.isMultiNetworkEnabled) {
-                        root.advancedStore.toggleExperimentalFeature(root.advancedStore.experimentalFeatures.multiNetwork)
-                    } else {
-                        confirmationPopup.experimentalFeature = root.advancedStore.experimentalFeatures.multiNetwork
-                        confirmationPopup.open()
                     }
                 }
             }
@@ -476,24 +448,6 @@ SettingsContentBase {
                     Global.openPopup(enableAutoMessageConfirmationDialogComponent)
                 }
             }
-
-            // TODO: replace with StatusQ component
-            StatusSettingsLineButton {
-                anchors.leftMargin: 0
-                anchors.rightMargin: 0
-                text: qsTr("Stickers/ENS on ropsten")
-                visible: !localAccountSensitiveSettings.isMultiNetworkEnabled && root.advancedStore.currentNetworkId === Constants.networkRopsten
-                isSwitch: true
-                switchChecked: localAccountSensitiveSettings.stickersEnsRopsten
-                onClicked: {
-                    localAccountSensitiveSettings.stickersEnsRopsten = !localAccountSensitiveSettings.stickersEnsRopsten
-                }
-            }
-        }
-
-        NetworksModal {
-            id: networksModal
-            advancedStore: root.advancedStore
         }
 
         FleetsModal {

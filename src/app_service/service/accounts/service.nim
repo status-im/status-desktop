@@ -221,14 +221,12 @@ proc prepareAccountSettingsJsonObject(self: Service, account: GeneratedAccountDt
     "signing-phrase": generateSigningPhrase(3),
     "log-level": $LogLevel.INFO,
     "latest-derived-path": 0,
-    "networks/networks": DEFAULT_NETWORKS,
     "currency": "usd",
+    "networks/networks": @[],
+    "networks/current-network": "",
+    "wallet/visible-tokens": {},
     "waku-enabled": true,
-    "wallet/visible-tokens": {
-      DEFAULT_NETWORK_NAME: ["SNT"]
-    },
     "appearance": 0,
-    "networks/current-network": DEFAULT_NETWORK_NAME,
     "installation-id": installationId
   }
 
@@ -244,12 +242,8 @@ proc getAccountSettings(self: Service, accountId: string,
       return self.prepareAccountSettingsJsonObject(self.importedAccount, installationId, displayName)
 
 proc getDefaultNodeConfig*(self: Service, installationId: string): JsonNode =
-  let networkConfig = getNetworkConfig(DEFAULT_NETWORK_NAME)
-  let upstreamUrl = networkConfig["config"]["UpstreamConfig"]["URL"]
   let fleet = Fleet.Prod
 
-  var newDataDir = networkConfig["config"]["DataDir"].getStr
-  newDataDir.removeSuffix("_rpc")
   result = NODE_CONFIG.copy()
   result["ClusterConfig"]["Fleet"] = newJString($fleet)
   result["ClusterConfig"]["BootNodes"] = %* self.fleetConfiguration.getNodes(fleet, FleetNodes.Bootnodes)
@@ -257,10 +251,10 @@ proc getDefaultNodeConfig*(self: Service, installationId: string): JsonNode =
   result["ClusterConfig"]["StaticNodes"] = %* self.fleetConfiguration.getNodes(fleet, FleetNodes.Whisper)
   result["ClusterConfig"]["RendezvousNodes"] = %* self.fleetConfiguration.getNodes(fleet, FleetNodes.Rendezvous)
   result["ClusterConfig"]["DiscV5BootstrapNodes"] = %* (@[]) # TODO: set default status.prod enr
-  result["NetworkId"] = networkConfig["config"]["NetworkId"]
-  result["DataDir"] = newDataDir.newJString()
-  result["UpstreamConfig"]["Enabled"] = networkConfig["config"]["UpstreamConfig"]["Enabled"]
-  result["UpstreamConfig"]["URL"] = upstreamUrl
+  result["NetworkId"] = NETWORKS[0]{"chainId"}
+  result["DataDir"] = "ethereum".newJString()
+  result["UpstreamConfig"]["Enabled"] = true.newJBool()
+  result["UpstreamConfig"]["URL"] = NETWORKS[0]{"rpcUrl"}
   result["ShhextConfig"]["InstallationID"] = newJString(installationId)
 
   # TODO: fleet.status.im should have different sections depending on the node type

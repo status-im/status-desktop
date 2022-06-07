@@ -7,8 +7,8 @@ QtObject:
     View* = ref object of QObject
       delegate: io_interface.AccessInterface
       dappsAddress: string
-      networkId: int
-      currentNetwork: string
+      chainId: int
+      chainName: string
 
   proc delete*(self: View) =
     self.QObject.delete
@@ -38,31 +38,31 @@ QtObject:
     write = setDappsAddress
     notify = dappsAddressChanged
 
-  proc networkIdChanged(self: View, networkId: int) {.signal.}
+  proc chainIdChanged(self: View, chainId: int) {.signal.}
 
-  proc `networkId=`*(self: View, value: int) =
-    self.networkId = value
-    self.networkIdChanged(value)
+  proc `chainId=`*(self: View, value: int) =
+    self.chainId = value
+    self.chainIdChanged(value)
 
-  proc networkId*(self: View): int {.slot.} =
-    result = self.networkId
+  proc chainId*(self: View): int {.slot.} =
+    result = self.chainId
 
-  QtProperty[int] networkId:
-    read = networkId
-    notify = networkIdChanged
+  QtProperty[int] chainId:
+    read = chainId
+    notify = chainIdChanged
 
-  proc currentNetworkChanged(self: View) {.signal.}
+  proc chainNameChanged(self: View) {.signal.}
 
-  proc `currentNetwork=`*(self: View, value: string) =
-    self.currentNetwork = value
-    self.currentNetworkChanged()
+  proc `chainName=`*(self: View, value: string) =
+    self.chainName = value
+    self.chainNameChanged()
 
-  proc currentNetwork*(self: View): string {.slot.} =
-    result = self.currentNetwork
+  proc chainName*(self: View): string {.slot.} =
+    result = self.chainName
 
-  QtProperty[string] currentNetwork:
-    read = currentNetwork
-    notify = currentNetworkChanged
+  QtProperty[string] chainName:
+    read = chainName
+    notify = chainNameChanged
 
   proc replaceHostByENS*(self: View, url: string, ens: string): string {.slot.} =
     result = url_replaceHostAndAddPath(url, ens)

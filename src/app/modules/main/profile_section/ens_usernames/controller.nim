@@ -73,9 +73,6 @@ proc setPubKey*(self: Controller, ensUsername: string, address: string, gas: str
   maxPriorityFeePerGas: string, maxFeePerGas: string, password: string, eip1559Enabled: bool): string =
   return self.ensService.setPubKey(ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password, eip1559Enabled)
 
-proc getCurrentNetworkDetails*(self: Controller): Network =
-  return self.settingsService.getCurrentNetworkDetails()
-
 proc getSigningPhrase*(self: Controller): string =
   return self.settingsService.getSigningPhrase()
 
@@ -130,5 +127,5 @@ proc getStatusToken*(self: Controller): string =
   }
   return $jsonObj
 
-proc getChainIdForEns*(self: Controller): int =
-  return self.networkService.getNetworkForEns().chainId
+proc getNetwork*(self: Controller): NetworkDto =
+  return self.networkService.getNetworkForEns()

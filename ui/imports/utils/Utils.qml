@@ -456,23 +456,6 @@ QtObject {
         return Date.now().toString(36) + Math.random().toString(36).substr(2, 5)
     }
 
-    function getNetworkName(network){
-        switch(network){
-            //% "Mainnet with upstream RPC"
-            case Constants.networkMainnet: return qsTrId("mainnet-with-upstream-rpc")
-            //% "POA Network"
-            case Constants.networkPOA: return qsTrId("poa-network")
-            //% "xDai Chain"
-            case Constants.networkXDai: return qsTrId("xdai-chain")
-            //% "Goerli with upstream RPC"
-            case Constants.networkGoerli: return qsTrId("goerli-with-upstream-rpc")
-            //% "Rinkeby with upstream RPC"
-            case Constants.networkRinkeby: return qsTrId("rinkeby-with-upstream-rpc")
-            //% "Ropsten with upstream RPC"
-            case Constants.networkRopsten: return qsTrId("ropsten-with-upstream-rpc")
-            default: return network
-        }
-    }
 
     function validatePasswords(item, firstPasswordField, repeatPasswordField) {
         switch (item) {

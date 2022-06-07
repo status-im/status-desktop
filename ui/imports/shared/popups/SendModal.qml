@@ -56,10 +56,6 @@ StatusModal {
     }
 
     property var recalculateRoutesAndFees: Backpressure.debounce(popup, 600, function() {
-        if (!popup.store.isMultiNetworkEnabled) {
-            return
-        }
-
         networkSelector.suggestedRoutes = popup.store.suggestedRoutes(
             advancedHeader.accountSelector.selectedAccount.address, advancedHeader.amountToSendInput.text, advancedHeader.assetSelector.selectedAsset.symbol
         )
@@ -97,12 +93,7 @@ StatusModal {
             }
         }
 
-        if (popup.store.isMultiNetworkEnabled) {
-            popup.recalculateRoutesAndFees()
-        } else {
-            gasSelector.suggestedFees = popup.store.suggestedFees(Global.currentChainId)
-            gasSelector.checkOptimal()
-        }
+        popup.recalculateRoutesAndFees()
     }
 
 
@@ -165,9 +156,9 @@ StatusModal {
                     anchors.top: addressSelector.bottom
                     anchors.right: parent.right
                     anchors.left: parent.left
-                    visible: popup.store.isMultiNetworkEnabled
                     onNetworkChanged: function(chainId) {
                         gasSelector.suggestedFees = popup.store.suggestedFees(chainId)
+                        gasSelector.updateGasEthValue()
                     }
                 }
 
@@ -178,7 +169,7 @@ StatusModal {
                     getFiatValue: popup.store.getFiatValue
                     getEstimatedTime: popup.store.getEstimatedTime
                     defaultCurrency: popup.store.currentCurrency
-
+                    chainId: networkSelector.selectedNetwork.chainId
                     width: stack.width
                     property var estimateGas: Backpressure.debounce(gasSelector, 600, function() {
                         if (!(advancedHeader.accountSelector.selectedAccount && advancedHeader.accountSelector.selectedAccount.address &&

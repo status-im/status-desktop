@@ -30,7 +30,7 @@ Item {
     signal goToList();
 
     function goToStart(){
-        if(ensView.ensUsernamesStore.ensUsernamesModel.count > 0 && Global.networkGuarded){
+        if(ensView.ensUsernamesStore.ensUsernamesModel.count > 0){
             goToList();
         } else {
             goToWelcome();

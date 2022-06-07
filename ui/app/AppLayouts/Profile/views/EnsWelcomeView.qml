@@ -297,7 +297,6 @@ Item {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: Style.current.padding
         anchors.horizontalCenter: parent.horizontalCenter
-        enabled: Global.networkGuarded
         //% "Start"
         text: enabled ?
           qsTrId("start") :

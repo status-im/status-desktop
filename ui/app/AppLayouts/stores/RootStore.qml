@@ -52,7 +52,6 @@ QtObject {
 
     property var walletSectionTransactionsInst: walletSectionTransactions
 
-    property bool isMultiNetworkEnabled: localAccountSensitiveSettings.isMultiNetworkEnabled
 
     property bool isCommunitiesPortalEnabled: localAccountSensitiveSettings.isCommunitiesPortalEnabled
 
@@ -102,8 +101,8 @@ QtObject {
         return JSON.parse(walletSectionTransactions.suggestedFees(chainId))
     }
 
-    function getEstimatedTime(priorityFeePerGas, maxFeePerGas) {
-       return walletSectionTransactions.getEstimatedTime(priorityFeePerGas, maxFeePerGas)
+    function getEstimatedTime(chainId, priorityFeePerGas, maxFeePerGas) {
+       return walletSectionTransactions.getEstimatedTime(chainId, priorityFeePerGas, maxFeePerGas)
     }
 
     function getChainIdForChat() {
