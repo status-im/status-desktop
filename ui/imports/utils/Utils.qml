@@ -542,6 +542,10 @@ QtObject {
         return Constants.acceptedImageExtensions.some(ext => url.toLowerCase().includes(ext))
     }
 
+    function removeGifUrls(message) {
+        return message.replace(/(?:https?|ftp):\/\/[\n\S]*(\.gif)+/gm, '');
+    }
+
     function hasDragNDropImageExtension(url) {
         return Constants.acceptedDragNDropImageExtensions.some(ext => url.toLowerCase().includes(ext))
     }

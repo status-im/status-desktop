@@ -318,6 +318,7 @@ Item {
 
                 ChatTextView {
                     id: chatText
+                    message: root.message
                     anchors.top: parent.top
                     anchors.topMargin: chatBox.chatVerticalPadding
                     anchors.left: parent.left

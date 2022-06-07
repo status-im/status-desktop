@@ -334,6 +334,7 @@ Column {
         CompactMessageView {
             container: root
             store: root.store
+            message: root.message
             messageStore: root.messageStore
             usersStore: root.usersStore
             contactsStore: root.contactsStore

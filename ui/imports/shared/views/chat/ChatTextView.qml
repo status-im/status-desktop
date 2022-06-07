@@ -11,6 +11,7 @@ import StatusQ.Core.Utils 0.1 as StatusQUtils
 Item {
     id: root
 
+    property string message: ""
     property var store
     property bool longChatText: true
     property bool veryLongChatText: globalUtils.plainText(message).length > Constants.limitLongChatTextCompactMode
