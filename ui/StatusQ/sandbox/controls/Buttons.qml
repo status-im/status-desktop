@@ -4,6 +4,7 @@ import QtQuick.Dialogs 1.3
 
 import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
+import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 
 Column {
@@ -317,4 +318,5 @@ Column {
             colorSelected = true;
         }
     }
+
 }

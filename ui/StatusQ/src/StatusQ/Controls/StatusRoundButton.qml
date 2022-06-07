@@ -48,9 +48,6 @@ Rectangle {
         Primary,
         Secondary
     }
-
-
-
     /// Implementation
 
     QtObject {
@@ -84,27 +81,31 @@ Rectangle {
         }
     }
 
+    QtObject {
+        id: d
+        readonly property color iconColor: statusRoundButton.enabled ? statusRoundButton.icon.color : statusRoundButton.icon.disabledColor
+    }
+
     implicitWidth: 44
     implicitHeight: 44
     radius: width / 2;
 
     color: {
-        if (statusRoundButton.enabled) {
+        if (statusRoundButton.enabled)
             return sensor.containsMouse || highlighted ? backgroundSettings.hoverColor
-                                        : backgroundSettings.color
-        } else {
-            return backgroundSettings.disabledColor
-        }
+                                                       : backgroundSettings.color;
+        return backgroundSettings.disabledColor
     }
+
     MouseArea {
         id: sensor
 
         anchors.fill: parent
         cursorShape: loading ? Qt.ArrowCursor
                              : Qt.PointingHandCursor
-        hoverEnabled: !loading
-        enabled: !loading
 
+        hoverEnabled: true
+        enabled: !loading && statusRoundButton.enabled
 
         StatusIcon {
             id: statusIcon
@@ -117,25 +118,13 @@ Rectangle {
             width: statusRoundButton.icon.width
             height: statusRoundButton.icon.height
 
-            color: {
-                if (statusRoundButton.enabled) {
-                    return statusRoundButton.icon.color
-                } else {
-                    return statusRoundButton.icon.disabledColor
-                }
-            }
+            color: d.iconColor
         } // Icon
         Loader {
             active: loading
             anchors.centerIn: parent
             sourceComponent: StatusLoadingIndicator {
-                color: {
-                    if (statusRoundButton.enabled) {
-                        return statusRoundButton.icon.color
-                    } else {
-                        return statusRoundButton.icon.disabledColor
-                    }
-                }
+                color: d.iconColor
             } // Indicator
         } // Loader
 

@@ -86,14 +86,16 @@ Rectangle {
     radius: size !== StatusBaseButton.Size.Tiny ? 8 : 6
 
     color: {
-        if (statusBaseButton.enabled) {
+        if (statusBaseButton.enabled)
             return sensor.containsMouse || highlighted ? hoverColor
-                                        : normalColor
-        } else {
-            return disaledColor
-        }
+                                                       : normalColor;
+        return disaledColor
     }
 
+    QtObject {
+        id: d
+        readonly property color textColor: statusBaseButton.enabled ? statusBaseButton.textColor : statusBaseButton.disabledTextColor
+    }
 
     MouseArea {
         id: sensor
@@ -102,17 +104,16 @@ Rectangle {
 
         cursorShape: loading ? Qt.ArrowCursor
                              : Qt.PointingHandCursor
-        hoverEnabled: !loading
-        enabled: !loading
 
+        hoverEnabled: true
+        enabled: !loading && statusBaseButton.enabled
 
         Loader {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
             active: loading
             sourceComponent: StatusLoadingIndicator {
-                color: statusBaseButton.enabled ? textColor
-                                                : disabledTextColor
+                color: d.textColor
             } // Indicator
         } // Loader
 
@@ -130,8 +131,7 @@ Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
                 opacity: !loading && statusBaseButton.icon.name !== ""
                 visible: statusBaseButton.icon.name !== ""
-                color: statusBaseButton.enabled ? textColor
-                                                : disabledTextColor
+                color: d.textColor
             } // Icon
             StatusBaseText {
                 id: label
@@ -139,8 +139,7 @@ Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
                 font.pixelSize: size === StatusBaseButton.Size.Large ? 15 : 13 // by design
 
-                color: statusBaseButton.enabled ? textColor
-                                                : disabledTextColor
+                color: d.textColor
             } // Text
         } // Ro
 
