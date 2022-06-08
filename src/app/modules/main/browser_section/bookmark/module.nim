@@ -6,6 +6,7 @@ import view
 import controller
 import ../../../../global/global_singleton
 import ../../../../../app_service/service/bookmarks/service as bookmark_service
+import ../../../../core/eventemitter
 
 export io_interface
 
@@ -17,13 +18,13 @@ type
     moduleLoaded: bool
     controller: Controller
 
-proc newModule*(delegate: delegate_interface.AccessInterface, bookmarkService: bookmark_service.Service): Module =
+proc newModule*(delegate: delegate_interface.AccessInterface, events: EventEmitter, bookmarkService: bookmark_service.Service): Module =
   result = Module()
   result.delegate = delegate
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
   result.moduleLoaded = false
-  result.controller = controller.newController(result, bookmarkService)
+  result.controller = controller.newController(result, events, bookmarkService)
 
 method delete*(self: Module) =
   self.view.delete
@@ -32,6 +33,7 @@ method delete*(self: Module) =
 
 method load*(self: Module) =
   singletonInstance.engine.setRootContextProperty("bookmarkModule", self.viewVariant)
+  self.controller.init()
   self.view.load()
 
 method isLoaded*(self: Module): bool =

@@ -16,6 +16,9 @@ type
   Bookmark* = ref object of RootObj
     name* {.serializedFieldName("name").}: string
     url* {.serializedFieldName("url").}: string
+    imageUrl* {.serializedFieldName("imageUrl").}: string
+    removed* {.serializedFieldName("removed").}: bool
+    deletedAt* {.serializedFieldName("deletedAt").}: int
 
   Permission* = ref object of RootObj
     dapp* {.serializedFieldName("dapp").}: string
