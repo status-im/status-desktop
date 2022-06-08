@@ -2,7 +2,6 @@ from data.StatusAccount import StatusAccount
 from processes.StatusLoginProcess import StatusLoginProcess
 
 
-
 @Given("A Status Desktop |any| and |any|")
 def step(context, account, password):
 

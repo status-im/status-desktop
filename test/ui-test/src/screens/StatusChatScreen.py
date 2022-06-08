@@ -12,6 +12,7 @@
 from enum import Enum
 from drivers.SquishDriver import *
 from drivers.SquishDriverVerification import *
+from drivers.SDKeyboardCommands import *
 
 
 class ChatComponents(Enum):
