@@ -103,7 +103,3 @@ def type(objName, text):
         return True
     except LookupError:
         return False
-
-
-def press_enter(objName):
-    type(objName, "<Return>")
