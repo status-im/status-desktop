@@ -1,5 +1,6 @@
 import QtQuick 2.3
 import QtQuick.Dialogs 1.3
+import QtQuick.Layouts 1.14
 
 import utils 1.0
 
@@ -101,14 +102,7 @@ Item {
                 property alias button: joinBtn
                 property bool isPendingRequest: root.store.isCommunityRequestPending(communityId)
                 width: 270
-                height: title.height + title.anchors.topMargin +
-                        invitedYou.height + invitedYou.anchors.topMargin +
-                        sep1.height + sep1.anchors.topMargin +
-                        communityName.height + communityName.anchors.topMargin +
-                        communityDesc.height + communityDesc.anchors.topMargin +
-                        communityNbMembers.height + communityNbMembers.anchors.topMargin +
-                        sep2.height + sep2.anchors.topMargin +
-                        btnItemId.height + btnItemId.anchors.topMargin
+                height: column.implicitHeight
                 radius: 16
                 color: Style.current.background
                 border.color: Style.current.border
@@ -193,168 +187,157 @@ Item {
 //                    }
 //                }
 
-                // TODO add check if verified
-                StatusBaseText {
-                    id: title
-                    color: invitedCommunity.verifed ? Theme.palette.primaryColor1 : Theme.palette.baseColor1
-                    text: invitedCommunity.verifed ?
-                              //% "Verified community invitation"
-                              qsTrId("verified-community-invitation") :
-                              //% "Community invitation"
-                              qsTrId("community-invitation")
-                    font.weight: Font.Medium
-                    anchors.top: parent.top
-                    anchors.topMargin: Style.current.halfPadding
-                    anchors.left: parent.left
-                    anchors.leftMargin: root.innerMargin
-                    font.pixelSize: 13
-                }
-
-                StatusBaseText {
-                    id: invitedYou
-                    text: {
-                        // Not Refactored Yet
-                        return ""
-//                        if (root.store.chatsModelInst.channelView.activeChannel.chatType === Constants.chatType.oneToOne) {
-//                            return isCurrentUser ?
-//                                        //% "You invited %1 to join a community"
-//                                        qsTrId("you-invited--1-to-join-a-community").arg(root.store.chatsModelInst.userNameOrAlias(root.store.chatsModelInst.channelView.activeChannel.id))
-//                                        //% "%1 invited you to join a community"
-//                                      : qsTrId("-1-invited-you-to-join-a-community").arg(displayUserName)
-//                        } else {
-//                            return isCurrentUser ?
-//                                        //% "You shared a community"
-//                                        qsTrId("you-shared-a-community")
-//                                        //% "A community has been shared"
-//                                      : qsTrId("a-community-has-been-shared")
-//                        }
-                    }
-                    anchors.top: title.bottom
-                    anchors.topMargin: 4
-                    anchors.left: parent.left
-                    anchors.leftMargin: root.innerMargin
-                    anchors.right: parent.right
-                    anchors.rightMargin: root.innerMargin
-                    wrapMode: Text.WordWrap
-                    font.pixelSize: 15
-                    color: Theme.palette.directColor1
-                }
-
-                Separator {
-                    id: sep1
-                    anchors.top: invitedYou.bottom
-                    anchors.topMargin: Style.current.halfPadding
-                }
-
-                // TODO add image when it's supported
-                StatusBaseText {
-                    id: communityName
-                    text: invitedCommunity.name
-                    anchors.top: sep1.bottom
-                    anchors.topMargin: root.innerMargin
-                    anchors.left: parent.left
-                    anchors.leftMargin: root.innerMargin
-                    anchors.right: parent.right
-                    anchors.rightMargin: root.innerMargin
-                    font.weight: Font.Bold
-                    wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-                    font.pixelSize: 17
-                    color: Theme.palette.directColor1
-                }
-
-                StatusBaseText {
-                    id: communityDesc
-                    text: invitedCommunity.description
-                    anchors.top: communityName.bottom
-                    anchors.topMargin: 2
-                    anchors.left: parent.left
-                    anchors.leftMargin: root.innerMargin
-                    anchors.right: parent.right
-                    anchors.rightMargin: root.innerMargin
-                    wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-                    font.pixelSize: 15
-                    color: Theme.palette.directColor1
-                }
-
-                StatusBaseText {
-                    id: communityNbMembers
-                    // TODO add the plural support
-                    //% "%1 members"
-                    text: qsTrId("-1-members").arg(invitedCommunity.nbMembers)
-                    anchors.top: communityDesc.bottom
-                    anchors.topMargin: 2
-                    anchors.left: parent.left
-                    anchors.leftMargin: root.innerMargin
-                    font.pixelSize: 13
-                    font.weight: Font.Medium
-                    color: Theme.palette.baseColor1
-                }
-
-                Separator {
-                    id: sep2
-                    anchors.top: communityNbMembers.bottom
-                    anchors.topMargin: Style.current.halfPadding
-                }
-                Item {
-                    id: btnItemId
+                ColumnLayout {
+                    id: column
                     width: parent.width
-                    height: 44
-                    anchors.bottom: parent.bottom
-                    clip: true
-                    StatusFlatButton {
-                        id: joinBtn
-                        anchors.top: parent.top
-                        anchors.topMargin: -Style.current.smallPadding
-                        radius: 16
-                        width: parent.width
-                        height: 54
-                        enabled: true
-                        text: qsTr("Unsupported state")
-                        onClicked: {
+                    spacing: Style.current.halfPadding
 
-                            let onBtnClick = function(){
-                                let error
+                    // TODO add check if verified
+                    StatusBaseText {
+                        id: title
+                        color: invitedCommunity.verifed ? Theme.palette.primaryColor1 : Theme.palette.baseColor1
+                        text: invitedCommunity.verifed ?
+                                  //% "Verified community invitation"
+                                  qsTrId("verified-community-invitation") :
+                                  //% "Community invitation"
+                                  qsTrId("community-invitation")
+                        font.weight: Font.Medium
+                        Layout.topMargin: Style.current.halfPadding
+                        Layout.leftMargin: root.innerMargin
+                        font.pixelSize: 13
+                    }
 
-                                if (rectangleBubble.state === "joined") {
-                                    root.store.setActiveCommunity(communityId);
-                                    return
-                                }
-                                if (rectangleBubble.state === "unjoined") {
-                                    Global.openPopup(communityIntroDialog, { joinMethod: () => {
-                                                             let error = root.store.joinCommunity(communityId)
-                                                             if (error) joiningError.showError(error)
-                                                         } });
-                                }
-                                else if (rectangleBubble.state === "requestToJoin") {
-                                    Global.openPopup(communityIntroDialog, { joinMethod: () => {
-                                                             let error = root.store.requestToJoinCommunity(communityId, userProfile.name)
-                                                             if (error) joiningError.showError(error)
-                                                             else rectangleBubble.isPendingRequest = root.store.isCommunityRequestPending(communityId)
-                                                         } });
-                                }
-
-                                if (error) joiningError.showError(error)
-                            }
-
-                            if (localAccountSensitiveSettings.communitiesEnabled) {
-                                onBtnClick();
-                            } else {
-                                Global.openPopup(confirmationPopupComponent, { onConfirmed: onBtnClick });
-                            }
+                    StatusBaseText {
+                        id: invitedYou
+                        visible: text != ""
+                        text: {
+                            // Not Refactored Yet
+                            return ""
+    //                        if (root.store.chatsModelInst.channelView.activeChannel.chatType === Constants.chatType.oneToOne) {
+    //                            return isCurrentUser ?
+    //                                        //% "You invited %1 to join a community"
+    //                                        qsTrId("you-invited--1-to-join-a-community").arg(root.store.chatsModelInst.userNameOrAlias(root.store.chatsModelInst.channelView.activeChannel.id))
+    //                                        //% "%1 invited you to join a community"
+    //                                      : qsTrId("-1-invited-you-to-join-a-community").arg(displayUserName)
+    //                        } else {
+    //                            return isCurrentUser ?
+    //                                        //% "You shared a community"
+    //                                        qsTrId("you-shared-a-community")
+    //                                        //% "A community has been shared"
+    //                                      : qsTrId("a-community-has-been-shared")
+    //                        }
                         }
+                        Layout.leftMargin: root.innerMargin
+                        Layout.rightMargin: root.innerMargin
+                        Layout.fillWidth: true
+                        wrapMode: Text.WordWrap
+                        font.pixelSize: 15
+                        color: Theme.palette.directColor1
+                    }
 
-                        MessageDialog {
-                            id: joiningError
+                    Separator {
+                        Layout.fillWidth: true
+                    }
 
-                            function showError(error) {
-                                joiningError.text = error
-                                joiningError.open()
+                    // TODO add image when it's supported
+                    StatusBaseText {
+                        id: communityName
+                        text: invitedCommunity.name
+                        Layout.topMargin: 2
+                        Layout.leftMargin: root.innerMargin
+                        Layout.fillWidth: true
+                        Layout.rightMargin: root.innerMargin
+                        font.weight: Font.Bold
+                        wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                        font.pixelSize: 17
+                        color: Theme.palette.directColor1
+                    }
+
+                    StatusBaseText {
+                        id: communityDesc
+                        text: invitedCommunity.description
+                        Layout.leftMargin: root.innerMargin
+                        Layout.rightMargin: root.innerMargin
+                        Layout.fillWidth: true
+                        wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                        font.pixelSize: 15
+                        color: Theme.palette.directColor1
+                    }
+
+                    StatusBaseText {
+                        id: communityNbMembers
+                        // TODO add the plural support
+                        //% "%1 members"
+                        text: qsTrId("-1-members").arg(invitedCommunity.nbMembers)
+                        Layout.leftMargin: root.innerMargin
+                        font.pixelSize: 13
+                        font.weight: Font.Medium
+                        color: Theme.palette.baseColor1
+                    }
+
+                    Separator {
+                        Layout.fillWidth: true
+                    }
+
+                    Item {
+                        id: btnItemId
+                        Layout.topMargin: -column.spacing
+                        Layout.fillWidth: true
+                        height: 44
+                        clip: true
+                        StatusFlatButton {
+                            id: joinBtn
+                            anchors.fill: parent
+                            anchors.verticalCenter: parent.verticalCenter
+                            radius: 16
+                            enabled: true
+                            text: qsTr("Unsupported state")
+                            onClicked: {
+
+                                let onBtnClick = function(){
+                                    let error
+
+                                    if (rectangleBubble.state === "joined") {
+                                        root.store.setActiveCommunity(communityId);
+                                        return
+                                    }
+                                    if (rectangleBubble.state === "unjoined") {
+                                        Global.openPopup(communityIntroDialog, { joinMethod: () => {
+                                                                 let error = root.store.joinCommunity(communityId)
+                                                                 if (error) joiningError.showError(error)
+                                                             } });
+                                    }
+                                    else if (rectangleBubble.state === "requestToJoin") {
+                                        Global.openPopup(communityIntroDialog, { joinMethod: () => {
+                                                                 let error = root.store.requestToJoinCommunity(communityId, userProfile.name)
+                                                                 if (error) joiningError.showError(error)
+                                                                 else rectangleBubble.isPendingRequest = root.store.isCommunityRequestPending(communityId)
+                                                             } });
+                                    }
+
+                                    if (error) joiningError.showError(error)
+                                }
+
+                                if (localAccountSensitiveSettings.communitiesEnabled) {
+                                    onBtnClick();
+                                } else {
+                                    Global.openPopup(confirmationPopupComponent, { onConfirmed: onBtnClick });
+                                }
                             }
 
-                            //% "Error joining the community"
-                            title: qsTrId("error-joining-the-community")
-                            icon: StandardIcon.Critical
-                            standardButtons: StandardButton.Ok
+                            MessageDialog {
+                                id: joiningError
+
+                                function showError(error) {
+                                    joiningError.text = error
+                                    joiningError.open()
+                                }
+
+                                //% "Error joining the community"
+                                title: qsTrId("error-joining-the-community")
+                                icon: StandardIcon.Critical
+                                standardButtons: StandardButton.Ok
+                            }
                         }
                     }
                 }
