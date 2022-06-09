@@ -5,6 +5,8 @@ import message_item, message_reaction_item, message_transaction_parameters_item
 type
   ModelRole {.pure.} = enum
     Id = UserRole + 1
+    PrevMsgIndex
+    NextMsgIndex
     CommunityId
     ResponseToMessageWithId
     SenderId
@@ -77,6 +79,8 @@ QtObject:
   method roleNames(self: Model): Table[int, string] =
     {
       ModelRole.Id.int:"id",
+      ModelRole.PrevMsgIndex.int:"prevMsgIndex",
+      ModelRole.NextMsgIndex.int:"nextMsgIndex",
       ModelRole.CommunityId.int:"communityId",
       ModelRole.ResponseToMessageWithId.int:"responseToMessageWithId",
       ModelRole.SenderId.int:"senderId",
@@ -120,6 +124,10 @@ QtObject:
     case enumRole:
     of ModelRole.Id:
       result = newQVariant(item.id)
+    of ModelRole.PrevMsgIndex:
+      result = newQVariant(index.row + 1)
+    of ModelRole.NextMsgIndex:
+      result = newQVariant(index.row - 1)
     of ModelRole.CommunityId:
       result = newQVariant(item.communityId)
     of ModelRole.ResponseToMessageWithId:
@@ -186,11 +194,18 @@ QtObject:
     of ModelRole.MentionedUsersPks:
       result = newQVariant(item.mentionedUsersPks.join(" "))
 
+  proc updateItemAtIndex(self: Model, index: int) =
+    let ind = self.createIndex(index, 0, nil)
+    self.dataChanged(ind, ind, self.allKeys)
+
   proc findIndexForMessageId*(self: Model, messageId: string): int =
+    result = -1
+    if messageId.len == 0:
+      return
     for i in 0 ..< self.items.len:
       if(self.items[i].id == messageId):
-        return i
-    return -1
+        result = i
+        return
 
   proc findIdsOfTheMessagesWhichRespondedToMessageWithId*(self: Model, messageId: string): seq[string] =
     for i in 0 ..< self.items.len:
@@ -274,6 +289,9 @@ QtObject:
     self.beginInsertRows(parentModelIndex, position, position)
     self.items.insert(item, position)
     self.endInsertRows()
+
+    if position > 0:
+      self.updateItemAtIndex(position - 1)
     self.countChanged()
 
   proc removeItem*(self: Model, messageId: string) =
@@ -287,6 +305,9 @@ QtObject:
     self.beginRemoveRows(parentModelIndex, ind, ind)
     self.items.delete(ind)
     self.endRemoveRows()
+    
+    if self.items.len > 0 and ind > 0 and ind < self.items.len:
+        self.updateItemAtIndex(ind - 1)
     self.countChanged()
 
   proc getItemWithMessageId*(self: Model, messageId: string): Item =
@@ -411,6 +432,4 @@ QtObject:
     let ind = self.findIndexForMessageId(messageId)
     if(ind == -1):
       return
-
-    let index = self.createIndex(ind, 0, nil)
-    self.dataChanged(index, index, self.allKeys)
+    self.updateItemAtIndex(ind)
