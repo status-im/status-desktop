@@ -8,6 +8,8 @@ const LSS_KEY_WALLET_SPLIT_VIEW* = "walletSplitView"
 const LSS_KEY_PROFILE_SPLIT_VIEW* = "profileSplitView"
 const LSS_KEY_IS_WALLET_ENABLED* = "isExperimentalWalletEnabled"
 const DEFAULT_IS_WALLET_ENABLED = false
+const LSS_KEY_IS_COMMUNITY_PERMISSIONS_ENABLED* = "isExperimentalCommunityPermissionsEnabled"
+const DEFAULT_IS_COMMUNITY_PERMISSIONS_ENABLED = false
 const LSS_KEY_NODE_MANAGEMENT_ENABLED* = "nodeManagementEnabled"
 const DEFAULT_NODE_MANAGEMENT_ENABLED = false
 const LSS_KEY_IS_BROWSER_ENABLED* = "isExperimentalBrowserEnabled"
@@ -190,6 +192,18 @@ QtObject:
     read = getProfileSplitView
     write = setProfileSplitView
     notify = profileSplitViewChanged
+
+  proc isCommunityPermissionsEnabledChanged*(self: LocalAccountSensitiveSettings) {.signal.}
+  proc getIsCommunityPermissionsEnabled*(self: LocalAccountSensitiveSettings): bool {.slot.} =
+    getSettingsProp[bool](self, LSS_KEY_IS_COMMUNITY_PERMISSIONS_ENABLED, newQVariant(DEFAULT_IS_COMMUNITY_PERMISSIONS_ENABLED))
+  proc setIsCommunityPermissionsEnabled*(self: LocalAccountSensitiveSettings, value: bool) {.slot.} =
+    setSettingsProp(self, LSS_KEY_IS_COMMUNITY_PERMISSIONS_ENABLED, newQVariant(value)):
+      self.isCommunityPermissionsEnabledChanged()
+
+  QtProperty[bool] isCommunityPermissionsEnabled:
+    read = getIsCommunityPermissionsEnabled
+    write = setIsCommunityPermissionsEnabled
+    notify = isCommunityPermissionsEnabledChanged
 
   proc isWalletEnabledChanged*(self: LocalAccountSensitiveSettings) {.signal.}
   proc getIsWalletEnabled*(self: LocalAccountSensitiveSettings): bool {.slot.} =
@@ -740,6 +754,7 @@ QtObject:
       of LSS_KEY_WALLET_SPLIT_VIEW: self.walletSplitViewChanged()
       of LSS_KEY_PROFILE_SPLIT_VIEW: self.profileSplitViewChanged()
       of LSS_KEY_IS_WALLET_ENABLED: self.isWalletEnabledChanged()
+      of LSS_KEY_IS_COMMUNITY_PERMISSIONS_ENABLED: self.isCommunityPermissionsEnabledChanged()
       of LSS_KEY_NODE_MANAGEMENT_ENABLED: self.nodeManagementEnabledChanged()
       of LSS_KEY_IS_BROWSER_ENABLED: self.isBrowserEnabledChanged()
       of LSS_KEY_SHOW_ONLINE_USERS: self.showOnlineUsersChanged()

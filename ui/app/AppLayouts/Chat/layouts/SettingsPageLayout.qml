@@ -5,6 +5,8 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 
+import utils 1.0
+import shared.panels 1.0
 import shared.popups 1.0
 
 Item {
@@ -44,24 +46,18 @@ Item {
         id: layout
 
         anchors.fill: parent
-
         spacing: 16
 
-        Item {
+        StatusIconTextButton {
             implicitHeight: 32
-
-            StatusBaseText {
-                visible: root.previousPage
-                text: "<- " + root.previousPage
-                color: Theme.palette.primaryColor1
-                font.pixelSize: 15
-
-                MouseArea {
-                    anchors.fill: parent
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: root.previousPageClicked()
-                }
-            }
+            visible: root.previousPage
+            spacing: 8
+            statusIcon: "arrow"
+            icon.width: 24
+            icon.height: 24
+            text: root.previousPage
+            font.pixelSize: 15
+            onClicked: root.previousPageClicked()
         }
 
         StatusBaseText {
@@ -77,6 +73,7 @@ Item {
             id: contentLoader
             Layout.fillWidth: true
             Layout.fillHeight: true
+            Layout.topMargin: 16
             Layout.leftMargin: 24
             Layout.rightMargin: 24
 
@@ -98,4 +95,3 @@ Item {
         onSaveChangesClicked: root.saveChangesClicked()
     }
 }
-

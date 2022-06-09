@@ -23,17 +23,18 @@ StatusAppTwoPanelLayout {
     id: root
 
     // TODO: get this model from backend?
-    property var settingsMenuModel: [
-        {name: qsTr("Overview"), icon: "help"},
-        {name: qsTr("Members"), icon: "group-chat"},
-//        {name: qsTr("Permissions"), icon: "objects"},
-//        {name: qsTr("Tokens"), icon: "token"},
-//        {name: qsTr("Airdrops"), icon: "airdrop"},
-//        {name: qsTr("Token sales"), icon: "token-sale"},
-//        {name: qsTr("Subscriptions"), icon: "subscription"}
-    ]
+    property var settingsMenuModel: root.rootStore.communityPermissionsEnabled ? [{name: qsTr("Overview"), icon: "help"},
+                                                                                 {name: qsTr("Members"), icon: "group-chat"},
+                                                                                 {name: qsTr("Permissions"), icon: "objects"}] :
+                                                                                 [{name: qsTr("Overview"), icon: "help"},
+                                                                                 {name: qsTr("Members"), icon: "group-chat"}]
+    // TODO: Next community settings options:
+    //                        {name: qsTr("Tokens"), icon: "token"},
+    //                        {name: qsTr("Airdrops"), icon: "airdrop"},
+    //                        {name: qsTr("Token sales"), icon: "token-sale"},
+    //                        {name: qsTr("Subscriptions"), icon: "subscription"},
 
-    property var rootStore
+    property var rootStore    
     property var community
     property var chatCommunitySectionModule
     property bool hasAddedContacts: false
@@ -122,12 +123,8 @@ StatusAppTwoPanelLayout {
 
     rightPanel: Loader {
         anchors.fill: parent
-        anchors.leftMargin: 28
-        anchors.topMargin: 23
-        anchors.margins: 16
-
+        anchors.margins: 32
         active: root.community
-
         sourceComponent: StackLayout {
             currentIndex: d.currentIndex
 
@@ -199,9 +196,12 @@ StatusAppTwoPanelLayout {
                     communitySectionModule: root.chatCommunitySectionModule
                 })
             }
+
+            CommunityPermissionsSettingsPanel {}
         }
     }
 
+    onSettingsMenuModelChanged: d.currentIndex = 0
 
     QtObject {
         id: d
