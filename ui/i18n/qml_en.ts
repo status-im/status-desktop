@@ -102,50 +102,44 @@
         <translation>Enter URL</translation>
     </message>
     <message id="error-sending-the-transaction">
-        <location filename="../app/AppLayouts/Browser/BrowserLayout.qml" line="68"/>
+        <location filename="../app/AppLayouts/Browser/BrowserLayout.qml" line="69"/>
         <location filename="../imports/shared/popups/SendModal.qml" line="34"/>
-        <location filename="../imports/shared/popups/SignTransactionModal.qml" line="78"/>
-        <location filename="../imports/shared/status/StatusETHTransactionModal.qml" line="66"/>
+        <location filename="../imports/shared/popups/SignTransactionModal.qml" line="68"/>
+        <location filename="../imports/shared/status/StatusETHTransactionModal.qml" line="73"/>
         <location filename="../imports/shared/status/StatusSNTTransactionModal.qml" line="43"/>
-        <location filename="../app/AppLayouts/Browser/BrowserLayout.qml" line="68"/>
+        <location filename="../app/AppLayouts/Browser/BrowserLayout.qml" line="69"/>
         <location filename="../imports/shared/popups/SendModal.qml" line="34"/>
-        <location filename="../imports/shared/popups/SignTransactionModal.qml" line="78"/>
-        <location filename="../imports/shared/status/StatusETHTransactionModal.qml" line="66"/>
+        <location filename="../imports/shared/popups/SignTransactionModal.qml" line="68"/>
+        <location filename="../imports/shared/status/StatusETHTransactionModal.qml" line="73"/>
         <location filename="../imports/shared/status/StatusSNTTransactionModal.qml" line="43"/>
         <source>Error sending the transaction</source>
         <translation>Error sending the transaction</translation>
     </message>
     <message id="error-signing-message">
-        <location filename="../app/AppLayouts/Browser/BrowserLayout.qml" line="75"/>
-        <location filename="../app/AppLayouts/Browser/BrowserLayout.qml" line="75"/>
+        <location filename="../app/AppLayouts/Browser/BrowserLayout.qml" line="76"/>
+        <location filename="../app/AppLayouts/Browser/BrowserLayout.qml" line="76"/>
         <source>Error signing message</source>
         <translation>Error signing message</translation>
     </message>
     <message id="ens-transaction-pending">
-        <location filename="../app/AppLayouts/Browser/BrowserLayout.qml" line="198"/>
-        <location filename="../app/AppLayouts/Profile/views/EnsView.qml" line="327"/>
-        <location filename="../imports/shared/popups/SendModal.qml" line="279"/>
-        <location filename="../imports/shared/popups/SignTransactionModal.qml" line="367"/>
         <location filename="../imports/shared/popups/ToastMessage.qml" line="32"/>
         <location filename="../imports/shared/popups/ToastMessage.qml" line="53"/>
-        <location filename="../app/AppLayouts/Browser/BrowserLayout.qml" line="198"/>
-        <location filename="../imports/shared/popups/SendModal.qml" line="279"/>
-        <location filename="../imports/shared/popups/SignTransactionModal.qml" line="367"/>
         <location filename="../imports/shared/popups/ToastMessage.qml" line="32"/>
         <location filename="../imports/shared/popups/ToastMessage.qml" line="53"/>
         <source>Transaction pending...</source>
         <translation>Transaction pending...</translation>
     </message>
     <message id="wrong-password">
-        <location filename="../app/AppLayouts/Wallet/popups/AddAccountModal.qml" line="62"/>
-        <location filename="../imports/shared/popups/SendModal.qml" line="271"/>
-        <location filename="../imports/shared/popups/SignTransactionModal.qml" line="356"/>
-        <location filename="../imports/shared/status/StatusETHTransactionModal.qml" line="47"/>
-        <location filename="../imports/shared/status/StatusSNTTransactionModal.qml" line="68"/>
-        <location filename="../imports/shared/popups/SendModal.qml" line="271"/>
-        <location filename="../imports/shared/popups/SignTransactionModal.qml" line="356"/>
-        <location filename="../imports/shared/status/StatusETHTransactionModal.qml" line="47"/>
-        <location filename="../imports/shared/status/StatusSNTTransactionModal.qml" line="68"/>
+        <location filename="../app/AppLayouts/Wallet/popups/AddAccountModal.qml" line="61"/>
+        <location filename="../app/AppLayouts/Wallet/popups/AddAccountModal.qml" line="68"/>
+        <location filename="../imports/shared/popups/SendModal.qml" line="303"/>
+        <location filename="../imports/shared/popups/SignTransactionModal.qml" line="352"/>
+        <location filename="../imports/shared/status/StatusETHTransactionModal.qml" line="49"/>
+        <location filename="../imports/shared/status/StatusSNTTransactionModal.qml" line="69"/>
+        <location filename="../imports/shared/popups/SendModal.qml" line="303"/>
+        <location filename="../imports/shared/popups/SignTransactionModal.qml" line="352"/>
+        <location filename="../imports/shared/status/StatusETHTransactionModal.qml" line="49"/>
+        <location filename="../imports/shared/status/StatusSNTTransactionModal.qml" line="69"/>
         <source>Wrong password</source>
         <translation>Wrong password</translation>
     </message>
@@ -167,20 +161,20 @@
         <translation>Downloads Page</translation>
     </message>
     <message id="server-s-certificate-not-trusted">
-        <location filename="../app/AppLayouts/Browser/BrowserLayout.qml" line="347"/>
-        <location filename="../app/AppLayouts/Browser/BrowserLayout.qml" line="347"/>
+        <location filename="../app/AppLayouts/Browser/BrowserLayout.qml" line="348"/>
+        <location filename="../app/AppLayouts/Browser/BrowserLayout.qml" line="348"/>
         <source>Server&apos;s certificate not trusted</source>
         <translation>Server&apos;s certificate not trusted</translation>
     </message>
     <message id="do-you-wish-to-continue-">
-        <location filename="../app/AppLayouts/Browser/BrowserLayout.qml" line="349"/>
-        <location filename="../app/AppLayouts/Browser/BrowserLayout.qml" line="349"/>
+        <location filename="../app/AppLayouts/Browser/BrowserLayout.qml" line="350"/>
+        <location filename="../app/AppLayouts/Browser/BrowserLayout.qml" line="350"/>
         <source>Do you wish to continue?</source>
         <translation>Do you wish to continue?</translation>
     </message>
     <message id="if-you-wish-so--you-may-continue-with-an-unverified-certificate--accepting-an-unverified-certificate-means-you-may-not-be-connected-with-the-host-you-tried-to-connect-to--ndo-you-wish-to-override-the-security-check-and-continue-">
-        <location filename="../app/AppLayouts/Browser/BrowserLayout.qml" line="351"/>
-        <location filename="../app/AppLayouts/Browser/BrowserLayout.qml" line="351"/>
+        <location filename="../app/AppLayouts/Browser/BrowserLayout.qml" line="352"/>
+        <location filename="../app/AppLayouts/Browser/BrowserLayout.qml" line="352"/>
         <source>If you wish so, you may continue with an unverified certificate. Accepting an unverified certificate means you may not be connected with the host you tried to connect to.
 Do you wish to override the security check and continue?</source>
         <translation>If you wish so, you may continue with an unverified certificate. Accepting an unverified certificate means you may not be connected with the host you tried to connect to.
@@ -303,7 +297,7 @@ Do you wish to override the security check and continue?</translation>
         <location filename="../app/AppLayouts/Browser/popups/DownloadMenu.qml" line="69"/>
         <location filename="../app/AppLayouts/Browser/popups/JSDialogWindow.qml" line="80"/>
         <location filename="../imports/shared/status/StatusStickerButton.qml" line="117"/>
-        <location filename="../imports/shared/views/chat/CompactMessageView.qml" line="462"/>
+        <location filename="../imports/shared/views/chat/CompactMessageView.qml" line="472"/>
         <location filename="../imports/shared/status/StatusStickerButton.qml" line="117"/>
         <source>Cancel</source>
         <translation>Cancel</translation>
@@ -362,18 +356,18 @@ Do you wish to override the security check and continue?</translation>
     </message>
     <message id="sign-with-password">
         <location filename="../app/AppLayouts/Browser/popups/SignMessageModal.qml" line="229"/>
-        <location filename="../imports/shared/popups/SignTransactionModal.qml" line="204"/>
-        <location filename="../imports/shared/popups/SignTransactionModal.qml" line="254"/>
-        <location filename="../imports/shared/status/StatusETHTransactionModal.qml" line="145"/>
-        <location filename="../imports/shared/status/StatusETHTransactionModal.qml" line="169"/>
-        <location filename="../imports/shared/status/StatusSNTTransactionModal.qml" line="167"/>
-        <location filename="../imports/shared/status/StatusSNTTransactionModal.qml" line="192"/>
-        <location filename="../imports/shared/popups/SignTransactionModal.qml" line="204"/>
-        <location filename="../imports/shared/popups/SignTransactionModal.qml" line="254"/>
-        <location filename="../imports/shared/status/StatusETHTransactionModal.qml" line="145"/>
-        <location filename="../imports/shared/status/StatusETHTransactionModal.qml" line="169"/>
-        <location filename="../imports/shared/status/StatusSNTTransactionModal.qml" line="167"/>
-        <location filename="../imports/shared/status/StatusSNTTransactionModal.qml" line="192"/>
+        <location filename="../imports/shared/popups/SignTransactionModal.qml" line="199"/>
+        <location filename="../imports/shared/popups/SignTransactionModal.qml" line="250"/>
+        <location filename="../imports/shared/status/StatusETHTransactionModal.qml" line="150"/>
+        <location filename="../imports/shared/status/StatusETHTransactionModal.qml" line="174"/>
+        <location filename="../imports/shared/status/StatusSNTTransactionModal.qml" line="171"/>
+        <location filename="../imports/shared/status/StatusSNTTransactionModal.qml" line="196"/>
+        <location filename="../imports/shared/popups/SignTransactionModal.qml" line="199"/>
+        <location filename="../imports/shared/popups/SignTransactionModal.qml" line="250"/>
+        <location filename="../imports/shared/status/StatusETHTransactionModal.qml" line="150"/>
+        <location filename="../imports/shared/status/StatusETHTransactionModal.qml" line="174"/>
+        <location filename="../imports/shared/status/StatusSNTTransactionModal.qml" line="171"/>
+        <location filename="../imports/shared/status/StatusSNTTransactionModal.qml" line="196"/>
         <source>Sign with password</source>
         <translation>Sign with password</translation>
     </message>
@@ -382,24 +376,24 @@ Do you wish to override the security check and continue?</translation>
         <translation type="vanished">Contact request pending</translation>
     </message>
     <message id="connected">
-        <location filename="../app/AppLayouts/Chat/views/ChatContentView.qml" line="298"/>
+        <location filename="../app/AppLayouts/Chat/views/ChatContentView.qml" line="318"/>
         <source>Connected</source>
         <translation>Connected</translation>
     </message>
     <message id="disconnected">
-        <location filename="../app/AppLayouts/Chat/views/ChatContentView.qml" line="300"/>
+        <location filename="../app/AppLayouts/Chat/views/ChatContentView.qml" line="320"/>
         <source>Disconnected</source>
         <translation>Disconnected</translation>
     </message>
     <message id="this-user-has-been-blocked-">
-        <location filename="../app/AppLayouts/Chat/views/ChatContentView.qml" line="467"/>
+        <location filename="../app/AppLayouts/Chat/views/ChatContentView.qml" line="487"/>
         <source>This user has been blocked.</source>
         <translation>This user has been blocked.</translation>
     </message>
     <message id="type-a-message-">
-        <location filename="../app/AppLayouts/Chat/views/ChatContentView.qml" line="469"/>
+        <location filename="../app/AppLayouts/Chat/views/ChatContentView.qml" line="489"/>
         <location filename="../imports/shared/status/StatusChatInput.qml" line="61"/>
-        <location filename="../imports/shared/views/chat/CompactMessageView.qml" line="400"/>
+        <location filename="../imports/shared/views/chat/CompactMessageView.qml" line="410"/>
         <location filename="../imports/shared/status/StatusChatInput.qml" line="61"/>
         <source>Type a message.</source>
         <translation>Type a message.</translation>
@@ -409,10 +403,10 @@ Do you wish to override the security check and continue?</translation>
         <location filename="../app/AppLayouts/Wallet/panels/WalletFooter.qml" line="34"/>
         <location filename="../imports/shared/popups/SignTransactionModal.qml" line="20"/>
         <location filename="../imports/shared/views/SendModalFooter.qml" line="92"/>
-        <location filename="../imports/shared/views/SendModalHeader.qml" line="99"/>
+        <location filename="../imports/shared/views/SendModalHeader.qml" line="104"/>
         <location filename="../imports/shared/popups/SignTransactionModal.qml" line="20"/>
         <location filename="../imports/shared/views/SendModalFooter.qml" line="92"/>
-        <location filename="../imports/shared/views/SendModalHeader.qml" line="99"/>
+        <location filename="../imports/shared/views/SendModalHeader.qml" line="104"/>
         <source>Send</source>
         <translation>Send</translation>
     </message>
@@ -435,12 +429,12 @@ Do you wish to override the security check and continue?</translation>
     <message id="continue">
         <location filename="../app/AppLayouts/Chat/popups/ChatCommandModal.qml" line="52"/>
         <location filename="../app/AppLayouts/Profile/views/DevicesView.qml" line="60"/>
-        <location filename="../imports/shared/popups/SignTransactionModal.qml" line="114"/>
-        <location filename="../imports/shared/status/StatusETHTransactionModal.qml" line="85"/>
-        <location filename="../imports/shared/status/StatusSNTTransactionModal.qml" line="96"/>
-        <location filename="../imports/shared/popups/SignTransactionModal.qml" line="114"/>
-        <location filename="../imports/shared/status/StatusETHTransactionModal.qml" line="85"/>
-        <location filename="../imports/shared/status/StatusSNTTransactionModal.qml" line="96"/>
+        <location filename="../imports/shared/popups/SignTransactionModal.qml" line="109"/>
+        <location filename="../imports/shared/status/StatusETHTransactionModal.qml" line="92"/>
+        <location filename="../imports/shared/status/StatusSNTTransactionModal.qml" line="102"/>
+        <location filename="../imports/shared/popups/SignTransactionModal.qml" line="109"/>
+        <location filename="../imports/shared/status/StatusETHTransactionModal.qml" line="92"/>
+        <location filename="../imports/shared/status/StatusSNTTransactionModal.qml" line="102"/>
         <source>Continue</source>
         <translation>Continue</translation>
     </message>
@@ -475,20 +469,19 @@ Do you wish to override the security check and continue?</translation>
     </message>
     <message id="transaction-preview">
         <location filename="../app/AppLayouts/Chat/popups/ChatCommandModal.qml" line="132"/>
-        <location filename="../imports/shared/popups/SignTransactionModal.qml" line="202"/>
-        <location filename="../imports/shared/popups/SignTransactionModal.qml" line="202"/>
+        <location filename="../imports/shared/popups/SignTransactionModal.qml" line="197"/>
+        <location filename="../imports/shared/popups/SignTransactionModal.qml" line="197"/>
         <source>Transaction preview</source>
         <translation>Transaction preview</translation>
     </message>
     <message id="next">
         <location filename="../app/AppLayouts/Chat/popups/ChatCommandModal.qml" line="172"/>
-        <location filename="../app/AppLayouts/Profile/popups/BackupSeedModal.qml" line="250"/>
-        <location filename="../imports/shared/popups/SignTransactionModal.qml" line="292"/>
-        <location filename="../imports/shared/status/StatusETHTransactionModal.qml" line="211"/>
-        <location filename="../imports/shared/status/StatusSNTTransactionModal.qml" line="236"/>
-        <location filename="../imports/shared/popups/SignTransactionModal.qml" line="292"/>
-        <location filename="../imports/shared/status/StatusETHTransactionModal.qml" line="211"/>
-        <location filename="../imports/shared/status/StatusSNTTransactionModal.qml" line="236"/>
+        <location filename="../imports/shared/popups/SignTransactionModal.qml" line="288"/>
+        <location filename="../imports/shared/status/StatusETHTransactionModal.qml" line="216"/>
+        <location filename="../imports/shared/status/StatusSNTTransactionModal.qml" line="240"/>
+        <location filename="../imports/shared/popups/SignTransactionModal.qml" line="288"/>
+        <location filename="../imports/shared/status/StatusETHTransactionModal.qml" line="216"/>
+        <location filename="../imports/shared/status/StatusSNTTransactionModal.qml" line="240"/>
         <source>Next</source>
         <translation>Next</translation>
     </message>
@@ -498,35 +491,35 @@ Do you wish to override the security check and continue?</translation>
     </message>
     <message id="authorize--1--2">
         <location filename="../imports/shared/status/StatusSNTTransactionModal.qml" line="38"/>
-        <location filename="../imports/shared/status/StatusSNTTransactionModal.qml" line="94"/>
-        <location filename="../imports/shared/status/StatusSNTTransactionModal.qml" line="165"/>
+        <location filename="../imports/shared/status/StatusSNTTransactionModal.qml" line="100"/>
+        <location filename="../imports/shared/status/StatusSNTTransactionModal.qml" line="169"/>
         <location filename="../imports/shared/status/StatusSNTTransactionModal.qml" line="38"/>
-        <location filename="../imports/shared/status/StatusSNTTransactionModal.qml" line="94"/>
-        <location filename="../imports/shared/status/StatusSNTTransactionModal.qml" line="165"/>
+        <location filename="../imports/shared/status/StatusSNTTransactionModal.qml" line="100"/>
+        <location filename="../imports/shared/status/StatusSNTTransactionModal.qml" line="169"/>
         <source>Authorize %1 %2</source>
         <translation>Authorize %1 %2</translation>
     </message>
     <message id="choose-account">
-        <location filename="../imports/shared/popups/SignTransactionModal.qml" line="128"/>
-        <location filename="../imports/shared/status/StatusETHTransactionModal.qml" line="100"/>
-        <location filename="../imports/shared/status/StatusSNTTransactionModal.qml" line="111"/>
-        <location filename="../imports/shared/popups/SignTransactionModal.qml" line="128"/>
-        <location filename="../imports/shared/status/StatusETHTransactionModal.qml" line="100"/>
-        <location filename="../imports/shared/status/StatusSNTTransactionModal.qml" line="111"/>
+        <location filename="../imports/shared/popups/SignTransactionModal.qml" line="123"/>
+        <location filename="../imports/shared/status/StatusETHTransactionModal.qml" line="108"/>
+        <location filename="../imports/shared/status/StatusSNTTransactionModal.qml" line="117"/>
+        <location filename="../imports/shared/popups/SignTransactionModal.qml" line="123"/>
+        <location filename="../imports/shared/status/StatusETHTransactionModal.qml" line="108"/>
+        <location filename="../imports/shared/status/StatusSNTTransactionModal.qml" line="117"/>
         <source>Choose account</source>
         <translation>Choose account</translation>
     </message>
     <message id="network-fee">
-        <location filename="../imports/shared/popups/SignTransactionModal.qml" line="146"/>
+        <location filename="../imports/shared/popups/SignTransactionModal.qml" line="142"/>
         <location filename="../imports/shared/views/TransactionPreview.qml" line="389"/>
-        <location filename="../imports/shared/popups/SignTransactionModal.qml" line="146"/>
+        <location filename="../imports/shared/popups/SignTransactionModal.qml" line="142"/>
         <location filename="../imports/shared/views/TransactionPreview.qml" line="389"/>
         <source>Network fee</source>
         <translation>Network fee</translation>
     </message>
     <message id="error-estimating-gas---1">
-        <location filename="../imports/shared/popups/SendModal.qml" line="173"/>
-        <location filename="../imports/shared/popups/SendModal.qml" line="173"/>
+        <location filename="../imports/shared/popups/SendModal.qml" line="203"/>
+        <location filename="../imports/shared/popups/SendModal.qml" line="203"/>
         <source>Error estimating gas: %1</source>
         <translation>Error estimating gas: %1</translation>
     </message>
@@ -537,10 +530,10 @@ Do you wish to override the security check and continue?</translation>
         <translation type="unfinished">. The transaction will probably fail.</translation>
     </message>
     <message id="send--1--2">
-        <location filename="../imports/shared/popups/SignTransactionModal.qml" line="256"/>
-        <location filename="../imports/shared/status/StatusSNTTransactionModal.qml" line="190"/>
-        <location filename="../imports/shared/popups/SignTransactionModal.qml" line="256"/>
-        <location filename="../imports/shared/status/StatusSNTTransactionModal.qml" line="190"/>
+        <location filename="../imports/shared/popups/SignTransactionModal.qml" line="252"/>
+        <location filename="../imports/shared/status/StatusSNTTransactionModal.qml" line="194"/>
+        <location filename="../imports/shared/popups/SignTransactionModal.qml" line="252"/>
+        <location filename="../imports/shared/status/StatusSNTTransactionModal.qml" line="194"/>
         <source>Send %1 %2</source>
         <translation>Send %1 %2</translation>
     </message>
@@ -657,7 +650,7 @@ Do you wish to override the security check and continue?</translation>
     </message>
     <message id="yesterday">
         <location filename="../imports/shared/controls/chat/DateGroup.qml" line="42"/>
-        <location filename="../imports/utils/Utils.qml" line="335"/>
+        <location filename="../imports/utils/Utils.qml" line="343"/>
         <source>Yesterday</source>
         <translation>Yesterday</translation>
     </message>
@@ -683,7 +676,7 @@ Do you wish to override the security check and continue?</translation>
     </message>
     <message id="may">
         <location filename="../imports/shared/controls/chat/DateGroup.qml" line="54"/>
-        <location filename="../imports/utils/Utils.qml" line="273"/>
+        <location filename="../imports/utils/Utils.qml" line="281"/>
         <source>May</source>
         <translation>May</translation>
     </message>
@@ -723,17 +716,17 @@ Do you wish to override the security check and continue?</translation>
         <translation>December</translation>
     </message>
     <message id="-and-">
-        <location filename="../app/AppLayouts/Chat/stores/MessageStore.qml" line="133"/>
+        <location filename="../app/AppLayouts/Chat/stores/MessageStore.qml" line="140"/>
         <source> and </source>
         <translation> and </translation>
     </message>
     <message id="-1-more">
-        <location filename="../app/AppLayouts/Chat/stores/MessageStore.qml" line="160"/>
+        <location filename="../app/AppLayouts/Chat/stores/MessageStore.qml" line="167"/>
         <source>%1 more</source>
         <translation>%1 more</translation>
     </message>
     <message id="-reacted-with-">
-        <location filename="../app/AppLayouts/Chat/stores/MessageStore.qml" line="169"/>
+        <location filename="../app/AppLayouts/Chat/stores/MessageStore.qml" line="176"/>
         <source> reacted with </source>
         <translation> reacted with </translation>
     </message>
@@ -751,34 +744,34 @@ Do you wish to override the security check and continue?</translation>
         <translation>Loading image...</translation>
     </message>
     <message id="this-feature-is-experimental-and-is-meant-for-testing-purposes-by-core-contributors-and-the-community--it-s-not-meant-for-real-use-and-makes-no-claims-of-security-or-integrity-of-funds-or-data--use-at-your-own-risk-">
-        <location filename="../app/AppLayouts/Profile/views/AdvancedView.qml" line="603"/>
+        <location filename="../app/AppLayouts/Profile/views/AdvancedView.qml" line="620"/>
         <location filename="../imports/shared/views/chat/InvitationBubbleView.qml" line="60"/>
         <source>This feature is experimental and is meant for testing purposes by core contributors and the community. It&apos;s not meant for real use and makes no claims of security or integrity of funds or data. Use at your own risk.</source>
         <translation>This feature is experimental and is meant for testing purposes by core contributors and the community. It&apos;s not meant for real use and makes no claims of security or integrity of funds or data. Use at your own risk.</translation>
     </message>
     <message id="membership-requires-an-ens-username">
-        <location filename="../imports/shared/views/chat/InvitationBubbleView.qml" line="109"/>
+        <location filename="../imports/shared/views/chat/InvitationBubbleView.qml" line="124"/>
         <source>Membership requires an ENS username</source>
         <translation>Membership requires an ENS username</translation>
     </message>
     <message id="you-need-to-be-invited">
         <location filename="../app/AppLayouts/Chat/popups/community/CommunityDetailPopup.qml" line="184"/>
-        <location filename="../imports/shared/views/chat/InvitationBubbleView.qml" line="119"/>
+        <location filename="../imports/shared/views/chat/InvitationBubbleView.qml" line="134"/>
         <source>You need to be invited</source>
         <translation>You need to be invited</translation>
     </message>
     <message id="request-access">
-        <location filename="../imports/shared/views/chat/InvitationBubbleView.qml" line="153"/>
+        <location filename="../imports/shared/views/chat/InvitationBubbleView.qml" line="168"/>
         <source>Request Access</source>
         <translation>Request Access</translation>
     </message>
     <message id="verified-community-invitation">
-        <location filename="../imports/shared/views/chat/InvitationBubbleView.qml" line="187"/>
+        <location filename="../imports/shared/views/chat/InvitationBubbleView.qml" line="202"/>
         <source>Verified community invitation</source>
         <translation>Verified community invitation</translation>
     </message>
     <message id="community-invitation">
-        <location filename="../imports/shared/views/chat/InvitationBubbleView.qml" line="189"/>
+        <location filename="../imports/shared/views/chat/InvitationBubbleView.qml" line="204"/>
         <source>Community invitation</source>
         <translation>Community invitation</translation>
     </message>
@@ -799,15 +792,14 @@ Do you wish to override the security check and continue?</translation>
         <translation type="vanished">A community has been shared</translation>
     </message>
     <message id="unsupported-state">
-        <location filename="../imports/shared/views/chat/InvitationBubbleView.qml" line="298"/>
         <source>Unsupported state</source>
-        <translation>Unsupported state</translation>
+        <translation type="vanished">Unsupported state</translation>
     </message>
     <message id="-1-members">
         <location filename="../app/AppLayouts/Chat/popups/community/CommunitiesPopup.qml" line="122"/>
         <location filename="../app/AppLayouts/Chat/popups/community/CommunityDetailPopup.qml" line="90"/>
-        <location filename="../app/AppLayouts/Chat/views/ChatContentView.qml" line="86"/>
-        <location filename="../imports/shared/views/chat/InvitationBubbleView.qml" line="268"/>
+        <location filename="../app/AppLayouts/Chat/views/ChatContentView.qml" line="90"/>
+        <location filename="../imports/shared/views/chat/InvitationBubbleView.qml" line="283"/>
         <source>%1 members</source>
         <translation>%1 members</translation>
     </message>
@@ -816,7 +808,7 @@ Do you wish to override the security check and continue?</translation>
         <translation type="vanished">Joined</translation>
     </message>
     <message id="join">
-        <location filename="../imports/shared/views/chat/InvitationBubbleView.qml" line="166"/>
+        <location filename="../imports/shared/views/chat/InvitationBubbleView.qml" line="181"/>
         <source>Join</source>
         <translation>Join</translation>
     </message>
@@ -910,7 +902,7 @@ Do you wish to override the security check and continue?</translation>
     <message id="invite-chat-pending">
         <location filename="../app/AppLayouts/Chat/popups/community/CommunityDetailPopup.qml" line="178"/>
         <location filename="../imports/shared/controls/chat/StateBubble.qml" line="62"/>
-        <location filename="../imports/shared/views/chat/InvitationBubbleView.qml" line="130"/>
+        <location filename="../imports/shared/views/chat/InvitationBubbleView.qml" line="145"/>
         <source>Pending</source>
         <translation>Pending</translation>
     </message>
@@ -971,7 +963,7 @@ Do you wish to override the security check and continue?</translation>
         <translation type="vanished">Group Information</translation>
     </message>
     <message id="clear-history">
-        <location filename="../app/AppLayouts/Chat/views/ChatContextMenuView.qml" line="187"/>
+        <location filename="../app/AppLayouts/Chat/views/ChatContextMenuView.qml" line="183"/>
         <source>Clear history</source>
         <oldsource>Clear History</oldsource>
         <translation>Clear history</translation>
@@ -986,21 +978,21 @@ Do you wish to override the security check and continue?</translation>
         <translation type="vanished">Are you sure you want to leave this chat?</translation>
     </message>
     <message id="remove-contact">
-        <location filename="../app/AppLayouts/Chat/views/ChatView.qml" line="167"/>
+        <location filename="../app/AppLayouts/Chat/views/ChatView.qml" line="168"/>
         <location filename="../app/AppLayouts/Profile/views/ContactsView.qml" line="318"/>
         <source>Remove contact</source>
         <oldsource>Remove Contact</oldsource>
         <translation type="unfinished">Remove Contact</translation>
     </message>
     <message id="are-you-sure-you-want-to-remove-this-contact-">
-        <location filename="../app/AppLayouts/Chat/views/ChatView.qml" line="169"/>
+        <location filename="../app/AppLayouts/Chat/views/ChatView.qml" line="170"/>
         <location filename="../app/AppLayouts/Profile/views/ContactsView.qml" line="320"/>
         <source>Are you sure you want to remove this contact?</source>
         <translation>Are you sure you want to remove this contact?</translation>
     </message>
     <message id="communities">
         <location filename="../app/AppLayouts/Chat/popups/community/CommunitiesPopup.qml" line="28"/>
-        <location filename="../app/AppLayouts/Chat/views/ContactsColumnView.qml" line="106"/>
+        <location filename="../app/AppLayouts/Chat/views/ContactsColumnView.qml" line="104"/>
         <location filename="../app/AppLayouts/Profile/views/AdvancedView.qml" line="153"/>
         <source>Communities</source>
         <translation>Communities</translation>
@@ -1015,7 +1007,7 @@ Do you wish to override the security check and continue?</translation>
     </message>
     <message id="1-member">
         <location filename="../app/AppLayouts/Chat/popups/GroupInfoPopup.qml" line="69"/>
-        <location filename="../app/AppLayouts/Chat/views/ChatContentView.qml" line="88"/>
+        <location filename="../app/AppLayouts/Chat/views/ChatContentView.qml" line="92"/>
         <source>1 member</source>
         <translation>1 member</translation>
     </message>
@@ -1079,7 +1071,7 @@ Do you wish to override the security check and continue?</translation>
     </message>
     <message id="error-joining-the-community">
         <location filename="../app/AppLayouts/Chat/popups/community/CommunityDetailPopup.qml" line="235"/>
-        <location filename="../imports/shared/views/chat/InvitationBubbleView.qml" line="332"/>
+        <location filename="../imports/shared/views/chat/InvitationBubbleView.qml" line="355"/>
         <source>Error joining the community</source>
         <translation>Error joining the community</translation>
     </message>
@@ -1093,13 +1085,13 @@ Do you wish to override the security check and continue?</translation>
     </message>
     <message id="create-category">
         <location filename="../app/AppLayouts/Chat/views/CommunityColumnView.qml" line="65"/>
-        <location filename="../app/AppLayouts/Chat/views/CommunityColumnView.qml" line="170"/>
+        <location filename="../app/AppLayouts/Chat/views/CommunityColumnView.qml" line="203"/>
         <source>Create category</source>
         <translation>Create category</translation>
     </message>
     <message id="invite-people">
         <location filename="../app/AppLayouts/Chat/panels/communities/CommunityProfilePopupMembersListPanel.qml" line="47"/>
-        <location filename="../app/mainui/AppMain.qml" line="307"/>
+        <location filename="../app/mainui/AppMain.qml" line="319"/>
         <source>Invite People</source>
         <oldsource>Invite people</oldsource>
         <translation type="unfinished">Invite people</translation>
@@ -1108,7 +1100,7 @@ Do you wish to override the security check and continue?</translation>
         <location filename="../app/AppLayouts/Chat/panels/communities/CommunityMembersSettingsPanel.qml" line="51"/>
         <location filename="../app/AppLayouts/Chat/panels/communities/CommunityProfilePopupMembersListPanel.qml" line="69"/>
         <location filename="../app/AppLayouts/Chat/popups/community/MembershipRequestsPopup.qml" line="24"/>
-        <location filename="../app/AppLayouts/Chat/views/CommunityColumnView.qml" line="100"/>
+        <location filename="../app/AppLayouts/Chat/views/CommunityColumnView.qml" line="101"/>
         <source>Membership requests</source>
         <translation>Membership requests</translation>
     </message>
@@ -1119,32 +1111,32 @@ Do you wish to override the security check and continue?</translation>
         <translation type="unfinished">Edit Category</translation>
     </message>
     <message id="delete-category">
-        <location filename="../app/AppLayouts/Chat/popups/community/CreateCategoryPopup.qml" line="164"/>
+        <location filename="../app/AppLayouts/Chat/popups/community/CreateCategoryPopup.qml" line="170"/>
         <source>Delete category</source>
         <oldsource>Delete Category</oldsource>
         <translation type="unfinished">Delete Category</translation>
     </message>
     <message id="delete--1-category">
-        <location filename="../app/AppLayouts/Chat/popups/community/CreateCategoryPopup.qml" line="170"/>
-        <location filename="../app/AppLayouts/Chat/views/CommunityColumnView.qml" line="234"/>
+        <location filename="../app/AppLayouts/Chat/popups/community/CreateCategoryPopup.qml" line="176"/>
+        <location filename="../app/AppLayouts/Chat/views/CommunityColumnView.qml" line="267"/>
         <source>Delete %1 category</source>
         <translation>Delete %1 category</translation>
     </message>
     <message id="are-you-sure-you-want-to-delete--1-category--channels-inside-the-category-won-t-be-deleted-">
-        <location filename="../app/AppLayouts/Chat/popups/community/CreateCategoryPopup.qml" line="172"/>
-        <location filename="../app/AppLayouts/Chat/views/CommunityColumnView.qml" line="236"/>
+        <location filename="../app/AppLayouts/Chat/popups/community/CreateCategoryPopup.qml" line="178"/>
+        <location filename="../app/AppLayouts/Chat/views/CommunityColumnView.qml" line="269"/>
         <source>Are you sure you want to delete %1 category? Channels inside the category won’t be deleted.</source>
         <translation>Are you sure you want to delete %1 category? Channels inside the category won’t be deleted.</translation>
     </message>
     <message id="error-deleting-the-category">
-        <location filename="../app/AppLayouts/Chat/views/CommunityColumnView.qml" line="486"/>
+        <location filename="../app/AppLayouts/Chat/views/CommunityColumnView.qml" line="521"/>
         <source>Error deleting the category</source>
         <translation>Error deleting the category</translation>
     </message>
     <message id="view-profile">
         <location filename="../app/AppLayouts/Chat/panels/communities/CommunityProfilePopupMembersListPanel.qml" line="170"/>
-        <location filename="../app/AppLayouts/Chat/views/ChatContextMenuView.qml" line="55"/>
-        <location filename="../imports/shared/views/chat/MessageContextMenuView.qml" line="164"/>
+        <location filename="../app/AppLayouts/Chat/views/ChatContextMenuView.qml" line="57"/>
+        <location filename="../imports/shared/views/chat/MessageContextMenuView.qml" line="166"/>
         <source>View Profile</source>
         <translation>View Profile</translation>
     </message>
@@ -1163,31 +1155,30 @@ Do you wish to override the security check and continue?</translation>
         <translation>Ban</translation>
     </message>
     <message id="transfer-ownership">
-        <location filename="../app/AppLayouts/Chat/panels/communities/CommunityProfilePopupOverviewPanel.qml" line="128"/>
+        <location filename="../app/AppLayouts/Chat/panels/communities/CommunityProfilePopupOverviewPanel.qml" line="117"/>
         <location filename="../app/AppLayouts/Chat/popups/community/TransferOwnershipPopup.qml" line="21"/>
         <source>Transfer ownership</source>
         <translation>Transfer ownership</translation>
     </message>
     <message id="invite-successfully-sent">
-        <location filename="../app/AppLayouts/Chat/panels/communities/CommunityProfilePopupInviteFriendsPanel.qml" line="34"/>
+        <location filename="../app/AppLayouts/Chat/popups/community/InviteFriendsToCommunityPopup.qml" line="48"/>
         <source>Invite successfully sent</source>
         <translation>Invite successfully sent</translation>
     </message>
     <message id="share-community">
-        <location filename="../app/AppLayouts/Chat/panels/communities/CommunityProfilePopupInviteFriendsPanel.qml" line="39"/>
-        <location filename="../app/AppLayouts/Chat/panels/communities/CommunityProfilePopupOverviewPanel.qml" line="52"/>
+        <location filename="../app/AppLayouts/Chat/panels/communities/CommunityProfilePopupInviteFriendsPanel.qml" line="28"/>
+        <location filename="../app/AppLayouts/Chat/panels/communities/CommunityProfilePopupOverviewPanel.qml" line="51"/>
         <source>Share community</source>
         <translation>Share community</translation>
     </message>
     <message id="notifications">
-        <location filename="../app/AppLayouts/Chat/panels/communities/CommunityProfilePopupOverviewPanel.qml" line="99"/>
+        <location filename="../app/AppLayouts/Chat/panels/communities/CommunityProfilePopupOverviewPanel.qml" line="98"/>
         <source>Notifications</source>
         <translation>Notifications</translation>
     </message>
     <message id="edit-community">
-        <location filename="../app/AppLayouts/Chat/panels/communities/CommunityProfilePopupOverviewPanel.qml" line="118"/>
         <source>Edit community</source>
-        <translation>Edit community</translation>
+        <translation type="vanished">Edit community</translation>
     </message>
     <message id="export-community">
         <source>Export community</source>
@@ -1195,12 +1186,13 @@ Do you wish to override the security check and continue?</translation>
     </message>
     <message id="create-channel">
         <location filename="../app/AppLayouts/Chat/views/CommunityColumnView.qml" line="57"/>
-        <location filename="../app/AppLayouts/Chat/views/CommunityColumnView.qml" line="161"/>
+        <location filename="../app/AppLayouts/Chat/views/CommunityColumnView.qml" line="194"/>
         <source>Create channel</source>
         <translation>Create channel</translation>
     </message>
     <message id="leave-community">
-        <location filename="../app/AppLayouts/Chat/panels/communities/CommunityProfilePopupOverviewPanel.qml" line="137"/>
+        <location filename="../app/AppLayouts/Chat/panels/communities/CommunityProfilePopupOverviewPanel.qml" line="126"/>
+        <location filename="../app/AppLayouts/Profile/panels/CommunitiesListPanel.qml" line="45"/>
         <source>Leave community</source>
         <translation>Leave community</translation>
     </message>
@@ -1209,19 +1201,19 @@ Do you wish to override the security check and continue?</translation>
         <translation type="vanished">Delete</translation>
     </message>
     <message id="welcome-to-your-community-">
-        <location filename="../app/AppLayouts/Chat/panels/communities/CommunityWelcomeBannerPanel.qml" line="84"/>
+        <location filename="../app/AppLayouts/Chat/panels/communities/CommunityWelcomeBannerPanel.qml" line="85"/>
         <source>Welcome to your community!</source>
         <translation>Welcome to your community!</translation>
     </message>
     <message id="add-members">
-        <location filename="../app/AppLayouts/Chat/panels/communities/CommunityWelcomeBannerPanel.qml" line="100"/>
+        <location filename="../app/AppLayouts/Chat/panels/communities/CommunityWelcomeBannerPanel.qml" line="101"/>
         <location filename="../app/AppLayouts/Chat/popups/GroupInfoPopup.qml" line="59"/>
         <location filename="../app/AppLayouts/Chat/popups/GroupInfoPopup.qml" line="284"/>
         <source>Add members</source>
         <translation>Add members</translation>
     </message>
     <message id="manage-community">
-        <location filename="../app/AppLayouts/Chat/panels/communities/CommunityWelcomeBannerPanel.qml" line="114"/>
+        <location filename="../app/AppLayouts/Chat/panels/communities/CommunityWelcomeBannerPanel.qml" line="115"/>
         <source>Manage community</source>
         <translation>Manage community</translation>
     </message>
@@ -1320,30 +1312,28 @@ Do you wish to override the security check and continue?</translation>
     </message>
     <message id="channels">
         <location filename="../app/AppLayouts/Chat/popups/community/CommunityDetailPopup.qml" line="111"/>
-        <location filename="../app/AppLayouts/Chat/popups/community/CreateCategoryPopup.qml" line="99"/>
+        <location filename="../app/AppLayouts/Chat/popups/community/CreateCategoryPopup.qml" line="105"/>
         <source>Channels</source>
         <translation>Channels</translation>
     </message>
     <message id="create">
-        <location filename="../app/AppLayouts/Chat/popups/community/CreateCategoryPopup.qml" line="214"/>
-        <location filename="../app/AppLayouts/Chat/popups/community/CreateChannelPopup.qml" line="291"/>
-        <location filename="../app/AppLayouts/Chat/popups/community/CreateCommunityPopup.qml" line="356"/>
+        <location filename="../app/AppLayouts/Chat/popups/community/CreateCategoryPopup.qml" line="220"/>
+        <location filename="../app/AppLayouts/Chat/popups/community/CreateChannelPopup.qml" line="301"/>
         <source>Create</source>
         <translation>Create</translation>
     </message>
     <message id="error-editing-the-category">
-        <location filename="../app/AppLayouts/Chat/popups/community/CreateCategoryPopup.qml" line="242"/>
+        <location filename="../app/AppLayouts/Chat/popups/community/CreateCategoryPopup.qml" line="248"/>
         <source>Error editing the category</source>
         <translation>Error editing the category</translation>
     </message>
     <message id="error-creating-the-category">
-        <location filename="../app/AppLayouts/Chat/popups/community/CreateCategoryPopup.qml" line="244"/>
+        <location filename="../app/AppLayouts/Chat/popups/community/CreateCategoryPopup.qml" line="250"/>
         <source>Error creating the category</source>
         <translation>Error creating the category</translation>
     </message>
     <message id="error-creating-the-community">
-        <location filename="../app/AppLayouts/Chat/popups/community/CreateChannelPopup.qml" line="330"/>
-        <location filename="../app/AppLayouts/Chat/popups/community/CreateCommunityPopup.qml" line="407"/>
+        <location filename="../app/AppLayouts/Chat/popups/community/CreateChannelPopup.qml" line="340"/>
         <source>Error creating the community</source>
         <translation>Error creating the community</translation>
     </message>
@@ -1392,38 +1382,25 @@ Do you wish to override the security check and continue?</translation>
         <translation type="vanished">community decription</translation>
     </message>
     <message id="thumbnail-image">
-        <location filename="../app/AppLayouts/Chat/panels/communities/CommunityEditSettingsPanel.qml" line="95"/>
-        <location filename="../app/AppLayouts/Chat/popups/community/CreateCommunityPopup.qml" line="129"/>
         <source>Thumbnail image</source>
-        <translation>Thumbnail image</translation>
+        <translation type="vanished">Thumbnail image</translation>
     </message>
     <message id="please-choose-an-image">
-        <location filename="../app/AppLayouts/Chat/panels/communities/CommunityEditSettingsPanel.qml" line="119"/>
-        <location filename="../app/AppLayouts/Chat/popups/community/CreateCommunityPopup.qml" line="153"/>
         <location filename="../app/AppLayouts/Profile/popups/ChangeProfilePicModal.qml" line="107"/>
-        <location filename="../imports/shared/status/StatusChatInput.qml" line="646"/>
-        <location filename="../imports/shared/status/StatusChatInput.qml" line="646"/>
+        <location filename="../imports/shared/status/StatusChatInput.qml" line="647"/>
+        <location filename="../imports/shared/status/StatusChatInput.qml" line="647"/>
         <source>Please choose an image</source>
         <translation>Please choose an image</translation>
     </message>
     <message id="image-files----jpg---jpeg---png-">
-        <location filename="../app/AppLayouts/Chat/panels/communities/CommunityEditSettingsPanel.qml" line="122"/>
-        <location filename="../app/AppLayouts/Chat/popups/community/CreateCommunityPopup.qml" line="157"/>
         <location filename="../app/AppLayouts/Profile/popups/ChangeProfilePicModal.qml" line="111"/>
         <source>Image files (*.jpg *.jpeg *.png)</source>
         <translation>Image files (*.jpg *.jpeg *.png)</translation>
     </message>
     <message id="upload">
-        <location filename="../app/AppLayouts/Chat/panels/communities/CommunityEditSettingsPanel.qml" line="174"/>
-        <location filename="../app/AppLayouts/Chat/popups/community/CreateCommunityPopup.qml" line="210"/>
         <location filename="../app/AppLayouts/Profile/popups/ChangeProfilePicModal.qml" line="97"/>
         <source>Upload</source>
         <translation>Upload</translation>
-    </message>
-    <message id="Community colour">
-        <location filename="../app/AppLayouts/Chat/panels/communities/CommunityEditSettingsPanel.qml" line="213"/>
-        <source></source>
-        <translation type="unfinished"></translation>
     </message>
     <message id="community-color">
         <source>Community colour</source>
@@ -1431,7 +1408,7 @@ Do you wish to override the security check and continue?</translation>
         <translation type="vanished">Community colour</translation>
     </message>
     <message id="pick-a-color">
-        <location filename="../app/AppLayouts/Chat/popups/community/CreateChannelPopup.qml" line="180"/>
+        <location filename="../app/AppLayouts/Chat/popups/community/CreateChannelPopup.qml" line="185"/>
         <source>Pick a color</source>
         <translation>Pick a color</translation>
     </message>
@@ -1460,9 +1437,8 @@ Do you wish to override the security check and continue?</translation>
         <translation type="vanished">You can require new members to meet certain criteria before they can join. This can be changed at any time</translation>
     </message>
     <message id="Save">
-        <location filename="../app/AppLayouts/Chat/popups/community/CreateCommunityPopup.qml" line="354"/>
         <source>Save</source>
-        <translation>Save</translation>
+        <translation type="vanished">Save</translation>
     </message>
     <message id="private-community">
         <source>Private community</source>
@@ -1481,28 +1457,40 @@ Do you wish to override the security check and continue?</translation>
         <translation type="vanished">You need to enter a key</translation>
     </message>
     <message id="access-existing-community">
-        <location filename="../app/AppLayouts/Chat/popups/community/AccessExistingCommunityPopup.qml" line="26"/>
         <location filename="../app/AppLayouts/Chat/popups/community/CommunitiesPopup.qml" line="43"/>
         <source>Access existing community</source>
         <translation>Access existing community</translation>
     </message>
     <message id="community-key">
-        <location filename="../app/AppLayouts/Chat/popups/community/AccessExistingCommunityPopup.qml" line="43"/>
         <source>Community private key</source>
         <oldsource>Community key</oldsource>
-        <translation>Community private key</translation>
+        <translation type="vanished">Community private key</translation>
+    </message>
+    <message id="Import Community">
+        <location filename="../imports/shared/popups/ImportCommunityPopup.qml" line="26"/>
+        <location filename="../imports/shared/popups/ImportCommunityPopup.qml" line="26"/>
+        <source>Import Community</source>
+        <translation type="unfinished"></translation>
     </message>
     <message id="entering-a-community-key-will-grant-you-the-ownership-of-that-community--please-be-responsible-with-it-and-don-t-share-the-key-with-people-you-don-t-trust-">
-        <location filename="../app/AppLayouts/Chat/popups/community/AccessExistingCommunityPopup.qml" line="57"/>
+        <location filename="../imports/shared/popups/ImportCommunityPopup.qml" line="45"/>
+        <location filename="../imports/shared/popups/ImportCommunityPopup.qml" line="45"/>
         <source>Entering a community key will grant you the ownership of that community. Please be responsible with it and don’t share the key with people you don’t trust.</source>
         <translation>Entering a community key will grant you the ownership of that community. Please be responsible with it and don’t share the key with people you don’t trust.</translation>
+    </message>
+    <message id="Community key">
+        <location filename="../imports/shared/popups/ImportCommunityPopup.qml" line="55"/>
+        <location filename="../imports/shared/popups/ImportCommunityPopup.qml" line="55"/>
+        <source>Community private key</source>
+        <translation type="unfinished">Community private key</translation>
     </message>
     <message id="0x---">
         <source>0x...</source>
         <translation type="vanished">0x...</translation>
     </message>
     <message id="import">
-        <location filename="../app/AppLayouts/Chat/popups/community/AccessExistingCommunityPopup.qml" line="72"/>
+        <location filename="../imports/shared/popups/ImportCommunityPopup.qml" line="74"/>
+        <location filename="../imports/shared/popups/ImportCommunityPopup.qml" line="74"/>
         <source>Import</source>
         <translation>Import</translation>
     </message>
@@ -1511,22 +1499,22 @@ Do you wish to override the security check and continue?</translation>
         <translation type="vanished">Error importing the community</translation>
     </message>
     <message id="members-label">
-        <location filename="../app/AppLayouts/Chat/panels/communities/CommunityProfilePopupOverviewPanel.qml" line="76"/>
-        <location filename="../app/AppLayouts/Chat/popups/community/CommunityProfilePopup.qml" line="116"/>
+        <location filename="../app/AppLayouts/Chat/panels/communities/CommunityProfilePopupOverviewPanel.qml" line="75"/>
+        <location filename="../app/AppLayouts/Chat/popups/community/CommunityProfilePopup.qml" line="98"/>
         <source>Members</source>
         <translation>Members</translation>
     </message>
     <message id="invite-friends">
         <location filename="../app/AppLayouts/Chat/panels/EmptyViewPanel.qml" line="92"/>
-        <location filename="../app/AppLayouts/Chat/popups/community/CommunityProfilePopup.qml" line="129"/>
-        <location filename="../app/AppLayouts/Chat/popups/community/InviteFriendsToCommunityPopup.qml" line="37"/>
+        <location filename="../app/AppLayouts/Chat/popups/community/CommunityProfilePopup.qml" line="111"/>
+        <location filename="../app/AppLayouts/Chat/popups/community/InviteFriendsToCommunityPopup.qml" line="39"/>
         <location filename="../imports/shared/views/NoFriendsRectangle.qml" line="35"/>
         <location filename="../imports/shared/views/NoFriendsRectangle.qml" line="35"/>
         <source>Invite friends</source>
         <translation>Invite friends</translation>
     </message>
     <message id="community-invite-title">
-        <location filename="../app/AppLayouts/Chat/popups/community/CommunityProfilePopup.qml" line="163"/>
+        <location filename="../app/AppLayouts/Chat/popups/community/CommunityProfilePopup.qml" line="145"/>
         <source>Invite</source>
         <translation>Invite</translation>
     </message>
@@ -1535,22 +1523,22 @@ Do you wish to override the security check and continue?</translation>
         <translation type="vanished">Contacts</translation>
     </message>
     <message id="invite-button">
-        <location filename="../app/AppLayouts/Chat/popups/community/InviteFriendsToCommunityPopup.qml" line="63"/>
+        <location filename="../app/AppLayouts/Chat/popups/community/InviteFriendsToCommunityPopup.qml" line="75"/>
         <source>Invite</source>
         <translation>Invite</translation>
     </message>
     <message id="chat">
-        <location filename="../app/AppLayouts/Chat/views/ContactsColumnView.qml" line="58"/>
+        <location filename="../app/AppLayouts/Chat/views/ContactsColumnView.qml" line="59"/>
         <source>Chat</source>
         <translation>Chat</translation>
     </message>
     <message id="community-imported">
-        <location filename="../app/AppLayouts/Chat/views/ContactsColumnView.qml" line="383"/>
+        <location filename="../app/AppLayouts/Chat/views/ContactsColumnView.qml" line="372"/>
         <source>Community imported</source>
         <translation>Community imported</translation>
     </message>
     <message id="importing-community-is-in-progress">
-        <location filename="../app/AppLayouts/Chat/views/ContactsColumnView.qml" line="391"/>
+        <location filename="../app/AppLayouts/Chat/views/ContactsColumnView.qml" line="377"/>
         <source>Importing community is in progress</source>
         <translation>Importing community is in progress</translation>
     </message>
@@ -1572,7 +1560,7 @@ Do you wish to override the security check and continue?</translation>
     </message>
     <message id="new-public-group-chat">
         <location filename="../app/AppLayouts/Chat/popups/PublicChatPopup.qml" line="44"/>
-        <location filename="../app/AppLayouts/Chat/views/ContactsColumnView.qml" line="99"/>
+        <location filename="../app/AppLayouts/Chat/views/ContactsColumnView.qml" line="97"/>
         <source>Join public chat</source>
         <translation>Join public chat</translation>
     </message>
@@ -1608,39 +1596,39 @@ Do you wish to override the security check and continue?</translation>
         <translation type="vanished">Share Chat</translation>
     </message>
     <message id="test-wakuv2---requestallhistoricmessages">
-        <location filename="../app/AppLayouts/Chat/views/ChatContextMenuView.qml" line="99"/>
+        <location filename="../app/AppLayouts/Chat/views/ChatContextMenuView.qml" line="95"/>
         <source>Test WakuV2 - requestAllHistoricMessages</source>
         <translation>Test WakuV2 - requestAllHistoricMessages</translation>
     </message>
     <message id="unmute-chat">
-        <location filename="../app/AppLayouts/Chat/views/ChatContextMenuView.qml" line="130"/>
+        <location filename="../app/AppLayouts/Chat/views/ChatContextMenuView.qml" line="126"/>
         <source>Unmute chat</source>
         <translation>Unmute chat</translation>
     </message>
     <message id="mute-chat">
-        <location filename="../app/AppLayouts/Chat/views/ChatContextMenuView.qml" line="132"/>
+        <location filename="../app/AppLayouts/Chat/views/ChatContextMenuView.qml" line="128"/>
         <source>Mute chat</source>
         <translation>Mute chat</translation>
     </message>
     <message id="edit-channel">
-        <location filename="../app/AppLayouts/Chat/views/ChatContextMenuView.qml" line="196"/>
+        <location filename="../app/AppLayouts/Chat/views/ChatContextMenuView.qml" line="192"/>
         <source>Edit Channel</source>
         <translation>Edit Channel</translation>
     </message>
     <message id="mark-as-read">
-        <location filename="../app/AppLayouts/Chat/views/ChatContextMenuView.qml" line="144"/>
+        <location filename="../app/AppLayouts/Chat/views/ChatContextMenuView.qml" line="140"/>
         <source>Mark as Read</source>
         <translation>Mark as Read</translation>
     </message>
     <message id="delete-chat">
-        <location filename="../app/AppLayouts/Chat/views/ChatContextMenuView.qml" line="252"/>
-        <location filename="../app/AppLayouts/Chat/views/ChatContextMenuView.qml" line="292"/>
+        <location filename="../app/AppLayouts/Chat/views/ChatContextMenuView.qml" line="248"/>
+        <location filename="../app/AppLayouts/Chat/views/ChatContextMenuView.qml" line="288"/>
         <source>Delete chat</source>
         <translation>Delete chat</translation>
     </message>
     <message id="leave-chat">
-        <location filename="../app/AppLayouts/Chat/views/ChatContextMenuView.qml" line="254"/>
-        <location filename="../app/AppLayouts/Chat/views/ChatContextMenuView.qml" line="294"/>
+        <location filename="../app/AppLayouts/Chat/views/ChatContextMenuView.qml" line="250"/>
+        <location filename="../app/AppLayouts/Chat/views/ChatContextMenuView.qml" line="290"/>
         <source>Leave chat</source>
         <translation>Leave chat</translation>
     </message>
@@ -1767,12 +1755,12 @@ Do you wish to override the security check and continue?</translation>
     </message>
     <message id="unpin">
         <location filename="../app/AppLayouts/Chat/popups/PinnedMessagesPopup.qml" line="209"/>
-        <location filename="../imports/shared/views/chat/MessageContextMenuView.qml" line="229"/>
+        <location filename="../imports/shared/views/chat/MessageContextMenuView.qml" line="232"/>
         <source>Unpin</source>
         <translation>Unpin</translation>
     </message>
     <message id="pin">
-        <location filename="../imports/shared/views/chat/MessageContextMenuView.qml" line="232"/>
+        <location filename="../imports/shared/views/chat/MessageContextMenuView.qml" line="235"/>
         <source>Pin</source>
         <translation>Pin</translation>
     </message>
@@ -1781,17 +1769,17 @@ Do you wish to override the security check and continue?</translation>
         <translation type="vanished">Copy link</translation>
     </message>
     <message id="edit-message">
-        <location filename="../imports/shared/views/chat/MessageContextMenuView.qml" line="200"/>
+        <location filename="../imports/shared/views/chat/MessageContextMenuView.qml" line="202"/>
         <source>Edit message</source>
         <translation>Edit message</translation>
     </message>
     <message id="send-message">
-        <location filename="../imports/shared/views/chat/MessageContextMenuView.qml" line="177"/>
+        <location filename="../imports/shared/views/chat/MessageContextMenuView.qml" line="179"/>
         <source>Send message</source>
         <translation>Send message</translation>
     </message>
     <message id="reply-to">
-        <location filename="../imports/shared/views/chat/MessageContextMenuView.qml" line="179"/>
+        <location filename="../imports/shared/views/chat/MessageContextMenuView.qml" line="181"/>
         <source>Reply to</source>
         <translation>Reply to</translation>
     </message>
@@ -1800,17 +1788,17 @@ Do you wish to override the security check and continue?</translation>
         <translation type="vanished">Jump to</translation>
     </message>
     <message id="delete-message">
-        <location filename="../imports/shared/views/chat/MessageContextMenuView.qml" line="292"/>
+        <location filename="../imports/shared/views/chat/MessageContextMenuView.qml" line="295"/>
         <source>Delete message</source>
         <translation>Delete message</translation>
     </message>
     <message id="confirm-deleting-this-message">
-        <location filename="../imports/shared/views/chat/MessageContextMenuView.qml" line="337"/>
+        <location filename="../imports/shared/views/chat/MessageContextMenuView.qml" line="340"/>
         <source>Confirm deleting this message</source>
         <translation>Confirm deleting this message</translation>
     </message>
     <message id="are-you-sure-you-want-to-delete-this-message--be-aware-that-other-clients-are-not-guaranteed-to-delete-the-message-as-well-">
-        <location filename="../imports/shared/views/chat/MessageContextMenuView.qml" line="339"/>
+        <location filename="../imports/shared/views/chat/MessageContextMenuView.qml" line="342"/>
         <source>Are you sure you want to delete this message? Be aware that other clients are not guaranteed to delete the message as well.</source>
         <translation>Are you sure you want to delete this message? Be aware that other clients are not guaranteed to delete the message as well.</translation>
     </message>
@@ -1842,10 +1830,10 @@ Do you wish to override the security check and continue?</translation>
         <translation type="vanished">Enter a valid chat key or ENS usernameEnter a valid chat key or ENS username</translation>
     </message>
     <message id="can-t-chat-with-yourself">
-        <location filename="../imports/shared/controls/ContactsListAndSearch.qml" line="58"/>
-        <location filename="../imports/shared/controls/ContactsListAndSearch.qml" line="121"/>
-        <location filename="../imports/shared/controls/ContactsListAndSearch.qml" line="58"/>
-        <location filename="../imports/shared/controls/ContactsListAndSearch.qml" line="121"/>
+        <location filename="../imports/shared/controls/ContactsListAndSearch.qml" line="59"/>
+        <location filename="../imports/shared/controls/ContactsListAndSearch.qml" line="122"/>
+        <location filename="../imports/shared/controls/ContactsListAndSearch.qml" line="59"/>
+        <location filename="../imports/shared/controls/ContactsListAndSearch.qml" line="122"/>
         <source>Can&apos;t chat with yourself</source>
         <translation>Can&apos;t chat with yourself</translation>
     </message>
@@ -1860,8 +1848,8 @@ Do you wish to override the security check and continue?</translation>
         <translation>My Profile</translation>
     </message>
     <message id="enter-contact-code">
-        <location filename="../imports/shared/controls/ContactsListAndSearch.qml" line="70"/>
-        <location filename="../imports/shared/controls/ContactsListAndSearch.qml" line="70"/>
+        <location filename="../imports/shared/controls/ContactsListAndSearch.qml" line="71"/>
+        <location filename="../imports/shared/controls/ContactsListAndSearch.qml" line="71"/>
         <source>Enter ENS username or chat key</source>
         <translation>Enter ENS username or chat key</translation>
     </message>
@@ -1938,17 +1926,17 @@ Do you wish to override the security check and continue?</translation>
         <translation>Start chat</translation>
     </message>
     <message id="pinned-by--1">
-        <location filename="../imports/shared/views/chat/CompactMessageView.qml" line="262"/>
+        <location filename="../imports/shared/views/chat/CompactMessageView.qml" line="272"/>
         <source>Pinned by %1</source>
         <translation>Pinned by %1</translation>
     </message>
     <message id="save">
         <location filename="../app/AppLayouts/Chat/popups/RenameGroupPopup.qml" line="50"/>
-        <location filename="../app/AppLayouts/Chat/popups/community/CreateCategoryPopup.qml" line="212"/>
-        <location filename="../app/AppLayouts/Chat/popups/community/CreateChannelPopup.qml" line="289"/>
+        <location filename="../app/AppLayouts/Chat/popups/community/CreateCategoryPopup.qml" line="218"/>
+        <location filename="../app/AppLayouts/Chat/popups/community/CreateChannelPopup.qml" line="299"/>
         <location filename="../app/AppLayouts/Profile/popups/AddWakuNodeModal.qml" line="73"/>
         <location filename="../app/AppLayouts/Profile/popups/NewCustomNetworkModal.qml" line="74"/>
-        <location filename="../imports/shared/views/chat/CompactMessageView.qml" line="476"/>
+        <location filename="../imports/shared/views/chat/CompactMessageView.qml" line="486"/>
         <source>Save</source>
         <translation>Save</translation>
     </message>
@@ -1963,29 +1951,31 @@ Do you wish to override the security check and continue?</translation>
         <translation type="vanished">Profile</translation>
     </message>
     <message id="version">
-        <location filename="../app/AppLayouts/Profile/views/AboutView.qml" line="29"/>
         <source>App version</source>
-        <translation>App version</translation>
+        <translation type="vanished">App version</translation>
     </message>
     <message id="version---1">
-        <location filename="../app/AppLayouts/Profile/views/AboutView.qml" line="31"/>
         <source>Version: %1</source>
-        <translation>Version: %1</translation>
+        <translation type="vanished">Version: %1</translation>
     </message>
     <message id="node-version-">
-        <location filename="../app/AppLayouts/Profile/views/AboutView.qml" line="42"/>
         <source>Node version </source>
-        <translation>Node version </translation>
+        <translation type="vanished">Node version </translation>
     </message>
     <message id="check-for-updates">
-        <location filename="../app/AppLayouts/Profile/views/AboutView.qml" line="52"/>
-        <source>Check for updates</source>
-        <translation>Check for updates</translation>
+        <location filename="../app/AppLayouts/Profile/views/AboutView.qml" line="23"/>
+        <source></source>
+        <oldsource>Check for updates</oldsource>
+        <translation type="unfinished">Check for updates</translation>
+    </message>
+    <message id="Software License">
+        <location filename="../app/AppLayouts/Profile/views/AboutView.qml" line="174"/>
+        <source></source>
+        <translation type="unfinished"></translation>
     </message>
     <message id="privacy-policy">
-        <location filename="../app/AppLayouts/Profile/views/AboutView.qml" line="63"/>
         <source>Privacy Policy</source>
-        <translation>Privacy Policy</translation>
+        <translation type="vanished">Privacy Policy</translation>
     </message>
     <message id="network">
         <location filename="../app/AppLayouts/Profile/popups/NetworksModal.qml" line="20"/>
@@ -2021,12 +2011,11 @@ Do you wish to override the security check and continue?</translation>
         <translation>Dapp Browser</translation>
     </message>
     <message id="Community History Archive Protocol">
-        <location filename="../app/AppLayouts/Profile/views/AdvancedView.qml" line="170"/>
         <source>Communities</source>
-        <translation type="unfinished">Communities</translation>
+        <translation type="obsolete">Communities</translation>
     </message>
     <message id="activity-center">
-        <location filename="../app/AppLayouts/Profile/views/AdvancedView.qml" line="188"/>
+        <location filename="../app/AppLayouts/Profile/views/AdvancedView.qml" line="187"/>
         <source>Activity Center</source>
         <translation>Activity Center</translation>
     </message>
@@ -2039,25 +2028,25 @@ Do you wish to override the security check and continue?</translation>
         <translation type="vanished">Broadcast user status</translation>
     </message>
     <message id="bloom-filter-level">
-        <location filename="../app/AppLayouts/Profile/views/AdvancedView.qml" line="256"/>
+        <location filename="../app/AppLayouts/Profile/views/AdvancedView.qml" line="273"/>
         <source>Bloom filter level</source>
         <translation>Bloom filter level</translation>
     </message>
     <message id="the-account-will-be-logged-out--when-you-login-again--the-selected-mode-will-be-enabled">
-        <location filename="../app/AppLayouts/Profile/views/AdvancedView.qml" line="278"/>
-        <location filename="../app/AppLayouts/Profile/views/AdvancedView.qml" line="368"/>
+        <location filename="../app/AppLayouts/Profile/views/AdvancedView.qml" line="295"/>
+        <location filename="../app/AppLayouts/Profile/views/AdvancedView.qml" line="385"/>
         <source>The account will be logged out. When you login again, the selected mode will be enabled</source>
         <translation>The account will be logged out. When you login again, the selected mode will be enabled</translation>
     </message>
     <message id="light-node">
-        <location filename="../app/AppLayouts/Profile/views/AdvancedView.qml" line="302"/>
-        <location filename="../app/AppLayouts/Profile/views/AdvancedView.qml" line="392"/>
+        <location filename="../app/AppLayouts/Profile/views/AdvancedView.qml" line="319"/>
+        <location filename="../app/AppLayouts/Profile/views/AdvancedView.qml" line="409"/>
         <source>Light Node</source>
         <translation>Light Node</translation>
     </message>
     <message id="full-node">
-        <location filename="../app/AppLayouts/Profile/views/AdvancedView.qml" line="332"/>
-        <location filename="../app/AppLayouts/Profile/views/AdvancedView.qml" line="407"/>
+        <location filename="../app/AppLayouts/Profile/views/AdvancedView.qml" line="349"/>
+        <location filename="../app/AppLayouts/Profile/views/AdvancedView.qml" line="424"/>
         <source>Full Node</source>
         <translation>Full Node</translation>
     </message>
@@ -2074,7 +2063,7 @@ Do you wish to override the security check and continue?</translation>
         <translation type="vanished">undefined</translation>
     </message>
     <message id="node-management">
-        <location filename="../app/AppLayouts/Profile/views/AdvancedView.qml" line="206"/>
+        <location filename="../app/AppLayouts/Profile/views/AdvancedView.qml" line="205"/>
         <source>Node Management</source>
         <translation>Node Management</translation>
     </message>
@@ -2094,41 +2083,33 @@ Do you wish to override the security check and continue?</translation>
         <translation>Change font size</translation>
     </message>
     <message id="xs">
-        <location filename="../app/AppLayouts/Profile/views/AppearanceView.qml" line="146"/>
         <source>XS</source>
-        <translation>XS</translation>
+        <translation type="vanished">XS</translation>
     </message>
     <message id="s">
-        <location filename="../app/AppLayouts/Profile/views/AppearanceView.qml" line="154"/>
-        <location filename="../app/AppLayouts/Profile/views/HelpView.qml" line="112"/>
         <source>S</source>
         <extracomment>This letter corresponds to the section title above, so here it is &quot;S&quot; because the title above is &quot;Seed Phrase&quot;</extracomment>
-        <translation>S</translation>
+        <translation type="vanished">S</translation>
     </message>
     <message id="m">
-        <location filename="../app/AppLayouts/Profile/views/AppearanceView.qml" line="163"/>
-        <location filename="../app/AppLayouts/Profile/views/HelpView.qml" line="84"/>
         <source>M</source>
         <extracomment>This letter corresponds to the section title above, so here it is &quot;M&quot; because the title above is &quot;Mailserver&quot;</extracomment>
-        <translation>M</translation>
+        <translation type="vanished">M</translation>
     </message>
     <message id="l">
-        <location filename="../app/AppLayouts/Profile/views/AppearanceView.qml" line="172"/>
         <source>L</source>
-        <translation>L</translation>
+        <translation type="vanished">L</translation>
     </message>
     <message id="xl">
-        <location filename="../app/AppLayouts/Profile/views/AppearanceView.qml" line="181"/>
         <source>XL</source>
-        <translation>XL</translation>
+        <translation type="vanished">XL</translation>
     </message>
     <message id="xxl">
-        <location filename="../app/AppLayouts/Profile/views/AppearanceView.qml" line="190"/>
         <source>XXL</source>
-        <translation>XXL</translation>
+        <translation type="vanished">XXL</translation>
     </message>
     <message id="Light">
-        <location filename="../app/AppLayouts/Profile/views/AppearanceView.qml" line="319"/>
+        <location filename="../app/AppLayouts/Profile/views/AppearanceView.qml" line="210"/>
         <source>Light</source>
         <translation type="unfinished">Light</translation>
     </message>
@@ -2137,7 +2118,7 @@ Do you wish to override the security check and continue?</translation>
         <translation type="vanished">Chat mode</translation>
     </message>
     <message id="normal">
-        <location filename="../app/AppLayouts/Profile/views/AdvancedView.qml" line="317"/>
+        <location filename="../app/AppLayouts/Profile/views/AdvancedView.qml" line="334"/>
         <source>Normal</source>
         <translation>Normal</translation>
     </message>
@@ -2146,7 +2127,7 @@ Do you wish to override the security check and continue?</translation>
         <translation type="vanished">Compact</translation>
     </message>
     <message id="appearance">
-        <location filename="../app/AppLayouts/Profile/views/AppearanceView.qml" line="297"/>
+        <location filename="../app/AppLayouts/Profile/views/AppearanceView.qml" line="188"/>
         <source>Appearance</source>
         <translation>Appearance</translation>
     </message>
@@ -2155,80 +2136,66 @@ Do you wish to override the security check and continue?</translation>
         <translation type="vanished">Light</translation>
     </message>
     <message id="dark">
-        <location filename="../app/AppLayouts/Profile/views/AppearanceView.qml" line="335"/>
+        <location filename="../app/AppLayouts/Profile/views/AppearanceView.qml" line="226"/>
         <source>Dark</source>
         <translation>Dark</translation>
     </message>
     <message id="system">
-        <location filename="../app/AppLayouts/Profile/views/AppearanceView.qml" line="351"/>
+        <location filename="../app/AppLayouts/Profile/views/AppearanceView.qml" line="242"/>
         <source>System</source>
         <translation>System</translation>
     </message>
     <message id="back-up-seed-phrase">
-        <location filename="../app/AppLayouts/Profile/popups/BackupSeedModal.qml" line="37"/>
         <source>Back up seed phrase</source>
-        <translation>Back up seed phrase</translation>
+        <translation type="vanished">Back up seed phrase</translation>
     </message>
     <message id="step--1-of-3">
-        <location filename="../app/AppLayouts/Profile/popups/BackupSeedModal.qml" line="46"/>
         <source>Step %1 of 3</source>
-        <translation>Step %1 of 3</translation>
+        <translation type="vanished">Step %1 of 3</translation>
     </message>
     <message id="your-data-belongs-to-you">
-        <location filename="../app/AppLayouts/Profile/popups/BackupSeedModal.qml" line="136"/>
         <source>If you lose your seed phrase you lose your data and funds</source>
-        <translation>If you lose your seed phrase you lose your data and funds</translation>
+        <translation type="vanished">If you lose your seed phrase you lose your data and funds</translation>
     </message>
     <message id="your-data-belongs-to-you-description">
-        <location filename="../app/AppLayouts/Profile/popups/BackupSeedModal.qml" line="148"/>
         <source>If you lose access, for example by losing your phone, you can only access your keys with your seed phrase. No one, but you has your seed phrase. Write it down. Keep it safe</source>
-        <translation>If you lose access, for example by losing your phone, you can only access your keys with your seed phrase. No one, but you has your seed phrase. Write it down. Keep it safe</translation>
+        <translation type="vanished">If you lose access, for example by losing your phone, you can only access your keys with your seed phrase. No one, but you has your seed phrase. Write it down. Keep it safe</translation>
     </message>
     <message id="check-your-recovery-phrase">
-        <location filename="../app/AppLayouts/Profile/popups/BackupSeedModal.qml" line="171"/>
         <source>Check your seed phrase</source>
-        <translation>Check your seed phrase</translation>
+        <translation type="vanished">Check your seed phrase</translation>
     </message>
     <message id="word---1">
-        <location filename="../app/AppLayouts/Profile/popups/BackupSeedModal.qml" line="175"/>
         <source>Word #%1</source>
-        <translation>Word #%1</translation>
+        <translation type="vanished">Word #%1</translation>
     </message>
     <message id="enter-word">
-        <location filename="../app/AppLayouts/Profile/popups/BackupSeedModal.qml" line="188"/>
         <source>Enter word</source>
-        <translation>Enter word</translation>
+        <translation type="vanished">Enter word</translation>
     </message>
     <message id="in-order-to-check-if-you-have-backed-up-your-seed-phrase-correctly--enter-the-word---1-above">
-        <location filename="../app/AppLayouts/Profile/popups/BackupSeedModal.qml" line="200"/>
         <source>In order to check if you have backed up your seed phrase correctly, enter the word #%1 above</source>
-        <translation>In order to check if you have backed up your seed phrase correctly, enter the word #%1 above</translation>
+        <translation type="vanished">In order to check if you have backed up your seed phrase correctly, enter the word #%1 above</translation>
     </message>
     <message id="are-you-sure?">
-        <location filename="../app/AppLayouts/Profile/popups/BackupSeedModal.qml" line="209"/>
         <source>Are you sure?</source>
-        <translation>Are you sure?</translation>
+        <translation type="vanished">Are you sure?</translation>
     </message>
     <message id="are-you-sure-description">
-        <location filename="../app/AppLayouts/Profile/popups/BackupSeedModal.qml" line="211"/>
         <source>You will not be able to see the whole seed phrase again</source>
-        <translation>You will not be able to see the whole seed phrase again</translation>
+        <translation type="vanished">You will not be able to see the whole seed phrase again</translation>
     </message>
     <message id="with-this-12-words-you-can-always-get-your-key-back.-write-it-down.-keep-it-safe,-offline,-and-separate-from-this-device.">
-        <location filename="../app/AppLayouts/Profile/popups/BackupSeedModal.qml" line="228"/>
         <source>With this 12 words you can always get your key back. Write it down. Keep it safe, offline, and separate from this device.</source>
-        <translation>With this 12 words you can always get your key back. Write it down. Keep it safe, offline, and separate from this device.</translation>
+        <translation type="vanished">With this 12 words you can always get your key back. Write it down. Keep it safe, offline, and separate from this device.</translation>
     </message>
     <message id="ok-continue">
-        <location filename="../app/AppLayouts/Profile/popups/BackupSeedModal.qml" line="248"/>
         <source>Okay, continue</source>
-        <translation>Okay, continue</translation>
+        <translation type="vanished">Okay, continue</translation>
     </message>
     <message id="wrong-word">
-        <location filename="../app/AppLayouts/Profile/popups/BackupSeedModal.qml" line="268"/>
-        <location filename="../app/AppLayouts/Profile/popups/BackupSeedModal.qml" line="281"/>
         <source>Wrong word</source>
-        <translation>Wrong word</translation>
+        <translation type="vanished">Wrong word</translation>
     </message>
     <message id="general">
         <source>General</source>
@@ -2420,23 +2387,23 @@ Do you wish to override the security check and continue?</translation>
         <translation>You can follow the progress in the Transaction History section of your wallet.</translation>
     </message>
     <message id="wallet-address">
-        <location filename="../app/AppLayouts/Profile/views/EnsTermsAndConditionsView.qml" line="281"/>
+        <location filename="../app/AppLayouts/Profile/views/EnsTermsAndConditionsView.qml" line="283"/>
         <source>Wallet address</source>
         <translation>Wallet address</translation>
     </message>
     <message id="key">
-        <location filename="../app/AppLayouts/Profile/views/EnsTermsAndConditionsView.qml" line="296"/>
+        <location filename="../app/AppLayouts/Profile/views/EnsTermsAndConditionsView.qml" line="298"/>
         <source>Key</source>
         <translation>Key</translation>
     </message>
     <message id="Release username">
-        <location filename="../app/AppLayouts/Profile/views/EnsDetailsView.qml" line="144"/>
+        <location filename="../app/AppLayouts/Profile/views/EnsDetailsView.qml" line="142"/>
         <source></source>
         <translation type="unfinished"></translation>
     </message>
     <message id="back">
-        <location filename="../app/AppLayouts/Profile/views/EnsDetailsView.qml" line="166"/>
-        <location filename="../app/AppLayouts/Profile/views/EnsTermsAndConditionsView.qml" line="343"/>
+        <location filename="../app/AppLayouts/Profile/views/EnsDetailsView.qml" line="164"/>
+        <location filename="../app/AppLayouts/Profile/views/EnsTermsAndConditionsView.qml" line="345"/>
         <source>Back</source>
         <translation>Back</translation>
     </message>
@@ -2516,57 +2483,57 @@ Do you wish to override the security check and continue?</translation>
         <translation type="vanished">Your username</translation>
     </message>
     <message id="ens-username-available">
-        <location filename="../imports/utils/Constants.qml" line="328"/>
+        <location filename="../imports/utils/Constants.qml" line="336"/>
         <source>✓ Username available!</source>
         <translation>✓ Username available!</translation>
     </message>
     <message id="ens-username-owned-continue">
-        <location filename="../imports/utils/Constants.qml" line="326"/>
+        <location filename="../imports/utils/Constants.qml" line="334"/>
         <source>Continuing will connect this username with your chat key.</source>
         <translation>Continuing will connect this username with your chat key.</translation>
     </message>
     <message id="ens-custom-username-taken">
-        <location filename="../imports/utils/Constants.qml" line="324"/>
+        <location filename="../imports/utils/Constants.qml" line="332"/>
         <source>Username doesn’t belong to you :(</source>
         <translation>Username doesn’t belong to you :(</translation>
     </message>
     <message id="ens-username-taken">
-        <location filename="../imports/utils/Constants.qml" line="322"/>
+        <location filename="../imports/utils/Constants.qml" line="330"/>
         <source>Username already taken :(</source>
         <translation>Username already taken :(</translation>
     </message>
     <message id="-edited-">
-        <location filename="../imports/utils/Constants.qml" line="316"/>
+        <location filename="../imports/utils/Constants.qml" line="324"/>
         <source>(edited)</source>
         <translation>(edited)</translation>
     </message>
     <message id="ens-username-already-added">
-        <location filename="../imports/utils/Constants.qml" line="330"/>
+        <location filename="../imports/utils/Constants.qml" line="338"/>
         <source>Username is already connected with your chat key and can be used inside Status.</source>
         <translation>Username is already connected with your chat key and can be used inside Status.</translation>
     </message>
     <message id="this-user-name-is-owned-by-you-and-connected-with-your-chat-key--continue-to-set--show-my-ens-username-in-chats--">
-        <location filename="../imports/utils/Constants.qml" line="332"/>
+        <location filename="../imports/utils/Constants.qml" line="340"/>
         <source>This user name is owned by you and connected with your chat key. Continue to set `Show my ENS username in chats`.</source>
         <translation>This user name is owned by you and connected with your chat key. Continue to set `Show my ENS username in chats`.</translation>
     </message>
     <message id="ens-username-connected-with-different-key">
-        <location filename="../imports/utils/Constants.qml" line="334"/>
+        <location filename="../imports/utils/Constants.qml" line="342"/>
         <source>Continuing will require a transaction to connect the username with your current chat key.</source>
         <translation>Continuing will require a transaction to connect the username with your current chat key.</translation>
     </message>
     <message id="ens-custom-domain">
-        <location filename="../app/AppLayouts/Profile/views/EnsSearchView.qml" line="234"/>
+        <location filename="../app/AppLayouts/Profile/views/EnsSearchView.qml" line="233"/>
         <source>Custom domain</source>
         <translation>Custom domain</translation>
     </message>
     <message id="ens-want-domain">
-        <location filename="../app/AppLayouts/Profile/views/EnsSearchView.qml" line="246"/>
+        <location filename="../app/AppLayouts/Profile/views/EnsSearchView.qml" line="245"/>
         <source>I want a stateofus.eth domain</source>
         <translation>I want a stateofus.eth domain</translation>
     </message>
     <message id="ens-want-custom-domain">
-        <location filename="../app/AppLayouts/Profile/views/EnsSearchView.qml" line="249"/>
+        <location filename="../app/AppLayouts/Profile/views/EnsSearchView.qml" line="248"/>
         <source>I own a name on another domain</source>
         <translation>I own a name on another domain</translation>
     </message>
@@ -2575,88 +2542,88 @@ Do you wish to override the security check and continue?</translation>
         <translation type="vanished">Connect username with your pubkey</translation>
     </message>
     <message id="ens-terms-header">
-        <location filename="../app/AppLayouts/Profile/views/EnsTermsAndConditionsView.qml" line="83"/>
+        <location filename="../app/AppLayouts/Profile/views/EnsTermsAndConditionsView.qml" line="85"/>
         <source>Terms of name registration</source>
         <translation>Terms of name registration</translation>
     </message>
     <message id="ens-terms-point-1">
-        <location filename="../app/AppLayouts/Profile/views/EnsTermsAndConditionsView.qml" line="100"/>
+        <location filename="../app/AppLayouts/Profile/views/EnsTermsAndConditionsView.qml" line="102"/>
         <source>Funds are deposited for 1 year. Your SNT will be locked, but not spent.</source>
         <translation>Funds are deposited for 1 year. Your SNT will be locked, but not spent.</translation>
     </message>
     <message id="ens-terms-point-2">
-        <location filename="../app/AppLayouts/Profile/views/EnsTermsAndConditionsView.qml" line="109"/>
+        <location filename="../app/AppLayouts/Profile/views/EnsTermsAndConditionsView.qml" line="111"/>
         <source>After 1 year, you can release the name and get your deposit back, or take no action to keep the name.</source>
         <translation>After 1 year, you can release the name and get your deposit back, or take no action to keep the name.</translation>
     </message>
     <message id="ens-terms-point-3">
-        <location filename="../app/AppLayouts/Profile/views/EnsTermsAndConditionsView.qml" line="118"/>
+        <location filename="../app/AppLayouts/Profile/views/EnsTermsAndConditionsView.qml" line="120"/>
         <source>If terms of the contract change — e.g. Status makes contract upgrades — user has the right to release the username regardless of time held.</source>
         <translation>If terms of the contract change — e.g. Status makes contract upgrades — user has the right to release the username regardless of time held.</translation>
     </message>
     <message id="ens-terms-point-4">
-        <location filename="../app/AppLayouts/Profile/views/EnsTermsAndConditionsView.qml" line="127"/>
+        <location filename="../app/AppLayouts/Profile/views/EnsTermsAndConditionsView.qml" line="129"/>
         <source>The contract controller cannot access your deposited funds. They can only be moved back to the address that sent them.</source>
         <translation>The contract controller cannot access your deposited funds. They can only be moved back to the address that sent them.</translation>
     </message>
     <message id="ens-terms-point-5">
-        <location filename="../app/AppLayouts/Profile/views/EnsTermsAndConditionsView.qml" line="136"/>
+        <location filename="../app/AppLayouts/Profile/views/EnsTermsAndConditionsView.qml" line="138"/>
         <source>Your address(es) will be publicly associated with your ENS name.</source>
         <translation>Your address(es) will be publicly associated with your ENS name.</translation>
     </message>
     <message id="ens-terms-point-6">
-        <location filename="../app/AppLayouts/Profile/views/EnsTermsAndConditionsView.qml" line="145"/>
+        <location filename="../app/AppLayouts/Profile/views/EnsTermsAndConditionsView.qml" line="147"/>
         <source>Usernames are created as subdomain nodes of stateofus.eth and are subject to the ENS smart contract terms.</source>
         <translation>Usernames are created as subdomain nodes of stateofus.eth and are subject to the ENS smart contract terms.</translation>
     </message>
     <message id="ens-terms-point-7">
-        <location filename="../app/AppLayouts/Profile/views/EnsTermsAndConditionsView.qml" line="154"/>
+        <location filename="../app/AppLayouts/Profile/views/EnsTermsAndConditionsView.qml" line="156"/>
         <source>You authorize the contract to transfer SNT on your behalf. This can only occur when you approve a transaction to authorize the transfer.</source>
         <translation>You authorize the contract to transfer SNT on your behalf. This can only occur when you approve a transaction to authorize the transfer.</translation>
     </message>
     <message id="ens-terms-point-8">
-        <location filename="../app/AppLayouts/Profile/views/EnsTermsAndConditionsView.qml" line="163"/>
+        <location filename="../app/AppLayouts/Profile/views/EnsTermsAndConditionsView.qml" line="165"/>
         <source>These terms are guaranteed by the smart contract logic at addresses:</source>
         <translation>These terms are guaranteed by the smart contract logic at addresses:</translation>
     </message>
     <message id="-1--status-usernameregistrar--">
-        <location filename="../app/AppLayouts/Profile/views/EnsTermsAndConditionsView.qml" line="173"/>
+        <location filename="../app/AppLayouts/Profile/views/EnsTermsAndConditionsView.qml" line="175"/>
         <source>%1 (Status UsernameRegistrar).</source>
         <translation>%1 (Status UsernameRegistrar).</translation>
     </message>
     <message id="-a-href---1-2--look-up-on-etherscan--a-">
-        <location filename="../app/AppLayouts/Profile/views/EnsTermsAndConditionsView.qml" line="183"/>
-        <location filename="../app/AppLayouts/Profile/views/EnsTermsAndConditionsView.qml" line="209"/>
+        <location filename="../app/AppLayouts/Profile/views/EnsTermsAndConditionsView.qml" line="185"/>
+        <location filename="../app/AppLayouts/Profile/views/EnsTermsAndConditionsView.qml" line="211"/>
         <source>&lt;a href=&apos;%1%2&apos;&gt;Look up on Etherscan&lt;/a&gt;</source>
         <translation>&lt;a href=&apos;%1%2&apos;&gt;Look up on Etherscan&lt;/a&gt;</translation>
     </message>
     <message id="-1--ens-registry--">
-        <location filename="../app/AppLayouts/Profile/views/EnsTermsAndConditionsView.qml" line="199"/>
+        <location filename="../app/AppLayouts/Profile/views/EnsTermsAndConditionsView.qml" line="201"/>
         <source>%1 (ENS Registry).</source>
         <translation>%1 (ENS Registry).</translation>
     </message>
     <message id="agree-to--a-href-------terms-of-name-registration---a--i-understand-that-my-wallet-address-will-be-publicly-connected-to-my-username-">
-        <location filename="../app/AppLayouts/Profile/views/EnsTermsAndConditionsView.qml" line="321"/>
+        <location filename="../app/AppLayouts/Profile/views/EnsTermsAndConditionsView.qml" line="323"/>
         <source>Agree to &lt;a href=&quot;#&quot;&gt;Terms of name registration.&lt;/a&gt; I understand that my wallet address will be publicly connected to my username.</source>
         <translation>Agree to &lt;a href=&quot;#&quot;&gt;Terms of name registration.&lt;/a&gt; I understand that my wallet address will be publicly connected to my username.</translation>
     </message>
     <message id="ens-10-SNT">
-        <location filename="../app/AppLayouts/Profile/views/EnsTermsAndConditionsView.qml" line="364"/>
+        <location filename="../app/AppLayouts/Profile/views/EnsTermsAndConditionsView.qml" line="366"/>
         <source>10 SNT</source>
         <translation>10 SNT</translation>
     </message>
     <message id="ens-deposit">
-        <location filename="../app/AppLayouts/Profile/views/EnsTermsAndConditionsView.qml" line="374"/>
+        <location filename="../app/AppLayouts/Profile/views/EnsTermsAndConditionsView.qml" line="376"/>
         <source>Deposit</source>
         <translation>Deposit</translation>
     </message>
     <message id="not-enough-snt">
-        <location filename="../app/AppLayouts/Profile/views/EnsTermsAndConditionsView.qml" line="392"/>
+        <location filename="../app/AppLayouts/Profile/views/EnsTermsAndConditionsView.qml" line="394"/>
         <source>Not enough SNT</source>
         <translation>Not enough SNT</translation>
     </message>
     <message id="ens-register">
-        <location filename="../app/AppLayouts/Profile/views/EnsTermsAndConditionsView.qml" line="394"/>
+        <location filename="../app/AppLayouts/Profile/views/EnsTermsAndConditionsView.qml" line="396"/>
         <source>Register</source>
         <translation>Register</translation>
     </message>
@@ -2736,29 +2703,29 @@ Do you wish to override the security check and continue?</translation>
         <translation>Only available on Mainnet</translation>
     </message>
     <message id="ens-registration-failed">
-        <location filename="../app/AppLayouts/Profile/views/EnsView.qml" line="339"/>
+        <location filename="../app/AppLayouts/Profile/views/EnsView.qml" line="340"/>
         <source>ENS Registration failed</source>
         <translation>ENS Registration failed</translation>
     </message>
     <message id="ens-registration-completed">
-        <location filename="../app/AppLayouts/Profile/views/EnsView.qml" line="342"/>
+        <location filename="../app/AppLayouts/Profile/views/EnsView.qml" line="343"/>
         <source>ENS Registration completed</source>
         <translation>ENS Registration completed</translation>
     </message>
     <message id="updating-ens-pubkey-failed">
-        <location filename="../app/AppLayouts/Profile/views/EnsView.qml" line="347"/>
+        <location filename="../app/AppLayouts/Profile/views/EnsView.qml" line="348"/>
         <source>Updating ENS pubkey failed</source>
         <translation>Updating ENS pubkey failed</translation>
     </message>
     <message id="updating-ens-pubkey-completed">
-        <location filename="../app/AppLayouts/Profile/views/EnsView.qml" line="350"/>
+        <location filename="../app/AppLayouts/Profile/views/EnsView.qml" line="351"/>
         <source>Updating ENS pubkey completed</source>
         <translation>Updating ENS pubkey completed</translation>
     </message>
     <message id="close-app-title">
         <location filename="../app/AppLayouts/Profile/controls/FleetRadioSelector.qml" line="34"/>
         <location filename="../app/AppLayouts/Profile/controls/NetworkRadioSelector.qml" line="36"/>
-        <location filename="../app/AppLayouts/Profile/views/AdvancedView.qml" line="276"/>
+        <location filename="../app/AppLayouts/Profile/views/AdvancedView.qml" line="293"/>
         <source>Warning!</source>
         <translation>Warning!</translation>
     </message>
@@ -2772,113 +2739,92 @@ Do you wish to override the security check and continue?</translation>
         <translation type="vanished">Glossary</translation>
     </message>
     <message id="account-title">
-        <location filename="../app/AppLayouts/Profile/views/HelpView.qml" line="28"/>
         <source>Account</source>
-        <translation>Account</translation>
+        <translation type="vanished">Account</translation>
     </message>
     <message id="a">
-        <location filename="../app/AppLayouts/Profile/views/HelpView.qml" line="31"/>
         <source>A</source>
         <extracomment>This letter corresponds to the section title above, so here it is &quot;A&quot; because the title above is &quot;Account&quot;</extracomment>
-        <translation>A</translation>
+        <translation type="vanished">A</translation>
     </message>
     <message id="your-status-account--accessed-by-the-seed-phrase-that-you-create-or-import-during-onboarding--a-status-account-can-hold-more-than-one-ethereum-address--in-addition-to-the-one-created-during-onboarding--we-refer-to-these-as-additional-accounts-within-the-wallet">
-        <location filename="../app/AppLayouts/Profile/views/HelpView.qml" line="33"/>
         <source>Your Status account, accessed by the seed phrase that you create or import during onboarding. A Status account can hold more than one Ethereum address, in addition to the one created during onboarding. We refer to these as additional accounts within the wallet</source>
-        <translation>Your Status account, accessed by the seed phrase that you create or import during onboarding. A Status account can hold more than one Ethereum address, in addition to the one created during onboarding. We refer to these as additional accounts within the wallet</translation>
+        <translation type="vanished">Your Status account, accessed by the seed phrase that you create or import during onboarding. A Status account can hold more than one Ethereum address, in addition to the one created during onboarding. We refer to these as additional accounts within the wallet</translation>
     </message>
     <message id="chat-key-title">
-        <location filename="../app/AppLayouts/Profile/views/HelpView.qml" line="42"/>
         <source>Chat Key</source>
-        <translation>Chat Key</translation>
+        <translation type="vanished">Chat Key</translation>
     </message>
     <message id="c">
-        <location filename="../app/AppLayouts/Profile/views/HelpView.qml" line="45"/>
         <source>C</source>
         <extracomment>This letter corresponds to the section title above, so here it is &quot;C&quot; because the title above is &quot;Chat Key&quot;</extracomment>
-        <translation>C</translation>
+        <translation type="vanished">C</translation>
     </message>
     <message id="chat-key-content">
-        <location filename="../app/AppLayouts/Profile/views/HelpView.qml" line="47"/>
         <source>Messages on the Status chat protocol are sent and received using encryption keys. The public chat key is a string of characters you share with others so they can send you messages in Status.</source>
-        <translation>Messages on the Status chat protocol are sent and received using encryption keys. The public chat key is a string of characters you share with others so they can send you messages in Status.</translation>
+        <translation type="vanished">Messages on the Status chat protocol are sent and received using encryption keys. The public chat key is a string of characters you share with others so they can send you messages in Status.</translation>
     </message>
     <message id="chat-name-title">
-        <location filename="../app/AppLayouts/Profile/views/HelpView.qml" line="56"/>
         <source>Chat Name</source>
-        <translation>Chat Name</translation>
+        <translation type="vanished">Chat Name</translation>
     </message>
     <message id="chat-name-content">
-        <location filename="../app/AppLayouts/Profile/views/HelpView.qml" line="58"/>
         <source>Three random words, derived algorithmically from your chat key and used as your default alias in chat. Chat names are completely unique; no other user can have the same three words.</source>
-        <translation>Three random words, derived algorithmically from your chat key and used as your default alias in chat. Chat names are completely unique; no other user can have the same three words.</translation>
+        <translation type="vanished">Three random words, derived algorithmically from your chat key and used as your default alias in chat. Chat names are completely unique; no other user can have the same three words.</translation>
     </message>
     <message id="ens-name-title">
-        <location filename="../app/AppLayouts/Profile/views/HelpView.qml" line="67"/>
         <source>ENS Name</source>
-        <translation>ENS Name</translation>
+        <translation type="vanished">ENS Name</translation>
     </message>
     <message id="e">
-        <location filename="../app/AppLayouts/Profile/views/HelpView.qml" line="70"/>
         <source>E</source>
         <extracomment>This letter corresponds to the section title above, so here it is &quot;E&quot; because the title above is &quot;ENS Name&quot;</extracomment>
-        <translation>E</translation>
+        <translation type="vanished">E</translation>
     </message>
     <message id="ens-name-content">
-        <location filename="../app/AppLayouts/Profile/views/HelpView.qml" line="72"/>
         <source>Custom alias for your chat key that you can register using the Ethereum Name Service. ENS names are decentralized usernames.</source>
-        <translation>Custom alias for your chat key that you can register using the Ethereum Name Service. ENS names are decentralized usernames.</translation>
+        <translation type="vanished">Custom alias for your chat key that you can register using the Ethereum Name Service. ENS names are decentralized usernames.</translation>
     </message>
     <message id="mailserver-title">
-        <location filename="../app/AppLayouts/Profile/views/HelpView.qml" line="81"/>
         <source>Mailserver</source>
-        <translation>Mailserver</translation>
+        <translation type="vanished">Mailserver</translation>
     </message>
     <message id="mailserver-content">
-        <location filename="../app/AppLayouts/Profile/views/HelpView.qml" line="86"/>
         <source>A node in the Status network that routes and stores messages, for up to 30 days.</source>
-        <translation>A node in the Status network that routes and stores messages, for up to 30 days.</translation>
+        <translation type="vanished">A node in the Status network that routes and stores messages, for up to 30 days.</translation>
     </message>
     <message id="peer-title">
-        <location filename="../app/AppLayouts/Profile/views/HelpView.qml" line="95"/>
         <source>Peer</source>
-        <translation>Peer</translation>
+        <translation type="vanished">Peer</translation>
     </message>
     <message id="p">
-        <location filename="../app/AppLayouts/Profile/views/HelpView.qml" line="98"/>
         <source>P</source>
         <extracomment>This letter corresponds to the section title above, so here it is &quot;P&quot; because the title above is &quot;Peer&quot;</extracomment>
-        <translation>P</translation>
+        <translation type="vanished">P</translation>
     </message>
     <message id="a-device-connected-to-the-status-chat-network--each-user-can-represent-one-or-more-peers--depending-on-their-number-of-devices">
-        <location filename="../app/AppLayouts/Profile/views/HelpView.qml" line="100"/>
         <source>A device connected to the Status chat network. Each user can represent one or more peers, depending on their number of devices</source>
-        <translation>A device connected to the Status chat network. Each user can represent one or more peers, depending on their number of devices</translation>
+        <translation type="vanished">A device connected to the Status chat network. Each user can represent one or more peers, depending on their number of devices</translation>
     </message>
     <message id="seed-phrase-title">
-        <location filename="../app/AppLayouts/Profile/views/HelpView.qml" line="109"/>
         <source>Seed Phrase</source>
-        <translation>Seed Phrase</translation>
+        <translation type="vanished">Seed Phrase</translation>
     </message>
     <message id="a-64-character-hex-address-based-on-the-ethereum-standard-and-beginning-with-0x--public-facing--your-wallet-key-is-shared-with-others-when-you-want-to-receive-funds--also-referred-to-as-an--ethereum-address--or--wallet-address-">
-        <location filename="../app/AppLayouts/Profile/views/HelpView.qml" line="114"/>
         <source>A 64 character hex address based on the Ethereum standard and beginning with 0x. Public-facing, your wallet key is shared with others when you want to receive funds. Also referred to as an “Ethereum address” or “wallet address.</source>
-        <translation>A 64 character hex address based on the Ethereum standard and beginning with 0x. Public-facing, your wallet key is shared with others when you want to receive funds. Also referred to as an “Ethereum address” or “wallet address.</translation>
+        <translation type="vanished">A 64 character hex address based on the Ethereum standard and beginning with 0x. Public-facing, your wallet key is shared with others when you want to receive funds. Also referred to as an “Ethereum address” or “wallet address.</translation>
     </message>
     <message id="faq">
-        <location filename="../app/AppLayouts/Profile/views/HelpView.qml" line="123"/>
         <source>Frequently asked questions</source>
-        <translation>Frequently asked questions</translation>
+        <translation type="vanished">Frequently asked questions</translation>
     </message>
     <message id="submit-bug">
-        <location filename="../app/AppLayouts/Profile/views/HelpView.qml" line="148"/>
         <source>Submit a bug</source>
-        <translation>Submit a bug</translation>
+        <translation type="vanished">Submit a bug</translation>
     </message>
     <message id="request-feature">
-        <location filename="../app/AppLayouts/Profile/views/HelpView.qml" line="173"/>
         <source>Request a feature</source>
-        <translation>Request a feature</translation>
+        <translation type="vanished">Request a feature</translation>
     </message>
     <message id="language-settings">
         <source>Language settings</source>
@@ -3116,9 +3062,8 @@ packs will not need to be re-purchased.</translation>
         <translation type="vanished">Security</translation>
     </message>
     <message id="backup-seed-phrase">
-        <location filename="../app/AppLayouts/Profile/views/PrivacyView.qml" line="31"/>
         <source>Backup Seed Phrase</source>
-        <translation>Backup Seed Phrase</translation>
+        <translation type="vanished">Backup Seed Phrase</translation>
     </message>
     <message id="display-all-profile-pictures--not-only-contacts-">
         <source>Display all profile pictures (not only contacts)</source>
@@ -3193,18 +3138,18 @@ packs will not need to be re-purchased.</translation>
     </message>
     <message id="you-need-to-enter-an-account-name">
         <location filename="../app/AppLayouts/Profile/popups/RenameAccontModal.qml" line="67"/>
-        <location filename="../app/AppLayouts/Wallet/popups/AddAccountModal.qml" line="167"/>
+        <location filename="../app/AppLayouts/Wallet/popups/AddAccountModal.qml" line="181"/>
         <source>You need to enter an account name</source>
         <translation>You need to enter an account name</translation>
     </message>
     <message id="enter-an-account-name...">
         <location filename="../app/AppLayouts/Profile/popups/RenameAccontModal.qml" line="54"/>
-        <location filename="../app/AppLayouts/Wallet/popups/AddAccountModal.qml" line="152"/>
+        <location filename="../app/AppLayouts/Wallet/popups/AddAccountModal.qml" line="166"/>
         <source>Enter an account name...</source>
         <translation>Enter an account name...</translation>
     </message>
     <message id="account-name">
-        <location filename="../app/AppLayouts/Wallet/popups/AddAccountModal.qml" line="154"/>
+        <location filename="../app/AppLayouts/Wallet/popups/AddAccountModal.qml" line="168"/>
         <source>Account name</source>
         <translation>Account name</translation>
     </message>
@@ -3439,62 +3384,62 @@ packs will not need to be re-purchased.</translation>
         <translation type="vanished">Add account from private key</translation>
     </message>
     <message id="you-need-to-enter-a-password">
-        <location filename="../app/AppLayouts/Wallet/popups/AddAccountModal.qml" line="78"/>
+        <location filename="../app/AppLayouts/Wallet/popups/AddAccountModal.qml" line="92"/>
         <location filename="../imports/shared/views/TransactionSigner.qml" line="22"/>
-        <location filename="../imports/utils/Utils.qml" line="474"/>
+        <location filename="../imports/utils/Utils.qml" line="482"/>
         <location filename="../imports/shared/views/TransactionSigner.qml" line="22"/>
         <source>You need to enter a password</source>
         <translation>You need to enter a password</translation>
     </message>
     <message id="password-needs-to-be-6-characters-or-more">
-        <location filename="../app/AppLayouts/Wallet/popups/AddAccountModal.qml" line="81"/>
+        <location filename="../app/AppLayouts/Wallet/popups/AddAccountModal.qml" line="95"/>
         <location filename="../imports/shared/views/TransactionSigner.qml" line="24"/>
-        <location filename="../imports/utils/Utils.qml" line="477"/>
+        <location filename="../imports/utils/Utils.qml" line="485"/>
         <location filename="../imports/shared/views/TransactionSigner.qml" line="24"/>
         <source>Password needs to be 6 characters or more</source>
         <translation>Password needs to be 6 characters or more</translation>
     </message>
     <message id="you-need-to-enter-a-private-key">
-        <location filename="../app/AppLayouts/Wallet/panels/ImportPrivateKeyPanel.qml" line="24"/>
-        <location filename="../app/AppLayouts/Wallet/panels/ImportPrivateKeyPanel.qml" line="53"/>
+        <location filename="../app/AppLayouts/Wallet/panels/ImportPrivateKeyPanel.qml" line="28"/>
+        <location filename="../app/AppLayouts/Wallet/panels/ImportPrivateKeyPanel.qml" line="63"/>
         <source>You need to enter a private key</source>
         <translation>You need to enter a private key</translation>
     </message>
     <message id="enter-a-valid-private-key-(64-characters-hexadecimal-string)">
-        <location filename="../app/AppLayouts/Wallet/panels/ImportPrivateKeyPanel.qml" line="27"/>
-        <location filename="../app/AppLayouts/Wallet/panels/ImportPrivateKeyPanel.qml" line="60"/>
+        <location filename="../app/AppLayouts/Wallet/panels/ImportPrivateKeyPanel.qml" line="31"/>
+        <location filename="../app/AppLayouts/Wallet/panels/ImportPrivateKeyPanel.qml" line="70"/>
         <source>Enter a valid private key (64 characters hexadecimal string)</source>
         <translation>Enter a valid private key (64 characters hexadecimal string)</translation>
     </message>
     <message id="enter-your-password…">
-        <location filename="../app/AppLayouts/Wallet/popups/AddAccountModal.qml" line="135"/>
+        <location filename="../app/AppLayouts/Wallet/popups/AddAccountModal.qml" line="149"/>
         <source>Enter your password…</source>
         <translation>Enter your password…</translation>
     </message>
     <message id="password">
-        <location filename="../app/AppLayouts/Wallet/popups/AddAccountModal.qml" line="137"/>
+        <location filename="../app/AppLayouts/Wallet/popups/AddAccountModal.qml" line="151"/>
         <location filename="../imports/shared/views/TransactionSigner.qml" line="109"/>
         <location filename="../imports/shared/views/TransactionSigner.qml" line="109"/>
         <source>Password</source>
         <translation>Password</translation>
     </message>
     <message id="paste-the-contents-of-your-private-key">
-        <location filename="../app/AppLayouts/Wallet/panels/ImportPrivateKeyPanel.qml" line="47"/>
+        <location filename="../app/AppLayouts/Wallet/panels/ImportPrivateKeyPanel.qml" line="57"/>
         <source>Paste the contents of your private key</source>
         <translation>Paste the contents of your private key</translation>
     </message>
     <message id="private-key">
-        <location filename="../app/AppLayouts/Wallet/panels/ImportPrivateKeyPanel.qml" line="41"/>
+        <location filename="../app/AppLayouts/Wallet/panels/ImportPrivateKeyPanel.qml" line="51"/>
         <source>Private key</source>
         <translation>Private key</translation>
     </message>
     <message id="loading">
-        <location filename="../app/AppLayouts/Wallet/popups/AddAccountModal.qml" line="223"/>
+        <location filename="../app/AppLayouts/Wallet/popups/AddAccountModal.qml" line="237"/>
         <source>Loading...</source>
         <translation>Loading...</translation>
     </message>
     <message id="add-account">
-        <location filename="../app/AppLayouts/Wallet/popups/AddAccountModal.qml" line="225"/>
+        <location filename="../app/AppLayouts/Wallet/popups/AddAccountModal.qml" line="239"/>
         <location filename="../app/AppLayouts/Wallet/views/LeftTabView.qml" line="133"/>
         <source>Add account</source>
         <translation>Add account</translation>
@@ -3626,7 +3571,7 @@ packs will not need to be re-purchased.</translation>
     </message>
     <message id="view">
         <location filename="../app/AppLayouts/Wallet/popups/CollectiblesModal.qml" line="25"/>
-        <location filename="../imports/shared/views/chat/InvitationBubbleView.qml" line="142"/>
+        <location filename="../imports/shared/views/chat/InvitationBubbleView.qml" line="157"/>
         <source>View</source>
         <translation>View</translation>
     </message>
@@ -4041,7 +3986,7 @@ packs will not need to be re-purchased.</translation>
         <translation>South African rand</translation>
     </message>
     <message id="view-community">
-        <location filename="../app/mainui/AppMain.qml" line="319"/>
+        <location filename="../app/mainui/AppMain.qml" line="331"/>
         <source>View Community</source>
         <translation>View Community</translation>
     </message>
@@ -4074,20 +4019,20 @@ packs will not need to be re-purchased.</translation>
         <translation type="vanished">Where do you want to go?</translation>
     </message>
     <message id="status-desktop">
-        <location filename="../main.qml" line="37"/>
-        <location filename="../main.qml" line="37"/>
+        <location filename="../main.qml" line="35"/>
+        <location filename="../main.qml" line="35"/>
         <source>Status Desktop</source>
         <translation>Status Desktop</translation>
     </message>
     <message id="open-status">
-        <location filename="../main.qml" line="229"/>
-        <location filename="../main.qml" line="229"/>
+        <location filename="../main.qml" line="248"/>
+        <location filename="../main.qml" line="248"/>
         <source>Open Status</source>
         <translation>Open Status</translation>
     </message>
     <message id="quit">
-        <location filename="../main.qml" line="240"/>
-        <location filename="../main.qml" line="240"/>
+        <location filename="../main.qml" line="259"/>
+        <location filename="../main.qml" line="259"/>
         <source>Quit</source>
         <translation>Quit</translation>
     </message>
@@ -4213,7 +4158,7 @@ where you alone own your data</translation>
         <translation type="vanished">Thanks for trying Status Desktop! Please note that this is an alpha release and we advise you that using this app should be done for testing purposes only and you assume the full responsibility for all risks concerning your data and funds. Status makes no claims of security or integrity of funds in these builds.</translation>
     </message>
     <message id="i-understand">
-        <location filename="../app/AppLayouts/Profile/views/AdvancedView.qml" line="605"/>
+        <location filename="../app/AppLayouts/Profile/views/AdvancedView.qml" line="622"/>
         <location filename="../imports/shared/views/chat/InvitationBubbleView.qml" line="62"/>
         <source>I understand</source>
         <translation>I understand</translation>
@@ -4223,13 +4168,13 @@ where you alone own your data</translation>
         <translation type="vanished">Status does not collect, share or sell any personal data. By continuing you agree with the privacy policy.</translation>
     </message>
     <message id="intro-wizard-title1">
-        <location filename="../app/AppLayouts/Onboarding/views/KeysMainView.qml" line="53"/>
+        <location filename="../app/AppLayouts/Onboarding/views/KeysMainView.qml" line="50"/>
         <source></source>
         <oldsource>Get your keys</oldsource>
         <translation type="unfinished">Get your keys</translation>
     </message>
     <message id="a-set-of-keys-controls-your-account.-your-keys-live-on-your-device,-so-only-you-can-use-them.">
-        <location filename="../app/AppLayouts/Onboarding/views/KeysMainView.qml" line="65"/>
+        <location filename="../app/AppLayouts/Onboarding/views/KeysMainView.qml" line="67"/>
         <source></source>
         <oldsource>A set of keys controls your account. Your keys live on your device, so only you can use them.</oldsource>
         <translation type="unfinished">A set of keys controls your account. Your keys live on your device, so only you can use them.</translation>
@@ -4327,23 +4272,21 @@ Assets won’t be sent yet.</translation>
     </message>
     <message id="insufficient-balance">
         <location filename="../imports/shared/controls/AssetAndAmountInput.qml" line="18"/>
-        <location filename="../imports/shared/panels/BalanceValidator.qml" line="51"/>
+        <location filename="../imports/shared/panels/BalanceValidator.qml" line="52"/>
         <location filename="../imports/shared/controls/AssetAndAmountInput.qml" line="18"/>
-        <location filename="../imports/shared/panels/BalanceValidator.qml" line="51"/>
+        <location filename="../imports/shared/panels/BalanceValidator.qml" line="52"/>
         <source>Insufficient balance</source>
         <translation>Insufficient balance</translation>
     </message>
     <message id="must-be-greater-than-0">
-        <location filename="../imports/shared/controls/GasSelector.qml" line="39"/>
-        <location filename="../imports/shared/controls/GasSelector.qml" line="39"/>
+        <location filename="../imports/shared/controls/GasSelector.qml" line="37"/>
+        <location filename="../imports/shared/controls/GasSelector.qml" line="37"/>
         <source>Must be greater than 0</source>
         <translation>Must be greater than 0</translation>
     </message>
     <message id="priority">
-        <location filename="../imports/shared/controls/GasSelector.qml" line="175"/>
-        <location filename="../imports/shared/controls/GasSelector.qml" line="175"/>
         <source>Priority</source>
-        <translation>Priority</translation>
+        <translation type="vanished">Priority</translation>
     </message>
     <message id="use-suggestions">
         <location filename="../imports/shared/controls/GasSelector.qml" line="199"/>
@@ -4367,27 +4310,27 @@ Assets won’t be sent yet.</translation>
         <translation type="vanished">High</translation>
     </message>
     <message id="gas-amount-limit">
-        <location filename="../imports/shared/controls/GasSelector.qml" line="306"/>
-        <location filename="../imports/shared/controls/GasSelector.qml" line="306"/>
+        <location filename="../imports/shared/controls/GasSelector.qml" line="307"/>
+        <location filename="../imports/shared/controls/GasSelector.qml" line="307"/>
         <source>Gas amount limit</source>
         <translation>Gas amount limit</translation>
     </message>
     <message id="per-gas-overall-limit">
-        <location filename="../imports/shared/controls/GasSelector.qml" line="364"/>
-        <location filename="../imports/shared/controls/GasSelector.qml" line="364"/>
+        <location filename="../imports/shared/controls/GasSelector.qml" line="365"/>
+        <location filename="../imports/shared/controls/GasSelector.qml" line="365"/>
         <source>Per-gas overall limit</source>
         <translation>Per-gas overall limit</translation>
     </message>
     <message id="maximum-priority-fee---1-eth">
-        <location filename="../imports/shared/controls/GasSelector.qml" line="412"/>
-        <location filename="../imports/shared/controls/GasSelector.qml" line="412"/>
+        <location filename="../imports/shared/controls/GasSelector.qml" line="414"/>
+        <location filename="../imports/shared/controls/GasSelector.qml" line="414"/>
         <source></source>
         <oldsource>Maximum priority fee: %1 ETH</oldsource>
         <translation type="unfinished">Maximum priority fee: %1 ETH</translation>
     </message>
     <message id="maximum-overall-price-for-the-transaction--if-the-block-base-fee-exceeds-this--it-will-be-included-in-a-following-block-with-a-lower-base-fee-">
-        <location filename="../imports/shared/controls/GasSelector.qml" line="434"/>
-        <location filename="../imports/shared/controls/GasSelector.qml" line="434"/>
+        <location filename="../imports/shared/controls/GasSelector.qml" line="437"/>
+        <location filename="../imports/shared/controls/GasSelector.qml" line="437"/>
         <source>Maximum overall price for the transaction. If the block base fee exceeds this, it will be included in a following block with a lower base fee.</source>
         <translation>Maximum overall price for the transaction. If the block base fee exceeds this, it will be included in a following block with a lower base fee.</translation>
     </message>
@@ -4399,17 +4342,17 @@ Assets won’t be sent yet.</translation>
     </message>
     <message id="this-needs-to-be-a-number">
         <location filename="../imports/shared/controls/AssetAndAmountInput.qml" line="22"/>
-        <location filename="../imports/shared/controls/GasSelector.qml" line="41"/>
+        <location filename="../imports/shared/controls/GasSelector.qml" line="39"/>
         <location filename="../imports/shared/controls/AssetAndAmountInput.qml" line="22"/>
-        <location filename="../imports/shared/controls/GasSelector.qml" line="41"/>
+        <location filename="../imports/shared/controls/GasSelector.qml" line="39"/>
         <source>This needs to be a number</source>
         <translation>This needs to be a number</translation>
     </message>
     <message id="please-enter-an-amount">
         <location filename="../imports/shared/controls/AssetAndAmountInput.qml" line="24"/>
-        <location filename="../imports/shared/controls/GasSelector.qml" line="43"/>
+        <location filename="../imports/shared/controls/GasSelector.qml" line="41"/>
         <location filename="../imports/shared/controls/AssetAndAmountInput.qml" line="24"/>
-        <location filename="../imports/shared/controls/GasSelector.qml" line="43"/>
+        <location filename="../imports/shared/controls/GasSelector.qml" line="41"/>
         <source>Please enter an amount</source>
         <translation>Please enter an amount</translation>
     </message>
@@ -4512,10 +4455,10 @@ Assets won’t be sent yet.</translation>
         <translation type="vanished">Custom Network Fee</translation>
     </message>
     <message id="gwei">
-        <location filename="../imports/shared/controls/GasSelector.qml" line="352"/>
-        <location filename="../imports/shared/controls/GasSelector.qml" line="383"/>
-        <location filename="../imports/shared/controls/GasSelector.qml" line="352"/>
-        <location filename="../imports/shared/controls/GasSelector.qml" line="383"/>
+        <location filename="../imports/shared/controls/GasSelector.qml" line="353"/>
+        <location filename="../imports/shared/controls/GasSelector.qml" line="384"/>
+        <location filename="../imports/shared/controls/GasSelector.qml" line="353"/>
+        <location filename="../imports/shared/controls/GasSelector.qml" line="384"/>
         <source>Gwei</source>
         <translation>Gwei</translation>
     </message>
@@ -4524,8 +4467,8 @@ Assets won’t be sent yet.</translation>
         <translation type="vanished">Apply</translation>
     </message>
     <message id="wallet-insufficient-gas">
-        <location filename="../imports/shared/controls/GasValidator.qml" line="59"/>
-        <location filename="../imports/shared/controls/GasValidator.qml" line="59"/>
+        <location filename="../imports/shared/controls/GasValidator.qml" line="63"/>
+        <location filename="../imports/shared/controls/GasValidator.qml" line="63"/>
         <source>Not enough ETH for gas</source>
         <translation>Not enough ETH for gas</translation>
     </message>
@@ -4573,7 +4516,7 @@ Assets won’t be sent yet.</translation>
         <translation>My account</translation>
     </message>
     <message id="chat-is-a-contact">
-        <location filename="../app/AppLayouts/Chat/views/ChatContentView.qml" line="77"/>
+        <location filename="../app/AppLayouts/Chat/views/ChatContentView.qml" line="81"/>
         <location filename="../imports/shared/controls/RecipientSelector.qml" line="54"/>
         <location filename="../imports/shared/controls/RecipientSelector.qml" line="54"/>
         <source>Contact</source>
@@ -4581,7 +4524,7 @@ Assets won’t be sent yet.</translation>
     </message>
     <message id="search">
         <location filename="../app/AppLayouts/Chat/popups/GroupInfoPopup.qml" line="114"/>
-        <location filename="../app/AppLayouts/Chat/views/ContactsColumnView.qml" line="79"/>
+        <location filename="../app/AppLayouts/Chat/views/ContactsColumnView.qml" line="77"/>
         <location filename="../imports/shared/controls/SearchBox.qml" line="12"/>
         <location filename="../imports/shared/controls/SearchBox.qml" line="12"/>
         <source>Search</source>
@@ -4660,30 +4603,30 @@ Assets won’t be sent yet.</translation>
         <translation>Request transaction</translation>
     </message>
     <message id="public-chat">
-        <location filename="../app/AppLayouts/Chat/views/ChatContentView.qml" line="82"/>
+        <location filename="../app/AppLayouts/Chat/views/ChatContentView.qml" line="86"/>
         <source>Public chat</source>
         <translation>Public chat</translation>
     </message>
     <message id="chat-is-not-a-contact">
-        <location filename="../app/AppLayouts/Chat/views/ChatContentView.qml" line="79"/>
+        <location filename="../app/AppLayouts/Chat/views/ChatContentView.qml" line="83"/>
         <source>Not a contact</source>
         <translation>Not a contact</translation>
     </message>
     <message id="image-files---1-">
-        <location filename="../imports/shared/status/StatusChatInput.qml" line="651"/>
-        <location filename="../imports/shared/status/StatusChatInput.qml" line="651"/>
+        <location filename="../imports/shared/status/StatusChatInput.qml" line="652"/>
+        <location filename="../imports/shared/status/StatusChatInput.qml" line="652"/>
         <source>Image files (%1)</source>
         <translation>Image files (%1)</translation>
     </message>
     <message id="your-message-is-too-long.">
-        <location filename="../imports/shared/status/StatusChatInput.qml" line="671"/>
-        <location filename="../imports/shared/status/StatusChatInput.qml" line="671"/>
+        <location filename="../imports/shared/status/StatusChatInput.qml" line="672"/>
+        <location filename="../imports/shared/status/StatusChatInput.qml" line="672"/>
         <source>Your message is too long.</source>
         <translation>Your message is too long.</translation>
     </message>
     <message id="please-make-your-message-shorter.-we-have-set-the-limit-to-2000-characters-to-be-courteous-of-others.">
-        <location filename="../imports/shared/status/StatusChatInput.qml" line="674"/>
-        <location filename="../imports/shared/status/StatusChatInput.qml" line="674"/>
+        <location filename="../imports/shared/status/StatusChatInput.qml" line="675"/>
+        <location filename="../imports/shared/status/StatusChatInput.qml" line="675"/>
         <source>Please make your message shorter. We have set the limit to 2000 characters to be courteous of others.</source>
         <translation>Please make your message shorter. We have set the limit to 2000 characters to be courteous of others.</translation>
     </message>
@@ -4692,32 +4635,32 @@ Assets won’t be sent yet.</translation>
         <translation type="vanished">Type a message</translation>
     </message>
     <message id="bold">
-        <location filename="../imports/shared/status/StatusChatInput.qml" line="1064"/>
-        <location filename="../imports/shared/status/StatusChatInput.qml" line="1064"/>
+        <location filename="../imports/shared/status/StatusChatInput.qml" line="1065"/>
+        <location filename="../imports/shared/status/StatusChatInput.qml" line="1065"/>
         <source>Bold</source>
         <translation>Bold</translation>
     </message>
     <message id="italic">
-        <location filename="../imports/shared/status/StatusChatInput.qml" line="1074"/>
-        <location filename="../imports/shared/status/StatusChatInput.qml" line="1074"/>
+        <location filename="../imports/shared/status/StatusChatInput.qml" line="1075"/>
+        <location filename="../imports/shared/status/StatusChatInput.qml" line="1075"/>
         <source>Italic</source>
         <translation>Italic</translation>
     </message>
     <message id="strikethrough">
-        <location filename="../imports/shared/status/StatusChatInput.qml" line="1085"/>
-        <location filename="../imports/shared/status/StatusChatInput.qml" line="1085"/>
+        <location filename="../imports/shared/status/StatusChatInput.qml" line="1086"/>
+        <location filename="../imports/shared/status/StatusChatInput.qml" line="1086"/>
         <source>Strikethrough</source>
         <translation>Strikethrough</translation>
     </message>
     <message id="code">
-        <location filename="../imports/shared/status/StatusChatInput.qml" line="1095"/>
-        <location filename="../imports/shared/status/StatusChatInput.qml" line="1095"/>
+        <location filename="../imports/shared/status/StatusChatInput.qml" line="1096"/>
+        <location filename="../imports/shared/status/StatusChatInput.qml" line="1096"/>
         <source>Code</source>
         <translation>Code</translation>
     </message>
     <message id="no-recent-emojis">
-        <location filename="../imports/shared/status/StatusEmojiSection.qml" line="39"/>
-        <location filename="../imports/shared/status/StatusEmojiSection.qml" line="39"/>
+        <location filename="../imports/shared/status/StatusEmojiSection.qml" line="40"/>
+        <location filename="../imports/shared/status/StatusEmojiSection.qml" line="40"/>
         <source>No recent emojis</source>
         <translation>No recent emojis</translation>
     </message>
@@ -4809,7 +4752,7 @@ Assets won’t be sent yet.</translation>
         <translation type="vanished">Revoke all access</translation>
     </message>
     <message id="show-more">
-        <location filename="../app/AppLayouts/Chat/popups/ActivityCenterPopup.qml" line="243"/>
+        <location filename="../app/AppLayouts/Chat/popups/ActivityCenterPopup.qml" line="245"/>
         <source>Show more</source>
         <translation>Show more</translation>
     </message>
@@ -4834,7 +4777,7 @@ Assets won’t be sent yet.</translation>
     </message>
     <message id="contact-requests">
         <location filename="../app/AppLayouts/Chat/popups/ContactRequestsPopup.qml" line="21"/>
-        <location filename="../app/AppLayouts/Chat/views/ContactsColumnView.qml" line="149"/>
+        <location filename="../app/AppLayouts/Chat/views/ContactsColumnView.qml" line="147"/>
         <source>Contact requests</source>
         <translation>Contact requests</translation>
     </message>
@@ -5043,162 +4986,162 @@ Assets won’t be sent yet.</translation>
         <translation>TODO</translation>
     </message>
     <message id="now">
-        <location filename="../imports/utils/Utils.qml" line="366"/>
+        <location filename="../imports/utils/Utils.qml" line="374"/>
         <source>NOW</source>
         <translation>NOW</translation>
     </message>
     <message id="-1m">
-        <location filename="../imports/utils/Utils.qml" line="371"/>
+        <location filename="../imports/utils/Utils.qml" line="379"/>
         <source>%1M</source>
         <translation>%1M</translation>
     </message>
     <message id="-1h">
-        <location filename="../imports/utils/Utils.qml" line="376"/>
+        <location filename="../imports/utils/Utils.qml" line="384"/>
         <source>%1H</source>
         <translation>%1H</translation>
     </message>
     <message id="-1d">
-        <location filename="../imports/utils/Utils.qml" line="379"/>
+        <location filename="../imports/utils/Utils.qml" line="387"/>
         <source>%1D</source>
         <translation>%1D</translation>
     </message>
     <message id="sun">
-        <location filename="../imports/utils/Utils.qml" line="250"/>
+        <location filename="../imports/utils/Utils.qml" line="258"/>
         <source>Sun</source>
         <translation>Sun</translation>
     </message>
     <message id="mon">
-        <location filename="../imports/utils/Utils.qml" line="252"/>
+        <location filename="../imports/utils/Utils.qml" line="260"/>
         <source>Mon</source>
         <translation>Mon</translation>
     </message>
     <message id="tue">
-        <location filename="../imports/utils/Utils.qml" line="254"/>
+        <location filename="../imports/utils/Utils.qml" line="262"/>
         <source>Tue</source>
         <translation>Tue</translation>
     </message>
     <message id="wed">
-        <location filename="../imports/utils/Utils.qml" line="256"/>
+        <location filename="../imports/utils/Utils.qml" line="264"/>
         <source>Wed</source>
         <translation>Wed</translation>
     </message>
     <message id="thu">
-        <location filename="../imports/utils/Utils.qml" line="258"/>
+        <location filename="../imports/utils/Utils.qml" line="266"/>
         <source>Thu</source>
         <translation>Thu</translation>
     </message>
     <message id="fri">
-        <location filename="../imports/utils/Utils.qml" line="260"/>
+        <location filename="../imports/utils/Utils.qml" line="268"/>
         <source>Fri</source>
         <translation>Fri</translation>
     </message>
     <message id="sat">
-        <location filename="../imports/utils/Utils.qml" line="262"/>
+        <location filename="../imports/utils/Utils.qml" line="270"/>
         <source>Sat</source>
         <translation>Sat</translation>
     </message>
     <message id="jan">
-        <location filename="../imports/utils/Utils.qml" line="265"/>
+        <location filename="../imports/utils/Utils.qml" line="273"/>
         <source>Jan</source>
         <translation>Jan</translation>
     </message>
     <message id="feb">
-        <location filename="../imports/utils/Utils.qml" line="267"/>
+        <location filename="../imports/utils/Utils.qml" line="275"/>
         <source>Feb</source>
         <translation>Feb</translation>
     </message>
     <message id="mar">
-        <location filename="../imports/utils/Utils.qml" line="269"/>
+        <location filename="../imports/utils/Utils.qml" line="277"/>
         <source>Mar</source>
         <translation>Mar</translation>
     </message>
     <message id="apr">
-        <location filename="../imports/utils/Utils.qml" line="271"/>
+        <location filename="../imports/utils/Utils.qml" line="279"/>
         <source>Apr</source>
         <translation>Apr</translation>
     </message>
     <message id="jun">
-        <location filename="../imports/utils/Utils.qml" line="275"/>
+        <location filename="../imports/utils/Utils.qml" line="283"/>
         <source>Jun</source>
         <translation>Jun</translation>
     </message>
     <message id="jul">
-        <location filename="../imports/utils/Utils.qml" line="277"/>
+        <location filename="../imports/utils/Utils.qml" line="285"/>
         <source>Jul</source>
         <translation>Jul</translation>
     </message>
     <message id="aug">
-        <location filename="../imports/utils/Utils.qml" line="279"/>
+        <location filename="../imports/utils/Utils.qml" line="287"/>
         <source>Aug</source>
         <translation>Aug</translation>
     </message>
     <message id="sep">
-        <location filename="../imports/utils/Utils.qml" line="281"/>
+        <location filename="../imports/utils/Utils.qml" line="289"/>
         <source>Sep</source>
         <translation>Sep</translation>
     </message>
     <message id="oct">
-        <location filename="../imports/utils/Utils.qml" line="283"/>
+        <location filename="../imports/utils/Utils.qml" line="291"/>
         <source>Oct</source>
         <translation>Oct</translation>
     </message>
     <message id="nov">
-        <location filename="../imports/utils/Utils.qml" line="285"/>
+        <location filename="../imports/utils/Utils.qml" line="293"/>
         <source>Nov</source>
         <translation>Nov</translation>
     </message>
     <message id="dec">
-        <location filename="../imports/utils/Utils.qml" line="287"/>
+        <location filename="../imports/utils/Utils.qml" line="295"/>
         <source>Dec</source>
         <translation>Dec</translation>
     </message>
     <message id="sunday">
-        <location filename="../imports/utils/Utils.qml" line="338"/>
+        <location filename="../imports/utils/Utils.qml" line="346"/>
         <source>Sunday</source>
         <translation>Sunday</translation>
     </message>
     <message id="monday">
-        <location filename="../imports/utils/Utils.qml" line="340"/>
+        <location filename="../imports/utils/Utils.qml" line="348"/>
         <source>Monday</source>
         <translation>Monday</translation>
     </message>
     <message id="tuesday">
-        <location filename="../imports/utils/Utils.qml" line="342"/>
+        <location filename="../imports/utils/Utils.qml" line="350"/>
         <source>Tuesday</source>
         <translation>Tuesday</translation>
     </message>
     <message id="wednesday">
-        <location filename="../imports/utils/Utils.qml" line="344"/>
+        <location filename="../imports/utils/Utils.qml" line="352"/>
         <source>Wednesday</source>
         <translation>Wednesday</translation>
     </message>
     <message id="thursday">
-        <location filename="../imports/utils/Utils.qml" line="346"/>
+        <location filename="../imports/utils/Utils.qml" line="354"/>
         <source>Thursday</source>
         <translation>Thursday</translation>
     </message>
     <message id="friday">
-        <location filename="../imports/utils/Utils.qml" line="348"/>
+        <location filename="../imports/utils/Utils.qml" line="356"/>
         <source>Friday</source>
         <translation>Friday</translation>
     </message>
     <message id="saturday">
-        <location filename="../imports/utils/Utils.qml" line="350"/>
+        <location filename="../imports/utils/Utils.qml" line="358"/>
         <source>Saturday</source>
         <translation>Saturday</translation>
     </message>
     <message id="start-a-1-on-1-chat-with--1">
-        <location filename="../app/AppLayouts/Chat/stores/RootStore.qml" line="364"/>
+        <location filename="../app/AppLayouts/Chat/stores/RootStore.qml" line="383"/>
         <source>Start a 1-on-1 chat with %1</source>
         <translation>Start a 1-on-1 chat with %1</translation>
     </message>
     <message id="join-the--1-community">
-        <location filename="../app/AppLayouts/Chat/stores/RootStore.qml" line="393"/>
+        <location filename="../app/AppLayouts/Chat/stores/RootStore.qml" line="412"/>
         <source>Join the %1 community</source>
         <translation>Join the %1 community</translation>
     </message>
     <message id="join-the--1-group-chat">
-        <location filename="../app/AppLayouts/Chat/stores/RootStore.qml" line="421"/>
+        <location filename="../app/AppLayouts/Chat/stores/RootStore.qml" line="440"/>
         <source>Join the %1 group chat</source>
         <translation>Join the %1 group chat</translation>
     </message>
@@ -5211,37 +5154,37 @@ Assets won’t be sent yet.</translation>
         <translation type="vanished">undefined</translation>
     </message>
     <message id="words">
-        <location filename="../imports/utils/Utils.qml" line="444"/>
+        <location filename="../imports/utils/Utils.qml" line="452"/>
         <source>words</source>
         <translation>words</translation>
     </message>
     <message id="mainnet-with-upstream-rpc">
-        <location filename="../imports/utils/Utils.qml" line="454"/>
+        <location filename="../imports/utils/Utils.qml" line="462"/>
         <source>Mainnet with upstream RPC</source>
         <translation>Mainnet with upstream RPC</translation>
     </message>
     <message id="poa-network">
-        <location filename="../imports/utils/Utils.qml" line="456"/>
+        <location filename="../imports/utils/Utils.qml" line="464"/>
         <source>POA Network</source>
         <translation>POA Network</translation>
     </message>
     <message id="xdai-chain">
-        <location filename="../imports/utils/Utils.qml" line="458"/>
+        <location filename="../imports/utils/Utils.qml" line="466"/>
         <source>xDai Chain</source>
         <translation>xDai Chain</translation>
     </message>
     <message id="goerli-with-upstream-rpc">
-        <location filename="../imports/utils/Utils.qml" line="460"/>
+        <location filename="../imports/utils/Utils.qml" line="468"/>
         <source>Goerli with upstream RPC</source>
         <translation>Goerli with upstream RPC</translation>
     </message>
     <message id="rinkeby-with-upstream-rpc">
-        <location filename="../imports/utils/Utils.qml" line="462"/>
+        <location filename="../imports/utils/Utils.qml" line="470"/>
         <source>Rinkeby with upstream RPC</source>
         <translation>Rinkeby with upstream RPC</translation>
     </message>
     <message id="ropsten-with-upstream-rpc">
-        <location filename="../imports/utils/Utils.qml" line="464"/>
+        <location filename="../imports/utils/Utils.qml" line="472"/>
         <source>Ropsten with upstream RPC</source>
         <translation>Ropsten with upstream RPC</translation>
     </message>
@@ -5250,32 +5193,32 @@ Assets won’t be sent yet.</translation>
         <translation type="vanished">undefined</translation>
     </message>
     <message id="you-need-to-repeat-your-password">
-        <location filename="../imports/utils/Utils.qml" line="484"/>
+        <location filename="../imports/utils/Utils.qml" line="492"/>
         <source>You need to repeat your password</source>
         <translation>You need to repeat your password</translation>
     </message>
     <message id="passwords-don-t-match">
-        <location filename="../imports/utils/Utils.qml" line="487"/>
+        <location filename="../imports/utils/Utils.qml" line="495"/>
         <source>Passwords don&apos;t match</source>
         <translation>Passwords don&apos;t match</translation>
     </message>
     <message id="you-need-to-enter-a--1">
-        <location filename="../imports/utils/Utils.qml" line="575"/>
+        <location filename="../imports/utils/Utils.qml" line="583"/>
         <source>You need to enter a %1</source>
         <translation>You need to enter a %1</translation>
     </message>
     <message id="the--1-cannot-exceed--2-characters">
-        <location filename="../imports/utils/Utils.qml" line="580"/>
+        <location filename="../imports/utils/Utils.qml" line="588"/>
         <source>The %1 cannot exceed %2 characters</source>
         <translation>The %1 cannot exceed %2 characters</translation>
     </message>
     <message id="must-be-an-hexadecimal-color--eg---4360df-">
-        <location filename="../imports/utils/Utils.qml" line="585"/>
+        <location filename="../imports/utils/Utils.qml" line="593"/>
         <source>Must be an hexadecimal color (eg: #4360DF)</source>
         <translation>Must be an hexadecimal color (eg: #4360DF)</translation>
     </message>
     <message id="use-only-lowercase-letters--a-to-z---numbers---dashes------do-not-use-chat-keys-">
-        <location filename="../imports/utils/Utils.qml" line="590"/>
+        <location filename="../imports/utils/Utils.qml" line="598"/>
         <source>Use only lowercase letters (a to z), numbers &amp; dashes (-). Do not use chat keys.</source>
         <translation>Use only lowercase letters (a to z), numbers &amp; dashes (-). Do not use chat keys.</translation>
     </message>
@@ -5288,6 +5231,74 @@ Assets won’t be sent yet.</translation>
         <location filename="../app/AppLayouts/Onboarding/views/TouchIDAuthView.qml" line="69"/>
         <source></source>
         <translation type="unfinished"></translation>
+    </message>
+    <message id="I have a pen and paper">
+        <location filename="../app/AppLayouts/Profile/popups/backupseed/Acknowledgements.qml" line="70"/>
+        <source></source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="I am ready to write down my seed phrase">
+        <location filename="../app/AppLayouts/Profile/popups/backupseed/Acknowledgements.qml" line="75"/>
+        <source></source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>AboutView</name>
+    <message>
+        <location filename="../app/AppLayouts/Profile/views/AboutView.qml" line="58"/>
+        <source>Current Version</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Profile/views/AboutView.qml" line="67"/>
+        <source>Release Notes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Profile/views/AboutView.qml" line="72"/>
+        <source>Our Principles</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Profile/views/AboutView.qml" line="88"/>
+        <source>Status desktop’s GitHub Repositories</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Profile/views/AboutView.qml" line="99"/>
+        <source>Status Desktop</source>
+        <translation type="unfinished">Status Desktop</translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Profile/views/AboutView.qml" line="110"/>
+        <source>Status Go</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Profile/views/AboutView.qml" line="121"/>
+        <source>StatusQ</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Profile/views/AboutView.qml" line="132"/>
+        <source>go-waku</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Profile/views/AboutView.qml" line="146"/>
+        <source>Legal &amp; Privacy Documents</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Profile/views/AboutView.qml" line="155"/>
+        <source>Terms of Use</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Profile/views/AboutView.qml" line="163"/>
+        <source>Privacy Policy</source>
+        <translation type="unfinished">Privacy Policy</translation>
     </message>
 </context>
 <context>
@@ -5377,6 +5388,34 @@ Assets won’t be sent yet.</translation>
     </message>
 </context>
 <context>
+    <name>Acknowledgements</name>
+    <message>
+        <location filename="../app/AppLayouts/Profile/popups/backupseed/Acknowledgements.qml" line="26"/>
+        <source>Secure Your Assets and Funds</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Profile/popups/backupseed/Acknowledgements.qml" line="44"/>
+        <source>Your seed phrase is a 12-word passcode to your funds.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Profile/popups/backupseed/Acknowledgements.qml" line="59"/>
+        <source>Your seed phrase cannot be recovered if lost. Therefore, you &lt;b&gt;must&lt;/b&gt; back it up. The simplest way is to &lt;b&gt;write it down offline and store it somewhere secure.&lt;/b&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Profile/popups/backupseed/Acknowledgements.qml" line="80"/>
+        <source>I know where I’ll store it</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Profile/popups/backupseed/Acknowledgements.qml" line="97"/>
+        <source>You can only complete this process once. Status will not store your seed phrase and can never help you recover it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ActivityCenterMessageComponentView</name>
     <message>
         <location filename="../app/AppLayouts/Chat/views/ActivityCenterMessageComponentView.qml" line="66"/>
@@ -5392,12 +5431,12 @@ Assets won’t be sent yet.</translation>
 <context>
     <name>AddAccountModal</name>
     <message>
-        <location filename="../app/AppLayouts/Wallet/popups/AddAccountModal.qml" line="176"/>
+        <location filename="../app/AppLayouts/Wallet/popups/AddAccountModal.qml" line="190"/>
         <source>color</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Wallet/popups/AddAccountModal.qml" line="199"/>
+        <location filename="../app/AppLayouts/Wallet/popups/AddAccountModal.qml" line="213"/>
         <source>Advanced</source>
         <translation type="unfinished">Advanced</translation>
     </message>
@@ -5544,84 +5583,113 @@ Assets won’t be sent yet.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Profile/views/AdvancedView.qml" line="223"/>
+        <location filename="../app/AppLayouts/Profile/views/AdvancedView.qml" line="169"/>
+        <source>Community History Archive Protocol</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Profile/views/AdvancedView.qml" line="222"/>
         <source>Multi network</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Profile/views/AdvancedView.qml" line="241"/>
+        <location filename="../app/AppLayouts/Profile/views/AdvancedView.qml" line="240"/>
         <source>Keycard</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Profile/views/AdvancedView.qml" line="349"/>
+        <location filename="../app/AppLayouts/Profile/views/AdvancedView.qml" line="252"/>
+        <source>Communities Portal</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Profile/views/AdvancedView.qml" line="366"/>
         <source>WakuV2 mode</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Profile/views/AdvancedView.qml" line="423"/>
+        <location filename="../app/AppLayouts/Profile/views/AdvancedView.qml" line="440"/>
         <source>Developer features</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Profile/views/AdvancedView.qml" line="435"/>
+        <location filename="../app/AppLayouts/Profile/views/AdvancedView.qml" line="452"/>
         <source>Full developer mode</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Profile/views/AdvancedView.qml" line="455"/>
+        <location filename="../app/AppLayouts/Profile/views/AdvancedView.qml" line="472"/>
         <source>Download messages</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Profile/views/AdvancedView.qml" line="467"/>
+        <location filename="../app/AppLayouts/Profile/views/AdvancedView.qml" line="484"/>
         <source>Telemetry</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Profile/views/AdvancedView.qml" line="479"/>
+        <location filename="../app/AppLayouts/Profile/views/AdvancedView.qml" line="496"/>
         <source>Debug</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Profile/views/AdvancedView.qml" line="491"/>
+        <location filename="../app/AppLayouts/Profile/views/AdvancedView.qml" line="508"/>
         <source>Auto message</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Profile/views/AdvancedView.qml" line="503"/>
+        <location filename="../app/AppLayouts/Profile/views/AdvancedView.qml" line="520"/>
         <source>Stickers/ENS on ropsten</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Profile/views/AdvancedView.qml" line="530"/>
+        <location filename="../app/AppLayouts/Profile/views/AdvancedView.qml" line="547"/>
         <source>Are you sure you want to enable all the develoer features? The app will be restarted.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Profile/views/AdvancedView.qml" line="549"/>
+        <location filename="../app/AppLayouts/Profile/views/AdvancedView.qml" line="566"/>
         <source>Are you sure you want to enable telemetry? This will reduce your privacy level while using Status. You need to restart the app for this change to take effect.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Profile/views/AdvancedView.qml" line="567"/>
+        <location filename="../app/AppLayouts/Profile/views/AdvancedView.qml" line="584"/>
         <source>Are you sure you want to enable auto message? You need to restart the app for this change to take effect.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Profile/views/AdvancedView.qml" line="585"/>
+        <location filename="../app/AppLayouts/Profile/views/AdvancedView.qml" line="602"/>
         <source>Are you sure you want to %1 debug mode? You need to restart the app for this change to take effect.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Profile/views/AdvancedView.qml" line="586"/>
+        <location filename="../app/AppLayouts/Profile/views/AdvancedView.qml" line="603"/>
         <source>disable</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Profile/views/AdvancedView.qml" line="587"/>
+        <location filename="../app/AppLayouts/Profile/views/AdvancedView.qml" line="604"/>
         <source>enable</source>
         <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>AllowNotificationsView</name>
+    <message>
+        <location filename="../app/AppLayouts/Onboarding/views/AllowNotificationsView.qml" line="38"/>
+        <source>Allow notifications</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Onboarding/views/AllowNotificationsView.qml" line="49"/>
+        <source>Status will notify you about new messages. You can
+edit your notification preferences later in settings.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Onboarding/views/AllowNotificationsView.qml" line="62"/>
+        <source>Ok, got it</source>
+        <translation type="unfinished">Ok, got it</translation>
     </message>
 </context>
 <context>
@@ -5647,7 +5715,27 @@ Assets won’t be sent yet.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/mainui/AppMain.qml" line="879"/>
+        <location filename="../app/mainui/AppMain.qml" line="656"/>
+        <source>Can not connect to mailserver</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/mainui/AppMain.qml" line="667"/>
+        <source>The mailserver you&apos;re connecting to is unavailable.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/mainui/AppMain.qml" line="675"/>
+        <source>Pick another</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/mainui/AppMain.qml" line="682"/>
+        <source>Retry</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/mainui/AppMain.qml" line="911"/>
         <source>Where do you want to go?</source>
         <translation type="unfinished">Where do you want to go?</translation>
     </message>
@@ -5668,9 +5756,96 @@ Assets won’t be sent yet.</translation>
 <context>
     <name>AppearanceView</name>
     <message>
-        <location filename="../app/AppLayouts/Profile/views/AppearanceView.qml" line="204"/>
+        <location filename="../app/AppLayouts/Profile/views/AppearanceView.qml" line="125"/>
+        <source>XS</source>
+        <translation type="unfinished">XS</translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Profile/views/AppearanceView.qml" line="125"/>
+        <source>S</source>
+        <translation type="unfinished">S</translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Profile/views/AppearanceView.qml" line="125"/>
+        <source>M</source>
+        <translation type="unfinished">M</translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Profile/views/AppearanceView.qml" line="125"/>
+        <source>L</source>
+        <translation type="unfinished">L</translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Profile/views/AppearanceView.qml" line="125"/>
+        <source>XL</source>
+        <translation type="unfinished">XL</translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Profile/views/AppearanceView.qml" line="125"/>
+        <source>XXL</source>
+        <translation type="unfinished">XXL</translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Profile/views/AppearanceView.qml" line="141"/>
         <source>Change Zoom (requires restart)</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Profile/views/AppearanceView.qml" line="164"/>
+        <source>50%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Profile/views/AppearanceView.qml" line="164"/>
+        <source>100%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Profile/views/AppearanceView.qml" line="164"/>
+        <source>150%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Profile/views/AppearanceView.qml" line="164"/>
+        <source>200%</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>BackupSeedModal</name>
+    <message>
+        <location filename="../app/AppLayouts/Profile/popups/BackupSeedModal.qml" line="21"/>
+        <source>Back up your seed phrase</source>
+        <translation type="unfinished">Back up your seed phrase</translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Profile/popups/BackupSeedModal.qml" line="56"/>
+        <location filename="../app/AppLayouts/Profile/popups/BackupSeedModal.qml" line="64"/>
+        <source>Confirm Seed Phrase</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Profile/popups/BackupSeedModal.qml" line="59"/>
+        <source>Continue</source>
+        <translation type="unfinished">Continue</translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Profile/popups/BackupSeedModal.qml" line="61"/>
+        <source>Complete &amp; Delete My Seed Phrase</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>BackupSeedStepBase</name>
+    <message>
+        <location filename="../app/AppLayouts/Profile/popups/backupseed/BackupSeedStepBase.qml" line="34"/>
+        <source>Enter word</source>
+        <translation type="unfinished">Enter word</translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Profile/popups/backupseed/BackupSeedStepBase.qml" line="38"/>
+        <source>Wrong word</source>
+        <translation type="unfinished">Wrong word</translation>
     </message>
 </context>
 <context>
@@ -5696,6 +5871,21 @@ Assets won’t be sent yet.</translation>
     </message>
 </context>
 <context>
+    <name>BrowserLayout</name>
+    <message>
+        <location filename="../app/AppLayouts/Browser/BrowserLayout.qml" line="199"/>
+        <location filename="../app/AppLayouts/Browser/BrowserLayout.qml" line="199"/>
+        <source>Transaction pending...</source>
+        <translation type="unfinished">Transaction pending...</translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Browser/BrowserLayout.qml" line="200"/>
+        <location filename="../app/AppLayouts/Browser/BrowserLayout.qml" line="200"/>
+        <source>View on etherscan</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>BrowserView</name>
     <message>
         <location filename="../app/AppLayouts/Profile/views/BrowserView.qml" line="78"/>
@@ -5703,8 +5893,18 @@ Assets won’t be sent yet.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Profile/views/BrowserView.qml" line="95"/>
+        <location filename="../app/AppLayouts/Profile/views/BrowserView.qml" line="97"/>
         <source>Connected DApps</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Profile/views/BrowserView.qml" line="123"/>
+        <source>No connected dApps</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Profile/views/BrowserView.qml" line="133"/>
+        <source>Connecting a dApp grants it permission to view your address and balances, and to send you transaction requests</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5755,7 +5955,7 @@ Assets won’t be sent yet.</translation>
 <context>
     <name>ChatContentView</name>
     <message>
-        <location filename="../app/AppLayouts/Chat/views/ChatContentView.qml" line="329"/>
+        <location filename="../app/AppLayouts/Chat/views/ChatContentView.qml" line="349"/>
         <source>Blocked</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5763,62 +5963,67 @@ Assets won’t be sent yet.</translation>
 <context>
     <name>ChatContextMenuView</name>
     <message>
-        <location filename="../app/AppLayouts/Chat/views/ChatContextMenuView.qml" line="57"/>
+        <location filename="../app/AppLayouts/Chat/views/ChatContextMenuView.qml" line="59"/>
         <source>View Members</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Chat/views/ChatContextMenuView.qml" line="106"/>
+        <location filename="../app/AppLayouts/Chat/views/ChatContextMenuView.qml" line="78"/>
+        <source>Add / remove from group</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Chat/views/ChatContextMenuView.qml" line="102"/>
         <source>Edit name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Chat/views/ChatContextMenuView.qml" line="231"/>
+        <location filename="../app/AppLayouts/Chat/views/ChatContextMenuView.qml" line="227"/>
         <source>Download</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Chat/views/ChatContextMenuView.qml" line="245"/>
+        <location filename="../app/AppLayouts/Chat/views/ChatContextMenuView.qml" line="241"/>
         <source>Delete Channel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Chat/views/ChatContextMenuView.qml" line="248"/>
+        <location filename="../app/AppLayouts/Chat/views/ChatContextMenuView.qml" line="244"/>
         <source>Leave group</source>
         <translation type="unfinished">Leave group</translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Chat/views/ChatContextMenuView.qml" line="274"/>
+        <location filename="../app/AppLayouts/Chat/views/ChatContextMenuView.qml" line="270"/>
         <source>Save</source>
         <translation type="unfinished">Save</translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Chat/views/ChatContextMenuView.qml" line="276"/>
+        <location filename="../app/AppLayouts/Chat/views/ChatContextMenuView.qml" line="272"/>
         <source>Download messages</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Chat/views/ChatContextMenuView.qml" line="289"/>
+        <location filename="../app/AppLayouts/Chat/views/ChatContextMenuView.qml" line="285"/>
         <source>Delete #%1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Chat/views/ChatContextMenuView.qml" line="295"/>
+        <location filename="../app/AppLayouts/Chat/views/ChatContextMenuView.qml" line="291"/>
         <source>Delete</source>
         <translation type="unfinished">Delete</translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Chat/views/ChatContextMenuView.qml" line="296"/>
+        <location filename="../app/AppLayouts/Chat/views/ChatContextMenuView.qml" line="292"/>
         <source>Are you sure you want to delete #%1 channel?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Chat/views/ChatContextMenuView.qml" line="298"/>
+        <location filename="../app/AppLayouts/Chat/views/ChatContextMenuView.qml" line="294"/>
         <source>Are you sure you want to delete this chat?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Chat/views/ChatContextMenuView.qml" line="299"/>
+        <location filename="../app/AppLayouts/Chat/views/ChatContextMenuView.qml" line="295"/>
         <source>Are you sure you want to leave this chat?</source>
         <translation type="unfinished">Are you sure you want to leave this chat?</translation>
     </message>
@@ -5826,7 +6031,7 @@ Assets won’t be sent yet.</translation>
 <context>
     <name>ChatView</name>
     <message>
-        <location filename="../app/AppLayouts/Chat/views/ChatView.qml" line="102"/>
+        <location filename="../app/AppLayouts/Chat/views/ChatView.qml" line="103"/>
         <source>Members</source>
         <translation type="unfinished">Members</translation>
     </message>
@@ -5905,6 +6110,29 @@ Assets won’t be sent yet.</translation>
     </message>
 </context>
 <context>
+    <name>CommunitiesListPanel</name>
+    <message>
+        <location filename="../app/AppLayouts/Profile/panels/CommunitiesListPanel.qml" line="77"/>
+        <source>Leave %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Profile/panels/CommunitiesListPanel.qml" line="88"/>
+        <source>Are you sure you want to leave? Once you leave, you will have to request to rejoin if you change your mind.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Profile/panels/CommunitiesListPanel.qml" line="96"/>
+        <source>Cancel</source>
+        <translation type="unfinished">Cancel</translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Profile/panels/CommunitiesListPanel.qml" line="101"/>
+        <source>Leave community</source>
+        <translation type="unfinished">Leave community</translation>
+    </message>
+</context>
+<context>
     <name>CommunitiesPopup</name>
     <message>
         <source>Communities</source>
@@ -5929,6 +6157,71 @@ Assets won’t be sent yet.</translation>
     </message>
 </context>
 <context>
+    <name>CommunitiesPortalLayout</name>
+    <message>
+        <location filename="../app/AppLayouts/CommunitiesPortal/CommunitiesPortalLayout.qml" line="45"/>
+        <source>Find community</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/CommunitiesPortal/CommunitiesPortalLayout.qml" line="61"/>
+        <source>Search</source>
+        <translation type="unfinished">Search</translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/CommunitiesPortal/CommunitiesPortalLayout.qml" line="77"/>
+        <source>Import Community</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/CommunitiesPortal/CommunitiesPortalLayout.qml" line="83"/>
+        <source>Creat New Community</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/CommunitiesPortal/CommunitiesPortalLayout.qml" line="123"/>
+        <source>Featured</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/CommunitiesPortal/CommunitiesPortalLayout.qml" line="158"/>
+        <source>Popular</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>CommunitiesView</name>
+    <message>
+        <location filename="../app/AppLayouts/Profile/views/CommunitiesView.qml" line="30"/>
+        <source>Import community</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Profile/views/CommunitiesView.qml" line="51"/>
+        <source>Communities you&apos;ve joined</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>CommunityBannerPicker</name>
+    <message>
+        <location filename="../app/AppLayouts/Chat/controls/community/CommunityBannerPicker.qml" line="37"/>
+        <location filename="../app/AppLayouts/Chat/controls/community/CommunityBannerPicker.qml" line="51"/>
+        <source>Community banner</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Chat/controls/community/CommunityBannerPicker.qml" line="50"/>
+        <source>Choose an image for banner</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Chat/controls/community/CommunityBannerPicker.qml" line="52"/>
+        <source>Make this my Community banner</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>CommunityChannelsAndCategoriesBannerPanel</name>
     <message>
         <location filename="../app/AppLayouts/Chat/panels/communities/CommunityChannelsAndCategoriesBannerPanel.qml" line="70"/>
@@ -5938,6 +6231,65 @@ Assets won’t be sent yet.</translation>
     <message>
         <location filename="../app/AppLayouts/Chat/panels/communities/CommunityChannelsAndCategoriesBannerPanel.qml" line="94"/>
         <source>Add categories</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>CommunityColorPicker</name>
+    <message>
+        <location filename="../app/AppLayouts/Chat/controls/community/CommunityColorPicker.qml" line="20"/>
+        <source>Community colour</source>
+        <translation type="unfinished">Community colour</translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Chat/controls/community/CommunityColorPicker.qml" line="47"/>
+        <source>Community Colour</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Chat/controls/community/CommunityColorPicker.qml" line="48"/>
+        <source>White text should be legable on top of this colour</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Chat/controls/community/CommunityColorPicker.qml" line="49"/>
+        <source>Select Community Colour</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>CommunityColumnView</name>
+    <message>
+        <location filename="../app/AppLayouts/Chat/views/CommunityColumnView.qml" line="135"/>
+        <source>Create channel</source>
+        <translation type="unfinished">Create channel</translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Chat/views/CommunityColumnView.qml" line="142"/>
+        <source>Create category</source>
+        <translation type="unfinished">Create category</translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Chat/views/CommunityColumnView.qml" line="151"/>
+        <source>Invite people</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>CommunityDescriptionInput</name>
+    <message>
+        <location filename="../app/AppLayouts/Chat/controls/community/CommunityDescriptionInput.qml" line="15"/>
+        <source>Description</source>
+        <translation type="unfinished">Description</translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Chat/controls/community/CommunityDescriptionInput.qml" line="18"/>
+        <source>What your community is about</source>
+        <translation type="unfinished">What your community is about</translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Chat/controls/community/CommunityDescriptionInput.qml" line="26"/>
+        <source>community description</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5960,39 +6312,24 @@ Assets won’t be sent yet.</translation>
 <context>
     <name>CommunityEditSettingsPanel</name>
     <message>
-        <location filename="../app/AppLayouts/Chat/panels/communities/CommunityEditSettingsPanel.qml" line="49"/>
-        <source>Community name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../app/AppLayouts/Chat/panels/communities/CommunityEditSettingsPanel.qml" line="51"/>
         <source>A catchy name</source>
-        <translation type="unfinished">A catchy name</translation>
+        <translation type="obsolete">A catchy name</translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Chat/panels/communities/CommunityEditSettingsPanel.qml" line="56"/>
         <source>community name</source>
-        <translation type="unfinished">community name</translation>
+        <translation type="obsolete">community name</translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Chat/panels/communities/CommunityEditSettingsPanel.qml" line="71"/>
         <source>Description</source>
-        <translation type="unfinished">Description</translation>
+        <translation type="obsolete">Description</translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Chat/panels/communities/CommunityEditSettingsPanel.qml" line="74"/>
         <source>What your community is about</source>
-        <translation type="unfinished">What your community is about</translation>
+        <translation type="obsolete">What your community is about</translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Chat/panels/communities/CommunityEditSettingsPanel.qml" line="83"/>
-        <source>community description</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../app/AppLayouts/Chat/panels/communities/CommunityEditSettingsPanel.qml" line="226"/>
         <source>Pick a color</source>
-        <translation type="unfinished">Pick a color</translation>
+        <translation type="obsolete">Pick a color</translation>
     </message>
 </context>
 <context>
@@ -6004,6 +6341,70 @@ Assets won’t be sent yet.</translation>
     <message>
         <source>%1 members</source>
         <translation type="obsolete">%1 members</translation>
+    </message>
+</context>
+<context>
+    <name>CommunityIntroDialog</name>
+    <message>
+        <location filename="../imports/shared/popups/CommunityIntroDialog.qml" line="28"/>
+        <location filename="../imports/shared/popups/CommunityIntroDialog.qml" line="28"/>
+        <source>Welcome to %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../imports/shared/popups/CommunityIntroDialog.qml" line="32"/>
+        <location filename="../imports/shared/popups/CommunityIntroDialog.qml" line="32"/>
+        <source>Join %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../imports/shared/popups/CommunityIntroDialog.qml" line="73"/>
+        <location filename="../imports/shared/popups/CommunityIntroDialog.qml" line="73"/>
+        <source>Community &lt;b&gt;%1&lt;/b&gt; has no intro message...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../imports/shared/popups/CommunityIntroDialog.qml" line="83"/>
+        <location filename="../imports/shared/popups/CommunityIntroDialog.qml" line="83"/>
+        <source>I agree with the above</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>CommunityIntroMessageInput</name>
+    <message>
+        <location filename="../app/AppLayouts/Chat/controls/community/CommunityIntroMessageInput.qml" line="15"/>
+        <source>Community introduction and rules</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Chat/controls/community/CommunityIntroMessageInput.qml" line="21"/>
+        <source>What new members will read before joining (eg. community rules, welcome message, etc.). Members will need to tick a check box agreeing to these rules before they are allowed to join your community.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Chat/controls/community/CommunityIntroMessageInput.qml" line="30"/>
+        <source>community intro message</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>CommunityLogoPicker</name>
+    <message>
+        <location filename="../app/AppLayouts/Chat/controls/community/CommunityLogoPicker.qml" line="37"/>
+        <location filename="../app/AppLayouts/Chat/controls/community/CommunityLogoPicker.qml" line="50"/>
+        <source>Community logo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Chat/controls/community/CommunityLogoPicker.qml" line="49"/>
+        <source>Choose an image as logo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Chat/controls/community/CommunityLogoPicker.qml" line="51"/>
+        <source>Make this my Community logo</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -6030,21 +6431,75 @@ Assets won’t be sent yet.</translation>
     </message>
 </context>
 <context>
+    <name>CommunityNameInput</name>
+    <message>
+        <location filename="../app/AppLayouts/Chat/controls/community/CommunityNameInput.qml" line="15"/>
+        <source>Community name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Chat/controls/community/CommunityNameInput.qml" line="17"/>
+        <source>A catchy name</source>
+        <translation type="unfinished">A catchy name</translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Chat/controls/community/CommunityNameInput.qml" line="22"/>
+        <source>community name</source>
+        <translation type="unfinished">community name</translation>
+    </message>
+</context>
+<context>
+    <name>CommunityOptions</name>
+    <message>
+        <location filename="../app/AppLayouts/Chat/controls/community/CommunityOptions.qml" line="31"/>
+        <source>Community history service</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Chat/controls/community/CommunityOptions.qml" line="48"/>
+        <source>Request to join required</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Chat/controls/community/CommunityOptions.qml" line="65"/>
+        <source>Any member can pin a message</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>CommunityOutroMessageInput</name>
+    <message>
+        <location filename="../app/AppLayouts/Chat/controls/community/CommunityOutroMessageInput.qml" line="15"/>
+        <source>Leaving community message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Chat/controls/community/CommunityOutroMessageInput.qml" line="18"/>
+        <source>The message a member will see when they leave your community</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Chat/controls/community/CommunityOutroMessageInput.qml" line="25"/>
+        <source>community intro message</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>CommunityOverviewSettingsPanel</name>
     <message>
-        <location filename="../app/AppLayouts/Chat/panels/communities/CommunityOverviewSettingsPanel.qml" line="27"/>
-        <location filename="../app/AppLayouts/Chat/panels/communities/CommunityOverviewSettingsPanel.qml" line="119"/>
+        <location filename="../app/AppLayouts/Chat/panels/communities/CommunityOverviewSettingsPanel.qml" line="36"/>
+        <location filename="../app/AppLayouts/Chat/panels/communities/CommunityOverviewSettingsPanel.qml" line="128"/>
         <source>Overview</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Chat/panels/communities/CommunityOverviewSettingsPanel.qml" line="79"/>
-        <location filename="../app/AppLayouts/Chat/panels/communities/CommunityOverviewSettingsPanel.qml" line="120"/>
+        <location filename="../app/AppLayouts/Chat/panels/communities/CommunityOverviewSettingsPanel.qml" line="88"/>
+        <location filename="../app/AppLayouts/Chat/panels/communities/CommunityOverviewSettingsPanel.qml" line="129"/>
         <source>Edit Community</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Chat/panels/communities/CommunityOverviewSettingsPanel.qml" line="103"/>
+        <location filename="../app/AppLayouts/Chat/panels/communities/CommunityOverviewSettingsPanel.qml" line="112"/>
         <source>This node is the Community Owner Node. For your Community to function correctly try to keep this computer with Status running and onlinie as much as possible.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6063,12 +6518,12 @@ Assets won’t be sent yet.</translation>
 <context>
     <name>CommunityProfilePopupInviteFriendsPanel</name>
     <message>
-        <location filename="../app/AppLayouts/Chat/panels/communities/CommunityProfilePopupInviteFriendsPanel.qml" line="41"/>
+        <location filename="../app/AppLayouts/Chat/panels/communities/CommunityProfilePopupInviteFriendsPanel.qml" line="30"/>
         <source>Copied!</source>
         <translation type="unfinished">Copied!</translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Chat/panels/communities/CommunityProfilePopupInviteFriendsPanel.qml" line="57"/>
+        <location filename="../app/AppLayouts/Chat/panels/communities/CommunityProfilePopupInviteFriendsPanel.qml" line="46"/>
         <source>Contacts</source>
         <translation type="unfinished">Contacts</translation>
     </message>
@@ -6084,7 +6539,7 @@ Assets won’t be sent yet.</translation>
 <context>
     <name>CommunityProfilePopupOverviewPanel</name>
     <message>
-        <location filename="../app/AppLayouts/Chat/panels/communities/CommunityProfilePopupOverviewPanel.qml" line="54"/>
+        <location filename="../app/AppLayouts/Chat/panels/communities/CommunityProfilePopupOverviewPanel.qml" line="53"/>
         <source>Copied!</source>
         <translation type="unfinished">Copied!</translation>
     </message>
@@ -6103,7 +6558,7 @@ Assets won’t be sent yet.</translation>
     </message>
     <message>
         <location filename="../app/AppLayouts/Chat/views/CommunitySettingsView.qml" line="32"/>
-        <location filename="../app/AppLayouts/Chat/views/CommunitySettingsView.qml" line="153"/>
+        <location filename="../app/AppLayouts/Chat/views/CommunitySettingsView.qml" line="165"/>
         <source>Notifications</source>
         <translation type="unfinished">Notifications</translation>
     </message>
@@ -6123,8 +6578,13 @@ Assets won’t be sent yet.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Chat/views/CommunitySettingsView.qml" line="159"/>
+        <location filename="../app/AppLayouts/Chat/views/CommunitySettingsView.qml" line="171"/>
         <source>Enabled</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Chat/views/CommunitySettingsView.qml" line="198"/>
+        <source>Error editing the community</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6202,6 +6662,53 @@ Assets won’t be sent yet.</translation>
     </message>
 </context>
 <context>
+    <name>ConfirmSeedPhrasePanel</name>
+    <message>
+        <location filename="../app/AppLayouts/Profile/popups/backupseed/ConfirmSeedPhrasePanel.qml" line="14"/>
+        <source>Write down your 12-word seed phrase to keep offline</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Profile/popups/backupseed/ConfirmSeedPhrasePanel.qml" line="53"/>
+        <source>Reveal seed phrase</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Profile/popups/backupseed/ConfirmSeedPhrasePanel.qml" line="74"/>
+        <source>The next screen contains your seed phrase.
+&lt;b&gt;Anyone&lt;/b&gt; who sees it can use it to access to your funds.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ConfirmStoringSeedPhrasePanel</name>
+    <message>
+        <location filename="../app/AppLayouts/Profile/popups/backupseed/ConfirmStoringSeedPhrasePanel.qml" line="7"/>
+        <source>Complete back up</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Profile/popups/backupseed/ConfirmStoringSeedPhrasePanel.qml" line="20"/>
+        <source>Store Your Phrase Offline and Complete Your Back Up</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Profile/popups/backupseed/ConfirmStoringSeedPhrasePanel.qml" line="32"/>
+        <source>By completing this process, you will remove your seed phrase from this application’s storage. This makes your funds more secure.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Profile/popups/backupseed/ConfirmStoringSeedPhrasePanel.qml" line="44"/>
+        <source>You will remain logged in, and your seed phrase will be entirely in your hands.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Profile/popups/backupseed/ConfirmStoringSeedPhrasePanel.qml" line="52"/>
+        <source>I aknowledge that Status will not be able to show me my seed phrase again.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ConfirmationDialog</name>
     <message>
         <location filename="../imports/shared/popups/ConfirmationDialog.qml" line="20"/>
@@ -6243,37 +6750,37 @@ Assets won’t be sent yet.</translation>
 <context>
     <name>Constants</name>
     <message>
-        <location filename="../imports/utils/Constants.qml" line="116"/>
+        <location filename="../imports/utils/Constants.qml" line="119"/>
         <source>Username must be at least 5 characters</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../imports/utils/Constants.qml" line="120"/>
+        <location filename="../imports/utils/Constants.qml" line="123"/>
         <source>Only letters, numbers, underscores and hyphens allowed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../imports/utils/Constants.qml" line="126"/>
+        <location filename="../imports/utils/Constants.qml" line="129"/>
         <source>24 character username limit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../imports/utils/Constants.qml" line="131"/>
+        <location filename="../imports/utils/Constants.qml" line="134"/>
         <source>Usernames ending with &apos;-eth&apos; are not allowed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../imports/utils/Constants.qml" line="136"/>
+        <location filename="../imports/utils/Constants.qml" line="139"/>
         <source>Usernames ending with &apos;_eth&apos; are not allowed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../imports/utils/Constants.qml" line="141"/>
+        <location filename="../imports/utils/Constants.qml" line="144"/>
         <source>Usernames ending with &apos;.eth&apos; are not allowed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../imports/utils/Constants.qml" line="146"/>
+        <location filename="../imports/utils/Constants.qml" line="149"/>
         <source>Sorry, the name you have chosen is not allowed, try picking another username</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6299,12 +6806,12 @@ Assets won’t be sent yet.</translation>
 <context>
     <name>ContactsColumnView</name>
     <message>
-        <location filename="../app/AppLayouts/Chat/views/ContactsColumnView.qml" line="114"/>
+        <location filename="../app/AppLayouts/Chat/views/ContactsColumnView.qml" line="112"/>
         <source>Public chats &amp; communities</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Chat/views/ContactsColumnView.qml" line="129"/>
+        <location filename="../app/AppLayouts/Chat/views/ContactsColumnView.qml" line="127"/>
         <source>Start chat</source>
         <translation type="unfinished">Start chat</translation>
     </message>
@@ -6312,8 +6819,8 @@ Assets won’t be sent yet.</translation>
 <context>
     <name>ContactsListAndSearch</name>
     <message>
-        <location filename="../imports/shared/controls/ContactsListAndSearch.qml" line="41"/>
-        <location filename="../imports/shared/controls/ContactsListAndSearch.qml" line="41"/>
+        <location filename="../imports/shared/controls/ContactsListAndSearch.qml" line="42"/>
+        <location filename="../imports/shared/controls/ContactsListAndSearch.qml" line="42"/>
         <source>Enter a valid chat key or ENS username</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6375,14 +6882,72 @@ Assets won’t be sent yet.</translation>
     </message>
 </context>
 <context>
+    <name>Controls</name>
+    <message>
+        <location filename="../StatusQ/sandbox/controls/Controls.qml" line="194"/>
+        <source>XS</source>
+        <translation type="unfinished">XS</translation>
+    </message>
+    <message>
+        <location filename="../StatusQ/sandbox/controls/Controls.qml" line="194"/>
+        <source>S</source>
+        <translation type="unfinished">S</translation>
+    </message>
+    <message>
+        <location filename="../StatusQ/sandbox/controls/Controls.qml" line="194"/>
+        <source>M</source>
+        <translation type="unfinished">M</translation>
+    </message>
+    <message>
+        <location filename="../StatusQ/sandbox/controls/Controls.qml" line="194"/>
+        <source>L</source>
+        <translation type="unfinished">L</translation>
+    </message>
+    <message>
+        <location filename="../StatusQ/sandbox/controls/Controls.qml" line="194"/>
+        <source>XL</source>
+        <translation type="unfinished">XL</translation>
+    </message>
+    <message>
+        <location filename="../StatusQ/sandbox/controls/Controls.qml" line="194"/>
+        <source>XXL</source>
+        <translation type="unfinished">XXL</translation>
+    </message>
+    <message>
+        <location filename="../StatusQ/sandbox/controls/Controls.qml" line="199"/>
+        <source>50%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../StatusQ/sandbox/controls/Controls.qml" line="199"/>
+        <source>100%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../StatusQ/sandbox/controls/Controls.qml" line="199"/>
+        <source>150%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../StatusQ/sandbox/controls/Controls.qml" line="199"/>
+        <source>200%</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>CreateCategoryPopup</name>
     <message>
-        <location filename="../app/AppLayouts/Chat/popups/community/CreateCategoryPopup.qml" line="58"/>
+        <location filename="../app/AppLayouts/Chat/popups/community/CreateCategoryPopup.qml" line="62"/>
         <source>Category title</source>
         <translation type="unfinished">Category title</translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Chat/popups/community/CreateCategoryPopup.qml" line="61"/>
+        <location filename="../app/AppLayouts/Chat/popups/community/CreateCategoryPopup.qml" line="64"/>
+        <source>Name the category</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Chat/popups/community/CreateCategoryPopup.qml" line="67"/>
         <source>category name</source>
         <translation type="unfinished">category name</translation>
     </message>
@@ -6390,37 +6955,37 @@ Assets won’t be sent yet.</translation>
 <context>
     <name>CreateChannelPopup</name>
     <message>
-        <location filename="../app/AppLayouts/Chat/popups/community/CreateChannelPopup.qml" line="108"/>
+        <location filename="../app/AppLayouts/Chat/popups/community/CreateChannelPopup.qml" line="113"/>
         <source>Channel name</source>
         <translation type="unfinished">Channel name</translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Chat/popups/community/CreateChannelPopup.qml" line="110"/>
+        <location filename="../app/AppLayouts/Chat/popups/community/CreateChannelPopup.qml" line="115"/>
         <source>Name the channel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Chat/popups/community/CreateChannelPopup.qml" line="138"/>
+        <location filename="../app/AppLayouts/Chat/popups/community/CreateChannelPopup.qml" line="143"/>
         <source>channel name</source>
         <translation type="unfinished">channel name</translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Chat/popups/community/CreateChannelPopup.qml" line="150"/>
+        <location filename="../app/AppLayouts/Chat/popups/community/CreateChannelPopup.qml" line="155"/>
         <source>Channel colour</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Chat/popups/community/CreateChannelPopup.qml" line="210"/>
+        <location filename="../app/AppLayouts/Chat/popups/community/CreateChannelPopup.qml" line="220"/>
         <source>Description</source>
         <translation type="unfinished">Description</translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Chat/popups/community/CreateChannelPopup.qml" line="213"/>
+        <location filename="../app/AppLayouts/Chat/popups/community/CreateChannelPopup.qml" line="223"/>
         <source>Describe the channel</source>
         <translation type="unfinished">Describe the channel</translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Chat/popups/community/CreateChannelPopup.qml" line="219"/>
+        <location filename="../app/AppLayouts/Chat/popups/community/CreateChannelPopup.qml" line="229"/>
         <source>channel description</source>
         <translation type="unfinished">channel description</translation>
     </message>
@@ -6429,24 +6994,24 @@ Assets won’t be sent yet.</translation>
     <name>CreateChatView</name>
     <message>
         <location filename="../StatusQ/sandbox/demoapp/CreateChatView.qml" line="30"/>
-        <location filename="../app/AppLayouts/Chat/views/CreateChatView.qml" line="108"/>
+        <location filename="../app/AppLayouts/Chat/views/CreateChatView.qml" line="109"/>
         <source>To: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../StatusQ/sandbox/demoapp/CreateChatView.qml" line="31"/>
-        <location filename="../app/AppLayouts/Chat/views/CreateChatView.qml" line="109"/>
+        <location filename="../app/AppLayouts/Chat/views/CreateChatView.qml" line="110"/>
         <source>USER LIMIT REACHED</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../StatusQ/sandbox/demoapp/CreateChatView.qml" line="32"/>
-        <location filename="../app/AppLayouts/Chat/views/CreateChatView.qml" line="107"/>
+        <location filename="../app/AppLayouts/Chat/views/CreateChatView.qml" line="108"/>
         <source>Contacts</source>
         <translation type="unfinished">Contacts</translation>
     </message>
     <message>
-        <location filename="../StatusQ/sandbox/demoapp/CreateChatView.qml" line="61"/>
+        <location filename="../StatusQ/sandbox/demoapp/CreateChatView.qml" line="94"/>
         <source>You can only send direct messages to your Contacts. 
 
 
@@ -6456,7 +7021,7 @@ chat with them once they have accepted your contact request.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Chat/views/CreateChatView.qml" line="179"/>
+        <location filename="../app/AppLayouts/Chat/views/CreateChatView.qml" line="189"/>
         <source>You can only send direct messages to your Contacts.
 
 
@@ -6488,59 +7053,44 @@ chat with them once they have accepted your contact request.</source>
         <translation type="obsolete">Please choose a color</translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Chat/popups/community/CreateCommunityPopup.qml" line="53"/>
-        <source>Edit Community</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../app/AppLayouts/Chat/popups/community/CreateCommunityPopup.qml" line="54"/>
+        <location filename="../app/AppLayouts/Chat/popups/community/CreateCommunityPopup.qml" line="34"/>
         <source>Create New Community</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Chat/popups/community/CreateCommunityPopup.qml" line="93"/>
+        <location filename="../app/AppLayouts/Chat/popups/community/CreateCommunityPopup.qml" line="38"/>
+        <source>Next</source>
+        <translation type="unfinished">Next</translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Chat/popups/community/CreateCommunityPopup.qml" line="45"/>
+        <source>Create Community</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Chat/popups/community/CreateCommunityPopup.qml" line="183"/>
+        <source>Error creating the community</source>
+        <translation type="unfinished">Error creating the community</translation>
+    </message>
+    <message>
         <source>Name your community</source>
-        <translation type="unfinished">Name your community</translation>
+        <translation type="obsolete">Name your community</translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Chat/popups/community/CreateCommunityPopup.qml" line="95"/>
         <source>A catchy name</source>
-        <translation type="unfinished">A catchy name</translation>
+        <translation type="obsolete">A catchy name</translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Chat/popups/community/CreateCommunityPopup.qml" line="103"/>
-        <source>This is not a valid community name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../app/AppLayouts/Chat/popups/community/CreateCommunityPopup.qml" line="111"/>
         <source>Give it a short description</source>
-        <translation type="unfinished">Give it a short description</translation>
+        <translation type="obsolete">Give it a short description</translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Chat/popups/community/CreateCommunityPopup.qml" line="114"/>
         <source>What your community is about</source>
-        <translation type="unfinished">What your community is about</translation>
+        <translation type="obsolete">What your community is about</translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Chat/popups/community/CreateCommunityPopup.qml" line="244"/>
         <source>Community colour</source>
-        <translation type="unfinished">Community colour</translation>
-    </message>
-    <message>
-        <location filename="../app/AppLayouts/Chat/popups/community/CreateCommunityPopup.qml" line="268"/>
-        <source>Pick a colour</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../app/AppLayouts/Chat/popups/community/CreateCommunityPopup.qml" line="304"/>
-        <source>Community history service</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../app/AppLayouts/Chat/popups/community/CreateCommunityPopup.qml" line="321"/>
-        <source>Request to join required</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Community colour</translation>
     </message>
 </context>
 <context>
@@ -6617,22 +7167,22 @@ chat with them once they have accepted your contact request.</source>
 <context>
     <name>DemoApp</name>
     <message>
-        <location filename="../StatusQ/sandbox/DemoApp.qml" line="152"/>
+        <location filename="../StatusQ/sandbox/DemoApp.qml" line="158"/>
         <source>Invite People</source>
         <translation type="unfinished">Invite people</translation>
     </message>
     <message>
-        <location filename="../StatusQ/sandbox/DemoApp.qml" line="157"/>
+        <location filename="../StatusQ/sandbox/DemoApp.qml" line="163"/>
         <source>View Community</source>
         <translation type="unfinished">View Community</translation>
     </message>
     <message>
-        <location filename="../StatusQ/sandbox/DemoApp.qml" line="162"/>
+        <location filename="../StatusQ/sandbox/DemoApp.qml" line="168"/>
         <source>Edit Community</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../StatusQ/sandbox/DemoApp.qml" line="170"/>
+        <location filename="../StatusQ/sandbox/DemoApp.qml" line="176"/>
         <source>Leave Community</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6640,33 +7190,49 @@ chat with them once they have accepted your contact request.</source>
 <context>
     <name>DerivationPathsPanel</name>
     <message>
-        <location filename="../app/AppLayouts/Wallet/panels/DerivationPathsPanel.qml" line="20"/>
+        <location filename="../app/AppLayouts/Wallet/panels/DerivationPathsPanel.qml" line="43"/>
         <source>Derivation Path</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Wallet/panels/DerivationPathsPanel.qml" line="50"/>
+        <source>Reset</source>
+        <translation type="unfinished">Reset</translation>
     </message>
 </context>
 <context>
     <name>DerivedAddressesPanel</name>
     <message>
-        <location filename="../app/AppLayouts/Wallet/panels/DerivedAddressesPanel.qml" line="23"/>
-        <location filename="../app/AppLayouts/Wallet/panels/DerivedAddressesPanel.qml" line="78"/>
+        <location filename="../app/AppLayouts/Wallet/panels/DerivedAddressesPanel.qml" line="26"/>
         <source>No activity</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../app/AppLayouts/Wallet/panels/DerivedAddressesPanel.qml" line="31"/>
+        <source>Pending</source>
+        <translation type="unfinished">Pending</translation>
+    </message>
+    <message>
         <location filename="../app/AppLayouts/Wallet/panels/DerivedAddressesPanel.qml" line="38"/>
-        <location filename="../app/AppLayouts/Wallet/panels/DerivedAddressesPanel.qml" line="125"/>
+        <source>Invalid path</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Wallet/panels/DerivedAddressesPanel.qml" line="56"/>
+        <location filename="../app/AppLayouts/Wallet/panels/DerivedAddressesPanel.qml" line="97"/>
+        <location filename="../app/AppLayouts/Wallet/panels/DerivedAddressesPanel.qml" line="160"/>
         <source>Has Activity</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Wallet/panels/DerivedAddressesPanel.qml" line="38"/>
-        <location filename="../app/AppLayouts/Wallet/panels/DerivedAddressesPanel.qml" line="125"/>
+        <location filename="../app/AppLayouts/Wallet/panels/DerivedAddressesPanel.qml" line="56"/>
+        <location filename="../app/AppLayouts/Wallet/panels/DerivedAddressesPanel.qml" line="97"/>
+        <location filename="../app/AppLayouts/Wallet/panels/DerivedAddressesPanel.qml" line="160"/>
         <source>No Activity</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Wallet/panels/DerivedAddressesPanel.qml" line="66"/>
+        <location filename="../app/AppLayouts/Wallet/panels/DerivedAddressesPanel.qml" line="84"/>
         <source>Account</source>
         <translation type="unfinished">Account</translation>
     </message>
@@ -6717,15 +7283,6 @@ chat with them once they have accepted your contact request.</source>
     </message>
 </context>
 <context>
-    <name>EditCroppedImagePanel</name>
-    <message>
-        <location filename="../imports/shared/panels/EditCroppedImagePanel.qml" line="153"/>
-        <location filename="../imports/shared/panels/EditCroppedImagePanel.qml" line="153"/>
-        <source>Image files (*.jpg *.jpeg, *.jfif, *.png *.tiff *.heif)</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>EnsDetailsView</name>
     <message>
         <location filename="../app/AppLayouts/Profile/views/EnsDetailsView.qml" line="78"/>
@@ -6744,12 +7301,12 @@ chat with them once they have accepted your contact request.</source>
         <translation type="unfinished">Key</translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Profile/views/EnsDetailsView.qml" line="112"/>
+        <location filename="../app/AppLayouts/Profile/views/EnsDetailsView.qml" line="110"/>
         <source>Connect username with your pubkey</source>
         <translation type="unfinished">Connect username with your pubkey</translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Profile/views/EnsDetailsView.qml" line="156"/>
+        <location filename="../app/AppLayouts/Profile/views/EnsDetailsView.qml" line="154"/>
         <source>Username locked. You won&apos;t be able to release it until %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6770,7 +7327,7 @@ chat with them once they have accepted your contact request.</source>
 <context>
     <name>EnsSearchView</name>
     <message>
-        <location filename="../app/AppLayouts/Profile/views/EnsSearchView.qml" line="69"/>
+        <location filename="../app/AppLayouts/Profile/views/EnsSearchView.qml" line="67"/>
         <source>Connect username with your pubkey</source>
         <translation type="unfinished">Connect username with your pubkey</translation>
     </message>
@@ -6778,9 +7335,24 @@ chat with them once they have accepted your contact request.</source>
 <context>
     <name>EnsTermsAndConditionsView</name>
     <message>
-        <location filename="../app/AppLayouts/Profile/views/EnsTermsAndConditionsView.qml" line="283"/>
-        <location filename="../app/AppLayouts/Profile/views/EnsTermsAndConditionsView.qml" line="301"/>
+        <location filename="../app/AppLayouts/Profile/views/EnsTermsAndConditionsView.qml" line="285"/>
+        <location filename="../app/AppLayouts/Profile/views/EnsTermsAndConditionsView.qml" line="303"/>
         <source>Copied to clipboard!</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>EnsView</name>
+    <message>
+        <location filename="../app/AppLayouts/Profile/views/EnsView.qml" line="327"/>
+        <location filename="../app/AppLayouts/Profile/views/EnsView.qml" line="366"/>
+        <source>Transaction pending...</source>
+        <translation type="unfinished">Transaction pending...</translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Profile/views/EnsView.qml" line="328"/>
+        <location filename="../app/AppLayouts/Profile/views/EnsView.qml" line="367"/>
+        <source>View on etherscan</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6857,27 +7429,52 @@ chat with them once they have accepted your contact request.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../imports/shared/controls/GasSelector.qml" line="187"/>
-        <location filename="../imports/shared/controls/GasSelector.qml" line="187"/>
+        <location filename="../imports/shared/controls/GasSelector.qml" line="174"/>
+        <location filename="../imports/shared/controls/GasSelector.qml" line="174"/>
+        <source>Priority</source>
+        <translation type="unfinished">Priority</translation>
+    </message>
+    <message>
+        <location filename="../imports/shared/controls/GasSelector.qml" line="174"/>
+        <location filename="../imports/shared/controls/GasSelector.qml" line="174"/>
+        <source>Gas Price</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../imports/shared/controls/GasSelector.qml" line="186"/>
+        <location filename="../imports/shared/controls/GasSelector.qml" line="186"/>
         <source>Current base fee: %1 %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../imports/shared/controls/GasSelector.qml" line="220"/>
-        <location filename="../imports/shared/controls/GasSelector.qml" line="220"/>
+        <location filename="../imports/shared/controls/GasSelector.qml" line="221"/>
+        <location filename="../imports/shared/controls/GasSelector.qml" line="221"/>
         <source>Low</source>
         <translation type="unfinished">Low</translation>
     </message>
     <message>
-        <location filename="../imports/shared/controls/GasSelector.qml" line="273"/>
-        <location filename="../imports/shared/controls/GasSelector.qml" line="273"/>
+        <location filename="../imports/shared/controls/GasSelector.qml" line="274"/>
+        <location filename="../imports/shared/controls/GasSelector.qml" line="274"/>
         <source>High</source>
         <translation type="unfinished">High</translation>
     </message>
     <message>
-        <location filename="../imports/shared/controls/GasSelector.qml" line="330"/>
-        <location filename="../imports/shared/controls/GasSelector.qml" line="330"/>
+        <location filename="../imports/shared/controls/GasSelector.qml" line="331"/>
+        <location filename="../imports/shared/controls/GasSelector.qml" line="331"/>
         <source>Per-gas tip limit</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>GroupChatPanel</name>
+    <message>
+        <location filename="../app/AppLayouts/Chat/panels/GroupChatPanel.qml" line="151"/>
+        <source>To: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Chat/panels/GroupChatPanel.qml" line="152"/>
+        <source>USER LIMIT REACHED</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6908,6 +7505,15 @@ chat with them once they have accepted your contact request.</source>
     </message>
 </context>
 <context>
+    <name>ImageCropWorkflow</name>
+    <message>
+        <location filename="../imports/shared/popups/ImageCropWorkflow.qml" line="34"/>
+        <location filename="../imports/shared/popups/ImageCropWorkflow.qml" line="34"/>
+        <source>Supported image formats (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ImageCropperModal</name>
     <message>
         <source>Crop your image (optional)</source>
@@ -6919,15 +7525,38 @@ chat with them once they have accepted your contact request.</source>
     </message>
 </context>
 <context>
-    <name>ImportSeedPhrasePanel</name>
+    <name>ImportPrivateKeyPanel</name>
     <message>
-        <location filename="../app/AppLayouts/Wallet/panels/ImportSeedPhrasePanel.qml" line="254"/>
-        <source>Use 24 word seed phrase</source>
+        <location filename="../app/AppLayouts/Wallet/panels/ImportPrivateKeyPanel.qml" line="93"/>
+        <source>Public address</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Wallet/panels/ImportSeedPhrasePanel.qml" line="255"/>
-        <source>Use 12 word seed phrase</source>
+        <location filename="../app/AppLayouts/Wallet/panels/ImportPrivateKeyPanel.qml" line="107"/>
+        <source>Account already added</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Wallet/panels/ImportPrivateKeyPanel.qml" line="107"/>
+        <source>Pending</source>
+        <translation type="unfinished">Pending</translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Wallet/panels/ImportPrivateKeyPanel.qml" line="108"/>
+        <source>Has Activity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Wallet/panels/ImportPrivateKeyPanel.qml" line="108"/>
+        <source>No Activity</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ImportSeedPhrasePanel</name>
+    <message>
+        <location filename="../app/AppLayouts/Wallet/panels/ImportSeedPhrasePanel.qml" line="261"/>
+        <source>%1 words</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6949,41 +7578,64 @@ chat with them once they have accepted your contact request.</source>
 <context>
     <name>InsertDetailsView</name>
     <message>
-        <location filename="../app/AppLayouts/Onboarding/views/InsertDetailsView.qml" line="54"/>
-        <location filename="../app/AppLayouts/Onboarding/views/InsertDetailsView.qml" line="221"/>
+        <location filename="../app/AppLayouts/Onboarding/views/InsertDetailsView.qml" line="64"/>
+        <location filename="../app/AppLayouts/Onboarding/views/InsertDetailsView.qml" line="249"/>
         <source>Your profile</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Onboarding/views/InsertDetailsView.qml" line="64"/>
-        <location filename="../app/AppLayouts/Onboarding/views/InsertDetailsView.qml" line="225"/>
+        <location filename="../app/AppLayouts/Onboarding/views/InsertDetailsView.qml" line="77"/>
+        <location filename="../app/AppLayouts/Onboarding/views/InsertDetailsView.qml" line="253"/>
         <source>Longer and unusual names are better as they are less likely to be used by someone else.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Onboarding/views/InsertDetailsView.qml" line="115"/>
+        <location filename="../app/AppLayouts/Onboarding/views/InsertDetailsView.qml" line="131"/>
         <source>Display name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Onboarding/views/InsertDetailsView.qml" line="147"/>
+        <location filename="../app/AppLayouts/Onboarding/views/InsertDetailsView.qml" line="164"/>
         <source>Chatkey:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Onboarding/views/InsertDetailsView.qml" line="192"/>
+        <location filename="../app/AppLayouts/Onboarding/views/InsertDetailsView.qml" line="213"/>
         <source>Next</source>
         <translation type="unfinished">Next</translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Onboarding/views/InsertDetailsView.qml" line="252"/>
+        <location filename="../app/AppLayouts/Onboarding/views/InsertDetailsView.qml" line="230"/>
+        <source>Choose an image for profile picture</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Onboarding/views/InsertDetailsView.qml" line="231"/>
+        <source>Profile picture</source>
+        <translation type="unfinished">Profile picture</translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Onboarding/views/InsertDetailsView.qml" line="232"/>
+        <source>Make this my profile picture</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Onboarding/views/InsertDetailsView.qml" line="280"/>
         <source>Your emojihash and identicon ring</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Onboarding/views/InsertDetailsView.qml" line="256"/>
+        <location filename="../app/AppLayouts/Onboarding/views/InsertDetailsView.qml" line="284"/>
         <source>This set of emojis and coloured ring around your avatar are unique and represent your chat key, so your friends can easily distinguish you from potential impersonators.</source>
         <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>InvitationBubbleView</name>
+    <message>
+        <location filename="../imports/shared/views/chat/InvitationBubbleView.qml" line="312"/>
+        <source>Unsupported state</source>
+        <translation type="unfinished">Unsupported state</translation>
     </message>
 </context>
 <context>
@@ -7022,48 +7674,46 @@ chat with them once they have accepted your contact request.</source>
 <context>
     <name>KeysMainView</name>
     <message>
-        <location filename="../app/AppLayouts/Onboarding/views/KeysMainView.qml" line="138"/>
+        <location filename="../app/AppLayouts/Onboarding/views/KeysMainView.qml" line="140"/>
         <source>Connect your keys</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Onboarding/views/KeysMainView.qml" line="143"/>
+        <location filename="../app/AppLayouts/Onboarding/views/KeysMainView.qml" line="144"/>
         <source>Use your existing Status keys to login to this device.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Onboarding/views/KeysMainView.qml" line="159"/>
+        <location filename="../app/AppLayouts/Onboarding/views/KeysMainView.qml" line="158"/>
         <source>Enter a seed phrase</source>
         <translation type="unfinished">Enter a seed phrase</translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Onboarding/views/KeysMainView.qml" line="167"/>
+        <location filename="../app/AppLayouts/Onboarding/views/KeysMainView.qml" line="170"/>
         <source>Get your keys</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Onboarding/views/KeysMainView.qml" line="172"/>
+        <location filename="../app/AppLayouts/Onboarding/views/KeysMainView.qml" line="174"/>
         <source>A set of keys controls your account. Your keys live on your
 device, so only you can use them.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Onboarding/views/KeysMainView.qml" line="177"/>
+        <location filename="../app/AppLayouts/Onboarding/views/KeysMainView.qml" line="178"/>
         <source>Generate new keys</source>
         <translation type="unfinished">Generate new keys</translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Onboarding/views/KeysMainView.qml" line="187"/>
-        <location filename="../app/AppLayouts/Onboarding/views/KeysMainView.qml" line="195"/>
-        <location filename="../app/AppLayouts/Onboarding/views/KeysMainView.qml" line="210"/>
+        <location filename="../app/AppLayouts/Onboarding/views/KeysMainView.qml" line="188"/>
+        <location filename="../app/AppLayouts/Onboarding/views/KeysMainView.qml" line="200"/>
+        <location filename="../app/AppLayouts/Onboarding/views/KeysMainView.qml" line="215"/>
         <source>Import a seed phrase</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Onboarding/views/KeysMainView.qml" line="204"/>
-        <source>Seed phrases are used to back up and restore your keys.
-
-Only use this option if you already have a seed phrase.</source>
+        <location filename="../app/AppLayouts/Onboarding/views/KeysMainView.qml" line="210"/>
+        <source>Seed phrases are used to back up and restore your keys. Only use this option if you already have a seed phrase.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7138,34 +7788,44 @@ Only use this option if you already have a seed phrase.</source>
 <context>
     <name>Layout</name>
     <message>
-        <location filename="../StatusQ/sandbox/controls/Layout.qml" line="142"/>
-        <location filename="../StatusQ/sandbox/controls/Layout.qml" line="227"/>
-        <location filename="../StatusQ/sandbox/controls/Layout.qml" line="317"/>
-        <location filename="../StatusQ/sandbox/controls/Layout.qml" line="412"/>
+        <location filename="../StatusQ/sandbox/controls/Layout.qml" line="95"/>
+        <source>To: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../StatusQ/sandbox/controls/Layout.qml" line="96"/>
+        <source>USER LIMIT REACHED</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../StatusQ/sandbox/controls/Layout.qml" line="203"/>
+        <location filename="../StatusQ/sandbox/controls/Layout.qml" line="288"/>
+        <location filename="../StatusQ/sandbox/controls/Layout.qml" line="378"/>
+        <location filename="../StatusQ/sandbox/controls/Layout.qml" line="473"/>
         <source>Invite People</source>
         <translation type="unfinished">Invite people</translation>
     </message>
     <message>
-        <location filename="../StatusQ/sandbox/controls/Layout.qml" line="147"/>
-        <location filename="../StatusQ/sandbox/controls/Layout.qml" line="232"/>
-        <location filename="../StatusQ/sandbox/controls/Layout.qml" line="322"/>
-        <location filename="../StatusQ/sandbox/controls/Layout.qml" line="417"/>
+        <location filename="../StatusQ/sandbox/controls/Layout.qml" line="208"/>
+        <location filename="../StatusQ/sandbox/controls/Layout.qml" line="293"/>
+        <location filename="../StatusQ/sandbox/controls/Layout.qml" line="383"/>
+        <location filename="../StatusQ/sandbox/controls/Layout.qml" line="478"/>
         <source>View Community</source>
         <translation type="unfinished">View Community</translation>
     </message>
     <message>
-        <location filename="../StatusQ/sandbox/controls/Layout.qml" line="152"/>
-        <location filename="../StatusQ/sandbox/controls/Layout.qml" line="237"/>
-        <location filename="../StatusQ/sandbox/controls/Layout.qml" line="327"/>
-        <location filename="../StatusQ/sandbox/controls/Layout.qml" line="422"/>
+        <location filename="../StatusQ/sandbox/controls/Layout.qml" line="213"/>
+        <location filename="../StatusQ/sandbox/controls/Layout.qml" line="298"/>
+        <location filename="../StatusQ/sandbox/controls/Layout.qml" line="388"/>
+        <location filename="../StatusQ/sandbox/controls/Layout.qml" line="483"/>
         <source>Edit Community</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../StatusQ/sandbox/controls/Layout.qml" line="160"/>
-        <location filename="../StatusQ/sandbox/controls/Layout.qml" line="245"/>
-        <location filename="../StatusQ/sandbox/controls/Layout.qml" line="335"/>
-        <location filename="../StatusQ/sandbox/controls/Layout.qml" line="430"/>
+        <location filename="../StatusQ/sandbox/controls/Layout.qml" line="221"/>
+        <location filename="../StatusQ/sandbox/controls/Layout.qml" line="306"/>
+        <location filename="../StatusQ/sandbox/controls/Layout.qml" line="396"/>
+        <location filename="../StatusQ/sandbox/controls/Layout.qml" line="491"/>
         <source>Leave Community</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7178,17 +7838,17 @@ Only use this option if you already have a seed phrase.</source>
         <translation type="unfinished">Settings</translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Profile/views/LeftTabView.qml" line="56"/>
+        <location filename="../app/AppLayouts/Profile/views/LeftTabView.qml" line="63"/>
         <source>Sign out</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Profile/views/LeftTabView.qml" line="57"/>
+        <location filename="../app/AppLayouts/Profile/views/LeftTabView.qml" line="64"/>
         <source>Make sure you have your account password and seed phrase stored. Without them you can lock yourself out of your account and lose funds.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Profile/views/LeftTabView.qml" line="58"/>
+        <location filename="../app/AppLayouts/Profile/views/LeftTabView.qml" line="65"/>
         <source>Sign out &amp; Quit</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7224,37 +7884,32 @@ Only use this option if you already have a seed phrase.</source>
 <context>
     <name>MainView</name>
     <message>
-        <location filename="../app/AppLayouts/Profile/views/wallet/MainView.qml" line="24"/>
-        <source>Manage Assets &amp; List</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../app/AppLayouts/Profile/views/wallet/MainView.qml" line="52"/>
+        <location filename="../app/AppLayouts/Profile/views/wallet/MainView.qml" line="55"/>
         <source>DApp Permissions</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Profile/views/wallet/MainView.qml" line="70"/>
+        <location filename="../app/AppLayouts/Profile/views/wallet/MainView.qml" line="73"/>
         <source>Networks</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Profile/views/wallet/MainView.qml" line="90"/>
+        <location filename="../app/AppLayouts/Profile/views/wallet/MainView.qml" line="93"/>
         <source>Accounts</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Profile/views/wallet/MainView.qml" line="94"/>
+        <location filename="../app/AppLayouts/Profile/views/wallet/MainView.qml" line="97"/>
         <source>Generated from Your Seed Phrase</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Profile/views/wallet/MainView.qml" line="111"/>
+        <location filename="../app/AppLayouts/Profile/views/wallet/MainView.qml" line="114"/>
         <source>Imported</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Profile/views/wallet/MainView.qml" line="128"/>
+        <location filename="../app/AppLayouts/Profile/views/wallet/MainView.qml" line="131"/>
         <source>Watch-Only</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7262,17 +7917,17 @@ Only use this option if you already have a seed phrase.</source>
 <context>
     <name>MenuPanel</name>
     <message>
-        <location filename="../app/AppLayouts/Profile/panels/MenuPanel.qml" line="40"/>
+        <location filename="../app/AppLayouts/Profile/panels/MenuPanel.qml" line="55"/>
         <source>Apps</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Profile/panels/MenuPanel.qml" line="67"/>
+        <location filename="../app/AppLayouts/Profile/panels/MenuPanel.qml" line="83"/>
         <source>Settings</source>
         <translation type="unfinished">Settings</translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Profile/panels/MenuPanel.qml" line="89"/>
+        <location filename="../app/AppLayouts/Profile/panels/MenuPanel.qml" line="98"/>
         <source>About &amp; Help</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7280,27 +7935,27 @@ Only use this option if you already have a seed phrase.</source>
 <context>
     <name>MessageContextMenuView</name>
     <message>
-        <location filename="../imports/shared/views/chat/MessageContextMenuView.qml" line="139"/>
+        <location filename="../imports/shared/views/chat/MessageContextMenuView.qml" line="141"/>
         <source>Copy image</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../imports/shared/views/chat/MessageContextMenuView.qml" line="152"/>
+        <location filename="../imports/shared/views/chat/MessageContextMenuView.qml" line="154"/>
         <source>Download image</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../imports/shared/views/chat/MessageContextMenuView.qml" line="215"/>
+        <location filename="../imports/shared/views/chat/MessageContextMenuView.qml" line="218"/>
         <source>Copy Message Id</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../imports/shared/views/chat/MessageContextMenuView.qml" line="308"/>
+        <location filename="../imports/shared/views/chat/MessageContextMenuView.qml" line="311"/>
         <source>Jump to</source>
         <translation type="unfinished">Jump to</translation>
     </message>
     <message>
-        <location filename="../imports/shared/views/chat/MessageContextMenuView.qml" line="319"/>
+        <location filename="../imports/shared/views/chat/MessageContextMenuView.qml" line="322"/>
         <source>Please choose a directory</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7314,79 +7969,79 @@ Only use this option if you already have a seed phrase.</source>
     </message>
     <message>
         <location filename="../app/AppLayouts/Profile/views/MessagingView.qml" line="86"/>
-        <location filename="../app/AppLayouts/Profile/views/MessagingView.qml" line="141"/>
+        <location filename="../app/AppLayouts/Profile/views/MessagingView.qml" line="136"/>
         <source>Everyone</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../app/AppLayouts/Profile/views/MessagingView.qml" line="99"/>
-        <location filename="../app/AppLayouts/Profile/views/MessagingView.qml" line="154"/>
+        <location filename="../app/AppLayouts/Profile/views/MessagingView.qml" line="149"/>
         <source>Contacts</source>
         <translation type="unfinished">Contacts</translation>
     </message>
     <message>
         <location filename="../app/AppLayouts/Profile/views/MessagingView.qml" line="112"/>
-        <location filename="../app/AppLayouts/Profile/views/MessagingView.qml" line="167"/>
+        <location filename="../app/AppLayouts/Profile/views/MessagingView.qml" line="162"/>
         <source>No One</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Profile/views/MessagingView.qml" line="132"/>
+        <location filename="../app/AppLayouts/Profile/views/MessagingView.qml" line="127"/>
         <source>See Profile Pictures From</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Profile/views/MessagingView.qml" line="187"/>
+        <location filename="../app/AppLayouts/Profile/views/MessagingView.qml" line="177"/>
         <source>Open Message Links With</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Profile/views/MessagingView.qml" line="196"/>
+        <location filename="../app/AppLayouts/Profile/views/MessagingView.qml" line="186"/>
         <source>Status Browser</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Profile/views/MessagingView.qml" line="208"/>
+        <location filename="../app/AppLayouts/Profile/views/MessagingView.qml" line="199"/>
         <source>System Default Browser</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Profile/views/MessagingView.qml" line="224"/>
+        <location filename="../app/AppLayouts/Profile/views/MessagingView.qml" line="216"/>
         <source>Contacts, Requests, and Blocked Users</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Profile/views/MessagingView.qml" line="238"/>
+        <location filename="../app/AppLayouts/Profile/views/MessagingView.qml" line="230"/>
         <source>Display Message Link Previews</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Profile/views/MessagingView.qml" line="293"/>
+        <location filename="../app/AppLayouts/Profile/views/MessagingView.qml" line="285"/>
         <source>Fine tune which sites to allow link previews</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Profile/views/MessagingView.qml" line="316"/>
+        <location filename="../app/AppLayouts/Profile/views/MessagingView.qml" line="308"/>
         <source>Image unfurling</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Profile/views/MessagingView.qml" line="317"/>
+        <location filename="../app/AppLayouts/Profile/views/MessagingView.qml" line="309"/>
         <source>All images (links that contain an image extension) will be downloaded and displayed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Profile/views/MessagingView.qml" line="416"/>
+        <location filename="../app/AppLayouts/Profile/views/MessagingView.qml" line="408"/>
         <source>Message syncing</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Profile/views/MessagingView.qml" line="421"/>
+        <location filename="../app/AppLayouts/Profile/views/MessagingView.qml" line="413"/>
         <source>Waku nodes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Profile/views/MessagingView.qml" line="444"/>
+        <location filename="../app/AppLayouts/Profile/views/MessagingView.qml" line="436"/>
         <source>For security reasons, private chat history won&apos;t be synced.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7421,6 +8076,24 @@ Only use this option if you already have a seed phrase.</source>
     <message>
         <location filename="../app/AppLayouts/Wallet/controls/NetworkFilter.qml" line="28"/>
         <source>All networks</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>NetworkSelector</name>
+    <message>
+        <location filename="../imports/shared/views/NetworkSelector.qml" line="66"/>
+        <source>Networks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../imports/shared/views/NetworkSelector.qml" line="73"/>
+        <source>Choose a network to use for the transaction</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../imports/shared/views/NetworkSelector.qml" line="84"/>
+        <source>No networks available</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7807,62 +8480,62 @@ Only use this option if you already have a seed phrase.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../imports/shared/views/PasswordView.qml" line="250"/>
-        <location filename="../imports/shared/views/PasswordView.qml" line="250"/>
+        <location filename="../imports/shared/views/PasswordView.qml" line="253"/>
+        <location filename="../imports/shared/views/PasswordView.qml" line="253"/>
         <source>Very weak</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../imports/shared/views/PasswordView.qml" line="251"/>
-        <location filename="../imports/shared/views/PasswordView.qml" line="251"/>
+        <location filename="../imports/shared/views/PasswordView.qml" line="254"/>
+        <location filename="../imports/shared/views/PasswordView.qml" line="254"/>
         <source>Weak</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../imports/shared/views/PasswordView.qml" line="252"/>
-        <location filename="../imports/shared/views/PasswordView.qml" line="252"/>
+        <location filename="../imports/shared/views/PasswordView.qml" line="255"/>
+        <location filename="../imports/shared/views/PasswordView.qml" line="255"/>
         <source>So-so</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../imports/shared/views/PasswordView.qml" line="253"/>
-        <location filename="../imports/shared/views/PasswordView.qml" line="253"/>
+        <location filename="../imports/shared/views/PasswordView.qml" line="256"/>
+        <location filename="../imports/shared/views/PasswordView.qml" line="256"/>
         <source>Good</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../imports/shared/views/PasswordView.qml" line="254"/>
-        <location filename="../imports/shared/views/PasswordView.qml" line="254"/>
+        <location filename="../imports/shared/views/PasswordView.qml" line="257"/>
+        <location filename="../imports/shared/views/PasswordView.qml" line="257"/>
         <source>Great</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../imports/shared/views/PasswordView.qml" line="272"/>
-        <location filename="../imports/shared/views/PasswordView.qml" line="272"/>
+        <location filename="../imports/shared/views/PasswordView.qml" line="275"/>
+        <location filename="../imports/shared/views/PasswordView.qml" line="275"/>
         <source>Lower case</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../imports/shared/views/PasswordView.qml" line="279"/>
-        <location filename="../imports/shared/views/PasswordView.qml" line="279"/>
+        <location filename="../imports/shared/views/PasswordView.qml" line="282"/>
+        <location filename="../imports/shared/views/PasswordView.qml" line="282"/>
         <source>Upper case</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../imports/shared/views/PasswordView.qml" line="286"/>
-        <location filename="../imports/shared/views/PasswordView.qml" line="286"/>
+        <location filename="../imports/shared/views/PasswordView.qml" line="289"/>
+        <location filename="../imports/shared/views/PasswordView.qml" line="289"/>
         <source>Numbers</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../imports/shared/views/PasswordView.qml" line="293"/>
-        <location filename="../imports/shared/views/PasswordView.qml" line="293"/>
+        <location filename="../imports/shared/views/PasswordView.qml" line="296"/>
+        <location filename="../imports/shared/views/PasswordView.qml" line="296"/>
         <source>Symbols</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../imports/shared/views/PasswordView.qml" line="307"/>
-        <location filename="../imports/shared/views/PasswordView.qml" line="307"/>
+        <location filename="../imports/shared/views/PasswordView.qml" line="310"/>
+        <location filename="../imports/shared/views/PasswordView.qml" line="310"/>
         <source>Confirm password</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7870,12 +8543,12 @@ Only use this option if you already have a seed phrase.</source>
 <context>
     <name>PermissionsListView</name>
     <message>
-        <location filename="../app/AppLayouts/Profile/views/wallet/PermissionsListView.qml" line="31"/>
+        <location filename="../app/AppLayouts/Profile/views/wallet/PermissionsListView.qml" line="38"/>
         <source>Disconnect All</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Profile/views/wallet/PermissionsListView.qml" line="31"/>
+        <location filename="../app/AppLayouts/Profile/views/wallet/PermissionsListView.qml" line="38"/>
         <source>Disconnect</source>
         <translation type="unfinished">Disconnect</translation>
     </message>
@@ -7890,27 +8563,27 @@ Only use this option if you already have a seed phrase.</source>
 <context>
     <name>PrivacyView</name>
     <message>
-        <location filename="../app/AppLayouts/Profile/views/PrivacyView.qml" line="51"/>
+        <location filename="../app/AppLayouts/Profile/views/PrivacyView.qml" line="29"/>
         <source>Change password</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Profile/views/PrivacyView.qml" line="65"/>
+        <location filename="../app/AppLayouts/Profile/views/PrivacyView.qml" line="43"/>
         <source>Store pass to Keychain</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Profile/views/PrivacyView.qml" line="71"/>
+        <location filename="../app/AppLayouts/Profile/views/PrivacyView.qml" line="49"/>
         <source>Store</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Profile/views/PrivacyView.qml" line="74"/>
+        <location filename="../app/AppLayouts/Profile/views/PrivacyView.qml" line="52"/>
         <source>Never</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Profile/views/PrivacyView.qml" line="76"/>
+        <location filename="../app/AppLayouts/Profile/views/PrivacyView.qml" line="54"/>
         <source>Not now</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8030,72 +8703,77 @@ Only use this option if you already have a seed phrase.</source>
 <context>
     <name>ProfileSectionStore</name>
     <message>
-        <location filename="../app/AppLayouts/Profile/stores/ProfileSectionStore.qml" line="69"/>
+        <location filename="../app/AppLayouts/Profile/stores/ProfileSectionStore.qml" line="78"/>
         <source>Profile</source>
         <translation type="unfinished">Profile</translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Profile/stores/ProfileSectionStore.qml" line="72"/>
+        <location filename="../app/AppLayouts/Profile/stores/ProfileSectionStore.qml" line="81"/>
         <source>ENS usernames</source>
         <translation type="unfinished">ENS usernames</translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Profile/stores/ProfileSectionStore.qml" line="80"/>
+        <location filename="../app/AppLayouts/Profile/stores/ProfileSectionStore.qml" line="89"/>
         <source>Messaging</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Profile/stores/ProfileSectionStore.qml" line="83"/>
+        <location filename="../app/AppLayouts/Profile/stores/ProfileSectionStore.qml" line="92"/>
         <source>Wallet</source>
         <translation type="unfinished">Wallet</translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Profile/stores/ProfileSectionStore.qml" line="86"/>
+        <location filename="../app/AppLayouts/Profile/stores/ProfileSectionStore.qml" line="95"/>
         <source>Browser</source>
         <translation type="unfinished">Browser</translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Profile/stores/ProfileSectionStore.qml" line="94"/>
+        <location filename="../app/AppLayouts/Profile/stores/ProfileSectionStore.qml" line="98"/>
+        <source>Communities</source>
+        <translation type="unfinished">Communities</translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Profile/stores/ProfileSectionStore.qml" line="106"/>
         <source>Privacy and security</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Profile/stores/ProfileSectionStore.qml" line="97"/>
+        <location filename="../app/AppLayouts/Profile/stores/ProfileSectionStore.qml" line="109"/>
         <source>Appearance</source>
         <translation type="unfinished">Appearance</translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Profile/stores/ProfileSectionStore.qml" line="100"/>
+        <location filename="../app/AppLayouts/Profile/stores/ProfileSectionStore.qml" line="115"/>
         <source>Language &amp; Currency</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Profile/stores/ProfileSectionStore.qml" line="103"/>
+        <location filename="../app/AppLayouts/Profile/stores/ProfileSectionStore.qml" line="112"/>
         <source>Notifications &amp; Sounds</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Profile/stores/ProfileSectionStore.qml" line="106"/>
+        <location filename="../app/AppLayouts/Profile/stores/ProfileSectionStore.qml" line="75"/>
+        <source>Back up seed phrase</source>
+        <translation type="unfinished">Back up seed phrase</translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Profile/stores/ProfileSectionStore.qml" line="118"/>
         <source>Devices settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Profile/stores/ProfileSectionStore.qml" line="109"/>
+        <location filename="../app/AppLayouts/Profile/stores/ProfileSectionStore.qml" line="121"/>
         <source>Advanced</source>
         <translation type="unfinished">Advanced</translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Profile/stores/ProfileSectionStore.qml" line="117"/>
-        <source>Help &amp; Glossary</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../app/AppLayouts/Profile/stores/ProfileSectionStore.qml" line="120"/>
+        <location filename="../app/AppLayouts/Profile/stores/ProfileSectionStore.qml" line="129"/>
         <source>About</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Profile/stores/ProfileSectionStore.qml" line="123"/>
+        <location filename="../app/AppLayouts/Profile/stores/ProfileSectionStore.qml" line="132"/>
         <source>Sign out &amp; Quit</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8168,7 +8846,7 @@ Only use this option if you already have a seed phrase.</source>
 <context>
     <name>RootStore</name>
     <message>
-        <location filename="../app/AppLayouts/Chat/stores/RootStore.qml" line="207"/>
+        <location filename="../app/AppLayouts/Chat/stores/RootStore.qml" line="205"/>
         <source>You</source>
         <translation type="unfinished">You</translation>
     </message>
@@ -8204,47 +8882,46 @@ Only use this option if you already have a seed phrase.</source>
 <context>
     <name>SeedPhraseInputView</name>
     <message>
-        <location filename="../app/AppLayouts/Onboarding/views/SeedPhraseInputView.qml" line="78"/>
+        <location filename="../app/AppLayouts/Onboarding/views/SeedPhraseInputView.qml" line="77"/>
         <source>Keys for this account already exist</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Onboarding/views/SeedPhraseInputView.qml" line="79"/>
+        <location filename="../app/AppLayouts/Onboarding/views/SeedPhraseInputView.qml" line="78"/>
         <source>Keys for this account already exist and can&apos;t be added again. If you&apos;ve lost your password, passcode or Keycard, uninstall the app, reinstall and access your keys by entering your seed phrase</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Onboarding/views/SeedPhraseInputView.qml" line="81"/>
+        <location filename="../app/AppLayouts/Onboarding/views/SeedPhraseInputView.qml" line="80"/>
         <source>Error importing seed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Onboarding/views/SeedPhraseInputView.qml" line="107"/>
+        <location filename="../app/AppLayouts/Onboarding/views/SeedPhraseInputView.qml" line="108"/>
         <source>Enter seed phrase</source>
         <translation type="unfinished">Enter seed phrase</translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Onboarding/views/SeedPhraseInputView.qml" line="118"/>
+        <location filename="../app/AppLayouts/Onboarding/views/SeedPhraseInputView.qml" line="119"/>
         <source>%1 words</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Onboarding/views/SeedPhraseInputView.qml" line="284"/>
+        <location filename="../app/AppLayouts/Onboarding/views/SeedPhraseInputView.qml" line="285"/>
         <source>Invalid seed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Onboarding/views/SeedPhraseInputView.qml" line="299"/>
+        <location filename="../app/AppLayouts/Onboarding/views/SeedPhraseInputView.qml" line="297"/>
         <source>Restore Status Profile</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Onboarding/views/SeedPhraseInputView.qml" line="300"/>
         <source>Next</source>
-        <translation type="unfinished">Next</translation>
+        <translation type="obsolete">Next</translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Onboarding/views/SeedPhraseInputView.qml" line="300"/>
+        <location filename="../app/AppLayouts/Onboarding/views/SeedPhraseInputView.qml" line="297"/>
         <source>Import</source>
         <translation type="unfinished">Import</translation>
     </message>
@@ -8258,21 +8935,21 @@ Only use this option if you already have a seed phrase.</source>
     </message>
     <message>
         <location filename="../app/AppLayouts/Wallet/panels/SelectGeneratedAccount.qml" line="41"/>
-        <source>Import new Private Key</source>
+        <source>Generate from Private key</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Wallet/panels/SelectGeneratedAccount.qml" line="60"/>
+        <location filename="../app/AppLayouts/Wallet/panels/SelectGeneratedAccount.qml" line="61"/>
         <source>Imported</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Wallet/panels/SelectGeneratedAccount.qml" line="63"/>
+        <location filename="../app/AppLayouts/Wallet/panels/SelectGeneratedAccount.qml" line="65"/>
         <source>Add new</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Wallet/panels/SelectGeneratedAccount.qml" line="71"/>
+        <location filename="../app/AppLayouts/Wallet/panels/SelectGeneratedAccount.qml" line="73"/>
         <source>Origin</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8311,6 +8988,21 @@ Only use this option if you already have a seed phrase.</source>
     </message>
 </context>
 <context>
+    <name>SendModal</name>
+    <message>
+        <location filename="../imports/shared/popups/SendModal.qml" line="311"/>
+        <location filename="../imports/shared/popups/SendModal.qml" line="311"/>
+        <source>Transaction pending...</source>
+        <translation type="unfinished">Transaction pending...</translation>
+    </message>
+    <message>
+        <location filename="../imports/shared/popups/SendModal.qml" line="312"/>
+        <location filename="../imports/shared/popups/SendModal.qml" line="312"/>
+        <source>View on etherscan</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>SendModalFooter</name>
     <message>
         <location filename="../imports/shared/views/SendModalFooter.qml" line="16"/>
@@ -8334,32 +9026,32 @@ Only use this option if you already have a seed phrase.</source>
 <context>
     <name>SendModalHeader</name>
     <message>
-        <location filename="../imports/shared/views/SendModalHeader.qml" line="34"/>
-        <location filename="../imports/shared/views/SendModalHeader.qml" line="34"/>
+        <location filename="../imports/shared/views/SendModalHeader.qml" line="38"/>
+        <location filename="../imports/shared/views/SendModalHeader.qml" line="38"/>
         <source>Please enter a valid amount</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../imports/shared/views/SendModalHeader.qml" line="36"/>
-        <location filename="../imports/shared/views/SendModalHeader.qml" line="36"/>
+        <location filename="../imports/shared/views/SendModalHeader.qml" line="40"/>
+        <location filename="../imports/shared/views/SendModalHeader.qml" line="40"/>
         <source>Max: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../imports/shared/views/SendModalHeader.qml" line="106"/>
-        <location filename="../imports/shared/views/SendModalHeader.qml" line="106"/>
+        <location filename="../imports/shared/views/SendModalHeader.qml" line="111"/>
+        <location filename="../imports/shared/views/SendModalHeader.qml" line="111"/>
         <source>No balances active</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../imports/shared/views/SendModalHeader.qml" line="204"/>
-        <location filename="../imports/shared/views/SendModalHeader.qml" line="204"/>
+        <location filename="../imports/shared/views/SendModalHeader.qml" line="211"/>
+        <location filename="../imports/shared/views/SendModalHeader.qml" line="211"/>
         <source>To</source>
         <translation type="unfinished">To</translation>
     </message>
     <message>
-        <location filename="../imports/shared/views/SendModalHeader.qml" line="207"/>
-        <location filename="../imports/shared/views/SendModalHeader.qml" line="207"/>
+        <location filename="../imports/shared/views/SendModalHeader.qml" line="214"/>
+        <location filename="../imports/shared/views/SendModalHeader.qml" line="214"/>
         <source>Enter an ENS name or address</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8367,17 +9059,16 @@ Only use this option if you already have a seed phrase.</source>
 <context>
     <name>SettingsPageLayout</name>
     <message>
-        <location filename="../app/AppLayouts/Chat/layouts/SettingsPageLayout.qml" line="127"/>
-        <source>Changes detected!</source>
+        <source>Cancel</source>
+        <translation type="obsolete">Cancel</translation>
+    </message>
+    <message>
+        <location filename="../app/AppLayouts/Chat/layouts/SettingsPageLayout.qml" line="106"/>
+        <source>Cancel changes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Chat/layouts/SettingsPageLayout.qml" line="132"/>
-        <source>Cancel</source>
-        <translation type="unfinished">Cancel</translation>
-    </message>
-    <message>
-        <location filename="../app/AppLayouts/Chat/layouts/SettingsPageLayout.qml" line="140"/>
+        <location filename="../app/AppLayouts/Chat/layouts/SettingsPageLayout.qml" line="128"/>
         <source>Save changes</source>
         <translation type="unfinished">Save changes</translation>
     </message>
@@ -8385,22 +9076,34 @@ Only use this option if you already have a seed phrase.</source>
 <context>
     <name>SignTransactionModal</name>
     <message>
-        <location filename="../imports/shared/popups/SignTransactionModal.qml" line="111"/>
-        <location filename="../imports/shared/popups/SignTransactionModal.qml" line="111"/>
+        <location filename="../imports/shared/popups/SignTransactionModal.qml" line="106"/>
+        <location filename="../imports/shared/popups/SignTransactionModal.qml" line="106"/>
         <source>Send</source>
         <translation type="unfinished">Send</translation>
     </message>
     <message>
-        <location filename="../imports/shared/popups/SignTransactionModal.qml" line="147"/>
-        <location filename="../imports/shared/popups/SignTransactionModal.qml" line="147"/>
+        <location filename="../imports/shared/popups/SignTransactionModal.qml" line="143"/>
+        <location filename="../imports/shared/popups/SignTransactionModal.qml" line="143"/>
         <source>Continue</source>
         <translation type="unfinished">Continue</translation>
     </message>
     <message>
-        <location filename="../imports/shared/popups/SignTransactionModal.qml" line="181"/>
-        <location filename="../imports/shared/popups/SignTransactionModal.qml" line="181"/>
+        <location filename="../imports/shared/popups/SignTransactionModal.qml" line="176"/>
+        <location filename="../imports/shared/popups/SignTransactionModal.qml" line="176"/>
         <source>Error estimating gas: %1</source>
         <translation type="unfinished">Error estimating gas: %1</translation>
+    </message>
+    <message>
+        <location filename="../imports/shared/popups/SignTransactionModal.qml" line="364"/>
+        <location filename="../imports/shared/popups/SignTransactionModal.qml" line="364"/>
+        <source>Transaction pending...</source>
+        <translation type="unfinished">Transaction pending...</translation>
+    </message>
+    <message>
+        <location filename="../imports/shared/popups/SignTransactionModal.qml" line="365"/>
+        <location filename="../imports/shared/popups/SignTransactionModal.qml" line="365"/>
+        <source>View on etherscan</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -8420,9 +9123,27 @@ Only use this option if you already have a seed phrase.</source>
     </message>
 </context>
 <context>
+    <name>StatusAppCommunitiesPortalView</name>
+    <message>
+        <location filename="../StatusQ/sandbox/demoapp/StatusAppCommunitiesPortalView.qml" line="46"/>
+        <source>Find community</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../StatusQ/sandbox/demoapp/StatusAppCommunitiesPortalView.qml" line="84"/>
+        <source>Featured</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../StatusQ/sandbox/demoapp/StatusAppCommunitiesPortalView.qml" line="122"/>
+        <source>Popular</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>StatusAppCommunityView</name>
     <message>
-        <location filename="../StatusQ/sandbox/demoapp/StatusAppCommunityView.qml" line="245"/>
+        <location filename="../StatusQ/sandbox/demoapp/StatusAppCommunityView.qml" line="254"/>
         <source>Members</source>
         <translation type="unfinished">Members</translation>
     </message>
@@ -8454,14 +9175,14 @@ Only use this option if you already have a seed phrase.</source>
 <context>
     <name>StatusChatInput</name>
     <message>
-        <location filename="../imports/shared/status/StatusChatInput.qml" line="1199"/>
-        <location filename="../imports/shared/status/StatusChatInput.qml" line="1199"/>
+        <location filename="../imports/shared/status/StatusChatInput.qml" line="1200"/>
+        <location filename="../imports/shared/status/StatusChatInput.qml" line="1200"/>
         <source>Send</source>
         <translation type="unfinished">Send</translation>
     </message>
     <message>
-        <location filename="../imports/shared/status/StatusChatInput.qml" line="1270"/>
-        <location filename="../imports/shared/status/StatusChatInput.qml" line="1270"/>
+        <location filename="../imports/shared/status/StatusChatInput.qml" line="1271"/>
+        <location filename="../imports/shared/status/StatusChatInput.qml" line="1271"/>
         <source>Unblock</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8503,31 +9224,87 @@ Only use this option if you already have a seed phrase.</source>
 <context>
     <name>StatusChatToolBar</name>
     <message>
-        <location filename="../StatusQ/src/StatusQ/Components/StatusChatToolBar.qml" line="61"/>
+        <location filename="../StatusQ/src/StatusQ/Components/StatusChatToolBar.qml" line="65"/>
         <source>Search</source>
         <translation type="unfinished">Search</translation>
     </message>
     <message>
-        <location filename="../StatusQ/src/StatusQ/Components/StatusChatToolBar.qml" line="75"/>
+        <location filename="../StatusQ/src/StatusQ/Components/StatusChatToolBar.qml" line="79"/>
         <source>Members</source>
         <translation type="unfinished">Members</translation>
     </message>
     <message>
-        <location filename="../StatusQ/src/StatusQ/Components/StatusChatToolBar.qml" line="90"/>
+        <location filename="../StatusQ/src/StatusQ/Components/StatusChatToolBar.qml" line="94"/>
         <source>More</source>
         <translation type="unfinished">More</translation>
     </message>
     <message>
-        <location filename="../StatusQ/src/StatusQ/Components/StatusChatToolBar.qml" line="144"/>
+        <location filename="../StatusQ/src/StatusQ/Components/StatusChatToolBar.qml" line="148"/>
         <source>Activity</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>StatusColorDialog</name>
+    <message>
+        <location filename="../StatusQ/src/StatusQ/Popups/StatusColorDialog.qml" line="80"/>
+        <source>This is not a valid color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../StatusQ/src/StatusQ/Popups/StatusColorDialog.qml" line="97"/>
+        <source>Preview</source>
+        <translation type="unfinished">Preview</translation>
+    </message>
+    <message>
+        <location filename="../StatusQ/src/StatusQ/Popups/StatusColorDialog.qml" line="118"/>
+        <source>Standart colours</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../StatusQ/src/StatusQ/Popups/StatusColorDialog.qml" line="138"/>
+        <source>Select Colour</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>StatusColorSpacePage</name>
+    <message>
+        <location filename="../StatusQ/sandbox/pages/StatusColorSpacePage.qml" line="18"/>
+        <source>Thickness</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../StatusQ/sandbox/pages/StatusColorSpacePage.qml" line="30"/>
+        <source>Min saturate: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../StatusQ/sandbox/pages/StatusColorSpacePage.qml" line="42"/>
+        <source>Max saturate: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../StatusQ/sandbox/pages/StatusColorSpacePage.qml" line="54"/>
+        <source>Min value: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../StatusQ/sandbox/pages/StatusColorSpacePage.qml" line="66"/>
+        <source>Max value: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../StatusQ/sandbox/pages/StatusColorSpacePage.qml" line="88"/>
+        <source>Color</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>StatusETHTransactionModal</name>
     <message>
-        <location filename="../imports/shared/status/StatusETHTransactionModal.qml" line="25"/>
-        <location filename="../imports/shared/status/StatusETHTransactionModal.qml" line="25"/>
+        <location filename="../imports/shared/status/StatusETHTransactionModal.qml" line="26"/>
+        <location filename="../imports/shared/status/StatusETHTransactionModal.qml" line="26"/>
         <source>Contract interaction</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8740,7 +9517,7 @@ Only use this option if you already have a seed phrase.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../StatusQ/src/StatusQ/Popups/StatusSearchPopup.qml" line="124"/>
+        <location filename="../StatusQ/src/StatusQ/Popups/StatusSearchPopup.qml" line="129"/>
         <source>In</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8761,14 +9538,14 @@ Only use this option if you already have a seed phrase.</source>
 <context>
     <name>StatusStickerMarket</name>
     <message>
-        <location filename="../imports/shared/status/StatusStickerMarket.qml" line="170"/>
-        <location filename="../imports/shared/status/StatusStickerMarket.qml" line="170"/>
+        <location filename="../imports/shared/status/StatusStickerMarket.qml" line="172"/>
+        <location filename="../imports/shared/status/StatusStickerMarket.qml" line="172"/>
         <source>This feature is experimental and is meant for testing purposes by core contributors and the community. It&apos;s not meant for real use and makes no claims of security or integrity of funds or data. Use at your own risk.</source>
         <translation type="unfinished">This feature is experimental and is meant for testing purposes by core contributors and the community. It&apos;s not meant for real use and makes no claims of security or integrity of funds or data. Use at your own risk.</translation>
     </message>
     <message>
-        <location filename="../imports/shared/status/StatusStickerMarket.qml" line="171"/>
-        <location filename="../imports/shared/status/StatusStickerMarket.qml" line="171"/>
+        <location filename="../imports/shared/status/StatusStickerMarket.qml" line="173"/>
+        <location filename="../imports/shared/status/StatusStickerMarket.qml" line="173"/>
         <source>I understand</source>
         <translation type="unfinished">I understand</translation>
     </message>
@@ -8909,46 +9686,16 @@ Only use this option if you already have a seed phrase.</source>
 <context>
     <name>TabNetworkAndFees</name>
     <message>
-        <location filename="../imports/shared/views/TabNetworkAndFees.qml" line="30"/>
-        <location filename="../imports/shared/views/TabNetworkAndFees.qml" line="30"/>
-        <source>Simple</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../imports/shared/views/TabNetworkAndFees.qml" line="34"/>
-        <location filename="../imports/shared/views/TabNetworkAndFees.qml" line="34"/>
         <source>Advanced</source>
-        <translation type="unfinished">Advanced</translation>
+        <translation type="obsolete">Advanced</translation>
     </message>
     <message>
-        <location filename="../imports/shared/views/TabNetworkAndFees.qml" line="38"/>
-        <location filename="../imports/shared/views/TabNetworkAndFees.qml" line="38"/>
         <source>Custom</source>
-        <translation type="unfinished">Custom</translation>
+        <translation type="obsolete">Custom</translation>
     </message>
     <message>
-        <location filename="../imports/shared/views/TabNetworkAndFees.qml" line="81"/>
-        <location filename="../imports/shared/views/TabNetworkAndFees.qml" line="81"/>
-        <source>Networks</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../imports/shared/views/TabNetworkAndFees.qml" line="89"/>
-        <location filename="../imports/shared/views/TabNetworkAndFees.qml" line="89"/>
-        <source>The networks where the receipient will receive tokens. Amounts calculated automatically for the lowest cost.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../imports/shared/views/TabNetworkAndFees.qml" line="140"/>
-        <location filename="../imports/shared/views/TabNetworkAndFees.qml" line="140"/>
-        <source>Fees</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../imports/shared/views/TabNetworkAndFees.qml" line="169"/>
-        <location filename="../imports/shared/views/TabNetworkAndFees.qml" line="169"/>
         <source>Slow</source>
-        <translation type="unfinished">Slow</translation>
+        <translation type="obsolete">Slow</translation>
     </message>
 </context>
 <context>
@@ -9143,22 +9890,22 @@ Only use this option if you already have a seed phrase.</source>
 <context>
     <name>UserListPanel</name>
     <message>
-        <location filename="../app/AppLayouts/Chat/panels/UserListPanel.qml" line="83"/>
+        <location filename="../app/AppLayouts/Chat/panels/UserListPanel.qml" line="115"/>
         <source>Offline</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Chat/panels/UserListPanel.qml" line="84"/>
+        <location filename="../app/AppLayouts/Chat/panels/UserListPanel.qml" line="116"/>
         <source>Online</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Chat/panels/UserListPanel.qml" line="85"/>
+        <location filename="../app/AppLayouts/Chat/panels/UserListPanel.qml" line="117"/>
         <source>Do not disturb</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Chat/panels/UserListPanel.qml" line="86"/>
+        <location filename="../app/AppLayouts/Chat/panels/UserListPanel.qml" line="118"/>
         <source>Idle</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9199,112 +9946,117 @@ Only use this option if you already have a seed phrase.</source>
         <translation type="obsolete">Password needs to be 6 characters or more</translation>
     </message>
     <message>
-        <location filename="../imports/utils/Utils.qml" line="500"/>
+        <location filename="../imports/utils/Utils.qml" line="232"/>
+        <source>timestamp must be type of int and greater than 0 (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../imports/utils/Utils.qml" line="508"/>
         <source>You need to enter a PIN</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../imports/utils/Utils.qml" line="502"/>
+        <location filename="../imports/utils/Utils.qml" line="510"/>
         <source>The PIN must contain only digits</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../imports/utils/Utils.qml" line="504"/>
+        <location filename="../imports/utils/Utils.qml" line="512"/>
         <source>The PIN must be exactly 6 digits</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../imports/utils/Utils.qml" line="510"/>
+        <location filename="../imports/utils/Utils.qml" line="518"/>
         <source>You need to repeat your PIN</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../imports/utils/Utils.qml" line="512"/>
+        <location filename="../imports/utils/Utils.qml" line="520"/>
         <source>PIN don&apos;t match</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../imports/utils/Utils.qml" line="600"/>
+        <location filename="../imports/utils/Utils.qml" line="608"/>
         <source>You need to enter a %1</source>
         <translation type="unfinished">You need to enter a %1</translation>
     </message>
     <message>
-        <location filename="../imports/utils/Utils.qml" line="601"/>
+        <location filename="../imports/utils/Utils.qml" line="609"/>
         <source>Value has to be at least %1 characters long</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../imports/utils/Utils.qml" line="698"/>
+        <location filename="../imports/utils/Utils.qml" line="706"/>
         <source>years ago</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../imports/utils/Utils.qml" line="698"/>
+        <location filename="../imports/utils/Utils.qml" line="706"/>
         <source>year ago</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../imports/utils/Utils.qml" line="707"/>
+        <location filename="../imports/utils/Utils.qml" line="715"/>
         <source>months ago</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../imports/utils/Utils.qml" line="707"/>
+        <location filename="../imports/utils/Utils.qml" line="715"/>
         <source>month ago</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../imports/utils/Utils.qml" line="716"/>
+        <location filename="../imports/utils/Utils.qml" line="724"/>
         <source>weeks ago</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../imports/utils/Utils.qml" line="716"/>
+        <location filename="../imports/utils/Utils.qml" line="724"/>
         <source>week ago</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../imports/utils/Utils.qml" line="725"/>
+        <location filename="../imports/utils/Utils.qml" line="733"/>
         <source>days ago</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../imports/utils/Utils.qml" line="725"/>
+        <location filename="../imports/utils/Utils.qml" line="733"/>
         <source>day ago</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../imports/utils/Utils.qml" line="734"/>
+        <location filename="../imports/utils/Utils.qml" line="742"/>
         <source>hours ago</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../imports/utils/Utils.qml" line="734"/>
+        <location filename="../imports/utils/Utils.qml" line="742"/>
         <source>hour ago</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../imports/utils/Utils.qml" line="743"/>
+        <location filename="../imports/utils/Utils.qml" line="751"/>
         <source>mins ago</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../imports/utils/Utils.qml" line="743"/>
+        <location filename="../imports/utils/Utils.qml" line="751"/>
         <source>min ago</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../imports/utils/Utils.qml" line="752"/>
+        <location filename="../imports/utils/Utils.qml" line="760"/>
         <source>secs ago</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../imports/utils/Utils.qml" line="752"/>
+        <location filename="../imports/utils/Utils.qml" line="760"/>
         <source>sec ago</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../imports/utils/Utils.qml" line="757"/>
+        <location filename="../imports/utils/Utils.qml" line="765"/>
         <source>now</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9371,23 +10123,22 @@ Only use this option if you already have a seed phrase.</source>
 <context>
     <name>WelcomeView</name>
     <message>
-        <location filename="../app/AppLayouts/Onboarding/views/WelcomeView.qml" line="67"/>
+        <location filename="../app/AppLayouts/Onboarding/views/WelcomeView.qml" line="58"/>
         <source>Welcome to Status</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Onboarding/views/WelcomeView.qml" line="79"/>
-        <source>Your fully decentralized gateway to Ethereum and Web3.
-Crypto wallet, privacy first group chat, and dApp browser.</source>
+        <location filename="../app/AppLayouts/Onboarding/views/WelcomeView.qml" line="70"/>
+        <source>Your fully decentralized gateway to Ethereum and Web3. Crypto wallet, privacy first group chat, and dApp browser.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Onboarding/views/WelcomeView.qml" line="94"/>
+        <location filename="../app/AppLayouts/Onboarding/views/WelcomeView.qml" line="85"/>
         <source>I am new to Status</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Onboarding/views/WelcomeView.qml" line="102"/>
+        <location filename="../app/AppLayouts/Onboarding/views/WelcomeView.qml" line="93"/>
         <source>I already use Status</source>
         <translation type="unfinished"></translation>
     </message>
