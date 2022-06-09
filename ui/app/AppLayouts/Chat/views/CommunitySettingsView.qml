@@ -25,7 +25,7 @@ StatusAppTwoPanelLayout {
     // TODO: get this model from backend?
     property var model: [{name: qsTr("Overview"), icon: "help"},
                         {name: qsTr("Members"), icon: "group-chat"},
-//                        {name: qsTr("Permissions"), icon: "objects"},
+                        {name: qsTr("Permissions"), icon: "objects"},
 //                        {name: qsTr("Tokens"), icon: "token"},
 //                        {name: qsTr("Airdrops"), icon: "airdrop"},
 //                        {name: qsTr("Token sales"), icon: "token-sale"},
@@ -78,7 +78,7 @@ StatusAppTwoPanelLayout {
                 width: listView.width
                 title: modelData.name
                 icon.name: modelData.icon
-                selected: d.currentIndex == index
+                selected: d.currentIndex === index
                 onClicked: d.currentIndex = index
             }
         }
@@ -192,6 +192,8 @@ StatusAppTwoPanelLayout {
                     communitySectionModule: root.chatCommunitySectionModule
                 })
             }
+
+            CommunityPermissionsSettingsPanel {}
 
             SettingsPageLayout {
                 title: qsTr("Notifications")

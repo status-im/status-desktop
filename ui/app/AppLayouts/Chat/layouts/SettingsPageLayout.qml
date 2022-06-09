@@ -77,6 +77,7 @@ Item {
             id: contentLoader
             Layout.fillWidth: true
             Layout.fillHeight: true
+            Layout.topMargin: 16
             Layout.leftMargin: 24
             Layout.rightMargin: 24
 
