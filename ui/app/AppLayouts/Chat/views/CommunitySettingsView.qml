@@ -125,6 +125,8 @@ StatusAppTwoPanelLayout {
                 logoImageData: root.community.image
                 bannerImageData: root.community.bannerImageData
                 color: root.community.color
+                tags: root.rootStore.communityTags
+                selectedTags: root.community.tags
                 archiveSupportEnabled: root.community.historyArchiveSupportEnabled
                 requestToJoinEnabled: root.community.access === Constants.communityChatOnRequestAccess
                 pinMessagesEnabled: root.community.pinMessageAllMembersEnabled
@@ -140,6 +142,7 @@ StatusAppTwoPanelLayout {
                         Utils.filterXSS(item.outroMessage),
                         item.options.requestToJoinEnabled ? Constants.communityChatOnRequestAccess : Constants.communityChatPublicAccess,
                         item.color.toString().toUpperCase(),
+                        item.selectedTags,
                         JSON.stringify({imagePath: String(item.logoImagePath).replace("file://", ""), cropRect: item.logoCropRect}),
                         JSON.stringify({imagePath: String(item.bannerPath).replace("file://", ""), cropRect: item.bannerCropRect}),
                         item.options.archiveSupportEnabled,

@@ -62,8 +62,11 @@ QtObject {
         return profileSectionModule.ensUsernamesModule.getEtherscanLink()
     }
 
-    function createCommunity(communityName, communityDescription, checkedMembership, communityColor, communityImage, imageCropperModalaX, imageCropperModalaY, imageCropperModalbX, imageCropperModalbY) {
-        communitiesModuleInst.createCommunity(communityName, communityDescription, checkedMembership, communityColor, communityImage, imageCropperModalaX, imageCropperModalaY, imageCropperModalbX, imageCropperModalbY);
+    function createCommunity(communityName, communityDescription, checkedMembership, communityColor, communityTags,
+                             communityImage, imageCropperModalaX, imageCropperModalaY, imageCropperModalbX, imageCropperModalbY) {
+        communitiesModuleInst.createCommunity(communityName, communityDescription, checkedMembership, communityColor,
+                                              communityTags, communityImage, imageCropperModalaX, imageCropperModalaY,
+                                              imageCropperModalbX, imageCropperModalbY);
     }
 
     function copyToClipboard(text) {

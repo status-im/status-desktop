@@ -741,12 +741,13 @@ method banUserFromCommunity*(self: Module, pubKey: string) =
 
 method editCommunity*(self: Module, name: string,
                         description, introMessage, outroMessage: string,
-                        access: int, color: string,
+                        access: int, color: string, tags: string,
                         logoJsonStr: string,
                         bannerJsonStr: string,
                         historyArchiveSupportEnabled: bool,
                         pinMessageAllMembersEnabled: bool) =
-  self.controller.editCommunity(name, description, introMessage, outroMessage, access, color, logoJsonStr, bannerJsonStr, historyArchiveSupportEnabled, pinMessageAllMembersEnabled)
+  self.controller.editCommunity(name, description, introMessage, outroMessage, access, color, tags, logoJsonStr, 
+                                bannerJsonStr, historyArchiveSupportEnabled, pinMessageAllMembersEnabled)
 
 method exportCommunity*(self: Module): string =
   self.controller.exportCommunity()

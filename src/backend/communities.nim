@@ -6,6 +6,9 @@ import interpret/cropped_image
 
 export response_type
 
+proc getCommunityTags*(): RpcResponse[JsonNode] {.raises: [Exception].} =
+  result = callPrivateRPC("communityTags".prefix)
+
 proc getJoinedComunities*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* []
   result = callPrivateRPC("joinedCommunities".prefix, payload)
@@ -42,6 +45,7 @@ proc createCommunity*(
     outroMessage: string,
     access: int,
     color: string,
+    tags: string,
     imageUrl: string,
     aX: int, aY: int, bX: int, bY: int,
     historyArchiveSupportEnabled: bool,
@@ -56,6 +60,7 @@ proc createCommunity*(
       "outroMessage": outroMessage,
       "ensOnly": false, # TODO ensOnly is no longer supported. Remove this when we remove it in status-go
       "color": color,
+      "tags": parseJson(tags),
       "image": imageUrl,
       "imageAx": aX,
       "imageAy": aY,
@@ -73,6 +78,7 @@ proc editCommunity*(
     outroMessage: string,
     access: int,
     color: string,
+    tags: string,
     imageUrl: string,
     aX: int,
     aY: int,
@@ -92,6 +98,7 @@ proc editCommunity*(
     "outroMessage": outroMessage,
     "ensOnly": false, # TODO ensOnly is no longer supported. Remove this when we remove it in status-go
     "color": color,
+    "tags": parseJson(tags),
     "image": imageUrl,
     "imageAx": aX,
     "imageAy": aY,

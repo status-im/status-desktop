@@ -26,6 +26,8 @@ Flickable {
     property alias introMessage: introMessageTextInput.text
     property alias outroMessage: outroMessageTextInput.text
     property alias color: colorPicker.color
+    property alias tags: tagsPicker.tags
+    property alias selectedTags: tagsPicker.selectedTags
     property alias options: options
 
     property alias logoImageData: logoPicker.imageData
@@ -73,6 +75,11 @@ Flickable {
 
         CommunityColorPicker {
             id: colorPicker
+            Layout.fillWidth: true
+        }
+
+        CommunityTagsPicker {
+            id: tagsPicker
             Layout.fillWidth: true
         }
 

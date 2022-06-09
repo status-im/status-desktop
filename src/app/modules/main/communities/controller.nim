@@ -62,6 +62,9 @@ proc init*(self: Controller) =
     let args = CommunityMutedArgs(e)
     self.delegate.communityMuted(args.communityId, args.muted)
 
+proc getCommunityTags*(self: Controller): string =
+  result = self.communityService.getCommunityTags()
+
 proc getAllCommunities*(self: Controller): seq[CommunityDto] =
   result = self.communityService.getAllCommunities()
 
@@ -82,6 +85,7 @@ proc createCommunity*(
     outroMessage: string,
     access: int,
     color: string,
+    tags: string,
     imageUrl: string,
     aX: int, aY: int, bX: int, bY: int,
     historyArchiveSupportEnabled: bool,
@@ -93,6 +97,7 @@ proc createCommunity*(
     outroMessage,
     access,
     color,
+    tags,
     imageUrl,
     aX, aY, bX, bY,
     historyArchiveSupportEnabled,
