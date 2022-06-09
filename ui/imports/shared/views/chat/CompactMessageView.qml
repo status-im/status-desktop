@@ -340,11 +340,11 @@ Item {
             }
         }
 
-
-        UserImage {
+        StatusSmartIdenticon {
             id: chatImage
 
-            active: isMessage && headerRepeatCondition
+            property int imageHeight: 36
+            property int imageWidth: 36
 
             anchors.left: parent.left
             anchors.leftMargin: Style.current.padding
@@ -352,11 +352,35 @@ Item {
                                             pinnedRectangleLoader.active ? pinnedRectangleLoader.bottom : parent.top
             anchors.topMargin: chatReply.active || pinnedRectangleLoader.active ? 4 : Style.current.smallPadding
 
-            image: root.senderIcon
-            pubkey: senderId
-            name: senderDisplayName
+            active: isMessage && headerRepeatCondition
 
-            onClicked: root.clickMessage(true, false, false, null, false, false, false, false, "")
+            width: active? imageWidth : 0
+            height: active? imageHeight : 0
+
+            name: senderDisplayName
+            image {
+                width: chatImage.imageWidth
+                height: chatImage.imageHeight
+                source: root.senderIcon
+            }
+            icon {
+                width: chatImage.imageWidth
+                height: chatImage.imageHeight
+                color: Utils.colorForPubkey(senderId)
+                charactersLen: 2
+            }
+            ringSettings {
+                ringSpecModel: Utils.getColorHashAsJson(senderId)
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                hoverEnabled: true
+                onClicked: {
+                    root.clickMessage(true, false, false, null, false, false, false, false, "")
+                }
+            }
         }
 
         UsernameLabel {

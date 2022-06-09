@@ -321,10 +321,10 @@ Item {
             // Also one important thing here is that messages are set in descending order
             // in terms of `timestamp` of a message, that means a message with the most
             // recent time is added at index 0.
-            prevMessageIndex: index + 1
-            prevMessageAsJsonObj: messageStore.getMessageByIndexAsJson(index + 1)
-            nextMessageIndex: index - 1
-            nextMessageAsJsonObj: messageStore.getMessageByIndexAsJson(index - 1)
+            prevMessageIndex: model.prevMsgIndex
+            prevMessageAsJsonObj: messageStore.getMessageByIndexAsJson(model.prevMsgIndex)
+            nextMessageIndex: model.nextMsgIndex
+            nextMessageAsJsonObj: messageStore.getMessageByIndexAsJson(model.nextMsgIndex)
             onOpenStickerPackPopup: {
                 root.openStickerPackPopup(stickerPackId);
             }
