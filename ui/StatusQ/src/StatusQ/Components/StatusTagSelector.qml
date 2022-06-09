@@ -216,14 +216,15 @@ Item {
             spacing: 8
             StatusBaseText {
                 Layout.preferredWidth: 22
-                Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
+                Layout.alignment: Qt.AlignVCenter
                 color: Theme.palette.baseColor1
                 text: root.toLabelText
+                visible: (parent.width>22)
             }
 
             ScrollView {
-                Layout.preferredWidth: (namesList.contentWidth > (parent.width - 177)) ?
-                                       (parent.width - 177) : namesList.contentWidth
+                Layout.preferredWidth: (parent.width - 177) > 0 ? ((namesList.contentWidth > (parent.width - 177)) ?
+                                       (parent.width - 177) : namesList.contentWidth) : 0
                 implicitHeight: 30
                 Layout.alignment: Qt.AlignVCenter
                 visible: (namesList.count > 0)
@@ -289,6 +290,7 @@ Item {
                 font.family: Theme.palette.baseFont.name
                 Layout.fillWidth: true
                 Layout.preferredHeight: 44
+                visible: (parent.width>22)
                 Keys.onPressed: {
                     if ((event.key === Qt.Key_Backspace || event.key === Qt.Key_Escape)
                             && getText(cursorPosition, (cursorPosition-1)) === ""
