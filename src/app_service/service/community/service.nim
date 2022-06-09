@@ -25,7 +25,7 @@ type
     community*: CommunityDto
     error*: string
     fromUserAction*: bool
-  
+
   CuratedCommunityArgs* = ref object of Args
     curatedCommunity*: CuratedCommunity
 
@@ -100,12 +100,14 @@ QtObject:
       threadpool: ThreadPool
       events: EventEmitter
       chatService: chat_service.Service
+      communityTags: string # JSON string contraining tags map
       joinedCommunities: Table[string, CommunityDto] # [community_id, CommunityDto]
       curatedCommunities: Table[string, CuratedCommunity] # [community_id, CuratedCommunity]
       allCommunities: Table[string, CommunityDto] # [community_id, CommunityDto]
       myCommunityRequests*: seq[CommunityMembershipRequestDto]
 
   # Forward declaration
+  proc loadCommunityTags(self: Service): string
   proc loadAllCommunities(self: Service): seq[CommunityDto]
   proc loadJoinedComunities(self: Service): seq[CommunityDto]
   proc loadCuratedCommunities(self: Service): seq[CuratedCommunity]
@@ -127,6 +129,7 @@ QtObject:
     result.events = events
     result.threadpool = threadpool
     result.chatService = chatService
+    result.communityTags = newString(0)
     result.joinedCommunities = initTable[string, CommunityDto]()
     result.curatedCommunities = initTable[string, CuratedCommunity]()
     result.allCommunities = initTable[string, CommunityDto]()
@@ -327,6 +330,7 @@ QtObject:
 
   proc init*(self: Service) =
     self.doConnect()
+    self.communityTags = self.loadCommunityTags();
     let joinedCommunities = self.loadJoinedComunities()
     for community in joinedCommunities:
       self.joinedCommunities[community.id] = community
@@ -349,6 +353,12 @@ QtObject:
         self.joinedCommunities[settings.id].settings = settings
 
     self.loadMyPendingRequestsToJoin()
+
+  proc loadCommunityTags(self: Service): string =
+    let response = status_go.getCommunityTags()
+    var result = newString(0)
+    toUgly(result, response.result)
+    return result
 
   proc loadAllCommunities(self: Service): seq[CommunityDto] =
     try:
@@ -385,6 +395,9 @@ QtObject:
       let errDesription = e.msg
       error "error loading communities settings: ", errDesription
       return
+
+  proc getCommunityTags*(self: Service): string =
+    return self.communityTags
 
   proc getJoinedCommunities*(self: Service): seq[CommunityDto] =
     return toSeq(self.joinedCommunities.values)
@@ -498,7 +511,7 @@ QtObject:
       if not response.result.hasKey("communitiesSettings") or response.result["communitiesSettings"].kind != JArray or response.result["communitiesSettings"].len == 0:
         error "error: ", procName="joinCommunity", errDesription = "no 'communitiesSettings' key in response"
         return
-        
+
       var updatedCommunity = response.result["communities"][0].toCommunityDto()
       let communitySettings = response.result["communitiesSettings"][0].toCommunitySettingsDto()
 
@@ -591,6 +604,7 @@ QtObject:
       outroMessage: string,
       access: int,
       color: string,
+      tags: string,
       imageUrl: string,
       aX: int, aY: int, bX: int, bY: int,
       historyArchiveSupportEnabled: bool,
@@ -604,6 +618,7 @@ QtObject:
         outroMessage,
         access,
         color,
+        tags,
         image,
         aX, aY, bX, bY,
         historyArchiveSupportEnabled,
@@ -635,6 +650,7 @@ QtObject:
       outroMessage: string,
       access: int,
       color: string,
+      tags: string,
       logoJsonStr: string,
       bannerJsonStr: string,
       historyArchiveSupportEnabled: bool,
@@ -651,6 +667,7 @@ QtObject:
         outroMessage,
         access,
         color,
+        tags,
         logoJson["imagePath"].getStr(),
         int(cropRectJson["x"].getFloat()),
         int(cropRectJson["y"].getFloat()),

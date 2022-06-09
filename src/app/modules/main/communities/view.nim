@@ -10,6 +10,7 @@ import ./models/curated_community_model
 QtObject:
   type
     View* = ref object of QObject
+      communityTags: QVariant
       delegate: io_interface.AccessInterface
       model: SectionModel
       modelVariant: QVariant
@@ -28,6 +29,7 @@ QtObject:
   proc newView*(delegate: io_interface.AccessInterface): View =
     new(result, delete)
     result.QObject.setup
+    result.communityTags = newQVariant("")
     result.delegate = delegate
     result.model = newModel()
     result.modelVariant = newQVariant(result.model)
@@ -41,12 +43,21 @@ QtObject:
   proc communityAdded*(self: View, communityId: string) {.signal.}
   proc communityChanged*(self: View, communityId: string) {.signal.}
 
+  proc setCommunityTags*(self: View, communityTags: string) =
+    self.communityTags = newQVariant(communityTags)
+
   proc addItem*(self: View, item: SectionItem) =
     self.model.addItem(item)
     self.communityAdded(item.id)
 
   proc model*(self: View): SectionModel =
     result = self.model
+
+  proc getTags(self: View): QVariant {.slot.} =
+    return self.communityTags
+
+  QtProperty[QVariant] tags:
+    read = getTags
 
   proc getModel(self: View): QVariant {.slot.} =
     return self.modelVariant
@@ -84,12 +95,13 @@ QtObject:
 
   proc createCommunity*(self: View, name: string,
                         description: string, introMessage: string, outroMessage: string,
-                        access: int, color: string,
+                        access: int, color: string, tags: string,
                         imagePath: string,
                         aX: int, aY: int, bX: int, bY: int,
                         historyArchiveSupportEnabled: bool,
                         pinMessageAllMembersEnabled: bool) {.slot.} =
-    self.delegate.createCommunity(name, description, introMessage, outroMessage, access, color, imagePath, aX, aY, bX, bY, historyArchiveSupportEnabled, pinMessageAllMembersEnabled)
+    self.delegate.createCommunity(name, description, introMessage, outroMessage, access, color, tags,
+                                  imagePath, aX, aY, bX, bY, historyArchiveSupportEnabled, pinMessageAllMembersEnabled)
 
   proc deleteCommunityCategory*(self: View, communityId: string, categoryId: string): string {.slot.} =
     self.delegate.deleteCommunityCategory(communityId, categoryId)

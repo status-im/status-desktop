@@ -100,6 +100,12 @@ StatusModal {
                     Layout.fillWidth: true
                 }
 
+                CommunityTagsPicker {
+                    id: communityTagsPicker
+                    tags: root.store.communityTags
+                    Layout.fillWidth: true
+                }
+
                 StatusModalDivider {
                     Layout.fillWidth: true
                 }
@@ -149,6 +155,7 @@ StatusModal {
                     introMessage: Utils.filterXSS(introMessageInput.input.text),
                     outroMessage: Utils.filterXSS(outroMessageInput.input.text),
                     color: colorPicker.color.toString().toUpperCase(),
+                    tags: communityTagsPicker.selectedTags,
                     image: {
                         src: logoPicker.source,
                         AX: logoPicker.cropRect.x,

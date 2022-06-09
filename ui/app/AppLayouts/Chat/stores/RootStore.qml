@@ -138,6 +138,8 @@ QtObject {
 
     property bool isCommunityHistoryArchiveSupportEnabled: advancedModule? advancedModule.isCommunityHistoryArchiveSupportEnabled : false
 
+    property string communityTags: communitiesModule.tags
+
     function reCalculateAddToGroupContacts(channel) {
         const contacts = getContactListObject()
 
@@ -234,6 +236,7 @@ QtObject {
                                 introMessage: "",
                                 outroMessage: "",
                                 color: "",
+                                tags: "",
                                 image: {
                                     src: "",
                                     AX: 0,
@@ -248,7 +251,8 @@ QtObject {
                                 }
                              }) {
         return communitiesModuleInst.createCommunity(
-                    args.name, args.description, args.introMessage, args.outroMessage, args.options.checkedMembership, args.color,
+                    args.name, args.description, args.introMessage, args.outroMessage,
+                    args.options.checkedMembership, args.color, args.tags,
                     args.image.src, args.image.AX, args.image.AY, args.image.BX, args.image.BY,
                     args.options.historyArchiveSupportEnabled, args.options.pinMessagesAllowedForMembers);
     }
