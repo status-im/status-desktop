@@ -12,6 +12,7 @@ RoundedIcon 1.0 RoundedIcon.qml
 RoundedImage 1.0 RoundedImage.qml
 Separator 1.0 Separator.qml
 SeparatorWithIcon 1.0 SeparatorWithIcon.qml
+CurveSeparatorWithText 1.0 CurveSeparatorWithText.qml
 SplitViewHandle 1.0 SplitViewHandle.qml
 StyledText 1.0 StyledText.qml
 SVGImage 1.0 SVGImage.qml

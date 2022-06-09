@@ -33,6 +33,7 @@ QtObject {
         readonly property string gifWidget: "gifWidget"
         readonly property string communityHistoryArchiveSupport: "communityHistoryArchiveSupport"
         readonly property string communitiesPortal: "communitiesPortal"
+        readonly property string communityPermissions: "communityPermissions"
     }
 
     function logDir() {
@@ -129,6 +130,9 @@ QtObject {
         }
         else if (feature === experimentalFeatures.gifWidget) {
             localAccountSensitiveSettings.isGifWidgetEnabled = !localAccountSensitiveSettings.isGifWidgetEnabled
+        }
+        else if (feature === experimentalFeatures.communityPermissions) {
+            localAccountSensitiveSettings.isCommunityPermissionsEnabled = !localAccountSensitiveSettings.isCommunityPermissionsEnabled
         }
     }
 }

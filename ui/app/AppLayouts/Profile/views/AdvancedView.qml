@@ -163,6 +163,23 @@ SettingsContentBase {
                 }
             }
 
+            // TODO: replace with StatusQ component
+            StatusSettingsLineButton {
+                anchors.leftMargin: 0
+                anchors.rightMargin: 0
+                text: qsTr("Community Permissions Settings")
+                isSwitch: true
+                switchChecked: localAccountSensitiveSettings.isCommunityPermissionsEnabled
+                onClicked: {
+                    if (!localAccountSensitiveSettings.isCommunityPermissionsEnabled) {
+                        confirmationPopup.experimentalFeature = root.advancedStore.experimentalFeatures.communityPermissions
+                        confirmationPopup.open()
+                    } else {
+                        root.advancedStore.toggleExperimentalFeature(root.advancedStore.experimentalFeatures.communityPermissions)
+                    }
+                }
+            }
+
             StatusSectionHeadline {
                 anchors.left: parent.left
                 anchors.right: parent.right
