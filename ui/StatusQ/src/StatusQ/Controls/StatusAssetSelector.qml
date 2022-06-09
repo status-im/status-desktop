@@ -116,12 +116,12 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 StatusBaseText {
                     font.pixelSize: 15
-                    text: parseFloat(balance).toFixed(4) + " " + symbol
+                    text: parseFloat(totalBalance).toFixed(4) + " " + symbol
                 }
                 StatusBaseText {
                     font.pixelSize: 15
                     anchors.right: parent.right
-                    text: getCurrencyBalanceString(currencyBalance)
+                    text: getCurrencyBalanceString(totalCurrencyBalance)
                     color: Theme.palette.baseColor1
                 }
             }
@@ -130,14 +130,14 @@ Item {
             }
             Component.onCompleted: {
                 if(index === 0 ) {
-                    selectedAsset = { name: name, symbol: symbol, address: address, balance: balance, currencyBalance: currencyBalance}
+                    selectedAsset = { name: name, symbol: symbol, totalBalance: totalBalance, totalCurrencyBalance: totalCurrencyBalance}
                 }
             }
             MouseArea {
                 cursorShape: Qt.PointingHandCursor
                 anchors.fill: itemContainer
                 onClicked: {
-                    selectedAsset = {name: name, symbol: symbol, address: address, balance: balance, currencyBalance: currencyBalance}
+                    selectedAsset = {name: name, symbol: symbol, totalBalance: totalBalance, totalCurrencyBalance: totalCurrencyBalance}
                     select.selectMenu.close()
                 }
             }

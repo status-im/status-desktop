@@ -26,6 +26,7 @@ Item {
     property var assetFound
     property double minRequiredAssetBalance: 0
     property int dropdownWidth: width
+    property int chainId: 0
     property alias dropdownAlignment: select.menuAlignment
     property bool isValid: true
     property bool readOnly: false
@@ -46,7 +47,7 @@ Item {
         if (showBalanceForAssetSymbol == "" || minRequiredAssetBalance == 0 || !assetFound) {
             return root.isValid
         }
-        root.isValid = assetFound.balance >= minRequiredAssetBalance
+        root.isValid = assetFound.totalBalance >= minRequiredAssetBalance
         return root.isValid
     }
 
@@ -67,7 +68,7 @@ Item {
             textSelectedAddressFiatBalance.text = selectedAccount.currencyBalance + " " + currency.toUpperCase()
         }
         if (selectedAccount.assets && showBalanceForAssetSymbol) {
-            assetFound = Utils.findAssetBySymbol(selectedAccount.assets, showBalanceForAssetSymbol)
+            assetFound = Utils.findAssetByChainAndSymbol(root.chainId, selectedAccount.assets, showBalanceForAssetSymbol)
             if (!assetFound) {
                 console.warn("Cannot find asset '", showBalanceForAssetSymbol, "'. Ensure this asset has been added to the token list.")
             }
@@ -82,7 +83,7 @@ Item {
         if (!assetFound) {
             return
         }
-        txtAssetBalance.text = root.assetBalanceTextFn(assetFound.balance)
+        txtAssetBalance.text = root.assetBalanceTextFn(assetFound.totalBalance)
         txtAssetSymbol.text = " " + assetFound.symbol
     }
 
