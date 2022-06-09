@@ -50,23 +50,9 @@ SOURCES = *.qml \
           app/AppLayouts/Wallet/data/Currencies.qml \          
 }
 
+# Other *.ts files will be provided by Lokalise platform
 TRANSLATIONS += \
-    i18n/base.ts \
     i18n/qml_en.ts \
-    i18n/qml_fr.ts \
-    i18n/qml_it.ts \
-    i18n/qml_ko.ts \
-    i18n/qml_ru.ts \
-    i18n/qml_tr.ts \
-    i18n/qml_es.ts \
-    i18n/qml_id.ts \
-    i18n/qml_de.ts \
-    i18n/qml_pt_BR.ts \
-    i18n/qml_fil.ts \
-    i18n/qml_zh.ts \
-    i18n/qml_zh_TW.ts \
-    i18n/qml_ar.ts \
-    i18n/qml_ur.ts
 
 RESOURCES += \
     imports/Constants.qml \
