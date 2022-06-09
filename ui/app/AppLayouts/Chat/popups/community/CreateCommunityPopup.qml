@@ -62,8 +62,6 @@ StatusModal {
 
         anchors.fill: parent
 
-        implicitHeight: 720
-
         Flickable {
             id: generalView
 
@@ -71,6 +69,7 @@ StatusModal {
 
             clip: true
             contentHeight: generalViewLayout.height
+            implicitHeight: generalViewLayout.implicitHeight
             interactive: contentHeight > height
             flickableDirection: Flickable.VerticalFlick
 
