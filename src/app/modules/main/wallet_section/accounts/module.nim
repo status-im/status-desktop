@@ -98,6 +98,9 @@ method load*(self: Module) =
     var args = DerivedAddressesArgs(e)
     self.view.setDerivedAddresses(args.derivedAddresses, args.error)
 
+  self.events.on(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e:Args):
+    self.refreshWalletAccounts()
+
   self.controller.init()
   self.view.load()
 
