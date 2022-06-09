@@ -205,7 +205,7 @@ Rectangle {
 
     // Community logo:
     Rectangle {
-        z: parent.z + 1
+        z: content.z + 1
         anchors.top: parent.top
         anchors.topMargin: 16
         anchors.left: parent.left
@@ -227,6 +227,8 @@ Rectangle {
 
     // Content card
     Rectangle {
+        id: content
+        z: banner.z + 1
         visible: root.loaded
         anchors.top: parent.top
         anchors.topMargin: 40
