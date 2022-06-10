@@ -6,6 +6,7 @@ import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
 
 import utils 1.0
+import shared.controls.chat.menuItems 1.0
 
 Row {
     signal acceptClicked()
@@ -59,9 +60,7 @@ Row {
                 menuButton.highlighted = false
             }
 
-            StatusMenuItem {
-                text: qsTr("View Profile")
-                icon.name: "profile"
+            ViewProfileMenuItem {
                 onTriggered: root.profileClicked()
             }
 

@@ -7,6 +7,7 @@ import utils 1.0
 import StatusQ.Popups 0.1
 
 import shared.popups 1.0
+import shared.controls.chat.menuItems 1.0
 import "../popups"
 import "../popups/community"
 
@@ -48,30 +49,16 @@ StatusPopupMenu {
 
     width: root.amIChatAdmin && (root.chatType === Constants.chatType.privateGroupChat) ? 207 : implicitWidth
 
+    ViewProfileMenuItem {
+        enabled: root.chatType === Constants.chatType.oneToOne
+        onTriggered: root.displayProfilePopup(root.chatId)
+    }
+
     StatusMenuItem {
-        id: viewProfileMenuItem
-        text: {
-            switch (root.chatType) {
-            case Constants.chatType.oneToOne:
-                //% "View Profile"
-                return qsTrId("view-profile")
-            case Constants.chatType.privateGroupChat:
-                return qsTr("View Members")
-            default:
-                return ""
-            }
-        }
+        text: qsTr("View Members")
         icon.name: "group-chat"
-        enabled: root.chatType === Constants.chatType.oneToOne ||
-            root.chatType === Constants.chatType.privateGroupChat
-        onTriggered: {
-            if (root.chatType === Constants.chatType.oneToOne) {
-                root.displayProfilePopup(root.chatId)
-            }
-            if (root.chatType === Constants.chatType.privateGroupChat) {
-                root.displayGroupInfoPopup(root.chatId)
-            }
-        }
+        enabled: root.chatType === Constants.chatType.privateGroupChat
+        onTriggered: root.displayGroupInfoPopup(root.chatId)
     }
 
     StatusMenuItem {
@@ -82,12 +69,12 @@ StatusPopupMenu {
     }
 
     StatusMenuSeparator {
-        visible: viewProfileMenuItem.enabled
+        visible: root.chatType === Constants.chatType.oneToOne || root.chatType === Constants.chatType.privateGroupChat
     }
 
     Action {
         enabled: root.currentFleet === Constants.waku_prod   ||
-                 root.currentFleet === Constants.waku_test   || 
+                 root.currentFleet === Constants.waku_test   ||
                  root.currentFleet === Constants.status_test ||
                  root.currentFleet === Constants.status_prod
 
@@ -120,13 +107,8 @@ StatusPopupMenu {
         }
     }
 
-    StatusMenuItem {
-        text: root.chatMuted ?
-              //% "Unmute chat"
-              qsTrId("unmute-chat") :
-              //% "Mute chat"
-              qsTrId("mute-chat")
-        icon.name: "notification"
+    MuteChatMenuItem {
+        muted: root.chatMuted
         onTriggered: {
             if(root.chatMuted)
                 root.unmuteChat(root.chatId)
