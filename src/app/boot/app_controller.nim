@@ -362,9 +362,7 @@ proc buildAndRegisterUserProfile(self: AppController) =
   var displayName = self.settingsService.getDisplayName()
   let ensUsernames = self.settingsService.getEnsUsernames()
   let firstEnsName = if (ensUsernames.len > 0): ensUsernames[0] else: ""
-  let sendUserStatus = self.settingsService.getSendStatusUpdates()
-  ## This is still not in use. Read a comment in UserProfile.
-  ## let currentUserStatus = self.settingsService.getCurrentUserStatus()
+  let currentUserStatus = self.settingsService.getCurrentUserStatus()
 
   let loggedInAccount = self.accountsService.getLoggedInAccount()
   var thumbnail, large: string
@@ -386,6 +384,6 @@ proc buildAndRegisterUserProfile(self: AppController) =
   singletonInstance.userProfile.setFirstEnsName(firstEnsName)
   singletonInstance.userProfile.setThumbnailImage(thumbnail)
   singletonInstance.userProfile.setLargeImage(large)
-  singletonInstance.userProfile.setUserStatus(sendUserStatus)
+  singletonInstance.userProfile.setCurrentUserStatus(currentUserStatus.statusType.int)
 
   singletonInstance.engine.setRootContextProperty("userProfile", self.userProfileVariant)

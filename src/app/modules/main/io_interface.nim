@@ -7,12 +7,12 @@ import ../../../app_service/service/community/service as community_service
 import ../../../app_service/service/message/service as message_service
 import ../../../app_service/service/gif/service as gif_service
 import ../../../app_service/service/mailservers/service as mailservers_service
+from ../../../app_service/common/types import StatusType
 
 import ../../global/app_signals
 import ../../core/eventemitter
 import ../../core/notifications/details
 import ../shared_models/section_item
-import chat_search_item
 
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -162,7 +162,7 @@ method storePassword*(self: AccessInterface, password: string) {.base.} =
 method setActiveSection*(self: AccessInterface, item: SectionItem) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method setUserStatus*(self: AccessInterface, status: bool) {.base.} =
+method setCurrentUserStatus*(self: AccessInterface, status: StatusType) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getChatSectionModuleAsVariant*(self: AccessInterface): QVariant {.base.} =

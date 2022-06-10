@@ -141,7 +141,7 @@ QtObject:
     # if we add an item with offline status we add it as the first offline item (after the last online item)
     var position = -1
     for i in 0 ..< self.items.len:
-      if(self.items[i].onlineStatus == OnlineStatus.Offline):
+      if(self.items[i].onlineStatus == OnlineStatus.Inactive):
         position = i
         break
 

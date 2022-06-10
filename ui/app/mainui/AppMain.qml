@@ -369,18 +369,15 @@ Item {
                 badge.implicitHeight: 15
                 badge.implicitWidth: 15
                 badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusAppNavBar.backgroundColor
-                /*
-                //This is still not in use. Read a comment for `currentUserStatus` in UserProfile on the nim side.
-                // Use this code once support for custom user status is added
-                switch(userProfile.currentUserStatus){
-                    case Constants.userStatus.online:
-                        return Style.current.green;
-                    case Constants.userStatus.doNotDisturb:
-                        return Style.current.red;
-                    default:
-                        return Style.current.midGrey;
-                }*/
-                badge.color: appMain.rootStore.userProfileInst.userStatus ? Style.current.green : Style.current.midGrey
+                badge.color: {
+                    switch(appMain.rootStore.userProfileInst.currentUserStatus){
+                        case Constants.currentUserStatus.automatic:
+                        case Constants.currentUserStatus.alwaysOnline:
+                            return Style.current.green;
+                        default:
+                            return Style.current.midGrey;
+                    }
+                }
                 badge.border.width: 3
                 onClicked: {
                     userStatusContextMenu.opened ?

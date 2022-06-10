@@ -2,6 +2,8 @@ import Tables, json, options, tables, strutils
 import ../../stickers/dto/stickers
 
 include  ../../../common/json_utils
+from ../../../common/types import StatusType
+from ../../../common/conversion import intToEnum
 
 # Setting keys:
 const KEY_ADDRESS* = "address"
@@ -74,7 +76,7 @@ type PinnedMailserver* = object
   statusProd*: string
 
 type CurrentUserStatus* = object
-  statusType*: int
+  statusType*: StatusType
   clock*: int64
   text*: string
 
@@ -134,7 +136,9 @@ proc toPinnedMailserver*(jsonObj: JsonNode): PinnedMailserver =
   discard jsonObj.getProp("status.prod", result.statusProd)
 
 proc toCurrentUserStatus*(jsonObj: JsonNode): CurrentUserStatus =
-  discard jsonObj.getProp("statusType", result.statusType)
+  var statusTypeInt: int
+  discard jsonObj.getProp("statusType", statusTypeInt)
+  result.statusType = intToEnum(statusTypeInt, StatusType.Unknown)
   discard jsonObj.getProp("clock", result.clock)
   discard jsonObj.getProp("text", result.text)
 
