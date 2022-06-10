@@ -20,34 +20,30 @@ SettingsPageLayout {
 
     title: qsTr("Permissions")
 
-    content: Item {
-        QtObject {
-            id: d
-            property int contentWidth: 560 // by design
-        }
+    content: Flickable {
+        contentWidth: mainLayout.width
+        contentHeight: mainLayout.height
+        clip: true
+        flickableDirection: Flickable.AutoFlickIfNeeded
 
         ColumnLayout {
-            anchors.top: parent.top
-            anchors.topMargin: Style.current.padding
-            width: d.contentWidth
+            id: mainLayout
+
+            width: 560
             spacing: 24
 
             Rectangle {
                 Layout.fillWidth: true
-                color: "transparent"
                 Layout.preferredHeight: contentColumn.implicitHeight + contentColumn.anchors.topMargin + contentColumn.anchors.bottomMargin
+                color: "transparent"
                 radius: 16
                 border.color: Theme.palette.baseColor5
                 clip: true
 
                 ColumnLayout {
                     id: contentColumn
-                    anchors.top: parent.top
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.leftMargin: 16
-                    anchors.rightMargin: anchors.leftMargin
-                    anchors.topMargin: anchors.leftMargin
+                    anchors.fill: parent
+                    anchors.margins: 16
                     anchors.bottomMargin: 32
                     spacing: 8
                     clip: true
