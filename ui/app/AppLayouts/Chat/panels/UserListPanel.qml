@@ -64,7 +64,7 @@ Item {
             anchors.rightMargin: 8
             nickName: model.localNickname
             userName: model.displayName
-            pubKey: model.pubKey
+            pubKey: Utils.getCompressedPk(model.pubKey)
             isContact: model.isContact
             isVerified: model.isVerified
             isUntrustworthy: model.isUntrustworthy
