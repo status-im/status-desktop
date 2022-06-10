@@ -187,6 +187,9 @@ QtObject:
   proc removeMemberFromGroupChat*(self: View, communityID: string, chatId: string, pubKey: string) {.slot.} =
     self.delegate.removeMemberFromGroupChat(communityID, chatId, pubKey)
 
+  proc removeMembersFromGroupChat*(self: View, communityID: string, chatId: string, pubKeys: string) {.slot.} =
+    self.delegate.removeMembersFromGroupChat(communityID, chatId, pubKeys)
+
   proc renameGroupChat*(self: View, chatId: string, newName: string) {.slot.} =
     self.delegate.renameGroupChat(chatId, newName)
 
