@@ -14,6 +14,7 @@ import shared.panels 1.0
 import shared.status 1.0
 import shared.views 1.0
 import shared.controls.chat 1.0
+import shared.controls.chat.menuItems 1.0
 
 StatusListItem {
     id: container
@@ -128,9 +129,7 @@ StatusListItem {
 
                 Separator {}
 
-                StatusMenuItem {
-                    text: qsTr("View Profile")
-                    icon.name: "profile"
+                ViewProfileMenuItem {
                     icon.width: 16
                     icon.height: 16
                     onTriggered: {
@@ -139,9 +138,7 @@ StatusListItem {
                     }
                 }
 
-                StatusMenuItem {
-                    text: qsTr("Send message")
-                    icon.name: "chat"
+                SendMessageMenuItem {
                     icon.width: 16
                     icon.height: 16
                     onTriggered: {

@@ -13,6 +13,7 @@ import shared.panels 1.0
 import shared.popups 1.0
 import shared.status 1.0
 import shared.controls.chat 1.0
+import shared.controls.chat.menuItems 1.0
 
 StatusPopupMenu {
     id: root
@@ -160,36 +161,33 @@ StatusPopupMenu {
         enabled: root.isRightClickOnImage && !root.pinnedPopup
     }
 
-    StatusMenuItem {
+    ViewProfileMenuItem {
         id: viewProfileAction
-        //% "View Profile"
-        text: qsTrId("view-profile")
         onTriggered: {
             root.openProfileClicked(root.selectedUserPublicKey)
             root.close()
         }
-        icon.name: "profile"
         enabled: root.isProfile && !root.pinnedPopup
     }
 
-    StatusMenuItem {
-        id: sendMessageOrReplyTo
-        text: root.isProfile ?
-                  //% "Send message"
-                  qsTrId("send-message") :
-                  //% "Reply to"
-                  qsTrId("reply-to")
+    SendMessageMenuItem {
+        id: sendMessageMenuItem
+        enabled: root.isProfile && root.store.contactsStore.isMyMutualContact(root.selectedUserPublicKey)
         onTriggered: {
-            if (root.isProfile) {
-                root.createOneToOneChat("", root.selectedUserPublicKey, "")
-            } else {
-                root.showReplyArea()
-            }
+            root.createOneToOneChat("", root.selectedUserPublicKey, "")
             root.close()
         }
+    }
+
+    StatusMenuItem {
+        id: replyToMenuItem
+        text: qsTr("Reply to")
         icon.name: "chat"
-        enabled: root.isProfile && root.store.contactsStore.isMyMutualContact(root.selectedUserPublicKey) ||
-                 (!root.hideEmojiPicker &&
+        onTriggered: {
+            root.showReplyArea()
+            root.close()
+        }
+        enabled: (!root.hideEmojiPicker &&
                   !root.isEmoji &&
                   !root.isProfile &&
                   !root.pinnedPopup &&
@@ -274,7 +272,8 @@ StatusPopupMenu {
     StatusMenuSeparator {
         visible: deleteMessageAction.enabled &&
                  (viewProfileAction.enabled ||
-                  sendMessageOrReplyTo.enabled ||
+                  sendMessageMenuItem.enabled ||
+                  replyToMenuItem.enabled ||
                   editMessageAction.enabled ||
                   pinAction.enabled)
     }
