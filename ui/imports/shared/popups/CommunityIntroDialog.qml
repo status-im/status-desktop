@@ -17,13 +17,8 @@ StatusModal {
 
     signal joined
 
-    // Code below is needed because StatusModal content padding is messed up
-    // FIXME: when StatusModal is reworked
-    width: undefined       // popup is able to determine size from its content
-    topPadding: 64 + 16    // 64 is header height
-    leftPadding: 16
-    rightPadding: 16
-    bottomPadding: 71 + 16 // 71 is footer height
+    width: undefined // popup is able to determine size from its content
+    padding: 16
 
     header.title: qsTr("Welcome to %1").arg(name)
 

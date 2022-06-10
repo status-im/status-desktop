@@ -23,13 +23,7 @@ StatusModal {
     property var store
 
     width: 640
-
-    // Code below is needed because StatusModal content padding is messed up
-    // FIXME: when StatusModal is reworked
-    topPadding: 64 + 16 // 64 is header height
-    leftPadding: 16
-    rightPadding: 16
-    bottomPadding: 71 + 16 // 71 is footer height
+    padding: 16
 
     header.title: qsTr("Create New Community")
 
