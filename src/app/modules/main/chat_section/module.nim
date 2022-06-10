@@ -485,6 +485,7 @@ method onCommunityCategoryDeleted*(self: Module, cat: Category) =
       chatDto.color, chatDto.emoji, chatDto.description, chatDto.chatType.int, amIChatAdmin,
       hasNotification, notificationsCount, chatDto.muted, false, active = false,
       chatDto.position, categoryId="")
+    self.view.chatsModel().removeItemById(c.id)
     self.view.chatsModel().appendItem(channelItem)
 
   self.view.chatsModel().removeItemById(cat.id)
