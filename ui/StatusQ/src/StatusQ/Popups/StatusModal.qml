@@ -194,10 +194,11 @@ QC.Popup {
 
     width: 480
 
-    topPadding: headerImpl.implicitHeight
-    bottomPadding: footerImpl.implicitHeight
-    leftPadding: 0
-    rightPadding: 0
+    padding: 0
+    topPadding: padding + headerImpl.implicitHeight
+    bottomPadding: padding + footerImpl.implicitHeight
+    leftPadding: padding
+    rightPadding: padding
 
     modal: true
 
