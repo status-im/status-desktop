@@ -95,7 +95,7 @@ SettingsPageLayout {
                 id: memberItem
 
                 readonly property bool itsMe: model.pubKey.toLowerCase() === userProfile.pubKey.toLowerCase()
-                readonly property bool isOnline: model.onlineStatus === Constants.userStatus.online
+                readonly property bool isOnline: model.onlineStatus === Constants.onlineStatus.online
 
                 width: memberList.width
 

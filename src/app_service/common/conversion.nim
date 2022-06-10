@@ -63,3 +63,7 @@ proc wei2Eth*(input: string, decimals: int): string =
 
 proc wei2Gwei*(input: string): string =
   result = wei2Eth(input, 9)
+
+proc intToEnum*[T](intVal: int, defaultVal: T): T =
+  result = if (intVal >= ord(low(T)) and intVal <= ord(high(T))): T(intVal) else: defaultVal
+

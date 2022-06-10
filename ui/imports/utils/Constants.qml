@@ -49,11 +49,17 @@ QtObject {
         property int backUpSeed: 14
     }
 
-    readonly property QtObject userStatus: QtObject{
-        readonly property int offline: 0
-        readonly property int online: 1
+    readonly property QtObject currentUserStatus: QtObject{
+        readonly property int unknown: 0
+        readonly property int automatic: 1
         readonly property int doNotDisturb: 2
-        readonly property int idle: 3
+        readonly property int alwaysOnline: 3
+        readonly property int inactive: 4
+    }
+
+    readonly property QtObject onlineStatus: QtObject{
+        readonly property int inactive: 0
+        readonly property int online: 1
     }
 
     readonly property QtObject chatType: QtObject{

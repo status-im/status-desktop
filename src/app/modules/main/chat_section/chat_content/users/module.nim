@@ -5,6 +5,8 @@ import view, controller
 import ../../../../shared_models/[member_model, member_item]
 import ../../../../../global/global_singleton
 import ../../../../../core/eventemitter
+import ../../../../../../app_service/common/conversion
+import ../../../../../../app_service/common/types
 import ../../../../../../app_service/service/contacts/service as contact_service
 import ../../../../../../app_service/service/chat/service as chat_service
 import ../../../../../../app_service/service/community/service as community_service
@@ -69,7 +71,7 @@ method onNewMessagesLoaded*(self: Module, messages: seq[MessageDto]) =
 
     let contactDetails = self.controller.getContactDetails(m.`from`)
     let statusUpdateDto = self.controller.getStatusForContact(m.`from`)
-    let status = statusUpdateDto.statusType.int.OnlineStatus
+    let status = toOnlineStatus(statusUpdateDto.statusType)
     self.view.model().addItem(initMemberItem(
       pubKey = m.`from`,
       displayName = contactDetails.displayName,
@@ -93,7 +95,7 @@ method contactNicknameChanged*(self: Module, publicKey: string) =
 
 method contactsStatusUpdated*(self: Module, statusUpdates: seq[StatusUpdateDto]) =
   for s in statusUpdates:
-    let status = s.statusType.int.OnlineStatus
+    var status = toOnlineStatus(s.statusType)
     self.view.model().setOnlineStatus(s.publicKey, status)
 
 method contactUpdated*(self: Module, publicKey: string) =
@@ -130,9 +132,11 @@ method addChatMember*(self: Module,  member: ChatMember) =
   var displayName = contactDetails.displayName
   if (isMe):
     displayName = displayName & " (You)"
+    let currentUserStatus = intToEnum(singletonInstance.userProfile.getCurrentUserStatus(), StatusType.Unknown)
+    status = toOnlineStatus(currentUserStatus)
   else:
     let statusUpdateDto = self.controller.getStatusForContact(member.id)
-    status = statusUpdateDto.statusType.int.OnlineStatus
+    status = toOnlineStatus(statusUpdateDto.statusType)
   
   self.view.model().addItem(initMemberItem(
     pubKey = member.id,

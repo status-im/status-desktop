@@ -4,15 +4,15 @@ import ../../../app/global/global_singleton
 import ../../../app/core/signals/types
 import ../../../app/core/eventemitter
 import ../../../app/core/tasks/[qt, threadpool]
+import ../../common/types as common_types
 
+import ../settings/dto/settings
 import ../network/service as network_service
 import ./dto/contacts as contacts_dto
 import ./dto/status_update as status_update_dto
 import ./dto/contact_details
 import ../../../backend/contacts as status_contacts
 import ../../../backend/accounts as status_accounts
-import ../../../backend/chat as status_chat
-import ../../../backend/utils as status_utils
 
 export contacts_dto, status_update_dto, contact_details
 
@@ -38,8 +38,8 @@ type
 
 # Local Constants:
 const CheckStatusIntervalInMilliseconds = 5000 # 5 seconds, this is timeout how often do we check for user status.
-const OnlineLimitInSeconds = int(5.5 * 60) # 5.5 minutes
-const IdleLimitInSeconds = int(7 * 60) # 7 minutes
+const FiveMinsOnlineLimitInSeconds = int(5 * 60) # 5 minutes
+const TwoWeeksOnlineLimitInSeconds = int(14 * 24 * 60 * 60) # 2 weeks
 
 # Signals which may be emitted by this service:
 const SIGNAL_ENS_RESOLVED* = "ensResolved"
@@ -100,7 +100,7 @@ QtObject:
   proc addContact(self: Service, contact: ContactsDto) =
     # Private proc, used for adding contacts only.
     self.contacts[contact.id] = contact
-    self.contactsStatus[contact.id] = StatusUpdateDto(publicKey: contact.id, statusType: StatusType.Offline)
+    self.contactsStatus[contact.id] = StatusUpdateDto(publicKey: contact.id, statusType: StatusType.Unknown)
 
   proc fetchContacts*(self: Service) =
     try:
@@ -427,20 +427,9 @@ QtObject:
     let timestampNow = uint64(nowInMyLocalZone.toTime().toUnix())
     var updatedStatuses: seq[StatusUpdateDto]
     for status in self.contactsStatus.mvalues:
-      if(timestampNow - status.clock < uint64(OnlineLimitInSeconds)):
-        if(status.statusType == StatusType.Online):
-          continue
-        else:
-          status.statusType = StatusType.Online
-          updatedStatuses.add(status)
-      elif(timestampNow - status.clock < uint64(IdleLimitInSeconds)):
-        if(status.statusType == StatusType.Idle):
-          continue
-        else:
-          status.statusType = StatusType.Idle
-          updatedStatuses.add(status)
-      elif(status.statusType != StatusType.Offline):
-        status.statusType = StatusType.Offline
+      if((timestampNow - status.clock > uint64(FiveMinsOnlineLimitInSeconds) and status.statusType == StatusType.Automatic) or
+         (timestampNow - status.clock > uint64(TwoWeeksOnlineLimitInSeconds) and status.statusType == StatusType.AlwaysOnline)):
+        status.statusType = StatusType.Inactive
         updatedStatuses.add(status)
 
     if(updatedStatuses.len > 0):
@@ -448,6 +437,14 @@ QtObject:
       self.events.emit(SIGNAL_CONTACTS_STATUS_UPDATED, data)
 
     self.startCheckingContactStatuses()
+
+  proc emitCurrentUserStatusChanged*(self: Service, currentStatusUser: CurrentUserStatus) =
+    let currentUserStatusUpdate = StatusUpdateDto(publicKey: singletonInstance.userProfile.getPubKey(),
+                                                  statusType: currentStatusUser.statusType,
+                                                  clock: currentStatusUser.clock.uint64,
+                                                  text: currentStatusUser.text)
+    let data = ContactsStatusUpdatedArgs(statusUpdates: @[currentUserStatusUpdate])
+    self.events.emit(SIGNAL_CONTACTS_STATUS_UPDATED, data)
 
   proc startCheckingContactStatuses(self: Service) =
     if(self.closingApp):

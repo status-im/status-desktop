@@ -1,12 +1,10 @@
 import strformat
+import ../../../app_service/common/types
 
 type
   OnlineStatus* {.pure.} = enum
-    Offline = 0
+    Inactive = 0
     Online
-    DoNotDisturb
-    Idle
-    Invisible
 
   ContactRequest* {.pure.} = enum
     None = 0
@@ -83,7 +81,7 @@ proc initUserItem*(
   icon: string,
   colorId: int = 0,
   colorHash: string = "",
-  onlineStatus: OnlineStatus = OnlineStatus.Offline,
+  onlineStatus: OnlineStatus = OnlineStatus.Inactive,
   isContact: bool,
   isVerified: bool,
   isUntrustworthy: bool,
@@ -110,6 +108,12 @@ proc initUserItem*(
     contactRequest = contactRequest,
     incomingVerification = incomingVerification,
     outcomingVerification = outcomingVerification)
+
+proc toOnlineStatus*(statusType: StatusType): OnlineStatus =
+  if(statusType == StatusType.AlwaysOnline or statusType == StatusType.Automatic):
+    return OnlineStatus.Online
+  else:
+    return OnlineStatus.Inactive
 
 proc `$`*(self: UserItem): string =
   result = fmt"""User Item(

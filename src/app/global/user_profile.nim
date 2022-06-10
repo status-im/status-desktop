@@ -15,8 +15,7 @@ QtObject:
     preferredName: string
     thumbnailImage: string
     largeImage: string
-    userStatus: bool
-    #currentUserStatus: int
+    currentUserStatus: int
 
   proc setup(self: UserProfile) =
     self.QObject.setup
@@ -183,50 +182,18 @@ QtObject:
     read = getLargeImage
     notify = largeImageChanged
 
+  proc currentUserStatusChanged*(self: UserProfile) {.signal.}
 
-  proc userStatusChanged*(self: UserProfile) {.signal.}
-
-  proc getUserStatus*(self: UserProfile): bool {.slot.} =
-    self.userStatus
+  proc getCurrentUserStatus*(self: UserProfile): int {.slot.} =
+    self.currentUserStatus
 
   # this is not a slot
-  proc setUserStatus*(self: UserProfile, status: bool) =
-    if(self.userStatus == status):
+  proc setCurrentUserStatus*(self: UserProfile, status: int) =
+    if(self.currentUserStatus == status):
       return
-    self.userStatus = status
-    self.userStatusChanged()
+    self.currentUserStatus = status
+    self.currentUserStatusChanged()
 
-  QtProperty[bool] userStatus:
-    read = getUserStatus
-    notify = userStatusChanged
-
-
-  ## This is still not in use.
-  ## Once we decide to differ more than Online/Offline statuses we shouldn't use this code below,
-  ## but update current `userStatus` which is a bool to something like the code bellow (`currentUserStatus`).
-  ##
-  ## Proposal - some statuses we may have:
-  ## type
-  ##   OnlineStatus* {.pure.} = enum
-  ##     Online = 0
-  ##     Idle
-  ##     DoNotDisturb
-  ##     Invisible
-  ##     Offline
-  ##
-  ##
-  ## proc currentUserStatusChanged*(self: UserProfile) {.signal.}
-
-  ## proc getCurrentUserStatus*(self: UserProfile): int {.slot.} =
-  ##   self.currentUserStatus
-
-  ## # this is not a slot
-  ## proc setCurrentUserStatus*(self: UserProfile, status: int) =
-  ##   if(self.currentUserStatus == status):
-  ##     return
-  ##   self.currentUserStatus = status
-  ##   self.currentUserStatusChanged()
-
-  ## QtProperty[int] currentUserStatus:
-  ##   read = getCurrentUserStatus
-  ##   notify = currentUserStatusChanged
+  QtProperty[int] currentUserStatus:
+    read = getCurrentUserStatus
+    notify = currentUserStatusChanged

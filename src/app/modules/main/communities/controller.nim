@@ -151,3 +151,6 @@ proc userCanJoin*(self: Controller, communityId: string): bool =
 
 proc isCommunityRequestPending*(self: Controller, communityId: string): bool =
   return self.communityService.isCommunityRequestPending(communityId)
+
+proc getStatusForContactWithId*(self: Controller, publicKey: string): StatusUpdateDto =
+  return self.contactsService.getStatusForContactWithId(publicKey)

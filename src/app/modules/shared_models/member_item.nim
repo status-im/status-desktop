@@ -18,7 +18,7 @@ proc initMemberItem*(
   icon: string,
   colorId: int = 0,
   colorHash: string = "",
-  onlineStatus: OnlineStatus = OnlineStatus.Offline,
+  onlineStatus: OnlineStatus = OnlineStatus.Inactive,
   isContact: bool = false,
   isVerified: bool = false,
   isUntrustworthy: bool = false,

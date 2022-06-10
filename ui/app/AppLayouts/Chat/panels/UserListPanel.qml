@@ -114,10 +114,10 @@ Item {
                 color: Theme.palette.baseColor1
                 text: {
                     switch(parseInt(section)) {
-                        case Constants.userStatus.offline: return qsTr("Offline")
-                        case Constants.userStatus.online: return qsTr("Online")
-                        case Constants.userStatus.doNotDisturb: return qsTr("Do not disturb")
-                        case Constants.userStatus.idle: return qsTr("Idle")
+                        case Constants.onlineStatus.online:
+                            return qsTr("Online")
+                        default:
+                             return qsTr("Inactive")
                     }
                 }
             }

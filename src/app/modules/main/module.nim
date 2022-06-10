@@ -51,6 +51,7 @@ import ../../../app_service/service/gif/service as gif_service
 import ../../../app_service/service/ens/service as ens_service
 import ../../../app_service/service/network/service as network_service
 import ../../../app_service/service/general/service as general_service
+from ../../../app_service/common/types import StatusType
 
 import ../../core/notifications/details
 import ../../core/eventemitter
@@ -232,7 +233,7 @@ proc createChannelGroupItem[T](self: Module[T], c: ChannelGroupDto): SectionItem
         localNickname = contactDetails.details.localNickname,
         alias = contactDetails.details.alias,
         icon = contactDetails.icon,
-        onlineStatus = OnlineStatus.Offline,
+        onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(member.id).statusType),
         isContact = contactDetails.details.added # FIXME
         )),
     if (isCommunity): communityDetails.pendingRequestsToJoin.map(x => pending_request_item.initItem(
@@ -543,8 +544,8 @@ method toggleSection*[T](self: Module[T], sectionType: SectionType) =
     self.setSectionAvailability(sectionType, not enabled)
     singletonInstance.localAccountSensitiveSettings.setNodeManagementEnabled(not enabled)
 
-method setUserStatus*[T](self: Module[T], status: bool) =
-  self.controller.setUserStatus(status)
+method setCurrentUserStatus*[T](self: Module[T], status: StatusType) =
+  self.controller.setCurrentUserStatus(status)
 
 proc getChatSectionModule*[T](self: Module[T]): chat_section_module.AccessInterface =
   return self.channelGroupModules[singletonInstance.userProfile.getPubKey()]
