@@ -200,6 +200,8 @@ QC.Popup {
     leftPadding: padding
     rightPadding: padding
 
+    margins: 64
+
     modal: true
 
     QC.Overlay.modal: Rectangle {
