@@ -22,7 +22,7 @@ Page {
     property var emojiPopup: null
 
     Keys.onEscapePressed: {
-        root.rootStore.openCreateChat = false;        
+        root.rootStore.openCreateChat = false;
     }
 
     ListView {
@@ -31,8 +31,8 @@ Page {
         anchors.right: parent.right
         model: root.rootStore.contactsModel
         delegate: Item {
-            property string publicId: model.pubKey
-            property string name: model.name
+            property string pubKey: model.pubKey
+            property string displayName: model.displayName
             property string icon: model.icon
         }
     }
@@ -44,7 +44,7 @@ Page {
                 for (var i = 0; i < contactsModelListView.count; i ++) {
                     var entry = contactsModelListView.itemAtIndex(i);
                     contactsModel.insert(contactsModel.count,
-                    {"publicId": entry.publicId, "name": entry.name,
+                    {"pubKey": entry.pubKey, "displayName": entry.displayName,
                      "icon": entry.icon});
                 }
                 tagSelector.sortModel(root.contactsModel);
@@ -58,15 +58,15 @@ Page {
     function createChat() {
         if (tagSelector.namesModel.count === 1) {
             var ensName = tagSelector.namesModel.get(0).name.includes(".eth") ? tagSelector.namesModel.get(0).name : "";
-            root.rootStore.chatCommunitySectionModule.createOneToOneChat("", tagSelector.namesModel.get(0).publicId, ensName);
+            root.rootStore.chatCommunitySectionModule.createOneToOneChat("", tagSelector.namesModel.get(0).pubKey, ensName);
         } else {
             var groupName = "";
-            var publicIds = [];
+            var pubKeys = [];
             for (var i = 0; i < tagSelector.namesModel.count; i++) {
                 groupName += (tagSelector.namesModel.get(i).name + (i === tagSelector.namesModel.count - 1 ? "" : "&"));
-                publicIds.push(tagSelector.namesModel.get(i).publicId);
+                pubKeys.push(tagSelector.namesModel.get(i).pubKey);
             }
-            root.rootStore.chatCommunitySectionModule.createGroupChat("",groupName, JSON.stringify(publicIds));
+            root.rootStore.chatCommunitySectionModule.createGroupChat("",groupName, JSON.stringify(pubKeys));
         }
 
         chatInput.textInput.clear();

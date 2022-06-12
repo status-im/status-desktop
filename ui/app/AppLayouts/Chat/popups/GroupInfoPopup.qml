@@ -209,14 +209,14 @@ StatusModal {
             delegate: StatusListItem {
                 id: contactRow
 
-                title: model.name
+                title: model.displayName
                 statusListItemTitle.font.pixelSize: 17
                 statusListItemTitleAside.font.pixelSize: 17
                 label: model.isAdmin ? qsTrId("group-chat-admin"): ""
                 image.source: model.icon
-                ringSettings.ringSpecModel: Utils.getColorHashAsJson(model.id)
+                ringSettings.ringSpecModel: Utils.getColorHashAsJson(model.pubKey)
                 icon: StatusIconSettings {
-                    color: Theme.palette.userCustomizationColors[Utils.colorIdForPubkey(model.id)]
+                    color: Theme.palette.userCustomizationColors[Utils.colorIdForPubkey(model.pubKey)]
                     charactersLen: 2
                     isLetterIdenticon: model.icon === ""
                     height: isLetterIdenticon ? 40 : 20
@@ -242,7 +242,7 @@ StatusModal {
                                 icon.height: 16
                                 //% "Make Admin"
                                 text: qsTrId("make-admin")
-                                onTriggered: popup.chatSectionModule.makeAdmin("", popup.chatDetails.id,  model.id)
+                                onTriggered: popup.chatSectionModule.makeAdmin("", popup.chatDetails.id,  model.pubKey)
                             }
                             StatusMenuItem {
                                 icon.name: "remove-contact"
@@ -251,13 +251,13 @@ StatusModal {
                                 type: StatusMenuItem.Type.Danger
                                 //% "Remove From Group"
                                 text: qsTrId("remove-from-group")
-                                onTriggered: popup.chatSectionModule.removeMemberFromGroupChat("", popup.chatDetails.id,  model.id)
+                                onTriggered: popup.chatSectionModule.removeMemberFromGroupChat("", popup.chatDetails.id,  model.pubKey)
                             }
                         }
                     }
                 ]
                 onTitleClicked: {
-                    Global.openProfilePopup(model.id, popup)
+                    Global.openProfilePopup(model.pubKey, popup)
                 }
             }
         }

@@ -39,8 +39,8 @@ RowLayout {
          visible: false
          model: root.chatContentModule.usersModule.model
          delegate: Item {
-             property string publicId: model.id
-             property string name: model.name
+             property string pubKey: model.pubKey
+             property string name: model.displayName
              property string icon: model.icon
              property bool isAdmin: model.isAdmin
          }
@@ -51,8 +51,8 @@ RowLayout {
          visible: false
          model: root.rootStore.contactsModel
          delegate: Item {
-             property string publicId: model.pubKey
-             property string name: model.name
+             property string pubKey: model.pubKey
+             property string name: model.displayName
              property string icon: model.icon
          }
      }
@@ -69,7 +69,7 @@ RowLayout {
              // Add all group users different than me
              if(!entry.isAdmin) {
                  d.groupUsersModel.insert(d.groupUsersModel.count,
-                                      {"publicId": entry.publicId,
+                                      {"pubKey": entry.pubKey,
                                        "name": entry.name,
                                        "icon": entry.icon})
              }
@@ -79,7 +79,7 @@ RowLayout {
          for (var j = 0; j < contactsModelListView.count; j ++) {
              var entry2 = contactsModelListView.itemAtIndex(j)
              d.contactsModel.insert(d.contactsModel.count,
-                                {"publicId": entry2.publicId,
+                                {"pubKey": entry2.pubKey,
                                  "name": entry2.name,
                                  "icon": entry2.icon,
                                  "isIdenticon": false,
@@ -97,7 +97,7 @@ RowLayout {
              var exists = false
              for (var i = 0; i < groupUsersModelListView.count; i ++) {
                  var entry = groupUsersModelListView.itemAtIndex(i)
-                 if(entry.publicId === memberId) {
+                 if(entry.pubKey === memberId) {
                      exists = true
                      break
                  }
