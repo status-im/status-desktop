@@ -62,8 +62,6 @@ StatusModal {
                 headerImageSource: root.community.image
                 community: root.community
 
-                onMembersListButtonClicked: root.contentItem.push(membersList)
-                onNotificationsButtonClicked: root.communitySectionModule.setCommunityMuted(checked)
                 onTransferOwnershipButtonClicked: Global.openPopup(transferOwnershiproot, {
                     privateKey: communitySectionModule.exportCommunity(root.community.id),
                     store: root.store
@@ -85,21 +83,6 @@ StatusModal {
                 onClosed: {
                     destroy()
                 }
-            }
-        }
-
-        Component {
-            id: membersList
-            CommunityProfilePopupMembersListPanel {
-                // TODO assign the store on open
-                store: root.store
-                width: stack.width
-                //% "Members"
-                headerTitle: qsTrId("members-label")
-                headerSubtitle: root.community.members.count.toString()
-                community: root.community
-                communitySectionModule: root.communitySectionModule
-                onInviteButtonClicked: root.contentItem.push(inviteFriendsView)
             }
         }
 
