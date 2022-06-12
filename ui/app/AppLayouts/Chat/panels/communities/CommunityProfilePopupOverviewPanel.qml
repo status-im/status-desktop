@@ -18,8 +18,6 @@ Column {
     property string headerImageSource: ""
     property var community
 
-    signal membersListButtonClicked()
-    signal notificationsButtonClicked(bool checked)
     signal transferOwnershipButtonClicked()
     signal leaveButtonClicked()
     signal copyToClipboard(string link)
@@ -58,51 +56,6 @@ Column {
             tooltip.visible = !tooltip.visible
         }
         width: parent.width
-    }
-
-    StatusModalDivider {
-        topPadding: 8
-        bottomPadding: 8
-    }
-
-    StatusListItem {
-        id: membersListItem
-        anchors.horizontalCenter: parent.horizontalCenter
-
-        property int nbRequests: root.community.pendingRequestsToJoin.count
-
-        //% "Members"
-        title: qsTrId("members-label")
-        icon.name: "group-chat"
-        label: root.community.members.count.toString()
-        sensor.onClicked: root.membersListButtonClicked()
-
-        components: [
-            StatusBadge {
-                visible: !!membersListItem.nbRequests
-                value: membersListItem.nbRequests
-                anchors.top: parent.top
-                anchors.topMargin: 2
-            },
-            StatusIcon {
-                icon: "chevron-down"
-                rotation: 270
-                color: Theme.palette.baseColor1
-            }
-        ]
-    }
-
-    StatusListItem {
-        anchors.horizontalCenter: parent.horizontalCenter
-        //% "Notifications"
-        title: qsTrId("notifications")
-        icon.name: "notification"
-        components: [
-            StatusSwitch {
-                checked: !root.community.muted
-                onClicked: root.notificationsButtonClicked(!checked)
-            }
-        ]
     }
 
     StatusModalDivider {
