@@ -36,7 +36,7 @@ Page {
                 var index = -1;
                 if (!!contactsModel) {
                     for (var i = 0; i < contactsModel.count; i++) {
-                        if (contactsModel.get(i).publicId === pubKey) {
+                        if (contactsModel.get(i).pubKey === pubKey) {
                             index = i;
                         }
                     }

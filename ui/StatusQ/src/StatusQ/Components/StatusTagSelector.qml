@@ -26,24 +26,21 @@ import StatusQ.Controls 0.1
         anchors.centerIn: parent
         namesModel: ListModel {
             ListElement {
-                publicId: "0x0"
+                pubKey: "0x0"
                 name: "Maria"
                 icon: ""
-                isIdenticon: false
                 onlineStatus: 3
             }
             ListElement {
-                publicId: "0x1"
+                pubKey: "0x1"
                 name: "James"
                 icon: "https://pbs.twimg.com/profile_images/1369221718338895873/T_5fny6o_400x400.jpg"
-                isIdenticon: false
                 onlineStatus: 1
             }
             ListElement {
-                publicId: "0x2"
+                pubKey: "0x2"
                 name: "Paul"
                 icon: ""
-                isIdenticon: false
                 onlineStatus: 2
             }
         }
@@ -154,11 +151,11 @@ Item {
         This function is used to insert a new tag.
     */
     function insertTag(name, id, isReadonly, tagIcon) {
-        if (!find(namesModel, function(item) { return item.publicId === id }) && namesModel.count < root.nameCountLimit) {
+        if (!find(namesModel, function(item) { return item.pubKey === id }) && namesModel.count < root.nameCountLimit) {
             if(orderByReadonly && isReadonly)
-                namesModel.insert(0, {"name": name, "publicId": id, "isReadonly": !!isReadonly, "tagIcon": tagIcon ? tagIcon : ""});
+                namesModel.insert(0, {"name": name, "pubKey": id, "isReadonly": !!isReadonly, "tagIcon": tagIcon ? tagIcon : ""});
             else
-                namesModel.insert(namesModel.count, {"name": name, "publicId": id, "isReadonly": !!isReadonly, "tagIcon": tagIcon ? tagIcon : ""});
+                namesModel.insert(namesModel.count, {"name": name, "pubKey": id, "isReadonly": !!isReadonly, "tagIcon": tagIcon ? tagIcon : ""});
             addMember(id);
             edit.clear();
         }
@@ -173,16 +170,16 @@ Item {
         if (text !== "") {
             for (var i = 0; i < inputModel.count; i++ ) {
                 var entry = inputModel.get(i);
-                if (entry.name.toLowerCase().includes(text.toLowerCase()) &&
-                    !find(namesModel, function(item) { return item.name === entry.name })) {
-                    sortedList.append({"publicId": entry.publicId,
-                                       "name": entry.name,
-                                       "nickName": entry.nickName,
-                                       "trustIndicator": entry.trustIndicator,
-                                       "isMutualContact": entry.isMutualContact,
+                if (entry.displayName.toLowerCase().includes(text.toLowerCase()) &&
+                    !find(namesModel, function(item) { return item.name === entry.displayName })) {
+                    sortedList.append({"pubKey": entry.pubKey,
+                                       "displayName": entry.displayName,
+                                       "localNickname": entry.localNickname,
+                                       "isVerified": entry.isVerified,
+                                       "isUntrustworthy": entry.isUntrustworthy,
+                                       "isContact": entry.isMutualContact,
                                        "ringSpecModel": entry.ringSpecModel,
                                        "icon": entry.icon,
-                                       "isIdenticon": entry.isIdenticon,
                                        "onlineStatus": entry.onlineStatus,
                                        "tagIcon": entry.tagIcon ? entry.tagIcon : "",
                                        "isReadonly": !!entry.isReadonly});
@@ -284,7 +281,7 @@ Item {
                         icon: model.tagIcon
 
                         onClicked: {
-                            removeMember(model.publicId);
+                            removeMember(model.pubKey);
                             namesModel.remove(index, 1);
                         }
                     }
@@ -307,12 +304,12 @@ Item {
                     if ((event.key === Qt.Key_Backspace || event.key === Qt.Key_Escape)
                             && getText(cursorPosition, (cursorPosition-1)) === ""
                             && (namesList.count-1) >= 0) {
-                        removeMember(namesModel.get(namesList.count-1).publicId);
+                        removeMember(namesModel.get(namesList.count-1).pubKey);
                         namesModel.remove((namesList.count-1), 1);
                     }
                     if ((event.key === Qt.Key_Return || event.key === Qt.Key_Enter) && (sortedList.count > 0)) {
                         root.insertTag(sortedList.get(userListView.currentIndex).name,
-                                       sortedList.get(userListView.currentIndex).publicId,
+                                       sortedList.get(userListView.currentIndex).pubKey,
                                        sortedList.get(userListView.currentIndex).isReadonly,
                                        sortedList.get(userListView.currentIndex).tagIcon);
                     }                    
@@ -401,27 +398,27 @@ Item {
                 height: visible ? 64 : 0
                 visible: {
                     for (let i = 0; i < namesModel.count; i++) {
-                        if (namesModel.get(i).publicId === model.publicId) {
+                        if (namesModel.get(i).pubKey === model.pubKey) {
                             return false
                         }
                     }
                     return true
                 }
-                nickName: model.nickName
-                userName: model.name
-                pubKey: root.compressedKeyGetter(model.publicId)
-                isVerified: false // FIXME
-                isUntrustworthy: false // FIXME
-                isContact: model.isMutualContact
+                nickName: model.localNickname
+                userName: model.displayName
+                pubKey: root.compressedKeyGetter(model.pubKey)
+                isVerified: model.isVerified
+                isUntrustworthy: model.isUntrustworthy
+                isContact: model.isContact
                 image.source: model.icon
-                image.isIdenticon: model.isIdenticon
-                icon.color: Theme.palette.userCustomizationColors[root.colorIdForPubkeyGetter(model.publicId)]
+                image.isIdenticon: false
+                icon.color: Theme.palette.userCustomizationColors[root.colorIdForPubkeyGetter(model.pubKey)]
                 status: model.onlineStatus
                 statusListItemIcon.badge.border.color: sensor.containsMouse ? Theme.palette.baseColor2 : Theme.palette.baseColor4
-                ringSettings.ringSpecModel: root.ringSpecModelGetter(publicId)
+                ringSettings.ringSpecModel: root.ringSpecModelGetter(model.pubKey)
                 color: (sensor.containsMouse || highlighted) ? Theme.palette.baseColor2 : "transparent"
                 onClicked: {
-                    root.insertTag(model.name, model.publicId, model.isAdmin, model.isAdmin ? "crown" : "");
+                    root.insertTag(model.displayName, model.pubKey, model.isAdmin, model.isAdmin ? "crown" : "");
                 }
             }
         }

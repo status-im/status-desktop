@@ -267,15 +267,15 @@ StatusAppThreePanelLayout {
             model: Models.membersListModel
             delegate: StatusMemberListItem {
                 implicitWidth: parent.width
-                nickName: model.nickName
-                userName: model.name
-                chatKey: model.publicId
-                trustIndicator: model.trustIndicator
-                isMutualContact: model.isMutualContact
+                nickName: model.localNickname
+                userName: model.displayName
+                pubKey: model.pubKey
+                isVerified: model.isVerified
+                isUntrustworthy: model.isUntrustworthy
+                isContact: model.isContact
                 image.source: model.icon
-                image.isIdenticon: model.isIdenticon
-                isOnline: model.onlineStatus
-                ringSettings.ringSpecModel: model.ringSpecModel
+                image.isIdenticon: false
+                status: model.onlineStatus
             }
         }
     }

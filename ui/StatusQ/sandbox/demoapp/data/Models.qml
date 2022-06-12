@@ -843,73 +843,50 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
     property var membersListModel: ListModel {
         id: membersList
         ListElement {
-            nickName: "This is an example"
-            name: "Maria"
-            publicId: "0x043a7ed0e8752236a4688563652fd0296453cef00a5dcddbe252dc74f72cc1caa97a2b65e4a1a52d9c30a84c9966beaaaf6b333d659cbdd2e486b443ed1012cf04"
-            trustIndicator: StatusContactVerificationIcons.TrustedType.Verified
-            isMutualContact: true
-            onlineStatus: true
+            localNickname: "This is an example"
+            displayName: "Maria"
+            pubKey: "0x043a7ed0e8752236a4688563652fd0296453cef00a5dcddbe252dc74f72cc1caa97a2b65e4a1a52d9c30a84c9966beaaaf6b333d659cbdd2e486b443ed1012cf04"
+            isVerified: true
+            isUntrustworthy: false
+            isContact: true
+            onlineStatus: 1
             icon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAlklEQVR4nOzW0QmDQBAG4SSkl7SUQlJGCrElq9F3QdjjVhh/5nv3cFhY9vUIYQiNITSG0BhCExPynn1gWf9bx498P7/
                             nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2ImYgiNITTlTdG1nUZ5a92VITQxITFiJmIIjSE0htAYQrMHAAD//+wwFVpz+yqXAAAAAElFTkSuQmCC"
-            isIdenticon: true
             isAdmin: false
-            ringSpecModel: [ ListElement {colorId: 13; segmentLength: 5},
-                             ListElement {colorId: 31; segmentLength: 5},
-                             ListElement {colorId: 10; segmentLength: 1},
-                             ListElement {colorId: 2; segmentLength: 5},
-                             ListElement {colorId: 26; segmentLength: 2},
-                             ListElement {colorId: 19; segmentLength: 4},
-                             ListElement {colorId: 28; segmentLength: 3} ]
         }
         ListElement {
-            nickName: ""
-            name: "carmen.eth"
-            publicId: "0x043a7ed78362567894688563652fd0296453cef00a5dcddbe252dc74f72cc1caa97a2b65e4a1a52d9c30a84c9966beaaaf6b333d659cbdd2e486b443ed1012cf04"
-            trustIndicator: StatusContactVerificationIcons.TrustedType.Untrustworthy
-            isMutualContact: false
-            onlineStatus: false
+            localNickname: ""
+            displayName: "carmen.eth"
+            pubKey: "0x043a7ed78362567894688563652fd0296453cef00a5dcddbe252dc74f72cc1caa97a2b65e4a1a52d9c30a84c9966beaaaf6b333d659cbdd2e486b443ed1012cf04"
+            isVerified: false
+            isUntrustworthy: true
+            isContact: false
+            onlineStatus: 0
             icon: ""
             isAdmin: false
-            isIdenticon: false            
         }
         ListElement {
-            nickName: "This girl I know from work"
-            name: "annabelle"
-            publicId: "0x043a7ed0e8752236a4688563652fd0296453cef00a5dcddbe252dc74f72cc1caa97a2b65e4a1a52d9c30a84c9966beaaaf6b333d659cbdd2e486dsfkjghyu2cf04"
-            trustIndicator: StatusContactVerificationIcons.TrustedType.None
-            isMutualContact: false
-            onlineStatus: true
+            localNickname: "This girl I know from work"
+            displayName: "annabelle"
+            pubKey: "0x043a7ed0e8752236a4688563652fd0296453cef00a5dcddbe252dc74f72cc1caa97a2b65e4a1a52d9c30a84c9966beaaaf6b333d659cbdd2e486dsfkjghyu2cf04"
+            isVerified: false
+            isUntrustworthy: false
+            isContact: false
+            onlineStatus: 1
             isAdmin: false
             icon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAiElEQVR4nOzXUQpAQBRGYWQvLNAyLJDV8C5qpiGnv/M9al5Ot27X0IUwhMYQGkNoDKGJCRlLH67bftx9X+ap/+P9VcxEDK
                      ExhKZ4a9Uq3TZviZmIITSG0DRvlqcbqVbrlouZiCE0htD4h0hjCI0hNN5aNIbQGKKPxEzEEBpDaAyhMYTmDAAA//+gYCErzmCpCQAAAABJRU5ErkJggg=="
-            isIdenticon: true
-            ringSpecModel: [ ListElement {colorId: 11; segmentLength: 1},
-                             ListElement {colorId: 23; segmentLength: 5},
-                             ListElement {colorId: 23; segmentLength: 5},
-                             ListElement {colorId: 10; segmentLength: 4},
-                             ListElement {colorId: 15; segmentLength: 3},
-                             ListElement {colorId: 26; segmentLength: 2},
-                             ListElement {colorId: 29; segmentLength: 5} ]
         }
         ListElement {
-            nickName: "Mark Cuban"
-            name: "mark.eth"
-            publicId: "0x043a7ed0e8752236a4688563652fd0296453cef00a5dcddbe252dc79872cc1caa97a2b65e4a1a52d9c30a84c9966beaaaf6b333d659cbdd2e486b443ed1012cf04"
-            trustIndicator: StatusContactVerificationIcons.TrustedType.Untrustworthy
-            isMutualContact: true
-            onlineStatus: false
+            localNickname: "Mark Cuban"
+            displayName: "mark.eth"
+            pubKey: "0x043a7ed0e8752236a4688563652fd0296453cef00a5dcddbe252dc79872cc1caa97a2b65e4a1a52d9c30a84c9966beaaaf6b333d659cbdd2e486b443ed1012cf04"
+            isVerified: false
+            isUntrustworthy: true
+            isContact: true
+            onlineStatus: 0
             icon: ""
-            isIdenticon: false
             isAdmin: false
-            ringSpecModel: [ ListElement {colorId: 0; segmentLength: 1},
-                             ListElement {colorId: 28; segmentLength: 1},
-                             ListElement {colorId: 31; segmentLength: 1},
-                             ListElement {colorId: 22; segmentLength: 4},
-                             ListElement {colorId: 28; segmentLength: 3},
-                             ListElement {colorId: 27; segmentLength: 5},
-                             ListElement {colorId: 7; segmentLength: 5},
-                             ListElement {colorId: 13; segmentLength: 1},
-                             ListElement {colorId: 25; segmentLength: 4}]
         }
     }
 
@@ -1003,7 +980,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             color: ""
             hasNotification: false
             notificationsCount: 0
-        }        
+        }
         ListElement {
             sectionId: "profile"
             sectionType: 6
@@ -1320,7 +1297,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             category: "Beta Languages"
             selected: false
         }
-    }    
+    }
 
     property ListModel featuredCommunitiesModel : ListModel {
         ListElement {
