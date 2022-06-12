@@ -32,13 +32,13 @@ ScrollView {
 
             visible: {
                 if (selectMode) {
-                    return !searchString || model.name.toLowerCase().includes(searchString)
+                    return !searchString || model.displayName.toLowerCase().includes(searchString)
                 }
                 return checkbox.checked
             }
 
-            title: !model.name.endsWith(".eth") && !!model.localNickname ?
-                       model.localNickname : Utils.removeStatusEns(model.name)
+            title: !model.displayName.endsWith(".eth") && !!model.localNickname ?
+                       model.localNickname : Utils.removeStatusEns(model.displayName)
             image.source: Global.getProfileImage(model.pubKey)
             ringSettings.ringSpecModel: Utils.getColorHashAsJson(model.pubKey)
 
