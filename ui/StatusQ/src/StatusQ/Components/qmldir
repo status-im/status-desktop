@@ -37,3 +37,4 @@ StatusImageCropPanel 0.1 StatusImageCropPanel.qml
 StatusColorSpace 0.0 StatusColorSpace.qml
 StatusCommunityCard 0.1 StatusCommunityCard.qml
 StatusCommunityTags 0.1 StatusCommunityTags.qml
+StatusItemSelector 0.1 StatusItemSelector.qml
