@@ -7,6 +7,10 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 
+import utils 1.0
+import shared.panels 1.0
+
+
 Item {
     id: root
 
@@ -43,23 +47,32 @@ Item {
         id: layout
 
         anchors.fill: parent
-
         spacing: 16
 
         Item {
             implicitHeight: 32
+            implicitWidth: previousPageRow.implicitWidth
 
-            StatusBaseText {
+            RowLayout {
+                id: previousPageRow
                 visible: root.previousPage
-                text: "<- " + root.previousPage
-                color: Theme.palette.primaryColor1
-                font.pixelSize: 15
-
-                MouseArea {
-                    anchors.fill: parent
-                    cursorShape: Qt.PointingHandCursor
-                    onClicked: root.previousPageClicked()
+                spacing: 12
+                SVGImage {
+                    width: 24
+                    height: width
+                    source: Style.svg("leave_chat")
                 }
+                StatusBaseText {
+                    Layout.alignment: Qt.AlignVCenter
+                    text: root.previousPage
+                    color: Theme.palette.primaryColor1
+                    font.pixelSize: 15
+                }
+            }
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                onClicked: root.previousPageClicked()
             }
         }
 
@@ -147,4 +160,3 @@ Item {
         }
     }
 }
-
