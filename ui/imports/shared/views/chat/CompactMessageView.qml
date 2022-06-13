@@ -507,6 +507,7 @@ Item {
             anchors.leftMargin: chatImage.imageWidth + Style.current.padding + root.chatHorizontalPadding
             anchors.right: parent.right
             anchors.rightMargin: root.chatHorizontalPadding
+            anchors.topMargin: (!chatName.visible || !chatReply.active  || !pinnedRectangleLoader.active) ? Style.current.halfPadding : 0
             visible: !editModeOn
             ChatTextView {
                 id: chatText
