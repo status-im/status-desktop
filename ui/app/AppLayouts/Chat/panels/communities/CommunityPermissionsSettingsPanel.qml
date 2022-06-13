@@ -22,14 +22,15 @@ SettingsPageLayout {
 
     content: Flickable {
         contentWidth: mainLayout.width
-        contentHeight: mainLayout.height
+        contentHeight: mainLayout.height + mainLayout.anchors.topMargin
         clip: true
         flickableDirection: Flickable.AutoFlickIfNeeded
 
         ColumnLayout {
             id: mainLayout
-
-            width: 560
+            anchors.top: parent.top
+            anchors.topMargin: Style.current.padding
+            width: 560 // by design
             spacing: 24
 
             Rectangle {
