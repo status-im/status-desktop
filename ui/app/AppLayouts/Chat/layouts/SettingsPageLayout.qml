@@ -48,31 +48,16 @@ Item {
         anchors.fill: parent
         spacing: 16
 
-        Item {
+        StatusIconTextButton {
             implicitHeight: 32
-            implicitWidth: previousPageRow.implicitWidth
-
-            RowLayout {
-                id: previousPageRow
-                visible: root.previousPage
-                spacing: 12
-                SVGImage {
-                    width: 24
-                    height: width
-                    source: Style.svg("leave_chat")
-                }
-                StatusBaseText {
-                    Layout.alignment: Qt.AlignVCenter
-                    text: root.previousPage
-                    color: Theme.palette.primaryColor1
-                    font.pixelSize: 15
-                }
-            }
-            MouseArea {
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-                onClicked: root.previousPageClicked()
-            }
+            visible: root.previousPage
+            spacing: 8
+            statusIcon: "arrow"
+            icon.width: 24
+            icon.height: 24
+            text: root.previousPage
+            font.pixelSize: 15
+            onClicked: root.previousPageClicked()
         }
 
         StatusBaseText {

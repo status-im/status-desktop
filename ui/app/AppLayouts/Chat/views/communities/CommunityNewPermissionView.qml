@@ -9,21 +9,16 @@ import StatusQ.Controls 0.1
 import utils 1.0
 import shared.panels 1.0
 
+import "../../controls/community"
+
 Flickable {
-    id: root    
+    id: root
 
     signal createPermission()
 
     QtObject {
         id: d
         property bool isPrivate: false
-        signal addHolding()
-        signal addAllowance()
-        signal addChannel()
-
-        onAddHolding: console.log("TODO: Add who holds...")
-        onAddAllowance: console.log("TODO: Is allowed to...")
-        onAddChannel: console.log("TODO: In...")
     }
 
     contentWidth: mainLayout.width
@@ -34,43 +29,47 @@ Flickable {
     ColumnLayout {
         id: mainLayout
         width: 560 // by design
-        spacing: 24
+        spacing: 0
         CurveSeparatorWithText {
             Layout.alignment: Qt.AlignLeft
             Layout.leftMargin: 14
             text: qsTr("Anyone")
         }
         StatusItemSelector {
+            id: tokensSelector
             Layout.fillWidth: true
-            Layout.topMargin: -parent.spacing
             icon: Style.svg("contact_verified")
             title: qsTr("Who holds")
             defaultItemText: qsTr("Example: 10 SNT")
-            onAddItem: d.addHolding()
-            Rectangle {
-                  anchors.top: parent.bottom
-                  anchors.left:parent.left
-                  anchors.leftMargin: 16
-                  width: 2
-                  height: 24
-                  color: Style.current.separator
+            andOperatorText: qsTr("and")
+            orOperatorText: qsTr("or")
+            popupItem: HoldingsDropdown {
+                id: dropdown
+                withOperatorSelector: tokensSelector.itemsModel.count > 0
+                onAddToken: {                    
+                    tokensSelector.addItem(tokenText, tokenImage, operator)
+                    dropdown.close()
+                }
             }
-        }        
+        }
+        Rectangle {
+            Layout.leftMargin: 16
+            Layout.preferredWidth: 2
+            Layout.preferredHeight: 24
+            color: Style.current.separator
+        }
         StatusItemSelector {
             Layout.fillWidth: true
             icon: Style.svg("profile/security")
             iconSize: 24
             title: qsTr("Is allowed to")
             defaultItemText: qsTr("Example: View and post")
-            onAddItem: d.addAllowance()
-            Rectangle {
-                  anchors.top: parent.bottom
-                  anchors.left:parent.left
-                  anchors.leftMargin: 16
-                  width: 2
-                  height: 24
-                  color: Style.current.separator
-            }
+        }
+        Rectangle {
+            Layout.leftMargin: 16
+            Layout.preferredWidth: 2
+            Layout.preferredHeight: 24
+            color: Style.current.separator
         }
         StatusItemSelector {
             Layout.fillWidth: true
@@ -78,11 +77,12 @@ Flickable {
             iconSize: 24
             title: qsTr("In")
             defaultItemText: qsTr("Example: `#general` channel")
-            onAddItem: d.addChannel()
         }
-        Separator {}
+        Separator {
+            Layout.topMargin: 24
+        }
         RowLayout {
-            Layout.topMargin: -parent.spacing / 2
+            Layout.topMargin: 12
             Layout.fillWidth: true
             Layout.leftMargin: 16
             Layout.rightMargin: Layout.leftMargin
@@ -116,9 +116,10 @@ Flickable {
         }
         // TODO: Needed `StatusButton` redesign that allows to fill the width.
         StatusButton {
+            Layout.topMargin: 24
             text: qsTr("Create permission")
             enabled: false
-            height: 44
+            Layout.preferredHeight: 44
             Layout.alignment: Qt.AlignHCenter
             //Layout.fillWidth: true
             onClicked: root.createPermission()
