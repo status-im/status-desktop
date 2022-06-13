@@ -93,6 +93,10 @@ type ChannelGroupDto* = object
   historyArchiveSupportEnabled*: bool
   pinMessageAllMembersEnabled*: bool
 
+type ClearedHistoryDto* = object
+  chatId*: string
+  clearedAt*: int
+
 proc `$`*(self: ChatDto): string =
   result = fmt"""ChatDto(
     id: {self.id},
@@ -122,6 +126,11 @@ proc `$`*(self: ChatDto): string =
     position: {self.position},
     highlight: {self.highlight}
     )"""
+
+proc toClearedHistoryDto*(jsonObj: JsonNode): ClearedHistoryDto =
+  result = ClearedHistoryDto()
+  discard jsonObj.getProp("chatId", result.chatId)
+  discard jsonObj.getProp("clearedAt", result.clearedAt)
 
 proc toPermission*(jsonObj: JsonNode): Permission =
   result = Permission()
