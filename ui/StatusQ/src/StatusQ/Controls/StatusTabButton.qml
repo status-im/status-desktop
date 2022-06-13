@@ -66,7 +66,7 @@ TabButton {
         Rectangle {
             anchors.bottom: parent.bottom
             anchors.horizontalCenter: parent.horizontalCenter
-            visible: root.checked || root.hovered
+            visible: root.enabled && (root.checked || root.hovered)
             implicitWidth: 24
             implicitHeight: 2
             radius: 4
