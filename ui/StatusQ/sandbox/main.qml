@@ -300,11 +300,15 @@ StatusWindow {
                             selected: viewLoader.source.toString().includes(title)
                             onClicked: mainPageView.page(title);
                         }
-
                         StatusNavigationListItem {
                             title: "StatusModal"
                             selected: viewLoader.source.toString().includes("Popups")
                             onClicked: mainPageView.control("Popups");
+                        }
+                        StatusNavigationListItem {
+                            title: "StatusDialog"
+                            selected: viewLoader.source.toString().includes(title)
+                            onClicked: mainPageView.page(title);
                         }
                         StatusListSectionHeadline { text: "StatusQ.Platform" }
                         StatusNavigationListItem {

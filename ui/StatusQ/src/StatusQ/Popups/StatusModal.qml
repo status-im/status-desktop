@@ -50,6 +50,9 @@ import "statusModal" as Spares
 
    For a list of components available see StatusQ.
 */
+
+// Deprecation annotations come with Qt6.2
+// @Deprecated { reason: "Use StatusDialog instead, see reasoning: https://github.com/status-im/StatusQ/issues/720" }
 QC.Popup {
     id: statusModal
 

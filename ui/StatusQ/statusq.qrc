@@ -10502,5 +10502,12 @@
         <file>src/StatusQ/Animations/SkeletonGradientStop.qml</file>
         <file>src/StatusQ/Animations/qmldir</file>
         <file>src/assets/img/icons/arrow-up.svg</file>
+        <file>src/StatusQ/Popups/Dialog/qmldir</file>
+        <file>src/StatusQ/Popups/Dialog/StatusDialog.qml</file>
+        <file>src/StatusQ/Popups/Dialog/StatusTitleSubtitle.qml</file>
+        <file>src/StatusQ/Popups/Dialog/StatusHeaderActions.qml</file>
+        <file>src/StatusQ/Popups/Dialog/StatusDialogHeader.qml</file>
+        <file>src/StatusQ/Popups/Dialog/StatusDialogFooter.qml</file>
+        <file>src/StatusQ/Popups/Dialog/StatusDialogDivider.qml</file>
     </qresource>
 </RCC>
