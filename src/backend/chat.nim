@@ -52,7 +52,7 @@ proc deactivateChat*(chatId: string): RpcResponse[JsonNode] {.raises: [Exception
   callPrivateRPC("deactivateChat".prefix, %* [{ "ID": chatId }])
 
 proc clearChatHistory*(chatId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
-  callPrivateRPC("deleteMessagesByChatID".prefix, %* [chatId])
+  callPrivateRPC("clearHistory".prefix, %* [{ "id": chatId }])
 
 proc sendChatMessage*(
     chatId: string,

@@ -27,6 +27,7 @@ type MessageSignal* = ref object of Signal
   deletedMessages*: seq[RemovedMessageDto]
   currentStatus*: seq[StatusUpdateDto]
   settings*: seq[SettingsFieldDto]
+  clearedHistories*: seq[ClearedHistoryDto]
 
 proc fromEvent*(T: type MessageSignal, event: JsonNode): MessageSignal =
   var signal:MessageSignal = MessageSignal()
@@ -46,6 +47,11 @@ proc fromEvent*(T: type MessageSignal, event: JsonNode): MessageSignal =
     for jsonChat in event["event"]["chats"]:
       var chat = jsonChat.toChatDto()
       signal.chats.add(chat)
+
+  if event["event"]{"clearedHistories"} != nil:
+    for jsonClearedHistory in event["event"]{"clearedHistories"}:
+      var clearedHistoryDto = jsonClearedHistory.toClearedHistoryDto()
+      signal.clearedHistories.add(clearedHistoryDto)
 
   if event["event"]{"statusUpdates"} != nil:
     for jsonStatusUpdate in event["event"]["statusUpdates"]:

@@ -118,6 +118,10 @@ QtObject:
             chats.add(chatDto)
             self.updateOrAddChat(chatDto)
         self.events.emit(SIGNAL_CHAT_UPDATE, ChatUpdateArgsNew(messages: receivedData.messages, chats: chats))
+
+      if (receivedData.clearedHistories.len > 0):
+        for clearedHistoryDto in receivedData.clearedHistories:
+          self.events.emit(SIGNAL_CHAT_HISTORY_CLEARED, ChatArgs(chatId: clearedHistoryDto.chatId))
   
   proc sortPersonnalChatAsFirst[T, D](x, y: (T, D)): int =
     if (x[1].channelGroupType == Personal): return -1
@@ -303,7 +307,7 @@ QtObject:
       discard status_chat.deactivateChat(chatId)
 
       self.chats.del(chatId)
-      discard status_chat.clearChatHistory(chatId)
+      discard status_chat.deleteMessagesByChatId(chatId)
       self.events.emit(SIGNAL_CHAT_LEFT, ChatArgs(chatId: chatId))
     except Exception as e:
       error "Error deleting channel", chatId, msg = e.msg
@@ -436,7 +440,7 @@ QtObject:
 
   proc clearChatHistory*(self: Service, chatId: string) =
     try:
-      let response = status_chat.deleteMessagesByChatId(chatId)
+      let response = status_chat.clearChatHistory(chatId)
       if(not response.error.isNil):
         let msg = response.error.message & " chatId=" & chatId
         error "error while clearing chat history ", msg
