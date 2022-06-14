@@ -114,7 +114,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.statusFoundation = statusFoundation
   
   # Preparing settings service to be exposed later as global QObject
-  result.settingsService = settings_service.newService()
+  result.settingsService = settings_service.newService(statusFoundation.events)
   result.appSettingsVariant = newQVariant(result.settingsService)
   result.notificationsManager = newNotificationsManager(statusFoundation.events, result.settingsService)
 
