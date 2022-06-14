@@ -43,3 +43,4 @@ StatusColorSelectorGrid 0.1 StatusColorSelectorGrid.qml
 StatusSeedPhraseInput 0.1 StatusSeedPhraseInput.qml
 StatusImageCrop 0.1 StatusImageCrop.qml
 StatusFloatingButtonsSelector 0.1 StatusFloatingButtonsSelector.qml
+StatusActivityCenterButton 0.1 StatusActivityCenterButton.qml

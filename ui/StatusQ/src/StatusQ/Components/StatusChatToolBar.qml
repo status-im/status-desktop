@@ -135,43 +135,10 @@ Item {
                          (menuButton.visible || membersButton.visible || searchButton.visible)
             }
 
-            StatusFlatRoundButton {
+            StatusActivityCenterButton {
                 id: notificationButton
-                width: 32
-                height: 32
-
-                icon.name: "notification"
-                icon.height: 21
-                type: StatusFlatRoundButton.Type.Secondary
-
-                // initializing the tooltip
-                tooltip.text: qsTr("Activity")
-                tooltip.orientation: StatusToolTip.Orientation.Bottom
-                tooltip.y: parent.height + 12
-
+                unreadNotificationsCount: statusChatToolBar.notificationCount
                 onClicked: statusChatToolBar.notificationButtonClicked()
-
-                StatusBadge {
-                    id: statusBadge
-
-                    visible: value > 0
-                    anchors.top: parent.top
-                    anchors.left: parent.right
-                    anchors.topMargin: -3
-                    anchors.leftMargin: {
-                        if (statusBadge.value > 99) {
-                            return -22
-                        }
-                        if (statusBadge.value > 9) {
-                            return -21
-                        }
-                        return -18
-                    }
-
-                    value: statusChatToolBar.notificationCount
-                    border.width: 2
-                    border.color: parent.hovered ? Theme.palette.baseColor2 : Theme.palette.statusAppLayout.backgroundColor
-                }
             }
         }
     }
