@@ -6,7 +6,7 @@ Image {
     id: root
 
     property string emojiId: ""
-    
+
     width: 14
     height: 14
     sourceSize.width: width

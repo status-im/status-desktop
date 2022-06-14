@@ -1478,4 +1478,6 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
         ListElement { name: "enviroment"; emoji: "☠️"}
         ListElement { name: "privacy"; emoji: "👻"}
     }
+
+    property var communityTags :{"Activism":"✊","Art":"🎨","Blockchain":"🔗","Books & blogs":"📚","Career":"💼","Collaboration":"🤝","Commerce":"🛒","Crypto":"Ξ","Culture":"🎎","DAO":"🚀","DIY":"🔨","DeFi":"📈","Design":"🧩","Education":"🎒","Entertainment":"🍿","Environment":"🌿","Event":"🗓","Fantasy":"🧙‍♂️","Fashion":"🧦","Food":"🌶","Gaming":"🎮","Global":"🌍","Health":"🧠","Hobby":"📐","Innovation":"🧪","Language":"📜","Lifestyle":"✨","Local":"📍","Love":"❤️","Markets":"💎","Movies & TV":"🎞","Music":"🎶","NFT":"🖼","NSFW":"🍆","News":"🗞","Non-profit":"🙏","Org":"🏢","Pets":"🐶","Play":"🎲","Podcast":"🎙️","Politics":"🗳️","Privacy":"👻","Product":"🍱","Psyche":"🍁","Security":"🔒","Social":"☕","Software dev":"👩‍💻","Sports":"⚽️","Tech":"📱","Travel":"🗺","Vehicles":"🚕","Web3":"🌐"}
 }
