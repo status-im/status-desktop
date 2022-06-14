@@ -2,6 +2,7 @@ import QtQuick 2.14
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
+import StatusQ.Core.Utils 0.1
 
 Rectangle {
     id: statusBaseButton
@@ -133,6 +134,13 @@ Rectangle {
                 visible: statusBaseButton.icon.name !== ""
                 color: d.textColor
             } // Icon
+            StatusEmoji {
+                width: statusBaseButton.icon.width
+                height: statusBaseButton.icon.height
+                anchors.verticalCenter: parent.verticalCenter
+                visible: statusBaseButton.icon.emoji
+                emojiId: Emoji.iconId(statusBaseButton.icon.emoji, statusBaseButton.icon.emojiSize) || ""
+            } // Emoji
             StatusBaseText {
                 id: label
                 opacity: !loading

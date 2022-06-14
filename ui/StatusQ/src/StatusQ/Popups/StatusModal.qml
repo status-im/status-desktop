@@ -186,6 +186,12 @@ QC.Popup {
         \endqml
     */
     property alias hasCloseButton: headerImpl.hasCloseButton
+    /*!
+       \qmlproperty hasFloatingButtons
+        This property decides whether the advanced header has floating buttons on top of the Modal
+        \endqml
+    */
+    property bool hasFloatingButtons: false
 
     signal editButtonClicked()
     signal headerImageClicked()
@@ -237,6 +243,7 @@ QC.Popup {
         Loader {
             id: advancedHeader
             anchors.top: parent.top
+            anchors.topMargin: hasFloatingButtons ? -18 - height : 0
             width: visible ? parent.width : 0
             active: showAdvancedHeader
         }

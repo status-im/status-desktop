@@ -4,6 +4,9 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
+import StatusQ.Components 0.1
+import StatusQ.Popups 0.1
+import StatusQ.Core.Utils 0.1
 
 Column {
     spacing: 20
@@ -81,6 +84,12 @@ Column {
     StatusButton {
         text: "Modal with Advanced Header/Footer"
         onClicked: advancedHeaderFooterModal.open()
+    }
+
+
+    StatusButton {
+        text: "Modal with Floating header Buttons"
+        onClicked: floatingHeaderModal.open()
     }
 
     StatusModal {
@@ -394,10 +403,57 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
         }
     }
 
+    StatusModal {
+        id: floatingHeaderModal
+        anchors.centerIn: parent
+        height: 200
+        showHeader: false
+        showFooter: false
+        showAdvancedHeader: true
+        hasFloatingButtons: true
+        advancedHeaderComponent: StatusFloatingButtonsSelector {
+            id: floatingHeader
+            model: dummyAccountsModel
+            delegate: Rectangle {
+                width: button.width
+                height: button.height
+                radius: 8
+                visible: visibleIndices.includes(index)
+                StatusButton {
+                    id: button
+                    topPadding: 8
+                    bottomPadding: 0
+                    implicitHeight: 32
+                    defaultLeftPadding: 4
+                    text: name
+                    icon.emoji: !!emoji ? emoji: ""
+                    icon.emojiSize: Emoji.size.middle
+                    icon.name: !emoji ? "filled-account": ""
+                    normalColor: "transparent"
+                    highlighted: index === floatingHeader.currentIndex
+                    onClicked: {
+                        floatingHeader.currentIndex = index
+                    }
+                }
+            }
+            popupMenuDelegate: StatusListItem {
+                implicitWidth: 272
+                title: name
+                onClicked: floatingHeader.itemSelected(index)
+                visible: !visibleIndices.includes(index)
+            }
+        }
+    }
+
     ListModel {
         id: dummyAccountsModel
-        ListElement{name: "Account 1"; iconName: "filled-account"}
+        ListElement{name: "Account 1"; iconName: "filled-account"; emoji:  "🥑"}
         ListElement{name: "Account 2"; iconName: "filled-account"}
+        ListElement{name: "Account 3"; iconName: "filled-account"}
+        ListElement{name: "Account 4"; iconName: "filled-account"}
+        ListElement{name: "Account 5"; iconName: "filled-account"}
+        ListElement{name: "Account 6"; iconName: "filled-account"}
+        ListElement{name: "Account 7"; iconName: "filled-account"}
     }
 
     StatusSpellcheckingMenuItems {
