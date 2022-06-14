@@ -22,6 +22,7 @@ type MessageSignal* = ref object of Signal
   activityCenterNotifications*: seq[ActivityCenterNotificationDto]
   statusUpdates*: seq[StatusUpdateDto]
   deletedMessages*: seq[RemovedMessageDto]
+  currentStatus*: seq[StatusUpdateDto]
 
 proc fromEvent*(T: type MessageSignal, event: JsonNode): MessageSignal =
   var signal:MessageSignal = MessageSignal()
@@ -46,6 +47,10 @@ proc fromEvent*(T: type MessageSignal, event: JsonNode): MessageSignal =
     for jsonStatusUpdate in event["event"]["statusUpdates"]:
       var statusUpdate = jsonStatusUpdate.toStatusUpdateDto()
       signal.statusUpdates.add(statusUpdate)
+
+  if event["event"]{"currentStatus"} != nil:
+      var currentStatus = event["event"]["currentStatus"].toStatusUpdateDto()
+      signal.currentStatus.add(currentStatus)
 
   if event["event"]{"installations"} != nil:
     for jsonDevice in event["event"]["installations"]:
