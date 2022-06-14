@@ -129,6 +129,7 @@ Rectangle {
                 width: statusBaseButton.icon.width
                 height: statusBaseButton.icon.height
                 icon: statusBaseButton.icon.name
+                rotation: statusBaseButton.icon.rotation
                 anchors.verticalCenter: parent.verticalCenter
                 opacity: !loading && statusBaseButton.icon.name !== ""
                 visible: statusBaseButton.icon.name !== ""
