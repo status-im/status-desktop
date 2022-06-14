@@ -146,8 +146,7 @@ proc buildChatSectionUI(
       colorHash = self.controller.getColorHash(chatDto.id)
       colorId = self.controller.getColorId(chatDto.id)
 
-    let amIChatAdmin = self.amIMarkedAsAdminUser(chatDto.members)
-
+    let amIChatAdmin = (self.amIMarkedAsAdminUser(chatDto.members) or channelGroup.admin)
     let channelItem = initItem(chatDto.id, chatName, chatImage, chatDto.color,
       chatDto.emoji, chatDto.description, chatDto.chatType.int, amIChatAdmin, hasNotification,
       notificationsCount, chatDto.muted, blocked, chatDto.active, chatDto.position,
