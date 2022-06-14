@@ -1,0 +1,104 @@
+library 'status-jenkins-lib@v1.3.4'
+
+pipeline {
+  agent {
+    docker {
+      label 'linux-01'
+      image 'statusteam/nim-status-client-build:1.1.4'
+      /* allows jenkins use cat and mounts '/dev/fuse' for linuxdeployqt */
+      args '--entrypoint="" --cap-add SYS_ADMIN --security-opt apparmor:unconfined --device /dev/fuse'
+    }
+  }
+
+  parameters {
+    booleanParam(
+      name: 'RELEASE',
+      description: 'Decides whether binaries are built with debug symbols.',
+      defaultValue: params.RELEASE ?: false
+    )
+    choice(
+      name: 'VERBOSE',
+      description: 'Level of verbosity based on nimbus-build-system setup.',
+      choices: ['0', '1', '2']
+    )
+  }
+
+  options {
+    timestamps()
+    /* Prevent Jenkins jobs from running forever */
+    timeout(time: 20, unit: 'MINUTES')
+    /* manage how many builds we keep */
+    buildDiscarder(logRotator(
+      numToKeepStr: '10',
+      daysToKeepStr: '30',
+      artifactNumToKeepStr: '3',
+    ))
+  }
+
+  environment {
+    TARGET = 'uitests'
+    /* Improve make performance */
+    MAKEFLAGS = "-j4 V=${params.VERBOSE}"
+    /* Disable colors in Nim compiler logs */
+    NIMFLAGS = '--colors:off'
+    /* Makefile assumes the compiler folder is included */
+    QTDIR = "/opt/qt/5.14.0/gcc_64"
+    /* Control output the filename */
+    STATUS_CLIENT_APPIMAGE = "pkg/${utils.pkgFilename(ext: 'AppImage')}"
+    STATUS_CLIENT_TARBALL = "pkg/${utils.pkgFilename(ext: 'tar.gz')}"
+  }
+
+  stages {
+    stage('Deps') {
+      steps {
+        /* trigger fetching of git submodules */
+        sh 'make check-pkg-target-linux'
+        /* TODO: Re-add caching of Nim compiler. */
+        sh 'make deps'
+      }
+    }
+
+    stage('Squish-UI-Test') {
+      steps { script {
+        squish([
+          squishPackageName: 'squish-6.7.2-qt514x-linux64',
+          testSuite: 'status-desktop/test/ui-test/testSuites/tst_statusSignUp',
+          unstableBuildOnError: true,
+          host: 'localhost',
+          port: '4322',
+        ])
+      } }
+    }
+
+    //stage('status-go') {
+    //  steps { sh 'make status-go' }
+    //}
+
+    //stage('Package') {
+    //  steps { script {
+    //    linux.bundle('tgz-linux')
+    //  } }
+    //}
+
+    //stage('Parallel Upload') {
+    //  parallel {
+    //    stage('Upload') {
+    //      steps { script {
+    //        env.PKG_URL = s3.uploadArtifact(env.STATUS_CLIENT_TARBALL)
+    //        jenkins.setBuildDesc(AppImage: env.PKG_URL)
+    //      } }
+    //    }
+    //    stage('Archive') {
+    //      steps { script {
+    //        archiveArtifacts("${env.STATUS_CLIENT_TARBALL}*")
+    //      } }
+    //    }
+    //  }
+    //}
+  }
+  post {
+    success { script { github.notifyPR(true) } }
+    failure { script { github.notifyPR(false) } }
+    always { cleanWs() }
+  }
+}
