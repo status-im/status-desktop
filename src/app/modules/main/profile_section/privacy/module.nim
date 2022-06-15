@@ -93,6 +93,9 @@ method setProfilePicturesShowTo*(self: Module, value: int) =
 method emitProfilePicturesShowToChanged*(self: Module, value: int) =
   self.view.profilePicturesShowToChanged()
 
+method emitProfilePicturesVisibilityChanged*(self: Module, value: int) =
+  self.view.profilePicturesVisibilityChanged()
+
 method getProfilePicturesVisibility*(self: Module): int =
   self.controller.getProfilePicturesVisibility()
 
