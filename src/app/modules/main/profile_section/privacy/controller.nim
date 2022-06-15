@@ -37,6 +37,10 @@ proc init*(self: Controller) =
     var args = OperationSuccessArgs(e)
     self.delegate.onPasswordChanged(args.success, args.errorMsg)
 
+  self.events.on(SIGNAL_SETTING_PROFILE_PICTURES_SHOW_TO_CHANGED) do(e: Args):
+    var args = SettingProfilePictureArgs(e)
+    self.delegate.emitProfilePicturesShowToChanged(args.value)
+
 proc isMnemonicBackedUp*(self: Controller): bool =
   return self.privacyService.isMnemonicBackedUp()
 

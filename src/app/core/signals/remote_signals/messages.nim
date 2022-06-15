@@ -9,6 +9,7 @@ import ../../../../app_service/service/community/dto/[community]
 import ../../../../app_service/service/activity_center/dto/[notification]
 import ../../../../app_service/service/contacts/dto/[contacts, status_update]
 import ../../../../app_service/service/devices/dto/[device]
+import ../../../../app_service/service/settings/dto/[settings]
 
 type MessageSignal* = ref object of Signal
   bookmarks*: seq[BookmarkDto]
@@ -25,6 +26,7 @@ type MessageSignal* = ref object of Signal
   statusUpdates*: seq[StatusUpdateDto]
   deletedMessages*: seq[RemovedMessageDto]
   currentStatus*: seq[StatusUpdateDto]
+  settings*: seq[SettingsFieldDto]
 
 proc fromEvent*(T: type MessageSignal, event: JsonNode): MessageSignal =
   var signal:MessageSignal = MessageSignal()
@@ -90,6 +92,10 @@ proc fromEvent*(T: type MessageSignal, event: JsonNode): MessageSignal =
   if event["event"]{"pinMessages"} != nil:
     for jsonPinnedMessage in event["event"]["pinMessages"]:
       signal.pinnedMessages.add(jsonPinnedMessage.toPinnedMessageUpdateDto())
+
+  if event["event"]{"settings"} != nil:
+    for jsonSettingsField in event["event"]["settings"]:
+      signal.settings.add(jsonSettingsField.toSettingsFieldDto())
 
   result = signal
 

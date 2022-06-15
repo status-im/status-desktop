@@ -21,6 +21,7 @@ const DEFAULT_TELEMETRY_SERVER_URL* = "https://telemetry.status.im"
 const DEFAULT_FLEET* = $Fleet.Prod
 
 const SIGNAL_CURRENT_USER_STATUS_UPDATED* = "currentUserStatusUpdated"
+const SIGNAL_SETTING_PROFILE_PICTURES_SHOW_TO_CHANGED* = "profilePicturesShowToChanged"
 
 logScope:
   topics = "settings-service"
@@ -29,6 +30,11 @@ type
   CurrentUserStatusArgs* = ref object of Args
     statusType*: StatusType
     text*: string
+
+type
+  SettingProfilePictureArgs* = ref object of Args
+    value*: int
+
 
 QtObject:
   type Service* = ref object of QObject
@@ -57,6 +63,13 @@ QtObject:
       if receivedData.currentStatus.len > 0:
         var statusUpdate = receivedData.currentStatus[0]
         self.events.emit(SIGNAL_CURRENT_USER_STATUS_UPDATED, CurrentUserStatusArgs(statusType: statusUpdate.statusType, text: statusUpdate.text))
+
+      if receivedData.settings.len > 0:
+        for settingsField in receivedData.settings:
+
+          if settingsField.name == KEY_PROFILE_PICTURES_SHOW_TO:
+            self.settings.profilePicturesShowTo = settingsfield.value.parseInt
+            self.events.emit(SIGNAL_SETTING_PROFILE_PICTURES_SHOW_TO_CHANGED, SettingProfilePictureArgs(value: self.settings.profilePicturesShowTo))
 
   proc saveSetting(self: Service, attribute: string, value: string | JsonNode | bool | int): bool =
     try:
