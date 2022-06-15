@@ -62,7 +62,7 @@ pipeline {
       steps { script {
         squish([
           squishPackageName: 'squish-6.7.2-qt514x-linux64',
-          testSuite: '${JENKINS_HOME }/status-desktop/test/ui-test/testSuites/suite_status/tst_statusSignUp/test.py',
+          testSuite: '${JENKINS_HOME}/status-desktop/test/ui-test/testSuites/suite_status/tst_statusSignUp/test.py',
           unstableBuildOnError: true,
           host: 'localhost',
           port: '4322',
