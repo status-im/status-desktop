@@ -15,8 +15,10 @@ import utils 1.0
 
 import shared.panels 1.0
 import shared.controls 1.0
+import shared.controls.chat 1.0
 
 import "../stores"
+import "../popups"
 
 SettingsContentBase {
     id: root
@@ -27,6 +29,21 @@ SettingsContentBase {
     property bool isSyncing: false
 
     /*
+
+        Backend:
+            1. Is deviceName synced across devices? (seems to be yes)
+            2. Do I add new device with AddInstallations?
+            3. Can I remove device from syncing? Or is it done only by disabling?
+            4. What is a "Sync Code"? Is it same as installationId?
+
+            WAKU
+            1.There is this backup thing with waku.
+             - Is it working now in desktop app?
+             - How do I know when the last backup appeared for a particular installationId?
+
+
+        How to generate a QR code?
+
 
         Design questions:
             1. Should any device be "renamable"?
@@ -74,10 +91,10 @@ SettingsContentBase {
                         fcmToken: ""
             */
 
-            property bool deviceHasColor: false
-            property color deviceColor: "black" // TODO: move to backend
+            property int deviceColorIndex: undefined // TODO: move to backend
             property string deviceEmoji: "" // TODO: move to backend
-            property color effectiveDeviceColor: d.deviceHasColor ? d.deviceColor : Theme.palette.baseColor2
+            property color effectiveDeviceColor: d.deviceColorIndex ? Theme.palette.userCustomizationColors[deviceColorIndex % Theme.palette.userCustomizationColors.length]
+                                                                    : Theme.palette.primaryColor3
 
             property bool emojiPopupOpened: false
 
@@ -104,7 +121,7 @@ SettingsContentBase {
             }
 
             function setupSyncing() {
-
+                Global.openPopup(synNewDeviceModal);
             }
         }
 
@@ -187,6 +204,7 @@ SettingsContentBase {
 
                 components: [
                     StatusButton {
+//                        visible: !model.isCurrentDevice
                         text: qsTr("Setup syncing")
                         size: StatusBaseButton.Size.Small
                         onClicked: d.setupSyncing()
@@ -324,9 +342,14 @@ SettingsContentBase {
                 property var deviceModel
 
                 anchors.centerIn: parent
+
                 header.title: qsTr("Personalize %1").arg(deviceModel.name)
+                width: implicitWidth
+                padding: 16
 
                 onOpened: {
+                    console.info("Opened: ", d.deviceColorIndex, deviceModel.name)
+                    colorGrid.selectedColorIndex = d.deviceColorIndex
                     nameInput.text = deviceModel.name
                 }
 
@@ -335,8 +358,7 @@ SettingsContentBase {
                         text: "Done"
                         enabled: nameInput.text !== ""
                         onClicked : {
-                            d.deviceColor = colorDialog.selectedColor
-                            d.deviceHasColor = colorDialog.colorIsSelected
+                            d.deviceColorIndex = colorGrid.selectedColorIndex
                             root.devicesStore.setName(nameInput.text.trim())
                             personalizeDeviceModal.close();
                         }
@@ -349,75 +371,50 @@ SettingsContentBase {
                         id: nameInput
                         Layout.fillWidth: true
                         label: qsTr("Device name")
-                        //                        charLimit: popup.maxChannelNameLength
-                        //                        input.placeholderText: qsTr("Name the device")
-                        //                        input.onTextChanged: {
-                        //                            input.text = Utils.convertSpacesToDashesAndUpperToLowerCase(input.text);
-                        //                            input.cursorPosition = input.text.length
-                        //                            if (popup.channelEmoji === "") {
-                        //                                input.letterIconName = text;
-                        //                            }
-                        //                        }
+                        // charLimit: popup.maxChannelNameLength
+                        // input.placeholderText: qsTr("Name the device")
+                        // input.onTextChanged: {
+                        //     input.text = Utils.convertSpacesToDashesAndUpperToLowerCase(input.text);
+                        //     input.cursorPosition = input.text.length
+                        //     if (popup.channelEmoji === "") {
+                        //         input.letterIconName = text;
+                        //     }
+                        // }
                         input.icon.name: !!d.deviceEmoji ? "" : "desktop"
                         input.icon.emoji: d.deviceEmoji
-                        input.icon.background.color: colorDialog.effectiveColor
+                        input.icon.color: isLetterIdenticon && colorGrid.selectedColorIndex >= 0 ? colorGrid.selectedColor : Theme.palette.primaryColor1
+                        input.icon.background.color: colorGrid.selectedColorIndex >= 0 ? colorGrid.selectedColor : Theme.palette.primaryColor3
+                        input.icon.isLetterIdenticon: !!d.deviceEmoji
+                        input.isIconSelectable: true
                         input.leftPadding: 16
-                        input.rightComponent: StatusRoundButton {
-                            implicitWidth: 20
-                            implicitHeight: 20
-                            icon.width: implicitWidth
-                            icon.height: implicitHeight
-                            icon.name: "smiley"
-                            onClicked: {
-                                d.emojiPopupOpened = true;
-                                root.emojiPopup.open();
-                                root.emojiPopup.emojiSize = StatusQUtils.Emoji.size.verySmall;
-                                root.emojiPopup.x = root.width - 2 * Style.current.xlPadding;
-                                root.emojiPopup.y = root.y + nameInput.height + 2 * Style.current.xlPadding;
-                            }
+                        onIconClicked: {
+                            d.emojiPopupOpened = true;
+                            root.emojiPopup.open();
+                            root.emojiPopup.emojiSize = StatusQUtils.Emoji.size.verySmall;
+                            root.emojiPopup.x = root.width - 2 * Style.current.xlPadding;
+                            root.emojiPopup.y = root.y + nameInput.height + 2 * Style.current.xlPadding;
                         }
-                    }
-
-                    StatusBaseText {
-                        Layout.fillWidth: true
-                        text: qsTr("Channel colour")
-                        font.pixelSize: 15
-                        color: Theme.palette.directColor1
                     }
 
                     StatusColorSelectorGrid {
-
-                    }
-
-                    StatusPickerButton {
-                        Layout.fillWidth: true
-                        bgColor: colorDialog.effectiveColor
-                        contentColor: colorDialog.colorIsSelected ? Theme.palette.indirectColor1 : Theme.palette.baseColor1
-                        text: colorDialog.colorIsSelected ? colorDialog.selectedColor.toString().toUpperCase() : qsTr("Pick a color")
-                        onClicked: {
-                            colorDialog.open();
-                        }
-                    }
-
-                    StatusColorDialog {
-                        id: colorDialog
-                        anchors.centerIn: parent
-                        property bool colorIsSelected
-                        property color selectedColor
-                        property color effectiveColor: colorIsSelected ? selectedColor : Theme.palette.baseColor2
-                        onOpened: {
-                            if (colorIsSelected) {
-                                color = d.deviceColor;
-                                colorIsSelected = false;
-                            }
-                        }
-                        onAccepted: {
-                            selectedColor = color
-                            colorIsSelected = true
-                        }
+                        id: colorGrid
+                        Layout.alignment: Qt.AlignHCenter
+                        Layout.topMargin: 42
+                        Layout.bottomMargin: 42
+                        title.text: qsTr("Colour")
+                        title.font.weight: Font.Medium
+                        title.font.pixelSize: 13
+                        title.color: Theme.palette.baseColor1
                     }
                 }
+            }
+        }
 
+        Component {
+            id: synNewDeviceModal
+
+            SyncNewDevicePopup {
+                anchors.centerIn: parent
             }
         }
 

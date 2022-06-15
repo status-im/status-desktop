@@ -22,11 +22,6 @@ OnboardingBasePage {
 
     signal userValidated()
 
-    QtObject {
-        id: d
-        readonly property int listItemHeight: 40
-    }
-
     Column {
         id: layout
 

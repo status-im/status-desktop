@@ -18,6 +18,7 @@ Item {
     property bool compact: true
     property bool displayNameVisible: true
     property bool pubkeyVisible: true
+    property bool emojiHashVisible: true
 
     property alias imageOverlay: imageOverlay.sourceComponent
 
@@ -90,6 +91,7 @@ Item {
 
             Layout.alignment: Qt.AlignHCenter
 
+            visible: root.emojiHashVisible
             publicKey: root.pubkey
             size: root.compact ? 16 : 20
         }
