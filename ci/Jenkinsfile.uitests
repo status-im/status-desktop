@@ -64,8 +64,8 @@ pipeline {
           squishPackageName: 'squish-6.7.2-qt514x-linux64',
           testSuite: '${WORKSPACE}/test/ui-test/testSuites/*',
           unstableBuildOnError: true,
-          host: 'node-01.do-ams3.squish.ci.wg',
-          port: '49345',
+          host: 'localhost',
+          port: '4322',
         ])
       } }
     }
