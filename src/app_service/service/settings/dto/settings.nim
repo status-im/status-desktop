@@ -93,6 +93,11 @@ type CurrentUserStatus* = object
   text*: string
 
 type
+  SettingsFieldDto* = object
+    name*: string
+    value*: string
+
+type
   SettingsDto* = object # There is no point to keep all these info as settings, but we must follow status-go response
     address*: string
     currency*: string
@@ -169,6 +174,17 @@ proc toCurrentUserStatus*(jsonObj: JsonNode): CurrentUserStatus =
   discard jsonObj.getProp("statusType", result.statusType)
   discard jsonObj.getProp("clock", result.clock)
   discard jsonObj.getProp("text", result.text)
+
+proc toSettingsFieldDto*(jsonObj: JsonNode): SettingsFieldDto =
+  var field = SettingsFieldDto()
+  field.name = jsonObj["name"].getStr()
+
+  case field.name:
+    of KEY_PROFILE_PICTURES_SHOW_TO:
+      field.value = jsonObj["value"].getInt().intToStr
+    else:
+      field.value = jsonObj["value"].getStr()
+  result = field
 
 proc toSettingsDto*(jsonObj: JsonNode): SettingsDto =
   discard jsonObj.getProp(KEY_ADDRESS, result.address)
