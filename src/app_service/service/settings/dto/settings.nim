@@ -180,7 +180,7 @@ proc toSettingsFieldDto*(jsonObj: JsonNode): SettingsFieldDto =
   field.name = jsonObj["name"].getStr()
 
   case field.name:
-    of KEY_PROFILE_PICTURES_SHOW_TO:
+    of KEY_PROFILE_PICTURES_SHOW_TO, KEY_PROFILE_PICTURES_VISIBILITY:
       field.value = jsonObj["value"].getInt().intToStr
     else:
       field.value = jsonObj["value"].getStr()

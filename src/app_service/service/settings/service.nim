@@ -22,6 +22,7 @@ const DEFAULT_FLEET* = $Fleet.Prod
 
 const SIGNAL_CURRENT_USER_STATUS_UPDATED* = "currentUserStatusUpdated"
 const SIGNAL_SETTING_PROFILE_PICTURES_SHOW_TO_CHANGED* = "profilePicturesShowToChanged"
+const SIGNAL_SETTING_PROFILE_PICTURES_VISIBILITY_CHANGED* = "profilePicturesVisibilityChanged"
 
 logScope:
   topics = "settings-service"
@@ -34,7 +35,6 @@ type
 type
   SettingProfilePictureArgs* = ref object of Args
     value*: int
-
 
 QtObject:
   type Service* = ref object of QObject
@@ -70,6 +70,10 @@ QtObject:
           if settingsField.name == KEY_PROFILE_PICTURES_SHOW_TO:
             self.settings.profilePicturesShowTo = settingsfield.value.parseInt
             self.events.emit(SIGNAL_SETTING_PROFILE_PICTURES_SHOW_TO_CHANGED, SettingProfilePictureArgs(value: self.settings.profilePicturesShowTo))
+
+          if settingsField.name == KEY_PROFILE_PICTURES_VISIBILITY:
+            self.settings.profilePicturesVisibility = settingsfield.value.parseInt
+            self.events.emit(SIGNAL_SETTING_PROFILE_PICTURES_VISIBILITY_CHANGED, SettingProfilePictureArgs(value: self.settings.profilePicturesVisibility))
 
   proc saveSetting(self: Service, attribute: string, value: string | JsonNode | bool | int): bool =
     try:

@@ -41,6 +41,10 @@ proc init*(self: Controller) =
     var args = SettingProfilePictureArgs(e)
     self.delegate.emitProfilePicturesShowToChanged(args.value)
 
+  self.events.on(SIGNAL_SETTING_PROFILE_PICTURES_VISIBILITY_CHANGED) do(e: Args):
+    var args = SettingProfilePictureArgs(e)
+    self.delegate.emitProfilePicturesVisibilityChanged(args.value)
+
 proc isMnemonicBackedUp*(self: Controller): bool =
   return self.privacyService.isMnemonicBackedUp()
 
