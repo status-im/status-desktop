@@ -102,6 +102,7 @@ method load*(self: Module) =
     self.switchAccount(0)
     self.setTotalCurrencyBalance()
   self.events.on(SIGNAL_WALLET_ACCOUNT_CURRENCY_UPDATED) do(e:Args):
+    self.view.setCurrentCurrency(self.controller.getCurrency())
     self.setTotalCurrencyBalance()
   self.events.on(SIGNAL_WALLET_ACCOUNT_TOKEN_VISIBILITY_UPDATED) do(e:Args):
     self.setTotalCurrencyBalance()

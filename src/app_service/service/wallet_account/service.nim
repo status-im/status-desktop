@@ -12,6 +12,7 @@ import dto
 import derived_address
 
 import ../../../app/core/eventemitter
+import ../../../app/core/signals/types
 import ../../../app/core/tasks/[qt, threadpool]
 import ../../../backend/accounts as status_go_accounts
 import ../../../backend/backend as backend
@@ -159,6 +160,13 @@ QtObject:
       let errDesription = e.msg
       error "error: ", errDesription
       return
+
+    self.events.on(SignalType.Message.event) do(e: Args):
+      var receivedData = MessageSignal(e)
+      if receivedData.settings.len > 0:
+        for settingsField in receivedData.settings:
+          if settingsField.name == KEY_CURRENCY:
+            self.events.emit(SIGNAL_WALLET_ACCOUNT_CURRENCY_UPDATED, CurrencyUpdated())
 
   proc getAccountByAddress*(self: Service, address: string): WalletAccountDto =
     if not self.walletAccounts.hasKey(address):

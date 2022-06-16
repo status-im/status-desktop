@@ -74,6 +74,9 @@ QtObject:
             self.settings.profilePicturesVisibility = settingsfield.value.parseInt
             self.events.emit(SIGNAL_SETTING_PROFILE_PICTURES_VISIBILITY_CHANGED, SettingProfilePictureArgs(value: self.settings.profilePicturesVisibility))
 
+          if settingsField.name == KEY_CURRENCY:
+            self.settings.currency = settingsField.value
+
   proc saveSetting(self: Service, attribute: string, value: string | JsonNode | bool | int): bool =
     try:
       let response = status_settings.saveSettings(attribute, value)
