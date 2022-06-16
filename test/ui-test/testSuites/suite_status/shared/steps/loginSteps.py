@@ -1,10 +1,17 @@
 from data.StatusAccount import StatusAccount
 from processes.StatusLoginProcess import StatusLoginProcess
+from screens.StatusLoginScreen import StatusLoginScreen
+
+_loginScreen = StatusLoginScreen()
+
+
+@When("the user logs in with password |any|")
+def step(context, password):
+    _loginScreen.login(password)
 
 
 @Given("A Status Desktop |any| and |any|")
 def step(context, account, password):
-
     # Create new data domain:
     accountObj = StatusAccount(account, password)
 
@@ -16,7 +23,8 @@ def step(context, account, password):
     context.userData['account'] = accountObj
 
     # Verify process can be executed:
-    test.verify(process.can_execute_process(), "Not possible to start login process. Check if expected Login Screen is available.")
+    test.verify(process.can_execute_process(),
+                "Not possible to start login process. Check if expected Login Screen is available.")
 
 
 @When("the user tries to login with valid credentials")
@@ -42,7 +50,8 @@ def step(context):
 
 @Then("the user is NOT able to login to Status Desktop application")
 def step(context):
-    get_process_result(context)
+    accounts_popup = _loginScreen.get_accounts_selector_popup()
+    verify_screen_is_loaded(accounts_popup, False)
 
 
 # Common:
