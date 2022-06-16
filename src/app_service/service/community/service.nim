@@ -611,6 +611,10 @@ QtObject:
       pinMessageAllMembersEnabled: bool) =
     try:
       var image = singletonInstance.utils.formatImagePath(imageUrl)
+      var tagsString = tags
+      if len(tagsString) == 0:
+        tagsString = "[]"
+
       let response = status_go.createCommunity(
         name,
         description,
@@ -618,7 +622,7 @@ QtObject:
         outroMessage,
         access,
         color,
-        tags,
+        tagsString,
         image,
         aX, aY, bX, bY,
         historyArchiveSupportEnabled,
@@ -659,6 +663,9 @@ QtObject:
       # TODO: refactor status-go to use `CroppedImage` for logo as it does for banner. This is an API breaking change, sync with mobile
       let logoJson = parseJson(logoJsonStr)
       let cropRectJson = logoJson["cropRect"]
+      var tagsString = tags
+      if len(tagsString) == 0:
+        tagsString = "[]"
       let response = status_go.editCommunity(
         id,
         name,
@@ -667,7 +674,7 @@ QtObject:
         outroMessage,
         access,
         color,
-        tags,
+        tagsString,
         logoJson["imagePath"].getStr(),
         int(cropRectJson["x"].getFloat()),
         int(cropRectJson["y"].getFloat()),
