@@ -7,7 +7,7 @@ import StatusQ.Core.Theme 0.1
 StatusListItem {
     property var network
     title: network.chainName
-    image.source: Style.png("networks/" + network.chainName.toLowerCase())
+    image.source: Style.png(network.iconUrl)
     width: parent.width
     leftPadding: Style.current.padding
     rightPadding: Style.current.padding

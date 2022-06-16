@@ -203,6 +203,13 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_NETWORK_DISCONNECTED) do(e: Args):
     self.delegate.onNetworkDisconnected()
 
+  self.events.on(SIGNAL_CURRENT_USER_STATUS_UPDATED) do (e: Args):
+    var args = CurrentUserStatusArgs(e)
+    var status = true
+    if args.statusType == StatusType.Invisible:
+      status = false
+    singletonInstance.userProfile.setUserStatus(status)
+
 proc isConnected*(self: Controller): bool =
   return self.nodeService.isConnected()
 

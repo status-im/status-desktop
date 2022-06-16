@@ -14,6 +14,9 @@ type
     NativeCurrencySymbol
     IsTest
     IsEnabled
+    IconUrl
+    ChainColor
+    ShortName
 
 QtObject:
   type
@@ -59,6 +62,9 @@ QtObject:
       ModelRole.NativeCurrencySymbol.int:"nativeCurrencySymbol",
       ModelRole.IsTest.int:"isTest",
       ModelRole.IsEnabled.int:"isEnabled",
+      ModelRole.IconUrl.int:"iconUrl",
+      ModelRole.ShortName.int: "shortName",
+      ModelRole.ChainColor.int: "chainColor",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -92,6 +98,12 @@ QtObject:
       result = newQVariant(item.getIsTest())
     of ModelRole.IsEnabled:
       result = newQVariant(item.getIsEnabled())
+    of ModelRole.IconUrl:
+      result = newQVariant(item.getIconURL())
+    of ModelRole.ShortName:
+      result = newQVariant(item.getShortName())
+    of ModelRole.ChainColor:
+      result = newQVariant(item.getChainColor())
 
   proc setItems*(self: Model, items: seq[Item]) =
     self.beginResetModel()

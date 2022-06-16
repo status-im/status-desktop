@@ -1,14 +1,15 @@
 import NimQml, chronicles, json, strutils, sequtils, tables, sugar
 
 import ../../common/[network_constants]
+import ../../../app/core/eventemitter
 import ../../../app/core/fleets/fleet_configuration
+import ../../../app/core/signals/types
 import ../../../backend/settings as status_settings
 import ../../../backend/status_update as status_update
 
 import ./dto/settings as settings_dto
 import ../contacts/dto/status_update as status_update_dto
 import ../stickers/dto/stickers as stickers_dto
-import ../../../app/core/fleets/fleet_configuration
 
 export settings_dto
 export stickers_dto
@@ -19,18 +20,27 @@ const DEFAULT_CURRENCY* = "usd"
 const DEFAULT_TELEMETRY_SERVER_URL* = "https://telemetry.status.im"
 const DEFAULT_FLEET* = $Fleet.Prod
 
+const SIGNAL_CURRENT_USER_STATUS_UPDATED* = "currentUserStatusUpdated"
+
 logScope:
   topics = "settings-service"
 
+type
+  CurrentUserStatusArgs* = ref object of Args
+    statusType*: StatusType
+    text*: string
+
 QtObject:
   type Service* = ref object of QObject
+    events: EventEmitter
     settings: SettingsDto
 
   proc delete*(self: Service) =
     self.QObject.delete
 
-  proc newService*(): Service =
+  proc newService*(events: EventEmitter): Service =
     new(result, delete)
+    result.events = events
     result.QObject.setup
 
   proc init*(self: Service) =
@@ -40,6 +50,13 @@ QtObject:
     except Exception as e:
       let errDesription = e.msg
       error "error: ", errDesription
+
+    self.events.on(SignalType.Message.event) do(e: Args):
+      var receivedData = MessageSignal(e)
+      
+      if receivedData.currentStatus.len > 0:
+        var statusUpdate = receivedData.currentStatus[0]
+        self.events.emit(SIGNAL_CURRENT_USER_STATUS_UPDATED, CurrentUserStatusArgs(statusType: statusUpdate.statusType, text: statusUpdate.text))
 
   proc saveSetting(self: Service, attribute: string, value: string | JsonNode | bool | int): bool =
     try:
@@ -312,13 +329,20 @@ QtObject:
   proc saveSendStatusUpdates*(self: Service, value: bool): bool =
     var newStatus = StatusType.Online
     if not value:
-      newStatus = StatusType.Offline
+      # This looks unintuitive, but `StatusType.Offline` is interpreted
+      # as `StatusUpdate.UNKNOWN_STATUS_TYPE` in status-go, which causes an error.
+      # Hence `Invisible` (= 4 [which is `INACTIVE` in status-go]) is considerd offline.
+      newStatus = StatusType.Invisible
 
     try:
-      let r = status_update.setUserStatus(int(newStatus))
-      if(self.saveSetting(KEY_SEND_STATUS_UPDATES, value)):
-        self.settings.sendStatusUpdates = value
-        return true
+      # The new user status needs to always be broadcast, so we need to update
+      # the settings accordingly and might turn it off afterwards (if user has 
+      # set status to "offline"
+      if (self.saveSetting(KEY_SEND_STATUS_UPDATES, true)):
+        let r = status_update.setUserStatus(int(newStatus))
+        if(self.saveSetting(KEY_SEND_STATUS_UPDATES, value)):
+          self.settings.sendStatusUpdates = value
+          return true
       return false
     except:
       return false

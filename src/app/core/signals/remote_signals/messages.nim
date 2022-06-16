@@ -17,10 +17,12 @@ type MessageSignal* = ref object of Signal
   devices*: seq[DeviceDto]
   emojiReactions*: seq[ReactionDto]
   communities*: seq[CommunityDto]
+  communitiesSettings*: seq[CommunitySettingsDto]
   membershipRequests*: seq[CommunityMembershipRequestDto]
   activityCenterNotifications*: seq[ActivityCenterNotificationDto]
   statusUpdates*: seq[StatusUpdateDto]
   deletedMessages*: seq[RemovedMessageDto]
+  currentStatus*: seq[StatusUpdateDto]
 
 proc fromEvent*(T: type MessageSignal, event: JsonNode): MessageSignal =
   var signal:MessageSignal = MessageSignal()
@@ -46,6 +48,10 @@ proc fromEvent*(T: type MessageSignal, event: JsonNode): MessageSignal =
       var statusUpdate = jsonStatusUpdate.toStatusUpdateDto()
       signal.statusUpdates.add(statusUpdate)
 
+  if event["event"]{"currentStatus"} != nil:
+      var currentStatus = event["event"]["currentStatus"].toStatusUpdateDto()
+      signal.currentStatus.add(currentStatus)
+
   if event["event"]{"installations"} != nil:
     for jsonDevice in event["event"]["installations"]:
       signal.devices.add(jsonDevice.toDeviceDto())
@@ -57,6 +63,10 @@ proc fromEvent*(T: type MessageSignal, event: JsonNode): MessageSignal =
   if event["event"]{"communities"} != nil:
     for jsonCommunity in event["event"]["communities"]:
       signal.communities.add(jsonCommunity.toCommunityDto())
+
+  if event["event"]{"communitiesSettings"} != nil:
+    for jsonCommunitySettings in event["event"]["communitiesSettings"]:
+      signal.communitiesSettings.add(jsonCommunitySettings.toCommunitySettingsDto())
 
   if event["event"]{"requestsToJoinCommunity"} != nil:
     for jsonCommunity in event["event"]["requestsToJoinCommunity"]:
