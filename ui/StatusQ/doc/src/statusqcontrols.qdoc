@@ -15,6 +15,7 @@
        \li \l{StatusChatInfoButton}
        \li \l{StatusChatListCategoryItemButton}
        \li \l{StatusColorSelector}
+       \li \l{StatusDropdown}
        \li \l{StatusIconTabButton}
        \li \l{StatusNavBarTabButton}
        \li \l{StatusTabBarIconButton}

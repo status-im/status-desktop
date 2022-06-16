@@ -10510,5 +10510,6 @@
         <file>src/StatusQ/Popups/Dialog/StatusDialogHeader.qml</file>
         <file>src/StatusQ/Popups/Dialog/StatusDialogFooter.qml</file>
         <file>src/StatusQ/Popups/Dialog/StatusDialogDivider.qml</file>
+        <file>src/StatusQ/Controls/StatusDropdown.qml</file>
     </qresource>
 </RCC>
