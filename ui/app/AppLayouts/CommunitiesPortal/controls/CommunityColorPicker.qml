@@ -14,6 +14,8 @@ ColumnLayout {
 
     property color color: Theme.palette.primaryColor1
 
+    signal pick()
+
     spacing: 8
 
     StatusBaseText {
@@ -30,26 +32,12 @@ ColumnLayout {
         bgColor: root.color
         contentColor: Theme.palette.indirectColor1
         text: root.color.toString()
+        onClicked: root.pick()
 
-        onClicked: {
-            colorDialog.color = root.color
-            colorDialog.open()
-        }
         onTextChanged: {
             validationError = Utils.validateAndReturnError(
                         text,
                         Utils.Validate.NoEmpty | Utils.Validate.TextHexColor)
-        }
-
-        StatusColorDialog {
-            id: colorDialog
-            anchors.centerIn: parent
-            header.title: qsTr("Community Colour")
-            previewText: qsTr("White text should be legable on top of this colour")
-            acceptText: qsTr("Select Community Colour")
-            onAccepted: {
-                root.color = color
-            }
         }
     }
 }

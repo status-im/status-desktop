@@ -17,51 +17,23 @@ import StatusQ.Popups 0.1
 
 import "../../Chat/controls/community"
 
-StatusModal {
+import "../controls"
+import "../panels"
+
+StatusStackModal {
     id: root
 
     property var store
 
-    width: 640
-    padding: 16
+    stackTitle: qsTr("Create New Community")
 
-    header.title: qsTr("Create New Community")
+    finishButton: StatusButton {
+        text: qsTr("Create Community")
+        enabled: introMessageInput.valid && outroMessageInput.valid
+        onClicked: d.createCommunity()
+    }
 
-    rightButtons: [
-        StatusButton {
-            text: qsTr("Next")
-            enabled: generalView.canGoNext
-            visible: generalView.visible
-
-            onClicked: stackLayout.currentIndex = stackLayout.currentIndex + 1
-        },
-        StatusButton {
-            text: qsTr("Create Community")
-            enabled: introMessageInput.valid && outroMessageInput.valid
-            visible: introMessageInput.visible
-
-            onClicked: d.createCommunity()
-        }
-    ]
-
-    leftButtons: [
-        StatusRoundButton {
-            id: btnBack
-            icon.name: "arrow-right"
-            icon.width: 20
-            icon.height: 16
-            rotation: 180
-            visible: stackLayout.currentIndex !== 0
-
-            onClicked: stackLayout.currentIndex = 0
-        }
-    ]
-
-    StackLayout {
-        id: stackLayout
-
-        anchors.fill: parent
-
+    stackItems: [
         Flickable {
             id: generalView
 
@@ -82,7 +54,7 @@ StatusModal {
                     id: nameInput
                     Layout.fillWidth: true
                     Component.onCompleted: nameInput.input.forceActiveFocus(
-                                               Qt.MouseFocusReason)
+                                                Qt.MouseFocusReason)
                 }
 
                 CommunityDescriptionInput {
@@ -97,13 +69,42 @@ StatusModal {
 
                 CommunityColorPicker {
                     id: colorPicker
+                    onPick: root.replace(colorPanel)
                     Layout.fillWidth: true
+
+                    Component {
+                        id: colorPanel
+
+                        CommunityColorPanel {
+                            Component.onCompleted: color = colorPicker.color
+                            onAccepted: {
+                                colorPicker.color = color;
+                                root.replace(null);
+                            }
+                        }
+                    }
                 }
 
                 CommunityTagsPicker {
                     id: communityTagsPicker
                     tags: root.store.communityTags
+                    onPick: root.replace(tagsPanel)
                     Layout.fillWidth: true
+
+                    Component {
+                        id: tagsPanel
+
+                        CommunityTagsPanel {
+                            Component.onCompleted: {
+                                tags = communityTagsPicker.tags;
+                                selectedTags = communityTagsPicker.selectedTags;
+                            }
+                            onAccepted: {
+                                communityTagsPicker.selectedTags = selectedTags;
+                                root.replace(null);
+                            }
+                        }
+                    }
                 }
 
                 StatusModalDivider {
@@ -121,8 +122,7 @@ StatusModal {
                     Layout.fillHeight: true
                 }
             }
-        }
-
+        },
         ColumnLayout {
             id: introOutroMessageView
 
@@ -143,7 +143,7 @@ StatusModal {
                 Layout.fillWidth: true
             }
         }
-    }
+    ]
 
     QtObject {
         id: d

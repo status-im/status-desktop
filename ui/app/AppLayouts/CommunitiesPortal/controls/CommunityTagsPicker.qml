@@ -9,13 +9,13 @@ import StatusQ.Components 0.1
 import StatusQ.Popups 0.1
 import StatusQ.Controls 0.1
 
-import "../../popups/community"
-
 ColumnLayout {
     id: root
 
     property string tags
     property string selectedTags
+
+    signal pick()
 
     onSelectedTagsChanged: {
         var obj = JSON.parse(tags);
@@ -46,6 +46,7 @@ ColumnLayout {
     StatusPickerButton {
         bgColor: root.selectedTags == "" ? Theme.palette.baseColor2 : "transparent"
         text: root.selectedTags == "" ? "Choose tags describing the community" : ""
+        onClicked: root.pick()
         Layout.fillWidth: true
 
         StatusCommunityTags {
@@ -53,18 +54,6 @@ ColumnLayout {
             model: d.tagsModel
             active: false
             width: parent.width
-        }
-
-        onClicked: {
-            tagsDialog.tags = root.tags;
-            tagsDialog.selectedTags = root.selectedTags;
-            tagsDialog.open();
-        }
-
-        CommunityTagsPopup {
-            id: tagsDialog
-            anchors.centerIn: parent
-            onAccepted: root.selectedTags = selectedTags
         }
     }
 }

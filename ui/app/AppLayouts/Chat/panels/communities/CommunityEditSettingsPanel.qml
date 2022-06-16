@@ -18,6 +18,9 @@ import StatusQ.Controls.Validators 0.1
 
 import "../../controls/community"
 
+import "../../../CommunitiesPortal/controls"
+import "../../../CommunitiesPortal/panels"
+
 Flickable {
     id: root
 
@@ -75,12 +78,47 @@ Flickable {
 
         CommunityColorPicker {
             id: colorPicker
+            onPick: Global.openPopup(pickColorComponent)
             Layout.fillWidth: true
+
+            Component {
+                id: pickColorComponent
+
+                StatusStackModal {
+                    replaceItem: CommunityColorPanel {
+                        Component.onCompleted: color = colorPicker.color
+                        onAccepted: {
+                            colorPicker.color = color;
+                            close();
+                        }
+                    }
+                    onClosed: destroy()
+                }
+            }
         }
 
         CommunityTagsPicker {
             id: tagsPicker
+            onPick: Global.openPopup(pickTagsComponent)
             Layout.fillWidth: true
+
+            Component {
+                id: pickTagsComponent
+
+                StatusStackModal {
+                    replaceItem: CommunityTagsPanel {
+                        Component.onCompleted: {
+                            tags = tagsPicker.tags;
+                            selectedTags = tagsPicker.selectedTags;
+                        }
+                        onAccepted: {
+                            tagsPicker.selectedTags = selectedTags;
+                            close();
+                        }
+                    }
+                    onClosed: destroy()
+                }
+            }
         }
 
         StatusModalDivider {
