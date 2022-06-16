@@ -23,7 +23,7 @@ class ChatComponents(Enum):
 class StatusChatScreen:
 
     def __init__(self):
-        verify_screen_is_loaded(ChatComponents.TYPE_A_MESSAGE_PLACE_HOLDER.value)
+        verify_screen(ChatComponents.TYPE_A_MESSAGE_PLACE_HOLDER.value)
 
     def sendMessage(self, message):
         type(ChatComponents.MESSAGE_INPUT.value, message)

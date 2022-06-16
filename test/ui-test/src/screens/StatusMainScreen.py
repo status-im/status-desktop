@@ -29,7 +29,7 @@ class ChatNamePopUp(Enum):
 class StatusMainScreen:
 
     def __init__(self):
-        verify_screen_is_loaded(MainScreenComponents.STATUS_ICON.value)
+        verify_screen(MainScreenComponents.STATUS_ICON.value)
 
     def joinChatRoom(self, room):
         click_obj_by_name(MainScreenComponents.STATUS_ICON.value)

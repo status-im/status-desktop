@@ -16,9 +16,9 @@
 from common.Common import *
 
 
-@Given("the application is restarted")
+@When("the user restarts the app")
 def step(context):
-    currentApplicationContext().detach()
+    waitFor(lambda: currentApplicationContext().detach(), 100)
     startApplication("nim_status_client")
 
 
