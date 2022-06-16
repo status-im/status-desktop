@@ -922,8 +922,7 @@ QtObject {
         var isSelected = false
         for(var i = 0; i < currenciesModel.count; i++) {
             if(root.currentCurrency === root.currenciesModel.get(i).key) {
-                isSelected = true
-                root.currenciesModel.get(i).selected = true
+                root.currenciesModel.get(i).selected = isSelected = true
             }
             else {
                 root.currenciesModel.get(i).selected = false

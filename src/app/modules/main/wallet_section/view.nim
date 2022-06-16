@@ -70,6 +70,10 @@ QtObject:
     self.totalCurrencyBalance = totalCurrencyBalance
     self.totalCurrencyBalanceChanged()
 
+  proc setCurrentCurrency*(self: View, currency: string) =
+    self.currentCurrency = currency
+    self.currentCurrencyChanged()
+
   proc setData*(self: View, currency, signingPhrase: string, mnemonicBackedUp: bool) =
     self.currentCurrency = currency
     self.signingPhrase = signingPhrase
