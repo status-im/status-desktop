@@ -9,7 +9,7 @@ def step(context):
     _welcomeScreen.agree_terms_conditions_and_generate_new_key()
 
 
-@When("user inputs username |any| and password |any|")
+@When("user signs up with username |any| and password |any|")
 def step(context, username, password):
     _welcomeScreen.input_username_and_password_and_finalize_sign_up(username, password)
 

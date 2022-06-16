@@ -39,7 +39,7 @@ class SignUpComponents(Enum):
 class StatusWelcomeScreen:
 
     def __init__(self):
-        verify_screen_is_loaded(AgreementPopUp.OK_GOT_IT_BUTTON.value)
+        verify_screen(AgreementPopUp.OK_GOT_IT_BUTTON.value)
 
     def agree_terms_conditions_and_generate_new_key(self):
         click_obj_by_name(AgreementPopUp.OK_GOT_IT_BUTTON.value)

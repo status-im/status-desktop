@@ -16,13 +16,11 @@ Feature: Status Desktop login
     The following scenarios cover login by using a password.
 
     Scenario Outline: User tries to login with a valid password
-
 		Given A first time user lands on the status desktop and generates new key
-        When user inputs username <account> and password <password>
-        Given the application is restarted
-		Given A Status Desktop <account> and <password>
-        When the user tries to login with valid credentials
-        Then the user is able to login to Status Desktop application
+        When user signs up with username <account> and password <password>
+        And the user restarts the app
+        And the user logs in with password <password>
+        Then the user lands on the signed in app
  	Examples:
             | account 		   | password          |
             | Athletic_Prime   | TesTEr16843/!@00  |
@@ -33,10 +31,9 @@ Feature: Status Desktop login
     Scenario Outline: User tries to login with an invalid password
 
         Given A first time user lands on the status desktop and generates new key
-        When user inputs username <account> and password <password>
-        Given the application is restarted
-        Given A Status Desktop <account> and <wrongpassword>
-        When the user tries to login with invalid credentials
+        When user signs up with username <account> and password <password>
+        And the user restarts the app
+        And the user logs in with password <wrongpassword>
         Then the user is NOT able to login to Status Desktop application
 	Examples:
              | account 			  | password           |  wrongpassword    |

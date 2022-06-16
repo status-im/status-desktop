@@ -10,7 +10,7 @@ Feature: Status Desktop Chat
 
     Background:
          Given A first time user lands on the status desktop and generates new key
-    	 When user inputs username tester123 and password TesTEr16843/!@00
+    	 When user signs up with username tester123 and password TesTEr16843/!@00
     	 Then the user lands on the signed in app
 
     Scenario: User joins a room and chats
