@@ -62,8 +62,6 @@ QtObject {
 
     property bool browserMenuItemEnabled: localAccountSensitiveSettings.isBrowserEnabled
     property bool walletMenuItemEnabled: localAccountSensitiveSettings.isWalletEnabled
-    property bool appsMenuItemsEnabled: localAccountSensitiveSettings.isWalletEnabled || localAccountSensitiveSettings.communitiesEnabled
-    property bool communitiesMenuItemEnabled: localAccountSensitiveSettings.communitiesEnabled
 
     property var communitiesModuleInst: communitiesModule
     property var communitiesList: communitiesModuleInst.model
