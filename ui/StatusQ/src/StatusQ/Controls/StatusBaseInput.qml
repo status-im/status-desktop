@@ -327,7 +327,7 @@ Item {
                 spacing: 10
                 anchors {
                     fill: parent
-                    leftMargin: root.leftPadding
+                    leftMargin: root.leftPadding ? root.leftPadding : leftComponentLoader.item ? 8 : 16
                     rightMargin: root.rightPadding
                 }
 
