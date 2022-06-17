@@ -190,10 +190,10 @@ method acceptContactRequest*(self: AccessInterface, publicKey: string) {.base.} 
 method acceptAllContactRequests*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method dismissContactRequest*(self: AccessInterface, publicKey: string) {.base.} =
+method rejectContactRequest*(self: AccessInterface, publicKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method dismissAllContactRequests*(self: AccessInterface) {.base.} =
+method rejectAllContactRequests*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method blockContact*(self: AccessInterface, publicKey: string) {.base.} =

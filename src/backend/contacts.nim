@@ -21,6 +21,12 @@ proc unblockContact*(id: string): RpcResponse[JsonNode] {.raises: [Exception].} 
 proc removeContact*(id: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = callPrivateRPC("removeContact".prefix, %* [id])
 
+proc rejectContactRequest*(id: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %*[{
+    "id": id
+  }]
+  result = callPrivateRPC("rejectContactRequest".prefix, payload)
+
 proc setContactLocalNickname*(id: string, name: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [{
     "id": id,
@@ -28,24 +34,12 @@ proc setContactLocalNickname*(id: string, name: string): RpcResponse[JsonNode] {
   }]
   result = callPrivateRPC("setContactLocalNickname".prefix, payload)
 
-proc sendContactRequest*(id: string, message: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc addContact*(id: string, ensName: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [{
       "id": id,
-      "message": message
+      "ensName": ensName
     }]
-  result = callPrivateRPC("sendContactRequest".prefix, payload)
-
-proc acceptLatestContactRequestForContact*(id: string): RpcResponse[JsonNode] {.raises: [Exception].} =
-  let payload = %* [{
-      "id": id
-    }]
-  result = callPrivateRPC("acceptLatestContactRequestForContact".prefix, payload)
-
-proc dismissLatestContactRequestForContact*(id: string): RpcResponse[JsonNode] {.raises: [Exception].} =
-  let payload = %*[{
-    "id": id
-  }]
-  result = callPrivateRPC("dismissLatestContactRequestForContact".prefix, payload)
+  result = callPrivateRPC("addContact".prefix, payload)
 
 proc sendContactUpdate*(publicKey, ensName, thumbnail: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [publicKey, ensName, thumbnail]

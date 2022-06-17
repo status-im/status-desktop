@@ -83,17 +83,14 @@ method viewDidLoad*(self: Module) =
 method getModuleAsVariant*(self: Module): QVariant =
   return self.viewVariant
 
-method sendContactRequest*(self: Module, publicKey: string, message: string) =
-  self.controller.sendContactRequest(publicKey, message)
-
-method acceptContactRequest*(self: Module, publicKey: string) =
-  self.controller.acceptContactRequest(publicKey)
-
-method dismissContactRequest*(self: Module, publicKey: string) =
-  self.controller.dismissContactRequest(publicKey)
+method addContact*(self: Module, publicKey: string) =
+  self.controller.addContact(publicKey)
 
 method switchToOrCreateOneToOneChat*(self: Module, publicKey: string) =
   self.controller.switchToOrCreateOneToOneChat(publicKey)
+
+method rejectContactRequest*(self: Module, publicKey: string) =
+  self.controller.rejectContactRequest(publicKey)
 
 method unblockContact*(self: Module, publicKey: string) =
   self.controller.unblockContact(publicKey)

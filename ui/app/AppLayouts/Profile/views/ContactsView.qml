@@ -189,7 +189,7 @@ SettingsContentBase {
                         }
 
                         onContactRequestRejected: {
-                            root.contactsStore.dismissContactRequest(publicKey)
+                            root.contactsStore.rejectContactRequest(publicKey)
                         }
                     }
 

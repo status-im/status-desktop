@@ -169,11 +169,11 @@ QtObject:
   proc acceptAllContactRequests*(self: View) {.slot.} =
     self.delegate.acceptAllContactRequests()
 
-  proc dismissContactRequest*(self: View, publicKey: string) {.slot.} =
-    self.delegate.dismissContactRequest(publicKey)
+  proc rejectContactRequest*(self: View, publicKey: string) {.slot.} =
+    self.delegate.rejectContactRequest(publicKey)
 
-  proc dismissAllContactRequests*(self: View) {.slot.} =
-    self.delegate.dismissAllContactRequests()
+  proc rejectAllContactRequests*(self: View) {.slot.} =
+    self.delegate.rejectAllContactRequests()
 
   proc blockContact*(self: View, publicKey: string) {.slot.} =
     self.delegate.blockContact(publicKey)

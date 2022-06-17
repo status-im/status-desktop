@@ -62,12 +62,12 @@ QtObject {
         chatCommunitySectionModule.acceptAllContactRequests()
     }
 
-    function dismissContactRequest(pubKey) {
-        chatCommunitySectionModule.dismissContactRequest(pubKey)
+    function rejectContactRequest(pubKey) {
+        chatCommunitySectionModule.rejectContactRequest(pubKey)
     }
 
-    function dismissAllContactRequests() {
-        chatCommunitySectionModule.dismissAllContactRequests()
+    function rejectAllContactRequests() {
+        chatCommunitySectionModule.rejectAllContactRequests()
     }
 
     function blockContact(pubKey) {
