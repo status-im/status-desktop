@@ -36,10 +36,13 @@ SettingsContentBase {
             3. Can I remove device from syncing? Or is it done only by disabling?
             4. What is a "Sync Code"? Is it same as installationId?
 
-            WAKU
+        WAKU
             1.There is this backup thing with waku.
              - Is it working now in desktop app?
              - How do I know when the last backup appeared for a particular installationId?
+
+        Design:
+            1. Do we need a "back" button on first stages of Popup?
 
 
         How to generate a QR code?
@@ -92,11 +95,10 @@ SettingsContentBase {
             */
 
             property int deviceColorIndex: undefined // TODO: move to backend
-            property string deviceEmoji: "" // TODO: move to backend
+            property string deviceEmojiId: "" // TODO: move to backend
             property color effectiveDeviceColor: d.deviceColorIndex ? Theme.palette.userCustomizationColors[deviceColorIndex % Theme.palette.userCustomizationColors.length]
                                                                     : Theme.palette.primaryColor3
 
-            property bool emojiPopupOpened: false
 
             readonly property var instructionsModel: [
                                         qsTr("Verify your login with password or KeyCard"),
@@ -120,23 +122,10 @@ SettingsContentBase {
                                  })
             }
 
-            function setupSyncing() {
-                Global.openPopup(synNewDeviceModal);
-            }
-        }
-
-        Connections {
-            enabled: d.emojiPopupOpened
-            target: root.emojiPopup
-
-            onEmojiSelected: function (emojiText, atCursor) {
-    //            contentItem.channelName.input.icon.isLetterIdenticon = false;
-    //            scrollView.channelName.input.icon.emoji = emojiText
-                d.deviceEmoji = emojiText
-                console.log("Selected emoji: ", emojiText)
-            }
-            onClosed: {
-                d.emojiPopupOpened = false
+            function setupSyncing(mode) {
+                Global.openPopup(synNewDeviceModal, {
+                                        "mode": mode
+                                 });
             }
         }
 
@@ -196,8 +185,8 @@ SettingsContentBase {
 
                 }
 
-                icon.name: !!d.deviceEmoji ? "" : "desktop"
-                icon.emoji: d.deviceEmoji
+                icon.name: !!d.deviceEmojiId ? "" : "desktop"
+                icon.emoji: d.deviceEmojiId
                 icon.background.color: d.effectiveDeviceColor
                 icon.isLetterIdenticon: false
                 // label: qsTr("Next back up in %1 hours")
@@ -207,7 +196,7 @@ SettingsContentBase {
 //                        visible: !model.isCurrentDevice
                         text: qsTr("Setup syncing")
                         size: StatusBaseButton.Size.Small
-                        onClicked: d.setupSyncing()
+                        onClicked: d.setupSyncing(SetupSyncingPopup.GenerateSyncCode)
                     },
                     StatusIcon {
                         height: parent.height
@@ -306,7 +295,7 @@ SettingsContentBase {
                     textColor: Theme.palette.indirectColor1
                     font.weight: Font.Medium
                     text: qsTr("Setup Syncing")
-                    onClicked: d.setupSyncing()
+                    onClicked: d.setupSyncing(SetupSyncingPopup.GenerateSyncCode)
                 }
 
                 StatusBaseText {
@@ -324,6 +313,7 @@ SettingsContentBase {
             font.pixelSize: 15
             font.weight: Font.Medium
             text: qsTr("Enter Sync Code")
+            onClicked: d.setupSyncing(SetupSyncingPopup.EnterSyncCode)
         }
 
         StatusFlatButton {
@@ -331,142 +321,26 @@ SettingsContentBase {
             font.pixelSize: 15
             font.weight: Font.Medium
             text: qsTr("Scan Sync Code")
+            onClicked: d.setupSyncing(SetupSyncingPopup.ScanSyncCode)
         }
 
         Component {
             id: personalizeDevicePopup
 
-            StatusModal {
+            SyncDeviceCustomizationPopup {
                 id: personalizeDeviceModal
-
-                property var deviceModel
-
                 anchors.centerIn: parent
-
-                header.title: qsTr("Personalize %1").arg(deviceModel.name)
-                width: implicitWidth
-                padding: 16
-
-                onOpened: {
-                    console.info("Opened: ", d.deviceColorIndex, deviceModel.name)
-                    colorGrid.selectedColorIndex = d.deviceColorIndex
-                    nameInput.text = deviceModel.name
-                }
-
-                rightButtons: [
-                    StatusButton {
-                        text: "Done"
-                        enabled: nameInput.text !== ""
-                        onClicked : {
-                            d.deviceColorIndex = colorGrid.selectedColorIndex
-                            root.devicesStore.setName(nameInput.text.trim())
-                            personalizeDeviceModal.close();
-                        }
-                    }
-                ]
-
-                contentItem: ColumnLayout {
-
-                    StatusInput {
-                        id: nameInput
-                        Layout.fillWidth: true
-                        label: qsTr("Device name")
-                        // charLimit: popup.maxChannelNameLength
-                        // input.placeholderText: qsTr("Name the device")
-                        // input.onTextChanged: {
-                        //     input.text = Utils.convertSpacesToDashesAndUpperToLowerCase(input.text);
-                        //     input.cursorPosition = input.text.length
-                        //     if (popup.channelEmoji === "") {
-                        //         input.letterIconName = text;
-                        //     }
-                        // }
-                        input.icon.name: !!d.deviceEmoji ? "" : "desktop"
-                        input.icon.emoji: d.deviceEmoji
-                        input.icon.color: isLetterIdenticon && colorGrid.selectedColorIndex >= 0 ? colorGrid.selectedColor : Theme.palette.primaryColor1
-                        input.icon.background.color: colorGrid.selectedColorIndex >= 0 ? colorGrid.selectedColor : Theme.palette.primaryColor3
-                        input.icon.isLetterIdenticon: !!d.deviceEmoji
-                        input.isIconSelectable: true
-                        input.leftPadding: 16
-                        onIconClicked: {
-                            d.emojiPopupOpened = true;
-                            root.emojiPopup.open();
-                            root.emojiPopup.emojiSize = StatusQUtils.Emoji.size.verySmall;
-                            root.emojiPopup.x = root.width - 2 * Style.current.xlPadding;
-                            root.emojiPopup.y = root.y + nameInput.height + 2 * Style.current.xlPadding;
-                        }
-                    }
-
-                    StatusColorSelectorGrid {
-                        id: colorGrid
-                        Layout.alignment: Qt.AlignHCenter
-                        Layout.topMargin: 42
-                        Layout.bottomMargin: 42
-                        title.text: qsTr("Colour")
-                        title.font.weight: Font.Medium
-                        title.font.pixelSize: 13
-                        title.color: Theme.palette.baseColor1
-                    }
-                }
+                devicesStore: root.devicesStore
+                emojiPopup: root.emojiPopup
             }
         }
 
         Component {
             id: synNewDeviceModal
 
-            SyncNewDevicePopup {
+            SetupSyncingPopup {
                 anchors.centerIn: parent
             }
         }
-
-
-        //        Item {
-        //            id: deviceListItem
-        //            anchors.left: parent.left
-        //            anchors.leftMargin: Style.current.padding
-        //            anchors.top: advertiseDeviceItem.visible ? advertiseDeviceItem.bottom : parent.top
-        //            anchors.topMargin: Style.current.padding * 2
-        //            anchors.right: parent.right
-        //            anchors.rightMargin: Style.current.padding
-        //            height: childrenRect.height
-        //            visible: root.devicesStore.isDeviceSetup
-
-        //            StatusBaseText {
-        //                id: deviceListLbl
-        //                //% "Paired devices"
-        //                text: qsTrId("paired-devices")
-        //                font.pixelSize: 16
-        //                font.weight: Font.Bold
-        //                color: Theme.palette.directColor1
-        //            }
-
-
-        //            StatusButton {
-        //                id: syncAllBtn
-        //                anchors.top: listView.bottom
-        //                anchors.topMargin: Style.current.padding
-        //                // anchors.bottom: parent.bottom
-        //                // anchors.bottomMargin: Style.current.padding
-        //                anchors.horizontalCenter: listView.horizontalCenter
-
-        //                text: isSyncing ?
-        //                        //% "Syncing..."
-        //                        qsTrId("sync-in-progress") :
-        //                        //% "Sync all devices"
-        //                        qsTrId("sync-all-devices")
-        //                enabled: !isSyncing
-        //                onClicked : {
-        //                    isSyncing = true;
-        //                    root.devicesStore.syncAll()
-        //                    // Currently we don't know how long it takes, so we just disable for 10s, to avoid spamming
-        //                    timer.setTimeout(function(){
-        //                        isSyncing = false
-        //                    }, 10000);
-        //                }
-        //            }
-        //        }
-
-        //        Timer {
-        //            id: timer
-        //        }
     }
 }
