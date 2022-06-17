@@ -230,6 +230,11 @@ const prepareTokensTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
       currencyBalance: 0.0
     )
     for networkNativeCurrencySymbol, networks in groupedNetworks.pairs:
+      # Reset
+      enabledNetworkBalance = BalanceDto(
+        balance: 0.0,
+        currencyBalance: 0.0
+      )
       var balancesPerChain = initTable[int, BalanceDto]()
       for network in networks:
         let chainBalance = fetchNativeChainBalance(network.chainId, network.nativeCurrencyDecimals, address)
@@ -262,11 +267,12 @@ const prepareTokensTask: Task = proc(argEncoded: string) {.gcsafe, nimcall.} =
       )
 
     let groupedTokens = groupTokensBySymbol(allTokens)
-    enabledNetworkBalance = BalanceDto(
-      balance: 0.0,
-      currencyBalance: 0.0
-    )
     for symbol, tokens in groupedTokens.pairs:
+      # Reset
+      enabledNetworkBalance = BalanceDto(
+        balance: 0.0,
+        currencyBalance: 0.0
+      )
       var balancesPerChain = initTable[int, BalanceDto]()
       var visible = false
       
