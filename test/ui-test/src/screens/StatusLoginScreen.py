@@ -11,6 +11,7 @@
 from enum import Enum
 from screens.StatusAccountsScreen import StatusAccountsScreen
 from drivers.SquishDriver import *
+from drivers.SquishDriverVerification import *
 
 
 # It defines the identifier for each Login View component:
@@ -35,15 +36,15 @@ class StatusLoginScreen():
     __login_view_obj = None
 
     def __init__(self):
-        [self.__is_loaded, self.__login_view_obj] = is_loaded_visible_and_enabled(SLoginComponents.MAIN_VIEW.value)
-
-    def is_loaded(self):
-        return self.__is_loaded
+        verify_screen(SLoginComponents.MAIN_VIEW.value)
 
     def login(self, password):
         click_obj_by_name(SLoginComponents.PASSWORD_INPUT.value)
         type(SLoginComponents.PASSWORD_INPUT.value, password)
         click_obj_by_name(SLoginComponents.SUBMIT_BTN.value)
+
+    def verify_error_message_is_displayed(self):
+        verify_object_enabled(SLoginComponents.ERR_MSG_LABEL.value)
 
     def get_accounts_selector_popup(self):
         return StatusAccountsScreen()
