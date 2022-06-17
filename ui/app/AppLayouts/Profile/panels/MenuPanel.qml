@@ -19,8 +19,6 @@ Column {
 
     property bool browserMenuItemEnabled: false
     property bool walletMenuItemEnabled: false
-    property bool appsMenuItemsEnabled: false
-    property bool communitiesMenuItemEnabled: false
 
     signal menuItemClicked(var menu_item)
 
@@ -65,10 +63,9 @@ Column {
             selected: Global.settingsSubsection === model.subsection
             onClicked: root.menuItemClicked(model)
             visible: {
-                (model.subsection !== Constants.settingsSubsection.browserSettings && model.subsection !== Constants.settingsSubsection.wallet && model.subsection !== Constants.settingsSubsection.communitiesSettings) ||
-                (model.subsection === Constants.settingsSubsection.browserSettings && root.browserMenuItemEnabled) ||        
-                (model.subsection === Constants.settingsSubsection.communitiesSettings && root.communitiesMenuItemEnabled) ||
-                (model.subsection === Constants.settingsSubsection.wallet && root.appsMenuItemsEnabled)
+                (model.subsection !== Constants.settingsSubsection.browserSettings && model.subsection !== Constants.settingsSubsection.wallet) ||
+                (model.subsection === Constants.settingsSubsection.browserSettings && root.browserMenuItemEnabled) ||
+                (model.subsection === Constants.settingsSubsection.wallet && root.walletMenuItemEnabled)
             }
             badge.value: {
                 switch (model.subsection) {
