@@ -58,6 +58,11 @@ Item {
         This property holds a reference to the TextEdit's text property.
     */
     property alias text: statusBaseInput.text
+    /*!
+        \qmlproperty alias StatusInput::font
+        This property holds a reference to the TextEdit's font property.
+    */
+    property alias font: statusBaseInput.font
 
     /*!
        \qmlproperty errorMessageCmp
@@ -358,6 +363,9 @@ Item {
 
             Layout.fillWidth: true
             Layout.fillHeight: true
+
+            leftPadding: root.leftPadding
+            rightPadding: root.rightPadding
 
             maximumLength: root.charLimit
             onTextChanged: root.validate()
