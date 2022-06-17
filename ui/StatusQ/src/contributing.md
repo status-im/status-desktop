@@ -30,8 +30,8 @@ Consider that design follows user-friendlier principles.
 - Have transition if possible
   - Use Qt's property animation for states
 - Avoid often and radical size changes to items in views/layouts. Radical size change confuses users.
-  - If the content is not available, consider having placeholders using the estimated size 
-  (delegates, dummy items)
+  - If the content is not available, consider having placeholders using the estimated size
+    (delegates, dummy items)
 
 Have the base control as the component's root. This way, control inherits all the interface and reduce the code.
 If it doesn't map to an existing one, use a base control like `Item`.
@@ -46,6 +46,7 @@ If it doesn't map to an existing one, use a base control like `Item`.
 [Positioners and Layouts In QML](https://doc.qt.io/qt-6/qtquick-usecase-layouts.html)
 
 - Define size hints appropriately. Define implicit properties (`impicitWidth` and `implicitHeight`)
+
   - They are used to break polishing binding loops for adaptive control
   - All the containers use the implicit size for deriving the initial size (Layouts, Popups, Delegates, GridView, ListView ...). Size hints combined with resize adaptability are the appropriate way to have reactive controls.
   - For complex controls, look if layouts are the choice as the main position driver. [Layouts](###Layouts)
@@ -96,6 +97,7 @@ Use `Layout.preferredWidth` and `Layout.preferredHeight` attached properties to 
 Follow [Qt's recommendations](https://doc.qt.io/qt-5/qtqml-documents-scope.html) if appropriate
 
 - Avoid dynamic scoping in out-of-line components, see more: https://doc.qt.io/qt-5/qtqml-documents-scope.html#component-instance-hierarchy
+
   - Example
 
     ```qml
@@ -115,6 +117,37 @@ Follow [Qt's recommendations](https://doc.qt.io/qt-5/qtqml-documents-scope.html)
 - If in doubt, explicitly use an instance variable to access properties
 - If the scope is clear and there is no ambiguity, use the property directly for readability
 
+### Popups content sizing
+
+As stated in Qt documentation on Popup content sizing:
+
+1. `Popup` size is as calculated internally as `contentItem.implicitSize + paddings`
+2. The size of `contentItem` is managed by the popup to fit the Popup and paddings
+
+It's important to understand that `Popup.contentItem` is an internal invisible Item. Any user items will be parented to the `contentItem`, not the `Popup` itself.
+
+Knowing this, we make a simple rule to choose one of 2 ways for popup content sizing:
+
+1. Replace the `contentItem` with your item, but don't explicitly anchor or bind it's sizes, because the size of `contentItem` is managed by the popup.
+
+```qml
+Popup {
+  contentItem: ColumnLayout {
+    // no anchoring or binding
+ }
+}
+```
+
+2. Don't touch the `contentItem` property, but create a single child to the popup and **anchor it to `parent`**.
+
+```qml
+Popup {
+  ColumnLayout {
+    anchors.fill: parent // parent is contentItem, not Popup
+  }
+}
+```
+
 ## Testing
 
 Test in isolation
@@ -130,7 +163,7 @@ Integration tests
 Try scenarios
 
 - Embed in Layouts with different properties: fixed size, min-max, not size set
-  
+
   ```qml
   Window {
     width: mainLayout.implicitWidth
