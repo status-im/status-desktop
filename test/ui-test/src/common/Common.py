@@ -13,4 +13,4 @@ def input_text(text, obj):
     
     
 def object_not_enabled(obj):
-    verify_object_not_enabled(obj)
+    verify_object_enabled(obj, 500, False)

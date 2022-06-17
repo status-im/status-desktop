@@ -11,11 +11,6 @@ def verify_screen(objName, timeout=_MAX_WAIT_OBJ_TIMEOUT):
     result = is_loaded_visible_and_enabled(objName, timeout)
     test.verify(result, True)
 
-
-def verify_screen_is_loaded(self, condition=True):
-    test.verify(self.is_loaded, condition)
-
-
-def verify_object_not_enabled(objName, timeout=_MIN_WAIT_OBJ_TIMEOUT):
+def verify_object_enabled(objName, timeout=_MIN_WAIT_OBJ_TIMEOUT, condition=True):
     result = is_loaded_visible_and_enabled(objName, timeout)
-    test.verify(result, False)
+    test.verify(result, condition)
