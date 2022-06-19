@@ -21,20 +21,10 @@ ColumnLayout {
 
     spacing: 40
 
-    StatusInput {
+    StatusSyncCodeInput {
         id: syncCodeInput
         enabled: !root.pairingInProgress
         Layout.alignment: Qt.AlignHCenter
-        label: qsTr("Paste sync code")
-        input.placeholderText: qsTr("eg. %1").arg("0x2Ef19")
-        input.font: Theme.palette.monoFont.name
-        input.placeholderFont: input.font
-        input.rightComponent: StatusButton {
-            size: StatusBaseButton.Size.Tiny
-            enabled: syncCodeInput.input.edit.canPaste
-            onClicked: syncCodeInput.input.edit.paste()
-            text: qsTr("Paste")
-        }
     }
 
     StatusSyncingInstructions {
@@ -65,6 +55,7 @@ ColumnLayout {
                     color: Theme.palette.dangerColor1
                 }
                 StatusEmoji {
+                    height: parent.height
                     emojiId: Emoji.iconId("🤔")
                 }
             }
@@ -80,7 +71,7 @@ ColumnLayout {
             StatusBaseText {
                 Layout.alignment: Qt.AlignHCenter
                 text: root.pairingFailsCount < 2 ? qsTr("Please try pasting the sync code again.")
-                                                  : qsTr("Double check to make sure the code isn’t expired.")
+                                                 : qsTr("Double check to make sure the code isn’t expired.")
                 color: Theme.palette.baseColor1
                 font.pixelSize: 15
             }

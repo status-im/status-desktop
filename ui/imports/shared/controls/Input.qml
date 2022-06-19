@@ -52,9 +52,6 @@ Item {
     implicitHeight: inputRectangle.height +
                     (hasLabel ? inputLabel.height + labelMargin : 0) +
                     (!keepHeight &&!!validationError ? (validationErrorText.height + validationErrorTopMargin) : 0)
-    height: implicitHeight
-    anchors.right: parent.right
-    anchors.left: parent.left
 
     function resetInternal() {
         inputValue.text = ""

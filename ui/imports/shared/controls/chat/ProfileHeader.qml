@@ -24,7 +24,7 @@ Item {
 
     signal clicked()
 
-    height: visible ? contentContainer.height : 0
+    implicitWidth: contentContainer.implicitWidth
     implicitHeight: contentContainer.implicitHeight
 
     ColumnLayout {

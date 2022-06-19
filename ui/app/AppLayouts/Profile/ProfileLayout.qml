@@ -183,6 +183,7 @@ StatusAppTwoPanelLayout {
 
                 emojiPopup: profileView.emojiPopup
                 devicesStore: profileView.store.devicesStore
+                profileStore: profileView.store.profileStore
                 sectionTitle: profileView.store.getNameForSubsection(Constants.settingsSubsection.devicesSettings)
                 contentWidth: d.contentWidth
             }

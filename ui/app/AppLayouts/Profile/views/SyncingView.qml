@@ -19,59 +19,16 @@ import shared.controls.chat 1.0
 
 import "../stores"
 import "../popups"
+import "../controls"
 
 SettingsContentBase {
     id: root
 
     property DevicesStore devicesStore
+    property ProfileStore profileStore
     property var emojiPopup
 
     property bool isSyncing: false
-
-    /*
-
-        Backend:
-            1. Is deviceName synced across devices? (seems to be yes)
-            2. Do I add new device with AddInstallations?
-            3. Can I remove device from syncing? Or is it done only by disabling?
-            4. What is a "Sync Code"? Is it same as installationId?
-
-        WAKU
-            1.There is this backup thing with waku.
-             - Is it working now in desktop app?
-             - How do I know when the last backup appeared for a particular installationId?
-
-        Design:
-            1. Do we need a "back" button on first stages of Popup?
-
-
-        How to generate a QR code?
-
-
-        Design questions:
-            1. Should any device be "renamable"?
-            2. Personalize device: should we use a "Colour button" instead of limited colors?
-            3. Advertise - removing?
-            4. Where is "Enable device"? Or something like "remove sync with device".
-            5. Max device name?
-
-        Backend questions:
-            1. List of device properties
-            8. How do I add more properties to device? Like color/emoji/...
-            2. List of device types (macosx/...)
-            3. Sync a single device
-            4. Sync duration
-            5. What is "enable device"?
-            6. How do i now if device is online?
-            7. What is "duration" property?
-
-        Filling the specs:
-            1. Why are there no specs merged?
-            2. Where do I put my specs?
-            3. What should/must be in the specs?
-            4. Is there a guide on writing those?
-
-      */
 
     ColumnLayout {
         width: root.contentWidth
@@ -138,74 +95,22 @@ SettingsContentBase {
         ListView {
             id: listView
             Layout.fillWidth: true
+            // Layout.maximumHeight: 400
             Layout.topMargin: 17
             Layout.bottomMargin: 17
 
             implicitHeight: contentHeight
-
-//            Layout.maximumHeight: 400
-
-//            contentWidth: contentItem.childrenRect.width
-//            contentHeight: contentItem.childrenRect.height
+            // contentWidth: contentItem.childrenRect.width
+            // contentHeight: contentItem.childrenRect.height
 
             spacing: Style.current.padding
             model: root.devicesStore.devicesModel
 
-            delegate: StatusListItem {
-
-                readonly property var lastSyncDate: new Date(timestamp)
-                readonly property int millisecondsFromSync: lastSyncDate - Date.now()
-                readonly property int secondsFromSync: millisecondsFromSync / 1000
-                readonly property int minutesFromSync: secondsFromSync / 60
-                readonly property int daysFromSync: new Date().getDay() - lastSyncDate.getDay()
-
+            delegate: SyncDeviceDelegate {
                 width: ListView.view.width
-                title: model.name || qsTr("No device name")
-
-                subTitle: {
-                    if (model.isCurrentDevice)
-                        return qsTr("This device");
-
-                    if (secondsFromSync <= 120)
-                        return qsTr("Online now");
-
-                    if (minutesFromSync <= 60)
-                        return qsTr("Online %1 minutes ago").arg(minutesFromSync);
-
-                    if (daysFromSync == 0)
-                        return qsTr("Last seen earlier today");
-
-                    if (daysFromSync == 1)
-                        return qsTr("Last online yesterday");
-
-                    if (daysFromSync <= 6)
-                        return qsTr("Last online [%1]").arg(daysOfWeek[lastSyncDate.getDay()]);
-
-                    return qsTr("Last online %1").arg(lastSyncDate.toLocaleDateString(Qt.locale()))
-
-                }
-
-                icon.name: !!d.deviceEmojiId ? "" : "desktop"
-                icon.emoji: d.deviceEmojiId
-                icon.background.color: d.effectiveDeviceColor
-                icon.isLetterIdenticon: false
-                // label: qsTr("Next back up in %1 hours")
-
-                components: [
-                    StatusButton {
-//                        visible: !model.isCurrentDevice
-                        text: qsTr("Setup syncing")
-                        size: StatusBaseButton.Size.Small
-                        onClicked: d.setupSyncing(SetupSyncingPopup.GenerateSyncCode)
-                    },
-                    StatusIcon {
-                        height: parent.height
-                        icon: "chevron-down"
-                        rotation: 270
-                        color: Theme.palette.baseColor1
-                    }
-                ]
-
+                emojiId: d.deviceEmojiId
+                deviceColor: d.effectiveDeviceColor
+                onSetupSyncingButtonClicked: d.setupSyncing(SetupSyncingPopup.GenerateSyncCode)
                 onClicked: d.personalizeDevice(model)
             }
         }
@@ -288,7 +193,7 @@ SettingsContentBase {
                 }
 
                 StatusButton {
-                    type: StatusRou1ndButton.Type.Secondary
+//                    type: StatusRoundButton.Type.Secondary
                     Layout.alignment: Qt.AlignHCenter
                     normalColor: Theme.palette.primaryColor1
                     hoverColor: Theme.palette.miscColor1;
@@ -340,6 +245,8 @@ SettingsContentBase {
 
             SetupSyncingPopup {
                 anchors.centerIn: parent
+                devicesStore: root.devicesStore
+                profileStore: root.profileStore
             }
         }
     }

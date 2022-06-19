@@ -13,6 +13,7 @@ import StatusQ.Core.Utils 0.1
 import shared.controls 1.0
 
 import "setupsyncing" as Views
+import "../stores"
 
 StatusModal {
     id: root
@@ -25,8 +26,12 @@ StatusModal {
 
     property int mode: SetupSyncingPopup.GenerateSyncCode
 
+    property DevicesStore devicesStore
+    property ProfileStore profileStore
+
     width: implicitWidth
     padding: 16
+    modal: true
 
     header.title: qsTr("Sync a New Device")
 
@@ -53,7 +58,6 @@ StatusModal {
             // TODO: Replace with real syncing
             tempSyncingTimer.start()
         }
-
     }
 
     Timer {
@@ -73,7 +77,7 @@ StatusModal {
     Timer {
         id: tempSyncingTimer
         property int counter: 0
-        interval: 500
+        interval: 4000
         onTriggered: {
             counter = ++counter % 3;
             if (counter == 0)
@@ -120,12 +124,12 @@ StatusModal {
             }
 
             DSM.SignalTransition {
-                targetState: finalState
-                signal: nextButton.clicked
+                targetState: syncingBaseState
+                signal: nextButton.clicked // TODO: Remove, "Simulate pairing"
             }
 
             DSM.SignalTransition {
-                targetState: syncingState
+                targetState: syncingInProgressState
                 signal: d.otherDeviceConnected
             }
         }
@@ -162,7 +166,7 @@ StatusModal {
                 }
 
                 DSM.SignalTransition {
-                    targetState: syncingState
+                    targetState: syncingBaseState
                     signal: d.pairingSuccess
                 }
             }
@@ -183,44 +187,57 @@ StatusModal {
         }
 
         DSM.State {
-            id: syncingState
+            id: syncingBaseState
 
-            onEntered: {
-                d.startSyncing()
-            }
+            initialState: syncingInProgressState
 
             DSM.SignalTransition {
-                targetState: syncingFailedState
-                signal: d.syncingFailed
+                targetState: {
+                    switch (root.mode) {
+                    case SetupSyncingPopup.GenerateSyncCode: return displaySyncCodeState;
+                    case SetupSyncingPopup.EnterSyncCode:
+                    case SetupSyncingPopup.ScanSyncCode: return pairingBaseState;
+                    default:
+                        return displaySyncCodeState;
+                    }
+                }
+                signal: previousButton.clicked
             }
 
-            DSM.SignalTransition {
-                targetState: syncingSuccessState
-                signal: d.syncingSuccess
+            DSM.State {
+                id: syncingInProgressState
+
+                onEntered: {
+                    d.startSyncing()
+                }
+
+                DSM.SignalTransition {
+                    targetState: syncingFailedState
+                    signal: d.syncingFailed
+                }
+
+                DSM.SignalTransition {
+                    targetState: syncingSuccessState
+                    signal: d.syncingSuccess
+                }
             }
-        }
 
-        DSM.State {
-            id: syncingFailedState
+            DSM.State {
+                id: syncingFailedState
 
-            DSM.SignalTransition {
-                targetState: syncingState
-                signal: nextButton.clicked // Retry
+                DSM.SignalTransition {
+                    targetState: syncingInProgressState
+                    signal: nextButton.clicked // Retry
+                }
             }
 
-            DSM.SignalTransition {
-                targetState: syncingState
-                signal: nextButton.clicked // Retry
-            }
+            DSM.State {
+                id: syncingSuccessState
 
-        }
-
-        DSM.State {
-            id: syncingSuccessState
-
-            DSM.SignalTransition {
-                targetState: finalState
-                signal: nextButton.clicked
+                DSM.SignalTransition {
+                    targetState: finalState
+                    signal: nextButton.clicked
+                }
             }
         }
 
@@ -242,21 +259,30 @@ StatusModal {
     rightButtons: [
         StatusButton {
             id: nextButton
+            visible: !!text
             text: {
                 if (authenticationState.active)
                     return qsTr("Generate Sync Code");
+                // TODO: This button is wierd.
+                //      I feel like I should press it to continue, while I just need to wait.
+//                //      And the button will close the popup and stop the workflow
+//                if (displaySyncCodeState.active)
+//                    return qsTr("Close");
                 if (displaySyncCodeState.active)
-                    // TODO: This button is wierd.
-                    //      I feel like I should press it to continue, while I just need to wait.
-                    //      And the button will close the popup and stop the workflow
-                    return qsTr("Close");
+                    return qsTr("Simulate pairing");
+                if (pairingBaseState.active)
+                    return qsTr("Sync");
                 if (syncingSuccessState.active)
                     return qsTr("Done");
-                return qsTr("Sync");
+                if (syncingFailedState.active)
+                    return qsTr("Retry");
+                return ""
             }
             enabled: {
                 if (pairingBaseState.active)
-                    return enterSyncCodeView.syncCodeValid && !enterSyncCodeView.pairingInProgress;
+                    return root.mode === SetupSyncingPopup.EnterSyncCode
+                            && enterSyncCodeView.syncCodeValid
+                            && !enterSyncCodeView.pairingInProgress;
                 return true;
             }
         }
@@ -306,7 +332,12 @@ StatusModal {
         Views.Syncing {
             id: syncingView
             anchors.fill: parent
-            visible: syncingState.active || syncingFailedState.active || syncingSuccessState.active
+            visible: syncingBaseState.active
+            devicesStore: root.devicesStore
+            profileStore: root.profileStore
+            syncingInProgress: syncingInProgressState.active
+            syncingFailed: syncingFailedState.active
+            syncingSuccess: syncingSuccessState.active
         }
     }
 }
