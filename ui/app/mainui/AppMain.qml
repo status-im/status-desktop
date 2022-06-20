@@ -90,10 +90,10 @@ Item {
         }
         onOpenProfilePopupRequested: {
             var popup = profilePopupComponent.createObject(appMain);
-            if (parentPopup){
+            if (parentPopup) {
                 popup.parentPopup = parentPopup;
             }
-            popup.openPopup(publicKey, openNicknamePopup);
+            popup.openPopup(publicKey, state);
             Global.profilePopupOpened = true;
         }
         onOpenChangeProfilePicPopup: {

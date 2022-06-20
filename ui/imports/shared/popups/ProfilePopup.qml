@@ -43,27 +43,45 @@ StatusModal {
     signal contactUnblocked(publicKey: string)
     signal contactBlocked(publicKey: string)
 
-    function openPopup(publicKey, openNicknamePopup) {
+    function openPopup(publicKey, state = "") {
         // All this should be improved more, but for now we leave it like this.
-        let contactDetails = Utils.getContactDetailsAsJson(publicKey)
-        userPublicKey = publicKey
-        userDisplayName = contactDetails.displayName
-        userName = contactDetails.alias
-        userNickname = contactDetails.localNickname
-        userEnsName = contactDetails.name
-        userIcon = contactDetails.displayIcon
-        userIsEnsVerified = contactDetails.ensVerified
-        userIsBlocked = contactDetails.isBlocked
-        isAddedContact = contactDetails.isContact
+        let contactDetails = Utils.getContactDetailsAsJson(publicKey);
+        userPublicKey = publicKey;
+        userDisplayName = contactDetails.displayName;
+        userName = contactDetails.alias;
+        userNickname = contactDetails.localNickname;
+        userEnsName = contactDetails.name;
+        userIcon = contactDetails.displayIcon;
+        userIsEnsVerified = contactDetails.ensVerified;
+        userIsBlocked = contactDetails.isBlocked;
+        isAddedContact = contactDetails.isContact;
 
-        text = "" // this is most likely unneeded
-        isCurrentUser = popup.profileStore.pubkey === publicKey
-        showFooter = !isCurrentUser
-        popup.open()
+        text = ""; // this is most likely unneeded
+        isCurrentUser = popup.profileStore.pubkey === publicKey;
+        showFooter = !isCurrentUser;
+        popup.open();
 
-        if (openNicknamePopup) {
-            nicknamePopup.open()
+        if (state == "openNickname") {
+            nicknamePopup.open();
+        } else if (state == "contactRequest") {
+            sendContactRequestModal.open()
+        } else if (state == "blockUser") {
+            blockUser();
+        } else if (state == "unblockUser") {
+            unblockUser();
         }
+    }
+
+    function blockUser() {
+        contentItem.blockContactConfirmationDialog.contactName = userName;
+        contentItem.blockContactConfirmationDialog.contactAddress = userPublicKey;
+        contentItem.blockContactConfirmationDialog.open();
+    }
+
+    function unblockUser() {
+        contentItem.unblockContactConfirmationDialog.contactName = userName;
+        contentItem.unblockContactConfirmationDialog.contactAddress = userPublicKey;
+        contentItem.unblockContactConfirmationDialog.open();
     }
 
     header.title: userDisplayName + qsTr("'s Profile")
@@ -315,17 +333,7 @@ StatusModal {
                 qsTr("Unblock User") :
                 qsTr("Block User")
             type: StatusBaseButton.Type.Danger
-            onClicked: {
-                if (userIsBlocked) {
-                    contentItem.unblockContactConfirmationDialog.contactName = userName;
-                    contentItem.unblockContactConfirmationDialog.contactAddress = userPublicKey;
-                    contentItem.unblockContactConfirmationDialog.open();
-                    return;
-                }
-                contentItem.blockContactConfirmationDialog.contactName = userName;
-                contentItem.blockContactConfirmationDialog.contactAddress = userPublicKey;
-                contentItem.blockContactConfirmationDialog.open();
-            }
+            onClicked: userIsBlocked ? unblockUser() : blockUser()
         },
 
         StatusFlatButton {

@@ -191,7 +191,7 @@ StatusAppThreePanelLayout {
         store: root.rootStore
 
         onOpenProfileClicked: {
-            Global.openProfilePopup(publicKey)
+            Global.openProfilePopup(publicKey, null, state)
         }
         onCreateOneToOneChat: {
             Global.changeAppSectionBySectionType(Constants.appSection.chat)

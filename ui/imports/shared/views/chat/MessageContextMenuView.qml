@@ -17,7 +17,6 @@ import shared.controls.chat.menuItems 1.0
 
 StatusPopupMenu {
     id: root
-    width: emojiContainer.visible ? emojiContainer.width : 176
 
     property var store
     property var reactionModel
@@ -26,9 +25,6 @@ StatusPopupMenu {
     property string myPublicKey: ""
     property bool amIChatAdmin: false
     property bool pinMessageAllowedForMembers: false
-    property bool isMyMessage: {
-        return root.messageSenderId !== "" && root.messageSenderId == root.myPublicKey
-    }
 
     property int chatType: Constants.chatType.publicChat
     property string messageId: ""
@@ -49,12 +45,28 @@ StatusPopupMenu {
     property bool pinnedMessage: false
     property bool canPin: false
 
+    readonly property bool isMyMessage: {
+        return root.messageSenderId !== "" && root.messageSenderId == root.myPublicKey;
+    }
+    readonly property bool isMe: {
+        return root.selectedUserPublicKey == root.store.contactsStore.myPublicKey;
+    }
+    readonly property bool isMyMutualContact: {
+        return root.selectedUserPublicKey !== "" && root.store.contactsStore.isMyMutualContact(root.selectedUserPublicKey);
+    }
+    readonly property bool isBlockedContact: {
+        return root.selectedUserPublicKey !== "" && root.store.contactsStore.isBlockedContact(root.selectedUserPublicKey);
+    }
+    readonly property bool hasPendingContactRequest: {
+        return root.selectedUserPublicKey !== "" && root.store.contactsStore.hasPendingContactRequest(root.selectedUserPublicKey);
+    }
+
     property var setXPosition: function() {return 0}
     property var setYPosition: function() {return 0}
 
     property var emojiReactionsReactedByUser: []
 
-    signal openProfileClicked(string publicKey)
+    signal openProfileClicked(string publicKey, string state)
     signal pinMessage(string messageId)
     signal unpinMessage(string messageId)
     signal pinnedMessagesLimitReached(string messageId)
@@ -65,14 +77,6 @@ StatusPopupMenu {
     signal toggleReaction(string messageId, int emojiId)
     signal deleteMessage(string messageId)
     signal editClicked(string messageId)
-
-    onHeightChanged: {
-        root.y = setYPosition()
-    }
-
-    onWidthChanged: {
-        root.x = setXPosition()
-    }
 
     function show(userNameParam, fromAuthorParam, identiconParam, textParam, nicknameParam, emojiReactionsModel) {
         let newEmojiReactions = []
@@ -90,6 +94,11 @@ StatusPopupMenu {
         */
         popup()
     }
+
+    onHeightChanged: { root.y = setYPosition(); }
+    onWidthChanged: { root.x = setXPosition(); }
+
+    width: Math.max(emojiContainer.visible ? emojiContainer.width : 0, 200)
 
     Item {
         id: emojiContainer
@@ -163,18 +172,58 @@ StatusPopupMenu {
 
     ViewProfileMenuItem {
         id: viewProfileAction
+        enabled: root.isProfile && !root.pinnedPopup
         onTriggered: {
-            root.openProfileClicked(root.selectedUserPublicKey)
+            root.openProfileClicked(root.selectedUserPublicKey, "")
             root.close()
         }
-        enabled: root.isProfile && !root.pinnedPopup
     }
 
     SendMessageMenuItem {
         id: sendMessageMenuItem
-        enabled: root.isProfile && root.store.contactsStore.isMyMutualContact(root.selectedUserPublicKey)
+        enabled: root.isProfile && root.isMyMutualContact && !root.isBlockedContact
         onTriggered: {
             root.createOneToOneChat("", root.selectedUserPublicKey, "")
+            root.close()
+        }
+    }
+
+    SendContactRequestMenuItem {
+        enabled: root.isProfile && !root.isMe && !root.isMyMutualContact
+                                && !root.isBlockedContact && !root.hasPendingContactRequest
+        onTriggered: {
+            root.openProfileClicked(root.selectedUserPublicKey, "contactRequest")
+            root.close()
+        }
+    }
+
+    StatusMenuItem {
+        text: qsTr("Block User")
+        icon.name: "cancel"
+        icon.color: Style.current.danger
+        enabled: root.isProfile && !root.isMe && !root.isBlockedContact
+        onTriggered: {
+            root.openProfileClicked(root.selectedUserPublicKey, "blockUser")
+            root.close()
+        }
+    }
+
+    StatusMenuItem {
+        text: qsTr("Unblock User")
+        icon.name: "remove"
+        enabled: root.isProfile && !root.isMe && root.isBlockedContact
+        onTriggered: {
+            root.openProfileClicked(root.selectedUserPublicKey, "unblockUser")
+            root.close()
+        }
+    }
+
+    StatusMenuItem {
+        text: qsTr("Rename")
+        icon.name: "edit_pencil"
+        enabled: root.isProfile && !root.isMe
+        onTriggered: {
+            root.openProfileClicked(root.selectedUserPublicKey, "openNickname")
             root.close()
         }
     }
