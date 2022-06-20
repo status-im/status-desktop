@@ -26,7 +26,9 @@ Item {
     function getCommunity() {
         try {
             const communityJson = root.store.getSectionByIdJson(communityId)
+
             if (!communityJson) {
+                root.store.requestCommunityInfo(communityId)
                 return null
             }
 
@@ -42,14 +44,23 @@ Item {
         root.invitedCommunity = getCommunity()
     }
 
-   Connections {
-       target: root.store.communitiesModuleInst
-       onCommunityChanged: function (communityId) {
-           if (communityId === root.communityId) {
-               root.invitedCommunity = getCommunity()
-           }
-       }
-   }
+    Connections {
+        target: root.store.communitiesModuleInst
+        onCommunityChanged: function (communityId) {
+            if (communityId === root.communityId) {
+                root.invitedCommunity = getCommunity()
+            }
+        }
+    }
+
+    Connections {
+        target: root.store.communitiesModuleInst
+        onCommunityAdded: function (communityId) {
+            if (communityId === root.communityId) {
+                root.invitedCommunity = getCommunity()
+            }
+        }
+    }
 
     Component {
         id: confirmationPopupComponent
