@@ -359,6 +359,10 @@ QtObject {
         return communitiesList.getSectionByIdJson(id)
     }
 
+    function requestCommunityInfo(id) {
+        communitiesModuleInst.requestCommunityInfo(id)   
+    }
+
     function getLinkTitleAndCb(link) {
         const result = {
             title: "Status",

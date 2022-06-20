@@ -132,6 +132,7 @@ QtObject:
       chatService: chat_service.Service
       ): Service =
     result = Service()
+    result.QObject.setup
     result.events = events
     result.threadpool = threadpool
     result.chatService = chatService
@@ -938,24 +939,26 @@ QtObject:
       error "Error reordering category channel", msg = e.msg, communityId, categoryId, position
 
 
-  proc asyncActivityNotificationLoad*(self: Service, communityId: string) =
-    let arg = AsyncRequestCommunityInfoTaskArg(
-      tptr: cast[ByteAddress](asyncRequestCommunityInfoTask),
-      vptr: cast[ByteAddress](self.vptr),
-      slot: "asyncCommunityInfoLoaded",
-      communityId: communityId
-    )
-    self.threadpool.start(arg)
-
   proc asyncCommunityInfoLoaded*(self: Service, rpcResponse: string) {.slot.} =
     let rpcResponseObj = rpcResponse.parseJson
     if (rpcResponseObj{"error"}.kind != JNull):
       let error = Json.decode($rpcResponseObj["error"], RpcError)
       error "Error requesting community info", msg = error.message
+      return
+
+    let community = rpcResponseObj{"result"}.toCommunityDto()
+    self.allCommunities[community.id] = community
+    self.events.emit(SIGNAL_COMMUNITY_DATA_IMPORTED, CommunityArgs(community: community))
 
   proc requestCommunityInfo*(self: Service, communityId: string) =
     try:
-      self.asyncActivityNotificationLoad(communityId)
+      let arg = AsyncRequestCommunityInfoTaskArg(
+        tptr: cast[ByteAddress](asyncRequestCommunityInfoTask),
+        vptr: cast[ByteAddress](self.vptr),
+        slot: "asyncCommunityInfoLoaded",
+        communityId: communityId
+      )
+      self.threadpool.start(arg)
     except Exception as e:
       error "Error requesting community info", msg = e.msg, communityId
 
