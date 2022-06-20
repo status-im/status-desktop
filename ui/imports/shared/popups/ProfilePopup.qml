@@ -17,7 +17,6 @@ import StatusQ.Popups 0.1
 
 StatusModal {
     id: popup
-    anchors.centerIn: parent
 
     property Popup parentPopup
 
@@ -32,8 +31,6 @@ StatusModal {
     property string userIcon: ""
     property string text: ""
 
-    readonly property int innerMargin: 20
-
     property bool userIsEnsVerified: false
     property bool userIsBlocked: false
     property bool isCurrentUser: false
@@ -45,7 +42,6 @@ StatusModal {
 
     signal contactUnblocked(publicKey: string)
     signal contactBlocked(publicKey: string)
-    signal contactAdded(publicKey: string)
 
     function openPopup(publicKey, openNicknamePopup) {
         // All this should be improved more, but for now we leave it like this.
@@ -70,9 +66,16 @@ StatusModal {
         }
     }
 
-    header.title: userDisplayName
+    header.title: userDisplayName + qsTr("'s Profile")
     header.subTitle: userIsEnsVerified ? userName : Utils.getElidedCompressedPk(userPublicKey)
     header.subTitleElide: Text.ElideMiddle
+
+    QtObject {
+        id: d
+
+        readonly property int contentSpacing: 5
+        readonly property int contentMargins: 16
+    }
 
     headerActionButton: StatusFlatRoundButton {
         type: StatusFlatRoundButton.Type.Secondary
@@ -85,217 +88,225 @@ StatusModal {
         onClicked: contentItem.qrCodePopup.open()
     }
 
-    contentItem: Item {
-        width: popup.width
-        height: modalContent.height
+    Component {
+        id: contactTopComponent
+
+        ProfileHeader {
+            displayName: popup.userDisplayName
+            pubkey: popup.userPublicKey
+            icon: popup.isCurrentUser ? popup.profileStore.icon : popup.userIcon
+
+            displayNameVisible: false
+            pubkeyVisible: false
+            compact: false
+
+            imageOverlay: Item {
+                visible: popup.isCurrentUser
+
+                StatusFlatRoundButton {
+                    width: 24
+                    height: 24
+
+                    anchors {
+                        right: parent.right
+                        bottom: parent.bottom
+                        rightMargin: -8
+                    }
+
+                    type: StatusFlatRoundButton.Type.Secondary
+                    icon.name: "pencil"
+                    icon.color: Theme.palette.directColor1
+                    icon.width: 12.5
+                    icon.height: 12.5
+
+                    onClicked: Global.openChangeProfilePicPopup()
+                }
+            }
+        }
+    }
+
+    contentItem: ColumnLayout {
+        id: modalContent
 
         property alias qrCodePopup: qrCodePopup
         property alias unblockContactConfirmationDialog: unblockContactConfirmationDialog
         property alias blockContactConfirmationDialog: blockContactConfirmationDialog
         property alias removeContactConfirmationDialog: removeContactConfirmationDialog
 
-        Column {
-            id: modalContent
-            anchors.top: parent.top
-            width: parent.width
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.margins: d.contentMargins
+        spacing: d.contentSpacing
+        clip: true
 
-            Item {
-                height: 16
-                width: parent.width
-            }
-
-            ProfileHeader {
-                width: parent.width
-
-                displayName: popup.userDisplayName
-                pubkey: popup.userPublicKey
-                icon: popup.isCurrentUser ? popup.profileStore.icon : popup.userIcon
-
-                displayNameVisible: false
-                pubkeyVisible: false
-                compact: false
-
-                imageOverlay: Item {
-                    visible: popup.isCurrentUser
-
-                    StatusFlatRoundButton {
-                        width: 24
-                        height: 24
-
-                        anchors {
-                            right: parent.right
-                            bottom: parent.bottom
-                            rightMargin: -8
-                        }
-
-                        type: StatusFlatRoundButton.Type.Secondary
-                        icon.name: "pencil"
-                        icon.color: Theme.palette.directColor1
-                        icon.width: 12.5
-                        icon.height: 12.5
-
-                        onClicked: Global.openChangeProfilePicPopup()
-                    }
-                }
-            }
-
-            StatusBanner {
-                width: parent.width
-                visible: popup.userIsBlocked
-                type: StatusBanner.Type.Danger
-                statusText: qsTr("Blocked")
-            }
-
-            Item {
-                height: 16
-                width: parent.width
-            }
-
-            StatusDescriptionListItem {
-                title: userIsEnsVerified ?
-                    qsTr("ENS username") :
-                    qsTr("Username")
-                subTitle: userIsEnsVerified ? userEnsName : userName
-                tooltip.text: qsTr("Copy to clipboard")
-                icon.name: "copy"
-                iconButton.onClicked: {
-                    globalUtils.copyToClipboard(subTitle)
-                    tooltip.visible = !tooltip.visible
-                }
-                width: parent.width
-            }
-
-            StatusDescriptionListItem {
-                title: qsTr("Chat key")
-                subTitle: Utils.getCompressedPk(userPublicKey)
-                subTitleComponent.elide: Text.ElideMiddle
-                subTitleComponent.width: 320
-                subTitleComponent.font.family: Theme.palette.monoFont.name
-                tooltip.text: qsTr("Copy to clipboard")
-                icon.name: "copy"
-                iconButton.onClicked: {
-                    globalUtils.copyToClipboard(subTitle)
-                    tooltip.visible = !tooltip.visible
-                }
-                width: parent.width
-            }
-
-            StatusDescriptionListItem {
-                title: qsTr("Share Profile URL")
-                subTitle: {
-
-                    let user = ""
-                    if (isCurrentUser) {
-                        user = popup.profileStore.ensName !== "" ? popup.profileStore.ensName :
-                                                                   (popup.profileStore.pubkey.substring(0, 5) + "..." + popup.profileStore.pubkey.substring(popup.profileStore.pubkey.length - 5))
-                    } else if (userIsEnsVerified) {
-                        user = userEnsName
-                    }
-
-                    if (user === ""){
-                        user = userPublicKey.substr(0, 4) + "..." + userPublicKey.substr(userPublicKey.length - 5)
-                    }
-                    return Constants.userLinkPrefix +  user;
-                }
-                tooltip.text: qsTr("Copy to clipboard")
-                icon.name: "copy"
-                iconButton.onClicked: {
-                    let user = ""
-                    if (isCurrentUser) {
-                        user = popup.profileStore.ensName !== "" ? popup.profileStore.ensName : popup.profileStore.pubkey
-                    } else {
-                        user = (userEnsName !== "" ? userEnsName : userPublicKey)
-                    }
-                    popup.profileStore.copyToClipboard(Constants.userLinkPrefix + user)
-                    tooltip.visible = !tooltip.visible
-                }
-                width: parent.width
-            }
-
-            StatusDescriptionListItem {
-                visible: !isCurrentUser
-                title: qsTr("Chat settings")
-                subTitle: qsTr("Nickname")
-                value: userNickname ? userNickname : qsTr("None")
-                sensor.enabled: true
-                sensor.onClicked: {
-                    nicknamePopup.open()
-                }
-                width: parent.width
-            }
-
-            Item {
-                visible: !isCurrentUser
-                width: parent.width
-                height: 16
-            }
+        Item {
+            implicitHeight: d.contentSpacing
+            Layout.fillWidth: true
         }
 
-        // TODO: replace with StatusModal
-        ModalPopup {
-            id: qrCodePopup
-            width: 320
-            height: 320
-            Image {
-                asynchronous: true
-                fillMode: Image.PreserveAspectFit
-                source: globalUtils.qrCode(userPublicKey)
-                anchors.horizontalCenter: parent.horizontalCenter
-                height: 212
-                width: 212
-                mipmap: true
-                smooth: false
-            }
+        Loader {
+            sourceComponent: contactTopComponent
+            Layout.fillWidth: true
         }
 
-        UnblockContactConfirmationDialog {
-            id: unblockContactConfirmationDialog
-            onUnblockButtonClicked: {
-                popup.contactsStore.unblockContact(userPublicKey)
-                unblockContactConfirmationDialog.close();
-                popup.close()
-                popup.contactUnblocked(userPublicKey)
-            }
+        StatusBanner {
+            visible: popup.userIsBlocked
+            type: StatusBanner.Type.Danger
+            statusText: qsTr("Blocked")
+            Layout.fillWidth: true
         }
 
-        BlockContactConfirmationDialog {
-            id: blockContactConfirmationDialog
-            onBlockButtonClicked: {
-                popup.contactsStore.blockContact(userPublicKey)
-                blockContactConfirmationDialog.close();
-                popup.close()
-
-                popup.contactBlocked(userPublicKey)
+        StatusDescriptionListItem {
+            title: userIsEnsVerified ?
+                qsTr("ENS username") :
+                qsTr("Username")
+            subTitle: userIsEnsVerified ? userEnsName : userName
+            tooltip.text: qsTr("Copy to clipboard")
+            icon.name: "copy"
+            iconButton.onClicked: {
+                globalUtils.copyToClipboard(subTitle)
+                tooltip.visible = !tooltip.visible
             }
+            Layout.fillWidth: true
         }
 
-        ConfirmationDialog {
-            id: removeContactConfirmationDialog
-            header.title: qsTr("Remove contact")
-            confirmationText: qsTr("Are you sure you want to remove this contact?")
-            onConfirmButtonClicked: {
-                if (isAddedContact) {
-                    popup.contactsStore.removeContact(userPublicKey);
+        StatusDescriptionListItem {
+            title: qsTr("Chat key")
+            subTitle: Utils.getCompressedPk(userPublicKey)
+            subTitleComponent.elide: Text.ElideMiddle
+            subTitleComponent.width: 320
+            subTitleComponent.font.family: Theme.palette.monoFont.name
+            tooltip.text: qsTr("Copy to clipboard")
+            icon.name: "copy"
+            iconButton.onClicked: {
+                globalUtils.copyToClipboard(subTitle)
+                tooltip.visible = !tooltip.visible
+            }
+            Layout.fillWidth: true
+        }
+
+        StatusDescriptionListItem {
+            title: qsTr("Share Profile URL")
+            subTitle: {
+
+                let user = ""
+                if (isCurrentUser) {
+                    user = popup.profileStore.ensName !== "" ? popup.profileStore.ensName :
+                                                                (popup.profileStore.pubkey.substring(0, 5) + "..." + popup.profileStore.pubkey.substring(popup.profileStore.pubkey.length - 5))
+                } else if (userIsEnsVerified) {
+                    user = userEnsName
                 }
-                removeContactConfirmationDialog.close();
-                popup.close();
+
+                if (user === ""){
+                    user = userPublicKey.substr(0, 4) + "..." + userPublicKey.substr(userPublicKey.length - 5)
+                }
+                return Constants.userLinkPrefix +  user;
             }
+            tooltip.text: qsTr("Copy to clipboard")
+            icon.name: "copy"
+            iconButton.onClicked: {
+                let user = ""
+                if (isCurrentUser) {
+                    user = popup.profileStore.ensName !== "" ? popup.profileStore.ensName : popup.profileStore.pubkey
+                } else {
+                    user = (userEnsName !== "" ? userEnsName : userPublicKey)
+                }
+                popup.profileStore.copyToClipboard(Constants.userLinkPrefix + user)
+                tooltip.visible = !tooltip.visible
+            }
+            Layout.fillWidth: true
         }
 
-        NicknamePopup {
-            id: nicknamePopup
-            nickname: popup.userNickname
-            header.subTitle: popup.header.subTitle
-            header.subTitleElide: popup.header.subTitleElide
-            onEditDone: {
-                if(popup.userNickname !== newNickname)
-                {
-                    popup.userNickname = newNickname;
-                    popup.contactsStore.changeContactNickname(userPublicKey, newNickname);
-                }
-                popup.close()
+        StatusDescriptionListItem {
+            visible: !isCurrentUser
+            title: qsTr("Chat settings")
+            subTitle: qsTr("Nickname")
+            value: userNickname ? userNickname : qsTr("None")
+            sensor.enabled: true
+            sensor.onClicked: {
+                nicknamePopup.open()
             }
+            Layout.fillWidth: true
         }
+    }
+
+    // TODO: replace with StatusStackModal
+    ModalPopup {
+        id: qrCodePopup
+        width: 320
+        height: 320
+        Image {
+            asynchronous: true
+            fillMode: Image.PreserveAspectFit
+            source: globalUtils.qrCode(userPublicKey)
+            anchors.horizontalCenter: parent.horizontalCenter
+            height: 212
+            width: 212
+            mipmap: true
+            smooth: false
+        }
+    }
+
+    UnblockContactConfirmationDialog {
+        id: unblockContactConfirmationDialog
+        onUnblockButtonClicked: {
+            popup.contactsStore.unblockContact(userPublicKey)
+            unblockContactConfirmationDialog.close();
+            popup.close()
+            popup.contactUnblocked(userPublicKey)
+        }
+    }
+
+    BlockContactConfirmationDialog {
+        id: blockContactConfirmationDialog
+        onBlockButtonClicked: {
+            popup.contactsStore.blockContact(userPublicKey)
+            blockContactConfirmationDialog.close();
+            popup.close()
+
+            popup.contactBlocked(userPublicKey)
+        }
+    }
+
+    ConfirmationDialog {
+        id: removeContactConfirmationDialog
+        header.title: qsTr("Remove contact")
+        confirmationText: qsTr("Are you sure you want to remove this contact?")
+        onConfirmButtonClicked: {
+            if (isAddedContact) {
+                popup.contactsStore.removeContact(userPublicKey);
+            }
+            removeContactConfirmationDialog.close();
+            popup.close();
+        }
+    }
+
+    NicknamePopup {
+        id: nicknamePopup
+        nickname: popup.userNickname
+        header.subTitle: popup.header.subTitle
+        header.subTitleElide: popup.header.subTitleElide
+        onEditDone: {
+            if(popup.userNickname !== newNickname)
+            {
+                popup.userNickname = newNickname;
+                popup.contactsStore.changeContactNickname(userPublicKey, newNickname);
+            }
+            popup.close()
+        }
+    }
+
+    // TODO: replace with StatusStackModal
+    SendContactRequestModal {
+        id: sendContactRequestModal
+        anchors.centerIn: parent
+        width: popup.width
+        height: popup.height
+        visible: false
+        header.title: qsTr("Send Contact Request to") + " " + userDisplayName
+        topComponent: contactTopComponent
+        onAccepted: popup.contactsStore.sendContactRequest(userPublicKey, message)
+        onClosed: popup.close()
     }
 
     rightButtons: [
@@ -328,13 +339,9 @@ StatusModal {
         },
 
         StatusButton {
-            text: qsTr("Add to contacts")
+            text: qsTr("Send Contact Request")
             visible: !userIsBlocked && !isAddedContact
-            onClicked: {
-                popup.contactsStore.sendContactRequest(userPublicKey);
-                popup.contactAdded(userPublicKey);
-                popup.close();
-            }
+            onClicked: sendContactRequestModal.open()
         }
     ]
 }
