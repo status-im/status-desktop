@@ -242,4 +242,16 @@ StatusAppTwoPanelLayout {
             }
         }
     }
+
+    Component {
+        id: membershipRequestPopup
+        MembershipRequestsPopup {
+            anchors.centerIn: parent
+            store: root.rootStore
+            pendingRequestsToJoin: root.community.pendingRequestsToJoin
+            onClosed: {
+                destroy()
+            }
+        }
+    }
 }
