@@ -119,7 +119,7 @@ SettingsContentBase {
                         }
 
                         onOpenChangeNicknamePopup: {
-                            Global.openProfilePopup(publicKey, null, true)
+                            Global.openProfilePopup(publicKey, null, "openNickname")
                         }
                     }
 
@@ -140,7 +140,7 @@ SettingsContentBase {
                         }
 
                         onOpenChangeNicknamePopup: {
-                            Global.openProfilePopup(publicKey, null, true)
+                            Global.openProfilePopup(publicKey, null, "openNickname")
                         }
                     }
 
@@ -181,7 +181,7 @@ SettingsContentBase {
                         }
 
                         onOpenChangeNicknamePopup: {
-                            Global.openProfilePopup(publicKey, null, true)
+                            Global.openProfilePopup(publicKey, null, "openNickname")
                         }
 
                         onContactRequestAccepted: {
@@ -207,7 +207,7 @@ SettingsContentBase {
                         }
 
                         onOpenChangeNicknamePopup: {
-                            Global.openProfilePopup(publicKey, null, true)
+                            Global.openProfilePopup(publicKey, null, "openNickname")
                         }
                     }
 

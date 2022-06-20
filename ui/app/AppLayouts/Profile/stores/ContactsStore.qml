@@ -36,6 +36,14 @@ QtObject {
        return root.contactsModule.isMyMutualContact(pubKey)
     }
 
+    function isBlockedContact(pubKey) {
+       return root.contactsModule.isBlockedContact(pubKey)
+    }
+
+    function hasPendingContactRequest(pubKey) {
+       return root.contactsModule.hasPendingContactRequest(pubKey)
+    }
+
     function joinPrivateChat(pubKey) {
         Global.changeAppSectionBySectionType(Constants.appSection.chat)
         root.contactsModule.switchToOrCreateOneToOneChat(pubKey)

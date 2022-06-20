@@ -27,12 +27,12 @@ QtObject {
     signal settingsLoaded()
     signal openBackUpSeedPopup()
 
-    signal openProfilePopupRequested(string publicKey, var parentPopup, bool openNicknamePopup)
+    signal openProfilePopupRequested(string publicKey, var parentPopup, string state)
     signal openChangeProfilePicPopup()
     signal displayToastMessage(string title, string subTitle, string icon, bool loading, int ephNotifType, string url)
 
-    function openProfilePopup(publicKey, parentPopup, openNicknamePopup){
-        openProfilePopupRequested(publicKey, parentPopup, openNicknamePopup);
+    function openProfilePopup(publicKey, parentPopup, state = "") {
+        openProfilePopupRequested(publicKey, parentPopup, state);
     }
 
     function openPopup(popupComponent, params = {}) {

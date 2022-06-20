@@ -123,6 +123,12 @@ QtObject:
   proc isMyMutualContact*(self: View, publicKey: string): bool {.slot.} =
     return self.myMutualContactsModel.isContactWithIdAdded(publicKey)
 
+  proc isBlockedContact*(self: View, publicKey: string): bool {.slot.} =
+    return self.blockedContactsModel.isContactWithIdAdded(publicKey)
+
+  proc hasPendingContactRequest*(self: View, publicKey: string): bool {.slot.} =
+    return self.sentContactRequestsModel.isContactWithIdAdded(publicKey)
+
   proc sendContactRequest*(self: View, publicKey: string, message: string) {.slot.} =
     self.delegate.sendContactRequest(publicKey, message)
 

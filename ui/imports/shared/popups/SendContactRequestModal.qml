@@ -27,7 +27,7 @@ StatusModal {
         readonly property int contentMargins: 16
     }
 
-    contentItem: ColumnLayout {
+    ColumnLayout {
         id: content
         anchors.left: parent.left
         anchors.right: parent.right
