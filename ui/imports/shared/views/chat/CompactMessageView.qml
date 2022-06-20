@@ -514,7 +514,7 @@ Item {
             ChatTextView {
                 id: chatText
                 readonly property int leftPadding: chatImage.anchors.leftMargin + chatImage.width + chatHorizontalPadding
-                visible: isText || isEmoji || isImage
+                visible: isText || isEmoji || (isImage && root.message !== "<p>Update to latest version to see a nice image here!</p>")
 
                 message: Utils.removeGifUrls(root.message)
                 anchors.top: parent.top
