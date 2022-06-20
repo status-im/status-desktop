@@ -61,7 +61,7 @@ Rectangle {
             Layout.preferredHeight: 32
             icon.height: 20
             icon.width: 20
-            icon.name: "left"
+            icon.name: "arrow-left"
             icon.disabledColor: Style.current.lightGrey
             type: StatusFlatRoundButton.Type.Tertiary
             enabled: canGoBack
@@ -80,7 +80,7 @@ Rectangle {
             Layout.preferredHeight: 32
             icon.width: 20
             icon.height: 20
-            icon.name: "right"
+            icon.name: "arrow-right"
             icon.disabledColor: Style.current.lightGrey
             type: StatusFlatRoundButton.Type.Tertiary
             enabled: canGoForward
