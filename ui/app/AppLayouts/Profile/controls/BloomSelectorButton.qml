@@ -24,10 +24,10 @@ Rectangle {
 
     id: root
     border.color: hovered || radioBtn.checked ? Style.current.primary : Style.current.border
-    border.width: 1
+    border.width: Style.dp(1)
     color: Style.current.transparent
-    width: 130
-    height: 120
+    width: Style.dp(130)
+    height: Style.dp(120)
     clip: true
     radius: Style.current.radius
 
@@ -36,7 +36,7 @@ Rectangle {
         ButtonGroup.group: buttonGroup
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
-        anchors.topMargin: 14
+        anchors.topMargin: Style.dp(14)
         checked: root.checkedByDefault
         onCheckedChanged: {
             if (checked) {
@@ -48,10 +48,10 @@ Rectangle {
     StyledText {
         id: txt
         text: btnText
-        font.pixelSize: 15
+        font.pixelSize: Style.current.primaryTextFontSize
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: radioBtn.bottom
-        anchors.topMargin: 6
+        anchors.topMargin: Style.dp(6)
     }
 
 

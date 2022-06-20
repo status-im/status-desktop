@@ -51,13 +51,13 @@ StatusModal {
         property alias categoryName: nameInput
 
         width: root.width
-        topPadding: 16
+        topPadding: Style.current.padding
 
         StatusInput {
             id: nameInput
 
             anchors.left: parent.left
-            anchors.leftMargin: 16
+            anchors.leftMargin: Style.current.padding
 
             label: qsTr("Category title")
             charLimit: maxCategoryNameLength
@@ -69,15 +69,15 @@ StatusModal {
         }
 
         StatusModalDivider {
-            topPadding: 8
-            bottomPadding: 8
+            topPadding: Style.current.halfPadding
+            bottomPadding: Style.current.haldPadding
         }
 
         ScrollView {
             id: scrollView
 
             width: root.width
-            height: Math.min(content.height, 300)
+            height: Math.min(content.height, Style.dp(300))
             anchors.horizontalCenter: parent.horizontalCenter
 
             property ScrollBar vScrollBar: ScrollBar.vertical
@@ -98,14 +98,14 @@ StatusModal {
                 Item {
                     id: channelsLabel
                     anchors.horizontalCenter: parent.horizontalCenter
-                    width: parent.width - 32
-                    height: 34
+                    width: parent.width - Style.dp(32)
+                    height: Style.dp(34)
                     StatusBaseText {
                         //% "Channels"
                         text: qsTrId("channels")
                         anchors.bottom: parent.bottom
-                        anchors.bottomMargin: 4
-                        font.pixelSize: 15
+                        anchors.bottomMargin: Style.dp(4)
+                        font.pixelSize: Style.current.primaryTextFontSize
                         color: Theme.palette.baseColor1
                     }
                 }
@@ -157,8 +157,8 @@ StatusModal {
 
         StatusModalDivider {
             visible: deleteCategoryButton.visible
-            topPadding: 8
-            bottomPadding: 8
+            topPadding: Style.current.halfPadding
+            bottomPadding: Style.current.halfPadding
         }
 
         StatusListItem {
@@ -182,7 +182,7 @@ StatusModal {
         }
 
         Item {
-            height: 8
+            height: Style.dp(8)
             width: parent.width
         }
 

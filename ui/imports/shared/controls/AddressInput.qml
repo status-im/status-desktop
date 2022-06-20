@@ -62,7 +62,7 @@ Item {
             chatKey.text = address
         }
         searchResultsWidth: parentWidth
-        chatKey.customHeight: 56
+        chatKey.customHeight: Style.dp(56)
         chatKey.onFocusChanged: {
             root.validate()
             if (chatKey.text !== "" && Utils.isValidAddress(metrics.text)) {
@@ -83,7 +83,7 @@ Item {
         }
         TextMetrics {
             id: metrics
-            elideWidth: 97
+            elideWidth: Style.dp(97)
             elide: Text.ElideMiddle
         }
     }

@@ -102,13 +102,13 @@ StatusModal {
         Column {
             id: content
             width: popup.width
-            topPadding: 16
+            topPadding: Style.current.padding
 
             StatusInput {
                 id: nameInput
 
                 anchors.left: parent.left
-                anchors.leftMargin: 16
+                anchors.leftMargin: Style.current.padding
 
                 label: qsTr("Channel name")
                 charLimit: popup.maxChannelNameLength
@@ -121,10 +121,10 @@ StatusModal {
                     }
                 }
                 input.icon.color: colorDialog.color.toString()
-                input.leftPadding: 16
+                input.leftPadding: Style.current.padding
                 input.rightComponent: StatusRoundButton {
-                    implicitWidth: 20
-                    implicitHeight: 20
+                    implicitWidth: Style.dp(20)
+                    implicitHeight: Style.dp(20)
                     icon.width: implicitWidth
                     icon.height: implicitHeight
                     icon.name: "smiley"
@@ -147,28 +147,28 @@ StatusModal {
 
             Item {
                 id: spacer1
-                height: 16
+                height: Style.dp(16)
                 width: parent.width
             }
 
             StatusBaseText {
                 text: qsTr("Channel colour")
-                font.pixelSize: 15
+                font.pixelSize: Style.current.primaryTextFontSize
                 color: Theme.palette.directColor1
                 anchors.left: parent.left
-                anchors.leftMargin: 16
+                anchors.leftMargin: Style.current.padding
             }
 
             Item {
                 id: spacer2
-                height: 8
+                height: Style.dp(8)
                 width: parent.width
             }
 
             Item {
                 anchors.horizontalCenter: parent.horizontalCenter
-                height: colorSelectorButton.height + 16
-                width: parent.width - 32
+                height: colorSelectorButton.height + Style.dp(16)
+                width: parent.width - Style.dp(32)
 
                 StatusPickerButton {
                     id: colorSelectorButton
@@ -206,7 +206,7 @@ StatusModal {
                     visible: !!text
                     color: Theme.palette.dangerColor1
                     anchors.top: colorSelectorButton.bottom
-                    anchors.topMargin: 4
+                    anchors.topMargin: Style.dp(4)
                     anchors.right: colorSelectorButton.right
                 }
             }
@@ -215,14 +215,14 @@ StatusModal {
                 id: descriptionTextArea
 
                 anchors.left: parent.left
-                anchors.leftMargin: 16
+                anchors.leftMargin: Style.current.padding
 
                 label: qsTr("Description")
                 charLimit: 140
 
                 input.placeholderText: qsTr("Describe the channel")
                 input.multiline: true
-                input.implicitHeight: 88
+                input.implicitHeight: Style.dp(88)
                 validationMode: StatusInput.ValidationMode.Always
                 validators: [StatusMinLengthValidator {
                     minLength: 1
@@ -286,7 +286,7 @@ StatusModal {
 
             Item {
                 width: parent.width
-                height: 8
+                height: Style.dp(8)
             }
         }
     }

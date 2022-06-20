@@ -24,7 +24,7 @@ import "../controls"
             bottomMargin: Style.current.bigPadding * 2
             horizontalCenter: parent.horizontalCenter
         }
-        width: 624
+        width: Style.dp(624)
         spacing: Style.current.padding
 
         delegate: DownloadElement {
@@ -72,7 +72,7 @@ import "../controls"
         visible: !listView.count
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
-        font.pixelSize: 15
+        font.pixelSize: Style.current.primaryTextFontSize
         //% "Downloaded files will appear here."
         text: qsTrId("downloaded-files-will-appear-here-")
         color: Style.current.secondaryText

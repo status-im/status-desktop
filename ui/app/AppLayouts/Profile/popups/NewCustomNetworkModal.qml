@@ -12,7 +12,7 @@ StatusModal {
     id: addNetworkPopup
     //% "Add network"
     header.title: qsTrId("add-network")
-    height: 644
+    height: Style.dp(644)
 
     property var advancedStore
 

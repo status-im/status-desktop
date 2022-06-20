@@ -75,7 +75,7 @@ Item {
         visible: root.store.loadingHistoryMessagesInProgress
         anchors.top: parent.top
         anchors.left: parent.left
-        height: visible? 20 : 0
+        height: visible? Style.dp(20) : 0
         width: parent.width
 
         Loader {
@@ -84,8 +84,8 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             sourceComponent: Component {
                 LoadingAnimation {
-                    width: 18
-                    height: 18
+                    width: Style.dp(18)
+                    height: Style.dp(18)
                 }
             }
         }
@@ -147,7 +147,7 @@ Item {
 
             id: scrollDownButton
             visible: false
-            height: 32
+            height: Style.dp(32)
             width: nbMessages.width + arrowImage.width + 2 * Style.current.halfPadding + (nbMessages.visible ? scrollDownButton.buttonPadding : 0)
             anchors.bottom: parent.bottom
             anchors.right: parent.right
@@ -155,7 +155,7 @@ Item {
             background: Rectangle {
                 color: Style.current.buttonSecondaryColor
                 border.width: 0
-                radius: 16
+                radius: Style.current.radius*2
             }
             onClicked: {
                 newMessages = 0
@@ -177,8 +177,8 @@ Item {
 
             SVGImage {
                 id: arrowImage
-                width: 24
-                height: 24
+                width: Style.dp(24)
+                height: Style.dp(24)
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: nbMessages.right
                 source: Style.svg("leave_chat")
@@ -228,8 +228,8 @@ Item {
 //        }
 
         onContentYChanged: {
-            scrollDownButton.visible = contentHeight - (scrollY + height) > 400
-            let loadMore = scrollDownButton.visible && scrollY < 500
+            scrollDownButton.visible = contentHeight - (scrollY + height) > Style.dp(400)
+            let loadMore = scrollDownButton.visible && scrollY < Style.dp(500)
             if(loadMore){
                 messageStore.loadMoreMessages()
             }

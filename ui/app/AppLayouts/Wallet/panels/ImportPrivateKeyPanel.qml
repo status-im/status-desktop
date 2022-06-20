@@ -42,7 +42,7 @@ ColumnLayout {
         property bool accountAreadyAddedError: Utils.accountAlreadyExistsError(RootStore.derivedAddressesError)
     }
 
-    spacing: 24
+    spacing: Style.dp(24)
 
     StatusInput {
         id: privateKey
@@ -51,8 +51,8 @@ ColumnLayout {
         label: qsTrId("private-key")
         charLimit: _internal.privateKeyCharLimit
         input.multiline: true
-        input.minimumHeight: 80
-        input.maximumHeight: 108
+        input.minimumHeight: Style.dp(80)
+        input.maximumHeight: Style.dp(108)
         //% "Paste the contents of your private key"
         input.placeholderText: qsTrId("paste-the-contents-of-your-private-key")
         errorMessage: _internal.errorString
@@ -83,15 +83,15 @@ ColumnLayout {
     }
 
     ColumnLayout {
-        spacing: 8
+        spacing: Style.dp(8)
 
         StatusBaseText {
             id: inputLabel
             Layout.alignment: Qt.AlignLeft
-            Layout.leftMargin: 16
+            Layout.leftMargin: Style.current.padding
             Layout.fillWidth: true
             text: qsTr("Public address")
-            font.pixelSize: 15
+            font.pixelSize: Style.current.primaryTextFontSize
         }
 
         StatusListItem {
@@ -100,7 +100,7 @@ ColumnLayout {
             property bool hasActivity: RootStore.derivedAddressesList.count > 0 ?  RootStore.getDerivedAddressHasActivityData(0) : false
             Layout.alignment: Qt.AlignHCenter
             icon.background.color: "transparent"
-            border.width: 1
+            border.width: Style.dp(1)
             border.color: Theme.palette.baseColor2
             type: _internal.accountAreadyAddedError ? StatusListItem.Type.Danger : StatusListItem.Type.Primary
             statusListItemSubTitle.color: derivedAddress.hasActivity ?  Theme.palette.primaryColor1 : Theme.palette.baseColor1

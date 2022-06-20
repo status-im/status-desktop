@@ -24,8 +24,8 @@ Rectangle {
     Image {
         id: collectibleIconImage
         source: collectibleHeader.collectibleIconSource
-        width: 40
-        height: 40
+        width: Style.dp(40)
+        height: Style.dp(40)
         anchors.left: parent.left
         anchors.leftMargin: Style.current.padding
         anchors.verticalCenter: parent.verticalCenter
@@ -37,14 +37,14 @@ Rectangle {
         anchors.left: collectibleIconImage.right
         anchors.leftMargin: Style.current.padding
         anchors.verticalCenter: parent.verticalCenter
-        font.pixelSize: 17
+        font.pixelSize: Style.dp(17)
     }
 
     StyledText {
         visible: collectiblesQty >= Constants.maxTokens
         //% "Maximum number of collectibles to display reached"
         text: qsTrId("maximum-number-of-collectibles-to-display-reached")
-        font.pixelSize: 17
+        font.pixelSize: Style.dp(17)
         color: Style.current.secondaryText
         anchors.left: collectibleName.right
         anchors.leftMargin: Style.current.padding
@@ -78,7 +78,7 @@ Rectangle {
                 id: numberCollectibleText
                 color: Style.current.secondaryText
                 text: !!error ? "-" : collectibleHeader.collectiblesQty
-                font.pixelSize: 15
+                font.pixelSize: Style.current.primaryTextFontSize
                 anchors.verticalCenter: parent.verticalCenter
             }
 
@@ -86,7 +86,7 @@ Rectangle {
                 id: caretImg
                 anchors.verticalCenter: parent.verticalCenter
                 source: Style.svg("caret")
-                width: 11
+                width: Style.dp(11)
                 anchors.left: numberCollectibleText.right
                 anchors.leftMargin: Style.current.padding
                 fillMode: Image.PreserveAspectFit

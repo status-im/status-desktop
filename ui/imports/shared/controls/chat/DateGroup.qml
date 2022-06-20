@@ -11,7 +11,7 @@ StyledText {
     property string messageTimestamp
 
     id: dateGroupLbl
-    font.pixelSize: 13
+    font.pixelSize: Style.current.additionalTextSize
     color: Style.current.secondaryText
     horizontalAlignment: Text.AlignHCenter
     anchors.horizontalCenter: isActivityCenterMessage ? undefined : parent.horizontalCenter

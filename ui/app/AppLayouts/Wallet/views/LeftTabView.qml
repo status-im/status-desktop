@@ -37,7 +37,7 @@ Rectangle {
         anchors.topMargin: Style.current.padding
         anchors.horizontalCenter: parent.horizontalCenter
         font.weight: Font.Bold
-        font.pixelSize: 17
+        font.pixelSize: Style.dp(17)
     }
 
     Item {
@@ -61,7 +61,7 @@ Rectangle {
             readOnly: true
             anchors.left: parent.left
             font.weight: Font.Medium
-            font.pixelSize: 30
+            font.pixelSize: Style.dp(30)
         }
 
         StyledText {
@@ -72,7 +72,7 @@ Rectangle {
             anchors.left: walletAmountValue.left
             anchors.top: walletAmountValue.bottom
             font.weight: Font.Medium
-            font.pixelSize: 13
+            font.pixelSize: Style.current.additionalTextSize
         }
     }
 
@@ -89,7 +89,7 @@ Rectangle {
         anchors.top: walletValueTextContainer.bottom
         anchors.topMargin: Style.current.padding
         anchors.horizontalCenter: parent.horizontalCenter
-        width: 272
+        width: Style.dp(272)
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
         ScrollBar.vertical.policy: listView.contentHeight > listView.height ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
         clip: true
@@ -97,7 +97,7 @@ Rectangle {
         ListView {
             id: listView
 
-            spacing: 5
+            spacing: Style.dp(5)
             anchors.top: parent.top
             width: parent.width
             height: parent.height

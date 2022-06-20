@@ -37,10 +37,10 @@ Rectangle {
 
     id: gasRectangle
     border.color: hovered || gasRadioBtn.checked ? Style.current.primary : Style.current.border
-    border.width: 1
+    border.width: Style.dp(1)
     color: Style.current.transparent
-    width: 130
-    height: 120
+    width: Style.dp(130)
+    height: Style.dp(120)
     clip: true
     radius: Style.current.radius
 
@@ -49,7 +49,7 @@ Rectangle {
         ButtonGroup.group: buttonGroup
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
-        anchors.topMargin: 14
+        anchors.topMargin: Style.dp(14)
         checked: gasRectangle.checkedByDefault
         onCheckedChanged: {
             if (checked) {
@@ -61,26 +61,26 @@ Rectangle {
     StyledText {
         id: gasText
         text: gasRectangle.text
-        font.pixelSize: 15
+        font.pixelSize: Style.current.primaryTextFontSize
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: gasRadioBtn.bottom
-        anchors.topMargin: 6
+        anchors.topMargin: Style.dp(6)
     }
 
     StyledText {
         id: ethText
         text: gasRectangle.ethValue + " ETH"
-        font.pixelSize: 13
+        font.pixelSize: Style.current.additionalTextSize
         color: Style.current.secondaryText
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: gasText.bottom
-        anchors.topMargin: 4
+        anchors.topMargin: Style.current.halfPadding/2
     }
 
     StyledText {
         id: fiatText
         text: `${gasRectangle.fiatValue} ${gasRectangle.defaultCurrency}`
-        font.pixelSize: 13
+        font.pixelSize: Style.current.additionalTextSize
         color: Style.current.secondaryText
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: ethText.bottom

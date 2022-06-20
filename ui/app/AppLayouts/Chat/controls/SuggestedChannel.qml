@@ -9,9 +9,9 @@ Rectangle {
     property string channel: "status"
     signal clicked(string channel)
     border.width: 1
-    radius: 8
-    width: children[0].width + 10
-    height: 32
+    radius: Style.dp(8)
+    width: children[0].width + Style.dp(10)
+    height: Style.dp(32)
     border.color: Style.current.border
     color: Style.current.transparent
 
@@ -19,13 +19,13 @@ Rectangle {
         id: suggestedChannelText
         text: "#" + channel
         font.weight: Font.Medium
-        color: Style.current.blue;
-        anchors.top: parent.top;
-        anchors.topMargin: 5;
-        anchors.left: parent.left;
-        anchors.leftMargin: 5;
-        horizontalAlignment: Text.AlignLeft;
-        font.pixelSize: 15
+        color: Style.current.blue
+        anchors.top: parent.top
+        anchors.topMargin: Style.dp(5)
+        anchors.left: parent.left
+        anchors.leftMargin: Style.dp(5)
+        horizontalAlignment: Text.AlignLeft
+        font.pixelSize: Style.current.primaryTextFontSize
     }
 
     MouseArea {

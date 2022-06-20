@@ -11,7 +11,7 @@ import "../stores"
 Rectangle {
     id: root
     visible: !RootStore.mnemonicBackedUp
-    height: visible ? 32 : 0
+    height: visible ? Style.dp(32) : 0
     color: Style.current.red
 
     Row {
@@ -28,13 +28,13 @@ Rectangle {
         }
 
         Button {
-            width: 58
-            height: 24
+            width: Style.dp(58)
+            height: Style.dp(24)
             contentItem: Item {
                 anchors.fill: parent
                 Text {
                     text: "Back up"
-                    font.pixelSize: 13
+                    font.pixelSize: Style.current.additionalTextSize
                     font.weight: Font.Medium
                     font.family: Style.current.fontRegular.name
                     horizontalAlignment: Text.AlignHCenter
@@ -47,7 +47,7 @@ Rectangle {
                 }
             }
             background: Rectangle {
-                radius: 4
+                radius: Style.dp(4)
                 anchors.fill: parent
                 border.color: Style.current.white
                 color: "#19FFFFFF"
@@ -63,12 +63,12 @@ Rectangle {
     SVGImage {
         id: closeImg
         anchors.top: parent.top
-        anchors.topMargin: 6
+        anchors.topMargin: Style.dp(6)
         anchors.right: parent.right
-        anchors.rightMargin: 18
+        anchors.rightMargin: Style.dp(18)
         source: Style.svg("close-white")
-        height: 20
-        width: 20
+        height: Style.dp(20)
+        width: Style.dp(20)
     }
     ColorOverlay {
         anchors.fill: closeImg

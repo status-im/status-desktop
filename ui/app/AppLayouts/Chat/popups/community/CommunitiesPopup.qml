@@ -28,15 +28,15 @@ StatusModal {
     header.title: qsTrId("communities")
     headerActionButton: StatusFlatRoundButton {
         type: StatusFlatRoundButton.Type.Secondary
-        width: 32
-        height: 32
+        width: Style.dp(32)
+        height: width
         icon.name: "more"
 
         onClicked: contextMenu.popup(-contextMenu.width+width, height + 4)
 
         StatusPopupMenu {
             id: contextMenu
-            width: 230
+            width: Style.dp(230)
             StatusMenuItem {
                 icon.name: "download"
                 //% "Access existing community"
@@ -53,7 +53,7 @@ StatusModal {
             property alias searchBox: searchBox
 
             Item {
-                height: 8
+                height: Style.dp(8)
                 width: parent.width
             }
 
@@ -69,15 +69,15 @@ StatusModal {
             ScrollView {
                 width: parent.width
                 ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-                topPadding: 8
-                bottomPadding: 8
-                height: 400
+                topPadding: Style.current.halfPadding
+                bottomPadding: Style.current.halfPadding
+                height: Style.dp(400)
                 clip: true
 
                 ListView {
                     anchors.fill: parent
                     model: communitiesDelegateModel
-                    spacing: 4
+                    spacing: Style.current.radius/2
                     clip: true
                     id: communitiesList
 
@@ -87,15 +87,15 @@ StatusModal {
 
                         StatusBaseText {
                             anchors.left: parent.left
-                            anchors.leftMargin: 16
+                            anchors.leftMargin: Style.current.padding
                             text: section.toUpperCase()
-                            font.pixelSize: 15
+                            font.pixelSize: Style.current.primaryTextFontSize
                             font.weight: Font.Medium
                             color: Theme.palette.directColor1
                         }
 
                         StatusModalDivider {
-                            bottomPadding: 8
+                            bottomPadding: Style.current.halfPadding
                         }
                     }
                 }

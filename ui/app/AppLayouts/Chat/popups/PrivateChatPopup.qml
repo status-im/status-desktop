@@ -51,35 +51,35 @@ ModalPopup {
     }
 
     Control {
-        width: 124
-        height: 36
+        width: Style.dp(124)
+        height: Style.dp(36)
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 24
+        anchors.bottomMargin: Style.current.bigPadding
         anchors.horizontalCenter: parent.horizontalCenter
         background: Rectangle {
             anchors.fill: parent
-            radius: 34
+            radius: Style.dp(34)
             color: Style.current.blue
         }
         contentItem: Item {
             anchors.fill: parent
             RoundedImage {
                 id: dollarEmoji
-                width: 32
-                height: 32
+                width: Style.dp(32)
+                height: Style.dp(32)
                 anchors.left: parent.left
-                anchors.leftMargin: 2
+                anchors.leftMargin: Style.dp(2)
                 anchors.verticalCenter: parent.verticalCenter
                 source: Global.getProfileImage(userProfile.pubKey)
             }
 
             StyledText {
                 anchors.left: dollarEmoji.right
-                anchors.leftMargin: 6
+                anchors.leftMargin: Style.dp(6)
                 anchors.verticalCenter: parent.verticalCenter
                 //% "My Profile"
                 text: qsTrId("my-profile")
-                font.pixelSize: 15
+                font.pixelSize: Style.current.primaryTextFontSize
                 color: Style.current.white
             }
         }

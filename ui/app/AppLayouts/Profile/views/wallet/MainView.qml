@@ -48,12 +48,12 @@ Column {
     }
 
     Separator {
-        height: 17
+        height: Style.dp(17)
     }
 
     StatusListItem {
         title: qsTr("DApp Permissions")
-        height: 64
+        height: Style.dp(64)
         width: parent.width
         onClicked: goToDappPermissionsView()
         components: [
@@ -66,12 +66,12 @@ Column {
     }
 
     Separator {
-        height: 17
+        height: Style.dp(17)
     }
 
     StatusListItem {
         title: qsTr("Networks")
-        height: 64
+        height: Style.dp(64)
         width: parent.width
         onClicked: goToNetworksView()
         components: [
@@ -84,12 +84,12 @@ Column {
     }
 
     Separator {
-        height: 17
+        height: Style.dp(17)
         visible: root.walletStore.isMultiNetworkEnabled
     }
 
     StatusDescriptionListItem {
-        height: 64
+        height: Style.dp(64)
         subTitle: qsTr("Accounts")
     }
 

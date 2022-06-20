@@ -19,11 +19,11 @@ Item {
         horizontalAlignment: Text.AlignHCenter
         wrapMode: Text.WordWrap
         anchors.right: parent.right
-        anchors.rightMargin: 56
+        anchors.rightMargin: Style.dp(56)
         anchors.left: parent.left
-        anchors.leftMargin: 56
+        anchors.leftMargin: Style.dp(56)
         anchors.verticalCenter: parent.verticalCenter
-        font.pixelSize: 15
+        font.pixelSize: Style.current.primaryTextFontSize
         color: Style.current.darkGrey
     }
 }

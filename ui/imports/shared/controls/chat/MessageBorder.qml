@@ -14,38 +14,38 @@ Item {
     readonly property int fakeCornerSize: bigCorner * 2
 
     Rectangle {
-        width: parent.width + 2
-        height: parent.height + 2
+        width: parent.width + Style.dp(2)
+        height: parent.height + Style.dp(2)
         anchors.top: parent.top
         anchors.left: parent.left
-        anchors.topMargin: -1
-        anchors.leftMargin: -1
+        anchors.topMargin: -Style.dp(1)
+        anchors.leftMargin: -Style.dp(1)
         radius: root.bigCorner
-        border.width: 2
+        border.width: Style.dp(2)
         border.color: Style.current.border
     }
     Rectangle {
         anchors.bottom: parent.bottom
         anchors.left: parent.left
-        anchors.bottomMargin: -1
-        anchors.leftMargin: -1
+        anchors.bottomMargin: -Style.dp(1)
+        anchors.leftMargin: -Style.dp(1)
         width: root.fakeCornerSize
         height: root.fakeCornerSize
         radius: root.smallCorner
         visible: !root.isCurrentUser
-        border.width: 2
+        border.width: Style.dp(2)
         border.color: Style.current.border
     }
     Rectangle {
         anchors.bottom: parent.bottom
         anchors.right: parent.right
-        anchors.bottomMargin: -1
-        anchors.rightMargin: -1
+        anchors.bottomMargin: -Style.dp(1)
+        anchors.rightMargin: -Style.dp(1)
         width: root.fakeCornerSize
         height: root.fakeCornerSize
         radius: root.smallCorner
         visible: root.isCurrentUser
-        border.width: 2
+        border.width: Style.dp(2)
         border.color: Style.current.border
     }
 

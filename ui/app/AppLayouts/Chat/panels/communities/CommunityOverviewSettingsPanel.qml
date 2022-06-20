@@ -45,27 +45,27 @@ StackLayout {
         title: qsTr("Overview")
 
         content: ColumnLayout {
-            spacing: 16
+            spacing: Style.dp(16)
 
             RowLayout {
                 Layout.fillWidth: true
 
-                spacing: 16
+                spacing: Style.dp(16)
 
                 StatusSmartIdenticon {
                     name: root.name
 
                     icon {
-                        width: 80
-                        height: 80
+                        width: Style.dp(80)
+                        height: width
                         isLetterIdenticon: !root.logoImageData
                         color: root.color
                         letterSize: width / 2.4
                     }
 
                     image {
-                        width: 80
-                        height: 80
+                        width: Style.dp(80)
+                        height: width
                         source: root.logoImageData
                     }
                 }
@@ -76,7 +76,7 @@ StackLayout {
                     StatusBaseText {
                         id: nameText
                         Layout.fillWidth: true
-                        font.pixelSize: 24
+                        font.pixelSize: Style.dp(24)
                         color: Theme.palette.directColor1
                         wrapMode: Text.WordWrap
                         text: root.name
@@ -85,7 +85,7 @@ StackLayout {
                     StatusBaseText {
                         id: descriptionText
                         Layout.fillWidth: true
-                        font.pixelSize: 15
+                        font.pixelSize: Style.current.primaryTextFontSize
                         color: Theme.palette.directColor1
                         wrapMode: Text.WordWrap
                         text: root.description
@@ -119,7 +119,7 @@ StackLayout {
                 StatusBaseText {
                     Layout.fillWidth: true
                     text: qsTr("This node is the Community Owner Node. For your Community to function correctly try to keep this computer with Status running and onlinie as much as possible.")
-                    font.pixelSize: 15
+                    font.pixelSize: Style.current.primaryTextFontSize
                     color: Theme.palette.directColor1
                     wrapMode: Text.WordWrap
                 }

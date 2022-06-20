@@ -6,8 +6,8 @@ import shared.panels 1.0
 SVGImage {
     id: loadingImg
     source: Style.svg("loading")
-    width: 25
-    height: 25
+    width: Style.dp(25)
+    height: Style.dp(25)
     fillMode: Image.Stretch
     RotationAnimator {
         target: loadingImg;

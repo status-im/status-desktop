@@ -9,8 +9,8 @@ import utils 1.0
 
 Menu {
     id: root
-    width: 132
-    height: 36
+    width: Style.dp(132)
+    height: Style.dp(36)
 
     background: Item {
         id: menuBackground
@@ -28,8 +28,8 @@ Menu {
                 visible: menuBackgroundContent.visible
                 source: menuBackgroundContent
                 horizontalOffset: 0
-                verticalOffset: 4
-                radius: 12
+                verticalOffset: Style.dp(4)
+                radius: Style.dp(12)
                 samples: 25
                 spread: 0.2
                 color: "#22000000"
@@ -51,17 +51,17 @@ Menu {
 
     delegate: MenuItem {
         id: menuItem
-        width: 32
-        height: 32
+        width: Style.dp(32)
+        height: Style.dp(32)
         leftPadding: 0
         topPadding: 0
         action: Action {}
         contentItem: Item {
             StatusFlatRoundButton {
-                width: 32
-                height: 32
-                icon.width: 24
-                icon.height: 24
+                width: Style.dp(32)
+                height: Style.dp(32)
+                icon.width: Style.dp(24)
+                icon.height: Style.dp(24)
                 icon.name: menuItem.action.icon.name
                 highlighted: menuItem.action.checked
                 tooltip.text: menuItem.action.text

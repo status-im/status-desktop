@@ -25,8 +25,8 @@ Row {
                 id: chatImage
                 anchors.left: parent.left
                 anchors.verticalCenter: parent.verticalCenter
-                width: 64
-                height: 64
+                width: Style.dp(64)
+                height: Style.dp(64)
                 fillMode: Image.PreserveAspectCrop
                 mipmap: true
                 smooth: false
@@ -43,14 +43,14 @@ Row {
                             anchors.left: parent.left
                             width: chatImage.width
                             height: chatImage.height
-                            radius: 16
+                            radius: Style.dp(16)
                         }
                         Rectangle {
                             anchors.bottom: parent.bottom
                             anchors.right: parent.right
-                            width: 32
-                            height: 32
-                            radius: 4
+                            width: Style.dp(32)
+                            height: Style.dp(32)
+                            radius: Style.dp(4)
                         }
                     }
                 }
@@ -66,8 +66,8 @@ Row {
 
             RoundButton {
                 id: closeBtn
-                width: 24
-                height: 24
+                width: Style.dp(24)
+                height: Style.dp(24)
                 padding: 0
                 anchors.right: chatImage.right
                 anchors.rightMargin: -width / 3

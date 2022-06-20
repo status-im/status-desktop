@@ -13,8 +13,8 @@ import utils 1.0
 Popup {
     id: root
 
-    width: 400
-    height: 300
+    width: Style.dp(400)
+    height: Style.dp(300)
 
     property alias model: listView.model
 
@@ -37,7 +37,7 @@ Popup {
         layer.enabled: true
         layer.effect: DropShadow {
             verticalOffset: 3
-            radius: 8
+            radius: Style.current.radius
             samples: 15
             fast: true
             cached: true
@@ -56,8 +56,8 @@ Popup {
             rightPadding: 0
             input.placeholderText: root.searchBoxPlaceholder
             input.icon: StatusIconSettings {
-                width: 24
-                height: 24
+                width: Style.dp(24)
+                height: Style.dp(24)
                 name: "search"
                 color: Theme.palette.baseColor1
             }

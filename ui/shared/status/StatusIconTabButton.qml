@@ -10,8 +10,8 @@ import "../../shared/status"
 TabButton {
     id: control
     visible: enabled
-    width: 40
-    height: enabled ? 40 : 0
+    width: Style.dp(40)
+    height: enabled ? Style.dp(40) : 0
     anchors.horizontalCenter: parent.horizontalCenter
     property color iconColor: Style.current.secondaryText
     property color disabledColor: iconColor
@@ -33,8 +33,8 @@ TabButton {
         Global.changeAppSectionBySectionType(section)
     }
 
-    icon.height: 24
-    icon.width: 24
+    icon.height: Style.dp(24)
+    icon.width: Style.dp(24)
     icon.color: {
         if (!enabled) {
             return control.disabledColor
@@ -92,9 +92,9 @@ TabButton {
         Component {
             id: letterIdenticon
             StatusLetterIdenticon {
-                width: 26
-                height: 26
-                letterSize: 15
+                width: Style.dp(26)
+                height: Style.dp(26)
+                letterSize: Style.current.primaryTextFontSize
                 chatName: control.name
                 color: control.iconColor
             }

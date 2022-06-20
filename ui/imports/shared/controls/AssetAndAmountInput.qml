@@ -96,7 +96,7 @@ Item {
             text: qsTrId("balance--")
             anchors.right: txtBalance.left
             font.weight: Font.Medium
-            font.pixelSize: 13
+            font.pixelSize: Style.current.additionalTextSize
             color: Style.current.secondaryText
         }
 
@@ -106,7 +106,7 @@ Item {
             text: selectAsset.selectedAsset ? Utils.stripTrailingZeros(selectAsset.selectedAsset.value) : "0.00"
             anchors.right: parent.right
             font.weight: Font.Medium
-            font.pixelSize: 13
+            font.pixelSize: Style.current.additionalTextSize
             color: hovered ? Style.current.textColor : Style.current.secondaryText
 
             MouseArea {
@@ -133,7 +133,7 @@ Item {
         label: qsTrId("asset---amount")
         placeholderText: "0.00"
         anchors.top: parent.top
-        customHeight: 56
+        customHeight: Style.dp(56)
         validationErrorAlignment: TextEdit.AlignRight
         validationErrorTopMargin: 8
         validationErrorColor: formattedInputValue === 0 ? Style.current.warning : Style.current.danger
@@ -168,10 +168,10 @@ Item {
 
     StatusAssetSelector {
          id: selectAsset
-         width: 86
-         height: 28
+         width: Style.dp(86)
+         height: Style.dp(28)
          anchors.top: inputAmount.top
-         anchors.topMargin: Style.current.bigPadding + 14
+         anchors.topMargin: Style.current.bigPadding + Style.dp(14)
          anchors.right: parent.right
          anchors.rightMargin: Style.current.smallPadding
          defaultToken: Style.png("tokens/DEFAULT-TOKEN@3x")
@@ -198,7 +198,7 @@ Item {
         height: txtFiatBalance.height
         anchors.left: parent.left
         anchors.top: inputAmount.bottom
-        anchors.topMargin: inputAmount.validationError ? -16 : inputAmount.validationErrorTopMargin
+        anchors.topMargin: inputAmount.validationError ? -Style.current.padding : inputAmount.validationErrorTopMargin
 
         StyledTextField {
             id: txtFiatBalance
@@ -227,11 +227,11 @@ Item {
             id: txtFiatSymbol
             text: root.currentCurrency.toUpperCase()
             font.weight: Font.Medium
-            font.pixelSize: 12
+            font.pixelSize: Style.current.tertiaryTextFontSize
             color: Style.current.secondaryText
             anchors.top: parent.top
             anchors.left: txtFiatBalance.right
-            anchors.leftMargin: 2
+            anchors.leftMargin: Style.dp(2)
         }
     }
 }

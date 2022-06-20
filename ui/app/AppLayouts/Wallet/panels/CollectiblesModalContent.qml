@@ -16,11 +16,11 @@ Item {
 
     RoundedImage {
         id: collectibleImage
-        width: 248
-        height: 248
+        width: Style.dp(248)
+        height: Style.dp(248)
         anchors.horizontalCenter: parent.horizontalCenter
         source: root.collectibleImage
-        radius: 16
+        radius: Style.dp(16)
         fillMode: Image.PreserveAspectCrop
     }
 
@@ -30,7 +30,6 @@ Item {
         label: qsTrId("id")
         text: root.collectibleId
         anchors.top: collectibleImage.bottom
-        anchors.topMargin:0
     }
 
 
@@ -41,7 +40,6 @@ Item {
         label: qsTrId("description")
         text: root.collectibleDescription
         anchors.top: idText.bottom
-        anchors.topMargin: 0
         wrap: true
     }
 }

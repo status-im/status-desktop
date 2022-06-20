@@ -128,20 +128,20 @@ WebEngineView {
             Image {
                 id: emptyPageImage
                 source: Style.png("browser/compass")
-                width: 294
-                height: 294
+                width: Style.dp(294)
+                height: width
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: parent.top
-                anchors.topMargin: 60
+                anchors.topMargin: Style.dp(60)
             }
 
             FavoritesList {
                 id: bookmarkListContainer
                 anchors.horizontalCenter: emptyPageImage.horizontalCenter
                 anchors.top: emptyPageImage.bottom
-                anchors.topMargin: 30
-                width: (parent.width < 700) ? (Math.floor(parent.width/cellWidth)*cellWidth) : 700
-                height: parent.height - emptyPageImage.height - 20
+                anchors.topMargin: Style.dp(30)
+                width: (parent.width < Style.dp(700)) ? (Math.floor(parent.width/cellWidth)*cellWidth) : Style.dp(700)
+                height: parent.height - emptyPageImage.height - Style.dp(20)
                 model: BookmarksStore.bookmarksModel
                 favMenu: webEngineView.favMenu
                 addFavModal: webEngineView.addFavModal

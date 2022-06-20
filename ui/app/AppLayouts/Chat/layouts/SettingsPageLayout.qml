@@ -7,6 +7,8 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 
+import utils 1.0
+
 Item {
     id: root
 
@@ -44,16 +46,16 @@ Item {
 
         anchors.fill: parent
 
-        spacing: 16
+        spacing: Style.current.padding
 
         Item {
-            implicitHeight: 32
+            implicitHeight: Style.dp(32)
 
             StatusBaseText {
                 visible: root.previousPage
                 text: "<- " + root.previousPage
                 color: Theme.palette.primaryColor1
-                font.pixelSize: 15
+                font.pixelSize: Style.current.primaryTextFontSize
 
                 MouseArea {
                     anchors.fill: parent
@@ -64,11 +66,11 @@ Item {
         }
 
         StatusBaseText {
-            Layout.leftMargin: 32
+            Layout.leftMargin: Style.current.xlPadding
 
             text: root.title
             color: Theme.palette.directColor1
-            font.pixelSize: 26
+            font.pixelSize: Style.dp(26)
             font.bold: true
         }
 
@@ -76,8 +78,8 @@ Item {
             id: contentLoader
             Layout.fillWidth: true
             Layout.fillHeight: true
-            Layout.leftMargin: 24
-            Layout.rightMargin: 24
+            Layout.leftMargin: Style.current.bigPadding
+            Layout.rightMargin: Style.current.bigPadding
 
             sourceComponent: root.content
         }

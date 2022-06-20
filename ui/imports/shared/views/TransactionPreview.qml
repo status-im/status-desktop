@@ -61,8 +61,8 @@ Item {
                     anchors.verticalCenter: parent.verticalCenter
 
                     StyledText {
-                        font.pixelSize: 15
-                        height: 22
+                        font.pixelSize: Style.current.primaryTextFontSize
+                        height: Style.dp(22)
                         text: root.fromAccount ? root.fromAccount.name : ""
                         elide: Text.ElideRight
                         anchors.verticalCenter: parent.verticalCenter
@@ -71,8 +71,8 @@ Item {
                     }
                     SVGImage {
                         id: imgFromWallet
-                        sourceSize.height: 18
-                        sourceSize.width: 18
+                        sourceSize.height: Style.dp(18)
+                        sourceSize.width: Style.dp(18)
                         visible: !!root.fromAccount ? root.fromAccount.type === RecipientSelector.Type.Account : true
                         horizontalAlignment: Image.AlignLeft
                         width: itmFromValue.needsRightPadding() ? (Style.current.halfPadding + sourceSize.width) : undefined // adding width to add addl spacing to image
@@ -89,8 +89,8 @@ Item {
                     SVGImage {
                         id: fromInvalid
                         anchors.verticalCenter: parent.verticalCenter
-                        width: 13.33
-                        height: 13.33
+                        width: Style.dp(13)
+                        height: Style.dp(13)
                         sourceSize.height: height * 2
                         sourceSize.width: width * 2
                         fillMode: Image.PreserveAspectFit
@@ -99,8 +99,8 @@ Item {
                     }
                     SVGImage {
                         id: fromArrow
-                        width: 13
-                        height: 7
+                        width: Style.dp(13)
+                        height: Style.dp(7)
                         visible: root.isFromEditable
                         anchors.verticalCenter: parent.verticalCenter
                         fillMode: Image.PreserveAspectFit
@@ -138,7 +138,7 @@ Item {
                         //% "Unknown"
                         text: (!!root.toAccount && root.toAccount.address) ? root.toAccount.address : qsTrId("active-unknown")
                         elide: Text.ElideMiddle
-                        anchors.leftMargin: 190
+                        anchors.leftMargin: Style.dp(190)
                         anchors.right: parent.right
                     }
                     PropertyChanges {
@@ -202,8 +202,8 @@ Item {
 
             StyledText {
                 id: txtToPrimary
-                font.pixelSize: 15
-                height: 22
+                font.pixelSize: Style.current.primaryTextFontSize
+                height: Style.dp(22)
                 anchors.left: parent.left
                 anchors.right: txtToSeparator.visible ? txtToSeparator.left : idtToContact.left
                 anchors.rightMargin: txtToSeparator.visible ? 0 : Style.current.halfPadding
@@ -214,8 +214,8 @@ Item {
             }
             StyledText {
                 id: txtToSeparator
-                font.pixelSize: 15
-                height: 22
+                font.pixelSize: Style.current.primaryTextFontSize
+                height: Style.dp(22)
                 text: " • "
                 visible: txtToSecondary.visible && txtToSecondary.width > 0
                 color: Style.current.secondaryText
@@ -227,8 +227,8 @@ Item {
             StyledText {
                 id: txtToSecondary
                 visible: true
-                font.pixelSize: 15
-                height: 22
+                font.pixelSize: Style.current.primaryTextFontSize
+                height: Style.dp(22)
                 color: Style.current.secondaryText
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
@@ -237,14 +237,14 @@ Item {
             }
             TextMetrics {
                 id: metSecondary
-                elideWidth: 102
+                elideWidth: Style.dp(102)
                 elide: Text.ElideMiddle
             }
             SVGImage {
                 id: imgToWallet
                 visible: false
-                sourceSize.height: 18
-                sourceSize.width: 18
+                sourceSize.height: Style.dp(18)
+                sourceSize.width: Style.dp(18)
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
                 fillMode: Image.PreserveAspectFit
@@ -270,8 +270,8 @@ Item {
                 id: toInvalid
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: parent.right
-                width: 13.33
-                height: 13.33
+                width: Style.dp(13)
+                height: Style.dp(13)
                 sourceSize.height: height * 2
                 sourceSize.width: width * 2
                 fillMode: Image.PreserveAspectFit
@@ -288,8 +288,8 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
 
                 StyledText {
-                    font.pixelSize: 15
-                    height: 22
+                    font.pixelSize: Style.current.primaryTextFontSize
+                    height: Style.dp(22)
                     text: (root.asset && root.asset.name) ? root.asset.name : ""
                     anchors.left: parent.left
                     anchors.right: txtAssetSymbol.left
@@ -300,8 +300,8 @@ Item {
                 }
                 StyledText {
                     id: txtAssetSymbol
-                    font.pixelSize: 15
-                    height: 22
+                    font.pixelSize: Style.current.primaryTextFontSize
+                    height: Style.dp(22)
                     text: (root.asset && root.asset.symbol) ? root.asset.symbol : ""
                     color: Style.current.secondaryText
                     anchors.right: imgAsset.left
@@ -312,8 +312,8 @@ Item {
                 }
                 Image {
                     id: imgAsset
-                    sourceSize.height: 32
-                    sourceSize.width: 32
+                    sourceSize.height: Style.dp(32)
+                    sourceSize.width: Style.dp(32)
                     anchors.right: parent.right
                     anchors.verticalCenter: parent.verticalCenter
                     fillMode: Image.PreserveAspectFit
@@ -336,8 +336,8 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
 
                 StyledText {
-                    font.pixelSize: 15
-                    height: 22
+                    font.pixelSize: Style.current.primaryTextFontSize
+                    height: Style.dp(22)
                     text: (root.amount && root.amount.value) ? Utils.stripTrailingZeros(root.amount.value) : ""
                     anchors.left: parent.left
                     anchors.right: txtAmountSymbol.left
@@ -349,8 +349,8 @@ Item {
                 }
                 StyledText {
                     id: txtAmountSymbol
-                    font.pixelSize: 15
-                    height: 22
+                    font.pixelSize: Style.current.primaryTextFontSize
+                    height: Style.dp(22)
                     text: ((root.asset && root.asset.symbol) ? root.asset.symbol : "") + " •"
                     color: Style.current.secondaryText
                     anchors.right: txtAmountFiat.left
@@ -361,8 +361,8 @@ Item {
                 }
                 StyledText {
                     id: txtAmountFiat
-                    font.pixelSize: 15
-                    height: 22
+                    font.pixelSize: Style.current.primaryTextFontSize
+                    height: Style.dp(22)
                     text: "~" + (root.amount && root.amount.fiatValue ? root.amount.fiatValue : "0.00")
                     anchors.right: txtAmountCurrency.left
                     anchors.rightMargin: 5
@@ -372,8 +372,8 @@ Item {
                 }
                 StyledText {
                     id: txtAmountCurrency
-                    font.pixelSize: 15
-                    height: 22
+                    font.pixelSize: Style.current.primaryTextFontSize
+                    height: Style.dp(22)
                     text: root.currency.toUpperCase()
                     color: Style.current.secondaryText
                     anchors.right: parent.right
@@ -402,9 +402,9 @@ Item {
                     anchors.verticalCenter: parent.verticalCenter
                     StyledText {
                         id: networkFeeText
-                        font.pixelSize: 15
-                        width: 75
-                        height: 22
+                        font.pixelSize: Style.current.primaryTextFontSize
+                        width: Style.dp(75)
+                        height: Style.dp(22)
                         text: (root.gas && root.gas.value) ? Utils.stripTrailingZeros(root.gas.value) : ""
                         anchors.verticalCenter: parent.verticalCenter
                         horizontalAlignment: Text.AlignRight
@@ -427,8 +427,8 @@ Item {
                     }
                     StyledText {
                         id: txtFeeSymbol
-                        font.pixelSize: 15
-                        height: 22
+                        font.pixelSize: Style.current.primaryTextFontSize
+                        height: Style.dp(22)
                         text: ((root.gas && root.gas.symbol) ? root.gas.symbol : "") + " •"
                         color: Style.current.secondaryText
                         anchors.verticalCenter: parent.verticalCenter
@@ -437,8 +437,8 @@ Item {
                     }
                     StyledText {
                         id: txtFeeFiat
-                        font.pixelSize: 15
-                        height: 22
+                        font.pixelSize: Style.current.primaryTextFontSize
+                        height: Style.dp(22)
                         text: "~" + ((root.gas && root.gas.fiatValue) ? root.gas.fiatValue : "0.00")
                         anchors.verticalCenter: parent.verticalCenter
                         horizontalAlignment: Text.AlignRight
@@ -446,8 +446,8 @@ Item {
                     }
                     StyledText {
                         id: txtFeeCurrency
-                        font.pixelSize: 15
-                        height: 22
+                        font.pixelSize: Style.current.primaryTextFontSize
+                        height: Style.dp(22)
                         text: root.currency.toUpperCase()
                         color: Style.current.secondaryText
                         anchors.verticalCenter: parent.verticalCenter
@@ -457,8 +457,8 @@ Item {
                     SVGImage {
                         id: gasInvalid
                         anchors.verticalCenter: parent.verticalCenter
-                        width: 13.33
-                        height: 13.33
+                        width: Style.dp(13)
+                        height: Style.dp(13)
                         sourceSize.height: height * 2
                         sourceSize.width: width * 2
                         fillMode: Image.PreserveAspectFit
@@ -467,8 +467,8 @@ Item {
                     }
                     SVGImage {
                         id: gasArrow
-                        width: 13
-                        height: 7
+                        width: Style.dp(13)
+                        height: Style.dp(7)
                         visible: root.isGasEditable
                         anchors.verticalCenter: parent.verticalCenter
                         fillMode: Image.PreserveAspectFit
@@ -505,9 +505,9 @@ Item {
                     anchors.right: parent.right
                     anchors.verticalCenter: parent.verticalCenter
                     StyledText {
-                        font.pixelSize: 15
-                        height: 22
-                        width: 200
+                        font.pixelSize: Style.current.primaryTextFontSize
+                        height: Style.dp(22)
+                        width: Style.dp(200)
                         text: trxData
                         elide: Text.ElideRight
                         color: Style.current.secondaryText
@@ -516,8 +516,8 @@ Item {
                         verticalAlignment: Text.AlignVCenter
                     }
                     SVGImage {
-                        width: 13
-                        height: 7
+                        width: Style.dp(13)
+                        height: Style.dp(7)
                         visible: true
                         anchors.verticalCenter: parent.verticalCenter
                         fillMode: Image.PreserveAspectFit
@@ -537,15 +537,15 @@ Item {
                     id: dataPopup
                     //% "Data field"
                     title: qsTrId("data-field")
-                    height: 286
-                    width: 400
+                    height: Style.dp(286)
+                    width: Style.dp(400)
                     Item {
                         anchors.fill: parent
                         anchors.leftMargin: 0
                         anchors.rightMargin: 0
                         ScrollView {
                             width: parent.width
-                            height: 150
+                            height: Style.dp(150)
                             TextArea {
                                 wrapMode: TextEdit.Wrap
                                 readOnly: true

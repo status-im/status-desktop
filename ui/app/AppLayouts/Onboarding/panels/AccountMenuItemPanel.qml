@@ -23,7 +23,7 @@ MenuItem {
     signal clicked()
 
     width: parent.width
-    height: 64
+    height: Style.dp(64)
     background: Rectangle {
         color: root.hovered ? Theme.palette.statusSelect.menuItemHoverBackgroundColor : Theme.palette.statusSelect.menuItemBackgroundColor
     }
@@ -62,10 +62,10 @@ MenuItem {
 
     StatusBaseText {
         text: root.label
-        font.pixelSize: 15
+        font.pixelSize: Style.current.primaryTextFontSize
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: userImageOrIcon.right
-        anchors.leftMargin: 16
+        anchors.leftMargin: Style.current.padding
         color: !!root.colorId ? Theme.palette.directColor1 : Theme.palette.primaryColor1
     }
 }

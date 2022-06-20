@@ -30,10 +30,10 @@ ModalPopup {
 
         RoundedImage {
             id: collectibleImage
-            width: 248
-            height: 248
+            width: Style.dp(248)
+            height: Style.dp(248)
             anchors.horizontalCenter: parent.horizontalCenter
-            radius: 16
+            radius: Style.dp(16)
             fillMode: Image.PreserveAspectCrop
             source: root.imageUrl
         }

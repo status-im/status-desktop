@@ -7,8 +7,8 @@ Loader {
     property color color
     property int contentType: -1
     property string stickerData: ""
-    property int imageHeight: 140
-    property int imageWidth: 140
+    property int imageHeight: Style.dp(140)
+    property int imageWidth: Style.dp(140)
     signal loaded()
 
     id: root

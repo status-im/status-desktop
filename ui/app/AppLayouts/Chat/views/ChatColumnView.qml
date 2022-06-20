@@ -399,7 +399,7 @@ Item {
     ActivityCenterPopup {
         id: activityCenter
         height: root.height - 56 * 2 // TODO get screen size // Taken from old code top bar height was fixed there to 56
-        y: 56
+        y: Style.dp(56)
         store: root.rootStore
         chatSectionModule: root.parentModule
         messageContextMenu: contextmenu

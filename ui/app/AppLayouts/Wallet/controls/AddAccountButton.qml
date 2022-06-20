@@ -7,8 +7,8 @@ StatusRoundButton {
     id: btnAdd
     property bool checked: false
 
-    width: 36
-    height: 36
+    width: Style.dp(36)
+    height: Style.dp(36)
     icon.name: "add"
     icon.rotation: checked ? 45 : 0
     type: StatusRoundButton.Type.Secondary

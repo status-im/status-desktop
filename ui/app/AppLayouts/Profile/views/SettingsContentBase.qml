@@ -26,8 +26,8 @@ Item {
     QtObject {
         id: d
 
-        readonly property int topHeaderHeight: 56
-        readonly property int titleRowHeight: 56
+        readonly property int topHeaderHeight: Style.dp(56)
+        readonly property int titleRowHeight: Style.dp(56)
     }
 
     MouseArea {
@@ -59,8 +59,8 @@ Item {
             anchors.topMargin: Style.current.halfPadding
             visible: root.backButtonName != ""
             icon.name: "arrow-left"
-            icon.width: 20
-            icon.height: 20
+            icon.width: Style.dp(20)
+            icon.height: Style.dp(20)
             text: root.backButtonName
             size: StatusBaseButton.Size.Large
             onClicked: root.backButtonClicked()

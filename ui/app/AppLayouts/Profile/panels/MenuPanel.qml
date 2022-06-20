@@ -8,7 +8,7 @@ import utils 1.0
 
 Column {
     id: root
-    spacing: 4
+    spacing: Style.dp(4)
 
     property var privacyStore
     property var messagingStore

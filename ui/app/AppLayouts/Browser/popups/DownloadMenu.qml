@@ -21,16 +21,16 @@ PopupMenu {
     Action {
         enabled: downloadComplete
         icon.source: Style.svg("browser/file")
-        icon.width: 16
-        icon.height: 16
+        icon.width: Style.dp(16)
+        icon.height: Style.dp(16)
         //% "Open"
         text: qsTrId("open")
         onTriggered: DownloadsStore.openFile(index)
     }
     Action {
         icon.source: Style.svg("add_watch_only")
-        icon.width: 13
-        icon.height: 9
+        icon.width: Style.dp(13)
+        icon.height: Style.dp(9)
         //% "Show in folder"
         text: qsTrId("show-in-folder")
         onTriggered: DownloadsStore.openDirectory(index)
@@ -38,8 +38,8 @@ PopupMenu {
     Action {
         enabled: !downloadComplete && !!download && !download.isPaused
         icon.source: Style.svg("browser/pause")
-        icon.width: 16
-        icon.height: 16
+        icon.width: Style.dp(16)
+        icon.height: Style.dp(16)
         //% "Pause"
         text: qsTrId("pause")
         onTriggered: {
@@ -49,8 +49,8 @@ PopupMenu {
     Action {
         enabled: !downloadComplete && !!download && download.isPaused
         icon.source: Style.svg("browser/play")
-        icon.width: 16
-        icon.height: 16
+        icon.width: Style.dp(16)
+        icon.height: Style.dp(16)
         //% "Resume"
         text: qsTrId("resume")
         onTriggered: {
@@ -63,8 +63,8 @@ PopupMenu {
     Action {
         enabled: !downloadComplete
         icon.source: Style.svg("block-icon")
-        icon.width: 13
-        icon.height: 13
+        icon.width: Style.dp(13)
+        icon.height: Style.dp(13)
         //% "Cancel"
         text: qsTrId("browsing-cancel")
         onTriggered: {

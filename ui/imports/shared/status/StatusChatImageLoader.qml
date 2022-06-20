@@ -7,7 +7,7 @@ import utils 1.0
 
 Item {
     property int verticalPadding: 0
-    property int imageWidth: 350
+    property int imageWidth: Style.dp(350)
     property bool isCurrentUser: false
     property url source
     property bool playing: Global.applicationWindow.active
@@ -39,23 +39,23 @@ Item {
                     anchors.left: parent.left
                     width: imageMessage.width
                     height: imageMessage.height
-                    radius: 16
+                    radius: Style.dp(16)
                 }
 
                 Rectangle {
                     anchors.bottom: parent.bottom
                     anchors.left: parent.left
-                    width: 32
-                    height: 32
-                    radius: 4
+                    width: Style.dp(32)
+                    height: Style.dp(32)
+                    radius: Style.dp(4)
                     visible: !imageContainer.isCurrentUser && !allCornersRounded
                 }
                 Rectangle {
                     anchors.bottom: parent.bottom
                     anchors.right: parent.right
-                    width: 32
-                    height: 32
-                    radius: 4
+                    width: Style.dp(32)
+                    height: Style.dp(32)
+                    radius: Style.dp(4)
                     visible: imageContainer.isCurrentUser && !allCornersRounded
                 }
             }
@@ -75,11 +75,11 @@ Item {
         id: loadingImageLoader
         active: imageMessage.status === Image.Loading
                     || imageMessage.status === Image.Error
-        width: 300
+        width: Style.dp(300)
         height: width
         sourceComponent: Rectangle {
             anchors.fill: parent
-            border.width: 1
+            border.width: Style.dp(1)
             border.color: Style.current.border
             radius: Style.current.radius
 
@@ -93,7 +93,7 @@ Item {
                 color: imageMessage.status === Image.Error?
                         Style.current.red :
                         Style.current.textColor
-                font.pixelSize: 15
+                font.pixelSize: Style.current.primaryTextFontSize
             }
         }
     }

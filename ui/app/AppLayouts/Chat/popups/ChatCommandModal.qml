@@ -27,7 +27,7 @@ StatusModal {
     id: root
     anchors.centerIn: parent
     header.title: root.commandTitle
-    height: 504
+    height: Style.dp(504)
 
     property alias selectRecipient: selectRecipient
 
@@ -37,7 +37,7 @@ StatusModal {
         TransactionStackView {
             id: stack
             anchors.top: parent.top
-            anchors.topMargin: 16
+            anchors.topMargin: Style.current.padding
             anchors.leftMargin: Style.current.padding
             anchors.rightMargin: Style.current.padding
 
@@ -74,7 +74,7 @@ StatusModal {
                 SeparatorWithIcon {
                     id: separator
                     anchors.top: selectFromAccount.bottom
-                    anchors.topMargin: 19
+                    anchors.topMargin: Style.dp(19)
                     icon.rotation: root.isRequested ? -90 : 90
                 }
 
@@ -99,7 +99,7 @@ StatusModal {
                       //% "To"
                       qsTrId("to")
                     anchors.top: separator.bottom
-                    anchors.topMargin: 10
+                    anchors.topMargin: Style.dp(10)
                     width: stack.width
                     onSelectedRecipientChanged: {
                         addressRequiredValidator.address = root.isRequested ? selectFromAccount.selectedAccount.address : selectRecipient.selectedRecipient.address
@@ -156,8 +156,8 @@ StatusModal {
         StatusRoundButton {
             visible: !stack.isFirstGroup
             icon.name: "arrow-right"
-            icon.width: 20
-            icon.height: 16
+            icon.width: Style.dp(20)
+            icon.height: Style.dp(16)
             rotation: 180
             onClicked: {
                 stack.back()

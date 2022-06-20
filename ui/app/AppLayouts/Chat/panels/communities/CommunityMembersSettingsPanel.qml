@@ -56,7 +56,7 @@ SettingsPageLayout {
         Rectangle {
             Layout.fillWidth: true
 
-            implicitHeight: 1
+            implicitHeight: Style.dp(1)
             visible: memberRequestsButton.visible
             color: Theme.palette.statusPopupMenu.separatorColor
         }
@@ -67,7 +67,7 @@ SettingsPageLayout {
             visible: memberList.count === 0
             //% "Community members will appear here"
             text: qsTrId("community-members-will-appear-here")
-            font.pixelSize: 15
+            font.pixelSize: Style.current.primaryTextFontSize
             color: Theme.palette.baseColor1
         }
 
@@ -77,7 +77,7 @@ SettingsPageLayout {
             visible: !!memberSearch.input.text && memberList.height == 0
             //% "No contacts found"
             text: qsTrId("no-contacts-found")
-            font.pixelSize: 15
+            font.pixelSize: Style.current.primaryTextFontSize
             color: Theme.palette.baseColor1
         }
 
@@ -121,14 +121,14 @@ SettingsPageLayout {
                 }
 
                 image {
-                    width: 40
-                    height: 40
+                    width: Style.dp(40)
+                    height: width
                     source: model.icon
                 }
 
                 icon {
-                    width: 40
-                    height: 40
+                    width: Style.dp(40)
+                    height: width
                     color: Utils.colorForPubkey(model.pubKey)
                     letterSize: Math.max(4, root.imageWidth / 2.4)
                     charactersLen: 2

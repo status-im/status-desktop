@@ -34,7 +34,7 @@ Item {
         anchors.left: parent.left
         topPadding: Style.current.halfPadding
         anchors.top: separator.bottom
-        font.pixelSize: 15
+        font.pixelSize: Style.current.primaryTextFontSize
 
         MouseArea {
             anchors.fill: parent

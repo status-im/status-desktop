@@ -24,8 +24,8 @@ PopupMenu {
         //% "Open in new Tab"
         text: qsTrId("open-in-new-tab")
         icon.source: Style.svg("generate_account")
-        icon.width: 16
-        icon.height: 16
+        icon.width: Style.dp(16)
+        icon.height: Style.dp(16)
         onTriggered: {
             openInNewTab(favoritePopupMenu.url)
         }
@@ -37,8 +37,8 @@ PopupMenu {
         //% "Edit"
         text: qsTrId("edit")
         icon.source: Style.svg("edit")
-        icon.width: 16
-        icon.height: 16
+        icon.width: Style.dp(16)
+        icon.height: Style.dp(16)
         onTriggered: {
             // Force reloading current favorite as it could have been modified when edited:
             favoritePopupMenu.currentFavorite = BookmarksStore.getCurrentFavorite(url)
@@ -51,8 +51,8 @@ PopupMenu {
         text: qsTrId("remove")
         icon.source: Style.svg("remove")
         icon.color: Style.current.danger
-        icon.width: 16
-        icon.height: 16
+        icon.width: Style.dp(16)
+        icon.height: Style.dp(16)
         onTriggered: {
             BookmarksStore.deleteBookmark(favoritePopupMenu.url)
         }

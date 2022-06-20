@@ -33,8 +33,8 @@ StatusModal {
         property bool dirty: nameInput.input.dirty
     }
 
-    width: 574
-    height: 490
+    width: Style.dp(574)
+    height: Style.dp(490)
     header.title: edit ? qsTr("Edit saved address") : qsTr("Add saved address")
     header.subTitle: edit ? name : ""
 
@@ -47,9 +47,9 @@ StatusModal {
 
     contentItem: Column {
         anchors.left: parent.left
-        anchors.leftMargin: 8
+        anchors.leftMargin: Style.current.halfPadding
         anchors.right: parent.right
-        anchors.rightMargin: 10
+        anchors.rightMargin: Style.dp(10)
         height: childrenRect.height
         topPadding: Style.current.xlPadding
 
@@ -58,7 +58,7 @@ StatusModal {
         StatusInput {
             id: nameInput
             width: parent.width
-            input.implicitHeight: 56
+            input.implicitHeight: Style.dp(56)
             input.placeholderText: qsTr("Enter a name")
             label: qsTr("Name")
             validators: [
@@ -89,9 +89,9 @@ StatusModal {
                 contactsStore: root.contactsStore
                 label: qsTr("Address")
                 input.placeholderText: qsTr("Enter ENS Name or Ethereum Address")
-                labelFont.pixelSize: 15
+                labelFont.pixelSize: Style.current.primaryTextFontSize
                 labelFont.weight: Font.Normal
-                input.implicitHeight: 56
+                input.implicitHeight: Style.dp(56)
                 isSelectorVisible: false
                 addContactEnabled: false
                 onSelectedRecipientChanged: {

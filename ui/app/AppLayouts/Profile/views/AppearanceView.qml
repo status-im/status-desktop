@@ -111,7 +111,7 @@ SettingsContentBase {
             anchors.top: sectionHeadlineFontSize.bottom
             anchors.topMargin: Style.current.padding
             anchors.left: parent.left
-            font.pixelSize: 15
+            font.pixelSize: Style.current.primaryTextFontSize
             //% "Change font size"
             text: qsTrId("change-font-size")
             color: Theme.palette.directColor1
@@ -137,7 +137,7 @@ SettingsContentBase {
             anchors.top: fontSizeSlider.bottom
             anchors.topMargin: Style.current.xlPadding
             anchors.left: parent.left
-            font.pixelSize: 15
+            font.pixelSize: Style.current.primaryTextFontSize
             text: qsTr("Change Zoom (requires restart)")
             color: Theme.palette.directColor1
         }
@@ -202,10 +202,10 @@ SettingsContentBase {
 
             StatusImageRadioButton {
                 padding: Style.current.smallPadding
-                width: 208
-                height: 184
+                width: Style.dp(208)
+                height: Style.dp(184)
                 image.source: Style.png("appearance-light")
-                image.height: 128
+                image.height: Style.dp(128)
                 //% "Light"
                 control.text: qsTrId("Light")
                 control.checked: localAppSettings.theme === Universal.Light
@@ -218,10 +218,10 @@ SettingsContentBase {
 
             StatusImageRadioButton {
                 padding: Style.current.smallPadding
-                width: 208
-                height: 184
+                width: Style.dp(208)
+                height: Style.dp(184)
                 image.source: Style.png("appearance-dark")
-                image.height: 128
+                image.height: Style.dp(128)
                 //% "Dark"
                 control.text: qsTrId("dark")
                 control.checked: localAppSettings.theme === Universal.Dark
@@ -234,10 +234,10 @@ SettingsContentBase {
 
             StatusImageRadioButton {
                 padding: Style.current.smallPadding
-                width: 208
-                height: 184
+                width: Style.dp(208)
+                height: Style.dp(184)
                 image.source: Style.png("appearance-system")
-                image.height: 128
+                image.height: Style.dp(128)
                 //% "System"
                 control.text: qsTrId("system")
                 control.checked: localAppSettings.theme === Universal.System

@@ -127,8 +127,8 @@ SettingsContentBase {
                                    model.color
                         charactersLen: model.type === Constants.settingsSection.exemptions.oneToOneChat? 2 : 1
                         isLetterIdenticon: model.image === ""
-                        height: isLetterIdenticon ? 40 : 20
-                        width: isLetterIdenticon ? 40 : 20
+                        height: Style.dp(isLetterIdenticon ? 40 : 20)
+                        width: Style.dp(isLetterIdenticon ? 40 : 20)
                     }
 
                     components: [
@@ -481,14 +481,14 @@ SettingsContentBase {
                             width: volumeSlider.width
 
                             StatusBaseText {
-                                font.pixelSize: 15
+                                font.pixelSize: Style.current.primaryTextFontSize
                                 text: volumeSlider.from
                                 Layout.preferredWidth: volumeSlider.width/2
                                 color: Theme.palette.baseColor1
                             }
 
                             StatusBaseText {
-                                font.pixelSize: 15
+                                font.pixelSize: Style.current.primaryTextFontSize
                                 text: volumeSlider.to
                                 Layout.alignment: Qt.AlignRight
                                 color: Theme.palette.baseColor1
@@ -523,7 +523,7 @@ SettingsContentBase {
                         Layout.preferredWidth: root.contentWidth - 2 * Style.current.padding
                         Layout.leftMargin: Style.current.padding
                         Layout.rightMargin: Style.current.padding
-                        input.implicitHeight: 44
+                        input.implicitHeight: Style.dp(44)
                         input.placeholderText: qsTr("Search Communities, Group Chats and 1:1 Chats")
                     }
 
@@ -537,7 +537,7 @@ SettingsContentBase {
 
                     ListView {
                         Layout.preferredWidth: root.contentWidth
-                        Layout.preferredHeight: 400
+                        Layout.preferredHeight: Style.dp(400)
                         visible: root.notificationsStore.exemptionsModel.count > 0
                         clip: true
 

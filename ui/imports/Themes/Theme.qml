@@ -80,66 +80,66 @@ QtObject {
     property color pinnedMessageBackgroundHovered
     property color pinnedRectangleBackground
 
-    property int xlPadding: 32
-    property int bigPadding: 24
-    property int padding: 16
-    property int halfPadding: 8
-    property int smallPadding: 10
-    property int radius: 8
+    property int xlPadding: Style.dp(32)
+    property int bigPadding: Style.dp(24)
+    property int padding: Style.dp(16)
+    property int halfPadding: Style.dp(8)
+    property int smallPadding: Style.dp(10)
+    property int radius: Style.dp(8)
 
-    property int leftTabPreferredSize: 304
+    property int leftTabPreferredSize: Style.dp(304)
 
-    property int additionalTextSize: 13
+    property int additionalTextSize: Style.dp(13)
 
-    property int primaryTextFontSize: 15
-    property int secondaryTextFontSize: 14
-    property int tertiaryTextFontSize: 12
-    property int asideTextFontSize: 10
+    property int primaryTextFontSize: Style.dp(15)
+    property int secondaryTextFontSize: Style.dp(14)
+    property int tertiaryTextFontSize: Style.dp(12)
+    property int asideTextFontSize: Style.dp(10)
 
     property var accountColors
 
     function updateFontSize(fontSize) {
         switch (fontSize) {
             case Constants.fontSizeXS:
-                primaryTextFontSize = 13
-                secondaryTextFontSize = 12
-                tertiaryTextFontSize = 10
-                asideTextFontSize = 8
+                primaryTextFontSize = Style.dp(13)
+                secondaryTextFontSize = Style.dp(12)
+                tertiaryTextFontSize = Style.dp(10)
+                asideTextFontSize = Style.dp(8)
                 break;
 
             case Constants.fontSizeS:
-                primaryTextFontSize = 14
-                secondaryTextFontSize = 13
-                tertiaryTextFontSize = 11
-                asideTextFontSize = 9
+                primaryTextFontSize = Style.dp(14)
+                secondaryTextFontSize = Style.dp(13)
+                tertiaryTextFontSize = Style.dp(11)
+                asideTextFontSize = Style.dp(9)
                 break;
 
             case Constants.fontSizeM:
-                primaryTextFontSize = 15
-                secondaryTextFontSize = 14
-                tertiaryTextFontSize = 12
-                asideTextFontSize = 10
+                primaryTextFontSize = Style.dp(15)
+                secondaryTextFontSize = Style.dp(14)
+                tertiaryTextFontSize = Style.dp(12)
+                asideTextFontSize = Style.dp(10)
                 break;
 
             case Constants.fontSizeL:
-                primaryTextFontSize = 16
-                secondaryTextFontSize = 15
-                tertiaryTextFontSize = 13
-                asideTextFontSize = 11
+                primaryTextFontSize = Style.dp(16)
+                secondaryTextFontSize = Style.dp(15)
+                tertiaryTextFontSize = Style.dp(13)
+                asideTextFontSize = Style.dp(11)
                 break;
 
             case Constants.fontSizeXL:
-                primaryTextFontSize = 17
-                secondaryTextFontSize = 16
-                tertiaryTextFontSize = 14
-                asideTextFontSize = 12
+                primaryTextFontSize = Style.dp(17)
+                secondaryTextFontSize = Style.dp(16)
+                tertiaryTextFontSize = Style.dp(14)
+                asideTextFontSize = Style.dp(12)
                 break;
 
             case Constants.fontSizeXXL:
-                primaryTextFontSize = 18
-                secondaryTextFontSize = 17
-                tertiaryTextFontSize = 15
-                asideTextFontSize = 13
+                primaryTextFontSize = Style.dp(18)
+                secondaryTextFontSize = Style.dp(17)
+                tertiaryTextFontSize = Style.dp(15)
+                asideTextFontSize = Style.dp(13)
                 break;
         }
     }

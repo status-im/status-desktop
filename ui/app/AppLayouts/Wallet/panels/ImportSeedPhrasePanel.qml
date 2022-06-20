@@ -52,8 +52,8 @@ GridView {
 
     QtObject {
         id: _internal
-        property int seedPhraseInputHeight: 44
-        property int seedPhraseInputWidth: 220
+        property int seedPhraseInputHeight: Style.dp(44)
+        property int seedPhraseInputWidth: Style.dp(220)
         property var mnemonicInput: []
         property string errorString:  ""
         readonly property var seedPhraseWordsOptions: ([12, 18, 24])
@@ -245,7 +245,7 @@ GridView {
             visible: !!text
             text: _internal.errorString
 
-            font.pixelSize: 12
+            font.pixelSize: Style.current.tertiaryTextFontSize
             color: Theme.palette.dangerColor1
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap

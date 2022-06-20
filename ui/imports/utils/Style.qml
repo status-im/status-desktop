@@ -15,6 +15,16 @@ QtObject {
     property ThemePalette statusQLightTheme: StatusLightTheme {}
     property ThemePalette statusQDarkTheme: StatusDarkTheme {}
 
+    readonly property int screenWidth: 1400
+    readonly property int screenHeight: 840
+    readonly property int minimumScreenWidth: 900
+    readonly property int minimumScreenHeight: 600
+    property real scaleFactor: 1.0
+
+    function dp(value) {
+        return (value * scaleFactor);
+    }
+
     property var changeTheme: function (theme, isCurrentSystemThemeDark) {
 
         switch (theme) {

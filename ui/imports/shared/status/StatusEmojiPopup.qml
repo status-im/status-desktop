@@ -22,15 +22,15 @@ Popup {
     signal emojiSelected(string emoji, bool atCu)
 
     modal: false
-    width: 360
+    width: Style.dp(360)
     background: Rectangle {
         radius: Style.current.radius
         color: Style.current.background
         border.color: Style.current.border
         layer.enabled: true
         layer.effect: DropShadow{
-            verticalOffset: 3
-            radius: 8
+            verticalOffset: Style.dp(3)
+            radius: Style.current.radius
             samples: 15
             fast: true
             cached: true
@@ -233,8 +233,8 @@ Popup {
             Row {
                 id: skinToneEmoji
                 property bool expandSkinColorOptions: false
-                width: expandSkinColorOptions ? (22 * skinColorEmojiRepeater.count) : 22
-                height: 22
+                width: Style.dp(expandSkinColorOptions ? (22 * skinColorEmojiRepeater.count) : 22)
+                height: Style.dp(22)
                 opacity: expandSkinColorOptions ? 1.0 : 0.0
                 Behavior on width { NumberAnimation  { duration: 400 } }
                 Behavior on opacity { NumberAnimation  { duration: 200 } }
@@ -246,8 +246,8 @@ Popup {
                     id: skinColorEmojiRepeater
                     model: ["1f590-1f3fb", "1f590-1f3fc", "1f590-1f3fd", "1f590-1f3fe", "1f590-1f3ff", "1f590"]
                     delegate: StatusEmoji {
-                        width: 22
-                        height: 22
+                        width: Style.dp(22)
+                        height: Style.dp(22)
                         emojiId: modelData
                         MouseArea {
                             cursorShape: Qt.PointingHandCursor
@@ -263,8 +263,8 @@ Popup {
             }
 
             StatusEmoji {
-                width: 22
-                height: 22
+                width: Style.dp(22)
+                height: Style.dp(22)
                 anchors.verticalCenter: searchBox.verticalCenter
                 anchors.right: parent.right
                 anchors.rightMargin: emojiHeader.headerMargin
@@ -292,7 +292,7 @@ Popup {
             Layout.rightMargin: Style.current.smallPadding / 2
             Layout.topMargin: Style.current.smallPadding
             Layout.alignment: Qt.AlignTop | Qt.AlignLeft
-            Layout.preferredHeight: 400 - Style.current.smallPadding - emojiHeader.height
+            Layout.preferredHeight: Style.dp(400) - Style.current.smallPadding - emojiHeader.height
             clip: true
             ScrollBar.vertical.policy: ScrollBar.AlwaysOn
             ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
@@ -341,7 +341,7 @@ Popup {
 
         Row {
             Layout.fillWidth: true
-            height: 40
+            height: Style.dp(40)
             leftPadding: Style.current.smallPadding / 2
             rightPadding: Style.current.smallPadding / 2
             spacing: 0

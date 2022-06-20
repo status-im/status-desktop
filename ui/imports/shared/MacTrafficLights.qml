@@ -25,8 +25,8 @@ MouseArea {
         spacing: 8
 
         Rectangle {
-            width: 12
-            height: 12
+            width: Style.dp(12)
+            height: Style.dp(12)
             radius: width / 2
             antialiasing: true
 
@@ -53,8 +53,8 @@ MouseArea {
         }
 
         Rectangle {
-            width: 12
-            height: 12
+            width: Style.dp(12)
+            height: Style.dp(12)
             radius: width / 2
             antialiasing: true
 
@@ -66,7 +66,7 @@ MouseArea {
 
             Image {
                 anchors.centerIn: parent
-                anchors.verticalCenterOffset: -0.25
+                anchors.verticalCenterOffset: -Style.dp(0.25)
                 visible: statusMacWindowButtons.containsMouse
                 source: Style.png("traffic_lights/" + (miniSensor.pressed ? "minimise_pressed" : "minimise"))
                 scale: 0.27
@@ -81,8 +81,8 @@ MouseArea {
         }
 
         Rectangle {
-            width: 12
-            height: 12
+            width: Style.dp(12)
+            height: Style.dp(12)
             radius: width / 2
             antialiasing: true
 
@@ -90,7 +90,7 @@ MouseArea {
                                                                        : inactive)
             border.color: maxiSensor.pressed ? "#357225" : (Global.applicationWindow.active ? "#53A73E"
                                                                               : inactiveBorder)
-            border.width: Style.current.name === Constants.lightThemeName ? 0.5 : 0
+            border.width: Style.current.name === Constants.lightThemeName ? Style.dp(0.5) : 0
 
             Image {
                 anchors.centerIn: parent

@@ -18,11 +18,11 @@ Rectangle {
     property bool isEnabled: true
     signal clicked(bool checked)
     property bool isHovered: false
-    property int badgeSize: 18
+    property int badgeSize: Style.dp(18)
     property url iconSource
 
     id: root
-    implicitHeight: 52
+    implicitHeight: Style.dp(52)
     color: isHovered ? Style.current.backgroundHover : Style.current.transparent
     radius: Style.current.radius
     border.width: 0
@@ -37,10 +37,10 @@ Rectangle {
         source: root.iconSource
         iconColor: Style.current.primary
         color: Style.current.secondaryBackground
-        width: 40
-        height: 40
-        iconWidth: 24
-        iconHeight: 24
+        width: Style.dp(40)
+        height: Style.dp(40)
+        iconWidth: Style.dp(24)
+        iconHeight: Style.dp(24)
         anchors.left: parent.left
         anchors.leftMargin: Style.current.padding
         anchors.verticalCenter: parent.verticalCenter
@@ -52,7 +52,7 @@ Rectangle {
         anchors.leftMargin: Style.current.padding
         anchors.verticalCenter: parent.verticalCenter
         text: root.text
-        font.pixelSize: 15
+        font.pixelSize: Style.current.primaryTextFontSize
         color: !root.isEnabled ? Style.current.secondaryText : Style.current.textColor
     }
 
@@ -61,7 +61,7 @@ Rectangle {
         visible: !!root.currentValue
         text: root.currentValue
         elide: Text.ElideRight
-        font.pixelSize: 15
+        font.pixelSize: Style.current.primaryTextFontSize
         horizontalAlignment: Text.AlignRight
         color: Style.current.secondaryText
         anchors.left: textItem.right
@@ -93,7 +93,7 @@ Rectangle {
         width: root.badgeSize
         height: root.badgeSize
         Text {
-            font.pixelSize: 12
+            font.pixelSize: Style.current.tertiaryTextFontSize
             color: Style.current.white
             anchors.centerIn: parent
             text: root.badgeText
@@ -107,8 +107,8 @@ Rectangle {
         anchors.rightMargin: Style.current.padding
         anchors.verticalCenter: textItem.verticalCenter
         source: Style.svg("caret")
-        width: 13
-        height: 7
+        width: Style.dp(13)
+        height: Style.dp(7)
         rotation: -90
         ColorOverlay {
             anchors.fill: caret

@@ -36,14 +36,14 @@ Page {
 
     Item {
         id: container
-        width: 425
-        height: 513
+        width: Style.dp(425)
+        height: Style.dp(513)
         anchors.centerIn: parent
 
         Image {
             id: keysImg
-            width: 256
-            height: 256
+            width: Style.dp(256)
+            height: Style.dp(256)
             anchors.horizontalCenter: parent.horizontalCenter
             fillMode: Image.PreserveAspectFit
             source: Style.png("onboarding/welcome")
@@ -58,8 +58,8 @@ Page {
             font.bold: true
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: keysImg.bottom
-            font.letterSpacing: -0.2
-            font.pixelSize: 22
+            font.letterSpacing: -Style.dp(0.2)
+            font.pixelSize: Style.dp(22)
         }
 
         StyledText {
@@ -72,13 +72,13 @@ Page {
             anchors.left: parent.left
             anchors.top: txtTitle1.bottom
             anchors.topMargin: Style.current.padding
-            font.pixelSize: 15
+            font.pixelSize: Style.current.primaryTextFontSize
         }
 
         StatusButton {
             id: btnNewUser
             anchors.top: txtDesc1.bottom
-            anchors.topMargin: 40
+            anchors.topMargin: Style.dp(40)
             anchors.horizontalCenter: parent.horizontalCenter
             text: qsTr("I am new to Status")
             onClicked: {

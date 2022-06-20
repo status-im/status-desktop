@@ -60,8 +60,8 @@ Item {
         }
 
         // dimensions
-        property int popupWidth: 359
-        property int maxAddressWidth: 102
+        property int popupWidth: Style.dp(359)
+        property int maxAddressWidth: Style.dp(102)
     }
 
     Connections {
@@ -77,12 +77,12 @@ Item {
     ColumnLayout {
         id: layout
         width: parent.width
-        spacing: 7
+        spacing: Style.dp(7)
         StatusBaseText {
             id: inputLabel
             width: parent.width
             text: qsTr("Account")
-            font.pixelSize: 15
+            font.pixelSize: Style.current.primaryTextFontSize
             color: selectedDerivedAddress.enabled ? Theme.palette.directColor1 : Theme.palette.baseColor1
         }
         StatusListItem {
@@ -103,8 +103,8 @@ Item {
             statusListItemTitle.anchors.right: undefined
             components: [
                 StatusIcon {
-                    width: 24
-                    height: 24
+                    width: Style.dp(24)
+                    height: Style.dp(24)
                     icon: "chevron-down"
                     color: Theme.palette.baseColor1
                     visible: RootStore.derivedAddressesList.count > 1
@@ -168,13 +168,13 @@ Item {
                                     components: [
                                         StatusBaseText {
                                             text: element.actualIndex
-                                            font.pixelSize: 15
+                                            font.pixelSize: Style.current.primaryTextFontSize
                                             color: Theme.palette.baseColor1
                                         },
                                         Rectangle {
                                             radius: width/2
-                                            height: 5
-                                            width: 5
+                                            height: Style.dp(5)
+                                            width: Style.dp(5)
                                             color: Theme.palette.primaryColor1
                                             visible: element.hasActivity
                                             anchors.verticalCenter: parent.verticalCenter

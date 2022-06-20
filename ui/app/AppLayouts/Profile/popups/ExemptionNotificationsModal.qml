@@ -42,8 +42,8 @@ StatusModal {
                               root.item.color
         charactersLen: root.item.type === Constants.settingsSection.exemptions.oneToOneChat? 2 : 1
         isLetterIdenticon: root.item.image === ""
-        height: isLetterIdenticon ? 40 : 20
-        width: isLetterIdenticon ? 40 : 20
+        height: Style.dp(isLetterIdenticon ? 40 : 20)
+        width: Style.dp(isLetterIdenticon ? 40 : 20)
     }
 
     QtObject {

@@ -19,8 +19,8 @@ Popup {
     signal stickerSelected(string hashId, string packId)
     property int installedPacksCount: stickersModule.numInstalledStickerPacks
     property bool stickerPacksLoaded: false
-    width: 360
-    height: 440
+    width: Style.dp(360)
+    height: Style.dp(440)
     modal: false
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
     background: Rectangle {
@@ -30,7 +30,7 @@ Popup {
         layer.enabled: true
         layer.effect: DropShadow {
             verticalOffset: 3
-            radius: 8
+            radius: Style.current.radius
             samples: 15
             fast: true
             cached: true
@@ -102,12 +102,12 @@ Popup {
         Item {
             id: stickersContainer
             Layout.fillWidth: true
-            Layout.leftMargin: 4
-            Layout.rightMargin: 4
-            Layout.topMargin: 4
+            Layout.leftMargin: Style.dp(4)
+            Layout.rightMargin: Style.dp(4)
+            Layout.topMargin: Style.dp(4)
             Layout.bottomMargin: 0
             Layout.alignment: Qt.AlignTop | Qt.AlignLeft
-            Layout.preferredHeight: 400 - 4
+            Layout.preferredHeight: Style.dp(396)
 
             Item {
                 id: noStickerPacks
@@ -117,29 +117,29 @@ Popup {
                 Image {
                     id: imgNoStickers
                     visible: lblNoStickersYet.visible || lblNoRecentStickers.visible
-                    width: 56
-                    height: 56
+                    width: Style.dp(56)
+                    height: Style.dp(56)
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.top: parent.top
-                    anchors.topMargin: 134
+                    anchors.topMargin: Style.dp(134)
                     source: Style.svg("stickers_sad_icon")
                 }
 
                 Item {
                     id: noStickersContainer
                     width: parent.width
-                    height: 22
+                    height: Style.dp(22)
                     anchors.top: imgNoStickers.bottom
-                    anchors.topMargin: 8
+                    anchors.topMargin: Style.current.halfPadding
 
                     StyledText {
                         id: lblNoStickersYet
                         visible: root.installedPacksCount === 0
                         anchors.fill: parent
-                        font.pixelSize: 15
+                        font.pixelSize: Style.current.primaryTextFontSize
                         //% "You don't have any stickers yet"
                         text: qsTrId("you-don't-have-any-stickers-yet")
-                        lineHeight: 22
+                        lineHeight: Style.dp(22)
                         horizontalAlignment: Text.AlignHCenter
                     }
 
@@ -147,10 +147,10 @@ Popup {
                         id: lblNoRecentStickers
                         visible: stickerPackListView.selectedPackId === -1 && stickersModule.recent.rowCount() === 0 && !lblNoStickersYet.visible
                         anchors.fill: parent
-                        font.pixelSize: 15
+                        font.pixelSize: Style.current.primaryTextFontSize
                         //% "Recently used stickers will appear here"
                         text: qsTrId("recently-used-stickers")
-                        lineHeight: 22
+                        lineHeight: Style.dp(22)
                         horizontalAlignment: Text.AlignHCenter
                     }
                 }
@@ -183,8 +183,8 @@ Popup {
             Component {
                 id: loadingImageComponent
                 StatusLoadingIndicator {
-                    width: 50
-                    height: 50
+                    width: Style.dp(50)
+                    height: Style.dp(50)
                 }
             }
 
@@ -205,8 +205,8 @@ Popup {
 
             StatusQControls.StatusFlatRoundButton {
                 id: btnAddStickerPack
-                implicitHeight: 24
-                implicitWidth: 24
+                implicitHeight: Style.dp(24)
+                implicitWidth: Style.dp(24)
                 anchors.bottom: parent.bottom
                 anchors.bottomMargin: Style.current.padding / 2
                 icon.name: "add"
@@ -234,7 +234,7 @@ Popup {
             ScrollView {
                 id: installedStickersSV
                 anchors.bottom: parent.bottom
-                height: 32
+                height: Style.dp(32)
                 clip: true                
                 ScrollBar.vertical.policy: ScrollBar.AlwaysOff                
 
@@ -249,8 +249,8 @@ Popup {
                         delegate: StatusStickerPackIconWithIndicator {
                             id: packIconWithIndicator
                             visible: installed
-                            width: 24
-                            height: 24
+                            width: Style.dp(24)
+                            height: Style.dp(24)
                             selected: stickerPackListView.selectedPackId === packId
                             source: thumbnail
                             Layout.preferredHeight: height
@@ -267,8 +267,8 @@ Popup {
                         model: new Array(7)
 
                         delegate: Rectangle {
-                            width: 24
-                            height: 24
+                            width: Style.dp(24)
+                            height: Style.dp(24)
                             Layout.preferredHeight: height
                             Layout.preferredWidth: width
                             radius: width / 2

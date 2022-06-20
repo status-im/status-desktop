@@ -24,10 +24,10 @@ Item {
     StatusInput {
         id: inputText
         visible: (wordRandomNumber > -1)
-        implicitWidth: 448
-        input.implicitHeight: 44
+        implicitWidth: Style.dp(448)
+        input.implicitHeight: Style.dp(44)
         anchors.top: parent.top
-        anchors.topMargin: 40
+        anchors.topMargin: Style.dp(40)
         anchors.horizontalCenter: parent.horizontalCenter
         validationMode: StatusInput.ValidationMode.Always
         label: qsTr("Word #" + (wordRandomNumber+1))

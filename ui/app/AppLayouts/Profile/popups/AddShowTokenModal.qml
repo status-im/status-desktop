@@ -14,7 +14,7 @@ StatusModal {
     id: popup
 
     property bool editable: true
-    property int marginBetweenInputs: 35
+    property int marginBetweenInputs: Style.dp(35)
     property string validationError: ""
     property WalletStore walletStore
 
@@ -26,7 +26,7 @@ StatusModal {
     x: Math.round(((parent ? parent.width : 0) - width) / 2)
     y: Math.round(((parent ? parent.height : 0) - height) / 2)
 
-    height: editable ? 450 : 380
+    height: Style.dp(editable ? 450 : 380)
 
     onOpened: {
         addressInput.forceActiveFocus(Qt.MouseFocusReason)
@@ -132,7 +132,7 @@ StatusModal {
             anchors.topMargin: marginBetweenInputs
             anchors.left: parent.left
             anchors.right: undefined
-            width: parent.width / 2 - 20
+            width: parent.width / 2 - Style.dp(20)
         }
 
         Input {
@@ -146,7 +146,7 @@ StatusModal {
             anchors.topMargin: marginBetweenInputs
             anchors.right: parent.right
             anchors.left: undefined
-            width: parent.width / 2 - 20
+            width: parent.width / 2 - Style.dp(20)
         }
     }
 

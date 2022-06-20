@@ -25,7 +25,7 @@ StatusModal {
     id: popup
     header.title: qsTr("Create PIN")
     anchors.centerIn: parent
-    height: 500
+    height: Style.dp(500)
 
     onOpened: {
         submitted = false
@@ -36,10 +36,10 @@ StatusModal {
     contentItem: Item {
         Input {
             id: firstPINField
-            anchors.rightMargin: 56
-            anchors.leftMargin: 56
+            anchors.rightMargin: Style.dp(56)
+            anchors.leftMargin: Style.dp(56)
             anchors.top: parent.top
-            anchors.topMargin: 88
+            anchors.topMargin: Style.dp(88)
             placeholderText:  qsTr("New PIN")
             textField.echoMode: TextInput.Password
             onTextChanged: {
@@ -51,12 +51,10 @@ StatusModal {
         Input {
             id: repeatPINField
             enabled: firstPINFieldValid
-            anchors.rightMargin: 0
-            anchors.leftMargin: 0
             anchors.right: firstPINField.right
             anchors.left: firstPINField.left
             anchors.top: firstPINField.bottom
-            anchors.topMargin: 32
+            anchors.topMargin: Style.current.xlPadding
             placeholderText: qsTr("Confirm PIN")
             textField.echoMode: TextInput.Password
             Keys.onReturnPressed: function(event) {
@@ -78,12 +76,12 @@ StatusModal {
                 return "";
             }
             anchors.top: repeatPINField.bottom
-            anchors.topMargin: 20
+            anchors.topMargin: Style.dp(20)
             anchors.right: parent.right
             anchors.left: parent.left
             horizontalAlignment: Text.AlignHCenter
             color: Theme.palette.dangerColor1
-            font.pixelSize: 11
+            font.pixelSize: Style.dp(11)
         }
 
         StatusBaseText {
@@ -93,9 +91,9 @@ StatusModal {
             anchors.left: parent.left
             horizontalAlignment: Text.AlignHCenter
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 20
+            anchors.bottomMargin: Style.dp(20)
             color: Theme.palette.directColor1
-            font.pixelSize: 12
+            font.pixelSize: Style.current.tertiaryTextFontSize
         }
     }
 

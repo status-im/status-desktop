@@ -13,7 +13,7 @@ import ".."
 Item {
     id: root
     width: parent.width
-    height: 64
+    height: Style.dp(64)
 
     property bool allBtnHighlighted: false
     property bool repliesBtnHighlighted: false
@@ -104,8 +104,8 @@ Item {
         StatusFlatRoundButton {
             id: moreActionsBtn
             icon.name: "more"
-            width: 32
-            height: 32
+            width: Style.dp(32)
+            height: width
             type: StatusFlatRoundButton.Type.Secondary
             onClicked: {
                 let p = moreActionsBtn.mapToItem(otherButtons, moreActionsBtn.x, moreActionsBtn.y)

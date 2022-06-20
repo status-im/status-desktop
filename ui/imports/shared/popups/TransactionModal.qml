@@ -32,7 +32,7 @@ ModalPopup {
           else
               return ""
       }
-      font.pixelSize: 14
+      font.pixelSize: Style.current.secondaryTextFontSize
     }
 
     StyledText {
@@ -40,7 +40,7 @@ ModalPopup {
       //% "When the transaction has 12 confirmations you can consider it settled."
       text: qsTrId("confirmations-helper-text")
       wrapMode: Text.WordWrap
-      font.pixelSize: 14
+      font.pixelSize: Style.current.secondaryTextFontSize
       font.weight: Font.Medium
       color: Style.current.secondaryText
       anchors.top: confirmationsCount.bottom
@@ -79,7 +79,7 @@ ModalPopup {
     StyledText {
       id: valueBlock
       text: transaction !== undefined ? RootStore.hex2Dec(transaction.blockNumber) : ""
-      font.pixelSize: 14
+      font.pixelSize: Style.current.secondaryTextFontSize
       anchors.left: labelBlock.right
       anchors.leftMargin: Style.current.padding
     }
@@ -99,7 +99,7 @@ ModalPopup {
       id: labelHash
       //% "Hash"
       text: qsTrId("hash")
-      font.pixelSize: 14
+      font.pixelSize: Style.current.secondaryTextFontSize
       font.weight: Font.Medium
       color: Style.current.secondaryText
     }
@@ -107,10 +107,10 @@ ModalPopup {
     Address {
       id: valueHash
       text: transaction !== undefined ? transaction.id : ""
-      width: 160
+      width: Style.dp(160)
       maxWidth: parent.width - labelHash.width - Style.current.padding
       color: Style.current.textColor
-      font.pixelSize: 14
+      font.pixelSize: Style.current.secondaryTextFontSize
       anchors.left: labelHash.right
       anchors.leftMargin: Style.current.padding
     }
@@ -128,7 +128,7 @@ ModalPopup {
       id: labelFrom
       //% "From"
       text: qsTrId("from")
-      font.pixelSize: 14
+      font.pixelSize: Style.current.secondaryTextFontSize
       font.weight: Font.Medium
       color: Style.current.secondaryText
     }
@@ -137,8 +137,8 @@ ModalPopup {
       id: valueFrom
       text: transaction !== undefined ? transaction.from: ""
       color: Style.current.textColor
-      width: 160
-      font.pixelSize: 14
+      width: Style.dp(160)
+      font.pixelSize: Style.current.secondaryTextFontSize
       anchors.left: labelFrom.right
       anchors.leftMargin: Style.current.padding
     }
@@ -156,7 +156,7 @@ ModalPopup {
       id: labelTo
       //% "To"
       text: qsTrId("to")
-      font.pixelSize: 14
+      font.pixelSize: Style.current.secondaryTextFontSize
       font.weight: Font.Medium
       color: Style.current.secondaryText
     }
@@ -165,8 +165,8 @@ ModalPopup {
       id: valueTo
       text: transaction !== undefined ? transaction.to: ""
       color: Style.current.textColor
-      width: 160
-      font.pixelSize: 14
+      width: Style.dp(160)
+      font.pixelSize: Style.current.secondaryTextFontSize
       anchors.left: labelTo.right
       anchors.leftMargin: Style.current.padding
     }
@@ -184,7 +184,7 @@ ModalPopup {
       id: labelGasLimit
       //% "Gas limit"
       text: qsTrId("gas-limit")
-      font.pixelSize: 14
+      font.pixelSize: Style.current.secondaryTextFontSize
       font.weight: Font.Medium
       color: Style.current.secondaryText
     }
@@ -192,7 +192,7 @@ ModalPopup {
     StyledText {
       id: valueGasLimit
       text: transaction !== undefined ? RootStore.hex2Dec(transaction.gasLimit): ""
-      font.pixelSize: 14
+      font.pixelSize: Style.current.secondaryTextFontSize
       anchors.left: labelGasLimit.right
       anchors.leftMargin: Style.current.padding
     }
@@ -210,7 +210,7 @@ ModalPopup {
       id: labelGasPrice
       //% "Gas price"
       text: qsTrId("gas-price")
-      font.pixelSize: 14
+      font.pixelSize: Style.current.secondaryTextFontSize
       font.weight: Font.Medium
       color: Style.current.secondaryText
     }
@@ -218,7 +218,7 @@ ModalPopup {
     StyledText {
       id: valueGasPrice
       text: transaction !== undefined ? RootStore.hex2Eth(transaction.gasPrice): ""
-      font.pixelSize: 14
+      font.pixelSize: Style.current.secondaryTextFontSize
       anchors.left: labelGasPrice.right
       anchors.leftMargin: Style.current.padding
     }
@@ -236,7 +236,7 @@ ModalPopup {
       id: labelGasUsed
       //% "Gas used"
       text: qsTrId("gas-used")
-      font.pixelSize: 14
+      font.pixelSize: Style.current.secondaryTextFontSize
       font.weight: Font.Medium
       color: Style.current.secondaryText
     }
@@ -244,7 +244,7 @@ ModalPopup {
     StyledText {
       id: valueGasUsed
       text: transaction !== undefined ? RootStore.hex2Dec(transaction.gasUsed): ""
-      font.pixelSize: 14
+      font.pixelSize: Style.current.secondaryTextFontSize
       anchors.left: labelGasUsed.right
       anchors.leftMargin: Style.current.padding
     }
@@ -262,7 +262,7 @@ ModalPopup {
       id: labelNonce
       //% "Nonce"
       text: qsTrId("nonce")
-      font.pixelSize: 14
+      font.pixelSize: Style.current.secondaryTextFontSize
       font.weight: Font.Medium
       color: Style.current.secondaryText
     }
@@ -270,7 +270,7 @@ ModalPopup {
     StyledText {
       id: valueNonce
       text: transaction !== undefined ? RootStore.hex2Dec(transaction.nonce) : ""
-      font.pixelSize: 14
+      font.pixelSize: Style.current.secondaryTextFontSize
       anchors.left: labelNonce.right
       anchors.leftMargin: Style.current.padding
     }

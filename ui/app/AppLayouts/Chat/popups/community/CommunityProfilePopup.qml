@@ -110,8 +110,8 @@ StatusModal {
         StatusRoundButton {
             id: backButton
             icon.name: "arrow-right"
-            icon.height: 16
-            icon.width: 20
+            icon.height: Style.dp(16)
+            icon.width: Style.dp(20)
             rotation: 180
             visible: contentItem.depth > 1
             height: !visible ? 0 : implicitHeight

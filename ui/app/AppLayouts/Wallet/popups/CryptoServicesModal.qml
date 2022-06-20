@@ -15,7 +15,7 @@ import "../stores"
 StatusModal {
     id: cryptoServicesPopupRoot
 
-    height: 400
+    height: Style.dp(400)
     header.title: qsTr("Buy / Sell crypto")
     anchors.centerIn: parent
 
@@ -45,7 +45,7 @@ StatusModal {
                     anchors.bottom: parent.bottom
                     anchors.topMargin: Style.current.padding
                     anchors.horizontalCenter: parent.horizontalCenter
-                    width: 394
+                    width: Style.dp(394)
                     model: RootStore.cryptoRampServicesModel
                     focus: true
                     spacing: Style.current.padding

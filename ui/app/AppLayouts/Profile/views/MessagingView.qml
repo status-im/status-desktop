@@ -46,7 +46,7 @@ SettingsContentBase {
             id: allowNewContactRequest
 
             Layout.fillWidth: true
-            implicitHeight: 64
+            implicitHeight: Style.dp(64)
 
             //% "Allow new contact requests"
             title: qsTrId("allow-new-contact-requests")
@@ -75,7 +75,7 @@ SettingsContentBase {
             Layout.leftMargin: Style.current.padding
             Layout.rightMargin: Style.current.padding
             text: qsTr("Show My Profile Picture To")
-            font.pixelSize: 15
+            font.pixelSize: Style.current.primaryTextFontSize
             color: Theme.palette.directColor1
         }
 
@@ -125,7 +125,7 @@ SettingsContentBase {
             Layout.leftMargin: Style.current.padding
             Layout.rightMargin: Style.current.padding
             text: qsTr("See Profile Pictures From")
-            font.pixelSize: 15
+            font.pixelSize: Style.current.primaryTextFontSize
             color: Theme.palette.directColor1
         }
 
@@ -175,7 +175,7 @@ SettingsContentBase {
             Layout.leftMargin: Style.current.padding
             Layout.rightMargin: Style.current.padding
             text: qsTr("Open Message Links With")
-            font.pixelSize: 15
+            font.pixelSize: Style.current.primaryTextFontSize
             color: Theme.palette.directColor1
         }
 
@@ -228,7 +228,7 @@ SettingsContentBase {
         StatusListItem {
             Layout.fillWidth: true
             title: qsTr("Display Message Link Previews")
-            implicitHeight: 64
+            implicitHeight: Style.dp(64)
             components: [
                 StatusSwitch {
                     id: showMessageLinksSwitch
@@ -304,7 +304,7 @@ SettingsContentBase {
             // Manually add switch for the image unfurling
             StatusListItem {
                 width: parent.width
-                implicitHeight: 64
+                implicitHeight: Style.dp(64)
                 title: qsTr("Image unfurling")
                 subTitle: qsTr("All images (links that contain an image extension) will be downloaded and displayed")
                 // TODO find a better icon for this
@@ -338,7 +338,7 @@ SettingsContentBase {
                     StatusListItem {
                         property alias whitelistSwitch: siteSwitch
                         width: parent.width
-                        implicitHeight: 64
+                        implicitHeight: Style.dp(64)
                         title: model.title
                         subTitle: model.address
                         image.source:  {

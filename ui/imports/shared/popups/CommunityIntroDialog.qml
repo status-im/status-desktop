@@ -8,6 +8,8 @@ import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 import StatusQ.Popups 0.1
 
+import utils 1.0
+
 StatusModal {
     id: root
 
@@ -18,7 +20,7 @@ StatusModal {
     signal joined
 
     width: undefined // popup is able to determine size from its content
-    padding: 16
+    padding: Style.current.padding
 
     header.title: qsTr("Welcome to %1").arg(name)
 
@@ -36,12 +38,12 @@ StatusModal {
     ColumnLayout {
         anchors.fill: parent
 
-        spacing: 24
+        spacing: Style.current.bigPadding
 
         StatusRoundedImage {
             Layout.alignment: Qt.AlignCenter
-            Layout.preferredHeight: 64
-            Layout.preferredWidth: 64
+            Layout.preferredHeight: Style.dp(64)
+            Layout.preferredWidth: Style.dp(64)
 
             visible: image.status == Image.Loading || image.status == Image.Ready
             image.source: root.imageSrc
@@ -49,11 +51,11 @@ StatusModal {
 
         ScrollView {
             Layout.preferredWidth: contentWidth
-            Layout.minimumWidth: 300
+            Layout.minimumWidth: Style.dp(300)
 
             Layout.fillHeight: true
             Layout.preferredHeight: contentHeight
-            Layout.maximumHeight: 400
+            Layout.maximumHeight: Style.dp(400)
 
             contentWidth: messageContent.width
             contentHeight: messageContent.height
@@ -63,7 +65,7 @@ StatusModal {
             StatusBaseText {
                 id: messageContent
 
-                width: Math.min(implicitWidth, 640)
+                width: Math.min(implicitWidth, Style.dp(640))
 
                 text: root.introMessage !== "" ? root.introMessage : qsTr("Community <b>%1</b> has no intro message...").arg(root.name)
                 clip: true

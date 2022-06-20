@@ -30,18 +30,18 @@ Rectangle {
     signal communityNameClicked()
     signal channelNameClicked()
 
-    height: visible ? 24 : 0
-    width: childrenRect.width + 12
+    height: visible ? Style.dp(24) : 0
+    width: childrenRect.width + Style.dp(12)
     color: Style.current.transparent
     border.color: Style.current.borderSecondary
-    border.width: 1
-    radius: 11
+    border.width: Style.dp(1)
+    radius: Style.dp(11)
 
     Loader {
         active: true
         height: parent.height
         anchors.left: parent.left
-        anchors.leftMargin: 4
+        anchors.leftMargin: Style.dp(4)
         sourceComponent: {
             switch (wrapper.notificationType) {
             case Constants.activityCenterNotificationTypeMention: return wrapper.isCommunity? communityBadgeComponent : channelBadgeComponent

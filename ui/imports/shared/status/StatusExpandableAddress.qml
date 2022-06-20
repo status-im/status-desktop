@@ -21,12 +21,12 @@ Item {
     Button {
         id: control
         width: root.addressWidth
-        leftPadding: 8
-        rightPadding: 8
+        leftPadding: Style.current.halfPadding
+        rightPadding: Style.current.halfPadding
         contentItem: StyledText {
             id: addressText
             text: root.address
-            font.pixelSize: 13
+            font.pixelSize: Style.current.additionalTextSize
             font.family: Style.current.fontHexRegular.name
             color: Style.current.secondaryText
             elide: Text.ElideMiddle

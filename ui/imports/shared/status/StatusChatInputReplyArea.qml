@@ -15,7 +15,7 @@ Rectangle {
                 (root.contentType === Constants.messageContentType.stickerType) ?
                     replyToUsername.height + stickerThumbnail.height + Style.current.padding  : 50
     color: Style.current.replyBackground
-    radius: 16
+    radius: Style.dp(16)
     clip: true
 
     property string userName: ""
@@ -32,7 +32,7 @@ Rectangle {
         anchors.bottom: parent.bottom
         anchors.right: parent.right
         height: parent.height / 2
-        width: 32
+        width: Style.dp(32)
         radius: Style.current.radius
     }
 
@@ -44,14 +44,14 @@ Rectangle {
         anchors.topMargin: Style.current.halfPadding
         anchors.left: parent.left
         anchors.leftMargin: Style.current.smallPadding
-        font.pixelSize: 13
+        font.pixelSize: Style.current.additionalTextSize
         font.weight: Font.Medium
     }
 
     Rectangle {
         anchors.left: replyToUsername.left
         anchors.top: replyToUsername.bottom
-        anchors.topMargin: -3
+        anchors.topMargin: -Style.dp(3)
         anchors.right: parent.right
         anchors.rightMargin: Style.current.padding
         anchors.bottom: parent.bottom
@@ -64,7 +64,7 @@ Rectangle {
             text: Utils.getMessageWithStyle(StatusQUtils.Emoji.parse(Utils.linkifyAndXSS(message)), false)
             anchors.fill: parent
             elide: Text.ElideRight
-            font.pixelSize: 13
+            font.pixelSize: Style.current.additionalTextSize
             font.weight: Font.Normal
             textFormat: Text.RichText
             color: Style.current.textColor
@@ -75,8 +75,8 @@ Rectangle {
         id: imageThumbnail
         anchors.left: replyToUsername.left
         anchors.top: replyToUsername.bottom
-        anchors.topMargin: 2
-        imageWidth: 64
+        anchors.topMargin: Style.dp(2)
+        imageWidth: Style.dp(64)
         imageSource: root.image
         chatHorizontalPadding: 0
         container: root.container
@@ -88,9 +88,9 @@ Rectangle {
         id: stickerThumbnail
         anchors.left: replyToUsername.left
         anchors.top: replyToUsername.bottom
-        anchors.topMargin: 2
-        imageWidth: 64
-        imageHeight: 64
+        anchors.topMargin: Style.dp(2)
+        imageWidth: Style.dp(64)
+        imageHeight: Style.dp(64)
         stickerData: root.stickerData
         color: Style.current.transparent
         contentType: root.contentType
@@ -98,12 +98,12 @@ Rectangle {
 
     RoundButton {
         id: closeBtn
-        implicitWidth: 20
-        implicitHeight: 20
-        radius: 10
+        implicitWidth: Style.dp(20)
+        implicitHeight: Style.dp(20)
+        radius: Style.dp(10)
         padding: 0
         anchors.top: parent.top
-        anchors.topMargin: 4
+        anchors.topMargin: Style.dp(4)
         anchors.right: parent.right
         anchors.rightMargin: 4
         contentItem: SVGImage {

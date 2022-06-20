@@ -18,8 +18,8 @@ Rectangle {
     property bool isHovered: false
     signal radioCheckedChanged(checked: bool)
 
-    width: 312
-    height: 258
+    width: Style.dp(312)
+    height: Style.dp(258)
     color: radioControl.checked ? Style.current.secondaryBackground :
                                   (isHovered ? Style.current.backgroundHover : Style.current.transparent)
 

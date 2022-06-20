@@ -12,7 +12,7 @@ Column {
     spacing: Style.current.padding
     anchors.horizontalCenter: parent.horizontalCenter
     topPadding: visible ? Style.current.bigPadding : 0
-    bottomPadding: visible? 50 : 0
+    bottomPadding: visible? Style.dp(50) : 0
 
     property bool amIChatAdmin: false
     property string chatName: ""
@@ -26,15 +26,15 @@ Column {
         anchors.horizontalCenter: parent.horizontalCenter
         name: root.chatName
         icon {
-            width: 120
-            height: 120
+            width: Style.dp(120)
+            height: Style.dp(120)
             color: root.chatType === Constants.chatType.oneToOne ? Utils.colorForPubkey(root.chatId) : root.chatColor
             emoji: root.chatEmoji
             charactersLen: root.chatType === Constants.chatType.oneToOne ? 2 : 1
         }
         image {
-            width: 120
-            height: 120
+            width: Style.dp(120)
+            height: Style.dp(120)
             source: root.chatIcon
         }
         ringSettings.ringSpecModel: root.chatType === Constants.chatType.oneToOne ? Utils.getColorHashAsJson(root.chatId) : undefined
@@ -45,7 +45,7 @@ Column {
         wrapMode: Text.Wrap
         text: root.chatName
         font.weight: Font.Bold
-        font.pixelSize: 22
+        font.pixelSize: Style.dp(22)
         color: Style.current.textColor
         anchors.horizontalCenter: parent.horizontalCenter
     }
@@ -54,7 +54,7 @@ Column {
         id: descText
         wrapMode: Text.Wrap
         anchors.horizontalCenter: parent.horizontalCenter
-        width: 310
+        width: Style.dp(310)
         text: {
             switch(root.chatType) {
                 case Constants.chatType.privateGroupChat:

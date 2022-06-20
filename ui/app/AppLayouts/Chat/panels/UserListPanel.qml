@@ -31,7 +31,7 @@ Item {
         anchors.topMargin: Style.current.padding
         anchors.left: parent.left
         anchors.leftMargin: Style.current.padding
-        opacity: (root.width > 58) ? 1.0 : 0.0
+        opacity: (root.width > Style.dp(58)) ? 1.0 : 0.0
         visible: (opacity > 0.1)
         font.pixelSize: Style.current.primaryTextFontSize
         font.weight: Font.Medium
@@ -59,9 +59,9 @@ Item {
         section.delegate: (root.width > 58) ? sectionDelegateComponent : null
         delegate: StatusMemberListItem {
             anchors.left: parent.left
-            anchors.leftMargin: 8
+            anchors.leftMargin: Style.current.halfPadding
             anchors.right: parent.right
-            anchors.rightMargin: 8
+            anchors.rightMargin: Style.current.halfPadding
             nickName: model.localNickname
             userName: model.displayName
             pubKey: Utils.getCompressedPk(model.pubKey)
@@ -105,7 +105,7 @@ Item {
         id: sectionDelegateComponent
         Item {
             width: parent.width
-            height: 24
+            height: Style.dp(24)
             StyledText {
                 anchors.fill: parent
                 anchors.leftMargin: Style.current.padding

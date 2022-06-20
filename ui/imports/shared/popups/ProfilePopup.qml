@@ -97,11 +97,11 @@ StatusModal {
 
     headerActionButton: StatusFlatRoundButton {
         type: StatusFlatRoundButton.Type.Secondary
-        width: 32
-        height: 32
+        width: Style.dp(32)
+        height: Style.dp(32)
 
-        icon.width: 20
-        icon.height: 20
+        icon.width: Style.dp(20)
+        icon.height: Style.dp(20)
         icon.name: "qr"
         onClicked: contentItem.qrCodePopup.open()
     }
@@ -258,8 +258,8 @@ StatusModal {
             fillMode: Image.PreserveAspectFit
             source: globalUtils.qrCode(userPublicKey)
             anchors.horizontalCenter: parent.horizontalCenter
-            height: 212
-            width: 212
+                          height: Style.dp(212)
+                          width: Style.dp(212)
             mipmap: true
             smooth: false
         }

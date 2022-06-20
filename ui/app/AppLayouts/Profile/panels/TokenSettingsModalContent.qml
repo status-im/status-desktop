@@ -28,7 +28,7 @@ Item {
             title: symbol
             subTitle: name || ""
             image.source: Style.png("tokens/" + (hasIcon ? symbol : "DEFAULT-TOKEN@3x"))
-            image.height: 36
+            image.height: Style.dp(36)
             components: [StatusCheckBox {
                 id: assetCheck
                 checked: model.isVisible
@@ -72,7 +72,7 @@ Item {
 
     SearchBox {
         id: searchBox
-        input.font.pixelSize: 12
+        input.font.pixelSize: Style.current.tertiaryTextFontSize
         anchors.top: modalBody.top
         anchors.topMargin: Style.current.padding
         anchors.right: parent.right
@@ -110,7 +110,7 @@ Item {
                     text: qsTrId("custom")
                     font.pixelSize: 13
                     color: Style.current.secondaryText
-                    height: 20
+                    height: Style.dp(20)
                 }
 
                 Repeater {
@@ -132,9 +132,9 @@ Item {
                     id: defaultLbl
                     //% "Default"
                     text: qsTrId("default")
-                    font.pixelSize: 13
+                    font.pixelSize: Style.current.additionalTextSize
                     color: Style.current.secondaryText
-                    height: 20
+                    height: Style.dp(20)
                 }
 
                 Repeater {

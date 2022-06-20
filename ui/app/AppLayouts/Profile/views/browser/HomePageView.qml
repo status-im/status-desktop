@@ -16,7 +16,7 @@ ColumnLayout {
 
     StatusBaseText {
         text: qsTrId("homepage")
-        font.pixelSize: 15
+        font.pixelSize: Style.current.primaryTextFontSize
         color: Theme.palette.directColor1
     }
 
@@ -29,7 +29,7 @@ ColumnLayout {
     StatusRadioButton {
         id: defaultRadioButton
         Layout.alignment: Qt.AlignTop
-        Layout.topMargin: 10
+        Layout.topMargin: Style.dp(10)
         checked: root.homepage == ""
         text: qsTr("System default")
     }
@@ -37,7 +37,7 @@ ColumnLayout {
     StatusRadioButton {
         id: customRadioButton
         Layout.alignment: Qt.AlignTop
-        Layout.topMargin: 10
+        Layout.topMargin: Style.dp(10)
         checked: root.homepage !== ""
         text: qsTr("Other")
     }
@@ -45,7 +45,7 @@ ColumnLayout {
     StatusBaseInput {
         id: customUrlInput
         Layout.alignment: Qt.AlignTop
-        Layout.topMargin: 10
+        Layout.topMargin: Style.dp(10)
         visible: customRadioButton.checked
         placeholderText: qsTr("Example: duckduckgo.com")
         text: root.homepage

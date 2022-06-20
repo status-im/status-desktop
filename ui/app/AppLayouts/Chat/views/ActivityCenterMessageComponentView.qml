@@ -55,10 +55,10 @@ Item {
         id: markReadBtnComponent
         StatusFlatRoundButton {
             id: markReadBtn
-            width: 32
-            height: 32
-            icon.width: 24
-            icon.height: 24
+            width: Style.dp(32)
+            height: Style.dp(32)
+            icon.width: Style.dp(24)
+            icon.height: Style.dp(24)
             icon.source: Style.svg("check-activity")
             icon.color: model.read ? icon.disabledColor : "transparent"
             color: "transparent"
@@ -164,9 +164,9 @@ Item {
         Loader {
             active: true
             anchors.right: parent.right
-            anchors.rightMargin: 12
+            anchors.rightMargin: Style.dp(12)
             anchors.bottom: notificationMessage.bottom
-            anchors.bottomMargin: 14
+            anchors.bottomMargin: Style.dp(14)
             z: 52
 
             sourceComponent: {
@@ -181,7 +181,7 @@ Item {
             id: badge
             anchors.top: notificationMessage.bottom
             anchors.left: parent.left
-            anchors.leftMargin: 61 // TODO find a way to align with the text of the message
+            anchors.leftMargin: Style.dp(61) // TODO find a way to align with the text of the message
             visible: model.notificationType !== Constants.activityCenterNotificationTypeOneToOne
             notificationType: model.notificationType
             profileImage: realChatType === Constants.chatType.oneToOne ? Global.getProfileImage(chatId) || ""  : ""

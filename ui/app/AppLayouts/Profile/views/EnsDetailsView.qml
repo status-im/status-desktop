@@ -26,11 +26,11 @@ Item {
         id: sectionTitle
         text: username
         anchors.left: parent.left
-        anchors.leftMargin: 24
+        anchors.leftMargin: Style.current.bigPadding
         anchors.top: parent.top
-        anchors.topMargin: 24
+        anchors.topMargin: Style.current.bigPadding
         font.weight: Font.Bold
-        font.pixelSize: 20
+        font.pixelSize: Style.dp(20)
         color: Theme.palette.directColor1
     }
 
@@ -78,7 +78,7 @@ Item {
         title: qsTr("Wallet address")
         visible: false
         anchors.top: sectionTitle.bottom
-        anchors.topMargin: 24
+        anchors.topMargin: Style.current.bigPadding
         icon.name: "copy"
         tooltip.text: qsTr("Copied to clipboard!")
         iconButton.onClicked: {
@@ -91,7 +91,7 @@ Item {
         title: qsTr("Key")
         visible: false
         anchors.top: walletAddressLbl.bottom
-        anchors.topMargin: 24
+        anchors.topMargin: Style.current.bigPadding
         icon.name: "copy"
         tooltip.text: qsTr("Copied to clipboard!")
         iconButton.onClicked: {
@@ -126,8 +126,8 @@ Item {
                usernameReleased(username);
             }
 
-            width: 475
-            height: 500
+            width: Style.dp(475)
+            height: Style.dp(500)
         }
     }
 
@@ -136,9 +136,9 @@ Item {
         visible: false
         enabled: false
         anchors.top: keyLbl.bottom
-        anchors.topMargin: 24
+        anchors.topMargin: Style.current.bigPadding
         anchors.left: parent.left
-        anchors.leftMargin: 24
+        anchors.leftMargin: Style.current.bigPadding
         text: qsTrId("Release username")
         onClicked: {
             Global.openPopup(transactionDialogComponent)
@@ -148,9 +148,9 @@ Item {
     Text {
         visible: releaseBtn.visible && !releaseBtn.enabled
         anchors.top: releaseBtn.bottom
-        anchors.topMargin: 2
+        anchors.topMargin: Style.dp(2)
         anchors.left: parent.left
-        anchors.leftMargin: 24
+        anchors.leftMargin: Style.current.bigPadding
         text: qsTr("Username locked. You won't be able to release it until %1").arg(Utils.formatShortDateStr(new Date(expiration).toDateString()))
         color: Style.current.darkGrey
     }

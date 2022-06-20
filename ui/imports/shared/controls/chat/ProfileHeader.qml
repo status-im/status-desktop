@@ -29,7 +29,7 @@ Item {
     ColumnLayout {
         id: contentContainer
 
-        spacing: root.compact ? 4 : 12
+        spacing: Style.dp(root.compact ? 4 : 12)
 
         anchors {
             left: parent.left
@@ -47,7 +47,7 @@ Item {
             pubkey: root.pubkey
             image: root.icon
             interactive: false
-            imageWidth: root.compact ? 36 : 80
+            imageWidth: Style.dp(root.compact ? 36 : 80)
             imageHeight: imageWidth
 
             Loader {
@@ -91,7 +91,7 @@ Item {
             Layout.alignment: Qt.AlignHCenter
 
             publicKey: root.pubkey
-            size: root.compact ? 16 : 20
+            size: Style.dp(root.compact ? 16 : 20)
         }
     }
 }

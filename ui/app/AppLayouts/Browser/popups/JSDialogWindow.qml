@@ -14,7 +14,7 @@ import utils 1.0
 ModalPopup {
     id: root
     property QtObject request
-    height: 286
+    height: Style.dp(286)
 
     closePolicy: Popup.NoAutoClose
 
@@ -32,14 +32,14 @@ ModalPopup {
         if(request.type === JavaScriptDialogRequest.DialogTypePrompt){
             prompt.text = request.defaultText;
             prompt.visible = true;
-            svMessage.height = 75;
+            svMessage.height = Style.dp(75);
         }
     }
 
     ScrollView {
         id: svMessage
         width: parent.width
-        height: 100
+        height: Style.dp(100)
         TextArea {
             id: message
             wrapMode: TextEdit.Wrap

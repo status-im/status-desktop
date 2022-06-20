@@ -28,7 +28,7 @@ Item {
     StatusTabBar {
         id: accountSelectionTabBar
         anchors.top: parent.top
-        anchors.topMargin: 20
+        anchors.topMargin: Style.dp(20)
         width: parent.width
         
         StatusTabButton {
@@ -70,7 +70,7 @@ Item {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: parent.top
                 width: parent.width
-                height: Math.min(288, savedAddresses.contentHeight)
+                height: Math.min(Style.dp(288), savedAddresses.contentHeight)
 
                 model: root.store.savedAddressesModel
                 clip: true
@@ -79,7 +79,7 @@ Item {
                 boundsBehavior: Flickable.StopAtBounds
                 delegate: StatusListItem {
                     width: visible ? parent.width:  0
-                    height: visible ? 64 : 0
+                    height: visible ? Style.dp(64) : 0
                     title: name
                     subTitle: address
                     radius: 0
@@ -87,8 +87,8 @@ Item {
                     components: [
                         StatusIcon {
                             icon: "star-icon"
-                            width: 12
-                            height: 12
+                            width: Style.dp(12)
+                            height: Style.dp(12)
                         }
                     ]
                     onClicked: contactSelected(address, RecipientSelector.Type.Address )
@@ -97,11 +97,11 @@ Item {
                     id: search
                     StatusBaseInput {
                         width: parent.width
-                        height: 56
+                        height: Style.dp(56)
                         placeholderText: qsTr("Search for saved address")
                         rightComponent: StatusIcon {
                             icon: "search"
-                            height: 17
+                            height: Style.dp(17)
                             color: Theme.palette.baseColor1
                         }
                     }
@@ -109,7 +109,7 @@ Item {
                 Component {
                     id: nothingInList
                     StatusBaseText {
-                        font.pixelSize: 15
+                        font.pixelSize: Style.current.primaryTextFontSize
                         color: Theme.palette.directColor1
                         //% "No Saved Address"
                         text: qsTr("No Saved Address")
@@ -129,20 +129,20 @@ Item {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: parent.top
                 width: parent.width
-                height: Math.min(288, myAccounts.contentHeight)
+                height: Math.min(Style.dp(288), myAccounts.contentHeight)
 
                 boundsBehavior: Flickable.StopAtBounds
                 clip: true
 
                 delegate: StatusListItem {
                     width: visible ? parent.width:  0
-                    height: visible ? 64 : 0
+                    height: visible ? Style.dp(64) : 0
                     title: model.name
                     subTitle: Utils.toLocaleString(model.currencyBalance.toFixed(2), popup.store.locale, {"model.currency": true}) + " " + popup.store.currentCurrency.toUpperCase()
                     icon.emoji: !!model.emoji ? model.emoji: ""
                     icon.color: model.color
                     icon.name: !model.emoji ? "filled-account": ""
-                    icon.letterSize: 14
+                    icon.letterSize: Style.current.secondaryTextFontSize
                     icon.isLetterIdenticon: !!model.emoji ? true : false
                     icon.background.color: Theme.palette.indirectColor1
                     radius: 0
@@ -157,14 +157,14 @@ Item {
             Layout.maximumWidth: parent.width
             Layout.maximumHeight : recents.height
             color: "transparent"
-            radius: 8
+            radius: Style.dp(8)
 
             ListView {
                 id: recents
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: parent.top
                 width: parent.width
-                height: Math.min(288, recents.contentHeight)
+                height: Math.min(Style.dp(288), recents.contentHeight)
 
                 boundsBehavior: Flickable.StopAtBounds
                 clip: true
@@ -180,7 +180,7 @@ Item {
                 delegate: StatusListItem {
                     property bool isIncoming: to === popup.store.currentAccount.address
                     width: visible ? parent.width:  0
-                    height: visible ? 64 : 0
+                    height: visible ? Style.dp(64) : 0
                     title: isIncoming ? from : to
                     subTitle: Utils.getTimeDifference(new Date(parseInt(timestamp) * 1000), new Date())
                     statusListItemTitle.elide: Text.ElideMiddle
@@ -189,15 +189,15 @@ Item {
                     components: [
                         StatusIcon {
                             id: transferIcon
-                            height: 15
-                            width: 15
+                            height: Style.dp(15)
+                            width: Style.dp(15)
                             color: isIncoming ? Style.current.success : Style.current.danger
                             icon: isIncoming ? "down" : "up"
                             rotation: 45
                         },
                         StatusBaseText {
                             id: contactsLabel
-                            font.pixelSize: 15
+                            font.pixelSize: Style.current.primaryTextFontSize
                             color: Theme.palette.directColor1
                             text: popup.store.hex2Eth(value)
                         }

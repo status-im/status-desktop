@@ -93,13 +93,13 @@ OnboardingBasePage {
     }
 
     Item {
-        implicitWidth: 565
+        implicitWidth: Style.dp(565)
         implicitHeight: parent.height
         anchors.horizontalCenter: parent.horizontalCenter
 
         StatusBaseText {
             id: headlineText
-            font.pixelSize: 22
+            font.pixelSize: Style.dp(22)
             font.weight: Font.Bold
             color: Theme.palette.directColor1
             anchors.top: parent.top
@@ -112,7 +112,7 @@ OnboardingBasePage {
             id: switchTabBar
             anchors.top: headlineText.bottom
             anchors.horizontalCenter: parent.horizontalCenter
-            anchors.topMargin: 24
+            anchors.topMargin: Style.current.bigPadding
             Repeater {
                 model: root.tabs
                  StatusSwitchTabButton {
@@ -138,14 +138,14 @@ OnboardingBasePage {
                ,["1", "5", "9", "13", "17", "21", "2", "6", "10", "14", "18", "22",
                  "3", "7", "11", "15", "19", "23", "4", "8", "12", "16", "20", "24"]
             ]
-            height: 312
+            height: Style.dp(312)
             anchors.left: parent.left
-            anchors.leftMargin: 12
+            anchors.leftMargin: Style.dp(12)
             anchors.top: switchTabBar.bottom
-            anchors.topMargin: 24
+            anchors.topMargin: Style.current.bigPadding
             flow: GridView.FlowTopToBottom
-            cellWidth: (parent.width/(count/6)) - 8
-            cellHeight: 52
+            cellWidth: (parent.width/(count/6)) - Style.dp(8)
+            cellHeight: Style.dp(52)
             interactive: false
             z: 100000
             cacheBuffer: 9999
@@ -192,8 +192,8 @@ OnboardingBasePage {
 
             delegate: StatusSeedPhraseInput {
                 id: seedWordInput
-                width: (grid.cellWidth - 8)
-                height: (grid.cellHeight - 8)
+                width: (grid.cellWidth - Style.current.halfPadding)
+                height: (grid.cellHeight - Style.current.halfPadding)
                 Behavior on width { NumberAnimation { duration: 180 } }
                 textEdit.text: {
                     let pos = parseInt(seedWordInput.leftComponentText)
@@ -279,7 +279,7 @@ OnboardingBasePage {
             id: invalidSeedTxt
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: grid.bottom
-            anchors.topMargin: 24
+            anchors.topMargin: Style.current.bigPadding
             color: Theme.palette.dangerColor1
             visible: false
             text: qsTr("Invalid seed")
@@ -289,7 +289,7 @@ OnboardingBasePage {
             id: submitButton
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: invalidSeedTxt.bottom
-            anchors.topMargin: 24
+            anchors.topMargin: Style.current.bigPadding
             enabled: false
             function checkMnemonicLength() {
                 submitButton.enabled = (root.mnemonicInput.length === root.tabs[switchTabBar.currentIndex])

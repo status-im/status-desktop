@@ -9,6 +9,7 @@ import QtQuick.Window 2.0
 import QtQuick.Controls.Universal 2.12
 
 import DotherSide 0.1
+import StatusQ.Core.Theme 0.1
 
 import utils 1.0
 import shared 1.0
@@ -26,8 +27,8 @@ StatusWindow {
 
     id: applicationWindow
     objectName: "mainWindow"
-    minimumWidth: 900
-    minimumHeight: 600
+    minimumWidth: Style.minimumScreenWidth
+    minimumHeight: Style.minimumScreenHeight
     color: Style.current.background
     title: {
         // Set application settings
@@ -52,10 +53,9 @@ StatusWindow {
         if (geometry === undefined) {
             let screen = Qt.application.screens[0];
 
-            geometry = Qt.rect(0,
-                               0,
-                               Math.min(Screen.desktopAvailableWidth - 125, 1400),
-                               Math.min(Screen.desktopAvailableHeight - 125, 840));
+            geometry = Qt.rect(0, 0,
+                               Math.min(Screen.desktopAvailableWidth - 125, Style.screenWidth),
+                               Math.min(Screen.desktopAvailableHeight - 125, Style.screenHeight));
             geometry.x = (screen.width - geometry.width) / 2;
             geometry.y = (screen.height - geometry.height) / 2;
         }
@@ -84,6 +84,12 @@ StatusWindow {
     onYChanged: Qt.callLater(storeAppState)
     onWidthChanged: Qt.callLater(storeAppState)
     onHeightChanged: Qt.callLater(storeAppState)
+
+    readonly property real scaleRatio: Math.min(applicationWindow.width / Style.screenWidth, applicationWindow.height / Style.screenHeight)
+    onScaleRatioChanged: {
+        Style.scaleFactor = scaleRatio;
+        Theme.scaleFactor = scaleRatio;
+    }
 
     Action {
         shortcut: StandardKey.FullScreen

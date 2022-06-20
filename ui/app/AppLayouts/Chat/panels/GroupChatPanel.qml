@@ -146,7 +146,7 @@ RowLayout {
          Layout.fillWidth: true
          Layout.alignment: Qt.AlignTop | Qt.AlignLeft
          maxHeight: root.maxHeight
-         nameCountLimit: 20
+         nameCountLimit: Style.dp(20)
          showSortedListOnlyWhenText: true
          toLabelText: qsTr("To: ")
          warningText: qsTr("USER LIMIT REACHED")
@@ -163,7 +163,7 @@ RowLayout {
 
      StatusButton {
          id: confirmButton
-         implicitHeight: 44
+         implicitHeight: Style.dp(44)
          Layout.alignment: Qt.AlignTop
          text: "Confirm"
          onClicked: {

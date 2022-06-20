@@ -31,9 +31,9 @@ Item {
                 anchors.left: parent.left
                 anchors.leftMargin: Style.current.padding
                 anchors.verticalCenter: parent.verticalCenter
-                font.pixelSize: 15
+                font.pixelSize: Style.current.primaryTextFontSize
                 verticalAlignment: Text.AlignVCenter
-                height: 24
+                height: Style.dp(24)
                 color: Theme.palette.directColor1
             }
         }

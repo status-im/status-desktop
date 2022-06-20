@@ -19,8 +19,8 @@ Item {
 
     AnimatedImage {
         id: splashLogo
-        width: 127.88
-        height: 127.88
+        width: Style.dp(128)
+        height: Style.dp(128)
         anchors.centerIn: parent
         source: Style.gif("status_splash_" + (Style.current.name))
         playing: visible

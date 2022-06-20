@@ -38,7 +38,7 @@ Item {
                 anchors.horizontalCenter: parent.horizontalCenter
                 color: Style.current.secondaryText
                 text: qsTr("Collectibles will appear here")
-                font.pixelSize: 15
+                font.pixelSize: Style.current.primaryTextFontSize
             }
         }
     }

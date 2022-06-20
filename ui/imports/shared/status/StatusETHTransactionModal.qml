@@ -189,9 +189,9 @@ ModalPopup {
             id: btnBack
             anchors.left: parent.left
             icon.name: "arrow-right"
-            icon.width: 20
-            icon.height: 16
-            icon.rotation: 180
+            icon.width: Style.dp(20)
+            icon.height: Style.dp(16)
+            icon.rotation: Style.dp(180)
             visible: stack.currentGroup.showBackBtn
             enabled: stack.currentGroup.isValid || stack.isLastGroup
             onClicked: {

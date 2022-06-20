@@ -39,7 +39,7 @@ Item {
     StyledText {
         id: fetchDate
         anchors.top: fetchMoreButton.bottom
-        anchors.topMargin: 3
+        anchors.topMargin: Style.dp(3)
         anchors.horizontalCenter: parent.horizontalCenter
         width: parent.width
         wrapMode: Text.WordWrap

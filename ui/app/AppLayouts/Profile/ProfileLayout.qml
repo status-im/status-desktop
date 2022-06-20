@@ -29,11 +29,11 @@ StatusAppTwoPanelLayout {
         id: d
 
         readonly property int topMargin: secureYourSeedPhrase.visible ? secureYourSeedPhrase.height : 0
-        readonly property int bottomMargin: 56
-        readonly property int leftMargin: 48
-        readonly property int rightMargin: 48
+        readonly property int bottomMargin: Style.dp(56)
+        readonly property int leftMargin: Style.dp(48)
+        readonly property int rightMargin: Style.dp(48)
 
-        readonly property int contentWidth: 560
+        readonly property int contentWidth: Style.dp(560)
     }
 
     leftPanel: LeftTabView {
@@ -232,7 +232,7 @@ StatusAppTwoPanelLayout {
         visible: profileContainer.currentIndex === Constants.settingsSubsection.profile &&
                  !profileView.store.profileStore.userDeclinedBackupBanner
         color: Style.current.red
-        btnWidth: 100
+        btnWidth: Style.dp(100)
         text: qsTr("Secure your seed phrase")
         btnText: qsTr("Back up now")
 

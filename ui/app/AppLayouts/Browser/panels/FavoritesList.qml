@@ -12,8 +12,8 @@ GridView {
     property var favMenu
     property var addFavModal
 
-    cellWidth: 100
-    cellHeight: 100
+    cellWidth: Style.dp(100)
+    cellHeight: Style.dp(100)
 
     delegate: BookmarkButton {
         id: bookmarkBtn

@@ -30,7 +30,7 @@ StatusInput {
         id: cursor
         visible: input.edit.cursorVisible
         color: cursorColor
-        width: 2
+        width: Style.dp(2)
 
         SequentialAnimation {
             loops: Animation.Infinite

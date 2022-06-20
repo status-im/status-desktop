@@ -19,7 +19,6 @@ import "../panels"
 import "../popups"
 import "../stores"
 
-
 import utils 1.0
 
 Item {
@@ -73,7 +72,7 @@ Item {
 
     ConfirmationDialog {
         id: obtainingPasswordErrorNotification
-        height: 270
+        height: Style.dp(270)
         confirmButtonLabel: qsTr("Ok")
 
         onConfirmButtonClicked: {
@@ -87,15 +86,15 @@ Item {
 
     Item {
         id: element
-        width: 360
+        width: Style.dp(360)
         height: childrenRect.height
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
 
         Image {
             id: statusIcon
-            width: 140
-            height: 140
+            width: Style.dp(140)
+            height: Style.dp(140)
             fillMode: Image.PreserveAspectFit
             source: Style.png("status-logo")
             anchors.horizontalCenter: parent.horizontalCenter
@@ -105,9 +104,9 @@ Item {
             id: welcomeBackText
             text: qsTr("Welcome back")
             font.weight: Font.Bold
-            font.pixelSize: 17
+            font.pixelSize: Style.dp(17)
             anchors.top: statusIcon.bottom
-            anchors.topMargin: 10
+            anchors.topMargin: Style.dp(10)
             anchors.horizontalCenter: parent.horizontalCenter
             color: Theme.palette.directColor1
         }
@@ -134,8 +133,8 @@ Item {
           id: userInfo
           height: userImage.height
           anchors.top: welcomeBackText.bottom
-          anchors.topMargin: 64
-          width: 318
+          anchors.topMargin: Style.dp(64)
+          width: Style.dp(318)
           anchors.horizontalCenter: parent.horizontalCenter
 
           UserImage {
@@ -150,9 +149,9 @@ Item {
           StatusBaseText {
               id: usernameText
               text: LoginStore.currentAccount.username
-              font.pixelSize: 17
+              font.pixelSize: Style.dp(17)
               anchors.left: userImage.right
-              anchors.leftMargin: 16
+              anchors.leftMargin: Style.current.padding
               anchors.verticalCenter: userImage.verticalCenter
               color: Theme.palette.directColor1
           }
@@ -160,8 +159,8 @@ Item {
           StatusQControls.StatusFlatRoundButton {
               icon.name: "chevron-down"
               type: StatusQControls.StatusFlatRoundButton.Type.Tertiary
-              width: 24
-              height: 24
+              width: Style.dp(24)
+              height: Style.dp(24)
               id: changeAccountBtn
               anchors.verticalCenter: usernameText.verticalCenter
               anchors.right: parent.right
@@ -178,7 +177,7 @@ Item {
               StatusPopupMenu {
                   id: accountsPopup
                   closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
-                  width: 346
+                  width: Style.dp(346)
                   dim: false
                   Repeater {
                       id: accounts
@@ -223,7 +222,7 @@ Item {
             anchors.left: undefined
             anchors.right: undefined
             anchors.horizontalCenter: parent.horizontalCenter
-            width: 318
+            width: Style.dp(318)
             enabled: !loading
             placeholderText: loading ?
                 //% "Connecting..."
@@ -242,12 +241,12 @@ Item {
 
         StatusQControls.StatusRoundButton {
             id: submitBtn
-            width: 40
-            height: 40
+            width: Style.dp(40)
+            height: Style.dp(40)
             type: StatusQControls.StatusRoundButton.Type.Secondary
             icon.name: "arrow-right"
-            icon.width: 18
-            icon.height: 14
+            icon.width: Style.dp(18)
+            icon.height: Style.dp(14)
             opacity: (loading || txtPassword.text.length > 0) ? 1 : 0
             anchors.left: txtPassword.right
             anchors.leftMargin: (loading || txtPassword.text.length > 0) ? Style.current.padding : Style.current.smallPadding
@@ -298,7 +297,7 @@ Item {
             anchors.horizontalCenter: parent.horizontalCenter
             visible: false
             text: incorrectPasswordMsg
-            font.pixelSize: 13
+            font.pixelSize: Style.dp(13)
             color: Style.current.danger
         }
     }

@@ -23,17 +23,17 @@ Column {
     signal copyToClipboard(string link)
 
     Item {
-        height: Math.max(46, communityDescription.height + 16)
+        height: Math.max(Style.dp(46), communityDescription.height + Style.dp(16))
         width: parent.width
         StatusBaseText {
             id: communityDescription
             anchors.verticalCenter: parent.verticalCenter
             anchors.left: parent.left
             anchors.right: parent.right
-            anchors.leftMargin: 16
-            anchors.rightMargin: 16
+            anchors.leftMargin: Style.current.padding
+            anchors.rightMargin: Style.current.padding
             text: root.community.description
-            font.pixelSize: 15
+            font.pixelSize: Style.current.primaryTextFontSize
             color: Theme.palette.directColor1
             wrapMode: Text.Wrap
             textFormat: Text.PlainText
@@ -59,8 +59,8 @@ Column {
     }
 
     StatusModalDivider {
-        topPadding: 8
-        bottomPadding: 8
+        topPadding: Style.current.halfPadding
+        bottomPadding: Style.current.halfPadding
     }
 
     StatusListItem {
@@ -78,8 +78,8 @@ Column {
         //% "Leave community"
         title: qsTrId("leave-community")
         icon.name: "arrow-right"
-        icon.height: 16
-        icon.width: 20
+        icon.height: Style.dp(16)
+        icon.width: Style.dp(20)
         icon.rotation: 180
         type: StatusListItem.Type.Danger
         sensor.onClicked: root.leaveButtonClicked()

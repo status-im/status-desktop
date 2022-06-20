@@ -74,9 +74,9 @@ StatusModal {
         }
     })
 
-    width: 556
+    width: Style.dp(556)
     // To-Do as per design once the account selector become floating the heigth can be as defined in design as 595
-    height: 670
+    height: Style.dp(670)
     showHeader: false
     showFooter: false
     showAdvancedFooter: !!popup.advancedHeader ? popup.advancedHeader.isReady && gasValidator.isValid : false

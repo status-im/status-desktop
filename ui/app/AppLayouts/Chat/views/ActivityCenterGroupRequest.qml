@@ -43,9 +43,9 @@ Item {
             return activityCenter.currentFilter === ActivityCenter.Filter.All
         }
         width: parent.width
-        height: visible ? 60 : 0
+        height: visible ? Style.dp(60) : 0
         anchors.top: dateGroupLbl.bottom
-        anchors.topMargin: dateGroupLbl.visible ? 4 : 0
+        anchors.topMargin: dateGroupLbl.visible ? Style.dp(4) : 0
         color: model.read ? Style.current.transparent : Utils.setColorAlpha(Style.current.blue, 0.1)
 
         StatusSmartIdenticon {
@@ -72,8 +72,8 @@ Item {
 
             SVGImage {
                 id: groupImage
-                width: 16
-                height: 16
+                width: Style.dp(16)
+                height: Style.dp(16)
                 anchors.verticalCenter: chatName.verticalCenter
                 anchors.left: parent.left
                 source: Style.svg("channel-icon-group")
@@ -90,15 +90,15 @@ Item {
                 text: model.name
                 anchors.left: groupImage.right
                 anchors.leftMargin: 4
-                font.pixelSize: 15
+                font.pixelSize: Style.current.primaryTextFontSize
                 font.weight: Font.Medium
             }
 
             ChatTimePanel {
                 anchors.verticalCenter: chatName.verticalCenter
                 anchors.left: chatName.right
-                anchors.leftMargin: 4
-                font.pixelSize: 10
+                anchors.leftMargin: Style.dp(4)
+                font.pixelSize: Style.current.asideTextFontSize
                 visible: true
                 color: Style.current.secondaryText
                 //timestamp: root.timestamp
@@ -139,7 +139,7 @@ Item {
             anchors.right: buttons.left
             anchors.rightMargin: Style.current.halfPadding
             clip: true
-            font.pixelSize: 15
+            font.pixelSize: Style.current.primaryTextFontSize
             font.weight: Font.Medium
             readOnly: true
             selectByMouse: true

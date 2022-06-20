@@ -25,8 +25,8 @@ Item {
             root.validateAsync(name)
         }
     }
-    width: 12
-    height: 12
+    width: Style.dp(12)
+    height: Style.dp(12)
 
     Loader {
         anchors.fill: parent

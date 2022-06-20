@@ -29,7 +29,7 @@ ModalPopup {
                qsTr("Store password") :
                //% "Create a password"
                qsTrId("intro-wizard-title-alt4")
-    height: 500
+    height: Style.dp(500)
 
     onOpened: {
         firstPasswordField.text = "";
@@ -38,8 +38,8 @@ ModalPopup {
 
     Input {
         id: firstPasswordField
-        anchors.rightMargin: 56
-        anchors.leftMargin: 56
+        anchors.rightMargin:Style.dp(56)
+        anchors.leftMargin: Style.dp(56)
         anchors.top: parent.top
         anchors.topMargin: storingPasswordModal? Style.current.xlPadding : 88
         placeholderText: storingPasswordModal?
@@ -58,8 +58,6 @@ ModalPopup {
     Input {
         id: repeatPasswordField
         enabled: firstPasswordFieldValid
-        anchors.rightMargin: 0
-        anchors.leftMargin: 0
         anchors.right: firstPasswordField.right
         anchors.left: firstPasswordField.left
         anchors.top: firstPasswordField.bottom
@@ -86,14 +84,14 @@ ModalPopup {
             return "";
         }
         anchors.top: repeatPasswordField.bottom
-        anchors.topMargin: 20
+        anchors.topMargin: Style.dp(20)
         anchors.right: parent.right
         anchors.rightMargin: Style.current.xlPadding
         anchors.left: parent.left
         anchors.leftMargin: Style.current.xlPadding
         horizontalAlignment: Text.AlignHCenter
         color: Style.current.danger
-        font.pixelSize: 11
+        font.pixelSize: Style.dp(11)
     }
 
     StyledText {
@@ -109,7 +107,7 @@ ModalPopup {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 0
         color: Style.current.secondaryText
-        font.pixelSize: 12
+        font.pixelSize: Style.current.tertiaryTextFontSize
     }
 
     footer: Item {

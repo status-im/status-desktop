@@ -42,13 +42,13 @@ SettingsContentBase {
             Layout.fillWidth: true
             Layout.leftMargin: Style.current.padding
             Layout.rightMargin: Style.current.padding
-            height: 38
+            height: Style.dp(38)
             z: root.z + 2
 
             StatusBaseText {
                 text: qsTr("Set Display Currency")
                 anchors.left: parent.left
-                font.pixelSize: 15
+                font.pixelSize: Style.current.primaryTextFontSize
                 color: Theme.palette.directColor1
             }
             StatusListPicker {
@@ -66,13 +66,13 @@ SettingsContentBase {
                 }
 
                 z: root.z + 2
-                width: 104
+                width: Style.dp(104)
                 height: parent.height
                 anchors.right: parent.right
                 inputList: root.currencyStore.currenciesModel
                 printSymbol: true
                 placeholderSearchText: qsTr("Search Currencies")
-                maxPickerHeight: 350
+                maxPickerHeight: Style.dp(350)
 
                 onItemPickerChanged: {
                     if(selected) {
@@ -88,13 +88,13 @@ SettingsContentBase {
             Layout.fillWidth: true
             Layout.leftMargin: Style.current.padding
             Layout.rightMargin: Style.current.padding
-            height: 38
+            height: Style.dp(38)
             z: root.z + 1
 
             StatusBaseText {
                 text: qsTr("Language")
                 anchors.left: parent.left
-                font.pixelSize: 15
+                font.pixelSize: Style.current.primaryTextFontSize
                 color: Theme.palette.directColor1
             }
             StatusListPicker {
@@ -112,12 +112,12 @@ SettingsContentBase {
                 }
 
                 z: root.z + 1
-                width: 104
+                width: Style.dp(104)
                 height: parent.height
                 anchors.right: parent.right
                 inputList: root.languageStore.languageModel
                 placeholderSearchText: qsTr("Search Languages")
-                maxPickerHeight: 350
+                maxPickerHeight: Style.dp(350)
 
                 onItemPickerChanged: {
                     if(selected && localAppSettings.locale !== key) {
@@ -150,7 +150,7 @@ SettingsContentBase {
             StatusBaseText {
                 text: qsTr("Date Format")
                 anchors.left: parent.left
-                font.pixelSize: 15
+                font.pixelSize: Style.current.primaryTextFontSize
                 color: Theme.palette.directColor1
             }
 
@@ -158,7 +158,7 @@ SettingsContentBase {
                 id: ddmmyyFormat
                 ButtonGroup.group: dateFormatGroup
                 text: qsTr("DD/MM/YY")
-                font.pixelSize: 13
+                font.pixelSize: Style.dp(13)
                 checked: root.languageStore.isDDMMYYDateFormat
                 onCheckedChanged: root.languageStore.setIsDDMMYYDateFormat(checked)
             }
@@ -167,7 +167,7 @@ SettingsContentBase {
                 id: mmddyyFormat
                 ButtonGroup.group: dateFormatGroup
                 text: qsTr("MM/DD/YY")
-                font.pixelSize: 13
+                font.pixelSize: Style.dp(13)
                 checked: !root.languageStore.isDDMMYYDateFormat
             }
 
@@ -184,7 +184,7 @@ SettingsContentBase {
             StatusBaseText {
                 text: qsTr("Time Format")
                 anchors.left: parent.left
-                font.pixelSize: 15
+                font.pixelSize: Style.current.primaryTextFontSize
                 color: Theme.palette.directColor1
             }
 
@@ -192,7 +192,7 @@ SettingsContentBase {
                 id: h24Format
                 ButtonGroup.group: timeFormatGroup
                 text: qsTr("24-Hour Time")
-                font.pixelSize: 13
+                font.pixelSize: Style.dp(13)
                 checked: root.languageStore.is24hTimeFormat
                 onCheckedChanged: root.languageStore.setIs24hTimeFormat(checked)
             }
@@ -201,7 +201,7 @@ SettingsContentBase {
                 id: h12Format
                 ButtonGroup.group: timeFormatGroup
                 text: qsTr("12-Hour Time")
-                font.pixelSize: 13
+                font.pixelSize: Style.dp(13)
                 checked: !root.languageStore.is24hTimeFormat
             }
 

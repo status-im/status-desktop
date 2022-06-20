@@ -19,7 +19,7 @@ import StatusQ.Popups 0.1
 
 Item {
     id: root
-    width: 304
+    width: Style.dp(304)
     height: parent.height
 
     // Important:
@@ -53,7 +53,7 @@ Item {
     StatusNavigationPanelHeadline {
         id: headline
         anchors.top: parent.top
-        anchors.topMargin: 16
+        anchors.topMargin: Style.current.padding
         anchors.horizontalCenter: parent.horizontalCenter
         //% "Chat"
         text: qsTrId("chat")
@@ -61,18 +61,18 @@ Item {
 
     RowLayout {
         id: searchInputWrapper
-        width: 288
+        width: Style.dp(288)
         height: searchInput.height
         anchors.top: headline.bottom
-        anchors.topMargin: 16
+        anchors.topMargin: Style.current.padding
         anchors.horizontalCenter: parent.horizontalCenter
 
         StatusBaseInput {
             id: searchInput
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignVCenter
-            implicitHeight: 36
-            topPadding: 9
+            implicitHeight: Style.dp(36)
+            topPadding: Style.dp(9)
             //% "Search"
             placeholderText: qsTrId("search")
             icon.name: "search"

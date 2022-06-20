@@ -20,8 +20,8 @@ ModalPopup {
     signal cropFinished(aX: int, aY: int, bX: int, bY: int)
 
     id: cropImageModal
-    width: image.width + 50
-    height: image.height + 170
+    width: image.width + Style.dp(50)
+    height: image.height + Style.dp(170)
     //% "Crop your image (optional)"
     title: qsTrId("crop-your-image--optional-")
 

@@ -10,8 +10,8 @@ import "../popups"
 
 Item {
     id: noContactsRect
-    width: 260
-    height: visible ? 120 : 0
+    width: Style.dp(260)
+    height: visible ? Style.dp(120) : 0
 
     //% "You don’t have any contacts yet. Invite your friends to start chatting."
     property string text: qsTrId("you-don-t-have-any-contacts-yet--invite-your-friends-to-start-chatting-")
@@ -27,7 +27,7 @@ Item {
         anchors.left: parent.left
         anchors.right: parent.right
         wrapMode: Text.WordWrap
-        font.pixelSize: 15
+        font.pixelSize: Style.current.primaryTextFontSize
         horizontalAlignment: Text.AlignHCenter
     }
     StatusButton {

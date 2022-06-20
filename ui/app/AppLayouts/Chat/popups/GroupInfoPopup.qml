@@ -52,7 +52,7 @@ StatusModal {
         popup.close();
     }
 
-    height: 504
+    height: Style.dp(504)
     anchors.centerIn: parent
 
     //% "Add members"
@@ -109,14 +109,14 @@ StatusModal {
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignTop
 
-            implicitHeight: 36
+            implicitHeight: Style.dp(36)
             //% "Search"
             placeholderText: qsTrId("search")
-            placeholderFont.pixelSize: 15
+            placeholderFont.pixelSize: Style.current.primaryTextFontSize
 
             icon.name: "search"
-            icon.width: 17
-            icon.height: 17
+            icon.width: Style.dp(17)
+            icon.height: Style.dp(17)
         }
 
         NoFriendsRectangle {
@@ -219,8 +219,8 @@ StatusModal {
                     color: Theme.palette.userCustomizationColors[Utils.colorIdForPubkey(model.pubKey)]
                     charactersLen: 2
                     isLetterIdenticon: model.icon === ""
-                    height: isLetterIdenticon ? 40 : 20
-                    width: isLetterIdenticon ? 40 : 20
+                    height: Style.dp(isLetterIdenticon ? 40 : 20)
+                    width: Style.dp(isLetterIdenticon ? 40 : 20)
                 }
 
                 components: [
@@ -238,16 +238,16 @@ StatusModal {
                             id: contextMenu
                             StatusMenuItem {
                                 icon.name: "admin"
-                                icon.width: 16
-                                icon.height: 16
+                                icon.width: Style.dp(16)
+                                icon.height: Style.dp(16)
                                 //% "Make Admin"
                                 text: qsTrId("make-admin")
                                 onTriggered: popup.chatSectionModule.makeAdmin("", popup.chatDetails.id,  model.pubKey)
                             }
                             StatusMenuItem {
                                 icon.name: "remove-contact"
-                                icon.width: 16
-                                icon.height: 16
+                                icon.width: Style.dp(16)
+                                icon.height: Style.dp(16)
                                 type: StatusMenuItem.Type.Danger
                                 //% "Remove From Group"
                                 text: qsTrId("remove-from-group")
@@ -267,8 +267,8 @@ StatusModal {
         StatusRoundButton {
             visible: popup.addMembers
             icon.name: "arrow-right"
-            icon.width: 20
-            icon.height: 16
+            icon.width: Style.dp(20)
+            icon.height: Style.dp(16)
             icon.rotation: 180
             onClicked: {
                 popup.addMembers = false;

@@ -24,7 +24,7 @@ Item {
         id: inputLabel
         text: infoText.label
         font.weight: Font.Medium
-        font.pixelSize: 13
+        font.pixelSize: Style.current.additionalTextSize
         color: Style.current.secondaryText
     }
 
@@ -35,8 +35,8 @@ Item {
         font.family: fontFamily
         readOnly: true
         anchors.top: inputLabel.bottom
-        anchors.topMargin: 4
-        font.pixelSize: 15
+        anchors.topMargin: Style.dp(4)
+        font.pixelSize: Style.current.primaryTextFontSize
         wrapMode: infoText.wrap ? Text.WordWrap : Text.NoWrap
         anchors.left: parent.left
         anchors.right: infoText.wrap ? parent.right : undefined

@@ -36,24 +36,24 @@ Item {
         ColumnLayout {
             id: simpleLayout
             Layout.fillWidth: true
-            spacing: 24
+            spacing: Style.dp(24)
             Rectangle {
                 id: networksRect
-                radius: 13
+                radius: Style.dp(13)
                 color: Theme.palette.indirectColor1
                 Layout.fillWidth: true
-                Layout.preferredHeight: layout.height + 24
+                Layout.preferredHeight: layout.height + Style.dp(24)
                 ColumnLayout {
                     id: layout
                     anchors.top: parent.top
                     anchors.left: parent.left
-                    anchors.margins: 16
-                    spacing: 20
+                    anchors.margins: Style.current.padding
+                    spacing: Style.dp(20)
                     RowLayout {
-                        spacing: 10
+                        spacing: Style.dp(10)
                         StatusRoundIcon {
                             Layout.alignment: Qt.AlignTop
-                            radius: 8
+                            radius: Style.current.radius
                             icon.name: "flash"
                         }
                         ColumnLayout {
@@ -67,8 +67,8 @@ Item {
                                 wrapMode: Text.WordWrap
                             }
                             StatusBaseText {
-                                Layout.maximumWidth: 410
-                                font.pixelSize: 15
+                                Layout.maximumWidth: Style.dp(410)
+                                font.pixelSize: Style.current.primaryTextFontSize
                                 color: Theme.palette.baseColor1
                                 text: qsTr("Choose a network to use for the transaction")
                                 wrapMode: Text.WordWrap
@@ -77,7 +77,7 @@ Item {
                     }
                     StatusBaseText {
                         visible: suggestedRoutes.length === 0
-                        font.pixelSize: 15
+                        font.pixelSize: Style.current.primaryTextFontSize
                         verticalAlignment: Text.AlignVCenter
                         horizontalAlignment: Text.AlignHCenter
                         color: Theme.palette.dangerColor1
@@ -87,30 +87,30 @@ Item {
 
                     Item {
                         Layout.fillWidth: true
-                        height: 50
+                        height: Style.dp(50)
                         ScrollView {
                             width: parent.width
                             contentWidth: row.width
-                            contentHeight: row.height + 10
+                            contentHeight: row.height + Style.dp(10)
                             ScrollBar.vertical.policy: ScrollBar.AlwaysOff
                             ScrollBar.horizontal.policy: ScrollBar.AlwaysOn
                             clip: true
                             Row {
                                 id: row
-                                spacing: 16
+                                spacing: Style.dp(16)
                                 Repeater {
                                     id: repeater
                                     model: suggestedRoutes
                                     StatusListItem {
                                         id: item
-                                        implicitWidth: 126
+                                        implicitWidth: Style.dp(126)
                                         title: modelData.chainName
                                         subTitle: ""
                                         image.source: Style.png("networks/" + modelData.chainName.toLowerCase())
-                                        image.width: 32
-                                        image.height: 32
-                                        leftPadding: 5
-                                        rightPadding: 5
+                                        image.width: Style.dp(32)
+                                        image.height: Style.dp(32)
+                                        leftPadding: Style.dp(5)
+                                        rightPadding: Style.dp(5)
                                         color: "transparent"
                                         border.color: Style.current.primary
                                         border.width: root.selectedNetwork.chainId === modelData.chainId ? 1 : 0

@@ -18,8 +18,8 @@ Rectangle {
     property int chatType: Constants.chatType.publicChat
 
     color: "#F7F7F7"
-    width: 366
-    height: 75
+    width: Style.dp(366)
+    height: Style.dp(75)
 
     anchors.top: Global.applicationWindow.top
     radius: Style.current.radius
@@ -30,8 +30,8 @@ Rectangle {
         anchors.left: parent.left
         anchors.leftMargin: Style.current.padding
         anchors.verticalCenter: parent.verticalCenter
-        height: 40
-        width: 40
+        height: Style.dp(40)
+        width: Style.dp(40)
     }
 
     Component {
@@ -42,13 +42,13 @@ Rectangle {
             anchors.leftMargin: Style.current.smallPadding
             anchors.verticalCenter: parent.verticalCenter
             image: StatusImageSettings {
-                width: 40
-                height: 40
+                width: Style.dp(40)
+                height: Style.dp(40)
             }
             icon: StatusIconSettings {
-                width: 40
-                height: 40
-                letterSize: 15
+                width: Style.dp(40)
+                height: Style.dp(40)
+                letterSize: Style.current.primaryTextFontSize
                 color: Theme.palette.miscColor5
             }
             name: root.name
@@ -59,15 +59,15 @@ Rectangle {
         id: statusIdenticon
         SVGImage {
             source: Style.svg("status-logo-icon")
-            width: 40
-            height: 40
+            width: Style.dp(40)
+            height: Style.dp(40)
         }
     }
 
     StyledText {
         id: name
         anchors.bottom: messagePreview.top
-        anchors.bottomMargin: 2
+        anchors.bottomMargin: Style.dp(2)
         anchors.left: identicon.right
         anchors.leftMargin: Style.current.smallPadding
         anchors.right: openButton.left
@@ -75,21 +75,21 @@ Rectangle {
         elide: Text.ElideRight
         text: root.name
         font.weight: Font.Medium
-        font.pixelSize: 15
+        font.pixelSize: Style.current.primaryTextFontSize
         color: Style.current.evenDarkerGrey
     }
 
     StyledText {
         id: messagePreview
         anchors.bottom: identicon.bottom
-        anchors.bottomMargin: 2
+        anchors.bottomMargin: Style.dp(2)
         anchors.left: identicon.right
         anchors.leftMargin: Style.current.smallPadding
         anchors.right: openButton.left
         anchors.rightMargin: Style.current.padding
         elide: Text.ElideRight
         clip: true // This is needed because emojis don't ellide correctly
-        font.pixelSize: 14
+        font.pixelSize: Style.current.secondaryTextFontSize
         color: Style.current.evenDarkerGrey
         text: root.message
     }
@@ -98,7 +98,7 @@ Rectangle {
         id: openButton
         anchors.right: parent.right
         height: parent.height
-        width: 85
+        width: Style.dp(85)
         color: "transparent"
 
         Rectangle {
@@ -110,7 +110,7 @@ Rectangle {
 
         StyledText {
             font.weight: Font.Medium
-            font.pixelSize: 14
+            font.pixelSize: Style.current.secondaryTextFontSize
             anchors.verticalCenter: parent.verticalCenter
             anchors.horizontalCenter: parent.horizontalCenter
             //% "Open"

@@ -39,8 +39,8 @@ PopupMenu {
         text: qsTr("View My Profile")
 
         icon.source: Style.svg("profile")
-        icon.width: 16
-        icon.height: 16
+        icon.width: Style.dp(16)
+        icon.height: Style.dp(16)
 
         onTriggered: {
             Global.openProfilePopup(root.store.userProfileInst.pubKey)
@@ -62,8 +62,8 @@ PopupMenu {
         }
         icon.color: Style.current.green
         icon.source: Style.svg("online")
-        icon.width: 16
-        icon.height: 16
+        icon.width: Style.dp(16)
+        icon.height: Style.dp(16)
     }
 
     Action {
@@ -78,7 +78,7 @@ PopupMenu {
 
         icon.color: Style.current.midGrey
         icon.source: Style.svg("offline")
-        icon.width: 16
-        icon.height: 16
+        icon.width: Style.dp(16)
+        icon.height: Style.dp(16)
     }
 }

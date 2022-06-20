@@ -25,8 +25,8 @@ Popup {
         border.width: 0
         layer.enabled: true
         layer.effect: DropShadow {
-            verticalOffset: 3
-            radius: 8
+            verticalOffset: Style.dp(3)
+            radius: Style.current.radius
             samples: 15
             fast: true
             cached: true
@@ -37,9 +37,7 @@ Popup {
     Row {
         id: buttonRow
         anchors.left: parent.left
-        anchors.leftMargin: 0
         anchors.top: parent.top
-        anchors.topMargin: 0
         padding: Style.current.halfPadding
         spacing: Style.current.halfPadding
 

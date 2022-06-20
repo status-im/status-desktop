@@ -32,7 +32,7 @@ ModalPopup {
               :
               //% "Once you select a username, you won’t be able to disable it afterwards. You will only be able choose a different username to display."
               qsTrId("once-you-select-a-username--you-won-t-be-able-to-disable-it-afterwards--you-will-only-be-able-choose-a-different-username-to-display-")
-        font.pixelSize: 15
+        font.pixelSize: Style.current.primaryTextFontSize
         wrapMode: Text.WordWrap
         width: parent.width
     }
@@ -42,14 +42,14 @@ ModalPopup {
         anchors.top: lbl1.bottom
         anchors.topMargin: Style.current.padding
         text: popup.ensUsernamesStore.preferredUsername
-        font.pixelSize: 17
+        font.pixelSize: Style.dp(17)
         font.weight: Font.Bold
     }
 
     ScrollView {
         anchors.fill: parent
         anchors.top: lbl2.bottom
-        anchors.topMargin: 70
+        anchors.topMargin: Style.dp(70)
         Layout.fillWidth: true
         Layout.fillHeight: true
 
@@ -95,8 +95,8 @@ ModalPopup {
 
         Button {
             id: btnSelectPreferred
-            width: 44
-            height: 44
+            width: Style.dp(44)
+            height: Style.dp(44)
             anchors.bottom: parent.bottom
             anchors.right: parent.right
             state: "inactive"
@@ -119,8 +119,8 @@ ModalPopup {
 
             SVGImage {
                 id: btnContinue
-                width: 50
-                height: 50
+                width: Style.dp(50)
+                height: Style.dp(50)
             }
             background: Rectangle {
                 color: "transparent"

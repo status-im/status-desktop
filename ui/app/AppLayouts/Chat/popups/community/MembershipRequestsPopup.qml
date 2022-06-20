@@ -40,16 +40,16 @@ StatusModal {
         }
 
         Item {
-            height: 8
+            height: Style.dp(8)
             width: parent.width
         }
 
         ScrollView {
             width: parent.width
             ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-            topPadding: 8
-            bottomPadding: 8
-            height: 300
+            topPadding: Style.current.halfPadding
+            bottomPadding: Style.current.halfPadding
+            height: Style.dp(300)
             clip: true
 
             ListView {
@@ -72,8 +72,8 @@ StatusModal {
                         StatusRoundIcon {
                             icon.name: "thumbs-up"
                             icon.color: Theme.palette.white
-                            icon.background.width: 28
-                            icon.background.height: 28
+                            icon.background.width: Style.dp(28)
+                            icon.background.height: Style.dp(28)
                             icon.background.color: Theme.palette.successColor1
                             MouseArea {
                                 id: thumbsUpSensor
@@ -86,8 +86,8 @@ StatusModal {
                         StatusRoundIcon {
                             icon.name: "thumbs-down"
                             icon.color: Theme.palette.white
-                            icon.background.width: 28
-                            icon.background.height: 28
+                            icon.background.width: Style.dp(28)
+                            icon.background.height: Style.dp(28)
                             icon.background.color: Theme.palette.dangerColor1
                             MouseArea {
                                 id: thumbsDownSensor
@@ -106,8 +106,8 @@ StatusModal {
     leftButtons: [
         StatusRoundButton {
             icon.name: "arrow-right"
-            icon.width: 20
-            icon.height: 16
+            icon.width: Style.dp(20)
+            icon.height: Style.dp(16)
             rotation: 180
             onClicked: popup.close()
         }

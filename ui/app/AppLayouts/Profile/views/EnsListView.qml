@@ -61,7 +61,7 @@ Item {
                 Text {
 
                     anchors.top: usernameTxt.bottom
-                    anchors.topMargin: 2
+                    anchors.topMargin: Style.dp(2)
                     text: username.substr(username.indexOf("."))
                     color: Theme.palette.baseColor1
                 }
@@ -75,10 +75,10 @@ Item {
                     id: usernameTxt
                     //% "(pending)"
                     text: username  + " " + (isPending ? qsTrId("-pending-") : "")
-                    font.pixelSize: 16
+                    font.pixelSize: Style.dp(16)
                     color: Theme.palette.directColor1
                     anchors.top: parent.top
-                    anchors.topMargin: 5
+                    anchors.topMargin: Style.dp(5)
                 }
             }
         }
@@ -86,7 +86,7 @@ Item {
         Component {
             id: ensDelegate
             Item {
-                height: 45
+                height: Style.dp(45)
                 anchors.left: parent.left
                 anchors.right: parent.right
 
@@ -99,16 +99,16 @@ Item {
 
                 Rectangle {
                     id: circle
-                    width: 35
-                    height: 35
-                    radius: 35
+                    width: Style.dp(35)
+                    height: Style.dp(35)
+                    radius: Style.dp(35)
                     color: Theme.palette.primaryColor1
 
                     StatusBaseText {
                         text: "@"
                         opacity: 0.7
                         font.weight: Font.Bold
-                        font.pixelSize: 16
+                        font.pixelSize: Style.dp(16)
                         color: Theme.palette.indirectColor1
                         anchors.centerIn: parent
                         verticalAlignment: Text.AlignVCenter
@@ -137,11 +137,11 @@ Item {
             //% "ENS usernames"
             text: qsTrId("ens-usernames")
             anchors.left: parent.left
-            anchors.leftMargin: 24
+            anchors.leftMargin: Style.current.bigPadding
             anchors.top: parent.top
-            anchors.topMargin: 24
+            anchors.topMargin: Style.current.bigPadding
             font.weight: Font.Bold
-            font.pixelSize: 20
+            font.pixelSize: Style.dp(20)
             color: Theme.palette.directColor1
         }
 
@@ -154,8 +154,8 @@ Item {
 
             StatusRoundButton {
                 id: addButton
-                width: 40
-                height: 40
+                width: Style.dp(40)
+                height: Style.dp(40)
                 anchors.verticalCenter: parent.verticalCenter
                 icon.name: "add"
                 type: StatusRoundButton.Type.Secondary
@@ -169,7 +169,7 @@ Item {
                 anchors.left: addButton.right
                 anchors.leftMargin: Style.current.padding
                 anchors.verticalCenter: addButton.verticalCenter
-                font.pixelSize: 15
+                font.pixelSize: Style.current.primaryTextFontSize
             }
 
             MouseArea {
@@ -186,18 +186,18 @@ Item {
             text: qsTrId("ens-your-usernames")
             anchors.left: parent.left
             anchors.top: addUsername.bottom
-            anchors.topMargin: 24
+            anchors.topMargin: Style.current.bigPadding
             font.pixelSize: 16
             color: Theme.palette.directColor1
         }
 
         Item {
+            id: ensList
             anchors.top: usernamesLabel.bottom
-            anchors.topMargin: 10
+            anchors.topMargin: Style.dp(10)
             anchors.left: parent.left
             anchors.right: parent.right
-            height: 200
-            id: ensList
+            height: Style.dp(200)
 
             ScrollView {
                 anchors.fill: parent
@@ -211,7 +211,7 @@ Item {
                     id: lvEns
                     anchors.fill: parent
                     model: root.ensUsernamesStore.ensUsernamesModel
-                    spacing: 10
+                    spacing: Style.dp(10)
                     clip: true
                     delegate: ensDelegate
                 }
@@ -232,8 +232,8 @@ Item {
             text: qsTrId("chat-settings")
             anchors.left: parent.left
             anchors.top: ensList.bottom
-            anchors.topMargin: 24
-            font.pixelSize: 16
+            anchors.topMargin: Style.current.bigPadding
+            font.pixelSize: Style.dp(16)
             color: Theme.palette.directColor1
         }
 
@@ -244,14 +244,14 @@ Item {
             id: preferredUsername
             anchors.left: parent.left
             anchors.top: chatSettingsLabel.bottom
-            anchors.topMargin: 24
+            anchors.topMargin: Style.current.bigPadding
 
             StatusBaseText {
                 id: usernameLabel
                 visible: chatSettingsLabel.visible
                 //% "Primary Username"
                 text: qsTrId("primary-username")
-                font.pixelSize: 14
+                font.pixelSize: Style.current.secondaryTextFontSize
                 font.weight: Font.Bold
                 color: Theme.palette.directColor1
             }
@@ -263,7 +263,7 @@ Item {
                 text: root.ensUsernamesStore.preferredUsername || qsTrId("none-selected")
                 anchors.left: usernameLabel.right
                 anchors.leftMargin: Style.current.padding
-                font.pixelSize: 14
+                font.pixelSize: Style.current.secondaryTextFontSize
                 color: Theme.palette.directColor1
             }
 
@@ -285,7 +285,7 @@ Item {
                 anchors.left: parent.left
                 anchors.leftMargin: Style.current.padding
                 anchors.top: parent.top
-                anchors.topMargin: 20
+                anchors.topMargin: Style.dp(20)
 
                 image: root.ensUsernamesStore.icon
 
@@ -294,9 +294,7 @@ Item {
 
             UsernameLabel {
                 id: chatName
-                anchors.leftMargin: 20
-                anchors.top: parent.top
-                anchors.topMargin: 0
+                anchors.leftMargin: Style.dp(20)
                 anchors.left: chatImage.right
 
                 displayName: "@" + (root.ensUsernamesStore.preferredUsername.replace(".stateofus.eth", ""))
@@ -305,15 +303,15 @@ Item {
             }
 
             Rectangle {
-                property int chatVerticalPadding: 7
-                property int chatHorizontalPadding: 12
+                property int chatVerticalPadding: Style.dp(7)
+                property int chatHorizontalPadding: Style.dp(12)
                 id: chatBox
                 color: Style.current.secondaryBackground
-                height: 35
-                width:  80
-                radius: 16
+                height: Style.dp(35)
+                width:  Style.dp(80)
+                radius: Style.dp(16)
                 anchors.left: chatImage.right
-                anchors.leftMargin: 8
+                anchors.leftMargin: Style.current.halfPadding
                 anchors.top: chatImage.top
 
                 ChatTextView {
@@ -334,7 +332,7 @@ Item {
             ChatTimePanel {
                 id: chatTime
                 anchors.top: chatBox.bottom
-                anchors.topMargin: 4
+                anchors.topMargin: Style.dp(4)
                 anchors.bottomMargin: Style.current.padding
                 anchors.right: chatBox.right
                 anchors.rightMargin: Style.current.padding
@@ -348,7 +346,7 @@ Item {
                 anchors.topMargin: Style.current.padding
                 //% "You’re displaying your ENS username in chats"
                 text: qsTrId("you-re-displaying-your-ens-username-in-chats")
-                font.pixelSize: 14
+                font.pixelSize: Style.current.secondaryTextFontSize
                 color: Theme.palette.baseColor1
             }
         }

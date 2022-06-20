@@ -47,12 +47,12 @@ Item {
 
         anchors.centerIn: Overlay.overlay
 
-        width: root.roundedImage ? 480 : 580
+        width: Style.dp(root.roundedImage ? 480 : 580)
 
         StatusImageCropPanel {
             id: imageCropper
 
-            implicitHeight: root.roundedImage ? 350 : 370
+            implicitHeight: Style.dp(root.roundedImage ? 350 : 370)
 
             anchors {
                  fill: parent
@@ -62,7 +62,7 @@ Item {
                  bottomMargin: Style.current.bigPadding
             }
 
-            margins: root.roundedImage ? 10 : 20
+            margins: Style.dp(root.roundedImage ? 10 : 20)
             windowStyle: root.roundedImage ? StatusImageCrop.WindowStyle.Rounded : StatusImageCrop.WindowStyle.Rectangular
             enableCheckers: true
         }

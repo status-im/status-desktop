@@ -49,8 +49,8 @@ StatusModal {
         onPasswordChanged: onChangePasswordResponse(success, errorMsg)
     }
 
-    width: 480
-    height: 546
+    width: Style.dp(480)
+    height: Style.dp(546)
     closePolicy: Popup.NoAutoClose
     header.title: qsTr("Change password")
 

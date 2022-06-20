@@ -27,7 +27,7 @@ SettingsContentBase {
         StatusListItem {
             Layout.fillWidth: true
             title: qsTr("Change password")
-            implicitHeight: 52
+            implicitHeight: Style.dp(52)
             components: [
                 StatusIcon {
                     icon: "chevron-down"
@@ -41,7 +41,7 @@ SettingsContentBase {
         StatusListItem {
             Layout.fillWidth: true
             title: qsTr("Store pass to Keychain")
-            implicitHeight: 52
+            implicitHeight: Style.dp(52)
             visible: Qt.platform.os == "osx" // For now, this is available only on MacOS
             label: {
                 let value = localAccountSettings.storeToKeychainValue

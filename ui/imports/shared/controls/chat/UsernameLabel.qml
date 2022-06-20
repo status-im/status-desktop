@@ -59,6 +59,6 @@ Item {
         color: Style.current.secondaryText
         font.pixelSize: chatName.font.pixelSize
         anchors.left: chatName.right
-        anchors.leftMargin: chatName.visible ? 4 : 0
+        anchors.leftMargin: chatName.visible ? Style.dp(4) : 0
     }
 }

@@ -31,18 +31,18 @@ Item {
 
         anchors.fill: parent
 
-        spacing: 8
+        spacing: Style.dp(8)
 
         StatusBaseText {
             text: qsTr("Community logo")
-            font.pixelSize: 15
+            font.pixelSize: Style.current.primaryTextFontSize
             color: Theme.palette.directColor1
         }
 
         EditCroppedImagePanel {
             id: editor
 
-            Layout.preferredWidth: 128
+            Layout.preferredWidth: Style.dp(128)
             Layout.preferredHeight: Layout.preferredWidth / aspectRatio
             Layout.alignment: Qt.AlignHCenter
 

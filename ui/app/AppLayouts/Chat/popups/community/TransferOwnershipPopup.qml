@@ -30,11 +30,11 @@ StatusModal {
         Column {
             id: content
             anchors.top: parent.top
-            anchors.topMargin: 16
+            anchors.topMargin: Style.current.padding
             anchors.horizontalCenter: parent.horizontalCenter
 
-            width: popup.width - 32
-            spacing: 16
+            width: popup.width - Style.dp(32)
+            spacing: Style.dp(16)
 
             StatusInput {
                 property string elidedPkey: popup.privateKey.substring(0, 15) + "..." + popup.privateKey.substring(popup.privateKey.length - 16)
@@ -69,7 +69,7 @@ StatusModal {
                 text: qsTrId("you-should-keep-it-safe-and-only-share-it-with-people-you-trust-to-take-ownership-of-your-community")
                 wrapMode: Text.WordWrap
                 width: parent.width
-                font.pixelSize: 13
+                font.pixelSize: Style.current.additionalTextSize
                 color: Theme.palette.baseColor1
             }
 
@@ -79,7 +79,7 @@ StatusModal {
                 text: qsTrId("you-can-also-use-this-key-to-import-your-community-on-another-device")
                 wrapMode: Text.WordWrap
                 width: parent.width
-                font.pixelSize: 13
+                font.pixelSize: Style.current.additionalTextSize
                 color: Theme.palette.baseColor1
             }
         }
@@ -88,8 +88,8 @@ StatusModal {
     leftButtons: [
         StatusRoundButton {
             icon.name: "arrow-right"
-            icon.height: 16
-            icon.width: 20
+            icon.height: Style.dp(16)
+            icon.width: Style.dp(20)
             rotation: 180
             onClicked: {
                 popup.close()

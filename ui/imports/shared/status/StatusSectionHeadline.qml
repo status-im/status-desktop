@@ -5,8 +5,8 @@ import utils 1.0
 import shared.panels 1.0
 
 StyledText {
-    font.pixelSize: 15
+    font.pixelSize: Style.current.primaryTextFontSize
     color: Style.current.secondaryText
-    anchors.topMargin: 38
+    anchors.topMargin: Style.dp(38)
 }
 

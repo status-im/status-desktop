@@ -13,13 +13,13 @@ import utils 1.0
 
 Rectangle {
     id: root
-    height: 220
+    height: Style.dp(220)
     anchors.left: parent.left
     anchors.leftMargin: Style.current.padding
     anchors.right: parent.right
     anchors.rightMargin: Style.current.padding
     border.color: Style.current.border
-    radius: 16
+    radius: Style.dp(16)
     color: Style.current.transparent
     property var activeCommunity
     property var store
@@ -40,33 +40,33 @@ Rectangle {
     }
 
     Rectangle {
-        width: 70
-        height: 4
+        width: Style.dp(70)
+        height: Style.dp(4)
         color: Style.current.secondaryMenuBackground
         anchors.top: parent.top
-        anchors.topMargin: -2
+        anchors.topMargin: -height/2
         anchors.horizontalCenter: parent.horizontalCenter
     }
 
     SVGImage {
         anchors.top: parent.top
-        anchors.topMargin: -6
+        anchors.topMargin: -Style.dp(6)
         anchors.horizontalCenter: parent.horizontalCenter
         source: Style.svg("chatEmptyHeader")
-        width: 66
-        height: 50
+        width: Style.dp(66)
+        height: Style.dp(50)
     }
 
     StatusQControls.StatusFlatRoundButton {
         id: closeImg
-        implicitWidth: 32
-        implicitHeight: 32
+        implicitWidth: Style.dp(32)
+        implicitHeight: Style.dp(32)
         anchors.top: parent.top
-        anchors.topMargin: 10
+        anchors.topMargin: Style.dp(10)
         anchors.right: parent.right
-        anchors.rightMargin: 10
-        icon.height: 20
-        icon.width: 20
+        anchors.rightMargin: Style.dp(10)
+        icon.height: Style.dp(20)
+        icon.width: Style.dp(20)
         icon.name: "close-circle"
         type: StatusQControls.StatusFlatRoundButton.Type.Tertiary
         onClicked: {
@@ -84,9 +84,9 @@ Rectangle {
         //% "Welcome to your community!"
         text: qsTrId("welcome-to-your-community-")
         anchors.top: parent.top
-        anchors.topMargin: 60
+        anchors.topMargin: Style.dp(60)
         horizontalAlignment: Text.AlignHCenter
-        font.pixelSize: 15
+        font.pixelSize: Style.current.primaryTextFontSize
         color: Theme.palette.directColor1
         wrapMode: Text.WordWrap
         anchors.right: parent.right

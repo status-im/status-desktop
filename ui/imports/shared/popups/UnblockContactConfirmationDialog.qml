@@ -27,7 +27,7 @@ ModalPopup {
     StyledText {
         //% "Unblocking will allow new messages you received from %1 to reach you."
         text: qsTrId("unblocking-will-allow-new-messages-you-received-from--1-to-reach-you-").arg(contactName)
-        font.pixelSize: 15
+        font.pixelSize: Style.current.primaryTextFontSize
         anchors.left: parent.left
         anchors.right: parent.right
         wrapMode: Text.WordWrap

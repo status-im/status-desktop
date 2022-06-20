@@ -13,7 +13,7 @@ Rectangle {
     property url imageSource
     property bool flipImage: false
     property var onClicked: function () {}
-    property int margin: 8
+    property int margin: Style.dp(8)
 
     width: buttonImage.width + buttonText.width + Style.current.smallPadding * 2
            + (text === "" ? 0 : headerButton.margin)
@@ -46,7 +46,7 @@ Rectangle {
         anchors.left: buttonImage.right
         anchors.leftMargin: headerButton.margin
         anchors.verticalCenter: parent.verticalCenter
-        font.pixelSize: 13
+        font.pixelSize: Style.current.additionalTextSize
         font.family: Style.current.fontMedium.name
         font.weight: Font.Medium
         color: Style.current.blue

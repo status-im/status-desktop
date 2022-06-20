@@ -42,13 +42,13 @@ ModalPopup {
         pending = stickersModule.stickerPacks.rowData(idx, "pending") === "true"
     }
 
-    height: 472
+    height: Style.dp(472)
     header: StatusStickerPackDetails {
         id: stickerGrid
         packThumb: thumbnail
         packName: name
         packAuthor: author
-        packNameFontSize: 17
+        packNameFontSize: Style.dp(17)
         spacing: Style.current.padding / 2
     }
 
@@ -94,7 +94,7 @@ ModalPopup {
     }
 
     footer: StatusStickerButton {
-        height: 44
+        height: Style.dp(44)
         anchors.right: parent.right
         style: StatusStickerButton.StyleType.LargeNoIcon
         packPrice: price

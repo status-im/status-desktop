@@ -11,7 +11,7 @@ import StatusQ.Controls 0.1
 ScrollView {
     id: collectiblesContent
 
-    readonly property int imageSize: 164
+    readonly property int imageSize: Style.dp(164)
     property var collectiblesModal
     property string buttonText: "View in Cryptokitties"
     property var getLink: function () {}
@@ -52,7 +52,7 @@ ScrollView {
                     text: qsTrId("something-went-wrong")
                     anchors.horizontalCenter: parent.horizontalCenter
                     color: Style.current.secondaryText
-                    font.pixelSize: 13
+                    font.pixelSize: Style.current.additionalTextSize
                 }
 
                 StatusButton {
@@ -92,7 +92,7 @@ ScrollView {
                         height: collectiblesContent.imageSize
                         border.width: 1
                         border.color: Style.current.border
-                        radius: 16
+                        radius: Style.dp(16)
                         source: modelData.image
                         fillMode: Image.PreserveAspectCrop
                         anchors.verticalCenter: parent.verticalCenter

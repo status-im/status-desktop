@@ -1,6 +1,8 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 
+import utils 1.0
+
 Action {
     property string wrapper
     property string selectedTextWithFormationChars: ""
@@ -18,7 +20,7 @@ Action {
     }
     // adding this signal due to a known limitation from Qt: Menu closes when Action is triggered
     signal actionTriggered()
-    icon.width: 12
-    icon.height: 16
+    icon.width: Style.dp(12)
+    icon.height: Style.dp(16)
     checked: surroundedBy(wrapper)
 }

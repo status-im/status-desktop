@@ -16,13 +16,14 @@ Rectangle {
     height: width
     color: reactedByUser ? Style.current.secondaryBackground :
                            (isHovered ? Style.current.backgroundHover : Style.current.transparent)
-    border.width: reactedByUser ? 1 : 0
+    border.width: reactedByUser ? Style.dp(1) : 0
     border.color: Style.current.borderTertiary
     radius: Style.current.radius
 
     SVGImage {
         id: reactionImage
-        width: 32
+        width: Style.dp(32)
+        height: Style.dp(32)
         fillMode: Image.PreserveAspectFit
         anchors.centerIn: parent
     }

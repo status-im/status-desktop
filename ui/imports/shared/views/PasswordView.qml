@@ -133,7 +133,7 @@ Column {
 
     spacing: 3 * Style.current.padding / 2
     z: root.zFront
-    width: 416
+    width: Style.dp(416)
 
     // View visual content:
     StatusBaseText {
@@ -141,7 +141,7 @@ Column {
         anchors.horizontalCenter: parent.horizontalCenter
         visible: root.titleVisible
         text: root.title
-        font.pixelSize: 22
+        font.pixelSize: Style.dp(22)
         font.bold: true
         color: Theme.palette.directColor1
     }
@@ -151,7 +151,7 @@ Column {
             id: introTxt
             anchors.horizontalCenter: parent.horizontalCenter
             text: root.introText
-            font.pixelSize: 12
+            font.pixelSize: Style.current.tertiaryTextFontSize
             color: Theme.palette.baseColor1
         }
 
@@ -159,7 +159,7 @@ Column {
             id: recoverTxt
             anchors.horizontalCenter: parent.horizontalCenter
             text: root.recoverText
-            font.pixelSize: 12
+            font.pixelSize: Style.current.tertiaryTextFontSize
             color: Theme.palette.dangerColor1
         }
     }
@@ -186,8 +186,8 @@ Column {
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
             anchors.rightMargin: 16
-            width: 24
-            height: 24
+            width: Style.dp(24)
+            height: Style.dp(24)
             icon.name: currentPswInput.showPassword ? "hide" : "show"
             icon.color: Theme.palette.baseColor1
 
@@ -233,9 +233,9 @@ Column {
                 visible: newPswInput.text !== ""
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: parent.right
-                anchors.rightMargin: 16
-                width: 24
-                height: 24
+                anchors.rightMargin: Style.current.padding
+                width: Style.dp(24)
+                height: Style.dp(24)
                 icon.name: newPswInput.showPassword ? "hide" : "show"
                 icon.color: Theme.palette.baseColor1
 
@@ -262,7 +262,7 @@ Column {
         id: strengthenTxt
         anchors.horizontalCenter: parent.horizontalCenter
         text: root.strengthenText
-        font.pixelSize: 12
+        font.pixelSize: Style.current.tertiaryTextFontSize
         color: Theme.palette.baseColor1
     }
 
@@ -273,28 +273,28 @@ Column {
         StatusBaseText {
             id: lowerCaseTxt
             text: "• " + qsTr("Lower case")
-            font.pixelSize: 12
+            font.pixelSize: Style.current.tertiaryTextFontSize
             color: d.containsLower ? Theme.palette.successColor1 : Theme.palette.baseColor1
         }
 
         StatusBaseText {
             id: upperCaseTxt
             text: "• " + qsTr("Upper case")
-            font.pixelSize: 12
+            font.pixelSize: Style.current.tertiaryTextFontSize
             color: d.containsUpper ? Theme.palette.successColor1 : Theme.palette.baseColor1
         }
 
         StatusBaseText {
             id: numbersTxt
             text: "• " + qsTr("Numbers")
-            font.pixelSize: 12
+            font.pixelSize: Style.current.tertiaryTextFontSize
             color: d.containsNumbers ? Theme.palette.successColor1 : Theme.palette.baseColor1
         }
 
         StatusBaseText {
             id: symbolsTxt
             text: "• " + qsTr("Symbols")
-            font.pixelSize: 12
+            font.pixelSize: Style.current.tertiaryTextFontSize
             color: d.containsSymbols ? Theme.palette.successColor1 : Theme.palette.baseColor1
         }
     }
@@ -337,9 +337,9 @@ Column {
             visible: confirmPswInput.text !== ""
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
-            anchors.rightMargin: 16
-            width: 24
-            height: 24
+            anchors.rightMargin: Style.current.padding
+            width: Style.dp(24)
+            height: Style.dp(24)
             icon.name: confirmPswInput.showPassword ? "hide" : "show"
             icon.color: Theme.palette.baseColor1
 
@@ -350,7 +350,7 @@ Column {
     StatusBaseText {
         id: errorTxt
         anchors.horizontalCenter: parent.horizontalCenter
-        font.pixelSize: 12
+        font.pixelSize: Style.current.tertiaryTextFontSize
         color: Theme.palette.dangerColor1
         onTextChanged: {
             if(text === "") filler.visible = true

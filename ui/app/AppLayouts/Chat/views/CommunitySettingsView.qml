@@ -44,12 +44,12 @@ StatusAppTwoPanelLayout {
     leftPanel: ColumnLayout {
         anchors {
             fill: parent
-            margins: 8
-            topMargin: 16
-            bottomMargin: 16
+            margins: Style.current.halfPadding
+            topMargin: Style.current.padding
+            bottomMargin: Style.current.padding
         }
 
-        spacing: 16
+        spacing: Style.dp(16)
 
         StatusNavigationPanelHeadline {
             Layout.alignment: Qt.AlignHCenter
@@ -81,7 +81,7 @@ StatusAppTwoPanelLayout {
             Layout.alignment: Qt.AlignHCenter
             text: qsTr("Open legacy popup (to be removed)")
             color: Theme.palette.baseColor1
-            font.pixelSize: 10
+            font.pixelSize: Style.current.asideTextFontSize
             font.underline: true
 
             MouseArea {
@@ -95,7 +95,7 @@ StatusAppTwoPanelLayout {
             Layout.alignment: Qt.AlignHCenter
             text: "<- " + qsTr("Back to community")
             color: Theme.palette.baseColor1
-            font.pixelSize: 15
+            font.pixelSize: Style.current.primaryTextFontSize
             font.underline: true
 
             MouseArea {
@@ -109,7 +109,7 @@ StatusAppTwoPanelLayout {
 
     rightPanel: Loader {
         anchors.fill: parent
-        anchors.margins: 16
+        anchors.margins: Style.current.padding
 
         active: root.community
 

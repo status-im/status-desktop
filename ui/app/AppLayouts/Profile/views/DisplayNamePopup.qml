@@ -16,8 +16,8 @@ StatusModal {
     id: root
     property var profileStore
 
-    width: 420
-    height: 250
+    width: Style.dp(420)
+    height: Style.dp(250)
     closePolicy: Popup.NoAutoClose
     header.title: qsTr("Edit")
     contentItem: Item {

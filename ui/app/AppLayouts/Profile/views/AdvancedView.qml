@@ -75,7 +75,7 @@ SettingsContentBase {
                 font.pixelSize: 15
                 font.underline: mouseArea.containsMouse
                 color: Style.current.blue
-                topPadding: 23
+                topPadding: Style.dp(23)
 
                 MouseArea {
                     id: mouseArea
@@ -227,7 +227,7 @@ SettingsContentBase {
                 anchors.leftMargin: Style.current.padding
                 anchors.rightMargin: Style.current.padding
                 visible: !root.advancedStore.isWakuV2
-                spacing: 11
+                spacing: Style.dp(11)
 
                 Component {
                     id: bloomConfirmationDialogComponent
@@ -319,7 +319,7 @@ SettingsContentBase {
                 anchors.right: parent.right
                 anchors.leftMargin: Style.current.padding
                 anchors.rightMargin: Style.current.padding
-                spacing: 11
+                spacing: Style.dp(11)
                 visible: root.advancedStore.isWakuV2
                 Component {
                     id: wakuV2ModeConfirmationDialogComponent

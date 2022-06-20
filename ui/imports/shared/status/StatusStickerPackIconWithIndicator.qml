@@ -11,8 +11,8 @@ Item {
     property bool useIconInsteadOfImage: false
     property url source: Style.svg("history")
     signal clicked
-    height: 24
-    width: 24
+    height: Style.dp(24)
+    width: Style.dp(24)
 
     RoundedImage {
         visible: !useIconInsteadOfImage
@@ -29,7 +29,7 @@ Item {
         visible: useIconInsteadOfImage
         width: parent.width
         height: parent.height
-        iconWidth: 6
+        iconWidth: Style.dp(6)
         color: Style.current.darkGrey
         source: root.source
         onClicked: {
@@ -40,10 +40,10 @@ Item {
         id: packIndicator
         visible: root.selected
         border.color: Style.current.blue
-        border.width: 1
-        height: 2
-        width: 16
-        x: 4
-        y: root.y + root.height + 6
+        border.width: Style.dp(1)
+        height: Style.dp(2)
+        width: Style.dp(16)
+        x: Style.dp(4)
+        y: root.y + root.height + Style.dp(6)
     }
 }

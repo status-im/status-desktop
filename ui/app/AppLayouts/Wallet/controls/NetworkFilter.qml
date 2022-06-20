@@ -19,17 +19,17 @@ Item {
 
     StatusListItem {
         id: selectRectangle
-        implicitWidth: 210
-        implicitHeight: 40
-        border.width: 1
+        implicitWidth: Style.dp(210)
+        implicitHeight: Style.dp(40)
+        border.width: Style.dp(1)
         border.color: Theme.palette.baseColor2
         color: Theme.palette.statusListItem.backgroundColor
         //% "All networks"
         title: qsTr("All networks")
         components:[
             StatusIcon {
-                width: 20
-                height: 20
+                width: Style.dp(20)
+                height: Style.dp(20)
                 icon: "chevron-down"
                 color: Theme.palette.baseColor1
             }
@@ -46,7 +46,7 @@ Item {
     Grid {
         id: enabledNetworks
         columns: 4
-        spacing: 2
+        spacing: Style.dp(2)
         visible: (chainRepeater.count > 0)
 
         anchors.top: selectRectangle.bottom

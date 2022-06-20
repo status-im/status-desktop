@@ -21,7 +21,7 @@ Item {
 
     ScrollView {
         contentWidth: availableWidth
-        contentHeight: profileMenu.height + 24
+        contentHeight: profileMenu.height + Style.dp(24)
         anchors.right: parent.right
         anchors.rightMargin: Style.current.smallPadding
         anchors.left: parent.left

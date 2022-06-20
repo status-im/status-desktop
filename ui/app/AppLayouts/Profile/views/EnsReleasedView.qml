@@ -21,7 +21,7 @@ Item {
         anchors.top: parent.top
         anchors.topMargin: Style.current.bigPadding
         font.weight: Font.Bold
-        font.pixelSize: 20
+        font.pixelSize: Style.dp(20)
         color: Theme.palette.directColor1
     }
 
@@ -32,16 +32,16 @@ Item {
         anchors.top: sectionTitle.bottom
         anchors.topMargin: Style.current.bigPadding
         anchors.horizontalCenter: parent.horizontalCenter
-        width: 60
-        height: 60
-        radius: 120
+        width: Style.dp(60)
+        height: Style.dp(60)
+        radius: Style.dp(120)
         color: Theme.palette.primaryColor1
 
         StatusBaseText {
             text: "✓"
             opacity: 0.7
             font.weight: Font.Bold
-            font.pixelSize: 18
+            font.pixelSize: Style.dp(18)
             color: Theme.palette.indirectColor1
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
@@ -54,7 +54,7 @@ Item {
         anchors.top: circle.bottom
         anchors.topMargin: Style.current.bigPadding
         font.weight: Font.Bold
-        font.pixelSize: 24
+        font.pixelSize: Style.dp(24)
         anchors.left: parent.left
         anchors.right: parent.right
         horizontalAlignment: Text.AlignHCenter
@@ -66,8 +66,8 @@ Item {
         id: subtitle
         text: qsTr("The username %1 will be removed and your deposit will be returned once the transaction is mined").arg(ensUsername)
         anchors.top: title.bottom
-        anchors.topMargin: 24
-        font.pixelSize: 14
+        anchors.topMargin: Style.current.bigPadding
+        font.pixelSize: Style.current.secondaryTextFontSize
         anchors.left: parent.left
         anchors.right: parent.right
         horizontalAlignment: Text.AlignHCenter
@@ -80,8 +80,8 @@ Item {
         //% "You can follow the progress in the Transaction History section of your wallet."
         text: qsTrId("ens-username-you-can-follow-progress")
         anchors.top: subtitle.bottom
-        anchors.topMargin: 24
-        font.pixelSize: 12
+        anchors.topMargin: Style.current.bigPadding
+        font.pixelSize: Style.current.tertiaryTextFontSize
         anchors.left: parent.left
         anchors.right: parent.right
         horizontalAlignment: Text.AlignHCenter

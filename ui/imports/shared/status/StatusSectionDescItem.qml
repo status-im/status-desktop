@@ -22,7 +22,7 @@ Item {
     StyledText {
         id: name
         text: root.name
-        font.pixelSize: 15
+        font.pixelSize: Style.current.primaryTextFontSize
     }
 
     StyledText {
@@ -30,7 +30,7 @@ Item {
         visible: !!root.description
         text: root.description
         elide: Text.ElideRight
-        font.pixelSize: 15
+        font.pixelSize: Style.current.primaryTextFontSize
         horizontalAlignment: Text.AlignRight
         color: Style.current.secondaryText
         anchors.right: parent.right

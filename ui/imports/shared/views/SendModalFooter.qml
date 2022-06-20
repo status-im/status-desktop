@@ -25,8 +25,8 @@ Rectangle {
     }
 
     width: parent.width
-    height: 82
-    radius: 8
+    height: Style.dp(82)
+    radius: Style.current.radius
     color: Theme.palette.statusModal.backgroundColor
 
     Rectangle {
@@ -45,12 +45,12 @@ Rectangle {
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.leftMargin: 32
-        anchors.rightMargin: 32
+        anchors.leftMargin: Style.dp(32)
+        anchors.rightMargin: Style.dp(32)
 
         ColumnLayout {
             StatusBaseText {
-                font.pixelSize: 15
+                font.pixelSize: Style.current.primaryTextFontSize
                 color: Theme.palette.directColor5
                 //% "Estimated Time:"
                 text: qsTr("Estimated Time:")
@@ -59,7 +59,7 @@ Rectangle {
             // To-do not implemented yet
             StatusBaseText {
                 id: estimatedTime
-                font.pixelSize: 15
+                font.pixelSize: Style.current.primaryTextFontSize
                 color: Theme.palette.directColor1
                 wrapMode: Text.WordWrap
             }
@@ -68,14 +68,14 @@ Rectangle {
         // To fill gap in between
         Item {
             Layout.fillWidth: true
-            implicitHeight: 1
+            implicitHeight: Style.dp(1)
         }
 
         RowLayout {
-            spacing: 16
+            spacing: Style.dp(16)
             ColumnLayout {
                 StatusBaseText {
-                    font.pixelSize: 15
+                    font.pixelSize: Style.current.primaryTextFontSize
                     color: Theme.palette.directColor5
                     //% "Max Fees:"
                     text: qsTr("Max Fees:")

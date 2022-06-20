@@ -16,11 +16,11 @@ ColumnLayout {
 
     signal pick()
 
-    spacing: 8
+    spacing: Style.dp(8)
 
     StatusBaseText {
         text: qsTr("Community colour")
-        font.pixelSize: 15
+        font.pixelSize: Style.current.primaryTextFontSize
         color: Theme.palette.directColor1
     }
 

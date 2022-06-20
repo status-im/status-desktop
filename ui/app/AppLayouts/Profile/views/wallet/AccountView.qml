@@ -34,16 +34,16 @@ Item {
                 id: accountImage
                 anchors.verticalCenter: parent.verticalCenter
                 icon: StatusIconSettings {
-                    width: isLetterIdenticon ? 40 : 20
-                    height: isLetterIdenticon ? 40 : 20
+                    width: Style.dp(isLetterIdenticon ? 40 : 20)
+                    height: Style.dp(isLetterIdenticon ? 40 : 20)
                     color: walletStore.currentAccount.color
                     emoji: walletStore.currentAccount.emoji
                     name: !walletStore.currentAccount.emoji ? "filled-account": ""
-                    letterSize: 14
+                    letterSize: Style.current.secondaryTextFontSize
                     isLetterIdenticon: !!walletStore.currentAccount.emoji
                     background: StatusIconBackgroundSettings {
-                        width: 40
-                        height: 40
+                        width: Style.dp(40)
+                        height: Style.dp(40)
                         color: Theme.palette.primaryColor3
                     }
                 }
@@ -56,12 +56,12 @@ Item {
                         id: accountName
                         text: walletStore.currentAccount.name
                         font.weight: Font.Bold
-                        font.pixelSize: 28
+                        font.pixelSize: Style.dp(28)
                         color: Theme.palette.directColor1
                     }
                     StatusFlatRoundButton {
-                        width: 28
-                        height: 28
+                        width: Style.dp(28)
+                        height: Style.dp(28)
                         anchors.verticalCenter: accountName.verticalCenter
                         type: StatusFlatRoundButton.Type.Tertiary
                         color: "transparent"
@@ -71,7 +71,7 @@ Item {
                 }
                 StatusAddress {
                     text: walletStore.currentAccount.address
-                    font.pixelSize: 15
+                    font.pixelSize: Style.current.primaryTextFontSize
                 }
             }
         }
@@ -82,12 +82,12 @@ Item {
         }
 
         Item {
-            height: 50
+            height: Style.dp(50)
             width: parent.width
             
             Rectangle {
                 id: typeRectangle
-                border.width: 1
+                border.width: Style.dp(1)
                 border.color: Theme.palette.directColor7
                 radius: Style.current.radius
                 width: typeText.width + Style.current.xlPadding
@@ -100,7 +100,7 @@ Item {
                     anchors.left: parent.left
                     anchors.leftMargin: Style.current.smallPadding
                     text: qsTr("Type")
-                    font.pixelSize: 13
+                    font.pixelSize: Style.current.additionalTextSize
                     color: Theme.palette.directColor5
                 }
                 StatusBaseText {
@@ -118,7 +118,7 @@ Item {
                             return qsTr("Imported Account")
                         }
                     }
-                    font.pixelSize: 15
+                    font.pixelSize: Style.current.primaryTextFontSize
                     color: Theme.palette.directColor1
                 }
             }
@@ -167,7 +167,7 @@ Item {
             border.color: Theme.palette.directColor7
             radius: Style.current.radius
             width: Math.max(path.width, labelPath.width) + Style.current.xlPadding
-            height: 50
+            height: Style.dp(50)
             color: Style.current.transparent
 
             StatusBaseText {
@@ -178,7 +178,7 @@ Item {
                 anchors.leftMargin: Style.current.smallPadding
                 text: qsTr("Derivation Path")
                 font.weight: Font.Medium
-                font.pixelSize: 13
+                font.pixelSize: Style.current.additionalTextSize
                 color: Theme.palette.directColor5
             }
             StatusBaseText {
@@ -187,7 +187,7 @@ Item {
                 anchors.left: parent.left
                 anchors.leftMargin: Style.current.smallPadding
                 text: walletStore.currentAccount.path
-                font.pixelSize: 15
+                font.pixelSize: Style.current.primaryTextFontSize
                 color: Theme.palette.directColor1
             }
         }

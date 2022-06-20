@@ -34,19 +34,19 @@ SettingsContentBase {
             Layout.fillWidth: true
             Image {
                 id: statusIcon
-                width: 80
-                height: 80
+                width: Style.dp(80)
+                height: Style.dp(80)
                 fillMode: Image.PreserveAspectFit
                 source: Style.png("status-logo")
                 anchors.horizontalCenter: parent.horizontalCenter
             }
 
-            Item { width: 1; height: 8}
+            Item { width: Style.dp(1); height: Style.dp(8)}
 
             StatusBaseText {
                 anchors.horizontalCenter: parent.horizontalCenter
                 color: Theme.palette.textColor
-                font.pixelSize: 22
+                font.pixelSize: Style.dp(22)
                 font.bold: true
                 text: root.store.getCurrentVersion()
             }
@@ -54,11 +54,11 @@ SettingsContentBase {
             StatusBaseText {
                 anchors.horizontalCenter: parent.horizontalCenter
                 color: Theme.palette.textColor
-                font.pixelSize: 15
+                font.pixelSize: Style.current.primaryTextFontSize
                 text: qsTr("Current Version")
             }
 
-            Item { width: 1; height: 17}
+            Item { width: Style.dp(1); height: Style.dp(17)}
 
             StatusButton {
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -71,7 +71,7 @@ SettingsContentBase {
         StatusListItem {
             title: qsTr("Our Principles")
             Layout.fillWidth: true
-            implicitHeight: 64
+            implicitHeight: Style.dp(64)
             components: [
                 StatusIcon {
                     icon: "chevron-down"
@@ -83,12 +83,12 @@ SettingsContentBase {
 
         Column {
             Layout.fillWidth: true
-            spacing: 4
+            spacing: Style.dp(4)
             StatusBaseText {
                 text: qsTr("Status desktop’s GitHub Repositories")
                 anchors.left: parent.left
                 anchors.leftMargin: Style.current.padding
-                font.pixelSize: 15
+                font.pixelSize: Style.current.primaryTextFontSize
                 color: Style.current.secondaryText
             }
 
@@ -139,12 +139,12 @@ SettingsContentBase {
 
         Column {
             Layout.fillWidth: true
-            spacing: 4
+            spacing: Style.dp(4)
             StatusBaseText {
                 anchors.left: parent.left
                 anchors.leftMargin: Style.current.padding
                 text: qsTr("Legal & Privacy Documents")
-                font.pixelSize: 15
+                font.pixelSize: Style.current.primaryTextFontSize
                 color: Style.current.secondaryText
             }
 

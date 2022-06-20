@@ -16,21 +16,21 @@ BackupSeedStepBase {
     GridView {
         id: grid
         width: parent.width
-        height: 304
+        height: Style.dp(304)
         anchors.left: parent.left
-        anchors.leftMargin: 2
+        anchors.leftMargin: Style.dp(2)
         anchors.top: parent.top
-        anchors.topMargin: 88
+        anchors.topMargin: Style.dp(88)
         flow: GridView.FlowTopToBottom
-        cellWidth: 208
-        cellHeight: 48
+        cellWidth: Style.dp(208)
+        cellHeight: Style.dp(48)
         interactive: false
         model: 12
         property var wordIndex: ["1", "3", "5", "7", "9", "11", "2", "4", "6", "8", "10", "12"]
         delegate: StatusSeedPhraseInput {
             id: seedWordInput
-            width: (grid.cellWidth - 4)
-            height: (grid.cellHeight - 4)
+            width: (grid.cellWidth - Style.dp(4))
+            height: (grid.cellHeight - Style.dp(4))
             textEdit.input.edit.enabled: false
             text: root.seedPhrase[parseInt(leftComponentText)-1]
             leftComponentText: grid.wordIndex[index]
@@ -42,7 +42,7 @@ BackupSeedStepBase {
         anchors.fill: grid
         visible: hideSeed
         source: grid
-        radius: 16
+        radius: Style.dp(16)
         samples: 16
     }
 
@@ -63,7 +63,7 @@ BackupSeedStepBase {
         anchors.right: parent.right
         //anchors.rightMargin: Style.current.bigPadding
         anchors.top: grid.bottom
-        anchors.topMargin: 36
+        anchors.topMargin: Style.dp(36)
         visible: hideSeed
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter

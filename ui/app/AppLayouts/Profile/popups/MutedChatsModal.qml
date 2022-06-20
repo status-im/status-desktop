@@ -47,14 +47,14 @@ ModalPopup {
                 anchors.leftMargin: Style.current.smallPadding
                 anchors.verticalCenter: parent.verticalCenter
                 image: StatusImageSettings {
-                    width: 40
-                    height: 40
+                    width: Style.dp(40)
+                    height: Style.dp(40)
                     source: model.icon
                 }
                 icon: StatusIconSettings {
-                    width: 40
-                    height: 40
-                    letterSize: 15
+                    width: Style.dp(40)
+                    height: Style.dp(40)
+                    letterSize: Style.current.primaryTextFontSize
                     color: Theme.palette.miscColor5
                 }
                 name: model.name
@@ -66,7 +66,7 @@ ModalPopup {
                 anchors.right: unmuteButton.left
                 anchors.rightMargin: Style.current.smallPadding
                 elide: Text.ElideRight
-                font.pixelSize: 15
+                font.pixelSize: Style.current.primaryTextFontSize
                 anchors.left: contactImage.right
                 anchors.leftMargin: Style.current.padding
                 anchors.verticalCenter: parent.verticalCenter

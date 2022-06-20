@@ -34,7 +34,7 @@ SettingsContentBase {
                 id: profileName
                 text: root.profileStore.name
                 font.weight: Font.Bold
-                font.pixelSize: 20
+                font.pixelSize: Style.dp(20)
                 color: Theme.palette.directColor1
             }
 
@@ -50,8 +50,8 @@ SettingsContentBase {
             StatusFlatRoundButton {
                 id: qrCodeButton
 
-                Layout.preferredWidth: 32
-                Layout.preferredHeight: 32
+                Layout.preferredWidth: Style.dp(32)
+                Layout.preferredHeight: Style.dp(32)
 
                 icon.name: "qr"
                 type: StatusFlatRoundButton.Type.Quaternary
@@ -80,20 +80,20 @@ SettingsContentBase {
 
             imageOverlay: Item {
                 StatusFlatRoundButton {
-                    width: 24
-                    height: 24
+                    width: Style.dp(24)
+                    height: Style.dp(24)
 
                     anchors {
                         right: parent.right
                         bottom: parent.bottom
-                        rightMargin: -8
+                        rightMargin: -Style.current.halfPadding
                     }
 
                     type: StatusFlatRoundButton.Type.Secondary
                     icon.name: "pencil"
                     icon.color: Theme.palette.directColor1
-                    icon.width: 12.5
-                    icon.height: 12.5
+                    icon.width: Style.dp(12)
+                    icon.height: Style.dp(12)
 
                     onClicked: Global.openChangeProfilePicPopup()
                 }
@@ -124,7 +124,7 @@ SettingsContentBase {
             title: qsTr("Chat key")
             subTitle: Utils.getCompressedPk(root.profileStore.pubkey)
             subTitleComponent.elide: Text.ElideMiddle
-            subTitleComponent.width: 320
+            subTitleComponent.width: Style.dp(320)
             subTitleComponent.font.family: Theme.palette.monoFont.name
             tooltip.text: qsTr("Copy to clipboard")
             icon.name: "copy"
@@ -160,8 +160,8 @@ SettingsContentBase {
 
         ModalPopup {
             id: qrCodePopup
-            width: 420
-            height: 420
+            width: Style.dp(420)
+            height: Style.dp(420)
             Image {
                 asynchronous: true
                 fillMode: Image.PreserveAspectFit
@@ -169,8 +169,8 @@ SettingsContentBase {
                 anchors.verticalCenterOffset: 20
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
-                height: 312
-                width: 312
+                height: Style.dp(312)
+                width: Style.dp(312)
                 mipmap: true
                 smooth: false
             }

@@ -39,7 +39,7 @@ Rectangle {
 
     property bool emojiEvent: false;
     property bool paste: false;
-    property bool isColonPressed: false;
+    property bool isColonPressed: false
     property bool isReply: false
     property string replyMessageId: replyArea.messageId
 
@@ -94,7 +94,7 @@ Rectangle {
     color: Style.current.transparent
 
     function calculateExtraHeightFactor() {
-        const factor = (messageInputField.length / 500) + 1;
+        const factor = (messageInputField.length / Style.dp(500)) + 1;
         return (factor > 5) ? 5 : factor;
     }
 
@@ -714,7 +714,7 @@ Rectangle {
 
     ChatCommandsPopup {
         id: chatCommandsPopup
-        x: 8
+        x: Style.current.halfPadding
         y: -height
         onSendTransactionCommandButtonClicked: {
             control.sendTransactionCommandButtonClicked()
@@ -734,8 +734,8 @@ Rectangle {
 
     StatusGifPopup {
         id: gifPopup
-        width: 360
-        height: 440
+        width: Style.dp(360)
+        height: Style.dp(440)
         x: parent.width - width - Style.current.halfPadding
         y: -height
         gifSelected: function (event, url) {
@@ -771,12 +771,12 @@ Rectangle {
 
     StatusQ.StatusFlatRoundButton {
         id: chatCommandsBtn
-        width: 32
-        height: 32
+        width: Style.dp(32)
+        height: Style.dp(32)
         anchors.left: parent.left
         anchors.leftMargin: 4
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 16
+        anchors.bottomMargin: Style.current.padding
         icon.name: "chat-commands"
         type: StatusQ.StatusFlatRoundButton.Type.Tertiary
         visible: RootStore.isWalletEnabled && !isEdit && control.chatType === Constants.chatType.oneToOne && !control.isStatusUpdateInput
@@ -790,12 +790,12 @@ Rectangle {
 
     StatusQ.StatusFlatRoundButton {
         id: imageBtn
-        width: 32
-        height: 32
+        width: Style.dp(32)
+        height: Style.dp(32)
         anchors.left: chatCommandsBtn.visible ? chatCommandsBtn.right : parent.left
-        anchors.leftMargin: chatCommandsBtn.visible ? 2 : 4
+        anchors.leftMargin: Style.dp(chatCommandsBtn.visible ? 2 : 4)
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 16
+        anchors.bottomMargin: Style.current.padding
         icon.name: "image"
         type: StatusQ.StatusFlatRoundButton.Type.Tertiary
         visible: !isEdit && control.chatType !== Constants.chatType.publicChat && !control.isStatusUpdateInput
@@ -809,13 +809,13 @@ Rectangle {
     Rectangle {
         id: messageInput
         enabled: !control.isContactBlocked
-        property int maxInputFieldHeight: control.isStatusUpdateInput ? 124 : 112
-        property int defaultInputFieldHeight: control.isStatusUpdateInput ? 56 : 40
+        property int maxInputFieldHeight: Style.dp(control.isStatusUpdateInput ? 124 : 112)
+        property int defaultInputFieldHeight: Style.dp(control.isStatusUpdateInput ? 56 : 40)
         anchors.left: imageBtn.visible ? imageBtn.right : parent.left
-        anchors.leftMargin: imageBtn.visible ? 5 : Style.current.smallPadding
+        anchors.leftMargin: imageBtn.visible ? Style.dp(5) : Style.current.smallPadding
         anchors.top: control.isStatusUpdateInput ? parent.top : undefined
         anchors.bottom: !control.isStatusUpdateInput ? parent.bottom : undefined
-        anchors.bottomMargin: control.isStatusUpdateInput ? 0 : 12
+        anchors.bottomMargin: control.isStatusUpdateInput ? 0 : Style.dp(12)
         anchors.right: unblockBtn.visible ? unblockBtn.left : parent.right
         anchors.rightMargin: Style.current.smallPadding
         height: {
@@ -873,15 +873,15 @@ Rectangle {
             anchors.top: control.isStatusUpdateInput ? messageInput.bottom : undefined
             anchors.topMargin: control.isStatusUpdateInput ? -Style.current.halfPadding : 0
             color: isEdit ? Style.current.secondaryInputBackground : Style.current.inputBackground
-            radius: control.isStatusUpdateInput ? 36 : 16
+            radius: Style.dp(control.isStatusUpdateInput ? 36 : 16)
 
             Rectangle {
                 color: parent.color
                 anchors.right: parent.right
                 anchors.left: parent.left
-                height: control.isStatusUpdateInput ? 64 : 30
+                height: Style.dp(control.isStatusUpdateInput ? 64 : 30)
                 anchors.top: control.isStatusUpdateInput ? parent.top : undefined
-                anchors.topMargin: control.isStatusUpdateInput ? -24 : 0
+                anchors.topMargin: control.isStatusUpdateInput ? -Style.dp(24) : 0
                 anchors.bottom: control.isStatusUpdateInput ? undefined : parent.bottom
                 anchors.bottomMargin: control.isStatusUpdateInput ? 0 : -height/2
             }
@@ -910,11 +910,11 @@ Rectangle {
                 id: replyArea
                 visible: isReply
                 anchors.left: parent.left
-                anchors.leftMargin: 2
+                anchors.leftMargin: Style.dp(2)
                 anchors.right: parent.right
-                anchors.rightMargin: 2
+                anchors.rightMargin: Style.dp(2)
                 anchors.top: parent.top
-                anchors.topMargin: 2
+                anchors.topMargin: Style.dp(2)
                 // Not Refactored Yet
 //                stickerData: sticker
                 onCloseButtonClicked: {
@@ -948,7 +948,7 @@ Rectangle {
                 property var lastClick: 0
                 property int cursorWhenPressed: 0
                 textFormat: Text.RichText
-                font.pixelSize: 15
+                font.pixelSize: Style.current.primaryTextFontSize
                 font.family: Style.current.fontRegular.name
                 wrapMode: TextArea.Wrap
                 placeholderText: control.chatInputPlaceholder
@@ -1149,7 +1149,7 @@ Rectangle {
             anchors.right: parent.right
             visible: !control.isStatusUpdateInput
             height: parent.height / 2
-            width: 32
+            width: Style.dp(32)
             radius: Style.current.radius
         }
 
@@ -1179,10 +1179,10 @@ Rectangle {
 
             StatusQ.StatusFlatRoundButton {
                 id: imageBtn2
-                implicitHeight: 32
-                implicitWidth: 32
+                implicitHeight: Style.dp(32)
+                implicitWidth: Style.dp(32)
                 anchors.right: sendBtn.left
-                anchors.rightMargin: 2
+                anchors.rightMargin: Style.dp(2)
                 anchors.bottom: parent.bottom
                 icon.name: "image"
                 type: StatusQ.StatusFlatRoundButton.Type.Tertiary
@@ -1213,8 +1213,8 @@ Rectangle {
             StatusQ.StatusFlatRoundButton {
                 id: emojiBtn
                 enabled: !control.emojiPopupOpened
-                implicitHeight: 32
-                implicitWidth: 32
+                implicitHeight: Style.dp(32)
+                implicitWidth: Style.dp(32)
                 anchors.left: parent.left
                 anchors.bottom: parent.bottom
                 visible: !imageBtn2.visible
@@ -1231,10 +1231,10 @@ Rectangle {
 
             StatusQ.StatusFlatRoundButton {
                 id: gifBtn
-                implicitHeight: 32
-                implicitWidth: 32
+                implicitHeight: Style.dp(32)
+                implicitWidth: Style.dp(32)
                 anchors.right: emojiBtn.left
-                anchors.rightMargin: 2
+                anchors.rightMargin: Style.dp(2)
                 anchors.bottom: parent.bottom
                 visible: !isEdit && RootStore.isGifWidgetEnabled
                 icon.name: "gif"
@@ -1245,11 +1245,11 @@ Rectangle {
 
             StatusQ.StatusFlatRoundButton {
                 id: stickersBtn
-                implicitHeight: 32
-                implicitWidth: 32
-                width: visible ? 32 : 0
+                implicitHeight: Style.dp(32)
+                implicitWidth: Style.dp(32)
+                width: visible ? Style.dp(32) : 0
                 anchors.left: emojiBtn.right
-                anchors.leftMargin: 2
+                anchors.leftMargin: Style.dp(2)
                 anchors.bottom: parent.bottom
                 icon.name: "stickers"
                 type: StatusQ.StatusFlatRoundButton.Type.Tertiary

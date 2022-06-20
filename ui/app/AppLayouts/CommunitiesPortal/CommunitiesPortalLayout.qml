@@ -24,10 +24,10 @@ ScrollView {
         property ListModel tagsModel: root.communitiesStore.tagsModel
 
         property string searchText: ""
-        property int layoutVMargin: 70
-        property int layoutHMargin: 64
-        property int titlePixelSize: 28
-        property int subtitlePixelSize: 17
+        property int layoutVMargin: Style.dp(70)
+        property int layoutHMargin: Style.dp(64)
+        property int titlePixelSize: Style.dp(28)
+        property int subtitlePixelSize: Style.dp(17)
 
         function navigateToCommunity(communityId) {
             root.communitiesStore.setActiveCommunity(communityId)
@@ -52,15 +52,15 @@ ScrollView {
         }
 
         RowLayout {
-            width: 230/*Card Width by design*/ * featuredGrid.columns  + 2 * featuredGrid.rowSpacing
-            spacing: 24
+            width: Style.dp(230)/*Card Width by design*/ * featuredGrid.columns  + 2 * featuredGrid.rowSpacing
+            spacing: Style.dp(24)
 
             StatusBaseInput {
                 id: searcher
                 enabled: false // Out of scope
                 Layout.leftMargin: d.layoutHMargin
-                height: 36 // by design
-                width: 351 // by design
+                height: Style.dp(36) // by design
+                width: Style.dp(351) // by design
                 placeholderText: qsTr("Search")
                 text: d.searchText
                 icon.name: "search"
@@ -94,7 +94,7 @@ ScrollView {
             visible: false//d.tagsModel.count > 0 --> out of scope
             Layout.leftMargin: d.layoutHMargin
             Layout.rightMargin: d.layoutHMargin
-            width: 1234 // by design
+            width: Style.dp(1234) // by design
             spacing: Style.current.halfPadding
 
             Repeater {
@@ -102,16 +102,16 @@ ScrollView {
                 delegate: StatusListItemTag {
                     border.color: Theme.palette.baseColor2
                     color: "transparent"
-                    height: 32
-                    radius: 36
+                    height: Style.dp(32)
+                    radius: Style.dp(36)
                     closeButtonVisible: false
                     icon.emoji: model.emoji
-                    icon.height: 32
+                    icon.height: Style.dp(32)
                     icon.width: icon.height
                     icon.color: "transparent"
                     icon.isLetterIdenticon: true
                     title: model.name
-                    titleText.font.pixelSize: 15
+                    titleText.font.pixelSize: Style.current.primaryTextFontSize
                     titleText.color: Theme.palette.primaryColor1
                 }
             }
@@ -122,7 +122,7 @@ ScrollView {
 
         StatusBaseText {
             Layout.leftMargin: d.layoutHMargin
-            Layout.topMargin: 20
+            Layout.topMargin: Style.dp(20)
             text: qsTr("Featured")
             font.weight: Font.Bold
             font.pixelSize: d.subtitlePixelSize
@@ -157,7 +157,7 @@ ScrollView {
 
         StatusBaseText {
             Layout.leftMargin: d.layoutHMargin
-            Layout.topMargin: 20
+            Layout.topMargin: Style.dp(20)
             text: qsTr("Popular")
             font.weight: Font.Bold
             font.pixelSize: d.subtitlePixelSize

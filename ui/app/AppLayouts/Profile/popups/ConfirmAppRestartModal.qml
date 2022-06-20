@@ -12,8 +12,8 @@ import shared.popups 1.0
 
 // TODO: replace with StatusModal
 ModalPopup {
-    height: 237
-    width: 400
+    height: Style.dp(237)
+    width: Style.dp(400)
 
     property Popup parentPopup
 
@@ -21,7 +21,7 @@ ModalPopup {
 
     StyledText {
         text: qsTr("Please restart the application to apply the changes.")
-        font.pixelSize: 15
+        font.pixelSize: Style.current.primaryTextFontSize
         anchors.left: parent.left
         anchors.right: parent.right
         wrapMode: Text.WordWrap

@@ -24,23 +24,23 @@ Column {
 
     Row {
         width: parent.width
-        spacing: 10
+        spacing: Style.dp(10)
         StatusBaseText {
             text: qsTr("Upload")
-            width: 250
+            width: Style.dp(250)
             anchors.verticalCenter: parent.verticalCenter
         }
 
         Item {
-            width: 140
-            height: 44
+            width: Style.dp(140)
+            height: Style.dp(44)
             // TODO: replace with StatusInput from StatusQ at some point
             Input {
                 id: uploadRate
                 text: Math.round(parseInt(store.nodeModelInst.uploadRate, 10) / 1024 * 100) / 100
                 width: parent.width
                 readOnly: true
-                customHeight: 44
+                customHeight: Style.dp(44)
                 placeholderText: "0"
                 anchors.top: parent.top
             }
@@ -51,26 +51,26 @@ Column {
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: uploadRate.right
                 anchors.rightMargin: Style.current.padding
-                font.pixelSize: 15
+                font.pixelSize: Style.current.primaryTextFontSize
             }
         }
 
         StatusBaseText {
             text: qsTr("Download")
-            width: 273
+            width: Style.dp(273)
             anchors.verticalCenter: parent.verticalCenter
         }
 
         Item {
-            width: 140
-            height: 44
+            width: Style.dp(140)
+            height: Style.dp(44)
             // TODO: replace with StatusInput from StatusQ at some point
             Input {
                 id: downloadRate
                 text: Math.round(parseInt(store.nodeModelInst.downloadRate, 10) / 1024 * 100) / 100
                 width: parent.width
                 readOnly: true
-                customHeight: 44
+                customHeight: Style.dp(44)
                 placeholderText: "0"
                 anchors.top: parent.top
             }
@@ -81,7 +81,7 @@ Column {
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: downloadRate.right
                 anchors.rightMargin: Style.current.padding
-                font.pixelSize: 15
+                font.pixelSize: Style.current.primaryTextFontSize
             }
         }
     }

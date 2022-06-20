@@ -11,20 +11,20 @@ import utils 1.0
 
 StatusModal {
     id: root
-    width: 400
-    height: 248
+    width: Style.dp(400)
+    height: Style.dp(248)
 
     closePolicy: Popup.NoAutoClose
 
     showHeader: false
     contentItem: ColumnLayout {
         anchors.fill: parent
-        anchors.margins: 45
+        anchors.margins: Style.dp(45)
         spacing: Style.current.halfPadding
         StatusIcon {
             Layout.alignment: Qt.AlignHCenter
-            Layout.preferredWidth: 26
-            Layout.preferredHeight: 26
+            Layout.preferredWidth: Style.dp(26)
+            Layout.preferredHeight: Style.dp(26)
             icon: "checkmark"
             color: Style.current.green
         }

@@ -19,10 +19,10 @@ Rectangle {
     property alias icon: bannerIcon.source
 
 
-    implicitWidth: 272
-    implicitHeight: 182
+    implicitWidth: Style.dp(272)
+    implicitHeight: Style.dp(182)
     border.color: Style.current.border
-    radius: 16
+    radius: Style.dp(16)
     color: Style.current.transparent
 
     signal buttonClicked()
@@ -39,29 +39,29 @@ Rectangle {
     }
 
     Rectangle {
-        width: 70
-        height: 4
+        width: Style.dp(70)
+        height: Style.dp(4)
         color: Style.current.background
         anchors.top: parent.top
-        anchors.topMargin: -2
+        anchors.topMargin: -Style.dp(2)
         anchors.horizontalCenter: parent.horizontalCenter
     }
 
     SVGImage {
         id: bannerIcon
         anchors.top: parent.top
-        anchors.topMargin: -6
+        anchors.topMargin: -Style.dp(6)
         anchors.horizontalCenter: parent.horizontalCenter
-        width: 66
-        height: 50
+        width: Style.dp(66)
+        height: Style.dp(50)
     }
 
     StatusBaseText {
         id: bannerText
         anchors.top: parent.top
-        anchors.topMargin: 60
+        anchors.topMargin: Style.dp(60)
         horizontalAlignment: Text.AlignHCenter
-        font.pixelSize: 15
+        font.pixelSize: Style.current.primaryTextFontSize
         color: Theme.palette.directColor1
         wrapMode: Text.WordWrap
         anchors.right: parent.right
@@ -74,7 +74,7 @@ Rectangle {
         id: bannerButton
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 22
+        anchors.bottomMargin: Style.dp(22)
         onClicked: root.buttonClicked()
     }
 }

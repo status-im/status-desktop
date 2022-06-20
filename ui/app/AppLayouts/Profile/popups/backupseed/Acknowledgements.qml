@@ -12,8 +12,8 @@ Item {
     property bool allAccepted: (havePen.checked && writeDown.checked && storeIt.checked)
     Image {
         id: keysImg
-        width: 120
-        height: 120
+        width: Style.dp(120)
+        height: Style.dp(120)
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
         fillMode: Image.PreserveAspectFit
@@ -31,7 +31,7 @@ Item {
         font.bold: true
         anchors.top: keysImg.bottom
         anchors.topMargin: Style.current.padding
-        font.pixelSize: 22
+        font.pixelSize: Style.dp(22)
     }
 
     StyledText {
@@ -40,7 +40,7 @@ Item {
         anchors.topMargin: Style.current.padding
         anchors.horizontalCenter: parent.horizontalCenter
         font.pixelSize: Style.current.primaryTextFontSize
-        font.letterSpacing: -0.2
+        font.letterSpacing: -Style.dp(0.2)
         text: qsTr("Your seed phrase is a 12-word passcode to your funds.")
     }
 
@@ -60,7 +60,7 @@ Item {
     }
 
     ColumnLayout {
-        anchors.topMargin: 49
+        anchors.topMargin: Style.dp(49)
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: secondTxtDesc.bottom
         spacing: Style.current.padding
@@ -83,7 +83,7 @@ Item {
 
     Item {
         width: parent.width
-        height: 60
+        height: Style.dp(60)
         anchors.bottom: parent.bottom
         anchors.horizontalCenter: parent.horizontalCenter
         StyledText {
@@ -98,7 +98,7 @@ Item {
         }
         Rectangle {
             anchors.fill: parent
-            radius: 8
+            radius: Style.current.radius
             color: Theme.palette.dangerColor1
             opacity: 0.1
         }

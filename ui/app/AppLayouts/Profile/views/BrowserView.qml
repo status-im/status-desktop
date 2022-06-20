@@ -34,7 +34,7 @@ SettingsContentBase {
             anchors.top: parent.top
             anchors.left: parent.left
             width: parent.width
-            spacing: 10
+            spacing: Style.dp(10)
 
             HomePageView {
                 id: homePageView
@@ -95,7 +95,7 @@ SettingsContentBase {
 
             StatusBaseText {
                 text: qsTr("Connected DApps")
-                font.pixelSize: 15
+                font.pixelSize: Style.current.primaryTextFontSize
                 color: Theme.palette.baseColor1
                 anchors.left: parent.left
                 anchors.right: parent.right
@@ -121,7 +121,7 @@ SettingsContentBase {
                         Layout.preferredWidth: parent.width
                         horizontalAlignment: Text.AlignHCenter
                         text: qsTr("No connected dApps")
-                        font.pixelSize: 15
+                        font.pixelSize: Style.current.primaryTextFontSize
                         lineHeight: Constants.settingsSection.infoLineHeight
                         lineHeightMode: Text.FixedHeight
                         color: Theme.palette.baseColor1

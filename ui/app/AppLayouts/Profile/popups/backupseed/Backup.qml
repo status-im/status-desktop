@@ -35,12 +35,12 @@ Item {
 
     TabBar {
         id: bar
-        width: (59 * count)
-        height: 4
+        width: (Style.dp(59) * count)
+        height: Style.dp(4)
         anchors.top: txtDesc.bottom
         anchors.topMargin: Style.current.halfPadding
         anchors.horizontalCenter: parent.horizontalCenter
-        spacing: 2
+        spacing: Style.dp(2)
         background: null
         TabBarButton { index: 0; currentIndex: bar.currentIndex }
         TabBarButton { index: 1; currentIndex: bar.currentIndex }

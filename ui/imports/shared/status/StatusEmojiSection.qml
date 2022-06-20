@@ -11,8 +11,8 @@ Item {
     id: emojiSection
     property string searchString: ""
     property string searchStringLowercase: searchString.toLowerCase()
-    property int imageWidth: 26
-    property int imageMargin: 4
+    property int imageWidth: Style.dp(26)
+    property int imageMargin: Style.dp(4)
     property var emojis: []
     property var allEmojis: modelData
     property var addEmoji: function () {}
@@ -30,7 +30,7 @@ Item {
         id: categoryText
         text: modelData && modelData.length ? modelData[0].category.toUpperCase() : ""
         color: Style.current.secondaryText
-        font.pixelSize: 13
+        font.pixelSize: Style.current.additionalTextSize
     }
 
     StyledText {
@@ -39,7 +39,7 @@ Item {
         //% "No recent emojis"
         text: qsTrId("no-recent-emojis")
         color: Style.current.secondaryText
-        font.pixelSize: 10
+        font.pixelSize: Style.dp(10)
         anchors.top: categoryText.bottom
         anchors.topMargin: Style.current.smallPadding
     }

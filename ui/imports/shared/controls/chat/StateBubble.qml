@@ -10,11 +10,11 @@ Rectangle {
     property bool outgoing: true
 
     id: root
-    width: childrenRect.width + 24
-    height: 28
-    border.width: 1
+    width: childrenRect.width + Style.dp(24)
+    height: Style.dp(28)
+    border.width: Style.dp(1)
     border.color: Style.current.border
-    radius: 24
+    radius: Style.dp(24)
     color: Style.current.background
 
     SVGImage {
@@ -31,8 +31,8 @@ Rectangle {
             default: return ""
             }
         }
-        width: 16
-        height: 16
+        width: Style.dp(16)
+        height: Style.dp(16)
         anchors.left: parent.left
         anchors.leftMargin: Style.current.halfPadding
         anchors.verticalCenter: stateText.verticalCenter
@@ -84,8 +84,8 @@ Rectangle {
         }
         font.weight: Font.Medium
         anchors.left: stateImage.right
-        anchors.leftMargin: 4
+        anchors.leftMargin: Style.dp(4)
         anchors.verticalCenter: parent.verticalCenter
-        font.pixelSize: 13
+        font.pixelSize: Style.current.additionalTextSize
     }
 }

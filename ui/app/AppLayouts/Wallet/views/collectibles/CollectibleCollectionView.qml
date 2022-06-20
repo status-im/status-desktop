@@ -6,6 +6,8 @@ import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
 import shared.panels 1.0
 
+import utils 1.0
+
 import "../../stores"
 
 Item {
@@ -33,7 +35,7 @@ Item {
         id: contentLoader
         width: parent.width
         anchors.top: parent.top
-        anchors.topMargin: 16
+        anchors.topMargin: Style.current.padding
         anchors.horizontalCenter: parent.horizontalCenter
         sourceComponent: {
             if (!root.collectiblesLoaded) {
@@ -51,10 +53,10 @@ Item {
 
         Item {
             id: loadingIndicator
-            height: 164
+            height: Style.dp(164)
             StatusLoadingIndicator {
-                width: 20
-                height: 20
+                width: Style.dp(20)
+                height: Style.dp(20)
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.horizontalCenter: parent.horizontalCenter
             }
@@ -66,13 +68,13 @@ Item {
 
         Item {
             id: emptyContainer
-            height: 164
+            height: Style.dp(164)
             StyledText {
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.horizontalCenter: parent.horizontalCenter
                 color: Style.current.secondaryText
                 text: qsTr("No collectibles available")
-                font.pixelSize: 15
+                font.pixelSize: Style.current.primaryTextFontSize
             }
         }
     }
@@ -83,19 +85,19 @@ Item {
         Flow {
             width: parent.width
 
-            bottomPadding: 16
-            spacing: 24
+            bottomPadding: Style.current.padding
+            spacing: Style.current.bigPadding
 
             Repeater {
                 model: RootStore.getCollectionCollectiblesList(root.slug)
                 StatusRoundedImage {
                     id: image
-                    width: 146
-                    height: 146
-                    radius: 16
+                    width: Style.dp(146)
+                    height: Style.dp(146)
+                    radius: Style.dp(16)
                     image.source: model.imageUrl
                     border.color: Theme.palette.baseColor2
-                    border.width: 1
+                    border.width: Style.dp(1)
                     showLoadingIndicator: true
                     color: model.backgroundColor
                     MouseArea {

@@ -22,7 +22,7 @@ import "../panels"
 StatusModal {
     id: popup
 
-    property int marginBetweenInputs: 38
+    property int marginBetweenInputs: Style.dp(38)
     property string passwordValidationError: ""
     property bool loading: false
     property var emojiPopup: null
@@ -125,14 +125,14 @@ StatusModal {
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
         topPadding: Style.current.halfPadding
         bottomPadding: Style.current.halfPadding
-        height: 400
+        height: Style.dp(400)
         clip: true
 
         Column {
             property alias accountNameInput: accountNameInput
             width: popup.width
             spacing: Style.current.halfPadding
-            topPadding: 20
+            topPadding: Style.dp(20)
 
             // To-Do Password hidden option not supported in StatusQ StatusBaseInput
             Item {
@@ -168,7 +168,7 @@ StatusModal {
                 label: qsTrId("account-name")
                 input.isIconSelectable: true
                 input.icon.color: colorSelectionGrid.selectedColor ? colorSelectionGrid.selectedColor : Theme.palette.directColor1
-                input.leftPadding: 16
+                input.leftPadding: Style.current.padding
                 onIconClicked: {
                     popup.emojiPopup.open()
                     popup.emojiPopup.emojiSize = StatusQUtils.Emoji.size.verySmall

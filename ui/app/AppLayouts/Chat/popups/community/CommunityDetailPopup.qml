@@ -59,16 +59,16 @@ StatusModal {
         width: root.width
 
         Item {
-            height: childrenRect.height + 8
-            width: parent.width - 32
+            height: childrenRect.height + Style.dp(8)
+            width: parent.width - Style.dp(32)
             anchors.horizontalCenter: parent.horizontalCenter
 
             StatusBaseText {
                 id: description
                 anchors.top: parent.top
-                anchors.topMargin: 16
+                anchors.topMargin: Style.current.padding
                 text: root.description
-                font.pixelSize: 15
+                font.pixelSize: Style.current.primaryTextFontSize
                 color: Theme.palette.directColor1
                 wrapMode: Text.WordWrap
                 width: parent.width
@@ -78,47 +78,47 @@ StatusModal {
             StatusIcon {
                 id: statusIcon
                 anchors.top: description.bottom
-                anchors.topMargin: 16
+                anchors.topMargin: Style.current.padding
                 anchors.left: parent.left
                 icon: "tiny/contact"
-                width: 16
+                width: Style.dp(16)
                 color: Theme.palette.directColor1
             }
 
             StatusBaseText {
                 //% "%1 members"
                 text: qsTrId("-1-members").arg(nbMembers)
-                font.pixelSize: 15
+                font.pixelSize: Style.current.primaryTextFontSize
                 font.weight: Font.Medium
                 color: Theme.palette.directColor1
                 anchors.left: statusIcon.right
-                anchors.leftMargin: 2
+                anchors.leftMargin: Style.dp(2)
                 anchors.verticalCenter: statusIcon.verticalCenter
             }
         }
 
         StatusModalDivider {
-            topPadding: 8
-            bottomPadding: 8
+            topPadding: Style.current.halfPadding
+            bottomPadding: Style.current.halfPadding
         }
 
         Item {
             anchors.horizontalCenter: parent.horizontalCenter
-            width: parent.width - 32
-            height: 34
+            width: parent.width - Style.dp(32)
+            height: Style.dp(34)
             StatusBaseText {
                 //% "Channels"
                 text: qsTrId("channels")
                 anchors.bottom: parent.bottom
-                anchors.bottomMargin: 4
-                font.pixelSize: 15
+                anchors.bottomMargin: Style.dp(4)
+                font.pixelSize: Style.current.primaryTextFontSize
                 color: Theme.palette.baseColor1
             }
         }
 
         ScrollView {
             width: root.width
-            height: 300
+            height: Style.dp(300)
             ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
             clip: true
             ListView {
@@ -143,8 +143,8 @@ StatusModal {
         StatusRoundButton {
             id: backButton
             icon.name: "arrow-right"
-            icon.height: 16
-            icon.width: 20
+            icon.height: Style.dp(16)
+            icon.width: Style.dp(20)
             rotation: 180
             onClicked: {
                 Global.openPopup(communitiesPopupComponent)

@@ -20,8 +20,8 @@ Row {
 
     StatusFlatRoundButton  {
         id: acceptBtn
-        width: 32
-        height: 32
+        width: Style.dp(32)
+        height: width
         anchors.verticalCenter: parent.verticalCenter
         icon.name: "checkmark-circle"
         icon.color: Style.current.success
@@ -31,8 +31,8 @@ Row {
 
     StatusFlatRoundButton {
         id: declineBtn
-        width: 32
-        height: 32
+        width: Style.dp(32)
+        height: width
         anchors.verticalCenter: parent.verticalCenter
         icon.name: "close-circle"
         icon.color: Style.current.danger
@@ -44,8 +44,8 @@ Row {
     StatusFlatRoundButton {
         id: menuButton
         anchors.verticalCenter: parent.verticalCenter
-        width: 32
-        height: 32
+        width: Style.dp(32)
+        height: width
         icon.name: "more"
         type: StatusFlatRoundButton.Type.Secondary
         onClicked: {

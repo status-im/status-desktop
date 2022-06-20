@@ -52,32 +52,32 @@ StatusListItem {
     components: [
         StatusFlatRoundButton {
             visible: showSendMessageButton
-            width: visible ? 32 : 0
-            height: visible ? 32 : 0
+            width: visible ? Style.dp(32) : 0
+            height: visible ? Style.dp(32) : 0
             icon.name: "chat"
             icon.color: Theme.palette.directColor1
             onClicked: container.sendMessageActionTriggered(container.publicKey)
         },
         StatusFlatRoundButton {
             visible: showRejectContactRequestButton
-            width: visible ? 32 : 0
-            height: visible ? 32 : 0
+            width: visible ? Style.dp(32) : 0
+            height: visible ? Style.dp(32) : 0
             icon.name: "close-circle"
             icon.color: Style.current.danger
             onClicked: container.contactRequestRejected(container.publicKey)
         },
         StatusFlatRoundButton {
             visible: showAcceptContactRequestButton
-            width: visible ? 32 : 0
-            height: visible ? 32 : 0
+            width: visible ? Style.dp(32) : 0
+            height: visible ? Style.dp(32) : 0
             icon.name: "checkmark-circle"
             icon.color: Style.current.success
             onClicked: container.contactRequestAccepted(container.publicKey)
         },
         StatusFlatRoundButton {
             visible: showRemoveRejectionButton
-            width: visible ? 32 : 0
-            height: visible ? 32 : 0
+            width: visible ? Style.dp(32) : 0
+            height: visible ? Style.dp(32) : 0
             icon.name: "cancel"
             icon.color: Style.current.danger
             onClicked: container.rejectionRemoved(container.publicKey)
@@ -99,8 +99,8 @@ StatusListItem {
         },
         StatusFlatRoundButton {
             id: menuButton
-            width: 32
-            height: 32
+            width: Style.dp(32)
+            height: Style.dp(32)
             icon.name: "more"
             icon.color: Theme.palette.directColor1
             onClicked: {
@@ -124,14 +124,14 @@ StatusListItem {
                 }
 
                 Item {
-                    height: 8
+                    height: Style.dp(8)
                 }
 
                 Separator {}
 
                 ViewProfileMenuItem {
-                    icon.width: 16
-                    icon.height: 16
+                    icon.width: Style.dp(16)
+                    icon.height: Style.dp(16)
                     onTriggered: {
                         container.openProfilePopup(container.publicKey)
                         menuButton.highlighted = false
@@ -139,8 +139,8 @@ StatusListItem {
                 }
 
                 SendMessageMenuItem {
-                    icon.width: 16
-                    icon.height: 16
+                    icon.width: Style.dp(16)
+                    icon.height: Style.dp(16)
                     onTriggered: {
                         container.sendMessageActionTriggered(container.publicKey)
                         menuButton.highlighted = false
@@ -151,8 +151,8 @@ StatusListItem {
                 StatusMenuItem {
                     text: qsTr("Rename")
                     icon.name: "edit_pencil"
-                    icon.width: 16
-                    icon.height: 16
+                    icon.width: Style.dp(16)
+                    icon.height: Style.dp(16)
                     onTriggered: {
                         container.openChangeNicknamePopup(container.publicKey)
                         menuButton.highlighted = false

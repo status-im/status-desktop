@@ -16,9 +16,9 @@ import "../stores"
 
 Item {
     id: root
-    anchors.leftMargin: 80
-    anchors.rightMargin: 80
-    anchors.topMargin: 62
+    anchors.leftMargin: Style.dp(80)
+    anchors.rightMargin: Style.dp(80)
+    anchors.topMargin: Style.dp(62)
 
     property var contactsStore
 
@@ -39,20 +39,20 @@ Item {
             anchors.left: parent.left
             anchors.top: parent.top
             anchors.right: btnAdd.left
-            spacing: 10
+            spacing: Style.dp(10)
 
             StatusIcon {
                 icon: "address"
                 color: Theme.palette.primaryColor1
                 width: undefined
-                height: 35
+                height: Style.dp(35)
                 anchors.verticalCenter: parent.verticalCenter
             }
             StatusBaseText {
                 id: title
                 text: qsTr("Saved addresses")
                 font.weight: Font.Medium
-                font.pixelSize: 28
+                font.pixelSize: Style.dp(28)
                 anchors.verticalCenter: parent.verticalCenter
                 color: Theme.palette.directColor1
             }
@@ -62,8 +62,8 @@ Item {
             anchors.right: parent.right
             anchors.top: parent.top
             text: "Add new   +"
-            leftPadding: 8
-            rightPadding: 11
+            leftPadding: Style.current.halfPadding
+            rightPadding: Style.dp(11)
             visible: !_internal.loading
             onClicked: {
                 Global.openPopup(addEditSavedAddress)
@@ -184,7 +184,7 @@ Item {
         anchors.topMargin: Style.current.padding
         visible: _internal.error !== ""
         text: _internal.error
-        height: visible ? 36 : 0
+        height: visible ? Style.dp(36) : 0
     }
 
     StatusBaseText {
@@ -214,7 +214,7 @@ Item {
             id: listView
             model: RootStore.savedAddresses
             clip: true
-            spacing: 5
+            spacing: Style.dp(5)
             anchors.fill: parent
             boundsBehavior: Flickable.StopAtBounds
             delegate: delegateSavedAddress

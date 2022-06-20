@@ -19,9 +19,9 @@ OnboardingBasePage {
 
     QtObject {
         id: d
-        readonly property int titlePixelSize: 22
-        readonly property real titleLetterSpacing: -0.2
-        readonly property int okButtonTopMargin: 40
+        readonly property int titlePixelSize: Style.dp(22)
+        readonly property real titleLetterSpacing: -Style.dp(0.2)
+        readonly property int okButtonTopMargin: Style.dp(40)
     }
 
     Image {

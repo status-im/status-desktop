@@ -52,7 +52,7 @@ Column {
                     icon.emoji: !!model.emoji ? model.emoji: ""
                     icon.color: model.color
                     icon.name: !model.emoji ? "filled-account": ""
-                    icon.letterSize: 14
+                    icon.letterSize: Style.current.secondaryTextFontSize
                     icon.isLetterIdenticon: !!model.emoji
                     icon.background.color: Theme.palette.indirectColor1
                     onClicked: {

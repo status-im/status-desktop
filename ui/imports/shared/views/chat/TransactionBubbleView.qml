@@ -72,7 +72,7 @@ Item {
     // Any transaction where isCurrentUser is true is actually outgoing transaction.
     property bool outgoing: isCurrentUser
 
-    property int innerMargin: 12
+    property int innerMargin: Style.dp(12)
     property bool isError: transactionParamsObject.contract === "{}"
     onTokenSymbolChanged: {
         if (!!tokenSymbol) {
@@ -88,7 +88,7 @@ Item {
         radius: 16
         color: Style.current.background
         border.color: Style.current.border
-        border.width: 1
+        border.width: Style.dp(1)
 
         StyledText {
             id: title
@@ -111,7 +111,7 @@ Item {
             anchors.topMargin: Style.current.halfPadding
             anchors.left: parent.left
             anchors.leftMargin: root.innerMargin
-            font.pixelSize: 13
+            font.pixelSize: Style.current.additionalTextSize
         }
 
         Item {
@@ -119,7 +119,7 @@ Item {
             width: childrenRect.width
             height: tokenText.height + fiatText.height
             anchors.top: title.bottom
-            anchors.topMargin: 4
+            anchors.topMargin: Style.dp(4)
             anchors.left: parent.left
             anchors.leftMargin: root.innerMargin
 
@@ -133,8 +133,8 @@ Item {
             Image {
                 id: tokenImage
                 visible: !root.isError
-                width: 24
-                height: 24
+                width: Style.dp(24)
+                height: Style.dp(24)
                 anchors.verticalCenter: parent.verticalCenter
             }
 
@@ -145,7 +145,7 @@ Item {
                 text: `${root.tokenAmount} ${root.tokenSymbol}`
                 anchors.left: tokenImage.right
                 anchors.leftMargin: Style.current.halfPadding
-                font.pixelSize: 22
+                font.pixelSize: Style.dp(22)
             }
 
             StyledText {
@@ -155,7 +155,7 @@ Item {
                 text: root.fiatValue
                 anchors.top: tokenText.bottom
                 anchors.left: tokenText.left
-                font.pixelSize: 13
+                font.pixelSize: Style.current.additionalTextSize
             }
         }
 
@@ -255,12 +255,12 @@ Item {
             color: Style.current.secondaryText
             text: Utils.formatShortTime(timestamp, RootStore.accountSensitiveSettings.is24hTimeFormat)
             anchors.left: bubbleLoader.active ? bubbleLoader.right : undefined
-            anchors.leftMargin: bubbleLoader.active ? 13 : 0
+            anchors.leftMargin: bubbleLoader.active ? Style.dp(13) : 0
             anchors.right: bubbleLoader.active ? undefined : parent.right
             anchors.rightMargin: bubbleLoader.active ? 0 : root.innerMargin
             anchors.bottom: bubbleLoader.active ? bubbleLoader.bottom : buttonsLoader.top
-            anchors.bottomMargin: bubbleLoader.active ? -root.innerMargin : 7
-            font.pixelSize: 10
+            anchors.bottomMargin: bubbleLoader.active ? -root.innerMargin : Style.dp(7)
+            font.pixelSize: Style.current.asideTextFontSize
         }
     }
 }

@@ -49,7 +49,7 @@ SettingsContentBase {
                 anchors.leftMargin: Style.current.padding
                 color: Theme.palette.baseColor1
                 text: qsTr("Communities you've joined")
-                font.pixelSize: 15
+                font.pixelSize: Style.current.primaryTextFontSize
             }
 
             CommunitiesListPanel {

@@ -7,6 +7,8 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
 
+import utils 1.0
+
 StatusModal {
     id: confirmationDialog
     anchors.centerIn: parent
@@ -38,17 +40,17 @@ StatusModal {
         width: confirmationDialog.width
         implicitHeight: childrenRect.height
         Column {
-            width: parent.width - 32
+            width: parent.width - Style.dp(32)
             anchors.horizontalCenter: parent.horizontalCenter
 
             Item {
                 width: parent.width
-                height: 16
+                height: Style.dp(16)
             }
 
             StatusBaseText {
                 text: confirmationDialog.confirmationText
-                font.pixelSize: 15
+                font.pixelSize: Style.current.primaryTextFontSize
                 anchors.left: parent.left
                 anchors.right: parent.right
                 wrapMode: Text.WordWrap
@@ -57,7 +59,7 @@ StatusModal {
 
             Item {
                 width: parent.width
-                height: 16
+                height: Style.dp(16)
             }
 
             StatusCheckBox {
@@ -69,7 +71,7 @@ StatusModal {
 
             Item {
                 width: parent.width
-                height: visible ? 16 : 0
+                height: visible ? Style.dp(16) : 0
                 visible: checkbox.visible
             }
         }

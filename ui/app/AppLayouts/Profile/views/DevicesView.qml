@@ -39,7 +39,7 @@ SettingsContentBase {
                 id: deviceNameLbl
                 //% "Please set a name for your device."
                 text: qsTrId("pairing-please-set-a-name")
-                font.pixelSize: 14
+                font.pixelSize: Style.current.secondaryTextFontSize
                 color: Theme.palette.directColor1
             }
 
@@ -54,7 +54,7 @@ SettingsContentBase {
             // TODO: replace with StatusQ component
             StatusButton {
                 anchors.top: deviceNameTxt.bottom
-                anchors.topMargin: 10
+                anchors.topMargin: Style.dp(10)
                 anchors.right: deviceNameTxt.right
                 //% "Continue"
                 text: qsTrId("continue")
@@ -77,15 +77,15 @@ SettingsContentBase {
             Rectangle {
                 id: advertiseDevice
                 height: childrenRect.height
-                width: 500
+                width: Style.dp(500)
                 anchors.left: parent.left
                 anchors.right: parent.right
                 color: Style.current.transparent
 
                 SVGImage {
                     id: advertiseImg
-                    height: 32
-                    width: 32
+                    height: Style.dp(32)
+                    width: Style.dp(32)
                     anchors.left: parent.left
                     fillMode: Image.PreserveAspectFit
                     source: Style.svg("messageActive")
@@ -100,7 +100,7 @@ SettingsContentBase {
                     id: advertiseDeviceTitle
                     //% "Advertise device"
                     text: qsTrId("pair-this-device")
-                    font.pixelSize: 18
+                    font.pixelSize: Style.dp(18)
                     font.weight: Font.Bold
                     color: Theme.palette.primaryColor1
                     anchors.left: advertiseImg.right
@@ -111,9 +111,9 @@ SettingsContentBase {
                     id: advertiseDeviceDesk
                     //% "Pair your devices to sync contacts and chats between them"
                     text: qsTrId("pair-this-device-description")
-                    font.pixelSize: 14
+                    font.pixelSize: Style.current.secondaryTextFontSize
                     anchors.top: advertiseDeviceTitle.bottom
-                    anchors.topMargin: 6
+                    anchors.topMargin: Style.dp(6)
                     anchors.left: advertiseImg.right
                     anchors.leftMargin: Style.current.padding
                     color: Theme.palette.directColor1
@@ -131,7 +131,7 @@ SettingsContentBase {
                 anchors.topMargin: Style.current.padding
                 //% "Learn more"
                 text: qsTrId("learn-more")
-                font.pixelSize: 16
+                font.pixelSize: Style.dp(16)
                 color: Theme.palette.primaryColor1
                 anchors.left: parent.left
                 MouseArea {
@@ -157,7 +157,7 @@ SettingsContentBase {
                 id: deviceListLbl
                 //% "Paired devices"
                 text: qsTrId("paired-devices")
-                font.pixelSize: 16
+                font.pixelSize: Style.dp(16)
                 font.weight: Font.Bold
                 color: Theme.palette.directColor1
             }
@@ -167,8 +167,8 @@ SettingsContentBase {
                 anchors.top: deviceListLbl.bottom
                 anchors.topMargin: Style.current.padding
                 // This is a placeholder fix to the display. This whole page will be redesigned
-                height: 300
-                spacing: 5
+                height: Style.dp(300)
+                spacing: Style.dp(5)
                 width: parent.width
                 // TODO: replace with StatusQ component
                 delegate: Item {
@@ -176,8 +176,8 @@ SettingsContentBase {
                     SVGImage {
                         id: enabledIcon
                         source: Style.svg("messageActive")
-                        height: 24
-                        width: 24
+                        height: Style.dp(24)
+                        width: Style.dp(24)
                         ColorOverlay {
                             anchors.fill: parent
                             source: parent
@@ -195,7 +195,7 @@ SettingsContentBase {
                             return labelText;
                         }
                         elide: Text.ElideRight
-                        font.pixelSize: 14
+                        font.pixelSize: Style.current.secondaryTextFontSize
                         anchors.left: enabledIcon.right
                         anchors.leftMargin: Style.current.padding
                         color: Theme.palette.directColor1

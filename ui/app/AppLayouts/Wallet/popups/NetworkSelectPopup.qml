@@ -14,8 +14,8 @@ import utils 1.0
 Popup {
     id: popup
     modal: false
-    width: 360
-    height: 432
+    width: Style.dp(360)
+    height: Style.dp(432)
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
     property var layer1Networks
     property var layer2Networks
@@ -29,8 +29,8 @@ Popup {
         border.color: Style.current.border
         layer.enabled: true
         layer.effect: DropShadow{
-            verticalOffset: 3
-            radius: 8
+            verticalOffset: Style.dp(3)
+            radius: Style.current.radius
             samples: 15
             fast: true
             cached: true

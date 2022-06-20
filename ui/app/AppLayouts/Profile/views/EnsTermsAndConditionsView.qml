@@ -28,11 +28,11 @@ Item {
         //% "ENS usernames"
         text: qsTrId("ens-usernames")
         anchors.left: parent.left
-        anchors.leftMargin: 24
+        anchors.leftMargin: Style.current.bigPadding
         anchors.top: parent.top
-        anchors.topMargin: 24
+        anchors.topMargin: Style.current.bigPadding
         font.weight: Font.Bold
-        font.pixelSize: 20
+        font.pixelSize: Style.dp(20)
         color: Theme.palette.directColor1
     }
 
@@ -248,16 +248,16 @@ Item {
                 anchors.top: parent.top
                 anchors.topMargin: 24
                 anchors.horizontalCenter: parent.horizontalCenter
-                width: 60
-                height: 60
-                radius: 120
+                width: Style.dp(60)
+                height: Style.dp(60)
+                radius: Style.dp(120)
                 color: Style.current.blue
 
                 StatusBaseText {
                     text: "@"
                     opacity: 0.7
                     font.weight: Font.Bold
-                    font.pixelSize: 18
+                    font.pixelSize: Style.dp(18)
                     color: Style.current.white
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
@@ -268,9 +268,9 @@ Item {
                 id: ensUsername
                 text: username + ".stateofus.eth"
                 font.weight: Font.Bold
-                font.pixelSize: 18
+                font.pixelSize: Style.dp(18)
                 anchors.top: circleAt.bottom
-                anchors.topMargin: 24
+                anchors.topMargin: Style.current.bigPadding
                 anchors.left: parent.left
                 anchors.right: parent.right
                 horizontalAlignment: Text.AlignHCenter
@@ -289,7 +289,7 @@ Item {
                     tooltip.visible = !tooltip.visible
                 }
                 anchors.top: ensUsername.bottom
-                anchors.topMargin: 24
+                anchors.topMargin: Style.current.bigPadding
             }
 
             StatusDescriptionListItem {
@@ -307,7 +307,7 @@ Item {
                     tooltip.visible = !tooltip.visible
                 }
                 anchors.top: walletAddressLbl.bottom
-                anchors.topMargin: 24
+                anchors.topMargin: Style.current.bigPadding
             }
 
             StatusCheckBox {
@@ -315,7 +315,7 @@ Item {
                 anchors.top: keyLbl.bottom
                 anchors.topMargin: Style.current.padding
                 anchors.left: parent.left
-                anchors.leftMargin: 24
+                anchors.leftMargin: Style.current.bigPadding
             }
 
             StatusBaseText {
@@ -354,7 +354,7 @@ Item {
 
         Image {
             id: image1
-            height: 50
+            height: Style.dp(50)
             width: height
             source: Style.png("tokens/SNT")
             sourceSize: Qt.size(width, height)
@@ -365,21 +365,21 @@ Item {
             //% "10 SNT"
             text: qsTrId("ens-10-SNT")
             anchors.left: image1.right
-            anchors.leftMargin: 5
+            anchors.leftMargin: Style.dp(5)
             anchors.top: image1.top
             color: Theme.palette.directColor1
-            font.pixelSize: 14
+            font.pixelSize: Style.current.secondaryTextFontSize
         }
 
         StatusBaseText {
             //% "Deposit"
             text: qsTrId("ens-deposit")
             anchors.left: image1.right
-            anchors.leftMargin: 5
-            anchors.topMargin: 5
+            anchors.leftMargin: Style.dp(5)
+            anchors.topMargin: Style.dp(5)
             anchors.top: ensPriceLbl.bottom
             color: Theme.palette.baseColor1
-            font.pixelSize: 14
+            font.pixelSize: Style.current.secondaryTextFontSize
         }
     }
 

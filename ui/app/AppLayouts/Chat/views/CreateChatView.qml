@@ -84,7 +84,7 @@ Page {
         width: parent.width
         height: tagSelector.height
         anchors.top: parent.top
-        anchors.topMargin: 8
+        anchors.topMargin: Style.current.halfPadding
         clip: true
         StatusTagSelector {
             id: tagSelector
@@ -112,7 +112,7 @@ Page {
 
         StatusButton {
             id: confirmButton
-            implicitHeight: 44
+            implicitHeight: Style.dp(44)
             Layout.alignment: Qt.AlignTop
             enabled: (tagSelector.namesModel.count > 0)
             text: "Confirm"
@@ -125,8 +125,8 @@ Page {
 
         Item {
             Layout.alignment: Qt.AlignTop
-            implicitHeight: 44
-            implicitWidth: 44
+            implicitHeight: Style.dp(44)
+            implicitWidth: Style.dp(44)
 
             StatusActivityCenterButton {
                 id: notificationButton
@@ -139,7 +139,7 @@ Page {
 
     contentItem: Item {
         anchors.fill: parent
-        anchors.topMargin: headerRow.height + 32
+        anchors.topMargin: headerRow.height + Style.dp(32)
 
         StatusChatInput {
             id: chatInput
@@ -185,7 +185,7 @@ Page {
             verticalAlignment: Text.AlignVCenter
             visible: (contactsModel.count === 0)
             wrapMode: Text.WordWrap
-            font.pixelSize: 15
+            font.pixelSize: Style.current.primaryTextFontSize
             color: Theme.palette.baseColor1
             text: qsTr("You can only send direct messages to your Contacts.\n\n
 Send a contact request to the person you would like to chat with, you will be able to

@@ -29,22 +29,22 @@ Item {
         id: title
         text: currentAccount.name
         anchors.top: parent.top
-        anchors.topMargin: 56
+        anchors.topMargin: Style.dp(56)
         anchors.left: parent.left
-        anchors.leftMargin: 24
+        anchors.leftMargin: Style.current.bigPadding
         font.weight: Font.Medium
-        font.pixelSize: 28
+        font.pixelSize: Style.dp(28)
     }
 
     Rectangle {
         id: separatorDot
-        width: 8
-        height: 8
+        width: Style.dp(8)
+        height: Style.dp(8)
         color: Style.current.primary
         anchors.top: title.verticalCenter
-        anchors.topMargin: -3
+        anchors.topMargin: -Style.dp(3)
         anchors.left: title.right
-        anchors.leftMargin: 8
+        anchors.leftMargin: Style.dp(8)
         radius: 50
     }
 
@@ -54,9 +54,9 @@ Item {
             Utils.toLocaleString(currentAccount.currencyBalance.toFixed(2), locale, {"currency": true}) + " " + walletHeader.currency.toUpperCase()
         }
         anchors.left: separatorDot.right
-        anchors.leftMargin: 8
+        anchors.leftMargin: Style.current.halfPadding
         anchors.verticalCenter: title.verticalCenter
-        font.pixelSize: 22
+        font.pixelSize: Style.dp(22)
     }
 
     StatusExpandableAddress {
@@ -64,7 +64,7 @@ Item {
         address: currentAccount.mixedcaseAddress
         anchors.top: title.bottom
         anchors.left: title.left
-        addressWidth: 180
+        addressWidth: Style.dp(180)
         anchors.leftMargin: 0
         anchors.topMargin: 0
         store: walletHeader.store
@@ -74,9 +74,9 @@ Item {
         id: networkFilter
         visible: walletHeader.walletStore.isMultiNetworkEnabled 
         anchors.top: parent.top
-        anchors.topMargin: 56
+        anchors.topMargin: Style.dp(56)
         anchors.right: parent.right
-        anchors.rightMargin: 63
+        anchors.rightMargin: Style.dp(63)
         store: walletHeader.walletStore
     }
  }

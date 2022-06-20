@@ -13,7 +13,7 @@ StatusModal {
     id: root
     //% "Select account"
     header.title: qsTrId("select-account")
-    height: 284
+    height: Style.dp(284)
 
     property var accounts
     property string currency

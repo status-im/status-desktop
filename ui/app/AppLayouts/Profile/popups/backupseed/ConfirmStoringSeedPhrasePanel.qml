@@ -10,13 +10,13 @@ BackupSeedStepBase {
     StyledText {
         id: txtTitle
         anchors.top: parent.top
-        anchors.topMargin: 40
+        anchors.topMargin: Style.dp(40)
         anchors.right: parent.right
         anchors.left: parent.left
         horizontalAlignment: Text.AlignHCenter
         wrapMode: Text.WordWrap
         font.bold: true
-        font.pixelSize: 17
+        font.pixelSize: Style.dp(17)
         text: qsTr("Store Your Phrase Offline and Complete Your Back Up")
     }
 
@@ -48,7 +48,7 @@ BackupSeedStepBase {
         id: storeCheck
         width: parent.width
         anchors.top: secondTxtDesc.bottom
-        anchors.topMargin: 48
+        anchors.topMargin: Style.dp(48)
         text: qsTr("I aknowledge that Status will not be able to show me my seed phrase again.")
     }
 }

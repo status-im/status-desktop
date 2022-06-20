@@ -153,13 +153,13 @@ ColumnLayout {
                  advancedSection.addAccountType !== SelectGeneratedAccount.AddAccountType.WatchOnly
         DerivationPathsPanel {
             id: derivationPathsPanel
-            Layout.preferredWidth: 213
+            Layout.preferredWidth: Style.dp(213)
             Layout.alignment: Qt.AlignTop
             Component.onCompleted: advancedSection.path = Qt.binding(function() { return derivationPathsPanel.path})
         }
         DerivedAddressesPanel {
             id: derivedAddressesPanel
-            Layout.preferredWidth: 213
+            Layout.preferredWidth: Style.dp(213)
             Layout.alignment: Qt.AlignTop
             Component.onCompleted: advancedSection.pathSubFix = Qt.binding(function() { return derivedAddressesPanel.pathSubFix})
         }

@@ -105,8 +105,8 @@ Rectangle {
         visible: container.visible
         source: container
         horizontalOffset: 0
-        verticalOffset: 2
-        radius: 10
+        verticalOffset: Style.dp(2)
+        radius: Style.dp(10)
         samples: 15
         color: "#22000000"
     }
@@ -198,7 +198,7 @@ Rectangle {
                 color: ListView.isCurrentItem ? Style.current.backgroundHover : Style.current.transparent
                 border.width: 0
                 width: parent.width
-                height: 42
+                height: Style.dp(42)
                 radius: Style.current.radius
 
                 UserImage {
@@ -206,8 +206,8 @@ Rectangle {
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.left: parent.left
                     anchors.leftMargin: Style.current.smallPadding
-                    imageWidth: 32
-                    imageHeight: 32
+                    imageWidth: Style.dp(32)
+                    imageHeight: imageWidth
 
                     name: model.name
                     pubkey: model.publicKey
@@ -221,7 +221,7 @@ Rectangle {
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.left: accountImage.right
                     anchors.leftMargin: Style.current.smallPadding
-                    font.pixelSize: 15
+                    font.pixelSize: Style.current.primaryTextFontSize
                 }
 
                 MouseArea {

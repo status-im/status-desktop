@@ -27,7 +27,7 @@ Rectangle {
     }
     property bool isHovered: false
 
-    height: 64
+    height: Style.dp(64)
     anchors.right: parent.right
     anchors.left: parent.left
     border.width: 0
@@ -59,7 +59,7 @@ Rectangle {
         elide: Text.ElideRight
         anchors.right: parent.right
         anchors.rightMargin: Style.current.padding + radio.width
-        font.pixelSize: 17
+        font.pixelSize: Style.dp(17)
         anchors.top: accountImage.top
         anchors.left: accountImage.right
         anchors.leftMargin: Style.current.padding
@@ -72,10 +72,8 @@ Rectangle {
         font.family: Style.current.fontHexRegular.name
         elide: Text.ElideMiddle
         anchors.bottom: accountImage.bottom
-        anchors.bottomMargin: 0
         anchors.left: usernameText.left
-        anchors.leftMargin: 0
-        font.pixelSize: 15
+        font.pixelSize: Style.current.primaryTextFontSize
         color: Style.current.secondaryText
     }
 

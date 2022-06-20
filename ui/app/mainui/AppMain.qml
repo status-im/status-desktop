@@ -226,8 +226,8 @@ Item {
 
     StatusEmojiPopup {
         id: statusEmojiPopup
-        width: 360
-        height: 440
+        width: Style.dp(360)
+        height: Style.dp(440)
     }
 
     StatusAppLayout {
@@ -298,7 +298,7 @@ Item {
                 badge.value: model.notificationsCount
                 badge.visible: model.hasNotification
                 badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusBadge.borderColor
-                badge.border.width: 2
+                badge.border.width: Style.dp(2)
                 onClicked: {
                     changeAppSectionBySectionId(model.id)
                 }
@@ -345,7 +345,7 @@ Item {
                         //% "Leave Community"
                         text: qsTrId("leave-community")
                         icon.name: "arrow-right"
-                        icon.width: 14
+                        icon.width: Style.dp(14)
                         iconRotation: 180
                         type: StatusMenuItem.Type.Danger
                         onTriggered: communityContextMenu.chatCommunitySectionModule.leaveCommunity()
@@ -364,10 +364,10 @@ Item {
                 identicon.ringSettings.ringSpecModel: Utils.getColorHashAsJson(appMain.rootStore.userProfileInst.pubKey)
 
                 badge.visible: true
-                badge.anchors.rightMargin: 4
-                badge.anchors.topMargin: 25
-                badge.implicitHeight: 15
-                badge.implicitWidth: 15
+                badge.anchors.rightMargin: Style.dp(4)
+                badge.anchors.topMargin: Style.dp(25)
+                badge.implicitHeight: Style.dp(15)
+                badge.implicitWidth: Style.dp(15)
                 badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusAppNavBar.backgroundColor
                 /*
                 //This is still not in use. Read a comment for `currentUserStatus` in UserProfile on the nim side.
@@ -381,7 +381,7 @@ Item {
                         return Style.current.midGrey;
                 }*/
                 badge.color: appMain.rootStore.userProfileInst.userStatus ? Style.current.green : Style.current.midGrey
-                badge.border.width: 3
+                badge.border.width: Style.dp(3)
                 onClicked: {
                     userStatusContextMenu.opened ?
                         userStatusContextMenu.close() :
@@ -402,10 +402,10 @@ Item {
             ModuleWarning {
                 id: versionWarning
                 width: parent.width
-                height: 32
+                height: Style.dp(32)
                 visible: !!newVersionJSON.available
                 color: Style.current.green
-                btnWidth: 100
+                btnWidth: Style.dp(100)
                 text: qsTr("A new version of Status (%1) is available").arg(newVersionJSON.version)
                 btnText: qsTr("Download")
                 onClick: function(){
@@ -420,10 +420,10 @@ Item {
             ModuleWarning {
                 id: versionUpToDate
                 width: parent.width
-                height: 32
+                height: Style.dp(32)
                 visible: false
                 color: Style.current.green
-                btnWidth: 100
+                btnWidth: Style.dp(100)
                 text: qsTr("Your version is up to date")
                 btnText: qsTr("Close")
 
@@ -698,7 +698,7 @@ Item {
 
                 contentItem: Item {
                     width: msNotWorkingPopup.width
-                    implicitHeight: 100
+                    implicitHeight: Style.dp(100)
 
                     StatusBaseText {
                       text: qsTr("The mailserver you're connecting to is unavailable.")
@@ -859,10 +859,10 @@ Item {
 
                 Image {
                     source: modelData
-                    width: 80
-                    height: 80
-                    sourceSize.width: 160
-                    sourceSize.height: 160
+                    width: Style.dp(80)
+                    height: Style.dp(80)
+                    sourceSize.width: Style.dp(160)
+                    sourceSize.height: Style.dp(160)
                     fillMode: Image.PreserveAspectFit
                     x: index * 10 + rptDraggedPreviews.x
                     y: index * 10 + rptDraggedPreviews.y
@@ -983,12 +983,12 @@ Item {
     ListView {
         id: toastArea
         anchors.top: parent.top
-        anchors.topMargin: 60
+        anchors.topMargin: Style.dp(60)
         anchors.right: parent.right
-        anchors.rightMargin: 8
+        anchors.rightMargin: Style.current.halfPadding
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 60
-        spacing: 8
+        anchors.bottomMargin: Style.dp(60)
+        spacing: Style.current.radius
         verticalLayoutDirection: ListView.BottomToTop
         model: appMain.rootStore.mainModuleInst.ephemeralNotificationModel
         delegate: StatusToastMessage {

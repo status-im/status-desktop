@@ -40,8 +40,8 @@ ModalPopup {
         RoundedImage {
             id: profilePic
             source: popup.largeImage
-            width: 160
-            height: 160
+            width: Style.dp(160)
+            height: Style.dp(160)
             anchors.verticalCenter: parent.verticalCenter
             anchors.horizontalCenter: parent.horizontalCenter
             border.width: 1
@@ -56,9 +56,9 @@ ModalPopup {
             anchors.right: parent.right
             anchors.top: profilePic.bottom
             horizontalAlignment: Text.AlignHCenter
-            font.pixelSize: 13
+            font.pixelSize: Style.current.additionalTextSize
             wrapMode: Text.WordWrap
-            anchors.topMargin: 13
+            anchors.topMargin: Style.dp(13)
             font.weight: Font.Thin
             color: Style.current.danger
         }

@@ -23,7 +23,7 @@ Repeater {
             id: sectionTitle
             text: modelData.name
             font.bold: true
-            font.pixelSize: 16
+            font.pixelSize: Style.dp(16)
         }
         Flow {
             anchors.top: sectionTitle.bottom
@@ -31,7 +31,7 @@ Repeater {
             Layout.fillHeight: true
             Layout.fillWidth: true
             width: parent.width
-            spacing: 10
+            spacing: Style.dp(10)
             Repeater {
                 model: modelData.channels
                 SuggestedChannel {

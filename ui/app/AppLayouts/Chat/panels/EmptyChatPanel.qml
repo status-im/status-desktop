@@ -20,7 +20,10 @@ Item {
         id: walkieTalkieImage
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
-        source: Style.png("chat/chat@2x")
+        fillMode: Image.PreserveAspectFit
+        width: Style.dp(375)
+        height: Style.dp(375)
+        source: Style.png("chat/chat@3x")
     }
 
     Item {
@@ -34,7 +37,7 @@ Item {
             id: shareKeyLink
             //% "Share your chat key"
             text: qsTrId("share-your-chat-key")
-            font.pixelSize: 15
+            font.pixelSize: Style.current.primaryTextFontSize
             color: Style.current.blue
 
             MouseArea {
@@ -55,10 +58,10 @@ Item {
             id: orText
             //% "or"
             text: qsTrId("or")
-            font.pixelSize: 15
+            font.pixelSize: Style.current.primaryTextFontSize
             color: Style.current.secondaryText
             anchors.left: shareKeyLink.right
-            anchors.leftMargin: 2
+            anchors.leftMargin: Style.dp(2)
             anchors.bottom: shareKeyLink.bottom
         }
 
@@ -66,10 +69,10 @@ Item {
             id: inviteLink
             //% "invite"
             text: qsTrId("invite")
-            font.pixelSize: 15
+            font.pixelSize: Style.current.primaryTextFontSize
             color: Style.current.blue
             anchors.left: orText.right
-            anchors.leftMargin: 2
+            anchors.leftMargin: Style.dp(2)
             anchors.bottom: shareKeyLink.bottom
 
             MouseArea {
@@ -92,7 +95,7 @@ Item {
     StyledText {
         //% "friends to start messaging in Status"
         text: qsTrId("friends-to-start-messaging-in-status")
-        font.pixelSize: 15
+        font.pixelSize: Style.current.primaryTextFontSize
         color: Style.current.secondaryText
         anchors.horizontalCenter: walkieTalkieImage.horizontalCenter
         anchors.top: links.bottom

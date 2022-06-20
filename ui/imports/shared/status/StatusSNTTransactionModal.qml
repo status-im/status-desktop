@@ -32,7 +32,7 @@ ModalPopup {
         gasSelector.estimateGas();
     }
 
-    height: 540
+    height: Style.dp(540)
 
     //% "Authorize %1 %2"
     title: qsTrId("authorize--1--2").arg(Utils.stripTrailingZeros(assetPrice)).arg(asset.symbol)
@@ -211,8 +211,8 @@ ModalPopup {
             id: btnBack
             anchors.left: parent.left
             icon.name: "arrow-right"
-            icon.width: 20
-            icon.height: 16
+            icon.width: Style.dp(20)
+            icon.height: Style.dp(16)
             icon.rotation: 180
             visible: stack.currentGroup.showBackBtn
             enabled: {

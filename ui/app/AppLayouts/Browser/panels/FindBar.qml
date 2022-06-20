@@ -75,8 +75,8 @@ Rectangle {
     signal findNext()
     signal findPrevious()
 
-    width: 300
-    height: 40
+    width: Style.dp(300)
+    height: Style.dp(40)
     radius: Style.current.radius
 
     border.width: 0
@@ -87,12 +87,12 @@ Rectangle {
         width: root.width
         height: root.height
         x: root.x
-        y: root.y + 10
+        y: root.y + Style.dp(10)
         visible: root.visible
         source: root
         horizontalOffset: 0
-        verticalOffset: 2
-        radius: 10
+        verticalOffset: Style.dp(2)
+        radius: Style.dp(10)
         samples: 15
         color: "#22000000"
     }
@@ -109,12 +109,12 @@ Rectangle {
 
     RowLayout {
         anchors.fill: parent
-        anchors.topMargin: 5
-        anchors.bottomMargin: 5
-        anchors.leftMargin: 10
-        anchors.rightMargin: 10
+        anchors.topMargin: Style.dp(5)
+        anchors.bottomMargin: Style.dp(5)
+        anchors.leftMargin: Style.dp(10)
+        anchors.rightMargin: Style.dp(10)
 
-        spacing: 5
+        spacing: Style.dp(5)
 
         Rectangle {
             Layout.fillWidth: true
@@ -143,16 +143,16 @@ Rectangle {
         Rectangle {
             border.width: 1
             border.color: Style.current.border
-            width: 2
+            width: Style.dp(2)
             height: parent.height
-            anchors.topMargin: 5
-            anchors.bottomMargin: 5
+            anchors.topMargin: Style.dp(5)
+            anchors.bottomMargin: Style.dp(5)
         }
 
         StatusFlatRoundButton {
             id: prevBtn
-            implicitWidth: 32
-            implicitHeight: 32
+            implicitWidth: Style.dp(32)
+            implicitHeight: Style.dp(32)
             icon.name: "previous"
             enabled: numberOfMatches > 0
             type: StatusFlatRoundButton.Type.Tertiary
@@ -161,8 +161,8 @@ Rectangle {
 
         StatusFlatRoundButton {
             id: nextBtn
-            implicitWidth: 32
-            implicitHeight: 32
+            implicitWidth: Style.dp(32)
+            implicitHeight: Style.dp(32)
             icon.name: "next"
             enabled: numberOfMatches > 0
             type: StatusFlatRoundButton.Type.Tertiary
@@ -171,8 +171,8 @@ Rectangle {
 
         StatusFlatRoundButton {
             id: closeBtn
-            implicitWidth: 32
-            implicitHeight: 32
+            implicitWidth: Style.dp(32)
+            implicitHeight: Style.dp(32)
             icon.name: "close-circle"
             type: StatusFlatRoundButton.Type.Tertiary
             onClicked:  root.visible = false

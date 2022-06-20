@@ -31,19 +31,19 @@ Item {
 
         anchors.fill: parent
 
-        spacing: 8
+        spacing: Style.dp(8)
 
         StatusBaseText {
             text: qsTr("Community banner")
 
-            font.pixelSize: 15
+            font.pixelSize: Style.current.primaryTextFontSize
             color: Theme.palette.directColor1
         }
 
         EditCroppedImagePanel {
             id: editor
 
-            Layout.preferredWidth: 475
+            Layout.preferredWidth: Style.dp(475)
             Layout.preferredHeight: Layout.preferredWidth / aspectRatio
             Layout.alignment: Qt.AlignHCenter
 
@@ -52,7 +52,7 @@ Item {
             acceptButtonText: qsTr("Make this my Community banner")
 
             roundedImage: false
-            aspectRatio: 375/184
+            aspectRatio: Style.dp(375)/Style.dp(184)
 
             dataImage: root.imageData
 

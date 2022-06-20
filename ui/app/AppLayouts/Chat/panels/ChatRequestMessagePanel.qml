@@ -18,8 +18,8 @@ Item {
     Image {
         id: waveImg
         source: Style.png("chat/wave")
-        width: 80
-        height: 80
+        width: Style.dp(80)
+        height: width
         anchors.horizontalCenter: parent.horizontalCenter
     }
 
@@ -48,7 +48,7 @@ Item {
         horizontalAlignment: Text.AlignHCenter
         wrapMode: Text.WordWrap
         anchors.top: contactText1.bottom
-        anchors.topMargin: 2
+        anchors.topMargin: Style.dp(2)
         anchors.horizontalCenter: parent.horizontalCenter
         width: parent.width / 1.3
         color: Theme.palette.directColor1

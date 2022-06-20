@@ -161,8 +161,8 @@ Item {
         sourceComponent: Component {
             SVGImage {
                 id: emojiImage
-                width: 256
-                height: 44
+                width: Style.dp(256)
+                height: Style.dp(44)
                 fillMode: Image.PreserveAspectFit
                 source: Style.svg("read-more")
                 z: 100

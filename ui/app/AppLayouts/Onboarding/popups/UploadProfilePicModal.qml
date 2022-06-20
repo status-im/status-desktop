@@ -16,7 +16,7 @@ import "../stores"
 StatusModal {
     id: popup
 
-    height: 510
+    height: Style.dp(510)
     header.title: qsTr("Upload profile picture")
 
     property string currentProfileImg: ""
@@ -35,8 +35,8 @@ StatusModal {
         EditCroppedImagePanel {
             id: imageEditor
 
-            width: 160
-            height: 160
+            width: Style.dp(160)
+            height: Style.dp(160)
             anchors.centerIn: parent
 
             imageFileDialogTitle: qsTr("Choose an image for profile picture")

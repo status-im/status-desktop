@@ -27,7 +27,7 @@ OnboardingBasePage {
         id: container
         enabled: !dimBackground.active
         anchors.centerIn: parent
-        width: 425
+        width: Style.dp(425)
         height: {
             let h = 0
             const children = this.children
@@ -39,8 +39,8 @@ OnboardingBasePage {
         }
         Image {
             id: keysImg
-            width: 188
-            height: 185
+            width: Style.dp(188)
+            height: Style.dp(185)
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: parent.top
             fillMode: Image.PreserveAspectFit
@@ -56,23 +56,23 @@ OnboardingBasePage {
             font.bold: true
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: keysImg.bottom
-            font.letterSpacing: -0.2
-            font.pixelSize: 22
+            font.letterSpacing: -Style.dp(0.2)
+            font.pixelSize: Style.dp(22)
         }
 
         StyledText {
             id: txtDesc
-            width: 426
+            width: Style.dp(426)
             anchors.top: txtTitle.bottom
             anchors.topMargin: Style.current.padding
             color: Style.current.secondaryText
             text: qsTrId("Would you like to use your Touch ID to login to Status?")
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
-            font.pixelSize: 15
+            font.pixelSize: Style.current.primaryTextFontSize
         }
         ColumnLayout {
-            anchors.topMargin: 40
+            anchors.topMargin: Style.dp(40)
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: txtDesc.bottom
             spacing: Style.current.bigPadding
@@ -91,7 +91,7 @@ OnboardingBasePage {
                 Layout.alignment: Qt.AlignHCenter
                 color: Theme.palette.primaryColor1
                 text: qsTr("I prefer to use my password")
-                font.pixelSize: 15
+                font.pixelSize: Style.current.primaryTextFontSize
                 MouseArea {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor

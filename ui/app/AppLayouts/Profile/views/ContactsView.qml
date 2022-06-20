@@ -45,8 +45,7 @@ SettingsContentBase {
             id: searchBox
             anchors.left: parent.left
             anchors.right: parent.right
-            input.implicitHeight: 44
-            input.placeholderText: qsTr("Search by a display name or chat key")
+            input.implicitHeight: Style.dp(44)
         }
 
         StatusTabBar {
@@ -277,8 +276,8 @@ SettingsContentBase {
         Component {
             id: loadingIndicator
             StatusLoadingIndicator {
-                width: 12
-                height: 12
+                width: Style.dp(12)
+                height: Style.dp(12)
             }
         }
 

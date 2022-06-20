@@ -14,17 +14,17 @@ StatusModal {
 
     //% "Choose browser"
     header.title: qsTrId("choose-browser")
-    width: 440
+    width: Style.dp(440)
 
     contentItem: Column {
-        width: popup.width - 32
-        spacing: 20
+        width: popup.width - Style.dp(32)
+        spacing: Style.dp(20)
         anchors.horizontalCenter: popup.horizontalCenter
 
         Image {
             source: Style.png("browser/chooseBrowserImage")
-            width: 240
-            height: 148
+            width: Style.dp(240)
+            height: Style.dp(148)
             anchors.horizontalCenter: parent.horizontalCenter
         }
 

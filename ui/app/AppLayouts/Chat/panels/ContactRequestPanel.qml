@@ -20,7 +20,7 @@ Rectangle {
     property bool isHovered: false
     id: container
 
-    height: visible ? 64 : 0
+    height: visible ? Style.dp(64) : 0
     anchors.right: parent.right
     anchors.left: parent.left
     border.width: 0
@@ -43,7 +43,7 @@ Rectangle {
         id: usernameText
         text: contactName
         elide: Text.ElideRight
-        font.pixelSize: 17
+        font.pixelSize: Style.dp(17)
         anchors.top: accountImage.top
         anchors.topMargin: Style.current.smallPadding
         anchors.left: accountImage.right

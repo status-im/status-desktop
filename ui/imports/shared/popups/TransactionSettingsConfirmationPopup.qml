@@ -13,8 +13,8 @@ import "."
 ModalPopup {
     id: popup
 
-    height: 300 + (showPriceLimitWarning ? 65 : 0) + (showTipLimitWarning ? 65 : 0)
-    width: 400
+    height: Style.dp(300 + (showPriceLimitWarning ? 65 : 0) + (showTipLimitWarning ? 65 : 0))
+    width: Style.dp(400)
     title: qsTr("Are you sure?")
 
     property var onConfirm: function(){}
@@ -32,15 +32,15 @@ ModalPopup {
 
     Column {
         id: content
-        width: 450
+        width: Style.dp(450)
         height: parent.height
-        spacing: 10
+        spacing: Style.dp(10)
 
         StyledText {
             anchors.left: parent.left
             anchors.leftMargin: Style.current.smallPadding
             text: qsTr("Your priority fee is below our suggested parameters.")
-            font.pixelSize: 13
+            font.pixelSize: Style.current.additionalTextSize
             wrapMode: Text.WordWrap
             color: Style.current.secondaryText
         }
@@ -49,19 +49,19 @@ ModalPopup {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.leftMargin: Style.current.smallPadding
-            height: 20
+            height: Style.dp(20)
 
             StyledText {
                 text: qsTr("Current base fee")
-                font.pixelSize: 13
-                width: 190
+                font.pixelSize: Style.current.additionalTextSize
+                width: Style.dp(190)
                 anchors.left: parent.left
             }
 
             StyledText {
                 text: qsTr("%1 Gwei").arg(currentBaseFee)
-                font.pixelSize: 13
-                width: 190
+                font.pixelSize: Style.current.additionalTextSize
+                width: Style.dp(190)
                 anchors.right: parent.right
             }
         }
@@ -70,19 +70,19 @@ ModalPopup {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.leftMargin: Style.current.smallPadding
-            height: 20
+            height: Style.dp(20)
 
             StyledText {
                 text: qsTr("Current minimum tip")
-                font.pixelSize: 13
-                width: 190
+                font.pixelSize: Style.current.additionalTextSize
+                width: Style.dp(190)
                 anchors.left: parent.left
             }
 
             StyledText {
                 text: qsTr("%1 Gwei").arg(currentMinimumTip)
-                font.pixelSize: 13
-                width: 190
+                font.pixelSize: Style.current.additionalTextSize
+                width: Style.dp(190)
                 anchors.right: parent.right
             }
         }
@@ -91,29 +91,29 @@ ModalPopup {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.leftMargin: Style.current.smallPadding
-            height: 20
+            height: Style.dp(20)
 
             StyledText {
                 text: qsTr("Current average tip")
-                font.pixelSize: 13
-                width: 190
+                font.pixelSize: Style.current.additionalTextSize
+                width: Style.dp(190)
                 anchors.left: parent.left
             }
 
             StyledText {
                 text: qsTr("%1 Gwei").arg(currentAverageTip)
-                font.pixelSize: 13
-                width: 190
+                font.pixelSize: Style.current.additionalTextSize
+                width: Style.dp(190)
                 anchors.right: parent.right
             }
         }
 
         Rectangle {
             id: tipLimitRect
-            width: 368
+            width: Style.dp(368)
             visible: showTipLimitWarning
-            height: visible ? 70 : 0
-            radius: 8
+            height: visible ? Style.dp(70) : 0
+            radius: Style.current.radius
             color: Style.current.backgroundHoverLight
 
             Column {
@@ -121,26 +121,26 @@ ModalPopup {
                 anchors.topMargin: Style.current.smallPadding
                 anchors.left: parent.left
                 anchors.leftMargin: Style.current.smallPadding
-                height: 100
-                width: 450 - Style.current.smallPadding
-                spacing: 10
+                height: Style.dp(100)
+                width: Style.dp(450) - Style.current.smallPadding
+                spacing: Style.dp(10)
 
                 Item {
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    height: 20
+                    height: Style.dp(20)
                     StyledText {
                         text: qsTr("Your tip limit")
-                        font.pixelSize: 13
-                        width: 190
+                        font.pixelSize: Style.current.additionalTextSize
+                        width: Style.dp(190)
                         anchors.left: parent.left
                         color: Style.current.red
                     }
 
                     StyledText {
                         text: qsTr("%1 Gwei").arg(tipLimit)
-                        font.pixelSize: 13
-                        width: 190
+                        font.pixelSize: Style.current.additionalTextSize
+                        width: Style.dp(190)
                         anchors.right: parent.right
                         color: Style.current.red
                     }
@@ -149,19 +149,19 @@ ModalPopup {
                 Item {
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    height: 20
+                    height: Style.dp(20)
 
                     StyledText {
                         text: qsTr("Suggested minimum tip")
-                        font.pixelSize: 13
-                        width: 190
+                        font.pixelSize: Style.current.additionalTextSize
+                        width: Style.dp(190)
                         anchors.left: parent.left
                     }
 
                     StyledText {
                         text: qsTr("%1 Gwei").arg(suggestedTipLimit)
-                        font.pixelSize: 13
-                        width: 190
+                        font.pixelSize: Style.current.additionalTextSize
+                        width: Style.dp(190)
                         anchors.right: parent.right
                     }
                 }
@@ -171,10 +171,10 @@ ModalPopup {
 
         Rectangle {
             id: minPriceLimitRect
-            width: 368
+            width: Style.dp(368)
             visible: showPriceLimitWarning
-            height: visible ? 70 : 0
-            radius: 8
+            height: visible ? Style.dp(70) : 0
+            radius: Style.current.radius
             color: Style.current.backgroundHoverLight
 
             Column {
@@ -182,26 +182,26 @@ ModalPopup {
                 anchors.topMargin: Style.current.smallPadding
                 anchors.left: parent.left
                 anchors.leftMargin: Style.current.smallPadding
-                height: 100
-                width: 450 - Style.current.smallPadding
-                spacing: 10
+                height: Style.dp(100)
+                width: Style.dp(450) - Style.current.smallPadding
+                spacing: Style.dp(10)
 
                 Item {
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    height: 20
+                    height: Style.dp(20)
                     StyledText {
                         text: qsTr("Your price limit")
-                        font.pixelSize: 13
-                        width: 190
+                        font.pixelSize: Style.current.additionalTextSize
+                        width: Style.dp(190)
                         anchors.left: parent.left
                         color: Style.current.red
                     }
 
                     StyledText {
                         text: qsTr("%1 Gwei").arg(priceLimit)
-                        font.pixelSize: 13
-                        width: 190
+                        font.pixelSize: Style.current.additionalTextSize
+                        width: Style.dp(190)
                         anchors.right: parent.right
                         color: Style.current.red
                     }
@@ -210,19 +210,19 @@ ModalPopup {
                 Item {
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    height: 20
+                    height: Style.dp(20)
 
                     StyledText {
                         text: qsTr("Suggested minimum price limit")
-                        font.pixelSize: 13
-                        width: 190
+                        font.pixelSize: Style.current.additionalTextSize
+                        width: Style.dp(190)
                         anchors.left: parent.left
                     }
 
                     StyledText {
                         text: qsTr("%1 Gwei").arg(suggestedPriceLimit)
-                        font.pixelSize: 13
-                        width: 190
+                        font.pixelSize: Style.current.additionalTextSize
+                        width: Style.dp(190)
                         anchors.right: parent.right
                     }
                 }

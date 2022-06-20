@@ -110,7 +110,7 @@ ModalPopup {
             OnboardingComponents.CreatePasswordModal {
                 privacyStore: popup.privacyStore
                 storingPasswordModal: true
-                height: 350
+                height: Style.dp(350)
 
                 onOfferToStorePassword: {
                     popup.offerToStorePassword(password, runStoreToKeychainPopup)
@@ -123,7 +123,7 @@ ModalPopup {
             ConfirmationDialog {
                 id: storeToKeychainConfirmationPopup
                 property string password: ""
-                height: 200
+                height: Style.dp(200)
                 confirmationText: qsTr("Would you like to store password to the Keychain?")
                 showRejectButton: true
                 showCancelButton: true

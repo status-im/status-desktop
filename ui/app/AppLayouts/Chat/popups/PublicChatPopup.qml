@@ -56,7 +56,7 @@ ModalPopup {
 
         StyledText {
             width: parent.width
-            font.pixelSize: 15
+            font.pixelSize: Style.current.primaryTextFontSize
             //% "A public chat is where you get to hang out with others, make friends and talk about subjects of your interest."
             text: qsTrId("a-public-chat-is-where-you-get-to-hang-out-with-others,-make-friends-and-talk-about-subjects-of-your-interest.")
             wrapMode: Text.WordWrap

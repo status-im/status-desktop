@@ -40,7 +40,7 @@ Rectangle {
         property string maxString: qsTr("Max: ")
     }
 
-    radius: 8
+    radius: Style.current.radius
 
     color: Theme.palette.statusModal.backgroundColor
     width: parent.width
@@ -61,7 +61,7 @@ Rectangle {
 
     ColumnLayout {
         id: headerLayout
-        spacing: 8
+        spacing: Style.current.halfPadding
         width: parent.width
         anchors.top: parent.top
         anchors.leftMargin: Style.current.xlPadding
@@ -93,12 +93,12 @@ Rectangle {
                 header.selectedAccountChanged()
             }
             showAccountDetails: false
-            selectField.select.height: 32
+            selectField.select.height: Style.dp(32)
         }
         ColumnLayout {
             id: assetAndAmmountSelector
             RowLayout {
-                spacing: 16
+                spacing: Style.dp(16)
                 StatusBaseText {
                     //% "Send"
                     text: qsTrId("command-button-send")
@@ -110,8 +110,8 @@ Rectangle {
                     //% "No balances active"
                     title: assetSelector.selectedAsset.totalBalance > 0 ? _internal.maxString + (assetSelector.selectedAsset ? _internal.maxFiatBalance : "0.00") : qsTr("No balances active")
                     closeButtonVisible: false
-                    titleText.font.pixelSize: 12
-                    height: 22
+                    titleText.font.pixelSize: Style.current.tertiaryTextFontSize
+                    height: Style.dp(22)
                 }
             }
             Item {
@@ -123,7 +123,7 @@ Rectangle {
                     anchors.left: parent.left
                     width: parent.width - assetSelector.width
                     input.placeholderText: "0.00" + " " + assetSelector.selectedAsset.symbol
-                    errorMessageCmp.anchors.rightMargin: -100
+                    errorMessageCmp.anchors.rightMargin: -Style.dp(100)
                     validators: [
                         StatusFloatValidator{
                             id: floatValidator
@@ -176,7 +176,7 @@ Rectangle {
                     id: txtFiatBalance
                     color: txtFiatBalance.activeFocus ? Style.current.textColor : Style.current.secondaryText
                     font.weight: Font.Medium
-                    font.pixelSize: 12
+                    font.pixelSize: Style.current.tertiaryTextFontSize
                     inputMethodHints: Qt.ImhFormattedNumbersOnly
                     text: "0.00"
                     selectByMouse: true
@@ -196,7 +196,7 @@ Rectangle {
                 StatusBaseText {
                     id: currencyText
                     text: header.store.currentCurrency.toUpperCase()
-                    font.pixelSize: 13
+                    font.pixelSize: Style.current.additionalTextSize
                     color: Theme.palette.directColor5
                 }
             }
@@ -214,9 +214,9 @@ Rectangle {
             input.placeholderText: qsTr("Enter an ENS name or address")
             input.anchors.leftMargin: 0
             input.anchors.rightMargin: 0
-            labelFont.pixelSize: 15
+            labelFont.pixelSize: Style.current.primaryTextFontSize
             labelFont.weight: Font.Normal
-            input.height: 56
+            input.height: Style.dp(56)
             isSelectorVisible: false
             addContactEnabled: false
             onSelectedRecipientChanged: estimateGas()

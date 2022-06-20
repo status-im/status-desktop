@@ -21,8 +21,8 @@ Rectangle {
     visible: isVisible && !!listView.count
     color: Style.current.background
     width: parent.width
-    height: 56
-    border.width: 1
+    height: Style.dp(56)
+    border.width: Style.dp(1)
     border.color: Style.current.border
 
     // This container is to contain the downloaded elements between the parent buttons and hide the overflow

@@ -23,19 +23,19 @@ OnboardingBasePage {
 
     Item {
         id: container
-        width: 425
-        height: 513
+        width: Style.dp(425)
+        height: Style.dp(513)
         anchors.centerIn: parent
 
         Item {
             id: keysImgWrapperItem
-            width: 257
-            height: 257
+            width: Style.dp(257)
+            height: Style.dp(257)
             anchors.horizontalCenter: parent.horizontalCenter
             Image {
                 id: keysImg
-                width: 257
-                height: 257
+                width: Style.dp(257)
+                height: Style.dp(257)
                 anchors.bottom: parent.bottom
                 anchors.horizontalCenter: parent.horizontalCenter
                 source: Style.png("onboarding/keys")
@@ -50,13 +50,13 @@ OnboardingBasePage {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: keysImgWrapperItem.bottom
             anchors.topMargin: Style.current.padding
-            font.letterSpacing: -0.2
-            font.pixelSize: 22
+            font.letterSpacing: -Style.dp(0.2)
+            font.pixelSize: Style.dp(22)
         }
 
         StyledText {
             id: txtDesc
-            height: 44
+            height: Style.dp(44)
             anchors.right: parent.right
             anchors.left: parent.left
             anchors.top: txtTitle.bottom
@@ -65,12 +65,12 @@ OnboardingBasePage {
             text: qsTrId("a-set-of-keys-controls-your-account.-your-keys-live-on-your-device,-so-only-you-can-use-them.")
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
-            font.pixelSize: 15
+            font.pixelSize: Style.current.primaryTextFontSize
         }
 
         ColumnLayout {
             anchors.top: txtDesc.bottom
-            anchors.topMargin: 32
+            anchors.topMargin: Style.dp(32)
             anchors.horizontalCenter: parent.horizontalCenter
             spacing: Style.current.bigPadding
             StatusButton {
@@ -106,7 +106,7 @@ OnboardingBasePage {
                 id: seedLink
                 Layout.alignment: Qt.AlignHCenter
                 color: Theme.palette.primaryColor1
-                font.pixelSize: 15
+                font.pixelSize: Style.current.primaryTextFontSize
                 MouseArea {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
@@ -130,8 +130,8 @@ OnboardingBasePage {
             name: "connectkeys"
             PropertyChanges {
                 target: keysImg
-                width: 160
-                height: 160
+                width: Style.dp(160)
+                height: Style.dp(160)
             }
             PropertyChanges {
                 target: txtTitle
@@ -160,8 +160,8 @@ OnboardingBasePage {
             name: "getkeys"
             PropertyChanges {
                 target: keysImg
-                width: 160
-                height: 160
+                width: Style.dp(160)
+                height: Style.dp(160)
             }
             PropertyChanges {
                 target: txtTitle
@@ -190,8 +190,8 @@ OnboardingBasePage {
             name: "importseed"
             PropertyChanges {
                 target: keysImg
-                width: 257
-                height: 257
+                width: Style.dp(257)
+                height: Style.dp(257)
             }
             PropertyChanges {
                 target: txtTitle
@@ -199,8 +199,8 @@ OnboardingBasePage {
             }
             PropertyChanges {
                 target: keysImg
-                width: 257
-                height: 257
+                width: Style.dp(257)
+                height: Style.dp(257)
                 source: Style.png("onboarding/seed-phrase")
             }
             PropertyChanges {

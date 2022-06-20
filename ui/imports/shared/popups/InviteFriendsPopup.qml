@@ -13,7 +13,7 @@ StatusModal {
 
     //% "Download Status link"
     header.title: qsTrId("download-status-link")
-    height: 156
+    height: Style.dp(156)
 
     StatusDescriptionListItem {
         subTitle: root.getStatusText

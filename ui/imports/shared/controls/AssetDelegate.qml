@@ -15,13 +15,14 @@ Item {
 
     anchors.left: parent.left
     visible: networkVisible && enabledNetworkBalance > 0
-    height: visible ? 40 + 2 * Style.current.padding : 0
+    height: visible ? Style.dp(40) + 2 * Style.current.padding : 0
 
 
     Image {
         id: assetInfoImage
-        width: 36
-        height: 36
+        width: Style.dp(36)
+        height: Style.dp(36)
+        fillMode: Image.PreserveAspectFit
         source: symbol ? Style.png("tokens/" + symbol) : ""
         anchors.left: parent.left
         anchors.leftMargin: 0
@@ -38,8 +39,7 @@ Item {
         anchors.left: assetInfoImage.right
         anchors.leftMargin: Style.current.smallPadding
         anchors.top: assetInfoImage.top
-        anchors.topMargin: 0
-        font.pixelSize: 15
+        font.pixelSize: Style.current.primaryTextFontSize
     }
     StyledText {
         id: assetFullTokenName
@@ -48,7 +48,7 @@ Item {
         anchors.left: assetInfoImage.right
         anchors.leftMargin: Style.current.smallPadding
         color: Style.current.secondaryText
-        font.pixelSize: 15
+        font.pixelSize: Style.current.primaryTextFontSize
     }
     StyledText {
         id: assetBalance
@@ -57,7 +57,7 @@ Item {
         anchors.topMargin: 0
         anchors.right: parent.right
         anchors.rightMargin: 0
-        font.pixelSize: 15
+        font.pixelSize: Style.current.primaryTextFontSize
         font.strikeout: false
     }
     StyledText {
@@ -67,6 +67,6 @@ Item {
         anchors.right: parent.right
         anchors.rightMargin: 0
         anchors.top: assetBalance.bottom
-        font.pixelSize: 15
+        font.pixelSize: Style.current.primaryTextFontSize
     }
 }

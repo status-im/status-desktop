@@ -32,10 +32,9 @@ Rectangle {
     property var onContactClicked
 
     visible: isVisible && (isContact || isUser)
-    height: visible ? 64 : 0
+    height: visible ? Style.dp(64) : 0
     anchors.right: parent.right
     anchors.left: parent.left
-    border.width: 0
     radius: Style.current.radius
     color: isHovered ? Style.current.backgroundHover : Style.current.transparent
 
@@ -56,9 +55,9 @@ Rectangle {
         elide: Text.ElideRight
         anchors.right: assetCheck.visible ? assetCheck.left : parent.right
         anchors.rightMargin: Style.current.padding
-        font.pixelSize: 17
+        font.pixelSize: Style.dp(17)
         anchors.top: accountImage.top
-        anchors.topMargin: 10
+        anchors.topMargin: Style.dp(10)
         anchors.left: accountImage.right
         anchors.leftMargin: Style.current.padding
     }
@@ -67,7 +66,7 @@ Rectangle {
         id: assetCheck
         visible: showCheckbox && !isUser
         anchors.top: accountImage.top
-        anchors.topMargin: 6
+        anchors.topMargin: Style.dp(6)
         anchors.right: parent.right
         anchors.rightMargin: Style.current.padding
         checked: isChecked
@@ -83,10 +82,10 @@ Rectangle {
         text: qsTrId("group-chat-admin")
         anchors.right: parent.right
         anchors.rightMargin: Style.current.padding
-        font.pixelSize: 15
+        font.pixelSize: Style.current.primaryTextFontSize
         color: Style.current.darkGrey
         anchors.top: accountImage.top
-        anchors.topMargin: 10
+        anchors.topMargin: Style.dp(10)
     }
 
     MouseArea {

@@ -15,7 +15,7 @@ Rectangle {
 
     property var sendModal
 
-    height: 61
+    height: Style.dp(61)
     color: Theme.palette.statusAppLayout.rightPanelBackgroundColor
 
     StatusModalDivider {

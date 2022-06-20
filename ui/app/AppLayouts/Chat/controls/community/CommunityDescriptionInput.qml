@@ -17,7 +17,7 @@ StatusInput {
 
     input.placeholderText: qsTr("What your community is about")
     input.multiline: true
-    input.implicitHeight: 88
+    input.implicitHeight: Style.dp(88)
 
     validators: [
         StatusMinLengthValidator {

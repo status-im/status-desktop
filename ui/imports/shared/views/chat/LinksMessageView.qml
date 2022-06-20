@@ -255,18 +255,18 @@ Column {
                 container: root.container
                 source: linkData.thumbnailUrl
                 visible: linkData.thumbnailUrl.length
-                imageWidth: 300
+                imageWidth: Style.dp(300)
                 isCurrentUser: root.isCurrentUser
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: parent.top
-                anchors.topMargin: 1
+                anchors.topMargin: Style.dp(1)
                 playing: root.messageStore.playAnimation
             }
 
             StatusBaseText {
                 id: linkTitle
                 text: linkData.title
-                font.pixelSize: 13
+                font.pixelSize: Style.current.additionalTextSize
                 font.weight: Font.Medium
                 wrapMode: Text.Wrap
                 anchors.top: linkImage.visible ? linkImage.bottom : parent.top
@@ -281,7 +281,7 @@ Column {
             StatusBaseText {
                 id: linkSite
                 text: linkData.site
-                font.pixelSize: 12
+                font.pixelSize: Style.current.tertiaryTextFontSize
                 font.weight: Font.Thin
                 color: Theme.palette.baseColor1
                 anchors.top: linkTitle.bottom
@@ -311,10 +311,10 @@ Column {
         id: enableLinkComponent
         Rectangle {
             id: enableLinkRoot
-            width: 300
+            width: Style.dp(300)
             height: childrenRect.height + Style.current.smallPadding
-            radius: 16
-            border.width: 1
+            radius: Style.dp(16)
+            border.width: Style.dp(1)
             border.color: Style.current.border
             color: Style.current.background
 
@@ -323,8 +323,8 @@ Column {
                 anchors.topMargin: Style.current.smallPadding
                 anchors.right: parent.right
                 anchors.rightMargin: Style.current.smallPadding
-                icon.width: 20
-                icon.height: 20
+                icon.width: Style.dp(20)
+                icon.height: Style.dp(20)
                 icon.name: "close-circle"
                 onClicked: {
                     enableLinkRoot.height = 0
@@ -335,8 +335,8 @@ Column {
             Image {
                 id: unfurlingImage
                 source: Style.png("unfurling-image")
-                width: 132
-                height: 94
+                width: Style.dp(132)
+                height: Style.dp(94)
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: parent.top
                 anchors.topMargin: Style.current.smallPadding
@@ -353,7 +353,7 @@ Column {
                 wrapMode: Text.WordWrap
                 anchors.top: unfurlingImage.bottom
                 anchors.topMargin: Style.current.halfPadding
-                font.pixelSize: 15
+                font.pixelSize: Style.current.primaryTextFontSize
                 color: Theme.palette.directColor1
             }
 
@@ -365,7 +365,7 @@ Column {
                 width: parent.width
                 wrapMode: Text.WordWrap
                 anchors.top: enableText.bottom
-                font.pixelSize: 13
+                font.pixelSize: Style.current.additionalTextSize
                 color: Theme.palette.baseColor1
             }
 

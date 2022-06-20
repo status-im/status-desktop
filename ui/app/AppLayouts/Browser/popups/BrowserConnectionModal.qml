@@ -22,8 +22,8 @@ StatusModal {
     property bool interactedWith: false
     property var web3Response: function(){}
 
-    width: 360
-    height: 480
+    width: Style.dp(360)
+    height: Style.dp(480)
     showHeader: false
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
     topPadding: 0
@@ -55,7 +55,7 @@ StatusModal {
             anchors.centerIn: parent
 
             RowLayout {
-                property int imgSize: 40
+                property int imgSize: Style.dp(40)
 
                 id: logoHeader
                 spacing: Style.current.halfPadding
@@ -83,11 +83,11 @@ StatusModal {
 
                 RoundedIcon {
                     source: Style.svg("walletIcon")
-                    iconHeight: 18
-                    iconWidth: 18
+                    iconHeight: Style.dp(18)
+                    iconWidth: Style.dp(18)
                     iconColor: accountSelector.selectedAccount.iconColor || Style.current.primary
                     color: Style.current.background
-                    border.width: 1
+                    border.width: Style.dp(1)
                     border.color: Style.current.border
                 }
             }
@@ -98,7 +98,7 @@ StatusModal {
                 text: qsTrId("--1--would-like-to-connect-to").arg(request.title)
                 wrapMode: Text.WordWrap
                 font.weight: Font.Bold
-                font.pixelSize: 17
+                font.pixelSize: Style.dp(17)
                 horizontalAlignment: Text.AlignHCenter
                 elide: Text.ElideRight
                 Layout.maximumWidth: browserConnectionModal.width - Style.current.padding
@@ -110,7 +110,7 @@ StatusModal {
             StatusAccountSelector {
                 id: accountSelector
                 label: ""
-                implicitWidth: 300
+                implicitWidth: Style.dp(300)
                 Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
                 showAccountDetails: false
                 accounts: WalletStore.accounts
@@ -148,7 +148,7 @@ StatusModal {
                     }
                 }
                 wrapMode: Text.WordWrap
-                font.pixelSize: 15
+                font.pixelSize: Style.dp(15)
                 horizontalAlignment: Text.AlignHCenter
                 color: Theme.palette.baseColor1
                 Layout.maximumWidth: browserConnectionModal.width - Style.current.padding
@@ -162,7 +162,7 @@ StatusModal {
 
                 StatusButton {
                     type: StatusBaseButton.Type.Danger
-                    width: 151
+                    width: Style.dp(151)
                     //% "Deny"
                     text: qsTrId("deny")
                     onClicked: {
@@ -174,7 +174,7 @@ StatusModal {
                 StatusButton {
                     normalColor: Utils.setColorAlpha(Style.current.success, 0.1)
                     textColor: Style.current.success
-                    width: 151
+                    width: Style.dp(151)
                     //% "Allow"
                     text: qsTrId("allow")
                     onClicked: {

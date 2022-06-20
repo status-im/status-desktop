@@ -47,8 +47,8 @@ Item {
         anchors.right: parent.right
         active: false
         sourceComponent: StatusLoadingIndicator {
-            width: 12
-            height: 12
+            width: Style.dp(12)
+            height: Style.dp(12)
         }
     }
     StyledText {

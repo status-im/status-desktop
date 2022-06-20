@@ -22,7 +22,7 @@ Item {
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
         contentHeight: contentItem.childrenRect.height
         anchors.top: parent.top
-        anchors.topMargin: 24
+        anchors.topMargin: Style.current.bigPadding
         anchors.bottom: startBtn.top
         anchors.bottomMargin: Style.current.padding
         anchors.left: parent.left
@@ -46,9 +46,9 @@ Item {
                 //% "Get a universal username"
                 text: qsTrId("ens-get-name")
                 anchors.top: image.bottom
-                anchors.topMargin: 24
+                anchors.topMargin: Style.current.bigPadding
                 font.weight: Font.Bold
-                font.pixelSize: 24
+                font.pixelSize: Style.dp(24)
                 anchors.left: parent.left
                 anchors.right: parent.right
                 horizontalAlignment: Text.AlignHCenter
@@ -61,7 +61,7 @@ Item {
                 //% "ENS names transform those crazy-long addresses into unique usernames."
                 text: qsTrId("ens-welcome-hints")
                 anchors.top: title.bottom
-                anchors.topMargin: 24
+                anchors.topMargin: Style.current.bigPadding
                 font.pixelSize: 14
                 anchors.left: parent.left
                 anchors.right: parent.right
@@ -74,11 +74,11 @@ Item {
                 id: element1Number
                 text: "1"
                 anchors.left: parent.left
-                anchors.leftMargin: 24
+                anchors.leftMargin: Style.current.bigPadding
                 anchors.top: subtitle.bottom
-                anchors.topMargin: 24
+                anchors.topMargin: Style.current.bigPadding
                 font.weight: Font.Bold
-                font.pixelSize: 14
+                font.pixelSize: Style.current.secondaryTextFontSize
                 color: Theme.palette.directColor1
             }
 
@@ -87,13 +87,13 @@ Item {
                 //% "Customize your chat name"
                 text: qsTrId("ens-welcome-point-customize-title")
                 anchors.left: element1Number.right
-                anchors.leftMargin: 24
+                anchors.leftMargin: Style.current.bigPadding
                 anchors.top: subtitle.bottom
-                anchors.topMargin: 24
+                anchors.topMargin: Style.current.bigPadding
                 anchors.right: parent.right
                 wrapMode: Text.WordWrap
                 font.weight: Font.Bold
-                font.pixelSize: 14
+                font.pixelSize: Style.current.secondaryTextFontSize
                 color: Theme.palette.directColor1
             }
 
@@ -102,12 +102,12 @@ Item {
                 //% "An ENS name can replace your random 3-word name in chat. Be @yourname instead of %1."
                 text: qsTrId("an-ens-name-can-replace-your-random-3-word-name-in-chat--be--yourname-instead-of--1-").arg(root.username)
                 anchors.left: element1Number.right
-                anchors.leftMargin: 24
+                anchors.leftMargin: Style.current.bigPadding
                 anchors.top: element1Title.bottom
-                anchors.topMargin: 24
+                anchors.topMargin: Style.current.bigPadding
                 anchors.right: parent.right
                 wrapMode: Text.WordWrap
-                font.pixelSize: 14
+                font.pixelSize: Style.current.secondaryTextFontSize
                 color: Theme.palette.directColor1
             }
 
@@ -115,11 +115,11 @@ Item {
                 id: element2Number
                 text: "2"
                 anchors.left: parent.left
-                anchors.leftMargin: 24
+                anchors.leftMargin: Style.current.bigPadding
                 anchors.top: element1Subtitle.bottom
-                anchors.topMargin: 24
+                anchors.topMargin: Style.current.bigPadding
                 font.weight: Font.Bold
-                font.pixelSize: 14
+                font.pixelSize: Style.current.secondaryTextFontSize
                 color: Theme.palette.directColor1
             }
 
@@ -128,13 +128,13 @@ Item {
                 //% "Simplify your ETH address"
                 text: qsTrId("ens-welcome-point-simplify-title")
                 anchors.left: element2Number.right
-                anchors.leftMargin: 24
+                anchors.leftMargin: Style.current.bigPadding
                 anchors.top: element1Subtitle.bottom
-                anchors.topMargin: 24
+                anchors.topMargin: Style.current.bigPadding
                 anchors.right: parent.right
                 wrapMode: Text.WordWrap
                 font.weight: Font.Bold
-                font.pixelSize: 14
+                font.pixelSize: Style.current.secondaryTextFontSize
                 color: Theme.palette.directColor1
             }
 
@@ -143,12 +143,12 @@ Item {
                 //% "You can receive funds to your easy-to-share ENS name rather than your hexadecimal hash (0x...)."
                 text: qsTrId("ens-welcome-point-simplify")
                 anchors.left: element2Number.right
-                anchors.leftMargin: 24
+                anchors.leftMargin: Style.current.bigPadding
                 anchors.top: element2Title.bottom
-                anchors.topMargin: 24
+                anchors.topMargin: Style.current.bigPadding
                 anchors.right: parent.right
                 wrapMode: Text.WordWrap
-                font.pixelSize: 14
+                font.pixelSize: Style.current.secondaryTextFontSize
                 color: Theme.palette.directColor1
             }
 
@@ -156,11 +156,11 @@ Item {
                 id: element3Number
                 text: "3"
                 anchors.left: parent.left
-                anchors.leftMargin: 24
+                anchors.leftMargin: Style.current.bigPadding
                 anchors.top: element2Subtitle.bottom
-                anchors.topMargin: 24
+                anchors.topMargin: Style.current.bigPadding
                 font.weight: Font.Bold
-                font.pixelSize: 14
+                font.pixelSize: Style.current.secondaryTextFontSize
                 color: Theme.palette.directColor1
             }
 
@@ -169,13 +169,13 @@ Item {
                 //% "Receive transactions in chat"
                 text: qsTrId("ens-welcome-point-receive-title")
                 anchors.left: element3Number.right
-                anchors.leftMargin: 24
+                anchors.leftMargin: Style.current.bigPadding
                 anchors.top: element2Subtitle.bottom
-                anchors.topMargin: 24
+                anchors.topMargin: Style.current.bigPadding
                 anchors.right: parent.right
                 wrapMode: Text.WordWrap
                 font.weight: Font.Bold
-                font.pixelSize: 14
+                font.pixelSize: Style.current.secondaryTextFontSize
                 color: Theme.palette.directColor1
             }
 
@@ -184,12 +184,12 @@ Item {
                 //% "Others can send you funds via chat in one simple step."
                 text: qsTrId("ens-welcome-point-receive")
                 anchors.left: element3Number.right
-                anchors.leftMargin: 24
+                anchors.leftMargin: Style.current.bigPadding
                 anchors.top: element3Title.bottom
                 anchors.right: parent.right
                 wrapMode: Text.WordWrap
-                anchors.topMargin: 24
-                font.pixelSize: 14
+                anchors.topMargin: Style.current.bigPadding
+                font.pixelSize: Style.current.secondaryTextFontSize
                 color: Theme.palette.directColor1
             }
 
@@ -197,11 +197,11 @@ Item {
                 id: element4Number
                 text: "4"
                 anchors.left: parent.left
-                anchors.leftMargin: 24
+                anchors.leftMargin: Style.current.bigPadding
                 anchors.top: element3Subtitle.bottom
-                anchors.topMargin: 24
+                anchors.topMargin: Style.current.bigPadding
                 font.weight: Font.Bold
-                font.pixelSize: 14
+                font.pixelSize: Style.current.secondaryTextFontSize
                 color: Theme.palette.directColor1
             }
 
@@ -210,13 +210,13 @@ Item {
                 //% "10 SNT to register"
                 text: qsTrId("ens-welcome-point-register-title")
                 anchors.left: element4Number.right
-                anchors.leftMargin: 24
+                anchors.leftMargin: Style.current.bigPadding
                 anchors.top: element3Subtitle.bottom
-                anchors.topMargin: 24
+                anchors.topMargin: Style.current.bigPadding
                 anchors.right: parent.right
                 wrapMode: Text.WordWrap
                 font.weight: Font.Bold
-                font.pixelSize: 14
+                font.pixelSize: Style.current.secondaryTextFontSize
                 color: Theme.palette.directColor1
             }
 
@@ -225,12 +225,12 @@ Item {
                 //% "Register once to keep the name forever. After 1 year you can release the name and get your SNT back."
                 text: qsTrId("ens-welcome-point-register")
                 anchors.left: element4Number.right
-                anchors.leftMargin: 24
+                anchors.leftMargin: Style.current.bigPadding
                 anchors.top: element4Title.bottom
-                anchors.topMargin: 24
+                anchors.topMargin: Style.current.bigPadding
                 anchors.right: parent.right
                 wrapMode: Text.WordWrap
-                font.pixelSize: 14
+                font.pixelSize: Style.current.secondaryTextFontSize
                 color: Theme.palette.directColor1
             }
 
@@ -239,11 +239,11 @@ Item {
                 id: element5Number
                 text: "@"
                 anchors.left: parent.left
-                anchors.leftMargin: 24
+                anchors.leftMargin: Style.current.bigPadding
                 anchors.top: element4Subtitle.bottom
-                anchors.topMargin: 24
+                anchors.topMargin: Style.current.bigPadding
                 font.weight: Font.Bold
-                font.pixelSize: 14
+                font.pixelSize: Style.current.secondaryTextFontSize
                 color: Theme.palette.directColor1
             }
 
@@ -252,13 +252,13 @@ Item {
                 //% "Already own a username?"
                 text: qsTrId("ens-welcome-point-verify-title")
                 anchors.left: element5Number.right
-                anchors.leftMargin: 24
+                anchors.leftMargin: Style.current.bigPadding
                 anchors.top: element4Subtitle.bottom
-                anchors.topMargin: 24
+                anchors.topMargin: Style.current.bigPadding
                 anchors.right: parent.right
                 wrapMode: Text.WordWrap
                 font.weight: Font.Bold
-                font.pixelSize: 14
+                font.pixelSize: Style.current.secondaryTextFontSize
                 color: Theme.palette.directColor1
             }
 
@@ -267,12 +267,12 @@ Item {
                 //% "You can verify and add any usernames you own in the next steps."
                 text: qsTrId("ens-welcome-point-verify")
                 anchors.left: element5Number.right
-                anchors.leftMargin: 24
+                anchors.leftMargin: Style.current.bigPadding
                 anchors.top: element5Title.bottom
-                anchors.topMargin: 24
+                anchors.topMargin: Style.current.bigPadding
                 anchors.right: parent.right
                 wrapMode: Text.WordWrap
-                font.pixelSize: 14
+                font.pixelSize: Style.current.secondaryTextFontSize
                 color: Theme.palette.directColor1
             }
 
@@ -281,12 +281,12 @@ Item {
                 //% "Powered by Ethereum Name Services"
                 text: qsTrId("ens-powered-by")
                 anchors.left: element5Number.right
-                anchors.leftMargin: 24
+                anchors.leftMargin: Style.current.bigPadding
                 anchors.top: element5Subtitle.bottom
-                anchors.topMargin: 40
+                anchors.topMargin: Style.dp(40)
                 anchors.right: parent.right
                 wrapMode: Text.WordWrap
-                font.pixelSize: 11
+                font.pixelSize: Style.dp(11)
                 color: Theme.palette.directColor1
             }
         }

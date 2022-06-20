@@ -20,8 +20,8 @@ Item {
     RoundedImage {
         id: imgThumb
         anchors.left: parent.left
-        width: 40
-        height: 40
+        width: Style.dp(40)
+        height: Style.dp(40)
         source: packThumb
     }
 
@@ -39,7 +39,7 @@ Item {
             color: Style.current.secondaryText
             text: packAuthor
             font.family: Style.current.fontRegular.name
-            font.pixelSize: 15
+            font.pixelSize: Style.current.primaryTextFontSize
         }
     }
 

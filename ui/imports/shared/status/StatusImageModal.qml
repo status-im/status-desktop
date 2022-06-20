@@ -29,8 +29,8 @@ Popup {
 
     function setPopupData(image) {
         messageImage.source = image.source;
-        const maxHeight = Global.applicationWindow.height - 80
-        const maxWidth = Global.applicationWindow.width - 80
+        const maxHeight = Global.applicationWindow.height - Style.dp(80)
+        const maxWidth = Global.applicationWindow.width - Style.dp(80)
 
 
         if (image.sourceSize.width >= maxWidth || image.sourceSize.height >= maxHeight) {

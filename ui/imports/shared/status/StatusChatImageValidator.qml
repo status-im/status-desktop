@@ -25,8 +25,8 @@ Item {
         radius: Style.current.halfPadding
         layer.enabled: true
         layer.effect: DropShadow {
-            verticalOffset: 3
-            radius: 8
+            verticalOffset: Style.dp(3)
+            radius: Style.current.radius
             samples: 15
             fast: true
             cached: true
@@ -35,15 +35,15 @@ Item {
 
         SVGImage {
             id: imgExclamation
-            width: 20
-            height: 20
+            width: Style.dp(20)
+            height: Style.dp(20)
             sourceSize.height: height * 2
             sourceSize.width: width * 2
             verticalAlignment: Image.AlignVCenter
             anchors.top: parent.top
             anchors.left: parent.left
-            anchors.topMargin: 6
-            anchors.leftMargin: 6
+            anchors.topMargin: Style.dp(6)
+            anchors.leftMargin: Style.dp(6)
             fillMode: Image.PreserveAspectFit
             source: Style.svg("exclamation_outline")
         }
@@ -52,11 +52,11 @@ Item {
             verticalAlignment: Text.AlignVCenter
             anchors.top: parent.top
             anchors.left: imgExclamation.right
-            anchors.topMargin: 7
-            anchors.leftMargin: 6
+            anchors.topMargin: Style.dp(7)
+            anchors.leftMargin: Style.dp(6)
             wrapMode: Text.WordWrap
-            font.pixelSize: 13
-            height: 18
+            font.pixelSize: Style.current.additionalTextSize
+            height: Style.dp(18)
             color: Style.current.danger
         }
         StyledText {
@@ -64,11 +64,11 @@ Item {
             verticalAlignment: Text.AlignVCenter
             anchors.top: parent.top
             anchors.left: txtValidationError.right
-            anchors.topMargin: 7
-            anchors.leftMargin: 6
+            anchors.topMargin: Style.dp(7)
+            anchors.leftMargin: Style.dp(6)
             wrapMode: Text.WordWrap
-            font.pixelSize: 13
-            height: 18
+            font.pixelSize: Style.current.additionalTextSize
+            height: Style.dp(18)
             color: Style.current.textColor
         }
     }

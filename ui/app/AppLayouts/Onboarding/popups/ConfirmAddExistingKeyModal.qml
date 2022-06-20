@@ -13,7 +13,7 @@ ModalPopup {
     id: popup
     //% "Enter seed phrase"
     title: qsTrId("enter-seed-phrase")
-    height: 200
+    height: Style.dp(200)
     signal openModalClicked()
 
     StyledText {

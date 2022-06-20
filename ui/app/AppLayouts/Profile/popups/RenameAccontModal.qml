@@ -26,7 +26,7 @@ StatusModal {
     //% "'%1' would like to connect to"
     header.title: qsTr("Rename %1").arg(currentAccount.name)
 
-    property int marginBetweenInputs: 30
+    property int marginBetweenInputs: Style.dp(30)
 
     onOpened: {
         accountNameInput.forceActiveFocus(Qt.MouseFocusReason)
@@ -78,7 +78,7 @@ StatusModal {
         StatusColorSelectorGrid {
             id: accountColorInput
             anchors.top: selectedColor.bottom
-            anchors.topMargin: 10
+            anchors.topMargin: Style.dp(10)
             anchors.horizontalCenter: parent.horizontalCenter
             //% "color"
             titleText: qsTr("color").toUpperCase()
@@ -99,7 +99,7 @@ StatusModal {
 
         Item {
             width: parent.width
-            height: 8
+            height: Style.dp(8)
         }
     }
 

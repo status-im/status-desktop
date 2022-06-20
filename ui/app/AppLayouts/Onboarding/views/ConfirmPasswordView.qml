@@ -61,13 +61,13 @@ OnboardingBasePage {
     Column {
         id: view
         spacing: 4 * Style.current.padding
-        width: 416
+        width: Style.dp(416)
         anchors.centerIn: parent
 
         StatusBaseText {
             anchors.horizontalCenter: parent.horizontalCenter
             text: qsTr("Have you written down your password?")
-            font.pixelSize: 22
+            font.pixelSize: Style.dp(22)
             font.bold: true
             color: Theme.palette.directColor1
         }
@@ -79,21 +79,21 @@ OnboardingBasePage {
             StatusBaseText {
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: qsTr("You will never be able to recover your password if you lose it.")
-                font.pixelSize: 15
+                font.pixelSize: Style.current.primaryTextFontSize
                 color: Theme.palette.dangerColor1
             }
 
             StatusBaseText {
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: qsTr("If you need to, write it using pen and paper and keep in a safe place.")
-                font.pixelSize: 15
+                font.pixelSize: Style.current.primaryTextFontSize
                 color: Theme.palette.baseColor1
             }
 
             StatusBaseText {
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: qsTr("If you lose your password you will lose access to your Status profile.")
-                font.pixelSize: 15
+                font.pixelSize: Style.current.primaryTextFontSize
                 color: Theme.palette.baseColor1
             }
         }
@@ -124,9 +124,9 @@ OnboardingBasePage {
                     visible: confPswInput.text !== ""
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.right: parent.right
-                    anchors.rightMargin: 16
-                    width: 24
-                    height: 24
+                    anchors.rightMargin: Style.current.padding
+                    width: Style.dp(24)
+                    height: Style.dp(24)
                     icon.name: confPswInput.showPassword ? "hide" : "show"
                     icon.color: Theme.palette.baseColor1
 
@@ -137,7 +137,7 @@ OnboardingBasePage {
             StatusBaseText {
                 id: errorTxt
                 anchors.horizontalCenter: parent.horizontalCenter
-                font.pixelSize: 12
+                font.pixelSize: Style.current.tertiaryTextFontSize
                 color: Theme.palette.dangerColor1
                 onTextChanged: {
                     if(text === "") filler.visible = true

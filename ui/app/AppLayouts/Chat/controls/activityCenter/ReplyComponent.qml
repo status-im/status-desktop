@@ -21,8 +21,8 @@ Item {
 
     SVGImage {
         id: replyIcon
-        width: 16
-        height: 16
+        width: Style.dp(16)
+        height: width
         source: Style.svg("reply-small-arrow")
         anchors.left: parent.left
         anchors.verticalCenter:parent.verticalCenter
@@ -31,14 +31,14 @@ Item {
     StyledTextEdit {
         text: Utils.getReplyMessageStyle(StatusQUtils.Emoji.parse(Utils.linkifyAndXSS(repliedMessageContent), StatusQUtils.Emoji.size.small), false)
         textFormat: Text.RichText
-        height: 18
-        width: implicitWidth > 300 ? 300 : implicitWidth
+        height: Style.dp(18)
+        width: implicitWidth > Style.dp(300) ? Style.dp(300) : implicitWidth
         clip: true
         anchors.left: replyIcon.right
-        anchors.leftMargin: 4
+        anchors.leftMargin: Style.dp(4)
         color: Style.current.secondaryText
         font.weight: Font.Medium
-        font.pixelSize: 13
+        font.pixelSize: Style.current.additionalTextSize
         anchors.verticalCenter: parent.verticalCenter
         selectByMouse: true
         readOnly: true

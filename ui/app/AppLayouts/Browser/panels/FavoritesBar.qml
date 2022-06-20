@@ -28,10 +28,10 @@ RowLayout {
         boundsBehavior: Flickable.StopAtBounds
         delegate: StatusFlatButton {
             id: favoriteBtn
-            height: 32
+            height: Style.dp(32)
             icon.source: imageUrl
-            icon.width: 24
-            icon.height: 24
+            icon.width: Style.dp(24)
+            icon.height: Style.dp(24)
             // Limit long named tabs. StatusFlatButton is not well-behaved control
             //  implicitWidth doesn't work. Also avoid breaking visualization by escaping HTML
             text: Utils.escapeHtml(Utils.elideIfTooLong(name, 40))

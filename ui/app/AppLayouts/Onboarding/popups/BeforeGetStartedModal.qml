@@ -21,13 +21,13 @@ StatusModal {
         implicitHeight: childrenRect.height
         width: popup.width
         Column {
-            spacing: 12
+            spacing: Style.dp(12)
             anchors.left: parent.left
             anchors.right: parent.right
-            anchors.leftMargin: 32
-            anchors.rightMargin: 32
+            anchors.leftMargin: Style.dp(32)
+            anchors.rightMargin: Style.dp(32)
 
-            Item { height: 12;  width: parent.width }
+            Item { height: Style.dp(12);  width: parent.width }
 
             StatusCheckBox {
                 id: acknowledge
@@ -41,7 +41,7 @@ StatusModal {
                 objectName: "termsOfUseCheckBox"
 
                 contentItem: Row {
-                    spacing: 4
+                    spacing: Style.dp(4)
                     leftPadding: termsOfUse.indicator.width + termsOfUse.spacing
 
                     StatusBaseText {
@@ -98,7 +98,7 @@ StatusModal {
                 }
             }
 
-            Item { height: 12;  width: parent.width }
+            Item { height: Style.dp(12);  width: parent.width }
         }
     }
 

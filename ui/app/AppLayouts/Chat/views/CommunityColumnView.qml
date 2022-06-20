@@ -19,7 +19,7 @@ import "../panels/communities"
 
 Item {
     id: root
-    width: 304
+    width: Style.dp(304)
     height: parent.height
 
     // Important:
@@ -86,11 +86,11 @@ Item {
         property int nbRequests: root.communityData.pendingRequestsToJoin.count || 0
 
         anchors.top: communityHeader.bottom
-        anchors.topMargin: active ? 8 : 0
+        anchors.topMargin: active ? Style.current.halfPadding : 0
         anchors.horizontalCenter: parent.horizontalCenter
 
         active: communityData.amISectionAdmin && nbRequests > 0
-        height: nbRequests > 0 ? 64 : 0
+        height: nbRequests > 0 ? Style.dp(64) : 0
         sourceComponent: Component {
             StatusContactRequestsIndicatorListItem {
                 //% "Membership requests"

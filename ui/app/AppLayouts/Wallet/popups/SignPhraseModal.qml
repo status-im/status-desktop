@@ -19,7 +19,7 @@ ModalPopup {
 
     //% "Signing phrase"
     title: qsTrId("signing-phrase")
-    height: 390
+    height: Style.dp(390)
     closePolicy: Popup.NoAutoClose
 
     Column {
@@ -30,7 +30,7 @@ ModalPopup {
             anchors.horizontalCenter: parent.horizontalCenter
             //% "This is your signing phrase"
             text: qsTrId("this-is-you-signing")
-            font.pixelSize: 17
+            font.pixelSize: Style.dp(17)
             font.weight: Font.Bold
             horizontalAlignment: Text.AlignHCenter
             height: Style.current.padding * 3
@@ -40,8 +40,8 @@ ModalPopup {
             anchors.horizontalCenter: parent.horizontalCenter
             //% "You should see these 3 words before signing each transaction"
             text: qsTrId("three-words-description")
-            font.pixelSize: 15
-            width: 330
+            font.pixelSize: Style.current.primaryTextFontSize
+            width: Style.dp(330)
             wrapMode: Text.WordWrap
             horizontalAlignment: Text.AlignHCenter
             height: Style.current.padding * 4
@@ -49,23 +49,23 @@ ModalPopup {
 
         Rectangle {
             color: Style.current.inputBackground
-            height: 44
+            height: Style.dp(44)
             width: parent.width
             StyledText {
                 id: signingPhrase
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
-                font.pixelSize: 15
+                font.pixelSize: Style.current.primaryTextFontSize
                 text: RootStore.signingPhrase
             }
         }
 
         Item {
-            height: 30
+            height: Style.dp(30)
             width: parent.width
             SVGImage {
-                width: 13.33
-                height: 13.33
+                width: Style.dp(13)
+                height: Style.dp(13)
                 sourceSize.height: height * 2
                 sourceSize.width: width * 2
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -81,8 +81,8 @@ ModalPopup {
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
             width: parent.width
-            font.pixelSize: 13
-            height: 18
+            font.pixelSize: Style.current.additionalTextSize
+            height: Style.dp(18)
             color: Style.current.danger
             anchors.horizontalCenter: parent.horizontalCenter
         }

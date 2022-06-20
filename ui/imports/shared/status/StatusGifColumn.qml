@@ -12,7 +12,7 @@ import shared.stores 1.0
 
 Column {
     id: root
-    spacing: 8
+    spacing: Style.current.halfPadding
     property alias gifList: repeater
     property var gifWidth: 0
     property var store
@@ -39,7 +39,7 @@ Column {
 
             Rectangle {
                 id: loader
-                height: 100
+                height: Style.dp(100)
                 width: root.gifWidth
                 visible: animation.status != Image.Ready
                 radius: Style.current.radius
@@ -92,7 +92,6 @@ Column {
                 source: model.tinyUrl
                 width: root.gifWidth
                 fillMode: Image.PreserveAspectFit
-                z: 0
                 layer.enabled: true
                 layer.effect: OpacityMask {
                     opacity: model.id === root.lastHoveredId ? 0.6 : 1

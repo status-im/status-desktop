@@ -16,8 +16,8 @@ StatusModal {
     anchors.centerIn: parent
 
     id: popup
-    width: 400
-    height: 340
+    width: Style.dp(400)
+    height: Style.dp(340)
     header.title: qsTr("Nickname")
 
     property string nickname: ""
@@ -36,16 +36,16 @@ StatusModal {
 
         Column {
             anchors.top: parent.top
-            anchors.topMargin: 16
+            anchors.topMargin: Style.current.padding
             anchors.horizontalCenter: parent.horizontalCenter
-            width: parent.width - 32
-            spacing: 16
+            width: parent.width - Style.dp(32)
+            spacing: Style.dp(16)
 
             StatusBaseText {
                 id: descriptionText
                 //% "Nicknames help you identify others in Status. Only you can see the nicknames you’ve added"
                 text: qsTrId("nicknames-help-you-identify-others-in-status--only-you-can-see-the-nicknames-you-ve-added")
-                font.pixelSize: 15
+                font.pixelSize: Style.current.primaryTextFontSize
                 wrapMode: Text.WordWrap
                 color: Theme.palette.baseColor1
                 width: parent.width

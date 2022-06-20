@@ -12,8 +12,8 @@ import "."
 // TODO: replace with StatusModal
 ModalPopup {
     id: blockContactConfirmationDialog
-    height: 237
-    width: 400
+    height: Style.dp(237)
+    width: Style.dp(400)
 
     property Popup parentPopup
     property string contactAddress: ""
@@ -26,7 +26,7 @@ ModalPopup {
 
     StyledText {
         text: qsTr("Blocking will stop new messages from reaching you from %1.").arg(contactName)
-        font.pixelSize: 15
+        font.pixelSize: Style.current.primaryTextFontSize
         anchors.left: parent.left
         anchors.right: parent.right
         wrapMode: Text.WordWrap

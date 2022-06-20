@@ -49,9 +49,9 @@ Menu {
         }
         action: Action{} // Meant to be overwritten
         id: popupMenuItem
-        implicitWidth: 200
-        implicitHeight: 34
-        font.pixelSize: 13
+        implicitWidth: Style.dp(200)
+        implicitHeight: Style.dp(34)
+        font.pixelSize: Style.current.additionalTextSize
         font.weight: checked ? Font.Medium : Font.Normal
         icon.color: popupMenuItem.action.icon.color != "#00000000" ? popupMenuItem.action.icon.color : Style.current.blue
         icon.source: this.subMenu ? subMenuIcons[subMenuIndex].source : popupMenuItem.action.icon.source
@@ -65,8 +65,9 @@ Menu {
             rotation: -90
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
-            anchors.rightMargin: 12
-            width: 9
+            anchors.rightMargin: Style.dp(12)
+            width: Style.dp(9)
+            height: Style.dp(sourceSize.height)
             fillMode: Image.PreserveAspectFit
             visible: popupMenuItem.subMenu && popupMenuItem.subMenu.enabled
 
@@ -117,8 +118,8 @@ Menu {
         }
 
         background: Rectangle {
-            implicitWidth: 220
-            implicitHeight: enabled ? 24 : 0
+            implicitWidth: Style.dp(220)
+            implicitHeight: enabled ? Style.dp(24) : 0
             color: popupMenuItem.hovered ? popupMenuItem.hoverColor : "transparent"
         }
         MouseArea {
@@ -130,14 +131,14 @@ Menu {
 
     background: Item {
         id: bgPopupMenu
-        implicitWidth: 220
+        implicitWidth: Style.dp(220)
 
         Rectangle {
             id: bgPopupMenuContent
             implicitWidth: bgPopupMenu.width
             implicitHeight: bgPopupMenu.height
             color: Style.current.modalBackground
-            radius: 8
+            radius: Style.current.radius
             layer.enabled: true
             layer.effect: DropShadow{
                 width: bgPopupMenuContent.width
@@ -146,8 +147,8 @@ Menu {
                 visible: bgPopupMenuContent.visible
                 source: bgPopupMenuContent
                 horizontalOffset: 0
-                verticalOffset: 4
-                radius: 12
+                verticalOffset: Style.dp(4)
+                radius: Style.dp(12)
                 samples: 25
                 spread: 0.2
                 color: "#22000000"

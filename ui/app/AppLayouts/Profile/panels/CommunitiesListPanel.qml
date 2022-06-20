@@ -51,8 +51,8 @@ ListView {
             },
             StatusFlatRoundButton {
                 type: StatusFlatRoundButton.Type.Secondary
-                width: 44
-                height: 44
+                width: Style.dp(44)
+                height: Style.dp(44)
                 icon.source: model.muted ? Style.svg("communities/notifications-muted")
                                          : Style.svg("communities/notifications")
                 onClicked: root.communityProfileModule.setCommunityMuted(model.id, !model.muted)
@@ -60,8 +60,8 @@ ListView {
 
             StatusFlatRoundButton {
                 type: StatusFlatRoundButton.Type.Secondary
-                width: 44
-                height: 44
+                width: Style.dp(44)
+                height: Style.dp(44)
                 icon.name: "invite-users"
                 onClicked: root.inviteFriends(model)
             }
@@ -75,18 +75,18 @@ ListView {
         anchors.centerIn: parent
         header.title: qsTr("Leave %1").arg(community)
         contentItem: Item {
-            implicitWidth: 368
-            implicitHeight: msg.implicitHeight + 32
+            implicitWidth: Style.dp(368)
+            implicitHeight: msg.implicitHeight + Style.dp(32)
             StatusBaseText {
                 id: msg
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
-                anchors.margins: 16
+                anchors.margins: Style.current.padding
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                 text: qsTr("Are you sure you want to leave? Once you leave, you will have to request to rejoin if you change your mind.")
                 color: Theme.palette.directColor1
-                font.pixelSize: 15
+                font.pixelSize: Style.current.primaryTextFontSize
             }
         }
 

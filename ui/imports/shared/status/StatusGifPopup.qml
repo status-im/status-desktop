@@ -130,7 +130,7 @@ Popup {
             }
             visible: searchBox.text === ""
             color: Style.current.secondaryText
-            font.pixelSize: 13
+            font.pixelSize: Style.current.additionalTextSize
             topPadding: gifHeader.headerMargin
             leftPadding: gifHeader.headerMargin
         }
@@ -144,7 +144,7 @@ Popup {
             Layout.alignment: Qt.AlignTop | Qt.AlignLeft
             Layout.preferredHeight: {
                 const headerTextHeight = searchBox.text === "" ? headerText.height : 0
-                return 400 - gifHeader.height - headerTextHeight
+                return Style.dp(400) - gifHeader.height - headerTextHeight
             }
             sourceComponent: RootStore.gifColumnA.rowCount() == 0 ? empty : gifItems
         }
@@ -190,8 +190,8 @@ Popup {
         id: confirmationPopup
         modal: false
         anchors.centerIn: parent
-        height: 290
-        width: 280
+        height: tyle.dp(290)
+        width: tyle.dp(280)
         closePolicy: Popup.NoAutoClose
 
         background: Rectangle {
@@ -201,7 +201,7 @@ Popup {
             layer.enabled: true
             layer.effect: DropShadow{
                 verticalOffset: 3
-                radius: 8
+                radius: Style.current.radius
                 samples: 15
                 fast: true
                 cached: true
@@ -211,7 +211,7 @@ Popup {
 
         Column {
             anchors.fill: parent
-            spacing: 12
+            spacing: tyle.dp(12)
 
             SVGImage {
                 id: gifImage
@@ -234,7 +234,7 @@ Popup {
                 width: parent.width
                 horizontalAlignment: Text.AlignHCenter
                 wrapMode: Text.WordWrap
-                font.pixelSize: 13
+                font.pixelSize: Style.current.additionalTextSize
                 color: Style.current.secondaryText
             }
 

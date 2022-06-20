@@ -26,7 +26,7 @@ Rectangle {
 
     height: suggestionContainer.height + inviteFriendsContainer.height + Style.current.padding * 2
     border.color: Style.current.secondaryMenuBorder
-    radius: 16
+    radius: Style.dp(16)
     color: Style.current.transparent
 
     anchors.right: parent.right
@@ -36,34 +36,31 @@ Rectangle {
 
     Item {
         id: inviteFriendsContainer
-        height: visible ? 190 : 0
+        height: visible ? Style.dp(190) : 0
         anchors.top: parent.top
-        anchors.topMargin: 0
         anchors.right: parent.right
-        anchors.rightMargin: 0
         anchors.left: parent.left
-        anchors.leftMargin: 0
 
         SVGImage {
             anchors.top: parent.top
-            anchors.topMargin: -6
+            anchors.topMargin: -Style.dp(6)
             anchors.horizontalCenter: parent.horizontalCenter
             source: Style.svg("chatEmptyHeader")
-            width: 66
-            height: 50
+            width: Style.dp(66)
+            height: Style.dp(50)
         }
 
 
         StatusQControls.StatusFlatRoundButton {
             id: closeImg
-            implicitWidth: 32
-            implicitHeight: 32
+            implicitWidth: Style.dp(32)
+            implicitHeight: implicitWidth
             anchors.top: parent.top
-            anchors.topMargin: 10
+            anchors.topMargin: Style.dp(10)
             anchors.right: parent.right
-            anchors.rightMargin: 10
-            icon.height: 20
-            icon.width: 20
+            anchors.rightMargin: Style.dp(10)
+            icon.height: Style.dp(20)
+            icon.width: Style.dp(20)
             icon.name: "close-circle"
             type: StatusQControls.StatusFlatRoundButton.Type.Tertiary
             onClicked: {
@@ -76,9 +73,9 @@ Rectangle {
             //% "Chat and transact privately with your friends"
             text: qsTrId("chat-and-transact-privately-with-your-friends")
             anchors.top: parent.top
-            anchors.topMargin: 56
+            anchors.topMargin: Style.dp(56)
             horizontalAlignment: Text.AlignHCenter
-            font.pixelSize: 15
+            font.pixelSize: Style.current.primaryTextFontSize
             wrapMode: Text.WordWrap
             anchors.right: parent.right
             anchors.rightMargin: Style.current.xlPadding
@@ -105,7 +102,6 @@ Rectangle {
     }
 
     Separator {
-        anchors.topMargin: 0
         anchors.top: inviteFriendsContainer.bottom
         color: Style.current.border
     }
@@ -134,7 +130,7 @@ Rectangle {
             text: qsTrId("follow-your-interests-in-one-of-the-many-public-chats.")
             anchors.top: parent.top
             anchors.topMargin: Style.current.xlPadding
-            font.pointSize: 15
+            font.pointSize: Style.current.primaryTextFontSize
             wrapMode: Text.WordWrap
             verticalAlignment: Text.AlignTop
             horizontalAlignment: Text.AlignHCenter

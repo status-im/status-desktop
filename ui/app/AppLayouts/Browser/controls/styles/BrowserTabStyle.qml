@@ -31,14 +31,14 @@ TabViewStyle {
             id: tabRectangle
             color: styleData.selected ? fillColor : nonSelectedColor
             border.width: 0
-            implicitWidth: 240
+            implicitWidth: Style.dp(240)
             implicitHeight: control.tabHeight
             radius: Style.current.radius
 
             // This rectangle is to hide the bottom radius
             Rectangle {
                 width: parent.implicitWidth
-                height: 5
+                height: Style.dp(5)
                 color: parent.color
                 border.width: 0
                 anchors.bottom: parent.bottom
@@ -68,8 +68,8 @@ TabViewStyle {
 
             StatusFlatRoundButton {
                 id: closeTabBtn
-                width: 16
-                height: 16
+                width: Style.dp(16)
+                height: Style.dp(16)
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: parent.right
                 anchors.rightMargin: Style.current.halfPadding
@@ -91,8 +91,8 @@ TabViewStyle {
             sourceComponent: Component {
                 StatusFlatRoundButton {
                     id: addButton
-                    width: 16
-                    height: 16
+                    width: Style.dp(16)
+                    height: Style.dp(16)
                     icon.name: "close"
                     icon.rotation: 45
                     color: "transparent"

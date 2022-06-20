@@ -19,7 +19,7 @@ Item {
 
     property string communityId
     property var invitedCommunity
-    property int innerMargin: 12
+    property int innerMargin: Style.dp(12)
     property bool isLink: false
     property var store
 
@@ -76,12 +76,12 @@ Item {
                 id: rectangleBubble
                 property alias button: joinBtn
                 property bool isPendingRequest: root.store.isCommunityRequestPending(communityId)
-                width: 270
+                width: Style.dp(270)
                 height: column.implicitHeight
-                radius: 16
+                radius: Style.dp(16)
                 color: Style.current.background
                 border.color: Style.current.border
-                border.width: 1
+                border.width: Style.dp(1)
 
                 states: [
                     State {
@@ -205,7 +205,7 @@ Item {
                         Layout.rightMargin: root.innerMargin
                         Layout.fillWidth: true
                         wrapMode: Text.WordWrap
-                        font.pixelSize: 15
+                        font.pixelSize: Style.current.primaryTextFontSize
                         color: Theme.palette.directColor1
                     }
 
@@ -217,13 +217,13 @@ Item {
                     StatusBaseText {
                         id: communityName
                         text: invitedCommunity.name
-                        Layout.topMargin: 2
+                        Layout.topMargin: Style.dp(2)
                         Layout.leftMargin: root.innerMargin
                         Layout.fillWidth: true
                         Layout.rightMargin: root.innerMargin
                         font.weight: Font.Bold
                         wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-                        font.pixelSize: 17
+                        font.pixelSize: Style.dp(17)
                         color: Theme.palette.directColor1
                     }
 
@@ -234,7 +234,7 @@ Item {
                         Layout.rightMargin: root.innerMargin
                         Layout.fillWidth: true
                         wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-                        font.pixelSize: 15
+                        font.pixelSize: Style.current.primaryTextFontSize
                         color: Theme.palette.directColor1
                     }
 
@@ -244,7 +244,7 @@ Item {
                         //% "%1 members"
                         text: qsTrId("-1-members").arg(invitedCommunity.nbMembers)
                         Layout.leftMargin: root.innerMargin
-                        font.pixelSize: 13
+                        font.pixelSize: Style.current.additionalTextSize
                         font.weight: Font.Medium
                         color: Theme.palette.baseColor1
                     }
@@ -257,13 +257,13 @@ Item {
                         id: btnItemId
                         Layout.topMargin: -column.spacing
                         Layout.fillWidth: true
-                        height: 44
+                        height: Style.dp(44)
                         clip: true
                         StatusFlatButton {
                             id: joinBtn
                             anchors.fill: parent
                             anchors.verticalCenter: parent.verticalCenter
-                            radius: 16
+                            radius: Style.dp(16)
                             enabled: true
                             text: qsTr("Unsupported state")
                             onClicked: {

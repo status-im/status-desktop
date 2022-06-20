@@ -26,8 +26,8 @@ Item {
 
     SVGImage {
         id: communityIcon
-        width: 16
-        height: 16
+        width: Style.dp(16)
+        height: width
         source: Style.svg("communities")
         anchors.left: parent.left
         anchors.verticalCenter:parent.verticalCenter
@@ -54,17 +54,17 @@ Item {
             source: communityBadge.image
             noMouseArea: true
             noHover: true
-            width: 16
-            height: 16
+            width: Style.dp(16)
+            height: width
         }
     }
 
     Component {
         id: letterIdenticon
         StatusLetterIdenticon {
-            width: 16
-            height: 16
-            letterSize: 12
+            width: Style.dp(16)
+            height: width
+            letterSize: Style.dp(12)
             name: communityBadge.communityName
             color: communityBadge.iconColor
         }
@@ -73,15 +73,15 @@ Item {
     StyledTextEdit {
         id: communityName
         text: Utils.getLinkStyle(communityBadge.communityName, hoveredLink, textColor)
-        height: 18
+        height: Style.dp(18)
         readOnly: true
         textFormat: Text.RichText
-        width: implicitWidth > 300 ? 300 : implicitWidth
+        width: implicitWidth > Style.dp(300) ? Style.dp(300) : implicitWidth
         clip: true
         anchors.left: communityImageLoader.right
-        anchors.leftMargin: 4
+        anchors.leftMargin: Style.dp(4)
         color: textColor
-        font.pixelSize: 13
+        font.pixelSize: Style.current.additionalTextSize
         anchors.verticalCenter: parent.verticalCenter
         onLinkActivated: communityNameClicked()
     }
@@ -89,8 +89,8 @@ Item {
     SVGImage {
         id: caretImage
         source: Style.svg("show-category")
-        width: 16
-        height: 16
+        width: Style.dp(16)
+        height: width
         anchors.left: communityName.right
         anchors.verticalCenter: parent.verticalCenter
 
@@ -104,14 +104,14 @@ Item {
     StyledTextEdit {
         id: channelName
         text: Utils.getLinkStyle(communityBadge.channelName || name, hoveredLink, textColor)
-        height: 18
+        height: Style.dp(18)
         readOnly: true
         textFormat: Text.RichText
         width: implicitWidth > 300 ? 300 : implicitWidth
         clip: true
         anchors.left: caretImage.right
         color: textColor
-        font.pixelSize: 13
+        font.pixelSize: Style.current.additionalTextSize
         anchors.verticalCenter: parent.verticalCenter
         onLinkActivated: channelNameClicked()
     }

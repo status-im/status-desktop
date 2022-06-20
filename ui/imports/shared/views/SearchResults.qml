@@ -17,7 +17,7 @@ import StatusQ.Components 0.1
 Item {
     id: root
     width: parent.width
-    height: hasExistingContacts ? 64 : 0
+    height: hasExistingContacts ? Style.dp(64) : 0
 
     property bool hasExistingContacts: false
     property bool showProfileNotFoundMessage: false
@@ -56,7 +56,7 @@ Item {
         text: qsTrId("non-contacts")
         anchors.top: parent.top
         color: Style.current.secondaryText
-        font.pixelSize: 15
+        font.pixelSize: Style.current.primaryTextFontSize
         visible: root.hasExistingContacts && (root.loading || root.pubKey !== "" || root.showProfileNotFoundMessage)
     }
 
@@ -66,8 +66,8 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         sourceComponent: Component {
             LoadingAnimation {
-                width: 18
-                height: 18
+                width: Style.dp(18)
+                height: Style.dp(18)
             }
         }
     }
@@ -79,7 +79,7 @@ Item {
         color: hovered ? Style.current.backgroundHover : Style.current.background
         radius: Style.current.radius
         width: parent.width
-        height: 64
+        height: Style.dp(64)
         visible: root.pubKey !== "" && !root.loading
 
         StatusSmartIdenticon {
@@ -92,7 +92,7 @@ Item {
 
         StyledText {
             id: ensUsername
-            font.pixelSize: 17
+            font.pixelSize: Style.dp(17)
             color: Style.current.textColor
             anchors.top: contactIdenticon.top
             anchors.left: contactIdenticon.right
@@ -102,10 +102,10 @@ Item {
 
         StyledText {
             id: contactAlias
-            font.pixelSize: 15
+            font.pixelSize: Style.current.primaryTextFontSize
             color: Style.current.secondaryText
             anchors.top: ensUsername.bottom
-            anchors.topMargin: 2
+            anchors.topMargin: Style.dp(2)
             anchors.left: ensUsername.left
             text: root.userAlias
         }
@@ -125,13 +125,13 @@ Item {
 
         StatusFlatRoundButton {
             id: addContactBtn
-            width: 32
-            height: 32
+            width: Style.dp(32)
+            height: Style.dp(32)
             anchors.right: parent.right
             anchors.rightMargin: Style.current.padding
             anchors.verticalCenter: parent.verticalCenter
-            icon.width: 24
-            icon.height: 24
+            icon.width: Style.dp(24)
+            icon.height: Style.dp(24)
             icon.name: "add-contact"
             backgroundHoverColor: Utils.setColorAlpha(Style.current.buttonHoveredBackgroundColor, 0.2)
             visible: addContactEnabled && !isAddedContact && !checkIcon.visible
@@ -145,8 +145,8 @@ Item {
         SVGImage {
             id: checkIcon
             source: Style.svg("check-2")
-            width: 19
-            height: 19
+            width: Style.dp(19)
+            height: Style.dp(19)
             anchors.right: parent.right
             anchors.rightMargin: Style.current.smallPadding * 2
             anchors.verticalCenter: parent.verticalCenter
@@ -158,7 +158,7 @@ Item {
         id: profileNotFoundMessage
         color: Style.current.secondaryText
         visible: root.showProfileNotFoundMessage
-        font.pixelSize: 15
+        font.pixelSize: Style.current.primaryTextFontSize
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
         //% "No profile found"

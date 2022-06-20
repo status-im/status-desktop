@@ -10,13 +10,13 @@ import "../controls"
 Popup {
     id: root
     closePolicy: Popup.NoAutoClose
-    height: 68
+    height: Style.dp(68)
     padding: 0
     margins: 0
     width: Math.max(Math.max(titleText.width, linkStyledText.width)
                     + (toastImage.visible? toastImage.width + rowId.spacing : 0)
                     + rowId.leftPadding + rowId.rightPadding,
-                    343)
+                    Style.dp(343))
     x: parent.width - width - Style.current.bigPadding
     y: parent.height - height - Style.current.bigPadding
 
@@ -76,8 +76,8 @@ Popup {
             visible: container.visible
             source: container
             horizontalOffset: 0
-            verticalOffset: 2
-            radius: 10
+            verticalOffset: Style.dp(2)
+            radius: Style.dp(10)
             samples: 15
             color: Style.current.dropShadow
         }
@@ -86,19 +86,19 @@ Popup {
     Row {
         id: rowId
         anchors.fill: parent
-        leftPadding: 12
-        rightPadding: 12
+        leftPadding: Style.dp(12)
+        rightPadding: Style.dp(12)
         topPadding: Style.current.padding
         bottomPadding: Style.current.padding
-        spacing: 12
+        spacing: Style.dp(12)
 
         RoundedIcon {
             id: toastImage
             visible: root.source != ""
-            width: 32
-            height: 32
-            iconHeight: 20
-            iconWidth: 20
+            width: Style.dp(32)
+            height: Style.dp(32)
+            iconHeight: Style.dp(20)
+            iconWidth: Style.dp(20)
             color: Utils.setColorAlpha(root.iconColor, 0.1)
             anchors.verticalCenter: parent.verticalCenter
             source: root.source
@@ -112,7 +112,7 @@ Popup {
             StyledText {
                 id: titleText
                 text: root.title
-                font.pixelSize: 13
+                font.pixelSize: Style.current.additionalTextSize
                 font.weight: Font.Medium
             }
 
@@ -122,7 +122,7 @@ Popup {
                 text: `<a href='${root.link}' style='color:${Style.current.textColorTertiary};text-decoration:none;'>${root.linkText}</a>`
                 color: Style.current.textColorTertiary
                 textFormat: Text.RichText
-                font.pixelSize: 13
+                font.pixelSize: Style.current.additionalTextSize
                 font.weight: Font.Medium
                 onLinkActivated: {
                     Global.openLink(root.link)
@@ -140,8 +140,8 @@ Popup {
         source: Style.svg("plusSign")
         anchors.topMargin: Style.current.padding
         anchors.rightMargin: Style.current.padding
-        width: 9
-        height: 9
+        width: Style.dp(9)
+        height: Style.dp(9)
         rotation: 45
 
         MouseArea {

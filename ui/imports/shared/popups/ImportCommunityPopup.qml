@@ -13,8 +13,8 @@ import StatusQ.Controls 0.1 as StatusQControls
 
 StatusModal {
     id: root
-    width: 640
-    height: 400
+    width: Style.dp(640)
+    height: Style.dp(400)
 
     property var store
 
@@ -30,11 +30,11 @@ StatusModal {
     }
 
     contentItem: Item {
-        width: root.width - 32
+        width: root.width - Style.dp(32)
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.leftMargin: 16
-        anchors.rightMargin: 16
+        anchors.leftMargin: Style.current.padding
+        anchors.rightMargin: Style.current.padding
         height: childrenRect.height
 
         StatusBaseText {
@@ -45,7 +45,7 @@ StatusModal {
             text: qsTrId("entering-a-community-key-will-grant-you-the-ownership-of-that-community--please-be-responsible-with-it-and-don-t-share-the-key-with-people-you-don-t-trust-")
             wrapMode: Text.WordWrap
             width: parent.width
-            font.pixelSize: 13
+            font.pixelSize: Style.current.additionalTextSize
             color: Theme.palette.baseColor1
         }
 
@@ -54,7 +54,7 @@ StatusModal {
             //% "Community private key"
             label: qsTrId("Community key")
             placeholderText: "0x0..."
-            customHeight: 110
+            customHeight: Style.dp(110)
             anchors.top: infoText1.bottom
             anchors.topMargin: Style.current.bigPadding
             anchors.left: parent.left

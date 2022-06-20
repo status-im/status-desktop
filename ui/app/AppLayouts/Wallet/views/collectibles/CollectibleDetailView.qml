@@ -7,6 +7,8 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
 
+import utils 1.0
+
 import "../"
 import "../../stores"
 import "../../controls"
@@ -34,33 +36,33 @@ StackDetailBase {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: collectibleHeader.bottom
-        anchors.topMargin: 46
+        anchors.topMargin: Style.dp(46)
 
         Row {
             id: collectibleImageDetails
             anchors.top: parent.top
             width: parent.width
-            spacing: 24
+            spacing: Style.dp(24)
 
             StatusRoundedImage {
                 id: collectibleimage
-                width: 253
-                height: 253
-                radius: 2
+                width: Style.dp(253)
+                height: Style.dp(253)
+                radius: Style.dp(2)
                 color: RootStore.collectiblesStore.backgroundColor
                 border.color: Theme.palette.directColor8
-                border.width: 1
+                border.width: Style.dp(1)
                 image.source: RootStore.collectiblesStore.imageUrl
             }
             StatusBaseText {
                 id: collectibleText
-                width: parent.width - collectibleimage.width - 24
+                width: parent.width - collectibleimage.width - Style.dp(24)
                 height: collectibleimage.height
 
                 text: RootStore.collectiblesStore.description
                 color: Theme.palette.directColor1
-                font.pixelSize: 15
-                lineHeight: 22
+                font.pixelSize: Style.current.primaryTextFontSize
+                lineHeight: Style.dp(22)
                 lineHeightMode: Text.FixedHeight
                 elide: Text.ElideRight
                 wrapMode: Text.Wrap
@@ -69,9 +71,9 @@ StackDetailBase {
 
         ListView {
             anchors.top: collectibleImageDetails.bottom
-            anchors.topMargin: 32
+            anchors.topMargin: Style.dp(32)
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 20
+            anchors.bottomMargin: Style.dp(20)
             anchors.horizontalCenter: parent.horizontalCenter
             width: parent.width
 
@@ -98,28 +100,28 @@ StackDetailBase {
 
         Flow {
             width: parent.width
-            spacing: 10
+            spacing: Style.dp(10)
 
             Repeater {
                 model: assetProperties
                 Rectangle {
                     id: containerRect
-                    height: 52
-                    width: 147
+                    height: Style.dp(52)
+                    width: Style.dp(147)
                     color: "transparent"
                     border.color: Theme.palette.baseColor2
-                    border.width: 1
-                    radius: 8
+                    border.width: Style.dp(1)
+                    radius: Style.current.radius
                     Column {
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.top: parent.top
-                        anchors.topMargin: 6
+                        anchors.topMargin: Style.dp(6)
                         StatusBaseText {
-                            width: containerRect.width - 12
+                            width: containerRect.width - Style.dp(12)
 
                             color: Theme.palette.baseColor1
-                            font.pixelSize: 13
-                            lineHeight: 18
+                            font.pixelSize: Style.current.additionalTextSize
+                            lineHeight: Style.dp(18)
                             lineHeightMode: Text.FixedHeight
                             elide: Text.ElideRight
                             horizontalAlignment: Text.AlignHCenter
@@ -127,11 +129,11 @@ StackDetailBase {
                             font.capitalization: Font.Capitalize
                         }
                         StatusBaseText {
-                            width: containerRect.width - 12
+                            width: containerRect.width - Style.dp(12)
 
                             color: Theme.palette.directColor1
-                            font.pixelSize: 15
-                            lineHeight: 22
+                            font.pixelSize: Style.current.primaryTextFontSize
+                            lineHeight: Style.dp(22)
                             lineHeightMode: Text.FixedHeight
                             horizontalAlignment: Text.AlignHCenter
                             elide: Text.ElideRight
@@ -149,22 +151,22 @@ StackDetailBase {
 
         Column {
             width: parent.width
-            spacing: 10
+            spacing: Style.dp(10)
 
             Repeater {
                 model: assetRankings
                 Rectangle {
                     anchors.horizontalCenter: parent.horizontalCenter
                     width: parent.width
-                    height: 52
+                    height: Style.dp(52)
                     color: Theme.palette.baseColor4
                     StatusBaseText {
                         anchors.left: parent.left
-                        anchors.leftMargin: 10
+                        anchors.leftMargin: Style.dp(10)
                         anchors.verticalCenter: parent.verticalCenter
                         color: Theme.palette.baseColor1
-                        font.pixelSize: 15
-                        lineHeight: 22
+                        font.pixelSize: Style.current.primaryTextFontSize
+                        lineHeight: Style.dp(22)
                         lineHeightMode: Text.FixedHeight
                         elide: Text.ElideRight
                         horizontalAlignment: Text.AlignLeft
@@ -173,11 +175,11 @@ StackDetailBase {
                     }
                     StatusBaseText {
                         anchors.right: parent.right
-                        anchors.rightMargin: 10
+                        anchors.rightMargin: Style.dp(10)
                         anchors.verticalCenter: parent.verticalCenter
                         color: Theme.palette.directColor1
-                        font.pixelSize: 15
-                        lineHeight: 22
+                        font.pixelSize: Style.current.primaryTextFontSize
+                        lineHeight: Style.dp(22)
                         lineHeightMode: Text.FixedHeight
                         horizontalAlignment: Text.AlignLeft
                         elide: Text.ElideRight
@@ -194,22 +196,22 @@ StackDetailBase {
 
         Column {
             width: parent.width
-            spacing: 10
+            spacing: Style.dp(10)
 
             Repeater {
                 model: assetStats
                 Rectangle {
                     anchors.horizontalCenter: parent.horizontalCenter
                     width: parent.width
-                    height: 52
+                    height: Style.dp(52)
                     color: Theme.palette.baseColor4
                     StatusBaseText {
                         anchors.left: parent.left
-                        anchors.leftMargin: 10
+                        anchors.leftMargin: Style.dp(10)
                         anchors.verticalCenter: parent.verticalCenter
                         color: Theme.palette.baseColor1
-                        font.pixelSize: 15
-                        lineHeight: 22
+                        font.pixelSize: Style.current.primaryTextFontSize
+                        lineHeight: Style.dp(22)
                         lineHeightMode: Text.FixedHeight
                         elide: Text.ElideRight
                         horizontalAlignment: Text.AlignLeft
@@ -218,11 +220,11 @@ StackDetailBase {
                     }
                     StatusBaseText {
                         anchors.right: parent.right
-                        anchors.rightMargin: 10
+                        anchors.rightMargin: Style.dp(10)
                         anchors.verticalCenter: parent.verticalCenter
                         color: Theme.palette.directColor1
-                        font.pixelSize: 15
-                        lineHeight: 22
+                        font.pixelSize: Style.current.primaryTextFontSize
+                        lineHeight: Style.dp(22)
                         lineHeightMode: Text.FixedHeight
                         horizontalAlignment: Text.AlignLeft
                         elide: Text.ElideRight

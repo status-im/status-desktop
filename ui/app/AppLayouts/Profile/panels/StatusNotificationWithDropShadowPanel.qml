@@ -11,7 +11,7 @@ Item {
     property string message
 
     height: statusNotification.height
-    width: 416
+    width: Style.dp(416)
 
     StatusMacNotification {
         id: statusNotification
@@ -24,8 +24,8 @@ Item {
     DropShadow {
         anchors.fill: statusNotification
         horizontalOffset: 0
-        verticalOffset: 2
-        radius: 10
+        verticalOffset: Style.dp(2)
+        radius: Style.dp(10)
         samples: 12
         color: "#22000000"
         source: statusNotification

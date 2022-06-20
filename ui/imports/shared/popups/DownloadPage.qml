@@ -37,7 +37,7 @@ Rectangle {
         source: Style.svg(Theme.palette.name == "light" ? "status-logo-light" : "status-logo-dark")
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
-        anchors.topMargin: 108
+        anchors.topMargin: Style.dp(108)
     }
 
     StatusBaseText {
@@ -45,8 +45,8 @@ Rectangle {
         text: qsTr("Thanks for using Status")
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: logoImage.bottom
-        anchors.topMargin: 75
-        font.pixelSize: 38
+        anchors.topMargin: Style.dp(75)
+        font.pixelSize: Style.dp(38)
         font.weight: Font.Medium
         color: Theme.palette.directColor1
     }
@@ -56,8 +56,8 @@ Rectangle {
         text: qsTr("You're curently using version %1 of Status.").arg(root.currentVersion)
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: title.bottom
-        anchors.topMargin: 32
-        font.pixelSize: 28
+        anchors.topMargin: Style.dp(32)
+        font.pixelSize: Style.dp(28)
         color: Theme.palette.directColor1
     }
 
@@ -66,7 +66,7 @@ Rectangle {
         text: qsTr("There's new version available to download.")
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: currentVersionText.bottom
-        font.pixelSize: 28
+        font.pixelSize: Style.dp(28)
         color: Theme.palette.directColor1
     }
 
@@ -77,7 +77,7 @@ Rectangle {
         text: qsTr("Get Status %1").arg(root.newVersion)
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: newVersionAvailableText.bottom
-        anchors.topMargin: 32
+        anchors.topMargin: Style.dp(32)
         onClicked: {
             Global.openLink(root.downloadURL)
             root.closed()

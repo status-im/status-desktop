@@ -24,8 +24,8 @@ Popup {
 
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
     parent: Overlay.overlay
-    width: 360
-    height: 480
+    width: Style.dp(360)
+    height: Style.dp(480)
     background: Rectangle {
         id: bgPopup
         color: Style.current.background
@@ -35,12 +35,12 @@ Popup {
             width: bgPopup.width
             height: bgPopup.height
             x: bgPopup.x
-            y: bgPopup.y + 10
+            y: bgPopup.y + Style.dp(10)
             visible: bgPopup.visible
             source: bgPopup
             horizontalOffset: 0
-            verticalOffset: 5
-            radius: 10
+            verticalOffset: Style.dp(5)
+            radius: Style.dp(10)
             samples: 15
             color: Style.current.dropShadow
         }
@@ -54,8 +54,8 @@ Popup {
 
         Rectangle {
             id: networkColorCircle
-            width: 8
-            height: 8
+            width: Style.dp(8)
+            height: width
             radius: width / 2
             color: {
                 switch (Web3ProviderStore.currentNetwork) {
@@ -76,7 +76,7 @@ Popup {
                 default: return qsTrId("Unknown")
                 }
             }
-            font.pixelSize: 15
+            font.pixelSize: Style.current.primaryTextFontSize
             anchors.verticalCenter: parent.verticalCenter
             anchors.left: networkColorCircle.right
             anchors.leftMargin: Style.current.halfPadding
@@ -85,7 +85,7 @@ Popup {
         StatusBaseText {
             id: disconectBtn
             text: qsTr("Disconnect")
-            font.pixelSize: 15
+            font.pixelSize: Style.current.primaryTextFontSize
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
             color: Style.current.danger
@@ -147,8 +147,8 @@ Popup {
 
         CopyToClipBoardButton {
             id: copyBtn
-            width: 20
-            height: 20
+            width: Style.dp(20)
+            height: Style.dp(20)
             anchors.right: sendBtn.left
             anchors.rightMargin: Style.current.padding
             anchors.top: parent.top
@@ -160,8 +160,8 @@ Popup {
 
         StatusFlatRoundButton {
             id: sendBtn
-            width: 40
-            height: 40
+            width: Style.dp(40)
+            height: Style.dp(40)
             anchors.right: parent.right
             anchors.top: parent.top
             anchors.topMargin: Style.current.halfPadding

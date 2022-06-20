@@ -24,7 +24,7 @@ ModalPopup {
     ScrollView {
         id: svNetworks
         width: parent.width
-        height: 300
+        height: Style.dp(300)
         clip: true
 
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
@@ -44,8 +44,8 @@ ModalPopup {
 
                 StatusQControls.StatusRoundButton {
                     id: addButton
-                    width: 40
-                    height: 40
+                    width: Style.dp(40)
+                    height: Style.dp(40)
                     icon.name: "add"
                     type: StatusQControls.StatusRoundButton.Type.Secondary
                     anchors.verticalCenter: parent.verticalCenter
@@ -59,7 +59,7 @@ ModalPopup {
                     anchors.left: addButton.right
                     anchors.leftMargin: Style.current.padding
                     anchors.verticalCenter: addButton.verticalCenter
-                    font.pixelSize: 15
+                    font.pixelSize: Style.current.primaryTextFontSize
                 }
 
                 MouseArea {

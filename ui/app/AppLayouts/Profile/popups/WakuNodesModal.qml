@@ -21,7 +21,7 @@ StatusModal {
     id: popup
 
     anchors.centerIn: parent
-    height: 560
+    height: Style.dp(560)
     header.title: qsTr("Waku nodes")
 
     property var messagingStore

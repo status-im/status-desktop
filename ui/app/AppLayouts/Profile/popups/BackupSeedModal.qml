@@ -16,8 +16,8 @@ import "backupseed"
 
 StatusModal {
     id: popup
-    width: 480
-    height: 748
+    width: Style.dp(480)
+    height: Style.dp(748)
     header.title: qsTr("Back up your seed phrase")
 
     property var privacyStore
@@ -106,9 +106,9 @@ StatusModal {
         anchors.right: parent.right
         anchors.rightMargin: Style.current.padding
         anchors.top: parent.top
-        anchors.topMargin: 80
+        anchors.topMargin: Style.dp(80)
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 88
+        anchors.bottomMargin: Style.dp(88)
         Acknowledgements { id: acknowledgment }
         Backup { id: backUp; privacyStore: popup.privacyStore }
     }

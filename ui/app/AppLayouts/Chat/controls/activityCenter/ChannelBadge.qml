@@ -21,8 +21,8 @@ Item {
 
     SVGImage {
         id: channelIcon
-        width: 16
-        height: 16
+        width: Style.dp(16)
+        height: width
         fillMode: Image.PreserveAspectFit
         source: Style.svg("channel-icon-" + (realChatType === Constants.chatType.publicChat ? "public-chat" : "group"))
         anchors.left: parent.left
@@ -35,14 +35,14 @@ Item {
         anchors.leftMargin: 4
         anchors.verticalCenter: parent.verticalCenter
         image: StatusImageSettings {
-            width: 16
-            height: 16
+            width: Style.dp(16)
+            height: width
             source: profileImage
         }
         icon: StatusIconSettings {
-            width: 16
-            height: 16
-            letterSize: 11
+            width: Style.dp(16)
+            height: width
+            letterSize: Style.dp(11)
         }
         name: channelBadge.name
     }
@@ -53,10 +53,10 @@ Item {
                   StatusQUtils.Emoji.parse(Utils.removeStatusEns(Utils.filterXSS(name))) :
                   "#" + Utils.filterXSS(name)
         anchors.left: contactImage.right
-        anchors.leftMargin: 4
+        anchors.leftMargin: Style.dp(4)
         color: textColor
         font.weight: Font.Medium
-        font.pixelSize: 13
+        font.pixelSize: Style.current.additionalTextSize
         anchors.verticalCenter: parent.verticalCenter
     }
 }

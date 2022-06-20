@@ -27,11 +27,11 @@ Popup {
     parent: Overlay.overlay
     x: Math.round(((parent ? parent.width : 0) - width) / 2)
     y: Math.round(((parent ? parent.height : 0) - height) / 2)
-    width: 480
-    height: 510 // TODO find a way to make this dynamic
+    width: Style.dp(480)
+    height: Style.dp(510) // TODO find a way to make this dynamic
     background: Rectangle {
         color: Style.current.background
-        radius: 8
+        radius: Style.current.radius
     }
     onOpened: {
         Global.popupOpened = true
@@ -70,8 +70,8 @@ Popup {
                 anchors.right: parent.right
                 anchors.rightMargin: 44
                 font.bold: true
-                font.pixelSize: 17
-                height: visible ? 24 : 0
+                font.pixelSize: Style.dp(17)
+                height: visible ? Style.dp(24) : 0
                 elide: Text.ElideRight
                 visible: !!title
                 verticalAlignment: Text.AlignVCenter
@@ -83,21 +83,21 @@ Popup {
             objectName: "closeButtonRectangle"
             property bool hovered: false
             visible: displayCloseButton
-            height: 32
-            width: 32
+            height: Style.dp(32)
+            width: Style.dp(32)
             anchors.top: parent.top
-            anchors.topMargin: 12
+            anchors.topMargin: Style.dp(12)
             anchors.right: parent.right
-            anchors.rightMargin: 12
-            radius: 8
+            anchors.rightMargin: Style.dp(12)
+            radius: Style.current.radius
             color: hovered ? Style.current.backgroundHover : Style.current.transparent
 
             SVGImage {
                 id: closeModalImg
                 objectName: "closeImage"
                 source: "../img/close.svg"
-                width: 11
-                height: 11
+                width: Style.dp(11)
+                height: Style.dp(11)
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
             }

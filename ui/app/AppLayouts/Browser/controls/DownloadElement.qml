@@ -22,8 +22,8 @@ Rectangle {
     signal itemClicked()
 
     id: root
-    width: 272
-    height: 40
+    width: Style.dp(272)
+    height: Style.dp(40)
     border.width: 0
     color: hovered ? Style.current.backgroundHover : Style.current.transparent
     radius: Style.current.radius
@@ -64,8 +64,8 @@ Rectangle {
             id: fileImageComponent
             SVGImage {
                 source: Style.svg("browser/file")
-                width: 24
-                height: 24
+                width: Style.dp(24)
+                height: Style.dp(24)
                 ColorOverlay {
                     anchors.fill: parent
                     source: parent
@@ -83,9 +83,9 @@ Rectangle {
         anchors.right: optionsBtn.left
         anchors.top:  downloadComplete ? undefined : parent.top
         anchors.verticalCenter: downloadComplete ? parent.verticalCenter : undefined
-        minimumPixelSize: 13
+        minimumPixelSize: Style.dp(13)
         anchors.leftMargin: Style.current.smallPadding
-        anchors.topMargin: 2
+        anchors.topMargin: Style.dp(2)
     }
 
     StyledText {
@@ -97,14 +97,14 @@ Rectangle {
         anchors.left: iconLoader.right
         anchors.right: optionsBtn.left
         anchors.bottom: parent.bottom
-        minimumPixelSize: 13
+        minimumPixelSize: Style.dp(13)
         anchors.leftMargin: Style.current.smallPadding
-        anchors.bottomMargin: 2
+        anchors.bottomMargin: Style.dp(2)
     }
 
     StatusFlatRoundButton {
-        width: 32
-        height: 32
+        width: Style.dp(32)
+        height: Style.dp(32)
         id: optionsBtn
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right

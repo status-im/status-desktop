@@ -86,8 +86,8 @@ Item {
                 usernameUpdated(ensUsername.text);
             }
 
-            width: 475
-            height: 500
+            width: Style.dp(475)
+            height: Style.dp(500)
         }
     }
 
@@ -102,9 +102,9 @@ Item {
             anchors.top: parent.top
             anchors.topMargin: Style.current.bigPadding*2
             anchors.horizontalCenter: parent.horizontalCenter
-            width: 60
-            height: 60
-            radius: 120
+            width: Style.dp(60)
+            height: Style.dp(60)
+            radius: Style.dp(120)
             color: Theme.palette.primaryColor1
 
             SVGImage {
@@ -112,8 +112,8 @@ Item {
                 visible: ensStatus === Constants.ens_taken
                 fillMode: Image.PreserveAspectFit
                 source: Style.svg("block-icon-white")
-                width: 20
-                height: 20
+                width: Style.dp(20)
+                height: Style.dp(20)
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
             }
@@ -131,7 +131,7 @@ Item {
                 }
                 opacity: 0.7
                 font.weight: Font.Bold
-                font.pixelSize: 18
+                font.pixelSize: Style.dp(18)
                 color: Theme.palette.indirectColor1
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
@@ -177,15 +177,15 @@ Item {
 
         StatusQControls.StatusRoundButton {
             id: btnContinue
-            width: 40
-            height: 40
+            width: Style.dp(40)
+            height: Style.dp(40)
             anchors.top: circleAt.bottom
             anchors.topMargin: Style.current.bigPadding
             anchors.right: parent.right
             type: StatusQControls.StatusRoundButton.Type.Secondary
             icon.name: "arrow-right"
-            icon.width: 18
-            icon.height: 14
+            icon.width: Style.dp(18)
+            icon.height: Style.dp(14)
             visible: valid
             onClicked: {
                 if(!valid) return;
@@ -212,12 +212,12 @@ Item {
             id: ensTypeRect
             anchors.top: ensUsername.bottom
             anchors.topMargin: Style.current.bigPadding
-            border.width: 1
+            border.width: Style.dp(1)
             border.color: Style.current.border
             color: Style.current.background
-            radius: 50
-            height: 30
-            width: 350
+            radius: Style.dp(50)
+            height: Style.dp(30)
+            width: Style.dp(350)
 
             Item {
                 anchors.left: parent.left
@@ -225,7 +225,7 @@ Item {
                 anchors.top: parent.top
                 anchors.topMargin: Style.current.halfPadding
                 anchors.leftMargin: Style.current.padding
-                height: 20
+                height: Style.dp(20)
 
                 StatusBaseText {
                     text: !isStatus ?
@@ -234,7 +234,7 @@ Item {
                         :
                         ".stateofus.eth"
                     font.weight: Font.Bold
-                    font.pixelSize: 12
+                    font.pixelSize: Style.current.tertiaryTextFontSize
                     anchors.leftMargin: Style.current.padding
                     color: Theme.palette.directColor1
                 }
@@ -246,7 +246,7 @@ Item {
                         :
                         //% "I own a name on another domain"
                         qsTrId("ens-want-custom-domain")
-                    font.pixelSize: 12
+                    font.pixelSize: Style.current.tertiaryTextFontSize
                     color: Theme.palette.primaryColor1
                     anchors.right: parent.right
                     anchors.rightMargin: Style.current.padding

@@ -52,7 +52,7 @@ Column {
     ContactsListAndSearch {
         id: contactFieldAndList
         anchors.horizontalCenter: parent.horizontalCenter
-        width: parent.width - 32
+        width: parent.width - Style.dp(32)
         contactsStore: root.contactsStore
         community: root.community
         showCheckbox: true

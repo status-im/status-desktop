@@ -11,7 +11,7 @@ QQC1.TabView {
     property var currentWebEngineProfile
     property var tabComponent
     property var determineRealURL: function(url) {}
-    readonly property int tabHeight: 40
+    readonly property int tabHeight: Style.dp(40)
 
     signal openNewTabTriggered()
 

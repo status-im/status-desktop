@@ -17,8 +17,8 @@ Popup {
     property var getText: function () {}
     property var getId: function () {}
     signal clicked(int index, string id)
-    property int imageWidth: 22
-    property int imageHeight: 22
+    property int imageWidth: Style.dp(22)
+    property int imageHeight: Style.dp(22)
     property string title
     property bool showSearchBox: false
     property var messageInput
@@ -56,19 +56,18 @@ Popup {
         id: bgRectangle
         visible: !!popup.title || (!!popup.modelList && popup.modelList.length > 0)
         color: Style.current.background
-        border.width: 0
         radius: Style.current.radius
         layer.enabled: true
         layer.effect: DropShadow{
             width: bgRectangle.width
             height: bgRectangle.height
             x: bgRectangle.x
-            y: bgRectangle.y + 10
+            y: bgRectangle.y + Style.dp(10)
             visible: bgRectangle.visible
             source: bgRectangle
             horizontalOffset: 0
-            verticalOffset: 2
-            radius: 10
+            verticalOffset: Style.dp(2)
+            radius: Style.dp(10)
             samples: 15
             color: Style.current.dropShadow
         }
@@ -79,7 +78,7 @@ Popup {
         visible: !!popup.title
         height: visible ? implicitHeight : 0
         text: popup.title
-        font.pixelSize: 17
+        font.pixelSize: Style.dp(17)
         anchors.top: parent.top
     }
 

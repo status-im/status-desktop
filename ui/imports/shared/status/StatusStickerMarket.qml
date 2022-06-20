@@ -31,7 +31,7 @@ Item {
     GridView {
         id: availableStickerPacks
         width: parent.width
-        height: 380
+        height: Style.dp(380)
         anchors.left: parent.left
         anchors.leftMargin: Style.current.padding
         anchors.right: parent.right
@@ -39,7 +39,7 @@ Item {
         anchors.top: parent.top
         anchors.topMargin: Style.current.padding
         cellWidth: parent.width - (Style.current.padding * 2)
-        cellHeight: height - 72
+        cellHeight: height - Style.dp(72)
 
         focus: true
         clip: true
@@ -50,7 +50,6 @@ Item {
                 if (items.count > 0) {
                     items.setGroups(0, items.count, "items");
                 }
-
                 var visible = [];
                 for (var i = 0; i < items.count; ++i) {
                     var item = items.get(i);
@@ -79,7 +78,6 @@ Item {
             filterOnGroup: "visible"
             groups: DelegateModelGroup {
                 id: visibleItems
-
                 name: "visible"
                 includeByDefault: false
             }
@@ -175,7 +173,7 @@ Item {
 
                 StatusStickerPackDetails {
                     id: stickerPackDetails
-                    height: 64 - (Style.current.smallPadding * 2)
+                    height: Style.dp(64) - (Style.current.smallPadding * 2)
                     width: parent.width - (Style.current.padding * 2)
                     anchors.top: imgPreview.bottom
                     anchors.topMargin: Style.current.smallPadding
@@ -189,7 +187,7 @@ Item {
                     StatusStickerButton {
                         anchors.right: parent.right
                         packPrice: price
-                        width: 75 // only needed for Qt Creator
+                        width: Style.dp(75) // only needed for Qt Creator
                         isInstalled: installed
                         isBought: bought
                         isPending: pending
@@ -230,7 +228,7 @@ Item {
 
     Item {
         id: footer
-        height: 44 - Style.current.padding
+        height: Style.dp(44) - Style.current.padding
         anchors.top: availableStickerPacks.bottom
 
         RoundedIcon {
@@ -239,10 +237,10 @@ Item {
             anchors.topMargin: Style.current.padding / 2
             anchors.left: parent.left
             anchors.leftMargin: Style.current.padding / 2
-            width: 28
-            height: 28
-            iconWidth: 17.5
-            iconHeight: 13.5
+            width: Style.dp(28)
+            height: Style.dp(28)
+            iconWidth: Style.dp(18)
+            iconHeight: Style.dp(14)
             iconColor: Style.current.roundedButtonSecondaryForegroundColor
             source: Style.svg("arrowUp")
             rotation: 270

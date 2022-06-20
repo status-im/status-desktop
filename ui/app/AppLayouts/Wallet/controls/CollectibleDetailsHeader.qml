@@ -14,19 +14,19 @@ Item {
     property alias primaryText: collectibleName.text
     property alias secondaryText: collectibleId.text
     property StatusImageSettings image: StatusImageSettings {
-        width: 40
-        height: 40
+        width: Style.dp(40)
+        height: Style.dp(40)
     }
     signal hideButtonClicked()
 
     Row {
         id: collectibleRow
         anchors.top: parent.top
-        anchors.topMargin: 63
+        anchors.topMargin: Style.dp(63)
         anchors.left: parent.left
         width: parent.width - sendButton.width
 
-        spacing: 8
+        spacing: Style.dp(8)
 
         Loader {
             id: identiconLoader
@@ -38,8 +38,8 @@ Item {
             id: collectibleName
             width: Math.min(parent.width - identiconLoader.width - collectibleId.width - 24, implicitWidth)
             anchors.verticalCenter: parent.verticalCenter
-            font.pixelSize: 28
-            lineHeight: 38
+            font.pixelSize: Style.dp(28)
+            lineHeight: Style.dp(38)
             lineHeightMode: Text.FixedHeight
             elide: Text.ElideRight
             color: Theme.palette.directColor1
@@ -48,8 +48,8 @@ Item {
         StatusBaseText {
             id: collectibleId
             anchors.verticalCenter: collectibleName.verticalCenter
-            font.pixelSize: 28
-            lineHeight: 38
+            font.pixelSize: Style.dp(28)
+            lineHeight: Style.dp(38)
             lineHeightMode: Text.FixedHeight
             color: Theme.palette.baseColor1
         }
@@ -65,9 +65,9 @@ Item {
     Component {
         id: statusLetterIdenticonCmp
         StatusLetterIdenticon {
-            width: 40
-            height: 40
-            letterSize: 20
+            width: Style.dp(40)
+            height: Style.dp(40)
+            letterSize: Style.dp(20)
             color: Theme.palette.miscColor5
             name: collectibleName.text
         }

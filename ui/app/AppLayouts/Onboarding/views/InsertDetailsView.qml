@@ -54,14 +54,14 @@ Item {
     }
 
     ColumnLayout {
-        height: 461
+        height: Style.dp(461)
         anchors.centerIn: parent
 
         StyledText {
             id: usernameText
             text: qsTr("Your profile")
             font.weight: Font.Bold
-            font.pixelSize: 22
+            font.pixelSize: Style.dp(22)
             Layout.alignment: Qt.AlignHCenter
         }
 
@@ -75,26 +75,26 @@ Item {
             text: qsTr("Longer and unusual names are better as they are less likely to be used by someone else.")
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
-            font.pixelSize: 15
+            font.pixelSize: Style.current.primaryTextFontSize
         }
 
         Item {
-            implicitWidth: 80
-            implicitHeight: 80
+            implicitWidth: Style.dp(80)
+            implicitHeight: Style.dp(80)
             Layout.alignment: Qt.AlignTop | Qt.AlignHCenter
-            Layout.topMargin: 27
+            Layout.topMargin: Style.dp(27)
             StatusSmartIdenticon {
                 anchors.left: parent.left
                 id: userImage
                 image {
-                    width: 86
-                    height: 86
+                    width: Style.dp(86)
+                    height: Style.dp(86)
                     isIdenticon: false
                 }
                 icon {
-                    width: 86
-                    height: 86
-                    letterSize: 32
+                    width: Style.dp(86)
+                    height: Style.dp(86)
+                    letterSize: Style.dp(32)
                     color: Theme.palette.miscColor5
                     charactersLen: 2
                 }
@@ -104,11 +104,11 @@ Item {
             }
             StatusRoundButton {
                 id: updatePicButton
-                width: 40
-                height: 40
+                width: Style.dp(40)
+                height: Style.dp(40)
                 anchors.top: parent.top
                 anchors.right: parent.right
-                anchors.rightMargin: -20
+                anchors.rightMargin: -Style.dp(20)
                 type: StatusFlatRoundButton.Type.Secondary
                 icon.name: "add"
                 onClicked: {
@@ -119,19 +119,19 @@ Item {
 
         Item {
             id: nameInputItem
-            implicitWidth: 328
-            Layout.preferredHeight: 69
+            implicitWidth: Style.dp(328)
+            Layout.preferredHeight: Style.dp(69)
             Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
-            Layout.topMargin: 37
+            Layout.topMargin: Style.dp(37)
             StatusInput {
                 id: nameInput
                 width: parent.width
                 input.placeholderText: qsTr("Display name")
                 input.rightComponent: RoundedIcon {
-                    width: 14
-                    height: 14
-                    iconWidth: 14
-                    iconHeight: 14
+                    width: Style.dp(14)
+                    height: Style.dp(14)
+                    iconWidth: Style.dp(14)
+                    iconHeight: Style.dp(14)
                     visible: (nameInput.input.text.length > 0)
                     color: "transparent"
                     source: Style.svg("close-filled")
@@ -159,22 +159,22 @@ Item {
 
         StyledText {
             id: chatKeyTxt
-            Layout.preferredHeight: 44
+            Layout.preferredHeight: Style.dp(44)
             color: Style.current.secondaryText
             text: qsTr("Chatkey:") + " " + Utils.getCompressedPk(root.pubKey)
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
             Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
-            Layout.topMargin: 13
-            font.pixelSize: 15
+            Layout.topMargin: Style.dp(13)
+            font.pixelSize: Style.current.primaryTextFontSize
         }
 
         Item {
             id: chainsChatKeyImg
             Layout.alignment: Qt.AlignHCenter
             Layout.topMargin: Style.current.padding
-            Layout.preferredWidth: 215
-            Layout.preferredHeight: 77
+            Layout.preferredWidth: Style.dp(215)
+            Layout.preferredHeight: Style.dp(77)
             Image {
                 id: imgChains
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -194,8 +194,8 @@ Item {
                     right: parent.right
                     rightMargin: 25
                 }
-                icon.width: 44
-                icon.height: 44
+                icon.width: Style.dp(44)
+                icon.height: Style.dp(44)
                 icon.color: "transparent"
                 ringSettings { ringSpecModel: Utils.getColorHashAsJson(root.pubKey) }
             }

@@ -52,15 +52,15 @@ Rectangle {
     RowLayout {
         id: barRow
         width: parent.width
-        height: 45
+        height: Style.dp(45)
         spacing: _internal.innerMargin
 
         StatusFlatRoundButton {
             id: backButton
-            Layout.preferredWidth: 32
-            Layout.preferredHeight: 32
-            icon.height: 20
-            icon.width: 20
+            Layout.preferredWidth: Style.dp(32)
+            Layout.preferredHeight: Style.dp(32)
+            icon.height: Style.dp(20)
+            icon.width: Style.dp(20)
             icon.name: "left"
             icon.disabledColor: Style.current.lightGrey
             type: StatusFlatRoundButton.Type.Tertiary
@@ -76,10 +76,10 @@ Rectangle {
 
         StatusFlatRoundButton {
             id: forwardButton
-            Layout.preferredWidth: 32
-            Layout.preferredHeight: 32
-            icon.width: 20
-            icon.height: 20
+            Layout.preferredWidth: Style.dp(32)
+            Layout.preferredHeight: Style.dp(32)
+            icon.width: Style.dp(20)
+            icon.height: Style.dp(20)
             icon.name: "right"
             icon.disabledColor: Style.current.lightGrey
             type: StatusFlatRoundButton.Type.Tertiary
@@ -95,13 +95,13 @@ Rectangle {
 
         StyledTextField {
             id: addressBar
-            Layout.preferredHeight: 40
+            Layout.preferredHeight: Style.dp(40)
             Layout.fillWidth: true
             background: Rectangle {
                 color: Style.current.inputBackground
                 border.color: Style.current.inputBorderFocus
-                border.width: activeFocus ? 1 : 0
-                radius: 20
+                border.width: activeFocus ? Style.dp(1) : 0
+                radius: Style.dp(20)
             }
             leftPadding: Style.current.padding
             rightPadding: addFavoriteBtn.width + reloadBtn.width + Style.current.bigPadding
@@ -124,8 +124,8 @@ Rectangle {
 
             StatusFlatRoundButton {
                 id: addFavoriteBtn
-                width: 24
-                height: 24
+                width: Style.dp(24)
+                height: width
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: reloadBtn.left
                 anchors.rightMargin: Style.current.halfPadding
@@ -138,8 +138,8 @@ Rectangle {
 
             StatusFlatRoundButton {
                 id: reloadBtn
-                width: 24
-                height: 24
+                width: Style.dp(24)
+                height: width
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: parent.right
                 anchors.rightMargin: Style.current.halfPadding
@@ -159,10 +159,10 @@ Rectangle {
             id: notConnectedBtnCompoent
             StatusFlatRoundButton {
                 id: accountBtn
-                width: 24
-                height: 24
-                icon.width: 24
-                icon.height: 24
+                width: Style.dp(24)
+                height: width
+                icon.width: width
+                icon.height: width
                 icon.name: "filled-account"
                 type: StatusFlatRoundButton.Type.Tertiary
                 onClicked: {

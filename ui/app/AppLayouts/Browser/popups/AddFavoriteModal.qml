@@ -19,8 +19,8 @@ ModalPopup {
     property bool toolbarMode: false
 
     id: popup
-    width: toolbarMode ? 345 : 480
-    height: toolbarMode ? 400 : 480
+    width: Style.dp(toolbarMode ? 345 : 480)
+    height: Style.dp(toolbarMode ? 400 : 480)
 
     modal: !toolbarMode
 
@@ -33,12 +33,12 @@ ModalPopup {
             width: bgPopup.width
             height: bgPopup.height
             x: bgPopup.x
-            y: bgPopup.y + 10
+            y: bgPopup.y + Style.dp(10)
             visible: bgPopup.visible
             source: bgPopup
             horizontalOffset: 0
-            verticalOffset: 5
-            radius: 10
+            verticalOffset: Style.dp(5)
+            radius: Style.dp(10)
             samples: 15
             color: Style.current.dropShadow
         }
@@ -89,7 +89,7 @@ ModalPopup {
             input.placeholderText: qsTr("Paste URL")
             input.rightComponent: StatusButton {
                 anchors.verticalCenter: parent.verticalCenter
-                border.width: 1
+                border.width: Style.dp(1)
                 border.color: Theme.palette.primaryColor1
                 size: StatusBaseButton.Size.Tiny
                 text: qsTr("Paste")

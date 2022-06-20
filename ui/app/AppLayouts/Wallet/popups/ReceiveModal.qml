@@ -37,7 +37,7 @@ StatusModal {
     //% "Receive"
     header.title: qsTrId("receive")
     contentHeight: layout.implicitHeight
-    width: 556
+    width: Style.dp(556)
 
     showHeader: false
     showAdvancedHeader: true
@@ -49,14 +49,14 @@ StatusModal {
         delegate: Rectangle {
             width: button.width
             height: button.height
-            radius: 8
+            radius: Style.current.radius
             visible: floatingHeader.visibleIndices.includes(index)
             StatusButton {
                 id: button
-                topPadding: 8
+                topPadding: Style.current.halfPadding
                 bottomPadding: 0
-                implicitHeight: 32
-                defaultLeftPadding: 4
+                implicitHeight: Style.dp(32)
+                defaultLeftPadding: Style.dp(4)
                 text: name
                 icon.emoji: !!emoji ? emoji: ""
                 icon.emojiSize: Emoji.size.middle
@@ -75,13 +75,13 @@ StatusModal {
             }
         }
         popupMenuDelegate: StatusListItem {
-            implicitWidth: 272
+            implicitWidth: Style.dp(272)
             title: name
             subTitle: currencyBalance
             icon.emoji: !!emoji ? emoji: ""
             icon.color: model.color
             icon.name: !emoji ? "filled-account": ""
-            icon.letterSize: 14
+            icon.letterSize: Style.current.secondaryTextFontSize
             icon.isLetterIdenticon: !!model.emoji
             icon.background.color: Theme.palette.indirectColor1
             onClicked: {
@@ -157,8 +157,8 @@ StatusModal {
 
             Rectangle {
                 id: qrCodeBox
-                height: 339
-                width: 339
+                height: Style.dp(339)
+                width: Style.dp(339)
                 anchors.centerIn: parent
                 anchors.horizontalCenter: parent.horizontalCenter
                 layer.enabled: true
@@ -203,14 +203,14 @@ StatusModal {
 
                 Rectangle {
                     anchors.centerIn: qrCodeImage
-                    width: 78
-                    height: 78
+                    width: Style.dp(78)
+                    height: Style.dp(78)
                     color: "white"
                     StatusIcon {
                         anchors.centerIn: parent
-                        anchors.margins: 2
-                        width: 78
-                        height: 78
+                        anchors.margins: Style.dp(2)
+                        width: Style.dp(78)
+                        height: Style.dp(78)
                         source: Style.svg("status-logo-icon")
                     }
                 }
@@ -234,11 +234,11 @@ StatusModal {
                 }
                 RowLayout {
                     id: networksLabel
-                    spacing: -1
+                    spacing: -Style.dp(1)
                     Repeater {
                         model: RootStore.enabledNetworks
                         delegate: StatusBaseText {
-                            font.pixelSize: 15
+                            font.pixelSize: Style.current.primaryTextFontSize
                             color: chainColor
                             text: shortName + ":"
                             Component.onCompleted: {
@@ -252,7 +252,7 @@ StatusModal {
                 StatusAddress {
                     id: txtWalletAddress
                     color: Theme.palette.directColor1
-                    font.pixelSize: 15
+                    font.pixelSize: Style.current.primaryTextFontSize
                 }
             }
             Column {
@@ -268,7 +268,7 @@ StatusModal {
                 }
                 StatusBaseText {
                     anchors.horizontalCenter: parent.horizontalCenter
-                    font.pixelSize: 13
+                    font.pixelSize: Style.current.additionalTextSize
                     color: Theme.palette.primaryColor1
                     text: qsTr("Copy")
                 }

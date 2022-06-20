@@ -13,8 +13,8 @@ GridView {
     property var stickerGrid
     visible: count > 0
     anchors.fill: parent
-    cellWidth: 88
-    cellHeight: 88
+    cellWidth: Style.dp(88)
+    cellHeight: Style.dp(88)
     model: stickerList
     focus: true
     clip: true
@@ -24,11 +24,11 @@ GridView {
         height: root.cellHeight
         Column {
             anchors.fill: parent
-            anchors.topMargin: 4
-            anchors.leftMargin: 4
+            anchors.topMargin: Style.current.halfPadding/2
+            anchors.leftMargin: Style.current.halfPadding/2
             ImageLoader {
-                width: 80
-                height: 80
+                width: Style.dp(80)
+                height: Style.dp(80)
                 source: url
                 onClicked: {
                     root.stickerClicked(hash, packId)

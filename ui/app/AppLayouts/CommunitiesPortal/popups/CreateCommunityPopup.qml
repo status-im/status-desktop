@@ -48,7 +48,7 @@ StatusStackModal {
             ColumnLayout {
                 id: generalViewLayout
                 width: generalView.width
-                spacing: 12
+                spacing: Style.dp(12)
 
                 CommunityNameInput {
                     id: nameInput
@@ -126,7 +126,7 @@ StatusStackModal {
         ColumnLayout {
             id: introOutroMessageView
 
-            spacing: 12
+            spacing: Style.dp(12)
 
             CommunityIntroMessageInput {
                 id: introMessageInput

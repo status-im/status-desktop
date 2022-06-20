@@ -53,7 +53,7 @@ Flickable {
         id: layout
 
         width: root.width
-        spacing: 12
+        spacing: Style.dp(12)
 
         CommunityNameInput {
             id: nameInput
@@ -133,7 +133,7 @@ Flickable {
         StatusModalDivider {
             Layout.fillWidth: true
             Layout.topMargin: -layout.spacing
-            Layout.bottomMargin: 8
+            Layout.bottomMargin: Style.dp(8)
         }
 
         CommunityIntroMessageInput {

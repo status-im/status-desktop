@@ -11,7 +11,7 @@ import StatusQ.Popups 0.1
 StatusModal {
 
     id: popup
-    height: 210
+    height: Style.dp(210)
     anchors.centerIn: parent
 
     //% "Group name"

@@ -39,13 +39,13 @@ Popup {
     dim: true
     Overlay.modeless: MouseArea {}
 
-    width: 560
+    width: Style.dp(560)
     background: Rectangle {
         color: Style.current.background
         radius: Style.current.radius
         layer.enabled: true
         layer.effect: DropShadow {
-            verticalOffset: 3
+            verticalOffset: Style.dp(3)
             radius: Style.current.radius
             samples: 15
             fast: true
@@ -90,7 +90,7 @@ Popup {
     ScrollView {
         id: scrollView
         anchors.top: activityCenterTopBar.bottom
-        anchors.topMargin: 13
+        anchors.topMargin: Style.dp(13)
         anchors.bottom: parent.bottom
         anchors.bottomMargin: Style.current.smallPadding
         width: parent.width

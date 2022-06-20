@@ -59,7 +59,7 @@ ColumnLayout {
     }
     StatusBaseInput {
         id: derivationPathInput
-        Layout.preferredHeight: 64
+        Layout.preferredHeight: Style.dp(64)
         Layout.preferredWidth: parent.width
         text: _internal.defaultDerivationPath
         color: _internal.pathError ? Theme.palette.dangerColor1 : Theme.palette.directColor1
@@ -71,8 +71,8 @@ ColumnLayout {
             id: loadedIcon
             StatusIcon {
                 icon: _internal.pathError ? "cancel" : "checkmark"
-                height: 14
-                width: 14
+                height: Style.dp(14)
+                width: Style.dp(14)
                 color: _internal.pathError ? Theme.palette.dangerColor1 : Theme.palette.primaryColor1
             }
         }

@@ -128,7 +128,7 @@ Item {
             hovered && setHovered(messageId, hovered)
         }
         anchors.right: parent.right
-        anchors.rightMargin: 20
+        anchors.rightMargin: Style.dp(20)
         anchors.top: messageContainer.top
         // This is not exactly like the design because the hover becomes messed up with the buttons on top of another Message
         anchors.topMargin: -Style.current.halfPadding
@@ -214,8 +214,8 @@ Item {
                 + (emojiReactionLoader.active ? emojiReactionLoader.height: 0)
                 + (retry.visible && !chatTime.visible ? Style.current.smallPadding : 0)
                 + (pinnedRectangleLoader.active ? Style.current.smallPadding : 0)
-                + (editModeOn ? 25 : 0)
-                + (!chatName.visible ? 6 : 0)
+                + (editModeOn ? Style.dp(25) : 0)
+                + (!chatName.visible ? Style.dp(6) : 0)
         width: parent.width
 
         color: {
@@ -249,18 +249,18 @@ Item {
             sourceComponent: Component {
                 Rectangle {
                     id: pinnedRectangle
-                    height: 24
+                    height: Style.dp(24)
                     width: childrenRect.width + Style.current.smallPadding
                     color: Style.current.pinnedRectangleBackground
-                    radius: 12
+                    radius: Style.dp(12)
 
                     SVGImage {
                         id: pinImage
                         source: Style.svg("pin")
                         anchors.left: parent.left
-                        anchors.leftMargin: 3
-                        width: 16
-                        height: 16
+                        anchors.leftMargin: Style.dp(3)
+                        width: Style.dp(16)
+                        height: Style.dp(16)
                         anchors.verticalCenter: parent.verticalCenter
 
                         ColorOverlay {
@@ -275,7 +275,7 @@ Item {
                         text: qsTrId("pinned-by--1").arg(Utils.getContactDetailsAsJson(messagePinnedBy).displayName)
                         anchors.left: pinImage.right
                         anchors.verticalCenter: parent.verticalCenter
-                        font.pixelSize: 13
+                        font.pixelSize: Style.current.additionalTextSize
                     }
                 }
             }
@@ -295,7 +295,7 @@ Item {
         ChatReplyPanel {
             id: chatReply
             anchors.top: pinnedRectangleLoader.active ? pinnedRectangleLoader.bottom : parent.top
-            anchors.topMargin: active ? 4 : 0
+            anchors.topMargin: active ? Style.dp(4) : 0
             anchors.left: chatImage.left
             anchors.right: parent.right
             anchors.rightMargin: Style.current.padding
@@ -378,7 +378,7 @@ Item {
             visible: !editModeOn && headerRepeatCondition
             anchors.verticalCenter: chatName.verticalCenter
             anchors.left: chatName.right
-            anchors.leftMargin: 4
+            anchors.leftMargin: Style.dp(4)
             color: Style.current.secondaryText
             timestamp: messageTimestamp
         }
@@ -502,7 +502,7 @@ Item {
 
         Item {
             id: messageContent
-            height: childrenRect.height + (isEmoji ? 2 : 0)
+            height: childrenRect.height + (isEmoji ? Style.dp(2) : 0)
             anchors.top: chatName.visible ? chatName.bottom :
                                             chatReply.active ? chatReply.bottom :
                                                 pinnedRectangleLoader.active ? pinnedRectangleLoader.bottom : parent.top
@@ -519,7 +519,7 @@ Item {
 
                 message: Utils.removeGifUrls(root.message)
                 anchors.top: parent.top
-                anchors.topMargin: isEmoji ? 2 : 0
+                anchors.topMargin: isEmoji ? Style.dp(2) : 0
                 anchors.left: parent.left
                 anchors.right: parent.right
                 // using a padding instead of a margin let's us select text more easily
@@ -538,13 +538,13 @@ Item {
                 id: chatImageContent
                 active: isImage
                 anchors.top: chatText.visible ? chatText.bottom : parent.top
-                anchors.topMargin: active ? 6 : 0
+                anchors.topMargin: active ? Style.dp(6) : 0
                 z: 51
                 sourceComponent: Component {
                     StatusChatImage {
                         playing: root.messageStore.playAnimation
                         imageSource: messageImage
-                        imageWidth: 200
+                        imageWidth: Style.dp(200)
                         onClicked: {
                             if (mouse.button === Qt.LeftButton) {
                                 root.imageClicked(image)
@@ -572,8 +572,8 @@ Item {
                         id: stickerContainer
                         color: Style.current.transparent
                         border.color: isHovered ? Qt.darker(Style.current.border, 1.1) : Style.current.border
-                        border.width: 1
-                        radius: 16
+                        border.width: Style.dp(1)
+                        radius: Style.dp(16)
                         width: stickerId.width + 2 * chatVerticalPadding
                         height: stickerId.height + 2 * chatVerticalPadding
 
@@ -668,7 +668,7 @@ Item {
                 active: contentType === Constants.messageContentType.communityInviteType
                 anchors.left: parent.left
                 anchors.top: parent.top
-                anchors.topMargin: active ? 8 : 0
+                anchors.topMargin: active ? Style.current.halfPadding : 0
                 sourceComponent: Component {
                     id: invitationBubble
                     InvitationBubbleView {
@@ -686,7 +686,7 @@ Item {
             anchors.left: chatTime.visible ? chatTime.right : messageContent.left
             anchors.leftMargin: chatTime.visible ? chatHorizontalPadding : 0
             anchors.top: chatTime.visible ? chatTime.top : messageContent.bottom
-            anchors.topMargin: chatTime.visible ? 0 : -4
+            anchors.topMargin: chatTime.visible ? 0 : -Style.dp(4)
             anchors.bottom: chatTime.visible ? chatTime.bottom : undefined
             isCurrentUser: root.amISender
             isExpired: isExpired
@@ -708,7 +708,7 @@ Item {
             Rectangle {
                 id: mentionBorder
                 color: pinnedMessage ? Style.current.pinnedMessageBorder : Style.current.mentionColor
-                width: 2
+                width: Style.dp(2)
                 height: parent.height
             }
         }

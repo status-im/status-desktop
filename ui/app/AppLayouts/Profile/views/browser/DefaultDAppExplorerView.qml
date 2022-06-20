@@ -14,7 +14,7 @@ ColumnLayout {
 
     StatusBaseText {
         text: qsTr("Default DApp explorer")
-        font.pixelSize: 15
+        font.pixelSize: Style.current.primaryTextFontSize
         color: Theme.palette.directColor1
     }
 
@@ -32,7 +32,7 @@ ColumnLayout {
     StatusRadioButton {
         id: noneRadioButton
         Layout.alignment: Qt.AlignTop
-        Layout.topMargin: 10
+        Layout.topMargin: Style.dp(10)
         checked: localAccountSensitiveSettings.useBrowserEthereumExplorer === Constants.browserEthereumExplorerNone
         text: qsTrId("none")
         onCheckedChanged: {
@@ -45,7 +45,7 @@ ColumnLayout {
     StatusRadioButton {
         id: etherscanRadioButton
         Layout.alignment: Qt.AlignTop
-        Layout.topMargin: 10
+        Layout.topMargin: Style.dp(10)
         checked: localAccountSensitiveSettings.useBrowserEthereumExplorer === Constants.browserEthereumExplorerEtherscan
         text: "etherscan.io"
         onCheckedChanged: {
@@ -58,7 +58,7 @@ ColumnLayout {
     StatusRadioButton {
         id: ethplorerRadioButton
         Layout.alignment: Qt.AlignTop
-        Layout.topMargin: 10
+        Layout.topMargin: Style.dp(10)
         checked: localAccountSensitiveSettings.useBrowserEthereumExplorer === Constants.browserEthereumExplorerEthplorer
         text: "ethplorer.io"
         onCheckedChanged: {
@@ -71,7 +71,7 @@ ColumnLayout {
     StatusRadioButton {
         id: blockchairRadioButton
         Layout.alignment: Qt.AlignTop
-        Layout.topMargin: 10
+        Layout.topMargin: Style.dp(10)
         checked: localAccountSensitiveSettings.useBrowserEthereumExplorer === Constants.browserEthereumExplorerBlockchair
         text: "blockchair.com"
         onCheckedChanged: {

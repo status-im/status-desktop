@@ -80,13 +80,13 @@ StatusSelect {
         tagsDelegate: StatusListItemTag {
             color: model.color
             height: Style.current.bigPadding
-            radius: 6
+            radius: Style.dp(6)
             closeButtonVisible: false
             icon.emoji: model.emoji
             icon.emojiSize: Emoji.size.verySmall
             icon.isLetterIdenticon: true
             title: model.name
-            titleText.font.pixelSize: 12
+            titleText.font.pixelSize: Style.current.tertiaryTextFontSize
             titleText.color: Theme.palette.indirectColor1
         }
     }
@@ -100,14 +100,14 @@ StatusSelect {
         icon.color: model.generatedModel ? Theme.palette.primaryColor1 : Theme.palette.directColor5
         tagsDelegate: StatusListItemTag {
             color: model.color
-            height: 24
-            radius: 6
+            height: Style.dp(24)
+            radius: Style.dp(6)
             closeButtonVisible: false
             icon.emoji: model.emoji
             icon.emojiSize: Emoji.size.verySmall
             icon.isLetterIdenticon: true
             title: model.name
-            titleText.font.pixelSize: 12
+            titleText.font.pixelSize: Style.current.tertiaryTextFontSize
             titleText.color: Theme.palette.indirectColor1
         }
         onClicked: {

@@ -293,7 +293,7 @@ Rectangle {
 
     ProgressBar {
         id: progressBar
-        height: 3
+        height: Style.dp(3)
         from: 0
         to: 100
         visible: value != 0 && value != 100
@@ -307,7 +307,7 @@ Rectangle {
     WebEngineView {
         id: devToolsView
         visible: localAccountSensitiveSettings.devToolsEnabled
-        height: visible ? 400 : 0
+        height: visible ? Style.dp(400) : 0
         inspectedView: visible && tabs.currentIndex < tabs.count ? tabs.getTab(tabs.currentIndex).item : null
         anchors.left: parent.left
         anchors.right: parent.right

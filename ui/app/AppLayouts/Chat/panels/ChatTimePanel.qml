@@ -15,7 +15,7 @@ StyledText {
     StatusQ.StatusToolTip {
         visible: hhandler.hovered
         text: Utils.formatLongDateTime(parseInt(chatTime.timestamp, 10), RootStore.accountSensitiveSettings.isDDMMYYDateFormat, RootStore.accountSensitiveSettings.is24hTimeFormat)
-        maxWidth: 350
+        maxWidth: Style.dp(350)
     }
 
     HoverHandler {

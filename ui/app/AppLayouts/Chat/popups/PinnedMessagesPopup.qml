@@ -39,7 +39,7 @@ ModalPopup {
             anchors.top: parent.top
             anchors.left: parent.left
             font.bold: true
-            font.pixelSize: 17
+            font.pixelSize: Style.dp(17)
         }
 
         StyledText {
@@ -59,8 +59,8 @@ ModalPopup {
             }
             anchors.left: parent.left
             anchors.top: title.bottom
-            anchors.topMargin: 2
-            font.pixelSize: 15
+            anchors.topMargin: Style.dp(2)
+            font.pixelSize: Style.current.primaryTextFontSize
             color: Style.current.secondaryText
         }
 

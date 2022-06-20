@@ -18,7 +18,7 @@ StatusModal {
     id: root
     //% "Send"
     header.title: qsTrId("command-button-send")
-    height: 540
+    height: Style.dp(540)
 
     property var store
     property var contactsStore
@@ -267,8 +267,8 @@ StatusModal {
         StatusRoundButton {
             id: btnBack
             icon.name: "arrow-right"
-            icon.width: 20
-            icon.height: 16
+            icon.width: Style.dp(20)
+            icon.height: Style.dp(16)
             icon.rotation: 180
             visible: stack.currentGroup.showBackBtn
             enabled: stack.currentGroup.isValid || stack.isLastGroup

@@ -17,13 +17,13 @@ Item {
     signal rightClicked(mouse: var)
 
     id: root
-    width: 74
-    height: 48 + Style.current.halfPadding
+    width: Style.dp(74)
+    height: Style.dp(48) + Style.current.halfPadding
 
     SVGImage {
         id: bookmarkImage
-        width: 48
-        height: 48
+        width: Style.dp(48)
+        height: Style.dp(48)
         anchors.horizontalCenter: parent.horizontalCenter
         source: !!root.source && !!root.source.toString() ? root.source : Style.svg("compassActive")
         visible: root.source && root.source.toString()
@@ -50,7 +50,7 @@ Item {
     StyledText {
         id: bookmarkName
         text: root.text
-        width: 67
+        width: Style.dp(67)
         anchors.top: bookmarkImage.bottom
         horizontalAlignment: Text.AlignHCenter
         font.pixelSize: Style.current.additionalTextSize

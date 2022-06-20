@@ -49,7 +49,7 @@ Item {
         StyledText {
             id: labelSigningPhrase
             color: Style.current.secondaryText
-            font.pixelSize: 15
+            font.pixelSize: Style.current.primaryTextFontSize
             //% "Signing phrase"
             text: qsTrId("signing-phrase")
         }
@@ -59,8 +59,8 @@ Item {
             anchors.left: labelSigningPhrase.right
             anchors.leftMargin: 7
             anchors.verticalCenter: parent.verticalCenter
-            width: 13
-            height: 13
+            width: Style.dp(13)
+            height: Style.dp(13)
             icon.width: width
             icon.height: height
             icon.name: "info"
@@ -77,18 +77,18 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: signingPhraseItem.bottom
         anchors.topMargin: Style.current.smallPadding
-        font.pixelSize: 15
+        font.pixelSize: Style.current.primaryTextFontSize
         text: root.signingPhrase
     }
 
     StatusQControls.StatusRoundButton {
         id: passwordInfoButton
         anchors.left: parent.left
-        anchors.leftMargin: 67
+        anchors.leftMargin: Style.dp(67)
         anchors.top: txtPassword.top
-        anchors.topMargin: 2
-        width: 13
-        height: 13
+        anchors.topMargin: Style.dp(2)
+        width: Style.dp(13)
+        height: Style.dp(13)
         icon.width: width
         icon.height: height
         icon.name: "info"
@@ -104,14 +104,14 @@ Item {
         anchors.top: signingPhrase.bottom
         anchors.topMargin: Style.current.bigPadding
         focus: true
-        customHeight: 56
+        customHeight: Style.dp(56)
         //% "Password"
         label: qsTrId("password")
         //% "Enter password"
         placeholderText: qsTrId("enter-password")
         textField.echoMode: TextInput.Password
         validationErrorAlignment: TextEdit.AlignRight
-        validationErrorTopMargin: 8
+        validationErrorTopMargin: Style.current.halfPadding
         onTextChanged: {
             if(root.validate()) {
                 root.enteredPassword = this.text

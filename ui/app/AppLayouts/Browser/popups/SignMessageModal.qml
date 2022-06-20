@@ -36,7 +36,7 @@ StatusModal {
 
     //% "Signature request"
     header.title: qsTrId("signature-request")
-    height: 504
+    height: Style.dp(504)
 
     onClosed: {
         if(!interactedWith){
@@ -109,8 +109,8 @@ StatusModal {
                         anchors.verticalCenter: parent.verticalCenter
 
                         StyledText {
-                            font.pixelSize: 15
-                            height: 22
+                            font.pixelSize: Style.current.primaryTextFontSize
+                            height: Style.dp(22)
                             text: selectedAccount.name
                             elide: Text.ElideRight
                             anchors.verticalCenter: parent.verticalCenter
@@ -119,8 +119,8 @@ StatusModal {
                         }
                         SVGImage {
                             id: imgFromWallet
-                            sourceSize.height: 18
-                            sourceSize.width: 18
+                            sourceSize.height: Style.dp(18)
+                            sourceSize.width: Style.dp(18)
                             visible: true
                             horizontalAlignment: Image.AlignLeft
                             width: undefined
@@ -150,15 +150,15 @@ StatusModal {
                         id: messagePopup
                         //% "Message"
                         title: qsTrId("message")
-                        height: 286
-                        width: 400
+                        height: Style.dp(286)
+                        width: Style.dp(400)
                         Item {
                             anchors.fill: parent
                             anchors.leftMargin: Style.current.padding
                             anchors.rightMargin: Style.current.padding
                             ScrollView {
                                 width: parent.width
-                                height: 150
+                                height: Style.dp(150)
                                 TextArea {
                                     wrapMode: TextEdit.Wrap
                                     readOnly: true
@@ -174,9 +174,9 @@ StatusModal {
                         anchors.right: parent.right
                         anchors.verticalCenter: parent.verticalCenter
                         StyledText {
-                            width: 250
-                            font.pixelSize: 15
-                            height: 22
+                            width: Style.dp(250)
+                            height: Style.dp(22)
+                            font.pixelSize: Style.current.primaryTextFontSize
                             text: messageToSign()
                             anchors.verticalCenter: parent.verticalCenter
                             horizontalAlignment: Text.AlignRight
@@ -185,7 +185,7 @@ StatusModal {
                             color: Style.current.secondaryText
                         }
                         SVGImage {
-                            width: 13
+                            width: Style.dp(13)
                             anchors.verticalCenter: parent.verticalCenter
                             fillMode: Image.PreserveAspectFit
                             source: Style.svg("caret")

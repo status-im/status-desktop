@@ -314,13 +314,13 @@ Column {
             `</html>`;
             }
             visible: isStatusMessage
-            font.pixelSize: 14
+            font.pixelSize: Style.current.secondaryTextFontSize
             color: Style.current.secondaryText
-            width:  parent.width - 120
+            width:  parent.width - Style.dp(120)
             horizontalAlignment: Text.AlignHCenter
             anchors.horizontalCenter: parent.horizontalCenter
             textFormat: Text.RichText
-            topPadding: root.prevMessageIndex === 1 ? Style.current.bigPadding : 0
+            topPadding: root.prevMessageIndex === Style.dp(1) ? Style.current.bigPadding : 0
         }
     }
 
