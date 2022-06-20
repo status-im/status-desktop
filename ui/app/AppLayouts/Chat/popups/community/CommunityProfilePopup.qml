@@ -93,7 +93,6 @@ StatusModal {
                 //% "Invite friends"
                 headerTitle: qsTrId("invite-friends")
                 community: root.community
-                communitySectionModule: root.communitySectionModule
                 contactsStore: root.contactsStore
                 rootStore: root.store
 

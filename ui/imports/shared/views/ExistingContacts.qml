@@ -16,7 +16,6 @@ Item {
 
     property var contactsStore
     property var community
-    property var communityModule
 
     property string filterText: ""
     property bool expanded: true
@@ -47,17 +46,19 @@ Item {
                 showCheckbox: root.showCheckbox
                 isChecked: root.pubKeys.indexOf(model.pubKey) > -1
                 pubKey: model.pubKey
-                isContact: model.isMutualContact
+                isContact: model.isContact
                 isUser: false
-                name: model.name
+                name: model.displayName
                 image: model.icon
                 isVisible: {
-                    return model.isMutualContact && !model.isBlocked && (root.filterText === "" ||
-                    root.matchesAlias(model.name.toLowerCase(), root.filterText.toLowerCase()) ||
-                    model.name.toLowerCase().includes(root.filterText.toLowerCase()) ||
+                    return model.isContact && !model.isBlocked && (root.filterText === "" ||
+                    root.matchesAlias(model.alias.toLowerCase(), root.filterText.toLowerCase()) ||
+                    model.displayName.toLowerCase().includes(root.filterText.toLowerCase()) ||
+                    model.ensName.toLowerCase().includes(root.filterText.toLowerCase()) ||
+                    model.localNickname.toLowerCase().includes(root.filterText.toLowerCase()) ||
                     model.pubKey.toLowerCase().includes(root.filterText.toLowerCase())) &&
                     (!root.hideCommunityMembers ||
-                    !root.communityModule.hasMember(commmunity.id, model.pubKey))
+                    !root.community.hasMember(model.pubKey))
                 }
                 onContactClicked: function () {
                     root.contactClicked(model)

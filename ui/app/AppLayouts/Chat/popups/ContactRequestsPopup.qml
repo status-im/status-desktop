@@ -32,14 +32,14 @@ ModalPopup {
 
         delegate: ContactRequestPanel {
             contactPubKey: model.pubKey
-            contactName: model.name
+            contactName: model.displayName
             contactIcon: model.icon
 
             onOpenProfilePopup: {
                 Global.openProfilePopup(model.pubKey)
             }
             onBlockContactActionTriggered: {
-                blockContactConfirmationDialog.contactName = model.name
+                blockContactConfirmationDialog.contactName = model.displayName
                 blockContactConfirmationDialog.contactAddress = model.pubKey
                 blockContactConfirmationDialog.open()
             }

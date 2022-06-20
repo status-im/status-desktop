@@ -153,8 +153,7 @@ StatusAppTwoPanelLayout {
                 onInviteNewPeopleClicked: {
                     Global.openPopup(inviteFriendsToCommunityPopup, {
                                          community: root.community,
-                                         hasAddedContacts: root.hasAddedContacts,
-                                         communitySectionModule: root.chatCommunitySectionModule
+                                         hasAddedContacts: root.hasAddedContacts
                                      })
                 }
 
@@ -231,7 +230,7 @@ StatusAppTwoPanelLayout {
         InviteFriendsToCommunityPopup {
             anchors.centerIn: parent
             rootStore: root.rootStore
-            contactsStore: root.rootStore.contactStore
+            contactsStore: root.rootStore.contactsStore
             onClosed: {
                 destroy()
             }

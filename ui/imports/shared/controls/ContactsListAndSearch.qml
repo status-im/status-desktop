@@ -21,7 +21,6 @@ Item {
     property var rootStore
     property var contactsStore
     property var community
-    property var communityModule
 
     property string validationError: ""
     property string successMessage: ""
@@ -182,7 +181,6 @@ Item {
 
         contactsStore: root.contactsStore
         community: root.community
-        communityModule: root.communityModule
         visible: showContactList
         hideCommunityMembers: root.hideCommunityMembers
         anchors.topMargin: this.height > 0 ? Style.current.halfPadding : 0
@@ -211,7 +209,7 @@ Item {
             root.pubKeys = pubKeysCopy
 
             chatKey.hasValidSearchResult = false
-            userClicked(contact.pubKey, contact.isContact, contact.name, contact.address)
+            userClicked(contact.pubKey, contact.isContact, contact.alias, contact.address)
         }
         expanded: !searchResults.loading && pubKey === "" && !searchResults.showProfileNotFoundMessage
     }
