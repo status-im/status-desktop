@@ -151,7 +151,9 @@ Item {
                 onKeyPressed: {
                     if (input.edit.keyEvent === Qt.Key_Return || input.edit.keyEvent === Qt.Key_Enter) {
                         event.accepted = true
-                        nextBtn.clicked(null)
+                        if(nextBtn.enabled) {
+                            nextBtn.clicked(null)
+                        }
                     }
                 }
             }
