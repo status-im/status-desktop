@@ -48,6 +48,10 @@ QtObject {
         const match = parsed.match('src=".*\/(.+?).svg');
         return (match && match.length >= 2) ? match[1] : undefined;
     }
+    // NOTE: doing the same thing as iconId but without checking Twemoji internal checks
+    function iconHex(text) {
+        return text.codePointAt(0).toString(16);
+    }
     function fromCodePoint(value) {
         return Twemoji.twemoji.convert.fromCodePoint(value)
     }

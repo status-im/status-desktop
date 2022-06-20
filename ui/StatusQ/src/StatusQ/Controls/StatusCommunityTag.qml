@@ -24,6 +24,7 @@ Rectangle {
         id: mouseArea
         anchors.fill: parent
         hoverEnabled: true
+        cursorShape: Qt.PointingHandCursor
         onClicked: root.clicked()
     }
 
@@ -32,7 +33,7 @@ Rectangle {
         anchors.centerIn: parent
 
         StatusEmoji {
-            emojiId: root.emoji != "" ? Emoji.iconId(root.emoji) : ""
+            emojiId: root.emoji != "" ? Emoji.iconHex(root.emoji) : ""
             anchors.verticalCenter: parent.verticalCenter
         }
 
