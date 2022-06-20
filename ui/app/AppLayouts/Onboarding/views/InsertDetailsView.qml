@@ -55,9 +55,7 @@ Item {
 
     ColumnLayout {
         height: 461
-        anchors.top: parent.top
-        anchors.topMargin: 185
-        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.centerIn: parent
 
         StyledText {
             id: usernameText

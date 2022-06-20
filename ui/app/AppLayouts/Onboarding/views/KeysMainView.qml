@@ -25,9 +25,7 @@ OnboardingBasePage {
         id: container
         width: 425
         height: 513
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 143
+        anchors.centerIn: parent
 
         Item {
             id: keysImgWrapperItem
