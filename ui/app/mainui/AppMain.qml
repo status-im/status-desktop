@@ -182,6 +182,7 @@ Item {
 
     property Component profilePopupComponent: ProfilePopup {
         id: profilePopup
+        anchors.centerIn: parent
         profileStore: appMain.rootStore.profileSectionStore.profileStore
         contactsStore: appMain.rootStore.profileSectionStore.contactsStore
         onClosed: {
