@@ -87,7 +87,7 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             anchors.left: parent.left
             anchors.leftMargin: Style.current.padding
-            name: root.userName
+            name: root.username
         }
 
         StyledText {

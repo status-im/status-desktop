@@ -35,6 +35,9 @@ StatusModal {
         contentItem.contactListSearch.noContactsRect.visible = !contentItem.contactListSearch.existingContacts.visible;
     }
 
+    margins: 32
+    height: 550
+
     //% "Invite friends"
     header.title: qsTrId("invite-friends")
 
@@ -51,7 +54,6 @@ StatusModal {
     contentItem: CommunityProfilePopupInviteFriendsPanel {
         id: contactFieldAndList
         rootStore: popup.rootStore
-        communitySectionModule: popup.communitySectionModule
         contactsStore: popup.contactsStore
         community: popup.community
     }

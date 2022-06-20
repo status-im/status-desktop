@@ -19,7 +19,6 @@ Column {
 
     property var rootStore
     property var contactsStore
-    property var communitySectionModule
     property var community
     property alias contactListSearch: contactFieldAndList
 
@@ -55,7 +54,6 @@ Column {
         anchors.horizontalCenter: parent.horizontalCenter
         width: parent.width - 32
         contactsStore: root.contactsStore
-        communityModule: root.communitySectionModule
         community: root.community
         showCheckbox: true
         hideCommunityMembers: true
