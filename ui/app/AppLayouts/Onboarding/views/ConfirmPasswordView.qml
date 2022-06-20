@@ -92,7 +92,7 @@ OnboardingBasePage {
 
             StatusBaseText {
                 anchors.horizontalCenter: parent.horizontalCenter
-                text: qsTr("If you lose your password you will lose access to  your Status profile.")
+                text: qsTr("If you lose your password you will lose access to your Status profile.")
                 font.pixelSize: 15
                 color: Theme.palette.baseColor1
             }
