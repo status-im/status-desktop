@@ -37,7 +37,7 @@ SettingsContentBase {
                 width: 80
                 height: 80
                 fillMode: Image.PreserveAspectFit
-                source: Style.svg("status-logo-circle")
+                source: Style.png("status-logo")
                 anchors.horizontalCenter: parent.horizontalCenter
             }
 
