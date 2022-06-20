@@ -362,7 +362,7 @@ StatusPopupMenu {
             root.close()
             root.shouldCloseParentPopup()
         }
-        icon.name: "up"
+        icon.name: "arrow-up"
     }
 
     FileDialog {
