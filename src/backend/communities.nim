@@ -84,9 +84,8 @@ proc editCommunity*(
     ): RpcResponse[JsonNode] {.raises: [Exception].} =
   let bannerImage = newCroppedImage(bannerJsonStr)
   result = callPrivateRPC("editCommunity".prefix, %*[{
-    # TODO this will need to be renamed membership (small m)
     "CommunityID": communityId,
-    "Membership": access,
+    "membership": access,
     "name": name,
     "description": description,
     "introMessage": introMessage,
