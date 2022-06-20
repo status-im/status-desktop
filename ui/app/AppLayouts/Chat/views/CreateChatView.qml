@@ -49,6 +49,7 @@ Page {
                 }
                 tagSelector.sortModel(root.contactsModel);
             } else {
+                contactsModel.clear();
                 tagSelector.namesModel.clear();
             }
         }
