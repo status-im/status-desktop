@@ -1,4 +1,4 @@
-import NimQml, json, sequtils, chronicles, strutils, strutils, stint
+import NimQml, json, sequtils, chronicles, strutils, strutils, stint, sugar
 
 import ../../../app/core/eventemitter
 import ../../../app/core/[main]
@@ -86,7 +86,7 @@ QtObject:
       if (receivedData.activityCenterNotifications.len > 0):
         self.events.emit(
           SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_LOADED,
-          ActivityCenterNotificationsArgs(activityCenterNotifications: receivedData.activityCenterNotifications)
+          ActivityCenterNotificationsArgs(activityCenterNotifications: receivedData.activityCenterNotifications.filter(n => n.notificationType != ActivityCenterNotificationType.ContactRequest))
         )
 
   proc hasMoreToShow*(self: Service): bool =
@@ -176,8 +176,9 @@ QtObject:
 
       self.cursor = activityCenterNotificationsTuple[0]
 
+      # Filter contact request notification til we have the UI working
       self.events.emit(SIGNAL_ACTIVITY_CENTER_NOTIFICATIONS_LOADED,
-        ActivityCenterNotificationsArgs(activityCenterNotifications: activityCenterNotificationsTuple[1]))
+        ActivityCenterNotificationsArgs(activityCenterNotifications: activityCenterNotificationsTuple[1].filter(n => n.notificationType != ActivityCenterNotificationType.ContactRequest)))
 
   proc acceptActivityCenterNotifications*(self: Service, notificationIds: seq[string]): string =
     try:
