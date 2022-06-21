@@ -6,6 +6,7 @@ import utils 1.0
 
 import "views"
 import "stores"
+import "popups/community"
 
 StackLayout {
     id: root
@@ -19,10 +20,23 @@ StackLayout {
 
     clip: true
 
+    Component {
+        id: membershipRequestPopupComponent
+        MembershipRequestsPopup {
+            anchors.centerIn: parent
+            store: root.rootStore
+            communityData: store.mainModuleInst ? store.mainModuleInst.activeSection || {} : {}
+            onClosed: {
+                destroy()
+            }
+        }
+    }
+
     ChatView {
         id: chatView
         contactsStore: root.contactsStore
         rootStore: root.rootStore
+        membershipRequestPopup: membershipRequestPopupComponent
 
         onCommunityInfoButtonClicked: root.currentIndex = 1
         onCommunityManageButtonClicked: root.currentIndex = 1
@@ -32,6 +46,7 @@ StackLayout {
         active: root.rootStore.chatCommunitySectionModule.isCommunity()
 
         sourceComponent: CommunitySettingsView {
+            membershipRequestPopup: membershipRequestPopupComponent
             rootStore: root.rootStore
             hasAddedContacts: root.contactsStore.myContactsModel.count > 0
             chatCommunitySectionModule: root.rootStore.chatCommunitySectionModule

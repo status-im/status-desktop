@@ -29,6 +29,7 @@ StatusAppThreePanelLayout {
     property RootStore rootStore
 
     property Component pinnedMessagesListPopupComponent
+    property Component membershipRequestPopup
     property var emojiPopup
     property bool stickersLoaded: false
 
@@ -138,6 +139,7 @@ StatusAppThreePanelLayout {
             emojiPopup: root.emojiPopup
             hasAddedContacts: root.hasAddedContacts
             pinnedMessagesPopupComponent: root.pinnedMessagesListPopupComponent
+            membershipRequestPopup: root.membershipRequestPopup
             onInfoButtonClicked: root.communityInfoButtonClicked()
             onManageButtonClicked: root.communityManageButtonClicked()
         }

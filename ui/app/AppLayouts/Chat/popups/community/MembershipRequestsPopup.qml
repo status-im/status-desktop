@@ -15,7 +15,7 @@ StatusModal {
     id: popup
     property var store
     property var communitySectionModule
-    property var pendingRequestsToJoin
+    property var communityData
     onOpened: {
         contentItem.errorText.text = ""
     }
@@ -55,7 +55,7 @@ StatusModal {
             ListView {
                 id: membershipRequestList
                 anchors.fill: parent
-                model: popup.pendingRequestsToJoin
+                model: popup.communityData.pendingRequestsToJoin
                 clip: true
 
                 delegate: StatusListItem {

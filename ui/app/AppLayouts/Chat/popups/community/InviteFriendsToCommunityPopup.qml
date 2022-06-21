@@ -38,7 +38,7 @@ StatusModal {
     //% "Invite friends"
     header.title: qsTrId("invite-friends")
 
-    function proccesInviteResult(error) {
+    function processInviteResult(error) {
         if (error) {
             console.error('Error inviting', error)
             contactFieldAndList.validationError = error
