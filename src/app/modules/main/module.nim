@@ -299,7 +299,7 @@ method load*[T](
   hasNotification = false,
   notificationsCount = 0,
   active = false,
-  enabled = singletonInstance.localAccountSensitiveSettings.getIsCommunitiesPortalEnabled())
+  enabled = true)
   self.view.model().addItem(communitiesPortalSectionItem)
   if(activeSectionId == communitiesPortalSectionItem.id):
     activeSection = communitiesPortalSectionItem
@@ -527,10 +527,6 @@ proc setSectionAvailability[T](self: Module[T], sectionType: SectionType, availa
     self.view.model().disableSection(sectionType)
 
 method toggleSection*[T](self: Module[T], sectionType: SectionType) =
-  #if (sectionType == SectionType.CommunitiesPortal):
-  #  let enabled = true #singletonInstance.localAccountSensitiveSettings.getIsCommunitiesPortalEnabled()
-  #  self.setSectionAvailability(sectionType, not enabled)
-  #  singletonInstance.localAccountSensitiveSettings.setIsWalletEnabled(not enabled)
   if (sectionType == SectionType.Wallet):
     let enabled = singletonInstance.localAccountSensitiveSettings.getIsWalletEnabled()
     self.setSectionAvailability(sectionType, not enabled)
@@ -543,10 +539,6 @@ method toggleSection*[T](self: Module[T], sectionType: SectionType) =
     let enabled = singletonInstance.localAccountSensitiveSettings.getNodeManagementEnabled()
     self.setSectionAvailability(sectionType, not enabled)
     singletonInstance.localAccountSensitiveSettings.setNodeManagementEnabled(not enabled)
-  elif (sectionType == SectionType.CommunitiesPortal):
-    let enabled = singletonInstance.localAccountSensitiveSettings.getIsCommunitiesPortalEnabled()
-    self.setSectionAvailability(sectionType, not enabled)
-    singletonInstance.localAccountSensitiveSettings.setIsCommunitiesPortalEnabled(not enabled)
 
 method setUserStatus*[T](self: Module[T], status: bool) =
   self.controller.setUserStatus(status)

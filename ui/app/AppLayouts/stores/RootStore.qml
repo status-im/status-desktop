@@ -54,8 +54,6 @@ QtObject {
 
     property bool isMultiNetworkEnabled: localAccountSensitiveSettings.isMultiNetworkEnabled
 
-    property bool isCommunitiesPortalEnabled: localAccountSensitiveSettings.isCommunitiesPortalEnabled
-
     property var savedAddressesModel: walletSectionSavedAddresses.model
 
     function getEtherscanLink() {
