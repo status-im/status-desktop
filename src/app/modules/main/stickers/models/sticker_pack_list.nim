@@ -105,21 +105,19 @@ QtObject:
   proc removeStickerPackFromList*(self: StickerPackList, packId: string) =
     let idx = self.findIndexById(packId)
     self.beginRemoveRows(newQModelIndex(), idx, idx)
-    self.packs.keepItIf(it.pack.id != packId)
+    self.packs.delete(idx)
     self.endRemoveRows()
 
   proc updateStickerPackInList*(self: StickerPackList, packId: string, installed: bool, pending: bool) =
-    if not self.hasKey(packId):
+    let idx = self.findIndexById(packId)
+    if idx == -1:
       return
-
-    let topLeft = self.createIndex(0, 0, nil)
-    let bottomRight = self.createIndex(self.packs.len, 0, nil)
+    let index = self.createIndex(idx, 0, nil)
     self.packs.apply(proc(it: var StickerPackView) =
       if it.pack.id == packId:
         it.installed = installed
         it.pending = pending)
-
-    self.dataChanged(topLeft, bottomRight, @[StickerPackRoles.Installed.int, StickerPackRoles.Pending.int])
+    self.dataChanged(index, index, @[StickerPackRoles.Installed.int, StickerPackRoles.Pending.int])
 
   proc getStickers*(self: StickerPackList): QVariant {.slot.} =
     let packInfo = self.packs[self.packIdToRetrieve]
