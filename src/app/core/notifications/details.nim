@@ -6,6 +6,7 @@ include ../../../app_service/common/json_utils
 
 type
   NotificationType* {.pure.} = enum
+    UnknownNotification,
     TestNotification,
     NewContactRequest,
     AcceptedContactRequest,
@@ -18,7 +19,7 @@ type
     IdentityVerificationRequest
 
   NotificationDetails* = object
-    notificationType*: NotificationType
+    notificationType*: NotificationType # the default value is `UnknownNotification`
     sectionId*: string
     isCommunitySection*: bool
     sectionActive*: bool
@@ -27,6 +28,9 @@ type
     isOneToOne*: bool
     isGroupChat*: bool
     messageId*: string
+
+proc isEmpty*(self: NotificationDetails): bool =
+  return self.notificationType == NotificationType.UnknownNotification
 
 proc toNotificationDetails*(jsonObj: JsonNode): NotificationDetails =
   var notificationType: int

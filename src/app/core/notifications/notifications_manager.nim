@@ -98,6 +98,9 @@ QtObject:
     app_makeItActive(singletonInstance.engine)
 
     let details = toNotificationDetails(parseJson(identifier))
+    if(details.isEmpty()):
+      info "Notification details are empty"
+      return
     if(details.notificationType == NotificationType.TestNotification):
       info "Test notification was clicked"
       return

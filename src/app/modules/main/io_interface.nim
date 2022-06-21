@@ -137,10 +137,13 @@ method displayEphemeralNotification*(self: AccessInterface, title: string, subTi
   raise newException(ValueError, "No implementation available")
 
 method displayEphemeralNotification*(self: AccessInterface, title: string, subTitle: string, icon: string, loading: bool, 
-    ephNotifType: int, url: string) {.base.} =
+    ephNotifType: int, url: string, details = NotificationDetails()) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method removeEphemeralNotification*(self: AccessInterface, id: int64) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method ephemeralNotificationClicked*(self: AccessInterface, id: int64) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method newCommunityMembershipRequestReceived*(self: AccessInterface, membershipRequest: CommunityMembershipRequestDto)

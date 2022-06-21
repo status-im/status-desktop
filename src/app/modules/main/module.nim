@@ -781,31 +781,42 @@ method meMentionedCountChanged*[T](self: Module[T], allMentions: int) =
   singletonInstance.globalEvents.meMentionedIconBadgeNotification(allMentions)
 
 method displayEphemeralNotification*[T](self: Module[T], title: string, subTitle: string, icon: string, loading: bool, 
-  ephNotifType: int, url: string) =
+  ephNotifType: int, url: string, details = NotificationDetails()) =
   let now = getTime()
   let id = now.toUnix * 1000000000 + now.nanosecond
   var finalEphNotifType = EphemeralNotificationType.Default
   if(ephNotifType == EphemeralNotificationType.Success.int):
     finalEphNotifType = EphemeralNotificationType.Success
   let item = ephemeral_notification_item.initItem(id, title, TOAST_MESSAGE_VISIBILITY_DURATION_IN_MS, subTitle, icon,
-  loading, finalEphNotifType, url)
+  loading, finalEphNotifType, url, details)
   self.view.ephemeralNotificationModel().addItem(item)
 
 method displayEphemeralNotification*[T](self: Module[T], title: string, subTitle: string, details: NotificationDetails) =
   if(details.notificationType == NotificationType.NewMessage or 
     details.notificationType == NotificationType.NewMessageWithPersonalMention or
     details.notificationType == NotificationType.NewMessageWithGlobalMention):
-    self.displayEphemeralNotification(title, subTitle, "", false, EphemeralNotificationType.Default.int, "")
+    self.displayEphemeralNotification(title, subTitle, "", false, EphemeralNotificationType.Default.int, "", details)
   
   elif(details.notificationType == NotificationType.NewContactRequest or 
     details.notificationType == NotificationType.IdentityVerificationRequest):
-    self.displayEphemeralNotification(title, subTitle, "contact", false, EphemeralNotificationType.Default.int, "")
+    self.displayEphemeralNotification(title, subTitle, "contact", false, EphemeralNotificationType.Default.int, "", details)
 
   elif(details.notificationType == NotificationType.AcceptedContactRequest):
-    self.displayEphemeralNotification(title, subTitle, "checkmark-circle", false, EphemeralNotificationType.Success.int, "")
+    self.displayEphemeralNotification(title, subTitle, "checkmark-circle", false, EphemeralNotificationType.Success.int, "", details)
 
 method removeEphemeralNotification*[T](self: Module[T], id: int64) =
   self.view.ephemeralNotificationModel().removeItemWithId(id)
+
+method ephemeralNotificationClicked*[T](self: Module[T], id: int64) =
+  let item = self.view.ephemeralNotificationModel().getItemWithId(id)
+  if(item.details.isEmpty()):
+    return
+  if(item.details.notificationType == NotificationType.NewMessage or 
+    item.details.notificationType == NotificationType.NewMessageWithPersonalMention or
+    item.details.notificationType == NotificationType.NewMessageWithGlobalMention):
+    self.controller.switchTo(item.details.sectionId, item.details.chatId, item.details.messageId)
+  else:
+    self.osNotificationClicked(item.details)
 
 method onStatusUrlRequested*[T](self: Module[T], action: StatusUrlAction, communityId: string, chatId: string, 
   url: string, userId: string, groupName: string, listOfUserIds: seq[string]) =
