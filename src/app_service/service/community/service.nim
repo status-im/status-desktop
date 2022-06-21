@@ -327,51 +327,64 @@ QtObject:
 
   proc init*(self: Service) =
     self.doConnect()
+    let joinedCommunities = self.loadJoinedComunities()
+    for community in joinedCommunities:
+      self.joinedCommunities[community.id] = community
+      if (community.admin):
+        self.joinedCommunities[community.id].pendingRequestsToJoin = self.pendingRequestsToJoinForCommunity(community.id)
 
+    let allCommunities = self.loadAllCommunities()
+    for community in allCommunities:
+      self.allCommunities[community.id] = community
+
+    let curatedCommunities = self.loadCuratedCommunities()
+    for curatedCommunity in curatedCommunities:
+      self.curatedCommunities[curatedCommunity.communityId] = curatedCommunity
+
+    let communitiesSettings = self.loadCommunitiesSettings()
+    for settings in communitiesSettings:
+      if self.allCommunities.hasKey(settings.id):
+        self.allCommunities[settings.id].settings = settings
+      if self.joinedCommunities.hasKey(settings.id):
+        self.joinedCommunities[settings.id].settings = settings
+
+    self.loadMyPendingRequestsToJoin()
+
+  proc loadAllCommunities(self: Service): seq[CommunityDto] =
     try:
-      let joinedCommunities = self.loadJoinedComunities()
-      for community in joinedCommunities:
-        self.joinedCommunities[community.id] = community
-        if (community.admin):
-          self.joinedCommunities[community.id].pendingRequestsToJoin = self.pendingRequestsToJoinForCommunity(community.id)
+      let response = status_go.getAllCommunities()
+      return parseCommunities(response)
+    except Exception as e:
+      let errDesription = e.msg
+      error "error loading all communities: ", errDesription
+      return @[]
 
-      let curatedCommunities = self.loadCuratedCommunities()
-      for curatedCommunity in curatedCommunities:
-        self.curatedCommunities[curatedCommunity.communityId] = curatedCommunity
-
-      let allCommunities = self.loadAllCommunities()
-      for community in allCommunities:
-        self.allCommunities[community.id] = community
-
-      let communitiesSettings = self.loadCommunitiesSettings()
-      for settings in communitiesSettings:
-        if self.allCommunities.hasKey(settings.id):
-          self.allCommunities[settings.id].settings = settings
-        if self.joinedCommunities.hasKey(settings.id):
-          self.joinedCommunities[settings.id].settings = settings
-
-      self.loadMyPendingRequestsToJoin()
-
+  proc loadJoinedComunities(self: Service): seq[CommunityDto] =
+    try:
+      let response = status_go.getJoinedComunities()
+      return parseCommunities(response)
     except Exception as e:
       let errDesription = e.msg
       error "error: ", errDesription
-      return
-
-  proc loadAllCommunities(self: Service): seq[CommunityDto] =
-    let response = status_go.getAllCommunities()
-    return parseCommunities(response)
-
-  proc loadJoinedComunities(self: Service): seq[CommunityDto] =
-    let response = status_go.getJoinedComunities()
-    return parseCommunities(response)
+      return @[]
 
   proc loadCuratedCommunities(self: Service): seq[CuratedCommunity] =
-    let response = status_go.getCuratedCommunities()
-    return parseCuratedCommunities(response)
+    try:
+      let response = status_go.getCuratedCommunities()
+      return parseCuratedCommunities(response)
+    except Exception as e:
+      let errDesription = e.msg
+      error "error loading curated communities: ", errDesription
+      return @[]
 
   proc loadCommunitiesSettings(self: Service): seq[CommunitySettingsDto] =
-    let response = status_go.getCommunitiesSettings()
-    return parseCommunitiesSettings(response)
+    try:
+      let response = status_go.getCommunitiesSettings()
+      return parseCommunitiesSettings(response)
+    except Exception as e:
+      let errDesription = e.msg
+      error "error loading communities settings: ", errDesription
+      return
 
   proc getJoinedCommunities*(self: Service): seq[CommunityDto] =
     return toSeq(self.joinedCommunities.values)
