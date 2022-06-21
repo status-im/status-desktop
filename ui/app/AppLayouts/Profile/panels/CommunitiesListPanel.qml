@@ -12,11 +12,10 @@ import utils 1.0
 ListView {
     id: root
 
-    property var communitySectionModule
-    property var communityProfileModule
     property bool hasAddedContacts: false
 
     signal inviteFriends(var communityData)
+    signal leaveCommunityClicked(var communityId)
 
     interactive: false
     implicitHeight: contentItem.childrenRect.height
@@ -100,7 +99,7 @@ ListView {
                 type: StatusBaseButton.Type.Danger
                 text: qsTr("Leave community")
                 onClicked: {
-                    root.communityProfileModule.leaveCommunity(leavePopup.communityId)
+                    root.leaveCommunityClicked(leavePopup.communityId)
                     leavePopup.close()
                 }
             }

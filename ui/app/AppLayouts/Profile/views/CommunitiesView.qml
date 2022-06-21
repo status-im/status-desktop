@@ -55,9 +55,9 @@ SettingsContentBase {
             CommunitiesListPanel {
                 width: parent.width
                 model: root.profileSectionStore.communitiesList
-                communitySectionModule: root.profileSectionStore.communitiesModuleInst
-                communityProfileModule: root.profileSectionStore.communitiesProfileModule
-
+                onLeaveCommunityClicked: {
+                    root.profileSectionStore.communitiesProfileModule.leaveCommunity(leavePopup.communityId)
+                }
                 onInviteFriends: {
                     Global.openPopup(inviteFriendsToCommunityPopup, {
                                          community: communityData,
