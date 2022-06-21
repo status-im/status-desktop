@@ -352,6 +352,8 @@ Column {
             editModeOn: root.editModeOn
             linkUrls: root.linkUrls
             isInPinnedPopup: root.isInPinnedPopup
+            pinnedMessage: root.pinnedMessage
+            canPin: messageStore.getNumberOfPinnedMessages() < Constants.maxNumberOfPins
 
             transactionParams: root.transactionParams
 
