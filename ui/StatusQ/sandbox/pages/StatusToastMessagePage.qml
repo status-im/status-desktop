@@ -35,6 +35,9 @@ Item {
                 onClose: {
                     console.warn("toast closed: ", modelData.title)
                 }
+                onClicked: {
+                    console.warn("toast clicked")
+                }
             }
         }
     }

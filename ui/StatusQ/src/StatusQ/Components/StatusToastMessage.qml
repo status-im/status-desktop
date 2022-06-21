@@ -127,6 +127,11 @@ Control {
 
     /*!
         \qmlsignal
+        This signal is emitted when the ToastMessage is clicked.
+    */
+    signal clicked()
+    /*!
+        \qmlsignal
         This signal is emitted when the ToastMessage is closed (after animation).
     */
     signal close()
@@ -213,6 +218,9 @@ Control {
             anchors.fill: parent
             onMouseXChanged: {
                 root.open = (mouseX < (root.width/3));
+            }
+            onClicked: {
+                root.clicked();
             }
         }
         RowLayout {
