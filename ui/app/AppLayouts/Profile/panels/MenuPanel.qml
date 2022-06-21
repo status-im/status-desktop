@@ -64,7 +64,8 @@ Column {
             onClicked: root.menuItemClicked(model)
             visible: {
                 (model.subsection !== Constants.settingsSubsection.browserSettings && model.subsection !== Constants.settingsSubsection.wallet) ||
-                (model.subsection === Constants.settingsSubsection.browserSettings && root.browserMenuItemEnabled) ||
+                (model.subsection === Constants.settingsSubsection.browserSettings && root.browserMenuItemEnabled) ||        
+                (model.subsection === Constants.settingsSubsection.communitiesSettings) ||
                 (model.subsection === Constants.settingsSubsection.wallet && root.walletMenuItemEnabled)
             }
             badge.value: {

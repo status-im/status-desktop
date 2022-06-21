@@ -52,30 +52,6 @@ Item {
    }
 
     Component {
-        id: confirmationPopupComponent
-        ConfirmationDialog {
-            property string settingsProp: ""
-            property var onConfirmed: (function(){})
-            showCancelButton: true
-            //% "This feature is experimental and is meant for testing purposes by core contributors and the community. It's not meant for real use and makes no claims of security or integrity of funds or data. Use at your own risk."
-            confirmationText: qsTrId("this-feature-is-experimental-and-is-meant-for-testing-purposes-by-core-contributors-and-the-community--it-s-not-meant-for-real-use-and-makes-no-claims-of-security-or-integrity-of-funds-or-data--use-at-your-own-risk-")
-            //% "I understand"
-            confirmButtonLabel: qsTrId("i-understand")
-            onConfirmButtonClicked: {
-                onConfirmed()
-                close()
-            }
-
-            onCancelButtonClicked: {
-                close()
-            }
-            onClosed: {
-                destroy()
-            }
-        }
-    }
-
-    Component {
         id: communityIntroDialog
 
         CommunityIntroDialog {
@@ -291,36 +267,27 @@ Item {
                             enabled: true
                             text: qsTr("Unsupported state")
                             onClicked: {
+                                let error
 
-                                let onBtnClick = function(){
-                                    let error
-
-                                    if (rectangleBubble.state === "joined") {
-                                        root.store.setActiveCommunity(communityId);
-                                        return
-                                    }
-                                    if (rectangleBubble.state === "unjoined") {
-                                        Global.openPopup(communityIntroDialog, { joinMethod: () => {
-                                                                 let error = root.store.joinCommunity(communityId)
-                                                                 if (error) joiningError.showError(error)
-                                                             } });
-                                    }
-                                    else if (rectangleBubble.state === "requestToJoin") {
-                                        Global.openPopup(communityIntroDialog, { joinMethod: () => {
-                                                                 let error = root.store.requestToJoinCommunity(communityId, userProfile.name)
-                                                                 if (error) joiningError.showError(error)
-                                                                 else rectangleBubble.isPendingRequest = root.store.isCommunityRequestPending(communityId)
-                                                             } });
-                                    }
-
-                                    if (error) joiningError.showError(error)
+                                if (rectangleBubble.state === "joined") {
+                                    root.store.setActiveCommunity(communityId);
+                                    return
+                                }
+                                if (rectangleBubble.state === "unjoined") {
+                                    Global.openPopup(communityIntroDialog, { joinMethod: () => {
+                                                                let error = root.store.joinCommunity(communityId)
+                                                                if (error) joiningError.showError(error)
+                                                            } });
+                                }
+                                else if (rectangleBubble.state === "requestToJoin") {
+                                    Global.openPopup(communityIntroDialog, { joinMethod: () => {
+                                                                let error = root.store.requestToJoinCommunity(communityId, userProfile.name)
+                                                                if (error) joiningError.showError(error)
+                                                                else rectangleBubble.isPendingRequest = root.store.isCommunityRequestPending(communityId)
+                                                            } });
                                 }
 
-                                if (localAccountSensitiveSettings.communitiesEnabled) {
-                                    onBtnClick();
-                                } else {
-                                    Global.openPopup(confirmationPopupComponent, { onConfirmed: onBtnClick });
-                                }
+                                if (error) joiningError.showError(error)
                             }
 
                             MessageDialog {
