@@ -22,7 +22,8 @@ Item {
         width: 127.88
         height: 127.88
         anchors.centerIn: parent
-        source: Style.gif("status_splash_"+(Style.current.name))
+        source: Style.gif("status_splash_" + (Style.current.name))
+        playing: visible
     }
 
     // NOTE: keep it if we will decide to switch on lottie
