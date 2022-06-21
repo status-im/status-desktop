@@ -15,7 +15,7 @@ import StatusQ.Controls 0.1
 import StatusQ.Controls.Validators 0.1
 import StatusQ.Popups 0.1
 
-import "../../controls/community"
+import "../../Chat/controls/community"
 
 StatusModal {
     id: root

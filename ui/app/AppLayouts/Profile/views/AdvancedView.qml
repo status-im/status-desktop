@@ -209,24 +209,6 @@ SettingsContentBase {
                 }
             }
 
-            // TODO: replace with StatusQ component
-            StatusSettingsLineButton {
-                anchors.leftMargin: 0
-                anchors.rightMargin: 0
-                text: qsTr("Communities Portal")
-                isSwitch: true
-                switchChecked: localAccountSensitiveSettings.isCommunitiesPortalEnabled
-                onClicked: {
-                    if (localAccountSensitiveSettings.isCommunitiesPortalEnabled) {
-                        root.advancedStore.toggleExperimentalFeature(root.advancedStore.experimentalFeatures.communitiesPortal)
-                    } else {
-                        confirmationPopup.experimentalFeature = root.advancedStore.experimentalFeatures.communitiesPortal
-                        confirmationPopup.open()
-                    }
-                }
-            }
-
-
             StatusSectionHeadline {
                 anchors.left: parent.left
                 anchors.right: parent.right

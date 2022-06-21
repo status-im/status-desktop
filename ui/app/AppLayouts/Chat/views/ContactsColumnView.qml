@@ -84,37 +84,24 @@ Item {
             }
         }
 
-        StatusIconTabButton {
+        StatusRoundButton {
             icon.name: "public-chat"
-            checked: publicChatCommunityContextMenu.visible
-            highlighted: publicChatCommunityContextMenu.visible
-            onClicked: { publicChatCommunityContextMenu.popup(); }
-            StatusPopupMenu {
-                 id: publicChatCommunityContextMenu
-                 closePolicy: Popup.CloseOnReleaseOutsideParent | Popup.CloseOnEscape
-                 StatusMenuItem {
-                     //% "Join public chat"
-                     text: qsTrId("new-public-group-chat")
-                     icon.name: "public-chat"
-                     onTriggered: Global.openPopup(publicChatPopupComponent)
-                 }
+            icon.height: editBtn.icon.height
+            icon.width: editBtn.icon.width
+            implicitWidth: editBtn.implicitWidth
+            implicitHeight: editBtn.implicitHeight
+            type: StatusRoundButton.Type.Tertiary
 
-                 StatusMenuItem {
-                     //% "Communities"
-                     text: qsTrId("communities")
-                     icon.name: "communities"
-                     onTriggered: Global.openPopup(communitiesPopupComponent)
-                 }
-            }
+            onClicked: { Global.openPopup(publicChatPopupComponent) }
 
             StatusToolTip {
-              text: qsTr("Public chats & communities")
+              text: qsTr("Join public chats")
               visible: parent.hovered
             }
         }
 
-
         StatusIconTabButton {
+            id: editBtn
             icon.name: "edit"
             checked: root.store.openCreateChat
             highlighted: root.store.openCreateChat
@@ -315,28 +302,6 @@ Item {
             onSetObservedCommunity: {
                 root.store.setObservedCommunity(id)
             }
-            onClosed: {
-                destroy()
-            }
-        }
-    }
-
-    Component {
-        id: createCommunitiesPopupComponent
-        CreateCommunityPopup {
-            anchors.centerIn: parent
-            store: root.store
-            onClosed: {
-                destroy()
-            }
-        }
-    }
-
-    Component {
-        id: importCommunitiesPopupComponent
-        ImportCommunityPopup {
-            anchors.centerIn: parent
-            store: root.store
             onClosed: {
                 destroy()
             }
