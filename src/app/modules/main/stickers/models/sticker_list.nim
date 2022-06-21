@@ -52,9 +52,16 @@ QtObject:
     self.stickers.insert(sticker, 0)
     self.endInsertRows()
 
+  proc findIndexByPackId(self: StickerList, packId: string): int =
+    for i in 0 ..< self.stickers.len:
+      if(self.stickers[i].getPackId() == packId):
+        return i
+    return -1
+
   proc removeStickersFromList*(self: StickerList, packId: string) =
-    if not self.stickers.anyIt(it.getPackId == packId):
+    let idx = self.findIndexByPackId(packId)
+    if idx == -1:
       return
-    self.beginRemoveRows(newQModelIndex(), 0, 0)
-    self.stickers.keepItIf(it.getPackId != packId)
+    self.beginRemoveRows(newQModelIndex(), idx, idx)
+    self.stickers.delete(idx)
     self.endRemoveRows()
