@@ -158,24 +158,10 @@ QtObject:
     # if (not chats[0].active):
     #   return
 
-
-    # In case of reply to a message we're receiving 2 messages in the `messages` array (replied message
-    # and a message one replied to) but we actually need only a new replied message, that's why we need to filter
-    # messages here.
-    # We are not sure if we can receive more replies here, also ordering in the `messages` array is not
-    # the same (once we may have replied messages before once after the messages one replied to), that's why we are
-    # covering the most general case here.
-    var messagesOneRepliedTo: seq[string]
-
     for msg in messages:
       if(msg.editedAt > 0):
         let data = MessageEditedArgs(chatId: msg.localChatId, message: msg)
         self.events.emit(SIGNAL_MESSAGE_EDITED, data)
-      if msg.responseTo.len > 0:
-        messagesOneRepliedTo.add(msg.responseTo)
-
-    for msgId in messagesOneRepliedTo:
-      removeMessageWithId(messages, msgId)
 
     for i in 0 ..< chats.len:
       if(chats[i].chatType == ChatType.Unknown):
