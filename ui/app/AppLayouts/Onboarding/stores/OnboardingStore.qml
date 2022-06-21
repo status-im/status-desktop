@@ -23,6 +23,11 @@ QtObject {
     property bool showBeforeGetStartedPopup: true
 
     function generateImage(source, aX, aY, bX, bY) {
+        profImgUrl = source
+        profImgAX = aX
+        profImgAY = aY
+        profImgBX = bX
+        profImgBY = bY
         return onboardingModuleInst.generateImage(source, aX, aY, bX, bY)
     }
 
