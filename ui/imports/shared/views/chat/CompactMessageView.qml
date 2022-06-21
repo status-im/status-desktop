@@ -40,27 +40,9 @@ Item {
     property string senderIcon: ""
     property bool isHovered: false
     property bool isInPinnedPopup: false
+    property bool pinnedMessage: false
+    property bool canPin: false
     property string communityId
-    property bool showMoreButton: {
-        if(!root.messageStore)
-            return false
-
-        let chatTypeThisMessageBelongsTo = root.messageStore.getChatType()
-        switch (chatTypeThisMessageBelongsTo) {
-        case Constants.chatType.oneToOne:
-            return true
-        case Constants.chatType.privateGroupChat:
-            return messageStore.amIChatAdmin() || amISender
-        case Constants.chatType.publicChat:
-            return amISender
-        case Constants.chatType.communityChat:
-            return messageStore.amIChatAdmin() || amISender || messageStore.pinMessageAllowedForMembers()
-        case Constants.chatType.profile:
-            return false
-        default:
-            return false
-        }
-    }
     property bool editModeOn: false
     property string linkUrls: ""
 
@@ -133,10 +115,37 @@ Item {
         // This is not exactly like the design because the hover becomes messed up with the buttons on top of another Message
         anchors.topMargin: -Style.current.halfPadding
         messageContextMenu: root.messageContextMenu
-        showMoreButton: root.showMoreButton
         isInPinnedPopup: root.isInPinnedPopup
         fromAuthor: senderId
         editBtnActive: isText && !editModeOn && root.amISender
+        pinButtonActive: {
+            if (!root.messageStore)
+                 return false
+
+            const chatType = root.messageStore.getChatType();
+            const amIChatAdmin = root.messageStore.amIChatAdmin();
+            const pinMessageAllowedForMembers = root.messageStore.pinMessageAllowedForMembers()
+
+            return chatType === Constants.chatType.oneToOne ||
+                   chatType === Constants.chatType.privateGroupChat && amIChatAdmin ||
+                   chatType === Constants.chatType.communityChat && (amIChatAdmin || pinMessageAllowedForMembers);
+
+        }
+        deleteButtonActive: {
+            if (!root.messageStore)
+                return false;
+            const isMyMessage = senderId !== "" && senderId === userProfile.pubKey;
+            const chatType = root.messageStore.getChatType();
+            return isMyMessage &&
+                    (contentType === Constants.messageContentType.messageType ||
+                     contentType === Constants.messageContentType.stickerType ||
+                     contentType === Constants.messageContentType.emojiType ||
+                     contentType === Constants.messageContentType.imageType ||
+                     contentType === Constants.messageContentType.audioType);
+        }
+        pinnedMessage: root.pinnedMessage
+        canPin: root.canPin
+
         activityCenterMsg: activityCenterMessage
         placeholderMsg: placeholderMessage
         onClickMessage: {
