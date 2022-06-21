@@ -105,6 +105,9 @@ QtObject:
   proc removeEphemeralNotification*(self: View, id: string) {.slot.} =
     self.delegate.removeEphemeralNotification(id.parseInt)
 
+  proc ephemeralNotificationClicked*(self: View, id: string) {.slot.} =
+    self.delegate.ephemeralNotificationClicked(id.parseInt)
+
   proc openStoreToKeychainPopup*(self: View) {.signal.}
 
   proc offerToStorePassword*(self: View) =

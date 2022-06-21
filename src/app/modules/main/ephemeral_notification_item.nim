@@ -1,3 +1,5 @@
+import ../../core/notifications/details
+
 type
   EphemeralNotificationType* {.pure.} = enum
     Default = 0
@@ -13,6 +15,7 @@ type
     loading: bool
     ephNotifType: EphemeralNotificationType
     url: string
+    details: NotificationDetails
 
 proc initItem*(id: int64,
     title: string,
@@ -21,7 +24,8 @@ proc initItem*(id: int64,
     icon = "",
     loading = false,
     ephNotifType = EphemeralNotificationType.Default,
-    url = ""): Item =
+    url = "",
+    details: NotificationDetails): Item =
   result = Item()
   result.id = id
   result.durationInMs = durationInMs
@@ -31,6 +35,7 @@ proc initItem*(id: int64,
   result.loading = loading
   result.ephNotifType = ephNotifType
   result.url = url
+  result.details = details
 
 proc id*(self: Item): int64 =
   self.id
@@ -55,3 +60,6 @@ proc ephNotifType*(self: Item): EphemeralNotificationType =
 
 proc url*(self: Item): string =
   self.url
+
+proc details*(self: Item): NotificationDetails =
+  self.details

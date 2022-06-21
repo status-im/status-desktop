@@ -986,6 +986,10 @@ Item {
             type: model.ephNotifType
             linkUrl: model.url
             duration: model.durationInMs
+            onClicked: {
+                appMain.rootStore.mainModuleInst.ephemeralNotificationClicked(model.id)
+                this.open = false
+            }
             onLinkActivated: {
                 Qt.openUrlExternally(link);
             }

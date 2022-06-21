@@ -73,6 +73,12 @@ QtObject:
       if(self.items[i].id == id):
         return i
     return -1
+  
+  proc getItemWithId*(self: Model, id: int64): Item =
+    let ind = self.findIndexById(id)
+    if(ind == -1):
+      return
+    return self.items[ind]
 
   proc addItem*(self: Model, item: Item) =
     let parentModelIndex = newQModelIndex()
