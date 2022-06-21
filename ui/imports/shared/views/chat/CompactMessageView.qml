@@ -215,6 +215,7 @@ Item {
                 + (retry.visible && !chatTime.visible ? Style.current.smallPadding : 0)
                 + (pinnedRectangleLoader.active ? Style.current.smallPadding : 0)
                 + (editModeOn ? 25 : 0)
+                + (!chatName.visible ? 6 : 0)
         width: parent.width
 
         color: {
@@ -509,7 +510,7 @@ Item {
             anchors.leftMargin: chatImage.imageWidth + Style.current.padding + root.chatHorizontalPadding
             anchors.right: parent.right
             anchors.rightMargin: root.chatHorizontalPadding
-            anchors.topMargin: (!chatName.visible || !chatReply.active  || !pinnedRectangleLoader.active) ? Style.current.halfPadding : 0
+            anchors.topMargin: (!chatName.visible || !chatReply.active  || !pinnedRectangleLoader.active) ? 4 : 0
             visible: !editModeOn
             ChatTextView {
                 id: chatText
@@ -681,6 +682,7 @@ Item {
 
         Retry {
             id: retry
+            height: visible ? implicitHeight : 0
             anchors.left: chatTime.visible ? chatTime.right : messageContent.left
             anchors.leftMargin: chatTime.visible ? chatHorizontalPadding : 0
             anchors.top: chatTime.visible ? chatTime.top : messageContent.bottom
