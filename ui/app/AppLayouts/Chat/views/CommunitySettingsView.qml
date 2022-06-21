@@ -36,6 +36,7 @@ StatusAppTwoPanelLayout {
     property var community
     property var chatCommunitySectionModule
     property bool hasAddedContacts: false
+    property Component membershipRequestPopup
 
     signal backToCommunityClicked
     signal openLegacyPopupClicked // TODO: remove me when migration to new settings is done
@@ -174,7 +175,7 @@ StatusAppTwoPanelLayout {
                 onUserProfileClicked: Global.openProfilePopup(id)
                 onKickUserClicked: root.rootStore.removeUserFromCommunity(id)
                 onBanUserClicked: root.rootStore.banUserFromCommunity(id)
-                onMembershipRequestsClicked: Global.openPopup(membershipRequestPopup, {
+                onMembershipRequestsClicked: Global.openPopup(root.membershipRequestPopup, {
                     communitySectionModule: root.chatCommunitySectionModule
                 })
             }

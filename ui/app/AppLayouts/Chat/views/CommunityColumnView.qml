@@ -30,6 +30,7 @@ Item {
     property bool hasAddedContacts: false
     property var communityData: store.mainModuleInst ? store.mainModuleInst.activeSection || {} : {}
     property Component pinnedMessagesPopupComponent
+    property Component membershipRequestPopup
 
     signal infoButtonClicked
     signal manageButtonClicked
@@ -100,7 +101,7 @@ Item {
                 //% "Membership requests"
                 title: qsTrId("membership-requests")
                 requestsCount: membershipRequests.nbRequests
-                sensor.onClicked: Global.openPopup(membershipRequestPopup, {
+                sensor.onClicked: Global.openPopup(root.membershipRequestPopup, {
                     communitySectionModule: root.communitySectionModule
                 })
             }
@@ -521,18 +522,6 @@ Item {
         title: qsTrId("error-deleting-the-category")
         icon: StandardIcon.Critical
         standardButtons: StandardButton.Ok
-    }
-
-    Component {
-        id: membershipRequestPopup
-        MembershipRequestsPopup {
-            anchors.centerIn: parent
-            store: root.store
-            pendingRequestsToJoin: root.communityData.pendingRequestsToJoin
-            onClosed: {
-                destroy()
-            }
-        }
     }
 
     Component {
