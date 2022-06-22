@@ -98,12 +98,13 @@ proc createFetchMoreMessagesItem(self: Module): Item =
 proc createChatIdentifierItem(self: Module): Item =
   let chatDto = self.controller.getChatDetails()
   var chatName = chatDto.name
+  var smallImage = ""
   var chatIcon = ""
   var senderIsAdded = false
   if(chatDto.chatType == ChatType.OneToOne):
     let sender = self.controller.getContactDetails(chatDto.id)
     senderIsAdded = sender.details.added
-    (chatName, chatIcon) = self.controller.getOneToOneChatNameAndImage()
+    (chatName, smallImage, chatIcon) = self.controller.getOneToOneChatNameAndImage()
 
   result = initItem(
     CHAT_IDENTIFIER_MESSAGE_ID,

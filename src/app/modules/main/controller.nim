@@ -285,7 +285,7 @@ proc getContacts*(self: Controller, group: ContactsGroup): seq[ContactsDto] =
   return self.contactsService.getContactsByGroup(group)
 
 proc getContactNameAndImage*(self: Controller, contactId: string):
-  tuple[name: string, image: string] =
+    tuple[name: string, image: string, largeImage: string] =
   return self.contactsService.getContactNameAndImage(contactId)
 
 proc getContactDetails*(self: Controller, contactId: string): ContactDetails =

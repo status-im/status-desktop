@@ -130,11 +130,11 @@ proc searchMessages*(self: Controller, searchTerm: string) =
   self.messageService.asyncSearchMessages(communities, chats, self.searchTerm, false)
 
 proc getOneToOneChatNameAndImage*(self: Controller, chatId: string):
-  tuple[name: string, image: string] =
+    tuple[name: string, image: string, largeImage: string] =
   return self.chatService.getOneToOneChatNameAndImage(chatId)
 
 proc getContactNameAndImage*(self: Controller, contactId: string):
-  tuple[name: string, image: string] =
+    tuple[name: string, image: string, largeImage: string] =
   return self.contactsService.getContactNameAndImage(contactId)
 
 proc addResultItemDetails*(self: Controller, itemId: string, sectionId = "", channelId = "", messageId = "") =

@@ -276,13 +276,16 @@ QtObject:
 
     return self.contactsStatus[publicKey]
 
-  proc getContactNameAndImage*(self: Service, publicKey: string): tuple[name: string, image: string] =
+  proc getContactNameAndImage*(self: Service, publicKey: string):
+      tuple[name: string, image: string, largeImage: string] =
     ## This proc should be used accross the app in order to have for the same contact
     ## same image and name displayed everywhere in the app.
     let contactDto = self.getContactById(publicKey)
     result.name = contactDto.userNameOrAlias()
     if(contactDto.image.thumbnail.len > 0):
       result.image = contactDto.image.thumbnail
+    if(contactDto.image.large.len > 0):
+      result.largeImage = contactDto.image.large
 
   proc saveContact(self: Service, contact: ContactsDto) =
     # we must keep local contacts updated
@@ -461,7 +464,7 @@ QtObject:
 
   proc getContactDetails*(self: Service, pubKey: string): ContactDetails =
     result = ContactDetails()
-    let (name, icon) = self.getContactNameAndImage(pubKey)
+    let (name, icon, _) = self.getContactNameAndImage(pubKey)
     result.displayName = name
     result.icon = icon
     result.isCurrentUser = pubKey == singletonInstance.userProfile.getPubKey()

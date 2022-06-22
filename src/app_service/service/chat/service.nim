@@ -247,7 +247,7 @@ QtObject:
     return self.chats[chatId]
 
   proc getOneToOneChatNameAndImage*(self: Service, chatId: string):
-    tuple[name: string, image: string] =
+      tuple[name: string, image: string, largeImage: string] =
     return self.contactService.getContactNameAndImage(chatId)
 
   proc createChatFromResponse(self: Service, response: RpcResponse[JsonNode]): tuple[chatDto: ChatDto, success: bool] =
