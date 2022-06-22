@@ -160,8 +160,8 @@ Rectangle {
         }
     }
 
-    width: d.cardWidth
-    height: d.totalHeigth
+    implicitWidth: d.cardWidth
+    implicitHeight: d.totalHeigth
     radius: d.bannerRadius
     color: "transparent"
     layer.enabled: true
