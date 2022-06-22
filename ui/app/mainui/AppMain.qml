@@ -98,7 +98,7 @@ Item {
         }
         onOpenChangeProfilePicPopup: {
             var popup = changeProfilePicComponent.createObject(appMain);
-            popup.open();
+            popup.chooseImageToCrop();
         }
         onOpenBackUpSeedPopup: {
             var popup = backupSeedModalComponent.createObject(appMain)
@@ -196,8 +196,16 @@ Item {
     }
 
     property Component changeProfilePicComponent: Component {
-        ChangeProfilePicModal {
-            profileStore: appMain.rootStore.profileSectionStore.profileStore
+        ImageCropWorkflow {
+            title: qsTr("Profile Picture")
+            acceptButtonText: qsTr("Make this my Profile Pic")
+            onImageCropped: {
+                appMain.rootStore.profileSectionStore.profileStore.uploadImage(image,
+                                              cropRect.x.toFixed(),
+                                              cropRect.y.toFixed(),
+                                              (cropRect.x + cropRect.width).toFixed(),
+                                              (cropRect.y + cropRect.height).toFixed());
+            }
         }
     }
 

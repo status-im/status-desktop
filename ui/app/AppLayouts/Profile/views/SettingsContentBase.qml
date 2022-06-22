@@ -3,6 +3,7 @@ import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.13
 
 import utils 1.0
+import shared.popups 1.0
 
 import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
@@ -20,8 +21,17 @@ Item {
     property list<Item> headerComponents
     default property Item content
 
+    property bool dirty: false
+    property bool saveChangesButtonEnabled: false
+
     signal backButtonClicked()
     signal baseAreaClicked()
+    signal saveChangesClicked()
+    signal resetChangesClicked()
+
+    function notifyDirty() {
+        settingsDirtyToastMessage.notifyDirty();
+    }
 
     QtObject {
         id: d
@@ -90,21 +100,57 @@ Item {
     }
 
     ScrollView {
-        anchors.top: titleRow.visible? titleRow.bottom : topHeader.bottom
+        id: scrollView
+        anchors.top: titleRow.visible ? titleRow.bottom : topHeader.bottom
         anchors.bottom: parent.bottom
         anchors.left: parent.left
-        anchors.right: parent.right
         anchors.topMargin: Style.current.bigPadding
-        contentWidth: Math.max(contentWrapper.implicitWidth, width)
-        contentHeight: Math.max(contentWrapper.implicitHeight, height)+anchors.topMargin
+        width: root.contentWidth
         clip: true
-        MouseArea {
-            anchors.fill: parent
-            onClicked: { root.baseAreaClicked() }
+
+        Flickable {
+            id: contentFliackable
+            contentWidth: Math.max(contentLayout.implicitWidth, scrollView.width)
+            contentHeight: Math.max(contentLayout.implicitHeight, scrollView.height) + scrollView.anchors.topMargin
 
             Column {
-                id: contentWrapper
+                id: contentLayout
+                anchors.fill: parent.contentItem
+
+                MouseArea {
+                    onClicked: root.baseAreaClicked()
+                    width: contentWrapper.implicitWidth
+                    height: contentWrapper.implicitHeight
+
+                    Column {
+                        id: contentWrapper
+                    }
+                }
+
+                Item {
+                    // This is a settingsDirtyToastMessage placeholder
+                    width: settingsDirtyToastMessage.implicitWidth
+                    height: settingsDirtyToastMessage.active ? settingsDirtyToastMessage.implicitHeight : 0
+
+                    Behavior on implicitHeight {
+                        NumberAnimation {
+                            duration: 150
+                            easing.type: Easing.InOutQuad
+                        }
+                    }
+                }
             }
         }
+    }
+
+    SettingsDirtyToastMessage {
+        id: settingsDirtyToastMessage
+        anchors.bottom: scrollView.bottom
+        anchors.horizontalCenter: scrollView.horizontalCenter
+        active: root.dirty
+        flickable: contentFliackable
+        saveChangesButtonEnabled: root.saveChangesButtonEnabled
+        onResetChangesClicked: root.resetChangesClicked()
+        onSaveChangesClicked: root.saveChangesClicked()
     }
 }

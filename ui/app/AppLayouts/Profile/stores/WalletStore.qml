@@ -17,6 +17,7 @@ QtObject {
         networksModule.toggleTestNetworksEnabled()
     }
 
+    property var accounts: walletSectionAccounts.model
     property var importedAccounts: walletSectionAccounts.imported
     property var generatedAccounts: walletSectionAccounts.generated
     property var watchOnlyAccounts: walletSectionAccounts.watchOnly

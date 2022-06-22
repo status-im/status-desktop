@@ -20,6 +20,8 @@ QtObject {
         }
     }
 
+    property var details: Utils.getContactDetailsAsJson(pubkey)
+
     function uploadImage(source, aX, aY, bX, bY) {
         return root.profileModule.upload(source, aX, aY, bX, bY)
     }

@@ -23,18 +23,27 @@ StatusModal {
 
     function onChangePasswordResponse(success, errorMsg) {
         if (success) {
+            if (Qt.platform.os === "osx") {
+                localAccountSettings.storeToKeychainValue = Constants.storeToKeychainValueStore;
+                root.privacyStore.storeToKeyChain(d.passwordProcessing);
+            }
             passwordChanged()
-            submitBtn.enabled = false
-        } else {
+        }
+        else {
             view.reset()
             view.errorMsgText = errorMsg
             console.warn("TODO: Display error message when change password action failure! ")
         }
-        submitBtn.loading = false
+        d.passwordProcessing = "";
+        submitBtn.enabled = false;
     }
 
     QtObject {
         id: d
+
+        // We temporarly store the password during "changePassword" call
+        // to store it to KeyChain after successfull change operation.
+        property string passwordProcessing: ""
 
         function submit() {
             submitBtn.loading = true
@@ -77,6 +86,7 @@ StatusModal {
                 interval: 20
                 onTriggered: {
                     // Change current password call action to the backend
+                    d.passwordProcessing = view.newPswText
                     root.privacyStore.changePassword(view.currentPswText, view.newPswText)
                 }
             }

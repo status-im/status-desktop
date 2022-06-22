@@ -10,6 +10,8 @@ import shared.controls.chat 1.0
 
 import "../popups"
 import "../stores"
+import "../controls"
+import "./profile"
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -19,161 +21,69 @@ import StatusQ.Controls 0.1
 SettingsContentBase {
     id: root
 
+    property WalletStore walletStore
     property ProfileStore profileStore
+    property PrivacyStore privacyStore
+
+    titleRowComponentLoader.sourceComponent: StatusButton {
+        text: qsTr("Change Password")
+        onClicked: changePasswordModal.open()
+    }
+
+    dirty: settingsView.dirty
+    saveChangesButtonEnabled: settingsView.valid
+
+    onResetChangesClicked: settingsView.reset()
+    onSaveChangesClicked: settingsView.save()
 
     ColumnLayout {
+        id: layout
         spacing: Constants.settingsSection.itemSpacing
         width: root.contentWidth
 
-        RowLayout {
+        StatusTabBar {
+            id: editPreviwTabBar
             Layout.fillWidth: true
-            Layout.leftMargin: Style.current.padding
-            Layout.rightMargin: Style.current.padding
 
-            StatusBaseText {
-                id: profileName
-                text: root.profileStore.name
-                font.weight: Font.Bold
-                font.pixelSize: 20
-                color: Theme.palette.directColor1
+            StatusTabButton {
+                width: implicitWidth
+                text: qsTr("Edit")
             }
-
-            StatusButton {
-                text: "Edit"
-                onClicked: Global.openPopup(displayNamePopupComponent)
+            StatusTabButton {
+                width: implicitWidth
+                text: qsTr("Preview")
             }
+        }
 
-            Item {
+        StackLayout {
+            Layout.fillWidth: true
+            currentIndex: editPreviwTabBar.currentIndex
+
+            MyProfileSettingsView {
+                id: settingsView
                 Layout.fillWidth: true
-            }
-
-            StatusFlatRoundButton {
-                id: qrCodeButton
-
-                Layout.preferredWidth: 32
-                Layout.preferredHeight: 32
-
-                icon.name: "qr"
-                type: StatusFlatRoundButton.Type.Quaternary
-                onClicked: qrCodePopup.open()
-            }
-        }
-
-        Separator {
-            Layout.fillWidth: true
-        }
-
-        ProfileHeader {
-            id: profileImgNameContainer
-
-            Layout.fillWidth: true
-            Layout.leftMargin: Style.current.padding
-            Layout.rightMargin: Style.current.padding
-
-            displayName: profileStore.name
-            pubkey: profileStore.pubkey
-            icon: profileStore.icon
-
-            displayNameVisible: false
-            pubkeyVisible: false
-            compact: false
-
-            imageOverlay: Item {
-                StatusFlatRoundButton {
-                    width: 24
-                    height: 24
-
-                    anchors {
-                        right: parent.right
-                        bottom: parent.bottom
-                        rightMargin: -8
-                    }
-
-                    type: StatusFlatRoundButton.Type.Secondary
-                    icon.name: "pencil"
-                    icon.color: Theme.palette.directColor1
-                    icon.width: 12.5
-                    icon.height: 12.5
-
-                    onClicked: Global.openChangeProfilePicPopup()
-                }
-            }
-        }
-
-        StatusDescriptionListItem {
-            Layout.fillWidth: true
-            Layout.leftMargin: Style.current.padding
-            Layout.rightMargin: Style.current.padding
-
-            title: qsTr("ENS username")
-            subTitle: root.profileStore.ensName
-            tooltip.text: qsTr("Copy to clipboard")
-            icon.name: "copy"
-            visible: !!root.profileStore.ensName
-            iconButton.onClicked: {
-                root.profileStore.copyToClipboard(root.profileStore.ensName)
-                tooltip.visible = !tooltip.visible
-            }
-        }
-
-        StatusDescriptionListItem {
-            Layout.fillWidth: true
-            Layout.leftMargin: Style.current.padding
-            Layout.rightMargin: Style.current.padding
-
-            title: qsTr("Chat key")
-            subTitle: Utils.getCompressedPk(root.profileStore.pubkey)
-            subTitleComponent.elide: Text.ElideMiddle
-            subTitleComponent.width: 320
-            subTitleComponent.font.family: Theme.palette.monoFont.name
-            tooltip.text: qsTr("Copy to clipboard")
-            icon.name: "copy"
-            iconButton.onClicked: {
-                root.profileStore.copyToClipboard(subTitle)
-                tooltip.visible = !tooltip.visible
-            }
-        }
-
-        StatusDescriptionListItem {
-            Layout.fillWidth: true
-            Layout.leftMargin: Style.current.padding
-            Layout.rightMargin: Style.current.padding
-
-            title: qsTr("Share Profile URL")
-            subTitle: `${Constants.userLinkPrefix}${root.profileStore.ensName !== "" ? root.profileStore.ensName : (root.profileStore.pubkey.substring(0, 5) + "..." + root.profileStore.pubkey.substring(root.profileStore.pubkey.length - 5))}`
-            tooltip.text: qsTr("Copy to clipboard")
-            icon.name: "copy"
-            iconButton.onClicked: {
-                root.profileStore.copyToClipboard(Constants.userLinkPrefix + (root.profileStore.ensName !== "" ? root.profileStore.ensName : root.profileStore.pubkey))
-                tooltip.visible = !tooltip.visible
-            }
-        }
-
-        Component {
-            id: displayNamePopupComponent
-            DisplayNamePopup {
                 profileStore: root.profileStore
-                anchors.centerIn: Overlay.overlay
-                onClosed: { destroy() }
+                privacyStore: root.privacyStore
+                walletStore: root.walletStore
+            }
+
+            MyProfilePreview {
+                id: profilePreview
+                Layout.fillWidth: true
+                profileStore: root.profileStore
             }
         }
 
-        ModalPopup {
-            id: qrCodePopup
-            width: 420
-            height: 420
-            Image {
-                asynchronous: true
-                fillMode: Image.PreserveAspectFit
-                source: root.profileStore.getQrCodeSource(root.profileStore.pubkey)
-                anchors.verticalCenterOffset: 20
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenter: parent.verticalCenter
-                height: 312
-                width: 312
-                mipmap: true
-                smooth: false
-            }
+        ChangePasswordModal {
+            id: changePasswordModal
+            privacyStore: root.privacyStore
+            anchors.centerIn: parent
+            onPasswordChanged: successPopup.open()
+        }
+
+        ChangePasswordSuccessModal {
+            id: successPopup
+            anchors.centerIn: parent
         }
     }
 }

@@ -41,6 +41,12 @@ StatusAppTwoPanelLayout {
         store: profileView.store
         anchors.fill: parent
         anchors.topMargin: d.topMargin
+        onMenuItemClicked: {
+            if (profileContainer.currentItem.dirty) {
+                event.accepted = true;
+                profileContainer.currentItem.notifyDirty();
+            }
+        }
     }
 
     rightPanel: Item {
@@ -65,6 +71,8 @@ StatusAppTwoPanelLayout {
         StackLayout {
             id: profileContainer
 
+            readonly property var currentItem: (currentIndex >= 0 && currentIndex < children.length) ? children[currentIndex] : null
+
             anchors.top: banner.visible? banner.bottom : parent.top
             anchors.left: parent.left
             anchors.right: parent.right
@@ -86,7 +94,9 @@ StatusAppTwoPanelLayout {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
 
+                walletStore: profileView.store.walletStore
                 profileStore: profileView.store.profileStore
+                privacyStore: profileView.store.privacyStore
                 sectionTitle: profileView.store.getNameForSubsection(Constants.settingsSubsection.profile)
                 contentWidth: d.contentWidth
             }
@@ -135,15 +145,6 @@ StatusAppTwoPanelLayout {
                 walletStore: profileView.store.walletStore
                 emojiPopup: profileView.emojiPopup
                 sectionTitle: profileView.store.getNameForSubsection(Constants.settingsSubsection.wallet)
-                contentWidth: d.contentWidth
-            }
-
-            PrivacyView {
-                implicitWidth: parent.width
-                implicitHeight: parent.height
-
-                privacyStore: profileView.store.privacyStore
-                sectionTitle: profileView.store.getNameForSubsection(Constants.settingsSubsection.privacyAndSecurity)
                 contentWidth: d.contentWidth
             }
 

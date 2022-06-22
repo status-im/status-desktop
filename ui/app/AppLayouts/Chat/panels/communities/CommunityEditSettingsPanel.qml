@@ -40,6 +40,11 @@ Flickable {
     property alias bannerPath: bannerPicker.source
     property alias bannerCropRect: bannerPicker.cropRect
 
+    property size bottomReservedSpace: Qt.size(0, 0)
+    property bool bottomReservedSpaceActive: false
+
+    readonly property bool saveChangesButtonEnabled: true
+
     contentWidth: layout.width
     contentHeight: layout.height
     clip: true
@@ -149,7 +154,10 @@ Flickable {
         }
 
         Item {
-            Layout.fillHeight: true
+            // settingsDirtyToastMessage placeholder
+            visible: root.bottomReservedSpaceActive
+            implicitWidth: root.bottomReservedSpace.width
+            implicitHeight: root.bottomReservedSpace.height
         }
     }
 }
