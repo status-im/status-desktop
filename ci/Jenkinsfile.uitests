@@ -87,12 +87,15 @@ pipeline {
     stage('Squish-UI-Test') {
          steps { script {
            squish([
-             squishPackageName: 'squish-6.7.2-qt514x-linux64',
-             testSuite: '${WORKSPACE}/test/ui-test/testSuites/*',
-             unstableBuildOnError: true,
-             host: 'localhost',
-             port: '4322',
-             addAppPath: '${WORKSPACE}/bin',
+           extraOptions: '''--config
+           addAppPath
+           \'${WORKSPACE}/bin\'
+            ''',
+            squishPackageName: 'squish-6.7.2-qt514x-linux64',
+            testSuite: '${WORKSPACE}/test/ui-test/testSuites/*',
+            unstableBuildOnError: true,
+            host: 'localhost',
+            port: '4322',
            ])
          } }
     }
