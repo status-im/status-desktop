@@ -809,3 +809,10 @@ method addChatIfDontExist*(self: Module,
 
   self.addNewChat(chat, belongsToCommunity, events, settingsService, contactService, chatService,
     communityService, messageService, gifService, mailserversService, setChatAsActive)
+
+method downloadMessages*(self: Module, chatId: string, filePath: string) =
+  if(not self.chatContentModules.contains(chatId)):
+    error "unexisting chat key: ", chatId, methodName="downloadMessages"
+    return
+
+  self.chatContentModules[chatId].downloadMessages(filePath)

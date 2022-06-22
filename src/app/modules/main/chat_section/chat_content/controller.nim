@@ -1,5 +1,6 @@
 import Tables
-
+import NimQml
+import json
 import io_interface
 
 import ../../../../../app_service/service/settings/service as settings_service
@@ -12,6 +13,7 @@ import ../../../../../app_service/service/wallet_account/service as wallet_accou
 
 import ../../../../core/signals/types
 import ../../../../core/eventemitter
+import ../../../shared_models/message_item
 
 
 type
@@ -196,3 +198,13 @@ proc getTransactionDetails*(self: Controller, message: MessageDto): (string,stri
 
 proc getWalletAccounts*(self: Controller): seq[wallet_account_service.WalletAccountDto] =
   return self.messageService.getWalletAccounts()
+
+proc downloadMessages*(self: Controller, messages: seq[message_item.Item], filePath: string) =
+  let data = newJArray()
+  for message in messages:
+    data.elems.add(%*{
+      "id": message.id(), "text": message.messageText(), "timestamp": message.timestamp(),
+      "sender": message.senderDisplayName()
+    })
+
+  writeFile(url_toLocalFile(filePath), $data) 

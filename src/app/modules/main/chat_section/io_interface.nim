@@ -284,3 +284,6 @@ method reorderCommunityChat*(self: AccessInterface, categoryId: string, chatId: 
 
 method onMeMentionedInEditedMessage*(self: AccessInterface, chatId: string, editedMessage : MessageDto) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method downloadMessages*(self: AccessInterface, chatId: string, filePath: string) =
+  raise newException(ValueError, "No implementation available")

@@ -122,3 +122,6 @@ QtObject:
   proc updateChatDetailsName*(self: View, name: string) =
     self.chatDetails.setName(name)
     self.chatDetailsChanged()
+
+  proc downloadMessages*(self: View, filePath: string) {.slot.} =
+    self.delegate.downloadMessages(filePath)

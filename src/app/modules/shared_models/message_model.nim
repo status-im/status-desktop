@@ -38,7 +38,7 @@ type
 QtObject:
   type
     Model* = ref object of QAbstractListModel
-      items: seq[Item]
+      items*: seq[Item]
       allKeys: seq[int]
 
   proc delete(self: Model) =
