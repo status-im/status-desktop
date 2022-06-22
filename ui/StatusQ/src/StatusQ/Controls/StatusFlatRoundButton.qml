@@ -172,6 +172,6 @@ Rectangle {
 
     StatusToolTip {
         id: statusToolTip
-        visible: !!text && parent.hovered
+        visible: !!text && statusFlatRoundButton.hovered
     } // Tooltip
 } // Rectangle
