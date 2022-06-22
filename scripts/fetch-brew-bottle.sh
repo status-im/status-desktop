@@ -3,8 +3,10 @@ set -eof pipefail
 
 # This script is used to fetch HomeBrew bottles for PCRE and OpenSSL.
 
+trap "echo 'Failed to download bottle. Check your authentication token and network connection.'" EXIT ERR INT QUIT
+
 function get_gh_pkgs_token() {
-    curl --fail -Ls -u "${GITHUB_USER}:${GITHUB_TOKEN}" https://ghcr.io/token | jq -r '.token'
+    curl --fail --show-error -Ls -u "${GITHUB_USER}:${GITHUB_TOKEN}" https://ghcr.io/token | jq -r '.token'
 }
 
 function get_bottle_json() {
@@ -20,7 +22,7 @@ function fetch_bottle() {
     else
         AUTH=("-u" "_:_") # WARNING: Unauthorized requests can be throttled.
     fi
-    curl --fail -Ls "${AUTH[@]}" -o "${1}" "${2}"
+    curl --fail --show-error -Ls "${AUTH[@]}" -o "${1}" "${2}"
 }
 
 if [[ $(uname) != "Darwin" ]]; then
