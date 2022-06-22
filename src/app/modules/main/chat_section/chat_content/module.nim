@@ -331,3 +331,7 @@ method onChatEdited*(self: Module, chatDto: ChatDto) =
 method onChatRenamed*(self: Module, newName: string) =
   self.view.updateChatDetailsName(newName)
   self.messagesModule.updateChatIdentifier()
+
+method downloadMessages*(self: Module, filePath: string) =
+  let messages = self.messagesModule.getMessages()
+  self.controller.downloadMessages(messages, filePath)

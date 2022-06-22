@@ -327,7 +327,7 @@ Item {
                 onDeleteCommunityChat:  root.store.removeCommunityChat(chatId)
 
                 onDownloadMessages: {
-                    // Not Refactored Yet
+                    root.communitySectionModule.downloadMessages(chatId, file)
                 }
 
                 onDisplayProfilePopup: {

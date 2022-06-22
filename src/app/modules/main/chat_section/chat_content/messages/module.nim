@@ -486,3 +486,6 @@ method onChatMemberUpdated*(self: Module, publicKey: string, admin: bool, joined
     return
 
   self.view.model().refreshItemWithId(CHAT_IDENTIFIER_MESSAGE_ID)
+
+method getMessages*(self: Module): seq[message_item.Item] =
+  return self.view.model().items

@@ -232,7 +232,7 @@ Item {
                 }
 
                 onDownloadMessages: {
-                    // Not Refactored Yet
+                   root.chatSectionModule.downloadMessages(chatId, file)
                 }
 
                 onDisplayProfilePopup: {
