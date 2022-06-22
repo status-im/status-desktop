@@ -77,9 +77,6 @@ pipeline {
              unstableBuildOnError: true,
              host: 'localhost',
              port: '4322',
-             config{
-              aut: '${WORKSPACE}/bin',
-             }
            ])
          } }
     }
