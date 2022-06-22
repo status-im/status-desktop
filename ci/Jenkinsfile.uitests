@@ -60,14 +60,29 @@ pipeline {
 
     stage('status-go') {
       steps { sh 'make status-go' }
-    }
+     }
 
     stage('Package') {
       steps { script {
-        linux.bundle('tgz-linux')
+       linux.bundle('tgz-linux')
       } }
     }
 
+    stage('Parallel Upload') {
+      parallel {
+        stage('Upload') {
+          steps { script {
+            env.PKG_URL = s3.uploadArtifact(env.STATUS_CLIENT_TARBALL)
+            jenkins.setBuildDesc(AppImage: env.PKG_URL)
+          } }
+        }
+        stage('Archive') {
+          steps { script {
+            archiveArtifacts("${env.STATUS_CLIENT_TARBALL}*")
+          } }
+        }
+      }
+    }
 
     stage('Squish-UI-Test') {
          steps { script {
@@ -77,6 +92,9 @@ pipeline {
              unstableBuildOnError: true,
              host: 'localhost',
              port: '4322',
+             config{
+              addAppPath: '${WORKSPACE}/bin',
+             }
            ])
          } }
     }
