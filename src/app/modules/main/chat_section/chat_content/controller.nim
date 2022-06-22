@@ -139,7 +139,7 @@ proc getChatDetails*(self: Controller): ChatDto =
 proc getCommunityDetails*(self: Controller): CommunityDto =
   return self.communityService.getCommunityById(self.sectionId)
 
-proc getOneToOneChatNameAndImage*(self: Controller): tuple[name: string, image: string] =
+proc getOneToOneChatNameAndImage*(self: Controller): tuple[name: string, image: string, largeImage: string] =
   return self.chatService.getOneToOneChatNameAndImage(self.chatId)
 
 proc belongsToCommunity*(self: Controller): bool =

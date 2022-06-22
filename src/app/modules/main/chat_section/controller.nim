@@ -240,7 +240,7 @@ proc removeCommunityChat*(self: Controller, itemId: string) =
   self.communityService.deleteCommunityChat(self.getMySectionId(), itemId)
 
 proc getOneToOneChatNameAndImage*(self: Controller, chatId: string):
-  tuple[name: string, image: string] =
+    tuple[name: string, image: string, largeImage: string] =
   return self.chatService.getOneToOneChatNameAndImage(chatId)
 
 proc createPublicChat*(self: Controller, chatId: string) =

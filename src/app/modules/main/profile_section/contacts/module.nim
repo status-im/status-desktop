@@ -40,7 +40,7 @@ method delete*(self: Module) =
 
 proc createItemFromPublicKey(self: Module, publicKey: string): UserItem =
   let contact =  self.controller.getContact(publicKey)
-  let (name, image) = self.controller.getContactNameAndImage(contact.id)
+  let (name, image, _) = self.controller.getContactNameAndImage(contact.id)
 
   return initUserItem(
     pubKey = contact.id,
@@ -164,7 +164,7 @@ method contactUpdated*(self: Module, publicKey: string) =
   self.removeIfExistsAndAddToAppropriateModel(publicKey)
 
 method contactNicknameChanged*(self: Module, publicKey: string) =
-  let (name, _) = self.controller.getContactNameAndImage(publicKey)
+  let (name, _, _) = self.controller.getContactNameAndImage(publicKey)
   self.view.myMutualContactsModel().updateName(publicKey, name)
   self.view.receivedContactRequestsModel().updateName(publicKey, name)
   self.view.sentContactRequestsModel().updateName(publicKey, name)

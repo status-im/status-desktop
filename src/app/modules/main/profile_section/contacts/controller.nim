@@ -60,7 +60,7 @@ proc getContact*(self: Controller, id: string): ContactsDto =
   return self.contactsService.getContactById(id)
 
 proc getContactNameAndImage*(self: Controller, contactId: string):
-  tuple[name: string, image: string] =
+    tuple[name: string, image: string, largeImage: string] =
   return self.contactsService.getContactNameAndImage(contactId)
 
 proc unblockContact*(self: Controller, publicKey: string) =

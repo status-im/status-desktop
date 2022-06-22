@@ -679,10 +679,10 @@ method communityEdited*[T](
 
 method getContactDetailsAsJson*[T](self: Module[T], publicKey: string): string =
   let contact =  self.controller.getContact(publicKey)
-  let (name, image) = self.controller.getContactNameAndImage(contact.id)
+  let (name, _, _) = self.controller.getContactNameAndImage(contact.id)
   let jsonObj = %* {
     "displayName": name,
-    "displayIcon": image,
+    "displayIcon": contact.image.thumbnail,
     "publicKey": contact.id,
     "name": contact.name,
     "ensVerified": contact.ensVerified,
@@ -690,8 +690,8 @@ method getContactDetailsAsJson*[T](self: Module[T], publicKey: string): string =
     "lastUpdated": contact.lastUpdated,
     "lastUpdatedLocally": contact.lastUpdatedLocally,
     "localNickname": contact.localNickname,
-    "thumbnailImage": contact.image.large,
-    "largeImage": contact.image.thumbnail,
+    "thumbnailImage": contact.image.thumbnail,
+    "largeImage": contact.image.large,
     "isContact":contact.added,
     "isBlocked":contact.blocked,
     "requestReceived":contact.hasAddedUs,
@@ -764,7 +764,7 @@ method osNotificationClicked*[T](self: Module[T], details: NotificationDetails) 
     echo "There is no particular action clicking on a notification informing you about rejection to join community"
 
 method newCommunityMembershipRequestReceived*[T](self: Module[T], membershipRequest: CommunityMembershipRequestDto) =
-  let (contactName, _) = self.controller.getContactNameAndImage(membershipRequest.publicKey)
+  let (contactName, _, _) = self.controller.getContactNameAndImage(membershipRequest.publicKey)
   let community =  self.controller.getCommunityById(membershipRequest.communityId)
   singletonInstance.globalEvents.newCommunityMembershipRequestNotification("New membership request",
   fmt "{contactName} asks to join {community.name}", community.id)

@@ -192,7 +192,7 @@ Column {
             messageContextMenu.messageSenderId = obj.senderId
             messageContextMenu.selectedUserPublicKey = obj.senderId
             messageContextMenu.selectedUserDisplayName = obj.senderDisplayName
-            messageContextMenu.selectedUserIcon = obj.senderIcon
+            messageContextMenu.selectedUserIcon = obj.senderIconToShow
         }
 
 
@@ -289,7 +289,7 @@ Column {
             chatColor: root.messageStore.getChatColor()
             chatEmoji: root.channelEmoji
             amIChatAdmin: root.messageStore.amIChatAdmin()
-            chatIcon: root.senderIcon
+            chatIcon: root.senderIconToShow
         }
     }
 

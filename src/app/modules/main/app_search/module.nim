@@ -231,7 +231,7 @@ method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
       continue
 
     let chatDto = self.controller.getChatDetails("", m.chatId)
-    var (senderName, senderImage) = self.controller.getContactNameAndImage(m.`from`)
+    var (senderName, senderImage, _) = self.controller.getContactNameAndImage(m.`from`)
     if(m.`from` == singletonInstance.userProfile.getPubKey()):
       senderName = "You"
 

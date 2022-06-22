@@ -115,7 +115,8 @@ proc getChatDetails*(self: Controller, chatId: string): ChatDto =
 proc getChannelGroups*(self: Controller): seq[ChannelGroupDto] =
   return self.chatService.getChannelGroups()
 
-proc getOneToOneChatNameAndImage*(self: Controller, chatId: string): tuple[name: string, image: string] =
+proc getOneToOneChatNameAndImage*(self: Controller, chatId: string):
+    tuple[name: string, image: string, largeImage: string] =
   return self.chatService.getOneToOneChatNameAndImage(chatId)
 
 proc getMessageById*(self: Controller, chatId, messageId: string): MessageDto =
