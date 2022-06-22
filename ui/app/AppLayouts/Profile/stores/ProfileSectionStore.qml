@@ -100,9 +100,6 @@ QtObject {
 
     property ListModel settingsMenuItems: ListModel {
         Component.onCompleted: {
-            append({subsection: Constants.settingsSubsection.privacyAndSecurity,
-                       text: qsTr("Privacy and security"),
-                       icon: "security"})
             append({subsection: Constants.settingsSubsection.appearance,
                        text: qsTr("Appearance"),
                        icon: "appearance"})

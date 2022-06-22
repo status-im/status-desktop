@@ -184,6 +184,9 @@ StackLayout {
                 pinMessagesEnabled: root.pinMessagesEnabled
             }
 
+            bottomReservedSpace: editCommunityPage.settingsDirtyToastMessageImplicitSize
+            bottomReservedSpaceActive: editCommunityPage.dirty
+
             Component.onCompleted: {
                 editCommunityPage.dirty =
                         Qt.binding(() => {

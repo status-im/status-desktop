@@ -7,6 +7,7 @@ import utils 1.0
 import shared 1.0
 import shared.popups 1.0
 import shared.stores 1.0
+import shared.views 1.0 as SharedViews
 import shared.controls.chat 1.0
 
 import StatusQ.Core 0.1
@@ -29,23 +30,18 @@ StatusModal {
     property string userNickname: ""
     property string userEnsName: ""
     property string userIcon: ""
-    property string text: ""
 
     property bool userIsEnsVerified: false
     property bool userIsBlocked: false
     property bool isCurrentUser: false
     property bool isAddedContact: false
 
-    signal blockButtonClicked(name: string, address: string)
-    signal unblockButtonClicked(name: string, address: string)
-    signal removeButtonClicked(address: string)
-
     signal contactUnblocked(publicKey: string)
     signal contactBlocked(publicKey: string)
 
     function openPopup(publicKey, state = "") {
         // All this should be improved more, but for now we leave it like this.
-        let contactDetails = Utils.getContactDetailsAsJson(publicKey);
+        const contactDetails = Utils.getContactDetailsAsJson(publicKey);
         userPublicKey = publicKey;
         userDisplayName = contactDetails.displayName;
         userName = contactDetails.alias;
@@ -55,9 +51,8 @@ StatusModal {
         userIsEnsVerified = contactDetails.ensVerified;
         userIsBlocked = contactDetails.isBlocked;
         isAddedContact = contactDetails.isContact;
-
-        text = ""; // this is most likely unneeded
         isCurrentUser = popup.profileStore.pubkey === publicKey;
+
         showFooter = !isCurrentUser;
         popup.open();
 
@@ -73,20 +68,21 @@ StatusModal {
     }
 
     function blockUser() {
-        contentItem.blockContactConfirmationDialog.contactName = userName;
-        contentItem.blockContactConfirmationDialog.contactAddress = userPublicKey;
-        contentItem.blockContactConfirmationDialog.open();
+        profileView.blockContactConfirmationDialog.contactName = userName;
+        profileView.blockContactConfirmationDialog.contactAddress = userPublicKey;
+        profileView.blockContactConfirmationDialog.open();
     }
 
     function unblockUser() {
-        contentItem.unblockContactConfirmationDialog.contactName = userName;
-        contentItem.unblockContactConfirmationDialog.contactAddress = userPublicKey;
-        contentItem.unblockContactConfirmationDialog.open();
+        profileView.unblockContactConfirmationDialog.contactName = userName;
+        profileView.unblockContactConfirmationDialog.contactAddress = userPublicKey;
+        profileView.unblockContactConfirmationDialog.open();
     }
 
     header.title: userDisplayName + qsTr("'s Profile")
     header.subTitle: userIsEnsVerified ? userName : Utils.getElidedCompressedPk(userPublicKey)
     header.subTitleElide: Text.ElideMiddle
+    padding: 8
 
     QtObject {
         id: d
@@ -103,213 +99,47 @@ StatusModal {
         icon.width: 20
         icon.height: 20
         icon.name: "qr"
-        onClicked: contentItem.qrCodePopup.open()
+        onClicked: profileView.qrCodePopup.open()
     }
 
-    Component {
-        id: contactTopComponent
+    SharedViews.ProfileView {
+        id: profileView
+        anchors.fill: parent
 
-        ProfileHeader {
-            displayName: popup.userDisplayName
-            pubkey: popup.userPublicKey
-            icon: popup.isCurrentUser ? popup.profileStore.icon : popup.userIcon
+        profileStore: popup.profileStore
+        contactsStore: popup.contactsStore
 
-            displayNameVisible: false
-            pubkeyVisible: false
-            compact: false
+        userPublicKey: popup.userPublicKey
+        userDisplayName: popup.userDisplayName
+        userName: popup.userName
+        userNickname: popup.userNickname
+        userEnsName: popup.userEnsName
+        userIcon: popup.userIcon
+        userIsEnsVerified: popup.userIsEnsVerified
+        userIsBlocked: popup.userIsBlocked
+        isAddedContact: popup.isAddedContact
+        isCurrentUser: popup.isCurrentUser
 
-            imageOverlay: Item {
-                visible: popup.isCurrentUser
-
-                StatusFlatRoundButton {
-                    width: 24
-                    height: 24
-
-                    anchors {
-                        right: parent.right
-                        bottom: parent.bottom
-                        rightMargin: -8
-                    }
-
-                    type: StatusFlatRoundButton.Type.Secondary
-                    icon.name: "pencil"
-                    icon.color: Theme.palette.directColor1
-                    icon.width: 12.5
-                    icon.height: 12.5
-
-                    onClicked: Global.openChangeProfilePicPopup()
-                }
-            }
-        }
-    }
-
-    contentItem: ColumnLayout {
-        id: modalContent
-
-        property alias qrCodePopup: qrCodePopup
-        property alias unblockContactConfirmationDialog: unblockContactConfirmationDialog
-        property alias blockContactConfirmationDialog: blockContactConfirmationDialog
-        property alias removeContactConfirmationDialog: removeContactConfirmationDialog
-
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.margins: d.contentMargins
-        spacing: d.contentSpacing
-        clip: true
-
-        Item {
-            implicitHeight: d.contentSpacing
-            Layout.fillWidth: true
-        }
-
-        Loader {
-            sourceComponent: contactTopComponent
-            Layout.fillWidth: true
-        }
-
-        StatusBanner {
-            visible: popup.userIsBlocked
-            type: StatusBanner.Type.Danger
-            statusText: qsTr("Blocked")
-            Layout.fillWidth: true
-        }
-
-        StatusDescriptionListItem {
-            title: userIsEnsVerified ?
-                qsTr("ENS username") :
-                qsTr("Username")
-            subTitle: userIsEnsVerified ? userEnsName : userName
-            tooltip.text: qsTr("Copy to clipboard")
-            icon.name: "copy"
-            iconButton.onClicked: {
-                globalUtils.copyToClipboard(subTitle)
-                tooltip.visible = !tooltip.visible
-            }
-            Layout.fillWidth: true
-        }
-
-        StatusDescriptionListItem {
-            title: qsTr("Chat key")
-            subTitle: Utils.getCompressedPk(userPublicKey)
-            subTitleComponent.elide: Text.ElideMiddle
-            subTitleComponent.width: 320
-            subTitleComponent.font.family: Theme.palette.monoFont.name
-            tooltip.text: qsTr("Copy to clipboard")
-            icon.name: "copy"
-            iconButton.onClicked: {
-                globalUtils.copyToClipboard(subTitle)
-                tooltip.visible = !tooltip.visible
-            }
-            Layout.fillWidth: true
-        }
-
-        StatusDescriptionListItem {
-            title: qsTr("Share Profile URL")
-            subTitle: {
-
-                let user = ""
-                if (isCurrentUser) {
-                    user = popup.profileStore.ensName !== "" ? popup.profileStore.ensName :
-                                                                (popup.profileStore.pubkey.substring(0, 5) + "..." + popup.profileStore.pubkey.substring(popup.profileStore.pubkey.length - 5))
-                } else if (userIsEnsVerified) {
-                    user = userEnsName
-                }
-
-                if (user === ""){
-                    user = userPublicKey.substr(0, 4) + "..." + userPublicKey.substr(userPublicKey.length - 5)
-                }
-                return Constants.userLinkPrefix +  user;
-            }
-            tooltip.text: qsTr("Copy to clipboard")
-            icon.name: "copy"
-            iconButton.onClicked: {
-                let user = ""
-                if (isCurrentUser) {
-                    user = popup.profileStore.ensName !== "" ? popup.profileStore.ensName : popup.profileStore.pubkey
-                } else {
-                    user = (userEnsName !== "" ? userEnsName : userPublicKey)
-                }
-                popup.profileStore.copyToClipboard(Constants.userLinkPrefix + user)
-                tooltip.visible = !tooltip.visible
-            }
-            Layout.fillWidth: true
-        }
-
-        StatusDescriptionListItem {
-            visible: !isCurrentUser
-            title: qsTr("Chat settings")
-            subTitle: qsTr("Nickname")
-            value: userNickname ? userNickname : qsTr("None")
-            sensor.enabled: true
-            sensor.onClicked: {
-                nicknamePopup.open()
-            }
-            Layout.fillWidth: true
-        }
-    }
-
-    // TODO: replace with StatusStackModal
-    ModalPopup {
-        id: qrCodePopup
-        width: 320
-        height: 320
-        Image {
-            asynchronous: true
-            fillMode: Image.PreserveAspectFit
-            source: globalUtils.qrCode(userPublicKey)
-            anchors.horizontalCenter: parent.horizontalCenter
-            height: 212
-            width: 212
-            mipmap: true
-            smooth: false
-        }
-    }
-
-    UnblockContactConfirmationDialog {
-        id: unblockContactConfirmationDialog
-        onUnblockButtonClicked: {
-            popup.contactsStore.unblockContact(userPublicKey)
-            unblockContactConfirmationDialog.close();
+        onContactUnblocked: {
             popup.close()
-            popup.contactUnblocked(userPublicKey)
+            popup.contactUnblocked(publicKey)
         }
-    }
 
-    BlockContactConfirmationDialog {
-        id: blockContactConfirmationDialog
-        onBlockButtonClicked: {
-            popup.contactsStore.blockContact(userPublicKey)
-            blockContactConfirmationDialog.close();
+        onContactBlocked: {
             popup.close()
-
-            popup.contactBlocked(userPublicKey)
+            popup.contactBlocked(publicKey)
         }
-    }
 
-    ConfirmationDialog {
-        id: removeContactConfirmationDialog
-        header.title: qsTr("Remove contact")
-        confirmationText: qsTr("Are you sure you want to remove this contact?")
-        onConfirmButtonClicked: {
-            if (isAddedContact) {
-                popup.contactsStore.removeContact(userPublicKey);
-            }
-            removeContactConfirmationDialog.close();
-            popup.close();
+        onContactAdded: {
+            popup.close()
+            popup.contactAdded(publicKey)
         }
-    }
 
-    NicknamePopup {
-        id: nicknamePopup
-        nickname: popup.userNickname
-        header.subTitle: popup.header.subTitle
-        header.subTitleElide: popup.header.subTitleElide
-        onEditDone: {
-            if(popup.userNickname !== newNickname)
-            {
-                popup.userNickname = newNickname;
-                popup.contactsStore.changeContactNickname(userPublicKey, newNickname);
-            }
+        onContactRemoved: {
+            popup.close()
+        }
+        
+        onNicknameEdited: {
             popup.close()
         }
     }
@@ -322,7 +152,9 @@ StatusModal {
         height: popup.height
         visible: false
         header.title: qsTr("Send Contact Request to") + " " + userDisplayName
-        topComponent: contactTopComponent
+        userPublicKey: popup.userPublicKey
+        userDisplayName: popup.userDisplayName
+        userIcon: popup.userIcon
         onAccepted: popup.contactsStore.sendContactRequest(userPublicKey, message)
         onClosed: popup.close()
     }
@@ -341,8 +173,8 @@ StatusModal {
             type: StatusBaseButton.Type.Danger
             text: qsTr('Remove Contact')
             onClicked: {
-                contentItem.removeContactConfirmationDialog.parentPopup = popup;
-                contentItem.removeContactConfirmationDialog.open();
+                profileView.removeContactConfirmationDialog.parentPopup = popup;
+                profileView.removeContactConfirmationDialog.open();
             }
         },
 

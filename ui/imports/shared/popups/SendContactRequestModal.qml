@@ -3,6 +3,7 @@ import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.14
 
 import utils 1.0
+import shared.controls.chat 1.0
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -13,9 +14,13 @@ import StatusQ.Popups 0.1
 StatusModal {
     id: root
 
+    property string userPublicKey: ""
+    property string userDisplayName: ""
+    property string userIcon: ""
+
     signal accepted(string message)
 
-    property alias topComponent: topComponentLoader.sourceComponent
+    padding: 16
 
     QtObject {
         id: d
@@ -24,19 +29,24 @@ StatusModal {
         readonly property int minMsgLength: 1
         readonly property int msgHeight: 152
         readonly property int contentSpacing: 5
-        readonly property int contentMargins: 16
     }
 
     ColumnLayout {
         id: content
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.margins: d.contentMargins
+        anchors.fill: parent
         spacing: d.contentSpacing
 
-        Loader {
-            id: topComponentLoader
+        ProfileHeader {
             Layout.fillWidth: true
+
+            displayName: root.userDisplayName
+            pubkey: root.userPublicKey
+            icon: root.userIcon
+
+            displayNameVisible: false
+            pubkeyVisible: false
+            imageSize: ProfileHeader.ImageSize.Middle
+            editImageButtonVisible: false
         }
 
         StatusInput {

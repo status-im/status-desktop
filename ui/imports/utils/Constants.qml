@@ -37,17 +37,16 @@ QtObject {
         property int ensUsernames: 2
         property int messaging: 3
         property int wallet: 4
-        property int privacyAndSecurity: 5
-        property int appearance: 6
-        property int language: 7
-        property int notifications: 8
-        property int devicesSettings: 9
-        property int browserSettings: 10
-        property int advanced: 11
-        property int about: 12
-        property int communitiesSettings: 13
-        property int signout: 14
-        property int backUpSeed: 15
+        property int appearance: 5
+        property int language: 6
+        property int notifications: 7
+        property int devicesSettings: 8
+        property int browserSettings: 9
+        property int advanced: 10
+        property int about: 11
+        property int communitiesSettings: 12
+        property int signout: 13
+        property int backUpSeed: 14
     }
 
     readonly property QtObject userStatus: QtObject{

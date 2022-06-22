@@ -5,26 +5,46 @@ import utils 1.0
 import shared.panels 1.0
 import shared.controls 1.0
 
+import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
 
 Item {
     id: root
 
+    enum ImageSize {
+        Compact,
+        Middle,
+        Big
+    }
+
     property string displayName
     property string pubkey
     property string icon
 
-    property bool compact: true
+    property int imageSize: ProfileHeader.ImageSize.Compact
     property bool displayNameVisible: true
     property bool pubkeyVisible: true
-
-    property alias imageOverlay: imageOverlay.sourceComponent
+    property bool emojiHashVisible: true
+    property bool editImageButtonVisible: false
+    readonly property bool compact: root.imageSize == ProfileHeader.ImageSize.Compact
 
     signal clicked()
 
     height: visible ? contentContainer.height : 0
     implicitHeight: contentContainer.implicitHeight
+
+    QtObject {
+        id: d
+        function getSize(compact, normal, big) {
+            switch(root.imageSize) {
+                case ProfileHeader.ImageSize.Compact: return compact;
+                case ProfileHeader.ImageSize.Middle: return normal;
+                case ProfileHeader.ImageSize.Big: return big;
+                return normal;
+            }
+        }
+    }
 
     ColumnLayout {
         id: contentContainer
@@ -38,21 +58,36 @@ Item {
             rightMargin: Style.current.smallPadding
         }
 
-        UserImage {
-            id: userImage
-
+        Item {
             Layout.alignment: Qt.AlignHCenter
+            implicitWidth: userImage.width
+            implicitHeight: userImage.height
 
-            name: root.displayName
-            pubkey: root.pubkey
-            image: root.icon
-            interactive: false
-            imageWidth: root.compact ? 36 : 80
-            imageHeight: imageWidth
+            UserImage {
+                id: userImage
+                name: root.displayName
+                pubkey: root.pubkey
+                image: root.icon
+                interactive: false
+                imageWidth: d.getSize(36, 80, 160)
+                imageHeight: imageWidth
+            }
 
-            Loader {
-                id: imageOverlay
-                anchors.fill: parent
+            StatusRoundButton {
+                visible: root.editImageButtonVisible
+                anchors.bottom: userImage.bottom
+                anchors.right: userImage.right
+                anchors.rightMargin: Math.round(userImage.width / 10)
+
+                width: d.getSize(10, 24, 40)
+                height: width
+
+                type: StatusRoundButton.Type.Secondary
+                icon.name: "edit_pencil"
+                icon.width: d.getSize(8, 12, 20)
+                icon.height: d.getSize(8, 12, 20)
+
+                onClicked: Global.openChangeProfilePicPopup()
             }
         }
 
@@ -87,9 +122,8 @@ Item {
 
         EmojiHash {
             id: emojiHash
-
             Layout.alignment: Qt.AlignHCenter
-
+            visible: root.emojiHashVisible
             publicKey: root.pubkey
             size: root.compact ? 16 : 20
         }
