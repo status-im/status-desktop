@@ -91,8 +91,7 @@ pipeline {
            addAUT
            nim_status_client
            ${WORKSPACE}/bin/
-           '''
-            ''',
+           ''',
             squishPackageName: 'squish-6.7.2-qt514x-linux64',
             testSuite: '${WORKSPACE}/test/ui-test/testSuites/*',
             unstableBuildOnError: true,
