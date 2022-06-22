@@ -93,7 +93,7 @@ pipeline {
              host: 'localhost',
              port: '4322',
              config{
-              addAppPath: '${WORKSPACE}/bin',
+              addAppPath: '${WORKSPACE}',
              }
            ])
          } }
