@@ -68,28 +68,15 @@ pipeline {
       } }
     }
 
-    stage('Parallel Upload') {
-      parallel {
-        stage('Upload') {
-          steps { script {
-            env.PKG_URL = s3.uploadArtifact(env.STATUS_CLIENT_TARBALL)
-            jenkins.setBuildDesc(AppImage: env.PKG_URL)
-          } }
-        }
-        stage('Archive') {
-          steps { script {
-            archiveArtifacts("${env.STATUS_CLIENT_TARBALL}*")
-          } }
-        }
-      }
-    }
 
     stage('Squish-UI-Test') {
          steps { script {
            squish([
            extraOptions: '''--config
-           addAppPath
-           ${WORKSPACE}/bin
+           addAUT
+           nim_status_client
+           ${WORKSPACE}/bin/
+           '''
             ''',
             squishPackageName: 'squish-6.7.2-qt514x-linux64',
             testSuite: '${WORKSPACE}/test/ui-test/testSuites/*',
