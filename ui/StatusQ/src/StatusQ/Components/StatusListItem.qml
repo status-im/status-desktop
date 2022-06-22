@@ -5,6 +5,10 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Animations 0.1
+import QtGraphicalEffects 1.14
+
+import "private"
 
 Rectangle {
     id: statusListItem
@@ -27,6 +31,8 @@ Rectangle {
     property Component bottomDelegate
     property var tagsModel: []
     property Component tagsDelegate
+    property bool loading: false
+    property bool loadingFailed: false
 
     property StatusIconSettings icon: StatusIconSettings {
         height: isLetterIdenticon ? 40 : 20
@@ -134,6 +140,7 @@ Rectangle {
             anchors.leftMargin: statusListItem.leftPadding
             anchors.top: parent.top
             anchors.topMargin: 12
+            visible: !iconOrImageLoadingOverlay.visible
             image: statusListItem.image
             icon: statusListItem.icon
             name: statusListItem.title
@@ -143,6 +150,20 @@ Rectangle {
                     !!statusListItem.icon.emoji
             badge.border.color: statusListItem.color
             ringSettings: statusListItem.ringSettings
+        }
+
+        Rectangle {
+            id: iconOrImageLoadingOverlay
+            visible: statusListItem.loading || statusListItem.loadingFailed
+            anchors.fill: iconOrImage
+            radius: width / 2
+            color: statusListItem.loadingFailed ? Theme.palette.dangerColor2 : Theme.palette.baseColor1
+
+            SkeletonAnimation {
+                anchors.fill: parent
+                mask: parent
+                visible: statusListItem.loading && !statusListItem.loadingFailed
+            }
         }
 
         Item {
@@ -164,8 +185,29 @@ Rectangle {
 
             height: childrenRect.height
 
+            Rectangle {
+                id: titleLoadingOverlay
+                visible: statusListItem.loading || statusListItem.loadingFailed
+                anchors {
+                    left: statusListItemTitle.left
+                    top: statusListItemTitle.top
+                    bottom: statusListItemTitle.bottom
+                }
+
+                width: Math.max(95, statusListItemTitle.width)
+                radius: 4
+                color: statusListItem.loadingFailed ? Theme.palette.dangerColor2 : Theme.palette.baseColor1
+
+                SkeletonAnimation {
+                    anchors.fill: parent
+                    mask: parent
+                    visible: statusListItem.loading && !statusListItem.loadingFailed
+                }
+            }
+
             StatusBaseText {
                 id: statusListItemTitle
+                opacity: titleLoadingOverlay.visible ? 0 : 1
                 text: statusListItem.title
                 font.pixelSize: 15
                 height: visible ? contentHeight : 0
@@ -235,7 +277,10 @@ Rectangle {
                 width: parent.width
                 text: statusListItem.subTitle
                 font.pixelSize: 15
-                color: !statusListItem.enabled || !statusListItem.tertiaryTitle ? Theme.palette.baseColor1 : Theme.palette.directColor1
+                color: statusListItem.loadingFailed ? Theme.palette.dangerColor1
+                                                    : !statusListItem.enabled || !statusListItem.tertiaryTitle
+                                                      ? Theme.palette.baseColor1
+                                                      : Theme.palette.directColor1
                 height: visible ? contentHeight : 0
                 visible: !!statusListItem.subTitle
                 wrapMode: Text.WrapAtWordBoundaryOrAnywhere

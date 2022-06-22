@@ -445,4 +445,33 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
         isAdmin: true
         isUntrustworthy: true
     }
+
+    StatusBaseText {
+        Layout.fillWidth: true
+        Layout.topMargin: 16
+        text: "Loading features:"
+        font.pixelSize: 17
+    }
+
+    StatusListItem {
+        title: "Nokia 3310"
+        subTitle: "Incoming device"
+        label: "loading: true"
+        icon.emoji: "😁"
+        icon.color: "hotpink"
+        icon.letterSize: 14
+        icon.isLetterIdenticon: true
+        loading: true
+    }
+
+    StatusListItem {
+        title: "Nokia 3310"
+        subTitle: "Device"
+        label: "loadingFailed: true"
+        icon.emoji: "😁"
+        icon.color: "hotpink"
+        icon.letterSize: 14
+        icon.isLetterIdenticon: true
+        loadingFailed: true
+    }
 }

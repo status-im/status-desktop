@@ -10502,5 +10502,8 @@
         <file>src/assets/twemoji/LICENSE</file>
         <file>src/StatusQ/Controls/StatusTabBar.qml</file>
         <file>src/StatusQ/Controls/StatusTagItem.qml</file>
+        <file>src/StatusQ/Animations/SkeletonAnimation.qml</file>
+        <file>src/StatusQ/Animations/SkeletonGradientStop.qml</file>
+        <file>src/StatusQ/Animations/qmldir</file>
     </qresource>
 </RCC>
