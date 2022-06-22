@@ -68,6 +68,21 @@ pipeline {
       } }
     }
 
+    stage('Parallel Upload') {
+      parallel {
+        stage('Upload') {
+          steps { script {
+            env.PKG_URL = s3.uploadArtifact(env.STATUS_CLIENT_TARBALL)
+            jenkins.setBuildDesc(AppImage: env.PKG_URL)
+          } }
+        }
+        stage('Archive') {
+          steps { script {
+            archiveArtifacts("${env.STATUS_CLIENT_TARBALL}*")
+          } }
+        }
+      }
+    }
 
     stage('Squish-UI-Test') {
          steps { script {
