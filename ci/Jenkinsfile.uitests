@@ -89,7 +89,7 @@ pipeline {
            squish([
            extraOptions: '''--config
            addAppPath
-           \'${WORKSPACE}/bin\'
+           ${WORKSPACE}/bin
             ''',
             squishPackageName: 'squish-6.7.2-qt514x-linux64',
             testSuite: '${WORKSPACE}/test/ui-test/testSuites/*',
