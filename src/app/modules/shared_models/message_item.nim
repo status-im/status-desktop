@@ -72,7 +72,7 @@ proc initItem*(
   result.senderIcon = senderIcon
   result.seen = seen
   result.outgoingStatus = outgoingStatus
-  result.messageText = text
+  result.messageText = if ContentType.Image == contentType: "" else: text
   result.messageImage = image
   result.messageContainsMentions = messageContainsMentions
   result.timestamp = timestamp
