@@ -137,6 +137,8 @@ Item {
 
             StatusActivityCenterButton {
                 id: notificationButton
+                width: 32
+                height: width
                 unreadNotificationsCount: statusChatToolBar.notificationCount
                 onClicked: statusChatToolBar.notificationButtonClicked()
             }

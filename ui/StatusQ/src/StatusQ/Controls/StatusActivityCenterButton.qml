@@ -31,9 +31,6 @@ StatusFlatRoundButton {
     */
     property alias unreadNotificationsCount: statusBadge.value
 
-    implicitWidth: 32
-    implicitHeight: 32
-
     icon.name: "notification"
     icon.height: 21
     type: StatusFlatRoundButton.Type.Secondary
