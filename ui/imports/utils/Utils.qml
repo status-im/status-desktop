@@ -229,7 +229,6 @@ QtObject {
         if(Number.isInteger(value) && value > 0) {
             return true;
         }
-        console.error(qsTr("timestamp must be type of int and greater than 0 (%1)").arg(errorLocation));
         return false;
     }
 

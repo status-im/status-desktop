@@ -14,6 +14,8 @@ import shared.popups 1.0
 import shared.status 1.0
 import shared.controls 1.0
 import shared.views.chat 1.0
+import StatusQ.Core 0.1
+import StatusQ.Components 0.1
 
 import "../controls"
 
@@ -32,6 +34,7 @@ Item {
     property bool stickersLoaded: false
     property alias chatLogView: chatLogView
     property bool isChatBlocked: false
+    property bool isActiveChannel: false
 
     property var messageContextMenuInst
 
@@ -41,6 +44,20 @@ Item {
     property int countOnStartUp: 0
     signal openStickerPackPopup(string stickerPackId)
     signal showReplyArea(string messageId, string author)
+
+    property bool allMessagesLoaded: false
+
+    onIsActiveChannelChanged: {
+        if (!isActiveChannel) {
+            root.allMessagesLoaded = false
+            return
+        }
+        // We wait to load all messages, because switching back to chats makes
+        // the scroll go crazy so it loads way too many messages making it slow
+        timer.setTimeout(function() {
+            root.allMessagesLoaded = true
+        }, 10);
+    }
 
     Connections {
         target: root.messageStore.messageModule
@@ -87,6 +104,22 @@ Item {
                     width: 18
                     height: 18
                 }
+            }
+        }
+    }
+
+    Loader {
+        active: !root.allMessagesLoaded
+        anchors.centerIn: parent
+        sourceComponent: Item {
+            StatusBaseText {
+                id: loadingText
+                text: qsTr("Loading...")
+            }
+            StatusLoadingIndicator {
+                color: Theme.palette.directColor4
+                anchors.left: loadingText.right
+                anchors.leftMargin: 8
             }
         }
     }
@@ -237,11 +270,14 @@ Item {
 
         model: messageStore.messagesModel
 
-        // Not Refactored Yet
-        //Component.onCompleted: scrollToBottom(true)
+        Component.onCompleted: chatLogView.scrollToBottom(true)
 
         delegate: MessageView {
             id: msgDelegate
+
+            // We wait to load all messages, because switching back to chats makes
+            // the scroll go crazy so it loads way too many messages making it slow
+            visible:  root.allMessagesLoaded
 
             store: root.store
             messageStore: root.messageStore

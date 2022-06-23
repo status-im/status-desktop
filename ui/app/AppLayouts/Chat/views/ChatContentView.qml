@@ -429,6 +429,7 @@ ColumnLayout {
             stickersLoaded: chatContentRoot.stickersLoaded
             isChatBlocked: chatContentRoot.isBlocked
             channelEmoji: chatContentModule.chatDetails.emoji || ""
+            isActiveChannel: chatContentRoot.isActiveChannel
             onShowReplyArea: {
                 let obj = messageStore.getMessageByIdAsJson(messageId)
                 if (!obj) {
