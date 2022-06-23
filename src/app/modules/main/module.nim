@@ -707,7 +707,7 @@ method resolveENS*[T](self: Module[T], ensName: string, uuid: string, reason: st
   self.controller.resolveENS(ensName, uuid, reason)
 
 method resolvedENS*[T](self: Module[T], publicKey: string, address: string, uuid: string, reason: string) =
-  if(publicKey.len == 0):
+  if(reason.len > 0 and publicKey.len == 0):
     self.displayEphemeralNotification("Unexisting contact", "Wrong public key or ens name", "", false, EphemeralNotificationType.Default.int, "")
     return
   

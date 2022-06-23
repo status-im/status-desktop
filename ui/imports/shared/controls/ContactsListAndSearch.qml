@@ -114,7 +114,7 @@ Item {
                     ensUsername.text = "";
                     searchResults.pubKey = pubKey = "";
                     searchResults.address = "";
-                    searchResults.showProfileNotFoundMessage = true
+                    searchResults.showProfileNotFoundMessage = root.showContactList
                 } else {
                     if (userProfile.pubKey === resolvedPubKey) {
                         //% "Can't chat with yourself"
