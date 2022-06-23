@@ -188,6 +188,7 @@ ColumnLayout {
 
         onMembersButtonClicked: localAccountSensitiveSettings.expandUsersList = !localAccountSensitiveSettings.expandUsersList
         onNotificationButtonClicked: activityCenter.open()
+        notificationButton.highlighted: activityCenter.visible
 
         popupMenu: ChatContextMenuView {
             emojiPopup: chatContentRoot.emojiPopup
