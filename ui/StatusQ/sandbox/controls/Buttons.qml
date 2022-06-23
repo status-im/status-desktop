@@ -174,6 +174,25 @@ Column {
             loading: true
         }
 
+        // transparent
+
+        StatusRoundButton {
+            type: StatusRoundButton.Type.Tertiary
+            icon.name: "info"
+        }
+
+        StatusRoundButton {
+            type: StatusRoundButton.Type.Tertiary
+            icon.name: "info"
+            enabled: false
+        }
+
+        StatusRoundButton {
+            type: StatusRoundButton.Type.Tertiary
+            icon.name: "info"
+            loading: true
+        }
+
         // Rounded blue
 
         StatusFlatRoundButton {

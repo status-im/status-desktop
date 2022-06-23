@@ -12,14 +12,27 @@ Rectangle {
         height: 23
         rotation: 0
 
+        property color hoverColor: {
+            switch(statusRoundButton.type) {
+            case StatusRoundButton.Type.Primary:
+                return Theme.palette.primaryColor1;
+            case StatusRoundButton.Type.Secondary:
+                return Theme.palette.indirectColor1;
+            case StatusRoundButton.Type.Tertiary:
+                return Theme.palette.primaryColor1;
+            }
+        }
+
         color: {
             switch(statusRoundButton.type) {
             case StatusRoundButton.Type.Primary:
                 return Theme.palette.primaryColor1;
             case StatusRoundButton.Type.Secondary:
                 return Theme.palette.indirectColor1;
+            case StatusRoundButton.Type.Tertiary:
+                return Theme.palette.baseColor1;
             }
-        }
+        }        
 
         disabledColor: {
             switch(statusRoundButton.type) {
@@ -27,6 +40,8 @@ Rectangle {
                 return Theme.palette.baseColor1;
             case StatusRoundButton.Type.Secondary:
                 return Theme.palette.indirectColor1;
+            case StatusRoundButton.Type.Tertiary:
+                return Theme.palette.baseColor1;
             }
         }
     }
@@ -46,7 +61,8 @@ Rectangle {
 
     enum Type {
         Primary,
-        Secondary
+        Secondary,
+        Tertiary
     }
     /// Implementation
 
@@ -59,6 +75,8 @@ Rectangle {
                 return Theme.palette.primaryColor3;
             case StatusRoundButton.Type.Secondary:
                 return Theme.palette.primaryColor1;
+            case StatusRoundButton.Type.Tertiary:
+                return "transparent";
             }
         }
 
@@ -68,6 +86,8 @@ Rectangle {
                 return Theme.palette.primaryColor2;
             case StatusRoundButton.Type.Secondary:
                 return Theme.palette.miscColor1;
+            case StatusRoundButton.Type.Tertiary:
+                return Theme.palette.primaryColor3;
             }
         }
 
@@ -77,13 +97,17 @@ Rectangle {
                 return Theme.palette.baseColor2;
             case StatusRoundButton.Type.Secondary:
                 return Theme.palette.baseColor1;
+            case StatusRoundButton.Type.Tertiary:
+                return "transparent";
             }
         }
     }
 
     QtObject {
         id: d
-        readonly property color iconColor: statusRoundButton.enabled ? statusRoundButton.icon.color : statusRoundButton.icon.disabledColor
+        readonly property color iconColor: !statusRoundButton.enabled ? statusRoundButton.icon.disabledColor :
+                                                                        (statusRoundButton.enabled && statusRoundButton.hovered) ? statusRoundButton.icon.hoverColor :
+                                                                                                                                   statusRoundButton.icon.color
     }
 
     implicitWidth: 44
