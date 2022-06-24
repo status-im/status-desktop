@@ -153,12 +153,15 @@ proc setBloomLevel*(self: Service, bloomLevel: string): bool =
   # default is BLOOM_LEVEL_NORMAL
   var bloomFilterMode = false
   var fullNode = true
-  if (bloomLevel == BLOOM_LEVEL_LIGHT):
+  if bloomLevel == BLOOM_LEVEL_LIGHT:
     bloomFilterMode = false
     fullNode = false
-  elif (bloomLevel == BLOOM_LEVEL_FULL):
+  elif bloomLevel == BLOOM_LEVEL_FULL:
     bloomFilterMode = true
     fullNode = true
+  elif bloomLevel == BLOOM_LEVEL_NORMAL:
+    bloomFilterMode = true
+    fullNode = false
 
   if(not self.settingsService.saveWakuBloomFilterMode(bloomFilterMode)):
     error "error saving waku bloom filter mode ", procName="setBloomLevel"
