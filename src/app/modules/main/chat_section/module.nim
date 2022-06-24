@@ -599,6 +599,7 @@ method acceptContactRequest*(self: Module, publicKey: string) =
 
 method onContactAccepted*(self: Module, publicKey: string) =
   self.view.contactRequestsModel().removeItemById(publicKey)
+  self.switchToOrCreateOneToOneChat(publicKey)
   self.updateParentBadgeNotifications()
 
 method acceptAllContactRequests*(self: Module) =
