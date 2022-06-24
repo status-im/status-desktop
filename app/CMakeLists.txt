@@ -40,7 +40,6 @@ add_subdirectory(qml)
 add_subdirectory(src)
 add_subdirectory(res)
 
-include(${CMAKE_SOURCE_DIR}/cmake/platform_specific.cmake)
 string(TOLOWER ${PROJECT_ORGANIZATION_NAME} URL_ORGANIZATION_NAME)
 configure_app_os_specific(${PROJECT_NAME} ${URL_ORGANIZATION_NAME} ${PROJECT_ORGANIZATION_DOMAIN} ${PROJECT_VERSION_MAJOR} ${PROJECT_VERSION_MINOR} ${PROJECT_VERSION_PATCH})
 
