@@ -25,7 +25,7 @@ _MIN_WAIT_OBJ_TIMEOUT = 500
 
 # Waits for the given object is loaded, visible and enabled.
 # It returns a tuple: True in case it is found. Otherwise, false. And the object itself.
-def is_loaded_visible_and_enabled(objName, timeout=_MAX_WAIT_OBJ_TIMEOUT):
+def is_loaded_visible_and_enabled(objName: str, timeout: int=_MAX_WAIT_OBJ_TIMEOUT):
     obj = None
     try:
         obj = squish.waitForObject(getattr(names, objName), timeout)
@@ -36,7 +36,7 @@ def is_loaded_visible_and_enabled(objName, timeout=_MAX_WAIT_OBJ_TIMEOUT):
 
 # Waits for the given object is loaded and might be not visible and/or not enabled:
 # It returns a tuple: True in case it is found. Otherwise, false. And the object itself.
-def is_loaded(objName):
+def is_loaded(objName: str):
     obj = None
     try:
         obj = squish.findObject(getattr(names, objName))
@@ -68,7 +68,7 @@ def click_obj(obj):
 
 
 # It executes the click action into object with given object name:
-def click_obj_by_name(objName):
+def click_obj_by_name(objName: str):
     try:
         obj = squish.waitForObject(getattr(names, objName))
         squish.mouseClick(obj, squish.Qt.LeftButton)
@@ -77,7 +77,7 @@ def click_obj_by_name(objName):
         return False
 
 
-def check_obj_by_name(objName):
+def check_obj_by_name(objName: str):
     try:
         obj = squish.waitForObject(getattr(names, objName))
         obj.checked = True
@@ -86,7 +86,7 @@ def check_obj_by_name(objName):
         return False
 
 
-def is_text_matching(objName, text):
+def is_text_matching(objName: str, text: str):
     try:
         obj = squish.waitForObject(getattr(names, objName))
         test.compare(obj.text, text, "Found the following text " + text)
@@ -96,7 +96,7 @@ def is_text_matching(objName, text):
 
 
 # It types the specified text into the given object (as if the user had used the keyboard):
-def type(objName, text):
+def type(objName: str, text: str):
     try:
         obj = squish.findObject(getattr(names, objName))
         squish.type(obj, text)
