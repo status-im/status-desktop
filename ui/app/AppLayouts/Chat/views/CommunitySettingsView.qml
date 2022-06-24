@@ -248,7 +248,6 @@ StatusAppTwoPanelLayout {
         MembershipRequestsPopup {
             anchors.centerIn: parent
             store: root.rootStore
-            pendingRequestsToJoin: root.community.pendingRequestsToJoin
             onClosed: {
                 destroy()
             }
