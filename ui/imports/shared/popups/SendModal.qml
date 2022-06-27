@@ -25,7 +25,7 @@ StatusModal {
 
     property var store
     property var contactsStore
-    property var preSelectedAccount
+    property var selectedAccount: store.currentAccount
     property var preSelectedRecipient
     property bool launchedFromChat: false
     property MessageDialog sendingError: MessageDialog {
@@ -40,10 +40,10 @@ StatusModal {
         stack.currentGroup.isPending = true
         let success = false
         success = popup.store.transfer(
-            advancedHeader.accountSelector.selectedAccount.address,
-            advancedHeader.recipientSelector.selectedRecipient.address,
-            advancedHeader.assetSelector.selectedAsset.symbol,
-            advancedHeader.amountToSendInput.text,
+            popup.selectedAccount.address,
+            recipientSelector.selectedRecipient.address,
+            assetSelector.selectedAsset.symbol,
+            amountToSendInput.text,
             gasSelector.selectedGasLimit,
             gasSelector.suggestedFees.eip1559Enabled ? "" : gasSelector.selectedGasPrice,
             gasSelector.selectedTipLimit,
@@ -57,7 +57,7 @@ StatusModal {
 
     property var recalculateRoutesAndFees: Backpressure.debounce(popup, 600, function() {
         networkSelector.suggestedRoutes = popup.store.suggestedRoutes(
-            advancedHeader.accountSelector.selectedAccount.address, advancedHeader.amountToSendInput.text, advancedHeader.assetSelector.selectedAsset.symbol
+            popup.selectedAccount.address, amountToSendInput.text, assetSelector.selectedAsset.symbol
         )
         if (networkSelector.suggestedRoutes.length) {
             networkSelector.selectedNetwork = networkSelector.suggestedRoutes[0]
@@ -70,84 +70,244 @@ StatusModal {
         }
     })
 
+    QtObject {
+        id: d
+        readonly property string maxFiatBalance: Utils.stripTrailingZeros(parseFloat(assetSelector.selectedAsset.totalBalance).toFixed(4))
+        readonly property bool isReady: amountToSendInput.valid && !amountToSendInput.pending && recipientSelector.isValid && !recipientSelector.isPending
+        onIsReadyChanged: {
+            if(!isReady && stack.isLastGroup)
+                stack.back()
+        }
+    }
+
     width: 556
-    // To-Do as per design once the account selector become floating the heigth can be as defined in design as 595
-    height: 670
+    height: 595
     showHeader: false
     showFooter: false
-    showAdvancedFooter: !!popup.advancedHeader ? popup.advancedHeader.isReady && gasValidator.isValid : false
+    showAdvancedFooter: d.isReady && gasValidator.isValid
     showAdvancedHeader: true
 
-    onOpened: {
-        if(!!advancedHeader) {
-            advancedHeader.amountToSendInput.input.edit.forceActiveFocus()
+    onSelectedAccountChanged: popup.recalculateRoutesAndFees()
 
-            if(popup.launchedFromChat) {
-                advancedHeader.recipientSelector.selectedType = RecipientSelector.Type.Contact
-                advancedHeader.recipientSelector.readOnly = true
-                advancedHeader.recipientSelector.selectedRecipient = popup.preSelectedRecipient
-                
+    onOpened: {
+        amountToSendInput.input.edit.forceActiveFocus()
+
+        assetSelector.assets = Qt.binding(function() {
+            if (popup.selectedAccount) {
+                return  popup.selectedAccount.assets
             }
-            if(popup.preSelectedAccount) {
-                advancedHeader.accountSelector.selectedAccount = popup.preSelectedAccount
-            }
+        })
+
+        if(popup.launchedFromChat) {
+            recipientSelector.selectedType = RecipientSelector.Type.Contact
+            recipientSelector.readOnly = true
+            recipientSelector.selectedRecipient = popup.preSelectedRecipient
         }
 
         popup.recalculateRoutesAndFees()
     }
 
-
+    hasFloatingButtons: true
     advancedHeaderComponent: SendModalHeader {
-        store: popup.store
-        contactsStore: popup.contactsStore
-        estimateGas: function() {
-            if(popup.contentItem.currentGroup.isValid)
-                gasSelector.estimateGas()
-        }
-
-        onAssetChanged: function() {
-            popup.recalculateRoutesAndFees()
-        }
-
-        onSelectedAccountChanged: function() {
-            popup.recalculateRoutesAndFees()
-        }
-
-        onAmountToSendChanged: function() {
-            popup.recalculateRoutesAndFees()
+        model: popup.store.accounts
+        selectedAccount: popup.selectedAccount
+        onUpdatedSelectedAccount: {
+            popup.selectedAccount = account
         }
     }
 
-    contentItem: TransactionStackView {
+   TransactionStackView {
         id: stack
         property alias currentGroup: stack.currentGroup
         anchors.leftMargin: Style.current.xlPadding
-        anchors.topMargin: (!!advancedHeader ? advancedHeader.height: 0) + Style.current.smallPadding
+        anchors.topMargin: Style.current.xlPadding
         anchors.rightMargin: Style.current.xlPadding
         anchors.bottomMargin: popup.showAdvancedFooter  && !!advancedFooter ? advancedFooter.height : Style.current.padding
         TransactionFormGroup {
             id: group1
             anchors.fill: parent
-            ScrollView {
-                height: stack.height
-                width: parent.width
+
+            ColumnLayout {
+                id: assetAndAmmountSelector
                 anchors.top: parent.top
+                anchors.right: parent.right
+                anchors.left: parent.left
+                RowLayout {
+                    spacing: 16
+                    StatusBaseText {
+                        //% "Send"
+                        text: qsTrId("command-button-send")
+                        font.pixelSize: 15
+                        color: Theme.palette.directColor1
+                        Layout.alignment: Qt.AlignVCenter
+                    }
+                    StatusListItemTag {
+                        //% "No balances active"
+                        title: assetSelector.selectedAsset.totalBalance > 0 ? qsTr("Max: ") + (assetSelector.selectedAsset ? d.maxFiatBalance : "0.00") : qsTr("No balances active")
+                        closeButtonVisible: false
+                        titleText.font.pixelSize: 12
+                        Layout.preferredHeight: 22
+                        Layout.preferredWidth: childrenRect.width
+                    }
+                }
+                Item {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: childrenRect.height
+                    AmountInputWithCursor {
+                        id: amountToSendInput
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.left: parent.left
+                        width: parent.width - assetSelector.width
+                        input.placeholderText: "0.00" + " " + assetSelector.selectedAsset.symbol
+                        errorMessageCmp.anchors.rightMargin: -100
+                        validators: [
+                            StatusFloatValidator{
+                                id: floatValidator
+                                bottom: 0
+                                top: d.maxFiatBalance
+                                errorMessage: qsTr("Please enter a valid amount")
+                            }
+                        ]
+                        Keys.onReleased: {
+                            let amount = amountToSendInput.text.trim()
+
+                            if (isNaN(amount)) {
+                                return
+                            }
+                            if (amount === "") {
+                                txtFiatBalance.text = "0.00"
+                            } else {
+                                txtFiatBalance.text = popup.store.getFiatValue(amount, assetSelector.selectedAsset.symbol, popup.store.currentCurrency)
+                            }
+                            gasSelector.estimateGas()
+                            popup.recalculateRoutesAndFees()
+                        }
+                    }
+                    StatusAssetSelector {
+                        id: assetSelector
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.right: parent.right
+                        defaultToken: Style.png("tokens/DEFAULT-TOKEN@3x")
+                        getCurrencyBalanceString: function (currencyBalance) {
+                            return Utils.toLocaleString(currencyBalance.toFixed(2), popup.store.locale, {"currency": true}) + " " + popup.store.currentCurrency.toUpperCase()
+                        }
+                        tokenAssetSourceFn: function (symbol) {
+                            return symbol ? Style.png("tokens/" + symbol) : defaultToken
+                        }
+                        onSelectedAssetChanged: {
+                            if (!assetSelector.selectedAsset) {
+                                return
+                            }
+                            if (amountToSendInput.text === "" || isNaN(amountToSendInput.text)) {
+                                return
+                            }
+                            txtFiatBalance.text = popup.store.getFiatValue(amountToSendInput.text, assetSelector.selectedAsset.symbol, popup.store.currentCurrency)
+                            gasSelector.estimateGas()
+                            popup.recalculateRoutesAndFees()
+                        }
+                    }
+                }
+                RowLayout {
+                    Layout.alignment: Qt.AlignLeft
+                    StyledTextField {
+                        id: txtFiatBalance
+                        color: txtFiatBalance.activeFocus ? Style.current.textColor : Style.current.secondaryText
+                        font.weight: Font.Medium
+                        font.pixelSize: 12
+                        inputMethodHints: Qt.ImhFormattedNumbersOnly
+                        text: "0.00"
+                        selectByMouse: true
+                        background: Rectangle {
+                            color: Style.current.transparent
+                        }
+                        padding: 0
+                        Keys.onReleased: {
+                            let balance = txtFiatBalance.text.trim()
+                            if (balance === "" || isNaN(balance)) {
+                                return
+                            }
+                            // To-Do Not refactored yet
+                            // amountToSendInput.text = root.getCryptoValue(balance, popup.store.currentCurrency, assetSelector.selectedAsset.symbol)
+                        }
+                    }
+                    StatusBaseText {
+                        id: currencyText
+                        text: popup.store.currentCurrency.toUpperCase()
+                        font.pixelSize: 13
+                        color: Theme.palette.directColor5
+                    }
+                }
+            }
+
+            Rectangle {
+                id: border
+                anchors.top: assetAndAmmountSelector.bottom
+                anchors.topMargin: Style.current.padding
+                anchors.left: parent.left
+                anchors.leftMargin: -Style.current.xlPadding
+
+                width: popup.width
+                height: 1
+                color: Theme.palette.directColor8
+                visible: false
+            }
+
+            DropShadow {
+                anchors.fill: border
+                horizontalOffset: 0
+                verticalOffset: 2
+                radius: 8.0
+                samples: 17
+                color: Theme.palette.directColor1
+                source: border
+            }
+
+            ScrollView {
+                id: scrollView
+                height: stack.height - assetAndAmmountSelector.height
+                width: parent.width
+                anchors.top: border.bottom
+                anchors.topMargin: Style.current.halfPadding
                 anchors.left: parent.left
 
                 ScrollBar.vertical.policy: ScrollBar.AlwaysOff
                 ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-                contentHeight: addressSelector.height + networkSelector.height + gasSelector.height + gasValidator.height
+                contentHeight: recipientSelector.height + addressSelector.height + networkSelector.height + gasSelector.height + gasValidator.height
                 clip: true
+
+                // To-do use standard StatusInput component once the flow for ens name resolution is clear
+                RecipientSelector {
+                    anchors.top: assetAndAmmountSelector.bottom
+                    anchors.topMargin: Style.current.halfPadding
+                    anchors.right: parent.right
+                    anchors.left: parent.left
+
+                    id: recipientSelector
+                    accounts: popup.store.accounts
+                    contactsStore: popup.contactsStore
+                    //% To
+                    label: qsTr("To")
+                    Layout.fillWidth: true
+                    //% "Enter an ENS name or address"
+                    input.placeholderText: qsTr("Enter an ENS name or address")
+                    input.anchors.leftMargin: 0
+                    input.anchors.rightMargin: 0
+                    labelFont.pixelSize: 15
+                    labelFont.weight: Font.Normal
+                    input.height: 56
+                    isSelectorVisible: false
+                    addContactEnabled: false
+                    onSelectedRecipientChanged: gasSelector.estimateGas()
+                }
 
                 TabAddressSelectorView {
                     id: addressSelector
-                    anchors.top: parent.top
+                    anchors.top: recipientSelector.bottom
                     anchors.right: parent.right
                     anchors.left: parent.left
                     store: popup.store
                     onContactSelected:  {
-                        if(!!popup.advancedHeader)
-                            advancedHeader.recipientSelector.input.text = address
+                        recipientSelector.input.text = address
                     }
                 }
 
@@ -172,20 +332,20 @@ StatusModal {
                     chainId: networkSelector.selectedNetwork.chainId
                     width: stack.width
                     property var estimateGas: Backpressure.debounce(gasSelector, 600, function() {
-                        if (!(advancedHeader.accountSelector.selectedAccount && advancedHeader.accountSelector.selectedAccount.address &&
-                            advancedHeader.recipientSelector.selectedRecipient && advancedHeader.recipientSelector.selectedRecipient.address &&
-                            advancedHeader.assetSelector.selectedAsset && advancedHeader.assetSelector.selectedAsset.symbol &&
-                            advancedHeader.amountToSendInput.text)) {
+                        if (!(popup.selectedAccount && popup.selectedAccount.address &&
+                            recipientSelector.selectedRecipient && recipientSelector.selectedRecipient.address &&
+                            assetSelector.selectedAsset && assetSelector.selectedAsset.symbol &&
+                            amountToSendInput.text)) {
                             selectedGasLimit = 250000
                             defaultGasLimit = selectedGasLimit
                             return
                         }
 
                         let gasEstimate = JSON.parse(popup.store.estimateGas(
-                                                        advancedHeader.accountSelector.selectedAccount.address,
-                                                        advancedHeader.recipientSelector.selectedRecipient.address,
-                                                        advancedHeader.assetSelector.selectedAsset.symbol,
-                                                        advancedHeader.amountToSendInput.text,
+                                                        popup.selectedAccount.address,
+                                                        recipientSelector.selectedRecipient.address,
+                                                        assetSelector.selectedAsset.symbol,
+                                                        amountToSendInput.text,
                                                         networkSelector.selectedNetwork.chainId || Global.currentChainId,
                                                         ""))
 
@@ -204,10 +364,10 @@ StatusModal {
                 GasValidator {
                     id: gasValidator
                     anchors.top: gasSelector.bottom
-                    selectedAccount: advancedHeader.accountSelector.selectedAccount
-                    selectedAmount: advancedHeader.amountToSendInput.text === "" ? 0.0
-                                                                                 : parseFloat(advancedHeader.amountToSendInput.text)
-                    selectedAsset: advancedHeader.assetSelector.selectedAsset
+                    selectedAccount: popup.selectedAccount
+                    selectedAmount: amountToSendInput.text === "" ? 0.0
+                                                                                 : parseFloat(amountToSendInput.text)
+                    selectedAsset: assetSelector.selectedAsset
                     selectedGasEthValue: gasSelector.selectedGasEthValue
                     selectedNetwork: networkSelector.selectedNetwork
                 }
@@ -232,17 +392,17 @@ StatusModal {
     advancedFooterComponent: SendModalFooter {
         maxFiatFees: gasSelector.maxFiatFees
         estimatedTxTimeFlag: gasSelector.estimatedTxTimeFlag
-        currentGroupPending: popup.contentItem.currentGroup.isPending
-        currentGroupValid: popup.contentItem.currentGroup.isValid
-        isLastGroup: popup.contentItem.isLastGroup
+        currentGroupPending: stack.currentGroup.isPending
+        currentGroupValid: stack.currentGroup.isValid
+        isLastGroup: stack.isLastGroup
         onNextButtonClicked: {
-            const validity = popup.contentItem.currentGroup.validate()
+            const validity = stack.currentGroup.validate()
             if (validity.isValid && !validity.isPending) {
-                if (popup.contentItem.isLastGroup) {
+                if (stack.isLastGroup) {
                     return popup.sendTransaction()
                 }
 
-                if(gasSelector.suggestedFees.eip1559Enabled && popup.contentItem.currentGroup === group1 && gasSelector.advancedMode){
+                if(gasSelector.suggestedFees.eip1559Enabled && stack.currentGroup === group1 && gasSelector.advancedMode){
                     if(gasSelector.showPriceLimitWarning || gasSelector.showTipLimitWarning){
                         Global.openPopup(transactionSettingsConfirmationPopupComponent, {
                                              currentBaseFee: gasSelector.suggestedFees.baseFee,
@@ -255,14 +415,14 @@ StatusModal {
                                              showPriceLimitWarning: gasSelector.showPriceLimitWarning,
                                              showTipLimitWarning: gasSelector.showTipLimitWarning,
                                              onConfirm: function(){
-                                                 popup.contentItem.next();
+                                                 stack.next();
                                              }
                                          })
                         return
                     }
                 }
 
-                popup.contentItem.next()
+                stack.next()
             }
         }
     }
@@ -270,15 +430,6 @@ StatusModal {
     Component {
         id: transactionSettingsConfirmationPopupComponent
         TransactionSettingsConfirmationPopup {}
-    }
-
-    Connections {
-        target: advancedHeader
-        onIsReadyChanged: {
-            if(!advancedHeader.isReady && popup.contentItem.isLastGroup)
-                popup.contentItem.back()
-
-        }
     }
 
     Connections {

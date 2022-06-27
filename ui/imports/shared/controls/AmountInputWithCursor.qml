@@ -10,7 +10,6 @@ StatusInput {
 
     property string cursorColor: Theme.palette.primaryColor1
 
-    height: input.edit.height
     leftPadding: 0
     rightPadding: 0
 

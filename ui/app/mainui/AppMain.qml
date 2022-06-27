@@ -895,7 +895,7 @@ Item {
             }
             onLoaded: {
                 if (!!sendModal.selectedAccount) {
-                    item.preSelectedAccount = sendModal.selectedAccount
+                    item.selectedAccount = sendModal.selectedAccount
                 }
             }
         }
