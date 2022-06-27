@@ -547,7 +547,11 @@ $(STATUS_CLIENT_7Z): $(STATUS_CLIENT_EXE)
 	echo -e $(BUILD_MSG) "7z"
 	7z a $(STATUS_CLIENT_7Z) ./$(OUTPUT)
 
-pkg: $(PKG_TARGET)
+# pkg target rebuilds status client
+# this is to ensure production version of the app is deployed
+pkg:
+	rm $(NIM_STATUS_CLIENT) | :
+	$(MAKE) $(PKG_TARGET)
 
 pkg-linux: check-pkg-target-linux $(STATUS_CLIENT_APPIMAGE)
 
