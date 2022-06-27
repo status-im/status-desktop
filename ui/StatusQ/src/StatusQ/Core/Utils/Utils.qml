@@ -3,6 +3,14 @@ pragma Singleton
 import QtQuick 2.13
 
 QtObject {
+
+    // Logical operators
+    enum Operators {
+        None,
+        And,
+        Or
+    }
+
     function getAbsolutePosition(node) {
         var returnPos = {};
         returnPos.x = 0;

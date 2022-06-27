@@ -68,5 +68,6 @@
         <file>images/SuperRareCommunityBanner.png</file>
         <file>images/RARI.png</file>
         <file>images/SRToken.png</file>
+        <file>pages/StatusItemSelectorPage.qml</file>
     </qresource>
 </RCC>

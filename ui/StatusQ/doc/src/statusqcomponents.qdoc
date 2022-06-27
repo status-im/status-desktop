@@ -20,6 +20,7 @@
        \li \l{StatusChatToolBar}
        \li \l{StatusContactRequestsIndicatorListItem}
        \li \l{StatusDescriptionListItem}
+       \li \l{StatusItemSelector}
        \li \l{StatusLetterIdenticon}
        \li \l{StatusListItem}
        \li \l{StatusListPicker}
