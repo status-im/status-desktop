@@ -4,6 +4,7 @@ import ../../../app/core/tasks/[qt, threadpool]
 import ../../../app/core/signals/types
 import ../../../app/core/eventemitter
 import ../../../app/global/global_singleton
+import ../../../backend/accounts as status_accounts
 import ../../../backend/messages as status_go
 import ../contacts/service as contact_service
 import ../token/service as token_service
@@ -665,8 +666,11 @@ proc renderInline(self: Service, parsedText: ParsedText): string =
     of PARSED_TEXT_CHILD_TYPE_STRONG_EMPH:
       result = fmt(" <strong><em>{value}</em></strong> ")
     of PARSED_TEXT_CHILD_TYPE_MENTION:
-      let contactDto = self.contactService.getContactById(value)
-      result = fmt("<a href=\"//{value}\" class=\"mention\">{contactDto.userNameOrAlias()}</a>")
+      var id = value
+      if isCompressedPubKey(id):
+        id = status_accounts.decompressPk(id).result
+      let contactDto = self.contactService.getContactById(id)
+      result = fmt("<a href=\"//{id}\" class=\"mention\">{contactDto.userNameOrAlias()}</a>")
     of PARSED_TEXT_CHILD_TYPE_STATUS_TAG:
       result = fmt("<a href=\"#{value}\" class=\"status-tag\">#{value}</a>")
     of PARSED_TEXT_CHILD_TYPE_DEL:
