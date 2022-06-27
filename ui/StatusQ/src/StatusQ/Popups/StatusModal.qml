@@ -199,6 +199,7 @@ QC.Popup {
     parent: QC.Overlay.overlay
 
     width: 480
+    // implicitHeight: headerImpl.implicitHeight + contentItem.implicitHeight + footerImpl.implicitHeight
 
     padding: 0
     topPadding: padding + headerImpl.implicitHeight
@@ -213,7 +214,6 @@ QC.Popup {
     QC.Overlay.modal: Rectangle {
         color: Theme.palette.backdropColor
     }
-
 
     background: Rectangle {
         color: Theme.palette.statusModal.backgroundColor
@@ -245,7 +245,7 @@ QC.Popup {
             anchors.top: parent.top
             anchors.topMargin: hasFloatingButtons ? -18 - height : 0
             width: visible ? parent.width : 0
-            active: showAdvancedHeader
+            active: statusModal.showAdvancedHeader
         }
 
         Spares.StatusModalFooter {
@@ -259,7 +259,7 @@ QC.Popup {
             id: advancedFooter
             anchors.bottom: parent.bottom
             width: visible ? parent.width : 0
-            active: showAdvancedFooter
+            active: statusModal.showAdvancedFooter
         }
     }
 }

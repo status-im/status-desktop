@@ -9,3 +9,4 @@ StatusImageSettings 0.1 StatusImageSettings.qml
 StatusModalHeaderSettings 0.1 StatusModalHeaderSettings.qml
 StatusTooltipSettings 0.1 StatusTooltipSettings.qml
 StatusAppNavBarFilterModel 0.1 StatusAppNavBarFilterModel.qml
+StatusAnimatedStack 0.1 StatusAnimatedStack.qml
