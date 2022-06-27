@@ -8,6 +8,8 @@ import StatusQ.Core.Theme 0.1
 TabButton {
     id: statusSwitchTabButton
 
+    property int fontPixelSize: 15
+
     contentItem: Item {
         height: 36
         MouseArea {
@@ -26,7 +28,7 @@ TabButton {
                     Theme.palette.statusSwitchTab.selectedTextColor :
                     Theme.palette.statusSwitchTab.textColor
                 font.weight: Font.Medium
-                font.pixelSize: 15
+                font.pixelSize: statusSwitchTabButton.fontPixelSize
                 horizontalAlignment: Text.AlignHCenter
                 anchors.centerIn: parent
             }
