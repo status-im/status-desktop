@@ -39,9 +39,6 @@ QtObject {
 
     function openPopup(popupComponent, params = {}) {
         const popup = popupComponent.createObject(root.appMain, params);
-        popup.x = Qt.binding(function() { return (root.appMain.width - popup.width) / 2; });
-        popup.y = popup.margins;
-        popup.height = Qt.binding(function() { return root.appMain.height - popup.margins * 2; });
         popup.open();
         return popup;
     }
