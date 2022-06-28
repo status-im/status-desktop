@@ -14,7 +14,7 @@ SVGImage {
         from: 0;
         to: 360;
         duration: 1200
-        running: true
+        running: visible
         loops: Animation.Infinite
     }
 }

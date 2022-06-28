@@ -183,7 +183,7 @@ Item {
                 from: 0;
                 to: 360;
                 duration: 1200
-                running: root.icon.runAnimation
+                running: visible && root.icon.runAnimation
                 loops: Animation.Infinite
             }
             ColorOverlay {

@@ -34,7 +34,7 @@ StatusInput {
 
         SequentialAnimation {
             loops: Animation.Infinite
-            running: input.edit.cursorVisible
+            running: visible && input.edit.cursorVisible
 
             PropertyAction {
                 target: cursor
