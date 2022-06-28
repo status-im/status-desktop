@@ -172,6 +172,7 @@ Item {
 
     SequentialAnimation {
         id: messageFoundAnimation
+        running: visible
         PauseAnimation {
             duration: 600
         }
