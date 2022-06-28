@@ -762,6 +762,9 @@ method removeUserFromCommunity*(self: Module, pubKey: string) =
 method banUserFromCommunity*(self: Module, pubKey: string) =
   self.controller.banUserFromCommunity(pubkey)
 
+method unbanUserFromCommunity*(self: Module, pubKey: string) =
+  self.controller.unbanUserFromCommunity(pubkey)
+
 method editCommunity*(self: Module, name: string,
                         description, introMessage, outroMessage: string,
                         access: int, color: string, tags: string,

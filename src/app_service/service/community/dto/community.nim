@@ -7,12 +7,6 @@ include ../../../common/json_utils
 
 import ../../chat/dto/chat
 
-type
-  CommunityMemberRoles* {.pure.} = enum
-    Unknown = 0,
-    All = 1,
-    ManagerUsers = 2
-
 type Member* = object
   id*: string
   roles*: seq[int]
@@ -69,6 +63,7 @@ type CommunityDto* = object
   pendingRequestsToJoin*: seq[CommunityMembershipRequestDto]
   settings*: CommunitySettingsDto
   adminSettings*: CommunityAdminSettingsDto
+  bannedMembersIds*: seq[string]
 
 type CuratedCommunity* = object
     available*: bool
@@ -123,6 +118,11 @@ proc toCommunityDto*(jsonObj: JsonNode): CommunityDto =
     toUgly(result.tags, tagsObj)
   else:
     result.tags = "[]"
+
+  var bannedMembersIdsObj: JsonNode
+  if(jsonObj.getProp("banList", bannedMembersIdsObj) and bannedMembersIdsObj.kind == JArray):
+    for bannedMemberId in bannedMembersIdsObj:
+      result.bannedMembersIds.add(bannedMemberId.getStr)
 
   discard jsonObj.getProp("canRequestAccess", result.canRequestAccess)
   discard jsonObj.getProp("canManageUsers", result.canManageUsers)
@@ -193,11 +193,12 @@ proc toChannelGroupDto*(communityDto: CommunityDto): ChannelGroupDto =
     members: communityDto.members.map(m => ChatMember(
         id: m.id,
         joined: true,
-        admin: m.roles.contains(CommunityMemberRoles.ManagerUsers.int)
+        admin: isMemberAdmin(m.roles)
       )),
     canManageUsers: communityDto.canManageUsers,
     muted: communityDto.muted,
-    historyArchiveSupportEnabled: communityDto.settings.historyArchiveSupportEnabled
+    historyArchiveSupportEnabled: communityDto.settings.historyArchiveSupportEnabled,
+    bannedMembersIds: communityDto.bannedMembersIds
   )
 
 proc parseCommunitiesSettings*(response: RpcResponse[JsonNode]): seq[CommunitySettingsDto] =

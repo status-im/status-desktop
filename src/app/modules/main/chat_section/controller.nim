@@ -404,6 +404,9 @@ proc removeUserFromCommunity*(self: Controller, pubKey: string) =
 proc banUserFromCommunity*(self: Controller, pubKey: string) =
   self.communityService.banUserFromCommunity(self.sectionId, pubKey)
 
+proc unbanUserFromCommunity*(self: Controller, pubKey: string) =
+  self.communityService.unbanUserFromCommunity(self.sectionId, pubKey)
+
 proc editCommunity*(
     self: Controller,
     name: string,
