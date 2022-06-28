@@ -211,8 +211,9 @@ Item {
                      SequentialAnimation {
                          id: blinkingAnimation
                          loops: Animation.Infinite
-                         NumberAnimation { target: inner; property: "opacity"; to: 0; duration: 800 }
-                         NumberAnimation { target: inner; property: "opacity"; to: 1; duration: 800 }
+                         running: visible
+                         NumberAnimation { target: inner; property: "opacity"; to: 0; duration: 800; running: visible }
+                         NumberAnimation { target: inner; property: "opacity"; to: 1; duration: 800; running: visible }
                      }
                  }
             }

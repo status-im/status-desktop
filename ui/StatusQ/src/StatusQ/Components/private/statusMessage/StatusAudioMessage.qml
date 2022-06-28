@@ -115,6 +115,7 @@ Rectangle {
                     properties: "scale";
                     duration: 100;
                     easing.type: Easing.InOutQuad
+                    running: visible
                 }
             }
 

@@ -217,12 +217,12 @@ Rectangle {
         Transition {
             from: "COLLAPSED"
             to: "EXPANDED"
-            NumberAnimation { properties: "height"; duration: 200 }
+            NumberAnimation { properties: "height"; duration: 200; running: visible }
         },
         Transition {
             from: "EXPANDED"
             to: "COLLAPSED"
-            NumberAnimation { properties: "height"; duration: 200 }
+            NumberAnimation { properties: "height"; duration: 200; running: visible }
         }
     ]
 }

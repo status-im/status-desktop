@@ -73,6 +73,7 @@ Item {
                     duration: 150
                     direction: RotationAnimation.Clockwise
                     easing.type: Easing.InCubic
+                    running: visible
                 }
             },
             Transition {
@@ -82,6 +83,7 @@ Item {
 										duration: 150
 										direction: RotationAnimation.Counterclockwise
 										easing.type: Easing.OutCubic
+										running: visible
 								}
         		}
         ]

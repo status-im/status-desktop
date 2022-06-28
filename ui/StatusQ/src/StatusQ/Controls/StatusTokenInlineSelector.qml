@@ -108,6 +108,7 @@ RowLayout {
 
             Behavior on color {
                 ColorAnimation {
+                    running: visible
                 }
             }
 
@@ -155,7 +156,7 @@ RowLayout {
                     from: 0
                     to: parent.width
                     duration: 800
-                    running: mouseArea.containsPress
+                    running: visible && mouseArea.containsPress
 
                     onStopped: {
                         if (pressIndicator.width == parent.width) {

@@ -16,6 +16,7 @@ GradientStop {
     NumberAnimation on position {
         easing.type: Easing.Linear
         loops: Animation.Infinite
+        running: visible
         from: root.from
         to: from + 4
         duration: 2000
