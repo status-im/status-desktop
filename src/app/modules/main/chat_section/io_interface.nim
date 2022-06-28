@@ -269,6 +269,9 @@ method editCommunity*(self: AccessInterface, name: string, description, introMes
                       historyArchiveSupportEnabled: bool, pinMessageAllMembersEnabled: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method unbanUserFromCommunity*(self: AccessInterface, pubKey: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method exportCommunity*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
 

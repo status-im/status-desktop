@@ -259,6 +259,9 @@ QtObject:
     self.delegate.editCommunity(name, description, introMessage, outroMessage, access, color, tags,
                                 logoJsonData, bannerJsonData, historyArchiveSupportEnabled, pinMessageAllMembersEnabled)
 
+  proc unbanUserFromCommunity*(self: View, pubKey: string) {.slot.} =
+    self.delegate.unbanUserFromCommunity(pubKey)
+
   proc exportCommunity*(self: View): string {.slot.} =
     self.delegate.exportCommunity()
 

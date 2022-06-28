@@ -1,6 +1,7 @@
 {.used.}
 
 import json, strformat, strutils
+import ../../community/dto/community
 
 include ../../../common/json_utils
 
@@ -16,6 +17,14 @@ type ChannelGroupType* {.pure.}= enum
   Unknown = "unknown",
   Personal = "personal",
   Community = "community"
+
+type CommunityMemberRoles* {.pure.} = enum
+  Unknown = 0,
+  All = 1,
+  ManagerUsers = 2
+
+proc isMemberAdmin*(roles: seq[int]): bool =
+  return roles.contains(CommunityMemberRoles.All.int)
 
 type Category* = object
   id*: string
@@ -92,6 +101,7 @@ type ChannelGroupDto* = object
   muted*: bool
   historyArchiveSupportEnabled*: bool
   pinMessageAllMembersEnabled*: bool
+  bannedMembersIds*: seq[string]
 
 type ClearedHistoryDto* = object
   chatId*: string
@@ -169,6 +179,11 @@ proc toChatMember*(jsonObj: JsonNode): ChatMember =
   if(jsonObj.getProp("roles", rolesObj) and rolesObj.kind == JArray):
     for role in rolesObj:
       result.roles.add(role.getInt)
+
+  # channel group members json contains only roles
+  # fill admin info by checking roles
+  if (not jsonObj.contains("admin")):
+    result.admin = isMemberAdmin(result.roles)
 
 proc toChatMember(jsonObj: JsonNode, memberId: string): ChatMember =
   # Mapping this DTO is not strightforward since only keys are used for id. We
@@ -265,6 +280,11 @@ proc toChannelGroupDto*(jsonObj: JsonNode): ChannelGroupDto =
   if(jsonObj.getProp("members", membersObj) and membersObj.kind == JObject):
     for memberId, memberObj in membersObj:
       result.members.add(toChatMember(memberObj, memberId))
+
+  var bannedMembersIdsObj: JsonNode
+  if(jsonObj.getProp("banList", bannedMembersIdsObj) and bannedMembersIdsObj.kind == JArray):
+    for bannedMemberId in bannedMembersIdsObj:
+      result.bannedMembersIds.add(bannedMemberId.getStr)
 
   discard jsonObj.getProp("canManageUsers", result.canManageUsers)
   discard jsonObj.getProp("color", result.color)

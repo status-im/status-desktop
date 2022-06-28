@@ -17,11 +17,13 @@ QtObject:
     result.setup
 
   proc membersChanged*(self: ActiveSection) {.signal.}
+  proc bannedMembersChanged*(self: ActiveSection) {.signal.}
   proc pendingRequestsToJoinChanged*(self: ActiveSection) {.signal.}
 
   proc setActiveSectionData*(self: ActiveSection, item: SectionItem) =
     self.item = item
     self.membersChanged()
+    self.bannedMembersChanged()
     self.pendingRequestsToJoinChanged()
 
   proc getId*(self: ActiveSection): string {.slot.} =
@@ -171,6 +173,17 @@ QtObject:
   QtProperty[QVariant] members:
     read = members
     notify = membersChanged
+
+
+  proc bannedMembers(self: ActiveSection): QVariant {.slot.} =
+    if (self.item.id == ""):
+      # FIXME (Jo) I don't know why but the Item is sometimes empty and doing anything here crashes the app
+      return newQVariant("")
+    return newQVariant(self.item.bannedMembers)
+
+  QtProperty[QVariant] bannedMembers:
+    read = bannedMembers
+    notify = bannedMembersChanged
 
   proc hasMember(self: ActiveSection, pubkey: string): bool {.slot.} =
     return self.item.hasMember(pubkey)

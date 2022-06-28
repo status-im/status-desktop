@@ -1124,6 +1124,12 @@ QtObject:
     except Exception as e:
       error "Error banning user from community", msg = e.msg
 
+  proc unbanUserFromCommunity*(self: Service, communityId: string, pubKey: string)  =
+    try:
+      discard status_go.unbanUserFromCommunity(communityId, pubKey)
+    except Exception as e:
+      error "Error banning user from community", msg = e.msg
+
   proc setCommunityMuted*(self: Service, communityId: string, muted: bool) =
     try:
       discard status_go.setCommunityMuted(communityId, muted)
