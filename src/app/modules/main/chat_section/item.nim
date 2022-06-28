@@ -39,6 +39,7 @@ proc `$`*(self: Item): string =
     position: {self.position},
     categoryId: {self.categoryId},
     highlight: {self.highlight},
+    trustStatus: {self.trustStatus},
     subItems:[
       {$self.subItems}
     ]"""
@@ -60,7 +61,8 @@ proc toJsonNode*(self: Item): JsonNode =
     "active": self.active,
     "position": self.position,
     "categoryId": self.categoryId,
-    "highlight": self.highlight
+    "highlight": self.highlight,
+    "trustStatus": self.trustStatus,
   }
 
 proc appendSubItems*(self: Item, items: seq[SubItem]) =

@@ -28,6 +28,7 @@ QtObject {
     signal openProfilePopupRequested(string publicKey, var parentPopup, string state)
     signal openChangeProfilePicPopup()
     signal displayToastMessage(string title, string subTitle, string icon, bool loading, int ephNotifType, string url)
+    signal openEditDisplayNamePopup()
 
     function openProfilePopup(publicKey, parentPopup, state = "") {
         openProfilePopupRequested(publicKey, parentPopup, state);

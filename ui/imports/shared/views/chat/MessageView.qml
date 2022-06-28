@@ -41,6 +41,7 @@ Column {
     property string senderIcon: ""
     property bool amISender: false
     property bool senderIsAdded: false
+    property int senderTrustStatus: Constants.trustStatus.unknown
     readonly property string senderIconToShow: {
         if ((!senderIsAdded &&
             Global.privacyModuleInst.profilePicturesVisibility !==
@@ -340,6 +341,7 @@ Column {
             isChatBlocked: root.isChatBlocked
             isActiveChannel: root.isActiveChannel
             emojiPopup: root.emojiPopup
+            senderTrustStatus: root.senderTrustStatus
 
             communityId: root.communityId
             stickersLoaded: root.stickersLoaded
@@ -353,7 +355,7 @@ Column {
             linkUrls: root.linkUrls
             isInPinnedPopup: root.isInPinnedPopup
             pinnedMessage: root.pinnedMessage
-            canPin: messageStore.getNumberOfPinnedMessages() < Constants.maxNumberOfPins
+            canPin: !!messageStore && messageStore.getNumberOfPinnedMessages() < Constants.maxNumberOfPins
 
             transactionParams: root.transactionParams
 

@@ -31,6 +31,7 @@ StatusListItem {
     property bool isBlocked: false
     property bool isVerified: false
     property bool isUntrustworthy: false
+    property int verificationRequestStatus: 0
 
     property string searchStr: ""
 
@@ -44,12 +45,24 @@ StatusListItem {
     signal openProfilePopup(string publicKey)
     signal openChangeNicknamePopup(string publicKey)
     signal sendMessageActionTriggered(string publicKey)
+    signal showVerificationRequest(string publicKey)
     signal contactRequestAccepted(string publicKey)
     signal contactRequestRejected(string publicKey)
     signal rejectionRemoved(string publicKey)
     signal textClicked(string publicKey)
 
     components: [
+        StatusFlatButton {
+            visible: verificationRequestStatus === Constants.verificationStatus.verifying ||
+                verificationRequestStatus === Constants.verificationStatus.verified
+            width: visible ? implicitWidth : 0
+            height: visible ? implicitHeight : 0
+            text: verificationRequestStatus === Constants.verificationStatus.verifying ?
+                qsTr("Respond to ID Request") :
+                qsTr("See ID Request")
+            size: StatusBaseButton.Size.Small
+            onClicked: container.showVerificationRequest(container.publicKey)
+        },
         StatusFlatRoundButton {
             visible: showSendMessageButton
             width: visible ? 32 : 0

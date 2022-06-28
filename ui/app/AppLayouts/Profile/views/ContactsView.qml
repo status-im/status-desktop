@@ -17,8 +17,6 @@ import shared.controls 1.0
 import "../stores"
 import "../panels"
 import "../popups"
-// TODO remove this import when the ContactRequestPanel is moved to the the Profile completely
-import "../../Chat/panels"
 
 SettingsContentBase {
     id: root
@@ -181,6 +179,23 @@ SettingsContentBase {
                     onContactRequestRejected: {
                         root.contactsStore.rejectContactRequest(publicKey)
                     }
+
+                    onShowVerificationRequest: {
+                        try {
+                            let request = root.contactsStore.getVerificationDetailsFromAsJson(publicKey)
+                            Global.openPopup(contactVerificationRequestPopupComponent, {
+                                senderPublicKey: request.from,
+                                senderDisplayName: request.displayName,
+                                senderIcon: request.icon,
+                                challengeText: request.challenge,
+                                responseText: request.response,
+                                messageTimestamp: request.requestedAt,
+                                responseTimestamp: request.repliedAt
+                            })
+                        } catch (e) {
+                            console.error("Error getting or parsing verification data", e)
+                        }
+                    }
                 }
 
                 ContactsListPanel {
@@ -304,6 +319,18 @@ SettingsContentBase {
                     root.contactsStore.removeContact(removeContactConfirmationDialog.value);
                 }
                 removeContactConfirmationDialog.close()
+        }
+    }
+
+    Component {
+        id: contactVerificationRequestPopupComponent
+        ContactVerificationRequestPopup {
+            onResponseSent: {
+                root.contactsStore.acceptVerificationRequest(senderPublicKey, response)
+            }
+            onVerificationRefused: {
+                root.contactsStore.declineVerificationRequest(senderPublicKey)
+            }
             }
         }
 

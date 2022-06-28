@@ -28,6 +28,7 @@ Item {
     property int contentType
     property bool isChatBlocked: false
     property bool isActiveChannel: false
+    property int senderTrustStatus
 
     property int chatHorizontalPadding: Style.current.halfPadding
     property int chatVerticalPadding: 7
@@ -72,8 +73,9 @@ Item {
             + (dateGroupLbl.visible ? dateGroupLbl.height + dateGroupLbl.anchors.topMargin : 0)
 
     Connections {
-        target: !!root.messageStore && root.messageStore.messageModule? root.messageStore.messageModule : null
-        enabled: responseTo !== ""
+        target: !!root.messageStore && root.messageStore.messageModule ?
+            root.messageStore.messageModule : null
+        enabled: !!root.messageStore && !!root.messageStore.messageModule && responseTo !== ""
         onRefreshAMessageUserRespondedTo: {
             if(msgId === messageId)
                 chatReply.resetOriginalMessage()
@@ -383,11 +385,21 @@ Item {
             }
         }
 
+        VerificationLabel {
+            id: trustStatus
+            anchors.left: chatName.right
+            anchors.leftMargin: 4
+            anchors.bottom: chatName.bottom
+            anchors.bottomMargin: 4
+            visible: !root.amISender && chatName.visible
+            trustStatus: senderTrustStatus
+        }
+
         ChatTimePanel {
             id: chatTime
             visible: !editModeOn && headerRepeatCondition
             anchors.verticalCenter: chatName.verticalCenter
-            anchors.left: chatName.right
+            anchors.left: trustStatus.right
             anchors.leftMargin: 4
             color: Style.current.secondaryText
             timestamp: messageTimestamp

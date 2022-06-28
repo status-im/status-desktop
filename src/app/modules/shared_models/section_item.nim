@@ -238,8 +238,9 @@ proc updateMember*(
     ensName: string,
     nickname: string,
     alias: string,
-    image: string) =
-  self.membersModel.updateItem(pubkey, name, ensName, nickname, alias, image)
+    image: string,
+    isUntrustworthy: bool) =
+  self.membersModel.updateItem(pubkey, name, ensName, nickname, alias, image, isUntrustworthy)
 
 proc pendingRequestsToJoin*(self: SectionItem): PendingRequestModel {.inline.} =
   self.pendingRequestsToJoinModel

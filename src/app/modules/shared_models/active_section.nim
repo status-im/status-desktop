@@ -1,5 +1,6 @@
 import NimQml
 import section_item
+import ../../../app_service/service/contacts/dto/contacts
 
 QtObject:
   type ActiveSection* = ref object of QObject
@@ -182,8 +183,8 @@ QtObject:
       localNickname: string,
       alias: string,
       image: string,
-      ) =
-    self.item.updateMember(pubkey, name, ensName, localNickname, alias, image)
+      isUntrustworthy: bool) =
+    self.item.updateMember(pubkey, name, ensName, localNickname, alias, image, isUntrustworthy)
 
   proc pendingRequestsToJoin(self: ActiveSection): QVariant {.slot.} =
     if (self.item.id == ""):

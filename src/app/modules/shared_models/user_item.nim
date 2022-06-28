@@ -10,13 +10,16 @@ type
     None = 0
     IncomingPending
     IncomingRejected
-    OutcomingPending
-    OutcomingRejected
+    OutgoingPending
+    OutgoingRejected
 
-  VerificationRequest* {.pure.} = enum
+  VerificationRequestStatus* {.pure.} = enum
     None = 0
     Pending
     Answered
+    Declined
+    Canceled
+    Trusted
 
 type
   UserItem* = ref object of RootObj
@@ -34,8 +37,8 @@ type
     isUntrustworthy: bool
     isBlocked: bool
     contactRequest: ContactRequest
-    incomingVerification: VerificationRequest
-    outcomingVerification: VerificationRequest
+    incomingVerificationStatus: VerificationRequestStatus
+    outgoingVerificationStatus: VerificationRequestStatus
 
 proc setup*(self: UserItem,
   pubKey: string,
@@ -52,8 +55,9 @@ proc setup*(self: UserItem,
   isUntrustworthy: bool,
   isBlocked: bool,
   contactRequest: ContactRequest,
-  incomingVerification: VerificationRequest,
-  outcomingVerification: VerificationRequest) =
+  incomingVerificationStatus: VerificationRequestStatus,
+  outgoingVerificationStatus: VerificationRequestStatus,
+  ) =
   self.pubKey = pubKey
   self.displayName = displayName
   self.ensName = ensName
@@ -68,28 +72,28 @@ proc setup*(self: UserItem,
   self.isUntrustworthy = isUntrustworthy
   self.isBlocked = isBlocked
   self.contactRequest = contactRequest
-  self.incomingVerification = incomingVerification
-  self.outcomingVerification = outcomingVerification
+  self.incomingVerificationStatus = incomingVerificationStatus
+  self.outgoingVerificationStatus = outgoingVerificationStatus
 
 # FIXME: remove defaults
 proc initUserItem*(
-  pubKey: string,
-  displayName: string,
-  ensName: string = "",
-  localNickname: string = "",
-  alias: string = "",
-  icon: string,
-  colorId: int = 0,
-  colorHash: string = "",
-  onlineStatus: OnlineStatus = OnlineStatus.Inactive,
-  isContact: bool,
-  isVerified: bool,
-  isUntrustworthy: bool,
-  isBlocked: bool,
-  contactRequest: ContactRequest = ContactRequest.None,
-  incomingVerification: VerificationRequest = VerificationRequest.None,
-  outcomingVerification: VerificationRequest = VerificationRequest.None
-): UserItem =
+    pubKey: string,
+    displayName: string,
+    ensName: string = "",
+    localNickname: string = "",
+    alias: string = "",
+    icon: string,
+    colorId: int = 0,
+    colorHash: string = "",
+    onlineStatus: OnlineStatus = OnlineStatus.Inactive,
+    isContact: bool,
+    isVerified: bool,
+    isUntrustworthy: bool,
+    isBlocked: bool,
+    contactRequest: ContactRequest = ContactRequest.None,
+    incomingVerificationStatus: VerificationRequestStatus = VerificationRequestStatus.None,
+    outgoingVerificationStatus: VerificationRequestStatus = VerificationRequestStatus.None,
+    ): UserItem =
   result = UserItem()
   result.setup(
     pubKey = pubKey,
@@ -106,8 +110,8 @@ proc initUserItem*(
     isUntrustworthy = isUntrustworthy,
     isBlocked = isBlocked,
     contactRequest = contactRequest,
-    incomingVerification = incomingVerification,
-    outcomingVerification = outcomingVerification)
+    incomingVerificationStatus = incomingVerificationStatus,
+    outgoingVerificationStatus = outgoingVerificationStatus)
 
 proc toOnlineStatus*(statusType: StatusType): OnlineStatus =
   if(statusType == StatusType.AlwaysOnline or statusType == StatusType.Automatic):
@@ -131,8 +135,8 @@ proc `$`*(self: UserItem): string =
     isUntrustworthy: {self.isUntrustworthy},
     isBlocked: {self.isBlocked},
     contactRequest: {$self.contactRequest.int},
-    incomingVerification: {$self.incomingVerification.int},
-    outcomingVerification: {$self.outcomingVerification.int},
+    incomingVerificationStatus: {$self.incomingVerificationStatus.int},
+    outgoingVerificationStatus: {$self.outgoingVerificationStatus.int},
     ]"""
 
 proc pubKey*(self: UserItem): string {.inline.} =
@@ -216,14 +220,14 @@ proc contactRequest*(self: UserItem): ContactRequest {.inline.} =
 proc `contactRequest=`*(self: UserItem, value: ContactRequest) {.inline.} =
   self.contactRequest = value
 
-proc incomingVerification*(self: UserItem): VerificationRequest {.inline.} =
-  self.incomingVerification
+proc incomingVerificationStatus*(self: UserItem): VerificationRequestStatus {.inline.} =
+  self.incomingVerificationStatus
 
-proc `incomingVerification=`*(self: UserItem, value: VerificationRequest) {.inline.} =
-  self.incomingVerification = value
+proc `incomingVerificationStatus=`*(self: UserItem, value: VerificationRequestStatus) {.inline.} =
+  self.incomingVerificationStatus = value
 
-proc outcomingVerification*(self: UserItem): VerificationRequest {.inline.} =
-  self.outcomingVerification
+proc outgoingVerificationStatus*(self: UserItem): VerificationRequestStatus {.inline.} =
+  self.outgoingVerificationStatus
 
-proc `outcomingVerification=`*(self: UserItem, value: VerificationRequest) {.inline.} =
-  self.outcomingVerification = value
+proc `outgoingVerificationStatus=`*(self: UserItem, value: VerificationRequestStatus) {.inline.} =
+  self.outgoingVerificationStatus = value

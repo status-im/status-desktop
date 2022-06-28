@@ -6,7 +6,8 @@ Item {
     id: root
     property color color: Style.current.separator
     width: parent.width
-    height: root.visible ? 1 : 0
+    implicitHeight: 1
+    height: root.visible ? implicitHeight : 0
     anchors.topMargin: Style.current.padding
     Rectangle {
           id: separator
