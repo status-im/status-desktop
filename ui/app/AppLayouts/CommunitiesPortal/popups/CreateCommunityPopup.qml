@@ -26,6 +26,13 @@ StatusStackModal {
     property var store
 
     stackTitle: qsTr("Create New Community")
+    width: 640
+
+    nextButton: StatusButton {
+        text: qsTr("Next")
+        enabled:  nameInput.valid && descriptionTextInput.valid
+        onClicked: currentIndex++
+    }
 
     finishButton: StatusButton {
         text: qsTr("Create Community")
@@ -36,9 +43,6 @@ StatusStackModal {
     stackItems: [
         Flickable {
             id: generalView
-
-            readonly property bool canGoNext: nameInput.valid && descriptionTextInput.valid
-
             clip: true
             contentHeight: generalViewLayout.height
             implicitHeight: generalViewLayout.implicitHeight
@@ -125,7 +129,6 @@ StatusStackModal {
         },
         ColumnLayout {
             id: introOutroMessageView
-
             spacing: 12
 
             CommunityIntroMessageInput {

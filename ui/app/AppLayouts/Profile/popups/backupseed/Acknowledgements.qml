@@ -3,89 +3,96 @@ import QtQuick.Layouts 1.12
 
 import StatusQ.Controls 0.1
 import StatusQ.Core.Theme 0.1
+
 import shared.panels 1.0
 import utils 1.0
 
-Item {
-    anchors.fill: parent
-    objectName: "acknowledgment"
-    property bool allAccepted: (havePen.checked && writeDown.checked && storeIt.checked)
-    Image {
-        id: keysImg
-        width: 120
-        height: 120
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.top: parent.top
-        fillMode: Image.PreserveAspectFit
-        source: Style.png("onboarding/keys")
-        mipmap: true
-    }
+ColumnLayout {
+    id: root
 
-    StyledText {
-        id: txtTitle
-        text: qsTr("Secure Your Assets and Funds")
-        horizontalAlignment: Text.AlignHCenter
-        wrapMode: Text.WordWrap
-        anchors.right: parent.right
-        anchors.left: parent.left
-        font.bold: true
-        anchors.top: keysImg.bottom
-        anchors.topMargin: Style.current.padding
-        font.pixelSize: 22
-    }
+    readonly property bool allAccepted: havePen.checked && writeDown.checked && storeIt.checked
 
-    StyledText {
-        id: txtDesc
-        anchors.top: txtTitle.bottom
-        anchors.topMargin: Style.current.padding
-        anchors.horizontalCenter: parent.horizontalCenter
-        font.pixelSize: Style.current.primaryTextFontSize
-        font.letterSpacing: -0.2
-        text: qsTr("Your seed phrase is a 12-word passcode to your funds.")
-    }
+    spacing: Style.current.padding
+    implicitHeight: 520
 
-    StyledText {
-        id: secondTxtDesc
-        anchors.right: parent.right
-        anchors.rightMargin: Style.current.padding
-        anchors.leftMargin: Style.current.padding
-        anchors.left: parent.left
-        anchors.top: txtDesc.bottom
-        anchors.topMargin: Style.current.bigPadding
-        horizontalAlignment: Text.AlignHCenter
-        wrapMode: Text.WordWrap
-        textFormat: Text.RichText
-        font.pixelSize: Style.current.primaryTextFontSize
-        text: qsTr("Your seed phrase cannot be recovered if lost. Therefore, you <b>must</b> back it up. The simplest way is to <b>write it down offline and store it somewhere secure.</b>")
-    }
+    Flickable {
+        id: flick
+        clip: true
+        contentHeight: flickLayout.height
+        implicitHeight: flickLayout.implicitHeight
+        interactive: contentHeight > height
+        flickableDirection: Flickable.VerticalFlick
+        Layout.fillWidth: true
+        Layout.fillHeight: true
 
-    ColumnLayout {
-        anchors.topMargin: 49
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.top: secondTxtDesc.bottom
-        spacing: Style.current.padding
-        StatusCheckBox {
-            id: havePen
+        ColumnLayout {
+            id: flickLayout
             width: parent.width
-            text: qsTr("I have a pen and paper")
-        }
-        StatusCheckBox {
-            id: writeDown
-            width: parent.width
-            text: qsTr("I am ready to write down my seed phrase")
-        }
-        StatusCheckBox {
-            id: storeIt
-            width: parent.width
-            text: qsTr("I know where I’ll store it")
+            spacing: Style.current.padding
+
+            Image {
+                id: keysImg
+                fillMode: Image.PreserveAspectFit
+                source: Style.png("onboarding/keys")
+                mipmap: true
+                Layout.alignment: Qt.AlignHCenter
+                Layout.preferredWidth: 120
+                Layout.preferredHeight: width
+            }
+
+            StyledText {
+                id: txtTitle
+                text: qsTr("Secure Your Assets and Funds")
+                horizontalAlignment: Text.AlignHCenter
+                wrapMode: Text.WordWrap
+                font.bold: true
+                font.pixelSize: 22
+                Layout.fillWidth: true
+            }
+
+            StyledText {
+                id: txtDesc
+                font.pixelSize: Style.current.primaryTextFontSize
+                font.letterSpacing: -0.2
+                text: qsTr("Your seed phrase is a 12-word passcode to your funds.")
+                Layout.fillWidth: true
+            }
+
+            StyledText {
+                id: secondTxtDesc
+                horizontalAlignment: Text.AlignHCenter
+                wrapMode: Text.WordWrap
+                textFormat: Text.RichText
+                font.pixelSize: Style.current.primaryTextFontSize
+                text: qsTr("Your seed phrase cannot be recovered if lost. Therefore, you <b>must</b> back it up. The simplest way is to <b>write it down offline and store it somewhere secure.</b>")
+                Layout.fillWidth: true
+            }
+
+            StatusCheckBox {
+                id: havePen
+                text: qsTr("I have a pen and paper")
+                Layout.fillWidth: true
+            }
+
+            StatusCheckBox {
+                id: writeDown
+                text: qsTr("I am ready to write down my seed phrase")
+                Layout.fillWidth: true
+            }
+
+            StatusCheckBox {
+                id: storeIt
+                text: qsTr("I know where I’ll store it")
+                Layout.fillWidth: true
+            }
         }
     }
 
-    Item {
-        width: parent.width
-        height: 60
-        anchors.bottom: parent.bottom
-        anchors.horizontalCenter: parent.horizontalCenter
+    Rectangle {
+        color: Theme.palette.statusModal.backgroundColor
+        Layout.fillWidth: true
+        Layout.preferredHeight: 60
+
         StyledText {
             anchors.fill: parent
             anchors.margins: Style.current.halfPadding
@@ -96,6 +103,7 @@ Item {
             color: Theme.palette.dangerColor1
             text: qsTr("You can only complete this process once. Status will not store your seed phrase and can never help you recover it.")
         }
+
         Rectangle {
             anchors.fill: parent
             radius: 8
