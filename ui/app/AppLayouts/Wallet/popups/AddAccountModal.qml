@@ -22,7 +22,7 @@ import "../panels"
 StatusModal {
     id: popup
 
-    property int marginBetweenInputs: 38
+    property int marginBetweenInputs: Style.dp(38)
     property string passwordValidationError: ""
     property bool loading: false
     property var emojiPopup: null
@@ -125,14 +125,16 @@ StatusModal {
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
         topPadding: Style.current.halfPadding
         bottomPadding: Style.current.halfPadding
-        height: 400
+        leftPadding: Style.current.padding
+        rightPadding: Style.current.padding
+        height: Style.dp(400)
         clip: true
 
         Column {
             property alias accountNameInput: accountNameInput
-            width: popup.width
+            width: parent.width
             spacing: Style.current.halfPadding
-            topPadding: 20
+            topPadding: Style.dp(20)
 
             // To-Do Password hidden option not supported in StatusQ StatusBaseInput
             Item {
@@ -142,8 +144,6 @@ StatusModal {
                 Input {
                     id: passwordInput
                     anchors.fill: parent
-                    anchors.leftMargin: Style.current.padding
-                    anchors.rightMargin: Style.current.padding
 
                     //% "Enter your password…"
                     placeholderText: qsTrId("enter-your-password…")
@@ -162,13 +162,14 @@ StatusModal {
 
             StatusInput {
                 id: accountNameInput
+                width: parent.width
                 //% "Enter an account name..."
                 input.placeholderText: qsTrId("enter-an-account-name...")
                 //% "Account name"
                 label: qsTrId("account-name")
                 input.isIconSelectable: true
                 input.icon.color: colorSelectionGrid.selectedColor ? colorSelectionGrid.selectedColor : Theme.palette.directColor1
-                input.leftPadding: 16
+                input.leftPadding: Style.current.padding
                 onIconClicked: {
                     popup.emojiPopup.open()
                     popup.emojiPopup.emojiSize = StatusQUtils.Emoji.size.verySmall
@@ -243,8 +244,8 @@ StatusModal {
                     return false
                 }
 
-                return (advancedSelection.expandableItem.addAccountType === SelectGeneratedAccount.AddAccountType.WatchOnly || passwordInput.text !== "") && 
-                    accountNameInput.text !== "" && 
+                return (advancedSelection.expandableItem.addAccountType === SelectGeneratedAccount.AddAccountType.WatchOnly || passwordInput.text !== "") &&
+                    accountNameInput.text !== "" &&
                     advancedSelection.isValid
             }
 
