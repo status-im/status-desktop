@@ -10,11 +10,6 @@ QtObject {
     property int profilePicturesVisibility: privacyModule.profilePicturesVisibility
     property int profilePicturesShowTo: privacyModule.profilePicturesShowTo
 
-    // TODO move contact requests back to the contacts module since we need them in the Profile 
-    // also, having them in the chat section creates some waste, since no community has it
-    property var chatSectionModule: mainModule.getChatSectionModule()
-    property var contactRequestsModel: chatSectionModule.contactRequestsModel
-
     property var mailservers: syncModule.model
 
     property bool useMailservers: syncModule.useMailservers

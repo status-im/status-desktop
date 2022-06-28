@@ -7,6 +7,7 @@ import ../../../../../global/global_singleton
 import ../../../../../core/eventemitter
 import ../../../../../../app_service/common/conversion
 import ../../../../../../app_service/common/types
+import ../../../../../../app_service/service/contacts/dto/contacts
 import ../../../../../../app_service/service/contacts/service as contact_service
 import ../../../../../../app_service/service/chat/service as chat_service
 import ../../../../../../app_service/service/community/service as community_service
@@ -81,6 +82,7 @@ method onNewMessagesLoaded*(self: Module, messages: seq[MessageDto]) =
       icon = contactDetails.icon,
       onlineStatus = status,
       isContact = contactDetails.details.added,
+      isUntrustworthy = contactDetails.details.trustStatus == TrustStatus.Untrustworthy,
       )
     )
 
@@ -108,6 +110,7 @@ method contactUpdated*(self: Module, publicKey: string) =
     alias = contactDetails.details.alias,
     icon = contactDetails.icon,
     isContact = contactDetails.details.added, #FIXME
+    isUntrustworthy = contactDetails.details.trustStatus == TrustStatus.Untrustworthy,
   )
 
 method loggedInUserImageChanged*(self: Module) =
@@ -148,8 +151,9 @@ method addChatMember*(self: Module,  member: ChatMember) =
     onlineStatus = status,
     isContact = contactDetails.details.added, #FIXME
     isAdmin = member.admin,
-    joined = member.joined)
-  )
+    joined = member.joined,
+    isUntrustworthy = contactDetails.details.trustStatus == TrustStatus.Untrustworthy
+    ))
 
 method onChatMembersAdded*(self: Module,  ids: seq[string]) =
   for id in ids:
@@ -184,7 +188,9 @@ method onChatMemberUpdated*(self: Module, publicKey: string, admin: bool, joined
     icon = contactDetails.icon,
     isContact = contactDetails.details.added,
     isAdmin = admin,
-    joined = joined)
+    joined = joined,
+    isUntrustworthy = contactDetails.details.trustStatus == TrustStatus.Untrustworthy,
+    )
 
 method getMembersPublicKeys*(self: Module): string =
   let publicKeys = self.controller.getMembersPublicKeys()

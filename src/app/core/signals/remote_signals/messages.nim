@@ -28,6 +28,7 @@ type MessageSignal* = ref object of Signal
   currentStatus*: seq[StatusUpdateDto]
   settings*: seq[SettingsFieldDto]
   clearedHistories*: seq[ClearedHistoryDto]
+  verificationRequests*: seq[VerificationRequest]
 
 proc fromEvent*(T: type MessageSignal, event: JsonNode): MessageSignal =
   var signal:MessageSignal = MessageSignal()
@@ -102,6 +103,10 @@ proc fromEvent*(T: type MessageSignal, event: JsonNode): MessageSignal =
   if event["event"]{"settings"} != nil:
     for jsonSettingsField in event["event"]["settings"]:
       signal.settings.add(jsonSettingsField.toSettingsFieldDto())
+
+  if event["event"]{"verificationRequests"} != nil:
+    for jsonVerificationRequest in event["event"]["verificationRequests"]:
+      signal.verificationRequests.add(jsonVerificationRequest.toVerificationRequest())
 
   result = signal
 

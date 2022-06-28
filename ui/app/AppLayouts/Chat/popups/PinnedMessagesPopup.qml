@@ -129,6 +129,7 @@ ModalPopup {
                     pinnedMessage: model.pinned
                     messagePinnedBy: model.pinnedBy
                     reactionsModel: model.reactions
+                    senderTrustStatus: model.senderTrustStatus
                     linkUrls: model.links
                     isInPinnedPopup: true
                     transactionParams: model.transactionParameters

@@ -107,6 +107,10 @@ Item {
         onDisplayToastMessage: {
             appMain.rootStore.mainModuleInst.displayEphemeralNotification(title, subTitle, icon, loading, ephNotifType, url);
         }
+        onOpenEditDisplayNamePopup: {
+            var popup = displayNamePopupComponent.createObject(appMain)
+            popup.open()
+        }
     }
 
     function changeAppSectionBySectionId(sectionId) {
@@ -149,6 +153,13 @@ Item {
         id: backupSeedModal
         anchors.centerIn: parent
         privacyStore: appMain.rootStore.profileSectionStore.privacyStore
+    }
+
+    property Component displayNamePopupComponent: DisplayNamePopup {
+        profileStore: appMain.rootStore.profileSectionStore.profileStore
+        onClosed: {
+            destroy()
+        }
     }
 
     Component {

@@ -71,7 +71,7 @@ StatusModal {
         enabled: messageInput.valid
         text: qsTr("Send Contact Request")
         onClicked: {
-            root.accepted(messageInput.text);
+            root.accepted(Utils.escapeHtml(messageInput.text));
             root.close();
         }
     }

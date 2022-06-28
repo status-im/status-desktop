@@ -91,6 +91,18 @@ proc init*(self: Controller) =
 
   # Events only for the user list, so not needed in public and one to one chats
   if(self.isUsersListAvailable):
+    self.events.on(SIGNAL_CONTACT_UNTRUSTWORTHY) do(e: Args):
+      var args = TrustArgs(e)
+      self.delegate.contactUpdated(args.publicKey)
+    
+    self.events.on(SIGNAL_CONTACT_TRUSTED) do(e: Args):
+      var args = TrustArgs(e)
+      self.delegate.contactUpdated(args.publicKey)
+        
+    self.events.on(SIGNAL_REMOVED_TRUST_STATUS) do(e: Args):
+      var args = TrustArgs(e)
+      self.delegate.contactUpdated(args.publicKey)
+
     self.events.on(SIGNAL_CONTACTS_STATUS_UPDATED) do(e: Args):
       let args = ContactsStatusUpdatedArgs(e)
       self.delegate.contactsStatusUpdated(args.statusUpdates)

@@ -2,6 +2,7 @@ import NimQml, Tables, strformat, sequtils, sugar
 
 # TODO: use generics to remove duplication between user_model and member_model
 
+import ../../../app_service/service/contacts/dto/contacts
 import member_item
 
 type
@@ -20,8 +21,8 @@ type
     IsUntrustworthy
     IsBlocked
     ContactRequest
-    IncomingVerification
-    OutcomingVerification
+    IncomingVerificationStatus
+    OutgoingVerificationStatus
     IsAdmin
     Joined
 
@@ -81,8 +82,8 @@ QtObject:
       ModelRole.IsUntrustworthy.int: "isUntrustworthy",
       ModelRole.IsBlocked.int: "isBlocked",
       ModelRole.ContactRequest.int: "contactRequest",
-      ModelRole.IncomingVerification.int: "incomingVerification",
-      ModelRole.OutcomingVerification.int: "outcomingVerification",
+      ModelRole.IncomingVerificationStatus.int: "incomingVerificationStatus",
+      ModelRole.OutgoingVerificationStatus.int: "outgoingVerificationStatus",
       ModelRole.IsAdmin.int: "isAdmin",
       ModelRole.Joined.int: "joined",
     }.toTable
@@ -126,10 +127,10 @@ QtObject:
       result = newQVariant(item.isBlocked)
     of ModelRole.ContactRequest:
       result = newQVariant(item.contactRequest.int)
-    of ModelRole.IncomingVerification:
-      result = newQVariant(item.incomingVerification.int)
-    of ModelRole.OutcomingVerification:
-      result = newQVariant(item.outcomingVerification.int)
+    of ModelRole.IncomingVerificationStatus:
+      result = newQVariant(item.incomingVerificationStatus.int)
+    of ModelRole.OutgoingVerificationStatus:
+      result = newQVariant(item.outgoingVerificationStatus.int)
     of ModelRole.IsAdmin:
       result = newQVariant(item.isAdmin)
     of ModelRole.Joined:
@@ -213,7 +214,8 @@ QtObject:
       icon: string,
       isContact: bool = false,
       isAdmin: bool = false,
-      joined: bool = false
+      joined: bool = false,
+      isUntrustworthy: bool = false,
       ) =
     let ind = self.findIndexForMessageId(pubKey)
     if(ind == -1):
@@ -227,6 +229,7 @@ QtObject:
     self.items[ind].isContact = isContact
     self.items[ind].isAdmin = isAdmin
     self.items[ind].joined = joined
+    self.items[ind].isUntrustworthy = isUntrustworthy
 
     let index = self.createIndex(ind, 0, nil)
     self.dataChanged(index, index, @[
@@ -238,6 +241,7 @@ QtObject:
       ModelRole.IsContact.int,
       ModelRole.IsAdmin.int,
       ModelRole.Joined.int,
+      ModelRole.IsUntrustworthy.int,
     ])
 
   proc setOnlineStatus*(self: Model, pubKey: string,

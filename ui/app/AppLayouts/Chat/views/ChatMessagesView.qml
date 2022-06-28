@@ -303,6 +303,7 @@ Item {
             messageTimestamp: model.timestamp
             messageOutgoingStatus: model.outgoingStatus
             messageContentType: model.contentType
+            senderTrustStatus: model.senderTrustStatus
             pinnedMessage: model.pinned
             messagePinnedBy: model.pinnedBy
             reactionsModel: model.reactions

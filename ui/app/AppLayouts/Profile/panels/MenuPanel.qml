@@ -11,7 +11,7 @@ Column {
     spacing: 4
 
     property var privacyStore
-    property var messagingStore
+    property var contactsStore
     property alias mainMenuItems: mainMenuItems.model
     property alias settingsMenuItems: settingsMenuItems.model
     property alias extraMenuItems: extraMenuItems.model
@@ -71,7 +71,7 @@ Column {
             badge.value: {
                 switch (model.subsection) {
                     case Constants.settingsSubsection.messaging:
-                        return root.messagingStore.contactRequestsModel.count
+                        return root.contactsStore.receivedContactRequestsModel.count
                     default: return ""
                 }
             }

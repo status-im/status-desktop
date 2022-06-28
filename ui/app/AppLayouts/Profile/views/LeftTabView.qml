@@ -38,7 +38,7 @@ Item {
         MenuPanel {
             id: profileMenu
             privacyStore: store.privacyStore
-            messagingStore: store.messagingStore
+            contactsStore: store.contactsStore
             mainMenuItems: store.mainMenuItems
             settingsMenuItems: store.settingsMenuItems
             extraMenuItems: store.extraMenuItems

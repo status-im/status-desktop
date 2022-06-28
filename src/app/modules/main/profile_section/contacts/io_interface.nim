@@ -1,4 +1,5 @@
 import NimQml
+import ../../../../../app_service/service/contacts/dto/contacts as contacts
 
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -69,8 +70,53 @@ method contactRemoved*(self: AccessInterface, publicKey: string) {.base.} =
 method contactNicknameChanged*(self: AccessInterface, publicKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method contactTrustStatusChanged*(self: AccessInterface, publicKey: string, isUntrustworthy: bool) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method contactUpdated*(self: AccessInterface, publicKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method markUntrustworthy*(self: AccessInterface, publicKey: string): void {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method removeTrustStatus*(self: AccessInterface, publicKey: string): void {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getSentVerificationDetailsAsJson*(self: AccessInterface, publicKey: string): string =
+  raise newException(ValueError, "No implementation available")
+
+method getVerificationDetailsFromAsJson*(self: AccessInterface, publicKey: string): string =
+  raise newException(ValueError, "No implementation available")
+
+method sendVerificationRequest*(self: AccessInterface, publicKey: string, challenge: string) =
+  raise newException(ValueError, "No implementation available")
+
+method cancelVerificationRequest*(self: AccessInterface, publicKey: string) =
+  raise newException(ValueError, "No implementation available")
+
+method verifiedTrusted*(self: AccessInterface, publicKey: string): void {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method verifiedUntrustworthy*(self: AccessInterface, publicKey: string): void {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method declineVerificationRequest*(self: AccessInterface, publicKey: string): void {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method acceptVerificationRequest*(self: AccessInterface, publicKey: string, response: string): void {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method contactRequestRejectionRemoved*(self: AccessInterface, publicKey: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getReceivedVerificationRequests*(self: AccessInterface): seq[VerificationRequest] {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method hasReceivedVerificationRequestFrom*(self: AccessInterface, fromId: string): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onVerificationRequestDeclined*(self: AccessInterface, publicKey: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onVerificationRequestUpdatedOrAdded*(self: AccessInterface, VerificationRequest: VerificationRequest) {.base.} =
   raise newException(ValueError, "No implementation available")

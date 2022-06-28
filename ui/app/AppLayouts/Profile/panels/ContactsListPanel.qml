@@ -27,6 +27,7 @@ Item {
     signal contactClicked(string publicKey)
     signal openProfilePopup(string publicKey)
     signal sendMessageActionTriggered(string publicKey)
+    signal showVerificationRequest(string publicKey)
     signal openChangeNicknamePopup(string publicKey)
     signal contactRequestAccepted(string publicKey)
     signal contactRequestRejected(string publicKey)
@@ -115,19 +116,20 @@ Item {
             isBlocked: model.isBlocked
             isVerified: model.isVerified
             isUntrustworthy: model.isUntrustworthy
+            verificationRequestStatus: model.incomingVerificationStatus
 
             searchStr: contactListRoot.searchString
 
             showSendMessageButton: model.isContact
             showRejectContactRequestButton: {
-                if (contactListRoot.panelUsage === Constants.contactsPanelUsage.receivedContactRequest) {
+                if (contactListRoot.panelUsage === Constants.contactsPanelUsage.receivedContactRequest && !model.verificationRequestStatus) {
                     return true
                 }
 
                 return false
             }
             showAcceptContactRequestButton: {
-                if (contactListRoot.panelUsage === Constants.contactsPanelUsage.receivedContactRequest) {
+                if (contactListRoot.panelUsage === Constants.contactsPanelUsage.receivedContactRequest && !model.verificationRequestStatus) {
                     return true
                 }
 
@@ -162,6 +164,7 @@ Item {
             onContactRequestRejected: contactListRoot.contactRequestRejected(publicKey)
             onRejectionRemoved: contactListRoot.rejectionRemoved(publicKey)
             onTextClicked: contactListRoot.textClicked(publicKey)
+            onShowVerificationRequest: contactListRoot.showVerificationRequest(publicKey)
 
             visible: searchString === "" ||
                      panelDelegate.name.toLowerCase().includes(lowerCaseSearchString) ||
