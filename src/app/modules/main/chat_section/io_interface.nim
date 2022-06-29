@@ -175,6 +175,18 @@ method muteChat*(self: AccessInterface, chatId: string) {.base.} =
 method unmuteChat*(self: AccessInterface, chatId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method muteCategory*(self: AccessInterface, categoryId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method unmuteCategory*(self: AccessInterface, categoryId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onCategoryMuted*(self: AccessInterface, categoryId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onCategoryUnmuted*(self: AccessInterface, categoryId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method markAllMessagesRead*(self: AccessInterface, chatId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 

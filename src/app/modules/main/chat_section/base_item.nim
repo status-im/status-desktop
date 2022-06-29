@@ -123,7 +123,7 @@ method `notificationsCount=`*(self: var BaseItem, value: int) {.inline base.} =
 method muted*(self: BaseItem): bool {.inline base.} =
   self.muted
 
-method `muted=`*(self: var BaseItem, value: bool) {.inline base.} =
+method `muted=`*(self: BaseItem, value: bool) {.inline base.} =
   self.muted = value
 
 method blocked*(self: BaseItem): bool {.inline base.} =

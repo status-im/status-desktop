@@ -249,7 +249,16 @@ QtObject:
         return
 
       if self.items[i].subItems.muteUnmuteItemById(id, mute):
+        self.items[i].BaseItem.muted = self.items[i].subItems.isAllMuted()
         return
+  
+  proc muteUnmuteItemsOrSubItemsByCategoryId*(self: Model, categoryId: string, mute: bool) =
+    for i in 0 ..< self.items.len:
+      if(self.items[i].categoryId == categoryId):
+        let index = self.createIndex(i, 0, nil)
+        self.items[i].subItems.muteUnmuteAll(mute)
+        self.items[i].BaseItem.muted = mute
+        self.dataChanged(index, index, @[ModelRole.Muted.int])
 
   proc blockUnblockItemOrSubItemById*(self: Model, id: string, blocked: bool) =
     for i in 0 ..< self.items.len:

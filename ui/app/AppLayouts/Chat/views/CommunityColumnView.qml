@@ -235,6 +235,18 @@ Item {
                 }
 
                 StatusMenuItem {
+                    text: categoryItem.muted ? qsTr("Unmute category") : qsTr("Mute category")
+                    icon.name: "notification"
+                    onTriggered: {
+                        if (categoryItem.muted) {
+                            root.communitySectionModule.unmuteCategory(categoryItem.itemId)
+                        } else {
+                            root.communitySectionModule.muteCategory(categoryItem.itemId)
+                        }
+                    }
+                }
+
+                StatusMenuItem {
                     enabled: communityData.amISectionAdmin
                     //% "Edit Category"
                     text: qsTrId("edit-category")
