@@ -10,7 +10,8 @@ Item {
     property int imageWidth: 350
     property bool isCurrentUser: false
     property url source
-    property bool playing: Global.applicationWindow.active
+    property bool isActiveChannel: false
+    property bool playing: Global.applicationWindow.active && isChatActive
     property bool isAnimated: !!source && source.toString().endsWith('.gif')
     signal clicked(var image, var mouse)
     property var container
