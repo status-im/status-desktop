@@ -23,6 +23,7 @@ Column {
     property var contactsStore
     property var messageContextMenu
     property string channelEmoji
+    property bool isActiveChannel: false
 
     property var emojiPopup
 
@@ -337,6 +338,7 @@ Column {
             messageContextMenu: root.messageContextMenu
             contentType: root.messageContentType
             isChatBlocked: root.isChatBlocked
+            isActiveChannel: root.isActiveChannel
             emojiPopup: root.emojiPopup
 
             communityId: root.communityId

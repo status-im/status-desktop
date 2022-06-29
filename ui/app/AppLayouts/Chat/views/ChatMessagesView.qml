@@ -49,14 +49,13 @@ Item {
 
     onIsActiveChannelChanged: {
         if (!isActiveChannel) {
-            root.allMessagesLoaded = false
             return
         }
         // We wait to load all messages, because switching back to chats makes
         // the scroll go crazy so it loads way too many messages making it slow
         timer.setTimeout(function() {
             root.allMessagesLoaded = true
-        }, 10);
+        }, 5);
     }
 
     Connections {
@@ -117,7 +116,6 @@ Item {
                 text: qsTr("Loading...")
             }
             StatusLoadingIndicator {
-                color: Theme.palette.directColor4
                 anchors.left: loadingText.right
                 anchors.leftMargin: 8
             }
@@ -286,6 +284,7 @@ Item {
             channelEmoji: root.channelEmoji
             emojiPopup: root.emojiPopup
 
+            isActiveChannel: root.isActiveChannel
             isChatBlocked: root.isChatBlocked
             messageContextMenu: messageContextMenuInst
 

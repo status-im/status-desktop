@@ -27,6 +27,7 @@ Item {
     property var container
     property int contentType
     property bool isChatBlocked: false
+    property bool isActiveChannel: false
 
     property int chatHorizontalPadding: Style.current.halfPadding
     property int chatVerticalPadding: 7
@@ -545,6 +546,7 @@ Item {
                         playing: root.messageStore.playAnimation
                         imageSource: messageImage
                         imageWidth: 200
+                        isActiveChannel: root.isActiveChannel
                         onClicked: {
                             if (mouse.button === Qt.LeftButton) {
                                 root.imageClicked(image)
