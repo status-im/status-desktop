@@ -58,7 +58,6 @@ StatusModal {
     onReplaceItemChanged: updateRightButtons()
 
     width: 640
-    height: Math.max(implicitHeight, replaceLoader.implicitHeight)
     padding: 16
 
     header.title: replaceLoader.item && typeof(replaceLoader.item.title) != "undefined"
@@ -84,8 +83,8 @@ StatusModal {
     Item {
         id: content
         anchors.fill: parent
-        implicitWidth: stackLayout.implicitWidth
-        implicitHeight: stackLayout.implicitHeight
+        implicitWidth: Math.max(stackLayout.implicitWidth, replaceLoader.implicitWidth)
+        implicitHeight: Math.max(stackLayout.implicitHeight, replaceLoader.implicitHeight)
         clip: true
 
         StatusAnimatedStack {
