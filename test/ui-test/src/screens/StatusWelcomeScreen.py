@@ -35,6 +35,16 @@ class SignUpComponents(Enum):
     FINALIZE_PASSWORD_STEP = "mainWindow_Finalise_Status_Password_Creation_StatusBaseText"
     PASSWORD_PREFERENCE = "mainWindow_I_prefer_to_use_my_password_StatusBaseText"
 
+    
+class SeedPhraseComponents(Enum):
+    IMPORT_A_SEED_TEXT = "import_a_seed_phrase_StatusBaseText"
+    IMPORT_A_SEED_BUTTON = "mainWindow_button_StatusButton"
+    TWELVE_WORDS_BUTTON = "switchTabBar_12_words_StatusBaseText"
+    EIGHTEEN_WORDS_BUTTON = "switchTabBar_18_words_StatusBaseText"
+    TWENTY_FOUR_BUTTON = "switchTabBar_24_words_StatusBaseText"
+    SEEDS_WORDS_TEXTFIELD = "mainWindow_placeholder_StatusBaseText"
+    SUBMIT_BUTTON = "mainWindow_submitButton_StatusButton"
+
 
 class StatusWelcomeScreen:
 
@@ -42,12 +52,28 @@ class StatusWelcomeScreen:
         verify_screen(AgreementPopUp.OK_GOT_IT_BUTTON.value)
 
     def agree_terms_conditions_and_generate_new_key(self):
-        click_obj_by_name(AgreementPopUp.OK_GOT_IT_BUTTON.value)
-        click_obj_by_name(AgreementPopUp.ACKNOWLEDGE_CHECKBOX.value)
-        check_obj_by_name(AgreementPopUp.TERMS_OF_USE_CHECK_BOX.value)
-        click_obj_by_name(AgreementPopUp.GET_STARTED_BUTTON.value)
-        click_obj_by_name(SignUpComponents.NEW_TO_STATUS.value)
+        self._agree_terms_and_conditions()
         click_obj_by_name(SignUpComponents.GENERATE_NEW_KEYS.value)
+        
+    def agree_terms_conditions_and_navigate_to_import_seed_phrase(self):
+        self._agree_terms_and_conditions()
+        click_obj_by_name(SeedPhraseComponents.IMPORT_A_SEED_TEXT.value)
+        click_obj_by_name(SeedPhraseComponents.IMPORT_A_SEED_BUTTON.value)
+
+    def input_seed_phrase(self, seed, words, occurrences):
+        if words =='18':
+            click_obj_by_name(SeedPhraseComponents.EIGHTEEN_WORDS_BUTTON.value)
+        
+        if words == '24':
+            click_obj_by_name(SeedPhraseComponents.TWENTY_FOUR_BUTTON.value)
+            
+        if words == '12':
+            click_obj_by_name(SeedPhraseComponents.TWELVE_WORDS_BUTTON.value)
+                
+        
+        type(SeedPhraseComponents.SEEDS_WORDS_TEXTFIELD.value, seed)
+        
+        
 
     def input_username_and_password_and_finalize_sign_up(self, username, password):
         self.input_username(username)
@@ -72,3 +98,11 @@ class StatusWelcomeScreen:
     def input_confirmation_password(self, password):
         type(SignUpComponents.PASSWORD_CONFIRM_INPUT.value, password)
         click_obj_by_name(SignUpComponents.CREATE_PASSWORD.value)
+        
+    def _agree_terms_and_conditions(self):
+        click_obj_by_name(AgreementPopUp.OK_GOT_IT_BUTTON.value)
+        click_obj_by_name(AgreementPopUp.ACKNOWLEDGE_CHECKBOX.value)
+        check_obj_by_name(AgreementPopUp.TERMS_OF_USE_CHECK_BOX.value)
+        click_obj_by_name(AgreementPopUp.GET_STARTED_BUTTON.value)
+        click_obj_by_name(SignUpComponents.NEW_TO_STATUS.value)
+        

@@ -73,3 +73,26 @@ Feature: Status Desktop Sign Up
       | tester123 | Invalid34            | TesTEr16843/!@00 |
       | tester123 | TesTEr16843/!@)      | TesTEr16843/!@01 |
 
+
+	Scenario: User signs up with imported seed phrase
+
+		Given A first time user lands on the status desktop and navigates to import seed phrase
+		When The user inputs 12 seed phrases
+			| phrases   | occurrence |
+			| lawn      | 1   	   |
+			| corn      | 3   	   |
+			| paddle    | 5          |
+			| survey    | 7          |
+			| shrimp    | 9          |
+			| mind      | 11         |
+			| select    | 2    	   |
+			| gaze      | 4          |
+			| arrest    | 6          |
+			| pear      | 8          |
+			| reduce    | 10         |
+			| scan      | 12         |
+		And user clicks on the following ui-component mainWindow_submitButton_StatusButton
+		When user signs up with username tester123 and password TesTEr16843/!@00
+		Then the user lands on the signed in app
+		When the user opens app settings screen
+		And  the user activates wallet

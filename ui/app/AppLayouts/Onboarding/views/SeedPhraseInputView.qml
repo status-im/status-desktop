@@ -117,6 +117,8 @@ OnboardingBasePage {
                 model: root.tabs
                  StatusSwitchTabButton {
                     text: qsTr("%1 words").arg(modelData)
+                    id: seedPhraseWords
+                    objectName: qsTr("%1SeedButton").arg(modelData)
                 }
             }
             onCurrentIndexChanged: {
