@@ -46,6 +46,7 @@ StatusModal {
                 rightPadding: 0
                 label: qsTr("Community private key")
                 input.text: elidedPkey
+                input.edit.readOnly: true
                 input.edit.onActiveFocusChanged: {
                     pKeyInput.input.text =  pKeyInput.input.edit.focus ? popup.privateKey : elidedPkey
                 }

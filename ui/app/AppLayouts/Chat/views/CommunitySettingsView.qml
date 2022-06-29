@@ -165,7 +165,6 @@ StatusAppTwoPanelLayout {
                 onBackUpClicked: {
                     Global.openPopup(transferOwnershipPopup, {
                         privateKey: root.chatCommunitySectionModule.exportCommunity(root.communityId),
-                        store: root.store
                     })
                 }
             }
@@ -226,6 +225,7 @@ StatusAppTwoPanelLayout {
         id: transferOwnershipPopup
         TransferOwnershipPopup {
             anchors.centerIn: parent
+            store: root.rootStore
         }
     }
 
