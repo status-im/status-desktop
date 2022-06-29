@@ -171,6 +171,16 @@ proc init*(self: Controller) =
       let args = ReloadMessagesArgs(e)
       if (args.communityId == self.sectionId):
         self.messageService.asyncLoadInitialMessagesForChat(self.getActiveChatId())
+    
+    self.events.on(SIGNAL_CATEGORY_MUTED) do(e: Args):
+      let args = CategoryArgs(e)
+      if (args.communityId == self.sectionId):
+        self.delegate.onCategoryMuted(args.categoryId)
+    
+    self.events.on(SIGNAL_CATEGORY_UNMUTED) do(e: Args):
+      let args = CategoryArgs(e)
+      if (args.communityId == self.sectionId):
+        self.delegate.onCategoryUnmuted(args.categoryId)
 
   self.events.on(SIGNAL_CONTACT_NICKNAME_CHANGED) do(e: Args):
     var args = ContactArgs(e)
@@ -421,6 +431,12 @@ proc editCommunity*(
 
 proc exportCommunity*(self: Controller): string =
   self.communityService.exportCommunity(self.sectionId)
+
+method muteCategory*(self: Controller, categoryId: string) =
+  self.communityService.muteCategory(self.sectionId, categoryId)
+
+method unmuteCategory*(self: Controller, categoryId: string) =
+  self.communityService.unmuteCategory(self.sectionId, categoryId)
 
 proc setCommunityMuted*(self: Controller, muted: bool) =
   self.communityService.setCommunityMuted(self.sectionId, muted)

@@ -38,6 +38,7 @@ type CommunityMembershipRequestDto* = object
 type CommunitySettingsDto* = object
   id*: string
   historyArchiveSupportEnabled*: bool
+  categoriesMuted*: seq[string]
 
 type CommunityAdminSettingsDto* = object
   pinMessageAllMembersEnabled*: bool

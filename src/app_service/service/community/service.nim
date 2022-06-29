@@ -69,6 +69,10 @@ type
     communityId*: string
     muted*: bool
 
+  CategoryArgs* = ref object of Args
+    communityId*: string
+    categoryId*: string
+
 # Signals which may be emitted by this service:
 const SIGNAL_COMMUNITY_JOINED* = "communityJoined"
 const SIGNAL_COMMUNITY_MY_REQUEST_ADDED* = "communityMyRequestAdded"
@@ -93,6 +97,8 @@ const SIGNAL_COMMUNITY_MEMBER_REMOVED* = "communityMemberRemoved"
 const SIGNAL_NEW_REQUEST_TO_JOIN_COMMUNITY* = "newRequestToJoinCommunity"
 const SIGNAL_CURATED_COMMUNITY_FOUND* = "curatedCommunityFound"
 const SIGNAL_COMMUNITY_MUTED* = "communityMuted"
+const SIGNAL_CATEGORY_MUTED* = "categoryMuted"
+const SIGNAL_CATEGORY_UNMUTED* = "categoryUnmuted"
 
 QtObject:
   type
@@ -1071,6 +1077,32 @@ QtObject:
     except Exception as e:
       error "Error inviting to community", msg = e.msg
       result = "Error exporting community: " & e.msg
+
+  proc muteCategory*(self: Service, communityId: string, categoryId: string) =
+    try:
+      let response = status_go.muteCategory(communityId, categoryId)
+      if (not response.error.isNil):
+        let msg = response.error.message & " categoryId=" & categoryId
+        error "error while mute category ", msg
+        return
+
+      self.events.emit(SIGNAL_CATEGORY_MUTED, CategoryArgs(communityId: communityId, categoryId: categoryId))
+
+    except Exception as e:
+      error "Error muting category", msg = e.msg
+
+  proc unmuteCategory*(self: Service, communityId: string, categoryId: string) =
+    try:
+      let response = status_go.unmuteCategory(communityId, categoryId)
+      if (not response.error.isNil):
+        let msg = response.error.message & " categoryId=" & categoryId
+        error "error while unmute category ", msg
+        return
+
+      self.events.emit(SIGNAL_CATEGORY_UNMUTED, CategoryArgs(communityId: communityId, categoryId: categoryId))
+
+    except Exception as e:
+      error "Error unmuting category", msg = e.msg
 
   proc removeUserFromCommunity*(self: Service, communityId: string, pubKey: string)  =
     try:

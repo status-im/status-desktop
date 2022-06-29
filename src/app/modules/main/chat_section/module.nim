@@ -577,6 +577,18 @@ method muteChat*(self: Module, chatId: string) =
 method unmuteChat*(self: Module, chatId: string) =
   self.controller.unmuteChat(chatId)
 
+method muteCategory*(self: Module, categoryId: string) =
+  self.controller.muteCategory(categoryId)
+
+method unmuteCategory*(self: Module, categoryId: string) =
+  self.controller.unmuteCategory(categoryId)
+
+method onCategoryMuted*(self: Module, categoryId: string) =
+  self.view.chatsModel().muteUnmuteItemsOrSubItemsByCategoryId(categoryId, true)
+
+method onCategoryUnmuted*(self: Module, categoryId: string) =
+  self.view.chatsModel().muteUnmuteItemsOrSubItemsByCategoryId(categoryId, false)
+
 method onChatMuted*(self: Module, chatId: string) =
   self.view.chatsModel().muteUnmuteItemOrSubItemById(chatId, mute=true)
 
