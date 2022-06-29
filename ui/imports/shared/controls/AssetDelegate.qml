@@ -8,13 +8,18 @@ import shared.panels 1.0
 Item {
     id: assetDelegate
 
+    QtObject {
+        id: _internal
+        readonly property var alwaysVisible : ["ETH", "SNT", "DAI", "STT"]
+    }
+
     property string locale: ""
     property string currency: ""
 
     anchors.right: parent.right
 
     anchors.left: parent.left
-    visible: networkVisible && enabledNetworkBalance > 0
+    visible: _internal.alwaysVisible.includes(symbol) || (networkVisible && enabledNetworkBalance > 0)
     height: visible ? 40 + 2 * Style.current.padding : 0
 
 
