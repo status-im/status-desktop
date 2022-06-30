@@ -29,7 +29,7 @@ Platform specific conan profile
   - Intel: `conan install . --profile=vendor/conan-configs/apple-arm64.ini -s build_type=Release --build=missing -if=build/conan`
   - Apple silicon: `conan install . --profile=vendor/conan-configs/apple-x86_64.ini -s build_type=Release --build=missing -if=build/conan`
 - Windows: TODO
-- Linux: `conan install . -s build_type=Release --build=missing -if=build/conan`
+- Linux: `conan install . --profile=./vendor/conan-configs/linux.ini -s build_type=Release --build=missing -if=build/conan`
 
 
 ## Buid, test & run
