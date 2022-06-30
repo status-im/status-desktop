@@ -12,8 +12,3 @@ constexpr bool isDebugBuild()
 }
 
 }
-
-#if !defined STRINGIFY
-  #define STRINGIFY(X) STRIFY(X)
-  #define STRIFY(X) #X
-#endif
