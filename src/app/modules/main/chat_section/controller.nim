@@ -90,7 +90,7 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_CONTACT_ADDED) do(e: Args):
     var args = ContactArgs(e)
-    self.delegate.onContactAccepted(args.contactId)
+    self.delegate.onContactAdded(args.contactId)
 
   self.events.on(SIGNAL_CONTACT_REMOVED) do(e: Args):
     var args = ContactArgs(e)
@@ -280,6 +280,9 @@ proc getCurrentFleet*(self: Controller): string =
 
 proc getContacts*(self: Controller, group: ContactsGroup): seq[ContactsDto] =
   return self.contactService.getContactsByGroup(group)
+
+proc getContactById*(self: Controller, id: string): ContactsDto =
+  return self.contactService.getContactById(id)
 
 proc getContactDetails*(self: Controller, id: string): ContactDetails =
   return self.contactService.getContactDetails(id)
