@@ -45,6 +45,7 @@ Item {
     property bool isSectionActive: mainModule.activeSection.id === parentModule.getMySectionId()
     property string activeChatId: parentModule && parentModule.activeItem.id
     property string activeSubItemId: parentModule && parentModule.activeItem.activeSubItem.id
+    property int chatsCount: parentModule && parentModule.model ? parentModule.model.count : 0
     property string activeChatType: parentModule && parentModule.activeItem.type
     property string currentNotificationChatId
     property string currentNotificationCommunityId
@@ -160,7 +161,7 @@ Item {
 
     EmptyChatPanel {
         anchors.fill: parent
-        visible: root.activeChatId === ""
+        visible: root.activeChatId === "" || root.chatsCount == 0
         rootStore: root.rootStore
         onShareChatKeyClicked: Global.openProfilePopup(userProfile.pubKey);
     }
