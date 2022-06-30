@@ -221,7 +221,6 @@
         <file>src/assets/img/icons/delete.svg</file>
         <file>src/assets/img/icons/desktop.svg</file>
         <file>src/assets/img/icons/double-checkmark.svg</file>
-        <file>src/assets/img/icons/down.svg</file>
         <file>src/assets/img/icons/download.svg</file>
         <file>src/assets/img/icons/edit.svg</file>
         <file>src/assets/img/icons/emojis.svg</file>
@@ -253,7 +252,6 @@
         <file>src/assets/img/icons/keycard.svg</file>
         <file>src/assets/img/icons/language.svg</file>
         <file>src/assets/img/icons/ledger.svg</file>
-        <file>src/assets/img/icons/left.svg</file>
         <file>src/assets/img/icons/link.svg</file>
         <file>src/assets/img/icons/loading.svg</file>
         <file>src/assets/img/icons/location.svg</file>
@@ -291,7 +289,6 @@
         <file>src/assets/img/icons/remove-contact.svg</file>
         <file>src/assets/img/icons/remove.svg</file>
         <file>src/assets/img/icons/reply.svg</file>
-        <file>src/assets/img/icons/right.svg</file>
         <file>src/assets/img/icons/rotate.svg</file>
         <file>src/assets/img/icons/search.svg</file>
         <file>src/assets/img/icons/secret.svg</file>
@@ -370,7 +367,6 @@
         <file>src/assets/img/icons/travel-and-places.svg</file>
         <file>src/assets/img/icons/tributeToTalk.svg</file>
         <file>src/assets/img/icons/union.svg</file>
-        <file>src/assets/img/icons/up.svg</file>
         <file>src/assets/img/icons/username.svg</file>
         <file>src/assets/img/icons/wallet.svg</file>
         <file>src/assets/img/icons/warning.svg</file>
@@ -10505,5 +10501,6 @@
         <file>src/StatusQ/Animations/SkeletonAnimation.qml</file>
         <file>src/StatusQ/Animations/SkeletonGradientStop.qml</file>
         <file>src/StatusQ/Animations/qmldir</file>
+        <file>src/assets/img/icons/arrow-up.svg</file>
     </qresource>
 </RCC>
