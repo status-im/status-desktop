@@ -211,6 +211,12 @@ NIM_PARAMS += -d:DESKTOP_VERSION="$(DESKTOP_VERSION)"
 GIT_COMMIT=`git log --pretty=format:'%h' -n 1`
 NIM_PARAMS += -d:GIT_COMMIT="$(GIT_COMMIT)"
 
+OUTPUT_CSV ?= false
+ifeq ($(OUTPUT_CSV), true)
+  NIM_PARAMS += -d:output_csv
+  $(shell touch .update.timestamp)
+endif
+
 $(DOTHERSIDE): | deps
 	echo -e $(BUILD_MSG) "DOtherSide"
 	+ cd vendor/DOtherSide && \
