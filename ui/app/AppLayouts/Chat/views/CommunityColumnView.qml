@@ -120,9 +120,11 @@ Item {
         background: MouseArea {
             acceptedButtons: Qt.RightButton
             onClicked: {
-                popup.x = mouse.x + 4
-                popup.y = mouse.y + 4
-                popup.open()
+                if (communityData.amISectionAdmin) {
+                    popup.x = mouse.x + 4
+                    popup.y = mouse.y + 4
+                    popup.open()
+                }
             }
 
         property var popup: StatusPopupMenu {
