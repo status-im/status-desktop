@@ -597,9 +597,13 @@ method getCurrentFleet*(self: Module): string =
 method acceptContactRequest*(self: Module, publicKey: string) =
   self.controller.acceptContactRequest(publicKey)
 
-method onContactAccepted*(self: Module, publicKey: string) =
+method onContactAdded*(self: Module, publicKey: string) =
   self.view.contactRequestsModel().removeItemById(publicKey)
-  self.switchToOrCreateOneToOneChat(publicKey)
+
+  let contact = self.controller.getContactById(publicKey)
+  if (contact.isMutualContact):
+    self.switchToOrCreateOneToOneChat(publicKey)
+
   self.updateParentBadgeNotifications()
 
 method acceptAllContactRequests*(self: Module) =
