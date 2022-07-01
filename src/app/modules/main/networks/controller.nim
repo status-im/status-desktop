@@ -34,6 +34,9 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_WALLET_ACCOUNT_NETWORK_ENABLED_UPDATED) do(e: Args):
     self.delegate.refreshNetworks()
 
+  self.events.on(SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT) do(e:Args):
+    self.delegate.refreshNetworks()
+
 proc getNetworks*(self: Controller): seq[NetworkDto] =
   return self.networkService.getNetworks()
 
@@ -45,3 +48,6 @@ proc areTestNetworksEnabled*(self: Controller): bool =
 
 proc toggleTestNetworksEnabled*(self: Controller) =
   self.walletAccountService.toggleTestNetworksEnabled()
+
+proc getNetworkCurrencyBalance*(self: Controller, network: NetworkDto): float64 = 
+  return self.walletAccountService.getNetworkCurrencyBalance(network)

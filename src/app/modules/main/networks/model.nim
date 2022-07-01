@@ -17,6 +17,7 @@ type
     IconUrl
     ChainColor
     ShortName
+    Balance
 
 QtObject:
   type
@@ -65,6 +66,7 @@ QtObject:
       ModelRole.IconUrl.int:"iconUrl",
       ModelRole.ShortName.int: "shortName",
       ModelRole.ChainColor.int: "chainColor",
+      ModelRole.Balance.int: "balance",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -104,6 +106,8 @@ QtObject:
       result = newQVariant(item.getShortName())
     of ModelRole.ChainColor:
       result = newQVariant(item.getChainColor())
+    of ModelRole.Balance:
+      result = newQVariant(item.getBalance())
 
   proc setItems*(self: Model, items: seq[Item]) =
     self.beginResetModel()
