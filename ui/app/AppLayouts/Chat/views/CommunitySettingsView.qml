@@ -38,6 +38,17 @@ StatusAppTwoPanelLayout {
     property bool hasAddedContacts: false
     property Component membershipRequestPopup
 
+    readonly property string filteredSelectedTags: {
+        if (!community || !community.tags)
+            return "";
+
+        const json = JSON.parse(community.tags);
+        const tagsArray = json.map(tag => {
+            return tag.name;
+        });
+        return tagsArray;
+    }
+
     signal backToCommunityClicked
     signal openLegacyPopupClicked // TODO: remove me when migration to new settings is done
 
@@ -126,7 +137,7 @@ StatusAppTwoPanelLayout {
                 bannerImageData: root.community.bannerImageData
                 color: root.community.color
                 tags: root.rootStore.communityTags
-                selectedTags: root.community.tags
+                selectedTags: root.filteredSelectedTags
                 archiveSupportEnabled: root.community.historyArchiveSupportEnabled
                 requestToJoinEnabled: root.community.access === Constants.communityChatOnRequestAccess
                 pinMessagesEnabled: root.community.pinMessageAllMembersEnabled

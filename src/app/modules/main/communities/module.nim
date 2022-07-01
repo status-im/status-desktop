@@ -86,6 +86,7 @@ method getCommunityItem(self: Module, c: CommunityDto): SectionItem =
       c.images.banner,
       icon = "",
       c.color,
+      c.tags,
       hasNotification = false,
       notificationsCount = 0,
       active = false,
@@ -121,6 +122,7 @@ method getCuratedCommunityItem(self: Module, c: CuratedCommunity): CuratedCommun
       c.available,
       c.community.images.thumbnail,
       c.community.color,
+      c.community.tags,
       len(c.community.members))
 
 method setCommunityTags*(self: Module, communityTags: string) =

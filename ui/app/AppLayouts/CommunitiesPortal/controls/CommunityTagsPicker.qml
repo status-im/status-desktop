@@ -18,8 +18,8 @@ ColumnLayout {
     signal pick()
 
     onSelectedTagsChanged: {
-        var obj = JSON.parse(tags);
-        var array = JSON.parse(selectedTags);
+        const obj = JSON.parse(tags);
+        const array = selectedTags.length ? JSON.parse(selectedTags) : [];
 
         d.tagsModel.clear();
         for (const key of Object.keys(obj)) {

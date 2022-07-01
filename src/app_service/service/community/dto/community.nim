@@ -117,11 +117,17 @@ proc toCommunityDto*(jsonObj: JsonNode): CommunityDto =
     for memberId, memberObj in membersObj:
       result.members.add(toMember(memberObj, memberId))
 
+  var tagsObj: JsonNode
+  if(jsonObj.getProp("tags", tagsObj)):
+    toUgly(result.tags, tagsObj)
+  else:
+    result.tags = "[]"
+
   discard jsonObj.getProp("canRequestAccess", result.canRequestAccess)
   discard jsonObj.getProp("canManageUsers", result.canManageUsers)
   discard jsonObj.getProp("canJoin", result.canJoin)
   discard jsonObj.getProp("color", result.color)
-  discard jsonObj.getProp("tags", result.tags)
+
   discard jsonObj.getProp("requestedToJoinAt", result.requestedToJoinAt)
   discard jsonObj.getProp("isMember", result.isMember)
   discard jsonObj.getProp("muted", result.muted)
