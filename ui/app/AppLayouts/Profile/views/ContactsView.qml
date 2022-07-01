@@ -177,7 +177,7 @@ SettingsContentBase {
                     }
 
                     onContactRequestRejected: {
-                        root.contactsStore.rejectContactRequest(publicKey)
+                        root.contactsStore.dismissContactRequest(publicKey)
                     }
 
                     onShowVerificationRequest: {
