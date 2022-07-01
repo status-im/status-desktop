@@ -89,6 +89,12 @@ QtObject:
   QtProperty[string] color:
     read = getColor
 
+  proc getTags(self: ActiveSection): string {.slot.} =
+    return self.item.tags
+
+  QtProperty[string] tags:
+    read = getTags
+
   proc getHasNotification(self: ActiveSection): bool {.slot.} =
     return self.item.hasNotification
 
