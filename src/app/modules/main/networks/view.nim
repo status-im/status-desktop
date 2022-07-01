@@ -1,4 +1,4 @@
-import NimQml, sequtils, sugar
+import Tables, NimQml, sequtils, sugar
 
 import ../../../../app_service/service/network/dto
 import ./io_interface
@@ -68,22 +68,26 @@ QtObject:
     read = getEnabled
     notify = enabledChanged
 
-  proc load*(self: View, networks: seq[NetworkDto]) =
-    let items = networks.map(n => initItem(
-      n.chainId,
-      n.nativeCurrencyDecimals,
-      n.layer,
-      n.chainName,
-      n.rpcURL,
-      n.blockExplorerURL,
-      n.nativeCurrencyName,
-      n.nativeCurrencySymbol,
-      n.isTest,
-      n.enabled,
-      n.iconUrl,
-      n.chainColor,
-      n.shortName,
-    ))
+  proc load*(self: View, networks: TableRef[NetworkDto, float64]) =
+    var items: seq[Item] = @[]
+    for n, balance in networks.pairs:
+      items.add(initItem(
+        n.chainId,
+        n.nativeCurrencyDecimals,
+        n.layer,
+        n.chainName,
+        n.rpcURL,
+        n.blockExplorerURL,
+        n.nativeCurrencyName,
+        n.nativeCurrencySymbol,
+        n.isTest,
+        n.enabled,
+        n.iconUrl,
+        n.chainColor,
+        n.shortName,
+        balance,
+      ))
+    
     self.layer1.setItems(items.filter(i => i.getLayer() == 1))
     self.layer2.setItems(items.filter(i => i.getLayer() == 2))
     self.enabled.setItems(items.filter(i => i.getIsEnabled()))

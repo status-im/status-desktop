@@ -1,4 +1,4 @@
-import NimQml
+import Tables, NimQml
 import ../io_interface as delegate_interface
 import io_interface, view, controller
 import ../../../global/global_singleton
@@ -39,7 +39,10 @@ method delete*(self: Module) =
   self.controller.delete
 
 method refreshNetworks*(self: Module) =
-  let networks = self.controller.getNetworks()
+  let networks = newTable[NetworkDto, float64]()
+
+  for network in self.controller.getNetworks():
+    networks[network] = self.controller.getNetworkCurrencyBalance(network)
   self.view.load(networks)
 
 method load*(self: Module) =

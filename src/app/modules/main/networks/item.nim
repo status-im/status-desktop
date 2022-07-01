@@ -15,6 +15,7 @@ type
     iconUrl: string
     chainColor: string
     shortName: string
+    balance: float64
 
 proc initItem*(
   chainId: int,
@@ -30,6 +31,7 @@ proc initItem*(
   iconUrl: string,
   chainColor: string,
   shortName: string,
+  balance: float64,
 ): Item =
   result.chainId = chainId
   result.nativeCurrencyDecimals = nativeCurrencyDecimals
@@ -44,6 +46,7 @@ proc initItem*(
   result.iconUrl = iconUrl
   result.chainColor = chainColor
   result.shortName = shortName
+  result.balance = balance
 
 proc `$`*(self: Item): string =
   result = fmt"""NetworkItem(
@@ -60,6 +63,7 @@ proc `$`*(self: Item): string =
     iconUrl:{self.iconUrl},
     shortName: {self.shortName},
     chainColor: {self.chainColor},
+    balance: {self.balance},
     ]"""
 
 proc getChainId*(self: Item): int =
@@ -100,3 +104,6 @@ proc getShortName*(self: Item): string =
 
 proc getChainColor*(self: Item): string =
   return self.chainColor
+
+proc getBalance*(self: Item): float64 =
+  return self.balance
