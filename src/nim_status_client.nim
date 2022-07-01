@@ -40,16 +40,7 @@ proc determineStatusAppIconPath(): string =
       return "/../status-dev.svg"
 
 proc prepareLogging() =
-  # do not create log file
-  if defined(production):
-    return
-
-  # log level can be overriden by LOG_LEVEL env parameter
-  let logLvl = try: parseEnum[LogLevel](getEnv("LOG_LEVEL"))
-                    except: NONE
-
-  setLogLevel(logLvl)
-
+  # Outputs logs in the node tab
   when compiles(defaultChroniclesStream.output.writer):
     defaultChroniclesStream.output.writer =
       proc (logLevel: LogLevel, msg: LogOutputStr) {.gcsafe, raises: [Defect].} =
@@ -59,9 +50,17 @@ proc prepareLogging() =
         except:
           logLoggingFailure(cstring(msg), getCurrentException())
 
-  let formattedDate = now().format("yyyyMMdd'_'HHmmss")
-  let logFile = fmt"app_{formattedDate}.log"
-  discard defaultChroniclesStream.outputs[1].open(LOGDIR & logFile, fmAppend)
+  # do not create log file
+  when not defined(production):
+    # log level can be overriden by LOG_LEVEL env parameter
+    let logLvl = try: parseEnum[LogLevel](getEnv("LOG_LEVEL"))
+                      except: NONE
+
+    setLogLevel(logLvl)
+
+    let formattedDate = now().format("yyyyMMdd'_'HHmmss")
+    let logFile = fmt"app_{formattedDate}.log"
+    discard defaultChroniclesStream.outputs[1].open(LOGDIR & logFile, fmAppend)
 
 proc setupRemoteSignalsHandling() =
   # Please note that this must use the `cdecl` calling convention because
