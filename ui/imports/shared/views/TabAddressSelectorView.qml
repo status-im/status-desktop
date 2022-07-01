@@ -134,7 +134,7 @@ Item {
                     width: visible ? parent.width:  0
                     height: visible ? 64 : 0
                     title: model.name
-                    subTitle: Utils.toLocaleString(model.currencyBalance.toFixed(2), popup.store.locale, {"model.currency": true}) + " " + popup.store.currentCurrency.toUpperCase()
+                    subTitle: Utils.toLocaleString(model.currencyBalance.toFixed(2), store.locale, {"model.currency": true}) + " " + store.currentCurrency.toUpperCase()
                     icon.emoji: !!model.emoji ? model.emoji: ""
                     icon.color: model.color
                     icon.name: !model.emoji ? "filled-account": ""
@@ -173,7 +173,7 @@ Item {
                 }
 
                 delegate: StatusListItem {
-                    property bool isIncoming: to === popup.store.currentAccount.address
+                    property bool isIncoming: to === store.currentAccount.address
                     width: visible ? parent.width:  0
                     height: visible ? 64 : 0
                     title: isIncoming ? from : to
@@ -187,14 +187,14 @@ Item {
                             height: 15
                             width: 15
                             color: isIncoming ? Style.current.success : Style.current.danger
-                            icon: isIncoming ? "down" : "up"
+                            icon: isIncoming ? "arrow-down" : "arrow-up"
                             rotation: 45
                         },
                         StatusBaseText {
                             id: contactsLabel
                             font.pixelSize: 15
                             color: Theme.palette.directColor1
-                            text: popup.store.hex2Eth(value)
+                            text: store.hex2Eth(value)
                         }
                     ]
                     onClicked: contactSelected(title, RecipientSelector.Type.Address)

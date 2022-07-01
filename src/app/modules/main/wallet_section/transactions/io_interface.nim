@@ -55,7 +55,7 @@ method transactionWasSent*(self: AccessInterface, result: string) {.base.} =
 method suggestedFees*(self: AccessInterface, chainId: int): string {.base.} = 
   raise newException(ValueError, "No implementation available")
 
-method suggestedRoutes*(self: AccessInterface, account: string, amount: float64, token: string): string {.base.} = 
+method suggestedRoutes*(self: AccessInterface, account: string, amount: float64, token: string, disabledChainIDs: seq[uint64]): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getChainIdForChat*(self: AccessInterface): int =

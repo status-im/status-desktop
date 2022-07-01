@@ -355,6 +355,7 @@ QtObject {
         return qsTr("%1D").arg(diffDay)
     }
 
+    // To-do move to Wallet Store, this should not be under Utils.
     function findAssetByChainAndSymbol(chainIdToFind, assets, symbolToFind) {
         for(var i=0; i<assets.rowCount(); i++) {
             const symbol = assets.rowData(i, "symbol")

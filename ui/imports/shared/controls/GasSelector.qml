@@ -7,13 +7,13 @@ import shared.panels 1.0
 import shared.controls 1.0
 import shared.controls.chat 1.0
 import StatusQ.Controls 0.1
+import StatusQ.Components 0.1
 
 Item {
     id: root
     width: parent.width
     height:  visible ? Style.current.smallPadding + prioritytext.height +
              (advancedMode ? advancedModeItemGroup.height : selectorButtons.height) : 0
-
 
     property var suggestedFees: ({
         eip1559Enabled: true
@@ -29,7 +29,6 @@ Item {
     property string maxFiatFees: selectedGasFiatValue + root.defaultCurrency.toUpperCase()
     property int estimatedTxTimeFlag: Constants.transactionEstimatedTime.unknown
     property int chainId: 1
-
 
     property alias selectedTipLimit: inputPerGasTipLimit.text
     property alias selectedOverallLimit: inputGasPrice.text
@@ -109,8 +108,8 @@ Item {
     }
 
     function checkOptimal() {
-        if (!optimalGasButton.gasRadioBtn.checked) {
-            optimalGasButton.gasRadioBtn.toggle()
+        if (!optimalGasButton.checked) {
+            optimalGasButton.toggle()
         }
     }
 
@@ -191,10 +190,13 @@ Item {
         color: Style.current.secondaryText
     }
 
-    StatusFlatButton {
-        id: buttonAdvanced
+    StatusButton {
         anchors.verticalCenter: prioritytext.verticalCenter
         anchors.right: parent.right
+        height: 22
+        defaultTopPadding: 2
+        defaultBottomPadding: 2
+        size: StatusBaseButton.Size.Tiny
         visible: root.suggestedFees.eip1559Enabled
         text: advancedMode ?
             qsTr("Use suggestions") :
@@ -210,38 +212,34 @@ Item {
         anchors.topMargin: Style.current.halfPadding
         spacing: 11
 
-        ButtonGroup {
-            id: gasGroup
-            onClicked: updateGasEthValue()
-        }
-
         GasSelectorButton {
             id: lowGasButton
-            buttonGroup: gasGroup
-            text: qsTr("Low")
-            price: {
-                if (!root.suggestedFees.eip1559Enabled) return root.suggestedFees.gasPrice;
-                return formatDec(root.suggestedFees.maxFeePerGasL, 6)
-            }
+            primaryText: qsTr("Low")
             gasLimit: inputGasLimit ? inputGasLimit.text : ""
             getGasEthValue: root.getGasEthValue
             getFiatValue: root.getFiatValue
             defaultCurrency: root.defaultCurrency
-            onChecked: {
-                if (root.suggestedFees.eip1559Enabled){
-                    inputPerGasTipLimit.text = formatDec(root.suggestedFees.maxPriorityFeePerGas, 2);
-                    inputGasPrice.text = formatDec(root.suggestedFees.maxFeePerGasL, 2);
-                } else {
-                    inputGasPrice.text = price
+            price: {
+                if (!root.suggestedFees.eip1559Enabled) return root.suggestedFees.gasPrice;
+                return formatDec(root.suggestedFees.maxFeePerGasL, 6)
+            }
+            onCheckedChanged: {
+                if(checked) {
+                    if (root.suggestedFees.eip1559Enabled){
+                        inputPerGasTipLimit.text = formatDec(root.suggestedFees.maxPriorityFeePerGas, 2);
+                        inputGasPrice.text = formatDec(root.suggestedFees.maxFeePerGasL, 2);
+                    } else {
+                        inputGasPrice.text = price
+                    }
+                    root.updateGasEthValue()
+                    root.checkLimits()
                 }
-                root.updateGasEthValue()
-                root.checkLimits()
             }
         }
+
         GasSelectorButton {
             id: optimalGasButton
-            buttonGroup: gasGroup
-            text: qsTr("Optimal")
+            primaryText: qsTr("Optimal")
             price: {
                 if (!root.suggestedFees.eip1559Enabled) {
                     // Setting the gas price field here because the binding didn't work
@@ -255,22 +253,23 @@ Item {
             getGasEthValue: root.getGasEthValue
             getFiatValue: root.getFiatValue
             defaultCurrency: root.defaultCurrency
-            onChecked: {
-                if (root.suggestedFees.eip1559Enabled){
-                    inputPerGasTipLimit.text = formatDec(root.suggestedFees.maxPriorityFeePerGas, 2);
-                    inputGasPrice.text = formatDec(root.suggestedFees.maxFeePerGasM, 2);
-                } else {
-                    inputGasPrice.text = root.suggestedFees.gasPrice
+            onCheckedChanged: {
+                if(checked) {
+                    if (root.suggestedFees.eip1559Enabled){
+                        inputPerGasTipLimit.text = formatDec(root.suggestedFees.maxPriorityFeePerGas, 2);
+                        inputGasPrice.text = formatDec(root.suggestedFees.maxFeePerGasM, 2);
+                    } else {
+                        inputGasPrice.text = root.suggestedFees.gasPrice
+                    }
+                    root.updateGasEthValue()
+                    root.checkLimits()
                 }
-                root.updateGasEthValue()
-                root.checkLimits()
             }
         }
 
         GasSelectorButton {
             id: highGasButton
-            buttonGroup: gasGroup
-            text: qsTr("High")
+            primaryText: qsTr("High")
             price: {
                 if (!root.suggestedFees.eip1559Enabled) return root.suggestedFees.gasPrice;
                 return formatDec(root.suggestedFees.maxFeePerGasH,6);
@@ -279,15 +278,17 @@ Item {
             getGasEthValue: root.getGasEthValue
             getFiatValue: root.getFiatValue
             defaultCurrency: root.defaultCurrency
-            onChecked: {
-                if (root.suggestedFees.eip1559Enabled){
-                    inputPerGasTipLimit.text = formatDec(root.suggestedFees.maxPriorityFeePerGas, 2);
-                    inputGasPrice.text = formatDec(root.suggestedFees.maxFeePerGasH, 2);
-                } else {
-                    inputGasPrice.text = price
+            onCheckedChanged: {
+                if(checked) {
+                    if (root.suggestedFees.eip1559Enabled){
+                        inputPerGasTipLimit.text = formatDec(root.suggestedFees.maxPriorityFeePerGas, 2);
+                        inputGasPrice.text = formatDec(root.suggestedFees.maxFeePerGasH, 2);
+                    } else {
+                        inputGasPrice.text = price
+                    }
+                    root.updateGasEthValue()
+                    root.checkLimits()
                 }
-                root.updateGasEthValue()
-                root.checkLimits()
             }
         }
     }

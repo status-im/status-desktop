@@ -54,9 +54,10 @@ StatusModal {
         )
     }
 
-    property var recalculateRoutesAndFees: Backpressure.debounce(popup, 600, function() {
+    property var recalculateRoutesAndFees: Backpressure.debounce(popup, 600, function(disabledChainIds) {
+        if (disabledChainIds === undefined) disabledChainIds = []
         networkSelector.suggestedRoutes = popup.store.suggestedRoutes(
-            popup.selectedAccount.address, amountToSendInput.text, assetSelector.selectedAsset.symbol
+            popup.selectedAccount.address, amountToSendInput.text, assetSelector.selectedAsset.symbol, disabledChainIds
         )
         if (networkSelector.suggestedRoutes.length) {
             networkSelector.selectedNetwork = networkSelector.suggestedRoutes[0]
@@ -73,6 +74,7 @@ StatusModal {
         id: d
         readonly property string maxFiatBalance: Utils.stripTrailingZeros(parseFloat(assetSelector.selectedAsset.totalBalance).toFixed(4))
         readonly property bool isReady: amountToSendInput.valid && !amountToSendInput.pending && recipientSelector.isValid && !recipientSelector.isPending
+        readonly property bool errorMode: networkSelector.suggestedRoutes && networkSelector.suggestedRoutes.length <= 0 || networkSelector.errorMode
         onIsReadyChanged: {
             if(!isReady && stack.isLastGroup)
                 stack.back()
@@ -83,19 +85,13 @@ StatusModal {
     height: 595
     showHeader: false
     showFooter: false
-    showAdvancedFooter: d.isReady && gasValidator.isValid
+    showAdvancedFooter: d.isReady && !isNaN(parseFloat(amountToSendInput.text)) && gasValidator.isValid
     showAdvancedHeader: true
 
     onSelectedAccountChanged: popup.recalculateRoutesAndFees()
 
     onOpened: {
         amountToSendInput.input.edit.forceActiveFocus()
-
-        assetSelector.assets = Qt.binding(function() {
-            if (popup.selectedAccount) {
-                return  popup.selectedAccount.assets
-            }
-        })
 
         if(popup.launchedFromChat) {
             recipientSelector.selectedType = RecipientSelector.Type.Contact
@@ -145,6 +141,8 @@ StatusModal {
                         titleText.font.pixelSize: 12
                         Layout.preferredHeight: 22
                         Layout.preferredWidth: childrenRect.width
+                        color: d.errorMode ? Theme.palette.dangerColor2 : Theme.palette.primaryColor3
+                        titleText.color: d.errorMode ? Theme.palette.dangerColor1 : Theme.palette.primaryColor1
                     }
                 }
                 Item {
@@ -157,6 +155,7 @@ StatusModal {
                         width: parent.width - assetSelector.width
                         input.placeholderText: "0.00" + " " + assetSelector.selectedAsset.symbol
                         errorMessageCmp.anchors.rightMargin: -100
+                        input.edit.color: d.errorMode ? Theme.palette.dangerColor1 : Theme.palette.directColor1
                         validators: [
                             StatusFloatValidator{
                                 id: floatValidator
@@ -184,6 +183,7 @@ StatusModal {
                         id: assetSelector
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.right: parent.right
+                        assets: popup.selectedAccount.assets
                         defaultToken: Style.png("tokens/DEFAULT-TOKEN@3x")
                         getCurrencyBalanceString: function (currencyBalance) {
                             return Utils.toLocaleString(currencyBalance.toFixed(2), popup.store.locale, {"currency": true}) + " " + popup.store.currentCurrency.toUpperCase()
@@ -269,12 +269,12 @@ StatusModal {
 
                 ScrollBar.vertical.policy: ScrollBar.AlwaysOff
                 ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-                contentHeight: recipientSelector.height + addressSelector.height + networkSelector.height + gasSelector.height + gasValidator.height
+                contentHeight: recipientSelector.height + addressSelector.height + networkSelector.height + fees.height + Style.current.halfPadding
                 clip: true
 
                 // To-do use standard StatusInput component once the flow for ens name resolution is clear
                 RecipientSelector {
-                    anchors.top: assetAndAmmountSelector.bottom
+                    anchors.top: parent.top
                     anchors.topMargin: Style.current.halfPadding
                     anchors.right: parent.right
                     anchors.left: parent.left
@@ -308,62 +308,96 @@ StatusModal {
 
                 NetworkSelector {
                     id: networkSelector
+                    store: popup.store
+                    selectedAccount: popup.selectedAccount
                     anchors.top: addressSelector.bottom
                     anchors.right: parent.right
                     anchors.left: parent.left
+                    amountToSend: isNaN(parseFloat(amountToSendInput.text)) ? 0 : parseFloat(amountToSendInput.text)
+                    requiredGasInEth: gasSelector.selectedGasEthValue
+                    assets: popup.selectedAccount.assets
+                    selectedAsset: assetSelector.selectedAsset
                     onNetworkChanged: function(chainId) {
                         gasSelector.suggestedFees = popup.store.suggestedFees(chainId)
                         gasSelector.updateGasEthValue()
                     }
+                    onReCalculateSuggestedRoute: popup.recalculateRoutesAndFees(disabledChainIds)
                 }
 
-                GasSelector {
-                    id: gasSelector
+                Rectangle {
+                    id: fees
+                    radius: 13
+                    color: Theme.palette.indirectColor1
                     anchors.top: networkSelector.bottom
-                    getGasEthValue: popup.store.getGasEthValue
-                    getFiatValue: popup.store.getFiatValue
-                    getEstimatedTime: popup.store.getEstimatedTime
-                    defaultCurrency: popup.store.currentCurrency
-                    chainId: networkSelector.selectedNetwork.chainId
-                    width: stack.width
-                    property var estimateGas: Backpressure.debounce(gasSelector, 600, function() {
-                        if (!(popup.selectedAccount && popup.selectedAccount.address &&
-                            recipientSelector.selectedRecipient && recipientSelector.selectedRecipient.address &&
-                            assetSelector.selectedAsset && assetSelector.selectedAsset.symbol &&
-                            amountToSendInput.text)) {
-                            selectedGasLimit = 250000
-                            defaultGasLimit = selectedGasLimit
-                            return
+                    width: parent.width
+                    height: gasSelector.visible || gasValidator.visible ? feesLayout.height + gasValidator.height : 0
+
+                    RowLayout {
+                        id: feesLayout
+                        spacing: 10
+                        anchors.top: parent.top
+                        anchors.left: parent.left
+                        anchors.margins: Style.current.padding
+
+                        StatusRoundIcon {
+                            id: feesIcon
+                            Layout.alignment: Qt.AlignTop
+                            radius: 8
+                            icon.name: "fees"
                         }
+                        ColumnLayout {
+                            Layout.alignment: Qt.AlignTop
+                            GasSelector {
+                                id: gasSelector
+                                Layout.preferredWidth: fees.width - feesIcon.width - Style.current.xlPadding
+                                getGasEthValue: popup.store.getGasEthValue
+                                getFiatValue: popup.store.getFiatValue
+                                getEstimatedTime: popup.store.getEstimatedTime
+                                defaultCurrency: popup.store.currentCurrency
+                                chainId: networkSelector.selectedNetwork && networkSelector.selectedNetwork.chainId ? networkSelector.selectedNetwork.chainId : 1
+                                property var estimateGas: Backpressure.debounce(gasSelector, 600, function() {
+                                    if (!(popup.selectedAccount && popup.selectedAccount.address &&
+                                          recipientSelector.selectedRecipient && recipientSelector.selectedRecipient.address &&
+                                          assetSelector.selectedAsset && assetSelector.selectedAsset.symbol &&
+                                          amountToSendInput.text)) {
+                                        selectedGasLimit = 250000
+                                        defaultGasLimit = selectedGasLimit
+                                        return
+                                    }
 
-                        let gasEstimate = JSON.parse(popup.store.estimateGas(
-                                                        popup.selectedAccount.address,
-                                                        recipientSelector.selectedRecipient.address,
-                                                        assetSelector.selectedAsset.symbol,
-                                                        amountToSendInput.text,
-                                                        networkSelector.selectedNetwork.chainId || Global.currentChainId,
-                                                        ""))
+                                    var chainID = networkSelector.selectedNetwork ? networkSelector.selectedNetwork.chainId: 1
 
-                        if (!gasEstimate.success) {
-                            
-                            console.warn(qsTr("Error estimating gas: %1").arg(gasEstimate.error.message))
-                            return
+                                    let gasEstimate = JSON.parse(popup.store.estimateGas(
+                                                                     popup.selectedAccount.address,
+                                                                     recipientSelector.selectedRecipient.address,
+                                                                     assetSelector.selectedAsset.symbol,
+                                                                     amountToSendInput.text,
+                                                                     chainID || Global.currentChainId,
+                                                                     ""))
+
+                                    if (!gasEstimate.success) {
+
+                                        console.warn(qsTrId("error-estimating-gas---1").arg(gasEstimate.error.message))
+                                        return
+                                    }
+
+                                    selectedGasLimit = gasEstimate.result
+                                    defaultGasLimit = selectedGasLimit
+                                })
+                            }
+                            GasValidator {
+                                id: gasValidator
+                                anchors.horizontalCenter: undefined
+                                Layout.alignment: Qt.AlignHCenter
+                                selectedAccount: popup.selectedAccount
+                                selectedAmount: amountToSendInput.text === "" ? 0.0 :
+                                                parseFloat(amountToSendInput.text)
+                                selectedAsset: assetSelector.selectedAsset
+                                selectedGasEthValue: gasSelector.selectedGasEthValue
+                                selectedNetwork: networkSelector.selectedNetwork ? networkSelector.selectedNetwork: null
+                            }
                         }
-
-                        selectedGasLimit = gasEstimate.result
-                        defaultGasLimit = selectedGasLimit
-                    })
-                }
-                
-                GasValidator {
-                    id: gasValidator
-                    anchors.top: gasSelector.bottom
-                    selectedAccount: popup.selectedAccount
-                    selectedAmount: amountToSendInput.text === "" ? 0.0
-                                                                                 : parseFloat(amountToSendInput.text)
-                    selectedAsset: assetSelector.selectedAsset
-                    selectedGasEthValue: gasSelector.selectedGasEthValue
-                    selectedNetwork: networkSelector.selectedNetwork
+                    }
                 }
             }
         }

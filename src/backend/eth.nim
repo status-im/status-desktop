@@ -28,6 +28,6 @@ proc suggestedFees*(chainId: int): RpcResponse[JsonNode] {.raises: [Exception].}
   let payload = %* [chainId]
   return core.callPrivateRPC("wallet_getSuggestedFees", payload)
 
-proc suggestedRoutes*(account: string, amount: float64, token: string): RpcResponse[JsonNode] {.raises: [Exception].} =
-  let payload = %* [account, amount, token]
+proc suggestedRoutes*(account: string, amount: float64, token: string, disabledChainIDs: seq[uint64]): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [account, amount, token, disabledChainIDs]
   return core.callPrivateRPC("wallet_getSuggestedRoutes", payload)
