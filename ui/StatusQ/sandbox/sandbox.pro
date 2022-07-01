@@ -1,11 +1,13 @@
 QT += quick svg
 
 CONFIG += c++11 warn_on qtquickcompiler
+CONFIG += resources_big
 
 QML_IMPORT_PATH= $$PWD/../src
 
 DEFINES += QT_DEPRECATED_WARNINGS
 
+QMAKE_LFLAGS += $$(LDFLAGS)
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
