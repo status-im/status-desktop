@@ -161,6 +161,7 @@ QtObject:
 
   proc removeContactRequestRejection*(self: View, publicKey: string) {.slot.} =
     self.delegate.removeContactRequestRejection(publicKey)
+    
   proc getSentVerificationDetailsAsJson(self: View, publicKey: string): string {.slot.} =
     return self.delegate.getSentVerificationDetailsAsJson(publicKey)
 
@@ -187,3 +188,6 @@ QtObject:
 
   proc hasReceivedVerificationRequestFrom*(self: View, fromId: string): bool {.slot.} =
     result = self.delegate.hasReceivedVerificationRequestFrom(fromId)
+
+  proc acceptContactRequest*(self: View, publicKey: string) {.slot.} =
+    self.delegate.acceptContactRequest(publicKey)
