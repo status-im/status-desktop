@@ -369,8 +369,8 @@ QtObject:
       eip1559Enabled: response{"eip1559Enabled"}.getbool,
     )
 
-  proc suggestedRoutes*(self: Service, account: string, amount: float64, token: string): SuggestedRoutes = 
-    let response = eth.suggestedRoutes(account, amount, token)
+  proc suggestedRoutes*(self: Service, account: string, amount: float64, token: string, disabledChainIDs: seq[uint64]): SuggestedRoutes =
+    let response = eth.suggestedRoutes(account, amount, token, disabledChainIDs)
     return SuggestedRoutes(
       networks: Json.decode($response.result{"networks"}, seq[NetworkDto])
     )

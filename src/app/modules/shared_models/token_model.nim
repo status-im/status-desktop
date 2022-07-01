@@ -111,3 +111,17 @@ QtObject:
         return true
 
     return false
+
+  proc hasGas*(self: Model, chainId: int, nativeGasSymbol: string, requiredGas: float): bool {.slot.} =
+    for item in self.items:
+        if(item.getSymbol() != nativeGasSymbol):
+            continue
+
+        for balance in item.getBalances().items:
+            if (balance.chainId != chainId):
+                continue
+
+            if(balance.balance >= requiredGas):
+                return true
+
+    return false

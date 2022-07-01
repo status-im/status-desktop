@@ -6,6 +6,8 @@ import StatusQ.Core.Utils 0.1 as StatusQUtils
 QtObject {
     id: root
 
+    property string locale: localAppSettings.locale
+
     property var contactsStore
 
     property bool openCreateChat: false
@@ -473,6 +475,36 @@ QtObject {
         return userProfile.getPubKey()
     }
 
+    property var allNetworks: networksModule.all
+
+    property var disabledChainIds: []
+
+    function addRemoveDisabledChain(suggestedRoutes, chainID, isDisbaled) {
+        if(isDisbaled) {
+            for(var i = 0; i < suggestedRoutes.length;i++) {
+                if(suggestedRoutes[i].chainId === chainID) {
+                    disabledChainIds.push(suggestedRoutes[i].chainId)
+                }
+            }
+        }
+        else {
+            for(var i = 0; i < disabledChainIds.length;i++) {
+                if(disabledChainIds[i] === chainID) {
+                    disabledChainIds.splice(i, 1)
+                }
+            }
+        }
+    }
+
+    function checkIfDisabledByUser(chainID) {
+        for(var i = 0; i < disabledChainIds.length;i++) {
+            if(disabledChainIds[i] === chainID) {
+                return true
+            }
+        }
+        return false
+    }
+
     function getFiatValue(balance, cryptoSymbo, fiatSymbol) {
         return profileSectionModule.ensUsernamesModule.getFiatValue(balance, cryptoSymbo, fiatSymbol)
     }
@@ -526,7 +558,7 @@ QtObject {
         return JSON.parse(walletSectionTransactions.suggestedFees(chainId))
     }
 
-    function suggestedRoutes(account, amount, token) {
-        return JSON.parse(walletSectionTransactions.suggestedRoutes(account, amount, token)).networks
+    function suggestedRoutes(account, amount, token, disabledChainIds) {
+        return JSON.parse(walletSectionTransactions.suggestedRoutes(account, amount, token, disabledChainIds)).networks
     }
 }

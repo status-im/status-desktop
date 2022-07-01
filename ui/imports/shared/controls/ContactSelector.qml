@@ -189,7 +189,7 @@ Item {
                       height: 16
                     }
                     StatusBaseText {
-                        text: currentContact.address
+                        text: currentContact.publicKey
                         width: 85
                         elide: Text.ElideMiddle
                         color: Theme.palette.baseColor1

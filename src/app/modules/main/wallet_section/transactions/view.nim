@@ -1,4 +1,4 @@
-import NimQml, tables, stint, json, strformat, sequtils, strutils
+import NimQml, tables, stint, json, strformat, sequtils, strutils, sugar
 
 import ./item
 import ./model
@@ -125,15 +125,22 @@ QtObject:
   proc suggestedFees*(self: View, chainId: int): string {.slot.} =
     return self.delegate.suggestedFees(chainId)
 
-  proc suggestedRoutes*(self: View, account: string, amount: string, token: string): string {.slot.} =
+  proc suggestedRoutes*(self: View, account: string, amount: string, token: string, disabledChainIDs: string): string {.slot.} =
     var parsedAmount = 0.0
+    var seqDisabledChainIds = seq[uint64] : @[]
+
+    try:
+      for chainID in disabledChainIDs.split(','):
+        seqDisabledChainIds.add(parseUInt(chainID))
+    except:
+      discard
 
     try:
       parsedAmount = parsefloat(amount)
     except:
       discard
 
-    return self.delegate.suggestedRoutes(account, parsedAmount, token)
+    return self.delegate.suggestedRoutes(account, parsedAmount, token, seqDisabledChainIds)
   
   proc getChainIdForChat*(self: View): int {.slot.} =
     return self.delegate.getChainIdForChat()
