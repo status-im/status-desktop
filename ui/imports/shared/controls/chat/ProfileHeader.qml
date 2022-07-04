@@ -206,8 +206,8 @@ Item {
             id: emojiHash
             Layout.alignment: Qt.AlignHCenter
             visible: root.emojiHashVisible
+            compact: root.compact
             publicKey: root.pubkey
-            size: root.compact ? 16 : 20
         }
     }
 }
