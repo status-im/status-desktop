@@ -229,8 +229,15 @@ StatusAppTwoPanelLayout {
     ModuleWarning {
         id: secureYourSeedPhrase
         width: parent.width
-        visible: profileContainer.currentIndex === Constants.settingsSubsection.profile &&
-                 !profileView.store.profileStore.userDeclinedBackupBanner
+        visible: {
+          if (profileContainer.currentIndex !== Constants.settingsSubsection.profile) {
+            return false
+          }
+          if (profileView.store.profileStore.userDeclinedBackupBanner) {
+            return false
+          }
+          return !profileView.store.profileStore.privacyStore.mnemonicBackedUp
+        }
         color: Style.current.red
         btnWidth: 100
         text: qsTr("Secure your seed phrase")
