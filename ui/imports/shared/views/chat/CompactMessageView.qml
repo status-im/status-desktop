@@ -464,7 +464,7 @@ Item {
                                 index += 8 // "<a href="
                                 continue
                             }
-                            let addrEndIndex = message.indexOf('"', addrIndex)
+                            let addrEndIndex = message.indexOf("\"", addrIndex)
                             if (addrEndIndex < 0) {
                                 index += 8 // "<a href="
                                 continue

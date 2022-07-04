@@ -188,7 +188,6 @@ QtObject:
       self.channelGroups[channelGroupId].chats.add(chat)
     else:
       self.channelGroups[channelGroupId].chats[index] = chat
-    
 
   proc parseChatResponse*(self: Service, response: RpcResponse[JsonNode]): (seq[ChatDto], seq[MessageDto]) =
     var chats: seq[ChatDto] = @[]
@@ -204,24 +203,14 @@ QtObject:
         chats.add(chat)
     result = (chats, messages)
 
-  proc processMessageUpdateAfterSend*(self: Service, response: RpcResponse[JsonNode]): (seq[ChatDto], seq[MessageDto])  =
+  proc processMessageUpdateAfterSend*(self: Service, response: RpcResponse[JsonNode]): (seq[ChatDto], seq[MessageDto]) =
     result = self.parseChatResponse(response)
     var (chats, messages) = result
     if chats.len == 0 or messages.len == 0:
       error "no chats or messages in the parsed response"
       return
 
-    # The reason why we are sending all the messages with responseTo filled in is because
-    # the reposnse from status_go doesnt necessarily contain the last reply on the 0th position.
-    var isaReply = false
-    var msg = messages[0]
-    for m in messages:
-      if(m.responseTo.len > 0):
-        isaReply = true
-        msg = m
-        self.events.emit(SIGNAL_SENDING_SUCCESS, MessageSendingSuccess(message: msg, chat: chats[0]))
-
-    if not isaReply:
+    for msg in messages:
       self.events.emit(SIGNAL_SENDING_SUCCESS, MessageSendingSuccess(message: msg, chat: chats[0]))
 
   proc processUpdateForTransaction*(self: Service, messageId: string, response: RpcResponse[JsonNode]) =
@@ -243,7 +232,7 @@ QtObject:
       if (showWarning):
         warn "trying to get chat data for an unexisting chat id", chatId
       return
-    
+
     return self.chats[chatId]
 
   proc getOneToOneChatNameAndImage*(self: Service, chatId: string):
