@@ -14,6 +14,8 @@ QtObject {
     property string profileLargeImage: userProfile.largeImage
     property string icon: userProfile.icon
     property bool userDeclinedBackupBanner: localAccountSensitiveSettings.userDeclinedBackupBanner
+    property var privacyStore: profileSectionModule.privacyModule
+
     onUserDeclinedBackupBannerChanged: {
         if (userDeclinedBackupBanner !== localAccountSensitiveSettings.userDeclinedBackupBanner) {
             localAccountSensitiveSettings.userDeclinedBackupBanner = userDeclinedBackupBanner
