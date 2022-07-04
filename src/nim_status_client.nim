@@ -95,6 +95,7 @@ proc mainProc() =
   installSelfSignedCertificate(imageCert)
 
   let app = newQGuiApplication()
+  os.putEnv("QT_QUICK_CONTROLS_HOVER_ENABLED", "1")
   let appController = newAppController(statusFoundation)
   let singleInstance = newSingleInstance($toMD5(DATADIR), openUri)
   let networkAccessFactory = newQNetworkAccessManagerFactory(TMPDIR & "netcache")
