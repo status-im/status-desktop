@@ -1,0 +1,86 @@
+library 'status-jenkins-lib@v1.3.4'
+
+pipeline {
+  agent {
+    dockerfile {
+      label 'linux'
+      dir 'ci/cpp'
+      filename 'Dockerfile-linux'
+      /* allows jenkins use cat and mounts '/dev/fuse' for linuxdeployqt */
+      args '--entrypoint="" --cap-add SYS_ADMIN --security-opt apparmor:unconfined --device /dev/fuse'
+    }
+  }
+
+  parameters {
+    booleanParam(
+      name: 'RELEASE',
+      description: 'Decides whether binaries are built with debug symbols.',
+      defaultValue: params.RELEASE ?: false
+    )
+  }
+
+  options {
+    timestamps()
+    /* Prevent Jenkins jobs from running forever */
+    timeout(time: 20, unit: 'MINUTES')
+    /* manage how many builds we keep */
+    buildDiscarder(logRotator(
+      numToKeepStr: '10',
+      daysToKeepStr: '30',
+      artifactNumToKeepStr: '3',
+    ))
+  }
+
+  environment {
+    TARGET = 'linux-cpp'
+    /* Control output the filename */
+    STATUS_CLIENT_APPIMAGE = "pkg/${utils.pkgFilename(ext: 'AppImage')}"
+    CONAN_USER_HOME = "${env.WORKSPACE}/build/conan/conan_home"
+    CONAN_NON_INTERACTIVE = 1
+  }
+
+  // TODO: Move all stages to the Makefile as targets "*-linux-using-docker"
+  stages {
+    stage('CMake Build') {
+      steps {
+        sh "conan install ${env.WORKSPACE}/ --profile=${env.WORKSPACE}/vendor/conan-configs/linux.ini -s build_type=Release --build=missing -if=${env.WORKSPACE}/build/conan  -of=${env.WORKSPACE}/build"
+        // TODO: This fails compiling status-go with Jenkins user but not when run with docker's user. Fix go installation to work for all users or build docker with jenkin's
+        sh "conan build ${env.WORKSPACE} --build-folder=${env.WORKSPACE}/build/conan"
+      }
+    }
+
+    stage('Package') {
+      steps {
+        sh "linuxdeploy --plugin qt --executable=${env.WORKSPACE}/build/status-desktop --appdir ${env.WORKSPACE}/build/AppDir --desktop-file=${env.WORKSPACE}/status.desktop --icon-file=${env.WORKSPACE}/status.svg --custom-apprun=${env.WORKSPACE}/AppRun-cpp"
+        sh "cmake --install ${env.WORKSPACE}/build --prefix=${env.WORKSPACE}/build/install"
+        sh "cp ${env.WORKSPACE}/build/install/lib/* ${env.WORKSPACE}/build/AppDir/usr/lib/"
+        // TODO enable after deploying appimage plugin in the corresponding docker
+        //sh "linuxdeploy --appdir ${env.WORKSPACE}/build/AppDir --output=appimage"
+        // sh "mkdir pkg && cp \"\$(find ${env.WORKSPACE}/build/AppDir -maxdepth 2 -type f -iname \"*.AppImage\")\" ${env.STATUS_CLIENT_APPIMAGE}"
+      }
+    }
+
+    // TODO: enable after generating the AppImage
+    // stage('Parallel Upload') {
+    //   parallel {
+    //     stage('Upload') {
+    //       steps { script {
+    //         env.PKG_URL = s3.uploadArtifact(env.STATUS_CLIENT_APPIMAGE)
+    //         jenkins.setBuildDesc(AppImage: env.PKG_URL)
+    //       } }
+    //     }
+    //     stage('Archive') {
+    //       steps { script {
+    //         archiveArtifacts("${env.STATUS_CLIENT_APPIMAGE}*")
+    //       } }
+    //     }
+    //   }
+    // }
+  }
+
+  post {
+    success { script { github.notifyPR(true) } }
+    failure { script { github.notifyPR(false) } }
+    always { cleanWs() }
+  }
+}

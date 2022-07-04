@@ -5,7 +5,7 @@ set(CMAKE_AUTORCC On)
 find_package(Qt6 ${STATUS_QT_VERSION} COMPONENTS Quick REQUIRED)
 qt6_standard_project_setup()
 
-qt6_add_executable(${PROJECT_NAME} "")
+qt6_add_executable(${PROJECT_NAME})
 
 # TODO: Fix temporarly workaround until we make qt6_target_qml_sources work
 # Adds qml files as /Status/Application/qml/.../<file name>
@@ -45,7 +45,6 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE BUILD_PROJECT_APPLICATION_NAM
 target_compile_definitions(${PROJECT_NAME} PRIVATE BUILD_BINARY_DIR=${CMAKE_BINARY_DIR})
 target_compile_definitions(${PROJECT_NAME} PRIVATE BUILD_SOURCE_DIR=${CMAKE_SOURCE_DIR})
 
-add_subdirectory(qml)
 add_subdirectory(qml/Status/Application/Navigation)
 add_subdirectory(src)
 add_subdirectory(res)
@@ -63,14 +62,15 @@ target_link_libraries(${PROJECT_NAME}
     PRIVATE
         Qt6::Quick
 
-        StatusQ_Application_Navigation
+        Status::Application::Navigation
 
         # TODO: Use Status:: namespace
-        #Core
-        Helpers
-        Onboarding
-        Assets
-        StatusQ
+        Status::ApplicationCore
+        Status::Helpers
+        Status::Onboarding
+        Status::Assets
+        Status::StatusQ
+        Status::StatusGoQt
 )
 
 # QtCreator needs this

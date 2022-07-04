@@ -2,7 +2,7 @@ FROM stateoftheartio/qt6:6.3-gcc-aqt
 
 RUN export DEBIAN_FRONTEND=noninteractive \
  && sudo apt update -yq \
- && sudo apt install -yq libgl-dev libvulkan-dev libxcb*-dev libxkbcommon-x11-dev python3-pip gcc-10
+ && sudo apt install -yq libgl-dev libvulkan-dev libxcb*-dev libxkbcommon-x11-dev python3-pip gcc-10 golang-go
 
 RUN sudo pip install conan
 

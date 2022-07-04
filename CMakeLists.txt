@@ -31,5 +31,6 @@ add_subdirectory(libs)
 add_subdirectory(app)
 add_subdirectory(test)
 # TODO: temporary not to duplicate resources until we switch to c++ app then it can be refactored
+add_subdirectory(resources)
 add_subdirectory(ui/imports/assets)
 add_subdirectory(ui/fonts)

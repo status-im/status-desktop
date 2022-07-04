@@ -11,7 +11,8 @@ set(QT_NO_CREATE_VERSIONLESS_FUNCTIONS true)
 find_package(Qt6 ${STATUS_QT_VERSION} COMPONENTS Quick Qml REQUIRED)
 qt6_standard_project_setup()
 
-add_library(${PROJECT_NAME} SHARED "")
+add_library(Helpers SHARED)
+add_library(Status::Helpers ALIAS Helpers)
 
 # Setup configuration type (Debug/Release)
 # Inspired by https://programmingrecluse.wordpress.com/2020/02/04/detect-debug-build-with-cmake/
@@ -36,21 +37,17 @@ configure_file("${CMAKE_CURRENT_SOURCE_DIR}/template/BuildConfiguration.h.in"
                "${BUILD_GENERATED_DIRECTORY}/Helpers/BuildConfiguration.h"
                @ONLY)
 
-target_include_directories(${PROJECT_NAME}
+target_include_directories(Helpers
     PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
         ${BUILD_GENERATED_DIRECTORY}
+
     PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/Helpers
         ${BUILD_GENERATED_DIRECTORY}/Helpers
 )
 
-target_sources(${PROJECT_NAME}
-    PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/template/BuildConfiguration.h.in
-)
-
-add_subdirectory(src)
-
-target_link_libraries(${PROJECT_NAME}
+target_link_libraries(Helpers
     PRIVATE
         Qt6::Quick
         Qt6::Qml
@@ -58,6 +55,14 @@ target_link_libraries(${PROJECT_NAME}
 
 install(
     TARGETS
-        ${PROJECT_NAME}
+        Helpers
     RUNTIME
+)
+
+target_sources(Helpers
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/Helpers/helpers.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/Helpers/logs.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/Helpers/logs.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/Helpers/Singleton.h
 )
