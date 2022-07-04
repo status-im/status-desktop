@@ -10,12 +10,27 @@ import shared.panels.chat 1.0
 import shared.views.chat 1.0
 import shared.controls.chat 1.0
 
-Column {
+Loader {
     id: root
 
     width: parent.width
-    anchors.right: !isCurrentUser ? undefined : parent.right
     z: (typeof chatLogView === "undefined") ? 1 : (chatLogView.count - index)
+
+    sourceComponent: {
+        switch(contentType) {
+            case Constants.messageContentType.chatIdentifier:
+                return channelIdentifierComponent
+            case Constants.messageContentType.fetchMoreMessagesButton:
+                return fetchMoreMessagesButtonComponent
+            case Constants.messageContentType.systemMessagePrivateGroupType:
+                return privateGroupHeaderComponent
+            case Constants.messageContentType.gapType:
+                return gapComponent
+            default:
+                return compactMessageComponent
+
+        }
+    }
 
     property var store
     property var messageStore
@@ -212,7 +227,7 @@ Column {
 //    }
 
     function startMessageFoundAnimation() {
-        messageLoader.item.startMessageFoundAnimation();
+        root.item.startMessageFoundAnimation();
     }
     /////////////////////////////////////////////
 
@@ -236,27 +251,6 @@ Column {
 //            }
 //        }
 //    }
-
-    Loader {
-        id: messageLoader
-        active: root.visible
-        width: parent.width
-        sourceComponent: {
-            switch(contentType) {
-                case Constants.messageContentType.chatIdentifier:
-                    return channelIdentifierComponent
-                case Constants.messageContentType.fetchMoreMessagesButton:
-                    return fetchMoreMessagesButtonComponent
-                case Constants.messageContentType.systemMessagePrivateGroupType:
-                    return privateGroupHeaderComponent
-                case Constants.messageContentType.gapType:
-                    return gapComponent
-                default:
-                    return compactMessageComponent
-
-            }
-        }
-    }
 
     Component {
         id: gapComponent

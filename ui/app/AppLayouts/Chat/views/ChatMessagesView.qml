@@ -21,7 +21,6 @@ import "../controls"
 
 Item {
     id: root
-    //anchors.fill: parent
 
     property var store
     property var messageStore
@@ -44,19 +43,6 @@ Item {
     property int countOnStartUp: 0
     signal openStickerPackPopup(string stickerPackId)
     signal showReplyArea(string messageId, string author)
-
-    property bool allMessagesLoaded: false
-
-    onIsActiveChannelChanged: {
-        if (!isActiveChannel) {
-            return
-        }
-        // We wait to load all messages, because switching back to chats makes
-        // the scroll go crazy so it loads way too many messages making it slow
-        timer.setTimeout(function() {
-            root.allMessagesLoaded = true
-        }, 5);
-    }
 
     Connections {
         target: root.messageStore.messageModule
@@ -103,21 +89,6 @@ Item {
                     width: 18
                     height: 18
                 }
-            }
-        }
-    }
-
-    Loader {
-        active: !root.allMessagesLoaded
-        anchors.centerIn: parent
-        sourceComponent: Item {
-            StatusBaseText {
-                id: loadingText
-                text: qsTr("Loading...")
-            }
-            StatusLoadingIndicator {
-                anchors.left: loadingText.right
-                anchors.leftMargin: 8
             }
         }
     }
@@ -272,10 +243,6 @@ Item {
 
         delegate: MessageView {
             id: msgDelegate
-
-            // We wait to load all messages, because switching back to chats makes
-            // the scroll go crazy so it loads way too many messages making it slow
-            visible:  root.allMessagesLoaded
 
             store: root.store
             messageStore: root.messageStore
