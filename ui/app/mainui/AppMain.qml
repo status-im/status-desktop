@@ -361,7 +361,8 @@ Item {
 
                 UserStatusContextMenu {
                     id: userStatusContextMenu
-                    y: profileButton.y - userStatusContextMenu.height
+                    y: profileButton.y - userStatusContextMenu.height + profileButton.height
+                    x: profileButton.x + profileButton.width + 5
                     store: appMain.rootStore
                 }
             }
