@@ -684,7 +684,11 @@ QtObject {
             return ""
         }
         let compressedPk = getCompressedPk(publicKey)
-        return compressedPk.substr(0, 6) + "..." + compressedPk.substr(compressedPk.length - 3)
+        return elideText(compressedPk, 6, 3)
+    }
+
+    function elideText(text, leftCharsCount, rightCharsCount = leftCharsCount) {
+        return text.substr(0, leftCharsCount) + "..." + text.substr(text.length - rightCharsCount)
     }
 
     function getTimeDifference(d1, d2) {
