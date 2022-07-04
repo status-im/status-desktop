@@ -1,5 +1,5 @@
 import QtQuick 2.12
-import QtQuick.Controls 2.3
+import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.3
 import QtQml.Models 2.3
 
@@ -8,17 +8,14 @@ import shared.controls.chat 1.0
 import shared.panels 1.0
 
 import StatusQ.Components 0.1
+import StatusQ.Popups 0.1
 
-// TODO: replace with StatusPopupMenu
-PopupMenu {
+StatusPopupMenu {
     id: root
 
     property var store
 
-    width: 200
-    closePolicy: Popup.CloseOnReleaseOutsideParent | Popup.CloseOnEscape
-
-    overrideTextColor: Style.current.textColor
+    width: 210
 
     ProfileHeader {
         width: parent.width
@@ -28,74 +25,55 @@ PopupMenu {
         icon: root.store.userProfileInst.icon
     }
 
-    Item {
-        height: root.topPadding
+    StatusMenuSeparator {
     }
 
-    Separator {
-    }
-
-    Action {
+    StatusMenuItem {
         text: qsTr("View My Profile")
-
-        icon.source: Style.svg("profile")
-        icon.width: 16
-        icon.height: 16
-
+        icon.name: "profile"
         onTriggered: {
             Global.openProfilePopup(root.store.userProfileInst.pubKey)
             root.close()
         }
     }
 
-    Separator {
+    StatusMenuSeparator {
     }
 
-    Action {
+    StatusMenuItem {
+        id: alwaysOnlineAction
         text: qsTr("Always online")
+        image.source: Style.svg("statuses/online")
+        image.width: 12
+        image.height: 12
+        fontSettings.bold: root.store.userProfileInst.currentUserStatus === Constants.currentUserStatus.alwaysOnline
         onTriggered: {
-            //TODO move this to the store as soon as #4274 is merged
-            if (userProfile.currentUserStatus !== Constants.currentUserStatus.alwaysOnline) {
-                mainModule.setCurrentUserStatus(Constants.currentUserStatus.alwaysOnline);
-            }
+            store.setCurrentUserStatus(Constants.currentUserStatus.alwaysOnline)
             root.close();
         }
-
-        icon.color: Style.current.green
-        icon.source: Style.svg("online")
-        icon.width: 16
-        icon.height: 16
     }
 
-    Action {
+    StatusMenuItem {
+        id: inactiveAction
         text: qsTr("Inactive")
+        image.source: Style.svg("statuses/inactive")
+        image.width: 12
+        image.height: 12
+        fontSettings.bold: root.store.userProfileInst.currentUserStatus === Constants.currentUserStatus.inactive
         onTriggered: {
-            //TODO move this to the store as soon as #4274 is merged
-            if (userProfile.currentUserStatus !== Constants.currentUserStatus.inactive) {
-                mainModule.setCurrentUserStatus(Constants.currentUserStatus.inactive);
-            }
+            store.setCurrentUserStatus(Constants.currentUserStatus.inactive)
             root.close();
         }
-
-        icon.color: Style.current.midGrey
-        icon.source: Style.svg("offline")
-        icon.width: 16
-        icon.height: 16
     }
 
-    Action {
+    StatusMenuItem {
+        id: automaticAction
         text: qsTr("Set status automatically")
+        image.source: Style.svg("statuses/automatic")
+        fontSettings.bold: root.store.userProfileInst.currentUserStatus === Constants.currentUserStatus.automatic
         onTriggered: {
-            //TODO move this to the store as soon as #4274 is merged
-            if (userProfile.currentUserStatus !== Constants.currentUserStatus.automatic) {
-                mainModule.setCurrentUserStatus(Constants.currentUserStatus.automatic);
-            }
+            store.setCurrentUserStatus(Constants.currentUserStatus.automatic)
             root.close();
         }
-
-        icon.color: Style.current.green
-        icon.source: Style.svg("online")
-        icon.width: 16
-        icon.height: 16
     }
 }
