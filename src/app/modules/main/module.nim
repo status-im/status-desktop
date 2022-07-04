@@ -3,7 +3,7 @@ import NimQml, tables, json, sugar, sequtils, strformat, marshal, times
 import io_interface, view, controller, chat_search_item, chat_search_model
 import ephemeral_notification_item, ephemeral_notification_model
 import ./communities/models/[pending_request_item, pending_request_model]
-import ../shared_models/[member_item, member_model, section_item, section_model, active_section]
+import ../shared_models/[user_item, member_item, member_model, section_item, section_model, active_section]
 import ../../global/app_sections_config as conf
 import ../../global/app_signals
 import ../../global/global_singleton
@@ -227,6 +227,8 @@ proc createChannelGroupItem[T](self: Module[T], c: ChannelGroupDto): SectionItem
     c.muted,
     c.members.map(proc(member: ChatMember): MemberItem =
       let contactDetails = self.controller.getContactDetails(member.id)
+      let statusUpdateDto = self.controller.getStatusForContact(member.id)
+      let status = statusUpdateDto.statusType.int
       result = initMemberItem(
         pubKey = member.id,
         displayName = contactDetails.displayName,
@@ -730,6 +732,11 @@ method resolvedENS*[T](self: Module[T], publicKey: string, address: string, uuid
       self.statusUrlGroupMembersCount = 0
   else:
     self.view.emitResolvedENSSignal(publicKey, address, uuid)
+
+method contactsStatusUpdated*[T](self: Module[T], statusUpdates: seq[StatusUpdateDto]) =
+  for s in statusUpdates:
+    let status = OnlineStatus(s.statusType.int)
+    self.view.activeSection().setOnlineStatusForMember(s.publicKey, status)
 
 method contactUpdated*[T](self: Module[T], publicKey: string) =
   let contactDetails = self.controller.getContactDetails(publicKey)
