@@ -30,7 +30,7 @@ StatusModal {
 
             Layout.fillWidth: true
 
-            readonly property string elidedPkey: root.privateKey.substring(0, 15) + "..." + root.privateKey.substring(root.privateKey.length - 16)
+            readonly property string elidedPkey: Utils.elideText(root.privateKey, 16)
 
             leftPadding: 0
             rightPadding: 0
