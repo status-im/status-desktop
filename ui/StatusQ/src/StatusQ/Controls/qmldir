@@ -45,3 +45,5 @@ StatusSeedPhraseInput 0.1 StatusSeedPhraseInput.qml
 StatusImageCrop 0.1 StatusImageCrop.qml
 StatusFloatingButtonsSelector 0.1 StatusFloatingButtonsSelector.qml
 StatusActivityCenterButton 0.1 StatusActivityCenterButton.qml
+StatusDropdown 0.1 StatusDropdown.qml
+StatusIconTextButton 0.1 StatusIconTextButton.qml

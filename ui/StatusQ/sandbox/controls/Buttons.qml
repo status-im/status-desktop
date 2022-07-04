@@ -343,4 +343,26 @@ Column {
         text: "Button with Emoji"
         icon.emoji: "🖼️️"
     }
+
+    RowLayout {
+        spacing: 20
+
+        StatusIconTextButton {
+            Layout.alignment: Qt.AlignVCenter
+            spacing: 0
+            statusIcon: "next"
+            icon.width: 24
+            icon.height: 24
+            iconRotation: 180
+            text: "Previous page"
+            font.pixelSize: 15
+            onClicked: testText.visible = !testText.visible
+        }
+        StatusBaseText {
+            id: testText
+            Layout.alignment: Qt.AlignVCenter
+            text: "Click and hide!"
+            font.pixelSize: 15
+        }
+    }
 }

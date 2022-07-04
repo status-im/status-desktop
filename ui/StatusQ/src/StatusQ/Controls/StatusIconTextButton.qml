@@ -1,0 +1,83 @@
+import QtQuick 2.12
+import QtQuick.Controls 2.12
+import QtQuick.Layouts 1.14
+
+import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
+
+/*!
+   \qmltype StatusIconTextButton
+   \inherits Item
+   \inqmlmodule StatusQ.Controls
+   \since StatusQ.Controls 0.1
+   \brief It presents an icon + plain text button. Inherits \l{https://doc.qt.io/qt-5/qml-qtquick-controls2-abstractbutton.html}{AbstractButton}.
+
+   The \c StatusIconTextButton is a clickable icon + text control.
+
+   NOTE: It only contemplates `display` property as `AbstractButton.TextBesideIcon`.
+
+   Example of how the component looks like:
+   \image status_icon_text_button.png
+   Example of how to use it:
+   \qml
+        StatusIconTextButton {
+            spacing: 0
+            statusIcon: "next"
+            iconRotation: 180
+            icon.width: 12
+            icon.height: 12
+            text: qsTr("Back")
+            onClicked: console.log("Clicked!")
+        }
+   \endqml
+   For a list of components available see StatusQ.
+*/
+AbstractButton {
+    id: root
+
+    /*!
+       \qmlproperty string StatusIconTextButton::statusIcon
+       This property holds the status icon name.
+    */
+    property string statusIcon
+    /*!
+       \qmlproperty int StatusIconTextButton::iconRotation
+       This property holds the status icon rotation.
+    */
+    property int iconRotation
+    /*!
+       \qmlproperty color StatusIconTextButton::textColor
+       This property holds the text color.
+    */
+    property color textColor: Theme.palette.primaryColor1
+
+    icon.color: Theme.palette.primaryColor1
+    icon.height: 24
+    icon.width: 24
+    font.pixelSize: 13
+    contentItem: RowLayout {
+         spacing: root.spacing
+         StatusIcon {
+             Layout.alignment: Qt.AlignVCenter
+             icon: root.statusIcon
+             color: root.icon.color
+             width: root.icon.width
+             height: root.icon.height
+             rotation: root.iconRotation
+         }
+         StatusBaseText {
+             Layout.alignment: Qt.AlignVCenter
+             text: root.text
+             color: root.textColor
+             font.pixelSize: root.font.pixelSize
+         }
+     }
+
+    // TODO: To remove when switch to Qt 5.15
+    MouseArea {
+      anchors.fill: parent
+      cursorShape: Qt.PointingHandCursor
+      acceptedButtons: Qt.NoButton
+      hoverEnabled: true
+    }
+}
