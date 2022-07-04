@@ -9,9 +9,10 @@ import shared.panels 1.0
 Item {
     id: root
 
+    property bool compact: false
     property string publicKey
 
-    property real size: 16
+    readonly property real size: compact ? 10 : 15
 
     implicitHeight: positioner.implicitHeight
     implicitWidth: positioner.implicitWidth
