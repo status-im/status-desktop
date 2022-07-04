@@ -21,8 +21,8 @@ Item {
         id: positioner
 
         rows: 2
-        columnSpacing: Math.ceil(root.size / 16)
-        rowSpacing: columnSpacing + 6
+        columnSpacing: 0
+        rowSpacing: root.compact ? 4 : 6
 
         Repeater {
             model: Utils.getEmojiHashAsJson(root.publicKey)
