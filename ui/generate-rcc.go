@@ -52,10 +52,6 @@ func main() {
 			if err != nil {
 				return err
 			}
-
-			// clean relative path
-			*sourceDirName, _ = filepath.Abs(*sourceDirName)
-
 			if !info.IsDir() {
 				ext := filepath.Ext(path)
 				base := filepath.Base(path)

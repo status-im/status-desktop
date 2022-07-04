@@ -14,9 +14,10 @@ find_package(Qt6 ${STATUS_QT_VERSION} COMPONENTS Quick Qml REQUIRED)
 qt6_standard_project_setup()
 
 qt6_add_qml_module(${PROJECT_NAME}
-    URI Status.TestHelpers
+    URI Status.${PROJECT_NAME}
     VERSION 1.0
 )
+add_library(Status::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
 target_include_directories(${PROJECT_NAME}
     PUBLIC
@@ -43,5 +44,3 @@ target_link_libraries(${PROJECT_NAME}
     PRIVATE
         GTest::gtest_main
 )
-
-add_library(Status::TestHelpers ALIAS TestHelpers)

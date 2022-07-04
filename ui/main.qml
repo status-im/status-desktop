@@ -174,10 +174,7 @@ StatusWindow {
     }
 
 	Connections {
-        // This handling should be part of backend code, but because of compatibility with the current Nim App
-        // since c++ and Nim app are sharing the same/identical qml code we are still not allowed to remove this
-        // completely, and that's why we have this `target` set to null in case of c++ app.
-        target: !Constants.isCppApp? singleInstance : null
+        target: singleInstance
 
         onSecondInstanceDetected: {
             console.log("User attempted to run the second instance of the application")

@@ -22,6 +22,8 @@ namespace Status::Testing {
 class MonitorQtOutput : public QQuickItem
 {
     Q_OBJECT
+
+    QML_ELEMENT
 public:
     MonitorQtOutput();
     ~MonitorQtOutput();

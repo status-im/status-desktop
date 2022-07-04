@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.5)
 
 project(TestStatusQ LANGUAGES CXX)
 
-enable_testing()
+enable_testing(true)
 
 set(QT_NO_CREATE_VERSIONLESS_FUNCTIONS true)
 
@@ -10,7 +10,7 @@ find_package(Qt6 ${STATUS_QT_VERSION} COMPONENTS Quick Qml QuickTest REQUIRED)
 qt6_standard_project_setup()
 
 qt6_add_qml_module(${PROJECT_NAME}
-    URI StatusQ.TestHelpers
+    URI Status.TestHelpers
     VERSION 1.0
     # TODO: temporary until we make qt_target_qml_sources work
     QML_FILES
@@ -29,7 +29,6 @@ add_test(NAME ${PROJECT_NAME} WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} COMM
 add_custom_target("Run_${PROJECT_NAME}" COMMAND ${CMAKE_CTEST_COMMAND} --test-dir "${CMAKE_CURRENT_BINARY_DIR}")
 add_dependencies("Run_${PROJECT_NAME}" ${PROJECT_NAME})
 
-# TODO: move this to a test helpers library
 target_include_directories(${PROJECT_NAME}
     PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}

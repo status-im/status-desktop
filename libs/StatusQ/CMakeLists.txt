@@ -20,6 +20,7 @@ qt6_add_qml_module(${PROJECT_NAME}
     OUTPUT_DIRECTORY
         ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Status
 )
+add_library(Status::StatusQ ALIAS StatusQ)
 
 add_subdirectory(qml/Status/Containers)
 add_subdirectory(qml/Status/Controls)

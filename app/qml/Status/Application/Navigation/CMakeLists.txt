@@ -1,5 +1,5 @@
 # Controls specialized on user workflows
-project(StatusQ_Application_Navigation)
+project(Status_Application_Navigation)
 
 set(QT_NO_CREATE_VERSIONLESS_FUNCTIONS true)
 
@@ -23,3 +23,4 @@ qt6_add_qml_module(${PROJECT_NAME}
     OUTPUT_DIRECTORY
         ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Status/Application/Navigation
 )
+add_library(Status::Application::Navigation ALIAS Status_Application_Navigation)

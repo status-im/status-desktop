@@ -1,4 +1,4 @@
-#include <Helpers/BuildConfiguration.h>
+#include "Helpers/BuildConfiguration.h"
 
 namespace Status::Helpers {
 

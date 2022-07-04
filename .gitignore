@@ -90,9 +90,3 @@ build/
 *.exe
 *.out
 *.app
-
-# Cpp App
-*build-src-cpp-structure*
-src-cpp-structure/projects/App/translations.qrc
-src-cpp-structure/projects/App/i18n/*
-src-cpp-structure/projects/App/translations/*
