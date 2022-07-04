@@ -199,7 +199,7 @@ proc createChannelGroupItem[T](self: Module[T], c: ChannelGroupDto): SectionItem
   result = initItem(
     c.id,
     if isCommunity: SectionType.Community else: SectionType.Chat,
-    c.name,
+    if isCommunity: c.name else: "Chat",
     c.admin,
     c.description,
     c.introMessage,
