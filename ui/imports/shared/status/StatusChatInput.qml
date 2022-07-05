@@ -35,7 +35,7 @@ Rectangle {
     property var emojiPopup: null
     // Use this to only enable the Connections only when this Input opens the Emoji popup
     property bool emojiPopupOpened: false
-    property bool closeGifPopupAfterSelection: false
+    property bool closeGifPopupAfterSelection: true
 
     property bool emojiEvent: false;
     property bool paste: false;
