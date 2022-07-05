@@ -54,16 +54,13 @@ SOURCES = *.qml \
 TRANSLATIONS += \
     i18n/qml_en.ts \
 
-RESOURCES += \
-    imports/Constants.qml \
-    imports/Style.qml \
-    main.qml
-
 OTHER_FILES += $$files("$$PWD/*.qml", true)
+OTHER_FILES += $$files("$$PWD/*.js", true)
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH = $$PWD/imports \
-                  $$PWD/StatusQ/src
+                  $$PWD/StatusQ/src \
+                  $$PWD/app
 
 # Additional import path used to resolve QML modules just for Qt Quick Designer
 QML_DESIGNER_IMPORT_PATH = $$PWD/imports
