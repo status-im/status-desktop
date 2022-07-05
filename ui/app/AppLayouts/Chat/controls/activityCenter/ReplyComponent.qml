@@ -24,7 +24,7 @@ Item {
     }
 
     StyledTextEdit {
-        text: Utils.getReplyMessageStyle(StatusQUtils.Emoji.parse(Utils.linkifyAndXSS(repliedMessageContent), StatusQUtils.Emoji.size.small), false)
+        text: Utils.getReplyMessageStyle(StatusQUtils.Emoji.parse(StatusQUtils.Utils.linkifyAndXSS(repliedMessageContent), StatusQUtils.Emoji.size.small), false)
         textFormat: Text.RichText
         height: 18
         width: implicitWidth > 300 ? 300 : implicitWidth

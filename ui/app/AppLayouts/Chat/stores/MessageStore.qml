@@ -135,49 +135,6 @@ QtObject {
         return messageModule.toggleReaction(messageId, emojiId)
     }
 
-    function lastTwoItems(nodes) {
-        return nodes.join(qsTr(" and "));
-    }
-
-    function showReactionAuthors(jsonArrayOfUsersReactedWithThisEmoji, emojiId) {
-        let listOfUsers = JSON.parse(jsonArrayOfUsersReactedWithThisEmoji)
-        if (listOfUsers.error) {
-            console.error("error parsing users who reacted to a message, error: ", obj.error)
-            return
-        }
-
-        let tooltip
-        if (listOfUsers.length === 1) {
-            tooltip = listOfUsers[0]
-        } else if (listOfUsers.length === 2) {
-            tooltip = lastTwoItems(listOfUsers);
-        } else {
-            var leftNode = [];
-            var rightNode = [];
-            const maxReactions = 12
-            let maximum = Math.min(maxReactions, listOfUsers.length)
-
-            if (listOfUsers.length > maxReactions) {
-                leftNode = listOfUsers.slice(0, maxReactions);
-                rightNode = listOfUsers.slice(maxReactions, listOfUsers.length);
-                return (rightNode.length === 1) ?
-                            lastTwoItems([leftNode.join(", "), rightNode[0]]) :
-                            lastTwoItems([leftNode.join(", "), qsTr("%1 more").arg(rightNode.length)]);
-            }
-
-            leftNode = listOfUsers.slice(0, maximum - 1);
-            rightNode = listOfUsers.slice(maximum - 1, listOfUsers.length);
-            tooltip = lastTwoItems([leftNode.join(", "), rightNode[0]])
-        }
-
-        tooltip += qsTr(" reacted with ");
-        let emojiHtml = StatusQUtils.Emoji.getEmojiFromId(emojiId);
-        if (emojiHtml) {
-            tooltip += emojiHtml;
-        }
-        return tooltip
-    }
-
     function deleteMessage(messageId) {
         if(!messageModule)
             return

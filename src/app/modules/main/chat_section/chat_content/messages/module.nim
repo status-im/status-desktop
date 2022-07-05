@@ -91,10 +91,11 @@ proc createFetchMoreMessagesItem(self: Module): Item =
     messageType = -1,
     sticker = "",
     stickerPack = -1,
-    @[],
-    newTransactionParametersItem("","","","","","",-1,""),
-    @[],
-    TrustStatus.Unknown
+    links = @[],
+    transactionParameters = newTransactionParametersItem("","","","","","",-1,""),
+    mentionedUsersPks = @[],
+    senderTrustStatus = TrustStatus.Unknown,
+    senderEnsVerified = false
   )
 
 proc createChatIdentifierItem(self: Module): Item =
@@ -128,10 +129,11 @@ proc createChatIdentifierItem(self: Module): Item =
     messageType = -1,
     sticker = "",
     stickerPack = -1,
-    @[],
-    newTransactionParametersItem("","","","","","",-1,""),
-    @[],
-    TrustStatus.Unknown
+    links = @[],
+    transactionParameters = newTransactionParametersItem("","","","","","",-1,""),
+    mentionedUsersPks = @[],
+    senderTrustStatus = TrustStatus.Unknown,
+    senderEnsVerified = false
   )
 
 proc checkIfMessageLoadedAndScrollToItIfItIs(self: Module): bool =
@@ -177,7 +179,7 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
         m.communityId,
         m.responseTo,
         m.`from`,
-        sender.displayName,
+        sender.details.displayName,
         sender.details.localNickname,
         sender.icon,
         isCurrentUser,
@@ -203,6 +205,7 @@ method newMessagesLoaded*(self: Module, messages: seq[MessageDto], reactions: se
           m.transactionParameters.signature),
         m.mentionedUsersPks(),
         sender.details.trustStatus,
+        sender.details.ensVerified
         )
 
       for r in reactions:
@@ -265,7 +268,7 @@ method messageAdded*(self: Module, message: MessageDto) =
     message.communityId,
     message.responseTo,
     message.`from`,
-    sender.displayName,
+    sender.details.displayName,
     sender.details.localNickname,
     sender.icon,
     isCurrentUser,
@@ -291,6 +294,7 @@ method messageAdded*(self: Module, message: MessageDto) =
                     message.transactionParameters.signature),
     message.mentionedUsersPks,
     sender.details.trustStatus,
+    sender.details.ensVerified
   )
 
   self.view.model().insertItemBasedOnTimestamp(item)
@@ -399,7 +403,7 @@ method updateContactDetails*(self: Module, contactId: string) =
   let updatedContact = self.controller.getContactDetails(contactId)
   for item in self.view.model().modelContactUpdateIterator(contactId):
     if(item.senderId == contactId):
-      item.senderDisplayName = updatedContact.displayName
+      item.senderDisplayName = updatedContact.details.displayName
       item.senderLocalName = updatedContact.details.localNickname
       item.senderIcon = updatedContact.icon
       item.senderIsAdded = updatedContact.details.added

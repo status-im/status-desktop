@@ -18,7 +18,6 @@ Loader {
     property string image
     property bool showRing: true
     property bool interactive: true
-    property var messageContextMenu
 
     property int colorId: Utils.colorIdForPubkey(pubkey)
     property var colorHash: Utils.getColorHashAsJson(pubkey)
@@ -51,12 +50,6 @@ Loader {
                 cursorShape: Qt.PointingHandCursor
                 hoverEnabled: true
                 onClicked: {
-                    if (!!root.messageContextMenu) {
-                        // Set parent, X & Y positions for the messageContextMenu
-                        root.messageContextMenu.parent = root
-                        root.messageContextMenu.setXPosition = function() { return root.width + 4 }
-                        root.messageContextMenu.setYPosition = function() { return 0 }
-                    }
                     root.clicked()
                 }
             }

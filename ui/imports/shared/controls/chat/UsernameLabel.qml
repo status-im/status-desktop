@@ -12,7 +12,6 @@ Item {
     width: chatName.width + (ensOrAlias.visible ? ensOrAlias.width + ensOrAlias.anchors.leftMargin : 0)
     property alias label: chatName
 
-    property var messageContextMenu
     property string displayName
     property string localName
     property bool amISender
@@ -41,12 +40,6 @@ Item {
                 root.isHovered = false
             }
             onClicked: {
-                if (!!root.messageContextMenu) {
-                    // Set parent, X & Y positions for the messageContextMenu
-                    root.messageContextMenu.parent = root
-                    root.messageContextMenu.setXPosition = function() { return 0}
-                    root.messageContextMenu.setYPosition = function() { return root.height + 4}
-                }
                 root.clickMessage(true);
             }
         }

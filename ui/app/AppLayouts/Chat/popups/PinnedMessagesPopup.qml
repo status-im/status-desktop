@@ -98,13 +98,16 @@ ModalPopup {
 
             delegate: Item {
                 id: messageDelegate
-                property var listView: ListView.view
-                width: parent.width
+
+                width: ListView.view.width
                 height: messageItem.height
 
                 MessageView {
                     id: messageItem
-                    store: popup.store
+
+                    width: parent.width
+
+                    rootStore: popup.store
                     messageStore: popup.messageStore
                     messageContextMenu: msgContextMenu
 
@@ -113,9 +116,10 @@ ModalPopup {
                     senderId: model.senderId
                     senderDisplayName: model.senderDisplayName
                     senderLocalName: model.senderLocalName
+                    senderEnsName: model.senderEnsVerified ? model.senderDisplayName : ""
                     senderIcon: model.senderIcon
                     amISender: model.amISender
-                    message: model.messageText
+                    messageText: model.messageText
                     messageImage: model.messageImage
                     messageTimestamp: model.timestamp
                     messageOutgoingStatus: model.outgoingStatus
@@ -125,7 +129,6 @@ ModalPopup {
                     reactionsModel: model.reactions
                     senderTrustStatus: model.senderTrustStatus
                     linkUrls: model.links
-                    isInPinnedPopup: true
                     transactionParams: model.transactionParameters
 
                     // This is possible since we have all data loaded before we load qml.
@@ -136,7 +139,8 @@ ModalPopup {
                     nextMessageAsJsonObj: popup.messageStore? popup.messageStore.getMessageByIndexAsJson(index + 1) : {}
 
                     // Additional params
-                    forceHoverHandler: !popup.messageToPin
+                    isInPinnedPopup: true
+                    disableHover: !!popup.messageToPin
                 }
 
                 MouseArea {

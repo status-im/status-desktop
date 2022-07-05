@@ -4,6 +4,7 @@ import QtQuick.Dialogs 1.3
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Utils 0.1 as StatusQUtils
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Controls.Validators 0.1
@@ -220,9 +221,9 @@ StatusModal {
 
                 let error = ""
                 if (isEdit) {
-                    error = root.store.editCommunityCategory(root.categoryId, Utils.filterXSS(root.contentItem.categoryName.input.text), JSON.stringify(channels));
+                    error = root.store.editCommunityCategory(root.categoryId, StatusQUtils.Utils.filterXSS(root.contentItem.categoryName.input.text), JSON.stringify(channels));
                 } else {
-                    error = root.store.createCommunityCategory(Utils.filterXSS(root.contentItem.categoryName.input.text), JSON.stringify(channels));
+                    error = root.store.createCommunityCategory(StatusQUtils.Utils.filterXSS(root.contentItem.categoryName.input.text), JSON.stringify(channels));
                 }
 
                 if (error) {

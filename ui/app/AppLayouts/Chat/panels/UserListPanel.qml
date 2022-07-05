@@ -101,14 +101,12 @@ Item {
                 if (mouse.button === Qt.RightButton) {
                     // Set parent, X & Y positions for the messageContextMenu
                     messageContextMenu.parent = this
-                    messageContextMenu.setXPosition = function() { return 0; }
-                    messageContextMenu.setYPosition = function() { return mouse.y + (Style.current.halfPadding/2); }
                     messageContextMenu.isProfile = true
                     messageContextMenu.myPublicKey = userProfile.pubKey
                     messageContextMenu.selectedUserPublicKey = model.pubKey
                     messageContextMenu.selectedUserDisplayName = model.displayName
                     messageContextMenu.selectedUserIcon = image.source
-                    messageContextMenu.popup()
+                    messageContextMenu.popup(4, 4)
                 } else if (mouse.button === Qt.LeftButton && !!messageContextMenu) {
                     Global.openProfilePopup(model.pubKey);
                 }

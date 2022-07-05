@@ -303,14 +303,14 @@ StatusDialog {
 
                     if (!isEdit) {
                         //scrollView.communityColor.color.toString().toUpperCase()
-                        root.createCommunityChannel(Utils.filterXSS(nameInput.input.text),
-                                                     Utils.filterXSS(descriptionTextArea.text),
+                        root.createCommunityChannel(StatusQUtils.Utils.filterXSS(nameInput.input.text),
+                                                     StatusQUtils.Utils.filterXSS(descriptionTextArea.text),
                                                      emoji,
                                                      colorDialog.color.toString().toUpperCase(),
                                                      root.categoryId)
                     } else {
-                        root.editCommunityChannel(Utils.filterXSS(nameInput.input.text),
-                                                   Utils.filterXSS(descriptionTextArea.text),
+                        root.editCommunityChannel(StatusQUtils.Utils.filterXSS(nameInput.input.text),
+                                                   StatusQUtils.Utils.filterXSS(descriptionTextArea.text),
                                                    emoji,
                                                    colorDialog.color.toString().toUpperCase(),
                                                    root.categoryId)

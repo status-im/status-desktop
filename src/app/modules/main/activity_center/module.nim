@@ -75,7 +75,7 @@ proc createMessageItemFromDto(self: Module, message: MessageDto, chatDetails: Ch
     chatDetails.communityId, # we don't received community id via `activityCenterNotifications` api call
     message.responseTo,
     message.`from`,
-    contactDetails.displayName,
+    contactDetails.details.displayName,
     contactDetails.details.localNickname,
     contactDetails.icon,
     contactDetails.isCurrentUser,
@@ -93,7 +93,8 @@ proc createMessageItemFromDto(self: Module, message: MessageDto, chatDetails: Ch
     message.links,
     newTransactionParametersItem("","","","","","",-1,""),
     message.mentionedUsersPks,
-    contactDetails.details.trustStatus
+    contactDetails.details.trustStatus,
+    contactDetails.details.ensVerified
     ))
 
 method convertToItems*(

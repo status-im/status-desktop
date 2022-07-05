@@ -13,6 +13,7 @@ import shared.panels 1.0
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Utils 0.1 as StatusQUtils
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
@@ -228,13 +229,13 @@ Rectangle {
             subTitle: {
                 let user = ""
                 if (isCurrentUser) {
-                    user = root.profileStore.ensName !== "" ? root.profileStore.ensName  : Utils.elideText(root.profileStore.pubkey, 5)
+                    user = root.profileStore.ensName !== "" ? root.profileStore.ensName  : StatusQUtils.Utils.elideText(root.profileStore.pubkey, 5)
                 } else if (userIsEnsVerified) {
                     user = userEnsName
                 }
 
                 if (user === ""){
-                    user = Utils.elideText(userPublicKey, 5)
+                    user = StatusQUtils.Utils.elideText(userPublicKey, 5)
                 }
                 return Constants.userLinkPrefix +  user;
             }
@@ -370,9 +371,10 @@ Rectangle {
             isMessage: true
             shouldRepeatHeader: true
             messageTimestamp: root.verificationRequestedAt
+            senderId: profileStore.pubkey
             senderDisplayName: userProfile.name
             senderIcon: userProfile.icon
-            message: root.verificationChallenge
+            messageText: root.verificationChallenge
             messageContentType: Constants.messageContentType.messageType
             placeholderMessage: true
         }
@@ -380,13 +382,14 @@ Rectangle {
         MessageView {
             id: responseMessage
             visible: root.showVerificationPendingSection && !!root.verificationResponse
-            width: parent.width
+            Layout.fillWidth: true
             isMessage: true
             shouldRepeatHeader: true
             messageTimestamp: root.verificationRepliedAt
+            senderId: root.userPublicKey
             senderDisplayName: root.verificationResponseDisplayName
             senderIcon: root.verificationResponseIcon
-            message: root.verificationResponse
+            messageText: root.verificationResponse
             messageContentType: Constants.messageContentType.messageType
             placeholderMessage: true
         }

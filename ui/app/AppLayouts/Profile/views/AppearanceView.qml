@@ -56,23 +56,25 @@ SettingsContentBase {
             anchors.top: parent.top
             anchors.left: parent.left
             anchors.right: parent.right
-            height: paceholderMessage.height + paceholderMessage.anchors.margins*2
+            height: placeholderMessage.implicitHeight +
+                    placeholderMessage.anchors.leftMargin +
+                    placeholderMessage.anchors.rightMargin
             radius: Style.current.radius
             border.color: Style.current.border
             color: Style.current.transparent
 
             MessageView {
-                id: paceholderMessage
+                id: placeholderMessage
                 anchors.top: parent.top
                 anchors.left: parent.left
-                anchors.right: parent.left
+                anchors.right: parent.right
                 anchors.margins: Style.current.smallPadding
                 isMessage: true
                 shouldRepeatHeader: true
-                messageTimestamp:Date.now()
+                messageTimestamp: Date.now()
                 senderDisplayName: "@vitalik"
                 senderIcon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAb0lEQVR4Ae3UQQqAIBRF0Wj9ba9Bq6l5JBQqfn/ngDMH3YS3AAB/tO3H+XRG3b9bR/+gVoREI2RapVXpfd5+X5oXERKNkHS+rk3tOpWkeREh0QiZVu91ql2zNC8iJBoh0yqtSqt1slpCghICANDPBc0ESPh0bHkHAAAAAElFTkSuQmCC"
-                message: qsTr("Blockchains will drop search costs, causing a kind of decomposition that allows you to have markets of entities that are horizontally segregated and vertically segregated.")
+                messageText: qsTr("Blockchains will drop search costs, causing a kind of decomposition that allows you to have markets of entities that are horizontally segregated and vertically segregated.")
                 messageContentType: Constants.messageContentType.messageType
                 placeholderMessage: true
             }

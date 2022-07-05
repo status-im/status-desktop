@@ -8,19 +8,18 @@ import utils 1.0
 
 Item {
     id: root
-    height: childrenRect.height + Style.current.smallPadding * 2
-    anchors.left: parent.left
-    anchors.right: parent.right
 
     property int nextMessageIndex
-    property string nextMsgTimestamp
+    property double nextMsgTimestamp
     
     signal clicked()
     signal timerTriggered()
 
+    implicitHeight: childrenRect.height + Style.current.smallPadding * 2
+
     QtObject {
         id: d
-         readonly property string formattedDate: nextMessageIndex > -1 ? Utils.formatLongDate(nextMsgTimestamp * 1, RootStore.accountSensitiveSettings.isDDMMYYDateFormat) :
+         readonly property string formattedDate: nextMessageIndex > -1 ? Utils.formatLongDate(nextMsgTimestamp, RootStore.accountSensitiveSettings.isDDMMYYDateFormat) :
                                                                          Utils.formatLongDate(undefined, RootStore.accountSensitiveSettings.isDDMMYYDateFormat)
     }
 

@@ -19,12 +19,18 @@ import shared.status 1.0
 import shared.controls 1.0
 import shared.views.chat 1.0
 
+import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
+import StatusQ.Controls 0.1
+import StatusQ.Components 0.1
+
 import "../controls"
 
 Item {
     id: root
 
-    property var store
+    property var chatContentModule
+    property var rootStore
     property var messageStore
     property var usersStore
     property var contactsStore
@@ -37,7 +43,7 @@ Item {
     property bool isChatBlocked: false
     property bool isActiveChannel: false
 
-    property var messageContextMenuInst
+    property var messageContextMenu
 
     property real scrollY: chatLogView.visibleArea.yPosition * chatLogView.contentHeight
     property int newMessages: 0
@@ -67,23 +73,23 @@ Item {
         }
 
         // Not Refactored Yet
-//            onNewMessagePushed: {
-//                if (!chatLogView.scrollToBottom()) {
-//                    newMessages++
-//                }
-//            }
+        //            onNewMessagePushed: {
+        //                if (!chatLogView.scrollToBottom()) {
+        //                    newMessages++
+        //                }
+        //            }
     }
 
     Item {
         id: loadingMessagesIndicator
-        visible: root.store.loadingHistoryMessagesInProgress
+        visible: root.rootStore.loadingHistoryMessagesInProgress
         anchors.top: parent.top
         anchors.left: parent.left
         height: visible? 20 : 0
         width: parent.width
 
         Loader {
-            active: root.store.loadingHistoryMessagesInProgress
+            active: root.rootStore.loadingHistoryMessagesInProgress
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
             sourceComponent: Component {
@@ -105,14 +111,6 @@ Item {
         spacing: 0
         verticalLayoutDirection: ListView.BottomToTop
 
-        // This header and Connections is to create an invisible padding so that the chat identifier is at the top
-        // The Connections is necessary, because doing the check inside the header created a binding loop (the contentHeight includes the header height
-        // If the content height is smaller than the full height, we "show" the padding so that the chat identifier is at the top, otherwise we disable the Connections
-        header: Item {
-            height: 0
-            width: chatLogView.width
-        }
-
         function checkHeaderHeight() {
             if (!chatLogView.headerItem) {
                 return
@@ -125,30 +123,70 @@ Item {
             }
         }
 
+        function scrollToBottom(force, caller) {
+            if (!force && !chatLogView.atYEnd) {
+                // User has scrolled up, we don't want to scroll back
+                return false
+            }
+            if (caller && caller !== chatLogView.itemAtIndex(chatLogView.count - 1)) {
+                // If we have a caller, only accept its request if it's the last message
+                return false
+            }
+            // Call this twice and with a timer since the first scroll to bottom might have happened before some stuff loads
+            // meaning that the scroll will not actually be at the bottom on switch
+            // Add a small delay because images, even though they say they say they are loaed, they aren't shown yet
+            Qt.callLater(chatLogView.positionViewAtBeginning)
+            timer.setTimeout(function() {
+                Qt.callLater(chatLogView.positionViewAtBeginning)
+            }, 100);
+            return true
+        }
+
+        model: messageStore.messagesModel
+
+        Component.onCompleted: chatLogView.scrollToBottom(true)
+
+        onContentYChanged: {
+            scrollDownButton.visible = contentHeight - (scrollY + height) > 400
+            let loadMore = scrollDownButton.visible && scrollY < 500
+            if(loadMore){
+                messageStore.loadMoreMessages()
+            }
+        }
+
         ScrollBar.vertical: StatusScrollBar {
             visible: chatLogView.visibleArea.heightRatio < 1
         }
 
-//        Connections {
-//            id: contentHeightConnection
-//            enabled: true
-//            target: chatLogView
-//            onContentHeightChanged: {
-//                chatLogView.checkHeaderHeight()
-//            }
-//            onHeightChanged: {
-//                chatLogView.checkHeaderHeight()
-//            }
-//        }
+        // This header and Connections is to create an invisible padding so that the chat identifier is at the top
+        // The Connections is necessary, because doing the check inside the header created a binding loop (the contentHeight includes the header height
+        // If the content height is smaller than the full height, we "show" the padding so that the chat identifier is at the top, otherwise we disable the Connections
+        header: Item {
+            height: 0
+            width: chatLogView.width
+        }
+
+        //        Connections {
+        //            id: contentHeightConnection
+        //            enabled: true
+        //            target: chatLogView
+        //            onContentHeightChanged: {
+        //                chatLogView.checkHeaderHeight()
+        //            }
+        //            onHeightChanged: {
+        //                chatLogView.checkHeaderHeight()
+        //            }
+        //        }
 
         Timer {
             id: timer
         }
 
         Button {
+            id: scrollDownButton
+
             readonly property int buttonPadding: 5
 
-            id: scrollDownButton
             visible: false
             height: 32
             width: nbMessages.width + arrowImage.width + 2 * Style.current.halfPadding + (nbMessages.visible ? scrollDownButton.buttonPadding : 0)
@@ -160,6 +198,7 @@ Item {
                 border.width: 0
                 radius: 16
             }
+
             onClicked: {
                 newMessages = 0
                 scrollDownButton.visible = false
@@ -202,50 +241,23 @@ Item {
             }
         }
 
-        function scrollToBottom(force, caller) {
-            if (!force && !chatLogView.atYEnd) {
-                // User has scrolled up, we don't want to scroll back
-                return false
-            }
-            if (caller && caller !== chatLogView.itemAtIndex(chatLogView.count - 1)) {
-                // If we have a caller, only accept its request if it's the last message
-                return false
-            }
-            // Call this twice and with a timer since the first scroll to bottom might have happened before some stuff loads
-            // meaning that the scroll will not actually be at the bottom on switch
-            // Add a small delay because images, even though they say they say they are loaed, they aren't shown yet
-            Qt.callLater(chatLogView.positionViewAtBeginning)
-            timer.setTimeout(function() {
-                Qt.callLater(chatLogView.positionViewAtBeginning)
-            }, 100);
-            return true
-        }
-
-//        Connections {
+        //        Connections {
         // Not Refactored Yet
-//            target: root.store.chatsModelInst
+        //            target: root.rootStore.chatsModelInst
 
-//            onAppReady: {
-//                chatLogView.scrollToBottom(true)
-//            }
-//        }
-
-        onContentYChanged: {
-            scrollDownButton.visible = contentHeight - (scrollY + height) > 400
-            let loadMore = scrollDownButton.visible && scrollY < 500
-            if(loadMore){
-                messageStore.loadMoreMessages()
-            }
-        }
-
-        model: messageStore.messagesModel
-
-        Component.onCompleted: chatLogView.scrollToBottom(true)
+        //            onAppReady: {
+        //                chatLogView.scrollToBottom(true)
+        //            }
+        //        }
 
         delegate: MessageView {
             id: msgDelegate
+
+            width: ListView.view.width
+            height: implicitHeight
+
             objectName: "chatMessageViewDelegate"
-            store: root.store
+            rootStore: root.rootStore
             messageStore: root.messageStore
             usersStore: root.usersStore
             contactsStore: root.contactsStore
@@ -255,7 +267,7 @@ Item {
 
             isActiveChannel: root.isActiveChannel
             isChatBlocked: root.isChatBlocked
-            messageContextMenu: messageContextMenuInst
+            messageContextMenu: root.messageContextMenu
 
             itemIndex: index
             messageId: model.id
@@ -264,10 +276,11 @@ Item {
             senderId: model.senderId
             senderDisplayName: model.senderDisplayName
             senderLocalName: model.senderLocalName
+            senderEnsName: model.senderEnsVerified ? model.senderDisplayName : ""
             senderIcon: model.senderIcon
             senderIsAdded: model.senderIsAdded
             amISender: model.amISender
-            message: model.messageText
+            messageText: model.messageText
             messageImage: model.messageImage
             messageTimestamp: model.timestamp
             messageOutgoingStatus: model.outgoingStatus
@@ -282,6 +295,7 @@ Item {
             isEdited: model.isEdited
             linkUrls: model.links
             transactionParams: model.transactionParameters
+            hasMention: model.mentionedUsersPks.split(" ").includes(root.rootStore.userProfileInst.pubKey)
 
             gapFrom: model.gapFrom
             gapTo: model.gapTo
@@ -296,6 +310,7 @@ Item {
             prevMsgTimestamp: model.prevMsgTimestamp
             nextMessageIndex: model.nextMsgIndex
             nextMessageAsJsonObj: messageStore.getMessageByIndexAsJson(model.nextMsgIndex)
+
             onOpenStickerPackPopup: {
                 root.openStickerPackPopup(stickerPackId);
             }
@@ -304,7 +319,7 @@ Item {
                 root.showReplyArea(messageId, author)
             }
 
-            onImageClicked: Global.openImagePopup(image, messageContextMenuInst)
+            onImageClicked: Global.openImagePopup(image, messageContextMenu)
 
             stickersLoaded: root.stickersLoaded
 

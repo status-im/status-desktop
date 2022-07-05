@@ -4,6 +4,7 @@ import QtQuick 2.13
 
 import shared 1.0
 import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Utils 0.1 as StatusQUtils
 
 QtObject {
     property var globalUtilsInst: globalUtils
@@ -56,55 +57,6 @@ QtObject {
         return Style.current.accountColors[colorIndex]
     }
 
-    function getMessageWithStyle(msg, isCurrentUser, hoveredLink = "") {
-        return `<style type="text/css">` +
-                    `img, a, del, code, blockquote { margin: 0; padding: 0; }` +
-                    `code {` +
-                        `font-family: ${Style.current.fontCodeRegular.name};` +
-                        `font-weight: 400;` +
-                        `font-size: ${Style.current.secondaryTextFontSize};` +
-                        `padding: 2px 4px;` +
-                        `border-radius: 4px;` +
-                        `background-color: ${Style.current.codeBackground};` +
-                        `color: ${Style.current.black};` +
-                        `white-space: pre;` +
-                    `}` +
-                    `p {` +
-                        `line-height: 22px;` +
-                    `}` +
-                    `a {` +
-                        `color: ${Style.current.linkColor};` +
-                    `}` +
-                    `a.mention {` +
-                        `color: ${Style.current.mentionColor};` +
-                        `background-color: ${Style.current.mentionBgColor};` +
-                        `text-decoration: none;` +
-                        `padding: 0px 2px;` +
-                    `}` +
-                    (hoveredLink !== "" ? `a.mention[href="${hoveredLink}"] { background-color: ${Style.current.mentionBgHoverColor}; }` : ``) +
-                    `del {` +
-                        `text-decoration: line-through;` +
-                    `}` +
-                    `table.blockquote td {` +
-                        `padding-left: 10px;` +
-                        `color: ${isCurrentUser ? Style.current.chatReplyCurrentUser : Style.current.secondaryText};` +
-                    `}` +
-                    `table.blockquote td.quoteline {` +
-                        `background-color: ${isCurrentUser ? Style.current.chatReplyCurrentUser : Style.current.secondaryText};` +
-                        `height: 100%;` +
-                        `padding-left: 0;` +
-                    `}` +
-                    `.emoji {` +
-                        `vertical-align: bottom;` +
-                    `}` +
-                    `span.isEdited {` +
-                        `color: ${Style.current.secondaryText};` +
-                        `margin-left: 5px` +
-                    `}` +
-                `</style>` +
-                `${msg}`
-    }
-
     function getReplyMessageStyle(msg, isCurrentUser) {
         return `<style type="text/css">`+
                     `a {`+
@@ -145,22 +97,6 @@ QtObject {
             return addr;
         }
         return addr.substring(0, 2 + numberOfChars) + "..." + addr.substring(addr.length - numberOfChars);
-    }
-
-    function linkifyAndXSS(inputText) {
-        //URLs starting with http://, https://, or ftp://
-        var replacePattern1 = /(\b(https?|ftp|statusim):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
-        var replacedText = inputText.replace(replacePattern1, "<a href='$1'>$1</a>");
-
-        //URLs starting with "www." (without // before it, or it'd re-link the ones done above).
-        var replacePattern2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
-        replacedText = replacedText.replace(replacePattern2, "$1<a href='http://$2'>$2</a>");
-
-        return XSS.filterXSS(replacedText)
-    }
-
-    function filterXSS(inputText) {
-        return XSS.filterXSS(inputText)
     }
 
     function toLocaleString(val, locale, options) {
@@ -656,11 +592,7 @@ QtObject {
             return ""
         }
         let compressedPk = getCompressedPk(publicKey)
-        return elideText(compressedPk, 6, 3)
-    }
-
-    function elideText(text, leftCharsCount, rightCharsCount = leftCharsCount) {
-        return text.substr(0, leftCharsCount) + "..." + text.substr(text.length - rightCharsCount)
+        return StatusQUtils.Utils.elideText(compressedPk, 6, 3)
     }
 
     function getTimeDifference(d1, d2) {

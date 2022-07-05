@@ -124,11 +124,11 @@ Item {
         MessageView {
             id: notificationMessage
             anchors.right: undefined
-            store: root.store
+            rootStore: root.store
             messageStore: root.store.messageStore
             messageId: model.id
             senderDisplayName: model.message.senderDisplayName
-            message: model.message.messageText
+            messageText: model.message.messageText
             responseToMessageWithId: model.message.responseToMessageWithId
             senderId: model.message.senderId
             senderLocalName: model.message.senderLocalName
@@ -140,10 +140,10 @@ Item {
             messageContentType: model.message.contentType
             senderTrustStatus: model.message.senderTrustStatus
             activityCenterMessage: true
-            read: model.read
+            activityCenterMessageRead: model.read
             onImageClicked: Global.openImagePopup(image, root.messageContextMenu)
             scrollToBottom: null
-            clickMessage: function (isProfileClick) {
+            messageClickHandler: {
                 if (isProfileClick) {
                     return Global.openProfilePopup(model.message.senderId);
                 }

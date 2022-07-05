@@ -10,6 +10,7 @@ import shared.popups 1.0
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Utils 0.1 as StatusQUtils
 import StatusQ.Layout 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
@@ -148,10 +149,10 @@ StatusAppTwoPanelLayout {
 
                 onEdited: {
                     const error = root.chatCommunitySectionModule.editCommunity(
-                        Utils.filterXSS(item.name),
-                        Utils.filterXSS(item.description),
-                        Utils.filterXSS(item.introMessage),
-                        Utils.filterXSS(item.outroMessage),
+                        StatusQUtils.Utils.filterXSS(item.name),
+                        StatusQUtils.Utils.filterXSS(item.description),
+                        StatusQUtils.Utils.filterXSS(item.introMessage),
+                        StatusQUtils.Utils.filterXSS(item.outroMessage),
                         item.options.requestToJoinEnabled ? Constants.communityChatOnRequestAccess : Constants.communityChatPublicAccess,
                         item.color.toString().toUpperCase(),
                         item.selectedTags,

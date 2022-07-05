@@ -250,7 +250,7 @@ Item {
         StyledText {
             id: timeText
             color: Style.current.secondaryText
-            text: Utils.formatShortTime(timestamp, RootStore.accountSensitiveSettings.is24hTimeFormat)
+            text: Utils.formatShortTime(messageTimestamp, RootStore.accountSensitiveSettings.is24hTimeFormat)
             anchors.left: bubbleLoader.active ? bubbleLoader.right : undefined
             anchors.leftMargin: bubbleLoader.active ? 13 : 0
             anchors.right: bubbleLoader.active ? undefined : parent.right

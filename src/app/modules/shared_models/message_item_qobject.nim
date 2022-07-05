@@ -49,6 +49,10 @@ QtObject:
   QtProperty[string] senderLocalName:
     read = senderLocalName
 
+  proc senderEnsVerified*(self: MessageItem): bool {.slot.} = result = ?.self.messageItem.senderEnsVerified
+  QtProperty[bool] senderEnsVerified:
+    read = senderEnsVerified
+
   proc amISender*(self: MessageItem): bool {.slot.} = result = ?.self.messageItem.amISender
   QtProperty[bool] amISender:
     read = amISender

@@ -12,6 +12,7 @@ import "../controls"
 import "../panels"
 
 import StatusQ.Components 0.1
+import StatusQ.Controls 0.1
 import StatusQ.Core.Theme 0.1
 
 Item {
@@ -20,22 +21,26 @@ Item {
     height: childrenRect.height + dateGroupLbl.anchors.topMargin
     property var store
     property int previousNotificationIndex
-    property string previousNotificationTimestamp
+    property int previousNotificationTimestamp
     property bool hideReadNotifications: false
     property bool acCurrentFilterAll: false
 
-    DateGroup {
+    StatusDateGroupLabel {
         id: dateGroupLbl
+        anchors.top: parent.top
+        anchors.topMargin: Style.current.halfPadding
+        anchors.left: parent.left
+        anchors.leftMargin: Style.current.padding
+        height: visible ? implicitHeight : 0
+        visible: text !== ""
         previousMessageIndex: root.previousNotificationIndex
         previousMessageTimestamp: root.previousNotificationTimestamp
         messageTimestamp: model.timestamp
-        isActivityCenterMessage: true
-        height: visible ? implicitHeight : 0
     }
 
     Rectangle {
         id: groupRequestContent
-        property string timestamp: model.timestamp
+        property int timestamp: model.timestamp
 
         visible: {
             if (hideReadNotifications && model.read) {
