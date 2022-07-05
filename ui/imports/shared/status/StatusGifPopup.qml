@@ -52,11 +52,10 @@ Popup {
         color: Style.current.background
         border.color: Style.current.border
         layer.enabled: true
-        layer.effect: DropShadow{
+        layer.effect: DropShadow {
             verticalOffset: 3
             radius: 8
             samples: 15
-            fast: true
             cached: true
             color: "#22000000"
         }
@@ -64,7 +63,7 @@ Popup {
 
     onOpened: {
         searchBox.text = ""
-        searchBox.forceActiveFocus(Qt.MouseFocusReason)
+        searchBox.input.edit.forceActiveFocus()
         if (RootStore.isTenorWarningAccepted) {
             RootStore.getTrendingsGifs()
         } else {

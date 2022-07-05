@@ -32,7 +32,6 @@ Popup {
             verticalOffset: 3
             radius: 8
             samples: 15
-            fast: true
             cached: true
             color: "#22000000"
         }
@@ -201,7 +200,7 @@ Popup {
 
     onOpened: {
         searchBox.text = ""
-        searchBox.forceActiveFocus(Qt.MouseFocusReason)
+        searchBox.input.edit.forceActiveFocus()
         Qt.callLater(populateCategories);
     }
 
