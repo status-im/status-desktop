@@ -46,7 +46,7 @@ StatusAppTwoPanelLayout {
         const tagsArray = json.map(tag => {
             return tag.name;
         });
-        return tagsArray;
+        return JSON.stringify(tagsArray);
     }
 
     signal backToCommunityClicked
