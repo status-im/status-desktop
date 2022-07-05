@@ -111,7 +111,7 @@ OnboardingBasePage {
 
                 width: parent.width
                 enabled: !submitBtn.loading
-                placeholderText: qsTr("Confirm you password (again)")
+                placeholderText: qsTr("Confirm your password (again)")
                 textField.echoMode: showPassword ? TextInput.Normal : TextInput.Password
                 textField.validator: RegExpValidator { regExp: /^[!-~]{0,64}$/ } // That incudes NOT extended ASCII printable characters less space and a maximum of 64 characters allowed
                 keepHeight: true
