@@ -91,11 +91,10 @@ ColumnLayout {
                 case Constants.chatType.publicChat:
                     return qsTr("Public chat")
                 case Constants.chatType.privateGroupChat:
-                    let cnt = root.usersStore.usersModule.model.count
-                    if(cnt > 1) return qsTr("%1 members").arg(cnt);
-                    return qsTr("1 member");
+                    const cnt = root.usersStore.usersModule.model.count
+                    return qsTr("%n members(s)", "", cnt)
                 case Constants.chatType.communityChat:
-                    return Utils.linkifyAndXSS(chatContentModule.chatDetails.description).trim()
+                    return StatusQUtils.Utils.linkifyAndXSS(chatContentModule.chatDetails.description).trim()
                 default:
                     return ""
                 }
@@ -161,10 +160,11 @@ ColumnLayout {
     Component {
         id: contactsSelector
         GroupChatPanel {
-            sectionModule: root.chatSectionModule
+            sectionModule: chatSectionModule
             chatContentModule: root.chatContentModule
             rootStore: root.rootStore
             maxHeight: root.height
+
             onPanelClosed: topBar.toolbarComponent = statusChatInfoButton
         }
     }
@@ -429,15 +429,16 @@ ColumnLayout {
             id: chatMessages
             Layout.fillWidth: true
             Layout.fillHeight: true
-            store: root.rootStore
+            chatContentModule: root.chatContentModule
+            rootStore: root.rootStore
             contactsStore: root.contactsStore
-            messageContextMenuInst: contextmenu
+            messageContextMenu: contextmenu
             messageStore: messageStore
             emojiPopup: root.emojiPopup
             usersStore: root.usersStore
             stickersLoaded: root.stickersLoaded
             isChatBlocked: root.isBlocked
-            channelEmoji: chatContentModule.chatDetails.emoji || ""
+            channelEmoji: !chatContentModule ? "" : (chatContentModule.chatDetails.emoji || "")
             isActiveChannel: root.isActiveChannel
             onShowReplyArea: {
                 let obj = messageStore.getMessageByIdAsJson(messageId)
@@ -455,9 +456,9 @@ ColumnLayout {
             id: inputArea
             Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
             Layout.fillWidth: true
-            Layout.preferredWidth: parent.width
-            height: chatInput.height
-            Layout.preferredHeight: height
+            Layout.preferredHeight: chatInput.implicitHeight
+                                    + chatInput.anchors.topMargin
+                                    + chatInput.anchors.bottomMargin
 
             Loader {
                 id: loadingMessagesIndicator
@@ -474,6 +475,10 @@ ColumnLayout {
 
             StatusChatInput {
                 id: chatInput
+
+                anchors.fill: parent
+                anchors.margins: Style.current.smallPadding
+
                 store: root.rootStore
                 usersStore: root.usersStore
 

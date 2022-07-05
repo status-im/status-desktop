@@ -167,7 +167,7 @@ proc buildPinnedMessageItem(self: Module, messageId: string, actionInitiatedBy: 
     m.communityId,
     m.responseTo,
     m.`from`,
-    contactDetails.displayName,
+    contactDetails.details.displayName,
     contactDetails.details.localNickname,
     contactDetails.icon,
     isCurrentUser,
@@ -193,6 +193,7 @@ proc buildPinnedMessageItem(self: Module, messageId: string, actionInitiatedBy: 
       m.transactionParameters.signature),
     m.mentionedUsersPks,
     contactDetails.details.trustStatus,
+    contactDetails.details.ensVerified
   )
   item.pinned = true
   item.pinnedBy = actionInitiatedBy
@@ -318,8 +319,9 @@ method onContactDetailsUpdated*(self: Module, contactId: string) =
   let updatedContact = self.controller.getContactDetails(contactId)
   for item in self.view.pinnedModel().modelContactUpdateIterator(contactId):
     if(item.senderId == contactId):
-      item.senderDisplayName = updatedContact.displayName
+      item.senderDisplayName = updatedContact.details.displayName
       item.senderLocalName = updatedContact.details.localNickname
+      item.senderEnsVerified = updatedContact.details.ensVerified
       item.senderIcon = updatedContact.icon
       item.senderTrustStatus = updatedContact.details.trustStatus
     if(item.messageContainsMentions):
@@ -329,7 +331,7 @@ method onContactDetailsUpdated*(self: Module, contactId: string) =
         item.messageContainsMentions = m.containsContactMentions()
 
   if(self.controller.getMyChatId() == contactId):
-    self.view.updateChatDetailsNameAndIcon(updatedContact.displayName, updatedContact.icon)
+    self.view.updateChatDetailsNameAndIcon(updatedContact.details.displayName, updatedContact.icon)
     self.view.updateTrustStatus(updatedContact.details.trustStatus == TrustStatus.Untrustworthy)
 
 method onNotificationsUpdated*(self: Module, hasUnreadMessages: bool, notificationCount: int) =

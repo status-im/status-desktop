@@ -140,7 +140,7 @@ Rectangle {
         }
         StyledText {
             id: timeValue
-            text: Utils.formatLongDateTime(parseInt(timestamp) * 1000, RootStore.accountSensitiveSettings.isDDMMYYDateFormat, RootStore.accountSensitiveSettings.is24hTimeFormat)
+            text: Utils.formatLongDateTime(timestamp * 1000, RootStore.accountSensitiveSettings.isDDMMYYDateFormat, RootStore.accountSensitiveSettings.is24hTimeFormat)
             font.pixelSize: Style.current.primaryTextFontSize
             anchors.rightMargin: Style.current.smallPadding
         }

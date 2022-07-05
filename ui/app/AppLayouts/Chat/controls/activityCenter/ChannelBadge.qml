@@ -50,8 +50,8 @@ Item {
     StyledText {
         id: contactInfo
         text: realChatType !== Constants.chatType.publicChat ?
-                  StatusQUtils.Emoji.parse(Utils.removeStatusEns(Utils.filterXSS(name))) :
-                  "#" + Utils.filterXSS(name)
+                  StatusQUtils.Emoji.parse(Utils.removeStatusEns(StatusQUtils.Utils.filterXSS(name))) :
+                  "#" + StatusQUtils.Utils.filterXSS(name)
         anchors.left: contactImage.right
         anchors.leftMargin: 4
         color: textColor

@@ -122,16 +122,16 @@ Item {
         }
 
         text: {
-            if (contentType === Constants.messageContentType.stickerType) return "";
-            let msg = Utils.linkifyAndXSS(message);
+            if (contentType === Constants.messageContentType.stickerType)
+                return "";
+            let msg = StatusQUtils.Utils.linkifyAndXSS(message);
             if (isEmoji)
                 return StatusQUtils.Emoji.parse(msg, StatusQUtils.Emoji.size.middle, StatusQUtils.Emoji.format.png);
             if (isEdited) {
                 let index = msg.endsWith("code>") ? msg.length : msg.length - 4
-                return Utils.getMessageWithStyle(StatusQUtils.Emoji.parse(msg.slice(0, index) + Constants.editLabel + msg.slice(index)), isCurrentUser, hoveredLink)
+                return StatusQUtils.Utils.getMessageWithStyle(StatusQUtils.Emoji.parse(msg.slice(0, index) + Constants.editLabel + msg.slice(index)), isCurrentUser, hoveredLink)
             }
-            return Utils.getMessageWithStyle(StatusQUtils.Emoji.parse(msg), isCurrentUser, hoveredLink)
-        
+            return StatusQUtils.Utils.getMessageWithStyle(StatusQUtils.Emoji.parse(msg), isCurrentUser, hoveredLink)
         }
     }
 

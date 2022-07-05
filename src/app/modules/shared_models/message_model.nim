@@ -38,6 +38,7 @@ type
     TransactionParameters
     MentionedUsersPks
     SenderTrustStatus
+    SenderEnsVerified
 
 QtObject:
   type
@@ -71,7 +72,7 @@ QtObject:
   proc countChanged(self: Model) {.signal.}
   proc getCount(self: Model): int {.slot.} =
     self.items.len
-  QtProperty[int] count:
+  QtProperty[int]count:
     read = getCount
     notify = countChanged
 
@@ -112,7 +113,8 @@ QtObject:
       ModelRole.Links.int: "links",
       ModelRole.TransactionParameters.int: "transactionParameters",
       ModelRole.MentionedUsersPks.int: "mentionedUsersPks",
-      ModelRole.SenderTrustStatus.int: "senderTrustStatus"
+      ModelRole.SenderTrustStatus.int: "senderTrustStatus",
+      ModelRole.SenderEnsVerified.int: "senderEnsVerified"
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -205,6 +207,8 @@ QtObject:
       }))
     of ModelRole.MentionedUsersPks:
       result = newQVariant(item.mentionedUsersPks.join(" "))
+    of ModelRole.SenderEnsVerified:
+      result = newQVariant(item.senderEnsVerified)
 
   proc updateItemAtIndex(self: Model, index: int) =
     let ind = self.createIndex(index, 0, nil)
@@ -393,8 +397,12 @@ QtObject:
 
       var roles: seq[int]
       if(self.items[i].senderId == contactId):
-        roles = @[ModelRole.SenderDisplayName.int, ModelRole.SenderLocalName.int,
-          ModelRole.SenderIcon.int, ModelRole.SenderIsAdded.int, ModelRole.SenderTrustStatus.int]
+        roles = @[ModelRole.SenderDisplayName.int,
+          ModelRole.SenderLocalName.int,
+          ModelRole.SenderIcon.int,
+          ModelRole.SenderIsAdded.int,
+          ModelRole.SenderTrustStatus.int,
+          ModelRole.SenderEnsVerified.int]
       if(self.items[i].pinnedBy == contactId):
         roles.add(ModelRole.PinnedBy.int)
       if(self.items[i].messageContainsMentions):

@@ -63,12 +63,14 @@ StatusModal {
             id: verificationMessage
             anchors.top: description.bottom
             anchors.topMargin: Style.current.padding
+            width: parent.width
             isMessage: true
             shouldRepeatHeader: true
             messageTimestamp: root.messageTimestamp
+            senderId: root.senderPublicKey
             senderDisplayName: root.senderDisplayName
             senderIcon: root.senderIcon
-            message: root.challengeText
+            messageText: root.challengeText
             messageContentType: Constants.messageContentType.messageType
             placeholderMessage: true
         }
@@ -93,12 +95,14 @@ StatusModal {
             id: responseMessage
             visible: !!root.responseText
             anchors.top: verificationMessage.bottom
+            width: parent.width
             isMessage: true
             shouldRepeatHeader: true
             messageTimestamp: root.responseTimestamp
+            senderId: root.senderPublicKey
             senderDisplayName: userProfile.name
             senderIcon: userProfile.icon
-            message: root.responseText
+            messageText: root.responseText
             messageContentType: Constants.messageContentType.messageType
             placeholderMessage: true
         }

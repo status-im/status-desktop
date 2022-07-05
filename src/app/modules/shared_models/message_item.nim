@@ -37,6 +37,7 @@ type
     transactionParameters: TransactionParametersItem
     mentionedUsersPks: seq[string]
     senderTrustStatus: TrustStatus
+    senderEnsVerified: bool
 
 proc initItem*(
     id,
@@ -61,7 +62,8 @@ proc initItem*(
     links: seq[string],
     transactionParameters: TransactionParametersItem,
     mentionedUsersPks: seq[string],
-    senderTrustStatus: TrustStatus
+    senderTrustStatus: TrustStatus,
+    senderEnsVerified: bool
     ): Item =
   result = Item()
   result.id = id
@@ -93,6 +95,7 @@ proc initItem*(
   result.gapFrom = 0
   result.gapTo = 0
   result.senderTrustStatus = senderTrustStatus
+  result.senderEnsVerified = senderEnsVerified
 
 proc `$`*(self: Item): string =
   result = fmt"""Item(
@@ -120,6 +123,7 @@ proc `$`*(self: Item): string =
     transactionParameters:{$self.transactionParameters},
     mentionedUsersPks:{$self.mentionedUsersPks},
     senderTrustStatus:{$self.senderTrustStatus},
+    senderEnsVerified: {self.senderEnsVerified},
     )"""
 
 proc id*(self: Item): string {.inline.} =
@@ -166,6 +170,12 @@ proc senderTrustStatus*(self: Item): TrustStatus {.inline.} =
 
 proc `senderTrustStatus=`*(self: Item, value: TrustStatus) {.inline.} =
   self.senderTrustStatus = value
+
+proc senderEnsVerified*(self: Item): bool {.inline.} =
+  self.senderEnsVerified
+
+proc `senderEnsVerified=`*(self: Item, value: bool) {.inline.} =
+  self.senderEnsVerified = value
 
 proc outgoingStatus*(self: Item): string {.inline.} =
   self.outgoingStatus
@@ -274,7 +284,8 @@ proc toJsonNode*(self: Item): JsonNode =
     "editMode": self.editMode,
     "isEdited": self.isEdited,
     "links": self.links,
-    "mentionedUsersPks": self.mentionedUsersPks
+    "mentionedUsersPks": self.mentionedUsersPks,
+    "senderEnsVerified": self.senderEnsVerified
   }
 
 proc editMode*(self: Item): bool {.inline.} =

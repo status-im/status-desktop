@@ -102,9 +102,6 @@ StatusPopupMenu {
     readonly property bool userTrustIsUnknown: d.contactDetails && d.contactDetails.trustStatus === Constants.trustStatus.unknown
     readonly property bool userIsUntrustworthy: d.contactDetails && d.contactDetails.trustStatus === Constants.trustStatus.untrustworthy
 
-    property var setXPosition: function() {return 0}
-    property var setYPosition: function() {return 0}
-
     property var emojiReactionsReactedByUser: []
 
     signal openProfileClicked(string publicKey, string state)
@@ -140,14 +137,6 @@ StatusPopupMenu {
         // Reset selectedUserPublicKey so that associated properties get recalculated on re-open
         selectedUserPublicKey = ""
         d.contactDetails = {}
-    }
-
-    onHeightChanged: { root.y = setYPosition(); }
-    onWidthChanged: { root.x = setXPosition(); }
-    onOpened: {
-        // Trigger x and y position:
-        x = setXPosition()
-        y = setYPosition()
     }
 
     width: Math.max(emojiContainer.visible ? emojiContainer.width : 0,
@@ -202,7 +191,8 @@ StatusPopupMenu {
         displayName: root.selectedUserDisplayName
         pubkey: root.selectedUserPublicKey
         icon: root.selectedUserIcon
-        trustStatus: d.contactDetails.trustStatus
+        trustStatus: d.contactDetails && d.contactDetails.trustStatus ? d.contactDetails.trustStatus
+                                                                      : Constants.trustStatus.unknown
         isContact: root.isMyMutualContact
         isCurrentUser: root.isMe
     }

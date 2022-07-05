@@ -9,6 +9,7 @@ import shared.popups 1.0
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Utils 0.1 as StatusQUtils
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Controls.Validators 0.1
@@ -160,10 +161,10 @@ StatusStackModal {
 
         function createCommunity() {
             const error = store.createCommunity({
-                    name: Utils.filterXSS(nameInput.input.text),
-                    description: Utils.filterXSS(descriptionTextInput.input.text),
-                    introMessage: Utils.filterXSS(introMessageInput.input.text),
-                    outroMessage: Utils.filterXSS(outroMessageInput.input.text),
+                    name: StatusQUtils.Utils.filterXSS(nameInput.input.text),
+                    description: StatusQUtils.Utils.filterXSS(descriptionTextInput.input.text),
+                    introMessage: StatusQUtils.Utils.filterXSS(introMessageInput.input.text),
+                    outroMessage: StatusQUtils.Utils.filterXSS(outroMessageInput.input.text),
                     color: colorPicker.color.toString().toUpperCase(),
                     tags: communityTagsPicker.selectedTags,
                     image: {

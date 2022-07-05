@@ -12,9 +12,7 @@ Item {
 
     signal clicked()
 
-    height: childrenRect.height + Style.current.smallPadding * 2
-    anchors.left: parent.left
-    anchors.right: parent.right
+    implicitHeight: childrenRect.height + Style.current.smallPadding * 2
 
     Separator {
         id: sep1

@@ -10,10 +10,12 @@ import StatusQ.Core.Utils 0.1 as StatusQUtils
 
 Rectangle {
     id: root
-    height: (root.contentType === Constants.messageContentType.imageType) ?
-                replyToUsername.height + imageThumbnail.height + Style.current.padding :
-                (root.contentType === Constants.messageContentType.stickerType) ?
-                    replyToUsername.height + stickerThumbnail.height + Style.current.padding  : 50
+    implicitHeight: (root.contentType === Constants.messageContentType.imageType)
+                    ? replyToUsername.height + imageThumbnail.height + Style.current.padding
+                    : (root.contentType === Constants.messageContentType.stickerType)
+                      ? replyToUsername.height + stickerThumbnail.height + Style.current.padding
+                      : 50
+
     color: Style.current.replyBackground
     radius: 16
     clip: true
@@ -61,7 +63,7 @@ Rectangle {
 
         StyledText {
             id: replyText
-            text: Utils.getMessageWithStyle(StatusQUtils.Emoji.parse(Utils.linkifyAndXSS(message)), false)
+            text: StatusQUtils.Utils.getMessageWithStyle(StatusQUtils.Emoji.parse(StatusQUtils.Utils.linkifyAndXSS(message)), false)
             anchors.fill: parent
             elide: Text.ElideRight
             font.pixelSize: 13

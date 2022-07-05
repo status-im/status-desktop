@@ -24,6 +24,7 @@ import StatusQ.Controls 0.1 as StatusQ
 
 Rectangle {
     id: control
+
     signal sendTransactionCommandButtonClicked()
     signal receiveTransactionCommandButtonClicked()
     signal stickerSelected(string hashId, string packId)
@@ -53,19 +54,18 @@ Rectangle {
     property var stickerPackList
 
     property int extraHeightFactor: calculateExtraHeightFactor()
-    property int messageLimit: control.isStatusUpdateInput ? 300 : 2000
-    property int messageLimitVisible: control.isStatusUpdateInput ? 50 : 200
+    property int messageLimit: 2000
+    property int messageLimitVisible: 200
 
     property int chatType
 
     property string chatInputPlaceholder: qsTr("Message")
 
     property alias textInput: messageInputField
-    property bool isStatusUpdateInput: chatType === Constants.chatType.profile
 
     property var fileUrls: []
 
-    property var imageErrorMessageLocation: StatusChatInput.ImageErrorMessageLocation.Top
+    property var imageErrorMessageLocation: StatusChatInput.ImageErrorMessageLocation.Top // TODO: Remove this proeprty?
 
     property var messageContextMenu
 
@@ -77,20 +77,50 @@ Rectangle {
     }
 
     objectName: "statusChatInput"
-    height: {
-        if (extendedArea.visible) {
-            return messageInput.height + extendedArea.height + (control.isStatusUpdateInput ? 0 : Style.current.bigPadding)
-        }
-        if (messageInput.height > messageInput.defaultInputFieldHeight) {
-            if (messageInput.height >= messageInput.maxInputFieldHeight) {
-                return messageInput.maxInputFieldHeight + (control.isStatusUpdateInput ? 0 : Style.current.bigPadding)
+    function parseMessage(message) {
+        let mentionsMap = new Map()
+        let index = 0
+        while (true) {
+            index = message.indexOf("<a href=", index)
+            if (index < 0) {
+                break
             }
-            return messageInput.height + (control.isStatusUpdateInput ? 0 : Style.current.bigPadding)
+            const startIndex = index
+            const endIndex = message.indexOf("</a>", index) + 4
+            if (endIndex < 0) {
+                index += 8 // "<a href="
+                continue
+            }
+            const addrIndex = message.indexOf("0x", index + 8)
+            if (addrIndex < 0) {
+                index += 8 // "<a href="
+                continue
+            }
+            const addrEndIndex = message.indexOf("\"", addrIndex)
+            if (addrEndIndex < 0) {
+                index += 8 // "<a href="
+                continue
+            }
+            const mentionLink = message.substring(startIndex, endIndex)
+            const linkTag = message.substring(index, endIndex)
+            const linkText = linkTag.replace(/(<([^>]+)>)/ig,"").trim()
+            const atSymbol = linkText.startsWith("@") ? '' : '@'
+            const mentionTag = Constants.mentionSpanTag + atSymbol + linkText + '</span> '
+            mentionsMap.set(mentionLink, mentionTag)
+            index += linkTag.length
         }
-        return control.isStatusUpdateInput ? 56 : 64
+
+        let text = message;
+
+        for (let [key, value] of mentionsMap)
+            text = text.replace(new RegExp(key, 'g'), value)
+
+        textInput.text = text
+        textInput.cursorPosition = textInput.length
     }
-    anchors.left: parent.left
-    anchors.right: parent.right
+
+    implicitWidth: layout.implicitWidth + layout.anchors.leftMargin + layout.anchors.rightMargin
+    implicitHeight: layout.implicitHeight + layout.anchors.topMargin + layout.anchors.bottomMargin
 
     color: Style.current.transparent
 
@@ -185,10 +215,6 @@ Rectangle {
                 event.accepted = true;
                 return
             }
-
-            if (control.isStatusUpdateInput) {
-                return // Status update require the send button to be clicked
-            }
             if (messageInputField.length < messageLimit) {
                 control.sendMessage(event)
                 control.hideExtendedArea();
@@ -271,7 +297,7 @@ Rectangle {
             let lastCursorPosition = suggestionsBox.suggestionFilter.cursorPosition;
             let lastAtPosition = suggestionsBox.suggestionFilter.lastAtPosition;
             if (aliasName.toLowerCase() === suggestionsBox.suggestionsModel.get(suggestionsBox.listView.currentIndex).name.toLowerCase()
-                && (event.key !== Qt.Key_Backspace) && (event.key !== Qt.Key_Delete)) {
+                    && (event.key !== Qt.Key_Backspace) && (event.key !== Qt.Key_Delete)) {
                 insertMention(aliasName, lastAtPosition, lastCursorPosition);
             } else if (event.key === Qt.Key_Space) {
                 var plainTextToReplace = messageInputField.getText(lastAtPosition, lastCursorPosition);
@@ -296,30 +322,30 @@ Rectangle {
     }
 
     function unwrapSelection(unwrapWith, selectedTextWithFormationChars) {
-            if (messageInputField.selectionStart - messageInputField.selectionEnd === 0) return
+        if (messageInputField.selectionStart - messageInputField.selectionEnd === 0) return
 
-            // calulate the new selection start and end positions
-            var newSelectionStart = messageInputField.selectionStart -  unwrapWith.length
-            var newSelectionEnd = messageInputField.selectionEnd-messageInputField.selectionStart + newSelectionStart
+        // calulate the new selection start and end positions
+        var newSelectionStart = messageInputField.selectionStart -  unwrapWith.length
+        var newSelectionEnd = messageInputField.selectionEnd-messageInputField.selectionStart + newSelectionStart
 
-            selectedTextWithFormationChars = selectedTextWithFormationChars.trim()
-            // Check if the selectedTextWithFormationChars has formation chars and if so, calculate how many so we can adapt the start and end pos
-            const selectTextDiff = (selectedTextWithFormationChars.length - messageInputField.selectedText.length) / 2
+        selectedTextWithFormationChars = selectedTextWithFormationChars.trim()
+        // Check if the selectedTextWithFormationChars has formation chars and if so, calculate how many so we can adapt the start and end pos
+        const selectTextDiff = (selectedTextWithFormationChars.length - messageInputField.selectedText.length) / 2
 
-            // Remove the deselected option from the before and after the selected text
-            const prefixChars = messageInputField.getText((messageInputField.selectionStart - selectTextDiff), messageInputField.selectionStart)
-            const updatedPrefixChars = prefixChars.replace(unwrapWith, '')
-            const postfixChars = messageInputField.getText(messageInputField.selectionEnd, (messageInputField.selectionEnd + selectTextDiff))
-            const updatedPostfixChars = postfixChars.replace(unwrapWith, '')
+        // Remove the deselected option from the before and after the selected text
+        const prefixChars = messageInputField.getText((messageInputField.selectionStart - selectTextDiff), messageInputField.selectionStart)
+        const updatedPrefixChars = prefixChars.replace(unwrapWith, '')
+        const postfixChars = messageInputField.getText(messageInputField.selectionEnd, (messageInputField.selectionEnd + selectTextDiff))
+        const updatedPostfixChars = postfixChars.replace(unwrapWith, '')
 
-            // Create updated selected string with pre and post formatting characters
-            const updatedSelectedStringWithFormatChars = updatedPrefixChars + messageInputField.selectedText + updatedPostfixChars
+        // Create updated selected string with pre and post formatting characters
+        const updatedSelectedStringWithFormatChars = updatedPrefixChars + messageInputField.selectedText + updatedPostfixChars
 
-            messageInputField.remove(messageInputField.selectionStart - selectTextDiff, messageInputField.selectionEnd + selectTextDiff)
+        messageInputField.remove(messageInputField.selectionStart - selectTextDiff, messageInputField.selectionEnd + selectTextDiff)
 
-            insertInTextInput(messageInputField.selectionStart, updatedSelectedStringWithFormatChars)
+        insertInTextInput(messageInputField.selectionStart, updatedSelectedStringWithFormatChars)
 
-            messageInputField.select(newSelectionStart, newSelectionEnd)
+        messageInputField.select(newSelectionStart, newSelectionEnd)
     }
 
     function getPlainText() {
@@ -408,7 +434,7 @@ Rectangle {
         id: dummyContactList
         model: control.usersStore ? control.usersStore.usersModel : []
         delegate: Item {
-            property string contactName: model.name
+            property string contactName: model.name || ""
         }
     }
 
@@ -653,7 +679,6 @@ Rectangle {
         ]
         onAccepted: {
             imageBtn.highlighted = false
-            imageBtn2.highlighted = false
             let validImages = validateImages(imageDialog.fileUrls)
             if (validImages.length > 0) {
                 control.showImageArea(validImages)
@@ -662,7 +687,6 @@ Rectangle {
         }
         onRejected: {
             imageBtn.highlighted = false
-            imageBtn2.highlighted = false
         }
     }
 
@@ -735,7 +759,7 @@ Rectangle {
         id: gifPopup
         width: 360
         height: 440
-        x: parent.width - width - Style.current.halfPadding
+        x: control.width - width - Style.current.halfPadding
         y: -height
         gifSelected: function (event, url) {
             messageInputField.text += "\n" + url
@@ -752,7 +776,7 @@ Rectangle {
 
     StatusStickersPopup {
         id: stickersPopup
-        x: parent.width - width - Style.current.halfPadding
+        x: control.width - width - Style.current.halfPadding
         y: -height
         store: control.store
         enabled: !!control.recentStickers && !!control.stickerPackList
@@ -768,518 +792,443 @@ Rectangle {
         }
     }
 
-    StatusQ.StatusFlatRoundButton {
-        id: chatCommandsBtn
-        width: 32
-        height: 32
-        anchors.left: parent.left
-        anchors.leftMargin: 4
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 16
-        icon.name: "chat-commands"
-        type: StatusQ.StatusFlatRoundButton.Type.Tertiary
-        visible: RootStore.isWalletEnabled && !isEdit && control.chatType === Constants.chatType.oneToOne && !control.isStatusUpdateInput
-        enabled: !control.isContactBlocked
-        onClicked: {
-            chatCommandsPopup.opened ?
-                chatCommandsPopup.close() :
-                chatCommandsPopup.open()
-        }
-    }
+    RowLayout {
+        id: layout
+        anchors.fill: parent
+        spacing: 4
 
-    StatusQ.StatusFlatRoundButton {
-        id: imageBtn
-        width: 32
-        height: 32
-        anchors.left: chatCommandsBtn.visible ? chatCommandsBtn.right : parent.left
-        anchors.leftMargin: chatCommandsBtn.visible ? 2 : 4
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 16
-        icon.name: "image"
-        type: StatusQ.StatusFlatRoundButton.Type.Tertiary
-        visible: !isEdit && control.chatType !== Constants.chatType.publicChat && !control.isStatusUpdateInput
-        enabled: !control.isContactBlocked
-        onClicked: {
-            highlighted = true
-            imageDialog.open()
-        }
-    }
-
-    Rectangle {
-        id: messageInput
-        enabled: !control.isContactBlocked
-        property int maxInputFieldHeight: control.isStatusUpdateInput ? 124 : 112
-        property int defaultInputFieldHeight: control.isStatusUpdateInput ? 56 : 40
-        anchors.left: imageBtn.visible ? imageBtn.right : parent.left
-        anchors.leftMargin: imageBtn.visible ? 5 : Style.current.smallPadding
-        anchors.top: control.isStatusUpdateInput ? parent.top : undefined
-        anchors.bottom: !control.isStatusUpdateInput ? parent.bottom : undefined
-        anchors.bottomMargin: control.isStatusUpdateInput ? 0 : 12
-        anchors.right: unblockBtn.visible ? unblockBtn.left : parent.right
-        anchors.rightMargin: Style.current.smallPadding
-        height: {
-            if (messageInputField.implicitHeight <= messageInput.defaultInputFieldHeight) {
-                return messageInput.defaultInputFieldHeight
+        StatusQ.StatusFlatRoundButton {
+            id: chatCommandsBtn
+            Layout.preferredWidth: 32
+            Layout.preferredHeight: 32
+            Layout.alignment: Qt.AlignBottom
+            Layout.bottomMargin: 4
+            icon.name: "chat-commands"
+            type: StatusQ.StatusFlatRoundButton.Type.Tertiary
+            visible: RootStore.isWalletEnabled && !isEdit && control.chatType === Constants.chatType.oneToOne
+            enabled: !control.isContactBlocked
+            onClicked: {
+                chatCommandsPopup.opened ?
+                            chatCommandsPopup.close() :
+                            chatCommandsPopup.open()
             }
-            if (messageInputField.implicitHeight >= messageInput.maxInputFieldHeight) {
-                return messageInput.maxInputFieldHeight
-            }
-            return messageInputField.implicitHeight
         }
 
-        color: isEdit ? Theme.palette.statusChatInput.secondaryBackgroundColor : Style.current.inputBackground
-        radius: control.isStatusUpdateInput ? 36 :
-                                              height > defaultInputFieldHeight + 1 || extendedArea.visible ? 16 : 32
-
-        ColumnLayout {
-            id: validators
-            anchors.bottom: control.imageErrorMessageLocation === StatusChatInput.ImageErrorMessageLocation.Top ? extendedArea.top : undefined
-            anchors.bottomMargin: control.imageErrorMessageLocation === StatusChatInput.ImageErrorMessageLocation.Top ? -4 : undefined
-            anchors.top: control.imageErrorMessageLocation === StatusChatInput.ImageErrorMessageLocation.Bottom ? extendedArea.bottom : undefined
-            anchors.topMargin: control.imageErrorMessageLocation === StatusChatInput.ImageErrorMessageLocation.Bottom ? (isImage ? -4 : 4) : undefined
-            anchors.horizontalCenter: parent.horizontalCenter
-            width: parent.width
-            z: 1
-            StatusChatImageExtensionValidator {
-                Layout.alignment: Qt.AlignHCenter
-            }
-            StatusChatImageSizeValidator {
-                Layout.alignment: Qt.AlignHCenter
-            }
-            StatusChatImageQtyValidator {
-                Layout.alignment: Qt.AlignHCenter
+        StatusQ.StatusFlatRoundButton {
+            id: imageBtn
+            Layout.preferredWidth: 32
+            Layout.preferredHeight: 32
+            Layout.alignment: Qt.AlignBottom
+            Layout.bottomMargin: 4
+            icon.name: "image"
+            type: StatusQ.StatusFlatRoundButton.Type.Tertiary
+            visible: !isEdit && control.chatType !== Constants.chatType.publicChat
+            enabled: !control.isContactBlocked
+            onClicked: {
+                highlighted = true
+                imageDialog.open()
             }
         }
 
         Rectangle {
-            id: extendedArea
-            visible: isImage || isReply
-            height: {
-                if (visible) {
-                    if (isImage) {
-                        return imageArea.height
-                    }
+            id: messageInput
 
-                    if (isReply) {
-                        return replyArea.height + replyArea.anchors.topMargin
-                    }
+            readonly property int defaultInputFieldHeight: 40
+
+            Layout.fillWidth: true
+
+
+            implicitHeight: inputLayout.implicitHeight + inputLayout.anchors.topMargin + inputLayout.anchors.bottomMargin
+            implicitWidth: inputLayout.implicitWidth + inputLayout.anchors.leftMargin + inputLayout.anchors.rightMargin
+
+            enabled: !control.isContactBlocked
+            color: isEdit ? Theme.palette.statusChatInput.secondaryBackgroundColor : Style.current.inputBackground
+            radius: 20
+
+            ColumnLayout {
+                id: validators
+                anchors.bottom: control.imageErrorMessageLocation === StatusChatInput.ImageErrorMessageLocation.Top ? parent.top : undefined
+                anchors.bottomMargin: control.imageErrorMessageLocation === StatusChatInput.ImageErrorMessageLocation.Top ? -4 : undefined
+                anchors.top: control.imageErrorMessageLocation === StatusChatInput.ImageErrorMessageLocation.Bottom ? parent.bottom : undefined
+                anchors.topMargin: control.imageErrorMessageLocation === StatusChatInput.ImageErrorMessageLocation.Bottom ? (isImage ? -4 : 4) : undefined
+                anchors.horizontalCenter: parent.horizontalCenter
+                width: parent.width
+                z: 1
+
+                StatusChatImageExtensionValidator {
+                    Layout.alignment: Qt.AlignHCenter
                 }
-                return 0
+                StatusChatImageSizeValidator {
+                    Layout.alignment: Qt.AlignHCenter
+                }
+                StatusChatImageQtyValidator {
+                    Layout.alignment: Qt.AlignHCenter
+                }
             }
-            anchors.left: messageInput.left
-            anchors.right: messageInput.right
-            anchors.bottom: control.isStatusUpdateInput ? undefined : messageInput.top
-            anchors.top: control.isStatusUpdateInput ? messageInput.bottom : undefined
-            anchors.topMargin: control.isStatusUpdateInput ? -Style.current.halfPadding : 0
-            color: isEdit ? Style.current.secondaryInputBackground : Style.current.inputBackground
-            radius: control.isStatusUpdateInput ? 36 : 16
 
             Rectangle {
+                // Bottom right corner has different radius
                 color: parent.color
+                anchors.bottom: parent.bottom
                 anchors.right: parent.right
-                anchors.left: parent.left
-                height: control.isStatusUpdateInput ? 64 : 30
-                anchors.top: control.isStatusUpdateInput ? parent.top : undefined
-                anchors.topMargin: control.isStatusUpdateInput ? -24 : 0
-                anchors.bottom: control.isStatusUpdateInput ? undefined : parent.bottom
-                anchors.bottomMargin: control.isStatusUpdateInput ? 0 : -height/2
+                height: parent.height / 2
+                width: 32
+                radius: Style.current.radius
             }
 
-            StatusChatInputImageArea {
-                id: imageArea
-                anchors.left: parent.left
-                anchors.leftMargin: control.isStatusUpdateInput ? profileImage.width + Style.current.padding : Style.current.halfPadding
-                anchors.right: parent.right
-                anchors.rightMargin: control.isStatusUpdateInput ? actions.width + 2* Style.current.padding : Style.current.halfPadding
-                anchors.top: parent.top
-                anchors.topMargin: Style.current.halfPadding
-                visible: isImage
-                width: messageInputField.width - actions.width
-                onImageClicked: Global.openImagePopup(chatImage, messageContextMenu)
-                onImageRemoved: {
-                    if (control.fileUrls.length > index && control.fileUrls[index]) {
-                        control.fileUrls.splice(index, 1)
+            ColumnLayout {
+                id: inputLayout
+
+                anchors.fill: parent
+                spacing: 4
+
+                StatusChatInputReplyArea {
+                    id: replyArea
+                    visible: isReply
+                    Layout.fillWidth: true
+                    Layout.margins: 2
+                    onCloseButtonClicked: {
+                        isReply = false
                     }
-                    isImage = control.fileUrls.length > 0
-                    validateImages(control.fileUrls)
                 }
-            }
 
-            StatusChatInputReplyArea {
-                id: replyArea
-                visible: isReply
-                anchors.left: parent.left
-                anchors.leftMargin: 2
-                anchors.right: parent.right
-                anchors.rightMargin: 2
-                anchors.top: parent.top
-                anchors.topMargin: 2
-                // Not Refactored Yet
-//                stickerData: sticker
-                onCloseButtonClicked: {
-                    isReply = false
+                StatusChatInputImageArea {
+                    id: imageArea
+                    Layout.fillWidth: true
+                    Layout.leftMargin: Style.current.halfPadding
+                    Layout.rightMargin: Style.current.halfPadding
+                    visible: isImage
+                    onImageClicked: Global.openImagePopup(chatImage, messageContextMenu)
+                    onImageRemoved: {
+                        if (control.fileUrls.length > index && control.fileUrls[index]) {
+                            control.fileUrls.splice(index, 1)
+                        }
+                        isImage = control.fileUrls.length > 0
+                        validateImages(control.fileUrls)
+                    }
                 }
-            }
-        }
 
-        StatusSmartIdenticon {
-            id: profileImage
-            anchors.left: parent.left
-            anchors.leftMargin: Style.current.smallPadding
-            anchors.top: parent.top
-            anchors.topMargin: Style.current.halfPadding
-            image.source: userProfile.icon
-            visible: control.isStatusUpdateInput
-        }
+                RowLayout {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    spacing: Style.current.radius
 
-        StatusScrollView {
-            id: scrollView
-            padding: 0
-            anchors.top: parent.top
-            anchors.bottom: parent.bottom
-            anchors.left: profileImage.visible ? profileImage.right : parent.left
-            anchors.leftMargin: Style.current.smallPadding
-            anchors.right: actions.left
-            anchors.rightMargin: Style.current.halfPadding
-            ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+                    StatusScrollView {
+                        id: inputScrollView
 
-            TextArea {
-                id: messageInputField                
-                objectName: "messageInputField"
-                property var lastClick: 0
-                property int cursorWhenPressed: 0
-                width: scrollView.availableWidth
-                textFormat: Text.RichText
-                font.pixelSize: 15
-                font.family: Style.current.fontRegular.name
-                wrapMode: TextArea.Wrap
-                placeholderText: control.chatInputPlaceholder
-                placeholderTextColor: Style.current.secondaryText
-                selectByMouse: true
-                color: isEdit ? Theme.palette.directColor1 : Style.current.textColor
-                topPadding: control.isStatusUpdateInput ? 18 : Style.current.smallPadding
-                bottomPadding: control.isStatusUpdateInput ? 14 : 12
-                Keys.onPressed: {
-                    keyEvent = event;
-                    onKeyPress(event)
-                    cursorWhenPressed = cursorPosition;
-                }
-                Keys.onReleased: onRelease(event) // gives much more up to date cursorPosition
-                Keys.onShortcutOverride: event.accepted = isUploadFilePressed(event)
-                leftPadding: 0
-                selectionColor: Style.current.primarySelectionColor
-                persistentSelection: true
-                property var keyEvent
-                onCursorPositionChanged: {
-                    if (mentionsPos.length > 0) {
-                        for (var i = 0; i < mentionsPos.length; i++) {
-                            if ((messageInputField.cursorPosition === (mentionsPos[i].leftIndex + 1)) && (keyEvent.key === Qt.Key_Right)) {
-                                messageInputField.cursorPosition = mentionsPos[i].rightIndex;
-                            } else if (messageInputField.cursorPosition === (mentionsPos[i].rightIndex - 1)) {
-                                if (keyEvent.key === Qt.Key_Left) {
-                                    messageInputField.cursorPosition = mentionsPos[i].leftIndex;
-                                } else if ((keyEvent.key === Qt.Key_Backspace) || (keyEvent.key === Qt.Key_Delete)) {
-                                    messageInputField.remove(mentionsPos[i].rightIndex, mentionsPos[i].leftIndex);
-                                    mentionsPos.pop(i);
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        Layout.leftMargin: 12
+                        Layout.rightMargin: 12
+                        Layout.maximumHeight: 112
+                        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+
+                        padding: 0
+
+                        TextArea {
+                            id: messageInputField
+                            objectName: "messageInputField"
+
+                            property var lastClick: 0
+                            property int cursorWhenPressed: 0
+
+                            width: inputScrollView.availableWidth
+
+                            textFormat: Text.RichText
+                            font.pixelSize: 15
+                            font.family: Style.current.fontRegular.name
+                            wrapMode: TextArea.Wrap
+                            placeholderText: control.chatInputPlaceholder
+                            placeholderTextColor: Style.current.secondaryText
+                            selectByMouse: true
+                            color: isEdit ? Theme.palette.directColor1 : Style.current.textColor
+                            topPadding: 9
+                            bottomPadding: 9
+                            leftPadding: 0
+                            padding: 0
+                            Keys.onPressed: {
+                                keyEvent = event;
+                                onKeyPress(event)
+                                cursorWhenPressed = cursorPosition;
+                            }
+                            Keys.onReleased: onRelease(event) // gives much more up to date cursorPosition
+                            Keys.onShortcutOverride: event.accepted = isUploadFilePressed(event)
+                            selectionColor: Style.current.primarySelectionColor
+                            persistentSelection: true
+                            property var keyEvent
+
+                            Component.onDestruction: {
+                                // NOTE: Without losing focus the app crashes on apply/cancel message editing.
+                                control.forceActiveFocus();
+                            }
+
+                            onCursorPositionChanged: {
+                                if (mentionsPos.length > 0) {
+                                    for (var i = 0; i < mentionsPos.length; i++) {
+                                        if ((messageInputField.cursorPosition === (mentionsPos[i].leftIndex + 1)) && (keyEvent.key === Qt.Key_Right)) {
+                                            messageInputField.cursorPosition = mentionsPos[i].rightIndex;
+                                        } else if (messageInputField.cursorPosition === (mentionsPos[i].rightIndex - 1)) {
+                                            if (keyEvent.key === Qt.Key_Left) {
+                                                messageInputField.cursorPosition = mentionsPos[i].leftIndex;
+                                            } else if ((keyEvent.key === Qt.Key_Backspace) || (keyEvent.key === Qt.Key_Delete)) {
+                                                messageInputField.remove(mentionsPos[i].rightIndex, mentionsPos[i].leftIndex);
+                                                mentionsPos.pop(i);
+                                            }
+                                        } else if (((messageInputField.cursorPosition > mentionsPos[i].leftIndex) &&
+                                                    (messageInputField.cursorPosition  < mentionsPos[i].rightIndex)) &&
+                                                   ((keyEvent.key === Qt.Key_Left) && ((keyEvent.modifiers & Qt.AltModifier) ||
+                                                                                       (keyEvent.modifiers & Qt.ControlModifier)))) {
+                                            messageInputField.cursorPosition = mentionsPos[i].leftIndex;
+                                        } else if ((keyEvent.key === Qt.Key_Up) || (keyEvent.key === Qt.Key_Down)) {
+                                            if (messageInputField.cursorPosition >= mentionsPos[i].leftIndex &&
+                                                    messageInputField.cursorPosition <= (((mentionsPos[i].leftIndex + mentionsPos[i].rightIndex)/2))) {
+                                                messageInputField.cursorPosition = mentionsPos[i].leftIndex;
+                                            } else if (messageInputField.cursorPosition <= mentionsPos[i].rightIndex &&
+                                                       messageInputField.cursorPosition > (((mentionsPos[i].leftIndex + mentionsPos[i].rightIndex)/2))) {
+                                                messageInputField.cursorPosition = mentionsPos[i].rightIndex;
+                                            }
+                                        }
+                                    }
                                 }
-                            } else if (((messageInputField.cursorPosition > mentionsPos[i].leftIndex) &&
-                                        (messageInputField.cursorPosition  < mentionsPos[i].rightIndex)) &&
-                                       ((keyEvent.key === Qt.Key_Left) && ((keyEvent.modifiers & Qt.AltModifier) ||
-                                                                           (keyEvent.modifiers & Qt.ControlModifier)))) {
-                                messageInputField.cursorPosition = mentionsPos[i].leftIndex;
-                            } else if ((keyEvent.key === Qt.Key_Up) || (keyEvent.key === Qt.Key_Down)) {
-                                if (messageInputField.cursorPosition >= mentionsPos[i].leftIndex &&
-                                    messageInputField.cursorPosition <= (((mentionsPos[i].leftIndex + mentionsPos[i].rightIndex)/2))) {
-                                    messageInputField.cursorPosition = mentionsPos[i].leftIndex;
-                                  } else if (messageInputField.cursorPosition <= mentionsPos[i].rightIndex &&
-                                           messageInputField.cursorPosition > (((mentionsPos[i].leftIndex + mentionsPos[i].rightIndex)/2))) {
-                                    messageInputField.cursorPosition = mentionsPos[i].rightIndex;
+                                if ((mentionsPos.length > 0) && (cursorPosition < length) && getText(cursorPosition, length).includes("@")
+                                        && (keyEvent.key !== Qt.Key_Right) && (keyEvent.key !== Qt.Key_Left) && (keyEvent.key !== Qt.Key_Up)
+                                        && (keyEvent.key !== Qt.Key_Down)) {
+                                    var unformattedText = getText(cursorPosition, length);
+                                    for (var k = 0; k < mentionsPos.length; k++) {
+                                        if ((unformattedText.indexOf(mentionsPos[k].name) !== -1) && (unformattedText.indexOf(mentionsPos[k].name) !== mentionsPos[k].leftIndex)) {
+                                            mentionsPos[k].leftIndex = (cursorPosition + unformattedText.indexOf(mentionsPos[k].name) - 1);
+                                            mentionsPos[k].rightIndex = (cursorPosition + unformattedText.indexOf(mentionsPos[k].name) + mentionsPos[k].name.length);
+                                        }
+                                    }
+                                }
+                            }
+
+                            onTextChanged: {
+                                if (length <= control.messageLimit) {
+                                    var symbols = ":='xX><0O;*dB8-D#%\\";
+                                    if ((length > 1) && (symbols.indexOf(getText((cursorPosition - 2), (cursorPosition - 1))) !== -1)
+                                            && (!getText((cursorPosition - 7), cursorPosition).includes("http"))) {
+                                        const emojis = StatusQUtils.Emoji.emojiJSON.emoji_json.filter(function (emoji) {
+                                            if (emoji.aliases_ascii.includes(getText((cursorPosition - 2), cursorPosition)) ||
+                                                    emoji.aliases_ascii.includes(getText((cursorPosition - 3), cursorPosition))) {
+                                                var has2Chars = emoji.aliases_ascii.includes(getText((cursorPosition - 2), cursorPosition));
+                                                replaceWithEmoji("", getText(cursorPosition - (has2Chars ? 2 : 3), cursorPosition), emoji.unicode);
+                                            }
+                                        })
+                                    }
+                                    if (text === "") {
+                                        mentionsPos = [];
+                                    }
+                                } else {
+                                    var removeFrom = (cursorPosition < messageLimit) ? cursorWhenPressed : messageLimit;
+                                    remove(removeFrom, cursorPosition);
+                                }
+                                messageLengthLimit.remainingChars = (messageLimit - length);
+                            }
+
+                            onReleased: function (event) {
+                                const now = Date.now()
+                                if (messageInputField.selectedText.trim() !== "") {
+                                    // If it's a double click, just check the mouse position
+                                    // If it's a mouse select, use the start and end position average)
+                                    let x = now < messageInputField.lastClick + 500 ? x = event.x :
+                                                                                      (messageInputField.cursorRectangle.x + event.x) / 2
+                                    x -= textFormatMenu.width / 2
+
+                                    textFormatMenu.popup(x, -messageInputField.height-2)
+                                    messageInputField.forceActiveFocus();
+                                }
+                                lastClick = now
+                            }
+
+                            cursorDelegate: Rectangle {
+                                color: Theme.palette.primaryColor1
+                                implicitWidth: 2
+                                implicitHeight: 22
+                                radius: 1
+                                visible: messageInputField.cursorVisible
+
+                                SequentialAnimation on visible {
+                                    loops: Animation.Infinite
+                                    running: messageInputField.cursorVisible
+                                    PropertyAnimation { to: false; duration: 600; }
+                                    PropertyAnimation { to: true; duration: 600; }
+                                }
+                            }
+
+                            StatusSyntaxHighlighter {
+                                quickTextDocument: messageInputField.textDocument
+                            }
+                            MouseArea {
+                                anchors.fill: parent
+                                acceptedButtons: Qt.NoButton
+                                enabled: parent.hoveredLink
+                                cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.IBeamCursor
+                            }
+                            StatusTextFormatMenu {
+                                id: textFormatMenu
+
+                                StatusChatInputTextFormationAction {
+                                    wrapper: "**"
+                                    icon.name: "bold"
+                                    text: qsTr("Bold")
+                                    selectedTextWithFormationChars: RootStore.getSelectedTextWithFormationChars(messageInputField)
+                                    onActionTriggered: checked ?
+                                                           unwrapSelection(wrapper, RootStore.getSelectedTextWithFormationChars(messageInputField)) :
+                                                           wrapSelection(wrapper)
+                                }
+                                StatusChatInputTextFormationAction {
+                                    wrapper: "*"
+                                    icon.name: "italic"
+                                    text: qsTr("Italic")
+                                    selectedTextWithFormationChars: RootStore.getSelectedTextWithFormationChars(messageInputField)
+                                    checked: (surroundedBy("*") && !surroundedBy("**")) || surroundedBy("***")
+                                    onActionTriggered: checked ?
+                                                           unwrapSelection(wrapper, RootStore.getSelectedTextWithFormationChars(messageInputField)) :
+                                                           wrapSelection(wrapper)
+                                }
+                                StatusChatInputTextFormationAction {
+                                    wrapper: "~~"
+                                    icon.name: "strikethrough"
+                                    text: qsTr("Strikethrough")
+                                    selectedTextWithFormationChars: RootStore.getSelectedTextWithFormationChars(messageInputField)
+                                    onActionTriggered: checked ?
+                                                           unwrapSelection(wrapper, RootStore.getSelectedTextWithFormationChars(messageInputField)) :
+                                                           wrapSelection(wrapper)
+                                }
+                                StatusChatInputTextFormationAction {
+                                    wrapper: "`"
+                                    icon.name: "code"
+                                    text: qsTr("Code")
+                                    selectedTextWithFormationChars: RootStore.getSelectedTextWithFormationChars(messageInputField)
+                                    onActionTriggered: checked ?
+                                                           unwrapSelection(wrapper, RootStore.getSelectedTextWithFormationChars(messageInputField)) :
+                                                           wrapSelection(wrapper)
+                                }
+                                onClosed: {
+                                    messageInputField.deselect();
                                 }
                             }
                         }
+
+
+                        Shortcut {
+                            enabled: messageInputField.activeFocus
+                            sequence: StandardKey.Bold
+                            onActivated: wrapSelection("**")
+                        }
+                        Shortcut {
+                            enabled: messageInputField.activeFocus
+                            sequence: StandardKey.Italic
+                            onActivated: wrapSelection("*")
+                        }
+                        Shortcut {
+                            enabled: messageInputField.activeFocus
+                            sequence: "Ctrl+Shift+Alt+C"
+                            onActivated: wrapSelection("```")
+                        }
+                        Shortcut {
+                            enabled: messageInputField.activeFocus
+                            sequence: "Ctrl+Shift+C"
+                            onActivated: wrapSelection("`")
+                        }
+                        Shortcut {
+                            enabled: messageInputField.activeFocus
+                            sequence: "Ctrl+Alt+-"
+                            onActivated: wrapSelection("~~")
+                        }
+                        Shortcut {
+                            enabled: messageInputField.activeFocus
+                            sequence: "Ctrl+Shift+X"
+                            onActivated: wrapSelection("~~")
+                        }
+                        Shortcut {
+                            enabled: messageInputField.activeFocus
+                            sequence: "Ctrl+Meta+Space"
+                            onActivated: emojiBtn.clicked(null)
+                        }
                     }
-                    if ((mentionsPos.length > 0) && (cursorPosition < length) && getText(cursorPosition, length).includes("@")
-                         && (keyEvent.key !== Qt.Key_Right) && (keyEvent.key !== Qt.Key_Left) && (keyEvent.key !== Qt.Key_Up)
-                         && (keyEvent.key !== Qt.Key_Down)) {
-                        var unformattedText = getText(cursorPosition, length);
-                        for (var k = 0; k < mentionsPos.length; k++) {
-                            if ((unformattedText.indexOf(mentionsPos[k].name) !== -1) && (unformattedText.indexOf(mentionsPos[k].name) !== mentionsPos[k].leftIndex)) {
-                                mentionsPos[k].leftIndex = (cursorPosition + unformattedText.indexOf(mentionsPos[k].name) - 1);
-                                mentionsPos[k].rightIndex = (cursorPosition + unformattedText.indexOf(mentionsPos[k].name) + mentionsPos[k].name.length);
+
+                    Column {
+                        Layout.alignment: Qt.AlignBottom
+                        Layout.bottomMargin: 3
+
+                        StyledText {
+                            id: messageLengthLimit
+                            property int remainingChars: -1
+                            leftPadding: Style.current.halfPadding
+                            rightPadding: Style.current.halfPadding
+                            visible: ((messageInputField.length >= control.messageLimitVisible) && (messageInputField.length <= control.messageLimit))
+                            color: (remainingChars <= messageLimitVisible) ? Style.current.danger : Style.current.textColor
+                            text: visible ? remainingChars.toString() : ""
+                        }
+
+                        Row {
+                            id: actions
+                            spacing: 2
+
+                            StatusQ.StatusFlatRoundButton {
+                                id: emojiBtn
+                                objectName: "statusChatInputEmojiButton"
+                                enabled: !control.emojiPopupOpened
+                                implicitHeight: 32
+                                implicitWidth: 32
+                                icon.name: "emojis"
+                                icon.color: (hovered || highlighted) ? Theme.palette.primaryColor1
+                                                                     : Theme.palette.baseColor1
+                                type: StatusQ.StatusFlatRoundButton.Type.Tertiary
+                                color: "transparent"
+                                onClicked: {
+                                    control.emojiPopupOpened = true
+                                    togglePopup(emojiPopup, emojiBtn)
+                                    emojiPopup.x = Global.applicationWindow.width - emojiPopup.width - Style.current.halfPadding
+                                    emojiPopup.y = Global.applicationWindow.height - emojiPopup.height - control.height
+                                }
+                            }
+
+                            StatusQ.StatusFlatRoundButton {
+                                id: gifBtn
+                                implicitHeight: 32
+                                implicitWidth: 32
+                                visible: !isEdit && RootStore.isGifWidgetEnabled
+                                icon.name: "gif"
+                                icon.color: (hovered || highlighted) ? Theme.palette.primaryColor1
+                                                                     : Theme.palette.baseColor1
+                                type: StatusQ.StatusFlatRoundButton.Type.Tertiary
+                                color: "transparent"
+                                onClicked: togglePopup(gifPopup, gifBtn)
+                            }
+
+                            StatusQ.StatusFlatRoundButton {
+                                id: stickersBtn
+                                implicitHeight: 32
+                                implicitWidth: 32
+                                width: visible ? 32 : 0
+                                icon.name: "stickers"
+                                icon.color: (hovered || highlighted) ? Theme.palette.primaryColor1
+                                                                     : Theme.palette.baseColor1
+                                type: StatusQ.StatusFlatRoundButton.Type.Tertiary
+                                visible: !isEdit && emojiBtn.visible
+                                color: "transparent"
+                                onClicked: togglePopup(stickersPopup, stickersBtn)
                             }
                         }
                     }
                 }
-                onTextChanged: {
-                    if (length <= control.messageLimit) {
-                        var symbols = ":='xX><0O;*dB8-D#%\\";
-                        if ((length > 1) && (symbols.indexOf(getText((cursorPosition - 2), (cursorPosition - 1))) !== -1)
-                                && (!getText((cursorPosition - 7), cursorPosition).includes("http"))) {
-                            const emojis = StatusQUtils.Emoji.emojiJSON.emoji_json.filter(function (emoji) {
-                                if (emoji.aliases_ascii.includes(getText((cursorPosition - 2), cursorPosition)) ||
-                                        emoji.aliases_ascii.includes(getText((cursorPosition - 3), cursorPosition))) {
-                                    var has2Chars = emoji.aliases_ascii.includes(getText((cursorPosition - 2), cursorPosition));
-                                    replaceWithEmoji("", getText(cursorPosition - (has2Chars ? 2 : 3), cursorPosition), emoji.unicode);
-                                }
-                            })
-                        }
-                        if (text === "") {
-                            mentionsPos = [];
-                        }
-                    } else {
-                        var removeFrom = (cursorPosition < messageLimit) ? cursorWhenPressed : messageLimit;
-                        remove(removeFrom, cursorPosition);
-                    }
-                    messageLengthLimit.remainingChars = (messageLimit - length);
-                }
-
-                onReleased: function (event) {
-                    const now = Date.now()
-                    if (messageInputField.selectedText.trim() !== "") {
-                        // If it's a double click, just check the mouse position
-                        // If it's a mouse select, use the start and end position average)
-                        let x = now < messageInputField.lastClick + 500 ? x = event.x :
-                                                                          (messageInputField.cursorRectangle.x + event.x) / 2
-                        x -= textFormatMenu.width / 2
-
-                        textFormatMenu.popup(x, -messageInputField.height-2)
-                        messageInputField.forceActiveFocus();
-                    }
-                    lastClick = now
-                }
-
-                StatusSyntaxHighlighter {
-                   quickTextDocument: messageInputField.textDocument
-                }
-                MouseArea {
-                    anchors.fill: parent
-                    acceptedButtons: Qt.NoButton
-                    enabled: parent.hoveredLink
-                    cursorShape: parent.hoveredLink ? Qt.PointingHandCursor : Qt.IBeamCursor
-                }
-                StatusTextFormatMenu {
-                    id: textFormatMenu
-
-                    StatusChatInputTextFormationAction {
-                        wrapper: "**"
-                        icon.name: "bold"
-                        text: qsTr("Bold")
-                        selectedTextWithFormationChars: RootStore.getSelectedTextWithFormationChars(messageInputField)
-                        onActionTriggered: checked ?
-                                         unwrapSelection(wrapper, RootStore.getSelectedTextWithFormationChars(messageInputField)) :
-                                         wrapSelection(wrapper)
-                    }
-                    StatusChatInputTextFormationAction {
-                        wrapper: "*"
-                        icon.name: "italic"
-                        text: qsTr("Italic")
-                        selectedTextWithFormationChars: RootStore.getSelectedTextWithFormationChars(messageInputField)
-                        checked: (surroundedBy("*") && !surroundedBy("**")) || surroundedBy("***")
-                        onActionTriggered: checked ?
-                                         unwrapSelection(wrapper, RootStore.getSelectedTextWithFormationChars(messageInputField)) :
-                                         wrapSelection(wrapper)
-                    }
-                    StatusChatInputTextFormationAction {
-                        wrapper: "~~"
-                        icon.name: "strikethrough"
-                        text: qsTr("Strikethrough")
-                        selectedTextWithFormationChars: RootStore.getSelectedTextWithFormationChars(messageInputField)
-                        onActionTriggered: checked ?
-                                         unwrapSelection(wrapper, RootStore.getSelectedTextWithFormationChars(messageInputField)) :
-                                         wrapSelection(wrapper)
-                    }
-                    StatusChatInputTextFormationAction {
-                        wrapper: "`"
-                        icon.name: "code"
-                        text: qsTr("Code")
-                        selectedTextWithFormationChars: RootStore.getSelectedTextWithFormationChars(messageInputField)
-                        onActionTriggered: checked ?
-                                         unwrapSelection(wrapper, RootStore.getSelectedTextWithFormationChars(messageInputField)) :
-                                         wrapSelection(wrapper)
-                    }
-                    onClosed: {
-                        messageInputField.deselect();
-                    }
-                }
             }
-
-            Shortcut {
-                enabled: messageInputField.activeFocus
-                sequence: StandardKey.Bold
-                onActivated: wrapSelection("**")
-            }
-            Shortcut {
-                enabled: messageInputField.activeFocus
-                sequence: StandardKey.Italic
-                onActivated: wrapSelection("*")
-            }
-            Shortcut {
-                enabled: messageInputField.activeFocus
-                sequence: "Ctrl+Shift+Alt+C"
-                onActivated: wrapSelection("```")
-            }
-            Shortcut {
-                enabled: messageInputField.activeFocus
-                sequence: "Ctrl+Shift+C"
-                onActivated: wrapSelection("`")
-            }
-            Shortcut {
-                enabled: messageInputField.activeFocus
-                sequence: "Ctrl+Alt+-"
-                onActivated: wrapSelection("~~")
-            }
-            Shortcut {
-                enabled: messageInputField.activeFocus
-                sequence: "Ctrl+Shift+X"
-                onActivated: wrapSelection("~~")
-            }
-            Shortcut {
-                enabled: messageInputField.activeFocus
-                sequence: "Ctrl+Meta+Space"
-                onActivated: emojiBtn.clicked(null)
-            }
-
         }
 
-        Rectangle {
-            color: parent.color
-            anchors.bottom: parent.bottom
-            anchors.right: parent.right
-            visible: !control.isStatusUpdateInput
-            height: parent.height / 2
-            width: 32
-            radius: Style.current.radius
-        }
-
-        StyledText {
-            id: messageLengthLimit
-            property int remainingChars: -1
-            anchors.right: parent.right
-            anchors.bottom: actions.top
-            anchors.rightMargin: control.isStatusUpdateInput ? Style.current.padding : Style.current.radius
-            leftPadding: Style.current.halfPadding
-            rightPadding: Style.current.halfPadding
-            visible: ((messageInputField.length >= control.messageLimitVisible) && (messageInputField.length <= control.messageLimit))
-            color: (remainingChars <=  messageLimitVisible) ? Style.current.danger : Style.current.textColor
-            text: visible ? remainingChars.toString() : ""
-        }
-
-        Item {
-            id: actions
-            width: control.isStatusUpdateInput ?
-                       imageBtn2.width + sendBtn.anchors.leftMargin + sendBtn.width :
-                       emojiBtn.width + stickersBtn.anchors.leftMargin + stickersBtn.width
-            anchors.bottom: control.isStatusUpdateInput && extendedArea.visible ? extendedArea.bottom : parent.bottom
-            anchors.bottomMargin: control.isStatusUpdateInput ? Style.current.smallPadding+2: 4
-            anchors.right: parent.right
-            anchors.rightMargin: Style.current.radius
-            height: emojiBtn.height
-
-            StatusQ.StatusFlatRoundButton {
-                id: imageBtn2
-                implicitHeight: 32
-                implicitWidth: 32
-                anchors.right: sendBtn.left
-                anchors.rightMargin: 2
-                anchors.bottom: parent.bottom
-                icon.name: "image"
-                type: StatusQ.StatusFlatRoundButton.Type.Tertiary
-                visible: control.isStatusUpdateInput
-
-                onClicked: {
-                    highlighted = true
-                    imageDialog.open()
-                }
-            }
-
-            StatusQ.StatusFlatButton {
-                id: sendBtn
-                icon.name: "send"
-                text: qsTr("Send")
-                size: StatusQ.StatusBaseButton.Size.Small
-                anchors.right: parent.right
-                anchors.rightMargin: Style.current.halfPadding
-                anchors.verticalCenter: parent.verticalCenter
-                visible: imageBtn2.visible
-                enabled: (globalUtils.plainText(StatusQUtils.Emoji.deparse(messageInputField.text)).length > 0 || isImage) && messageInputField.length < messageLimit
-                onClicked: function (event) {
-                    control.sendMessage(event)
-                    control.hideExtendedArea();
-                }
-            }
-
-            StatusQ.StatusFlatRoundButton {
-                id: emojiBtn
-                objectName: "statusChatInputEmojiButton"
-                enabled: !control.emojiPopupOpened
-                implicitHeight: 32
-                implicitWidth: 32
-                anchors.right: stickersBtn.left
-                anchors.rightMargin: 2
-                anchors.bottom: parent.bottom
-                visible: !imageBtn2.visible
-                icon.name: "emojis"
-                type: StatusQ.StatusFlatRoundButton.Type.Tertiary
-                color: "transparent"
-
-                icon.color: (hovered || highlighted) ? Theme.palette.primaryColor1
-                                                     : Theme.palette.baseColor1
-
-                onClicked: {
-                    control.emojiPopupOpened = true
-                    togglePopup(emojiPopup, emojiBtn)
-                    emojiPopup.x = Global.applicationWindow.width - emojiPopup.width - Style.current.halfPadding
-                    emojiPopup.y = Global.applicationWindow.height - emojiPopup.height - control.height
-                }
-            }
-
-            StatusQ.StatusFlatRoundButton {
-                id: gifBtn
-                implicitHeight: 32
-                implicitWidth: 32
-                anchors.left: stickersBtn.right
-                anchors.leftMargin: 2
-                anchors.bottom: parent.bottom
-                visible: !isEdit && RootStore.isGifWidgetEnabled
-                icon.name: "gif"
-                type: StatusQ.StatusFlatRoundButton.Type.Tertiary
-                color: "transparent"
-
-                icon.color: (hovered || highlighted) ? Theme.palette.primaryColor1
-                                                     : Theme.palette.baseColor1
-
-                onClicked: togglePopup(gifPopup, gifBtn)
-            }
-
-            StatusQ.StatusFlatRoundButton {
-                id: stickersBtn
-                implicitHeight: 32
-                implicitWidth: 32
-                width: visible ? 32 : 0
-                anchors.left: parent.left
-                anchors.bottom: parent.bottom
-                icon.name: "stickers"
-                type: StatusQ.StatusFlatRoundButton.Type.Tertiary
-                visible: !isEdit && emojiBtn.visible
-                color: "transparent"
-                icon.color: (hovered || highlighted) ? Theme.palette.primaryColor1
-                                                     : Theme.palette.baseColor1
-
-                onClicked: togglePopup(stickersPopup, stickersBtn)
+        StatusQ.StatusButton {
+            id: unblockBtn
+            Layout.alignment: Qt.AlignBottom
+            Layout.bottomMargin: 4
+            visible: control.isContactBlocked
+            text: qsTr("Unblock")
+            type: StatusQ.StatusBaseButton.Type.Danger
+            onClicked: function (event) {
+                control.unblockChat()
             }
         }
     }
 
-    StatusQ.StatusButton {
-        id: unblockBtn
-        visible: control.isContactBlocked
-        anchors.right: parent.right
-        anchors.rightMargin: Style.current.halfPadding
-        anchors.bottom: messageInput.bottom
-        text: qsTr("Unblock")
-        type: StatusQ.StatusBaseButton.Type.Danger
-        onClicked: function (event) {
-            control.unblockChat()
-        }
-    }
 }
