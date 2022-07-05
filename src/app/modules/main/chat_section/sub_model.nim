@@ -1,4 +1,4 @@
-import NimQml, Tables, strformat, json
+import NimQml, Tables, strformat, json, algorithm
 
 import sub_item
 
@@ -245,3 +245,19 @@ QtObject:
         self.dataChanged(index, index, @[ModelRole.HasUnreadMessages.int, ModelRole.NotificationsCount.int])
         return true
     return false
+
+  proc sortChats(x, y: SubItem): int =
+    if x.position < y.position: -1
+    elif x.position == y.position: 0
+    else: 1
+
+  proc reorder*(self: SubModel, id: string, position: int) =
+    let idx = self.getItemIdxById(id)
+    if idx == -1:
+      return
+
+    self.items[idx].BaseItem.position = position
+
+    self.beginResetModel()
+    self.items.sort(sortChats)
+    self.endResetModel()

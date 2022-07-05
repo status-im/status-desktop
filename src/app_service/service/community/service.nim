@@ -313,7 +313,7 @@ QtObject:
           # Handle position changes
           if(chat.id == prev_chat.id and chat.position != prev_chat.position):
             self.events.emit(SIGNAL_COMMUNITY_CHANNEL_REORDERED, CommunityChatOrderArgs(communityId: community.id,
-            chatId: community.id&chat.id, categoryId: chat.categoryId, position: chat.position))
+            chatId: chat.id, categoryId: chat.categoryId, position: chat.position))
 
           # Handle name/description changes
           if(chat.id == prev_chat.id and (chat.name != prev_chat.name or chat.description != prev_chat.description)):
@@ -804,7 +804,7 @@ QtObject:
               self.joinedCommunities[communityId].chats[prev_chat_idx].position = chat.position
               chatDetails.updateMissingFields(self.joinedCommunities[communityId].chats[prev_chat_idx])
               self.chatService.updateOrAddChat(chatDetails) # we have to update chats stored in the chat service.
-              self.events.emit(SIGNAL_COMMUNITY_CHANNEL_REORDERED, CommunityChatOrderArgs(communityId: updatedCommunity.id, chatId: fullChatId, categoryId: chat.categoryId, position: chat.position))
+              self.events.emit(SIGNAL_COMMUNITY_CHANNEL_REORDERED, CommunityChatOrderArgs(communityId: updatedCommunity.id, chatId: chat.id, categoryId: chat.categoryId, position: chat.position))
 
     except Exception as e:
       error "Error reordering community channel", msg = e.msg, communityId, chatId, position, procName="reorderCommunityChat"
