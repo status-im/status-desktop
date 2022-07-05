@@ -52,7 +52,7 @@ Switch {
 
             transitions: Transition {
                 reversible: true
-                NumberAnimation { properties: "x"; easing.type: Easing.Linear; duration: 120; running: visible }
+                NumberAnimation { properties: "x"; easing.type: Easing.Linear; duration: 120}
             }
         }
     }
