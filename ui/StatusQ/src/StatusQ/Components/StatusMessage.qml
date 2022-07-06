@@ -100,7 +100,7 @@ Rectangle {
                     displayName: messageDetails.displayName
                     secondaryName: messageDetails.secondaryName
                     tertiaryDetail: messageDetails.chatID
-                    isMutualContact: messageDetails.isMutualContact
+                    isContact: messageDetails.isContact
                     trustIndicator: messageDetails.trustIndicator
                     resendText: statusMessage.resendText
                     showResendButton: messageDetails.hasExpired && messageDetails.amISender

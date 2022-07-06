@@ -6,7 +6,7 @@ import StatusQ.Core.Theme 0.1
 Row {
     id: root
 
-    property bool isMutualContact: false
+    property bool isContact: false
     property var trustIndicator: StatusContactVerificationIcons.TrustedType.None
 
     property StatusIconSettings mutualConnectionIcon: StatusIconSettings {
@@ -51,10 +51,10 @@ Row {
     }
 
     spacing: 4
-    visible: root.isMutualContact || (root.trustIndicator !== StatusContactVerificationIcons.TrustedType.None)
+    visible: root.isContact || (root.trustIndicator !== StatusContactVerificationIcons.TrustedType.None)
 
     StatusRoundIcon {
-        visible: root.isMutualContact
+        visible: root.isContact
         icon.name: root.mutualConnectionIcon.name
         icon.width: root.mutualConnectionIcon.width
         icon.height: root.mutualConnectionIcon.height

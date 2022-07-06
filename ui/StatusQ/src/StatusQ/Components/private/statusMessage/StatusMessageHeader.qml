@@ -19,7 +19,7 @@ Item {
     property string tertiaryDetail: ""
     property string resendText: ""
     property bool showResendButton: false
-    property bool isMutualContact: false
+    property bool isContact: false
     property var trustIndicator: StatusContactVerificationIcons.TrustedType.None
 
     signal clicked()
@@ -55,7 +55,7 @@ Item {
             Layout.alignment: Qt.AlignBottom
         }       
         StatusContactVerificationIcons {
-            isMutualContact: statusMessageHeader.isMutualContact
+            isContact: statusMessageHeader.isContact
             trustIndicator: statusMessageHeader.trustIndicator
         }
         StatusBaseText {

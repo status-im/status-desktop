@@ -177,7 +177,7 @@ Item {
                                        "localNickname": entry.localNickname,
                                        "isVerified": entry.isVerified,
                                        "isUntrustworthy": entry.isUntrustworthy,
-                                       "isContact": entry.isMutualContact,
+                                       "isContact": entry.isContact,
                                        "ringSpecModel": entry.ringSpecModel,
                                        "icon": entry.icon,
                                        "onlineStatus": entry.onlineStatus,

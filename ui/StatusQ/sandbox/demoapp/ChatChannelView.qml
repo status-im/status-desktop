@@ -41,7 +41,7 @@ ListView {
             }
             messageText: model.message
             hasMention: model.hasMention
-            isMutualContact: model.isMutualContact
+            isContact: model.isContact
             trustIndicator: model.trustIndicator
             isPinned: model.isPinned
             pinnedBy: model.pinnedBy

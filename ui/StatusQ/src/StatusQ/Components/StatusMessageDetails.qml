@@ -17,7 +17,7 @@ QtObject {
     property string messageText: ""
     property int contentType: 0
     property string messageContent: ""
-    property bool isMutualContact: false
+    property bool isContact: false
     property var trustIndicator: StatusContactVerificationIcons.TrustedType.None
     property bool hasMention: false
     property bool isPinned: false

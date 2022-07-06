@@ -446,7 +446,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
  CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2ImYgiNITTlTdG1nUZ5a92VITQxITFiJmIIjSE0htAYQrMHAAD//+wwFVpz+yqXAAAAAElFTkSuQmCC"
             isIdenticon: true
             chatKey: "0x04d1bed19c523299cbd07ddec7b8949ad7dd923819a68e0b733c9c0bc38cde276bd256f098e755f8f028395c2c91f438a22adaff6caded060b7cc0ef3f470f5789"
-            isMutualContact: true
+            isContact: true
             trustIndicator: StatusContactVerificationIcons.TrustedType.None
             hasMention: false
             editMode: false
@@ -475,7 +475,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
  CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2ImYgiNITTlTdG1nUZ5a92VITQxITFiJmIIjSE0htAYQrMHAAD//+wwFVpz+yqXAAAAAElFTkSuQmCC"
             isIdenticon: true
             chatKey: "0x04d1bed19c523299cbd07ddec7b8949ad7dd923819a68e0b733c9c0bc38cde276bd256f098e755f8f028395c2c91f438a22adaff6caded060b7cc0ef3f470f2333"
-            isMutualContact: true
+            isContact: true
             trustIndicator: StatusContactVerificationIcons.TrustedType.Verified
             hasMention: false
             editMode: false
@@ -503,7 +503,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             profileImage: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAkUlEQVR4nOzYwQmDQBQG4SSkl3SQyizDyuzAavTi0cPK8sPwM9/Rw8rw4KH7eZUwhMYQGkNoDKGpCfmmDl63/bh7vvx/78T7aiZiCI0hNMMbJL2FZs+vmYghNIbQTG+cp9smtf1qJmIIjSEKqZmIITSG0Azfa6W/qfxDvBhCY4hCaiZiCI0hNIbQGEJzBgAA///3pSBjX42sYAAAAABJRU5ErkJggg=="
             isIdenticon: true
             chatKey: "0x04d1bed19c523299cbd07ddec7b8949ad7dd923819a68e0b733c9c0bc38cde276bd256f098e755f8f028395c2c91f438a22adaff6caded060b7cc0ef3f470f2333"
-            isMutualContact: true
+            isContact: true
             trustIndicator: StatusContactVerificationIcons.TrustedType.Verified
             hasMention: false
             editMode: false
@@ -531,7 +531,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             profileImage:  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAiElEQVR4nOzXUQpAQBRGYWQvLNAyLJDV8C5qpiGnv/M9al5Ot27X0IUwhMYQGkNoDKGJCRlLH67bftx9X+ap/+P9VcxEDKExhKZ4a9Uq3TZviZmIITSG0DRvlqcbqVbrlouZiCE0htD4h0hjCI0hNN5aNIbQGKKPxEzEEBpDaAyhMYTmDAAA//+gYCErzmCpCQAAAABJRU5ErkJggg="
             isIdenticon: true
             chatKey: "0x04d1bed19c523299cbd07ddec7b8949ad7dd923819a68e0b733c9c0bc38cde276bd256f098e755f8f028395c2c91f438a22adaff6caded060b7cc0ef3f470f6789"
-            isMutualContact: false
+            isContact: false
             trustIndicator: StatusContactVerificationIcons.TrustedType.Untrustworthy
             hasMention: false
             editMode: false
@@ -560,7 +560,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             profileImage: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAiElEQVR4nOzXUQpAQBRGYWQvLNAyLJDV8C5qpiGnv/M9al5Ot27X0IUwhMYQGkNoDKGJCRlLH67bftx9X+ap/+P9VcxEDKExhKZ4a9Uq3TZviZmIITSG0DRvlqcbqVbrlouZiCE0htD4h0hjCI0hNN5aNIbQGKKPxEzEEBpDaAyhMYTmDAAA//+gYCErzmCpCQAAAABJRU5ErkJggg=="
             isIdenticon: true
             chatKey: "0x04d1bed19c523299cbd07ddec7b8949ad7dd923819a68e0b733c9c0bc38cde276bd256f098e755f8f028395c2c91f438a22adaff6caded060b7cc0ef3f470f1234"
-            isMutualContact: true
+            isContact: true
             trustIndicator: StatusContactVerificationIcons.TrustedType.None
             hasMention: false
             editMode: false
@@ -589,7 +589,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             profileImage: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAiElEQVR4nOzXUQpAQBRGYWQvLNAyLJDV8C5qpiGnv/M9al5Ot27X0IUwhMYQGkNoDKGJCRlLH67bftx9X+ap/+P9VcxEDKExhKZ4a9Uq3TZviZmIITSG0DRvlqcbqVbrlouZiCE0htD4h0hjCI0hNN5aNIbQGKKPxEzEEBpDaAyhMYTmDAAA//+gYCErzmCpCQAAAABJRU5ErkJggg=="
             isIdenticon: true
             chatKey: "0x04d1bed19c523299cbd07ddec7b8949ad7dd923819a68e0b733c9c0bc38cde276bd256f098e755f8f028395c2c91f438a22adaff6caded060b7cc0ef3f470f1234"
-            isMutualContact: false
+            isContact: false
             trustIndicator: StatusContactVerificationIcons.TrustedType.Untrustworthy
             hasMention: false
             editMode: false
@@ -618,7 +618,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             profileImage: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAiElEQVR4nOzXUQpAQBRGYWQvLNAyLJDV8C5qpiGnv/M9al5Ot27X0IUwhMYQGkNoDKGJCRlLH67bftx9X+ap/+P9VcxEDKExhKZ4a9Uq3TZviZmIITSG0DRvlqcbqVbrlouZiCE0htD4h0hjCI0hNN5aNIbQGKKPxEzEEBpDaAyhMYTmDAAA//+gYCErzmCpCQAAAABJRU5ErkJggg=="
             isIdenticon: true
             chatKey: "0x04d1bed19c523299cbd07ddec7b8949ad7dd923819a68e0b733c9c0bc38cde276bd256f098e755f8f028395c2c91f438a22adaff6caded060b7cc0ef3f470f1234"
-            isMutualContact: false
+            isContact: false
             trustIndicator: StatusContactVerificationIcons.TrustedType.Untrustworthy
             hasMention: true
             editMode: false
@@ -648,7 +648,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             profileImage: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAiElEQVR4nOzXUQpAQBRGYWQvLNAyLJDV8C5qpiGnv/M9al5Ot27X0IUwhMYQGkNoDKGJCRlLH67bftx9X+ap/+P9VcxEDKExhKZ4a9Uq3TZviZmIITSG0DRvlqcbqVbrlouZiCE0htD4h0hjCI0hNN5aNIbQGKKPxEzEEBpDaAyhMYTmDAAA//+gYCErzmCpCQAAAABJRU5ErkJggg=="
             isIdenticon: true
             chatKey: "0x04d1bed19c523299cbd07ddec7b8949ad7dd923819a68e0b733c9c0bc38cde276bd256f098e755f8f028395c2c91f438a22adaff6caded060b7cc0ef3f470f1234"
-            isMutualContact: false
+            isContact: false
             trustIndicator: StatusContactVerificationIcons.TrustedType.Untrustworthy
             hasMention: false
             editMode: false
@@ -678,7 +678,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             profileImage: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAiElEQVR4nOzXUQpAQBRGYWQvLNAyLJDV8C5qpiGnv/M9al5Ot27X0IUwhMYQGkNoDKGJCRlLH67bftx9X+ap/+P9VcxEDKExhKZ4a9Uq3TZviZmIITSG0DRvlqcbqVbrlouZiCE0htD4h0hjCI0hNN5aNIbQGKKPxEzEEBpDaAyhMYTmDAAA//+gYCErzmCpCQAAAABJRU5ErkJggg=="
             isIdenticon: true
             chatKey: "0x04d1bed19c523299cbd07ddec7b8949ad7dd923819a68e0b733c9c0bc38cde276bd256f098e755f8f028395c2c91f438a22adaff6caded060b7cc0ef3f470f1234"
-            isMutualContact: false
+            isContact: false
             trustIndicator: StatusContactVerificationIcons.TrustedType.Untrustworthy
             hasMention: false
             editMode: false
@@ -708,7 +708,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             profileImage: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAiElEQVR4nOzXUQpAQBRGYWQvLNAyLJDV8C5qpiGnv/M9al5Ot27X0IUwhMYQGkNoDKGJCRlLH67bftx9X+ap/+P9VcxEDKExhKZ4a9Uq3TZviZmIITSG0DRvlqcbqVbrlouZiCE0htD4h0hjCI0hNN5aNIbQGKKPxEzEEBpDaAyhMYTmDAAA//+gYCErzmCpCQAAAABJRU5ErkJggg=="
             isIdenticon: true
             chatKey: "0x04d1bed19c523299cbd07ddec7b8949ad7dd923819a68e0b733c9c0bc38cde276bd256f098e755f8f028395c2c91f438a22adaff6caded060b7cc0ef3f470f1234"
-            isMutualContact: false
+            isContact: false
             trustIndicator: StatusContactVerificationIcons.TrustedType.Untrustworthy
             hasMention: false
             editMode: false
@@ -738,7 +738,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             profileImage: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAiElEQVR4nOzXUQpAQBRGYWQvLNAyLJDV8C5qpiGnv/M9al5Ot27X0IUwhMYQGkNoDKGJCRlLH67bftx9X+ap/+P9VcxEDKExhKZ4a9Uq3TZviZmIITSG0DRvlqcbqVbrlouZiCE0htD4h0hjCI0hNN5aNIbQGKKPxEzEEBpDaAyhMYTmDAAA//+gYCErzmCpCQAAAABJRU5ErkJggg=="
             isIdenticon: true
             chatKey: "0x04d1bed19c523299cbd07ddec7b8949ad7dd923819a68e0b733c9c0bc38cde276bd256f098e755f8f028395c2c91f438a22adaff6caded060b7cc0ef3f470f1234"
-            isMutualContact: false
+            isContact: false
             trustIndicator: StatusContactVerificationIcons.TrustedType.Untrustworthy
             hasMention: false
             editMode: false
@@ -767,7 +767,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             profileImage: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAiElEQVR4nOzXUQpAQBRGYWQvLNAyLJDV8C5qpiGnv/M9al5Ot27X0IUwhMYQGkNoDKGJCRlLH67bftx9X+ap/+P9VcxEDKExhKZ4a9Uq3TZviZmIITSG0DRvlqcbqVbrlouZiCE0htD4h0hjCI0hNN5aNIbQGKKPxEzEEBpDaAyhMYTmDAAA//+gYCErzmCpCQAAAABJRU5ErkJggg=="
             isIdenticon: true
             chatKey: "0x04d1bed19c523299cbd07ddec7b8949ad7dd923819a68e0b733c9c0bc38cde276bd256f098e755f8f028395c2c91f438a22adaff6caded060b7cc0ef3f470f1234"
-            isMutualContact: false
+            isContact: false
             trustIndicator: StatusContactVerificationIcons.TrustedType.Verified
             hasMention: false
             editMode: false
@@ -795,7 +795,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             profileImage: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAiElEQVR4nOzXUQpAQBRGYWQvLNAyLJDV8C5qpiGnv/M9al5Ot27X0IUwhMYQGkNoDKGJCRlLH67bftx9X+ap/+P9VcxEDKExhKZ4a9Uq3TZviZmIITSG0DRvlqcbqVbrlouZiCE0htD4h0hjCI0hNN5aNIbQGKKPxEzEEBpDaAyhMYTmDAAA//+gYCErzmCpCQAAAABJRU5ErkJggg=="
             isIdenticon: true
             chatKey: "0x04d1bed19c523299cbd07ddec7b8949ad7dd923819a68e0b733c9c0bc38cde276bd256f098e755f8f028395c2c91f438a22adaff6caded060b7cc0ef3f470f1234"
-            isMutualContact: true
+            isContact: true
             trustIndicator: StatusContactVerificationIcons.TrustedType.None
             hasMention: false
             editMode: false
@@ -823,7 +823,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             profileImage: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAiElEQVR4nOzXUQpAQBRGYWQvLNAyLJDV8C5qpiGnv/M9al5Ot27X0IUwhMYQGkNoDKGJCRlLH67bftx9X+ap/+P9VcxEDKExhKZ4a9Uq3TZviZmIITSG0DRvlqcbqVbrlouZiCE0htD4h0hjCI0hNN5aNIbQGKKPxEzEEBpDaAyhMYTmDAAA//+gYCErzmCpCQAAAABJRU5ErkJggg=="
             isIdenticon: true
             chatKey: "0x04d1bed19c523299cbd07ddec7b8949ad7dd923819a68e0b733c9c0bc38cde276bd256f098e755f8f028395c2c91f438a22adaff6caded060b7cc0ef3f470f1234"
-            isMutualContact: true
+            isContact: true
             trustIndicator: StatusContactVerificationIcons.TrustedType.None
             hasMention: false
             editMode: false

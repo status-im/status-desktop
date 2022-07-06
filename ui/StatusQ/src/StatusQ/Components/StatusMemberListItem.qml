@@ -111,7 +111,7 @@ StatusListItem {
     // root object settings:
     title: (root.nickName === "") ? root.userName : root.nickName
     statusListItemTitleIcons.sourceComponent: StatusContactVerificationIcons {
-        isMutualContact: root.isContact
+        isContact: root.isContact
         trustIndicator: {
             if (root.isVerified) return StatusContactVerificationIcons.TrustedType.Verified
             else if (root.isUntrustworthy) return StatusContactVerificationIcons.TrustedType.Untrustworthy
