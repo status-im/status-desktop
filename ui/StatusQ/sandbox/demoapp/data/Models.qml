@@ -1000,7 +1000,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             name: "United States Dollar"
             shortName: "USD"
             symbol: "$"
-            imageSource: "../../assets/twemoji/26x26/1f4b4.png"
+            imageSource: "../../assets/twemoji/svg/1f4b4.svg"
             category: ""
             selected: false
         }
@@ -1009,7 +1009,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             name: "British Pound"
             shortName: "GBP"
             symbol: "£"
-            imageSource: "../../assets/twemoji/26x26/1f4b5.png"
+            imageSource: "../../assets/twemoji/svg/1f4b5.svg"
             category: ""
             selected: false
         }
@@ -1018,7 +1018,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             name: "Euro"
             shortName: "EUR"
             symbol: "€"
-            imageSource: "../../assets/twemoji/26x26/1f4b6.png"
+            imageSource: "../../assets/twemoji/svg/1f4b6.svg"
             category: ""
             selected: true
         }
@@ -1027,7 +1027,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             name: "Shout Korean Won"
             shortName: "KRW"
             symbol: "₩"
-            imageSource: "../../assets/twemoji/26x26/1f4b8.png"
+            imageSource: "../../assets/twemoji/svg/1f4b8.svg"
             category: ""
             selected: false
         }
@@ -1036,7 +1036,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             name: "Ethereum"
             shortName: "ETH"
             symbol: "Ξ"
-            imageSource: "../../assets/twemoji/26x26/1f4b7.png"
+            imageSource: "../../assets/twemoji/svg/1f4b7.svg"
             category: "Tokens"
             selected: true
         }
@@ -1045,7 +1045,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             name: "Bitcoin"
             shortName: "BTC"
             symbol: "฿"
-            imageSource: "../../assets/twemoji/26x26/1f4b4.png"
+            imageSource: "../../assets/twemoji/svg/1f4b4.svg"
             category: "Tokens"
             selected: false
         }
@@ -1054,7 +1054,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             name: "Status Network Token"
             shortName: "SNT"
             symbol: ""
-            imageSource: "../../assets/twemoji/26x26/1f4b8.png"
+            imageSource: "../../assets/twemoji/svg/1f4b8.svg"
             category: "Tokens"
             selected: false
         }
@@ -1064,7 +1064,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             name: "Emirati Dirham"
             shortName: "AED"
             symbol: "د.إ"
-            imageSource: "../../assets/twemoji/26x26/1f4b4.png"
+            imageSource: "../../assets/twemoji/svg/1f4b4.svg"
             category: "Other Fiat"
             selected: false
         }
@@ -1073,7 +1073,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             name: "Afghani"
             shortName: "AFN"
             symbol: "؋"
-            imageSource: "../../assets/twemoji/26x26/1f4b7.png"
+            imageSource: "../../assets/twemoji/svg/1f4b7.svg"
             category: "Other Fiat"
             selected: false
         }
@@ -1082,7 +1082,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             name: "Argentine Peso"
             shortName: "AFN"
             symbol: "$"
-            imageSource: "../../assets/twemoji/26x26/1f4b4.png"
+            imageSource: "../../assets/twemoji/svg/1f4b4.svg"
             category: "Other Fiat"
             selected: false
         }
@@ -1094,7 +1094,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             name: "United States Dollar"
             shortName: "USD"
             symbol: "$"
-            imageSource: "../../assets/twemoji/26x26/1f4b4.png"
+            imageSource: "../../assets/twemoji/svg/1f4b4.svg"
             category: ""
             selected: false
         }
@@ -1103,7 +1103,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             name: "British Pound"
             shortName: "GBP"
             symbol: "£"
-            imageSource: "../../assets/twemoji/26x26/1f4b5.png"
+            imageSource: "../../assets/twemoji/svg/1f4b5.svg"
             category: ""
             selected: false
         }
@@ -1112,7 +1112,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             name: "Euro"
             shortName: "EUR"
             symbol: "€"
-            imageSource: "../../assets/twemoji/26x26/1f4b6.png"
+            imageSource: "../../assets/twemoji/svg/1f4b6.svg"
             category: ""
             selected: true
         }
@@ -1121,7 +1121,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             name: "Shout Korean Won"
             shortName: "KRW"
             symbol: "₩"
-            imageSource: "../../assets/twemoji/26x26/1f4b8.png"
+            imageSource: "../../assets/twemoji/svg/1f4b8.svg"
             category: ""
             selected: false
         }
@@ -1130,7 +1130,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             name: "Ethereum"
             shortName: "ETH"
             symbol: "Ξ"
-            imageSource: "../../assets/twemoji/26x26/1f4b7.png"
+            imageSource: "../../assets/twemoji/svg/1f4b7.svg"
             category: "Tokens"
             selected: true
         }
@@ -1139,7 +1139,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             name: "Bitcoin"
             shortName: "BTC"
             symbol: "฿"
-            imageSource: "../../assets/twemoji/26x26/1f4b4.png"
+            imageSource: "../../assets/twemoji/svg/1f4b4.svg"
             category: "Tokens"
             selected: false
         }
@@ -1148,7 +1148,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             name: "Status Network Token"
             shortName: "SNT"
             symbol: ""
-            imageSource: "../../assets/twemoji/26x26/1f4b8.png"
+            imageSource: "../../assets/twemoji/svg/1f4b8.svg"
             category: "Tokens"
             selected: false
         }
@@ -1158,7 +1158,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             name: "Emirati Dirham"
             shortName: "AED"
             symbol: "د.إ"
-            imageSource: "../../assets/twemoji/26x26/1f4b4.png"
+            imageSource: "../../assets/twemoji/svg/1f4b4.svg"
             category: "Other Fiat"
             selected: false
         }
@@ -1167,7 +1167,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             name: "Afghani"
             shortName: "AFN"
             symbol: "؋"
-            imageSource: "../../assets/twemoji/26x26/1f4b7.png"
+            imageSource: "../../assets/twemoji/svg/1f4b7.svg"
             category: "Other Fiat"
             selected: false
         }
@@ -1176,7 +1176,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             name: "Argentine Peso"
             shortName: "AFN"
             symbol: "$"
-            imageSource: "../../assets/twemoji/26x26/1f4b4.png"
+            imageSource: "../../assets/twemoji/svg/1f4b4.svg"
             category: "Other Fiat"
             selected: false
         }
@@ -1187,7 +1187,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             key: 0
             name: "English"
             shortName: "English"
-            imageSource: "../../assets/twemoji/26x26/1f1ec-1f1e7.png"
+            imageSource: "../../assets/twemoji/svg/1f1ec-1f1e7.svg"
             category: ""
             selected: false
         }
@@ -1195,7 +1195,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             key: 1
             name: "Korean"
             shortName: "한국어"
-            imageSource: "../../assets/twemoji/26x26/1f1f0-1f1f7.png"
+            imageSource: "../../assets/twemoji/svg/1f1f0-1f1f7.svg"
             category: ""
             selected: false
         }
@@ -1203,7 +1203,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             key: 2
             name: "Portuguese (Brazilian)"
             shortName: "Português"
-            imageSource: "../../assets/twemoji/26x26/1f1e7-1f1f7.png"
+            imageSource: "../../assets/twemoji/svg/1f1e7-1f1f7.svg"
             category: ""
             selected: true
         }
@@ -1211,7 +1211,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             key: 3
             name: "Dutch"
             shortName: "Nederlands"
-            imageSource: "../../assets/twemoji/26x26/1f1f3-1f1f1.png"
+            imageSource: "../../assets/twemoji/svg/1f1f3-1f1f1.svg"
             category: "Beta Languages"
             selected: false
         }
@@ -1219,7 +1219,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             key: 4
             name: "Indonesian"
             shortName: "Bahasa Indonesia"
-            imageSource: "../../assets/twemoji/26x26/1f1ee-1f1e9.png"
+            imageSource: "../../assets/twemoji/svg/1f1ee-1f1e9.svg"
             category: "Beta Languages"
             selected: false
         }
@@ -1227,7 +1227,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             key: 5
             name: "Spanish"
             shortName: "Español"
-            imageSource: "../../assets/twemoji/26x26/1f1ea-1f1e6.png"
+            imageSource: "../../assets/twemoji/svg/1f1ea-1f1e6.svg"
             category: "Beta Languages"
             selected: false
         }
