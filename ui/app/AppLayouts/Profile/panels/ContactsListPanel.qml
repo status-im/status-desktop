@@ -16,6 +16,7 @@ import "."
 Item {
     id: contactListRoot
 
+    property var contactsStore
     property var contactsModel
     property int panelUsage: Constants.contactsPanelUsage.unknownPosition
     property bool scrollbarOn: false
@@ -26,11 +27,10 @@ Item {
     readonly property string lowerCaseSearchString: searchString.toLowerCase()
     readonly property int count: contactsList.count
 
+    signal openContactContextMenu(string publicKey, string name, string icon)
     signal contactClicked(string publicKey)
-    signal openProfilePopup(string publicKey)
     signal sendMessageActionTriggered(string publicKey)
     signal showVerificationRequest(string publicKey)
-    signal openChangeNicknamePopup(string publicKey)
     signal contactRequestAccepted(string publicKey)
     signal contactRequestRejected(string publicKey)
     signal rejectionRemoved(string publicKey)
@@ -108,6 +108,7 @@ Item {
         ContactPanel {
             id: panelDelegate
             width: ListView.view.width
+            contactsStore: contactListRoot.contactsStore
             name: model.displayName
             publicKey: model.pubKey
             iconSource: model.icon
@@ -120,6 +121,9 @@ Item {
             searchStr: contactListRoot.searchString
 
             showSendMessageButton: isContact && !isBlocked
+            onOpenContactContextMenu: function (publicKey, name, icon) {
+                contactListRoot.openContactContextMenu(publicKey, name, icon)
+            }
             showRejectContactRequestButton: {
                 if (contactListRoot.panelUsage === Constants.contactsPanelUsage.receivedContactRequest && !model.verificationRequestStatus) {
                     return true
@@ -156,9 +160,7 @@ Item {
             }
 
             onClicked: contactListRoot.contactClicked(model.pubKey)
-            onOpenProfilePopup: contactListRoot.openProfilePopup(publicKey)
             onSendMessageActionTriggered: contactListRoot.sendMessageActionTriggered(publicKey)
-            onOpenChangeNicknamePopup: contactListRoot.openChangeNicknamePopup(publicKey)
             onContactRequestAccepted: contactListRoot.contactRequestAccepted(publicKey)
             onContactRequestRejected: contactListRoot.contactRequestRejected(publicKey)
             onRejectionRemoved: contactListRoot.rejectionRemoved(publicKey)
