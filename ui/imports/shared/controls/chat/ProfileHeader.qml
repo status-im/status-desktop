@@ -32,7 +32,7 @@ Item {
     property bool pubkeyVisibleWithCopy: false
     property bool emojiHashVisible: true
     property bool editImageButtonVisible: false
-    readonly property bool compact: root.imageSize == ProfileHeader.ImageSize.Compact
+    readonly property bool compact: root.imageSize === ProfileHeader.ImageSize.Compact
 
     signal clicked()
     signal editClicked()
@@ -47,7 +47,6 @@ Item {
                 case ProfileHeader.ImageSize.Compact: return compact;
                 case ProfileHeader.ImageSize.Middle: return normal;
                 case ProfileHeader.ImageSize.Big: return big;
-                return normal;
             }
         }
     }
