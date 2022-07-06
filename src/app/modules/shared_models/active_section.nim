@@ -187,8 +187,10 @@ QtObject:
       localNickname: string,
       alias: string,
       image: string,
+      isContact: bool,
       isUntrustworthy: bool) =
-    self.item.updateMember(pubkey, name, ensName, localNickname, alias, image, isUntrustworthy)
+    self.item.updateMember(pubkey, name, ensName, localNickname, alias, image, isContact,
+      isUntrustworthy)
 
   proc pendingRequestsToJoin(self: ActiveSection): QVariant {.slot.} =
     if (self.item.id == ""):

@@ -63,7 +63,7 @@ QtObject {
         let contactDetails = Utils.getContactDetailsAsJson(pubkey)
         
         if (root.privacyModuleInst.profilePicturesVisibility !==
-            Constants.profilePicturesVisibility.everyone && !contactDetails.isContact) {
+            Constants.profilePicturesVisibility.everyone && !contactDetails.isAdded) {
             return;
         }
 

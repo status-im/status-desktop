@@ -597,6 +597,7 @@ QtObject {
                 thumbnailImage: "",
                 largeImage: "",
                 isContact: false,
+                isAdded: false,
                 isBlocked: false,
                 requestReceived: false,
                 isSyncing: false,

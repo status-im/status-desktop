@@ -47,7 +47,7 @@ proc createItemFromPublicKey(self: Module, publicKey: string): UserItem =
     pubKey = contact.id,
     displayName = name,
     icon = image,
-    isContact = contact.isMutualContact(),
+    isContact = contact.isContact(),
     isBlocked = contact.isBlocked(),
     isVerified = contact.isContactVerified(),
     isUntrustworthy = contact.isContactUntrustworthy()
@@ -129,7 +129,7 @@ proc addItemToAppropriateModel(self: Module, item: UserItem) =
     return
   elif(contact.isBlocked()):
     self.view.blockedContactsModel().addItem(item)
-  elif(contact.isMutualContact()):
+  elif(contact.isContact()):
     self.view.myMutualContactsModel().addItem(item)
   else:
     if(contact.isContactRequestReceived() and not contact.isContactRequestSent()):

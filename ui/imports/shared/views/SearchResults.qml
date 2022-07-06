@@ -42,12 +42,12 @@ Item {
         isAddedContact = false
     }
 
-    function isContactAdded() {
-        return root.pubKey != "" ? Utils.getContactDetailsAsJson(root.pubKey).isContact : false
+    function isUserAdded() {
+        return root.pubKey != "" ? Utils.getContactDetailsAsJson(root.pubKey).isAdded : false
     }
 
     onPubKeyChanged: {
-        root.isAddedContact = root.isContactAdded()
+        root.isAddedContact = root.isUserAdded()
     }
 
     StyledText {

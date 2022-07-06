@@ -33,7 +33,6 @@ Item {
             property string alias: model.alias
             property string ensName: model.ensName
             property string icon: model.icon
-            property bool isAdded: model.isContact
         }
     }
 
@@ -71,8 +70,7 @@ Item {
                 nickname: listItem.nickname,
                 alias: listItem.alias,
                 ensName: listItem.ensName,
-                icon: listItem.icon,
-                isAdded: listItem.isAdded
+                icon: listItem.icon
             }
             if (all || isAcceptedItem(filter, item)) {
                 filterModel.append(item)

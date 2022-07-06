@@ -109,7 +109,7 @@ method getCommunityItem(self: Module, c: CommunityDto): SectionItem =
           alias = contactDetails.details.alias,
           icon = contactDetails.icon,
           onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(member.id).statusType),
-          isContact = contactDetails.details.added, # FIXME
+          isContact = contactDetails.details.isContact,
           )),
       historyArchiveSupportEnabled = c.settings.historyArchiveSupportEnabled
     )

@@ -22,7 +22,6 @@ StatusModal {
     property string finalButtonLabel: "Request address"
     property var sendChatCommand: function () {}
     property bool isRequested: false
-    property bool isContact: false
 
     id: root
     anchors.centerIn: parent

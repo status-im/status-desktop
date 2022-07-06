@@ -81,7 +81,7 @@ method onNewMessagesLoaded*(self: Module, messages: seq[MessageDto]) =
       alias = contactDetails.details.alias,
       icon = contactDetails.icon,
       onlineStatus = status,
-      isContact = contactDetails.details.added,
+      isContact = contactDetails.details.isContact,
       isUntrustworthy = contactDetails.details.trustStatus == TrustStatus.Untrustworthy,
       )
     )
@@ -109,7 +109,7 @@ method contactUpdated*(self: Module, publicKey: string) =
     localNickname = contactDetails.details.localNickname,
     alias = contactDetails.details.alias,
     icon = contactDetails.icon,
-    isContact = contactDetails.details.added, #FIXME
+    isContact = contactDetails.details.isContact,
     isUntrustworthy = contactDetails.details.trustStatus == TrustStatus.Untrustworthy,
   )
 
@@ -149,7 +149,7 @@ method addChatMember*(self: Module,  member: ChatMember) =
     alias = contactDetails.details.alias,
     icon = contactDetails.icon,
     onlineStatus = status,
-    isContact = contactDetails.details.added, #FIXME
+    isContact = contactDetails.details.isContact,
     isAdmin = member.admin,
     joined = member.joined,
     isUntrustworthy = contactDetails.details.trustStatus == TrustStatus.Untrustworthy
@@ -186,7 +186,7 @@ method onChatMemberUpdated*(self: Module, publicKey: string, admin: bool, joined
     localNickname = contactDetails.details.localNickname,
     alias = contactDetails.details.alias,
     icon = contactDetails.icon,
-    isContact = contactDetails.details.added,
+    isContact = contactDetails.details.isContact,
     isAdmin = admin,
     joined = joined,
     isUntrustworthy = contactDetails.details.trustStatus == TrustStatus.Untrustworthy,

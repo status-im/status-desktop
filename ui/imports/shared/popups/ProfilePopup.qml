@@ -43,7 +43,7 @@ StatusModal {
     property bool userTrustIsUnknown: false
     property bool isCurrentUser: false
     property bool isAddedContact: false
-    property bool isMutualContact: false
+    property bool isContact: false
     property bool isVerificationSent: false
     property bool isVerified: false
     property bool isTrusted: false
@@ -80,19 +80,19 @@ StatusModal {
         userIcon = contactDetails.largeImage;
         userIsEnsVerified = contactDetails.ensVerified;
         userIsBlocked = contactDetails.isBlocked;
-        isAddedContact = contactDetails.isContact;
-        isMutualContact = contactDetails.isContact && contactDetails.hasAddedUs
+        isAddedContact = contactDetails.isAdded;
+        isContact = contactDetails.isContact
         userTrustStatus = contactDetails.trustStatus
         userTrustIsUnknown = contactDetails.trustStatus === Constants.trustStatus.unknown
         userIsUntrustworthy = contactDetails.trustStatus === Constants.trustStatus.untrustworthy
         verificationStatus = contactDetails.verificationStatus
         isVerificationSent = verificationStatus !== Constants.verificationStatus.unverified
 
-        if (isMutualContact && popup.contactsStore.hasReceivedVerificationRequestFrom(publicKey)) {
+        if (isContact && popup.contactsStore.hasReceivedVerificationRequestFrom(publicKey)) {
             popup.hasReceivedVerificationRequest = true
         }
 
-        if(isMutualContact && isVerificationSent) {
+        if(isContact && isVerificationSent) {
             let verificationDetails = popup.contactsStore.getSentVerificationDetailsAsJson(publicKey);
 
             verificationStatus = verificationDetails.requestStatus;
@@ -176,7 +176,7 @@ StatusModal {
         isAddedContact: popup.isAddedContact
         isCurrentUser: popup.isCurrentUser
 
-        isMutualContact: popup.isMutualContact
+        isContact: popup.isContact
         isVerificationSent: popup.isVerificationSent
         isVerified: popup.isVerified
         isTrusted: popup.isTrusted
@@ -244,7 +244,7 @@ StatusModal {
     leftButtons:[
         StatusButton {
             text: qsTr("Cancel verification")
-            visible: !isVerified && isMutualContact && isVerificationSent && showVerificationPendingSection
+            visible: !isVerified && isContact && isVerificationSent && showVerificationPendingSection
             onClicked: {
                 popup.contactsStore.cancelVerificationRequest(userPublicKey);
                 popup.close()
@@ -337,7 +337,7 @@ StatusModal {
         StatusButton {
             text: qsTr("Verify Identity")
             visible: !showIdentityVerifiedUntrustworthy && !showIdentityVerified &&
-                !showVerifyIdentitySection && isMutualContact  && !isVerificationSent
+                !showVerifyIdentitySection && isContact  && !isVerificationSent
                 && !hasReceivedVerificationRequest
             onClicked: {
                 popup.showVerifyIdentitySection = true
@@ -347,7 +347,7 @@ StatusModal {
         StatusButton {
             text: qsTr("Verify Identity pending...")
             visible: (!showIdentityVerifiedUntrustworthy && !showIdentityVerified && !isTrusted
-                && isMutualContact && isVerificationSent && !showVerificationPendingSection) ||
+                && isContact && isVerificationSent && !showVerificationPendingSection) ||
                 (hasReceivedVerificationRequest && !isTrusted)
             onClicked: {
                 if (hasReceivedVerificationRequest) {
@@ -375,7 +375,7 @@ StatusModal {
 
         StatusButton {
             text: qsTr("Send verification request")
-            visible: showVerifyIdentitySection && isMutualContact  && !isVerificationSent
+            visible: showVerifyIdentitySection && isContact  && !isVerificationSent
             onClicked: {
                 popup.contactsStore.sendVerificationRequest(userPublicKey, Utils.escapeHtml(profileView.challengeTxt.input.text));
                 profileView.stepsListModel.setProperty(1, "stepCompleted", true);
@@ -391,7 +391,7 @@ StatusModal {
 
         StatusButton {
             text: qsTr("Confirm Identity")
-            visible: isMutualContact  && isVerificationSent && !isTrusted && showVerificationPendingSection
+            visible: isContact  && isVerificationSent && !isTrusted && showVerificationPendingSection
             enabled: verificationChallenge !== "" && verificationResponse !== ""
             onClicked: {
                 popup.showIdentityVerified = true;

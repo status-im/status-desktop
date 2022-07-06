@@ -55,7 +55,7 @@ Item {
     property Timer timer: Timer { }
     property var userList
     property var contactDetails: Utils.getContactDetailsAsJson(root.activeChatId)
-    property bool isContact: root.contactDetails.isContact
+    property bool isUserAdded: root.contactDetails.isAdded
     property bool contactRequestReceived: root.contactDetails.requestReceived
 
     signal openAppSearch()
@@ -294,8 +294,8 @@ Item {
         Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
         Layout.fillWidth: true
         Layout.bottomMargin: Style.current.bigPadding
-        isContact: root.isContact
-        visible: root.activeChatType === Constants.chatType.oneToOne && (!root.isContact /*|| !contactRequestReceived*/)
+        isUserAdded: root.isUserAdded
+        visible: root.activeChatType === Constants.chatType.oneToOne && !root.isUserAdded
         onAddContactClicked: {
             root.rootStore.addContact(root.activeChatId);
         }
@@ -307,7 +307,6 @@ Item {
             id: sendTransactionNoEns
             store: root.rootStore
             contactsStore: root.contactsStore
-            isContact: root.isContact
             onClosed: {
                 destroy()
             }
@@ -340,7 +339,6 @@ Item {
             id: receiveTransaction
             store: root.rootStore
             contactsStore: root.contactsStore
-            isContact: root.isContact
             onClosed: {
                 destroy()
             }

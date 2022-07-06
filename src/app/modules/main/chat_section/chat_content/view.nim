@@ -35,10 +35,10 @@ QtObject:
   proc load*(self: View, id: string, `type`: int, belongsToCommunity, isUsersListAvailable: bool,
       name, icon: string, color, description, emoji: string, hasUnreadMessages: bool,
       notificationsCount: int, muted: bool, position: int, isUntrustworthy: bool,
-      isMutualContact: bool) =
+      isContact: bool) =
     self.chatDetails.setChatDetails(id, `type`, belongsToCommunity, isUsersListAvailable, name,
       icon, color, description, emoji, hasUnreadMessages, notificationsCount, muted, position,
-      isUntrustworthy, isMutualContact)
+      isUntrustworthy, isContact)
     self.delegate.viewDidLoad()
     self.chatDetailsChanged()
 

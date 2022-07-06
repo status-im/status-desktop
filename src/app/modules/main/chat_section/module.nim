@@ -208,7 +208,7 @@ proc createItemFromPublicKey(self: Module, publicKey: string): UserItem =
     pubKey = contactDetails.details.id,
     displayName = contactDetails.displayName,
     icon = contactDetails.icon,
-    isContact = contactDetails.details.isMutualContact(),
+    isContact = contactDetails.details.isContact(),
     isVerified = contactDetails.details.isContactVerified(),
     isUntrustworthy = contactDetails.details.isContactUntrustworthy(),
     isBlocked = contactDetails.details.isBlocked(),
@@ -614,7 +614,7 @@ method onContactAdded*(self: Module, publicKey: string) =
   self.view.contactRequestsModel().removeItemById(publicKey)
 
   let contact = self.controller.getContactById(publicKey)
-  if (contact.isMutualContact):
+  if (contact.isContact):
     self.switchToOrCreateOneToOneChat(publicKey)
 
   self.updateParentBadgeNotifications()

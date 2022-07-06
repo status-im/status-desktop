@@ -46,7 +46,7 @@ Rectangle {
 
     property bool userIsUntrustworthy: false
     property bool userTrustIsUnknown: false
-    property bool isMutualContact: false
+    property bool isContact: false
     property bool isVerificationSent: false
     property bool isVerified: false
     property bool isTrusted: false
@@ -162,7 +162,7 @@ Rectangle {
             pubkey: root.userPublicKey
             icon: root.isCurrentUser ? root.profileStore.profileLargeImage : root.userIcon
             trustStatus: root.userTrustStatus
-            isContact: root.isAddedContact
+            isContact: root.isContact
             store: root.profileStore
 
             displayNameVisible: false
