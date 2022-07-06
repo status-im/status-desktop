@@ -75,12 +75,12 @@ method load*(self: Module) =
   let notificationsCount = chatDto.unviewedMentionsCount
   var chatName = chatDto.name
   var chatImage = chatDto.icon
-  var isMutualContact = false
+  var isContact = false
   var trustStatus = TrustStatus.Unknown
   if(chatDto.chatType == ChatType.OneToOne):
     let contactDto = self.controller.getContactById(self.controller.getMyChatId())
     chatName = contactDto.userNameOrAlias()
-    isMutualContact = contactDto.isMutualContact
+    isContact = contactDto.isContact
     trustStatus = contactDto.trustStatus
     if(contactDto.image.thumbnail.len > 0):
       chatImage = contactDto.image.thumbnail
@@ -89,7 +89,7 @@ method load*(self: Module) =
     self.controller.isUsersListAvailable(), chatName, chatImage,
     chatDto.color, chatDto.description, chatDto.emoji, hasNotification, notificationsCount,
     chatDto.muted, chatDto.position, isUntrustworthy = trustStatus == TrustStatus.Untrustworthy,
-    isMutualContact)
+    isContact)
 
   self.inputAreaModule.load()
   self.messagesModule.load()
@@ -349,8 +349,8 @@ method downloadMessages*(self: Module, filePath: string) =
 
 method onMutualContactChanged*(self: Module) =
   let contactDto = self.controller.getContactById(self.controller.getMyChatId())
-  let isMutualContact = contactDto.isMutualContact
-  self.view.onMutualContactChanged(isMutualContact)
+  let isContact = contactDto.isContact
+  self.view.onMutualContactChanged(isContact)
 
 method contactTrustStatusChanged*(self: Module, publicKey: string, isUntrustworthy: bool) =
     self.view.updateTrustStatus(isUntrustworthy)

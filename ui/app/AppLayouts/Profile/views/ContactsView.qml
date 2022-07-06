@@ -312,7 +312,7 @@ SettingsContentBase {
             header.title: qsTr("Remove contact")
             confirmationText: qsTr("Are you sure you want to remove this contact?")
             onConfirmButtonClicked: {
-                if (Utils.getContactDetailsAsJson(removeContactConfirmationDialog.value).isContact) {
+                if (Utils.getContactDetailsAsJson(removeContactConfirmationDialog.value).isAdded) {
                     root.contactsStore.removeContact(removeContactConfirmationDialog.value);
                 }
                 removeContactConfirmationDialog.close()

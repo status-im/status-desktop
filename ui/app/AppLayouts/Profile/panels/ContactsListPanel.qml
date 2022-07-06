@@ -112,7 +112,7 @@ Item {
             name: model.displayName
             publicKey: model.pubKey
             icon: model.icon
-            isMutualContact: model.isContact
+            isContact: model.isContact
             isBlocked: model.isBlocked
             isVerified: model.isVerified
             isUntrustworthy: model.isUntrustworthy

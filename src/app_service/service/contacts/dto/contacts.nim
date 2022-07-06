@@ -174,7 +174,7 @@ proc isContactRemoved*(self: ContactsDto): bool =
 proc isBlocked*(self: ContactsDto): bool =
   return self.blocked
 
-proc isMutualContact*(self: ContactsDto): bool =
+proc isContact*(self: ContactsDto): bool =
   # TODO not implemented in `status-go` yet
   # But for now we consider that contact is mutual contact if I added him and he added me.
   return self.hasAddedUs and self.added and not self.removed and not self.blocked

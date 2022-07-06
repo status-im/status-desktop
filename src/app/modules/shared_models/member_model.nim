@@ -203,7 +203,6 @@ QtObject:
     let index = self.createIndex(ind, 0, nil)
     self.dataChanged(index, index, @[ModelRole.Icon.int])
 
-# FIXME: remove defaults
   proc updateItem*(
       self: Model,
       pubKey: string,
@@ -212,10 +211,10 @@ QtObject:
       localNickname: string,
       alias: string,
       icon: string,
-      isContact: bool = false,
-      isAdmin: bool = false,
-      joined: bool = false,
-      isUntrustworthy: bool = false,
+      isContact: bool,
+      isAdmin: bool,
+      joined: bool,
+      isUntrustworthy: bool,
       ) =
     let ind = self.findIndexForMessageId(pubKey)
     if(ind == -1):
@@ -241,6 +240,40 @@ QtObject:
       ModelRole.IsContact.int,
       ModelRole.IsAdmin.int,
       ModelRole.Joined.int,
+      ModelRole.IsUntrustworthy.int,
+    ])
+
+  proc updateItem*(
+      self: Model,
+      pubKey: string,
+      displayName: string,
+      ensName: string,
+      localNickname: string,
+      alias: string,
+      icon: string,
+      isContact: bool,
+      isUntrustworthy: bool,
+      ) =
+    let ind = self.findIndexForMessageId(pubKey)
+    if(ind == -1):
+      return
+
+    self.items[ind].displayName = displayName
+    self.items[ind].ensName = ensName
+    self.items[ind].localNickname = localNickname
+    self.items[ind].alias = alias
+    self.items[ind].icon = icon
+    self.items[ind].isContact = isContact
+    self.items[ind].isUntrustworthy = isUntrustworthy
+
+    let index = self.createIndex(ind, 0, nil)
+    self.dataChanged(index, index, @[
+      ModelRole.DisplayName.int,
+      ModelRole.EnsName.int,
+      ModelRole.LocalNickname.int,
+      ModelRole.Alias.int,
+      ModelRole.Icon.int,
+      ModelRole.IsContact.int,
       ModelRole.IsUntrustworthy.int,
     ])
 

@@ -461,21 +461,6 @@ ColumnLayout {
                 store: chatContentRoot.rootStore
                 usersStore: chatContentRoot.usersStore
 
-                visible: {
-                    return true
-                        // Not Refactored Yet
-                        //                if (chatContentRoot.rootStore.chatsModelInst.channelView.activeChannel.chatType === Constants.chatType.privateGroupChat) {
-                        //                    return chatContentRoot.rootStore.chatsModelInst.channelView.activeChannel.isMember
-                        //                }
-                        //                if (chatContentRoot.rootStore.chatsModelInst.channelView.activeChannel.chatType === Constants.chatType.oneToOne) {
-                        //                    return isContact
-                        //                }
-                        //                const community = chatContentRoot.rootStore.chatsModelInst.communities.activeCommunity
-                        //                return !community.active ||
-                        //                        community.access === Constants.communityChatPublicAccess ||
-                        //                        community.admin ||
-                        //                        chatContentRoot.rootStore.chatsModelInst.channelView.activeChannel.canPost
-                }
                 messageContextMenu: contextmenu
                 emojiPopup: chatContentRoot.emojiPopup
                 isContactBlocked: chatContentRoot.isBlocked

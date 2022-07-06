@@ -177,7 +177,7 @@ StatusAppThreePanelLayout {
         confirmationText: qsTr("Are you sure you want to remove this contact?")
         onConfirmButtonClicked: {
             let pk = chatColumn.contactToRemove
-            if (Utils.getContactDetailsAsJson(pk).isContact) {
+            if (Utils.getContactDetailsAsJson(pk).isAdded) {
                 root.contactsStore.removeContact(pk)
             }
             removeContactConfirmationDialog.parentPopup.close();

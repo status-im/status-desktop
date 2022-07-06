@@ -140,20 +140,6 @@ QtObject {
 
     property string communityTags: communitiesModule.tags
 
-    function reCalculateAddToGroupContacts(channel) {
-        const contacts = getContactListObject()
-
-        if (channel) {
-            contacts.forEach(function (contact) {
-                if(channel.contains(contact.pubKey) ||
-                        !contact.isContact) {
-                    return;
-                }
-                addToGroupContacts.append(contact)
-            })
-        }
-    }
-
     property var stickersModuleInst: stickersModule
 
     property var stickersStore: StickersStore {

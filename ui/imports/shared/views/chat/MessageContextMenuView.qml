@@ -95,9 +95,13 @@ StatusPopupMenu {
         popup()
     }
 
+    onClosed: {
+        // Reset selectedUserPublicKey so that associated properties get recalculated on re-open
+        selectedUserPublicKey = ""
+    }
+
     onHeightChanged: { root.y = setYPosition(); }
     onWidthChanged: { root.x = setXPosition(); }
-    onClosed: selectedUserPublicKey = ""
 
     width: Math.max(emojiContainer.visible ? emojiContainer.width : 0, 200)
 

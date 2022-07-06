@@ -107,38 +107,6 @@ Item {
         mainModule.setActiveSectionById(sectionId)
     }
 
-    function getContactListObject(dataModel) {
-        // Not Refactored Yet - This should be resolved in a proper way in Chat Section Module most likely
-
-//        const nbContacts = appMain.rootStore.contactsModuleInst.model.list.rowCount()
-//        const contacts = []
-//        let contact
-//        for (let i = 0; i < nbContacts; i++) {
-//            if (appMain.rootStore.contactsModuleInst.model.list.rowData(i, "isBlocked") === "true") {
-//                continue
-//            }
-
-//            contact = {
-//                name: appMain.rootStore.contactsModuleInst.model.list.rowData(i, "name"),
-//                localNickname: appMain.rootStore.contactsModuleInst.model.list.rowData(i, "localNickname"),
-//                pubKey: appMain.rootStore.contactsModuleInst.model.list.rowData(i, "pubKey"),
-//                address: appMain.rootStore.contactsModuleInst.model.list.rowData(i, "address"),
-//                identicon: appMain.rootStore.contactsModuleInst.model.list.rowData(i, "identicon"),
-//                thumbnailImage: appMain.rootStore.contactsModuleInst.model.list.rowData(i, "thumbnailImage"),
-//                isUser: false,
-//                isContact: appMain.rootStore.contactsModuleInst.model.list.rowData(i, "isContact") !== "false"
-//            }
-
-//            contacts.push(contact)
-//            if (dataModel) {
-//                dataModel.append(contact);
-//            }
-//        }
-//        return contacts
-
-        return []
-    }
-
     property Component backupSeedModalComponent: BackupSeedModal {
         id: backupSeedModal
         anchors.centerIn: parent

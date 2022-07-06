@@ -29,7 +29,6 @@ Item {
     property bool isResolvedAddress: false
     property string selectAContact: qsTr("Select a contact")
     property string noEnsAddressMessage: qsTr("Contact does not have an ENS address. Please send a transaction in chat.")
-    property bool isContact: false
 
     function resolveEns() {
         if (selectedContact.ensVerified) {

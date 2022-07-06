@@ -237,7 +237,7 @@ proc createChannelGroupItem[T](self: Module[T], c: ChannelGroupDto): SectionItem
         alias = contactDetails.details.alias,
         icon = contactDetails.icon,
         onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(member.id).statusType),
-        isContact = contactDetails.details.added # FIXME
+        isContact = contactDetails.details.isContact
         )),
     if (isCommunity): communityDetails.pendingRequestsToJoin.map(x => pending_request_item.initItem(
       x.id,
@@ -691,11 +691,12 @@ method getContactDetailsAsJson*[T](self: Module[T], publicKey: string): string =
     "localNickname": contact.localNickname,
     "thumbnailImage": contact.image.thumbnail,
     "largeImage": contact.image.large,
-    "isContact":contact.added,
-    "isBlocked":contact.blocked,
-    "requestReceived":contact.hasAddedUs,
-    "isSyncing":contact.isSyncing,
-    "removed":contact.removed,
+    "isContact": contact.isContact,
+    "isBlocked": contact.blocked,
+    "requestReceived": contact.hasAddedUs,
+    "isAdded": contact.isContactRequestSent,
+    "isSyncing": contact.isSyncing,
+    "removed": contact.removed,
     "trustStatus": contact.trustStatus.int,
     "verificationStatus": contact.verificationStatus.int,
     "hasAddedUs": contact.hasAddedUs
@@ -747,6 +748,7 @@ method contactUpdated*[T](self: Module[T], publicKey: string) =
     contactDetails.details.localNickname,
     contactDetails.details.alias,
     contactDetails.icon,
+    isContact = contactDetails.details.isContact,
     isUntrustworthy = contactDetails.details.isContactUntrustworthy(),
     )
 
