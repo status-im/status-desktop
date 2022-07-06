@@ -8,12 +8,9 @@ Image {
     id: statusIcon
     width: 24
     height: 24
-    sourceSize.width: width
-    sourceSize.height: height
+    // SVGs must have sourceSize, PNGs not; otherwise blurry
+    sourceSize: !!icon ? Qt.size(width, height) : undefined
     fillMode: Image.PreserveAspectFit
-
-    antialiasing: true
-    mipmap: true
 
     onIconChanged: {
         if (icon !== "") {
@@ -21,10 +18,9 @@ Image {
         }
     }
 
-    layer.mipmap: true
     layer.smooth: true
     layer.format: ShaderEffectSource.RGBA
-    layer.enabled:!Qt.colorEqual(statusIcon.color, "transparent")
+    layer.enabled: !Qt.colorEqual(statusIcon.color, "transparent")
     layer.effect: ColorOverlay {
         color: statusIcon.color
     }
