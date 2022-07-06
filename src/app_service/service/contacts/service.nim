@@ -365,25 +365,27 @@ QtObject:
 
   proc unblockContact*(self: Service, publicKey: string) =
     var contact = self.getContactById(publicKey)
-    contact.blocked = false
 
     let response = status_contacts.unblockContact(contact.id)
     if(not response.error.isNil):
       let msg = response.error.message
       error "error unblocking contact ", msg
       return
+
+    contact.blocked = false
     self.saveContact(contact)
     self.events.emit(SIGNAL_CONTACT_UNBLOCKED, ContactArgs(contactId: contact.id))
 
   proc blockContact*(self: Service, publicKey: string) =
     var contact = self.getContactById(publicKey)
-    contact.blocked = true
 
     let response = status_contacts.blockContact(contact.id)
     if(not response.error.isNil):
       let msg = response.error.message
       error "error blocking contact ", msg
       return
+
+    contact.blocked = true
     self.saveContact(contact)
     self.events.emit(SIGNAL_CONTACT_BLOCKED, ContactArgs(contactId: contact.id))
 

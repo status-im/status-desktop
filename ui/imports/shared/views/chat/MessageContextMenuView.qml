@@ -97,6 +97,7 @@ StatusPopupMenu {
 
     onHeightChanged: { root.y = setYPosition(); }
     onWidthChanged: { root.x = setXPosition(); }
+    onClosed: selectedUserPublicKey = ""
 
     width: Math.max(emojiContainer.visible ? emojiContainer.width : 0, 200)
 
