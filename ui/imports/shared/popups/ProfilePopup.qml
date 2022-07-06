@@ -112,14 +112,16 @@ StatusModal {
         showFooter = !isCurrentUser;
         popup.open();
 
-        if (state == "openNickname") {
-            nicknamePopup.open();
-        } else if (state == "contactRequest") {
+        if (state === "openNickname") {
+            profileView.nicknamePopup.open();
+        } else if (state === "contactRequest") {
             sendContactRequestModal.open()
-        } else if (state == "blockUser") {
+        } else if (state === "blockUser") {
             blockUser();
-        } else if (state == "unblockUser") {
+        } else if (state === "unblockUser") {
             unblockUser();
+        } else if (state === "verifyIdentity") {
+            showVerifyIdentitySection = true;
         }
     }
 
@@ -408,7 +410,7 @@ StatusModal {
             visible: showIdentityVerified || showIdentityVerifiedUntrustworthy
             text: qsTr("Rename")
             onClicked: {
-                nicknamePopup.open()
+                profileView.nicknamePopup.open()
             }
         },
 

@@ -14,6 +14,7 @@ import "."
 Item {
     id: contactListRoot
 
+    property var contactsStore
     property var contactsModel
     property int panelUsage: Constants.contactsPanelUsage.unknownPosition
     property int contactsListHeight: ((contactsList.count * contactsList.itemAtIndex(0).implicitHeight)+title.height)
@@ -24,11 +25,10 @@ Item {
     property string lowerCaseSearchString: searchString.toLowerCase()
     readonly property int count: contactsList.count
 
+    signal openContactContextMenu(string publicKey, string name, string icon)
     signal contactClicked(string publicKey)
-    signal openProfilePopup(string publicKey)
     signal sendMessageActionTriggered(string publicKey)
     signal showVerificationRequest(string publicKey)
-    signal openChangeNicknamePopup(string publicKey)
     signal contactRequestAccepted(string publicKey)
     signal contactRequestRejected(string publicKey)
     signal rejectionRemoved(string publicKey)
@@ -109,6 +109,7 @@ Item {
         ContactPanel {
             id: panelDelegate
             width: (parent.width-10)
+            contactsStore: contactListRoot.contactsStore
             name: model.displayName
             publicKey: model.pubKey
             icon: model.icon
@@ -121,6 +122,9 @@ Item {
             searchStr: contactListRoot.searchString
 
             showSendMessageButton: model.isContact
+            onOpenContactContextMenu: function (publicKey, name, icon) {
+                contactListRoot.openContactContextMenu(publicKey, name, icon)
+            }
             showRejectContactRequestButton: {
                 if (contactListRoot.panelUsage === Constants.contactsPanelUsage.receivedContactRequest && !model.verificationRequestStatus) {
                     return true
@@ -157,9 +161,7 @@ Item {
             }
 
             onClicked: contactListRoot.contactClicked(model.pubKey)
-            onOpenProfilePopup: contactListRoot.openProfilePopup(publicKey)
             onSendMessageActionTriggered: contactListRoot.sendMessageActionTriggered(publicKey)
-            onOpenChangeNicknamePopup: contactListRoot.openChangeNicknamePopup(publicKey)
             onContactRequestAccepted: contactListRoot.contactRequestAccepted(publicKey)
             onContactRequestRejected: contactListRoot.contactRequestRejected(publicKey)
             onRejectionRemoved: contactListRoot.rejectionRemoved(publicKey)

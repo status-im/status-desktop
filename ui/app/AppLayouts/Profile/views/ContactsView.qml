@@ -13,6 +13,7 @@ import shared.views 1.0
 import shared.panels 1.0
 import shared.popups 1.0
 import shared.controls 1.0
+import shared.views.chat 1.0
 
 import "../stores"
 import "../panels"
@@ -36,8 +37,30 @@ SettingsContentBase {
         }
     ]
 
+
+    function openContextMenu(publicKey, name, icon) {
+        contactContextMenu.selectedUserPublicKey = publicKey
+        contactContextMenu.selectedUserDisplayName = name
+        contactContextMenu.selectedUserIcon = icon
+        contactContextMenu.popup()
+    }
+
     Item {
         id: contentItem
+
+        MessageContextMenuView {
+            id: contactContextMenu
+            store: ({contactsStore: root.contactsStore})
+            isProfile: true
+
+            onOpenProfileClicked: function (pubkey, state) {
+                Global.openProfilePopup(pubkey, null, state)
+            }
+
+            onCreateOneToOneChat: function (communityId, chatId, ensName) {
+                root.contactsStore.joinPrivateChat(chatId)
+            }
+        }
 
         SearchBox {
             id: searchBox
@@ -102,16 +125,13 @@ SettingsContentBase {
                     title: qsTr("Identity Verified Contacts")
                     contactsModel: root.contactsStore.myContactsModel
                     searchString: searchBox.text
-                    panelUsage: Constants.contactsPanelUsage.verifiedMutualContacts
-                    onOpenProfilePopup: {
-                        Global.openProfilePopup(publicKey)
+                    onOpenContactContextMenu: function (publicKey, name, icon) {
+                        root.openContextMenu(publicKey, name, icon)
                     }
+                    contactsStore: root.contactsStore
+                    panelUsage: Constants.contactsPanelUsage.verifiedMutualContacts
                     onSendMessageActionTriggered: {
                         root.contactsStore.joinPrivateChat(publicKey)
-                    }
-
-                    onOpenChangeNicknamePopup: {
-                        Global.openProfilePopup(publicKey, null, "openNickname")
                     }
                 }
 
@@ -124,17 +144,14 @@ SettingsContentBase {
                     title: qsTr("Contacts")
                     contactsModel: root.contactsStore.myContactsModel
                     searchString: searchBox.text
-                    panelUsage: Constants.contactsPanelUsage.mutualContacts
-                    onOpenProfilePopup: {
-                        Global.openProfilePopup(publicKey)
+                    contactsStore: root.contactsStore
+                    onOpenContactContextMenu: function (publicKey, name, icon) {
+                        root.openContextMenu(publicKey, name, icon)
                     }
+                    panelUsage: Constants.contactsPanelUsage.mutualContacts
 
                     onSendMessageActionTriggered: {
                         root.contactsStore.joinPrivateChat(publicKey)
-                    }
-
-                    onOpenChangeNicknamePopup: {
-                        Global.openProfilePopup(publicKey, null, "openNickname")
                     }
                 }
                 Item {
@@ -160,16 +177,12 @@ SettingsContentBase {
                                  (contactsListHeight > (stackLayout.height - sentRequests.contactsListHeight))
                     title: qsTr("Received")
                     searchString: searchBox.text
+                    contactsStore: root.contactsStore
+                    onOpenContactContextMenu: function (publicKey, name, icon) {
+                        root.openContextMenu(publicKey, name, icon)
+                    }
                     contactsModel: root.contactsStore.receivedContactRequestsModel
                     panelUsage: Constants.contactsPanelUsage.receivedContactRequest
-
-                    onOpenProfilePopup: {
-                        Global.openProfilePopup(publicKey)
-                    }
-
-                    onOpenChangeNicknamePopup: {
-                        Global.openProfilePopup(publicKey, null, "openNickname")
-                    }
 
                     onContactRequestAccepted: {
                         root.contactsStore.acceptContactRequest(publicKey)
@@ -206,16 +219,12 @@ SettingsContentBase {
                                  (contactsListHeight > (stackLayout.height - receivedRequests.contactsListHeight))
                     title: qsTr("Sent")
                     searchString: searchBox.text
+                    contactsStore: root.contactsStore
+                    onOpenContactContextMenu: function (publicKey, name, icon) {
+                        root.openContextMenu(publicKey, name, icon)
+                    }
                     contactsModel: root.contactsStore.sentContactRequestsModel
                     panelUsage: Constants.contactsPanelUsage.sentContactRequest
-
-                    onOpenProfilePopup: {
-                        Global.openProfilePopup(publicKey)
-                    }
-
-                    onOpenChangeNicknamePopup: {
-                        Global.openProfilePopup(publicKey, null, "openNickname")
-                    }
                 }
             }
 
@@ -234,16 +243,12 @@ SettingsContentBase {
             //                        clip: true
             //                        title: qsTr("Received")
             //                        searchString: searchBox.text
+            //                        contactsStore: root.contactsStore
+            //                        onOpenContactContextMenu: function (publicKey, name, icon) {
+            //                           root.openContextMenu(publicKey, name, icon)
+            //                        }
             //                        contactsModel: root.contactsStore.receivedButRejectedContactRequestsModel
             //                        panelUsage: Constants.contactsPanelUsage.rejectedReceivedContactRequest
-
-            //                        onOpenProfilePopup: {
-            //                            Global.openProfilePopup(publicKey)
-            //                        }
-
-            //                        onOpenChangeNicknamePopup: {
-            //                            Global.openProfilePopup(publicKey, null, true)
-            //                        }
 
             //                        onRejectionRemoved: {
             //                            root.contactsStore.removeContactRequestRejection(publicKey)
@@ -256,16 +261,12 @@ SettingsContentBase {
             //                        clip: true
             //                        title: qsTr("Sent")
             //                        searchString: searchBox.text
+            //                        contactsStore: root.contactsStore
+            //                        onOpenContactContextMenu: function (publicKey, name, icon) {
+            //                             root.openContextMenu(publicKey, name, icon)
+            //                         }
             //                        contactsModel: root.contactsStore.sentButRejectedContactRequestsModel
             //                        panelUsage: Constants.contactsPanelUsage.rejectedSentContactRequest
-
-            //                        onOpenProfilePopup: {
-            //                            Global.openProfilePopup(publicKey)
-            //                        }
-
-            //                        onOpenChangeNicknamePopup: {
-            //                            Global.openProfilePopup(publicKey, null, true)
-            //                        }
             //                    }
 
             //                    Item {
@@ -280,11 +281,12 @@ SettingsContentBase {
                 width: parent.width
                 height: (contactsListHeight+50)
                 searchString: searchBox.text
+                contactsStore: root.contactsStore
+                onOpenContactContextMenu: function (publicKey, name, icon) {
+                    root.openContextMenu(publicKey, name, icon)
+                }
                 contactsModel: root.contactsStore.blockedContactsModel
                 panelUsage: Constants.contactsPanelUsage.blockedContacts
-                onOpenProfilePopup: {
-                    Global.openProfilePopup(publicKey)
-                }
             }
         }
 

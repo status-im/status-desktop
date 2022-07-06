@@ -24,20 +24,21 @@ StatusPopupMenu {
 
     property string myPublicKey: ""
     property bool amIChatAdmin: false
-    property bool pinMessageAllowedForMembers: false
+
+    property string selectedUserPublicKey: ""
+    property string selectedUserDisplayName: ""
+    property string selectedUserIcon: ""
 
     property int chatType: Constants.chatType.publicChat
     property string messageId: ""
     property string messageSenderId: ""
     property int messageContentType: Constants.messageContentType.unknownContentType
-    property string selectedUserPublicKey: ""
-    property string selectedUserDisplayName: ""
-    property string selectedUserIcon: ""
     property string imageSource: ""
 
     property bool isProfile: false
     property bool isRightClickOnImage: false
     property bool pinnedPopup: false
+    property bool pinMessageAllowedForMembers: false
     property bool isDebugEnabled: false
     property bool isEmoji: false
     property bool isSticker: false
@@ -46,19 +47,44 @@ StatusPopupMenu {
     property bool canPin: false
 
     readonly property bool isMyMessage: {
-        return root.messageSenderId !== "" && root.messageSenderId == root.myPublicKey;
+        return root.messageSenderId !== "" && root.messageSenderId === root.myPublicKey;
     }
     readonly property bool isMe: {
-        return root.selectedUserPublicKey == root.store.contactsStore.myPublicKey;
+        return root.selectedUserPublicKey === root.store.contactsStore.myPublicKey;
     }
-    readonly property bool isMyMutualContact: {
-        return root.selectedUserPublicKey !== "" && root.store.contactsStore.isMyMutualContact(root.selectedUserPublicKey);
+    readonly property var contactDetails: {
+        if (root.selectedUserPublicKey === "" || isMe) {
+            return {}
+        }
+        return Utils.getContactDetailsAsJson(root.selectedUserPublicKey);
+    }
+    readonly property bool isContact: {
+        return root.selectedUserPublicKey !== "" && !!contactDetails.isContact
     }
     readonly property bool isBlockedContact: {
-        return root.selectedUserPublicKey !== "" && root.store.contactsStore.isBlockedContact(root.selectedUserPublicKey);
+        return root.selectedUserPublicKey !== "" && !!contactDetails.isBlocked
+    }
+    readonly property int outgoingVerificationStatus: {
+        if (root.selectedUserPublicKey === "" || root.isMe || !root.isContact) {
+            return 0
+        }
+        return contactDetails.verificationStatus
     }
     readonly property bool hasPendingContactRequest: {
-        return root.selectedUserPublicKey !== "" && root.store.contactsStore.hasPendingContactRequest(root.selectedUserPublicKey);
+        return !root.isMe && root.selectedUserPublicKey !== "" &&
+            root.store.contactsStore.hasPendingContactRequest(root.selectedUserPublicKey);
+    }
+    readonly property bool hasReceivedVerificationRequestFrom: {
+        if (!root.selectedUserPublicKey || root.isMe || !root.isContact) {
+            return false
+        }
+        return root.store.contactsStore.hasReceivedVerificationRequestFrom(root.selectedUserPublicKey)
+    }
+    readonly property bool isVerificationRequestSent: {
+        if (!root.selectedUserPublicKey || root.isMe || !root.isContact) {
+            return false
+        }
+        return root.outgoingVerificationStatus !== Constants.verificationStatus.unverified
     }
 
     property var setXPosition: function() {return 0}
@@ -186,7 +212,7 @@ StatusPopupMenu {
 
     SendMessageMenuItem {
         id: sendMessageMenuItem
-        enabled: root.isProfile && root.isMyMutualContact && !root.isBlockedContact
+        enabled: root.isProfile && root.isContact && !root.isBlockedContact
         onTriggered: {
             root.createOneToOneChat("", root.selectedUserPublicKey, "")
             root.close()
@@ -194,10 +220,22 @@ StatusPopupMenu {
     }
 
     SendContactRequestMenuItem {
-        enabled: root.isProfile && !root.isMe && !root.isMyMutualContact
+        enabled: root.isProfile && !root.isMe && !root.isContact
                                 && !root.isBlockedContact && !root.hasPendingContactRequest
         onTriggered: {
             root.openProfileClicked(root.selectedUserPublicKey, "contactRequest")
+            root.close()
+        }
+    }
+
+    StatusMenuItem {
+         text: qsTr("Verify Identity")
+        icon.name: "checkmark-circle"
+        enabled: root.isProfile && !root.isMe && root.isContact
+                                && !root.isBlockedContact && !root.isVerificationRequestSent
+                                && !root.hasReceivedVerificationRequestFrom
+        onTriggered: {
+            root.openProfileClicked(root.selectedUserPublicKey, "verifyIdentity")
             root.close()
         }
     }

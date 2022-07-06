@@ -72,6 +72,7 @@ Rectangle {
     readonly property alias wizardAnimation: wizardAnimation
     readonly property alias challengeTxt: challengeTxt
     readonly property alias stepsListModel: stepsListModel
+    readonly property alias nicknamePopup: nicknamePopup
 
     readonly property int animationDuration: 500
 

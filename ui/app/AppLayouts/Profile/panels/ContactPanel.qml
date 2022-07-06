@@ -24,6 +24,8 @@ StatusListItem {
     title: container.name
     image.source: container.icon
 
+    property var contactsStore
+
     property string name: "Jotaro Kujo"
     property string publicKey: "0x04d8c07dd137bd1b73a6f51df148b4f77ddaa11209d36e43d8344c0a7d6db1cad6085f27cfb75dd3ae21d86ceffebe4cf8a35b9ce8d26baa19dc264efe6d8f221b"
     property string icon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
@@ -42,8 +44,7 @@ StatusListItem {
     property string contactText: ""
     property bool contactTextClickable: false
 
-    signal openProfilePopup(string publicKey)
-    signal openChangeNicknamePopup(string publicKey)
+    signal openContactContextMenu(string publicKey, string name, string icon)
     signal sendMessageActionTriggered(string publicKey)
     signal showVerificationRequest(string publicKey)
     signal contactRequestAccepted(string publicKey)
@@ -117,61 +118,7 @@ StatusListItem {
             icon.name: "more"
             icon.color: Theme.palette.directColor1
             onClicked: {
-                highlighted = true
-                contactContextMenu.popup(-contactContextMenu.width+menuButton.width, menuButton.height + 4)
-            }
-
-            StatusPopupMenu {
-                id: contactContextMenu
-
-                onClosed: {
-                    menuButton.highlighted = false
-                }
-
-                ProfileHeader {
-                    width: parent.width
-
-                    displayName: container.name
-                    pubkey: container.publicKey
-                    icon: container.icon
-                }
-
-                Item {
-                    height: 8
-                }
-
-                Separator {}
-
-                ViewProfileMenuItem {
-                    icon.width: 16
-                    icon.height: 16
-                    onTriggered: {
-                        container.openProfilePopup(container.publicKey)
-                        menuButton.highlighted = false
-                    }
-                }
-
-                SendMessageMenuItem {
-                    icon.width: 16
-                    icon.height: 16
-                    onTriggered: {
-                        container.sendMessageActionTriggered(container.publicKey)
-                        menuButton.highlighted = false
-                    }
-                    enabled: container.isContact
-                }
-
-                StatusMenuItem {
-                    text: qsTr("Rename")
-                    icon.name: "edit_pencil"
-                    icon.width: 16
-                    icon.height: 16
-                    onTriggered: {
-                        container.openChangeNicknamePopup(container.publicKey)
-                        menuButton.highlighted = false
-                    }
-                    enabled: !container.isBlocked
-                }
+                container.openContactContextMenu(container.publicKey, container.name, container.icon)
             }
         }
     ]
