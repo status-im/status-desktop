@@ -160,7 +160,7 @@ Rectangle {
 
             displayName: root.userDisplayName
             pubkey: root.userPublicKey
-            icon: root.isCurrentUser ? root.profileStore.icon : root.userIcon
+            icon: root.isCurrentUser ? root.profileStore.profileLargeImage : root.userIcon
             trustStatus: root.userTrustStatus
             isContact: root.isAddedContact
             store: root.profileStore
