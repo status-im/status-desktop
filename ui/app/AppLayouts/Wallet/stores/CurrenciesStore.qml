@@ -12,7 +12,7 @@ QtObject {
            name: qsTr("US Dollars")
            symbol: "$"
            category: ""
-           imageSource: "../../assets/twemoji/26x26/1f1fa-1f1f8.png"
+           imageSource: "../../assets/twemoji/svg/1f1fa-1f1f8.svg"
            selected: false
        }
 
@@ -22,7 +22,7 @@ QtObject {
            name: qsTr("British Pound")
            symbol: "£"
            category: ""
-           imageSource: "../../assets/twemoji/26x26/1f1ec-1f1e7.png"
+           imageSource: "../../assets/twemoji/svg/1f1ec-1f1e7.svg"
            selected: false
        }
 
@@ -32,7 +32,7 @@ QtObject {
            name: qsTr("Euros")
            symbol: "€"
            category: ""
-           imageSource: "../../assets/twemoji/26x26/1f1ea-1f1fa.png"
+           imageSource: "../../assets/twemoji/svg/1f1ea-1f1fa.svg"
            selected: false
        }
 
@@ -42,7 +42,7 @@ QtObject {
            name: qsTr("Russian ruble")
            symbol: "₽"
            category: ""
-           imageSource: "../../assets/twemoji/26x26/1f1f7-1f1fa.png"
+           imageSource: "../../assets/twemoji/svg/1f1f7-1f1fa.svg"
            selected: false
        }
 
@@ -52,7 +52,7 @@ QtObject {
            name: qsTr("South Korean won")
            symbol: "₩"
            category: ""
-           imageSource: "../../assets/twemoji/26x26/1f1f0-1f1f7.png"
+           imageSource: "../../assets/twemoji/svg/1f1f0-1f1f7.svg"
            selected: false
        }
 
@@ -61,7 +61,7 @@ QtObject {
            shortName: "ETH"
            name: qsTr("Ethereum")
            symbol: "Ξ"
-           category: "Tokens"
+           category: qsTr("Tokens")
            imageSource: "../../../../imports/assets/png/tokens/ETH.png"
            selected: false
        }
@@ -71,7 +71,7 @@ QtObject {
            shortName: "BTC"
            name: qsTr("Bitcoin")
            symbol: "฿"
-           category: "Tokens"
+           category: qsTr("Tokens")
            imageSource: "../../../../imports/assets/png/tokens/WBTC.png"
            selected: false
        }
@@ -81,7 +81,7 @@ QtObject {
            shortName: "SNT"
            name: qsTr("Status Network Token")
            symbol: ""
-           category: "Tokens"
+           category: qsTr("Tokens")
            imageSource: "../../../../imports/assets/png/tokens/SNT.png"
            selected: false
        }
@@ -91,7 +91,7 @@ QtObject {
            shortName: "DAI"
            name: qsTr("Dai")
            symbol: "◈"
-           category: "Tokens"
+           category: qsTr("Tokens")
            imageSource: "../../../../imports/assets/png/tokens/DAI.png"
            selected: false
        }
@@ -101,8 +101,8 @@ QtObject {
            shortName: "AED"
            name: qsTr("United Arab Emirates dirham")
            symbol: "د.إ"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1e6-1f1ea.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1e6-1f1ea.svg"
            selected: false
        }
 
@@ -111,8 +111,8 @@ QtObject {
            shortName: "AFN"
            name: qsTr("Afghan afghani")
            symbol: "؋"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1e6-1f1eb.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1e6-1f1eb.svg"
            selected: false
        }
 
@@ -121,8 +121,8 @@ QtObject {
            shortName: "ARS"
            name: qsTr("Argentine peso")
            symbol: "$"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1e6-1f1f7.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1e6-1f1f7.svg"
            selected: false
        }
 
@@ -131,8 +131,8 @@ QtObject {
            shortName: "AUD"
            name: qsTr("Australian dollar")
            symbol: "$"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1e6-1f1fa.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1e6-1f1fa.svg"
            selected: false
        }
 
@@ -141,8 +141,8 @@ QtObject {
            shortName: "BBD"
            name: qsTr("Barbadian dollar")
            symbol: "$"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1e7-1f1e7.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1e7-1f1e7.svg"
            selected: false
        }
 
@@ -150,9 +150,9 @@ QtObject {
            key: "bdt"
            shortName: "BDT"
            name: qsTr("Bangladeshi taka")
-           symbol: " Tk"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1e7-1f1e9.png"
+           symbol: "Tk"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1e7-1f1e9.svg"
            selected: false
        }
 
@@ -161,8 +161,8 @@ QtObject {
            shortName: "BGN"
            name: qsTr("Bulgarian lev")
            symbol: "лв"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1e7-1f1ec.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1e7-1f1ec.svg"
            selected: false
        }
 
@@ -171,8 +171,8 @@ QtObject {
            shortName: "BHD"
            name: qsTr("Bahraini dinar")
            symbol: "BD"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1e7-1f1ed.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1e7-1f1ed.svg"
            selected: false
        }
 
@@ -181,8 +181,8 @@ QtObject {
            shortName: "BND"
            name: qsTr("Brunei dollar")
            symbol: "$"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1e7-1f1f3.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1e7-1f1f3.svg"
            selected: false
        }
 
@@ -191,8 +191,8 @@ QtObject {
            shortName: "BOB"
            name: qsTr("Bolivian boliviano")
            symbol: "$b"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1e7-1f1f4.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1e7-1f1f4.svg"
            selected: false
        }
 
@@ -201,8 +201,8 @@ QtObject {
            shortName: "BRL"
            name: qsTr("Brazillian real")
            symbol: "R$"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1e7-1f1f7.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1e7-1f1f7.svg"
            selected: false
        }
 
@@ -211,8 +211,8 @@ QtObject {
            shortName: "BTN"
            name: qsTr("Bhutanese ngultrum")
            symbol: "Nu."
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1e7-1f1f9.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1e7-1f1f9.svg"
            selected: false
        }
 
@@ -221,8 +221,8 @@ QtObject {
            shortName: "CAD"
            name: qsTr("Canadian dollar")
            symbol: "$"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1e8-1f1e6.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1e8-1f1e6.svg"
            selected: false
        }
 
@@ -231,8 +231,8 @@ QtObject {
            shortName: "CHF"
            name: qsTr("Swiss franc")
            symbol: "CHF"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1e8-1f1ed.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1e8-1f1ed.svg"
            selected: false
        }
 
@@ -241,8 +241,8 @@ QtObject {
            shortName: "CLP"
            name: qsTr("Chilean peso")
            symbol: "$"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1e8-1f1f1.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1e8-1f1f1.svg"
            selected: false
        }
 
@@ -251,8 +251,8 @@ QtObject {
            shortName: "CNY"
            name: qsTr("Chinese yuan")
            symbol: "¥"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1e8-1f1f3.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1e8-1f1f3.svg"
            selected: false
        }
 
@@ -261,8 +261,8 @@ QtObject {
            shortName: "COP"
            name: qsTr("Colombian peso")
            symbol: "$"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1e8-1f1f4.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1e8-1f1f4.svg"
            selected: false
        }
 
@@ -271,8 +271,8 @@ QtObject {
            shortName: "CRC"
            name: qsTr("Costa Rican colón")
            symbol: "₡"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1e8-1f1f7.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1e8-1f1f7.svg"
            selected: false
        }
 
@@ -281,8 +281,8 @@ QtObject {
            shortName: "CZK"
            name: qsTr("Czech koruna")
            symbol: "Kč"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1e8-1f1ff.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1e8-1f1ff.svg"
            selected: false
        }
 
@@ -291,8 +291,8 @@ QtObject {
            shortName: "DKK"
            name: qsTr("Danish krone")
            symbol: "kr"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1e9-1f1f0.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1e9-1f1f0.svg"
            selected: false
        }
 
@@ -301,8 +301,8 @@ QtObject {
            shortName: "DOP"
            name: qsTr("Dominican peso")
            symbol: "RD$"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1e9-1f1f4.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1e9-1f1f4.svg"
            selected: false
        }
 
@@ -311,8 +311,8 @@ QtObject {
            shortName: "EGP"
            name: qsTr("Egyptian pound")
            symbol: "£"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1ea-1f1ec.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1ea-1f1ec.svg"
            selected: false
        }
 
@@ -321,8 +321,8 @@ QtObject {
            shortName: "ETB"
            name: qsTr("Ethiopian birr")
            symbol: "Br"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1ea-1f1f9.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1ea-1f1f9.svg"
            selected: false
        }
 
@@ -331,8 +331,8 @@ QtObject {
            shortName: "GEL"
            name: qsTr("Georgian lari")
            symbol: "₾"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1ec-1f1ea.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1ec-1f1ea.svg"
            selected: false
        }
 
@@ -341,8 +341,8 @@ QtObject {
            shortName: "GHS"
            name: qsTr("Ghanaian cedi")
            symbol: "¢"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1ec-1f1ed.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1ec-1f1ed.svg"
            selected: false
        }
 
@@ -351,8 +351,8 @@ QtObject {
            shortName: "HKD"
            name: qsTr("Hong Kong dollar")
            symbol: "$"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1ed-1f1f0.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1ed-1f1f0.svg"
            selected: false
        }
 
@@ -361,8 +361,8 @@ QtObject {
            shortName: "HRK"
            name: qsTr("Croatian kuna")
            symbol: "kn"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1ed-1f1f7.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1ed-1f1f7.svg"
            selected: false
        }
 
@@ -371,8 +371,8 @@ QtObject {
            shortName: "HUF"
            name: qsTr("Hungarian forint")
            symbol: "Ft"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1ed-1f1fa.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1ed-1f1fa.svg"
            selected: false
        }
 
@@ -381,8 +381,8 @@ QtObject {
            shortName: "IDR"
            name: qsTr("Indonesian rupiah")
            symbol: "Rp"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1ee-1f1e9.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1ee-1f1e9.svg"
            selected: false
        }
 
@@ -391,8 +391,8 @@ QtObject {
            shortName: "ILS"
            name: qsTr("Israeli new shekel")
            symbol: "₪"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1ee-1f1f1.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1ee-1f1f1.svg"
            selected: false
        }
 
@@ -401,8 +401,8 @@ QtObject {
            shortName: "INR"
            name: qsTr("Indian rupee")
            symbol: "₹"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1ee-1f1f3.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1ee-1f1f3.svg"
            selected: false
        }
 
@@ -411,8 +411,8 @@ QtObject {
            shortName: "ISK"
            name: qsTr("Icelandic króna")
            symbol: "kr"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1ee-1f1f8.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1ee-1f1f8.svg"
            selected: false
        }
 
@@ -421,8 +421,8 @@ QtObject {
            shortName: "JMD"
            name: qsTr("Jamaican dollar")
            symbol: "J$"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1ef-1f1f2.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1ef-1f1f2.svg"
            selected: false
        }
 
@@ -431,8 +431,8 @@ QtObject {
            shortName: "JPY"
            name: qsTr("Japanese yen")
            symbol: "¥"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1ef-1f1f5.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1ef-1f1f5.svg"
            selected: false
        }
 
@@ -441,8 +441,8 @@ QtObject {
            shortName: "KES"
            name: qsTr("Kenyan shilling")
            symbol: "KSh"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f0-1f1ea.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f0-1f1ea.svg"
            selected: false
        }
 
@@ -451,8 +451,8 @@ QtObject {
            shortName: "KWD"
            name: qsTr("Kuwaiti dinar")
            symbol: "د.ك"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f0-1f1fc.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f0-1f1fc.svg"
            selected: false
        }
 
@@ -461,8 +461,8 @@ QtObject {
            shortName: "KZT"
            name: qsTr("Kazakhstani tenge")
            symbol: "лв"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f0-1f1ff.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f0-1f1ff.svg"
            selected: false
        }
 
@@ -471,8 +471,8 @@ QtObject {
            shortName: "LKR"
            name: qsTr("Sri Lankan rupee")
            symbol: "₨"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f1-1f1f0.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f1-1f1f0.svg"
            selected: false
        }
 
@@ -481,8 +481,8 @@ QtObject {
            shortName: "MAD"
            name: qsTr("Moroccan dirham")
            symbol: "MAD"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f2-1f1e6.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f2-1f1e6.svg"
            selected: false
        }
 
@@ -491,8 +491,8 @@ QtObject {
            shortName: "MDL"
            name: qsTr("Moldovan leu")
            symbol: "MDL"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f2-1f1e9.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f2-1f1e9.svg"
            selected: false
        }
 
@@ -501,8 +501,8 @@ QtObject {
            shortName: "MUR"
            name: qsTr("Mauritian rupee")
            symbol: "₨"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f2-1f1f7.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f2-1f1f7.svg"
            selected: false
        }
 
@@ -511,8 +511,8 @@ QtObject {
            shortName: "MWK"
            name: qsTr("Malawian kwacha")
            symbol: "MK"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f2-1f1fc.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f2-1f1fc.svg"
            selected: false
        }
 
@@ -521,8 +521,8 @@ QtObject {
            shortName: "MXN"
            name: qsTr("Mexican peso")
            symbol: "$"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f2-1f1fd.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f2-1f1fd.svg"
            selected: false
        }
 
@@ -531,8 +531,8 @@ QtObject {
            shortName: "MYR"
            name: qsTr("Malaysian ringgit")
            symbol: "RM"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f2-1f1fe.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f2-1f1fe.svg"
            selected: false
        }
 
@@ -541,8 +541,8 @@ QtObject {
            shortName: "MZN"
            name: qsTr("Mozambican metical")
            symbol: "MT"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f2-1f1ff.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f2-1f1ff.svg"
            selected: false
        }
 
@@ -551,8 +551,8 @@ QtObject {
            shortName: "NAD"
            name: qsTr("Namibian dollar")
            symbol: "$"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f3-1f1e6.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f3-1f1e6.svg"
            selected: false
        }
 
@@ -561,8 +561,8 @@ QtObject {
            shortName: "NGN"
            name: qsTr("Nigerian naira")
            symbol: "₦"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f3-1f1ec.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f3-1f1ec.svg"
            selected: false
        }
 
@@ -571,8 +571,8 @@ QtObject {
            shortName: "NOK"
            name: qsTr("Norwegian krone")
            symbol: "kr"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f3-1f1f4.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f3-1f1f4.svg"
            selected: false
        }
 
@@ -581,8 +581,8 @@ QtObject {
            shortName: "NPR"
            name: qsTr("Nepalese rupee")
            symbol: "₨"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f3-1f1f5.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f3-1f1f5.svg"
            selected: false
        }
 
@@ -591,8 +591,8 @@ QtObject {
            shortName: "NZD"
            name: qsTr("New Zealand dollar")
            symbol: "$"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f3-1f1ff.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f3-1f1ff.svg"
            selected: false
        }
 
@@ -601,8 +601,8 @@ QtObject {
            shortName: "OMR"
            name: qsTr("Omani rial")
            symbol: "﷼"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f4-1f1f2.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f4-1f1f2.svg"
            selected: false
        }
 
@@ -611,8 +611,8 @@ QtObject {
            shortName: "PEN"
            name: qsTr("Peruvian sol")
            symbol: "S/."
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f5-1f1ea.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f5-1f1ea.svg"
            selected: false
        }
 
@@ -621,8 +621,8 @@ QtObject {
            shortName: "PGK"
            name: qsTr("Papua New Guinean kina")
            symbol: "K"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f5-1f1ec.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f5-1f1ec.svg"
            selected: false
        }
 
@@ -631,8 +631,8 @@ QtObject {
            shortName: "PHP"
            name: qsTr("Philippine peso")
            symbol: "₱"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f5-1f1ed.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f5-1f1ed.svg"
            selected: false
        }
 
@@ -641,8 +641,8 @@ QtObject {
            shortName: "PKR"
            name: qsTr("Pakistani rupee")
            symbol: "₨"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f5-1f1f0.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f5-1f1f0.svg"
            selected: false
        }
 
@@ -651,8 +651,8 @@ QtObject {
            shortName: "PLN"
            name: qsTr("Polish złoty")
            symbol: "zł"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f5-1f1f1.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f5-1f1f1.svg"
            selected: false
        }
 
@@ -661,8 +661,8 @@ QtObject {
            shortName: "PYG"
            name: qsTr("Paraguayan guaraní")
            symbol: "Gs"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f5-1f1fe.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f5-1f1fe.svg"
            selected: false
        }
 
@@ -671,8 +671,8 @@ QtObject {
            shortName: "QAR"
            name: qsTr("Qatari riyal")
            symbol: "﷼"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f6-1f1e6.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f6-1f1e6.svg"
            selected: false
        }
 
@@ -681,8 +681,8 @@ QtObject {
            shortName: "RON"
            name: qsTr("Romanian leu")
            symbol: "lei"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f7-1f1f4.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f7-1f1f4.svg"
            selected: false
        }
 
@@ -691,8 +691,8 @@ QtObject {
            shortName: "RSD"
            name: qsTr("Serbian dinar")
            symbol: "Дин."
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f7-1f1f8.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f7-1f1f8.svg"
            selected: false
        }
 
@@ -701,8 +701,8 @@ QtObject {
            shortName: "SAR"
            name: qsTr("Saudi riyal")
            symbol: "﷼"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f8-1f1e6.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f8-1f1e6.svg"
            selected: false
        }
 
@@ -711,8 +711,8 @@ QtObject {
            shortName: "SEK"
            name: qsTr("Swedish krona")
            symbol: "kr"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f8-1f1ea.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f8-1f1ea.svg"
            selected: false
        }
 
@@ -721,8 +721,8 @@ QtObject {
            shortName: "SGD"
            name: qsTr("Singapore dollar")
            symbol: "$"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f8-1f1ec.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f8-1f1ec.svg"
            selected: false
        }
 
@@ -731,8 +731,8 @@ QtObject {
            shortName: "THB"
            name: qsTr("Thai baht")
            symbol: "฿"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f9-1f1ed.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f9-1f1ed.svg"
            selected: false
        }
 
@@ -741,8 +741,8 @@ QtObject {
            shortName: "TTD"
            name: qsTr("Trinidad and Tobago dollar")
            symbol: "TT$"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f9-1f1f9.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f9-1f1f9.svg"
            selected: false
        }
 
@@ -751,8 +751,8 @@ QtObject {
            shortName: "TWD"
            name: qsTr("New Taiwan dollar")
            symbol: "NT$"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f9-1f1fc.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f9-1f1fc.svg"
            selected: false
        }
 
@@ -761,8 +761,8 @@ QtObject {
            shortName: "TZS"
            name: qsTr("Tanzanian shilling")
            symbol: "TSh"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f9-1f1ff.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f9-1f1ff.svg"
            selected: false
        }
 
@@ -771,8 +771,8 @@ QtObject {
            shortName: "TRY"
            name: qsTr("Turkish lira")
            symbol: "₺"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f9-1f1f7.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f9-1f1f7.svg"
            selected: false
        }
 
@@ -781,8 +781,8 @@ QtObject {
            shortName: "UAH"
            name: qsTr("Ukrainian hryvnia")
            symbol: "₴"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1fa-1f1e6.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1fa-1f1e6.svg"
            selected: false
        }
 
@@ -791,8 +791,8 @@ QtObject {
            shortName: "UGX"
            name: qsTr("Ugandan shilling")
            symbol: "USh"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1fa-1f1ec.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1fa-1f1ec.svg"
            selected: false
        }
 
@@ -801,8 +801,8 @@ QtObject {
            shortName: "UYU"
            name: qsTr("Uruguayan peso")
            symbol: "$U"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1fa-1f1fe.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1fa-1f1fe.svg"
            selected: false
        }
 
@@ -811,8 +811,8 @@ QtObject {
            shortName: "VEF"
            name: qsTr("Venezuelan bolívar")
            symbol: "Bs"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1fb-1f1ea.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1fb-1f1ea.svg"
            selected: false
        }
 
@@ -821,8 +821,8 @@ QtObject {
            shortName: "VND"
            name: qsTr("Vietnamese đồng")
            symbol: "₫"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1fb-1f1f3.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1fb-1f1f3.svg"
            selected: false
        }
 
@@ -831,8 +831,8 @@ QtObject {
            shortName: "ZAR"
            name: qsTr("South African rand")
            symbol: "R"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1ff-1f1e6.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1ff-1f1e6.svg"
            selected: false
        }
     }
