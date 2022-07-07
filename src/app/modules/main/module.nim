@@ -677,9 +677,13 @@ method communityEdited*[T](
   let channelGroup = community.toChannelGroupDto()
   self.view.editItem(self.createChannelGroupItem(channelGroup))
 
+method getVerificationRequestFrom*[T](self: Module[T], publicKey: string): VerificationRequest =
+  self.controller.getVerificationRequestFrom(publicKey)
+
 method getContactDetailsAsJson*[T](self: Module[T], publicKey: string): string =
   let contact =  self.controller.getContact(publicKey)
   let (name, _, _) = self.controller.getContactNameAndImage(contact.id)
+  let request = self.getVerificationRequestFrom(publicKey)
   let jsonObj = %* {
     "displayName": name,
     "displayIcon": contact.image.thumbnail,
@@ -699,7 +703,9 @@ method getContactDetailsAsJson*[T](self: Module[T], publicKey: string): string =
     "isSyncing": contact.isSyncing,
     "removed": contact.removed,
     "trustStatus": contact.trustStatus.int,
+    # TODO rename verificationStatus to outgoingVerificationStatus
     "verificationStatus": contact.verificationStatus.int,
+    "incomingVerificationStatus": request.status.int,
     "hasAddedUs": contact.hasAddedUs
   }
   return $jsonObj
