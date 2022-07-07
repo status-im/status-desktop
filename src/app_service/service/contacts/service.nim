@@ -615,8 +615,9 @@ QtObject:
         return self.receivedIdentityRequests[publicKey]
 
       let response = status_contacts.getVerificationRequestFrom(publicKey)
-      result = response.result.toVerificationRequest()
-      self.receivedIdentityRequests[publicKey] = result
+      if not response.result.isNil and response.result.kind == JObject:
+        result = response.result.toVerificationRequest()
+        self.receivedIdentityRequests[publicKey] = result
     except Exception as e:
       let errDesription = e.msg
       error "error obtaining verification request", errDesription

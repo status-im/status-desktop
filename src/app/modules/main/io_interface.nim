@@ -202,7 +202,8 @@ method onStatusUrlRequested*(self: AccessInterface, action: StatusUrlAction, com
   url: string, userId: string, groupName: string, listOfUserIds: seq[string]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-
+method getVerificationRequestFrom*(self: AccessInterface, publicKey: string): VerificationRequest {.base.} =
+  raise newException(ValueError, "No implementation available")
 
 # This way (using concepts) is used only for the modules managed by AppController
 type
