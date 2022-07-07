@@ -64,7 +64,7 @@ method getChainIdForChat*(self: AccessInterface): int =
 method getChainIdForBrowser*(self: AccessInterface): int =
   raise newException(ValueError, "No implementation available")
 
-method getEstimatedTime*(self: AccessInterface, chainId: int, priorityFeePerGas: string, maxFeePerGas: string): int {.base.} = 
+method getEstimatedTime*(self: AccessInterface, chainId: int, maxFeePerGas: string): int {.base.} = 
   raise newException(ValueError, "No implementation available")
 
 # View Delegate Interface

@@ -35,10 +35,11 @@ const SIGNAL_TRANSACTION_SENT* = "transactionSent"
 
 type
   EstimatedTime* {.pure.} = enum
-    Unknown = -1
+    Unknown = 0
     LessThanOneMin
     LessThanThreeMins
     LessThanFiveMins
+    MoreThanFiveMins
 
 type
   TransactionMinedArgs* = ref object of Args
@@ -396,58 +397,10 @@ QtObject:
       if gasPrice < myTip:
         numOfTransactionWithTipLessThanMine.inc
 
-  proc getEstimatedTime*(self: Service, chainId: int, priorityFeePerGas: string, maxFeePerGas: string): EstimatedTime = 
-    let priorityFeePerGasF = priorityFeePerGas.parseFloat
-    let maxFeePerGasF = maxFeePerGas.parseFloat
-    var transactionsProcessed = 0
-    var numOfTransactionWithTipLessThanMine = 0
-    var latestBlockNumber: Option[Uint256]
-    var expectedBaseFeeForNextBlock: float
+  proc getEstimatedTime*(self: Service, chainId: int, maxFeePerGas: string): EstimatedTime =
     try:
-      let response = eth.getBlockByNumber(chainId, "latest", true)
-      if response.error.isNil:
-        let transactionsJson = response.result{"transactions"}
-        self.addToAllTransactionsAndSetNewMinMax(priorityFeePerGasF, numOfTransactionWithTipLessThanMine, transactionsJson)
-        transactionsProcessed = transactionsJson.len
-        latestBlockNumber = some(stint.fromHex(Uint256, response.result{"number"}.getStr))
-        let latestBlockBaseFeePerGasUnparsed = $fromHex(Stuint[256], response.result{"baseFeePerGas"}.getStr)
-        let latestBlockBaseFeePerGas = parseFloat(wei2gwei(latestBlockBaseFeePerGasUnparsed))
-        let latestBlockGasUsedUnparsed = $fromHex(Stuint[256], response.result{"gasUsed"}.getStr)
-        let latestBlockGasUsed = parseFloat(wei2gwei(latestBlockGasUsedUnparsed))
-        let latestBlockGasLimitUnparsed = $fromHex(Stuint[256], response.result{"gasLimit"}.getStr)
-        let latestBlockGasLimit = parseFloat(wei2gwei(latestBlockGasLimitUnparsed))
-
-        let ratio = latestBlockGasUsed / latestBlockGasLimit * 0.01
-        let maxFeeChange = latestBlockBaseFeePerGas * 0.125
-        if(ratio > 50):
-          expectedBaseFeeForNextBlock = latestBlockBaseFeePerGas + maxFeeChange * (ratio - 50) * 0.01
-        else:
-          expectedBaseFeeForNextBlock = latestBlockBaseFeePerGas - maxFeeChange * (50 - ratio) * 0.01
+      let response = backend.getTransactionEstimatedTime(chainId, maxFeePerGas.parseFloat).result.getInt
+      return EstimatedTime(response)
     except Exception as e:
-      error "error fetching latest block", msg=e.msg
-
-    if latestBlockNumber.isNone or
-      priorityFeePerGasF + expectedBaseFeeForNextBlock > maxFeePerGasF:
-      return EstimatedTime.Unknown
-
-    var blockNumber = latestBlockNumber.get
-    while (transactionsProcessed < 100 and latestBlockNumber.get < blockNumber + 10):
-      blockNumber = blockNumber - 1
-      try:
-        let hexPrevNum = "0x" & stint.toHex(blockNumber)
-        let response = getBlockByNumber(chainId, hexPrevNum, true)
-        let transactionsJson = response.result{"transactions"}
-        self.addToAllTransactionsAndSetNewMinMax(priorityFeePerGasF, numOfTransactionWithTipLessThanMine, transactionsJson)
-        transactionsProcessed += transactionsJson.len
-      except Exception as e:
-        error "error fetching block number", blockNumber=blockNumber, msg=e.msg
-
-    let p = numOfTransactionWithTipLessThanMine / transactionsProcessed
-    if p > 0.5:
-      return EstimatedTime.LessThanOneMin
-    elif p > 0.35:
-      return EstimatedTime.LessThanThreeMins
-    elif p > 0.15:
-      return EstimatedTime.LessThanFiveMins
-    else:
+      error "Error estimating transaction time", message = e.msg
       return EstimatedTime.Unknown

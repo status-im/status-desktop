@@ -111,5 +111,5 @@ method getChainIdForChat*(self: Module): int =
 method getChainIdForBrowser*(self: Module): int =
   return self.controller.getChainIdForBrowser()
 
-method getEstimatedTime*(self: Module, chainId: int, priorityFeePerGas: string, maxFeePerGas: string): int = 
-  return self.controller.getEstimatedTime(chainId, priorityFeePerGas, maxFeePerGas).int
+method getEstimatedTime*(self: Module, chainId: int, maxFeePerGas: string): int = 
+  return self.controller.getEstimatedTime(chainId, maxFeePerGas).int
