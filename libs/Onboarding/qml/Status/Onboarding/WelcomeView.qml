@@ -48,6 +48,10 @@ OnboardingPageBase {
                 id: passwordInput
                 Layout.preferredWidth: 328
                 Layout.preferredHeight: 44
+
+                // TODO: remove dev helper
+                text: "1234567890"
+                // END dev
             }
 
             Button {

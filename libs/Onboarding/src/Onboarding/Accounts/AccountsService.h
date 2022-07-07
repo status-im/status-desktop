@@ -50,7 +50,7 @@ public:
 
     QString generateAlias(const QString& publicKey) override;
 
-    QString generateIdenticon(const QString& publicKey) override;
+    void deleteMultiAccount(const AccountDto &account) override;
 
 private:
     QJsonObject prepareAccountJsonObject(const GeneratedAccountDto& account, const QString& displayName) const;
@@ -83,6 +83,7 @@ private:
     std::vector<GeneratedAccountDto> m_generatedAccounts;
 
     fs::path m_statusgoDataDir;
+    fs::path m_keyStoreDir;
     bool m_isFirstTimeAccountLogin;
     // TODO: don't see the need for this state here
     AccountDto m_loggedInAccount;

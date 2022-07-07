@@ -1,11 +1,12 @@
 #include "AccountsService.h"
 
 #include <StatusGo/Accounts/Accounts.h>
+#include <StatusGo/Accounts/AccountsAPI.h>
 #include <StatusGo/General.h>
 #include <StatusGo/Utils.h>
 #include <StatusGo/Messenger/Service.h>
 
-#include <ApplicationCore/Conversions.h>
+#include <Helpers/conversions.h>
 
 #include <optional>
 
@@ -13,7 +14,7 @@
 std::optional<QString>
 getDataFromFile(const fs::path &path)
 {
-    QFile jsonFile{Status::toString(path)};
+    QFile jsonFile{Status::toQString(path)};
     if(!jsonFile.open(QIODevice::ReadOnly))
     {
         qDebug() << "unable to open" << path.filename().c_str() << " for reading";
@@ -50,7 +51,6 @@ bool AccountsService::init(const fs::path& statusgoDataDir)
     {
         auto gAcc = GeneratedAccountDto::toGeneratedAccountDto(genAddressObj.toObject());
         gAcc.alias = generateAlias(gAcc.derivedAccounts.whisper.publicKey);
-        gAcc.identicon = generateIdenticon(gAcc.derivedAccounts.whisper.publicKey);
         m_generatedAccounts.push_back(std::move(gAcc));
     }
     return true;
@@ -97,6 +97,7 @@ bool AccountsService::setupAccountAndLogin(const QString &accountId, const QStri
     if(StatusGo::Accounts::openAccounts(m_statusgoDataDir.c_str()).containsError())
         return false;
 
+    AccountsService::storeAccount(accountId, hashedPassword);
     AccountsService::storeDerivedAccounts(accountId, hashedPassword, Constants::General::AccountDefaultPaths);
 
     m_loggedInAccount = saveAccountAndLogin(hashedPassword, accountData, subAccountData, settings, nodeConfig);
@@ -121,8 +122,8 @@ bool AccountsService::isFirstTimeAccountLogin() const
 
 bool AccountsService::setKeyStoreDir(const QString &key)
 {
-    auto keyStoreDir = m_statusgoDataDir / m_keyStoreDirName / key.toStdString();
-    auto response = StatusGo::General::initKeystore(keyStoreDir.c_str());
+    m_keyStoreDir = m_statusgoDataDir / m_keyStoreDirName / key.toStdString();
+    auto response = StatusGo::General::initKeystore(m_keyStoreDir.c_str());
     return !response.containsError();
 }
 
@@ -140,7 +141,7 @@ QString AccountsService::login(AccountDto account, const QString& password)
 
     QString thumbnailImage;
     QString largeImage;
-    auto response = StatusGo::Accounts::login(account.name, account.keyUid, hashedPassword, account.identicon,
+    auto response = StatusGo::Accounts::login(account.name, account.keyUid, hashedPassword,
                                              thumbnailImage, largeImage);
     if(response.containsError())
     {
@@ -173,16 +174,9 @@ QString AccountsService::generateAlias(const QString& publicKey)
     return response.result;
 }
 
-QString AccountsService::generateIdenticon(const QString& publicKey)
+void AccountsService::deleteMultiAccount(const AccountDto &account)
 {
-    auto response = StatusGo::Accounts::generateIdenticon(publicKey);
-    if(response.containsError())
-    {
-        qWarning() << response.error.message;
-        return QString();
-    }
-
-    return response.result;
+    StatusGo::Accounts::deleteMultiaccount(account.keyUid, m_keyStoreDir);
 }
 
 DerivedAccounts AccountsService::storeDerivedAccounts(const QString& accountId, const QString& hashedPassword,
@@ -225,15 +219,12 @@ QJsonObject AccountsService::prepareAccountJsonObject(const GeneratedAccountDto&
 {
     return QJsonObject{{"name", displayName.isEmpty() ? account.alias : displayName},
         {"address", account.address},
-        {"photo-path", account.identicon},
-        {"identicon", account.identicon},
         {"key-uid", account.keyUid},
         {"keycard-pairing", QJsonValue()}};
 }
 
 QJsonObject AccountsService::getAccountDataForAccountId(const QString &accountId, const QString &displayName) const
 {
-
     for(const GeneratedAccountDto &acc : m_generatedAccounts)
     {
         if(acc.id == accountId)
@@ -263,15 +254,16 @@ QJsonArray AccountsService::prepareSubaccountJsonObject(const GeneratedAccountDt
             {"color", "#4360df"},
             {"wallet", true},
             {"path", Constants::General::PathDefaultWallet},
-            {"name", "Status account"}
+            {"name", "Status account"},
+            {"derived-from", account.address}
         },
         QJsonObject{
             {"public-key", account.derivedAccounts.whisper.publicKey},
             {"address", account.derivedAccounts.whisper.address},
-            {"path", Constants::General::PathWhisper},
             {"name", displayName.isEmpty() ? account.alias : displayName},
-            {"identicon", account.identicon},
-            {"chat", true}
+            {"path", Constants::General::PathWhisper},
+            {"chat", true},
+            {"derived-from", ""}
         }
     };
 }
@@ -331,20 +323,22 @@ QJsonObject AccountsService::prepareAccountSettingsJsonObject(const GeneratedAcc
             {"eip1581-address", account.derivedAccounts.eip1581.address},
             {"dapps-address", account.derivedAccounts.defaultWallet.address},
             {"wallet-root-address", account.derivedAccounts.walletRoot.address},
-            {"preview-privacy", true},
+            {"preview-privacy?", true},
             {"signing-phrase", generateSigningPhrase(3)},
             {"log-level", "INFO"},
             {"latest-derived-path", 0},
-            {"networks/networks", defaultNetworksJson},
             {"currency", "usd"},
-            {"identicon", account.identicon},
+            //{"networks/networks", defaultNetworksJson},
+            {"networks/networks", QJsonArray()},
+            //{"networks/current-network", Constants::General::DefaultNetworkName},
+            {"networks/current-network", ""},
+            {"wallet/visible-tokens", QJsonObject()},
+            //{"wallet/visible-tokens", {
+            //        {Constants::General::DefaultNetworkName, QJsonArray{"SNT"}}
+            //    }
+            //},
             {"waku-enabled", true},
-            {"wallet/visible-tokens", {
-                    {Constants::General::DefaultNetworkName, QJsonArray{"SNT"}}
-                }
-            },
             {"appearance", 0},
-            {"networks/current-network", Constants::General::DefaultNetworkName},
             {"installation-id", installationId}
         };
     } catch (std::bad_optional_access) {
@@ -410,6 +404,7 @@ QJsonObject AccountsService::getDefaultNodeConfig(const QString& installationId)
 
         nodeConfigJson["ClusterConfig"] = clusterConfig;
 
+        nodeConfigJson["KeyStoreDir"] = toQString(fs::relative(m_keyStoreDir, m_statusgoDataDir));
         return nodeConfigJson;
     } catch (std::bad_optional_access) {
         return QJsonObject();

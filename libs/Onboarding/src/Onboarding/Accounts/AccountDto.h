@@ -10,13 +10,17 @@
 namespace Status::Onboarding
 {
 
+// TODO: refactor it to MultiAccount
 struct AccountDto
 {
     QString name;
     long timestamp;
-    QString identicon;
     QString keycardPairing;
     QString keyUid;
+    // TODO images
+    // TODO colorHash
+    // TODO colorId
+    QString address;
 
     bool isValid() const
     {
@@ -37,9 +41,9 @@ struct AccountDto
                 if(ok)
                     result.timestamp = t;
             }
-            result.identicon = Json::getMandatoryProp(jsonObj, "identicon")->toString();
             result.keycardPairing = Json::getMandatoryProp(jsonObj, "keycard-pairing")->toString();
             result.keyUid = Json::getMandatoryProp(jsonObj, "key-uid")->toString();
+            result.address = Json::getProp(jsonObj, "address")->toString();
 
             /// TODO: investigate unhandled `photo-path` value
         }

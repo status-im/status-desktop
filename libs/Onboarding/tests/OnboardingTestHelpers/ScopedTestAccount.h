@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Wallet/WalletApi.h>
+
 #include <string>
 #include <filesystem>
 
@@ -10,6 +12,9 @@ class QCoreApplication;
 namespace Status::Onboarding {
     class OnboardingController;
 }
+
+namespace Wallet = Status::StatusGo::Wallet;
+namespace Accounts = Status::StatusGo::Accounts;
 
 namespace Status::Testing {
 
@@ -31,9 +36,14 @@ public:
     void processMessages(size_t millis, std::function<bool()> shouldWaitUntilTimeout);
     void logOut();
 
+    static Accounts::MultiAccount firstChatAccount();
+    static Accounts::MultiAccount firstWalletAccount();
+
+    QString password() const { return m_accountPassword; };
+
     Status::Onboarding::OnboardingController* onboardingController() const;
 
-    const std::filesystem::path& fusedTestFolder() const;;
+    const std::filesystem::path& fusedTestFolder() const;
 
 private:
     std::unique_ptr<AutoCleanTempTestDir> m_fusedTestFolder;

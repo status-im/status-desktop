@@ -102,9 +102,8 @@ struct GeneratedAccountDto
     QString mnemonic;
     DerivedAccounts derivedAccounts;
 
-    // The following two are set additionally.
+    // set additionally.
     QString alias;
-    QString identicon;
 
     bool isValid() const
     {

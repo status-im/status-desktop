@@ -2,7 +2,7 @@
 
 #include <QtConcurrent>
 
-#include "libstatus.h"
+#include <libstatus.h>
 
 using namespace std::string_literals;
 

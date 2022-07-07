@@ -8,6 +8,7 @@
 #include <Onboarding/OnboardingController.h>
 
 #include <StatusGo/Accounts/Accounts.h>
+#include <StatusGo/Accounts/AccountsAPI.h>
 
 #include <QCoreApplication>
 
@@ -15,6 +16,7 @@
 
 namespace Testing = Status::Testing;
 namespace Onboarding = Status::Onboarding;
+namespace Accounts = Status::StatusGo::Accounts;
 
 namespace fs = std::filesystem;
 
@@ -86,6 +88,8 @@ ScopedTestAccount::ScopedTestAccount(const std::string &tempTestSubfolderName, c
 
 ScopedTestAccount::~ScopedTestAccount()
 {
+    const auto rootAccount = m_onboarding->accountsService()->getLoggedInAccount();
+    m_onboarding->accountsService()->deleteMultiAccount(rootAccount);
 }
 
 void ScopedTestAccount::processMessages(size_t maxWaitTimeMillis, std::function<bool()> shouldWaitUntilTimeout) {
@@ -104,6 +108,28 @@ void ScopedTestAccount::logOut()
 {
     if(Status::StatusGo::Accounts::logout().containsError())
         throw std::runtime_error("ScopedTestAccount - failed logging out");
+}
+
+Accounts::MultiAccount ScopedTestAccount::firstChatAccount()
+{
+    auto accounts = Accounts::getAccounts();
+    auto chatIt = std::find_if(accounts.begin(), accounts.end(), [](const auto& a) {
+        return a.isChat;
+    });
+    if(chatIt == accounts.end())
+        throw std::runtime_error("ScopedTestAccount::chatAccount: account not found");
+    return *chatIt;
+}
+
+Accounts::MultiAccount ScopedTestAccount::firstWalletAccount()
+{
+    auto accounts = Accounts::getAccounts();
+    auto walletIt = std::find_if(accounts.begin(), accounts.end(), [](const auto& a) {
+        return a.isWallet;
+    });
+    if(walletIt == accounts.end())
+        throw std::runtime_error("ScopedTestAccount::firstWalletAccount: account not found");
+    return *walletIt;
 }
 
 Onboarding::OnboardingController *ScopedTestAccount::onboardingController() const

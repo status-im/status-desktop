@@ -43,6 +43,7 @@ target_link_libraries(Onboarding
         Qt6::Concurrent
 
         Status::ApplicationCore
+        Status::Helpers
 
         Status::StatusGoQt
         Status::StatusGoConfig

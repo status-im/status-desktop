@@ -3,7 +3,10 @@
 #include <IOTestHelpers.h>
 #include <Constants.h>
 
+#include <StatusGo/Accounts/Accounts.h>
+
 #include <Onboarding/Accounts/AccountsService.h>
+#include <Onboarding/Common/Constants.h>
 
 #include <gtest/gtest.h>
 
@@ -14,14 +17,14 @@ namespace fs = std::filesystem;
 
 namespace Status::Testing {
 
-class AccountsServicesTest : public ::testing::Test
+class AccountsService : public ::testing::Test
 {
 protected:
     std::unique_ptr<Onboarding::AccountsService> m_accountsService;
     std::unique_ptr<Testing::AutoCleanTempTestDir> m_fusedTestFolder;
 
     void SetUp() override {
-        m_fusedTestFolder = std::make_unique<Testing::AutoCleanTempTestDir>("AccountsServicesTest");
+        m_fusedTestFolder = std::make_unique<Testing::AutoCleanTempTestDir>("TestAccountsService");
         m_accountsService = std::make_unique<Onboarding::AccountsService>();
         m_accountsService->init(m_fusedTestFolder->tempFolder() / Constants::statusGoDataDirName);
     }
@@ -33,7 +36,7 @@ protected:
 };
 
 
-TEST_F(AccountsServicesTest, GeneratedAccounts)
+TEST_F(AccountsService, GeneratedAccounts)
 {
     auto genAccounts = m_accountsService->generatedAccounts();
 
@@ -48,7 +51,7 @@ TEST_F(AccountsServicesTest, GeneratedAccounts)
     }
 }
 
-TEST_F(AccountsServicesTest, DISABLED_GenerateAlias) // temporary disabled till we see what's happening on the status-go side since it doesn't return aliases for any pk
+TEST_F(AccountsService, DISABLED_GenerateAlias) // temporary disabled till we see what's happening on the status-go side since it doesn't return aliases for any pk
 {
     QString testPubKey = "0x04487f44bac3e90825bfa9720148308cb64835bebb7e888f519cebc127223187067629f8b70d0661a35d4af6516b225286";
 

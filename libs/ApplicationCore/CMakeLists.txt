@@ -21,6 +21,8 @@ target_link_libraries(ApplicationCore
     PRIVATE
         Qt6::Quick
         Qt6::Qml
+
+        Status::Helpers
 )
 
 install(
@@ -42,8 +44,6 @@ target_include_directories(ApplicationCore
 
 target_sources(ApplicationCore
     PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/ApplicationCore/Conversions.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/ApplicationCore/Conversions.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/ApplicationCore/UserConfiguration.h
         ${CMAKE_CURRENT_SOURCE_DIR}/src/ApplicationCore/UserConfiguration.cpp
 )
