@@ -205,7 +205,6 @@ StatusModal {
                 expandable: true
                 expandableComponent: AdvancedAddAccountView {
                     width: parent.width
-                    Layout.margins: Style.current.padding
                     Component.onCompleted: advancedSelection.isValid = Qt.binding(function(){return isValid})
                     onCalculateDerivedPath: _internal.getDerivedAddressList()
                     onEnterPressed: {
