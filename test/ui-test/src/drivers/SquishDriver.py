@@ -44,6 +44,13 @@ def is_loaded(objName):
     except LookupError:
         return False, obj
 
+def is_Visible(objName):
+    try:
+        squish.findObject(getattr(names, objName))
+        return True
+    except LookupError:
+        return False
+
 
 # It checks if the given object is visible and enabled.
 def is_visible_and_enabled(obj):
@@ -66,24 +73,24 @@ def click_obj(obj):
     except LookupError:
         return False
 
+def get_obj(objName):
+        obj = squish.findObject(getattr(names, objName))
+        return obj
+   
 
 # It executes the click action into object with given object name:
 def click_obj_by_name(objName):
-    try:
         obj = squish.waitForObject(getattr(names, objName))
         squish.mouseClick(obj, squish.Qt.LeftButton)
-        return True
-    except LookupError:
-        return False
+    
+def scroll_obj_by_name(objName):
+        obj = squish.waitForObject(getattr(names, objName))
+        squish.mouseWheel(obj, 206, 35, 0, -1, squish.Qt.ControlModifier)
 
 
 def check_obj_by_name(objName):
-    try:
         obj = squish.waitForObject(getattr(names, objName))
         obj.checked = True
-        return True
-    except LookupError:
-        return False
 
 
 def is_text_matching(objName, text):
@@ -92,6 +99,7 @@ def is_text_matching(objName, text):
         test.compare(obj.text, text, "Found the following text " + text)
         return True
     except LookupError:
+        print(objName + " is not found, please check app for correct object and update object mapper")
         return False
 
 
@@ -103,3 +111,4 @@ def type(objName, text):
         return True
     except LookupError:
         return False
+
