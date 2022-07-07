@@ -107,5 +107,5 @@ proc getChainIdForChat*(self: Controller): int =
 proc getChainIdForBrowser*(self: Controller): int =
   return self.networkService.getNetworkForBrowser().chainId
 
-proc getEstimatedTime*(self: Controller, chainId: int, priorityFeePerGas: string, maxFeePerGas: string): EstimatedTime = 
-  return self.transactionService.getEstimatedTime(chainId, priorityFeePerGas, maxFeePerGas)
+proc getEstimatedTime*(self: Controller, chainId: int, maxFeePerGas: string): EstimatedTime = 
+  return self.transactionService.getEstimatedTime(chainId, maxFeePerGas)

@@ -113,8 +113,8 @@ QtObject {
         return JSON.parse(walletSectionTransactions.suggestedFees(chainId))
     }
 
-    function getEstimatedTime(chainId, priorityFeePerGas, maxFeePerGas) {
-       return walletSectionTransactions.getEstimatedTime(chainId, priorityFeePerGas, maxFeePerGas)
+    function getEstimatedTime(chainId, maxFeePerGas) {
+       return walletSectionTransactions.getEstimatedTime(chainId, maxFeePerGas)
     }
 
     function getChainIdForChat() {

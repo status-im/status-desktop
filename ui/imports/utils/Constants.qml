@@ -204,10 +204,11 @@ QtObject {
     }
 
     readonly property QtObject transactionEstimatedTime: QtObject {
-        readonly property int unknown: -1
-        readonly property int lessThanOneMin: 0
-        readonly property int lessThanThreeMins: 1
-        readonly property int lessThanFiveMins: 2
+        readonly property int unknown: 0
+        readonly property int lessThanOneMin: 1
+        readonly property int lessThanThreeMins: 2
+        readonly property int lessThanFiveMins: 3
+        readonly property int moreThanFiveMins: 4
     }
 
     readonly property int communityImported: 0

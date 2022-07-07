@@ -561,6 +561,10 @@ QtObject {
     /* Validation section end */
 
     function getLabelForEstimatedTxTime(estimatedFlag) {
+        if (estimatedFlag === Constants.transactionEstimatedTime.unknown) {
+            return qsTr("Unknown")
+        }
+
         if (estimatedFlag === Constants.transactionEstimatedTime.lessThanOneMin) {
             return qsTr("< 1 min")
         }

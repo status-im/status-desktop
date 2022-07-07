@@ -68,7 +68,7 @@ Item {
             let fiatValue = root.getFiatValue(ethValue, "ETH", root.defaultCurrency)
             selectedGasEthValue = ethValue
             selectedGasFiatValue = fiatValue
-            root.estimatedTxTimeFlag = root.getEstimatedTime(root.chainId, inputPerGasTipLimit.text, inputGasPrice.text)
+            root.estimatedTxTimeFlag = root.getEstimatedTime(root.chainId, inputGasPrice.text)
         })
     }
 

@@ -104,6 +104,10 @@ rpc(toggleVisibleToken, "wallet"):
   chainId: int
   address: string
 
+rpc(getTransactionEstimatedTime, "wallet"):
+  chainId: int
+  maxFeePerGas: float
+
 rpc(fetchPrices, "wallet"):
   symbols: seq[string]
   currency: string
