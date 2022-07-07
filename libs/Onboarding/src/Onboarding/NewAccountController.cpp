@@ -11,16 +11,8 @@ namespace Status::Onboarding
 
 namespace StatusGo = Status::StatusGo;
 
-NewAccountController::NewAccountController(std::shared_ptr<AccountsServiceInterface> accountsService, QObject *parent)
-    // TODO: remove dev dev setup after the final implementation
-    : m_name("TestAccount")
-    , m_nameIsValid(true)
-    , m_password("1234567890")
-    , m_passwordIsValid(true)
-    , m_confirmationPassword("1234567890")
-    , m_confirmationPasswordIsValid(true)
-    // END dev setup
-    , m_accountsService(accountsService)
+NewAccountController::NewAccountController(AccountsServiceInterfacePtr accountsService, QObject* parent)
+    : m_accountsService(accountsService)
 {
     connect(this, &NewAccountController::passwordChanged, this, &NewAccountController::checkAndUpdateDataValidity);
     connect(this, &NewAccountController::confirmationPasswordChanged, this, &NewAccountController::checkAndUpdateDataValidity);

@@ -1,7 +1,8 @@
 #include "General.h"
 
 #include "Utils.h"
-#include "libstatus.h"
+
+#include <libstatus.h>
 
 namespace Status::StatusGo::General
 {

@@ -7,8 +7,6 @@
 #include <ScopedTestAccount.h>
 
 #include <gtest/gtest.h>
-#include <gmock/gmock.h>
-
 
 namespace fs = std::filesystem;
 
@@ -17,7 +15,7 @@ namespace Status::Testing {
 /// This is an integration test to check that status-go doesn't crash on apple silicon when starting Me
 /// \warning the test depends on IO and it is not deterministic, fast, focused or reliable. It is here for validation only
 /// \todo fin a way to test the integration within a test environment. Also how about reusing an existing account
-TEST(OnboardingModule, TestStartMessaging)
+TEST(MessagingApi, TestStartMessaging)
 {
     bool nodeReady = false;
     QObject::connect(StatusGo::SignalsManager::instance(), &StatusGo::SignalsManager::nodeReady, [&nodeReady](const QString& error) {

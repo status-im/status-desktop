@@ -1,5 +1,6 @@
 #include "OnboardingController.h"
 
+#include "Accounts/AccountsServiceInterface.h"
 #include "NewAccountController.h"
 #include "UserAccount.h"
 
@@ -9,7 +10,7 @@ namespace Status::Onboarding {
 
 namespace StatusGo = Status::StatusGo;
 
-OnboardingController::OnboardingController(std::shared_ptr<AccountsServiceInterface> accountsService)
+OnboardingController::OnboardingController(AccountsServiceInterfacePtr accountsService)
     : QObject(nullptr)
     , m_accountsService(std::move(accountsService))
 {
@@ -72,6 +73,11 @@ void OnboardingController::terminateNewAccountController()
 NewAccountController *OnboardingController::newAccountController() const
 {
     return m_newAccountController.get();
+}
+
+AccountsServiceInterfacePtr OnboardingController::accountsService() const
+{
+    return m_accountsService;
 }
 
 }

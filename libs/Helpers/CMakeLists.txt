@@ -6,6 +6,8 @@ project(Helpers
     VERSION 0.1.0
     LANGUAGES CXX)
 
+find_package(nlohmann_json 3.10.5 REQUIRED)
+
 set(QT_NO_CREATE_VERSIONLESS_FUNCTIONS true)
 
 find_package(Qt6 ${STATUS_QT_VERSION} COMPONENTS Quick Qml REQUIRED)
@@ -48,6 +50,9 @@ target_include_directories(Helpers
 )
 
 target_link_libraries(Helpers
+    PUBLIC
+        nlohmann_json::nlohmann_json
+
     PRIVATE
         Qt6::Quick
         Qt6::Qml
@@ -61,6 +66,8 @@ install(
 
 target_sources(Helpers
     PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/Helpers/conversions.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/Helpers/conversions.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/Helpers/helpers.h
         ${CMAKE_CURRENT_SOURCE_DIR}/src/Helpers/logs.h
         ${CMAKE_CURRENT_SOURCE_DIR}/src/Helpers/logs.cpp

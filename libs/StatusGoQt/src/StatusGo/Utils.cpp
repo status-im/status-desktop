@@ -1,6 +1,6 @@
 #include "Utils.h"
 
-#include "libstatus.h"
+#include <libstatus.h>
 
 #include <QtCore>
 
@@ -15,8 +15,8 @@ QJsonArray toJsonArray(const QVector<QString>& value)
     return array;
 }
 
-const char* statusgoCallPrivateRPC(const char* inputJSON) {
-    // Evil done here! status-go API doesn't follow the proper so we adapt
+const char* statusGoCallPrivateRPC(const char* inputJSON) {
+    // Evil done here! status-go API doesn't follow the proper const conventions
     return CallPrivateRPC(const_cast<char*>(inputJSON));
 }
 

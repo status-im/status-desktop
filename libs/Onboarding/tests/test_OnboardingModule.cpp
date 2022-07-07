@@ -154,7 +154,6 @@ TEST(OnboardingModule, TestLoginEndToEnd)
         accountLoggedInError = true;
     });
 
-    //auto errorString = accountsService->login(accounts[0], accountPassword);
     // Workaround until we reset the status-go state
     auto ourAccountRes = std::find_if(accounts.begin(), accounts.end(), [accountName](const auto &a) { return a.name == accountName; });
     auto errorString = accountsService->login(*ourAccountRes, accountPassword);

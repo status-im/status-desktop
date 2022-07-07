@@ -45,7 +45,9 @@ public:
 
     virtual QString generateAlias(const QString& publicKey) = 0;
 
-    virtual QString generateIdenticon(const QString& publicKey) = 0;
+    virtual void deleteMultiAccount(const AccountDto &account) = 0;
 };
+
+using AccountsServiceInterfacePtr = std::shared_ptr<AccountsServiceInterface>;
 
 }

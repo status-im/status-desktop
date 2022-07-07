@@ -2,7 +2,6 @@
 
 #include "UserAccountsModel.h"
 
-#include "Accounts/AccountsServiceInterface.h"
 #include "Accounts/AccountDto.h"
 
 #include <QQmlEngine>
@@ -14,7 +13,7 @@ namespace Status::Onboarding
 {
 
 class UserAccount;
-
+class AccountsServiceInterface;
 class NewAccountController;
 
 /*!
@@ -50,6 +49,7 @@ public:
     Q_INVOKABLE NewAccountController *initNewAccountController();
     Q_INVOKABLE void terminateNewAccountController();
     NewAccountController *newAccountController() const;
+    std::shared_ptr<AccountsServiceInterface> accountsService() const;
 
 signals:
     void accountLoggedIn();

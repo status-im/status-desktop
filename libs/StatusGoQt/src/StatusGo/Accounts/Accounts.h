@@ -8,8 +8,6 @@ namespace Status::StatusGo::Accounts
 {
     RpcResponse<QJsonArray> generateAddresses(const QVector<QString>& paths);
 
-    RpcResponse<QString> generateIdenticon(const QString& publicKey);
-
     RpcResponse<QString> generateAlias(const QString& publicKey);
 
     RpcResponse<QJsonObject> storeDerivedAccounts(const QString& accountId, const QString& hashedPassword,
@@ -24,10 +22,10 @@ namespace Status::StatusGo::Accounts
     /// opens database and returns accounts list.
     RpcResponse<QJsonArray> openAccounts(const char* dataDirPath);
 
+    /// TODO harmonise password parameters (hashed or plain)?
     RpcResponse<QJsonObject> login(const QString& name, const QString& keyUid, const QString& hashedPassword,
-                                   const QString& identicon, const QString& thumbnail, const QString& large);
+                                   const QString& thumbnail, const QString& large);
     RpcResponse<QJsonObject> loginWithConfig(const QString& name, const QString& keyUid, const QString& hashedPassword,
-                                             const QString& identicon, const QString& thumbnail, const QString& large,
-                                             const QJsonObject& nodeConfig);
+                                             const QString& thumbnail, const QString& large, const QJsonObject& nodeConfig);
     RpcResponse<QJsonObject> logout();
 }

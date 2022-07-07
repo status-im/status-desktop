@@ -1,6 +1,6 @@
 #include "UserConfiguration.h"
 
-#include "Conversions.h"
+#include "Helpers/conversions.h"
 
 #include <filesystem>
 
@@ -21,7 +21,7 @@ UserConfiguration::UserConfiguration(QObject *parent)
 
 const QString UserConfiguration::qmlUserDataFolder() const
 {
-    return toString(m_userDataFolder.string());
+    return toQString(m_userDataFolder.string());
 }
 
 const fs::path &UserConfiguration::userDataFolder() const

@@ -1,7 +1,8 @@
 #include "Accounts.h"
 
 #include "Utils.h"
-#include "libstatus.h"
+
+#include <libstatus.h>
 
 const int NUMBER_OF_ADDRESSES_TO_GENERATE = 5;
 const int MNEMONIC_PHRASE_LENGTH = 12;
@@ -39,25 +40,6 @@ RpcResponse<QJsonArray> generateAddresses(const QVector<QString>& paths)
     {
         auto response = RpcResponse<QJsonArray>(QJsonArray());
         response.error.message = QObject::tr("an error generating address occurred");
-        return response;
-    }
-}
-
-RpcResponse<QString> generateIdenticon(const QString& publicKey)
-{
-    try
-    {
-        QString identicon;
-        if(!publicKey.isEmpty())
-        {
-            identicon = Identicon(publicKey.toUtf8().data());
-        }
-        return Utils::buildPrivateRPCResponse(identicon);
-    }
-    catch (...)
-    {
-        auto response = RpcResponse<QString>(QString());
-        response.error.message = QObject::tr("an error generating identicon occurred");
         return response;
     }
 }
@@ -212,7 +194,7 @@ RpcResponse<QJsonArray> openAccounts(const char* dataDirPath)
 }
 
 RpcResponse<QJsonObject> login(const QString& name, const QString& keyUid, const QString& hashedPassword,
-                                         const QString& identicon, const QString& thumbnail, const QString& large)
+                               const QString& thumbnail, const QString& large)
 {
     QJsonObject payload{
         {"name", name},
@@ -253,8 +235,7 @@ RpcResponse<QJsonObject> login(const QString& name, const QString& keyUid, const
 }
 
 RpcResponse<QJsonObject> loginWithConfig(const QString& name, const QString& keyUid, const QString& hashedPassword,
-                                         const QString& identicon, const QString& thumbnail, const QString& large,
-                                         const QJsonObject& nodeConfig)
+                                         const QString& thumbnail, const QString& large, const QJsonObject& nodeConfig)
 {
     QJsonObject payload{
         {"name", name},

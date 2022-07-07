@@ -80,14 +80,14 @@ RpcResponse<T> buildPrivateRPCResponse(const T& json)
     return response;
 }
 
-const char* statusgoCallPrivateRPC(const char* inputJSON);
+const char* statusGoCallPrivateRPC(const char* inputJSON);
 
 template<class T>
 RpcResponse<T> callPrivateRpc(const QByteArray& payload)
 {
     try
     {
-        auto result = statusgoCallPrivateRPC(payload.data());
+        auto result = statusGoCallPrivateRPC(payload.data());
         T jsonResult;
         if(!Utils::checkReceivedResponse(result, jsonResult))
         {

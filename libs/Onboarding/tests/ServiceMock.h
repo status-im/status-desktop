@@ -31,7 +31,7 @@ public:
     MOCK_METHOD(QString, login, (Onboarding::AccountDto, const QString&), (override));
     MOCK_METHOD(void, clear, (), (override));
     MOCK_METHOD(QString, generateAlias, (const QString&), (override));
-    MOCK_METHOD(QString, generateIdenticon, (const QString&), (override));
+    MOCK_METHOD(void, deleteMultiAccount, (const Onboarding::AccountDto&), (override));
 };
 
 }
