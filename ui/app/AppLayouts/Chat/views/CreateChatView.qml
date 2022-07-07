@@ -81,9 +81,7 @@ Page {
     // TODO: Could it be replaced to `GroupChatPanel`?
     header: RowLayout {
         id: headerRow
-        width: parent.width
         height: tagSelector.height
-        anchors.top: parent.top
         anchors.topMargin: 8
         clip: true
         StatusTagSelector {
@@ -93,7 +91,8 @@ Page {
             Layout.leftMargin: 17
             maxHeight: root.height
             nameCountLimit: 20
-            listLabel: qsTr("Contacts")
+            listLabel: contactsModel.count ? qsTr("Contacts") : ""
+            textEdit.enabled: contactsModel.count
             toLabelText: qsTr("To: ")
             warningText: qsTr("USER LIMIT REACHED")
             ringSpecModelGetter: function(pubKey) {
@@ -114,8 +113,8 @@ Page {
             id: confirmButton
             implicitHeight: 44
             Layout.alignment: Qt.AlignTop
-            enabled: (tagSelector.namesModel.count > 0)
-            text: "Confirm"
+            enabled: tagSelector.namesModel.count > 0
+            text: qsTr("Confirm")
             onClicked: {
                 root.rootStore.createChatInitMessage = chatInput.textInput.text;
                 root.rootStore.createChatFileUrls = chatInput.fileUrls;
@@ -138,9 +137,6 @@ Page {
     }
 
     contentItem: Item {
-        anchors.fill: parent
-        anchors.topMargin: headerRow.height + 32
-
         StatusChatInput {
             id: chatInput
             anchors.bottom: parent.bottom
@@ -178,17 +174,16 @@ Page {
         }
 
         StatusBaseText {
-            width: parent.width
-            height: contentHeight
+            width: parent.width*.66
             anchors.centerIn: parent
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
-            visible: (contactsModel.count === 0)
+            visible: contactsModel.count === 0
             wrapMode: Text.WordWrap
             font.pixelSize: 15
             color: Theme.palette.baseColor1
             text: qsTr("You can only send direct messages to your Contacts.\n\n
-Send a contact request to the person you would like to chat with, you will be able to
+Send a contact request to the person you would like to chat with, you will be able to \
 chat with them once they have accepted your contact request.")
             Component.onCompleted: {
                 if (visible) {

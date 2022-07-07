@@ -165,7 +165,7 @@ RowLayout {
          id: confirmButton
          implicitHeight: 44
          Layout.alignment: Qt.AlignTop
-         text: "Confirm"
+         text: qsTr("Confirm")
          onClicked: {
              if(root.chatContentModule.chatDetails.id &&((d.addedMembersIds.length > 0) || (d.removedMembersIds.length > 0))) {
                  // Add request:
