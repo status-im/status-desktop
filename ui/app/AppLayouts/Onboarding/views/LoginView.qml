@@ -227,7 +227,7 @@ Item {
             enabled: !loading
             placeholderText: loading ?
                 qsTr("Connecting...") :
-                qsTr("Enter password")
+                qsTr("Password")
             textField.echoMode: TextInput.Password
             Keys.onReturnPressed: {
                 doLogin(textField.text)
