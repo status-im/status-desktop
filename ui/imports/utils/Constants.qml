@@ -126,6 +126,16 @@ QtObject {
         readonly property int blockedContacts: 6
     }
 
+    readonly property QtObject profilePopupStates: QtObject {
+        readonly property string openNickname: "openNickname"
+        readonly property string contactRequest: "contactRequest"
+        readonly property string blockUser: "blockUser"
+        readonly property string unblockUser: "unblockUser"
+        readonly property string verifyIdentity: "verifyIdentity"
+        readonly property string showVerificationPendingSection: "showVerificationPendingSection"
+        readonly property string respondToPendingRequest: "respondToPendingRequest"
+    }
+
     readonly property QtObject validators: QtObject {
         readonly property list<StatusValidator> displayName: [
             StatusMinLengthValidator {

@@ -324,3 +324,6 @@ proc getCommunityById*(self: Controller, communityId: string): CommunityDto =
 
 proc getStatusForContactWithId*(self: Controller, publicKey: string): StatusUpdateDto =
   return self.contactsService.getStatusForContactWithId(publicKey)
+
+proc getVerificationRequestFrom*(self: Controller, publicKey: string): VerificationRequest =
+  self.contactsService.getVerificationRequestFrom(publicKey)

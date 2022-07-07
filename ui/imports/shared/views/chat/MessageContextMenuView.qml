@@ -70,6 +70,12 @@ StatusPopupMenu {
         }
         return contactDetails.verificationStatus
     }
+    readonly property int incomingVerificationStatus: {
+        if (root.selectedUserPublicKey === "" || root.isMe || !root.isContact) {
+            return 0
+        }
+        return contactDetails.incomingVerificationStatus
+    }
     readonly property bool hasPendingContactRequest: {
         return !root.isMe && root.selectedUserPublicKey !== "" &&
             root.store.contactsStore.hasPendingContactRequest(root.selectedUserPublicKey);
@@ -85,6 +91,13 @@ StatusPopupMenu {
             return false
         }
         return root.outgoingVerificationStatus !== Constants.verificationStatus.unverified
+    }
+    readonly property bool isTrusted: {
+        if (!root.selectedUserPublicKey || root.isMe || !root.isContact) {
+            return false
+        }
+        return root.verificationStatus === Constants.verificationStatus.trusted ||
+            root.incomingVerificationStatus === Constants.verificationStatus.trusted
     }
 
     property var setXPosition: function() {return 0}
@@ -223,7 +236,8 @@ StatusPopupMenu {
         enabled: root.isProfile && !root.isMe && !root.isContact
                                 && !root.isBlockedContact && !root.hasPendingContactRequest
         onTriggered: {
-            root.openProfileClicked(root.selectedUserPublicKey, "contactRequest")
+            root.openProfileClicked(root.selectedUserPublicKey,
+                Constants.profilePopupStates.contactRequest)
             root.close()
         }
     }
@@ -235,7 +249,32 @@ StatusPopupMenu {
                                 && !root.isBlockedContact && !root.isVerificationRequestSent
                                 && !root.hasReceivedVerificationRequestFrom
         onTriggered: {
-            root.openProfileClicked(root.selectedUserPublicKey, "verifyIdentity")
+            root.openProfileClicked(root.selectedUserPublicKey,
+                Constants.profilePopupStates.verifyIdentity)
+            root.close()
+        }
+    }
+
+    StatusMenuItem {
+
+         text: isVerificationRequestSent ||
+            root.incomingVerificationStatus === Constants.verificationStatus.verified ?
+            qsTr("ID Request Pending....") :
+            qsTr("Respond to ID Request...")
+        icon.name: "checkmark-circle"
+        enabled: root.isProfile && !root.isMe && root.isContact
+                                && !root.isBlockedContact && !root.isTrusted
+                                && (root.hasReceivedVerificationRequestFrom
+                                    || root.isVerificationRequestSent)
+        onTriggered: {
+            if (hasReceivedVerificationRequestFrom) {
+                root.openProfileClicked(root.selectedUserPublicKey,
+                    Constants.profilePopupStates.respondToPendingRequest)
+            } else if (root.isVerificationRequestSent) {
+                root.openProfileClicked(root.selectedUserPublicKey,
+                    Constants.profilePopupStates.showVerificationPendingSection)
+            }
+            
             root.close()
         }
     }
@@ -246,7 +285,8 @@ StatusPopupMenu {
         icon.color: Style.current.danger
         enabled: root.isProfile && !root.isMe && !root.isBlockedContact
         onTriggered: {
-            root.openProfileClicked(root.selectedUserPublicKey, "blockUser")
+            root.openProfileClicked(root.selectedUserPublicKey,
+                Constants.profilePopupStates.blockUser)
             root.close()
         }
     }
@@ -256,7 +296,8 @@ StatusPopupMenu {
         icon.name: "remove"
         enabled: root.isProfile && !root.isMe && root.isBlockedContact
         onTriggered: {
-            root.openProfileClicked(root.selectedUserPublicKey, "unblockUser")
+            root.openProfileClicked(root.selectedUserPublicKey,
+                Constants.profilePopupStates.unblockUser)
             root.close()
         }
     }
@@ -266,7 +307,8 @@ StatusPopupMenu {
         icon.name: "edit_pencil"
         enabled: root.isProfile && !root.isMe
         onTriggered: {
-            root.openProfileClicked(root.selectedUserPublicKey, "openNickname")
+            root.openProfileClicked(root.selectedUserPublicKey,
+                Constants.profilePopupStates.openNickname)
             root.close()
         }
     }

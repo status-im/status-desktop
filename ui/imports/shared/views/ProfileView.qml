@@ -39,7 +39,7 @@ Rectangle {
     property bool isAddedContact: false
 
     property int userTrustStatus: Constants.trustStatus.unknown
-    property int verificationStatus: Constants.verificationStatus.unverified
+    property int outgoingVerificationStatus: Constants.verificationStatus.unverified
 
     property string challenge: ""
     property string response: ""
@@ -140,7 +140,7 @@ Rectangle {
         }
         ScriptAction {
             script: {
-                if (verificationStatus === Constants.verificationStatus.trusted) {
+                if (outgoingVerificationStatus === Constants.verificationStatus.trusted) {
                     stepsListModel.setProperty(2, "stepCompleted", true);
                 }
             }

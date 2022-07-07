@@ -32,7 +32,8 @@ StatusModal {
     property string userEnsName: ""
     property string userIcon: ""
     property int userTrustStatus: Constants.trustStatus.unknown
-    property int verificationStatus: Constants.verificationStatus.unverified
+    property int outgoingVerificationStatus: Constants.verificationStatus.unverified
+    property int incomingVerificationStatus: Constants.verificationStatus.unverified
     property string text: ""
     property string challenge: ""
     property string response: ""
@@ -85,8 +86,9 @@ StatusModal {
         userTrustStatus = contactDetails.trustStatus
         userTrustIsUnknown = contactDetails.trustStatus === Constants.trustStatus.unknown
         userIsUntrustworthy = contactDetails.trustStatus === Constants.trustStatus.untrustworthy
-        verificationStatus = contactDetails.verificationStatus
-        isVerificationSent = verificationStatus !== Constants.verificationStatus.unverified
+        outgoingVerificationStatus = contactDetails.verificationStatus
+        incomingVerificationStatus = contactDetails.incomingVerificationStatus
+        isVerificationSent = outgoingVerificationStatus !== Constants.verificationStatus.unverified
 
         if (isContact && popup.contactsStore.hasReceivedVerificationRequestFrom(publicKey)) {
             popup.hasReceivedVerificationRequest = true
@@ -95,7 +97,7 @@ StatusModal {
         if(isContact && isVerificationSent) {
             let verificationDetails = popup.contactsStore.getSentVerificationDetailsAsJson(publicKey);
 
-            verificationStatus = verificationDetails.requestStatus;
+            outgoingVerificationStatus = verificationDetails.requestStatus;
             verificationChallenge = verificationDetails.challenge;
             verificationResponse = verificationDetails.response;
             verificationResponseDisplayName = verificationDetails.displayName;
@@ -103,8 +105,9 @@ StatusModal {
             verificationRequestedAt = verificationDetails.requestedAt;
             verificationRepliedAt = verificationDetails.repliedAt;
         }
-        isTrusted = verificationStatus === Constants.verificationStatus.trusted
-        isVerified = verificationStatus === Constants.verificationStatus.verified
+        isTrusted = outgoingVerificationStatus === Constants.verificationStatus.trusted
+            || incomingVerificationStatus === Constants.verificationStatus.trusted
+        isVerified = outgoingVerificationStatus === Constants.verificationStatus.verified
 
         text = ""; // this is most likely unneeded
         isCurrentUser = popup.profileStore.pubkey === publicKey;
@@ -112,16 +115,21 @@ StatusModal {
         showFooter = !isCurrentUser;
         popup.open();
 
-        if (state === "openNickname") {
+        if (state === Constants.profilePopupStates.openNickname) {
             profileView.nicknamePopup.open();
-        } else if (state === "contactRequest") {
+        } else if (state === Constants.profilePopupStates.contactRequest) {
             sendContactRequestModal.open()
-        } else if (state === "blockUser") {
+        } else if (state === Constants.profilePopupStates.blockUser) {
             blockUser();
-        } else if (state === "unblockUser") {
+        } else if (state === Constants.profilePopupStates.unblockUser) {
             unblockUser();
-        } else if (state === "verifyIdentity") {
+        } else if (state === Constants.profilePopupStates.verifyIdentity) {
             showVerifyIdentitySection = true;
+        } else if (state === Constants.profilePopupStates.respondToPendingRequest) {
+            popup.openPendingRequestPopup()
+        } else if (state === Constants.profilePopupStates.showVerificationPendingSection) {
+            popup.showVerificationPendingSection = true
+            profileView.wizardAnimation.running = true
         }
     }
 
@@ -135,6 +143,23 @@ StatusModal {
         profileView.unblockContactConfirmationDialog.contactName = userName;
         profileView.unblockContactConfirmationDialog.contactAddress = userPublicKey;
         profileView.unblockContactConfirmationDialog.open();
+    }
+
+    function openPendingRequestPopup() {
+        try {
+            let request = popup.contactsStore.getVerificationDetailsFromAsJson(popup.userPublicKey)
+            Global.openPopup(contactVerificationRequestPopupComponent, {
+                senderPublicKey: request.from,
+                senderDisplayName: request.displayName,
+                senderIcon: request.icon,
+                challengeText: request.challenge,
+                responseText: request.response,
+                messageTimestamp: request.requestedAt,
+                responseTimestamp: request.repliedAt
+            })
+        } catch (e) {
+            console.error("Error getting or parsing verification data", e)
+        }
     }
 
     width: 700
@@ -185,7 +210,7 @@ StatusModal {
         hasReceivedVerificationRequest: popup.hasReceivedVerificationRequest
 
         userTrustStatus: popup.userTrustStatus
-        verificationStatus: popup.verificationStatus
+        outgoingVerificationStatus: popup.outgoingVerificationStatus
         
         showVerifyIdentitySection: popup.showVerifyIdentitySection
         showVerificationPendingSection: popup.showVerificationPendingSection
@@ -353,20 +378,7 @@ StatusModal {
                 (hasReceivedVerificationRequest && !isTrusted)
             onClicked: {
                 if (hasReceivedVerificationRequest) {
-                    try {
-                        let request = popup.contactsStore.getVerificationDetailsFromAsJson(popup.userPublicKey)
-                        Global.openPopup(contactVerificationRequestPopupComponent, {
-                            senderPublicKey: request.from,
-                            senderDisplayName: request.displayName,
-                            senderIcon: request.icon,
-                            challengeText: request.challenge,
-                            responseText: request.response,
-                            messageTimestamp: request.requestedAt,
-                            responseTimestamp: request.repliedAt
-                        })
-                    } catch (e) {
-                        console.error("Error getting or parsing verification data", e)
-                    }
+                    popup.openPendingRequestPopup()
                 } else {
                     popup.showVerificationPendingSection = true
                     profileView.wizardAnimation.running = true
