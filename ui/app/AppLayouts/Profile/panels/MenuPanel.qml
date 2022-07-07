@@ -57,6 +57,7 @@ Column {
         id: appsMenuItems
         delegate: StatusNavigationListItem {
             id: appsMenuDelegate
+            objectName:  model.text + "-AppMenu"
             itemId: model.subsection
             title: model.text
             icon.name: model.icon
@@ -84,6 +85,7 @@ Column {
         id: settingsMenuItems
         delegate: StatusNavigationListItem {
             id: settingsMenuDelegate
+            objectName:  model.text + "-SettingsMenu"
             itemId: model.subsection
             title: model.text
             icon.name: model.icon
