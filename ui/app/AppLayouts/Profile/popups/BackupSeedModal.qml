@@ -31,13 +31,13 @@ StatusStackModal {
             return num;
         }
 
-        property alias seedHidden: confirmSeedPhrase.hideSeed
-        property alias seedStored: confirmStoringSeedPhrase.seedStored
+        readonly property alias seedHidden: confirmSeedPhrase.hideSeed
+        readonly property alias seedStored: confirmStoringSeedPhrase.seedStored
 
-        property alias validFirstSeedWord: confirmFirstWord.inputValid
-        property alias validSecondSeedWord: confirmSecondWord.inputValid
+        readonly property alias validFirstSeedWord: confirmFirstWord.inputValid
+        readonly property alias validSecondSeedWord: confirmSecondWord.inputValid
 
-        property Item skipButton: StatusButton {
+        readonly property Item skipButton: StatusButton {
             visible: currentIndex === 0
             border.color: Theme.palette.baseColor2
             text: qsTr("Not Now")
