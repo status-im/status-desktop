@@ -6,7 +6,9 @@
 
 <!-- List the affected areas (e.g wallet, browser, etc..) -->
 
-### Screenshot of functionality
+### Screenshot of functionality (including design for comparison)
+
+- [ ] I've checked the design and this PR matches it
 
 <!-- screenshot (or gif/video) that demonstrates the functionality, specially important if it's a bug fix. -->
 
