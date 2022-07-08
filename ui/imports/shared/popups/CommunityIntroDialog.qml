@@ -1,14 +1,15 @@
 import QtQuick 2.14
 import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.1
+import QtQml.Models 2.14
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
-import StatusQ.Popups 0.1
+import StatusQ.Popups.Dialog 0.1
 
-StatusModal {
+StatusDialog {
     id: root
 
     property string name
@@ -17,21 +18,20 @@ StatusModal {
 
     signal joined
 
-    width: undefined // popup is able to determine size from its content
-    padding: 16
+    title: qsTr("Welcome to %1").arg(name)
 
-    header.title: qsTr("Welcome to %1").arg(name)
-
-    rightButtons: [
-        StatusButton {
-            text: qsTr("Join %1").arg(root.name)
-            enabled: checkBox.checked
-            onClicked: {
-                root.joined()
-                root.close()
+    footer: StatusDialogFooter {
+        rightButtons: ObjectModel {
+            StatusButton {
+                text: qsTr("Join %1").arg(root.name)
+                enabled: checkBox.checked
+                onClicked: {
+                    root.joined()
+                    root.close()
+                }
             }
         }
-    ]
+    }
 
     ColumnLayout {
         anchors.fill: parent
