@@ -82,7 +82,6 @@ ColumnLayout {
         StatusBaseText {
             id: inputLabel
             Layout.alignment: Qt.AlignLeft
-            Layout.leftMargin: 16
             Layout.fillWidth: true
             text: qsTr("Public address")
             font.pixelSize: 15
