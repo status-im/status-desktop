@@ -97,7 +97,6 @@ ColumnLayout {
 
     SelectGeneratedAccount {
         id: selectGeneratedAccount
-        Layout.margins: Style.current.padding
         Component.onCompleted: {
             advancedSection.addAccountType = Qt.binding(function() {return addAccountType})
             advancedSection.derivedFromAddress = Qt.binding(function() {return derivedFromAddress})
@@ -112,9 +111,8 @@ ColumnLayout {
     ImportSeedPhrasePanel {
         id: importSeedPhrasePanel
         Layout.preferredWidth: parent.width
-        Layout.preferredHeight: visible ? importSeedPhrasePanel.preferredHeight: 0
-        Layout.leftMargin: Style.current.padding
-        Layout.rightMargin: Style.current.padding
+        Layout.preferredHeight: importSeedPhrasePanel.preferredHeight
+        Layout.leftMargin: (Style.current.halfPadding/4)
         visible: advancedSection.addAccountType === SelectGeneratedAccount.AddAccountType.ImportSeedPhrase && advancedSection.visible
         onMnemonicStringChanged: {
             advancedSection.mnemonicText = mnemonicString
@@ -142,20 +140,20 @@ ColumnLayout {
     }
 
     RowLayout {
-        Layout.margins: Style.current.padding
-        Layout.preferredWidth: parent.width
+        Layout.fillWidth: true
+        Layout.rightMargin: 2
         spacing: Style.current.bigPadding
         visible: advancedSection.addAccountType !== SelectGeneratedAccount.AddAccountType.ImportPrivateKey &&
                  advancedSection.addAccountType !== SelectGeneratedAccount.AddAccountType.WatchOnly
         DerivationPathsPanel {
             id: derivationPathsPanel
-            Layout.preferredWidth: 213
+            Layout.preferredWidth: ((parent.width - (Style.current.bigPadding/2))/2)
             Layout.alignment: Qt.AlignTop
             Component.onCompleted: advancedSection.path = Qt.binding(function() { return derivationPathsPanel.path})
         }
         DerivedAddressesPanel {
             id: derivedAddressesPanel
-            Layout.preferredWidth: 213
+            Layout.preferredWidth: ((parent.width - (Style.current.bigPadding/2))/2)
             Layout.alignment: Qt.AlignTop
             Component.onCompleted: advancedSection.pathSubFix = Qt.binding(function() { return derivedAddressesPanel.pathSubFix})
         }

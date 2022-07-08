@@ -77,7 +77,7 @@ StatusModal {
         userName = contactDetails.alias;
         userNickname = contactDetails.localNickname;
         userEnsName = contactDetails.name;
-        userIcon = contactDetails.displayIcon;
+        userIcon = contactDetails.largeImage;
         userIsEnsVerified = contactDetails.ensVerified;
         userIsBlocked = contactDetails.isBlocked;
         isAddedContact = contactDetails.isContact;

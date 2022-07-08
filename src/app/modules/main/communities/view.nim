@@ -90,8 +90,10 @@ QtObject:
     self.observedItem.setActiveSectionData(item)
     self.observedItemChanged()
 
-  proc joinCommunity*(self: View, communityId: string): string {.slot.} =
-    result = self.delegate.joinCommunity(communityId)
+  proc joinCommunity*(self: View, communityId: string, ensName: string) {.slot.} =
+    # Users always have to request to join a community but might 
+    # get automatically accepted.
+    self.delegate.requestToJoinCommunity(communityId, ensName)
 
   proc createCommunity*(self: View, name: string,
                         description: string, introMessage: string, outroMessage: string,

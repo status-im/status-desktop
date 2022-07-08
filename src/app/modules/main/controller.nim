@@ -170,6 +170,10 @@ proc init*(self: Controller) =
     var args = ContactArgs(e)
     self.delegate.contactUpdated(args.contactId)
 
+  self.events.on(SIGNAL_CONTACTS_STATUS_UPDATED) do(e: Args):
+    let args = ContactsStatusUpdatedArgs(e)
+    self.delegate.contactsStatusUpdated(args.statusUpdates)
+
   self.events.on(SIGNAL_CONTACT_NICKNAME_CHANGED) do(e: Args):
     var args = ContactArgs(e)
     self.delegate.contactUpdated(args.contactId)
@@ -301,6 +305,9 @@ proc getContactNameAndImage*(self: Controller, contactId: string):
 
 proc getContactDetails*(self: Controller, contactId: string): ContactDetails =
   return self.contactsService.getContactDetails(contactId)
+
+proc getStatusForContact*(self: Controller, contactId: string): StatusUpdateDto =
+  return self.contactsService.getStatusForContactWithId(contactId)
 
 proc resolveENS*(self: Controller, ensName: string, uuid: string = "", reason: string = "") =
   self.contactsService.resolveENS(ensName, uuid, reason)

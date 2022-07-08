@@ -60,7 +60,7 @@ ColumnLayout {
 
         displayName: profileStore.name
         pubkey: profileStore.pubkey
-        icon: profileStore.icon
+        icon: profileStore.profileLargeImage
         imageSize: ProfileHeader.ImageSize.Big
         
         displayNameVisible: false

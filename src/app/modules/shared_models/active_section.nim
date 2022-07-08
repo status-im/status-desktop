@@ -1,5 +1,5 @@
 import NimQml
-import section_item
+import section_item, user_item
 import ../../../app_service/service/contacts/dto/contacts
 
 QtObject:
@@ -175,6 +175,10 @@ QtObject:
   proc hasMember(self: ActiveSection, pubkey: string): bool {.slot.} =
     return self.item.hasMember(pubkey)
 
+  proc setOnlineStatusForMember*(self: ActiveSection, pubKey: string,
+      onlineStatus: OnlineStatus) =
+    self.item.setOnlineStatusForMember(pubKey, onlineStatus)
+    
   proc updateMember*(
       self: ActiveSection,
       pubkey: string,
