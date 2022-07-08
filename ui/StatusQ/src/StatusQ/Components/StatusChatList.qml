@@ -40,7 +40,7 @@ Column {
         model: statusChatList.model
         delegate: Item {
             id: draggable
-            width: statusChatListItem.width
+            width: statusChatList.width
             height: statusChatListItem.height
             property alias chatListItem: statusChatListItem
 
@@ -93,6 +93,7 @@ Column {
                 StatusChatListItem {
                     id: statusChatListItem
 
+                    width: parent.width
                     opacity: dragSensor.active ? 0.0 : 1.0
                     originalOrder: model.position
                     chatId: model.itemId
