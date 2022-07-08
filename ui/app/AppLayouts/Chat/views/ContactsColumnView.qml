@@ -36,44 +36,82 @@ Item {
     signal openProfileClicked()
     signal openAppSearch()
 
-    Component.onCompleted: {
-        appMain.openContactsPopup.connect(function(){
-            Global.openPopup(contactRequestsPopup, {chatSectionModule})
-        })
-    }
-
-    MouseArea {
-        anchors.fill: parent
-        onClicked: {
-            //steal focus from search field
-            actionButton.forceActiveFocus();
+    // main layout
+    ColumnLayout {
+        anchors {
+            fill: parent
+            margins: Style.current.padding
         }
-    }
+        spacing: Style.current.padding
 
-    StatusNavigationPanelHeadline {
-        id: headline
-        anchors.top: parent.top
-        anchors.topMargin: 16
-        anchors.horizontalCenter: parent.horizontalCenter
-        text: qsTr("Chat")
-    }
+        // Chat headline row
+        RowLayout {
+            Layout.fillWidth: true
 
-    RowLayout {
-        id: searchInputWrapper
-        width: 288
-        height: searchInput.height
-        anchors.top: headline.bottom
-        anchors.topMargin: 16
-        anchors.horizontalCenter: parent.horizontalCenter
+            StatusNavigationPanelHeadline {
+                Layout.alignment: Qt.AlignVCenter
+                text: qsTr("Chat")
+            }
 
+            Item {
+                Layout.fillWidth: true
+            }
+
+            StatusRoundButton {
+                Layout.alignment: Qt.AlignVCenter
+                icon.name: "public-chat"
+                icon.color: Theme.palette.directColor1
+                icon.height: editBtn.icon.height
+                icon.width: editBtn.icon.width
+                implicitWidth: editBtn.implicitWidth
+                implicitHeight: editBtn.implicitHeight
+                type: StatusRoundButton.Type.Tertiary
+
+                onClicked: Global.openPopup(publicChatPopupComponent)
+
+                StatusToolTip {
+                    text: qsTr("Join public chats")
+                    visible: parent.hovered
+                    orientation: StatusToolTip.Orientation.Bottom
+                    y: parent.height + 12
+                }
+            }
+
+            StatusIconTabButton {
+                id: editBtn
+                Layout.alignment: Qt.AlignVCenter
+                icon.name: "edit"
+                icon.color: Theme.palette.directColor1
+                checked: root.store.openCreateChat
+                highlighted: checked
+                onClicked: {
+                    root.store.openCreateChat = !root.store.openCreateChat
+                    if (root.store.openCreateChat) {
+                        Global.openCreateChatView()
+                    } else {
+                        Global.closeCreateChatView()
+                    }
+                }
+
+                StatusToolTip {
+                    text: qsTr("Start chat")
+                    visible: parent.hovered
+                    orientation: StatusToolTip.Orientation.Bottom
+                    y: parent.height + 12
+                }
+            }
+        }
+
+        // search field
         StatusBaseInput {
             id: searchInput
             Layout.fillWidth: true
-            Layout.alignment: Qt.AlignVCenter
-            implicitHeight: 36
-            topPadding: 9
+            Layout.preferredHeight: 36
             placeholderText: qsTr("Search")
             icon.name: "search"
+            leftPadding: 10
+            topPadding: 4
+            bottomPadding: 4
             MouseArea {
                 anchors.fill: parent
                 hoverEnabled: true
@@ -82,174 +120,131 @@ Item {
             }
         }
 
-        StatusRoundButton {
-            icon.name: "public-chat"
-            icon.height: editBtn.icon.height
-            icon.width: editBtn.icon.width
-            implicitWidth: editBtn.implicitWidth
-            implicitHeight: editBtn.implicitHeight
-            type: StatusRoundButton.Type.Tertiary
+        // contact requests
+        StatusContactRequestsIndicatorListItem {
+            id: contactRequests
+            Layout.fillWidth: true
+            Layout.preferredHeight: visible ? implicitHeight : 0
 
-            onClicked: { Global.openPopup(publicChatPopupComponent) }
+            readonly property int nbRequests: root.store.contactRequestsModel.count
 
-            StatusToolTip {
-              text: qsTr("Join public chats")
-              visible: parent.hovered
-            }
+            visible: nbRequests > 0
+            title: qsTr("Contact requests")
+            requestsCount: nbRequests
+
+            sensor.onClicked: Global.openPopup(contactRequestsPopup)
         }
 
-        StatusIconTabButton {
-            id: editBtn
-            icon.name: "edit"
-            checked: root.store.openCreateChat
-            highlighted: root.store.openCreateChat
-            onClicked: {
-                root.store.openCreateChat = !root.store.openCreateChat;
-                if (!root.store.openCreateChat) {
+        // chat list
+        ScrollView {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            contentHeight: channelList.childrenRect.height + emptyViewAndSuggestions.childrenRect.height
+
+            ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+
+            clip: true
+
+            StatusChatList {
+                id: channelList
+                width: parent.width
+                model: root.chatSectionModule.model
+                highlightItem: !root.store.openCreateChat
+                onChatItemSelected: {
                     Global.closeCreateChatView()
-                } else {
-                    Global.openCreateChatView()
+                    root.chatSectionModule.setActiveItem(id, "")
                 }
-            }
+                onChatItemUnmuted: root.chatSectionModule.unmuteChat(id)
 
-            StatusToolTip {
-              text: qsTr("Start chat")
-              visible: parent.hovered
-            }
-        }
-    }
+                popupMenu: ChatContextMenuView {
+                    id: chatContextMenuView
+                    emojiPopup: root.emojiPopup
 
+                    openHandler: function (id) {
+                        let jsonObj = root.chatSectionModule.getItemAsJson(id)
+                        let obj = JSON.parse(jsonObj)
+                        if (obj.error) {
+                            console.error("error parsing chat item json object, id: ", id, " error: ", obj.error)
+                            close()
+                            return
+                        }
 
-    StatusContactRequestsIndicatorListItem {
-        id: contactRequests
-
-        property int nbRequests: root.store.contactRequestsModel.count
-
-        anchors.top: searchInputWrapper.bottom
-        anchors.topMargin: visible ? Style.current.padding : 0
-        anchors.horizontalCenter: parent.horizontalCenter
-
-        visible: nbRequests > 0
-        height: visible ? implicitHeight : 0
-
-        title: qsTr("Contact requests")
-        requestsCount: nbRequests
-
-        sensor.onClicked: Global.openPopup(contactRequestsPopup)
-    }
-
-    ScrollView {
-        id: chatGroupsContainer
-
-        width: parent.width
-        height: (contentHeight < (parent.height - contactRequests.height - Style.current.padding)) ? contentHeight : (parent.height - contactRequests.height - Style.current.padding)
-        anchors.top: contactRequests.bottom
-        anchors.topMargin: Style.current.padding
-        anchors.bottom: root.bottom
-        contentHeight: channelList.childrenRect.height + emptyViewAndSuggestions.childrenRect.height
-
-        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-
-        clip: true
-
-        StatusChatList {
-            id: channelList
-            anchors.horizontalCenter: parent.horizontalCenter
-            model: root.chatSectionModule.model
-            highlightItem: !root.store.openCreateChat
-            onChatItemSelected: {
-                root.chatSectionModule.setActiveItem(id, "")
-            }
-            onChatItemUnmuted: root.chatSectionModule.unmuteChat(id)
-
-            popupMenu: ChatContextMenuView {
-                id: chatContextMenuView
-                emojiPopup: root.emojiPopup
-
-                openHandler: function (id) {
-                    let jsonObj = root.chatSectionModule.getItemAsJson(id)
-                    let obj = JSON.parse(jsonObj)
-                    if (obj.error) {
-                        console.error("error parsing chat item json object, id: ", id, " error: ", obj.error)
-                        close()
-                        return
+                        currentFleet = root.chatSectionModule.getCurrentFleet()
+                        isCommunityChat = root.chatSectionModule.isCommunity()
+                        amIChatAdmin = obj.amIChatAdmin
+                        chatId = obj.itemId
+                        chatName = obj.name
+                        chatDescription = obj.description
+                        chatEmoji = obj.emoji
+                        chatColor = obj.color
+                        chatType = obj.type
+                        chatMuted = obj.muted
                     }
 
-                    currentFleet = root.chatSectionModule.getCurrentFleet()
-                    isCommunityChat = root.chatSectionModule.isCommunity()
-                    amIChatAdmin = obj.amIChatAdmin
-                    chatId = obj.itemId
-                    chatName = obj.name
-                    chatDescription = obj.description
-                    chatEmoji = obj.emoji
-                    chatColor = obj.color
-                    chatType = obj.type
-                    chatMuted = obj.muted
-                }
+                    onMuteChat: {
+                        root.chatSectionModule.muteChat(chatId)
+                    }
 
-                onMuteChat: {
-                    root.chatSectionModule.muteChat(chatId)
-                }
+                    onUnmuteChat: {
+                        root.chatSectionModule.unmuteChat(chatId)
+                    }
 
-                onUnmuteChat: {
-                    root.chatSectionModule.unmuteChat(chatId)
-                }
+                    onMarkAllMessagesRead: {
+                        root.chatSectionModule.markAllMessagesRead(chatId)
+                    }
 
-                onMarkAllMessagesRead: {
-                    root.chatSectionModule.markAllMessagesRead(chatId)
-                }
+                    onClearChatHistory: {
+                        root.chatSectionModule.clearChatHistory(chatId)
+                    }
 
-                onClearChatHistory: {
-                    root.chatSectionModule.clearChatHistory(chatId)
-                }
+                    onRequestAllHistoricMessages: {
+                        // Not Refactored Yet - Check in the `master` branch if this is applicable here.
+                    }
 
-                onRequestAllHistoricMessages: {
-                    // Not Refactored Yet - Check in the `master` branch if this is applicable here.
-                }
+                    onLeaveChat: {
+                        root.chatSectionModule.leaveChat(chatId)
+                    }
 
-                onLeaveChat: {
-                    root.chatSectionModule.leaveChat(chatId)
-                }
+                    onDeleteCommunityChat: {
+                        // Not Refactored Yet
+                    }
 
-                onDeleteCommunityChat: {
-                    // Not Refactored Yet
-                }
+                    onDownloadMessages: {
+                        root.chatSectionModule.downloadMessages(chatId, file)
+                    }
 
-                onDownloadMessages: {
-                   root.chatSectionModule.downloadMessages(chatId, file)
-                }
-
-                onDisplayProfilePopup: {
-                    Global.openProfilePopup(publicKey)
-                }
-                onLeaveGroup: {
-                    chatSectionModule.leaveChat("", chatId, true);
-                }
-                onDisplayGroupInfoPopup: {
-                    chatSectionModule.prepareChatContentModuleForChatId(chatId)
-                    let chatContentModule = chatSectionModule.getChatContentModule()
-                    Global.openPopup(groupInfoPopupComponent, {
-                                         chatContentModule: chatContentModule,
-                                         chatDetails: chatContentModule.chatDetails
-                                     })
-                }
-                onRenameGroupChat: {
-                    chatSectionModule.renameGroupChat(
-                        chatId,
-                        groupName
-                    )
+                    onDisplayProfilePopup: {
+                        Global.openProfilePopup(publicKey)
+                    }
+                    onLeaveGroup: {
+                        chatSectionModule.leaveChat("", chatId, true);
+                    }
+                    onDisplayGroupInfoPopup: {
+                        chatSectionModule.prepareChatContentModuleForChatId(chatId)
+                        let chatContentModule = chatSectionModule.getChatContentModule()
+                        Global.openPopup(groupInfoPopupComponent, {
+                                             chatContentModule: chatContentModule,
+                                             chatDetails: chatContentModule.chatDetails
+                                         })
+                    }
+                    onRenameGroupChat: {
+                        chatSectionModule.renameGroupChat(
+                                    chatId,
+                                    groupName
+                                    )
+                    }
                 }
             }
-        }
 
-        EmptyViewPanel {
-            id: emptyViewAndSuggestions
-            visible: !localAccountSensitiveSettings.hideChannelSuggestions
-            width: parent.width
-            anchors.top: channelList.bottom
-            anchors.topMargin: Style.current.padding
-            rootStore: root.store
-            onSuggestedMessageClicked: chatSectionModule.createPublicChat(channel)
+            EmptyViewPanel {
+                id: emptyViewAndSuggestions
+                visible: !localAccountSensitiveSettings.hideChannelSuggestions
+                width: parent.width
+                anchors.top: channelList.bottom
+                anchors.topMargin: Style.current.padding
+                rootStore: root.store
+                onSuggestedMessageClicked: chatSectionModule.createPublicChat(channel)
+            }
         }
     }
 
@@ -264,7 +259,6 @@ Item {
                 chatSectionModule.createPublicChat(channel)
                 close()
             }
-
             onClosed: {
                 destroy()
             }
@@ -328,7 +322,7 @@ Item {
 
     Connections {
         target: root.store.communitiesModuleInst
-        onImportingCommunityStateChanged: {
+        function onImportingCommunityStateChanged(state, errorMsg) {
             let title = ""
             let loading = false
 
@@ -364,7 +358,7 @@ Item {
     Connections {
         target: root.store.mainModuleInst
 
-        onOpenContactRequestsPopup:{
+        function onOpenContactRequestsPopup() {
             Global.openPopup(contactRequestsPopup)
         }
     }

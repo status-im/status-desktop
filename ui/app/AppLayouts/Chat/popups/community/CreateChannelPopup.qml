@@ -24,7 +24,7 @@ StatusModal {
     property string channelColor: ""
     property bool emojiPopupOpened: false
     property var emojiPopup: null
-    readonly property var communityColorValidator: Utils.Validate.NoEmpty
+    readonly property int communityColorValidator: Utils.Validate.NoEmpty
                                                    | Utils.Validate.TextHexColor
 
     readonly property int maxChannelNameLength: 24
