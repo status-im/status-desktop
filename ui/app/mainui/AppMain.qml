@@ -44,8 +44,6 @@ Item {
     // set from main.qml
     property var sysPalette
 
-    signal openContactsPopup()
-
     Connections {
         target: rootStore.aboutModuleInst
         onAppVersionFetched: {

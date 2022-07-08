@@ -1,8 +1,5 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.13
-import QtGraphicalEffects 1.13
-import "../helpers/channelList.js" as ChannelJSON
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -17,22 +14,16 @@ import utils 1.0
 
 Rectangle {
     id: emptyView
-    Layout.fillHeight: true
-    Layout.fillWidth: true
 
     property var rootStore
 
     signal suggestedMessageClicked(string channel)
 
+    implicitWidth: 272
     height: suggestionContainer.height + inviteFriendsContainer.height + Style.current.padding * 2
     border.color: Style.current.secondaryMenuBorder
     radius: 16
     color: Style.current.transparent
-
-    anchors.right: parent.right
-    anchors.left: parent.left
-    anchors.leftMargin: Style.current.padding
-    anchors.rightMargin: Style.current.padding
 
     Item {
         id: inviteFriendsContainer
