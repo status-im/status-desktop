@@ -199,6 +199,12 @@ Item {
                                 }
                             }
                         }
+                        background: Rectangle {
+                            implicitWidth: stackLayout.width
+                            implicitHeight: stackLayout.height
+                            color: Theme.palette.statusPopupMenu.backgroundColor
+                            radius: 8
+                        }
                     }
                 }
             }

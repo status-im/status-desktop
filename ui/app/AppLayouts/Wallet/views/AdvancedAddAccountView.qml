@@ -111,7 +111,7 @@ ColumnLayout {
     ImportSeedPhrasePanel {
         id: importSeedPhrasePanel
         Layout.preferredWidth: parent.width
-        Layout.preferredHeight: importSeedPhrasePanel.preferredHeight
+        Layout.preferredHeight: visible ? importSeedPhrasePanel.preferredHeight: 0
         Layout.leftMargin: (Style.current.halfPadding/4)
         visible: advancedSection.addAccountType === SelectGeneratedAccount.AddAccountType.ImportSeedPhrase && advancedSection.visible
         onMnemonicStringChanged: {
