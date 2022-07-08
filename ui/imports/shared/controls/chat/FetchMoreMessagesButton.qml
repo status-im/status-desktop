@@ -56,8 +56,7 @@ Item {
         font.weight: Font.Medium
         font.pixelSize: Style.current.primaryTextFontSize
         color: Style.current.blue
-        //% "↓ Fetch more messages"
-        text: qsTrId("load-more-messages")
+        text: qsTr("↓ Fetch more messages")
         horizontalAlignment: Text.AlignHCenter
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: sep1.bottom

@@ -1,0 +1,12 @@
+FROM stateoftheartio/qt6:6.3-gcc-aqt
+
+RUN export DEBIAN_FRONTEND=noninteractive \
+ && sudo apt update -yq \
+ && sudo apt install -yq libgl-dev libvulkan-dev libxcb*-dev libxkbcommon-x11-dev python3-pip gcc-10 golang-go
+
+RUN sudo pip install conan
+
+# TODO finish installing dependencies then enable building the appimage in CI
+# RUN cd /tmp && git clone --single-branch --recursive https://github.com/AppImage/AppImageKit && cd AppImageKit/ && cmake -B ./build -S .
+# If still needed
+# RUN cd /tmp && git clone --single-branch --recursive https://github.com/linuxdeploy/linuxdeploy-plugin-appimage.git && cd AppImageKit/ && cmake -B ./build -S .

@@ -204,6 +204,18 @@ QtObject:
         return true
     return false
 
+  proc muteUnmuteAll*(self: SubModel, mute: bool) =
+    for i in 0 ..< self.items.len:
+      let index = self.createIndex(i, 0, nil)
+      self.items[i].BaseItem.muted = mute
+      self.dataChanged(index, index, @[ModelRole.Muted.int])
+
+  proc isAllMuted*(self: SubModel): bool =
+    for i in 0 ..< self.items.len:
+      if not self.items[i].BaseItem.muted:
+        return false
+    return self.items.len > 0
+
   proc blockUnblockItemById*(self: SubModel, id: string, blocked: bool): bool =
     ## even we're not able to block specific channel of community now, this is here more as a predisposition
     ## for that feature, which may be added easy later.

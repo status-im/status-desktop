@@ -24,6 +24,7 @@ SettingsContentBase {
     id: root
 
     property MessagingStore messagingStore
+    property ContactsStore contactsStore
 
     ColumnLayout {
         id: generalColumn
@@ -48,8 +49,7 @@ SettingsContentBase {
             Layout.fillWidth: true
             implicitHeight: 64
 
-            //% "Allow new contact requests"
-            title: qsTrId("allow-new-contact-requests")
+            title: qsTr("Allow new contact requests")
 
             components: [
                 StatusSwitch {
@@ -214,7 +214,7 @@ SettingsContentBase {
         StatusContactRequestsIndicatorListItem {
             Layout.fillWidth: true
             title: qsTr("Contacts, Requests, and Blocked Users")
-            requestsCount: root.messagingStore.contactRequestsModel.count
+            requestsCount: root.contactsStore.receivedContactRequestsModel.count
             sensor.onClicked: Global.changeAppSectionBySectionType(Constants.appSection.profile,
                                                                    Constants.settingsSubsection.contacts)
         }

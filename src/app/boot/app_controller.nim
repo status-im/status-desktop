@@ -133,7 +133,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.accountsService = accounts_service.newService(statusFoundation.fleetConfiguration)
   result.networkService = network_service.newService(statusFoundation.events, result.settingsService)
   result.contactsService = contacts_service.newService(
-    statusFoundation.events, statusFoundation.threadpool, result.settingsService
+    statusFoundation.events, statusFoundation.threadpool, result.networkService
   )
   result.chatService = chat_service.newService(statusFoundation.events, result.contactsService)
   result.communityService = community_service.newService(statusFoundation.events,
@@ -151,8 +151,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.messageService = message_service.newService(
     statusFoundation.events, statusFoundation.threadpool, result.contactsService, result.tokenService, result.walletAccountService, result.networkService
   )
-  result.transactionService = transaction_service.newService(statusFoundation.events, statusFoundation.threadpool,
-  result.walletAccountService, result.networkService, result.settingsService, result.tokenService)
+  result.transactionService = transaction_service.newService(statusFoundation.events, statusFoundation.threadpool, result.networkService, result.settingsService, result.tokenService)
   result.bookmarkService = bookmark_service.newService(statusFoundation.events)
   result.profileService = profile_service.newService(result.contactsService, result.settingsService)
   result.stickersService = stickers_service.newService(
@@ -363,9 +362,7 @@ proc buildAndRegisterUserProfile(self: AppController) =
   var displayName = self.settingsService.getDisplayName()
   let ensUsernames = self.settingsService.getEnsUsernames()
   let firstEnsName = if (ensUsernames.len > 0): ensUsernames[0] else: ""
-  let sendUserStatus = self.settingsService.getSendStatusUpdates()
-  ## This is still not in use. Read a comment in UserProfile.
-  ## let currentUserStatus = self.settingsService.getCurrentUserStatus()
+  let currentUserStatus = self.settingsService.getCurrentUserStatus()
 
   let loggedInAccount = self.accountsService.getLoggedInAccount()
   var thumbnail, large: string
@@ -387,6 +384,6 @@ proc buildAndRegisterUserProfile(self: AppController) =
   singletonInstance.userProfile.setFirstEnsName(firstEnsName)
   singletonInstance.userProfile.setThumbnailImage(thumbnail)
   singletonInstance.userProfile.setLargeImage(large)
-  singletonInstance.userProfile.setUserStatus(sendUserStatus)
+  singletonInstance.userProfile.setCurrentUserStatus(currentUserStatus.statusType.int)
 
   singletonInstance.engine.setRootContextProperty("userProfile", self.userProfileVariant)

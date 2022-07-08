@@ -1,5 +1,4 @@
 import NimQml, Tables, strformat, sequtils, sugar
-
 import user_item
 
 type
@@ -18,8 +17,8 @@ type
     IsUntrustworthy
     IsBlocked
     ContactRequest
-    IncomingVerification
-    OutcomingVerification
+    IncomingVerificationStatus
+    OutgoingVerificationStatus
 
 QtObject:
   type
@@ -75,8 +74,8 @@ QtObject:
       ModelRole.IsUntrustworthy.int: "isUntrustworthy",
       ModelRole.IsBlocked.int: "isBlocked",
       ModelRole.ContactRequest.int: "contactRequest",
-      ModelRole.IncomingVerification.int: "incomingVerification",
-      ModelRole.OutcomingVerification.int: "outcomingVerification",
+      ModelRole.IncomingVerificationStatus.int: "incomingVerificationStatus",
+      ModelRole.OutgoingVerificationStatus.int: "outgoingVerificationStatus",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -118,10 +117,10 @@ QtObject:
       result = newQVariant(item.isBlocked)
     of ModelRole.ContactRequest:
       result = newQVariant(item.contactRequest.int)
-    of ModelRole.IncomingVerification:
-      result = newQVariant(item.incomingVerification.int)
-    of ModelRole.OutcomingVerification:
-      result = newQVariant(item.outcomingVerification.int)
+    of ModelRole.IncomingVerificationStatus:
+      result = newQVariant(item.incomingVerificationStatus.int)
+    of ModelRole.OutgoingVerificationStatus:
+      result = newQVariant(item.outgoingVerificationStatus.int)
 
   proc addItems*(self: Model, items: seq[UserItem]) =
     if(items.len == 0):
@@ -143,7 +142,7 @@ QtObject:
     # if we add an item with offline status we add it as the first offline item (after the last online item)
     var position = -1
     for i in 0 ..< self.items.len:
-      if(self.items[i].onlineStatus == OnlineStatus.Offline):
+      if(self.items[i].onlineStatus == OnlineStatus.Inactive):
         position = i
         break
 
@@ -163,8 +162,7 @@ QtObject:
      self.items = @[]
      self.endResetModel()
 
-# TODO: rename to `findIndexForMessagePubkey`
-  proc findIndexForMessageId(self: Model, pubKey: string): int =
+  proc findIndexByPubKey(self: Model, pubKey: string): int =
     for i in 0 ..< self.items.len:
       if(self.items[i].pubKey == pubKey):
         return i
@@ -182,11 +180,11 @@ QtObject:
 
 # TODO: rename to `containsItem`
   proc isContactWithIdAdded*(self: Model, id: string): bool =
-    return self.findIndexForMessageId(id) != -1
+    return self.findIndexByPubKey(id) != -1
 
   proc setName*(self: Model, pubKey: string, displayName: string,
       ensName: string, localNickname: string) =
-    let ind = self.findIndexForMessageId(pubKey)
+    let ind = self.findIndexByPubKey(pubKey)
     if(ind == -1):
       return
 
@@ -202,7 +200,7 @@ QtObject:
       ])
 
   proc setIcon*(self: Model, pubKey: string, icon: string) =
-    let ind = self.findIndexForMessageId(pubKey)
+    let ind = self.findIndexByPubKey(pubKey)
     if(ind == -1):
       return
 
@@ -218,9 +216,10 @@ QtObject:
       ensName: string,
       localNickname: string,
       alias: string,
-      icon: string
+      icon: string,
+      isUntrustworthy: bool = false,
       ) =
-    let ind = self.findIndexForMessageId(pubKey)
+    let ind = self.findIndexByPubKey(pubKey)
     if(ind == -1):
       return
 
@@ -228,7 +227,7 @@ QtObject:
     self.items[ind].ensName = ensName
     self.items[ind].localNickname = localNickname
     self.items[ind].alias = alias
-    self.items[ind].icon = icon
+    self.items[ind].isUntrustworthy = isUntrustworthy
 
     let index = self.createIndex(ind, 0, nil)
     self.dataChanged(index, index, @[
@@ -237,6 +236,7 @@ QtObject:
       ModelRole.LocalNickname.int,
       ModelRole.Alias.int,
       ModelRole.Icon.int,
+      ModelRole.IsUntrustworthy.int,
     ])
   
   proc updateName*(
@@ -244,7 +244,7 @@ QtObject:
     pubKey: string,
     displayName: string
   ) =
-    let ind = self.findIndexForMessageId(pubKey)
+    let ind = self.findIndexByPubKey(pubKey)
     if(ind == -1):
       return
 
@@ -254,10 +254,36 @@ QtObject:
     self.dataChanged(index, index, @[
       ModelRole.DisplayName.int
     ])
+  
+  proc updateIncomingRequestStatus*(
+      self: Model,
+      pubKey: string,
+      requestStatus: VerificationRequestStatus
+      ) =
+    let ind = self.findIndexByPubKey(pubKey)
+    if(ind == -1):
+      return
+
+    self.items[ind].incomingVerificationStatus = requestStatus
+
+    let index = self.createIndex(ind, 0, nil)
+    self.dataChanged(index, index, @[
+      ModelRole.IncomingVerificationStatus.int
+    ])
+
+  proc updateTrustStatus*(self: Model, pubKey: string, isUntrustworthy: bool) =
+    let ind = self.findIndexByPubKey(pubKey)
+    if(ind == -1):
+      return
+
+    let first = self.createIndex(ind, 0, nil)
+    let last = self.createIndex(ind, 0, nil)
+    self.items[ind].isUntrustworthy = isUntrustworthy
+    self.dataChanged(first, last, @[ModelRole.IsUntrustworthy.int])
 
   proc setOnlineStatus*(self: Model, pubKey: string,
       onlineStatus: OnlineStatus) =
-    let ind = self.findIndexForMessageId(pubKey)
+    let ind = self.findIndexByPubKey(pubKey)
     if(ind == -1):
       return
 
@@ -271,7 +297,7 @@ QtObject:
 
 # TODO: rename me to removeItemByPubkey
   proc removeItemById*(self: Model, pubKey: string) =
-    let ind = self.findIndexForMessageId(pubKey)
+    let ind = self.findIndexByPubKey(pubKey)
     if(ind == -1):
       return
 
@@ -280,3 +306,6 @@ QtObject:
 # TODO: rename me to getItemsAsPubkeys
   proc getItemIds*(self: Model): seq[string] =
     return self.items.map(i => i.pubKey)
+
+  proc containsItemWithPubKey*(self: Model, pubKey: string): bool =
+    return self.findIndexByPubKey(pubKey) != -1

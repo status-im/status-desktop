@@ -30,7 +30,7 @@ Item {
     signal goToList();
 
     function goToStart(){
-        if(ensView.ensUsernamesStore.ensUsernamesModel.count > 0 && Global.networkGuarded){
+        if(ensView.ensUsernamesStore.ensUsernamesModel.count > 0){
             goToList();
         } else {
             goToWelcome();
@@ -336,19 +336,15 @@ Item {
             switch(trxType){
             case "RegisterENS":
                 title = !success ?
-                            //% "ENS Registration failed"
-                            qsTrId("ens-registration-failed")
+                            qsTr("ENS Registration failed")
                           :
-                            //% "ENS Registration completed"
-                            qsTrId("ens-registration-completed");
+                            qsTr("ENS Registration completed");
                 break;
             case "SetPubKey":
                 title = !success ?
-                            //% "Updating ENS pubkey failed"
-                            qsTrId("updating-ens-pubkey-failed")
+                            qsTr("Updating ENS pubkey failed")
                           :
-                            //% "Updating ENS pubkey completed"
-                            qsTrId("updating-ens-pubkey-completed");
+                            qsTr("Updating ENS pubkey completed");
                 break;
             default:
                 console.error("unknown transaction type: ", trxType);

@@ -29,8 +29,7 @@ Column {
 
     StatusBaseText {
         id: txtValidationError
-        //% "You need to request the recipient’s address first.\nAssets won’t be sent yet."
-        text: qsTrId("you-need-to-request-the-recipient-s-address-first--nassets-won-t-be-sent-yet-")
+        text: qsTr("You need to request the recipient’s address first.\nAssets won’t be sent yet.")
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
         wrapMode: Text.WordWrap

@@ -17,8 +17,7 @@ ModalPopup {
 
     property var store
 
-    //% "Contact requests"
-    title: qsTrId("contact-requests")
+    title: qsTr("Contact requests")
 
     ListView {
         id: contactList
@@ -66,10 +65,8 @@ ModalPopup {
 
         ConfirmationDialog {
             id: declineAllDialog
-            //% "Decline all contacts"
-            header.title: qsTrId("decline-all-contacts")
-            //% "Are you sure you want to decline all these contact requests"
-            confirmationText: qsTrId("are-you-sure-you-want-to-decline-all-these-contact-requests")
+            header.title: qsTr("Decline all contacts")
+            confirmationText: qsTr("Are you sure you want to decline all these contact requests")
             onConfirmButtonClicked: {
                 popup.store.dismissAllContactRequests()
                 declineAllDialog.close()
@@ -79,10 +76,8 @@ ModalPopup {
 
         ConfirmationDialog {
             id: acceptAllDialog
-            //% "Accept all contacts"
-            header.title: qsTrId("accept-all-contacts")
-            //% "Are you sure you want to accept all these contact requests"
-            confirmationText: qsTrId("are-you-sure-you-want-to-accept-all-these-contact-requests")
+            header.title: qsTr("Accept all contacts")
+            confirmationText: qsTr("Are you sure you want to accept all these contact requests")
             onConfirmButtonClicked: {
                 popup.store.acceptAllContactRequests()
                 acceptAllDialog.close()
@@ -97,8 +92,7 @@ ModalPopup {
             anchors.rightMargin: Style.current.padding
             anchors.bottom: parent.bottom
             type: StatusBaseButton.Type.Danger
-            //% "Decline all"
-            text: qsTrId("decline-all")
+            text: qsTr("Decline all")
             onClicked: declineAllDialog.open()
         }
 
@@ -106,8 +100,7 @@ ModalPopup {
             id: addToContactsButton
             enabled: contactList.count > 0
             anchors.right: parent.right
-            //% "Accept all"
-            text: qsTrId("accept-all")
+            text: qsTr("Accept all")
             anchors.bottom: parent.bottom
             onClicked: acceptAllDialog.open()
         }

@@ -42,10 +42,8 @@ StatusModal {
     }
 
     header.title: isEdit ?
-            //% "Edit category"
-            qsTrId("edit-category") :
-            //% "New category"
-            qsTrId("new-category")
+            qsTr("Edit category") :
+            qsTr("New category")
 
     contentItem: Column {
         property alias categoryName: nameInput
@@ -101,8 +99,7 @@ StatusModal {
                     width: parent.width - 32
                     height: 34
                     StatusBaseText {
-                        //% "Channels"
-                        text: qsTrId("channels")
+                        text: qsTr("Channels")
                         anchors.bottom: parent.bottom
                         anchors.bottomMargin: 4
                         font.pixelSize: 15
@@ -166,16 +163,13 @@ StatusModal {
             anchors.horizontalCenter: parent.horizontalCenter
             visible: isEdit
 
-            //% "Delete category"
-            title: qsTrId("delete-category")
+            title: qsTr("Delete category")
             icon.name: "delete"
             type: StatusListItem.Type.Danger
             sensor.onClicked: {
                 Global.openPopup(deleteCategoryConfirmationDialogComponent, {
-                    //% "Delete %1 category"
-                    title: qsTrId("delete--1-category").arg(root.contentItem.categoryName.input.text),
-                    //% "Are you sure you want to delete %1 category? Channels inside the category won’t be deleted."
-                    confirmationText: qsTrId("are-you-sure-you-want-to-delete--1-category--channels-inside-the-category-won-t-be-deleted-").arg(root.contentItem.categoryName.input.text)
+                    title: qsTr("Delete %1 category").arg(root.contentItem.categoryName.input.text),
+                    confirmationText: qsTr("Are you sure you want to delete %1 category? Channels inside the category won’t be deleted.").arg(root.contentItem.categoryName.input.text)
 
                 })
             }
@@ -214,10 +208,8 @@ StatusModal {
         StatusButton {
             enabled: isFormValid()
             text: isEdit ?
-                //% "Save"
-                qsTrId("save") :
-                //% "Create"
-                qsTrId("create")
+                qsTr("Save") :
+                qsTr("Create")
             onClicked: {
                 if (!isFormValid()) {
                     scrollView.scrollBackUp()
@@ -244,10 +236,8 @@ StatusModal {
     MessageDialog {
         id: categoryError
         title: isEdit ?
-                //% "Error editing the category"
-                qsTrId("error-editing-the-category") :
-                //% "Error creating the category"
-                qsTrId("error-creating-the-category")
+                qsTr("Error editing the category") :
+                qsTr("Error creating the category")
         icon: StandardIcon.Critical
         standardButtons: StandardButton.Ok
     }

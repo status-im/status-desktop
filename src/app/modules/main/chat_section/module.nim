@@ -21,6 +21,7 @@ import ../../../../app_service/service/message/service as message_service
 import ../../../../app_service/service/mailservers/service as mailservers_service
 import ../../../../app_service/service/gif/service as gif_service
 import ../../../../app_service/service/visual_identity/service as visual_identity
+import ../../../../app_service/service/contacts/dto/contacts as contacts_dto
 
 export io_interface
 
@@ -210,7 +211,7 @@ proc createItemFromPublicKey(self: Module, publicKey: string): UserItem =
     isContact = contactDetails.details.isMutualContact(),
     isVerified = contactDetails.details.isContactVerified(),
     isUntrustworthy = contactDetails.details.isContactUntrustworthy(),
-    isBlocked = contactDetails.details.isBlocked()
+    isBlocked = contactDetails.details.isBlocked(),
   )
 
 proc initContactRequestsModel(self: Module) =
@@ -576,6 +577,18 @@ method muteChat*(self: Module, chatId: string) =
 method unmuteChat*(self: Module, chatId: string) =
   self.controller.unmuteChat(chatId)
 
+method muteCategory*(self: Module, categoryId: string) =
+  self.controller.muteCategory(categoryId)
+
+method unmuteCategory*(self: Module, categoryId: string) =
+  self.controller.unmuteCategory(categoryId)
+
+method onCategoryMuted*(self: Module, categoryId: string) =
+  self.view.chatsModel().muteUnmuteItemsOrSubItemsByCategoryId(categoryId, true)
+
+method onCategoryUnmuted*(self: Module, categoryId: string) =
+  self.view.chatsModel().muteUnmuteItemsOrSubItemsByCategoryId(categoryId, false)
+
 method onChatMuted*(self: Module, chatId: string) =
   self.view.chatsModel().muteUnmuteItemOrSubItemById(chatId, mute=true)
 
@@ -597,8 +610,13 @@ method getCurrentFleet*(self: Module): string =
 method acceptContactRequest*(self: Module, publicKey: string) =
   self.controller.acceptContactRequest(publicKey)
 
-method onContactAccepted*(self: Module, publicKey: string) =
+method onContactAdded*(self: Module, publicKey: string) =
   self.view.contactRequestsModel().removeItemById(publicKey)
+
+  let contact = self.controller.getContactById(publicKey)
+  if (contact.isMutualContact):
+    self.switchToOrCreateOneToOneChat(publicKey)
+
   self.updateParentBadgeNotifications()
 
 method acceptAllContactRequests*(self: Module) =
@@ -645,7 +663,8 @@ method onContactDetailsUpdated*(self: Module, publicKey: string) =
 
   let chatName = contactDetails.displayName
   let chatImage = contactDetails.icon
-  self.view.chatsModel().updateItemDetails(publicKey, chatName, chatImage)
+  let trustStatus = contactDetails.details.trustStatus
+  self.view.chatsModel().updateItemDetails(publicKey, chatName, chatImage, trustStatus)
 
 method onNewMessagesReceived*(self: Module, sectionIdMsgBelongsTo: string, chatIdMsgBelongsTo: string, 
   chatTypeMsgBelongsTo: ChatType, unviewedMessagesCount: int, unviewedMentionsCount: int, message: MessageDto) =
@@ -741,12 +760,13 @@ method banUserFromCommunity*(self: Module, pubKey: string) =
 
 method editCommunity*(self: Module, name: string,
                         description, introMessage, outroMessage: string,
-                        access: int, color: string,
+                        access: int, color: string, tags: string,
                         logoJsonStr: string,
                         bannerJsonStr: string,
                         historyArchiveSupportEnabled: bool,
                         pinMessageAllMembersEnabled: bool) =
-  self.controller.editCommunity(name, description, introMessage, outroMessage, access, color, logoJsonStr, bannerJsonStr, historyArchiveSupportEnabled, pinMessageAllMembersEnabled)
+  self.controller.editCommunity(name, description, introMessage, outroMessage, access, color, tags, logoJsonStr, 
+                                bannerJsonStr, historyArchiveSupportEnabled, pinMessageAllMembersEnabled)
 
 method exportCommunity*(self: Module): string =
   self.controller.exportCommunity()

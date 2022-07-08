@@ -58,10 +58,10 @@ Popup {
             height: 8
             radius: width / 2
             color: {
-                switch (Web3ProviderStore.currentNetwork) {
-                case Constants.networkMainnet: return Style.current.green;
-                case Constants.networkRopsten: return Style.current.turquoise;
-                default: return Style.current.red
+                switch (Web3ProviderStore.chainName) {
+                    case Constants.networkMainnet: return Style.current.green;
+                    case Constants.networkRopsten: return Style.current.turquoise;
+                    default: return Style.current.red
                 }
             }
             anchors.verticalCenter: parent.verticalCenter
@@ -70,10 +70,10 @@ Popup {
         StatusBaseText {
             id: networkText
             text: {
-                switch (Web3ProviderStore.currentNetwork) {
-                case Constants.networkMainnet: return qsTr("Mainnet");
-                case Constants.networkRopsten: return qsTr("Ropsten");
-                default: return qsTrId("Unknown")
+                switch (Web3ProviderStore.chainName) {
+                    case Constants.networkMainnet: return qsTr("Mainnet");
+                    case Constants.networkRopsten: return qsTr("Ropsten");
+                    default: return qsTr("Unknown")
                 }
             }
             font.pixelSize: 15
@@ -190,7 +190,7 @@ Popup {
             StatusTabButton {
                 id: historyBtn
                 width: implicitWidth
-                text: qsTrId("History")
+                text: qsTr("History")
             }
         }
 

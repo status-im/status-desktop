@@ -6,6 +6,17 @@ import interpret/cropped_image
 
 export response_type
 
+proc getCommunityTags*(): RpcResponse[JsonNode] {.raises: [Exception].} =
+  result = callPrivateRPC("communityTags".prefix)
+  
+proc muteCategory*(communityId: string, categoryId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [communityId, categoryId]
+  result = callPrivateRPC("muteCommunityCategory".prefix, payload)
+
+proc unmuteCategory*(communityId: string, categoryId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [communityId, categoryId]
+  result = callPrivateRPC("unmuteCommunityCategory".prefix, payload)
+
 proc getJoinedComunities*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* []
   result = callPrivateRPC("joinedCommunities".prefix, payload)
@@ -42,6 +53,7 @@ proc createCommunity*(
     outroMessage: string,
     access: int,
     color: string,
+    tags: string,
     imageUrl: string,
     aX: int, aY: int, bX: int, bY: int,
     historyArchiveSupportEnabled: bool,
@@ -56,6 +68,7 @@ proc createCommunity*(
       "outroMessage": outroMessage,
       "ensOnly": false, # TODO ensOnly is no longer supported. Remove this when we remove it in status-go
       "color": color,
+      "tags": parseJson(tags),
       "image": imageUrl,
       "imageAx": aX,
       "imageAy": aY,
@@ -73,6 +86,7 @@ proc editCommunity*(
     outroMessage: string,
     access: int,
     color: string,
+    tags: string,
     imageUrl: string,
     aX: int,
     aY: int,
@@ -92,6 +106,7 @@ proc editCommunity*(
     "outroMessage": outroMessage,
     "ensOnly": false, # TODO ensOnly is no longer supported. Remove this when we remove it in status-go
     "color": color,
+    "tags": parseJson(tags),
     "image": imageUrl,
     "imageAx": aX,
     "imageAy": aY,

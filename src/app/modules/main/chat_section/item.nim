@@ -39,6 +39,7 @@ proc `$`*(self: Item): string =
     position: {self.position},
     categoryId: {self.categoryId},
     highlight: {self.highlight},
+    trustStatus: {self.trustStatus},
     subItems:[
       {$self.subItems}
     ]"""
@@ -60,20 +61,25 @@ proc toJsonNode*(self: Item): JsonNode =
     "active": self.active,
     "position": self.position,
     "categoryId": self.categoryId,
-    "highlight": self.highlight
+    "highlight": self.highlight,
+    "trustStatus": self.trustStatus,
   }
 
 proc appendSubItems*(self: Item, items: seq[SubItem]) =
   self.subItems.appendItems(items)
+  self.BaseItem.muted = self.subItems.isAllMuted()
 
 proc appendSubItem*(self: Item, item: SubItem) =
   self.subItems.appendItem(item)
+  self.BaseItem.muted = self.subItems.isAllMuted()
 
 proc prependSubItems*(self: Item, items: seq[SubItem]) =
   self.subItems.prependItems(items)
+  self.BaseItem.muted = self.subItems.isAllMuted()
 
 proc prependSubItem*(self: Item, item: SubItem) =
   self.subItems.prependItem(item)
+  self.BaseItem.muted = self.subItems.isAllMuted()
 
 proc setActiveSubItem*(self: Item, subItemId: string) =
   self.subItems.setActiveItem(subItemId)

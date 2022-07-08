@@ -30,6 +30,7 @@ type
     moduleLoaded: bool
 
 # Forward declaration
+method setCommunityTags*(self: Module, communityTags: string)
 method setAllCommunities*(self: Module, communities: seq[CommunityDto])
 method setCuratedCommunities*(self: Module, curatedCommunities: seq[CuratedCommunity])
 
@@ -66,6 +67,7 @@ method isLoaded*(self: Module): bool =
 method viewDidLoad*(self: Module) =
   self.moduleLoaded = true
 
+  self.setCommunityTags(self.controller.getCommunityTags())
   self.setAllCommunities(self.controller.getAllCommunities())
   self.setCuratedCommunities(self.controller.getCuratedCommunities())
 
@@ -84,6 +86,7 @@ method getCommunityItem(self: Module, c: CommunityDto): SectionItem =
       c.images.banner,
       icon = "",
       c.color,
+      c.tags,
       hasNotification = false,
       notificationsCount = 0,
       active = false,
@@ -105,7 +108,7 @@ method getCommunityItem(self: Module, c: CommunityDto): SectionItem =
           localNickname = contactDetails.details.localNickname,
           alias = contactDetails.details.alias,
           icon = contactDetails.icon,
-          onlineStatus = OnlineStatus.Offline, # TODO get the actual status?
+          onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(member.id).statusType),
           isContact = contactDetails.details.added, # FIXME
           )),
       historyArchiveSupportEnabled = c.settings.historyArchiveSupportEnabled
@@ -119,7 +122,11 @@ method getCuratedCommunityItem(self: Module, c: CuratedCommunity): CuratedCommun
       c.available,
       c.community.images.thumbnail,
       c.community.color,
+      c.community.tags,
       len(c.community.members))
+
+method setCommunityTags*(self: Module, communityTags: string) =
+  self.view.setCommunityTags(communityTags)
 
 method setAllCommunities*(self: Module, communities: seq[CommunityDto]) =
   for community in communities:
@@ -175,12 +182,13 @@ method communityCategoryDeleted*(self: Module) =
 
 method createCommunity*(self: Module, name: string,
                         description, introMessage: string, outroMessage: string,
-                        access: int, color: string,
+                        access: int, color: string, tags: string,
                         imagePath: string,
                         aX: int, aY: int, bX: int, bY: int,
                         historyArchiveSupportEnabled: bool,
                         pinMessageAllMembersEnabled: bool) =
-  self.controller.createCommunity(name, description, introMessage, outroMessage, access, color, imagePath, aX, aY, bX, bY, historyArchiveSupportEnabled, pinMessageAllMembersEnabled)
+  self.controller.createCommunity(name, description, introMessage, outroMessage, access, color, tags,
+                                  imagePath, aX, aY, bX, bY, historyArchiveSupportEnabled, pinMessageAllMembersEnabled)
 
 method deleteCommunityCategory*(self: Module, communityId: string, categoryId: string) =
   self.controller.deleteCommunityCategory(communityId, categoryId)

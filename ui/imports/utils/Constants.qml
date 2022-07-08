@@ -37,24 +37,29 @@ QtObject {
         property int ensUsernames: 2
         property int messaging: 3
         property int wallet: 4
-        property int privacyAndSecurity: 5
-        property int appearance: 6
-        property int language: 7
-        property int notifications: 8
-        property int devicesSettings: 9
-        property int browserSettings: 10
-        property int advanced: 11
-        property int about: 12
-        property int communitiesSettings: 13
-        property int signout: 14
-        property int backUpSeed: 15
+        property int appearance: 5
+        property int language: 6
+        property int notifications: 7
+        property int devicesSettings: 8
+        property int browserSettings: 9
+        property int advanced: 10
+        property int about: 11
+        property int communitiesSettings: 12
+        property int signout: 13
+        property int backUpSeed: 14
     }
 
-    readonly property QtObject userStatus: QtObject{
-        readonly property int offline: 0
-        readonly property int online: 1
+    readonly property QtObject currentUserStatus: QtObject{
+        readonly property int unknown: 0
+        readonly property int automatic: 1
         readonly property int doNotDisturb: 2
-        readonly property int idle: 3
+        readonly property int alwaysOnline: 3
+        readonly property int inactive: 4
+    }
+
+    readonly property QtObject onlineStatus: QtObject{
+        readonly property int inactive: 0
+        readonly property int online: 1
     }
 
     readonly property QtObject chatType: QtObject{
@@ -95,10 +100,19 @@ QtObject {
         readonly property int noOne: 3
     }
 
-    readonly property QtObject contactVerificationState: QtObject {
-        readonly property int notMarked: 0
-        readonly property int verified: 1
+    readonly property QtObject trustStatus: QtObject {
+        readonly property int unknown: 0
+        readonly property int trusted: 1
         readonly property int untrustworthy: 2
+    }
+
+    readonly property QtObject verificationStatus: QtObject {
+        readonly property int unverified: 0
+        readonly property int verifying: 1
+        readonly property int verified: 2
+        readonly property int declined: 3
+        readonly property int canceled: 4
+        readonly property int trusted: 5
     }
 
     readonly property QtObject contactsPanelUsage: QtObject {
@@ -260,12 +274,8 @@ QtObject {
 
     readonly property string zeroAddress: "0x0000000000000000000000000000000000000000"
 
-    readonly property string networkMainnet: "mainnet_rpc"
-    readonly property string networkPOA: "poa_rpc"
-    readonly property string networkXDai: "xdai_rpc"
-    readonly property string networkGoerli: "goerli_rpc"
-    readonly property string networkRinkeby: "rinkeby_rpc"
-    readonly property string networkRopsten: "testnet_rpc"
+    readonly property string networkMainnet: "Mainnet"
+    readonly property string networkRopsten: "Ropsten"
 
     readonly property string api_request: "api-request"
     readonly property string web3SendAsyncReadOnly: "web3-send-async-read-only"
@@ -327,29 +337,21 @@ QtObject {
     readonly property string storeToKeychainValueNotNow: "notNow"
     readonly property string storeToKeychainValueNever: "never"
 
-    //% "(edited)"
-    readonly property string editLabel: ` <span class="isEdited">` + qsTrId("-edited-") + `</span>`
+    readonly property string editLabel: ` <span class="isEdited">` + qsTr("(edited)") + `</span>`
 
     readonly property string newBookmark: " "
 
     readonly property var ensState: {
-        //% "Username already taken :("
-        "taken": qsTrId("ens-username-taken"),
-        //% "Username doesn’t belong to you :("
-        "taken-custom": qsTrId("ens-custom-username-taken"),
-        //% "Continuing will connect this username with your chat key."
-        "owned": qsTrId("ens-username-owned-continue"),
-        //% "✓ Username available!"
-        "available": qsTrId("ens-username-available"),
-        //% "Username is already connected with your chat key and can be used inside Status."
-        "already-connected": qsTrId("ens-username-already-added"),
-        //% "This user name is owned by you and connected with your chat key. Continue to set `Show my ENS username in chats`."
-        "connected": qsTrId("this-user-name-is-owned-by-you-and-connected-with-your-chat-key--continue-to-set--show-my-ens-username-in-chats--"),
-        //% "Continuing will require a transaction to connect the username with your current chat key."
-        "connected-different-key": qsTrId("ens-username-connected-with-different-key"),
+        "taken": qsTr("Username already taken :("),
+        "taken-custom": qsTr("Username doesn’t belong to you :("),
+        "owned": qsTr("Continuing will connect this username with your chat key."),
+        "available": qsTr("✓ Username available!"),
+        "already-connected": qsTr("Username is already connected with your chat key and can be used inside Status."),
+        "connected": qsTr("This user name is owned by you and connected with your chat key. Continue to set `Show my ENS username in chats`."),
+        "connected-different-key": qsTr("Continuing will require a transaction to connect the username with your current chat key."),
     }
 
     readonly property bool isCppApp: typeof cppApp !== "undefined" ? cppApp : false
-    
+
     readonly property string existingAccountError: "account already exists"
 }

@@ -35,37 +35,23 @@ StyledText {
         }
 
         if (now.toDateString() === currentMsgDate.toDateString()) {
-            //% "Today"
-            return qsTrId("today")
+            return qsTr("Today")
         } else if (yesterday.toDateString() === currentMsgDate.toDateString()) {
-            //% "Yesterday"
-            return qsTrId("yesterday")
+            return qsTr("Yesterday")
         } else {
             const monthNames = [
-                //% "January"
-                qsTrId("january"),
-                //% "February"
-                qsTrId("february"),
-                //% "March"
-                qsTrId("march"),
-                //% "April"
-                qsTrId("april"),
-                //% "May"
-                qsTrId("may"),
-                //% "June"
-                qsTrId("june"),
-                //% "July"
-                qsTrId("july"),
-                //% "August"
-                qsTrId("august"),
-                //% "September"
-                qsTrId("september"),
-                //% "October"
-                qsTrId("october"),
-                //% "November"
-                qsTrId("november"),
-                //% "December"
-                qsTrId("december")
+                qsTr("January"),
+                qsTr("February"),
+                qsTr("March"),
+                qsTr("April"),
+                qsTr("May"),
+                qsTr("June"),
+                qsTr("July"),
+                qsTr("August"),
+                qsTr("September"),
+                qsTr("October"),
+                qsTr("November"),
+                qsTr("December")
             ];
             return monthNames[currentMsgDate.getMonth()] + ", " + currentMsgDate.getDate()
         }

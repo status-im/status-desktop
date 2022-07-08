@@ -16,7 +16,7 @@ QtObject {
     property var showSendingError: function(){}
     property var showSigningError: function(){}
     property var showToastMessage: function(){}
-    property int networkId: (Web3ProviderStore && Web3ProviderStore.networkId) || -1
+    property int chainId: (Web3ProviderStore && Web3ProviderStore.chainId) || 1
 
     signal web3Response(string data);
 
@@ -64,6 +64,10 @@ QtObject {
             return;
         }
         request.address = WalletStore.dappBrowserAccount.address
+        if (!request.payload) {
+            request.payload = {}
+        }
+        request.payload.chainId = provider.chainId
 
         var ensAddr = Web3ProviderStore.urlENSDictionary[request.hostname];
         if (ensAddr) {
@@ -129,7 +133,7 @@ QtObject {
         } else if (request.type === Constants.web3DisconnectAccount) {
             web3Response(data);
         } else {
-            Web3ProviderStore.web3ProviderInst.postMessage(request.payload.method, requestType, data);
+            Web3ProviderStore.web3ProviderInst.postMessage(request.payload.method, requestType, JSON.stringify(request));
         }
     }
 

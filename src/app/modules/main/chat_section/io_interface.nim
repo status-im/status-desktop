@@ -94,7 +94,7 @@ method onChatUnmuted*(self: AccessInterface, chatId: string) {.base.} =
 method onMarkAllMessagesRead*(self: AccessInterface, chatId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onContactAccepted*(self: AccessInterface, publicKey: string) {.base.} =
+method onContactAdded*(self: AccessInterface, publicKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onContactRejected*(self: AccessInterface, publicKey: string) {.base.} =
@@ -175,6 +175,18 @@ method muteChat*(self: AccessInterface, chatId: string) {.base.} =
 method unmuteChat*(self: AccessInterface, chatId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method muteCategory*(self: AccessInterface, categoryId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method unmuteCategory*(self: AccessInterface, categoryId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onCategoryMuted*(self: AccessInterface, categoryId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onCategoryUnmuted*(self: AccessInterface, categoryId: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method markAllMessagesRead*(self: AccessInterface, chatId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -252,7 +264,9 @@ method removeUserFromCommunity*(self: AccessInterface, pubKey: string) {.base.} 
 method banUserFromCommunity*(self: AccessInterface, pubKey: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method editCommunity*(self: AccessInterface, name: string, description, introMessage, outroMessage: string, access: int, color: string, logoJsonData: string, bannerJsonData: string, historyArchiveSupportEnabled: bool, pinMessageAllMembersEnabled: bool) {.base.} =
+method editCommunity*(self: AccessInterface, name: string, description, introMessage, outroMessage: string,
+                      access: int, color: string, tags: string, logoJsonData: string, bannerJsonData: string,
+                      historyArchiveSupportEnabled: bool, pinMessageAllMembersEnabled: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method exportCommunity*(self: AccessInterface): string {.base.} =

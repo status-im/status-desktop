@@ -10,7 +10,8 @@ Item {
     property int imageWidth: 350
     property bool isCurrentUser: false
     property url source
-    property bool playing: Global.applicationWindow.active
+    property bool isActiveChannel: false
+    property bool playing: Global.applicationWindow.active && isChatActive
     property bool isAnimated: !!source && source.toString().endsWith('.gif')
     signal clicked(var image, var mouse)
     property var container
@@ -86,10 +87,8 @@ Item {
             StyledText {
                 anchors.centerIn: parent
                 text: imageMessage.status === Image.Error?
-                        //% "Error loading the image"
-                        qsTrId("error-loading-the-image") :
-                        //% "Loading image..."
-                        qsTrId("loading-image---")
+                        qsTr("Error loading the image") :
+                        qsTr("Loading image...")
                 color: imageMessage.status === Image.Error?
                         Style.current.red :
                         Style.current.textColor

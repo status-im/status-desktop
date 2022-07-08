@@ -17,8 +17,7 @@ import shared.popups 1.0
 // TODO: replace with StatusModal
 ModalPopup {
     id: root
-    //% "Muted chats"
-    title: qsTrId("muted-chats")
+    title: qsTr("Muted chats")
 
     property var model: []
     property string noContentText: ""
@@ -85,8 +84,7 @@ ModalPopup {
                 anchors.right: parent.right
                 anchors.rightMargin: Style.current.smallPadding
                 anchors.verticalCenter: parent.verticalCenter
-                //% "Unmute"
-                text: qsTrId("unmute")
+                text: qsTr("Unmute")
 
                 MouseArea {
                     anchors.fill: parent

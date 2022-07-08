@@ -43,8 +43,7 @@ Item {
 
             StatusBaseText {
                 id: title
-                //% "Get a universal username"
-                text: qsTrId("ens-get-name")
+                text: qsTr("Get a universal username")
                 anchors.top: image.bottom
                 anchors.topMargin: 24
                 font.weight: Font.Bold
@@ -58,8 +57,7 @@ Item {
 
             StatusBaseText {
                 id: subtitle
-                //% "ENS names transform those crazy-long addresses into unique usernames."
-                text: qsTrId("ens-welcome-hints")
+                text: qsTr("ENS names transform those crazy-long addresses into unique usernames.")
                 anchors.top: title.bottom
                 anchors.topMargin: 24
                 font.pixelSize: 14
@@ -84,8 +82,7 @@ Item {
 
             StatusBaseText {
                 id: element1Title
-                //% "Customize your chat name"
-                text: qsTrId("ens-welcome-point-customize-title")
+                text: qsTr("Customize your chat name")
                 anchors.left: element1Number.right
                 anchors.leftMargin: 24
                 anchors.top: subtitle.bottom
@@ -99,8 +96,7 @@ Item {
 
             StatusBaseText {
                 id: element1Subtitle
-                //% "An ENS name can replace your random 3-word name in chat. Be @yourname instead of %1."
-                text: qsTrId("an-ens-name-can-replace-your-random-3-word-name-in-chat--be--yourname-instead-of--1-").arg(root.username)
+                text: qsTr("An ENS name can replace your random 3-word name in chat. Be @yourname instead of %1.").arg(root.username)
                 anchors.left: element1Number.right
                 anchors.leftMargin: 24
                 anchors.top: element1Title.bottom
@@ -125,8 +121,7 @@ Item {
 
             StatusBaseText {
                 id: element2Title
-                //% "Simplify your ETH address"
-                text: qsTrId("ens-welcome-point-simplify-title")
+                text: qsTr("Simplify your ETH address")
                 anchors.left: element2Number.right
                 anchors.leftMargin: 24
                 anchors.top: element1Subtitle.bottom
@@ -140,8 +135,7 @@ Item {
 
             StatusBaseText {
                 id: element2Subtitle
-                //% "You can receive funds to your easy-to-share ENS name rather than your hexadecimal hash (0x...)."
-                text: qsTrId("ens-welcome-point-simplify")
+                text: qsTr("You can receive funds to your easy-to-share ENS name rather than your hexadecimal hash (0x...).")
                 anchors.left: element2Number.right
                 anchors.leftMargin: 24
                 anchors.top: element2Title.bottom
@@ -166,8 +160,7 @@ Item {
 
             StatusBaseText {
                 id: element3Title
-                //% "Receive transactions in chat"
-                text: qsTrId("ens-welcome-point-receive-title")
+                text: qsTr("Receive transactions in chat")
                 anchors.left: element3Number.right
                 anchors.leftMargin: 24
                 anchors.top: element2Subtitle.bottom
@@ -181,8 +174,7 @@ Item {
 
             StatusBaseText {
                 id: element3Subtitle
-                //% "Others can send you funds via chat in one simple step."
-                text: qsTrId("ens-welcome-point-receive")
+                text: qsTr("Others can send you funds via chat in one simple step.")
                 anchors.left: element3Number.right
                 anchors.leftMargin: 24
                 anchors.top: element3Title.bottom
@@ -207,8 +199,7 @@ Item {
 
             StatusBaseText {
                 id: element4Title
-                //% "10 SNT to register"
-                text: qsTrId("ens-welcome-point-register-title")
+                text: qsTr("10 SNT to register")
                 anchors.left: element4Number.right
                 anchors.leftMargin: 24
                 anchors.top: element3Subtitle.bottom
@@ -222,8 +213,7 @@ Item {
 
             StatusBaseText {
                 id: element4Subtitle
-                //% "Register once to keep the name forever. After 1 year you can release the name and get your SNT back."
-                text: qsTrId("ens-welcome-point-register")
+                text: qsTr("Register once to keep the name forever. After 1 year you can release the name and get your SNT back.")
                 anchors.left: element4Number.right
                 anchors.leftMargin: 24
                 anchors.top: element4Title.bottom
@@ -249,8 +239,7 @@ Item {
 
             StatusBaseText {
                 id: element5Title
-                //% "Already own a username?"
-                text: qsTrId("ens-welcome-point-verify-title")
+                text: qsTr("Already own a username?")
                 anchors.left: element5Number.right
                 anchors.leftMargin: 24
                 anchors.top: element4Subtitle.bottom
@@ -264,8 +253,7 @@ Item {
 
             StatusBaseText {
                 id: element5Subtitle
-                //% "You can verify and add any usernames you own in the next steps."
-                text: qsTrId("ens-welcome-point-verify")
+                text: qsTr("You can verify and add any usernames you own in the next steps.")
                 anchors.left: element5Number.right
                 anchors.leftMargin: 24
                 anchors.top: element5Title.bottom
@@ -278,8 +266,7 @@ Item {
 
             StatusBaseText {
                 id: poweredBy
-                //% "Powered by Ethereum Name Services"
-                text: qsTrId("ens-powered-by")
+                text: qsTr("Powered by Ethereum Name Services")
                 anchors.left: element5Number.right
                 anchors.leftMargin: 24
                 anchors.top: element5Subtitle.bottom
@@ -297,12 +284,9 @@ Item {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: Style.current.padding
         anchors.horizontalCenter: parent.horizontalCenter
-        enabled: Global.networkGuarded
-        //% "Start"
         text: enabled ?
-          qsTrId("start") :
-          //% "Only available on Mainnet"
-          qsTrId("ens-network-restriction")
+          qsTr("Start") :
+          qsTr("Only available on Mainnet")
         onClicked: startBtnClicked()
     }
 }

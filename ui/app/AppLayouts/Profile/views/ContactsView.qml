@@ -17,8 +17,6 @@ import shared.controls 1.0
 import "../stores"
 import "../panels"
 import "../popups"
-// TODO remove this import when the ContactRequestPanel is moved to the the Profile completely
-import "../../Chat/panels"
 
 SettingsContentBase {
     id: root
@@ -145,8 +143,7 @@ SettingsContentBase {
                     NoFriendsRectangle {
                         anchors.centerIn: parent
                         visible: root.contactsStore.myContactsModel.count === 0
-                        //% "You don’t have any contacts yet"
-                        text: qsTrId("you-don-t-have-any-contacts-yet")
+                        text: qsTr("You don’t have any contacts yet")
                     }
                 }
             }
@@ -180,6 +177,23 @@ SettingsContentBase {
 
                     onContactRequestRejected: {
                         root.contactsStore.rejectContactRequest(publicKey)
+                    }
+
+                    onShowVerificationRequest: {
+                        try {
+                            let request = root.contactsStore.getVerificationDetailsFromAsJson(publicKey)
+                            Global.openPopup(contactVerificationRequestPopupComponent, {
+                                senderPublicKey: request.from,
+                                senderDisplayName: request.displayName,
+                                senderIcon: request.icon,
+                                challengeText: request.challenge,
+                                responseText: request.response,
+                                messageTimestamp: request.requestedAt,
+                                responseTimestamp: request.repliedAt
+                            })
+                        } catch (e) {
+                            console.error("Error getting or parsing verification data", e)
+                        }
                     }
                 }
 
@@ -295,15 +309,25 @@ SettingsContentBase {
         // TODO: Make ConfirmationDialog a dynamic component on a future refactor
         ConfirmationDialog {
             id: removeContactConfirmationDialog
-            //% "Remove contact"
-            header.title: qsTrId("remove-contact")
-            //% "Are you sure you want to remove this contact?"
-            confirmationText: qsTrId("are-you-sure-you-want-to-remove-this-contact-")
+            header.title: qsTr("Remove contact")
+            confirmationText: qsTr("Are you sure you want to remove this contact?")
             onConfirmButtonClicked: {
                 if (Utils.getContactDetailsAsJson(removeContactConfirmationDialog.value).isContact) {
                     root.contactsStore.removeContact(removeContactConfirmationDialog.value);
                 }
                 removeContactConfirmationDialog.close()
+        }
+    }
+
+    Component {
+        id: contactVerificationRequestPopupComponent
+        ContactVerificationRequestPopup {
+            onResponseSent: {
+                root.contactsStore.acceptVerificationRequest(senderPublicKey, response)
+            }
+            onVerificationRefused: {
+                root.contactsStore.declineVerificationRequest(senderPublicKey)
+            }
             }
         }
 

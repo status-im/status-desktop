@@ -18,14 +18,14 @@ proc initMemberItem*(
   icon: string,
   colorId: int = 0,
   colorHash: string = "",
-  onlineStatus: OnlineStatus = OnlineStatus.Offline,
+  onlineStatus: OnlineStatus = OnlineStatus.Inactive,
   isContact: bool = false,
   isVerified: bool = false,
   isUntrustworthy: bool = false,
   isBlocked: bool = false,
   contactRequest: ContactRequest = ContactRequest.None,
-  incomingVerification: VerificationRequest = VerificationRequest.None,
-  outcomingVerification: VerificationRequest = VerificationRequest.None,
+  incomingVerificationStatus: VerificationRequestStatus = VerificationRequestStatus.None,
+  outgoingVerificationStatus: VerificationRequestStatus = VerificationRequestStatus.None,
   isAdmin: bool = false,
   joined: bool = false,
 ): MemberItem =
@@ -47,8 +47,8 @@ proc initMemberItem*(
     isUntrustworthy = isUntrustworthy,
     isBlocked = isBlocked,
     contactRequest = contactRequest,
-    incomingVerification = incomingVerification,
-    outcomingVerification = outcomingVerification
+    incomingVerificationStatus = incomingVerificationStatus,
+    outgoingVerificationStatus = outgoingVerificationStatus
   )
 
 proc `$`*(self: MemberItem): string =
@@ -67,8 +67,8 @@ proc `$`*(self: MemberItem): string =
     isUntrustworthy: {self.isUntrustworthy},
     isBlocked: {self.isBlocked},
     contactRequest: {$self.contactRequest.int},
-    incomingVerification: {$self.incomingVerification.int},
-    outcomingVerification: {$self.outcomingVerification.int},
+    incomingVerificationStatus: {$self.incomingVerificationStatus.int},
+    outgoingVerificationStatus: {$self.outgoingVerificationStatus.int},
     isAdmin: {self.isAdmin},
     joined: {self.joined}
     ]"""

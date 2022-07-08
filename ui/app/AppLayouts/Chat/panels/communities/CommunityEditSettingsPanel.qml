@@ -18,6 +18,9 @@ import StatusQ.Controls.Validators 0.1
 
 import "../../controls/community"
 
+import "../../../CommunitiesPortal/controls"
+import "../../../CommunitiesPortal/panels"
+
 Flickable {
     id: root
 
@@ -26,6 +29,8 @@ Flickable {
     property alias introMessage: introMessageTextInput.text
     property alias outroMessage: outroMessageTextInput.text
     property alias color: colorPicker.color
+    property alias tags: tagsPicker.tags
+    property alias selectedTags: tagsPicker.selectedTags
     property alias options: options
 
     property alias logoImageData: logoPicker.imageData
@@ -34,6 +39,11 @@ Flickable {
     property alias bannerImageData: bannerPicker.imageData
     property alias bannerPath: bannerPicker.source
     property alias bannerCropRect: bannerPicker.cropRect
+
+    property size bottomReservedSpace: Qt.size(0, 0)
+    property bool bottomReservedSpaceActive: false
+
+    readonly property bool saveChangesButtonEnabled: true
 
     contentWidth: layout.width
     contentHeight: layout.height
@@ -73,7 +83,51 @@ Flickable {
 
         CommunityColorPicker {
             id: colorPicker
+            onPick: Global.openPopup(pickColorComponent)
             Layout.fillWidth: true
+
+            Component {
+                id: pickColorComponent
+
+                StatusStackModal {
+                    anchors.centerIn: parent
+                    width: 640
+                    replaceItem: CommunityColorPanel {
+                        Component.onCompleted: color = colorPicker.color
+                        onAccepted: {
+                            colorPicker.color = color;
+                            close();
+                        }
+                    }
+                    onClosed: destroy()
+                }
+            }
+        }
+
+        CommunityTagsPicker {
+            id: tagsPicker
+            onPick: Global.openPopup(pickTagsComponent)
+            Layout.fillWidth: true
+
+            Component {
+                id: pickTagsComponent
+
+                StatusStackModal {
+                    anchors.centerIn: parent
+                    width: 640
+                    replaceItem: CommunityTagsPanel {
+                        Component.onCompleted: {
+                            tags = tagsPicker.tags;
+                            selectedTags = tagsPicker.selectedTags;
+                        }
+                        onAccepted: {
+                            tagsPicker.selectedTags = selectedTags;
+                            close();
+                        }
+                    }
+                    onClosed: destroy()
+                }
+            }
         }
 
         StatusModalDivider {
@@ -102,7 +156,10 @@ Flickable {
         }
 
         Item {
-            Layout.fillHeight: true
+            // settingsDirtyToastMessage placeholder
+            visible: root.bottomReservedSpaceActive
+            implicitWidth: root.bottomReservedSpace.width
+            implicitHeight: root.bottomReservedSpace.height
         }
     }
 }

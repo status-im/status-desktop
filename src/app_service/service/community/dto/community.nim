@@ -38,6 +38,7 @@ type CommunityMembershipRequestDto* = object
 type CommunitySettingsDto* = object
   id*: string
   historyArchiveSupportEnabled*: bool
+  categoriesMuted*: seq[string]
 
 type CommunityAdminSettingsDto* = object
   pinMessageAllMembersEnabled*: bool
@@ -61,6 +62,7 @@ type CommunityDto* = object
   canManageUsers*: bool
   canJoin*: bool
   color*: string
+  tags*: string
   requestedToJoinAt*: int64
   isMember*: bool
   muted*: bool
@@ -116,10 +118,17 @@ proc toCommunityDto*(jsonObj: JsonNode): CommunityDto =
     for memberId, memberObj in membersObj:
       result.members.add(toMember(memberObj, memberId))
 
+  var tagsObj: JsonNode
+  if(jsonObj.getProp("tags", tagsObj)):
+    toUgly(result.tags, tagsObj)
+  else:
+    result.tags = "[]"
+
   discard jsonObj.getProp("canRequestAccess", result.canRequestAccess)
   discard jsonObj.getProp("canManageUsers", result.canManageUsers)
   discard jsonObj.getProp("canJoin", result.canJoin)
   discard jsonObj.getProp("color", result.color)
+
   discard jsonObj.getProp("requestedToJoinAt", result.requestedToJoinAt)
   discard jsonObj.getProp("isMember", result.isMember)
   discard jsonObj.getProp("muted", result.muted)
@@ -179,6 +188,7 @@ proc toChannelGroupDto*(communityDto: CommunityDto): ChannelGroupDto =
     introMessage: communityDto.introMessage,
     outroMessage: communityDto.outroMessage,
     color: communityDto.color,
+    # tags: communityDto.tags, NOTE: do we need tags here?
     permissions: communityDto.permissions,
     members: communityDto.members.map(m => ChatMember(
         id: m.id,

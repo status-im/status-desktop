@@ -125,12 +125,7 @@ Item {
                 anchors.fill: parent
                 acceptedButtons: Qt.RightButton | Qt.LeftButton
                 onClicked: {
-                    if((mouse.button === Qt.RightButton) && inputValue.canPaste) {
-                        rightClickContextMenu.popup()
-                    }
-                    else {
-                        inputValue.forceActiveFocus(Qt.MouseFocusReason)
-                    }
+                    inputValue.forceActiveFocus(Qt.MouseFocusReason)
                 }
             }
         }
@@ -167,25 +162,19 @@ Item {
                         text: {
                             if (copied) {
                                 return inputBox.copyToClipboard ?
-                                            //% "Copied"
-                                            qsTrId("sharing-copied-to-clipboard")  :
-                                            //% "Pasted"
-                                            qsTrId("pasted")
+                                            qsTr("Copied")  :
+                                            qsTr("Pasted")
                             }
                             return inputBox.copyToClipboard ?
-                                        //% "Copy"
-                                        qsTrId("copy-to-clipboard") :
-                                        //% "Paste"
-                                        qsTrId("paste")
+                                        qsTr("Copy") :
+                                        qsTr("Paste")
 
                         }
                         onClicked: {
                            if (inputBox.copyToClipboard) {
                                RootStore.copyToClipboard(inputBox.textToCopy ? inputBox.textToCopy : inputValue.text)
                            } else {
-                               if (inputValue.canPaste) {
-                                   inputValue.paste()
-                               }
+                                inputValue.paste()
                            }
 
                            copyBtn.copied = true
@@ -210,22 +199,6 @@ Item {
         height: 16
         color: validationErrorColor
         wrapMode: TextEdit.Wrap
-    }
-
-    StatusPopupMenu {
-        id: rightClickContextMenu
-
-        StatusMenuItem {
-            enabled: inputValue.canPaste
-            text: qsTrId("Paste")
-            onTriggered: {
-                inputValue.paste()
-            }
-        }
-
-        onClosed: {
-            inputValue.forceActiveFocus(Qt.MouseFocusReason)
-        }
     }
 }
 

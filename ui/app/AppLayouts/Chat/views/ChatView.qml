@@ -173,9 +173,8 @@ StatusAppThreePanelLayout {
     ConfirmationDialog {
         id: removeContactConfirmationDialog
         // % "Remove contact"
-        header.title: qsTrId("remove-contact")
-        //% "Are you sure you want to remove this contact?"
-        confirmationText: qsTrId("are-you-sure-you-want-to-remove-this-contact-")
+        header.title: qsTr("Remove contact")
+        confirmationText: qsTr("Are you sure you want to remove this contact?")
         onConfirmButtonClicked: {
             let pk = chatColumn.contactToRemove
             if (Utils.getContactDetailsAsJson(pk).isContact) {

@@ -245,8 +245,7 @@ StatusPopupMenu {
 
     StatusMenuItem {
         id: editMessageAction
-        //% "Edit message"
-        text: qsTrId("edit-message")
+        text: qsTr("Edit message")
         onTriggered: {
             editClicked(messageId)
         }
@@ -275,11 +274,9 @@ StatusPopupMenu {
         id: pinAction
         text: {
             if (root.pinnedMessage) {
-                //% "Unpin"
-                return qsTrId("unpin")
+                return qsTr("Unpin")
             }
-            //% "Pin"
-            return qsTrId("pin")
+            return qsTr("Pin")
 
         }
         onTriggered: {
@@ -339,8 +336,7 @@ StatusPopupMenu {
                   root.messageContentType === Constants.messageContentType.emojiType ||
                   root.messageContentType === Constants.messageContentType.imageType ||
                   root.messageContentType === Constants.messageContentType.audioType)
-        //% "Delete message"
-        text: qsTrId("delete-message")
+        text: qsTr("Delete message")
         onTriggered: {
             if (!localAccountSensitiveSettings.showDeleteMessageWarning) {
                 deleteMessage(messageId)
@@ -362,7 +358,7 @@ StatusPopupMenu {
             root.close()
             root.shouldCloseParentPopup()
         }
-        icon.name: "up"
+        icon.name: "arrow-up"
     }
 
     FileDialog {
@@ -384,10 +380,8 @@ StatusPopupMenu {
     Component {
         id: deleteMessageConfirmationDialogComponent
         ConfirmationDialog {
-            //% "Confirm deleting this message"
-            header.title: qsTrId("confirm-deleting-this-message")
-            //% "Are you sure you want to delete this message? Be aware that other clients are not guaranteed to delete the message as well."
-            confirmationText: qsTrId("are-you-sure-you-want-to-delete-this-message--be-aware-that-other-clients-are-not-guaranteed-to-delete-the-message-as-well-")
+            header.title: qsTr("Confirm deleting this message")
+            confirmationText: qsTr("Are you sure you want to delete this message? Be aware that other clients are not guaranteed to delete the message as well.")
             height: 260
             checkbox.visible: true
             executeConfirm: function () {

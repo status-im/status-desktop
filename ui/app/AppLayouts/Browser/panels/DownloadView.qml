@@ -34,12 +34,10 @@ import "../controls"
             primaryText: downloadFileName
             downloadText: {
                 if (isCanceled) {
-                    //% "Cancelled"
-                    return qsTrId("cancelled")
+                    return qsTr("Cancelled")
                 }
                 if (isPaused) {
-                    //% "Paused"
-                    return qsTrId("paused")
+                    return qsTr("Paused")
                 }
                 return `${downloadsModel.downloads[index] ? (downloadsModel.downloads[index].receivedBytes / 1000000).toFixed(2) : 0}/${downloadsModel.downloads[index] ? (downloadsModel.downloads[index].totalBytes / 1000000).toFixed(2) : 0} MB` //"14.4/109 MB, 26 sec left"
             }
@@ -73,8 +71,7 @@ import "../controls"
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
         font.pixelSize: 15
-        //% "Downloaded files will appear here."
-        text: qsTrId("downloaded-files-will-appear-here-")
+        text: qsTr("Downloaded files will appear here.")
         color: Style.current.secondaryText
     }
 }

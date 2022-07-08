@@ -23,6 +23,8 @@ StackLayout {
     property string bannerImageData
     property rect bannerCropRect
     property color color
+    property string tags
+    property string selectedTags
     property bool archiveSupportEnabled
     property bool requestToJoinEnabled
     property bool pinMessagesEnabled
@@ -170,6 +172,8 @@ StackLayout {
             description: root.description
             introMessage: root.introMessage
             outroMessage: root.outroMessage
+            tags: root.tags
+            selectedTags: root.selectedTags
             color: root.color
             logoImageData: root.logoImageData
             bannerImageData: root.bannerImageData
@@ -179,6 +183,9 @@ StackLayout {
                 requestToJoinEnabled: root.requestToJoinEnabled
                 pinMessagesEnabled: root.pinMessagesEnabled
             }
+
+            bottomReservedSpace: editCommunityPage.settingsDirtyToastMessageImplicitSize
+            bottomReservedSpaceActive: editCommunityPage.dirty
 
             Component.onCompleted: {
                 editCommunityPage.dirty =
@@ -191,6 +198,7 @@ StackLayout {
                                               root.requestToJoinEnabled != options.requestToJoinEnabled ||
                                               root.pinMessagesEnabled != options.pinMessagesEnabled ||
                                               root.color != color ||
+                                              root.selectedTags != selectedTags ||
                                               logoImagePath.length > 0 ||
                                               isValidRect(logoCropRect) ||
                                               bannerPath.length > 0 ||

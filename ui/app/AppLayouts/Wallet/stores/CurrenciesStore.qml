@@ -9,55 +9,50 @@ QtObject {
        ListElement {
            key: "usd"
            shortName: "USD"
-           //% "US Dollars"
-           name: qsTrId("us-dollars")
+           name: qsTr("US Dollars")
            symbol: "$"
            category: ""
-           imageSource: "../../assets/twemoji/26x26/1f1fa-1f1f8.png"
+           imageSource: "../../assets/twemoji/svg/1f1fa-1f1f8.svg"
            selected: false
        }
 
        ListElement {
            key: "gbp"
            shortName: "GBP"
-           //% "British Pound"
-           name: qsTrId("british-pound")
+           name: qsTr("British Pound")
            symbol: "£"
            category: ""
-           imageSource: "../../assets/twemoji/26x26/1f1ec-1f1e7.png"
+           imageSource: "../../assets/twemoji/svg/1f1ec-1f1e7.svg"
            selected: false
        }
 
        ListElement {
            key: "eur"
            shortName: "EUR"
-           //% "Euros"
-           name: qsTrId("euros")
+           name: qsTr("Euros")
            symbol: "€"
            category: ""
-           imageSource: "../../assets/twemoji/26x26/1f1ea-1f1fa.png"
+           imageSource: "../../assets/twemoji/svg/1f1ea-1f1fa.svg"
            selected: false
        }
 
        ListElement {
            key: "rub"
            shortName: "RUB"
-           //% "Russian ruble"
-           name: qsTrId("russian-ruble")
+           name: qsTr("Russian ruble")
            symbol: "₽"
            category: ""
-           imageSource: "../../assets/twemoji/26x26/1f1f7-1f1fa.png"
+           imageSource: "../../assets/twemoji/svg/1f1f7-1f1fa.svg"
            selected: false
        }
 
        ListElement {
            key: "krw"
            shortName: "KRW"
-           //% "South Korean won"
-           name: qsTrId("south-korean-won")
+           name: qsTr("South Korean won")
            symbol: "₩"
            category: ""
-           imageSource: "../../assets/twemoji/26x26/1f1f0-1f1f7.png"
+           imageSource: "../../assets/twemoji/svg/1f1f0-1f1f7.svg"
            selected: false
        }
 
@@ -66,7 +61,7 @@ QtObject {
            shortName: "ETH"
            name: qsTr("Ethereum")
            symbol: "Ξ"
-           category: "Tokens"
+           category: qsTr("Tokens")
            imageSource: "../../../../imports/assets/png/tokens/ETH.png"
            selected: false
        }
@@ -76,7 +71,7 @@ QtObject {
            shortName: "BTC"
            name: qsTr("Bitcoin")
            symbol: "฿"
-           category: "Tokens"
+           category: qsTr("Tokens")
            imageSource: "../../../../imports/assets/png/tokens/WBTC.png"
            selected: false
        }
@@ -86,7 +81,7 @@ QtObject {
            shortName: "SNT"
            name: qsTr("Status Network Token")
            symbol: ""
-           category: "Tokens"
+           category: qsTr("Tokens")
            imageSource: "../../../../imports/assets/png/tokens/SNT.png"
            selected: false
        }
@@ -96,7 +91,7 @@ QtObject {
            shortName: "DAI"
            name: qsTr("Dai")
            symbol: "◈"
-           category: "Tokens"
+           category: qsTr("Tokens")
            imageSource: "../../../../imports/assets/png/tokens/DAI.png"
            selected: false
        }
@@ -104,814 +99,740 @@ QtObject {
        ListElement {
            key: "aed"
            shortName: "AED"
-           //% "United Arab Emirates dirham"
-           name: qsTrId("united-arab-emirates-dirham")
+           name: qsTr("United Arab Emirates dirham")
            symbol: "د.إ"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1e6-1f1ea.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1e6-1f1ea.svg"
            selected: false
        }
 
        ListElement {
            key: "afn"
            shortName: "AFN"
-           //% "Afghan afghani"
-           name: qsTrId("afghan-afghani")
+           name: qsTr("Afghan afghani")
            symbol: "؋"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1e6-1f1eb.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1e6-1f1eb.svg"
            selected: false
        }
 
        ListElement {
            key: "ars"
            shortName: "ARS"
-           //% "Argentine peso"
-           name: qsTrId("argentine-peso")
+           name: qsTr("Argentine peso")
            symbol: "$"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1e6-1f1f7.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1e6-1f1f7.svg"
            selected: false
        }
 
        ListElement {
            key: "aud"
            shortName: "AUD"
-           //% "Australian dollar"
-           name: qsTrId("australian-dollar")
+           name: qsTr("Australian dollar")
            symbol: "$"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1e6-1f1fa.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1e6-1f1fa.svg"
            selected: false
        }
 
        ListElement {
            key: "bbd"
            shortName: "BBD"
-           //% "Barbadian dollar"
-           name: qsTrId("barbadian-dollar")
+           name: qsTr("Barbadian dollar")
            symbol: "$"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1e7-1f1e7.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1e7-1f1e7.svg"
            selected: false
        }
 
        ListElement {
            key: "bdt"
            shortName: "BDT"
-           //% "Bangladeshi taka"
-           name: qsTrId("bangladeshi-taka")
-           symbol: " Tk"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1e7-1f1e9.png"
+           name: qsTr("Bangladeshi taka")
+           symbol: "Tk"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1e7-1f1e9.svg"
            selected: false
        }
 
        ListElement {
            key: "bgn"
            shortName: "BGN"
-           //% "Bulgarian lev"
-           name: qsTrId("bulgarian-lev")
+           name: qsTr("Bulgarian lev")
            symbol: "лв"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1e7-1f1ec.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1e7-1f1ec.svg"
            selected: false
        }
 
        ListElement {
            key: "bhd"
            shortName: "BHD"
-           //% "Bahraini dinar"
-           name: qsTrId("bahraini-dinar")
+           name: qsTr("Bahraini dinar")
            symbol: "BD"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1e7-1f1ed.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1e7-1f1ed.svg"
            selected: false
        }
 
        ListElement {
            key: "bnd"
            shortName: "BND"
-           //% "Brunei dollar"
-           name: qsTrId("brunei-dollar")
+           name: qsTr("Brunei dollar")
            symbol: "$"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1e7-1f1f3.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1e7-1f1f3.svg"
            selected: false
        }
 
        ListElement {
            key: "bob"
            shortName: "BOB"
-           //% "Bolivian boliviano"
-           name: qsTrId("bolivian-boliviano")
+           name: qsTr("Bolivian boliviano")
            symbol: "$b"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1e7-1f1f4.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1e7-1f1f4.svg"
            selected: false
        }
 
        ListElement {
            key: "brl"
            shortName: "BRL"
-           //% "Brazillian real"
-           name: qsTrId("brazillian-real")
+           name: qsTr("Brazillian real")
            symbol: "R$"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1e7-1f1f7.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1e7-1f1f7.svg"
            selected: false
        }
 
        ListElement {
            key: "btn"
            shortName: "BTN"
-           //% "Bhutanese ngultrum"
-           name: qsTrId("bhutanese-ngultrum")
+           name: qsTr("Bhutanese ngultrum")
            symbol: "Nu."
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1e7-1f1f9.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1e7-1f1f9.svg"
            selected: false
        }
 
        ListElement {
            key: "cad"
            shortName: "CAD"
-           //% "Canadian dollar"
-           name: qsTrId("canadian-dollar")
+           name: qsTr("Canadian dollar")
            symbol: "$"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1e8-1f1e6.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1e8-1f1e6.svg"
            selected: false
        }
 
        ListElement {
            key: "chf"
            shortName: "CHF"
-           //% "Swiss franc"
-           name: qsTrId("swiss-franc")
+           name: qsTr("Swiss franc")
            symbol: "CHF"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1e8-1f1ed.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1e8-1f1ed.svg"
            selected: false
        }
 
        ListElement {
            key: "clp"
            shortName: "CLP"
-           //% "Chilean peso"
-           name: qsTrId("chilean-peso")
+           name: qsTr("Chilean peso")
            symbol: "$"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1e8-1f1f1.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1e8-1f1f1.svg"
            selected: false
        }
 
        ListElement {
            key: "cny"
            shortName: "CNY"
-           //% "Chinese yuan"
-           name: qsTrId("chinese-yuan")
+           name: qsTr("Chinese yuan")
            symbol: "¥"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1e8-1f1f3.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1e8-1f1f3.svg"
            selected: false
        }
 
        ListElement {
            key: "cop"
            shortName: "COP"
-           //% "Colombian peso"
-           name: qsTrId("colombian-peso")
+           name: qsTr("Colombian peso")
            symbol: "$"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1e8-1f1f4.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1e8-1f1f4.svg"
            selected: false
        }
 
        ListElement {
            key: "crc"
            shortName: "CRC"
-           //% "Costa Rican colón"
-           name: qsTrId("costa-rican-colón")
+           name: qsTr("Costa Rican colón")
            symbol: "₡"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1e8-1f1f7.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1e8-1f1f7.svg"
            selected: false
        }
 
        ListElement {
            key: "czk"
            shortName: "CZK"
-           //% "Czech koruna"
-           name: qsTrId("czech-koruna")
+           name: qsTr("Czech koruna")
            symbol: "Kč"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1e8-1f1ff.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1e8-1f1ff.svg"
            selected: false
        }
 
        ListElement {
            key: "dkk"
            shortName: "DKK"
-           //% "Danish krone"
-           name: qsTrId("danish-krone")
+           name: qsTr("Danish krone")
            symbol: "kr"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1e9-1f1f0.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1e9-1f1f0.svg"
            selected: false
        }
 
        ListElement {
            key: "dop"
            shortName: "DOP"
-           //% "Dominican peso"
-           name: qsTrId("dominican-peso")
+           name: qsTr("Dominican peso")
            symbol: "RD$"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1e9-1f1f4.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1e9-1f1f4.svg"
            selected: false
        }
 
        ListElement {
            key: "egp"
            shortName: "EGP"
-           //% "Egyptian pound"
-           name: qsTrId("egyptian-pound")
+           name: qsTr("Egyptian pound")
            symbol: "£"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1ea-1f1ec.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1ea-1f1ec.svg"
            selected: false
        }
 
        ListElement {
            key: "etb"
            shortName: "ETB"
-           //% "Ethiopian birr"
-           name: qsTrId("ethiopian-birr")
+           name: qsTr("Ethiopian birr")
            symbol: "Br"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1ea-1f1f9.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1ea-1f1f9.svg"
            selected: false
        }
 
        ListElement {
            key: "gel"
            shortName: "GEL"
-           //% "Georgian lari"
-           name: qsTrId("georgian-lari")
+           name: qsTr("Georgian lari")
            symbol: "₾"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1ec-1f1ea.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1ec-1f1ea.svg"
            selected: false
        }
 
        ListElement {
            key: "ghs"
            shortName: "GHS"
-           //% "Ghanaian cedi"
-           name: qsTrId("ghanaian-cedi")
+           name: qsTr("Ghanaian cedi")
            symbol: "¢"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1ec-1f1ed.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1ec-1f1ed.svg"
            selected: false
        }
 
        ListElement {
            key: "hkd"
            shortName: "HKD"
-           //% "Hong Kong dollar"
-           name: qsTrId("hong-kong-dollar")
+           name: qsTr("Hong Kong dollar")
            symbol: "$"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1ed-1f1f0.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1ed-1f1f0.svg"
            selected: false
        }
 
        ListElement {
            key: "hrk"
            shortName: "HRK"
-           //% "Croatian kuna"
-           name: qsTrId("croatian-kuna")
+           name: qsTr("Croatian kuna")
            symbol: "kn"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1ed-1f1f7.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1ed-1f1f7.svg"
            selected: false
        }
 
        ListElement {
            key: "huf"
            shortName: "HUF"
-           //% "Hungarian forint"
-           name: qsTrId("hungarian-forint")
+           name: qsTr("Hungarian forint")
            symbol: "Ft"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1ed-1f1fa.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1ed-1f1fa.svg"
            selected: false
        }
 
        ListElement {
            key: "idr"
            shortName: "IDR"
-           //% "Indonesian rupiah"
-           name: qsTrId("indonesian-rupiah")
+           name: qsTr("Indonesian rupiah")
            symbol: "Rp"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1ee-1f1e9.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1ee-1f1e9.svg"
            selected: false
        }
 
        ListElement {
            key: "ils"
            shortName: "ILS"
-           //% "Israeli new shekel"
-           name: qsTrId("israeli-new-shekel")
+           name: qsTr("Israeli new shekel")
            symbol: "₪"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1ee-1f1f1.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1ee-1f1f1.svg"
            selected: false
        }
 
        ListElement {
            key: "inr"
            shortName: "INR"
-           //% "Indian rupee"
-           name: qsTrId("indian-rupee")
+           name: qsTr("Indian rupee")
            symbol: "₹"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1ee-1f1f3.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1ee-1f1f3.svg"
            selected: false
        }
 
        ListElement {
            key: "isk"
            shortName: "ISK"
-           //% "Icelandic króna"
-           name: qsTrId("icelandic-króna")
+           name: qsTr("Icelandic króna")
            symbol: "kr"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1ee-1f1f8.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1ee-1f1f8.svg"
            selected: false
        }
 
        ListElement {
            key: "jmd"
            shortName: "JMD"
-           //% "Jamaican dollar"
-           name: qsTrId("jamaican-dollar")
+           name: qsTr("Jamaican dollar")
            symbol: "J$"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1ef-1f1f2.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1ef-1f1f2.svg"
            selected: false
        }
 
        ListElement {
            key: "jpy"
            shortName: "JPY"
-           //% "Japanese yen"
-           name: qsTrId("japanese-yen")
+           name: qsTr("Japanese yen")
            symbol: "¥"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1ef-1f1f5.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1ef-1f1f5.svg"
            selected: false
        }
 
        ListElement {
            key: "kes"
            shortName: "KES"
-           //% "Kenyan shilling"
-           name: qsTrId("kenyan-shilling")
+           name: qsTr("Kenyan shilling")
            symbol: "KSh"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f0-1f1ea.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f0-1f1ea.svg"
            selected: false
        }
 
        ListElement {
            key: "kwd"
            shortName: "KWD"
-           //% "Kuwaiti dinar"
-           name: qsTrId("kuwaiti-dinar")
+           name: qsTr("Kuwaiti dinar")
            symbol: "د.ك"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f0-1f1fc.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f0-1f1fc.svg"
            selected: false
        }
 
        ListElement {
            key: "kzt"
            shortName: "KZT"
-           //% "Kazakhstani tenge"
-           name: qsTrId("kazakhstani-tenge")
+           name: qsTr("Kazakhstani tenge")
            symbol: "лв"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f0-1f1ff.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f0-1f1ff.svg"
            selected: false
        }
 
        ListElement {
            key: "lkr"
            shortName: "LKR"
-           //% "Sri Lankan rupee"
-           name: qsTrId("sri-lankan-rupee")
+           name: qsTr("Sri Lankan rupee")
            symbol: "₨"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f1-1f1f0.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f1-1f1f0.svg"
            selected: false
        }
 
        ListElement {
            key: "mad"
            shortName: "MAD"
-           //% "Moroccan dirham"
-           name: qsTrId("moroccan-dirham")
+           name: qsTr("Moroccan dirham")
            symbol: "MAD"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f2-1f1e6.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f2-1f1e6.svg"
            selected: false
        }
 
        ListElement {
            key: "mdl"
            shortName: "MDL"
-           //% "Moldovan leu"
-           name: qsTrId("moldovan-leu")
+           name: qsTr("Moldovan leu")
            symbol: "MDL"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f2-1f1e9.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f2-1f1e9.svg"
            selected: false
        }
 
        ListElement {
            key: "mur"
            shortName: "MUR"
-           //% "Mauritian rupee"
-           name: qsTrId("mauritian-rupee ")
+           name: qsTr("Mauritian rupee")
            symbol: "₨"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f2-1f1f7.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f2-1f1f7.svg"
            selected: false
        }
 
        ListElement {
            key: "mwk"
            shortName: "MWK"
-           //% "Malawian kwacha"
-           name: qsTrId("malawian-kwacha")
+           name: qsTr("Malawian kwacha")
            symbol: "MK"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f2-1f1fc.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f2-1f1fc.svg"
            selected: false
        }
 
        ListElement {
            key: "mxn"
            shortName: "MXN"
-           //% "Mexican peso"
-           name: qsTrId("mexican-peso")
+           name: qsTr("Mexican peso")
            symbol: "$"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f2-1f1fd.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f2-1f1fd.svg"
            selected: false
        }
 
        ListElement {
            key: "myr"
            shortName: "MYR"
-           //% "Malaysian ringgit"
-           name: qsTrId("malaysian-ringgit")
+           name: qsTr("Malaysian ringgit")
            symbol: "RM"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f2-1f1fe.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f2-1f1fe.svg"
            selected: false
        }
 
        ListElement {
            key: "mzn"
            shortName: "MZN"
-           //% "Mozambican metical"
-           name: qsTrId("mozambican-metical")
+           name: qsTr("Mozambican metical")
            symbol: "MT"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f2-1f1ff.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f2-1f1ff.svg"
            selected: false
        }
 
        ListElement {
            key: "nad"
            shortName: "NAD"
-           //% "Namibian dollar"
-           name: qsTrId("namibian-dollar")
+           name: qsTr("Namibian dollar")
            symbol: "$"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f3-1f1e6.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f3-1f1e6.svg"
            selected: false
        }
 
        ListElement {
            key: "ngn"
            shortName: "NGN"
-           //% "Nigerian naira"
-           name: qsTrId("nigerian-naira")
+           name: qsTr("Nigerian naira")
            symbol: "₦"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f3-1f1ec.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f3-1f1ec.svg"
            selected: false
        }
 
        ListElement {
            key: "nok"
            shortName: "NOK"
-           //% "Norwegian krone"
-           name: qsTrId("norwegian-krone")
+           name: qsTr("Norwegian krone")
            symbol: "kr"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f3-1f1f4.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f3-1f1f4.svg"
            selected: false
        }
 
        ListElement {
            key: "npr"
            shortName: "NPR"
-           //% "Nepalese rupee"
-           name: qsTrId("nepalese-rupee")
+           name: qsTr("Nepalese rupee")
            symbol: "₨"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f3-1f1f5.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f3-1f1f5.svg"
            selected: false
        }
 
        ListElement {
            key: "nzd"
            shortName: "NZD"
-           //% "New Zealand dollar"
-           name: qsTrId("new-zealand-dollar")
+           name: qsTr("New Zealand dollar")
            symbol: "$"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f3-1f1ff.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f3-1f1ff.svg"
            selected: false
        }
 
        ListElement {
            key: "omr"
            shortName: "OMR"
-           //% "Omani rial"
-           name: qsTrId("omani-rial")
+           name: qsTr("Omani rial")
            symbol: "﷼"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f4-1f1f2.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f4-1f1f2.svg"
            selected: false
        }
 
        ListElement {
            key: "pen"
            shortName: "PEN"
-           //% "Peruvian sol"
-           name: qsTrId("peruvian-sol")
+           name: qsTr("Peruvian sol")
            symbol: "S/."
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f5-1f1ea.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f5-1f1ea.svg"
            selected: false
        }
 
        ListElement {
            key: "pgk"
            shortName: "PGK"
-           //% "Papua New Guinean kina"
-           name: qsTrId("papua-new-guinean-kina")
+           name: qsTr("Papua New Guinean kina")
            symbol: "K"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f5-1f1ec.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f5-1f1ec.svg"
            selected: false
        }
 
        ListElement {
            key: "php"
            shortName: "PHP"
-           //% "Philippine peso"
-           name: qsTrId("philippine-peso")
+           name: qsTr("Philippine peso")
            symbol: "₱"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f5-1f1ed.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f5-1f1ed.svg"
            selected: false
        }
 
        ListElement {
            key: "pkr"
            shortName: "PKR"
-           //% "Pakistani rupee"
-           name: qsTrId("pakistani-rupee")
+           name: qsTr("Pakistani rupee")
            symbol: "₨"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f5-1f1f0.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f5-1f1f0.svg"
            selected: false
        }
 
        ListElement {
            key: "pln"
            shortName: "PLN"
-           //% "Polish złoty"
-           name: qsTrId("polish-złoty")
+           name: qsTr("Polish złoty")
            symbol: "zł"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f5-1f1f1.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f5-1f1f1.svg"
            selected: false
        }
 
        ListElement {
            key: "pyg"
            shortName: "PYG"
-           //% "Paraguayan guaraní"
-           name: qsTrId("paraguayan-guaraní")
+           name: qsTr("Paraguayan guaraní")
            symbol: "Gs"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f5-1f1fe.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f5-1f1fe.svg"
            selected: false
        }
 
        ListElement {
            key: "qar"
            shortName: "QAR"
-           //% "Qatari riyal"
-           name: qsTrId("qatari-riyal")
+           name: qsTr("Qatari riyal")
            symbol: "﷼"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f6-1f1e6.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f6-1f1e6.svg"
            selected: false
        }
 
        ListElement {
            key: "ron"
            shortName: "RON"
-           //% "Romanian leu"
-           name: qsTrId("romanian-leu")
+           name: qsTr("Romanian leu")
            symbol: "lei"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f7-1f1f4.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f7-1f1f4.svg"
            selected: false
        }
 
        ListElement {
            key: "rsd"
            shortName: "RSD"
-           //% "Serbian dinar"
-           name: qsTrId("serbian-dinar")
+           name: qsTr("Serbian dinar")
            symbol: "Дин."
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f7-1f1f8.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f7-1f1f8.svg"
            selected: false
        }
 
        ListElement {
            key: "sar"
            shortName: "SAR"
-           //% "Saudi riyal"
-           name: qsTrId("saudi-riyal")
+           name: qsTr("Saudi riyal")
            symbol: "﷼"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f8-1f1e6.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f8-1f1e6.svg"
            selected: false
        }
 
        ListElement {
            key: "sek"
            shortName: "SEK"
-           //% "Swedish krona"
-           name: qsTrId("swedish-krona")
+           name: qsTr("Swedish krona")
            symbol: "kr"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f8-1f1ea.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f8-1f1ea.svg"
            selected: false
        }
 
        ListElement {
            key: "sgd"
            shortName: "SGD"
-           //% "Singapore dollar"
-           name: qsTrId("singapore-dollar")
+           name: qsTr("Singapore dollar")
            symbol: "$"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f8-1f1ec.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f8-1f1ec.svg"
            selected: false
        }
 
        ListElement {
            key: "thb"
            shortName: "THB"
-           //% "Thai baht"
-           name: qsTrId("thai-baht")
+           name: qsTr("Thai baht")
            symbol: "฿"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f9-1f1ed.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f9-1f1ed.svg"
            selected: false
        }
 
        ListElement {
            key: "ttd"
            shortName: "TTD"
-           //% "Trinidad and Tobago dollar"
-           name: qsTrId("trinidad-and-tobago-dollar")
+           name: qsTr("Trinidad and Tobago dollar")
            symbol: "TT$"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f9-1f1f9.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f9-1f1f9.svg"
            selected: false
        }
 
        ListElement {
            key: "twd"
            shortName: "TWD"
-           //% "New Taiwan dollar"
-           name: qsTrId("new-taiwan-dollar")
+           name: qsTr("New Taiwan dollar")
            symbol: "NT$"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f9-1f1fc.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f9-1f1fc.svg"
            selected: false
        }
 
        ListElement {
            key: "tzs"
            shortName: "TZS"
-           //% "Tanzanian shilling"
-           name: qsTrId("tanzanian-shilling")
+           name: qsTr("Tanzanian shilling")
            symbol: "TSh"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f9-1f1ff.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f9-1f1ff.svg"
            selected: false
        }
 
        ListElement {
            key: "try"
            shortName: "TRY"
-           //% "Turkish lira"
-           name: qsTrId("turkish-lira")
+           name: qsTr("Turkish lira")
            symbol: "₺"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1f9-1f1f7.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1f9-1f1f7.svg"
            selected: false
        }
 
        ListElement {
            key: "uah"
            shortName: "UAH"
-           //% "Ukrainian hryvnia"
-           name: qsTrId("ukrainian-hryvnia")
+           name: qsTr("Ukrainian hryvnia")
            symbol: "₴"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1fa-1f1e6.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1fa-1f1e6.svg"
            selected: false
        }
 
        ListElement {
            key: "ugx"
            shortName: "UGX"
-           //% "Ugandan shilling"
-           name: qsTrId("ugandan-shilling")
+           name: qsTr("Ugandan shilling")
            symbol: "USh"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1fa-1f1ec.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1fa-1f1ec.svg"
            selected: false
        }
 
        ListElement {
            key: "uyu"
            shortName: "UYU"
-           //% "Uruguayan peso"
-           name: qsTrId("uruguayan-peso")
+           name: qsTr("Uruguayan peso")
            symbol: "$U"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1fa-1f1fe.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1fa-1f1fe.svg"
            selected: false
        }
 
        ListElement {
            key: "vef"
            shortName: "VEF"
-           //% "Venezuelan bolívar"
-           name: qsTrId("venezuelan-bolívar")
+           name: qsTr("Venezuelan bolívar")
            symbol: "Bs"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1fb-1f1ea.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1fb-1f1ea.svg"
            selected: false
        }
 
        ListElement {
            key: "vnd"
            shortName: "VND"
-           //% "Vietnamese đồng"
-           name: qsTrId("vietnamese-đồng")
+           name: qsTr("Vietnamese đồng")
            symbol: "₫"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1fb-1f1f3.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1fb-1f1f3.svg"
            selected: false
        }
 
        ListElement {
            key: "zar"
            shortName: "ZAR"
-           //% "South African rand"
-           name: qsTrId("south-african-rand")
+           name: qsTr("South African rand")
            symbol: "R"
-           category: "Other Fiat"
-           imageSource: "../../assets/twemoji/26x26/1f1ff-1f1e6.png"
+           category: qsTr("Other Fiat")
+           imageSource: "../../assets/twemoji/svg/1f1ff-1f1e6.svg"
            selected: false
        }
     }

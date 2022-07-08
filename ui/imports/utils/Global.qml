@@ -15,15 +15,12 @@ QtObject {
     property var mainModuleInst
     property var privacyModuleInst
     property bool profilePopupOpened: false
-    property string currentNetworkId: ""
-    property int currentChainId: 0
-    property bool networkGuarded: localAccountSensitiveSettings.isMultiNetworkEnabled || (root.currentNetworkId === Constants.networkMainnet ||
-        (root.currentNetworkId === Constants.networkRopsten && localAccountSensitiveSettings.stickersEnsRopsten))
 
     signal openImagePopup(var image, var contextMenu)
     signal openLinkInBrowser(string link)
     signal openChooseBrowserPopup(string link)
-    signal openDownloadModalRequested()
+    signal openPopupRequested(var popupComponent, var params)
+    signal openDownloadModalRequested(bool available, string version, string url)
     signal settingsLoaded()
     signal openBackUpSeedPopup()
     signal openCreateChatView()
@@ -32,6 +29,7 @@ QtObject {
     signal openProfilePopupRequested(string publicKey, var parentPopup, string state)
     signal openChangeProfilePicPopup()
     signal displayToastMessage(string title, string subTitle, string icon, bool loading, int ephNotifType, string url)
+    signal openEditDisplayNamePopup()
 
     function openProfilePopup(publicKey, parentPopup, state = "") {
         openProfilePopupRequested(publicKey, parentPopup, state);
@@ -43,8 +41,8 @@ QtObject {
         return popup;
     }
 
-    function openDownloadModal(){
-        openDownloadModalRequested();
+    function openDownloadModal(available, version, url){
+        openDownloadModalRequested(available, version, url);
     }
 
     function changeAppSectionBySectionType(sectionType, subsection = 0) {

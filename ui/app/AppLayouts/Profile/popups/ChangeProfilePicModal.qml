@@ -12,8 +12,7 @@ import shared.popups 1.0
 // TODO: replace with StatusModal
 ModalPopup {
     id: popup
-    //% "Profile picture"
-    title: qsTrId("profile-picture")
+    title: qsTr("Profile picture")
 
     property var profileStore
 
@@ -81,8 +80,7 @@ ModalPopup {
         StatusFlatButton {
             visible: popup.hasIdentityImage
             type: StatusBaseButton.Type.Danger
-            //% "Remove"
-            text: qsTrId("remove")
+            text: qsTr("Remove")
             anchors.right: uploadBtn.left
             anchors.rightMargin: Style.current.padding
             anchors.bottom: parent.bottom
@@ -93,8 +91,7 @@ ModalPopup {
 
         StatusButton {
             id: uploadBtn
-            //% "Upload"
-            text: qsTrId("upload")
+            text: qsTr("Upload")
             anchors.right: parent.right
             anchors.bottom: parent.bottom
             onClicked: {
@@ -103,12 +100,10 @@ ModalPopup {
 
             FileDialog {
                 id: imageDialog
-                //% "Please choose an image"
-                title: qsTrId("please-choose-an-image")
+                title: qsTr("Please choose an image")
                 folder: shortcuts.pictures
                 nameFilters: [
-                    //% "Image files (*.jpg *.jpeg *.png)"
-                    qsTrId("image-files----jpg---jpeg---png-")
+                    qsTr("Image files (*.jpg *.jpeg *.png)")
                 ]
                 onAccepted: {
                     selectedImage = imageDialog.fileUrls[0]

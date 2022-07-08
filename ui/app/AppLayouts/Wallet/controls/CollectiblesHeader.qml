@@ -42,8 +42,7 @@ Rectangle {
 
     StyledText {
         visible: collectiblesQty >= Constants.maxTokens
-        //% "Maximum number of collectibles to display reached"
-        text: qsTrId("maximum-number-of-collectibles-to-display-reached")
+        text: qsTr("Maximum number of collectibles to display reached")
         font.pixelSize: 17
         color: Style.current.secondaryText
         anchors.left: collectibleName.right

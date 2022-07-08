@@ -21,6 +21,7 @@ import activity_center/module as activity_center_module
 import communities/module as communities_module
 import node_section/module as node_section_module
 import networks/module as networks_module
+import ../../../app_service/service/contacts/dto/contacts
 
 import ../../../app_service/service/keychain/service as keychain_service
 import ../../../app_service/service/chat/service as chat_service
@@ -51,6 +52,7 @@ import ../../../app_service/service/gif/service as gif_service
 import ../../../app_service/service/ens/service as ens_service
 import ../../../app_service/service/network/service as network_service
 import ../../../app_service/service/general/service as general_service
+from ../../../app_service/common/types import StatusType
 
 import ../../core/notifications/details
 import ../../core/eventemitter
@@ -147,8 +149,10 @@ proc newModule*[T](
     transactionService, collectible_service, walletAccountService,
     settingsService, savedAddressService, networkService,
   )
-  result.browserSectionModule = browser_section_module.newModule(result, events, bookmarkService, settingsService,
-  dappPermissionsService, providerService, walletAccountService)
+  result.browserSectionModule = browser_section_module.newModule(
+    result, events, bookmarkService, settingsService, networkService,
+    dappPermissionsService, providerService, walletAccountService
+  )
   result.profileSectionModule = profile_section_module.newModule(
     result, events, accountsService, settingsService, stickersService,
     profileService, contactsService, aboutService, languageService, privacyService, nodeConfigurationService,
@@ -199,7 +203,7 @@ proc createChannelGroupItem[T](self: Module[T], c: ChannelGroupDto): SectionItem
   result = initItem(
     c.id,
     if isCommunity: SectionType.Community else: SectionType.Chat,
-    c.name,
+    if isCommunity: c.name else: "Chat",
     c.admin,
     c.description,
     c.introMessage,
@@ -208,6 +212,7 @@ proc createChannelGroupItem[T](self: Module[T], c: ChannelGroupDto): SectionItem
     c.images.banner,
     icon = if (isCommunity): "" else: conf.CHAT_SECTION_ICON,
     c.color,
+    if isCommunity: communityDetails.tags else: "",
     hasNotification,
     notificationsCount,
     active,
@@ -229,7 +234,7 @@ proc createChannelGroupItem[T](self: Module[T], c: ChannelGroupDto): SectionItem
         localNickname = contactDetails.details.localNickname,
         alias = contactDetails.details.alias,
         icon = contactDetails.icon,
-        onlineStatus = OnlineStatus.Offline,
+        onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(member.id).statusType),
         isContact = contactDetails.details.added # FIXME
         )),
     if (isCommunity): communityDetails.pendingRequestsToJoin.map(x => pending_request_item.initItem(
@@ -299,7 +304,7 @@ method load*[T](
   hasNotification = false,
   notificationsCount = 0,
   active = false,
-  enabled = singletonInstance.localAccountSensitiveSettings.getIsCommunitiesPortalEnabled())
+  enabled = true)
   self.view.model().addItem(communitiesPortalSectionItem)
   if(activeSectionId == communitiesPortalSectionItem.id):
     activeSection = communitiesPortalSectionItem
@@ -527,10 +532,6 @@ proc setSectionAvailability[T](self: Module[T], sectionType: SectionType, availa
     self.view.model().disableSection(sectionType)
 
 method toggleSection*[T](self: Module[T], sectionType: SectionType) =
-  #if (sectionType == SectionType.CommunitiesPortal):
-  #  let enabled = true #singletonInstance.localAccountSensitiveSettings.getIsCommunitiesPortalEnabled()
-  #  self.setSectionAvailability(sectionType, not enabled)
-  #  singletonInstance.localAccountSensitiveSettings.setIsWalletEnabled(not enabled)
   if (sectionType == SectionType.Wallet):
     let enabled = singletonInstance.localAccountSensitiveSettings.getIsWalletEnabled()
     self.setSectionAvailability(sectionType, not enabled)
@@ -543,13 +544,9 @@ method toggleSection*[T](self: Module[T], sectionType: SectionType) =
     let enabled = singletonInstance.localAccountSensitiveSettings.getNodeManagementEnabled()
     self.setSectionAvailability(sectionType, not enabled)
     singletonInstance.localAccountSensitiveSettings.setNodeManagementEnabled(not enabled)
-  elif (sectionType == SectionType.CommunitiesPortal):
-    let enabled = singletonInstance.localAccountSensitiveSettings.getIsCommunitiesPortalEnabled()
-    self.setSectionAvailability(sectionType, not enabled)
-    singletonInstance.localAccountSensitiveSettings.setIsCommunitiesPortalEnabled(not enabled)
 
-method setUserStatus*[T](self: Module[T], status: bool) =
-  self.controller.setUserStatus(status)
+method setCurrentUserStatus*[T](self: Module[T], status: StatusType) =
+  self.controller.setCurrentUserStatus(status)
 
 proc getChatSectionModule*[T](self: Module[T]): chat_section_module.AccessInterface =
   return self.channelGroupModules[singletonInstance.userProfile.getPubKey()]
@@ -696,7 +693,10 @@ method getContactDetailsAsJson*[T](self: Module[T], publicKey: string): string =
     "isBlocked":contact.blocked,
     "requestReceived":contact.hasAddedUs,
     "isSyncing":contact.isSyncing,
-    "removed":contact.removed
+    "removed":contact.removed,
+    "trustStatus": contact.trustStatus.int,
+    "verificationStatus": contact.verificationStatus.int,
+    "hasAddedUs": contact.hasAddedUs
   }
   return $jsonObj
 
@@ -707,7 +707,7 @@ method resolveENS*[T](self: Module[T], ensName: string, uuid: string, reason: st
   self.controller.resolveENS(ensName, uuid, reason)
 
 method resolvedENS*[T](self: Module[T], publicKey: string, address: string, uuid: string, reason: string) =
-  if(publicKey.len == 0):
+  if(reason.len > 0 and publicKey.len == 0):
     self.displayEphemeralNotification("Unexisting contact", "Wrong public key or ens name", "", false, EphemeralNotificationType.Default.int, "")
     return
   
@@ -740,6 +740,7 @@ method contactUpdated*[T](self: Module[T], publicKey: string) =
     contactDetails.details.localNickname,
     contactDetails.details.alias,
     contactDetails.icon,
+    isUntrustworthy = contactDetails.details.isContactUntrustworthy(),
     )
 
 method calculateProfileSectionHasNotification*[T](self: Module[T]): bool =

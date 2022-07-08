@@ -15,8 +15,7 @@ ModalPopup {
     signal accountSelected(int index)
     signal openModalClicked()
     id: popup
-    //% "Your keys"
-    title: qsTrId("your-keys")
+    title: qsTr("Your keys")
 
     AccountListPanel {
         id: accountList
@@ -37,8 +36,7 @@ ModalPopup {
         anchors.bottom: parent.bottom
         anchors.topMargin: Style.current.padding
         anchors.right: parent.right
-        //% "Add another existing key"
-        text: qsTrId("add-another-existing-key")
+        text: qsTr("Add another existing key")
 
         onClicked : {
            openModalClicked()

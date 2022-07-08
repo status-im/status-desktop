@@ -1,5 +1,6 @@
 import NimQml, Tables, strutils, strformat, json, algorithm
 from ../../../../app_service/service/chat/dto/chat import ChatType
+from ../../../../app_service/service/contacts/dto/contacts import TrustStatus
 import item, sub_item, base_item, sub_model
 
 type
@@ -24,6 +25,7 @@ type
     IsCategory
     CategoryId
     Highlight
+    TrustStatus
 
 QtObject:
   type
@@ -91,7 +93,8 @@ QtObject:
       ModelRole.SubItems.int:"subItems",
       ModelRole.IsCategory.int:"isCategory",
       ModelRole.CategoryId.int:"categoryId",
-      ModelRole.Highlight.int:"highlight"
+      ModelRole.Highlight.int:"highlight",
+      ModelRole.TrustStatus.int:"trustStatus",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -145,6 +148,8 @@ QtObject:
       result = newQVariant(item.categoryId)
     of ModelRole.Highlight:
       result = newQVariant(item.highlight)
+    of ModelRole.TrustStatus:
+      result = newQVariant(item.trustStatus.int)
 
   proc appendItem*(self: Model, item: Item) =
     let parentModelIndex = newQModelIndex()
@@ -244,7 +249,16 @@ QtObject:
         return
 
       if self.items[i].subItems.muteUnmuteItemById(id, mute):
+        self.items[i].BaseItem.muted = self.items[i].subItems.isAllMuted()
         return
+  
+  proc muteUnmuteItemsOrSubItemsByCategoryId*(self: Model, categoryId: string, mute: bool) =
+    for i in 0 ..< self.items.len:
+      if(self.items[i].categoryId == categoryId):
+        let index = self.createIndex(i, 0, nil)
+        self.items[i].subItems.muteUnmuteAll(mute)
+        self.items[i].BaseItem.muted = mute
+        self.dataChanged(index, index, @[ModelRole.Muted.int])
 
   proc blockUnblockItemOrSubItemById*(self: Model, id: string, blocked: bool) =
     for i in 0 ..< self.items.len:
@@ -257,14 +271,16 @@ QtObject:
       if self.items[i].subItems.blockUnblockItemById(id, blocked):
         return
 
-  proc updateItemDetails*(self: Model, id, name, icon: string) =
+  proc updateItemDetails*(self: Model, id, name, icon: string, trustStatus: TrustStatus) =
     ## This updates only first level items, it doesn't update subitems, since subitems cannot have custom icon.
     for i in 0 ..< self.items.len:
       if(self.items[i].id == id):
         self.items[i].BaseItem.name = name
         self.items[i].BaseItem.icon = icon
+        self.items[i].BaseItem.trustStatus = trustStatus
         let index = self.createIndex(i, 0, nil)
-        self.dataChanged(index, index, @[ModelRole.Name.int, ModelRole.Icon.int])
+        self.dataChanged(index, index, @[ModelRole.Name.int, ModelRole.Icon.int,
+          ModelRole.TrustStatus.int])
         return
 
   proc renameItem*(self: Model, id: string, name: string) =

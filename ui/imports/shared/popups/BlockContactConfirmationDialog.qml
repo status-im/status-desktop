@@ -21,8 +21,7 @@ ModalPopup {
 
     signal blockButtonClicked()
 
-    //% "Block User"
-    title: qsTrId("block-user")
+    title: qsTr("Block User")
 
     StyledText {
         text: qsTr("Blocking will stop new messages from reaching you from %1.").arg(contactName)
@@ -41,8 +40,7 @@ ModalPopup {
             anchors.right: parent.right
             anchors.rightMargin: Style.current.smallPadding
             type: StatusBaseButton.Type.Danger
-            //% "Block User"
-            text: qsTrId("block-user")
+            text: qsTr("Block User")
             anchors.bottom: parent.bottom
             onClicked: blockContactConfirmationDialog.blockButtonClicked()
         }

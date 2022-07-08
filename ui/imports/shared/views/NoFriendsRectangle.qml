@@ -13,8 +13,7 @@ Item {
     width: 260
     height: visible ? 120 : 0
 
-    //% "You don’t have any contacts yet. Invite your friends to start chatting."
-    property string text: qsTrId("you-don-t-have-any-contacts-yet--invite-your-friends-to-start-chatting-")
+    property string text: qsTr("You don’t have any contacts yet. Invite your friends to start chatting.")
     property alias textColor: noContacts.color
     property var rootStore
 
@@ -31,8 +30,7 @@ Item {
         horizontalAlignment: Text.AlignHCenter
     }
     StatusButton {
-        //% "Invite friends"
-        text: qsTrId("invite-friends")
+        text: qsTr("Invite friends")
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: noContacts.bottom
         anchors.topMargin: Style.current.padding

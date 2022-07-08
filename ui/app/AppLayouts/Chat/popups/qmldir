@@ -2,4 +2,3 @@ PinnedMessagesPopup 1.0 PinnedMessagesPopup.qml
 ChooseBrowserPopup 1.0 ChooseBrowserPopup.qml
 InviteFriendsToCommunityPopup 1.0 community/InviteFriendsToCommunityPopup.qml
 CommunityProfilePopup 1.0 community/CommunityProfilePopup.qml
-CreateCommunityPopup 1.0 community/CreateCommunityPopup.qml

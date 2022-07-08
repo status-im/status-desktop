@@ -55,8 +55,7 @@ Item {
         anchors.top: parent.top
         anchors.topMargin: 16
         anchors.horizontalCenter: parent.horizontalCenter
-        //% "Chat"
-        text: qsTrId("chat")
+        text: qsTr("Chat")
     }
 
     RowLayout {
@@ -73,8 +72,7 @@ Item {
             Layout.alignment: Qt.AlignVCenter
             implicitHeight: 36
             topPadding: 9
-            //% "Search"
-            placeholderText: qsTrId("search")
+            placeholderText: qsTr("Search")
             icon.name: "search"
             MouseArea {
                 anchors.fill: parent
@@ -84,37 +82,24 @@ Item {
             }
         }
 
-        StatusIconTabButton {
+        StatusRoundButton {
             icon.name: "public-chat"
-            checked: publicChatCommunityContextMenu.visible
-            highlighted: publicChatCommunityContextMenu.visible
-            onClicked: { publicChatCommunityContextMenu.popup(); }
-            StatusPopupMenu {
-                 id: publicChatCommunityContextMenu
-                 closePolicy: Popup.CloseOnReleaseOutsideParent | Popup.CloseOnEscape
-                 StatusMenuItem {
-                     //% "Join public chat"
-                     text: qsTrId("new-public-group-chat")
-                     icon.name: "public-chat"
-                     onTriggered: Global.openPopup(publicChatPopupComponent)
-                 }
+            icon.height: editBtn.icon.height
+            icon.width: editBtn.icon.width
+            implicitWidth: editBtn.implicitWidth
+            implicitHeight: editBtn.implicitHeight
+            type: StatusRoundButton.Type.Tertiary
 
-                 StatusMenuItem {
-                     //% "Communities"
-                     text: qsTrId("communities")
-                     icon.name: "communities"
-                     onTriggered: Global.openPopup(communitiesPopupComponent)
-                 }
-            }
+            onClicked: { Global.openPopup(publicChatPopupComponent) }
 
             StatusToolTip {
-              text: qsTr("Public chats & communities")
+              text: qsTr("Join public chats")
               visible: parent.hovered
             }
         }
 
-
         StatusIconTabButton {
+            id: editBtn
             icon.name: "edit"
             checked: root.store.openCreateChat
             highlighted: root.store.openCreateChat
@@ -147,8 +132,7 @@ Item {
         visible: nbRequests > 0
         height: visible ? implicitHeight : 0
 
-        //% "Contact requests"
-        title: qsTrId("contact-requests")
+        title: qsTr("Contact requests")
         requestsCount: nbRequests
 
         sensor.onClicked: Global.openPopup(contactRequestsPopup)
@@ -322,28 +306,6 @@ Item {
     }
 
     Component {
-        id: createCommunitiesPopupComponent
-        CreateCommunityPopup {
-            anchors.centerIn: parent
-            store: root.store
-            onClosed: {
-                destroy()
-            }
-        }
-    }
-
-    Component {
-        id: importCommunitiesPopupComponent
-        ImportCommunityPopup {
-            anchors.centerIn: parent
-            store: root.store
-            onClosed: {
-                destroy()
-            }
-        }
-    }
-
-    Component {
         id: communityDetailPopup
         CommunityDetailPopup {
             anchors.centerIn: parent
@@ -372,13 +334,11 @@ Item {
 
             if (state === Constants.communityImported)
             {
-                //% "Community imported"
-                title = qsTrId("community-imported")
+                title = qsTr("Community imported")
             }
             else if (state === Constants.communityImportingInProgress)
             {
-                //% "Importing community is in progress"
-                title = qsTrId("importing-community-is-in-progress")
+                title = qsTr("Importing community is in progress")
                 loading = true
             }
             else if (state === Constants.communityImportingError)

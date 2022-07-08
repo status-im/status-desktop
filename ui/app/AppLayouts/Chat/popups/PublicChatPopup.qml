@@ -19,11 +19,9 @@ ModalPopup {
     signal suggestedMessageClicked(string channel)
     function validate() {
         if (channelName.text === "") {
-            //% "You need to enter a channel name"
-            channelNameValidationError = qsTrId("you-need-to-enter-a-channel-name")
+            channelNameValidationError = qsTr("You need to enter a channel name")
         } else if (!Utils.isValidChannelName(channelName.text)) {
-            //% "The channel name can only contain lowercase letters, numbers and dashes"
-            channelNameValidationError = qsTrId("the-channel-name-can-only-contain-lowercase-letters--numbers-and-dashes")
+            channelNameValidationError = qsTr("The channel name can only contain lowercase letters, numbers and dashes")
         } else {
             channelNameValidationError = ""
         }
@@ -40,8 +38,7 @@ ModalPopup {
     }
 
     id: popup
-    //% "Join public chat"
-    title: qsTrId("new-public-group-chat")
+    title: qsTr("Join public chat")
 
     onOpened: {
         channelName.text = "";
@@ -57,8 +54,7 @@ ModalPopup {
         StyledText {
             width: parent.width
             font.pixelSize: 15
-            //% "A public chat is where you get to hang out with others, make friends and talk about subjects of your interest."
-            text: qsTrId("a-public-chat-is-where-you-get-to-hang-out-with-others,-make-friends-and-talk-about-subjects-of-your-interest.")
+            text: qsTr("A public chat is where you get to hang out with others, make friends and talk about subjects of your interest.")
             wrapMode: Text.WordWrap
             verticalAlignment: Text.AlignTop
         }
@@ -68,8 +64,7 @@ ModalPopup {
         id: channelName
         anchors.top: description.bottom
         anchors.topMargin: Style.current.padding
-        //% "chat-name"
-        placeholderText: qsTrId("chat-name")
+        placeholderText: qsTr("chat-name")
         Keys.onEnterPressed: doJoin()
         Keys.onReturnPressed: doJoin()
         icon: Style.svg("hash")
@@ -111,7 +106,6 @@ ModalPopup {
         anchors.bottom: parent.bottom
         anchors.right: parent.right
         onClicked : doJoin()
-        //% "Start chat"
-        text: qsTrId("start-chat")
+        text: qsTr("Start chat")
     }
 }

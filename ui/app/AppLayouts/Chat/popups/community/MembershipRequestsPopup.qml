@@ -20,8 +20,7 @@ StatusModal {
         contentItem.errorText.text = ""
     }
 
-    //% "Membership requests"
-    header.title: qsTrId("membership-requests")
+    header.title: qsTr("Membership requests")
     header.subTitle: contentItem.membershipRequestList.count
 
     contentItem: Column {

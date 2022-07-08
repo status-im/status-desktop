@@ -229,7 +229,6 @@ QtObject {
         if(Number.isInteger(value) && value > 0) {
             return true;
         }
-        console.error(qsTr("timestamp must be type of int and greater than 0 (%1)").arg(errorLocation));
         return false;
     }
 
@@ -254,45 +253,26 @@ QtObject {
     function formatShortDateStr(longStr) {
         const dmKeys = {
             // Days
-            //% "Sun"
-            Sunday: qsTrId("sun"),
-            //% "Mon"
-            Monday: qsTrId("mon"),
-            //% "Tue"
-            Tuesday: qsTrId("tue"),
-            //% "Wed"
-            Wednesday: qsTrId("wed"),
-            //% "Thu"
-            Thursday: qsTrId("thu"),
-            //% "Fri"
-            Friday: qsTrId("fri"),
-            //% "Sat"
-            Saturday: qsTrId("sat"),
+            Sunday: qsTr("Sun"),
+            Monday: qsTr("Mon"),
+            Tuesday: qsTr("Tue"),
+            Wednesday: qsTr("Wed"),
+            Thursday: qsTr("Thu"),
+            Friday: qsTr("Fri"),
+            Saturday: qsTr("Sat"),
             // Months
-            //% "Jan"
-            January: qsTrId("jan"),
-            //% "Feb"
-            February: qsTrId("feb"),
-            //% "Mar"
-            March: qsTrId("mar"),
-            //% "Apr"
-            April: qsTrId("apr"),
-            //% "May"
-            May: qsTrId("may"),
-            //% "Jun"
-            June: qsTrId("jun"),
-            //% "Jul"
-            July: qsTrId("jul"),
-            //% "Aug"
-            August: qsTrId("aug"),
-            //% "Sep"
-            September: qsTrId("sep"),
-            //% "Oct"
-            October: qsTrId("oct"),
-            //% "Nov"
-            November: qsTrId("nov"),
-            //% "Dec"
-            December: qsTrId("dec")
+            January: qsTr("Jan"),
+            February: qsTr("Feb"),
+            March: qsTr("Mar"),
+            April: qsTr("Apr"),
+            May: qsTr("May"),
+            June: qsTr("Jun"),
+            July: qsTr("Jul"),
+            August: qsTr("Aug"),
+            September: qsTr("Sep"),
+            October: qsTr("Oct"),
+            November: qsTr("Nov"),
+            December: qsTr("Dec")
         };
 
         let shortStr = longStr;
@@ -339,23 +319,15 @@ QtObject {
         if (now.toDateString() === messageDate.toDateString()) {
             return (hours < 10 ? "0" + hours : hours) + ":" + (minutes < 10 ? "0" + minutes : minutes)
         } else if (yesterday.toDateString() === messageDate.toDateString()) {
-            //% "Yesterday"
-            return qsTrId("yesterday")
+            return qsTr("Yesterday")
         } else if (lastWeek.getTime() < messageDate.getTime()) {
-            //% "Sunday"
-            let days = [qsTrId("sunday"),
-                        //% "Monday"
-                        qsTrId("monday"),
-                        //% "Tuesday"
-                        qsTrId("tuesday"),
-                        //% "Wednesday"
-                        qsTrId("wednesday"),
-                        //% "Thursday"
-                        qsTrId("thursday"),
-                        //% "Friday"
-                        qsTrId("friday"),
-                        //% "Saturday"
-                        qsTrId("saturday")];
+            let days = [qsTr("Sunday"),
+                        qsTr("Monday"),
+                        qsTr("Tuesday"),
+                        qsTr("Wednesday"),
+                        qsTr("Thursday"),
+                        qsTr("Friday"),
+                        qsTr("Saturday")];
             return days[messageDate.getDay()];
         } else {
             return formatShortDateStr(new Date().toLocaleDateString(Qt.locale(locale)))
@@ -370,21 +342,17 @@ QtObject {
         const diffMs = now - messageDate
         const diffMin = Math.floor(diffMs / 60000)
         if (diffMin < 1) {
-            //% "NOW"
-            return qsTrId("now")
+            return qsTr("NOW")
         }
         const diffHour = Math.floor(diffMin / 60)
         if (diffHour < 1) {
-            //% "%1M"
-            return qsTrId("-1m").arg(diffMin)
+            return qsTr("%1M").arg(diffMin)
         }
         const diffDay = Math.floor(diffHour / 24)
         if (diffDay < 1) {
-            //% "%1H"
-            return qsTrId("-1h").arg(diffHour)
+            return qsTr("%1H").arg(diffHour)
         }
-        //% "%1D"
-        return qsTrId("-1d").arg(diffDay)
+        return qsTr("%1D").arg(diffDay)
     }
 
     function findAssetByChainAndSymbol(chainIdToFind, assets, symbolToFind) {
@@ -448,51 +416,29 @@ QtObject {
      */
     function seedPhraseWordCountText(text) {
         let wordCount = countWords(text);
-        //% "words"
-        return getTick(wordCount) + wordCount.toString() + " " + qsTrId("words")
+        return getTick(wordCount) + wordCount.toString() + " " + qsTr("words")
     }
 
     function uuid() {
         return Date.now().toString(36) + Math.random().toString(36).substr(2, 5)
     }
 
-    function getNetworkName(network){
-        switch(network){
-            //% "Mainnet with upstream RPC"
-            case Constants.networkMainnet: return qsTrId("mainnet-with-upstream-rpc")
-            //% "POA Network"
-            case Constants.networkPOA: return qsTrId("poa-network")
-            //% "xDai Chain"
-            case Constants.networkXDai: return qsTrId("xdai-chain")
-            //% "Goerli with upstream RPC"
-            case Constants.networkGoerli: return qsTrId("goerli-with-upstream-rpc")
-            //% "Rinkeby with upstream RPC"
-            case Constants.networkRinkeby: return qsTrId("rinkeby-with-upstream-rpc")
-            //% "Ropsten with upstream RPC"
-            case Constants.networkRopsten: return qsTrId("ropsten-with-upstream-rpc")
-            default: return network
-        }
-    }
 
     function validatePasswords(item, firstPasswordField, repeatPasswordField) {
         switch (item) {
             case "first":
                 if (firstPasswordField.text === "") {
-                    //% "You need to enter a password"
-                    return [false, qsTrId("you-need-to-enter-a-password")];
+                    return [false, qsTr("You need to enter a password")];
                 } else if (firstPasswordField.text.length < 6) {
-                    //% "Password needs to be 6 characters or more"
-                    return [false, qsTrId("password-needs-to-be-6-characters-or-more")];
+                    return [false, qsTr("Password needs to be 6 characters or more")];
                 }
                 return [true, ""];
 
             case "repeat":
                 if (repeatPasswordField.text === "") {
-                    //% "You need to repeat your password"
-                    return [false, qsTrId("you-need-to-repeat-your-password")];
+                    return [false, qsTr("You need to repeat your password")];
                 } else if (repeatPasswordField.text !== firstPasswordField.text) {
-                    //% "Passwords don't match"
-                    return [false, qsTrId("passwords-don-t-match")];
+                    return [false, qsTr("Passwords don't match")];
                 }
                 return [true, ""];
 
@@ -583,23 +529,19 @@ QtObject {
         let errMsg = ""
 
         if(validation & Utils.Validate.NoEmpty && str === "") {
-            //% "You need to enter a %1"
-            errMsg = qsTrId("you-need-to-enter-a--1").arg(fieldName)
+            errMsg = qsTr("You need to enter a %1").arg(fieldName)
         }
 
         if(validation & Utils.Validate.TextLength && str.length > limit) {
-            //% "The %1 cannot exceed %2 characters"
-            errMsg = qsTrId("the--1-cannot-exceed--2-characters").arg(fieldName, limit)
+            errMsg = qsTr("The %1 cannot exceed %2 characters").arg(fieldName, limit)
         }
 
         if(validation & Utils.Validate.TextHexColor && !isHexColor(str)) {
-            //% "Must be an hexadecimal color (eg: #4360DF)"
-            errMsg = qsTrId("must-be-an-hexadecimal-color--eg---4360df-")
+            errMsg = qsTr("Must be an hexadecimal color (eg: #4360DF)")
         }
 
         if(validation & Utils.Validate.TextLowercaseLettersNumberAndDashes && !isValidChannelName(str)) {
-            //% "Use only lowercase letters (a to z), numbers & dashes (-). Do not use chat keys."
-            errMsg = qsTrId("use-only-lowercase-letters--a-to-z---numbers---dashes------do-not-use-chat-keys-")
+            errMsg = qsTr("Use only lowercase letters (a to z), numbers & dashes (-). Do not use chat keys.")
         }
 
         return errMsg
@@ -658,7 +600,9 @@ QtObject {
                 isBlocked: false,
                 requestReceived: false,
                 isSyncing: false,
-                removed: false
+                removed: false,
+                trustStatus: Constants.trustStatus.unknown,
+                verificationStatus: Constants.verificationStatus.unverified
             }
         }
     }
@@ -702,7 +646,11 @@ QtObject {
             return ""
         }
         let compressedPk = getCompressedPk(publicKey)
-        return compressedPk.substr(0, 6) + "..." + compressedPk.substr(compressedPk.length - 3)
+        return elideText(compressedPk, 6, 3)
+    }
+
+    function elideText(text, leftCharsCount, rightCharsCount = leftCharsCount) {
+        return text.substr(0, leftCharsCount) + "..." + text.substr(text.length - rightCharsCount)
     }
 
     function getTimeDifference(d1, d2) {
@@ -718,8 +666,6 @@ QtObject {
         var inYears = day2Year-day1Year
 
         if(inYears > 0) {
-            //% "years ago"
-            //% "year ago"
             timeString =  inYears > 1 ? qsTr("years ago") : qsTr("year ago")
             return inYears + " " + timeString
         }
@@ -727,8 +673,6 @@ QtObject {
         var inMonths = (day2Month+12*day2Year)-(day1Month+12*day1Year)
 
         if(inMonths > 0) {
-            //% "months ago"
-            //% "month ago"
             timeString =  inMonths > 1 ? qsTr("months ago") : qsTr("month ago")
             return inMonths + " " + timeString
         }
@@ -736,8 +680,6 @@ QtObject {
         var inWeeks = parseInt((day2Time-day2Time)/(24*3600*1000*7))
 
         if(inWeeks > 0) {
-            //% "weeks ago"
-            //% "week ago"
             timeString =  inWeeks > 1 ? qsTr("weeks ago") : qsTr("week ago")
             return inWeeks + " " + timeString
         }
@@ -745,8 +687,6 @@ QtObject {
         var inDays = parseInt((day2Time-day1Time)/(24*3600*1000))
 
         if(inDays > 0) {
-            //% "days ago"
-            //% "day ago"
             timeString =  inDays > 1 ? qsTr("days ago") : qsTr("day ago")
             return inDays + " " + timeString
         }
@@ -754,8 +694,6 @@ QtObject {
         var inHours = parseInt((day2Time-day1Time)/(3600*1000));
 
         if(inHours > 0) {
-            //% "hours ago"
-            //% "hour ago"
             timeString =  inHours > 1 ? qsTr("hours ago") : qsTr("hour ago")
             return inHours + " " + timeString
         }
@@ -763,8 +701,6 @@ QtObject {
         var inMins = parseInt((day2Time-day1Time)/(60*1000))
 
         if(inMins > 0) {
-            //% "mins ago"
-            //% "min ago"
             timeString =  inMins > 1 ? qsTr("mins ago") : qsTr("min ago")
             return inMins + " " + timeString
         }
@@ -772,13 +708,10 @@ QtObject {
         var inSecs = parseInt((day2Time-day1Time)/(1000));
 
         if(inSecs > 0) {
-            //% "secs ago"
-            //% "sec ago"
             timeString =  inSecs > 1 ? qsTr("secs ago") : qsTr("sec ago")
             return inSecs + " " + timeString
         }
 
-        //% "now"
         return qsTr("now")
     }
 

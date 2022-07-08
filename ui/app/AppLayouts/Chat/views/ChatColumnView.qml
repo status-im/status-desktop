@@ -45,6 +45,7 @@ Item {
     property bool isSectionActive: mainModule.activeSection.id === parentModule.getMySectionId()
     property string activeChatId: parentModule && parentModule.activeItem.id
     property string activeSubItemId: parentModule && parentModule.activeItem.activeSubItem.id
+    property int chatsCount: parentModule && parentModule.model ? parentModule.model.count : 0
     property string activeChatType: parentModule && parentModule.activeItem.type
     property string currentNotificationChatId
     property string currentNotificationCommunityId
@@ -160,7 +161,7 @@ Item {
 
     EmptyChatPanel {
         anchors.fill: parent
-        visible: root.activeChatId === ""
+        visible: root.activeChatId === "" || root.chatsCount == 0
         rootStore: root.rootStore
         onShareChatKeyClicked: Global.openProfilePopup(userProfile.pubKey);
     }
@@ -312,11 +313,9 @@ Item {
             }
             sendChatCommand: root.requestAddressForTransaction
             isRequested: false
-            //% "Send"
-            commandTitle: qsTrId("command-button-send")
+            commandTitle: qsTr("Send")
             header.title: commandTitle
-            //% "Request Address"
-            finalButtonLabel: qsTrId("request-address")
+            finalButtonLabel: qsTr("Request Address")
             selectRecipient.selectedRecipient: {
                 parentModule.prepareChatContentModuleForChatId(activeChatId)
                 let chatContentModule = parentModule.getChatContentModule()
@@ -347,11 +346,9 @@ Item {
             }
             sendChatCommand: root.requestTransaction
             isRequested: true
-            //% "Request"
-            commandTitle: qsTrId("wallet-request")
+            commandTitle: qsTr("Request")
             header.title: commandTitle
-            //% "Request"
-            finalButtonLabel: qsTrId("wallet-request")
+            finalButtonLabel: qsTr("Request")
             selectRecipient.selectedRecipient: {
                 parentModule.prepareChatContentModuleForChatId(activeChatId)
                 let chatContentModule = parentModule.getChatContentModule()
@@ -419,11 +416,9 @@ Item {
 //            }
 //            onTransactionCompleted: {
 //                toastMessage.title = !success ?
-//                                     //% "Could not buy Stickerpack"
-//                                     qsTrId("could-not-buy-stickerpack")
+//                                     qsTr("Could not buy Stickerpack")
 //                                     :
-//                                     //% "Stickerpack bought successfully"
-//                                     qsTrId("stickerpack-bought-successfully");
+//                                     qsTr("Stickerpack bought successfully");
 //                if (success) {
 //                    toastMessage.source = Style.svg("check-circle")
 //                    toastMessage.iconColor = Style.current.success

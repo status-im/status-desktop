@@ -1,0 +1,6 @@
+add_subdirectory(ApplicationCore)
+add_subdirectory(Assets)
+add_subdirectory(Helpers)
+add_subdirectory(Onboarding)
+add_subdirectory(StatusGoQt)
+add_subdirectory(StatusQ)

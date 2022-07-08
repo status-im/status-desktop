@@ -8,8 +8,7 @@ import StatusQ.Controls 0.1
 
 StatusInput {
     id: searchBox
-    //% "Search"
-    input.placeholderText: qsTrId("search")
+    input.placeholderText: qsTr("Search")
     input.icon.name: "search"
     input.clearable: true
     leftPadding: 0

@@ -8,8 +8,9 @@ type
     available: bool
     icon: string
     color: string
+    tags: string
     members: int
-    
+
 proc initCuratedCommunityItem*(
   id: string,
   name: string,
@@ -17,6 +18,7 @@ proc initCuratedCommunityItem*(
   available: bool,
   icon: string,
   color: string,
+  tags: string,
   members: int
 ): CuratedCommunityItem =
   result.id = id
@@ -25,6 +27,7 @@ proc initCuratedCommunityItem*(
   result.available = available
   result.icon = icon
   result.color = color
+  result.tags  = tags
   result.members = members
 
 proc `$`*(self: CuratedCommunityItem): string =
@@ -34,6 +37,7 @@ proc `$`*(self: CuratedCommunityItem): string =
     description: {self.description},
     available: {self.available},
     color: {self.color},
+    tags: {self.tags},
     members: {self.members}
     ]"""
 
@@ -57,3 +61,6 @@ proc getMembers*(self: CuratedCommunityItem): int =
 
 proc getColor*(self: CuratedCommunityItem): string =
   return self.color
+
+proc getTags*(self: CuratedCommunityItem): string =
+  return self.tags

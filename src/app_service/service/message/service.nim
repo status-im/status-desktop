@@ -4,6 +4,7 @@ import ../../../app/core/tasks/[qt, threadpool]
 import ../../../app/core/signals/types
 import ../../../app/core/eventemitter
 import ../../../app/global/global_singleton
+import ../../../backend/accounts as status_accounts
 import ../../../backend/messages as status_go
 import ../contacts/service as contact_service
 import ../token/service as token_service
@@ -290,14 +291,22 @@ QtObject:
     return self.pinnedMsgCursor[chatId]
 
   proc getTransactionDetails*(self: Service, message: MessageDto): (string, string) =
-    # TODO(alaibe): handle multi network
-    let networkDto = self.networkService.getNetworks()[0]
-    let ethereum = newTokenDto("Ethereum", networkDto.chainId, parseAddress(ZERO_ADDRESS), "ETH", 18, true)
-    let tokenContract = if message.transactionParameters.contract == "" : ethereum else: self.tokenService.findTokenByAddress(networkDto, parseAddress(message.transactionParameters.contract))
-    let tokenContractStr = if tokenContract == nil: "{}" else: $(Json.encode(tokenContract))
-    var weiStr = if tokenContract == nil: "0" else: service_conversion.wei2Eth(message.transactionParameters.value, tokenContract.decimals)
+    let networksDto = self.networkService.getNetworks()
+    var token = newTokenDto(networksDto[0].nativeCurrencyName, networksDto[0].chainId, parseAddress(ZERO_ADDRESS), networksDto[0].nativeCurrencySymbol, networksDto[0].nativeCurrencyDecimals, true)
+    
+    if message.transactionParameters.contract != "":
+      for networkDto in networksDto:
+        let tokenFound = self.tokenService.findTokenByAddress(networkDto, parseAddress(message.transactionParameters.contract))
+        if tokenFound == nil:
+          continue
+
+        token = tokenFound
+        break
+    
+    let tokenStr = $(Json.encode(token))
+    var weiStr = service_conversion.wei2Eth(message.transactionParameters.value, token.decimals)
     weiStr.trimZeros()
-    return (tokenContractStr, weiStr)
+    return (tokenStr, weiStr)
 
   proc onAsyncLoadMoreMessagesForChat*(self: Service, response: string) {.slot.} =
     let responseObj = response.parseJson
@@ -665,8 +674,11 @@ proc renderInline(self: Service, parsedText: ParsedText): string =
     of PARSED_TEXT_CHILD_TYPE_STRONG_EMPH:
       result = fmt(" <strong><em>{value}</em></strong> ")
     of PARSED_TEXT_CHILD_TYPE_MENTION:
-      let contactDto = self.contactService.getContactById(value)
-      result = fmt("<a href=\"//{value}\" class=\"mention\">{contactDto.userNameOrAlias()}</a>")
+      var id = value
+      if isCompressedPubKey(id):
+        id = status_accounts.decompressPk(id).result
+      let contactDto = self.contactService.getContactById(id)
+      result = fmt("<a href=\"//{id}\" class=\"mention\">{contactDto.userNameOrAlias()}</a>")
     of PARSED_TEXT_CHILD_TYPE_STATUS_TAG:
       result = fmt("<a href=\"#{value}\" class=\"status-tag\">#{value}</a>")
     of PARSED_TEXT_CHILD_TYPE_DEL:

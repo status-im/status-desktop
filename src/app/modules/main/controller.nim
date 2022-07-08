@@ -2,9 +2,10 @@ import ../shared_models/section_item, io_interface, chronicles
 import ../../global/app_sections_config as conf
 import ../../global/global_singleton
 import ../../global/app_signals
-import ../../core/signals/types
+import ../../core/signals/types as signal_types
 import ../../core/eventemitter
 import ../../core/notifications/notifications_manager
+import ../../../app_service/common/types
 import ../../../app_service/service/settings/service as settings_service
 import ../../../app_service/service/keychain/service as keychain_service
 import ../../../app_service/service/accounts/service as accounts_service
@@ -173,6 +174,18 @@ proc init*(self: Controller) =
     var args = ContactArgs(e)
     self.delegate.contactUpdated(args.contactId)
 
+  self.events.on(SIGNAL_CONTACT_UNTRUSTWORTHY) do(e: Args):
+    var args = TrustArgs(e)
+    self.delegate.contactUpdated(args.publicKey)
+
+  self.events.on(SIGNAL_CONTACT_TRUSTED) do(e: Args):
+    var args = TrustArgs(e)
+    self.delegate.contactUpdated(args.publicKey)
+
+  self.events.on(SIGNAL_REMOVED_TRUST_STATUS) do(e: Args):
+    var args = TrustArgs(e)
+    self.delegate.contactUpdated(args.publicKey)
+
   self.events.on(SIGNAL_MNEMONIC_REMOVAL) do(e: Args):
     self.delegate.mnemonicBackedUp()
 
@@ -205,10 +218,7 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_CURRENT_USER_STATUS_UPDATED) do (e: Args):
     var args = CurrentUserStatusArgs(e)
-    var status = true
-    if args.statusType == StatusType.Invisible:
-      status = false
-    singletonInstance.userProfile.setUserStatus(status)
+    singletonInstance.userProfile.setCurrentUserStatus(args.statusType.int)
 
 proc isConnected*(self: Controller): bool =
   return self.nodeService.isConnected()
@@ -272,9 +282,10 @@ proc getNumOfNotificationsForCommunity*(self: Controller, communityId: string): 
     result.unviewed += chat.unviewedMessagesCount
     result.mentions += chat.unviewedMentionsCount
 
-proc setUserStatus*(self: Controller, status: bool) =
+proc setCurrentUserStatus*(self: Controller, status: StatusType) =
   if(self.settingsService.saveSendStatusUpdates(status)):
-    singletonInstance.userProfile.setUserStatus(status)
+    singletonInstance.userProfile.setCurrentUserStatus(status.int)
+    self.contactsService.emitCurrentUserStatusChanged(self.settingsService.getCurrentUserStatus())
   else:
     error "error updating user status"
 
@@ -303,3 +314,6 @@ proc switchTo*(self: Controller, sectionId, chatId, messageId: string) =
 
 proc getCommunityById*(self: Controller, communityId: string): CommunityDto =
   return self.communityService.getCommunityById(communityId)
+
+proc getStatusForContactWithId*(self: Controller, publicKey: string): StatusUpdateDto =
+  return self.contactsService.getStatusForContactWithId(publicKey)

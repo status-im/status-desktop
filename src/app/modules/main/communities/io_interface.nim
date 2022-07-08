@@ -13,6 +13,9 @@ method load*(self: AccessInterface) {.base.} =
 method isLoaded*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method setCommunityTags*(self: AccessInterface, communityTags: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method setAllCommunities*(self: AccessInterface, communities: seq[CommunityDto]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -25,7 +28,9 @@ method getCommunityItem*(self: AccessInterface, community: CommunityDto): Sectio
 method joinCommunity*(self: AccessInterface, communityId: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method createCommunity*(self: AccessInterface, name: string, description, introMessage, outroMessage: string, access: int, color: string, imagePath: string, aX: int, aY: int, bX: int, bY: int, historyArchiveSupportEnabled: bool, pinMessageAllMembersEnabled: bool) {.base.} =
+method createCommunity*(self: AccessInterface, name: string, description, introMessage, outroMessage: string, access: int,
+                        color: string, tags: string, imagePath: string, aX: int, aY: int, bX: int, bY: int,
+                        historyArchiveSupportEnabled: bool, pinMessageAllMembersEnabled: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method deleteCommunityCategory*(self: AccessInterface, communityId: string, categoryId: string) {.base.} =

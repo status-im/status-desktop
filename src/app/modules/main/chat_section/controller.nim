@@ -90,7 +90,7 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_CONTACT_ADDED) do(e: Args):
     var args = ContactArgs(e)
-    self.delegate.onContactAccepted(args.contactId)
+    self.delegate.onContactAdded(args.contactId)
 
   self.events.on(SIGNAL_CONTACT_REMOVED) do(e: Args):
     var args = ContactArgs(e)
@@ -171,6 +171,16 @@ proc init*(self: Controller) =
       let args = ReloadMessagesArgs(e)
       if (args.communityId == self.sectionId):
         self.messageService.asyncLoadInitialMessagesForChat(self.getActiveChatId())
+    
+    self.events.on(SIGNAL_CATEGORY_MUTED) do(e: Args):
+      let args = CategoryArgs(e)
+      if (args.communityId == self.sectionId):
+        self.delegate.onCategoryMuted(args.categoryId)
+    
+    self.events.on(SIGNAL_CATEGORY_UNMUTED) do(e: Args):
+      let args = CategoryArgs(e)
+      if (args.communityId == self.sectionId):
+        self.delegate.onCategoryUnmuted(args.categoryId)
 
   self.events.on(SIGNAL_CONTACT_NICKNAME_CHANGED) do(e: Args):
     var args = ContactArgs(e)
@@ -179,6 +189,18 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_CONTACT_UPDATED) do(e: Args):
     var args = ContactArgs(e)
     self.delegate.onContactDetailsUpdated(args.contactId)
+
+  self.events.on(SIGNAL_CONTACT_UNTRUSTWORTHY) do(e: Args):
+    var args = TrustArgs(e)
+    self.delegate.onContactDetailsUpdated(args.publicKey)
+
+  self.events.on(SIGNAL_CONTACT_TRUSTED) do(e: Args):
+    var args = TrustArgs(e)
+    self.delegate.onContactDetailsUpdated(args.publicKey)
+
+  self.events.on(SIGNAL_REMOVED_TRUST_STATUS) do(e: Args):
+    var args = TrustArgs(e)
+    self.delegate.onContactDetailsUpdated(args.publicKey)
 
   self.events.on(SIGNAL_CHAT_RENAMED) do(e: Args):
     var args = ChatRenameArgs(e)
@@ -280,6 +302,9 @@ proc getCurrentFleet*(self: Controller): string =
 
 proc getContacts*(self: Controller, group: ContactsGroup): seq[ContactsDto] =
   return self.contactService.getContactsByGroup(group)
+
+proc getContactById*(self: Controller, id: string): ContactsDto =
+  return self.contactService.getContactById(id)
 
 proc getContactDetails*(self: Controller, id: string): ContactDetails =
   return self.contactService.getContactDetails(id)
@@ -385,6 +410,7 @@ proc editCommunity*(
     outroMessage: string,
     access: int,
     color: string,
+    tags: string,
     logoJsonStr: string,
     bannerJsonStr: string,
     historyArchiveSupportEnabled: bool,
@@ -397,6 +423,7 @@ proc editCommunity*(
     outroMessage,
     access,
     color,
+    tags,
     logoJsonStr,
     bannerJsonStr,
     historyArchiveSupportEnabled,
@@ -404,6 +431,12 @@ proc editCommunity*(
 
 proc exportCommunity*(self: Controller): string =
   self.communityService.exportCommunity(self.sectionId)
+
+method muteCategory*(self: Controller, categoryId: string) =
+  self.communityService.muteCategory(self.sectionId, categoryId)
+
+method unmuteCategory*(self: Controller, categoryId: string) =
+  self.communityService.unmuteCategory(self.sectionId, categoryId)
 
 proc setCommunityMuted*(self: Controller, muted: bool) =
   self.communityService.setCommunityMuted(self.sectionId, muted)

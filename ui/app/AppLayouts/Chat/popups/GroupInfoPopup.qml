@@ -55,18 +55,15 @@ StatusModal {
     height: 504
     anchors.centerIn: parent
 
-    //% "Add members"
-    header.title: addMembers ? qsTrId("add-members") : (popup.chatDetails ? popup.chatDetails.name : "")
+    header.title: addMembers ? qsTr("Add members") : (popup.chatDetails ? popup.chatDetails.name : "")
     header.subTitle:  {
         if (addMembers) {
             return qsTr("%1/%2 members").arg(memberCount).arg(maxMembers)
         } else {
-            //% "%1 members"
             if (currMemberCount > 1) {
-                return qsTrId("%1-members").arg(currMemberCount);
+                return qsTr("%1 members").arg(currMemberCount);
             }
-            //% "1 member"
-            return qsTrId("1-member");
+            return qsTr("1 member");
         }
     }
     header.editable: !addMembers && popup.isAdmin
@@ -110,8 +107,7 @@ StatusModal {
             Layout.alignment: Qt.AlignTop
 
             implicitHeight: 36
-            //% "Search"
-            placeholderText: qsTrId("search")
+            placeholderText: qsTr("Search")
             placeholderFont.pixelSize: 15
 
             icon.name: "search"
@@ -135,8 +131,7 @@ StatusModal {
             Layout.bottomMargin: childrenRect.height
 
             visible: chatSectionModule.listOfMyContacts.count === 0
-            //% "All your contacts are already in the group"
-            text: qsTrId("group-chat-all-contacts-invited")
+            text: qsTr("All your contacts are already in the group")
             textColor: Style.current.textColor
         }
 
@@ -175,8 +170,7 @@ StatusModal {
 
             id: pinnedMessagesBtn
             visible: pinnedCount > 0
-            //% "Pinned messages"
-            text: qsTrId("pinned-messages")
+            text: qsTr("Pinned messages")
             currentValue: pinnedCount
             onClicked: {
                 popup.store.messageStore.messageModule = popup.chatContentModule.messagesModule
@@ -212,7 +206,7 @@ StatusModal {
                 title: model.displayName
                 statusListItemTitle.font.pixelSize: 17
                 statusListItemTitleAside.font.pixelSize: 17
-                label: model.isAdmin ? qsTrId("group-chat-admin"): ""
+                label: model.isAdmin ? qsTr("Admin"): ""
                 image.source: model.icon
                 ringSettings.ringSpecModel: Utils.getColorHashAsJson(model.pubKey)
                 icon: StatusIconSettings {
@@ -240,8 +234,7 @@ StatusModal {
                                 icon.name: "admin"
                                 icon.width: 16
                                 icon.height: 16
-                                //% "Make Admin"
-                                text: qsTrId("make-admin")
+                                text: qsTr("Make Admin")
                                 onTriggered: popup.chatSectionModule.makeAdmin("", popup.chatDetails.id,  model.pubKey)
                             }
                             StatusMenuItem {
@@ -249,8 +242,7 @@ StatusModal {
                                 icon.width: 16
                                 icon.height: 16
                                 type: StatusMenuItem.Type.Danger
-                                //% "Remove From Group"
-                                text: qsTrId("remove-from-group")
+                                text: qsTr("Remove From Group")
                                 onTriggered: popup.chatSectionModule.removeMemberFromGroupChat("", popup.chatDetails.id,  model.pubKey)
                             }
                         }
@@ -280,8 +272,7 @@ StatusModal {
     rightButtons: [
         StatusButton {
             visible: !popup.addMembers && popup.isAdmin
-            //% "Add members"
-            text: qsTrId("add-members")
+            text: qsTr("Add members")
             onClicked: {
                 popup.addMembers = true;
             }
@@ -290,8 +281,7 @@ StatusModal {
             id: btnSelectMembers
             visible: popup.addMembers
             enabled: popup.memberCount >= popup.currMemberCount
-            //% "Add selected"
-            text: qsTrId("add-selected")
+            text: qsTr("Add selected")
             onClicked: popup.doAddMembers()
         }
     ]

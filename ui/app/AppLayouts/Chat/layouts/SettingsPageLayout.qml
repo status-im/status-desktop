@@ -1,11 +1,11 @@
 import QtQuick 2.14
 import QtQuick.Layouts 1.14
 
-import QtGraphicalEffects 1.13
-
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
+
+import shared.popups 1.0
 
 Item {
     id: root
@@ -20,6 +20,9 @@ Item {
     property bool editable: false
 
     readonly property Item contentItem: contentLoader.item
+    readonly property size settingsDirtyToastMessageImplicitSize: 
+        Qt.size(settingsDirtyToastMessage.implicitWidth,
+                settingsDirtyToastMessage.implicitHeight + settingsDirtyToastMessage.anchors.bottomMargin)
 
     signal previousPageClicked
     signal saveChangesClicked
@@ -31,9 +34,7 @@ Item {
     }
 
     function notifyDirty() {
-        cancelChangesButtonAnimation.running = true
-        saveChangesButtonAnimation.running = true
-        saveChangesButton.forceActiveFocus()
+        settingsDirtyToastMessage.notifyDirty()
     }
 
     implicitWidth: layout.implicitWidth
@@ -81,69 +82,20 @@ Item {
 
             sourceComponent: root.content
         }
+    }
 
-        Rectangle {
-            Layout.fillWidth: true
-
-            implicitHeight: buttonsLayout.implicitHeight
-
-            color: Theme.palette.statusToastMessage.backgroundColor
-            visible: root.editable
-
-            RowLayout {
-                id: buttonsLayout
-
-                anchors.fill: parent
-                enabled: root.dirty
-
-                Item {
-                    Layout.fillWidth: true
-                }
-
-                StatusButton {
-                    id: cancelChangesButton
-
-                    text: qsTr("Cancel changes")
-                    type: StatusBaseButton.Type.Danger
-
-                    border.color: textColor
-                    border.width: 0
-
-                    onClicked: root.resetChangesClicked()
-
-                    NumberAnimation on border.width {
-                        id: cancelChangesButtonAnimation
-                        from: 0
-                        to: 2
-                        loops: 2
-                        duration: 600
-
-                        onFinished: cancelChangesButton.border.width = 0
-                    }
-                }
-
-                StatusButton {
-                    id: saveChangesButton
-
-                    text: qsTr("Save changes")
-
-                    border.color: textColor
-                    border.width: 0
-
-                    onClicked: root.saveChangesClicked()
-
-                    NumberAnimation on border.width {
-                        id: saveChangesButtonAnimation
-                        from: 0
-                        to: 2
-                        loops: 2
-                        duration: 600
-
-                        onFinished: saveChangesButton.border.width = 0
-                    }
-                }
-            }
+    SettingsDirtyToastMessage {
+        id: settingsDirtyToastMessage
+        anchors {
+            bottom: parent.bottom
+            horizontalCenter: parent.horizontalCenter
+            bottomMargin: 16
         }
+        active: root.dirty
+        flickable: root.contentItem
+        saveChangesButtonEnabled: root.contentItem && root.contentItem.saveChangesButtonEnabled
+        onResetChangesClicked: root.resetChangesClicked()
+        onSaveChangesClicked: root.saveChangesClicked()
     }
 }
 

@@ -9,6 +9,20 @@ QtObject {
     property var communitiesModuleInst: communitiesModule
     property var observedCommunity: communitiesModuleInst.observedCommunity
 
+    property bool newVersionAvailable: false
+    property string latestVersion
+    property string downloadURL
+
+    function setLatestVersionInfo(newVersionAvailable, latestVersion, downloadURL) {
+        root.newVersionAvailable = newVersionAvailable;
+        root.latestVersion = latestVersion;
+        root.downloadURL = downloadURL;
+    }
+
+    function resetLastVersion(){
+        root.newVersionAvailable = false
+    }
+
     property AppSearchStore appSearchStore: AppSearchStore {
         appSearchModule: root.mainModuleInst.appSearchModule
     }
@@ -52,9 +66,6 @@ QtObject {
 
     property var walletSectionTransactionsInst: walletSectionTransactions
 
-    property bool isMultiNetworkEnabled: localAccountSensitiveSettings.isMultiNetworkEnabled
-
-    property bool isCommunitiesPortalEnabled: localAccountSensitiveSettings.isCommunitiesPortalEnabled
 
     property var savedAddressesModel: walletSectionSavedAddresses.model
 
@@ -62,8 +73,11 @@ QtObject {
         return profileSectionModule.ensUsernamesModule.getEtherscanLink()
     }
 
-    function createCommunity(communityName, communityDescription, checkedMembership, communityColor, communityImage, imageCropperModalaX, imageCropperModalaY, imageCropperModalbX, imageCropperModalbY) {
-        communitiesModuleInst.createCommunity(communityName, communityDescription, checkedMembership, communityColor, communityImage, imageCropperModalaX, imageCropperModalaY, imageCropperModalbX, imageCropperModalbY);
+    function createCommunity(communityName, communityDescription, checkedMembership, communityColor, communityTags,
+                             communityImage, imageCropperModalaX, imageCropperModalaY, imageCropperModalbX, imageCropperModalbY) {
+        communitiesModuleInst.createCommunity(communityName, communityDescription, checkedMembership, communityColor,
+                                              communityTags, communityImage, imageCropperModalaX, imageCropperModalaY,
+                                              imageCropperModalbX, imageCropperModalbY);
     }
 
     function copyToClipboard(text) {
@@ -99,8 +113,8 @@ QtObject {
         return JSON.parse(walletSectionTransactions.suggestedFees(chainId))
     }
 
-    function getEstimatedTime(priorityFeePerGas, maxFeePerGas) {
-       return walletSectionTransactions.getEstimatedTime(priorityFeePerGas, maxFeePerGas)
+    function getEstimatedTime(chainId, priorityFeePerGas, maxFeePerGas) {
+       return walletSectionTransactions.getEstimatedTime(chainId, priorityFeePerGas, maxFeePerGas)
     }
 
     function getChainIdForChat() {

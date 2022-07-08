@@ -6,7 +6,6 @@ QtObject {
     id: root
 
     property var accountSensitiveSettings: localAccountSensitiveSettings
-    property bool isMultiNetworkEnabled: accountSensitiveSettings.isMultiNetworkEnabled
 
     property var areTestNetworksEnabled: networksModule.areTestNetworksEnabled
     property var layer1Networks: networksModule.layer1
@@ -17,6 +16,7 @@ QtObject {
         networksModule.toggleTestNetworksEnabled()
     }
 
+    property var accounts: walletSectionAccounts.model
     property var importedAccounts: walletSectionAccounts.imported
     property var generatedAccounts: walletSectionAccounts.generated
     property var watchOnlyAccounts: walletSectionAccounts.watchOnly

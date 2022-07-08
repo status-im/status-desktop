@@ -59,12 +59,10 @@ Rectangle {
                 primaryText: downloadFileName
                 downloadText: {
                     if (isCanceled) {
-                        //% "Cancelled"
-                        return qsTrId("cancelled")
+                        return qsTr("Cancelled")
                     }
                     if (isPaused) {
-                        //% "Paused"
-                        return qsTrId("paused")
+                        return qsTr("Paused")
                     }
                     return `${downloadsModel.downloads[index] ? (downloadsModel.downloads[index].receivedBytes / 1000000).toFixed(2) : 0}/${downloadsModel.downloads[index] ? (downloadsModel.downloads[index].totalBytes / 1000000).toFixed(2) : 0} MB` //"14.4/109 MB, 26 sec left"
                 }
@@ -97,8 +95,7 @@ Rectangle {
     StatusButton {
         id: showAllBtn
         size: StatusBaseButton.Size.Small
-        //% "Show All"
-        text: qsTrId("show-all")
+        text: qsTr("Show All")
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: closeBtn.left
         anchors.rightMargin: Style.current.padding

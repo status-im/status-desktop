@@ -20,18 +20,15 @@ Item {
     property var selectedContact
     height: select.height
     property int dropdownWidth: width
-    //% "Please select a contact"
-    property string validationError: qsTrId("please-select-a-contact")
+    property string validationError: qsTr("Please select a contact")
     property alias validationErrorAlignment: select.validationErrorAlignment
     property bool isValid: false
     property alias isPending: ensResolver.isPending
 
     property bool readOnly: false
     property bool isResolvedAddress: false
-    //% "Select a contact"
-    property string selectAContact: qsTrId("select-a-contact")
-    //% "Contact does not have an ENS address. Please send a transaction in chat."
-    property string noEnsAddressMessage: qsTrId("contact-does-not-have-an-ens-address--please-send-a-transaction-in-chat-")
+    property string selectAContact: qsTr("Select a contact")
+    property string noEnsAddressMessage: qsTr("Contact does not have an ENS address. Please send a transaction in chat.")
     property bool isContact: false
 
     function resolveEns() {
@@ -74,8 +71,7 @@ Item {
         id: inpReadOnly
         visible: root.readOnly
         width: parent.width
-        //% "No contact selected"
-        text: (root.selectedContact && root.selectedContact.alias) ? root.selectedContact.alias : qsTrId("no-contact-selected")
+        text: (root.selectedContact && root.selectedContact.alias) ? root.selectedContact.alias : qsTr("No contact selected")
         textField.leftPadding: 14
         textField.topPadding: 18
         textField.bottomPadding: 18
@@ -123,8 +119,7 @@ Item {
             height: 186
             StatusBaseText {
                 anchors.fill: parent
-                //% "You don’t have any contacts yet"
-                text: qsTrId("you-don-t-have-any-contacts-yet")
+                text: qsTr("You don’t have any contacts yet")
                 verticalAlignment: Text.AlignVCenter
                 horizontalAlignment: Text.AlignHCenter
                 font.pixelSize: 13

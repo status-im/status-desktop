@@ -61,7 +61,7 @@ Rectangle {
             Layout.preferredHeight: 32
             icon.height: 20
             icon.width: 20
-            icon.name: "left"
+            icon.name: "arrow-left"
             icon.disabledColor: Style.current.lightGrey
             type: StatusFlatRoundButton.Type.Tertiary
             enabled: canGoBack
@@ -80,7 +80,7 @@ Rectangle {
             Layout.preferredHeight: 32
             icon.width: 20
             icon.height: 20
-            icon.name: "right"
+            icon.name: "arrow-right"
             icon.disabledColor: Style.current.lightGrey
             type: StatusFlatRoundButton.Type.Tertiary
             enabled: canGoForward
@@ -105,8 +105,7 @@ Rectangle {
             }
             leftPadding: Style.current.padding
             rightPadding: addFavoriteBtn.width + reloadBtn.width + Style.current.bigPadding
-            //% "Enter URL"
-            placeholderText: qsTrId("enter-url")
+            placeholderText: qsTr("Enter URL")
             focus: true
             text: ""
             color: Style.current.textColor

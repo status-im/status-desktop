@@ -4,6 +4,7 @@
 
 type
   LoadTransactionsTaskArg* = ref object of QObjectTaskArg
+    chainId: int
     address: string
     toBlock: Uint256
     limit: int
@@ -15,7 +16,8 @@ const loadTransactionsTask*: Task = proc(argEncoded: string) {.gcsafe, nimcall.}
     limitAsHex = "0x" & eth_utils.stripLeadingZeros(arg.limit.toHex)
     output = %*{
       "address": arg.address,
-      "history": transactions.getTransfersByAddress(arg.address, arg.toBlock, limitAsHex, arg.loadMore),
+      "chainId": arg.chainId,
+      "history": transactions.getTransfersByAddress(arg.chainId, arg.address, arg.toBlock, limitAsHex, arg.loadMore),
       "loadMore": arg.loadMore
     }
   arg.finish(output)

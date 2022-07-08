@@ -24,8 +24,6 @@ Loader {
 
     signal clicked()
 
-    height: active ? item.height : 0
-
     sourceComponent: StatusSmartIdenticon {
         name: root.name
         image {

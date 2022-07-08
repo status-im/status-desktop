@@ -10,7 +10,6 @@ StatusInput {
 
     property string cursorColor: Theme.palette.primaryColor1
 
-    height: input.edit.height
     leftPadding: 0
     rightPadding: 0
 
@@ -34,7 +33,7 @@ StatusInput {
 
         SequentialAnimation {
             loops: Animation.Infinite
-            running: input.edit.cursorVisible
+            running: visible && input.edit.cursorVisible
 
             PropertyAction {
                 target: cursor

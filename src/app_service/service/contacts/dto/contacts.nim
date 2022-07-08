@@ -10,6 +10,28 @@ type
     thumbnail*: string
     large*: string
 
+type TrustStatus* {.pure.}= enum
+  Unknown = 0,
+  Trusted = 1,
+  Untrustworthy = 2
+
+type  VerificationStatus* {.pure.}= enum
+  Unverified = 0
+  Verifying = 1
+  Verified = 2
+  Declined = 3
+  Canceled = 4
+  Trusted = 5
+
+type VerificationRequest* = object
+  fromID*: string
+  toID*: string
+  challenge*: string
+  requestedAt*: int64
+  response*: string
+  repliedAt*: int64
+  status*: VerificationStatus
+
 type ContactsDto* = object
   id*: string
   name*: string
@@ -25,6 +47,8 @@ type ContactsDto* = object
   hasAddedUs*: bool
   isSyncing*: bool
   removed*: bool
+  trustStatus*: TrustStatus
+  verificationStatus*: VerificationStatus
 
 proc `$`(self: Images): string =
   result = fmt"""Images(
@@ -45,11 +69,13 @@ proc `$`*(self: ContactsDto): string =
     image:[
       {$self.image}
     ],
-    added:{self.added}
-    blocked:{self.blocked}
-    hasAddedUs:{self.hasAddedUs}
-    isSyncing:{self.isSyncing}
-    removed:{self.removed}
+    added:{self.added},
+    blocked:{self.blocked},
+    hasAddedUs:{self.hasAddedUs},
+    isSyncing:{self.isSyncing},
+    removed:{self.removed},
+    trustStatus:{self.trustStatus},
+    verificationStatus:{self.verificationStatus},
     )"""
 
 proc toImages(jsonObj: JsonNode): Images =
@@ -63,6 +89,28 @@ proc toImages(jsonObj: JsonNode): Images =
   if(jsonObj.getProp("thumbnail", thumbnailObj)):
     discard thumbnailObj.getProp("uri", result.thumbnail)
 
+proc toTrustStatus*(value: int): TrustStatus =
+  result = TrustStatus.Unknown
+  if value >= ord(low(TrustStatus)) or value <= ord(high(TrustStatus)):
+      result = TrustStatus(value)
+  
+proc toVerificationStatus*(value: int): VerificationStatus =
+  result = VerificationStatus.Unverified
+  if value >= ord(low(VerificationStatus)) or value <= ord(high(VerificationStatus)):
+      result = VerificationStatus(value)
+  
+proc toVerificationRequest*(jsonObj: JsonNode): VerificationRequest =
+  result = VerificationRequest()
+  discard jsonObj.getProp("from", result.fromID)
+  discard jsonObj.getProp("to", result.toID)
+  discard jsonObj.getProp("challenge", result.challenge)
+  discard jsonObj.getProp("response", result.response)
+  discard jsonObj.getProp("requested_at", result.requestedAt)
+  discard jsonObj.getProp("replied_at", result.repliedAt)
+  var verificationStatusInt: int
+  discard jsonObj.getProp("verification_status", verificationStatusInt)
+  result.status = verificationStatusInt.toVerificationStatus()
+
 proc toContactsDto*(jsonObj: JsonNode): ContactsDto =
   result = ContactsDto()
   discard jsonObj.getProp("id", result.id)
@@ -73,6 +121,15 @@ proc toContactsDto*(jsonObj: JsonNode): ContactsDto =
   discard jsonObj.getProp("lastUpdated", result.lastUpdated)
   discard jsonObj.getProp("lastUpdatedLocally", result.lastUpdatedLocally)
   discard jsonObj.getProp("localNickname", result.localNickname)
+  
+  result.trustStatus = TrustStatus.Unknown
+  var trustStatusInt: int
+  discard jsonObj.getProp("trustStatus", trustStatusInt)
+  result.trustStatus = trustStatusInt.toTrustStatus()
+  
+  var verificationStatusInt: int
+  discard jsonObj.getProp("verificationStatus", verificationStatusInt)
+  result.verificationStatus = verificationStatusInt.toVerificationStatus()
 
   var imageObj: JsonNode
   if(jsonObj.getProp("images", imageObj)):
@@ -120,15 +177,16 @@ proc isBlocked*(self: ContactsDto): bool =
 proc isMutualContact*(self: ContactsDto): bool =
   # TODO not implemented in `status-go` yet
   # But for now we consider that contact is mutual contact if I added him and he added me.
-  return self.hasAddedUs and self.added
+  return self.hasAddedUs and self.added and not self.removed and not self.blocked
+
+proc trustStatus*(self: ContactsDto): TrustStatus =
+  result = self.trustStatus
 
 proc isContactVerified*(self: ContactsDto): bool =
-  # TODO not implemented in `status-go` yet
-  return false
+  return self.verificationStatus == VerificationStatus.Verified
 
 proc isContactUntrustworthy*(self: ContactsDto): bool =
-  # TODO not implemented in `status-go` yet
-  return false
+  return self.trustStatus == TrustStatus.Untrustworthy
 
 proc isContactMarked*(self: ContactsDto): bool =
   return self.isContactVerified() or self.isContactUntrustworthy()

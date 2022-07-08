@@ -47,8 +47,7 @@ SettingsPageLayout {
             Layout.fillWidth: true
 
             visible: root.editable && root.pendingRequests > 0
-            //% "Membership requests"
-            title: qsTrId("membership-requests")
+            title: qsTr("Membership requests")
             requestsCount: root.pendingRequests
             sensor.onClicked: root.membershipRequestsClicked()
         }
@@ -65,8 +64,7 @@ SettingsPageLayout {
             Layout.alignment: Qt.AlignHCenter
 
             visible: memberList.count === 0
-            //% "Community members will appear here"
-            text: qsTrId("community-members-will-appear-here")
+            text: qsTr("Community members will appear here")
             font.pixelSize: 15
             color: Theme.palette.baseColor1
         }
@@ -75,8 +73,7 @@ SettingsPageLayout {
             Layout.alignment: Qt.AlignHCenter
 
             visible: !!memberSearch.input.text && memberList.height == 0
-            //% "No contacts found"
-            text: qsTrId("no-contacts-found")
+            text: qsTr("No contacts found")
             font.pixelSize: 15
             color: Theme.palette.baseColor1
         }
@@ -95,7 +92,7 @@ SettingsPageLayout {
                 id: memberItem
 
                 readonly property bool itsMe: model.pubKey.toLowerCase() === userProfile.pubKey.toLowerCase()
-                readonly property bool isOnline: model.onlineStatus === Constants.userStatus.online
+                readonly property bool isOnline: model.onlineStatus === Constants.onlineStatus.online
 
                 width: memberList.width
 
@@ -105,8 +102,7 @@ SettingsPageLayout {
 
                 title: {
                     if (memberItem.itsMe) {
-                        //% "You"
-                        return qsTrId("You")
+                        return qsTr("You")
                     }
                     return !model.displayName.endsWith(".eth") ? model.displayName : Utils.removeStatusEns(model.displayName)
                 }

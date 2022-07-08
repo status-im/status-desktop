@@ -27,8 +27,7 @@ Item {
         rotation: 0,
         runAnimation: false
     })
-    //% "Buy for %1 SNT"
-    property string text: root.style === StatusStickerButton.StyleType.Default ? packPrice : qsTrId("buy-for--1-snt").arg(packPrice )
+    property string text: root.style === StatusStickerButton.StyleType.Default ? packPrice : qsTr("Buy for %1 SNT").arg(packPrice )
     property color textColor: style === StatusStickerButton.StyleType.Default ? Style.current.roundedButtonSecondaryForegroundColor : Style.current.buttonForegroundColor
     property color bgColor: style === StatusStickerButton.StyleType.Default ? Style.current.blue : Style.current.secondaryBackground
     signal uninstallClicked()
@@ -44,8 +43,7 @@ Item {
             when: root.isInstalled
             PropertyChanges {
                 target: root;
-                //% "Uninstall"
-                text: root.style === StatusStickerButton.StyleType.Default ? "" : qsTrId("uninstall");
+                text: root.style === StatusStickerButton.StyleType.Default ? "" : qsTr("Uninstall");
                 textColor: root.style === StatusStickerButton.StyleType.Default ? Style.current.roundedButtonSecondaryForegroundColor : Style.current.red;
                 bgColor: root.style === StatusStickerButton.StyleType.Default ? Style.current.green : Style.current.lightRed;
                 icon: new Object({
@@ -60,8 +58,7 @@ Item {
             when: root.isBought;
             PropertyChanges {
                 target: root;
-                //% "Install"
-                text: qsTrId("install");
+                text: qsTr("Install");
                 icon: new Object({
                     path: Style.svg("arrowUp"),
                     rotation: 180,
@@ -75,8 +72,7 @@ Item {
             extend: "bought"
             PropertyChanges {
                 target: root;
-                //% "Free"
-                text: qsTrId("free");
+                text: qsTr("Free");
             }
         },
         State {
@@ -95,8 +91,7 @@ Item {
             when: root.isPending
             PropertyChanges {
                 target: root;
-                //% "Pending..."
-                text: qsTrId("pending---");
+                text: qsTr("Pending...");
                 textColor: root.style === StatusStickerButton.StyleType.Default ? Style.current.roundedButtonSecondaryForegroundColor : Style.current.darkGrey
                 bgColor: root.style === StatusStickerButton.StyleType.Default ? Style.current.darkGrey : Style.current.grey;
                 enabled: false;
@@ -113,8 +108,7 @@ Item {
             extend: "pending"
             PropertyChanges {
                 target: root;
-                //% "Cancel"
-                text: qsTrId("browsing-cancel");
+                text: qsTr("Cancel");
                 textColor: root.style === StatusStickerButton.StyleType.Default ? Style.current.pillButtonTexroundedButtonSecondaryForegroundColortColor : Style.current.red;
                 bgColor: root.style === StatusStickerButton.StyleType.Default ? Style.current.red : Style.current.lightRed;
             }
@@ -125,8 +119,7 @@ Item {
             extend: "bought"
             PropertyChanges {
                 target: root;
-                //% "Update"
-                text: qsTrId("update");
+                text: qsTr("Update");
             }
         }
     ]
@@ -183,7 +176,7 @@ Item {
                 from: 0;
                 to: 360;
                 duration: 1200
-                running: root.icon.runAnimation
+                running: visible && root.icon.runAnimation
                 loops: Animation.Infinite
             }
             ColorOverlay {

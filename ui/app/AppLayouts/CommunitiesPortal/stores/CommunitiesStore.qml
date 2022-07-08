@@ -7,6 +7,8 @@ QtObject {
     property var communitiesModuleInst: communitiesModule
     property var curatedCommunitiesModel: root.communitiesModuleInst.curatedCommunities
     property var locale: localAppSettings.locale
+    property var advancedModule: profileSectionModule.advancedModule
+    property bool isCommunityHistoryArchiveSupportEnabled: advancedModule? advancedModule.isCommunityHistoryArchiveSupportEnabled : false
 
     // TODO: Could the backend provide directly 2 filtered models??
     //property var featuredCommunitiesModel: root.communitiesModuleInst.curatedFeaturedCommunities
@@ -27,5 +29,42 @@ QtObject {
         ListElement { name: "food"; emoji: "🥑"}
         ListElement { name: "enviroment"; emoji: "☠️"}
         ListElement { name: "privacy"; emoji: "👻"}
+    }
+
+    property string communityTags: communitiesModuleInst.tags
+
+    function createCommunity(args = {
+                                name: "",
+                                description: "",
+                                introMessage: "",
+                                outroMessage: "",
+                                color: "",
+                                tags: "",
+                                image: {
+                                    src: "",
+                                    AX: 0,
+                                    AY: 0,
+                                    BX: 0,
+                                    BY: 0,
+                                },
+                                options: {
+                                    historyArchiveSupportEnabled: false,
+                                    checkedMembership: false,
+                                    pinMessagesAllowedForMembers: false
+                                }
+                             }) {
+        return communitiesModuleInst.createCommunity(
+                    args.name, args.description, args.introMessage, args.outroMessage, args.options.checkedMembership,
+                    args.color, args.tags,
+                    args.image.src, args.image.AX, args.image.AY, args.image.BX, args.image.BY,
+                    args.options.historyArchiveSupportEnabled, args.options.pinMessagesAllowedForMembers);
+    }
+
+    function importCommunity(communityKey) {
+        root.communitiesModuleInst.importCommunity(communityKey);
+    }
+
+    function setActiveCommunity(communityId) {
+        mainModule.setActiveSectionById(communityId);
     }
 }

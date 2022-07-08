@@ -38,6 +38,7 @@ type SignalType* {.pure.} = enum
   HistoryArchivesSeeding = "community.historyArchivesSeeding"
   HistoryArchivesUnseeded = "community.historyArchivesUnseeded"
   HistoryArchiveDownloaded = "community.historyArchiveDownloaded"
+  UpdateAvailable = "update.available"
   Unknown
 
 proc event*(self:SignalType):string =

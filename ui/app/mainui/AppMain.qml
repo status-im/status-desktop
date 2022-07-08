@@ -43,21 +43,14 @@ Item {
     property RootStore rootStore: RootStore { }
     // set from main.qml
     property var sysPalette
-    property var newVersionJSON: {
-        try {
-            return JSON.parse(rootStore.aboutModuleInst.newVersion)
-        } catch (e) {
-            console.error("Error parsing version data", e)
-            return {}
-        }
-    }
 
     signal openContactsPopup()
 
     Connections {
         target: rootStore.aboutModuleInst
         onAppVersionFetched: {
-            if (!newVersionJSON.available) {
+            rootStore.setLatestVersionInfo(available, version, url);
+            if (!available) {
                 versionUpToDate.show()
             } else {
                 versionWarning.show()
@@ -81,10 +74,10 @@ Item {
         onOpenDownloadModalRequested: {
             const downloadPage = downloadPageComponent.createObject(appMain,
                 {
-                    newVersionAvailable: newVersionJSON.available,
-                    downloadURL: newVersionJSON.url,
+                    newVersionAvailable: available,
+                    downloadURL: url,
                     currentVersion: rootStore.profileSectionStore.getCurrentVersion(),
-                    newVersion: newVersionJSON.version
+                    newVersion: version
                 })
             return downloadPage
         }
@@ -98,14 +91,15 @@ Item {
         }
         onOpenChangeProfilePicPopup: {
             var popup = changeProfilePicComponent.createObject(appMain);
-            popup.open();
+            popup.chooseImageToCrop();
         }
-        onOpenBackUpSeedPopup: {
-            var popup = backupSeedModalComponent.createObject(appMain)
-            popup.open()
-        }
+        onOpenBackUpSeedPopup: Global.openPopup(backupSeedModalComponent)
         onDisplayToastMessage: {
             appMain.rootStore.mainModuleInst.displayEphemeralNotification(title, subTitle, icon, loading, ephNotifType, url);
+        }
+        onOpenEditDisplayNamePopup: {
+            var popup = displayNamePopupComponent.createObject(appMain)
+            popup.open()
         }
     }
 
@@ -149,6 +143,14 @@ Item {
         id: backupSeedModal
         anchors.centerIn: parent
         privacyStore: appMain.rootStore.profileSectionStore.privacyStore
+        onClosed: destroy()
+    }
+
+    property Component displayNamePopupComponent: DisplayNamePopup {
+        profileStore: appMain.rootStore.profileSectionStore.profileStore
+        onClosed: {
+            destroy()
+        }
     }
 
     Component {
@@ -196,8 +198,16 @@ Item {
     }
 
     property Component changeProfilePicComponent: Component {
-        ChangeProfilePicModal {
-            profileStore: appMain.rootStore.profileSectionStore.profileStore
+        ImageCropWorkflow {
+            title: qsTr("Profile Picture")
+            acceptButtonText: qsTr("Make this my Profile Pic")
+            onImageCropped: {
+                appMain.rootStore.profileSectionStore.profileStore.uploadImage(image,
+                                              cropRect.x.toFixed(),
+                                              cropRect.y.toFixed(),
+                                              (cropRect.x + cropRect.width).toFixed(),
+                                              (cropRect.y + cropRect.height).toFixed());
+            }
         }
     }
 
@@ -317,8 +327,7 @@ Item {
                     }
 
                     StatusMenuItem {
-                        //% "Invite People"
-                        text: qsTrId("invite-people")
+                        text: qsTr("Invite People")
                         icon.name: "share-ios"
                         enabled: model.canManageUsers
                         onTriggered: Global.openPopup(inviteFriendsToCommunityPopup, {
@@ -329,8 +338,7 @@ Item {
                     }
 
                     StatusMenuItem {
-                        //% "View Community"
-                        text: qsTrId("view-community")
+                        text: qsTr("View Community")
                         icon.name: "group-chat"
                         onTriggered: Global.openPopup(communityProfilePopup, {
                             store: appMain.rootStore,
@@ -342,8 +350,7 @@ Item {
                     StatusMenuSeparator {}
 
                     StatusMenuItem {
-                        //% "Leave Community"
-                        text: qsTrId("leave-community")
+                        text: qsTr("Leave Community")
                         icon.name: "arrow-right"
                         icon.width: 14
                         iconRotation: 180
@@ -369,18 +376,15 @@ Item {
                 badge.implicitHeight: 15
                 badge.implicitWidth: 15
                 badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusAppNavBar.backgroundColor
-                /*
-                //This is still not in use. Read a comment for `currentUserStatus` in UserProfile on the nim side.
-                // Use this code once support for custom user status is added
-                switch(userProfile.currentUserStatus){
-                    case Constants.userStatus.online:
-                        return Style.current.green;
-                    case Constants.userStatus.doNotDisturb:
-                        return Style.current.red;
-                    default:
-                        return Style.current.midGrey;
-                }*/
-                badge.color: appMain.rootStore.userProfileInst.userStatus ? Style.current.green : Style.current.midGrey
+                badge.color: {
+                    switch(appMain.rootStore.userProfileInst.currentUserStatus){
+                        case Constants.currentUserStatus.automatic:
+                        case Constants.currentUserStatus.alwaysOnline:
+                            return Style.current.green;
+                        default:
+                            return Style.current.midGrey;
+                    }
+                }
                 badge.border.width: 3
                 onClicked: {
                     userStatusContextMenu.opened ?
@@ -403,13 +407,16 @@ Item {
                 id: versionWarning
                 width: parent.width
                 height: 32
-                visible: !!newVersionJSON.available
+                visible: appMain.rootStore.newVersionAvailable
                 color: Style.current.green
                 btnWidth: 100
-                text: qsTr("A new version of Status (%1) is available").arg(newVersionJSON.version)
+                text: qsTr("A new version of Status (%1) is available").arg(appMain.rootStore.latestVersion)
                 btnText: qsTr("Download")
                 onClick: function(){
-                    Global.openDownloadModal()
+                    Global.openDownloadModal(appMain.rootStore.newVersionAvailable, appMain.rootStore.latestVersion, appMain.rootStore.downloadURL)
+                }
+                onClosed: {
+                    appMain.rootStore.resetLastVersion();
                 }
 
                 function show() {
@@ -895,7 +902,7 @@ Item {
             }
             onLoaded: {
                 if (!!sendModal.selectedAccount) {
-                    item.preSelectedAccount = sendModal.selectedAccount
+                    item.selectedAccount = sendModal.selectedAccount
                 }
             }
         }

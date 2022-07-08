@@ -29,11 +29,9 @@ Item {
     StyledText {
         id: acceptText
         color: Style.current.blue
-        //% "Accept and share address"
         text: root.state === Constants.addressRequested ?
-          qsTrId("accept-and-share-address") :
-          //% "Accept and send"
-          qsTrId("accept-and-send")
+          qsTr("Accept and share address") :
+          qsTr("Accept and send")
         padding: Style.current.halfPadding
         horizontalAlignment: Text.AlignHCenter
         wrapMode: Text.WordWrap
@@ -65,8 +63,7 @@ Item {
     StyledText {
         id: declineText
         color: Style.current.blue
-        //% "Decline"
-        text: qsTrId("decline")
+        text: qsTr("Decline")
         horizontalAlignment: Text.AlignHCenter
         wrapMode: Text.WordWrap
         font.weight: Font.Medium
@@ -108,7 +105,7 @@ Item {
             chainId: root.store.getChainIdForChat()
             onClosed: destroy()
             onOpenGasEstimateErrorPopup: {
-                gasEstimateErrorPopup.confirmationText = message + qsTrId("--the-transaction-will-probably-fail-");
+                gasEstimateErrorPopup.confirmationText = message + qsTr("Decline");
                 gasEstimateErrorPopup.open();
                 return;
             }

@@ -77,19 +77,14 @@ ColumnLayout {
                 switch (chatContentModule.chatDetails.type) {
                 case Constants.chatType.oneToOne:
                     return (chatContentModule.isMyContact(chatContentModule.chatDetails.id) ?
-                                //% "Contact"
-                                qsTrId("chat-is-a-contact") :
-                                //% "Not a contact"
-                                qsTrId("chat-is-not-a-contact"))
+                                qsTr("Contact") :
+                                qsTr("Not a contact"))
                 case Constants.chatType.publicChat:
-                    //% "Public chat"
-                    return qsTrId("public-chat")
+                    return qsTr("Public chat")
                 case Constants.chatType.privateGroupChat:
                     let cnt = chatContentRoot.usersStore.usersModule.model.count
-                    //% "%1 members"
-                    if(cnt > 1) return qsTrId("-1-members").arg(cnt);
-                    //% "1 member"
-                    return qsTrId("1-member");
+                    if(cnt > 1) return qsTr("%1 members").arg(cnt);
+                    return qsTr("1 member");
                 case Constants.chatType.communityChat:
                     return Utils.linkifyAndXSS(chatContentModule.chatDetails.description).trim()
                 default:
@@ -188,6 +183,7 @@ ColumnLayout {
 
         onMembersButtonClicked: localAccountSensitiveSettings.expandUsersList = !localAccountSensitiveSettings.expandUsersList
         onNotificationButtonClicked: activityCenter.open()
+        notificationButton.highlighted: activityCenter.visible
 
         popupMenu: ChatContextMenuView {
             emojiPopup: chatContentRoot.emojiPopup
@@ -317,10 +313,8 @@ ColumnLayout {
             color: Style.current.white
             id: connectedStatusLbl
             text: isConnected ?
-                      //% "Connected"
-                      qsTrId("connected") :
-                      //% "Disconnected"
-                      qsTrId("disconnected")
+                      qsTr("Connected") :
+                      qsTr("Disconnected")
         }
 
         Connections {
@@ -428,6 +422,7 @@ ColumnLayout {
             stickersLoaded: chatContentRoot.stickersLoaded
             isChatBlocked: chatContentRoot.isBlocked
             channelEmoji: chatContentModule.chatDetails.emoji || ""
+            isActiveChannel: chatContentRoot.isActiveChannel
             onShowReplyArea: {
                 let obj = messageStore.getMessageByIdAsJson(messageId)
                 if (!obj) {
@@ -486,10 +481,8 @@ ColumnLayout {
                 isContactBlocked: chatContentRoot.isBlocked
                 isActiveChannel: chatContentRoot.isActiveChannel
                 chatInputPlaceholder: chatContentRoot.isBlocked ?
-                                          //% "This user has been blocked."
-                                          qsTrId("this-user-has-been-blocked-") :
-                                          //% "Type a message."
-                                          qsTrId("type-a-message-")
+                                          qsTr("This user has been blocked.") :
+                                          qsTr("Type a message.")
                 anchors.bottom: parent.bottom
                 recentStickers: chatContentRoot.rootStore.stickersModuleInst.recent
                 stickerPackList: chatContentRoot.rootStore.stickersModuleInst.stickerPacks

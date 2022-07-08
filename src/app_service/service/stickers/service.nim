@@ -213,7 +213,8 @@ QtObject:
         address,
         $sntContract.address,
         $PendingTransactionTypeDto.BuyStickerPack,
-        packId
+        packId,
+        chainId,
       )
       return (txHash: transactionHash, error: "")
     except ValueError:

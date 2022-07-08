@@ -1,18 +1,18 @@
-import NimQml, Tables, json, sequtils, strformat, chronicles, strutils, times, sugar
+import NimQml, Tables, json, sequtils, strformat, chronicles, strutils, times, sugar, std/times
 
 import ../../../app/global/global_singleton
 import ../../../app/core/signals/types
 import ../../../app/core/eventemitter
 import ../../../app/core/tasks/[qt, threadpool]
+import ../../common/types as common_types
 
-import ../settings/service as settings_service
+import ../settings/dto/settings
+import ../network/service as network_service
 import ./dto/contacts as contacts_dto
 import ./dto/status_update as status_update_dto
 import ./dto/contact_details
 import ../../../backend/contacts as status_contacts
 import ../../../backend/accounts as status_accounts
-import ../../../backend/chat as status_chat
-import ../../../backend/utils as status_utils
 
 export contacts_dto, status_update_dto, contact_details
 
@@ -27,6 +27,10 @@ type
   ContactArgs* = ref object of Args
     contactId*: string
 
+  TrustArgs* = ref object of Args
+    publicKey*: string
+    isUntrustworthy*: bool
+
   ResolvedContactArgs* = ref object of Args
     pubkey*: string
     address*: string
@@ -36,10 +40,13 @@ type
   ContactsStatusUpdatedArgs* = ref object of Args
     statusUpdates*: seq[StatusUpdateDto]
 
+  VerificationRequestArgs* = ref object of Args
+    verificationRequest*: VerificationRequest
+
 # Local Constants:
 const CheckStatusIntervalInMilliseconds = 5000 # 5 seconds, this is timeout how often do we check for user status.
-const OnlineLimitInSeconds = int(5.5 * 60) # 5.5 minutes
-const IdleLimitInSeconds = int(7 * 60) # 7 minutes
+const FiveMinsOnlineLimitInSeconds = int(5 * 60) # 5 minutes
+const TwoWeeksOnlineLimitInSeconds = int(14 * 24 * 60 * 60) # 2 weeks
 
 # Signals which may be emitted by this service:
 const SIGNAL_ENS_RESOLVED* = "ensResolved"
@@ -52,6 +59,16 @@ const SIGNAL_CONTACT_NICKNAME_CHANGED* = "contactNicknameChanged"
 const SIGNAL_CONTACTS_STATUS_UPDATED* = "contactsStatusUpdated"
 const SIGNAL_CONTACT_UPDATED* = "contactUpdated"
 const SIGNAL_LOGGEDIN_USER_IMAGE_CHANGED* = "loggedInUserImageChanged"
+const SIGNAL_REMOVED_TRUST_STATUS* = "removedTrustStatus"
+const SIGNAL_CONTACT_UNTRUSTWORTHY* = "contactUntrustworthy"
+const SIGNAL_CONTACT_TRUSTED* = "contactTrusted"
+const SIGNAL_CONTACT_VERIFIED* = "contactVerified"
+const SIGNAL_CONTACT_VERIFICATION_SENT* = "contactVerificationRequestSent"
+const SIGNAL_CONTACT_VERIFICATION_CANCELLED* = "contactVerificationRequestCancelled"
+const SIGNAL_CONTACT_VERIFICATION_DECLINED* = "contactVerificationRequestDeclined"
+const SIGNAL_CONTACT_VERIFICATION_ACCEPTED* = "contactVerificationRequestAccepted"
+const SIGNAL_CONTACT_VERIFICATION_ADDED* = "contactVerificationRequestAdded"
+const SIGNAL_CONTACT_VERIFICATION_UPDATED* = "contactVerificationRequestUpdated"
 
 type
   ContactsGroup* {.pure.} = enum
@@ -66,9 +83,10 @@ type
 QtObject:
   type Service* = ref object of QObject
     threadpool: ThreadPool
-    settingsService: settings_service.Service
+    networkService: network_service.Service
     contacts: Table[string, ContactsDto] # [contact_id, ContactsDto]
     contactsStatus: Table[string, StatusUpdateDto] # [contact_id, StatusUpdateDto]
+    receivedIdentityRequests: Table[string, VerificationRequest] # [from_id, VerificationRequest]
     events: EventEmitter
     closingApp: bool
     imageServerUrl: string
@@ -77,30 +95,34 @@ QtObject:
   proc getContactById*(self: Service, id: string): ContactsDto
   proc saveContact(self: Service, contact: ContactsDto)
   proc startCheckingContactStatuses(self: Service)
+  proc fetchReceivedVerificationRequests*(self: Service) : seq[VerificationRequest]
 
   proc delete*(self: Service) =
     self.closingApp = true
     self.contacts.clear
     self.contactsStatus.clear
+    self.receivedIdentityRequests.clear
     self.QObject.delete
 
   proc newService*(
       events: EventEmitter,
       threadpool: ThreadPool,
-      settingsService: settings_service.Service
+      networkService: network_service.Service
       ): Service =
     new(result, delete)
     result.QObject.setup
     result.closingApp = false
     result.events = events
-    result.settingsService = settingsService
+    result.networkService = networkService
     result.threadpool = threadpool
     result.contacts = initTable[string, ContactsDto]()
+    result.contactsStatus = initTable[string, StatusUpdateDto]()
+    result.receivedIdentityRequests = initTable[string, VerificationRequest]()
 
   proc addContact(self: Service, contact: ContactsDto) =
     # Private proc, used for adding contacts only.
     self.contacts[contact.id] = contact
-    self.contactsStatus[contact.id] = StatusUpdateDto(publicKey: contact.id, statusType: StatusType.Offline)
+    self.contactsStatus[contact.id] = StatusUpdateDto(publicKey: contact.id, statusType: StatusType.Unknown)
 
   proc fetchContacts*(self: Service) =
     try:
@@ -111,9 +133,13 @@ QtObject:
       for contact in contacts:
         self.addContact(contact)
 
+      # Identity verifications      
+      for request in self.fetchReceivedVerificationRequests():
+        self.receivedIdentityRequests[request.fromId] = request
+
     except Exception as e:
       let errDesription = e.msg
-      error "error: ", errDesription
+      error "error fetching contacts: ", errDesription
       return
 
   proc doConnect(self: Service) =
@@ -139,6 +165,31 @@ QtObject:
 
           let data = ContactArgs(contactId: c.id)
           self.events.emit(SIGNAL_CONTACT_UPDATED, data)
+
+      let myPubKey = singletonInstance.userProfile.getPubKey()
+      if(receivedData.verificationRequests.len > 0):
+        for request in receivedData.verificationRequests:
+          if request.fromId == myPubKey:
+            # TODO handle reacting to my own request later
+            continue
+
+          let data = VerificationRequestArgs(verificationRequest: request)
+          let alreadyContains = self.receivedIdentityRequests.contains(request.fromId)
+          self.receivedIdentityRequests[request.fromId] = request
+
+          if alreadyContains:
+            self.events.emit(SIGNAL_CONTACT_VERIFICATION_UPDATED, data)
+
+            if request.status == VerificationStatus.Trusted:
+              if self.contacts.hasKey(request.fromId):
+                self.contacts[request.fromId].trustStatus = TrustStatus.Trusted
+                self.contacts[request.fromId].verificationStatus = VerificationStatus.Trusted
+
+              self.events.emit(SIGNAL_CONTACT_TRUSTED,
+                TrustArgs(publicKey: request.fromId, isUntrustworthy: false))
+              self.events.emit(SIGNAL_CONTACT_VERIFIED, ContactArgs(contactId: request.fromId))
+          else:
+            self.events.emit(SIGNAL_CONTACT_VERIFICATION_ADDED, data)
 
   proc setImageServerUrl(self: Service) =
     try:
@@ -197,9 +248,7 @@ QtObject:
     elif (group == ContactsGroup.MyMutualContacts):
       # we need to revise this when we introduce "identity verification" feature
       return contacts.filter(x => x.id != myPubKey and 
-        x.isMutualContact() and
-        not x.isContactRemoved() and
-        not x.isBlocked())
+        x.isMutualContact())
     elif (group == ContactsGroup.AllKnownContacts):
       return contacts
 
@@ -224,6 +273,15 @@ QtObject:
       return
     return status_accounts.generateAlias(publicKey).result.getStr
 
+  proc getTrustStatus*(self: Service, publicKey: string): TrustStatus =
+    try:
+      let t = status_contacts.getTrustStatus(publicKey).result.getInt
+      return t.toTrustStatus()
+    except Exception as e:
+      let errDesription = e.msg
+      error "error: ", errDesription
+      return TrustStatus.Unknown
+
   proc getContactById*(self: Service, id: string): ContactsDto =
     if(id == singletonInstance.userProfile.getPubKey()):
       # If we try to get the contact details of ourselves, just return our own info
@@ -237,7 +295,8 @@ QtObject:
         image: Images(
           thumbnail: singletonInstance.userProfile.getThumbnailImage(),
           large: singletonInstance.userProfile.getLargeImage()
-        )
+        ),
+        trustStatus: TrustStatus.Trusted
       )
 
     ## Returns contact details based on passed id (public key)
@@ -258,13 +317,15 @@ QtObject:
         return
 
       let alias = self.generateAlias(id)
+      let trustStatus = self.getTrustStatus(id)
       result = ContactsDto(
         id: id,
         alias: alias,
         ensVerified: false,
         added: false,
         blocked: false,
-        hasAddedUs: false
+        hasAddedUs: false,
+        trustStatus: trustStatus
       )
       self.addContact(result)
 
@@ -322,6 +383,7 @@ QtObject:
 
       var contact = self.getContactById(publicKey)
       contact.added = true
+      contact.removed = false
       self.saveContact(contact)
       self.events.emit(SIGNAL_CONTACT_ADDED, ContactArgs(contactId: contact.id))
 
@@ -391,6 +453,7 @@ QtObject:
   proc removeContact*(self: Service, publicKey: string) =
     var contact = self.getContactById(publicKey)
     contact.removed = true
+    contact.added = false
 
     let response = status_contacts.removeContact(contact.id)
     if(not response.error.isNil):
@@ -417,7 +480,7 @@ QtObject:
       vptr: cast[ByteAddress](self.vptr),
       slot: "ensResolved",
       value: value,
-      chainId: self.settingsService.getCurrentNetworkId(),
+      chainId: self.networkService.getNetworkForEns().chainId,
       uuid: uuid,
       reason: reason
     )
@@ -428,20 +491,9 @@ QtObject:
     let timestampNow = uint64(nowInMyLocalZone.toTime().toUnix())
     var updatedStatuses: seq[StatusUpdateDto]
     for status in self.contactsStatus.mvalues:
-      if(timestampNow - status.clock < uint64(OnlineLimitInSeconds)):
-        if(status.statusType == StatusType.Online):
-          continue
-        else:
-          status.statusType = StatusType.Online
-          updatedStatuses.add(status)
-      elif(timestampNow - status.clock < uint64(IdleLimitInSeconds)):
-        if(status.statusType == StatusType.Idle):
-          continue
-        else:
-          status.statusType = StatusType.Idle
-          updatedStatuses.add(status)
-      elif(status.statusType != StatusType.Offline):
-        status.statusType = StatusType.Offline
+      if((timestampNow - status.clock > uint64(FiveMinsOnlineLimitInSeconds) and status.statusType == StatusType.Automatic) or
+         (timestampNow - status.clock > uint64(TwoWeeksOnlineLimitInSeconds) and status.statusType == StatusType.AlwaysOnline)):
+        status.statusType = StatusType.Inactive
         updatedStatuses.add(status)
 
     if(updatedStatuses.len > 0):
@@ -449,6 +501,14 @@ QtObject:
       self.events.emit(SIGNAL_CONTACTS_STATUS_UPDATED, data)
 
     self.startCheckingContactStatuses()
+
+  proc emitCurrentUserStatusChanged*(self: Service, currentStatusUser: CurrentUserStatus) =
+    let currentUserStatusUpdate = StatusUpdateDto(publicKey: singletonInstance.userProfile.getPubKey(),
+                                                  statusType: currentStatusUser.statusType,
+                                                  clock: currentStatusUser.clock.uint64,
+                                                  text: currentStatusUser.text)
+    let data = ContactsStatusUpdatedArgs(statusUpdates: @[currentUserStatusUpdate])
+    self.events.emit(SIGNAL_CONTACTS_STATUS_UPDATED, data)
 
   proc startCheckingContactStatuses(self: Service) =
     if(self.closingApp):
@@ -469,3 +529,164 @@ QtObject:
     result.icon = icon
     result.isCurrentUser = pubKey == singletonInstance.userProfile.getPubKey()
     result.details = self.getContactById(pubKey)
+
+  proc markUntrustworthy*(self: Service, publicKey: string) =
+    let response = status_contacts.markUntrustworthy(publicKey)
+    if(not response.error.isNil):
+      let msg = response.error.message
+      error "error marking as untrustworthy ", msg
+      return
+
+    if self.contacts.hasKey(publicKey):
+      self.contacts[publicKey].trustStatus = TrustStatus.Untrustworthy
+
+    self.events.emit(SIGNAL_CONTACT_UNTRUSTWORTHY,
+      TrustArgs(publicKey: publicKey, isUntrustworthy: true))
+
+  proc verifiedTrusted*(self: Service, publicKey: string) =
+    let response = status_contacts.verifiedTrusted(publicKey)
+    if(not response.error.isNil):
+      let msg = response.error.message
+      error "error confirming identity ", msg
+      return
+
+    if self.contacts.hasKey(publicKey):
+      self.contacts[publicKey].trustStatus = TrustStatus.Trusted
+      self.contacts[publicKey].verificationStatus = VerificationStatus.Trusted
+
+    self.events.emit(SIGNAL_CONTACT_TRUSTED,
+      TrustArgs(publicKey: publicKey, isUntrustworthy: false))
+    self.events.emit(SIGNAL_CONTACT_VERIFIED, ContactArgs(contactId: publicKey))
+
+  proc verifiedUntrustworthy*(self: Service, publicKey: string) =
+    let response = status_contacts.verifiedUntrustworthy(publicKey)
+    if(not response.error.isNil):
+      let msg = response.error.message
+      error "error confirming identity ", msg
+      return
+
+    if self.contacts.hasKey(publicKey):
+      self.contacts[publicKey].trustStatus = TrustStatus.Untrustworthy
+      self.contacts[publicKey].verificationStatus = VerificationStatus.Verified
+
+    self.events.emit(SIGNAL_CONTACT_UNTRUSTWORTHY,
+      TrustArgs(publicKey: publicKey, isUntrustworthy: true))
+    self.events.emit(SIGNAL_CONTACT_VERIFIED, ContactArgs(contactId: publicKey))
+
+  proc removeTrustStatus*(self: Service, publicKey: string) =
+    let response = status_contacts.removeTrustStatus(publicKey)
+    if(not response.error.isNil):
+      let msg = response.error.message
+      error "error removing trust status", msg
+      return
+
+    if self.contacts.hasKey(publicKey):
+      self.contacts[publicKey].trustStatus = TrustStatus.Unknown
+      if self.contacts[publicKey].verificationStatus == VerificationStatus.Verified:
+        self.contacts[publicKey].verificationStatus = VerificationStatus.Unverified
+
+    self.events.emit(SIGNAL_REMOVED_TRUST_STATUS,
+      TrustArgs(publicKey: publicKey, isUntrustworthy: false))
+
+  proc getVerificationRequestSentTo*(self: Service, publicKey: string): VerificationRequest =
+    try:
+      let response = status_contacts.getVerificationRequestSentTo(publicKey)
+      return response.result.toVerificationRequest()
+    except Exception as e:
+      let errDesription = e.msg
+      error "error obtaining verification request", errDesription
+      return
+
+  proc getVerificationRequestFrom*(self: Service, publicKey: string): VerificationRequest =
+    try:
+      if (self.receivedIdentityRequests.contains(publicKey)):
+        return self.receivedIdentityRequests[publicKey]
+
+      let response = status_contacts.getVerificationRequestFrom(publicKey)
+      result = response.result.toVerificationRequest()
+      self.receivedIdentityRequests[publicKey] = result
+    except Exception as e:
+      let errDesription = e.msg
+      error "error obtaining verification request", errDesription
+
+  proc fetchReceivedVerificationRequests*(self: Service): seq[VerificationRequest] =
+    try:
+      let response = status_contacts.getReceivedVerificationRequests()
+
+      for request in response.result:
+        result.add(request.toVerificationRequest())
+    except Exception as e:
+      let errDesription = e.msg
+      error "error obtaining verification requests", errDesription
+
+  proc getReceivedVerificationRequests*(self: Service): seq[VerificationRequest] =
+    result = toSeq(self.receivedIdentityRequests.values)
+
+  proc hasReceivedVerificationRequestFrom*(self: Service, fromId: string): bool =
+    result = self.receivedIdentityRequests.contains(fromId)
+    
+  proc sendVerificationRequest*(self: Service, publicKey: string, challenge: string) =
+    try:
+      let response = status_contacts.sendVerificationRequest(publicKey, challenge)
+      if(not response.error.isNil):
+        let msg = response.error.message
+        error "error sending contact verification request", msg
+        return
+
+      var contact = self.getContactById(publicKey)
+      contact.verificationStatus = VerificationStatus.Verifying
+      self.saveContact(contact)
+      
+      self.events.emit(SIGNAL_CONTACT_VERIFICATION_SENT, ContactArgs(contactId: publicKey))
+    except Exception as e:
+      error "Error sending verification request", msg = e.msg
+
+  proc cancelVerificationRequest*(self: Service, publicKey: string) =
+    try:
+      let response = status_contacts.cancelVerificationRequest(publicKey)
+      if(not response.error.isNil):
+        let msg = response.error.message
+        error "error sending contact verification request", msg
+        return
+
+      var contact = self.getContactById(publicKey)
+      contact.verificationStatus = VerificationStatus.Unverified
+      self.saveContact(contact)
+      
+      self.events.emit(SIGNAL_CONTACT_VERIFICATION_CANCELLED, ContactArgs(contactId: publicKey))
+    except Exception as e:
+      error "Error canceling verification request", msg = e.msg
+
+  proc acceptVerificationRequest*(self: Service, publicKey: string, responseText: string) =
+    try:
+      let response = status_contacts.acceptVerificationRequest(publicKey, responseText)
+      if(not response.error.isNil):
+        let msg = response.error.message
+        raise newException(RpcException, msg)
+
+      var request = self.receivedIdentityRequests[publicKey]
+      request.status = VerificationStatus.Verified
+      request.response = responseText
+      request.repliedAt = getTime().toUnix * 1000
+      self.receivedIdentityRequests[publicKey] = request
+      
+      self.events.emit(SIGNAL_CONTACT_VERIFICATION_ACCEPTED,
+        VerificationRequestArgs(verificationRequest: request))
+    except Exception as e:
+      error "error accepting contact verification request", msg=e.msg
+
+  proc declineVerificationRequest*(self: Service, publicKey: string) =
+    try:
+      let response = status_contacts.declineVerificationRequest(publicKey)
+      if(not response.error.isNil):
+        let msg = response.error.message
+        raise newException(RpcException, msg)
+
+      var request = self.receivedIdentityRequests[publicKey]
+      request.status = VerificationStatus.Declined
+      self.receivedIdentityRequests[publicKey] = request
+      
+      self.events.emit(SIGNAL_CONTACT_VERIFICATION_DECLINED, ContactArgs(contactId: publicKey))
+    except Exception as e:
+      error "error declining contact verification request", msg=e.msg
+    

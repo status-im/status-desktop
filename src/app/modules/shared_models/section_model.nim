@@ -17,6 +17,7 @@ type
     BannerImageData
     Icon
     Color
+    Tags
     HasNotification
     NotificationsCount
     Active
@@ -81,6 +82,7 @@ QtObject:
       ModelRole.BannerImageData.int:"bannerImageData",
       ModelRole.Icon.int:"icon",
       ModelRole.Color.int:"color",
+      ModelRole.Tags.int:"tags",
       ModelRole.HasNotification.int:"hasNotification",
       ModelRole.NotificationsCount.int:"notificationsCount",
       ModelRole.Active.int:"active",
@@ -132,6 +134,8 @@ QtObject:
       result = newQVariant(item.icon)
     of ModelRole.Color:
       result = newQVariant(item.color)
+    of ModelRole.Tags:
+      result = newQVariant(item.tags)
     of ModelRole.HasNotification:
       result = newQVariant(item.hasNotification)
     of ModelRole.NotificationsCount:
@@ -257,6 +261,7 @@ QtObject:
       ModelRole.BannerImageData.int,
       ModelRole.Icon.int,
       ModelRole.Color.int,
+      ModelRole.Tags.int,
       ModelRole.HasNotification.int,
       ModelRole.NotificationsCount.int,
       ModelRole.IsMember.int,
@@ -362,6 +367,7 @@ QtObject:
           "bannerImageData": item.bannerImageData,
           "icon": item.icon,
           "color": item.color,
+          "tags": item.tags,
           "hasNotification": item.hasNotification,
           "notificationsCount": item.notificationsCount,
           "active": item.active,

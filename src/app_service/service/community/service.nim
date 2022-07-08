@@ -25,7 +25,7 @@ type
     community*: CommunityDto
     error*: string
     fromUserAction*: bool
-  
+
   CuratedCommunityArgs* = ref object of Args
     curatedCommunity*: CuratedCommunity
 
@@ -69,6 +69,10 @@ type
     communityId*: string
     muted*: bool
 
+  CategoryArgs* = ref object of Args
+    communityId*: string
+    categoryId*: string
+
 # Signals which may be emitted by this service:
 const SIGNAL_COMMUNITY_JOINED* = "communityJoined"
 const SIGNAL_COMMUNITY_MY_REQUEST_ADDED* = "communityMyRequestAdded"
@@ -93,6 +97,8 @@ const SIGNAL_COMMUNITY_MEMBER_REMOVED* = "communityMemberRemoved"
 const SIGNAL_NEW_REQUEST_TO_JOIN_COMMUNITY* = "newRequestToJoinCommunity"
 const SIGNAL_CURATED_COMMUNITY_FOUND* = "curatedCommunityFound"
 const SIGNAL_COMMUNITY_MUTED* = "communityMuted"
+const SIGNAL_CATEGORY_MUTED* = "categoryMuted"
+const SIGNAL_CATEGORY_UNMUTED* = "categoryUnmuted"
 
 QtObject:
   type
@@ -100,12 +106,14 @@ QtObject:
       threadpool: ThreadPool
       events: EventEmitter
       chatService: chat_service.Service
+      communityTags: string # JSON string contraining tags map
       joinedCommunities: Table[string, CommunityDto] # [community_id, CommunityDto]
       curatedCommunities: Table[string, CuratedCommunity] # [community_id, CuratedCommunity]
       allCommunities: Table[string, CommunityDto] # [community_id, CommunityDto]
       myCommunityRequests*: seq[CommunityMembershipRequestDto]
 
   # Forward declaration
+  proc loadCommunityTags(self: Service): string
   proc loadAllCommunities(self: Service): seq[CommunityDto]
   proc loadJoinedComunities(self: Service): seq[CommunityDto]
   proc loadCuratedCommunities(self: Service): seq[CuratedCommunity]
@@ -127,6 +135,7 @@ QtObject:
     result.events = events
     result.threadpool = threadpool
     result.chatService = chatService
+    result.communityTags = newString(0)
     result.joinedCommunities = initTable[string, CommunityDto]()
     result.curatedCommunities = initTable[string, CuratedCommunity]()
     result.allCommunities = initTable[string, CommunityDto]()
@@ -327,6 +336,7 @@ QtObject:
 
   proc init*(self: Service) =
     self.doConnect()
+    self.communityTags = self.loadCommunityTags();
     let joinedCommunities = self.loadJoinedComunities()
     for community in joinedCommunities:
       self.joinedCommunities[community.id] = community
@@ -349,6 +359,12 @@ QtObject:
         self.joinedCommunities[settings.id].settings = settings
 
     self.loadMyPendingRequestsToJoin()
+
+  proc loadCommunityTags(self: Service): string =
+    let response = status_go.getCommunityTags()
+    var result = newString(0)
+    toUgly(result, response.result)
+    return result
 
   proc loadAllCommunities(self: Service): seq[CommunityDto] =
     try:
@@ -385,6 +401,9 @@ QtObject:
       let errDesription = e.msg
       error "error loading communities settings: ", errDesription
       return
+
+  proc getCommunityTags*(self: Service): string =
+    return self.communityTags
 
   proc getJoinedCommunities*(self: Service): seq[CommunityDto] =
     return toSeq(self.joinedCommunities.values)
@@ -498,7 +517,7 @@ QtObject:
       if not response.result.hasKey("communitiesSettings") or response.result["communitiesSettings"].kind != JArray or response.result["communitiesSettings"].len == 0:
         error "error: ", procName="joinCommunity", errDesription = "no 'communitiesSettings' key in response"
         return
-        
+
       var updatedCommunity = response.result["communities"][0].toCommunityDto()
       let communitySettings = response.result["communitiesSettings"][0].toCommunitySettingsDto()
 
@@ -591,12 +610,17 @@ QtObject:
       outroMessage: string,
       access: int,
       color: string,
+      tags: string,
       imageUrl: string,
       aX: int, aY: int, bX: int, bY: int,
       historyArchiveSupportEnabled: bool,
       pinMessageAllMembersEnabled: bool) =
     try:
       var image = singletonInstance.utils.formatImagePath(imageUrl)
+      var tagsString = tags
+      if len(tagsString) == 0:
+        tagsString = "[]"
+
       let response = status_go.createCommunity(
         name,
         description,
@@ -604,6 +628,7 @@ QtObject:
         outroMessage,
         access,
         color,
+        tagsString,
         image,
         aX, aY, bX, bY,
         historyArchiveSupportEnabled,
@@ -635,6 +660,7 @@ QtObject:
       outroMessage: string,
       access: int,
       color: string,
+      tags: string,
       logoJsonStr: string,
       bannerJsonStr: string,
       historyArchiveSupportEnabled: bool,
@@ -643,6 +669,9 @@ QtObject:
       # TODO: refactor status-go to use `CroppedImage` for logo as it does for banner. This is an API breaking change, sync with mobile
       let logoJson = parseJson(logoJsonStr)
       let cropRectJson = logoJson["cropRect"]
+      var tagsString = tags
+      if len(tagsString) == 0:
+        tagsString = "[]"
       let response = status_go.editCommunity(
         id,
         name,
@@ -651,6 +680,7 @@ QtObject:
         outroMessage,
         access,
         color,
+        tagsString,
         logoJson["imagePath"].getStr(),
         int(cropRectJson["x"].getFloat()),
         int(cropRectJson["y"].getFloat()),
@@ -1047,6 +1077,32 @@ QtObject:
     except Exception as e:
       error "Error inviting to community", msg = e.msg
       result = "Error exporting community: " & e.msg
+
+  proc muteCategory*(self: Service, communityId: string, categoryId: string) =
+    try:
+      let response = status_go.muteCategory(communityId, categoryId)
+      if (not response.error.isNil):
+        let msg = response.error.message & " categoryId=" & categoryId
+        error "error while mute category ", msg
+        return
+
+      self.events.emit(SIGNAL_CATEGORY_MUTED, CategoryArgs(communityId: communityId, categoryId: categoryId))
+
+    except Exception as e:
+      error "Error muting category", msg = e.msg
+
+  proc unmuteCategory*(self: Service, communityId: string, categoryId: string) =
+    try:
+      let response = status_go.unmuteCategory(communityId, categoryId)
+      if (not response.error.isNil):
+        let msg = response.error.message & " categoryId=" & categoryId
+        error "error while unmute category ", msg
+        return
+
+      self.events.emit(SIGNAL_CATEGORY_UNMUTED, CategoryArgs(communityId: communityId, categoryId: categoryId))
+
+    except Exception as e:
+      error "Error unmuting category", msg = e.msg
 
   proc removeUserFromCommunity*(self: Service, communityId: string, pubKey: string)  =
     try:

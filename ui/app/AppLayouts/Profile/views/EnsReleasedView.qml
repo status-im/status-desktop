@@ -14,8 +14,7 @@ Item {
 
     StatusBaseText {
         id: sectionTitle
-        //% "ENS usernames"
-        text: qsTrId("ens-usernames")
+        text: qsTr("ENS usernames")
         anchors.left: parent.left
         anchors.leftMargin: Style.current.bigPadding
         anchors.top: parent.top
@@ -77,8 +76,7 @@ Item {
 
     StatusBaseText {
         id: progress
-        //% "You can follow the progress in the Transaction History section of your wallet."
-        text: qsTrId("ens-username-you-can-follow-progress")
+        text: qsTr("You can follow the progress in the Transaction History section of your wallet.")
         anchors.top: subtitle.bottom
         anchors.topMargin: 24
         font.pixelSize: 12
@@ -95,8 +93,7 @@ Item {
         anchors.top: progress.bottom
         anchors.topMargin: Style.current.padding
         anchors.horizontalCenter: parent.horizontalCenter
-        //% "Ok, got it"
-        text: qsTrId("ens-got-it")
+        text: qsTr("Ok, got it")
         onClicked: okBtnClicked()
     }
 }

@@ -98,10 +98,8 @@ Rectangle {
 
         StyledText {
             text: isIncoming ?
-                    //% "From "
-                    qsTrId("from-") :
-                    //% "To "
-                    qsTrId("to-")
+                    qsTr("From ") :
+                    qsTr("To ")
             color: Style.current.secondaryText
             font.pixelSize: Style.current.primaryTextFontSize
             font.strikeout: false
@@ -135,8 +133,7 @@ Rectangle {
 
         StyledText {
             id: timeIndicator
-            //% "At "
-            text: qsTrId("at-")
+            text: qsTr("At ")
             color: Style.current.secondaryText
             font.pixelSize: Style.current.primaryTextFontSize
             font.strikeout: false

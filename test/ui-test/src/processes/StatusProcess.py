@@ -11,7 +11,7 @@
 class StatusProcess:
     __context = None
     # Variable used to determine if it is needed to verify the process success or the process failure behavior
-    __verify_success = True
+    __verify_success: bool = True
                
     def __init__(self, context):
         self.__context = context
@@ -26,7 +26,7 @@ class StatusProcess:
                     
     # It is used to execute the specific status process steps.
     #@abstractmethod
-    def execute_process(self, verify_success = True):
+    def execute_process(self, verify_success: bool = True):
         self.__verify_success = verify_success
         print("TODO: Invoke navigations")
         # ***

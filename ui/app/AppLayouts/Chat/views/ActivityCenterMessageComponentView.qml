@@ -135,6 +135,7 @@ Item {
             messageTimestamp: model.timestamp
             messageOutgoingStatus: model.message.outgoingStatus
             messageContentType: model.message.contentType
+            senderTrustStatus: model.message.senderTrustStatus
             activityCenterMessage: true
             read: model.read
             onImageClicked: Global.openImagePopup(image, root.messageContextMenu)

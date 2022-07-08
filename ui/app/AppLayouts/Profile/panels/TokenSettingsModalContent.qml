@@ -51,8 +51,7 @@ Item {
                     id: contextMenu
                     Action {
                         icon.name: "admin"
-                        //% "Token details"
-                        text: qsTrId("token-details")
+                        text: qsTr("Token details")
                         onTriggered: {
                             modalBody.showTokenDetailsTriggered(chainId, address, name, symbol, decimals);
                         }
@@ -61,8 +60,7 @@ Item {
                         icon.name: "remove"
                         icon.color: Style.current.red
                         enabled: isCustom
-                        //% "Remove token"
-                        text: qsTrId("remove-token")
+                        text: qsTr("Remove token")
                         onTriggered: removeCustomTokenTriggered(chainId, address)
                     }
                 }
@@ -106,8 +104,7 @@ Item {
 
                 StyledText {
                     id: customLbl
-                    //% "Custom"
-                    text: qsTrId("custom")
+                    text: qsTr("Custom")
                     font.pixelSize: 13
                     color: Style.current.secondaryText
                     height: 20
@@ -130,8 +127,7 @@ Item {
 
                 StyledText {
                     id: defaultLbl
-                    //% "Default"
-                    text: qsTrId("default")
+                    text: qsTr("Default")
                     font.pixelSize: 13
                     color: Style.current.secondaryText
                     height: 20

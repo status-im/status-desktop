@@ -23,16 +23,14 @@ PopupMenu {
         icon.source: Style.svg("browser/file")
         icon.width: 16
         icon.height: 16
-        //% "Open"
-        text: qsTrId("open")
+        text: qsTr("Open")
         onTriggered: DownloadsStore.openFile(index)
     }
     Action {
         icon.source: Style.svg("add_watch_only")
         icon.width: 13
         icon.height: 9
-        //% "Show in folder"
-        text: qsTrId("show-in-folder")
+        text: qsTr("Show in folder")
         onTriggered: DownloadsStore.openDirectory(index)
     }
     Action {
@@ -40,8 +38,7 @@ PopupMenu {
         icon.source: Style.svg("browser/pause")
         icon.width: 16
         icon.height: 16
-        //% "Pause"
-        text: qsTrId("pause")
+        text: qsTr("Pause")
         onTriggered: {
             download.pause()
         }
@@ -51,8 +48,7 @@ PopupMenu {
         icon.source: Style.svg("browser/play")
         icon.width: 16
         icon.height: 16
-        //% "Resume"
-        text: qsTrId("resume")
+        text: qsTr("Resume")
         onTriggered: {
             download.resume()
         }
@@ -65,8 +61,7 @@ PopupMenu {
         icon.source: Style.svg("block-icon")
         icon.width: 13
         icon.height: 13
-        //% "Cancel"
-        text: qsTrId("browsing-cancel")
+        text: qsTr("Cancel")
         onTriggered: {
             download.cancel()
             cancelClicked()

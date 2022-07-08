@@ -45,8 +45,7 @@ Item {
         anchors.right: parent.right
         LabelValueRow {
             id: itmFrom
-            //% "From"
-            label: qsTrId("from")
+            label: qsTr("From")
             value: Item {
                 id: itmFromValue
                 anchors.fill: parent
@@ -127,16 +126,14 @@ Item {
             function needsRightPadding() {
                 return !root.toValid || root.toWarn
             }
-            //% "Recipient"
-            label: qsTrId("recipient")
+            label: qsTr("Recipient")
             states: [
                 State {
                     name: "Address"
                     when: !!root.toAccount && root.toAccount.type === RecipientSelector.Type.Address
                     PropertyChanges {
                         target: txtToPrimary
-                        //% "Unknown"
-                        text: (!!root.toAccount && root.toAccount.address) ? root.toAccount.address : qsTrId("active-unknown")
+                        text: (!!root.toAccount && root.toAccount.address) ? root.toAccount.address : qsTr("Unknown")
                         elide: Text.ElideMiddle
                         anchors.leftMargin: 190
                         anchors.right: parent.right
@@ -281,8 +278,7 @@ Item {
         }
         LabelValueRow {
             id: itmAsset
-            //% "Asset"
-            label: qsTrId("wallet-asset")
+            label: qsTr("Asset")
             value: Item {
                 anchors.fill: parent
                 anchors.verticalCenter: parent.verticalCenter
@@ -328,8 +324,7 @@ Item {
         }
         LabelValueRow {
             id: itmAmount
-            //% "Amount"
-            label: qsTrId("amount")
+            label: qsTr("Amount")
             value: Item {
                 id: amountRoot
                 anchors.fill: parent
@@ -385,8 +380,7 @@ Item {
         }
         LabelValueRow {
             id: itmNetworkFee
-            //% "Network fee"
-            label: qsTrId("network-fee")
+            label: qsTr("Network fee")
             visible: !!root.gas
             value: Item {
                 id: networkFeeRoot
@@ -492,8 +486,7 @@ Item {
         }
         LabelValueRow {
             id: itmData
-            //% "Data"
-            label: qsTrId("data")
+            label: qsTr("Data")
             visible: trxData !== "0x" && trxData !== ""
             value: Item {
                 id: dataRoot
@@ -535,8 +528,7 @@ Item {
                 // TODO: replace with StatusModal
                 ModalPopup {
                     id: dataPopup
-                    //% "Data field"
-                    title: qsTrId("data-field")
+                    title: qsTr("Data field")
                     height: 286
                     width: 400
                     Item {

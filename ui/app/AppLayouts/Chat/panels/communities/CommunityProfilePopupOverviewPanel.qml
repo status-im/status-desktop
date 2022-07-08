@@ -45,8 +45,7 @@ Column {
     }
 
     StatusDescriptionListItem {
-        //% "Share community"
-        title: qsTrId("share-community")
+        title: qsTr("Share community")
         subTitle: `${Constants.communityLinkPrefix}${root.community.id.substring(0, 4)}...${root.community.id.substring(root.community.id.length -2)}`
         tooltip.text: qsTr("Copied!")
         icon.name: "copy"
@@ -66,8 +65,7 @@ Column {
     StatusListItem {
         anchors.horizontalCenter: parent.horizontalCenter
         visible: root.community.amISectionAdmin
-        //% "Transfer ownership"
-        title: qsTrId("transfer-ownership")
+        title: qsTr("Transfer ownership")
         icon.name: "exchange"
         type: StatusListItem.Type.Secondary
         sensor.onClicked: root.transferOwnershipButtonClicked()
@@ -75,8 +73,7 @@ Column {
 
     StatusListItem {
         anchors.horizontalCenter: parent.horizontalCenter
-        //% "Leave community"
-        title: qsTrId("leave-community")
+        title: qsTr("Leave community")
         icon.name: "arrow-right"
         icon.height: 16
         icon.width: 20
@@ -85,13 +82,12 @@ Column {
         sensor.onClicked: root.leaveButtonClicked()
     }
 
-    //% "Roles"
     /*     // TODO add this back when roles exist */
 /* //        Loader { */
 /* //            active: root.community.isAdmin */
 /* //            width: parent.width */
 /* //            sourceComponent: CommunityPopupButton { */
-/* //                label: qsTrId("community-roles") */
+/* //                label: qsTr("Roles") */
 /* //                iconName: "roles" */
 /* //                width: parent.width */
 /* //                onClicked: console.log("TODO:") */

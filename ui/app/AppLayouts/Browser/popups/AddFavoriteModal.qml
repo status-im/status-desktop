@@ -67,12 +67,9 @@ ModalPopup {
 
     title: modifiyModal ?
                toolbarMode ?
-                   //% "Favorite added"
-                   qsTrId("favorite-added") :
-                   //% "Edit"
-                   qsTrId("edit")
-               //% "Add favorite"
-               : qsTrId("add-favorite")
+                   qsTr("Favorite added") :
+                   qsTr("Edit")
+               : qsTr("Add favorite")
 
     Column {
         width: parent.width
@@ -132,8 +129,7 @@ ModalPopup {
             anchors.right: addBtn.left
             anchors.rightMargin: Style.current.padding
             visible: popup.modifiyModal
-            //% "Remove"
-            text: qsTrId("remove")
+            text: qsTr("Remove")
             anchors.bottom: parent.bottom
             type: StatusBaseButton.Type.Danger
             onClicked: {
@@ -147,10 +143,8 @@ ModalPopup {
             anchors.right: parent.right
             anchors.rightMargin: Style.current.smallPadding
             text: popup.modifiyModal ?
-                      //% "Done"
-                      qsTrId("done") :
-                      //% "Add"
-                      qsTrId("add")
+                      qsTr("Done") :
+                      qsTr("Add")
             anchors.bottom: parent.bottom
             enabled: nameInput.valid && !!nameInput.text && urlInput.valid && !!urlInput.text
             onClicked: {

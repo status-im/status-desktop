@@ -27,8 +27,7 @@ PopupMenu {
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
 
     Action {
-        //% "New Tab"
-        text: qsTrId("new-tab")
+        text: qsTr("New Tab")
         shortcut: StandardKey.AddTab
         onTriggered: addNewTab()
     }
@@ -37,10 +36,8 @@ PopupMenu {
         id: offTheRecordEnabled
         // TODO show an indicator on the browser or tab?
         text: checked ?
-                  //% "Exit Incognito mode"
-                  qsTrId("exit-incognito-mode") :
-                  //% "Go Incognito"
-                  qsTrId("go-incognito")
+                  qsTr("Exit Incognito mode") :
+                  qsTr("Go Incognito")
         checkable: true
         checked: isIncognito
         onToggled: goIncognito(checked)
@@ -50,15 +47,13 @@ PopupMenu {
 
     // TODO find a way to put both in one button
     Action {
-        //% "Zoom In"
-        text: qsTrId("zoom-in")
+        text: qsTr("Zoom In")
         shortcut: StandardKey.ZoomIn
         onTriggered: zoomIn()
     }
 
     Action {
-        //% "Zoom Out"
-        text: qsTrId("zoom-out")
+        text: qsTr("Zoom Out")
         shortcut: StandardKey.ZoomOut
         onTriggered: zoomOut()
     }
@@ -71,23 +66,20 @@ PopupMenu {
     Separator {}
 
     Action {
-        //% "Find"
-        text: qsTrId("find")
+        text: qsTr("Find")
         shortcut: StandardKey.Find
         onTriggered: launchFindBar()
     }
 
     Action {
-        //% "Compatibility mode"
-        text: qsTrId("compatibility-mode")
+        text: qsTr("Compatibility mode")
         checkable: true
         checked: true
         onToggled: toggleCompatibilityMode(checked)
     }
 
     Action {
-        //% "Developer Tools"
-        text: qsTrId("developer-tools")
+        text: qsTr("Developer Tools")
         shortcut: "F12"
         onTriggered: {
             localAccountSensitiveSettings.devToolsEnabled = !localAccountSensitiveSettings.devToolsEnabled
@@ -97,8 +89,7 @@ PopupMenu {
     Separator {}
 
     Action {
-        //% "Settings"
-        text: qsTrId("settings")
+        text: qsTr("Settings")
         shortcut: "Ctrl+,"
         onTriggered: launchBrowserSettings()
     }

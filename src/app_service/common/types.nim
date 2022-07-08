@@ -14,3 +14,10 @@ type
     Community = 9
     Gap = 10
     Edit = 11
+
+type StatusType* {.pure.} = enum
+  Unknown = 0
+  Automatic
+  DoNotDisturb
+  AlwaysOnline
+  Inactive

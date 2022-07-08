@@ -8,8 +8,11 @@ import shared.popups 1.0
 import "../panels"
 
 Item {
+    id: root
 
     property var store
+
+    signal menuItemClicked(var event)
 
     StatusNavigationPanelHeadline {
         id: title
@@ -35,7 +38,7 @@ Item {
         MenuPanel {
             id: profileMenu
             privacyStore: store.privacyStore
-            messagingStore: store.messagingStore
+            contactsStore: store.contactsStore
             mainMenuItems: store.mainMenuItems
             settingsMenuItems: store.settingsMenuItems
             extraMenuItems: store.extraMenuItems
@@ -46,12 +49,20 @@ Item {
             onMenuItemClicked: {
                 if (menu_item.subsection === Constants.settingsSubsection.backUpSeed) {
                     Global.openBackUpSeedPopup();
-                } else {
-                    if (menu_item.subsection === Constants.settingsSubsection.signout) {
-                        return confirmDialog.open();
-                    }
-                    Global.settingsSubsection = menu_item.subsection;
+                    return;
                 }
+
+                let event = { accepted: false, item: menu_item.subsection };
+                
+                root.menuItemClicked(event);
+                
+                if (event.accepted)
+                    return;
+
+                if (menu_item.subsection === Constants.settingsSubsection.signout)
+                    return confirmDialog.open()
+
+                Global.settingsSubsection = menu_item.subsection
             }
         }
     }

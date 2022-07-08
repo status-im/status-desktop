@@ -10,8 +10,7 @@ import shared.controls 1.0
 // TODO: use StatusQ components
 Rectangle {
     property var buttonGroup
-    //% "Low"
-    property string text: qsTrId("low")
+    property string text: qsTr("Low")
     property string gasLimit
     property double price: 1
     property string defaultCurrency: "USD"

@@ -33,24 +33,20 @@ StatusModal {
         let subTitle = ""
         switch(access) {
             case Constants.communityChatPublicAccess:
-                //% "Public community"
-                subTitle = qsTrId("public-community");
+                subTitle = qsTr("Public community");
                 break;
             case Constants.communityChatInvitationOnlyAccess:
-                //% "Invitation only community"
-                subTitle = qsTrId("invitation-only-community");
+                subTitle = qsTr("Invitation only community");
                 break;
             case Constants.communityChatOnRequestAccess:
-                //% "On request community"
-                subTitle = qsTrId("on-request-community");
+                subTitle = qsTr("On request community");
                 break;
             default:
                 subTitle = qsTr("Unknown community");
                 break;
         }
         if (ensOnly) {
-            //% " - ENS only"
-            subTitle += qsTrId("---ens-only")
+            subTitle += qsTr(" - ENS only")
         }
         return subTitle
     }
@@ -86,8 +82,7 @@ StatusModal {
             }
 
             StatusBaseText {
-                //% "%1 members"
-                text: qsTrId("-1-members").arg(nbMembers)
+                text: qsTr("%1 members").arg(nbMembers)
                 font.pixelSize: 15
                 font.weight: Font.Medium
                 color: Theme.palette.directColor1
@@ -107,8 +102,7 @@ StatusModal {
             width: parent.width - 32
             height: 34
             StatusBaseText {
-                //% "Channels"
-                text: qsTrId("channels")
+                text: qsTr("Channels")
                 anchors.bottom: parent.bottom
                 anchors.bottomMargin: 4
                 font.pixelSize: 15
@@ -166,26 +160,19 @@ StatusModal {
             text: {
                 // Not Refactored Yet
 //                if (root.ensOnly && !root.store.profileModelInst.profile.ensVerified) {
-//                    //% "Membership requires an ENS username"
-//                    return qsTrId("membership-requires-an-ens-username")
+//                    return qsTr("Membership requires an ENS username")
 //                }
                 if (root.canJoin) {
-                    //% "Join ‘%1’"
-                    return qsTrId("join---1-").arg(root.name);
+                    return qsTr("Join ‘%1’").arg(root.name);
                 }
                 if (isPendingRequest) {
-                     //% "Pending"
-                     return qsTrId("invite-chat-pending")
+                     return qsTr("Pending")
                 }
                 switch(root.access) {
-                    //% "Join ‘%1’"
-                    case Constants.communityChatPublicAccess: return qsTrId("join---1-").arg(root.name);
-                    //% "You need to be invited"
-                    case Constants.communityChatInvitationOnlyAccess: return qsTrId("you-need-to-be-invited");
-                    //% "Request to join ‘%1’"
-                    case Constants.communityChatOnRequestAccess: return qsTrId("request-to-join---1-").arg(root.name);
-                    //% "Unknown community"
-                    default: return qsTrId("unknown-community");
+                    case Constants.communityChatPublicAccess: return qsTr("Join ‘%1’").arg(root.name);
+                    case Constants.communityChatInvitationOnlyAccess: return qsTr("You need to be invited");
+                    case Constants.communityChatOnRequestAccess: return qsTr("Request to join ‘%1’").arg(root.name);
+                    default: return qsTr("Unknown community");
                 }
             }
             enabled: {
@@ -212,8 +199,7 @@ StatusModal {
                 //    error = root.store.chatsModelInst.communities.requestToJoinCommunity(root.communityId, userProfile.name)
                 //    if (!error) {
                 //        enabled = false
-                //        //% "Pending"
-                //        text = qsTrId("invite-chat-pending")
+                //        text = qsTr("Pending")
                 //    }
                } else {
                    error = root.store.communitiesModuleInst.joinCommunity(root.communityId)
@@ -231,8 +217,7 @@ StatusModal {
 
     MessageDialog {
         id: joiningError
-        //% "Error joining the community"
-        title: qsTrId("error-joining-the-community")
+        title: qsTr("Error joining the community")
         icon: StandardIcon.Critical
         standardButtons: StandardButton.Ok
     }

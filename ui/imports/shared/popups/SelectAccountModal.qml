@@ -11,8 +11,7 @@ import StatusQ.Controls 0.1
 
 StatusModal {
     id: root
-    //% "Select account"
-    header.title: qsTrId("select-account")
+    header.title: qsTr("Select account")
     height: 284
 
     property var accounts
@@ -33,17 +32,14 @@ StatusModal {
               accounts: root.accounts
               currency: root.currency
               width: parent.width
-              //% "Choose account"
-              //% "Select account to share and receive assets"
-              label: qsTrId("select-account-to-share-and-receive-assets")
+              label: qsTr("Select account to share and receive assets")
           }
         }
     }
 
     rightButtons: [
         StatusButton {
-            //% "Confirm and share address"
-            text: qsTrId("confirm-and-share-address")
+            text: qsTr("Confirm and share address")
             onClicked: root.selectAndShareAddressButtonClicked()
         }
     ]

@@ -52,14 +52,15 @@ PopupMenu {
     }
 
     Action {
-        text: qsTr("Online")
+        text: qsTr("Always online")
         onTriggered: {
             //TODO move this to the store as soon as #4274 is merged
-            if (userProfile.userStatus !== true) {
-                mainModule.setUserStatus(true);
+            if (userProfile.currentUserStatus !== Constants.currentUserStatus.alwaysOnline) {
+                mainModule.setCurrentUserStatus(Constants.currentUserStatus.alwaysOnline);
             }
             root.close();
         }
+
         icon.color: Style.current.green
         icon.source: Style.svg("online")
         icon.width: 16
@@ -67,17 +68,33 @@ PopupMenu {
     }
 
     Action {
-        text: qsTr("Offline")
+        text: qsTr("Inactive")
         onTriggered: {
             //TODO move this to the store as soon as #4274 is merged
-            if (userProfile.userStatus !== false) {
-                mainModule.setUserStatus(false);
+            if (userProfile.currentUserStatus !== Constants.currentUserStatus.inactive) {
+                mainModule.setCurrentUserStatus(Constants.currentUserStatus.inactive);
             }
             root.close();
         }
 
         icon.color: Style.current.midGrey
         icon.source: Style.svg("offline")
+        icon.width: 16
+        icon.height: 16
+    }
+
+    Action {
+        text: qsTr("Set status automatically")
+        onTriggered: {
+            //TODO move this to the store as soon as #4274 is merged
+            if (userProfile.currentUserStatus !== Constants.currentUserStatus.automatic) {
+                mainModule.setCurrentUserStatus(Constants.currentUserStatus.automatic);
+            }
+            root.close();
+        }
+
+        icon.color: Style.current.green
+        icon.source: Style.svg("online")
         icon.width: 16
         icon.height: 16
     }

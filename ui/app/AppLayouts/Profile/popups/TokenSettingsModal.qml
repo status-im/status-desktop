@@ -15,13 +15,11 @@ StatusModal {
     y: Math.round(((parent ? parent.height : 0) - height) / 2)
     height: 480
     property WalletStore walletStore
-    //% "Manage Assets"
-    header.title: qsTrId("manage-assets")
+    header.title: qsTr("Manage Assets")
     
     rightButtons: [
         StatusButton {
-            //% "Add custom token"
-            text: qsTrId("add-custom-token")
+            text: qsTr("Add custom token")
             onClicked: {
                 addShowTokenModal.openEditable();
             }

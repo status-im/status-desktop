@@ -1,11 +1,14 @@
 ChatCommandsPopup 1.0 ChatCommandsPopup.qml
 BlockContactConfirmationDialog 1.0 BlockContactConfirmationDialog.qml
+SettingsDirtyToastMessage 1.0 SettingsDirtyToastMessage.qml
 ConfirmationDialog 1.0 ConfirmationDialog.qml
 CommunityIntroDialog 1.0 CommunityIntroDialog.qml
+ContactVerificationRequestPopup 1.0 ContactVerificationRequestPopup.qml
 DownloadModal 1.0 DownloadModal.qml
 DownloadPage 1.0 DownloadPage.qml
 ImageCropperModal 1.0 ImageCropperModal.qml
 InviteFriendsPopup 1.0 InviteFriendsPopup.qml
+NicknamePopup 1.0 NicknamePopup.qml
 ModalPopup 1.0 ModalPopup.qml
 PopupMenu 1.0 PopupMenu.qml
 SendModal 1.0 SendModal.qml
@@ -18,3 +21,4 @@ SelectAccountModal 1.0 SelectAccountModal.qml
 ProfilePopup 1.0 ProfilePopup.qml
 ImageCropWorkflow 1.0 ImageCropWorkflow.qml
 ImportCommunityPopup 1.0 ImportCommunityPopup.qml
+DisplayNamePopup 1.0 DisplayNamePopup.qml

@@ -81,8 +81,7 @@ Rectangle {
 
     StatusBaseText {
         id: welcomeText
-        //% "Welcome to your community!"
-        text: qsTrId("welcome-to-your-community-")
+        text: qsTr("Welcome to your community!")
         anchors.top: parent.top
         anchors.topMargin: 60
         horizontalAlignment: Text.AlignHCenter
@@ -97,8 +96,7 @@ Rectangle {
 
     StatusQControls.StatusButton {
         id: addMembersBtn
-        //% "Add members"
-        text: qsTrId("add-members")
+        text: qsTr("Add members")
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: manageBtn.top
         anchors.bottomMargin: Style.current.halfPadding
@@ -111,8 +109,7 @@ Rectangle {
 
     StatusQControls.StatusFlatButton {
         id: manageBtn
-        //% "Manage community"
-        text: qsTrId("manage-community")
+        text: qsTr("Manage community")
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
         anchors.bottomMargin: Style.current.padding

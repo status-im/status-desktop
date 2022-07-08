@@ -75,8 +75,7 @@ TabViewStyle {
                 anchors.rightMargin: Style.current.halfPadding
                 icon.name: "close"
                 type: StatusFlatRoundButton.Type.Quaternary
-                //% "Start Page"
-                visible: control.count > 1 || styleData.title !== qsTrId("start-page")
+                visible: control.count > 1 || styleData.title !== qsTr("Start Page")
                 enabled: visible
                 onClicked: control.closeButtonClicked(styleData.index)
             }

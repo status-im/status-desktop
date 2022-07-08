@@ -34,8 +34,7 @@ StatusModal {
     anchors.centerIn: parent
     id: root
 
-    //% "Signature request"
-    header.title: qsTrId("signature-request")
+    header.title: qsTr("Signature request")
     height: 504
 
     onClosed: {
@@ -96,8 +95,7 @@ StatusModal {
             anchors.leftMargin: Style.current.padding
 
             LabelValueRow {
-                //% "From"
-                label: qsTrId("from")
+                label: qsTr("From")
                 value: Item {
                     id: itmFromValue
                     anchors.fill: parent
@@ -139,8 +137,7 @@ StatusModal {
             }
 
             LabelValueRow {
-                //% "Data"
-                label: qsTrId("data")
+                label: qsTr("Data")
                 value: Item {
                     anchors.fill: parent
                     anchors.verticalCenter: parent.verticalCenter
@@ -148,8 +145,7 @@ StatusModal {
                     // TODO; replace with StatusModal
                     ModalPopup {
                         id: messagePopup
-                        //% "Message"
-                        title: qsTrId("message")
+                        title: qsTr("Message")
                         height: 286
                         width: 400
                         Item {
@@ -212,8 +208,7 @@ StatusModal {
     leftButtons: [
         StatusFlatButton {
             id: btnReject
-            //% "Reject"
-            text: qsTrId("reject")
+            text: qsTr("Reject")
             type: StatusBaseButton.Type.Danger
             onClicked: close()
         }
@@ -223,10 +218,8 @@ StatusModal {
         StatusButton {
             id: btnNext
             text: showSigningPhrase ?
-                    //% "Sign"
-                    qsTrId("transactions-sign") :
-                    //% "Sign with password"
-                    qsTrId("sign-with-password")
+                    qsTr("Sign") :
+                    qsTr("Sign with password")
             onClicked: {
                 if(!showSigningPhrase){
                     showSigningPhrase = true;

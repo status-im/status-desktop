@@ -12,8 +12,7 @@ StatusModal {
     id: popup
     anchors.centerIn: parent
 
-    //% "Choose browser"
-    header.title: qsTrId("choose-browser")
+    header.title: qsTr("Choose browser")
     width: 440
 
     contentItem: Column {
@@ -29,8 +28,7 @@ StatusModal {
         }
 
         StatusButton {
-            //% "Open in Status"
-            text: qsTrId("browsing-open-in-status")
+            text: qsTr("Open in Status")
             anchors.horizontalCenter: parent.horizontalCenter
             onClicked: {
                 localAccountSensitiveSettings.showBrowserSelector = !rememberChoiceCheckBox.checked
@@ -44,8 +42,7 @@ StatusModal {
         }
 
         StatusFlatButton {
-            //% "Open in my default browser"
-            text: qsTrId("open-in-my-default-browser")
+            text: qsTr("Open in my default browser")
             anchors.horizontalCenter: parent.horizontalCenter
             onClicked: {
                 localAccountSensitiveSettings.showBrowserSelector = !rememberChoiceCheckBox.checked
@@ -60,8 +57,7 @@ StatusModal {
 
         StatusCheckBox {
             id: rememberChoiceCheckBox
-            //% "Remember my choice. To override it, go to settings."
-            text: qsTrId("remember-my-choice--to-override-it--go-to-settings-")
+            text: qsTr("Remember my choice. To override it, go to settings.")
             width: parent.width
         }
     }

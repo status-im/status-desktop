@@ -24,7 +24,6 @@ Item {
         border.width: 1
         border.color: Theme.palette.baseColor2
         color: Theme.palette.statusListItem.backgroundColor
-        //% "All networks"
         title: qsTr("All networks")
         components:[
             StatusIcon {

@@ -73,8 +73,7 @@ Rectangle {
 
         StatusBaseText {
             id: chatAndTransactText
-            //% "Chat and transact privately with your friends"
-            text: qsTrId("chat-and-transact-privately-with-your-friends")
+            text: qsTr("Chat and transact privately with your friends")
             anchors.top: parent.top
             anchors.topMargin: 56
             horizontalAlignment: Text.AlignHCenter
@@ -88,8 +87,7 @@ Rectangle {
         }
 
         StatusQControls.StatusButton {
-            //% "Invite friends"
-            text: qsTrId("invite-friends")
+            text: qsTr("Invite friends")
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
             anchors.bottomMargin: Style.current.xlPadding
@@ -130,8 +128,7 @@ Rectangle {
         StatusBaseText {
             id: suggestionsText
             width: parent.width
-            //% "Follow your interests in one of the many Public Chats."
-            text: qsTrId("follow-your-interests-in-one-of-the-many-public-chats.")
+            text: qsTr("Follow your interests in one of the many Public Chats.")
             anchors.top: parent.top
             anchors.topMargin: Style.current.xlPadding
             font.pointSize: 15

@@ -49,8 +49,7 @@ method load*(self: Module) =
   self.controller.init()
 
   let signingPhrase = self.controller.getSigningPhrase()
-  let network = self.controller.getCurrentNetworkDetails()
-  var link = network.etherscanLink.replace("/address", "/tx")
+  let link = self.controller.getNetwork().blockExplorerUrl & "/tx/"
   self.view.load(link, signingPhrase)
 
 method isLoaded*(self: Module): bool =
@@ -236,7 +235,7 @@ method getStatusToken*(self: Module): string =
   return self.controller.getStatusToken()
 
 method getChainIdForEns*(self: Module): int =
-  return self.controller.getChainIdForEns()
+  return self.controller.getNetwork().chainId
 
 method setPrefferedEnsUsername*(self: Module, ensUsername: string) =
   self.controller.setPreferredName(ensUsername)

@@ -18,10 +18,7 @@ const LSS_KEY_EXPAND_USERS_LIST* = "expandUsersList"
 const DEFAULT_EXPAND_USERS_LIST = true
 const LSS_KEY_IS_GIF_WIDGET_ENABLED* = "isGifWidgetEnabled"
 const DEFAULT_IS_GIF_WIDGET_ENABLED = true
-const LSS_KEY_IS_MULTI_NETWORK_ENABLED* = "isMultiNetworkEnabled"
 const DEFAULT_IS_MULTI_NETWORK_ENABLED = false
-const LSS_KEY_IS_COMMUNITIES_PORTAL_ENABLED* = "isCommunitiesPortalEnabled"
-const DEFAULT_IS_COMMUNITIES_PORTAL_ENABLED = false
 const LSS_KEY_IS_TENOR_WARNING_ACCEPTED* = "isTenorWarningAccepted"
 const DEFAULT_IS_TENOR_WARNING_ACCEPTED = false
 const LSS_KEY_DISPLAY_CHAT_IMAGES* = "displayChatImages"
@@ -268,31 +265,6 @@ QtObject:
     read = getIsGifWidgetEnabled
     write = setIsGifWidgetEnabled
     notify = isGifWidgetEnabledChanged
-
-  proc isMultiNetworkEnabledChanged*(self: LocalAccountSensitiveSettings) {.signal.}
-  proc getIsMultiNetworkEnabled*(self: LocalAccountSensitiveSettings): bool {.slot.} =
-    getSettingsProp[bool](self, LSS_KEY_IS_MULTI_NETWORK_ENABLED, newQVariant(DEFAULT_IS_MULTI_NETWORK_ENABLED))
-  proc setIsMultiNetworkEnabled*(self: LocalAccountSensitiveSettings, value: bool) {.slot.} =
-    setSettingsProp(self, LSS_KEY_IS_MULTI_NETWORK_ENABLED, newQVariant(value)):
-      self.isMultiNetworkEnabledChanged()
-
-  QtProperty[bool] isMultiNetworkEnabled:
-    read = getIsMultiNetworkEnabled
-    write = setIsMultiNetworkEnabled
-    notify = isMultiNetworkEnabledChanged
-
-  proc isCommunitiesPortalEnabledChanged*(self: LocalAccountSensitiveSettings) {.signal.}
-  proc getIsCommunitiesPortalEnabled*(self: LocalAccountSensitiveSettings): bool {.slot.} =
-    getSettingsProp[bool](self, LSS_KEY_IS_COMMUNITIES_PORTAL_ENABLED, newQVariant(DEFAULT_IS_COMMUNITIES_PORTAL_ENABLED))
-  proc setIsCommunitiesPortalEnabled*(self: LocalAccountSensitiveSettings, value: bool) {.slot.} =
-    setSettingsProp(self, LSS_KEY_IS_COMMUNITIES_PORTAL_ENABLED, newQVariant(value)):
-      self.isCommunitiesPortalEnabledChanged()
-
-  QtProperty[bool] isCommunitiesPortalEnabled:
-    read = getIsCommunitiesPortalEnabled
-    write = setIsCommunitiesPortalEnabled
-    notify = isCommunitiesPortalEnabledChanged
-
 
   proc isTenorWarningAcceptedChanged*(self: LocalAccountSensitiveSettings) {.signal.}
   proc getIsTenorWarningAccepted*(self: LocalAccountSensitiveSettings): bool {.slot.} =
@@ -773,8 +745,6 @@ QtObject:
       of LSS_KEY_SHOW_ONLINE_USERS: self.showOnlineUsersChanged()
       of LSS_KEY_EXPAND_USERS_LIST: self.expandUsersListChanged()
       of LSS_KEY_IS_GIF_WIDGET_ENABLED: self.isGifWidgetEnabledChanged()
-      of LSS_KEY_IS_MULTI_NETWORK_ENABLED: self.isMultiNetworkEnabledChanged()
-      of LSS_KEY_IS_COMMUNITIES_PORTAL_ENABLED: self.isCommunitiesPortalEnabledChanged()
       of LSS_KEY_IS_TENOR_WARNING_ACCEPTED: self.isTenorWarningAcceptedChanged()
       of LSS_KEY_DISPLAY_CHAT_IMAGES: self.displayChatImagesChanged()
       of LSS_KEY_RECENT_EMOJIS: self.recentEmojisChanged()

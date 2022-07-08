@@ -13,8 +13,7 @@ Item {
     Layout.fillWidth: true
 
     StyledText {
-        //% "Your chats will appear here. To start new chats press the  button at the top"
-        text: qsTrId("your-chats-will-appear-here--to-start-new-chats-press-the---button-at-the-top")
+        text: qsTr("Your chats will appear here. To start new chats press the  button at the top")
         anchors.verticalCenterOffset: -80
         horizontalAlignment: Text.AlignHCenter
         wrapMode: Text.WordWrap

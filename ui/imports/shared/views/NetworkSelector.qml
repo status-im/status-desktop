@@ -62,7 +62,6 @@ Item {
                                 font.pixelSize: 15
                                 font.weight: Font.Medium
                                 color: Theme.palette.directColor1
-                                //% "Networks"
                                 text: qsTr("Networks")
                                 wrapMode: Text.WordWrap
                             }

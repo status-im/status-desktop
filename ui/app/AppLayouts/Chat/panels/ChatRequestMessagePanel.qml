@@ -25,12 +25,9 @@ Item {
 
     StatusBaseText {
         id: contactText1
-        //% "You need to be mutual contacts with this person for them to receive your messages"
-        text: qsTrId("you-need-to-be-mutual-contacts-with-this-person-for-them-to-receive-your-messages")
-        //% "You need to be mutual contacts with this person for them to receive your messages"
-        // text: !isContact ? qsTrId("you-need-to-be-mutual-contacts-with-this-person-for-them-to-receive-your-messages") :
-        //% "Waiting for %1 to accept your request"
-        // qsTrId("waiting-for--1-to-accept-your-request").arg(Utils.removeStatusEns(chatsModel.channelView.activeChannel.name))
+        text: qsTr("You need to be mutual contacts with this person for them to receive your messages")
+        // text: !isContact ? qsTr("You need to be mutual contacts with this person for them to receive your messages") :
+        // qsTr("Waiting for %1 to accept your request").arg(Utils.removeStatusEns(chatsModel.channelView.activeChannel.name))
         anchors.top: waveImg.bottom
         horizontalAlignment: Text.AlignHCenter
         wrapMode: Text.WordWrap
@@ -43,8 +40,7 @@ Item {
     StatusBaseText {
         id: contactText2
         visible: !isContact
-        //% "Just click this button to add them as contact. They will receive a notification. Once they accept the request, you'll be able to chat"
-        text: qsTrId("just-click-this-button-to-add-them-as-contact--they-will-receive-a-notification--once-they-accept-the-request--you-ll-be-able-to-chat")
+        text: qsTr("Just click this button to add them as contact. They will receive a notification. Once they accept the request, you'll be able to chat")
         horizontalAlignment: Text.AlignHCenter
         wrapMode: Text.WordWrap
         anchors.top: contactText1.bottom
@@ -56,8 +52,7 @@ Item {
 
     StatusButton {
         visible: !isContact
-        //% "Add to contacts"
-        text: qsTrId("add-to-contacts")
+        text: qsTr("Add to contacts")
         anchors.top: contactText2.bottom
         anchors.topMargin: Style.current.smallPadding
         anchors.horizontalCenter: parent.horizontalCenter

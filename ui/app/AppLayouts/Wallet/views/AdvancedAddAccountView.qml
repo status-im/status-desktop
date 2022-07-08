@@ -128,18 +128,14 @@ ColumnLayout {
     StatusInput {
         id: addressInput
         visible: advancedSection.addAccountType === SelectGeneratedAccount.AddAccountType.WatchOnly && advancedSection.visible
-        //% "Enter address..."
-        input.placeholderText: qsTrId("enter-address...")
-        //% "Account address"
-        label: qsTrId("wallet-key-title")
+        input.placeholderText: qsTr("Enter address...")
+        label: qsTr("Account address")
         validators: [
             StatusAddressValidator {
-                //% "This needs to be a valid address (starting with 0x)"
-                errorMessage: qsTrId("this-needs-to-be-a-valid-address-(starting-with-0x)")
+                errorMessage: qsTr("This needs to be a valid address (starting with 0x)")
             },
             StatusMinLengthValidator {
-                //% "You need to enter an address"
-                errorMessage: qsTrId("you-need-to-enter-an-address")
+                errorMessage: qsTr("You need to enter an address")
                 minLength: 1
             }
         ]

@@ -14,12 +14,13 @@ import shared.popups 1.0
 import shared.status 1.0
 import shared.controls 1.0
 import shared.views.chat 1.0
+import StatusQ.Core 0.1
+import StatusQ.Components 0.1
 
 import "../controls"
 
 Item {
     id: root
-    //anchors.fill: parent
 
     property var store
     property var messageStore
@@ -32,6 +33,7 @@ Item {
     property bool stickersLoaded: false
     property alias chatLogView: chatLogView
     property bool isChatBlocked: false
+    property bool isActiveChannel: false
 
     property var messageContextMenuInst
 
@@ -237,8 +239,7 @@ Item {
 
         model: messageStore.messagesModel
 
-        // Not Refactored Yet
-        //Component.onCompleted: scrollToBottom(true)
+        Component.onCompleted: chatLogView.scrollToBottom(true)
 
         delegate: MessageView {
             id: msgDelegate
@@ -250,6 +251,7 @@ Item {
             channelEmoji: root.channelEmoji
             emojiPopup: root.emojiPopup
 
+            isActiveChannel: root.isActiveChannel
             isChatBlocked: root.isChatBlocked
             messageContextMenu: messageContextMenuInst
 
@@ -268,6 +270,7 @@ Item {
             messageTimestamp: model.timestamp
             messageOutgoingStatus: model.outgoingStatus
             messageContentType: model.contentType
+            senderTrustStatus: model.senderTrustStatus
             pinnedMessage: model.pinned
             messagePinnedBy: model.pinnedBy
             reactionsModel: model.reactions
@@ -286,10 +289,10 @@ Item {
             // Also one important thing here is that messages are set in descending order
             // in terms of `timestamp` of a message, that means a message with the most
             // recent time is added at index 0.
-            prevMessageIndex: index + 1
-            prevMessageAsJsonObj: messageStore.getMessageByIndexAsJson(index + 1)
-            nextMessageIndex: index - 1
-            nextMessageAsJsonObj: messageStore.getMessageByIndexAsJson(index - 1)
+            prevMessageIndex: model.prevMsgIndex
+            prevMessageAsJsonObj: messageStore.getMessageByIndexAsJson(model.prevMsgIndex)
+            nextMessageIndex: model.nextMsgIndex
+            nextMessageAsJsonObj: messageStore.getMessageByIndexAsJson(model.nextMsgIndex)
             onOpenStickerPackPopup: {
                 root.openStickerPackPopup(stickerPackId);
             }
@@ -312,8 +315,7 @@ Item {
     MessageDialog {
         id: sendingMsgFailedPopup
         standardButtons: StandardButton.Ok
-        //% "Failed to send message."
-        text: qsTrId("failed-to-send-message-")
+        text: qsTr("Failed to send message.")
         icon: StandardIcon.Critical
     }
 }
