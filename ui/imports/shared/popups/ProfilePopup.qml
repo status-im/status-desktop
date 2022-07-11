@@ -141,9 +141,10 @@ StatusModal {
         if(showVerifyIdentitySection || showVerificationPendingSection){
             return qsTr("Verify %1's Identity").arg(userIsEnsVerified ? userName : userDisplayName)
         }
-        return qsTr("%1's Profile").arg(userIsEnsVerified ? userName : userDisplayName)
+        return popup.isCurrentUser ? qsTr("My Profile") :
+                                     qsTr("%1's Profile").arg(userIsEnsVerified ? userName : userDisplayName)
     }
-    header.subTitle: userIsEnsVerified ? userName : Utils.getElidedCompressedPk(userPublicKey)
+    header.subTitle: popup.isCurrentUser ? "" : userIsEnsVerified ? userName : Utils.getElidedCompressedPk(userPublicKey)
     header.subTitleElide: Text.ElideMiddle
     padding: 8
 
