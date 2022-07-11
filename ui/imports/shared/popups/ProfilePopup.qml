@@ -233,7 +233,7 @@ StatusModal {
         anchors.centerIn: parent
         width: popup.width
         visible: false
-        header.title: qsTr("Send Contact Request to") + " " + userDisplayName
+        header.title: qsTr("Send Contact Request to %1").arg(userDisplayName)
         userPublicKey: popup.userPublicKey
         userDisplayName: popup.userDisplayName
         userIcon: popup.userIcon

@@ -239,9 +239,9 @@ Rectangle {
 
         ListModel {
             id: stepsListModel
-            ListElement {description:"Send Request"; loadingTime: 0; stepCompleted: false}
-            ListElement {description:"Receive Response"; loadingTime: 0; stepCompleted: false}
-            ListElement {description:"Confirm Identity"; loadingTime: 0; stepCompleted: false}
+            ListElement {description: qsTr("Send Request"); loadingTime: 0; stepCompleted: false}
+            ListElement {description: qsTr("Receive Response"); loadingTime: 0; stepCompleted: false}
+            ListElement {description: qsTr("Confirm Identity"); loadingTime: 0; stepCompleted: false}
         }
 
         StatusWizardStepper {
