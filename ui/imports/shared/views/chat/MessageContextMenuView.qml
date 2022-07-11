@@ -102,6 +102,11 @@ StatusPopupMenu {
 
     onHeightChanged: { root.y = setYPosition(); }
     onWidthChanged: { root.x = setXPosition(); }
+    onOpened: {
+        // Trigger x and y position:
+        x = setXPosition()
+        y = setYPosition()
+    }
 
     width: Math.max(emojiContainer.visible ? emojiContainer.width : 0, 200)
 

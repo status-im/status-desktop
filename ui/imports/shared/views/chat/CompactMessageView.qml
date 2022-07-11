@@ -764,11 +764,14 @@ Item {
                 onAddEmojiClicked: {
                     if(root.isChatBlocked)
                         return
+
+                    // First set parent, X & Y positions for the messageContextMenu
+                    root.messageContextMenu.parent = emojiRect
+                    root.messageContextMenu.setXPosition = function() { return (root.messageContextMenu.parent.x + root.messageContextMenu.parent.width + 4) }
+                    root.messageContextMenu.setYPosition = function() { return  (-root.messageContextMenu.height - 4) }
+
+                    // Second, add emoji that also triggers setXYPosition methods / open popup:
                     root.addEmoji(false, false, false, null, true, false);
-                    // Set parent, X & Y positions for the messageContextMenu
-                    root.messageContextMenu.parent = emojiReactionLoader
-                    root.messageContextMenu.setXPosition = function() { return (root.messageContextMenu.parent.x + 4)}
-                    root.messageContextMenu.setYPosition = function() { return (-root.messageContextMenu.height - 4)}
                 }
 
                 onToggleReaction: {

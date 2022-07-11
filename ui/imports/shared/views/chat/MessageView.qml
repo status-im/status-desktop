@@ -212,10 +212,6 @@ Loader {
             messageContextMenu.selectedUserIcon = obj.senderIconToShow
         }
 
-
-        messageContextMenu.x = messageContextMenu.setXPosition()
-        messageContextMenu.y = messageContextMenu.setYPosition()
-
         messageContextMenu.popup()
     }
 
