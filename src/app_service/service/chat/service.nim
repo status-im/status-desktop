@@ -318,14 +318,22 @@ QtObject:
       error "Error deleting channel", chatId, msg = e.msg
       return
 
+  proc prepareImages*(self: Service, imagePathsJson: string): seq[string] =
+    var images = Json.decode(imagePathsJson, seq[string])
+
+    for imagePath in images.mitems:
+      var image = singletonInstance.utils.formatImagePath(imagePath)
+      imagePath = image_resizer(image, 2000, TMPDIR)
+    return images
+
+  proc prepareMessage*(self: Service, msg: string): string =
+    let allKnownContacts = self.contactService.getContactsByGroup(ContactsGroup.AllKnownContacts)
+    return message_common.replaceMentionsWithPubKeys(allKnownContacts, msg)
+
   proc sendImages*(self: Service, chatId: string, imagePathsJson: string): string =
     result = ""
     try:
-      var images = Json.decode(imagePathsJson, seq[string])
-
-      for imagePath in images.mitems:
-        var image = singletonInstance.utils.formatImagePath(imagePath)
-        imagePath = image_resizer(image, 2000, TMPDIR)
+      var images = self.prepareImages(imagePathsJson)
 
       let response = status_chat.sendImages(chatId, images)
 
@@ -333,6 +341,21 @@ QtObject:
         removeFile(imagePath)
 
       discard self.processMessageUpdateAfterSend(response)
+    except Exception as e:
+      error "Error sending images", msg = e.msg
+      result = fmt"Error sending images: {e.msg}"
+
+  proc sendImagesWithOneMessage*(self: Service, chatId: string, imagePathsJson: string, msg: string): string =
+    result = ""
+    try:
+      let images = self.prepareImages(imagePathsJson)
+      let processedMsg = self.prepareMessage(msg)
+
+      let response = status_chat.sendImagesWithOneMessage(chatId, images, processedMsg)
+
+      let (chats, messages) = self.processMessageUpdateAfterSend(response)
+      if chats.len == 0 or messages.len == 0:
+        self.events.emit(SIGNAL_SENDING_FAILED, ChatArgs(chatId: chatId))
     except Exception as e:
       error "Error sending images", msg = e.msg
       result = fmt"Error sending images: {e.msg}"
@@ -346,8 +369,7 @@ QtObject:
     preferredUsername: string = "",
     communityId: string = "") =
     try:
-      let allKnownContacts = self.contactService.getContactsByGroup(ContactsGroup.AllKnownContacts)
-      let processedMsg = message_common.replaceMentionsWithPubKeys(allKnownContacts, msg)
+      let processedMsg = self.prepareMessage(msg)
 
       let response = status_chat.sendChatMessage(
         chatId,

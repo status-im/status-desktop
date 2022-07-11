@@ -86,28 +86,39 @@ QtObject {
     }
 
     function sendMessage(event, text, replyMessageId, fileUrls) {
-        var chatContentModule = currentChatContentModule()
-        if (fileUrls.length > 0){
-            chatContentModule.inputAreaModule.sendImages(JSON.stringify(fileUrls));
+        var chatContentModule = currentChatContentModule();
+
+        let msg = globalUtils.plainText(StatusQUtils.Emoji.deparse(text));
+        if (msg.length > 0)
+            msg = interpretMessage(msg);
+
+        let sent = false;
+        if (fileUrls.length > 1) {
+            chatContentModule.inputAreaModule.sendImagesWithOneMessage(JSON.stringify(fileUrls), msg);
+            sent = true;
         }
-        let msg = globalUtils.plainText(StatusQUtils.Emoji.deparse(text))
-        if (msg.length > 0) {
-            msg = interpretMessage(msg)
+        else {
+            if (fileUrls.length > 0) {
+                chatContentModule.inputAreaModule.sendImages(JSON.stringify(fileUrls));
+                sent = true;
+            }
 
-            chatContentModule.inputAreaModule.sendMessage(
-                        msg,
-                        replyMessageId,
-                        Utils.isOnlyEmoji(msg) ? Constants.messageContentType.emojiType : Constants.messageContentType.messageType,
-                        false)
-
-            if (event)
-                event.accepted = true
-
-            return true
+            if (msg.length > 0) {
+                chatContentModule.inputAreaModule.sendMessage(
+                            msg,
+                            replyMessageId,
+                            Utils.isOnlyEmoji(msg) ? Constants.messageContentType.emojiType
+                                                   : Constants.messageContentType.messageType,
+                            false);
+                sent = true;
+            }
         }
-        return false
+
+        if (event)
+            event.accepted = true
+
+        return sent;
     }
-
 
     property var messageStore: MessageStore { }
 

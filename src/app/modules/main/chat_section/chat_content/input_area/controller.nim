@@ -48,6 +48,9 @@ proc belongsToCommunity*(self: Controller): bool =
 proc sendImages*(self: Controller, imagePathsJson: string): string =
   self.chatService.sendImages(self.chatId, imagePathsJson)
 
+proc sendImagesWithOneMessage*(self: Controller, imagePathsJson: string, msg: string): string =
+  self.chatService.sendImagesWithOneMessage(self.chatId, imagePathsJson, msg)
+
 proc sendChatMessage*(
     self: Controller,
     msg: string,

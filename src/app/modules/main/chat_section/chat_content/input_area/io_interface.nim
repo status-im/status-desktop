@@ -23,6 +23,9 @@ method sendChatMessage*(self: AccessInterface, msg: string, replyTo: string, con
 method sendImages*(self: AccessInterface, imagePathsJson: string): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method sendImagesWithOneMessage*(self: AccessInterface, imagePathsJson: string, msg: string): string {.base.} =
+ raise newException(ValueError, "No implementation available")
+
 method requestAddressForTransaction*(self: AccessInterface, fromAddress: string, amount: string, tokenAddress: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 

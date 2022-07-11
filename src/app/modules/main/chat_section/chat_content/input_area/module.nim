@@ -63,6 +63,9 @@ method getChatId*(self: Module): string =
 method sendImages*(self: Module, imagePathsJson: string): string =
   self.controller.sendImages(imagePathsJson)
 
+method sendImagesWithOneMessage*(self: Module, imagePathsJson: string, msg: string): string =
+  self.controller.sendImagesWithOneMessage(imagePathsJson, msg)
+
 method sendChatMessage*(
     self: Module,
     msg: string,

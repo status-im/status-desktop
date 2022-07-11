@@ -39,6 +39,9 @@ QtObject:
   proc sendImages*(self: View, sendImages: string): string {.slot.} =
     self.delegate.sendImages(sendImages)
 
+  proc sendImagesWithOneMessage*(self: View, sendImages: string, msg: string): string {.slot.} =
+    self.delegate.sendImagesWithOneMessage(sendImages, msg)
+
   proc acceptAddressRequest*(self: View, messageId: string , address: string) {.slot.} =
     self.delegate.acceptRequestAddressForTransaction(messageId, address)
 
