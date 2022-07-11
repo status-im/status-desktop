@@ -113,6 +113,7 @@ Item {
     }
 
     property Component displayNamePopupComponent: DisplayNamePopup {
+        anchors.centerIn: parent
         profileStore: appMain.rootStore.profileSectionStore.profileStore
         onClosed: {
             destroy()
