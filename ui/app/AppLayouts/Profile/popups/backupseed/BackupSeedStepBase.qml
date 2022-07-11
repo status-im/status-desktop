@@ -55,4 +55,6 @@ Flickable {
             Layout.fillWidth: true
         }
     }
+
+    ScrollIndicator.vertical: ScrollIndicator {}
 }

@@ -72,10 +72,10 @@ StatusStackModal {
             switch (root.currentIndex) {
             case 0:
             case 1:
-                return  qsTr("Confirm Seed Phrase");
+                return qsTr("Confirm Seed Phrase");
             case 2:
             case 3:
-                return qsTr("Continue");;
+                return qsTr("Continue");
             default:
                 return "";
             }
