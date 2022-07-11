@@ -226,18 +226,26 @@ QtObject {
             readonly property int buttonFontSize: 15
         }
 
+        readonly property QtObject mode: QtObject {
+            readonly property string generateNewKeysMode: "GenerateNewKeys"
+            readonly property string importSeedPhraseMode: "ImportSeedPhrase"
+            readonly property string oldUserLoginMode: "OldUserLogin"
+            readonly property string currentUserLoginMode: "CurrentUserLogin"
+        }
+
         readonly property QtObject state: QtObject {
-            readonly property string pluginKeycardState: "pluginKeycardState"
-            readonly property string insertKeycardState: "insertKeycardState"
-            readonly property string readingKeycardState: "readingKeycardState"
-            readonly property string createKeycardPinState: "createKeycardPinState"
-            readonly property string repeatKeycardPinState: "repeatKeycardPinState"
-            readonly property string keycardPinSetState: "keycardPinSetState"
-            readonly property string displaySeedPhraseState: "displaySeedPhraseState"
-            readonly property string enterSeedPhraseWordsState: "enterSeedPhraseWordsState"
-            readonly property string yourProfileState: "yourProfileState"
-            readonly property string keycardNotEmpty: "keycardNotEmpty"
-            readonly property string keycardLocked: "keycardLocked"
+            readonly property string pluginKeycardState: "PluginKeycardState"
+            readonly property string insertKeycardState: "InsertKeycardState"
+            readonly property string readingKeycardState: "ReadingKeycardState"
+            readonly property string createKeycardPinState: "CreateKeycardPinState"
+            readonly property string repeatKeycardPinState: "RepeatKeycardPinState"
+            readonly property string keycardPinSetState: "KeycardPinSetState"
+            readonly property string displaySeedPhraseState: "DisplaySeedPhraseState"
+            readonly property string enterSeedPhraseState: "EnterSeedPhraseState"
+            readonly property string enterSeedPhraseWordsState: "EnterSeedPhraseWordsState"
+            readonly property string yourProfileState: "YourProfileState"
+            readonly property string keycardNotEmpty: "KeycardNotEmpty"
+            readonly property string keycardLocked: "KeycardLocked"
         }
     }
 

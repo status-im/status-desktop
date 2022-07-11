@@ -40,11 +40,14 @@ proc init*(self: Controller) =
   self.events.on(SignalKeycardInserted) do(e: Args):
     self.delegate.switchToState(FlowStateType.ReadingKeycard)
 
-  self.events.on(SignalCreateKeycardPin) do(e: Args):
+  self.events.on(SignalCreateKeycardPIN) do(e: Args):
     self.delegate.switchToState(FlowStateType.CreateKeycardPin)
 
   self.events.on(SignalKeycardNotEmpty) do(e: Args):
     self.delegate.switchToState(FlowStateType.KeycardNotEmpty)
+
+  self.events.on(SignalKeycardLocked) do(e: Args):
+    self.delegate.switchToState(FlowStateType.KeycardLocked)
 
   self.events.on(SignalCreateSeedPhrase) do(e: Args):
     let arg = KeycardArgs(e)
@@ -54,14 +57,17 @@ proc init*(self: Controller) =
     let arg = KeycardArgs(e)
     self.delegate.setKeyUidAndSwitchToState(arg.data, FlowStateType.YourProfileState)
 
-proc startOnboardingKeycardFlow*(self: Controller) =
-  self.keycardService.startOnboardingKeycardFlow()
+proc runLoadAccountFlow*(self: Controller) =
+  self.keycardService.startLoadAccountFlow()
 
 proc storePin*(self: Controller, pin: string) =
   self.keycardService.storePin(pin)
 
-proc storeSeedPhrase*(self: Controller, seedPhrase: string) =
-  self.keycardService.storeSeedPhrase(seedPhrase)
+proc storeSeedPhrase*(self: Controller, seedPhraseLength: int, seedPhrase: string) =
+  self.keycardService.storeSeedPhrase(seedPhraseLength, seedPhrase)
+
+# proc storePinAndSeedPhrase*(self: Controller, pin: string, seedPhraseLength: int, seedPhrase: string) =
+#   self.keycardService.storePinAndSeedPhrase(pin, seedPhraseLength, seedPhrase)
 
 proc resumeCurrentFlow*(self: Controller) =
   self.keycardService.resumeCurrentFlow()
@@ -72,6 +78,12 @@ proc factoryReset*(self: Controller) =
 proc cancelCurrentFlow*(self: Controller) =
   self.keycardService.cancelCurrentFlow()
 
+proc validSeedPhrase*(self: Controller, seedPhrase: string): bool =
+  return self.accountsService.validateMnemonic(seedPhrase).len == 0
+
+# Once we improve our states and merge `startupModule`, `onboardingModule` and `loginModule` into one,
+# we should use `accountServices` from here to deal with accounts in an appropriate way.
+#
 # proc importMnemonic*(self: Controller, mnemonic: string): tuple[generatedAcc: GeneratedAccountDto, error: string] =
 #   result.error = self.accountsService.importMnemonic(mnemonic)
 #   result.generatedAcc = self.accountsService.getImportedAccount()

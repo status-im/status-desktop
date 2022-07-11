@@ -1,17 +1,24 @@
 import NimQml
 
+type KeycardMode* {.pure.} = enum
+  GenerateNewKeys = "GenerateNewKeys"
+  ImportSeedPhrase = "ImportSeedPhrase"
+  OldUserLogin = "OldUserLogin"
+  CurrentUserLogin = "CurrentUserLogin"
+
 type FlowStateType* {.pure.} = enum
-  PluginKeycard = "pluginKeycardState"
-  InsertKeycard = "insertKeycardState"
-  ReadingKeycard = "readingKeycardState"
-  CreateKeycardPin = "createKeycardPinState"
-  RepeatKeycardPin = "repeatKeycardPinState"
-  KeycardPinSet = "keycardPinSetState"
-  DisplaySeedPhrase = "displaySeedPhraseState"
-  EnterSeedPhraseWords = "enterSeedPhraseWordsState"
-  YourProfileState = "yourProfileState"
-  KeycardNotEmpty = "keycardNotEmpty"
-  KeycardLocked = "keycardLocked"
+  PluginKeycard = "PluginKeycardState"
+  InsertKeycard = "InsertKeycardState"
+  ReadingKeycard = "ReadingKeycardState"
+  CreateKeycardPin = "CreateKeycardPinState"
+  RepeatKeycardPin = "RepeatKeycardPinState"
+  KeycardPinSet = "KeycardPinSetState"
+  DisplaySeedPhrase = "DisplaySeedPhraseState"
+  EnterSeedPhrase = "EnterSeedPhraseState"
+  EnterSeedPhraseWords = "EnterSeedPhraseWordsState"
+  YourProfileState = "YourProfileState"
+  KeycardNotEmpty = "KeycardNotEmpty"
+  KeycardLocked = "KeycardLocked"
 
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -28,7 +35,10 @@ method getModuleAsVariant*(self: AccessInterface): QVariant {.base.} =
 method switchToState*(self: AccessInterface, state: FlowStateType) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method startOnboardingKeycardFlow*(self: AccessInterface) {.base.} =
+method runLoadAccountFlow*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method runLoginFlow*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method cancelFlow*(self: AccessInterface) {.base.} =
@@ -41,6 +51,9 @@ method checkRepeatedKeycardPinCurrent*(self: AccessInterface, pin: string): bool
   raise newException(ValueError, "No implementation available")
 
 method checkRepeatedKeycardPin*(self: AccessInterface, pin: string): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method checkSeedPhrase*(self: AccessInterface, seedPhraseLength: int, seedPhrase: string): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method shouldExitKeycardFlow*(self: AccessInterface): bool {.base.} =

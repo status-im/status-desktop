@@ -129,6 +129,7 @@ QtObject {
 
             DSM.State {
                 id: keycardState
+
                 onEntered: { onBoardingStepChanged(keycardFlowComponent, ""); }
 
                 DSM.SignalTransition {
@@ -225,6 +226,15 @@ QtObject {
                 }
             }
             onKeycardLinkClicked: {
+                if (state === "getkeys") {
+                    OnboardingStore.keycardStore.keycardModule.keycardMode = Constants.keycard.mode.generateNewKeysMode
+                }
+                else if (state === "importseed") {
+                    OnboardingStore.keycardStore.keycardModule.keycardMode = Constants.keycard.mode.importSeedPhraseMode
+                }
+                else if (state === "connectkeys") {
+                    OnboardingStore.keycardStore.keycardModule.keycardMode = Constants.keycard.mode.oldUserLoginMode
+                }
                 Global.applicationWindow.navigateTo("KeycardFlow");
             }
             onSeedLinkClicked: {
@@ -269,6 +279,7 @@ QtObject {
         GenKeyView {
             onExit: {
                 if(OnboardingStore.keycardStore.keycardModule.flowState === Constants.keycard.state.yourProfileState) {
+                    // After this line `OnCompleted` ensures that we run appropriate flow again (in case of "back" button action)
                     Global.applicationWindow.navigateTo("KeycardFlow");
                 }
                 else if (root.keysMainSetState === "importseed") {
@@ -292,55 +303,43 @@ QtObject {
 
             keycardStore: OnboardingStore.keycardStore
 
+            function getOutOfTheKeycardFlow() {
+                keycardStore.cancelFlow()
+
+                if(keycardStore.keycardModule.keycardMode == Constants.keycard.mode.generateNewKeysMode) {
+                    root.keysMainSetState = "getkeys";
+                }
+                else if(keycardStore.keycardModule.keycardMode == Constants.keycard.mode.importSeedPhraseMode) {
+                    root.keysMainSetState = "importseed";
+                }
+                else if(keycardStore.keycardModule.keycardMode == Constants.keycard.mode.oldUserLoginMode) {
+                    root.keysMainSetState = "connectkeys";
+                }
+
+                Global.applicationWindow.navigateTo("KeysMain")
+            }
+
             onBackClicked: {
                 if(keycardStore.shouldExitKeycardFlow()) {
-                    keycardStore.cancelFlow()
-                    Global.applicationWindow.navigateTo("KeysMain")
+                    getOutOfTheKeycardFlow()
                     return
                 }
                 keycardStore.backClicked()
             }
 
             Connections {
-                target: keycardFlowView.keycardStore.keycardModule
-
-                onContinueWithCreatingProfile: {
-                    console.warn("-----IMPORT ON KEYCARD")
-                    OnboardingStore.importMnemonic(seedPhrase)
+                target: keycardFlowView.keycardStore
+                onGetOutOfTheKeycardFlow: {
+                    keycardFlowView.getOutOfTheKeycardFlow()
                 }
-//                onFlowStateChanged: {
-//                    if(keycardFlowView.keycardStore.keycardModule.flowState === Constants.keycard.state.yourProfileState) {
-//                        root.keysMainSetState = "importseed";
-//                        Global.applicationWindow.navigateTo("GenKey");
-
-//                        root.keysMainSetState = "importseed";
-//                        Global.applicationWindow.navigateTo("GenKey");
-//                    }
-//                }
             }
 
             Connections {
-                target: OnboardingStore.onboardingModuleInst
-                onAccountImportError: {
-                    if (error === Constants.existingAccountError) {
-                        importSeedError.title = qsTr("Keys for this account already exist")
-                        importSeedError.text = qsTr("Keys for this account already exist and can't be added again. If you've lost your password, passcode or Keycard, uninstall the app, reinstall and access your keys by entering your seed phrase")
-                    } else {
-                        importSeedError.title = qsTr("Error importing seed")
-                        importSeedError.text = error
-                    }
-                    importSeedError.open()
-                }
-                onAccountImportSuccess: {
-                    root.keysMainSetState = "importseed";
-                    Global.applicationWindow.navigateTo("GenKey");
-                }
-            }
+                target: keycardFlowView.keycardStore.keycardModule
 
-            MessageDialog {
-                id: importSeedError
-                icon: StandardIcon.Critical
-                standardButtons: StandardButton.Ok
+                onContinueWithCreatingProfile: {
+                    OnboardingStore.importMnemonic(seedPhrase)
+                }
             }
         }
     }

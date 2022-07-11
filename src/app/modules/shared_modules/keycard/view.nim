@@ -1,4 +1,4 @@
-import NimQml
+import NimQml, strutils
 import io_interface
 
 QtObject:
@@ -6,6 +6,7 @@ QtObject:
     View* = ref object of QObject
       delegate: io_interface.AccessInterface
       flowState: FlowStateType
+      keycardMode: KeycardMode
 
   proc delete*(self: View) =
     self.QObject.delete
@@ -28,6 +29,21 @@ QtObject:
     read = getFlowState
     notify = flowStateChanged
 
+  proc keycardModeChanged*(self: View) {.signal.}
+  proc setKeycardMode*(self: View, value: string) {.slot.} =
+    if $self.keycardMode == value:
+      return
+    self.keycardMode = parseEnum[KeycardMode](value)
+    self.keycardModeChanged()
+  proc getKeycardModeAsString*(self: View): string {.slot.} =
+    return $self.keycardMode
+  proc getKeycardMode*(self: View): KeycardMode =
+    return self.keycardMode
+  QtProperty[string] keycardMode:
+    read = getKeycardModeAsString
+    write = setKeycardMode
+    notify = keycardModeChanged
+
   proc checkKeycardPin*(self: View, pin: string): bool {.slot.} =
     return self.delegate.checkKeycardPin(pin)
 
@@ -37,8 +53,14 @@ QtObject:
   proc checkRepeatedKeycardPin*(self: View, pin: string): bool {.slot.} =
     return self.delegate.checkRepeatedKeycardPin(pin)
 
-  proc startOnboardingKeycardFlow*(self: View) {.slot.} =
-    self.delegate.startOnboardingKeycardFlow()
+  proc checkSeedPhrase*(self: View, seedPhraseLength: int, seedPhrase: string): bool {.slot.} =
+    return self.delegate.checkSeedPhrase(seedPhraseLength, seedPhrase)
+
+  proc runLoadAccountFlow*(self: View) {.slot.} =
+    self.delegate.runLoadAccountFlow()
+
+  proc runLoginFlow*(self: View) {.slot.} =
+    self.delegate.runLoginFlow()
 
   proc cancelFlow*(self: View) {.slot.} =
     self.delegate.cancelFlow()

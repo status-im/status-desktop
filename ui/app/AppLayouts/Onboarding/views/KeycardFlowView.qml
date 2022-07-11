@@ -12,34 +12,44 @@ OnboardingBasePage {
     property KeycardStore keycardStore
 
     Component.onCompleted: {
-        keycardStore.startOnboardingKeycardFlow()
+        if(root.keycardStore.keycardModule.keycardMode == Constants.keycard.mode.generateNewKeysMode ||
+           root.keycardStore.keycardModule.keycardMode == Constants.keycard.mode.importSeedPhraseMode) {
+            root.keycardStore.runLoadAccountFlow()
+        }
+        else if(root.keycardStore.keycardModule.keycardMode == Constants.keycard.mode.oldUserLoginMode) {
+            root.keycardStore.runLoginFlow()
+        }
     }
 
     Loader {
         anchors.fill: parent
         sourceComponent: {
-            if (keycardStore.keycardModule.flowState === Constants.keycard.state.pluginKeycardState ||
-                    keycardStore.keycardModule.flowState === Constants.keycard.state.insertKeycardState ||
-                    keycardStore.keycardModule.flowState === Constants.keycard.state.readingKeycardState)
+            if (root.keycardStore.keycardModule.flowState === Constants.keycard.state.pluginKeycardState ||
+                    root.keycardStore.keycardModule.flowState === Constants.keycard.state.insertKeycardState ||
+                    root.keycardStore.keycardModule.flowState === Constants.keycard.state.readingKeycardState)
             {
                 return keycardInitViewComponent
             }
-            else if (keycardStore.keycardModule.flowState === Constants.keycard.state.createKeycardPinState ||
-                     keycardStore.keycardModule.flowState === Constants.keycard.state.repeatKeycardPinState ||
-                     keycardStore.keycardModule.flowState === Constants.keycard.state.keycardPinSetState)
+            else if (root.keycardStore.keycardModule.flowState === Constants.keycard.state.createKeycardPinState ||
+                     root.keycardStore.keycardModule.flowState === Constants.keycard.state.repeatKeycardPinState ||
+                     root.keycardStore.keycardModule.flowState === Constants.keycard.state.keycardPinSetState)
             {
                 return keycardPinViewComponent
             }
-            else if (keycardStore.keycardModule.flowState === Constants.keycard.state.displaySeedPhraseState)
+            else if (root.keycardStore.keycardModule.flowState === Constants.keycard.state.displaySeedPhraseState)
             {
                 return seedphraseViewComponent
             }
-            else if (keycardStore.keycardModule.flowState === Constants.keycard.state.enterSeedPhraseWordsState)
+            else if (root.keycardStore.keycardModule.flowState === Constants.keycard.state.enterSeedPhraseState)
+            {
+                return seedphraseInputViewComponent
+            }
+            else if (root.keycardStore.keycardModule.flowState === Constants.keycard.state.enterSeedPhraseWordsState)
             {
                 return seedphraseWordsInputViewComponent
             }
-            else if (keycardStore.keycardModule.flowState === Constants.keycard.state.keycardNotEmpty ||
-                     keycardStore.keycardModule.flowState === Constants.keycard.state.keycardLocked)
+            else if (root.keycardStore.keycardModule.flowState === Constants.keycard.state.keycardNotEmpty ||
+                     root.keycardStore.keycardModule.flowState === Constants.keycard.state.keycardLocked)
             {
                 return keycardNotEmptyViewComponent
             }
@@ -74,6 +84,14 @@ OnboardingBasePage {
 
     property var keycardNotEmptyViewComponent: Component {
         KeycardNotEmpty {
+            keycardStore: root.keycardStore
+        }
+    }
+
+    property var seedphraseInputViewComponent: Component {
+        SeedPhraseInputViewContent {
+            state: "importIntoKeycard"
+            keycardUsage: true
             keycardStore: root.keycardStore
         }
     }

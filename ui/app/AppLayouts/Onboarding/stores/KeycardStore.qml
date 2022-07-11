@@ -5,12 +5,22 @@ QtObject {
 
     property var keycardModule
 
-    function startOnboardingKeycardFlow() {
-        root.keycardModule.startOnboardingKeycardFlow()
+    signal getOutOfTheKeycardFlow() // We will use this signal until we combine all flows.
+
+    function runLoadAccountFlow() {
+        root.keycardModule.runLoadAccountFlow()
+    }
+
+    function runLoginFlow() {
+        root.keycardModule.runLoginFlow()
     }
 
     function cancelFlow() {
         root.keycardModule.cancelFlow()
+    }
+
+    function checkSeedPhrase(seedPhraseLength, seedPhrase) {
+        return root.keycardModule.checkSeedPhrase(seedPhraseLength, seedPhrase)
     }
 
     function checkKeycardPin(pin) {
