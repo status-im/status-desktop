@@ -275,7 +275,10 @@ QtObject:
 
   proc getTrustStatus*(self: Service, publicKey: string): TrustStatus =
     try:
-      let t = status_contacts.getTrustStatus(publicKey).result.getInt
+      let response = status_contacts.getTrustStatus(publicKey)
+      if (response.result.isNil):
+        return
+      let t = response.result.getInt
       return t.toTrustStatus()
     except Exception as e:
       let errDesription = e.msg
@@ -313,7 +316,7 @@ QtObject:
       var num64: int64
       let parsedChars = parseHex(id, num64)
       if(parsedChars != PK_LENGTH_0X_INCLUDED):
-        debug "id doesn't have expected lenght"
+        debug "id doesn't have expected length"
         return
 
       let alias = self.generateAlias(id)
@@ -330,6 +333,9 @@ QtObject:
       self.addContact(result)
 
   proc getStatusForContactWithId*(self: Service, publicKey: string): StatusUpdateDto =
+    if publicKey == singletonInstance.userProfile.getPubKey():
+      return
+
     # This proc will fetch current accurate status from `status-go` once we add an api point there for it.
     if(not self.contactsStatus.hasKey(publicKey)):
       # following line ensures that we have added a contact before setting status for it
