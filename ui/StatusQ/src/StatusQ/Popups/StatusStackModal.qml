@@ -16,7 +16,7 @@ StatusModal {
     property alias replaceItem: replaceLoader.sourceComponent
     property alias subHeaderItem: subHeaderLoader.sourceComponent
 
-    readonly property int itemsCount: stackLayout.children.length
+    readonly property int itemsCount: stackLayout.count
     readonly property var currentItem: stackLayout.currentItem
 
     property Item nextButton: StatusButton {
@@ -44,6 +44,7 @@ StatusModal {
         }
     }
 
+    Component.onCompleted: updateRightButtons()
     onCurrentIndexChanged: updateRightButtons()
     onReplaceItemChanged: updateRightButtons()
 
