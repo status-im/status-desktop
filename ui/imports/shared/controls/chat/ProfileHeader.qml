@@ -24,6 +24,7 @@ Item {
     property string icon
     property int trustStatus
     property bool isContact: false
+    property bool isCurrentUser
 
     property int imageSize: ProfileHeader.ImageSize.Compact
     property bool displayNameVisible: true
@@ -113,8 +114,7 @@ Item {
             }
         }
 
-        Row {
-            width: 380
+        RowLayout {
             spacing: Style.current.halfPadding
             Layout.alignment: Qt.AlignHCenter
             visible: root.displayNamePlusIconsVisible
@@ -132,7 +132,8 @@ Item {
                     width: 16
                     source: Style.svg("contact")
                 }
-                active: isContact
+                active: isContact && !root.isCurrentUser
+                visible: active
             }
 
             Loader {
@@ -142,7 +143,8 @@ Item {
                     height: 16
                     width: 16
                 }
-                active: root.trustStatus !== Constants.trustStatus.unknown
+                active: root.trustStatus !== Constants.trustStatus.unknown && !root.isCurrentUser
+                visible: active
             }
 
             SVGImage {
@@ -158,11 +160,11 @@ Item {
                     }
                 }
             }
-
         }
 
         StyledText {
             Layout.fillWidth: true
+            Layout.alignment: Qt.AlignHCenter
             visible: root.pubkeyVisible
 
             text: Utils.getElidedCompressedPk(pubkey)
@@ -172,8 +174,7 @@ Item {
             color: Style.current.secondaryText
         }
 
-        Row {
-            width: 380
+        RowLayout {
             Layout.alignment: Qt.AlignHCenter
             visible: root.pubkeyVisibleWithCopy
             StyledText {
@@ -182,19 +183,16 @@ Item {
                 horizontalAlignment: Text.AlignHCenter
                 font.pixelSize: Style.current.primaryTextFontSize
                 color: Style.current.secondaryText
-                width: 360
             }
-
 
             CopyToClipBoardButton {
                 id: copyBtn
-                width: 20
-                height: 20
+                Layout.preferredWidth: 20
+                Layout.preferredHeight: 20
                 color: Style.current.transparent
                 textToCopy: pubkey
                 store: root.store
             }
-
         }
 
         EmojiHash {
