@@ -164,6 +164,7 @@ Rectangle {
             trustStatus: root.userTrustStatus
             isContact: root.isContact
             store: root.profileStore
+            isCurrentUser: root.isCurrentUser
 
             displayNameVisible: false
             displayNamePlusIconsVisible: true
@@ -211,14 +212,13 @@ Rectangle {
             subTitle: {
                 let user = ""
                 if (isCurrentUser) {
-                    user = root.profileStore.ensName !== "" ? root.profileStore.ensName 
-                                                            : (root.profileStore.pubkey.substring(0, 5) + "..." + root.profileStore.pubkey.substring(root.profileStore.pubkey.length - 5))
+                    user = root.profileStore.ensName !== "" ? root.profileStore.ensName  : Utils.elideText(root.profileStore.pubkey, 5)
                 } else if (userIsEnsVerified) {
                     user = userEnsName
                 }
 
                 if (user === ""){
-                    user = userPublicKey.substr(0, 4) + "..." + userPublicKey.substr(userPublicKey.length - 5)
+                    user = Utils.elideText(userPublicKey, 5)
                 }
                 return Constants.userLinkPrefix +  user;
             }
