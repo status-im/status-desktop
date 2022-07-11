@@ -244,8 +244,6 @@ Item {
             height: 40
             type: StatusQControls.StatusRoundButton.Type.Secondary
             icon.name: "arrow-right"
-            icon.width: 18
-            icon.height: 14
             opacity: (loading || txtPassword.text.length > 0) ? 1 : 0
             anchors.left: txtPassword.right
             anchors.leftMargin: (loading || txtPassword.text.length > 0) ? Style.current.padding : Style.current.smallPadding
