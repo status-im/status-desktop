@@ -1,5 +1,7 @@
-import json, stint, chronicles
+import Tables, json, stint, chronicles, nimcrypto
 
+import ../app_service/service/transaction/dto
+import ../app_service/service/eth/dto/transaction
 import ./core as core
 
 proc checkRecentHistory*(chainIds: seq[int], addresses: seq[string]) {.raises: [Exception].} =
@@ -43,3 +45,7 @@ proc getPendingOutboundTransactionsByAddress*(chainIds: seq[int], address: strin
 proc fetchCryptoServices*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = core.callPrivateRPC("wallet_getCryptoOnRamps", %* [])
   
+proc createMultiTransaction*(multiTransaction: MultiTransactionDto, data: Table[string, seq[TransactionDataDto]], password: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  var hashed_password = "0x" & $keccak_256.digest(password)
+  let payload = %* [multiTransaction, data, hashed_password]
+  result = core.callPrivateRPC("wallet_createMultiTransaction", payload)

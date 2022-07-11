@@ -89,13 +89,6 @@ proc getEstimateGasData*(self: MethodDto, tx: var TransactionDataDto, procDescri
   tx.data = self.encodeAbi(procDescriptor)
   return %*[%tx]
 
-proc send*(self: MethodDto, chainId: int, tx: var TransactionDataDto, procDescriptor: object, password: string, success: var bool): RpcResponse[JsonNode] =
-  tx.data = self.encodeAbi(procDescriptor)
-  # this call should not be part of this file, we need to move it to appropriate place, or this should not be a DTO class.
-  let response = status_eth.sendTransaction(chainId, $(%tx), password)
-  success = response.error.isNil
-  return response
-
 proc call[T](self: MethodDto, chainId: int, tx: var TransactionDataDto, procDescriptor: object, success: var bool): T =
   success = true
   tx.data = self.encodeAbi(procDescriptor)

@@ -1,4 +1,4 @@
-import json, strutils, stint
+import json, strutils, stint, json_serialization
 include  ../../common/json_utils
 
 type
@@ -12,6 +12,20 @@ type
 proc event*(self:PendingTransactionTypeDto):string =
   result = "transaction:" & $self
 
+type
+  MultiTransactionType* = enum
+    MultiTransactionSend = 0, MultiTransactionSwap = 1, MultiTransactionBridge = 2
+
+type MultiTransactionDto* = ref object of RootObj
+  id* {.serializedFieldName("id").}: int
+  timestamp* {.serializedFieldName("timestamp").}: int
+  fromAddress* {.serializedFieldName("fromAddress").}: string
+  toAddress* {.serializedFieldName("toAddress").}: string
+  fromAsset* {.serializedFieldName("fromAsset").}: string
+  toAsset* {.serializedFieldName("toAsset").}: string
+  fromAmount* {.serializedFieldName("fromAmount").}: string
+  multiTxtype* {.serializedFieldName("type").}: MultiTransactionType
+  
 type
   TransactionDto* = ref object of RootObj
     id*: string

@@ -271,21 +271,24 @@ QtObject:
       eth_utils.validateTransactionInput(from_addr, to_addr, assetAddress = "", value, gas,
         gasPrice, data = "", eip1559Enabled, maxPriorityFeePerGas, maxFeePerGas, uuid)
 
-      # TODO move this to another thread
       var tx = ens_utils.buildTransaction(parseAddress(from_addr), eth2Wei(parseFloat(value), 18),
           gas, gasPrice, eip1559Enabled, maxPriorityFeePerGas, maxFeePerGas)
       tx.to = parseAddress(to_addr).some
-
-      let json: JsonNode = %tx
-      let response = eth.sendTransaction(parseInt(chainId), $json, password)
-      let output = %* { "result": response.result.getStr,  "success": %(response.error.isNil), "uuid": %uuid }
-      self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(result: $output))
-
-      # TODO ADD READ CHAIN
-      self.trackPendingTransaction(
-        response.result.getStr, from_addr, to_addr,
-        $PendingTransactionTypeDto.WalletTransfer, data = "", 1
+      
+      let response = transactions.createMultiTransaction(
+        MultiTransactionDto(
+          fromAddress: from_addr,
+          toAddress: to_addr,
+          fromAsset: "ETH",
+          toAsset: "ETH",
+          fromAmount:  "0x" & tx.value.unsafeGet.toHex,
+          multiTxtype: MultiTransactionType.MultiTransactionSend,
+        ), 
+        {chainId: @[tx]}.toTable,
+        password,
       )
+      let output = %* { "result": response.result{"hashes"}{chainId}[0].getStr,  "success": %(response.error.isNil), "uuid": %uuid }
+      self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(result: $output))
     except Exception as e:
       error "Error sending eth transfer transaction", msg = e.msg
       return false
@@ -316,20 +319,29 @@ QtObject:
       
       var tx = ens_utils.buildTokenTransaction(parseAddress(from_addr), token.address,
         gas, gasPrice, eip1559Enabled, maxPriorityFeePerGas, maxFeePerGas)
-      var success: bool
-      let transfer = Transfer(to: parseAddress(to_addr),
-        value: conversion.eth2Wei(parseFloat(value), token.decimals))
-      let transferproc = ERC20_procS.toTable["transfer"]
-      let response = transferproc.send(parseInt(chainId), tx, transfer, password, success)
-      let txHash = response.result.getStr
-      let output = %* { "result": txHash, "success": %success, "uuid": %uuid }
-      self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(result: $output))
 
-      self.trackPendingTransaction(
-        txHash, from_addr, to_addr,
-        $PendingTransactionTypeDto.WalletTransfer, data = "",
-        network.chainId
+      let weiValue = conversion.eth2Wei(parseFloat(value), token.decimals)
+      let transfer = Transfer(
+        to: parseAddress(to_addr),
+        value: weiValue,
       )
+
+      tx.data = ERC20_procS.toTable["transfer"].encodeAbi(transfer)
+      let response = transactions.createMultiTransaction(
+        MultiTransactionDto(
+          fromAddress: from_addr,
+          toAddress: to_addr,
+          fromAsset: tokenSymbol,
+          toAsset: tokenSymbol,
+          fromAmount:  "0x" & weiValue.toHex,
+          multiTxtype: MultiTransactionType.MultiTransactionSend,
+        ), 
+        {chainId: @[tx]}.toTable,
+        password,
+      )
+      let txHash = response.result.getStr
+      let output = %* { "result": response.result{"hashes"}{chainId}[0].getStr, "success":true, "uuid": %uuid }
+      self.events.emit(SIGNAL_TRANSACTION_SENT, TransactionSentArgs(result: $output))
     except Exception as e:
       error "Error sending token transfer transaction", msg = e.msg
       return false
