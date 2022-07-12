@@ -112,7 +112,7 @@ Rectangle {
                 icon.name: !model.emoji ? "filled-account": ""
                 icon.letterSize: 14
                 icon.isLetterIdenticon: !!model.emoji ? true : false
-                icon.background.color: Theme.palette.indirectColor1
+                icon.background.color: Theme.palette.primaryColor3
                 onClicked: {
                     changeSelectedAccount(index)
                     showSavedAddresses(false)

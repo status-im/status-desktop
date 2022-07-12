@@ -18,7 +18,7 @@ StatusListItem {
     icon.name: !account.emoji ? "filled-account": ""
     icon.letterSize: 14
     icon.isLetterIdenticon: !!account.emoji
-    icon.background.color: Theme.palette.indirectColor1
+    icon.background.color: Theme.palette.primaryColor3
     width: parent.width
     
     components: !showShevronIcon ? [] : [ shevronIcon ]
