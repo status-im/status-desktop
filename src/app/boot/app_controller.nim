@@ -133,7 +133,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.accountsService = accounts_service.newService(statusFoundation.fleetConfiguration)
   result.networkService = network_service.newService(statusFoundation.events, result.settingsService)
   result.contactsService = contacts_service.newService(
-    statusFoundation.events, statusFoundation.threadpool, result.networkService
+    statusFoundation.events, statusFoundation.threadpool, result.networkService, result.settingsService
   )
   result.chatService = chat_service.newService(statusFoundation.events, result.contactsService)
   result.communityService = community_service.newService(statusFoundation.events,
