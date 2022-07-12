@@ -81,8 +81,9 @@ Page {
     // TODO: Could it be replaced to `GroupChatPanel`?
     header: RowLayout {
         id: headerRow
+        anchors.top: parent.top
+        anchors.topMargin: Style.current.halfPadding
         height: tagSelector.height
-        anchors.topMargin: 8
         clip: true
         StatusTagSelector {
             id: tagSelector
