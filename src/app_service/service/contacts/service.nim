@@ -6,7 +6,7 @@ import ../../../app/core/eventemitter
 import ../../../app/core/tasks/[qt, threadpool]
 import ../../common/types as common_types
 
-import ../settings/dto/settings
+import ../settings/service as settings_service
 import ../network/service as network_service
 import ./dto/contacts as contacts_dto
 import ./dto/status_update as status_update_dto
@@ -84,6 +84,7 @@ QtObject:
   type Service* = ref object of QObject
     threadpool: ThreadPool
     networkService: network_service.Service
+    settingsService: settings_service.Service
     contacts: Table[string, ContactsDto] # [contact_id, ContactsDto]
     contactsStatus: Table[string, StatusUpdateDto] # [contact_id, StatusUpdateDto]
     receivedIdentityRequests: Table[string, VerificationRequest] # [from_id, VerificationRequest]
@@ -107,13 +108,15 @@ QtObject:
   proc newService*(
       events: EventEmitter,
       threadpool: ThreadPool,
-      networkService: network_service.Service
+      networkService: network_service.Service,
+      settingsService: settings_service.Service
       ): Service =
     new(result, delete)
     result.QObject.setup
     result.closingApp = false
     result.events = events
     result.networkService = networkService
+    result.settingsService = settingsService
     result.threadpool = threadpool
     result.contacts = initTable[string, ContactsDto]()
     result.contactsStatus = initTable[string, StatusUpdateDto]()
@@ -330,6 +333,12 @@ QtObject:
       self.addContact(result)
 
   proc getStatusForContactWithId*(self: Service, publicKey: string): StatusUpdateDto =
+    if publicKey == singletonInstance.userProfile.getPubKey():
+      let currentUserStatus = self.settingsService.getCurrentUserStatus()
+      return StatusUpdateDto(publicKey: singletonInstance.userProfile.getPubKey(),
+        statusType: currentUserStatus.statusType,
+        clock: currentUserStatus.clock.uint64,
+        text: currentUserStatus.text)
     # This proc will fetch current accurate status from `status-go` once we add an api point there for it.
     if(not self.contactsStatus.hasKey(publicKey)):
       # following line ensures that we have added a contact before setting status for it
