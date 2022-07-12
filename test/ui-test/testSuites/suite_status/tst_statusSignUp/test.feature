@@ -108,7 +108,7 @@ Feature: Status Desktop Sign Up
             | foam      | 4          |
             | time      | 7    	     |
             | sight     | 10         |
-            | scheme    | 13    	 |
+            | scheme    | 13    	|
             | describe  | 16         |
             | candy     | 2   	     |
             | erosion   | 5          |
