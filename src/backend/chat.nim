@@ -133,3 +133,7 @@ proc getLinkPreviewData*(link: string): RpcResponse[JsonNode] {.raises: [Excepti
 
 proc getMembers*(communityId, chatId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = callPrivateRPC("chat_getMembers", %* [communityId, chatId])
+
+proc editChat*(communityID: string, chatID: string, name: string, color: string, image: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let payload = %* [communityID, chatID, name, color, image]
+  return core.callPrivateRPC("chat_editChat", payload)

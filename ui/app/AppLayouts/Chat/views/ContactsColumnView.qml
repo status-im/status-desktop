@@ -224,11 +224,13 @@ Item {
                                              chatDetails: chatContentModule.chatDetails
                                          })
                     }
-                    onRenameGroupChat: {
-                        chatSectionModule.renameGroupChat(
-                                    chatId,
-                                    groupName
-                                    )
+                    onUpdateGroupChatDetails: {
+                        chatSectionModule.updateGroupChatDetails(
+                            chatId,
+                            groupName,
+                            groupColor,
+                            groupImage
+                        )
                     }
                 }
             }

@@ -30,8 +30,14 @@ Item {
 
     property string dataImage: ""
 
+    property Component backgroundComponent
+
     property bool userSelectedImage: false
     readonly property bool nothingToShow: state === d.noImageState
+
+    function chooseImageToCrop() {
+        imageCropWorkflow.chooseImageToCrop()
+    }
 
     implicitWidth: mainLayout.implicitWidth
     implicitHeight: mainLayout.implicitHeight
@@ -44,11 +50,15 @@ Item {
         },
         State {
             name: d.noImageState
-            when: root.dataImage.length === 0 && !userSelectedImage
+            when: root.dataImage.length === 0 && !userSelectedImage && !backgroundComponent
         },
         State {
             name: d.imageSelectedState
             when: userSelectedImage
+        },
+        State {
+            name: d.backgroundComponentState
+            when: root.dataImage.length === 0 && !userSelectedImage && backgroundComponent
         }
     ]
 
@@ -58,6 +68,7 @@ Item {
         readonly property string dataImageState: "dataImage"
         readonly property string noImageState: "noImage"
         readonly property string imageSelectedState: "imageSelected"
+        readonly property string backgroundComponentState: "backgroundComponent"
         readonly property int buttonsInsideOffset: 5
     }
 
@@ -70,7 +81,7 @@ Item {
             Layout.fillWidth: true
             Layout.fillHeight: true
 
-            visible: !imageCropEditor.visible
+            visible: !imageCropEditor.visible && (root.state !== d.backgroundComponentState)
 
             StatusRoundedImage {
                 anchors.fill: parent
@@ -140,6 +151,7 @@ Item {
                 icon.name: "add"
 
                 readonly property real rotationRadius: root.roundedImage ? parent.width/2 : imageCropEditor.radius
+
                 transform: [
                     Translate {
                         x: -addButton.width/2 - d.buttonsInsideOffset
@@ -172,6 +184,17 @@ Item {
                     root.userSelectedImage = true
                 }
             }
+        }
+
+        Loader {
+            id: backgroundLoader
+
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+
+            visible: root.state == d.backgroundComponentState
+
+            sourceComponent: root.backgroundComponent
         }
     }
 }

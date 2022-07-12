@@ -298,10 +298,12 @@ ColumnLayout {
             onLeaveGroup: {
                 chatContentModule.leaveChat();
             }
-            onRenameGroupChat: {
-                root.rootStore.chatCommunitySectionModule.renameGroupChat(
+            onUpdateGroupChatDetails: {
+                root.rootStore.chatCommunitySectionModule.updateGroupChatDetails(
                     chatId,
-                    groupName
+                    groupName,
+                    groupColor,
+                    groupImage
                 )
             }
         }

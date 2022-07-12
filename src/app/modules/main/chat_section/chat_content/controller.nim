@@ -165,6 +165,12 @@ proc init*(self: Controller) =
       return
     self.delegate.onChatRenamed(args.newName)
 
+  self.events.on(SIGNAL_GROUP_CHAT_DETAILS_UPDATED) do(e: Args):
+    var args = ChatUpdateDetailsArgs(e)
+    if(self.chatId != args.id):
+      return
+    self.delegate.onGroupChatDetailsUpdated(args.newName, args.newColor, args.newImage)
+
   self.events.on(SIGNAL_CHAT_UPDATE) do(e: Args):
     var args = ChatUpdateArgs(e)
     for chat in args.chats:

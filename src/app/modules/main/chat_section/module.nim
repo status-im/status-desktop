@@ -147,7 +147,12 @@ proc buildChatSectionUI(
       colorHash = self.controller.getColorHash(chatDto.id)
       colorId = self.controller.getColorId(chatDto.id)
 
-    let amIChatAdmin = (self.amIMarkedAsAdminUser(chatDto.members) or channelGroup.admin)
+    # for group chats only member.admin should be checked,
+    # because channelGroup.admin is alway true
+    var amIChatAdmin = self.amIMarkedAsAdminUser(chatDto.members)
+    if(chatDto.chatType != ChatType.PrivateGroupChat):
+      amIChatAdmin = amIChatAdmin or channelGroup.admin
+
     let channelItem = initItem(chatDto.id, chatName, chatImage, chatDto.color,
       chatDto.emoji, chatDto.description, chatDto.chatType.int, amIChatAdmin, hasNotification,
       notificationsCount, chatDto.muted, blocked, chatDto.active, chatDto.position,
@@ -715,6 +720,9 @@ method removeMembersFromGroupChat*(self: Module, communityID: string, chatId: st
 method renameGroupChat*(self: Module, chatId: string, newName: string) =
   self.controller.renameGroupChat(chatId, newName)
 
+method updateGroupChatDetails*(self: Module, chatId: string, newGroupName: string, newGroupColor: string, newGroupImage: string) =
+  self.controller.updateGroupChatDetails(chatId, newGroupName, newGroupColor, newGroupImage)
+
 method makeAdmin*(self: Module, communityID: string, chatId: string, pubKey: string) =
   self.controller.makeAdmin(communityID, chatId, pubKey)
 
@@ -729,6 +737,9 @@ method joinGroupChatFromInvitation*(self: Module, groupName: string, chatId: str
 
 method onChatRenamed*(self: Module, chatId: string, newName: string) =
   self.view.chatsModel().renameItem(chatId, newName)
+
+method onGroupChatDetailsUpdated*(self: Module, chatId, newName, newColor, newImage: string) =
+  self.view.chatsModel().updateNameColorIcon(chatId, newName, newColor, newImage)
 
 method acceptRequestToJoinCommunity*(self: Module, requestId: string) =
   self.controller.acceptRequestToJoinCommunity(requestId)
@@ -829,7 +840,9 @@ method addChatIfDontExist*(self: Module,
     return
 
   if self.doesCatOrChatExist(chat.id):
-    if(chat.chatType != ChatType.OneToOne):
+    if (chat.chatType == ChatType.PrivateGroupChat):
+      self.onGroupChatDetailsUpdated(chat.id, chat.name, chat.color, chat.icon)
+    elif (chat.chatType != ChatType.OneToOne):
       self.onChatRenamed(chat.id, chat.name)
     return
   self.addNewChat(chat, belongsToCommunity, events, settingsService, contactService, chatService,
