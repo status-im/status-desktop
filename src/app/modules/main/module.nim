@@ -227,8 +227,6 @@ proc createChannelGroupItem[T](self: Module[T], c: ChannelGroupDto): SectionItem
     c.muted,
     c.members.map(proc(member: ChatMember): MemberItem =
       let contactDetails = self.controller.getContactDetails(member.id)
-      let statusUpdateDto = self.controller.getStatusForContact(member.id)
-      let status = statusUpdateDto.statusType.int
       result = initMemberItem(
         pubKey = member.id,
         displayName = contactDetails.displayName,
@@ -736,7 +734,7 @@ method resolvedENS*[T](self: Module[T], publicKey: string, address: string, uuid
 
 method contactsStatusUpdated*[T](self: Module[T], statusUpdates: seq[StatusUpdateDto]) =
   for s in statusUpdates:
-    let status = OnlineStatus(s.statusType.int)
+    let status = toOnlineStatus(s.statusType)
     self.view.activeSection().setOnlineStatusForMember(s.publicKey, status)
 
 method contactUpdated*[T](self: Module[T], publicKey: string) =
