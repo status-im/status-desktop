@@ -20,8 +20,8 @@ Item {
 
     QtObject {
         id: d
-         property string formattedDate: nextMessageIndex > -1 ? Utils.formatLongDate(nextMsgTimestamp * 1, RootStore.accountSensitiveSettings.isDDMMYYDateFormat) :
-                                                                Utils.formatLongDate(undefined, RootStore.accountSensitiveSettings.isDDMMYYDateFormat)
+         readonly property string formattedDate: nextMessageIndex > -1 ? Utils.formatLongDate(nextMsgTimestamp * 1, RootStore.accountSensitiveSettings.isDDMMYYDateFormat) :
+                                                                         Utils.formatLongDate(undefined, RootStore.accountSensitiveSettings.isDDMMYYDateFormat)
     }
 
     Timer {
@@ -80,7 +80,7 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
         horizontalAlignment: Text.AlignHCenter
         color: Style.current.secondaryText
-        text: qsTr("before--%1").arg(d.formattedDate)
+        text: qsTr("Before %1").arg(d.formattedDate)
         visible: d.formattedDate
     }
 
