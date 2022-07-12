@@ -40,7 +40,7 @@ StatusPopupMenu {
     signal deleteCommunityChat(string chatId)
     signal leaveChat(string chatId)
     signal leaveGroup(string chatId)
-    signal renameGroupChat(string chatId, string groupName)
+    signal updateGroupChatDetails(string chatId, string groupName, string groupColor, string groupImage)
 
     signal createCommunityChannel(string chatId, string newName, string newDescription, string newEmoji, string newColor)
     signal editCommunityChannel(string chatId, string newName, string newDescription, string newEmoji, string newColor, string newCategory)
@@ -85,13 +85,14 @@ StatusPopupMenu {
     }
 
     StatusMenuItem {
-        text: qsTr("Edit name")
-        icon.name: "edit"
+        text: qsTr("Edit name and image")
+        icon.name: "edit_pencil"
         enabled: root.chatType === Constants.chatType.privateGroupChat
                  && root.amIChatAdmin
         onTriggered: {
             Global.openPopup(renameGroupPopupComponent, {
-                activeChannelName: root.chatName,
+                activeGroupName: root.chatName,
+                activeGroupColor: root.chatColor
             });
         }
     }
@@ -99,8 +100,8 @@ StatusPopupMenu {
     Component {
         id: renameGroupPopupComponent
         RenameGroupPopup {
-            onDoRename: {
-                root.renameGroupChat(root.chatId, groupName)
+            onUpdateGroupChatDetails: {
+                root.updateGroupChatDetails(root.chatId, groupName, groupColor, groupImage)
                 close()
             }
         }

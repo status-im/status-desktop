@@ -1,6 +1,6 @@
 import QtQuick 2.14
 import QtQuick.Controls 2.14
-import QtQuick.Dialogs 1.3
+import Qt.labs.platform 1.1
 
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1

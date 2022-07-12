@@ -115,6 +115,9 @@ method onCommunityChannelDeletedOrChatLeft*(self: AccessInterface, chatId: strin
 method onChatRenamed*(self: AccessInterface, chatId: string, newName: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method onGroupChatDetailsUpdated*(self: AccessInterface, chatId: string, newName: string, newColor: string, newImage: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method onCommunityChannelEdited*(self: AccessInterface, chat: ChatDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -221,6 +224,9 @@ method removeMembersFromGroupChat*(self: AccessInterface, communityID: string, c
   raise newException(ValueError, "No implementation available")
 
 method renameGroupChat*(self: AccessInterface, chatId: string, newName: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method updateGroupChatDetails*(self: AccessInterface, chatId: string, newGroupName: string, newGroupColor: string, newGroupImage: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method makeAdmin*(self: AccessInterface, communityID: string, chatId: string, pubKey: string) {.base.} =

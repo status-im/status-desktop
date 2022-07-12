@@ -99,6 +99,10 @@ QtObject:
     self.chatDetails.setName(name)
     self.chatDetails.setIcon(icon)
 
+  proc updateChatDetailsNameColorIcon*(self: View, name, color, icon: string) =
+    self.updateChatDetailsNameAndIcon(name, icon)
+    self.chatDetails.setColor(color)
+
   proc updateTrustStatus*(self: View, isUntrustworthy: bool) =
     self.chatDetails.setIsUntrustworthy(isUntrustworthy)
 

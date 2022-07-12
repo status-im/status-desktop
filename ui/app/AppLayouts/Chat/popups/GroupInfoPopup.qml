@@ -280,9 +280,10 @@ StatusModal {
 
     RenameGroupPopup {
         id: renameGroupPopup
-        activeChannelName: popup.chatDetails ? popup.chatDetails.name : ""
-        onDoRename: {
-            popup.chatSectionModule.renameGroupChat(popup.chatSectionModule.activeItem.id, groupName)
+        activeGroupName: popup.chatDetails ? popup.chatDetails.name : ""
+        activeGroupColor: popup.chatDetails ? popup.chatDetails.color: ""
+        onUpdateGroupChatDetails: {
+            popup.chatSectionModule.updateGroupChatDetails(popup.chatSectionModule.activeItem.id, groupName, groupColor, groupImage)
             popup.header.title = groupName
             close()
         }

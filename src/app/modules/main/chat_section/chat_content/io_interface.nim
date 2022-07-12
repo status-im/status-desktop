@@ -55,6 +55,9 @@ method onChatEdited*(self: AccessInterface, chatDto: ChatDto) {.base.} =
 method onChatRenamed*(self: AccessInterface, newName: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method onGroupChatDetailsUpdated*(self: AccessInterface, newName: string, newColor: string, newImage: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method inputAreaDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 

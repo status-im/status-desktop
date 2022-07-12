@@ -206,6 +206,10 @@ proc init*(self: Controller) =
     var args = ChatRenameArgs(e)
     self.delegate.onChatRenamed(args.id, args.newName)
 
+  self.events.on(SIGNAL_GROUP_CHAT_DETAILS_UPDATED) do(e: Args):
+    var args = ChatUpdateDetailsArgs(e)
+    self.delegate.onGroupChatDetailsUpdated(args.id, args.newName, args.newColor, args.newImage)
+
   self.events.on(SIGNAL_MAKE_SECTION_CHAT_ACTIVE) do(e: Args):
     var args = ActiveSectionChatArgs(e)
     if (self.sectionId != args.sectionId):
@@ -333,6 +337,10 @@ proc removeMembersFromGroupChat*(self: Controller, communityID: string, chatId: 
 proc renameGroupChat*(self: Controller, chatId: string, newName: string) =
   let communityId = if self.isCommunitySection: self.sectionId else: ""
   self.chatService.renameGroupChat(communityId, chatId, newName)
+
+proc updateGroupChatDetails*(self: Controller, chatId: string, newGroupName: string, newGroupColor: string, newGroupImage: string) =
+  let communityId = if self.isCommunitySection: self.sectionId else: ""
+  self.chatService.updateGroupChatDetails(communityId, chatId, newGroupName, newGroupColor, newGroupImage)
 
 proc makeAdmin*(self: Controller, communityID: string, chatId: string, pubKey: string) =
   self.chatService.makeAdmin(communityID, chatId, pubKey)

@@ -343,6 +343,10 @@ method onChatRenamed*(self: Module, newName: string) =
   self.view.updateChatDetailsName(newName)
   self.messagesModule.updateChatIdentifier()
 
+method onGroupChatDetailsUpdated*(self: Module, newName: string, newColor: string, newImage: string) =
+  self.view.updateChatDetailsNameColorIcon(newName, newColor, newImage)
+  self.messagesModule.updateChatIdentifier()
+
 method downloadMessages*(self: Module, filePath: string) =
   let messages = self.messagesModule.getMessages()
   self.controller.downloadMessages(messages, filePath)
