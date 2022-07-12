@@ -12,6 +12,7 @@
    \list
        \li \l{StatusAppNavBarFilterModel}
        \li \l{StatusBaseText}
+       \li \l{StatusFontSettings}
        \li \l{StatusIcon}
        \li \l{StatusIconBackgroundSettings}
        \li \l{StatusIconSettings}

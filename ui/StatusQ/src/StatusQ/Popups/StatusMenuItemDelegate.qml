@@ -53,14 +53,13 @@ MenuItem {
                 color: {
                     let c = !!statusPopupMenuItem.action.iconSettings && statusPopupMenuItem.action.iconSettings.color ||
                             !!statusPopupMenuItem.action && statusPopupMenuItem.action.icon.color
-                      
+
                     if (!Qt.colorEqual(c, "transparent")) {
                         return c
                     }
                     switch (statusPopupMenuItem.action.type) {
                         case StatusMenuItem.Type.Danger:
                           return Theme.palette.dangerColor1
-                          break;
                         default:
                           return Theme.palette.primaryColor1
                     }
@@ -158,7 +157,9 @@ MenuItem {
                   return Theme.palette.directColor1
             }
         }
-        font.pixelSize: 13
+        font.pixelSize: !!statusPopupMenuItem.action.fontSettings ? statusPopupMenuItem.action.fontSettings.pixelSize : 13
+        font.bold: !!statusPopupMenuItem.action.fontSettings ? statusPopupMenuItem.action.fontSettings.bold : false
+        font.italic: !!statusPopupMenuItem.action.fontSettings ? statusPopupMenuItem.action.fontSettings.italic : false
         elide: Text.ElideRight
         visible: statusPopupMenuItem.action.enabled
     }

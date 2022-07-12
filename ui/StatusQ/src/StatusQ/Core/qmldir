@@ -1,6 +1,7 @@
 module StatusQ.Core
 
 StatusBaseText 0.1 StatusBaseText.qml
+StatusFontSettings 0.1 StatusFontSettings.qml
 StatusIcon 0.1 StatusIcon.qml
 StatusIconSettings 0.1 StatusIconSettings.qml
 StatusIconBackgroundSettings 0.1 StatusIconBackgroundSettings.qml

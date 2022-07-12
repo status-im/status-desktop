@@ -28,6 +28,11 @@ GridLayout {
         onClicked: customMenu.popup()
     }
 
+    StatusButton {
+        text: "Menu with custom font settings"
+        onClicked: differentFontMenu.popup()
+    }
+
 
     StatusPopupMenu {
         id: simpleMenu
@@ -145,6 +150,24 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
                 iconSettings.isLetterIdenticon: true
                 iconSettings.background.color: "red"
             }
+        }
+    }
+
+    StatusPopupMenu {
+        id: differentFontMenu
+        StatusMenuItem {
+            text: "Bold"
+            fontSettings.bold: true
+        }
+
+        StatusMenuItem {
+            text: "Italic"
+            fontSettings.italic: true
+        }
+
+        StatusMenuItem {
+            text: "16px"
+            fontSettings.pixelSize: 16
         }
     }
 }

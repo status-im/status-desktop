@@ -22,4 +22,6 @@ Action {
         background: StatusIconBackgroundSettings {}
         color: "transparent"
     }
+
+    property StatusFontSettings fontSettings: StatusFontSettings {}
 }
