@@ -176,6 +176,7 @@ Page {
         StatusBaseText {
             width: parent.width*.66
             anchors.centerIn: parent
+            anchors.verticalCenterOffset: -(headerRow.height/2)
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
             visible: contactsModel.count === 0
