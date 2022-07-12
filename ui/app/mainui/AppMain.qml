@@ -34,6 +34,8 @@ import AppLayouts.Browser.stores 1.0 as BrowserStores
 
 import AppLayouts.stores 1.0
 
+import "popups"
+
 Item {
     id: appMain
     anchors.fill: parent
@@ -417,7 +419,7 @@ Item {
                 }
             }
 
-            
+
             Item {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
@@ -630,7 +632,7 @@ Item {
                     anchors.right: parent.right
                     width: chatLayoutContainer.chatView.width - chatLayoutContainer.chatView.leftPanel.width - anchors.rightMargin - anchors.leftMargin
                     visible: createChatView.opened
-                    
+
                     Connections {
                         target: Global
                         onOpenCreateChatView: {
@@ -662,45 +664,14 @@ Item {
 
         Component {
             id: mailserverNotWorkingPopupComponent
-            StatusModal {
-                id: msNotWorkingPopup
-                anchors.centerIn: parent
-                header.title: qsTr("Can not connect to mailserver")
+
+            MailserverConnectionDialog {
                 onClosed: {
                     appLayout.mailserverNotWorkingPopup = null
                     destroy()
                 }
-
-                contentItem: Item {
-                    width: msNotWorkingPopup.width
-                    implicitHeight: 100
-
-                    StatusBaseText {
-                      text: qsTr("The mailserver you're connecting to is unavailable.")
-                      color: Theme.palette.directColor1
-                      anchors.centerIn: parent
-                    }
-                }
-
-                rightButtons: [
-                    StatusButton {
-                      text: qsTr("Pick another")
-                      onClicked: {
-                          Global.changeAppSectionBySectionType(Constants.appSection.profile, Constants.settingsSubsection.messaging)
-                          msNotWorkingPopup.close()
-                      }
-                    },
-                    StatusButton {
-                      text: qsTr("Retry")
-                      onClicked: {
-                        // Retrying already happens automatically, so doing nothing
-                        // here is the same as retrying...
-                        msNotWorkingPopup.close()
-                      }
-                    }
-                ]
             }
-          }
+        }
 
         Component {
             id: chooseBrowserPopupComponent
