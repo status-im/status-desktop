@@ -306,9 +306,6 @@ proc getContactNameAndImage*(self: Controller, contactId: string):
 proc getContactDetails*(self: Controller, contactId: string): ContactDetails =
   return self.contactsService.getContactDetails(contactId)
 
-proc getStatusForContact*(self: Controller, contactId: string): StatusUpdateDto =
-  return self.contactsService.getStatusForContactWithId(contactId)
-
 proc resolveENS*(self: Controller, ensName: string, uuid: string = "", reason: string = "") =
   self.contactsService.resolveENS(ensName, uuid, reason)
 
