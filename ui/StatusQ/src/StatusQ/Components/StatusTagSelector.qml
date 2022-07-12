@@ -247,6 +247,7 @@ Item {
             StatusBaseText {
                 Layout.preferredWidth: 22
                 Layout.alignment: Qt.AlignVCenter
+                font.pixelSize: 15
                 color: Theme.palette.baseColor1
                 text: root.toLabelText
                 visible: (parent.width>22)
