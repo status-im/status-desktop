@@ -12,6 +12,9 @@ Column {
     property alias title: title
     property alias columns: grid.columns
 
+    property int diameter: 48
+    property int selectorDiameter: 20
+
     property int selectedColorIndex: 0
     property string selectedColor: ""
     property var model:[ StatusColors.colors['black'],
@@ -46,6 +49,10 @@ Column {
         Repeater {
             model: root.model
             delegate: StatusColorRadioButton {
+                implicitWidth: root.diameter
+                implicitHeight: root.diameter
+                diameter: root.diameter
+                selectorDiameter: root.selectorDiameter
                 checked: index === selectedColorIndex
                 radioButtonColor: root.model[index] || "transparent"
                 onCheckedChanged: {
