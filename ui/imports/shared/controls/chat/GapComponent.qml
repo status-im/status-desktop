@@ -1,6 +1,7 @@
 import QtQuick 2.13
 import shared 1.0
 import shared.panels 1.0
+import shared.stores 1.0
 import utils 1.0
 
 Item {
@@ -23,7 +24,7 @@ Item {
         font.weight: Font.Medium
         font.pixelSize: Style.current.primaryTextFontSize
         color: Style.current.blue
-        text: qsTr("fetch-messages")
+        text: qsTr("Fetch messages")
         horizontalAlignment: Text.AlignHCenter
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: sep1.bottom
@@ -45,7 +46,8 @@ Item {
         wrapMode: Text.WordWrap
         horizontalAlignment: Text.AlignHCenter
         color: Style.current.secondaryText
-        text: qsTr("between--1-and--2").arg(new Date(root.gapFrom * 1000)).arg(new Date(root.gapTo * 1000))
+        text: qsTr("Between %1 and %2").arg(Utils.formatLongDate(root.gapFrom * 1000, RootStore.accountSensitiveSettings.isDDMMYYDateFormat))
+            .arg(Utils.formatLongDate(root.gapTo * 1000, RootStore.accountSensitiveSettings.isDDMMYYDateFormat))
     }
     Separator {
         anchors.top: fetchDate.bottom
