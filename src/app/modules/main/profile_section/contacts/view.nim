@@ -135,6 +135,9 @@ QtObject:
   proc switchToOrCreateOneToOneChat*(self: View, publicKey: string) {.slot.} =
     self.delegate.switchToOrCreateOneToOneChat(publicKey)
 
+  proc acceptContactRequest*(self: View, publicKey: string) {.slot.} =
+    self.delegate.acceptContactRequest(publicKey)
+
   proc dismissContactRequest*(self: View, publicKey: string) {.slot.} =
     self.delegate.dismissContactRequest(publicKey)
 

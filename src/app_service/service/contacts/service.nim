@@ -399,17 +399,19 @@ QtObject:
       error "an error occurred while accepting contact request", msg=e.msg
 
   proc dismissContactRequest*(self: Service, publicKey: string) =
-    # NOTE: publicKey used for dismissing last request
-    let response = status_contacts.dismissLatestContactRequestForContact(publicKey)
-    if(not response.error.isNil):
-      let msg = response.error.message
-      error "error dismissing contact ", msg
-      return
-
-    var contact = self.getContactById(publicKey)
-    contact.removed = true
-    self.saveContact(contact)
-    self.events.emit(SIGNAL_CONTACT_REMOVED, ContactArgs(contactId: contact.id))
+    try:
+      # NOTE: publicKey used for dismissing last request
+      let response = status_contacts.dismissLatestContactRequestForContact(publicKey)
+      if(not response.error.isNil):
+        let msg = response.error.message
+        error "error dismissing contact ", msg
+        return
+      var contact = self.getContactById(publicKey)
+      contact.removed = true
+      self.saveContact(contact)
+      self.events.emit(SIGNAL_CONTACT_REMOVED, ContactArgs(contactId: contact.id))
+    except Exception as e:
+      error "an error occurred while dismissing contact request", msg=e.msg
 
   proc removeContactRequestRejection*(self: Service, publicKey: string) =
     var contact = self.getContactById(publicKey)
