@@ -86,7 +86,7 @@ Popup {
         StatusListItem {
             implicitWidth: scrollView.width
             title: model.chainName
-            image.source: Style.png(model.iconUrl)
+            image.source: Style.svg(model.iconUrl)
             onClicked:  {
                 checkBox.checked = !checkBox.checked
             }

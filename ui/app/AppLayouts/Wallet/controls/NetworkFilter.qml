@@ -78,7 +78,7 @@ Item {
                         anchors.verticalCenter: parent.verticalCenter
                         width: 22
                         height: 22
-                        source: Style.png(model.iconUrl)
+                        source: Style.svg("tiny/" + model.iconUrl)
                     }
                     StatusBaseText {
                         anchors.verticalCenter: parent.verticalCenter
