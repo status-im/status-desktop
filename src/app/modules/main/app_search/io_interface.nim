@@ -40,3 +40,6 @@ method searchMessages*(self: AccessInterface, searchTerm: string) {.base.} =
 
 method resultItemClicked*(self: AccessInterface, itemId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method updateSearchLocationIfPointToChatWithId*(self: AccessInterface, chatId: string) {.base.} =
+    raise newException(ValueError, "No implementation available")

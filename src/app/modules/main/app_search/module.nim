@@ -267,3 +267,7 @@ method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
 
 method resultItemClicked*(self: Module, itemId: string) =
   self.controller.resultItemClicked(itemId)
+
+method updateSearchLocationIfPointToChatWithId*(self: Module, chatId: string) =
+  if self.controller.activeChatId() == chatId:
+    self.controller.setSearchLocation(self.controller.activeSectionId(), "")
