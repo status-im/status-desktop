@@ -43,31 +43,53 @@ proc init*(self: Controller) =
   self.events.on(SignalCreateKeycardPIN) do(e: Args):
     self.delegate.switchToState(FlowStateType.CreateKeycardPin)
 
+  self.events.on(SignalEnterKeycardPIN) do(e: Args):
+    self.delegate.switchToState(FlowStateType.EnterKeycardPin)
+
   self.events.on(SignalKeycardNotEmpty) do(e: Args):
     self.delegate.switchToState(FlowStateType.KeycardNotEmpty)
 
-  self.events.on(SignalKeycardLocked) do(e: Args):
-    self.delegate.switchToState(FlowStateType.KeycardLocked)
+  self.events.on(SignalKeycardIsEmpty) do(e: Args):
+    self.delegate.switchToState(FlowStateType.KeycardIsEmpty)
+
+  self.events.on(SignalEnterKeycardPUK) do(e: Args):
+    self.delegate.onEnterKeycardPukRequest()
+
+  self.events.on(SignalMaxPINRetriesReached) do(e: Args):
+    self.delegate.switchToState(FlowStateType.MaxPinRetriesReached)
+
+  self.events.on(SignalMaxPairingSlotsReached) do(e: Args):
+    self.delegate.switchToState(FlowStateType.MaxPairingSlotsReached)
+
+  self.events.on(SignalKeycardFlowResult) do(e: Args):
+    let arg = KeycardArgs(e)
+    self.delegate.onFlowResult(arg.flowResult)
 
   self.events.on(SignalCreateSeedPhrase) do(e: Args):
     let arg = KeycardArgs(e)
     self.delegate.setSeedPhraseAndSwitchToState(arg.seedPhrase, FlowStateType.KeycardPinSet)
 
-  self.events.on(SignalKeyUidReceived) do(e: Args):
+  self.events.on(SignalWrongKeycardPIN) do(e: Args):
     let arg = KeycardArgs(e)
-    self.delegate.setKeyUidAndSwitchToState(arg.data, FlowStateType.YourProfileState)
+    self.delegate.onWrongKeycardPin(arg.data)
 
 proc runLoadAccountFlow*(self: Controller) =
   self.keycardService.startLoadAccountFlow()
 
+proc runLoginFlow*(self: Controller) =
+  self.keycardService.startLoginFlow()
+
+proc runRecoverAccountFlow*(self: Controller) =
+  self.keycardService.startRecoverAccountFlow()
+
 proc storePin*(self: Controller, pin: string) =
   self.keycardService.storePin(pin)
 
+proc enterPin*(self: Controller, pin: string) =
+  self.keycardService.enterPin(pin)
+
 proc storeSeedPhrase*(self: Controller, seedPhraseLength: int, seedPhrase: string) =
   self.keycardService.storeSeedPhrase(seedPhraseLength, seedPhrase)
-
-# proc storePinAndSeedPhrase*(self: Controller, pin: string, seedPhraseLength: int, seedPhrase: string) =
-#   self.keycardService.storePinAndSeedPhrase(pin, seedPhraseLength, seedPhrase)
 
 proc resumeCurrentFlow*(self: Controller) =
   self.keycardService.resumeCurrentFlow()
@@ -80,6 +102,9 @@ proc cancelCurrentFlow*(self: Controller) =
 
 proc validSeedPhrase*(self: Controller, seedPhrase: string): bool =
   return self.accountsService.validateMnemonic(seedPhrase).len == 0
+
+proc setupAccount*(self: Controller, keycardData: KeycardEvent) =
+  self.accountsService.setupAccountKeycard(keycardData)
 
 # Once we improve our states and merge `startupModule`, `onboardingModule` and `loginModule` into one,
 # we should use `accountServices` from here to deal with accounts in an appropriate way.

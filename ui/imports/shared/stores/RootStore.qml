@@ -7,7 +7,6 @@ QtObject {
 //    property var utilsModelInst: !!utilsModel ? utilsModel :  null
 //    property var chatsModelInst: !!chatsModel ?chatsModel : null
 //    property var walletModelInst: !!walletModel ? walletModel : null
-//    property var keycardModelInst: !!keycardModel ? keycardModel : null
 //    property var profileModelInst: !!profileModel ? profileModel : null
 
     property var profileSectionModuleInst: profileSectionModule

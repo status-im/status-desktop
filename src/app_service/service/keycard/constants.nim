@@ -60,3 +60,7 @@ const RequestParamTXHash = "tx-hash"
 const RequestParamBIP44Path = "bip44-path"
 const RequestParamTXSignature = "tx-signature"
 const RequestParamOverwrite = "overwrite"
+
+const RequestParamAddress = "address"
+const RequestParamPublicKey = "publicKey"
+const RequestParamPrivateKey = "privateKey"

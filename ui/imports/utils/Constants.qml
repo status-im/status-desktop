@@ -240,12 +240,19 @@ QtObject {
             readonly property string createKeycardPinState: "CreateKeycardPinState"
             readonly property string repeatKeycardPinState: "RepeatKeycardPinState"
             readonly property string keycardPinSetState: "KeycardPinSetState"
+            readonly property string enterKeycardPinState: "EnterKeycardPinState"
             readonly property string displaySeedPhraseState: "DisplaySeedPhraseState"
             readonly property string enterSeedPhraseState: "EnterSeedPhraseState"
             readonly property string enterSeedPhraseWordsState: "EnterSeedPhraseWordsState"
             readonly property string yourProfileState: "YourProfileState"
-            readonly property string keycardNotEmpty: "KeycardNotEmpty"
-            readonly property string keycardLocked: "KeycardLocked"
+            readonly property string keycardNotEmptyState: "KeycardNotEmptyState"
+            readonly property string keycardIsEmptyState: "KeycardIsEmptyState"
+            readonly property string keycardLockedFactoryResetState: "KeycardLockedFactoryResetState"
+            readonly property string keycardLockedRecoverState: "KeycardLockedRecoverState"
+            readonly property string maxPairingSlotsReachedState: "MaxPairingSlotsReachedState"
+            readonly property string wrongKeycardPinState: "WrongKeycardPinState"
+            readonly property string maxPinRetriesReachedState: "MaxPinRetriesReachedState"
+            readonly property string recoverKeycardState: "RecoverKeycardState"
         }
     }
 

@@ -6,6 +6,7 @@ QtObject {
     property var keycardModule
 
     signal getOutOfTheKeycardFlow() // We will use this signal until we combine all flows.
+    signal cancelCurrentAndRunLoadAccountFlowInMode(string mode) // We will use this signal until we combine all flows.
 
     function runLoadAccountFlow() {
         root.keycardModule.runLoadAccountFlow()
@@ -13,6 +14,10 @@ QtObject {
 
     function runLoginFlow() {
         root.keycardModule.runLoginFlow()
+    }
+
+    function runRecoverAccountFlow() {
+        root.keycardModule.runRecoverAccountFlow()
     }
 
     function cancelFlow() {

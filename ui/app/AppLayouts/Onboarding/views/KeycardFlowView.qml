@@ -12,12 +12,12 @@ OnboardingBasePage {
     property KeycardStore keycardStore
 
     Component.onCompleted: {
-        if(root.keycardStore.keycardModule.keycardMode == Constants.keycard.mode.generateNewKeysMode ||
-           root.keycardStore.keycardModule.keycardMode == Constants.keycard.mode.importSeedPhraseMode) {
+        if(root.keycardStore.keycardModule.keycardMode === Constants.keycard.mode.generateNewKeysMode ||
+           root.keycardStore.keycardModule.keycardMode === Constants.keycard.mode.importSeedPhraseMode) {
             root.keycardStore.runLoadAccountFlow()
         }
-        else if(root.keycardStore.keycardModule.keycardMode == Constants.keycard.mode.oldUserLoginMode) {
-            root.keycardStore.runLoginFlow()
+        else if(root.keycardStore.keycardModule.keycardMode === Constants.keycard.mode.oldUserLoginMode) {
+            root.keycardStore.runRecoverAccountFlow()
         }
     }
 
@@ -32,7 +32,9 @@ OnboardingBasePage {
             }
             else if (root.keycardStore.keycardModule.flowState === Constants.keycard.state.createKeycardPinState ||
                      root.keycardStore.keycardModule.flowState === Constants.keycard.state.repeatKeycardPinState ||
-                     root.keycardStore.keycardModule.flowState === Constants.keycard.state.keycardPinSetState)
+                     root.keycardStore.keycardModule.flowState === Constants.keycard.state.keycardPinSetState ||
+                     root.keycardStore.keycardModule.flowState === Constants.keycard.state.enterKeycardPinState ||
+                     root.keycardStore.keycardModule.flowState === Constants.keycard.state.wrongKeycardPinState)
             {
                 return keycardPinViewComponent
             }
@@ -48,10 +50,15 @@ OnboardingBasePage {
             {
                 return seedphraseWordsInputViewComponent
             }
-            else if (root.keycardStore.keycardModule.flowState === Constants.keycard.state.keycardNotEmpty ||
-                     root.keycardStore.keycardModule.flowState === Constants.keycard.state.keycardLocked)
+            else if (root.keycardStore.keycardModule.flowState === Constants.keycard.state.keycardNotEmptyState ||
+                     root.keycardStore.keycardModule.flowState === Constants.keycard.state.keycardIsEmptyState ||
+                     root.keycardStore.keycardModule.flowState === Constants.keycard.state.keycardLockedFactoryResetState ||
+                     root.keycardStore.keycardModule.flowState === Constants.keycard.state.maxPairingSlotsReachedState ||
+                     root.keycardStore.keycardModule.flowState === Constants.keycard.state.maxPinRetriesReachedState ||
+                     root.keycardStore.keycardModule.flowState === Constants.keycard.state.keycardLockedRecoverState ||
+                     root.keycardStore.keycardModule.flowState === Constants.keycard.state.recoverKeycardState)
             {
-                return keycardNotEmptyViewComponent
+                return keycardStateViewComponent
             }
 
             return undefined
@@ -82,8 +89,8 @@ OnboardingBasePage {
         }
     }
 
-    property var keycardNotEmptyViewComponent: Component {
-        KeycardNotEmpty {
+    property var keycardStateViewComponent: Component {
+        KeycardStateView {
             keycardStore: root.keycardStore
         }
     }

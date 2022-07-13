@@ -29,8 +29,8 @@ proc newModule*(events: EventEmitter, keycardService: keycard_service.Service,
 
 ## Forward declaration
 proc tryToStorePin(self: Module)
+proc tryToEnterPin(self: Module)
 proc tryToStoreSeedPhrase(self: Module)
-# proc tryToStorePinAndSeedPhrase(self: Module)
 
 method delete*(self: Module) =
   self.view.delete
@@ -50,8 +50,10 @@ method runLoadAccountFlow*(self: Module) =
   self.controller.runLoadAccountFlow()
 
 method runLoginFlow*(self: Module) =
-  discard
-  #self.controller.runLoadAccountFlow()
+  self.controller.runLoginFlow()
+
+method runRecoverAccountFlow*(self: Module) =
+  self.controller.runRecoverAccountFlow()
 
 method cancelFlow*(self: Module) =
   self.controller.cancelCurrentFlow()
@@ -90,27 +92,32 @@ method shouldExitKeycardFlow*(self: Module): bool =
     self.view.getFlowState() == $FlowStateType.ReadingKeycard or
     self.view.getFlowState() == $FlowStateType.CreateKeycardPin or
     self.view.getFlowState() == $FlowStateType.KeycardNotEmpty or
-    self.view.getFlowState() == $FlowStateType.KeycardLocked
+    self.view.getFlowState() == $FlowStateType.KeycardIsEmpty or
+    self.view.getFlowState() == $FlowStateType.KeycardLockedFactoryReset or
+    self.view.getFlowState() == $FlowStateType.KeycardLockedRecover or
+    self.view.getFlowState() == $FlowStateType.EnterKeycardPin or
+    self.view.getFlowState() == $FlowStateType.MaxPairingSlotsReached or 
+    self.view.getFlowState() == $FlowStateType.MaxPinRetriesReached
 
 proc backClickedMode_0(self: Module) =
   if self.view.getFlowState() == $FlowStateType.RepeatKeycardPin or
     self.view.getFlowState() == $FlowStateType.KeycardPinSet or
     self.view.getFlowState() == $FlowStateType.DisplaySeedPhrase:
-    self.view.setFlowState(FlowStateType.CreateKeycardPin)
+    self.switchToState(FlowStateType.CreateKeycardPin)
   elif self.view.getFlowState() == $FlowStateType.EnterSeedPhraseWords:
-    self.view.setFlowState(FlowStateType.DisplaySeedPhrase)
+    self.switchToState(FlowStateType.DisplaySeedPhrase)
   # "back" action from `YourProfileState` should start "generate new keys" flow again, cause we're not able to display 
   # details from a previously ended flow.
 
 proc nextState_0(self: Module) =
   if self.view.getFlowState() == $FlowStateType.CreateKeycardPin:
-    self.view.setFlowState(FlowStateType.RepeatKeycardPin)
+    self.switchToState(FlowStateType.RepeatKeycardPin)
   elif self.view.getFlowState() == $FlowStateType.RepeatKeycardPin:
     self.tryToStorePin()
   elif self.view.getFlowState() == $FlowStateType.KeycardPinSet:
-    self.view.setFlowState(FlowStateType.DisplaySeedPhrase)
+    self.switchToState(FlowStateType.DisplaySeedPhrase)
   elif self.view.getFlowState() == $FlowStateType.DisplaySeedPhrase:
-    self.view.setFlowState(FlowStateType.EnterSeedPhraseWords)
+    self.switchToState(FlowStateType.EnterSeedPhraseWords)
   elif self.view.getFlowState() == $FlowStateType.EnterSeedPhraseWords:
     self.tryToStoreSeedPhrase()
 
@@ -118,25 +125,31 @@ proc backClickedMode_1(self: Module) =
   if self.view.getFlowState() == $FlowStateType.RepeatKeycardPin or
     self.view.getFlowState() == $FlowStateType.KeycardPinSet or
     self.view.getFlowState() == $FlowStateType.EnterSeedPhrase:
-    self.view.setFlowState(FlowStateType.CreateKeycardPin)
+    self.switchToState(FlowStateType.CreateKeycardPin)
   # "back" action from `YourProfileState` should start "import into keycard" flow again, cause we're not able to display 
   # details from a previously ended flow.
 
 proc nextState_1(self: Module) =
   if self.view.getFlowState() == $FlowStateType.CreateKeycardPin:
-    self.view.setFlowState(FlowStateType.RepeatKeycardPin)
+    self.switchToState(FlowStateType.RepeatKeycardPin)
   elif self.view.getFlowState() == $FlowStateType.RepeatKeycardPin:
     self.tryToStorePin()
   elif self.view.getFlowState() == $FlowStateType.KeycardPinSet:
-    self.view.setFlowState(FlowStateType.EnterSeedPhrase)
+    self.switchToState(FlowStateType.EnterSeedPhrase)
   elif self.view.getFlowState() == $FlowStateType.EnterSeedPhrase:
     self.tryToStoreSeedPhrase()
 
 proc backClickedMode_2(self: Module) =
-  discard
+  if self.view.getFlowState() == $FlowStateType.RecoverKeycard:
+    self.switchToState(FlowStateType.MaxPinRetriesReached)
 
 proc nextState_2(self: Module) =
-  discard
+  if self.view.getFlowState() == $FlowStateType.EnterKeycardPin or
+    self.view.getFlowState() == $FlowStateType.WrongKeycardPin:
+    self.tryToEnterPin()
+  elif self.view.getFlowState() == $FlowStateType.MaxPinRetriesReached or
+    self.view.getFlowState() == $FlowStateType.KeycardLockedRecover:
+    self.switchToState(FlowStateType.RecoverKeycard)
 
 proc backClickedMode_3(self: Module) =
   discard
@@ -173,37 +186,56 @@ proc tryToStorePin(self: Module) =
   self.controller.storePin(self.tmpPin)
   self.tmpPin = ""
 
+proc tryToEnterPin(self: Module) =
+  self.controller.enterPin(self.tmpPin)
+  self.tmpPin = ""
+
 proc tryToStoreSeedPhrase(self: Module) =
   self.controller.storeSeedPhrase(self.tmpSeedPhraseLength, self.tmpSeedPhrase)
-
-# proc tryToStorePinAndSeedPhrase(self: Module) =
-#   self.controller.storePinAndSeedPhrase(self.tmpPin, self.tmpSeedPhraseLength, self.tmpSeedPhrase)
 
 method setSeedPhraseAndSwitchToState*(self: Module, seedPhrase: seq[string], state: FlowStateType) =
   self.tmpSeedPhrase = seedPhrase.join(" ")
   self.tmpSeedPhraseLength = seedPhrase.len
   self.switchToState(state)
 
-method setKeyUidAndSwitchToState*(self: Module, keyUid: string, state: FlowStateType) =
-  ## The correct flow should be, just from this procedure to import account from `accountsService` using 
-  ## `self.tmpSeedPhrase` and call `self.switchToState(state)`, but...
-  ## 
-  ## ...because of the current state of the onboarding flow (which need to be refactored, cause there is no clear 
-  ## resposibillyty defined and the way it's developed is very hard for maintaining) we're forced to send signal 
-  ## from this state and continue creating a profile using onboarding module and current code we have.
-  ## SeedPhraseGenerated
-  
-  self.view.sendContinueWithCreatingProfileSignal(self.tmpSeedPhrase)
-  self.tmpSeedPhrase = ""
-  self.tmpSeedPhraseLength = 0
-  # self.view.setFlowState(state) not needed for now, we will need it when we combine all flows.
+method onFlowResult*(self: Module, flowResult: KeycardEvent) =
+  echo "ON FLOW RES: mode: ", self.view.getKeycardMode(), "  SP: ", self.tmpSeedPhrase, "  res: ", $flowResult
+  if self.view.getKeycardMode() == KeycardMode.GenerateNewKeys or
+    self.view.getKeycardMode() == KeycardMode.ImportSeedPhrase:
+    ## The correct flow should be, just from this procedure to import account from `accountsService` using 
+    ## `self.tmpSeedPhrase` and call `self.switchToState(state)`, but...
+    ## 
+    ## ...because of the current state of the onboarding flow (which need to be refactored, cause there is no clear 
+    ## resposibillyty defined and the way it's developed is very hard for maintaining) we're forced to send signal 
+    ## from this state and continue creating a profile using onboarding module and current code we have.
+    ## SeedPhraseGenerated
+    self.view.sendContinueWithCreatingProfileSignal(self.tmpSeedPhrase)
+    self.tmpSeedPhrase = ""
+    self.tmpSeedPhraseLength = 0
+  elif self.view.getKeycardMode() == KeycardMode.OldUserLogin:
+    self.controller.setupAccount(flowResult)
+  elif self.view.getKeycardMode() == KeycardMode.CurrentUserLogin:
+    discard
 
 method factoryReset*(self: Module) =
   self.controller.factoryReset()
 
 method switchCard*(self: Module) =
-  if self.view.getFlowState() == $FlowStateType.KeycardLocked:
+  if self.view.getFlowState() == $FlowStateType.KeycardLockedFactoryReset:
     self.cancelFlow()
     self.runLoadAccountFlow()
   else:
     self.controller.resumeCurrentFlow()
+
+method onWrongKeycardPin*(self: Module, pinRetries: string) =
+  self.view.setKeycardData(pinRetries)
+  self.switchToState(FlowStateType.WrongKeycardPin)
+
+method onEnterKeycardPukRequest*(self: Module) =
+  if self.view.getKeycardMode() == KeycardMode.GenerateNewKeys or
+    self.view.getKeycardMode() == KeycardMode.ImportSeedPhrase:
+    self.switchToState(FlowStateType.KeycardLockedFactoryReset)
+  elif self.view.getKeycardMode() == KeycardMode.OldUserLogin:
+    self.switchToState(FlowStateType.KeycardLockedRecover)
+  elif self.view.getKeycardMode() == KeycardMode.CurrentUserLogin:
+    discard

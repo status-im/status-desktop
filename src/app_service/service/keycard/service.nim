@@ -29,12 +29,15 @@ const SupportedMnemonicLength24* = 24
 const MnemonicLengthForStatusApp = SupportedMnemonicLength12
 const TimerIntervalInMilliseconds = 5 * 1000 # 5 seconds
 
+const SignalKeycardFlowResult* = "keycardFlowResult"
 const SignalKeycardReaderUnplugged* = "keycardReaderUnplugged"
 const SignalKeycardNotInserted* = "keycardNotInserted"
 const SignalKeycardInserted* = "keycardInserted"
 const SignalCreateKeycardPIN* = "createKeycardPIN"
+const SignalEnterKeycardPIN* = "enterKeycardPIN"
+const SignalCreateKeycardPUK* = "createKeycardPUK"
+const SignalEnterKeycardPUK* = "enterKeycardPUK"
 const SignalCreateSeedPhrase* = "createSeedPhrase"
-const SignalKeyUidReceived* = "keyUidReceived"
 const SignalSwapKeycard* = "swapKeycard"
 const SignalKeycardError* = "keycardError"
 const SignalMaxPINRetriesReached* = "maxPINRetriesReached"
@@ -43,13 +46,7 @@ const SignalMaxPUKRetriesReached* = "maxPUKRetriesReached"
 const SignalWrongKeycardPUK* = "wrongKeycardPUK"
 const SignalMaxPairingSlotsReached* = "maxPairingSlotsReached"
 const SignalKeycardNotEmpty* = "keycardNotEmpty"
-const SignalKeycardLocked* = "keycardLocked"
-
-type
-  KeycardArgs* = ref object of Args
-    data*: string
-    seedPhrase*: seq[string]
-    errMessage*: string
+const SignalKeycardIsEmpty* = "keycardIsEmpty"
 
 logScope:
   topics = "keycard-service"
@@ -59,6 +56,13 @@ include ../../common/json_utils
 include ../../common/mnemonics
 include internal
 include async_tasks
+
+type
+  KeycardArgs* = ref object of Args
+    data*: string
+    seedPhrase*: seq[string]
+    errMessage*: string
+    flowResult*: KeycardEvent
 
 QtObject:
   type Service* = ref object of QObject
@@ -71,7 +75,6 @@ QtObject:
   # Forward declaration section
   proc runTimer(self: Service)
   proc handleMnemonic(self: Service, keycardEvent: KeycardEvent)
-  proc handleKeyUid(self: Service, keycardEvent: KeycardEvent)
   proc handleError(self: Service, keycardEvent: KeycardEvent): bool
   proc factoryReset*(self: Service)
 
@@ -119,7 +122,7 @@ QtObject:
     if flowType == ResponseTypeValueKeycardFlowResult:  
       if self.handleError(keycardEvent):
         return
-      self.handleKeyUid(keycardEvent)
+      self.events.emit(SignalKeycardFlowResult, KeycardArgs(flowResult: keycardEvent))
       return
 
     if flowType == ResponseTypeValueInsertCard:
@@ -130,18 +133,28 @@ QtObject:
       self.events.emit(SignalKeycardInserted, Args())
       return
   
-    if flowType == ResponseTypeValueEnterPIN or
-      flowType == ResponseTypeValueEnterNewPIN:
+    if flowType == ResponseTypeValueEnterNewPIN:
       if self.handleError(keycardEvent):
         return
       self.events.emit(SignalCreateKeycardPIN, Args())
       return
 
-    if flowType == ResponseTypeValueEnterPUK or
-      flowType == ResponseTypeValueEnterNewPUK:
+    if flowType == ResponseTypeValueEnterPIN:
       if self.handleError(keycardEvent):
         return
-      self.events.emit(SignalKeycardLocked, Args())
+      self.events.emit(SignalEnterKeycardPIN, Args())
+      return
+
+    if flowType == ResponseTypeValueEnterNewPUK:
+      if self.handleError(keycardEvent):
+        return
+      self.events.emit(SignalCreateKeycardPUK, Args())
+      return
+
+    if flowType == ResponseTypeValueEnterPUK:
+      if self.handleError(keycardEvent):
+        return
+      self.events.emit(SignalEnterKeycardPUK, Args())
       return
 
     if flowType == ResponseTypeValueEnterMnemonic:
@@ -168,14 +181,6 @@ QtObject:
       seedPhrase.add(englishWords[ind])
     self.events.emit(SignalCreateSeedPhrase, KeycardArgs(seedPhrase: seedPhrase))
 
-  proc handleKeyUid(self: Service, keycardEvent: KeycardEvent) =
-    if keycardEvent.keyUid.len == 0:
-      let err = "cannot generate key-uid"
-      error "keycard error: ", err
-      self.events.emit(SignalKeycardError, KeycardArgs(errMessage: err))
-      return
-    self.events.emit(SignalKeyUidReceived, KeycardArgs(data: keycardEvent.keyUid))
-
   proc handleError(self: Service, keycardEvent: KeycardEvent): bool =
     if keycardEvent.error.len > 0:
       if keycardEvent.error == ErrorConnection:
@@ -186,7 +191,7 @@ QtObject:
         if keycardEvent.pinRetries == 0:
           self.events.emit(SignalMaxPINRetriesReached, KeycardArgs())
         else:
-          self.events.emit(SignalWrongKeycardPIN, KeycardArgs())
+          self.events.emit(SignalWrongKeycardPIN, KeycardArgs(data: $keycardEvent.pinRetries))
         return true
       if keycardEvent.error == RequestParamPUK:
         if keycardEvent.pukRetries == 0:
@@ -196,6 +201,13 @@ QtObject:
         return true
       if keycardEvent.error == ErrorHasKeys:
         self.events.emit(SignalKeycardNotEmpty, KeycardArgs())
+        return true
+      if keycardEvent.error == ErrorNoKeys:
+        self.events.emit(SignalKeycardIsEmpty, KeycardArgs())
+        return true
+      if keycardEvent.error == RequestParamFreeSlots:
+        if keycardEvent.freePairingSlots == 0:
+          self.events.emit(SignalMaxPairingSlotsReached, KeycardArgs())
         return true
       return false
     return false
@@ -241,20 +253,15 @@ QtObject:
     self.currentFlow = FlowType.LoadAccount
     self.startFlow(payload)
 
-  # proc generateNewAccOnKeycardFlow*(self: Service) =
-  #   let payload = %* { }
-  #   self.currentFlow = FlowType.LoadAccount
-  #   self.startFlow(payload)
+  proc startLoginFlow*(self: Service) =
+    let payload = %* { }
+    self.currentFlow = FlowType.Login
+    self.startFlow(payload)
 
-  # proc importSeedPhraseIntoKeycardFlow*(self: Service, seedPhraseLength: int, seedPhrase: string) =
-  #   var payload = %* {
-  #     RequestParamOverwrite: true,
-  #     RequestParamMnemonicLen: seedPhraseLength,
-  #     RequestParamNewPUK: self.generateRandomPUK(),
-  #     RequestParamMnemonic: seedPhrase
-  #   }
-  #   self.currentFlow = FlowType.LoadAccount
-  #   self.startFlow(payload)
+  proc startRecoverAccountFlow*(self: Service) =
+    let payload = %* { }
+    self.currentFlow = FlowType.RecoverAccount
+    self.startFlow(payload)    
 
   proc storePin*(self: Service, pin: string) =
     if pin.len == 0:
@@ -269,6 +276,15 @@ QtObject:
     }
     self.resumeFlow(payload)
 
+  proc enterPin*(self: Service, pin: string) =
+    if pin.len == 0:
+      info "empty pin provided"
+      return
+    var payload = %* {
+      RequestParamPIN: pin
+    }
+    self.resumeFlow(payload)
+
   proc storeSeedPhrase*(self: Service, seedPhraseLength: int, seedPhrase: string) =
     if seedPhrase.len == 0:
       info "empty seed phrase provided"
@@ -280,24 +296,6 @@ QtObject:
       RequestParamMnemonic: seedPhrase
     }
     self.resumeFlow(payload)
-
-  # proc storePinAndSeedPhrase*(self: Service, pin: string, seedPhraseLength: int, seedPhrase: string) =
-  #   if pin.len == 0 or 
-  #     seedPhrase.len == 0 or 
-  #     (seedPhraseLength == SupportedMnemonicLength12 xor
-  #     seedPhraseLength == SupportedMnemonicLength18 xor
-  #     seedPhraseLength == SupportedMnemonicLength24):
-  #     info "empty pin or seed phrase or wrong seed phrase length provided"
-  #     return
-  #   var payload = %* {
-  #     RequestParamOverwrite: true,
-  #     RequestParamMnemonicLen: seedPhraseLength,
-  #     RequestParamMnemonic: seedPhrase,
-  #     RequestParamNewPUK: self.generateRandomPUK(),
-  #     RequestParamPIN: pin,
-  #     RequestParamNewPIN: pin
-  #   }
-  #   self.resumeFlow(payload)
 
   proc resumeCurrentFlow*(self: Service) =
     var payload = %* { }

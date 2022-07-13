@@ -1,4 +1,5 @@
 import NimQml
+import ../../../../app_service/service/keycard/service as keycard_service
 
 type KeycardMode* {.pure.} = enum
   GenerateNewKeys = "GenerateNewKeys"
@@ -13,12 +14,19 @@ type FlowStateType* {.pure.} = enum
   CreateKeycardPin = "CreateKeycardPinState"
   RepeatKeycardPin = "RepeatKeycardPinState"
   KeycardPinSet = "KeycardPinSetState"
+  EnterKeycardPin = "EnterKeycardPinState"
   DisplaySeedPhrase = "DisplaySeedPhraseState"
   EnterSeedPhrase = "EnterSeedPhraseState"
   EnterSeedPhraseWords = "EnterSeedPhraseWordsState"
   YourProfileState = "YourProfileState"
-  KeycardNotEmpty = "KeycardNotEmpty"
-  KeycardLocked = "KeycardLocked"
+  KeycardNotEmpty = "KeycardNotEmptyState"
+  KeycardIsEmpty = "KeycardIsEmptyState"
+  KeycardLockedFactoryReset = "KeycardLockedFactoryResetState"
+  KeycardLockedRecover = "KeycardLockedRecoverState"
+  MaxPairingSlotsReached = "MaxPairingSlotsReachedState"
+  WrongKeycardPin = "WrongKeycardPinState"
+  MaxPinRetriesReached = "MaxPinRetriesReachedState"
+  RecoverKeycard = "RecoverKeycardState"
 
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -39,6 +47,9 @@ method runLoadAccountFlow*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method runLoginFlow*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method runRecoverAccountFlow*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method cancelFlow*(self: AccessInterface) {.base.} =
@@ -71,11 +82,20 @@ method getSeedPhrase*(self: AccessInterface): string {.base.} =
 method setSeedPhraseAndSwitchToState*(self: AccessInterface, seedPhrase: seq[string], state: FlowStateType) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method setKeyUidAndSwitchToState*(self: AccessInterface, keyUid: string, state: FlowStateType) {.base.} =
+method onFlowResult*(self: AccessInterface, flowResult: KeycardEvent) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method factoryReset*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method switchCard*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onWrongKeycardPin*(self: AccessInterface, pinRetries: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getTmpData*(self: AccessInterface): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onEnterKeycardPukRequest*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")

@@ -54,19 +54,4 @@ StatusModal {
             }
         }
     ]
-
-    // Not Refactored Yet
-//    Connections {
-//        id: connection
-//        target: keycardModel
-//        ignoreUnknownSignals: true
-
-//        onCardConnected: {
-//            insertCard.close()
-//        }
-
-//        onCardDisconnected: {
-//            insertCard.open()
-//        }
-//    }
 }

@@ -7,6 +7,7 @@ QtObject:
       delegate: io_interface.AccessInterface
       flowState: FlowStateType
       keycardMode: KeycardMode
+      keycardData: string # used to temporary store the data coming from keycard
 
   proc delete*(self: View) =
     self.QObject.delete
@@ -44,6 +45,18 @@ QtObject:
     write = setKeycardMode
     notify = keycardModeChanged
 
+  proc keycardDataChanged*(self: View) {.signal.}
+  proc setKeycardData*(self: View, value: string) =
+    if self.keycardData == value:
+      return
+    self.keycardData = value
+    self.keycardDataChanged()
+  proc getKeycardData*(self: View): string {.slot.} =
+    return self.keycardData
+  QtProperty[string] keycardData:
+    read = getKeycardData
+    notify = keycardDataChanged
+
   proc checkKeycardPin*(self: View, pin: string): bool {.slot.} =
     return self.delegate.checkKeycardPin(pin)
 
@@ -61,6 +74,9 @@ QtObject:
 
   proc runLoginFlow*(self: View) {.slot.} =
     self.delegate.runLoginFlow()
+
+  proc runRecoverAccountFlow*(self: View) {.slot.} =
+    self.delegate.runRecoverAccountFlow()
 
   proc cancelFlow*(self: View) {.slot.} =
     self.delegate.cancelFlow()

@@ -3,6 +3,7 @@ import json_serialization, chronicles
 
 import ./dto/accounts as dto_accounts
 import ./dto/generated_accounts as dto_generated_accounts
+from ../keycard/service import KeycardEvent, KeyDetails 
 import ../../../backend/accounts as status_account
 import ../../../backend/general as status_general
 import ../../../backend/core as status_core
@@ -157,6 +158,25 @@ proc saveAccountAndLogin(self: Service, hashedPassword: string, account,
   except Exception as e:
     error "error: ", procName="saveAccountAndLogin", errName = e.name, errDesription = e.msg
 
+proc saveKeycardAccountAndLogin(self: Service, chatKey, password: string, account, subaccounts, settings, 
+  config: JsonNode): AccountDto =
+  try:
+    let response = status_account.saveAccountAndLoginWithKeycard(chatKey, password, account, subaccounts, settings, config)
+
+    var error = "response doesn't contain \"error\""
+    if(response.result.contains("error")):
+      error = response.result["error"].getStr
+      if error == "":
+        debug "Account saved succesfully"
+        result = toAccountDto(account)
+        return
+
+    let err = "Error saving account and logging in via keycard : " & error
+    error "error: ", procName="saveKeycardAccountAndLogin", errDesription = err
+
+  except Exception as e:
+    error "error: ", procName="saveKeycardAccountAndLogin", errName = e.name, errDesription = e.msg
+
 proc prepareAccountJsonObject(self: Service, account: GeneratedAccountDto, displayName: string): JsonNode =
   result = %* {
     "name": if displayName == "": account.alias else: displayName,
@@ -300,6 +320,77 @@ proc setupAccount*(self: Service, accountId, password, displayName: string): str
   except Exception as e:
     error "error: ", procName="setupAccount", errName = e.name, errDesription = e.msg
     return e.msg
+
+proc setupAccountKeycard*(self: Service, keycardData: KeycardEvent) = 
+  try:
+    let installationId = $genUUID()
+
+    let alias = generateAliasFromPk(keycardData.whisperKey.publicKey)
+    let accountDataJson = %* {
+      "name": alias,
+      "address": keycardData.masterKey.address, # confirmation needed????
+      "key-uid": keycardData.keyUid,
+      "keycard-pairing": nil
+    }
+
+    self.setKeyStoreDir(keycardData.keyUid)
+    let nodeConfigJson = self.getDefaultNodeConfig(installationId)
+    let subaccountDataJson = %* [
+      {
+        "public-key": keycardData.walletKey.publicKey,
+        "address": keycardData.walletKey.address,
+        "color": "#4360df",
+        "wallet": true,
+        "path": PATH_DEFAULT_WALLET,
+        "name": "Status account",
+        "derived-from": keycardData.masterKey.address, # confirmation needed????
+      },
+      {
+        "public-key": keycardData.whisperKey.publicKey,
+        "address": keycardData.whisperKey.address,
+        "name": alias,
+        "path": PATH_WHISPER,
+        "chat": true,
+        "derived-from": ""
+      }
+    ]
+
+    let settingsJson = %* {
+      "key-uid": keycardData.keyUid,
+      "public-key": keycardData.whisperKey.publicKey,
+      "name": alias,
+      "display-name": "",
+      "address":  keycardData.whisperKey.address,
+      "eip1581-address":  keycardData.eip1581Key.address,
+      "dapps-address":  keycardData.walletKey.address,
+      "wallet-root-address":  keycardData.walletRootKey.address,
+      "preview-privacy?": true,
+      "signing-phrase": generateSigningPhrase(3),
+      "log-level": $LogLevel.INFO,
+      "latest-derived-path": 0,
+      "currency": "usd",
+      "networks/networks": @[],
+      "networks/current-network": "",
+      "wallet/visible-tokens": {},
+      "waku-enabled": true,
+      "appearance": 0,
+      "installation-id": installationId
+    }
+
+    if(accountDataJson.isNil or subaccountDataJson.isNil or settingsJson.isNil or
+      nodeConfigJson.isNil):
+      let description = "at least one json object is not prepared well"
+      error "error: ", procName="setupAccountKeycard", errDesription = description
+      return
+
+    self.loggedInAccount = self.saveKeycardAccountAndLogin(keycardData.whisperKey.privateKey, 
+      keycardData.encryptionKey.publicKey, 
+      accountDataJson, 
+      subaccountDataJson, 
+      settingsJson, 
+      nodeConfigJson)
+  except Exception as e:
+    error "error: ", procName="setupAccount", errName = e.name, errDesription = e.msg
 
 proc importMnemonic*(self: Service, mnemonic: string): string =
   try:

@@ -15,6 +15,15 @@ Item {
     id: root
 
     property KeycardStore keycardStore
+    property string kcData: keycardStore.keycardModule.keycardData
+
+    onKcDataChanged: {
+        if (keycardStore.keycardModule.keycardMode === Constants.keycard.mode.oldUserLoginMode &&
+                keycardStore.keycardModule.flowState === Constants.keycard.state.wrongKeycardPinState) {
+            pinInputField.statesInitialization()
+            pinInputField.forceFocus()
+        }
+    }
 
     onStateChanged: {
         if(state === Constants.keycard.state.keycardPinSetState) {
@@ -66,7 +75,9 @@ Item {
             enabled: keycardStore.keycardModule.flowState !== Constants.keycard.state.keycardPinSetState
 
             onPinInputChanged: {
-                if(root.state === Constants.keycard.state.createKeycardPinState) {
+                if(root.state === Constants.keycard.state.createKeycardPinState ||
+                        root.state === Constants.keycard.state.enterKeycardPinState ||
+                        root.state === Constants.keycard.state.wrongKeycardPinState) {
                     if(keycardStore.checkKeycardPin(pinInput)) {
                         keycardStore.nextState()
                     }
@@ -89,7 +100,13 @@ Item {
             id: info
             Layout.alignment: Qt.AlignHCenter
             font.pixelSize: Constants.keycard.general.infoFontSize
-            color: Theme.palette.dangerColor1
+            wrapMode: Text.WordWrap
+        }
+
+        StatusBaseText {
+            id: message
+            Layout.alignment: Qt.AlignHCenter
+            font.pixelSize: Constants.keycard.general.infoFontSize
             wrapMode: Text.WordWrap
         }
     }
@@ -106,6 +123,10 @@ Item {
                 target: info
                 text: qsTr("It is very important that you do not loose this PIN")
             }
+            PropertyChanges {
+                target: message
+                text: ""
+            }
         },
         State {
             name: Constants.keycard.state.repeatKeycardPinState
@@ -117,6 +138,11 @@ Item {
             PropertyChanges {
                 target: info
                 text: qsTr("It is very important that you do not loose this PIN")
+                color: Theme.palette.dangerColor1
+            }
+            PropertyChanges {
+                target: message
+                text: ""
             }
         },
         State {
@@ -129,6 +155,48 @@ Item {
             PropertyChanges {
                 target: info
                 text: ""
+            }
+            PropertyChanges {
+                target: message
+                text: ""
+            }
+        },
+        State {
+            name: Constants.keycard.state.enterKeycardPinState
+            when: keycardStore.keycardModule.flowState === Constants.keycard.state.enterKeycardPinState
+            PropertyChanges {
+                target: title
+                text: qsTr("Enter Keycard PIN")
+            }
+            PropertyChanges {
+                target: info
+                text: ""
+            }
+            PropertyChanges {
+                target: message
+                text: ""
+            }
+        },
+        State {
+            name: Constants.keycard.state.wrongKeycardPinState
+            when: keycardStore.keycardModule.flowState === Constants.keycard.state.wrongKeycardPinState
+            PropertyChanges {
+                target: title
+                text: qsTr("Enter Keycard PIN")
+            }
+            PropertyChanges {
+                target: info
+                text: qsTr("PIN incorrect")
+                color: Theme.palette.dangerColor1
+            }
+            PropertyChanges {
+                target: message
+                text: root.kcData === "1"?
+                          qsTr("1 attempt remaining") :
+                          qsTr("%1 attempts remaining").arg(root.kcData)
+                color: root.kcData === "1"?
+                           Theme.palette.dangerColor1 :
+                           Theme.palette.baseColor1
             }
         }
     ]

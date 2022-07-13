@@ -218,6 +218,16 @@ proc saveAccountAndLogin*(hashedPassword: string, account, subaccounts, settings
     error "error doing rpc request", methodName = "saveAccountAndLogin", exception=e.msg
     raise newException(RpcException, e.msg)
 
+proc saveAccountAndLoginWithKeycard*(chatKey, password: string, account, subaccounts, settings, config: JsonNode): 
+  RpcResponse[JsonNode] {.raises: [Exception].} =
+  try:
+    let response = status_go.saveAccountAndLoginWithKeycard($account, password, $settings, $config, $subaccounts, chatKey)
+    result.result = Json.decode(response, JsonNode)
+
+  except RpcException as e:
+    error "error doing rpc request", methodName = "saveAccountAndLogin", exception=e.msg
+    raise newException(RpcException, e.msg)
+
 proc login*(name, keyUid, hashedPassword, thumbnail, large: string, nodeCfgObj: string):
   RpcResponse[JsonNode]
   {.raises: [Exception].} =

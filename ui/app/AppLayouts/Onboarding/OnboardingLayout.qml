@@ -137,6 +137,12 @@ QtObject {
                     signal: Global.applicationWindow.navigateTo
                     guard: path === "GenKey"
                 }
+
+                DSM.SignalTransition {
+                    targetState: appState
+                    signal: Global.applicationWindow.navigateTo
+                    guard: path === "LoggedIn"
+                }
             }
 
             DSM.State {
@@ -306,13 +312,13 @@ QtObject {
             function getOutOfTheKeycardFlow() {
                 keycardStore.cancelFlow()
 
-                if(keycardStore.keycardModule.keycardMode == Constants.keycard.mode.generateNewKeysMode) {
+                if(keycardStore.keycardModule.keycardMode === Constants.keycard.mode.generateNewKeysMode) {
                     root.keysMainSetState = "getkeys";
                 }
-                else if(keycardStore.keycardModule.keycardMode == Constants.keycard.mode.importSeedPhraseMode) {
+                else if(keycardStore.keycardModule.keycardMode === Constants.keycard.mode.importSeedPhraseMode) {
                     root.keysMainSetState = "importseed";
                 }
-                else if(keycardStore.keycardModule.keycardMode == Constants.keycard.mode.oldUserLoginMode) {
+                else if(keycardStore.keycardModule.keycardMode === Constants.keycard.mode.oldUserLoginMode) {
                     root.keysMainSetState = "connectkeys";
                 }
 
@@ -332,6 +338,12 @@ QtObject {
                 onGetOutOfTheKeycardFlow: {
                     keycardFlowView.getOutOfTheKeycardFlow()
                 }
+
+                onCancelCurrentAndRunLoadAccountFlowInMode: {
+                    keycardFlowView.keycardStore.cancelFlow()
+                    keycardFlowView.keycardStore.keycardModule.keycardMode = mode
+                    keycardFlowView.keycardStore.runLoadAccountFlow()
+                }
             }
 
             Connections {
@@ -339,6 +351,36 @@ QtObject {
 
                 onContinueWithCreatingProfile: {
                     OnboardingStore.importMnemonic(seedPhrase)
+                }
+            }
+
+            Connections {
+                target: startupModule
+                enabled: keycardFlowView.keycardStore.keycardModule.keycardMode === Constants.keycard.mode.oldUserLoginMode
+                onAppStateChanged: {
+                    if(state === Constants.appState.main) {
+                        Global.applicationWindow.navigateTo("LoggedIn")
+                    }
+                }
+            }
+
+            Connections {
+                target: OnboardingStore.onboardingModuleInst
+                enabled: keycardFlowView.keycardStore.keycardModule.keycardMode === Constants.keycard.mode.generateNewKeysMode ||
+                         keycardFlowView.keycardStore.keycardModule.keycardMode === Constants.keycard.mode.importSeedPhraseMode
+                onAccountImportError: {
+                    if (error === Constants.existingAccountError) {
+                        importSeedError.title = qsTr("Keys for this account already exist")
+                        importSeedError.text = qsTr("Keys for this account already exist and can't be added again. If you've lost your password, passcode or Keycard, uninstall the app, reinstall and access your keys by entering your seed phrase")
+                    } else {
+                        importSeedError.title = qsTr("Error importing seed")
+                        importSeedError.text = error
+                    }
+                    importSeedError.open()
+                }
+                onAccountImportSuccess: {
+                    root.keysMainSetState = "importseed";
+                    Global.applicationWindow.navigateTo("GenKey");
                 }
             }
         }
