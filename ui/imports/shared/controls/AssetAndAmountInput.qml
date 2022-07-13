@@ -161,7 +161,6 @@ Item {
 
     StatusAssetSelector {
          id: selectAsset
-         width: 86
          height: 28
          anchors.top: inputAmount.top
          anchors.topMargin: Style.current.bigPadding + 14
