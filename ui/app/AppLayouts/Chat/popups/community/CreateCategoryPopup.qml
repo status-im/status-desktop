@@ -71,7 +71,7 @@ StatusModal {
             bottomPadding: 8
         }
 
-        ScrollView {
+        StatusScrollView {
             id: scrollView
 
             width: root.width
@@ -82,7 +82,6 @@ StatusModal {
 
             contentHeight: content.height
             ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-            clip: true
 
             function scrollBackUp() {
                 vScrollBar.setPosition(0)

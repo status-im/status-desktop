@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.13
 
 import utils 1.0
 
+import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 import StatusQ.Popups 0.1
@@ -77,14 +78,10 @@ Item {
         anchors.left: parent.left
     }
 
-
-    ScrollView {
+    StatusScrollView {
         id: sview
-        clip: true
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
         ScrollBar.vertical.policy: ScrollBar.AlwaysOn
-
-        contentHeight: tokenList.height
 
         anchors.top: searchBox.bottom
         anchors.topMargin: Style.current.smallPadding

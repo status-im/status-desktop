@@ -16,6 +16,7 @@ import shared.stores 1.0
 //TODO remove this dependency
 import AppLayouts.Chat.panels 1.0
 
+import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
 import StatusQ.Components 0.1
@@ -928,7 +929,7 @@ Rectangle {
             visible: control.isStatusUpdateInput
         }
 
-        ScrollView {
+        StatusScrollView {
             id: scrollView
             anchors.top: parent.top
             anchors.bottom: parent.bottom

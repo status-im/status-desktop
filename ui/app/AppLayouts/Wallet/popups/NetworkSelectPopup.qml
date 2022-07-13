@@ -38,14 +38,13 @@ Popup {
         }
     }
 
-    contentItem: ScrollView {
+    contentItem: StatusScrollView {
         id: scrollView
         contentHeight: content.height
         width: popup.width
         height: popup.height
 
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-        clip: true
 
         Column {
             id: content

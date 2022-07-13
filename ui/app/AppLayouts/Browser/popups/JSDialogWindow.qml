@@ -3,9 +3,10 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtWebEngine 1.10
 
-import shared.controls 1.0
+import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
 
+import shared.controls 1.0
 import shared.popups 1.0
 
 import utils 1.0
@@ -36,7 +37,7 @@ ModalPopup {
         }
     }
 
-    ScrollView {
+    StatusScrollView {
         id: svMessage
         width: parent.width
         height: 100

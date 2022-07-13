@@ -3,6 +3,7 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
 
+import StatusQ.Core 0.1
 import StatusQ.Controls 0.1 as StatusQ
 import StatusQ.Components 0.1
 
@@ -535,7 +536,7 @@ Item {
                         anchors.fill: parent
                         anchors.leftMargin: 0
                         anchors.rightMargin: 0
-                        ScrollView {
+                        StatusScrollView {
                             width: parent.width
                             height: 150
                             TextArea {

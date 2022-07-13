@@ -14,7 +14,7 @@ import "../controls"
 Item {
     id: root
 
-    height: visible ? tabBar.height + stackLayout.height + 2* Style.current.xlPadding : 0
+    implicitHeight: visible ? tabBar.height + stackLayout.height + 2* Style.current.xlPadding : 0
 
     property var store
     property var suggestedRoutes

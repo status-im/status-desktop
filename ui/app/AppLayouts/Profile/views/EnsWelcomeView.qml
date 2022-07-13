@@ -16,11 +16,9 @@ Item {
     property string username: ""
     property int profileContentWidth
 
-    ScrollView {
+    StatusScrollView {
         id: sview
-        clip: true
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-        contentHeight: contentItem.childrenRect.height
         anchors.top: parent.top
         anchors.topMargin: 24
         anchors.bottom: startBtn.top

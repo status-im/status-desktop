@@ -47,7 +47,7 @@ StatusDialog {
             image.source: root.imageSrc
         }
 
-        ScrollView {
+        StatusScrollView {
             Layout.preferredWidth: contentWidth
             Layout.minimumWidth: 300
 
@@ -55,18 +55,12 @@ StatusDialog {
             Layout.preferredHeight: contentHeight
             Layout.maximumHeight: 400
 
-            contentWidth: messageContent.width
-            contentHeight: messageContent.height
-
-            clip: true
-
             StatusBaseText {
                 id: messageContent
 
                 width: Math.min(implicitWidth, 640)
 
                 text: root.introMessage !== "" ? root.introMessage : qsTr("Community <b>%1</b> has no intro message...").arg(root.name)
-                clip: true
                 color: Theme.palette.directColor1
                 wrapMode: Text.WordWrap
             }

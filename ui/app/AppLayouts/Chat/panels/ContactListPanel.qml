@@ -1,12 +1,13 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.3
 
+import StatusQ.Core 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 
 import utils 1.0
 
-ScrollView {
+StatusScrollView {
     id: contactListPanel
 
     property alias model: groupMembers.model
@@ -18,7 +19,6 @@ ScrollView {
 
     ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
     ScrollBar.vertical.policy: groupMembers.contentHeight > groupMembers.height ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
-
 
     ListView {
         id: groupMembers

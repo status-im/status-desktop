@@ -10,7 +10,7 @@ import StatusQ.Popups 0.1
 
 import utils 1.0
 
-ScrollView {
+StatusScrollView {
     id: root
 
     property string tags
@@ -60,8 +60,6 @@ ScrollView {
         }
     }
     onSelectedTagsChanged: updateSelectedTags()
-
-    contentHeight: column.height
 
     ScrollBar.vertical.policy: ScrollBar.AsNeeded
     ScrollBar.horizontal.policy: ScrollBar.AlwaysOff

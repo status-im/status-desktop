@@ -43,19 +43,17 @@ StatusModal {
             width: parent.width
         }
 
-        ScrollView {
+        StatusScrollView {
             width: parent.width
             ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
             topPadding: 8
             bottomPadding: 8
             height: 300
-            clip: true
 
             ListView {
                 id: membershipRequestList
                 anchors.fill: parent
                 model: popup.communityData.pendingRequestsToJoin
-                clip: true
 
                 delegate: StatusListItem {
                     anchors.horizontalCenter: parent.horizontalCenter

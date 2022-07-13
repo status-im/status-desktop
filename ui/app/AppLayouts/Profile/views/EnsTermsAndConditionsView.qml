@@ -82,12 +82,11 @@ Item {
         id: popup
         title: qsTr("Terms of name registration")
 
-        ScrollView {
+        StatusScrollView {
             ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
             ScrollBar.vertical.policy: ScrollBar.AlwaysOn
             width: parent.width
             height: parent.height
-            clip: true
 
             Column {
                 spacing: Style.current.halfPadding
@@ -212,11 +211,9 @@ Item {
         }
     }
 
-    ScrollView {
+    StatusScrollView {
         id: sview
-        clip: true
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-        contentHeight: contentItem.childrenRect.height
         anchors.top: sectionTitle.bottom
         anchors.topMargin: Style.current.padding
         anchors.bottom: startBtn.top

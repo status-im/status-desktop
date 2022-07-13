@@ -38,7 +38,6 @@ StatusScrollView {
 
     contentHeight: column.height + d.layoutVMargin
     contentWidth: column.width + d.layoutHMargin
-    clip: true
 
     ColumnLayout {
         id: column
