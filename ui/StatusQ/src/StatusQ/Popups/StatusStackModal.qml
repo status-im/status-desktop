@@ -60,10 +60,15 @@ StatusModal {
         rotation: 180
         visible: replaceItem || stackLayout.currentIndex > 0
         onClicked: {
-            if (replaceItem)
-                replaceItem = null;
-            else
-                stackLayout.currentIndex--;
+            if (replaceItem) {
+              replaceItem = null;
+            } else {
+              let prevAction = stackLayout.currentItem.prevAction
+              stackLayout.currentIndex--;
+              if (typeof(prevAction) == "function") {
+                prevAction()
+              }
+            }
         }
     }
 
