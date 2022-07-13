@@ -83,6 +83,73 @@ QtObject {
     function isHtml(text) {
         return (/<\/?[a-z][\s\S]*>/i.test(text))
     }
+
+    // function to draw arrow
+    function drawArrow(context, fromx, fromy, tox, toy, color) {
+        const dx = tox - fromx;
+        const dy = toy - fromy;
+        const headlen = 10; // length of head in pixels
+        const angle = 0
+        const radius = 5
+
+        context.strokeStyle = color ? color : '#627EEA'
+
+        // straight line
+        if(dy === 0) {
+            // draw semicircle
+            context.beginPath();
+            context.arc(fromx, fromy, radius, 3*Math.PI/2, Math.PI/2,false);
+            context.stroke();
+
+            // draw straightline
+            // context.setLineDash([5]);
+            context.beginPath();
+            context.moveTo(fromx + radius, fromy);
+            context.lineTo(tox, toy);
+            context.stroke();
+
+            // draw arrow
+            context.beginPath();
+            context.moveTo(tox - headlen * Math.cos(angle - Math.PI / 6), toy - headlen * Math.sin(angle - Math.PI / 6));
+            context.lineTo(tox, toy );
+            context.lineTo(tox - headlen * Math.cos(angle + Math.PI / 6), toy - headlen * Math.sin(angle + Math.PI / 6));
+            context.stroke();
+        }
+        // connecting between 2 different y positions
+        else {
+
+            // draw semicircle
+            context.beginPath();
+            context.arc(fromx, fromy, radius, 3*Math.PI/2, Math.PI/2,false);
+            context.stroke();
+
+            // draw bent line
+            context.beginPath();
+            context.moveTo(fromx + radius, fromy);
+            context.lineTo(fromx + dx / 2, fromy);
+            context.lineTo(fromx + dx / 2, toy - radius);
+            context.stroke();
+
+            // draw connecting circle
+            context.beginPath();
+            context.moveTo(fromx + dx / 2 + radius, toy);
+            context.arc(fromx + dx / 2, toy, radius, 0, 2*Math.PI,false);
+            context.stroke();
+
+            // draw straightline
+            context.beginPath();
+            context.moveTo(fromx + dx / 2 + radius, toy);
+            context.lineTo(tox, toy);
+            context.stroke();
+
+            // draw arrow
+            context.beginPath();
+            context.moveTo(tox - headlen * Math.cos(angle - Math.PI / 6), toy - headlen * Math.sin(angle - Math.PI / 6));
+            context.lineTo(tox, toy );
+            context.lineTo(tox - headlen * Math.cos(angle + Math.PI / 6), toy - headlen * Math.sin(angle + Math.PI / 6));
+            context.stroke();
+        }
+    }
 }
 
 

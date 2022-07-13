@@ -336,6 +336,11 @@ StatusWindow {
                             selected: viewLoader.source.toString().includes(title)
                             onClicked: mainPageView.page(title, true);
                         }
+                        StatusNavigationListItem {
+                            title: "StatusCard"
+                            selected: viewLoader.source.toString().includes(title)
+                            onClicked: mainPageView.page(title, true);
+                        }
                     }
                 }
             }
