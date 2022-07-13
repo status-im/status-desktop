@@ -12,8 +12,8 @@ using json = nlohmann::json;
 
 namespace Status {
 
-QString toQString(const std::string& str);
 QString toQString(const std::filesystem::path& path);
+
 std::filesystem::path toPath(const QString& pathStr);
 
 } // namespace Status
@@ -39,6 +39,17 @@ struct adl_serializer<QColor> {
 
     static void from_json(const json& j, QColor& color) {
         color = QColor(Status::toQString(j.get<std::string>()));
+    }
+};
+
+template<typename T>
+struct adl_serializer<std::optional<T>> {
+    static void to_json(json& j, const std::optional<T>& opt) {
+        j = opt.value();
+    }
+
+    static void from_json(const json& j, std::optional<T>& opt) {
+        opt.emplace(j.get<T>());
     }
 };
 

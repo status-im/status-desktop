@@ -36,8 +36,8 @@ public:
     void processMessages(size_t millis, std::function<bool()> shouldWaitUntilTimeout);
     void logOut();
 
-    static Accounts::MultiAccount firstChatAccount();
-    static Accounts::MultiAccount firstWalletAccount();
+    static Accounts::ChatOrWalletAccount firstChatAccount();
+    static Accounts::ChatOrWalletAccount firstWalletAccount();
 
     QString password() const { return m_accountPassword; };
 

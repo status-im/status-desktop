@@ -6,8 +6,8 @@ target_sources(${PROJECT_NAME}
         ${CMAKE_CURRENT_SOURCE_DIR}/UserAccount.h
         ${CMAKE_CURRENT_SOURCE_DIR}/UserAccountsModel.h
         
-        ${CMAKE_CURRENT_SOURCE_DIR}/Accounts/AccountDto.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/Accounts/GeneratedAccountDto.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/Accounts/MultiAccount.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/Accounts/GeneratedMultiAccount.h
         ${CMAKE_CURRENT_SOURCE_DIR}/Accounts/AccountsService.h
         ${CMAKE_CURRENT_SOURCE_DIR}/Accounts/AccountsServiceInterface.h        
         

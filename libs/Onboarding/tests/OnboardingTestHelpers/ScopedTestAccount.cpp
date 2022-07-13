@@ -110,7 +110,7 @@ void ScopedTestAccount::logOut()
         throw std::runtime_error("ScopedTestAccount - failed logging out");
 }
 
-Accounts::MultiAccount ScopedTestAccount::firstChatAccount()
+Accounts::ChatOrWalletAccount ScopedTestAccount::firstChatAccount()
 {
     auto accounts = Accounts::getAccounts();
     auto chatIt = std::find_if(accounts.begin(), accounts.end(), [](const auto& a) {
@@ -121,7 +121,7 @@ Accounts::MultiAccount ScopedTestAccount::firstChatAccount()
     return *chatIt;
 }
 
-Accounts::MultiAccount ScopedTestAccount::firstWalletAccount()
+Accounts::ChatOrWalletAccount ScopedTestAccount::firstWalletAccount()
 {
     auto accounts = Accounts::getAccounts();
     auto walletIt = std::find_if(accounts.begin(), accounts.end(), [](const auto& a) {

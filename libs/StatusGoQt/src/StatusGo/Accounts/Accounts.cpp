@@ -9,7 +9,7 @@ const int MNEMONIC_PHRASE_LENGTH = 12;
 
 namespace Status::StatusGo::Accounts {
 
-RpcResponse<QJsonArray> generateAddresses(const QVector<QString>& paths)
+RpcResponse<QJsonArray> generateAddresses(const std::vector<Accounts::DerivationPath>& paths)
 {
     QJsonObject payload{
         {"n", NUMBER_OF_ADDRESSES_TO_GENERATE},
@@ -64,13 +64,12 @@ RpcResponse<QString> generateAlias(const QString& publicKey)
     }
 }
 
-RpcResponse<QJsonObject> storeDerivedAccounts(const QString& id, const QString& hashedPassword,
-                                                        const QVector<QString>& paths)
+RpcResponse<QJsonObject> storeDerivedAccounts(const QString& id, const HashedPassword& password, const std::vector<Accounts::DerivationPath>& paths)
 {
     QJsonObject payload{
         {"accountID", id},
         {"paths", Utils::toJsonArray(paths)},
-        {"password", hashedPassword}
+        {"password", password.get()}
     };
 
     try
@@ -101,11 +100,11 @@ RpcResponse<QJsonObject> storeDerivedAccounts(const QString& id, const QString& 
     }
 }
 
-RpcResponse<QJsonObject> storeAccount(const QString& id, const QString& hashedPassword)
+RpcResponse<QJsonObject> storeAccount(const QString& id, const HashedPassword& password)
 {
     QJsonObject payload{
         {"accountID", id},
-        {"password", hashedPassword}
+        {"password", password.get()}
     };
 
     try
@@ -136,14 +135,14 @@ RpcResponse<QJsonObject> storeAccount(const QString& id, const QString& hashedPa
     }
 }
 
-bool saveAccountAndLogin(const QString& hashedPassword, const QJsonObject& account,
+bool saveAccountAndLogin(const HashedPassword& password, const QJsonObject& account,
                          const QJsonArray& subaccounts, const QJsonObject& settings,
                          const QJsonObject& nodeConfig)
 {
     try
     {
         auto result = SaveAccountAndLogin(Utils::jsonToByteArray(account).data(),
-                                          hashedPassword.toUtf8().data(),
+                                          password.get().toUtf8().data(),
                                           Utils::jsonToByteArray(settings).data(),
                                           Utils::jsonToByteArray(nodeConfig).data(),
                                           Utils::jsonToByteArray(subaccounts).data());
@@ -193,7 +192,7 @@ RpcResponse<QJsonArray> openAccounts(const char* dataDirPath)
     }
 }
 
-RpcResponse<QJsonObject> login(const QString& name, const QString& keyUid, const QString& hashedPassword,
+RpcResponse<QJsonObject> login(const QString& name, const QString& keyUid, const HashedPassword& password,
                                const QString& thumbnail, const QString& large)
 {
     QJsonObject payload{
@@ -210,7 +209,7 @@ RpcResponse<QJsonObject> login(const QString& name, const QString& keyUid, const
     try
     {
         auto payloadData = Utils::jsonToByteArray(std::move(payload));
-        auto result = Login(payloadData.data(), hashedPassword.toUtf8().data());
+        auto result = Login(payloadData.data(), password.get().toUtf8().data());
         QJsonObject jsonResult;
         if(!Utils::checkReceivedResponse(result, jsonResult))
         {
@@ -234,7 +233,7 @@ RpcResponse<QJsonObject> login(const QString& name, const QString& keyUid, const
     }
 }
 
-RpcResponse<QJsonObject> loginWithConfig(const QString& name, const QString& keyUid, const QString& hashedPassword,
+RpcResponse<QJsonObject> loginWithConfig(const QString& name, const QString& keyUid, const HashedPassword& password,
                                          const QString& thumbnail, const QString& large, const QJsonObject& nodeConfig)
 {
     QJsonObject payload{
@@ -252,7 +251,7 @@ RpcResponse<QJsonObject> loginWithConfig(const QString& name, const QString& key
     {
         auto payloadData = Utils::jsonToByteArray(std::move(payload));
         auto nodeConfigData = Utils::jsonToByteArray(nodeConfig);
-        auto result = LoginWithConfig(payloadData.data(), hashedPassword.toUtf8().data(), nodeConfigData.data());
+        auto result = LoginWithConfig(payloadData.data(), password.get().toUtf8().data(), nodeConfigData.data());
         QJsonObject jsonResult;
         if(!Utils::checkReceivedResponse(result, jsonResult))
         {

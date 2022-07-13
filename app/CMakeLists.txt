@@ -32,6 +32,9 @@ qt6_add_qml_module(${PROJECT_NAME}
         qml/Status/Application/MainShortcuts.qml
         qml/Status/Application/StatusWindow.qml
 
+    SOURCES
+        res/app.qrc
+
     OUTPUT_DIRECTORY
         ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Status/Application
 )
@@ -47,7 +50,6 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE BUILD_SOURCE_DIR=${CMAKE_SOUR
 
 add_subdirectory(qml/Status/Application/Navigation)
 add_subdirectory(src)
-add_subdirectory(res)
 
 include(${CMAKE_SOURCE_DIR}/cmake/platform_specific.cmake)
 string(TOLOWER ${PROJECT_ORGANIZATION_NAME} URL_ORGANIZATION_NAME)

@@ -4,13 +4,8 @@ namespace fs = std::filesystem;
 
 namespace Status {
 
-QString toQString(const std::string &str)
-{
-    return QString::fromStdString(str);
-}
-
 QString toQString(const fs::path &path) {
-    return toQString(path.string());
+    return QString::fromStdString(path.string());
 }
 
 fs::path toPath(const QString &pathStr) {

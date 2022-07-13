@@ -18,7 +18,6 @@ add_library(${PROJECT_NAME} SHARED)
 # Use by linker only
 set_property(GLOBAL PROPERTY DEBUG_CONFIGURATIONS Debug)
 
-# TODO: consider adding a private header for parsing and keep json dependency away!?
 target_link_libraries(${PROJECT_NAME}
     PUBLIC
         Status::Helpers
@@ -76,10 +75,11 @@ target_sources(${PROJECT_NAME}
 
         ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusGo/Accounts/Accounts.h
         ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusGo/Accounts/Accounts.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusGo/Accounts/accounts_types.h
         ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusGo/Accounts/AccountsAPI.h
         ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusGo/Accounts/AccountsAPI.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusGo/Accounts/MultiAccount.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusGo/Accounts/MultiAccount.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusGo/Accounts/ChatOrWalletAccount.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusGo/Accounts/ChatOrWalletAccount.cpp
 
         ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusGo/Messenger/Service.h
         ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusGo/Messenger/Service.cpp

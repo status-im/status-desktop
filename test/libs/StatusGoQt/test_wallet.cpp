@@ -32,11 +32,11 @@ TEST(WalletApi, TestGetDerivedAddressesForPath)
     const auto rootAccount = testAccount.onboardingController()->accountsService()->getLoggedInAccount();
     ASSERT_EQ(rootAccount.address, walletAccount.derivedFrom.value());
 
-    const auto hashedPassword{Utils::hashString(testAccountPassword)};
+    const auto password{Utils::hashPassword(testAccountPassword)};
     const auto testPath = Status::Constants::General::PathWalletRoot;
 
     // chatAccount.address
-    const auto chatDerivedAddresses = Wallet::getDerivedAddressesForPath(hashedPassword, chatAccount.address, testPath, 3, 1);
+    const auto chatDerivedAddresses = Wallet::getDerivedAddressesForPath(password, chatAccount.address, testPath, 3, 1);
     // Check that no change is done
     const auto updatedAccounts = Accounts::getAccounts();
     ASSERT_EQ(updatedAccounts.size(), 2);
@@ -47,14 +47,14 @@ TEST(WalletApi, TestGetDerivedAddressesForPath)
     // all hasActivity are false
     ASSERT_TRUE(std::none_of(chatDerivedAddresses.begin(), chatDerivedAddresses.end(), [](const auto& a) { return a.hasActivity; }));
     // all address are valid
-    ASSERT_TRUE(std::none_of(chatDerivedAddresses.begin(), chatDerivedAddresses.end(), [](const auto& a) { return a.address.isEmpty(); }));
+    ASSERT_TRUE(std::none_of(chatDerivedAddresses.begin(), chatDerivedAddresses.end(), [](const auto& a) { return a.address.get().isEmpty(); }));
 
-    const auto walletDerivedAddresses = Wallet::getDerivedAddressesForPath(hashedPassword, walletAccount.address, testPath, 2, 1);
+    const auto walletDerivedAddresses = Wallet::getDerivedAddressesForPath(password, walletAccount.address, testPath, 2, 1);
     ASSERT_EQ(walletDerivedAddresses.size(), 2);
     // all alreadyCreated are false
     ASSERT_TRUE(std::none_of(walletDerivedAddresses.begin(), walletDerivedAddresses.end(), [](const auto& a) { return a.alreadyCreated; }));
 
-    const auto rootDerivedAddresses = Wallet::getDerivedAddressesForPath(hashedPassword, rootAccount.address, testPath, 4, 1);
+    const auto rootDerivedAddresses = Wallet::getDerivedAddressesForPath(password, rootAccount.address, testPath, 4, 1);
     ASSERT_EQ(rootDerivedAddresses.size(), 4);
     ASSERT_EQ(std::count_if(rootDerivedAddresses.begin(), rootDerivedAddresses.end(), [](const auto& a) { return a.alreadyCreated; }), 1);
     const auto &existingAddress = *std::find_if(rootDerivedAddresses.begin(), rootDerivedAddresses.end(), [](const auto& a) { return a.alreadyCreated; });

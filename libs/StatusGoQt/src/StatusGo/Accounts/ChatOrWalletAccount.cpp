@@ -1,8 +1,8 @@
-#include "MultiAccount.h"
+#include "ChatOrWalletAccount.h"
 
 namespace Status::StatusGo::Accounts {
 
-void to_json(json& j, const MultiAccount& d) {
+void to_json(json& j, const ChatOrWalletAccount& d) {
     j = {{"address", d.address},
          {"chat", d.isChat},
          {"clock", d.clock},
@@ -21,7 +21,7 @@ void to_json(json& j, const MultiAccount& d) {
         j["derived-from"] = d.derivedFrom.value();
 }
 
-void from_json(const json& j, MultiAccount& d) {
+void from_json(const json& j, ChatOrWalletAccount& d) {
     j.at("address").get_to(d.address);
     j.at("chat").get_to(d.isChat);
     j.at("clock").get_to(d.clock);
@@ -40,7 +40,7 @@ void from_json(const json& j, MultiAccount& d) {
     if(j.contains(publicKeyKey))
         j.at(publicKeyKey).get_to(d.publicKey);
     if(d.isWallet && !j.at("derived-from").get<std::string>().empty())
-        d.derivedFrom = j.at("derived-from").get<QString>();
+        d.derivedFrom = j.at("derived-from").get<std::optional<EOAddress>>();
 }
 
 }

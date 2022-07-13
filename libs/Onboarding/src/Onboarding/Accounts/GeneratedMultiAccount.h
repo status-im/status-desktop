@@ -50,19 +50,19 @@ struct DerivedAccounts
         for(const auto &derivationPath : jsonObj.keys())
         {
             auto derivedObj = jsonObj.value(derivationPath).toObject();
-            if(derivationPath == Constants::General::PathWhisper)
+            if(derivationPath == Constants::General::PathWhisper.get())
             {
                 result.whisper = DerivedAccountDetails::toDerivedAccountDetails(derivedObj, derivationPath);
             }
-            else if(derivationPath == Constants::General::PathWalletRoot)
+            else if(derivationPath == Constants::General::PathWalletRoot.get())
             {
                 result.walletRoot = DerivedAccountDetails::toDerivedAccountDetails(derivedObj, derivationPath);
             }
-            else if(derivationPath == Constants::General::PathDefaultWallet)
+            else if(derivationPath == Constants::General::PathDefaultWallet.get())
             {
                 result.defaultWallet = DerivedAccountDetails::toDerivedAccountDetails(derivedObj, derivationPath);
             }
-            else if(derivationPath == Constants::General::PathEIP1581)
+            else if(derivationPath == Constants::General::PathEIP1581.get())
             {
                 result.eip1581 = DerivedAccountDetails::toDerivedAccountDetails(derivedObj, derivationPath);
             }
@@ -72,28 +72,28 @@ struct DerivedAccounts
     }
 };
 
-struct StoredAccountDto
+struct StoredMultiAccount
 {
     QString publicKey;
     QString address;
 
 };
 
-static StoredAccountDto toStoredAccountDto(const QJsonObject& jsonObj)
+static StoredMultiAccount toStoredMultiAccount(const QJsonObject& jsonObj)
 {
-    auto result = StoredAccountDto();
+    auto result = StoredMultiAccount();
 
     try {
         result.address = Json::getMandatoryProp(jsonObj, "address")->toString();
         result.publicKey = Json::getMandatoryProp(jsonObj, "publicKey")->toString();
     } catch (std::exception e) {
-        qWarning() << QString("Mapping StoredAccountDto failed: %1").arg(e.what());
+        qWarning() << QString("Mapping StoredMultiAccount failed: %1").arg(e.what());
     }
 
     return result;
 }
 
-struct GeneratedAccountDto
+struct GeneratedMultiAccount
 {
     QString id;
     QString publicKey;
@@ -110,9 +110,9 @@ struct GeneratedAccountDto
         return !(id.isEmpty() || publicKey.isEmpty() || address.isEmpty() || keyUid.isEmpty());
     }
 
-    static GeneratedAccountDto toGeneratedAccountDto(const QJsonObject& jsonObj)
+    static GeneratedMultiAccount toGeneratedMultiAccount(const QJsonObject& jsonObj)
     {
-        auto result = GeneratedAccountDto();
+        auto result = GeneratedMultiAccount();
 
         try
         {
@@ -130,7 +130,7 @@ struct GeneratedAccountDto
         }
         catch (std::exception e)
         {
-            qWarning() << QString("Mapping GeneratedAccountDto failed: %1").arg(e.what());
+            qWarning() << QString("Mapping GeneratedMultiAccount failed: %1").arg(e.what());
         }
 
         return result;

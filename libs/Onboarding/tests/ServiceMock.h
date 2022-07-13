@@ -21,17 +21,17 @@ public:
     virtual ~AccountsServiceMock() override {};
 
     MOCK_METHOD(bool, init, (const fs::path&), (override));
-    MOCK_METHOD(std::vector<Onboarding::AccountDto>, openAndListAccounts, (), (override));
-    MOCK_METHOD(const std::vector<Onboarding::GeneratedAccountDto>&, generatedAccounts, (), (const, override));
+    MOCK_METHOD(std::vector<Onboarding::MultiAccount>, openAndListAccounts, (), (override));
+    MOCK_METHOD(const std::vector<Onboarding::GeneratedMultiAccount>&, generatedAccounts, (), (const, override));
     MOCK_METHOD(bool, setupAccountAndLogin, (const QString&, const QString&, const QString&), (override));
-    MOCK_METHOD(const Onboarding::AccountDto&, getLoggedInAccount, (), (const, override));
-    MOCK_METHOD(const Onboarding::GeneratedAccountDto&, getImportedAccount, (), (const, override));
+    MOCK_METHOD(const Onboarding::MultiAccount&, getLoggedInAccount, (), (const, override));
+    MOCK_METHOD(const Onboarding::GeneratedMultiAccount&, getImportedAccount, (), (const, override));
     MOCK_METHOD(bool, isFirstTimeAccountLogin, (), (const, override));
     MOCK_METHOD(bool, setKeyStoreDir, (const QString&), (override));
-    MOCK_METHOD(QString, login, (Onboarding::AccountDto, const QString&), (override));
+    MOCK_METHOD(QString, login, (Onboarding::MultiAccount, const QString&), (override));
     MOCK_METHOD(void, clear, (), (override));
     MOCK_METHOD(QString, generateAlias, (const QString&), (override));
-    MOCK_METHOD(void, deleteMultiAccount, (const Onboarding::AccountDto&), (override));
+    MOCK_METHOD(void, deleteMultiAccount, (const Onboarding::MultiAccount&), (override));
 };
 
 }

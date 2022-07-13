@@ -1,9 +1,13 @@
 #pragma once
 
+#include <Helpers/NamedType.h>
+
 #include <QString>
 
 namespace Status::StatusGo
 {
+
+using HashedPassword = Helpers::NamedType<QString, struct HashedPasswordTag>;
 
 // Used in calls where we don't have version and id returned from `status-go`
 

@@ -5,7 +5,7 @@
 namespace Status::Onboarding
 {
 
-class AccountDto;
+class MultiAccount;
 
 /*!
  * \brief Represents a user account in Onboarding Presentation Layer
@@ -21,18 +21,18 @@ class UserAccount: public QObject
 
     Q_PROPERTY(QString name READ name NOTIFY nameChanged)
 public:
-    explicit UserAccount(std::unique_ptr<AccountDto> data);
+    explicit UserAccount(std::unique_ptr<MultiAccount> data);
 
     const QString &name() const;
 
-    const AccountDto& accountData() const;
-    void updateAccountData(const AccountDto& newData);
+    const MultiAccount& accountData() const;
+    void updateAccountData(const MultiAccount& newData);
 
 signals:
     void nameChanged();
 
 private:
-    std::unique_ptr<AccountDto> m_data;
+    std::unique_ptr<MultiAccount> m_data;
 };
 
 }

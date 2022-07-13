@@ -7,11 +7,11 @@
 namespace Status::StatusGo::Utils
 {
 
-QJsonArray toJsonArray(const QVector<QString>& value)
+QJsonArray toJsonArray(const std::vector<Accounts::DerivationPath>& value)
 {
     QJsonArray array;
     for(auto& v : value)
-        array << v;
+        array << v.get();
     return array;
 }
 
@@ -20,10 +20,10 @@ const char* statusGoCallPrivateRPC(const char* inputJSON) {
     return CallPrivateRPC(const_cast<char*>(inputJSON));
 }
 
-QString hashString(const QString &str)
+HashedPassword hashPassword(const QString &str)
 {
-    return "0x" + QString::fromUtf8(QCryptographicHash::hash(str.toUtf8(),
-                                                             QCryptographicHash::Keccak_256).toHex());
+    return HashedPassword("0x" + QString::fromUtf8(QCryptographicHash::hash(str.toUtf8(),
+                                                             QCryptographicHash::Keccak_256).toHex()));
 }
 
 std::optional<RpcError> getRPCErrorInJson(const QJsonObject& json)

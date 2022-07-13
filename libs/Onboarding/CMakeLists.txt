@@ -37,6 +37,9 @@ add_subdirectory(src)
 add_subdirectory(tests)
 
 target_link_libraries(Onboarding
+    PUBLIC
+        Status::StatusGoQt
+
     PRIVATE
         Qt6::Quick
         Qt6::Qml
@@ -45,7 +48,6 @@ target_link_libraries(Onboarding
         Status::ApplicationCore
         Status::Helpers
 
-        Status::StatusGoQt
         Status::StatusGoConfig
 )
 
