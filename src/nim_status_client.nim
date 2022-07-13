@@ -23,7 +23,7 @@ proc determineFleetsPath(): string =
 
 proc determineOpenUri(): string =
   if OPENURI.len > 0:
-    result = $(%* { "uri": OPENURI })
+    result = OPENURI
 
 proc determineStatusAppIconPath(): string =
   if defined(production):
@@ -109,7 +109,7 @@ proc mainProc() =
   let osThemeEvent = newStatusOSThemeEventObject(singletonInstance.engine)
   let urlSchemeEvent = newStatusUrlSchemeEventObject()
 
-  statusFoundation.initUrlSchemeManager(urlSchemeEvent)
+  statusFoundation.initUrlSchemeManager(urlSchemeEvent, singleInstance, openUri)
 
   if not defined(macosx):
     app.icon(app.applicationDirPath & statusAppIconPath)

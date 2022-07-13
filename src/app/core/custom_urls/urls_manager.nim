@@ -33,20 +33,28 @@ const UriFormatCommunityChannelLong = "status-im://community-channel/"
 QtObject:
   type UrlsManager* = ref object of QObject
     events: EventEmitter
+    protocolUriOnStart: string
 
-  proc setup(self: UrlsManager, urlSchemeEvent: StatusEvent) =
+  proc setup(self: UrlsManager, urlSchemeEvent: StatusEvent,
+      singleInstance: SingleInstance) =
     self.QObject.setup
-    signalConnect(urlSchemeEvent, "urlActivated(QString)", self, "onUrlActivated(QString)", 2)
+    signalConnect(urlSchemeEvent, "urlActivated(QString)", self,
+      "onUrlActivated(QString)", 2)
+    signalConnect(singleInstance, "eventReceived(QString)", self,
+      "onUrlActivated(QString)", 2)
 
   proc delete*(self: UrlsManager) =
     self.QObject.delete
 
-  proc newUrlsManager*(events: EventEmitter, urlSchemeEvent: StatusEvent): UrlsManager =
+  proc newUrlsManager*(events: EventEmitter, urlSchemeEvent: StatusEvent,
+      singleInstance: SingleInstance, protocolUriOnStart: string): UrlsManager =
     new(result)
-    result.setup(urlSchemeEvent)
-    result.events = events    
+    result.setup(urlSchemeEvent, singleInstance)
+    result.events = events
+    result.protocolUriOnStart = protocolUriOnStart
 
-  proc prepareGroupChatDetails(self: UrlsManager, urlQuery: string, data: var StatusUrlArgs) =
+  proc prepareGroupChatDetails(self: UrlsManager, urlQuery: string,
+       data: var StatusUrlArgs) =
     var urlParams = rsplit(urlQuery, "/u/")
     if(urlParams.len > 0):
       data.groupName = urlParams[0]
@@ -55,8 +63,11 @@ QtObject:
     else:
       info "wrong url format for group chat"
 
-  proc onUrlActivated*(self: UrlsManager, url: string) {.slot.} =
+  proc onUrlActivated*(self: UrlsManager, urlRaw: string) {.slot.} =
     var data = StatusUrlArgs()
+    let url = urlRaw.multiReplace((" ", ""))
+      .multiReplace(("\r\n", ""))
+      .multiReplace(("\n", ""))
 
     # Open `url` in the app's browser
     if url.startsWith(UriFormatBrowserShort):
@@ -130,3 +141,8 @@ QtObject:
       return
 
     self.events.emit(SIGNAL_STATUS_URL_REQUESTED, data)
+
+  proc userLoggedIn*(self: UrlsManager) =
+    if self.protocolUriOnStart != "":
+      self.onUrlActivated(self.protocolUriOnStart)
+      self.protocolUriOnStart = ""
