@@ -17,4 +17,4 @@ def verify_object_enabled(objName: str, timeout: int=_MIN_WAIT_OBJ_TIMEOUT, cond
 
 def verify_text_matching(objName: str, text: str):
     test.verify(is_text_matching(objName, text), True)
-    
+
