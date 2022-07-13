@@ -811,24 +811,17 @@ Item {
                 rptDraggedPreviews.y = drag.y
             }
             onExited: cleanup()
-            Rectangle {
-                id: dropRectangle
-
-                width: parent.width
-                height: parent.height
-                color: Style.current.transparent
-                opacity: 0.8
-
-                states: [
-                    State {
-                        when: dragTarget.enabled && dragTarget.containsDrag
-                        PropertyChanges {
-                            target: dropRectangle
-                            color: Style.current.background
-                        }
-                    }
-                ]
+            Loader {
+                active: dragTarget.enabled && dragTarget.containsDrag
+                width: active ? parent.width : 0
+                height: active ? parent.height : 0
+                sourceComponent: Rectangle {
+                    id: dropRectangle
+                    color: Style.current.background
+                    opacity: 0.8
+                }
             }
+           
             Repeater {
                 id: rptDraggedPreviews
 
