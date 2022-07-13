@@ -82,7 +82,6 @@ Page {
 
     contentItem: Item {
         anchors.fill: parent
-        anchors.topMargin: 68
 
         StatusBaseText {
             visible: (contactsModel.count === 0)
