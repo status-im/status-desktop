@@ -344,6 +344,7 @@ proc load(self: AppController) =
 proc userLoggedIn*(self: AppController) =
   self.generalService.startMessenger()
   self.load()
+  self.statusFoundation.userLoggedIn()
 
   # Once user is logged in and main module is loaded we need to check if it gets here importing mnemonic or not
   # and delete mnemonic in the first case.
