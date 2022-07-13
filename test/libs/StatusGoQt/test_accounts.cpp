@@ -36,14 +36,14 @@ TEST(AccountsAPI, TestGetAccounts)
     ASSERT_NE(chatIt, accounts.end());
     const auto &chatAccount = *chatIt;
     ASSERT_EQ(chatAccount.name, testAccountName);
-    ASSERT_FALSE(chatAccount.path.isEmpty());
+    ASSERT_FALSE(chatAccount.path.get().isEmpty());
     ASSERT_FALSE(chatAccount.derivedFrom.has_value());
 
     const auto walletIt = std::find_if(accounts.begin(), accounts.end(), [](const auto& a) { return a.isWallet; });
     ASSERT_NE(walletIt, accounts.end());
     const auto &walletAccount = *walletIt;
     ASSERT_NE(walletAccount.name, testAccountName);
-    ASSERT_FALSE(walletAccount.path.isEmpty());
+    ASSERT_FALSE(walletAccount.path.get().isEmpty());
     ASSERT_TRUE(walletAccount.derivedFrom.has_value());
 }
 
@@ -53,14 +53,14 @@ TEST(Accounts, TestGenerateAccountWithDerivedPath)
     constexpr auto testAccountPassword = "password*";
     ScopedTestAccount testAccount(test_info_->name(), testRootAccountName, testAccountPassword, true);
 
-    auto hashedPassword{Utils::hashString(testAccountPassword)};
+    auto password{Utils::hashPassword(testAccountPassword)};
     const auto newTestAccountName = u"test_generated_new_account-name"_qs;
     const auto newTestAccountColor = QColor("fuchsia");
     const auto newTestAccountEmoji = u""_qs;
     const auto newTestAccountPath = Status::Constants::General::PathWalletRoot;
 
     const auto chatAccount = testAccount.firstChatAccount();
-    Accounts::generateAccountWithDerivedPath(hashedPassword, newTestAccountName,
+    Accounts::generateAccountWithDerivedPath(password, newTestAccountName,
                                            newTestAccountColor, newTestAccountEmoji,
                                            newTestAccountPath, chatAccount.address);
     const auto updatedAccounts = Accounts::getAccounts();
@@ -72,13 +72,13 @@ TEST(Accounts, TestGenerateAccountWithDerivedPath)
                                      });
     ASSERT_NE(newAccountIt, updatedAccounts.end());
     const auto &newAccount = *newAccountIt;
-    ASSERT_FALSE(newAccount.address.isEmpty());
+    ASSERT_FALSE(newAccount.address.get().isEmpty());
     ASSERT_FALSE(newAccount.isChat);
     ASSERT_FALSE(newAccount.isWallet);
     ASSERT_EQ(newAccount.color, newTestAccountColor);
     ASSERT_FALSE(newAccount.derivedFrom.has_value());
     ASSERT_EQ(newAccount.emoji, newTestAccountEmoji);
-    ASSERT_EQ(newAccount.mixedcaseAddress.toUpper(), newAccount.address.toUpper());
+    ASSERT_EQ(newAccount.mixedcaseAddress.toUpper(), newAccount.address.get().toUpper());
     ASSERT_EQ(newAccount.path, newTestAccountPath);
     ASSERT_FALSE(newAccount.publicKey.isEmpty());
 }
@@ -91,7 +91,7 @@ TEST(AccountsAPI, TestGenerateAccountWithDerivedPath_WrongPassword)
 
     const auto chatAccount = testAccount.firstChatAccount();
     try {
-        Accounts::generateAccountWithDerivedPath(Utils::hashString("WrongPassword"), u"test_wrong_pass-name"_qs,
+        Accounts::generateAccountWithDerivedPath(Utils::hashPassword("WrongPassword"), u"test_wrong_pass-name"_qs,
                                                QColor("fuchsia"), "", Status::Constants::General::PathWalletRoot,
                                                chatAccount.address);
         FAIL();
@@ -111,14 +111,14 @@ TEST(AccountsAPI, TestAddAccountWithMnemonicAndPath)
     constexpr auto testAccountPassword = "password*";
     ScopedTestAccount testAccount(test_info_->name(), testRootAccountName, testAccountPassword, true);
 
-    auto hashedPassword{Utils::hashString(testAccountPassword)};
+    auto password{Utils::hashPassword(testAccountPassword)};
     const auto newTestAccountName = u"test_import_from_mnemonic-name"_qs;
     const auto newTestAccountColor = QColor("fuchsia");
     const auto newTestAccountEmoji = u""_qs;
     const auto newTestAccountPath = Status::Constants::General::PathWalletRoot;
 
     Accounts::addAccountWithMnemonicAndPath("festival october control quarter husband dish throw couch depth stadium cigar whisper",
-                                          hashedPassword, newTestAccountName, newTestAccountColor, newTestAccountEmoji,
+                                          password, newTestAccountName, newTestAccountColor, newTestAccountEmoji,
                                           newTestAccountPath);
     const auto updatedAccounts = Accounts::getAccounts();
     ASSERT_EQ(updatedAccounts.size(), 3);
@@ -129,13 +129,13 @@ TEST(AccountsAPI, TestAddAccountWithMnemonicAndPath)
     });
     ASSERT_NE(newAccountIt, updatedAccounts.end());
     const auto &newAccount = *newAccountIt;
-    ASSERT_FALSE(newAccount.address.isEmpty());
+    ASSERT_FALSE(newAccount.address.get().isEmpty());
     ASSERT_FALSE(newAccount.isChat);
     ASSERT_FALSE(newAccount.isWallet);
     ASSERT_EQ(newAccount.color, newTestAccountColor);
     ASSERT_FALSE(newAccount.derivedFrom.has_value());
     ASSERT_EQ(newAccount.emoji, newTestAccountEmoji);
-    ASSERT_EQ(newAccount.mixedcaseAddress.toUpper(), newAccount.address.toUpper());
+    ASSERT_EQ(newAccount.mixedcaseAddress.toUpper(), newAccount.address.get().toUpper());
     ASSERT_EQ(newAccount.path, newTestAccountPath);
     ASSERT_FALSE(newAccount.publicKey.isEmpty());
 }
@@ -147,7 +147,7 @@ TEST(AccountsAPI, TestAddAccountWithMnemonicAndPath_WrongMnemonicWorks)
     constexpr auto testAccountPassword = "password*";
     ScopedTestAccount testAccount(test_info_->name(), testRootAccountName, testAccountPassword, true);
 
-    auto hashedPassword{Utils::hashString(testAccountPassword)};
+    auto password{Utils::hashPassword(testAccountPassword)};
     const auto newTestAccountName = u"test_import_from_wrong_mnemonic-name"_qs;
     const auto newTestAccountColor = QColor("fuchsia");
     const auto newTestAccountEmoji = u""_qs;
@@ -155,7 +155,7 @@ TEST(AccountsAPI, TestAddAccountWithMnemonicAndPath_WrongMnemonicWorks)
 
     // Added an inexistent word. The mnemonic is not checked.
     Accounts::addAccountWithMnemonicAndPath("october control quarter husband dish throw couch depth stadium cigar waku",
-                                          hashedPassword, newTestAccountName, newTestAccountColor, newTestAccountEmoji,
+                                          password, newTestAccountName, newTestAccountColor, newTestAccountEmoji,
                                           newTestAccountPath);
 
     const auto updatedAccounts = Accounts::getAccounts();
@@ -168,13 +168,13 @@ TEST(AccountsAPI, TestAddAccountWithMnemonicAndPath_WrongMnemonicWorks)
 
     ASSERT_NE(newAccountIt, updatedAccounts.end());
     const auto &newAccount = *newAccountIt;
-    ASSERT_FALSE(newAccount.address.isEmpty());
+    ASSERT_FALSE(newAccount.address.get().isEmpty());
     ASSERT_FALSE(newAccount.isChat);
     ASSERT_FALSE(newAccount.isWallet);
     ASSERT_EQ(newAccount.color, newTestAccountColor);
     ASSERT_FALSE(newAccount.derivedFrom.has_value());
     ASSERT_EQ(newAccount.emoji, newTestAccountEmoji);
-    ASSERT_EQ(newAccount.mixedcaseAddress.toUpper(), newAccount.address.toUpper());
+    ASSERT_EQ(newAccount.mixedcaseAddress.toUpper(), newAccount.address.get().toUpper());
     ASSERT_EQ(newAccount.path, newTestAccountPath);
     ASSERT_FALSE(newAccount.publicKey.isEmpty());
 }
@@ -189,7 +189,7 @@ TEST(AccountsAPI, TestAddAccountWatch)
     const auto newTestAccountColor = QColor("fuchsia");
     const auto newTestAccountEmoji = u""_qs;
 
-    Accounts::addAccountWatch("0x145b6B821523afFC346774b41ACC7b77A171BbA4", newTestAccountName, newTestAccountColor, newTestAccountEmoji);
+    Accounts::addAccountWatch(Accounts::EOAddress("0x145b6B821523afFC346774b41ACC7b77A171BbA4"), newTestAccountName, newTestAccountColor, newTestAccountEmoji);
     const auto updatedAccounts = Accounts::getAccounts();
     ASSERT_EQ(updatedAccounts.size(), 3);
 
@@ -199,14 +199,14 @@ TEST(AccountsAPI, TestAddAccountWatch)
     });
     ASSERT_NE(newAccountIt, updatedAccounts.end());
     const auto &newAccount = *newAccountIt;
-    ASSERT_FALSE(newAccount.address.isEmpty());
+    ASSERT_FALSE(newAccount.address.get().isEmpty());
     ASSERT_FALSE(newAccount.isChat);
     ASSERT_FALSE(newAccount.isWallet);
     ASSERT_EQ(newAccount.color, newTestAccountColor);
     ASSERT_FALSE(newAccount.derivedFrom.has_value());
     ASSERT_EQ(newAccount.emoji, newTestAccountEmoji);
-    ASSERT_EQ(newAccount.mixedcaseAddress.toUpper(), newAccount.address.toUpper());
-    ASSERT_TRUE(newAccount.path.isEmpty());
+    ASSERT_EQ(newAccount.mixedcaseAddress.toUpper(), newAccount.address.get().toUpper());
+    ASSERT_TRUE(newAccount.path.get().isEmpty());
     ASSERT_TRUE(newAccount.publicKey.isEmpty());
 }
 
@@ -220,7 +220,7 @@ TEST(AccountsAPI, TestDeleteAccount)
     const auto newTestAccountColor = QColor("fuchsia");
     const auto newTestAccountEmoji = u""_qs;
 
-    Accounts::addAccountWatch("0x145b6B821523afFC346774b41ACC7b77A171BbA4", newTestAccountName, newTestAccountColor, newTestAccountEmoji);
+    Accounts::addAccountWatch(Accounts::EOAddress("0x145b6B821523afFC346774b41ACC7b77A171BbA4"), newTestAccountName, newTestAccountColor, newTestAccountEmoji);
     const auto updatedAccounts = Accounts::getAccounts();
     ASSERT_EQ(updatedAccounts.size(), 3);
 

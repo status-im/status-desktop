@@ -1,5 +1,7 @@
 #pragma once
 
+#include <StatusGo/Types.h>
+
 #include "AccountsServiceInterface.h"
 
 namespace Status::Onboarding
@@ -25,18 +27,18 @@ public:
     bool init(const fs::path& statusgoDataDir) override;
 
     /// \see ServiceInterface
-    [[nodiscard]] std::vector<AccountDto> openAndListAccounts() override;
+    [[nodiscard]] std::vector<MultiAccount> openAndListAccounts() override;
 
     /// \see ServiceInterface
-    [[nodiscard]] const std::vector<GeneratedAccountDto>& generatedAccounts() const override;
+    [[nodiscard]] const std::vector<GeneratedMultiAccount>& generatedAccounts() const override;
 
     /// \see ServiceInterface
     bool setupAccountAndLogin(const QString& accountId, const QString& password, const QString& displayName) override;
 
     /// \see ServiceInterface
-    [[nodiscard]] const AccountDto& getLoggedInAccount() const override;
+    [[nodiscard]] const MultiAccount& getLoggedInAccount() const override;
 
-    [[nodiscard]] const GeneratedAccountDto& getImportedAccount() const override;
+    [[nodiscard]] const GeneratedMultiAccount& getImportedAccount() const override;
 
     /// \see ServiceInterface
     [[nodiscard]] bool isFirstTimeAccountLogin() const override;
@@ -44,34 +46,34 @@ public:
     /// \see ServiceInterface
     bool setKeyStoreDir(const QString &key) override;
 
-    QString login(AccountDto account, const QString& password) override;
+    QString login(MultiAccount account, const QString& password) override;
 
     void clear() override;
 
     QString generateAlias(const QString& publicKey) override;
 
-    void deleteMultiAccount(const AccountDto &account) override;
+    void deleteMultiAccount(const MultiAccount &account) override;
 
 private:
-    QJsonObject prepareAccountJsonObject(const GeneratedAccountDto& account, const QString& displayName) const;
+    QJsonObject prepareAccountJsonObject(const GeneratedMultiAccount& account, const QString& displayName) const;
 
-    DerivedAccounts storeDerivedAccounts(const QString& accountId, const QString& hashedPassword,
-                                         const QVector<QString>& paths);
-    StoredAccountDto storeAccount(const QString& accountId, const QString& hashedPassword);
+    DerivedAccounts storeDerivedAccounts(const QString& accountId, const StatusGo::HashedPassword& password,
+                                         const std::vector<Accounts::DerivationPath>& paths);
+    StoredMultiAccount storeAccount(const QString& accountId, const StatusGo::HashedPassword& password);
 
-    AccountDto saveAccountAndLogin(const QString& hashedPassword, const QJsonObject& account,
+    MultiAccount saveAccountAndLogin(const StatusGo::HashedPassword& password, const QJsonObject& account,
                                    const QJsonArray& subaccounts, const QJsonObject& settings,
                                    const QJsonObject& config);
 
     QJsonObject getAccountDataForAccountId(const QString& accountId, const QString& displayName) const;
 
-    QJsonArray prepareSubaccountJsonObject(const GeneratedAccountDto& account, const QString& displayName) const;
+    QJsonArray prepareSubaccountJsonObject(const GeneratedMultiAccount& account, const QString& displayName) const;
 
     QJsonArray getSubaccountDataForAccountId(const QString& accountId, const QString& displayName) const;
 
     QString generateSigningPhrase(int count) const;
 
-    QJsonObject prepareAccountSettingsJsonObject(const GeneratedAccountDto& account,
+    QJsonObject prepareAccountSettingsJsonObject(const GeneratedMultiAccount& account,
                                                  const QString& installationId,
                                                  const QString& displayName) const;
 
@@ -80,14 +82,14 @@ private:
     QJsonObject getDefaultNodeConfig(const QString& installationId) const;
 
 private:
-    std::vector<GeneratedAccountDto> m_generatedAccounts;
+    std::vector<GeneratedMultiAccount> m_generatedAccounts;
 
     fs::path m_statusgoDataDir;
     fs::path m_keyStoreDir;
     bool m_isFirstTimeAccountLogin;
     // TODO: don't see the need for this state here
-    AccountDto m_loggedInAccount;
-    GeneratedAccountDto m_importedAccount;
+    MultiAccount m_loggedInAccount;
+    GeneratedMultiAccount m_importedAccount;
 
     // Here for now. Extract them if used by other services
     static constexpr auto m_keyStoreDirName = "keystore";

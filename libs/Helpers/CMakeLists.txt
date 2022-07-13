@@ -71,5 +71,6 @@ target_sources(Helpers
         ${CMAKE_CURRENT_SOURCE_DIR}/src/Helpers/helpers.h
         ${CMAKE_CURRENT_SOURCE_DIR}/src/Helpers/logs.h
         ${CMAKE_CURRENT_SOURCE_DIR}/src/Helpers/logs.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/Helpers/NamedType.h
         ${CMAKE_CURRENT_SOURCE_DIR}/src/Helpers/Singleton.h
 )

@@ -20,7 +20,6 @@ qt6_add_qml_module(${PROJECT_NAME}
     URI Status.Core.Theme
     VERSION 1.0
 
-    # TODO: temporary until we make qt_target_qml_sources work
     QML_FILES
         StatusColors.qml
         StatusDarkPalette.qml

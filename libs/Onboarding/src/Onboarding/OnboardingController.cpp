@@ -17,7 +17,7 @@ OnboardingController::OnboardingController(AccountsServiceInterfacePtr accountsS
     {   // Init accounts
         std::vector<std::shared_ptr<UserAccount>> accounts;
         for(auto &account : getOpenedAccounts()) {
-            accounts.push_back(std::make_shared<UserAccount>(std::make_unique<AccountDto>(std::move(account))));
+            accounts.push_back(std::make_shared<UserAccount>(std::make_unique<MultiAccount>(std::move(account))));
         }
         m_accounts = std::make_shared<UserAccountsModel>(std::move(accounts));
     }
@@ -38,7 +38,7 @@ void OnboardingController::onLogin(const QString& error)
         emit accountLoginError(error);
 }
 
-std::vector<AccountDto> OnboardingController::getOpenedAccounts() const
+std::vector<MultiAccount> OnboardingController::getOpenedAccounts() const
 {
     return m_accountsService->openAndListAccounts();
 }

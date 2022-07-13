@@ -27,9 +27,18 @@ endif()
 
 # status-desktop application
 add_subdirectory(vendor)
-add_subdirectory(libs)
+
+add_subdirectory(libs/ApplicationCore)
+add_subdirectory(libs/Assets)
+add_subdirectory(libs/Helpers)
+add_subdirectory(libs/Onboarding)
+add_subdirectory(libs/StatusGoQt)
+add_subdirectory(libs/StatusQ)
+
 add_subdirectory(app)
+
 add_subdirectory(test/libs/StatusGoQt)
+
 # TODO: temporary not to duplicate resources until we switch to c++ app then it can be refactored
 add_subdirectory(resources)
 add_subdirectory(ui/imports/assets)

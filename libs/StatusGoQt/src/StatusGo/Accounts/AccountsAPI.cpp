@@ -14,7 +14,7 @@ using json = nlohmann::json;
 namespace Status::StatusGo::Accounts
 {
 
-Accounts::MultiAccounts getAccounts() {
+Accounts::ChatOrWalletAccounts getAccounts() {
     // or even nicer with a raw string literal
     json inputJson = {
         {"jsonrpc", "2.0"},
@@ -29,10 +29,10 @@ Accounts::MultiAccounts getAccounts() {
     return resultJson.get<CallPrivateRpcResponse>().result;
 }
 
-void generateAccountWithDerivedPath(const QString &hashedPassword, const QString &name, const QColor &color, const QString &emoji,
-                                    const QString &path, const QString &derivedFrom)
+void generateAccountWithDerivedPath(const HashedPassword &password, const QString &name, const QColor &color, const QString &emoji,
+                                    const DerivationPath &path, const EOAddress &derivedFrom)
 {
-    std::vector<json> params = {hashedPassword, name, color, emoji, path, derivedFrom};
+    std::vector<json> params = {password, name, color, emoji, path, derivedFrom};
     json inputJson = {
         {"jsonrpc", "2.0"},
         {"method", "accounts_generateAccountWithDerivedPath"},
@@ -44,10 +44,10 @@ void generateAccountWithDerivedPath(const QString &hashedPassword, const QString
     checkPrivateRpcCallResultAndReportError(resultJson);
 }
 
-void addAccountWithMnemonicAndPath(const QString &mnemonic, const QString &hashedPassword, const QString &name,
-                                   const QColor &color, const QString &emoji, const QString &path)
+void addAccountWithMnemonicAndPath(const QString &mnemonic, const HashedPassword &password, const QString &name,
+                                   const QColor &color, const QString &emoji, const DerivationPath &path)
 {
-    std::vector<json> params = {mnemonic, hashedPassword, name, color, emoji, path};
+    std::vector<json> params = {mnemonic, password, name, color, emoji, path};
     json inputJson = {
         {"jsonrpc", "2.0"},
         {"method", "accounts_addAccountWithMnemonicAndPath"},
@@ -59,7 +59,7 @@ void addAccountWithMnemonicAndPath(const QString &mnemonic, const QString &hashe
     checkPrivateRpcCallResultAndReportError(resultJson);
 }
 
-void addAccountWatch(const QString &address, const QString &name, const QColor &color, const QString &emoji)
+void addAccountWatch(const EOAddress &address, const QString &name, const QColor &color, const QString &emoji)
 {
     std::vector<json> params = {address, name, color, emoji};
     json inputJson = {
@@ -73,7 +73,7 @@ void addAccountWatch(const QString &address, const QString &name, const QColor &
     checkPrivateRpcCallResultAndReportError(resultJson);
 }
 
-void deleteAccount(const QString &address)
+void deleteAccount(const EOAddress &address)
 {
     std::vector<json> params = {address};
     json inputJson = {

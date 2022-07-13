@@ -20,7 +20,6 @@ qt6_add_qml_module(Assets
     URI Status.Assets
     VERSION 1.0
 
-    # TODO: temporary until we make qt_target_qml_sources work
     QML_FILES
         qml/Status/Assets/Resources.qml
 

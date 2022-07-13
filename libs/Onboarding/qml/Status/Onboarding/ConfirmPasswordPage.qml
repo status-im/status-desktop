@@ -11,9 +11,6 @@ SetupNewProfilePageBase {
     TempTextInput {
         id: confirmPasswordInput
 
-        // TODO: remove this developer helper
-        text: qsTr("1234567890")
-
         width: 416
         height: 44
 

@@ -3,7 +3,7 @@
 #include "UserAccountsModel.h"
 
 #include "Accounts/AccountsServiceInterface.h"
-#include "Accounts/AccountDto.h"
+#include "Accounts/MultiAccount.h"
 
 #include <QtQmlIntegration>
 

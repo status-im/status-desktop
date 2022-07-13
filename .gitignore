@@ -8,6 +8,7 @@ noBackup/
 *.log
 .update.timestamp
 .vscode
+*.code-workspace
 .tours
 bin/
 /bottles/

@@ -41,11 +41,7 @@ target_link_libraries(${PROJECT_NAME}
 
         Status::OnboardingTestHelpers
         Status::Onboarding
-
-        # TODO tmp
-        Status::StatusGoQt
 )
-
 
 include(GoogleTest)
 gtest_add_tests(

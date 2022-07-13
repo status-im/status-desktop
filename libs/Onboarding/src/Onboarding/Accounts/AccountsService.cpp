@@ -26,11 +26,11 @@ getDataFromFile(const fs::path &path)
     return data;
 }
 
-namespace Status::Onboarding
-{
-
 namespace StatusGo = Status::StatusGo;
 namespace Utils = Status::StatusGo::Utils;
+
+namespace Status::Onboarding
+{
 
 AccountsService::AccountsService()
     : m_isFirstTimeAccountLogin(false)
@@ -49,32 +49,32 @@ bool AccountsService::init(const fs::path& statusgoDataDir)
 
     for(const auto &genAddressObj : response.result)
     {
-        auto gAcc = GeneratedAccountDto::toGeneratedAccountDto(genAddressObj.toObject());
+        auto gAcc = GeneratedMultiAccount::toGeneratedMultiAccount(genAddressObj.toObject());
         gAcc.alias = generateAlias(gAcc.derivedAccounts.whisper.publicKey);
         m_generatedAccounts.push_back(std::move(gAcc));
     }
     return true;
 }
 
-std::vector<AccountDto> AccountsService::openAndListAccounts()
+std::vector<MultiAccount> AccountsService::openAndListAccounts()
 {
     auto response = StatusGo::Accounts::openAccounts(m_statusgoDataDir.c_str());
     if(response.containsError())
     {
         qWarning() << response.error.message;
-        return std::vector<AccountDto>();
+        return std::vector<MultiAccount>();
     }
 
     const auto multiAccounts = response.result;
-    std::vector<AccountDto> result;
+    std::vector<MultiAccount> result;
     for(const auto &value : multiAccounts)
     {
-        result.push_back(AccountDto::toAccountDto(value.toObject()));
+        result.push_back(MultiAccount::toMultiAccount(value.toObject()));
     }
     return result;
 }
 
-const std::vector<GeneratedAccountDto>& AccountsService::generatedAccounts() const
+const std::vector<GeneratedMultiAccount>& AccountsService::generatedAccounts() const
 {
     return m_generatedAccounts;
 }
@@ -91,7 +91,7 @@ bool AccountsService::setupAccountAndLogin(const QString &accountId, const QStri
     QJsonObject settings(getAccountSettings(accountId, installationId, displayName));
     QJsonObject nodeConfig(getDefaultNodeConfig(installationId));
 
-    QString hashedPassword(Utils::hashString(password));
+    auto hashedPassword(Utils::hashPassword(password));
 
     // This initialize the DB if first time running. Required for storing accounts
     if(StatusGo::Accounts::openAccounts(m_statusgoDataDir.c_str()).containsError())
@@ -105,12 +105,12 @@ bool AccountsService::setupAccountAndLogin(const QString &accountId, const QStri
     return getLoggedInAccount().isValid();
 }
 
-const AccountDto& AccountsService::getLoggedInAccount() const
+const MultiAccount& AccountsService::getLoggedInAccount() const
 {
     return m_loggedInAccount;
 }
 
-const GeneratedAccountDto& AccountsService::getImportedAccount() const
+const GeneratedMultiAccount& AccountsService::getImportedAccount() const
 {
     return m_importedAccount;
 }
@@ -127,7 +127,7 @@ bool AccountsService::setKeyStoreDir(const QString &key)
     return !response.containsError();
 }
 
-QString AccountsService::login(AccountDto account, const QString& password)
+QString AccountsService::login(MultiAccount account, const QString& password)
 {
     // This is a requirement. Make it more explicit into the status go module
     if(!setKeyStoreDir(account.keyUid))
@@ -137,7 +137,7 @@ QString AccountsService::login(AccountDto account, const QString& password)
     if(StatusGo::Accounts::openAccounts(m_statusgoDataDir.c_str()).containsError())
         return QString("Failed to open accounts before logging in");
 
-    QString hashedPassword(Utils::hashString(password));
+    auto hashedPassword(Utils::hashPassword(password));
 
     QString thumbnailImage;
     QString largeImage;
@@ -157,8 +157,8 @@ QString AccountsService::login(AccountDto account, const QString& password)
 void AccountsService::clear()
 {
     m_generatedAccounts.clear();
-    m_loggedInAccount = AccountDto();
-    m_importedAccount = GeneratedAccountDto();
+    m_loggedInAccount = MultiAccount();
+    m_importedAccount = GeneratedMultiAccount();
     m_isFirstTimeAccountLogin = false;
 }
 
@@ -174,15 +174,15 @@ QString AccountsService::generateAlias(const QString& publicKey)
     return response.result;
 }
 
-void AccountsService::deleteMultiAccount(const AccountDto &account)
+void AccountsService::deleteMultiAccount(const MultiAccount &account)
 {
     StatusGo::Accounts::deleteMultiaccount(account.keyUid, m_keyStoreDir);
 }
 
-DerivedAccounts AccountsService::storeDerivedAccounts(const QString& accountId, const QString& hashedPassword,
-                                              const QVector<QString>& paths)
+DerivedAccounts AccountsService::storeDerivedAccounts(const QString& accountId, const StatusGo::HashedPassword& password,
+                                                      const std::vector<Accounts::DerivationPath> &paths)
 {
-    auto response = StatusGo::Accounts::storeDerivedAccounts(accountId, hashedPassword, paths);
+    auto response = StatusGo::Accounts::storeDerivedAccounts(accountId, password, paths);
     if(response.containsError())
     {
         qWarning() << response.error.message;
@@ -191,31 +191,31 @@ DerivedAccounts AccountsService::storeDerivedAccounts(const QString& accountId, 
     return DerivedAccounts::toDerivedAccounts(response.result);
 }
 
-StoredAccountDto AccountsService::storeAccount(const QString& accountId, const QString& hashedPassword)
+StoredMultiAccount AccountsService::storeAccount(const QString& accountId, const StatusGo::HashedPassword& password)
 {
-    auto response = StatusGo::Accounts::storeAccount(accountId, hashedPassword);
+    auto response = StatusGo::Accounts::storeAccount(accountId, password);
     if(response.containsError())
     {
         qWarning() << response.error.message;
-        return StoredAccountDto();
+        return StoredMultiAccount();
     }
-    return toStoredAccountDto(response.result);
+    return toStoredMultiAccount(response.result);
 }
 
-AccountDto AccountsService::saveAccountAndLogin(const QString& hashedPassword, const QJsonObject& account,
+MultiAccount AccountsService::saveAccountAndLogin(const StatusGo::HashedPassword& password, const QJsonObject& account,
                                         const QJsonArray& subaccounts, const QJsonObject& settings,
                                         const QJsonObject& config)
 {
-    if(!StatusGo::Accounts::saveAccountAndLogin(hashedPassword, account, subaccounts, settings, config)) {
+    if(!StatusGo::Accounts::saveAccountAndLogin(password, account, subaccounts, settings, config)) {
         qWarning() << "Failed saving acccount" << account.value("name");
-        return AccountDto();
+        return MultiAccount();
     }
 
     m_isFirstTimeAccountLogin = true;
-    return AccountDto::toAccountDto(account);
+    return MultiAccount::toMultiAccount(account);
 }
 
-QJsonObject AccountsService::prepareAccountJsonObject(const GeneratedAccountDto& account, const QString &displayName) const
+QJsonObject AccountsService::prepareAccountJsonObject(const GeneratedMultiAccount& account, const QString &displayName) const
 {
     return QJsonObject{{"name", displayName.isEmpty() ? account.alias : displayName},
         {"address", account.address},
@@ -225,7 +225,7 @@ QJsonObject AccountsService::prepareAccountJsonObject(const GeneratedAccountDto&
 
 QJsonObject AccountsService::getAccountDataForAccountId(const QString &accountId, const QString &displayName) const
 {
-    for(const GeneratedAccountDto &acc : m_generatedAccounts)
+    for(const GeneratedMultiAccount &acc : m_generatedAccounts)
     {
         if(acc.id == accountId)
         {
@@ -245,7 +245,7 @@ QJsonObject AccountsService::getAccountDataForAccountId(const QString &accountId
     return QJsonObject();
 }
 
-QJsonArray AccountsService::prepareSubaccountJsonObject(const GeneratedAccountDto& account, const QString &displayName) const
+QJsonArray AccountsService::prepareSubaccountJsonObject(const GeneratedMultiAccount& account, const QString &displayName) const
 {
     return {
         QJsonObject{
@@ -253,7 +253,7 @@ QJsonArray AccountsService::prepareSubaccountJsonObject(const GeneratedAccountDt
             {"address", account.derivedAccounts.defaultWallet.address},
             {"color", "#4360df"},
             {"wallet", true},
-            {"path", Constants::General::PathDefaultWallet},
+            {"path", Constants::General::PathDefaultWallet.get()},
             {"name", "Status account"},
             {"derived-from", account.address}
         },
@@ -261,7 +261,7 @@ QJsonArray AccountsService::prepareSubaccountJsonObject(const GeneratedAccountDt
             {"public-key", account.derivedAccounts.whisper.publicKey},
             {"address", account.derivedAccounts.whisper.address},
             {"name", displayName.isEmpty() ? account.alias : displayName},
-            {"path", Constants::General::PathWhisper},
+            {"path", Constants::General::PathWhisper.get()},
             {"chat", true},
             {"derived-from", ""}
         }
@@ -271,7 +271,7 @@ QJsonArray AccountsService::prepareSubaccountJsonObject(const GeneratedAccountDt
 QJsonArray AccountsService::getSubaccountDataForAccountId(const QString& accountId, const QString &displayName) const
 {
     // "All these for loops with a nested if cry for a std::find_if :)"
-    for(const GeneratedAccountDto &acc : m_generatedAccounts)
+    for(const GeneratedMultiAccount &acc : m_generatedAccounts)
     {
         if(acc.id == accountId)
         {
@@ -302,7 +302,7 @@ QString AccountsService::generateSigningPhrase(int count) const
     return words.join(" ");
 }
 
-QJsonObject AccountsService::prepareAccountSettingsJsonObject(const GeneratedAccountDto& account,
+QJsonObject AccountsService::prepareAccountSettingsJsonObject(const GeneratedMultiAccount& account,
                                                       const QString& installationId,
                                                       const QString& displayName) const
 {
@@ -348,7 +348,7 @@ QJsonObject AccountsService::prepareAccountSettingsJsonObject(const GeneratedAcc
 
 QJsonObject AccountsService::getAccountSettings(const QString& accountId, const QString& installationId, const QString &displayName) const
 {
-    for(const GeneratedAccountDto &acc : m_generatedAccounts)
+    for(const GeneratedMultiAccount &acc : m_generatedAccounts)
 
         if(acc.id == accountId)
         {

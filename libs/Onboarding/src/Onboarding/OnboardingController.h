@@ -2,7 +2,7 @@
 
 #include "UserAccountsModel.h"
 
-#include "Accounts/AccountDto.h"
+#include "Accounts/MultiAccount.h"
 
 #include <QQmlEngine>
 #include <QtQmlIntegration>
@@ -38,7 +38,7 @@ public:
     ~OnboardingController();
 
     /// Retrieve available accounts
-    std::vector<AccountDto> getOpenedAccounts() const;
+    std::vector<MultiAccount> getOpenedAccounts() const;
 
     /// Login user account
     /// TODO: \a user should be of type \c UserAccount but this doesn't work with Qt6 CMake API. Investigate and fix later on

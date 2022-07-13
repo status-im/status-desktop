@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Types.h"
+#include "Accounts/accounts_types.h"
 
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -26,7 +27,7 @@ QByteArray jsonToByteArray(const T& json)
     return QJsonDocument(json).toJson(QJsonDocument::Compact);
 }
 
-QJsonArray toJsonArray(const QVector<QString>& value);
+QJsonArray toJsonArray(const std::vector<Accounts::DerivationPath>& value);
 
 /// Check if json contains a standard status-go error and
 std::optional<RpcError> getRPCErrorInJson(const QJsonObject& json);
@@ -111,6 +112,6 @@ RpcResponse<T> callPrivateRpc(const QByteArray& payload)
     }
 }
 
-QString hashString(const QString &str);
+HashedPassword hashPassword(const QString &str);
 
 }

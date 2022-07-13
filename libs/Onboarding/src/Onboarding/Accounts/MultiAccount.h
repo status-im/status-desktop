@@ -4,14 +4,18 @@
 #include "Common/SigningPhrases.h"
 #include "Common/Json.h"
 
+#include <StatusGo/Accounts/accounts_types.h>
+
 #include <QtCore>
+
+namespace Accounts = Status::StatusGo::Accounts;
 
 // TODO: Move to StatusGo library
 namespace Status::Onboarding
 {
 
-// TODO: refactor it to MultiAccount
-struct AccountDto
+/// \note equivalent of status-go's multiaccounts.Account@multiaccounts/database.go
+struct MultiAccount
 {
     QString name;
     long timestamp;
@@ -20,16 +24,16 @@ struct AccountDto
     // TODO images
     // TODO colorHash
     // TODO colorId
-    QString address;
+    Accounts::EOAddress address;
 
     bool isValid() const
     {
         return !(name.isEmpty() || keyUid.isEmpty());
     }
 
-    static AccountDto toAccountDto(const QJsonObject& jsonObj)
+    static MultiAccount toMultiAccount(const QJsonObject& jsonObj)
     {
-        auto result = AccountDto();
+        auto result = MultiAccount();
 
         try
         {
@@ -43,13 +47,13 @@ struct AccountDto
             }
             result.keycardPairing = Json::getMandatoryProp(jsonObj, "keycard-pairing")->toString();
             result.keyUid = Json::getMandatoryProp(jsonObj, "key-uid")->toString();
-            result.address = Json::getProp(jsonObj, "address")->toString();
+            result.address = Accounts::EOAddress(Json::getProp(jsonObj, "address")->toString());
 
             /// TODO: investigate unhandled `photo-path` value
         }
         catch (std::exception e)
         {
-            qWarning() << QObject::tr("Mapping AccountDto failed: %1").arg(e.what());
+            qWarning() << QString("Mapping MultiAccount failed: %1").arg(e.what());
         }
 
         return result;
