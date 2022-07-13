@@ -419,6 +419,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
                 height: button.height
                 radius: 8
                 visible: visibleIndices.includes(index)
+                color: Theme.palette.statusAppLayout.backgroundColor
                 StatusButton {
                     id: button
                     topPadding: 8

@@ -99,6 +99,7 @@ Row {
         height: button.height
         radius: 8
         visible: floatingButtons.model.count > 3
+        color: Theme.palette.statusAppLayout.backgroundColor
         StatusButton {
             id: button
             implicitHeight: 32
