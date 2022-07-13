@@ -13,7 +13,7 @@ import shared.popups 1.0
 import "stores"
 import "popups"
 
-ScrollView {
+StatusScrollView {
     id: root
 
     property CommunitiesStore communitiesStore: CommunitiesStore {}
@@ -36,7 +36,6 @@ ScrollView {
 
     contentHeight: column.height + d.layoutVMargin
     contentWidth: column.width + d.layoutHMargin
-    clip: true
 
     ColumnLayout {
         id: column

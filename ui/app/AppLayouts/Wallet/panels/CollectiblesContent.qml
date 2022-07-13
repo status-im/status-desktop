@@ -3,12 +3,13 @@ import QtQuick.Controls 2.13
 import QtGraphicalEffects 1.13
 import QtQml.Models 2.13
 
+import StatusQ.Core 0.1
+import StatusQ.Controls 0.1
+
 import utils 1.0
 import shared.panels 1.0
 
-import StatusQ.Controls 0.1
-
-ScrollView {
+StatusScrollView {
     id: collectiblesContent
 
     readonly property int imageSize: 164
@@ -23,7 +24,6 @@ ScrollView {
     width: parent.width
     ScrollBar.vertical.policy: ScrollBar.AlwaysOff
     ScrollBar.horizontal.policy: ScrollBar.AsNeeded
-    clip: true
 
     Loader {
         id: contentLoader

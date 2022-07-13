@@ -110,15 +110,14 @@ StatusModal {
             }
         }
 
-        ScrollView {
+        StatusScrollView {
             width: root.width
             height: 300
             ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-            clip: true
+
             ListView {
                 id: chatList
                 anchors.fill: parent
-                clip: true
                 model: community.chats
                 boundsBehavior: Flickable.StopAtBounds
                 delegate: StatusListItem {

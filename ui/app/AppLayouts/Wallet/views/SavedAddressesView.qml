@@ -198,7 +198,7 @@ Item {
         text: qsTr("No saved addresses")
     }
 
-    ScrollView {
+    StatusScrollView {
         anchors.top: errorMessage.bottom
         anchors.topMargin: Style.current.padding
         anchors.bottom: parent.bottom
@@ -206,16 +206,12 @@ Item {
         anchors.right: parent.right
         anchors.left: parent.left
         visible: listView.count > 0
-        Layout.fillWidth: true
-        Layout.fillHeight: true
-        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
         ListView {
             id: listView
             model: RootStore.savedAddresses
-            clip: true
             spacing: 5
-            anchors.fill: parent
+            width: parent.width
             boundsBehavior: Flickable.StopAtBounds
             delegate: delegateSavedAddress
         }

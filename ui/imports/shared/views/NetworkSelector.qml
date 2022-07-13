@@ -87,13 +87,13 @@ Item {
                     Item {
                         Layout.fillWidth: true
                         height: 50
-                        ScrollView {
+                        StatusScrollView {
                             width: parent.width
                             contentWidth: row.width
                             contentHeight: row.height + 10
                             ScrollBar.vertical.policy: ScrollBar.AlwaysOff
                             ScrollBar.horizontal.policy: ScrollBar.AlwaysOn
-                            clip: true
+
                             Row {
                                 id: row
                                 spacing: 16

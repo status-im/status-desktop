@@ -115,7 +115,7 @@ StatusModal {
         }
     }
 
-    contentItem: ScrollView {
+    contentItem: StatusScrollView {
         width: popup.width
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
         topPadding: Style.current.halfPadding
@@ -123,7 +123,6 @@ StatusModal {
         leftPadding: Style.current.padding
         rightPadding: Style.current.padding
         height: Style.dp(400)
-        clip: true
 
         Column {
             property alias accountNameInput: accountNameInput

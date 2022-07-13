@@ -1,11 +1,12 @@
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
 
-import StatusQ.Controls 0.1
-import StatusQ.Core.Theme 0.1
-
 import shared.panels 1.0
 import utils 1.0
+
+import StatusQ.Controls 0.1
+import StatusQ.Core.Theme 0.1
+import StatusQ.Core 0.1
 
 ColumnLayout {
     id: root
@@ -15,13 +16,8 @@ ColumnLayout {
     spacing: Style.current.padding
     implicitHeight: 520
 
-    Flickable {
+    StatusScrollView {
         id: flick
-        clip: true
-        contentHeight: flickLayout.height
-        implicitHeight: flickLayout.implicitHeight
-        interactive: contentHeight > height
-        flickableDirection: Flickable.VerticalFlick
         Layout.fillWidth: true
         Layout.fillHeight: true
 

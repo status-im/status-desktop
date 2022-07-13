@@ -259,7 +259,7 @@ StatusModal {
                 source: border
             }
 
-            ScrollView {
+            StatusScrollView {
                 id: scrollView
                 height: stack.height - assetAndAmmountSelector.height
                 width: parent.width
@@ -270,7 +270,6 @@ StatusModal {
                 ScrollBar.vertical.policy: ScrollBar.AlwaysOff
                 ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
                 contentHeight: recipientSelector.height + addressSelector.height + networkSelector.height + gasSelector.height + gasValidator.height
-                clip: true
 
                 // To-do use standard StatusInput component once the flow for ens name resolution is clear
                 RecipientSelector {

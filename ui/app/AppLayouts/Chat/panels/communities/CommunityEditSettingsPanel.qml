@@ -21,7 +21,7 @@ import "../../controls/community"
 import "../../../CommunitiesPortal/controls"
 import "../../../CommunitiesPortal/panels"
 
-Flickable {
+StatusScrollView {
     id: root
 
     property alias name: nameInput.text
@@ -44,12 +44,6 @@ Flickable {
     property bool bottomReservedSpaceActive: false
 
     readonly property bool saveChangesButtonEnabled: true
-
-    contentWidth: layout.width
-    contentHeight: layout.height
-    clip: true
-    interactive: contentHeight > height
-    flickableDirection: Flickable.VerticalFlick
 
     implicitWidth: layout.implicitWidth
     implicitHeight: layout.implicitHeight

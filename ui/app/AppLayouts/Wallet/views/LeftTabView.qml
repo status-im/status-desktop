@@ -9,6 +9,7 @@ import shared.panels 1.0
 import shared.controls 1.0
 
 import StatusQ.Components 0.1
+import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 
@@ -81,7 +82,7 @@ Rectangle {
         emojiPopup: walletInfoContainer.emojiPopup
     }
 
-    ScrollView {
+    StatusScrollView {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: btnSavedAddresses.height + Style.current.padding
         anchors.top: walletValueTextContainer.bottom

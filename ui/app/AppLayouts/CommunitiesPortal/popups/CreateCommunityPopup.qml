@@ -41,13 +41,8 @@ StatusStackModal {
     }
 
     stackItems: [
-        Flickable {
+        StatusScrollView {
             id: generalView
-            clip: true
-            contentHeight: generalViewLayout.height
-            implicitHeight: generalViewLayout.implicitHeight
-            interactive: contentHeight > height
-            flickableDirection: Flickable.VerticalFlick
 
             ColumnLayout {
                 id: generalViewLayout

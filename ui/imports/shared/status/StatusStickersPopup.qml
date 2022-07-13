@@ -6,6 +6,7 @@ import QtGraphicalEffects 1.0
 import utils 1.0
 import shared.panels 1.0
 
+import StatusQ.Core 0.1
 import StatusQ.Controls 0.1 as StatusQControls
 import StatusQ.Components 0.1
 //TODO improve this!
@@ -228,12 +229,11 @@ Popup {
                 }
             }
 
-            ScrollView {
+            StatusScrollView {
                 id: installedStickersSV
                 anchors.bottom: parent.bottom
                 height: 32
-                clip: true                
-                ScrollBar.vertical.policy: ScrollBar.AlwaysOff                
+                ScrollBar.vertical.policy: ScrollBar.AlwaysOff
 
                 RowLayout {
                     id: stickersRowLayout

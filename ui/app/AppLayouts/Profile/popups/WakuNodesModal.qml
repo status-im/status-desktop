@@ -32,11 +32,9 @@ StatusModal {
         destroy()
     }
     
-    contentItem: ScrollView {
+    contentItem: StatusScrollView {
         height: parent.height
         width: parent.width
-        contentHeight: nodesColumn.height
-        clip: true
 
         Column {
             id: nodesColumn

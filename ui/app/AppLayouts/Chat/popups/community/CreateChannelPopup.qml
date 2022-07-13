@@ -76,7 +76,7 @@ StatusModal {
                                         communityColorValidator) === ""
     }
 
-    contentItem: ScrollView {
+    contentItem: StatusScrollView {
 
         id: scrollView
 
@@ -86,12 +86,10 @@ StatusModal {
         property alias channelDescription: descriptionTextArea
         property alias channelColorDialog: colorDialog
 
-        contentHeight: content.height
         height: Math.min(content.height, 432)
         width: popup.width
 
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-        clip: true
 
         function scrollBackUp() {
             vScrollBar.setPosition(0)

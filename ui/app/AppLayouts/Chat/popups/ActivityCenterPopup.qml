@@ -2,14 +2,16 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQml.Models 2.13
 import QtGraphicalEffects 1.13
+
+import StatusQ.Core 0.1
+import StatusQ.Controls 0.1
+
 import shared 1.0
 import shared.popups 1.0
+import utils 1.0
 
-import StatusQ.Controls 0.1
 import "../views"
 import "../panels"
-
-import utils 1.0
 
 Popup {
     enum Filter {
@@ -87,14 +89,13 @@ Popup {
         }
     }
 
-    ScrollView {
+    StatusScrollView {
         id: scrollView
         anchors.top: activityCenterTopBar.bottom
         anchors.topMargin: 13
         anchors.bottom: parent.bottom
         anchors.bottomMargin: Style.current.smallPadding
         width: parent.width
-        clip: true
 
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 

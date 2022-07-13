@@ -136,18 +136,16 @@ Item {
         }
 
         // chat list
-        ScrollView {
+        StatusScrollView {
+            id: scrollView
             Layout.fillWidth: true
             Layout.fillHeight: true
-            contentHeight: channelList.childrenRect.height + emptyViewAndSuggestions.childrenRect.height
 
             ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
-            clip: true
-
             StatusChatList {
                 id: channelList
-                width: parent.width
+                width: scrollView.availableWidth
                 model: root.chatSectionModule.model
                 highlightItem: !root.store.openCreateChat
                 onChatItemSelected: {
@@ -239,7 +237,6 @@ Item {
             EmptyViewPanel {
                 id: emptyViewAndSuggestions
                 visible: !localAccountSensitiveSettings.hideChannelSuggestions
-                width: parent.width
                 anchors.top: channelList.bottom
                 anchors.topMargin: Style.current.padding
                 rootStore: root.store
