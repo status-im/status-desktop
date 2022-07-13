@@ -34,6 +34,11 @@ notarization.log
 status-desktop.log
 nim_status_client.log
 
+# Squish test ================================================================
+
+test/ui-test/testSuites/suite_status/config.xml
+test/ui-test/testSuites/suite_status/envvars
+
 
 # CPP app =====================================================================
 
