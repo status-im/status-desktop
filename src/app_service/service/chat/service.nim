@@ -300,6 +300,11 @@ QtObject:
 
       discard status_chat.deactivateChat(chatId)
 
+      var channelGroupId = chat.communityId
+      if (channelGroupId == ""):
+        channelGroupId = singletonInstance.userProfile.getPubKey()
+
+      self.channelGroups[channelGroupId].chats.delete(self.getChatIndex(channelGroupId, chatId))
       self.chats.del(chatId)
       discard status_chat.deleteMessagesByChatId(chatId)
       self.events.emit(SIGNAL_CHAT_LEFT, ChatArgs(chatId: chatId))

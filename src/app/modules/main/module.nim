@@ -586,6 +586,9 @@ method switchTo*[T](self: Module[T], sectionId, chatId: string) =
 method onActiveChatChange*[T](self: Module[T], sectionId: string, chatId: string) =
   self.appSearchModule.onActiveChatChange(sectionId, chatId)
 
+method onChatLeft*[T](self: Module[T], chatId: string) =
+  self.appSearchModule.updateSearchLocationIfPointToChatWithId(chatId)
+
 method onNotificationsUpdated[T](self: Module[T], sectionId: string, sectionHasUnreadMessages: bool,
   sectionNotificationCount: int) =
   self.view.model().updateNotifications(sectionId, sectionHasUnreadMessages, sectionNotificationCount)

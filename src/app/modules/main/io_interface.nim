@@ -168,6 +168,9 @@ method storePassword*(self: AccessInterface, password: string) {.base.} =
 method setActiveSection*(self: AccessInterface, item: SectionItem) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method onChatLeft*(self: AccessInterface, chatId: string) =
+  raise newException(ValueError, "No implementation available")
+
 method setCurrentUserStatus*(self: AccessInterface, status: StatusType) {.base.} =
   raise newException(ValueError, "No implementation available")
 

@@ -224,6 +224,10 @@ proc init*(self: Controller) =
     var args = CurrentUserStatusArgs(e)
     singletonInstance.userProfile.setCurrentUserStatus(args.statusType.int)
 
+  self.events.on(chat_service.SIGNAL_CHAT_LEFT) do(e: Args):
+    let args = chat_service.ChatArgs(e)
+    self.delegate.onChatLeft(args.chatId)
+
 proc isConnected*(self: Controller): bool =
   return self.nodeService.isConnected()
 

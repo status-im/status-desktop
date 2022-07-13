@@ -84,11 +84,10 @@ Item {
             }
 
             let obj = JSON.parse(jsonObj)
-            if (obj.location === "") {
+            if (obj.location === "" || (obj.location !== "" && !obj.subLocation)) {
                 if(obj.subLocation === "") {
                     appSearch.store.setSearchLocation("", "")
-                }
-                else {
+                } else {
                     searchPopup.setSearchSelection(obj.subLocation.text,
                                                    "",
                                                    obj.subLocation.imageSource,
@@ -98,9 +97,8 @@ Item {
 
                     appSearch.store.setSearchLocation("", obj.subLocation.value)
                 }
-            }
-            else {
-                if (obj.location.title === "Chat") {
+            } else {
+                if (obj.location.title === "Chat" && !!obj.subLocation) {
                     searchPopup.setSearchSelection(obj.subLocation.text,
                                                    "",
                                                    obj.subLocation.imageSource,
@@ -112,8 +110,7 @@ Item {
                                                    obj.subLocation.colorHash)
 
                     appSearch.store.setSearchLocation(obj.location.value, obj.subLocation.value)
-                }
-                else {
+                } else {
                     searchPopup.setSearchSelection(obj.location.title,
                                                    obj.subLocation.text,
                                                    obj.location.imageSource,
