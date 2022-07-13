@@ -69,13 +69,12 @@ StatusModal {
 
             StatusModalDivider { topPadding: 8 }
 
-            ScrollView {
+            StatusScrollView {
                 width: parent.width
                 ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
                 topPadding: 8
                 bottomPadding: 8
                 height: 400
-                clip: true
 
                 ListView {
                     anchors.fill: parent

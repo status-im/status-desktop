@@ -260,18 +260,17 @@ StatusModal {
                 source: border
             }
 
-            ScrollView {
+            StatusScrollView {
                 id: scrollView
                 height: stack.height - assetAndAmmountSelector.height
                 width: parent.width
                 anchors.top: border.bottom
                 anchors.topMargin: Style.current.halfPadding
                 anchors.left: parent.left
-
+                contentHeight: recipientSelector.height + addressSelector.height + networkSelector.height +
+                               fees.height + Style.current.halfPadding
                 ScrollBar.vertical.policy: ScrollBar.AlwaysOff
                 ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-                contentHeight: recipientSelector.height + addressSelector.height + networkSelector.height + fees.height + Style.current.halfPadding
-                clip: true
 
                 // To-do use standard StatusInput component once the flow for ens name resolution is clear
                 RecipientSelector {

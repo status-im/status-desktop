@@ -3,6 +3,7 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.3
 import QtGraphicalEffects 1.0
 
+import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
@@ -279,8 +280,8 @@ Popup {
             }
         }
 
-        ScrollView {
-            property ScrollBar vScrollBar: ScrollBar.vertical
+        StatusScrollView {
+            readonly property ScrollBar vScrollBar: ScrollBar.vertical
             property var categrorySectionHeightRatios: []
             property int activeCategory: 0
 
@@ -292,7 +293,6 @@ Popup {
             Layout.topMargin: Style.current.smallPadding
             Layout.alignment: Qt.AlignTop | Qt.AlignLeft
             Layout.preferredHeight: 400 - Style.current.smallPadding - emojiHeader.height
-            clip: true
             ScrollBar.vertical.policy: ScrollBar.AlwaysOn
             ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
@@ -332,6 +332,7 @@ Popup {
                 model: popup.categories
 
                 StatusEmojiSection {
+                    width: scrollView.availableWidth
                     searchString: popup.searchString
                     addEmoji: popup.addEmoji
                 }

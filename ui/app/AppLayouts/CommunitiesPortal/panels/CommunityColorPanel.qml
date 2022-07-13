@@ -9,7 +9,7 @@ import StatusQ.Controls.Validators 0.1
 import StatusQ.Components 0.1
 import StatusQ.Popups 0.1
 
-ScrollView {
+StatusScrollView {
     id: root
 
     property string title: qsTr("Community Colour")
@@ -34,8 +34,6 @@ ScrollView {
     Component.onCompleted: {
         hexInput.text = color.toString();
     }
-
-    contentHeight: column.height
 
     ScrollBar.vertical.policy: ScrollBar.AsNeeded
     ScrollBar.horizontal.policy: ScrollBar.AlwaysOff

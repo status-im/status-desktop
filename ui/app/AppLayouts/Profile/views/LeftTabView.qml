@@ -1,10 +1,13 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
-import StatusQ.Components 0.1
-import utils 1.0
 
+import StatusQ.Core 0.1
+import StatusQ.Components 0.1
+
+import utils 1.0
 import shared 1.0
 import shared.popups 1.0
+
 import "../panels"
 
 Item {
@@ -22,7 +25,7 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
     }
 
-    ScrollView {
+    StatusScrollView {
         contentWidth: availableWidth
         contentHeight: profileMenu.height + 24
         anchors.right: parent.right
@@ -32,7 +35,6 @@ Item {
         anchors.top: title.bottom
         anchors.topMargin: Style.current.padding
         anchors.bottom: parent.bottom
-        clip: true
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
         MenuPanel {

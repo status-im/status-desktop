@@ -100,7 +100,7 @@ Item {
         }
     }
 
-    ScrollView {
+    StatusScrollView {
         id: chatGroupsContainer
         anchors.top: membershipRequests.bottom
         anchors.topMargin: Style.current.padding
@@ -112,7 +112,6 @@ Item {
         width: parent.width
 
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-        clip: true
         contentHeight: communityChatListAndCategories.height
                        + bannerColumn.height
                        + Style.current.bigPadding

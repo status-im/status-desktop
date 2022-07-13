@@ -2,13 +2,14 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 
+import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Controls.Validators 0.1
 
 import shared.panels 1.0
 import utils 1.0
 
-Flickable {
+StatusScrollView {
     id: root
 
     property int wordRandomNumber: -1
@@ -19,11 +20,7 @@ Flickable {
 
     default property alias content: column.children
 
-    clip: true
-    contentHeight: column.height
     implicitHeight: 520
-    interactive: contentHeight > height
-    flickableDirection: Flickable.VerticalFlick
 
     ColumnLayout {
         id: column

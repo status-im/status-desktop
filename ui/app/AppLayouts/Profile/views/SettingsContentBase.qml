@@ -99,16 +99,15 @@ Item {
         }
     }
 
-    ScrollView {
+    StatusScrollView {
         id: scrollView
         anchors.top: titleRow.visible ? titleRow.bottom : topHeader.bottom
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.topMargin: Style.current.bigPadding
         width: root.contentWidth
-        clip: true
 
-        Flickable {
+        StatusScrollView {
             id: contentFliackable
             contentWidth: Math.max(contentLayout.implicitWidth, scrollView.width)
             contentHeight: Math.max(contentLayout.implicitHeight, scrollView.height) + scrollView.anchors.topMargin

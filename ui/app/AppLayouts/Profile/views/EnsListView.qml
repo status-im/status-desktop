@@ -193,10 +193,8 @@ Item {
             height: 200
             id: ensList
 
-            ScrollView {
+            StatusScrollView {
                 anchors.fill: parent
-                Layout.fillWidth: true
-                Layout.fillHeight: true
 
                 ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
                 ScrollBar.vertical.policy: lvEns.contentHeight > lvEns.height ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
