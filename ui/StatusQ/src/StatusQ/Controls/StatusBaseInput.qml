@@ -387,7 +387,7 @@ Item {
                         focus: true
                         font.pixelSize: 15
                         font.family: Theme.palette.baseFont.name
-                        color: Theme.palette.directColor1
+                        color: root.enabled ? Theme.palette.directColor1 : Theme.palette.baseColor1 
                         wrapMode: root.multiline ? Text.WrapAtWordBoundaryOrAnywhere : TextEdit.NoWrap
 
                         Keys.onReturnPressed: event.accepted = !multiline && !acceptReturn
