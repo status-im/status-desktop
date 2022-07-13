@@ -16,53 +16,78 @@ StatusAppThreePanelLayout {
 
     leftPanel: Item {
         anchors.fill: parent
-
-        StatusNavigationPanelHeadline {
-            id: headline
-            anchors.top: parent.top
-            anchors.topMargin: 16
-            anchors.horizontalCenter: parent.horizontalCenter
-            text: "Chat"
-        }
-
+        anchors.margins: 16
         RowLayout {
             id: searchInputWrapper
-            width: 288
-            height: searchInput.height
-            anchors.top: headline.bottom
-            anchors.topMargin: 16
-            anchors.horizontalCenter: parent.horizontalCenter
+            width: parent.width
 
-            StatusBaseInput {
-                id: searchInput
-                Layout.fillWidth: true
+            StatusNavigationPanelHeadline {
+                id: headline
                 Layout.alignment: Qt.AlignVCenter
-                implicitHeight: 36
-                topPadding: 8
-                bottomPadding: 8
-                placeholderText: "Search"
-                icon.name: "search"
+                text: "Chat"
             }
 
-            StatusIconTabButton {
+            Item {
+                Layout.fillWidth: true
+            }
+
+
+            StatusRoundButton {
+                Layout.alignment: Qt.AlignVCenter
                 icon.name: "public-chat"
+                icon.color: Theme.palette.directColor1
+                icon.height: editBtn.icon.height
+                icon.width: editBtn.icon.width
+                implicitWidth: editBtn.implicitWidth
+                implicitHeight: editBtn.implicitHeight
+                type: StatusRoundButton.Type.Tertiary
+                StatusToolTip {
+                    text: qsTr("Join public chats")
+                    visible: parent.hovered
+                    orientation: StatusToolTip.Orientation.Bottom
+                    y: parent.height + 12
+                }
             }
 
             StatusIconTabButton {
+                id: editBtn
                 icon.name: "edit"
+                icon.color: Theme.palette.directColor1
+                checked: root.createChat
+                highlighted: checked
                 onClicked: {
                     root.createChat = !root.createChat;
+                }
+                StatusToolTip {
+                    text: qsTr("Start chat")
+                    visible: parent.hovered
+                    orientation: StatusToolTip.Orientation.Bottom
+                    y: parent.height + 12
                 }
             }
         }
 
-        Column {
+        StatusBaseInput {
+            id: searchInput
             anchors.top: searchInputWrapper.bottom
+            anchors.topMargin: 16
+            width: parent.width
+            implicitHeight: 36
+            topPadding: 8
+            bottomPadding: 8
+            placeholderText: "Search"
+            icon.name: "search"
+        }
+
+        Column {
+            width: parent.width
+            anchors.top: searchInput.bottom
             anchors.topMargin: 16
             anchors.horizontalCenter: parent.horizontalCenter
             spacing: 8
 
             StatusContactRequestsIndicatorListItem {
+                width: parent.width
                 anchors.horizontalCenter: parent.horizontalCenter
                 title: "Contact requests"
                 requestsCount: 3
@@ -70,6 +95,7 @@ StatusAppThreePanelLayout {
             }
 
             StatusChatList {
+                width: parent.width
                 model: Models.demoChatListItems
                 highlightItem: !root.createChat
                 onChatItemUnmuted: {
