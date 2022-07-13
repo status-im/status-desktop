@@ -137,11 +137,36 @@ StatusModal {
                 spacing: 5
                 Repeater {
                     model: RootStore.enabledNetworks
-                    delegate: StatusListItemTag {
-                        image.source: Style.png(iconUrl)
-                        title: shortName
-                        titleText.color: chainColor
-                        closeButtonVisible: false
+                    delegate: Control {
+                        horizontalPadding: Style.current.halfPadding
+                        verticalPadding: 5
+                        background: Rectangle {
+                            implicitWidth: 66
+                            implicitHeight: 32
+                            color: "transparent"
+                            border.width: 1
+                            border.color: Theme.palette.baseColor2
+                            radius: 36
+                        }
+
+                        contentItem: Row {
+                            spacing: 4
+                            // FIXME this could be StatusIcon but it can't load images from an arbitrary URL
+                            Image {
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: 24
+                                height: 24
+                                source: Style.svg("tiny/" + model.iconUrl)
+                            }
+                            StatusBaseText {
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: model.shortName
+                                color: model.chainColor
+                                font.pixelSize: Style.current.primaryTextFontSize
+                                font.weight: Font.Medium
+                            }
+                        }
+
                         MouseArea {
                             anchors.fill: parent
                             cursorShape: Qt.PointingHandCursor
@@ -149,16 +174,12 @@ StatusModal {
                         }
                     }
                 }
-                StatusListItemTag {
-                    closeButtonVisible: false
+                StatusRoundButton {
+                    width: 32
+                    height: 32
                     icon.name: "edit_pencil"
-                    MouseArea {
-                        anchors.fill: parent
-                        cursorShape: Qt.PointingHandCursor
-                        onClicked: {
-                            selectPopup.open()
-                        }
-                    }
+                    color: Theme.palette.primaryColor3
+                    onClicked: selectPopup.open()
                 }
             }
 
@@ -218,7 +239,7 @@ StatusModal {
                         anchors.margins: 2
                         width: 78
                         height: 78
-                        source: Style.svg("status-logo-icon")
+                        icon: "status-logo-icon"
                     }
                 }
             }
