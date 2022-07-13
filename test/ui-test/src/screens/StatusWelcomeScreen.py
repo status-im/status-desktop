@@ -30,7 +30,7 @@ class SignUpComponents(Enum):
     NEW_PASSWORD_BUTTON: str = "mainWindow_New_password_PlaceholderText"
     PASSWORD_INPUT: str = "loginView_passwordInput"
     CONFIRM_PASSWORD: str = "mainWindow_Confirm_password_PlaceholderText"
-    PASSWORD_CONFIRM_INPUT: str = "mainWindow_inputValue_StyledTextField"
+    PASSWORD_CONFIRM_INPUT: str = "mainWindow_Password_textField"
     CREATE_PASSWORD: str = "mainWindow_Create_password_StatusBaseText"
     CONFIRM_PASSWORD_AGAIN: str = "mainWindow_Confirm_you_password_again_PlaceholderText"
     FINALIZE_PASSWORD_STEP: str = "mainWindow_Finalise_Status_Password_Creation_StatusBaseText"
