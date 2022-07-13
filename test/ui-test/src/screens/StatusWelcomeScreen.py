@@ -9,6 +9,7 @@
 # *****************************************************************************/
 
 from enum import Enum
+import sys
 from drivers.SquishDriver import *
 from drivers.SquishDriverVerification import *
 
@@ -84,7 +85,8 @@ class StatusWelcomeScreen:
         self.input_password(password)
         click_obj_by_name(SignUpComponents.FINALIZE_PASSWORD_STEP.value)
 
-        click_obj_by_name(SignUpComponents.PASSWORD_PREFERENCE.value)
+        if sys.platform == "darwin":
+            click_obj_by_name(SignUpComponents.PASSWORD_PREFERENCE.value)
 
     def input_username(self, username: str):
         type(SignUpComponents.USERNAME_INPUT.value, username)
@@ -99,7 +101,9 @@ class StatusWelcomeScreen:
         click_obj_by_name(SignUpComponents.CREATE_PASSWORD.value)
         
     def _agree_terms_and_conditions(self):
-        click_obj_by_name(AgreementPopUp.OK_GOT_IT_BUTTON.value)
+        if sys.platform == "darwin":
+            click_obj_by_name(AgreementPopUp.OK_GOT_IT_BUTTON.value)
+
         click_obj_by_name(AgreementPopUp.ACKNOWLEDGE_CHECKBOX.value)
         check_obj_by_name(AgreementPopUp.TERMS_OF_USE_CHECK_BOX.value)
         click_obj_by_name(AgreementPopUp.GET_STARTED_BUTTON.value)

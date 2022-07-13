@@ -14,11 +14,12 @@
 # *          with a pattern which is matched against the steps being executed.
 # *****************************************************************************
 from common.Common import *
-
+import time
 
 @When("the user restarts the app")
 def step(context):
-    waitFor(lambda: currentApplicationContext().detach(), 100)
+    waitFor(lambda: currentApplicationContext().detach(), 500)
+    time.sleep(5)
     startApplication("nim_status_client")
 
 
