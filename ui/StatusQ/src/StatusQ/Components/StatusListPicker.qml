@@ -238,7 +238,7 @@ Item {
         bgColor: Theme.palette.primaryColor3
         contentColor: Theme.palette.primaryColor1
         text: picker.selectedItemsText
-        textPixelSize: 13
+        font.pixelSize: 13
         type: StatusPickerButton.Type.Down
 
         onClicked: {
