@@ -27,7 +27,7 @@ StatusWindow {
     id: applicationWindow
     objectName: "mainWindow"
     minimumWidth: 900
-    minimumHeight: 600
+    minimumHeight: 680
     color: Style.current.background
     title: {
         // Set application settings
