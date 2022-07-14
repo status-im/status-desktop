@@ -62,7 +62,7 @@ Item {
             color: "transparent"
             radius: 8
 
-            ListView {
+            StatusListView {
                 id: savedAddresses
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: parent.top
@@ -70,10 +70,8 @@ Item {
                 height: Math.min(288, savedAddresses.contentHeight)
 
                 model: root.store.savedAddressesModel
-                clip: true
                 header:  savedAddresses.count > 0 ? search : nothingInList
                 headerPositioning: ListView.OverlayHeader
-                boundsBehavior: Flickable.StopAtBounds
                 delegate: StatusListItem {
                     width: visible ? parent.width:  0
                     height: visible ? 64 : 0
@@ -120,15 +118,12 @@ Item {
             color: "transparent"
             radius: 8
 
-            ListView {
+            StatusListView {
                 id: myAccounts
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: parent.top
                 width: parent.width
                 height: Math.min(288, myAccounts.contentHeight)
-
-                boundsBehavior: Flickable.StopAtBounds
-                clip: true
 
                 delegate: StatusListItem {
                     width: visible ? parent.width:  0
@@ -155,15 +150,12 @@ Item {
             color: "transparent"
             radius: 8
 
-            ListView {
+            StatusListView {
                 id: recents
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: parent.top
                 width: parent.width
                 height: Math.min(288, recents.contentHeight)
-
-                boundsBehavior: Flickable.StopAtBounds
-                clip: true
 
                 header: StatusBaseText {
                     font.pixelSize: 15

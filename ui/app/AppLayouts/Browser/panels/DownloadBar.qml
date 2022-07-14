@@ -1,9 +1,10 @@
 import QtQuick 2.1
 import QtGraphicalEffects 1.13
 
-import utils 1.0
-
+import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
+
+import utils 1.0
 
 import "../controls"
 
@@ -35,7 +36,7 @@ Rectangle {
         height: listView.height
         clip: true
 
-        ListView {
+        StatusListView {
             id: listView
             orientation: ListView.Horizontal
             model: downloadsModel

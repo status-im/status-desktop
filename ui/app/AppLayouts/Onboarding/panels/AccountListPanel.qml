@@ -1,11 +1,13 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 
-import "../controls"
+import StatusQ.Core 0.1
 
 import utils 1.0
 
-ListView {
+import "../controls"
+
+StatusListView {
     id: accountsView
 
     property var isSelected: function () {}

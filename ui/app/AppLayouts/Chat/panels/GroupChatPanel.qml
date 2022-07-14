@@ -1,6 +1,7 @@
 import QtQuick 2.13
 import QtQuick.Layouts 1.13
 
+import StatusQ.Core 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 
@@ -43,7 +44,7 @@ RowLayout {
          }
      }
 
-     ListView {
+     StatusListView {
          id: groupUsersModelListView
          visible: false
          model: root.chatContentModule.usersModule.model
@@ -55,7 +56,7 @@ RowLayout {
          }
      }
 
-     ListView {
+     StatusListView {
          id: contactsModelListView
          visible: false
          model: root.rootStore.contactsModel

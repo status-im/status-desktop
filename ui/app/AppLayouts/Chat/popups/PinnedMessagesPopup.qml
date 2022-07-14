@@ -1,6 +1,9 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.3
 
+import StatusQ.Core 0.1
+import StatusQ.Controls 0.1 as StatusQControls
+
 import utils 1.0
 import shared 1.0
 import shared.views 1.0
@@ -12,8 +15,6 @@ import "../controls"
 import "../panels"
 //TODO remove or make view?
 import "../views"
-
-import StatusQ.Controls 0.1 as StatusQControls
 
 // TODO: replace with StatusMOdal
 ModalPopup {
@@ -83,7 +84,7 @@ ModalPopup {
             id: pinButtonGroup
         }
 
-        ListView {
+        StatusListView {
             id: pinnedMessageListView
             model: popup.pinnedMessagesModel
             height: parent.height
@@ -94,7 +95,6 @@ ModalPopup {
             topMargin: Style.current.halfPadding
             anchors.top: parent.top
             anchors.topMargin: -Style.current.halfPadding
-            clip: true
 
             delegate: Item {
                 id: messageDelegate

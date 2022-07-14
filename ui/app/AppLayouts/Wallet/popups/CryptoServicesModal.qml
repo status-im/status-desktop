@@ -40,7 +40,7 @@ StatusModal {
                     text: qsTr("Choose a service you'd like to use to buy crypto")
                 }
 
-                ListView {
+                StatusListView {
                     anchors.top: note.bottom
                     anchors.bottom: parent.bottom
                     anchors.topMargin: Style.current.padding
@@ -49,7 +49,6 @@ StatusModal {
                     model: RootStore.cryptoRampServicesModel
                     focus: true
                     spacing: Style.current.padding
-                    clip: true
 
                     delegate: StatusListItem {
                         width: parent.width

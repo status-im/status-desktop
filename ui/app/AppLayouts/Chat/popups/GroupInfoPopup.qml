@@ -193,11 +193,10 @@ StatusModal {
             visible: pinnedMessagesBtn.visible
         }
 
-        ListView {
+        StatusListView {
             id: memberList
             Layout.fillWidth: true
             Layout.fillHeight: true
-            clip: true
             model: popup.chatContentModule.usersModule.model
             delegate: StatusListItem {
                 id: contactRow

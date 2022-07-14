@@ -22,12 +22,12 @@ import QtQuick.Controls 2.13
 import QtGraphicalEffects 1.13
 import QtQml.Models 2.13
 
-import utils 1.0
-import shared.controls 1.0
-
+import StatusQ.Core 0.1
 import StatusQ.Components 0.1
 
+import utils 1.0
 import shared 1.0
+import shared.controls 1.0
 import shared.panels 1.0
 import shared.controls.chat 1.0
 
@@ -117,7 +117,7 @@ Rectangle {
         cursorPosition: container.cursorPosition
     }
 
-    ListView {
+    StatusListView {
         id: listView
         model: mentionsListDelegate
         keyNavigationEnabled: true
@@ -126,7 +126,6 @@ Rectangle {
         anchors.leftMargin: Style.current.halfPadding
         anchors.rightMargin: Style.current.halfPadding
         anchors.bottomMargin: Style.current.halfPadding
-        clip: true
         Keys.priority: Keys.AfterItem
         Keys.forwardTo: container.inputField
         Keys.onPressed: {

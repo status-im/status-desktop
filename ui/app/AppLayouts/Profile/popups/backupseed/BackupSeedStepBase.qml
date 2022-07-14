@@ -24,7 +24,7 @@ StatusScrollView {
 
     ColumnLayout {
         id: column
-        width: parent.width
+        width: root.availableWidth
         spacing: Style.current.padding
 
         StyledText {

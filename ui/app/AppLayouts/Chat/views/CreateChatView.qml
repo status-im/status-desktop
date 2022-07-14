@@ -25,7 +25,7 @@ Page {
         root.rootStore.openCreateChat = false;
     }
 
-    ListView {
+    StatusListView {
         id: contactsModelListView
         anchors.left: parent.left
         anchors.right: parent.right

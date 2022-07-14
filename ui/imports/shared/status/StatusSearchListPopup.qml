@@ -99,7 +99,7 @@ Popup {
             onTextChanged: if (text === "") listView.currentIndex = 0
         }
 
-        ListView {
+        StatusListView {
             id: listView
 
             Layout.fillWidth: true
@@ -107,7 +107,6 @@ Popup {
 
             property bool selectByHover: false
 
-            clip: true
             highlightMoveDuration: 200
 
             delegate: Item {

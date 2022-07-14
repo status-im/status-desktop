@@ -1,5 +1,7 @@
 import QtQuick 2.1
 
+import StatusQ.Core 0.1
+
 import utils 1.0
 
 import "../controls"
@@ -15,7 +17,7 @@ import "../controls"
 
     color: Style.current.background
 
-    ListView {
+    StatusListView {
         id: listView
         anchors {
             topMargin: Style.current.bigPadding

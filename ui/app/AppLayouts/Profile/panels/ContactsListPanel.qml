@@ -3,12 +3,14 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtQml.Models 2.13
 
+import StatusQ.Core 0.1
+
 import utils 1.0
 import shared 1.0
 import shared.popups 1.0
 import shared.panels 1.0
-import "../../Chat/popups"
 
+import "../../Chat/popups"
 import "."
 
 Item {
@@ -89,14 +91,13 @@ Item {
         delegate: contactPanelComponent
     }
 
-    ListView {
+    StatusListView {
         id: contactsList
         anchors.top: title.bottom
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         interactive: false
-        clip: true
         ScrollBar.vertical: ScrollBar {
             policy: contactListRoot.scrollbarOn ? ScrollBar.AlwaysOn : ScrollBar.AsNeeded
         }

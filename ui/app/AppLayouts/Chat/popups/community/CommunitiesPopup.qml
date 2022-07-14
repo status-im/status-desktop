@@ -8,7 +8,6 @@ import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 import StatusQ.Popups 0.1
 
-
 import utils 1.0
 import shared 1.0
 
@@ -76,11 +75,10 @@ StatusModal {
                 bottomPadding: 8
                 height: 400
 
-                ListView {
+                StatusListView {
                     anchors.fill: parent
                     model: communitiesDelegateModel
                     spacing: 4
-                    clip: true
                     id: communitiesList
 
                     section.property: "name"

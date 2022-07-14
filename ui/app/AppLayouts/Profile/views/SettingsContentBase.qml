@@ -105,37 +105,32 @@ Item {
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.topMargin: Style.current.bigPadding
+        padding: 0
         width: root.contentWidth
 
-        StatusScrollView {
-            id: contentFliackable
-            contentWidth: Math.max(contentLayout.implicitWidth, scrollView.width)
-            contentHeight: Math.max(contentLayout.implicitHeight, scrollView.height) + scrollView.anchors.topMargin
+        Column {
+            id: contentLayout
+            width: scrollView.availableWidth
 
-            Column {
-                id: contentLayout
-                anchors.fill: parent.contentItem
+            MouseArea {
+                onClicked: root.baseAreaClicked()
+                width: contentWrapper.implicitWidth
+                height: contentWrapper.implicitHeight
 
-                MouseArea {
-                    onClicked: root.baseAreaClicked()
-                    width: contentWrapper.implicitWidth
-                    height: contentWrapper.implicitHeight
-
-                    Column {
-                        id: contentWrapper
-                    }
+                Column {
+                    id: contentWrapper
                 }
+            }
 
-                Item {
-                    // This is a settingsDirtyToastMessage placeholder
-                    width: settingsDirtyToastMessage.implicitWidth
-                    height: settingsDirtyToastMessage.active ? settingsDirtyToastMessage.implicitHeight : 0
+            Item {
+                // This is a settingsDirtyToastMessage placeholder
+                width: settingsDirtyToastMessage.implicitWidth
+                height: settingsDirtyToastMessage.active ? settingsDirtyToastMessage.implicitHeight : 0
 
-                    Behavior on implicitHeight {
-                        NumberAnimation {
-                            duration: 150
-                            easing.type: Easing.InOutQuad
-                        }
+                Behavior on implicitHeight {
+                    NumberAnimation {
+                        duration: 150
+                        easing.type: Easing.InOutQuad
                     }
                 }
             }
@@ -147,7 +142,7 @@ Item {
         anchors.bottom: scrollView.bottom
         anchors.horizontalCenter: scrollView.horizontalCenter
         active: root.dirty
-        flickable: contentFliackable
+        flickable: scrollView
         saveChangesButtonEnabled: root.saveChangesButtonEnabled
         onResetChangesClicked: root.resetChangesClicked()
         onSaveChangesClicked: root.saveChangesClicked()

@@ -55,11 +55,10 @@ ModalPopup {
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
         ScrollBar.vertical.policy: ensNames.contentHeight > ensNames.height ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
 
-        ListView {
+        StatusListView {
             anchors.fill: parent
             model: root.ensUsernamesStore.ensUsernamesModel
             spacing: 0
-            clip: true
             id: ensNames
             delegate: RadioDelegate {
                 id: radioDelegate

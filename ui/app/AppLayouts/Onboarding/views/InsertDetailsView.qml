@@ -9,13 +9,12 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Popups 0.1
 
-
 import shared.panels 1.0
 import shared 1.0
 import shared.popups 1.0
-
-import utils 1.0
 import shared.controls 1.0
+import utils 1.0
+
 import "../popups"
 import "../stores"
 import "../shared"
@@ -40,7 +39,7 @@ Item {
 
     Loader {
         active: !OnboardingStore.onboardingModuleInst.importedAccountPubKey
-        sourceComponent: ListView {
+        sourceComponent: StatusListView {
             model: OnboardingStore.onboardingModuleInst.accountsModel
             delegate: Item {
                 Component.onCompleted: {

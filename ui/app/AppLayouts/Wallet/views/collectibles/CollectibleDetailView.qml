@@ -67,16 +67,13 @@ StackDetailBase {
             }
         }
 
-        ListView {
+        StatusListView {
             anchors.top: collectibleImageDetails.bottom
             anchors.topMargin: 32
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 20
             anchors.horizontalCenter: parent.horizontalCenter
             width: parent.width
-
-            clip: true
-            boundsBehavior: Flickable.StopAtBounds
             model: 3
             delegate: StatusExpandableItem {
                 width: parent.width
