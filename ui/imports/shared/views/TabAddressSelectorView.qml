@@ -29,6 +29,7 @@ Item {
         id: accountSelectionTabBar
         anchors.top: parent.top
         anchors.topMargin: 20
+        anchors.left: parent.left
         width: parent.width
         
         StatusTabButton {
@@ -186,7 +187,7 @@ Item {
 
                 delegate: StatusListItem {
                     property bool isIncoming: to === store.currentAccount.address
-                    width: visible ? recents.availableWidth : 0
+                    implicitWidth: parent.width
                     height: visible ? 64 : 0
                     title: isIncoming ? from : to
                     subTitle: Utils.getTimeDifference(new Date(parseInt(timestamp) * 1000), new Date())
