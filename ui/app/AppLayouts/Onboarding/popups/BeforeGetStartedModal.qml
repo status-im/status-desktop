@@ -1,32 +1,46 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.14
+import QtQml.Models 2.14
 
 import utils 1.0
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
-import StatusQ.Popups 0.1
+import StatusQ.Popups.Dialog 0.1
 
-StatusModal {
+StatusDialog {
     id: popup
 
     width: 480
     height: 318
     anchors.centerIn: parent
-    header.title: qsTr("Before you get started...")
-    hasCloseButton: false
     closePolicy: Popup.NoAutoClose
+
+    header: StatusDialogHeader {
+        headline.title: qsTr("Before you get started...")
+        actions.closeButton.visible: false
+    }
+
+    footer: StatusDialogFooter {
+        rightButtons: ObjectModel {
+            StatusButton {
+                objectName: "getStartedStatusButton"
+                enabled: acknowledge.checked && termsOfUse.checked
+                size: StatusBaseButton.Size.Large
+                font.weight: Font.Medium
+                text: qsTr("Get Started")
+                onClicked: popup.close()
+            }
+        }
+    }
 
     contentItem: Item {
         Column {
-            spacing: 12
-            anchors.fill: parent
-            anchors.leftMargin: 32
-            anchors.rightMargin: 32
-            anchors.topMargin: 24
-            anchors.bottomMargin: 24
+            width: 416
+            spacing: 16
+            anchors.centerIn: parent
 
             StatusCheckBox {
                 id: acknowledge
@@ -106,18 +120,4 @@ StatusModal {
             }
         }
     }
-
-    rightButtons: [
-        StatusButton {
-            id: getStartedButton
-            objectName: "getStartedStatusButton"
-            enabled: acknowledge.checked && termsOfUse.checked
-            size: StatusBaseButton.Size.Large
-            font.weight: Font.Medium
-            text: qsTr("Get Started")
-            onClicked: {
-                popup.close()
-            }
-        }
-    ]
 }
