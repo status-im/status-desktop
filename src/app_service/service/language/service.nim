@@ -21,7 +21,7 @@ proc init*(self: Service) =
   try:
     self.i18nPath = ""
     if defined(development):
-      self.i18nPath = joinPath(getAppDir(), "../ui/i18n")
+      self.i18nPath = joinPath(getAppDir(), "i18n")
     elif (defined(windows)):
       self.i18nPath = joinPath(getAppDir(), "../resources/i18n")
     elif (defined(macosx)):
