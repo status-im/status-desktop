@@ -32,6 +32,7 @@ CheckBox {
 
     contentItem: StatusBaseText {
         text: statusCheckBox.text
+        font.pixelSize: statusCheckBox.font.pixelSize
         opacity: enabled ? 1.0 : 0.3
         verticalAlignment: Text.AlignVCenter
         wrapMode: Text.WordWrap
