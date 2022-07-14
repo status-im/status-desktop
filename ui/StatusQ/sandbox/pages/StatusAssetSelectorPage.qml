@@ -25,14 +25,24 @@ Column {
                 name: "Status Network Token"
                 balance: "20"
                 symbol: "SNT"
-                currencyBalance: 9992.01
+                totalCurrencyBalance: 9992.01
+                totalBalance: 9992.01
             }
             ListElement {
                 address: "0x1234"
                 name: "DAI Token"
                 balance: "15"
                 symbol: "DAI"
-                currencyBalance: 20.00001
+                totalCurrencyBalance: 20.00001
+                totalBalance: 20.00001
+            }
+            ListElement {
+                address: "0x1234"
+                name: "ABYSS Token"
+                balance: "25"
+                symbol: "ABYSS"
+                totalCurrencyBalance: 24.1
+                totalBalance: 24.1
             }
         }
     }

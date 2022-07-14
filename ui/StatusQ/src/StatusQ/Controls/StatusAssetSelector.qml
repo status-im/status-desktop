@@ -19,7 +19,7 @@ Item {
     }
     // Define this in the usage to get balance in currency selected by user
     property var getCurrencyBalanceString: function (currencyBalance) { return "" }
-    implicitWidth: 86
+    implicitWidth: 106
     implicitHeight: 32
 
     function resetInternal() {
@@ -66,6 +66,8 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 font.pixelSize: 15
                 height: 22
+                width: 50
+                elide: Text.ElideRight
                 verticalAlignment: Text.AlignVCenter
                 color: Theme.palette.directColor1
             }
