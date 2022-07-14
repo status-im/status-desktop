@@ -13,7 +13,7 @@ import shared.popups 1.0
 import "stores"
 import "popups"
 
-ScrollView {
+StatusScrollView {
     id: root
 
     property CommunitiesStore communitiesStore: CommunitiesStore {}
