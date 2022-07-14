@@ -12,7 +12,7 @@ import StatusQ.Popups 0.1
 StatusModal {
     id: root
     width: 700
-    height: (!!searchResults && (searchResults.count >= 0) && (searchText !== "")) ? (((searchResults.count < 5)) ? 560 : 770) : 142 //970
+    height: !!searchResults && searchResults.count >= 0 && searchText !== "" ? 560 : 122
     anchors.centerIn: parent
     showHeader: false
     showFooter: false
@@ -68,8 +68,6 @@ StatusModal {
     }
 
     contentItem: Item {
-        width: parent.width
-        height: root.height
         property alias searchText: inputText.text
         property alias searchInput: inputText
 
@@ -94,18 +92,21 @@ StatusModal {
                 StatusBaseInput {
                     id: inputText
                     anchors.left: statusIcon.right
-                    anchors.leftMargin: 15
                     anchors.right: parent.right
-                    anchors.rightMargin: 8
                     anchors.verticalCenter: parent.verticalCenter
                     focus: true
                     font.pixelSize: 28
+                    leftPadding: 5
                     topPadding: 5 //smaller padding to handle bigger font
                     bottomPadding: 5
                     clearable: true
                     showBackground: false
-                    font.family: Theme.palette.baseFont.name
-                    color: Theme.palette.directColor1
+                    placeholder {
+                        text: qsTr("Search")
+                        font.pixelSize: 28
+                        color: Theme.palette.directColor9
+                    }
+
                     Keys.onPressed: {
                         if (event.key === Qt.Key_Enter || event.key === Qt.Key_Return)
                             event.accepted = true
@@ -113,7 +114,7 @@ StatusModal {
                 }
             }
             StatusMenuSeparator {
-                topPadding: 0
+                verticalPadding: 0
                 Layout.fillWidth: true
             }
             Item {
@@ -126,7 +127,6 @@ StatusModal {
                         root.searchSelectionButton = searchOptionsMenuButton
                     }
 
-                    property string prefixText: qsTr("In")
                     property string primaryText: ""
                     property string secondaryText: ""
                     property StatusIconSettings iconSettings: StatusIconSettings {
@@ -175,8 +175,9 @@ StatusModal {
                                 spacing: 2
                                 StatusBaseText {
                                     color: Theme.palette.directColor1
-                                    text: searchOptionsMenuButton.prefixText + ": "
+                                    text: qsTr("In: ")
                                     font.weight: Font.Medium
+                                    font.pixelSize: 15
                                 }
 
                                 StatusSmartIdenticon {
@@ -193,35 +194,39 @@ StatusModal {
                                 }
 
                                 StatusBaseText {
+                                    Layout.alignment: Qt.AlignVCenter
                                     color: Theme.palette.directColor1
                                     text: searchOptionsMenuButton.primaryText
                                     font.weight: Font.Medium
+                                    font.pixelSize: 13
                                 }
                                 StatusIcon {
-                                    Layout.preferredWidth: 14.5
-                                    Layout.preferredHeight: 17.5
+                                    Layout.preferredWidth: 16
+                                    Layout.preferredHeight: 16
                                     Layout.alignment: Qt.AlignVCenter
                                     visible: !!searchOptionsMenuButton.secondaryText
                                     color: Theme.palette.baseColor1
                                     icon: "next"
                                 }
                                 StatusIcon {
-                                    Layout.preferredWidth: 17.5
-                                    Layout.preferredHeight: 17.5
+                                    Layout.preferredWidth: 16
+                                    Layout.preferredHeight: 16
                                     Layout.alignment: Qt.AlignVCenter
                                     visible: !!searchOptionsMenuButton.secondaryText
                                     color: Theme.palette.directColor1
                                     icon: "channel"
                                 }
                                 StatusBaseText {
+                                    Layout.alignment: Qt.AlignVCenter
                                     color: Theme.palette.directColor1
                                     visible: !!searchOptionsMenuButton.secondaryText
                                     text: searchOptionsMenuButton.secondaryText
                                     font.weight: Font.Medium
+                                    font.pixelSize: 13
                                 }
                                 StatusIcon {
-                                    Layout.preferredWidth: 17.5
-                                    Layout.preferredHeight: 14.5
+                                    Layout.preferredWidth: 16
+                                    Layout.preferredHeight: 16
                                     Layout.alignment: Qt.AlignVCenter
                                     icon: "chevron-down"
                                     color: Theme.palette.directColor1
@@ -243,13 +248,14 @@ StatusModal {
                     type: StatusFlatRoundButton.Type.Secondary
                     icon.name: "close"
                     icon.color: Theme.palette.directColor1
-                    icon.width: 20
-                    icon.height: 20
                     onClicked: { root.resetSearchSelection(); }
                 }
             }
-
-            StatusMenuSeparator { Layout.fillWidth: true; visible: (root.height > 142) }
+            StatusMenuSeparator {
+                verticalPadding: 0
+                Layout.fillWidth: true;
+                visible: root.height > 142
+            }
             Item {
                 Layout.fillWidth: true
                 Layout.fillHeight: true

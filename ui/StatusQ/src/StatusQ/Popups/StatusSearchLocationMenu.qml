@@ -1,4 +1,5 @@
-import QtQuick 2.12
+import QtQuick 2.14
+import QtQml 2.14
 import QtQuick.Controls 2.14
 
 import StatusQ.Core 0.1
@@ -57,13 +58,13 @@ StatusPopupMenu {
                 }
             }
         }
-        onObjectRemoved: { root.removeItem(root.takeItem(index+2)); }
+        onObjectRemoved: { root.removeItem(root.takeItem(index + numDefaultItems)); }
     }
 
     Component {
         id: subMenuItemComponent
         StatusSearchPopupMenuItem {
-            onClicked: {
+            onTriggered: {
                 searchPopup.resetSearchSelection()
                 searchPopup.setSearchSelection(text,
                                                "",

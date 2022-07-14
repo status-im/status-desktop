@@ -152,7 +152,6 @@ MenuItem {
             switch (statusPopupMenuItem.action.type) {
                 case StatusMenuItem.Type.Danger:
                   return Theme.palette.dangerColor1
-                  break;
                 default:
                   return Theme.palette.directColor1
             }
