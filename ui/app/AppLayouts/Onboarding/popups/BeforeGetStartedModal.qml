@@ -12,33 +12,36 @@ import StatusQ.Popups 0.1
 StatusModal {
     id: popup
 
+    width: 480
+    height: 318
     anchors.centerIn: parent
-    header.title: qsTr("Before you get started")
+    header.title: qsTr("Before you get started...")
     hasCloseButton: false
     closePolicy: Popup.NoAutoClose
 
     contentItem: Item {
-        implicitHeight: childrenRect.height
-        width: popup.width
         Column {
             spacing: 12
-            anchors.left: parent.left
-            anchors.right: parent.right
+            anchors.fill: parent
             anchors.leftMargin: 32
             anchors.rightMargin: 32
-
-            Item { height: 12;  width: parent.width }
+            anchors.topMargin: 24
+            anchors.bottomMargin: 24
 
             StatusCheckBox {
                 id: acknowledge
                 objectName: "acknowledgeCheckBox"
+                spacing: 8
+                font.pixelSize: 15
                 width: parent.width
-                text: qsTr("I acknowledge that status desktop is in beta and by using it I take the full responsibility for all risks concerning my data and funds")
+                text: qsTr("I acknowledge that Status Desktop is in Beta and by using it I take the full responsibility for all risks concerning my data and funds.")
             }
 
             StatusCheckBox {
                 id: termsOfUse
                 objectName: "termsOfUseCheckBox"
+                width: parent.width
+                font.pixelSize: 15
 
                 contentItem: Row {
                     spacing: 4
@@ -46,13 +49,15 @@ StatusModal {
 
                     StatusBaseText {
                         text: qsTr("I accept Status")
-                        color: Theme.palette.directColor1
+                        font.pixelSize: 15
                     }
 
                     StatusBaseText {
                         objectName: "termsOfUseLink"
-                        text: qsTr("Terms of service")
+                        text: qsTr("Terms of Use")
                         color: Theme.palette.primaryColor1
+                        font.pixelSize: 15
+                        font.weight: Font.Medium
 
                         MouseArea {
                             anchors.fill: parent
@@ -65,20 +70,22 @@ StatusModal {
                                 parent.font.underline = false
                             }
                             onClicked: {
-                                Qt.openUrlExternally("https://status.im/terms-of-service/")
+                                Qt.openUrlExternally("https://status.im/terms-of-use/")
                             }
                         }
                     }
 
                     StatusBaseText {
-                        text: " & "
-                        color: Theme.palette.directColor1
+                        text: "&"
+                        font.pixelSize: 15
                     }
 
                     StatusBaseText {
                         objectName: "privacyPolicyLink"
                         text: qsTr("Privacy Policy")
                         color: Theme.palette.primaryColor1
+                        font.pixelSize: 15
+                        font.weight: Font.Medium
 
                         MouseArea {
                             anchors.fill: parent
@@ -97,8 +104,6 @@ StatusModal {
                     }
                 }
             }
-
-            Item { height: 12;  width: parent.width }
         }
     }
 
@@ -107,7 +112,9 @@ StatusModal {
             id: getStartedButton
             objectName: "getStartedStatusButton"
             enabled: acknowledge.checked && termsOfUse.checked
-            text: qsTr("Get started")
+            size: StatusBaseButton.Size.Large
+            font.weight: Font.Medium
+            text: qsTr("Get Started")
             onClicked: {
                 popup.close()
             }
