@@ -4273,24 +4273,6 @@ chat with them once they have accepted your contact request.</translation>
     </message>
 </context>
 <context>
-    <name>EmptyViewPanel</name>
-    <message>
-        <location filename="../app/AppLayouts/Chat/panels/EmptyViewPanel.qml" line="76" />
-        <source>Chat and transact privately with your friends</source>
-        <translation>Chat and transact privately with your friends</translation>
-    </message>
-    <message>
-        <location filename="../app/AppLayouts/Chat/panels/EmptyViewPanel.qml" line="90" />
-        <source>Invite friends</source>
-        <translation>Invite friends</translation>
-    </message>
-    <message>
-        <location filename="../app/AppLayouts/Chat/panels/EmptyViewPanel.qml" line="131" />
-        <source>Follow your interests in one of the many Public Chats.</source>
-        <translation>Follow your interests in one of the many Public Chats.</translation>
-    </message>
-</context>
-<context>
     <name>EnsAddedView</name>
     <message>
         <location filename="../app/AppLayouts/Profile/views/EnsAddedView.qml" line="17" />
