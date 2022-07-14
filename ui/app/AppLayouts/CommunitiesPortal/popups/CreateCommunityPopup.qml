@@ -46,7 +46,7 @@ StatusStackModal {
 
             ColumnLayout {
                 id: generalViewLayout
-                width: generalView.width
+                width: generalView.availableWidth
                 spacing: 12
 
                 CommunityNameInput {

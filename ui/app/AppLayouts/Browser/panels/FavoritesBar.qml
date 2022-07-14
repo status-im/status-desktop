@@ -1,9 +1,10 @@
 import QtQuick 2.13
 import QtQuick.Layouts 1.13
 
-import utils 1.0
-
+import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
+
+import utils 1.0
 
 RowLayout {
     id: favoritesBar
@@ -17,15 +18,12 @@ RowLayout {
     spacing: 0
     height: 38
 
-    ListView {
+    StatusListView {
         id: bookmarkList
         spacing: Style.current.halfPadding
         orientation : ListView.Horizontal
-        height: parent.height
-        clip: true
-        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
-        width: parent.width
-        boundsBehavior: Flickable.StopAtBounds
+        Layout.fillWidth: true
+        Layout.fillHeight: true
         delegate: StatusFlatButton {
             id: favoriteBtn
             height: 32

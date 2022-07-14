@@ -15,22 +15,17 @@ Item {
 
     height: assetListView.height
 
-    StatusScrollView {
+    StatusListView {
+        id: assetListView
         anchors.fill: parent
+        model: account.assets
+        delegate: AssetDelegate {
+            locale: RootStore.locale
+            currency: RootStore.currentCurrency
+        }
         Layout.fillWidth: true
         Layout.fillHeight: true
-        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-        ScrollBar.vertical.policy: assetListView.contentHeight > assetListView.height ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
 
-        ListView {
-            id: assetListView
-            anchors.fill: parent
-            model: account.assets
-            delegate: AssetDelegate {
-                locale: RootStore.locale
-                currency: RootStore.currentCurrency
-            }
-            boundsBehavior: Flickable.StopAtBounds
-        }
+        ScrollBar.vertical: ScrollBar { policy: ScrollBar.AsNeeded }
     }
 }

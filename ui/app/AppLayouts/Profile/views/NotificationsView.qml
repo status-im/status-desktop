@@ -535,11 +535,10 @@ SettingsContentBase {
                         color: Theme.palette.baseColor1
                     }
 
-                    ListView {
+                    StatusListView {
                         Layout.preferredWidth: root.contentWidth
                         Layout.preferredHeight: 400
                         visible: root.notificationsStore.exemptionsModel.count > 0
-                        clip: true
 
                         model: root.notificationsStore.exemptionsModel
                         delegate: exemptionDelegateComponent

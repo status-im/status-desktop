@@ -155,7 +155,7 @@ SettingsContentBase {
                 color: Theme.palette.directColor1
             }
 
-            ListView {
+            StatusListView {
                 id: listView
                 anchors.top: deviceListLbl.bottom
                 anchors.topMargin: Style.current.padding

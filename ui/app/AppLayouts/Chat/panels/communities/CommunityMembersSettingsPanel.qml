@@ -78,14 +78,13 @@ SettingsPageLayout {
             color: Theme.palette.baseColor1
         }
 
-        ListView {
+        StatusListView {
             id: memberList
 
             Layout.fillWidth: true
             Layout.fillHeight: true
 
             model: root.membersModel
-            clip: true
 
             // TODO: use StatusMemberListItem (it does not behave correctly right now)
             delegate: StatusListItem {

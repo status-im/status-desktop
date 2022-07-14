@@ -4,6 +4,8 @@ import QtGraphicalEffects 1.12
 import QtQuick.Dialogs 1.3
 import QtQuick.Layouts 1.13
 
+import StatusQ.Core 0.1
+
 import utils 1.0
 import shared 1.0
 import shared.panels 1.0
@@ -128,16 +130,14 @@ Popup {
         }
     }
 
-    ListView {
+    StatusListView {
         id: listView
         model: popup.modelList || []
         keyNavigationEnabled: true
-        Layout.fillHeight: true
         width: parent.width
         anchors.top: searchBox.bottom
         anchors.topMargin: searchBox.visible ? Style.current.smallPadding : 0
         anchors.bottom: parent.bottom
-        clip: true
 
         delegate: Rectangle {
             property variant myData: typeof modelData === "undefined" ? model : modelData

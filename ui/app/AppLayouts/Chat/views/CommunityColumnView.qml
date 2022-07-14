@@ -101,7 +101,7 @@ Item {
     }
 
     StatusScrollView {
-        id: chatGroupsContainer
+        id: scrollView
         anchors.top: membershipRequests.bottom
         anchors.topMargin: Style.current.padding
         anchors.bottom: createChatOrCommunity.top
@@ -362,7 +362,7 @@ Item {
 
         Column {
             id: bannerColumn
-            width: parent.width
+            width: scrollView.availableWidth
             anchors.top: communityChatListAndCategories.bottom
             anchors.topMargin: Style.current.padding
             spacing: Style.current.bigPadding

@@ -2,6 +2,11 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 
+import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
+import StatusQ.Controls 0.1
+import StatusQ.Components 0.1
+import StatusQ.Popups 0.1
 
 import utils 1.0
 import shared 1.0
@@ -10,12 +15,6 @@ import shared.popups 1.0
 import "../panels"
 import "../popups"
 import "../popups/community"
-
-import StatusQ.Core 0.1
-import StatusQ.Core.Theme 0.1
-import StatusQ.Controls 0.1
-import StatusQ.Components 0.1
-import StatusQ.Popups 0.1
 
 Item {
     id: root
@@ -139,15 +138,13 @@ Item {
 
         // chat list
         StatusScrollView {
-            id: scrollView
+            id: scroll
             Layout.fillWidth: true
             Layout.fillHeight: true
 
-            ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-
             StatusChatList {
                 id: channelList
-                width: scrollView.availableWidth
+                width: scroll.availableWidth
                 model: root.chatSectionModule.model
                 highlightItem: !root.store.openCreateChat
                 onChatItemSelected: {
@@ -233,15 +230,6 @@ Item {
                                     )
                     }
                 }
-            }
-
-            EmptyViewPanel {
-                id: emptyViewAndSuggestions
-                visible: !localAccountSensitiveSettings.hideChannelSuggestions
-                anchors.top: channelList.bottom
-                anchors.topMargin: Style.current.padding
-                rootStore: root.store
-                onSuggestedMessageClicked: chatSectionModule.createPublicChat(channel)
             }
         }
     }

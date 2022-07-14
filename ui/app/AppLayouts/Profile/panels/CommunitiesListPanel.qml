@@ -9,7 +9,7 @@ import StatusQ.Popups 0.1
 
 import utils 1.0
 
-ListView {
+StatusListView {
     id: root
 
     property bool hasAddedContacts: false

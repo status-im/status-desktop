@@ -1,6 +1,8 @@
 import QtQuick 2.13
 import utils 1.0
 
+import StatusQ.Core 0.1
+
 Item {
     id: suggestionsPanelRoot
     property alias model: filterModel
@@ -17,7 +19,7 @@ Item {
     onSourceModelChanged: invalidateFilter()
     Component.onCompleted: invalidateFilter()
 
-    ListView {
+    StatusListView {
         // This is a fake list (invisible), used just for the sake of accessing items of the `sourceModel`
         // without exposing explicit methods from the model which would return item detail.
         // In general the whole thing about preparing/displaying suggestion panel and list there should

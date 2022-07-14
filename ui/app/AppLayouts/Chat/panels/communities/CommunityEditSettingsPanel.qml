@@ -51,7 +51,7 @@ StatusScrollView {
     ColumnLayout {
         id: layout
 
-        width: root.width
+        width: root.availableWidth
         spacing: 12
 
         CommunityNameInput {

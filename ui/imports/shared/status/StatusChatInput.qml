@@ -402,7 +402,8 @@ Rectangle {
     property int copyTextStart: 0
     property string copiedTextPlain: ""
     property string copiedTextFormatted: ""
-    ListView {
+
+    StatusListView {
         id: dummyContactList
         model: control.usersStore ? control.usersStore.usersModel : []
         delegate: Item {
@@ -931,6 +932,7 @@ Rectangle {
 
         StatusScrollView {
             id: scrollView
+            padding: 0
             anchors.top: parent.top
             anchors.bottom: parent.bottom
             anchors.left: profileImage.visible ? profileImage.right : parent.left

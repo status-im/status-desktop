@@ -1,16 +1,16 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
-import StatusQ.Components 0.1
-import shared 1.0
-import shared.panels 1.0
-import shared.status 1.0
-
-import utils 1.0
-
-import "../controls"
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Components 0.1
+
+import shared 1.0
+import shared.panels 1.0
+import shared.status 1.0
+import utils 1.0
+
+import "../controls"
 
 Item {
     id: root
@@ -39,12 +39,8 @@ Item {
         text: root.label
     }
 
-    ListView {
+    StatusListView {
         id: userListView
-        clip: true
-        ScrollBar.vertical: ScrollBar {
-            policy: ScrollBar.AsNeeded
-        }
         anchors {
             top: titleText.bottom
             topMargin: Style.current.padding
@@ -53,7 +49,7 @@ Item {
             bottom: parent.bottom
             bottomMargin: Style.current.bigPadding
         }
-        boundsBehavior: Flickable.StopAtBounds
+
         model: usersModule.model
         section.property: "onlineStatus"
         section.delegate: (root.width > 58) ? sectionDelegateComponent : null

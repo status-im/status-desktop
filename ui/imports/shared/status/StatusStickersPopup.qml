@@ -233,7 +233,6 @@ Popup {
                 id: installedStickersSV
                 anchors.bottom: parent.bottom
                 height: 32
-                ScrollBar.vertical.policy: ScrollBar.AlwaysOff
 
                 RowLayout {
                     id: stickersRowLayout

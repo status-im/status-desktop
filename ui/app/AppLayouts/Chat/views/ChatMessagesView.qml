@@ -6,6 +6,10 @@ import QtQml.Models 2.13
 import QtGraphicalEffects 1.13
 import QtQuick.Dialogs 1.3
 
+import StatusQ.Core 0.1
+import StatusQ.Controls 0.1
+import StatusQ.Components 0.1
+
 import utils 1.0
 import shared 1.0
 import shared.views 1.0
@@ -14,8 +18,6 @@ import shared.popups 1.0
 import shared.status 1.0
 import shared.controls 1.0
 import shared.views.chat 1.0
-import StatusQ.Core 0.1
-import StatusQ.Components 0.1
 
 import "../controls"
 
@@ -93,15 +95,13 @@ Item {
         }
     }
 
-    ListView {
+    StatusListView {
         id: chatLogView
         anchors.top: loadingMessagesIndicator.bottom
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.right: parent.right
         spacing: 0
-        boundsBehavior: Flickable.StopAtBounds
-        clip: true
         verticalLayoutDirection: ListView.BottomToTop
 
         // This header and Connections is to create an invisible padding so that the chat identifier is at the top
@@ -124,7 +124,7 @@ Item {
             }
         }
 
-        ScrollBar.vertical: ScrollBar {
+        ScrollBar.vertical: StatusScrollBar {
             visible: chatLogView.visibleArea.heightRatio < 1
         }
 

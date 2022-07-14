@@ -3,10 +3,10 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
 
-import utils 1.0
-
+import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
 
+import utils 1.0
 import shared.popups 1.0
 
 import "../panels"
@@ -19,7 +19,7 @@ ModalPopup {
 
     title: qsTr("Contact requests")
 
-    ListView {
+    StatusListView {
         id: contactList
 
         anchors.fill: parent
@@ -27,7 +27,6 @@ ModalPopup {
         anchors.rightMargin: -Style.current.halfPadding
 
         model: popup.store.contactRequestsModel
-        clip: true
 
         delegate: ContactRequestPanel {
             contactPubKey: model.pubKey

@@ -68,7 +68,7 @@ StatusAppTwoPanelLayout {
             text: qsTr("Settings")
         }
 
-        ListView  {
+        StatusListView {
             id: listView
 
             Layout.fillWidth: true

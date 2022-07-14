@@ -2,10 +2,11 @@ import QtQuick 2.13
 import QtQuick.Controls 2.1
 import QtQuick.Layouts 1.3
 
-import utils 1.0
-
+import StatusQ.Core 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
+
+import utils 1.0
 
 import "../panels"
 import "../popups"
@@ -68,15 +69,13 @@ Item {
         font.pixelSize: Style.current.primaryTextFontSize
     }
 
-    ListView {
+    StatusListView {
         id: transactionListRoot
         anchors.top: noTxs.bottom
         anchors.topMargin: Style.current.padding
         anchors.bottom: loadMoreButton.top
         anchors.bottomMargin: Style.current.padding
         width: parent.width
-        clip: true
-        boundsBehavior: Flickable.StopAtBounds
         model: RootStore.historyTransactions
         delegate: TransactionDelegate {
             tokens: RootStore.tokens

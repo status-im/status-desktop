@@ -8,7 +8,6 @@ import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
 
-
 import utils 1.0
 
 StatusModal {
@@ -115,11 +114,10 @@ StatusModal {
             height: 300
             ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
-            ListView {
+            StatusListView {
                 id: chatList
                 anchors.fill: parent
                 model: community.chats
-                boundsBehavior: Flickable.StopAtBounds
                 delegate: StatusListItem {
                     anchors.horizontalCenter: parent.horizontalCenter
                     title: "#" + model.name

@@ -31,42 +31,36 @@ Item {
         return parts.some(p => p.startsWith(filter))
     }
 
-
-    StatusScrollView {
+    StatusListView {
+        id: contactListView
         anchors.fill: parent
+        spacing: 0
 
-        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-        ScrollBar.vertical.policy: contactListView.contentHeight > contactListView.height ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
-
-        ListView {
-            anchors.fill: parent
-            spacing: 0
-            clip: true
-            id: contactListView
-            model: root.contactsStore.myContactsModel
-            delegate: Contact {
-                showCheckbox: root.showCheckbox
-                isChecked: root.pubKeys.indexOf(model.pubKey) > -1
-                pubKey: model.pubKey
-                isContact: model.isContact
-                isUser: false
-                name: model.displayName
-                image: model.icon
-                isVisible: {
-                    return model.isContact && !model.isBlocked && (root.filterText === "" ||
-                    root.matchesAlias(model.alias.toLowerCase(), root.filterText.toLowerCase()) ||
-                    model.displayName.toLowerCase().includes(root.filterText.toLowerCase()) ||
-                    model.ensName.toLowerCase().includes(root.filterText.toLowerCase()) ||
-                    model.localNickname.toLowerCase().includes(root.filterText.toLowerCase()) ||
-                    model.pubKey.toLowerCase().includes(root.filterText.toLowerCase())) &&
-                    (!root.hideCommunityMembers ||
-                    !root.community.hasMember(model.pubKey))
-                }
-                onContactClicked: function () {
-                    root.contactClicked(model)
-                }
+        model: root.contactsStore.myContactsModel
+        delegate: Contact {
+            showCheckbox: root.showCheckbox
+            isChecked: root.pubKeys.indexOf(model.pubKey) > -1
+            pubKey: model.pubKey
+            isContact: model.isContact
+            isUser: false
+            name: model.displayName
+            image: model.icon
+            isVisible: {
+                return model.isContact && !model.isBlocked && (root.filterText === "" ||
+                root.matchesAlias(model.alias.toLowerCase(), root.filterText.toLowerCase()) ||
+                model.displayName.toLowerCase().includes(root.filterText.toLowerCase()) ||
+                model.ensName.toLowerCase().includes(root.filterText.toLowerCase()) ||
+                model.localNickname.toLowerCase().includes(root.filterText.toLowerCase()) ||
+                model.pubKey.toLowerCase().includes(root.filterText.toLowerCase())) &&
+                (!root.hideCommunityMembers ||
+                !root.community.hasMember(model.pubKey))
+            }
+            onContactClicked: function () {
+                root.contactClicked(model)
             }
         }
+
+        ScrollBar.vertical: ScrollBar { policy: ScrollBar.AsNeeded }
     }
 }
 

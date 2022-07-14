@@ -939,7 +939,7 @@ Item {
         }
     }
 
-    ListView {
+    StatusListView {
         id: toastArea
         anchors.top: parent.top
         anchors.topMargin: 60

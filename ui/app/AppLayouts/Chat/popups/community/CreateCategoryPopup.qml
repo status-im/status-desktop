@@ -106,7 +106,7 @@ StatusModal {
                     }
                 }
 
-                ListView {
+                StatusListView {
                     id: communityChannelList
 
                     anchors.top: channelsLabel.bottom
@@ -114,7 +114,6 @@ StatusModal {
                     width: parent.width
                     model: isEdit ? root.store.chatCommunitySectionModule.editCategoryChannelsModel : root.store.chatCommunitySectionModule.model
                     interactive: false
-                    clip: true
 
                     delegate: StatusListItem {
                         anchors.horizontalCenter: parent.horizontalCenter

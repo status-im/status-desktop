@@ -225,7 +225,8 @@ Item {
         text: qsTr("No saved addresses")
     }
 
-    StatusScrollView {
+    StatusListView {
+        id: listView
         anchors.top: errorMessage.bottom
         anchors.topMargin: Style.current.padding
         anchors.bottom: parent.bottom
@@ -233,14 +234,8 @@ Item {
         anchors.right: parent.right
         anchors.left: parent.left
         visible: listView.count > 0
-
-        ListView {
-            id: listView
-            model: RootStore.savedAddresses
-            spacing: 5
-            width: parent.width
-            boundsBehavior: Flickable.StopAtBounds
-            delegate: delegateSavedAddress
-        }
+        spacing: 5
+        model: RootStore.savedAddresses
+        delegate: delegateSavedAddress
     }
 }
