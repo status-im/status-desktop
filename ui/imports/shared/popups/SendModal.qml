@@ -115,9 +115,7 @@ StatusModal {
    TransactionStackView {
         id: stack
         property alias currentGroup: stack.currentGroup
-        anchors.leftMargin: Style.current.xlPadding
         anchors.topMargin: Style.current.xlPadding
-        anchors.rightMargin: Style.current.xlPadding
         anchors.bottomMargin: popup.showAdvancedFooter  && !!advancedFooter ? advancedFooter.height : Style.current.padding
         TransactionFormGroup {
             id: group1
@@ -128,6 +126,9 @@ StatusModal {
                 anchors.top: parent.top
                 anchors.right: parent.right
                 anchors.left: parent.left
+                anchors.leftMargin: Style.current.xlPadding
+                anchors.rightMargin: Style.current.xlPadding
+
                 RowLayout {
                     spacing: 16
                     StatusBaseText {
@@ -242,9 +243,8 @@ StatusModal {
                 anchors.top: assetAndAmmountSelector.bottom
                 anchors.topMargin: Style.current.padding
                 anchors.left: parent.left
-                anchors.leftMargin: -Style.current.xlPadding
+                anchors.right: parent.right
 
-                width: popup.width
                 height: 1
                 color: Theme.palette.directColor8
                 visible: false
@@ -266,11 +266,14 @@ StatusModal {
                 width: parent.width
                 anchors.top: border.bottom
                 anchors.topMargin: Style.current.halfPadding
+                anchors.left: parent.left
 
                 ColumnLayout {
                     width: scrollView.availableWidth
                     spacing: Style.current.halfPadding
-                // To-do use standard StatusInput component once the flow for ens name resolution is clear
+                    anchors.left: parent.left
+
+                    // To-do use standard StatusInput component once the flow for ens name resolution is clear
                     RecipientSelector {
                         id: recipientSelector
                         accounts: popup.store.accounts
@@ -279,13 +282,17 @@ StatusModal {
                         input.placeholderText: qsTr("Enter an ENS name or address")
                         input.anchors.leftMargin: 0
                         input.anchors.rightMargin: 0
+                        input.textField.anchors.rightMargin: 0
                         labelFont.pixelSize: 15
                         labelFont.weight: Font.Normal
                         input.height: 56
+                        inputWidth: parent.width
                         isSelectorVisible: false
                         addContactEnabled: false
                         onSelectedRecipientChanged: gasSelector.estimateGas()
                         Layout.fillWidth: true
+                        Layout.leftMargin: Style.current.bigPadding
+                        Layout.rightMargin: Style.current.bigPadding
                     }
 
                     TabAddressSelectorView {
@@ -295,6 +302,8 @@ StatusModal {
                             recipientSelector.input.text = address
                         }
                         Layout.fillWidth: true
+                        Layout.leftMargin: Style.current.bigPadding
+                        Layout.rightMargin: Style.current.bigPadding
                     }
 
                     NetworkSelector {
@@ -311,6 +320,8 @@ StatusModal {
                         }
                         onReCalculateSuggestedRoute: popup.recalculateRoutesAndFees(disabledChainIds)
                         Layout.fillWidth: true
+                        Layout.leftMargin: Style.current.bigPadding
+                        Layout.rightMargin: Style.current.bigPadding
                     }
 
                     Rectangle {
@@ -319,6 +330,8 @@ StatusModal {
                         color: Theme.palette.indirectColor1
                         implicitHeight: gasSelector.visible || gasValidator.visible ? feesLayout.height + gasValidator.height : 0
                         Layout.fillWidth: true
+                        Layout.leftMargin: Style.current.bigPadding
+                        Layout.rightMargin: Style.current.bigPadding
 
                         RowLayout {
                             id: feesLayout
