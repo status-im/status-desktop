@@ -139,7 +139,7 @@ Item {
         ScrollView {
             Layout.fillWidth: true
             Layout.fillHeight: true
-            contentHeight: channelList.childrenRect.height + emptyViewAndSuggestions.childrenRect.height
+            contentHeight: channelList.childrenRect.height
 
             ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
@@ -234,16 +234,6 @@ Item {
                                     )
                     }
                 }
-            }
-
-            EmptyViewPanel {
-                id: emptyViewAndSuggestions
-                visible: !localAccountSensitiveSettings.hideChannelSuggestions
-                width: parent.width
-                anchors.top: channelList.bottom
-                anchors.topMargin: Style.current.padding
-                rootStore: root.store
-                onSuggestedMessageClicked: chatSectionModule.createPublicChat(channel)
             }
         }
     }
