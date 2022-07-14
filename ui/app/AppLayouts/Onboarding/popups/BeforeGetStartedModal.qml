@@ -11,10 +11,9 @@ import StatusQ.Controls 0.1
 import StatusQ.Popups.Dialog 0.1
 
 StatusDialog {
-    id: popup
+    id: root
 
     width: 480
-    height: 318
     anchors.centerIn: parent
     closePolicy: Popup.NoAutoClose
 
@@ -31,7 +30,7 @@ StatusDialog {
                 size: StatusBaseButton.Size.Large
                 font.weight: Font.Medium
                 text: qsTr("Get Started")
-                onClicked: popup.close()
+                onClicked: root.close()
             }
         }
     }
