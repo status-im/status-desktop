@@ -59,7 +59,7 @@ StatusAppThreePanelLayout {
             }
         }
 
-        ScrollView {
+        StatusScrollView {
             id: scrollView
 
             anchors.top: statusChatInfoToolBar.bottom

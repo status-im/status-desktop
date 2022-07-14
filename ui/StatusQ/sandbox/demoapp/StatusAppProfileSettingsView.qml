@@ -3,6 +3,7 @@ import QtQuick.Controls 2.14
 
 import StatusQ.Components 0.1
 import StatusQ.Layout 0.1
+import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 
 import "data" 1.0
@@ -21,7 +22,7 @@ StatusAppTwoPanelLayout {
             text: "Profile"
         }
 
-        ScrollView {
+        StatusScrollView {
             anchors.top: profileHeadline.bottom
             anchors.topMargin: 16
             anchors.bottom: parent.bottom

@@ -33,7 +33,7 @@ StatusModal {
     width: 680
     implicitHeight: 820
 
-    contentItem: ScrollView {
+    contentItem: StatusScrollView {
         id: scroll
         width: parent.width
         topPadding: 30

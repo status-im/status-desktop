@@ -10,7 +10,7 @@ import StatusQ.Components 0.1
 import "../demoapp/data" 1.0
 
 
-ScrollView {
+StatusScrollView {
     id: root
 
     QtObject {
