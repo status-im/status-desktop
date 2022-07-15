@@ -39,6 +39,7 @@ StatusStackModal {
 
         readonly property Item skipButton: StatusButton {
             visible: currentIndex === 0
+            normalColor: "transparent"
             border.color: Theme.palette.baseColor2
             text: qsTr("Not Now")
             onClicked: root.close()
@@ -49,9 +50,10 @@ StatusStackModal {
         }
     }
 
+    implicitHeight: 748
     width: 480
     header.title: qsTr("Back up your seed phrase")
-    rightButtons: [ nextButton, finishButton, d.skipButton ]
+    rightButtons: [ d.skipButton, nextButton, finishButton ]
 
     nextButton: StatusButton {
         enabled: {
@@ -97,6 +99,7 @@ StatusStackModal {
         steps: root.itemsCount - 1
         currentIndex: root.currentIndex - 1
         visible: root.currentIndex > 0
+        height: visible ? implicitHeight : 0
     }
 
     stackItems: [

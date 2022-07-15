@@ -13,13 +13,11 @@ ColumnLayout {
     readonly property bool allAccepted: havePen.checked && writeDown.checked && storeIt.checked
 
     spacing: Style.current.padding
-    implicitHeight: 520
 
     Flickable {
         id: flick
         clip: true
         contentHeight: flickLayout.height
-        implicitHeight: flickLayout.implicitHeight
         interactive: contentHeight > height
         flickableDirection: Flickable.VerticalFlick
         Layout.fillWidth: true
@@ -50,40 +48,62 @@ ColumnLayout {
                 Layout.fillWidth: true
             }
 
-            StyledText {
-                id: txtDesc
-                font.pixelSize: Style.current.primaryTextFontSize
-                font.letterSpacing: -0.2
-                text: qsTr("Your seed phrase is a 12-word passcode to your funds.")
+            ColumnLayout {
                 Layout.fillWidth: true
+                Layout.leftMargin: Style.current.padding
+                Layout.rightMargin: Style.current.padding
+                spacing: Style.current.bigPadding
+
+                StyledText {
+                    id: txtDesc
+                    font.pixelSize: Style.current.primaryTextFontSize
+                    horizontalAlignment: Text.AlignHCenter
+                    text: qsTr("Your seed phrase is a 12-word passcode to your funds.")
+                    Layout.fillWidth: true
+                }
+
+                StyledText {
+                    id: secondTxtDesc
+                    horizontalAlignment: Text.AlignHCenter
+                    wrapMode: Text.WordWrap
+                    textFormat: Text.RichText
+                    font.pixelSize: Style.current.primaryTextFontSize
+                    lineHeight: 1.2
+                    text: qsTr("Your seed phrase cannot be recovered if lost. Therefore, you <b>must</b> back it up. The simplest way is to <b>write it down offline and store it somewhere secure.</b>")
+                    Layout.fillWidth: true
+                }
             }
 
-            StyledText {
-                id: secondTxtDesc
-                horizontalAlignment: Text.AlignHCenter
-                wrapMode: Text.WordWrap
-                textFormat: Text.RichText
-                font.pixelSize: Style.current.primaryTextFontSize
-                text: qsTr("Your seed phrase cannot be recovered if lost. Therefore, you <b>must</b> back it up. The simplest way is to <b>write it down offline and store it somewhere secure.</b>")
+            ColumnLayout {
                 Layout.fillWidth: true
-            }
+                Layout.leftMargin: Style.current.xlPadding
+                Layout.rightMargin: Style.current.xlPadding
+                Layout.topMargin: Style.current.bigPadding
+                spacing: Style.current.bigPadding/2
 
-            StatusCheckBox {
-                id: havePen
-                text: qsTr("I have a pen and paper")
-                Layout.fillWidth: true
-            }
+                StatusCheckBox {
+                    id: havePen
+                    spacing: Style.current.padding
+                    text: qsTr("I have a pen and paper")
+                    font.pixelSize: Style.current.primaryTextFontSize
+                    Layout.fillWidth: true
+                }
 
-            StatusCheckBox {
-                id: writeDown
-                text: qsTr("I am ready to write down my seed phrase")
-                Layout.fillWidth: true
-            }
+                StatusCheckBox {
+                    id: writeDown
+                    spacing: Style.current.padding
+                    text: qsTr("I am ready to write down my seed phrase")
+                    font.pixelSize: Style.current.primaryTextFontSize
+                    Layout.fillWidth: true
+                }
 
-            StatusCheckBox {
-                id: storeIt
-                text: qsTr("I know where I’ll store it")
-                Layout.fillWidth: true
+                StatusCheckBox {
+                    id: storeIt
+                    spacing: Style.current.padding
+                    text: qsTr("I know where I’ll store it")
+                    font.pixelSize: Style.current.primaryTextFontSize
+                    Layout.fillWidth: true
+                }
             }
         }
     }
@@ -101,12 +121,13 @@ ColumnLayout {
             font.pixelSize: Style.current.primaryTextFontSize
             wrapMode: Text.WordWrap
             color: Theme.palette.dangerColor1
+            lineHeight: 1.2
             text: qsTr("You can only complete this process once. Status will not store your seed phrase and can never help you recover it.")
         }
 
         Rectangle {
             anchors.fill: parent
-            radius: 8
+            radius: Style.current.radius
             color: Theme.palette.dangerColor1
             opacity: 0.1
         }
