@@ -20,6 +20,7 @@ Page {
         height: tagSelector.height
         anchors.right: parent.right
         anchors.rightMargin: 8
+        spacing: 16
 
         StatusTagSelector {
             id: tagSelector
@@ -73,10 +74,23 @@ Page {
         }
 
         StatusButton {
+            implicitWidth: 106
             implicitHeight: 44
             Layout.alignment: Qt.AlignTop
             enabled: (tagSelector.namesModel.count > 0)
             text: "Confirm"
+        }
+
+        Item {
+            implicitHeight: 32
+            implicitWidth: 32
+            Layout.alignment: Qt.AlignTop
+
+            StatusActivityCenterButton {
+                id: notificationButton
+                anchors.right: parent.right
+                unreadNotificationsCount: 3
+            }
         }
     }
 
@@ -84,15 +98,19 @@ Page {
         anchors.fill: parent
 
         StatusBaseText {
-            visible: (contactsModel.count === 0)
-            anchors.centerIn: parent
+            anchors.left: parent.left
+            anchors.leftMargin: 252
+            anchors.right: parent.right
+            anchors.rightMargin: 252
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.verticalCenterOffset: -(headerRow.height/2)
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
-            font.pixelSize: 15
+            visible: contactsModel.count === 0
+            wrapMode: Text.WordWrap
             color: Theme.palette.baseColor1
-            text: qsTr("You can only send direct messages to your Contacts. \n\n
-Send a contact request to the person you would like to chat with, you will be\n able to
-chat with them once they have accepted your contact request.")
+            text: qsTr("You can only send direct messages to your Contacts.\n
+Send a contact request to the person you would like to chat with, you will be able to chat with them once they have accepted your contact request.")
             Component.onCompleted: {
                 if (visible) {
                     tagSelector.enabled = false;
