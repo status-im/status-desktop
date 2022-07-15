@@ -21,3 +21,6 @@ proc delete*(self: Controller) =
 
 proc changeLanguage*(self: Controller, locale: string) =
   self.languageService.setLanguage(locale)
+
+proc getLocales*(self: Controller): seq[string] =
+  self.languageService.locales()
