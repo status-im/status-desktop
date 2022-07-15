@@ -8,6 +8,7 @@ QtObject:
       delegate: io_interface.AccessInterface
       model: Model
       modelVariant: QVariant
+      currentLocale: string
 
   proc delete*(self: View) =
     self.QObject.delete
@@ -33,11 +34,25 @@ QtObject:
   QtProperty[QVariant] model:
     read = getModel
 
-  proc changeLocale*(self: View, locale: string) {.slot.} =
-    self.delegate.changeLanguage(locale)
-
   proc setIsDDMMYYDateFormat*(self: View, isDDMMYYDateFormat: bool) {.slot.} =
     self.delegate.setIsDDMMYYDateFormat(isDDMMYYDateFormat)
 
   proc setIs24hTimeFormat*(self: View, is24hTimeFormat: bool) {.slot.} =
     self.delegate.setIs24hTimeFormat(is24hTimeFormat)
+
+  proc changeLocale*(self: View, locale: string) {.slot.} =
+    self.delegate.changeLocale(locale)
+
+  proc getLocale*(self: View): string {.slot.} =
+    self.currentLocale
+
+  proc localeChanged*(self: View) {.signal.}
+
+  QtProperty[string] currentLocale:
+    read = getLocale
+    notify = localeChanged
+
+  proc setLocale*(self: View, locale: string) =
+    if locale != self.currentLocale:
+      self.currentLocale = locale
+      self.localeChanged()

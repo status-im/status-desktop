@@ -85,7 +85,7 @@ proc newModule*(delegate: delegate_interface.AccessInterface,
 
   result.profileModule = profile_module.newModule(result, profileService)
   result.contactsModule = contacts_module.newModule(result, events, contactsService, chatService)
-  result.languageModule = language_module.newModule(result, languageService)
+  result.languageModule = language_module.newModule(result, events, languageService)
   result.privacyModule = privacy_module.newModule(result, events, settingsService, privacyService, generalService)
   result.aboutModule = about_module.newModule(result, events, aboutService)
   result.advancedModule = advanced_module.newModule(result, events, settingsService, stickersService, nodeConfigurationService)

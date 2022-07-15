@@ -1,12 +1,21 @@
 import NimQml
 import json, json_serialization, sequtils, chronicles, os, strformat, re
 import ../../../app/global/global_singleton
+import ../../../app/core/eventemitter
+import ../../../app/core/signals/types
 
 logScope:
   topics = "language-service"
 
+const SIGNAL_LOCALE_UPDATE* = "localeUpdated"
+
+type
+  LocaleUpdatedArgs* = ref object of Args
+    locale*: string
+
 type
   Service* = ref object of RootObj
+    events: EventEmitter
     i18nPath: string
     shouldRetranslate: bool
     locales: seq[string]
@@ -24,6 +33,12 @@ proc obtainLocales(dir: string): seq[string] =
     if file =~ localeRe:
       result.add(matches[0])
 
+proc currentLocale*(): string =
+  singletonInstance.localAppSettings.getLocale()
+
+proc locales*(self: Service): seq[string] =
+  self.locales
+
 proc init*(self: Service) =
   try:
     self.i18nPath = ""
@@ -38,7 +53,7 @@ proc init*(self: Service) =
 
     self.locales = obtainLocales(self.i18nPath)
 
-    let locale = singletonInstance.localAppSettings.getLocale()
+    let locale = currentLocale()
     singletonInstance.engine.setTranslationPackage(joinPath(self.i18nPath, fmt"qml_{locale}.qm"), self.shouldRetranslate)
 
   except Exception as e:
@@ -53,5 +68,4 @@ proc setLanguage*(self: Service, locale: string) =
   singletonInstance.localAppSettings.setLocale(locale)
   singletonInstance.engine.setTranslationPackage(joinPath(self.i18nPath, fmt"qml_{locale}.qm"), self.shouldRetranslate)
 
-proc locales*(self: Service): seq[string] =
-  self.locales
+  self.events.emit(SIGNAL_LOCALE_UPDATE, LocaleUpdatedArgs(locale: locale))
