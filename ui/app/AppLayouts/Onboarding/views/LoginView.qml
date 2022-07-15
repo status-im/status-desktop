@@ -286,7 +286,7 @@ Item {
 
         StyledText {
             id: errMsg
-            readonly property string incorrectPasswordMsg: qsTr("Login failed. Please re-enter your password and try again.")
+            readonly property string incorrectPasswordMsg: qsTr("Password incorrect")
             anchors.top: txtPassword.bottom
             anchors.topMargin: Style.current.padding
             anchors.horizontalCenter: parent.horizontalCenter
