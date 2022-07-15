@@ -108,7 +108,7 @@ Item {
                             keycardStore.switchCard()
                         }
                         else if(keycardStore.keycardModule.flowState === Constants.keycard.state.recoverKeycardState){
-                            console.warn("Recover with PUK")
+                            keycardStore.nextState()
                         }
                     }
                 }

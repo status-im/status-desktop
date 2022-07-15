@@ -8,6 +8,10 @@ import StatusQ.Core.Theme 0.1
 QtObject {
     property var globalUtilsInst: globalUtils
 
+    function isDigit(value) {
+      return /^\d$/.test(value);
+    }
+
     function isHex(value) {
         return /^(-0x|0x)?[0-9a-fA-F]*$/i.test(value)
     }

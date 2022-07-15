@@ -16,6 +16,7 @@ type
     viewVariant: QVariant
     controller: Controller
     tmpPin: string
+    tmpPuk: string
     tmpSeedPhrase: string
     tmpSeedPhraseLength: int
 
@@ -30,6 +31,7 @@ proc newModule*(events: EventEmitter, keycardService: keycard_service.Service,
 ## Forward declaration
 proc tryToStorePin(self: Module)
 proc tryToEnterPin(self: Module)
+proc tryToEnterPuk(self: Module)
 proc tryToStoreSeedPhrase(self: Module)
 
 method delete*(self: Module) =
@@ -61,6 +63,10 @@ method cancelFlow*(self: Module) =
 method checkKeycardPin*(self: Module, pin: string): bool =
   self.tmpPin = pin
   return self.tmpPin.len == PINLengthForStatusApp
+
+method checkKeycardPuk*(self: Module, puk: string): bool =
+  self.tmpPuk = puk
+  return self.tmpPuk.len == PUKLengthForStatusApp
 
 method checkRepeatedKeycardPinCurrent*(self: Module, pin: string): bool =
   if pin.len > self.tmpPin.len:
@@ -142,14 +148,27 @@ proc nextState_1(self: Module) =
 proc backClickedMode_2(self: Module) =
   if self.view.getFlowState() == $FlowStateType.RecoverKeycard:
     self.switchToState(FlowStateType.MaxPinRetriesReached)
+  elif self.view.getFlowState() == $FlowStateType.EnterKeycardPukState or
+    self.view.getFlowState() == $FlowStateType.CreateKeycardPin or
+    self.view.getFlowState() == $FlowStateType.WrongKeycardPuk:
+    self.switchToState(FlowStateType.RecoverKeycard)
 
 proc nextState_2(self: Module) =
   if self.view.getFlowState() == $FlowStateType.EnterKeycardPin or
     self.view.getFlowState() == $FlowStateType.WrongKeycardPin:
     self.tryToEnterPin()
+  elif self.view.getFlowState() == $FlowStateType.EnterKeycardPukState or
+    self.view.getFlowState() == $FlowStateType.WrongKeycardPuk:
+    self.tryToEnterPuk()
   elif self.view.getFlowState() == $FlowStateType.MaxPinRetriesReached or
     self.view.getFlowState() == $FlowStateType.KeycardLockedRecover:
     self.switchToState(FlowStateType.RecoverKeycard)
+  elif self.view.getFlowState() == $FlowStateType.RecoverKeycard:
+    self.switchToState(FlowStateType.EnterKeycardPukState)
+  elif self.view.getFlowState() == $FlowStateType.CreateKeycardPin:
+    self.switchToState(FlowStateType.RepeatKeycardPin)
+  elif self.view.getFlowState() == $FlowStateType.RepeatKeycardPin:
+    self.tryToStorePin()
 
 proc backClickedMode_3(self: Module) =
   discard
@@ -183,12 +202,18 @@ method getSeedPhrase*(self: Module): string =
   return self.tmpSeedPhrase
 
 proc tryToStorePin(self: Module) =
-  self.controller.storePin(self.tmpPin)
+  let useRandomPuk = self.view.getKeycardMode() == KeycardMode.GenerateNewKeys or
+    self.view.getKeycardMode() == KeycardMode.ImportSeedPhrase
+  self.controller.storePin(self.tmpPin, useRandomPuk)
   self.tmpPin = ""
 
 proc tryToEnterPin(self: Module) =
   self.controller.enterPin(self.tmpPin)
   self.tmpPin = ""
+
+proc tryToEnterPuk(self: Module) =
+  self.controller.enterPuk(self.tmpPuk)
+  self.tmpPuk = ""
 
 proc tryToStoreSeedPhrase(self: Module) =
   self.controller.storeSeedPhrase(self.tmpSeedPhraseLength, self.tmpSeedPhrase)
@@ -230,6 +255,10 @@ method switchCard*(self: Module) =
 method onWrongKeycardPin*(self: Module, pinRetries: string) =
   self.view.setKeycardData(pinRetries)
   self.switchToState(FlowStateType.WrongKeycardPin)
+
+method onWrongKeycardPuk*(self: Module, pukRetries: string) =
+  self.view.setKeycardData(pukRetries)
+  self.switchToState(FlowStateType.WrongKeycardPuk)
 
 method onEnterKeycardPukRequest*(self: Module) =
   if self.view.getKeycardMode() == KeycardMode.GenerateNewKeys or

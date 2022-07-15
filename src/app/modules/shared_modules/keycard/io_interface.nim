@@ -25,8 +25,10 @@ type FlowStateType* {.pure.} = enum
   KeycardLockedRecover = "KeycardLockedRecoverState"
   MaxPairingSlotsReached = "MaxPairingSlotsReachedState"
   WrongKeycardPin = "WrongKeycardPinState"
+  WrongKeycardPuk = "WrongKeycardPukState"
   MaxPinRetriesReached = "MaxPinRetriesReachedState"
   RecoverKeycard = "RecoverKeycardState"
+  EnterKeycardPukState = "EnterKeycardPukState"
 
 type
   AccessInterface* {.pure inheritable.} = ref object of RootObj
@@ -56,6 +58,9 @@ method cancelFlow*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method checkKeycardPin*(self: AccessInterface, pin: string): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method checkKeycardPuk*(self: AccessInterface, puk: string): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method checkRepeatedKeycardPinCurrent*(self: AccessInterface, pin: string): bool {.base.} =
@@ -92,6 +97,9 @@ method switchCard*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onWrongKeycardPin*(self: AccessInterface, pinRetries: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onWrongKeycardPuk*(self: AccessInterface, pukRetries: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method getTmpData*(self: AccessInterface): string {.base.} =

@@ -60,6 +60,9 @@ QtObject:
   proc checkKeycardPin*(self: View, pin: string): bool {.slot.} =
     return self.delegate.checkKeycardPin(pin)
 
+  proc checkKeycardPuk*(self: View, puk: string): bool {.slot.} =
+    return self.delegate.checkKeycardPuk(puk)
+
   proc checkRepeatedKeycardPinCurrent*(self: View, pin: string): bool {.slot.} =
     return self.delegate.checkRepeatedKeycardPinCurrent(pin)
 

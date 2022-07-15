@@ -224,6 +224,8 @@ QtObject {
             readonly property int seedPhraseCellNumberWidth: 24
             readonly property int seedPhraseCellFontSize: 12
             readonly property int buttonFontSize: 15
+            readonly property int pukCellWidth: 50
+            readonly property int pukCellHeight: 60
         }
 
         readonly property QtObject mode: QtObject {
@@ -251,8 +253,10 @@ QtObject {
             readonly property string keycardLockedRecoverState: "KeycardLockedRecoverState"
             readonly property string maxPairingSlotsReachedState: "MaxPairingSlotsReachedState"
             readonly property string wrongKeycardPinState: "WrongKeycardPinState"
+            readonly property string wrongKeycardPukState: "WrongKeycardPukState"
             readonly property string maxPinRetriesReachedState: "MaxPinRetriesReachedState"
             readonly property string recoverKeycardState: "RecoverKeycardState"
+            readonly property string enterKeycardPukState: "EnterKeycardPukState"
         }
     }
 

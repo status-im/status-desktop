@@ -20,7 +20,7 @@ type FlowType {.pure.} = enum
   DeleteAccountAndUnpair
 
 const PINLengthForStatusApp* = 6
-const PUKLengthForStatusApp = 12
+const PUKLengthForStatusApp* = 12
 
 const SupportedMnemonicLength12* = 12
 const SupportedMnemonicLength18* = 18
@@ -197,7 +197,7 @@ QtObject:
         if keycardEvent.pukRetries == 0:
           self.events.emit(SignalMaxPUKRetriesReached, KeycardArgs())
         else:
-          self.events.emit(SignalWrongKeycardPUK, KeycardArgs())
+          self.events.emit(SignalWrongKeycardPUK, KeycardArgs(data: $keycardEvent.pukRetries))
         return true
       if keycardEvent.error == ErrorHasKeys:
         self.events.emit(SignalKeycardNotEmpty, KeycardArgs())
@@ -221,8 +221,8 @@ QtObject:
     debug "keycardResumeFlow", flowType=self.currentFlow.int, payload=payload, response=response
 
   proc cancelCurrentFlow*(self: Service) =
-    self.currentFlow = FlowType.NoFlow
     let response = keycard_go.keycardCancelFlow()
+    self.currentFlow = FlowType.NoFlow
     debug "keycardCancelFlow", flowType=self.currentFlow.int, response=response
 
   proc generateRandomPUK(self: Service): string =
@@ -263,17 +263,18 @@ QtObject:
     self.currentFlow = FlowType.RecoverAccount
     self.startFlow(payload)    
 
-  proc storePin*(self: Service, pin: string) =
+  proc storePin*(self: Service, pin: string, useRandomPuk: bool) =
     if pin.len == 0:
       info "empty pin provided"
       return
     var payload = %* {
       RequestParamOverwrite: true,
       RequestParamMnemonicLen: MnemonicLengthForStatusApp,
-      RequestParamNewPUK: self.generateRandomPUK(),
       RequestParamPIN: pin,
       RequestParamNewPIN: pin
     }
+    if useRandomPuk:
+      payload[RequestParamNewPUK] = %* self.generateRandomPUK()
     self.resumeFlow(payload)
 
   proc enterPin*(self: Service, pin: string) =
@@ -282,6 +283,15 @@ QtObject:
       return
     var payload = %* {
       RequestParamPIN: pin
+    }
+    self.resumeFlow(payload)
+
+  proc enterPuk*(self: Service, puk: string) =
+    if puk.len == 0:
+      info "empty puk provided"
+      return
+    var payload = %* {
+      RequestParamPUK: puk
     }
     self.resumeFlow(payload)
 

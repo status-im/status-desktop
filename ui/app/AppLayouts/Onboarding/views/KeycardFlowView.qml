@@ -38,6 +38,11 @@ OnboardingBasePage {
             {
                 return keycardPinViewComponent
             }
+            else if (root.keycardStore.keycardModule.flowState === Constants.keycard.state.enterKeycardPukState ||
+                     root.keycardStore.keycardModule.flowState === Constants.keycard.state.wrongKeycardPukState)
+            {
+                return keycardPukViewComponent
+            }
             else if (root.keycardStore.keycardModule.flowState === Constants.keycard.state.displaySeedPhraseState)
             {
                 return seedphraseViewComponent
@@ -73,6 +78,12 @@ OnboardingBasePage {
 
     property var keycardPinViewComponent: Component {
         KeycardPinView {
+            keycardStore: root.keycardStore
+        }
+    }
+
+    property var keycardPukViewComponent: Component {
+        KeycardPukView {
             keycardStore: root.keycardStore
         }
     }

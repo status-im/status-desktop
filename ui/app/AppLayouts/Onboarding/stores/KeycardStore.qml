@@ -32,6 +32,10 @@ QtObject {
         return root.keycardModule.checkKeycardPin(pin)
     }
 
+    function checkKeycardPuk(puk) {
+        return root.keycardModule.checkKeycardPuk(puk)
+    }
+
     function checkRepeatedKeycardPinCurrent(pin) {
         return root.keycardModule.checkRepeatedKeycardPinCurrent(pin)
     }

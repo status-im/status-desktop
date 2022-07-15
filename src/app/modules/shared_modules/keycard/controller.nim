@@ -58,6 +58,9 @@ proc init*(self: Controller) =
   self.events.on(SignalMaxPINRetriesReached) do(e: Args):
     self.delegate.switchToState(FlowStateType.MaxPinRetriesReached)
 
+  self.events.on(SignalMaxPUKRetriesReached) do(e: Args):
+    self.delegate.switchToState(FlowStateType.KeycardLockedFactoryReset)
+
   self.events.on(SignalMaxPairingSlotsReached) do(e: Args):
     self.delegate.switchToState(FlowStateType.MaxPairingSlotsReached)
 
@@ -73,6 +76,10 @@ proc init*(self: Controller) =
     let arg = KeycardArgs(e)
     self.delegate.onWrongKeycardPin(arg.data)
 
+  self.events.on(SignalWrongKeycardPUK) do(e: Args):
+    let arg = KeycardArgs(e)
+    self.delegate.onWrongKeycardPuk(arg.data)
+
 proc runLoadAccountFlow*(self: Controller) =
   self.keycardService.startLoadAccountFlow()
 
@@ -82,11 +89,14 @@ proc runLoginFlow*(self: Controller) =
 proc runRecoverAccountFlow*(self: Controller) =
   self.keycardService.startRecoverAccountFlow()
 
-proc storePin*(self: Controller, pin: string) =
-  self.keycardService.storePin(pin)
+proc storePin*(self: Controller, pin: string, useRandomPuk: bool) =
+  self.keycardService.storePin(pin, useRandomPuk)
 
 proc enterPin*(self: Controller, pin: string) =
   self.keycardService.enterPin(pin)
+
+proc enterPuk*(self: Controller, puk: string) =
+  self.keycardService.enterPuk(puk)
 
 proc storeSeedPhrase*(self: Controller, seedPhraseLength: int, seedPhrase: string) =
   self.keycardService.storeSeedPhrase(seedPhraseLength, seedPhrase)
