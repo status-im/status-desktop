@@ -86,6 +86,7 @@ OnboardingBasePage {
             root.seedValidated()
         }
     }
+
     MessageDialog {
         id: importSeedError
         icon: StandardIcon.Critical
@@ -222,10 +223,12 @@ OnboardingBasePage {
                     grid.itemAtIndex(index).textEdit.input.edit.forceActiveFocus();
                 }
                 onKeyPressed: {
+                    grid.currentIndex = index;
+
                     if (event.key === Qt.Key_Backtab) {
                         for (var i = 0; i < grid.count; i++) {
                             if (parseInt(grid.itemAtIndex(i).leftComponentText) === ((parseInt(leftComponentText)-1) >= 0 ? (parseInt(leftComponentText)-1) : 0)) {
-                                grid.itemAtIndex(i).textEdit.input.edit.forceActiveFocus(Qt.TabFocusReason);
+                                grid.itemAtIndex(i).textEdit.input.edit.forceActiveFocus(Qt.BacktabFocusReason);
                                 textEdit.input.tabNavItem = grid.itemAtIndex(i).textEdit.input.edit;
                                 event.accepted = true
                                 break
@@ -265,8 +268,6 @@ OnboardingBasePage {
                             submitButton.checkMnemonicLength()
                         }
                     }
-
-                    grid.currentIndex = index;
                 }
                 Component.onCompleted: {
                     let item = grid.itemAtIndex(0)
