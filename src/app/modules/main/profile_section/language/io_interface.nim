@@ -16,7 +16,7 @@ method isLoaded*(self: AccessInterface): bool {.base.} =
 method getModuleAsVariant*(self: AccessInterface): QVariant {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method changeLanguage*(self: AccessInterface, locale: string) {.base.} =
+method changeLocale*(self: AccessInterface, locale: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method setIsDDMMYYDateFormat*(self: AccessInterface, isDDMMYYDateFormat: bool) {.slot.} =
@@ -24,6 +24,10 @@ method setIsDDMMYYDateFormat*(self: AccessInterface, isDDMMYYDateFormat: bool) {
 
 method setIs24hTimeFormat*(self: AccessInterface, is24hTimeFormat: bool) {.slot.} =
   raise newException(ValueError, "No implementation available")
+
+method onCurrentLocaleChanged*(self: AccessInterface, locale: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 
 # View Delegate Interface
 # Delegate for the view must be declared here due to use of QtObject and multi
