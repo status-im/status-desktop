@@ -1,6 +1,6 @@
-import NimQml, Tables
+import NimQml, tables, sequtils, sugar, chronicles
 
-import ./io_interface, ./view, ./controller
+import io_interface, view, controller, item, model, locale_table
 import ../io_interface as delegate_interface
 import ../../../../global/global_singleton
 
@@ -16,13 +16,31 @@ type
     viewVariant: QVariant
     moduleLoaded: bool
 
-proc newModule*(delegate: delegate_interface.AccessInterface, languageService: language_service.Service): Module =
+proc newModule*(delegate: delegate_interface.AccessInterface,
+    languageService: language_service.Service): Module =
   result = Module()
   result.delegate = delegate
   result.view = newView(result)
   result.viewVariant = newQVariant(result.view)
   result.controller = controller.newController(result, languageService)
   result.moduleLoaded = false
+
+proc populateLanguageModel(self: Module) =
+  var items: seq[Item]
+
+  for locale in self.controller.getLocales():
+    if localeDescriptionTable.contains(locale):
+      let localeDescr = localeDescriptionTable[locale]
+      items.add(initItem(
+        locale = locale,
+        name = localeDescr.name,
+        native = localeDescr.native,
+        flag = localeDescr.flag
+      ))
+    else:
+      warn "missing locale details", locale
+
+  self.view.model().setItems(items)
 
 method delete*(self: Module) =
   self.view.delete
@@ -35,6 +53,7 @@ method isLoaded*(self: Module): bool =
   return self.moduleLoaded
 
 method viewDidLoad*(self: Module) =
+  self.populateLanguageModel()
   self.moduleLoaded = true
   self.delegate.languageModuleDidLoad()
 
