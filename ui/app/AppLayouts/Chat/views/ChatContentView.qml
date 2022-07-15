@@ -477,13 +477,16 @@ ColumnLayout {
                 emojiPopup: root.emojiPopup
                 isContactBlocked: root.isBlocked
                 isActiveChannel: root.isActiveChannel
-                chatInputPlaceholder: root.isBlocked ?
-                                          qsTr("This user has been blocked.") :
-                                          qsTr("Type a message.")
                 anchors.bottom: parent.bottom
                 recentStickers: root.rootStore.stickersModuleInst.recent
                 stickerPackList: root.rootStore.stickersModuleInst.stickerPacks
                 chatType: chatContentModule? chatContentModule.chatDetails.type : Constants.chatType.unknown
+
+                Binding on chatInputPlaceholder {
+                    when: root.isBlocked
+                    value: qsTr("This user has been blocked.")
+                }
+
                 onSendTransactionCommandButtonClicked: {
                     if(!chatContentModule) {
                         console.debug("error on sending transaction command - chat content module is not set")
