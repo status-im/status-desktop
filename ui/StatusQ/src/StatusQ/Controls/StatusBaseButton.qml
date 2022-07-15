@@ -80,9 +80,9 @@ Rectangle {
 
 
     /// Implementation
+    implicitWidth: layout.width + statusBaseButton.leftPadding + statusBaseButton.rightPadding
+    implicitHeight: layout.height + statusBaseButton.topPadding + statusBaseButton.bottomPadding
 
-    implicitWidth: sensor.width
-    implicitHeight: sensor.height
 
     radius: size !== StatusBaseButton.Size.Tiny ? 8 : 6
 
@@ -100,9 +100,7 @@ Rectangle {
 
     MouseArea {
         id: sensor
-        width: layout.width + statusBaseButton.leftPadding + statusBaseButton.rightPadding
-        height: layout.height + statusBaseButton.topPadding + statusBaseButton.bottomPadding
-
+        anchors.fill: parent
         cursorShape: loading ? Qt.ArrowCursor
                              : Qt.PointingHandCursor
 
@@ -110,8 +108,7 @@ Rectangle {
         enabled: !loading && statusBaseButton.enabled
 
         Loader {
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
+            anchors.centerIn: parent
             active: loading
             sourceComponent: StatusLoadingIndicator {
                 color: d.textColor
@@ -120,9 +117,7 @@ Rectangle {
 
         Row {
             id: layout
-            anchors.left: parent.left
-            anchors.leftMargin: statusBaseButton.leftPadding
-            anchors.verticalCenter: parent.verticalCenter
+            anchors.centerIn: parent
             spacing: 4
             StatusIcon {
                 id: statusIcon
