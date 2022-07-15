@@ -9,7 +9,6 @@ UserAccount::UserAccount(std::unique_ptr<MultiAccount> data)
     : QObject()
     , m_data(std::move(data))
 {
-
 }
 
 const QString &UserAccount::name() const

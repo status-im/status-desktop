@@ -15,8 +15,8 @@ qt6_add_qml_module(${PROJECT_NAME}
     VERSION 1.0
 
     QML_FILES
-        StatusNavigationBar.qml
-        StatusNavigationButton.qml
+        NavigationBarButton.qml
+        SimpleNavBarSection.qml
 
     # Required to suppress "qmllint may not work" warning
     OUTPUT_DIRECTORY

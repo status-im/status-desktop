@@ -6,7 +6,6 @@
 #include <Onboarding/OnboardingController.h>
 
 #include <IOTestHelpers.h>
-#include <ScopedTestAccount.h>
 
 #include <gtest/gtest.h>
 

@@ -22,7 +22,9 @@ namespace fs = std::filesystem;
 
 namespace Status::Testing {
 
-ScopedTestAccount::ScopedTestAccount(const std::string &tempTestSubfolderName, const QString &accountName, const QString &accountPassword, bool ignorePreviousState)
+ScopedTestAccount::ScopedTestAccount(const std::string &tempTestSubfolderName,
+                                     const QString &accountName,
+                                     const QString &accountPassword)
     : m_fusedTestFolder{std::make_unique<AutoCleanTempTestDir>(tempTestSubfolderName)}
     , m_accountName(accountName)
     , m_accountPassword(accountPassword)
@@ -48,7 +50,7 @@ ScopedTestAccount::ScopedTestAccount(const std::string &tempTestSubfolderName, c
 
     // Beware, smartpointer is a requirement
     m_onboarding = std::make_shared<Onboarding::OnboardingController>(accountsService);
-    if(m_onboarding->getOpenedAccounts().size() != 0 && !ignorePreviousState)
+    if(m_onboarding->getOpenedAccounts().size() != 0)
         throw std::runtime_error("ScopedTestAccount - already have opened account");
 
     int accountLoggedInCount = 0;
@@ -130,6 +132,11 @@ Accounts::ChatOrWalletAccount ScopedTestAccount::firstWalletAccount()
     if(walletIt == accounts.end())
         throw std::runtime_error("ScopedTestAccount::firstWalletAccount: account not found");
     return *walletIt;
+}
+
+const Onboarding::MultiAccount &ScopedTestAccount::loggedInAccount() const
+{
+    return m_onboarding->accountsService()->getLoggedInAccount();
 }
 
 Onboarding::OnboardingController *ScopedTestAccount::onboardingController() const

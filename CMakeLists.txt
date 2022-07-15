@@ -32,6 +32,7 @@ add_subdirectory(libs/ApplicationCore)
 add_subdirectory(libs/Assets)
 add_subdirectory(libs/Helpers)
 add_subdirectory(libs/Onboarding)
+add_subdirectory(libs/Wallet)
 add_subdirectory(libs/StatusGoQt)
 add_subdirectory(libs/StatusQ)
 

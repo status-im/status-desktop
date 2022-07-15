@@ -20,8 +20,6 @@ qt6_add_qml_module(${PROJECT_NAME}
         qml/Status/Application/MainView/MainView.qml
         qml/Status/Application/MainView/StatusApplicationSections.qml
 
-        qml/Status/Application/MainView/StatusApplicationSections/Wallet/WalletNavBarSection.qml
-
         qml/Status/Application/Settings/ApplicationSettings.qml
 
         qml/Status/Application/System/StatusTrayIcon.qml
@@ -70,6 +68,7 @@ target_link_libraries(${PROJECT_NAME}
         Status::ApplicationCore
         Status::Helpers
         Status::Onboarding
+        Status::Wallet
         Status::Assets
         Status::StatusQ
         Status::StatusGoQt

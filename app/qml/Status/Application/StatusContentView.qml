@@ -29,8 +29,9 @@ Item {
         id: onboardingViewComponent
 
         OnboardingView {
-            onUserLoggedIn: {
+            onUserLoggedIn: function (statusAccount) {
                 splashScreenPopup.open()
+                //appController.statusAccount = statusAccount
                 contentLoader.sourceComponent = mainViewComponent
             }
         }

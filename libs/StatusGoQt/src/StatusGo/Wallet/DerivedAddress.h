@@ -23,7 +23,7 @@ namespace Status::StatusGo::Wallet {
  */
 struct DerivedAddress
 {
-    Accounts::EOAddress  address;
+    Accounts::EOAddress address;
     Accounts::DerivationPath path;
     bool hasActivity = false;
     bool alreadyCreated = false;
