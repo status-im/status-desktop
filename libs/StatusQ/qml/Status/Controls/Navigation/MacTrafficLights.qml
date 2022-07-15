@@ -4,6 +4,7 @@ import QtQuick.Controls
 import Status.Core.Theme
 import Status.Assets
 
+/// MacOS window decoration for QML. To be used when the title-bar is hidden.
 Item {
     id: root
 

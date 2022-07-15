@@ -1,0 +1,37 @@
+import QtQuick
+import QtQuick.Controls
+
+Item {
+    required property string name
+    property alias selected: iconButton.checked
+    property ButtonGroup mutuallyExclusiveGroup: null
+
+    height: width
+
+    Button {
+        id: iconButton
+
+        anchors.fill: parent
+
+        text: name.length ? name.charAt(0) : ""
+
+        flat: true
+
+        checkable: true
+        hoverEnabled: true
+
+        autoExclusive: true
+        ButtonGroup.group: mutuallyExclusiveGroup
+
+        background: Rectangle {
+            anchors.fill: parent
+
+            radius: width/2
+            border.width: 1
+
+            color: "#4360DF"
+            opacity: iconButton.checked ? 0.1 : iconButton.hovered ? 0.05 : 0
+            z: iconButton.z - 1
+        }
+    }
+}

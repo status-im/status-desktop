@@ -3,8 +3,11 @@
 #include <StatusGo/Accounts/Accounts.h>
 
 #include <Onboarding/Common/Constants.h>
+#include <Onboarding/Accounts/AccountsService.h>
 #include <Onboarding/OnboardingController.h>
 #include <StatusGo/Utils.h>
+
+#include <StatusGo/SignalsManager.h>
 
 #include <IOTestHelpers.h>
 #include <ScopedTestAccount.h>
@@ -25,12 +28,10 @@ namespace Status::Testing {
 TEST(AccountsAPI, TestGetAccounts)
 {
     constexpr auto testAccountName = "test_get_accounts_name";
-    constexpr auto testAccountPassword = "password*";
-    ScopedTestAccount testAccount(test_info_->name(), testAccountName, testAccountPassword, true);
+    ScopedTestAccount testAccount(test_info_->name(), testAccountName);
 
     const auto accounts = Accounts::getAccounts();
-    // TODO: enable after calling reset to status-go
-    //ASSERT_EQ(accounts.size(), 2);
+    ASSERT_EQ(accounts.size(), 2);
 
     const auto chatIt = std::find_if(accounts.begin(), accounts.end(), [](const auto& a) { return a.isChat; });
     ASSERT_NE(chatIt, accounts.end());
@@ -47,47 +48,79 @@ TEST(AccountsAPI, TestGetAccounts)
     ASSERT_TRUE(walletAccount.derivedFrom.has_value());
 }
 
-TEST(Accounts, TestGenerateAccountWithDerivedPath)
+TEST(Accounts, TestGenerateAccountWithDerivedPath_GenerateTwoAccounts)
 {
     constexpr auto testRootAccountName = "test-generate_account_with_derived_path-name";
-    constexpr auto testAccountPassword = "password*";
-    ScopedTestAccount testAccount(test_info_->name(), testRootAccountName, testAccountPassword, true);
+    ScopedTestAccount testAccount(test_info_->name(), testRootAccountName);
 
-    auto password{Utils::hashPassword(testAccountPassword)};
-    const auto newTestAccountName = u"test_generated_new_account-name"_qs;
+    const auto newTestWalletAccountNameBase = u"test_generated_new_wallet_account-name"_qs;
     const auto newTestAccountColor = QColor("fuchsia");
     const auto newTestAccountEmoji = u""_qs;
-    const auto newTestAccountPath = Status::Constants::General::PathWalletRoot;
+    const auto walletAccount = testAccount.firstWalletAccount();
+    for(int i = 1; i < 3; ++i) {
+        const auto newTestAccountPath = GoAccounts::DerivationPath(Status::Constants::General::PathWalletRoot.get() + "/" + QString::number(i));
+        const auto newTestWalletAccountName = newTestWalletAccountNameBase + QString::number(i);
+        Accounts::generateAccountWithDerivedPath(testAccount.hashedPassword(),
+                                                 newTestWalletAccountName,
+                                                 newTestAccountColor, newTestAccountEmoji,
+                                                 newTestAccountPath,
+                                                 walletAccount.derivedFrom.value());
+    }
 
-    const auto chatAccount = testAccount.firstChatAccount();
-    Accounts::generateAccountWithDerivedPath(password, newTestAccountName,
-                                           newTestAccountColor, newTestAccountEmoji,
-                                           newTestAccountPath, chatAccount.address);
     const auto updatedAccounts = Accounts::getAccounts();
-    ASSERT_EQ(updatedAccounts.size(), 3);
+    ASSERT_EQ(updatedAccounts.size(), 4);
+
+    for(int i = 1; i < 3; ++i) {
+        const auto newTestWalletAccountName = newTestWalletAccountNameBase + QString::number(i);
+        const auto newAccountIt = std::find_if(updatedAccounts.begin(), updatedAccounts.end(),
+                                         [&newTestWalletAccountName](const auto& a) {
+                                             return a.name == newTestWalletAccountName;
+                                         });
+        ASSERT_NE(newAccountIt, updatedAccounts.end());
+        const auto &acc = newAccountIt;
+        ASSERT_FALSE(acc->derivedFrom.has_value());
+        ASSERT_FALSE(acc->isWallet);
+        ASSERT_FALSE(acc->isChat);
+        const auto newTestAccountPath = GoAccounts::DerivationPath(Status::Constants::General::PathWalletRoot.get() + "/" + QString::number(i));
+        ASSERT_EQ(newTestAccountPath, acc->path);
+    }
+}
+
+TEST(Accounts, TestGenerateAccountWithDerivedPath_FailsWithAlreadyExists)
+{
+    constexpr auto testRootAccountName = "test-generate_account_with_derived_path-name";
+    ScopedTestAccount testAccount(test_info_->name(), testRootAccountName);
+
+    const auto newTestWalletAccountName = u"test_generated_new_account-name"_qs;
+    const auto newTestAccountColor = QColor("fuchsia");
+    const auto newTestAccountEmoji = u""_qs;
+    const auto newTestAccountPath = Status::Constants::General::PathDefaultWallet;
+
+    const auto walletAccount = testAccount.firstWalletAccount();
+    try {
+        Accounts::generateAccountWithDerivedPath(testAccount.hashedPassword(), newTestWalletAccountName,
+                                               newTestAccountColor, newTestAccountEmoji,
+                                               newTestAccountPath, walletAccount.derivedFrom.value());
+        FAIL() << "The first wallet account already exists from the logged in multi-account";
+    } catch(const StatusGo::CallPrivateRpcError& e) {
+        ASSERT_EQ(e.errorResponse().error.message, "account already exists");
+        ASSERT_EQ(e.errorResponse().error.code, -32000);
+    }
+
+    const auto updatedAccounts = Accounts::getAccounts();
+    ASSERT_EQ(updatedAccounts.size(), 2);
 
     const auto newAccountIt = std::find_if(updatedAccounts.begin(), updatedAccounts.end(),
-                                     [newTestAccountName = std::as_const(newTestAccountName)](const auto& a) {
-                                         return a.name == newTestAccountName;
+                                     [&newTestWalletAccountName](const auto& a) {
+                                         return a.name == newTestWalletAccountName;
                                      });
-    ASSERT_NE(newAccountIt, updatedAccounts.end());
-    const auto &newAccount = *newAccountIt;
-    ASSERT_FALSE(newAccount.address.get().isEmpty());
-    ASSERT_FALSE(newAccount.isChat);
-    ASSERT_FALSE(newAccount.isWallet);
-    ASSERT_EQ(newAccount.color, newTestAccountColor);
-    ASSERT_FALSE(newAccount.derivedFrom.has_value());
-    ASSERT_EQ(newAccount.emoji, newTestAccountEmoji);
-    ASSERT_EQ(newAccount.mixedcaseAddress.toUpper(), newAccount.address.get().toUpper());
-    ASSERT_EQ(newAccount.path, newTestAccountPath);
-    ASSERT_FALSE(newAccount.publicKey.isEmpty());
+    ASSERT_EQ(newAccountIt, updatedAccounts.end());
 }
 
 TEST(AccountsAPI, TestGenerateAccountWithDerivedPath_WrongPassword)
 {
     constexpr auto testRootAccountName = "test-generate_account_with_derived_path-name";
-    constexpr auto testAccountPassword = "password*";
-    ScopedTestAccount testAccount(test_info_->name(), testRootAccountName, testAccountPassword, true);
+    ScopedTestAccount testAccount(test_info_->name(), testRootAccountName);
 
     const auto chatAccount = testAccount.firstChatAccount();
     try {
@@ -108,23 +141,21 @@ TEST(AccountsAPI, TestGenerateAccountWithDerivedPath_WrongPassword)
 TEST(AccountsAPI, TestAddAccountWithMnemonicAndPath)
 {
     constexpr auto testRootAccountName = "test_root_account-name";
-    constexpr auto testAccountPassword = "password*";
-    ScopedTestAccount testAccount(test_info_->name(), testRootAccountName, testAccountPassword, true);
+    ScopedTestAccount testAccount(test_info_->name(), testRootAccountName);
 
-    auto password{Utils::hashPassword(testAccountPassword)};
     const auto newTestAccountName = u"test_import_from_mnemonic-name"_qs;
     const auto newTestAccountColor = QColor("fuchsia");
     const auto newTestAccountEmoji = u""_qs;
     const auto newTestAccountPath = Status::Constants::General::PathWalletRoot;
 
     Accounts::addAccountWithMnemonicAndPath("festival october control quarter husband dish throw couch depth stadium cigar whisper",
-                                          password, newTestAccountName, newTestAccountColor, newTestAccountEmoji,
+                                          testAccount.hashedPassword(), newTestAccountName, newTestAccountColor, newTestAccountEmoji,
                                           newTestAccountPath);
     const auto updatedAccounts = Accounts::getAccounts();
     ASSERT_EQ(updatedAccounts.size(), 3);
 
     const auto newAccountIt = std::find_if(updatedAccounts.begin(), updatedAccounts.end(),
-                                           [newTestAccountName = std::as_const(newTestAccountName)](const auto& a) {
+                                           [&newTestAccountName](const auto& a) {
         return a.name == newTestAccountName;
     });
     ASSERT_NE(newAccountIt, updatedAccounts.end());
@@ -144,10 +175,8 @@ TEST(AccountsAPI, TestAddAccountWithMnemonicAndPath)
 TEST(AccountsAPI, TestAddAccountWithMnemonicAndPath_WrongMnemonicWorks)
 {
     constexpr auto testRootAccountName = "test_root_account-name";
-    constexpr auto testAccountPassword = "password*";
-    ScopedTestAccount testAccount(test_info_->name(), testRootAccountName, testAccountPassword, true);
+    ScopedTestAccount testAccount(test_info_->name(), testRootAccountName);
 
-    auto password{Utils::hashPassword(testAccountPassword)};
     const auto newTestAccountName = u"test_import_from_wrong_mnemonic-name"_qs;
     const auto newTestAccountColor = QColor("fuchsia");
     const auto newTestAccountEmoji = u""_qs;
@@ -155,14 +184,14 @@ TEST(AccountsAPI, TestAddAccountWithMnemonicAndPath_WrongMnemonicWorks)
 
     // Added an inexistent word. The mnemonic is not checked.
     Accounts::addAccountWithMnemonicAndPath("october control quarter husband dish throw couch depth stadium cigar waku",
-                                          password, newTestAccountName, newTestAccountColor, newTestAccountEmoji,
+                                          testAccount.hashedPassword(), newTestAccountName, newTestAccountColor, newTestAccountEmoji,
                                           newTestAccountPath);
 
     const auto updatedAccounts = Accounts::getAccounts();
     ASSERT_EQ(updatedAccounts.size(), 3);
 
     const auto newAccountIt = std::find_if(updatedAccounts.begin(), updatedAccounts.end(),
-                                           [newTestAccountName = std::as_const(newTestAccountName)](const auto& a) {
+                                           [&newTestAccountName](const auto& a) {
         return a.name == newTestAccountName;
     });
 
@@ -182,8 +211,7 @@ TEST(AccountsAPI, TestAddAccountWithMnemonicAndPath_WrongMnemonicWorks)
 TEST(AccountsAPI, TestAddAccountWatch)
 {
     constexpr auto testRootAccountName = "test_root_account-name";
-    constexpr auto testAccountPassword = "password*";
-    ScopedTestAccount testAccount(test_info_->name(), testRootAccountName, testAccountPassword, true);
+    ScopedTestAccount testAccount(test_info_->name(), testRootAccountName);
 
     const auto newTestAccountName = u"test_watch_only-name"_qs;
     const auto newTestAccountColor = QColor("fuchsia");
@@ -194,7 +222,7 @@ TEST(AccountsAPI, TestAddAccountWatch)
     ASSERT_EQ(updatedAccounts.size(), 3);
 
     const auto newAccountIt = std::find_if(updatedAccounts.begin(), updatedAccounts.end(),
-                                           [newTestAccountName = std::as_const(newTestAccountName)](const auto& a) {
+                                           [&newTestAccountName](const auto& a) {
         return a.name == newTestAccountName;
     });
     ASSERT_NE(newAccountIt, updatedAccounts.end());
@@ -213,8 +241,7 @@ TEST(AccountsAPI, TestAddAccountWatch)
 TEST(AccountsAPI, TestDeleteAccount)
 {
     constexpr auto testRootAccountName = "test_root_account-name";
-    constexpr auto testAccountPassword = "password*";
-    ScopedTestAccount testAccount(test_info_->name(), testRootAccountName, testAccountPassword, true);
+    ScopedTestAccount testAccount(test_info_->name(), testRootAccountName);
 
     const auto newTestAccountName = u"test_account_to_delete-name"_qs;
     const auto newTestAccountColor = QColor("fuchsia");
@@ -225,7 +252,7 @@ TEST(AccountsAPI, TestDeleteAccount)
     ASSERT_EQ(updatedAccounts.size(), 3);
 
     const auto newAccountIt = std::find_if(updatedAccounts.begin(), updatedAccounts.end(),
-                                           [newTestAccountName = std::as_const(newTestAccountName)](const auto& a) {
+                                           [&newTestAccountName](const auto& a) {
         return a.name == newTestAccountName;
     });
     ASSERT_NE(newAccountIt, updatedAccounts.end());

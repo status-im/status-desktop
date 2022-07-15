@@ -7,7 +7,7 @@ import Status.Application
 import Status.Containers
 import Status.Controls
 
-import Status.Application.Navigation
+import Status.Controls.Navigation
 
 /// Responsible for setup of user workflows after onboarding
 Item {
@@ -28,12 +28,12 @@ Item {
 
         anchors.fill: parent
 
-        StatusNavigationBar {
+        NavigationBar {
             id: navBar
 
             Layout.fillHeight: true
 
-            sections: appSections.sectionsList
+            sections: appSections.sections
         }
 
         ColumnLayout {
@@ -46,17 +46,15 @@ Item {
                 visible: false  // TODO: appController.bannerController.visible
             }
             Loader {
-                id: mainLoader
-
                 Layout.fillWidth: true
                 Layout.fillHeight: true
+
+                sourceComponent: navBar.currentSection
             }
         }
     }
 
     StatusApplicationSections {
         id: appSections
-        // Chat ...
-        // Wallet ...
     }
 }

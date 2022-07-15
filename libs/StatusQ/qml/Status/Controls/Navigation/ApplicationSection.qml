@@ -1,12 +1,10 @@
 import QtQml
 
-/*!
-  An application section with button and content view
-  */
+/// An application section with button and content view
 QtObject {
-    required property NavigationBarButtonComponent navButton
-    required property ApplicationContentView content
+    /// \c NavigationBarSection
+    required property Component navigationSection
 
-    component NavigationBarButtonComponent: NavigationBarButton {}
-    component ApplicationContentViewComponent: ApplicationContentView {}
+    /// \c ApplicationContentView
+    required property Component content
 }
