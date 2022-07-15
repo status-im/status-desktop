@@ -1254,11 +1254,9 @@ Rectangle {
     StatusQ.StatusButton {
         id: unblockBtn
         visible: control.isContactBlocked
-        height: messageInput.height - Style.current.halfPadding
         anchors.right: parent.right
         anchors.rightMargin: Style.current.halfPadding
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: Style.current.padding
+        anchors.bottom: messageInput.bottom
         text: qsTr("Unblock")
         type: StatusQ.StatusBaseButton.Type.Danger
         onClicked: function (event) {
