@@ -85,6 +85,7 @@ Page {
         anchors.topMargin: Style.current.halfPadding
         height: tagSelector.height
         clip: true
+        spacing: Style.current.padding
         StatusTagSelector {
             id: tagSelector
             Layout.fillWidth: true
@@ -112,6 +113,7 @@ Page {
 
         StatusButton {
             id: confirmButton
+            implicitWidth: 106
             implicitHeight: 44
             Layout.alignment: Qt.AlignTop
             enabled: tagSelector.namesModel.count > 0
@@ -124,13 +126,13 @@ Page {
         }
 
         Item {
+            implicitHeight: 32
+            implicitWidth: 32
             Layout.alignment: Qt.AlignTop
-            implicitHeight: 44
-            implicitWidth: 44
 
             StatusActivityCenterButton {
                 id: notificationButton
-                anchors.centerIn: parent
+                anchors.right: parent.right
                 unreadNotificationsCount: activityCenter.unreadNotificationsCount
                 onClicked: activityCenter.open()
             }
@@ -175,8 +177,11 @@ Page {
         }
 
         StatusBaseText {
-            width: parent.width*.66
-            anchors.centerIn: parent
+            anchors.left: parent.left
+            anchors.leftMargin: 252
+            anchors.right: parent.right
+            anchors.rightMargin: 252
+            anchors.verticalCenter: parent.verticalCenter
             anchors.verticalCenterOffset: -(headerRow.height/2)
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
@@ -184,9 +189,8 @@ Page {
             wrapMode: Text.WordWrap
             font.pixelSize: 15
             color: Theme.palette.baseColor1
-            text: qsTr("You can only send direct messages to your Contacts.\n\n
-Send a contact request to the person you would like to chat with, you will be able to \
-chat with them once they have accepted your contact request.")
+            text: qsTr("You can only send direct messages to your Contacts.\n
+Send a contact request to the person you would like to chat with, you will be able to chat with them once they have accepted your contact request.")
             Component.onCompleted: {
                 if (visible) {
                     tagSelector.enabled = false;
