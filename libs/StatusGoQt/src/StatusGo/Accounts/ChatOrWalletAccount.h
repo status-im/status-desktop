@@ -19,19 +19,19 @@ namespace Status::StatusGo::Accounts {
 /// \note equivalent of status-go's accounts.Account@multiaccounts/accounts/database.go
 struct ChatOrWalletAccount
 {
+    QString name;
     EOAddress address;
     bool isChat = false;
-    int clock = -1;
-    QColor color;
-    std::optional<EOAddress> derivedFrom;
-    QString emoji;
-    bool isHidden = false;
-    QString mixedcaseAddress;
-    QString name;
-    DerivationPath path;
-    QString publicKey;
-    bool isRemoved = false;
     bool isWallet = false;
+    QColor color;
+    QString emoji;
+    std::optional<EOAddress> derivedFrom;
+    DerivationPath path;
+    int clock = -1;
+    bool isHidden = false;
+    bool isRemoved = false;
+    QString publicKey;
+    QString mixedcaseAddress;
 };
 
 using ChatOrWalletAccounts = std::vector<ChatOrWalletAccount>;

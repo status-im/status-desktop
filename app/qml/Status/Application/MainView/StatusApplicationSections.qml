@@ -1,25 +1,37 @@
 import QtQml
+import QtQuick
+import QtQuick.Controls
 
+import Status.Application.Navigation
 import Status.Controls.Navigation
+import Status.Wallet
 
-QtObject {
-    readonly property var sectionsList: [wallet, settings]
-    readonly property ApplicationSection wallet: ApplicationSection {
-        navButton: WalletButtonComponent
-        content: WalletContentComponent
+Item {
+    property var sections: [walletSection, settingsSection]
 
-        component WalletButtonComponent: NavigationBarButton {
-        }
-        component WalletContentComponent: ApplicationContentView {
-        }
+    ButtonGroup {
+        id: oneSectionSelectedGroup
     }
-    readonly property ApplicationSection settings: ApplicationSection {
-        navButton: SettingsButtonComponent
-        content: SettingsContentComponent
 
-        component SettingsButtonComponent: NavigationBarButton {
+    ApplicationSection {
+        id: walletSection
+        navigationSection: SimpleNavBarSection {
+            name: "Wallet"
+            mutuallyExclusiveGroup: oneSectionSelectedGroup
         }
-        component SettingsContentComponent: ApplicationContentView {
+        content: WalletView {}
+    }
+    ApplicationSection {
+        id: settingsSection
+        navigationSection: SimpleNavBarSection {
+            name: "Settings"
+            mutuallyExclusiveGroup: oneSectionSelectedGroup
+        }
+        content: ApplicationContentView {
+            Label {
+                anchors.centerIn: parent
+                text: "TODO Settings"
+            }
         }
     }
 }

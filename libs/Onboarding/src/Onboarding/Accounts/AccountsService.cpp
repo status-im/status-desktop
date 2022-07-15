@@ -139,10 +139,14 @@ QString AccountsService::login(MultiAccount account, const QString& password)
 
     auto hashedPassword(Utils::hashPassword(password));
 
+    QString installationId(QUuid::createUuid().toString(QUuid::WithoutBraces));
+    QJsonObject nodeConfig(getDefaultNodeConfig(installationId));
+
     QString thumbnailImage;
     QString largeImage;
+    // TODO DEV
     auto response = StatusGo::Accounts::login(account.name, account.keyUid, hashedPassword,
-                                             thumbnailImage, largeImage);
+                                             thumbnailImage, largeImage/*, nodeConfig*/);
     if(response.containsError())
     {
         qWarning() << response.error.message;

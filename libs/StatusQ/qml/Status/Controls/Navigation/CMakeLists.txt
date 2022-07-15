@@ -20,7 +20,8 @@ qt6_add_qml_module(${PROJECT_NAME}
         ApplicationState.qml
         MacTrafficLights.qml
         NavigationBar.qml
-        NavigationBarButton.qml
+        NavigationBarSection.qml
+        PanelAndContentBase.qml
 
     # Required to suppress "qmllint may not work" warning
     OUTPUT_DIRECTORY

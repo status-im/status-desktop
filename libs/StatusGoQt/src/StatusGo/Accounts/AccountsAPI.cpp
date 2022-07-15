@@ -42,6 +42,7 @@ void generateAccountWithDerivedPath(const HashedPassword &password, const QStrin
     auto result = Utils::statusGoCallPrivateRPC(inputJson.dump().c_str());
     auto resultJson = json::parse(result);
     checkPrivateRpcCallResultAndReportError(resultJson);
+
 }
 
 void addAccountWithMnemonicAndPath(const QString &mnemonic, const HashedPassword &password, const QString &name,

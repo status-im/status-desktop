@@ -2,6 +2,8 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
+import Status.Onboarding
+
 import Status.Containers
 
 import "base"
@@ -12,7 +14,8 @@ OnboardingPageBase {
     required property var onboardingController      // OnboardingController
 
     signal setupNewAccount()
-    signal accountLoggedIn()
+    /// \param statusAccount \c UserAccount
+    signal accountLoggedIn(var statusAccount)
 
     backAvailable: false
 
@@ -51,10 +54,16 @@ OnboardingPageBase {
 
                 // TODO: remove dev helper
                 text: "1234567890"
+                Timer {
+                    interval: 100
+                    running: loginButton.enabled && accountsComboBox.count
+                    onTriggered: loginButton.clicked()
+                }
                 // END dev
             }
 
             Button {
+                id: loginButton
                 text: qsTr("Login")
                 enabled: passwordInput.text.length >= 10
                 onClicked: {
@@ -80,7 +89,7 @@ OnboardingPageBase {
         target: onboardingController
 
         function onAccountLoggedIn() {
-            root.accountLoggedIn()
+            root.accountLoggedIn(accountsComboBox.currentValue)
         }
         function onAccountLoginError(error) {
             console.warn(`Error logging in "${error}"`)

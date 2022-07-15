@@ -17,7 +17,8 @@ import Status.ApplicationCore
 Item {
     id: root
 
-    signal userLoggedIn()
+    /// \param statusAccount \c UserAccount
+    signal userLoggedIn(var statusAccount)
 
     implicitWidth: 1232
     implicitHeight: 770
@@ -47,7 +48,9 @@ Item {
         initialItem: WelcomeView {
             onboardingController: onboardingModule.controller
             onSetupNewAccount: stackView.push(setupNewProfileViewComponent)
-            onAccountLoggedIn: root.userLoggedIn()
+            onAccountLoggedIn: function (statusAccount) {
+                root.userLoggedIn(statusAccount)
+            }
         }
     }
 

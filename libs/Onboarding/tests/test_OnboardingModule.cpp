@@ -120,8 +120,7 @@ TEST(OnboardingModule, TestLoginEndToEnd)
     });
 
     constexpr auto accountName = "TestLoginAccountName";
-    constexpr auto accountPassword = "1234567890";
-    ScopedTestAccount testAccount(test_info_->name(), accountName, accountPassword, true);
+    ScopedTestAccount testAccount(test_info_->name(), accountName);
     testAccount.processMessages(1000, [createAndLogin]() {
         return !createAndLogin;
     });
@@ -139,10 +138,9 @@ TEST(OnboardingModule, TestLoginEndToEnd)
 
     auto onboarding = std::make_shared<Onboarding::OnboardingController>(accountsService);
     // We don't have a way yet to simulate status-go process exit
-    //EXPECT_EQ(onboarding->getOpenedAccounts().count(), 0);
+    EXPECT_EQ(onboarding->getOpenedAccounts().size(), 1);
 
     auto accounts = accountsService->openAndListAccounts();
-    //ASSERT_EQ(accounts.size(), 1);
     ASSERT_GT(accounts.size(), 0);
 
     int accountLoggedInCount = 0;
@@ -150,13 +148,15 @@ TEST(OnboardingModule, TestLoginEndToEnd)
         accountLoggedInCount++;
     });
     bool accountLoggedInError = false;
-    QObject::connect(onboarding.get(), &Onboarding::OnboardingController::accountLoginError, [&accountLoggedInError]() {
-        accountLoggedInError = true;
-    });
+    QObject::connect(onboarding.get(), &Onboarding::OnboardingController::accountLoginError,
+                     [&accountLoggedInError](const QString& error) {
+                          accountLoggedInError = true;
+                          qDebug() << "Failed logging in in test" << test_info_->name() << "with error:" << error;
+                     }
+    );
 
-    // Workaround until we reset the status-go state
     auto ourAccountRes = std::find_if(accounts.begin(), accounts.end(), [accountName](const auto &a) { return a.name == accountName; });
-    auto errorString = accountsService->login(*ourAccountRes, accountPassword);
+    auto errorString = accountsService->login(*ourAccountRes, testAccount.password());
     ASSERT_EQ(errorString.length(), 0);
 
     testAccount.processMessages(1000, [accountLoggedInCount, accountLoggedInError]() {
@@ -164,6 +164,44 @@ TEST(OnboardingModule, TestLoginEndToEnd)
     });
     ASSERT_EQ(accountLoggedInCount, 1);
     ASSERT_EQ(accountLoggedInError, 0);
+}
+
+TEST(OnboardingModule, TestLoginEndToEnd_WrongPassword)
+{
+    constexpr auto testRootAccountName = "test-login_wrong_pass-name";
+    ScopedTestAccount testAccount(test_info_->name(), testRootAccountName);
+
+    testAccount.logOut();
+
+    auto accountsService = std::make_shared<Onboarding::AccountsService>();
+    auto result = accountsService->init(testAccount.fusedTestFolder());
+    ASSERT_TRUE(result);
+    auto onboarding = std::make_shared<Onboarding::OnboardingController>(accountsService);
+    auto accounts = accountsService->openAndListAccounts();
+    ASSERT_GT(accounts.size(), 0);
+
+    int accountLoggedInCount = 0;
+    QObject::connect(onboarding.get(), &Onboarding::OnboardingController::accountLoggedIn, [&accountLoggedInCount]() {
+        accountLoggedInCount++;
+    });
+    bool accountLoggedInError = false;
+    QString loginErrorMessage;
+    QObject::connect(onboarding.get(), &Onboarding::OnboardingController::accountLoginError,
+                     [&loginErrorMessage, &accountLoggedInError](const QString& error) {
+        accountLoggedInError = true;
+        loginErrorMessage = error;
+    });
+
+    auto ourAccountRes = std::find_if(accounts.begin(), accounts.end(), [testRootAccountName](const auto &a) { return a.name == testRootAccountName; });
+    auto errorString = accountsService->login(*ourAccountRes, testAccount.password() + "extra");
+    ASSERT_EQ(errorString.length(), 0);
+
+    testAccount.processMessages(1000, [accountLoggedInCount, accountLoggedInError]() {
+        return accountLoggedInCount == 0 && !accountLoggedInError;
+    });
+    ASSERT_EQ(accountLoggedInError, 1);
+    ASSERT_EQ(accountLoggedInCount, 0);
+    ASSERT_EQ(loginErrorMessage, "file is not a database");
 }
 
 } // namespace
