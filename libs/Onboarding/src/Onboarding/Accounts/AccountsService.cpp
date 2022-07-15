@@ -81,8 +81,8 @@ const std::vector<GeneratedMultiAccount>& AccountsService::generatedAccounts() c
 
 bool AccountsService::setupAccountAndLogin(const QString &accountId, const QString &password, const QString &displayName)
 {
-    QString installationId(QUuid::createUuid().toString(QUuid::WithoutBraces));
-    QJsonObject accountData(getAccountDataForAccountId(accountId, displayName));
+    const QString installationId(QUuid::createUuid().toString(QUuid::WithoutBraces));
+    const QJsonObject accountData(getAccountDataForAccountId(accountId, displayName));
 
     if(!setKeyStoreDir(accountData.value("key-uid").toString()))
         return false;
@@ -123,7 +123,7 @@ bool AccountsService::isFirstTimeAccountLogin() const
 bool AccountsService::setKeyStoreDir(const QString &key)
 {
     m_keyStoreDir = m_statusgoDataDir / m_keyStoreDirName / key.toStdString();
-    auto response = StatusGo::General::initKeystore(m_keyStoreDir.c_str());
+    const auto response = StatusGo::General::initKeystore(m_keyStoreDir.c_str());
     return !response.containsError();
 }
 
@@ -137,12 +137,16 @@ QString AccountsService::login(MultiAccount account, const QString& password)
     if(StatusGo::Accounts::openAccounts(m_statusgoDataDir.c_str()).containsError())
         return QString("Failed to open accounts before logging in");
 
-    auto hashedPassword(Utils::hashPassword(password));
+    const auto hashedPassword(Utils::hashPassword(password));
 
-    QString thumbnailImage;
-    QString largeImage;
-    auto response = StatusGo::Accounts::login(account.name, account.keyUid, hashedPassword,
-                                             thumbnailImage, largeImage);
+    const QString installationId(QUuid::createUuid().toString(QUuid::WithoutBraces));
+    const QJsonObject nodeConfig(getDefaultNodeConfig(installationId));
+
+    const QString thumbnailImage;
+    const QString largeImage;
+    // TODO DEV
+    const auto response = StatusGo::Accounts::login(account.name, account.keyUid, hashedPassword,
+                                             thumbnailImage, largeImage/*, nodeConfig*/);
     if(response.containsError())
     {
         qWarning() << response.error.message;
@@ -164,7 +168,7 @@ void AccountsService::clear()
 
 QString AccountsService::generateAlias(const QString& publicKey)
 {
-    auto response = StatusGo::Accounts::generateAlias(publicKey);
+    const auto response = StatusGo::Accounts::generateAlias(publicKey);
     if(response.containsError())
     {
         qWarning() << response.error.message;
@@ -182,7 +186,7 @@ void AccountsService::deleteMultiAccount(const MultiAccount &account)
 DerivedAccounts AccountsService::storeDerivedAccounts(const QString& accountId, const StatusGo::HashedPassword& password,
                                                       const std::vector<Accounts::DerivationPath> &paths)
 {
-    auto response = StatusGo::Accounts::storeDerivedAccounts(accountId, password, paths);
+    const auto response = StatusGo::Accounts::storeDerivedAccounts(accountId, password, paths);
     if(response.containsError())
     {
         qWarning() << response.error.message;
@@ -193,7 +197,7 @@ DerivedAccounts AccountsService::storeDerivedAccounts(const QString& accountId, 
 
 StoredMultiAccount AccountsService::storeAccount(const QString& accountId, const StatusGo::HashedPassword& password)
 {
-    auto response = StatusGo::Accounts::storeAccount(accountId, password);
+    const auto response = StatusGo::Accounts::storeAccount(accountId, password);
     if(response.containsError())
     {
         qWarning() << response.error.message;
@@ -308,7 +312,7 @@ QJsonObject AccountsService::prepareAccountSettingsJsonObject(const GeneratedMul
 {
     try {
         auto templateDefaultNetworksJson = getDataFromFile(":/Status/StaticConfig/default-networks.json").value();
-        auto infuraKey = getDataFromFile(":/Status/StaticConfig/infura_key").value();
+        const auto infuraKey = getDataFromFile(":/Status/StaticConfig/infura_key").value();
 
         QString defaultNetworksContent = templateDefaultNetworksJson.replace("%INFURA_KEY%", infuraKey);
         QJsonArray defaultNetworksJson = QJsonDocument::fromJson(defaultNetworksContent.toUtf8()).array();
@@ -370,7 +374,7 @@ QJsonObject AccountsService::getAccountSettings(const QString& accountId, const 
 
 QJsonArray getNodes(const QJsonObject& fleet, const QString& nodeType)
 {
-    auto nodes = fleet[nodeType].toObject();
+    const auto nodes = fleet[nodeType].toObject();
     QJsonArray result;
     for(auto it = nodes.begin(); it != nodes.end(); ++it)
         result << *it;

@@ -1,7 +1,5 @@
 import QtQuick
 
-/*!
-  Template for application section content
- */
+/// Template for application section content
 Item {
 }

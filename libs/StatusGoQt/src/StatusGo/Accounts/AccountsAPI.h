@@ -20,8 +20,12 @@ namespace Status::StatusGo::Accounts
 /// \throws \c CallPrivateRpcError
 Accounts::ChatOrWalletAccounts getAccounts();
 
-/// \brief Generate a new account
-/// \note the underlying status-go api, SaveAccounts@accounts.go, returns `nil` for \c CallPrivateRpcResponse.result
+/// \brief Generate a new account for the specified derivation path
+///
+/// \note if the account for the \c path exists it will fail with
+///       CallPrivateRpcError.errorResponse().error.message="account already exists"
+/// \note increment the last path index in consequent calls to generate multiple accounts for \c derivedFrom
+/// \note the underlying status-go API, SaveAccounts@accounts.go, returns `nil` for \c CallPrivateRpcResponse.result
 /// \see \c getAccounts
 /// \throws \c CallPrivateRpcError
 void generateAccountWithDerivedPath(const HashedPassword &password, const QString &name,

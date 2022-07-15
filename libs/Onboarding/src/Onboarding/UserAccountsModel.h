@@ -3,13 +3,10 @@
 #include "UserAccount.h"
 
 #include <QAbstractListModel>
-#include <QQmlEngine>
 
 namespace Status::Onboarding {
 
-/*!
- * \brief Available UserAccount elements
- */
+/// \todo Replace it with \c QObjectVectorModel
 class UserAccountsModel : public QAbstractListModel
 {
     Q_OBJECT

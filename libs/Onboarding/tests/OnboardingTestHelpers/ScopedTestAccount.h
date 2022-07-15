@@ -2,6 +2,8 @@
 
 #include <Wallet/WalletApi.h>
 
+#include <StatusGo/Utils.h>
+
 #include <string>
 #include <filesystem>
 
@@ -11,10 +13,12 @@ class QCoreApplication;
 
 namespace Status::Onboarding {
     class OnboardingController;
+    class MultiAccount;
 }
 
 namespace Wallet = Status::StatusGo::Wallet;
 namespace Accounts = Status::StatusGo::Accounts;
+namespace GoUtils = Status::StatusGo::Utils;
 
 namespace Status::Testing {
 
@@ -29,8 +33,7 @@ public:
      */
     explicit ScopedTestAccount(const std::string &tempTestSubfolderName,
                                const QString &accountName = defaultAccountName,
-                               const QString &accountPassword = defaultAccountPassword,
-                               bool ignorePreviousState = false /*workaround to status-go persisting state*/);
+                               const QString &accountPassword = defaultAccountPassword);
     ~ScopedTestAccount();
 
     void processMessages(size_t millis, std::function<bool()> shouldWaitUntilTimeout);
@@ -38,8 +41,11 @@ public:
 
     static Accounts::ChatOrWalletAccount firstChatAccount();
     static Accounts::ChatOrWalletAccount firstWalletAccount();
+    /// Root account
+    const Status::Onboarding::MultiAccount &loggedInAccount() const;
 
     QString password() const { return m_accountPassword; };
+    StatusGo::HashedPassword hashedPassword() const { return GoUtils::hashPassword(m_accountPassword); };
 
     Status::Onboarding::OnboardingController* onboardingController() const;
 
