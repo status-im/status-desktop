@@ -42,10 +42,9 @@ StatusFlatRoundButton {
 
     StatusBadge {
         id: statusBadge
-
         visible: value > 0
         anchors.centerIn: parent
-        anchors.verticalCenterOffset: -(icon.height/3)
+        anchors.verticalCenterOffset: -(icon.height/2.5)
         anchors.horizontalCenterOffset: (width/2.5)
         border.width: 2
         border.color: parent.hovered ? Theme.palette.baseColor2 : Theme.palette.statusAppLayout.backgroundColor

@@ -30,6 +30,8 @@ Rectangle {
         font.weight: Font.Medium
         color: Theme.palette.statusBadge.foregroundColor
         anchors.centerIn: parent
+        anchors.verticalCenterOffset: statusBadge.border.width/4
+        anchors.horizontalCenterOffset: statusBadge.border.width/4
         text: {
             if (statusBadge.value > 99) {
                 return qsTr("99+");
