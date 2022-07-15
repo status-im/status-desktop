@@ -250,6 +250,8 @@ Item {
             }
 
             regularNavBarButton: StatusNavBarTabButton {
+                id: navbar
+                objectName: model.name + "-navbar"
                 anchors.horizontalCenter: parent.horizontalCenter
                 name: model.icon.length > 0? "" : model.name
                 icon.name: model.icon
