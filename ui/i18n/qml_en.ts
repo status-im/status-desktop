@@ -5745,14 +5745,14 @@ device, so only you can use them.</translation>
         <translation>Enter password</translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Onboarding/views/LoginView.qml" line="280" />
+        <location filename="../app/AppLayouts/Onboarding/views/LoginView.qml" line="278" />
         <source>Login failed: %1</source>
         <translation>Login failed: %1</translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Onboarding/views/LoginView.qml" line="291" />
-        <source>Login failed. Please re-enter your password and try again.</source>
-        <translation>Login failed. Please re-enter your password and try again.</translation>
+        <location filename="../app/AppLayouts/Onboarding/views/LoginView.qml" line="289" />
+        <source>Password incorrect</source>
+        <translation>Password incorrect</translation>
     </message>
 </context>
 <context>
