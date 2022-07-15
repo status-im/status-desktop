@@ -1616,14 +1616,9 @@ Do you wish to override the security check and continue?</translation>
         <translation>Blocked</translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Chat/views/ChatContentView.qml" line="484" />
+        <location filename="../app/AppLayouts/Chat/views/ChatContentView.qml" line="475" />
         <source>This user has been blocked.</source>
         <translation>This user has been blocked.</translation>
-    </message>
-    <message>
-        <location filename="../app/AppLayouts/Chat/views/ChatContentView.qml" line="485" />
-        <source>Type a message.</source>
-        <translation>Type a message.</translation>
     </message>
 </context>
 <context>
@@ -7825,8 +7820,8 @@ device, so only you can use them.</translation>
     <message>
         <location filename="../imports/shared/status/StatusChatInput.qml" line="60" />
         <location filename="../imports/shared/status/StatusChatInput.qml" line="60" />
-        <source>Type a message.</source>
-        <translation>Type a message.</translation>
+        <source>Message</source>
+        <translation>Message</translation>
     </message>
     <message>
         <location filename="../imports/shared/status/StatusChatInput.qml" line="645" />

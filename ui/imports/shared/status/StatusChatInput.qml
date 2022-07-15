@@ -57,7 +57,7 @@ Rectangle {
 
     property int chatType
 
-    property string chatInputPlaceholder: qsTr("Type a message.")
+    property string chatInputPlaceholder: qsTr("Message")
 
     property alias textInput: messageInputField
     property bool isStatusUpdateInput: chatType === Constants.chatType.profile
