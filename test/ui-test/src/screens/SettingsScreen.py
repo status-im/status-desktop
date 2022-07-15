@@ -21,7 +21,7 @@ class MainScreenComponents(Enum):
 
 
 class AdvancedOptionScreen(Enum):
-    ACTIVATE_OR_DEACTIVATE_WALLET: str = "o_StatusSettingsLineButton"
+    ACTIVATE_OR_DEACTIVATE_WALLET: str = "walletSettingsLineButton"
     I_UNDERSTAND_POP_UP: str = "i_understand_StatusBaseText"
     
 

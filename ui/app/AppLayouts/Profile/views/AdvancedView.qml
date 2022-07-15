@@ -96,9 +96,11 @@ SettingsContentBase {
 
             // TODO: replace with StatusQ component
             StatusSettingsLineButton {
+                id: wallet
                 anchors.leftMargin: 0
                 anchors.rightMargin: 0
                 text: qsTr("Wallet")
+                objectName: qsTr("WalletSettingsLineButton")
                 isSwitch: true
                 switchChecked: localAccountSensitiveSettings.isWalletEnabled
                 onClicked: {

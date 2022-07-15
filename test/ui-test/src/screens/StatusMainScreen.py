@@ -18,7 +18,7 @@ class MainScreenComponents(Enum):
     STATUS_ICON = "mainWindow_statusIcon_StatusIcon_2"
     PUBLIC_CHAT_ICON = "mainWindow_public_chat_icon_StatusIcon"
     JOIN_PUBLIC_CHAT = "join_public_chat_StatusMenuItemDelegate"
-    SETTINGS_BUTTON = "settings_icon_StatusIcon"
+    SETTINGS_BUTTON = "settings_navbar_settings_icon_StatusIcon"
 
 
 class ChatNamePopUp(Enum):
@@ -42,3 +42,4 @@ class StatusMainScreen:
     
     def open_settings(self):
         click_obj_by_name(MainScreenComponents.SETTINGS_BUTTON.value)
+
