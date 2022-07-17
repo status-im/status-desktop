@@ -655,7 +655,7 @@ QtObject:
     )
     self.threadpool.start(arg)
 
-# See render-inline in status-react/src/status_im/ui/screens/chat/message/message.cljs
+# See render-inline in status-mobile/src/status_im/ui/screens/chat/message/message.cljs
 proc renderInline(self: Service, parsedText: ParsedText): string =
   let value = escape_html(parsedText.literal)
     .multiReplace(("\r\n", "<br/>"))
@@ -688,7 +688,7 @@ proc renderInline(self: Service, parsedText: ParsedText): string =
     else:
       result = fmt(" {value} ")
 
-# See render-block in status-react/src/status_im/ui/screens/chat/message/message.cljs
+# See render-block in status-mobile/src/status_im/ui/screens/chat/message/message.cljs
 proc getRenderedText*(self: Service, parsedTextArray: seq[ParsedText]): string =
   for parsedText in parsedTextArray:
     case parsedText.type:

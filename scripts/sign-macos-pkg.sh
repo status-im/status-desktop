@@ -86,7 +86,7 @@ if [[ -d "${TARGET}" ]]; then
     spctl --assess --type execute --verbose=2 "${TARGET}"
 else
     echo "WARNING: The 'open' type security assesment is disabled due to lack of 'Notarization'"
-    # Issue: https://github.com/status-im/status-react/pull/9172
+    # Issue: https://github.com/status-im/status-mobile/pull/9172
     # Details: https://developer.apple.com/documentation/security/notarizing_your_app_before_distribution
     #spctl --assess --type open --context context:primary-signature --verbose=2 "${OBJECT}"
 fi

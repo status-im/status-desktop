@@ -44,8 +44,8 @@ Item {
     property bool advancedMode: false
 
     // TODO: change these values false once EIP1559 suggestions are revised
-    property double perGasTipLimitFloor: 1 // Matches status-react minimum-priority-fee
-    property double perGasTipLimitAverage: formatDec(root.suggestedFees.maxPriorityFeePerGas, 2) // 1.5 // Matches status-react average-priority-fee
+    property double perGasTipLimitFloor: 1 // Matches status-mobile minimum-priority-fee
+    property double perGasTipLimitAverage: formatDec(root.suggestedFees.maxPriorityFeePerGas, 2) // 1.5 // Matches status-mobile average-priority-fee
 
 
     property bool showPriceLimitWarning : false

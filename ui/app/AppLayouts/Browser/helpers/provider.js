@@ -794,7 +794,7 @@ You may add additional accurate notices of copyright ownership.
 
 (function(){
   // Based on
-  // https://github.com/status-im/status-react/blob/f9fb4d6974138a276b0cdcc6e4ea1611063e70ca/resources/js/provider.js
+  // https://github.com/status-im/status-mobile/blob/f9fb4d6974138a276b0cdcc6e4ea1611063e70ca/resources/js/provider.js
   if(typeof EthereumProvider === "undefined"){
     let callbackId = 0;
     let callbacks = {};
