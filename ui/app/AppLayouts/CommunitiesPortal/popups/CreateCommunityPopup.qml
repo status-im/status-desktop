@@ -29,12 +29,14 @@ StatusStackModal {
     width: 640
 
     nextButton: StatusButton {
+        objectName: "createCommunityNextBtn"
         text: qsTr("Next")
         enabled:  nameInput.valid && descriptionTextInput.valid
         onClicked: currentIndex++
     }
 
     finishButton: StatusButton {
+        objectName: "createCommunityFinalBtn"
         text: qsTr("Create Community")
         enabled: introMessageInput.valid && outroMessageInput.valid
         onClicked: d.createCommunity()
@@ -51,6 +53,7 @@ StatusStackModal {
 
                 CommunityNameInput {
                     id: nameInput
+                    input.edit.objectName: "createCommunityNameInput"
                     Layout.fillWidth: true
                     Component.onCompleted: nameInput.input.forceActiveFocus(
                                                 Qt.MouseFocusReason)
@@ -58,6 +61,7 @@ StatusStackModal {
 
                 CommunityDescriptionInput {
                     id: descriptionTextInput
+                    input.edit.objectName: "createCommunityDescriptionInput"
                     Layout.fillWidth: true
                 }
 
@@ -128,6 +132,7 @@ StatusStackModal {
 
             CommunityIntroMessageInput {
                 id: introMessageInput
+                input.edit.objectName: "createCommunityIntroMessageInput"
 
                 Layout.fillWidth: true
                 Layout.fillHeight: true
@@ -137,6 +142,7 @@ StatusStackModal {
 
             CommunityOutroMessageInput {
                 id: outroMessageInput
+                input.edit.objectName: "createCommunityOutroMessageInput"
 
                 Layout.fillWidth: true
             }

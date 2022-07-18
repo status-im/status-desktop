@@ -39,6 +39,7 @@ Item {
 
     StatusChatInfoButton {
         id: communityHeader
+        objectName: communityHeaderButton
         title: communityData.name
         subTitle: communityData.members.count <= 1 ?
                                      qsTr("1 Member") :
