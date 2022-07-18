@@ -8602,8 +8602,10 @@ device, so only you can use them.</translation>
     </message>
     <message>
         <location filename="../app/AppLayouts/Onboarding/views/TouchIDAuthView.qml" line="69" />
-        <source>Would you like to use your Touch ID to login to Status?</source>
-        <translation>Would you like to use your Touch ID to login to Status?</translation>
+        <source>Would you like to use Touch ID
+to login to Status?</source>
+        <translation>Would you like to use Touch ID
+to login to Status?</translation>
     </message>
     <message>
         <location filename="../app/AppLayouts/Onboarding/views/TouchIDAuthView.qml" line="82" />
