@@ -107,6 +107,7 @@ Rectangle {
                     icon.isLetterIdenticon: !!model.emoji ? true : false
                     icon.background.color: Theme.palette.primaryColor3
                     statusListItemTitle.font.weight: Font.Medium
+                    color: sensor.containsMouse || highlighted ? Theme.palette.baseColor3 : "transparent"
                     onClicked: {
                         changeSelectedAccount(index)
                         showSavedAddresses(false)
@@ -121,6 +122,9 @@ Rectangle {
                         anchors.top: parent.top
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.margins: Style.current.bigPadding
+                        font.pixelSize: 15
+                        font.weight: Font.Medium
+                        icon.name: "add"
                         text: qsTr("Add account")
                         onClicked: addAccountModal.open()
                     }
