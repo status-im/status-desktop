@@ -1,4 +1,4 @@
-library 'status-jenkins-lib@v1.5.1'
+library 'status-jenkins-lib@v1.5.6'
 
 pipeline {
   agent { label 'windows' }
@@ -31,7 +31,7 @@ pipeline {
   environment {
     TARGET = 'windows'
     /* Improve make performance */
-    MAKEFLAGS = "-j4 V=${params.VERBOSE}"
+    MAKEFLAGS = "-j${utils.getProcCount()} V=${params.VERBOSE}"
     /* Disable colors in Nim compiler logs */
     NIMFLAGS = '--colors:off'
     /* Control output the filename */
@@ -53,7 +53,9 @@ pipeline {
     }
 
     stage('status-go') {
-      steps { sh 'make status-go' }
+      steps {
+        sh 'make status-go'
+      }
     }
 
     stage('Package') {
@@ -63,22 +65,28 @@ pipeline {
     }
 
     stage('Parallel Upload') {
+      /* Uploads on Windows are slow. */
       parallel {
-        stage('Upload') {
+        stage('Upload 7Z') {
           steps { script {
             zip_url = s3.uploadArtifact(env.STATUS_CLIENT_7Z)
-            exe_url = s3.uploadArtifact(env.STATUS_CLIENT_EXE)            
-            env.PKG_URL = exe_url
-            jenkins.setBuildDesc(Zip: zip_url, Exe: exe_url)
           } }
         }
-        stage('Archive') {
+        stage('Upload EXE') {
           steps { script {
-            archiveArtifacts(env.STATUS_CLIENT_EXE)
-            archiveArtifacts(env.STATUS_CLIENT_7Z)
+            exe_url = s3.uploadArtifact(env.STATUS_CLIENT_EXE)
           } }
         }
       }
+    }
+
+    stage('Archive') {
+      steps { script {
+        archiveArtifacts(env.STATUS_CLIENT_EXE)
+        archiveArtifacts(env.STATUS_CLIENT_7Z)
+        env.PKG_URL = exe_url
+        jenkins.setBuildDesc(Zip: zip_url, Exe: exe_url)
+      } }
     }
   }
   post {
