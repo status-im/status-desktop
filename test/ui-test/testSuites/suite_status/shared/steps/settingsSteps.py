@@ -11,7 +11,11 @@ def step(context: any):
     _statusMain.open_settings()
 
 
-@When("the user activates wallet and opens the wallets section")
+@When("the user activates wallet and opens the wallet settings")
+def step(context: any):
+    _settingsScreen.activate_open_wallet_settings()
+
+@When("the user activates wallet and opens the wallet section")
 def step(context: any):
     _settingsScreen.activate_open_wallet_section()
     

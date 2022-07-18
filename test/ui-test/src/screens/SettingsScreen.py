@@ -12,11 +12,10 @@
 from enum import Enum
 from drivers.SquishDriver import *
 from drivers.SquishDriverVerification import *
+from .StatusMainScreen import MainScreenComponents
 
-
-class MainScreenComponents(Enum):
+class SidebarComponents(Enum):
     ADVANCED_OPTION: str = "advanced_StatusBaseText"
-    SCROLL_BAR: str = "o_ScrollBar"
     WALLET_ITEM: str = "wallet_AppMenu_StatusNavigationListItem"
 
 
@@ -34,18 +33,25 @@ class WalletSettingsScreen(Enum):
 class SettingsScreen:
 
     def __init__(self):
-        verify_screen(MainScreenComponents.ADVANCED_OPTION.value)
+        verify_screen(SidebarComponents.ADVANCED_OPTION.value)
 
-    def activate_open_wallet_section(self):
-        scroll_obj_by_name(MainScreenComponents.SCROLL_BAR.value)
-        
-        if not (is_Visible(MainScreenComponents.WALLET_ITEM.value)) :
-            click_obj_by_name(MainScreenComponents.ADVANCED_OPTION.value)
+    def activate_open_wallet_settings(self):
+        if not (is_Visible(SidebarComponents.WALLET_ITEM.value)) :
+            click_obj_by_name(SidebarComponents.ADVANCED_OPTION.value)
             click_obj_by_name(AdvancedOptionScreen.ACTIVATE_OR_DEACTIVATE_WALLET.value)
             click_obj_by_name(AdvancedOptionScreen.I_UNDERSTAND_POP_UP.value)
-            verify_object_enabled(MainScreenComponents.WALLET_ITEM.value)
+            verify_object_enabled(SidebarComponents.WALLET_ITEM.value)
            
-        click_obj_by_name(MainScreenComponents.WALLET_ITEM.value)
+        click_obj_by_name(SidebarComponents.WALLET_ITEM.value)
+
+    def activate_open_wallet_section(self):
+        if not (is_Visible(SidebarComponents.WALLET_ITEM.value)):
+            click_obj_by_name(SidebarComponents.ADVANCED_OPTION.value)
+            click_obj_by_name(AdvancedOptionScreen.ACTIVATE_OR_DEACTIVATE_WALLET.value)
+            click_obj_by_name(AdvancedOptionScreen.I_UNDERSTAND_POP_UP.value)
+            verify_object_enabled(SidebarComponents.WALLET_ITEM.value)
+           
+        click_obj_by_name(MainScreenComponents.WALLET_BUTTON.value)
      
     def verify_address(self, phrase: str, address: str):
         if phrase =='18':

@@ -164,6 +164,7 @@ StatusGridView {
         width: grid.cellWidth - (Style.current.halfPadding/2)
         height: (grid.cellHeight - Style.current.halfPadding)
         textEdit.errorMessageCmp.visible: false
+        textEdit.input.placeholder.objectName: "seedPhraseInputPlaceholder" + index
         leftComponentText: index + 1
         inputList: BIP39_en { }
         property int itemIndex: index

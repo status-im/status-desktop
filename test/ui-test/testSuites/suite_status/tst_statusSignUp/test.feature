@@ -95,7 +95,7 @@ Feature: Status Desktop Sign Up
     When user signs up with username tester123 and password TesTEr16843/!@00
     Then the user lands on the signed in app
     When the user opens app settings screen
-    And  the user activates wallet and opens the wallets section
+    And  the user activates wallet and opens the wallet settings
     Then the 12 seed phrase address is 0x8285cb9bf17b23d64a489a8dad29163dd227d0fd displayed in the wallet
 
 
@@ -127,7 +127,7 @@ Feature: Status Desktop Sign Up
     When user signs up with username tester124 and password TesTEr16843/!@00
     Then the user lands on the signed in app
     When the user opens app settings screen
-    And  the user activates wallet and opens the wallets section
+    And  the user activates wallet and opens the wallet settings
     Then the 18 seed phrase address is 0xba1d0d6ef35df8751df5faf55ebd885ad0e877b0 displayed in the wallet
 
 
@@ -165,7 +165,7 @@ Feature: Status Desktop Sign Up
     When user signs up with username tester124 and password TesTEr16843/!@00
     Then the user lands on the signed in app
     When the user opens app settings screen
-    And  the user activates wallet and opens the wallets section
+    And  the user activates wallet and opens the wallet settings
     Then the 24 seed phrase address is 0x28cf6770664821a51984daf5b9fb1b52e6538e4b displayed in the wallet
 
   Scenario: User signs up with wrong imported seed phrase
