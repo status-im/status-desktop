@@ -17,10 +17,10 @@ from drivers.SquishDriverVerification import *
 class MainScreenComponents(Enum):
     STATUS_ICON = "mainWindow_statusIcon_StatusIcon_2"
     PUBLIC_CHAT_ICON = "mainWindow_public_chat_icon_StatusIcon"
+    COMMUNITY_PORTAL_ICON = "communities_Portal_navbar_communities_icon_StatusIcon"
     JOIN_PUBLIC_CHAT = "join_public_chat_StatusMenuItemDelegate"
     SETTINGS_BUTTON = "settings_navbar_settings_icon_StatusIcon"
     WALLET_BUTTON = "wallet_navbar_wallet_icon_StatusIcon"
-
 
 class ChatNamePopUp(Enum):
     CHAT_NAME_TEXT = "chat_name_PlaceholderText"
@@ -39,6 +39,8 @@ class StatusMainScreen:
         type(ChatNamePopUp.INPUT_ROOM_TOPIC_TEXT.value, room)
         click_obj_by_name(ChatNamePopUp.START_CHAT.value)
         
+    def open_community_portal(self):
+        click_obj_by_name(MainScreenComponents.COMMUNITY_PORTAL_ICON.value)
     
     def open_settings(self):
         click_obj_by_name(MainScreenComponents.SETTINGS_BUTTON.value)

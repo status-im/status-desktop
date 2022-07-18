@@ -84,6 +84,7 @@ StatusScrollView {
 
             StatusButton {
                 id: createBtn
+                objectName: "createCommunityButton"
                 text: qsTr("Create New Community")
                 onClicked: Global.openPopup(createCommunitiesPopupComponent)
             }
