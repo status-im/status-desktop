@@ -160,6 +160,7 @@ StatusModal {
         leftPadding: Style.current.padding
         rightPadding: Style.current.padding
         height: Style.dp(400)
+        objectName: "AddAccountModalContent"
 
         Column {
             property alias accountNameInput: accountNameInput
@@ -176,10 +177,12 @@ StatusModal {
                     id: passwordInput
                     anchors.fill: parent
 
-                    placeholderText: qsTr("Enter your password…")
+                    placeholderText: qsTr("Enter your password...")
                     label: qsTr("Password")
                     textField.echoMode: TextInput.Password
                     validationError: root.passwordValidationError
+                    textField.objectName: "accountModalPassword"
+                    validationError: popup.passwordValidationError
                     inputLabel.font.pixelSize: 15
                     inputLabel.font.weight: Font.Normal
                     onTextChanged: {

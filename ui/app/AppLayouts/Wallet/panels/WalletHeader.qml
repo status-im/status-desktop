@@ -34,6 +34,7 @@ Item {
         Row {
             spacing: Style.current.halfPadding
             StatusBaseText {
+                objectName: "accountName"
                 font.pixelSize: 28
                 font.bold: true
                 text: currentAccount.name
