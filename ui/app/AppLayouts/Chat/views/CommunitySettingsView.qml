@@ -23,14 +23,15 @@ StatusAppTwoPanelLayout {
     id: root
 
     // TODO: get this model from backend?
-    property var settingsMenuModel: [{name: qsTr("Overview"), icon: "help"},
-                        {name: qsTr("Members"), icon: "group-chat"},
-//                        {name: qsTr("Permissions"), icon: "objects"},
-//                        {name: qsTr("Tokens"), icon: "token"},
-//                        {name: qsTr("Airdrops"), icon: "airdrop"},
-//                        {name: qsTr("Token sales"), icon: "token-sale"},
-//                        {name: qsTr("Subscriptions"), icon: "subscription"},
-                        {name: qsTr("Notifications"), icon: "notification"}]
+    property var settingsMenuModel: [
+        {name: qsTr("Overview"), icon: "help"},
+        {name: qsTr("Members"), icon: "group-chat"},
+//        {name: qsTr("Permissions"), icon: "objects"},
+//        {name: qsTr("Tokens"), icon: "token"},
+//        {name: qsTr("Airdrops"), icon: "airdrop"},
+//        {name: qsTr("Token sales"), icon: "token-sale"},
+//        {name: qsTr("Subscriptions"), icon: "subscription"}
+    ]
 
     property var rootStore
     property var community
@@ -78,7 +79,7 @@ StatusAppTwoPanelLayout {
                 width: listView.width
                 title: modelData.name
                 icon.name: modelData.icon
-                selected: d.currentIndex == index
+                selected: d.currentIndex === index
                 onClicked: d.currentIndex = index
             }
         }
@@ -191,30 +192,6 @@ StatusAppTwoPanelLayout {
                 onMembershipRequestsClicked: Global.openPopup(root.membershipRequestPopup, {
                     communitySectionModule: root.chatCommunitySectionModule
                 })
-            }
-
-            SettingsPageLayout {
-                title: qsTr("Notifications")
-
-                content: ColumnLayout {
-                    StatusListItem {
-                        Layout.fillWidth: true
-
-                        title: qsTr("Enabled")
-                        icon.name: "notification"
-                        sensor.cursorShape: Qt.ArrowCursor
-                        components: [
-                            StatusSwitch {
-                                checked: !root.community.muted
-                                onClicked: root.chatCommunitySectionModule.setCommunityMuted(!checked)
-                            }
-                        ]
-                    }
-
-                    Item {
-                        Layout.fillHeight: true
-                    }
-                }
             }
         }
     }

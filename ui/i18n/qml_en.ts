@@ -2549,43 +2549,32 @@ Do you wish to override the security check and continue?</translation>
 <context>
     <name>CommunitySettingsView</name>
     <message>
-        <location filename="../app/AppLayouts/Chat/views/CommunitySettingsView.qml" line="26" />
+        <location filename="../app/AppLayouts/Chat/views/CommunitySettingsView.qml" line="27" />
         <source>Overview</source>
         <translation>Overview</translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Chat/views/CommunitySettingsView.qml" line="27" />
+        <location filename="../app/AppLayouts/Chat/views/CommunitySettingsView.qml" line="28" />
         <source>Members</source>
         <translation>Members</translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Chat/views/CommunitySettingsView.qml" line="33" />
-        <location filename="../app/AppLayouts/Chat/views/CommunitySettingsView.qml" line="197" />
-        <source>Notifications</source>
-        <translation>Notifications</translation>
-    </message>
-    <message>
-        <location filename="../app/AppLayouts/Chat/views/CommunitySettingsView.qml" line="67" />
+        <location filename="../app/AppLayouts/Chat/views/CommunitySettingsView.qml" line="68" />
         <source>Settings</source>
         <translation>Settings</translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Chat/views/CommunitySettingsView.qml" line="93" />
+        <location filename="../app/AppLayouts/Chat/views/CommunitySettingsView.qml" line="94" />
         <source>Open legacy popup (to be removed)</source>
         <translation>Open legacy popup (to be removed)</translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Chat/views/CommunitySettingsView.qml" line="107" />
+        <location filename="../app/AppLayouts/Chat/views/CommunitySettingsView.qml" line="108" />
         <source>Back to community</source>
         <translation>Back to community</translation>
     </message>
     <message>
-        <location filename="../app/AppLayouts/Chat/views/CommunitySettingsView.qml" line="203" />
-        <source>Enabled</source>
-        <translation>Enabled</translation>
-    </message>
-    <message>
-        <location filename="../app/AppLayouts/Chat/views/CommunitySettingsView.qml" line="230" />
+        <location filename="../app/AppLayouts/Chat/views/CommunitySettingsView.qml" line="207" />
         <source>Error editing the community</source>
         <translation>Error editing the community</translation>
     </message>
