@@ -27,6 +27,7 @@ Item {
 
     StyledText {
         id: title
+        objectName: "accountName"
         text: currentAccount.name
         anchors.top: parent.top
         anchors.topMargin: 56
