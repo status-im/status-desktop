@@ -136,6 +136,7 @@ mainWindow_submitBtn_StatusButton = {"container": statusDesktop_mainWindow, "id"
 appearance_SettingsMenu_StatusNavigationListItem = {"container": mainWindow_ScrollView, "objectName": "Appearance-SettingsMenu", "type": "StatusNavigationListItem", "visible": True}
 advanced_SettingsMenu_StatusNavigationListItem = {"container": mainWindow_ScrollView, "objectName": "Advanced-SettingsMenu", "type": "StatusNavigationListItem", "visible": True}
 walletSettingsLineButton = {"container": statusDesktop_mainWindow, "objectName": "WalletSettingsLineButton", "type": "StatusSettingsLineButton", "visible": True}
+
 navBarListView_Settings_navbar_StatusNavBarTabButton = {"checkable": True, "container": mainWindow_navBarListView_ListView, "objectName": "Settings-navbar", "type": "StatusNavBarTabButton", "visible": True}
 settings_navbar_settings_icon_StatusIcon = {"container": navBarListView_Settings_navbar_StatusNavBarTabButton, "objectName": "settings-icon", "type": "StatusIcon", "visible": True}
 navBarListView_Communities_Portal_navbar_StatusNavBarTabButton = {"checkable": True, "container": mainWindow_navBarListView_ListView, "objectName": "Communities Portal-navbar", "type": "StatusNavBarTabButton", "visible": True}
