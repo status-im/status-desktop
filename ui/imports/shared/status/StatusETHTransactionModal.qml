@@ -26,21 +26,22 @@ ModalPopup {
     title: qsTr("Contract interaction")
 
     property var estimateGasFunction: (function(userAddress) { return 0; })
-    property var onSendTransaction: (function(userAddress, gasLimit, gasPrice, password){ return ""; })
+    property var onSendTransaction: (function(userAddress, gasLimit, gasPrice, tipLimit, overallLimit, password, eip1559Enabled){ return ""; })
     property var onSuccess: (function(){})
 
     height: 540
-
+    
     function sendTransaction() {
         try {
-            let responseStr = root.ensUsernamesStore.setPubKey(root.ensUsername,
-                                                        selectFromAccount.selectedAccount.address,
-                                                        gasSelector.selectedGasLimit,
-                                                        gasSelector.suggestedFees.eip1559Enabled ? "" : gasSelector.selectedGasPrice,
-                                                        gasSelector.selectedTipLimit,
-                                                        gasSelector.selectedOverallLimit,
-                                                        transactionSigner.enteredPassword,
-                                                        gasSelector.suggestedFees.eip1559Enabled)
+            let responseStr = onSendTransaction(
+                                         selectFromAccount.selectedAccount.address,
+                                         gasSelector.selectedGasLimit,
+                                         gasSelector.suggestedFees.eip1559Enabled ? "" : gasSelector.selectedGasPrice,
+                                         gasSelector.selectedTipLimit,
+                                         gasSelector.selectedOverallLimit,
+                                         transactionSigner.enteredPassword,
+                                         gasSelector.suggestedFees.eip1559Enabled);
+            
             let response = JSON.parse(responseStr)
 
             if (!response.success) {
