@@ -94,9 +94,9 @@ QtObject:
   proc releaseEnsEstimate*(self: View, ensUsername: string, address: string): int {.slot.} =
     return self.delegate.releaseEnsEstimate(ensUsername, address)
 
-  proc release*(self: View, ensUsername: string, address: string, gas: string, gasPrice: string, password: string):
-    string {.slot.} =
-    return self.delegate.release(ensUsername, address, gas, gasPrice, password)
+  proc releaseEns*(self: View, ensUsername: string, address: string, gas: string, gasPrice: string,
+    maxPriorityFeePerGas: string, maxFeePerGas: string, password: string, eip1559Enabled: bool): string {.slot.} =
+    return self.delegate.release(ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password, eip1559Enabled)
 
   proc connectOwnedUsername*(self: View, ensUsername: string, isStatus: bool) {.slot.} =
     self.delegate.connectOwnedUsername(ensUsername, isStatus)

@@ -52,7 +52,7 @@ Item {
     Connections {
         target: root.ensUsernamesStore.ensUsernamesModule
         onDetailsObtained: {
-            if(username != ensName)
+            if(username != (isStatus ? ensName + ".stateofus.eth" : ensName))
                 return;
             walletAddressLbl.subTitle = address;
             keyLbl.subTitle = pubkey.substring(0, 20) + "..." + pubkey.substring(pubkey.length - 20);
@@ -61,6 +61,7 @@ Item {
             releaseBtn.visible = isStatus
             releaseBtn.enabled = (Date.now() / 1000) > expirationTime && expirationTime > 0 &&
                     root.ensUsernamesStore.preferredUsername != username
+                    releaseBtn.enabled = true
             expiration = new Date(expirationTime * 1000).getTime()
         }
         onLoading: {
@@ -107,20 +108,23 @@ Item {
             contactsStore: root.contactsStore
             ensUsername: root.username
             chainId: root.ensUsernamesStore.getChainIdForEns()
-            title: qsTr("Connect username with your pubkey")
+            title: qsTr("Release your username")
             onClosed: {
                 destroy()
             }
             estimateGasFunction: function(selectedAccount) {
                 if (username === "" || !selectedAccount) return 100000;
-                return root.ensUsernamesStore.releaseEnsEstimate(Utils.removeStatusEns(username), selectedAccount.address)
+                return root.ensUsernamesStore.releaseEnsEstimate(username, selectedAccount.address)
             }
-            onSendTransaction: function(selectedAddress, gasLimit, gasPrice, password) {
+            onSendTransaction: function(userAddress, gasLimit, gasPrice, tipLimit, overallLimit, password, eip1559Enabled){
                 return root.ensUsernamesStore.releaseEns(username,
-                                              selectedAddress,
-                                              gasLimit,
-                                              gasPrice,
-                                              password)
+                                                        userAddress,
+                                                        gasLimit,
+                                                        gasPrice,
+                                                        tipLimit,
+                                                        overallLimit,
+                                                        password, 
+                                                        eip1559Enabled)
             }
             onSuccess: function(){
                usernameReleased(username);

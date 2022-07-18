@@ -53,7 +53,7 @@ method releaseEnsEstimate*(self: AccessInterface, ensUsername: string, address: 
   raise newException(ValueError, "No implementation available")
 
 method release*(self: AccessInterface, ensUsername: string, address: string, gas: string, gasPrice: string,
-  password: string): string {.base.} =
+  maxPriorityFeePerGas: string, maxFeePerGas: string, password: string, eip1559Enabled: bool): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method connectOwnedUsername*(self: AccessInterface, ensUsername: string, isStatus: bool) {.base.} =

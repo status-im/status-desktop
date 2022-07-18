@@ -74,10 +74,10 @@ QtObject {
         return ensUsernamesModule.releaseEnsEstimate(ensUsername, address)
     }
 
-    function releaseEns(ensUsername, address, gasLimit, gasPrice, password) {
+    function releaseEns(ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password, eip1559Enabled) {
         if(!root.ensUsernamesModule)
             return ""
-        return ensUsernamesModule.releaseEns(ensUsername, address, gasLimit, gasPrice, password)
+        return ensUsernamesModule.releaseEns(ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password, eip1559Enabled)
     }
 
     function ensConnectOwnedUsername(name, isStatus) {

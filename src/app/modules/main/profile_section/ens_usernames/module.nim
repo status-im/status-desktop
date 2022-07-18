@@ -117,8 +117,9 @@ method setPubKey*(self: Module, ensUsername: string, address: string, gas: strin
 method releaseEnsEstimate*(self: Module, ensUsername: string, address: string): int =
   return self.controller.releaseEnsEstimate(ensUsername, address)
 
-method release*(self: Module, ensUsername: string, address: string, gas: string, gasPrice: string, password: string): string =
-  let response = self.controller.release(ensUsername, address, gas, gasPrice, password)
+method release*(self: Module, ensUsername: string, address: string, gas: string, gasPrice: string,
+  maxPriorityFeePerGas: string, maxFeePerGas: string, password: string, eip1559Enabled: bool): string =
+  let response = self.controller.release(ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password, eip1559Enabled)
   if(response.len == 0):
     info "expected response is empty", methodName="release"
     return
@@ -180,7 +181,7 @@ method registerEnsGasEstimate*(self: Module, ensUsername: string, address: strin
 method registerEns*(self: Module, ensUsername: string, address: string, gas: string, gasPrice: string,
   maxPriorityFeePerGas: string, maxFeePerGas: string, password: string, eip1559Enabled: bool): string =
   let response = self.controller.registerEns(ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password, eip1559Enabled)
-
+  
   let responseObj = response.parseJson
   if (responseObj.kind != JObject):
     info "expected response is not a json object", methodName="registerEns"
@@ -188,7 +189,7 @@ method registerEns*(self: Module, ensUsername: string, address: string, gas: str
 
   var respResult: string
   if(responseObj.getProp("result", respResult) and responseObj{"success"}.getBool == true):
-    self.view.model().addItem(Item(ensUsername: ensUsername, isPending: true))
+    self.view.model().addItem(Item(ensUsername: self.formatUsername(ensUsername, true), isPending: true))
     self.view.emitTransactionWasSentSignal(respResult)
 
   return response

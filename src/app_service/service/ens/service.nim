@@ -203,22 +203,20 @@ QtObject:
     discard responseObj.getProp("pubkey", data.pubkey)
     discard responseObj.getProp("isStatus", data.isStatus)
     discard responseObj.getProp("expirationTime", data.expirationTime)
-
     self.events.emit(SIGNAL_ENS_USERNAME_DETAILS_FETCHED, data)
 
   proc fetchDetailsForEnsUsername*(self: Service, ensUsername: string) =
     var isStatus = false
+    var username = ensUsername
     if ensUsername.endsWith(ens_utils.STATUS_DOMAIN):
-      let onlyUsername = ensUsername.replace(ens_utils.STATUS_DOMAIN, "")
-      let label = fromHex(FixedBytes[32], label(onlyUsername))
-      let expTime = ExpirationTime(label: label)
+      username = ensUsername.replace(ens_utils.STATUS_DOMAIN, "")
       isStatus = true
 
     let arg = EnsUsernamDetailsTaskArg(
       tptr: cast[ByteAddress](ensUsernameDetailsTask),
       vptr: cast[ByteAddress](self.vptr),
       slot: "onEnsUsernameDetailsFetched",
-      ensUsername: ensUsername,
+      ensUsername: username,
       chainId: self.networkService.getNetworkForEns().chainId,
       isStatus: isStatus
     )
@@ -295,13 +293,17 @@ QtObject:
       ensUsername: string,
       address: string,
       gas: string,
-      gasPrice: string,
-      password: string
+      gasPrice: string, 
+      maxPriorityFeePerGas: string,
+      maxFeePerGas: string,
+      password: string,
+      eip1559Enabled: bool
     ): string =    
     try:
       let
         chainId = self.networkService.getNetworkForEns().chainId
-        txData = ens_utils.buildTransaction(parseAddress(address), 0.u256, gas, gasPrice)
+        txData = ens_utils.buildTransaction(parseAddress(address), 0.u256, gas, gasPrice,
+          eip1559Enabled, maxPriorityFeePerGas, maxFeePerGas)
 
       let resp = status_ens.release(chainId, %txData, password, ensUsername)
       let hash = resp.result.getStr

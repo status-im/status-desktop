@@ -85,9 +85,10 @@ proc getPreferredEnsUsername*(self: Controller): string =
 proc releaseEnsEstimate*(self: Controller, ensUsername: string, address: string): int =
   return self.ensService.releaseEnsEstimate(ensUsername, address)
 
-proc release*(self: Controller, ensUsername: string, address: string, gas: string, gasPrice: string, password: string):
+proc release*(self: Controller, ensUsername: string, address: string, gas: string, gasPrice: string,
+  maxPriorityFeePerGas: string, maxFeePerGas: string, password: string, eip1559Enabled: bool):
   string =
-  return self.ensService.release(ensUsername, address, gas, gasPrice, password)
+  return self.ensService.release(ensUsername, address, gas, gasPrice, maxPriorityFeePerGas, maxFeePerGas, password, eip1559Enabled)
 
 proc setPreferredName*(self: Controller, preferredName: string) =
   if(self.settingsService.savePreferredName(preferredName)):
