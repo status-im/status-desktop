@@ -419,11 +419,11 @@ Column {
                     topPadding: 8
                     bottomPadding: 0
                     implicitHeight: 32
-                    defaultLeftPadding: 4
+                    leftPadding: 4
                     text: name
-                    icon.emoji: !!emoji ? emoji: ""
-                    icon.emojiSize: Emoji.size.middle
-                    icon.name: !emoji ? "filled-account": ""
+                    asset.emoji: !!emoji ? emoji: ""
+                    asset.emojiSize: Emoji.size.middle
+                    asset.name: !emoji ? "filled-account": ""
                     normalColor: "transparent"
                     highlighted: index === floatingHeader.currentIndex
                     onClicked: {

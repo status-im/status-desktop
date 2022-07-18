@@ -1103,6 +1103,7 @@ QtObject {
             isVerified: true
             isUntrustworthy: false
             isContact: true
+            isImage: true
             onlineStatus: 1
             icon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAlklEQVR4nOzW0QmDQBAG4SSkl7SUQlJGCrElq9F3QdjjVhh/5nv3cFhY9vUIYQiNITSG0BhCExPynn1gWf9bx498P7/
                           nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2ImYgiNITTlTdG1nUZ5a92VITQxITFiJmIIjSE0htAYQrMHAAD//+wwFVpz+yqXAAAAAElFTkSuQmCC"
@@ -1115,6 +1116,7 @@ QtObject {
             isVerified: false
             isUntrustworthy: true
             isContact: false
+            isImage: false
             onlineStatus: 0
             icon: ""
             isAdmin: false
@@ -1126,6 +1128,7 @@ QtObject {
             isVerified: false
             isUntrustworthy: false
             isContact: false
+            isImage: true
             onlineStatus: 1
             isAdmin: false
             icon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAiElEQVR4nOzXUQpAQBRGYWQvLNAyLJDV8C5qpiGnv/M9al5Ot27X0IUwhMYQGkNoDKGJCRlLH67bftx9X+ap/+P9VcxEDK
@@ -1138,6 +1141,7 @@ QtObject {
             isVerified: false
             isUntrustworthy: true
             isContact: true
+            isImage: false
             onlineStatus: 0
             icon: ""
             isAdmin: false

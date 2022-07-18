@@ -113,12 +113,11 @@ Row {
             implicitHeight: 32
             topPadding: 8
             bottomPadding: 0
-            defaultLeftPadding: 4
-            defaultRightPadding: 4
+            horizontalPadding: 4
             hoverColor: Theme.palette.statusFloatingButtonHighlight
             normalColor: Theme.palette.baseColor3
-            icon.name: "more"
-            icon.bgColor: "transparent"
+            asset.name: "more"
+            asset.bgColor: "transparent"
             onClicked: popupMenu.popup(parent.x, y + height + 8)
         }
     }

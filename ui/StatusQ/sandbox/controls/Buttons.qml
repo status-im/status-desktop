@@ -21,18 +21,31 @@ Column {
         StatusButton {
             text: "Button"
             type: StatusBaseButton.Type.Primary
+
+            StatusToolTip {
+                visible: parent.hovered
+                text: "Look I'm a tooltip on a button!"
+            }
+            onClicked: console.warn("Primary button clicked")
         }
 
         StatusButton {
             text: "Button"
             enabled: false
             type: StatusBaseButton.Type.Primary
+            onClicked: console.warn("Primary disabled button clicked, this should not happen !!!")
         }
 
         StatusButton {
             text: "Button"
             loading: true
             type: StatusBaseButton.Type.Primary
+
+            StatusToolTip {
+                visible: parent.hovered
+                text: "Look I'm a tooltip on a loading button!"
+            }
+            onClicked: console.warn("Primary loading button clicked, this should not happen !!!")
         }
 
         // Large
@@ -50,6 +63,25 @@ Column {
             loading: true
         }
 
+        // Large + Icon
+        StatusButton {
+            text: "Button"
+            icon.name: "info"
+        }
+
+        StatusButton {
+            text: "Button"
+            enabled: false
+            icon.name: "info"
+        }
+
+        StatusButton {
+            text: "Button"
+            loading: true
+            icon.name: "info"
+        }
+
+        // Danger
         StatusButton {
             text: "Button"
             type: StatusBaseButton.Type.Danger
@@ -67,6 +99,7 @@ Column {
             type: StatusBaseButton.Type.Danger
         }
 
+        // Flat
         StatusFlatButton {
             text: "Button"
         }
@@ -74,7 +107,6 @@ Column {
         StatusFlatButton {
             text: "Button"
             enabled: false
-
         }
 
         StatusFlatButton {
@@ -82,6 +114,7 @@ Column {
             loading: true
         }
 
+        // Flat + Danger
         StatusFlatButton {
             text: "Button"
             type: StatusBaseButton.Type.Danger
@@ -117,6 +150,7 @@ Column {
             loading: true
         }
 
+        // Small + danger
         StatusButton {
             text: "Button"
             type: StatusBaseButton.Type.Danger
@@ -137,6 +171,7 @@ Column {
             loading: true
         }
 
+        // Flat + small
         StatusFlatButton {
             text: "Button"
             size: StatusBaseButton.Size.Small
@@ -359,7 +394,7 @@ Column {
     // Button with emoji
     StatusButton {
         text: "Button with Emoji"
-        icon.emoji: "🖼️️"
+        asset.emoji: "🖼️️"
     }
 
     RowLayout {
