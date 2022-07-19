@@ -4,6 +4,7 @@ import QtQuick.Controls 2.14
 import QtGraphicalEffects 1.13
 import QtQuick.Layouts 1.14
 import Qt.labs.settings 1.0
+import QtQml.Models 2.14
 
 import Sandbox 0.1
 
@@ -13,6 +14,8 @@ import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 import StatusQ.Layout 0.1
 import StatusQ.Platform 0.1
+
+import SortFilterProxyModel 0.2
 
 import "demoapp/data" 1.0
 
@@ -44,7 +47,8 @@ StatusWindow {
         readonly property int nodeManagement: 4
         readonly property int profileSettings: 5
         readonly property int apiDocumentation: 100
-        readonly property int demoApp: 101
+        readonly property int examples: 101
+        readonly property int demoApp: 102
     }
 
     function setActiveItem(sectionId) {
@@ -87,13 +91,16 @@ StatusWindow {
                     if(model.sectionType === appSectionType.apiDocumentation)
                     {
                         stackView.push(libraryDocumentationCmp)
-                        rootWindow.setActiveItem(sectionId)
+                    }
+                    else if(model.sectionType === appSectionType.examples)
+                    {
+                        stackView.push(examplesCmp)
                     }
                     else if(model.sectionType === appSectionType.demoApp)
                     {
                         stackView.push(demoAppCmp)
-                        rootWindow.setActiveItem(model.sectionId)
                     }
+                    rootWindow.setActiveItem(model.sectionId)
                 }
             }
         }
@@ -401,6 +408,53 @@ StatusWindow {
     }
 
     Component {
+        id: examplesCmp
+
+        StatusAppTwoPanelLayout {
+            id: examplesView
+
+            function example(name) {
+                examplesLoader.source = Qt.resolvedUrl("./examples/" + name + ".qml")
+                storeSettings.selectedExample = examplesLoader.source
+            }
+
+            readonly property string defaultExampleSource: example("FilteringSorting")
+
+            leftPanel: StatusScrollView {
+                id: examplesLeftPanel
+
+                anchors.fill: parent
+                anchors.topMargin: 48
+
+                ColumnLayout {
+                    width: examplesLeftPanel.availableWidth
+                    spacing: 0
+
+                    StatusNavigationListItem {
+                        Layout.fillWidth: true
+                        title: "FilteringSorting"
+                        selected: examplesLoader.source.toString().includes(title)
+                        onClicked: examplesView.example(title)
+                    }
+                }
+            }
+
+            rightPanel: StatusScrollView {
+                id: examplesRightPanel
+                anchors.fill: parent
+                anchors.margins: 64
+                anchors.topMargin: anchors.margins + 32
+
+                Loader {
+                    id: examplesLoader
+                    width: examplesRightPanel.availableWidth
+                    source: storeSettings.selectedExample !== "" ? storeSettings.selectedExample : examplesView.defaultExampleSource
+                }
+            }
+        }
+    }
+
+    Component {
         id: demoAppCmp
 
         Rectangle {
@@ -494,6 +548,7 @@ StatusWindow {
     Settings {
         id: storeSettings
         property string selected: ""
+        property string selectedExample: ""
         property bool lightTheme: true
         property bool fillPage: false
     }

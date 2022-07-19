@@ -75,5 +75,6 @@
         <file>DemoApp.qml</file>
         <file>main.qml</file>
         <file>ThemeSwitch.qml</file>
+        <file>examples/FilteringSorting.qml</file>
     </qresource>
 </RCC>

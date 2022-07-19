@@ -913,8 +913,19 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
             notificationsCount: 0
         }
         ListElement {
-            sectionId: "demoApp"
+            sectionId: "examples"
             sectionType: 101
+            name: "Examples"
+            active: false
+            image: ""
+            icon: "show"
+            color: ""
+            hasNotification: false
+            notificationsCount: 0
+        }
+        ListElement {
+            sectionId: "demoApp"
+            sectionType: 102
             name: "Demo Application"
             active: false
             image: ""

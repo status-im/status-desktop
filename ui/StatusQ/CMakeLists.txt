@@ -8,6 +8,11 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# add_subdirectory(src)
+# https://doc.qt.io/qtcreator/creator-qml-modules-with-plugins.html#importing-qml-modules
+set(QML_IMPORT_PATH
+    ${CMAKE_SOURCE_DIR}/src;${QML_IMPORT_PATH}
+    CACHE STRING "")
+
+add_subdirectory(vendor/SortFilterProxyModel)
 add_subdirectory(sandbox)
 add_subdirectory(tests)
