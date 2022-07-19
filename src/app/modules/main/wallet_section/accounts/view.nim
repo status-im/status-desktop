@@ -158,39 +158,51 @@ QtObject:
   proc setItems*(self: View, items: seq[Item]) =
     self.model.setItems(items)
     
+    var statusDefaultAccountDerivedFrom: string = ""
+    var importedSeedIndex: int = 1
+
     var watchOnly: seq[Item] = @[]
     var imported: seq[Item] = @[]
     var generated: seq[Item] = @[]
 
+    # create a list of imported seeds/default account created from where more accounts can be derived
+    var generatedAccounts: seq[GeneratedWalletItem] = @[]
+
     for item in items:
-      if item.getWalletType() == "" or item.getWalletType() == GENERATED:
+      #  Default Account
+      if item.getWalletType() == "":
+        statusDefaultAccountDerivedFrom = item.getDerivedFrom()
+
+        var generatedAccs: Model = newModel()
+        generatedAccs.setItems(items.filter(x => cmpIgnoreCase(x.getDerivedFrom(), item.getDerivedFrom()) == 0))
+        generatedAccounts.add(initGeneratedWalletItem("Default", "status", generatedAccs, item.getDerivedFrom()))
         generated.add(item)
+
+      # Account generated from profile seed phrase
+      elif item.getWalletType() == GENERATED and cmpIgnoreCase(item.getDerivedFrom(), statusDefaultAccountDerivedFrom) == 0 :
+        generated.add(item)
+
+      # Watch only accounts
       elif item.getWalletType() == WATCH:
         watchOnly.add(item)
+
+      # Accounts imported with Seed phrase
+      elif item.getWalletType() == SEED:
+        var generatedAccs1: Model = newModel()
+        var filterItems: seq[Item] = items.filter(x => cmpIgnoreCase(x.getDerivedFrom(), item.getDerivedFrom()) == 0)
+        generatedAccs1.setItems(filterItems)
+        generatedAccounts.add(initGeneratedWalletItem("Seed " & $importedSeedIndex , "seed-phrase", generatedAccs1, item.getDerivedFrom()))
+        imported.add(item)
+        importedSeedIndex += 1
+
+      # Accounts imported with Key OR accounts generated from a seed thats not the profile seed
       else:
         imported.add(item)
 
     self.watchOnly.setItems(watchOnly)
     self.imported.setItems(imported)
     self.generated.setItems(generated)
-
-    # create a list of imported seeds/default account created from where more accounts can be derived
-    var generatedAccounts: seq[GeneratedWalletItem] = @[]
-    var importedSeedIndex: int = 1
-    for item in items:
-      if item.getWalletType() == "":
-        var generatedAccs: Model = newModel()
-        generatedAccs.setItems(generated.filter(x => cmpIgnoreCase(x.getDerivedFrom(), item.getDerivedFrom()) == 0))
-        generatedAccounts.add(initGeneratedWalletItem("Default", "status", generatedAccs, item.getDerivedFrom()))
-      elif item.getWalletType() == SEED:
-        var generatedAccs1: Model = newModel()
-        var filterItems: seq[Item] = generated.filter(x => cmpIgnoreCase(x.getDerivedFrom(), item.getDerivedFrom()) == 0)
-        filterItems.insert(item, 0)
-        generatedAccs1.setItems(filterItems)
-        generatedAccounts.add(initGeneratedWalletItem("Seed " & $importedSeedIndex , "seed-phrase", generatedAccs1, item.getDerivedFrom()))
-        importedSeedIndex += 1
     self.generatedAccounts.setItems(generatedAccounts)
-
 
   proc generateNewAccount*(self: View, password: string, accountName: string, color: string, emoji: string, path: string, derivedFrom: string): string {.slot.} =
     return self.delegate.generateNewAccount(password, accountName, color, emoji, path, derivedFrom)

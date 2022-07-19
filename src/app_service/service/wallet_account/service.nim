@@ -152,6 +152,7 @@ QtObject:
     try:
       let accounts = fetchAccounts()
       for account in accounts:
+        account.relatedAccounts = accounts.filter(x => not account.derivedFrom.isEmptyOrWhitespace and (cmpIgnoreCase(x.derivedFrom, account.derivedFrom) == 0))
         self.walletAccounts[account.address] = account
 
       self.buildAllTokens(true)
@@ -198,6 +199,7 @@ QtObject:
     for account in accounts:
       if not self.walletAccounts.haskey(account.address):
         newAccount = account
+        newAccount.relatedAccounts = accounts.filter(x => cmpIgnoreCase(x.derivedFrom, account.derivedFrom) == 0)
         break
     self.walletAccounts[newAccount.address] = newAccount
     self.buildAllTokens()

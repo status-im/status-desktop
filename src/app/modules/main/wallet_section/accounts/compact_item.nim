@@ -1,6 +1,4 @@
 import strformat
-import ../../../shared_models/token_model as token_model
-import ./compact_model as compact_model
 
 type
   Item* = object
@@ -13,10 +11,8 @@ type
     isWallet: bool
     isChat: bool
     currencyBalance: float64
-    assets: token_model.Model
     emoji: string
     derivedfrom: string
-    relatedAccounts: compact_model.Model
 
 proc initItem*(
   name: string,
@@ -28,10 +24,8 @@ proc initItem*(
   isWallet: bool,
   isChat: bool,
   currencyBalance: float64,
-  assets: token_model.Model,
   emoji: string,
-  derivedfrom: string,
-  relatedAccounts: compact_model.Model
+  derivedfrom: string
 ): Item =
   result.name = name
   result.address = address
@@ -42,10 +36,8 @@ proc initItem*(
   result.isWallet = isWallet
   result.isChat = isChat
   result.currencyBalance = currencyBalance
-  result.assets = assets
   result.emoji = emoji
   result.derivedfrom = derivedfrom
-  result.relatedAccounts = relatedAccounts
 
 proc `$`*(self: Item): string =
   result = fmt"""WalletAccountItem(
@@ -58,10 +50,8 @@ proc `$`*(self: Item): string =
     isWallet: {self.isWallet},
     isChat: {self.isChat},
     currencyBalance: {self.currencyBalance},
-    assets.len: {self.assets.getCount()},
     emoji: {self.emoji},
-    derivedfrom: {self.derivedfrom},
-    relatedAccounts: {self.relatedAccounts}
+    derivedfrom: {self.derivedfrom}
     ]"""
 
 proc getName*(self: Item): string =
@@ -94,11 +84,6 @@ proc getIsChat*(self: Item): bool =
 proc getCurrencyBalance*(self: Item): float64 =
   return self.currencyBalance
 
-proc getAssets*(self: Item): token_model.Model =
-  return self.assets
-
 proc getDerivedFrom*(self: Item): string =
   return self.derivedfrom
 
-proc getRelatedAccounts*(self: Item): compact_model.Model =
-  return self.relatedAccounts

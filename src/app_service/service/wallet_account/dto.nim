@@ -35,6 +35,7 @@ type
     tokens*: seq[WalletTokenDto]
     emoji*: string
     derivedfrom*: string
+    relatedAccounts*: seq[WalletAccountDto]
 
 proc newDto*(
   name: string,
@@ -46,7 +47,8 @@ proc newDto*(
   isWallet: bool,
   isChat: bool,
   emoji: string,
-  derivedfrom: string
+  derivedfrom: string,
+  relatedAccounts: seq[WalletAccountDto]
 ): WalletAccountDto =
   return WalletAccountDto(
     name: name,
@@ -58,7 +60,8 @@ proc newDto*(
     isWallet: isWallet,
     isChat: isChat,
     emoji: emoji,
-    derivedfrom: derivedfrom
+    derivedfrom: derivedfrom,
+    relatedAccounts: relatedAccounts
   )
 
 proc toWalletAccountDto*(jsonObj: JsonNode): WalletAccountDto =

@@ -1,6 +1,6 @@
-import NimQml, Tables, strutils, strformat
+import NimQml, Tables, strutils, strformat, sequtils
 
-import ./item
+import ./compact_item
 
 type
   ModelRole {.pure.} = enum
@@ -13,10 +13,8 @@ type
     IsWallet,
     IsChat,
     CurrencyBalance,
-    Assets,
     Emoji,
     DerivedFrom,
-    RelatedAccounts
 
 QtObject:
   type
@@ -60,11 +58,9 @@ QtObject:
       ModelRole.WalletType.int:"walletType",
       ModelRole.IsWallet.int:"isWallet",
       ModelRole.IsChat.int:"isChat",
-      ModelRole.Assets.int:"assets",
       ModelRole.CurrencyBalance.int:"currencyBalance",
       ModelRole.Emoji.int: "emoji",
       ModelRole.DerivedFrom.int: "derivedfrom",
-      ModelRole.RelatedAccounts.int: "relatedAccounts"
     }.toTable
 
 
@@ -103,29 +99,7 @@ QtObject:
       result = newQVariant(item.getIsChat())
     of ModelRole.CurrencyBalance:
       result = newQVariant(item.getCurrencyBalance())
-    of ModelRole.Assets:
-      result = newQVariant(item.getAssets())
     of ModelRole.Emoji:
       result = newQVariant(item.getEmoji())
     of ModelRole.DerivedFrom:
       result = newQVariant(item.getDerivedFrom())
-    of ModelRole.RelatedAccounts:
-      result = newQVariant(item.getRelatedAccounts())
-
-  proc getAccountNameByAddress*(self: Model, address: string): string =
-    for account in self.items:
-      if(account.getAddress() == address):
-        return account.getName()
-    return ""
-
-  proc getAccountIconColorByAddress*(self: Model, address: string): string =
-    for account in self.items:
-      if(account.getAddress() == address):
-        return account.getColor()
-    return ""
-
-  proc getAccountAssetsByAddress*(self: Model, address: string): QVariant =
-    for account in self.items:
-      if(account.getAddress() == address):
-        return newQVariant(account.getAssets())
-    return nil
