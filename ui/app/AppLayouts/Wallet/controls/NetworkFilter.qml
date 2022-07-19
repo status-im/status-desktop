@@ -1,4 +1,5 @@
 import QtQuick 2.13
+import QtQuick.Controls 2.14
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -12,23 +13,29 @@ import "../popups"
 
 Item {
     id: root
-    width: selectRectangle.width
-    height: childrenRect.height
+    implicitWidth: selectRectangle.width
+    implicitHeight: childrenRect.height
 
     property var store
 
+    // FIXME this should be a (styled) ComboBox
     StatusListItem {
         id: selectRectangle
-        implicitWidth: 210
+        implicitWidth: 130
         implicitHeight: 40
         border.width: 1
-        border.color: Theme.palette.baseColor2
-        color: Theme.palette.statusListItem.backgroundColor
-        title: qsTr("All networks")
+        border.color: Theme.palette.directColor7
+        color: "transparent"
+        leftPadding: 12
+        rightPadding: 12
+        statusListItemTitle.font.pixelSize: 13
+        statusListItemTitle.font.weight: Font.Medium
+        statusListItemTitle.color: Theme.palette.baseColor1
+        title: store.enabledNetworks.count === store.allNetworks.count ? qsTr("All networks") : qsTr("%n network(s)", "", store.enabledNetworks.count)
         components:[
             StatusIcon {
-                width: 20
-                height: 20
+                width: 16
+                height: 16
                 icon: "chevron-down"
                 color: Theme.palette.baseColor1
             }
@@ -36,41 +43,50 @@ Item {
         onClicked: {
             if (selectPopup.opened) {
                 selectPopup.close();
-                return;
+            } else {
+                selectPopup.open();
             }
-            selectPopup.open();
         }
     }
 
-    Grid {
-        id: enabledNetworks
-        columns: 4
-        spacing: 2
-        visible: (chainRepeater.count > 0)
-
+    Row {
         anchors.top: selectRectangle.bottom
-        anchors.topMargin: Style.current.padding
-        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.topMargin: Style.current.halfPadding
+        anchors.right: parent.right
+        spacing: Style.current.smallPadding
+        visible: chainRepeater.count > 0
 
         Repeater {
             id: chainRepeater
             model: store.enabledNetworks
-            width: parent.width
-            height: parent.height
+            delegate: Control {
+                horizontalPadding: Style.current.halfPadding
+                verticalPadding: 5
+                background: Rectangle {
+                    implicitWidth: 66
+                    implicitHeight: 32
+                    color: "transparent"
+                    border.width: 1
+                    border.color: Theme.palette.baseColor2
+                    radius: 36
+                }
 
-            Rectangle {
-                color: Utils.setColorAlpha(Style.current.blue, 0.1)
-                width: text.width + Style.current.halfPadding
-                height: text.height + Style.current.halfPadding
-                radius: Style.current.radius
-
-                StyledText {
-                    id: text
-                    text: model.chainName
-                    color: Style.current.blue
-                    font.pixelSize: Style.current.secondaryTextFontSize
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.horizontalCenter: parent.horizontalCenter
+                contentItem: Row {
+                    spacing: 4
+                    // FIXME this could be StatusIcon but it can't load images from an arbitrary URL
+                    Image {
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 22
+                        height: 22
+                        source: Style.png(model.iconUrl)
+                    }
+                    StatusBaseText {
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: model.shortName
+                        color: model.chainColor
+                        font.pixelSize: Style.current.primaryTextFontSize
+                        font.weight: Font.Medium
+                    }
                 }
             }
         }
