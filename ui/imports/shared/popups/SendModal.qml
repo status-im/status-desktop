@@ -376,8 +376,7 @@ StatusModal {
                                                                      ""))
 
                                     if (!gasEstimate.success) {
-
-                                        console.warn(qsTrId("error-estimating-gas---1").arg(gasEstimate.error.message))
+                                        console.warn("error estimating gas: %1").arg(gasEstimate.error.message)
                                         return
                                     }
 
