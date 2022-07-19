@@ -14,7 +14,7 @@ Item {
     id: root
     property string chatId: ""
     property string name: "channel name"
-    property string message: "Everything is connected"
+    property string message: qsTr("Everything is connected")
     property int chatType: 1
     property var onClick
 

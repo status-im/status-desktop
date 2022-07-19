@@ -32,7 +32,7 @@ Rectangle {
             contentItem: Item {
                 anchors.fill: parent
                 Text {
-                    text: "Back up"
+                    text: qsTr("Back up")
                     font.pixelSize: 13
                     font.weight: Font.Medium
                     font.family: Style.current.fontRegular.name

@@ -16,7 +16,7 @@ ModalPopup {
     signal openModalClicked()
 
     StyledText {
-        text: "Do you want to add another existing key?"
+        text: qsTr("Do you want to add another existing key?")
         anchors.left: parent.left
         anchors.top: parent.top
     }
@@ -26,7 +26,7 @@ ModalPopup {
         anchors.topMargin: Style.current.padding
         anchors.right: parent.right
         anchors.rightMargin: Style.current.padding
-        text: "Add another existing key"
+        text: qsTr("Add another existing key")
 
         onClicked : {
             openModalClicked()

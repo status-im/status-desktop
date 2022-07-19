@@ -36,7 +36,7 @@ StatusModal {
     rightButtons: [
         StatusButton {
             id: doneBtn
-            text: qsTr("Ok")
+            text: qsTr("OK")
             enabled: !!displayNameInput.text && displayNameInput.valid
             onClicked: {
                 root.profileStore.setDisplayName(displayNameInput.text)
