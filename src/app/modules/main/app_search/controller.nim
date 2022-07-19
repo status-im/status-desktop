@@ -127,6 +127,10 @@ proc searchMessages*(self: Controller, searchTerm: string) =
     for cId in communitiesIds:
       communities.add(cId)
 
+  if (communities.len == 0 and chats.len == 0):
+    self.delegate.onSearchMessagesDone(@[])
+    return
+
   self.messageService.asyncSearchMessages(communities, chats, self.searchTerm, false)
 
 proc getOneToOneChatNameAndImage*(self: Controller, chatId: string):
