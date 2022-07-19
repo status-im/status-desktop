@@ -7,6 +7,8 @@ import ../../../../core/eventemitter
 import ../../../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../shared_models/token_model as token_model
 import ../../../shared_models/token_item as token_item
+import ./compact_item as compact_item
+import ./compact_model as compact_model
 
 export io_interface
 
@@ -55,6 +57,23 @@ method refreshWalletAccounts*(self: Module) =
         ))
     )
 
+    let relatedAccounts = compact_model.newModel()
+    relatedAccounts.setItems(
+      w.relatedAccounts.map(x => compact_item.initItem(
+          x.name,
+          x.address,
+          x.path,
+          x.color,
+          x.publicKey,
+          x.walletType,
+          x.isWallet,
+          x.isChat,
+          x.getCurrencyBalance(),
+          x.emoji,
+          x.derivedfrom,
+        ))
+      )
+
     result = initItem(
       w.name,
       w.address,
@@ -67,7 +86,8 @@ method refreshWalletAccounts*(self: Module) =
       w.getCurrencyBalance(),
       assets,
       w.emoji,
-      w.derivedfrom
+      w.derivedfrom,
+      relatedAccounts
     ))
 
   self.view.setItems(items)

@@ -4,11 +4,17 @@ import ../../../../../app_service/service/wallet_account/service as wallet_accou
 import ./io_interface
 import ../../../shared_models/token_model as token_model
 import ../../../shared_models/token_item as token_item
+import ../accounts/compact_model
+import ../accounts/compact_item
+
+const GENERATED = "generated"
+const GENERATED_FROM_IMPORTED = "generated from imported accounts"
 
 QtObject:
   type
     View* = ref object of QObject
       delegate: io_interface.AccessInterface
+      defaultAccount: wallet_account_service.WalletAccountDto
       name: string
       address: string
       mixedcaseAddress: string
@@ -20,6 +26,8 @@ QtObject:
       currencyBalance: float64
       assets: token_model.Model
       emoji: string
+      derivedfrom: string
+      relatedAccounts: compact_model.Model
 
   proc setup(self: View) =
     self.QObject.setup
@@ -134,8 +142,29 @@ QtObject:
     read = getEmoji
     notify = emojiChanged
 
+  proc getDerivedfrom(self: View): QVariant {.slot.} =
+    return newQVariant(self.derivedfrom)
+
+  proc derivedfromChanged(self: View) {.signal.}
+
+  QtProperty[QVariant] derivedfrom:
+    read = getDerivedfrom
+    notify = derivedfromChanged
+
+  proc getRelatedAccounts(self: View): QVariant {.slot.} =
+    return newQVariant(self.relatedAccounts)
+
+  proc relatedAccountsChanged(self: View) {.signal.}
+
+  QtProperty[QVariant] relatedAccounts:
+    read = getRelatedAccounts
+    notify = relatedAccountsChanged
+
   proc update(self: View, address: string, accountName: string, color: string, emoji: string) {.slot.} =
     self.delegate.update(address, accountName, color, emoji)
+
+  proc setDefaultWalletAccount*(self: View, default: wallet_account_service.WalletAccountDto) =
+    self.defaultAccount = default
 
   proc setData*(self: View, dto: wallet_account_service.WalletAccountDto) =
     if(self.name != dto.name):
@@ -156,12 +185,40 @@ QtObject:
     if(self.publicKey != dto.publicKey):
       self.publicKey = dto.publicKey
       self.publicKeyChanged()
-    if(self.walletType != dto.walletType):
-      self.walletType = dto.walletType
-      self.walletTypeChanged()
+    # Check if the account is generated from default wallet account else change wallettype
+    if dto.walletType == GENERATED and dto.derivedfrom != self.defaultAccount.derivedfrom:
+        self.walletType = GENERATED_FROM_IMPORTED
+        self.walletTypeChanged()
+    else:
+      if(self.walletType != dto.walletType):
+        self.walletType = dto.walletType
+        self.walletTypeChanged()
     if(self.isChat != dto.isChat):
       self.isChat = dto.isChat
       self.isChatChanged()
     if(self.emoji != dto.emoji):
       self.emoji = dto.emoji
       self.emojiChanged()
+    if(self.derivedfrom != dto.derivedfrom):
+      self.derivedfrom = dto.derivedfrom
+      self.derivedfromChanged()
+    # Set related accounts
+    let relatedAccounts = compact_model.newModel()
+    relatedAccounts.setItems(
+      dto.relatedAccounts.map(x => compact_item.initItem(
+          x.name,
+          x.address,
+          x.path,
+          x.color,
+          x.publicKey,
+          x.walletType,
+          x.isWallet,
+          x.isChat,
+          x.getCurrencyBalance(),
+          x.emoji,
+          x.derivedfrom
+        ))
+      )
+    self.relatedAccounts = relatedAccounts
+    self.relatedAccountsChanged()
+

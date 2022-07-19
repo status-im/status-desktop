@@ -91,6 +91,8 @@ proc setAssetsAndBalance(self: Module, tokens: seq[WalletTokenDto]) =
 method switchAccount*(self: Module, accountIndex: int) =
   self.currentAccountIndex = accountIndex
   let walletAccount = self.controller.getWalletAccount(accountIndex)
+  # can safely do this as the account will always contain atleast one account
+  self.view.setDefaultWalletAccount(self.controller.getWalletAccount(0))
   self.view.setData(walletAccount)
   self.setAssetsAndBalance(walletAccount.tokens)
 
