@@ -20,7 +20,7 @@ import "../views"
 import "../panels"
 
 StatusModal {
-    id: popup
+    id: root
 
     property int marginBetweenInputs: Style.dp(38)
     property string passwordValidationError: ""
@@ -34,7 +34,7 @@ StatusModal {
     header.title: qsTr("Generate an account")
 
     QtObject {
-        id: _internal
+        id: d
 
         property int numOfItems: 100
         property int pageNumber: 1
@@ -56,13 +56,13 @@ StatusModal {
 
         onDerivedPathErrorChanged: {
             if(Utils.isInvalidPasswordMessage(derivedPathError))
-                popup.passwordValidationError = qsTr("Wrong password")
+                root.passwordValidationError = qsTr("Wrong password")
         }
 
         function showPasswordError(errMessage) {
             if (errMessage) {
                 if (Utils.isInvalidPasswordMessage(errMessage)) {
-                    popup.passwordValidationError = qsTr("Wrong password")
+                    root.passwordValidationError = qsTr("Wrong password")
                 } else {
                     accountError.text = errMessage;
                     accountError.open();
@@ -74,8 +74,45 @@ StatusModal {
             interval: 1000
             running: false
             onTriggered: {
-                _internal.getDerivedAddressList()
+                d.getDerivedAddressList()
             }
+        }
+
+        function generateNewAccount() {
+            // TODO the loaidng doesn't work because the function freezes th view. Might need to use threads
+            nextButton.loading = true
+            if (!validate() || !advancedSelection.validate()) {
+                Global.playErrorSound();
+                return nextButton.loading = false
+            }
+
+            let emoji =  StatusQUtils.Emoji.deparseFromParse(accountNameInput.input.icon.emoji)
+
+            var errMessage = ""
+            if(advancedSelection.expandableItem) {
+                switch(advancedSelection.expandableItem.addAccountType) {
+                case SelectGeneratedAccount.AddAccountType.GenerateNew:
+                    errMessage = RootStore.generateNewAccount(passwordInput.text, accountNameInput.text, colorSelectionGrid.selectedColor, accountNameInput.input.icon.emoji, advancedSelection.expandableItem.completePath, advancedSelection.expandableItem.derivedFromAddress)
+                    break
+                case SelectGeneratedAccount.AddAccountType.ImportSeedPhrase:
+                    errMessage = RootStore.addAccountsFromSeed(advancedSelection.expandableItem.mnemonicText, passwordInput.text, accountNameInput.text, colorSelectionGrid.selectedColor, accountNameInput.input.icon.emoji, advancedSelection.expandableItem.completePath)
+                    break
+                case SelectGeneratedAccount.AddAccountType.ImportPrivateKey:
+                    errMessage = RootStore.addAccountsFromPrivateKey(advancedSelection.expandableItem.privateKey, passwordInput.text, accountNameInput.text, colorSelectionGrid.selectedColor, accountNameInput.input.icon.emoji)
+                    break
+                case SelectGeneratedAccount.AddAccountType.WatchOnly:
+                    errMessage = RootStore.addWatchOnlyAccount(advancedSelection.expandableItem.watchAddress, accountNameInput.text, colorSelectionGrid.selectedColor, accountNameInput.input.icon.emoji)
+                    break
+                }
+            } else {
+                errMessage = RootStore.generateNewAccount(passwordInput.text, accountNameInput.text, colorSelectionGrid.selectedColor, accountNameInput.input.icon.emoji, advancedSelection.expandableItem.completePath, advancedSelection.expandableItem.derivedFromAddress)
+            }
+
+            nextButton.loading = false
+            d.showPasswordError(errMessage)
+
+            root.afterAddAccount();
+            root.close();
         }
     }
 
@@ -108,7 +145,7 @@ StatusModal {
     }
 
     Connections {
-        enabled: popup.opened
+        enabled: root.opened
         target: emojiPopup
         onEmojiSelected: function (emojiText, atCursor) {
             accountNameInput.input.icon.emoji = emojiText
@@ -116,7 +153,7 @@ StatusModal {
     }
 
     contentItem: ScrollView {
-        width: popup.width
+        width: root.width
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
         topPadding: Style.current.halfPadding
         bottomPadding: Style.current.halfPadding
@@ -143,12 +180,18 @@ StatusModal {
                     placeholderText: qsTr("Enter your password…")
                     label: qsTr("Password")
                     textField.echoMode: TextInput.Password
-                    validationError: popup.passwordValidationError
+                    validationError: root.passwordValidationError
                     inputLabel.font.pixelSize: 15
                     inputLabel.font.weight: Font.Normal
                     onTextChanged: {
-                        popup.passwordValidationError = ""
-                        _internal.waitTimer.restart()
+                        root.passwordValidationError = ""
+                        d.waitTimer.restart()
+                    }
+                    onKeyPressed: {
+                        if(event.key === Qt.Key_Tab) {
+                            accountNameInput.input.edit.forceActiveFocus(Qt.MouseFocusReason)
+                            event.accepted = true
+                        }
                     }
                 }
             }
@@ -161,10 +204,10 @@ StatusModal {
                 input.icon.color: colorSelectionGrid.selectedColor ? colorSelectionGrid.selectedColor : Theme.palette.directColor1
                 input.leftPadding: Style.current.padding
                 onIconClicked: {
-                    popup.emojiPopup.open()
-                    popup.emojiPopup.emojiSize = StatusQUtils.Emoji.size.verySmall
-                    popup.emojiPopup.x = popup.x + accountNameInput.x + Style.current.padding
-                    popup.emojiPopup.y = popup.y + contentItem.y + accountNameInput.y + accountNameInput.height +  Style.current.halfPadding
+                    root.emojiPopup.open()
+                    root.emojiPopup.emojiSize = StatusQUtils.Emoji.size.verySmall
+                    root.emojiPopup.x = root.x + accountNameInput.x + Style.current.padding
+                    root.emojiPopup.y = root.y + contentItem.y + accountNameInput.y + accountNameInput.height +  Style.current.halfPadding
                 }
                 validators: [
                     StatusMinLengthValidator {
@@ -172,6 +215,14 @@ StatusModal {
                         minLength: 1
                     }
                 ]
+                onKeyPressed: {
+                    if(event.key === Qt.Key_Tab) {
+                        if (nextButton.enabled) {
+                            nextButton.forceActiveFocus(Qt.MouseFocusReason)
+                            event.accepted = true
+                        }
+                    }
+                }
             }
 
             StatusColorSelectorGrid {
@@ -206,7 +257,7 @@ StatusModal {
                 expandableComponent: AdvancedAddAccountView {
                     width: parent.width
                     Component.onCompleted: advancedSelection.isValid = Qt.binding(function(){return isValid})
-                    onCalculateDerivedPath: _internal.getDerivedAddressList()
+                    onCalculateDerivedPath: d.getDerivedAddressList()
                     onEnterPressed: {
                         if (nextButton.enabled) {
                             nextButton.clicked(null)
@@ -235,6 +286,8 @@ StatusModal {
                     advancedSelection.isValid
             }
 
+            highlighted: focus
+
             MessageDialog {
                 id: accountError
                 title: "Adding the account failed"
@@ -242,42 +295,8 @@ StatusModal {
                 standardButtons: StandardButton.Ok
             }
 
-            onClicked : {
-                // TODO the loaidng doesn't work because the function freezes th eview. Might need to use threads
-                loading = true
-                if (!validate() || !advancedSelection.validate()) {
-                    Global.playErrorSound();
-                    return loading = false
-                }
-
-                let emoji =  StatusQUtils.Emoji.deparseFromParse(accountNameInput.input.icon.emoji)
-
-                var errMessage = ""
-                if(advancedSelection.expandableItem) {
-                    switch(advancedSelection.expandableItem.addAccountType) {
-                    case SelectGeneratedAccount.AddAccountType.GenerateNew:
-                        errMessage = RootStore.generateNewAccount(passwordInput.text, accountNameInput.text, colorSelectionGrid.selectedColor, accountNameInput.input.icon.emoji, advancedSelection.expandableItem.completePath, advancedSelection.expandableItem.derivedFromAddress)
-                        break
-                    case SelectGeneratedAccount.AddAccountType.ImportSeedPhrase:
-                        errMessage = RootStore.addAccountsFromSeed(advancedSelection.expandableItem.mnemonicText, passwordInput.text, accountNameInput.text, colorSelectionGrid.selectedColor, accountNameInput.input.icon.emoji, advancedSelection.expandableItem.completePath)
-                        break
-                    case SelectGeneratedAccount.AddAccountType.ImportPrivateKey:
-                        errMessage = RootStore.addAccountsFromPrivateKey(advancedSelection.expandableItem.privateKey, passwordInput.text, accountNameInput.text, colorSelectionGrid.selectedColor, accountNameInput.input.icon.emoji)
-                        break
-                    case SelectGeneratedAccount.AddAccountType.WatchOnly:
-                        errMessage = RootStore.addWatchOnlyAccount(advancedSelection.expandableItem.watchAddress, accountNameInput.text, colorSelectionGrid.selectedColor, accountNameInput.input.icon.emoji)
-                        break
-                    }
-                } else {
-                    errMessage = RootStore.generateNewAccount(passwordInput.text, accountNameInput.text, colorSelectionGrid.selectedColor, accountNameInput.input.icon.emoji, advancedSelection.expandableItem.completePath, advancedSelection.expandableItem.derivedFromAddress)
-                }
-
-                loading = false
-                _internal.showPasswordError(errMessage)
-
-                popup.afterAddAccount();
-                popup.close();
-            }
+            Keys.onReturnPressed: d.generateNewAccount()
+            onClicked : d.generateNewAccount()
         }
     ]
 }
