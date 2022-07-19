@@ -31,10 +31,11 @@ StatusWindow {
     color: Style.current.background
     title: {
         // Set application settings
-        Qt.application.name = qsTr("Status Desktop")
+        Qt.application.name = "Status Desktop"
+        Qt.application.displayName = qsTr("Status Desktop")
         Qt.application.organization = "Status"
         Qt.application.domain = "status.im"
-        return Qt.application.name
+        return Qt.application.displayName
     }
     visible: true
 
