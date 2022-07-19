@@ -22,6 +22,7 @@ StatusModal {
     id: popup
 
     property alias stack: stack
+    property alias addressText: recipientSelector.input.text
 
     property var store
     property var contactsStore

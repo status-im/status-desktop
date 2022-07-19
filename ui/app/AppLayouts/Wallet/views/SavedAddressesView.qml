@@ -8,16 +8,18 @@ import StatusQ.Components 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Popups 0.1
+import shared.controls 1.0
 
+import "../stores"
 import "../popups"
 import "../controls"
-import "../stores"
 
 Item {
     id: root
     anchors.leftMargin: Style.current.padding
     anchors.rightMargin: Style.current.padding
 
+    property var sendModal
     property var contactsStore
 
     QtObject {
@@ -67,43 +69,86 @@ Item {
         StatusListItem {
             id: savedAddress
             title: name
-            subTitle: address
-            icon.name: "wallet"
+            subTitle: name + " \u2022 " + Utils.getElidedCompressedPk(address)
             implicitWidth: parent.width
+            color: "transparent"
+            border.color: Theme.palette.baseColor5
+            //TODO uncomment when #6456 is fixed
+            //titleTextIcon: RootStore.favouriteAddress ? "star-icon" : ""
+            statusListItemComponentsSlot.spacing: 0
             property bool showButtons: sensor.containsMouse
+
             components: [
                 StatusRoundButton {
-                    color: hovered ? Theme.palette.dangerColor2 : Theme.palette.dangerColor3
-                    icon.color: Theme.palette.dangerColor1
-                    visible: showButtons
-                    icon.name: "delete"
+                    icon.color: savedAddress.showButtons ? Theme.palette.directColor1 : Theme.palette.baseColor1
+                    type: StatusRoundButton.Type.Tertiary
+                    icon.name: "send"
                     onClicked: {
-                        deleteAddressConfirm.name = name
-                        deleteAddressConfirm.address = address
-                        deleteAddressConfirm.open()
+                        root.sendModal.open(address);
                     }
                 },
-                StatusRoundButton {
-                    icon.name: "pencil"
-                    visible: showButtons
-                    onClicked: Global.openPopup(addEditSavedAddress,
-                                                {
-                                                    edit: true,
-                                                    address: address,
-                                                    name: name
-                                                })
+                CopyToClipBoardButton {
+                    type: StatusRoundButton.Type.Tertiary
+                    icon.color: savedAddress.showButtons ? Theme.palette.directColor1 : Theme.palette.baseColor1
+                    store: RootStore
+                    textToCopy: address
                 },
+                //TODO uncomment when #6456 is fixed
+//                StatusRoundButton {
+//                    icon.color: savedAddress.showButtons ? Theme.palette.directColor1 : Theme.palette.baseColor1
+//                    type: StatusRoundButton.Type.Tertiary
+//                    icon.name: savedAddress.favouriteAddress ? "favourite" : "unfavourite"
+//                    onClicked: {
+//                        RootStore.setFavourite();
+//                    }
+//                },
                 StatusRoundButton {
-                    icon.name: "send"
-                    visible: showButtons
-                },
-                StatusRoundButton {
-                    color: hovered ? Theme.palette.pinColor2 : Theme.palette.pinColor3
-                    icon.color: Theme.palette.pinColor1
-                    icon.name: "favourite"
-                    visible: showButtons
+                    icon.color: savedAddress.showButtons ? Theme.palette.directColor1 : Theme.palette.baseColor1
+                    type: StatusRoundButton.Type.Tertiary
+                    icon.name: "more"
+                    onClicked: {
+                        editDeleteMenu.openMenu(name, address);
+                    }
                 }
             ]
+        }
+    }
+
+    StatusPopupMenu {
+        id: editDeleteMenu
+        property string contactName
+        property string contactAddress
+        function openMenu(name, address) {
+            contactName = name;
+            contactAddress = address;
+            popup();
+        }
+        onClosed: {
+            contactName = "";
+            contactAddress = "";
+        }
+        StatusMenuItem {
+            text: qsTr("Edit")
+            iconSettings.name: "pencil-outline"
+            onTriggered: {
+                Global.openPopup(addEditSavedAddress,
+                                 {
+                                     edit: true,
+                                     address: editDeleteMenu.contactAddress,
+                                     name: editDeleteMenu.contactName
+                                 })
+            }
+        }
+        StatusMenuSeparator { }
+        StatusMenuItem {
+            text: qsTr("Delete")
+            type: StatusMenuItem.Type.Danger
+            iconSettings.name: "delete"
+            onTriggered: {
+                deleteAddressConfirm.name = editDeleteMenu.contactName;
+                deleteAddressConfirm.address = editDeleteMenu.contactAddress;
+                deleteAddressConfirm.open()
+            }
         }
     }
 

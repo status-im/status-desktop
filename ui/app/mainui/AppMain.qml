@@ -834,8 +834,9 @@ Item {
             id: sendModal
             active: false
 
-            function open() {
+            function open(address = "") {
                 this.active = true
+                this.item.addressText = address;
                 this.item.open()
             }
             function closed() {
