@@ -35,6 +35,7 @@ QtObject {
     property var layer2Networks: networksModule.layer2
     property var testNetworks: networksModule.test
     property var enabledNetworks: networksModule.enabled
+    property var allNetworks: networksModule.all
 
     property var cryptoRampServicesModel: walletSectionBuySellCrypto.model
 

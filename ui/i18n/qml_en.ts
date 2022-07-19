@@ -6061,6 +6061,15 @@ device, so only you can use them.</translation>
         <source>All networks</source>
         <translation>All networks</translation>
     </message>
+    <message numerus="yes">
+        <location filename="../app/AppLayouts/Wallet/controls/NetworkFilter.qml" line="34"/>
+        <location filename="../app/AppLayouts/Wallet/controls/NetworkFilter.qml" line="34"/>
+        <source>%n network(s)</source>
+        <translation>
+            <numerusform>%n network</numerusform>
+            <numerusform>%n networks</numerusform>
+        </translation>
+    </message>
 </context>
 <context>
     <name>NetworkSelectPopup</name>
