@@ -9,7 +9,7 @@
 #include <QLocale>
 
 #include <QRegularExpression>
-#include <QApplication>
+#include <QGuiApplication>
 #include <QDir>
 
 SpellChecker::SpellChecker(QObject *parent)
@@ -53,8 +53,8 @@ void SpellChecker::initHunspell()
         delete m_hunspell;
     }
 
-    QString dictFile = QApplication::applicationDirPath() + "/dictionaries/" + m_lang  + "/index.dic";
-    QString affixFile = QApplication::applicationDirPath() + "/dictionaries/" + m_lang  + "/index.aff";
+    QString dictFile = QGuiApplication::applicationDirPath() + "/dictionaries/" + m_lang  + "/index.dic";
+    QString affixFile = QGuiApplication::applicationDirPath() + "/dictionaries/" + m_lang  + "/index.aff";
     QByteArray dictFilePathBA = dictFile.toLocal8Bit();
     QByteArray affixFilePathBA = affixFile.toLocal8Bit();
     m_hunspell = new Hunspell(affixFilePathBA.constData(),

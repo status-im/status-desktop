@@ -20,7 +20,7 @@ void SandboxApp::startEngine()
     qmlRegisterType<SpellChecker>("Sandbox", 0, 1, "Spellchecker");
 
 #ifdef QT_DEBUG
-    const QUrl url = QUrl::fromLocalFile(applicationDirPath() + "/../main.qml");
+    const QUrl url = QUrl::fromLocalFile(SRC_DIR + QString{"/main.qml"});
 #else
     const QUrl url(QStringLiteral("qrc:/main.qml"));
 #endif
@@ -29,9 +29,9 @@ void SandboxApp::startEngine()
 
 
 #ifdef QT_DEBUG
-    m_engine.addImportPath(applicationDirPath() + "/../../src");
+    m_engine.addImportPath(SRC_DIR + QString{"/../src"});
 #else
-    m_engine.addImportPath(QStringLiteral("qrc:/src"));
+    m_engine.addImportPath(QStringLiteral(":/"));
 #endif
     qDebug() << m_engine.importPathList();
     QObject::connect(&m_engine, &QQmlApplicationEngine::objectCreated,

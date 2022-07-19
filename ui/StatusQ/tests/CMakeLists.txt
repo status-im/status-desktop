@@ -14,12 +14,6 @@ find_package(Qt${QT_VERSION_MAJOR} COMPONENTS QuickTest Qml Quick REQUIRED)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
-
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
 # no need to copy around qml test files for shadow builds - just set the respective define
 add_definitions(-DQUICK_TEST_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
 

@@ -1,22 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>main.qml</file>
-        <file>pages/StatusAccountSelectorPage.qml</file>
-        <file>pages/StatusAddressPage.qml</file>
-        <file>pages/StatusAssetSelectorPage.qml</file>
-        <file>pages/StatusChatCommandButtonPage.qml</file>
-        <file>pages/StatusChatInfoToolBarPage.qml</file>
-        <file>pages/StatusColorSelectorPage.qml</file>
-        <file>pages/StatusExpandableSettingsItemPage.qml</file>
-        <file>pages/StatusInputPage.qml</file>
-        <file>pages/StatusMacNotificationPage.qml</file>
-        <file>pages/StatusPopupMenuPage.qml</file>
-        <file>pages/StatusSelectPage.qml</file>
-        <file>pages/StatusTabBarIconButtonPage.qml</file>
-        <file>pages/StatusTabSwitchPage.qml</file>
-        <file>pages/StatusWalletColorButtonPage.qml</file>
-        <file>pages/StatusWalletColorSelectPage.qml</file>
-        <file>pages/StatusPasswordStrengthIndicatorPage.qml</file>
         <file>controls/Buttons.qml</file>
         <file>controls/Controls.qml</file>
         <file>controls/Icons.qml</file>
@@ -24,50 +7,73 @@
         <file>controls/ListItems.qml</file>
         <file>controls/Others.qml</file>
         <file>controls/Popups.qml</file>
+        <file>demoapp/data/logo-test-image.png</file>
+        <file>demoapp/data/Models.qml</file>
+        <file>demoapp/data/qmldir</file>
         <file>demoapp/ChatChannelView.qml</file>
         <file>demoapp/CreateChatView.qml</file>
         <file>demoapp/DemoCommunityDetailModal.qml</file>
         <file>demoapp/DemoContactRequestsModal.qml</file>
         <file>demoapp/StatusAppChatView.qml</file>
+        <file>demoapp/StatusAppCommunitiesPortalView.qml</file>
         <file>demoapp/StatusAppCommunityView.qml</file>
         <file>demoapp/StatusAppProfileSettingsView.qml</file>
-        <file>demoapp/data/Models.qml</file>
-        <file>demoapp/data/qmldir</file>
-        <file>demoapp/data/logo-test-image.png</file>
-        <file>DemoApp.qml</file>
-        <file>ThemeSwitch.qml</file>
-        <file>pages/StatusColorSelectorGridPage.qml</file>
-        <file>pages/StatusListPickerPage.qml</file>
-        <file>pages/StatusPinInputPage.qml</file>
-        <file>pages/StatusTagSelectorPage.qml</file>
-        <file>pages/StatusToastMessagePage.qml</file>
-        <file>pages/StatusWizardStepperPage.qml</file>
-        <file>pages/StatusTabBarButtonPage.qml</file>
-        <file>pages/StatusColorSpacePage.qml</file>
+        <file>images/Coinbase.png</file>
+        <file>images/CoinBaseCommunityBanner.png</file>
+        <file>images/CommunityBanner1.png</file>
         <file>images/CryptoKitties.png</file>
         <file>images/CryptoPunks.png</file>
         <file>images/Dragonerum.png</file>
-        <file>images/FriendsBenefits.png</file>
-        <file>images/logo-test-image.png</file>
-        <file>images/P2PCrypto.png</file>
-        <file>images/SNT.png</file>
-        <file>images/Socks.png</file>
-        <file>images/StatusPunks.png</file>
-        <file>images/CommunityBanner1.png</file>
-        <file>images/Coinbase.png</file>
-        <file>images/CoinBaseCommunityBanner.png</file>
         <file>images/DribbbleCommunityBanner.png</file>
         <file>images/Ethereum.png</file>
         <file>images/EthereumCommunityBanner.png</file>
         <file>images/Fluff.png</file>
+        <file>images/FriendsBenefits.png</file>
+        <file>images/logo-test-image.png</file>
+        <file>images/P2PCrypto.png</file>
+        <file>images/RARI.png</file>
         <file>images/Rarible.png</file>
         <file>images/RaribleCommunityBanner.png</file>
+        <file>images/SNT.png</file>
+        <file>images/Socks.png</file>
         <file>images/Spotify.png</file>
         <file>images/SpotifyCommunityBanner.png</file>
         <file>images/SR.png</file>
-        <file>images/SuperRareCommunityBanner.png</file>
-        <file>images/RARI.png</file>
         <file>images/SRToken.png</file>
+        <file>images/StatusPunks.png</file>
+        <file>images/SuperRareCommunityBanner.png</file>
+        <file>pages/StatusAccountSelectorPage.qml</file>
+        <file>pages/StatusAddressPage.qml</file>
+        <file>pages/StatusAssetSelectorPage.qml</file>
+        <file>pages/StatusCardPage.qml</file>
+        <file>pages/StatusChatCommandButtonPage.qml</file>
+        <file>pages/StatusChatInfoToolBarPage.qml</file>
+        <file>pages/StatusColorSelectorGridPage.qml</file>
+        <file>pages/StatusColorSelectorPage.qml</file>
+        <file>pages/StatusColorSpacePage.qml</file>
+        <file>pages/StatusCommunityCardPage.qml</file>
+        <file>pages/StatusCommunityTagsPage.qml</file>
+        <file>pages/StatusDialogPage.qml</file>
+        <file>pages/StatusExpandableSettingsItemPage.qml</file>
+        <file>pages/StatusImageCropPanelPage.qml</file>
+        <file>pages/StatusInputPage.qml</file>
         <file>pages/StatusItemSelectorPage.qml</file>
+        <file>pages/StatusListPickerPage.qml</file>
+        <file>pages/StatusMacNotificationPage.qml</file>
+        <file>pages/StatusPasswordStrengthIndicatorPage.qml</file>
+        <file>pages/StatusPinInputPage.qml</file>
+        <file>pages/StatusPopupMenuPage.qml</file>
+        <file>pages/StatusSelectPage.qml</file>
+        <file>pages/StatusTabBarButtonPage.qml</file>
+        <file>pages/StatusTabBarIconButtonPage.qml</file>
+        <file>pages/StatusTabSwitchPage.qml</file>
+        <file>pages/StatusTagSelectorPage.qml</file>
+        <file>pages/StatusToastMessagePage.qml</file>
+        <file>pages/StatusWalletColorButtonPage.qml</file>
+        <file>pages/StatusWalletColorSelectPage.qml</file>
+        <file>pages/StatusWizardStepperPage.qml</file>
+        <file>DemoApp.qml</file>
+        <file>main.qml</file>
+        <file>ThemeSwitch.qml</file>
     </qresource>
 </RCC>
