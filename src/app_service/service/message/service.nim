@@ -526,8 +526,8 @@ QtObject:
       self.finishAsyncSearchMessagesWithError(chatId, "search messages response doesn't contain messages array")
       return
 
-    if (messagesArray.kind != JArray):
-      self.finishAsyncSearchMessagesWithError(chatId, "expected messages json array is not of JArray type")
+    if (messagesArray.kind notin {JArray, JNull}):
+      self.finishAsyncSearchMessagesWithError(chatId, "expected messages json array is neither of JArray nor JNull type")
       return
 
     var messages = map(messagesArray.getElems(), proc(x: JsonNode): MessageDto = x.toMessageDto())
@@ -542,6 +542,7 @@ QtObject:
       return
 
     if (searchTerm.len == 0):
+      error "the searched term cannot be empty", procName="asyncSearchMessages"
       return
 
     let arg = AsyncSearchMessagesInChatTaskArg(
@@ -564,6 +565,7 @@ QtObject:
       return
 
     if (searchTerm.len == 0):
+      error "the searched term cannot be empty", procName="asyncSearchMessages"
       return
 
     let arg = AsyncSearchMessagesInChatsAndCommunitiesTaskArg(
