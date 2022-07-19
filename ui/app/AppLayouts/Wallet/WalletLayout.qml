@@ -46,6 +46,7 @@ Item {
             anchors.left: parent ? parent.left: undefined
             anchors.right: parent ? parent.right: undefined
             contactsStore: walletView.contactsStore
+            sendModal: walletView.sendModal
         }
     }
 
