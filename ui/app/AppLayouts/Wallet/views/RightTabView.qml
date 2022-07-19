@@ -1,7 +1,6 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
-import QtGraphicalEffects 1.13
 
 import StatusQ.Controls 0.1
 
@@ -17,86 +16,68 @@ import "../views"
 import "../panels"
 
 Item {
-    id: walletContainer
+    id: root
 
     property alias currentTabIndex: walletTabBar.currentIndex
     property var store
     property var sendModal
 
     ColumnLayout {
-        width: parent.width
-        height: parent.height
+       anchors.fill: parent
 
         WalletHeader {
-            id: walletHeader
             Layout.fillWidth: true
+            Layout.leftMargin: Style.current.padding
+            Layout.rightMargin: Style.current.padding
             locale: RootStore.locale
             currency: RootStore.currentCurrency
             currentAccount: RootStore.currentAccount
-            store: walletContainer.store
+            store: root.store
             walletStore: RootStore
         }
 
-        Item {
-            id: walletInfoContent
-            Layout.fillHeight: true
+        StatusTabBar {
+            id: walletTabBar
+            horizontalPadding: Style.current.padding
             Layout.fillWidth: true
+            Layout.topMargin: Style.current.padding
 
-            StatusTabBar {
-                id: walletTabBar
-                anchors.right: parent.right
-                anchors.rightMargin: Style.current.bigPadding
-                anchors.left: parent.left
-                anchors.leftMargin: Style.current.bigPadding
-                anchors.top: parent.top
-                anchors.topMargin: Style.current.padding
-                
-                StatusTabButton {
-                    id: assetBtn
-                    width: implicitWidth
-                    text: qsTr("Assets")
-                }
-                StatusTabButton {
-                    id: collectiblesBtn
-                    width: implicitWidth
-                    text: qsTr("Collectibles")
-                }
-                StatusTabButton {
-                    id: historyBtn
-                    width: implicitWidth
-                    text: qsTr("History")
-                }
+            StatusTabButton {
+                leftPadding: 0
+                width: implicitWidth
+                text: qsTr("Assets")
             }
+            StatusTabButton {
+                width: implicitWidth
+                text: qsTr("Collectibles")
+            }
+            StatusTabButton {
+                rightPadding: 0
+                width: implicitWidth
+                text: qsTr("Activity")
+            }
+        }
 
-            StackLayout {
-                id: stackLayout
-                anchors.rightMargin: Style.current.bigPadding
-                anchors.leftMargin: Style.current.bigPadding
-                anchors.top: walletTabBar.bottom
-                anchors.right: parent.right
-                anchors.bottom: parent.bottom
-                anchors.left: parent.left
-                anchors.topMargin: Style.current.bigPadding
-                currentIndex: walletTabBar.currentIndex
+        StackLayout {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            Layout.margins: Style.current.padding
+            currentIndex: walletTabBar.currentIndex
 
-                AssetsView {
-                    id: assetsTab
-                    account: RootStore.currentAccount
-                }
-                CollectiblesView {
-                    id: collectiblesTab
-                }
-                HistoryView {
-                    id: historyTab
-                    account: RootStore.currentAccount
-                }
+            AssetsView {
+                account: RootStore.currentAccount
+            }
+            CollectiblesView {}
+            HistoryView {
+                account: RootStore.currentAccount
             }
         }
 
         WalletFooter {
-            id: walletFooter
             Layout.fillWidth: true
-            sendModal: walletContainer.sendModal
+            Layout.leftMargin: -root.StackView.view.anchors.leftMargin
+            Layout.rightMargin: -root.StackView.view.anchors.rightMargin
+            sendModal: root.sendModal
         }
     }
 }

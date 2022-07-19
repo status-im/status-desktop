@@ -101,6 +101,9 @@ Item {
         rightPanel: StackView {
             id: rightPanelStackView
             anchors.fill: parent
+            anchors.topMargin: 49
+            anchors.leftMargin: 49
+            anchors.rightMargin: 49
             initialItem: walletContainer
             replaceEnter: Transition {
                 NumberAnimation { property: "opacity"; from: 0; to: 1; duration: 400; easing.type: Easing.OutCubic }
