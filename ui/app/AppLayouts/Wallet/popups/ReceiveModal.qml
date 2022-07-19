@@ -41,6 +41,15 @@ StatusModal {
     showHeader: false
     showAdvancedHeader: true
 
+    // When no network is selected reset the prefix to empty string
+    Connections {
+        target: RootStore.enabledNetworks
+        function onModelReset() {
+            if(RootStore.enabledNetworks.count === 0)
+                popup.networkPrefix = ""
+        }
+    }
+
     hasFloatingButtons: true
     advancedHeaderComponent: StatusFloatingButtonsSelector {
         id: floatingHeader
