@@ -1,6 +1,5 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.13
 
 import utils 1.0
 
@@ -16,9 +15,8 @@ import "../stores"
 
 Item {
     id: root
-    anchors.leftMargin: 80
-    anchors.rightMargin: 80
-    anchors.topMargin: 62
+    anchors.leftMargin: Style.current.padding
+    anchors.rightMargin: Style.current.padding
 
     property var contactsStore
 
@@ -35,35 +33,23 @@ Item {
         anchors.top: parent.top
         height: btnAdd.height
 
-        Row {
+        StatusBaseText {
             anchors.left: parent.left
-            anchors.top: parent.top
-            anchors.right: btnAdd.left
-            spacing: 10
-
-            StatusIcon {
-                icon: "address"
-                color: Theme.palette.primaryColor1
-                width: undefined
-                height: 35
-                anchors.verticalCenter: parent.verticalCenter
-            }
-            StatusBaseText {
-                id: title
-                text: qsTr("Saved addresses")
-                font.weight: Font.Medium
-                font.pixelSize: 28
-                anchors.verticalCenter: parent.verticalCenter
-                color: Theme.palette.directColor1
-            }
+            anchors.verticalCenter: parent.verticalCenter
+            id: title
+            text: qsTr("Saved addresses")
+            font.weight: Font.Bold
+            font.pixelSize: 28
+            color: Theme.palette.directColor1
         }
         StatusButton {
             id: btnAdd
             anchors.right: parent.right
             anchors.top: parent.top
-            text: "Add new   +"
-            leftPadding: 8
-            rightPadding: 11
+            anchors.verticalCenter: parent.verticalCenter
+            size: StatusBaseButton.Size.Small
+            font.weight: Font.Medium
+            text: qsTr("Add new address")
             visible: !_internal.loading
             onClicked: {
                 Global.openPopup(addEditSavedAddress)
@@ -146,7 +132,7 @@ Item {
         // caused no text to render
         property string text: qsTr("Are you sure you want to remove '%1' from your saved addresses?").arg(name)
         anchors.centerIn: parent
-        header.title: "Are you sure?"
+        header.title: qsTr("Are you sure?")
         header.subTitle: name
         contentItem: StatusBaseText {
             anchors.centerIn: parent
@@ -188,11 +174,7 @@ Item {
     }
 
     StatusBaseText {
-        anchors.top: errorMessage.bottom
-        anchors.topMargin: Style.current.padding
         anchors.centerIn: parent
-        Layout.fillWidth: true
-        Layout.fillHeight: true
         visible: listView.count === 0
         color: Theme.palette.baseColor1
         text: qsTr("No saved addresses")
@@ -206,8 +188,6 @@ Item {
         anchors.right: parent.right
         anchors.left: parent.left
         visible: listView.count > 0
-        Layout.fillWidth: true
-        Layout.fillHeight: true
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
         ListView {
