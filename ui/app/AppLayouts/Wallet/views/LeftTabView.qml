@@ -80,6 +80,7 @@ Rectangle {
 
         ScrollView {
             Layout.fillWidth: true
+            Layout.fillHeight: true
             Layout.topMargin: Style.current.halfPadding
             ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
             ScrollBar.vertical.policy: listView.contentHeight > listView.height ? ScrollBar.AlwaysOn : ScrollBar.AlwaysOff
