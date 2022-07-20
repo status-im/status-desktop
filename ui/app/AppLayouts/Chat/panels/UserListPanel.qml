@@ -43,6 +43,11 @@ Item {
 
     StatusListView {
         id: userListView
+        objectName: "userListPanel"
+        clip: true
+        ScrollBar.vertical: ScrollBar {
+            policy: ScrollBar.AsNeeded
+        }
         anchors {
             top: titleText.bottom
             topMargin: Style.current.padding

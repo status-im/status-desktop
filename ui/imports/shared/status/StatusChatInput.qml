@@ -76,6 +76,7 @@ Rectangle {
         Bottom
     }
 
+    objectName: "statusChatInput"
     height: {
         if (extendedArea.visible) {
             return messageInput.height + extendedArea.height + (control.isStatusUpdateInput ? 0 : Style.current.bigPadding)
@@ -942,7 +943,8 @@ Rectangle {
             ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
             TextArea {
-                id: messageInputField
+                id: messageInputField                
+                objectName: "messageInputField"
                 property var lastClick: 0
                 property int cursorWhenPressed: 0
                 width: scrollView.availableWidth

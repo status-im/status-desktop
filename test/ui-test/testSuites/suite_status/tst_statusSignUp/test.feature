@@ -33,20 +33,26 @@ Feature: Status Desktop Sign Up
       | tester3@ |
 
 
-  Scenario Outline: User cannot sign up with wrong password format
+  Scenario Outline: User cannot sign up with wrong password format in both new password and confirmation input
     Given A first time user lands on the status desktop and generates new key
     When the user inputs username <username>
+    When user inputs the following <wrongpassword> with ui-component onboarding_newPsw_Input
+    And user inputs the following <wrongpassword> with ui-component onboarding_confirmPsw_Input
+    Then the following ui-component onboarding_create_password_button is not enabled
 
-        # Input wrong password format in both new password and confirmation input and verify create password button is not enabled
-    When user inputs the following <wrongpassword> with ui-component loginView_passwordInput
-    And user inputs the following <wrongpassword> with ui-component mainWindow_Password_textField
-    Then the following ui-component mainWindow_Create_password_StatusBaseText is not enabled
+    Examples:
+      | username  | wrongpassword |
+      | tester123 | Invalid34     |
+      | tester124 | badP          |
+      | tester124 | bad2!s        |
 
 
-        # Input right password format in new password input but incorrect in confirmation password input and verify create password button is not enabled
-    When user inputs the following <password> with ui-component loginView_passwordInput
-    And user inputs the following <wrongpassword> with ui-component mainWindow_Password_textField
-    Then the following ui-component mainWindow_Create_password_StatusBaseText is not enabled
+  Scenario Outline: User cannot sign up with right password format in new password input but incorrect in confirmation password input
+    Given A first time user lands on the status desktop and generates new key
+    When the user inputs username <username>
+    When user inputs the following <password> with ui-component onboarding_newPsw_Input
+    And user inputs the following <wrongpassword> with ui-component onboarding_confirmPsw_Input
+    Then the following ui-component onboarding_create_password_button is not enabled
 
     Examples:
       | username  | wrongpassword | password         |
@@ -54,25 +60,57 @@ Feature: Status Desktop Sign Up
       | tester124 | badP          | TesTEr16843/!@01 |
       | tester124 | bad2!s        | TesTEr16843/!@01 |
 
-
-  Scenario Outline: User cannot finish Sign Up and Sign In process with wrong password
+  Scenario Outline: User cannot sign up with incorrect confirmation-again password
     Given A first time user lands on the status desktop and generates new key
     When the user inputs username <username>
-
-        # Input correct password format in both new password and confirmation input
-    When user inputs the following <password> with ui-component loginView_passwordInput
-    And user inputs the following  <password> with ui-component mainWindow_Password_textField
-    And user clicks on the following ui-component mainWindow_Create_password_StatusBaseText
-
-        # Input wrong password in final password input and verify password creation button is not enabled
-    When user inputs the following <wrongpassword> with ui-component loginView_passwordInput
-    Then the following ui-component mainWindow_Finalise_Status_Password_Creation_StatusBaseText is not enabled
+    When user inputs the following <password> with ui-component onboarding_newPsw_Input
+    And user inputs the following  <password> with ui-component onboarding_confirmPsw_Input
+    And user clicks on the following ui-component onboarding_create_password_button
+    And user inputs the following  <wrongpassword> with ui-component onboarding_confirmPswAgain_Input
+    Then the following ui-component onboarding_finalise_password_button is not enabled
 
     Examples:
       | username  | wrongpassword   | password         |
       | tester123 | Invalid34       | TesTEr16843/!@00 |
       | tester123 | TesTEr16843/!@) | TesTEr16843/!@01 |
 
+  Scenario Outline: User cannot finish Sign Up and Sign In process with wrong password format in both new password and confirmation input
+    Given A first time user lands on the status desktop and generates new key
+    When the user inputs username <username>
+    When user inputs the following <wrongpassword> with ui-component onboarding_newPsw_Input
+    And user inputs the following  <wrongpassword> with ui-component onboarding_confirmPsw_Input
+    Then the following ui-component onboarding_create_password_button is not enabled
+
+    Examples:
+      | username  | wrongpassword   |
+      | tester123 | Invalid34       |
+      | tester123 | TesTEr16843/!@) |
+
+  Scenario Outline: User cannot finish Sign Up and Sign In process with right password format in new password input but incorrect in confirmation password input
+    Given A first time user lands on the status desktop and generates new key
+    When the user inputs username <username>
+    When user inputs the following <password> with ui-component onboarding_newPsw_Input
+    And user inputs the following  <wrongpassword> with ui-component onboarding_confirmPsw_Input
+    Then the following ui-component onboarding_create_password_button is not enabled
+
+    Examples:
+      | username  | wrongpassword   | password         |
+      | tester123 | Invalid34       | TesTEr16843/!@00 |
+      | tester123 | TesTEr16843/!@) | TesTEr16843/!@01 |
+
+  Scenario Outline: User cannot finish Sign Up and Sign In process with incorrect confirmation-again password
+    Given A first time user lands on the status desktop and generates new key
+    When the user inputs username <username>
+    When user inputs the following <password> with ui-component onboarding_newPsw_Input
+    And user inputs the following  <password> with ui-component onboarding_confirmPsw_Input
+    And user clicks on the following ui-component onboarding_create_password_button
+    And user inputs the following  <wrongpassword> with ui-component onboarding_confirmPswAgain_Input
+    Then the following ui-component onboarding_finalise_password_button is not enabled
+
+    Examples:
+      | username  | wrongpassword   | password         |
+      | tester123 | Invalid34       | TesTEr16843/!@00 |
+      | tester123 | TesTEr16843/!@) | TesTEr16843/!@01 |
 
   Scenario: User signs up with imported 12 seed phrase
 

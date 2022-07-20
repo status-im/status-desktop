@@ -184,6 +184,7 @@ Item {
               width: 24
               height: 24
               id: changeAccountBtn
+              objectName: "changeAccountBtn"
               anchors.verticalCenter: usernameText.verticalCenter
               anchors.right: parent.right
 
@@ -252,6 +253,7 @@ Item {
             placeholderText: loading ?
                 qsTr("Connecting...") :
                 qsTr("Password")
+            textField.objectName: "loginPasswordInput"
             textField.echoMode: TextInput.Password
             Keys.onReturnPressed: {
                 doLogin(textField.text)

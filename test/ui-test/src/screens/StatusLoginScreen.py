@@ -38,7 +38,16 @@ class StatusLoginScreen():
     def __init__(self):
         verify_screen(SLoginComponents.MAIN_VIEW.value)
 
-    def login(self, password):
+    def login(self, account, password):
+        self.select_account(account)
+        self.enter_password(password)        
+        
+    def select_account(self, account):
+        self.open_accounts_selector_popup()
+        accounts_popup = self.get_accounts_selector_popup()
+        accounts_popup.select_account(account)
+    
+    def enter_password(self, password):
         click_obj_by_name(SLoginComponents.PASSWORD_INPUT.value)
         type(SLoginComponents.PASSWORD_INPUT.value, password)
         click_obj_by_name(SLoginComponents.SUBMIT_BTN.value)

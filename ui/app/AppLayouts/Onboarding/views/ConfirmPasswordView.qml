@@ -144,6 +144,7 @@ Item {
 
         StatusButton {
             id: submitBtn
+            objectName: "confirmPswSubmitBtn"
             anchors.horizontalCenter: parent.horizontalCenter
             text: qsTr("Finalise Status Password Creation")
             enabled: !submitBtn.loading && (confPswInput.text === root.password)

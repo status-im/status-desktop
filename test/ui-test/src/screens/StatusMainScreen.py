@@ -21,11 +21,13 @@ class MainScreenComponents(Enum):
     JOIN_PUBLIC_CHAT = "join_public_chat_StatusMenuItemDelegate"
     SETTINGS_BUTTON = "settings_navbar_settings_icon_StatusIcon"
     WALLET_BUTTON = "wallet_navbar_wallet_icon_StatusIcon"
+    START_CHAT_BTN = "mainWindow_startChat"
+    CHAT_LIST = "chatList_Repeater"
 
 class ChatNamePopUp(Enum):
     CHAT_NAME_TEXT = "chat_name_PlaceholderText"
     INPUT_ROOM_TOPIC_TEXT = "inputValue_StyledTextField"
-    START_CHAT = "start_chat_StatusBaseText"
+    START_CHAT_BTN = "startChat_Btn"
 
 
 class StatusMainScreen:
@@ -33,15 +35,33 @@ class StatusMainScreen:
     def __init__(self):
         verify_screen(MainScreenComponents.PUBLIC_CHAT_ICON.value)
 
-    def joinChatRoom(self, room: str):
+    def join_chat_room(self, room: str):
         click_obj_by_name(MainScreenComponents.PUBLIC_CHAT_ICON.value)
-        click_obj_by_name(MainScreenComponents.JOIN_PUBLIC_CHAT.value)
+        #click_obj_by_name(MainScreenComponents.JOIN_PUBLIC_CHAT.value)
         type(ChatNamePopUp.INPUT_ROOM_TOPIC_TEXT.value, room)
-        click_obj_by_name(ChatNamePopUp.START_CHAT.value)
+        click_obj_by_name(ChatNamePopUp.START_CHAT_BTN.value)
         
     def open_community_portal(self):
         click_obj_by_name(MainScreenComponents.COMMUNITY_PORTAL_ICON.value)
     
     def open_settings(self):
         click_obj_by_name(MainScreenComponents.SETTINGS_BUTTON.value)
+        
+    def open_start_chat_view(self):
+        click_obj_by_name(MainScreenComponents.START_CHAT_BTN.value)
+        
+    def open_chat(self, chatName: str):
+        [loaded, chat_button] = self._find_chat(chatName)
+        if loaded:
+            click_obj(chat_button)
+        verify(loaded, "Trying to get chat: " + chatName)     
+        
+    def _find_chat(self, chatName: str):
+        [loaded, chat_lists] = is_loaded(MainScreenComponents.CHAT_LIST.value)
+        if loaded:
+            for index in range(chat_lists.count):
+                chat = chat_lists.itemAt(index)
+                if(chat.objectName == chatName):
+                    return True, chat        
+        return False, None
 

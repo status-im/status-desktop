@@ -103,6 +103,7 @@ ModalPopup {
     }
 
     footer: StatusButton {
+        objectName: "startChatButton"
         anchors.bottom: parent.bottom
         anchors.right: parent.right
         onClicked : doJoin()

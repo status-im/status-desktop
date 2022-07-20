@@ -1,0 +1,80 @@
+=============== Jul 22, 2022 (CEST) ===============
+13:34:21.543832 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+13:34:21.600074 db@open opening
+13:34:21.600521 version@stat F·[] S·0B[] Sc·[]
+13:34:21.619557 db@janitor F·2 G·0
+13:34:21.619622 db@open done T·19.49625ms
+=============== Jul 22, 2022 (CEST) ===============
+13:35:19.867102 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+13:35:19.867757 version@stat F·[] S·0B[] Sc·[]
+13:35:19.867882 db@open opening
+13:35:19.868092 journal@recovery F·1
+13:35:19.868312 journal@recovery recovering @1
+13:35:19.890768 memdb@flush created L0@2 N·1 S·275B "\x02en..443,v1":"\x02en..443,v1"
+13:35:19.891041 version@stat F·[1] S·275B[275B] Sc·[0.25]
+13:35:19.969277 db@janitor F·3 G·0
+13:35:19.969320 db@open done T·101.421875ms
+=============== Jul 22, 2022 (CEST) ===============
+13:36:15.872377 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+13:36:15.873087 version@stat F·[1] S·275B[275B] Sc·[0.25]
+13:36:15.873177 db@open opening
+13:36:15.873399 journal@recovery F·1
+13:36:15.873861 journal@recovery recovering @3
+13:36:15.893922 memdb@flush created L0@5 N·4 S·459B "\x02en..443,d5":"\x02en..443,d3"
+13:36:15.894148 version@stat F·[2] S·734B[734B] Sc·[0.50]
+13:36:15.967812 db@janitor F·4 G·0
+13:36:15.967851 db@open done T·94.654583ms
+=============== Jul 22, 2022 (CEST) ===============
+13:38:51.021325 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+13:38:51.022013 version@stat F·[2] S·734B[734B] Sc·[0.50]
+13:38:51.022114 db@open opening
+13:38:51.022335 journal@recovery F·1
+13:38:51.022476 journal@recovery recovering @6
+13:38:51.022995 version@stat F·[2] S·734B[734B] Sc·[0.50]
+13:38:51.098658 db@janitor F·4 G·0
+13:38:51.098761 db@open done T·76.568959ms
+=============== Jul 22, 2022 (CEST) ===============
+13:39:40.618300 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+13:39:40.618956 version@stat F·[2] S·734B[734B] Sc·[0.50]
+13:39:40.619029 db@open opening
+13:39:40.619252 journal@recovery F·1
+13:39:40.619551 journal@recovery recovering @8
+13:39:40.639827 memdb@flush created L0@10 N·2 S·426B "\x02en..443,v9":"\x02en..443,d8"
+13:39:40.640327 version@stat F·[3] S·1KiB[1KiB] Sc·[0.75]
+13:39:40.717685 db@janitor F·5 G·0
+13:39:40.717734 db@open done T·98.68125ms
+=============== Jul 22, 2022 (CEST) ===============
+13:40:17.935554 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+13:40:17.936197 version@stat F·[3] S·1KiB[1KiB] Sc·[0.75]
+13:40:17.936319 db@open opening
+13:40:17.936504 journal@recovery F·1
+13:40:17.936594 journal@recovery recovering @11
+13:40:17.936938 version@stat F·[3] S·1KiB[1KiB] Sc·[0.75]
+13:40:18.013343 db@janitor F·5 G·0
+13:40:18.013428 db@open done T·77.056542ms
+=============== Jul 22, 2022 (CEST) ===============
+13:40:52.852910 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+13:40:52.853577 version@stat F·[3] S·1KiB[1KiB] Sc·[0.75]
+13:40:52.853663 db@open opening
+13:40:52.853892 journal@recovery F·1
+13:40:52.854364 journal@recovery recovering @13
+13:40:52.862793 version@stat F·[3] S·1KiB[1KiB] Sc·[0.75]
+13:40:52.939700 db@janitor F·5 G·0
+13:40:52.939813 db@open done T·86.058916ms
+=============== Jul 22, 2022 (CEST) ===============
+13:41:26.634527 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+13:41:26.635191 version@stat F·[3] S·1KiB[1KiB] Sc·[0.75]
+13:41:26.635275 db@open opening
+13:41:26.635503 journal@recovery F·1
+13:41:26.635591 journal@recovery recovering @15
+13:41:26.655097 memdb@flush created L0@17 N·2 S·426B "\x02en..443,d11":"\x02en..443,v12"
+13:41:26.656171 version@stat F·[4] S·1KiB[1KiB] Sc·[1.00]
+13:41:26.747056 db@janitor F·6 G·0
+13:41:26.747104 db@open done T·111.806791ms
+13:41:26.747588 table@compaction L0·4 -> L1·0 S·1KiB Q·13
+13:41:26.766462 table@build created L1@20 N·1 S·275B "\x02en..443,v12":"\x02en..443,v12"
+13:41:26.766776 version@stat F·[0 1] S·275B[0B 275B] Sc·[0.00 0.00]
+13:41:26.803557 table@compaction committed F-3 S-1KiB Ke·0 D·8 T·55.675208ms
+13:41:26.804573 table@remove removed @10
+13:41:26.821231 table@remove removed @5
+13:41:26.821462 table@remove removed @2

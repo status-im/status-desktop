@@ -110,6 +110,7 @@ Page {
 
         StatusButton {
             id: confirmButton
+            objectName: "createChatConfirmButton"
             implicitWidth: 106
             implicitHeight: 44
             Layout.alignment: Qt.AlignTop

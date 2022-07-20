@@ -2,15 +2,14 @@
 
 from objectmaphelper import *
 
+# Global UI objects:
 statusDesktop_mainWindow = {"name": "mainWindow", "type": "StatusWindow", "visible": True}
-mainWindow_dropRectangle_Rectangle = {"container": statusDesktop_mainWindow, "id": "dropRectangle", "type": "Rectangle", "unnamed": 1, "visible": True}
-loginView_passwordInput = {"container": statusDesktop_mainWindow, "echoMode": 2, "passwordCharacter": "•", "type": "StyledTextField", "unnamed": 1, "visible": True}
-loginView_changeAccountBtn = {"container": statusDesktop_mainWindow, "id": "changeAccountBtn", "type": "Rectangle", "unnamed": 1, "visible": True}
-loginView_submitBtn = {"container": statusDesktop_mainWindow, "type": "StatusRoundButton", "visible": True}
-loginView_main = {"container": statusDesktop_mainWindow, "type": "LoginView", "visible": True}
-loginView_errMsgLabel = {"container": statusDesktop_mainWindow, "id": "errMsg", "type": "StyledText", "visible": True}
 statusDesktop_mainWindow_overlay = {"container": statusDesktop_mainWindow, "type": "Overlay", "unnamed": 1, "visible": True}
-accountsView_accountListPanel = {"container": statusDesktop_mainWindow_overlay, "type": "AccountListPanel", "visible": True}
+
+mainWindow_ScrollView = {"container": statusDesktop_mainWindow, "type": "StatusScrollView", "unnamed": 1, "visible": True}
+mainWindow_scrollView_ScrollView = {"container": statusDesktop_mainWindow, "id": "scrollView", "type": "StatusScrollView", "unnamed": 1, "visible": True}
+mainWindow_startChat = {"checkable": True, "container": statusDesktop_mainWindow, "objectName": "startChatButton", "type": "StatusIconTabButton"}
+mainWindow_dropRectangle_Rectangle = {"container": statusDesktop_mainWindow, "id": "dropRectangle", "type": "Rectangle", "unnamed": 1, "visible": True}
 acknowledge_checkbox = {"checkable": True, "container": statusDesktop_mainWindow_overlay, "objectName": "acknowledgeCheckBox", "type": "StatusCheckBox", "visible": True}
 termsOfUseCheckBox_StatusCheckBox = {"checkable": True, "container": statusDesktop_mainWindow_overlay, "objectName":"termsOfUseCheckBox", "type": "StatusCheckBox", "visible": True}
 getStartedStatusButton_StatusButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "getStartedStatusButton", "type": "StatusButton", "visible": True}
@@ -21,15 +20,10 @@ i_accept_Status_StatusBaseText = {"container": statusDesktop_mainWindow_overlay,
 termsOfUseLink_StatusBaseText = {"container": statusDesktop_mainWindow_overlay, "objectName": "termsOfUseLink", "type": "StatusBaseText", "visible": True}
 mainWindow_edit_TextEdit = {"container": statusDesktop_mainWindow, "type": "TextEdit", "unnamed": 1, "visible": True}
 mainWindow_Next_StatusBaseText = {"container": statusDesktop_mainWindow, "text": "Next", "type": "StatusBaseText", "unnamed": 1, "visible": True}
-mainWindow_Confirm_password_PlaceholderText = {"container": statusDesktop_mainWindow, "text": "Confirm password", "type": "PlaceholderText", "unnamed": 1, "visible": True}
 mainWindow_Display_name_StatusBaseText = {"container": statusDesktop_mainWindow, "text": "Display name", "type": "StatusBaseText", "unnamed": 1, "visible": True}
 mainWindow_nextBtn_StatusButton = {"container": statusDesktop_mainWindow, "type": "StatusButton", "unnamed": 1, "visible": True}
-mainWindow_New_password_PlaceholderText = {"container": statusDesktop_mainWindow, "text": "New password", "type": "PlaceholderText", "unnamed": 1, "visible": True}
 mainWindow_Password_textField = {"container": statusDesktop_mainWindow, "echoMode": 2, "occurrence": 2, "passwordCharacter": "•", "type": "StyledTextField", "unnamed": 1, "visible": True}
 mainWindow_Rectangle = {"container": statusDesktop_mainWindow, "occurrence": 11, "type": "Rectangle", "unnamed": 1, "visible": True}
-mainWindow_Create_password_StatusBaseText = {"container": statusDesktop_mainWindow, "text": "Create password", "type": "StatusBaseText", "unnamed": 1, "visible": True}
-mainWindow_Confirm_you_password_again_PlaceholderText = {"container": statusDesktop_mainWindow, "text": "Confirm you password (again)", "type": "PlaceholderText", "unnamed": 1, "visible": True}
-mainWindow_Finalise_Status_Password_Creation_StatusBaseText = {"container": statusDesktop_mainWindow, "text": "Finalise Status Password Creation", "type": "StatusBaseText", "unnamed": 1, "visible": True}
 mainWindow_I_prefer_to_use_my_password_StatusBaseText = {"container": statusDesktop_mainWindow, "text": "I prefer to use my password", "type": "StatusBaseText", "unnamed": 1, "visible": True}
 mainWindow_Enter_password_PlaceholderText = {"container": statusDesktop_mainWindow, "text": "Enter password", "type": "PlaceholderText", "unnamed": 1, "visible": True}
 mainWindow_button_StatusButton = {"container": statusDesktop_mainWindow, "id": "button", "type": "StatusButton", "unnamed": 1, "visible": True}
@@ -50,12 +44,8 @@ mainWindow_statusIcon_StatusIcon = {"container": statusDesktop_mainWindow, "id":
 join_public_chat_StatusMenuItemDelegate = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "enabled": True, "text": "Join public chat", "type": "StatusMenuItemDelegate", "unnamed": 1, "visible": True}
 chat_name_PlaceholderText = {"container": statusDesktop_mainWindow_overlay, "text": "chat-name", "type": "PlaceholderText", "unnamed": 1, "visible": True}
 inputValue_StyledTextField = {"container": statusDesktop_mainWindow_overlay, "echoMode": 0, "id": "inputValue", "type": "StyledTextField", "unnamed": 1, "visible": True}
-start_chat_StatusBaseText = {"container": statusDesktop_mainWindow_overlay, "text": "Start chat", "type": "StatusBaseText", "unnamed": 1, "visible": True}
-mainWindow_scrollView_ScrollView = {"container": statusDesktop_mainWindow, "id": "scrollView", "type": "StatusScrollView", "unnamed": 1, "visible": True}
-scrollView_messageInputField_TextArea = {"container": mainWindow_scrollView_ScrollView, "id": "messageInputField", "type": "TextArea", "unnamed": 1, "visible": True}
 reactionImage_SVGImage = {"container": statusDesktop_mainWindow_overlay, "id": "reactionImage", "source": "qrc:/imports/assets/icons/emojiReactions/heart.svg", "type": "SVGImage", "unnamed": 1, "visible": True}
 mainWindow_statusIcon_StatusIcon_2 = {"container": statusDesktop_mainWindow, "id": "statusIcon", "source": "qrc:/StatusQ/src/assets/img/icons/public-chat.svg", "type": "StatusIcon", "unnamed": 1, "visible": True}
-scrollView_Type_a_message_PlaceholderText = {"container": mainWindow_scrollView_ScrollView, "text": "Type a message.", "type": "PlaceholderText", "unnamed": 1, "visible": True}
 import_a_seed_phrase_StatusBaseText = {"container": statusDesktop_mainWindow, "text": "Import a seed phrase", "type": "StatusBaseText", "unnamed": 1, "visible": True}
 mainWindow_placeholder_StatusBaseText = {"container": statusDesktop_mainWindow, "id": "placeholder", "type": "StatusBaseText", "unnamed": 1, "visible": True}
 mainWindow_Image = {"container": statusDesktop_mainWindow, "source": "qrc:/imports/assets/png/traffic_lights/close.png", "type": "Image", "unnamed": 1, "visible": True}
@@ -91,7 +81,6 @@ i_understand_StatusBaseText = {"container": statusDesktop_mainWindow_overlay, "t
 mainWindow_navBarListView_ListView = {"container": statusDesktop_mainWindow, "type": "ListView", "unnamed": 1, "visible": True}
 navBarListView_StatusNavBarTabButton = {"checkable": True, "container": mainWindow_navBarListView_ListView, "occurrence": 4, "type": "StatusNavBarTabButton", "unnamed": 1, "visible": True}
 statusIcon_StatusIcon_3 = {"container": navBarListView_StatusNavBarTabButton, "id": "statusIcon", "source": "qrc:/StatusQ/src/assets/img/icons/settings.svg", "type": "StatusIcon", "unnamed": 1, "visible": True}
-mainWindow_ScrollView = {"container": statusDesktop_mainWindow, "type": "StatusScrollView", "unnamed": 1, "visible": True}
 privacy_and_security_StatusBaseText = {"container": mainWindow_ScrollView, "text": "Privacy and security", "type": "StatusBaseText", "unnamed": 1, "visible": True}
 settingsMenuDelegate_StatusNavigationListItem = {"container": mainWindow_ScrollView, "id": "settingsMenuDelegate", "occurrence": 4, "type": "StatusNavigationListItem", "unnamed": 1, "visible": True}
 language_Currency_StatusBaseText = {"container": mainWindow_ScrollView, "text": "Language & Currency", "type": "StatusBaseText", "unnamed": 1, "visible": True}
@@ -137,7 +126,6 @@ advanced_listItem_StatusNavigationListItem = {"container": mainWindow_ScrollView
 communities_AppMenu_StatusNavigationListItem = {"container": mainWindow_ScrollView, "objectName": "Communities-AppMenu", "type": "StatusNavigationListItem", "visible": True}
 wallet_AppMenu_StatusNavigationListItem = {"container": mainWindow_ScrollView, "objectName": "Wallet-AppMenu", "type": "StatusNavigationListItem", "visible": True}
 mainWindow_public_chat_icon_StatusIcon = {"container": statusDesktop_mainWindow, "objectName": "public-chat-icon", "source": "qrc:/StatusQ/src/assets/img/icons/public-chat.svg", "type": "StatusIcon", "visible": True}
-
 mainWindow_Rectangle_5 = {"container": statusDesktop_mainWindow, "occurrence": 3, "type": "Rectangle", "unnamed": 1, "visible": True}
 mainWindow_Welcome_to_Status_StyledText = {"container": statusDesktop_mainWindow, "text": "Welcome to Status", "type": "StyledText", "unnamed": 1, "visible": True}
 mainWindow_Your_fully_decentralized_gateway_to_Ethereum_and_Web3_Crypto_wallet_privacy_first_group_chat_and_dApp_browser_StyledText = {"container": statusDesktop_mainWindow, "text": "Your fully decentralized gateway to Ethereum and Web3. Crypto wallet, privacy first group chat, and dApp browser.", "type": "StyledText", "unnamed": 1, "visible": True}
@@ -152,7 +140,7 @@ navBarListView_Settings_navbar_StatusNavBarTabButton = {"checkable": True, "cont
 settings_navbar_settings_icon_StatusIcon = {"container": navBarListView_Settings_navbar_StatusNavBarTabButton, "objectName": "settings-icon", "type": "StatusIcon", "visible": True}
 navBarListView_Communities_Portal_navbar_StatusNavBarTabButton = {"checkable": True, "container": mainWindow_navBarListView_ListView, "objectName": "Communities Portal-navbar", "type": "StatusNavBarTabButton", "visible": True}
 communities_Portal_navbar_communities_icon_StatusIcon = {"container": navBarListView_Communities_Portal_navbar_StatusNavBarTabButton, "objectName": "communities-icon", "type": "StatusIcon", "visible": True}
-mainWindow_communitiesPortalLayoutContainer_CommunitiesPortalLayout = {"container": statusDesktop_mainWindow, "id": "communitiesPortalLayoutContainer", "type": "CommunitiesPortalLayout", "unnamed": 1, "visible": True}
+mainWindow_communitiesPortalLayoutContainer_CommunitiesPortalLayout = {"container": statusDesktop_mainWindow, "objectName": "communitiesPortalLayout", "type": "CommunitiesPortalLayout"}
 communitiesPortalLayoutContainer_createCommunityButton_StatusButton = {"container": mainWindow_communitiesPortalLayoutContainer_CommunitiesPortalLayout, "objectName": "createCommunityButton", "type": "StatusButton", "visible": True}
 createCommunityNameInput_TextEdit = {"container": statusDesktop_mainWindow_overlay, "objectName": "createCommunityNameInput", "type": "TextEdit", "visible": True}
 createCommunityDescriptionInput_TextEdit = {"container": statusDesktop_mainWindow_overlay, "objectName": "createCommunityDescriptionInput", "type": "TextEdit", "visible": True}
@@ -167,11 +155,6 @@ createOrEditCommunityChannelNameInput_TextEdit = {"container": statusDesktop_mai
 createOrEditCommunityChannelDescriptionInput_TextEdit = {"container": statusDesktop_mainWindow_overlay, "objectName": "createOrEditCommunityChannelDescriptionInput", "type": "TextEdit", "visible": True}
 createOrEditCommunityChannelBtn_StatusButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "createOrEditCommunityChannelBtn", "type": "StatusButton", "visible": True}
 channel_Header_chat_title_StatusBaseText = {"container": statusDesktop_mainWindow, "objectName": "chatInfoNameText", "type": "StatusBaseText", "visible": True}
-mainWindow_communityHeader_StatusChatInfoButton = {"container": statusDesktop_mainWindow, "objectName": "communityHeaderButton", "type": "StatusChatInfoButton", "visible": True}
-community_ChatInfo_Name_Text = {"container": mainWindow_communityHeader_StatusChatInfoButton, "objectName": "statusChatInfoButtonNameText", "type": "StatusBaseText", "visible": True}
-mainWindow_chatMessageListView_ListView = {"container": statusDesktop_mainWindow, "objectName": "chatMessageListView", "type": "ListView", "visible": True}
-chatMessageListView_msgDelegate_MessageView = {"container": mainWindow_chatMessageListView_ListView, "objectName": "chatMessageViewDelegate", "index": 1, "type": "MessageView", "visible": True}
-msgDelegate_channelIdentifierNameText_StyledText = {"container": chatMessageListView_msgDelegate_MessageView, "objectName": "channelIdentifierNameText", "type": "StyledText", "visible": True}
 chat_moreOptions_menuButton = {"container": statusDesktop_mainWindow, "objectName": "chatToolbarMoreOptionsButton", "type": "StatusFlatRoundButton", "visible": True}
 edit_Channel_StatusMenuItemDelegate = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "enabled": True, "objectName": "editChannelMenuItem", "type": "StatusMenuItemDelegate", "visible": True}
 
@@ -211,3 +194,47 @@ settings_Wallet_MainView_GeneratedAccounts = {"container": statusDesktop_mainWin
 settings_Wallet_AccountView_DeleteAccount = {"container": statusDesktop_mainWindow, "type": "StatusButton", "objectName": "deleteAccountButton"}
 settings_Wallet_AccountView_DeleteAccount_Confirm = {"container": statusDesktop_mainWindow, "type": "StatusButton", "objectName": "confirmDeleteAccountButton"}
 mainWindow_communityColumnView_CommunityColumnView = {"container": statusDesktop_mainWindow, "objectName": "communityColumnView", "type": "CommunityColumnView"}
+settings_navbar_settings_icon_StatusIcon = {"container": navBarListView_Settings_navbar_StatusNavBarTabButton, "objectName": "settings-icon", "source": "qrc:/StatusQ/src/assets/img/icons/settings.svg", "type": "StatusIcon", "visible": True}
+
+# Onboarding region:
+onboarding_newPsw_Input = {"container": statusDesktop_mainWindow, "text": "New password", "type": "PlaceholderText"}
+onboarding_confirmPsw_Input = {"container": statusDesktop_mainWindow, "text": "Confirm password", "type": "PlaceholderText"}
+onboarding_create_password_button = {"container": statusDesktop_mainWindow, "objectName": "createPswBtn", "type": "StatusButton"}
+onboarding_confirmPswAgain_Input = {"container": statusDesktop_mainWindow, "text": "Confirm your password (again)", "type": "PlaceholderText"}
+onboarding_finalise_password_button = {"container": statusDesktop_mainWindow, "objectName": "confirmPswSubmitBtn", "type": "StatusButton"}
+
+# Loading region:
+loginView_passwordInput = {"container": statusDesktop_mainWindow, "objectName": "loginPasswordInput", "type": "StyledTextField"}
+loginView_changeAccountBtn = {"container": statusDesktop_mainWindow, "objectName": "changeAccountBtn", "type": "Rectangle"}
+loginView_submitBtn = {"container": statusDesktop_mainWindow, "type": "StatusRoundButton", "visible": True}
+loginView_main = {"container": statusDesktop_mainWindow, "type": "LoginView", "visible": True}
+loginView_errMsgLabel = {"container": statusDesktop_mainWindow, "id": "errMsg", "type": "StyledText", "visible": True}
+accountsView_accountListPanel = {"container": statusDesktop_mainWindow, "type": "ListView", "visible": True}
+
+# Main Window - chat related:
+chatList_Repeater = {"container": statusDesktop_mainWindow, "objectName": "chatListItems", "type": "Repeater"}
+
+# Join chat popup:
+startChat_Btn = {"container": statusDesktop_mainWindow_overlay, "objectName": "startChatButton", "type": "StatusButton"}
+
+# Create chat view region:
+createChatView_contactsList = {"container": statusDesktop_mainWindow, "objectName": "tagSelectorUserList", "type": "ListView"}
+createChatView_confirmBtn = {"container": statusDesktop_mainWindow, "objectName": "createChatConfirmButton", "type": "StatusButton"}
+
+# Chat view region:
+chatView_log = {"container": statusDesktop_mainWindow, "objectName": "chatLogView", "type": "StatusListView", "visible": True}
+chatView_StatusChatInfoButton = {"container": statusDesktop_mainWindow, "objectName": "chatInfoBtnInHeader", "type": "StatusChatInfoButton"}
+chatView_messageInput = {"container": mainWindow_scrollView_ScrollView, "objectName": "messageInputField", "type": "TextArea", "visible": True}
+
+# Community chat region
+mainWindow_communityHeader_StatusChatInfoButton = {"container": statusDesktop_mainWindow, "objectName": "communityHeaderButton", "type": "StatusChatInfoButton", "visible": True}
+community_ChatInfo_Name_Text = {"container": mainWindow_communityHeader_StatusChatInfoButton, "objectName": "statusChatInfoButtonNameText", "type": "StatusBaseText", "visible": True}
+
+
+chatView_chatLogView_lastMsg_MessageView = {"container": chatView_log, "index": 0, "type": "MessageView"}
+chatView_lastChatText_Text = {"container": chatView_chatLogView_lastMsg_MessageView, "objectName": "chatText", "type": "StyledTextEdit"}
+chatMessageListView_msgDelegate_MessageView = {"container": chatView_log, "objectName": "chatMessageViewDelegate", "index": 1, "type": "MessageView", "visible": True}
+msgDelegate_channelIdentifierNameText_StyledText = {"container": chatMessageListView_msgDelegate_MessageView, "objectName": "channelIdentifierNameText", "type": "StyledText", "visible": True}
+
+# Members panel:
+chatView_chatMembers_ListView = {"container": statusDesktop_mainWindow, "objectName": "userListPanel", "type": "ListView"}

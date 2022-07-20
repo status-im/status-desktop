@@ -3,22 +3,22 @@
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "../../../src/"))
 
-
 from utils.FileManager import *
 
-
-_statusDektopAppName = "nim_status_client"
-_appClosureTimeout = 2 #[seconds]
+_status_desktop_app_name = "nim_status_client"
+_status_data_folder_path = "../../../../../Status/data"
+_status_qt_path = "../../../../../Status/qt"
+_app_closure_timeout = 2 #[seconds]
 
 @OnScenarioStart
 def hook(context):
-    erase_directory("../../../../../Status/data")
-    erase_directory("../../../../../Status/qt")
-    startApplication(_statusDektopAppName)
+    erase_directory(_status_qt_path)
     context.userData = {}
+    context.userData["aut_name"] = _status_desktop_app_name
+    context.userData["status_data_folder_path"] = _status_data_folder_path
 
 @OnScenarioEnd
 def hook(context):
     currentApplicationContext().detach()
-    snooze(_appClosureTimeout)
+    snooze(_app_closure_timeout)
 
