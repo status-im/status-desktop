@@ -42,8 +42,8 @@ Page {
 
         Image {
             id: keysImg
-            width: 256
-            height: 256
+            width: 230
+            height: 230
             anchors.horizontalCenter: parent.horizontalCenter
             fillMode: Image.PreserveAspectFit
             source: Style.png("onboarding/welcome")
@@ -53,7 +53,7 @@ Page {
         StyledText {
             id: txtTitle1
             text: qsTr("Welcome to Status")
-            anchors.topMargin: Style.current.padding
+            anchors.topMargin: Style.current.bigPadding
             font.bold: true
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: keysImg.bottom
@@ -77,7 +77,7 @@ Page {
         StatusButton {
             id: btnNewUser
             anchors.top: txtDesc1.bottom
-            anchors.topMargin: 40
+            anchors.topMargin: Style.current.xlPadding
             anchors.horizontalCenter: parent.horizontalCenter
             text: qsTr("I am new to Status")
             onClicked: {
@@ -89,7 +89,7 @@ Page {
             id: btnExistingUser
             text: qsTr("I already use Status")
             anchors.top: btnNewUser.bottom
-            anchors.topMargin: Style.current.padding
+            anchors.topMargin: Style.current.bigPadding
             anchors.horizontalCenter: parent.horizontalCenter
             onClicked: {
                 page.btnExistingUserClicked();
