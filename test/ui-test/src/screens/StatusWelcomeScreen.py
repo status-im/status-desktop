@@ -29,12 +29,11 @@ class SignUpComponents(Enum):
     WELCOME_TO_STATUS: str = "mainWindow_Welcome_to_Status_StyledText"
     NEXT_STATUS_BUTTON: str = "mainWindow_nextBtn_StatusButton"
     NEW_PASSWORD_BUTTON: str = "mainWindow_New_password_PlaceholderText"
-    PASSWORD_INPUT: str = "loginView_passwordInput"
-    CONFIRM_PASSWORD: str = "mainWindow_Confirm_password_PlaceholderText"
-    PASSWORD_CONFIRM_INPUT: str = "mainWindow_Password_textField"
-    CREATE_PASSWORD: str = "mainWindow_Create_password_StatusBaseText"
-    CONFIRM_PASSWORD_AGAIN: str = "mainWindow_Confirm_you_password_again_PlaceholderText"
-    FINALIZE_PASSWORD_STEP: str = "mainWindow_Finalise_Status_Password_Creation_StatusBaseText"
+    NEW_PSW_INPUT: str = "onboarding_newPsw_Input"
+    CONFIRM_PSW_INPUT: str = "onboarding_confirmPsw_Input"
+    CREATE_PSW_BUTTON: str = "onboarding_create_password_button"
+    CONFIRM_PSW_AGAIN_INPUT: str = "onboarding_confirmPswAgain_Input"
+    FINALIZE_PSW_BUTTON: str = "onboarding_finalise_password_button"
     PASSWORD_PREFERENCE: str = "mainWindow_I_prefer_to_use_my_password_StatusBaseText"
 
     
@@ -46,7 +45,6 @@ class SeedPhraseComponents(Enum):
     TWENTY_FOUR_BUTTON: str = "switchTabBar_24_words_StatusBaseText"
     SEEDS_WORDS_TEXTFIELD: str = "mainWindow_placeholder_StatusBaseText"
     SUBMIT_BUTTON: str = "mainWindow_submitButton_StatusButton"
-
 
 class StatusWelcomeScreen:
 
@@ -74,16 +72,12 @@ class StatusWelcomeScreen:
 
         type(SeedPhraseComponents.SEEDS_WORDS_TEXTFIELD.value, seed)
 
-
     def input_username_and_password_and_finalize_sign_up(self, username: str, password: str):
         self.input_username(username)
 
         self.input_password(password)
 
         self.input_confirmation_password(password)
-
-        self.input_password(password)
-        click_obj_by_name(SignUpComponents.FINALIZE_PASSWORD_STEP.value)
 
         if sys.platform == "darwin":
             click_obj_by_name(SignUpComponents.PASSWORD_PREFERENCE.value)
@@ -94,11 +88,13 @@ class StatusWelcomeScreen:
         click_obj_by_name(SignUpComponents.NEXT_STATUS_BUTTON.value)
 
     def input_password(self, password: str):
-        type(SignUpComponents.PASSWORD_INPUT.value, password)
-
+        type(SignUpComponents.NEW_PSW_INPUT.value, password)
+        type(SignUpComponents.CONFIRM_PSW_INPUT.value, password)
+        click_obj_by_name(SignUpComponents.CREATE_PSW_BUTTON.value)
+        
     def input_confirmation_password(self, password: str):
-        type(SignUpComponents.PASSWORD_CONFIRM_INPUT.value, password)
-        click_obj_by_name(SignUpComponents.CREATE_PASSWORD.value)
+        type(SignUpComponents.CONFIRM_PSW_AGAIN_INPUT.value, password)
+        click_obj_by_name(SignUpComponents.FINALIZE_PSW_BUTTON.value)
         
     def _agree_terms_and_conditions(self):
         if sys.platform == "darwin":

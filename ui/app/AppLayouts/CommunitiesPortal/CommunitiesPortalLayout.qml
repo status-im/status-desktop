@@ -15,6 +15,7 @@ import "popups"
 
 StatusScrollView {
     id: root
+    objectName: "communitiesPortalLayout"
 
     property CommunitiesStore communitiesStore: CommunitiesStore {}
     property var importCommunitiesPopup: importCommunitiesPopupComponent

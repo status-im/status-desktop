@@ -73,6 +73,7 @@ Item {
     StatusIconTabButton {
         id: adHocChatButton
         icon.name: "edit"
+        objectName: "startChatButton"
         anchors.verticalCenter: communityHeader.verticalCenter
         anchors.right: parent.right
         anchors.rightMargin: 14

@@ -6,11 +6,15 @@ _welcomeScreen = StatusWelcomeScreen()
 
 @Given("A first time user lands on the status desktop and generates new key")
 def step(context):
+    erase_directory(context.userData["status_data_folder_path"])
+    startApplication(context.userData["aut_name"])
     _welcomeScreen.agree_terms_conditions_and_generate_new_key()
 
 
 @Given("A first time user lands on the status desktop and navigates to import seed phrase")
 def step(context):
+    erase_directory(context.userData["status_data_folder_path"])
+    startApplication(context.userData["aut_name"])
     _welcomeScreen.agree_terms_conditions_and_navigate_to_import_seed_phrase()
 
 

@@ -81,6 +81,7 @@ Item {
             StatusIconTabButton {
                 id: editBtn
                 Layout.alignment: Qt.AlignVCenter
+                objectName: "startChatButton"
                 icon.name: "edit"
                 icon.color: Theme.palette.directColor1
                 checked: root.store.openCreateChat

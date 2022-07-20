@@ -44,6 +44,7 @@ Item {
         }
         StatusButton {
             id: submitBtn
+            objectName: "createPswBtn"
             z: d.zFront
             anchors.horizontalCenter: parent.horizontalCenter
             text: qsTr("Create password")

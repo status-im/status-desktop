@@ -43,6 +43,7 @@ Item {
 
     StyledTextEdit {
         id: chatText
+        objectName: "chatText"
         visible: !showMoreLoader.active || root.readMore
         textFormat: Text.RichText
         wrapMode: Text.Wrap

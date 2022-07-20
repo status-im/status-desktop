@@ -74,29 +74,28 @@ def click_obj(obj):
         return False
 
 def get_obj(objName: str):
-        obj = squish.findObject(getattr(names, objName))
-        return obj
+    obj = squish.findObject(getattr(names, objName))
+    return obj
 
 
-# It executes the click action into object with given object name:
+# It executes the left-click action into object with given object name:
 def click_obj_by_name(objName: str):
-        obj = squish.waitForObject(getattr(names, objName))
-        squish.mouseClick(obj, squish.Qt.LeftButton)
+    obj = squish.waitForObject(getattr(names, objName))
+    squish.mouseClick(obj, squish.Qt.LeftButton)
         
 # It executes the right-click action into object with given object name:
 def right_click_obj_by_name(objName: str):
-        obj = squish.waitForObject(getattr(names, objName))
-        squish.mouseClick(obj, squish.Qt.RightButton)
-
+    obj = squish.waitForObject(getattr(names, objName))
+    squish.mouseClick(obj, squish.Qt.RightButton)
 
 def scroll_obj_by_name(objName: str):
-        obj = squish.waitForObject(getattr(names, objName))
-        squish.mouseWheel(obj, 206, 35, 0, -1, squish.Qt.ControlModifier)
+    obj = squish.waitForObject(getattr(names, objName))
+    squish.mouseWheel(obj, 206, 35, 0, -1, squish.Qt.ControlModifier)
 
 
 def check_obj_by_name(objName: str):
-        obj = squish.waitForObject(getattr(names, objName))
-        obj.checked = True
+    obj = squish.waitForObject(getattr(names, objName))
+    obj.checked = True
 
 
 def is_text_matching(objName: str, text: str):
