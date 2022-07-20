@@ -8,6 +8,7 @@ import shared 1.0
 import shared.views 1.0
 import shared.panels 1.0
 import shared.controls 1.0
+import shared.stores 1.0
 
 import StatusQ.Popups 0.1
 import StatusQ.Controls 0.1
@@ -69,6 +70,7 @@ StatusModal {
         id: view
         anchors.topMargin: Style.current.padding
         anchors.centerIn: parent
+        passwordStrengthScoreFunction: RootStore.getPasswordStrengthScore
         titleVisible: false
         introText: qsTr("Change password used to unlock Status on this device & sign transactions.")
         createNewPsw: false

@@ -22,25 +22,26 @@ import "../shared"
 Item {
     id: root
 
+    property StartupStore startupStore
+
     property string pubKey
     property string address
     property string displayName
     signal createPassword()
 
-    state: "username"
-
     Component.onCompleted: {
-        if (!!OnboardingStore.onboardingModuleInst.importedAccountPubKey) {
-            root.address = OnboardingStore.onboardingModuleInst.importedAccountAddress ;
-            root.pubKey = OnboardingStore.onboardingModuleInst.importedAccountPubKey;
+        if (!!root.startupStore.startupModuleInst.importedAccountPubKey) {
+            root.address = root.startupStore.startupModuleInst.importedAccountAddress ;
+            root.pubKey = root.startupStore.startupModuleInst.importedAccountPubKey;
         }
+        nameInput.text = root.startupStore.getDisplayName();
         nameInput.input.edit.forceActiveFocus();
     }
 
     Loader {
-        active: !OnboardingStore.onboardingModuleInst.importedAccountPubKey
+        active: !root.startupStore.startupModuleInst.importedAccountPubKey
         sourceComponent: StatusListView {
-            model: OnboardingStore.onboardingModuleInst.accountsModel
+            model: root.startupStore.startupModuleInst.generatedAccountsModel
             delegate: Item {
                 Component.onCompleted: {
                     if (index === 0) {
@@ -66,7 +67,7 @@ Item {
 
         StyledText {
             id: txtDesc
-            Layout.preferredWidth: (root.state === "username") ? 338 : 643
+            Layout.preferredWidth: root.state === Constants.startupState.userProfileCreate? 338 : 643
             Layout.preferredHeight: 44
             Layout.alignment: Qt.AlignTop | Qt.AlignHCenter
             Layout.topMargin: Style.current.padding
@@ -211,16 +212,11 @@ Item {
             enabled: !!nameInput.text && nameInput.valid
             text: qsTr("Next")
             onClicked: {
-                if (root.state === "username") {
-                    if (OnboardingStore.accountCreated) {
-                        OnboardingStore.updatedDisplayName(nameInput.text);
-                    }
-                    OnboardingStore.displayName = nameInput.text;
+                if (root.state === Constants.startupState.userProfileCreate) {
+                    root.startupStore.setDisplayName(nameInput.text)
                     root.displayName = nameInput.text;
-                    root.state = "chatkey";
-                } else {
-                    createPassword();
                 }
+                root.startupStore.doPrimaryAction()
             }
         }
 
@@ -230,7 +226,7 @@ Item {
             title: qsTr("Profile picture")
             acceptButtonText: qsTr("Make this my profile picture")
             onImageCropped: {
-                const croppedImg = OnboardingStore.generateImage(image,
+                const croppedImg = root.startupStore.generateImage(image,
                                                                  cropRect.x.toFixed(),
                                                                  cropRect.y.toFixed(),
                                                                  (cropRect.x + cropRect.width).toFixed(),
@@ -242,7 +238,8 @@ Item {
 
     states: [
         State {
-            name: "username"
+            name: Constants.startupState.userProfileCreate
+            when: root.startupStore.currentStartupState.stateType === Constants.startupState.userProfileCreate
             PropertyChanges {
                 target: usernameText
                 text: qsTr("Your profile")
@@ -273,7 +270,8 @@ Item {
             }
         },
         State {
-            name: "chatkey"
+            name: Constants.startupState.userProfileChatKey
+            when: root.startupStore.currentStartupState.stateType === Constants.startupState.userProfileChatKey
             PropertyChanges {
                 target: usernameText
                 text: qsTr("Your emojihash and identicon ring")

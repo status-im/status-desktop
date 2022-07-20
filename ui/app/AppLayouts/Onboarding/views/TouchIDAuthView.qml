@@ -14,14 +14,10 @@ import "../controls"
 import "../panels"
 import "../stores"
 
-OnboardingBasePage {
+Item {
     id: root
 
-    property string userPass
-
-    signal genKeysDone()
-
-    backButtonVisible: false
+    property StartupStore startupStore
 
     Item {
         id: container
@@ -81,9 +77,8 @@ OnboardingBasePage {
                 Layout.alignment: Qt.AlignHCenter
                 text: qsTr("Yes, use Touch ID")
                 onClicked: {
-                    OnboardingStore.accountSettings.storeToKeychainValue = Constants.storeToKeychainValueStore;
-                    dimBackground.active = true;
-                    OnboardingStore.storeToKeyChain(userPass);
+                    dimBackground.active = true
+                    root.startupStore.doPrimaryAction()
                 }
             }
             StatusBaseText {
@@ -103,8 +98,7 @@ OnboardingBasePage {
                         parent.font.underline = false
                     }
                     onClicked: {
-                        OnboardingStore.accountSettings.storeToKeychainValue = Constants.storeToKeychainValueNever;
-                        root.genKeysDone();
+                        root.startupStore.doSecondaryAction()
                     }
                 }
             }
@@ -117,18 +111,6 @@ OnboardingBasePage {
         active: false
         sourceComponent: Rectangle {
             color: Qt.rgba(0, 0, 0, 0.4)
-        }
-    }
-
-    Connections {
-        enabled: !!OnboardingStore.mainModuleInst
-        target: OnboardingStore.mainModuleInst
-        onStoringPasswordSuccess: {
-            dimBackground.active = false;
-            root.genKeysDone();
-        }
-        onStoringPasswordError: {
-            dimBackground.active = false;
         }
     }
 }

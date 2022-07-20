@@ -1,54 +1,54 @@
 import NimQml
-import item
+import models/login_account_item
 
 QtObject:
-  type SelectedAccount* = ref object of QObject
+  type SelectedLoginAccount* = ref object of QObject
     item: Item
 
-  proc setup(self: SelectedAccount) =
+  proc setup(self: SelectedLoginAccount) =
     self.QObject.setup
 
-  proc delete*(self: SelectedAccount) =
+  proc delete*(self: SelectedLoginAccount) =
     self.QObject.delete
 
-  proc newSelectedAccount*(): SelectedAccount =
+  proc newSelectedLoginAccount*(): SelectedLoginAccount =
     new(result, delete)
     result.setup
 
-  proc setSelectedAccountData*(self: SelectedAccount, item: Item) =
+  proc setData*(self: SelectedLoginAccount, item: Item) =
     self.item = item
 
-  proc getName(self: SelectedAccount): string {.slot.} =
+  proc getName(self: SelectedLoginAccount): string {.slot.} =
     return self.item.getName()
 
   QtProperty[string] username:
     read = getName
 
-  proc getKeyUid(self: SelectedAccount): string {.slot.} =
+  proc getKeyUid(self: SelectedLoginAccount): string {.slot.} =
     return self.item.getKeyUid()
 
   QtProperty[string] keyUid:
     read = getKeyUid
 
-  proc getColorHash(self: SelectedAccount): QVariant {.slot.} =
+  proc getColorHash(self: SelectedLoginAccount): QVariant {.slot.} =
     return self.item.getColorHashVariant()
 
   QtProperty[QVariant] colorHash:
     read = getColorHash
 
-  proc getColorId(self: SelectedAccount): int {.slot.} =
+  proc getColorId(self: SelectedLoginAccount): int {.slot.} =
     return self.item.getColorId()
 
   QtProperty[int] colorId:
     read = getColorId
 
-  proc getThumbnailImage(self: SelectedAccount): string {.slot.} =
+  proc getThumbnailImage(self: SelectedLoginAccount): string {.slot.} =
     return self.item.getThumbnailImage()
 
   QtProperty[string] thumbnailImage:
     read = getThumbnailImage
 
-  proc getLargeImage(self: SelectedAccount): string {.slot.} =
+  proc getLargeImage(self: SelectedLoginAccount): string {.slot.} =
     return self.item.getLargeImage()
 
   QtProperty[string] largeImage:

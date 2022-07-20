@@ -18,7 +18,6 @@ import mainui 1.0
 import AppLayouts.Onboarding 1.0
 
 StatusWindow {
-    property bool hasAccounts: startupModule.appState !== Constants.appState.onboarding
     property bool appIsReady: false
 
     Universal.theme: Universal.System
@@ -134,6 +133,9 @@ StatusWindow {
             if(state === Constants.appState.main) {
                 // We set main module to the Global singleton once user is logged in and we move to the main app.
                 Global.mainModuleInst = mainModule
+                loader.sourceComponent = app
+                startupOnboarding.unload()
+                startupOnboarding.visible = false
 
                 if(localAccountSensitiveSettings.recentEmojis === "") {
                     localAccountSensitiveSettings.recentEmojis = [];
@@ -282,17 +284,9 @@ StatusWindow {
     }
 
     OnboardingLayout {
-        hasAccounts: applicationWindow.hasAccounts
-        onLoadApp: {
-            loader.sourceComponent = app;
-        }
-
-        onOnBoardingStepChanged: {
-            loader.sourceComponent = view;
-            if (!!state) {
-                loader.item.state = state;
-            }
-        }
+        id: startupOnboarding
+        anchors.fill: parent
+        visible: !splashScreen.visible
     }
 
     NotificationWindow {

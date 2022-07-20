@@ -1,9 +1,9 @@
 import os, json, sequtils, strutils, uuids
 import json_serialization, chronicles
 
+import ../../../app/global/global_singleton
 import ./dto/accounts as dto_accounts
 import ./dto/generated_accounts as dto_generated_accounts
-import ../../../backend/accounts as status_account
 import ../../../backend/general as status_general
 import ../../../backend/core as status_core
 
@@ -20,6 +20,8 @@ logScope:
 
 const PATHS = @[PATH_WALLET_ROOT, PATH_EIP_1581, PATH_WHISPER, PATH_DEFAULT_WALLET]
 const ACCOUNT_ALREADY_EXISTS_ERROR =  "account already exists"
+
+include utils
 
 type
   Service* = ref object of RootObj
@@ -52,22 +54,6 @@ proc isFirstTimeAccountLogin*(self: Service): bool =
 proc setKeyStoreDir(self: Service, key: string) = 
   self.keyStoreDir = joinPath(main_constants.ROOTKEYSTOREDIR, key) & main_constants.sep
   discard status_general.initKeystore(self.keyStoreDir)
-
-proc compressPk*(publicKey: string): string =
-  try:
-    let response = status_account.compressPk(publicKey)
-    if(not response.error.isNil):
-      error "error compressPk: ", errDescription = response.error.message
-    result = response.result
-
-  except Exception as e:
-    error "error: ", procName="compressPk", errName = e.name, errDesription = e.msg
-
-proc generateAliasFromPk*(publicKey: string): string =
-  return status_account.generateAlias(publicKey).result.getStr
-
-proc isAlias*(value: string): bool =
-  return status_account.isAlias(value)
 
 proc init*(self: Service) =
   try:
@@ -269,6 +255,10 @@ proc getDefaultNodeConfig*(self: Service, installationId: string): JsonNode =
   
   result["KeyStoreDir"] = newJString(self.keyStoreDir.replace(main_constants.STATUSGODIR, ""))
 
+proc setLocalAccountSettingsFile(self: Service) =
+  if(defined(macosx) and self.getLoggedInAccount.isValid()):
+    singletonInstance.localAccountSettings.setFileName(self.getLoggedInAccount.name)
+
 proc setupAccount*(self: Service, accountId, password, displayName: string): string =
   try:
     let installationId = $genUUID()
@@ -292,6 +282,7 @@ proc setupAccount*(self: Service, accountId, password, displayName: string): str
 
     self.loggedInAccount = self.saveAccountAndLogin(hashedPassword, accountDataJson,
       subaccountDataJson, settingsJson, nodeConfigJson)
+    self.setLocalAccountSettingsFile()
 
     if self.getLoggedInAccount.isValid():
       return ""
@@ -377,6 +368,7 @@ proc login*(self: Service, account: AccountDto, password: string): string =
       if error == "":
         debug "Account logged in"
         self.loggedInAccount = account
+        self.setLocalAccountSettingsFile()
 
     return error
 

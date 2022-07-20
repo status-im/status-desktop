@@ -12,7 +12,6 @@ QtObject {
 
     property var profileSectionModuleInst: profileSectionModule
     property var privacyModule: profileSectionModuleInst.privacyModule
-    property var onboardingModuleInst: onboardingModule
     property var userProfileInst: !!userProfile ? userProfile : null
     property var walletSectionInst: !!walletSection ? walletSection : null
     property var appSettings: !!localAppSettings ? localAppSettings : null
@@ -109,13 +108,8 @@ QtObject {
         chatSectionChatContentInputArea.addToRecentsGif(id)
     }
 
-    function getPasswordStrengthScore(password, onboarding = false) {
-        if (onboarding) {
-            let userName = root.onboardingModuleInst.importedAccountAlias;
-            return root.onboardingModuleInst.getPasswordStrengthScore(password, userName);
-        } else {
-            return root.privacyModule.getPasswordStrengthScore(password);
-        }
+    function getPasswordStrengthScore(password) {
+        return root.privacyModule.getPasswordStrengthScore(password);
     }
 
     function isFetchingHistory(address) {

@@ -11,18 +11,13 @@ import "../stores"
 
 import utils 1.0
 
-Page {
-    id: page
+Item {
+    id: root
 
-    signal btnNewUserClicked()
-    signal btnExistingUserClicked()
-
-    background: Rectangle {
-        color: Style.current.background
-    }
+    property StartupStore startupStore
 
     Component.onCompleted: {
-        if (OnboardingStore.showBeforeGetStartedPopup) {
+        if (root.startupStore.showBeforeGetStartedPopup()) {
             beforeGetStartedModal.open();
         }
     }
@@ -30,7 +25,7 @@ Page {
     BeforeGetStartedModal {
         id: beforeGetStartedModal
         onClosed: {
-            OnboardingStore.showBeforeGetStartedPopup = false;
+            root.startupStore.beforeGetStartedPopupAccepted()
         }
     }
 
@@ -81,7 +76,7 @@ Page {
             anchors.horizontalCenter: parent.horizontalCenter
             text: qsTr("I am new to Status")
             onClicked: {
-                page.btnNewUserClicked();
+                root.startupStore.doPrimaryAction()
             }
         }
 
@@ -92,7 +87,7 @@ Page {
             anchors.topMargin: Style.current.bigPadding
             anchors.horizontalCenter: parent.horizontalCenter
             onClicked: {
-                page.btnExistingUserClicked();
+                root.startupStore.doSecondaryAction()
             }
         }
     }

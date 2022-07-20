@@ -1,4 +1,4 @@
-import json, json_serialization, chronicles, nimcrypto, strutils
+import json, json_serialization, chronicles, strutils
 import ./core, ./utils
 import ./response_type
 

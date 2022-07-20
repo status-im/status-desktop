@@ -4,9 +4,9 @@ import ./utils/qrcodegen
 
 # Services as instances shouldn't be used in this class, just some general/global procs
 import ../../app_service/common/conversion
-import ../../app_service/service/accounts/service as procs_from_accounts
 import ../../app_service/service/visual_identity/service as procs_from_visual_identity_service
 
+include ../../app_service/service/accounts/utils
 
 QtObject:
   type Utils* = ref object of QObject
@@ -28,7 +28,7 @@ QtObject:
       result.removePrefix('/')
 
   proc isAlias*(self: Utils, value: string): bool {.slot.} =
-    result = procs_from_accounts.isAlias(value)
+    result = isAlias(value)
 
   proc urlFromUserInput*(self: Utils, input: string): string {.slot.} =
     result = url_fromUserInput(input)
@@ -71,7 +71,7 @@ QtObject:
     return $stint.fromHex(StUint[256], value)
 
   proc generateAlias*(self: Utils, pk: string): string {.slot.} =
-    return procs_from_accounts.generateAliasFromPk(pk)
+    return generateAliasFromPk(pk)
 
   proc getFileSize*(self: Utils, filename: string): string {.slot.} =
     var f: File = nil
@@ -146,7 +146,7 @@ QtObject:
     int(procs_from_visual_identity_service.colorIdOf(publicKey))
 
   proc getCompressedPk*(self: Utils, publicKey: string): string {.slot.} =
-    procs_from_accounts.compressPk(publicKey)
+    compressPk(publicKey)
 
   proc isCompressedPubKey*(self: Utils, publicKey: string): bool {.slot.} =
     conversion.isCompressedPubKey(publicKey)

@@ -23,20 +23,20 @@ import "../stores"
 import utils 1.0
 
 Item {
-    property bool loading: false
-    signal addNewUserClicked()
-    signal addExistingKeyClicked()
+    id: root
 
-    id: loginView
-    anchors.fill: parent
+    property StartupStore startupStore
+
+    property bool loading: false
 
     function doLogin(password) {
         if (loading || password.length === 0)
             return
 
         loading = true
-        LoginStore.login(password)
         txtPassword.textField.clear()
+        root.startupStore.setPassword(password)
+        root.startupStore.doPrimaryAction()
     }
 
     function resetLogin() {
@@ -57,7 +57,7 @@ Item {
 
     Connections{
         id: connection
-        target: LoginStore.loginModuleInst
+        target: root.startupStore.startupModuleInst
 
         onObtainingPasswordError: {
             enabled = false
@@ -115,18 +115,19 @@ Item {
         ConfirmAddExistingKeyModal {
             id: confirmAddExstingKeyModal
             onOpenModalClicked: {
-                addExistingKeyClicked()
+                root.startupStore.doTertiaryAction()
             }
         }
 
         SelectAnotherAccountModal {
             id: selectAnotherAccountModal
+            startupStore: root.startupStore
             onAccountSelected: {
-                LoginStore.setCurrentAccount(index)
+                root.startupStore.setSelectedLoginAccountByIndex(index)
                 resetLogin()
             }
             onOpenModalClicked: {
-                addExistingKeyClicked()
+                root.startupStore.doTertiaryAction()
             }
         }
 
@@ -140,16 +141,16 @@ Item {
 
           UserImage {
               id: userImage
-              image: LoginStore.currentAccount.thumbnailImage
-              name: LoginStore.currentAccount.username
-              colorId: LoginStore.currentAccount.colorId
-              colorHash: LoginStore.currentAccount.colorHash
+              image: root.startupStore.selectedLoginAccount.thumbnailImage
+              name: root.startupStore.selectedLoginAccount.username
+              colorId: root.startupStore.selectedLoginAccount.colorId
+              colorHash: root.startupStore.selectedLoginAccount.colorHash
               anchors.left: parent.left
           }
 
           StatusBaseText {
               id: usernameText
-              text: LoginStore.currentAccount.username
+              text: root.startupStore.selectedLoginAccount.username
               font.pixelSize: 17
               anchors.left: userImage.right
               anchors.leftMargin: 16
@@ -182,14 +183,14 @@ Item {
                   dim: false
                   Repeater {
                       id: accounts
-                      model: LoginStore.loginModuleInst.accountsModel
+                      model: root.startupStore.startupModuleInst.loginAccountsModel
                       delegate: AccountMenuItemPanel {
                           label: model.username
                           image: model.thumbnailImage
                           colorId: model.colorId
                           colorHash: model.colorHash
                           onClicked: {
-                              LoginStore.setCurrentAccount(index)
+                              root.startupStore.setSelectedLoginAccountByIndex(index)
                               resetLogin()
                               accountsPopup.close()
                           }
@@ -200,7 +201,7 @@ Item {
                     label: qsTr("Add new user")
                     onClicked: {
                       accountsPopup.close()
-                      addNewUserClicked();
+                      root.startupStore.doSecondaryAction()
                     }
                   }
 
@@ -209,7 +210,7 @@ Item {
                     iconSettings.name: "wallet"
                     onClicked: {
                       accountsPopup.close()
-                      addExistingKeyClicked();
+                      root.startupStore.doTertiaryAction()
                     }
                   }
               }
@@ -268,7 +269,7 @@ Item {
         }
 
         Connections {
-            target: LoginStore.loginModuleInst
+            target: root.startupStore.startupModuleInst
             onAccountLoginError: {
                 if (error) {
                     // SQLITE_NOTADB: "file is not a database"

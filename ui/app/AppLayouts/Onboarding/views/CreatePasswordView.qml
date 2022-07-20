@@ -8,12 +8,18 @@ import shared.views 1.0
 
 import "../../Profile/views"
 import "../controls"
+import "../stores"
 
-OnboardingBasePage {
+Item {
     id: root
 
-    property string newPassword
-    property string confirmationPassword
+    property StartupStore startupStore
+
+    Component.onCompleted: {
+        view.newPswText = root.startupStore.getPassword()
+        view.confirmationPswText = root.startupStore.getPassword()
+    }
+
     function forceNewPswInputFocus() { view.forceNewPswInputFocus() }
 
     QtObject {
@@ -22,9 +28,8 @@ OnboardingBasePage {
         readonly property int zFront: 100
 
         function submit() {
-            root.newPassword = view.newPswText
-            root.confirmationPassword = view.confirmationPswText
-            root.exit()
+            root.startupStore.setPassword(view.newPswText)
+            root.startupStore.doPrimaryAction()
         }
     }
 
@@ -34,9 +39,7 @@ OnboardingBasePage {
         z: view.zFront
         PasswordView {
             id: view
-            onboarding: true
-            newPswText: root.newPassword
-            confirmationPswText: root.confirmationPassword
+            passwordStrengthScoreFunction: root.startupStore.getPasswordStrengthScore
             onReturnPressed: { if(view.ready) d.submit() }
         }
         StatusButton {
@@ -47,22 +50,5 @@ OnboardingBasePage {
             enabled: view.ready
             onClicked: { d.submit() }
         }
-    }
-
-    // Back button:
-    StatusRoundButton {
-        z: d.zFront // Focusable / clickable component
-        anchors.left: parent.left
-        anchors.leftMargin: Style.current.padding
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: Style.current.padding
-        icon.name: "arrow-left"
-        onClicked: { root.backClicked() }
-    }
-    // By clicking anywhere outside password entries fields or focusable element in the view, it is needed to check if passwords entered matches
-    MouseArea {
-        anchors.fill: parent
-        z: d.zBehind // Behind focusable components
-        onClicked: { view.checkPasswordMatches() }
     }
 }

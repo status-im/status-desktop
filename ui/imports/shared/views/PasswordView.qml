@@ -22,7 +22,8 @@ Column {
     property string introText: qsTr("Create a password to unlock Status on this device & sign transactions.")
     property string recoverText: qsTr("You will not be able to recover this password if it is lost.")
     property string strengthenText: qsTr("Minimum %1 characters. To strengthen your password consider including:").arg(minPswLen)
-    property bool onboarding: false
+
+    property var passwordStrengthScoreFunction: function () {}
 
     readonly property int zBehind: 1
     readonly property int zFront: 100
@@ -221,7 +222,7 @@ Column {
                 d.containsSymbols = d.symbolsValidator(text)
 
                 // Update strength indicator:
-                strengthInditactor.strength = d.convertStrength(RootStore.getPasswordStrengthScore(newPswInput.text, root.onboarding))
+                strengthInditactor.strength = d.convertStrength(root.passwordStrengthScoreFunction(newPswInput.text))
                 if (textField.text.length === confirmPswInput.text.length) {
                     root.checkPasswordMatches(false)
                 }

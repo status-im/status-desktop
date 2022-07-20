@@ -11,15 +11,14 @@ import shared 1.0
 import shared.panels 1.0
 import "../popups"
 import "../controls"
+import "../stores"
 
 import utils 1.0
 
-OnboardingBasePage {
+Item {
     id: root
 
-    signal buttonClicked()
-    signal keycardLinkClicked()
-    signal seedLinkClicked()
+    property StartupStore startupStore
 
     Item {
         id: container
@@ -78,7 +77,7 @@ OnboardingBasePage {
                 enabled: (opacity > 0.1)
                 Layout.alignment: Qt.AlignHCenter
                 onClicked: {
-                    root.buttonClicked();
+                    root.startupStore.doPrimaryAction()
                 }
             }
 
@@ -97,7 +96,7 @@ OnboardingBasePage {
                         parent.font.underline = false
                     }
                     onClicked: {
-                        root.keycardLinkClicked();
+                        root.startupStore.doSecondaryAction()
                     }
                 }
             }
@@ -118,7 +117,7 @@ OnboardingBasePage {
                         parent.font.underline = false
                     }
                     onClicked: {
-                        root.seedLinkClicked();
+                        root.startupStore.doTertiaryAction()
                     }
                 }
             }
@@ -127,7 +126,8 @@ OnboardingBasePage {
 
     states: [
         State {
-            name: "connectkeys"
+            name: Constants.startupState.welcomeOldStatusUser
+            when: root.startupStore.currentStartupState.stateType === Constants.startupState.welcomeOldStatusUser
             PropertyChanges {
                 target: keysImg
                 width: 160
@@ -157,7 +157,8 @@ OnboardingBasePage {
             }
         },
         State {
-            name: "getkeys"
+            name: Constants.startupState.welcomeNewStatusUser
+            when: root.startupStore.currentStartupState.stateType === Constants.startupState.welcomeNewStatusUser
             PropertyChanges {
                 target: keysImg
                 width: 160
@@ -187,7 +188,8 @@ OnboardingBasePage {
             }
         },
         State {
-            name: "importseed"
+            name: Constants.startupState.userProfileImportSeedPhrase
+            when: root.startupStore.currentStartupState.stateType === Constants.startupState.userProfileImportSeedPhrase
             PropertyChanges {
                 target: keysImg
                 width: 257

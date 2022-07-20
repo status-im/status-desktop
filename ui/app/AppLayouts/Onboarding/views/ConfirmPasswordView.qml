@@ -1,11 +1,11 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.12
-import QtQuick.Dialogs 1.3
 
 import shared.controls 1.0
 import shared 1.0
 import shared.panels 1.0
+import shared.stores 1.0
 import utils 1.0
 
 import StatusQ.Controls 0.1
@@ -15,12 +15,17 @@ import StatusQ.Core.Theme 0.1
 import "../stores"
 import "../controls"
 
-OnboardingBasePage {
+Item {
     id: root
 
+    property StartupStore startupStore
+
     property string password
-    property string tmpPass
-    property string displayName
+
+    Component.onCompleted: {
+        root.password = root.startupStore.getPassword()
+    }
+
     function forcePswInputFocus() { confPswInput.forceActiveFocus(Qt.MouseFocusReason)}
 
     QtObject {
@@ -39,22 +44,7 @@ OnboardingBasePage {
                 return
             }
 
-            if (OnboardingStore.accountCreated) {
-                if (root.password !== root.tmpPass) {
-                    OnboardingStore.changePassword(root.tmpPass, root.password)
-                    root.tmpPass = root.password
-                }
-                else {
-                    submitBtn.loading = false
-                    root.exit();
-                }
-            }
-            else {
-                root.tmpPass = root.password
-                submitBtn.loading = true
-                OnboardingStore.setCurrentAccountAndDisplayName(root.displayName)
-                pause.start()
-            }
+            root.startupStore.doPrimaryAction()
         }
     }
 
@@ -158,72 +148,12 @@ OnboardingBasePage {
             text: qsTr("Finalise Status Password Creation")
             enabled: !submitBtn.loading && (confPswInput.text === root.password)
 
-            property Timer sim: Timer {
-                id: pause
-                interval: 20
-                onTriggered: {
-                    // Create account operation blocks the UI so loading = true; will never have any affect until it is done.
-                    // Getting around it with a small pause (timer) in order to get the desired behavior
-                    OnboardingStore.finishCreatingAccount(root.password)
-                }
-            }
-
             onClicked: { d.submit() }
-
-            Connections {
-                target: onboardingModule
-                onAccountSetupError: {
-                    if (error === Constants.existingAccountError) {
-                        importLoginError.title = qsTr("Keys for this account already exist")
-                        importLoginError.text = qsTr("Keys for this account already exist and can't be added again. If you've lost your password, passcode or Keycard, uninstall the app, reinstall and access your keys by entering your seed phrase")
-                    } else {
-                        importLoginError.title = qsTr("Login failed")
-                        importLoginError.text = qsTr("Login failed. Please re-enter your password and try again.")
-                    }
-                    importLoginError.open()
-                }
-            }
-
-            MessageDialog {
-                id: importLoginError
-                title: qsTr("Login failed")
-                text: qsTr("Login failed. Please re-enter your password and try again.")
-                icon: StandardIcon.Critical
-                standardButtons: StandardButton.Ok
-                onVisibilityChanged: {
-                    submitBtn.loading = false
-                }
-            }
-        }
-    }
-
-    // Back button:
-    StatusRoundButton {
-        enabled: !submitBtn.loading
-        anchors.left: parent.left
-        anchors.leftMargin: Style.current.padding
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: Style.current.padding
-        icon.name: "arrow-left"
-        onClicked: { root.backClicked() }
-    }
-
-    Connections {
-        target: startupModule
-        onAppStateChanged: {
-            if (state === Constants.appState.main) {
-                if (!!OnboardingStore.profImgUrl) {
-                    OnboardingStore.saveImage();
-                    OnboardingStore.accountCreated = true;
-                }
-                submitBtn.loading = false
-                root.exit()
-            }
         }
     }
 
     Connections {
-        target: OnboardingStore.privacyModule
+        target: RootStore.privacyModule
         onPasswordChanged: {
             if (success) {
                 submitBtn.loading = false
