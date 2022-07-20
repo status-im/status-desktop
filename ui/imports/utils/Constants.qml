@@ -5,10 +5,37 @@ import QtQuick 2.13
 import StatusQ.Controls.Validators 0.1
 
 QtObject {
+
     readonly property QtObject appState: QtObject {
-        readonly property int onboarding: 0
-        readonly property int login: 1
-        readonly property int main: 2
+        readonly property int startup: 0
+        readonly property int main: 1
+    }
+
+    readonly property QtObject startupFlow: QtObject {
+        readonly property string general: "General"
+        readonly property string firstRunNewUserNewKeys: "FirstRunNewUserNewKeys"
+        readonly property string firstRunNewUserNewKeycardKeys: "FirstRunNewUserNewKeycardKeys"
+        readonly property string firstRunNewUserImportSeedPhrase: "FirstRunNewUserImportSeedPhrase"
+        readonly property string firstRunOldUserSyncCode: "FirstRunOldUserSyncCode"
+        readonly property string firstRunOldUserKeycardImport: "FirstRunOldUserKeycardImport"
+        readonly property string firstRunOldUserImportSeedPhrase: "FirstRunOldUserImportSeedPhrase"
+        readonly property string appLogin: "AppLogin"
+    }
+
+    readonly property QtObject startupState: QtObject {
+        readonly property string noState: "NoState"
+        readonly property string allowNotifications: "AllowNotifications"
+        readonly property string welcome: "Welcome"
+        readonly property string welcomeNewStatusUser: "WelcomeNewStatusUser"
+        readonly property string welcomeOldStatusUser: "WelcomeOldStatusUser"
+        readonly property string userProfileCreate: "UserProfileCreate"
+        readonly property string userProfileChatKey: "UserProfileChatKey"
+        readonly property string userProfileCreatePassword: "UserProfileCreatePassword"
+        readonly property string userProfileConfirmPassword: "UserProfileConfirmPassword"
+        readonly property string userProfileImportSeedPhrase: "UserProfileImportSeedPhrase"
+        readonly property string userProfileEnterSeedPhrase: "UserProfileEnterSeedPhrase"
+        readonly property string biometrics: "Biometrics"
+        readonly property string login: "Login"
     }
 
     readonly property QtObject appSection: QtObject {

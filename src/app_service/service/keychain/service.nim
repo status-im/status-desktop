@@ -8,6 +8,9 @@ logScope:
 const ERROR_TYPE_AUTHENTICATION* = "authentication"
 const ERROR_TYPE_KEYCHAIN* = "keychain"
 
+const SIGNAL_KEYCHAIN_SERVICE_SUCCESS* = "keychainServiceSuccess"
+const SIGNAL_KEYCHAIN_SERVICE_ERROR* = "keychainServiceError"
+
 type
   KeyChainServiceArg* = ref object of Args
     data*: string
@@ -53,9 +56,9 @@ QtObject:
 
     let arg = KeyChainServiceArg(errCode: errorCode, errType: errorType,
     errDescription: errorDescription)
-    self.events.emit("keychainServiceError", arg)
+    self.events.emit("", arg)
 
   proc onKeychainManagerSuccess*(self: Service, data: string) {.slot.} =
     ## This slot is called in case a password is successfully retrieved from the
     ## Keychain. In this case @data contains required password.
-    self.events.emit("keychainServiceSuccess", KeyChainServiceArg(data: data))
+    self.events.emit(SIGNAL_KEYCHAIN_SERVICE_SUCCESS, KeyChainServiceArg(data: data))

@@ -85,15 +85,11 @@ proc init*(self: Controller) =
   self.events.on(SIGNAL_MAILSERVER_NOT_WORKING) do(e: Args):
     self.delegate.emitMailserverNotWorking()
 
-  if(defined(macosx)):
-    let account = self.accountsService.getLoggedInAccount()
-    singletonInstance.localAccountSettings.setFileName(account.name)
-
-  self.events.on("keychainServiceSuccess") do(e:Args):
+  self.events.on(SIGNAL_KEYCHAIN_SERVICE_SUCCESS) do(e:Args):
     let args = KeyChainServiceArg(e)
     self.delegate.emitStoringPasswordSuccess()
 
-  self.events.on("keychainServiceError") do(e:Args):
+  self.events.on(SIGNAL_KEYCHAIN_SERVICE_ERROR) do(e:Args):
     let args = KeyChainServiceArg(e)
     singletonInstance.localAccountSettings.removeKey(LS_KEY_STORE_TO_KEYCHAIN)
     self.delegate.emitStoringPasswordError(args.errDescription)

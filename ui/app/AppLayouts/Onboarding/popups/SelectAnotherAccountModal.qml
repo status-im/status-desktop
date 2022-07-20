@@ -12,23 +12,27 @@ import "../stores"
 
 // TODO: replace with StatusModal
 ModalPopup {
+    id: root
+
+    property StartupStore startupStore
+
     signal accountSelected(int index)
     signal openModalClicked()
-    id: popup
+
     title: qsTr("Your keys")
 
     AccountListPanel {
         id: accountList
         anchors.fill: parent
 
-        model: LoginStore.loginModuleInst.accountsModel
+        model: root.startupStore.startupModuleInst.loginAccountsModel
         isSelected: function (index, keyUid) {
-            return LoginStore.currentAccount.keyUid === keyUid
+            return root.startupStore.selectedLoginAccount.keyUid === keyUid
         }
 
         onAccountSelect: function(index) {
-            popup.accountSelected(index)
-            popup.close()
+            root.accountSelected(index)
+            root.close()
         }
     }
 
@@ -40,7 +44,7 @@ ModalPopup {
 
         onClicked : {
            openModalClicked()
-           popup.close()
+           root.close()
         }
     }
 }

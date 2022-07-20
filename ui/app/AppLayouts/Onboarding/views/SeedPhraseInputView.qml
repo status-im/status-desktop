@@ -15,12 +15,11 @@ import shared.controls 1.0
 import "../controls"
 import "../stores"
 
-OnboardingBasePage {
+Item {
     id: root
 
-    state: "existingUser"
+    property StartupStore startupStore
 
-    property bool existingUser: (root.state === "existingUser")
     property var mnemonicInput: []
 
     signal seedValidated()
@@ -70,29 +69,6 @@ OnboardingBasePage {
             submitButton.checkMnemonicLength()
         }, timeout);
         return true
-    }
-
-    Connections {
-        target: OnboardingStore.onboardingModuleInst
-        onAccountImportError: {
-            if (error === Constants.existingAccountError) {
-                importSeedError.title = qsTr("Keys for this account already exist")
-                importSeedError.text = qsTr("Keys for this account already exist and can't be added again. If you've lost your password, passcode or Keycard, uninstall the app, reinstall and access your keys by entering your seed phrase")
-            } else {
-                importSeedError.title = qsTr("Error importing seed")
-                importSeedError.text = error
-            }
-            importSeedError.open()
-        }
-        onAccountImportSuccess: {
-            root.seedValidated()
-        }
-    }
-
-    MessageDialog {
-        id: importSeedError
-        icon: StandardIcon.Critical
-        standardButtons: StandardButton.Ok
     }
 
     Item {
@@ -299,7 +275,9 @@ OnboardingBasePage {
             function checkMnemonicLength() {
                 submitButton.enabled = (root.mnemonicInput.length === root.tabs[switchTabBar.currentIndex])
             }
-            text: root.existingUser ? qsTr("Restore Status Profile") : qsTr("Import")
+            text: root.startupStore.currentStartupState.flowType === Constants.startupFlow.firstRunNewUserImportSeedPhrase?
+                      qsTr("Import") :
+                      qsTr("Restore Status Profile")
             onClicked: {
                 let mnemonicString = "";
                 var sortTable = mnemonicInput.sort(function (a, b) {
@@ -308,19 +286,14 @@ OnboardingBasePage {
                 for (var i = 0; i < mnemonicInput.length; i++) {
                     mnemonicString += sortTable[i].seed + ((i === (grid.count-1)) ? "" : " ");
                 }
-                if (Utils.isMnemonic(mnemonicString) && !OnboardingStore.validateMnemonic(mnemonicString)) {
-                    OnboardingStore.importMnemonic(mnemonicString)
+                if (Utils.isMnemonic(mnemonicString) && root.startupStore.validMnemonic(mnemonicString)) {
                     root.mnemonicInput = [];
+                    root.startupStore.doPrimaryAction()
                 } else {
                     invalidSeedTxt.visible = true;
                     enabled = false;
                 }
             }
         }
-    }
-
-    onBackClicked: {
-        root.mnemonicInput = [];
-        root.exit();
     }
 }

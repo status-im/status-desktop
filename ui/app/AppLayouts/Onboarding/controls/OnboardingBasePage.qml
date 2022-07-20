@@ -10,7 +10,6 @@ Page {
 
     property alias backButtonVisible: backButton.visible
 
-    signal exit()
     signal backClicked()
 
     background: Rectangle {

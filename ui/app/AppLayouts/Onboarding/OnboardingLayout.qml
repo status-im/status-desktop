@@ -1,307 +1,172 @@
-import QtQuick 2.12
-import QtQml.StateMachine 1.14 as DSM
+import QtQuick 2.14
+import QtQuick.Controls 2.14
+import QtQuick.Dialogs 1.3
+
 import utils 1.0
 
+import "controls"
 import "views"
 import "stores"
 
-QtObject {
+OnboardingBasePage {
     id: root
-    property bool hasAccounts
-    property string keysMainSetState: ""
-    property string prevState: ""
 
-    signal loadApp()
-    signal onBoardingStepChanged(var view, string state)
+    property var startupStore: StartupStore {}
 
-    property var stateMachine: DSM.StateMachine {
-        id: stateMachine
-        initialState: onboardingState
-        running: true
+    backButtonVisible: root.startupStore.currentStartupState.displayBackButton
 
-        DSM.State {
-            id: onboardingState
-            initialState: root.hasAccounts ? stateLogin : (Qt.platform.os === "osx" ? allowNotificationsState : welcomeMainState)
+    onBackClicked: {
+        root.startupStore.backAction()
+    }
 
-            DSM.State {
-                id: allowNotificationsState
-                onEntered: { onBoardingStepChanged(allowNotificationsMain, ""); }
+    function unload() {
+        loader.sourceComponent  = undefined
+    }
 
-                DSM.SignalTransition {
-                    targetState: welcomeMainState
-                    signal: Global.applicationWindow.navigateTo
-                    guard: path === "WelcomeMain"
-                }
+    Loader {
+        id: loader
+        anchors.fill: parent
+        sourceComponent: {
+            if (root.startupStore.currentStartupState.stateType === Constants.startupState.allowNotifications)
+            {
+                return allowNotificationsViewComponent
+            }
+            else if (root.startupStore.currentStartupState.stateType === Constants.startupState.welcome)
+            {
+                return welcomeViewComponent
+            }
+            else if (root.startupStore.currentStartupState.stateType === Constants.startupState.welcomeNewStatusUser ||
+                     root.startupStore.currentStartupState.stateType === Constants.startupState.welcomeOldStatusUser ||
+                     root.startupStore.currentStartupState.stateType === Constants.startupState.userProfileImportSeedPhrase)
+            {
+                return keysMainViewComponent
+            }
+            else if (root.startupStore.currentStartupState.stateType === Constants.startupState.userProfileCreate ||
+                     root.startupStore.currentStartupState.stateType === Constants.startupState.userProfileChatKey)
+            {
+                return insertDetailsViewComponent
+            }
+            else if (root.startupStore.currentStartupState.stateType === Constants.startupState.userProfileCreatePassword)
+            {
+                return createPasswordViewComponent
+            }
+            else if (root.startupStore.currentStartupState.stateType === Constants.startupState.userProfileConfirmPassword)
+            {
+                return confirmPasswordViewComponent
+            }
+            else if (root.startupStore.currentStartupState.stateType === Constants.startupState.biometrics)
+            {
+                return touchIdAuthViewComponent
+            }
+            else if (root.startupStore.currentStartupState.stateType === Constants.startupState.userProfileEnterSeedPhrase)
+            {
+                return seedPhraseInputViewComponent
+            }
+            else if (root.startupStore.currentStartupState.stateType === Constants.startupState.login)
+            {
+                return loginViewComponent
             }
 
-            DSM.State {
-                id: welcomeMainState
-                onEntered: { onBoardingStepChanged(welcomeMain, ""); }
-
-                DSM.SignalTransition {
-                    targetState: keysMainState
-                    signal: Global.applicationWindow.navigateTo
-                    guard: path === "KeyMain"
-                }
-            }
-
-            DSM.State {
-                id: keysMainState
-                onEntered: { onBoardingStepChanged(keysMain, root.keysMainSetState); }
-
-                DSM.SignalTransition {
-                    targetState: genKeyState
-                    signal: Global.applicationWindow.navigateTo
-                    guard: path === "GenKey"
-                }
-
-                DSM.SignalTransition {
-                    targetState: importSeedState
-                    signal: Global.applicationWindow.navigateTo
-                    guard: path === "ImportSeed"
-                }
-
-                DSM.SignalTransition {
-                    targetState: welcomeMainState
-                    signal: Global.applicationWindow.navigateTo
-                    guard: path === "Welcome"
-                }
-
-                DSM.SignalTransition {
-                    targetState: stateLogin
-                    signal: Global.applicationWindow.navigateTo
-                    guard: path === "LogIn"
-                }
-            }
-
-            DSM.State {
-                id: genKeyState
-                onEntered: { onBoardingStepChanged(genKey, ""); }
-                DSM.SignalTransition {
-                    targetState: welcomeMainState
-                    signal: Global.applicationWindow.navigateTo
-                    guard: path === "Welcome"
-                }
-
-                DSM.SignalTransition {
-                    targetState: appState
-                    signal: Global.applicationWindow.navigateTo
-                    guard: path === "LoggedIn"
-                }
-
-                DSM.SignalTransition {
-                    targetState: stateLogin
-                    signal: Global.applicationWindow.navigateTo
-                    guard: path === "LogIn"
-                }
-
-                DSM.SignalTransition {
-                    targetState: importSeedState
-                    signal: Global.applicationWindow.navigateTo
-                    guard: path === "ImportSeed"
-                }
-            }
-
-            DSM.State {
-                id: importSeedState
-                property string seedInputState: "existingUser"
-                onEntered: { onBoardingStepChanged(seedPhrase, seedInputState); }
-
-                DSM.SignalTransition {
-                    targetState: keysMainState
-                    signal: Global.applicationWindow.navigateTo
-                    guard: path === "KeyMain"
-                }
-
-                DSM.SignalTransition {
-                    targetState: genKeyState
-                    signal: Global.applicationWindow.navigateTo
-                    guard: path === "GenKey"
-                }
-            }
-
-            DSM.State {
-                id: keycardState
-                onEntered: { onBoardingStepChanged(keycardFlowSelection, ""); }
-
-                DSM.SignalTransition {
-                    targetState: appState
-                    signal: startupModule.appStateChanged
-                    guard: state === Constants.appState.main
-                }
-            }
-
-            DSM.State {
-                id: stateLogin
-                onEntered: { onBoardingStepChanged(login, ""); }
-
-                DSM.SignalTransition {
-                    targetState: appState
-                    signal: startupModule.appStateChanged
-                    guard: state === Constants.appState.main
-                }
-
-                DSM.SignalTransition {
-                    targetState: genKeyState
-                    signal: Global.applicationWindow.navigateTo
-                    guard: path === "GenKey"
-                }
-            }
-
-            DSM.SignalTransition {
-                targetState: root.hasAccounts ? stateLogin : keysMainState
-                signal: Global.applicationWindow.navigateTo
-                guard: path === "InitialState"
-            }
-
-            DSM.SignalTransition {
-                targetState: keysMainState
-                signal: Global.applicationWindow.navigateTo
-                guard: path === "KeysMain"
-            }
-
-            DSM.SignalTransition {
-                targetState: keycardState
-                signal: Global.applicationWindow.navigateTo
-                guard: path === "KeycardFlowSelection"
-            }
-
-            DSM.FinalState {
-                id: onboardingDoneState
-            }
-        }
-
-        DSM.State {
-            id: appState
-            onEntered: loadApp();
-
-            DSM.SignalTransition {
-                targetState: stateLogin
-                signal: startupModule.logOut
-            }
+            return undefined
         }
     }
 
-    property var allowNotificationsComponent: Component {
-        id: allowNotificationsMain
+    Connections {
+        target: root.startupStore.startupModuleInst
+        onAccountSetupError: {
+            if (error === Constants.existingAccountError) {
+                msgDialog.title = qsTr("Keys for this account already exist")
+                msgDialog.text = qsTr("Keys for this account already exist and can't be added again. If you've lost your password, passcode or Keycard, uninstall the app, reinstall and access your keys by entering your seed phrase")
+            } else {
+                msgDialog.title = qsTr("Login failed")
+                msgDialog.text = qsTr("Login failed. Please re-enter your password and try again.")
+            }
+            msgDialog.open()
+        }
+
+        onAccountImportError: {
+            if (error === Constants.existingAccountError) {
+                msgDialog.title = qsTr("Keys for this account already exist")
+                msgDialog.text = qsTr("Keys for this account already exist and can't be added again. If you've lost your password, passcode or Keycard, uninstall the app, reinstall and access your keys by entering your seed phrase")
+            } else {
+                msgDialog.title = qsTr("Error importing seed")
+                msgDialog.text = error
+            }
+            msgDialog.open()
+        }
+    }
+
+    MessageDialog {
+        id: msgDialog
+        title: qsTr("Login failed")
+        text: qsTr("Login failed. Please re-enter your password and try again.")
+        icon: StandardIcon.Critical
+        standardButtons: StandardButton.Ok
+        onAccepted: {
+            console.log("TODO: restart flow...")
+        }
+    }
+
+    Component {
+        id: allowNotificationsViewComponent
         AllowNotificationsView {
-            onBtnOkClicked: {
-                Global.applicationWindow.navigateTo("WelcomeMain");
-            }
+            startupStore: root.startupStore
         }
     }
 
-    property var welcomeComponent: Component {
-        id: welcomeMain
+    Component {
+        id: welcomeViewComponent
         WelcomeView {
-            onBtnNewUserClicked: {
-                root.keysMainSetState = "getkeys";
-                Global.applicationWindow.navigateTo("KeyMain");
-            }
-            onBtnExistingUserClicked: {
-                root.keysMainSetState = "connectkeys";
-                Global.applicationWindow.navigateTo("KeyMain");
-            }
+            startupStore: root.startupStore
         }
     }
 
-    property var keysMainComponent: Component {
-        id: keysMain
+    Component {
+        id: keysMainViewComponent
         KeysMainView {
-            onButtonClicked: {
-                if (state === "importseed") {
-                    importSeedState.seedInputState = "existingUser";
-                    Global.applicationWindow.navigateTo("ImportSeed");
-                } else {
-                    importSeedState.seedInputState = "newUser";
-                    Global.applicationWindow.navigateTo("GenKey");
-                }
-            }
-            onKeycardLinkClicked: {
-                Global.applicationWindow.navigateTo("KeycardFlowSelection");
-            }
-            onSeedLinkClicked: {
-                if (state === "getkeys") {
-                    importSeedState.seedInputState = "newUser";
-                    state = "importseed";
-                } else {
-                    importSeedState.seedInputState = "existingUser";
-                    Global.applicationWindow.navigateTo("ImportSeed");
-                }
-            }
-            onBackClicked: {
-                if (state === "importseed") {
-                    state = "getkeys";
-                } else if ((root.keysMainSetState === "connectkeys" && LoginStore.currentAccount.username !== "") || root.prevState === "LogIn") {
-                    Global.applicationWindow.navigateTo("LogIn");
-                } else {
-                    Global.applicationWindow.navigateTo("Welcome");
-                }
-            }
+            startupStore: root.startupStore
         }
     }
 
-    property var seedPhraseInputComponent: Component {
-        id: seedPhrase
+    Component {
+        id: insertDetailsViewComponent
+        InsertDetailsView {
+            startupStore: root.startupStore
+        }
+    }
+
+    Component {
+        id: createPasswordViewComponent
+        CreatePasswordView {
+            startupStore: root.startupStore
+        }
+    }
+
+    Component {
+        id: confirmPasswordViewComponent
+        ConfirmPasswordView {
+            startupStore: root.startupStore
+        }
+    }
+
+    Component {
+        id: touchIdAuthViewComponent
+        TouchIDAuthView {
+            startupStore: root.startupStore
+        }
+    }
+
+    Component {
+        id: seedPhraseInputViewComponent
         SeedPhraseInputView {
-            onExit: {
-                if (root.keysMainSetState !== "connectkeys") {
-                    root.keysMainSetState = "importseed";
-                }
-                Global.applicationWindow.navigateTo("KeyMain");
-            }
-            onSeedValidated: {
-                root.keysMainSetState = "importseed";
-                Global.applicationWindow.navigateTo("GenKey");
-            }
+            startupStore: root.startupStore
         }
     }
 
-    property var genKeyComponent: Component {
-        id: genKey
-        GenKeyView {
-            onExit: {
-                if (root.keysMainSetState === "importseed") {
-                    root.keysMainSetState = "connectkeys"
-                    Global.applicationWindow.navigateTo("ImportSeed");
-                } else if (LoginStore.currentAccount.username !== "" && importSeedState.seedInputState === "existingUser") {
-                    Global.applicationWindow.navigateTo("LogIn");
-                } else {
-                    Global.applicationWindow.navigateTo("KeysMain");
-                }
-            }
-            onKeysGenerated: {
-                Global.applicationWindow.navigateTo("LoggedIn")
-            }
-        }
-    }
-
-    property var keycardFlowSelectionComponent: Component {
-        id: keycardFlowSelection
-        KeycardFlowSelectionView {
-            onClosed: {
-                if (root.hasAccounts) {
-                    Global.applicationWindow.navigateTo("InitialState")
-                } else {
-                    Global.applicationWindow.navigateTo("KeysMain")
-                }
-            }
-        }
-    }
-
-    property var loginComponent: Component {
-        id: login
+    Component {
+        id: loginViewComponent
         LoginView {
-            onAddNewUserClicked: {
-                root.keysMainSetState = "getkeys";
-                root.prevState = "LogIn"
-                Global.applicationWindow.navigateTo("KeysMain");
-            }
-            onAddExistingKeyClicked: {
-                root.keysMainSetState = "connectkeys";
-                root.prevState = "LogIn"
-                Global.applicationWindow.navigateTo("KeysMain");
-            }
+            startupStore: root.startupStore
         }
     }
 }

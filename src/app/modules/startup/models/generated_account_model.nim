@@ -1,15 +1,14 @@
-import NimQml, Tables, strutils, strformat
+import NimQml, Tables, strutils
 
-import item
+import generated_account_item
 
 type
   ModelRole {.pure.} = enum
-    Name = UserRole + 1
-    ThumbnailImage
-    LargeImage
+    Id = UserRole + 1
+    Alias
+    Address
+    PubKey
     KeyUid
-    ColorHash
-    ColorId
 
 QtObject:
   type
@@ -32,12 +31,11 @@ QtObject:
 
   method roleNames(self: Model): Table[int, string] =
     {
-      ModelRole.Name.int:"username",
-      ModelRole.ThumbnailImage.int:"thumbnailImage",
-      ModelRole.LargeImage.int:"largeImage",
-      ModelRole.KeyUid.int:"keyUid",
-      ModelRole.ColorHash.int:"colorHash",
-      ModelRole.ColorId.int:"colorId"
+      ModelRole.Id.int:"accountId",
+      ModelRole.Alias.int:"username",
+      ModelRole.Address.int:"address",
+      ModelRole.PubKey.int:"pubKey",
+      ModelRole.KeyUid.int:"keyUid"
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -51,26 +49,18 @@ QtObject:
     let enumRole = role.ModelRole
 
     case enumRole:
-    of ModelRole.Name:
-      result = newQVariant(item.getName())
-    of ModelRole.ThumbnailImage:
-      result = newQVariant(item.getThumbnailImage())
-    of ModelRole.LargeImage:
-      result = newQVariant(item.getLargeImage())
+    of ModelRole.Id:
+      result = newQVariant(item.getId())
+    of ModelRole.Alias:
+      result = newQVariant(item.getAlias())
+    of ModelRole.Address:
+      result = newQVariant(item.getAddress())
+    of ModelRole.PubKey:
+      result = newQVariant(item.getPubKey())
     of ModelRole.KeyUid:
       result = newQVariant(item.getKeyUid())
-    of ModelRole.ColorHash:
-      result = newQVariant(item.getColorHash())
-    of ModelRole.ColorId:
-      result = newQVariant(item.getColorId())
 
   proc setItems*(self: Model, items: seq[Item]) =
     self.beginResetModel()
     self.items = items
     self.endResetModel()
-
-  proc getItemAtIndex*(self: Model, index: int): Item =
-    if(index < 0 or index >= self.items.len):
-      return
-
-    return self.items[index]

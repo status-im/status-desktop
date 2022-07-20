@@ -8,14 +8,12 @@ import shared.panels 1.0
 
 import utils 1.0
 
-import "../controls"
+import "../stores"
 
-OnboardingBasePage {
-    id: page
+Item {
+    id: root
 
-    signal btnOkClicked()
-
-    backButtonVisible: false
+    property StartupStore startupStore
 
     QtObject {
         id: d
@@ -61,7 +59,7 @@ OnboardingBasePage {
         anchors.horizontalCenter: parent.horizontalCenter
         text: qsTr("Ok, got it")
         onClicked: {
-            page.btnOkClicked();
+            root.startupStore.doPrimaryAction()
         }
     }
 }

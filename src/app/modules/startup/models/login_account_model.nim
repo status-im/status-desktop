@@ -1,14 +1,15 @@
 import NimQml, Tables, strutils
 
-import item
+import login_account_item
 
 type
   ModelRole {.pure.} = enum
-    Id = UserRole + 1
-    Alias
-    Address
-    PubKey
+    Name = UserRole + 1
+    ThumbnailImage
+    LargeImage
     KeyUid
+    ColorHash
+    ColorId
 
 QtObject:
   type
@@ -31,11 +32,12 @@ QtObject:
 
   method roleNames(self: Model): Table[int, string] =
     {
-      ModelRole.Id.int:"accountId",
-      ModelRole.Alias.int:"username",
-      ModelRole.Address.int:"address",
-      ModelRole.PubKey.int:"pubKey",
-      ModelRole.KeyUid.int:"keyUid"
+      ModelRole.Name.int:"username",
+      ModelRole.ThumbnailImage.int:"thumbnailImage",
+      ModelRole.LargeImage.int:"largeImage",
+      ModelRole.KeyUid.int:"keyUid",
+      ModelRole.ColorHash.int:"colorHash",
+      ModelRole.ColorId.int:"colorId"
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -49,18 +51,26 @@ QtObject:
     let enumRole = role.ModelRole
 
     case enumRole:
-    of ModelRole.Id:
-      result = newQVariant(item.getId())
-    of ModelRole.Alias:
-      result = newQVariant(item.getAlias())
-    of ModelRole.Address:
-      result = newQVariant(item.getAddress())
-    of ModelRole.PubKey:
-      result = newQVariant(item.getPubKey())
+    of ModelRole.Name:
+      result = newQVariant(item.getName())
+    of ModelRole.ThumbnailImage:
+      result = newQVariant(item.getThumbnailImage())
+    of ModelRole.LargeImage:
+      result = newQVariant(item.getLargeImage())
     of ModelRole.KeyUid:
       result = newQVariant(item.getKeyUid())
+    of ModelRole.ColorHash:
+      result = newQVariant(item.getColorHash())
+    of ModelRole.ColorId:
+      result = newQVariant(item.getColorId())
 
   proc setItems*(self: Model, items: seq[Item]) =
     self.beginResetModel()
     self.items = items
     self.endResetModel()
+
+  proc getItemAtIndex*(self: Model, index: int): Item =
+    if(index < 0 or index >= self.items.len):
+      return
+
+    return self.items[index]

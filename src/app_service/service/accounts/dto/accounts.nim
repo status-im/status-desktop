@@ -44,7 +44,8 @@ proc toAccountDto*(jsonObj: JsonNode): AccountDto =
   discard jsonObj.getProp("keycard-pairing", result.keycardPairing)
   discard jsonObj.getProp("key-uid", result.keyUid)
   discard jsonObj.getProp("colorId", result.colorId)
-  result.colorHash = toColorHashDto(jsonObj["colorHash"])
+  if jsonObj.hasKey("colorHash"):
+    result.colorHash = toColorHashDto(jsonObj["colorHash"])
 
   var imagesObj: JsonNode
   if(jsonObj.getProp("images", imagesObj) and imagesObj.kind == JArray):
