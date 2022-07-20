@@ -27,10 +27,10 @@ macro(add_target name type)
         target_include_directories(${name} PUBLIC include include/Qt)
     endif()
 
-    target_link_libraries(${name} PRIVATE Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Qml Qt5::Quick Qt5::Network Qt5::Multimedia)
+    target_link_libraries(${name} PRIVATE Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Qml Qt5::Quick Qt5::Network Qt5::Multimedia SortFilterProxyModel)
 
     # for DOtherSide.pc
-    set(PC_REQUIRES "Qt5Core, Qt5Gui, Qt5Widgets, Qt5Qml, Qt5Quick, Qt5Network, Qt5DBus, Qt5Multimedia")
+    set(PC_REQUIRES "Qt5Core, Qt5Gui, Qt5Widgets, Qt5Qml, Qt5Quick, Qt5Network, Qt5DBus, Qt5Multimedia SortFilterProxyModel")
     if (${Qt5QuickControls2_FOUND})
         target_link_libraries(${name} PRIVATE Qt5::QuickControls2)
         set(PC_REQUIRES "${PC_REQUIRES}, Qt5QuickControls2")

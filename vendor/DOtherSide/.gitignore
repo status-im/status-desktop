@@ -11,6 +11,7 @@ nimcache
 *.orig
 doc
 cmake-build-*
+.cache
 
 # libraries
 *.a
