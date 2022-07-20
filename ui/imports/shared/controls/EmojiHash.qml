@@ -21,7 +21,7 @@ Item {
         id: positioner
 
         rows: 2
-        columnSpacing: 0
+        columnSpacing: 0.2
         rowSpacing: root.compact ? 4 : 6
 
         Repeater {
