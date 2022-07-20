@@ -42,10 +42,10 @@ class AddAccountPopup(Enum):
 
 class StatusWalletScreen:
     
-    def acceptSigningPhrase(self):
+    def accept_signing_phrase(self):
         click_obj_by_name(SigningPhrasePopUp.OK_GOT_IT_BUTTON.value)
         
-    def addWatchOnlyAccount(self, account_name: str, address: str):
+    def add_watch_only_account(self, account_name: str, address: str):
         click_obj_by_name(MainWalletScreen.ADD_ACCOUNT_BUTTON.value)
         
         type(AddAccountPopup.ACCOUNT_NAME_INPUT.value, account_name)
@@ -58,7 +58,7 @@ class StatusWalletScreen:
         type(AddAccountPopup.ADDRESS_INPUT.value, address)
         click_obj_by_name(AddAccountPopup.ADD_ACCOUNT_BUTTON.value)
 
-    def importPrivateKey(self, account_name: str, password: str, private_key: str):
+    def import_private_key(self, account_name: str, password: str, private_key: str):
         click_obj_by_name(MainWalletScreen.ADD_ACCOUNT_BUTTON.value)
         
         type(AddAccountPopup.PASSWORD_INPUT.value, password)
@@ -72,7 +72,7 @@ class StatusWalletScreen:
         type(AddAccountPopup.PRIVATE_KEY_INPUT.value, private_key)
         click_obj_by_name(AddAccountPopup.ADD_ACCOUNT_BUTTON.value)
     
-    def importSeedPhrase(self, account_name: str, password: str, mnemonic: str):
+    def import_seed_phrase(self, account_name: str, password: str, mnemonic: str):
         click_obj_by_name(MainWalletScreen.ADD_ACCOUNT_BUTTON.value)
         
         type(AddAccountPopup.PASSWORD_INPUT.value, password)
@@ -109,7 +109,7 @@ class StatusWalletScreen:
         
         click_obj_by_name(AddAccountPopup.ADD_ACCOUNT_BUTTON.value)
         
-    def generateNewAccount(self, account_name: str, password: str):
+    def generate_new_account(self, account_name: str, password: str):
         click_obj_by_name(MainWalletScreen.ADD_ACCOUNT_BUTTON.value)
         
         type(AddAccountPopup.PASSWORD_INPUT.value, password)
@@ -118,6 +118,6 @@ class StatusWalletScreen:
         time.sleep(2)
         click_obj_by_name(AddAccountPopup.ADD_ACCOUNT_BUTTON.value)
          
-    def verifyAccountNameIsPresent(self, account_name: str):
+    def verify_account_name_is_present(self, account_name: str):
         verify_text_matching(MainWalletScreen.ACCOUNT_NAME.value, account_name)
         

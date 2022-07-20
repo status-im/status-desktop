@@ -16,6 +16,7 @@ StatusModal {
     property var executeConfirm
     property var executeReject
     property var executeCancel
+    property string confirmButtonObjectName: ""
     property string btnType: "warn"
     property string confirmButtonLabel: qsTr("Confirm")
     property string rejectButtonLabel: qsTr("Reject")
@@ -99,6 +100,7 @@ StatusModal {
         },
         StatusButton {
             id: confirmButton
+            objectName: confirmationDialog.confirmButtonObjectName
             type: {
                 switch (confirmationDialog.btnType) {
                     case "warn":

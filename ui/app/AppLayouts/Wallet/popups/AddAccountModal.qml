@@ -182,7 +182,6 @@ StatusModal {
                     textField.echoMode: TextInput.Password
                     validationError: root.passwordValidationError
                     textField.objectName: "accountModalPassword"
-                    validationError: popup.passwordValidationError
                     inputLabel.font.pixelSize: 15
                     inputLabel.font.weight: Font.Normal
                     onTextChanged: {
