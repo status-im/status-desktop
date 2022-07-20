@@ -185,7 +185,6 @@ ColumnLayout {
 
         OnboardingComponents.CreatePasswordModal {
             privacyStore: root.privacyStore
-            storingPasswordModal: true
             onOfferToStorePassword: {
                 root.offerToStorePassword(password, runStoreToKeychainPopup)
             }
