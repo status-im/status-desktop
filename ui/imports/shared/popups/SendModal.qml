@@ -266,134 +266,123 @@ StatusModal {
                 width: parent.width
                 anchors.top: border.bottom
                 anchors.topMargin: Style.current.halfPadding
-                anchors.left: parent.left
-                contentHeight: recipientSelector.height + addressSelector.height + networkSelector.height +
-                               fees.height + Style.current.halfPadding
-                ScrollBar.vertical.policy: ScrollBar.AlwaysOff
-                ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
+                ColumnLayout {
+                    width: scrollView.availableWidth
+                    spacing: Style.current.halfPadding
                 // To-do use standard StatusInput component once the flow for ens name resolution is clear
-                RecipientSelector {
-                    anchors.top: parent.top
-                    anchors.topMargin: Style.current.halfPadding
-                    anchors.right: parent.right
-                    anchors.left: parent.left
-
-                    id: recipientSelector
-                    accounts: popup.store.accounts
-                    contactsStore: popup.contactsStore
-                    label: qsTr("To")
-                    Layout.fillWidth: true
-                    input.placeholderText: qsTr("Enter an ENS name or address")
-                    input.anchors.leftMargin: 0
-                    input.anchors.rightMargin: 0
-                    labelFont.pixelSize: 15
-                    labelFont.weight: Font.Normal
-                    input.height: 56
-                    isSelectorVisible: false
-                    addContactEnabled: false
-                    onSelectedRecipientChanged: gasSelector.estimateGas()
-                }
-
-                TabAddressSelectorView {
-                    id: addressSelector
-                    anchors.top: recipientSelector.bottom
-                    anchors.right: parent.right
-                    anchors.left: parent.left
-                    store: popup.store
-                    onContactSelected:  {
-                        recipientSelector.input.text = address
+                    RecipientSelector {
+                        id: recipientSelector
+                        accounts: popup.store.accounts
+                        contactsStore: popup.contactsStore
+                        label: qsTr("To")
+                        input.placeholderText: qsTr("Enter an ENS name or address")
+                        input.anchors.leftMargin: 0
+                        input.anchors.rightMargin: 0
+                        labelFont.pixelSize: 15
+                        labelFont.weight: Font.Normal
+                        input.height: 56
+                        isSelectorVisible: false
+                        addContactEnabled: false
+                        onSelectedRecipientChanged: gasSelector.estimateGas()
+                        Layout.fillWidth: true
                     }
-                }
 
-                NetworkSelector {
-                    id: networkSelector
-                    store: popup.store
-                    selectedAccount: popup.selectedAccount
-                    anchors.top: addressSelector.bottom
-                    anchors.right: parent.right
-                    anchors.left: parent.left
-                    amountToSend: isNaN(parseFloat(amountToSendInput.text)) ? 0 : parseFloat(amountToSendInput.text)
-                    requiredGasInEth: gasSelector.selectedGasEthValue
-                    assets: popup.selectedAccount.assets
-                    selectedAsset: assetSelector.selectedAsset
-                    onNetworkChanged: function(chainId) {
-                        gasSelector.suggestedFees = popup.store.suggestedFees(chainId)
-                        gasSelector.updateGasEthValue()
-                    }
-                    onReCalculateSuggestedRoute: popup.recalculateRoutesAndFees(disabledChainIds)
-                }
-
-                Rectangle {
-                    id: fees
-                    radius: 13
-                    color: Theme.palette.indirectColor1
-                    anchors.top: networkSelector.bottom
-                    width: parent.width
-                    height: gasSelector.visible || gasValidator.visible ? feesLayout.height + gasValidator.height : 0
-
-                    RowLayout {
-                        id: feesLayout
-                        spacing: 10
-                        anchors.top: parent.top
-                        anchors.left: parent.left
-                        anchors.margins: Style.current.padding
-
-                        StatusRoundIcon {
-                            id: feesIcon
-                            Layout.alignment: Qt.AlignTop
-                            radius: 8
-                            icon.name: "fees"
+                    TabAddressSelectorView {
+                        id: addressSelector
+                        store: popup.store
+                        onContactSelected:  {
+                            recipientSelector.input.text = address
                         }
-                        ColumnLayout {
-                            Layout.alignment: Qt.AlignTop
-                            GasSelector {
-                                id: gasSelector
-                                Layout.preferredWidth: fees.width - feesIcon.width - Style.current.xlPadding
-                                getGasEthValue: popup.store.getGasEthValue
-                                getFiatValue: popup.store.getFiatValue
-                                getEstimatedTime: popup.store.getEstimatedTime
-                                defaultCurrency: popup.store.currentCurrency
-                                chainId: networkSelector.selectedNetwork && networkSelector.selectedNetwork.chainId ? networkSelector.selectedNetwork.chainId : 1
-                                property var estimateGas: Backpressure.debounce(gasSelector, 600, function() {
-                                    if (!(popup.selectedAccount && popup.selectedAccount.address &&
-                                          recipientSelector.selectedRecipient && recipientSelector.selectedRecipient.address &&
-                                          assetSelector.selectedAsset && assetSelector.selectedAsset.symbol &&
-                                          amountToSendInput.text)) {
-                                        selectedGasLimit = 250000
-                                        defaultGasLimit = selectedGasLimit
-                                        return
-                                    }
+                        Layout.fillWidth: true
+                    }
 
-                                    var chainID = networkSelector.selectedNetwork ? networkSelector.selectedNetwork.chainId: 1
+                    NetworkSelector {
+                        id: networkSelector
+                        store: popup.store
+                        selectedAccount: popup.selectedAccount
+                        amountToSend: isNaN(parseFloat(amountToSendInput.text)) ? 0 : parseFloat(amountToSendInput.text)
+                        requiredGasInEth: gasSelector.selectedGasEthValue
+                        assets: popup.selectedAccount.assets
+                        selectedAsset: assetSelector.selectedAsset
+                        onNetworkChanged: function(chainId) {
+                            gasSelector.suggestedFees = popup.store.suggestedFees(chainId)
+                            gasSelector.updateGasEthValue()
+                        }
+                        onReCalculateSuggestedRoute: popup.recalculateRoutesAndFees(disabledChainIds)
+                        Layout.fillWidth: true
+                    }
 
-                                    let gasEstimate = JSON.parse(popup.store.estimateGas(
-                                                                     popup.selectedAccount.address,
-                                                                     recipientSelector.selectedRecipient.address,
-                                                                     assetSelector.selectedAsset.symbol,
-                                                                     amountToSendInput.text,
-                                                                     chainID || Global.currentChainId,
-                                                                     ""))
+                    Rectangle {
+                        id: fees
+                        radius: 13
+                        color: Theme.palette.indirectColor1
+                        implicitHeight: gasSelector.visible || gasValidator.visible ? feesLayout.height + gasValidator.height : 0
+                        Layout.fillWidth: true
 
-                                    if (!gasEstimate.success) {
-                                        console.warn("error estimating gas: %1").arg(gasEstimate.error.message)
-                                        return
-                                    }
+                        RowLayout {
+                            id: feesLayout
+                            spacing: 10
+                            anchors.top: parent.top
+                            anchors.left: parent.left
+                            anchors.margins: Style.current.padding
 
-                                    selectedGasLimit = gasEstimate.result
-                                    defaultGasLimit = selectedGasLimit
-                                })
+                            StatusRoundIcon {
+                                id: feesIcon
+                                Layout.alignment: Qt.AlignTop
+                                radius: 8
+                                icon.name: "fees"
                             }
-                            GasValidator {
-                                id: gasValidator
-                                anchors.horizontalCenter: undefined
-                                Layout.alignment: Qt.AlignHCenter
-                                selectedAccount: popup.selectedAccount
-                                selectedAmount: amountToSendInput.text === "" ? 0.0 :
-                                                parseFloat(amountToSendInput.text)
-                                selectedAsset: assetSelector.selectedAsset
-                                selectedGasEthValue: gasSelector.selectedGasEthValue
-                                selectedNetwork: networkSelector.selectedNetwork ? networkSelector.selectedNetwork: null
+                            ColumnLayout {
+                                Layout.alignment: Qt.AlignTop
+                                GasSelector {
+                                    id: gasSelector
+                                    Layout.preferredWidth: fees.width - feesIcon.width - Style.current.xlPadding
+                                    getGasEthValue: popup.store.getGasEthValue
+                                    getFiatValue: popup.store.getFiatValue
+                                    getEstimatedTime: popup.store.getEstimatedTime
+                                    defaultCurrency: popup.store.currentCurrency
+                                    chainId: networkSelector.selectedNetwork && networkSelector.selectedNetwork.chainId ? networkSelector.selectedNetwork.chainId : 1
+                                    property var estimateGas: Backpressure.debounce(gasSelector, 600, function() {
+                                        if (!(popup.selectedAccount && popup.selectedAccount.address &&
+                                            recipientSelector.selectedRecipient && recipientSelector.selectedRecipient.address &&
+                                            assetSelector.selectedAsset && assetSelector.selectedAsset.symbol &&
+                                            amountToSendInput.text)) {
+                                            selectedGasLimit = 250000
+                                            defaultGasLimit = selectedGasLimit
+                                            return
+                                        }
+
+                                        var chainID = networkSelector.selectedNetwork ? networkSelector.selectedNetwork.chainId: 1
+
+                                        let gasEstimate = JSON.parse(popup.store.estimateGas(
+                                                                        popup.selectedAccount.address,
+                                                                        recipientSelector.selectedRecipient.address,
+                                                                        assetSelector.selectedAsset.symbol,
+                                                                        amountToSendInput.text,
+                                                                        chainID || Global.currentChainId,
+                                                                        ""))
+
+                                        if (!gasEstimate.success) {
+                                            console.warn("error estimating gas: %1").arg(gasEstimate.error.message)
+                                            return
+                                        }
+
+                                        selectedGasLimit = gasEstimate.result
+                                        defaultGasLimit = selectedGasLimit
+                                    })
+                                }
+                                GasValidator {
+                                    id: gasValidator
+                                    anchors.horizontalCenter: undefined
+                                    Layout.alignment: Qt.AlignHCenter
+                                    selectedAccount: popup.selectedAccount
+                                    selectedAmount: amountToSendInput.text === "" ? 0.0 :
+                                                    parseFloat(amountToSendInput.text)
+                                    selectedAsset: assetSelector.selectedAsset
+                                    selectedGasEthValue: gasSelector.selectedGasEthValue
+                                    selectedNetwork: networkSelector.selectedNetwork ? networkSelector.selectedNetwork: null
+                                }
                             }
                         }
                     }

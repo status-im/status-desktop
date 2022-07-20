@@ -48,7 +48,7 @@ Popup {
 
         Column {
             id: content
-            width: popup.width
+            width: scrollView.availableWidth
             spacing: Style.current.padding
 
             Repeater {
