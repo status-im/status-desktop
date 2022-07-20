@@ -1,0 +1,3 @@
+[submodule "vendor/SortFilterProxyModel"]
+	path = vendor/SortFilterProxyModel
+	url = git@github.com:status-im/SortFilterProxyModel.git
