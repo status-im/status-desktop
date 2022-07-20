@@ -20,14 +20,11 @@ ModalPopup {
     property bool repeatPasswordFieldValid: false
     property string passwordValidationError: ""
     property string repeatPasswordValidationError: ""
-    property bool storingPasswordModal: false
 
     signal offerToStorePassword(string password, bool runStoreToKeychainPopup)
 
     id: popup
-    title: storingPasswordModal?
-               qsTr("Store password") :
-               qsTr("Create a password")
+    title: qsTr("Store password")
     height: 500
 
     onOpened: {
@@ -40,10 +37,8 @@ ModalPopup {
         anchors.rightMargin: 56
         anchors.leftMargin: 56
         anchors.top: parent.top
-        anchors.topMargin: storingPasswordModal? Style.current.xlPadding : 88
-        placeholderText: storingPasswordModal?
-                             qsTr("Current password...") :
-                             qsTr("New password...")
+        anchors.topMargin: Style.current.xlPadding
+        placeholderText: qsTr("Current password...")
         textField.echoMode: TextInput.Password
         onTextChanged: {
             [firstPasswordFieldValid, passwordValidationError] =
@@ -93,21 +88,6 @@ ModalPopup {
         font.pixelSize: 11
     }
 
-    StyledText {
-        visible: !storingPasswordModal
-        text: qsTr("At least 6 characters. You will use this password to unlock status on this device & sign transactions.")
-        wrapMode: Text.WordWrap
-        anchors.right: parent.right
-        anchors.rightMargin: Style.current.xlPadding
-        anchors.left: parent.left
-        anchors.leftMargin: Style.current.xlPadding
-        horizontalAlignment: Text.AlignHCenter
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 0
-        color: Style.current.secondaryText
-        font.pixelSize: 12
-    }
-
     footer: Item {
         width: parent.width
         height: submitBtn.height
@@ -119,9 +99,7 @@ ModalPopup {
             anchors.right: parent.right
             state: loading ? "pending" : "default"
 
-            text: storingPasswordModal?
-                      qsTr("Store password") :
-                      qsTr("Create password")
+            text: qsTr("Store password")
 
             enabled: firstPasswordFieldValid && repeatPasswordFieldValid && !loading
 
@@ -147,32 +125,16 @@ ModalPopup {
                 }
             }
 
-            Connections {
-                target: OnboardingStore.onboardingModuleInst
-                onAccountSetupError: {
-                    importLoginError.open()
-                }
-            }
-
             onClicked: {
-                if (storingPasswordModal)
-                {
-                    // validate the entered password
-                    var validatePassword = privacyStore.validatePassword(repeatPasswordField.text)
-                    if(!validatePassword) {
-                        firstPasswordFieldValid = false
-                        passwordValidationError = qsTr("Incorrect password")
-                    }
-                    else {
-                        popup.offerToStorePassword(repeatPasswordField.text, true)
-                        popup.close()
-                    }
+                // validate the entered password
+                var validatePassword = privacyStore.validatePassword(repeatPasswordField.text)
+                if(!validatePassword) {
+                    firstPasswordFieldValid = false
+                    passwordValidationError = qsTr("Incorrect password")
                 }
-                else
-                {
-                    loading = true
-                    OnboardingStore.onboardingModuleInst.storeSelectedAccountAndLogin(repeatPasswordField.text);
-                    popup.offerToStorePassword(repeatPasswordField.text, false)
+                else {
+                    popup.offerToStorePassword(repeatPasswordField.text, true)
+                    popup.close()
                 }
             }
         }
