@@ -14,13 +14,20 @@
 # *          with a pattern which is matched against the steps being executed.
 # *****************************************************************************
 from common.Common import *
+from utils.FileManager import *
 import time
+
 
 @When("the user restarts the app")
 def step(context):
     waitFor(lambda: currentApplicationContext().detach(), 500)
     time.sleep(5)
     startApplication("nim_status_client")
+    
+
+@When("the app data folder is erased")
+def step(context):
+    erase_directory("../../../../../Status/data")
 
 
 @When("user inputs the following |any| with ui-component |any|")
@@ -36,3 +43,11 @@ def step(context, obj):
 @Then("the following ui-component |any| is not enabled")
 def step(context, obj):
     object_not_enabled(obj)
+    
+@Then("the following ui-component |any| is enabled")
+def step(context, obj):
+    object_enabled(obj)
+    
+@Then("the following ui-component |any| contains |any|")
+def step(context, obj, text):
+    verify_text_is_displayed(obj, text)

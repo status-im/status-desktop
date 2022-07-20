@@ -87,6 +87,7 @@ Page {
 
         StatusFlatButton {
             id: btnExistingUser
+            objectName: "i_already_use_status_button"
             text: qsTr("I already use Status")
             anchors.top: btnNewUser.bottom
             anchors.topMargin: Style.current.padding

@@ -3,151 +3,84 @@
 from objectmaphelper import *
 
 statusDesktop_mainWindow = {"name": "mainWindow", "type": "StatusWindow", "visible": True}
-mainWindow_dropRectangle_Rectangle = {"container": statusDesktop_mainWindow, "id": "dropRectangle", "type": "Rectangle", "unnamed": 1, "visible": True}
+
 loginView_passwordInput = {"container": statusDesktop_mainWindow, "echoMode": 2, "id": "inputValue", "passwordCharacter": "•", "type": "StyledTextField", "unnamed": 1, "visible": True}
 loginView_changeAccountBtn = {"container": statusDesktop_mainWindow, "id": "changeAccountBtn", "type": "Rectangle", "unnamed": 1, "visible": True}
 loginView_submitBtn = {"container": statusDesktop_mainWindow, "type": "StatusRoundButton", "visible": True}
 loginView_main = {"container": statusDesktop_mainWindow, "type": "LoginView", "visible": True}
 loginView_errMsgLabel = {"container": statusDesktop_mainWindow, "id": "errMsg", "type": "StyledText", "visible": True}
+
+mainWindow_I_am_new_to_Status_StatusBaseText = {"container": statusDesktop_mainWindow, "text": "I am new to Status", "type": "StatusBaseText", "unnamed": 1, "visible": True}
+mainWindow_Generate_new_keys_StatusBaseText = {"container": statusDesktop_mainWindow, "text": "Generate new keys", "type": "StatusBaseText", "unnamed": 1, "visible": True}
+
+mainWindow_edit_TextEdit = {"container": statusDesktop_mainWindow, "id": "edit", "type": "TextEdit", "unnamed": 1, "visible": True}
+mainWindow_Next_StatusBaseText = {"container": statusDesktop_mainWindow, "text": "Next", "type": "StatusBaseText", "unnamed": 1, "visible": True}
+mainWindow_nextBtn_StatusButton = {"container": statusDesktop_mainWindow, "id": "nextBtn", "type": "StatusButton", "unnamed": 1, "visible": True}
+mainWindow_New_password_PlaceholderText = {"container": statusDesktop_mainWindow, "text": "New password", "type": "PlaceholderText", "unnamed": 1, "visible": True}
+mainWindow_Password_textField = {"container": statusDesktop_mainWindow, "echoMode": 2, "id": "inputValue", "occurrence": 2, "passwordCharacter": "•", "type": "StyledTextField", "unnamed": 1, "visible": True}
+mainWindow_Ok_got_it_StatusBaseText = {"container": statusDesktop_mainWindow, "text": "Ok, got it", "type": "StatusBaseText", "unnamed": 1, "visible": True}
+
+mainWindow_Create_password_StatusBaseText = {"container": statusDesktop_mainWindow, "text": "Create password", "type": "StatusBaseText", "unnamed": 1, "visible": True}
+mainWindow_Finalise_Status_Password_Creation_StatusBaseText = {"container": statusDesktop_mainWindow, "text": "Finalise Status Password Creation", "type": "StatusBaseText", "unnamed": 1, "visible": True}
+mainWindow_I_prefer_to_use_my_password_StatusBaseText = {"container": statusDesktop_mainWindow, "text": "I prefer to use my password", "type": "StatusBaseText", "unnamed": 1, "visible": True}
+mainWindow_button_StatusButton = {"container": statusDesktop_mainWindow, "id": "button", "type": "StatusButton", "unnamed": 1, "visible": True}
+username_must_be_at_least_5_characters_error_message = {"container": statusDesktop_mainWindow, "text": "Username must be at least 5 characters", "type": "StatusBaseText", "unnamed": 1, "visible": True}
+
+mainWindow_Welcome_to_Status_StyledText = {"container": statusDesktop_mainWindow, "text": "Welcome to Status", "type": "StyledText", "unnamed": 1, "visible": True}
+mainWindow_Enter_a_seed_phrase_StatusBaseText = {"container": statusDesktop_mainWindow, "text": "Enter a seed phrase", "type": "StatusBaseText", "unnamed": 1, "visible": True}
+
+import_a_seed_phrase_StatusBaseText = {"container": statusDesktop_mainWindow, "text": "Import a seed phrase", "type": "StatusBaseText", "unnamed": 1, "visible": True}
+mainWindow_placeholder_StatusBaseText = {"container": statusDesktop_mainWindow, "id": "placeholder", "type": "StatusBaseText", "unnamed": 1, "visible": True}
+
+mainWindow_submitButton_StatusButton = {"container": statusDesktop_mainWindow, "id": "submitButton", "type": "StatusButton", "unnamed": 1, "visible": True}
+
+mainWindow_Confirm_your_password_again_PlaceholderText = {"container": statusDesktop_mainWindow, "text": "Confirm your password (again)", "type": "PlaceholderText", "unnamed": 1, "visible": True}
+only_letters_numbers_underscores_and_hyphens_allowed_error_message = {"container": statusDesktop_mainWindow, "text": "Only letters, numbers, underscores and hyphens allowed", "type": "StatusBaseText", "unnamed": 1, "visible": True}
+twentyfour_character_username_limit_error_message = {"container": statusDesktop_mainWindow, "text": "24 character username limit", "type": "StatusBaseText", "unnamed": 1, "visible": True}
+i_already_use_status_button_StatusFlatButton = {"container": statusDesktop_mainWindow, "objectName": "i_already_use_status_button", "type": "StatusFlatButton", "visible": True}
+
+
 statusDesktop_mainWindow_overlay = {"container": statusDesktop_mainWindow, "type": "Overlay", "unnamed": 1, "visible": True}
+
+
 accountsView_accountListPanel = {"container": statusDesktop_mainWindow_overlay, "type": "AccountListPanel", "visible": True}
 acknowledge_checkbox = {"checkable": True, "container": statusDesktop_mainWindow_overlay, "objectName": "acknowledgeCheckBox", "type": "StatusCheckBox", "visible": True}
 termsOfUseCheckBox_StatusCheckBox = {"checkable": True, "container": statusDesktop_mainWindow_overlay, "id":"termsOfUse", "type": "StatusCheckBox", "visible": True}
 getStartedStatusButton_StatusButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "getStartedStatusButton", "type": "StatusButton", "visible": True}
-mainWindow_I_am_new_to_Status_StatusBaseText = {"container": statusDesktop_mainWindow, "text": "I am new to Status", "type": "StatusBaseText", "unnamed": 1, "visible": True}
-mainWindow_Generate_new_keys_StatusBaseText = {"container": statusDesktop_mainWindow, "text": "Generate new keys", "type": "StatusBaseText", "unnamed": 1, "visible": True}
 get_Started_StatusBaseText = {"container": statusDesktop_mainWindow_overlay, "text": "Get Started", "type": "StatusBaseText", "unnamed": 1, "visible": True}
-i_accept_Status_StatusBaseText = {"container": statusDesktop_mainWindow_overlay, "text": "I accept Status", "type": "StatusBaseText", "unnamed": 1, "visible": True}
-termsOfUseLink_StatusBaseText = {"container": statusDesktop_mainWindow_overlay, "objectName": "termsOfUseLink", "type": "StatusBaseText", "visible": True}
-mainWindow_edit_TextEdit = {"container": statusDesktop_mainWindow, "id": "edit", "type": "TextEdit", "unnamed": 1, "visible": True}
-mainWindow_Next_StatusBaseText = {"container": statusDesktop_mainWindow, "text": "Next", "type": "StatusBaseText", "unnamed": 1, "visible": True}
-mainWindow_Confirm_password_PlaceholderText = {"container": statusDesktop_mainWindow, "text": "Confirm password", "type": "PlaceholderText", "unnamed": 1, "visible": True}
-mainWindow_Display_name_StatusBaseText = {"container": statusDesktop_mainWindow, "text": "Display name", "type": "StatusBaseText", "unnamed": 1, "visible": True}
-mainWindow_nextBtn_StatusButton = {"container": statusDesktop_mainWindow, "id": "nextBtn", "type": "StatusButton", "unnamed": 1, "visible": True}
-mainWindow_New_password_PlaceholderText = {"container": statusDesktop_mainWindow, "text": "New password", "type": "PlaceholderText", "unnamed": 1, "visible": True}
-mainWindow_Password_textField = {"container": statusDesktop_mainWindow, "echoMode": 2, "id": "inputValue", "occurrence": 2, "passwordCharacter": "•", "type": "StyledTextField", "unnamed": 1, "visible": True}
-mainWindow_Rectangle = {"container": statusDesktop_mainWindow, "occurrence": 11, "type": "Rectangle", "unnamed": 1, "visible": True}
-mainWindow_Create_password_StatusBaseText = {"container": statusDesktop_mainWindow, "text": "Create password", "type": "StatusBaseText", "unnamed": 1, "visible": True}
-mainWindow_Confirm_you_password_again_PlaceholderText = {"container": statusDesktop_mainWindow, "text": "Confirm you password (again)", "type": "PlaceholderText", "unnamed": 1, "visible": True}
-mainWindow_Finalise_Status_Password_Creation_StatusBaseText = {"container": statusDesktop_mainWindow, "text": "Finalise Status Password Creation", "type": "StatusBaseText", "unnamed": 1, "visible": True}
-mainWindow_I_prefer_to_use_my_password_StatusBaseText = {"container": statusDesktop_mainWindow, "text": "I prefer to use my password", "type": "StatusBaseText", "unnamed": 1, "visible": True}
-mainWindow_Enter_password_PlaceholderText = {"container": statusDesktop_mainWindow, "text": "Enter password", "type": "PlaceholderText", "unnamed": 1, "visible": True}
-mainWindow_button_StatusButton = {"container": statusDesktop_mainWindow, "id": "button", "type": "StatusButton", "unnamed": 1, "visible": True}
-mainWindow_Username_must_be_at_least_5_characters_StatusBaseText = {"container": statusDesktop_mainWindow, "text": "Username must be at least 5 characters", "type": "StatusBaseText", "unnamed": 1, "visible": True}
-mainWindow_Passwords_don_t_match_StatusBaseText = {"container": statusDesktop_mainWindow, "text": "Passwords don't match", "type": "StatusBaseText", "unnamed": 1, "visible": True}
-mainWindow_inputRectangle_Rectangle = {"container": statusDesktop_mainWindow, "id": "inputRectangle", "occurrence": 2, "type": "Rectangle", "unnamed": 1, "visible": True}
-mainWindow_inputRectangle_Rectangle_2 = {"container": statusDesktop_mainWindow, "id": "inputRectangle", "type": "Rectangle", "unnamed": 1, "visible": True}
-mainWindow_You_will_not_be_able_to_recover_this_password_if_it_is_lost_StatusBaseText = {"container": statusDesktop_mainWindow, "text": "You will not be able to recover this password if it is lost.", "type": "StatusBaseText", "unnamed": 1, "visible": True}
-mainWindow_Ok_got_it_StatusBaseText = {"container": statusDesktop_mainWindow, "text": "Ok, got it", "type": "StatusBaseText", "unnamed": 1, "visible": True}
-mainWindow_background_Rectangle = {"container": statusDesktop_mainWindow, "id": "background", "type": "Rectangle", "unnamed": 1, "visible": True}
-o_Rectangle = {"container": statusDesktop_mainWindow_overlay, "occurrence": 2, "type": "Rectangle", "unnamed": 1, "visible": True}
 edit_TextEdit = {"container": statusDesktop_mainWindow_overlay, "id": "edit", "type": "TextEdit", "unnamed": 1, "visible": True}
-background_Rectangle = {"container": statusDesktop_mainWindow_overlay, "id": "background", "type": "Rectangle", "unnamed": 1, "visible": True}
-statusIcon_StatusIcon = {"container": statusDesktop_mainWindow_overlay, "id": "statusIcon", "source": "qrc:/StatusQ/src/assets/img/icons/clear.svg", "type": "StatusIcon", "unnamed": 1, "visible": True}
-statusIcon_StatusIcon_2 = {"container": statusDesktop_mainWindow_overlay, "id": "statusIcon", "source": "qrc:/StatusQ/src/assets/img/icons/close.svg", "type": "StatusIcon", "unnamed": 1, "visible": True}
-o_Rectangle_2 = {"container": statusDesktop_mainWindow_overlay, "type": "Rectangle", "unnamed": 1, "visible": True}
-mainWindow_statusIcon_StatusIcon = {"container": statusDesktop_mainWindow, "id": "statusIcon", "source": "qrc:/StatusQ/src/assets/img/icons/arrow-right.svg", "type": "StatusIcon", "unnamed": 1, "visible": True}
-join_public_chat_StatusMenuItemDelegate = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "enabled": True, "text": "Join public chat", "type": "StatusMenuItemDelegate", "unnamed": 1, "visible": True}
-chat_name_PlaceholderText = {"container": statusDesktop_mainWindow_overlay, "text": "chat-name", "type": "PlaceholderText", "unnamed": 1, "visible": True}
 inputValue_StyledTextField = {"container": statusDesktop_mainWindow_overlay, "echoMode": 0, "id": "inputValue", "type": "StyledTextField", "unnamed": 1, "visible": True}
 start_chat_StatusBaseText = {"container": statusDesktop_mainWindow_overlay, "text": "Start chat", "type": "StatusBaseText", "unnamed": 1, "visible": True}
+i_understand_StatusBaseText = {"container": statusDesktop_mainWindow_overlay, "text": "I understand", "type": "StatusBaseText", "unnamed": 1, "visible": True}
+
 mainWindow_scrollView_ScrollView = {"container": statusDesktop_mainWindow, "id": "scrollView", "type": "ScrollView", "unnamed": 1, "visible": True}
 scrollView_messageInputField_TextArea = {"container": mainWindow_scrollView_ScrollView, "id": "messageInputField", "type": "TextArea", "unnamed": 1, "visible": True}
-reactionImage_SVGImage = {"container": statusDesktop_mainWindow_overlay, "id": "reactionImage", "source": "qrc:/imports/assets/icons/emojiReactions/heart.svg", "type": "SVGImage", "unnamed": 1, "visible": True}
-mainWindow_statusIcon_StatusIcon_2 = {"container": statusDesktop_mainWindow, "id": "statusIcon", "source": "qrc:/StatusQ/src/assets/img/icons/public-chat.svg", "type": "StatusIcon", "unnamed": 1, "visible": True}
 scrollView_Type_a_message_PlaceholderText = {"container": mainWindow_scrollView_ScrollView, "text": "Type a message.", "type": "PlaceholderText", "unnamed": 1, "visible": True}
-import_a_seed_phrase_StatusBaseText = {"container": statusDesktop_mainWindow, "text": "Import a seed phrase", "type": "StatusBaseText", "unnamed": 1, "visible": True}
-mainWindow_placeholder_StatusBaseText = {"container": statusDesktop_mainWindow, "id": "placeholder", "type": "StatusBaseText", "unnamed": 1, "visible": True}
-mainWindow_Image = {"container": statusDesktop_mainWindow, "source": "qrc:/imports/assets/png/traffic_lights/close.png", "type": "Image", "unnamed": 1, "visible": True}
-mainWindow_edit_TextEdit_2 = {"container": statusDesktop_mainWindow, "id": "edit", "occurrence": 7, "type": "TextEdit", "unnamed": 1, "visible": True}
-mainWindow_edit_TextEdit_3 = {"container": statusDesktop_mainWindow, "id": "edit", "occurrence": 2, "type": "TextEdit", "unnamed": 1, "visible": True}
-mainWindow_edit_TextEdit_4 = {"container": statusDesktop_mainWindow, "id": "edit", "occurrence": 8, "type": "TextEdit", "unnamed": 1, "visible": True}
-mainWindow_btnOk_StatusButton = {"container": statusDesktop_mainWindow, "id": "btnOk", "type": "StatusButton", "unnamed": 1, "visible": True}
-mainWindow_Rectangle_2 = {"container": statusDesktop_mainWindow, "occurrence": 32, "type": "Rectangle", "unnamed": 1, "visible": True}
+
 mainWindow_switchTabBar_StatusSwitchTabBar = {"container": statusDesktop_mainWindow, "id": "switchTabBar", "type": "StatusSwitchTabBar", "unnamed": 1, "visible": True}
 switchTabBar_18_words_StatusBaseText = {"container": mainWindow_switchTabBar_StatusSwitchTabBar, "text": "18 words", "type": "StatusBaseText", "unnamed": 1, "visible": True}
 switchTabBar_24_words_StatusBaseText = {"container": mainWindow_switchTabBar_StatusSwitchTabBar, "text": "24 words", "type": "StatusBaseText", "unnamed": 1, "visible": True}
 switchTabBar_12_words_StatusBaseText = {"container": mainWindow_switchTabBar_StatusSwitchTabBar, "text": "12 words", "type": "StatusBaseText", "unnamed": 1, "visible": True}
-mainWindow_grid_GridView = {"container": statusDesktop_mainWindow, "id": "grid", "type": "GridView", "unnamed": 1, "visible": True}
-grid_seedWordInput_StatusSeedPhraseInput = {"container": mainWindow_grid_GridView, "id": "seedWordInput", "index": 5, "type": "StatusSeedPhraseInput", "unnamed": 1, "visible": True}
-seedWordInput_background_Rectangle = {"container": grid_seedWordInput_StatusSeedPhraseInput, "id": "background", "type": "Rectangle", "unnamed": 1, "visible": True}
-mainWindow_statusIcon_StatusIcon_3 = {"container": statusDesktop_mainWindow, "id": "statusIcon", "occurrence": 3, "source": "qrc:/StatusQ/src/assets/img/icons/arrow-left.svg", "type": "StatusIcon", "unnamed": 1, "visible": True}
-mainWindow_statusIcon_StatusIcon_4 = {"container": statusDesktop_mainWindow, "id": "statusIcon", "source": "qrc:/StatusQ/src/assets/img/icons/arrow-left.svg", "type": "StatusIcon", "unnamed": 1, "visible": True}
-mainWindow_Rectangle_3 = {"container": statusDesktop_mainWindow, "occurrence": 4, "type": "Rectangle", "unnamed": 1, "visible": True}
-mainWindow_edit_TextEdit_5 = {"container": statusDesktop_mainWindow, "id": "edit", "occurrence": 3, "type": "TextEdit", "unnamed": 1, "visible": True}
-grid_seedWordInput_StatusSeedPhraseInput_2 = {"container": mainWindow_grid_GridView, "id": "seedWordInput", "index": 2, "type": "StatusSeedPhraseInput", "unnamed": 1, "visible": True}
-seedWordInput_seedSuggestionsList_ListView = {"container": grid_seedWordInput_StatusSeedPhraseInput_2, "id": "seedSuggestionsList", "type": "ListView", "unnamed": 1, "visible": True}
-seedSuggestionsList_txtDelegate_Item = {"container": seedWordInput_seedSuggestionsList_ListView, "id": "txtDelegate", "index": 0, "type": "Item", "unnamed": 1, "visible": True}
-txtDelegate_Rectangle = {"container": seedSuggestionsList_txtDelegate_Item, "type": "Rectangle", "unnamed": 1, "visible": True}
-mainWindow_edit_TextEdit_6 = {"container": statusDesktop_mainWindow, "id": "edit", "occurrence": 4, "type": "TextEdit", "unnamed": 1, "visible": True}
-grid_seedWordInput_StatusSeedPhraseInput_3 = {"container": mainWindow_grid_GridView, "id": "seedWordInput", "index": 3, "type": "StatusSeedPhraseInput", "unnamed": 1, "visible": True}
-seedWordInput_seedSuggestionsList_ListView_2 = {"container": grid_seedWordInput_StatusSeedPhraseInput_3, "id": "seedSuggestionsList", "type": "ListView", "unnamed": 1, "visible": True}
-seedSuggestionsList_txtDelegate_Item_2 = {"container": seedWordInput_seedSuggestionsList_ListView_2, "id": "txtDelegate", "index": 0, "type": "Item", "unnamed": 1, "visible": True}
-txtDelegate_survey_StatusBaseText = {"container": seedSuggestionsList_txtDelegate_Item_2, "text": "survey", "type": "StatusBaseText", "unnamed": 1, "visible": True}
-mainWindow_Restore_Status_Profile_StatusBaseText = {"container": statusDesktop_mainWindow, "text": "Restore Status Profile", "type": "StatusBaseText", "unnamed": 1, "visible": True}
-mainWindow_Rectangle_4 = {"container": statusDesktop_mainWindow, "occurrence": 31, "type": "Rectangle", "unnamed": 1, "visible": True}
-mainWindow_submitButton_StatusButton = {"container": statusDesktop_mainWindow, "id": "submitButton", "type": "StatusButton", "unnamed": 1, "visible": True}
-i_understand_StatusBaseText = {"container": statusDesktop_mainWindow_overlay, "text": "I understand", "type": "StatusBaseText", "unnamed": 1, "visible": True}
+
+
 mainWindow_navBarListView_ListView = {"container": statusDesktop_mainWindow, "id": "navBarListView", "type": "ListView", "unnamed": 1, "visible": True}
-navBarListView_StatusNavBarTabButton = {"checkable": True, "container": mainWindow_navBarListView_ListView, "occurrence": 4, "type": "StatusNavBarTabButton", "unnamed": 1, "visible": True}
-statusIcon_StatusIcon_3 = {"container": navBarListView_StatusNavBarTabButton, "id": "statusIcon", "source": "qrc:/StatusQ/src/assets/img/icons/settings.svg", "type": "StatusIcon", "unnamed": 1, "visible": True}
+
 mainWindow_ScrollView = {"container": statusDesktop_mainWindow, "type": "ScrollView", "unnamed": 1, "visible": True}
-privacy_and_security_StatusBaseText = {"container": mainWindow_ScrollView, "text": "Privacy and security", "type": "StatusBaseText", "unnamed": 1, "visible": True}
-settingsMenuDelegate_StatusNavigationListItem = {"container": mainWindow_ScrollView, "id": "settingsMenuDelegate", "occurrence": 4, "type": "StatusNavigationListItem", "unnamed": 1, "visible": True}
-language_Currency_StatusBaseText = {"container": mainWindow_ScrollView, "text": "Language & Currency", "type": "StatusBaseText", "unnamed": 1, "visible": True}
-advanced_StatusBaseText = {"container": mainWindow_ScrollView, "text": "Advanced", "type": "StatusBaseText", "unnamed": 1, "visible": True}
-mainWindow_ScrollView_2 = {"container": statusDesktop_mainWindow, "occurrence": 2, "type": "ScrollView", "unnamed": 1, "visible": True}
-o_StatusSettingsLineButton = {"container": mainWindow_ScrollView_2, "occurrence": 4, "type": "StatusSettingsLineButton", "unnamed": 1, "visible": True}
-navBarListView_StatusNavBarTabButton_2 = {"checkable": True, "container": mainWindow_navBarListView_ListView, "occurrence": 2, "type": "StatusNavBarTabButton", "unnamed": 1, "visible": True}
-statusIcon_StatusIcon_4 = {"container": navBarListView_StatusNavBarTabButton_2, "id": "statusIcon", "source": "qrc:/StatusQ/src/assets/img/icons/settings.svg", "type": "StatusIcon", "unnamed": 1, "visible": True}
-o_Flickable = {"container": mainWindow_ScrollView, "type": "Flickable", "unnamed": 1, "visible": True}
-settingsMenuDelegate_StatusNavigationListItem_2 = {"container": mainWindow_ScrollView, "id": "settingsMenuDelegate", "occurrence": 5, "type": "StatusNavigationListItem", "unnamed": 1, "visible": True}
-appsMenuDelegate_StatusNavigationListItem = {"container": mainWindow_ScrollView, "id": "appsMenuDelegate", "occurrence": 2, "type": "StatusNavigationListItem", "unnamed": 1, "visible": True}
-twelve_seed_phrase_address = {"container": mainWindow_ScrollView_2, "text": "0x8285cb9bf17b23d64a489a8dad29163dd227d0fd", "type": "StatusBaseText", "unnamed": 1, "visible": True}
-o_Flickable_2 = {"container": mainWindow_ScrollView_2, "type": "Flickable", "unnamed": 1, "visible": True}
-appsMenuDelegate_StatusNavigationListItem_2 = {"container": mainWindow_ScrollView, "id": "appsMenuDelegate", "occurrence": 3, "type": "StatusNavigationListItem", "unnamed": 1, "visible": True}
-settingsMenuDelegate_StatusNavigationListItem_3 = {"container": mainWindow_ScrollView, "id": "settingsMenuDelegate", "occurrence": 2, "type": "StatusNavigationListItem", "unnamed": 1, "visible": True}
-settingsMenuDelegate_StatusNavigationListItem_4 = {"container": mainWindow_ScrollView, "id": "settingsMenuDelegate", "type": "StatusNavigationListItem", "unnamed": 1, "visible": True}
-settingsMenuDelegate_StatusNavigationListItem_5 = {"container": mainWindow_ScrollView, "id": "settingsMenuDelegate", "occurrence": 6, "type": "StatusNavigationListItem", "unnamed": 1, "visible": True}
-follow_your_interests_in_one_of_the_many_Public_Chats_StatusBaseText = {"container": mainWindow_ScrollView, "text": "Follow your interests in one of the many Public Chats.", "type": "StatusBaseText", "unnamed": 1, "visible": True}
-notifications_Sounds_StatusBaseText = {"container": mainWindow_ScrollView, "text": "Notifications & Sounds", "type": "StatusBaseText", "unnamed": 1, "visible": True}
-wallet_StatusBaseText = {"container": mainWindow_ScrollView, "text": "Wallet", "type": "StatusBaseText", "unnamed": 1, "visible": True}
-switchItem_StatusSwitch = {"checkable": True, "container": mainWindow_ScrollView_2, "id": "switchItem", "occurrence": 2, "type": "StatusSwitch", "unnamed": 1, "visible": True}
-settingsMenuDelegate_StatusNavigationListItem_6 = {"container": mainWindow_ScrollView, "id": "settingsMenuDelegate", "occurrence": 3, "type": "StatusNavigationListItem", "unnamed": 1, "visible": True}
-circle_Rectangle = {"container": mainWindow_ScrollView_2, "id": "circle", "occurrence": 2, "type": "Rectangle", "unnamed": 1, "visible": True}
-o_WalletAccountDelegate = {"container": mainWindow_ScrollView_2, "type": "WalletAccountDelegate", "unnamed": 1, "visible": True}
-statusIcon_StatusIcon_5 = {"container": mainWindow_ScrollView_2, "id": "statusIcon", "source": "qrc:/StatusQ/src/assets/img/icons/filled-account.svg", "type": "StatusIcon", "unnamed": 1, "visible": True}
-mainWindow_Wallet_StatusBaseText = {"container": statusDesktop_mainWindow, "occurrence": 2, "text": "Wallet", "type": "StatusBaseText", "unnamed": 1, "visible": True}
-o_StatusListItem = {"container": mainWindow_ScrollView_2, "occurrence": 2, "type": "StatusListItem", "unnamed": 1, "visible": True}
-mainWindow_Testnet_Mode_StatusSwitch = {"checkable": True, "container": statusDesktop_mainWindow, "text": "Testnet Mode", "type": "StatusSwitch", "unnamed": 1, "visible": True}
-o_crypto_StyledText = {"container": mainWindow_ScrollView, "text": "#crypto", "type": "StyledText", "unnamed": 1, "visible": True}
-emptyViewAndSuggestions_EmptyViewPanel = {"container": mainWindow_ScrollView, "id": "emptyViewAndSuggestions", "type": "EmptyViewPanel", "unnamed": 1, "visible": True}
-o_vr_ar_StyledText = {"container": mainWindow_ScrollView, "text": "#vr-ar", "type": "StyledText", "unnamed": 1, "visible": True}
-o_SuggestedChannel = {"container": mainWindow_ScrollView, "occurrence": 64, "type": "SuggestedChannel", "unnamed": 1, "visible": True}
-o_status_assemble_StyledText = {"container": mainWindow_ScrollView, "text": "#status-assemble", "type": "StyledText", "unnamed": 1, "visible": True}
-mainWindow_statusIcon_StatusIcon_5 = {"container": statusDesktop_mainWindow, "id": "statusIcon", "source": "qrc:/StatusQ/src/assets/img/icons/chevron-down.svg", "type": "StatusIcon", "unnamed": 1, "visible": True}
-o_AccountMenuItemPanel = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "enabled": True, "occurrence": 2, "type": "AccountMenuItemPanel", "unnamed": 1, "visible": True}
-mainWindow_walkieTalkieImage_Image = {"container": statusDesktop_mainWindow, "id": "walkieTalkieImage", "source": "qrc:/imports/assets/png/chat/chat@2x.png", "type": "Image", "unnamed": 1, "visible": True}
-eighteen_seed_phrase_address = {"container": mainWindow_ScrollView_2, "text": "0xba1d0d6ef35df8751df5faf55ebd885ad0e877b0", "type": "StatusBaseText", "unnamed": 1, "visible": True}
-typeRectangle_Rectangle = {"container": mainWindow_ScrollView_2, "id": "typeRectangle", "type": "Rectangle", "unnamed": 1, "visible": True}
-mainWindow_StatusFlatButton = {"container": statusDesktop_mainWindow, "type": "StatusFlatButton", "unnamed": 1, "visible": True}
-walletAccount_WalletAccountDelegate = {"container": mainWindow_ScrollView_2, "objectName": "walletAccount", "type": "WalletAccountDelegate", "visible": True}
-twenty_four_seed_phrase_address = {"container": mainWindow_ScrollView_2, "text": "0x28cf6770664821a51984daf5b9fb1b52e6538e4b", "type": "StatusBaseText", "unnamed": 1, "visible": True}
-advanced_listItem_StatusNavigationListItem = {"container": mainWindow_ScrollView, "objectName": "Advanced-listItem", "type": "StatusNavigationListItem", "visible": True}
-communities_AppMenu_StatusNavigationListItem = {"container": mainWindow_ScrollView, "objectName": "Communities-AppMenu", "type": "StatusNavigationListItem", "visible": True}
-o_ScrollBar = {"container": mainWindow_ScrollView, "type": "ScrollBar", "unnamed": 1, "visible": True}
 wallet_AppMenu_StatusNavigationListItem = {"container": mainWindow_ScrollView, "objectName": "Wallet-AppMenu", "type": "StatusNavigationListItem", "visible": True}
+
+advanced_StatusBaseText = {"container": mainWindow_ScrollView, "text": "Advanced", "type": "StatusBaseText", "unnamed": 1, "visible": True}
+
+mainWindow_ScrollView_2 = {"container": statusDesktop_mainWindow, "occurrence": 2, "type": "ScrollView", "unnamed": 1, "visible": True}
+
+twelve_seed_phrase_address = {"container": mainWindow_ScrollView_2, "text": "0x8285cb9bf17b23d64a489a8dad29163dd227d0fd", "type": "StatusBaseText", "unnamed": 1, "visible": True}
+eighteen_seed_phrase_address = {"container": mainWindow_ScrollView_2, "text": "0xba1d0d6ef35df8751df5faf55ebd885ad0e877b0", "type": "StatusBaseText", "unnamed": 1, "visible": True}
+twenty_four_seed_phrase_address = {"container": mainWindow_ScrollView_2, "text": "0x28cf6770664821a51984daf5b9fb1b52e6538e4b", "type": "StatusBaseText", "unnamed": 1, "visible": True}
+walletSettingsLineButton = {"container": mainWindow_ScrollView_2, "objectName": "WalletSettingsLineButton", "type": "StatusSettingsLineButton", "visible": True}
+
+o_ScrollBar = {"container": mainWindow_ScrollView, "type": "ScrollBar", "unnamed": 1, "visible": True}
 mainWindow_public_chat_icon_StatusIcon = {"container": statusDesktop_mainWindow, "objectName": "public-chat-icon", "source": "qrc:/StatusQ/src/assets/img/icons/public-chat.svg", "type": "StatusIcon", "visible": True}
 
-mainWindow_Rectangle_5 = {"container": statusDesktop_mainWindow, "occurrence": 3, "type": "Rectangle", "unnamed": 1, "visible": True}
-mainWindow_Welcome_to_Status_StyledText = {"container": statusDesktop_mainWindow, "text": "Welcome to Status", "type": "StyledText", "unnamed": 1, "visible": True}
-mainWindow_Your_fully_decentralized_gateway_to_Ethereum_and_Web3_Crypto_wallet_privacy_first_group_chat_and_dApp_browser_StyledText = {"container": statusDesktop_mainWindow, "text": "Your fully decentralized gateway to Ethereum and Web3. Crypto wallet, privacy first group chat, and dApp browser.", "type": "StyledText", "unnamed": 1, "visible": True}
-mainWindow_I_already_use_Status_StatusBaseText = {"container": statusDesktop_mainWindow, "text": "I already use Status", "type": "StatusBaseText", "unnamed": 1, "visible": True}
-mainWindow_Enter_a_seed_phrase_StatusBaseText = {"container": statusDesktop_mainWindow, "text": "Enter a seed phrase", "type": "StatusBaseText", "unnamed": 1, "visible": True}
-get_started_StatusBaseText = {"container": statusDesktop_mainWindow_overlay, "text": "Get started", "type": "StatusBaseText", "unnamed": 1, "visible": True}
-mainWindow_submitBtn_StatusButton = {"container": statusDesktop_mainWindow, "id": "submitBtn", "type": "StatusButton", "unnamed": 1, "visible": True}
-appearance_SettingsMenu_StatusNavigationListItem = {"container": mainWindow_ScrollView, "objectName": "Appearance-SettingsMenu", "type": "StatusNavigationListItem", "visible": True}
-advanced_SettingsMenu_StatusNavigationListItem = {"container": mainWindow_ScrollView, "objectName": "Advanced-SettingsMenu", "type": "StatusNavigationListItem", "visible": True}
-walletSettingsLineButton = {"container": mainWindow_ScrollView_2, "objectName": "WalletSettingsLineButton", "type": "StatusSettingsLineButton", "visible": True}
 navBarListView_Settings_navbar_StatusNavBarTabButton = {"checkable": True, "container": mainWindow_navBarListView_ListView, "objectName": "Settings-navbar", "type": "StatusNavBarTabButton", "visible": True}
 settings_navbar_settings_icon_StatusIcon = {"container": navBarListView_Settings_navbar_StatusNavBarTabButton, "objectName": "settings-icon", "source": "qrc:/StatusQ/src/assets/img/icons/settings.svg", "type": "StatusIcon", "visible": True}
+
+

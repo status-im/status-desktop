@@ -23,6 +23,7 @@ class AgreementPopUp(Enum):
 
 class SignUpComponents(Enum):
     NEW_TO_STATUS: str = "mainWindow_I_am_new_to_Status_StatusBaseText"
+    I_ALREADY_USE_STATUS_BUTTON: str ="i_already_use_status_button_StatusFlatButton"
     GENERATE_NEW_KEYS: str = "mainWindow_Generate_new_keys_StatusBaseText"
     USERNAME_INPUT: str = "mainWindow_edit_TextEdit"
     NEXT_BUTTON: str = "mainWindow_Next_StatusBaseText"
@@ -30,12 +31,12 @@ class SignUpComponents(Enum):
     NEXT_STATUS_BUTTON: str = "mainWindow_nextBtn_StatusButton"
     NEW_PASSWORD_BUTTON: str = "mainWindow_New_password_PlaceholderText"
     PASSWORD_INPUT: str = "loginView_passwordInput"
-    CONFIRM_PASSWORD: str = "mainWindow_Confirm_password_PlaceholderText"
     PASSWORD_CONFIRM_INPUT: str = "mainWindow_Password_textField"
+    CONFIRM_PASSWORD_AGAIN: str = "mainWindow_Confirm_your_password_again_PlaceholderText"
     CREATE_PASSWORD: str = "mainWindow_Create_password_StatusBaseText"
-    CONFIRM_PASSWORD_AGAIN: str = "mainWindow_Confirm_you_password_again_PlaceholderText"
     FINALIZE_PASSWORD_STEP: str = "mainWindow_Finalise_Status_Password_Creation_StatusBaseText"
     PASSWORD_PREFERENCE: str = "mainWindow_I_prefer_to_use_my_password_StatusBaseText"
+    ENTER_A_SEED_PHRASE_BUTTON: str = "mainWindow_Enter_a_seed_phrase_StatusBaseText"
 
     
 class SeedPhraseComponents(Enum):
@@ -45,7 +46,6 @@ class SeedPhraseComponents(Enum):
     EIGHTEEN_WORDS_BUTTON: str = "switchTabBar_18_words_StatusBaseText"
     TWENTY_FOUR_BUTTON: str = "switchTabBar_24_words_StatusBaseText"
     SEEDS_WORDS_TEXTFIELD: str = "mainWindow_placeholder_StatusBaseText"
-    SUBMIT_BUTTON: str = "mainWindow_submitButton_StatusButton"
 
 
 class StatusWelcomeScreen:
@@ -55,12 +55,19 @@ class StatusWelcomeScreen:
 
     def agree_terms_conditions_and_generate_new_key(self):
         self._agree_terms_and_conditions()
+        click_obj_by_name(SignUpComponents.NEW_TO_STATUS.value)
         click_obj_by_name(SignUpComponents.GENERATE_NEW_KEYS.value)
         
     def agree_terms_conditions_and_navigate_to_import_seed_phrase(self):
         self._agree_terms_and_conditions()
+        click_obj_by_name(SignUpComponents.NEW_TO_STATUS.value)
         click_obj_by_name(SeedPhraseComponents.IMPORT_A_SEED_TEXT.value)
         click_obj_by_name(SeedPhraseComponents.IMPORT_A_SEED_BUTTON.value)
+        
+    def agree_terms_conditions_as_already_use_status_and_navigate_to_import_seed_phrase(self):
+        self._agree_terms_and_conditions()
+        click_obj_by_name(SignUpComponents.I_ALREADY_USE_STATUS_BUTTON.value)
+        click_obj_by_name(SignUpComponents.ENTER_A_SEED_PHRASE_BUTTON.value)
 
     def input_seed_phrase(self, seed: str, words: str, occurrence: str):
         if words =='18':
@@ -82,7 +89,7 @@ class StatusWelcomeScreen:
 
         self.input_confirmation_password(password)
 
-        self.input_password(password)
+        self.input_password_again(password)
         click_obj_by_name(SignUpComponents.FINALIZE_PASSWORD_STEP.value)
 
         if sys.platform == "darwin":
@@ -94,6 +101,10 @@ class StatusWelcomeScreen:
         click_obj_by_name(SignUpComponents.NEXT_STATUS_BUTTON.value)
 
     def input_password(self, password: str):
+        type(SignUpComponents.NEW_PASSWORD_BUTTON.value, password)
+        
+    def input_password_again(self, password: str):
+        click_obj_by_name(SignUpComponents.CONFIRM_PASSWORD_AGAIN.value)
         type(SignUpComponents.PASSWORD_INPUT.value, password)
 
     def input_confirmation_password(self, password: str):
@@ -108,5 +119,5 @@ class StatusWelcomeScreen:
         check_obj_by_name(AgreementPopUp.TERMS_OF_USE_CHECK_BOX.value)
         click_obj_by_name(AgreementPopUp.GET_STARTED_BUTTON.value)
         verify_text_matching(SignUpComponents.WELCOME_TO_STATUS.value, "Welcome to Status")
-        click_obj_by_name(SignUpComponents.NEW_TO_STATUS.value)
+        
         

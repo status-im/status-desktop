@@ -14,25 +14,27 @@ Feature: Status Desktop Sign Up
   As a user I want to Sign-up into the Status Desktop application.
   The following scenarios cover Sign up process.
 
+  @journey-test
   Scenario: User signs up and signs in with password
     Given A first time user lands on the status desktop and generates new key
     When user signs up with username tester123 and password TesTEr16843/!@00
     Then the user lands on the signed in app
 
-
+  @journey-test
   Scenario Outline: User cannot sign up with wrong username format
     Given A first time user lands on the status desktop and generates new key
     When user inputs the following <username> with ui-component mainWindow_edit_TextEdit
     Then the following ui-component mainWindow_Next_StatusBaseText is not enabled
+    And the following ui-component <errormessageuicomponent> contains <errormessage>
 
     Examples:
-      | username |
-      | Athl     |
-      | Nervo    |
-      | Gra      |
-      | tester3@ |
+      | username                  | errormessageuicomponent                                            | errormessage                                           |
+      | Athl                      | username_must_be_at_least_5_characters_error_message               | Username must be at least 5 characters                 |
+      | Gra                       | username_must_be_at_least_5_characters_error_message               | Username must be at least 5 characters                 |
+      | tester3@                  | only_letters_numbers_underscores_and_hyphens_allowed_error_message | Only letters, numbers, underscores and hyphens allowed |
+      | testertestertestertesters | twentyfour_character_username_limit_error_message                  | 24 character username limit                            |
 
-
+  @functional-test
   Scenario Outline: User cannot sign up with wrong password format
     Given A first time user lands on the status desktop and generates new key
     When the user inputs username <username>
@@ -54,7 +56,7 @@ Feature: Status Desktop Sign Up
       | tester124 | badP          | TesTEr16843/!@01 |
       | tester124 | bad2!s        | TesTEr16843/!@01 |
 
-
+  @functional-test
   Scenario Outline: User cannot finish Sign Up and Sign In process with wrong password
     Given A first time user lands on the status desktop and generates new key
     When the user inputs username <username>
@@ -73,7 +75,7 @@ Feature: Status Desktop Sign Up
       | tester123 | Invalid34       | TesTEr16843/!@00 |
       | tester123 | TesTEr16843/!@) | TesTEr16843/!@01 |
 
-
+  @journey-test
   Scenario: User signs up with imported 12 seed phrase
 
     Given A first time user lands on the status desktop and navigates to import seed phrase
@@ -98,7 +100,7 @@ Feature: Status Desktop Sign Up
     And  the user activates wallet and opens the wallets section
     Then the 12 seed phrase address is 0x8285cb9bf17b23d64a489a8dad29163dd227d0fd displayed in the wallet
 
-
+  @journey-test
   Scenario: User signs up with imported 18 seed phrase
 
     Given A first time user lands on the status desktop and navigates to import seed phrase
@@ -130,7 +132,7 @@ Feature: Status Desktop Sign Up
     And  the user activates wallet and opens the wallets section
     Then the 18 seed phrase address is 0xba1d0d6ef35df8751df5faf55ebd885ad0e877b0 displayed in the wallet
 
-
+  @journey-test
   Scenario: User signs up with imported 24 seed phrase
 
     Given A first time user lands on the status desktop and navigates to import seed phrase
@@ -168,6 +170,7 @@ Feature: Status Desktop Sign Up
     And  the user activates wallet and opens the wallets section
     Then the 24 seed phrase address is 0x28cf6770664821a51984daf5b9fb1b52e6538e4b displayed in the wallet
 
+  @journey-test
   Scenario: User signs up with wrong imported seed phrase
 
     Given A first time user lands on the status desktop and navigates to import seed phrase
@@ -199,3 +202,29 @@ Feature: Status Desktop Sign Up
       | house    | 24         |
 
     Then the following ui-component mainWindow_submitButton_StatusButton is not enabled
+
+  @journey-test
+  Scenario: An existing user with 12 seed phrase signs up with imported 12 seed phrase
+
+    Given An existing user with seed phrase lands on the status desktop and navigates to import seed phrase
+    When The user inputs 12 seed phrases
+      | phrases | occurrence |
+      | lawn    | 1          |
+      | corn    | 3          |
+      | paddle  | 5          |
+      | survey  | 7          |
+      | shrimp  | 9          |
+      | mind    | 11         |
+      | select  | 2          |
+      | gaze    | 4          |
+      | arrest  | 6          |
+      | pear    | 8          |
+      | reduce  | 10         |
+      | scan    | 12         |
+    And user clicks on the following ui-component mainWindow_submitButton_StatusButton
+    When user signs up with username tester123 and password TesTEr16843/!@00
+    Then the user lands on the signed in app
+    When the user opens app settings screen
+    When the user activates wallet and opens the wallets section
+    Then the 12 seed phrase address is 0x8285cb9bf17b23d64a489a8dad29163dd227d0fd displayed in the wallet
+
