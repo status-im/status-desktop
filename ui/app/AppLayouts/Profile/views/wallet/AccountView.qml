@@ -198,12 +198,14 @@ Item {
         }
 
         StatusButton {
+            objectName: "deleteAccountButton"
             visible: walletStore.currentAccount.walletType !== ""
             text: qsTr("Remove from your profile")
             type: StatusBaseButton.Type.Danger
 
             ConfirmationDialog {
                 id: confirmationPopup
+                confirmButtonObjectName: "confirmDeleteAccountButton"
                 header.title: qsTr("Confirm %1 Removal").arg(walletStore.currentAccount.name)
                 confirmationText: qsTr("You will not be able to restore viewing access to this account in the future unless you enter this account’s address again.")
                 confirmButtonLabel: qsTr("Remove Account")

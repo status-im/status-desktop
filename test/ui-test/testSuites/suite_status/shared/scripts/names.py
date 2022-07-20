@@ -148,7 +148,6 @@ mainWindow_submitBtn_StatusButton = {"container": statusDesktop_mainWindow, "id"
 appearance_SettingsMenu_StatusNavigationListItem = {"container": mainWindow_ScrollView, "objectName": "Appearance-SettingsMenu", "type": "StatusNavigationListItem", "visible": True}
 advanced_SettingsMenu_StatusNavigationListItem = {"container": mainWindow_ScrollView, "objectName": "Advanced-SettingsMenu", "type": "StatusNavigationListItem", "visible": True}
 walletSettingsLineButton = {"container": mainWindow_ScrollView_2, "objectName": "WalletSettingsLineButton", "type": "StatusSettingsLineButton", "visible": True}
-
 navBarListView_Settings_navbar_StatusNavBarTabButton = {"checkable": True, "container": mainWindow_navBarListView_ListView, "objectName": "Settings-navbar", "type": "StatusNavBarTabButton", "visible": True}
 settings_navbar_settings_icon_StatusIcon = {"container": navBarListView_Settings_navbar_StatusNavBarTabButton, "objectName": "settings-icon", "type": "StatusIcon", "visible": True}
 
@@ -183,3 +182,7 @@ mainWindow_Add_Account_Popup_Seed_Phrase_11 = {"container": mainWallet_Add_Accou
 
 mainWallet_Add_Account_Popup_Footer = {"container": statusDesktop_mainWindow, "type": "StatusModalFooter", "unnamed": 1, "visible": True}
 mainWallet_Add_Account_Popup_Footer_Add_Account = {"container": mainWallet_Add_Account_Popup_Footer, "text": "Add account", "type": "StatusBaseText", "unnamed": 1, "visible": True}
+
+settings_Wallet_MainView_GeneratedAccounts = {"container": statusDesktop_mainWindow, "objectName":'generatedAccounts', "type": 'ListView'}
+settings_Wallet_AccountView_DeleteAccount = {"container": statusDesktop_mainWindow, "type": "StatusButton", "objectName": "deleteAccountButton"}
+settings_Wallet_AccountView_DeleteAccount_Confirm = {"container": statusDesktop_mainWindow, "type": "StatusButton", "objectName": "confirmDeleteAccountButton"}

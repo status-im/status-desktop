@@ -44,3 +44,12 @@ Feature: Status Desktop Wallet
     	Examples:
       	  | account_name | seed_phrase |
       	  | one		     | indoor dish desk flag debris potato excuse depart ticket judge file exit |
+
+ 	Scenario Outline: User delete a generated account
+        When the user generate a new account with <account_name> and TesTEr16843/!@00
+        And the user deletes the account <account_name>
+        Then the account <account_name> is not in the list of accounts
+
+    	Examples:
+      	  | account_name |
+      	  | one		     |
