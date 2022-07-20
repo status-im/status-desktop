@@ -19,7 +19,7 @@ import "../views"
 Item {
     id: root
     clip: true
-    implicitHeight: accountSelectionTabBar.height + stackLayout.height + Style.current.xlPadding
+    implicitHeight: accountSelectionTabBar.height + stackLayout.height + Style.current.bigPadding
 
     property var store
 
@@ -59,54 +59,69 @@ Item {
         Rectangle {
             Layout.maximumWidth: parent.width
             Layout.maximumHeight : savedAddresses.height
-            color: "transparent"
+            color: Theme.palette.indirectColor1
             radius: 8
 
             StatusListView {
                 id: savedAddresses
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: parent.top
-                width: parent.width
+                implicitWidth: parent.width
                 height: Math.min(288, savedAddresses.contentHeight)
 
                 model: root.store.savedAddressesModel
                 header:  savedAddresses.count > 0 ? search : nothingInList
                 headerPositioning: ListView.OverlayHeader
                 delegate: StatusListItem {
-                    width: visible ? savedAddresses.availableWidth : 0
+                    implicitWidth: parent.width
                     height: visible ? 64 : 0
                     title: name
                     subTitle: address
                     radius: 0
+                    color: sensor.containsMouse || highlighted ? Theme.palette.baseColor3 : "transparent"
                     visible: !savedAddresses.headerItem.text || name.toLowerCase().includes(savedAddresses.headerItem.text)
-                    components: [
-                        StatusIcon {
-                            icon: "star-icon"
-                            width: 12
-                            height: 12
-                        }
-                    ]
+//                    TODO uncomment when #6456 is fixed
+//                    components: [
+//                        StatusIcon {
+//                            icon: "star-icon"
+//                            width: 12
+//                            height: 12
+//                        }
+//                    ]
                     onClicked: contactSelected(address, RecipientSelector.Type.Address )
                 }
                 Component {
                     id: search
-                    StatusBaseInput {
+                    ColumnLayout {
                         width: parent.width
-                        height: 56
-                        placeholderText: qsTr("Search for saved address")
-                        rightComponent: StatusIcon {
-                            icon: "search"
-                            height: 17
-                            color: Theme.palette.baseColor1
+                        StatusBaseInput {
+                            Layout.preferredHeight: 55
+                            Layout.preferredWidth: parent.width
+                            showBackground: false
+                            placeholderText: qsTr("Search for saved address")
+                            rightComponent: StatusIcon {
+                                icon: "search"
+                                height: 17
+                                color: Theme.palette.baseColor1
+                            }
+                        }
+                        Rectangle {
+                            Layout.preferredHeight: 1
+                            Layout.preferredWidth: parent.width
+                            color: Theme.palette.baseColor3
                         }
                     }
                 }
                 Component {
                     id: nothingInList
                     StatusBaseText {
+                        width: savedAddresses.width
+                        height: visible ? 56 : 0
                         font.pixelSize: 15
                         color: Theme.palette.directColor1
                         text: qsTr("No Saved Address")
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
                     }
                 }
             }
@@ -115,7 +130,7 @@ Item {
             id: myAccountsRect
             Layout.maximumWidth: parent.width
             Layout.maximumHeight : myAccounts.height
-            color: "transparent"
+            color: Theme.palette.indirectColor1
             radius: 8
 
             StatusListView {
@@ -126,7 +141,7 @@ Item {
                 height: Math.min(288, myAccounts.contentHeight)
 
                 delegate: StatusListItem {
-                    width: myAccounts.availableWidth
+                    implicitWidth: parent.width
                     height: visible ? 64 : 0
                     title: !!model.name ? model.name : ""
                     subTitle: Utils.toLocaleString(model.currencyBalance.toFixed(2), store.locale, {"model.currency": true}) + " " + store.currentCurrency.toUpperCase()
@@ -137,6 +152,7 @@ Item {
                     icon.isLetterIdenticon: !!model.emoji ? true : false
                     icon.background.color: Theme.palette.indirectColor1
                     radius: 0
+                    color: sensor.containsMouse || highlighted ? Theme.palette.baseColor3 : "transparent"
                     onClicked: contactSelected(model.address, RecipientSelector.Type.Account )
                 }
 
@@ -147,7 +163,7 @@ Item {
         Rectangle {
             Layout.maximumWidth: parent.width
             Layout.maximumHeight : recents.height
-            color: "transparent"
+            color: Theme.palette.indirectColor1
             radius: 8
 
             StatusListView {
@@ -158,9 +174,13 @@ Item {
                 height: Math.min(288, recents.contentHeight)
 
                 header: StatusBaseText {
+                    height: visible ? 56 : 0
+                    width: recents.width
                     font.pixelSize: 15
                     color: Theme.palette.directColor1
                     text: qsTr("No Recents")
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
                     visible: recents.count <= 0
                 }
 
@@ -173,6 +193,7 @@ Item {
                     statusListItemTitle.elide: Text.ElideMiddle
                     statusListItemTitle.wrapMode: Text.NoWrap
                     radius: 0
+                    color: sensor.containsMouse || highlighted ? Theme.palette.baseColor3 : "transparent"
                     components: [
                         StatusIcon {
                             id: transferIcon
