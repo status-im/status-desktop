@@ -13,17 +13,18 @@ import StatusQ.Controls.Validators 0.1
 import StatusQ.Popups 0.1
 
 StatusModal {
-    anchors.centerIn: parent
-
     id: popup
+
     width: 400
     height: 340
+    anchors.centerIn: parent
+
     header.title: qsTr("Nickname")
 
-    property string nickname: ""
-    property int nicknameLength: nicknameInput.text.length
+    property alias nickname: nicknameInput.text
+    readonly property int nicknameLength: nicknameInput.text.length
     readonly property int maxNicknameLength: 32
-    property bool nicknameTooLong: nicknameLength > maxNicknameLength
+
     signal editDone(string newNickname)
 
     onOpened: {
@@ -53,7 +54,6 @@ StatusModal {
             StatusInput {
                 id: nicknameInput
                 input.placeholderText: qsTr("Nickname")
-                text: nickname
 
                 width: parent.width
 
@@ -77,7 +77,7 @@ StatusModal {
         StatusButton {
             id: doneBtn
             text: qsTr("Done")
-            enabled: !popup.nicknameTooLong
+            enabled: nicknameInput.valid
             onClicked: editDone(nicknameInput.text)
         }
     ]
