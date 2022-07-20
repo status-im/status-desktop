@@ -20,6 +20,7 @@ Rectangle {
     property string subTitle: ""
     property string tertiaryTitle: ""
     property string label: ""
+    property string titleTextIcon: ""
     property real leftPadding: 16
     property real rightPadding: 16
     property bool enabled: true
@@ -228,6 +229,16 @@ Rectangle {
                         case StatusListItem.Type.Danger:
                             return Theme.palette.dangerColor1
                     }
+                }
+
+                StatusIcon {
+                    width: visible ? 12 : 0
+                    height: visible ? 12 : 0
+                    visible: !!statusListItem.titleTextIcon
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.left: parent.left
+                    anchors.leftMargin: statusListItemTitle.contentWidth + 6
+                    icon: statusListItem.titleTextIcon
                 }
 
                 StatusToolTip {
