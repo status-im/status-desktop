@@ -25,7 +25,6 @@ Item {
     property alias additionalInfo: txtAddlInfo.text
     property var selectedRecipient
     property bool readOnly: false
-    height: inpAddress.height + txtLabel.height
     readonly property string addressValidationError: qsTr("Invalid ethereum address")
     property alias wrongInputValidationError: inpAddress.wrongInputValidationError
     property bool isValid: false
@@ -114,6 +113,8 @@ Item {
                 break
         }
     }
+
+    implicitHeight: inpAddress.height + txtLabel.height
 
     Text {
         id: txtLabel

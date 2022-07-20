@@ -2,6 +2,7 @@ import QtQuick 2.12
 import QtQuick.Layouts 1.12
 import QtGraphicalEffects 1.13
 
+import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 
@@ -20,7 +21,7 @@ BackupSeedStepBase {
         implicitHeight: 304
         Layout.fillWidth: true
 
-        GridView {
+        StatusGridView {
             id: grid
             leftMargin: grid.spacing/2
             width: cellWidth*2

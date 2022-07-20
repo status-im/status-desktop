@@ -945,6 +945,7 @@ Rectangle {
                 id: messageInputField
                 property var lastClick: 0
                 property int cursorWhenPressed: 0
+                width: scrollView.availableWidth
                 textFormat: Text.RichText
                 font.pixelSize: 15
                 font.family: Style.current.fontRegular.name

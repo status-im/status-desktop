@@ -35,12 +35,11 @@ StatusScrollView {
         hexInput.text = color.toString();
     }
 
-    ScrollBar.vertical.policy: ScrollBar.AsNeeded
-    ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+    padding: 0
 
     ColumnLayout {
         id: column
-        width: root.width - root.leftPadding - root.rightPadding
+        width: root.availableWidth
         spacing: 12
 
         StatusColorSpace {

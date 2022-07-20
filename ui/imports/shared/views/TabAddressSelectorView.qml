@@ -19,7 +19,7 @@ import "../views"
 Item {
     id: root
     clip: true
-    height: accountSelectionTabBar.height + stackLayout.height + Style.current.xlPadding
+    implicitHeight: accountSelectionTabBar.height + stackLayout.height + Style.current.xlPadding
 
     property var store
 
@@ -73,7 +73,7 @@ Item {
                 header:  savedAddresses.count > 0 ? search : nothingInList
                 headerPositioning: ListView.OverlayHeader
                 delegate: StatusListItem {
-                    width: visible ? parent.width:  0
+                    width: visible ? savedAddresses.availableWidth : 0
                     height: visible ? 64 : 0
                     title: name
                     subTitle: address
@@ -126,9 +126,9 @@ Item {
                 height: Math.min(288, myAccounts.contentHeight)
 
                 delegate: StatusListItem {
-                    width: visible ? parent.width:  0
+                    width: myAccounts.availableWidth
                     height: visible ? 64 : 0
-                    title: model.name
+                    title: !!model.name ? model.name : ""
                     subTitle: Utils.toLocaleString(model.currencyBalance.toFixed(2), store.locale, {"model.currency": true}) + " " + store.currentCurrency.toUpperCase()
                     icon.emoji: !!model.emoji ? model.emoji: ""
                     icon.color: model.color
@@ -166,7 +166,7 @@ Item {
 
                 delegate: StatusListItem {
                     property bool isIncoming: to === store.currentAccount.address
-                    width: visible ? parent.width:  0
+                    width: visible ? recents.availableWidth : 0
                     height: visible ? 64 : 0
                     title: isIncoming ? from : to
                     subTitle: Utils.getTimeDifference(new Date(parseInt(timestamp) * 1000), new Date())

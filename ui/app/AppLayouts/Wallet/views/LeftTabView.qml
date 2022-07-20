@@ -85,7 +85,7 @@ Rectangle {
             Layout.fillHeight: true
             Layout.topMargin: Style.current.halfPadding
 
-            ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+            // ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
             delegate: StatusListItem {
                 width: ListView.view.width
@@ -125,8 +125,6 @@ Rectangle {
             model: RootStore.accounts
             // model: RootStore.exampleWalletModel
         }
-
-        Item { Layout.fillHeight: true }
 
         StatusButton {
             size: StatusBaseButton.Size.Small

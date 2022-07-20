@@ -83,6 +83,7 @@ Item {
         title: qsTr("Terms of name registration")
 
         StatusScrollView {
+            id: scroll
             ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
             ScrollBar.vertical.policy: ScrollBar.AlwaysOn
             width: parent.width
@@ -91,7 +92,7 @@ Item {
             Column {
                 spacing: Style.current.halfPadding
                 height: childrenRect.height
-                width: parent.width
+                width: scroll.availableWidth
 
 
                 StatusBaseText {
@@ -223,8 +224,7 @@ Item {
 
         Item {
             id: contentItem
-            anchors.right: parent.right;
-            anchors.left: parent.left;
+            width: sview.availableWidth
 
             Rectangle {
                 id: circleAt

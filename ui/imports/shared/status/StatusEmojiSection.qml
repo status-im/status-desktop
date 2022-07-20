@@ -1,11 +1,12 @@
 import QtQuick 2.13
 import QtQuick.Layouts 1.3
 
+import StatusQ.Core 0.1
+import StatusQ.Components 0.1
+
 import utils 1.0
 import shared 1.0
 import shared.panels 1.0
-
-import StatusQ.Components 0.1
 
 Item {
     id: emojiSection
@@ -64,7 +65,7 @@ Item {
         this.emojis = this.allEmojis
     }
 
-    GridView {
+    StatusGridView {
         id: emojiGrid
         anchors.top: categoryText.bottom
         anchors.topMargin: Style.current.smallPadding
@@ -75,7 +76,6 @@ Item {
         cellHeight: emojiSection.imageWidth + emojiSection.imageMargin * 2
         model: emojiSection.emojis
         focus: true
-        clip: true
         interactive: false
 
         delegate: Item {

@@ -25,11 +25,11 @@ Item {
         anchors.bottomMargin: Style.current.padding
         anchors.left: parent.left
         anchors.right: parent.right
+        contentWidth: contentItem.width
 
         Item {
             id: contentItem
             width: profileContentWidth
-            anchors.horizontalCenter: parent.horizontalCenter
 
             Image {
                 id: image
