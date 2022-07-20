@@ -114,6 +114,7 @@ Rectangle {
 
             StatusBaseText {
                 id: chatName
+                objectName: "statusChatInfoButtonNameText"
 
                 anchors.left: statusIcon.visible ? statusIcon.right : parent.left
                 anchors.leftMargin: statusIcon.visible ? 1 : 0
