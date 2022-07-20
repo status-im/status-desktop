@@ -83,6 +83,7 @@ Item {
 
             StatusFlatRoundButton {
                 id: menuButton
+                objectName: "chatToolbarMoreOptionsButton"
                 width: 32
                 height: 32
                 icon.name: "more"
