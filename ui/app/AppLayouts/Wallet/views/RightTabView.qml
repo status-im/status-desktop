@@ -78,6 +78,7 @@ Item {
             Layout.leftMargin: -root.StackView.view.anchors.leftMargin
             Layout.rightMargin: -root.StackView.view.anchors.rightMargin
             sendModal: root.sendModal
+            walletStore: RootStore
         }
     }
 }

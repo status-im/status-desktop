@@ -14,6 +14,7 @@ Rectangle {
     id: walletFooter
 
     property var sendModal
+    property var walletStore
 
     height: 61
     color: Theme.palette.statusAppLayout.rightPanelBackgroundColor
@@ -57,7 +58,7 @@ Rectangle {
     Component {
         id: receiveModalComponent
         ReceiveModal {
-            selectedAccount: walletHeader.walletStore.currentAccount
+            selectedAccount: walletStore.currentAccount
             anchors.centerIn: parent
         }
     }
