@@ -51,7 +51,7 @@ join_public_chat_StatusMenuItemDelegate = {"checkable": False, "container": stat
 chat_name_PlaceholderText = {"container": statusDesktop_mainWindow_overlay, "text": "chat-name", "type": "PlaceholderText", "unnamed": 1, "visible": True}
 inputValue_StyledTextField = {"container": statusDesktop_mainWindow_overlay, "echoMode": 0, "id": "inputValue", "type": "StyledTextField", "unnamed": 1, "visible": True}
 start_chat_StatusBaseText = {"container": statusDesktop_mainWindow_overlay, "text": "Start chat", "type": "StatusBaseText", "unnamed": 1, "visible": True}
-mainWindow_scrollView_ScrollView = {"container": statusDesktop_mainWindow, "id": "scrollView", "type": "ScrollView", "unnamed": 1, "visible": True}
+mainWindow_scrollView_ScrollView = {"container": statusDesktop_mainWindow, "id": "scrollView", "type": "StatusScrollView", "unnamed": 1, "visible": True}
 scrollView_messageInputField_TextArea = {"container": mainWindow_scrollView_ScrollView, "id": "messageInputField", "type": "TextArea", "unnamed": 1, "visible": True}
 reactionImage_SVGImage = {"container": statusDesktop_mainWindow_overlay, "id": "reactionImage", "source": "qrc:/imports/assets/icons/emojiReactions/heart.svg", "type": "SVGImage", "unnamed": 1, "visible": True}
 mainWindow_statusIcon_StatusIcon_2 = {"container": statusDesktop_mainWindow, "id": "statusIcon", "source": "qrc:/StatusQ/src/assets/img/icons/public-chat.svg", "type": "StatusIcon", "unnamed": 1, "visible": True}
@@ -91,12 +91,12 @@ i_understand_StatusBaseText = {"container": statusDesktop_mainWindow_overlay, "t
 mainWindow_navBarListView_ListView = {"container": statusDesktop_mainWindow, "type": "ListView", "unnamed": 1, "visible": True}
 navBarListView_StatusNavBarTabButton = {"checkable": True, "container": mainWindow_navBarListView_ListView, "occurrence": 4, "type": "StatusNavBarTabButton", "unnamed": 1, "visible": True}
 statusIcon_StatusIcon_3 = {"container": navBarListView_StatusNavBarTabButton, "id": "statusIcon", "source": "qrc:/StatusQ/src/assets/img/icons/settings.svg", "type": "StatusIcon", "unnamed": 1, "visible": True}
-mainWindow_ScrollView = {"container": statusDesktop_mainWindow, "type": "ScrollView", "unnamed": 1, "visible": True}
+mainWindow_ScrollView = {"container": statusDesktop_mainWindow, "type": "StatusScrollView", "unnamed": 1, "visible": True}
 privacy_and_security_StatusBaseText = {"container": mainWindow_ScrollView, "text": "Privacy and security", "type": "StatusBaseText", "unnamed": 1, "visible": True}
 settingsMenuDelegate_StatusNavigationListItem = {"container": mainWindow_ScrollView, "id": "settingsMenuDelegate", "occurrence": 4, "type": "StatusNavigationListItem", "unnamed": 1, "visible": True}
 language_Currency_StatusBaseText = {"container": mainWindow_ScrollView, "text": "Language & Currency", "type": "StatusBaseText", "unnamed": 1, "visible": True}
-advanced_StatusBaseText = {"container": mainWindow_ScrollView, "text": "Advanced", "type": "StatusBaseText", "unnamed": 1, "visible": True}
-mainWindow_ScrollView_2 = {"container": statusDesktop_mainWindow, "occurrence": 2, "type": "ScrollView", "unnamed": 1, "visible": True}
+advanced_StatusBaseText = {"container": statusDesktop_mainWindow, "text": "Advanced", "type": "StatusBaseText", "unnamed": 1, "visible": True}
+mainWindow_ScrollView_2 = {"container": statusDesktop_mainWindow, "occurrence": 2, "type": "StatusScrollView", "unnamed": 1, "visible": True}
 o_StatusSettingsLineButton = {"container": mainWindow_ScrollView_2, "occurrence": 4, "type": "StatusSettingsLineButton", "unnamed": 1, "visible": True}
 navBarListView_StatusNavBarTabButton_2 = {"checkable": True, "container": mainWindow_navBarListView_ListView, "occurrence": 2, "type": "StatusNavBarTabButton", "unnamed": 1, "visible": True}
 statusIcon_StatusIcon_4 = {"container": navBarListView_StatusNavBarTabButton_2, "id": "statusIcon", "source": "qrc:/StatusQ/src/assets/img/icons/settings.svg", "type": "StatusIcon", "unnamed": 1, "visible": True}
@@ -147,8 +147,7 @@ get_started_StatusBaseText = {"container": statusDesktop_mainWindow_overlay, "te
 mainWindow_submitBtn_StatusButton = {"container": statusDesktop_mainWindow, "id": "submitBtn", "type": "StatusButton", "unnamed": 1, "visible": True}
 appearance_SettingsMenu_StatusNavigationListItem = {"container": mainWindow_ScrollView, "objectName": "Appearance-SettingsMenu", "type": "StatusNavigationListItem", "visible": True}
 advanced_SettingsMenu_StatusNavigationListItem = {"container": mainWindow_ScrollView, "objectName": "Advanced-SettingsMenu", "type": "StatusNavigationListItem", "visible": True}
-walletSettingsLineButton = {"container": mainWindow_ScrollView_2, "objectName": "WalletSettingsLineButton", "type": "StatusSettingsLineButton", "visible": True}
-
+walletSettingsLineButton = {"container": statusDesktop_mainWindow, "objectName": "WalletSettingsLineButton", "type": "StatusSettingsLineButton", "visible": True}
 navBarListView_Settings_navbar_StatusNavBarTabButton = {"checkable": True, "container": mainWindow_navBarListView_ListView, "objectName": "Settings-navbar", "type": "StatusNavBarTabButton", "visible": True}
 settings_navbar_settings_icon_StatusIcon = {"container": navBarListView_Settings_navbar_StatusNavBarTabButton, "objectName": "settings-icon", "type": "StatusIcon", "visible": True}
 
@@ -158,7 +157,7 @@ wallet_navbar_wallet_icon_StatusIcon = {"container": navBarListView_Wallet_navba
 mainWallet_Account_Name = {"container": statusDesktop_mainWindow, "objectName": "accountName", "type": "StatusBaseText", "visible": True}
 mainWallet_Add_Account = {"container": statusDesktop_mainWindow, "text": "Add account", "type": "StatusBaseText", "unnamed": 1, "visible": True}
 
-mainWallet_Add_Account_Popup_Main = {"container": statusDesktop_mainWindow, "objectName": "AddAccountModalContent", "type": "ScrollView", "visible": True}
+mainWallet_Add_Account_Popup_Main = {"container": statusDesktop_mainWindow, "objectName": "AddAccountModalContent", "type": "StatusScrollView", "visible": True}
 mainWallet_Add_Account_Popup_Password = {"container": mainWallet_Add_Account_Popup_Main, "text": "Enter your password...", "type": "PlaceholderText", "unnamed": 1, "visible": True}
 mainWallet_Add_Account_Popup_Advanced = {"container": mainWallet_Add_Account_Popup_Main, "text": "Advanced", "type": "StatusBaseText", "unnamed": 1, "visible": True}
 mainWallet_Add_Account_Popup_Type_Selector = {"container": mainWallet_Add_Account_Popup_Main, "text": "Default", "type": "StatusBaseText", "unnamed": 1, "visible": True}
@@ -183,3 +182,7 @@ mainWindow_Add_Account_Popup_Seed_Phrase_11 = {"container": mainWallet_Add_Accou
 
 mainWallet_Add_Account_Popup_Footer = {"container": statusDesktop_mainWindow, "type": "StatusModalFooter", "unnamed": 1, "visible": True}
 mainWallet_Add_Account_Popup_Footer_Add_Account = {"container": mainWallet_Add_Account_Popup_Footer, "text": "Add account", "type": "StatusBaseText", "unnamed": 1, "visible": True}
+
+settings_Wallet_MainView_GeneratedAccounts = {"container": statusDesktop_mainWindow, "objectName":'generatedAccounts', "type": 'ListView'}
+settings_Wallet_AccountView_DeleteAccount = {"container": statusDesktop_mainWindow, "type": "StatusButton", "objectName": "deleteAccountButton"}
+settings_Wallet_AccountView_DeleteAccount_Confirm = {"container": statusDesktop_mainWindow, "type": "StatusButton", "objectName": "confirmDeleteAccountButton"}

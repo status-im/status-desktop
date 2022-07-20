@@ -99,7 +99,10 @@ Column {
         bottomPadding: Style.current.halfPadding/2
     }
 
-    Repeater {
+    ListView {
+        width: parent.width
+        height: childrenRect.height
+        objectName: "generatedAccounts"
         model: walletStore.generatedAccounts
         delegate: WalletAccountDelegate {
             account: model
