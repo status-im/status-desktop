@@ -308,8 +308,7 @@ Popup {
 
             Row {
                 id: gifs
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenter: parent.verticalCenter
+                width: scrollView.availableWidth
                 spacing: Style.current.halfPadding
 
                 property string lastHoveredId

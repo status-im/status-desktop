@@ -154,7 +154,7 @@ StatusModal {
 
     contentItem: StatusScrollView {
         id: scroll
-        width: root.width
+        width: popup.width
         topPadding: Style.current.halfPadding
         bottomPadding: Style.current.halfPadding
         leftPadding: Style.current.padding

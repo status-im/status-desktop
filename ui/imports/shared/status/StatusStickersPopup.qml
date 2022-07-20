@@ -236,7 +236,9 @@ Popup {
 
                 RowLayout {
                     id: stickersRowLayout
+                    width: scrollView.availableWidth
                     spacing: Style.current.padding
+
                     Repeater {
                         id: stickerPackListView
                         property int selectedPackId: -1

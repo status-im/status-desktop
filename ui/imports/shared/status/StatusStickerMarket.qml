@@ -4,6 +4,8 @@ import QtQuick.Layouts 1.3
 import QtGraphicalEffects 1.0
 import QtQml.Models 2.13
 
+import StatusQ.Core 0.1
+
 import utils 1.0
 import shared 1.0
 import shared.panels 1.0
@@ -28,7 +30,7 @@ Item {
     signal updateClicked(int packId)
     signal buyClicked(int packId)
 
-    GridView {
+    StatusGridView {
         id: availableStickerPacks
         width: parent.width
         height: 380
@@ -42,7 +44,6 @@ Item {
         cellHeight: height - 72
 
         focus: true
-        clip: true
         model: DelegateModel {
             id: delegateModel
 

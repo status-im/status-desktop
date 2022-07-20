@@ -61,8 +61,7 @@ StatusScrollView {
     }
     onSelectedTagsChanged: updateSelectedTags()
 
-    ScrollBar.vertical.policy: ScrollBar.AsNeeded
-    ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+    padding: 0
 
     QtObject {
         id: d
@@ -73,7 +72,7 @@ StatusScrollView {
 
     ColumnLayout {
         id: column
-        width: root.width - root.leftPadding - root.rightPadding
+        width: root.availableWidth
         spacing: 20
 
         StatusInput {

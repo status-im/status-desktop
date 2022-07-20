@@ -9,7 +9,7 @@ import shared.stores 1.0
 
 import "../stores"
 
-GridView {
+StatusGridView {
     id: grid
 
     property bool isValid: false
