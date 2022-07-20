@@ -10,6 +10,7 @@ MenuItem {
     id: statusPopupMenuItem
     implicitWidth: parent ? parent.width : 0
     implicitHeight: action.enabled ? 38 : 0
+    objectName: action.objectName
 
     property int subMenuIndex
     property var statusPopupMenu: null
