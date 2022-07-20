@@ -82,5 +82,3 @@ mainWindow_public_chat_icon_StatusIcon = {"container": statusDesktop_mainWindow,
 
 navBarListView_Settings_navbar_StatusNavBarTabButton = {"checkable": True, "container": mainWindow_navBarListView_ListView, "objectName": "Settings-navbar", "type": "StatusNavBarTabButton", "visible": True}
 settings_navbar_settings_icon_StatusIcon = {"container": navBarListView_Settings_navbar_StatusNavBarTabButton, "objectName": "settings-icon", "source": "qrc:/StatusQ/src/assets/img/icons/settings.svg", "type": "StatusIcon", "visible": True}
-
-

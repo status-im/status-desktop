@@ -23,12 +23,6 @@ def step(context):
     waitFor(lambda: currentApplicationContext().detach(), 500)
     time.sleep(5)
     startApplication("nim_status_client")
-    
-
-@When("the app data folder is erased")
-def step(context):
-    erase_directory("../../../../../Status/data")
-
 
 @When("user inputs the following |any| with ui-component |any|")
 def step(context, text, obj):
