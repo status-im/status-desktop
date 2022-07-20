@@ -74,6 +74,8 @@
 #include "DOtherSide/Status/QClipboardProxy.h"
 #include "DOtherSide/DosSpellchecker.h"
 
+#include <qqmlsortfilterproxymodeltypes.h>
+
 namespace {
 
 void register_meta_types()
@@ -83,7 +85,7 @@ void register_meta_types()
     qmlRegisterType<StatusSyntaxHighlighterHelper>("DotherSide", 0 , 1, "StatusSyntaxHighlighter");
     qmlRegisterType<SpellChecker>("DotherSide", 0, 1, "SpellChecker");
     qmlRegisterSingletonType<QClipboardProxy>("DotherSide", 0 , 1, "QClipboardProxy", &QClipboardProxy::qmlInstance);
-
+    qqsfpm::registerTypes();
 }
 
 }
