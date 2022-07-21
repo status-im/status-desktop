@@ -35,6 +35,10 @@ QtObject {
         return root.startupModuleInst.generateImage(source, aX, aY, bX, bY)
     }
 
+    function getCroppedProfileImage() {
+        return root.startupModuleInst.getCroppedProfileImage()
+    }
+
     function setDisplayName(value) {
         root.startupModuleInst.setDisplayName(value)
     }
@@ -51,6 +55,18 @@ QtObject {
         return root.startupModuleInst.getPassword()
     }
 
+    function setPin(value) {
+        root.startupModuleInst.setPin(value)
+    }
+
+    function getPin() {
+        return root.startupModuleInst.getPin()
+    }
+
+    function setPuk(value) {
+        root.startupModuleInst.setPuk(value)
+    }
+
     function getPasswordStrengthScore(password) {
         let userName = root.startupModuleInst.importedAccountAlias
         return root.startupModuleInst.getPasswordStrengthScore(password, userName)
@@ -62,5 +78,13 @@ QtObject {
 
     function setSelectedLoginAccountByIndex(index) {
         root.startupModuleInst.setSelectedLoginAccountByIndex(index)
+    }
+
+    function checkRepeatedKeycardPinWhileTyping(pin) {
+        return root.startupModuleInst.checkRepeatedKeycardPinWhileTyping(pin)
+    }
+
+    function getSeedPhrase() {
+        return root.startupModuleInst.getSeedPhrase()
     }
 }

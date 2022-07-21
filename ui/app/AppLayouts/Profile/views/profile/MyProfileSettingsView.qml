@@ -41,7 +41,7 @@ ColumnLayout {
         if (biometricsSwitch.checked)
             Global.openPopup(storePasswordModal)
         else
-            localAccountSettings.storeToKeychainValue = Constants.storeToKeychainValueNever;
+            localAccountSettings.storeToKeychainValue = Constants.keychain.storedValue.never;
     }
 
     function offerToStorePassword(password, runStoreToKeyChainPopup)
@@ -49,7 +49,7 @@ ColumnLayout {
         if (Qt.platform.os !== "osx")
             return;
 
-        localAccountSettings.storeToKeychainValue = Constants.storeToKeychainValueStore;
+        localAccountSettings.storeToKeychainValue = Constants.keychain.storedValue.store;
         root.privacyStore.storeToKeyChain(password);
     }
 
@@ -89,7 +89,7 @@ ColumnLayout {
         components: [ StatusSwitch {
             id: biometricsSwitch
             horizontalPadding: 0
-            readonly property bool currentStoredValue: localAccountSettings.storeToKeychainValue === Constants.storeToKeychainValueStore
+            readonly property bool currentStoredValue: localAccountSettings.storeToKeychainValue === Constants.keychain.storedValue.store
             checked: currentStoredValue
         } ]
         sensor.onClicked: biometricsSwitch.toggle()

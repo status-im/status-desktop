@@ -17,6 +17,7 @@ MenuItem {
     property string colorId: ""
     property var colorHash
     property url image: ""
+    property bool keycardCreatedAccount: false
     property StatusIconSettings iconSettings: StatusIconSettings {
       name: "add"
     }
@@ -65,8 +66,28 @@ MenuItem {
         font.pixelSize: 15
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: userImageOrIcon.right
-        anchors.leftMargin: 16
+        anchors.right: root.keycardCreatedAccount? keycardIcon.left : parent.right
+        anchors.leftMargin: Style.current.padding
         color: !!root.colorId ? Theme.palette.directColor1 : Theme.palette.primaryColor1
+        elide: Text.ElideRight
+    }
+
+    Loader {
+        id: keycardIcon
+        active: root.keycardCreatedAccount
+        sourceComponent: keycardIconComponent
+        anchors.rightMargin: Style.current.padding
+        anchors.right: parent.right
+        anchors.verticalCenter: parent.verticalCenter
+    }
+
+    Component {
+        id: keycardIconComponent
+        StatusIcon {
+            icon: "keycard"
+            height: Style.current.padding
+            color: Theme.palette.baseColor1
+        }
     }
 }
 

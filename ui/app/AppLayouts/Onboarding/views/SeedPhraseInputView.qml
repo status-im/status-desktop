@@ -276,9 +276,22 @@ Item {
             function checkMnemonicLength() {
                 submitButton.enabled = (root.mnemonicInput.length === root.tabs[switchTabBar.currentIndex])
             }
-            text: root.startupStore.currentStartupState.flowType === Constants.startupFlow.firstRunNewUserImportSeedPhrase?
-                      qsTr("Import") :
-                      qsTr("Restore Status Profile")
+            text: {
+                if (root.startupStore.currentStartupState.flowType === Constants.startupFlow.firstRunNewUserImportSeedPhrase) {
+                    return qsTr("Import")
+                }
+                else if (root.startupStore.currentStartupState.flowType === Constants.startupFlow.firstRunOldUserImportSeedPhrase) {
+                    return qsTr("Restore Status Profile")
+                }
+                else if (root.startupStore.currentStartupState.flowType === Constants.startupFlow.firstRunOldUserKeycardImport ||
+                         root.startupStore.currentStartupState.flowType === Constants.startupFlow.appLogin) {
+                    return qsTr("Recover Keycard")
+                }
+                else if (root.startupStore.currentStartupState.flowType === Constants.startupFlow.firstRunNewUserImportSeedPhraseIntoKeycard) {
+                    return qsTr("Next")
+                }
+                return ""
+            }
             onClicked: {
                 let mnemonicString = "";
                 var sortTable = mnemonicInput.sort(function (a, b) {

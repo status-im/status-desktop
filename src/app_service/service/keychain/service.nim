@@ -42,21 +42,21 @@ QtObject:
     signalConnect(self.keychainManager, "error(QString, int, QString)", self,
     "onKeychainManagerError(QString, int, QString)", 2)
 
-  proc storePassword*(self: Service, username: string, password: string) =
-    self.keychainManager.storeDataAsync(username, password)
-
-  proc tryToObtainPassword*(self: Service, username: string) =
-    self.keychainManager.readDataAsync(username)
+  proc storeData*(self: Service, key: string, data: string) =
+    self.keychainManager.storeDataAsync(key, data)
+ 
+  proc tryToObtainData*(self: Service, key: string) =
+    self.keychainManager.readDataAsync(key)
 
   proc onKeychainManagerError*(self: Service, errorType: string, errorCode: int,
     errorDescription: string) {.slot.} =
     ## This slot is called in case an error occured while we're dealing with
     ## KeychainManager. So far we're just logging the error.
-    info "KeychainManager stopped: ", msg = errorCode, errorDescription
+    info "KeychainManager stopped: ", errCode=errorCode, errType=errorType, errDesc=errorDescription
 
     let arg = KeyChainServiceArg(errCode: errorCode, errType: errorType,
     errDescription: errorDescription)
-    self.events.emit("", arg)
+    self.events.emit(SIGNAL_KEYCHAIN_SERVICE_ERROR, arg)
 
   proc onKeychainManagerSuccess*(self: Service, data: string) {.slot.} =
     ## This slot is called in case a password is successfully retrieved from the

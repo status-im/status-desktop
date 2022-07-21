@@ -1,6 +1,7 @@
 import NimQml, chronicles, os, strformat, strutils, times, md5, json
 
 import status_go
+import keycard_go
 import app/core/main
 import constants
 
@@ -11,6 +12,7 @@ logScope:
   topics = "status-app"
 
 var signalsManagerQObjPointer: pointer
+var keycardServiceQObjPointer: pointer
 
 proc isExperimental(): string =
   result = if getEnv("EXPERIMENTAL") == "1": "1" else: "0" # value explicity passed to avoid trusting input
@@ -66,11 +68,15 @@ proc setupRemoteSignalsHandling() =
   # Please note that this must use the `cdecl` calling convention because
   # it will be passed as a regular C function to statusgo_backend. This means that
   # we cannot capture any local variables here (we must rely on globals)
-  var callback: SignalCallback = proc(p0: cstring) {.cdecl.} =
+  var callbackStatusGo: status_go.SignalCallback = proc(p0: cstring) {.cdecl.} =
     if signalsManagerQObjPointer != nil:
       signal_handler(signalsManagerQObjPointer, p0, "receiveSignal")
+  status_go.setSignalEventCallback(callbackStatusGo)
 
-  status_go.setSignalEventCallback(callback)
+  var callbackKeycardGo: keycard_go.KeycardSignalCallback = proc(p0: cstring) {.cdecl.} =
+    if keycardServiceQObjPointer != nil:
+      signal_handler(keycardServiceQObjPointer, p0, "receiveKeycardSignal")
+  keycard_go.setSignalEventCallback(callbackKeycardGo)
 
 proc mainProc() =
   if defined(macosx) and defined(production):
@@ -133,6 +139,7 @@ proc mainProc() =
   defer:
     info "shutting down..."
     signalsManagerQObjPointer = nil
+    keycardServiceQObjPointer = nil
     isProductionQVariant.delete()
     isExperimentalQVariant.delete()
     signalsManagerQVariant.delete()
@@ -149,17 +156,18 @@ proc mainProc() =
     info "Terminating the app as the second instance"
     quit()
 
+  # We need these global variables in order to be able to access the application
+  # from the non-closure callback passed to `statusgo_backend.setSignalEventCallback`
+  signalsManagerQObjPointer = cast[pointer](statusFoundation.signalsManager.vptr)
+  keycardServiceQObjPointer = cast[pointer](appController.keycardService.vptr)
+  setupRemoteSignalsHandling()
+
   info fmt("Version: {DESKTOP_VERSION}")
   info fmt("Commit: {GIT_COMMIT}")
   info "Current date:", currentDateTime=now()
 
   info "starting application controller..."
   appController.start()
-
-  # We need this global variable in order to be able to access the application
-  # from the non-closure callback passed to `statusgo_backend.setSignalEventCallback`
-  signalsManagerQObjPointer = cast[pointer](statusFoundation.signalsManager.vptr)
-  setupRemoteSignalsHandling()
 
   info "starting application..."
   app.exec()

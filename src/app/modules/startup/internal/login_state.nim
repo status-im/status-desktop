@@ -1,7 +1,3 @@
-import state
-import ../controller
-import welcome_state_new_user, welcome_state_old_user
-
 type
   LoginState* = ref object of State
 
@@ -12,14 +8,22 @@ proc newLoginState*(flowType: FlowType, backState: State): LoginState =
 proc delete*(self: LoginState) =
   self.State.delete
 
-method moveToNextPrimaryState*(self: LoginState): bool =
-  return false
-
 method executePrimaryCommand*(self: LoginState, controller: Controller) =
   controller.login()
 
-method getNextSecondaryState*(self: LoginState): State =
-  return newWelcomeStateNewUser(FlowType.General, self)
+method getNextSecondaryState*(self: LoginState, controller: Controller): State =
+  return createState(StateType.WelcomeNewStatusUser, self.flowType, self)
 
-method getNextTertiaryState*(self: LoginState): State =
-  return newWelcomeStateOldUser(FlowType.General, self)
+method getNextTertiaryState*(self: LoginState, controller: Controller): State =
+  return createState(StateType.WelcomeOldStatusUser, self.flowType, self)
+
+method resolveKeycardNextState*(self: LoginState, keycardFlowType: string, keycardEvent: KeycardEvent, 
+  controller: Controller): State =
+  if self.flowType == FlowType.AppLogin:
+    if keycardFlowType == ResponseTypeValueKeycardFlowResult and 
+      keycardEvent.error.len > 0 and
+      keycardEvent.error == ErrorConnection:
+        controller.resumeCurrentFlowLater()
+        return nil
+    if keycardFlowType == ResponseTypeValueInsertCard:
+      return createState(StateType.LoginKeycardInsertKeycard, self.flowType, nil)

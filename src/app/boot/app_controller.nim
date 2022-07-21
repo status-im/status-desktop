@@ -2,6 +2,7 @@ import NimQml, chronicles
 
 import ../../app_service/service/general/service as general_service
 import ../../app_service/service/keychain/service as keychain_service
+import ../../app_service/service/keycard/service as keycard_service
 import ../../app_service/service/accounts/service as accounts_service
 import ../../app_service/service/contacts/service as contacts_service
 import ../../app_service/service/language/service as language_service
@@ -56,6 +57,7 @@ type
 
     # Services
     generalService: general_service.Service
+    keycardService*: keycard_service.Service
     keychainService: keychain_service.Service
     accountsService: accounts_service.Service
     contactsService: contacts_service.Service
@@ -126,7 +128,8 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   result.globalUtilsVariant = newQVariant(singletonInstance.utils)  
 
   # Services
-  result.generalService = general_service.newService()  
+  result.generalService = general_service.newService()
+  result.keycardService = keycard_service.newService(statusFoundation.events, statusFoundation.threadpool)
   result.nodeConfigurationService = node_configuration_service.newService(statusFoundation.fleetConfiguration,
   result.settingsService)
   result.keychainService = keychain_service.newService(statusFoundation.events)
@@ -189,7 +192,8 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     result.keychainService,
     result.accountsService,
     result.generalService,
-    result.profileService
+    result.profileService,
+    result.keycardService
   )
   result.mainModule = main_module.newModule[AppController](
     result,
@@ -272,6 +276,7 @@ proc delete*(self: AppController) =
   self.generalService.delete
   self.ensService.delete
   self.gifService.delete
+  self.keycardService.delete
 
 proc startupDidLoad*(self: AppController) =
   singletonInstance.engine.setRootContextProperty("localAppSettings", self.localAppSettingsVariant)
@@ -290,6 +295,7 @@ proc mainDidLoad*(self: AppController) =
   self.mainModule.checkForStoringPassword()
 
 proc start*(self: AppController) =
+  self.keycardService.init()
   self.keychainService.init()
   self.generalService.init()
   self.accountsService.init()

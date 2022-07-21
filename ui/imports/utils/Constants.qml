@@ -16,6 +16,7 @@ QtObject {
         readonly property string firstRunNewUserNewKeys: "FirstRunNewUserNewKeys"
         readonly property string firstRunNewUserNewKeycardKeys: "FirstRunNewUserNewKeycardKeys"
         readonly property string firstRunNewUserImportSeedPhrase: "FirstRunNewUserImportSeedPhrase"
+        readonly property string firstRunNewUserImportSeedPhraseIntoKeycard: "FirstRunNewUserImportSeedPhraseIntoKeycard"
         readonly property string firstRunOldUserSyncCode: "FirstRunOldUserSyncCode"
         readonly property string firstRunOldUserKeycardImport: "FirstRunOldUserKeycardImport"
         readonly property string firstRunOldUserImportSeedPhrase: "FirstRunOldUserImportSeedPhrase"
@@ -35,7 +36,47 @@ QtObject {
         readonly property string userProfileImportSeedPhrase: "UserProfileImportSeedPhrase"
         readonly property string userProfileEnterSeedPhrase: "UserProfileEnterSeedPhrase"
         readonly property string biometrics: "Biometrics"
+        readonly property string keycardPluginReader: "KeycardPluginReader"
+        readonly property string keycardInsertKeycard: "KeycardInsertKeycard"
+        readonly property string keycardReadingKeycard: "KeycardReadingKeycard"
+        readonly property string keycardCreatePin: "KeycardCreatePin"
+        readonly property string keycardRepeatPin: "KeycardRepeatPin"
+        readonly property string keycardPinSet: "KeycardPinSet"
+        readonly property string keycardEnterPin: "KeycardEnterPin"
+        readonly property string keycardWrongPin: "KeycardWrongPin"
+        readonly property string keycardEnterPuk: "KeycardEnterPuk"
+        readonly property string keycardWrongPuk: "KeycardWrongPuk"
+        readonly property string keycardDisplaySeedPhrase: "KeycardDisplaySeedPhrase"
+        readonly property string keycardEnterSeedPhraseWords: "KeycardEnterSeedPhraseWords"
+        readonly property string keycardNotEmpty: "KeycardNotEmpty"
+        readonly property string keycardEmpty: "KeycardEmpty"
+        readonly property string keycardLocked: "KeycardLocked"
+        readonly property string keycardRecover: "KeycardRecover"
+        readonly property string keycardMaxPairingSlotsReached: "KeycardMaxPairingSlotsReached"
+        readonly property string keycardMaxPinRetriesReached: "KeycardMaxPinRetriesReached"
+        readonly property string keycardMaxPukRetriesReached: "KeycardMaxPukRetriesReached"
         readonly property string login: "Login"
+        readonly property string loginKeycardInsertKeycard: "LoginKeycardInsertKeycard"
+        readonly property string loginKeycardReadingKeycard: "LoginKeycardReadingKeycard"
+        readonly property string loginKeycardEnterPin: "LoginKeycardEnterPin"
+        readonly property string loginKeycardWrongKeycard: "LoginKeycardWrongKeycard"
+        readonly property string loginKeycardWrongPin: "LoginKeycardWrongPin"
+        readonly property string loginKeycardMaxPinRetriesReached: "LoginKeycardMaxPinRetriesReached"
+        readonly property string loginKeycardMaxPukRetriesReached: "LoginKeycardMaxPukRetriesReached"
+        readonly property string loginKeycardEmpty: "LoginKeycardEmpty"
+    }
+
+    readonly property QtObject keychain: QtObject {
+        readonly property QtObject errorType: QtObject {
+            readonly property string authentication: "authentication"
+            readonly property string keychain: "keychain"
+        }
+
+        readonly property QtObject storedValue: QtObject {
+            readonly property string store: "store"
+            readonly property string notNow: "notNow"
+            readonly property string never: "never"
+        }
     }
 
     readonly property QtObject appSection: QtObject {
@@ -254,6 +295,24 @@ QtObject {
         readonly property int stable: 2
     }
 
+    readonly property QtObject keycard: QtObject {
+
+        readonly property QtObject general: QtObject {
+            readonly property int footerWrapperHeight: 125
+            readonly property int keycardPinLength: 6
+            readonly property int fontSize1: 22
+            readonly property int fontSize2: 15
+            readonly property int fontSize3: 12
+            readonly property int seedPhraseCellWidth: 193
+            readonly property int seedPhraseCellHeight: 60
+            readonly property int seedPhraseCellNumberWidth: 24
+            readonly property int seedPhraseCellFontSize: 12
+            readonly property int buttonFontSize: 15
+            readonly property int pukCellWidth: 50
+            readonly property int pukCellHeight: 60
+        }
+    }
+
     readonly property int communityImported: 0
     readonly property int communityImportingInProgress: 1
     readonly property int communityImportingError: 2
@@ -376,10 +435,6 @@ QtObject {
     readonly property string ens_already_connected: "already-connected"
     readonly property string ens_connected: "connected"
     readonly property string ens_connected_dkey: "connected-different-key"
-
-    readonly property string storeToKeychainValueStore: "store"
-    readonly property string storeToKeychainValueNotNow: "notNow"
-    readonly property string storeToKeychainValueNever: "never"
 
     readonly property string editLabel: ` <span class="isEdited">` + qsTr("(edited)") + `</span>`
 

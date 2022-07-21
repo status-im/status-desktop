@@ -1,5 +1,3 @@
-import state, welcome_state
-
 type
   NotificationState* = ref object of State
 
@@ -10,5 +8,5 @@ proc newNotificationState*(flowType: FlowType, backState: State): NotificationSt
 proc delete*(self: NotificationState) =
   self.State.delete
 
-method getNextPrimaryState*(self: NotificationState): State =
-  return newWelcomeState(FlowType.General, nil)
+method getNextPrimaryState*(self: NotificationState, controller: Controller): State =
+  return createState(StateType.Welcome, FlowType.General, nil)

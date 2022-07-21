@@ -1,9 +1,10 @@
-import os, json, sequtils, strutils, uuids
+import os, json, sequtils, strutils, uuids, times
 import json_serialization, chronicles
 
 import ../../../app/global/global_singleton
 import ./dto/accounts as dto_accounts
 import ./dto/generated_accounts as dto_generated_accounts
+from ../keycard/service import KeycardEvent, KeyDetails 
 import ../../../backend/general as status_general
 import ../../../backend/core as status_core
 
@@ -143,6 +144,25 @@ proc saveAccountAndLogin(self: Service, hashedPassword: string, account,
   except Exception as e:
     error "error: ", procName="saveAccountAndLogin", errName = e.name, errDesription = e.msg
 
+proc saveKeycardAccountAndLogin(self: Service, chatKey, password: string, account, subaccounts, settings, 
+  config: JsonNode): AccountDto =
+  try:
+    let response = status_account.saveAccountAndLoginWithKeycard(chatKey, password, account, subaccounts, settings, config)
+
+    var error = "response doesn't contain \"error\""
+    if(response.result.contains("error")):
+      error = response.result["error"].getStr
+      if error == "":
+        debug "Account saved succesfully"
+        result = toAccountDto(account)
+        return
+
+    let err = "Error saving account and logging in via keycard : " & error
+    error "error: ", procName="saveKeycardAccountAndLogin", errDesription = err
+
+  except Exception as e:
+    error "error: ", procName="saveKeycardAccountAndLogin", errName = e.name, errDesription = e.msg
+
 proc prepareAccountJsonObject(self: Service, account: GeneratedAccountDto, displayName: string): JsonNode =
   result = %* {
     "name": if displayName == "": account.alias else: displayName,
@@ -259,15 +279,32 @@ proc setLocalAccountSettingsFile(self: Service) =
   if(defined(macosx) and self.getLoggedInAccount.isValid()):
     singletonInstance.localAccountSettings.setFileName(self.getLoggedInAccount.name)
 
-proc setupAccount*(self: Service, accountId, password, displayName: string): string =
+proc addKeycardDetails(self: Service, settingsJson: var JsonNode, accountData: var JsonNode) =
+  let keycardPairingJsonString = readFile(main_constants.KEYCARDPAIRINGDATAFILE)
+  let keycardPairingJsonObj = keycardPairingJsonString.parseJSON
+  let now = now().toTime().toUnix()
+  for instanceUid, kcDataObj in keycardPairingJsonObj:
+    if not settingsJson.isNil:
+      settingsJson["keycard-instance-uid"] = %* instanceUid
+      settingsJson["keycard-paired-on"] = %* now
+      settingsJson["keycard-pairing"] = kcDataObj{"key"}
+    if not accountData.isNil:
+      accountData["keycard-pairing"] = kcDataObj{"key"}
+
+proc setupAccount*(self: Service, accountId, password, displayName: string, keycardUsage: bool): string =
   try:
     let installationId = $genUUID()
-    let accountDataJson = self.getAccountDataForAccountId(accountId, displayName)
+    var accountDataJson = self.getAccountDataForAccountId(accountId, displayName)
+
+    var usedPassword = password
+    if password.len == 0:
+      # this means we're setting up an account using keycard
+      usedPassword = accountDataJson{"key-uid"}.getStr
 
     self.setKeyStoreDir(accountDataJson{"key-uid"}.getStr)
 
     let subaccountDataJson = self.getSubaccountDataForAccountId(accountId, displayName)
-    let settingsJson = self.getAccountSettings(accountId, installationId, displayName)
+    var settingsJson = self.getAccountSettings(accountId, installationId, displayName)
     let nodeConfigJson = self.getDefaultNodeConfig(installationId)
 
     if(accountDataJson.isNil or subaccountDataJson.isNil or settingsJson.isNil or
@@ -276,10 +313,13 @@ proc setupAccount*(self: Service, accountId, password, displayName: string): str
       error "error: ", procName="setupAccount", errDesription = description
       return description
 
-    let hashedPassword = hashString(password)
+    let hashedPassword = hashString(usedPassword)
     discard self.storeAccount(accountId, hashedPassword)
     discard self.storeDerivedAccounts(accountId, hashedPassword, PATHS)
 
+    if keycardUsage:
+      self.addKeycardDetails(settingsJson, accountDataJson)
+    
     self.loggedInAccount = self.saveAccountAndLogin(hashedPassword, accountDataJson,
       subaccountDataJson, settingsJson, nodeConfigJson)
     self.setLocalAccountSettingsFile()
@@ -292,7 +332,83 @@ proc setupAccount*(self: Service, accountId, password, displayName: string): str
     error "error: ", procName="setupAccount", errName = e.name, errDesription = e.msg
     return e.msg
 
+proc setupAccountKeycard*(self: Service, keycardData: KeycardEvent) = 
+  try:
+    let installationId = $genUUID()
+
+    let alias = generateAliasFromPk(keycardData.whisperKey.publicKey)
+    var accountDataJson = %* {
+      "name": alias,
+      "address": keycardData.masterKey.address,
+      "key-uid": keycardData.keyUid
+    }
+
+    self.setKeyStoreDir(keycardData.keyUid)
+    let nodeConfigJson = self.getDefaultNodeConfig(installationId)
+    let subaccountDataJson = %* [
+      {
+        "public-key": keycardData.walletKey.publicKey,
+        "address": keycardData.walletKey.address,
+        "color": "#4360df",
+        "wallet": true,
+        "path": PATH_DEFAULT_WALLET,
+        "name": "Status account",
+        "derived-from": keycardData.masterKey.address,
+      },
+      {
+        "public-key": keycardData.whisperKey.publicKey,
+        "address": keycardData.whisperKey.address,
+        "name": alias,
+        "path": PATH_WHISPER,
+        "chat": true,
+        "derived-from": ""
+      }
+    ]
+
+    var settingsJson = %* {
+      "key-uid": keycardData.keyUid,
+      "public-key": keycardData.whisperKey.publicKey,
+      "name": alias,
+      "display-name": "",
+      "address":  keycardData.whisperKey.address,
+      "eip1581-address":  keycardData.eip1581Key.address,
+      "dapps-address":  keycardData.walletKey.address,
+      "wallet-root-address":  keycardData.walletRootKey.address,
+      "preview-privacy?": true,
+      "signing-phrase": generateSigningPhrase(3),
+      "log-level": $LogLevel.INFO,
+      "latest-derived-path": 0,
+      "currency": "usd",
+      "networks/networks": @[],
+      "networks/current-network": "",
+      "wallet/visible-tokens": {},
+      "waku-enabled": true,
+      "appearance": 0,
+      "installation-id": installationId
+    }
+
+    self.addKeycardDetails(settingsJson, accountDataJson)
+    
+    if(accountDataJson.isNil or subaccountDataJson.isNil or settingsJson.isNil or
+      nodeConfigJson.isNil):
+      let description = "at least one json object is not prepared well"
+      error "error: ", procName="setupAccountKeycard", errDesription = description
+      return
+
+    let hashedPassword = hashString(keycardData.keyUid) # using hashed keyUid as password
+
+    self.loggedInAccount = self.saveKeycardAccountAndLogin(keycardData.whisperKey.privateKey, 
+      hashedPassword, 
+      accountDataJson, 
+      subaccountDataJson, 
+      settingsJson, 
+      nodeConfigJson)
+  except Exception as e:
+    error "error: ", procName="setupAccount", errName = e.name, errDesription = e.msg
+
 proc importMnemonic*(self: Service, mnemonic: string): string =
+  if mnemonic.len == 0:
+    return "empty mnemonic"
   try:
     let response = status_account.multiAccountImportMnemonic(mnemonic)
     self.importedAccount = toGeneratedAccountDto(response.result)
@@ -374,6 +490,35 @@ proc login*(self: Service, account: AccountDto, password: string): string =
 
   except Exception as e:
     error "error: ", procName="login", errName = e.name, errDesription = e.msg
+    return e.msg
+
+proc loginAccountKeycard*(self: Service, keycardData: KeycardEvent): string = 
+  try:
+    self.setKeyStoreDir(keycardData.keyUid)
+
+    let alias = generateAliasFromPk(keycardData.whisperKey.publicKey)
+    var accountDataJson = %* {
+      "name": alias,
+      "address": keycardData.masterKey.address,
+      "key-uid": keycardData.keyUid
+    }
+    var settingsJson: JsonNode
+    self.addKeycardDetails(settingsJson, accountDataJson)
+    
+    let hashedPassword = hashString(keycardData.keyUid) # using hashed keyUid as password
+
+    let response = status_account.loginWithKeycard(keycardData.whisperKey.privateKey, 
+      hashedPassword,
+      accountDataJson)
+
+    var error = "response doesn't contain \"error\""
+    if(response.result.contains("error")):
+      error = response.result["error"].getStr
+      if error == "":
+        debug "Account logged in succesfully"
+        return
+  except Exception as e:
+    error "error: ", procName="loginAccountKeycard", errName = e.name, errDesription = e.msg
     return e.msg
 
 proc verifyAccountPassword*(self: Service, account: string, password: string): bool =

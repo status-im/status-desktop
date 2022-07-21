@@ -91,8 +91,10 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_KEYCHAIN_SERVICE_ERROR) do(e:Args):
     let args = KeyChainServiceArg(e)
-    singletonInstance.localAccountSettings.removeKey(LS_KEY_STORE_TO_KEYCHAIN)
-    self.delegate.emitStoringPasswordError(args.errDescription)
+    # with the following condition we guard unintentional props deletion from the `.ini` file
+    if self.accountsService.getLoggedInAccount().isValid():
+      singletonInstance.localAccountSettings.removeKey(LS_KEY_STORE_TO_KEYCHAIN)
+      self.delegate.emitStoringPasswordError(args.errDescription)
 
   self.events.on(SIGNAL_COMMUNITY_JOINED) do(e:Args):
     let args = CommunityArgs(e)
@@ -253,7 +255,7 @@ proc storePassword*(self: Controller, password: string) =
   if (value != LS_VALUE_STORE or account.name.len == 0):
     return
 
-  self.keychainService.storePassword(account.name, password)
+  self.keychainService.storeData(account.name, password)
 
 proc getActiveSectionId*(self: Controller): string =
   result = self.activeSectionId

@@ -118,3 +118,6 @@
 [submodule "vendor/nim-keycard-go"]
 	path = vendor/nim-keycard-go
 	url = https://github.com/status-im/nim-keycard-go
+[submodule "vendor/status-keycard-go"]
+	path = vendor/status-keycard-go
+	url = https://github.com/status-im/status-keycard-go.git

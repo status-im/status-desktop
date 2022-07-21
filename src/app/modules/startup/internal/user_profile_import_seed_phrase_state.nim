@@ -1,6 +1,3 @@
-import state
-import user_profile_enter_seed_phrase_state
-
 type
   UserProfileImportSeedPhraseState* = ref object of State
 
@@ -11,5 +8,8 @@ proc newUserProfileImportSeedPhraseState*(flowType: FlowType, backState: State):
 proc delete*(self: UserProfileImportSeedPhraseState) =
   self.State.delete
 
-method getNextPrimaryState*(self: UserProfileImportSeedPhraseState): State =
-  return newUserProfileEnterSeedPhraseState(self.State.flowType, self)
+method getNextPrimaryState*(self: UserProfileImportSeedPhraseState, controller: Controller): State =
+  return createState(StateType.UserProfileEnterSeedPhrase, FlowType.FirstRunNewUserImportSeedPhrase, self)
+
+method getNextSecondaryState*(self: UserProfileImportSeedPhraseState, controller: Controller): State =
+  return createState(StateType.KeycardPluginReader, FlowType.FirstRunNewUserImportSeedPhraseIntoKeycard, self)

@@ -1,10 +1,14 @@
 import ../controller
+from ../../../../app_service/service/keycard/service import KeycardEvent, KeyDetails
+
+export KeycardEvent, KeyDetails
 
 type FlowType* {.pure.} = enum
   General = "General"
   FirstRunNewUserNewKeys = "FirstRunNewUserNewKeys"
   FirstRunNewUserNewKeycardKeys = "FirstRunNewUserNewKeycardKeys"
   FirstRunNewUserImportSeedPhrase = "FirstRunNewUserImportSeedPhrase"
+  FirstRunNewUserImportSeedPhraseIntoKeycard = "FirstRunNewUserImportSeedPhraseIntoKeycard"
   FirstRunOldUserSyncCode = "FirstRunOldUserSyncCode"
   FirstRunOldUserKeycardImport = "FirstRunOldUserKeycardImport"
   FirstRunOldUserImportSeedPhrase = "FirstRunOldUserImportSeedPhrase"
@@ -23,7 +27,35 @@ type StateType* {.pure.} = enum
   UserProfileImportSeedPhrase = "UserProfileImportSeedPhrase"
   UserProfileEnterSeedPhrase = "UserProfileEnterSeedPhrase"
   Biometrics = "Biometrics"
+  KeycardPluginReader = "KeycardPluginReader"
+  KeycardInsertKeycard = "KeycardInsertKeycard"
+  KeycardReadingKeycard = "KeycardReadingKeycard"
+  KeycardCreatePin = "KeycardCreatePin"
+  KeycardRepeatPin = "KeycardRepeatPin"
+  KeycardPinSet = "KeycardPinSet"
+  KeycardEnterPin = "KeycardEnterPin"
+  KeycardWrongPin = "KeycardWrongPin"
+  KeycardEnterPuk = "KeycardEnterPuk"
+  KeycardWrongPuk = "KeycardWrongPuk"
+  KeycardDisplaySeedPhrase = "KeycardDisplaySeedPhrase"
+  KeycardEnterSeedPhraseWords = "KeycardEnterSeedPhraseWords"
+  KeycardNotEmpty = "KeycardNotEmpty"
+  KeycardEmpty = "KeycardEmpty"
+  KeycardLocked = "KeycardLocked"
+  KeycardRecover = "KeycardRecover"
+  KeycardMaxPairingSlotsReached = "KeycardMaxPairingSlotsReached"
+  KeycardMaxPinRetriesReached = "KeycardMaxPinRetriesReached"
+  KeycardMaxPukRetriesReached = "KeycardMaxPukRetriesReached"
   Login = "Login"
+  LoginKeycardInsertKeycard = "LoginKeycardInsertKeycard"
+  LoginKeycardReadingKeycard = "LoginKeycardReadingKeycard"
+  LoginKeycardEnterPin = "LoginKeycardEnterPin"
+  LoginKeycardWrongKeycard = "LoginKeycardWrongKeycard"
+  LoginKeycardWrongPin = "LoginKeycardWrongPin"
+  LoginKeycardMaxPinRetriesReached = "LoginKeycardMaxPinRetriesReached"
+  LoginKeycardMaxPukRetriesReached = "LoginKeycardMaxPukRetriesReached"
+  LoginKeycardEmpty = "LoginKeycardEmpty"
+
 
 ## This is the base class for all state we may have in onboarding/login flow.
 ## We should not instance of this class (in c++ this will be an abstract class).
@@ -67,15 +99,15 @@ method displayBackButton*(self: State): bool {.inline base.} =
   return not self.backState.isNil
 
 ## Returns next state instance in case the "primary" action is triggered
-method getNextPrimaryState*(self: State): State  {.inline base.} =
+method getNextPrimaryState*(self: State, controller: Controller): State  {.inline base.} =
   return nil
 
 ## Returns next state instance in case the "secondary" action is triggered
-method getNextSecondaryState*(self: State): State {.inline base.} =
+method getNextSecondaryState*(self: State, controller: Controller): State {.inline base.} =
   return nil
 
 ## Returns next state instance in case the "tertiary" action is triggered
-method getNextTertiaryState*(self: State): State {.inline base.} =
+method getNextTertiaryState*(self: State, controller: Controller): State {.inline base.} =
   return nil
 
 ## This method is executed in case "back" button is clicked
@@ -94,18 +126,7 @@ method executeSecondaryCommand*(self: State, controller: Controller) {.inline ba
 method executeTertiaryCommand*(self: State, controller: Controller) {.inline base.} =
   discard
 
-## Returns true if we should move from this state immediatelly when the "primary" action is triggered,
-## in case we need to wait for some other action, or some aync event, this should return false
-method moveToNextPrimaryState*(self: State): bool {.inline base.} =
-  return true
-
-## Returns true if we should move from this state immediatelly when the "secondary" action is triggered,
-## in case we need to wait for some other action, or some aync event, this should return false
-method moveToNextSecondaryState*(self: State): bool {.inline base.} =
-  return true
-
-## Returns true if we should move from this state immediatelly when the "tertiary" action is triggered,
-## in case we need to wait for some other action, or some aync event, this should return false
-method moveToNextTertiaryState*(self: State): bool {.inline base.} =
-  return true
-
+## This method is used for handling aync responses for keycard related states
+method resolveKeycardNextState*(self: State, keycardFlowType: string, keycardEvent: KeycardEvent, 
+  controller: Controller): State {.inline base.} =
+  return nil
