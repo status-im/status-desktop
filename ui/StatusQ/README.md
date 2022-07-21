@@ -36,7 +36,7 @@ To make viewing and testing components easy, we've added a sandbox application t
 
 ### Using Qt Creator
 
-The easiest way to run the sandbox application is to simply open the provided `sandbox.pro` file using Qt Creator.
+The easiest way to run the sandbox application is to simply open the provided `CMakeLists.txt` file using Qt Creator.
 
 ### Using command line interface
 
@@ -44,14 +44,13 @@ To run the sandbox from within a command line interface, run the following comma
 
 ```
 $ git clone https://github.com/status-im/StatusQ
-$ cd StatusQ/sandbox
-$ ./scripts/build
+$ cd StatusQ
+$ git submodule update --init
+$ ./sandbox/scripts/build
 ```
 
 Once that is done, the sandbox can be started with the generated executable:
 
 ```
-$ ./bin/sandbox
+$ ./build/sandbox/Sandbox
 ```
-
-More Documentation available on the [wiki](https://hackmd.io/@status-desktop/B1naRjxh_/%2FwFtiXvOiQqCdw2lk6gbOLA)

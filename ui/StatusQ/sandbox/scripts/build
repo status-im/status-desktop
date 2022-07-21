@@ -1,10 +1,4 @@
 #!/bin/bash
 
-make clean
-if [[ $OSTYPE == 'darwin'* ]]
-then
-  qmake sandbox.pro -spec macx-clang CONFIG+=debug CONFIG+=x86_64 && /usr/bin/make qmake_all
-else
-  qmake sandbox.pro CONFIG+=debug CONFIG+=x86_64 && /usr/bin/make qmake_all
-fi
-make
+cmake -B build
+cmake --build build
