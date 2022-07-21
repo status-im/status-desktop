@@ -13,7 +13,7 @@ StatusValidator {
     }
 
     validate: function (value) {
-        return value.length >= minLength ? true : {
+        return value.length >= minLength && value.trim().length > 0 ? true : {
             min: minLength,
             actual: value.length
         }
