@@ -502,7 +502,6 @@ method setFirstChannelAsActive*(self: Module) =
 
 method onReorderChatOrCategory*(self: Module, chatOrCatId: string, position: int) =
   self.view.chatsModel().reorder(chatOrCatId, position)
-  self.setFirstChannelAsActive()
 
 method onCategoryNameChanged*(self: Module, category: Category) =
   self.view.chatsModel().renameItem(category.id, category.name)
