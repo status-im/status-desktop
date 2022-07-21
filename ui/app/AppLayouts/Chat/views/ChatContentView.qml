@@ -64,7 +64,7 @@ ColumnLayout {
         if(root.height > 0) {
             chatInput.forceInputActiveFocus()
         }
-    }  
+    }
 
     Keys.onEscapePressed: { topBar.toolbarComponent = statusChatInfoButton }
 
@@ -412,7 +412,7 @@ ColumnLayout {
             if (!obj) {
                 return
             }
-            chatInput.showReplyArea(messageId, obj.senderDisplayName, obj.messageText, obj.senderIcon, obj.contentType, obj.messageImage, obj.sticker)
+            chatInput.showReplyArea(messageId, obj.senderDisplayName, obj.messageText, obj.contentType, obj.messageImage, obj.sticker)
         }
     }
 
@@ -440,7 +440,7 @@ ColumnLayout {
                 if (!obj) {
                     return
                 }
-                chatInput.showReplyArea(messageId, obj.senderDisplayName, obj.messageText, obj.senderIcon, obj.contentType, obj.messageImage, obj.sticker)
+                chatInput.showReplyArea(messageId, obj.senderDisplayName, obj.messageText, obj.contentType, obj.messageImage, obj.sticker)
             }
             onOpenStickerPackPopup: {
                 root.openStickerPackPopup(stickerPackId);
