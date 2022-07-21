@@ -272,6 +272,7 @@ StatusModal {
                 anchors.topMargin: Style.current.halfPadding
                 anchors.left: parent.left
                 z: 0
+                objectName: "sendModalScroll"
 
                 ColumnLayout {
                     width: scrollView.availableWidth

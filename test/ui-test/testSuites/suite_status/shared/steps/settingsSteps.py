@@ -3,7 +3,7 @@ from screens.StatusMainScreen import StatusMainScreen
 from screens.SettingsScreen import SettingsScreen
 
 _statusMain = StatusMainScreen()
-_settingsScreen =SettingsScreen()
+_settingsScreen = SettingsScreen()
 
 
 @When("the user opens app settings screen")
@@ -22,6 +22,10 @@ def step(context: any):
 def step(context: any, account_name: str):
     _statusMain.open_settings()
     _settingsScreen.delete_account(account_name)
+    
+@When("the user toggles test networks")
+def step(context: any):
+    _settingsScreen.toggle_test_networks()
     
 @Then("the |any| seed phrase address is |any| displayed in the wallet")
 def step(context: any, phrase :str, address: str):

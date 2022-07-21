@@ -20,6 +20,8 @@ StatusFloatingButtonsSelector {
 
     property var selectedAccount
 
+    repeater.objectName: "accountsListFloatingHeader"
+    
     signal updatedSelectedAccount(var account)
 
     QtObject {
@@ -40,6 +42,7 @@ StatusFloatingButtonsSelector {
             implicitHeight: 32
             defaultLeftPadding: 4
             text: name
+            objectName: name
             icon.emoji: !!emoji ? emoji: ""
             icon.emojiSize: StatusQUtils.Emoji.size.middle
             icon.name: !emoji ? "filled-account": ""

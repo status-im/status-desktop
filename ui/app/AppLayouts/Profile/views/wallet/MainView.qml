@@ -70,6 +70,7 @@ Column {
     }
 
     StatusListItem {
+        objectName: "networksItem"
         title: qsTr("Networks")
         height: 64
         width: parent.width

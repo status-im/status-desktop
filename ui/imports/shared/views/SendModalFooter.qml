@@ -91,6 +91,7 @@ Rectangle {
             StatusFlatButton {
                 icon.name: isLastGroup ? "" : "password"
                 text: qsTr("Send")
+                objectName: "sendModalFooterSendButton"
                 size: StatusBaseButton.Size.Large
                 normalColor: Theme.palette.primaryColor2
                 disaledColor: Theme.palette.baseColor2

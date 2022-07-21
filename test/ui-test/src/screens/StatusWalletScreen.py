@@ -12,7 +12,17 @@ class SigningPhrasePopUp(Enum):
 class MainWalletScreen(Enum):
     ADD_ACCOUNT_BUTTON: str = "mainWallet_Add_Account"
     ACCOUNT_NAME: str = "mainWallet_Account_Name"
+    SEND_BUTTON_FOOTER: str = "mainWallet_Footer_Send_Button"
 
+class SendPopup(Enum):
+    SCROLL_BAR: str = "mainWallet_Send_Popup_Main"
+    HEADER_ACCOUNTS_LIST: str = "mainWallet_Send_Popup_Header_Accounts"
+    AMOUNT_INPUT: str = "mainWallet_Send_Popup_Amount_Input"
+    MY_ACCOUNTS_TAB: str = "mainWallet_Send_Popup_My_Accounts_Tab"
+    MY_ACCOUNTS_LIST: str = "mainWallet_Send_Popup_My_Accounts_List"
+    NETWORKS_LIST: str = "mainWallet_Send_Popup_Networks_List"
+    SEND_BUTTON: str = "mainWallet_Send_Popup_Send_Button"
+    PASSWORD_INPUT: str = "mainWallet_Send_Popup_Password_Input"
     
 class AddAccountPopup(Enum):
     SCROLL_BAR: str = "mainWallet_Add_Account_Popup_Main"
@@ -121,3 +131,44 @@ class StatusWalletScreen:
     def verify_account_name_is_present(self, account_name: str):
         verify_text_matching(MainWalletScreen.ACCOUNT_NAME.value, account_name)
         
+    def send_transaction(self, account_name, amount, token, chain_name, password):
+        click_obj_by_name(MainWalletScreen.SEND_BUTTON_FOOTER.value)
+        
+        self._click_repeater(SendPopup.HEADER_ACCOUNTS_LIST.value, account_name)
+        time.sleep(1)
+        type(SendPopup.AMOUNT_INPUT.value, amount)
+        
+        if token != "ETH":
+            print("TODO: switch token")
+        
+        click_obj_by_name(SendPopup.MY_ACCOUNTS_TAB.value)
+        
+        accounts = get_obj(SendPopup.MY_ACCOUNTS_LIST.value)
+        for index in range(accounts.count):
+            if(accounts.itemAtIndex(index).objectName == account_name):
+                click_obj(accounts.itemAtIndex(index))
+                break
+
+        scroll_obj_by_name(SendPopup.SCROLL_BAR.value)
+        time.sleep(2)
+        scroll_obj_by_name(SendPopup.SCROLL_BAR.value)
+        time.sleep(2)
+        scroll_obj_by_name(SendPopup.SCROLL_BAR.value)
+        time.sleep(2)
+        
+        self._click_repeater(SendPopup.NETWORKS_LIST.value, chain_name)
+        
+        click_obj_by_name(SendPopup.SEND_BUTTON.value)
+        
+        type(SendPopup.PASSWORD_INPUT.value, password)
+        click_obj_by_name(SendPopup.SEND_BUTTON.value)
+    
+    def _click_repeater(self, repeater_object_name: str, object_name: str):
+        repeater = get_obj(repeater_object_name)
+        for index in range(repeater.count):
+            if(repeater.itemAt(index).objectName == object_name):
+                click_obj(repeater.itemAt(index))
+                break
+        
+    def verify_transaction(self):
+        print("TODO: fix notification and ensure there is one")

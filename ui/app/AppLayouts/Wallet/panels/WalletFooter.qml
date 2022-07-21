@@ -30,6 +30,7 @@ Rectangle {
         spacing:  Style.current.padding
 
         StatusFlatButton {
+            objectName: "walletFooterSendButton"
             icon.name: "send"
             text: qsTr("Send")
             onClicked: function() {

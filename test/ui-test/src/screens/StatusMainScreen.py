@@ -72,3 +72,6 @@ class StatusMainScreen:
             right_click_obj(chat_button)
         
         click_obj_by_name(MainScreenComponents.MARK_AS_READ_BUTTON.value)
+
+    def open_wallet(self):
+        click_obj_by_name(MainScreenComponents.WALLET_BUTTON.value)
