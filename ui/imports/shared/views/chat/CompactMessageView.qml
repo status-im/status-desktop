@@ -365,6 +365,7 @@ Item {
             image: root.senderIcon
             pubkey: senderId
             name: senderDisplayName
+            messageContextMenu: root.messageContextMenu
 
             onClicked: root.clickMessage(true, false, false, null, false, false, false, false, "")
         }
