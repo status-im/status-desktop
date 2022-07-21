@@ -31,6 +31,8 @@ class WalletSettingsScreen(Enum):
     GENERATED_ACCOUNTS: str = "settings_Wallet_MainView_GeneratedAccounts"
     DELETE_ACCOUNT: str = "settings_Wallet_AccountView_DeleteAccount"
     DELETE_ACCOUNT_CONFIRM: str = "settings_Wallet_AccountView_DeleteAccount_Confirm"
+    NETWORKS_ITEM: str = "settings_Wallet_MainView_Networks"
+    TESTNET_TOGGLE: str = "settings_Wallet_NetworksView_TestNet_Toggle"
 
 
 class SettingsScreen:
@@ -83,7 +85,10 @@ class SettingsScreen:
         if phrase == '12':
             verify_text_matching(WalletSettingsScreen.TWELVE_SEED_PHRASE.value, address)
               
-        
+    def toggle_test_networks(self):
+        click_obj_by_name(WalletSettingsScreen.NETWORKS_ITEM.value)
+        click_obj_by_name(WalletSettingsScreen.TESTNET_TOGGLE.value)
+    
     def _find_account_index(self, account_name: str) -> int:
         accounts = get_obj(WalletSettingsScreen.GENERATED_ACCOUNTS.value)
         for index in range(accounts.count):

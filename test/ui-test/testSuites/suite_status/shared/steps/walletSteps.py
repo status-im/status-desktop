@@ -1,8 +1,13 @@
 from screens.StatusWalletScreen import StatusWalletScreen
 
+_statusMain = StatusMainScreen()
 _walletScreen = StatusWalletScreen()
 
-@When("the user accept the signing phrase")
+@When("the user opens wallet screen")
+def step(context):
+    _statusMain.open_wallet()
+    
+@When("the user accepts the signing phrase")
 def step(context):
     _walletScreen.accept_signing_phrase()
 
@@ -22,6 +27,15 @@ def step(context, account_name, password, private_key):
 def step(context, account_name, password, mnemonic):
     _walletScreen.import_seed_phrase(account_name, password, mnemonic)  
 
+@When("the user sends a transaction to himself from account |any| of |any| |any| on |any| with password |any|")
+def step(context, account_name, amount, token, chain_name, password):
+    _walletScreen.send_transaction(account_name, amount, token, chain_name, password)
+    
 @Then("the new account |any| is added")
 def step(context, account_name):
     _walletScreen.verify_account_name_is_present(account_name)
+
+@Then("the transaction is in progress")
+def step(context):
+    _walletScreen.verify_transaction()    
+    

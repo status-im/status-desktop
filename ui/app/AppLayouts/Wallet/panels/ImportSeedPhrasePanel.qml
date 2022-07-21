@@ -37,11 +37,9 @@ StatusGridView {
         if (!Utils.isMnemonic(mnemonicString)) {
             _internal.errorString = qsTr("Invalid seed phrase")
         } else {
-            _internal.errorString = RootStore.vaildateMnemonic(mnemonicString)
-            const regex = new RegExp('word [a-z]+ not found in the dictionary', 'i');
-            if (regex.test(_internal.errorString)) {
+            if (!RootStore.validMnemonic(mnemonicString)) {
                 _internal.errorString = qsTr("Invalid seed phrase") + '. ' +
-                        qsTr("This seed phrase doesn't match our supported dictionary. Check for misspelled words.")
+                    qsTr("This seed phrase doesn't match our supported dictionary. Check for misspelled words.")
             }
         }
         return _internal.errorString === ""

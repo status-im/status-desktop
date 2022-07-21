@@ -98,6 +98,7 @@ Item {
         id: txtPassword
         anchors.top: signingPhrase.bottom
         anchors.topMargin: Style.current.bigPadding
+        textField.objectName: "transactionSignerPasswordInput"
         focus: true
         customHeight: 56
         label: qsTr("Password")

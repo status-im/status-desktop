@@ -272,6 +272,7 @@ StatusDialog {
                 anchors.top: border.bottom
                 anchors.left: parent.left
                 z: 0
+                objectName: "sendModalScroll"
 
                 ColumnLayout {
                     width: scrollView.availableWidth

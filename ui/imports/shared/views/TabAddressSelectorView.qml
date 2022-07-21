@@ -45,6 +45,7 @@ Item {
         StatusTabButton {
             id: collectiblesBtn
             width: implicitWidth
+            objectName: "myAccountsTab"
             text: qsTr("My Accounts")
         }
         StatusTabButton {
@@ -141,6 +142,7 @@ Item {
 
             StatusListView {
                 id: myAccounts
+                objectName: "myAccountsList"
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: parent.top
                 width: parent.width
@@ -148,6 +150,7 @@ Item {
 
                 delegate: StatusListItem {
                     implicitWidth: parent.width
+                    objectName: model.name
                     height: visible ? 64 : 0
                     title: !!model.name ? model.name : ""
                     subTitle: Utils.toLocaleString(model.currencyBalance.toFixed(2), store.locale, {"model.currency": true}) + " " + store.currentCurrency.toUpperCase()

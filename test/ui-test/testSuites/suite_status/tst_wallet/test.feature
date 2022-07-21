@@ -8,7 +8,7 @@ Feature: Status Desktop Wallet
     	Then the user lands on the signed in app
     	When the user opens app settings screen
         When the user activates wallet and opens the wallet section
-        When the user accept the signing phrase
+        When the user accepts the signing phrase
 
     Scenario Outline: User adds a watch only account
         When the user adds watch only account with <account_name> and <address>

@@ -104,6 +104,7 @@ SettingsContentBase {
         Component {
             id: testnetModeSwitchComponent
             StatusSwitch {
+                objectName: "testnetModeSwitch"
                 text: qsTr("Testnet Mode")
                 checked: walletStore.areTestNetworksEnabled
                 onClicked: walletStore.toggleTestNetworksEnabled()

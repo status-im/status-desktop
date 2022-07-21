@@ -14,6 +14,7 @@ StatusInput {
     rightPadding: 0
 
     placeholderText: ""
+    input.edit.objectName: "amountInput"
     input.edit.cursorVisible: true
     input.edit.font.pixelSize: 32
     input.placeholderFont.pixelSize: 32

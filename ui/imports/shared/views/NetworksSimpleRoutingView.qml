@@ -69,9 +69,11 @@ RowLayout {
                 spacing: Style.current.padding
                 Repeater {
                     id: repeater
+                    objectName: "networksList"
                     model: networksSimpleRoutingView.suggestedRoutes
                     StatusListItem {
                         id: item
+                        objectName: modelData.chainName
                         leftPadding: 5
                         rightPadding: 5
                         implicitWidth: 126

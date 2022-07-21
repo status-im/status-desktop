@@ -213,8 +213,8 @@ QtObject {
         walletSectionAccounts.resetDerivedAddressModel()
     }
 
-    function vaildateMnemonic(mnemonic) {
-        return onboardingModule.validateMnemonic(mnemonic)
+    function validMnemonic(mnemonic) {
+        return startupModule.validMnemonic(mnemonic)
     }
 
     function getNextSelectableDerivedAddressIndex() {
