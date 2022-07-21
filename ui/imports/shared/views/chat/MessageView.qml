@@ -209,7 +209,7 @@ Loader {
             messageContextMenu.messageSenderId = obj.senderId
             messageContextMenu.selectedUserPublicKey = obj.senderId
             messageContextMenu.selectedUserDisplayName = obj.senderDisplayName
-            messageContextMenu.selectedUserIcon = obj.senderIconToShow
+            messageContextMenu.selectedUserIcon = obj.senderIcon
         }
 
         messageContextMenu.popup()
