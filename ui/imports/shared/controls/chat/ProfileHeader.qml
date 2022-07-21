@@ -33,6 +33,7 @@ Item {
     property bool pubkeyVisibleWithCopy: false
     property bool emojiHashVisible: true
     property bool editImageButtonVisible: false
+    property bool editButtonVisible: displayNamePlusIconsVisible
     readonly property bool compact: root.imageSize === ProfileHeader.ImageSize.Compact
 
     signal clicked()
@@ -115,11 +116,14 @@ Item {
         }
 
         RowLayout {
-            spacing: Style.current.halfPadding
+            spacing: compact ? 4 : Style.current.halfPadding
+            Layout.fillWidth: true
             Layout.alignment: Qt.AlignHCenter
             visible: root.displayNamePlusIconsVisible
             StyledText {
+                Layout.maximumWidth: root.width - Style.current.xlPadding
                 text: root.displayName
+                elide: Text.ElideRight
                 font {
                     weight: Font.Medium
                     pixelSize: Style.current.primaryTextFontSize
@@ -128,8 +132,8 @@ Item {
 
             Loader {
                 sourceComponent: SVGImage {
-                    height: 16
-                    width: 16
+                    height: compact ? 10 : 16
+                    width: compact ? 10 : 16
                     source: Style.svg("contact")
                 }
                 active: isContact && !root.isCurrentUser
@@ -138,27 +142,30 @@ Item {
 
             Loader {
                 sourceComponent: VerificationLabel {
-                    id: trustStatus
                     trustStatus: root.trustStatus
-                    height: 16
-                    width: 16
+                    height: compact ? 10 : 16
+                    width: compact ? 10 : 16
                 }
                 active: root.trustStatus !== Constants.trustStatus.unknown && !root.isCurrentUser
                 visible: active
             }
 
-            SVGImage {
-                height: 16
-                width: 16
-                source: Style.svg("edit-message")
-                MouseArea {
-                    anchors.fill: parent
-                    cursorShape: Qt.PointingHandCursor
-                    acceptedButtons: Qt.LeftButton
-                    onClicked: {
-                        root.editClicked()
+            Loader {
+                sourceComponent: SVGImage {
+                    height: compact ? 10 : 16
+                    width: compact ? 10 : 16
+                    source: Style.svg("edit-message")
+                    MouseArea {
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        acceptedButtons: Qt.LeftButton
+                        onClicked: {
+                            root.editClicked()
+                        }
                     }
                 }
+                active: root.editButtonVisible
+                visible: active
             }
         }
 
