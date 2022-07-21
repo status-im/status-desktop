@@ -54,10 +54,16 @@ Item {
 
         model: SortFilterProxyModel {
             sourceModel: usersModule.model
-            sorters: StringSorter {
-                roleName: "displayName"
-                caseSensitivity: Qt.CaseInsensitive
-            }
+            sorters: [
+                RoleSorter {
+                    roleName: "onlineStatus"
+                    sortOrder: Qt.DescendingOrder
+                },
+                StringSorter {
+                    roleName: "displayName"
+                    caseSensitivity: Qt.CaseInsensitive
+                }
+            ]
         }
         section.property: "onlineStatus"
         section.delegate: (root.width > 58) ? sectionDelegateComponent : null
