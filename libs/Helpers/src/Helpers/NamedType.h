@@ -4,6 +4,7 @@
 
 #include <type_traits>
 #include <utility>
+#include <compare>
 
 using json = nlohmann::json;
 
@@ -19,25 +20,38 @@ class NamedType
 public:
     using UnderlyingType = T;
 
-    // constructor
     explicit constexpr NamedType(T const& value) : m_value(value) {}
     template<typename T_ = T, typename = IsNotReference<T_>>
     explicit constexpr NamedType(T&& value) : m_value(std::move(value)) {}
     explicit constexpr NamedType() = default;
 
-    // get
-    constexpr T& get() { return m_value; }
-    constexpr std::remove_reference_t<T> const& get() const {return m_value; }
+    constexpr T& get() {
+        return m_value;
+    }
 
-    bool operator<(const NamedType<T, Parameter> &) const = default;
-    bool operator>(const NamedType<T, Parameter> &) const = default;
-    bool operator<=(const NamedType<T, Parameter> &) const = default;
-    bool operator>=(const NamedType<T, Parameter> &) const = default;
-    bool operator==(const NamedType<T, Parameter> &) const = default;
-    bool operator!=(const NamedType<T, Parameter> &) const = default;
+    constexpr std::remove_reference_t<T> const& get() const {
+        return m_value;
+    }
+
+#if defined __cpp_impl_three_way_comparison && defined __cpp_lib_three_way_comparison
+    friend auto operator<=>(const NamedType<T, Parameter>& l, const NamedType<T, Parameter>& r) noexcept {
+        return l.m_value <=> r.m_value;
+    };
+#else
+    bool operator<(const NamedType<T, Parameter> &other) const { return m_value < other.m_value; };
+    bool operator>(const NamedType<T, Parameter> &other) const { return m_value > other.m_value; };
+    bool operator<=(const NamedType<T, Parameter> &other) const { return m_value <= other.m_value; };
+    bool operator>=(const NamedType<T, Parameter> &other) const { return m_value >= other.m_value; };
+    bool operator==(const NamedType<T, Parameter> &other) const { return m_value == other.m_value; };
+    bool operator!=(const NamedType<T, Parameter> &other) const { return m_value != other.m_value; };
+#endif
+
+    T &operator=(NamedType<T, Parameter> const& rhs) {
+        return m_value = rhs.m_value;
+    };
 
 private:
-    T m_value;
+    T m_value{};
 };
 
 template <typename T, typename P>
@@ -59,7 +73,6 @@ template <typename T, typename Parameter>
 struct hash<Status::Helpers::NamedType<T, Parameter>>
 {
     using NamedType = Status::Helpers::NamedType<T, Parameter>;
-    using checkIfHashable = typename std::enable_if<NamedType::is_hashable, void>::type;
 
     size_t operator()(NamedType const& x) const
     {
@@ -67,4 +80,4 @@ struct hash<Status::Helpers::NamedType<T, Parameter>>
     }
 };
 
-}
+} // namespace std

@@ -161,4 +161,117 @@ TEST(WalletApi, TestGetDerivedAddressesForPath_FromWalletAccount_SecondLevel)
     ASSERT_TRUE(std::all_of(derivedAddresses.begin(), derivedAddresses.end(), [&testPath](const auto& a) { return a.path.get().startsWith(testPath.get()); }));
 }
 
+TEST(WalletApi, TestGetEthereumChains)
+{
+    ScopedTestAccount testAccount(test_info_->name());
+
+    auto networks = Wallet::getEthereumChains(false);
+    ASSERT_GT(networks.size(), 0);
+    const auto &network = networks[0];
+    ASSERT_FALSE(network.chainName.isEmpty());
+    ASSERT_TRUE(network.rpcUrl.isValid());
+}
+
+TEST(WalletApi, TestGetTokens)
+{
+    ScopedTestAccount testAccount(test_info_->name());
+
+    auto networks = Wallet::getEthereumChains(false);
+    ASSERT_GT(networks.size(), 0);
+    auto mainNetIt = std::find_if(networks.begin(), networks.end(), [](const auto &n){ return n.chainName == "Mainnet"; });
+    ASSERT_NE(mainNetIt, networks.end());
+    const auto &mainNet = *mainNetIt;
+
+    auto tokens = Wallet::getTokens(mainNet.chainId);
+
+    auto sntIt = std::find_if(tokens.begin(), tokens.end(), [](const auto &t){ return t.symbol == "SNT"; });
+    ASSERT_NE(sntIt, tokens.end());
+    const auto &snt = *sntIt;
+    ASSERT_EQ(snt.chainId, mainNet.chainId);
+    ASSERT_TRUE(snt.color.isValid());
+}
+
+TEST(WalletApi, TestGetTokensBalancesForChainIDs)
+{
+    ScopedTestAccount testAccount(test_info_->name());
+
+    auto networks = Wallet::getEthereumChains(false);
+    ASSERT_GT(networks.size(), 1);
+
+    auto mainNetIt = std::find_if(networks.begin(), networks.end(), [](const auto &n){ return n.chainName == "Mainnet"; });
+    ASSERT_NE(mainNetIt, networks.end());
+    const auto &mainNet = *mainNetIt;
+
+    auto mainTokens = Wallet::getTokens(mainNet.chainId);
+    auto sntMainIt = std::find_if(mainTokens.begin(), mainTokens.end(), [](const auto &t){ return t.symbol == "SNT"; });
+    ASSERT_NE(sntMainIt, mainTokens.end());
+    const auto &sntMain = *sntMainIt;
+
+    auto testNetIt = std::find_if(networks.begin(), networks.end(), [](const auto &n){ return n.chainName == "Ropsten"; });
+    ASSERT_NE(testNetIt, networks.end());
+    const auto &testNet = *testNetIt;
+
+    auto testTokens = Wallet::getTokens(testNet.chainId);
+    auto sntTestIt = std::find_if(testTokens.begin(), testTokens.end(), [](const auto &t){ return t.symbol == "STT"; });
+    ASSERT_NE(sntTestIt, testTokens.end());
+    const auto &sntTest = *sntTestIt;
+
+    auto testAddress = testAccount.firstWalletAccount().address;
+    auto balances = Wallet::getTokensBalancesForChainIDs({mainNet.chainId, testNet.chainId},
+                                                         {testAddress},
+                                                         {sntMain.address, sntTest.address});
+    ASSERT_GT(balances.size(), 0);
+
+    ASSERT_TRUE(balances.contains(testAddress));
+    const auto &addressBallance = balances[testAddress];
+    ASSERT_GT(addressBallance.size(), 0);
+
+    ASSERT_TRUE(addressBallance.contains(sntMain.address));
+    ASSERT_EQ(toQString(addressBallance.at(sntMain.address)), "0");
+
+    ASSERT_TRUE(addressBallance.contains(sntTest.address));
+    ASSERT_EQ(toQString(addressBallance.at(sntTest.address)), "0");
+}
+
+TEST(WalletApi, TestGetTokensBalancesForChainIDs_WatchOnlyAccount)
+{
+    ScopedTestAccount testAccount(test_info_->name());
+
+    const auto newTestAccountName = u"test_watch_only-name"_qs;
+    Accounts::addAccountWatch(Accounts::EOAddress("0xdb5ac1a559b02e12f29fc0ec0e37be8e046def49"), newTestAccountName, QColor("fuchsia"), u""_qs);
+    const auto updatedAccounts = Accounts::getAccounts();
+    ASSERT_EQ(updatedAccounts.size(), 3);
+
+    const auto newAccountIt = std::find_if(updatedAccounts.begin(), updatedAccounts.end(),
+                                           [&newTestAccountName](const auto& a) {
+        return a.name == newTestAccountName;
+    });
+    ASSERT_NE(newAccountIt, updatedAccounts.end());
+    const auto &newAccount = *newAccountIt;
+
+    auto networks = Wallet::getEthereumChains(false);
+    ASSERT_GT(networks.size(), 1);
+
+    auto mainNetIt = std::find_if(networks.begin(), networks.end(), [](const auto &n){ return n.chainName == "Mainnet"; });
+    ASSERT_NE(mainNetIt, networks.end());
+    const auto &mainNet = *mainNetIt;
+
+    auto mainTokens = Wallet::getTokens(mainNet.chainId);
+    auto sntMainIt = std::find_if(mainTokens.begin(), mainTokens.end(), [](const auto &t){ return t.symbol == "SNT"; });
+    ASSERT_NE(sntMainIt, mainTokens.end());
+    const auto &sntMain = *sntMainIt;
+
+    auto balances = Wallet::getTokensBalancesForChainIDs({mainNet.chainId},
+                                                         {newAccount.address},
+                                                         {sntMain.address});
+    ASSERT_GT(balances.size(), 0);
+
+    ASSERT_TRUE(balances.contains(newAccount.address));
+    const auto &addressBallance = balances[newAccount.address];
+    ASSERT_GT(addressBallance.size(), 0);
+
+    ASSERT_TRUE(addressBallance.contains(sntMain.address));
+    ASSERT_GT(addressBallance.at(sntMain.address), 0);
+}
+
 } // namespace

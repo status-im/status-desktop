@@ -1,0 +1,10 @@
+[requires]
+gtest/1.11.0
+nlohmann_json/3.10.5
+boost/1.79.0
+
+#"fruit/3.6.0"
+
+[generators]
+CMakeToolchain
+CMakeDeps

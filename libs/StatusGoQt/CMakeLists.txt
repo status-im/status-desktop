@@ -9,6 +9,7 @@ project(StatusGoQt
 set(QT_NO_CREATE_VERSIONLESS_FUNCTIONS true)
 
 find_package(nlohmann_json 3.10.5 REQUIRED)
+find_package(Boost)
 
 find_package(Qt6 ${STATUS_QT_VERSION} COMPONENTS Core Concurrent Gui REQUIRED)
 qt6_standard_project_setup()
@@ -21,6 +22,7 @@ set_property(GLOBAL PROPERTY DEBUG_CONFIGURATIONS Debug)
 target_link_libraries(${PROJECT_NAME}
     PUBLIC
         Status::Helpers
+        Boost::headers
 
     PRIVATE
         Qt6::Gui
@@ -90,7 +92,12 @@ target_sources(${PROJECT_NAME}
         ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusGo/SignalsManager.h
         ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusGo/SignalsManager.cpp
 
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusGo/Wallet/BigInt.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusGo/Wallet/BigInt.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusGo/Wallet/DerivedAddress.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusGo/Wallet/NetworkConfiguration.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusGo/Wallet/Token.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusGo/Wallet/wallet_types.h
         ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusGo/Wallet/WalletApi.h
         ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusGo/Wallet/WalletApi.cpp
 )
