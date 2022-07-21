@@ -302,11 +302,16 @@ Item {
             StatusBaseText {
                 text: qsTr("Agree to <a href=\"#\">Terms of name registration.</a> I understand that my wallet address will be publicly connected to my username.")
                 anchors.left: termsAndConditionsCheckbox.right
+                anchors.leftMargin: Style.current.halfPadding
                 anchors.right: parent.right
                 wrapMode: Text.WordWrap
-                anchors.top: termsAndConditionsCheckbox.top
+                anchors.verticalCenter: termsAndConditionsCheckbox.verticalCenter
                 onLinkActivated: popup.open()
                 color: Theme.palette.directColor1
+                TapHandler {
+                    enabled: !parent.hoveredLink
+                    onSingleTapped: termsAndConditionsCheckbox.toggle()
+                }
                 MouseArea {
                     anchors.fill: parent
                     acceptedButtons: Qt.NoButton // we don't want to eat clicks on the Text
