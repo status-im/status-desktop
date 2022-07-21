@@ -1,7 +1,3 @@
-import state
-import ../controller
-import user_profile_confirm_password_state
-
 type
   UserProfileCreatePasswordState* = ref object of State
 
@@ -12,8 +8,8 @@ proc newUserProfileCreatePasswordState*(flowType: FlowType, backState: State): U
 proc delete*(self: UserProfileCreatePasswordState) =
   self.State.delete
 
-method getNextPrimaryState*(self: UserProfileCreatePasswordState): State =
-  return newUserProfileConfirmPasswordState(self.State.flowType, self)
+method getNextPrimaryState*(self: UserProfileCreatePasswordState, controller: Controller): State =
+  return createState(StateType.UserProfileConfirmPassword, self.flowType, self)
 
 method executeBackCommand*(self: UserProfileCreatePasswordState, controller: Controller) =
   controller.setPassword("")

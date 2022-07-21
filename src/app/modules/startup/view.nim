@@ -26,6 +26,7 @@ QtObject:
       loginAccountsModel: login_acc_model.Model
       loginAccountsModelVariant: QVariant
       appState: AppState
+      keycardData: string # used to temporary store the data coming from keycard, depends on current state different data may be stored
 
   proc delete*(self: View) =
     self.currentStartupStateVariant.delete
@@ -133,7 +134,10 @@ QtObject:
     notify = importedAccountChanged
 
   proc generateImage*(self: View, imageUrl: string, aX: int, aY: int, bX: int, bY: int): string {.slot.} =
-    self.delegate.generateImage(imageUrl, aX, aY, bX, bY)
+    return self.delegate.generateImage(imageUrl, aX, aY, bX, bY)
+
+  proc getCroppedProfileImage*(self: View): string {.slot.} =
+    return self.delegate.getCroppedProfileImage()
 
   proc setDisplayName*(self: View, value: string) {.slot.} =
     self.delegate.setDisplayName(value)
@@ -146,6 +150,15 @@ QtObject:
 
   proc getPassword*(self: View): string {.slot.} =
     return self.delegate.getPassword()
+
+  proc setPin*(self: View, value: string) {.slot.} =
+    self.delegate.setPin(value)
+
+  proc getPin*(self: View): string {.slot.} =
+    return self.delegate.getPin()
+
+  proc setPuk*(self: View, value: string) {.slot.} =
+    self.delegate.setPuk(value)
 
   proc getPasswordStrengthScore*(self: View, password: string, userName: string): int {.slot.} =
     return self.delegate.getPasswordStrengthScore(password, userName)
@@ -194,10 +207,28 @@ QtObject:
   proc emitAccountLoginError*(self: View, error: string) =
     self.accountLoginError(error)
 
-  proc obtainingPasswordError*(self:View, errorDescription: string) {.signal.}
-  proc emitObtainingPasswordError*(self: View, errorDescription: string) =
-    self.obtainingPasswordError(errorDescription)
+  proc obtainingPasswordError*(self:View, errorDescription: string, errorType: string) {.signal.}
+  proc emitObtainingPasswordError*(self: View, errorDescription: string, errorType: string) =
+    self.obtainingPasswordError(errorDescription, errorType)
 
   proc obtainingPasswordSuccess*(self:View, password: string) {.signal.}
   proc emitObtainingPasswordSuccess*(self: View, password: string) =
     self.obtainingPasswordSuccess(password)
+
+  proc checkRepeatedKeycardPinWhileTyping*(self: View, pin: string): bool {.slot.} =
+    return self.delegate.checkRepeatedKeycardPinWhileTyping(pin)
+
+  proc getSeedPhrase*(self: View): string {.slot.} =
+    return self.delegate.getSeedPhrase()
+
+  proc keycardDataChanged*(self: View) {.signal.}
+  proc setKeycardData*(self: View, value: string) =
+    if self.keycardData == value:
+      return
+    self.keycardData = value
+    self.keycardDataChanged()
+  proc getKeycardData*(self: View): string {.slot.} =
+    return self.keycardData
+  QtProperty[string] keycardData:
+    read = getKeycardData
+    notify = keycardDataChanged

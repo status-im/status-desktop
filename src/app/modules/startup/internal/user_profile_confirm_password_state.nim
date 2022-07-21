@@ -1,7 +1,3 @@
-import state
-import biometrics_state
-import ../controller
-
 type
   UserProfileConfirmPasswordState* = ref object of State
 
@@ -12,23 +8,23 @@ proc newUserProfileConfirmPasswordState*(flowType: FlowType, backState: State): 
 proc delete*(self: UserProfileConfirmPasswordState) =
   self.State.delete
 
-method moveToNextPrimaryState*(self: UserProfileConfirmPasswordState): bool =
-  return defined(macosx)
-
-method getNextPrimaryState*(self: UserProfileConfirmPasswordState): State =
-  if not self.moveToNextPrimaryState():
+method getNextPrimaryState*(self: UserProfileConfirmPasswordState, controller: Controller): State =
+  if not defined(macosx):
     return nil
-  return newBiometricsState(self.State.flowType, nil)
+  return createState(StateType.Biometrics, self.flowType, self)
 
 method executePrimaryCommand*(self: UserProfileConfirmPasswordState, controller: Controller) =
-  if self.moveToNextPrimaryState():
+  if defined(macosx):
     return
+  let storeToKeychain = false # false, cause we don't have keychain support for other than mac os
   if self.flowType == FlowType.FirstRunNewUserNewKeys:
-    controller.storeGeneratedAccountAndLogin(storeToKeychain = false) # false, cause we don't have keychain support for other than mac os
+    controller.storeGeneratedAccountAndLogin(storeToKeychain)
   elif self.flowType == FlowType.FirstRunNewUserImportSeedPhrase:
-    controller.storeImportedAccountAndLogin(storeToKeychain = false) # false, cause we don't have keychain support for other than mac os
+    controller.storeImportedAccountAndLogin(storeToKeychain)
   elif self.flowType == FlowType.FirstRunOldUserImportSeedPhrase:
-    ## This should not be the correct call for this flow, this is an issue, but since current implementation is like that
-    ## and this is not a bug fixing issue, left as it is.
-    controller.storeImportedAccountAndLogin(storeToKeychain = false) # false, cause we don't have keychain support for other than mac os
+    ## This should not be the correct call for this flow, this is an issue, 
+    ## but since current implementation is like that and this is not a bug fixing issue, left as it is.
+    controller.storeImportedAccountAndLogin(storeToKeychain)
+  elif self.flowType == FlowType.FirstRunNewUserNewKeycardKeys:
+    controller.storeKeycardAccountAndLogin(storeToKeychain)
   

@@ -1,6 +1,3 @@
-import state
-import user_profile_create_state, user_profile_import_seed_phrase_state
-
 type
   WelcomeStateNewUser* = ref object of State
 
@@ -11,14 +8,15 @@ proc newWelcomeStateNewUser*(flowType: FlowType, backState: State): WelcomeState
 proc delete*(self: WelcomeStateNewUser) =
   self.State.delete
 
-method getNextPrimaryState*(self: WelcomeStateNewUser): State =
-  return newUserProfileCreateState(FlowType.FirstRunNewUserNewKeys, self)
+method executeBackCommand*(self: WelcomeStateNewUser, controller: Controller) =
+  if self.flowType == FlowType.AppLogin and controller.isKeycardCreatedAccountSelectedOne():
+    controller.runLoginFlow()
 
-method getNextSecondaryState*(self: WelcomeStateNewUser): State =
-  # We will handle here a click on `Generate keys for a new Keycard`
-  discard
+method getNextPrimaryState*(self: WelcomeStateNewUser, controller: Controller): State =
+  return createState(StateType.UserProfileCreate, FlowType.FirstRunNewUserNewKeys, self)
 
-method getNextTertiaryState*(self: WelcomeStateNewUser): State =
-  return newUserProfileImportSeedPhraseState(FlowType.FirstRunNewUserImportSeedPhrase, self)
+method getNextSecondaryState*(self: WelcomeStateNewUser, controller: Controller): State =
+  return createState(StateType.KeycardPluginReader, FlowType.FirstRunNewUserNewKeycardKeys, self)
 
-
+method getNextTertiaryState*(self: WelcomeStateNewUser, controller: Controller): State =
+  return createState(StateType.UserProfileImportSeedPhrase, FlowType.General, self)

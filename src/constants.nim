@@ -59,6 +59,7 @@ let
   ROOTKEYSTOREDIR* = joinPath(baseDir, "data", "keystore")
   TMPDIR* = joinPath(baseDir, "tmp") & sep
   LOGDIR* = joinPath(baseDir, "logs") & sep
+  KEYCARDPAIRINGDATAFILE* = joinPath(baseDir, "data", "keycard/pairings.json")
 
 proc ensureDirectories*(dataDir, tmpDir, logDir: string) =
   createDir(dataDir)

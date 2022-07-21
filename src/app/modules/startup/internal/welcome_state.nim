@@ -1,6 +1,3 @@
-import state
-import welcome_state_new_user, welcome_state_old_user
-
 type
   WelcomeState* = ref object of State
 
@@ -11,8 +8,8 @@ proc newWelcomeState*(flowType: FlowType, backState: State): WelcomeState =
 proc delete*(self: WelcomeState) =
   self.State.delete
 
-method getNextPrimaryState*(self: WelcomeState): State =
-  return newWelcomeStateNewUser(FlowType.General, self)
+method getNextPrimaryState*(self: WelcomeState, controller: Controller): State =
+  return createState(StateType.WelcomeNewStatusUser, FlowType.General, self)
 
-method getNextSecondaryState*(self: WelcomeState): State =
-  return newWelcomeStateOldUser(FlowType.General, self)
+method getNextSecondaryState*(self: WelcomeState, controller: Controller): State =
+  return createState(StateType.WelcomeOldStatusUser, FlowType.General, self)

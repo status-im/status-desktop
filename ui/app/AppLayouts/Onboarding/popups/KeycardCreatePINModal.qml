@@ -11,7 +11,6 @@ import utils 1.0 as Imports
 
 import shared 1.0
 import shared.controls 1.0
-import shared.keycard 1.0
 
 StatusModal {
     property bool firstPINFieldValid: false

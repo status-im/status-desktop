@@ -218,6 +218,26 @@ proc saveAccountAndLogin*(hashedPassword: string, account, subaccounts, settings
     error "error doing rpc request", methodName = "saveAccountAndLogin", exception=e.msg
     raise newException(RpcException, e.msg)
 
+proc saveAccountAndLoginWithKeycard*(chatKey, password: string, account, subaccounts, settings, config: JsonNode): 
+  RpcResponse[JsonNode] {.raises: [Exception].} =
+  try:
+    let response = status_go.saveAccountAndLoginWithKeycard($account, password, $settings, $config, $subaccounts, chatKey)
+    result.result = Json.decode(response, JsonNode)
+
+  except RpcException as e:
+    error "error doing rpc request", methodName = "saveAccountAndLogin", exception=e.msg
+    raise newException(RpcException, e.msg)
+
+proc convertToKeycardAccount*(keyStoreDir: string, account: JsonNode, settings: JsonNode, password: string, newPassword: string): 
+  RpcResponse[JsonNode] {.raises: [Exception].} =
+  try:
+    let response = status_go.convertToKeycardAccount(keyStoreDir, $account, $settings, password, newPassword)
+    result.result = Json.decode(response, JsonNode)
+
+  except RpcException as e:
+    error "error doing rpc request", methodName = "convertToKeycardAccount", exception=e.msg
+    raise newException(RpcException, e.msg)
+
 proc login*(name, keyUid, hashedPassword, thumbnail, large: string, nodeCfgObj: string):
   RpcResponse[JsonNode]
   {.raises: [Exception].} =
@@ -236,6 +256,14 @@ proc login*(name, keyUid, hashedPassword, thumbnail, large: string, nodeCfgObj: 
 
   except RpcException as e:
     error "error doing rpc request", methodName = "login", exception=e.msg
+    raise newException(RpcException, e.msg)
+
+proc loginWithKeycard*(chatKey, password: string, account: JsonNode): RpcResponse[JsonNode] {.raises: [Exception].} =
+  try:
+    let response = status_go.loginWithKeycard($account, password, chatKey)
+    result.result = Json.decode(response, JsonNode)
+  except RpcException as e:
+    error "error doing rpc request", methodName = "loginWithKeycard", exception=e.msg
     raise newException(RpcException, e.msg)
 
 proc verifyAccountPassword*(address: string, password: string, keystoreDir: string):

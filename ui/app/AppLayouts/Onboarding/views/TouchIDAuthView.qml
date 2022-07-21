@@ -62,7 +62,11 @@ Item {
             anchors.top: txtTitle.bottom
             anchors.topMargin: Style.current.padding
             color: Style.current.secondaryText
-            text: qsTr("Would you like to use Touch ID\nto login to Status?")
+            text: root.startupStore.currentStartupState.flowType === Constants.startupFlow.firstRunNewUserNewKeycardKeys ||
+                  root.startupStore.currentStartupState.flowType === Constants.startupFlow.firstRunNewUserImportSeedPhraseIntoKeycard ||
+                  root.startupStore.currentStartupState.flowType === Constants.startupFlow.firstRunOldUserKeycardImport?
+                      qsTr("Would you like to use TouchID instead of a PIN code\nto login to Status using your Keycard?") :
+                      qsTr("Would you like to use Touch ID\nto login to Status?")
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
             font.pixelSize: 15
@@ -85,7 +89,11 @@ Item {
                 id: keycardLink
                 Layout.alignment: Qt.AlignHCenter
                 color: Theme.palette.primaryColor1
-                text: qsTr("I prefer to use my password")
+                text: root.startupStore.currentStartupState.flowType === Constants.startupFlow.firstRunNewUserNewKeycardKeys ||
+                      root.startupStore.currentStartupState.flowType === Constants.startupFlow.firstRunNewUserImportSeedPhraseIntoKeycard ||
+                      root.startupStore.currentStartupState.flowType === Constants.startupFlow.firstRunOldUserKeycardImport?
+                          qsTr("I prefer to use my PIN") :
+                          qsTr("I prefer to use my password")
                 font.pixelSize: 15
                 MouseArea {
                     anchors.fill: parent

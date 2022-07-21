@@ -12,8 +12,10 @@ type
     colorHash: color_hash_model.Model
     colorHashVariant: QVariant
     colorId: int
+    keycardPairing: string
 
-proc initItem*(name, thumbnailImage, largeImage, keyUid: string, colorHash: seq[ColorHashSegment], colorId: int):
+proc initItem*(name, thumbnailImage, largeImage, keyUid: string, colorHash: seq[ColorHashSegment], colorId: int,
+  keycardPairing: string):
   Item =
   result.name = name
   result.thumbnailImage = thumbnailImage
@@ -23,6 +25,7 @@ proc initItem*(name, thumbnailImage, largeImage, keyUid: string, colorHash: seq[
   result.colorHash.setItems(map(colorHash, x => color_hash_item.initItem(x.len, x.colorIdx)))
   result.colorHashVariant = newQVariant(result.colorHash)
   result.colorId = colorId
+  result.keycardPairing = keycardPairing
 
 proc getName*(self: Item): string =
   return self.name
@@ -44,3 +47,9 @@ proc getColorHashVariant*(self: Item): QVariant =
 
 proc getColorId*(self: Item): int =
   return self.colorId
+
+proc getKeycardPairing*(self: Item): string =
+  return self.keycardPairing
+
+proc getKeycardCreatedAccount*(self: Item): bool =
+  return self.keycardPairing.len > 0

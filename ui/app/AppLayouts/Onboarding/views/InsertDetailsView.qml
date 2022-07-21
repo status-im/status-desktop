@@ -36,6 +36,7 @@ Item {
         }
         nameInput.text = root.startupStore.getDisplayName();
         nameInput.input.edit.forceActiveFocus();
+        userImage.image.source = root.startupStore.getCroppedProfileImage();
     }
 
     Loader {

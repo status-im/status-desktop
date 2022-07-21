@@ -16,7 +16,7 @@ if defined(macosx):
   # note: macdeployqt rewrites rpath appropriately when building the .app bundle
   switch("passL", "-rpath" & " " & getEnv("QT5_LIBDIR"))
   switch("passL", "-rpath" & " " & getEnv("STATUSGO_LIBDIR"))
-  switch("passL", "-rpath" & " " & getEnv("KEYCARDGO_LIBDIR"))
+  switch("passL", "-rpath" & " " & getEnv("STATUSKEYCARDGO_LIBDIR"))
   # statically link these libs
   switch("passL", "bottles/openssl@1.1/lib/libcrypto.a")
   switch("passL", "bottles/openssl@1.1/lib/libssl.a")
