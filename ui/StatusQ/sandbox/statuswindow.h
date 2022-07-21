@@ -11,40 +11,11 @@ class StatusWindow: public QQuickWindow
     Q_PROPERTY(bool isFullScreen READ isFullScreen NOTIFY isFullScreenChanged)
 
 public:
-    struct EventCallbacks {
-        std::function<void()> onResize;
-        std::function<void()> willExitFullScreen;
-        std::function<void()> didExitFullScreen;
-    };
-
-    explicit StatusWindow(QWindow *parent = nullptr)
-        : QQuickWindow(parent),
-          m_isFullScreen(false)
-    {
-        removeTitleBar();
-
-        connect(this, &QQuickWindow::windowStateChanged, [&](Qt::WindowState windowState) {
-            if (windowState == Qt::WindowNoState) {
-                removeTitleBar();
-                m_isFullScreen = false;
-                emit isFullScreenChanged();
-            } else if (windowState == Qt::WindowFullScreen) {
-                m_isFullScreen = true;
-                emit isFullScreenChanged();
-                showTitleBar();
-            }
-        });
-
-    }
+    explicit StatusWindow(QQuickWindow *parent = nullptr);
 
     Q_INVOKABLE void toggleFullScreen();
 
-    Q_INVOKABLE void updatePosition() {
-        auto point = QPoint(screen()->geometry().center().x() - geometry().width() / 2, screen()->geometry().center().y() - geometry().height() / 2);
-        if (point != this->position()) {
-            this->setPosition(point);
-        }
-    }
+    Q_INVOKABLE void updatePosition();
 
     bool isFullScreen() const;
 
@@ -54,10 +25,15 @@ signals:
 private:
     void removeTitleBar();
     void showTitleBar();
-    void initCallbacks();
+#ifdef Q_OS_WIN
+    void removeTitleBarWin();
+    void showTitleBarWin();
+#elif defined Q_OS_MACOS
+    void removeTitleBarMac();
+    void showTitleBarMac();
+#endif
 
 private:
-    EventCallbacks m_callbacks;
     bool m_isFullScreen;
 };
 

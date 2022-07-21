@@ -12,21 +12,7 @@
 #include <AppKit/NSButton.h>
 #include <AppKit/AppKit.h>
 
-void StatusWindow::toggleFullScreen()
-{
-    if (m_isFullScreen) {
-        showNormal();
-    } else {
-        showFullScreen();
-    }
-}
-
-bool StatusWindow::isFullScreen() const
-{
-    return m_isFullScreen;
-}
-
-void StatusWindow::removeTitleBar()
+void StatusWindow::removeTitleBarMac()
 {
     NSView *nsView = reinterpret_cast<NSView*>(this->winId());
     NSWindow *window = [nsView window];
@@ -39,7 +25,7 @@ void StatusWindow::removeTitleBar()
     [titleBarContainerView setHidden:YES];
 }
 
-void StatusWindow::showTitleBar()
+void StatusWindow::showTitleBarMac()
 {
     NSView *nsView = reinterpret_cast<NSView*>(this->winId());
     NSWindow *window = [nsView window];
