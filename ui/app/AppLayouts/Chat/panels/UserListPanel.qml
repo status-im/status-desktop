@@ -12,6 +12,8 @@ import utils 1.0
 
 import "../controls"
 
+import SortFilterProxyModel 0.2
+
 Item {
     id: root
     anchors.fill: parent
@@ -50,7 +52,13 @@ Item {
             bottomMargin: Style.current.bigPadding
         }
 
-        model: usersModule.model
+        model: SortFilterProxyModel {
+            sourceModel: usersModule.model
+            sorters: StringSorter {
+                roleName: "displayName"
+                caseSensitivity: Qt.CaseInsensitive
+            }
+        }
         section.property: "onlineStatus"
         section.delegate: (root.width > 58) ? sectionDelegateComponent : null
         delegate: StatusMemberListItem {
