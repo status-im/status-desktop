@@ -13,41 +13,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 lupdate_only{
-SOURCES = *.qml \
-          app/*.qml \
-          imports/*.qml \
-          imports/shared/*.qml \
-          imports/shared/controls/*.qml \
-          imports/shared/keycard/*.qml \
-          imports/shared/panels/*.qml \
-          imports/shared/popups/*.qml \
-          imports/shared/status/*.qml \
-          imports/shared/views/*.qml \
-          app/AppLayouts/*.qml \
-          app/AppLayouts/Browser/*.qml \
-          app/AppLayouts/Chat/*.qml \
-          app/AppLayouts/Chat/CommunityComponents/*.qml \
-          app/AppLayouts/Chat/ChatColumn/*.qml \
-          app/AppLayouts/Chat/ChatColumn/ChatComponents/*.qml \
-          app/AppLayouts/Chat/ChatColumn/MessageComponents/*.qml \
-          app/AppLayouts/Chat/ChatColumn/MessageComponents/TransactionComponents/*.qml \
-          app/AppLayouts/CommunitiesPortalLayout/*.qml \
-          app/AppLayouts/Chat/ContactsColumn/*.qml \
-          app/AppLayouts/Chat/components/*.qml \
-          app/AppLayouts/Node/*.qml \
-          app/AppLayouts/Profile/*.qml \
-          app/AppLayouts/Profile/LeftTab/*.qml \
-          app/AppLayouts/Profile/LeftTab/components/*.qml \
-          app/AppLayouts/Profile/Sections/*.qml \
-          app/AppLayouts/Profile/Sections/BrowserModals/*.qml \
-          app/AppLayouts/Profile/Sections/Contacts/*.qml \
-          app/AppLayouts/Profile/Sections/Data/*.qml \
-          app/AppLayouts/Profile/Sections/Ens/*.qml \
-          app/AppLayouts/Profile/Sections/Privileges/*.qml \
-          app/AppLayouts/Wallet/*.qml \
-          app/AppLayouts/Wallet/components/*.qml \
-          app/AppLayouts/Wallet/components/collectiblesComponents/*.qml \
-          app/AppLayouts/Wallet/data/Currencies.qml \          
+SOURCES += $$files("$$PWD/*.qml", true)
+SOURCES += $$files("$$PWD/*.js", true)
 }
 
 # Other *.ts files will be provided by Lokalise platform

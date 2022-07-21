@@ -15,8 +15,9 @@ def fixupTranslations(enTsFile: str):
     for messageNode in messageNodes:
         enString = messageNode.find('source').text
         trNode = messageNode.find('translation')
-        trNode.text = enString  # add translation
-        trNode.attrib = {}  # remove 'type="unfinished"'
+        if not trNode.text:
+            trNode.text = enString  # add translation
+            trNode.attrib = {}  # remove 'type="unfinished"'
 
     tsXmlTree.write(enTsFile)
 
