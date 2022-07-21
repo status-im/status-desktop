@@ -12,4 +12,5 @@ StatusTooltipSettings 0.1 StatusTooltipSettings.qml
 StatusAppNavBarFilterModel 0.1 StatusAppNavBarFilterModel.qml
 StatusAnimatedStack 0.1 StatusAnimatedStack.qml
 StatusScrollView 0.1 StatusScrollView.qml
-
+StatusListView 0.1 StatusListView.qml
+StatusGridView 0.1 StatusGridView.qml

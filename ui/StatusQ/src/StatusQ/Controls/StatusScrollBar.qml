@@ -4,8 +4,40 @@ import QtQuick.Controls 2.14 as T
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 
+/*!
+   \qmltype StatusScrollView
+   \inherits ScrollBar
+   \inqmlmodule StatusQ.Core
+   \since StatusQ.Core 0.1
+   \brief Status custom ScrollBar component.
+
+   The \c StatusScrollBar can be used just like a plain ScrollBar. Function resolveVisibility can be used for decoration Flickable based components.
+
+   Example of how to use it:
+
+   \qml
+        ScrollBar.horizontal: StatusScrollBar {
+            policy: ScrollBar.AsNeeded
+            visible: resolveVisibility(policy, root.width, root.contentWidth)
+        }
+   \endqml
+
+   For a list of components available see StatusQ.
+*/
 T.ScrollBar {
     id: root
+
+    function resolveVisibility(policy, length, availableLength) {
+        switch (policy) {
+        case T.ScrollBar.AsNeeded:
+            return availableLength > length;
+        case T.ScrollBar.AlwaysOn:
+            return true;
+        case T.ScrollBar.AlwaysOff:
+        default:
+            return false;
+        }
+    }
 
     // TODO: add this sizes to Theme
     implicitWidth: 14
@@ -14,8 +46,8 @@ T.ScrollBar {
     background: null
 
     contentItem: Rectangle {
-        color: root.hovered || root.active ? Theme.palette.primaryColor3 : Theme.palette.baseColor2
-        opacity: enabled ? 1.0 : 0.0
+        color: Theme.palette.primaryColor2
+        opacity: enabled && (root.hovered || root.active) ? 1.0 : 0.0
         radius: Math.min(width, height) / 2
 
         Behavior on opacity { NumberAnimation { duration: 100 } }

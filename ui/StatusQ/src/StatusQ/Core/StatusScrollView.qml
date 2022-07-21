@@ -5,12 +5,12 @@ import StatusQ.Controls 0.1
 
 /*!
    \qmltype StatusScrollView
-   \inherits ScrollView
+   \inherits Flickable
    \inqmlmodule StatusQ.Core
    \since StatusQ.Core 0.1
-   \brief ScrollView wrapper with tuned flickable.
+   \brief ScrollView component based on a Flickable with padding and scrollbars.
 
-   The \c StatusScrollView can be used just like a plain ScrollView but with tuned scrolling parameters.
+   The \c StatusScrollView can be used just like a plain ScrollView but without ability to decarate existing Flickable.
 
    Example of how to use it:
 
@@ -20,29 +20,55 @@ import StatusQ.Controls 0.1
             anchors.fill: parent
 
             ColumnView {
-                width: scrollView.avaiulableWidth
+                width: scrollView.availableWidth
             }
         }
    \endqml
 
    For a list of components available see StatusQ.
 */
-ScrollView {
+Flickable {
     id: root
 
-    clip: true // NOTE: in Qt6 clip true will be default
-    background: null
+    // NOTE: this should be replaced with margins since Qt 5.15
+    property int padding: 8
+    property int topPadding: padding
+    property int bottomPadding: padding
+    property int leftPadding: padding
+    property int rightPadding: padding
 
-    ScrollBar.horizontal.policy: ScrollBar.AsNeeded
-    ScrollBar.vertical.policy: ScrollBar.AsNeeded
+    property Item background: null
 
-    Flickable {
-        id: flickable
+    readonly property int availableWidth: width - leftPadding - rightPadding
+    readonly property int availableHeight: height - topPadding - bottomPadding
 
-        contentWidth: contentItem.childrenRect.width
-        contentHeight: contentItem.childrenRect.height
-        boundsBehavior: Flickable.StopAtBounds
-        maximumFlickVelocity: 0
-        synchronousDrag: true
+    onBackgroundChanged: {
+        if (background) {
+            background.anchors.fill = root;
+        }
+    }
+
+    // NOTE: in Qt6 clip true will be default
+    clip: true
+    topMargin: topPadding
+    bottomMargin: bottomPadding
+    leftMargin: leftPadding
+    rightMargin: rightPadding
+    contentWidth: contentItem.childrenRect.width
+    contentHeight: contentItem.childrenRect.height
+    implicitWidth: contentWidth + leftPadding + rightPadding
+    implicitHeight: contentHeight + topPadding + bottomPadding
+    boundsBehavior: Flickable.StopAtBounds
+    maximumFlickVelocity: 2000
+    synchronousDrag: true
+
+    ScrollBar.horizontal: StatusScrollBar {
+        policy: ScrollBar.AsNeeded
+        visible: resolveVisibility(policy, root.width, root.contentWidth)
+    }
+
+    ScrollBar.vertical: StatusScrollBar {
+        policy: ScrollBar.AsNeeded
+        visible: resolveVisibility(policy, root.height, root.contentHeight)
     }
 }
