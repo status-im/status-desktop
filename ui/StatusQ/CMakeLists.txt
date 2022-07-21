@@ -2,6 +2,11 @@ cmake_minimum_required(VERSION 3.19)
 
 project(StatusQ)
 
+if (APPLE)
+    set(MACOS_VERSION_MIN_FLAGS -mmacosx-version-min=10.14)
+    set(CMAKE_OSX_ARCHITECTURES "x86_64")
+endif()
+
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
