@@ -217,7 +217,7 @@ Item {
                         }
 
                         sourceComponent: ChatContentView {
-                            visible: !root.rootStore.openCreateChat
+                            visible: !root.rootStore.openCreateChat && isActiveChannel
                             width: parent.width
                             height: parent.height
                             clip: true
@@ -274,7 +274,7 @@ Item {
                     }
 
                     sourceComponent: ChatContentView {
-                        visible: !root.rootStore.openCreateChat
+                        visible: !root.rootStore.openCreateChat && isActiveChannel
                         width: parent.width
                         height: parent.height
                         clip: true
