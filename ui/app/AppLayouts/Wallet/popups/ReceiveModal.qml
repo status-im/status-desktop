@@ -127,8 +127,9 @@ StatusModal {
                 id: multiChainList
                 property bool need2Columns: RootStore.enabledNetworks.count >= 9
 
-                anchors.centerIn: parent
-                anchors.horizontalCenterOffset: need2Columns ? 0 : qrCodeBox.width/2 + Style.current.xlPadding + Style.current.halfPadding
+                anchors.left: need2Columns ? undefined: qrCodeBox.right
+                anchors.leftMargin: need2Columns ?undefined : Style.current.halfPadding
+                anchors.centerIn: need2Columns ? parent : undefined
                 height: qrCodeBox.height
 
                 columnSpacing: need2Columns ? qrCodeBox.width + Style.current.bigPadding : 0
