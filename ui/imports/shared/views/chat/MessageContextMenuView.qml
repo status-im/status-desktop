@@ -54,12 +54,13 @@ StatusPopupMenu {
     readonly property bool isMyMutualContact: {
         return root.selectedUserPublicKey !== "" && root.store.contactsStore.isMyMutualContact(root.selectedUserPublicKey);
     }
-    readonly property bool isBlockedContact: {
-        return root.selectedUserPublicKey !== "" && root.store.contactsStore.isBlockedContact(root.selectedUserPublicKey);
-    }
+    readonly property bool isBlockedContact: d.contactDetails && d.contactDetails.isBlocked
     readonly property bool hasPendingContactRequest: {
         return root.selectedUserPublicKey !== "" && root.store.contactsStore.hasPendingContactRequest(root.selectedUserPublicKey);
     }
+
+    readonly property bool userTrustIsUnknown: d.contactDetails && d.contactDetails.trustStatus === Constants.trustStatus.unknown
+    readonly property bool userIsUntrustworthy: d.contactDetails && d.contactDetails.trustStatus === Constants.trustStatus.untrustworthy
 
     property var setXPosition: function() {return 0}
     property var setYPosition: function() {return 0}
@@ -98,6 +99,7 @@ StatusPopupMenu {
     onClosed: {
         // Reset selectedUserPublicKey so that associated properties get recalculated on re-open
         selectedUserPublicKey = ""
+        d.contactDetails = {}
     }
 
     onHeightChanged: { root.y = setYPosition(); }
@@ -108,7 +110,20 @@ StatusPopupMenu {
         y = setYPosition()
     }
 
-    width: Math.max(emojiContainer.visible ? emojiContainer.width : 0, 200)
+    width: Math.max(emojiContainer.visible ? emojiContainer.width : 0, 230)
+
+    onAboutToShow: {
+        if (root.isProfile && root.selectedUserPublicKey !== "") {
+            d.contactDetails = Utils.getContactDetailsAsJson(root.selectedUserPublicKey)
+        } else {
+            d.contactDetails = {}
+        }
+    }
+
+    QtObject {
+        id: d
+        property var contactDetails: ({})
+    }
 
     Item {
         id: emojiContainer
@@ -141,9 +156,15 @@ StatusPopupMenu {
         width: parent.width
         visible: root.isProfile
 
+        displayNameVisible: false
+        displayNamePlusIconsVisible: true
+        editButtonVisible: false
         displayName: root.selectedUserDisplayName
         pubkey: root.selectedUserPublicKey
         icon: root.selectedUserIcon
+        trustStatus: d.contactDetails.trustStatus
+        isContact: root.isMyMutualContact
+        isCurrentUser: root.isMe
     }
 
     Item {
@@ -208,27 +229,6 @@ StatusPopupMenu {
     }
 
     StatusMenuItem {
-        text: qsTr("Block User")
-        icon.name: "cancel"
-        icon.color: Style.current.danger
-        enabled: root.isProfile && !root.isMe && !root.isBlockedContact
-        onTriggered: {
-            root.openProfileClicked(root.selectedUserPublicKey, "blockUser")
-            root.close()
-        }
-    }
-
-    StatusMenuItem {
-        text: qsTr("Unblock User")
-        icon.name: "remove"
-        enabled: root.isProfile && !root.isMe && root.isBlockedContact
-        onTriggered: {
-            root.openProfileClicked(root.selectedUserPublicKey, "unblockUser")
-            root.close()
-        }
-    }
-
-    StatusMenuItem {
         text: qsTr("Rename")
         icon.name: "edit_pencil"
         enabled: root.isProfile && !root.isMe
@@ -236,6 +236,43 @@ StatusPopupMenu {
             root.openProfileClicked(root.selectedUserPublicKey, "openNickname")
             root.close()
         }
+    }
+
+    StatusMenuItem {
+        text: qsTr("Unblock User")
+        icon.name: "remove-circle"
+        enabled: root.isProfile && !root.isMe && root.isBlockedContact
+        onTriggered: root.store.contactsStore.unblockContact(root.selectedUserPublicKey)
+    }
+
+    StatusMenuSeparator {
+        visible: blockMenuItem.enabled || markUntrustworthyMenuItem.enabled || removeUntrustworthyMarkMenuItem.enabled
+    }
+
+    StatusMenuItem {
+        id: markUntrustworthyMenuItem
+        text: qsTr("Mark as Untrustworthy")
+        icon.name: "warning"
+        type: StatusMenuItem.Type.Danger
+        enabled: root.isProfile && !root.isMe && root.userTrustIsUnknown
+        onTriggered: root.store.contactsStore.markUntrustworthy(root.selectedUserPublicKey)
+    }
+
+    StatusMenuItem {
+        id: removeUntrustworthyMarkMenuItem
+        text: qsTr("Remove Untrustworthy Mark")
+        icon.name: "warning"
+        enabled: root.isProfile && !root.isMe && root.userIsUntrustworthy
+        onTriggered: root.store.contactsStore.removeTrustStatus(root.selectedUserPublicKey)
+    }
+
+    StatusMenuItem {
+        id: blockMenuItem
+        text: qsTr("Block User")
+        icon.name: "cancel"
+        type: StatusMenuItem.Type.Danger
+        enabled: root.isProfile && !root.isMe && !root.isBlockedContact
+        onTriggered: root.store.contactsStore.blockContact(root.selectedUserPublicKey)
     }
 
     StatusMenuItem {
