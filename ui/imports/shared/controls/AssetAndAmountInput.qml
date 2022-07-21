@@ -5,8 +5,8 @@ import QtGraphicalEffects 1.13
 
 import utils 1.0
 import shared.stores 1.0
+import shared.panels 1.0
 
-import StatusQ.Controls 0.1
 
 import "../"
 import "../panels"
@@ -161,9 +161,8 @@ Item {
 
     StatusAssetSelector {
          id: selectAsset
-         height: 28
          anchors.top: inputAmount.top
-         anchors.topMargin: Style.current.bigPadding + 14
+         anchors.topMargin: 28
          anchors.right: parent.right
          anchors.rightMargin: Style.current.smallPadding
          defaultToken: Style.png("tokens/DEFAULT-TOKEN@3x")

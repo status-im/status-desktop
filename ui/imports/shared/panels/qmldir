@@ -18,3 +18,4 @@ SVGImage 1.0 SVGImage.qml
 TextWithLabel 1.0 TextWithLabel.qml
 EditCroppedImagePanel 1.0 EditCroppedImagePanel.qml
 NoImageUploadedPanel 1.0 NoImageUploadedPanel.qml
+StatusAssetSelector 1.0 StatusAssetSelector.qml

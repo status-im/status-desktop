@@ -7,8 +7,8 @@ import StatusQ.Controls.Validators 0.1
 
 import utils 1.0
 import shared.stores 1.0
+import shared.panels 1.0
 
-import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
 import StatusQ.Components 0.1
 import StatusQ.Core 0.1
@@ -130,6 +130,7 @@ StatusModal {
                 anchors.left: parent.left
                 anchors.leftMargin: Style.current.xlPadding
                 anchors.rightMargin: Style.current.xlPadding
+                z: 1
 
                 RowLayout {
                     spacing: 16
@@ -270,6 +271,7 @@ StatusModal {
                 anchors.top: border.bottom
                 anchors.topMargin: Style.current.halfPadding
                 anchors.left: parent.left
+                z: 0
 
                 ColumnLayout {
                     width: scrollView.availableWidth
@@ -418,8 +420,10 @@ StatusModal {
 
             TransactionSigner {
                 id: transactionSigner
-                Layout.topMargin: Style.current.smallPadding
-                width: stack.width
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.topMargin: Style.current.smallPadding
+                anchors.margins: 32
                 signingPhrase: popup.store.signingPhrase
             }
         }
