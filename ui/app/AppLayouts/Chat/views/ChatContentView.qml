@@ -25,6 +25,7 @@ import "../stores"
 
 ColumnLayout {
     id: root
+    objectName: "chatContentViewColumn"
     spacing: 0
 
     // Important:
@@ -73,6 +74,7 @@ ColumnLayout {
         id: statusChatInfoButton
 
         StatusChatInfoButton {
+            objectName: "chatInfoBtnInHeader"
             width: Math.min(implicitWidth, parent.width)
             title: chatContentModule? chatContentModule.chatDetails.name : ""
             subTitle: {

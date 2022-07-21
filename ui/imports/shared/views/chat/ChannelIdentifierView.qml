@@ -42,6 +42,7 @@ Column {
 
     StyledText {
         id: channelName
+        objectName: "channelIdentifierNameText"
         wrapMode: Text.Wrap
         text: root.chatName
         font.weight: Font.Bold

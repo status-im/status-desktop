@@ -97,6 +97,7 @@ Item {
 
     StatusListView {
         id: chatLogView
+        objectName: "chatMessageListView"
         anchors.top: loadingMessagesIndicator.bottom
         anchors.bottom: parent.bottom
         anchors.left: parent.left
@@ -243,6 +244,7 @@ Item {
 
         delegate: MessageView {
             id: msgDelegate
+            objectName: "chatMessageViewDelegate"
 
             store: root.store
             messageStore: root.messageStore

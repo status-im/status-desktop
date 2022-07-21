@@ -10,7 +10,6 @@ class MainCommunityPortalScreen(Enum):
 
     
 class CreateCommunityPopup(Enum):
-    SCROLL_BAR: str = "mainWallet_Add_Account_Popup_Main"
     COMMUNITY_NAME_INPUT: str = "createCommunityNameInput_TextEdit"
     COMMUNITY_DESCRIPTION_INPUT: str = "createCommunityDescriptionInput_TextEdit"
     NEXT_SCREEN_BUTTON: str = "createCommunityNextBtn_StatusButton"
@@ -24,7 +23,7 @@ class StatusCommunityPortalScreen:
         verify_screen(MainCommunityPortalScreen.CREATE_COMMUNITY_BUTTON.value)
 
     
-    def createCommunity(self, communityName: str, communityDescription: str, introMessage: str, outroMessage: str):
+    def create_community(self, communityName: str, communityDescription: str, introMessage: str, outroMessage: str):
         click_obj_by_name(MainCommunityPortalScreen.CREATE_COMMUNITY_BUTTON.value)
         
         type(CreateCommunityPopup.COMMUNITY_NAME_INPUT.value, communityName)

@@ -102,6 +102,7 @@ StatusModal {
 
             StatusInput {
                 id: nameInput
+                input.edit.objectName: "createCommunityChannelNameInput"
 
                 anchors.left: parent.left
                 anchors.leftMargin: 16
@@ -208,6 +209,7 @@ StatusModal {
 
             StatusInput {
                 id: descriptionTextArea
+                input.edit.objectName: "createCommunityChannelDescriptionInput"
 
                 anchors.left: parent.left
                 anchors.leftMargin: 16
@@ -284,6 +286,7 @@ StatusModal {
 
     rightButtons: [
         StatusButton {
+            objectName: "createCommunityChannelBtn"
             enabled: isFormValid()
             text: isEdit ?
                   qsTr("Save") :

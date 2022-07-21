@@ -13,7 +13,7 @@ Feature: Status Desktop community
 
     As a user I want to create a community and chat
 
-    The following scenarios cover basic flows of creating a community
+    The following scenarios cover basic flows of a community
 
     Background:
         Given A first time user lands on the status desktop and generates new key
@@ -29,3 +29,15 @@ Feature: Status Desktop community
         Examples:
         | community_name    | community_description   | community_intro  | community_outro  |
         | testCommunity1    | Community tested 1      | My intro for the community | My community outro  |
+
+
+    Scenario Outline: Admin creates a community channel
+    	When the user creates a community named myCommunity, with description My community description, intro Community Intro and outro Community Outro
+		Then the user lands on the community named myCommunity
+        When the admin creates a community channel named <community_channel_name>, with description <community_channel_description>
+        Then the user lands on the community channel named <community_channel_name>
+
+        Examples:
+        | community_channel_name    | community_channel_description   |
+        | test-channel    | Community channel description tested 1      |
+

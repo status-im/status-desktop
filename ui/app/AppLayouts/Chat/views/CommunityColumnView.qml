@@ -39,7 +39,7 @@ Item {
 
     StatusChatInfoButton {
         id: communityHeader
-        objectName: communityHeaderButton
+        objectName: "communityHeaderButton"
         title: communityData.name
         subTitle: communityData.members.count <= 1 ?
                                      qsTr("1 Member") :
@@ -484,6 +484,7 @@ Item {
         active: communityData.amISectionAdmin
         sourceComponent: Component {
             StatusBaseText {
+                objectName: "createChannelOrCategoryBtn"
                 color: Theme.palette.baseColor1
                 height: visible ? implicitHeight : 0
                 text: qsTr("Create channel or category")
@@ -508,12 +509,14 @@ Item {
                     id: createChatOrCatMenu
                     closePolicy: Popup.CloseOnPressOutsideParent
                     StatusMenuItem {
+                        objectName: "createCommunityChannelBtn"
                         text: qsTr("Create channel")
                         icon.name: "channel"
                         onTriggered: Global.openPopup(createChannelPopup)
                     }
 
                     StatusMenuItem {
+                        objectName: "createCommunityCategoryBtn"
                         text: qsTr("Create category")
                         icon.name: "channel-category"
                         onTriggered: Global.openPopup(createCategoryPopup)
