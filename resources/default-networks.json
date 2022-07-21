@@ -1,76 +1,122 @@
 [
-    {
-      "id": "testnet_rpc",
-      "etherscan-link": "https://ropsten.etherscan.io/address/",
-      "name": "Ropsten with upstream RPC",
-      "config": {
-        "NetworkId": 3,
-        "DataDir": "/ethereum/testnet_rpc",
-        "UpstreamConfig": {
-          "Enabled": true,
-          "URL": "https://ropsten.infura.io/v3/%INFURA_KEY%"
-        }
-      }
-    },
-    {
-      "id": "rinkeby_rpc",
-      "etherscan-link": "https://rinkeby.etherscan.io/address/",
-      "name": "Rinkeby with upstream RPC",
-      "config": {
-        "NetworkId": 4,
-        "DataDir": "/ethereum/rinkeby_rpc",
-        "UpstreamConfig": {
-          "Enabled": true,
-          "URL": "https://rinkeby.infura.io/v3/%INFURA_KEY%"
-        }
-      }
-    },
-    {
-      "id": "goerli_rpc",
-      "etherscan-link": "https://goerli.etherscan.io/address/",
-      "name": "Goerli with upstream RPC",
-      "config": {
-        "NetworkId": 5,
-        "DataDir": "/ethereum/goerli_rpc",
-        "UpstreamConfig": {
-          "Enabled": true,
-          "URL": "https://goerli.blockscout.com/"
-        }
-      }
-    },
-    {
-      "id": "mainnet_rpc",
-      "etherscan-link": "https://etherscan.io/address/",
-      "name": "Mainnet with upstream RPC",
-      "config": {
-        "NetworkId": 1,
-        "DataDir": "/ethereum/mainnet_rpc",
-        "UpstreamConfig": {
-          "Enabled": true,
-          "URL": "https://mainnet.infura.io/v3/%INFURA_KEY%"
-        }
-      }
-    },
-    {
-      "id": "xdai_rpc",
-      "name": "xDai Chain",
-      "config": {
-        "NetworkId": 100,
-        "DataDir": "/ethereum/xdai_rpc",
-        "UpstreamConfig": {
-          "Enabled": true,
-          "URL": "https://dai.poa.network"
-        }
-      }
-    },
-    {
-      "id": "poa_rpc",
-      "name": "POA Network",
-      "config": {
-        "NetworkId": 99,
-        "DataDir": "/ethereum/poa_rpc",
-        "UpstreamConfig": { "Enabled": true, "URL": "https://core.poa.network" }
-      }
-    }
-  ]
-  
+  {
+    "chainId": 1,
+    "chainName": "Mainnet",
+    "rpcUrl": "https://mainnet.infura.io/v3/%INFURA_TOKEN_RESOLVED%",
+    "blockExplorerUrl": "https://etherscan.io/",
+    "iconUrl": "network/Network=Ethereum",
+    "chainColor": "#627EEA",
+    "shortName": "eth",
+    "nativeCurrencyName": "Ether",
+    "nativeCurrencySymbol": "ETH",
+    "nativeCurrencyDecimals": 18,
+    "isTest": false,
+    "layer": 1,
+    "enabled": true
+  },
+  {
+    "chainId": 3,
+    "chainName": "Ropsten",
+    "rpcUrl": "https://ropsten.infura.io/v3%INFURA_TOKEN_RESOLVED%",
+    "blockExplorerUrl": "https://ropsten.etherscan.io/",
+    "iconUrl": "network/Network=Tetnet",
+    "chainColor": "#939BA1",
+    "shortName": "ropEth",
+    "nativeCurrencyName": "Ether",
+    "nativeCurrencySymbol": "ETH",
+    "nativeCurrencyDecimals": 18,
+    "isTest": true,
+    "layer": 1,
+    "enabled": true
+  },
+  {
+    "chainId": 4,
+    "chainName": "Rinkeby",
+    "rpcUrl": "https://rinkeby.infura.io/v3/%INFURA_TOKEN_RESOLVED%",
+    "blockExplorerUrl": "https://rinkeby.etherscan.io/",
+    "iconUrl": "network/Network=Tetnet",
+    "chainColor": "#939BA1",
+    "shortName": "rinEth",
+    "nativeCurrencyName": "Ether",
+    "nativeCurrencySymbol": "ETH",
+    "nativeCurrencyDecimals": 18,
+    "isTest": true,
+    "layer": 1,
+    "enabled": false
+  },
+  {
+    "chainId": 5,
+    "chainName": "Goerli",
+    "rpcUrl": "http://goerli.blockscout.com/",
+    "blockExplorerUrl": "https://goerli.etherscan.io/",
+    "iconUrl": "network/Network=Tetnet",
+    "chainColor": "#939BA1",
+    "shortName": "goeEth",
+    "nativeCurrencyName": "Ether",
+    "nativeCurrencySymbol": "ETH",
+    "nativeCurrencyDecimals": 18,
+    "isTest": true,
+    "layer": 1,
+    "enabled": false
+  },
+  {
+    "chainId": 10,
+    "chainName": "Optimism",
+    "rpcUrl": "https://optimism-mainnet.infura.io/v3/%INFURA_TOKEN_RESOLVED%",
+    "blockExplorerUrl": "https://optimistic.etherscan.io",
+    "iconUrl": "network/Network=Optimism",
+    "chainColor": "#E90101",
+    "shortName": "opt",
+    "nativeCurrencyName": "Ether",
+    "nativeCurrencySymbol": "ETH",
+    "nativeCurrencyDecimals": 18,
+    "isTest":  false,
+    "layer":   2,
+    "enabled": true
+  },
+  {
+    "chainId": 69,
+    "chainName": "Optimism Kovan",
+    "rpcUrl": "https://optimism-kovan.infura.io/v3/%INFURA_TOKEN_RESOLVED%",
+    "blockExplorerUrl": "https://kovan-optimistic.etherscan.io",
+    "iconUrl": "network/Network=Tetnet",
+    "chainColor": "#939BA1",
+    "shortName": "kovOpt",
+    "nativeCurrencyName": "Ether",
+    "nativeCurrencySymbol": "ETH",
+    "nativeCurrencyDecimals": 18,
+    "isTest":  true,
+    "layer":   2,
+    "enabled": false
+  },
+  {
+    "chainId": 42161,
+    "chainName": "Arbitrum",
+    "rpcUrl": "https://arbitrum-mainnet.infura.io/v3/%INFURA_TOKEN_RESOLVED%",
+    "blockExplorerUrl": "https://arbiscan.io/",
+    "iconUrl": "network/Network=Arbitrum",
+    "chainColor": "#51D0F0",
+    "shortName": "arb",
+    "nativeCurrencyName": "Ether",
+    "nativeCurrencySymbol": "ETH",
+    "nativeCurrencyDecimals": 18,
+    "isTest":  false,
+    "layer":   2,
+    "enabled": true
+  },
+  {
+    "chainId": 421611,
+    "chainName": "Arbitrum Rinkeby",
+    "rpcUrl": "https://arbitrum-rinkeby.infura.io/v3/%INFURA_TOKEN_RESOLVED%",
+    "blockExplorerUrl": " https://testnet.arbiscan.io",
+    "iconUrl": "network/Network=Tetnet",
+    "chainColor": "#939BA1",
+    "shortName": "rinArb",
+    "nativeCurrencyName": "Ether",
+    "nativeCurrencySymbol": "ETH",
+    "nativeCurrencyDecimals": 18,
+    "isTest":  true,
+    "layer":   2,
+    "enabled": false
+  }
+]

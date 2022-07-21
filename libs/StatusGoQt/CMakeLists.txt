@@ -90,7 +90,12 @@ target_sources(${PROJECT_NAME}
         ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusGo/SignalsManager.h
         ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusGo/SignalsManager.cpp
 
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusGo/Wallet/BigInt.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusGo/Wallet/BigInt.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusGo/Wallet/DerivedAddress.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusGo/Wallet/NetworkConfiguration.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusGo/Wallet/Token.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusGo/Wallet/wallet_types.h
         ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusGo/Wallet/WalletApi.h
         ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusGo/Wallet/WalletApi.cpp
 )

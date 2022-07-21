@@ -139,14 +139,10 @@ QString AccountsService::login(MultiAccount account, const QString& password)
 
     auto hashedPassword(Utils::hashPassword(password));
 
-    QString installationId(QUuid::createUuid().toString(QUuid::WithoutBraces));
-    QJsonObject nodeConfig(getDefaultNodeConfig(installationId));
-
     QString thumbnailImage;
     QString largeImage;
-    // TODO DEV
     auto response = StatusGo::Accounts::login(account.name, account.keyUid, hashedPassword,
-                                             thumbnailImage, largeImage/*, nodeConfig*/);
+                                             thumbnailImage, largeImage);
     if(response.containsError())
     {
         qWarning() << response.error.message;
@@ -311,12 +307,6 @@ QJsonObject AccountsService::prepareAccountSettingsJsonObject(const GeneratedMul
                                                       const QString& displayName) const
 {
     try {
-        auto templateDefaultNetworksJson = getDataFromFile(":/Status/StaticConfig/default-networks.json").value();
-        auto infuraKey = getDataFromFile(":/Status/StaticConfig/infura_key").value();
-
-        QString defaultNetworksContent = templateDefaultNetworksJson.replace("%INFURA_KEY%", infuraKey);
-        QJsonArray defaultNetworksJson = QJsonDocument::fromJson(defaultNetworksContent.toUtf8()).array();
-
         return QJsonObject{
             {"key-uid", account.keyUid},
             {"mnemonic", account.mnemonic},
@@ -332,15 +322,9 @@ QJsonObject AccountsService::prepareAccountSettingsJsonObject(const GeneratedMul
             {"log-level", "INFO"},
             {"latest-derived-path", 0},
             {"currency", "usd"},
-            //{"networks/networks", defaultNetworksJson},
             {"networks/networks", QJsonArray()},
-            //{"networks/current-network", Constants::General::DefaultNetworkName},
             {"networks/current-network", ""},
             {"wallet/visible-tokens", QJsonObject()},
-            //{"wallet/visible-tokens", {
-            //        {Constants::General::DefaultNetworkName, QJsonArray{"SNT"}}
-            //    }
-            //},
             {"waku-enabled", true},
             {"appearance", 0},
             {"installation-id", installationId}
@@ -388,25 +372,48 @@ QJsonObject AccountsService::getDefaultNodeConfig(const QString& installationId)
         auto fleetJson = getDataFromFile(":/Status/StaticConfig/fleets.json").value();
         auto infuraKey = getDataFromFile(":/Status/StaticConfig/infura_key").value();
 
-        auto nodeConfigJsonStr = templateNodeConfigJsonStr.replace("%INSTALLATIONID%", installationId)
-                .replace("%INFURA_KEY%", infuraKey);
-        QJsonObject nodeConfigJson = QJsonDocument::fromJson(nodeConfigJsonStr.toUtf8()).object();
-        QJsonObject clusterConfig = nodeConfigJson["ClusterConfig"].toObject();
+        auto templateDefaultNetworksJson = getDataFromFile(":/Status/StaticConfig/default-networks.json").value();
+        QString defaultNetworksContent = templateDefaultNetworksJson.replace("%INFURA_TOKEN_RESOLVED%", infuraKey);
+        QJsonArray defaultNetworksJson = QJsonDocument::fromJson(defaultNetworksContent.toUtf8()).array();
 
+        auto DEFAULT_TORRENT_CONFIG_PORT = 9025;
+        auto DEFAULT_TORRENT_CONFIG_DATADIR = m_statusgoDataDir / "archivedata";
+        auto DEFAULT_TORRENT_CONFIG_TORRENTDIR = m_statusgoDataDir / "torrents";
+
+        auto nodeConfigJsonStr = templateNodeConfigJsonStr
+                .replace("%INSTALLATIONID%", installationId)
+                .replace("%INFURA_TOKEN_RESOLVED%", infuraKey)
+                .replace("%DEFAULT_TORRENT_CONFIG_PORT%", QString::number(DEFAULT_TORRENT_CONFIG_PORT))
+                .replace("%DEFAULT_TORRENT_CONFIG_DATADIR%", DEFAULT_TORRENT_CONFIG_DATADIR.c_str())
+                .replace("%DEFAULT_TORRENT_CONFIG_TORRENTDIR%", DEFAULT_TORRENT_CONFIG_TORRENTDIR.c_str());
+        QJsonObject nodeConfigJson = QJsonDocument::fromJson(nodeConfigJsonStr.toUtf8()).object();
+
+        QJsonObject clusterConfig = nodeConfigJson["ClusterConfig"].toObject();
         QJsonObject fleetsJson = QJsonDocument::fromJson(fleetJson.toUtf8()).object()["fleets"].toObject();
         auto fleet = fleetsJson[Constants::Fleet::Prod].toObject();
-
         clusterConfig["Fleet"] = Constants::Fleet::Prod;
         clusterConfig["BootNodes"] = getNodes(fleet, Constants::FleetNodes::Bootnodes);
         clusterConfig["TrustedMailServers"] = getNodes(fleet, Constants::FleetNodes::Mailservers);
         clusterConfig["StaticNodes"] = getNodes(fleet, Constants::FleetNodes::Whisper);
         clusterConfig["RendezvousNodes"] = getNodes(fleet, Constants::FleetNodes::Rendezvous);
+        clusterConfig["DiscV5BootstrapNodes"] = QJsonArray();
         clusterConfig["RelayNodes"] = getNodes(fleet, Constants::FleetNodes::Waku);
         clusterConfig["StoreNodes"] = getNodes(fleet, Constants::FleetNodes::Waku);
         clusterConfig["FilterNodes"] = getNodes(fleet, Constants::FleetNodes::Waku);
         clusterConfig["LightpushNodes"] = getNodes(fleet, Constants::FleetNodes::Waku);
 
         nodeConfigJson["ClusterConfig"] = clusterConfig;
+
+        nodeConfigJson["NetworkId"] = defaultNetworksJson[0].toObject()["chainId"];
+        nodeConfigJson["DataDir"] = "ethereum";
+        auto upstreamConfig = nodeConfigJson["UpstreamConfig"].toObject();
+        upstreamConfig["Enabled"] = true;
+        upstreamConfig["URL"] = defaultNetworksJson[0].toObject()["rpcUrl"];
+        nodeConfigJson["UpstreamConfig"] = upstreamConfig;
+        auto shhextConfig = nodeConfigJson["ShhextConfig"].toObject();
+        shhextConfig["InstallationID"] = installationId;
+        nodeConfigJson["ShhextConfig"] = shhextConfig;
+        nodeConfigJson["Networks"] = defaultNetworksJson;
 
         nodeConfigJson["KeyStoreDir"] = toQString(fs::relative(m_keyStoreDir, m_statusgoDataDir));
         return nodeConfigJson;

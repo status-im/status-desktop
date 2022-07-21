@@ -1,8 +1,11 @@
 #pragma once
 
+#include "helpers.h"
 
 #include <QString>
+#include <QByteArray>
 #include <QColor>
+#include <QUrl>
 
 #include <filesystem>
 
@@ -31,6 +34,23 @@ struct adl_serializer<QString> {
     }
 };
 
+using namespace std::string_literals;
+
+template<>
+struct adl_serializer<QByteArray> {
+    static void to_json(json& j, const QByteArray& data) {
+        j = data.toStdString();
+    }
+
+    static void from_json(const json& j, QByteArray& data) {
+        auto str = j.get<std::string>();
+        if(str.size() >= 2 && Status::Helpers::iequals(str, "0x"s, 2))
+            data = QByteArray::fromHex(QByteArray::fromRawData(str.c_str() + 2 * sizeof(str[0]), str.size() - 2));
+        else
+            data = QByteArray::fromStdString(str);
+    }
+};
+
 template<>
 struct adl_serializer<QColor> {
     static void to_json(json& j, const QColor& color) {
@@ -38,7 +58,18 @@ struct adl_serializer<QColor> {
     }
 
     static void from_json(const json& j, QColor& color) {
-        color = QColor(Status::toQString(j.get<std::string>()));
+        color = QColor(QString::fromStdString(j.get<std::string>()));
+    }
+};
+
+template<>
+struct adl_serializer<QUrl> {
+    static void to_json(json& j, const QUrl& url) {
+        j = url.toString();
+    }
+
+    static void from_json(const json& j, QUrl& url) {
+        url = QUrl(QString::fromStdString(j.get<std::string>()));
     }
 };
 

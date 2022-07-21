@@ -22,8 +22,9 @@ const char* statusGoCallPrivateRPC(const char* inputJSON) {
 
 HashedPassword hashPassword(const QString &str)
 {
+    // TODO: is utf8 the standard used by NIM also? Will it unlock DBs encrypted with NIM password hashing?
     return HashedPassword("0x" + QString::fromUtf8(QCryptographicHash::hash(str.toUtf8(),
-                                                             QCryptographicHash::Keccak_256).toHex()));
+                                                   QCryptographicHash::Keccak_256).toHex().toUpper()));
 }
 
 std::optional<RpcError> getRPCErrorInJson(const QJsonObject& json)

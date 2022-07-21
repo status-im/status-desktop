@@ -29,15 +29,17 @@ public:
     constexpr T& get() { return m_value; }
     constexpr std::remove_reference_t<T> const& get() const {return m_value; }
 
-    bool operator<(const NamedType<T, Parameter> &) const = default;
-    bool operator>(const NamedType<T, Parameter> &) const = default;
-    bool operator<=(const NamedType<T, Parameter> &) const = default;
-    bool operator>=(const NamedType<T, Parameter> &) const = default;
-    bool operator==(const NamedType<T, Parameter> &) const = default;
-    bool operator!=(const NamedType<T, Parameter> &) const = default;
+    bool operator<(const NamedType<T, Parameter> &other) const { return m_value < other.m_value; };
+    bool operator>(const NamedType<T, Parameter> &other) const { return m_value > other.m_value; };
+    bool operator<=(const NamedType<T, Parameter> &other) const { return m_value <= other.m_value; };
+    bool operator>=(const NamedType<T, Parameter> &other) const { return m_value >= other.m_value; };
+    bool operator==(const NamedType<T, Parameter> &other) const { return m_value == other.m_value; };
+    bool operator!=(const NamedType<T, Parameter> &other) const { return m_value != other.m_value; };
+
+    T &operator=(const NamedType<T, Parameter> &r) { return m_value = r.m_value; };
 
 private:
-    T m_value;
+    T m_value{};
 };
 
 template <typename T, typename P>
@@ -59,7 +61,6 @@ template <typename T, typename Parameter>
 struct hash<Status::Helpers::NamedType<T, Parameter>>
 {
     using NamedType = Status::Helpers::NamedType<T, Parameter>;
-    using checkIfHashable = typename std::enable_if<NamedType::is_hashable, void>::type;
 
     size_t operator()(NamedType const& x) const
     {
@@ -67,4 +68,4 @@ struct hash<Status::Helpers::NamedType<T, Parameter>>
     }
 };
 
-}
+} // namespace std
