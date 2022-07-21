@@ -37,20 +37,26 @@
     "MaxMessageDeliveryAttempts": 6,
     "PFSEnabled": true,
     "VerifyENSContractAddress": "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e",
-    "VerifyENSURL": "https://mainnet.infura.io/v3/%INFURA_KEY%",
+    "VerifyENSURL": "https://mainnet.infura.io/v3/%INFURA_TOKEN_RESOLVED%",
     "VerifyTransactionChainID": 1,
-    "VerifyTransactionURL": "https://mainnet.infura.io/v3/%INFURA_KEY%",
+    "VerifyTransactionURL": "https://mainnet.infura.io/v3/%INFURA_TOKEN_RESOLVED%",
     "BandwidthStatsEnabled": true
+  },
+  "Web3ProviderConfig": {
+    "Enabled": true
+  },
+  "EnsConfig": {
+    "Enabled": true
   },
   "StatusAccountsConfig": {
     "Enabled": true
   },
   "UpstreamConfig": {
     "Enabled": true,
-    "URL": "https://mainnet.infura.io/v3/%INFURA_KEY%"
+    "URL": "https://mainnet.infura.io/v3/%INFURA_TOKEN_RESOLVED%"
   },
   "WakuConfig": {
-    "BloomFilterMode": null,
+    "BloomFilterMode": true,
     "Enabled": true,
     "LightClient": true,
     "MinimumPoW": 0.001
@@ -59,9 +65,25 @@
     "Enabled": false,
     "Host": "0.0.0.0",
     "Port": 0,
-    "LightClient": false
+    "LightClient": false,
+    "PersistPeers": true,
+    "EnableDiscV5": true,
+    "UDPPort": 0,
+    "PeerExchange": true,
+    "AutoUpdate": true
   },
   "WalletConfig": {
+    "Enabled": true,
+    "OpenseaAPIKey": ""
+  },
+  "EnsConfig": {
     "Enabled": true
+  },
+  "Networks": [],
+  "TorrentConfig": {
+    "Enabled": false,
+    "Port": %DEFAULT_TORRENT_CONFIG_PORT%,
+    "DataDir": "%DEFAULT_TORRENT_CONFIG_DATADIR%",
+    "TorrentDir": "%DEFAULT_TORRENT_CONFIG_TORRENTDIR%"
   }
 }

@@ -9,6 +9,6 @@ Item {
 
     Label {
         anchors.centerIn: parent
-        text: "$$$$$"
+        text: asset.name
     }
 }

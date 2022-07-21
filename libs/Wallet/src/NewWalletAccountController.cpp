@@ -31,9 +31,6 @@ NewWalletAccountController::NewWalletAccountController(std::shared_ptr<Helpers::
 {
 }
 
-NewWalletAccountController::~NewWalletAccountController()
-{
-}
 
 QAbstractListModel* NewWalletAccountController::mainAccountsModel()
 {
@@ -58,10 +55,10 @@ void NewWalletAccountController::setDerivationPath(const QString &newDerivationP
     emit derivationPathChanged();
 
     auto oldCustom = m_customDerivationPath;
-    auto found = searchDerivationPath(m_derivationPath);
-    m_customDerivationPath = std::get<0>(found) == nullptr;
-    if(!m_customDerivationPath && !std::get<0>(found).get()->alreadyCreated())
-        updateSelectedDerivedAddress(std::get<1>(found), std::get<0>(found));
+    const auto &[derivedPath, index]= searchDerivationPath(m_derivationPath);
+    m_customDerivationPath = derivedPath == nullptr;
+    if(!m_customDerivationPath && !derivedPath.get()->alreadyCreated())
+        updateSelectedDerivedAddress(index, derivedPath);
 
     if(m_customDerivationPath != oldCustom)
         emit customDerivationPathChanged();

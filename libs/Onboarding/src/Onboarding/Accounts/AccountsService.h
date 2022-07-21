@@ -46,6 +46,8 @@ public:
     /// \see ServiceInterface
     bool setKeyStoreDir(const QString &key) override;
 
+    /// \todo login@src/app_service/service/accounts/service.nim adds custom configuration for defaults
+    ///       to account for legacy user DBs. See if this is required to replicate or add proper migration logic
     QString login(MultiAccount account, const QString& password) override;
 
     void clear() override;

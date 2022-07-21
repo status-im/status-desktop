@@ -1,0 +1,42 @@
+#pragma once
+
+#include "wallet_types.h"
+
+#include <nlohmann/json.hpp>
+
+#include <QString>
+#include <QUrl>
+
+#include <vector>
+
+using json = nlohmann::json;
+
+/// \note not sure if this is the best namespace, ok for now
+namespace Status::StatusGo::Wallet {
+
+/// \note equivalent of status-go's Network@config.go (params package)
+struct NetworkConfiguration
+{
+    ChainID chainId;
+    QString chainName;
+    QUrl rpcUrl;
+    std::optional<QUrl> blockExplorerUrl;
+    std::optional<QUrl> iconUrl;
+    std::optional<QString> nativeCurrencyName;
+    std::optional<QString> nativeCurrencySymbol;
+    unsigned int nativeCurrencyDecimals{};
+    bool isTest{};
+    unsigned int layer{};
+    bool enabled{};
+    QColor chainColor;
+    QString shortName;
+};
+
+using NetworkConfigurations = std::vector<NetworkConfiguration>;
+
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(NetworkConfiguration, chainId, chainName, rpcUrl, blockExplorerUrl,
+                                   iconUrl, nativeCurrencyName, nativeCurrencySymbol,
+                                   nativeCurrencyDecimals, isTest, layer, enabled, chainColor,
+                                   shortName);
+
+}

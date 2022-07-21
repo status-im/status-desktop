@@ -12,9 +12,6 @@ add_executable(TestOnboardingQml
     "main.cpp"
 )
 
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
 # no need to copy around qml test files for shadow builds - just set the respective define
 add_compile_definitions(QUICK_TEST_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
 

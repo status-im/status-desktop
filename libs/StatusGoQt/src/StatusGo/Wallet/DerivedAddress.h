@@ -16,11 +16,9 @@ using json = nlohmann::json;
 
 namespace Status::StatusGo::Wallet {
 
-/*!
- * \brief Define a derived address as returned by the corresponding API
- * \note equivalent of status-go's DerivedAddress@api.go
- * \see \c getDerivedAddressesForPath
- */
+/// \brief Define a derived address as returned by the corresponding API
+/// \note equivalent of status-go's DerivedAddress@api.go
+/// \see \c getDerivedAddressesForPath
 struct DerivedAddress
 {
     Accounts::EOAddress address;

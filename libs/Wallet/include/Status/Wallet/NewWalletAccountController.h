@@ -34,7 +34,6 @@ public:
 
     /// \note On account creation \c accounts are updated with the newly created wallet account
     NewWalletAccountController(std::shared_ptr<AccountsModel> accounts);
-    ~NewWalletAccountController();
 
     /// Called by QML engine to register the instance. QML takes ownership of the instance
     static NewWalletAccountController *create(QQmlEngine *qmlEngine, QJSEngine *jsEngine);
