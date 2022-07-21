@@ -5,8 +5,6 @@ import ../../constants
 # Local Account Settings keys:
 const LS_KEY_STORE_TO_KEYCHAIN* = "storeToKeychain"
 const DEFAULT_STORE_TO_KEYCHAIN = "notNow"
-const LS_KEY_IS_KEYCARD_ENABLED* = "isKeycardEnabled"
-const DEFAULT_IS_KEYCARD_ENABLED = false
 # Local Account Settings values:
 const LS_VALUE_STORE* = "store"
 const LS_VALUE_NOTNOW* = "notNow"
@@ -35,23 +33,17 @@ QtObject:
   proc setFileName*(self: LocalAccountSettings, fileName: string) =
     if(not self.settings.isNil):
       self.settings.delete
-
     let filePath = os.joinPath(self.settingsFileDir, fileName)
     self.settings = newQSettings(filePath, QSettingsFormat.IniFormat)
 
   proc storeToKeychainValueChanged*(self: LocalAccountSettings) {.signal.}
-  proc isKeycardEnabledChanged*(self: LocalAccountSettings) {.signal.}
 
   proc removeKey*(self: LocalAccountSettings, key: string) =
     if(self.settings.isNil):
       return
-
     self.settings.remove(key)
-
     if(key == LS_KEY_STORE_TO_KEYCHAIN):
       self.storeToKeychainValueChanged()
-    elif(key == LS_KEY_IS_KEYCARD_ENABLED):
-      self.isKeycardEnabledChanged()
 
   proc getStoreToKeychainValue*(self: LocalAccountSettings): string {.slot.} =
     if(self.settings.isNil):
@@ -70,22 +62,3 @@ QtObject:
     read = getStoreToKeychainValue
     write = setStoreToKeychainValue
     notify = storeToKeychainValueChanged
-
-
-  proc getIsKeycardEnabled*(self: LocalAccountSettings): bool {.slot.} =
-    if(self.settings.isNil):
-      return DEFAULT_IS_KEYCARD_ENABLED
-
-    self.settings.value(LS_KEY_IS_KEYCARD_ENABLED).boolVal
-
-  proc setIsKeycardEnabled*(self: LocalAccountSettings, value: bool) {.slot.} =
-    if(self.settings.isNil):
-      return
-
-    self.settings.setValue(LS_KEY_IS_KEYCARD_ENABLED, newQVariant(value))
-    self.isKeycardEnabledChanged()
-
-  QtProperty[bool] isKeycardEnabled:
-    read = getIsKeycardEnabled
-    write = setIsKeycardEnabled
-    notify = isKeycardEnabledChanged

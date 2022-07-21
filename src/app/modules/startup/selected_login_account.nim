@@ -26,30 +26,35 @@ QtObject:
 
   proc getKeyUid(self: SelectedLoginAccount): string {.slot.} =
     return self.item.getKeyUid()
-
   QtProperty[string] keyUid:
     read = getKeyUid
 
+  proc getKeycardPairing(self: SelectedLoginAccount): string {.slot.} =
+    return self.item.getKeycardPairing()
+  QtProperty[string] keycardPairing:
+    read = getKeycardPairing
+
+  proc getKeycardCreatedAccount(self: SelectedLoginAccount): bool {.slot.} =
+    return self.item.getKeycardPairing().len > 0
+  QtProperty[bool] keycardCreatedAccount:
+    read = getKeycardCreatedAccount
+
   proc getColorHash(self: SelectedLoginAccount): QVariant {.slot.} =
     return self.item.getColorHashVariant()
-
   QtProperty[QVariant] colorHash:
     read = getColorHash
 
   proc getColorId(self: SelectedLoginAccount): int {.slot.} =
     return self.item.getColorId()
-
   QtProperty[int] colorId:
     read = getColorId
 
   proc getThumbnailImage(self: SelectedLoginAccount): string {.slot.} =
     return self.item.getThumbnailImage()
-
   QtProperty[string] thumbnailImage:
     read = getThumbnailImage
 
   proc getLargeImage(self: SelectedLoginAccount): string {.slot.} =
     return self.item.getLargeImage()
-
   QtProperty[string] largeImage:
     read = getLargeImage

@@ -163,18 +163,6 @@ SettingsContentBase {
                 }
             }
 
-            // TODO: replace with StatusQ component
-            StatusSettingsLineButton {
-                anchors.leftMargin: 0
-                anchors.rightMargin: 0
-                text: qsTr("Keycard")
-                isSwitch: true
-                switchChecked: localAccountSettings.isKeycardEnabled
-                onClicked: {
-                    root.advancedStore.toggleExperimentalFeature(root.advancedStore.experimentalFeatures.keycard)
-                }
-            }
-
             StatusSectionHeadline {
                 anchors.left: parent.left
                 anchors.right: parent.right

@@ -25,7 +25,7 @@ StatusModal {
     function onChangePasswordResponse(success, errorMsg) {
         if (success) {
             if (Qt.platform.os === "osx") {
-                localAccountSettings.storeToKeychainValue = Constants.storeToKeychainValueStore;
+                localAccountSettings.storeToKeychainValue = Constants.keychain.storedValue.store;
                 root.privacyStore.storeToKeyChain(d.passwordProcessing);
             }
             passwordChanged()

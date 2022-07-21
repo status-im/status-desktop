@@ -31,7 +31,6 @@ QtObject {
         readonly property string nodeManagement: "nodeManagement"
         readonly property string onlineUsers: "onlineUsers"
         readonly property string gifWidget: "gifWidget"
-        readonly property string keycard: "keycard"
         readonly property string communityHistoryArchiveSupport: "communityHistoryArchiveSupport"
         readonly property string communitiesPortal: "communitiesPortal"
     }
@@ -131,9 +130,5 @@ QtObject {
         else if (feature === experimentalFeatures.gifWidget) {
             localAccountSensitiveSettings.isGifWidgetEnabled = !localAccountSensitiveSettings.isGifWidgetEnabled
         }
-        else if (feature === experimentalFeatures.keycard) {
-            localAccountSettings.isKeycardEnabled = !localAccountSettings.isKeycardEnabled
-        }
-        
     }
 }

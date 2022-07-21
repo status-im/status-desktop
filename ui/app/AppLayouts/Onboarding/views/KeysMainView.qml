@@ -86,6 +86,7 @@ Item {
                 id: keycardLink
                 Layout.alignment: Qt.AlignHCenter
                 color: Theme.palette.primaryColor1
+                font.pixelSize: 15
                 MouseArea {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
@@ -148,10 +149,10 @@ Item {
                 //TODO remove when sync code is implemented
                 opacity: 0.0
             }
-//            PropertyChanges {
-//                target: keycardLink
-//                text: qsTr("Login with Keycard")
-//            }
+            PropertyChanges {
+                target: keycardLink
+                text: qsTr("Login with Keycard")
+            }
             PropertyChanges {
                 target: seedLink
                 text: qsTr("Enter a seed phrase")
@@ -179,10 +180,10 @@ Item {
                 //TODO remove when sync code is implemented
                 opacity: 1.0
             }
-//            PropertyChanges {
-//                target: keycardLink
-//                text: qsTr("Generate keys for a new Keycard")
-//            }
+            PropertyChanges {
+                target: keycardLink
+                text: qsTr("Generate keys for a new Keycard")
+            }
             PropertyChanges {
                 target: seedLink
                 text: qsTr("Import a seed phrase")
@@ -217,10 +218,10 @@ Item {
                 //TODO remove when sync code is implemented
                 opacity: 1.0
             }
-//            PropertyChanges {
-//                target: keycardLink
-//                text: qsTr("Import a seed phrase into a new Keycard")
-//            }
+            PropertyChanges {
+                target: keycardLink
+                text: qsTr("Import a seed phrase into a new Keycard")
+            }
             PropertyChanges {
                 target: seedLink
                 text: ""

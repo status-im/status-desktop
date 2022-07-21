@@ -1,7 +1,3 @@
-import state
-import ../controller
-import user_profile_chat_key_state
-
 type
   UserProfileCreateState* = ref object of State
 
@@ -12,8 +8,8 @@ proc newUserProfileCreateState*(flowType: FlowType, backState: State): UserProfi
 proc delete*(self: UserProfileCreateState) =
   self.State.delete
 
-method getNextPrimaryState*(self: UserProfileCreateState): State =
-  return newUserProfileChatKeyState(self.State.flowType, self)
+method getNextPrimaryState*(self: UserProfileCreateState, controller: Controller): State =
+  return createState(StateType.UserProfileChatKey, self.flowType, self)
 
 method executeBackCommand*(self: UserProfileCreateState, controller: Controller) =
   controller.setDisplayName("")
