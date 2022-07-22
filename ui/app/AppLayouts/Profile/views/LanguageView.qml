@@ -8,11 +8,14 @@ import shared.popups 1.0
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Core.Utils 0.1 as StatusQUtils
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 
 import "../popups"
 import "../stores"
+
+import SortFilterProxyModel 0.2
 
 SettingsContentBase {
     id: root
@@ -25,7 +28,6 @@ SettingsContentBase {
 
     Component.onCompleted: {
         root.currencyStore.updateCurrenciesModel()
-        root.languageStore.initializeLanguageModel()
     }
 
     function setViewIdleState() {
@@ -111,16 +113,48 @@ SettingsContentBase {
                     }
                 }
 
+                inputList: SortFilterProxyModel {
+                    id: languageModel
+
+                    sourceModel: root.languageStore.languageModel
+
+                    function imageSourceForEmoji(emoji) {
+                        return StatusQUtils.Emoji.iconSource(emoji)
+                    }
+
+                    proxyRoles: [
+                        ExpressionRole {
+                            name: "key"
+                            expression: model.locale
+                        },
+                        ExpressionRole {
+                            name: "shortName"
+                            expression: model.native
+                        },
+                        ExpressionRole {
+                            name: "category"
+                            expression: ""
+                        },
+                        ExpressionRole {
+                            name: "selected"
+                            expression: model.locale == root.languageStore.currentLocale
+                        },
+                        ExpressionRole {
+                            name: "imageSource"
+                            expression: languageModel.imageSourceForEmoji(model.flag)
+                        }
+                    ]
+                }
+
                 z: root.z + 1
                 width: 104
                 height: parent.height
                 anchors.right: parent.right
-                inputList: root.languageStore.languageModel
                 placeholderSearchText: qsTr("Search Languages")
                 maxPickerHeight: 350
 
                 onItemPickerChanged: {
-                    if(selected && localAppSettings.locale !== key) {
+                    if(selected && root.languageStore.currentLocale !== key) {
                         // TEMPORARY: It should be removed as it is only used in Linux OS but it must be investigated how to change language in execution time, as well, in Linux (will be addressed in another task)
                         if (Qt.platform.os === Constants.linux) {
                             linuxConfirmationDialog.active = true
