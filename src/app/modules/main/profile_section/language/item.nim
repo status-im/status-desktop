@@ -15,10 +15,10 @@ proc locale*(self: Item): string {.inline.} =
   self.locale
 
 proc name*(self: Item): string {.inline.} =
-  self.locale
+  self.name
 
 proc native*(self: Item): string {.inline.} =
-  self.locale
+  self.native
 
 proc flag*(self: Item): string {.inline.} =
-  self.locale
+  self.flag

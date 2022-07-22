@@ -23,8 +23,9 @@ type
 proc delete*(self: Service) =
   discard
 
-proc newService*(): Service =
+proc newService*(events: EventEmitter): Service =
   result = Service()
+  result.events = events
   result.shouldRetranslate = not defined(linux)
 
 proc obtainLocales(dir: string): seq[string] =
