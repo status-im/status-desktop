@@ -74,7 +74,7 @@ Column {
 
         type: StatusExpandableItem.Type.Secondary
         expandable: true
-        image.source: "https://pbs.twimg.com/profile_images/1369221718338895873/T_5fny6o_400x400.jpg"
+        image.source: "qrc:/demoapp/data/profile-image-1.jpeg"
         primaryText: "CryptoKitties"
         additionalText: "1456 USD"
         expandableComponent: notImplemented
@@ -85,7 +85,7 @@ Column {
 
         type: StatusExpandableItem.Type.Secondary
         expandable: true
-        image.source: "https://pbs.twimg.com/profile_images/1369221718338895873/T_5fny6o_400x400.jpg"
+        image.source: "qrc:/demoapp/data/profile-image-1.jpeg"
         primaryText: "Adding Really long text to test scenario of having very long text along with tertiary text"
         additionalText: "564.90 USD"
         expandableComponent: notImplemented

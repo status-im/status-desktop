@@ -32,14 +32,14 @@ GridLayout {
     }
 
     StatusIconTabButton {
-        icon.source: "https://pbs.twimg.com/profile_images/1369221718338895873/T_5fny6o_400x400.jpg"
+        icon.source: "qrc:/demoapp/data/profile-image-1.jpeg"
     }
 
     StatusIconTabButton {
         icon.color: Theme.palette.miscColor9
         // This icon source is flawed and demonstrates the fallback case
         // when the image source can't be loaded
-        icon.source: "https://pbs.twimg.com/profile_images/1369221718338895873/T_5fny6o_400x400.jp"
+        icon.source: "https://httpstat.us/404"
         name: "Pascal"
     }
 
@@ -86,7 +86,7 @@ GridLayout {
     }
 
     StatusNavBarTabButton {
-        icon.source: "https://pbs.twimg.com/profile_images/1369221718338895873/T_5fny6o_400x400.jpg"
+        icon.source: "qrc:/demoapp/data/profile-image-1.jpeg"
         tooltip.text: "Some Community"
     }
 
@@ -124,7 +124,7 @@ GridLayout {
         title: "Iuri Matias"
         subTitle: "Contact"
         icon.color: Theme.palette.miscColor7
-        image.source: "https://pbs.twimg.com/profile_images/1369221718338895873/T_5fny6o_400x400.jpg"
+        image.source: "qrc:/demoapp/data/profile-image-1.jpeg"
         type: StatusChatInfoButton.Type.OneToOneChat
         muted: true
         pinnedMessagesCount: 1
@@ -137,7 +137,7 @@ GridLayout {
             title: "Iuri Matias elided"
             subTitle: "Contact"
             icon.color: Theme.palette.miscColor7
-            image.source: "https://pbs.twimg.com/profile_images/1369221718338895873/T_5fny6o_400x400.jpg"
+            image.source: "qrc:/demoapp/data/profile-image-1.jpeg"
             type: StatusChatInfoButton.Type.OneToOneChat
             muted: true
             pinnedMessagesCount: 1
@@ -152,7 +152,7 @@ GridLayout {
             title: "Iuri Matias big not elided"
             subTitle: "Contact"
             icon.color: Theme.palette.miscColor7
-            image.source: "https://pbs.twimg.com/profile_images/1369221718338895873/T_5fny6o_400x400.jpg"
+            image.source: "qrc:/demoapp/data/profile-image-1.jpeg"
             type: StatusChatInfoButton.Type.OneToOneChat
             muted: true
             pinnedMessagesCount: 1

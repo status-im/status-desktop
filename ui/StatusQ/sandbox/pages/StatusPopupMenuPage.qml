@@ -89,7 +89,7 @@ GridLayout {
         subMenuItemIcons: [
             { icon: "chat" },
             { 
-                source: "https://pbs.twimg.com/profile_images/1369221718338895873/T_5fny6o_400x400.jpg" 
+                source: "qrc:/demoapp/data/profile-image-1.jpeg"
             },
             { 
                 isLetterIdenticon: true, 
@@ -115,7 +115,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
 
             StatusMenuItem { 
                 text: "Pascal"
-                image.source: "https://pbs.twimg.com/profile_images/1369221718338895873/T_5fny6o_400x400.jpg"
+                image.source: "qrc:/demoapp/data/profile-image-1.jpeg"
             }
         }
 

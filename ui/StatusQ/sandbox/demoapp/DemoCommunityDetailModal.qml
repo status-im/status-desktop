@@ -13,7 +13,7 @@ StatusModal {
 
     header.title: "Cryptokitties"
     header.subTitle: "Public Community"
-    header.image.source: "https://pbs.twimg.com/profile_images/1369221718338895873/T_5fny6o_400x400.jpg"
+    header.image.source: "qrc:/demoapp/data/profile-image-1.jpeg"
 
     contentItem: Column {
         width: root.width

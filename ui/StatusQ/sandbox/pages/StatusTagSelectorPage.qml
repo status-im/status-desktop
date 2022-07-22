@@ -19,7 +19,7 @@ Item {
         ListElement {
             publicId: "0x1"
             name: "vitalikbuterin"
-            icon: "https://pbs.twimg.com/profile_images/1369221718338895873/T_5fny6o_400x400.jpg"
+            icon: "qrc:/demoapp/data/profile-image-1.jpeg"
             isIdenticon: false
             onlineStatus: 1
             isReadonly: false

@@ -5,7 +5,6 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
 import StatusQ.Components 0.1
-import StatusQ.Popups 0.1
 import StatusQ.Core.Utils 0.1
 
 Column {
@@ -110,7 +109,7 @@ Column {
         anchors.centerIn: parent
         header.title: "Some Title"
         header.subTitle: "Subtitle"
-        header.image.source: "https://pbs.twimg.com/profile_images/1369221718338895873/T_5fny6o_400x400.jpg"
+        header.image.source: "qrc:/demoapp/data/profile-image-1.jpeg"
     }
 
     StatusModal {
@@ -118,7 +117,7 @@ Column {
         anchors.centerIn: parent
         header.title: "Some Title"
         header.subTitle: "Subtitle"
-        header.image.source: "https://pbs.twimg.com/profile_images/1369221718338895873/T_5fny6o_400x400.jpg"
+        header.image.source: "qrc:/demoapp/data/profile-image-1.jpeg"
         leftButtons: [
             StatusRoundButton {
                 icon.name: "arrow-right"
@@ -140,7 +139,7 @@ Column {
         anchors.centerIn: parent
         header.title: "Some Title"
         header.subTitle: "Subtitle"
-        header.image.source: "https://pbs.twimg.com/profile_images/1369221718338895873/T_5fny6o_400x400.jpg"
+        header.image.source: "qrc:/demoapp/data/profile-image-1.jpeg"
 
         headerActionButton: StatusFlatRoundButton {
             type: StatusFlatRoundButton.Type.Secondary
@@ -171,7 +170,7 @@ Column {
     StatusModal {
         id: modalExample
         anchors.centerIn: parent
-        header.image.source: "https://pbs.twimg.com/profile_images/1369221718338895873/T_5fny6o_400x400.jpg"
+        header.image.source: "qrc:/demoapp/data/profile-image-1.jpeg"
         header.title: "Header"
         header.subTitle: "SubTitle"
         rightButtons: [

@@ -316,9 +316,9 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
     //dummy search popup models
     property var searchResultsA: ListModel {
         ListElement { itemId: "i1"; titleId: "t1"; title: "@Flea"; sectionName: "Messages"; time: "18:55 AM"; content: "lorem ipsum <font color='#4360DF'>@Nick</font> dolor sit amet";
-            image: "https://pbs.twimg.com/profile_images/1369221718338895873/T_5fny6o_400x400.jpg";
+            image: "qrc:/demoapp/data/profile-image-1.jpeg";
             color: "orange";
-            badgeImage: "https://pbs.twimg.com/profile_images/1369221718338895873/T_5fny6o_400x400.jpg";
+            badgeImage: "qrc:/demoapp/data/profile-image-1.jpeg";
             badgePrimaryText: "CryptoKities";
             badgeSecondaryText: "";
             badgeIconColor: "";
@@ -361,7 +361,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
                 ListElement {
                     value: "sub_item_1_1"
                     text: "Profile image item"
-                    imageSource: "https://pbs.twimg.com/profile_images/1369221718338895873/T_5fny6o_400x400.jpg"
+                    imageSource: "qrc:/demoapp/data/profile-image-1.jpeg"
                     iconName: ""
                     iconColor: ""
                 },
@@ -375,7 +375,7 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
         ListElement {
             value: "item_2"
             title: "Community item";
-            imageSource: "https://pbs.twimg.com/profile_images/1369221718338895873/T_5fny6o_400x400.jpg"
+            imageSource: "qrc:/demoapp/data/profile-image-1.jpeg"
             iconName: ""
             iconColor: ""
             subItems: [
