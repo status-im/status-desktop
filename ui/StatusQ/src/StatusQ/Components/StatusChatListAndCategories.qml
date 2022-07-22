@@ -13,6 +13,8 @@ Item {
     implicitHeight: chatListsAndCategories.height
     implicitWidth: chatListsAndCategories.width
 
+    property alias highlightItem: statusChatList.highlightItem
+
     property StatusTooltipSettings categoryAddButtonToolTip: StatusTooltipSettings {
         text: qsTr("Add channel inside category")
     }
