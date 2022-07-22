@@ -64,8 +64,7 @@ Item {
         checked: root.store.openCreateChat
         highlighted: root.store.openCreateChat
         onClicked: {
-            root.store.openCreateChat = !root.store.openCreateChat;
-            if (!root.store.openCreateChat) {
+            if (root.store.openCreateChat) {
                 Global.closeCreateChatView()
             } else {
                 Global.openCreateChatView()
@@ -163,7 +162,11 @@ Item {
             draggableCategories: communityData.amISectionAdmin
 
             model: root.communitySectionModule.model
+            highlightItem: !root.store.openCreateChat
+
             onChatItemSelected: {
+                Global.closeCreateChatView()
+
                 if(categoryId === "")
                     root.communitySectionModule.setActiveItem(id, "")
                 else

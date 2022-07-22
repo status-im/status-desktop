@@ -86,11 +86,10 @@ Item {
                 checked: root.store.openCreateChat
                 highlighted: checked
                 onClicked: {
-                    root.store.openCreateChat = !root.store.openCreateChat
                     if (root.store.openCreateChat) {
-                        Global.openCreateChatView()
-                    } else {
                         Global.closeCreateChatView()
+                    } else {
+                        Global.openCreateChatView()
                     }
                 }
 

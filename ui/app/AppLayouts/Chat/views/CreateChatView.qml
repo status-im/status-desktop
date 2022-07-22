@@ -20,10 +20,7 @@ Page {
     property var rootStore
     property var emojiPopup: null
 
-    Keys.onEscapePressed: {
-        Global.closeCreateChatView()
-        root.rootStore.openCreateChat = false;
-    }
+    Keys.onEscapePressed: Global.closeCreateChatView()
 
     StatusListView {
         id: contactsModelListView
