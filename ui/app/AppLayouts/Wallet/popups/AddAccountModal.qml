@@ -168,7 +168,7 @@ StatusModal {
             spacing: Style.current.halfPadding
             topPadding: Style.dp(20)
 
-            // To-Do Password hidden option not supported in StatusQ StatusBaseInput
+            // To-Do Password hidden option not supported in StatusQ StatusInput
             Item {
                 width: parent.width
                 height: passwordInput.height
@@ -199,7 +199,7 @@ StatusModal {
 
             StatusInput {
                 id: accountNameInput
-                input.placeholderText: qsTr("Enter an account name...")
+                placeholderText: qsTr("Enter an account name...")
                 label: qsTr("Account name")
                 input.isIconSelectable: true
                 input.icon.color: colorSelectionGrid.selectedColor ? colorSelectionGrid.selectedColor : Theme.palette.directColor1

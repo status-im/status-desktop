@@ -94,7 +94,7 @@ Popup {
 
             SearchBox {
                 id: searchBox
-                input.placeholderText: qsTr("Search Tenor")
+                placeholderText: qsTr("Search Tenor")
                 enabled: RootStore.isTenorWarningAccepted
                 anchors.right: parent.right
                 anchors.rightMargin: gifHeader.headerMargin

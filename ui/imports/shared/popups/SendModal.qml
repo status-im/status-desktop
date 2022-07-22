@@ -155,7 +155,7 @@ StatusModal {
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.left: parent.left
                         width: parent.width - assetSelector.width
-                        input.placeholderText: "0.00" + " " + assetSelector.selectedAsset.symbol
+                        placeholderText: "0.00" + " " + assetSelector.selectedAsset.symbol
                         errorMessageCmp.anchors.rightMargin: -100
                         input.edit.color: d.errorMode ? Theme.palette.dangerColor1 : Theme.palette.directColor1
                         validators: [

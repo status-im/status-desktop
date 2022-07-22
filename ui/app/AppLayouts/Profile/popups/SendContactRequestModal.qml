@@ -93,7 +93,7 @@ StatusModal {
             StatusInput {
                 id: chatKeyInput
 
-                input.placeholderText: qsTr("Enter chat key here")
+                placeholderText: qsTr("Enter chat key here")
                 input.text: input.edit.focus? d.realChatKey : d.elidedChatKey
                 input.rightComponent: {
                     if(d.showPasteButton)
@@ -127,7 +127,7 @@ StatusModal {
                 id: messageInput
                 charLimit: d.maxMsgLength
 
-                input.placeholderText: qsTr("Say who you are / why you want to become a contact...")
+                placeholderText: qsTr("Say who you are / why you want to become a contact...")
                 input.multiline: true
                 input.implicitHeight: d.msgHeight
                 input.verticalAlignment: TextEdit.AlignTop

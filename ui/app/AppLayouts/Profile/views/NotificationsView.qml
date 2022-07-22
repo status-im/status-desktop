@@ -524,7 +524,7 @@ SettingsContentBase {
                         Layout.leftMargin: Style.current.padding
                         Layout.rightMargin: Style.current.padding
                         input.implicitHeight: 44
-                        input.placeholderText: qsTr("Search Communities, Group Chats and 1:1 Chats")
+                        placeholderText: qsTr("Search Communities, Group Chats and 1:1 Chats")
                     }
 
                     StatusBaseText {

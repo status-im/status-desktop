@@ -126,7 +126,7 @@ Item {
             StatusInput {
                 id: nameInput
                 width: parent.width
-                input.placeholderText: qsTr("Display name")
+                placeholderText: qsTr("Display name")
                 input.rightComponent: RoundedIcon {
                     width: 14
                     height: 14

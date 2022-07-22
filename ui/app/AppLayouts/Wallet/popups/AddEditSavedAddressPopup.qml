@@ -59,7 +59,7 @@ StatusModal {
             id: nameInput
             width: parent.width
             input.implicitHeight: 56
-            input.placeholderText: qsTr("Enter a name")
+            placeholderText: qsTr("Enter a name")
             label: qsTr("Name")
             validators: [
                 StatusMinLengthValidator {

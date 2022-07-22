@@ -53,7 +53,7 @@ StatusModal {
 
             StatusInput {
                 id: nicknameInput
-                input.placeholderText: qsTr("Nickname")
+                placeholderText: qsTr("Nickname")
 
                 width: parent.width
 

@@ -137,7 +137,7 @@ StatusStackModal {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
 
-                input.maximumHeight: 0
+                maximumHeight: 0
             }
 
             CommunityOutroMessageInput {

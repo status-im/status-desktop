@@ -100,18 +100,16 @@ StatusModal {
 
         spacing: Style.current.padding
 
-        StatusBaseInput {
+        StatusInput {
             id: searchBox
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignTop
-
-            implicitHeight: 36
+            maximumHeight: 36
             placeholderText: qsTr("Search")
-            placeholderFont.pixelSize: 15
-
-            icon.name: "search"
-            icon.width: 17
-            icon.height: 17
+            input.placeholderFont.pixelSize: 15
+            input.icon.name: "search"
+            input.icon.width: 17
+            input.icon.height: 17
         }
 
         NoFriendsRectangle {

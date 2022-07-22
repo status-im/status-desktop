@@ -103,12 +103,13 @@ Item {
         }
 
         // search field
-        StatusBaseInput {
+        StatusInput {
             id: searchInput
             Layout.fillWidth: true
             Layout.preferredHeight: 36
+            maximumHeight: 36
             placeholderText: qsTr("Search")
-            icon.name: "search"
+            input.icon.name: "search"
             leftPadding: 10
             topPadding: 4
             bottomPadding: 4

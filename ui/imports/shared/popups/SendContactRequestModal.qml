@@ -53,7 +53,7 @@ StatusModal {
             id: messageInput
             charLimit: d.maxMsgLength
 
-            input.placeholderText: qsTr("Say who you are / why you want to become a contact...")
+            placeholderText: qsTr("Say who you are / why you want to become a contact...")
             input.multiline: true
             input.implicitHeight: d.msgHeight
             input.verticalAlignment: TextEdit.AlignTop

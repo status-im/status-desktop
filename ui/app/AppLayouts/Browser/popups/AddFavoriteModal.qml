@@ -83,7 +83,7 @@ ModalPopup {
             rightPadding: 0
             label: qsTr("URL")
             input.text: ogUrl
-            input.placeholderText: qsTr("Paste URL")
+            placeholderText: qsTr("Paste URL")
             input.rightComponent: StatusButton {
                 anchors.verticalCenter: parent.verticalCenter
                 border.width: 1
@@ -110,7 +110,7 @@ ModalPopup {
             rightPadding: 0
             label: qsTr("Name")
             input.text: ogName
-            input.placeholderText: qsTr("Name of the website")
+            placeholderText: qsTr("Name of the website")
             validators: [
                 StatusMinLengthValidator {
                     errorMessage: qsTr("Please enter a name")

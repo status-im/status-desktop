@@ -13,7 +13,7 @@ StatusInput {
     leftPadding: 0
     rightPadding: 0
 
-    input.placeholderText: ""
+    placeholderText: ""
     input.edit.cursorVisible: true
     input.edit.font.pixelSize: 32
     input.placeholderFont.pixelSize: 32

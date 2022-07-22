@@ -36,7 +36,7 @@ StatusModal {
         StatusInput {
             id: nameInput
             label: qsTr("Name")
-            input.placeholderText: qsTr("Specify a name")
+            placeholderText: qsTr("Specify a name")
             validators: [StatusMinLengthValidator {
                 minLength: 1
                 errorMessage: qsTr("You need to enter a name")
@@ -47,7 +47,7 @@ StatusModal {
         StatusInput {
             id: enodeInput
             label: qsTr("History node address")
-            input.placeholderText:  "enode://{enode-id}:{password}@{ip-address}:{port-number}"
+            placeholderText:  "enode://{enode-id}:{password}@{ip-address}:{port-number}"
             validators: [StatusMinLengthValidator {
                 minLength: 1
                 errorMessage: qsTr("You need to enter the enode address")

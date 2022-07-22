@@ -59,7 +59,7 @@ StatusModal {
 
             label: qsTr("Category title")
             charLimit: maxCategoryNameLength
-            input.placeholderText: qsTr("Name the category")
+            placeholderText: qsTr("Name the category")
             validators: [StatusMinLengthValidator {
                 minLength: 1
                 errorMessage: Utils.getErrorMessage(nameInput.errors, qsTr("category name"))

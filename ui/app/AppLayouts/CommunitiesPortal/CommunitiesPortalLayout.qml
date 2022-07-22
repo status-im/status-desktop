@@ -41,6 +41,7 @@ StatusScrollView {
 
     ColumnLayout {
         id: column
+        width: parent.width
         spacing: 18
 
         StatusBaseText {
@@ -53,19 +54,25 @@ StatusScrollView {
         }
 
         RowLayout {
-            width: 230/*Card Width by design*/ * featuredGrid.columns  + 2 * featuredGrid.rowSpacing
-            spacing: 24
+            implicitWidth: parent.width
+            implicitHeight: 38
+            spacing: Style.current.bigPadding
 
-            StatusBaseInput {
+            StatusInput {
                 id: searcher
-                enabled: false // Out of scope
+                implicitWidth: 327
                 Layout.leftMargin: d.layoutHMargin
-                height: 36 // by design
-                width: 351 // by design
+                Layout.alignment: Qt.AlignVCenter
+                enabled: false // Out of scope
                 placeholderText: qsTr("Search")
+                input.icon.name: "search"
+                leftPadding: 0
+                rightPadding: 0
+                topPadding: 0
+                bottomPadding: 0
+                minimumHeight: 36
+                maximumHeight: 36
                 text: d.searchText
-                icon.name: "search"
-
                 onTextChanged: {
                     console.warn("TODO: Community Cards searcher algorithm.")
                     // 1. Filter Community Cards by title, description or tags category.
@@ -78,6 +85,7 @@ StatusScrollView {
 
             StatusButton {
                 id: importBtn
+                Layout.fillHeight: true
                 text: qsTr("Import Community")
                 onClicked: Global.openPopup(importCommunitiesPopupComponent)
             }
@@ -85,6 +93,7 @@ StatusScrollView {
             StatusButton {
                 id: createBtn
                 objectName: "createCommunityButton"
+                Layout.fillHeight: true
                 text: qsTr("Create New Community")
                 onClicked: Global.openPopup(createCommunitiesPopupComponent)
             }
