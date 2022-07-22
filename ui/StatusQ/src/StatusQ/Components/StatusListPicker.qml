@@ -6,6 +6,8 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 
+import SortFilterProxyModel 0.2
+
 /*!
    \qmltype StatusListPicker
    \inherits Item
@@ -69,7 +71,7 @@ Item {
         }
        \endqml
     */
-    property ListModel inputList: ListModel { }
+    property var inputList: ListModel { }
 
     /*!
        \qmlproperty string StatusListPicker::searchText
@@ -151,40 +153,6 @@ Item {
 
     QtObject {
         id: d
-        property var filteredModel: ListModel { }
-
-        // Used to set up component and the needed private properties
-        function initialize() {
-            if(filteredModel.count === 0) {
-                // It is necessary to load the model, not loaded yet!
-                var selected = 0
-                var selectionText = ""
-                for(var i = 0; i < root.inputList.count; i++) {
-                    var item = root.inputList.get(i)
-                    d.filteredModel.append(item)
-                    if(item.selected) selected++;
-                }
-
-                // If the given model has more than one selected elements, the behaviour of the list picker will be as a multiple selector with checkboxes although it is
-                // set in the radiobutton mode. Radiobutton mode is only for mutial-exclusion.
-                if(selected > 1)
-                    multiSelection = true
-
-                // Update selected items text:
-                d.getSelectedItemsText()
-            }
-        }
-
-        // Used to update model elements given a specific text by filtering them for its `name` and / or `shortName`.
-        function applyFilter(text) {
-            const input = text.toLowerCase()
-            filteredModel.clear()
-            for(var i = 0; i < root.inputList.count; i++) {
-                let item = root.inputList.get(i)
-                if(item.name.toLowerCase().includes(input) || item.shortName.toLowerCase().includes(input))
-                    filteredModel.append(item)
-            }
-        }        
 
         function formatSymbolShortNameText(symbol, shortName) {
             var formattedText = ""
@@ -229,8 +197,6 @@ Item {
 
     width: 110
     height: 38
-
-    Component.onCompleted: d.initialize()
 
     StatusPickerButton {
         id: btn
@@ -282,7 +248,18 @@ Item {
             property int itemHeight: 40
             property int itemWidth: 360
 
-            model: d.filteredModel
+            model: SortFilterProxyModel {
+                sourceModel: root.inputList
+                delayed: true
+                filters: ExpressionFilter {
+                    expression: {
+                        root.searchText // ensure expression is reevaluated when searchText changes
+                        return model.name.toLowerCase().startsWith(root.searchText.toLowerCase()) ||
+                               model.shortName.toLowerCase().startsWith(root.searchText.toLowerCase())
+                    }
+                }
+            }
+
             width: itemWidth
             anchors.top: parent.top
             anchors.topMargin: 8
@@ -310,10 +287,7 @@ Item {
                     text: root.searchText
                     input.icon.name: "search"
 
-                    onTextChanged: {
-                        d.applyFilter(text)
-                        root.searchText = text
-                    }
+                    onTextChanged: root.searchText = text
                 }
             }// End of search input item
             delegate: StatusItemPicker {
