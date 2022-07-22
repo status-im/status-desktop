@@ -1,5 +1,6 @@
 import QtQuick 2.13
 
+import shared.stores 1.0 as SharedStore
 import "../../Wallet/stores"
 
 QtObject {
@@ -25,7 +26,7 @@ QtObject {
     property var customTokenList: walletSectionAllTokens.custom
 
 
-    property var currencyStore: CurrenciesStore {}
+    property var currencyStore: SharedStore.RootStore.currencyStore
 
     function addCustomToken(chainId, address, name, symbol, decimals) {
         return walletSectionAllTokens.addCustomToken(chainId, address, name, symbol, decimals)

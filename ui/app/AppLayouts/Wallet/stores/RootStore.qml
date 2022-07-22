@@ -3,6 +3,7 @@ pragma Singleton
 import QtQuick 2.13
 
 import utils 1.0
+import shared.stores 1.0 as SharedStore
 
 QtObject {
     id: root
@@ -14,7 +15,8 @@ QtObject {
     property string locale: appSettings.locale
     property bool hideSignPhraseModal: accountSensitiveSettings.hideSignPhraseModal
 
-    property string currentCurrency: walletSection.currentCurrency
+    property var currencyStore: SharedStore.RootStore.currencyStore
+    property string currentCurrency: currencyStore.currentCurrency
     property string totalCurrencyBalance: walletSection.totalCurrencyBalance
     property string signingPhrase: walletSection.signingPhrase
     property string mnemonicBackedUp: walletSection.isMnemonicBackedUp
