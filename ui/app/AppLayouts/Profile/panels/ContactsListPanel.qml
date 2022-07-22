@@ -18,12 +18,12 @@ Item {
 
     property var contactsModel
     property int panelUsage: Constants.contactsPanelUsage.unknownPosition
-    property int contactsListHeight: ((contactsList.count * contactsList.itemAtIndex(0).implicitHeight)+title.height)
     property bool scrollbarOn: false
+    readonly property int contactsListHeight: ((contactsList.count * contactsList.itemAtIndex(0).implicitHeight)+title.height)
 
     property string title: ""
     property string searchString: ""
-    property string lowerCaseSearchString: searchString.toLowerCase()
+    readonly property string lowerCaseSearchString: searchString.toLowerCase()
     readonly property int count: contactsList.count
 
     signal contactClicked(string publicKey)
@@ -167,9 +167,12 @@ Item {
             onTextClicked: contactListRoot.textClicked(publicKey)
             onShowVerificationRequest: contactListRoot.showVerificationRequest(publicKey)
 
+            readonly property string compressedPkLowerCase: Utils.getCompressedPk(publicKey).toLowerCase()
+
             visible: searchString === "" ||
-                     panelDelegate.name.toLowerCase().includes(lowerCaseSearchString) ||
-                     panelDelegate.publicKey.toLowerCase().includes(lowerCaseSearchString)
+                     name.toLowerCase().includes(lowerCaseSearchString) ||
+                     publicKey.toLowerCase().includes(lowerCaseSearchString) ||
+                     compressedPkLowerCase.includes(lowerCaseSearchString)
         }
     }
 }
