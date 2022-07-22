@@ -166,7 +166,7 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
   )
   result.aboutService = about_service.newService(statusFoundation.events, statusFoundation.threadpool)
   result.dappPermissionsService = dapp_permissions_service.newService()
-  result.languageService = language_service.newService()
+  result.languageService = language_service.newService(statusFoundation.events)
   # result.mnemonicService = mnemonic_service.newService()
   result.privacyService = privacy_service.newService(statusFoundation.events, result.settingsService,
   result.accountsService)

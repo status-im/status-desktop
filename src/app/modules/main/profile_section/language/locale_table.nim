@@ -19,7 +19,7 @@ let localeDescriptionTable* = {
     "fa": Description(name: "Persian", native: "فارسی", flag: "🇮🇷"),
     "fr": Description(name: "French", native: "Français", flag: "🇫🇷"),
     "he": Description(name: "Hebrew", native: "עברית'", flag: "🇮🇱"),
-    "he": Description(name: "Hindi", native: "हिन्दी", flag: "🇮🇳"),
+    "hi": Description(name: "Hindi", native: "हिन्दी", flag: "🇮🇳"),
     "hu": Description(name: "Hungarian", native: "Magyar", flag: "🇭🇺"),
     "id": Description(name: "Indonesian", native: "Bahasa Indonesia", flag: "🇮🇩"),
     "it": Description(name: "Italian", native: "Italiano", flag: "🇮🇹"),
