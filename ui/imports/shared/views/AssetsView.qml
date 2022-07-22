@@ -22,6 +22,7 @@ Item {
         delegate: AssetDelegate {
             locale: RootStore.locale
             currency: RootStore.currentCurrency
+            currencySymbol: RootStore.currencyStore.currentCurrencySymbol
         }
         Layout.fillWidth: true
         Layout.fillHeight: true
