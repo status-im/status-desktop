@@ -1,5 +1,6 @@
 import state
 import ../controller
+import loading_app_animation_state
 
 type
   BiometricsState* = ref object of State
@@ -11,11 +12,11 @@ proc newBiometricsState*(flowType: FlowType, backState: State): BiometricsState 
 proc delete*(self: BiometricsState) =
   self.State.delete
 
-method moveToNextPrimaryState*(self: BiometricsState): bool =
-  return false
+method getNextPrimaryState*(self: BiometricsState): State =
+  return newLoadingAppAnimationState(self.State.flowType, nil)
 
-method moveToNextSecondaryState*(self: BiometricsState): bool =
-  return false
+method getNextSecondaryState*(self: BiometricsState): State =
+  return newLoadingAppAnimationState(self.State.flowType, nil)
 
 method executePrimaryCommand*(self: BiometricsState, controller: Controller) =
   if self.flowType == FlowType.FirstRunNewUserNewKeys:

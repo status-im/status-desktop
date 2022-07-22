@@ -273,7 +273,6 @@ StatusWindow {
         opacity: active ? 1.0 : 0.0
         visible: (opacity > 0.0001)
         Behavior on opacity { NumberAnimation { duration: 120 }}
-        active: !splashScreen.visible
     }
 
     Component {
@@ -286,7 +285,6 @@ StatusWindow {
     OnboardingLayout {
         id: startupOnboarding
         anchors.fill: parent
-        visible: !splashScreen.visible
     }
 
     NotificationWindow {
@@ -321,10 +319,6 @@ StatusWindow {
         onMaximized: {
             applicationWindow.toggleFullScreen()
         }
-    }
-
-    SplashScreen {
-        id: splashScreen
     }
 }
 

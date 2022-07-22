@@ -36,6 +36,7 @@ QtObject {
         readonly property string userProfileEnterSeedPhrase: "UserProfileEnterSeedPhrase"
         readonly property string biometrics: "Biometrics"
         readonly property string login: "Login"
+        readonly property string loadingAppAnimation: "LoadingAppAnimation"
     }
 
     readonly property QtObject appSection: QtObject {

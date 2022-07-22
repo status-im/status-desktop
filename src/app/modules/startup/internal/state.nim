@@ -24,6 +24,7 @@ type StateType* {.pure.} = enum
   UserProfileEnterSeedPhrase = "UserProfileEnterSeedPhrase"
   Biometrics = "Biometrics"
   Login = "Login"
+  LoadingAppAnimation = "LoadingAppAnimation"
 
 ## This is the base class for all state we may have in onboarding/login flow.
 ## We should not instance of this class (in c++ this will be an abstract class).

@@ -1,6 +1,6 @@
 import state
 import ../controller
-import welcome_state_new_user, welcome_state_old_user
+import welcome_state_new_user, welcome_state_old_user, loading_app_animation_state
 
 type
   LoginState* = ref object of State
@@ -12,11 +12,11 @@ proc newLoginState*(flowType: FlowType, backState: State): LoginState =
 proc delete*(self: LoginState) =
   self.State.delete
 
-method moveToNextPrimaryState*(self: LoginState): bool =
-  return false
-
 method executePrimaryCommand*(self: LoginState, controller: Controller) =
   controller.login()
+
+method getNextPrimaryState*(self: LoginState): State =
+  return newLoadingAppAnimationState(self.State.flowType, nil)
 
 method getNextSecondaryState*(self: LoginState): State =
   return newWelcomeStateNewUser(FlowType.General, self)

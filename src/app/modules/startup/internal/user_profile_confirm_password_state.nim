@@ -1,5 +1,5 @@
 import state
-import biometrics_state
+import biometrics_state, loading_app_animation_state
 import ../controller
 
 type
@@ -16,9 +16,10 @@ method moveToNextPrimaryState*(self: UserProfileConfirmPasswordState): bool =
   return defined(macosx)
 
 method getNextPrimaryState*(self: UserProfileConfirmPasswordState): State =
-  if not self.moveToNextPrimaryState():
-    return nil
-  return newBiometricsState(self.State.flowType, nil)
+  if self.moveToNextPrimaryState():
+    return newBiometricsState(self.State.flowType, nil)
+  else:
+    return newLoadingAppAnimationState(self.State.flowType, nil)
 
 method executePrimaryCommand*(self: UserProfileConfirmPasswordState, controller: Controller) =
   if self.moveToNextPrimaryState():

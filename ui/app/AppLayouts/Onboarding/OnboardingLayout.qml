@@ -3,6 +3,7 @@ import QtQuick.Controls 2.14
 import QtQuick.Dialogs 1.3
 
 import utils 1.0
+import mainui 1.0
 
 import "controls"
 import "views"
@@ -66,6 +67,10 @@ OnboardingBasePage {
             {
                 return loginViewComponent
             }
+            else if (root.startupStore.currentStartupState.stateType === Constants.startupState.loadingAppAnimation)
+            {
+                return splashScreenView
+            }
 
             return undefined
         }
@@ -104,6 +109,12 @@ OnboardingBasePage {
         standardButtons: StandardButton.Ok
         onAccepted: {
             console.log("TODO: restart flow...")
+        }
+    }
+
+    Component {
+        id: splashScreenView
+        SplashScreen {
         }
     }
 
