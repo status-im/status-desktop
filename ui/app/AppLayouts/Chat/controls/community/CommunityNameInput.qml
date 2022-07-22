@@ -14,7 +14,7 @@ StatusInput {
     rightPadding: 0
     label: qsTr("Community name")
     charLimit: 30
-    input.placeholderText: qsTr("A catchy name")
+    placeholderText: qsTr("A catchy name")
     validators: [
         StatusMinLengthValidator {
             minLength: 1

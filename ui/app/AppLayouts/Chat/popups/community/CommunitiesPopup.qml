@@ -62,7 +62,7 @@ StatusModal {
             StatusInput {
                 id: searchBox
                 anchors.horizontalCenter: parent.horizontalCenter
-                input.placeholderText: qsTr("Search for communities or topics")
+                placeholderText: qsTr("Search for communities or topics")
                 input.icon.name: "search"
             }
 

@@ -38,7 +38,7 @@ SettingsPageLayout {
 
             leftPadding: 0
             rightPadding: 0
-            input.placeholderText: qsTr("Member name")
+            placeholderText: qsTr("Member name")
         }
 
         StatusContactRequestsIndicatorListItem {

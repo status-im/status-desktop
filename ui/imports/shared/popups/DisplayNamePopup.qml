@@ -27,7 +27,7 @@ StatusModal {
             anchors.top: parent.top
             anchors.topMargin: Style.current.padding
             anchors.horizontalCenter: parent.horizontalCenter
-            input.placeholderText: qsTr("Display Name")
+            placeholderText: qsTr("Display Name")
             input.text: root.profileStore.displayName
             validators: Constants.validators.displayName
         }

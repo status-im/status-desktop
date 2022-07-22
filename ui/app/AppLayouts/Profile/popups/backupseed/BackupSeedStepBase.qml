@@ -42,7 +42,7 @@ StatusScrollView {
             input.implicitHeight: 44
             validationMode: StatusInput.ValidationMode.Always
             label: qsTr("Word #%1").arg(wordRandomNumber + 1)
-            input.placeholderText: qsTr("Enter word")
+            placeholderText: qsTr("Enter word")
             validators: [
                 StatusValidator {
                     validate: function (t) { return (root.wordAtRandomNumber === inputText.text); }

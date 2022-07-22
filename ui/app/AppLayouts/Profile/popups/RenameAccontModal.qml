@@ -49,7 +49,7 @@ StatusModal {
         StatusInput {
             id: accountNameInput
             input.isIconSelectable: true
-            input.placeholderText: qsTr("Enter an account name...")
+            placeholderText: qsTr("Enter an account name...")
             input.text: currentAccount.name
             input.icon.emoji: currentAccount.emoji
             input.icon.color: currentAccount.color

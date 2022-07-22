@@ -15,7 +15,7 @@ StatusInput {
     label: qsTr("Description")
     charLimit: 140
 
-    input.placeholderText: qsTr("What your community is about")
+    placeholderText: qsTr("What your community is about")
     input.multiline: true
     input.implicitHeight: 88
 

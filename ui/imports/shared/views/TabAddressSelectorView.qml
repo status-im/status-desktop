@@ -95,12 +95,12 @@ Item {
                     id: search
                     ColumnLayout {
                         width: parent.width
-                        StatusBaseInput {
+                        StatusInput {
                             Layout.preferredHeight: 55
                             Layout.preferredWidth: parent.width
-                            showBackground: false
+                            input.showBackground: false
                             placeholderText: qsTr("Search for saved address")
-                            rightComponent: StatusIcon {
+                            input.rightComponent: StatusIcon {
                                 icon: "search"
                                 height: 17
                                 color: Theme.palette.baseColor1

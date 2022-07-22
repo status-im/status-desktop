@@ -54,7 +54,7 @@ Popup {
             Layout.fillWidth: true
             leftPadding: 0
             rightPadding: 0
-            input.placeholderText: root.searchBoxPlaceholder
+            placeholderText: root.searchBoxPlaceholder
             input.icon: StatusIconSettings {
                 width: 24
                 height: 24

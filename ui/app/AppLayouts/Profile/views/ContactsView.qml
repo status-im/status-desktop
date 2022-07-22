@@ -44,7 +44,7 @@ SettingsContentBase {
             anchors.left: parent.left
             anchors.right: parent.right
             input.implicitHeight: 44
-            input.placeholderText: qsTr("Search by a display name or chat key")
+            placeholderText: qsTr("Search by a display name or chat key")
         }
 
         StatusTabBar {

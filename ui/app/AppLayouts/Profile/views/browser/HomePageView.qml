@@ -42,7 +42,7 @@ ColumnLayout {
         text: qsTr("Other")
     }
 
-    StatusBaseInput {
+    StatusInput {
         id: customUrlInput
         Layout.alignment: Qt.AlignTop
         Layout.topMargin: 10

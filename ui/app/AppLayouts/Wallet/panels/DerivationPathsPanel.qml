@@ -57,13 +57,14 @@ ColumnLayout {
             onClicked: derivationPathSelect.reset()
         }
     }
-    StatusBaseInput {
+    StatusInput {
         id: derivationPathInput
         Layout.preferredHeight: 64
         Layout.preferredWidth: parent.width
+        maximumHeight: 64
         text: _internal.defaultDerivationPath
-        color: _internal.pathError ? Theme.palette.dangerColor1 : Theme.palette.directColor1
-        rightComponent: _internal.derivationAddressLoading ? loadingIcon : loadedIcon
+        input.color: _internal.pathError ? Theme.palette.dangerColor1 : Theme.palette.directColor1
+        input.rightComponent: _internal.derivationAddressLoading ? loadingIcon : loadedIcon
 
         onTextChanged: _internal.userInputTimer.start()
 

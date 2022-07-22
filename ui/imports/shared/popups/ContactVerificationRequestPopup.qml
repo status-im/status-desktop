@@ -79,7 +79,7 @@ StatusModal {
             anchors.top: verificationMessage.bottom
             anchors.topMargin: 5
             input.multiline: true
-            input.placeholderText: qsTr("Provide answer to verification request from this contact.")
+            placeholderText: qsTr("Provide answer to verification request from this contact.")
             input.implicitHeight: 152
             width: parent.width
             input.verticalAlignment: TextEdit.AlignTop

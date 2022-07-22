@@ -73,7 +73,7 @@ ColumnLayout {
         id: displayNameInput
         Layout.fillWidth: true
         label: qsTr("Display name")
-        input.placeholderText: qsTr("Display Name")
+        placeholderText: qsTr("Display Name")
         charLimit: 24
         input.text: root.profileStore.displayName
         validators: Constants.validators.displayName

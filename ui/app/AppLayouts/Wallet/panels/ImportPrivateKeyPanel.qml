@@ -48,9 +48,9 @@ ColumnLayout {
         label: qsTr("Private key")
         charLimit: _internal.privateKeyCharLimit
         input.multiline: true
-        input.minimumHeight: 80
-        input.maximumHeight: 108
-        input.placeholderText: qsTr("Paste the contents of your private key")
+        minimumHeight: 80
+        maximumHeight: 108
+        placeholderText: qsTr("Paste the contents of your private key")
         errorMessage: _internal.errorString
         validators: [
             StatusMinLengthValidator {

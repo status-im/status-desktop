@@ -126,7 +126,7 @@ ColumnLayout {
     StatusInput {
         id: addressInput
         visible: advancedSection.addAccountType === SelectGeneratedAccount.AddAccountType.WatchOnly && advancedSection.visible
-        input.placeholderText: qsTr("Enter address...")
+        placeholderText: qsTr("Enter address...")
         label: qsTr("Account address")
         validators: [
             StatusAddressValidator {
