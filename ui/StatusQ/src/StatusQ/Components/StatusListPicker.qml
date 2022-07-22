@@ -17,7 +17,7 @@ import SortFilterProxyModel 0.2
 
    The \c StatusListPicker is populated with a data model. The data model is commonly a JavaScript array or a ListModel object.
 
-   StatusListPicker can be made as a single or multiple options picker by setting its StatusListPicker::multiSelection property properly or will be auto-set if the model contains / provides more than one selected items.
+   StatusListPicker can be made as a single or multiple options picker by setting its StatusListPicker::multiSelection property properly.
    The StatusPickerButton text holds the text of the current item selected in the list picker. If there is more than one item selected, a string composed will be displayed.
    The drop-down list incorporates a searcher by the following model roles: `name` or / and `shortName`.
 
@@ -46,6 +46,7 @@ Item {
        This property holds the data that will be populated in the list picker.
 
        NOTE: This model property should not change so it is an in / out property where the selected role will be dynamically changed according to user actions.
+       NOTE: Be sure provided model is compatible with StatusListPicker::multiSelection property.
 
        Here an example of the model roles expected:
        \qml
@@ -154,56 +155,64 @@ Item {
     QtObject {
         id: d
 
-        function formatSymbolShortNameText(symbol, shortName) {
-            var formattedText = ""
-            if(root.printSymbol && symbol)
-                formattedText = symbol + shortName
-            else
-                formattedText = shortName
-            return formattedText
+        readonly property SortFilterProxyModel selectedItems: SortFilterProxyModel {
+            sourceModel: root.inputList
+            // NOTE: ValueFilter would crash if source model does not contain given role
+            // FIXME: use ValueFilter when its fixed
+            filters: ExpressionFilter {
+                expression: model.selected
+            }
         }
 
-        function getSelectedItemsText() {
+        readonly property string selectedItemsText: {
+            function formatSymbolShortNameText(symbol, shortName) {
+                var formattedText = ""
+                if(root.printSymbol && symbol)
+                    formattedText = symbol + shortName
+                else
+                    formattedText = shortName
+                return formattedText
+            }
+
             var res = ""
-            for(var i = 0; i < root.inputList.count; i++) {
-                var item = root.inputList.get(i)
-                if(item.selected) {
-                    if(res != "")
-                        res += ", "
-                    res += d.formatSymbolShortNameText(item.symbol, item.shortName)
-                }
+            for(var i = 0; i < selectedItems.count; i++) {
+                var item = selectedItems.get(i)
+                if(res != "")
+                    res += ", "
+                res += formatSymbolShortNameText(item.symbol, item.shortName)
             }
             return res
-        }
-
-        // Used to update the base input list model with the new selected property
-        function updateInputListModel(key, selected, isSingleSelection) {
-            // If it is a single selection we must ensure that when a new key is selected  others are cleared.
-            // It must be done manually because as there is the option of filterning, the model visualized changes
-            // and it could be possible to have a filtered list without an element selected (but in the base model
-            // it is) so, the binding to not selected will not be executed, as in the current filtered model
-            // there are no changes to update, just only the selected one.
-            for(var i = 0; i < root.inputList.count; i++) {
-                if(root.inputList.get(i).key === key) {
-                    root.inputList.get(i).selected = selected
-                }
-                else if(isSingleSelection && selected) {
-                     // Clear all the list
-                    root.inputList.get(i).selected = false
-                }
-            }
         }
     }
 
     width: 110
     height: 38
 
+    Repeater {
+        // Used to update the base input list model with the new selected property
+        // If it is a single selection we must ensure that when a new key is selected others are cleared.
+        id: itemsSelectorHelper
+
+        signal selectItem(var key, bool checked)
+
+        model: root.inputList
+        delegate: Item {
+            Connections {
+                target: itemsSelectorHelper
+                function onSelectItem(key, checked) {
+                    if (model.key === key) model.selected = checked
+                    else if (!root.multiSelection && checked) model.selected = false
+                }
+            }
+        }
+    }
+
     StatusPickerButton {
         id: btn
         anchors.fill: parent
         bgColor: Theme.palette.primaryColor3
         contentColor: Theme.palette.primaryColor1
-        text: picker.selectedItemsText
+        text: d.selectedItemsText
         font.pixelSize: 13
         type: StatusPickerButton.Type.Down
 
@@ -218,8 +227,6 @@ Item {
 
     Rectangle {
         id: picker
-
-        property string selectedItemsText: ""
 
         width: content.itemWidth
         height: Math.min(content.contentHeight + content.anchors.topMargin + content.anchors.bottomMargin, root.maxPickerHeight)
@@ -243,7 +250,7 @@ Item {
         }
 
         ListView {
-            id: content            
+            id: content
 
             property int itemHeight: 40
             property int itemWidth: 360
@@ -254,8 +261,8 @@ Item {
                 filters: ExpressionFilter {
                     expression: {
                         root.searchText // ensure expression is reevaluated when searchText changes
-                        return model.name.toLowerCase().startsWith(root.searchText.toLowerCase()) ||
-                               model.shortName.toLowerCase().startsWith(root.searchText.toLowerCase())
+                        return model.name.toLowerCase().includes(root.searchText.toLowerCase()) ||
+                               model.shortName.toLowerCase().includes(root.searchText.toLowerCase())
                     }
                 }
             }
@@ -307,14 +314,8 @@ Item {
                 radioGroup: radioBtnGroup
 
                 onCheckedChanged: {
-                    d.updateInputListModel(model.key, checked, selectorType === StatusItemPicker.SelectorType.RadioButton)
-                    if(selectorType === StatusItemPicker.SelectorType.RadioButton && checked) {
-                        // Update selected item text
-                        picker.selectedItemsText = d.formatSymbolShortNameText(model.symbol, model.shortName)
-                    }
-                    else {
-                        // Update selected items text (multiple selection, text chain).
-                        picker.selectedItemsText = d.getSelectedItemsText()
+                    if (checked !== model.selected) {
+                        itemsSelectorHelper.selectItem(model.key, checked)
                     }
 
                     // Used to notify selected property changes in the specific item picker.

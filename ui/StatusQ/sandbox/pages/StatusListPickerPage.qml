@@ -34,6 +34,7 @@ GridLayout {
             inputList: Models.languageNoImagePickerModel
             placeholderSearchText: qsTr("Search Languages")
             menuAlignment: StatusListPicker.MenuAlignment.Center
+            multiSelection: true
         }
 
         StatusListPicker {
@@ -60,7 +61,7 @@ GridLayout {
         width: 500
         text: "4 different configurations for the `StatusListPicker` component:\n
     * Single selection. \n
-    * Single selection but dynamically changed to multiple selection (model provides multiple selected items).\n
+    * Multiple selection without images.\n
     * Multiple selection.\n
     * Multiple selection and displayed name is the symbol + shortName\n"
         color: Theme.palette.baseColor1
