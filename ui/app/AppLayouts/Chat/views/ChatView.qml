@@ -42,7 +42,8 @@ StatusAppThreePanelLayout {
 
     Connections {
         target: root.rootStore.stickersStore.stickersModule
-        onStickerPacksLoaded: {
+
+        function onStickerPacksLoaded() {
             root.stickersLoaded = true;
         }
     }
@@ -50,15 +51,9 @@ StatusAppThreePanelLayout {
     Connections {
         target: root.rootStore.chatCommunitySectionModule
         ignoreUnknownSignals: true
-        onActiveItemChanged: {
-            root.rootStore.openCreateChat = false;
-        }
-    }
 
-    Connections {
-        target: Global
-        onCloseCreateChatView: {
-            root.rootStore.openCreateChat = false
+        function onActiveItemChanged() {
+            Global.closeCreateChatView()
         }
     }
 

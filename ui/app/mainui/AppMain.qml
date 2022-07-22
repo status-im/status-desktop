@@ -513,6 +513,7 @@ Item {
 
                         contactsStore: appMain.rootStore.contactStore
                         rootStore.emojiReactionsModel: appMain.rootStore.emojiReactionsModel
+                        rootStore.openCreateChat: createChatView.opened
 
                         chatView.onProfileButtonClicked: {
                             Global.changeAppSectionBySectionType(Constants.appSection.profile);
@@ -617,6 +618,7 @@ Item {
 
                                     contactsStore: appMain.rootStore.contactStore
                                     rootStore.emojiReactionsModel: appMain.rootStore.emojiReactionsModel
+                                    rootStore.openCreateChat: createChatView.opened
 
                                     chatView.onProfileButtonClicked: {
                                         Global.changeAppSectionBySectionType(Constants.appSection.profile);
@@ -639,9 +641,10 @@ Item {
                 }
 
                 CreateChatView {
+                    id: createChatView
+
                     property bool opened: false
 
-                    id: createChatView
                     rootStore: chatLayoutContainer.rootStore
                     emojiPopup: statusEmojiPopup
                     anchors.top: parent.top
@@ -654,13 +657,16 @@ Item {
 
                     Connections {
                         target: Global
-                        onOpenCreateChatView: {
+
+                        function onOpenCreateChatView() {
                             createChatView.opened = true
                         }
-                        onCloseCreateChatView: {
+
+                        function onCloseCreateChatView() {
                             createChatView.opened = false
                         }
                     }
+
                     Connections {
                         target: mainModule
                         onActiveSectionChanged: {
