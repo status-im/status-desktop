@@ -43,6 +43,11 @@ QtObject {
             }
         })
     }
+    function iconSource(text) {
+        const parsed = parse(text);
+        const match = parsed.match('src="(.*\.svg).*"');
+        return (match && match.length >= 2) ? match[1] : undefined;
+    }
     function iconId(text) {
         const parsed = parse(text);
         const match = parsed.match('src=".*\/(.+?).svg');
