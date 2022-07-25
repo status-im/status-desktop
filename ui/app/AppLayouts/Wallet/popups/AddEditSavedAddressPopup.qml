@@ -1,6 +1,6 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
-import QtQuick.Dialogs 1.3
+import QtQml.Models 2.14
 
 import utils 1.0
 import shared.controls 1.0
@@ -10,11 +10,11 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Controls.Validators 0.1
-import StatusQ.Popups 0.1
+import StatusQ.Popups.Dialog 0.1
 
 import "../stores"
 
-StatusModal {
+StatusDialog {
     id: root
 
     property bool edit: false
@@ -35,8 +35,11 @@ StatusModal {
 
     width: 574
     height: 490
-    header.title: edit ? qsTr("Edit saved address") : qsTr("Add saved address")
-    header.subTitle: edit ? name : ""
+
+    header: StatusDialogHeader {
+        headline.title: edit ? qsTr("Edit saved address") : qsTr("Add saved address")
+        headline.subtitle: edit ? name : ""
+    }
 
     onOpened: {
         if(edit) {
@@ -45,11 +48,8 @@ StatusModal {
         nameInput.input.edit.forceActiveFocus(Qt.MouseFocusReason)
     }
 
-    contentItem: Column {
-        anchors.left: parent.left
-        anchors.leftMargin: 8
-        anchors.right: parent.right
-        anchors.rightMargin: 10
+    Column {
+        width: parent.width
         height: childrenRect.height
         topPadding: Style.current.xlPadding
 
@@ -57,8 +57,9 @@ StatusModal {
 
         StatusInput {
             id: nameInput
-            width: parent.width
-            input.implicitHeight: 56
+            implicitWidth: parent.width
+            minimumHeight: 56
+            maximumHeight: 56
             placeholderText: qsTr("Enter a name")
             label: qsTr("Name")
             validators: [
@@ -76,38 +77,35 @@ StatusModal {
         }
 
         // To-Do use StatusInput within the below component
-        Item {
-            width: parent.width
-            height: addressInput.height
-            RecipientSelector {
-                id: addressInput
-                anchors.left: parent.left
-                anchors.leftMargin: Style.current.padding
-                anchors.top: parent.top
-                width: parent.width
-                accounts: RootStore.accounts
-                contactsStore: root.contactsStore
-                label: qsTr("Address")
-                input.placeholderText: qsTr("Enter ENS Name or Ethereum Address")
-                labelFont.pixelSize: 15
-                labelFont.weight: Font.Normal
-                input.implicitHeight: 56
-                isSelectorVisible: false
-                addContactEnabled: false
-                onSelectedRecipientChanged: {
-                    root.address = selectedRecipient.address
-                }
-                readOnly: root.edit
-                wrongInputValidationError: qsTr("Please enter a valid ENS name OR Ethereum Address")
+        RecipientSelector {
+            id: addressInput
+            implicitWidth: parent.width
+            inputWidth: implicitWidth
+            accounts: RootStore.accounts
+            contactsStore: root.contactsStore
+            label: qsTr("Address")
+            input.placeholderText: qsTr("Enter ENS Name or Ethereum Address")
+            labelFont.pixelSize: 15
+            labelFont.weight: Font.Normal
+            input.implicitHeight: 56
+            input.textField.anchors.rightMargin: 0
+            isSelectorVisible: false
+            addContactEnabled: false
+            onSelectedRecipientChanged: {
+                root.address = selectedRecipient.address
             }
+            readOnly: root.edit
+            wrongInputValidationError: qsTr("Please enter a valid ENS name OR Ethereum Address")
         }
     }
 
-    rightButtons: [
-        StatusButton {
-            text: root.edit ? qsTr("Save") : qsTr("Add address")
-            enabled: _internal.valid && _internal.dirty
-            onClicked: save(name, address)
+    footer: StatusDialogFooter {
+        rightButtons:  ObjectModel {
+            StatusButton {
+                text: root.edit ? qsTr("Save") : qsTr("Add address")
+                enabled: _internal.valid && _internal.dirty
+                onClicked: root.save(name, address)
+            }
         }
-    ]
+    }
 }

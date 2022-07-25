@@ -64,10 +64,9 @@ Item {
     Input {
         id: chatKey
         property bool hasValidSearchResult: false
-
+        height: visible ? implicitHeight : 0
         placeholderText: qsTr("Enter ENS username or chat key")
         visible: showSearch
-        height: visible ? implicitHeight : 0
         Keys.onReleased: {
             successMessage = "";
             searchResults.pubKey = "";

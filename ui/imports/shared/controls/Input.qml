@@ -49,12 +49,12 @@ Item {
     signal textEdited(string inputValue)
     signal keyPressed(var event)
 
+    anchors.right: parent.right
+    anchors.left: parent.left
     implicitHeight: inputRectangle.height +
                     (hasLabel ? inputLabel.height + labelMargin : 0) +
                     (!keepHeight &&!!validationError ? (validationErrorText.height + validationErrorTopMargin) : 0)
     height: implicitHeight
-    anchors.right: parent.right
-    anchors.left: parent.left
 
     function resetInternal() {
         inputValue.text = ""
@@ -65,35 +65,25 @@ Item {
         id: inputLabel
         text: inputBox.label
         font.weight: Font.Medium
-        anchors.left: parent.left
-        anchors.leftMargin: 0
-        anchors.top: parent.top
-        anchors.topMargin: 0
         font.pixelSize: 13
         color: Style.current.textColor
     }
 
     Item {
         id: inputField
-        anchors.right: parent.right
         anchors.left: parent.left
+        anchors.right: parent.right
         height: customHeight
         anchors.top: inputBox.hasLabel ? inputLabel.bottom : parent.top
         anchors.topMargin: inputBox.hasLabel ? inputBox.labelMargin : 0
-
         StyledTextField {
             id: inputValue
             visible: !inputBox.isTextArea && !inputBox.isSelect
             placeholderText: inputBox.placeholderText
             placeholderTextColor: inputBox.placeholderTextColor
-            anchors.top: parent.top
-            anchors.topMargin: 0
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 0
+            anchors.fill: parent
             anchors.right: clipboardButtonLoader.active ? clipboardButtonLoader.left : parent.right
-            anchors.rightMargin: clipboardButtonLoader.active ? Style.current.padding : parent.rightMargin
-            anchors.left: parent.left
-            anchors.leftMargin: 0
+            anchors.rightMargin: clipboardButtonLoader.active ? Style.current.padding : 0
             leftPadding: inputBox.hasIcon ? iconWidth + 20 : Style.current.padding
             selectByMouse: true
             font.pixelSize: fontPixelSize
