@@ -10,6 +10,7 @@
 
 
 from enum import Enum
+import time
 from drivers.SquishDriver import *
 from drivers.SquishDriverVerification import *
 
@@ -20,11 +21,13 @@ class CommunityScreenComponents(Enum):
     COMMUNITY_CREATE_CHANNEL__MENU_ITEM = "create_channel_StatusMenuItemDelegate"
     COMMUNITY_CREATE_CATEGORY__MENU_ITEM = "create_category_StatusMenuItemDelegate"
     CHAT_IDENTIFIER_CHANNEL_NAME = "msgDelegate_channelIdentifierNameText_StyledText"
+    CHAT_MORE_OPTIONS_BUTTON = "chat_moreOptions_menuButton"
+    EDIT_CHANNEL_MENU_ITEM = "edit_Channel_StatusMenuItemDelegate"
 
-class CreateCommunityChannelPopup(Enum):
-    COMMUNITY_CHANNEL_NAME_INPUT: str = "createCommunityChannelNameInput_TextEdit"
-    COMMUNITY_CHANNEL_DESCRIPTION_INPUT: str = "createCommunityChannelDescriptionInput_TextEdit"
-    COMMUNITY_CHANNEL_BUTTON: str = "createCommunityChannelBtn_StatusButton"
+class CreateOrEditCommunityChannelPopup(Enum):
+    COMMUNITY_CHANNEL_NAME_INPUT: str = "createOrEditCommunityChannelNameInput_TextEdit"
+    COMMUNITY_CHANNEL_DESCRIPTION_INPUT: str = "createOrEditCommunityChannelDescriptionInput_TextEdit"
+    COMMUNITY_CHANNEL_BUTTON: str = "createOrEditCommunityChannelBtn_StatusButton"
 
 class StatusCommunityScreen:
 
@@ -38,11 +41,21 @@ class StatusCommunityScreen:
         click_obj_by_name(CommunityScreenComponents.COMMUNITY_CREATE_CHANNEL_OR_CAT_BUTTON.value)
         click_obj_by_name(CommunityScreenComponents.COMMUNITY_CREATE_CHANNEL__MENU_ITEM.value)
         
-        type(CreateCommunityChannelPopup.COMMUNITY_CHANNEL_NAME_INPUT.value, communityChannelName)
-        type(CreateCommunityChannelPopup.COMMUNITY_CHANNEL_DESCRIPTION_INPUT.value, communityChannelDescription)
-        click_obj_by_name(CreateCommunityChannelPopup.COMMUNITY_CHANNEL_BUTTON.value)
+        wait_for_object_and_type(CreateOrEditCommunityChannelPopup.COMMUNITY_CHANNEL_NAME_INPUT.value, communityChannelName)
+        type(CreateOrEditCommunityChannelPopup.COMMUNITY_CHANNEL_DESCRIPTION_INPUT.value, communityChannelDescription)
+        click_obj_by_name(CreateOrEditCommunityChannelPopup.COMMUNITY_CHANNEL_BUTTON.value)
         
     def verify_channel_name(self, communityChannelName: str):
         verify_text_matching(CommunityScreenComponents.CHAT_IDENTIFIER_CHANNEL_NAME.value, communityChannelName)
+        
+    def editCommunityChannel(self, communityChannelName: str, newCommunityChannelName: str):
+        click_obj_by_name(CommunityScreenComponents.CHAT_MORE_OPTIONS_BUTTON.value)
+        click_obj_by_name(CommunityScreenComponents.EDIT_CHANNEL_MENU_ITEM.value)
+
+        # Select all text in the input before typing
+        wait_for_object_and_type(CreateOrEditCommunityChannelPopup.COMMUNITY_CHANNEL_NAME_INPUT.value, "<Ctrl+a>")
+        type(CreateOrEditCommunityChannelPopup.COMMUNITY_CHANNEL_NAME_INPUT.value, newCommunityChannelName)
+        click_obj_by_name(CreateOrEditCommunityChannelPopup.COMMUNITY_CHANNEL_BUTTON.value)
+        time.sleep(0.5)
         
         

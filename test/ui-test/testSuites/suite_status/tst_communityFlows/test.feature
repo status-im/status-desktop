@@ -20,24 +20,35 @@ Feature: Status Desktop community
         When user signs up with username tester123 and password TesTEr16843/!@00
         Then the user lands on the signed in app
         Then the user opens the community portal section
-		Then the user lands on the community portal section
+        Then the user lands on the community portal section
 
     Scenario Outline: User creates a community
         When the user creates a community named <community_name>, with description <community_description>, intro <community_intro> and outro <community_outro>
         Then the user lands on the community named <community_name>
 
         Examples:
-        | community_name    | community_description   | community_intro  | community_outro  |
-        | testCommunity1    | Community tested 1      | My intro for the community | My community outro  |
+        	| community_name    | community_description   | community_intro  | community_outro  |
+        	| testCommunity1    | Community tested 1      | My intro for the community | My community outro  |
 
 
     Scenario Outline: Admin creates a community channel
-    	When the user creates a community named myCommunity, with description My community description, intro Community Intro and outro Community Outro
-		Then the user lands on the community named myCommunity
+        When the user creates a community named myCommunity, with description My community description, intro Community Intro and outro Community Outro
+        Then the user lands on the community named myCommunity
         When the admin creates a community channel named <community_channel_name>, with description <community_channel_description>
         Then the user lands on the community channel named <community_channel_name>
 
         Examples:
-        | community_channel_name    | community_channel_description   |
-        | test-channel    | Community channel description tested 1      |
+        	| community_channel_name    | community_channel_description   |
+        	| test-channel    | Community channel description tested 1      |
 
+    Scenario Outline: Admin edits a community channel
+        When the user creates a community named myCommunity, with description My community description, intro Community Intro and outro Community Outro
+        Then the user lands on the community named myCommunity
+        When the admin creates a community channel named test-channel, with description My description
+        Then the user lands on the community channel named test-channel
+        When the admin edits a community channel named <community_channel_name> to the name <new_community_channel_name>
+        Then the user lands on the community channel named <new_community_channel_name>
+
+        Examples:
+        	| community_channel_name    | community_channel_description   | new_community_channel_name  |
+        	| test-channel    | Community channel description tested 1    | new-test-channel            |

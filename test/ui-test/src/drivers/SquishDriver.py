@@ -112,3 +112,13 @@ def type(objName: str, text: str):
         return True
     except LookupError:
         return False
+
+# Wait for the object to appears and
+# It types the specified text into the given object (as if the user had used the keyboard):
+def wait_for_object_and_type(objName: str, text: str):
+    try:
+        obj = squish.waitForObject(getattr(names, objName))
+        squish.type(obj, text)
+        return True
+    except LookupError:
+        return False
