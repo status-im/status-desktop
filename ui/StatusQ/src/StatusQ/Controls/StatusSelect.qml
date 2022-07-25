@@ -21,6 +21,7 @@ Item {
     property alias selectMenu: selectMenu
     property color bgColorHover: bgColor
     property alias selectedItemComponent: selectedItemContainer.children
+    property bool caretVisible: true
     property int caretRightMargin: 16
     property alias select: inputRectangle
     property int menuAlignment: StatusSelect.MenuAlignment.Right
@@ -72,6 +73,7 @@ Item {
             height: 24
             icon: "chevron-down"
             color: Theme.palette.baseColor1
+            visible: caretVisible
         }
     }
 
