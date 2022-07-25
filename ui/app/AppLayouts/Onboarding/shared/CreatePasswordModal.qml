@@ -34,6 +34,8 @@ ModalPopup {
 
     Input {
         id: firstPasswordField
+        anchors.left: parent.left
+        anchors.right: parent.right
         anchors.rightMargin: 56
         anchors.leftMargin: 56
         anchors.top: parent.top

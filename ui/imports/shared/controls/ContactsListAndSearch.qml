@@ -1,6 +1,6 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtGraphicalEffects 1.13
+import QtQuick 2.14
+import QtQuick.Layouts 1.4
+import QtGraphicalEffects 1.14
 
 import utils 1.0
 import shared.stores 1.0
@@ -15,8 +15,6 @@ import "."
 
 Item {
     id: root
-    height: (chatKey.height + message.height + existingContacts.height
-            + searchResults.height + noContactsRect.height + 24)
 
     property var rootStore
     property var contactsStore
@@ -34,14 +32,12 @@ Item {
     property bool showCheckbox: false
     property bool showContactList: true
     property bool showSearch: true
-    signal userClicked(string pubKey, bool isAddedContact, string name, string address)
     property var pubKeys: ([])
     property bool hideCommunityMembers: false
     property bool addContactEnabled: true
     property string wrongInputValidationError: qsTr("Enter a valid chat key or ENS username");
 
-
-    property var resolveENS: Backpressure.debounce(root, 500, function (ensName) {
+    readonly property var resolveENS: Backpressure.debounce(root, 500, function (ensName) {
         noContactsRect.visible = false
         searchResults.loading = true
         searchResults.showProfileNotFoundMessage = false
@@ -61,174 +57,176 @@ Item {
         return root.validationError === "";
     }
 
-    Input {
-        id: chatKey
-        property bool hasValidSearchResult: false
-        height: visible ? implicitHeight : 0
-        placeholderText: qsTr("Enter ENS username or chat key")
-        visible: showSearch
-        Keys.onReleased: {
-            successMessage = "";
-            searchResults.pubKey = "";
-            root.validationError = "";
-            searchResults.showProfileNotFoundMessage = false;
-            if (chatKey.text !== "") {
-                if (!validate()) {
-                    noContactsRect.visible = false;
-                    return;
-                }
+    signal userClicked(string pubKey, bool isAddedContact, string name, string address)
 
-                chatKey.text = chatKey.text.trim();
+    implicitWidth: column.implicitWidth
+    implicitHeight: column.implicitHeight
 
-                if (Utils.isChatKey(chatKey.text)) {
-                    pubKey = chatKey.text;
-                    let contactDetails = Utils.getContactDetailsAsJson(pubKey)
-                    if (!contactDetails.isContact) {
-                        searchResults.username = contactDetails.alias
-                        searchResults.userAlias = Utils.compactAddress(pubKey, 4);
-                        searchResults.pubKey = pubKey
-                    }
-                    noContactsRect.visible = false;
-                    return;
-                }
+    ColumnLayout {
+        id: column
+        anchors.fill: parent
+        spacing: Style.current.smallPadding
 
-                chatKey.hasValidSearchResult = false
-                Qt.callLater(resolveENS, chatKey.text);
-            } else {
+        Input {
+            id: chatKey
+
+            property bool hasValidSearchResult: false
+
+            placeholderText: qsTr("Enter ENS username or chat key")
+            visible: showSearch
+            textField.anchors.rightMargin: clearBtn.width + Style.current.padding + 2
+
+            Layout.fillWidth: true
+            Layout.preferredHeight: visible ? implicitHeight : 0
+            Keys.onReleased: {
+                successMessage = "";
+                searchResults.pubKey = "";
                 root.validationError = "";
-            }
-        }
-        textField.anchors.rightMargin: clearBtn.width + Style.current.padding + 2
-
-        Connections {
-            target: mainModule
-            onResolvedENS: {
-                chatKey.hasValidSearchResult = false
-                if (chatKey.text == "") {
-                    ensUsername.text = "";
-                    pubKey = "";
-                } else if(resolvedPubKey == ""){
-                    ensUsername.text = "";
-                    searchResults.pubKey = pubKey = "";
-                    searchResults.address = "";
-                    searchResults.showProfileNotFoundMessage = root.showContactList
-                } else {
-                    if (userProfile.pubKey === resolvedPubKey) {
-                        root.validationError = qsTr("Can't chat with yourself");
-                    } else {
-                        chatKey.hasValidSearchResult = true
-                        searchResults.username = Utils.addStatusEns(chatKey.text.trim())
-                        let userAlias = globalUtils.generateAlias(resolvedPubKey)
-                        userAlias = userAlias.length > 20 ? userAlias.substring(0, 19) + "..." : userAlias
-                        searchResults.userAlias =  userAlias + " • " + Utils.compactAddress(resolvedPubKey, 4)
-                        searchResults.pubKey = pubKey = resolvedPubKey;
-                        searchResults.address = resolvedAddress;
-                    }
-                    searchResults.showProfileNotFoundMessage = false
-                }
-                searchResults.loading = false;
-                noContactsRect.visible = pubKey === ""  &&
-                        ensUsername.text === "" &&
-                        root.contactsStore.myContactsModel.count === 0 &&
-                        !profileNotFoundMessage.visible
-            }
-        }
-
-        StatusFlatRoundButton {
-            id: clearBtn
-            width: 20
-            height: 20
-            anchors.right: parent.right
-            anchors.rightMargin: Style.current.padding
-            anchors.verticalCenter: parent.verticalCenter
-            icon.name: "clear"
-            visible: chatKey.text !== "" && !chatKey.readOnly
-            icon.width: 20
-            icon.height: 20
-            type: StatusFlatRoundButton.Type.Tertiary
-            color: "transparent"
-            onClicked: {
-                chatKey.text = "";
-                chatKey.forceActiveFocus(Qt.MouseFocusReason);
                 searchResults.showProfileNotFoundMessage = false;
-                searchResults.pubKey = pubKey = "";
-                noContactsRect.visible = false;
-                searchResults.loading = false;
-                root.validationError = "";
+                if (chatKey.text !== "") {
+                    if (!validate()) {
+                        noContactsRect.visible = false;
+                        return;
+                    }
+
+                    chatKey.text = chatKey.text.trim();
+
+                    if (Utils.isChatKey(chatKey.text)) {
+                        pubKey = chatKey.text;
+                        let contactDetails = Utils.getContactDetailsAsJson(pubKey);
+                        if (!contactDetails.isContact) {
+                            searchResults.username = contactDetails.alias;
+                            searchResults.userAlias = Utils.compactAddress(pubKey, 4);
+                            searchResults.pubKey = pubKey;
+                        }
+                        noContactsRect.visible = false;
+                        return;
+                    }
+
+                    chatKey.hasValidSearchResult = false
+                    Qt.callLater(resolveENS, chatKey.text);
+                } else {
+                    root.validationError = "";
+                }
+            }
+
+            Connections {
+                target: mainModule
+                onResolvedENS: {
+                    chatKey.hasValidSearchResult = false
+                    if (chatKey.text == "") {
+                        ensUsername.text = "";
+                        pubKey = "";
+                    } else if(resolvedPubKey == ""){
+                        ensUsername.text = "";
+                        searchResults.pubKey = pubKey = "";
+                        searchResults.address = "";
+                        searchResults.showProfileNotFoundMessage = root.showContactList
+                    } else {
+                        if (userProfile.pubKey === resolvedPubKey) {
+                            root.validationError = qsTr("Can't chat with yourself");
+                        } else {
+                            chatKey.hasValidSearchResult = true
+                            searchResults.username = Utils.addStatusEns(chatKey.text.trim())
+                            let userAlias = globalUtils.generateAlias(resolvedPubKey)
+                            userAlias = userAlias.length > 20 ? userAlias.substring(0, 19) + "..." : userAlias
+                            searchResults.userAlias =  userAlias + " • " + Utils.compactAddress(resolvedPubKey, 4)
+                            searchResults.pubKey = pubKey = resolvedPubKey;
+                            searchResults.address = resolvedAddress;
+                        }
+                        searchResults.showProfileNotFoundMessage = false
+                    }
+                    searchResults.loading = false;
+                    noContactsRect.visible = pubKey === ""  &&
+                            ensUsername.text === "" &&
+                            root.contactsStore.myContactsModel.count === 0 &&
+                            !profileNotFoundMessage.visible
+                }
+            }
+
+            StatusFlatRoundButton {
+                id: clearBtn
+                width: 20
+                height: 20
+                anchors.right: parent.right
+                anchors.rightMargin: Style.current.padding
+                anchors.verticalCenter: parent.verticalCenter
+                icon.name: "clear"
+                visible: chatKey.text !== "" && !chatKey.readOnly
+                icon.width: 20
+                icon.height: 20
+                type: StatusFlatRoundButton.Type.Tertiary
+                color: "transparent"
+                onClicked: {
+                    chatKey.text = "";
+                    chatKey.forceActiveFocus(Qt.MouseFocusReason);
+                    searchResults.showProfileNotFoundMessage = false;
+                    searchResults.pubKey = pubKey = "";
+                    noContactsRect.visible = false;
+                    searchResults.loading = false;
+                    root.validationError = "";
+                    chatKey.hasValidSearchResult = false
+                }
+            }
+        }
+
+        StyledText {
+            id: message
+            text: root.validationError || successMessage
+            visible: root.validationError !== "" || successMessage !== ""
+            font.pixelSize: 13
+            color: !!root.validationError ? Style.current.danger : Style.current.success
+            Layout.alignment: Qt.AlignHCenter
+            Layout.preferredHeight: visible ? contentHeight : 0
+        }
+
+        ExistingContacts {
+            id: existingContacts
+
+            contactsStore: root.contactsStore
+            community: root.community
+            visible: showContactList
+            hideCommunityMembers: root.hideCommunityMembers
+            showCheckbox: root.showCheckbox
+            filterText: chatKey.text
+            pubKeys: root.pubKeys
+            onContactClicked: function (contact) {
+                if (!contact || typeof contact === "string") {
+                    return
+                }
+                const index = root.pubKeys.indexOf(contact.pubKey)
+                const pubKeysCopy = Object.assign([], root.pubKeys)
+                if (index === -1) {
+                    pubKeysCopy.push(contact.pubKey)
+                } else {
+                    pubKeysCopy.splice(index, 1)
+                }
+                root.pubKeys = pubKeysCopy
+
                 chatKey.hasValidSearchResult = false
+                userClicked(contact.pubKey, contact.isContact, contact.alias, contact.address)
+            }
+            expanded: !searchResults.loading && pubKey === "" && !searchResults.showProfileNotFoundMessage
+            Layout.fillWidth: true
+        }
+
+        SearchResults {
+            id: searchResults
+            hasExistingContacts: existingContacts.visible
+            loading: false
+            addContactEnabled: root.addContactEnabled
+            onResultClicked: {
+                chatKey.hasValidSearchResult = false
+                userClicked(pubKey, isAddedContact, username, searchResults.address)
+                if (!validate()) {
+                    return
+                }
+            }
+            onAddToContactsButtonClicked: {
+                root.contactsStore.addContact(pubKey)
             }
         }
-    }
-
-    StyledText {
-        id: message
-        text: root.validationError || successMessage
-        visible: root.validationError !== "" || successMessage !== ""
-        height: visible ? contentHeight : 0
-        font.pixelSize: 13
-        color: !!root.validationError ? Style.current.danger : Style.current.success
-        anchors.top: chatKey.bottom
-        anchors.topMargin: Style.current.smallPadding
-        anchors.horizontalCenter: parent.horizontalCenter
-    }
-
-    ExistingContacts {
-        id: existingContacts
-
-        contactsStore: root.contactsStore
-        community: root.community
-        visible: showContactList
-        hideCommunityMembers: root.hideCommunityMembers
-        anchors.topMargin: this.height > 0 ? Style.current.halfPadding : 0
-        anchors.top: {
-            if (message.visible) {
-                return message.bottom
-            }
-            if (chatKey.visible) {
-                return chatKey.bottom
-            }
-        }
-        showCheckbox: root.showCheckbox
-        filterText: chatKey.text
-        pubKeys: root.pubKeys
-        onContactClicked: function (contact) {
-            if (!contact || typeof contact === "string") {
-                return
-            }
-            const index = root.pubKeys.indexOf(contact.pubKey)
-            const pubKeysCopy = Object.assign([], root.pubKeys)
-            if (index === -1) {
-                pubKeysCopy.push(contact.pubKey)
-            } else {
-                pubKeysCopy.splice(index, 1)
-            }
-            root.pubKeys = pubKeysCopy
-
-            chatKey.hasValidSearchResult = false
-            userClicked(contact.pubKey, contact.isContact, contact.alias, contact.address)
-        }
-        expanded: !searchResults.loading && pubKey === "" && !searchResults.showProfileNotFoundMessage
-    }
-
-    SearchResults {
-        id: searchResults
-        anchors.top: existingContacts.visible ? existingContacts.bottom :
-                                                message.visible? message.bottom : chatKey.bottom
-        anchors.topMargin: Style.current.halfPadding
-        hasExistingContacts: existingContacts.visible
-        loading: false
-        width: searchResultsWidth > 0 ? searchResultsWidth : parent.width
-        addContactEnabled: root.addContactEnabled
-        onResultClicked: {
-            chatKey.hasValidSearchResult = false
-            userClicked(pubKey, isAddedContact, username, searchResults.address)
-            if (!validate()) {
-                return
-            }
-        }
-        onAddToContactsButtonClicked: {
-            root.contactsStore.addContact(pubKey)
-        }
+        Layout.fillWidth: true
     }
 
     NoFriendsRectangle {

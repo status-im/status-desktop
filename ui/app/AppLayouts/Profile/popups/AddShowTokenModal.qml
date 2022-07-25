@@ -97,6 +97,8 @@ StatusModal {
         anchors.rightMargin: Style.current.padding
         Input {
             id: addressInput
+            anchors.left: parent.left
+            anchors.right: parent.right
             readOnly: !editable
             textField.maximumLength: 42
             placeholderText: qsTr("Enter contract address...")
@@ -107,9 +109,11 @@ StatusModal {
 
         Input {
             id: nameInput
-            readOnly: !editable
+            anchors.left: parent.left
+            anchors.right: parent.right
             anchors.top: addressInput.bottom
             anchors.topMargin: marginBetweenInputs
+            readOnly: !editable
             placeholderText: qsTr("The name of your token...")
             label: qsTr("Name")
         }

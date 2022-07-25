@@ -35,7 +35,9 @@ StatusModal {
     contentItem: Item {
         Input {
             id: firstPINField
+            anchors.right: parent.right
             anchors.rightMargin: 56
+            anchors.left: parent.left
             anchors.leftMargin: 56
             anchors.top: parent.top
             anchors.topMargin: 88

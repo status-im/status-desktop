@@ -12,9 +12,6 @@ import AppLayouts.Chat.controls 1.0
 
 Item {
     id: root
-    anchors.left: parent.left
-    anchors.right: parent.right
-    height: visible ? Math.min(contactListView.contentHeight, (expanded ? 320 : 192)) : 0
 
     property var contactsStore
     property var community
@@ -24,12 +21,16 @@ Item {
     property bool showCheckbox: false
     property bool hideCommunityMembers: false
     property var pubKeys: ([])
+
     signal contactClicked(var contact)
 
     function matchesAlias(name, filter) {
         let parts = name.split(" ")
         return parts.some(p => p.startsWith(filter))
     }
+
+    implicitWidth: contactListView.implicitWidth
+    implicitHeight: visible ? Math.min(contactListView.contentHeight, (expanded ? 320 : 192)) : 0
 
     StatusListView {
         id: contactListView
@@ -38,6 +39,7 @@ Item {
 
         model: root.contactsStore.myContactsModel
         delegate: Contact {
+            width: contactListView.availableWidth
             showCheckbox: root.showCheckbox
             isChecked: root.pubKeys.indexOf(model.pubKey) > -1
             pubKey: model.pubKey
@@ -47,20 +49,18 @@ Item {
             image: model.icon
             isVisible: {
                 return model.isContact && !model.isBlocked && (root.filterText === "" ||
-                root.matchesAlias(model.alias.toLowerCase(), root.filterText.toLowerCase()) ||
-                model.displayName.toLowerCase().includes(root.filterText.toLowerCase()) ||
-                model.ensName.toLowerCase().includes(root.filterText.toLowerCase()) ||
-                model.localNickname.toLowerCase().includes(root.filterText.toLowerCase()) ||
-                model.pubKey.toLowerCase().includes(root.filterText.toLowerCase())) &&
-                (!root.hideCommunityMembers ||
-                !root.community.hasMember(model.pubKey))
+                    root.matchesAlias(model.alias.toLowerCase(), root.filterText.toLowerCase()) ||
+                    model.displayName.toLowerCase().includes(root.filterText.toLowerCase()) ||
+                    model.ensName.toLowerCase().includes(root.filterText.toLowerCase()) ||
+                    model.localNickname.toLowerCase().includes(root.filterText.toLowerCase()) ||
+                    model.pubKey.toLowerCase().includes(root.filterText.toLowerCase())) &&
+                    (!root.hideCommunityMembers ||
+                    !root.community.hasMember(model.pubKey));
             }
             onContactClicked: function () {
-                root.contactClicked(model)
+                root.contactClicked(model);
             }
         }
-
-        ScrollBar.vertical: ScrollBar { policy: ScrollBar.AsNeeded }
     }
 }
 

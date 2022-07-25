@@ -138,6 +138,7 @@ Item {
         Input {
             id: ensUsername
             placeholderText: !isStatus ? "vitalik94.domain.eth" : "vitalik94"
+            anchors.left: parent.left
             anchors.top: circleAt.bottom
             anchors.topMargin: Style.current.bigPadding
             anchors.right: btnContinue.left

@@ -96,6 +96,8 @@ Item {
 
     Input {
         id: txtPassword
+        anchors.left: parent.left
+        anchors.right: parent.right
         anchors.top: signingPhrase.bottom
         anchors.topMargin: Style.current.bigPadding
         textField.objectName: "transactionSignerPasswordInput"

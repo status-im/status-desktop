@@ -44,9 +44,11 @@ SettingsContentBase {
 
             Input {
                 id: deviceNameTxt
-                placeholderText: qsTr("Specify a name")
+                anchors.left: parent.left
+                anchors.right: parent.right
                 anchors.top: deviceNameLbl.bottom
                 anchors.topMargin: Style.current.padding
+                placeholderText: qsTr("Specify a name")
             }
 
             // TODO: replace with StatusQ component
