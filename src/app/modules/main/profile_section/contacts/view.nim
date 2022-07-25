@@ -188,6 +188,3 @@ QtObject:
 
   proc hasReceivedVerificationRequestFrom*(self: View, fromId: string): bool {.slot.} =
     result = self.delegate.hasReceivedVerificationRequestFrom(fromId)
-
-  proc acceptContactRequest*(self: View, publicKey: string) {.slot.} =
-    self.delegate.acceptContactRequest(publicKey)
