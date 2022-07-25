@@ -30,6 +30,7 @@ StatusModal {
 
     signal resultItemClicked(string itemId)
     signal resultItemTitleClicked(string titleId)
+    signal resetSearchLocationClicked()
 
     property var formatTimestampFn: function (ts) {
         return ts
@@ -248,7 +249,7 @@ StatusModal {
                     type: StatusFlatRoundButton.Type.Secondary
                     icon.name: "close"
                     icon.color: Theme.palette.directColor1
-                    onClicked: { root.resetSearchSelection(); }
+                    onClicked: { root.resetSearchLocationClicked(); }
                 }
             }
             StatusMenuSeparator {
