@@ -12,22 +12,22 @@ Column {
     spacing: 8
 
     StatusInput {
-        input.placeholderText: "Placeholder"
+        placeholderText: "Placeholder"
     }
 
     StatusInput {
         label: "Label"
-        input.placeholderText: "Disabled"
+        placeholderText: "Disabled"
         input.enabled: false
     }
 
     StatusInput {
-        input.placeholderText: "Clearable"
+        placeholderText: "Clearable"
         input.clearable: true
     }
 
     StatusInput {
-        input.placeholderText: "Invalid"
+        placeholderText: "Invalid"
         input.valid: false
     }
 
@@ -35,25 +35,25 @@ Column {
         label: "Label"
 
         input.icon.name: "search"
-        input.placeholderText: "Input with icon"
+        placeholderText: "Input with icon"
     }
 
     StatusInput {
         label: "Label"
-        input.placeholderText: "Placeholder"
+        placeholderText: "Placeholder"
         input.clearable: true
     }
 
     StatusInput {
         charLimit: 30
-        input.placeholderText: "Placeholder"
+        placeholderText: "Placeholder"
         input.clearable: true
     }
 
     StatusInput {
         label: "Label"
         charLimit: 30
-        input.placeholderText: "Placeholder"
+        placeholderText: "Placeholder"
         input.clearable: true
     }
 
@@ -91,7 +91,7 @@ Column {
         errorMessage: "Error message"
         input.clearable: true
         input.valid: false
-        input.placeholderText: "Placeholder"
+        placeholderText: "Placeholder"
     }
 
     StatusInput {
@@ -106,7 +106,7 @@ Column {
     StatusInput {
         label: "Label"
         secondaryLabel: "secondary label"
-        input.placeholderText: "Placeholder"
+        placeholderText: "Placeholder"
         input.implicitHeight: 56
     }
 
@@ -114,7 +114,7 @@ Column {
         id: input
         label: "Label"
         charLimit: 30
-        input.placeholderText: "Input with validator"
+        placeholderText: "Input with validator"
 
         validators: [
             StatusMinLengthValidator {
@@ -132,7 +132,7 @@ Column {
     StatusInput {
         label: "Input with <i>StatusRegularExpressionValidator</i>"
         charLimit: 30
-        input.placeholderText: `Must match regex(${validators[0].regularExpression.toString()}) and <= 30 chars`
+        placeholderText: `Must match regex(${validators[0].regularExpression.toString()}) and <= 30 chars`
         validationMode: StatusInput.ValidationMode.IgnoreInvalidInput
 
         validators: [
@@ -145,7 +145,7 @@ Column {
 
     StatusInput {
         label: "Label"
-        input.placeholderText: "Input width component (right side)"
+        placeholderText: "Input width component (right side)"
         input.rightComponent: StatusIcon {
             icon: "cancel"
             height: 16
@@ -156,26 +156,26 @@ Column {
 
     StatusInput {
         input.multiline: true
-        input.placeholderText: "Multiline"
+        placeholderText: "Multiline"
     }
 
     StatusInput {
         input.multiline: true
-        input.placeholderText: "Multiline with static height"
+        placeholderText: "Multiline with static height"
         input.implicitHeight: 100
     }
 
     StatusInput {
         input.multiline: true
-        input.placeholderText: "Multiline with max/min"
-        input.minimumHeight: 80
-        input.maximumHeight: 200
+        placeholderText: "Multiline with max/min"
+        minimumHeight: 80
+        maximumHeight: 200
     }
 
     StatusInput {
         property bool toggled: true
         label: "Input with emoji icon"
-        input.placeholderText: "Enter Name"
+        placeholderText: "Enter Name"
         input.icon.emoji: toggled ? "😁" : "🧸"
         input.icon.color: "blue"
         input.isIconSelectable: true
@@ -187,7 +187,7 @@ Column {
     StatusInput {
         property bool toggled: true
         label: "Input with selectable icon which is not an emoji"
-        input.placeholderText: "Enter Name"
+        placeholderText: "Enter Name"
         input.icon.emoji: ""
         input.icon.name: toggled ? "filled-account" : "image"
         input.icon.color: "blue"

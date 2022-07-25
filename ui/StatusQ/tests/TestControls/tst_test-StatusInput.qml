@@ -19,7 +19,7 @@ Item {
         id: statusInput
         label: "Control under test"
         charLimit: 30
-        input.placeholderText: `Must match regex(${validators[0].regularExpression.toString()}) and <= 30 chars`
+        placeholderText: `Must match regex(${validators[0].regularExpression.toString()}) and <= 30 chars`
         focus: true
 
         validators: [

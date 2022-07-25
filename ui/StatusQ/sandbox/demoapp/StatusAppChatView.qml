@@ -67,16 +67,16 @@ StatusAppThreePanelLayout {
             }
         }
 
-        StatusBaseInput {
+        StatusInput {
             id: searchInput
             anchors.top: searchInputWrapper.bottom
             anchors.topMargin: 16
             width: parent.width
-            implicitHeight: 36
+            maximumHeight: 36
             topPadding: 8
             bottomPadding: 8
             placeholderText: "Search"
-            icon.name: "search"
+            input.icon.name: "search"
         }
 
         Column {

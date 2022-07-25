@@ -174,17 +174,6 @@ Item {
         This property sets the tab key navigation item.
     */
     property var tabNavItem: null
-
-    /*!
-        \qmlproperty real StatusBaseInput::minimumHeight
-        This property sets the minimum height.
-    */
-    property real minimumHeight: 0
-    /*!
-        \qmlproperty alias StatusBaseInput::maximumHeight
-        This property sets the maximum height.
-    */
-    property real maximumHeight: 0
     /*!
         \qmlproperty int StatusBaseInput::maximumLength
         This property sets the text's maximum length.
@@ -277,20 +266,10 @@ Item {
     */
     signal editClicked()
 
-    implicitWidth: 448
-    implicitHeight: multiline ? Math.min(Math.max(
-                                    (edit.implicitHeight + topPadding + bottomPadding),
-                                    44, root.minimumHeight), root.maximumHeight) : 44
 
     Rectangle {
         id: background
-        width: parent.width
-        height: maximumHeight != 0 ? Math.min(
-                                         minimumHeight
-                                         != 0 ? Math.max(
-                                                    root.implicitHeight,
-                                                    minimumHeight) : root.implicitHeight,
-                                         maximumHeight) : parent.height
+        anchors.fill: parent
         color: root.showBackground ? Theme.palette.baseColor2
                                               : "transparent"
         radius: 8
@@ -324,10 +303,10 @@ Item {
                 root.editClicked()
             }
             RowLayout {
-                spacing: 10
+                spacing: 2
                 anchors {
                     fill: parent
-                    leftMargin: root.leftPadding ? root.leftPadding : leftComponentLoader.item ? 8 : 16
+                    leftMargin: root.leftPadding ? root.leftPadding : leftComponentLoader.item ? 6 : 16
                     rightMargin: root.rightPadding
                 }
 
@@ -346,12 +325,10 @@ Item {
 
                 Flickable {
                     id: flick
-
-                    Layout.fillHeight: true
                     Layout.fillWidth: true
+                    Layout.fillHeight: true
                     Layout.topMargin: root.topPadding
                     Layout.bottomMargin: root.bottomPadding
-
                     contentWidth: edit.paintedWidth
                     contentHeight: edit.paintedHeight
                     boundsBehavior: Flickable.StopAtBounds
@@ -374,10 +351,8 @@ Item {
 
                     TextEdit {
                         id: edit
-
                         property string previousText: text
                         property var keyEvent
-
                         width: flick.width
                         height: flick.height
                         verticalAlignment: TextEdit.AlignVCenter
@@ -389,7 +364,6 @@ Item {
                         font.family: Theme.palette.baseFont.name
                         color: root.enabled ? Theme.palette.directColor1 : Theme.palette.baseColor1 
                         wrapMode: root.multiline ? Text.WrapAtWordBoundaryOrAnywhere : TextEdit.NoWrap
-
                         Keys.onReturnPressed: event.accepted = !multiline && !acceptReturn
                         Keys.onEnterPressed: event.accepted = !multiline && !acceptReturn
                         Keys.forwardTo: [root]
@@ -399,7 +373,6 @@ Item {
                             edit.keyEvent = event.key
                             root.keyPressed(event);
                         }
-
                         onCursorRectangleChanged: flick.ensureVisible(cursorRectangle)
                         onActiveFocusChanged: if (root.pristine) root.pristine = false
                         onTextChanged: {

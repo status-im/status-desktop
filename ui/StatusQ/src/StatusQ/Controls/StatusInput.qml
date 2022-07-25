@@ -22,7 +22,7 @@ import StatusQ.Controls.Validators 0.1
             charLimit: 30
             errorMessage: qsTr("Input doesn't match validator")
             input.clearable: true
-            input.placeholderText: qsTr("Placeholder text")
+            placeholderText: qsTr("Placeholder text")
         }
    \endqml
 
@@ -59,10 +59,20 @@ Item {
     */
     property alias text: statusBaseInput.text
     /*!
+        \qmlproperty alias StatusInput::placeholderText
+        This property holds a reference to the TextEdit's placeholderText property.
+    */
+    property alias placeholderText: statusBaseInput.placeholderText
+    /*!
         \qmlproperty alias StatusInput::font
         This property holds a reference to the TextEdit's font property.
     */
     property alias font: statusBaseInput.font
+    /*!
+        \qmlproperty alias StatusInput::multiline
+        This property indicates whether the StatusBaseInput allows multiline text. Default value is false.
+    */
+    property alias multiline: statusBaseInput.multiline
 
     /*!
        \qmlproperty errorMessageCmp
@@ -101,15 +111,35 @@ Item {
     */
     property string errorMessage: ""
     /*!
-        \qmlproperty real StatusBaseInput::leftPadding
+        \qmlproperty alias StatusInput::leftPadding
         This property sets the leftComponentLoader's left padding.
     */
-    property real leftPadding: 16
+    property alias leftPadding: statusBaseInput.leftPadding
     /*!
-        \qmlproperty real StatusBaseInput::rightPadding
+        \qmlproperty alias StatusInput::rightPadding
         This property sets the right padding.
     */
-    property real rightPadding: 16
+    property alias rightPadding: statusBaseInput.rightPadding
+    /*!
+        \qmlproperty alias StatusInput::topPadding
+        This property sets the top padding.
+    */
+    property alias topPadding: statusBaseInput.topPadding
+    /*!
+        \qmlproperty alias StatusInput::bottomPadding
+        This property sets the bottom padding.
+    */
+    property alias bottomPadding: statusBaseInput.bottomPadding
+    /*!
+        \qmlproperty real StatusInput::minimumHeight
+        This property sets the minimum height.
+    */
+    property real minimumHeight: 0
+    /*!
+        \qmlproperty alias StatusInput::maximumHeight
+        This property sets the maximum height.
+    */
+    property real maximumHeight: 0
     /*!
         \qmlproperty list StatusBaseInput::validators
         This property sets the list of validators to be considered.
@@ -310,24 +340,32 @@ Item {
         root.valid = Object.values(asyncErrors).length == 0
     }
 
-    implicitWidth: inputLayout.implicitWidth
-    implicitHeight: inputLayout.implicitHeight
-    height: implicitHeight
-    width: implicitWidth
+    QtObject {
+        id: internal
+        readonly property int inputHeight: statusBaseInput.multiline || (root.minimumHeight > 0) || (root.maximumHeight > 0)?
+                                  Math.min(Math.max(statusBaseInput.topPadding + statusBaseInput.bottomPadding, 44,
+                                                    root.minimumHeight), root.maximumHeight) : 44
+    }
 
-    Component.onCompleted: validate()
+    implicitWidth: 448
+    implicitHeight: (internal.inputHeight + topRow.height + errorMessage.height + (2*inputLayout.spacing))
+
+    Component.onCompleted: {
+        validate()
+    }
 
     ColumnLayout {
         id: inputLayout
-
         anchors.fill: parent
-
+        spacing: ((topRow.height > 0) || (errorMessage.height > 0)) ? 8 : 0
         RowLayout {
+            id: topRow
             Layout.fillWidth: true
-
+            Layout.preferredHeight: (!!root.label || !!root.secondaryLabel || root.charLimit > 0) ? 22 :0
             StatusBaseText {
                 id: label
-                visible: !!root.label
+                visible: !!text
+                height: visible ? contentHeight : 0
                 elide: Text.ElideRight
                 text: root.label
                 font.pixelSize: 15
@@ -340,6 +378,7 @@ Item {
                 elide: Text.ElideRight
                 text: root.secondaryLabel
                 font.pixelSize: 15
+                height: visible ? contentHeight : 0
                 color: Theme.palette.baseColor1
             }
 
@@ -349,9 +388,9 @@ Item {
 
             StatusBaseText {
                 id: charLimitLabel
-
+                Layout.alignment: Qt.AlignVCenter
+                height: visible ? contentHeight : 0
                 visible: root.charLimit > 0
-
                 text: "%1 / %2".arg(statusBaseInput.text.length).arg(root.charLimit)
                 font.pixelSize: 12
                 color: statusBaseInput.enabled ? Theme.palette.baseColor1 : Theme.palette.directColor6
@@ -360,16 +399,10 @@ Item {
 
         StatusBaseInput {
             id: statusBaseInput
-
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-
-            leftPadding: root.leftPadding
-            rightPadding: root.rightPadding
-
+            implicitWidth: parent.width
+            implicitHeight: internal.inputHeight
             maximumLength: root.charLimit
             onTextChanged: root.validate()
-
             Keys.forwardTo: [root]
             onIconClicked: root.iconClicked()
             onKeyPressed: {
@@ -382,13 +415,11 @@ Item {
 
         StatusBaseText {
             id: errorMessage
-
             visible: !!text && !statusBaseInput.valid
-
+            height: visible ? contentHeight : 0
             font.pixelSize: 12
             color: Theme.palette.dangerColor1
-
-            horizontalAlignment: Text.AlignRight
+            Layout.alignment: Qt.AlignVCenter
             wrapMode: Text.WordWrap
         }
     }

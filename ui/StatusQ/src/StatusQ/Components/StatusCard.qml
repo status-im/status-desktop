@@ -12,7 +12,7 @@ import StatusQ.Controls 0.1
    \since StatusQ.Components 0.1
    \brief This component represents a StatusCard as defined in design under https://www.figma.com/file/FkFClTCYKf83RJWoifWgoX/Wallet-v2?node-id=3161%3A171040
 
-   There is an advanced mode avialable where a StatusBaseInput is provided for the user to be able to change values.
+   There is an advanced mode available where a StatusInput is provided for the user to be able to change values.
 
    Example of how the component looks like:
    \image status_card.png
@@ -80,7 +80,7 @@ Rectangle {
     property alias tertiaryText: tertiaryText.text
     /*!
        \qmlproperty alias StatusCard::advancedInputText
-       Used to set text in the StatusBaseInput in advancedMode
+       Used to set text in the StatusInput in advancedMode
     */
     property alias advancedInputText: advancedInput.text
     /*!
@@ -111,7 +111,7 @@ Rectangle {
     property alias tertiaryLabel: tertiaryText
     /*!
        \qmlproperty alias StatusCard::advancedInput
-       This property allows user to customize the StatusBaseInput in advanced mode
+       This property allows user to customize the StatusInput in advanced mode
     */
     property alias advancedInput: advancedInput
     /*!
@@ -191,18 +191,18 @@ Rectangle {
                 }
             }
 
-            StatusBaseInput {
+            StatusInput {
                 id: advancedInput
                 property bool locked: false
                 implicitWidth: 80
-                implicitHeight: 32
+                maximumHeight: 32
                 topPadding: 0
                 bottomPadding: 0
                 leftPadding: 8
                 rightPadding: 5
-                edit.font.pixelSize: 13
-                edit.readOnly: locked || disabled
-                rightComponent: Row {
+                input.edit.font.pixelSize: 13
+                input.edit.readOnly: locked || disabled
+                input.rightComponent: Row {
                     width: implicitWidth
                     spacing: 4
                     StatusFlatRoundButton {

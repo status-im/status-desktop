@@ -26,7 +26,7 @@ Item {
             // To-Do: Move to StatusChatInput once its moved to StatusQ
             sourceComponent: StatusInput {
                 width: editText.width
-                input.placeholderText: ""
+                placeholderText: ""
                 input.text: msgText
                 input.implicitHeight: 40
             }

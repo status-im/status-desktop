@@ -298,9 +298,9 @@ Item {
                 color: Theme.palette.statusPopupMenu.backgroundColor
                 z: 3 // Above delegate (z=1) and above section.delegate (z = 2)
 
-                StatusBaseInput {
+                StatusInput {
                     id: searchInput
-                    implicitHeight: 36
+                    maximumHeight: 36
                     width: content.itemWidth - 2 * 18
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
@@ -308,7 +308,7 @@ Item {
                     bottomPadding: 0
                     placeholderText: root.placeholderSearchText
                     text: root.searchText
-                    icon.name: "search"
+                    input.icon.name: "search"
 
                     onTextChanged: {
                         d.applyFilter(text)

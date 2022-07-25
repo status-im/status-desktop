@@ -89,7 +89,7 @@ StatusModal {
                     color: Theme.palette.baseColor1
                 }
 
-                StatusBaseInput {
+                StatusInput {
                     id: inputText
                     anchors.left: statusIcon.right
                     anchors.right: parent.right
@@ -99,9 +99,9 @@ StatusModal {
                     leftPadding: 5
                     topPadding: 5 //smaller padding to handle bigger font
                     bottomPadding: 5
-                    clearable: true
-                    showBackground: false
-                    placeholder {
+                    input.clearable: true
+                    input.showBackground: false
+                    input.placeholder {
                         text: qsTr("Search")
                         font.pixelSize: 28
                         color: Theme.palette.directColor9

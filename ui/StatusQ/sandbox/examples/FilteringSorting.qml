@@ -36,7 +36,7 @@ ColumnLayout {
 
             Layout.fillWidth: true
             input.icon.name: "search"
-            input.placeholderText: "nickname.."
+            placeholderText: "nickname.."
         }
 
         StatusIconTabButton {
