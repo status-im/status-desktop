@@ -1,6 +1,6 @@
 {.used.}
 
-import json
+import json, marshal
 import ../../visual_identity/dto
 
 include ../../../common/json_utils
@@ -57,3 +57,7 @@ proc contains*(accounts: seq[AccountDto], keyUid: string): bool =
     if (account.keyUid == keyUid):
       return true
   return false
+
+proc toJsonNode*(accountDto: AccountDto): JsonNode =
+  let accountDtoAsString = $$accountDto
+  result = parseJson(accountDtoAsString)

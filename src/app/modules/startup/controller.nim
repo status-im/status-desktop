@@ -33,6 +33,7 @@ type
     tmpPassword: string
     tmpMnemonic: string
     tmpSelectedLoginAccountKeyUid: string
+    tmpStoreToKeychain: bool
 
 proc newController*(delegate: io_interface.AccessInterface,
   events: EventEmitter,
@@ -48,6 +49,10 @@ proc newController*(delegate: io_interface.AccessInterface,
   result.accountsService = accountsService
   result.keychainService = keychainService
   result.profileService = profileService
+
+## Forward initialization
+proc finalizeSettingupAccount(self: Controller, error: string)
+proc finalizeLoggingInAccount(self: Controller, error: string)
 
 proc delete*(self: Controller) =
   discard
@@ -76,6 +81,14 @@ proc init*(self: Controller) =
       return
     singletonInstance.localAccountSettings.removeKey(LS_KEY_STORE_TO_KEYCHAIN)
     self.delegate.emitObtainingPasswordError(args.errDescription)
+
+  self.events.on(SIGNAL_SETUP_ACCOUNT_RESPONSE) do(e:Args):
+    let args = AccountsArgs(e)
+    self.finalizeSettingupAccount(args.error)
+
+  self.events.on(SIGNAL_LOGIN_ACCOUNT_RESPONSE) do(e:Args):
+    let args = AccountsArgs(e)
+    self.finalizeLoggingInAccount(args.error)
 
 proc shouldStartWithOnboardingScreen*(self: Controller): bool =
   return self.accountsService.openedAccounts().len == 0
@@ -130,18 +143,22 @@ proc storeIdentityImage*(self: Controller) =
   self.tmpProfileImageDetails.y1, self.tmpProfileImageDetails.x2, self.tmpProfileImageDetails.y2)
   self.tmpProfileImageDetails = ProfileImageDetails()
 
-proc setupAccount(self: Controller, accountId: string, storeToKeychain: bool) =
-  let error = self.accountsService.setupAccount(accountId, self.tmpPassword, self.tmpDisplayName)
+proc finalizeSettingupAccount(self: Controller, error: string) =
   if error != "":
     self.delegate.setupAccountError(error)
   else:
-    if storeToKeychain:
+    if self.tmpStoreToKeychain:
       singletonInstance.localAccountSettings.setStoreToKeychainValue(LS_VALUE_STORE)
       self.storePasswordToKeychain()
     else:
       singletonInstance.localAccountSettings.setStoreToKeychainValue(LS_VALUE_NEVER)
   self.setPassword("")
   self.setDisplayName("")
+  self.tmpStoreToKeychain = false  
+
+proc setupAccount(self: Controller, accountId: string, storeToKeychain: bool) =
+  self.tmpStoreToKeychain = storeToKeychain
+  let error = self.accountsService.setupAccount(accountId, self.tmpPassword, self.tmpDisplayName)
 
 proc storeGeneratedAccountAndLogin*(self: Controller, storeToKeychain: bool) =
   let accounts = self.getGeneratedAccounts()
@@ -192,9 +209,11 @@ proc setSelectedLoginAccountKeyUid*(self: Controller, keyUid: string) =
     return
   self.keychainService.tryToObtainPassword(selectedAccount.name)
 
-proc login*(self: Controller) =
-  let selectedAccount = self.getSelectedLoginAccount()
-  let error = self.accountsService.login(selectedAccount, self.tmpPassword)
-  self.setPassword("")
+proc finalizeLoggingInAccount(self: Controller, error: string) =
   if(error.len > 0):
     self.delegate.emitAccountLoginError(error)
+
+proc login*(self: Controller) =
+  let selectedAccount = self.getSelectedLoginAccount()
+  self.accountsService.login(selectedAccount, self.tmpPassword)
+  self.setPassword("")
