@@ -19,6 +19,7 @@ import "../panels/communities"
 
 Item {
     id: root
+    objectName: "communityColumnView"
     width: 304
     height: parent.height
 
@@ -114,10 +115,10 @@ Item {
     }
 
     StatusPopupMenu {
-        property bool showInviteButton: false
-
         id: adminPopupMenu
         enabled: communityData.amISectionAdmin
+
+        property bool showInviteButton: false
 
         onClosed: adminPopupMenu.showInviteButton = false
 
@@ -510,9 +511,8 @@ Item {
                     onClicked: {
                         adminPopupMenu.showInviteButton = false
                         adminPopupMenu.popup()
-                        adminPopupMenu.y = Qt.binding(function () {
-                            return root.height - adminPopupMenu.height - createChannelOrCategoryBtn.height - 20
-                        })
+                        adminPopupMenu.y = Qt.binding(() => root.height - adminPopupMenu.height
+                            - createChannelOrCategoryBtn.height - 20)
                     }
                 }
             }
