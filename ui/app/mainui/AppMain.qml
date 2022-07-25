@@ -719,13 +719,13 @@ Item {
                 anchors.centerIn: parent
                 rootStore: appMain.rootStore
                 contactsStore: appMain.rootStore.contactStore
-                onClosed: {
-                    destroy()
+                onClosed: () => {
+                    destroy();
                 }
 
-                onSendInvites: {
-                    const error = communitySectionModule.inviteUsersToCommunity(JSON.stringify(pubKeys))
-                    processInviteResult(error)
+                onSendInvites: (pubKeys, inviteMessage) => {
+                    const error = communitySectionModule.inviteUsersToCommunity(JSON.stringify(pubKeys), inviteMessage);
+                    processInviteResult(error);
                 }
             }
         }

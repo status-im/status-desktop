@@ -1,6 +1,6 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.Layouts 1.13
+import QtQuick 2.14
+import QtQuick.Controls 2.14
+import QtQuick.Layouts 1.14
 
 import StatusQ.Core 0.1
 
@@ -22,6 +22,8 @@ Item {
     property bool hideCommunityMembers: false
     property var pubKeys: ([])
 
+    readonly property alias count: contactListView.count
+
     signal contactClicked(var contact)
 
     function matchesAlias(name, filter) {
@@ -29,12 +31,13 @@ Item {
         return parts.some(p => p.startsWith(filter))
     }
 
-    implicitWidth: contactListView.implicitWidth
+    implicitWidth: contactListView.implicitWidth + contactListView.margins
     implicitHeight: visible ? Math.min(contactListView.contentHeight, (expanded ? 320 : 192)) : 0
 
     StatusListView {
         id: contactListView
         anchors.fill: parent
+        rightMargin: 0
         spacing: 0
 
         model: root.contactsStore.myContactsModel
@@ -48,6 +51,9 @@ Item {
             name: model.displayName
             image: model.icon
             isVisible: {
+                if (isChecked)
+                    return true;
+
                 return model.isContact && !model.isBlocked && (root.filterText === "" ||
                     root.matchesAlias(model.alias.toLowerCase(), root.filterText.toLowerCase()) ||
                     model.displayName.toLowerCase().includes(root.filterText.toLowerCase()) ||
@@ -63,5 +69,3 @@ Item {
         }
     }
 }
-
-

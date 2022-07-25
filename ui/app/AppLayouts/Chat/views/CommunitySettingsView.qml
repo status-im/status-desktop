@@ -229,13 +229,13 @@ StatusAppTwoPanelLayout {
             anchors.centerIn: parent
             rootStore: root.rootStore
             contactsStore: root.rootStore.contactsStore
-            onClosed: {
-                destroy()
+            onClosed: () => {
+                destroy();
             }
 
-            onSendInvites: {
-                const error = root.chatCommunitySectionModule.inviteUsersToCommunity(JSON.stringify(pubKeys))
-                processInviteResult(error)
+            onSendInvites: (pubKeys, inviteMessage) => {
+                const error = root.communitySectionModule.inviteUsersToCommunity(JSON.stringify(pubKeys), inviteMessage);
+                processInviteResult(error);
             }
         }
     }

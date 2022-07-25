@@ -92,14 +92,14 @@ SettingsContentBase {
         anchors.centerIn: parent
         rootStore: root.rootStore
         contactsStore: root.contactStore
-        onClosed: {
-            destroy()
+        onClosed: () => {
+            destroy();
         }
 
         onSendInvites: {
             const error = root.profileSectionStore.communitiesProfileModule.inviteUsersToCommunity(
-                            community.id, JSON.stringify(pubKeys))
-            processInviteResult(error)
+                                community.id, JSON.stringify(pubKeys), inviteMessage);
+            processInviteResult(error);
         }
     }
 

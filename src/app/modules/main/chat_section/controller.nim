@@ -454,8 +454,8 @@ method unmuteCategory*(self: Controller, categoryId: string) =
 proc setCommunityMuted*(self: Controller, muted: bool) =
   self.communityService.setCommunityMuted(self.sectionId, muted)
 
-proc inviteUsersToCommunity*(self: Controller, pubKeys: string): string =
-  result = self.communityService.inviteUsersToCommunityById(self.sectionId, pubKeys)
+proc inviteUsersToCommunity*(self: Controller, pubKeys: string, inviteMessage: string): string =
+  result = self.communityService.inviteUsersToCommunityById(self.sectionId, pubKeys, inviteMessage)
 
 proc reorderCommunityCategories*(self: Controller, categoryId: string, position: int) =
   self.communityService.reorderCommunityCategories(self.sectionId, categoryId, position)

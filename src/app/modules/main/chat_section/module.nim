@@ -792,8 +792,8 @@ method exportCommunity*(self: Module): string =
 method setCommunityMuted*(self: Module, muted: bool) =
   self.controller.setCommunityMuted(muted)
 
-method inviteUsersToCommunity*(self: Module, pubKeysJSON: string): string =
-  result = self.controller.inviteUsersToCommunity(pubKeysJSON)
+method inviteUsersToCommunity*(self: Module, pubKeysJSON: string, inviteMessage: string): string =
+  result = self.controller.inviteUsersToCommunity(pubKeysJSON, inviteMessage)
 
 method prepareEditCategoryModel*(self: Module, categoryId: string) =
   self.view.editCategoryChannelsModel().clearItems()

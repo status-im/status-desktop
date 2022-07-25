@@ -1,0 +1,53 @@
+import QtQuick 2.14
+import QtQuick.Layouts 1.4
+
+import StatusQ.Core 0.1
+import StatusQ.Components 0.1
+import StatusQ.Controls 0.1
+import StatusQ.Popups 0.1
+
+import utils 1.0
+import shared 1.0
+import shared.views 1.0
+import shared.status 1.0
+
+ColumnLayout {
+    id: root
+
+    property var pubKeys: ([])
+
+    property var rootStore
+    property var contactsStore
+
+    property alias inviteMessage: messageInput.text
+
+    spacing: Style.current.padding
+
+    QtObject {
+        id: d
+
+        readonly property int maxMsgLength: 140
+        readonly property int msgHeight: 108
+    }
+
+    StatusInput {
+        id: messageInput
+        label: qsTr("Invitation Message")
+        charLimit: d.maxMsgLength
+        placeholderText: qsTr("The message a contact will get with community invitation")
+        input.multiline: true
+        input.implicitHeight: d.msgHeight
+        input.verticalAlignment: TextEdit.AlignTop
+        Layout.minimumHeight: 150 // TODO: implicitHeight is not calculated well from input.implicitHeight
+        Layout.fillWidth: true
+    }
+
+    PickedContacts {
+        id: existingContacts
+        enabled: false
+        contactsStore: root.contactsStore
+        pubKeys: root.pubKeys
+        Layout.fillWidth: true
+        Layout.fillHeight: true
+    }
+}

@@ -1,5 +1,6 @@
 EnsResolver 1.0 EnsResolver.qml
 ExistingContacts 1.0 ExistingContacts.qml
+PickedContacts 1.0 PickedContacts.qml
 NoFriendsRectangle 1.0 NoFriendsRectangle.qml
 SearchResults 1.0 SearchResults.qml
 TransactionPreview 1.0 TransactionPreview.qml
