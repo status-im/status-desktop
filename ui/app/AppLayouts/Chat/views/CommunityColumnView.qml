@@ -37,6 +37,19 @@ Item {
     signal infoButtonClicked
     signal manageButtonClicked
 
+    MouseArea {
+        enabled: communityData.amISectionAdmin
+        anchors.fill: parent
+        z: 0
+        acceptedButtons: Qt.RightButton
+        onClicked: {
+            adminPopupMenu.showInviteButton = true
+            adminPopupMenu.x = mouse.x + 4
+            adminPopupMenu.y = mouse.y + 4
+            adminPopupMenu.open()
+        }
+    }
+
     StatusChatInfoButton {
         id: communityHeader
         objectName: "communityHeaderButton"
@@ -76,7 +89,7 @@ Item {
             text: qsTr("Start chat")
             visible: parent.hovered
         }
-    } // StatusChatInfoToolBar
+    }
 
     Loader {
         id: membershipRequests
@@ -100,6 +113,45 @@ Item {
         }
     }
 
+    StatusPopupMenu {
+        property bool showInviteButton: false
+
+        id: adminPopupMenu
+        enabled: communityData.amISectionAdmin
+
+        onClosed: adminPopupMenu.showInviteButton = false
+
+        StatusMenuItem {
+            objectName: "createCommunityChannelBtn"
+            text: qsTr("Create channel")
+            icon.name: "channel"
+            onTriggered: Global.openPopup(createChannelPopup)
+        }
+
+        StatusMenuItem {
+            objectName: "createCommunityCategoryBtn"
+            text: qsTr("Create category")
+            icon.name: "channel-category"
+            onTriggered: Global.openPopup(createCategoryPopup)
+        }
+
+        StatusMenuSeparator {
+            visible: invitePeopleBtn.enabled
+        }
+
+        StatusMenuItem {
+            id: invitePeopleBtn
+            text: qsTr("Invite people")
+            icon.name: "share-ios"
+            enabled: communityData.canManageUsers && adminPopupMenu.showInviteButton
+            onTriggered: Global.openPopup(inviteFriendsToCommunityPopup, {
+                                            community: communityData,
+                                            hasAddedContacts: root.hasAddedContacts,
+                                            communitySectionModule: root.communitySectionModule
+                                        })
+        }
+    }
+
     StatusScrollView {
         id: scrollView
         anchors.top: membershipRequests.bottom
@@ -115,46 +167,6 @@ Item {
         contentHeight: communityChatListAndCategories.height
                        + bannerColumn.height
                        + Style.current.bigPadding
-
-        background: MouseArea {
-            acceptedButtons: Qt.RightButton
-            onClicked: {
-                if (communityData.amISectionAdmin) {
-                    popup.x = mouse.x + 4
-                    popup.y = mouse.y + 4
-                    popup.open()
-                }
-            }
-
-        property var popup: StatusPopupMenu {
-            StatusMenuItem {
-                text: qsTr("Create channel")
-                icon.name: "channel"
-                enabled: communityData.amISectionAdmin
-                onTriggered: Global.openPopup(createChannelPopup)
-            }
-
-            StatusMenuItem {
-                text: qsTr("Create category")
-                icon.name: "channel-category"
-                enabled: communityData.amISectionAdmin
-                onTriggered: Global.openPopup(createCategoryPopup)
-            }
-
-            StatusMenuSeparator {}
-
-            StatusMenuItem {
-                text: qsTr("Invite people")
-                icon.name: "share-ios"
-                enabled: communityData.canManageUsers
-                onTriggered: Global.openPopup(inviteFriendsToCommunityPopup, {
-                                                  community: communityData,
-                                                  hasAddedContacts: root.hasAddedContacts,
-                                                  communitySectionModule: root.communitySectionModule
-                                              })
-            }
-        }
-    } // MouseArea
 
         StatusChatListAndCategories {
             id: communityChatListAndCategories
@@ -192,7 +204,6 @@ Item {
                 StatusMenuItem {
                     text: qsTr("Create channel")
                     icon.name: "channel"
-                    // Not Refactored Yet
                     enabled: communityData.amISectionAdmin
                     onTriggered: Global.openPopup(createChannelPopup)
                 }
@@ -484,6 +495,7 @@ Item {
         active: communityData.amISectionAdmin
         sourceComponent: Component {
             StatusBaseText {
+                id: createChannelOrCategoryBtn
                 objectName: "createChannelOrCategoryBtn"
                 color: Theme.palette.baseColor1
                 height: visible ? implicitHeight : 0
@@ -496,30 +508,11 @@ Item {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
                     onClicked: {
-                        if (createChatOrCatMenu.opened) {
-                            createChatOrCatMenu.close()
-                            return
-                        }
-                        createChatOrCatMenu.open()
-                        createChatOrCatMenu.y = - createChatOrCatMenu.height - 5
-                    }
-                }
-
-                StatusPopupMenu {
-                    id: createChatOrCatMenu
-                    closePolicy: Popup.CloseOnPressOutsideParent
-                    StatusMenuItem {
-                        objectName: "createCommunityChannelBtn"
-                        text: qsTr("Create channel")
-                        icon.name: "channel"
-                        onTriggered: Global.openPopup(createChannelPopup)
-                    }
-
-                    StatusMenuItem {
-                        objectName: "createCommunityCategoryBtn"
-                        text: qsTr("Create category")
-                        icon.name: "channel-category"
-                        onTriggered: Global.openPopup(createCategoryPopup)
+                        adminPopupMenu.showInviteButton = false
+                        adminPopupMenu.popup()
+                        adminPopupMenu.y = Qt.binding(function () {
+                            return root.height - adminPopupMenu.height - createChannelOrCategoryBtn.height - 20
+                        })
                     }
                 }
             }
