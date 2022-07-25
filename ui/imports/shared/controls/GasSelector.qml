@@ -334,7 +334,6 @@ Item {
             anchors.top: parent.top
             anchors.right: inputGasPrice.left
             anchors.rightMargin: Style.current.padding
-            anchors.left: undefined
             visible: root.suggestedFees.eip1559Enabled
             width: 125
             customHeight: 56
@@ -364,7 +363,6 @@ Item {
             label: qsTr("Per-gas overall limit")
             inputLabel.color: Style.current.secondaryText
             anchors.top: parent.top
-            anchors.left: undefined
             anchors.right: parent.right
             width: 125
             customHeight: 56

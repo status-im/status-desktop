@@ -53,8 +53,9 @@ ModalPopup {
         id: prompt
         text: ""
         visible: false
-        Layout.fillWidth: true
         anchors.top: svMessage.bottom
+        anchors.right: parent.right
+        anchors.left: parent.left
     }
 
     footer: Item {
