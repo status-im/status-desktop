@@ -17,8 +17,8 @@ proc newController*(delegate: io_interface.AccessInterface,
 proc delete*(self: Controller) =
   discard
 
-proc inviteUsersToCommunity*(self: Controller, communityID: string, pubKeys: string): string =
-  result = self.communityService.inviteUsersToCommunityById(communityID, pubKeys)
+proc inviteUsersToCommunity*(self: Controller, communityID: string, pubKeys: string, inviteMessage: string): string =
+  result = self.communityService.inviteUsersToCommunityById(communityID, pubKeys, inviteMessage)
 
 proc leaveCommunity*(self: Controller, communityID: string) =
   self.communityService.leaveCommunity(communityID)

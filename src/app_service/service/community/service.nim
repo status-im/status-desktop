@@ -1069,7 +1069,7 @@ QtObject:
     except Exception as e:
       error "Error declining request to join community", msg = e.msg
 
-  proc inviteUsersToCommunityById*(self: Service, communityId: string, pubKeysJson: string): string =
+  proc inviteUsersToCommunityById*(self: Service, communityId: string, pubKeysJson: string, inviteMessage: string): string =
     try:
       let pubKeysParsed = pubKeysJson.parseJson
       var pubKeys: seq[string] = @[]
@@ -1077,7 +1077,7 @@ QtObject:
         pubKeys.add(pubKey.getStr)
       # We no longer send invites, but merely share the community so 
       # users can request access (with automatic acception)
-      let response =  status_go.shareCommunityToUsers(communityId, pubKeys)
+      let response = status_go.shareCommunityToUsers(communityId, pubKeys, inviteMessage)
       discard self.chatService.processMessageUpdateAfterSend(response)
     except Exception as e:
       error "Error sharing community", msg = e.msg

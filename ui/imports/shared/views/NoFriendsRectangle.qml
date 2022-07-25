@@ -10,8 +10,8 @@ import "../popups"
 
 Item {
     id: noContactsRect
-    width: 260
-    height: visible ? 120 : 0
+    implicitWidth: 260
+    implicitHeight: visible ? 120 : 0
 
     property string text: qsTr("You don’t have any contacts yet. Invite your friends to start chatting.")
     property alias textColor: noContacts.color

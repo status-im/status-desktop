@@ -33,8 +33,6 @@ Rectangle {
 
     visible: isVisible && (isContact || isUser)
     height: visible ? 64 : 0
-    anchors.right: parent.right
-    anchors.left: parent.left
     border.width: 0
     radius: Style.current.radius
     color: isHovered ? Style.current.backgroundHover : Style.current.transparent

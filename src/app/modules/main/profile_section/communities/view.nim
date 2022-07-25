@@ -19,8 +19,8 @@ QtObject:
   proc load*(self: View) =
     self.delegate.viewDidLoad()
 
-  method inviteUsersToCommunity*(self: View, communityID: string, pubKeysJSON: string): string {.slot.} =
-    result = self.delegate.inviteUsersToCommunity(communityID, pubKeysJSON)
+  method inviteUsersToCommunity*(self: View, communityID: string, pubKeysJSON: string, inviteMessage: string): string {.slot.} =
+    result = self.delegate.inviteUsersToCommunity(communityID, pubKeysJSON, inviteMessage)
 
   method leaveCommunity*(self: View, communityID: string) {.slot.} =
     self.delegate.leaveCommunity(communityID)

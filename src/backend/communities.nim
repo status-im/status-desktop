@@ -274,10 +274,11 @@ proc inviteUsersToCommunity*(communityId: string, pubKeys: seq[string]): RpcResp
     "users": pubKeys
   }])
 
-proc shareCommunityToUsers*(communityId: string, pubKeys: seq[string]): RpcResponse[JsonNode] {.raises: [Exception].} =
+proc shareCommunityToUsers*(communityId: string, pubKeys: seq[string], inviteMessage: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   return callPrivateRPC("shareCommunity".prefix, %*[{
     "communityId": communityId,
-    "users": pubKeys
+    "users": pubKeys,
+    "inviteMessage": inviteMessage
   }])
 
 proc getCommunitiesSettings*(): RpcResponse[JsonNode] {.raises: [Exception].} =

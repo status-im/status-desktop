@@ -50,8 +50,6 @@ Item {
     signal textEdited(string inputValue)
     signal keyPressed(var event)
 
-    anchors.right: parent.right
-    anchors.left: parent.left
     implicitHeight: inputRectangle.height +
                     (hasLabel ? inputLabel.height + labelMargin : 0) +
                     (!keepHeight &&!!validationError ? (validationErrorText.height + validationErrorTopMargin) : 0)

@@ -1,18 +1,18 @@
-import QtQuick 2.12
-import QtQuick.Controls 2.12
-import QtQuick.Dialogs 1.3
-import QtQuick.Layouts 1.13
-import QtGraphicalEffects 1.13
+import QtQuick 2.14
+import QtQuick.Layouts 1.4
 
-import utils 1.0
-import shared.controls 1.0
-import shared 1.0
-import shared.panels 1.0
-import shared.status 1.0
 import StatusQ.Components 0.1
+import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
 
-Column {
+import utils 1.0
+import shared 1.0
+import shared.controls 1.0
+import shared.panels 1.0
+import shared.views 1.0
+import shared.status 1.0
+
+ColumnLayout {
     id: root
 
     property string headerTitle: ""
@@ -20,7 +20,57 @@ Column {
     property var rootStore
     property var contactsStore
     property var community
-    property alias contactListSearch: contactFieldAndList
+
+    property var pubKeys: ([])
+
+    spacing: Style.current.padding
+
+    StyledText {
+        id: headline
+        text: qsTr("Contacts")
+        font.pixelSize: Style.current.primaryTextFontSize
+        color: Style.current.secondaryText
+    }
+
+    StatusInput {
+        id: filterInput
+        placeholderText: qsTr("Search contacts")
+        input.icon.name: "search"
+        input.clearable: true
+        Layout.fillWidth: true
+    }
+
+    ExistingContacts {
+        id: existingContacts
+
+        contactsStore: root.contactsStore
+        community: root.community
+        hideCommunityMembers: true
+        showCheckbox: true
+        filterText: filterInput.text
+        pubKeys: root.pubKeys
+        onContactClicked: function (contact) {
+            if (!contact || typeof contact === "string") {
+                return
+            }
+            const index = root.pubKeys.indexOf(contact.pubKey)
+            const pubKeysCopy = Object.assign([], root.pubKeys)
+            if (index === -1) {
+                pubKeysCopy.push(contact.pubKey)
+            } else {
+                pubKeysCopy.splice(index, 1)
+            }
+            root.pubKeys = pubKeysCopy
+        }
+        Layout.rightMargin: -Style.current.padding
+        Layout.fillWidth: true
+        Layout.fillHeight: true
+    }
+
+    StatusModalDivider {
+        bottomPadding: Style.current.padding
+        Layout.fillWidth: true
+    }
 
     StatusDescriptionListItem {
         title: qsTr("Share community")
@@ -32,31 +82,5 @@ Column {
             root.rootStore.copyToClipboard(link)
             tooltip.visible = !tooltip.visible
         }
-        width: parent.width
-    }
-
-    StatusModalDivider {
-        bottomPadding: Style.current.padding
-    }
-
-    StyledText {
-        id: headline
-        text: qsTr("Contacts")
-        font.pixelSize: Style.current.primaryTextFontSize
-        color: Style.current.secondaryText
-        anchors.left: parent.left
-        anchors.leftMargin: Style.current.padding
-    }
-
-    ContactsListAndSearch {
-        id: contactFieldAndList
-        anchors.horizontalCenter: parent.horizontalCenter
-        width: parent.width - 32
-        contactsStore: root.contactsStore
-        community: root.community
-        showCheckbox: true
-        hideCommunityMembers: true
-        showSearch: false
-        rootStore: root.rootStore
     }
 }

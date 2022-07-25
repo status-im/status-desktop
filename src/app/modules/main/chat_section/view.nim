@@ -274,8 +274,8 @@ QtObject:
   proc setCommunityMuted*(self: View, muted: bool) {.slot.} =
     self.delegate.setCommunityMuted(muted)
 
-  proc inviteUsersToCommunity*(self: View, pubKeysJSON: string): string {.slot.} =
-    result = self.delegate.inviteUsersToCommunity(pubKeysJSON)
+  proc inviteUsersToCommunity*(self: View, pubKeysJSON: string, inviteMessage: string): string {.slot.} =
+    result = self.delegate.inviteUsersToCommunity(pubKeysJSON, inviteMessage)
 
   proc createCommunityCategory*(self: View, name: string, channels: string) {.slot.} =
     let channelsSeq = map(parseJson(channels).getElems(), proc(x:JsonNode):string = x.getStr())

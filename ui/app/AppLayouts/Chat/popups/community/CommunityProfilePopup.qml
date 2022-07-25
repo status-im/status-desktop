@@ -90,13 +90,6 @@ StatusModal {
                 community: root.community
                 contactsStore: root.contactsStore
                 rootStore: root.store
-
-                contactListSearch.chatKey.text: ""
-                contactListSearch.pubKey: ""
-                contactListSearch.pubKeys: []
-                contactListSearch.ensUsername: ""
-                contactListSearch.existingContacts.visible: root.hasAddedContacts
-                contactListSearch.noContactsRect.visible: !contactListSearch.existingContacts.visible
             }
         }
     }
@@ -117,9 +110,9 @@ StatusModal {
             text: qsTr("Invite")
             visible: root.contentItem.depth > 2
             height: !visible ? 0 : implicitHeight
-            enabled: root.contentItem.currentItem.contactListSearch !== undefined && root.contentItem.currentItem.contactListSearch.pubKeys.length > 0
+            enabled: root.contentItem.currentItem !== undefined && root.contentItem.currentItem.pubKeys.length > 0
             onClicked: {
-                root.contentItem.currentItem.sendInvites(root.contentItem.currentItem.contactListSearch.pubKeys)
+                root.contentItem.currentItem.sendInvites(root.contentItem.currentItem.pubKeys, "") // NOTE: empty message
                 root.contentItem.pop()
             }
         }

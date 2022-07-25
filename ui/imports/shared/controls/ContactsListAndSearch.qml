@@ -2,10 +2,11 @@ import QtQuick 2.14
 import QtQuick.Layouts 1.4
 import QtGraphicalEffects 1.14
 
-import utils 1.0
-import shared.stores 1.0
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
+
+import utils 1.0
+import shared.stores 1.0
 
 import "../"
 import "../views"
@@ -65,6 +66,7 @@ Item {
     ColumnLayout {
         id: column
         anchors.fill: parent
+        anchors.rightMargin: Style.current.bigPadding
         spacing: Style.current.smallPadding
 
         Input {
@@ -225,13 +227,18 @@ Item {
             onAddToContactsButtonClicked: {
                 root.contactsStore.addContact(pubKey)
             }
+            Layout.fillWidth: true
+            Layout.rightMargin: Style.current.padding
         }
-        Layout.fillWidth: true
+
+        Item {
+            Layout.fillHeight: true
+        }
     }
 
     NoFriendsRectangle {
         id: noContactsRect
-        visible: showContactList
+        visible: showContactList && existingContacts.count === 0
         anchors.centerIn: parent
         rootStore: root.rootStore
     }
