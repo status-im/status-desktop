@@ -55,14 +55,24 @@ SettingsContentBase {
             CommunitiesListPanel {
                 width: parent.width
                 model: root.profileSectionStore.communitiesList
+
                 onLeaveCommunityClicked: {
-                    root.profileSectionStore.communitiesProfileModule.leaveCommunity(leavePopup.communityId)
+                    root.profileSectionStore.communitiesProfileModule.leaveCommunity(communityId)
                 }
+
+                onSetCommunityMutedClicked: {
+                    root.profileSectionStore.communitiesProfileModule.setCommunityMuted(communityId, muted)
+                }
+
+                onSetActiveCommunityClicked: {
+                    rootStore.setActiveCommunity(communityId)
+                }
+
                 onInviteFriends: {
                     Global.openPopup(inviteFriendsToCommunityPopup, {
                                          community: communityData,
                                          hasAddedContacts: root.contactStore.myContactsModel.count > 0,
-                                         communitySectionModule: communityProfileModule
+                                         communitySectionModule: root.profileSectionStore.communitiesProfileModule
                                      })
                 }
             }
@@ -87,7 +97,8 @@ SettingsContentBase {
         }
 
         onSendInvites: {
-            const error = communitySectionModule.inviteUsersToCommunity(communty.id, JSON.stringify(pubKeys))
+            const error = root.profileSectionStore.communitiesProfileModule.inviteUsersToCommunity(
+                            community.id, JSON.stringify(pubKeys))
             processInviteResult(error)
         }
     }

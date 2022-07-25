@@ -166,4 +166,8 @@ QtObject {
             mainModuleInst.setCurrentUserStatus(newStatus)
         }
     }
+
+    function setActiveCommunity(communityId) {
+        mainModule.setActiveSectionById(communityId);
+    }
 }

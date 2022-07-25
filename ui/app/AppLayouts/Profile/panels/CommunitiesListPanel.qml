@@ -15,7 +15,9 @@ StatusListView {
     property bool hasAddedContacts: false
 
     signal inviteFriends(var communityData)
-    signal leaveCommunityClicked(var communityId)
+    signal leaveCommunityClicked(string communityId)
+    signal setCommunityMutedClicked(string communityId, bool muted)
+    signal setActiveCommunityClicked(string communityId)
 
     interactive: false
     implicitHeight: contentItem.childrenRect.height
@@ -36,6 +38,10 @@ StatusListView {
 
         sensor.hoverEnabled: false
 
+        onClicked: {
+            setActiveCommunityClicked(model.id)
+        }
+
         components: [
             StatusFlatButton {
                 size: StatusBaseButton.Size.Small
@@ -55,7 +61,7 @@ StatusListView {
                 height: 44
                 icon.source: model.muted ? Style.svg("communities/notifications-muted")
                                          : Style.svg("communities/notifications")
-                onClicked: root.communityProfileModule.setCommunityMuted(model.id, !model.muted)
+                onClicked: root.setCommunityMutedClicked(model.id, !model.muted)
             },
 
             StatusFlatRoundButton {
@@ -70,8 +76,10 @@ StatusListView {
 
     property Component leaveCommunityPopup: StatusModal {
         id: leavePopup
+
         property string community: ""
-        property var communityId
+        property string communityId: ""
+
         anchors.centerIn: parent
         header.title: qsTr("Leave %1").arg(community)
         contentItem: Item {
