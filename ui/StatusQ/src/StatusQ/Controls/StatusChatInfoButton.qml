@@ -6,6 +6,7 @@ import StatusQ.Components 0.1
 
 Rectangle {
     id: statusChatInfoButton
+    objectName: "chatInfoButton"
 
     implicitWidth: identicon.width +
                    Math.max(
