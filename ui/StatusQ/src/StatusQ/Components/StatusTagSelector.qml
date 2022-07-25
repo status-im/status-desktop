@@ -378,6 +378,7 @@ Item {
         }
         contentItem: ListView {
             id: userListView
+            objectName: "tagSelectorUserList"
             anchors {
                 fill: parent
                 topMargin: 16
