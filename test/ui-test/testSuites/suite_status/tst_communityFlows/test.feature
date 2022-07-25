@@ -27,28 +27,30 @@ Feature: Status Desktop community
         Then the user lands on the community named <community_name>
 
         Examples:
-        	| community_name    | community_description   | community_intro  | community_outro  |
-        	| testCommunity1    | Community tested 1      | My intro for the community | My community outro  |
+            | community_name    | community_description   | community_intro  | community_outro  |
+            | testCommunity1    | Community tested 1      | My intro for the community | My community outro  |
 
 
     Scenario Outline: Admin creates a community channel
         When the user creates a community named myCommunity, with description My community description, intro Community Intro and outro Community Outro
         Then the user lands on the community named myCommunity
-        When the admin creates a community channel named <community_channel_name>, with description <community_channel_description>
+        When the admin creates a community channel named <community_channel_name>, with description <community_channel_description> with the method <method>
         Then the user lands on the community channel named <community_channel_name>
 
         Examples:
-        	| community_channel_name    | community_channel_description   |
-        	| test-channel    | Community channel description tested 1      |
+        	| community_channel_name    | community_channel_description     | method           |
+        	| test-channel    | Community channel description tested 1      | bottom_menu      |
+            | test-channel2   | Community channel description tested 2      | right_click_menu |
 
     Scenario Outline: Admin edits a community channel
         When the user creates a community named myCommunity, with description My community description, intro Community Intro and outro Community Outro
         Then the user lands on the community named myCommunity
-        When the admin creates a community channel named test-channel, with description My description
+        When the admin creates a community channel named test-channel, with description My description with the method bottom_menu
         Then the user lands on the community channel named test-channel
         When the admin edits a community channel named <community_channel_name> to the name <new_community_channel_name>
         Then the user lands on the community channel named <new_community_channel_name>
 
         Examples:
         	| community_channel_name    | community_channel_description   | new_community_channel_name  |
-        	| test-channel    | Community channel description tested 1    | new-test-channel            |
+            | test-channel    | Community channel description tested 1    | new-test-channel            |
+

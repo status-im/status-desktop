@@ -82,6 +82,11 @@ def get_obj(objName: str):
 def click_obj_by_name(objName: str):
         obj = squish.waitForObject(getattr(names, objName))
         squish.mouseClick(obj, squish.Qt.LeftButton)
+        
+# It executes the right-click action into object with given object name:
+def right_click_obj_by_name(objName: str):
+        obj = squish.waitForObject(getattr(names, objName))
+        squish.mouseClick(obj, squish.Qt.RightButton)
 
 
 def scroll_obj_by_name(objName: str):
