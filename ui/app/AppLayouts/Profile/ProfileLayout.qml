@@ -60,12 +60,7 @@ StatusAppTwoPanelLayout {
             visible: profileContainer.currentIndex === Constants.settingsSubsection.wallet &&
                      profileView.store.walletStore.areTestNetworksEnabled
             type: StatusBanner.Type.Danger
-            statusText: {
-                if(profileContainer.currentIndex === Constants.settingsSubsection.wallet &&
-                        profileView.store.walletStore.areTestNetworksEnabled)
-                    return qsTr("Testnet mode is enabled. All balances, transactions and dApp interactions will be on testnets.")
-                return ""
-            }
+            statusText: qsTr("Testnet mode is enabled. All balances, transactions and dApp interactions will be on testnets.")
         }
 
         StackLayout {
