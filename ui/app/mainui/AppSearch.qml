@@ -72,6 +72,11 @@ Item {
         onClosed: {
             searchPopupMenu.dismiss();
         }
+        onResetSearchLocationClicked: {
+            searchPopup.resetSearchSelection();
+            appSearch.store.setSearchLocation("", "")
+            searchMessages(searchPopup.searchText)
+        }
         onOpened: {
             searchPopup.resetSearchSelection();
             searchPopup.forceActiveFocus()
