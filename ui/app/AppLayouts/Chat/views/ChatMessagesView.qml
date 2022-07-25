@@ -250,6 +250,7 @@ Item {
             contactsStore: root.contactsStore
             channelEmoji: root.channelEmoji
             emojiPopup: root.emojiPopup
+            chatLogView: ListView.view
 
             isActiveChannel: root.isActiveChannel
             isChatBlocked: root.isChatBlocked

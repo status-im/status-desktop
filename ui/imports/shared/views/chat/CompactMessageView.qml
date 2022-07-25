@@ -21,6 +21,7 @@ Item {
     property var usersStore
     property var contactsStore
 
+    property var chatLogView
     property var emojiPopup
 
     property var messageContextMenu
@@ -736,7 +737,7 @@ Item {
     }
 
     HoverHandler {
-        enabled: !activityCenterMessage &&
+        enabled: !activityCenterMessage && !chatLogView.flickingVertically &&
                  (forceHoverHandler || (typeof root.messageContextMenu !== "undefined" && typeof Global.profilePopupOpened !== "undefined" &&
                                         !root.messageContextMenu.opened && !Global.profilePopupOpened && !Global.popupOpened))
         onHoveredChanged: {
