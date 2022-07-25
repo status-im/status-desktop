@@ -40,6 +40,7 @@ Loader {
     property string channelEmoji
     property bool isActiveChannel: false
 
+    property var chatLogView
     property var emojiPopup
 
     // Once we redo qml we will know all section/chat related details in each message form the parent components
@@ -332,6 +333,7 @@ Loader {
             isActiveChannel: root.isActiveChannel
             emojiPopup: root.emojiPopup
             senderTrustStatus: root.senderTrustStatus
+            chatLogView: root.chatLogView
 
             communityId: root.communityId
             stickersLoaded: root.stickersLoaded
