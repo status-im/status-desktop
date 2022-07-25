@@ -37,16 +37,8 @@ Flickable {
     property int leftPadding: padding
     property int rightPadding: padding
 
-    property Item background: null
-
     readonly property int availableWidth: width - leftPadding - rightPadding
     readonly property int availableHeight: height - topPadding - bottomPadding
-
-    onBackgroundChanged: {
-        if (background) {
-            background.anchors.fill = root;
-        }
-    }
 
     // NOTE: in Qt6 clip true will be default
     clip: true
