@@ -167,6 +167,7 @@ StatusPopupMenu {
     }
 
     StatusMenuItem {
+        objectName: "editChannelMenuItem"
         text: qsTr("Edit Channel")
         icon.name: "edit"
         enabled: root.isCommunityChat && root.amIChatAdmin

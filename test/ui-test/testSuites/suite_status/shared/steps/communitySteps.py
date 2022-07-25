@@ -29,6 +29,10 @@ def step(context, community_name):
 def step(context, community_channel_name, community_channel_description):
     _statusCommunityScreen.create_community_channel(community_channel_name, community_channel_description)
     
+@When("the admin edits a community channel named |any| to the name |any|")
+def step(context, community_channel_name, new_community_channel_name):
+    _statusCommunityScreen.editCommunityChannel(community_channel_name, new_community_channel_name)
+    
 @Then("the user lands on the community channel named |any|")
 def step(context, community_channel_name): 
     _statusCommunityScreen.verify_channel_name(community_channel_name)
