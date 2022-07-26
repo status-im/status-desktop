@@ -40,6 +40,7 @@ Column {
         model: statusChatList.model
         delegate: Item {
             id: draggable
+            objectName: model.name
             width: statusChatList.width
             height: statusChatListItem.height
             property alias chatListItem: statusChatListItem
@@ -210,6 +211,7 @@ Column {
 
     Repeater {
         id: statusChatListItems
+        objectName: "chatListItems"
         model: delegateModel
     }
 
