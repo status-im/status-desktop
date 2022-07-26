@@ -219,13 +219,16 @@ Item {
 
         Input {
             id: txtPassword
+            width: 318
+            height: 70
             anchors.top: userInfo.bottom
             anchors.topMargin: Style.current.padding * 2
             anchors.left: undefined
             anchors.right: undefined
             anchors.horizontalCenter: parent.horizontalCenter
-            width: 318
             enabled: !loading
+            validationErrorAlignment: Text.AlignHCenter
+            validationErrorTopMargin: 10
             placeholderText: loading ?
                 qsTr("Connecting...") :
                 qsTr("Password")
@@ -234,7 +237,7 @@ Item {
                 doLogin(textField.text)
             }
             onTextEdited: {
-                errMsg.visible = false
+                validationError = "";
                 loading = false
             }
         }
@@ -246,9 +249,10 @@ Item {
             type: StatusQControls.StatusRoundButton.Type.Secondary
             icon.name: "arrow-right"
             opacity: (loading || txtPassword.text.length > 0) ? 1 : 0
+            anchors.top: userInfo.bottom
+            anchors.topMargin: 34
             anchors.left: txtPassword.right
             anchors.leftMargin: (loading || txtPassword.text.length > 0) ? Style.current.padding : Style.current.smallPadding
-            anchors.verticalCenter: txtPassword.verticalCenter
             state: loading ? "pending" : "default"
             onClicked: {
                 doLogin(txtPassword.textField.text)
@@ -274,27 +278,14 @@ Item {
                 if (error) {
                     // SQLITE_NOTADB: "file is not a database"
                     if (error === "file is not a database") {
-                        errMsg.text = errMsg.incorrectPasswordMsg
+                        txtPassword.validationError = qsTr("Password incorrect")
                     } else {
-                        errMsg.text = qsTr("Login failed: %1").arg(error.toUpperCase())
+                        txtPassword.validationError = qsTr("Login failed: %1").arg(error.toUpperCase())
                     }
-                    errMsg.visible = true
                     loading = false
                     txtPassword.textField.forceActiveFocus()
                 }
             }
-        }
-
-        StyledText {
-            id: errMsg
-            readonly property string incorrectPasswordMsg: qsTr("Password incorrect")
-            anchors.top: txtPassword.bottom
-            anchors.topMargin: Style.current.padding
-            anchors.horizontalCenter: parent.horizontalCenter
-            visible: false
-            text: incorrectPasswordMsg
-            font.pixelSize: 13
-            color: Style.current.danger
         }
     }
 }
