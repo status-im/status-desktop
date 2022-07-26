@@ -1,10 +1,12 @@
 import QtQuick
 
+import Status.Onboarding
+
 /*! Proposal on how to templetize the alignment requirement of some views
  */
 OnboardingPageBase {
     // TODO: fix error "Unable to assign Status::Onboarding::NewAccountController to Status::Onboarding::NewAccountController" then enable typed properties
-    required property var/*NewAccountController*/ newAccountController
+    required property var newAccountController
 
     /// Common reference item that doesn't change between common views/pages
     readonly property Item alignmentItem: alignmentBaselineItem

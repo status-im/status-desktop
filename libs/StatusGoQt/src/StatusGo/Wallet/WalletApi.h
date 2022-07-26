@@ -28,12 +28,13 @@ NetworkConfigurations getEthereumChains(bool onlyEnabled);
 
 /// \note status-go's GetEthereumChains@api.go which calls
 ///       NetworkManager@client.go -> network.Manager.get()
-/// \throws \c CallPrivateRpcError
+/// \throws \c CallPrivateRpcError.errorResponse().error with \c "no tokens for this network" in case of missing tokens for the network
+/// \throws \c CallPrivateRpcError for general RPC call failure
 NetworkConfigurations getEthereumChains(bool onlyEnabled);
 
 
 /// \note status-go's GetTokens@api.go -> TokenManager.getTokens@token.go
-/// \throws \c CallPrivateRpcError
+/// \throws \c CallPrivateRpcError with
 Tokens getTokens(const ChainID &chainId);
 
 using TokenBalances = std::map<Accounts::EOAddress, std::map<Accounts::EOAddress, BigInt>>;

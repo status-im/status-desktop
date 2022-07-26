@@ -13,7 +13,7 @@ const QString &WalletAccount::name() const
     return m_data.name;
 }
 
-const QString &WalletAccount::address() const
+const QString &WalletAccount::strAddress() const
 {
     return m_data.address.get();
 }

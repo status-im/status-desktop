@@ -66,13 +66,17 @@ install(
 
 target_sources(Wallet
     PRIVATE
+        include/Status/Wallet/AccountAssetsController.h
+        src/AccountAssetsController.cpp
         include/Status/Wallet/DerivedWalletAddress.h
         src/DerivedWalletAddress.cpp
         include/Status/Wallet/NewWalletAccountController.h
         src/NewWalletAccountController.cpp
-        include/Status/Wallet/WalletAccount.h
         # Move to Accounts module
+        include/Status/Wallet/WalletAccount.h
         src/WalletAccount.cpp
+        include/Status/Wallet/WalletAsset.h
+        src/WalletAsset.cpp
         include/Status/Wallet/WalletController.h
         src/WalletController.cpp
 )

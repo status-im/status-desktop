@@ -58,7 +58,9 @@ public:
     };
 
     void clear() {
+        beginResetModel();
         m_objects.clear();
+        endResetModel();
     };
 
     void push_back(const std::shared_ptr<T> newValue) {

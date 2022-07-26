@@ -2,7 +2,7 @@
 
 #include "Accounts/ChatOrWalletAccount.h"
 
-#include <QObject>
+#include <QtQmlIntegration>
 
 namespace GoAccounts = Status::StatusGo::Accounts;
 
@@ -11,9 +11,11 @@ namespace Status::Wallet {
 class WalletAccount: public QObject
 {
     Q_OBJECT
+    QML_ELEMENT
+    QML_UNCREATABLE("C++ only, for now")
 
     Q_PROPERTY(QString name READ name CONSTANT)
-    Q_PROPERTY(QString address READ address CONSTANT)
+    Q_PROPERTY(QString address READ strAddress CONSTANT)
     Q_PROPERTY(QColor color READ color CONSTANT)
 
 public:
@@ -21,7 +23,7 @@ public:
 
     const QString &name() const;
 
-    const QString &address() const;
+    const QString &strAddress() const;
 
     QColor color() const;
 

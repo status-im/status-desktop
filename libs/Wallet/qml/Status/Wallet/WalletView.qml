@@ -36,7 +36,8 @@ PanelAndContentBase {
             Layout.fillWidth: true
             Layout.fillHeight: true
 
-            asset: WalletController.currentAccount
+            account: WalletController.currentAccount
+            assetController: panel.currentAssetController
         }
     }
 }

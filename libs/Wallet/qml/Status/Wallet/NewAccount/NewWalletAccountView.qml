@@ -9,7 +9,7 @@ import Status.Containers
 Item {
     id: root
 
-    /// NewWalletAccountController
+    // Using the type NewWalletAccountController generates "/bin/sh: line 1: 12832 Segmentation fault: 11  qmlcachegen --resource-path /Status/Wallet/qml/Status/Wallet/NewAccount/NewWalletAccountView.qml"
     required property var controller
 
     signal accountCreated()
@@ -135,7 +135,7 @@ Item {
                             }
                             highlighted: derivedAddressCombo.highlightedIndex === index
 
-                            required property var derivedAddress
+                            required property DerivedWalletAddress derivedAddress
                             required property int index
                     }
                 }
@@ -174,7 +174,7 @@ Item {
                     }
                     highlighted: derivedFromCombo.highlightedIndex === index
 
-                    required property var account
+                    required property WalletAccount account
                     required property int index
             }
         }

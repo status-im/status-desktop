@@ -2,7 +2,11 @@
 
 #include "Helpers/BuildConfiguration.h"
 
+#include <QObject>
+
 #include <string>
+#include <map>
+#include <memory.h>
 
 namespace Status::Helpers {
 
@@ -27,6 +31,26 @@ bool iequals(const T& a, const T& b, size_t len = -1)
                       [](auto a, auto b) {
                           return tolower(a) == tolower(b);
                       });
+}
+
+template<typename KeyType, typename ValT>
+std::vector<KeyType> getKeys(const std::map<KeyType, ValT>& map)
+{
+    std::vector<KeyType> keys;
+    keys.reserve(map.size());
+    for (const auto& [key, _] : map)
+        keys.push_back(key);
+    return keys;
+}
+
+static void doDeleteLater(QObject *obj) {
+    obj->deleteLater();
+}
+
+// TODO: use https://en.cppreference.com/w/cpp/memory/shared_ptr/allocate_shared
+template<typename T, typename ...Args>
+std::shared_ptr<T> makeSharedQObject(Args&& ...args) {
+    return std::shared_ptr<T>(new T(std::forward<Args>(args)...), doDeleteLater);
 }
 
 }

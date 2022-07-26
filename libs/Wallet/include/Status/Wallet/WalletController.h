@@ -5,7 +5,6 @@
 
 #include <Helpers/QObjectVectorModel.h>
 
-#include <QQmlListProperty>
 #include <QtQmlIntegration>
 
 #include <memory>
@@ -16,6 +15,7 @@ class QJSEngine;
 namespace Status::Wallet {
 
 class NewWalletAccountController;
+class AccountAssetsController;
 
 /// \todo move account creation to its own controller
 class WalletController: public QObject
@@ -43,6 +43,9 @@ public:
 
     WalletAccount *currentAccount() const;
     Q_INVOKABLE void setCurrentAccountIndex(int index);
+
+    /// \note caller (QML) takes ownership of the returned instance
+    Q_INVOKABLE Status::Wallet::AccountAssetsController* createAccountAssetsController(Status::Wallet::WalletAccount* account);
 
 signals:
     void currentAccountChanged();

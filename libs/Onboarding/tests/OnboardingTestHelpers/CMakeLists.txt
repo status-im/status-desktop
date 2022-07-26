@@ -8,8 +8,6 @@ project(OnboardingTestHelpers
 
 set(QT_NO_CREATE_VERSIONLESS_FUNCTIONS true)
 
-find_package(GTest REQUIRED)
-
 find_package(Qt6 ${STATUS_QT_VERSION} COMPONENTS Quick Qml REQUIRED)
 qt6_standard_project_setup()
 
@@ -47,6 +45,4 @@ target_link_libraries(OnboardingTestHelpers
         Status::ApplicationCore
         Status::Onboarding
         Status::StatusGoQt
-
-        GTest::gtest
 )

@@ -6,6 +6,8 @@
 
 #include <StatusGo/SignalsManager.h>
 
+#include <Helpers/helpers.h>
+
 namespace Status::Onboarding {
 
 namespace StatusGo = Status::StatusGo;
@@ -17,9 +19,9 @@ OnboardingController::OnboardingController(AccountsServiceInterfacePtr accountsS
     {   // Init accounts
         std::vector<std::shared_ptr<UserAccount>> accounts;
         for(auto &account : getOpenedAccounts()) {
-            accounts.push_back(std::make_shared<UserAccount>(std::make_unique<MultiAccount>(std::move(account))));
+            accounts.push_back(Helpers::makeSharedQObject<UserAccount>(std::make_unique<MultiAccount>(std::move(account))));
         }
-        m_accounts = std::make_shared<UserAccountsModel>(std::move(accounts));
+        m_accounts = Helpers::makeSharedQObject<UserAccountsModel>(std::move(accounts));
     }
 
     connect(StatusGo::SignalsManager::instance(), &StatusGo::SignalsManager::nodeLogin, this, &OnboardingController::onLogin);

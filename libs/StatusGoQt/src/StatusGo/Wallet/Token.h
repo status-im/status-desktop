@@ -28,6 +28,7 @@ struct Token
 	ChainID  chainId;
 };
 
+using TokenPtr = std::shared_ptr<Token>;
 using Tokens = std::vector<Token>;
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Token, address, name,symbol,

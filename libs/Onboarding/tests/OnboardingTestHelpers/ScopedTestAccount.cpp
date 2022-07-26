@@ -10,9 +10,9 @@
 #include <StatusGo/Accounts/Accounts.h>
 #include <StatusGo/Accounts/AccountsAPI.h>
 
-#include <QCoreApplication>
+#include <Helpers/helpers.h>
 
-#include <gtest/gtest.h>
+#include <QCoreApplication>
 
 namespace Testing = Status::Testing;
 namespace Onboarding = Status::Onboarding;
@@ -49,7 +49,7 @@ ScopedTestAccount::ScopedTestAccount(const std::string &tempTestSubfolderName,
     //
 
     // Beware, smartpointer is a requirement
-    m_onboarding = std::make_shared<Onboarding::OnboardingController>(accountsService);
+    m_onboarding = Helpers::makeSharedQObject<Onboarding::OnboardingController>(accountsService);
     if(m_onboarding->getOpenedAccounts().size() != 0)
         throw std::runtime_error("ScopedTestAccount - already have opened account");
 

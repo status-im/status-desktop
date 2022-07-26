@@ -63,7 +63,7 @@ cmake -B build -S . -DCMAKE_PREFIX_PATH="$HOME/Qt/6.3.2/gcc_64" -DCMAKE_BUILD_TY
 
 # Windows: cmake -B build -S . -DCMAKE_PREFIX_PATH="$HOME/Qt/6.3.2/mingw_64" -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=build/conan/conan_toolchain.cmake
 
-cmake --build build --config Release
+cmake --build build
 ```
 
 ### Run tests

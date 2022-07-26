@@ -7,6 +7,8 @@
 #include <Onboarding/Accounts/AccountsService.h>
 #include <Onboarding/OnboardingController.h>
 
+#include <Helpers/helpers.h>
+
 #include <gtest/gtest.h>
 
 #include <memory>
@@ -49,7 +51,7 @@ std::shared_ptr<AccountsServiceMock> LoginTest::m_accountsServiceMock;
 TEST_F(LoginTest, DISABLED_TestLoginController)
 {
     // Controller hides as a regular class but at runtime it must be a shared pointer; TODO: refactor
-    auto controller = std::make_shared<Onboarding::OnboardingController>(m_accountsServiceMock);
+    auto controller = Helpers::makeSharedQObject<Onboarding::OnboardingController>(m_accountsServiceMock);
 }
 
 } // namespace

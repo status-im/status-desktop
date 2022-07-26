@@ -5,19 +5,16 @@
 
 #include <Helpers/QObjectVectorModel.h>
 
-#include <QQmlListProperty>
 #include <QtQmlIntegration>
-
-class QQmlEngine;
-class QJSEngine;
 
 namespace Status::Wallet {
 
-/// \note the folowing values are kept in sync \c selectedDerivedAddress, \c derivedAddressIndex and \c derivationPath
+/// \note the following values are kept in sync \c selectedDerivedAddress, \c derivedAddressIndex and \c derivationPath
 ///       and \c customDerivationPath; \see connascence.io/value
 class NewWalletAccountController: public QObject
 {
     Q_OBJECT
+    QML_ELEMENT
     QML_UNCREATABLE("C++ only")
 
     Q_PROPERTY(QAbstractListModel* mainAccountsModel READ mainAccountsModel CONSTANT)
@@ -34,10 +31,6 @@ public:
 
     /// \note On account creation \c accounts are updated with the newly created wallet account
     NewWalletAccountController(std::shared_ptr<AccountsModel> accounts);
-
-    /// Called by QML engine to register the instance. QML takes ownership of the instance
-    static NewWalletAccountController *create(QQmlEngine *qmlEngine, QJSEngine *jsEngine);
-
 
     QAbstractListModel *mainAccountsModel();
     QAbstractItemModel *currentDerivedAddressModel();
