@@ -72,16 +72,26 @@ void NewWalletAccountController::createAccountAsync(const QString &password, con
         GoAccounts::generateAccountWithDerivedPath(StatusGo::HashedPassword(UtilsSG::hashPassword(password)),
                                                    name, color, "", GoAccounts::DerivationPath(path),
                                                    derivedFrom->data().derivedFrom.value());
-        auto found = findMissingAccount();
-        if(found)
-            m_accounts->push_back(found);
-        else
-            qWarning() << "Failed to create account. No new account found by this->findMissingAccount";
 
-        emit accountCreatedStatus(found != nullptr);
+        addNewlyCreatedAccount(findMissingAccount());
     }
     catch(const StatusGo::CallPrivateRpcError& e) {
         qWarning() << "StatusGoQt.generateAccountWithDerivedPath error: " << e.errorResponse().error.message.c_str();
+
+        emit accountCreatedStatus(false);
+    }
+}
+
+void NewWalletAccountController::addWatchOnlyAccountAsync(const QString &address, const QString &name, const QColor &color)
+{
+    try {
+        GoAccounts::addAccountWatch(Accounts::EOAddress(address), name, color, u""_qs);
+
+        addNewlyCreatedAccount(findMissingAccount());
+    }
+    catch(const StatusGo::CallPrivateRpcError& e) {
+        qWarning() << "StatusGoQt.generateAccountWithDerivedPath error: " << e.errorResponse().error.message.c_str();
+
         emit accountCreatedStatus(false);
     }
 }
@@ -147,6 +157,16 @@ NewWalletAccountController::filterMainAccounts(const AccountsModel &accounts)
     const auto &c = accounts.objects();
     std::copy_if(c.begin(), c.end(), std::back_inserter(out), [](const auto &a){ return a->data().isWallet; });
     return out;
+}
+
+void NewWalletAccountController::addNewlyCreatedAccount(WalletAccountPtr newAccount)
+{
+    if(newAccount)
+        m_accounts->push_back(newAccount);
+    else
+        qWarning() << "No new account to add. Creation failed";
+
+    emit accountCreatedStatus(newAccount != nullptr);
 }
 
 DerivedWalletAddress *NewWalletAccountController::selectedDerivedAddress() const

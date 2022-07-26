@@ -35,14 +35,6 @@ Item {
 
         anchors.fill: parent
 
-        Rectangle {
-            color: "blue"
-
-            Layout.fillWidth: true
-            Layout.preferredHeight: 2
-            Layout.margins: 5
-        }
-
         Label {
             text: "Name"
 
@@ -77,40 +69,11 @@ Item {
             Layout.margins: 5
         }
 
-        ComboBox {
+        TmpColorComboBox {
             id: colorCombo
-
-            model: ListModel {
-                ListElement { colorText: "Red"; colorValue: "red" }
-                ListElement { colorText: "Green"; colorValue: "green" }
-                ListElement { colorText: "Blue"; colorValue: "blue" }
-                ListElement { colorText: "Orange"; colorValue: "orange" }
-                ListElement { colorText: "Pink"; colorValue: "pink" }
-                ListElement { colorText: "Fuchsia"; colorValue: "fuchsia" }
-            }
-            textRole: "colorText"
-            valueRole: "colorValue"
-
-            currentIndex: 0
 
             Layout.fillWidth: true
             Layout.margins: 5
-
-            delegate: ItemDelegate {
-                    required property string colorText
-                    required property color colorValue
-                    required property int index
-
-                    width: colorCombo.width
-                    contentItem: Text {
-                        text: colorText
-                        color: colorValue
-                        font: colorCombo.font
-                        elide: Text.ElideRight
-                        verticalAlignment: Text.AlignVCenter
-                    }
-                    highlighted: colorCombo.highlightedIndex === index
-            }
         }
 
         Label {
@@ -220,8 +183,8 @@ Item {
             Button {
                 text: qsTr("Create")
 
-                enabled: nameInput.text.length > 5 && passwordInput.length > 5
-                         && pathInput.length > 0
+                enabled: nameInput.text.length > 5 && passwordInput.text.length > 5
+                         && pathInput.text.length > 0
 
                 onClicked: root.controller.createAccountAsync(passwordInput.text, nameInput.text,
                                                          colorCombo.currentValue, pathInput.text,

@@ -7,11 +7,10 @@ TextInput {
     font.pointSize: 23
     verticalAlignment: TextInput.AlignVCenter
 
+    clip: true
+
     Rectangle {
-        anchors {
-            fill: parent
-            margins: -1
-        }
+        anchors.fill: parent
         border.width: 1
         z: parent.z - 1
     }

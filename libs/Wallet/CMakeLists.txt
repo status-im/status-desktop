@@ -16,7 +16,9 @@ qt6_add_qml_module(Wallet
     VERSION 1.0
 
     QML_FILES
+        qml/Status/Wallet/NewAccount/AddWatchOnlyAccountView.qml
         qml/Status/Wallet/NewAccount/NewWalletAccountView.qml
+        qml/Status/Wallet/NewAccount/TmpColorComboBox.qml
         qml/Status/Wallet/AssetsPanel.qml
         qml/Status/Wallet/AssetView.qml
         qml/Status/Wallet/WalletContentView.qml

@@ -50,6 +50,10 @@ public:
                                         const QColor &color, const QString &path,
                                         const Status::Wallet::WalletAccount *derivedFrom);
 
+    /// \see \c accountCreatedStatus for async result
+    Q_INVOKABLE void addWatchOnlyAccountAsync(const QString &address, const QString &name,
+                                              const QColor &color);
+
 
     /// \returns \c false if fails (due to incomplete user input)
     Q_INVOKABLE bool retrieveAndUpdateDerivedAddresses(const QString &password,
@@ -76,6 +80,8 @@ private:
     WalletAccountPtr findMissingAccount();
 
     AccountsModel::ObjectContainer filterMainAccounts(const AccountsModel &accounts);
+    /// Logs a debug message if it fails
+    void addNewlyCreatedAccount(WalletAccountPtr newAccount);
 
     std::shared_ptr<AccountsModel> m_accounts;
     /// \todo make it a proxy filter on top of \c m_accounts
