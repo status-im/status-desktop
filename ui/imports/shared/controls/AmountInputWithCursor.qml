@@ -17,7 +17,7 @@ StatusInput {
     input.edit.cursorVisible: true
     input.edit.font.pixelSize: 32
     input.placeholderFont.pixelSize: 32
-    input.leftPadding: -1
+    input.leftPadding: 0
     input.rightPadding: 0
     input.topPadding: 0
     input.bottomPadding: 0

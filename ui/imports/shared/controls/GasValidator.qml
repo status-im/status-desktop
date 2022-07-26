@@ -59,6 +59,7 @@ Column {
     }
     StyledText {
         id: txtValidationError
+        anchors.horizontalCenter: parent.horizontalCenter
         text: qsTr("Not enough ETH for gas")
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter

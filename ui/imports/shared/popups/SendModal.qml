@@ -88,6 +88,7 @@ StatusModal {
     showFooter: false
     showAdvancedFooter: d.isReady && !isNaN(parseFloat(amountToSendInput.text)) && gasValidator.isValid
     showAdvancedHeader: true
+    backgroundColor: Theme.palette.baseColor3
 
     onSelectedAccountChanged: popup.recalculateRoutesAndFees()
 
@@ -120,6 +121,7 @@ StatusModal {
         TransactionFormGroup {
             id: group1
             anchors.fill: parent
+            color: Theme.palette.baseColor3
 
             ColumnLayout {
                 id: assetAndAmmountSelector
@@ -154,6 +156,7 @@ StatusModal {
                         id: amountToSendInput
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.left: parent.left
+                        anchors.leftMargin: -Style.current.padding
                         width: parent.width - assetSelector.width
                         placeholderText: "0.00" + " " + assetSelector.selectedAsset.symbol
                         errorMessageCmp.anchors.rightMargin: -100
@@ -283,6 +286,7 @@ StatusModal {
                         input.anchors.leftMargin: 0
                         input.anchors.rightMargin: 0
                         input.textField.anchors.rightMargin: 0
+                        input.bgColor: Theme.palette.indirectColor1
                         labelFont.pixelSize: 15
                         labelFont.weight: Font.Normal
                         input.height: 56
@@ -347,10 +351,11 @@ StatusModal {
                                 icon.name: "fees"
                             }
                             ColumnLayout {
-                                Layout.alignment: Qt.AlignTop
+                                Layout.alignment: Qt.AlignTop | Qt.AlignHCenter
+                                Layout.preferredWidth: fees.width - feesIcon.width - Style.current.xlPadding
                                 GasSelector {
                                     id: gasSelector
-                                    Layout.preferredWidth: fees.width - feesIcon.width - Style.current.xlPadding
+                                    Layout.fillWidth: true
                                     getGasEthValue: popup.store.getGasEthValue
                                     getFiatValue: popup.store.getFiatValue
                                     getEstimatedTime: popup.store.getEstimatedTime
@@ -377,7 +382,7 @@ StatusModal {
                                                                         ""))
 
                                         if (!gasEstimate.success) {
-                                            console.warn("error estimating gas: %1").arg(gasEstimate.error.message)
+                                            console.warn("error estimating gas: ", gasEstimate.error.message)
                                             return
                                         }
 
@@ -387,7 +392,7 @@ StatusModal {
                                 }
                                 GasValidator {
                                     id: gasValidator
-                                    anchors.horizontalCenter: undefined
+                                    Layout.fillWidth: true
                                     Layout.alignment: Qt.AlignHCenter
                                     selectedAccount: popup.selectedAccount
                                     selectedAmount: amountToSendInput.text === "" ? 0.0 :
@@ -404,6 +409,8 @@ StatusModal {
         }
         TransactionFormGroup {
             id: group4
+
+            color: Theme.palette.baseColor3
 
             StackView.onActivated: {
                 transactionSigner.forceActiveFocus(Qt.MouseFocusReason)

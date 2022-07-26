@@ -27,7 +27,7 @@ Rectangle {
     width: parent.width
     height: 82
     radius: 8
-    color: Theme.palette.statusModal.backgroundColor
+    color: Theme.palette.baseColor3
 
     Rectangle {
         anchors.top: parent.top

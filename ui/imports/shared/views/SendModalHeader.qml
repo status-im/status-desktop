@@ -32,7 +32,7 @@ StatusFloatingButtonsSelector {
         height: button.height
         radius: 8
         visible: floatingHeader.visibleIndices.includes(index) && walletType !== Constants.watchWalletType
-        color: Theme.palette.statusAppLayout.backgroundColor
+        color: Theme.palette.baseColor3
         StatusButton {
             id: button
             topPadding: 8
@@ -44,6 +44,7 @@ StatusFloatingButtonsSelector {
             icon.emojiSize: StatusQUtils.Emoji.size.middle
             icon.name: !emoji ? "filled-account": ""
             normalColor: "transparent"
+            hoverColor: Theme.palette.statusFloatingButtonHighlight
             highlighted: index === floatingHeader.currentIndex
             onClicked: {
                 updatedSelectedAccount(model)
