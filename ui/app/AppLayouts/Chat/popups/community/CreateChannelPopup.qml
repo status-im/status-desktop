@@ -219,7 +219,8 @@ StatusModal {
 
                 placeholderText: qsTr("Describe the channel")
                 input.multiline: true
-                input.implicitHeight: 88
+                minimumHeight: 88
+                maximumHeight: 88
                 validationMode: StatusInput.ValidationMode.Always
                 validators: [StatusMinLengthValidator {
                     minLength: 1

@@ -43,7 +43,6 @@ SettingsContentBase {
             id: searchBox
             anchors.left: parent.left
             anchors.right: parent.right
-            input.implicitHeight: 44
             placeholderText: qsTr("Search by a display name or chat key")
         }
 

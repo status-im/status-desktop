@@ -523,7 +523,6 @@ SettingsContentBase {
                         Layout.preferredWidth: root.contentWidth - 2 * Style.current.padding
                         Layout.leftMargin: Style.current.padding
                         Layout.rightMargin: Style.current.padding
-                        input.implicitHeight: 44
                         placeholderText: qsTr("Search Communities, Group Chats and 1:1 Chats")
                     }
 
