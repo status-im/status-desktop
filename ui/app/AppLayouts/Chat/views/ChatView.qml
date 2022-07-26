@@ -25,7 +25,6 @@ StatusAppThreePanelLayout {
 
     property var contactsStore
     property bool hasAddedContacts: root.contactsStore.myContactsModel.count > 0
-    property alias activityCenter: chatColumn.activityCenter
 
     property RootStore rootStore
 

@@ -18,7 +18,6 @@ Page {
 
     property ListModel contactsModel: ListModel { }
     property var rootStore
-    property var activityCenter: null
     property var emojiPopup: null
 
     Keys.onEscapePressed: Global.closeCreateChatView()
@@ -135,8 +134,8 @@ Page {
                 width: parent.width
                 height: parent.height
                 tooltip.offset: width/2
-                unreadNotificationsCount: activityCenter.unreadNotificationsCount
-                onClicked: activityCenter.open()
+                unreadNotificationsCount: root.rootStore.unreadNotificationsCount
+                onClicked: Global.openActivityCenterPopup()
             }
         }
     }
