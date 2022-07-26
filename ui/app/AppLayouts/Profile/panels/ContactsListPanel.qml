@@ -112,7 +112,7 @@ Item {
             width: (parent.width-10)
             name: model.displayName
             publicKey: model.pubKey
-            icon: model.icon
+            iconSource: model.icon
             isContact: model.isContact
             isBlocked: model.isBlocked
             isVerified: model.isVerified
