@@ -1,6 +1,6 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
-import QtQuick.Controls.Universal 2.12
+import QtQuick.Layouts 1.14
 
 import utils 1.0
 import shared 1.0
@@ -12,35 +12,36 @@ import StatusQ.Controls 0.1 as StatusQControls
 Rectangle {
     id: root
 
-    property int padding: Style.current.padding
+    property int padding: Style.current.halfPadding
     property alias control: radioControl
     property alias image: img
     property bool isHovered: false
-    signal radioCheckedChanged(checked: bool)
+    signal radioCheckedChanged(bool checked)
 
-    width: 312
-    height: 258
+    implicitWidth: 208
+    implicitHeight: layout.height
     color: radioControl.checked ? Style.current.secondaryBackground :
                                   (isHovered ? Style.current.backgroundHover : Style.current.transparent)
 
     radius: Style.current.radius
 
-    SVGImage {
-        id: img
-        anchors.top: parent.top
-        anchors.topMargin: root.padding
-        anchors.left: parent.left
-        anchors.leftMargin: root.padding
-        anchors.right: parent.right
-        anchors.rightMargin: root.padding
-    }
+    ColumnLayout {
+        id: layout
+        width: parent.width
+        spacing: root.padding
 
-    StatusQControls.StatusRadioButton {
-        id: radioControl
-        anchors.top: img.bottom
-        anchors.topMargin: root.padding
-        anchors.left: parent.left
-        anchors.leftMargin: root.padding
+        SVGImage {
+            id: img
+            Layout.alignment: Qt.AlignHCenter
+            Layout.preferredWidth: root.width - root.padding*2
+        }
+
+        StatusQControls.StatusRadioButton {
+            id: radioControl
+            Layout.fillWidth: true
+            Layout.leftMargin: root.padding
+            Layout.rightMargin: root.padding
+        }
     }
 
     MouseArea {
