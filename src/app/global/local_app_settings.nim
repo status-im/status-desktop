@@ -3,7 +3,7 @@ import NimQml, os
 import ../../constants
 
 # Local App Settings keys:
-const LAS_KEY_LOCALE* = "global/locale"
+const LAS_KEY_LANGUAGE* = "global/language"
 const DEFAULT_LOCALE = "en"
 const LAS_KEY_THEME* = "global/theme"
 const DEFAULT_THEME = 2 #system theme, from qml
@@ -30,17 +30,17 @@ QtObject:
     result.settings = newQSettings(filePath, QSettingsFormat.IniFormat)
 
 
-  proc localeChanged*(self: LocalAppSettings) {.signal.}
-  proc getLocale*(self: LocalAppSettings): string {.slot.} =
-    self.settings.value(LAS_KEY_LOCALE, newQVariant(DEFAULT_LOCALE)).stringVal
-  proc setLocale*(self: LocalAppSettings, value: string) {.slot.} =
-    self.settings.setValue(LAS_KEY_LOCALE, newQVariant(value))
-    self.localeChanged()
+  proc languageChanged*(self: LocalAppSettings) {.signal.}
+  proc getLanguage*(self: LocalAppSettings): string {.slot.} =
+    self.settings.value(LAS_KEY_LANGUAGE, newQVariant(DEFAULT_LOCALE)).stringVal
+  proc setLanguage*(self: LocalAppSettings, value: string) {.slot.} =
+    self.settings.setValue(LAS_KEY_LANGUAGE, newQVariant(value))
+    self.languageChanged()
 
-  QtProperty[string] locale:
-    read = getLocale
-    write = setLocale
-    notify = localeChanged
+  QtProperty[string] language:
+    read = getLanguage
+    write = setLanguage
+    notify = languageChanged
 
 
   proc themeChanged*(self: LocalAppSettings) {.signal.}
@@ -89,7 +89,7 @@ QtObject:
     self.settings.remove(key)
 
     case key:
-      of LAS_KEY_LOCALE: self.localeChanged()
+      of LAS_KEY_LANGUAGE: self.languageChanged()
       of LAS_KEY_THEME: self.themeChanged()
       of LAS_KEY_GEOMETRY: self.geometryChanged()
       of LAS_KEY_VISIBILITY: self.visibilityChanged()

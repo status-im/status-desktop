@@ -6,7 +6,7 @@ QtObject {
 
     property var communitiesModuleInst: communitiesModule
     property var curatedCommunitiesModel: root.communitiesModuleInst.curatedCommunities
-    property var locale: localAppSettings.locale
+    property var locale: localAppSettings.language
     property var advancedModule: profileSectionModule.advancedModule
     property bool isCommunityHistoryArchiveSupportEnabled: advancedModule? advancedModule.isCommunityHistoryArchiveSupportEnabled : false
 

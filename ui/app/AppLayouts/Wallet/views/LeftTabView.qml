@@ -58,7 +58,7 @@ Rectangle {
                 id: walletAmountValue
                 color: Style.current.textColor
                 text: {
-                    Utils.toLocaleString(parseFloat(RootStore.totalCurrencyBalance).toFixed(2), localAppSettings.locale, {"currency": true}) + " " + RootStore.currentCurrency.toUpperCase()
+                    Utils.toLocaleString(parseFloat(RootStore.totalCurrencyBalance).toFixed(2), localAppSettings.language, {"currency": true}) + " " + RootStore.currentCurrency.toUpperCase()
                 }
                 selectByMouse: true
                 cursorVisible: true

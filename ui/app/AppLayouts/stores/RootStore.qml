@@ -5,7 +5,7 @@ import "../Profile/stores"
 QtObject {
     id: root
 
-    property string locale: localAppSettings.locale
+    property string locale: localAppSettings.language
 
     property var mainModuleInst: mainModule
     property var aboutModuleInst: aboutModule

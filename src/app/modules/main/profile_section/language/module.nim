@@ -29,7 +29,7 @@ proc newModule*(delegate: delegate_interface.AccessInterface,
 proc populateLanguageModel(self: Module) =
   var items: seq[Item]
 
-  for locale in self.controller.getLocales():
+  for locale in self.controller.getLanguages():
     if localeDescriptionTable.contains(locale):
       let localeDescr = localeDescriptionTable[locale]
       items.add(initItem(
@@ -55,7 +55,7 @@ method isLoaded*(self: Module): bool =
 
 method viewDidLoad*(self: Module) =
   self.populateLanguageModel()
-  self.view.setLocale(self.controller.getCurrentLocale())
+  self.view.setLanguage(self.controller.getCurrentLanguage())
 
   self.moduleLoaded = true
   self.delegate.languageModuleDidLoad()
@@ -63,11 +63,11 @@ method viewDidLoad*(self: Module) =
 method getModuleAsVariant*(self: Module): QVariant =
   return self.viewVariant
 
-method changeLocale*(self: Module, locale: string) =
-  self.controller.changeLocale(locale)
+method changeLanguage*(self: Module, language: string) =
+  self.controller.changeLanguage(language)
 
-method onCurrentLocaleChanged*(self: Module, locale: string) =
-  self.view.setLocale(locale)
+method onCurrentLanguageChanged*(self: Module, language: string) =
+  self.view.setLanguage(language)
 
 method setIsDDMMYYDateFormat*(self: Module, isDDMMYYDateFormat: bool) =
   if(isDDMMYYDateFormat != singletonInstance.localAccountSensitiveSettings.getIsDDMMYYDateFormat()):
