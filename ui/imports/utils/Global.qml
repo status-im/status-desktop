@@ -19,6 +19,8 @@ QtObject {
     property var inviteFriendsToCommunityPopup
     property bool profilePopupOpened: false
 
+    property bool activityCenterPopupOpened: false
+
     property var sendMessageSound
     property var notificationSound
     property var errorSound
@@ -37,9 +39,14 @@ QtObject {
     signal openChangeProfilePicPopup()
     signal displayToastMessage(string title, string subTitle, string icon, bool loading, int ephNotifType, string url)
     signal openEditDisplayNamePopup()
+    signal openActivityCenterPopupRequested
 
     function openProfilePopup(publicKey, parentPopup, state = "") {
         openProfilePopupRequested(publicKey, parentPopup, state);
+    }
+
+    function openActivityCenterPopup() {
+        openActivityCenterPopupRequested()
     }
 
     function openPopup(popupComponent, params = {}) {
