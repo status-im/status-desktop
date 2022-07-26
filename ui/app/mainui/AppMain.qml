@@ -221,12 +221,10 @@ Item {
     StatusAppLayout {
         id: appLayout
 
-        width: parent.width
-        anchors.top: parent.top
-        anchors.bottom: parent.bottom
+        anchors.fill: parent
 
         appNavBar: StatusAppNavBar {
-            height: appMain.height
+            height: parent.height
             communityTypeRole: "sectionType"
             communityTypeValue: Constants.appSection.community
             sectionModel: mainModule.sectionsModel
@@ -346,15 +344,27 @@ Item {
 
                 name: appMain.rootStore.userProfileInst.name
                 icon.source: appMain.rootStore.userProfileInst.icon
+                width: 32
+                height: 32
+                identicon.width: width
+                identicon.height: height
                 identicon.icon.charactersLen: 2
                 identicon.icon.color: Utils.colorForPubkey(appMain.rootStore.userProfileInst.pubKey)
                 identicon.ringSettings.ringSpecModel: Utils.getColorHashAsJson(appMain.rootStore.userProfileInst.pubKey)
 
                 badge.visible: true
-                badge.anchors.rightMargin: 4
-                badge.anchors.topMargin: 25
-                badge.implicitHeight: 15
-                badge.implicitWidth: 15
+                badge.anchors {
+                    left: undefined
+                    top: undefined
+                    right: profileButton.right
+                    bottom: profileButton.bottom
+                    margins: 0
+                    rightMargin: -badge.border.width
+                    bottomMargin: -badge.border.width
+                }
+                badge.implicitHeight: 12
+                badge.implicitWidth: 12
+                badge.border.width: 2
                 badge.border.color: hovered ? Theme.palette.statusBadge.hoverBorderColor : Theme.palette.statusAppNavBar.backgroundColor
                 badge.color: {
                     switch(appMain.rootStore.userProfileInst.currentUserStatus){
@@ -365,12 +375,8 @@ Item {
                             return Style.current.midGrey;
                     }
                 }
-                badge.border.width: 3
-                onClicked: {
-                    userStatusContextMenu.opened ?
-                        userStatusContextMenu.close() :
-                        userStatusContextMenu.open()
-                }
+
+                onClicked: userStatusContextMenu.opened ? userStatusContextMenu.close() : userStatusContextMenu.open()
 
                 UserStatusContextMenu {
                     id: userStatusContextMenu
