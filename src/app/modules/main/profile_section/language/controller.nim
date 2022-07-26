@@ -9,9 +9,9 @@ type
     languageService: language_service.Service
 
 proc init*(self: Controller) =
-  self.events.on(SIGNAL_LOCALE_UPDATE) do(e: Args):
-    let args = LocaleUpdatedArgs(e)
-    self.delegate.onCurrentLocaleChanged(args.locale)
+  self.events.on(SIGNAL_LANGUAGE_UPDATE) do(e: Args):
+    let args = LanguageUpdatedArgs(e)
+    self.delegate.onCurrentLanguageChanged(args.language)
 
 proc newController*(delegate: io_interface.AccessInterface,
     events: EventEmitter, languageService: language_service.Service):
@@ -24,11 +24,11 @@ proc newController*(delegate: io_interface.AccessInterface,
 proc delete*(self: Controller) =
   discard
 
-proc changeLocale*(self: Controller, locale: string) =
-  self.languageService.setLanguage(locale)
+proc changeLanguage*(self: Controller, language: string) =
+  self.languageService.setLanguage(language)
 
-proc getLocales*(self: Controller): seq[string] =
-  self.languageService.locales()
+proc getLanguages*(self: Controller): seq[string] =
+  self.languageService.languages()
 
-proc getCurrentLocale*(self: Controller): string =
-  language_service.currentLocale()
+proc getCurrentLanguage*(self: Controller): string =
+  language_service.currentLanguage()

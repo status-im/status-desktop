@@ -1,5 +1,5 @@
 import NimQml
-import json, json_serialization, sequtils, chronicles, os, strformat, re
+import json_serialization, chronicles, os, strformat, re
 import ../../../app/global/global_singleton
 import ../../../app/core/eventemitter
 import ../../../app/core/signals/types
@@ -7,18 +7,18 @@ import ../../../app/core/signals/types
 logScope:
   topics = "language-service"
 
-const SIGNAL_LOCALE_UPDATE* = "localeUpdated"
+const SIGNAL_LANGUAGE_UPDATE* = "languageUpdated"
 
 type
-  LocaleUpdatedArgs* = ref object of Args
-    locale*: string
+  LanguageUpdatedArgs* = ref object of Args
+    language*: string
 
 type
   Service* = ref object of RootObj
     events: EventEmitter
     i18nPath: string
     shouldRetranslate: bool
-    locales: seq[string]
+    languages: seq[string] # list of locale names for translation purposes
 
 proc delete*(self: Service) =
   discard
@@ -28,17 +28,17 @@ proc newService*(events: EventEmitter): Service =
   result.events = events
   result.shouldRetranslate = not defined(linux)
 
-proc obtainLocales(dir: string): seq[string] =
+proc obtainLanguages(dir: string): seq[string] =
   let localeRe = re".*qml_(.*).qm"
   for file in walkFiles dir & "/*.qm":
     if file =~ localeRe:
       result.add(matches[0])
 
-proc currentLocale*(): string =
-  singletonInstance.localAppSettings.getLocale()
+proc currentLanguage*(): string =
+  singletonInstance.localAppSettings.getLanguage()
 
-proc locales*(self: Service): seq[string] =
-  self.locales
+proc languages*(self: Service): seq[string] =
+  self.languages
 
 proc init*(self: Service) =
   try:
@@ -52,21 +52,21 @@ proc init*(self: Service) =
     elif (defined(linux)):
       self.i18nPath = joinPath(getAppDir(), "../i18n")
 
-    self.locales = obtainLocales(self.i18nPath)
+    self.languages = obtainLanguages(self.i18nPath)
 
-    let locale = currentLocale()
-    singletonInstance.engine.setTranslationPackage(joinPath(self.i18nPath, fmt"qml_{locale}.qm"), self.shouldRetranslate)
+    let language = currentLanguage()
+    singletonInstance.engine.setTranslationPackage(joinPath(self.i18nPath, fmt"qml_{language}.qm"), self.shouldRetranslate)
 
   except Exception as e:
     let errDesription = e.msg
     error "error: ", errDesription
     return
 
-proc setLanguage*(self: Service, locale: string) =
-  if (locale == singletonInstance.localAppSettings.getLocale()):
+proc setLanguage*(self: Service, language: string) =
+  if (language == singletonInstance.localAppSettings.getLanguage()):
     return
 
-  singletonInstance.localAppSettings.setLocale(locale)
-  singletonInstance.engine.setTranslationPackage(joinPath(self.i18nPath, fmt"qml_{locale}.qm"), self.shouldRetranslate)
+  singletonInstance.localAppSettings.setLanguage(language)
+  singletonInstance.engine.setTranslationPackage(joinPath(self.i18nPath, fmt"qml_{language}.qm"), self.shouldRetranslate)
 
-  self.events.emit(SIGNAL_LOCALE_UPDATE, LocaleUpdatedArgs(locale: locale))
+  self.events.emit(SIGNAL_LANGUAGE_UPDATE, LanguageUpdatedArgs(language: language))

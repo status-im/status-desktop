@@ -108,8 +108,8 @@ SettingsContentBase {
                     id: languagePause
                     interval: 100
                     onTriggered: {
-                        // changeLocale function operation blocks a little bit the UI so getting around it with a small pause (timer) in order to get the desired visual behavior
-                        root.languageStore.changeLocale(languagePicker.newKey)
+                        // changeLanguage function operation blocks a little bit the UI so getting around it with a small pause (timer) in order to get the desired visual behavior
+                        root.languageStore.changeLanguage(languagePicker.newKey)
                     }
                 }
 
@@ -137,7 +137,7 @@ SettingsContentBase {
                         },
                         ExpressionRole {
                             name: "selected"
-                            expression: model.locale == root.languageStore.currentLocale
+                            expression: model.locale == root.languageStore.currentLanguage
                         },
                         ExpressionRole {
                             name: "imageSource"
@@ -154,7 +154,7 @@ SettingsContentBase {
                 maxPickerHeight: 350
 
                 onItemPickerChanged: {
-                    if(selected && root.languageStore.currentLocale !== key) {
+                    if(selected && root.languageStore.currentLanguage !== key) {
                         // TEMPORARY: It should be removed as it is only used in Linux OS but it must be investigated how to change language in execution time, as well, in Linux (will be addressed in another task)
                         if (Qt.platform.os === Constants.linux) {
                             linuxConfirmationDialog.active = true
@@ -253,7 +253,7 @@ SettingsContentBase {
                 confirmationText: qsTr("Display language has been changed. You must restart the application for changes to take effect.")
                 confirmButtonLabel: qsTr("Close the app now")
                 onConfirmButtonClicked: {
-                    root.languageStore.changeLocale(newLocale)
+                    root.languageStore.changeLanguage(newLocale)
                     loader.active = false
                     Qt.quit()
                 }

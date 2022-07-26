@@ -6,7 +6,7 @@ import StatusQ.Core.Utils 0.1 as StatusQUtils
 QtObject {
     id: root
 
-    property string locale: localAppSettings.locale
+    property string locale: localAppSettings.language
 
     property var contactsStore
 

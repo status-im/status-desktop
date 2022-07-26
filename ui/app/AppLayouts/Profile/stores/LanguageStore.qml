@@ -7,12 +7,12 @@ QtObject {
     property var languageModule
 
     readonly property var languageModel: languageModule ? languageModule.model : null
-    readonly property string currentLocale: languageModule ? languageModule.currentLocale : null
+    readonly property string currentLanguage: languageModule ? languageModule.currentLanguage : null
     readonly property bool isDDMMYYDateFormat: localAccountSensitiveSettings.isDDMMYYDateFormat
     readonly property bool is24hTimeFormat: localAccountSensitiveSettings.is24hTimeFormat
 
-    function changeLocale(locale) {
-        root.languageModule.changeLocale(locale)
+    function changeLanguage(locale) {
+        root.languageModule.changeLanguage(locale)
     }
 
     function setIsDDMMYYDateFormat(isDDMMYYDateFormat) {
