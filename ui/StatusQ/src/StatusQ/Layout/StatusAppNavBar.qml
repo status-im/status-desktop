@@ -169,6 +169,6 @@ Rectangle {
         width: visible? statusAppNavBar.navBarProfileButton.width : 0
         visible: !!statusAppNavBar.navBarProfileButton
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: visible ? 32 : 0
+        anchors.bottomMargin: visible ? 24 : 0
     }
 }
