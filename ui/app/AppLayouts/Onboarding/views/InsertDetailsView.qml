@@ -95,7 +95,7 @@ Item {
                     width: 86
                     height: 86
                     letterSize: 32
-                    color: Theme.palette.miscColor5
+                    color: Utils.colorForPubkey(root.pubKey)
                     charactersLen: 2
                 }
                 ringSettings {
