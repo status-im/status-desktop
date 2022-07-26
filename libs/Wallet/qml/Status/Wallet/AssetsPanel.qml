@@ -109,31 +109,71 @@ Item {
             onClicked: newAccountLoader.active = true
         }
 
-        Loader {
-            id: newAccountLoader
+        ColumnLayout {
+            visible: !errorLayout.visible && newAccountLoader.active
 
-            Layout.fillWidth: true
+            Rectangle {
+                color: "blue"
 
-            visible: !errorLayout.visible && active
-            active: false
+                Layout.fillWidth: true
+                Layout.preferredHeight: 2
+                Layout.margins: 5
+            }
 
-            sourceComponent: Component {
-                NewWalletAccountView {
-                    controller: root.controller.createNewWalletAccountController()
+            ComboBox {
+                id: accountTypeComboBox
 
-                    onCancel: newAccountLoader.active = false
-                    onAccountCreated: newAccountLoader.active = false
+                textRole: "title"
+                valueRole: "sourceComponent"
 
-                    Connections {
-                        target: controller
-                        function onAccountCreatedStatus(createdSuccessfully) {
-                            if(createdSuccessfully)
-                                newAccountLoader.active = false
-                            else
-                                errorLayout.visible = true
+                Layout.fillWidth: true
+
+                component NewAccountEntry: ItemDelegate {
+                    required property string title
+                    required property Component sourceComponent
+
+                    text: title
+                    width: accountTypeComboBox.width
+                }
+                model: ObjectModel {
+                    NewAccountEntry {
+                        title: "New Account"
+                        sourceComponent: NewWalletAccountView {
+                            controller: root.controller.createNewWalletAccountController()
+                        }
+                    }
+                    NewAccountEntry {
+                        title: "Watch Only Account"
+                        sourceComponent: AddWatchOnlyAccountView {
+                            controller: root.controller.createNewWalletAccountController()
                         }
                     }
                 }
+            }
+
+            Loader {
+                id: newAccountLoader
+
+                Layout.fillWidth: true
+
+                active: false
+
+                sourceComponent: accountTypeComboBox.currentValue
+            }
+
+            Connections {
+                target: newAccountLoader.item ? newAccountLoader.item.controller : null
+                function onAccountCreatedStatus(createdSuccessfully) {
+                    if(createdSuccessfully)
+                        newAccountLoader.active = false
+                    else
+                        errorLayout.visible = true
+                }
+            }
+            Connections {
+                target: newAccountLoader.item
+                function onCancel() { newAccountLoader.active = false }
+                function onAccountCreated() { newAccountLoader.active = false }
             }
         }
 
