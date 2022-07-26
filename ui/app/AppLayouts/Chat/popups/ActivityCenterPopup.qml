@@ -8,12 +8,16 @@ import StatusQ.Controls 0.1
 
 import shared 1.0
 import shared.popups 1.0
+import shared.views.chat 1.0
+
 import utils 1.0
 
 import "../views"
 import "../panels"
 
 Popup {
+    id: activityCenter
+
     enum Filter {
         All,
         Mentions,
@@ -28,11 +32,13 @@ Popup {
     property bool hideReadNotifications: false
     property var store
     property var chatSectionModule
-    property var messageContextMenu
+    property var messageContextMenu: MessageContextMenuView {
+        store: activityCenter.store
+        reactionModel: activityCenter.store.emojiReactionsModel
+    }
 
     readonly property int unreadNotificationsCount : activityCenter.store.activityCenterList.unreadCount
 
-    id: activityCenter
     modal: false
 
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
