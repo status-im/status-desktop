@@ -66,7 +66,6 @@
         <file>StatusQ/Controls/qmldir</file>
         <file>StatusQ/Controls/StatusAccountSelector.qml</file>
         <file>StatusQ/Controls/StatusActivityCenterButton.qml</file>
-        <file>StatusQ/Controls/StatusAssetSelector.qml</file>
         <file>StatusQ/Controls/StatusBanner.qml</file>
         <file>StatusQ/Controls/StatusBaseButton.qml</file>
         <file>StatusQ/Controls/StatusBaseInput.qml</file>

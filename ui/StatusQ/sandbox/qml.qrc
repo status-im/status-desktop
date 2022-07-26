@@ -44,7 +44,6 @@
         <file>images/SuperRareCommunityBanner.png</file>
         <file>pages/StatusAccountSelectorPage.qml</file>
         <file>pages/StatusAddressPage.qml</file>
-        <file>pages/StatusAssetSelectorPage.qml</file>
         <file>pages/StatusCardPage.qml</file>
         <file>pages/StatusChatCommandButtonPage.qml</file>
         <file>pages/StatusChatInfoToolBarPage.qml</file>
