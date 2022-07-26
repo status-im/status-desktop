@@ -31,6 +31,9 @@ import StatusQ.Controls 0.1
 ListView {
     id: root
 
+    readonly property int availableWidth: width - leftMargin - rightMargin
+    readonly property int availableHeight: height - topMargin - bottomMargin
+
     clip: true
     boundsBehavior: Flickable.StopAtBounds
     maximumFlickVelocity: 2000
