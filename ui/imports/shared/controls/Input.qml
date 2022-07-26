@@ -179,12 +179,13 @@ Item {
     }
 
     StatusBaseText {
-        visible: !!validationError
         id: validationErrorText
+        visible: !!validationError
         text: validationError
         anchors.top: inputField.bottom
         anchors.topMargin: validationErrorTopMargin
-        anchors.right: inputField.right
+        width: parent.width
+        horizontalAlignment: Text.AlignRight
         font.pixelSize: 12
         height: 16
         color: validationErrorColor
