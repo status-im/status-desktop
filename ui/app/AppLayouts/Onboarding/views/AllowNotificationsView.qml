@@ -39,6 +39,7 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         font.letterSpacing: d.titleLetterSpacing
         font.pixelSize: d.titlePixelSize
+        lineHeight: 1.2
     }
 
     StyledText {
@@ -50,6 +51,7 @@ Item {
         anchors.top: txtTitle.bottom
         anchors.topMargin: Style.current.padding
         font.pixelSize: Style.current.primaryTextFontSize
+        lineHeight: 1.2
     }
 
     StatusButton {
@@ -57,6 +59,9 @@ Item {
         anchors.top: txtDesc.bottom
         anchors.topMargin: d.okButtonTopMargin
         anchors.horizontalCenter: parent.horizontalCenter
+        leftPadding: Style.current.padding
+        rightPadding: Style.current.padding
+        font.weight: Font.Medium
         text: qsTr("Ok, got it")
         onClicked: {
             root.startupStore.doPrimaryAction()
