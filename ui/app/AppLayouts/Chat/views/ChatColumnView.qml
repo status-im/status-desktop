@@ -58,8 +58,6 @@ Item {
     property bool contactRequestReceived: root.contactDetails.requestReceived
     property Component pinnedMessagesListPopupComponent
 
-    property alias activityCenter: activityCenter
-
     signal openAppSearch()
     signal openStickerPackPopup(string stickerPackId)
 
@@ -155,12 +153,6 @@ Item {
         }
     }
 
-    MessageContextMenuView {
-        id: contextmenu
-        store: root.rootStore
-        reactionModel: root.rootStore.emojiReactionsModel
-    }
-
     EmptyChatPanel {
         anchors.fill: parent
         visible: root.activeChatId === "" || root.chatsCount == 0
@@ -233,14 +225,14 @@ Item {
                             stickersLoaded: root.stickersLoaded
                             isBlocked: model.blocked
                             isActiveChannel: categoryChatLoader.isActiveChannel
-                            activityCenterVisible: activityCenter.visible
-                            activityCenterNotificationsCount: activityCenter.unreadNotificationsCount
+                            activityCenterVisible: Global.activityCenterPopupOpened
+                            activityCenterNotificationsCount: root.rootStore.unreadNotificationsCount
                             pinnedMessagesPopupComponent: root.pinnedMessagesListPopupComponent
                             onOpenStickerPackPopup: {
                                 root.openStickerPackPopup(stickerPackId)
                             }
                             onNotificationButtonClicked: {
-                                activityCenter.open();
+                                Global.openActivityCenterPopup()
                             }
                             onOpenAppSearch: {
                                 root.openAppSearch();
@@ -264,13 +256,13 @@ Item {
                     width: parent.width
                     height: isActiveChannel ? parent.height : 0
                     Connections {
-                        id: loaderConnections
+                        id: defaultLoaderConnections
                         target: chatLoader
                         // First time this channel turns active, activate the Loader
                         onIsActiveChannelChanged: {
                             if (chatLoader.isActiveChannel) {
                                 chatLoader.active = true
-                                loaderConnections.enabled = false
+                                defaultLoaderConnections.enabled = false
                             }
                         }
                     }
@@ -290,14 +282,14 @@ Item {
                         stickersLoaded: root.stickersLoaded
                         isBlocked: model.blocked
                         isActiveChannel: chatLoader.isActiveChannel
-                        activityCenterVisible: activityCenter.visible
-                        activityCenterNotificationsCount: activityCenter.unreadNotificationsCount
+                        activityCenterVisible: Global.activityCenterPopupOpened
+                        activityCenterNotificationsCount: root.rootStore.unreadNotificationsCount
                         pinnedMessagesPopupComponent: root.pinnedMessagesListPopupComponent
                         onOpenStickerPackPopup: {
                             root.openStickerPackPopup(stickerPackId)
                         }
                         onNotificationButtonClicked: {
-                            activityCenter.open();
+                            Global.openActivityCenterPopup()
                         }
                         onOpenAppSearch: {
                             root.openAppSearch();
@@ -412,15 +404,6 @@ Item {
                 }
             }
         }
-    }
-
-    ActivityCenterPopup {
-        id: activityCenter
-        height: root.height - 56 * 2 // TODO get screen size // Taken from old code top bar height was fixed there to 56
-        y: 56
-        store: root.rootStore
-        chatSectionModule: root.parentModule
-        messageContextMenu: contextmenu
     }
 
         // Not Refactored Yet

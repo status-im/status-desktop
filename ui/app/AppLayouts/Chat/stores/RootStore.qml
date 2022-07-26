@@ -122,6 +122,7 @@ QtObject {
     property var mainModuleInst: mainModule
     property var activityCenterModuleInst: activityCenterModule
     property var activityCenterList: activityCenterModuleInst.model
+    property int unreadNotificationsCount: activityCenterList.unreadCount
 
     property var communitiesModuleInst: communitiesModule
     property var communitiesList: communitiesModuleInst.model

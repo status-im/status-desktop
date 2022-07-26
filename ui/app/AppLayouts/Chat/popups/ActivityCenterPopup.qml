@@ -8,12 +8,16 @@ import StatusQ.Controls 0.1
 
 import shared 1.0
 import shared.popups 1.0
+import shared.views.chat 1.0
+
 import utils 1.0
 
 import "../views"
 import "../panels"
 
 Popup {
+    id: root
+
     enum Filter {
         All,
         Mentions,
@@ -28,11 +32,13 @@ Popup {
     property bool hideReadNotifications: false
     property var store
     property var chatSectionModule
-    property var messageContextMenu
+    property var messageContextMenu: MessageContextMenuView {
+        store: root.store
+        reactionModel: root.store.emojiReactionsModel
+    }
 
-    readonly property int unreadNotificationsCount : activityCenter.store.activityCenterList.unreadCount
+    readonly property int unreadNotificationsCount : root.store.activityCenterList.unreadCount
 
-    id: activityCenter
     modal: false
 
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
@@ -55,7 +61,7 @@ Popup {
             color: Style.current.dropShadow
         }
     }
-    x: Global.applicationWindow.width - activityCenter.width - Style.current.halfPadding
+    x: Global.applicationWindow.width - root.width - Style.current.halfPadding
     onOpened: {
         Global.popupOpened = true
     }
@@ -66,27 +72,27 @@ Popup {
 
     ActivityCenterPopupTopBarPanel {
         id: activityCenterTopBar
-        hasReplies: activityCenter.hasReplies
-        hasMentions: activityCenter.hasMentions
-        hideReadNotifications: activityCenter.hideReadNotifications
-        allBtnHighlighted: activityCenter.currentFilter === ActivityCenterPopup.Filter.All
-        mentionsBtnHighlighted: activityCenter.currentFilter === ActivityCenterPopup.Filter.Mentions
-        repliesBtnHighlighted: activityCenter.currentFilter === ActivityCenterPopup.Filter.Replies
+        hasReplies: root.hasReplies
+        hasMentions: root.hasMentions
+        hideReadNotifications: root.hideReadNotifications
+        allBtnHighlighted: root.currentFilter === ActivityCenterPopup.Filter.All
+        mentionsBtnHighlighted: root.currentFilter === ActivityCenterPopup.Filter.Mentions
+        repliesBtnHighlighted: root.currentFilter === ActivityCenterPopup.Filter.Replies
         onAllBtnClicked: {
-            activityCenter.currentFilter = ActivityCenterPopup.Filter.All;
+            root.currentFilter = ActivityCenterPopup.Filter.All;
         }
         onRepliesBtnClicked: {
-            activityCenter.currentFilter = ActivityCenterPopup.Filter.Replies;
+            root.currentFilter = ActivityCenterPopup.Filter.Replies;
         }
         onMentionsBtnClicked: {
-            activityCenter.currentFilter = ActivityCenterPopup.Filter.Mentions;
+            root.currentFilter = ActivityCenterPopup.Filter.Mentions;
         }
         onPreferencesClicked: {
-            activityCenter.close()
+            root.close()
             Global.changeAppSectionBySectionType(Constants.appSection.profile, Constants.settingsSubsection.notifications);
         }
         onMarkAllReadClicked: {
-            errorText = activityCenter.store.activityCenterModuleInst.markAllActivityCenterNotificationsRead()
+            errorText = root.store.activityCenterModuleInst.markAllActivityCenterNotificationsRead()
         }
     }
 
@@ -108,11 +114,11 @@ Popup {
             // TODO remove this once it is handled by the activity center
 //            Repeater {
 //                id: contactList
-//                model: activityCenter.store.contactRequests
+//                model: root.store.contactRequests
 
 //                delegate: ContactRequest {
 //                    visible: !hideReadNotifications &&
-//                             (activityCenter.currentFilter === ActivityCenter.Filter.All || activityCenter.currentFilter === ActivityCenter.Filter.ContactRequests)
+//                             (root.currentFilter === ActivityCenter.Filter.All || root.currentFilter === ActivityCenter.Filter.ContactRequests)
 //                    name: Utils.removeStatusEns(model.name)
 //                    address: model.address
 //                    localNickname: model.localNickname
@@ -142,7 +148,7 @@ Popup {
                     function(left, right) { return left.timestamp > right.timestamp }
                 ]
 
-                model: activityCenter.store.activityCenterList
+                model: root.store.activityCenterList
 
                 delegate: Item {
                     id: notificationDelegate
@@ -180,9 +186,9 @@ Popup {
                             }
                             return -1;
                         }
-                        property string previousNotificationTimestamp: notificationDelegate.idx === 0 ? "" : activityCenter.store.activityCenterList.getNotificationData(previousNotificationIndex, "timestamp")
+                        property string previousNotificationTimestamp: notificationDelegate.idx === 0 ? "" : root.store.activityCenterList.getNotificationData(previousNotificationIndex, "timestamp")
                         onPreviousNotificationTimestampChanged: {
-                            activityCenter.store.messageStore.prevMsgTimestamp = previousNotificationTimestamp;
+                            root.store.messageStore.prevMsgTimestamp = previousNotificationTimestamp;
                         }
 
                         id: notifLoader
@@ -212,17 +218,17 @@ Popup {
 
                         ActivityCenterMessageComponentView {
                             id: activityCenterMessageView
-                            store: activityCenter.store
-                            acCurrentFilter: activityCenter.currentFilter
-                            chatSectionModule: activityCenter.chatSectionModule
-                            messageContextMenu: activityCenter.messageContextMenu
-                            hideReadNotifications: activityCenter.hideReadNotifications
+                            store: root.store
+                            acCurrentFilter: root.currentFilter
+                            chatSectionModule: root.chatSectionModule
+                            messageContextMenu: root.messageContextMenu
+                            hideReadNotifications: root.hideReadNotifications
                             Connections {
-                                target: activityCenter
+                                target: root
                                 onOpened: activityCenterMessageView.reevaluateItemBadge()
                             }
                             onActivityCenterClose: {
-                                activityCenter.close();
+                                root.close();
                             }
                             Component.onCompleted: {
                                 activityCenterMessageView.reevaluateItemBadge()
@@ -234,16 +240,16 @@ Popup {
                         id: groupRequestNotificationComponent
 
                         ActivityCenterGroupRequest {
-                            store: activityCenter.store
-                            hideReadNotifications: activityCenter.hideReadNotifications
-                            acCurrentFilterAll: activityCenter.currentFilter === ActivityCenter.Filter.All
+                            store: root.store
+                            hideReadNotifications: root.hideReadNotifications
+                            acCurrentFilterAll: root.currentFilter === ActivityCenter.Filter.All
                         }
                     }
                 }
             }
 
             Item {
-                visible: activityCenter.store.activityCenterModuleInst.hasMoreToShow
+                visible: root.store.activityCenterModuleInst.hasMoreToShow
                 width: parent.width
                 height: visible ? showMoreBtn.height + showMoreBtn.anchors.topMargin : 0
                 StatusButton {
@@ -252,7 +258,7 @@ Popup {
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.top: parent.top
                     anchors.topMargin: Style.current.smallPadding
-                    onClicked: activityCenter.store.activityCenterModuleInst.loadMoreNotifications()
+                    onClicked: root.store.activityCenterModuleInst.loadMoreNotifications()
                 }
             }
         }
