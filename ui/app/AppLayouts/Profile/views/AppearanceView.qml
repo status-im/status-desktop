@@ -23,12 +23,6 @@ SettingsContentBase {
 
     property var systemPalette
 
-    enum Theme {
-        Light,
-        Dark,
-        System
-    }
-
     function updateTheme(theme) {
         localAppSettings.theme = theme
         Style.changeTheme(theme, systemPalette.isCurrentSystemThemeDark())
@@ -47,7 +41,7 @@ SettingsContentBase {
         anchors.left: parent.left
         anchors.leftMargin: Style.current.padding
         width: appearanceView.contentWidth - 2 * Style.current.padding
-        height: this.childrenRect.height + 100
+        height: childrenRect.height
 
         ButtonGroup {
             id: chatModeSetting
@@ -57,22 +51,12 @@ SettingsContentBase {
             id: appearanceSetting
         }
 
-        StatusSectionHeadline {
-            id: sectionHeadlinePreview
-            text: qsTr("Preview")
+        Rectangle {
+            id: preview
             anchors.top: parent.top
             anchors.left: parent.left
             anchors.right: parent.right
-            anchors.topMargin: 0
-        }
-
-        Rectangle {
-            id: preview
-            anchors.top: sectionHeadlinePreview.bottom
-            anchors.topMargin: Style.current.smallPadding
-            anchors.left: parent.left
-            anchors.right: parent.right
-            height: paceholderMessage.height + Style.current.padding*4
+            height: paceholderMessage.height + paceholderMessage.anchors.margins*2
             radius: Style.current.radius
             border.color: Style.current.border
             color: Style.current.transparent
@@ -80,9 +64,9 @@ SettingsContentBase {
             MessageView {
                 id: paceholderMessage
                 anchors.top: parent.top
-                anchors.topMargin: Style.current.padding*2
                 anchors.left: parent.left
-                anchors.leftMargin: Style.current.smallPadding
+                anchors.right: parent.left
+                anchors.margins: Style.current.smallPadding
                 isMessage: true
                 shouldRepeatHeader: true
                 messageTimestamp:Date.now()
@@ -96,26 +80,16 @@ SettingsContentBase {
 
         StatusSectionHeadline {
             id: sectionHeadlineFontSize
-            text: qsTr("Size")
+            text: qsTr("Text size")
             anchors.top: preview.bottom
-            anchors.topMargin: Style.current.padding
+            anchors.topMargin: Style.current.bigPadding*2
             anchors.left: parent.left
             anchors.right: parent.right
         }
 
-        StatusBaseText {
-            id: labelFontSize
-            anchors.top: sectionHeadlineFontSize.bottom
-            anchors.topMargin: Style.current.padding
-            anchors.left: parent.left
-            font.pixelSize: 15
-            text: qsTr("Change font size")
-            color: Theme.palette.directColor1
-        }
-
         StatusQ.StatusLabeledSlider {
             id: fontSizeSlider
-            anchors.top: labelFontSize.bottom
+            anchors.top: sectionHeadlineFontSize.bottom
             anchors.topMargin: Style.current.padding
             width: parent.width
             model: [ qsTr("XS"), qsTr("S"), qsTr("M"), qsTr("L"), qsTr("XL"), qsTr("XXL") ]
@@ -128,14 +102,13 @@ SettingsContentBase {
             }
         }
 
-        StatusBaseText {
+        StatusSectionHeadline {
             id: labelZoom
             anchors.top: fontSizeSlider.bottom
-            anchors.topMargin: Style.current.xlPadding
+            anchors.topMargin: Style.current.bigPadding*2
             anchors.left: parent.left
-            font.pixelSize: 15
-            text: qsTr("Change Zoom (requires restart)")
-            color: Theme.palette.directColor1
+            anchors.right: parent.right
+            text: qsTr("Zoom (requires restart)")
         }
 
         StatusQ.StatusLabeledSlider {
@@ -178,11 +151,20 @@ SettingsContentBase {
             }
         }
 
+        Rectangle {
+            id: modeSeparator
+            anchors.top: zoomSlider.bottom
+            anchors.topMargin: Style.current.padding*3
+            anchors.left: parent.left
+            anchors.right: parent.right
+            height: 1
+            color: Style.current.separator
+        }
+
         StatusSectionHeadline {
             id: sectionHeadlineAppearance
-            text: qsTr("Appearance")
-            // anchors.top: chatModeSection.bottom
-            anchors.top: zoomSlider.bottom
+            text: qsTr("Mode")
+            anchors.top: modeSeparator.bottom
             anchors.topMargin: Style.current.padding*3
             anchors.left: parent.left
             anchors.right: parent.right
@@ -194,13 +176,12 @@ SettingsContentBase {
             anchors.topMargin: Style.current.padding
             anchors.left: parent.left
             anchors.right: parent.right
+            spacing: Style.current.halfPadding
 
             StatusImageRadioButton {
-                padding: Style.current.smallPadding
-                width: 208
-                height: 184
+                Layout.preferredWidth: parent.width/3 - parent.spacing
+                Layout.preferredHeight: implicitHeight
                 image.source: Style.png("appearance-light")
-                image.height: 128
                 control.text: qsTr("Light")
                 control.checked: localAppSettings.theme === Universal.Light
                 onRadioCheckedChanged: {
@@ -211,11 +192,8 @@ SettingsContentBase {
             }
 
             StatusImageRadioButton {
-                padding: Style.current.smallPadding
-                width: 208
-                height: 184
+                Layout.preferredWidth: parent.width/3 - parent.spacing
                 image.source: Style.png("appearance-dark")
-                image.height: 128
                 control.text: qsTr("Dark")
                 control.checked: localAppSettings.theme === Universal.Dark
                 onRadioCheckedChanged: {
@@ -226,11 +204,8 @@ SettingsContentBase {
             }
 
             StatusImageRadioButton {
-                padding: Style.current.smallPadding
-                width: 208
-                height: 184
+                Layout.preferredWidth: parent.width/3 - parent.spacing
                 image.source: Style.png("appearance-system")
-                image.height: 128
                 control.text: qsTr("System")
                 control.checked: localAppSettings.theme === Universal.System
                 onRadioCheckedChanged: {
