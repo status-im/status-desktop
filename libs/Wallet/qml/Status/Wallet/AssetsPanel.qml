@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import QtQml
 
 import Status.Wallet
 
@@ -13,6 +14,7 @@ Item {
 
     /// WalletController
     required property WalletController controller
+    readonly property AccountAssetsController currentAssetController: listView.currentItem ? listView.currentItem.assetController : null
 
     ColumnLayout {
         anchors.left: leftLine.right
@@ -25,7 +27,8 @@ Item {
         }
         Label {
             id: totalValueLabel
-            text: "" // TODO: Aggregate or API!?
+            // TODO: source it from the last total cached value of balance service,
+            text: "-"
         }
         Label {
             text: qsTr("Total value")
@@ -37,6 +40,8 @@ Item {
         }
 
         ListView {
+            id: listView
+
             Layout.fillWidth: true
             Layout.fillHeight: true
 
@@ -47,9 +52,16 @@ Item {
             clip: true
 
             delegate: ItemDelegate {
+                required property int index
+                // Enabling type generates 'Writing to "account" broke the binding to the underlying model'
+                required property var/*WalletAccount*/ account
+
+                readonly property AccountAssetsController assetController: account && WalletController.createAccountAssetsController(account)
+
                 highlighted: ListView.isCurrentItem
 
                 width: ListView.view.width
+
 
                 onClicked: ListView.view.currentIndex = index
 
@@ -79,17 +91,19 @@ Item {
                             elide: Label.ElideRight
                         }
                     }
-                    Label {
+
+                    RowLayout {
                         Layout.leftMargin: 10
                         Layout.rightMargin: 10
                         Layout.bottomMargin: 5
 
-                        text: "$"
-                        color: "grey"
-
-                        verticalAlignment: Qt.AlignVCenter
-
-                        elide: Label.ElideRight
+                        Label {
+                            text: assetController.assetsReady ? assetController.totalValue : "-"
+                        }
+                        Label {
+                            text: "$"
+                            color: "grey"
+                        }
                     }
                 }
             }
@@ -137,13 +151,13 @@ Item {
                 }
                 model: ObjectModel {
                     NewAccountEntry {
-                        title: "New Account"
+                        title: qsTr("New Account")
                         sourceComponent: NewWalletAccountView {
                             controller: root.controller.createNewWalletAccountController()
                         }
                     }
                     NewAccountEntry {
-                        title: "Watch Only Account"
+                        title: qsTr("Watch Only Account")
                         sourceComponent: AddWatchOnlyAccountView {
                             controller: root.controller.createNewWalletAccountController()
                         }

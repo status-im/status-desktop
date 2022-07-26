@@ -46,7 +46,7 @@ public:
 
     UserAccountsModel *accounts() const;
 
-    Q_INVOKABLE NewAccountController *initNewAccountController();
+    Q_INVOKABLE Status::Onboarding::NewAccountController *initNewAccountController();
     Q_INVOKABLE void terminateNewAccountController();
     NewAccountController *newAccountController() const;
     std::shared_ptr<AccountsServiceInterface> accountsService() const;

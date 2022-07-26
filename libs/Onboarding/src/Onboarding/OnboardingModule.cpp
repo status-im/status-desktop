@@ -4,6 +4,7 @@
 
 #include <ApplicationCore/UserConfiguration.h>
 
+#include <Helpers/helpers.h>
 
 namespace AppCore = Status::ApplicationCore;
 
@@ -43,7 +44,7 @@ void OnboardingModule::initWithUserDataPath(const fs::path &path)
     auto result = m_accountsService->init(path);
     if(!result)
         throw std::runtime_error(std::string("Failed to initialize OnboadingService") + path.string());
-    m_controller = std::make_shared<OnboardingController>(
+    m_controller = Helpers::makeSharedQObject<OnboardingController>(
                 m_accountsService);
     emit controllerChanged();
 }

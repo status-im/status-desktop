@@ -1,5 +1,7 @@
 #include "Status/Wallet/WalletController.h"
+
 #include "NewWalletAccountController.h"
+#include "AccountAssetsController.h"
 
 #include <StatusGo/Wallet/WalletApi.h>
 
@@ -16,14 +18,14 @@
 #include <QJSEngine>
 
 namespace GoAccounts = Status::StatusGo::Accounts;
-namespace GoWallet = Status::StatusGo::Wallet;
+namespace WalletGo = Status::StatusGo::Wallet;
 namespace UtilsSG = Status::StatusGo::Utils;
 namespace StatusGo = Status::StatusGo;
 
 namespace Status::Wallet {
 
 WalletController::WalletController()
-    : m_accounts(std::make_shared<AccountsModel>(std::move(getWalletAccounts()), "account"))
+    : m_accounts(Helpers::makeSharedQObject<AccountsModel>(std::move(getWalletAccounts()), "account"))
     , m_currentAccount(m_accounts->get(0))
 {
 }
@@ -60,13 +62,18 @@ void WalletController::setCurrentAccountIndex(int index)
     emit currentAccountChanged();
 }
 
+AccountAssetsController *WalletController::createAccountAssetsController(WalletAccount *account)
+{
+    return new AccountAssetsController(account);
+}
+
 std::vector<WalletAccountPtr> WalletController::getWalletAccounts(bool rootWalletAccountsOnly) const
 {
     auto all = GoAccounts::getAccounts();
     std::vector<WalletAccountPtr> result;
     for(auto account : all) {
         if(!account.isChat && (!rootWalletAccountsOnly || account.isWallet))
-            result.push_back(std::make_shared<WalletAccount>(std::move(account)));
+            result.push_back(Helpers::makeSharedQObject<WalletAccount>(std::move(account)));
     }
     return result;
 }

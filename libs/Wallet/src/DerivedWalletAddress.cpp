@@ -2,7 +2,7 @@
 
 namespace Status::Wallet {
 
-DerivedWalletAddress::DerivedWalletAddress(GoWallet::DerivedAddress address, QObject *parent)
+DerivedWalletAddress::DerivedWalletAddress(WalletGo::DerivedAddress address, QObject *parent)
     : QObject{parent}
     , m_derivedAddress{std::move(address)}
 {

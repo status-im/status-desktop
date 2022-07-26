@@ -16,8 +16,8 @@ import Status.Onboarding
 Item {
     id: root
 
-    // TODO: fix error "Unable to assign Status::Onboarding::NewAccountController to Status::Onboarding::NewAccountController" then enable typed properties
-    required property var/*NewAccountController*/ newAccountController
+    /// \c NewAccountController
+    required property var newAccountController
 
     signal userLoggedIn()
     signal abortAccountCreation()

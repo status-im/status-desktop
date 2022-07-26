@@ -8,17 +8,17 @@ import Status.Wallet
 Item {
     id: root
 
-    /// WalletAccount
-    required property var asset
+    required property WalletAccount account
+    required property AccountAssetsController assetController
 
     ColumnLayout {
         anchors.fill: parent
 
         Label {
-            text: asset.name
+            text: account.name
         }
         Label {
-            text: asset.address
+            text: account.address
         }
         TabBar {
             id: tabBar
@@ -37,6 +37,7 @@ Item {
 
             Layout.fillWidth: true
             Layout.fillHeight: true
+            Layout.margins: 10
 
             currentIndex: tabBar.currentIndex
 
@@ -44,21 +45,24 @@ Item {
             clip: true
 
             Loader {
-                active: SwipeView.isCurrentItem
+                active: SwipeView.isCurrentItem && root.assetController && root.account
                 sourceComponent: AssetView {
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
+                    Rectangle {
+                        anchors.fill: parent
+                        color: "#66000066"
+                        border.width: 1
+                    }
+                    width: swipeView.width
+                    height: swipeView.height
 
-                    asset: root.asset
+                    assetController: root.assetController
+                    account: root.account
                 }
             }
 
             Loader {
                 active: SwipeView.isCurrentItem
                 sourceComponent: Item {
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-
                     Label {
                         anchors.centerIn: parent
                         text: "TODO"

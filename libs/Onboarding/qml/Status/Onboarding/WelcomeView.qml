@@ -11,7 +11,9 @@ import "base"
 OnboardingPageBase {
     id: root
 
-    required property var onboardingController      // OnboardingController
+    /// \c OnboardingController
+    /// \todo investigate "Unable to assign Status::Onboarding::OnboardingController to Status::Onboarding::OnboardingController"
+    required property var onboardingController
 
     signal setupNewAccount()
     /// \param statusAccount \c UserAccount
@@ -51,15 +53,6 @@ OnboardingPageBase {
                 id: passwordInput
                 Layout.preferredWidth: 328
                 Layout.preferredHeight: 44
-
-                // TODO: remove dev helper
-                text: "1234567890"
-                Timer {
-                    interval: 100
-                    running: loginButton.enabled && accountsComboBox.count
-                    onTriggered: loginButton.clicked()
-                }
-                // END dev
             }
 
             Button {

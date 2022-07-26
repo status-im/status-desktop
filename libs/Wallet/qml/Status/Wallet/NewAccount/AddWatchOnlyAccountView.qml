@@ -11,8 +11,7 @@ import Status.Containers
 Item {
     id: root
 
-    /// NewWalletAccountController
-    required property var controller
+    required property NewWalletAccountController controller
 
     signal accountCreated()
     signal cancel()

@@ -12,6 +12,7 @@ TextInput {
     Rectangle {
         anchors.fill: parent
         border.width: 1
+        border.color: "#55555555"
         z: parent.z - 1
     }
 }

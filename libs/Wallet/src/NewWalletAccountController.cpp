@@ -17,7 +17,7 @@
 #include <ranges>
 
 namespace GoAccounts = Status::StatusGo::Accounts;
-namespace GoWallet = Status::StatusGo::Wallet;
+namespace WalletGo = Status::StatusGo::Wallet;
 namespace UtilsSG = Status::StatusGo::Utils;
 namespace StatusGo = Status::StatusGo;
 
@@ -30,7 +30,6 @@ NewWalletAccountController::NewWalletAccountController(std::shared_ptr<Helpers::
     , m_derivationPath(Status::Constants::General::PathWalletRoot)
 {
 }
-
 
 QAbstractListModel* NewWalletAccountController::mainAccountsModel()
 {
@@ -107,7 +106,7 @@ bool NewWalletAccountController::retrieveAndUpdateDerivedAddresses(const QString
         auto maxPageCount = static_cast<int>(std::ceil(static_cast<double>(m_maxDerivedAddresses)/static_cast<double>(m_derivedAddressesPageSize)));
         std::shared_ptr<DerivedWalletAddress> foundEntry;
         while(currentPage <= maxPageCount && foundIndex < 0) {
-            auto all = GoWallet::getDerivedAddressesForPath(StatusGo::HashedPassword(UtilsSG::hashPassword(password)),
+            auto all = WalletGo::getDerivedAddressesForPath(StatusGo::HashedPassword(UtilsSG::hashPassword(password)),
                                                             derivedFrom->data().derivedFrom.value(),
                                                             Status::Constants::General::PathWalletRoot,
                                                             m_derivedAddressesPageSize, currentPage);
@@ -115,7 +114,7 @@ bool NewWalletAccountController::retrieveAndUpdateDerivedAddresses(const QString
                 m_derivedAddress.resize(currentIndex + all.size());
 
             for(auto newDerived : all) {
-                auto newEntry = std::make_shared<DerivedWalletAddress>(std::move(newDerived));
+                auto newEntry = Helpers::makeSharedQObject<DerivedWalletAddress>(std::move(newDerived));
                 m_derivedAddress.set(currentIndex, newEntry);
                 if(foundIndex < 0 && !newEntry->data().alreadyCreated) {
                     foundIndex = currentIndex;
@@ -147,7 +146,7 @@ WalletAccountPtr NewWalletAccountController::findMissingAccount()
         return std::none_of(m_accounts->objects().begin(), m_accounts->objects().end(),
                             [&a](const auto &eA) { return a.address == eA->data().address; });
     });
-    return it != accounts.end() ? std:: make_shared<WalletAccount>(*it) : nullptr;
+    return it != accounts.end() ? Helpers::makeSharedQObject<WalletAccount>(*it) : nullptr;
 }
 
 NewWalletAccountController::AccountsModel::ObjectContainer

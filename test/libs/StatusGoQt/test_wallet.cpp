@@ -1,5 +1,7 @@
 #include <StatusGo/Accounts/AccountsAPI.h>
+
 #include <StatusGo/Wallet/WalletApi.h>
+
 #include <StatusGo/Metadata/api_response.h>
 
 #include <Onboarding/Accounts/AccountsServiceInterface.h>
@@ -223,14 +225,14 @@ TEST(WalletApi, TestGetTokensBalancesForChainIDs)
     ASSERT_GT(balances.size(), 0);
 
     ASSERT_TRUE(balances.contains(testAddress));
-    const auto &addressBallance = balances[testAddress];
-    ASSERT_GT(addressBallance.size(), 0);
+    const auto &addressBalance = balances[testAddress];
+    ASSERT_GT(addressBalance.size(), 0);
 
-    ASSERT_TRUE(addressBallance.contains(sntMain.address));
-    ASSERT_EQ(toQString(addressBallance.at(sntMain.address)), "0");
+    ASSERT_TRUE(addressBalance.contains(sntMain.address));
+    ASSERT_EQ(toQString(addressBalance.at(sntMain.address)), "0");
 
-    ASSERT_TRUE(addressBallance.contains(sntTest.address));
-    ASSERT_EQ(toQString(addressBallance.at(sntTest.address)), "0");
+    ASSERT_TRUE(addressBalance.contains(sntTest.address));
+    ASSERT_EQ(toQString(addressBalance.at(sntTest.address)), "0");
 }
 
 TEST(WalletApi, TestGetTokensBalancesForChainIDs_WatchOnlyAccount)
@@ -267,11 +269,14 @@ TEST(WalletApi, TestGetTokensBalancesForChainIDs_WatchOnlyAccount)
     ASSERT_GT(balances.size(), 0);
 
     ASSERT_TRUE(balances.contains(newAccount.address));
-    const auto &addressBallance = balances[newAccount.address];
-    ASSERT_GT(addressBallance.size(), 0);
+    const auto &addressBalance = balances[newAccount.address];
+    ASSERT_GT(addressBalance.size(), 0);
 
-    ASSERT_TRUE(addressBallance.contains(sntMain.address));
-    ASSERT_GT(addressBallance.at(sntMain.address), 0);
+    ASSERT_TRUE(addressBalance.contains(sntMain.address));
+    ASSERT_GT(addressBalance.at(sntMain.address), 0);
 }
+
+// TODO
+// "{"jsonrpc":"2.0","id":0,"error":{"code":-32000,"message":"no tokens for this network"}}"
 
 } // namespace
