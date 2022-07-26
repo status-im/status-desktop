@@ -39,7 +39,6 @@ StatusScrollView {
             id: inputText
             visible: (wordRandomNumber > -1)
             implicitWidth: 448
-            input.implicitHeight: 44
             validationMode: StatusInput.ValidationMode.Always
             label: qsTr("Word #%1").arg(wordRandomNumber + 1)
             placeholderText: qsTr("Enter word")

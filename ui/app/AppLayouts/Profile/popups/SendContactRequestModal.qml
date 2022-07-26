@@ -129,7 +129,8 @@ StatusModal {
 
                 placeholderText: qsTr("Say who you are / why you want to become a contact...")
                 input.multiline: true
-                input.implicitHeight: d.msgHeight
+                minimumHeight: d.msgHeight
+                maximumHeight: d.msgHeight
                 input.verticalAlignment: TextEdit.AlignTop
 
                 validators: [StatusMinLengthValidator {

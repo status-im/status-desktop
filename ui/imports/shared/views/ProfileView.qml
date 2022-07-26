@@ -342,7 +342,8 @@ Rectangle {
             Layout.rightMargin: d.contentMargins
             Layout.leftMargin: d.contentMargins
             input.multiline: true
-            input.implicitHeight: 152
+            minimumHeight: 152
+            maximumHeight: 152
             placeholderText: qsTr("Ask a question that only the real %1 will be able to answer e.g. a question about a shared experience, or ask Mark to enter a code or phrase you have sent to them via a different communication channel (phone, post, etc...).").arg(userIsEnsVerified ? userEnsName : userDisplayName)
         }
 
