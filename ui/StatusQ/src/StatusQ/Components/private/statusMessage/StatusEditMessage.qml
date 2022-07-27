@@ -28,7 +28,7 @@ Item {
                 width: editText.width
                 placeholderText: ""
                 input.text: msgText
-                input.implicitHeight: 40
+                maximumHeight: 40
             }
         }
         RowLayout {

@@ -107,7 +107,8 @@ Column {
         label: "Label"
         secondaryLabel: "secondary label"
         placeholderText: "Placeholder"
-        input.implicitHeight: 56
+        minimumHeight: 56
+        maximumHeight: 56
     }
 
     StatusInput {
@@ -162,7 +163,8 @@ Column {
     StatusInput {
         input.multiline: true
         placeholderText: "Multiline with static height"
-        input.implicitHeight: 100
+        minimumHeight: 100
+        maximumHeight: 100
     }
 
     StatusInput {
