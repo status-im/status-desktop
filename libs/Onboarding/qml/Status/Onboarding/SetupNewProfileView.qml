@@ -59,6 +59,8 @@ Item {
         id: swipeView
         anchors.fill: parent
 
+        interactive: false
+
         Repeater {
             id: pageRepeater
             model: pagesModel

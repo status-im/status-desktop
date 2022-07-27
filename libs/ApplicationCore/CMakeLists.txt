@@ -14,6 +14,8 @@ qt6_standard_project_setup()
 qt6_add_qml_module(ApplicationCore
     URI Status.ApplicationCore
     VERSION 1.0
+
+    OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Status/ApplicationCore
 )
 add_library(Status::ApplicationCore ALIAS ApplicationCore)
 

@@ -20,6 +20,8 @@ qt6_add_qml_module(${PROJECT_NAME}
         Inter/Inter-Regular.otf
 
     RESOURCE_PREFIX ""
+
+    OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Status/FontsAssets
 )
 
 target_link_libraries(${PROJECT_NAME}
