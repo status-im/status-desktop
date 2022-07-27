@@ -121,7 +121,7 @@ Item {
 
             searchStr: contactListRoot.searchString
 
-            showSendMessageButton: model.isContact
+            showSendMessageButton: isContact && !isBlocked
             showRejectContactRequestButton: {
                 if (contactListRoot.panelUsage === Constants.contactsPanelUsage.receivedContactRequest && !model.verificationRequestStatus) {
                     return true
