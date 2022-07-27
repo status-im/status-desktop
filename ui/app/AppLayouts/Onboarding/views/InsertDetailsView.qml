@@ -80,8 +80,8 @@ Item {
         }
 
         Item {
-            Layout.preferredWidth: 80
-            Layout.preferredHeight: 80
+            Layout.preferredWidth: 86
+            Layout.preferredHeight: 86
             Layout.alignment: Qt.AlignTop | Qt.AlignHCenter
             Layout.topMargin: Style.current.bigPadding
             StatusSmartIdenticon {
@@ -121,7 +121,7 @@ Item {
         Item {
             id: nameInputItem
             Layout.preferredWidth: 328
-            Layout.preferredHeight: 69
+            Layout.preferredHeight: 66
             Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
             Layout.topMargin: 37
             StatusInput {
@@ -160,7 +160,7 @@ Item {
 
         StyledText {
             id: chatKeyTxt
-            Layout.preferredHeight: 44
+            Layout.preferredHeight: 22
             color: Style.current.secondaryText
             text: qsTr("Chatkey:") + " " + Utils.getCompressedPk(root.pubKey)
             horizontalAlignment: Text.AlignHCenter
@@ -172,10 +172,11 @@ Item {
 
         Item {
             id: chainsChatKeyImg
-            Layout.alignment: Qt.AlignHCenter
+            Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
             Layout.topMargin: Style.current.padding
             Layout.preferredWidth: 215
             Layout.preferredHeight: 77
+
             Image {
                 id: imgChains
                 anchors.horizontalCenter: parent.horizontalCenter
