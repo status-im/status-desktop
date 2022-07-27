@@ -98,18 +98,21 @@ proc toggleNetwork*(self: Service, chainId: int) =
 
 proc getNetworkForEns*(self: Service): NetworkDto =
   if self.settingsService.areTestNetworksEnabled():
-    return self.getNetwork(Ropsten)
+    return self.getNetwork(Goerli)
 
   return self.getNetwork(Mainnet)
 
 proc getNetworkForStickers*(self: Service): NetworkDto =
-    return self.getNetworkForEns()
+  if self.settingsService.areTestNetworksEnabled():
+    return self.getNetwork(Goerli)
+
+  return self.getNetwork(Mainnet)
 
 proc getNetworkForBrowser*(self: Service): NetworkDto =
-    return self.getNetworkForEns()
+  return self.getNetworkForStickers()
 
 proc getNetworkForChat*(self: Service): NetworkDto =
-    return self.getNetworkForEns()
+  return self.getNetworkForStickers()
 
 proc getNetworkForCollectibles*(self: Service): NetworkDto =
   if self.settingsService.areTestNetworksEnabled():

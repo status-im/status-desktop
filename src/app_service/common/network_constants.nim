@@ -56,7 +56,7 @@ let NETWORKS* = %* [
     "nativeCurrencyDecimals": 18,
     "isTest": true,
     "layer": 1,
-    "enabled": true,
+    "enabled": false,
   },
   {
     "chainId": 4,
@@ -76,7 +76,7 @@ let NETWORKS* = %* [
   {
     "chainId": 5,
     "chainName": "Goerli",
-    "rpcUrl": "http://goerli.blockscout.com/",
+    "rpcUrl": "https://goerli.infura.io/v3/" & INFURA_TOKEN_RESOLVED,
     "blockExplorerUrl": "https://goerli.etherscan.io/",
     "iconUrl": "network/Network=Tetnet",
     "chainColor": "#939BA1",
@@ -86,7 +86,7 @@ let NETWORKS* = %* [
     "nativeCurrencyDecimals": 18,
     "isTest": true,
     "layer": 1,
-    "enabled": false,
+    "enabled": true,
   },
   {
     "chainId": 10,
