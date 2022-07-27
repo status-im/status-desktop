@@ -25,6 +25,11 @@ Item {
 
     signal contactSelected(string address, int type)
 
+    QtObject {
+        id: d
+        readonly property int maxHeightForList: 281
+    }
+
     StatusTabBar {
         id: accountSelectionTabBar
         anchors.top: parent.top
@@ -68,7 +73,7 @@ Item {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: parent.top
                 implicitWidth: parent.width
-                height: Math.min(288, savedAddresses.contentHeight)
+                height: Math.min(d.maxHeightForList, savedAddresses.contentHeight)
 
                 model: root.store.savedAddressesModel
                 header:  savedAddresses.count > 0 ? search : nothingInList
@@ -139,7 +144,7 @@ Item {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: parent.top
                 width: parent.width
-                height: Math.min(288, myAccounts.contentHeight)
+                height: Math.min(d.maxHeightForList, myAccounts.contentHeight)
 
                 delegate: StatusListItem {
                     implicitWidth: parent.width
@@ -172,7 +177,7 @@ Item {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: parent.top
                 width: parent.width
-                height: Math.min(288, recents.contentHeight)
+                height: Math.min(d.maxHeightForList, recents.contentHeight)
 
                 header: StatusBaseText {
                     height: visible ? 56 : 0

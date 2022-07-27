@@ -390,7 +390,6 @@ Item {
         id: cmpSendTransactionWithEns
         SendModal {
             id: sendTransactionWithEns
-            anchors.centerIn: parent
             store: root.rootStore
             contactsStore: root.contactsStore
             onClosed: {

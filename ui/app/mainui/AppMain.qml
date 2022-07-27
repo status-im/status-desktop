@@ -857,7 +857,6 @@ Item {
             }
             property var selectedAccount
             sourceComponent: SendModal {
-                anchors.centerIn: parent
                 store: appMain.rootStore
                 contactsStore: appMain.rootStore.profileSectionStore.contactsStore
                 onClosed: {

@@ -3,22 +3,23 @@ import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 import QtQuick.Dialogs 1.3
 import QtGraphicalEffects 1.0
-import StatusQ.Controls.Validators 0.1
 
 import utils 1.0
 import shared.stores 1.0
 import shared.panels 1.0
 
-import StatusQ.Popups 0.1
+import StatusQ.Controls 0.1
+import StatusQ.Popups.Dialog 0.1
 import StatusQ.Components 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
+import StatusQ.Controls.Validators 0.1
 
 import "../panels"
 import "../controls"
 import "../views"
 
-StatusModal {
+StatusDialog {
     id: popup
 
     property alias stack: stack
@@ -74,8 +75,9 @@ StatusModal {
     QtObject {
         id: d
         readonly property string maxFiatBalance: Utils.stripTrailingZeros(parseFloat(assetSelector.selectedAsset.totalBalance).toFixed(4))
-        readonly property bool isReady: amountToSendInput.valid && !amountToSendInput.pending && recipientSelector.isValid && !recipientSelector.isPending
+        readonly property bool isReady: amountToSendInput.valid && !amountToSendInput.pending && recipientReady
         readonly property bool errorMode: networkSelector.suggestedRoutes && networkSelector.suggestedRoutes.length <= 0 || networkSelector.errorMode
+        property bool recipientReady: recipientSelector.isValid && !recipientSelector.isPending
         onIsReadyChanged: {
             if(!isReady && stack.isLastGroup)
                 stack.back()
@@ -84,11 +86,11 @@ StatusModal {
 
     width: 556
     height: 595
-    showHeader: false
-    showFooter: false
-    showAdvancedFooter: d.isReady && !isNaN(parseFloat(amountToSendInput.text)) && gasValidator.isValid
-    showAdvancedHeader: true
-    backgroundColor: Theme.palette.baseColor3
+
+    padding: 0
+    background: StatusDialogBackground {
+        color: Theme.palette.baseColor3
+    }
 
     onSelectedAccountChanged: popup.recalculateRoutesAndFees()
 
@@ -104,8 +106,9 @@ StatusModal {
         popup.recalculateRoutesAndFees()
     }
 
-    hasFloatingButtons: true
-    advancedHeaderComponent: SendModalHeader {
+    header: SendModalHeader {
+        anchors.top: parent.top
+        anchors.topMargin: -height - 18
         model: popup.store.accounts
         selectedAccount: popup.selectedAccount
         onUpdatedSelectedAccount: {
@@ -116,8 +119,6 @@ StatusModal {
    TransactionStackView {
         id: stack
         property alias currentGroup: stack.currentGroup
-        anchors.topMargin: Style.current.xlPadding
-        anchors.bottomMargin: popup.showAdvancedFooter  && !!advancedFooter ? advancedFooter.height : Style.current.padding
         TransactionFormGroup {
             id: group1
             anchors.fill: parent
@@ -266,10 +267,9 @@ StatusModal {
 
             StatusScrollView {
                 id: scrollView
-                height: stack.height - assetAndAmmountSelector.height
+                height: stack.height - assetAndAmmountSelector.height - Style.current.bigPadding
                 width: parent.width
                 anchors.top: border.bottom
-                anchors.topMargin: Style.current.halfPadding
                 anchors.left: parent.left
                 z: 0
 
@@ -299,6 +299,21 @@ StatusModal {
                         Layout.fillWidth: true
                         Layout.leftMargin: Style.current.bigPadding
                         Layout.rightMargin: Style.current.bigPadding
+
+                        StatusButton {
+                            anchors.right: parent.right
+                            anchors.rightMargin: 16
+                            anchors.bottom: parent.bottom
+                            anchors.bottomMargin: 8
+
+                            visible: recipientSelector.input.textField.text === ""
+
+                            border.width: 1
+                            border.color: Theme.palette.primaryColor1
+                            size: StatusBaseButton.Size.Tiny
+                            text: qsTr("Paste")
+                            onClicked: recipientSelector.input.textField.paste()
+                        }
                     }
 
                     TabAddressSelectorView {
@@ -310,6 +325,7 @@ StatusModal {
                         Layout.fillWidth: true
                         Layout.leftMargin: Style.current.bigPadding
                         Layout.rightMargin: Style.current.bigPadding
+                        visible: !d.recipientReady
                     }
 
                     NetworkSelector {
@@ -328,16 +344,18 @@ StatusModal {
                         Layout.fillWidth: true
                         Layout.leftMargin: Style.current.bigPadding
                         Layout.rightMargin: Style.current.bigPadding
+                        visible: d.recipientReady
                     }
 
                     Rectangle {
                         id: fees
                         radius: 13
                         color: Theme.palette.indirectColor1
-                        implicitHeight: gasSelector.visible || gasValidator.visible ? feesLayout.height + gasValidator.height : 0
+                        Layout.preferredHeight: text.height + gasSelector.height + gasValidator.height + Style.current.padding
                         Layout.fillWidth: true
                         Layout.leftMargin: Style.current.bigPadding
                         Layout.rightMargin: Style.current.bigPadding
+                        visible: d.recipientReady
 
                         RowLayout {
                             id: feesLayout
@@ -355,6 +373,15 @@ StatusModal {
                             ColumnLayout {
                                 Layout.alignment: Qt.AlignTop | Qt.AlignHCenter
                                 Layout.preferredWidth: fees.width - feesIcon.width - Style.current.xlPadding
+                                StatusBaseText {
+                                    id: text
+                                    Layout.maximumWidth: 410
+                                    font.pixelSize: 15
+                                    font.weight: Font.Medium
+                                    color: Theme.palette.directColor1
+                                    text: qsTr("Fees")
+                                    wrapMode: Text.WordWrap
+                                }
                                 GasSelector {
                                     id: gasSelector
                                     Layout.fillWidth: true
@@ -395,7 +422,6 @@ StatusModal {
                                 GasValidator {
                                     id: gasValidator
                                     Layout.fillWidth: true
-                                    Layout.alignment: Qt.AlignHCenter
                                     selectedAccount: popup.selectedAccount
                                     selectedAmount: amountToSendInput.text === "" ? 0.0 :
                                                     parseFloat(amountToSendInput.text)
@@ -429,12 +455,13 @@ StatusModal {
         }
     }
 
-    advancedFooterComponent: SendModalFooter {
+    footer: SendModalFooter {
         maxFiatFees: gasSelector.maxFiatFees
         estimatedTxTimeFlag: gasSelector.estimatedTxTimeFlag
         currentGroupPending: stack.currentGroup.isPending
         currentGroupValid: stack.currentGroup.isValid
         isLastGroup: stack.isLastGroup
+        visible: d.isReady && !isNaN(parseFloat(amountToSendInput.text)) && gasValidator.isValid
         onNextButtonClicked: {
             const validity = stack.currentGroup.validate()
             if (validity.isValid && !validity.isPending) {

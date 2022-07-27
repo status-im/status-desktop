@@ -176,6 +176,7 @@ Item {
         font.weight: Font.Medium
         font.pixelSize: 13
         color: Style.current.textColor
+        visible: root.suggestedFees.eip1559Enabled && advancedMode
     }
 
     StyledText {
@@ -193,6 +194,7 @@ Item {
     StatusButton {
         anchors.verticalCenter: prioritytext.verticalCenter
         anchors.right: parent.right
+        anchors.rightMargin: Style.current.bigPadding
         height: 22
         defaultTopPadding: 2
         defaultBottomPadding: 2

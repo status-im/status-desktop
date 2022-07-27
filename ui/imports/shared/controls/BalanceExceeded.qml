@@ -16,15 +16,18 @@ ColumnLayout {
     property bool transferPossible: false
     property double amountToSend: 0
 
+    visible: !balancedExceededError.transferPossible && balancedExceededError.amountToSend > 0
+
     StatusIcon {
+        Layout.preferredHeight: 20
+        Layout.preferredWidth: 20
         Layout.alignment: Qt.AlignHCenter
-        visible: !balancedExceededError.transferPossible && balancedExceededError.amountToSend > 0
         icon: "cancel"
         color: Theme.palette.dangerColor1
     }
     StatusBaseText {
         Layout.alignment: Qt.AlignHCenter
-        font.pixelSize: 15
+        font.pixelSize: 13
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
         color: Theme.palette.dangerColor1

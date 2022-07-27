@@ -2,6 +2,9 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 
+import StatusQ.Core 0.1
+import StatusQ.Core.Theme 0.1
+
 import utils 1.0
 import "../status"
 import "../"
@@ -10,7 +13,7 @@ import "../panels"
 // TODO: use StatusQ components here
 Column {
     id: root
-    anchors.horizontalCenter: parent.horizontalCenter
+
     visible: !isValid
     spacing: 5
 
@@ -29,11 +32,10 @@ Column {
     onSelectedNetworkChanged: validate()
 
     function validate() {
-        let isValid = true
+        let isValid = false
         if (!(selectedAccount && selectedAccount.assets && selectedAsset && selectedGasEthValue > 0)) {
             return root.isValid
         }
-        isValid = true
         let gasTotal = selectedGasEthValue
         if (selectedAsset && selectedAsset.symbol && selectedAsset.symbol.toUpperCase() === "ETH") {
             gasTotal += selectedAmount
@@ -41,21 +43,18 @@ Column {
         const chainId = (selectedNetwork && selectedNetwork.chainId) || Global.currentChainId
 
         const currAcctGasAsset = Utils.findAssetByChainAndSymbol(chainId, selectedAccount.assets, "ETH")
-        if (currAcctGasAsset && currAcctGasAsset.totalBalance < gasTotal) {
-            isValid = false
+        if (currAcctGasAsset && currAcctGasAsset.totalBalance > gasTotal) {
+            isValid = true
         }
         root.isValid = isValid
         return isValid
     }
-    SVGImage {
-        id: imgExclamation
-        width: 13.33
-        height: 13.33
-        sourceSize.height: height * 2
-        sourceSize.width: width * 2
+    StatusIcon {
         anchors.horizontalCenter: parent.horizontalCenter
-        fillMode: Image.PreserveAspectFit
-        source: Style.svg("exclamation_outline")
+        height: 20
+        width: 20
+        icon: "cancel"
+        color: Theme.palette.dangerColor1
     }
     StyledText {
         id: txtValidationError
