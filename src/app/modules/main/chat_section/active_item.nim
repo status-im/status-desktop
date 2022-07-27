@@ -24,12 +24,20 @@ QtObject:
   #################################################
   # Forward declaration section
   proc activeSubItemChanged(self: ActiveItem) {.signal.}
+  proc idChanged(self: ActiveItem) {.signal.}
 
   #################################################
 
   proc setActiveItemData*(self: ActiveItem, item: Item, subItem: SubItem) =
     self.item = item
     self.activeSubItem.setActiveSubItemData(subItem)
+    self.activeSubItemChanged()
+
+  # Used when there is no longer an active item (last channel was deleted)
+  proc resetActiveItemData*(self: ActiveItem) =
+    self.item = Item()
+    self.activeSubItem.setActiveSubItemData(SubItem())
+    self.idChanged()
     self.activeSubItemChanged()
 
   proc getId(self: ActiveItem): string {.slot.} =
@@ -39,6 +47,7 @@ QtObject:
 
   QtProperty[string] id:
     read = getId
+    notify = idChanged
 
   proc getIsSubItemActive(self: ActiveItem): bool {.slot.} =
     if(self.activeSubItem.getId().len > 0):

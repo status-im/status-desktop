@@ -2,7 +2,7 @@ import NimQml, Tables, chronicles, json, sequtils, strutils, strformat, sugar
 
 import io_interface
 import ../io_interface as delegate_interface
-import view, controller, item, sub_item, sub_model, base_item
+import view, controller, item, sub_item, sub_model, base_item, active_item
 import model as chats_model
 import ../../shared_models/user_item as user_item
 import ../../shared_models/user_model as user_model
@@ -310,6 +310,10 @@ method makeChatWithIdActive*(self: Module, chatId: string) =
   self.setActiveItemSubItem(item.BaseItem.id, subItemId)
 
 method activeItemSubItemSet*(self: Module, itemId: string, subItemId: string) =
+  if (itemId == "" and subItemId == ""):
+    self.view.activeItem().resetActiveItemData()
+    return
+
   let item = self.view.chatsModel().getItemById(itemId)
   if(item.isNil):
     # Should never be here
@@ -492,6 +496,7 @@ method onCommunityCategoryDeleted*(self: Module, cat: Category) =
 
 method setFirstChannelAsActive*(self: Module) =
   if(self.view.chatsModel().getCount() == 0):
+    self.setActiveItemSubItem("", "")
     return
   let item = self.view.chatsModel().getItemAtIndex(0)
   if(item.subItems.getCount() == 0):
