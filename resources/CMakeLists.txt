@@ -22,6 +22,8 @@ qt6_add_qml_module(${PROJECT_NAME}
         infura_key
         node-config.json
     RESOURCE_PREFIX ""
+
+    OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Status/StaticConfig
 )
 add_library(Status::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 

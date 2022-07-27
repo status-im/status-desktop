@@ -21,7 +21,7 @@ qt6_add_qml_module(${PROJECT_NAME}
 
 add_subdirectory(Navigation)
 
-target_link_libraries(${PROJECT_NAME}
+target_link_libraries(OnboardingTestHelpers
     PRIVATE
         Qt6::Quick
         Qt6::Qml

@@ -13,18 +13,20 @@ find_package(GTest REQUIRED)
 find_package(Qt6 ${STATUS_QT_VERSION} COMPONENTS Quick Qml REQUIRED)
 qt6_standard_project_setup()
 
-qt6_add_qml_module(${PROJECT_NAME}
-    URI Status.${PROJECT_NAME}
+qt6_add_qml_module(TestHelpers
+    URI Status.TestHelpers
     VERSION 1.0
-)
-add_library(Status::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
-target_include_directories(${PROJECT_NAME}
+    OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Status/TestHelpers
+)
+add_library(Status::TestHelpers ALIAS TestHelpers)
+
+target_include_directories(TestHelpers
     PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-target_sources(${PROJECT_NAME}
+target_sources(TestHelpers
     PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/MonitorQtOutput.h
         ${CMAKE_CURRENT_SOURCE_DIR}/IOTestHelpers.h
@@ -36,7 +38,7 @@ target_sources(${PROJECT_NAME}
         ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt
 )
 
-target_link_libraries(${PROJECT_NAME}
+target_link_libraries(TestHelpers
     PUBLIC
         Qt6::Quick
         Qt6::Qml

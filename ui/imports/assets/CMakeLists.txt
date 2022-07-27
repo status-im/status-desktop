@@ -32,6 +32,8 @@ qt6_add_qml_module(${PROJECT_NAME}
         png/status-logo.png
 
     RESOURCE_PREFIX ""
+
+    OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Status/UiAssets
 )
 
 target_link_libraries(${PROJECT_NAME}
