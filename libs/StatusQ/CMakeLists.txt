@@ -9,7 +9,7 @@ set(QT_NO_CREATE_VERSIONLESS_FUNCTIONS true)
 find_package(Qt6 ${STATUS_QT_VERSION} COMPONENTS Quick Qml REQUIRED)
 qt6_standard_project_setup()
 
-qt6_add_qml_module(${PROJECT_NAME}
+qt6_add_qml_module(StatusQ
     URI Status
     VERSION 1.0
 
@@ -26,7 +26,7 @@ add_subdirectory(qml/Status/Controls)
 add_subdirectory(qml/Status/Core)
 add_subdirectory(tests)
 
-target_link_libraries(${PROJECT_NAME}
+target_link_libraries(StatusQ
     PRIVATE
         Qt6::Quick
         Qt6::Qml
@@ -43,6 +43,6 @@ list(REMOVE_DUPLICATES QML_IMPORT_PATH)
 
 install(
     TARGETS
-        ${PROJECT_NAME}
+        StatusQ
     RUNTIME
 )
