@@ -30,6 +30,7 @@ RowLayout {
     }
     ColumnLayout {
         Layout.alignment: Qt.AlignTop
+        Layout.preferredWidth: networksSimpleRoutingView.width
         StatusBaseText {
             Layout.maximumWidth: 410
             font.pixelSize: 15
@@ -46,8 +47,9 @@ RowLayout {
             wrapMode: Text.WordWrap
         }
         BalanceExceeded {
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignHCenter
             Layout.topMargin: Style.current.bigPadding
-            Layout.alignment: Qt.AlignCenter
             visible: !transferPossible
             transferPossible: networksSimpleRoutingView.suggestedRoutes ? networksSimpleRoutingView.suggestedRoutes.length > 0 : false
             amountToSend: networksSimpleRoutingView.amountToSend

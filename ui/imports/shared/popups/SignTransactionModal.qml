@@ -179,6 +179,7 @@ StatusModal {
                 GasValidator {
                     id: gasValidator
                     anchors.top: gasSelector.bottom
+                    anchors.horizontalCenter: parent.horizontalCenter
                     selectedAccount: selectFromAccount.selectedAccount
                     selectedAmount: parseFloat(root.selectedAmount)
                     selectedAsset: root.selectedAsset

@@ -151,6 +151,7 @@ ModalPopup {
             GasValidator {
                 id: gasValidator
                 anchors.top: gasSelector.bottom
+                anchors.horizontalCenter: parent.horizontalCenter
                 selectedAccount: selectFromAccount.selectedAccount
                 selectedAsset: root.asset
                 selectedAmount: parseFloat(root.assetPrice)
