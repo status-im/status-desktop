@@ -1,567 +1,565 @@
-<!DOCTYPE TS><TS version="2.1" language="pt_BR">
+<!DOCTYPE TS><TS version="2.1" language="bn">
 <context>
 	<name></name>
 	<message>
 		<source>about-app</source>
-		<translation>Sobre</translation>
+		<translation>সম্বন্ধে</translation>
 	</message>
 	<message>
 		<source>about-key-storage-content</source>
-		<translation>O Status nunca acessará sua chave privada. Não esqueça de salvar sua frase-semente. Se você perder seu telefone, essa é a única maneira de acessar suas chaves.</translation>
+		<translation>Status কখনই আপনার Private key অ্যাক্সেস করবে না। আপনার বীজ বাক্যাংশ ব্যাকআপ করতে নিশ্চিত হোন। আপনি যদি আপনার ফোন হারিয়ে ফেলেন তাহলে এটি আপনার চাবি অ্যাক্সেস করার একমাত্র উপায়।</translation>
 	</message>
 	<message>
 		<source>about-key-storage-title</source>
-		<translation>Sobre o armazenamento de chaves</translation>
+		<translation>কী স্টোরেজ সম্পর্কে</translation>
 	</message>
 	<message>
 		<source>about-names-content</source>
-		<translation>Ninguém pode fingir ser você! Você é anônimo por padrão e nunca precisa revelar seu nome real. Você pode cadastrar um nome personalizado por uma pequena taxa.</translation>
+		<translation>কেউ তোমার ভান করতে পারবে না! আপনি ডিফল্টভাবে বেনামী এবং কখনোই আপনার আসল নাম প্রকাশ করতে হবে না। আপনি একটি ছোট ফি জন্য একটি কাস্টম নাম নিবন্ধন করতে পারেন।</translation>
 	</message>
 	<message>
 		<source>about-names-title</source>
-		<translation>Os nomes não podem ser alterados</translation>
+		<translation>নাম পরিবর্তন করা যাবে না</translation>
 	</message>
 	<message>
 		<source>access-key</source>
-		<translation>Chave de acesso</translation>
+		<translation>অ্যাক্সেস কী</translation>
 	</message>
 	<message>
 		<source>access-existing-keys</source>
-		<translation>Acessar chaves existentes</translation>
+		<translation>বিদ্যমান কীসমূহ অ্যাক্সেস করুন</translation>
 	</message>
 	<message>
 		<source>accept-and-share-address</source>
-		<translation>Aceitar e compartilhar endereço</translation>
+		<translation>ঠিকানা গ্রহণ এবং শেয়ার করুন</translation>
 	</message>
 	<message>
 		<source>account-added</source>
-		<translation>Conta adicionada</translation>
+		<translation>অ্যাকাউন্ট যুক্ত হয়েছে</translation>
 	</message>
 	<message>
 		<source>account-color</source>
-		<translation>Cor da conta</translation>
+		<translation>অ্যাকাউন্টের রং</translation>
 	</message>
 	<message>
 		<source>anyone</source>
-		<translation>Qualquer um</translation>
+		<translation>যে কেউ</translation>
 	</message>
 	<message>
 		<source>messages-from-contacts-only-subtitle</source>
-		<translation>Apenas as pessoas que você adicionou como contatos podem iniciar um novo bate-papo com você ou convidá-lo para um grupo</translation>
+		<translation>আপনার পরিচিতি হিসেবে যোগ করা লোকজনই আপনার সাথে নতুন চ্যাট শুরু করতে পারে অথবা আপনাকে একটি গ্রুপে আমন্ত্রণ জানাতে পারেন</translation>
 	</message>
 	<message>
 		<source>accept-new-chats-from</source>
-		<translation>Aceitar novos bate-papos de</translation>
+		<translation>গ্রহণ করুন  নতুন চ্যাট থেকে</translation>
 	</message>
 	<message>
 		<source>account-name</source>
-		<translation>Nome da conta</translation>
+		<translation>অ্যাকাউন্টের নাম</translation>
 	</message>
 	<message>
 		<source>account-settings</source>
-		<translation>Configurações da conta</translation>
+		<translation>অ্যাকাউন্ট সেটিংস</translation>
 	</message>
 	<message>
 		<source>accounts</source>
-		<translation>Contas</translation>
+		<translation>হিসাব</translation>
 	</message>
 	<message>
 		<source>active-online</source>
-		<translation>Online</translation>
+		<translation>অনলাইন</translation>
 	</message>
 	<message>
 		<source>active-unknown</source>
-		<translation>Desconhecido</translation>
+		<translation>অজানা</translation>
 	</message>
 	<message>
 		<source>add</source>
-		<translation>Adicionar</translation>
+		<translation>যুক্ত</translation>
 	</message>
 	<message>
 		<source>add-a-watch-account</source>
-		<translation>Adicione um endereço somente leitura</translation>
+		<translation>কেবলমাত্র দেখার জন্য ঠিকানা যুক্ত করুন</translation>
 	</message>
 	<message>
 		<source>add-account</source>
-		<translation>Adicione uma conta</translation>
+		<translation>একটি অ্যাকাউন্ট যুক্ত করুন</translation>
 	</message>
 	<message>
 		<source>add-account-description</source>
-		<translation>Você pode importar qualquer tipo de conta Ethereum para adicioná-lo à sua carteira Status</translation>
+		<translation>আপনি আপনার স্ট্যাটাস ওয়ালেটে এটি যোগ করতে যেকোনো ধরনের ইথেরিয়াম অ্যাকাউন্ট আমদানি করতে পারেন</translation>
 	</message>
 	<message>
 		<source>add-account-incorrect-password</source>
-		<translation>A senha parece estar incorreta. Digite a senha que você usa para desbloquear o aplicativo.</translation>
+		<translation>পাসওয়ার্ডটি ভুল বলে মনে হচ্ছে। অ্যাপ্লিকেশনটি আনলক করতে আপনি যে পাসওয়ার্ডটি ব্যবহার করেন তা প্রবেশ করুন।</translation>
 	</message>
 	<message>
 		<source>add-an-account</source>
-		<translation>Adicione uma conta</translation>
+		<translation>একটি অ্যাকাউন্ট যুক্ত করুন</translation>
 	</message>
 	<message>
 		<source>add-bootnode</source>
-		<translation>Adicionar nó de inicialização</translation>
+		<translation>বুটনোড যুক্ত করুন</translation>
 	</message>
 	<message>
 		<source>add-contact</source>
-		<translation>Adicionar contato</translation>
+		<translation>পরিচিতি যুক্ত করুন</translation>
 	</message>
 	<message>
 		<source>add-custom-token</source>
-		<translation>Adicionar token personalizado</translation>
+		<translation>কাস্টম টোকেন যুক্ত করুন</translation>
 	</message>
 	<message>
 		<source>add-mailserver</source>
-		<translation>Adicionar nó do Status</translation>
+		<translation>স্ট্যাটাস নোড যুক্ত করুন</translation>
 	</message>
 	<message>
 		<source>add-members</source>
-		<translation>Adicionar membros</translation>
+		<translation>সদস্য যুক্ত করুন</translation>
 	</message>
 	<message>
 		<source>add-network</source>
-		<translation>Adicionar rede</translation>
+		<translation>নেটওয়ার্ক যুক্ত করুন</translation>
 	</message>
 	<message>
 		<source>add-node</source>
-		<translation>Adicionar nó</translation>
+		<translation>নোড যোগ করুন</translation>
 	</message>
 	<message>
 		<source>add-to-contacts</source>
-		<translation>Adicionar aos contatos</translation>
+		<translation>পরিচিতিগুলিতে যুক্ত করুন</translation>
 	</message>
 	<message>
 		<source>add-to-contacts-text</source>
-		<translation>Ao adicionar um usuário à sua lista de contatos, você compartilha o endereço da sua carteira</translation>
+		<translation>আপনার যোগাযোগ তালিকায় একজন ব্যবহারকারী যুক্ত করে, আপনি আপনার মানিব্যাগ ঠিকানা শেয়ার করুন</translation>
 	</message>
 	<message>
 		<source>address</source>
-		<translation>Endereço</translation>
+		<translation>ঠিকানা</translation>
 	</message>
 	<message>
 		<source>address-received</source>
-		<translation>Endereço recebido</translation>
+		<translation>ঠিকানা গৃহীত হয়েছে</translation>
 	</message>
 	<message>
 		<source>address-requested</source>
-		<translation>Endereço solicitado</translation>
+		<translation>ঠিকানা অনুরোধ করা হয়েছে</translation>
 	</message>
 	<message>
 		<source>address-request-accepted</source>
-		<translation>Solicitação de endereço aceita</translation>
+		<translation>ঠিকানা অনুরোধ গৃহীত</translation>
 	</message>
 	<message>
 		<source>advanced</source>
-		<translation>Avançado</translation>
+		<translation>উন্নত</translation>
 	</message>
 	<message>
 		<source>advanced-settings</source>
-		<translation>Configurações avançadas</translation>
+		<translation>উন্নত সেটিংস</translation>
 	</message>
 	<message>
 		<source>agree-by-continuing</source>
-		<translation>Ao continuar, você concorda 
- com nosso</translation>
+		<translation>আপনি কি একমত আমাদের সাথে?</translation>
 	</message>
 	<message>
 		<source>all</source>
-		<translation>Todos</translation>
+		<translation>সব</translation>
 	</message>
 	<message>
 		<source>allow</source>
-		<translation>Permitir</translation>
+		<translation>অনুমতি দিন</translation>
 	</message>
 	<message>
 		<source>allowing-authorizes-this-dapp</source>
-		<translation>Permitir que este DApp recupere o endereço da sua carteira e ative o Web3</translation>
+		<translation>আপনার ওয়ালেট ঠিকানা পুনরুদ্ধার এবং Web3 সক্রিয় করতে এই DApp অনুমোদন দেন</translation>
 	</message>
 	<message>
 		<source>already-have-asset</source>
-		<translation>Você já tem este ativo</translation>
+		<translation>আপনার এই সম্পদ ইতিমধ্যেই আছে</translation>
 	</message>
 	<message>
 		<source>amount</source>
-		<translation>Quantia</translation>
+		<translation>পরিমান</translation>
 	</message>
 	<message>
 		<source>are-you-sure-description</source>
-		<translation>Você não poderá ver toda a frase-semente de novo</translation>
+		<translation>আপনি পুরো বীজ বাক্যাংশটি আবার দেখতে পাবেন না</translation>
 	</message>
 	<message>
 		<source>are-you-sure?</source>
-		<translation>Você tem certeza?</translation>
+		<translation>আপনি কি নিশ্চিত?</translation>
 	</message>
 	<message>
 		<source>ask-in-status</source>
-		<translation>Faça uma pergunta ou relate um bug</translation>
+		<translation>একটি প্রশ্ন জিজ্ঞাসা করুন অথবা একটি বাগ প্রতিবেদন করুন</translation>
 	</message>
 	<message>
 		<source>at</source>
-		<translation>em</translation>
+		<translation>at</translation>
 	</message>
 	<message>
 		<source>authorize</source>
-		<translation>Autorizar</translation>
+		<translation>অনুমোদন করুন</translation>
 	</message>
 	<message>
 		<source>available</source>
-		<translation>Disponível</translation>
+		<translation>উপলভ্য</translation>
 	</message>
 	<message numerus="yes">
 		<source>available-participants</source>
 		<translation>
-			<numerusform>Você pode selecionar mais um participante</numerusform>
-			<numerusform>Você pode selecionar mais {{count}} participantes</numerusform>
+			<numerusform>আপনি আরও একটি অংশগ্রহণকারী নির্বাচন করতে পারেন</numerusform>
+			<numerusform>আপনি আরও অংশগ্রহণকারী {{count}}নির্বাচন করতে পারেন</numerusform>
 		</translation>
 	</message>
 	<message>
 		<source>back</source>
-		<translation>Voltar</translation>
+		<translation>পেছনে</translation>
 	</message>
 	<message>
 		<source>back-up-seed-phrase</source>
-		<translation>Fazer backup da frase-semente</translation>
+		<translation>বীজ বাক্যাংশ ব্যাক আপ করুন</translation>
 	</message>
 	<message>
 		<source>back-up-your-seed-phrase</source>
-		<translation>Fazer backup da frase-semente</translation>
+		<translation>আপনার বীজ বাক্যাংশ ব্যাক আপ করুন</translation>
 	</message>
 	<message>
 		<source>backup-recovery-phrase</source>
-		<translation>Cópia de segurança da frase-semente</translation>
+		<translation>বীজ বাক্যাংশ ব্যাক আপ করুন</translation>
 	</message>
 	<message>
 		<source>balance</source>
-		<translation>Saldo</translation>
+		<translation>ভারসাম্য</translation>
 	</message>
 	<message>
 		<source>begin-set-up</source>
-		<translation>Iniciar configuração</translation>
+		<translation>উপস্থাপনা শুরু করুন</translation>
 	</message>
 	<message>
 		<source>biometric-auth-android-sensor-desc</source>
-		<translation>Toque no sensor</translation>
+		<translation>স্পর্শ সেন্সর</translation>
 	</message>
 	<message>
 		<source>biometric-auth-android-sensor-error-desc</source>
-		<translation>Falhou</translation>
+		<translation>ব্যর্থ</translation>
 	</message>
 	<message>
 		<source>biometric-auth-android-title</source>
-		<translation>Autenticação necessária</translation>
+		<translation>প্রমাণীকরণ প্রয়োজন</translation>
 	</message>
 	<message>
 		<source>biometric-auth-confirm-logout</source>
-		<translation>Faça login novamente</translation>
+		<translation>পুনরায় লগ-ইন করুন</translation>
 	</message>
 	<message>
 		<source>biometric-auth-confirm-message</source>
-		<translation>É necessária autenticação biométrica para continuar. Se não for possível, desbloqueie suas chaves com sua senha ou código de acesso</translation>
+		<translation>বায়োমেট্রিক প্রমাণীকরণ অব্যাহত রাখা আবশ্যক, যদি সম্ভব না হয় অনুগ্রহ করে আপনার পাসওয়ার্ড বা পাসকোড দিয়ে আপনার কী আনলক করুন</translation>
 	</message>
 	<message>
 		<source>biometric-auth-confirm-title</source>
-		<translation>Você deve autenticar!</translation>
+		<translation>আপনাকে অবশ্যই প্রমাণীকরণ করতে হবে!</translation>
 	</message>
 	<message>
 		<source>biometric-auth-confirm-try-again</source>
-		<translation>Tente novamente</translation>
+		<translation>আবার চেষ্টা করুন</translation>
 	</message>
 	<message>
 		<source>biometric-auth-error</source>
-		<translation>Não foi possível executar a autenticação biométrica ({{code}})</translation>
+		<translation>বায়োমেট্রিক প্রমাণীকরণ সম্পাদন করতে অক্ষম ({{code}})</translation>
 	</message>
 	<message>
 		<source>biometric-auth-login-error-title</source>
-		<translation>Erro de autenticação biométrica</translation>
+		<translation>বায়োমেট্রিক প্রমাণীকরণ ত্রুটি</translation>
 	</message>
 	<message>
 		<source>biometric-auth-login-ios-fallback-label</source>
-		<translation>Digite a senha</translation>
+		<translation>পাসওয়ার্ড লিখুন</translation>
 	</message>
 	<message>
 		<source>biometric-auth-reason-login</source>
-		<translation>Login no Status</translation>
+		<translation>Status খুলুন</translation>
 	</message>
 	<message>
 		<source>biometric-auth-reason-verify</source>
-		<translation>Verificar autenticação</translation>
+		<translation>প্রমাণীকরণ যাচাই করুন</translation>
 	</message>
 	<message>
 		<source>biometric-secure-with</source>
-		<translation>Proteger com {{bio-type-label}}</translation>
+		<translation>{{bio-type-label}} দিয়ে নিরাপদ</translation>
 	</message>
 	<message>
 		<source>biometric-enable-keycard</source>
-		<translation>Se você não quiser usar seu Keycard cada vez que acessar o aplicativo, ative {{bio-type-label}} para iniciar a sessão</translation>
+		<translation>আপনি যদি অ্যাপটি অ্যাক্সেস করতে প্রতিবার আপনার কীকার্ড ব্যবহার করতে না চান, {{bio-type-label}} সাইন ইন সক্রিয় করুন</translation>
 	</message>
 	<message>
 		<source>biometric-enable</source>
-		<translation>Se você não quiser inserir sua senha todas as vezes para acessar o aplicativo, ative o início de sessão por {{bio-type-label}}</translation>
+		<translation>আপনি যদি অ্যাপটি অ্যাক্সেস করতে প্রতিবার আপনার পাসওয়ার্ড প্রবেশ করাতে না চান, {{bio-type-label}} সাইন ইন সক্রিয় করুন</translation>
 	</message>
 	<message>
 		<source>biometric-disable-bioauth</source>
-		<translation>desativar {{bio-type-label}}</translation>
+		<translation>{{bio-type-label}} নিষ্ক্রিয় করুন</translation>
 	</message>
 	<message>
 		<source>biometric-disable-password-title</source>
-		<translation>Desativar senha salva</translation>
+		<translation>পাসওয়ার্ড সংরক্ষণ নিষ্ক্রিয় করুন</translation>
 	</message>
 	<message>
 		<source>biometric-disable-password-description</source>
-		<translation>Se você desativar isso, você também irá </translation>
+		<translation>আপনি যদি এটি অক্ষম করেন তবে আপনি এটিও করবেন</translation>
 	</message>
 	<message>
 		<source>biometric-enable-button</source>
-		<translation>Ativar {{bio-type-label}}</translation>
+		<translation>{{bio-type-label}} সক্রিয় করুন</translation>
 	</message>
 	<message>
 		<source>biometric-fingerprint</source>
-		<translation>Impressão digital</translation>
+		<translation>আঙ্গুলের ছাপ</translation>
 	</message>
 	<message>
 		<source>biometric-faceid</source>
-		<translation>Face ID</translation>
+		<translation>ফেস আইডি</translation>
 	</message>
 	<message>
 		<source>biometric-touchid</source>
-		<translation>Touch ID</translation>
+		<translation>টাচ আইডি</translation>
 	</message>
 	<message>
 		<source>blank-keycard-text</source>
-		<translation>Você pode continuar com o seu keycard depois de gerar as chaves e o nome</translation>
+		<translation>আপনি আপনার কী এবং নাম তৈরি করার পর আপনি আপনার কীকার্ড দিয়ে অগ্রসর হতে পারেন</translation>
 	</message>
 	<message>
 		<source>blank-keycard-title</source>
-		<translation>Parece que você utilizou
-um Keycard em branco.</translation>
+		<translation>দেখে মনে হচ্ছে আপনি টেপ করেছেন
+ একটি ফাঁকা কিকার্ড</translation>
 	</message>
 	<message>
 		<source>block</source>
-		<translation>Bloquear </translation>
+		<translation>ব্লক</translation>
 	</message>
 	<message>
 		<source>unblock</source>
-		<translation>Desbloquear</translation>
+		<translation>অবরোধ মুক্ত করুন</translation>
 	</message>
 	<message>
 		<source>block-contact</source>
-		<translation>Bloquear esse usuário</translation>
+		<translation>এই ব্যবহারকারীকে অবরুদ্ধ করুন</translation>
 	</message>
 	<message>
 		<source>block-contact-details</source>
-		<translation>O bloqueio excluirá as mensagens anteriores deste usuário e impedirá que novas cheguem até você</translation>
+		<translation>অবরোধ এই ব্যবহারকারীর পূর্ববর্তী বার্তাগুলি মুছে ফেলবে এবং নতুন বার্তাগুলি আপনার কাছে পৌঁছানো থেকে বিরত রাখবে</translation>
 	</message>
 	<message>
 		<source>blocked-users</source>
-		<translation>Usuários bloqueados</translation>
+		<translation>অবরুদ্ধ ব্যবহারকারী</translation>
 	</message>
 	<message>
 		<source>bootnode-address</source>
-		<translation>Endereço do nó de inicialização</translation>
+		<translation>বুটনোড ঠিকানা</translation>
 	</message>
 	<message>
 		<source>bootnode-details</source>
-		<translation>Detalhes do nó de inicialização</translation>
+		<translation>বুটনোড বিস্তারিত</translation>
 	</message>
 	<message>
 		<source>bootnode-format</source>
-		<translation>enode://{enode-id}@{ip-address}:{port}</translation>
+		<translation>এনোড: // {enode-id} @ {ip-address} : {port}</translation>
 	</message>
 	<message>
 		<source>bootnodes</source>
-		<translation>Nós de inicialização</translation>
+		<translation>বুটনোডস</translation>
 	</message>
 	<message>
 		<source>bootnodes-enabled</source>
-		<translation>Nós de inicialização ativados</translation>
+		<translation>bootnodes সক্রিয় করা হয়েছে</translation>
 	</message>
 	<message>
 		<source>bootnodes-settings</source>
-		<translation>Configurações de nós de inicialização</translation>
+		<translation>bootnodes সেটিংস</translation>
 	</message>
 	<message>
 		<source>browsed-websites</source>
-		<translation>O histórico do navegador aparecerá aqui</translation>
+		<translation>ব্রাউজারের ইতিহাস এখানে প্রদর্শিত হবে</translation>
 	</message>
 	<message>
 		<source>browser</source>
-		<translation>Navegador</translation>
+		<translation>ব্রাউজার</translation>
 	</message>
 	<message>
 		<source>browser-not-secure</source>
-		<translation>A conexão não é segura! Não assine transações nem envie dados pessoais neste site.</translation>
+		<translation>সংযোগ নিরাপদ নয়! লেনদেনে স্বাক্ষর করবেন না বা এই সাইটে ব্যক্তিগত ডেটা প্রেরণ করবেন না।</translation>
 	</message>
 	<message>
 		<source>browser-secure</source>
-		<translation>A conexão é segura. Certifique-se de confiar neste site antes de assinar transações ou inserir dados pessoais.</translation>
+		<translation>সংযোগটি সুরক্ষিত। লেনদেনগুলি স্বাক্ষর করার আগে বা ব্যক্তিগত ডেটা প্রবেশের আগে নিশ্চিত হয়ে নিন যে আপনি এই সাইটে সত্যই বিশ্বাস করছেন।</translation>
 	</message>
 	<message>
 		<source>browsers</source>
-		<translation>Navegadores</translation>
+		<translation>ব্রাউজারগুলি</translation>
 	</message>
 	<message>
 		<source>browsing-cancel</source>
-		<translation>Cancelar</translation>
+		<translation>বাতিল</translation>
 	</message>
 	<message>
 		<source>browsing-open-in-android-web-browser</source>
-		<translation>Abrir no Android</translation>
+		<translation>অ্যান্ড্রয়েডে খুলুন</translation>
 	</message>
 	<message>
 		<source>browsing-open-in-ios-web-browser</source>
-		<translation>Abrir no iOS</translation>
+		<translation>iOS-এ খুলুন</translation>
 	</message>
 	<message>
 		<source>browsing-open-in-status</source>
-		<translation>Abrir no Status</translation>
+		<translation>Status খুলুন</translation>
 	</message>
 	<message>
 		<source>browsing-site-blocked-description1</source>
-		<translation>Detectamos atividades maliciosas em potencial neste endereço. Para proteger você e sua carteira, estamos impedindo mais navegação. 
-
-Se você acha que isso é um erro, informe-nos no</translation>
+		<translation>আমরা এই ঠিকানা থেকে সম্ভাব্য বিদ্বেষপূর্ণ কার্যকলাপ সনাক্ত করেছি। আপনাকে এবং আপনার মানিব্যাগ রক্ষা করতে, আমরা আরো নেভিগেশন প্রতিরোধ করছি। আপনি যদি মনে করেন এটি একটি ত্রুটি, তাহলে আমাদের জানান।</translation>
 	</message>
 	<message>
 		<source>browsing-site-blocked-description2</source>
-		<translation> conversa pública.</translation>
+		<translation>পাবলিক চ্যাট।</translation>
 	</message>
 	<message>
 		<source>browsing-site-blocked-go-back</source>
-		<translation>Voltar</translation>
+		<translation>ফিরে যাও</translation>
 	</message>
 	<message>
 		<source>browsing-site-blocked-title</source>
-		<translation>Este site está bloqueado</translation>
+		<translation>এই সাইটটি অবরুদ্ধ করা হয়েছে</translation>
 	</message>
 	<message>
 		<source>browsing-title</source>
-		<translation>Buscar</translation>
+		<translation>ব্রাউজ করুন</translation>
 	</message>
 	<message>
 		<source>bug-report</source>
-		<translation>Relatar um bug</translation>
+		<translation>একটি বাগ রিপোর্ট করুন</translation>
 	</message>
 	<message>
 		<source>bug-report-description</source>
-		<translation>Descrição</translation>
+		<translation>* বর্ণনা</translation>
 	</message>
 	<message>
 		<source>bug-report-description-placeholder</source>
-		<translation>Obrigatório, não pode ser vazio</translation>
+		<translation>আবশ্যক, খালি হতে পারে না</translation>
 	</message>
 	<message>
 		<source>bug-report-steps</source>
-		<translation>Passos para reproduzir</translation>
+		<translation>ধাপ পুনর্গঠন কর</translation>
 	</message>
 	<message>
 		<source>bug-report-steps-placeholder</source>
-		<translation>- abra a app
-- faça algo
-- e então faça outra coisa</translation>
+		<translation>- অ্যাপ খুলুন
+- কিছু একটা করুন
+- এবং তারপর অন্য কিছু...</translation>
 	</message>
 	<message>
 		<source>bug-report-submit-email</source>
-		<translation>Enviar por e-mail com arquivo de logs</translation>
+		<translation>লগ আর্কাইভ সহ ইমেলের মাধ্যমে জমা দিন</translation>
 	</message>
 	<message>
 		<source>bug-report-submit-gh-issue</source>
-		<translation>Enviar um problema do GitHub sem logs</translation>
+		<translation>লগ ছাড়া একটি GitHub সমস্যা জমা দিন</translation>
 	</message>
 	<message>
 		<source>bug-report-too-short-description</source>
-		<translation>Descrição muito curta</translation>
+		<translation>বর্ণনা খুবই ছোট</translation>
 	</message>
 	<message>
 		<source>camera-access-error</source>
-		<translation>Para conceder a permissão de câmera necessária, vá para as configurações do sistema e verifique se Status &gt; Câmera está selecionado.</translation>
+		<translation>প্রয়োজনীয় ক্যামেরা অনুমতি দিতে, অনুগ্রহ করে আপনার সিস্টেম সেটিংসে যান এবং নিশ্চিত করুন যে Status &gt; ক্যামেরা নির্বাচন করা হয়েছে।</translation>
 	</message>
 	<message>
 		<source>can-not-add-yourself</source>
-		<translation>É você. Para iniciar um bate-papo, escolha outra pessoa</translation>
+		<translation>এটি আপনি, চ্যাট শুরু করতে অন্য কাউকে বেছে নিন</translation>
 	</message>
 	<message>
 		<source>cancel</source>
-		<translation>Cancelar</translation>
+		<translation>বাতিল</translation>
 	</message>
 	<message>
 		<source>cancel-keycard-setup</source>
-		<translation>Cancelar a configuração do Keycard </translation>
+		<translation>কী-কার্ড উপস্থাপনা বাতিল করুন</translation>
 	</message>
 	<message>
 		<source>cannot-read-card</source>
-		<translation>Não é possível ler o cartão. Por favor, segure-o na parte de trás do seu telefone</translation>
+		<translation>কার্ড পড়তে পারছি না।
+অনুগ্রহ করে এটি আপনার ফোনের পিছনে ধরে রাখুন</translation>
 	</message>
 	<message>
 		<source>cannot-use-default-pin</source>
-		<translation>O código de acesso 000000 não é permitido. 
-Por favor, use outro número</translation>
+		<translation>পাসকোড 000000 অনুমোদিত নয়।
+ দয়া করে অন্য নম্বরটি ব্যবহার করুন</translation>
 	</message>
 	<message>
 		<source>card-is-blank</source>
-		<translation>Este cartão está em branco</translation>
+		<translation>এই কার্ডটি ফাঁকা</translation>
 	</message>
 	<message>
 		<source>card-reseted</source>
-		<translation>O cartão foi redefinido</translation>
+		<translation>কার্ড পুনরায় সেট করা হয়েছে</translation>
 	</message>
 	<message>
 		<source>card-unpaired</source>
-		<translation>O cartão foi desemparelhado do dispositivo atual</translation>
+		<translation>বর্তমান ডিভাইস থেকে কার্ড আনপেয়ার করা হয়েছে</translation>
 	</message>
 	<message>
 		<source>change-fleet</source>
-		<translation>Mude a frota para {{fleet}}</translation>
+		<translation>{{fleet}} এ fleet পরিবর্তন করুন</translation>
 	</message>
 	<message>
 		<source>change-log-level</source>
-		<translation>Confirmar e reiniciar o aplicativo para alterar o nível de log para {{log-level}}</translation>
+		<translation>লগ স্তরটি {{log-level}} to এ পরিবর্তন করতে অ্যাপটিকে নিশ্চিত করুন এবং পুনরায় চালু করুন</translation>
 	</message>
 	<message>
 		<source>change-logging-enabled</source>
-		<translation>Tem certeza de que deseja {{enable}} o registro?</translation>
+		<translation>আপনি কি নিশ্চিত যে আপনি {{enable}} লগিং করতে চান?</translation>
 	</message>
 	<message>
 		<source>change-passcode</source>
-		<translation>Alterar código de acesso</translation>
+		<translation>পাসকোড পরিবর্তন করুন</translation>
 	</message>
 	<message>
 		<source>change-password</source>
-		<translation>Alterar senha</translation>
+		<translation>পাসওয়ার্ড পরিবর্তন করুন</translation>
 	</message>
 	<message>
 		<source>change-pin</source>
-		<translation>Alterar código de acesso de 6 dígitos</translation>
+		<translation>৬-সংখ্যার পাসকোড পরিবর্তন করুন</translation>
 	</message>
 	<message>
 		<source>change-puk</source>
-		<translation>Alterar PUK de 12 dígitos</translation>
+		<translation>12-সংখ্যার PUK পরিবর্তন করুন</translation>
 	</message>
 	<message>
 		<source>change-pairing</source>
-		<translation>Alterar o código de emparelhamento</translation>
+		<translation>পেয়ারিং কোড পরিবর্তন করুন</translation>
 	</message>
 	<message>
 		<source>change-pairing-title</source>
-		<translation>Criar um novo código de emparelhamento</translation>
+		<translation>একটি নতুন পেয়ারিং কোড তৈরি করুন</translation>
 	</message>
 	<message>
 		<source>change-pairing-description</source>
-		<translation>Alterar o código de emparelhamento não afeta os emparelhamentos atuais. No entanto, qualquer novo emparelhamento exigirá o novo código.</translation>
+		<translation>পেয়ারিং কোড পরিবর্তন করা বর্তমান পেয়ারিংগুলিকে প্রভাবিত করে না। যাইহোক, যে কোন নতুন পেয়ারিং এর জন্য নতুন কোডের প্রয়োজন হবে।</translation>
 	</message>
 	<message>
 		<source>changed-amount-warning</source>
-		<translation>O valor foi alterado de {{old}} para {{new}}</translation>
+		<translation>{{old}} থেকে {{new}} পর্যন্ত পরিমাণ পরিবর্তন করা হয়েছে</translation>
 	</message>
 	<message>
 		<source>changed-asset-warning</source>
-		<translation>O ativo foi alterado de {{old}} para {{new}}</translation>
+		<translation>সম্পদ {{old}} থেকে {{new}} পরিবর্তন করা হয়েছে</translation>
 	</message>
 	<message>
 		<source>chaos-mode</source>
-		<translation>Modo caos</translation>
+		<translation>বিশৃঙ্খলা মোড</translation>
 	</message>
 	<message>
 		<source>chaos-unicorn-day</source>
-		<translation>Dia do Caos do Unicórnio</translation>
+		<translation>বিশৃঙ্খলা ইউনিকর্ন দিবস</translation>
 	</message>
 	<message>
 		<source>chaos-unicorn-day-details</source>
@@ -569,880 +567,880 @@ Por favor, use outro número</translation>
 	</message>
 	<message>
 		<source>chat</source>
-		<translation>Bate-papo</translation>
+		<translation>আলাপ</translation>
 	</message>
 	<message>
 		<source>chat-and-transact</source>
-		<translation>Converse e faça transações de forma privada com amigos</translation>
+		<translation>বন্ধুদের সাথে গোপনে চ্যাট করুন এবং লেনদেন করুন</translation>
 	</message>
 	<message>
 		<source>chat-key</source>
-		<translation>Chave de bate-papo</translation>
+		<translation>চ্যাট কী</translation>
 	</message>
 	<message>
 		<source>chat-name</source>
-		<translation>Nome do chat</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>chat-settings</source>
-		<translation>Configurações do chat</translation>
+		<translation>চ্যাট সেটিংস</translation>
 	</message>
 	<message>
 		<source>chats</source>
-		<translation>Chats</translation>
+		<translation>আড্ডা</translation>
 	</message>
 	<message>
 		<source>check-your-recovery-phrase</source>
-		<translation>Confira sua frase-semente</translation>
+		<translation>আপনার seed phrase পরীক্ষা করুন</translation>
 	</message>
 	<message>
 		<source>choose-authentication-method</source>
-		<translation>Escolha um método de autenticação</translation>
+		<translation>একটি প্রমাণীকরণ পদ্ধতি চয়ন করুন</translation>
 	</message>
 	<message>
 		<source>clear</source>
-		<translation>Apagar</translation>
+		<translation>পরিষ্কার</translation>
 	</message>
 	<message>
 		<source>clear-all</source>
-		<translation>Apagar tudo</translation>
+		<translation>সব পরিষ্কার করে দাও</translation>
 	</message>
 	<message>
 		<source>clear-history</source>
-		<translation>Apagar histórico</translation>
+		<translation>ইতিহাস পরিষ্কার করুন</translation>
 	</message>
 	<message>
 		<source>clear-history-action</source>
-		<translation>Apagar</translation>
+		<translation>পরিষ্কার</translation>
 	</message>
 	<message>
 		<source>clear-history-confirmation</source>
-		<translation>Apagar o histórico?</translation>
+		<translation>ইতিহাস সাফ করবেন?</translation>
 	</message>
 	<message>
 		<source>clear-history-confirmation-content</source>
-		<translation>Tem certeza de que deseja apagar este histórico de bate-papo?</translation>
+		<translation>আপনি কি নিশ্চিত যে আপনি এই চ্যাটের ইতিহাস মুছে ফেলতে চান?</translation>
 	</message>
 	<message>
 		<source>clear-history-title</source>
-		<translation>Apagar o histórico?</translation>
+		<translation>ইতিহাস সাফ করবেন?</translation>
 	</message>
 	<message>
 		<source>close</source>
-		<translation>Fechar</translation>
+		<translation>বন্ধ</translation>
 	</message>
 	<message>
 		<source>close-app-button</source>
-		<translation>Confirmar</translation>
+		<translation>নিশ্চিত</translation>
 	</message>
 	<message>
 		<source>close-app-content</source>
-		<translation>O aplicativo irá parar e fechar. Quando você reabri-lo, a rede selecionada será usada</translation>
+		<translation>অ্যাপটি বন্ধ হয়ে যাবে এবং বন্ধ হবে। আপনি যখন এটি পুনরায় খুলবেন, নির্বাচিত নেটওয়ার্কটি ব্যবহৃত হবে</translation>
 	</message>
 	<message>
 		<source>close-app-title</source>
-		<translation>Atenção!</translation>
+		<translation>সতর্কীকরণ!</translation>
 	</message>
 	<message>
 		<source>command-button-send</source>
-		<translation>Enviar</translation>
+		<translation>প্রেরণ</translation>
 	</message>
 	<message>
 		<source>communities</source>
-		<translation>Comunidades</translation>
+		<translation>কমিউনিটি</translation>
 	</message>
 	<message numerus="yes">
 		<source>community-members</source>
 		<translation>
-			<numerusform>{{count}} membro</numerusform>
-			<numerusform>{{count}} membros</numerusform>
+			<numerusform>সদস্য</numerusform>
+			<numerusform>সদস্যরা</numerusform>
 		</translation>
 	</message>
 	<message>
 		<source>members-label</source>
-		<translation>Membros</translation>
+		<translation>সদস্যরা</translation>
 	</message>
 	<message>
 		<source>open-membership</source>
-		<translation>Participação aberta</translation>
+		<translation>উন্মুক্ত সদস্যপদ</translation>
 	</message>
 	<message>
 		<source>member-kick</source>
-		<translation>Expulsar membro</translation>
+		<translation>কিক সদস্য</translation>
 	</message>
 	<message>
 		<source>member-ban</source>
-		<translation>Banir membro</translation>
+		<translation>নিষিদ্ধ সদস্য</translation>
 	</message>
 	<message>
 		<source>membership-requests</source>
-		<translation>Pedidos de participação</translation>
+		<translation>সদস্যপদের অনুরোধ</translation>
 	</message>
 	<message>
 		<source>community-members-title</source>
-		<translation>Membros</translation>
+		<translation>সদস্যরা</translation>
 	</message>
 	<message>
 		<source>community-requests-to-join-title</source>
-		<translation>Pedidos de participação</translation>
+		<translation>সদস্যপদের অনুরোধ</translation>
 	</message>
 	<message>
 		<source>name-your-channel</source>
-		<translation>Dê um nome ao seu canal</translation>
+		<translation>আপনার চ্যানেলের নাম দিন</translation>
 	</message>
 	<message>
 		<source>name-your-channel-placeholder</source>
-		<translation>Nome do canal</translation>
+		<translation>চ্যানেলের নাম</translation>
 	</message>
 	<message>
 		<source>give-a-short-description</source>
-		<translation>Dê uma breve descrição</translation>
+		<translation>একটি সংক্ষিপ্ত বিবরণ দিন</translation>
 	</message>
 	<message>
 		<source>describe-channel</source>
-		<translation>Descreva o canal</translation>
+		<translation>চ্যানেলটি বর্ণনা করুন</translation>
 	</message>
 	<message>
 		<source>communities-alpha</source>
-		<translation>Comunidades (alfa)</translation>
+		<translation>সম্প্রদায় (আলফা)</translation>
 	</message>
 	<message>
 		<source>communities-verified</source>
-		<translation>✓ Comunidade do Status verificada</translation>
+		<translation>✓ যাচাইকৃত স্থিতি সম্প্রদায়</translation>
 	</message>
 	<message>
 		<source>communities-enabled</source>
-		<translation>Comunidades habilitadas</translation>
+		<translation>সম্প্রদায় সক্ষম</translation>
 	</message>
 	<message>
 		<source>request-access</source>
-		<translation>Solicitar acesso</translation>
+		<translation>অ্যাক্সেসের অনুরোধ করুন</translation>
 	</message>
 	<message>
 		<source>membership-request-pending</source>
-		<translation>Pedido de participação pendente</translation>
+		<translation>সদস্যপদের আবেদন মুলতুবি</translation>
 	</message>
 	<message>
 		<source>create-community</source>
-		<translation>Criar uma comunidade</translation>
+		<translation>একটি সম্প্রদায় তৈরি করুন</translation>
 	</message>
 	<message>
 		<source>create-category</source>
-		<translation>Criar categoria</translation>
+		<translation>বিভাগ তৈরি করুন</translation>
 	</message>
 	<message>
 		<source>rearrange-categories</source>
-		<translation>Reorganizar Categorias</translation>
+		<translation>শ্রেণীবিন্যাস পুনর্বিন্যাস করুন</translation>
 	</message>
 	<message>
 		<source>edited</source>
-		<translation>Editado</translation>
+		<translation>সম্পাদিত</translation>
 	</message>
 	<message>
 		<source>edit-community</source>
-		<translation>Editar comunidade</translation>
+		<translation>সম্প্রদায় সম্পাদনা করুন</translation>
 	</message>
 	<message>
 		<source>editing-message</source>
-		<translation>Editando mensagem</translation>
+		<translation>বার্তা সম্পাদনা করা হচ্ছে</translation>
 	</message>
 	<message>
 		<source>community-edit-title</source>
-		<translation>Editar comunidade</translation>
+		<translation>সম্প্রদায় সম্পাদনা করুন</translation>
 	</message>
 	<message>
 		<source>community-invite-title</source>
-		<translation>Convidar</translation>
+		<translation>আমন্ত্রণ</translation>
 	</message>
 	<message>
 		<source>community-share-title</source>
-		<translation>Compartilhar</translation>
+		<translation>ভাগ করুন</translation>
 	</message>
 	<message>
 		<source>invite</source>
-		<translation>Convidar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>create-channel</source>
-		<translation>Criar um canal</translation>
+		<translation>একটি চ্যানেল তৈরি করুন</translation>
 	</message>
 	<message>
 		<source>import-community</source>
-		<translation>Importar uma comunidade</translation>
+		<translation>একটি সম্প্রদায় আমদানি করুন</translation>
 	</message>
 	<message>
 		<source>import-community-title</source>
-		<translation>Importar uma comunidade</translation>
+		<translation>একটি সম্প্রদায় আমদানি করুন</translation>
 	</message>
 	<message>
 		<source>name-your-community</source>
-		<translation>Dê um nome para sua comunidade</translation>
+		<translation>আপনার সম্প্রদায়ের নাম দিন</translation>
 	</message>
 	<message>
 		<source>name-your-community-placeholder</source>
-		<translation>Um nome atraente</translation>
+		<translation>একটি আকর্ষণীয় নাম</translation>
 	</message>
 	<message>
 		<source>give-a-short-description-community</source>
-		<translation>Dê uma breve descrição</translation>
+		<translation>একটি সংক্ষিপ্ত বিবরণ দিন</translation>
 	</message>
 	<message>
 		<source>new-community-title</source>
-		<translation>Nova comunidade</translation>
+		<translation>নতুন সম্প্রদায়</translation>
 	</message>
 	<message>
 		<source>new-category</source>
-		<translation>Nova categoria</translation>
+		<translation>নতুন বিভাগ</translation>
 	</message>
 	<message>
 		<source>category-title</source>
-		<translation>Nome da categoria</translation>
+		<translation>বিভাগের শিরোনাম</translation>
 	</message>
 	<message>
 		<source>membership-title</source>
-		<translation>Requisitos de participação</translation>
+		<translation>সদস্যপদের প্রয়োজনীয়তা</translation>
 	</message>
 	<message>
 		<source>create-channel-title</source>
-		<translation>Novo canal</translation>
+		<translation>নতুন চ্যানেল</translation>
 	</message>
 	<message>
 		<source>edit-channel-title</source>
-		<translation>Editar canal</translation>
+		<translation>চ্যানেল সম্পাদনা করুন</translation>
 	</message>
 	<message>
 		<source>community-thumbnail-image</source>
-		<translation>Imagem em miniatura</translation>
+		<translation>থাম্বনেইল ছবি</translation>
 	</message>
 	<message>
 		<source>community-emoji-thumbnail-title</source>
-		<translation>Thumbnail</translation>
+		<translation>থাম্বনেইল</translation>
 	</message>
 	<message>
 		<source>community-thumbnail-upload</source>
-		<translation>Carregar</translation>
+		<translation>আপলোড</translation>
 	</message>
 	<message>
 		<source>community-image-take</source>
-		<translation>Tirar foto</translation>
+		<translation>একটি ছবি তুলুন</translation>
 	</message>
 	<message>
 		<source>community-image-pick</source>
-		<translation>Escolha uma imagem</translation>
+		<translation>একটি চিত্র বাছাই করুন</translation>
 	</message>
 	<message>
 		<source>community-image-remove</source>
-		<translation>Remover</translation>
+		<translation>অপসারণ</translation>
 	</message>
 	<message>
 		<source>community-color</source>
-		<translation>Cor da comunidade</translation>
+		<translation>কমিউনিটির রঙ</translation>
 	</message>
 	<message>
 		<source>community-link</source>
-		<translation>Link da comunidade</translation>
+		<translation>কমিউনিটি লিঙ্ক</translation>
 	</message>
 	<message>
 		<source>community-color-placeholder</source>
-		<translation>Escolha uma cor</translation>
+		<translation>একটি রঙ বেছে নিন</translation>
 	</message>
 	<message>
 		<source>membership-button</source>
-		<translation>Requisitos de participação</translation>
+		<translation>সদস্যপদের প্রয়োজনীয়তা</translation>
 	</message>
 	<message>
 		<source>membership-none</source>
-		<translation>Nenhum</translation>
+		<translation>কিছুই না</translation>
 	</message>
 	<message>
 		<source>membership-none-placeholder</source>
-		<translation>Você pode exigir que novos membros atendam a certos critérios antes que eles possam participar. Isso pode ser alterado a qualquer momento</translation>
+		<translation>আপনি নতুন সদস্যদের যোগদানের আগে নির্দিষ্ট মানদণ্ড পূরণ করতে পারেন। এটি যে কোন সময় পরিবর্তন করা যেতে পারে</translation>
 	</message>
 	<message>
 		<source>membership-approval</source>
-		<translation>Exigir aprovação</translation>
+		<translation>অনুমোদন প্রয়োজন</translation>
 	</message>
 	<message>
 		<source>membership-approval-description</source>
-		<translation>Sua comunidade é livre para participar, mas novos membros são obrigados a ser aprovados pelo criador da comunidade primeiro</translation>
+		<translation>আপনার কমিউনিটি যোগদানের জন্য স্বাধীন, কিন্তু নতুন সদস্যদের প্রথমে কমিউনিটি নির্মাতার অনুমোদন প্রয়োজন</translation>
 	</message>
 	<message>
 		<source>membership-invite</source>
-		<translation>Exigir convite de outro membro</translation>
+		<translation>অন্য সদস্যের আমন্ত্রণ প্রয়োজন</translation>
 	</message>
 	<message>
 		<source>membership-invite-description</source>
-		<translation>Sua comunidade só pode ser acessada por convite de membros existentes da comunidade</translation>
+		<translation>আপনার সম্প্রদায় শুধুমাত্র বিদ্যমান সম্প্রদায়ের সদস্যদের একটি আমন্ত্রণ দ্বারা যোগদান করা যেতে পারে</translation>
 	</message>
 	<message>
 		<source>membership-ens</source>
-		<translation>Exigir nome de usuário ENS</translation>
+		<translation>ইএনএস ব্যবহারকারীর নাম প্রয়োজন</translation>
 	</message>
 	<message>
 		<source>membership-ens-description</source>
-		<translation>Sua comunidade requer um nome de usuário ENS para poder participar</translation>
+		<translation>আপনার সম্প্রদায়ের যোগদান করতে সক্ষম হওয়ার জন্য একটি ইএনএস ব্যবহারকারীর নাম প্রয়োজন</translation>
 	</message>
 	<message>
 		<source>membership-free</source>
-		<translation>Nenhuma exigência</translation>
+		<translation>কোন প্রয়োজনীয়তা নেই</translation>
 	</message>
 	<message>
 		<source>membership-free-description</source>
-		<translation>Sua comunidade é livre para que qualquer pessoa possa participar</translation>
+		<translation>আপনার কমিউনিটি যে কেউ যোগদানের জন্য বিনামূল্যে</translation>
 	</message>
 	<message>
 		<source>community-roles</source>
-		<translation>Funções</translation>
+		<translation>ভূমিকা</translation>
 	</message>
 	<message>
 		<source>community-key</source>
-		<translation>Chave privada da comunidade</translation>
+		<translation>কমিউনিটি প্রাইভেট কী</translation>
 	</message>
 	<message>
 		<source>community-key-placeholder</source>
-		<translation>Digite a chave privada da sua comunidade</translation>
+		<translation>আপনার সম্প্রদায়ের ব্যক্তিগত কী লিখুন</translation>
 	</message>
 	<message>
 		<source>leave-community</source>
-		<translation>Deixar a comunidade</translation>
+		<translation>সম্প্রদায় ত্যাগ করুন</translation>
 	</message>
 	<message>
 		<source>enter-user-pk</source>
-		<translation>Insira a chave pública do usuário</translation>
+		<translation>ব্যবহারকারী পাবলিক কী লিখুন</translation>
 	</message>
 	<message>
 		<source>import</source>
-		<translation>Importar</translation>
+		<translation>আমদানি</translation>
 	</message>
 	<message>
 		<source>complete-hardwallet-setup</source>
-		<translation>Este cartão agora está vinculado. Você precisa dele para assinar transações e desbloquear suas chaves</translation>
+		<translation>এই কার্ডটি এখন সংযুক্ত। আপনার লেনদেনগুলি স্বাক্ষর করতে এবং আপনার কীগুলি আনলক করার জন্য এটি দরকার</translation>
 	</message>
 	<message>
 		<source>chat-notification-preferences</source>
-		<translation>Configurações de notificação</translation>
+		<translation>বিজ্ঞপ্তি সেটিংস</translation>
 	</message>
 	<message>
 		<source>completed</source>
-		<translation>Concluído</translation>
+		<translation>সম্পূর্ণ</translation>
 	</message>
 	<message>
 		<source>confirm</source>
-		<translation>Confirmar</translation>
+		<translation>নিশ্চিত</translation>
 	</message>
 	<message>
 		<source>confirmation-request</source>
-		<translation>Pedido de confirmação</translation>
+		<translation>নিশ্চিতকরণ অনুরোধ</translation>
 	</message>
 	<message>
 		<source>confirmations</source>
-		<translation>Confirmações</translation>
+		<translation>নিশ্চিতকরণ</translation>
 	</message>
 	<message>
 		<source>confirmations-helper-text</source>
-		<translation>Quando a transação tiver 12 confirmações, você poderá considerá-la liquidada.</translation>
+		<translation>যখন লেনদেনের 12 টি নিশ্চয়তা থাকে আপনি এটিকে নিষ্পত্তি হিসাবে বিবেচনা করতে পারেন।</translation>
 	</message>
 	<message>
 		<source>connect</source>
-		<translation>Conectar</translation>
+		<translation>সংযোগ করুন</translation>
 	</message>
 	<message>
 		<source>connect-mailserver-content</source>
-		<translation>Conectar-se a {{name}} ?</translation>
+		<translation>{{name}}-এ সংযোগ করুন?</translation>
 	</message>
 	<message>
 		<source>connected</source>
-		<translation>Conectado</translation>
+		<translation>সংযুক্ত</translation>
 	</message>
 	<message>
 		<source>connected-to</source>
-		<translation>Conectado a</translation>
+		<translation>সংযুক্ত</translation>
 	</message>
 	<message>
 		<source>connecting</source>
-		<translation>Conectando...</translation>
+		<translation>সংযুক্ত হচ্ছে ...</translation>
 	</message>
 	<message>
 		<source>connecting-requires-login</source>
-		<translation>Conectar-se a outra rede requer login</translation>
+		<translation>অন্য নেটওয়ার্কের সাথে সংযোগ স্থাপনের জন্য লগইন প্রয়োজন</translation>
 	</message>
 	<message>
 		<source>connection-with-the-card-lost</source>
-		<translation>A conexão com o cartão 
- foi perdida</translation>
+		<translation>কার্ডের সাথে সংযোগ
+ বিচ্ছিন্ন হয়েছে</translation>
 	</message>
 	<message>
 		<source>connection-with-the-card-lost-setup-text</source>
-		<translation>Para retomar a configuração, segure o cartão na
- parte de trás do seu telefone e mantenha 
- o cartão em contato com o telefone</translation>
+		<translation>উপস্থাপনা পুনরায় শুরু করতে কার্ডটি ধরে রাখুন
+ আপনার ফোনের পিছনে এবং রক্ষণাবেক্ষণ
+ ফোন যোগাযোগে কার্ড</translation>
 	</message>
 	<message>
 		<source>connection-with-the-card-lost-text</source>
-		<translation>Para continuar, segure o cartão na parte de trás do seu telefone</translation>
+		<translation>আপনার ফোনের পিছনে কার্ডটি ধরে রাখুন</translation>
 	</message>
 	<message>
 		<source>contact-code</source>
-		<translation>Chave de bate-papo</translation>
+		<translation>চ্যাট কী</translation>
 	</message>
 	<message numerus="yes">
 		<source>contact-s</source>
 		<translation>
-			<numerusform>contato</numerusform>
-			<numerusform>contatos</numerusform>
+			<numerusform>যোগাযোগ</numerusform>
+			<numerusform>যোগাযোগ</numerusform>
 		</translation>
 	</message>
 	<message>
 		<source>contacts</source>
-		<translation>Contatos</translation>
+		<translation>যোগাযোগ</translation>
 	</message>
 	<message>
 		<source>continue</source>
-		<translation>Continuar</translation>
+		<translation>চালিয়ে যান</translation>
 	</message>
 	<message>
 		<source>contract-address</source>
-		<translation>Endereço do contrato</translation>
+		<translation>চুক্তির ঠিকানা</translation>
 	</message>
 	<message>
 		<source>contract-interaction</source>
-		<translation>Interação contratual</translation>
+		<translation>চুক্তি মিথস্ক্রিয়া</translation>
 	</message>
 	<message>
 		<source>copy-info</source>
-		<translation>Copiar informação</translation>
+		<translation>তথ্য অনুলিপি করুন</translation>
 	</message>
 	<message>
 		<source>copy-qr</source>
-		<translation>Copiar código</translation>
+		<translation>কোড অনুলিপি করুন</translation>
 	</message>
 	<message>
 		<source>copy-to-clipboard</source>
-		<translation>Copiar</translation>
+		<translation>অনুলিপি</translation>
 	</message>
 	<message>
 		<source>copy-transaction-hash</source>
-		<translation>Copiar ID da transação</translation>
+		<translation>লেনদেন আইডি অনুলিপি করুন</translation>
 	</message>
 	<message>
 		<source>cost-fee</source>
-		<translation>Custo/Taxa</translation>
+		<translation>খরচ / ফি</translation>
 	</message>
 	<message>
 		<source>counter-9-plus</source>
-		<translation>9+</translation>
+		<translation>৯+</translation>
 	</message>
 	<message>
 		<source>counter-99-plus</source>
-		<translation>99+</translation>
+		<translation>৯৯+</translation>
 	</message>
 	<message>
 		<source>create</source>
-		<translation>Criar</translation>
+		<translation>তৈরি</translation>
 	</message>
 	<message>
 		<source>create-a-pin</source>
-		<translation>Crie um código de acesso de 6 dígitos</translation>
+		<translation>একটি 6-সংখ্যার পাসকোড তৈরি করুন</translation>
 	</message>
 	<message>
 		<source>create-a-puk</source>
-		<translation>Crie um PUK de 12 dígitos</translation>
+		<translation>একটি 12 সংখ্যার পিইউকে তৈরি করুন</translation>
 	</message>
 	<message>
 		<source>create-group-chat</source>
-		<translation>Criar bate-papo do grupo</translation>
+		<translation>গ্রুপ চ্যাট তৈরি করুন</translation>
 	</message>
 	<message>
 		<source>create-multiaccount</source>
-		<translation>Gerar chaves</translation>
+		<translation>কী তৈরি করুন</translation>
 	</message>
 	<message>
 		<source>create-new-key</source>
-		<translation>Obter novas chaves</translation>
+		<translation>নতুন চাবি পান</translation>
 	</message>
 	<message>
 		<source>create-pin</source>
-		<translation>Criar código de acesso de 6 dígitos</translation>
+		<translation>6-সংখ্যার পাসকোড তৈরি করুন</translation>
 	</message>
 	<message>
 		<source>create-pin-description</source>
-		<translation>Você precisará do seu cartão + este código de acesso de 6 dígitos para desbloquear o Status e confirmar transações</translation>
+		<translation>Status আনলক করতে এবং লেনদেন নিশ্চিত করতে আপনার কার্ড + এই ৬ ডিজিটের পাসকোড প্রয়োজন হবে</translation>
 	</message>
 	<message>
 		<source>created-group-chat-description</source>
-		<translation>Você criou o grupo {{group-name}}</translation>
+		<translation>আপনি গ্রুপটি তৈরি করেছেন</translation>
 	</message>
 	<message>
 		<source>members-count</source>
-		<translation>{{count}} membros</translation>
+		<translation>{{count}} সদস্য</translation>
 	</message>
 	<message>
 		<source>cryptokitty-name</source>
-		<translation>CryptoKitty #{{id}}</translation>
+		<translation>ক্রিপ্টোকিটি #{id}}</translation>
 	</message>
 	<message>
 		<source>currency</source>
-		<translation>Moeda</translation>
+		<translation>মুদ্রা</translation>
 	</message>
 	<message>
 		<source>currency-display-name-aed</source>
-		<translation>Dirham dos Emiratos Árabes Unidos</translation>
+		<translation>আমিরাতি দিরহাম</translation>
 	</message>
 	<message>
 		<source>currency-display-name-afn</source>
-		<translation>Afegane afegão</translation>
+		<translation>আফগানিস্তান আফগানি</translation>
 	</message>
 	<message>
 		<source>currency-display-name-ars</source>
-		<translation>Peso argentino</translation>
+		<translation>আর্জেন্টিনা পেসো</translation>
 	</message>
 	<message>
 		<source>currency-display-name-aud</source>
-		<translation>Dólar australiano</translation>
+		<translation>অস্ট্রেলিয়ান ডলার</translation>
 	</message>
 	<message>
 		<source>currency-display-name-bbd</source>
-		<translation>Dólar de Barbados</translation>
+		<translation>বার্বাডোস ডলার</translation>
 	</message>
 	<message>
 		<source>currency-display-name-bdt</source>
-		<translation>Taka de Bangladesh</translation>
+		<translation>বাংলাদেশী টাকা</translation>
 	</message>
 	<message>
 		<source>currency-display-name-bgn</source>
-		<translation>Lev búlgaro</translation>
+		<translation>বুলগেরিয়ান লেভ</translation>
 	</message>
 	<message>
 		<source>currency-display-name-bhd</source>
-		<translation>Dinar do Bahrein</translation>
+		<translation>বাহরাইনি দিনার</translation>
 	</message>
 	<message>
 		<source>currency-display-name-bnd</source>
-		<translation>Dólar de Brunei</translation>
+		<translation>ব্রুনাই দারুসসালাম ডলার</translation>
 	</message>
 	<message>
 		<source>currency-display-name-bob</source>
-		<translation>Boliviano</translation>
+		<translation>বলিভিয়া বলিভিয়ানো</translation>
 	</message>
 	<message>
 		<source>currency-display-name-brl</source>
-		<translation>Real do Brasil</translation>
+		<translation>ব্রাজিল রিয়াল</translation>
 	</message>
 	<message>
 		<source>currency-display-name-btn</source>
-		<translation>Ngultrum do Butão</translation>
+		<translation>ভুটানি এনগল্ট্রাম</translation>
 	</message>
 	<message>
 		<source>currency-display-name-cad</source>
-		<translation>Dólar canadense</translation>
+		<translation>কানাডা ডলার</translation>
 	</message>
 	<message>
 		<source>currency-display-name-chf</source>
-		<translation>Franco suíço</translation>
+		<translation>সুইজারল্যান্ড ফ্রাঙ্ক</translation>
 	</message>
 	<message>
 		<source>currency-display-name-clp</source>
-		<translation>Peso chileno</translation>
+		<translation>চিলি পেসো</translation>
 	</message>
 	<message>
 		<source>currency-display-name-cny</source>
-		<translation>Renminbi yaun chinês</translation>
+		<translation>চীন ইউয়ান রেনমিনবি</translation>
 	</message>
 	<message>
 		<source>currency-display-name-cop</source>
-		<translation>Peso colombiano</translation>
+		<translation>কলম্বিয়া পেসো</translation>
 	</message>
 	<message>
 		<source>currency-display-name-crc</source>
-		<translation>Cólon da Costa Rica</translation>
+		<translation>কোস্টা রিকা কোলন</translation>
 	</message>
 	<message>
 		<source>currency-display-name-czk</source>
-		<translation>Coroa checa</translation>
+		<translation>চেক কুরুনা</translation>
 	</message>
 	<message>
 		<source>currency-display-name-dkk</source>
-		<translation>Coroa dinamarquesa</translation>
+		<translation>ডেনমার্ক ক্রোন</translation>
 	</message>
 	<message>
 		<source>currency-display-name-dop</source>
-		<translation>Peso da República Dominicana</translation>
+		<translation>ডোমিনিকান রিপাবলিক পেসো</translation>
 	</message>
 	<message>
 		<source>currency-display-name-egp</source>
-		<translation>Libra egipcia</translation>
+		<translation>মিশর পাউন্ড</translation>
 	</message>
 	<message>
 		<source>currency-display-name-etb</source>
-		<translation>Birr etíope</translation>
+		<translation>ইথিওপিয়ান বির</translation>
 	</message>
 	<message>
 		<source>currency-display-name-eur</source>
-		<translation>Euro</translation>
+		<translation>ইউরো</translation>
 	</message>
 	<message>
 		<source>currency-display-name-gbp</source>
-		<translation>Libra esterlina</translation>
+		<translation>ব্রিটিশ পাউন্ড</translation>
 	</message>
 	<message>
 		<source>currency-display-name-gel</source>
-		<translation>Lari georgiano</translation>
+		<translation>জর্জিয়ান লারি</translation>
 	</message>
 	<message>
 		<source>currency-display-name-ghs</source>
-		<translation>Cedi ganês</translation>
+		<translation>ঘানা সেদি</translation>
 	</message>
 	<message>
 		<source>currency-display-name-hkd</source>
-		<translation>Dólar de Hong Kong</translation>
+		<translation>হংকং ডলার</translation>
 	</message>
 	<message>
 		<source>currency-display-name-hrk</source>
-		<translation>Kuna da Croácia</translation>
+		<translation>ক্রোয়েশিয়া কুনা</translation>
 	</message>
 	<message>
 		<source>currency-display-name-huf</source>
-		<translation>Florim húngaro</translation>
+		<translation>হাঙ্গেরি ফরিন্ট</translation>
 	</message>
 	<message>
 		<source>currency-display-name-idr</source>
-		<translation>Rupia indonésia</translation>
+		<translation>ইন্দোনেশিয়া রুপিয়া</translation>
 	</message>
 	<message>
 		<source>currency-display-name-ils</source>
-		<translation>Shekel de Israel</translation>
+		<translation>ইজরায়েল শেকেল</translation>
 	</message>
 	<message>
 		<source>currency-display-name-inr</source>
-		<translation>Rupia indiana</translation>
+		<translation>ভারত রুপি</translation>
 	</message>
 	<message>
 		<source>currency-display-name-isk</source>
-		<translation>Coroa islandesa</translation>
+		<translation>আইসল্যান্ড ক্রোনা</translation>
 	</message>
 	<message>
 		<source>currency-display-name-jmd</source>
-		<translation>Dólar jamaicano</translation>
+		<translation>জ্যামাইকা ডলার</translation>
 	</message>
 	<message>
 		<source>currency-display-name-jpy</source>
-		<translation>Yen japonês</translation>
+		<translation>জাপানি ইয়েন</translation>
 	</message>
 	<message>
 		<source>currency-display-name-kes</source>
-		<translation>Xelim queniano</translation>
+		<translation>কেনিয়ান শিলিং</translation>
 	</message>
 	<message>
 		<source>currency-display-name-krw</source>
-		<translation>Won sul-coreano</translation>
+		<translation>কোরিয়া (দক্ষিণ) ওন</translation>
 	</message>
 	<message>
 		<source>currency-display-name-kwd</source>
-		<translation>Dinar kuwaitianao</translation>
+		<translation>কুয়েতি দিনার</translation>
 	</message>
 	<message>
 		<source>currency-display-name-kzt</source>
-		<translation>Tenge do Cazaquistão</translation>
+		<translation>কাজাখস্তান টেঙ্গে</translation>
 	</message>
 	<message>
 		<source>currency-display-name-lkr</source>
-		<translation>Rupia do Sri Lanka</translation>
+		<translation>শ্রীলংকা রুপি</translation>
 	</message>
 	<message>
 		<source>currency-display-name-mad</source>
-		<translation>Dirham marroquino</translation>
+		<translation>মরোক্কোর দিরহাম</translation>
 	</message>
 	<message>
 		<source>currency-display-name-mdl</source>
-		<translation>Leu moldávo</translation>
+		<translation>মোল্দোভান লেউ</translation>
 	</message>
 	<message>
 		<source>currency-display-name-mur</source>
-		<translation>Rúpia mauriciana</translation>
+		<translation>মরিশাস রুপি</translation>
 	</message>
 	<message>
 		<source>currency-display-name-mwk</source>
-		<translation>Kwacha do Malawi</translation>
+		<translation>মালাউয়ান কোয়াছা</translation>
 	</message>
 	<message>
 		<source>currency-display-name-mxn</source>
-		<translation>Peso mexicano</translation>
+		<translation>মেক্সিকো পেসো</translation>
 	</message>
 	<message>
 		<source>currency-display-name-myr</source>
-		<translation>Ringgit malaio</translation>
+		<translation>মালয়েশিয়া রিংগিত</translation>
 	</message>
 	<message>
 		<source>currency-display-name-mzn</source>
-		<translation>Metical de Moçambique</translation>
+		<translation>মোজাম্বিক মেটিক্যাল</translation>
 	</message>
 	<message>
 		<source>currency-display-name-nad</source>
-		<translation>Dólar namibiano</translation>
+		<translation>নামিবিয়া ডলার</translation>
 	</message>
 	<message>
 		<source>currency-display-name-ngn</source>
-		<translation>Naira da Nigéria</translation>
+		<translation>নাইজেরিয়া নাইরা</translation>
 	</message>
 	<message>
 		<source>currency-display-name-nok</source>
-		<translation>Coroa norueguesa</translation>
+		<translation>নরওয়ে ক্রোন</translation>
 	</message>
 	<message>
 		<source>currency-display-name-npr</source>
-		<translation>Rupia nepalesa</translation>
+		<translation>নেপাল রুপি</translation>
 	</message>
 	<message>
 		<source>currency-display-name-nzd</source>
-		<translation>Dólar da Nova Zelândia</translation>
+		<translation>নিউজিল্যান্ড ডলার</translation>
 	</message>
 	<message>
 		<source>currency-display-name-omr</source>
-		<translation>Rial de Omã</translation>
+		<translation>ওমান রিয়াল</translation>
 	</message>
 	<message>
 		<source>currency-display-name-pen</source>
-		<translation>Sol peruano</translation>
+		<translation>পেরু সোল</translation>
 	</message>
 	<message>
 		<source>currency-display-name-pgk</source>
-		<translation>Kina da Papua-Nova Guiné</translation>
+		<translation>পাপুয়া নিউ গিনি কিনা</translation>
 	</message>
 	<message>
 		<source>currency-display-name-php</source>
-		<translation>Peso das Filipinas</translation>
+		<translation>ফিলিপাইন পেসো</translation>
 	</message>
 	<message>
 		<source>currency-display-name-pkr</source>
-		<translation>Rupia paquistanesa</translation>
+		<translation>পাকিস্তান রুপি</translation>
 	</message>
 	<message>
 		<source>currency-display-name-pln</source>
-		<translation>Zloty polonês</translation>
+		<translation>পোল্যান্ড জলোটি</translation>
 	</message>
 	<message>
 		<source>currency-display-name-pyg</source>
-		<translation>Guarani do Paraguai</translation>
+		<translation>প্যারাগুয়ে গুয়ারানি</translation>
 	</message>
 	<message>
 		<source>currency-display-name-qar</source>
-		<translation>Rial do Qatar</translation>
+		<translation>কাতার রিয়াল</translation>
 	</message>
 	<message>
 		<source>currency-display-name-ron</source>
-		<translation>Leu romeno</translation>
+		<translation>রুমানিয়া লিউ</translation>
 	</message>
 	<message>
 		<source>currency-display-name-rsd</source>
-		<translation>Dinar sérvio</translation>
+		<translation>সার্বিয়া দিনার</translation>
 	</message>
 	<message>
 		<source>currency-display-name-rub</source>
-		<translation>Rublo russo</translation>
+		<translation>রাশিয়া রুবেল</translation>
 	</message>
 	<message>
 		<source>currency-display-name-sar</source>
-		<translation>Rial da Arábia Saudita</translation>
+		<translation>সৌদি আরব রিয়াল</translation>
 	</message>
 	<message>
 		<source>currency-display-name-sek</source>
-		<translation>Coroa da Suécia</translation>
+		<translation>সুইডেন ক্রোনা</translation>
 	</message>
 	<message>
 		<source>currency-display-name-sgd</source>
-		<translation>Dólar de Singapura</translation>
+		<translation>সিঙ্গাপুর ডলার</translation>
 	</message>
 	<message>
 		<source>currency-display-name-thb</source>
-		<translation>Baht da Tailândia</translation>
+		<translation>থাইল্যান্ড বাহত</translation>
 	</message>
 	<message>
 		<source>currency-display-name-try</source>
-		<translation>Lira turca</translation>
+		<translation>তুর্কি লিরা</translation>
 	</message>
 	<message>
 		<source>currency-display-name-ttd</source>
-		<translation>Dólar de Trinidad e Tobago</translation>
+		<translation>ত্রিনিদাদ ও টোবাগো ডলার</translation>
 	</message>
 	<message>
 		<source>currency-display-name-twd</source>
-		<translation>Novo dólar taiwanês</translation>
+		<translation>তাইওয়ান নিউ ডলার</translation>
 	</message>
 	<message>
 		<source>currency-display-name-tzs</source>
-		<translation>Xelim tanzaniano</translation>
+		<translation>তানজানিয়ান শিলিং</translation>
 	</message>
 	<message>
 		<source>currency-display-name-uah</source>
-		<translation>Grívnia da Ucrânia</translation>
+		<translation>ইউক্রেন রিভনিয়া</translation>
 	</message>
 	<message>
 		<source>currency-display-name-ugx</source>
-		<translation>Xelim ugandês</translation>
+		<translation>উগান্ডার শিলিং</translation>
 	</message>
 	<message>
 		<source>currency-display-name-usd</source>
-		<translation>Dólar dos Estados Unidos</translation>
+		<translation>মার্কিন যুক্তরাষ্ট্র ডলার</translation>
 	</message>
 	<message>
 		<source>currency-display-name-uyu</source>
-		<translation>Peso uruguaio</translation>
+		<translation>উরুগুয়ে পেসো</translation>
 	</message>
 	<message>
 		<source>currency-display-name-vef</source>
-		<translation>Bolívar venezuelano</translation>
+		<translation>ভেনেজুয়েলা বলিভার</translation>
 	</message>
 	<message>
 		<source>currency-display-name-vnd</source>
-		<translation>Vietnam Dong</translation>
+		<translation>ভিয়েতনাম ডং</translation>
 	</message>
 	<message>
 		<source>currency-display-name-zar</source>
-		<translation>Rand sul-africano</translation>
+		<translation>দক্ষিণ আফ্রিকা র্যান্ড</translation>
 	</message>
 	<message>
 		<source>current-network</source>
-		<translation>Rede atual</translation>
+		<translation>বর্তমান নেটওয়ার্ক</translation>
 	</message>
 	<message>
 		<source>current-pin</source>
-		<translation>Digite o código de acesso de 6 dígitos</translation>
+		<translation>6-ডিজিটের পাসকোড প্রবেশ করান</translation>
 	</message>
 	<message>
 		<source>current-pin-description</source>
-		<translation>Digite seu código de acesso de 6 dígitos para continuar</translation>
+		<translation>অগ্রসর হতে আপনার ৬-ডিজিটের পাসকোড প্রবেশ করান</translation>
 	</message>
 	<message>
 		<source>custom</source>
-		<translation>Personalizado</translation>
+		<translation>কাস্টম</translation>
 	</message>
 	<message>
 		<source>custom-networks</source>
-		<translation>Redes personalizadas</translation>
+		<translation>পছন্দসই নেটওয়ার্ক</translation>
 	</message>
 	<message>
 		<source>dapp</source>
-		<translation>ÐApp</translation>
+		<translation>DApp</translation>
 	</message>
 	<message>
 		<source>dapp-would-like-to-connect-wallet</source>
-		<translation>gostaria de se conectar a</translation>
+		<translation>সংযোগ করতে চান</translation>
 	</message>
 	<message>
 		<source>dapps</source>
-		<translation>ÐApps</translation>
+		<translation>DApps</translation>
 	</message>
 	<message>
 		<source>dapps-permissions</source>
-		<translation>Permissões do DApp</translation>
+		<translation>DApp অনুমতি</translation>
 	</message>
 	<message>
 		<source>data</source>
-		<translation>Dados</translation>
+		<translation>ডাটা</translation>
 	</message>
 	<message>
 		<source>datetime-ago</source>
-		<translation>atrás</translation>
+		<translation>আগে</translation>
 	</message>
 	<message>
 		<source>datetime-ago-format</source>
@@ -1450,34 +1448,34 @@ Por favor, use outro número</translation>
 	</message>
 	<message>
 		<source>datetime-ago-format-short</source>
-		<translation>{{number}}{{time-intervals}}</translation>
+		<translation>{{number}} {{time-intervals}}</translation>
 	</message>
 	<message numerus="yes">
 		<source>datetime-day</source>
 		<translation>
-			<numerusform>dia</numerusform>
-			<numerusform>dias</numerusform>
+			<numerusform>দিন</numerusform>
+			<numerusform>দিন</numerusform>
 		</translation>
 	</message>
 	<message numerus="yes">
 		<source>datetime-hour</source>
 		<translation>
-			<numerusform>hora</numerusform>
-			<numerusform>horas</numerusform>
+			<numerusform>ঘন্টা</numerusform>
+			<numerusform>ঘন্টা</numerusform>
 		</translation>
 	</message>
 	<message numerus="yes">
 		<source>datetime-minute</source>
 		<translation>
-			<numerusform>minuto</numerusform>
-			<numerusform>minutos</numerusform>
+			<numerusform>সময়</numerusform>
+			<numerusform>সময়</numerusform>
 		</translation>
 	</message>
 	<message numerus="yes">
 		<source>datetime-second</source>
 		<translation>
-			<numerusform>segundo</numerusform>
-			<numerusform>segundos</numerusform>
+			<numerusform></numerusform>
+			<numerusform>সেগেন্ড</numerusform>
 		</translation>
 	</message>
 	<message numerus="yes">
@@ -1510,663 +1508,665 @@ Por favor, use outro número</translation>
 	</message>
 	<message>
 		<source>datetime-today</source>
-		<translation>hoje</translation>
+		<translation>আজ</translation>
 	</message>
 	<message>
 		<source>datetime-yesterday</source>
-		<translation>ontem</translation>
+		<translation>গতকাল</translation>
 	</message>
 	<message>
 		<source>decimals</source>
-		<translation>Decimais</translation>
+		<translation>দশমিক</translation>
 	</message>
 	<message>
 		<source>decline</source>
-		<translation>Recusar</translation>
+		<translation>প্রত্যাখ্যান করুন</translation>
 	</message>
 	<message>
 		<source>decryption-failed-content</source>
-		<translation>Ocorreu um erro ao descriptografar seus dados. Você pode precisar apagar seus dados antigos e gerar uma nova conta. Toque em “Aplicar” para apagar ou “Cancelar” para tentar novamente</translation>
+		<translation>আপনার উপাত্ত ডিক্রিপ্ট করতে একটি ত্রুটি সংঘটিত হয়েছে। আপনার হয়ত আপনার পুরনো ডেটা মুছে ফেলতে হবে এবং একটি নতুন অ্যাকাউন্ট তৈরি করতে হবে। আবার চেষ্টা করতে মুছে ফেলতে &quot;প্রয়োগ করুন&quot; ট্যাপ করুন অথবা &quot;বাতিল করুন&quot; ট্যাপ করুন</translation>
 	</message>
 	<message>
 		<source>default</source>
-		<translation>Padrão</translation>
+		<translation>ডিফল্ট</translation>
 	</message>
 	<message>
 		<source>delete</source>
-		<translation>Excluir</translation>
+		<translation>মুছে ফেলা</translation>
 	</message>
 	<message>
 		<source>delete-and-leave-group</source>
-		<translation>Excluir e sair do grupo</translation>
+		<translation>মুছে ফেলুন এবং দল ছেড়ে দিন</translation>
 	</message>
 	<message>
 		<source>delete-bootnode</source>
-		<translation>Excluir nó de inicialização</translation>
+		<translation>bootnode মুছে ফেলুন</translation>
 	</message>
 	<message>
 		<source>delete-bootnode-are-you-sure</source>
-		<translation>Tem certeza de que deseja excluir este nó de inicialização?</translation>
+		<translation>আপনি কি নিশ্চিত যে আপনি এই bootnode টি মুছে ফেলতে চান?</translation>
 	</message>
 	<message>
 		<source>delete-bootnode-title</source>
-		<translation>Eliminar nó de inicialização</translation>
+		<translation>bootnode মুছুন</translation>
 	</message>
 	<message>
 		<source>delete-chat</source>
-		<translation>Excluir conversa</translation>
+		<translation>চ্যাট মুছুন</translation>
 	</message>
 	<message>
 		<source>delete-chat-confirmation</source>
-		<translation>Tem certeza de que deseja excluir este bate-papo?</translation>
+		<translation>আপনি কি নিশ্চিত যে আপনি এই চ্যাটটি মুছে ফেলতে চান?</translation>
 	</message>
 	<message>
 		<source>delete-category-confirmation</source>
-		<translation>Tem certeza de que deseja excluir esta categoria?</translation>
+		<translation>আপনি কি এই বিভাগটি মুছে ফেলার বিষয়ে নিশ্চিত?
+</translation>
 	</message>
 	<message>
 		<source>delete-confirmation</source>
-		<translation>Excluir?</translation>
+		<translation>মুছে ফেলা?</translation>
 	</message>
 	<message>
 		<source>delete-mailserver</source>
-		<translation>Excluir nó do Status</translation>
+		<translation>ইতিহাস নোড মুছে ফেলুন</translation>
 	</message>
 	<message>
 		<source>delete-mailserver-are-you-sure</source>
-		<translation>Tem certeza de que deseja excluir este nó do Status?</translation>
+		<translation>আপনি কি নিশ্চিত যে আপনি এই ইতিহাস নোডটি মুছে ফেলতে চান?</translation>
 	</message>
 	<message>
 		<source>delete-mailserver-title</source>
-		<translation>Excluir nó do Status</translation>
+		<translation>ইতিহাস নোড মুছে ফেলুন</translation>
 	</message>
 	<message>
 		<source>delete-message</source>
-		<translation>Apagar mensagem</translation>
+		<translation>বার্তা মুছে ফেলুন</translation>
 	</message>
 	<message>
 		<source>delete-my-account</source>
-		<translation>Excluir minha conta</translation>
+		<translation>আমার অ্যাকাউন্ট মুছে ফেলুন</translation>
 	</message>
 	<message>
 		<source>delete-network-confirmation</source>
-		<translation>Tem certeza de que deseja excluir esta rede?</translation>
+		<translation>আপনি কি নিশ্চিত যে আপনি এই নেটওয়ার্কটি মুছে ফেলতে চান?</translation>
 	</message>
 	<message>
 		<source>delete-network-error</source>
-		<translation>Conecte-se a uma rede diferente antes de excluir esta</translation>
+		<translation>এটি মুছে ফেলার আগে অনুগ্রহ করে একটি ভিন্ন নেটওয়ার্কে সংযোগ করুন</translation>
 	</message>
 	<message>
 		<source>delete-network-title</source>
-		<translation>Excluir rede?</translation>
+		<translation>নেটওয়ার্ক মুছে ফেলা হবে?</translation>
 	</message>
 	<message>
 		<source>delete-node</source>
-		<translation>Excluir nó</translation>
+		<translation>নোড মুছুন</translation>
 	</message>
 	<message>
 		<source>delete-node-are-you-sure</source>
-		<translation>Você tem certeza que deseja excluir esse nó?</translation>
+		<translation>আপনি কি নিশ্চিত যে আপনি এই নোডটি মুছতে চান?</translation>
 	</message>
 	<message>
 		<source>delete-node-title</source>
-		<translation>Excluir nó</translation>
+		<translation>নোড মুছে দিন</translation>
 	</message>
 	<message>
 		<source>delete-profile</source>
-		<translation>Excluir perfil</translation>
+		<translation>প্রোফাইল মুছে ফেলুন</translation>
 	</message>
 	<message>
 		<source>delete-my-profile</source>
-		<translation>Excluir meu perfil</translation>
+		<translation>আমার প্রোফাইল মুছে ফেলুন</translation>
 	</message>
 	<message>
 		<source>delete-profile-warning</source>
-		<translation>Aviso: se você não tiver sua frase-semente escrita, você perderá o acesso aos seus fundos depois de excluir seu perfil</translation>
+		<translation>সতর্কীকরণ: আপনার যদি আপনার বীজ বাক্যাংশ লেখা না থাকে, আপনি আপনার প্রোফাইল মুছে ফেলার পর আপনার তহবিলে প্রবেশাধিকার হারাবেন</translation>
 	</message>
 	<message>
 		<source>profile-deleted-title</source>
-		<translation>Perfil excluído</translation>
+		<translation>প্রোফাইল মুছে ফেলা হয়েছে</translation>
 	</message>
 	<message>
 		<source>profile-deleted-content</source>
-		<translation>O seu perfil foi excluído com sucesso</translation>
+		<translation>আপনার প্রোফাইল সফলভাবে মুছে ফেলা হয়েছে</translation>
 	</message>
 	<message>
 		<source>profile-deleted-keycard</source>
-		<translation>Agora você pode restaurar outro par de chaves no seu Keycard</translation>
+		<translation>আপনি এখন আপনার কীকার্ডে অন্য কীপেয়ার পুনরুদ্ধার করতে পারেন</translation>
 	</message>
 	<message>
 		<source>deny</source>
-		<translation>Negar</translation>
+		<translation>অস্বীকার করুন</translation>
 	</message>
 	<message>
 		<source>description</source>
-		<translation>Descrição</translation>
+		<translation>বর্ণনা</translation>
 	</message>
 	<message>
 		<source>dev-mode</source>
-		<translation>Modo de desenvolvimento</translation>
+		<translation>ডেভলপমেন্ট মোড</translation>
 	</message>
 	<message>
 		<source>dev-mode-settings</source>
-		<translation>Configurações do modo de desenvolvimento</translation>
+		<translation>উন্নয়ন মোড সেটিংস</translation>
 	</message>
 	<message>
 		<source>device-syncing</source>
-		<translation>Sincronização de dispositivos</translation>
+		<translation>ডিভাইস এককালবর্তীকরণ</translation>
 	</message>
 	<message>
 		<source>devices</source>
-		<translation>Dispositivos</translation>
+		<translation>ডিভাইসগুলি</translation>
 	</message>
 	<message>
 		<source>disable</source>
-		<translation>desativar</translation>
+		<translation>অক্ষম</translation>
 	</message>
 	<message>
 		<source>disabled</source>
-		<translation>Desativado</translation>
+		<translation>অক্ষম</translation>
 	</message>
 	<message>
 		<source>disconnected</source>
-		<translation>Bate-papo offline</translation>
+		<translation>অফলাইনে চ্যাট করুন</translation>
 	</message>
 	<message>
 		<source>discover</source>
-		<translation>Descobrir</translation>
+		<translation>আবিষ্কার করুন</translation>
 	</message>
 	<message>
 		<source>dismiss</source>
-		<translation>Ignorar</translation>
+		<translation>বরখাস্ত করুন</translation>
 	</message>
 	<message>
 		<source>done</source>
-		<translation>Concluído</translation>
+		<translation>সম্পন্ন হয়েছে</translation>
 	</message>
 	<message>
 		<source>edit</source>
-		<translation>Editar</translation>
+		<translation>সম্পাদনা</translation>
 	</message>
 	<message>
 		<source>edit-group</source>
-		<translation>Editar grupo</translation>
+		<translation>গোষ্ঠী সম্পাদনা করুন</translation>
 	</message>
 	<message>
 		<source>edit-profile</source>
-		<translation>Editar perfil</translation>
+		<translation>প্রোফাইল সম্পাদনা করুন</translation>
 	</message>
 	<message>
 		<source>empty-chat-description</source>
-		<translation>Ainda não há mensagens 
- neste bate-papo</translation>
+		<translation>কোন বার্তা নেই 
+এই আড্ডায় এখনো</translation>
 	</message>
 	<message>
 		<source>empty-chat-description-one-to-one</source>
-		<translation>Todas as mensagens que você envia aqui são criptografadas e só podem ser lidas por você e </translation>
+		<translation>আপনি এখানে যে কোনও বার্তা প্রেরণ করেন তা এনক্রিপ্ট করা হয় এবং কেবল আপনি এবং এর মাধ্যমে পড়তে পারেন</translation>
 	</message>
 	<message>
 		<source>empty-chat-description-public</source>
-		<translation>Está quieto aqui nas últimas {{quiet-hours}}. Inicie a conversa ou </translation>
+		<translation>এটি এখানে শেষ {{quiet-hours}} এর জন্য  কথোপকথন শুরু করুন 
+ বা</translation>
 	</message>
 	<message>
 		<source>cleared-chat-description-public</source>
-		<translation>Tem estado muito quieto por aqui. Inicie a conversa ou </translation>
+		<translation>এটা এখানে শান্ত হয়েছে. কথোপকথন শুরু করুন বা</translation>
 	</message>
 	<message>
 		<source>empty-chat-description-community</source>
-		<translation>Tem estado quieto aqui nas últimas {{quiet-hours}}.</translation>
+		<translation>এখানে শেষবারের মতো শান্ত ছিল{{quiet-hours}}</translation>
 	</message>
 	<message>
 		<source>empty-chat-description-public-share-this</source>
-		<translation>compartilhe este bate-papo.</translation>
+		<translation>এই চ্যাটটি শেয়ার করুন</translation>
 	</message>
 	<message>
 		<source>enable</source>
-		<translation>Ativar</translation>
+		<translation>সক্ষম করুন</translation>
 	</message>
 	<message>
 		<source>encrypt-with-password</source>
-		<translation>Criptografar com senha</translation>
+		<translation>পাসওয়ার্ড সহ এনক্রিপ্ট করুন</translation>
 	</message>
 	<message>
 		<source>ens-10-SNT</source>
-		<translation>10 SNT</translation>
+		<translation>১০ SNT</translation>
 	</message>
 	<message>
 		<source>ens-add-username</source>
-		<translation>Adicionar nome de usuário </translation>
+		<translation>ব্যবহারকারীর নাম যুক্ত করুন</translation>
 	</message>
 	<message>
 		<source>ens-agree-to</source>
-		<translation>Concordo com</translation>
+		<translation>সম্মত হন</translation>
 	</message>
 	<message>
 		<source>ens-chat-settings</source>
-		<translation>Configurações de bate-papo</translation>
+		<translation>চ্যাট সেটিংস</translation>
 	</message>
 	<message>
 		<source>ens-custom-domain</source>
-		<translation>Domínio personalizado</translation>
+		<translation>কাস্টম ডোমেইন</translation>
 	</message>
 	<message>
 		<source>ens-custom-username-hints</source>
-		<translation>Digite o nome de usuário inteiro, incluindo o domínio personalizado, como nomedeusuario.domínio.eth</translation>
+		<translation>username.domain.eth-এর মতো কাস্টম ডোমেইন সহ সম্পূর্ণ ব্যবহারকারীর নাম টাইপ করুন</translation>
 	</message>
 	<message>
 		<source>ens-custom-username-taken</source>
-		<translation>O nome de usuário não pertence a você :(</translation>
+		<translation>ব্যবহারকারীর নাম আপনার সাথে সম্পর্কিত নয় :(</translation>
 	</message>
 	<message>
 		<source>ens-deposit</source>
-		<translation>Depósito</translation>
+		<translation>আমানত</translation>
 	</message>
 	<message>
 		<source>ens-displayed-with</source>
-		<translation>Suas mensagens são exibidas para outras pessoas com</translation>
+		<translation>আপনার বার্তাগুলি অন্যদের সাথে প্রদর্শিত হয়</translation>
 	</message>
 	<message>
 		<source>ens-get-name</source>
-		<translation>Obter um nome universal</translation>
+		<translation>একটি সার্বজনীন ব্যবহারকারীর নাম পান</translation>
 	</message>
 	<message>
 		<source>ens-got-it</source>
-		<translation>Ok, entendi.</translation>
+		<translation>ঠিক আছে, বুঝতে পেরেছি</translation>
 	</message>
 	<message>
 		<source>ens-locked</source>
-		<translation>Nome de usuário bloqueado. Você não poderá liberá-lo até {{date}}</translation>
+		<translation>ব্যবহারকারীর নাম লক করা হয়েছে। {{date}} পর্যন্ত আপনি এটি প্রকাশ করতে পারবেন না</translation>
 	</message>
 	<message>
 		<source>ens-network-restriction</source>
-		<translation>Disponível apenas na Mainnet</translation>
+		<translation>শুধুমাত্র mainnet উপলভ্য</translation>
 	</message>
 	<message>
 		<source>ens-no-usernames</source>
-		<translation>Você não tem nenhum nome de usuário conectado</translation>
+		<translation>আপনার সাথে কোনও ব্যবহারকারীর নাম সংযুক্ত নেই</translation>
 	</message>
 	<message>
 		<source>ens-powered-by</source>
-		<translation>Desenvolvido com Ethereum Name Services</translation>
+		<translation>ইথেরিয়াম নাম সেবা দ্বারা চালিত</translation>
 	</message>
 	<message>
 		<source>ens-primary-username</source>
-		<translation>Nome de usuário principal</translation>
+		<translation>প্রাথমিক ব্যবহারকারীর নাম</translation>
 	</message>
 	<message>
 		<source>ens-register</source>
-		<translation>Cadastro</translation>
+		<translation>নিবন্ধন</translation>
 	</message>
 	<message>
 		<source>ens-registration-in-progress</source>
-		<translation>Cadastro em andamento…</translation>
+		<translation>নিবন্ধন চলছে...</translation>
 	</message>
 	<message>
 		<source>ens-registration-failure</source>
-		<translation>Erro ao cadastrar</translation>
+		<translation>নিবন্ধন ব্যর্থ হয়েছে</translation>
 	</message>
 	<message>
 		<source>ens-dismiss-message</source>
-		<translation>Clique aqui para fechar</translation>
+		<translation>বরখাস্ত করতে এখানে ক্লিক করুন</translation>
 	</message>
 	<message>
 		<source>ens-registration-failed</source>
-		<translation>Para cadastrar o nome de usuário, tente novamente.</translation>
+		<translation>ব্যবহারকারীর নাম নিবন্ধন করতে, অনুগ্রহ করে আবার চেষ্টা করুন।</translation>
 	</message>
 	<message>
 		<source>ens-registration-failed-title</source>
-		<translation>Falha na transação</translation>
+		<translation>লেনদেন ব্যর্থ হয়েছে</translation>
 	</message>
 	<message>
 		<source>ens-release-username</source>
-		<translation>Liberar nome de usuário</translation>
+		<translation>ব্যবহারকারীর নাম প্রকাশ করুন</translation>
 	</message>
 	<message>
 		<source>ens-remove-hints</source>
-		<translation>A remoção desanexará o nome de usuário da sua chave.</translation>
+		<translation>অপসারণ আপনার কী থেকে ব্যবহারকারীর নামটি পৃথক করবে।</translation>
 	</message>
 	<message>
 		<source>ens-remove-username</source>
-		<translation>Remover nome de usuário</translation>
+		<translation>ব্যবহারকারীর নাম অপসারণ করুন</translation>
 	</message>
 	<message>
 		<source>ens-saved</source>
-		<translation> agora está conectado com sua chave de bate-papo e pode ser usado no Status.</translation>
+		<translation>এখন আপনার চ্যাট কী-এর সাথে সংযুক্ত এবং Status ব্যবহার করা যাবে।</translation>
 	</message>
 	<message>
 		<source>ens-saved-title</source>
-		<translation>Nome de usuário adicionado</translation>
+		<translation>ব্যবহারকারীর নাম যুক্ত করা হয়েছে</translation>
 	</message>
 	<message>
 		<source>ens-show-username</source>
-		<translation>Mostrar meu nome de usuário ENS em bate-papos</translation>
+		<translation>চ্যাটগুলিতে আমার ENS ব্যবহারকারীর নামটি দেখান</translation>
 	</message>
 	<message>
 		<source>ens-terms-header</source>
-		<translation>Termos de cadastro de nome</translation>
+		<translation>নাম নিবন্ধনের শর্তাবলী</translation>
 	</message>
 	<message>
 		<source>ens-terms-point-1</source>
-		<translation>Os fundos são depositados por 1 ano. Seu SNT será bloqueado, mas não será gasto.</translation>
+		<translation>তহবিল 1 বছরের জন্য জমা হয়। আপনার SNT লক হয়ে যাবে, তবে ব্যয় হবে না।</translation>
 	</message>
 	<message>
 		<source>ens-terms-point-10</source>
-		<translation>0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e (Registro ENS).</translation>
+		<translation>0x0000000000C2E074eC69A0dFb2997BA6C7d2e1e (ENS রেজিস্ট্রি)।</translation>
 	</message>
 	<message>
 		<source>ens-terms-point-2</source>
-		<translation>Após 1 ano, você pode liberar o nome e receber seu depósito de volta ou não fazer nenhuma ação para manter o nome.</translation>
+		<translation>1 বছর পরে, আপনি নামটি প্রকাশ করতে পারেন এবং আপনার আমানত ফিরে পেতে পারেন, বা নাম রাখার জন্য কোনও পদক্ষেপ নিতে পারবেন না।</translation>
 	</message>
 	<message>
 		<source>ens-terms-point-3</source>
-		<translation>Se os termos do contrato mudarem — por exemplo, o Status fizer atualizações do contrato — o usuário tem o direito de liberar o nome de usuário, independentemente do tempo de espera.</translation>
+		<translation>যদি চুক্তির শর্তাবলী পরিবর্তিত হয় - উদাহরণস্বরূপ Status চুক্তি আপগ্রেড করে - ব্যবহারকারীর সময় নির্বিশেষে ব্যবহারকারীর নাম প্রকাশ করার অধিকার আছে।</translation>
 	</message>
 	<message>
 		<source>ens-terms-point-4</source>
-		<translation>O controlador do contrato não pode acessar seus fundos depositados. Eles só podem ser movidos de volta para o endereço que os enviou.</translation>
+		<translation>চুক্তি নিয়ন্ত্রক আপনার জমা দেওয়া তহবিল অ্যাক্সেস করতে পারে না। এগুলি কেবল তাদের পাঠানো ঠিকানায় ফিরে যেতে পারে।</translation>
 	</message>
 	<message>
 		<source>ens-terms-point-5</source>
-		<translation>Seus endereços serão publicamente associados ao seu nome no ENS.</translation>
+		<translation>আপনার ঠিকানা(es) আপনার ENS নামের সাথে জনসম্মুখে সংযুক্ত করা হবে।</translation>
 	</message>
 	<message>
 		<source>ens-terms-point-6</source>
-		<translation>Os nomes de usuários são criados como nós de subdomínio stateofus.eth e estão sujeitos aos termos do contrato inteligente do ENS.</translation>
+		<translation>ব্যবহারকারীর নামগুলি stateofus.eth এর সাবডোমেন নোড হিসাবে তৈরি করা হয় এবং ENS স্মার্ট চুক্তির শর্ত সাপেক্ষে।</translation>
 	</message>
 	<message>
 		<source>ens-terms-point-7</source>
-		<translation>Você autoriza o contrato a transferir o SNT em seu nome. Isso só pode ocorrer quando você aprovar uma transação para autorizar a transferência.</translation>
+		<translation>আপনি আপনার পক্ষ থেকে SNT স্থানান্তরের চুক্তির অনুমোদন দেন। আপনি যখন স্থানান্তরের অনুমোদন দেওয়ার জন্য একটি লেনদেন অনুমোদন করেন তখনই এটি ঘটতে পারে।</translation>
 	</message>
 	<message>
 		<source>ens-terms-point-8</source>
-		<translation>Estes termos são garantidos pela lógica do contrato inteligente nos endereços:</translation>
+		<translation>এই শর্তাবলী ঠিকানায় স্মার্ট কন্ট্রাক্ট লজিক দ্বারা গ্যারান্টি দেওয়া হয়।</translation>
 	</message>
 	<message>
 		<source>ens-terms-point-9</source>
-		<translation>{{address}} (Status UsernameRegistrar)</translation>
+		<translation>{{address}} (Status ইউজারনেম রেজিস্ট্রার)</translation>
 	</message>
 	<message>
 		<source>ens-terms-registration</source>
-		<translation>Termos de cadastro do nome.</translation>
+		<translation>নাম নিবন্ধনের শর্তাবলী।</translation>
 	</message>
 	<message>
 		<source>ens-test-message</source>
-		<translation>Olá</translation>
+		<translation>আরে</translation>
 	</message>
 	<message>
 		<source>ens-transaction-pending</source>
-		<translation>Transação pendente ...</translation>
+		<translation>লেনদেন স্থগিত...</translation>
 	</message>
 	<message>
 		<source>ens-understand</source>
-		<translation>Entendo que o endereço da minha carteira estará publicamente conectado ao meu nome de usuário.</translation>
+		<translation>আমি বুঝতে পারছি যে আমার মানিব্যাগের ঠিকানা আমার ব্যবহারকারীর নামের সাথে প্রকাশ্যে সংযুক্ত করা হবে।</translation>
 	</message>
 	<message>
 		<source>ens-username</source>
-		<translation>Nome de usuário ENS</translation>
+		<translation>ENS ব্যবহারকারীর নাম</translation>
 	</message>
 	<message>
 		<source>ens-username-available</source>
-		<translation>✓ Nome de usuário disponível!</translation>
+		<translation>✓ ব্যবহারকারীর নাম উপলব্ধ!</translation>
 	</message>
 	<message>
 		<source>ens-username-connected</source>
-		<translation>Esse nome de usuário é de sua propriedade e conectado à sua chave de bate-papo.</translation>
+		<translation>এই ব্যবহারকারীর নামটি আপনার মালিকানাধীন এবং আপনার চ্যাট কী-এর সাথে সংযুক্ত।</translation>
 	</message>
 	<message>
 		<source>ens-username-connection-confirmation</source>
-		<translation>{{username}} será conectado assim que a transação for concluída.</translation>
+		<translation>লেনদেন সম্পন্ন হলে {{username}} সংযুক্ত হবে।</translation>
 	</message>
 	<message>
 		<source>ens-username-hints</source>
-		<translation>Pelo menos 4 caracteres. Usando letras minúsculas e números.</translation>
+		<translation>কমপক্ষে ৪ টি অক্ষর। লাতিন বর্ণ, সংখ্যা এবং কেবল ছোট হাতের অক্ষর।</translation>
 	</message>
 	<message>
 		<source>ens-username-invalid</source>
-		<translation>Apenas letras e números.</translation>
+		<translation>শুধু অক্ষর এবং সংখ্যা.</translation>
 	</message>
 	<message>
 		<source>ens-username-owned</source>
-		<translation>✓ O nome de usuário é seu.</translation>
+		<translation>® ব্যবহারকারীর নাম আপনার মালিকানাধীন। </translation>
 	</message>
 	<message>
 		<source>ens-username-registration-confirmation</source>
-		<translation>Ótimo! Você será o proprietário do {{username}} assim que a transação for concluída.</translation>
+		<translation>চমৎকার! লেনদেন সম্পূর্ণ হলে আপনি {{username}} এর মালিক।</translation>
 	</message>
 	<message>
 		<source>ens-username-you-can-follow-progress</source>
-		<translation>Você pode acompanhar o progresso na seção Histórico de Transações da sua carteira.</translation>
+		<translation>আপনি আপনার মানিব্যাগের লেনদেন ইতিহাস বিভাগের অগ্রগতি অনুসরণ করতে পারেন।</translation>
 	</message>
 	<message>
 		<source>ens-usernames</source>
-		<translation>Nomes de usuário ENS</translation>
+		<translation>ENS ব্যবহারকারীর নাম</translation>
 	</message>
 	<message>
 		<source>ens-usernames-details</source>
-		<translation>Cadastre um nome de usuário universal para ser facilmente reconhecido por outros usuários</translation>
+		<translation>অন্যান্য ব্যবহারকারীদের দ্বারা সহজে স্বীকৃত হতে একটি সার্বজনীন ব্যবহারকারীর নাম নিবন্ধন করুন</translation>
 	</message>
 	<message>
 		<source>wallet-address</source>
-		<translation>Endereço da carteira</translation>
+		<translation>মানিব্যাগের ঠিকানা</translation>
 	</message>
 	<message>
 		<source>ens-want-custom-domain</source>
-		<translation>Eu possuo um nome em outro domínio</translation>
+		<translation>আমি অন্য ডোমেইনে একটি নামের মালিক</translation>
 	</message>
 	<message>
 		<source>ens-want-domain</source>
-		<translation>Eu quero um domínio stateofus.eth</translation>
+		<translation>আমি একটি stateofus.eth ডোমেইন চাই</translation>
 	</message>
 	<message>
 		<source>ens-welcome-hints</source>
-		<translation>Os nomes do ENS transformam esses endereços compridos e malucos em nomes de usuário exclusivos.</translation>
+		<translation>ইএনএস নামগুলি সেই উন্মাদ-দীর্ঘ ঠিকানাগুলিকে অনন্য ব্যবহারকারীর নামে রূপান্তরিত করে।</translation>
 	</message>
 	<message>
 		<source>ens-welcome-point-customize</source>
-		<translation>Um nome ENS pode substituir seu nome aleatório de três palavras no chat. Seja @seunome em vez de {{name}}.</translation>
+		<translation>একটি ENS নাম চ্যাটে আপনার এলোমেলো 3-শব্দের নাম প্রতিস্থাপন করতে পারে. {{name}} এর পরিবর্তে @yourname হবে।</translation>
 	</message>
 	<message>
 		<source>ens-welcome-point-customize-title</source>
-		<translation>Personalize seu nome de chat</translation>
+		<translation>আপনার চ্যাট নামটি কাস্টমাইজ করুন</translation>
 	</message>
 	<message>
 		<source>ens-welcome-point-simplify</source>
-		<translation>Você pode receber fundos em um nome ENS fácil de compartilhar, em vez do seu endereço hexadecimal (0x ...).</translation>
+		<translation>আপনি আপনার হেক্সাডেসিমাল হ্যাশ (0x ...) এর পরিবর্তে আপনার সহজেই ভাগ করে নেওয়ার জন্য ENS নামে তহবিলগুলি পেতে পারেন।</translation>
 	</message>
 	<message>
 		<source>ens-welcome-point-simplify-title</source>
-		<translation>Simplifique seu endereço ETH</translation>
+		<translation>আপনার ETH ঠিকানা সরল করুন</translation>
 	</message>
 	<message>
 		<source>ens-welcome-point-receive</source>
-		<translation>Outras pessoas podem enviar fundos para você pelo chat em um único passo.</translation>
+		<translation>অন্যরা আপনাকে একটি সহজ ধাপে চ্যাটের মাধ্যমে ফান্ড পাঠাতে পারেন।</translation>
 	</message>
 	<message>
 		<source>ens-welcome-point-receive-title</source>
-		<translation>Receba transações no chat</translation>
+		<translation>চ্যাটে লেনদেন গ্রহণ করুন</translation>
 	</message>
 	<message>
 		<source>ens-welcome-point-register</source>
-		<translation>Cadastre-se uma vez para manter o nome para sempre. Após 1 ano, você pode liberar o nome e recuperar seu SNT.</translation>
+		<translation>নাম চিরকাল রাখার জন্য একবার নিবন্ধন করুন। ১ বছর পর আপনি নাম প্রকাশ করতে পারেন এবং আপনার SNT ফেরত পেতে পারেন।</translation>
 	</message>
 	<message>
 		<source>ens-welcome-point-register-title</source>
-		<translation>10 SNT para se cadastrar</translation>
+		<translation>নিবন্ধন করতে ১০ টি SNT</translation>
 	</message>
 	<message>
 		<source>ens-welcome-point-verify</source>
-		<translation>Você pode verificar e adicionar qualquer nome de usuário que você possui nos próximos passos.</translation>
+		<translation>আপনি পরবর্তী পদক্ষেপগুলিতে নিজের মালিকানাধীন যে কোনও ব্যবহারকারীর নামটি যাচাই করতে এবং যুক্ত করতে পারেন।</translation>
 	</message>
 	<message>
 		<source>ens-welcome-point-verify-title</source>
-		<translation>Já possui um nome de usuário?</translation>
+		<translation>ইতোমধ্যে একটি ব্যবহারকারীর নামের মালিক?</translation>
 	</message>
 	<message>
 		<source>ens-your-username</source>
-		<translation>Seu nome de usuário</translation>
+		<translation>আপনার ব্যবহারকারীর নাম</translation>
 	</message>
 	<message>
 		<source>ens-your-usernames</source>
-		<translation>Seus nomes de usuário</translation>
+		<translation>আপনার ব্যবহারকারীর নাম</translation>
 	</message>
 	<message>
 		<source>ens-your-your-name</source>
-		<translation>Seu nome ENS</translation>
+		<translation>আপনার ENS নাম</translation>
 	</message>
 	<message>
 		<source>ens-username-already-added</source>
-		<translation>O nome de usuário já está conectado à sua chave de bate-papo e pode ser usado dentro do Status.</translation>
+		<translation>ব্যবহারকারীর নামটি ইতিমধ্যে আপনার চ্যাট কীটির সাথে সংযুক্ত এবং Status অভ্যন্তরে ব্যবহার করা যেতে পারে।</translation>
 	</message>
 	<message>
 		<source>ens-username-connected-continue</source>
-		<translation>Continuar configurando &quot;Mostrar meu nome de usuário do ENS nos bate-papos&quot;.</translation>
+		<translation>চ্যাটে আমার ENS ব্যবহারকারীর নাম দেখান&apos; সেট অব্যাহত রাখুন।</translation>
 	</message>
 	<message>
 		<source>ens-username-connected-with-different-key</source>
-		<translation>Continuar exigirá uma transação para conectar o nome de usuário com sua chave de bate-papo atual.</translation>
+		<translation>অব্যাহত রাখার জন্য আপনার বর্তমান চ্যাট কী-এর সাথে ব্যবহারকারীর নাম সংযুক্ত করতে একটি লেনদেনের প্রয়োজন হবে।</translation>
 	</message>
 	<message>
 		<source>ens-username-owned-continue</source>
-		<translation>Continuar conectará esse nome de usuário com sua chave de bate-papo.</translation>
+		<translation>অব্যাহত রাখা এই ব্যবহারকারীর নামকে আপনার চ্যাট কী-এর সাথে সংযুক্ত করবে।</translation>
 	</message>
 	<message>
 		<source>ens-username-taken</source>
-		<translation>Nome de usuário já utilizado :(</translation>
+		<translation>ব্যবহারকারীর নাম ইতিমধ্যেই নেওয়া :(</translation>
 	</message>
 	<message>
 		<source>ens-name-not-found</source>
-		<translation>Não é possível resolver o nome ENS</translation>
+		<translation>ENS নামটি সমাধান করতে পারে না</translation>
 	</message>
 	<message>
 		<source>ens-username-registration-invalid</source>
-		<translation>Aviso! O processo de registro terminou em estado inválido. NÃO USE o nome para transações de carteira e contate nosso suporte em support@status.im</translation>
+		<translation>সতর্কতা ! রেজিস্ট্রেশন প্রক্রিয়া অবৈধ অবস্থায় শেষ হয়েছে। ওয়ালেট লেনদেনের জন্য নামটি ব্যবহার করবেন না এবং support@status.im-এ আমাদের সহায়তার সাথে যোগাযোগ করুন</translation>
 	</message>
 	<message>
 		<source>ens-username-invalid-name-warning</source>
-		<translation>O processo de registro de um dos seus nomes ens terminou em estado inválido. NÃO USE o nome para transações de carteira e contate nosso suporte em support@status.im</translation>
+		<translation>আপনার নামগুলির একটির নিবন্ধন প্রক্রিয়া অবৈধ অবস্থায় শেষ হয়েছে৷ ওয়ালেট লেনদেনের জন্য নামটি ব্যবহার করবেন না এবং support@status.im-এ আমাদের সহায়তার সাথে যোগাযোগ করুন</translation>
 	</message>
 	<message>
 		<source>enter-12-words</source>
-		<translation>Digite as 12 palavras da sua frase-semente, separadas por um espaço</translation>
+		<translation>আপনার seed phrase এর 12 টি শব্দ লিখুন, একক স্পেস দ্বারা পৃথক করে</translation>
 	</message>
 	<message>
 		<source>enter-a-private-key</source>
-		<translation>Digite uma chave privada</translation>
+		<translation>একটি ব্যক্তিগত কী লিখুন</translation>
 	</message>
 	<message>
 		<source>enter-a-seed-phrase</source>
-		<translation>Digite uma frase-semente</translation>
+		<translation>Seed phrase প্রবেশ করান</translation>
 	</message>
 	<message>
 		<source>enter-address</source>
-		<translation>Inserir endereço</translation>
+		<translation>ঠিকানা লিখুন</translation>
 	</message>
 	<message>
 		<source>enter-contact-code</source>
-		<translation>ENS (vitalik94) ou chave de bate-papo (0x04 ...)</translation>
+		<translation>ই এন এস (vitalik94) অথবা চ্যাট কী (0x04…)</translation>
 	</message>
 	<message>
 		<source>enter-pair-code</source>
-		<translation>Digite seu código de emparelhamento</translation>
+		<translation>আপনার জোড়া কোড প্রবেশ করান</translation>
 	</message>
 	<message>
 		<source>pair-code-placeholder</source>
-		<translation>Código de emparelhamento…</translation>
+		<translation>জোড়া কোড...</translation>
 	</message>
 	<message>
 		<source>enter-pair-code-description</source>
-		<translation>O código de emparelhamento pode ser definido a partir de um cliente Status já emparelhado</translation>
+		<translation>কী-কার্ড উপস্থাপনার সময় আপনার কাছে জোড়া কোড প্রদর্শিত হয়েছিল</translation>
 	</message>
 	<message>
 		<source>enter-password</source>
-		<translation>Digite a senha</translation>
+		<translation>পাসওয়ার্ড প্রবেশ করান</translation>
 	</message>
 	<message>
 		<source>enter-password-migration-prompt</source>
-		<translation>Digite sua senha para mover contatos, bate-papos e configurações com suas chaves</translation>
+		<translation>আপনার কীগুলির সাথে পরিচিতি, চ্যাট এবং সেটিংস সরাতে আপনার পাসওয়ার্ড লিখুন</translation>
 	</message>
 	<message>
 		<source>migration-successful</source>
-		<translation>Migração realizada com sucesso</translation>
+		<translation>মাইগ্রেশন সফল</translation>
 	</message>
 	<message>
 		<source>migration-successful-text</source>
-		<translation>Conta migrada com sucesso para o Keycard</translation>
+		<translation>অ্যাকাউন্ট সফলভাবে কীকার্ডে স্থানান্তরিত হয়েছে</translation>
 	</message>
 	<message>
 		<source>skip</source>
-		<translation>Pular</translation>
+		<translation>এড়িয়ে যান</translation>
 	</message>
 	<message>
 		<source>password-placeholder</source>
-		<translation>Senha…</translation>
+		<translation>পাসওয়ার্ড।।।</translation>
 	</message>
 	<message>
 		<source>confirm-password-placeholder</source>
-		<translation>Confirme sua senha…</translation>
+		<translation>আপনার পাসওয়ার্ড নিশ্চিত করুন...</translation>
 	</message>
 	<message>
 		<source>enter-pin</source>
-		<translation>Digite o código de acesso de 6 dígitos</translation>
+		<translation>6-ডিজিটের পাসকোড প্রবেশ করান</translation>
 	</message>
 	<message>
 		<source>enter-puk-code</source>
-		<translation>Digite o código PUK</translation>
+		<translation>PUK কোড প্রবেশ করান</translation>
 	</message>
 	<message>
 		<source>enter-puk-code-description</source>
-		<translation>O código de acesso de 6 dígitos foi bloqueado. 
- Digite o código PUK para desbloquear o código de acesso.</translation>
+		<translation>6-সংখ্যার পাসকোড ব্লক করা হয়েছে।
+ পাসকোড অবরোধ মুক্ত করতে দয়া করে PUK কোড প্রবেশ করুন।</translation>
 	</message>
 	<message>
 		<source>enter-recipient-address-or-username</source>
-		<translation>Digite o endereço ou nome de usuário do destinatário</translation>
+		<translation>প্রাপকের ঠিকানা বা ব্যবহারকারীর নাম লিখুন</translation>
 	</message>
 	<message>
 		<source>enter-seed-phrase</source>
-		<translation>Inserir frase-semente</translation>
+		<translation>বীজ বাক্যাংশ লিখুন</translation>
 	</message>
 	<message>
 		<source>enter-url</source>
-		<translation>Inserir URL</translation>
+		<translation>ইউআরএল লিখুন</translation>
 	</message>
 	<message>
 		<source>enter-watch-account-address</source>
-		<translation>Escaneie um código QR 
-ou 
-digite o endereço para visualizar</translation>
+		<translation>একটি QR কোড স্ক্যান করুন
+বা
+দেখার জন্য ঠিকানা প্রবেশ করান</translation>
 	</message>
 	<message>
 		<source>enter-word</source>
-		<translation>Digite a palavra</translation>
+		<translation>শব্দ লিখুন</translation>
 	</message>
 	<message>
 		<source>enter-your-code</source>
-		<translation>Digite sua senha de 6 dígitos</translation>
+		<translation>আপনার 6-সংখ্যার পাসকোড প্রবেশ করান</translation>
 	</message>
 	<message>
 		<source>enter-your-password</source>
-		<translation>Digite sua senha</translation>
+		<translation>আপনার পাসওয়ার্ড লিখুন</translation>
 	</message>
 	<message>
 		<source>error</source>
-		<translation>Erro</translation>
+		<translation>ত্রুটি</translation>
 	</message>
 	<message>
 		<source>error-unable-to-get-balance</source>
-		<translation>Não foi possível obter o saldo</translation>
+		<translation>ভারসাম্য পেতে অক্ষম</translation>
 	</message>
 	<message>
 		<source>error-unable-to-get-prices</source>
-		<translation>Erro de conversão de moeda. Atualize sua tela para tentar novamente.</translation>
+		<translation>মুদ্রা রূপান্তর ত্রুটি। আবার চেষ্টা করতে আপনার স্ক্রীন সতেজ করুন।</translation>
 	</message>
 	<message>
 		<source>error-unable-to-get-token-balance</source>
-		<translation>Não foi possível obter o saldo de token</translation>
+		<translation>টোকেন ব্যালেন্স পেতে অক্ষম</translation>
 	</message>
 	<message>
 		<source>errors</source>
-		<translation>Erros</translation>
+		<translation>ত্রুটি</translation>
 	</message>
 	<message>
 		<source>eth</source>
@@ -2174,217 +2174,217 @@ digite o endereço para visualizar</translation>
 	</message>
 	<message>
 		<source>ethereum-node-started-incorrectly-description</source>
-		<translation>O nó Ethereum foi iniciado com a configuração incorreta. O aplicativo será interrompido para se recuperar dessa condição. ID de rede configurado = {{network-id}}, real = {{fetched-network-id}}</translation>
+		<translation>ভুল কনফিগারেশন দিয়ে Ethereum নোড শুরু করা হয়েছে, সেই অবস্থা থেকে পুনরুদ্ধার করতে প্রয়োগণ বন্ধ করা হবে। কনফিগার করা নেটওয়ার্ক id = {{network-id}} actual = {{fetched-network-id}}</translation>
 	</message>
 	<message>
 		<source>ethereum-node-started-incorrectly-title</source>
-		<translation>Nó Ethereum iniciado incorretamente</translation>
+		<translation>Ethereum নোডটি ভুলভাবে শুরু হয়েছে</translation>
 	</message>
 	<message>
 		<source>etherscan-lookup</source>
-		<translation>Procurar no Etherscan</translation>
+		<translation>Etherscan এর দিকে তাকান</translation>
 	</message>
 	<message>
 		<source>export-account</source>
-		<translation>Exportar conta</translation>
+		<translation>একাউন্ট রপ্তানি করুন</translation>
 	</message>
 	<message>
 		<source>export-key</source>
-		<translation>Exportar chave privada</translation>
+		<translation>ব্যক্তিগত কী রপ্তানি করুন</translation>
 	</message>
 	<message>
 		<source>community-private-key</source>
-		<translation>Chave privada da comunidade</translation>
+		<translation>কমিউনিটি প্রাইভেট কী</translation>
 	</message>
 	<message>
 		<source>failed</source>
-		<translation>Falhou</translation>
+		<translation>ব্যর্থ</translation>
 	</message>
 	<message>
 		<source>faq</source>
-		<translation>Perguntas frequentes</translation>
+		<translation>ঘন ঘন জিজ্ঞাসিত প্রশ্ন</translation>
 	</message>
 	<message>
 		<source>fetch-messages</source>
-		<translation>↓ Buscar mensagens</translation>
+		<translation>বার্তা আনুন</translation>
 	</message>
 	<message>
 		<source>fetch-timeline</source>
-		<translation>↓ Buscar</translation>
+		<translation>আনুন</translation>
 	</message>
 	<message>
 		<source>find</source>
-		<translation>Encontrar</translation>
+		<translation>অনুসন্ধান</translation>
 	</message>
 	<message>
 		<source>finish</source>
-		<translation>Terminar</translation>
+		<translation>সমাপ্ত</translation>
 	</message>
 	<message>
 		<source>finishing-card-setup</source>
-		<translation>Finalizando configurações do cartão</translation>
+		<translation>কার্ড উপস্থাপনা সমাপ্ত হচ্ছে</translation>
 	</message>
 	<message>
 		<source>fleet</source>
-		<translation>Frota</translation>
+		<translation>বহর</translation>
 	</message>
 	<message>
 		<source>fleet-settings</source>
-		<translation>Configurações de frota</translation>
+		<translation>ফ্লিট সেটিংস</translation>
 	</message>
 	<message>
 		<source>follow-your-interests</source>
-		<translation>Entre em um bate-papo público e conheça novas pessoas</translation>
+		<translation>একটি সর্বজনীন চ্যাটে যান এবং নতুন লোকের সাথে দেখা করুন</translation>
 	</message>
 	<message>
 		<source>follow</source>
-		<translation>Seguir</translation>
+		<translation>অনুসরণ করুন</translation>
 	</message>
 	<message>
 		<source>free</source>
-		<translation>↓ Grátis</translation>
+		<translation>↓ বিনামূল্যে</translation>
 	</message>
 	<message>
 		<source>from</source>
-		<translation>De</translation>
+		<translation>থেকে</translation>
 	</message>
 	<message>
 		<source>gas-limit</source>
-		<translation>Limite de gás</translation>
+		<translation>গ্যাসের সীমা</translation>
 	</message>
 	<message>
 		<source>gas-price</source>
-		<translation>Preço do gás</translation>
+		<translation>Gas সীমা</translation>
 	</message>
 	<message>
 		<source>gas-used</source>
-		<translation>Gás usado</translation>
+		<translation>Gas ব্যাবহার</translation>
 	</message>
 	<message>
 		<source>generate-a-key</source>
-		<translation>Gerar chaves</translation>
+		<translation>কী তৈরি করুন</translation>
 	</message>
 	<message>
 		<source>generate-a-new-account</source>
-		<translation>Gerar uma conta</translation>
+		<translation>একটি অ্যাকাউন্ট তৈরি করুন</translation>
 	</message>
 	<message>
 		<source>generate-a-new-key</source>
-		<translation>Gere uma nova chave</translation>
+		<translation>একটি নতুন কী তৈরি করুন</translation>
 	</message>
 	<message>
 		<source>generate-account</source>
-		<translation>Gerar chaves</translation>
+		<translation>কী তৈরি করুন</translation>
 	</message>
 	<message>
 		<source>generate-new-key</source>
-		<translation>Gerar chaves</translation>
+		<translation>কী তৈরি করুন</translation>
 	</message>
 	<message>
 		<source>your-keys</source>
-		<translation>Suas chaves</translation>
+		<translation>আপনার চাবি</translation>
 	</message>
 	<message>
 		<source>generating-codes-for-pairing</source>
-		<translation>&gt; Download do software do produto no cartão 
-&gt; Gerando códigos de desbloqueio e emparelhamento</translation>
+		<translation>&gt; কার্ডে পণ্য সফটওয়্যার ডাউনলোড করা হচ্ছে
+ &gt; আনলক এবং জোড়া কোড তৈরি করা হচ্ছে</translation>
 	</message>
 	<message>
 		<source>generating-keys</source>
-		<translation>Gerando chaves...</translation>
+		<translation>কী তৈরি করা হচ্ছে...</translation>
 	</message>
 	<message>
 		<source>you-will-need-this-code</source>
-		<translation>Você precisará desse código para abrir o Status e assinar transações</translation>
+		<translation>Status খুলতে এবং লেনদেন সাইন করতে আপনার এই কোডটির প্রয়োজন হবে</translation>
 	</message>
 	<message>
 		<source>generating-mnemonic</source>
-		<translation>Gerando frase-semente</translation>
+		<translation>Seed phrase তৈরি করা হচ্ছে</translation>
 	</message>
 	<message>
 		<source>get-started</source>
-		<translation>Começar</translation>
+		<translation>শুরু করুন</translation>
 	</message>
 	<message>
 		<source>get-status-at</source>
-		<translation>Obter o Status em http://status.im</translation>
+		<translation>Status পান http://status.im</translation>
 	</message>
 	<message>
 		<source>get-stickers</source>
-		<translation>Obter Adesivos</translation>
+		<translation>স্টিকার পান</translation>
 	</message>
 	<message>
 		<source>go-to-settings</source>
-		<translation>Vá para as configurações...</translation>
+		<translation>সেটিংসে যান...</translation>
 	</message>
 	<message>
 		<source>got-it</source>
-		<translation>Entendido</translation>
+		<translation>পেয়েছি</translation>
 	</message>
 	<message>
 		<source>group-chat</source>
-		<translation>Conversa em grupo</translation>
+		<translation>গ্রুপ চ্যাট</translation>
 	</message>
 	<message>
 		<source>group-chat-admin</source>
-		<translation>Administrador</translation>
+		<translation>প্রশাসক</translation>
 	</message>
 	<message>
 		<source>group-chat-admin-added</source>
-		<translation>**{{member}}** foi adicionado como administrador</translation>
+		<translation>** {{member}} ** প্রশাসক করা হয়েছে</translation>
 	</message>
 	<message>
 		<source>group-chat-created</source>
-		<translation>**{{member}}** criou o grupo **{{name}}**</translation>
+		<translation>** {{member}} ** গ্রুপ তৈরি করেছে ** {{name}} **</translation>
 	</message>
 	<message>
 		<source>group-chat-decline-invitation</source>
-		<translation>Recusar o convite</translation>
+		<translation>আমন্ত্রণ প্রত্যাখ্যান করুন</translation>
 	</message>
 	<message>
 		<source>group-chat-member-added</source>
-		<translation>**{{member}}** foi convidado</translation>
+		<translation>** {{member}} ** আমন্ত্রিত হয়েছে</translation>
 	</message>
 	<message>
 		<source>group-chat-member-joined</source>
-		<translation>**{{member}}** acessou o grupo</translation>
+		<translation>** {{member}} ** গ্রুপে যোগ দিয়েছে</translation>
 	</message>
 	<message>
 		<source>group-chat-member-removed</source>
-		<translation>**{{member}}** saiu do grupo</translation>
+		<translation>** {{member}} ** গোষ্ঠীটি ছেড়ে গেছে</translation>
 	</message>
 	<message>
 		<source>group-chat-members-count</source>
-		<translation>{{selected}}/{{max}} membros</translation>
+		<translation>{{নির্বাচিত}}/{সর্বোচ্চ}} সদস্য</translation>
 	</message>
 	<message>
 		<source>group-chat-name-changed</source>
-		<translation>**{{member}}** mudou o nome do grupo para **{{name}}**</translation>
+		<translation>** {{member}} ** গোষ্ঠীর নাম পরিবর্তন করে ** {{name}} ** করা হয়েছে</translation>
 	</message>
 	<message>
 		<source>group-chat-no-contacts</source>
-		<translation>Você ainda não possui nenhum contato.
-Convide seus amigos para começar a conversar.</translation>
+		<translation>আপনার এখনও কোনও যোগাযোগ নেই।
+ চ্যাট শুরু করতে আপনার বন্ধুদের আমন্ত্রণ জানান</translation>
 	</message>
 	<message>
 		<source>leave-chat</source>
-		<translation>Sair da conversa</translation>
+		<translation>চ্যাট ছেড়ে দিন</translation>
 	</message>
 	<message>
 		<source>leave-confirmation</source>
-		<translation>Sair de {{chat-name}}</translation>
+		<translation>চ্যাট ছেড়ে দিন</translation>
 	</message>
 	<message>
 		<source>leave-chat-confirmation</source>
-		<translation>O histórico do chat será removido do seu dispositivo. Depois de voltar você não será capaz de recuperar seu histórico.</translation>
+		<translation>আপনি কি নিশ্চিত যে আপনি চ্যাট ছেড়ে যেতে চান?</translation>
 	</message>
 	<message>
 		<source>group-chat-all-contacts-invited</source>
-		<translation>Todos os seus contatos já estão no grupo</translation>
+		<translation>আপনার সমস্ত পরিচিতি ইতিমধ্যে গ্রুপে রয়েছে</translation>
 	</message>
 	<message>
 		<source>group-info</source>
-		<translation>Informações do grupo</translation>
+		<translation>গ্রুপ তথ্য</translation>
 	</message>
 	<message>
 		<source>gwei</source>
@@ -2392,92 +2392,92 @@ Convide seus amigos para começar a conversar.</translation>
 	</message>
 	<message>
 		<source>hash</source>
-		<translation>Hash</translation>
+		<translation>হ্যাশ</translation>
 	</message>
 	<message>
 		<source>help</source>
-		<translation>ajuda</translation>
+		<translation>সাহায্য</translation>
 	</message>
 	<message>
 		<source>help-capitalized</source>
-		<translation>Ajuda</translation>
+		<translation>সহায়তা</translation>
 	</message>
 	<message>
 		<source>help-center</source>
-		<translation>Centro de ajuda</translation>
+		<translation>সহায়তা কেন্দ্র</translation>
 	</message>
 	<message>
 		<source>hide-content-when-switching-apps</source>
-		<translation>Bloquear capturas de tela</translation>
+		<translation>স্ক্রীনশটগুলি ব্লক করুন</translation>
 	</message>
 	<message>
 		<source>hide-content-when-switching-apps-ios</source>
-		<translation>Ocultar visualização</translation>
+		<translation>প্রাকদর্শন লুকান</translation>
 	</message>
 	<message>
 		<source>history</source>
-		<translation>Histórico</translation>
+		<translation>ইতিহাস</translation>
 	</message>
 	<message>
 		<source>history-nodes</source>
-		<translation>Nós de mensagem da Status</translation>
+		<translation>ইতিহাস নোড</translation>
 	</message>
 	<message>
 		<source>hold-card</source>
-		<translation>Segure o cartão na parte de trás 
- do seu telefone</translation>
+		<translation>পিছনে কার্ড ধরে রাখুন
+ আপনার ফোনের</translation>
 	</message>
 	<message>
 		<source>home</source>
-		<translation>Início</translation>
+		<translation>বাড়ি</translation>
 	</message>
 	<message>
 		<source>hooks</source>
-		<translation>Hooks</translation>
+		<translation>হুকস</translation>
 	</message>
 	<message>
 		<source>identifier</source>
-		<translation>Identificador</translation>
+		<translation>শনাক্তকারী</translation>
 	</message>
 	<message>
 		<source>image-remove-current</source>
-		<translation>Remover foto atual</translation>
+		<translation>বর্তমান ছবি অপসারণ করুন</translation>
 	</message>
 	<message>
 		<source>image-source-gallery</source>
-		<translation>Escolher na galeria</translation>
+		<translation>গ্যালারী থেকে নির্বাচন করুন</translation>
 	</message>
 	<message>
 		<source>image-source-make-photo</source>
-		<translation>Tirar foto</translation>
+		<translation>ক্যাপচার</translation>
 	</message>
 	<message>
 		<source>image-source-title</source>
-		<translation>Editar imagem</translation>
+		<translation>ছবি সম্পাদনা করুন</translation>
 	</message>
 	<message>
 		<source>profile-pic-take</source>
-		<translation>Tirar foto</translation>
+		<translation>ছবি তুলুন</translation>
 	</message>
 	<message>
 		<source>profile-pic-pick</source>
-		<translation>Escolher na galeria</translation>
+		<translation>গ্যালারী থেকে নির্বাচন করুন</translation>
 	</message>
 	<message>
 		<source>profile-pic-remove</source>
-		<translation>Remover foto</translation>
+		<translation>ছবি সরান</translation>
 	</message>
 	<message>
 		<source>in-contacts</source>
-		<translation>Em contatos</translation>
+		<translation>যোগাযোগে</translation>
 	</message>
 	<message>
 		<source>incoming</source>
-		<translation>Recebidos</translation>
+		<translation>আগত</translation>
 	</message>
 	<message>
 		<source>incoming-transaction</source>
-		<translation>Transação recebida</translation>
+		<translation>আগত লেনদেন</translation>
 	</message>
 	<message>
 		<source>incorrect-code::0</source>
@@ -2485,636 +2485,635 @@ Convide seus amigos para começar a conversar.</translation>
 	</message>
 	<message>
 		<source>incorrect-code::1</source>
-		<translation>Desculpe, o código estava incorreto. Por favor, digite novamente</translation>
+		<translation>দুঃখিত কোডটি ভুল ছিল, দয়া করে এটি আবার লিখুন</translation>
 	</message>
 	<message>
 		<source>initialization</source>
-		<translation>Inicialização</translation>
+		<translation>আরম্ভ</translation>
 	</message>
 	<message>
 		<source>install</source>
-		<translation>Instalar</translation>
+		<translation>↓ ইনস্টল করুন</translation>
 	</message>
 	<message>
 		<source>intro-message1</source>
-		<translation>Bem-vindo ao Status
-Toque nesta mensagem para definir sua senha e começar!</translation>
+		<translation>Status স্বাগতম! আপনার পাসওয়ার্ড সেট করতে এবং শুরু করতে এই বার্তাটি আলতো চাপুন।</translation>
 	</message>
 	<message>
 		<source>intro-privacy-policy-note1</source>
-		<translation>O Status não coleta ou lucra com seus dados pessoais. Ao continuar, você concorda com a </translation>
+		<translation>স্ট্যাটাস আপনার ব্যক্তিগত ডেটা থেকে সংগ্রহ বা লাভ করে না। অব্যাহত রেখে, আপনি এর সাথে একমত</translation>
 	</message>
 	<message>
 		<source>intro-privacy-policy-note2</source>
-		<translation>política de privacidade</translation>
+		<translation>গোপনীয়তা নীতি</translation>
 	</message>
 	<message>
 		<source>intro-text</source>
-		<translation>Status é a sua porta de entrada para a web descentralizada</translation>
+		<translation>Status বিকেন্দ্রীভূত ওয়েবে আপনার গেটওয়ে</translation>
 	</message>
 	<message>
 		<source>intro-text1</source>
-		<translation>Converse em uma rede criptografada ponto a ponto, onde as mensagens não podem ser censuradas ou invadidas</translation>
+		<translation>একটি পিয়ার-টু-পিয়ার, এনক্রিপ্ট করা নেটওয়ার্কে চ্যাট করুন যেখানে বার্তাসেন্সর বা হ্যাক করা যাবে না</translation>
 	</message>
 	<message>
 		<source>intro-text2</source>
-		<translation>Envie e receba ativos digitais em qualquer lugar do mundo - não é necessária uma conta bancária</translation>
+		<translation>বিশ্বের যে কোন জায়গায় ডিজিটাল সম্পদ প্রেরণ এবং গ্রহণ করুন- কোন ব্যাংক একাউন্টের প্রয়োজন নেই</translation>
 	</message>
 	<message>
 		<source>intro-text3</source>
-		<translation>Explore jogos, trocas e redes sociais onde só você é o proprietário dos seus dados</translation>
+		<translation>গেম, এক্সচেঞ্জ এবং সামাজিক নেটওয়ার্ক অনুসন্ধান করুন যেখানে আপনি একা আপনার ডেটার মালিক</translation>
 	</message>
 	<message>
 		<source>intro-title1</source>
-		<translation>Comunicação verdadeiramente privada</translation>
+		<translation>সত্যিকারের ব্যক্তিগত যোগাযোগ</translation>
 	</message>
 	<message>
 		<source>intro-title2</source>
-		<translation>Carteira criptográfica segura</translation>
+		<translation>নিরাপদ ক্রিপ্টো ওয়ালেট</translation>
 	</message>
 	<message>
 		<source>intro-title3</source>
-		<translation>Aplicativos descentralizados</translation>
+		<translation>বিকেন্দ্রীভূত অ্যাপস</translation>
 	</message>
 	<message>
 		<source>intro-wizard-text1</source>
-		<translation>Um conjunto de chaves controla sua conta. Suas chaves estão no seu telefone, então somente você pode usá-las</translation>
+		<translation>কীগুলির একটি সেট আপনার অ্যাকাউন্ট নিয়ন্ত্রণ করে. আপনার কী আপনার ফোনে সরাসরি, যাতে আপনি সেগুলি ব্যবহার করতে পারেন</translation>
 	</message>
 	<message>
 		<source>intro-wizard-text2</source>
-		<translation>Uma chave é para o bate-papo. Ela vem com um nome legível que não pode ser alterado.</translation>
+		<translation>একটা চাবি হল আড্ডার জন্য। এটি একটি পাঠযোগ্য নাম নিয়ে আসে যা পরিবর্তন করা যাবে না।</translation>
 	</message>
 	<message>
 		<source>intro-wizard-text3</source>
-		<translation>Se você possui um Keycard, armazene suas chaves nele para maior segurança.</translation>
+		<translation>আপনি যদি একটি কীকার্ডের মালিক হন, বর্ধিত নিরাপত্তার জন্য সেখানে আপনার চাবি সঞ্চয় করুন।</translation>
 	</message>
 	<message>
 		<source>intro-wizard-text4</source>
-		<translation>Proteja e criptografe suas chaves</translation>
+		<translation>আপনার কীসমূহ নিরাপদ এবং এনক্রিপ্ট করুন</translation>
 	</message>
 	<message>
 		<source>intro-wizard-text6</source>
-		<translation>O Status notificará você sobre novas mensagens. Você pode editar suas preferências de notificação mais tarde nas configurações</translation>
+		<translation>স্ট্যটাস আপনাকে নতুন বার্তাগুলি সম্পর্কে অবহিত করবে। আপনি পরে সেটিংসে আপনার বিজ্ঞপ্তি পছন্দগুলি সম্পাদনা করতে পারেন</translation>
 	</message>
 	<message>
 		<source>intro-wizard-title-alt4</source>
-		<translation>Crie uma senha</translation>
+		<translation>একটি পাসওয়ার্ড তৈরি করুন</translation>
 	</message>
 	<message>
 		<source>intro-wizard-title-alt5</source>
-		<translation>Confirme sua senha</translation>
+		<translation>আপনার পাসওয়ার্ড নিশ্চিত করুন</translation>
 	</message>
 	<message>
 		<source>intro-wizard-title1</source>
-		<translation>Obtenha suas chaves</translation>
+		<translation>আপনার চাবি পান</translation>
 	</message>
 	<message>
 		<source>intro-wizard-title2</source>
-		<translation>Escolha um nome de bate-papo</translation>
+		<translation>একটি চ্যাট নাম পছন্দ করুন</translation>
 	</message>
 	<message>
 		<source>intro-wizard-title3</source>
-		<translation>Escolha o armazenamento de chaves</translation>
+		<translation>কী স্টোরেজ পছন্দ করুন</translation>
 	</message>
 	<message>
 		<source>intro-wizard-title4</source>
-		<translation>Crie uma senha de 6 dígitos</translation>
+		<translation>একটি ৬-সংখ্যার পাসকোড তৈরি করুন</translation>
 	</message>
 	<message>
 		<source>intro-wizard-title5</source>
-		<translation>Confirme a senha</translation>
+		<translation>পাসকোডটি নিশ্চিত করুন</translation>
 	</message>
 	<message>
 		<source>intro-wizard-title6</source>
-		<translation>Ativar notificações</translation>
+		<translation>বিজ্ঞপ্তিগুলি সক্ষম করুন</translation>
 	</message>
 	<message>
 		<source>are-you-sure-to-cancel</source>
-		<translation>Você tem certeza que deseja cancelar?</translation>
+		<translation>আপনি কি নিশ্চিত যে আপনি বাতিল করতে চান?</translation>
 	</message>
 	<message>
 		<source>you-will-start-from-scratch</source>
-		<translation>Você começará do zero com um novo conjunto de chaves</translation>
+		<translation>আপনি একটি নতুন সেট কী দিয়ে শুরু করবেন</translation>
 	</message>
 	<message>
 		<source>invalid-address-qr-code</source>
-		<translation>O código QR escaneado não contém um endereço válido</translation>
+		<translation>স্ক্যান করা QR কোড একটি বৈধ ঠিকানা ধারণ করে না</translation>
 	</message>
 	<message>
 		<source>invalid-format</source>
-		<translation>Formato Inválido 
- Deve ser {{format}}</translation>
+		<translation>অকার্যকর বিন্যাস
+অবশ্যই {{format}} হতে হবে</translation>
 	</message>
 	<message>
 		<source>invalid-key-confirm</source>
-		<translation>Aplicar</translation>
+		<translation>প্রয়োগ করুন</translation>
 	</message>
 	<message>
 		<source>invalid-key-content</source>
-		<translation>O banco de dados não pode ser criptografado porque um arquivo está corrompido. Seus fundos e a chave de bate-papo estão seguros. Outros dados, como suas conversas e contatos, não podem ser restaurados. O botão &quot;{{erase-multiaccounts-data-button-text}}&quot; removerá todos os outros dados e permitirá que você acesse seus fundos e envie mensagens</translation>
+		<translation>ডেটাবেস এনক্রিপ্ট করা যায় না কারণ একটি ফাইল দূষিত। আপনার তহবিল এবং চ্যাট কী নিরাপদ। অন্যান্য ডেটা, যেমন আপনার চ্যাট এবং পরিচিতিগুলি পুনরুদ্ধার করা যায় না। &quot; {{erase-multiaccounts-data-button-text}} &quot; বোতামটি, অন্যান্য সমস্ত ডেটা সরিয়ে দেবে এবং আপনাকে আপনার তহবিলগুলিতে অ্যাক্সেস করতে এবং বার্তাগুলি প্রেরণ করতে দেয়</translation>
 	</message>
 	<message>
 		<source>invalid-number</source>
-		<translation>Número inválido</translation>
+		<translation>অকার্যকর সংখ্যা</translation>
 	</message>
 	<message>
 		<source>invalid-pairing-password</source>
-		<translation>Senha de emparelhamento inválida</translation>
+		<translation>অকার্যকর জোড়া পাসওয়ার্ড</translation>
 	</message>
 	<message>
 		<source>invalid-range</source>
-		<translation>Formato inválido, deve estar entre {{min}} e {{max}}</translation>
+		<translation>অকার্যকর বিন্যাস, অবশ্যই {{min}} এবং {{max}} এর মধ্যে থাকতে হবে</translation>
 	</message>
 	<message>
 		<source>invalid-username-or-key</source>
-		<translation>Nome de usuário ou chave de bate-papo inválida</translation>
+		<translation>অবৈধ ব্যবহারকারীর নাম বা চ্যাট কী</translation>
 	</message>
 	<message>
 		<source>join-me</source>
-		<translation>Junte-se a mim no Status: {{url}}</translation>
+		<translation>স্ট্যাটাসে আমার সাথে যোগ দিন</translation>
 	</message>
 	<message>
 		<source>join-a-community</source>
-		<translation>ou junte-se a uma comunidade</translation>
+		<translation>অথবা একটি সম্প্রদায়ে যোগ দিন</translation>
 	</message>
 	<message>
 		<source>http-gateway-error</source>
-		<translation>Opa, falha na solicitação!</translation>
+		<translation>উফ, অনুরোধ ব্যর্থ হয়েছে!</translation>
 	</message>
 	<message>
 		<source>sign-request-failed</source>
-		<translation>Não foi possível assinar a mensagem</translation>
+		<translation>বার্তায় স্বাক্ষর করা যায়নি</translation>
 	</message>
 	<message>
 		<source>invite-friends</source>
-		<translation>Convide amigos</translation>
+		<translation>বন্ধুদের আমন্ত্রণ করুন</translation>
 	</message>
 	<message>
 		<source>invite-people</source>
-		<translation>Convide pessoas</translation>
+		<translation>বন্ধুদের আমন্ত্রণ করুন</translation>
 	</message>
 	<message>
 		<source>invite-reward</source>
-		<translation>Ganhe criptomoedas para cada amigo que você convidar!</translation>
+		<translation>আপনার আমন্ত্রিত প্রতিটি বন্ধুর জন্য ক্রিপ্টো আয় করুন!</translation>
 	</message>
 	<message>
 		<source>invite-select-account</source>
-		<translation>Selecione uma conta para receber o seu bônus de indicação</translation>
+		<translation>আপনার রেফারেল বোনাস পেতে একটি অ্যাকাউন্ট নির্বাচন করুন</translation>
 	</message>
 	<message>
 		<source>invited</source>
-		<translation>convidou</translation>
+		<translation>আমন্ত্রিত</translation>
 	</message>
 	<message>
 		<source>invite-button</source>
-		<translation>Convidar</translation>
+		<translation>আমন্ত্রণ</translation>
 	</message>
 	<message>
 		<source>invite-receive-account</source>
-		<translation>Conta para receber o seu bônus de indicação</translation>
+		<translation>আপনার রেফারেল বোনাস গ্রহণের জন্য অ্যাকাউন্ট</translation>
 	</message>
 	<message>
 		<source>how-it-works</source>
-		<translation>Como funciona</translation>
+		<translation>এটা কিভাবে কাজ করে</translation>
 	</message>
 	<message>
 		<source>invite-warning</source>
-		<translation>Esta promoção é válida apenas para usuários de um dispositivo Android, que não sejam residentes dos EUA. O amigo precisa confirmar a indicação dentro de 7 dias</translation>
+		<translation>এই প্রমোশন শুধুমাত্র একটি অ্যান্ড্রয়েড ডিভাইস ব্যবহারকারীদের জন্য বৈধ, যারা মার্কিন যুক্তরাষ্ট্রের বাসিন্দা নয়। বন্ধুকে ৭ দিনের মধ্যে রেফারেল নিশ্চিত করতে হবে</translation>
 	</message>
 	<message>
 		<source>invite-instruction-first</source>
-		<translation>Você envia um link de convite exclusivo para seu amigo fazer o download e entrar no Status</translation>
+		<translation>স্ট্যাটাস ডাউনলোড এবং যোগদান করতে আপনি আপনার বন্ধুকে একটি অনন্য আমন্ত্রণ লিংক পাঠান</translation>
 	</message>
 	<message>
 		<source>invite-instruction-second</source>
-		<translation>Seu amigo baixa o Status e cria uma conta (no Android)</translation>
+		<translation>আপনার বন্ধু স্ট্যাটাস ডাউনলোড করে এবং একটি অ্যাকাউন্ট তৈরি করে (অ্যান্ড্রয়েডে)</translation>
 	</message>
 	<message>
 		<source>invite-instruction-third</source>
-		<translation>É iniciada uma conversa com seu amigo, onde ele confirma sua indicação</translation>
+		<translation>আপনার বন্ধুর সাথে একটি চ্যাট শুরু হয়েছে, যেখানে তারা আপনার রেফারেল নিশ্চিত করে</translation>
 	</message>
 	<message>
 		<source>invite-instruction-fourth</source>
-		<translation>Você recebe seu bônus de indicação e seu amigo recebe o Pacote inicial</translation>
+		<translation>আপনি আপনার রেফারেল বোনাস এবং আপনার বন্ধু স্টার্টার প্যাক পাবেন</translation>
 	</message>
 	<message>
 		<source>invite-instruction-fifth</source>
-		<translation>Você pode optar por resgatar seu bônus de indicação a qualquer momento.</translation>
+		<translation>আপনি যে কোন সময় আপনার রেফারেল বোনাস পরিশোধ করতে পারেন।</translation>
 	</message>
 	<message>
 		<source>invite-reward-you</source>
-		<translation>Você: </translation>
+		<translation>আপনি: </translation>
 	</message>
 	<message>
 		<source>invite-reward-you-name</source>
-		<translation>Bônus de indicação</translation>
+		<translation>রেফারেল বোনাস</translation>
 	</message>
 	<message>
 		<source>invite-reward-you-description</source>
-		<translation>Convide um amigo e receba {{reward}} como bônus pela indicação. Utilize para comprar adesivos, um nome ENS e testar alguns DApps.</translation>
+		<translation>একজন বন্ধুকে আমন্ত্রণ জানান এবং রেফারেল বোনাস হিসেবে {{reward}} গ্রহণ করুন। স্টিকার, একটি ই এন এস নাম পেতে এটি ব্যবহার করুন এবং ড্যাপ চেষ্টা করুন</translation>
 	</message>
 	<message>
 		<source>invite-reward-friend</source>
-		<translation>Amigo:</translation>
+		<translation>বন্ধু: </translation>
 	</message>
 	<message>
 		<source>invite-reward-friend-name</source>
-		<translation>Pacote Inicial</translation>
+		<translation>স্টার্টার প্যাক</translation>
 	</message>
 	<message>
 		<source>invite-reward-friend-description</source>
-		<translation>Seu amigo receberá um Pacote Inicial que consiste em {{reward}} para começar</translation>
+		<translation>আপনার বন্ধু শুরু করার জন্য কিছু {{reward}} নিয়ে গঠিত একটি স্টার্টার প্যাক পাবেন</translation>
 	</message>
 	<message>
 		<source>invite-privacy-policy1</source>
-		<translation>Ao aceitar você concorda com o programa de indicação</translation>
+		<translation>গ্রহণ করে আপনি রেফারেল প্রোগ্রামটিতে সম্মত হন</translation>
 	</message>
 	<message>
 		<source>invite-privacy-policy2</source>
-		<translation>Termos e Condições.</translation>
+		<translation>শর্তাবলী।</translation>
 	</message>
 	<message>
 		<source>invite-privacy-policy-public</source>
-		<translation>Você instalou o Status por meio de um link de indicação. Ao entrar nesta conversa, você confirma seu referenciador e concorda com os</translation>
+		<translation>আপনি একটি রেফারেল লিঙ্কের মাধ্যমে স্ট্যাটাস ইনস্টল করেছেন। এই চ্যাটে যোগদান করে আপনি আপনার রেফারারকে অ্যাট্রিবিউট করেন এবং এতে সম্মত হন</translation>
 	</message>
 	<message>
 		<source>invite-chat-name</source>
-		<translation>Indicação de amigo</translation>
+		<translation>বন্ধু রেফারেল</translation>
 	</message>
 	<message>
 		<source>invite-chat-starter-pack</source>
-		<translation>Pacote Inicial</translation>
+		<translation>স্টার্টার প্যাক</translation>
 	</message>
 	<message>
 		<source>invite-chat-intro</source>
-		<translation>Você foi indicado por um amigo para participar do Status. Aqui estão algumas criptomoedas para você começar! Use-as para cadastrar um nome ENS ou comprar um pacote de adesivos</translation>
+		<translation>Status যোগ দিতে একজন বন্ধু আপনাকে রেফার করেছে। এখানে আপনাকে শুরু করার জন্য কিছু ক্রিপ্টো আছে! একটি ENS নাম নিবন্ধন করতে বা একটি স্টিকার প্যাক কিনতে এটি ব্যবহার করুন।</translation>
 	</message>
 	<message>
 		<source>invite-public-chat-home</source>
-		<translation>Convite de indicação</translation>
+		<translation>রেফারেল আমন্ত্রণ</translation>
 	</message>
 	<message>
 		<source>invite-public-chat-intro</source>
-		<translation>Aqui estão algumas criptomoedas para você começar! Use-as para registrar um nome ENS ou comprar um pacote de adesivos</translation>
+		<translation>আপনাকে শুরু করার জন্য এখানে কিছু ক্রিপ্টো আছে! একটি ENS নাম নিবন্ধন করতে বা স্টিকার প্যাক কিনতে এটি ব্যবহার করুন</translation>
 	</message>
 	<message>
 		<source>invite-chat-accept</source>
-		<translation>Aceitar</translation>
+		<translation>গ্রহণ করুন</translation>
 	</message>
 	<message>
 		<source>invite-chat-pending</source>
-		<translation>Pendente</translation>
+		<translation>বিচারাধীন</translation>
 	</message>
 	<message>
 		<source>invite-chat-accept-join</source>
-		<translation>Aceitar e participar</translation>
+		<translation>গ্রহণ করুন এবং যোগদান করুন</translation>
 	</message>
 	<message>
 		<source>invite-chat-rule</source>
-		<translation>Aceitar também recompensará o seu amigo com um bônus de criptomoeda pela indicação</translation>
+		<translation>গ্রহণ করলে আপনার বন্ধুকে ক্রিপ্টো রেফারেল বোনাস প্রদান করা হবে।</translation>
 	</message>
 	<message>
 		<source>redeem-now</source>
-		<translation>Resgatar agora</translation>
+		<translation>এখনি তুলুন</translation>
 	</message>
 	<message>
 		<source>redeem-amount</source>
-		<translation>{{quantity}} bônus disponíveis</translation>
+		<translation>{{পরিমাণ}} বোনাস উপলব্ধ</translation>
 	</message>
 	<message>
 		<source>redeem-success</source>
-		<translation>Resgate de bônus com sucesso!</translation>
+		<translation>বোনাস সাফল্য উদ্ধার করুন!</translation>
 	</message>
 	<message>
 		<source>attribution-received</source>
-		<translation>{{attrib}} de {{max}} bônus recebidos</translation>
+		<translation>{{সর্বোচ্চ}} বোনাস প্রাপ্ত বোনাসগুলির মধ্যে {{আট্রিব}}</translation>
 	</message>
 	<message>
 		<source>advertiser-starter-pack-title</source>
-		<translation>Pacote Inicial</translation>
+		<translation>স্টার্টার প্যাক</translation>
 	</message>
 	<message>
 		<source>advertiser-starter-pack-description</source>
-		<translation>Aqui estão algumas criptografias para você começar! Use-as para obter adesivos, um nome ENS e experimentar os dapps</translation>
+		<translation>এখানে আপনাকে শুরু করার জন্য কিছু ক্রিপ্টো আছে! স্টিকার, একটি ENS নাম পেতে এটি ব্যবহার করুন এবং DApps চেষ্টা করুন।</translation>
 	</message>
 	<message>
 		<source>advertiser-title</source>
-		<translation>Privacidade por padrão</translation>
+		<translation>ডিফল্টভাবে গোপনীয়তা</translation>
 	</message>
 	<message>
 		<source>advertiser-description</source>
-		<translation>Você descobriu o Status graças a um parceiro. Você se importa se o Status verificar seu endereço IP uma vez para que ele seja recompensado? Esta informação não será usada para mais nada e será removida completamente após 7 dias.</translation>
+		<translation>আপনি স্ট্যাটাস আবিষ্কার করেছেন একজন সঙ্গীকে ধন্যবাদ।স্ট্যাটাস যদি আপনার আইপি ঠিকানা একবার পরীক্ষা করে তবে তারা পুরস্কৃত হয় তাতে আপনার কি আপত্তি আছে? এই তথ্য অন্য কোন কিছুর জন্য ব্যবহার করা হবে না এবং ৭ দিন পর এটি সম্পূর্ণরূপে মুছে ফেলা হবে।</translation>
 	</message>
 	<message>
 		<source>advertiser-starter-pack-accept</source>
-		<translation>Aceitar</translation>
+		<translation>গ্রহণ করুন</translation>
 	</message>
 	<message>
 		<source>advertiser-starter-pack-decline</source>
-		<translation>Recusar</translation>
+		<translation>প্রত্যাখ্যান করুন</translation>
 	</message>
 	<message>
 		<source>dapp-starter-pack-title</source>
-		<translation>Pacote Inicial</translation>
+		<translation>স্টার্টার প্যাক</translation>
 	</message>
 	<message>
 		<source>dapp-starter-pack-description</source>
-		<translation>Aqui estão algumas criptografias para você começar! Use-o para obter adesivos, um nome ENS e experimente os dapps</translation>
+		<translation>এখানে আপনাকে শুরু করার জন্য কিছু ক্রিপ্টো আছে! স্টিকার, একটি ENS নাম পেতে এটি ব্যবহার করুন এবং DApps চেষ্টা করুন।</translation>
 	</message>
 	<message>
 		<source>dapp-starter-pack-accept</source>
-		<translation>Aceitar e Abrir</translation>
+		<translation>গ্রহণ করুন এবং খুলুন</translation>
 	</message>
 	<message>
 		<source>starter-pack-coming</source>
-		<translation>Pacote de iniciante vindo até você</translation>
+		<translation>স্টার্টার প্যাক আপনার পথে আসছে</translation>
 	</message>
 	<message>
 		<source>starter-pack-coming-description</source>
-		<translation>Pode levar de alguns minutos a horas</translation>
+		<translation>কয়েক মিনিট থেকে কয়েক ঘন্টা সময় লাগতে পারে</translation>
 	</message>
 	<message>
 		<source>starter-pack-received</source>
-		<translation>Pacote inicial recebido</translation>
+		<translation>স্টার্টার প্যাক গৃহীত হয়েছে</translation>
 	</message>
 	<message>
 		<source>starter-pack-received-description</source>
-		<translation>Aqui estão algumas criptomoedas para você começar! Use-as para obter adesivos, um nome ENS e testar alguns dapps</translation>
+		<translation>এখানে আপনাকে শুরু করার জন্য কিছু ক্রিপ্টো আছে! স্টিকার, একটি ENS নাম পেতে এটি ব্যবহার করুন এবং DApps চেষ্টা করুন।</translation>
 	</message>
 	<message>
 		<source>join-group-chat</source>
-		<translation>Acessar grupo</translation>
+		<translation>গ্রুপে যোগ দিন</translation>
 	</message>
 	<message>
 		<source>join-group-chat-description</source>
-		<translation>{{username}} convidou você para ingressar no grupo {{group-name}}</translation>
+		<translation>{{username}} আপনাকে দলে যোগ দিতে আমন্ত্রণ জানিয়েছে {{group-name}}</translation>
 	</message>
 	<message>
 		<source>joined-group-chat-description</source>
-		<translation>Você ingressou no {{group-name}} por convite de {{username}}</translation>
+		<translation>আপনি {{group-name}} আমন্ত্রণ থেকে {{username}} যোগদান করেছেন</translation>
 	</message>
 	<message>
 		<source>key</source>
-		<translation>Chave</translation>
+		<translation>কী</translation>
 	</message>
 	<message>
 		<source>keycard</source>
-		<translation>Keycard</translation>
+		<translation>কী-কার্ড</translation>
 	</message>
 	<message>
 		<source>keycard-access-reset</source>
-		<translation>O acesso ao Keycard foi redefinido</translation>
+		<translation>কী-কার্ড অ্যাক্সেস রিসেট করা হয়েছে</translation>
 	</message>
 	<message>
 		<source>keycard-can-use-with-new-passcode</source>
-		<translation>Você pode usar este cartão com sua nova senha</translation>
+		<translation>আপনি আপনার নতুন পাসকোড দিয়ে এই কার্ডটি ব্যবহার করতে পারেন</translation>
 	</message>
 	<message>
 		<source>keycard-applet-install-instructions</source>
-		<translation>Para instalar o applet, siga as instruções em https://github.com/status-im/keycard-cli#keycard-applet-installation</translation>
+		<translation>অ্যাপলেট ইনস্টল করতে অনুগ্রহ করে https://github.com/status-im/keycard-cli#keycard-applet-installation উপর নির্দেশাবলী অনুসরণ করুন</translation>
 	</message>
 	<message>
 		<source>keycard-blocked</source>
-		<translation>O keycard foi bloqueado. 
-Você precisa redefinir o cartão para continuar usando.</translation>
+		<translation>কীকার্ড অবরুদ্ধ করা হয়েছে।
+ এটি ব্যবহার চালিয়ে যেতে আপনার পুনরায় সেট করতে হবে।</translation>
 	</message>
 	<message>
 		<source>keycard-cancel-setup-text</source>
-		<translation>Isso cancelará a configuração do Keycard. É altamente recomendável concluir a configuração para usar o keycard. Deseja mesmo cancelar?</translation>
+		<translation>এটি কী-কার্ড উপস্থাপনা বাতিল করবে। কী-কার্ড ব্যবহার করার জন্য উপস্থাপনা টি শেষ করা অত্যন্ত বাঞ্ছনীয়। আপনি কি সত্যিই বাতিল করতে চান?</translation>
 	</message>
 	<message>
 		<source>keycard-cancel-setup-title</source>
-		<translation>Operação perigosa</translation>
+		<translation>বিপজ্জনক অপারেশন</translation>
 	</message>
 	<message>
 		<source>keycard-desc</source>
-		<translation>Tem um Keycard? Armazene suas chaves nele. Você precisará delas para as transações</translation>
+		<translation>আপনি একটি কী কার্ডের মালিক? এতে আপনার চাবি সংরক্ষণ করুন; লেনদেনের জন্য আপনার এটি প্রয়োজন হবে</translation>
 	</message>
 	<message>
 		<source>keycard-dont-ask-card</source>
-		<translation>Não peça o cartão para entrar</translation>
+		<translation>সাইন ইন করার জন্য কার্ড চাইবেন না</translation>
 	</message>
 	<message>
 		<source>keycard-reset-passcode</source>
-		<translation>Redefinir senha</translation>
+		<translation>পাসকোড রিসেট করুন</translation>
 	</message>
 	<message>
 		<source>keycard-factory-reset</source>
-		<translation>Retornar cartão para as configurações de fábrica</translation>
+		<translation>কারখানার সেটিংসে কার্ড ফেরত দিন</translation>
 	</message>
 	<message>
 		<source>keycard-factory-reset-title</source>
-		<translation>Tem certeza de que deseja redefinir os padrões de fábrica?</translation>
+		<translation>আপনি কি নিশ্চিত যে আপনি একটি ফ্যাক্টরি রিসেট করতে চান?</translation>
 	</message>
 	<message>
 		<source>keycard-factory-reset-text</source>
-		<translation>Fazer isso excluirá qualquer frase mnemônica armazenada no cartão. Certifique-se de ter um backup da frase mnemônica que está usando com este Keycard.</translation>
+		<translation>এটি সম্পাদন করলে কার্ডে সংরক্ষিত যেকোন স্মৃতিচিহ্ন মুছে যাবে। এই কীকার্ডের সাহায্যে আপনি যে স্মরণীয় বাক্যাংশটি ব্যবহার করছেন তার একটি ব্যাকআপ নিশ্চিত করুন।</translation>
 	</message>
 	<message>
 		<source>keycard-enter-new-passcode</source>
-		<translation>Digite a nova senha {{step}} / 2</translation>
+		<translation>নতুন পাসকোড প্রবেশ করান {{step}}/2</translation>
 	</message>
 	<message>
 		<source>keycard-has-multiaccount-on-it</source>
-		<translation>Este cartão está cheio. Cada cartão pode conter um par de chaves principal</translation>
+		<translation>এই কার্ডটি পূর্ণ। প্রতিটি কার্ড একটি প্রধান কী-পেয়ার ধারণ করতে পারে</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-finishing-header</source>
-		<translation>Finalizando</translation>
+		<translation>সমাপ্ত হচ্ছে</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-intro-header</source>
-		<translation>Armazene suas chaves no Keycard</translation>
+		<translation>কীকার্ডে আপনার কী সঞ্চয় করুন</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-intro-text</source>
-		<translation>Prepare-se, isso pode levar alguns minutos, mas é importante proteger sua conta</translation>
+		<translation>প্রস্তুত হন, এটি কয়েক মিনিট সময় নিতে পারে, তবে আপনার অ্যাকাউন্ট সুরক্ষিত করা গুরুত্বপূর্ণ</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-pairing-header</source>
-		<translation>Emparelhando o cartão...</translation>
+		<translation>কার্ডটি যুক্ত করা হচ্ছে ...</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-preparing-header</source>
-		<translation>Preparando o cartão...</translation>
+		<translation>কার্ড প্রস্তুত করা হচ্ছে...</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-puk-code-header</source>
-		<translation>Anote os códigos e
- guarde de forma segura</translation>
+		<translation>কোড লিখুন
+ এবং এগুলি নিরাপদে সংরক্ষণ করুন</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-recovery-phrase-description</source>
-		<translation>Você precisa dessa frase-semente para recuperar sua chave. Anote e mantenha sua frase-semente offline em segurança, separada deste dispositivo.</translation>
+		<translation>আপনার চাবি ফেরত পেতে আপনার এই বীজ বাক্যাংশ প্রয়োজন. এটা লিখে রাখুন। এটি নিরাপদ, অফলাইন রাখুন, এবং এই ডিভাইস থেকে পৃথক করুন.</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-recovery-phrase-header</source>
-		<translation>Fazer backup da frase-semente</translation>
+		<translation>বীজ বাক্যাংশ ব্যাক আপ করুন</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-recovery-phrase-text</source>
-		<translation>Somente para você ver. Esta é a frase-semente mágica usada para gerar sua chave.</translation>
+		<translation>শুধু আপনার চোখের জন্য। এটি আপনার চাবি তৈরি করতে ব্যবহৃত যাদুকরী বীজ।</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-start-header</source>
-		<translation>Segure o cartão na parte de trás 
- do seu telefone para começar</translation>
+		<translation>পিছনে কার্ড ধরে
+ আপনার ফোন শুরু করতে</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-pin-text</source>
-		<translation>Você precisará criar uma senha de 6 dígitos que será usada para proteger o acesso ao seu Keycard.</translation>
+		<translation>আপনাকে একটি 6-সংখ্যার পাসকোড তৈরি করতে হবে যা আপনার কীকার্ডের অ্যাক্সেস সুরক্ষিত করতে ব্যবহৃত হবে।</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-mnemonic-text</source>
-		<translation>Você também precisará de um pedaço de papel e um lápis para escrever sua frase-semente.</translation>
+		<translation>আপনার বীজ বাক্যাংশটি লিখতে আপনার একটি কাগজ এবং একটি পেন্সিলেরও প্রয়োজন হবে।</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-start-step1</source>
-		<translation>Crie uma senha</translation>
+		<translation>একটি পাসকোড তৈরি করুন</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-start-step1-text</source>
-		<translation>Em torno de 1 minuto. Crie uma senha de 6 dígitos para criptografar suas chaves</translation>
+		<translation>প্রায় ১ মিনিট। আপনার কী এনক্রিপ্ট করতে একটি ৬-ডিজিটের পাসকোড তৈরি করুন</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-start-step2</source>
-		<translation>Anote o PUK e o código de emparelhamento</translation>
+		<translation>পিইউকে এবং পেয়ারিং কোড লিখুন</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-start-step2-text</source>
-		<translation>Em torno de 1 minuto. Você vai precisar de um pedaço de papel e um lápis para isso</translation>
+		<translation>প্রায় ১ মিনিট। তার জন্য আপনার প্রয়োজন এক টুকরো কাগজ এবং একটি পেন্সিল</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-start-step3</source>
-		<translation>Faça backup da frase-semente</translation>
+		<translation>বীজ বাক্যাংশ ব্যাক আপ করুন</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-start-step3-text</source>
-		<translation>Em torno de 1 minuto. Também são necessários um pedaço de papel e um lápis</translation>
+		<translation>প্রায় ১ মিনিট। এছাড়াও একটি কাগজ এবং একটি পেন্সিল প্রয়োজন</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-start-text</source>
-		<translation>E mantenha o cartão em contato com o telefone
- durante a configuração. A configuração levará cerca de 4 minutos</translation>
+		<translation>এবং ফোন যোগাযোগে কার্ড বজায় রাখুন
+ উপস্থাপনার সময়। সেটআপ প্রায় ৪ মিনিট সময় লাগবে</translation>
 	</message>
 	<message>
 		<source>keycard-recovery-intro-button-text</source>
-		<translation>Iniciar a recuperação</translation>
+		<translation>পুনরুদ্ধার শুরু করুন</translation>
 	</message>
 	<message>
 		<source>keycard-recovery-intro-header</source>
-		<translation>Recuperar chaves armazenadas no keycard</translation>
+		<translation>কীকার্ডে সংরক্ষিত কীগুলি পুনরুদ্ধার করুন</translation>
 	</message>
 	<message>
 		<source>keycard-recovery-intro-text</source>
-		<translation>Se você gerou chaves usando um keycard antes e agora quer usar estas chaves neste dispositivo</translation>
+		<translation>আপনি যদি আগে একটি কীকার্ড ব্যবহার করে কী তৈরি করেন এবং এখন এই ডিভাইসে এই কীগুলি ব্যবহার করতে চান</translation>
 	</message>
 	<message>
 		<source>keycard-recovery-no-key-header</source>
-		<translation>Não há nada para 
- recuperar aqui.</translation>
+		<translation>কিছুই নেই
+ এখানে পুনরুদ্ধার করার</translation>
 	</message>
 	<message>
 		<source>keycard-recovery-no-key-text</source>
-		<translation>Seu Keycard não tem nenhuma chave armazenada. Para usá-lo, gere uma nova chave e escolha seu Keycard para armazenar a chave</translation>
+		<translation>আপনার কীকার্ডে কোন কী মজুদ নেই। এটি ব্যবহার করতে, একটি নতুন কী তৈরি করুন এবং কী সঞ্চয় করতে আপনার কীকার্ড চয়ন করুন</translation>
 	</message>
 	<message>
 		<source>keycard-recovery-phrase-confirm-header</source>
-		<translation>Confirmar frase-semente</translation>
+		<translation>বীজ বাক্যাংশ নিশ্চিত করুন</translation>
 	</message>
 	<message>
 		<source>keycard-recovery-phrase-confirmation-text</source>
-		<translation>Você não terá uma segunda chance! Se você perder o acesso, por exemplo ao perder seu keycard, só poderá acessar suas chaves com sua frase-semente. Somente você tem sua frase-semente. Anote e mantenha sua frase-semente em segurança.</translation>
+		<translation>তুমি দ্বিতীয় বার সুযোগ পেতে পারবে না! আপনি যদি অ্যাক্সেস হারান, উদাহরণস্বরূপ আপনার কী-কার্ড হারিয়ে, আপনি শুধুমাত্র আপনার বীজ বাক্যাংশ দিয়ে আপনার কী অ্যাক্সেস করতে পারেন. কেউ না, কিন্তু তোমার বীজের বাক্যাংশ আছে। এটা লিখে দাও। এটা নিরাপদ রাখো।</translation>
 	</message>
 	<message>
 		<source>keycard-recovery-phrase-confirmation-title</source>
-		<translation>Anotou a frase-semente?</translation>
+		<translation>বীজ বাক্যটি নিচে লিখেছেন?</translation>
 	</message>
 	<message>
 		<source>keycard-recovery-success-header</source>
-		<translation>Suas chaves foram 
- recuperadas com sucesso</translation>
+		<translation>আপনার চাবি হয়েছে
+ সফলভাবে পুনরুদ্ধার</translation>
 	</message>
 	<message>
 		<source>keycard-redeem-title</source>
-		<translation>Resgatar para</translation>
+		<translation>ছাড়িয়ে দিন</translation>
 	</message>
 	<message>
 		<source>keycard-redeem-tx</source>
-		<translation>Resgatar bens</translation>
+		<translation>সম্পদ উদ্ধার করুন</translation>
 	</message>
 	<message>
 		<source>keycard-redeem-tx-desc</source>
-		<translation>Toque no cartão para assinar e receber bens</translation>
+		<translation>স্বাক্ষর করতে এবং সম্পদ গ্রহণ করতে কার্ডটি ট্যাপ করুন</translation>
 	</message>
 	<message>
 		<source>keycard-unauthorized-operation</source>
-		<translation>Você não está autorizado a realizar esta operação. 
- Por favor, utilize o cartão válido e tente novamente.</translation>
+		<translation>আপনি এই অপারেশন করতে অননুমোদিত।
+ বৈধ কার্ডটি আলতো চাপুন এবং আবার চেষ্টা করুন।</translation>
 	</message>
 	<message>
 		<source>keycard-is-frozen-title</source>
-		<translation>O Keycard travou</translation>
+		<translation>কী-কার্ড জমে গেছে</translation>
 	</message>
 	<message>
 		<source>keycard-is-frozen-details</source>
-		<translation>Para proteger os seus bens, o seu cartão travou. Redefina o acesso ao cartão para desbloquear e enviar transações. Você pode fazer isso com seu PUK ou seu mnemônico.</translation>
+		<translation>আপনার সম্পদ রক্ষা করতে, আপনার কার্ড হিমায়িত করা হয়েছে। কী আনলক করতে এবং লেনদেন প্রেরণ করতে কার্ড অ্যাক্সেস রিসেট করুন. একটি নতুন পাসকোড তৈরি করুন এবং এই কার্ডে আপনার অ্যাকাউন্ট(গুলি) অ্যাক্সেস করতে আপনার PUK প্রবেশ করান</translation>
 	</message>
 	<message>
 		<source>keycard-is-frozen-reset</source>
-		<translation>Reiniciar com o PUK</translation>
+		<translation>কার্ড অ্যাক্সেস পুনরায় সেট করুন</translation>
 	</message>
 	<message>
 		<source>keycard-is-frozen-factory-reset</source>
-		<translation>Redefinir com mnemônica</translation>
+		<translation>মেমোনিক দিয়ে রিসেট করুন</translation>
 	</message>
 	<message>
 		<source>your-card-is-frozen</source>
-		<translation>Seu Keycard travou. Redefinir acesso ao cartão</translation>
+		<translation>আপনার কী-কার্ড জমে গেছে। কার্ড অ্যাক্সেস রিসেট করুন</translation>
 	</message>
 	<message>
 		<source>keycard-is-blocked-title</source>
-		<translation>O Keycard está bloqueado</translation>
+		<translation>কী-কার্ড অবরুদ্ধ</translation>
 	</message>
 	<message>
 		<source>keycard-is-blocked-details</source>
-		<translation>Você não pode mais usar este cartão para acessar ou assinar esta conta. Houve muitas tentativas falhas de senha e PUK.</translation>
+		<translation>এই অ্যাকাউন্টের জন্য অ্যাক্সেস বা সাইন করতে আপনি আর এই কার্ডটি ব্যবহার করতে পারবেন না। অনেক ব্যর্থ পাসকোড এবং পিইউকে প্রচেষ্টা হয়েছে।</translation>
 	</message>
 	<message>
 		<source>keycard-is-blocked-instructions</source>
-		<translation>Para acessar sua conta, você precisará redefinir seu cartão para os padrões de fábrica. Toque no botão abaixo para iniciar o procedimento. Você precisará da sua frase-semente.</translation>
+		<translation>আপনার অ্যাকাউন্টটি পুনরায় ইনস্টল করার পর স্ট্যটাস অ্যাক্সেস করতে এবং একটি নতুন কীকার্ড ব্যবহার করতে, আলাদা ওয়ালেট ব্যবহার করুন বা ম্যানুয়ালি কীকার্ড পুনরায় সেট করুন।</translation>
 	</message>
 	<message>
 		<source>language</source>
-		<translation>Idioma</translation>
+		<translation>ভাষা</translation>
 	</message>
 	<message>
 		<source>learn-more</source>
-		<translation>Saiba mais</translation>
+		<translation>আরও জানুন</translation>
 	</message>
 	<message>
 		<source>learn-more-about-keycard</source>
-		<translation>Saiba mais sobre o Keycard </translation>
+		<translation>কীকার্ড সম্পর্কে আরও জানুন</translation>
 	</message>
 	<message>
 		<source>leave</source>
-		<translation>Sair</translation>
+		<translation>ছেড়ে দিন</translation>
 	</message>
 	<message>
 		<source>joined</source>
-		<translation>Entrou</translation>
+		<translation>যোগদান করা হয়েছে</translation>
 	</message>
 	<message>
 		<source>leave-group</source>
-		<translation>Sair do grupo</translation>
+		<translation>দল পরিত্যাগ করুন</translation>
 	</message>
 	<message>
 		<source>left</source>
-		<translation>saiu</translation>
+		<translation>বাঁদিকে</translation>
 	</message>
 	<message>
 		<source>lets-go</source>
-		<translation>Vamos lá</translation>
+		<translation>চলো যাই</translation>
 	</message>
 	<message>
 		<source>les-ulc</source>
@@ -3122,1508 +3121,1490 @@ Você precisa redefinir o cartão para continuar usando.</translation>
 	</message>
 	<message>
 		<source>linked-on</source>
-		<translation>Vinculado em {{date}}</translation>
+		<translation>{{date}} এ সংযুক্ত</translation>
 	</message>
 	<message>
 		<source>load-messages-before</source>
-		<translation>antes de {{date}}</translation>
+		<translation>{{date}} এর আগে</translation>
 	</message>
 	<message>
 		<source>load-more-messages</source>
-		<translation>↓ Buscar mais mensagens</translation>
+		<translation>আরও বার্তা আনুন</translation>
 	</message>
 	<message>
 		<source>load-more-timeline</source>
-		<translation>↓ Buscar mais</translation>
+		<translation>আরও আনুন</translation>
 	</message>
 	<message>
 		<source>loading</source>
-		<translation>Carregando...</translation>
+		<translation>লোড হচ্ছে ...</translation>
 	</message>
 	<message>
 		<source>log-level</source>
-		<translation>Nível de registro</translation>
+		<translation>লগ স্তর</translation>
 	</message>
 	<message>
 		<source>log-level-settings</source>
-		<translation>Configurações de nível de registro</translation>
+		<translation>লগ স্তরের সেটিংস</translation>
 	</message>
 	<message>
 		<source>logging</source>
-		<translation>Registro</translation>
+		<translation>লগিং</translation>
 	</message>
 	<message>
 		<source>logging-enabled</source>
-		<translation>Registro ativado?</translation>
+		<translation>লগিং সক্রিয় করা হয়েছে?</translation>
 	</message>
 	<message>
 		<source>login-pin-description</source>
-		<translation>Digite seu código de acesso de 6 dígitos para desbloquear suas chaves</translation>
+		<translation>আপনার কী আনলক করতে আপনার 6-ডিজিটের পাসকোড প্রবেশ করান</translation>
 	</message>
 	<message>
 		<source>logout</source>
-		<translation>Sair</translation>
+		<translation>লগ আউট করুন</translation>
 	</message>
 	<message>
 		<source>logout-app-content</source>
-		<translation>A conta será desconectada. Quando você a desbloquear novamente, a rede selecionada será usada</translation>
+		<translation>একাউন্টটি লগ আউট করা হবে। যখন আপনি এটি আবার আনলক করবেন, নির্বাচিত নেটওয়ার্ক ব্যবহার করা হবে</translation>
 	</message>
 	<message>
 		<source>logout-are-you-sure</source>
-		<translation>Você tem certeza que quer 
- sair?</translation>
+		<translation>আপনি কি নিশ্চিত আপনি চান
+লগ আউট করতে?</translation>
 	</message>
 	<message>
 		<source>logout-title</source>
-		<translation>Sair?</translation>
+		<translation>লগ আউট?</translation>
 	</message>
 	<message>
 		<source>logout-key-management</source>
-		<translation>Você precisa se desconectar para acessar o gerenciamento de chaves.</translation>
+		<translation>কী ম্যানেজমেন্ট অ্যাক্সেস করতে আপনাকে লগ আউট করতে হবে</translation>
 	</message>
 	<message>
 		<source>looking-for-cards</source>
-		<translation>Procurando cartões…</translation>
+		<translation>কার্ড খুঁজছেন ...</translation>
 	</message>
 	<message>
 		<source>lost-connection</source>
-		<translation>Conexão perdida</translation>
+		<translation>সংযোগ হারিয়ে গেছে</translation>
 	</message>
 	<message>
 		<source>mailserver-address</source>
-		<translation>Endereço do nó do Status</translation>
+		<translation>স্ট্যাটাস নোডের ঠিকানা</translation>
 	</message>
 	<message>
 		<source>mailserver-automatic</source>
-		<translation>Seleção automática</translation>
+		<translation>স্বয়ংক্রিয় নির্বাচন</translation>
 	</message>
 	<message>
 		<source>mailserver-automatic-switch-explanation</source>
-		<translation>Escolha o nó da Status mais rápido disponível</translation>
+		<translation>উপলভ্য দ্রুততম ইতিহাস নোড চয়ন করুন</translation>
 	</message>
 	<message>
 		<source>mailserver-connection-error</source>
-		<translation>Não foi possível conectar ao nó do Status</translation>
+		<translation>ইতিহাস নোডের সাথে সংযোগ করা যায়নি</translation>
 	</message>
 	<message>
 		<source>mailserver-details</source>
-		<translation>Detalhes do nó do Status</translation>
+		<translation>ইতিহাস নোডের বিস্তারিত</translation>
 	</message>
 	<message>
 		<source>mailserver-error-content</source>
-		<translation>O nó do Status selecionado não pôde ser localizado.</translation>
+		<translation>আপনার নির্বাচিত ইতিহাস নোডে পৌঁছানো যায়নি।</translation>
 	</message>
 	<message>
 		<source>mailserver-error-title</source>
-		<translation>Erro ao conectar o nó do Status</translation>
+		<translation>ইতিহাস নোডের সাথে সংযুক্ত হতে ত্রুটি</translation>
 	</message>
 	<message>
 		<source>mailserver-format</source>
-		<translation>enode://{enode-id}:{password}@{ip-address}:{port}</translation>
+		<translation>এনোড: // {enode-id} : {password} @ {ip-address} : {port}</translation>
 	</message>
 	<message>
 		<source>mailserver-pick-another</source>
-		<translation>Escolha outro nó do Status</translation>
+		<translation>আরেকটি ইতিহাস নোড বেছে নিন</translation>
 	</message>
 	<message>
 		<source>mailserver-reconnect</source>
-		<translation>Não foi possível conectar ao nó do Status. Toque para reconectar</translation>
+		<translation>ইতিহাস নোডের সাথে সংযোগ করা যায়নি। পুনরায় সংযোগ করতে ট্যাপ করুন</translation>
 	</message>
 	<message>
 		<source>mailserver-request-error-content</source>
-		<translation>O seguinte erro foi retornado pelo nó do Status: {{error}}</translation>
+		<translation>নিম্নলিখিত ত্রুটিটি ইতিহাস নোড দ্বারা ফেরত দেওয়া হয়েছে: {{error}}</translation>
 	</message>
 	<message>
 		<source>mailserver-request-error-status</source>
-		<translation>Um erro ocorreu ao buscar o histórico, verifique os registros para obter detalhes</translation>
+		<translation>ইতিহাস আনার সময় একটি ত্রুটি সংঘটিত হয়েছে, বিস্তারিত জানার জন্য লগপরীক্ষা করুন</translation>
 	</message>
 	<message>
 		<source>mailserver-request-error-title</source>
-		<translation>Erro de comunicação com o nó da Status</translation>
+		<translation>ইতিহাস নোড অনুরোধ ত্রুটি</translation>
 	</message>
 	<message>
 		<source>mailserver-request-retry</source>
-		<translation>Solicitar nova tentativa</translation>
+		<translation>অনুরোধ পুনরায় চেষ্টা করুন</translation>
 	</message>
 	<message>
 		<source>mailserver-retry</source>
-		<translation>Tente novamente</translation>
+		<translation>পুনরায় চেষ্টা করা</translation>
 	</message>
 	<message>
 		<source>main-currency</source>
-		<translation>Moeda principal</translation>
+		<translation>প্রধান মুদ্রা</translation>
 	</message>
 	<message>
 		<source>main-networks</source>
-		<translation>Redes principais</translation>
+		<translation>প্রধান নেটওয়ার্কসমূহ</translation>
 	</message>
 	<message>
 		<source>main-wallet</source>
-		<translation>Carteira principal</translation>
+		<translation>প্রধান মানিব্যাগ</translation>
 	</message>
 	<message>
 		<source>mainnet-network</source>
-		<translation>Rede principal</translation>
+		<translation>প্রধান নেটওয়ার্ক</translation>
 	</message>
 	<message>
 		<source>make-admin</source>
-		<translation>Tornar-se administrador</translation>
+		<translation>প্রশাসক তৈরি করুন</translation>
 	</message>
 	<message>
 		<source>manage-keys-and-storage</source>
-		<translation>Gerenciar chaves e armazenamento</translation>
+		<translation>কী এবং স্টোরেজ পরিচালনা করুন</translation>
 	</message>
 	<message>
 		<source>mark-all-read</source>
-		<translation>Marcar todas como lidas</translation>
+		<translation>সমস্ত পড়া চিহ্নিত করুন</translation>
 	</message>
 	<message numerus="yes">
 		<source>members</source>
 		<translation>
-			<numerusform>1 membro</numerusform>
-			<numerusform>{{count}} membros</numerusform>
+			<numerusform>1 সদস্য</numerusform>
+			<numerusform> {{count}} সদস্য</numerusform>
 		</translation>
 	</message>
 	<message numerus="yes">
 		<source>members-active</source>
 		<translation>
-			<numerusform>1 membro</numerusform>
-			<numerusform>{{count}} membros</numerusform>
+			<numerusform>সদস্য</numerusform>
+			<numerusform>{{count}} সদস্য</numerusform>
 		</translation>
 	</message>
 	<message>
 		<source>members-active-none</source>
-		<translation>sem membros</translation>
+		<translation>কোন সদস্য নেই</translation>
 	</message>
 	<message>
 		<source>members-title</source>
-		<translation>Membros</translation>
+		<translation>সদস্যরা</translation>
 	</message>
 	<message>
 		<source>message</source>
-		<translation>Mensagem</translation>
+		<translation>বার্তা</translation>
 	</message>
 	<message>
 		<source>message-not-sent</source>
-		<translation>Mensagem não enviada</translation>
+		<translation>বার্তা প্রেরণ করা হয়নি</translation>
 	</message>
 	<message>
 		<source>message-options-cancel</source>
-		<translation>Cancelar</translation>
+		<translation>বাতিল</translation>
 	</message>
 	<message>
 		<source>message-reply</source>
-		<translation>Responder</translation>
+		<translation>উত্তর</translation>
 	</message>
 	<message>
 		<source>replying-to</source>
-		<translation>Respondendo a {{author}}</translation>
+		<translation>{{author}} কে উত্তর দেওয়া হচ্ছে</translation>
 	</message>
 	<message>
 		<source>data-syncing</source>
-		<translation>Sincronização de dados</translation>
+		<translation>ডাটা সিংক্রোনাইজিং</translation>
 	</message>
 	<message>
 		<source>messages</source>
-		<translation>Mensagens</translation>
+		<translation>বার্তাগুলি</translation>
 	</message>
 	<message>
 		<source>chat-is-a-contact</source>
-		<translation>Contato</translation>
+		<translation>যোগাযোগ</translation>
 	</message>
 	<message>
 		<source>chat-is-not-a-contact</source>
-		<translation>Não é um contato</translation>
+		<translation>যোগাযোগ নয়</translation>
 	</message>
 	<message>
 		<source>might-break</source>
-		<translation>Pode quebrar alguns ÐApps</translation>
+		<translation>কিছু অ্যাপ ভাঙ্গতে পারে</translation>
 	</message>
 	<message>
 		<source>migrations-failed-content</source>
-		<translation>{{message}} 
- versão do esquema: inicial {{initial-version}} , atual {{current-version}} , última {{last-version}} 
+		<translation>{{message}}
+ স্কিমা সংস্করণ: প্রাথমিক {{initial-version}} , বর্তমান {{current-version}} , শেষ {{last-version}} 
 
-Ocorreu um erro no banco de dados. Seus fundos e chave de bate-papo estão seguros. Outros dados, como bate-papos e contatos, não podem ser restaurados. O botão &quot;{{erase-multiaccounts-data-button-text}}&quot; irá remover todos os outros dados e permitir que você acesse seus fundos e envie mensagens.</translation>
+ একটি ডাটাবেস ত্রুটি ঘটেছে। আপনার তহবিল এবং চ্যাট কী নিরাপদ। অন্যান্য ডেটা, যেমন আপনার চ্যাট এবং পরিচিতিগুলি পুনরুদ্ধার করা যায় না। &quot; {{erase-multiaccounts-data-button-text}} &quot; বোতামটি, অন্যান্য সমস্ত ডেটা সরিয়ে ফেলবে এবং আপনাকে আপনার তহবিলগুলিতে অ্যাক্সেস করতে এবং বার্তাগুলি প্রেরণের অনুমতি দেয়।</translation>
 	</message>
 	<message>
 		<source>mobile-network-ask-me</source>
-		<translation>Pergunte-me quando estiver na rede móvel</translation>
+		<translation>মোবাইল নেটওয়ার্কে আমাকে জিজ্ঞেস করুন</translation>
 	</message>
 	<message>
 		<source>mobile-network-continue-syncing</source>
-		<translation>Continuar a sincronizar</translation>
+		<translation>এককালবর্তীকরণ অব্যাহত রাখুন</translation>
 	</message>
 	<message>
 		<source>mobile-network-continue-syncing-details</source>
-		<translation>Você pode alterar isso mais tarde nas configurações</translation>
+		<translation>আপনি এটি পরে সেটিংসে পরিবর্তন করতে পারেন</translation>
 	</message>
 	<message>
 		<source>mobile-network-go-to-settings</source>
-		<translation>Ir para configurações</translation>
+		<translation>সেটিংসে যান</translation>
 	</message>
 	<message>
 		<source>mobile-network-settings</source>
-		<translation>Dados móveis</translation>
+		<translation>মোবাইল ডাটা</translation>
 	</message>
 	<message>
 		<source>mobile-network-sheet-configure</source>
-		<translation>Você pode configurar a sincronização com mais 
-detalhes em</translation>
+		<translation>আপনি আরো সিংক্রোনাইজিং কনফিগার করতে পারেন 
+বিস্তারিত</translation>
 	</message>
 	<message>
 		<source>mobile-network-sheet-offline</source>
-		<translation>Sem Wi-Fi, sincronização de mensagens desativada.</translation>
+		<translation>কোনও ওয়াই-ফাই নেই, বার্তা সিঙ্ক করা অক্ষম হয়েছে।</translation>
 	</message>
 	<message>
 		<source>mobile-network-sheet-offline-details</source>
-		<translation>A sincronização usando a rede móvel está desativada</translation>
+		<translation>মোবাইল নেটওয়ার্ক ব্যবহার করে এককালবর্তীকরণ বন্ধ</translation>
 	</message>
 	<message>
 		<source>mobile-network-sheet-remember-choice</source>
-		<translation>Lembrar a minha escolha</translation>
+		<translation>আমার পছন্দ মনে রেখো</translation>
 	</message>
 	<message>
 		<source>mobile-network-sheet-settings</source>
-		<translation>configurações</translation>
+		<translation>সেটিংস</translation>
 	</message>
 	<message>
 		<source>mobile-network-start-syncing</source>
-		<translation>Iniciar sincronização</translation>
+		<translation>এককালবর্তীকরণ শুরু করুন</translation>
 	</message>
 	<message>
 		<source>mobile-network-stop-syncing</source>
-		<translation>Parar de sincronizar</translation>
+		<translation>এককালবর্তীকরণ বন্ধ করুন</translation>
 	</message>
 	<message>
 		<source>mobile-network-stop-syncing-details</source>
-		<translation>Está conectado ao Wi-Fi?</translation>
+		<translation>ওয়াই-ফাই-এর সাথে সংযুক্ত না হওয়া পর্যন্ত?</translation>
 	</message>
 	<message>
 		<source>mobile-network-use-mobile</source>
-		<translation>Utilizar dados móveis</translation>
+		<translation>মোবাইল ডাটা ব্যবহার করুন</translation>
 	</message>
 	<message>
 		<source>mobile-network-use-mobile-data</source>
-		<translation>O Status usa muitos dados ao sincronizar bate-papos e carteira.</translation>
+		<translation>চ্যাট এবং ওয়ালেট সিঙ্ক করার সময় স্ট্যাটাস প্রচুর ডেটা ব্যবহার করে।</translation>
 	</message>
 	<message>
 		<source>mobile-network-use-wifi</source>
-		<translation>Somente Wi-Fi</translation>
+		<translation>শুধুমাত্র ওয়াই-ফাই</translation>
 	</message>
 	<message>
 		<source>mobile-syncing-sheet-details</source>
-		<translation>O Status usa muitos dados ao sincronizar bate-papos e carteira.</translation>
+		<translation>চ্যাট এবং ওয়ালেট সিঙ্ক করার সময় Status প্রচুর ডেটা ব্যবহার করে।</translation>
 	</message>
 	<message>
 		<source>mobile-syncing-sheet-title</source>
-		<translation>Sincronizar usando dados móveis?</translation>
+		<translation>মোবাইল ডেটা ব্যবহার করে সিঙ্ক করবেন?</translation>
 	</message>
 	<message>
 		<source>more</source>
-		<translation>mais</translation>
+		<translation>আরও</translation>
 	</message>
 	<message>
 		<source>multiaccount-exists-title</source>
-		<translation>Já existem chaves para esta conta</translation>
+		<translation>এই অ্যাকাউন্টের কীগুলি ইতিমধ্যে বিদ্যমান</translation>
 	</message>
 	<message>
 		<source>multiaccount-exists-content</source>
-		<translation>Já existem chaves para esta conta e não podem ser adicionadas novamente. Se você perdeu sua senha, código de acesso ou Keycard, desinstale o aplicativo, reinstale e acesse suas chaves inserindo sua frase-semente</translation>
+		<translation>এই একাউন্টের জন্য কী ইতোমধ্যে বিদ্যমান এবং পুনরায় যুক্ত করা যাবে না। আপনি যদি আপনার পাসওয়ার্ড, পাসকোড বা কীকার্ড হারিয়ে ফেলেন, অ্যাপটি আনইনস্টল করুন, আপনার বীজ বাক্যাংশ প্রবেশ করিয়ে আপনার কী পুনরায় ইনস্টল করুন এবং অ্যাক্সেস করুন</translation>
 	</message>
 	<message>
 		<source>multiaccounts-recover-enter-phrase-text</source>
-		<translation>Digite 12, 15, 18, 21 ou 24 palavras. 
-Separe as palavras por um único espaço.</translation>
+		<translation>১২,১৫,১৮,২১ বা ২৪ শব্দ প্রবেশ করান।
+একটি একক স্থান দ্বারা শব্দ পৃথক করুন।</translation>
 	</message>
 	<message>
 		<source>multiaccounts-recover-enter-phrase-title</source>
-		<translation>Digite sua frase-semente</translation>
+		<translation>আপনার বীজ বাক্যাংশ লিখুন</translation>
 	</message>
 	<message>
 		<source>name</source>
-		<translation>Nome</translation>
+		<translation>নাম</translation>
 	</message>
 	<message>
 		<source>name-of-token</source>
-		<translation>O nome do seu token</translation>
+		<translation>আপনার টোকেনের নাম</translation>
 	</message>
 	<message>
 		<source>need-help</source>
-		<translation>Precisa de ajuda?</translation>
+		<translation>সাহায্য লাগবে?</translation>
 	</message>
 	<message>
 		<source>glossary</source>
-		<translation>Glossário</translation>
+		<translation>শব্দকোষ</translation>
 	</message>
 	<message>
 		<source>account-title</source>
-		<translation>Conta</translation>
+		<translation>একাউন্ট</translation>
 	</message>
 	<message>
 		<source>account-content</source>
-		<translation>Você pode comparar contas no Status com contas bancárias. Como uma conta bancária, uma conta normalmente possui um endereço e um saldo. Você usa essa conta para realizar transações no Ethereum. Você pode ter várias contas na sua carteira. Todas acessadas desbloqueando o Status.</translation>
+		<translation>আপনি Status একাউন্টকে ব্যাংক একাউন্টের সাথে তুলনা করতে পারেন। ব্যাংক একাউন্টের মত, একটি অ্যাকাউন্টে সাধারণত একটি ঠিকানা এবং ব্যালেন্স থাকে আপনি এই একাউন্ট ব্যবহার করে Ethereum লেনদেন করেন। আপনার মানিব্যাগে একাধিক অ্যাকাউন্ট থাকতে পারে। Status আনলক করে সব অ্যাক্সেস করা হয়েছে।</translation>
 	</message>
 	<message>
 		<source>chat-key-title</source>
-		<translation>Chave de bate-papo</translation>
+		<translation>চ্যাট কী</translation>
 	</message>
 	<message>
 		<source>chat-key-content</source>
-		<translation>As mensagens no protocolo de bate-papo Status são enviadas e recebidas usando chaves de criptografia. A chave de bate-papo público é uma sequência de caracteres que você compartilha com outras pessoas para que elas possam enviar mensagens para você no Status.</translation>
+		<translation>Status চ্যাট প্রোটোকলের বার্তাগুলি এনক্রিপশন কী ব্যবহার করে প্রেরণ এবং প্রাপ্ত করা হয়। সর্বজনীন চ্যাট কী এমন অক্ষরের একটি স্ট্রিং যা আপনি অন্যদের সাথে ভাগ করেন যাতে তারা আপনাকে Status বার্তা প্রেরণ করতে পারে।</translation>
 	</message>
 	<message>
 		<source>chat-name-title</source>
-		<translation>Nome no chat</translation>
+		<translation>চ্যাট নাম</translation>
 	</message>
 	<message>
 		<source>chat-name-content</source>
-		<translation>Três palavras aleatórias, derivadas algoritmicamente da sua chave de bate-papo e usadas como pseudônimo padrão no bate-papo. Os nomes de bate-papo são completamente únicos; nenhum outro usuário pode ter as mesmas três palavras.</translation>
+		<translation>তিনটি এলোমেলো শব্দ, আপনার চ্যাট কী থেকে অ্যালগরিদমে প্রাপ্ত এবং চ্যাটে আপনার ডিফল্ট ছদ্মনাম হিসেবে ব্যবহৃত হয়। চ্যাটের নাম সম্পূর্ণ অনন্য; অন্য কোন ব্যবহারকারীর একই তিনটি শব্দ থাকতে পারে না।</translation>
 	</message>
 	<message>
 		<source>ens-name-title</source>
-		<translation>Nome ENS</translation>
+		<translation>ENS নাম</translation>
 	</message>
 	<message>
 		<source>ens-name-content</source>
-		<translation>Pseudônimo personalizado para sua chave de bate-papo que você pode cadastrar usando o Ethereum Name Service. Os nomes do ENS são nomes de usuário descentralizados.</translation>
+		<translation>আপনার চ্যাট কী-এর জন্য কাস্টম ছদ্মনাম যা আপনি Ethereum নাম সেবা ব্যবহার করে নিবন্ধন করতে পারেন। ENS নামবিকেন্দ্রীভূত ব্যবহারকারীর নাম।</translation>
 	</message>
 	<message>
 		<source>mailserver-title</source>
-		<translation>Nó de mensagem Status</translation>
+		<translation>ইতিহাস নোড</translation>
 	</message>
 	<message>
 		<source>mailserver-content</source>
-		<translation>Um nó na rede Status que encaminha e armazena mensagens por até 30 dias.</translation>
+		<translation>Status নেটওয়ার্কের একটি নোড যা ৩০ দিন পর্যন্ত বার্তারুট এবং সঞ্চয় করে।</translation>
 	</message>
 	<message>
 		<source>peer-title</source>
-		<translation>Par</translation>
+		<translation>সমকক্ষ</translation>
 	</message>
 	<message>
 		<source>peer-content</source>
-		<translation>Um dispositivo conectado à rede de bate-papo Status. Cada usuário pode representar um ou mais pares, dependendo do número de dispositivos.</translation>
+		<translation>Status চ্যাট নেটওয়ার্কের সাথে সংযুক্ত একটি ডিভাইস। প্রত্যেক ব্যবহারকারী তাদের ডিভাইসের সংখ্যার উপর নির্ভর করে এক বা একাধিক সমবয়সীদের প্রতিনিধিত্ব করতে পারে।</translation>
 	</message>
 	<message>
 		<source>seed-phrase-title</source>
-		<translation>Frase-semente</translation>
+		<translation>বীজ বাক্যাংশ</translation>
 	</message>
 	<message>
 		<source>seed-phrase-content</source>
-		<translation>Um conjunto de palavras fáceis de ler, selecionadas aleatoriamente na lista padrão BIP39 e usadas para recuperar ou acessar sua conta Ethereum em outras carteiras e dispositivos. Também chamada de &quot;frase mnemônica&quot;, &quot;frase de recuperação&quot; ou &quot;backup de carteira&quot; em todo o ecossistema de criptomoeda. A maioria dos aplicativos de criptomoeda usa esse mesmo padrão para gerar contas.</translation>
+		<translation>তালিকা থেকে এলোমেলোভাবে নির্বাচিত এবং অন্যান্য মানিব্যাগ এবং ডিভাইসে আপনার Ethereum অ্যাকাউন্ট পুনরুদ্ধার বা অ্যাক্সেস করতে ব্যবহৃত. এছাড়াও ক্রিপ্টো বাস্তুতন্ত্র জুড়ে একটি &quot;স্মৃতিচারণমূলক বাক্যাংশ&quot;, &quot;পুনরুদ্ধার বাক্যাংশ&quot; বা &quot;ওয়ালেট ব্যাকআপ&quot; হিসেবে উল্লেখ করা হয়। অধিকাংশ ক্রিপ্টো অ্যাপ অ্যাকাউন্ট তৈরি করতে এই একই মান ব্যবহার করে।</translation>
 	</message>
 	<message>
 		<source>wallet-key-title</source>
-		<translation>Endereço da conta</translation>
+		<translation>অ্যাকাউন্টের ঠিকানা</translation>
 	</message>
 	<message>
 		<source>wallet-key-content</source>
-		<translation>Um endereço hexadecimal de 64 caracteres baseado no padrão Ethereum e começando com 0x. Para o público, o endereço da sua conta é compartilhado com outras pessoas quando você deseja receber fundos. Também chamado de &quot;endereço Ethereum&quot; ou &quot;endereço da carteira&quot;.</translation>
+		<translation>Ethereum স্ট্যান্ডার্ডের ভিত্তিতে এবং 0x দিয়ে শুরু করে একটি 64 টি অক্ষরের হেক্স ঠিকানা। জনসমক্ষে, যখন আপনি তহবিল পেতে চান তখন আপনার অ্যাকাউন্টের ঠিকানা অন্যের সাথে ভাগ করা হয়। একটি &quot;Ethereum ঠিকানা&quot; বা &quot;মানিব্যাগের ঠিকানা&quot; হিসাবেও উল্লেখ করা হয়।</translation>
 	</message>
 	<message>
 		<source>buy-crypto-title</source>
-		<translation>Parece que sua carteira está vazia</translation>
+		<translation>মনে হচ্ছে আপনার  খালি</translation>
 	</message>
 	<message>
 		<source>buy-crypto-description</source>
-		<translation>Encontre um dapp para comprar criptomoedas agora</translation>
+		<translation>ক্রিপ্টো কিনতে এখনই একটি ড্যাপ খুঁজুন</translation>
 	</message>
 	<message>
 		<source>buy-crypto</source>
-		<translation>Comprar criptomoedas</translation>
+		<translation>ক্রিপ্টো কিনুন</translation>
 	</message>
 	<message>
 		<source>buy-crypto-choose-a-service</source>
-		<translation>Escolha um serviço que você gostaria de utilizar para comprar criptomoedas</translation>
+		<translation>ক্রিপ্টো কেনার জন্য আপনি যে পরিষেবাটি ব্যবহার করতে চান তা চয়ন করুন</translation>
 	</message>
 	<message>
 		<source>buy-crypto-leaving</source>
-		<translation>Você está saindo do Status e entrando em um site de terceiros para concluir sua compra</translation>
+		<translation>আপনি স্ট্যাটাস ছেড়ে চলে যাচ্ছেন এবং আপনার ক্রয় সম্পন্ন করতে একটি তৃতীয় পক্ষের ওয়েবসাইটে প্রবেশ করছেন</translation>
 	</message>
 	<message>
 		<source>opening-buy-crypto</source>
-		<translation>Abrindo {{site}}...</translation>
+		<translation>{{site}} খোলা হচ্ছে ...</translation>
 	</message>
 	<message>
 		<source>network</source>
-		<translation>Rede</translation>
+		<translation>নেটওয়ার্ক</translation>
 	</message>
 	<message>
 		<source>network-chain</source>
-		<translation>Cadeia de rede</translation>
+		<translation>নেটওয়ার্ক চেইন</translation>
 	</message>
 	<message>
 		<source>network-details</source>
-		<translation>Detalhes da rede</translation>
+		<translation>নেটওয়ার্কের বিস্তারিত</translation>
 	</message>
 	<message>
 		<source>network-info</source>
-		<translation>Informações da rede</translation>
+		<translation>নেটওয়ার্ক তথ্য</translation>
 	</message>
 	<message>
 		<source>network-fee</source>
-		<translation>Taxa de rede</translation>
+		<translation>নেটওয়ার্ক ফি</translation>
 	</message>
 	<message>
 		<source>network-id</source>
-		<translation>ID de rede</translation>
+		<translation>নেটওয়ার্ক আইডি</translation>
 	</message>
 	<message>
 		<source>network-invalid-network-id</source>
-		<translation>O ID da rede especificado não corresponde ao ID da rede pelo URL RPC</translation>
+		<translation>নির্দিষ্ট নেটওয়ার্ক আইডি RPC url দ্বারা নেটওয়ার্ক আইডির সাথে সামঞ্জস্যপূর্ণ নয়</translation>
 	</message>
 	<message>
 		<source>network-invalid-status-code</source>
-		<translation>Código de status inválido: {{code}}</translation>
+		<translation>অকার্যকর স্তিতি কোড: {{code}}</translation>
 	</message>
 	<message>
 		<source>network-invalid-url</source>
-		<translation>URL da rede é inválida</translation>
+		<translation>নেটওয়ার্ক ইউআরএল অবৈধ</translation>
 	</message>
 	<message>
 		<source>network-settings</source>
-		<translation>Configurações de rede</translation>
+		<translation>নেটওয়ার্ক সেটিংস</translation>
 	</message>
 	<message>
 		<source>new</source>
-		<translation>Novo</translation>
+		<translation>নতুন</translation>
 	</message>
 	<message>
 		<source>new-chat</source>
-		<translation>Nova conversa</translation>
+		<translation>নতুন চ্যাট</translation>
 	</message>
 	<message>
 		<source>new-contact</source>
-		<translation>Novo contato</translation>
+		<translation>নতুন পরিচিতি</translation>
 	</message>
 	<message>
 		<source>new-contract</source>
-		<translation>Novo Contrato</translation>
+		<translation>নতুন চুক্তি</translation>
 	</message>
 	<message>
 		<source>new-group</source>
-		<translation>Novo grupo</translation>
+		<translation>নতুন দল</translation>
 	</message>
 	<message>
 		<source>new-group-chat</source>
-		<translation>Novo grupo de bate-papo</translation>
+		<translation>নতুন গ্রুপ চ্যাট</translation>
 	</message>
 	<message>
 		<source>new-network</source>
-		<translation>Nova rede</translation>
+		<translation>নতুন নেটওয়ার্ক</translation>
 	</message>
 	<message>
 		<source>new-pin-description</source>
-		<translation>Digite o novo código de acesso de 6 dígitos</translation>
+		<translation>নতুন 6-ডিজিটের পাসকোড প্রবেশ করান</translation>
 	</message>
 	<message>
 		<source>new-puk-description</source>
-		<translation>Insira o novo PUK de 12 dígitos</translation>
+		<translation>নতুন 12-সংখ্যার PUK লিখুন</translation>
 	</message>
 	<message>
 		<source>new-public-group-chat</source>
-		<translation>Participar do bate-papo público</translation>
+		<translation>পাবলিক চ্যাটে যোগ দিন</translation>
 	</message>
 	<message>
 		<source>next</source>
-		<translation>Próximo</translation>
+		<translation>পরবর্তী</translation>
 	</message>
 	<message>
 		<source>no</source>
-		<translation>Não</translation>
+		<translation>না</translation>
 	</message>
 	<message>
 		<source>no-collectibles</source>
-		<translation>Não há colecionáveis disponíveis</translation>
+		<translation>কোনো সংগ্রহ সুপ্রাপ্য নয়</translation>
 	</message>
 	<message>
 		<source>no-contacts</source>
-		<translation>Você ainda não tem contatos</translation>
+		<translation>এখনো কোন পরিচিতি নেই</translation>
 	</message>
 	<message>
 		<source>no-keycard-applet-on-card</source>
-		<translation>Não há applet Keycard no cartão</translation>
+		<translation>কার্ডে কোন কীকার্ড অ্যাপলেট নেই</translation>
 	</message>
 	<message>
 		<source>no-messages</source>
-		<translation>Nenhuma mensagem</translation>
+		<translation>কোনো বার্তা নেই</translation>
 	</message>
 	<message>
 		<source>no-pairing-slots-available</source>
-		<translation>Este cartão já está emparelhado com 5 dispositivos e não pode ser emparelhado com este. Use um dos dispositivos emparelhados, faça login com este cartão e libere uma porta de emparelhamento no cartão</translation>
+		<translation>এই কার্ডটি ইতোমধ্যে ৫টি ডিভাইসে জোড়া হয়েছে এবং এটির সাথে জোড়া হতে পারে না। অনুগ্রহ করে জোড়া ডিভাইসগুলির একটি ব্যবহার করুন, এই কার্ড দিয়ে লগ ইন করুন এবং কার্ডে জোড়া স্লট খালি করুন</translation>
 	</message>
 	<message>
 		<source>no-result</source>
-		<translation>Nenhum resultado</translation>
+		<translation>কোন ফলাফল নেই</translation>
 	</message>
 	<message>
 		<source>no-tokens-found</source>
-		<translation>Nenhum token encontrado</translation>
+		<translation>কোনো টোকেন খুঁজে পাওয়া যায়নি</translation>
 	</message>
 	<message>
 		<source>node-info</source>
-		<translation>Informação do nó</translation>
+		<translation>নোড তথ্য</translation>
 	</message>
 	<message>
 		<source>node-address</source>
-		<translation>Endereço do nó</translation>
+		<translation>নোডের ঠিকানা</translation>
 	</message>
 	<message>
 		<source>node-details</source>
-		<translation>Detalhes do nó</translation>
+		<translation>নোডের বিবরণ</translation>
 	</message>
 	<message>
 		<source>node-version</source>
-		<translation>Versão do nó</translation>
+		<translation>নোড সংস্করণ</translation>
 	</message>
 	<message>
 		<source>nonce</source>
-		<translation>Nonce</translation>
+		<translation>nonce</translation>
 	</message>
 	<message>
 		<source>none</source>
-		<translation>Nenhum</translation>
+		<translation>কিছুই না</translation>
 	</message>
 	<message>
 		<source>not-applicable</source>
-		<translation>Não aplicável a transações não assinadas</translation>
+		<translation>অস্বাক্ষরিত লেনদেনের জন্য প্রযোজ্য নয়</translation>
 	</message>
 	<message>
 		<source>not-keycard-text</source>
-		<translation>O cartão que você usou não é um Keycard. Você precisa comprar um Keycard para usá-lo</translation>
+		<translation>আপনি যে কার্ডটি ব্যবহার করেছেন তা কীকার্ড নয়। এটি ব্যবহার করার জন্য আপনাকে একটি কীকার্ড কিনতে হবে</translation>
 	</message>
 	<message>
 		<source>not-keycard-title</source>
-		<translation>Não é um Keycard</translation>
+		<translation>কীকার্ড নয়</translation>
 	</message>
 	<message>
 		<source>notifications</source>
-		<translation>Notificações</translation>
+		<translation>বিজ্ঞপ্তি</translation>
 	</message>
 	<message>
 		<source>local-notifications</source>
-		<translation>Notificações locais</translation>
+		<translation>স্থানীয় বিজ্ঞপ্তিসমূহ</translation>
 	</message>
 	<message>
 		<source>local-notifications-subtitle</source>
-		<translation>Ativar serviço em segundo plano</translation>
+		<translation>ব্যাকগ্রাউন্ড পরিষেবা সক্রিয় করুন</translation>
 	</message>
 	<message>
 		<source>remote-notifications</source>
-		<translation>Notificações remotas</translation>
+		<translation>দূরবর্তী বিজ্ঞপ্তিগুলি</translation>
 	</message>
 	<message>
 		<source>remote-notifications-subtitle</source>
-		<translation>Ativar notificações push do google</translation>
+		<translation>Google পুশ বিজ্ঞপ্তিগুলি সক্ষম করুন</translation>
 	</message>
 	<message>
 		<source>show-notifications</source>
-		<translation>Mostrar notificações</translation>
+		<translation>বিজ্ঞপ্তিগুলি দেখান</translation>
 	</message>
 	<message>
 		<source>notification-settings</source>
-		<translation>Notificações</translation>
+		<translation>বিজ্ঞপ্তি</translation>
 	</message>
 	<message>
 		<source>notifications-servers</source>
-		<translation>Servidores de notificação</translation>
+		<translation>বিজ্ঞপ্তি সার্ভার</translation>
 	</message>
 	<message>
 		<source>notifications-preferences</source>
-		<translation>Preferências de notificação</translation>
+		<translation>বিজ্ঞপ্তি পছন্দসমূহ</translation>
 	</message>
 	<message>
 		<source>notifications-switch</source>
-		<translation>Mostrar notificações</translation>
+		<translation>বিজ্ঞপ্তিগুলি দেখান</translation>
 	</message>
 	<message>
 		<source>notifications-non-contacts</source>
-		<translation>Notificações de não contatos</translation>
+		<translation>যোগাযোগবিহীন থেকে বিজ্ঞপ্তি</translation>
 	</message>
 	<message>
 		<source>notifications-transactions</source>
-		<translation>Transações da carteira</translation>
+		<translation>মানিব্যাগ লেনদেন</translation>
 	</message>
 	<message>
 		<source>send-push-notifications</source>
-		<translation>Enviar Notificações Push</translation>
+		<translation>পুশ বিজ্ঞপ্তিগুলি পাঠান</translation>
 	</message>
 	<message>
 		<source>send-push-notifications-description</source>
-		<translation>Quando desativado, a pessoa que recebe suas mensagens não será notificada de suas novas mensagens</translation>
+		<translation>যখন নিষ্ক্রিয় করা হবে, যে ব্যক্তি আপনার বার্তা গ্রহণ করছে তাকে তাদের আগমন সম্পর্কে অবহিত করা হবে না</translation>
 	</message>
 	<message>
 		<source>push-notifications-server-enabled</source>
-		<translation>Servidor habilitado</translation>
+		<translation>সার্ভার সক্রিয় করা হয়েছে</translation>
 	</message>
 	<message>
 		<source>push-notifications-servers</source>
-		<translation>Servidores de notificação push</translation>
+		<translation>বিজ্ঞপ্তি সার্ভারগুলি পুশ করুন</translation>
 	</message>
 	<message>
 		<source>push-inbound-transaction</source>
-		<translation>Você recebeu {{value}} {{currency}}</translation>
+		<translation>আপনি {{মান}} {{মুদ্রা}} পেয়েছেন</translation>
 	</message>
 	<message>
 		<source>push-outbound-transaction</source>
-		<translation>Você enviou {{value}} {{currency}}</translation>
+		<translation>আপনি {{value}} {{currency}} প্রেরণ করেছেন</translation>
 	</message>
 	<message>
 		<source>push-failed-transaction</source>
-		<translation>Falha na sua transação</translation>
+		<translation>আপনার লেনদেন ব্যর্থ হয়েছে</translation>
 	</message>
 	<message>
 		<source>push-inbound-transaction-body</source>
-		<translation>De {{from}} para {{to}}</translation>
+		<translation>{{old}} থেকে {{new}} পর্যন্ত পরিমাণ পরিবর্তন করা হয়েছে</translation>
 	</message>
 	<message>
 		<source>push-outbound-transaction-body</source>
-		<translation>De {{from}} para {{to}}</translation>
+		<translation>{{old}} থেকে {{new}} পর্যন্ত পরিমাণ পরিবর্তন করা হয়েছে</translation>
 	</message>
 	<message>
 		<source>push-failed-transaction-body</source>
-		<translation>{{value}} {{currency}} para {{to}}</translation>
+		<translation>{{মান}} {{মুদ্রা}} থেকে {{থেকে}}</translation>
 	</message>
 	<message>
 		<source>allow-mention-notifications</source>
-		<translation>Mostrar @ menções</translation>
+		<translation>উল্লেখ@ দেখান</translation>
 	</message>
 	<message>
 		<source>server</source>
-		<translation>Servidor</translation>
+		<translation>সার্ভার</translation>
 	</message>
 	<message>
 		<source>specify-server-public-key</source>
-		<translation>Digite a chave pública do servidor</translation>
+		<translation>সার্ভার সর্বজনীন কী প্রবেশ করান</translation>
 	</message>
 	<message>
 		<source>notify</source>
-		<translation>Notificar</translation>
+		<translation>অবহিত</translation>
 	</message>
 	<message>
 		<source>off</source>
-		<translation>Desativado</translation>
+		<translation>বন্ধ</translation>
 	</message>
 	<message>
 		<source>offline</source>
-		<translation>Offline</translation>
+		<translation>অফলাইন</translation>
 	</message>
 	<message>
 		<source>offline-messaging-use-history-nodes</source>
-		<translation>Usar nós de mensagem da Status</translation>
+		<translation>ইতিহাস নোড ব্যবহার করুন</translation>
 	</message>
 	<message>
 		<source>offline-messaging-use-history-explanation</source>
-		<translation>Ative os nós da Status para buscar mensagens enviadas enquanto o aplicativo está fechado. Quando ativado, um nó de histórico obtém seu endereço IP. Quando desativado, você não receberá mensagens quando o aplicativo for fechado e não as verá quando abrir o app mais tarde.</translation>
+		<translation>অ্যাপটি বন্ধ করার সময় প্রেরিত বার্তা আনতে ইতিহাস নোড সক্রিয় করুন। যখন সক্রিয় করা হয়, একটি ইতিহাস নোড আপনার IP ঠিকানা পায়। যখন নিষ্ক্রিয় করা হবে তখন আপনি বার্তা পাবেন না যখন অ্যাপটি বন্ধ করা হবে এবং পরে অ্যাপটি খুললে আপনি সেগুলি দেখতে পাবেন না।</translation>
 	</message>
 	<message>
 		<source>ok</source>
-		<translation>OK</translation>
+		<translation>ঠিক আছে</translation>
 	</message>
 	<message>
 		<source>ok-continue</source>
-		<translation>Ok, continuar</translation>
+		<translation>ঠিক আছে, চালিয়ে যান</translation>
 	</message>
 	<message>
 		<source>ok-got-it</source>
-		<translation>Ok, entendido</translation>
+		<translation>আচ্ছা আমি বুঝে গেছি</translation>
 	</message>
 	<message>
 		<source>okay</source>
-		<translation>OK</translation>
+		<translation>ঠিক আছে</translation>
 	</message>
 	<message>
 		<source>on</source>
-		<translation>Ativado</translation>
+		<translation>চালু করুন</translation>
 	</message>
 	<message>
 		<source>open</source>
-		<translation>Abrir</translation>
+		<translation>খুলুন</translation>
 	</message>
 	<message>
 		<source>open-home</source>
-		<translation>Abrir...</translation>
+		<translation>খুলুন।।।</translation>
 	</message>
 	<message>
 		<source>open-dapp</source>
-		<translation>Abrir ÐApp</translation>
+		<translation>DApp খুলুন</translation>
 	</message>
 	<message>
 		<source>open-dapp-store</source>
-		<translation>Descubra ÐApps</translation>
+		<translation>DApps আবিষ্কার করুন</translation>
 	</message>
 	<message>
 		<source>open-nfc-settings</source>
-		<translation>Abrir configurações do NFC</translation>
+		<translation>এনএফসি সেটিংস খুলুন</translation>
 	</message>
 	<message>
 		<source>open-on-block-explorer</source>
-		<translation>Abrir no explorador de blocos</translation>
+		<translation>ব্লক এক্সপ্লোরারে খুলুন</translation>
 	</message>
 	<message>
 		<source>optional</source>
-		<translation>opcional</translation>
+		<translation>ঐচ্ছিক</translation>
 	</message>
 	<message>
 		<source>or</source>
-		<translation>OU</translation>
+		<translation>বা</translation>
 	</message>
 	<message>
 		<source>outgoing</source>
-		<translation>Enviados</translation>
+		<translation>বহির্গামী</translation>
 	</message>
 	<message>
 		<source>outgoing-transaction</source>
-		<translation>Transação enviada</translation>
+		<translation>বহির্গামী লেনদেন</translation>
 	</message>
 	<message>
 		<source>pair</source>
-		<translation>Sincronizar dispositivos</translation>
+		<translation>ডিভাইসগুলি যুক্ত করুন</translation>
 	</message>
 	<message>
 		<source>pair-card</source>
-		<translation>Sincronizar para este dispositivo</translation>
+		<translation>এই ডিভাইসে যুক্ত করুন</translation>
 	</message>
 	<message>
 		<source>pair-code</source>
-		<translation>Código de par</translation>
+		<translation>জোড়া কোড</translation>
 	</message>
 	<message>
 		<source>pair-code-explanation</source>
-		<translation>Emparelha o cartão com um dispositivo diferente (até 5) para desbloquear as chaves e assinar transações com o mesmo Keycard</translation>
+		<translation>কী আনলক করতে এবং একই কীকার্ডের সাথে লেনদেনে স্বাক্ষর করতে একটি ভিন্ন ডিভাইসে (৫ পর্যন্ত) কার্ড জোড়া</translation>
 	</message>
 	<message>
 		<source>pair-this-card</source>
-		<translation>Emparelhar este cartão</translation>
+		<translation>এই কার্ডটি যুক্ত করুন</translation>
 	</message>
 	<message>
 		<source>pair-this-device</source>
-		<translation>Anunciar dispositivo</translation>
+		<translation>ডিভাইসের বিজ্ঞাপন দিন</translation>
 	</message>
 	<message>
 		<source>pair-this-device-description</source>
-		<translation>Emparelhe seus dispositivos para sincronizar contatos e bate-papos entre eles</translation>
+		<translation>তাদের মধ্যে যোগাযোগ এবং চ্যাট এককালবর্তী করতে আপনার ডিভাইসগুলি জোড়া করুন</translation>
 	</message>
 	<message>
 		<source>paired-devices</source>
-		<translation>Dispositivos sincronizados</translation>
+		<translation>জোড়া ডিভাইস</translation>
 	</message>
 	<message>
 		<source>pairing</source>
-		<translation>Emparelhamento</translation>
+		<translation>জোড়া</translation>
 	</message>
 	<message>
 		<source>pairing-card</source>
-		<translation>Cartão de emparelhamento</translation>
+		<translation>জোড়া কার্ড</translation>
 	</message>
 	<message>
 		<source>pairing-code-placeholder</source>
-		<translation>Código de emparelhamento...</translation>
+		<translation>কোড জোড়া হচ্ছে ...</translation>
 	</message>
 	<message>
 		<source>pairing-code_error1</source>
-		<translation>Os códigos de emparelhamento não correspondem.</translation>
+		<translation>পেয়ারিং কোড মেলে না</translation>
 	</message>
 	<message>
 		<source>confirm-pairing-code-placeholder</source>
-		<translation>Confirme o seu código de emparelhamento...</translation>
+		<translation>আপনার জোড়া কোড নিশ্চিত করুন ...</translation>
 	</message>
 	<message>
 		<source>pairing-go-to-installation</source>
-		<translation>Ir para as configurações de sincronização</translation>
+		<translation>জোড়া সেটিংসে যান</translation>
 	</message>
 	<message>
 		<source>pairing-maximum-number-reached-content</source>
-		<translation>Desative um dos seus dispositivos antes de ativar um novo.</translation>
+		<translation>নতুন কোনও সক্ষম করার আগে দয়া করে আপনার একটি ডিভাইস অক্ষম করুন।</translation>
 	</message>
 	<message>
 		<source>pairing-maximum-number-reached-title</source>
-		<translation>Atingido o número máximo de dispositivos</translation>
+		<translation>ডিভাইসের সর্বোচ্চ সংখ্যা পৌঁছেছে</translation>
 	</message>
 	<message>
 		<source>pairing-new-installation-detected-content</source>
-		<translation>Um novo dispositivo foi detectado. 
-Para usar seus dispositivos corretamente, é importante emparelhá-los e ativá-los antes de usar. 
-Acesse a seção configurações dos dispositivos para parear seus dispositivos.</translation>
+		<translation>একটি নতুন ডিভাইস সনাক্ত করা হয়েছে।
+ আপনার ডিভাইসগুলি সঠিকভাবে ব্যবহার করতে, তাদের ব্যবহারের আগে তাদের জোড়া এবং সক্ষম করা জরুরী।
+ আপনার ডিভাইসগুলি যুক্ত করতে দয়া করে সেটিংসের অধীনে ডিভাইস বিভাগে যান।</translation>
 	</message>
 	<message>
 		<source>pairing-new-installation-detected-title</source>
-		<translation>Novo dispositivo detectado</translation>
+		<translation>নতুন ডিভাইস শনাক্ত করা হয়েছে</translation>
 	</message>
 	<message>
 		<source>pairing-no-info</source>
-		<translation>Sem informações</translation>
+		<translation>কোন তথ্য নেই</translation>
 	</message>
 	<message>
 		<source>pairing-please-set-a-name</source>
-		<translation>Defina um nome para o seu dispositivo.</translation>
+		<translation>অনুগ্রহ করে আপনার ডিভাইসের জন্য একটি নাম নির্ধারণ করুন।</translation>
 	</message>
 	<message>
 		<source>passphrase</source>
-		<translation>Frase-semente</translation>
+		<translation>পাসফ্রেজ</translation>
 	</message>
 	<message>
 		<source>password</source>
-		<translation>Senha</translation>
+		<translation>পাসওয়ার্ড</translation>
 	</message>
 	<message>
 		<source>password-description</source>
-		<translation>Pelo menos 6 caracteres. Sua senha protege suas chaves. Você precisa dela para desbloquear o Status e fazer transações.</translation>
+		<translation>কমপক্ষে ৬ অক্ষর. আপনার পাসওয়ার্ড আপনার চাবিকে রক্ষা করে। স্ট্যাটাস আনলক করতে এবং লেনদেনের জন্য আপনার এটি প্রয়োজন।</translation>
 	</message>
 	<message>
 		<source>password-placeholder2</source>
-		<translation>Confirme sua senha</translation>
+		<translation>আপনার পাসওয়ার্ড নিশ্চিত করুন</translation>
 	</message>
 	<message>
 		<source>password_error1</source>
-		<translation>As senhas não correspondem.</translation>
+		<translation>পাসওয়ার্ড মেলে না।</translation>
 	</message>
 	<message>
 		<source>paste</source>
-		<translation>Colar</translation>
+		<translation>আটকান</translation>
 	</message>
 	<message>
 		<source>paste-json</source>
-		<translation>Colar JSON</translation>
+		<translation>JSON প্রতিলেপন করুন</translation>
 	</message>
 	<message>
 		<source>pay-to-chat</source>
-		<translation>Pagar para conversar</translation>
+		<translation>চ্যাট করতে টাকা দিন</translation>
 	</message>
 	<message>
 		<source>peers</source>
-		<translation>Pares</translation>
+		<translation>সহকর্মীরা</translation>
 	</message>
 	<message>
 		<source>pending</source>
-		<translation>Pendente</translation>
+		<translation>বিচারাধীন</translation>
 	</message>
 	<message>
 		<source>pending-confirmation</source>
-		<translation>Confirmação pendente...</translation>
+		<translation>অমীমাংসিত নিশ্চিতকরণ...</translation>
 	</message>
 	<message>
 		<source>permissions</source>
-		<translation>Permissões</translation>
+		<translation>অনুমতি</translation>
 	</message>
 	<message>
 		<source>phone-e164</source>
-		<translation>Internacional 1</translation>
+		<translation>আন্তর্জাতিক ১</translation>
 	</message>
 	<message>
 		<source>photos-access-error</source>
-		<translation>Para conceder a permissão de fotos necessária, acesse as configurações do sistema e verifique se Status &gt; Fotos está selecionado.</translation>
+		<translation>প্রয়োজনীয় ফটো অনুমতি দিতে, অনুগ্রহ করে আপনার সিস্টেম সেটিংসে যান এবং নিশ্চিত করুন যে Status &gt; ফটো নির্বাচন করা হয়েছে।</translation>
 	</message>
 	<message>
 		<source>pin-changed</source>
-		<translation>O código de acesso de 6 dígitos foi alterado</translation>
+		<translation>৬-ডিজিটের পাসকোড পরিবর্তন করা হয়েছে</translation>
 	</message>
 	<message>
 		<source>puk-changed</source>
-		<translation>PUK de 12 dígitos foi alterado</translation>
+		<translation>12-সংখ্যার PUK পরিবর্তন করা হয়েছে</translation>
 	</message>
 	<message>
 		<source>pairing-changed</source>
-		<translation>Código de emparelhamento foi alterado</translation>
+		<translation>পেয়ারিং কোড পরিবর্তন করা হয়েছে</translation>
 	</message>
 	<message>
 		<source>pin-code</source>
-		<translation>Código de acesso de 6 dígitos</translation>
+		<translation>৬-ডিজিটের পাসকোড</translation>
 	</message>
 	<message>
 		<source>pin-mismatch</source>
-		<translation>Código de acesso incorreto</translation>
+		<translation>ভুল পাসকোড</translation>
 	</message>
 	<message>
 		<source>pin-retries-left</source>
-		<translation>{{number}} tentativas restantes</translation>
+		<translation>{{number}} বাকি আছে</translation>
 	</message>
 	<message>
 		<source>pin-one-attempt-blocked-before</source>
-		<translation>Cuidado, você só tem</translation>
+		<translation>সাবধানে থাকুন, আপনার একটি মাত্র সুযোগ আছে</translation>
 	</message>
 	<message>
 		<source>pin-one-attempt-frozen-before</source>
-		<translation>Cuidado, você só tem</translation>
+		<translation>সাবধানে থাকুন, আপনার একটি মাত্র সুযোগ আছে</translation>
 	</message>
 	<message>
 		<source>pin-one-attempt</source>
-		<translation>uma tentativa</translation>
+		<translation>এক চেষ্টা</translation>
 	</message>
 	<message>
 		<source>pin-one-attempt-blocked-after</source>
-		<translation>antes que o seu Keycard seja bloqueado</translation>
+		<translation>আপনার কিকার্ড ব্লক হওয়ার আগে</translation>
 	</message>
 	<message>
 		<source>pin-one-attempt-frozen-after</source>
-		<translation>antes que o seu Keycard trave</translation>
+		<translation>আপনার কিকার্ড হিমশীতল হওয়ার আগে</translation>
 	</message>
 	<message>
 		<source>preview-privacy</source>
-		<translation>Visualizar modo de privacidade</translation>
+		<translation>প্রাইভেসি মোডের পূর্বরূপ দেখুন</translation>
 	</message>
 	<message>
 		<source>privacy</source>
-		<translation>Privacidade</translation>
+		<translation>গোপনীয়তা</translation>
 	</message>
 	<message>
 		<source>privacy-photos</source>
-		<translation>Privacidade da Foto de Perfil</translation>
+		<translation>প্রোফাইল ছবির গোপনীয়তা</translation>
 	</message>
 	<message>
 		<source>privacy-and-security</source>
-		<translation>Privacidade e segurança</translation>
+		<translation>গোপনীয়তা এবং নিরাপত্তা</translation>
 	</message>
 	<message>
 		<source>privacy-policy</source>
-		<translation>Política de privacidade</translation>
+		<translation>গোপনীয়তা নীতি</translation>
 	</message>
 	<message>
 		<source>privacy-show-to-warning</source>
-		<translation>As pessoas que já viram sua foto de perfil continuarão vendo</translation>
+		<translation>যারা ইতিমধ্যে আপনার প্রোফাইল ছবি দেখেছেন তারা তা করতে থাকবে</translation>
 	</message>
 	<message>
 		<source>processing</source>
-		<translation>Aguarde um momento</translation>
+		<translation>শুধু একটি মুহূর্ত</translation>
 	</message>
 	<message>
 		<source>product-information</source>
-		<translation>Informações do produto</translation>
+		<translation>পণ্যের তথ্য</translation>
 	</message>
 	<message>
 		<source>profile</source>
-		<translation>Perfil</translation>
+		<translation>প্রোফাইল</translation>
 	</message>
 	<message>
 		<source>profile-details</source>
-		<translation>Detalhes do perfil</translation>
+		<translation>প্রোফাইল বিশদ</translation>
 	</message>
 	<message>
 		<source>public-chat</source>
-		<translation>Conversa pública</translation>
+		<translation>পাবলিক চ্যাট</translation>
 	</message>
 	<message>
 		<source>public-chats</source>
-		<translation>Conversas públicas</translation>
+		<translation>পাবলিক চ্যাট</translation>
 	</message>
 	<message>
 		<source>public-group-status</source>
-		<translation>Público</translation>
+		<translation>পাবলিক</translation>
 	</message>
 	<message>
 		<source>public-group-topic</source>
-		<translation>Assunto</translation>
+		<translation>বিষয়</translation>
 	</message>
 	<message>
 		<source>join-new-public-chat</source>
-		<translation>Participar do chat público</translation>
+		<translation>একটি সর্বজনীন আড্ডায় যোগ দিন</translation>
 	</message>
 	<message>
 		<source>join-new-private-chat</source>
-		<translation>Iniciar uma nova conversa privada</translation>
+		<translation>একটি নতুন ব্যক্তিগত চ্যাট শুরু করুন</translation>
 	</message>
 	<message>
 		<source>search-no-chat-found</source>
-		<translation>Sem resultados. Você quer dizer</translation>
+		<translation>কোন সন্ধান ফলাফল নেই. তুমি কি বলতে চাচ্ছো</translation>
 	</message>
 	<message>
 		<source>public-key</source>
-		<translation>Chave pública</translation>
+		<translation>পাবলিক কী</translation>
 	</message>
 	<message>
 		<source>puk-and-pairing-codes-displayed</source>
-		<translation>Códigos PUK e de emparelhamento exibidos</translation>
+		<translation>PUK এবং জোড়া কোড প্রদর্শিত হয়েছে</translation>
 	</message>
 	<message>
 		<source>puk-code</source>
-		<translation>Código PUK</translation>
+		<translation>PUK কোড</translation>
 	</message>
 	<message>
 		<source>puk-code-explanation</source>
-		<translation>Se você esquecer seu código de acesso de 6 dígitos ou inseri-lo incorretamente três vezes, precisará desse código para desbloquear seu cartão.</translation>
+		<translation>আপনি যদি আপনার ৬ ডিজিটের পাসকোড ভুলে যান অথবা ভুলভাবে ৩ বার প্রবেশ করান, তাহলে আপনার কার্ড আনলক করার জন্য এই কোডের প্রয়োজন হবে।</translation>
 	</message>
 	<message>
 		<source>puk-mismatch</source>
-		<translation>Código PUK errado</translation>
+		<translation>ভুল PUK কোড</translation>
 	</message>
 	<message>
 		<source>quiet-days</source>
-		<translation>{{quiet-days}} dias</translation>
+		<translation>{{quiet-days}} দিন</translation>
 	</message>
 	<message>
 		<source>quiet-hours</source>
-		<translation>{{quiet-hours}} horas</translation>
+		<translation>{{quiet-hours}} ঘন্টা</translation>
 	</message>
 	<message>
 		<source>re-encrypt-key</source>
-		<translation>Recriptografe suas chaves</translation>
+		<translation>আপনার কীগুলি পুনরায় এনক্রিপ্ট করুন</translation>
 	</message>
 	<message>
 		<source>receive</source>
-		<translation>Receber</translation>
+		<translation>প্রাপ্তি</translation>
 	</message>
 	<message>
 		<source>receive-transaction</source>
-		<translation>Receber transação</translation>
+		<translation>লেনদেন গ্রহণ করুন</translation>
 	</message>
 	<message>
 		<source>recent</source>
-		<translation>Recentes</translation>
+		<translation>সাম্প্রতিক</translation>
 	</message>
 	<message>
 		<source>recent-recipients</source>
-		<translation>Contatos</translation>
+		<translation>যোগাযোগ</translation>
 	</message>
 	<message>
 		<source>recently-used-stickers</source>
-		<translation>Os adesivos usados recentemente aparecerão aqui</translation>
+		<translation>সম্প্রতি ব্যবহৃত স্টিকার গুলো এখানে প্রদর্শিত হবে</translation>
 	</message>
 	<message>
 		<source>recipient</source>
-		<translation>Destinatário</translation>
+		<translation>প্রাপক</translation>
 	</message>
 	<message>
 		<source>recipient-code</source>
-		<translation>Digite o endereço do destinatário</translation>
+		<translation>প্রাপকের ঠিকানা লিখুন</translation>
 	</message>
 	<message>
 		<source>recipient-code-placeholder</source>
-		<translation>0x… ou nome.dominio.eth</translation>
+		<translation>0x... অথবা username.domain.eth</translation>
 	</message>
 	<message>
 		<source>recover</source>
-		<translation>Recuperar</translation>
+		<translation>পুনরুদ্ধার</translation>
 	</message>
 	<message>
 		<source>recover-key</source>
-		<translation>Acessar chaves existentes</translation>
+		<translation>বিদ্যমান কীসমূহ অ্যাক্সেস করুন</translation>
 	</message>
 	<message>
 		<source>recover-keycard-multiaccount-not-supported</source>
-		<translation>Já existem chaves para esta conta e não podem ser adicionadas novamente. Se você perdeu sua senha, código de acesso ou Keycard, desinstale o aplicativo, reinstale e acesse suas chaves inserindo sua frase-semente</translation>
+		<translation>এই একাউন্টের জন্য কী ইতোমধ্যে বিদ্যমান এবং পুনরায় যুক্ত করা যাবে না। আপনি যদি আপনার পাসওয়ার্ড, পাসকোড বা কীকার্ড হারিয়ে ফেলেন, অ্যাপটি আনইনস্টল করুন, আপনার বীজ বাক্যাংশ প্রবেশ করিয়ে আপনার কী পুনরায় ইনস্টল করুন এবং অ্যাক্সেস করুন</translation>
 	</message>
 	<message>
 		<source>recover-with-keycard</source>
-		<translation>Recuperar com Keycard</translation>
+		<translation>কীকার্ড দিয়ে পুনরুদ্ধার করুন</translation>
 	</message>
 	<message>
 		<source>recovering-key</source>
-		<translation>Acessando chaves…</translation>
+		<translation>কীগুলি অ্যাক্সেস করা হচ্ছে ...</translation>
 	</message>
 	<message>
 		<source>recovery-confirm-phrase</source>
-		<translation>Confirmar frase-semente</translation>
+		<translation>বীজ বাক্যাংশ নিশ্চিত করুন</translation>
 	</message>
 	<message>
 		<source>recovery-phrase</source>
-		<translation>Frase-semente</translation>
+		<translation>বীজ বাক্যাংশ</translation>
 	</message>
 	<message>
 		<source>recovery-success-text</source>
-		<translation>Você terá que definir um novo código ou senha para recriptografar suas chaves</translation>
+		<translation>আপনার কীপুনরায় এনক্রিপ্ট করতে আপনাকে একটি নতুন কোড বা পাসওয়ার্ড তৈরি করতে হবে</translation>
 	</message>
 	<message>
 		<source>recovery-typo-dialog-description</source>
-		<translation>Observe que sua frase-semente deve usar exatamente as mesmas palavras e ordem que você recebeu</translation>
+		<translation>অনুগ্রহ করে লক্ষ্য করুন, আপনার বীজ বাক্যাংশ টি পাওয়ার সাথে সাথে ঠিক একই শব্দ ব্যবহার করতে হবে এবং অর্ডার করতে হবে</translation>
 	</message>
 	<message>
 		<source>recovery-typo-dialog-title</source>
-		<translation>A frase-semente está correta?</translation>
+		<translation>বীজের বাক্যাংশটি কি সঠিক?</translation>
 	</message>
 	<message>
 		<source>remember-me</source>
-		<translation>Lembrar-me</translation>
+		<translation>আমাকে মনে রেখো</translation>
 	</message>
 	<message>
 		<source>remind-me-later</source>
-		<translation>Mostrar isso novamente</translation>
+		<translation>আমাকে এটা আবার দেখাও</translation>
 	</message>
 	<message>
 		<source>remove</source>
-		<translation>Remover</translation>
+		<translation>অপসারণ</translation>
 	</message>
 	<message>
 		<source>remove-from-chat</source>
-		<translation>Remover do chat</translation>
+		<translation>চ্যাট থেকে অপসারণ করুন</translation>
 	</message>
 	<message>
 		<source>remove-from-contacts</source>
-		<translation>Remover dos contatos</translation>
+		<translation>পরিচিতি থেকে অপসারণ করুন</translation>
 	</message>
 	<message>
 		<source>remove-from-contacts-text</source>
-		<translation>Ao remover um usuário da sua lista de contatos, você não esconde dele o endereço da sua carteira</translation>
+		<translation>আপনার পরিচিতি তালিকা থেকে কোনও ব্যবহারকারীকে সরিয়ে আপনি তাদের থেকে আপনার ওয়ালেট ঠিকানাটি গোপন করবেন না</translation>
 	</message>
 	<message>
 		<source>remove-network</source>
-		<translation>Remover rede</translation>
+		<translation>নেটওয়ার্ক অপসারণ করুন</translation>
 	</message>
 	<message>
 		<source>remove-token</source>
-		<translation>Remover token</translation>
+		<translation>টোকেন অপসারণ করুন</translation>
 	</message>
 	<message>
 		<source>removed</source>
-		<translation>removeu</translation>
+		<translation>অপসারণ</translation>
 	</message>
 	<message>
 		<source>repeat-pin</source>
-		<translation>Repita os 6 novos dígitos do código de acesso</translation>
+		<translation>নতুন ৬-সংখ্যার পাসকোড পুনরাবৃত্তি করুন</translation>
 	</message>
 	<message>
 		<source>repeat-puk</source>
-		<translation>Repita o novo PUK de 12 dígitos</translation>
+		<translation>নতুন 12-সংখ্যা PUK পুনরাবৃত্তি করুন৷</translation>
 	</message>
 	<message>
 		<source>report-bug-email-template</source>
-		<translation>1. Descrição do problema 
- (Descreva o recurso que você deseja ou resuma brevemente o bug e o que você fez, o que esperava que acontecesse e o que realmente acontece. Seções abaixo) 
-
-
- 2. Passos para reproduzir 
- (Descreva como podemos replicar o bug passo a passo.) 
- - Abrir Status
- - ... 
- - Etapa 3, etc. 
-
-
- 3. Comportamento esperado 
- (Descreva o que você esperava que acontecesse.) 
-
-
- 4. Comportamento real 
- (Descreva o que realmente aconteceu.) 
-
-
- 5. Por favor, anexe capturas de tela que possam demonstrar o problema</translation>
+		<translation>1. ইস্যু বিবরণ (আপনি যে বৈশিষ্ট্যটি চান তা বর্ণনা করুন, অথবা সংক্ষেপে বাগ এবং আপনি কি করেছেন, আপনি কি আশা করেছিলেন, এবং আসলে কি ঘটবে তা বর্ণনা করুন। নিচের বিভাগসমূহ) 2. প্রজননের পদক্ষেপ (বর্ণনা করুন কিভাবে আমরা ধাপে ধাপে বাগ প্রতিলিপি করতে পারি। - Status খুলুন -... - ধাপ ৩, ইত্যাদি। 3. প্রত্যাশিত আচরণ (আপনি যা আশা করেছেন তা বর্ণনা করুন। 4. প্রকৃত আচরণ (আসলে কি ঘটেছে তা বর্ণনা করুন। 5. সমস্যা ডেমো করতে পারে দয়া করে এমন স্ক্রিনশট সংযুক্ত করুন।</translation>
 	</message>
 	<message>
 		<source>request-transaction</source>
-		<translation>Solicitar transação</translation>
+		<translation>অনুরোধ লেনদেন</translation>
 	</message>
 	<message>
 		<source>required-field</source>
-		<translation>Campo obrigatório</translation>
+		<translation>প্রয়োজনীয় ক্ষেত্র</translation>
 	</message>
 	<message>
 		<source>resend-message</source>
-		<translation>Reenviar</translation>
+		<translation>পুনরায় পাঠান</translation>
 	</message>
 	<message>
 		<source>reset-card</source>
-		<translation>Redefinir cartão</translation>
+		<translation>কার্ড রিসেট করুন</translation>
 	</message>
 	<message>
 		<source>reset-card-description</source>
-		<translation>Esta operação redefinirá o cartão para o estado inicial. Ele apagará todos os dados do cartão, incluindo chaves privadas. A operação não é reversível.</translation>
+		<translation>এই অপারেশন কার্ডটিকে প্রাথমিক অবস্থায় রিসেট করবে। এটি ব্যক্তিগত কী সহ সমস্ত কার্ড ডেটা মুছে ফেলবে। অপারেশন বিপরীত হবে না।</translation>
 	</message>
 	<message>
 		<source>retry</source>
-		<translation>Tentar de novo</translation>
+		<translation>পুনরায় চেষ্টা করা</translation>
 	</message>
 	<message>
 		<source>revoke-access</source>
-		<translation>Recuperar acesso</translation>
+		<translation>প্রবেশ বাতিল করুন</translation>
 	</message>
 	<message>
 		<source>rinkeby-network</source>
-		<translation>Rede de teste Rinkeby</translation>
+		<translation>Rinkeby পরীক্ষা নেটওয়ার্ক</translation>
 	</message>
 	<message>
 		<source>ropsten-network</source>
-		<translation>Rede de teste de Ropsten</translation>
+		<translation>Ropsten পরীক্ষা নেটওয়ার্ক</translation>
 	</message>
 	<message>
 		<source>rpc-url</source>
-		<translation>RPC URL</translation>
+		<translation>আরপিসি ইউআরএল</translation>
 	</message>
 	<message>
 		<source>save</source>
-		<translation>Salvar</translation>
+		<translation>সংরক্ষণ</translation>
 	</message>
 	<message>
 		<source>save-password</source>
-		<translation>Salvar senha</translation>
+		<translation>পাসওয়ার্ড সংরক্ষণ করুন</translation>
 	</message>
 	<message>
 		<source>save-password-unavailable</source>
-		<translation>Defina o código de acesso do dispositivo para salvar a senha</translation>
+		<translation>পাসওয়ার্ড সংরক্ষণ করতে ডিভাইস পাসকোড নির্ধারণ করুন</translation>
 	</message>
 	<message>
 		<source>save-password-unavailable-android</source>
-		<translation>Salvar senha não está disponível: seu dispositivo pode estar &quot;rooteado&quot; ou não possui os recursos de segurança necessários.</translation>
+		<translation>গুপ্ত-সংকেত সংরক্ষণ অনুপলভ্য: আপনার ডিভাইসটি মূল হতে পারে অথবা প্রয়োজনীয় নিরাপত্তা বৈশিষ্ট্যের অভাব হতে পারে.</translation>
 	</message>
 	<message>
 		<source>scan-qr</source>
-		<translation>Escanear código QR</translation>
+		<translation>কিউআর কোড স্ক্যান করুন</translation>
 	</message>
 	<message>
 		<source>scan-qr-code</source>
-		<translation>Escaneie um código QR com um endereço de carteira</translation>
+		<translation>একটি ওয়ালেট ঠিকানা সহ একটি QR কোড স্ক্যান করুন</translation>
 	</message>
 	<message>
 		<source>search</source>
-		<translation>Procurar</translation>
+		<translation>অনুসন্ধান করুন</translation>
 	</message>
 	<message>
 		<source>secret-keys-confirmation-text</source>
-		<translation>Você vai precisar deles para continuar a usar o seu Keycard no caso de perder o seu celular.</translation>
+		<translation>আপনি যদি কখনো আপনার ফোন হারিয়ে ফেলেন তাহলে আপনার কীকার্ড ব্যবহার চালিয়ে যেতে হবে।</translation>
 	</message>
 	<message>
 		<source>secret-keys-confirmation-title</source>
-		<translation>Já anotou os códigos?</translation>
+		<translation>কোড গুলো লিখেছেন?</translation>
 	</message>
 	<message>
 		<source>security</source>
-		<translation>Segurança</translation>
+		<translation>নিরাপত্তা</translation>
 	</message>
 	<message>
 		<source>see-details</source>
-		<translation>Ver detalhes</translation>
+		<translation>বিস্তারিত দেখুন</translation>
 	</message>
 	<message>
 		<source>see-it-again</source>
-		<translation>VEJA NOVAMENTE</translation>
+		<translation>এটি আবার দেখুন</translation>
 	</message>
 	<message>
 		<source>select-account-first</source>
-		<translation>Selecione uma conta primeiro</translation>
+		<translation>প্রথমে একটি অ্যাকাউন্ট নির্বাচন করুন</translation>
 	</message>
 	<message>
 		<source>select-chat</source>
-		<translation>Selecionar bate-papo para iniciar o envio de mensagens</translation>
+		<translation>বার্তা শুরু করতে চ্যাট নির্বাচন করুন</translation>
 	</message>
 	<message>
 		<source>selected</source>
-		<translation>Selecionado</translation>
+		<translation>নির্বাচিত</translation>
 	</message>
 	<message>
 		<source>select</source>
-		<translation>Selecionar</translation>
+		<translation>নির্বাচন করুন</translation>
 	</message>
 	<message>
 		<source>select-account</source>
-		<translation>Selecionar conta</translation>
+		<translation>অ্যাকাউন্ট নির্বাচন করুন</translation>
 	</message>
 	<message>
 		<source>send-logs</source>
-		<translation>Relatar um bug</translation>
+		<translation>একটি বাগ রিপোর্ট করুন</translation>
 	</message>
 	<message>
 		<source>send-logs-to</source>
-		<translation>Relatar um bug para {{email}}</translation>
+		<translation>{{email}} এ একটি বাগ প্রতিবেদন করুন</translation>
 	</message>
 	<message>
 		<source>send-message</source>
-		<translation>Enviar mensagem</translation>
+		<translation>বার্তা পাঠান</translation>
 	</message>
 	<message>
 		<source>send-request</source>
-		<translation>Enviar pedido</translation>
+		<translation>অনুরোধ প্রেরণ করুন</translation>
 	</message>
 	<message>
 		<source>send-request-amount</source>
-		<translation>Quantidade</translation>
+		<translation>পরিমান</translation>
 	</message>
 	<message>
 		<source>send-request-amount-max-decimals</source>
-		<translation>O número máximo de decimais é {{asset-decimals}}</translation>
+		<translation>দশমিক সংখ্যা সর্বোচ্চ {{asset-decimals}}</translation>
 	</message>
 	<message>
 		<source>send-request-unknown-token</source>
-		<translation>Token desconhecido - {{asset}}</translation>
+		<translation>অজানা টোকেন - {{asset}}</translation>
 	</message>
 	<message>
 		<source>send-sending-to</source>
-		<translation>para {{recipient-name}}</translation>
+		<translation>	
+{{recipient-name}} to</translation>
 	</message>
 	<message>
 		<source>send-transaction</source>
-		<translation>Enviar transação</translation>
+		<translation>লেনদেন প্রেরণ করুন</translation>
 	</message>
 	<message>
 		<source>sending</source>
-		<translation>Enviando</translation>
+		<translation>প্রেরণ</translation>
 	</message>
 	<message>
 		<source>sent-at</source>
-		<translation>Enviado em</translation>
+		<translation>পাঠানো হয়েছে</translation>
 	</message>
 	<message>
 		<source>set-a-topic</source>
-		<translation>Criar um tópico</translation>
+		<translation>একটি বিষয় তৈরি করুন</translation>
 	</message>
 	<message>
 		<source>set-currency</source>
-		<translation>Definir moeda</translation>
+		<translation>মুদ্রা নির্ধারণ করুন</translation>
 	</message>
 	<message>
 		<source>set-dapp-access-permissions</source>
-		<translation>Definir permissões de acesso do DApp</translation>
+		<translation>DApp অ্যাক্সেস অনুমতি নির্ধারণ করুন</translation>
 	</message>
 	<message>
 		<source>settings</source>
-		<translation>Configurações</translation>
+		<translation>সেটিংস</translation>
 	</message>
 	<message>
 		<source>share</source>
-		<translation>Compartilhar</translation>
+		<translation>ভাগ করুন</translation>
 	</message>
 	<message>
 		<source>shared</source>
-		<translation>Compartilhado</translation>
+		<translation>অংশীদারি</translation>
 	</message>
 	<message>
 		<source>share-address</source>
-		<translation>Compartilhar endereço</translation>
+		<translation>ঠিকানা শেয়ার করুন</translation>
 	</message>
 	<message>
 		<source>share-chat</source>
-		<translation>Compartilhar bate-papo</translation>
+		<translation>চ্যাট শেয়ার করুন</translation>
 	</message>
 	<message>
 		<source>share-contact-code</source>
-		<translation>Compartilhar minha chave de bate-papo</translation>
+		<translation>আমার চ্যাট কী শেয়ার করুন</translation>
 	</message>
 	<message>
 		<source>share-dapp-text</source>
-		<translation>Confira este DApp que estou usando no Status: {{link}}</translation>
+		<translation>Status আমি যে DApp ব্যবহার করছি তা দেখুন: {{link}}</translation>
 	</message>
 	<message>
 		<source>share-link</source>
-		<translation>Compartilhar link</translation>
+		<translation>শেয়ার লিংক</translation>
 	</message>
 	<message>
 		<source>share-my-profile</source>
-		<translation>Compartilhar meu perfil</translation>
+		<translation>আমার প্রোফাইল শেয়ার করুন</translation>
 	</message>
 	<message>
 		<source>share-profile</source>
-		<translation>Compartilhar perfil</translation>
+		<translation>প্রোফাইল শেয়ার করুন</translation>
 	</message>
 	<message>
 		<source>share-profile-link</source>
-		<translation>Compartilhar link do perfil</translation>
+		<translation>প্রোফাইল লিংক শেয়ার করুন</translation>
 	</message>
 	<message>
 		<source>share-public-chat-text</source>
-		<translation>Confira este bate-papo público no app Status: {{link}}</translation>
+		<translation>Status অ্যাপে এই সর্বজনীন চ্যাটটি দেখুন: {{link}}</translation>
 	</message>
 	<message>
 		<source>sharing-copied-to-clipboard</source>
-		<translation>Copiado</translation>
+		<translation>অনুলিপি</translation>
 	</message>
 	<message>
 		<source>sharing-copy-to-clipboard</source>
-		<translation>Copiar</translation>
+		<translation>অনুলিপি</translation>
 	</message>
 	<message>
 		<source>share-logs</source>
-		<translation>Compartilhar logs</translation>
+		<translation>লগগুলি শেয়ার করুন</translation>
 	</message>
 	<message>
 		<source>sharing-share</source>
-		<translation>Compartilhar</translation>
+		<translation>ভাগ করুন</translation>
 	</message>
 	<message>
 		<source>show-less</source>
-		<translation>Mostre menos</translation>
+		<translation>কম দেখাও</translation>
 	</message>
 	<message>
 		<source>show-more</source>
-		<translation>Mostrar mais</translation>
+		<translation>আরও দেখান</translation>
 	</message>
 	<message>
 		<source>show-qr</source>
-		<translation>Mostrar código QR</translation>
+		<translation>QR কোড দেখান</translation>
 	</message>
 	<message>
 		<source>show-transaction-data</source>
-		<translation>Mostrar dados da transação</translation>
+		<translation>লেনদেনের তথ্য দেখান</translation>
 	</message>
 	<message>
 		<source>sign-and-send</source>
-		<translation>Assinar e enviar</translation>
+		<translation>স্বাক্ষর করুন এবং প্রেরণ করুন</translation>
 	</message>
 	<message>
 		<source>sign-in</source>
-		<translation>Entrar</translation>
+		<translation>আনলক করুন</translation>
 	</message>
 	<message>
 		<source>sign-message</source>
-		<translation>Assinar Mensagem</translation>
+		<translation>বার্তা স্বাক্ষর করুন</translation>
 	</message>
 	<message>
 		<source>sign-out</source>
-		<translation>Sair da sessão</translation>
+		<translation>সাইন আউট করুন</translation>
 	</message>
 	<message>
 		<source>sign-with</source>
-		<translation>Assinar com</translation>
+		<translation>সাথে সাইন ইন করুন</translation>
 	</message>
 	<message>
 		<source>sign-with-password</source>
-		<translation>Assinar com senha</translation>
+		<translation>পাসওয়ার্ড দিয়ে সাইন ইন করুন</translation>
 	</message>
 	<message>
 		<source>sign-you-in</source>
-		<translation>Iniciando sessão...</translation>
+		<translation>আপনাকে স্বাক্ষর করা হচ্ছে...</translation>
 	</message>
 	<message>
 		<source>signing</source>
-		<translation>Assinatura</translation>
+		<translation>স্বাক্ষর</translation>
 	</message>
 	<message>
 		<source>signing-a-message</source>
-		<translation>Assinando uma mensagem</translation>
+		<translation>একটি বার্তায় স্বাক্ষর করা হচ্ছে</translation>
 	</message>
 	<message>
 		<source>signing-phrase</source>
-		<translation>Frase de assinatura</translation>
+		<translation>স্বাক্ষর বাক্যাংশ</translation>
 	</message>
 	<message>
 		<source>something-went-wrong</source>
-		<translation>Algo deu errado</translation>
+		<translation>কিছু ভুল হয়েছে</translation>
 	</message>
 	<message>
 		<source>soon</source>
-		<translation>Em breve</translation>
+		<translation>শীঘ্রই</translation>
 	</message>
 	<message>
 		<source>specify-address</source>
-		<translation>Especificar endereço</translation>
+		<translation>ঠিকানা উল্লেখ করুন</translation>
 	</message>
 	<message>
 		<source>specify-name</source>
-		<translation>Especifique um nome</translation>
+		<translation>একটি নাম উল্লেখ করুন</translation>
 	</message>
 	<message>
 		<source>specify-symbol</source>
-		<translation>Especifique um símbolo</translation>
+		<translation>একটি প্রতীক উল্লেখ করুন</translation>
 	</message>
 	<message>
 		<source>specify-network-id</source>
-		<translation>Especifique o ID da rede</translation>
+		<translation>নেটওয়ার্ক আইডি নির্দিষ্ট ভাবে উল্লেখ করুন</translation>
 	</message>
 	<message>
 		<source>specify-rpc-url</source>
-		<translation>Especifique um URL RPC</translation>
+		<translation>একটি RPC URL উল্লেখ করুন</translation>
 	</message>
 	<message>
 		<source>start-chat</source>
-		<translation>Iniciar bate-papo</translation>
+		<translation>চ্যাট শুরু করুন</translation>
 	</message>
 	<message>
 		<source>start-conversation</source>
-		<translation>Iniciar conversa</translation>
+		<translation>কথোপকথন শুরু করুন</translation>
 	</message>
 	<message>
 		<source>start-group-chat</source>
-		<translation>Iniciar conversa em grupo</translation>
+		<translation>গ্রুপ চ্যাট শুরু করুন</translation>
 	</message>
 	<message>
 		<source>start-new-chat</source>
-		<translation>Iniciar nova conversa</translation>
+		<translation>নতুন চ্যাট শুরু করুন</translation>
 	</message>
 	<message>
 		<source>status</source>
@@ -4631,1350 +4612,1353 @@ Acesse a seção configurações dos dispositivos para parear seus dispositivos.
 	</message>
 	<message>
 		<source>status-confirmed</source>
-		<translation>Confirmado</translation>
+		<translation>নিশ্চিত করা হয়েছে</translation>
 	</message>
 	<message>
 		<source>status-hardwallet</source>
-		<translation>Hardwallet Status</translation>
+		<translation>Status hardwallet</translation>
 	</message>
 	<message>
 		<source>status-keycard</source>
-		<translation>Keycard Status</translation>
+		<translation>Status কীকার্ড</translation>
 	</message>
 	<message>
 		<source>status-pending</source>
-		<translation>Pendente</translation>
+		<translation>বিচারাধীন</translation>
 	</message>
 	<message>
 		<source>status-tx-not-found</source>
-		<translation>TX não encontrado</translation>
+		<translation>TX খুঁজে পাওয়া যায়নি</translation>
 	</message>
 	<message>
 		<source>status-sent</source>
-		<translation>Enviado</translation>
+		<translation>প্রেরিত</translation>
 	</message>
 	<message>
 		<source>status-not-sent-tap</source>
-		<translation>Não confirmado. Toque para opções</translation>
+		<translation>নিশ্চিত করা হয়নি। পছন্দসমূহের জন্য ট্যাপ করুন</translation>
 	</message>
 	<message>
 		<source>status-not-sent-click</source>
-		<translation>Não confirmado. Clique para opções</translation>
+		<translation>নিশ্চিত করা হয়নি। পছন্দসমূহের জন্য ক্লিক করুন</translation>
 	</message>
 	<message>
 		<source>step-i-of-n</source>
-		<translation>Etapa {{step}} de {{number}}</translation>
+		<translation>{{number}} এর পদক্ষেপ {{step}} {{number}}</translation>
 	</message>
 	<message>
 		<source>sticker-market</source>
-		<translation>Mercado de adesivos</translation>
+		<translation>স্টিকার বাজার</translation>
 	</message>
 	<message>
 		<source>sticker</source>
-		<translation>Sticker</translation>
+		<translation>স্টিকার</translation>
 	</message>
 	<message>
 		<source>submit</source>
-		<translation>Enviar</translation>
+		<translation>জমা দিন</translation>
 	</message>
 	<message>
 		<source>submit-bug</source>
-		<translation>Relatar um bug</translation>
+		<translation>একটি বাগ জমা দিন</translation>
 	</message>
 	<message>
 		<source>success</source>
-		<translation>Sucesso</translation>
+		<translation>সাফল্য</translation>
 	</message>
 	<message>
 		<source>symbol</source>
-		<translation>Símbolo</translation>
+		<translation>প্রতীক</translation>
 	</message>
 	<message>
 		<source>sync-all-devices</source>
-		<translation>Sincronizar todos dispositivos</translation>
+		<translation>সকল ডিভাইস এককালবর্তী করুন</translation>
 	</message>
 	<message>
 		<source>sync-in-progress</source>
-		<translation>Sincronizando...</translation>
+		<translation>এককালবর্তী করা হচ্ছে...</translation>
 	</message>
 	<message>
 		<source>sync-settings</source>
-		<translation>Configurações de sincronização</translation>
+		<translation>এককালবর্তীকরণ সেটিংস</translation>
 	</message>
 	<message>
 		<source>sync-synced</source>
-		<translation>Sincronizado</translation>
+		<translation>সিংক্রোনাইজে</translation>
 	</message>
 	<message>
 		<source>syncing-devices</source>
-		<translation>Sincronizando...</translation>
+		<translation>এককালবর্তী করা হচ্ছে...</translation>
 	</message>
 	<message>
 		<source>tag-was-lost</source>
-		<translation>A tag foi perdida</translation>
+		<translation>ট্যাগ হারিয়ে গেছে</translation>
 	</message>
 	<message>
 		<source>tap-card-again</source>
-		<translation>Aproxime o cartão na parte de trás do seu telefone novamente</translation>
+		<translation>কার্ডটি আবার আপনার ফোনের পিছনে ট্যাপ করুন</translation>
 	</message>
 	<message>
 		<source>test-networks</source>
-		<translation>Redes de teste</translation>
+		<translation>নেটওয়ার্ক পরীক্ষা করুন</translation>
 	</message>
 	<message>
 		<source>text-input-disabled</source>
-		<translation>Aguarde um momento…</translation>
+		<translation>দয়া করে একমিনিট অপেক্ষা করো।।।</translation>
 	</message>
 	<message>
 		<source>this-device</source>
-		<translation>Este dispositivo</translation>
+		<translation>এই যন্ত্রটি</translation>
 	</message>
 	<message>
 		<source>this-device-desc</source>
-		<translation>Suas chaves serão criptografadas e armazenadas com segurança no seu dispositivo</translation>
+		<translation>আপনার কীগুলি সঙ্কেতায়িত এবং নিরাপদে আপনার ডিভাইসে সংরক্ষণ করা হবে</translation>
 	</message>
 	<message>
 		<source>this-is-you-signing</source>
-		<translation>Esta é a sua frase de assinatura</translation>
+		<translation>এটা আপনার স্বাক্ষর বাক্যাংশ</translation>
 	</message>
 	<message>
 		<source>this-will-take-few-seconds</source>
-		<translation>Isso levará alguns segundos</translation>
+		<translation>এটি কয়েক সেকেন্ড সময় লাগবে</translation>
 	</message>
 	<message>
 		<source>three-words-description</source>
-		<translation>Você deve ver essas três palavras antes de assinar cada transação</translation>
+		<translation>প্রতিটি লেনদেনে স্বাক্ষর করার আগে আপনার এই ৩টি শব্দ দেখা উচিত</translation>
 	</message>
 	<message>
 		<source>three-words-description-2</source>
-		<translation>Se você ver uma combinação diferente, cancele a transação e finalize a sessão</translation>
+		<translation>আপনি যদি একটি ভিন্ন সমন্বয় দেখেন, লেনদেন বাতিল করুন এবং সাইন আউট করুন</translation>
 	</message>
 	<message>
 		<source>to</source>
-		<translation>Para</translation>
+		<translation>করতে</translation>
 	</message>
 	<message>
 		<source>to-block</source>
-		<translation>Bloquear </translation>
+		<translation>ব্লক</translation>
 	</message>
 	<message>
 		<source>to-encrypt-enter-password</source>
-		<translation>Para criptografar a conta, digite sua senha</translation>
+		<translation>অ্যাকাউন্ট এনক্রিপ্ট করতে আপনার পাসওয়ার্ড দিন</translation>
 	</message>
 	<message>
 		<source>to-see-this-message</source>
-		<translation>Para ver esta mensagem,</translation>
+		<translation>এই বার্তাটি দেখতে,</translation>
 	</message>
 	<message>
 		<source>token-auto-validate-decimals-error</source>
-		<translation>Decimais incorretos para o token {{symbol}} no endereço {{address}} - definido como {{expected}} mas detectado como {{actual}}</translation>
+		<translation>ঠিকানা {{address}} ঠিকানায় টোকেন {{symbol}} এর জন্য ভুল দশমিক - {{expected}} সেট করা হয়েছে কিন্তু {{actual}} হিসাবে শনাক্ত করা হয়েছে</translation>
 	</message>
 	<message>
 		<source>token-auto-validate-name-error</source>
-		<translation>Nome incorreto para o token {{symbol}} no endereço {{address}} - definido como {{expected}} mas detectado como {{actual}}</translation>
+		<translation>ঠিকানায় {{symbol}} ঠিকানায় টোকেনের জন্য ভুল নাম {{address}} - {{expected}} সেট করা হয়েছে কিন্তু {{actual}} হিসাবে শনাক্ত করা হয়েছে</translation>
 	</message>
 	<message>
 		<source>token-auto-validate-symbol-error</source>
-		<translation>Símbolo incorreto para o token {{symbol}} no endereço {{address}} - definido como {{expected}} mas detectado como {{actual}}</translation>
+		<translation>ঠিকানায় {{symbol}} ঠিকানায় টোকেনের জন্য ভুল নাম {{address}} - {{expected}} সেট করা হয়েছে কিন্তু {{actual}} হিসাবে শনাক্ত করা হয়েছে</translation>
 	</message>
 	<message>
 		<source>token-details</source>
-		<translation>Detalhes do Token</translation>
+		<translation>টোকেন বিস্তারিত</translation>
 	</message>
 	<message>
 		<source>topic-name-error</source>
-		<translation>Use apenas letras minúsculas (a a z), números e traços (-). Não use teclas de bate-papo</translation>
+		<translation>কেবল ছোট হাতের অক্ষর (a to z), সংখ্যা এবং ড্যাশ (-) ব্যবহার করুন। চ্যাট কীগুলি ব্যবহার করবেন না</translation>
 	</message>
 	<message>
 		<source>transaction</source>
-		<translation>Transação</translation>
+		<translation>লেনদেন</translation>
 	</message>
 	<message>
 		<source>transaction-data</source>
-		<translation>Dados da transação</translation>
+		<translation>লেনদেনের তথ্য</translation>
 	</message>
 	<message>
 		<source>transaction-declined</source>
-		<translation>Transação recusada</translation>
+		<translation>লেনদেন প্রত্যাখ্যান</translation>
 	</message>
 	<message>
 		<source>transactions-management-enabled</source>
-		<translation>Gerenciamento de transações (alfa)</translation>
+		<translation>লেনদেন ব্যবস্থাপনা (আলফা)</translation>
 	</message>
 	<message>
 		<source>transaction-description</source>
-		<translation>Considere-o completo após 12 confirmações na rede.</translation>
+		<translation>নেটওয়ার্কে 12 টি নিশ্চিতকরণের পরে এটি সম্পূর্ণ বিবেচনা করুন।</translation>
 	</message>
 	<message>
 		<source>transaction-details</source>
-		<translation>Detalhes da transação</translation>
+		<translation>লেনদেনের বিস্তারিত</translation>
 	</message>
 	<message>
 		<source>transaction-failed</source>
-		<translation>Falha na transação</translation>
+		<translation>লেনদেন ব্যর্থ হয়েছে</translation>
 	</message>
 	<message>
 		<source>transaction-history</source>
-		<translation>Histórico de transações</translation>
+		<translation>লেনদেনের ইতিহাস</translation>
 	</message>
 	<message>
 		<source>transaction-request</source>
-		<translation>Solicitação de transação</translation>
+		<translation>লেনদেনের অনুরোধ</translation>
 	</message>
 	<message>
 		<source>transaction-sent</source>
-		<translation>Transação enviada</translation>
+		<translation>লেনদেন পাঠানো হয়েছে</translation>
 	</message>
 	<message>
 		<source>transaction-signed</source>
-		<translation>A transação foi assinada com sucesso</translation>
+		<translation>লেনদেন সফলভাবে স্বাক্ষরিত হয়েছে</translation>
 	</message>
 	<message>
 		<source>transactions</source>
-		<translation>Transações</translation>
+		<translation>লেনদেন</translation>
 	</message>
 	<message>
 		<source>transactions-filter-select-all</source>
-		<translation>Selecionar tudo</translation>
+		<translation>সব নির্বাচন করুন</translation>
 	</message>
 	<message>
 		<source>transactions-filter-title</source>
-		<translation>Filtrar histórico</translation>
+		<translation>ইতিহাস ফিল্টার করুন</translation>
 	</message>
 	<message>
 		<source>type</source>
-		<translation>Tipo</translation>
+		<translation>প্রকার</translation>
 	</message>
 	<message>
 		<source>transactions-history</source>
-		<translation>Histórico de transações</translation>
+		<translation>লেনদেনের ইতিহাস</translation>
 	</message>
 	<message>
 		<source>transactions-history-empty</source>
-		<translation>Ainda não há transações no seu histórico</translation>
+		<translation>আপনার ইতিহাসে এখনো কোন লেনদেন হয়নি</translation>
 	</message>
 	<message>
 		<source>transactions-history-loading</source>
-		<translation>Carregando histórico de transações. Isso pode demorar um pouco.</translation>
+		<translation>লেনদেনের ইতিহাস লোড করা হচ্ছে। এতে কিছু সময় লাগতে পারে।</translation>
 	</message>
 	<message>
 		<source>transactions-sign</source>
-		<translation>Assinar</translation>
+		<translation>চিহ্ন</translation>
 	</message>
 	<message>
 		<source>tribute-required-by-multiaccount</source>
-		<translation>{{multiaccount-name}} precisa de SNT para começar uma conversa.</translation>
+		<translation>{{multiaccount-name}} জন্য একটি চ্যাট শুরু করার জন্য SNT প্রয়োজন।</translation>
 	</message>
 	<message>
 		<source>tribute-state-paid</source>
-		<translation>Tributo pago</translation>
+		<translation>শ্রদ্ধা নিবেদন</translation>
 	</message>
 	<message>
 		<source>tribute-state-pending</source>
-		<translation>Tributo pendente</translation>
+		<translation>শ্রদ্ধা নিবেদন মুলতুবি</translation>
 	</message>
 	<message>
 		<source>tribute-state-required</source>
-		<translation>Requer {{snt-amount}} tributos em SNT</translation>
+		<translation>{{snt-ammount}} SNT শ্রদ্ধাঞ্জলি প্রয়োজন</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk</source>
-		<translation>Tribute to Talk</translation>
+		<translation>কথা বলার প্রতি শ্রদ্ধা</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-add-friends</source>
-		<translation>Adicione amigos como um contato para permitir bate-papos sem pagamento de tributo.</translation>
+		<translation>শ্রদ্ধা নিবেদন ছাড়াই চ্যাটগুলিকে অনুমতি দেওয়ার জন্য বন্ধুদের যোগাযোগ হিসাবে যুক্ত করুন।</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-are-you-friends</source>
-		<translation>Vocês são amigos?</translation>
+		<translation>তুমরা কী বন্ধু?</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-ask-to-be-added</source>
-		<translation>Peça para ser adicionado como um contato</translation>
+		<translation>একটি যোগাযোগ হিসাবে যুক্ত করতে বলুন</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-contact-received-your-tribute</source>
-		<translation> recebeu seu tributo. Agora vocês podem conversar com segurança.</translation>
+		<translation> তোমার শ্রদ্ধা ঞ্জলি পেয়েছি। আপনি এখন নিরাপদে একে অপরের সাথে চ্যাট করতে পারেন।</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-desc</source>
-		<translation>Monetize sua atenção exigindo pagamento de SNT para novas pessoas iniciem um bate-papo</translation>
+		<translation>নতুন দের জন্য SNT প্রয়োজন দ্বারা আপনার মনোযোগ আকর্ষণ করুন একটি চ্যাট শুরু করার জন্য</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-disabled</source>
-		<translation>Tribute to Talk desativado</translation>
+		<translation>প্রতিবন্ধী কথা বলার প্রতি শ্রদ্ধা</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-disabled-note</source>
-		<translation>A partir de agora, novas pessoas podem iniciar um bate-papo com você sem enviar o SNT.</translation>
+		<translation>এখন থেকে, নতুন রা SNT না পাঠিয়ে আপনার সাথে চ্যাট শুরু করতে পারবেন।</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-enabled</source>
-		<translation>Você tem o Tribute to Talk ativado.</translation>
+		<translation>আপনার কথা বলার প্রতি শ্রদ্ধা নিবেদন সক্রিয় আছে।</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-finish-desc</source>
-		<translation>A partir de agora, você receberá apenas conversas de contatos e pessoas que pagaram </translation>
+		<translation>এখন থেকে, আপনি শুধুমাত্র যোগাযোগ থেকে চ্যাট পাবেন, এবং যারা অর্থ প্রদান করেছেন </translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-learn-more-1</source>
-		<translation>Seu tempo e atenção são seus ativos mais valiosos. O Tribute to Talk permite definir uma quantidade de SNT necessária para novas pessoas iniciarem um bate-papo com você.</translation>
+		<translation>আপনার সময় এবং মনোযোগ আপনার সবচেয়ে মূল্যবান সম্পদ। টকের প্রতি শ্রদ্ধা নিবেদন আপনাকে নতুন দের সাথে চ্যাট শুরু করার জন্য প্রয়োজনীয় একটি পরিমাণ SNT সেট করতে দেয়।</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-learn-more-2</source>
-		<translation>Qualquer pessoa que não esteja na sua lista de contatos será solicitada a pagar e você pode responder assim que ela efetuar o pagamento.</translation>
+		<translation>যে কেউ আপনার কন্ট্যাক্ট লিস্টে নেই তাকে টাকা দিতে বলা হবে, এবং একবার তাদের কাছে গেলে আপনি সাড়া দিতে পারেন।</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-learn-more-3</source>
-		<translation>Você sempre pode enviar o dinheiro de volta, mas para garantir que os amigos possam entrar em contato com você gratuitamente, adicione-os primeiro como contato.</translation>
+		<translation>আপনি সবসময় টাকা ফেরত পাঠাতে পারেন, কিন্তু বন্ধুরা যাতে স্বাধীনভাবে আপনার কাছে পৌঁছাতে পারে তা নিশ্চিত করতে, প্রথমে তাদের যোগাযোগ হিসেবে যোগ করুন।</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-paywall-learn-more-1</source>
-		<translation>Nosso tempo e atenção são nossos ativos mais valiosos. O Tribute to Talk permite que você entre em contato com novas pessoas em troca de um pagamento SNT.</translation>
+		<translation>আমাদের সময় এবং মনোযোগ আমাদের সবচেয়ে মূল্যবান সম্পদ। টকের প্রতি শ্রদ্ধা নিবেদন আপনাকে একটি SNT পেমেন্টের বিনিময়ে নতুন দের সাথে যোগাযোগ করতে দেয়।</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-paywall-learn-more-2</source>
-		<translation>Para iniciar um bate-papo com alguém que tenha um conjunto de tributos, basta pagar o SNT necessário e você será adicionado como um contato.</translation>
+		<translation>যার একটি শ্রদ্ধাঞ্জলি সেট আছে তার সাথে চ্যাট শুরু করতে, শুধুমাত্র প্রয়োজনীয় SNT পরিশোধ করুন এবং আপনাকে একটি যোগাযোগ হিসেবে যুক্ত করা হবে।</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-paywall-learn-more-3</source>
-		<translation>Se você os conhece, pode compartilhar seu perfil fora do Status para ser adicionado gratuitamente.</translation>
+		<translation>আপনি যদি তাদের চেনেন, আপনি Status বাইরে আপনার প্রোফাইল শেয়ার করতে পারেন বিনামূল্যে যুক্ত করতে।</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-pending</source>
-		<translation>Tributo pendente de confirmação</translation>
+		<translation>শ্রদ্ধা নিবেদন নিশ্চিতকরণের মুলতুবি</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-pending-note</source>
-		<translation>A transação de tributo está pendente de confirmação na rede. Você pode verificar seu status no histórico de transações</translation>
+		<translation>শ্রদ্ধাঞ্জলি লেনদেন নেটওয়ার্কে নিশ্চিতকরণ মুলতুবি আছে। আপনি লেনদেনের ইতিহাসে এর Status পরীক্ষা করতে পারেন</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-removing-note</source>
-		<translation>A remoção do Tribute to Talk permitirá que novas pessoas iniciem um bate-papo sem enviar o SNT. Requer que uma transação seja feita.</translation>
+		<translation>টক-এর প্রতি শ্রদ্ধা নিবেদন অপসারণ করলে নতুন রা SNT পাঠানো ছাড়াই চ্যাট শুরু করতে পারবে। একটি লেনদেন করা প্রয়োজন।</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-set-snt-amount</source>
-		<translation>Defina a quantidade de SNT necessária para novas pessoas iniciarem um bate-papo</translation>
+		<translation>নতুন দের জন্য প্রয়োজনীয় SNT-এর পরিমাণ নির্ধারণ করুন একটি চ্যাট শুরু করার জন্য</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-signing</source>
-		<translation>Aguardando para assinar a transação</translation>
+		<translation>লেনদেনে স্বাক্ষর করার জন্য অপেক্ষা করা হচ্ছে</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-transaction-failed-note</source>
-		<translation>A transação falhou e as configurações do Tribute to Talk não foram alteradas</translation>
+		<translation>লেনদেন ব্যর্থ হয়েছে এবং আপনার বক্তৃতা সেটিংসের প্রতি শ্রদ্ধা নিবেদন পরিবর্তন করা হয়নি</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-tribute-received1</source>
-		<translation>Tributo recebido. Você e</translation>
+		<translation>শ্রদ্ধা নিবেদন। আপনি এবং</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-tribute-received2</source>
-		<translation>agora são contatos e podem conversar com segurança.</translation>
+		<translation>এখন পরিচিতি এবং একে অপরের সাথে নিরাপদে চ্যাট করতে পারেন।</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-you-require-snt</source>
-		<translation>Você requer SNT para novas pessoas iniciarem um bate-papo.</translation>
+		<translation>নতুন দের জন্য আপনার SNT প্রয়োজন একটি চ্যাট শুরু করার জন্য।</translation>
 	</message>
 	<message>
 		<source>try-again</source>
-		<translation>Tente novamente</translation>
+		<translation>আবার চেষ্টা করুন</translation>
 	</message>
 	<message>
 		<source>try-keeping-the-card-still</source>
-		<translation>Tente manter o cartão parado</translation>
+		<translation>কার্ডটি স্থির রাখার চেষ্টা করুন</translation>
 	</message>
 	<message>
 		<source>turn-nfc-on</source>
-		<translation>Ative a NFC para continuar</translation>
+		<translation>অব্যাহত রাখতে এনএফসি চালু করুন</translation>
 	</message>
 	<message>
 		<source>turn-nfc-description</source>
-		<translation>NFC está desativado no seu dispositivo. Você pode habilitá-lo nas configurações</translation>
+		<translation>এনএফসি ইয়র ডিভাইসে নিষ্ক্রিয়। আপনি সেটিংসে এটি সক্রিয় করতে পারেন</translation>
 	</message>
 	<message>
 		<source>keycard-init-title</source>
-		<translation>Procurando cartões…</translation>
+		<translation>কার্ড খুঁজছেন ...</translation>
 	</message>
 	<message>
 		<source>keycard-init-description</source>
-		<translation>Coloque o cartão na parte de trás do telefone para continuar</translation>
+		<translation>অব্যাহত রাখতে আপনার ফোনের পিছনে কার্ডটি রাখুন</translation>
 	</message>
 	<message>
 		<source>keycard-awaiting-title</source>
-		<translation>Ainda procurando…</translation>
+		<translation>এখনো খুঁজছি...</translation>
 	</message>
 	<message>
 		<source>keycard-awaiting-description</source>
-		<translation>Tente mover o cartão para encontrar o leitor NFC em seu dispositivo</translation>
+		<translation>আপনার ডিভাইসে NFC রিডার খুঁজতে কার্ডটি সরানোর চেষ্টা করুন</translation>
 	</message>
 	<message>
 		<source>keycard-processing-title</source>
-		<translation>Processando…</translation>
+		<translation>প্রক্রিয়াকরণ।।।</translation>
 	</message>
 	<message>
 		<source>keycard-processing-description</source>
-		<translation>Tente manter o cartão parado</translation>
+		<translation>কার্ডটি স্থির রাখার চেষ্টা করুন</translation>
 	</message>
 	<message>
 		<source>keycard-connected-title</source>
-		<translation>Conectado</translation>
+		<translation>সংযুক্ত</translation>
 	</message>
 	<message>
 		<source>keycard-connected-description</source>
-		<translation>Tente manter o cartão parado</translation>
+		<translation>কার্ডটি স্থির রাখার চেষ্টা করুন</translation>
 	</message>
 	<message>
 		<source>keycard-error-title</source>
-		<translation>Conexão perdida</translation>
+		<translation>সংযোগ হারিয়ে গেছে</translation>
 	</message>
 	<message>
 		<source>keycard-error-description</source>
-		<translation>Conecte o cartão novamente para continuar</translation>
+		<translation>চালিয়ে যাওয়ার জন্য কার্ডটি আবার সংযুক্ত করুন</translation>
 	</message>
 	<message>
 		<source>keycard-success-title</source>
-		<translation>Sucesso</translation>
+		<translation>সাফল্য</translation>
 	</message>
 	<message>
 		<source>keycard-success-description</source>
-		<translation>Você pode remover o cartão agora</translation>
+		<translation>আপনি এখন কার্ডটি অপসারণ করতে পারেন</translation>
 	</message>
 	<message>
 		<source>keycard-recover</source>
-		<translation>cartão perdido ou travado?</translation>
+		<translation>হারানো বা হিমায়িত কার্ড?</translation>
 	</message>
 	<message>
 		<source>keycard-recover-title</source>
-		<translation>Criar um novo cartão para esta conta?</translation>
+		<translation>এই অ্যাকাউন্টের জন্য একটি নতুন কার্ড তৈরি করবেন?</translation>
 	</message>
 	<message>
 		<source>keycard-recover-text</source>
-		<translation>Se você tem sua frase mnemônica, poderá criar um novo Keycard associado a esta conta. Você pode usar um novo Keycard ou redefinir os padrões de fábrica em um cartão travado.</translation>
+		<translation>যদি আপনার স্মারক বাক্যাংশ থাকে তবে আপনি এই অ্যাকাউন্টের সাথে যুক্ত একটি নতুন কীকার্ড তৈরি করতে পারেন। আপনি একটি নতুন কীকার্ড ব্যবহার করতে পারেন অথবা হিমায়িত একটিতে ফ্যাক্টরি রিসেট করতে পারেন।</translation>
 	</message>
 	<message>
 		<source>keycard-backup</source>
-		<translation>Crie um Keycard de backup</translation>
+		<translation>একটি ব্যাকআপ কীকার্ড তৈরি করুন</translation>
 	</message>
 	<message>
 		<source>keycard-backup-success-title</source>
-		<translation>Backup bem-sucedido</translation>
+		<translation>ব্যাকআপ সফল</translation>
 	</message>
 	<message>
 		<source>keycard-backup-success-body</source>
-		<translation>Cartão de backup criado com sucesso. Agora você pode usá-lo com sua conta, assim como o cartão principal.</translation>
+		<translation>ব্যাকআপ কার্ড সফলভাবে তৈরি হয়েছে। আপনি এখন এটি আপনার অ্যাকাউন্টের সাথে প্রাথমিক কার্ডের মতো ব্যবহার করতে পারেন।</translation>
 	</message>
 	<message>
 		<source>type-a-message</source>
-		<translation>Mensagem</translation>
+		<translation>বার্তা</translation>
 	</message>
 	<message>
 		<source>ulc-enabled</source>
-		<translation>ULC ativado</translation>
+		<translation>ইউএলসি সক্ষম হয়েছে</translation>
 	</message>
 	<message>
 		<source>backup-enabled</source>
-		<translation>Habilitado</translation>
+		<translation>সক্রিয়</translation>
 	</message>
 	<message>
 		<source>backup-disabled</source>
-		<translation>Desativado</translation>
+		<translation>অক্ষম</translation>
 	</message>
 	<message>
 		<source>backup-settings</source>
-		<translation>Configurações de cópia de segurança</translation>
+		<translation>ব্যাকআপ সেটিংস</translation>
 	</message>
 	<message>
 		<source>backup-through-waku</source>
-		<translation>Realizar cópia de segurança através do Waku</translation>
+		<translation>Waku এর মাধ্যমে ব্যাকআপ</translation>
 	</message>
 	<message>
 		<source>perform-backup</source>
-		<translation>Fazer cópia de segurança</translation>
+		<translation>ব্যাকআপ সঞ্চালন</translation>
 	</message>
 	<message>
 		<source>backing-up</source>
-		<translation>Realizando cópia de segurança...</translation>
+		<translation>ব্যাক আপ করা হচ্ছে...</translation>
 	</message>
 	<message>
 		<source>last-backup-performed</source>
-		<translation>Última cópia de segurança executada</translation>
+		<translation>শেষ ব্যাকআপ সম্পাদিত:</translation>
 	</message>
 	<message>
 		<source>unable-to-read-this-code</source>
-		<translation>Não foi possível ler este código</translation>
+		<translation>এই কোডটি পড়তে অক্ষম</translation>
 	</message>
 	<message>
 		<source>unblock-contact</source>
-		<translation>Desbloquear este usuário</translation>
+		<translation>এই ব্যবহারকারীকে অবরোধ মুক্ত করুন</translation>
 	</message>
 	<message>
 		<source>unknown-status-go-error</source>
-		<translation>Erro desconhecido de status-go</translation>
+		<translation>অজানা status-go ত্রুটি</translation>
 	</message>
 	<message>
 		<source>unlock</source>
-		<translation>Desbloquear</translation>
+		<translation>আনলক করুন</translation>
 	</message>
 	<message>
 		<source>unpair-card</source>
-		<translation>Desemparelhar cartão</translation>
+		<translation>কার্ড জোড় করা</translation>
 	</message>
 	<message>
 		<source>unpair-card-confirmation</source>
-		<translation>Esta operação desemparelhará o cartão do dispositivo atual. Requer autorização de código de acesso de 6 dígitos. Deseja continuar?</translation>
+		<translation>এই অপারেশনটি বর্তমান ডিভাইস থেকে কার্ডটি জোড় করে দেবে। ৬-সংখ্যার পাসকোড অনুমোদন প্রয়োজন। আপনি কি এগিয়ে যেতে চান?</translation>
 	</message>
 	<message>
 		<source>unpaired-keycard-text</source>
-		<translation>O Keycard que você utilizou não está associado a este telefone</translation>
+		<translation>আপনি যে কীকার্ডটি ট্যাপ করেছেন তা এই ফোনের সাথে সংযুক্ত নয়</translation>
 	</message>
 	<message>
 		<source>unpaired-keycard-title</source>
-		<translation>Parece que seu cartão não foi pareado.</translation>
+		<translation>মনে হচ্ছে আপনার কার্ড আনপেয়ার করা হয়েছে</translation>
 	</message>
 	<message>
 		<source>unpair-keycard</source>
-		<translation>Desparear o Keycard deste telefone</translation>
+		<translation>এই ফোন থেকে কীকার্ড খুলে ফেলুন</translation>
 	</message>
 	<message>
 		<source>unpair-keycard-warning</source>
-		<translation>Seu código de emparelhamento/PUK &amp; PIN permanecem inalterados</translation>
+		<translation>আপনার পেয়ারিং কোড/পিইউকে এবং পিন অপরিবর্তিত থাকবে</translation>
 	</message>
 	<message>
 		<source>update</source>
-		<translation>Atualizar</translation>
+		<translation>হালনাগাদ</translation>
 	</message>
 	<message>
 		<source>url</source>
-		<translation>URL</translation>
+		<translation>ইউআরএল</translation>
 	</message>
 	<message>
 		<source>usd-currency</source>
-		<translation>USD</translation>
+		<translation>Usd</translation>
 	</message>
 	<message>
 		<source>use-valid-contact-code</source>
-		<translation>Digite ou escaneie uma chave de bate-papo ou nome de usuário válidos</translation>
+		<translation>অনুগ্রহ করে একটি বৈধ চ্যাট কী বা ব্যবহারকারীর নাম প্রবেশ করান বা স্ক্যান করুন</translation>
 	</message>
 	<message>
 		<source>validation-amount-invalid-number</source>
-		<translation>A quantidade não é um número válido</translation>
+		<translation>পরিমাণ একটি বৈধ সংখ্যা নয়</translation>
 	</message>
 	<message>
 		<source>validation-amount-is-too-precise</source>
-		<translation>O valor é muito preciso. O número máximo de casas decimais é {{decimals}} .</translation>
+		<translation>পরিমাণ খুব নিখুঁত। দশমিকের সর্বোচ্চ সংখ্যা হল {{decimals}}।</translation>
 	</message>
 	<message>
 		<source>version</source>
-		<translation>Versão do aplicativo</translation>
+		<translation>অ্যাপ সংস্করণ</translation>
 	</message>
 	<message>
 		<source>app-commit</source>
-		<translation>Commit do aplicativo</translation>
+		<translation>অ্যাপ কমিট</translation>
 	</message>
 	<message>
 		<source>view</source>
-		<translation>Visualizar</translation>
+		<translation>দেখুন</translation>
 	</message>
 	<message>
 		<source>view-cryptokitties</source>
-		<translation>Ver em CryptoKitties</translation>
+		<translation>ক্রিপ্টোকিটিতে দেখুন</translation>
 	</message>
 	<message>
 		<source>view-cryptostrikers</source>
-		<translation>Ver no CryptoStrikers</translation>
+		<translation>ক্রিপ্টোস্ট্রাইকারে দেখুন</translation>
 	</message>
 	<message>
 		<source>view-etheremon</source>
-		<translation>Ver no Etheremon</translation>
+		<translation>ইথেরেমনে দেখুন</translation>
 	</message>
 	<message>
 		<source>view-gitcoin</source>
-		<translation>Ver no Gitcoin</translation>
+		<translation>গিটকয়েনে দেখুন</translation>
 	</message>
 	<message>
 		<source>view-profile</source>
-		<translation>Ver perfil</translation>
+		<translation>প্রোফাইল দেখুন</translation>
 	</message>
 	<message>
 		<source>view-details</source>
-		<translation>Ver Detalhes</translation>
+		<translation>বিস্তারিত দেখুন</translation>
 	</message>
 	<message>
 		<source>view-signing</source>
-		<translation>Ver frase de assinatura</translation>
+		<translation>স্বাক্ষর বাক্যাংশ প্রদর্শন করুন</translation>
 	</message>
 	<message>
 		<source>view-superrare</source>
-		<translation>Ver no SuperRare</translation>
+		<translation>SuperRare দেখুন</translation>
 	</message>
 	<message>
 		<source>waiting-for-wifi</source>
-		<translation>Sem Wi-Fi, sincronização de mensagens desativada.</translation>
+		<translation>কোনও ওয়াই-ফাই নেই, বার্তা সিঙ্ক করা অক্ষম হয়েছে।</translation>
 	</message>
 	<message>
 		<source>waiting-for-wifi-change</source>
-		<translation>Configurações</translation>
+		<translation>সেটিংস</translation>
 	</message>
 	<message>
 		<source>waiting-to-sign</source>
-		<translation>Aguardando para assinar a transação...</translation>
+		<translation>লেনদেনে স্বাক্ষর করার জন্য অপেক্ষা করছে...</translation>
 	</message>
 	<message>
 		<source>wallet</source>
-		<translation>Carteira</translation>
+		<translation>মানিব্যাগ</translation>
 	</message>
 	<message>
 		<source>wallet-asset</source>
-		<translation>Ativo</translation>
+		<translation>সম্পদ</translation>
 	</message>
 	<message>
 		<source>wallet-assets</source>
-		<translation>Ativos</translation>
+		<translation>সম্পদ</translation>
 	</message>
 	<message>
 		<source>wallet-backup-recovery-title</source>
-		<translation>Faça backup da sua frase-semente</translation>
+		<translation>আপনার বীজ বাক্যাংশ ব্যাক আপ করুন</translation>
 	</message>
 	<message>
 		<source>wallet-choose-recipient</source>
-		<translation>Escolher destinatário</translation>
+		<translation>প্রাপক চয়ন করুন</translation>
 	</message>
 	<message>
 		<source>wallet-collectibles</source>
-		<translation>Colecionáveis</translation>
+		<translation>সংগ্রহ</translation>
 	</message>
 	<message>
 		<source>wallet-insufficient-funds</source>
-		<translation>Fundos insuficientes</translation>
+		<translation>অপর্যাপ্ত তহবিল</translation>
 	</message>
 	<message>
 		<source>wallet-insufficient-gas</source>
-		<translation>Não há ETH suficiente para o gás</translation>
+		<translation>গ্যাসের জন্য পর্যাপ্ত ইটিএইচ নেই</translation>
 	</message>
 	<message>
 		<source>wallet-invalid-address</source>
-		<translation>Endereço inválido: 
+		<translation>ভুল ঠিকানা:
  {{data}}</translation>
 	</message>
 	<message>
 		<source>wallet-invalid-address-checksum</source>
-		<translation>Erro no endereço:{{data}}</translation>
+		<translation>ঠিকানায় ত্রুটি:
+ {{data}}</translation>
 	</message>
 	<message>
 		<source>wallet-invalid-chain-id</source>
-		<translation>A rede não corresponde: 
- {{data}} mas a cadeia atual é {{chain}}</translation>
+		<translation>নেটওয়ার্ক মেলে না: 
+ {{data}} কিন্তু বর্তমান চেইন হচ্ছে {{chain}}</translation>
 	</message>
 	<message>
 		<source>wallet-manage-assets</source>
-		<translation>Gerenciar ativos</translation>
+		<translation>সম্পদ পরিচালনা করুন</translation>
 	</message>
 	<message>
 		<source>wallet-manage-accounts</source>
-		<translation>Gerenciar contas</translation>
+		<translation>অ্যাকাউন্টগুলি পরিচালনা করুন</translation>
 	</message>
 	<message>
 		<source>wallet-request</source>
-		<translation>Solicitação</translation>
+		<translation>অনুরোধ</translation>
 	</message>
 	<message>
 		<source>wallet-send</source>
-		<translation>Enviar</translation>
+		<translation>প্রেরণ</translation>
 	</message>
 	<message>
 		<source>wallet-send-min-units</source>
-		<translation>Mínimo 21000 unidades</translation>
+		<translation>সর্বনিম্ন 21000 ইউনিট</translation>
 	</message>
 	<message>
 		<source>wallet-send-min-wei</source>
-		<translation>Min 1 wei</translation>
+		<translation>ন্যূনতম 1 ওয়ে</translation>
 	</message>
 	<message>
 		<source>wallet-settings</source>
-		<translation>Configurações da carteira</translation>
+		<translation>মানিব্যাগ সেটিংস</translation>
 	</message>
 	<message>
 		<source>wallet-total-value</source>
-		<translation>Valor total</translation>
+		<translation>মোট মূল্য</translation>
 	</message>
 	<message>
 		<source>wallet-transaction-total-fee</source>
-		<translation>Taxa total</translation>
+		<translation>মোট ফি</translation>
 	</message>
 	<message>
 		<source>wants-to-access-profile</source>
-		<translation>quer acessar seu perfil</translation>
+		<translation>আপনার প্রোফাইলে অ্যাক্সেস করতে চায়</translation>
 	</message>
 	<message>
 		<source>warning</source>
-		<translation>Atenção</translation>
+		<translation>সতর্কীকরণ</translation>
 	</message>
 	<message>
 		<source>warning-message</source>
-		<translation>Desculpe, limitamos o envio de várias mensagens em rápida sucessão para evitar spam. Por favor, tente novamente daqui a pouco</translation>
+		<translation>দুঃখিত, আমরা স্প্যাম প্রতিরোধ করতে দ্রুত বেশ কিছু বার্তা পাঠাতে সীমাবদ্ধ. অনুগ্রহ করে এক মুহূর্তের মধ্যে আবার চেষ্টা করুন</translation>
 	</message>
 	<message>
 		<source>web-view-error</source>
-		<translation>Não foi possível carregar a página</translation>
+		<translation>পৃষ্ঠা লোড করতে অক্ষম</translation>
 	</message>
 	<message>
 		<source>welcome-screen-text</source>
-		<translation>Configure sua carteira, convide seus amigos para bater papo e navegue pelos dapps mais usados!</translation>
+		<translation>আপনার মানিব্যাগ সেট আপ করুন, চ্যাটে বন্ধুদের আমন্ত্রণ করুন
+ এবং জনপ্রিয় ড্যাপ ব্রাউজ করুন!</translation>
 	</message>
 	<message>
 		<source>welcome-to-status</source>
-		<translation>Bem-vindo ao Status!</translation>
+		<translation>Status স্বাগতম</translation>
 	</message>
 	<message>
 		<source>welcome-to-status-description</source>
-		<translation>Configure sua carteira criptográfica, convide amigos para conversar e navegue por aplicativos descentralizados</translation>
+		<translation>আপনার ক্রিপ্টো ওয়ালেট সেট আপ করুন, বন্ধুদের চ্যাট এবং বিকেন্দ্রীভূত অ্যাপস ব্রাউজ করতে আমন্ত্রণ জানান</translation>
 	</message>
 	<message>
 		<source>welcome-blank-message</source>
-		<translation>Suas conversas serão exibidas aqui. Para iniciar novos bate-papos, pressione o botão ⊕</translation>
+		<translation>আপনার চ্যাট এখানে প্রদর্শিত হবে। নতুন চ্যাট শুরু করতে ⊕ বোতামটি চাপুন</translation>
 	</message>
 	<message>
 		<source>welcome-community-blank-message</source>
-		<translation>Seus canais aparecerão aqui. Para criar um novo canal, clique no botão ⊕ e selecione &quot;Criar um canal&quot;</translation>
+		<translation>আপনার চ্যানেলগুলি এখানে উপস্থিত হবে। একটি নতুন চ্যানেল তৈরি করতে, ⊕ বোতামে ক্লিক করুন এবং &quot;একটি চ্যানেল তৈরি করুন&quot; নির্বাচন করুন</translation>
 	</message>
 	<message>
 		<source>welcome-community-blank-message-edit-chats</source>
-		<translation>Seus canais aparecerão aqui. Para criar um novo canal, volte para a tela da comunidade, clique no botão ⊕ e selecione &quot;Criar um canal&quot;</translation>
+		<translation>আপনার চ্যানেল এখানে প্রদর্শিত হবে. একটি নতুন চ্যানেল তৈরি করতে, কমিউনিটি স্ক্রিনে ফিরে যান, ⊕ বোতামে ক্লিক করুন এবং &quot;একটি চ্যানেল তৈরি করুন&quot; নির্বাচন করুন।</translation>
 	</message>
 	<message>
 		<source>welcome-blank-community-message</source>
-		<translation>Suas comunidades aparecerão aqui.</translation>
+		<translation>আপনার সম্প্রদায়গুলি এখানে উপস্থিত হবে।</translation>
 	</message>
 	<message>
 		<source>fetch-community</source>
-		<translation>Buscar comunidade</translation>
+		<translation>সম্প্রদায় আনয়ন করুন</translation>
 	</message>
 	<message>
 		<source>fetching-community</source>
-		<translation>Buscando comunidade…</translation>
+		<translation>সম্প্রদায় আনা হচ্ছে...</translation>
 	</message>
 	<message>
 		<source>seed-phrase-placeholder</source>
-		<translation>Frase-semente…</translation>
+		<translation>বীজ বাক্যাংশ ...</translation>
 	</message>
 	<message>
 		<source>word-count</source>
-		<translation>Contagem de palavras</translation>
+		<translation>শব্দ গণনা</translation>
 	</message>
 	<message>
 		<source>word-n</source>
-		<translation>Palavra #{{number}}</translation>
+		<translation>শব্দ # {{number}}</translation>
 	</message>
 	<message>
 		<source>word-n-description</source>
-		<translation>Para verificar se você fez o backup da sua frase-semente corretamente, digite a palavra #{{number}} acima.</translation>
+		<translation>আপনি আপনার বীজ বাক্যটি সঠিকভাবে ব্যাকআপ করেছেন কিনা তা পরীক্ষা করার জন্য, উপরে #{{number}} শব্দটি প্রবেশ করান।</translation>
 	</message>
 	<message numerus="yes">
 		<source>words-n</source>
 		<translation>
-			<numerusform>1 palavra</numerusform>
-			<numerusform>{{count}} palavras</numerusform>
+			<numerusform>১ শব্দ</numerusform>
+			<numerusform>{{count}}শব্দ</numerusform>
 		</translation>
 	</message>
 	<message>
 		<source>write-down-and-store-securely</source>
-		<translation>Anote os códigos e
- guarde-os de forma segura</translation>
+		<translation>কোড লিখুন
+ এবং তাদের নিরাপদে সংরক্ষণ করুন</translation>
 	</message>
 	<message>
 		<source>wrong-address</source>
-		<translation>Endereço errado</translation>
+		<translation>ভুল ঠিকানা</translation>
 	</message>
 	<message>
 		<source>wrong-card</source>
-		<translation>Cartão errado</translation>
+		<translation>ভুল কার্ড</translation>
 	</message>
 	<message>
 		<source>wrong-card-text</source>
-		<translation>O cartão utilizado não corresponde às chaves que você selecionou</translation>
+		<translation>ট্যাপ করা কার্ড আপনার নির্বাচিত কীর সাথে সামঞ্জস্যপূর্ণ নয়</translation>
 	</message>
 	<message>
 		<source>wrong-contract</source>
-		<translation>Contrato errado</translation>
+		<translation>ভুল চুক্তি</translation>
 	</message>
 	<message>
 		<source>contract-isnt-supported</source>
-		<translation>Contrato não suportado</translation>
+		<translation>চুক্তি সমর্থিত নয়</translation>
 	</message>
 	<message>
 		<source>wrong-keycard-text</source>
-		<translation>O Keycard que você utilizou não está associado a este telefone</translation>
+		<translation>আপনি যে কীকার্ডটি ট্যাপ করেছেন তা এই ফোনের সাথে সংযুক্ত নয়</translation>
 	</message>
 	<message>
 		<source>wrong-keycard-title</source>
-		<translation>Parece que você utilizou
- um Keycard errado.</translation>
+		<translation>দেখে মনে হচ্ছে আপনি টেপ করেছেন
+ একটি ভুল কিকার্ড</translation>
 	</message>
 	<message>
 		<source>wrong-password</source>
-		<translation>Senha incorreta</translation>
+		<translation>ভুল পাসওয়ার্ড</translation>
 	</message>
 	<message>
 		<source>wrong-word</source>
-		<translation>Palavra errada</translation>
+		<translation>ভুল শব্দ</translation>
 	</message>
 	<message>
 		<source>yes</source>
-		<translation>Sim</translation>
+		<translation>হ্যাঁ</translation>
 	</message>
 	<message>
 		<source>You</source>
-		<translation>Você</translation>
+		<translation>আপনি</translation>
 	</message>
 	<message>
 		<source>you</source>
-		<translation>você</translation>
+		<translation>আপনি</translation>
 	</message>
 	<message>
 		<source>you-already-have-an-asset</source>
-		<translation>Você já tem um ativo {{value}}</translation>
+		<translation>আপনার ইতোমধ্যে একটি সম্পদ আছে {{value}}</translation>
 	</message>
 	<message>
 		<source>you-are-all-set</source>
-		<translation>Está tudo pronto!</translation>
+		<translation>তোমরা সবাই প্রস্তুত!</translation>
 	</message>
 	<message>
 		<source>you-are-all-set-description</source>
-		<translation>Se você perder seu telefone, agora você pode acessar seus fundos e a chave de bate-papo usando sua frase-semente</translation>
+		<translation>আপনি যদি আপনার ফোন হারান, আপনি এখন আপনার বীজ বাক্যাংশ ব্যবহার করে আপনার তহবিল এবং চ্যাট কী অ্যাক্সেস করতে পারেন</translation>
 	</message>
 	<message>
 		<source>you-can-change-account</source>
-		<translation>Você pode mudar o nome da conta e a cor para o que desejar</translation>
+		<translation>আপনি যা চান তা হিসাবের নাম এবং রং পরিবর্তন করতে পারেন</translation>
 	</message>
 	<message>
 		<source>you-dont-have-stickers</source>
-		<translation>Você ainda não tem nenhum adesivo</translation>
+		<translation>তোমার কাছে এখনো কোন স্টিকার নেই</translation>
 	</message>
 	<message>
 		<source>you-dont-have-contacts-invite-friends</source>
-		<translation>Você ainda não tem contatos.
- Convide seus amigos para começar a conversar.</translation>
+		<translation>আপনার এখনও কোনও পরিচিতি নেই।
+চ্যাট করা শুরু করতে আপনার বন্ধুদের আমন্ত্রণ জানান।</translation>
 	</message>
 	<message>
 		<source>your-contact-code</source>
-		<translation>A concessão de acesso autoriza este DApp a recuperar sua chave de bate-papo</translation>
+		<translation>অ্যাক্সেস মঞ্জুর করা এই DApp আপনার চ্যাট কী পুনরুদ্ধার করতে অনুমোদন দেয়</translation>
 	</message>
 	<message>
 		<source>your-data-belongs-to-you</source>
-		<translation>Se você perder a sua frase-semente, você perde seus dados e fundos</translation>
+		<translation>আপনি যদি আপনার বীজ বাক্যাংশ হারান তাহলে আপনি আপনার ডেটা এবং তহবিল হারান</translation>
 	</message>
 	<message>
 		<source>your-data-belongs-to-you-description</source>
-		<translation>Se perder o acesso, por exemplo, ao perder seu telefone, você só pode acessar suas chaves com sua frase-semente. Só você tem a sua frase-semente. Anote e mantenha sua frase-semente em segurança</translation>
+		<translation>আপনি যদি অ্যাক্সেস হারান, উদাহরণস্বরূপ, আপনার ফোন হারিয়ে, আপনি শুধুমাত্র আপনার বীজ বাক্যাংশ দিয়ে আপনার চাবি অ্যাক্সেস করতে পারেন. কেউ না, কিন্তু তোমার বীজের বাক্যাংশ আছে। এটা লিখে দাও। এটা নিরাপদ রাখুন</translation>
 	</message>
 	<message>
 		<source>your-recovery-phrase</source>
-		<translation>Sua frase-semente</translation>
+		<translation>আপনার বীজ বাক্যাংশ</translation>
 	</message>
 	<message>
 		<source>your-recovery-phrase-description</source>
-		<translation>Esta é sua frase-semente. Você a usa para provar que esta é sua carteira. Você só pode vê-la uma vez! Escreva no papel e mantenha em um lugar seguro. Você vai precisar dela se perder ou reinstalar sua carteira.</translation>
+		<translation>এটা তোমার বীজের বাক্যাংশ। আপনি এটা ব্যবহার করে প্রমাণ করতে যে এটা আপনার মানিব্যাগ। তুমি শুধু একবারই এটা দেখতে পাবে! এটা কাগজে লিখে নিরাপদ জায়গায় রাখুন। আপনি যদি আপনার মানিব্যাগ হারান বা পুনরায় ইনস্টল করেন তাহলে আপনার এটি প্রয়োজন হবে।</translation>
 	</message>
 	<message>
 		<source>custom-seed-phrase</source>
-		<translation>Frase-semente inválida</translation>
+		<translation>অবৈধ seed phrase</translation>
 	</message>
 	<message>
 		<source>custom-seed-phrase-text-1</source>
-		<translation>Esta frase-semente não é compatível com o nosso dicionário. Verifique se há palavras com erros ortográficos.</translation>
+		<translation>এই seed phrase আমাদের সমর্থিত অভিধানের সাথে মেলে না। ভুল বানান শব্দের জন্য পরীক্ষা করুন।</translation>
 	</message>
 	<message>
 		<source>to-enable-biometric</source>
-		<translation>Para ativar o {{bio-type-label}}, você deve salvar sua senha na tela de desbloqueio</translation>
+		<translation>{{bio-type-label}} সক্রিয় করতে, আপনাকে অবশ্যই আনলক স্ক্রীনে আপনার পাসওয়ার্ড সংরক্ষণ করতে হবে</translation>
 	</message>
 	<message>
 		<source>ok-save-pass</source>
-		<translation>OK, salvar senha</translation>
+		<translation>ঠিক আছে, পাসওয়ার্ড সংরক্ষণ করুন</translation>
 	</message>
 	<message>
 		<source>lock-app-with</source>
-		<translation>Bloquear aplicativo com</translation>
+		<translation>সঙ্গে অ্যাপ লক করুন</translation>
 	</message>
 	<message>
 		<source>grant-face-id-permissions</source>
-		<translation>Para conceder a permissão de Face ID necessária, vá para as configurações do seu sistema e certifique-se de que Status &gt; Face ID está selecionado</translation>
+		<translation>প্রয়োজনীয় ফেস আইডি অনুমতি দিতে, অনুগ্রহ করে আপনার সিস্টেম সেটিংসে যান এবং নিশ্চিত করুন যে Status&gt; ফেস আইডি নির্বাচন করা হয়েছে।</translation>
 	</message>
 	<message>
 		<source>request-feature</source>
-		<translation>Solicitar um recurso</translation>
+		<translation>একটি বৈশিষ্ট্য অনুরোধ</translation>
 	</message>
 	<message>
 		<source>select-account-dapp</source>
-		<translation>Selecione a conta que você deseja usar com Dapps</translation>
+		<translation>Dapps-এর সাথে আপনি যে অ্যাকাউন্টটি ব্যবহার করতে চান তা নির্বাচন করুন</translation>
 	</message>
 	<message>
 		<source>apply</source>
-		<translation>Aplicar</translation>
+		<translation>প্রয়োগ করুন</translation>
 	</message>
 	<message>
 		<source>on-status-tree</source>
-		<translation>Árvore Status ativada</translation>
+		<translation>অন Status ট্রি</translation>
 	</message>
 	<message>
 		<source>off-status-tree</source>
-		<translation>Árvore Status desativada</translation>
+		<translation>অফ Status ট্রি</translation>
 	</message>
 	<message>
 		<source>derivation-path</source>
-		<translation>Caminho de derivação</translation>
+		<translation>বিবর্তনের পথ</translation>
 	</message>
 	<message>
 		<source>storage</source>
-		<translation>Armazenamento</translation>
+		<translation>সঞ্চয়</translation>
 	</message>
 	<message>
 		<source>keycard-free-pairing-slots</source>
-		<translation>O Keycard tem {{n}} portas de emparelhamento livres</translation>
+		<translation>কীকার্ডে {{n}} বিনামূল্যে জোড়া স্লট আছে</translation>
 	</message>
 	<message>
 		<source>public-chat-description</source>
-		<translation>Participe de bate-papos públicos sobre seus interesses! Qualquer um pode começar uma nova sala.</translation>
+		<translation>আপনার স্বার্থের জন্য পাবলিক চ্যাটে যোগ দিন! যে কেউ নতুন শুরু করতে পারে।</translation>
 	</message>
 	<message>
 		<source>delete-account</source>
-		<translation>Remover conta</translation>
+		<translation>অ্যাকাউন্ট মুছে ফেলুন</translation>
 	</message>
 	<message>
 		<source>delete-keys-keycard</source>
-		<translation>Excluir chaves do Keycard</translation>
+		<translation>কীকার্ড থেকে কীগুলি মুছুন</translation>
 	</message>
 	<message>
 		<source>watch-only</source>
-		<translation>Somente exibição</translation>
+		<translation>কেবলমাত্র দেখার জন্য</translation>
 	</message>
 	<message>
 		<source>cant-report-bug</source>
-		<translation>Não é possível relatar um bug</translation>
+		<translation>একটি বাগ প্রতিবেদন করা যাবে না</translation>
 	</message>
 	<message>
 		<source>mail-should-be-configured</source>
-		<translation>O cliente de e-mail deve ser configurado</translation>
+		<translation>মেইল ক্লায়েন্ট কনফিগার করা উচিত</translation>
 	</message>
 	<message>
 		<source>check-on-block-explorer</source>
-		<translation>Verifique no explorador de blocos</translation>
+		<translation>ব্লক এক্সপ্লোরার চেক করুন</translation>
 	</message>
 	<message>
 		<source>check-on-opensea</source>
-		<translation>Confira no opensea</translation>
+		<translation>ওপেনসিয়া পরীক্ষা করুন</translation>
 	</message>
 	<message>
 		<source>transactions-load-more</source>
-		<translation>Carregar mais</translation>
+		<translation>আরও লোড করুন</translation>
 	</message>
 	<message>
 		<source>private-key</source>
-		<translation>Chave privada</translation>
+		<translation>ব্যক্তিগত কী</translation>
 	</message>
 	<message>
 		<source>generate-an-account</source>
-		<translation>Gerar uma conta</translation>
+		<translation>একটি অ্যাকাউন্ট তৈরি করুন</translation>
 	</message>
 	<message>
 		<source>add-watch-account</source>
-		<translation>Adicionar uma conta somente para exibição</translation>
+		<translation>কেবলমাত্র দেখার জন্য অ্যাকাউন্ট যুক্ত করুন</translation>
 	</message>
 	<message>
 		<source>add-seed-account</source>
-		<translation>Adicionar conta com uma frase-semente</translation>
+		<translation>একটি Seed phrase সহ অ্যাকাউন্ট যুক্ত করুন</translation>
 	</message>
 	<message>
 		<source>account-exists-title</source>
-		<translation>A conta já existe</translation>
+		<translation>একাউন্ট ইতোমধ্যে বিদ্যমান</translation>
 	</message>
 	<message>
 		<source>add-private-key-account</source>
-		<translation>Adicionar conta a partir de chave privada</translation>
+		<translation>ব্যক্তিগত কী থেকে অ্যাকাউন্ট যুক্ত করুন</translation>
 	</message>
 	<message>
 		<source>profile-not-found</source>
-		<translation>Perfil não encontrado</translation>
+		<translation>প্রোফাইল পাওয়া যায়নি</translation>
 	</message>
 	<message>
 		<source>waku-bloom-filter-mode</source>
-		<translation>Modo de filtro Waku bloom</translation>
+		<translation>ওয়াকু ব্লুম ফিল্টার মোড</translation>
 	</message>
 	<message>
 		<source>wakuv2-settings</source>
-		<translation>Configurações Waku v2</translation>
+		<translation>Waku v2 সেটিংস</translation>
 	</message>
 	<message>
 		<source>wakuv2-node-format</source>
-		<translation>/ip4/{node-ip}/tcp/{port}/p2p/{id}</translation>
+		<translation>/ip4/ {node-ip} /tcp/ {port} /p2p/ {id}</translation>
 	</message>
 	<message>
 		<source>wakuv2-change-nodes</source>
-		<translation>Tem certeza de que deseja modificar os nós do Wakuv2?</translation>
+		<translation>আপনি কি নিশ্চিত যে আপনি ওয়াকুভ২ নোডপরিবর্তন করতে চান?</translation>
 	</message>
 	<message>
 		<source>appearance</source>
-		<translation>Aparência</translation>
+		<translation>উপস্থিতি</translation>
 	</message>
 	<message>
 		<source>preference</source>
-		<translation>Preferência</translation>
+		<translation>অগ্রাধিকার</translation>
 	</message>
 	<message>
 		<source>light</source>
-		<translation>Claro</translation>
+		<translation>হালকা</translation>
 	</message>
 	<message>
 		<source>dark</source>
-		<translation>Escuro</translation>
+		<translation>অদৃশ্য</translation>
 	</message>
 	<message>
 		<source>system</source>
-		<translation>Sistema</translation>
+		<translation>পদ্ধতি</translation>
 	</message>
 	<message>
 		<source>give-permissions-camera</source>
-		<translation>Dar permissão
-para acessar a câmera</translation>
+		<translation>অনুমতি দিন
+ক্যামেরা অ্যাক্সেস করতে</translation>
 	</message>
 	<message>
 		<source>photos</source>
-		<translation>Fotos</translation>
+		<translation>ছবি</translation>
 	</message>
 	<message>
 		<source>image</source>
-		<translation>Imagem</translation>
+		<translation>চিত্র</translation>
 	</message>
 	<message>
 		<source>sign-anyway</source>
-		<translation>Assinar mesmo assim</translation>
+		<translation>যাই হোক স্বাক্ষর করুন</translation>
 	</message>
 	<message>
 		<source>tx-fail-description1</source>
-		<translation>É provável que esta transação falhe. Assine por sua conta e risco usando uma taxa de rede personalizada.</translation>
+		<translation>এই লেনদেন ব্যর্থ হওয়ার সম্ভাবনা আছে। কাস্টম নেটওয়ার্ক ফি ব্যবহার করে আপনার নিজের ঝুঁকিতে স্বাক্ষর করুন।</translation>
 	</message>
 	<message>
 		<source>tx-fail-description2</source>
-		<translation>É provável que esta transação falhe. Defina uma taxa de rede personalizada para assinar por sua conta e risco.</translation>
+		<translation>এই লেনদেন ব্যর্থ হওয়ার সম্ভাবনা আছে। আপনার নিজের ঝুঁকিতে স্বাক্ষর করার জন্য একটি কাস্টম নেটওয়ার্ক ফি নির্ধারণ করুন।</translation>
 	</message>
 	<message>
 		<source>set-custom-fee</source>
-		<translation>Definir taxa personalizada</translation>
+		<translation>কাস্টম ফি নির্ধারণ করুন</translation>
 	</message>
 	<message>
 		<source>not-enough-snt</source>
-		<translation>SNT insuficiente</translation>
+		<translation>পর্যাপ্ত SNT নেই</translation>
 	</message>
 	<message>
 		<source>add-new-contact</source>
-		<translation>Adicionar novo contato</translation>
+		<translation>নতুন পরিচিতি যুক্ত করুন</translation>
 	</message>
 	<message>
 		<source>you-dont-have-contacts</source>
-		<translation>Você ainda não possui contatos.</translation>
+		<translation>তোমার এখনো কোন যোগাযোগ নেই।</translation>
 	</message>
 	<message>
 		<source>set-max</source>
-		<translation>Definir máximo</translation>
+		<translation>সর্বোচ্চ নির্ধারণ করুন</translation>
 	</message>
 	<message>
 		<source>continue-anyway</source>
-		<translation>Continuar mesmo assim</translation>
+		<translation>যাই হোক চালিয়ে যান</translation>
 	</message>
 	<message>
 		<source>private-notifications</source>
-		<translation>Notificações privadas</translation>
+		<translation>ব্যক্তিগত বিজ্ঞপ্তি</translation>
 	</message>
 	<message>
 		<source>private-notifications-descr</source>
-		<translation>O Status notificará você sobre novas mensagens. Você pode editar suas preferências de notificação nas configurações.</translation>
+		<translation>স্ট্যটাস আপনাকে নতুন বার্তাগুলি সম্পর্কে অবহিত করবে। আপনি পরে সেটিংসে আপনার বিজ্ঞপ্তি পছন্দগুলি সম্পাদনা করতে পারেন</translation>
 	</message>
 	<message>
 		<source>maybe-later</source>
-		<translation>Talvez mais tarde</translation>
+		<translation>হয়তো পরে</translation>
 	</message>
 	<message>
 		<source>join</source>
-		<translation>Participar</translation>
+		<translation>যোগদান</translation>
 	</message>
 	<message>
 		<source>registered</source>
-		<translation>cadastrado</translation>
+		<translation>নিবন্ধিত</translation>
 	</message>
 	<message>
 		<source>not-registered</source>
-		<translation>não cadastrado</translation>
+		<translation>অনিবন্ধিত</translation>
 	</message>
 	<message>
 		<source>audio-recorder-error</source>
-		<translation>Erro no gravador</translation>
+		<translation>রেকর্ডার ত্রুটি</translation>
 	</message>
 	<message>
 		<source>audio-recorder</source>
-		<translation>Gravador</translation>
+		<translation>রেকর্ডার</translation>
 	</message>
 	<message>
 		<source>audio-recorder-max-ms-reached</source>
-		<translation>Tempo máximo de gravação atingido</translation>
+		<translation>সর্বোচ্চ রেকর্ডিং সময় পৌঁছেছে</translation>
 	</message>
 	<message>
 		<source>audio-recorder-permissions-error</source>
-		<translation>Você precisa dar permissão para enviar mensagens de áudio</translation>
+		<translation>অডিও বার্তা প্রেরণের জন্য আপনাকে অনুমতি দিতে হবে</translation>
 	</message>
 	<message>
 		<source>audio</source>
-		<translation>Áudio</translation>
+		<translation>অডিও</translation>
 	</message>
 	<message>
 		<source>update-to-see-image</source>
-		<translation>Atualize para a versão mais recente para ver uma bela imagem aqui!</translation>
+		<translation>এখানে একটি চমৎকার ছবি দেখতে সর্বশেষ সংস্করণে আপডেট করুন!</translation>
 	</message>
 	<message>
 		<source>update-to-listen-audio</source>
-		<translation>Atualize para a versão mais recente para ouvir uma mensagem de áudio aqui!</translation>
+		<translation>এখানে একটি অডিও বার্তা শুনতে সর্বশেষ সংস্করণে হালনাগাদ করুন!</translation>
 	</message>
 	<message>
 		<source>update-to-see-sticker</source>
-		<translation>Atualize para a versão mais recente para ver um belo adesivo aqui!</translation>
+		<translation>এখানে একটি চমৎকার স্টিকার দেখতে সর্বশেষ সংস্করণে আপডেট করুন!</translation>
 	</message>
 	<message>
 		<source>webview-camera-permission-requests</source>
-		<translation>Solicitações de permissão de câmera do Webview</translation>
+		<translation>ওয়েবভিউ ক্যামেরার অনুমতি অনুরোধ</translation>
 	</message>
 	<message>
 		<source>webview-camera-permission-requests-subtitle</source>
-		<translation>Quando habilitado, sites e dapps podem pedir para usar sua câmera</translation>
+		<translation>যখন সক্রিয় করা হয়, ওয়েবসাইট এবং ড্যাপস আপনার ক্যামেরা ব্যবহার করতে বলতে পারে</translation>
 	</message>
 	<message>
 		<source>page-would-like-to-use-camera</source>
-		<translation>gostaria de usar sua câmera</translation>
+		<translation>আপনার ক্যামেরা ব্যবহার করতে চান</translation>
 	</message>
 	<message>
 		<source>page-camera-request-blocked</source>
-		<translation>Solicitações de câmera bloqueadas. Para habilitar as solicitações de câmera, vá em Configurações</translation>
+		<translation>ক্যামেরার অনুরোধ অবরুদ্ধ। ক্যামেরার অনুরোধ সক্রিয় করতে সেটিংসে যান</translation>
 	</message>
 	<message>
 		<source>nickname</source>
-		<translation>Apelido</translation>
+		<translation>ডাকনাম</translation>
 	</message>
 	<message>
 		<source>add-nickname</source>
-		<translation>Adicionar um apelido (opcional)</translation>
+		<translation>একটি ডাকনাম যুক্ত করুন (ঐচ্ছিক)</translation>
 	</message>
 	<message>
 		<source>nickname-description</source>
-		<translation>Os apelidos ajudam você a identificar as pessoas no Status. 
- Só você pode ver os apelidos que adicionou</translation>
+		<translation>ডাকনামগুলি আপনাকে স্ট্যাটাসে অন্যদের সনাক্ত করতে সহায়তা করে।
+আপনি যে ডাকনামগুলি যোগ করেছেন তা কেবল আপনি দেখতে পারেন</translation>
 	</message>
 	<message>
 		<source>accept</source>
-		<translation>Aceitar</translation>
+		<translation>গ্রহণ করুন</translation>
 	</message>
 	<message>
 		<source>group-invite</source>
-		<translation>Convite para o grupo</translation>
+		<translation>গ্রুপ আমন্ত্রণ</translation>
 	</message>
 	<message>
 		<source>group-invite-link</source>
-		<translation>Link de convite do grupo</translation>
+		<translation>গ্রুপ আমন্ত্রণ লিংক</translation>
 	</message>
 	<message>
 		<source>pending-invitations</source>
-		<translation>Pedidos de entrada pendentes</translation>
+		<translation>সদস্যপদের অনুরোধ স্থগিত</translation>
 	</message>
 	<message>
 		<source>empty-pending-invitations-descr</source>
-		<translation>Pessoas que desejam entrar no grupo 
- através de um link de convite aparecerão aqui</translation>
+		<translation>যারা এই গ্রুপে যোগ দিতে চান
+একটি আমন্ত্রণ লিংকের মাধ্যমে এখানে প্রদর্শিত হবে</translation>
 	</message>
 	<message>
 		<source>introduce-yourself</source>
-		<translation>Apresente-se com uma breve mensagem</translation>
+		<translation>একটি সংক্ষিপ্ত বার্তা দিয়ে নিজেকে পরিচয় করিয়ে দিন</translation>
 	</message>
 	<message>
 		<source>request-pending</source>
-		<translation>Pedido pendente…</translation>
+		<translation>মুলতুবি অনুরোধ…</translation>
 	</message>
 	<message>
 		<source>membership-declined</source>
-		<translation>O pedido de entrada no grupo foi recusado</translation>
+		<translation>সদস্যপদের অনুরোধ প্রত্যাখ্যান করা হয়েছে</translation>
 	</message>
 	<message>
 		<source>remove-group</source>
-		<translation>Remover grupo</translation>
+		<translation>গ্রুপ অপসারণ করুন</translation>
 	</message>
 	<message>
 		<source>request-membership</source>
-		<translation>Solicitar para entrar</translation>
+		<translation>সদস্যতার জন্য অনুরোধ</translation>
 	</message>
 	<message>
 		<source>membership-description</source>
-		<translation>A entrada no grupo exige que você seja aceito pelo administrador do grupo</translation>
+		<translation>গ্রুপ মেম্বারশিপ আপনাকে গ্রুপ অ্যাডমিন দ্বারা গ্রহণ করতে হবে</translation>
 	</message>
 	<message>
 		<source>group-membership-request</source>
-		<translation>Pedido para entrar no grupo</translation>
+		<translation>গ্রুপ সদস্যতার অনুরোধ</translation>
 	</message>
 	<message>
 		<source>members-limit-reached</source>
-		<translation>Limite de membros atingido</translation>
+		<translation>সদস্যদের সীমা পৌঁছেছে</translation>
 	</message>
 	<message>
 		<source>favourite</source>
-		<translation>Favoritos</translation>
+		<translation>প্রিয়</translation>
 	</message>
 	<message>
 		<source>favourites</source>
-		<translation>Favoritos</translation>
+		<translation>পছন্দনীয়</translation>
 	</message>
 	<message>
 		<source>new-favourite</source>
-		<translation>Novo favorito</translation>
+		<translation>নতুন প্রিয়</translation>
 	</message>
 	<message>
 		<source>edit-favourite</source>
-		<translation>Editar favorito</translation>
+		<translation>প্রিয় সম্পাদনা করুন</translation>
 	</message>
 	<message>
 		<source>remove-favourite</source>
-		<translation>Remover favorito</translation>
+		<translation>প্রিয়টি সরান</translation>
 	</message>
 	<message>
 		<source>add-favourite</source>
-		<translation>Adicionar favorito</translation>
+		<translation>প্রিয় বিষয় যোগ করুন</translation>
 	</message>
 	<message>
 		<source>add-to-favourites</source>
-		<translation>Adicionar aos favoritos</translation>
+		<translation>পছন্দনীয়তে যুক্ত করুন</translation>
 	</message>
 	<message>
 		<source>favourites-empty</source>
-		<translation>Os endereços adicionados aos favoritos aparecerão aqui</translation>
+		<translation>পছন্দনীয়তে যুক্ত ঠিকানা এখানে প্রদর্শিত হবে</translation>
 	</message>
 	<message>
 		<source>contacts-empty</source>
-		<translation>Contatos com nomes ENS aparecerão aqui</translation>
+		<translation>ই এন এস নামের পরিচিতিগুলি এখানে উপস্থিত হবে</translation>
 	</message>
 	<message>
 		<source>my-accounts</source>
-		<translation>Minhas contas</translation>
+		<translation>আমার অ্যাকাউন্ট</translation>
 	</message>
 	<message>
 		<source>my-accounts-empty</source>
-		<translation>Suas contas disponíveis aparecerão aqui</translation>
+		<translation>আপনার উপলভ্য একাউন্টসমূহ এখানে প্রদর্শিত হবে</translation>
 	</message>
 	<message>
 		<source>recent-empty</source>
-		<translation>Os endereços usados recentemente aparecerão aqui</translation>
+		<translation>সম্প্রতি ব্যবহৃত ঠিকানাএখানে প্রদর্শিত হবে</translation>
 	</message>
 	<message>
 		<source>address-or-ens-name</source>
-		<translation>Endereço ou nome ENS</translation>
+		<translation>ঠিকানা বা ইএনএস নাম</translation>
 	</message>
 	<message>
 		<source>name-optional</source>
-		<translation>Nome (opcional)</translation>
+		<translation>নাম (ঐচ্ছিক)</translation>
 	</message>
 	<message>
 		<source>mute</source>
-		<translation>Silenciar</translation>
+		<translation>নিঃশব্দ করুন</translation>
 	</message>
 	<message>
 		<source>unmute</source>
-		<translation>Ativar som</translation>
+		<translation>নীরব করো না</translation>
 	</message>
 	<message>
 		<source>scan-tokens</source>
-		<translation>Escanear tokens</translation>
+		<translation>টোকেন স্ক্যান করুন</translation>
 	</message>
 	<message>
 		<source>my-status</source>
-		<translation>Meu status</translation>
+		<translation>আমার স্ট্যাটাস</translation>
 	</message>
 	<message>
 		<source>contacts-descr</source>
-		<translation>Seus contatos aparecerão aqui. Você receberá atualizações de status de qualquer pessoa que adicionar como contato</translation>
+		<translation>আপনার পরিচিতিগুলি এখানে উপস্থিত হবে। আপনি পরিচিতি হিসাবে যাকে যুক্ত করেন তার কাছ থেকে স্ট্যাটাস আপডেট পাবেন</translation>
 	</message>
 	<message>
 		<source>status-updates-descr</source>
-		<translation>As atualizações de status aparecerão aqui. Adicione este perfil como um contato para receber atualizações em sua linha do tempo.</translation>
+		<translation>Status হালনাগাদসমূহ এখানে প্রদর্শিত হবে। আপনার সময়রেখায় হালনাগাদসমূহ পেতে পরিচিতি হিসেবে প্রোফাইলটি যুক্ত করুন।</translation>
 	</message>
 	<message>
 		<source>whats-on-your-mind</source>
-		<translation>O que você está pensando...</translation>
+		<translation>আপনি কি ভাবছেন...</translation>
 	</message>
 	<message>
 		<source>cant-open-public-chat</source>
-		<translation>Não é possível abrir este chat público</translation>
+		<translation>পাবলিক চ্যাট খোলা যাবে না</translation>
 	</message>
 	<message>
 		<source>invalid-public-chat-topic</source>
-		<translation>Tópico de chat público inválido</translation>
+		<translation>অকার্যকর পাবলিক চ্যাট প্রসঙ্গ</translation>
 	</message>
 	<message>
 		<source>now</source>
-		<translation>Agora</translation>
+		<translation>এখন</translation>
 	</message>
 	<message>
 		<source>statuses-my-status-descr</source>
-		<translation>Compartilhe o que você está pensando. Qualquer pessoa que visitar seu perfil poderá ver seu status. As pessoas que adicionam você como contato receberão suas atualizações na linha do tempo delas</translation>
+		<translation>	
+আপনার মনে যা আছে তা ভাগ করুন। আপনার প্রোফাইল দেখার জন্য যে কেউ আপনার Status দেখতে সক্ষম হবে। আপনাকে যোগাযোগ হিসাবে যুক্ত করা লোকেরা তাদের টাইমলাইনে আপনার আপডেটগুলি গ্রহণ করবে</translation>
 	</message>
 	<message>
 		<source>statuses-descr</source>
-		<translation>Compartilhe o que você está pensando e fique atualizado com seus contatos</translation>
+		<translation>আপনার মনে যা আছে তা ভাগ করুন এবং আপনার পরিচিতিগুলির সাথে আপডেট থাকুন</translation>
 	</message>
 	<message>
 		<source>new-status</source>
-		<translation>Novo status</translation>
+		<translation>নতুন স্ট্যাটাস</translation>
 	</message>
 	<message>
 		<source>chat-link-previews</source>
-		<translation>Visualizações de links de chat</translation>
+		<translation>চ্যাট লিঙ্ক পূর্বরূপ</translation>
 	</message>
 	<message>
 		<source>you-can-choose-preview-websites</source>
-		<translation>Você pode escolher quais dos seguintes sites podem visualizar o link de descrições e imagens nas conversas</translation>
+		<translation>আপনি নিম্নলিখিত ওয়েবসাইটগুলির মধ্যে কোনটি চ্যাটে বর্ণনা এবং ছবির লিঙ্ক প্রাকদর্শন করতে পারেন তা চয়ন করতে পারেন</translation>
 	</message>
 	<message>
 		<source>previewing-may-share-metadata</source>
-		<translation>Visualizar links desses sites pode compartilhar seus metadados com os proprietários</translation>
+		<translation>এই ওয়েবসাইটথেকে লিংক প্রাকদর্শন তাদের মালিকদের সাথে আপনার মেটাডাটা শেয়ার করতে পারে</translation>
 	</message>
 	<message>
 		<source>websites</source>
-		<translation>Sites</translation>
+		<translation>ওয়েবসাইট</translation>
 	</message>
 	<message>
 		<source>enable-all</source>
-		<translation>Habilitar todos</translation>
+		<translation>সব সক্রিয় করুন</translation>
 	</message>
 	<message>
 		<source>disable-all</source>
-		<translation>Desativar todos</translation>
+		<translation>সব নিষ্ক্রিয় করুন</translation>
 	</message>
 	<message>
 		<source>warning-sending-to-contract-descr</source>
-		<translation>O endereço que você inseriu é um contrato inteligente. O envio de fundos para este endereço pode resultar em perda de fundos. Para interagir com um DApp, abra o DApp no navegador da Status.</translation>
+		<translation>আপনি যে ঠিকানায় প্রবেশ করেছেন তা একটি স্মার্ট চুক্তি, এই ঠিকানায় তহবিল পাঠানোর ফলে তহবিল ক্ষতিগ্রস্ত হতে পারে। একটি DApp-এর সাথে মিথস্ক্রিয়া করতে, Status DApp ব্রাউজারে DApp খুলুন।</translation>
 	</message>
 	<message>
 		<source>dont-ask</source>
-		<translation>Não me pergunte novamente</translation>
+		<translation>আমাকে আবার জিজ্ঞাসা করবেন না</translation>
 	</message>
 	<message>
 		<source>enable-link-previews</source>
-		<translation>Ativar visualizações de link no chat?</translation>
+		<translation>চ্যাটে লিঙ্কের পূর্বরূপগুলি সক্ষম করবেন?</translation>
 	</message>
 	<message>
 		<source>once-enabled-share-metadata</source>
-		<translation>Uma vez habilitados, os links postados no chat podem compartilhar seus metadados com o site</translation>
+		<translation>একবার সক্রিয় হয়ে গেলে, চ্যাটে পোস্ট করা লিংকগুলো সাইটের সাথে আপনার মেটাডাটা শেয়ার করতে পারে</translation>
 	</message>
 	<message>
 		<source>external-storage-denied</source>
-		<translation>Acesso ao armazenamento externo negado</translation>
+		<translation>বাহ্যিক স্টোরেজ অ্যাক্সেস অস্বীকার করা হয়</translation>
 	</message>
 	<message>
 		<source>timeline</source>
-		<translation>Linha do tempo</translation>
+		<translation>টাইমলাইন</translation>
 	</message>
 	<message>
 		<source>main-account</source>
@@ -5982,271 +5966,271 @@ para acessar a câmera</translation>
 	</message>
 	<message>
 		<source>ethereum-address</source>
-		<translation>Endereço Ethereum</translation>
+		<translation>ইথেরিয়াম ঠকানা</translation>
 	</message>
 	<message>
 		<source>default-assets</source>
-		<translation>ERC20 e ERC721 padrão</translation>
+		<translation>ডিফল্ট ERC20 এবং ERC721</translation>
 	</message>
 	<message>
 		<source>increase-gas</source>
-		<translation>Aumentar o gás</translation>
+		<translation>গ্যাস বাড়ান</translation>
 	</message>
 	<message>
 		<source>cancelling</source>
-		<translation>Cancelando</translation>
+		<translation>বাতিল করা হচ্ছে</translation>
 	</message>
 	<message>
 		<source>refresh</source>
-		<translation>Atualizar</translation>
+		<translation>সতেজ</translation>
 	</message>
 	<message>
 		<source>close-all</source>
-		<translation>Fechar tudo</translation>
+		<translation>সব বন্ধ করুন</translation>
 	</message>
 	<message>
 		<source>tabs</source>
-		<translation>Abas</translation>
+		<translation>ট্যাব</translation>
 	</message>
 	<message>
 		<source>new-tab</source>
-		<translation>Nova aba</translation>
+		<translation>নতুন ট্যাব</translation>
 	</message>
 	<message>
 		<source>empty-tab</source>
-		<translation>Aba vazia</translation>
+		<translation>খালি ট্যাব</translation>
 	</message>
 	<message>
 		<source>open-in-new-tab</source>
-		<translation>Abrir em nova aba</translation>
+		<translation>নতুন ট্যাবে খুলুন</translation>
 	</message>
 	<message>
 		<source>has-permissions</source>
-		<translation>tem permissão para acessar</translation>
+		<translation>অ্যাক্সেস করার অনুমতি আছে</translation>
 	</message>
 	<message>
 		<source>connect-wallet</source>
-		<translation>Conectar carteira</translation>
+		<translation>ওয়ালেট সংযোগ করুন</translation>
 	</message>
 	<message>
 		<source>open-chat</source>
-		<translation>Abrir chat</translation>
+		<translation>চ্যাট খুলুন</translation>
 	</message>
 	<message>
 		<source>favourite-description</source>
-		<translation>Seus sites favoritos aparecerão aqui</translation>
+		<translation>আপনার প্রিয় ওয়েবসাইটগুলি এখানে উপস্থিত হবে</translation>
 	</message>
 	<message>
 		<source>transfers-fetching-failure</source>
-		<translation>O histórico de transferências não pôde ser atualizado. Verifique sua conexão e puxe para baixo para tentar novamente</translation>
+		<translation>স্থানান্তরের ইতিহাস আপডেট করা যায়নি। আপনার সংযোগ পরীক্ষা করুন এবং আবার চেষ্টা করতে নীচে টানুন</translation>
 	</message>
 	<message>
 		<source>move-and-reset</source>
-		<translation>Mover e reiniciar</translation>
+		<translation>সরান এবং পুনরায় সেট করুন</translation>
 	</message>
 	<message>
 		<source>move-keystore-file-to-keycard</source>
-		<translation>Mover arquivo de armazenamento de chaves para o Keycard?</translation>
+		<translation>কীস্টোর ফাইলকে কীকার্ডে সরাতে চান?</translation>
 	</message>
 	<message>
 		<source>database-reset-title</source>
-		<translation>Redefinição do banco de dados</translation>
+		<translation>ডাটাবেস রিসেট</translation>
 	</message>
 	<message>
 		<source>database-reset-content</source>
-		<translation>Conversas, contatos e configurações foram excluídos. Você pode usar sua conta com seu Keycard</translation>
+		<translation>চ্যাট, পরিচিতি এবং সেটিংস মুছে ফেলা হয়েছে। আপনি আপনার কী -কার্ড দিয়ে আপনার অ্যাকাউন্ট ব্যবহার করতে পারেন</translation>
 	</message>
 	<message>
 		<source>database-reset-warning</source>
-		<translation>O banco de dados será redefinido. Conversas, contatos e configurações serão excluídos</translation>
+		<translation>ডাটাবেস রিসেট করা হবে। চ্যাট, পরিচিতি এবং সেটিংস মুছে ফেলা হবে</translation>
 	</message>
 	<message>
 		<source>empty-keycard-required</source>
-		<translation>Requer um Keycard vazio</translation>
+		<translation>একটি খালি কীকার্ড প্রয়োজন</translation>
 	</message>
 	<message>
 		<source>current</source>
-		<translation>Atual</translation>
+		<translation>বর্তমান</translation>
 	</message>
 	<message>
 		<source>choose-storage</source>
-		<translation>Escolha o armazenamento</translation>
+		<translation>স্টোরেজ বেছে নিন</translation>
 	</message>
 	<message>
 		<source>choose-new-location-for-keystore</source>
-		<translation>Escolha um novo local para salvar seu arquivo de armazenamento de chaves</translation>
+		<translation>আপনার কীস্টোর ফাইল সংরক্ষণ করতে একটি নতুন অবস্থান চয়ন করুন</translation>
 	</message>
 	<message>
 		<source>get-a-keycard</source>
-		<translation>Obtenha um Keycard</translation>
+		<translation>একটি কীকার্ড পান</translation>
 	</message>
 	<message>
 		<source>keycard-upsell-subtitle</source>
-		<translation>Maior segurança e facilidade</translation>
+		<translation>উন্নত নিরাপত্তা এবং সুবিধা</translation>
 	</message>
 	<message>
 		<source>actions</source>
-		<translation>Ações</translation>
+		<translation>ক্রিয়া</translation>
 	</message>
 	<message>
 		<source>move-keystore-file</source>
-		<translation>Mover arquivo de armazenamento de chaves</translation>
+		<translation>কীস্টোর ফাইল সরান</translation>
 	</message>
 	<message>
 		<source>select-new-location-for-keys</source>
-		<translation>Selecione um novo local para salvar sua(s) chave(s) privada(s)</translation>
+		<translation>আপনার ব্যক্তিগত কী (গুলি) সংরক্ষণ করতে একটি নতুন অবস্থান নির্বাচন করুন</translation>
 	</message>
 	<message>
 		<source>reset-database</source>
-		<translation>Reiniciar base de dados</translation>
+		<translation>ডাটাবেস রিসেট করুন</translation>
 	</message>
 	<message>
 		<source>reset-database-warning</source>
-		<translation>Excluir conversas, contatos e configurações. Obrigatório quando você perder sua senha</translation>
+		<translation>চ্যাট, পরিচিতি এবং সেটিংস মুছুন। যখন আপনি আপনার পাসওয়ার্ড হারিয়ে ফেলবেন তখন এটি প্রয়োজনীয়</translation>
 	</message>
 	<message>
 		<source>reset-database-warning-keycard</source>
-		<translation>Excluir conversas, contatos e configurações.</translation>
+		<translation>চ্যাট, পরিচিতি এবং সেটিংস মুছুন।</translation>
 	</message>
 	<message>
 		<source>key-managment</source>
-		<translation>Gerenciamento de chave</translation>
+		<translation>কী ব্যবস্থাপনা</translation>
 	</message>
 	<message>
 		<source>choose-actions</source>
-		<translation>Escolha ações</translation>
+		<translation>ক্রিয়াগুলি চয়ন করুন</translation>
 	</message>
 	<message>
 		<source>master-account</source>
-		<translation>Conta mestre</translation>
+		<translation>মাস্টার অ্যাকাউন্ট</translation>
 	</message>
 	<message>
 		<source>back-up</source>
-		<translation>Cópia de segurança</translation>
+		<translation>ব্যাক আপ</translation>
 	</message>
 	<message>
 		<source>key-on-device</source>
-		<translation>A chave privada está salva neste dispositivo</translation>
+		<translation>এই ডিভাইসে ব্যক্তিগত কী সংরক্ষিত আছে</translation>
 	</message>
 	<message>
 		<source>seed-key-uid-mismatch</source>
-		<translation>Semente não corresponde</translation>
+		<translation>বীজ মিলছে না</translation>
 	</message>
 	<message>
 		<source>seed-key-uid-mismatch-desc-1</source>
-		<translation>A frase-semente que você inseriu não corresponde a {{multiaccount-name}}</translation>
+		<translation>আপনার লেখা বীজ বাক্যাংশ এর সাথে মেলে না</translation>
 	</message>
 	<message>
 		<source>seed-key-uid-mismatch-desc-2</source>
-		<translation>Para gerenciar as chaves para esta conta, verifique sua frase-semente e tente novamente.</translation>
+		<translation>এই অ্যাকাউন্টের কীগুলি পরিচালনা করতে আপনার বীজ বাক্যাংশ যাচাই করুন এবং আবার চেষ্টা করুন।</translation>
 	</message>
 	<message>
 		<source>recover-with-seed-phrase</source>
-		<translation>Recupere com a frase-semente</translation>
+		<translation>বীজ বাক্যাংশ দিয়ে পুনরুদ্ধার করুন</translation>
 	</message>
 	<message>
 		<source>transfer-ma-unknown-error-desc-1</source>
-		<translation>Parece que sua conta múltipla não foi excluída. O banco de dados pode ter sido redefinido</translation>
+		<translation>মনে হচ্ছে আপনার মাল্টি অ্যাকাউন্ট মুছে ফেলা হয়নি। ডেটাবেস রিসেট করা হতে পারে</translation>
 	</message>
 	<message>
 		<source>transfer-ma-unknown-error-desc-2</source>
-		<translation>Verifique sua lista de contas e tente novamente. Se a conta não estiver listada, vá para Acessar as chaves existentes para recuperar com a frase-semente</translation>
+		<translation>অনুগ্রহ করে আপনার অ্যাকাউন্টের তালিকা টি পরীক্ষা করুন এবং আবার চেষ্টা করুন। যদি অ্যাকাউন্টটি তালিকাভুক্ত না হয় তবে বীজ বাক্যাংশের সাথে পুনরুদ্ধার করতে বিদ্যমান কীগুলিতে অ্যাক্সেস করুন</translation>
 	</message>
 	<message>
 		<source>everyone</source>
-		<translation>Todos</translation>
+		<translation>প্রত্যেকে</translation>
 	</message>
 	<message>
 		<source>show-profile-pictures</source>
-		<translation>Mostrar fotos de perfil de</translation>
+		<translation>এখান থেকে প্রোফাইল ছবি দেখুন</translation>
 	</message>
 	<message>
 		<source>show-profile-pictures-to</source>
-		<translation>Mostre sua foto de perfil para</translation>
+		<translation>প্রোফাইল শেয়ার করুন</translation>
 	</message>
 	<message>
 		<source>non-archival-node</source>
-		<translation>O endpoint RPC não oferece suporte a solicitações de arquivamento. Seu histórico de transferências locais pode estar incompleto.</translation>
+		<translation>আরপিসি এন্ডপয়েন্ট আর্কাইভের অনুরোধ সমর্থন করে না। আপনার স্থানীয় স্থানান্তরের ইতিহাস অসম্পূর্ণ হতে পারে।</translation>
 	</message>
 	<message>
 		<source>custom-node</source>
-		<translation>Você está usando um endpoint RPC personalizado. Seu histórico de transferências locais pode estar incompleto.</translation>
+		<translation>আপনি কাস্টম RPC এন্ডপয়েন্ট ব্যবহার করছেন। আপনার স্থানীয় স্থানান্তরের ইতিহাস অসম্পূর্ণ হতে পারে।</translation>
 	</message>
 	<message>
 		<source>connection-status</source>
-		<translation>Status de conexão</translation>
+		<translation>সংযোগ অবস্থা</translation>
 	</message>
 	<message>
 		<source>peer-to-peer</source>
-		<translation>P2P</translation>
+		<translation>পিয়ার টু পিয়ার</translation>
 	</message>
 	<message>
 		<source>not-connected-to-peers</source>
-		<translation>Não conectado a nenhum par</translation>
+		<translation>কোন সমবয়সীদের সাথে সংযুক্ত নয়</translation>
 	</message>
 	<message>
 		<source>unable-to-send-messages</source>
-		<translation>Incapaz de enviar e receber mensagens</translation>
+		<translation>বার্তাগুলি পাঠাতে এবং গ্রহণ করতে অক্ষম</translation>
 	</message>
 	<message>
 		<source>can-send-messages</source>
-		<translation>Você pode enviar e receber novas mensagens</translation>
+		<translation>আপনি নতুন বার্তা পাঠাতে এবং গ্রহণ করতে পারেন</translation>
 	</message>
 	<message>
 		<source>not-connected-nodes</source>
-		<translation>Não conectado a um nó do Status</translation>
+		<translation>স্ট্যাটাস নোডের সাথে সংযুক্ত নয়</translation>
 	</message>
 	<message>
 		<source>unable-to-fetch</source>
-		<translation>Não foi possível obter o histórico de conversas</translation>
+		<translation>চ্যাটের ইতিহাস আনতে অক্ষম</translation>
 	</message>
 	<message>
 		<source>nodes-disabled</source>
-		<translation>Nós do Status desativados</translation>
+		<translation>স্ট্যাটাস নোড নিষ্ক্রিয়</translation>
 	</message>
 	<message>
 		<source>waiting-wi-fi</source>
-		<translation>Aguardando Wi-Fi...</translation>
+		<translation>Wi-Fi এর জন্য অপেক্ষা করা হচ্ছে...</translation>
 	</message>
 	<message>
 		<source>you-can-fetch</source>
-		<translation>Você pode obter o histórico de conversas</translation>
+		<translation>আপনি চ্যাটের ইতিহাস আনতে পারেন</translation>
 	</message>
 	<message>
 		<source>youre-on-mobile-network</source>
-		<translation>Você está em uma rede móvel</translation>
+		<translation>আপনি মোবাইল নেটওয়ার্কে আছেন</translation>
 	</message>
 	<message>
 		<source>status-mobile-descr</source>
-		<translation>O Status usa muitos dados ao sincronizar conversas. Você pode optar por não sincronizar quando na rede móvel</translation>
+		<translation>চ্যাট সিঙ্ক করার সময় স্ট্যাটাস অনেক ডেটা ব্যবহার করে। মোবাইল নেটওয়ার্কে থাকাকালীন আপনি সিঙ্ক না করা বেছে নিতে পারেন৷</translation>
 	</message>
 	<message>
 		<source>restore-defaults</source>
-		<translation>Restaurar padrões</translation>
+		<translation>ডিফল্টগুলি পুনর্বহাল করুন</translation>
 	</message>
 	<message>
 		<source>rpc-usage-info</source>
-		<translation>Estatísticas de uso de RPC</translation>
+		<translation>RPC ব্যবহারের পরিসংখ্যান</translation>
 	</message>
 	<message>
 		<source>rpc-usage-get-stats</source>
-		<translation>Atualizar</translation>
+		<translation>সতেজ</translation>
 	</message>
 	<message>
 		<source>rpc-usage-reset</source>
-		<translation>Redefinir</translation>
+		<translation>রিসেট</translation>
 	</message>
 	<message>
 		<source>rpc-usage-filter</source>
-		<translation>Métodos de filtro</translation>
+		<translation>ফিল্টার পদ্ধতি</translation>
 	</message>
 	<message>
 		<source>rpc-usage-filter-methods</source>
-		<translation>Métodos de filtro</translation>
+		<translation>ফিল্টার পদ্ধতি</translation>
 	</message>
 	<message>
 		<source>rpc-usage-copy</source>
-		<translation>Copiar</translation>
+		<translation>অনুলিপি</translation>
 	</message>
 	<message>
 		<source>rpc-usage-total</source>
@@ -6258,600 +6242,600 @@ para acessar a câmera</translation>
 	</message>
 	<message>
 		<source>community-message-preview</source>
-		<translation>Convite para participar do(a) {{community-name}}</translation>
+		<translation>{{community-name}} যোগ দেওয়ার আমন্ত্রণ</translation>
 	</message>
 	<message>
 		<source>non-contacts</source>
-		<translation>Sem contatos</translation>
+		<translation>পরিচিতি নেই</translation>
 	</message>
 	<message>
 		<source>community</source>
-		<translation>Comunidade</translation>
+		<translation>সম্প্রদায়</translation>
 	</message>
 	<message>
 		<source>verified-community</source>
-		<translation>✓ Comunidade verificada</translation>
+		<translation>✓ যাচাইকৃত সম্প্রদায়</translation>
 	</message>
 	<message>
 		<source>community-info-not-found</source>
-		<translation>Informação da comunidade não encontrada</translation>
+		<translation>সম্প্রদায়ের তথ্য পাওয়া যায়নি</translation>
 	</message>
 	<message>
 		<source>community-info</source>
-		<translation>Informação da comunidade</translation>
+		<translation>কমিউনিটি তথ্য</translation>
 	</message>
 	<message>
 		<source>not-found</source>
-		<translation>Não encontrado</translation>
+		<translation>পাওয়া যায়নি</translation>
 	</message>
 	<message>
 		<source>activity</source>
-		<translation>Atividade</translation>
+		<translation>কার্যকলাপ</translation>
 	</message>
 	<message>
 		<source>reject-and-delete</source>
-		<translation>Rejeitar e apagar</translation>
+		<translation>প্রত্যাখ্যান করুন এবং মুছুন</translation>
 	</message>
 	<message>
 		<source>accept-and-add</source>
-		<translation>Aceitar e adicionar</translation>
+		<translation>গ্রহণ করুন এবং যোগ করুন</translation>
 	</message>
 	<message>
 		<source>one-day</source>
-		<translation>Um dia</translation>
+		<translation>এক দিন</translation>
 	</message>
 	<message>
 		<source>three-days</source>
-		<translation>Três dias</translation>
+		<translation>তিন দিন</translation>
 	</message>
 	<message>
 		<source>one-week</source>
-		<translation>Uma semana</translation>
+		<translation>এক সপ্তাহ</translation>
 	</message>
 	<message>
 		<source>one-month</source>
-		<translation>Um mês</translation>
+		<translation>এক মাস</translation>
 	</message>
 	<message>
 		<source>my-profile</source>
-		<translation>Meu perfil</translation>
+		<translation>আমার প্রোফাইল</translation>
 	</message>
 	<message>
 		<source>bip39-password-placeholder</source>
-		<translation>Senha BIP39</translation>
+		<translation>BIP39 পাসওয়ার্ড</translation>
 	</message>
 	<message>
 		<source>public-channel</source>
-		<translation>Canal público</translation>
+		<translation>পাবলিক চ্যানেল</translation>
 	</message>
 	<message>
 		<source>default-sync-period</source>
-		<translation>Histórico de sincronização para</translation>
+		<translation>ইতিহাস ফিল্টার করুন</translation>
 	</message>
 	<message>
 		<source>what-is-shared</source>
-		<translation>O que é compartilhado</translation>
+		<translation>কি শেয়ার করা হয়</translation>
 	</message>
 	<message>
 		<source>view-data</source>
-		<translation>Ver dados</translation>
+		<translation>ডেটা দেখুন</translation>
 	</message>
 	<message>
 		<source>data-collected</source>
-		<translation>Dados coletados</translation>
+		<translation>তথ্য সংগ্রহ</translation>
 	</message>
 	<message>
 		<source>data-collected-subtitle</source>
-		<translation>A tabela abaixo mostra os dados exatos que estão armazenados e serão enviados. Os dados são validados de acordo com as regras públicas para garantir que nenhum dado sensível seja enviado. Não confie, verifique.</translation>
+		<translation>নীচের টেবিলটি সঠিক ডেটা দেখায় যা সংরক্ষণ করা হয় এবং পাঠানো হবে। কোনও সংবেদনশীল ডেটা প্রেরণ করা হয় না তা নিশ্চিত করার জন্য ডেটা সর্বজনীন নিয়মের বিরুদ্ধে যাচাই করা হয়। বিশ্বাস করবেন না, যাচাই করুন।</translation>
 	</message>
 	<message>
 		<source>view-rules</source>
-		<translation>Ver regras</translation>
+		<translation>নিয়ম দেখুন</translation>
 	</message>
 	<message>
 		<source>expand-all</source>
-		<translation>Expandir todos</translation>
+		<translation>সব প্রসারিত করুন</translation>
 	</message>
 	<message>
 		<source>about-sharing-data</source>
-		<translation>Sobre o compartilhamento de dados</translation>
+		<translation>ডেটা শেয়ার করার বিষয়ে</translation>
 	</message>
 	<message>
 		<source>sharing-data-desc-1</source>
-		<translation>Os dados são validados de acordo com as regras públicas para garantir que nenhum dado sensível seja enviado. Não confie, verifique.</translation>
+		<translation>কোনও সংবেদনশীল তথ্য পাঠানো হয় না তা নিশ্চিত করার জন্য জনসাধারণের নিয়মের বিরুদ্ধে ডেটা বৈধ করা হয়। বিশ্বাস করবেন না, যাচাই করুন।</translation>
 	</message>
 	<message>
 		<source>sharing-data-desc-2</source>
-		<translation>Os dados de uso são enviados criptografados de ponta a ponta pela rede ponto a ponto (P2P) do Status</translation>
+		<translation>ব্যবহারের তথ্য স্ট্যাটাসের পিয়ার-টু-পিয়ার নেটওয়ার্কের উপর এনক্রিপ্ট করা এন্ড-টু-এন্ড পাঠানো হয়</translation>
 	</message>
 	<message>
 		<source>sharing-data-desc-3</source>
-		<translation>Em vez de sua chave de bate-papo normal, uma chave de uso único é utilizada</translation>
+		<translation>আপনার নিয়মিত চ্যাট কী এর পরিবর্তে, একটি একক ব্যবহার কী ব্যবহার করা হয়</translation>
 	</message>
 	<message>
 		<source>sharing-data-desc-4</source>
-		<translation>Os dados de uso não podem ser associados ao seu endereço IP</translation>
+		<translation>ব্যবহারের তথ্য আপনার আইপি ঠিকানার সাথে যুক্ত করা যাবে না</translation>
 	</message>
 	<message>
 		<source>sharing-data-desc-5</source>
-		<translation>Os dados acumulados de todos os usuários estão disponíveis publicamente</translation>
+		<translation>সকল ব্যবহারকারীর সমষ্টিগত তথ্য সর্বজনীনভাবে উপলব্ধ</translation>
 	</message>
 	<message>
 		<source>view-public-dashboard</source>
-		<translation>Ver painel de controle público</translation>
+		<translation>সর্বজনীন ড্যাশবোর্ড দেখুন</translation>
 	</message>
 	<message>
 		<source>sharing-data-desc-6</source>
-		<translation>Os dados são removidos do seu telefone após serem enviados</translation>
+		<translation>ডেটা পাঠানোর পরে আপনার ফোন থেকে সরানো হয়</translation>
 	</message>
 	<message>
 		<source>allow-and-send</source>
-		<translation>Permitir e enviar</translation>
+		<translation>অনুমতি দিন এবং পাঠান</translation>
 	</message>
 	<message>
 		<source>no-thanks</source>
-		<translation>Não, obrigado</translation>
+		<translation>না ধন্যবাদ</translation>
 	</message>
 	<message>
 		<source>help-improve-status</source>
-		<translation>Ajude a melhorar o Status</translation>
+		<translation>স্ট্যাটাস উন্নত করতে সাহায্য করুন</translation>
 	</message>
 	<message>
 		<source>thank-you</source>
-		<translation>Obrigado</translation>
+		<translation>ধন্যবাদ</translation>
 	</message>
 	<message>
 		<source>current-password</source>
-		<translation>Senha atual</translation>
+		<translation>বর্তমান পাসওয়ার্ড</translation>
 	</message>
 	<message>
 		<source>reset-password</source>
-		<translation>Redefinir senha</translation>
+		<translation>পাসওয়ার্ড রিসেট করুন</translation>
 	</message>
 	<message>
 		<source>password-reset-success</source>
-		<translation>Redefinição de senha</translation>
+		<translation>পাসওয়ার্ড পরিবর্তিত হয়েছে</translation>
 	</message>
 	<message>
 		<source>password-reset-success-message</source>
-		<translation>Você precisará entrar novamente</translation>
+		<translation>আপনাকে আবার সাইন ইন করতে হবে</translation>
 	</message>
 	<message>
 		<source>password-reset-in-progress</source>
-		<translation>Alterando senha...</translation>
+		<translation>পাসওয়ার্ড পরিবর্তন করা হচ্ছে ...</translation>
 	</message>
 	<message>
 		<source>new-password</source>
-		<translation>Nova Senha</translation>
+		<translation>নতুন পাসওয়ার্ড</translation>
 	</message>
 	<message>
 		<source>confirm-new-password</source>
-		<translation>Confirmar nova senha</translation>
+		<translation>নতুন পাসওয়ার্ড নিশ্চিত করুন</translation>
 	</message>
 	<message>
 		<source>password-mismatch</source>
-		<translation>A nova senha e a confirmação não correspondem</translation>
+		<translation>নতুন পাসওয়ার্ড এবং নিশ্চিতকরণ মেলে না</translation>
 	</message>
 	<message>
 		<source>terms-of-service</source>
-		<translation>Termos de uso</translation>
+		<translation>ব্যবহারের শর্তাবলী</translation>
 	</message>
 	<message>
 		<source>accept-status-tos-prefix</source>
-		<translation>Eu aceito o Status</translation>
+		<translation>আমি স্ট্যাটাস গ্রহণ করি</translation>
 	</message>
 	<message>
 		<source>updates-to-tos</source>
-		<translation>Atualizações nos Termos de Serviço</translation>
+		<translation>ব্যবহারের শর্তাবলীতে আপডেট</translation>
 	</message>
 	<message>
 		<source>updates-to-tos-desc</source>
-		<translation>Antes de continuar, leia os Termos de Serviço e confirme se você assume total responsabilidade pelo modo como usa o aplicativo.</translation>
+		<translation>আপনি চালিয়ে যাওয়ার আগে, অনুগ্রহ করে ব্যবহারের শর্তাবলী পর্যালোচনা করুন এবং নিশ্চিত করুন যে আপনি কীভাবে অ্যাপটি ব্যবহার করেন তার জন্য আপনি সম্পূর্ণ দায়িত্ব নেবেন।</translation>
 	</message>
 	<message>
 		<source>what-changed</source>
-		<translation>O que mudou</translation>
+		<translation>কি পরিবর্তন হয়েছে</translation>
 	</message>
 	<message>
 		<source>wc-new-tos-based-on-principles-prefix</source>
-		<translation>Novos Termos de Serviço desenvolvidos com base em nossos</translation>
+		<translation>আমাদের উপর ভিত্তি করে ডিজাইন করা নতুন ব্যবহারের শর্তাবলী</translation>
 	</message>
 	<message>
 		<source>principles</source>
-		<translation>Princípios</translation>
+		<translation>নীতি</translation>
 	</message>
 	<message>
 		<source>wc-how-to-use-status-app</source>
-		<translation>Como usar o aplicativo Status, incluindo privacidade e segurança</translation>
+		<translation>গোপনীয়তা এবং নিরাপত্তা সহ স্থিতি অ্যাপ্লিকেশনটি কীভাবে ব্যবহার করবেন</translation>
 	</message>
 	<message>
 		<source>wc-brand-guide</source>
-		<translation>Orientação sobre o uso de marcas, como marcas registradas e logotipos</translation>
+		<translation>ব্র্যান্ডিং যেমন ট্রেডমার্ক এবং লোগো ব্যবহার করার বিষয়ে নির্দেশিকা</translation>
 	</message>
 	<message>
 		<source>wc-disclaimer</source>
-		<translation>Exonerações de responsabilidade (incluindo fornecedores terceirizados), garantias e liberações legais</translation>
+		<translation>Disclaimers (তৃতীয় পক্ষের প্রদানকারী সহ), ওয়ারেন্টি, এবং আইনি রিলিজ</translation>
 	</message>
 	<message>
 		<source>wc-dispute</source>
-		<translation>Disposições de resolução de disputas</translation>
+		<translation>বিরোধ নিষ্পত্তির বিধান</translation>
 	</message>
 	<message>
 		<source>status-is-open-source</source>
-		<translation>O status é de código aberto</translation>
+		<translation>স্ট্যাটাস ওপেন সোর্স</translation>
 	</message>
 	<message>
 		<source>build-yourself</source>
-		<translation>Para usar o aplicativo sem estes Termos de Serviço, você pode construir sua própria versão</translation>
+		<translation>এই ব্যবহারের শর্তাবলী ছাড়া অ্যাপটি ব্যবহার করতে, আপনি আপনার নিজস্ব সংস্করণ তৈরি করতে পারেন</translation>
 	</message>
 	<message>
 		<source>accept-and-continue</source>
-		<translation>Aceitar e continuar</translation>
+		<translation>গ্রহণ করুন এবং চালিয়ে যান</translation>
 	</message>
 	<message>
 		<source>empty-activity-center</source>
-		<translation>Suas notificações de bate-papo
- aparecerão aqui</translation>
+		<translation>আপনার চ্যাটের বিজ্ঞপ্তি
+ এখানে প্রদর্শিত হবে</translation>
 	</message>
 	<message>
 		<source>pinned-messages</source>
-		<translation>Mensagens fixadas</translation>
+		<translation>পিন করা বার্তাগুলি</translation>
 	</message>
 	<message>
 		<source>pin</source>
-		<translation>Fixar</translation>
+		<translation>পিন</translation>
 	</message>
 	<message>
 		<source>unpin</source>
-		<translation>Desafixar</translation>
+		<translation>আনপিন করুন</translation>
 	</message>
 	<message>
 		<source>no-pinned-messages</source>
-		<translation>Nenhuma mensagem fixada</translation>
+		<translation>কোন পিন করা বার্তা নেই</translation>
 	</message>
 	<message numerus="yes">
 		<source>pinned-messages-count</source>
 		<translation>
-			<numerusform>1 mensagem fixada</numerusform>
-			<numerusform>{{count}} mensagens fixadas</numerusform>
+			<numerusform>১টি পিনড বার্তা</numerusform>
+			<numerusform>পিন করা বার্তাগুলি</numerusform>
 		</translation>
 	</message>
 	<message>
 		<source>pinned-messages-empty</source>
-		<translation>As mensagens fixadas aparecerão aqui. Para fixar uma mensagem, pressione e segure e toque em `Fixar`</translation>
+		<translation>পিন করা বার্তাগুলি এখানে প্রদর্শিত হবে। একটি বার্তা পিন করতে, এটি টিপুন এবং ধরে রাখুন এবং `পিন` আলতো চাপুন</translation>
 	</message>
 	<message>
 		<source>pinned-by</source>
-		<translation>Fixado por</translation>
+		<translation>যার দ্বারা পিন করা হয়েছে</translation>
 	</message>
 	<message>
 		<source>pin-limit-reached</source>
-		<translation>Limite de mensagens fixadas atingido. Desafixe uma mensagem anterior primeiro.</translation>
+		<translation>পিনের সীমায় পৌঁছেছে। প্রথমে একটি পূর্ববর্তী বার্তা আনপিন করুন।</translation>
 	</message>
 	<message>
 		<source>max-fee</source>
-		<translation>Taxa máxima</translation>
+		<translation>সর্বোচ্চ ফি</translation>
 	</message>
 	<message>
 		<source>max-priority-fee</source>
-		<translation>Taxa máxima de prioridade</translation>
+		<translation>সর্বোচ্চ অগ্রাধিকার ফি</translation>
 	</message>
 	<message>
 		<source>miners-higher-fee</source>
-		<translation>Os mineradores provavelmente incluirão sua transação mais cedo se você pagar uma taxa mais alta.</translation>
+		<translation>আপনি যদি উচ্চতর ফি প্রদান করেন তবে খনির লোকেরা সম্ভবত আপনার লেনদেনকে অন্তর্ভুক্ত করবে।</translation>
 	</message>
 	<message>
 		<source>gas-amount-limit</source>
-		<translation>Limite de quantidade de Gas</translation>
+		<translation>গ্যাসের সীমা</translation>
 	</message>
 	<message>
 		<source>per-gas-tip-limit</source>
-		<translation>Limite de gorjeta
-por gás</translation>
+		<translation>প্রতি গ্যাস টিপ সীমা</translation>
 	</message>
 	<message>
 		<source>per-gas-price-limit</source>
-		<translation>Limite de preço por gás</translation>
+		<translation>প্রতি গ্যাস মূল্য সীমা</translation>
 	</message>
 	<message>
 		<source>current-base-fee</source>
-		<translation>Taxa base atual</translation>
+		<translation>বর্তমান বেস ফি</translation>
 	</message>
 	<message>
 		<source>fee-explanation</source>
-		<translation>Preço total máximo para a transação. Se a taxa base do bloco exceder esse valor, ela será incluída em um bloco seguinte com uma taxa base mais baixa.</translation>
+		<translation>লেনদেনের জন্য সর্বাধিক সামগ্রিক মূল্য। যদি ব্লক বেস ফি এর চেয়ে বেশি হয়, তাহলে এটি নিম্ন ভিত্তি ফি সহ নিম্নলিখিত ব্লকে অন্তর্ভুক্ত করা হবে।</translation>
 	</message>
 	<message>
 		<source>slow</source>
-		<translation>Lento</translation>
+		<translation>ধীর</translation>
 	</message>
 	<message>
 		<source>optimal</source>
-		<translation>Ótimo</translation>
+		<translation>সর্বোত্তম</translation>
 	</message>
 	<message>
 		<source>fast</source>
-		<translation>Rápido</translation>
+		<translation>দ্রুত</translation>
 	</message>
 	<message>
 		<source>see-suggestions</source>
-		<translation>Veja sugestões</translation>
+		<translation>পরামর্শ দেখুন</translation>
 	</message>
 	<message>
 		<source>maximum-fee</source>
-		<translation>Taxa máxima</translation>
+		<translation>সর্বোচ্চ ফি</translation>
 	</message>
 	<message>
 		<source>low-tip</source>
-		<translation>a gorjeta é muito baixa</translation>
+		<translation>টিপ খুব কম</translation>
 	</message>
 	<message>
 		<source>lower-than-average-tip</source>
-		<translation>gorjeta inferior à média</translation>
+		<translation>গড় টিপের চেয়ে কম</translation>
 	</message>
 	<message>
 		<source>below-base-fee</source>
-		<translation>taxa máxima abaixo da taxa base</translation>
+		<translation>বেস ফি এর নিচে সর্বোচ্চ ফি</translation>
 	</message>
 	<message>
 		<source>reduced-tip</source>
-		<translation>a gorjeta prioritária será reduzida</translation>
+		<translation>অগ্রাধিকার টিপ হ্রাস করা হবে</translation>
 	</message>
 	<message>
 		<source>are-you-sure</source>
-		<translation>Você tem certeza?</translation>
+		<translation>আপনি কি নিশ্চিত?</translation>
 	</message>
 	<message>
 		<source>bad-fees-description</source>
-		<translation>Sua taxa de prioridade está abaixo de nossos parâmetros sugeridos.</translation>
+		<translation>আপনার অগ্রাধিকার ফি আমাদের প্রস্তাবিত প্যারামিটারের নিচে।</translation>
 	</message>
 	<message>
 		<source>change-tip</source>
-		<translation>Mudar gorjeta</translation>
+		<translation>টিপ পরিবর্তন করুন</translation>
 	</message>
 	<message>
 		<source>current-minimum-tip</source>
-		<translation>Gorjeta mínima atual</translation>
+		<translation>বর্তমান ন্যূনতম টিপ</translation>
 	</message>
 	<message>
 		<source>current-average-tip</source>
-		<translation>Gorjeta média atual</translation>
+		<translation>বর্তমান গড় টিপ</translation>
 	</message>
 	<message>
 		<source>your-tip-limit</source>
-		<translation>Seu limite de gorjeta</translation>
+		<translation>আপনার টিপ সীমা</translation>
 	</message>
 	<message>
 		<source>your-price-limit</source>
-		<translation>Seu limite de preço</translation>
+		<translation>আপনার মূল্য সীমা</translation>
 	</message>
 	<message>
 		<source>suggested-min-tip</source>
-		<translation>Gorjeta mínima sugerida</translation>
+		<translation>প্রস্তাবিত min. tip</translation>
 	</message>
 	<message>
 		<source>suggested-price-limit</source>
-		<translation>Limite de preço sugerido</translation>
+		<translation>প্রস্তাবিত মূল্য সীমা</translation>
 	</message>
 	<message>
 		<source>include</source>
-		<translation>Incluir</translation>
+		<translation>অন্তর্ভুক্ত করুন</translation>
 	</message>
 	<message>
 		<source>category</source>
-		<translation>Categoria</translation>
+		<translation>বিভাগ</translation>
 	</message>
 	<message>
 		<source>edit-chats</source>
-		<translation>Editar bate-papos</translation>
+		<translation>চ্যাট সম্পাদনা করুন</translation>
 	</message>
 	<message>
 		<source>edit-categories</source>
-		<translation>Editar categorias</translation>
+		<translation>বিভাগ সম্পাদনা করুন</translation>
 	</message>
 	<message>
 		<source>hide</source>
-		<translation>Esconder</translation>
+		<translation>লুকান</translation>
 	</message>
 	<message>
 		<source>account-is-used</source>
-		<translation>A conta está sendo usada com os Dapps no navegador.</translation>
+		<translation>ব্রাউজারে ড্যাপের সাথে অ্যাকাউন্টটি ব্যবহার করা হচ্ছে।</translation>
 	</message>
 	<message>
 		<source>normal</source>
-		<translation>Normal</translation>
+		<translation>স্বাভাবিক</translation>
 	</message>
 	<message>
 		<source>never</source>
-		<translation>Nunca</translation>
+		<translation>কখনই না</translation>
 	</message>
 	<message>
 		<source>fee-options</source>
-		<translation>Opções de taxas sugeridas</translation>
+		<translation>প্রস্তাবিত ফি অপশন</translation>
 	</message>
 	<message>
 		<source>fee-cap</source>
-		<translation>Limite de taxa</translation>
+		<translation>ফি ক্যাপ</translation>
 	</message>
 	<message>
 		<source>tip-cap</source>
-		<translation>Limite de gorjeta</translation>
+		<translation>টিপ ক্যাপ</translation>
 	</message>
 	<message>
 		<source>collectibles-leak-metadata</source>
-		<translation>Você pode exibir seus NFTs aqui. Se você fizer isso, você compartilhará sua carteira e endereço IP</translation>
+		<translation>আপনি এখানে আপনার NFT প্রদর্শন করতে পারেন। যদি আপনি তা করেন, আপনি আপনার ওয়ালেট এবং আইপি ঠিকানা শেয়ার করবেন</translation>
 	</message>
 	<message>
 		<source>display-collectibles</source>
-		<translation>Exibir colecionáveis</translation>
+		<translation>সংগ্রহযোগ্য প্রদর্শন
+</translation>
 	</message>
 	<message>
 		<source>disable-later-in-settings</source>
-		<translation>Você pode desativar isso mais tarde nas Configurações</translation>
+		<translation>আপনি সেটিংসে পরে এটি অক্ষম করতে পারেন৷</translation>
 	</message>
 	<message>
 		<source>use-as-profile-picture</source>
-		<translation>Usar como foto de perfil</translation>
+		<translation>প্রোফাইল ছবি হিসেবে ব্যবহার করুন</translation>
 	</message>
 	<message>
 		<source>view-on-opensea</source>
-		<translation>Ver no OpenSea</translation>
+		<translation>OpenSea এ দেখুন</translation>
 	</message>
 	<message>
 		<source>profile-picture-updated</source>
-		<translation>Foto do perfil atualizada</translation>
+		<translation>প্রোফাইল ছবি আপডেট করা হয়েছে</translation>
 	</message>
 	<message>
 		<source>status-automatic</source>
-		<translation>Automático</translation>
+		<translation>স্বয়ংক্রিয়</translation>
 	</message>
 	<message>
 		<source>status-automatic-subtitle</source>
-		<translation>Definir status automaticamente</translation>
+		<translation>স্বয়ংক্রিয়ভাবে স্থিতি সেট করুন</translation>
 	</message>
 	<message>
 		<source>status-dnd</source>
-		<translation>Não perturbe</translation>
+		<translation>বিরক্ত করবেন না</translation>
 	</message>
 	<message>
 		<source>status-dnd-subtitle</source>
-		<translation>Silencia todas as notificações</translation>
+		<translation>সমস্ত বিজ্ঞপ্তি নিঃশব্দ করে</translation>
 	</message>
 	<message>
 		<source>status-always-online</source>
-		<translation>Sempre Online</translation>
+		<translation>সবসময় অনলাইন</translation>
 	</message>
 	<message>
 		<source>status-inactive</source>
-		<translation>Inativo</translation>
+		<translation>নিষ্ক্রিয়</translation>
 	</message>
 	<message>
 		<source>status-inactive-subtitle</source>
-		<translation>Oculta seu status online</translation>
+		<translation>আপনার অনলাইন স্ট্যাটাস লুকিয়ে রাখে</translation>
 	</message>
 	<message>
 		<source>two-minutes</source>
-		<translation>dois minutos</translation>
+		<translation>দুই মিনিট</translation>
 	</message>
 	<message>
 		<source>swap</source>
-		<translation>Troca</translation>
+		<translation>অদলবদল</translation>
 	</message>
 	<message>
 		<source>select-token-to-swap</source>
-		<translation>Selecione o token para trocar</translation>
+		<translation>সোয়াপ করতে টোকেন নির্বাচন করুন</translation>
 	</message>
 	<message>
 		<source>select-token-to-receive</source>
-		<translation>Selecione o token para receber</translation>
+		<translation>গ্রহণ করতে টোকেন নির্বাচন করুন</translation>
 	</message>
 	<message>
 		<source>minimum-received</source>
-		<translation>Mínimo recebido</translation>
+		<translation>ন্যূনতম প্রাপ্তি</translation>
 	</message>
 	<message>
 		<source>powered-by-paraswap</source>
-		<translation>Desenvolvido por Paraswap</translation>
+		<translation>Parswap দ্বারা চালিত</translation>
 	</message>
 	<message>
 		<source>priority</source>
-		<translation>Prioridade</translation>
+		<translation>অগ্রাধিকার</translation>
 	</message>
 	<message>
 		<source>switch-to-simple-interface</source>
-		<translation>Mudar para interface simples</translation>
+		<translation>সাধারণ ইন্টারফেসে স্যুইচ করুন</translation>
 	</message>
 	<message>
 		<source>transaction-fee</source>
-		<translation>Taxa de transação</translation>
+		<translation>লেনদেন ফি</translation>
 	</message>
 	<message>
 		<source>swap-details</source>
-		<translation>Trocar detalhes</translation>
+		<translation>অদলবদল বিবরণ</translation>
 	</message>
 	<message>
 		<source>slippage</source>
-		<translation>Derrapagem</translation>
+		<translation>স্লিপেজ</translation>
 	</message>
 	<message>
 		<source>price-impact</source>
-		<translation>Impacto do preço</translation>
+		<translation>দামের প্রভাব</translation>
 	</message>
 	<message>
 		<source>total-gas</source>
-		<translation>Gas total</translation>
+		<translation>মোট গ্যাস</translation>
 	</message>
 	<message>
 		<source>token</source>
-		<translation>Token</translation>
+		<translation>টোকেন</translation>
 	</message>
 	<message>
 		<source>approve-limit</source>
-		<translation>Aprovar limite</translation>
+		<translation>সীমা অনুমোদন করুন</translation>
 	</message>
 	<message>
 		<source>approve-token</source>
-		<translation>Aprovar token</translation>
+		<translation>টোকেন অনুমোদন করুন</translation>
 	</message>
 	<message>
 		<source>approve-token-contract-desc</source>
-		<translation>Aprovar um token com um contrato permite que ele gaste seu saldo de tokens. Se você julgar que um projeto não é confiável, não aprove o token com eles ou aprove apenas o valor que você usará com eles.</translation>
+		<translation>একটি চুক্তির সাথে একটি টোকেন অনুমোদন করা এটি আপনার টোকেন ব্যালেন্স ব্যয় করতে দেয়। আপনি যদি মনে করেন যে কোনও প্রকল্প অবিশ্বস্ত, তবে তাদের সাথে টোকেনটি অনুমোদন করবেন না, বা কেবলমাত্র আপনি তাদের সাথে যে পরিমাণ অর্থ ব্যবহার করবেন তা অনুমোদন করবেন না।</translation>
 	</message>
 	<message>
 		<source>unlimited</source>
-		<translation>Ilimitado</translation>
+		<translation>সীমাহীন</translation>
 	</message>
 	<message>
 		<source>approve</source>
-		<translation>Aprovar</translation>
+		<translation>অনুমোদন করুন</translation>
 	</message>
 	<message>
 		<source>limit</source>
-		<translation>Limite</translation>
+		<translation>সীমা</translation>
 	</message>
 	<message>
 		<source>last-transaction</source>
-		<translation>Última transação</translation>
+		<translation>সর্বশেষ লেনদেন</translation>
 	</message>
 	<message>
 		<source>price-impact-desc</source>
-		<translation>Impacto de preço estimado para esta transação. Se a taxa base do bloco atual exceder isso, sua transação será incluída em um bloco seguinte com uma taxa base mais baixa.</translation>
+		<translation>এই লেনদেনের জন্য আনুমানিক মূল্য প্রভাব. যদি বর্তমান ব্লকের বেস ফি এর বেশি হয়, তাহলে আপনার লেনদেন নিম্ন ভিত্তি ফি সহ নিম্নলিখিত ব্লকে অন্তর্ভুক্ত করা হবে।</translation>
 	</message>
 	<message>
 		<source>safe-estimate</source>
-		<translation>Estimativa segura</translation>
+		<translation>নিরাপদ অনুমান</translation>
 	</message>
 	<message>
 		<source>current-average</source>
-		<translation>Média atual</translation>
+		<translation>বর্তমান গড়</translation>
 	</message>
 	<message>
 		<source>current-base</source>
-		<translation>Base atual</translation>
+		<translation>বর্তমান ভিত্তি</translation>
 	</message>
 	<message>
 		<source>maximum-fee-desc</source>
-		<translation>Preço total máximo para a transação. Se a taxa base do bloco atual exceder isso, sua transação será incluída em um bloco seguinte com uma taxa base mais baixa.</translation>
+		<translation>লেনদেনের জন্য সর্বাধিক সামগ্রিক মূল্য। যদি বর্তমান ব্লক বেস ফি এটি অতিক্রম করে তবে আপনার লেনদেনটি কম বেস ফি সহ একটি নিম্নলিখিত ব্লকে অন্তর্ভুক্ত করা হবে।</translation>
 	</message>
 	<message>
 		<source>insufficient-balance-to-cover-fee</source>
-		<translation>saldo insuficiente para cobrir a taxa de transação</translation>
+		<translation>লেনদেন ফি কভার করার জন্য যথেষ্ট ব্যালেন্স নেই</translation>
 	</message>
 	<message>
 		<source>wallet-connect-proposal-title</source>
-		<translation>Gostaria de se conectar com sua carteira</translation>
+		<translation>আপনার ওয়ালেটের সাথে সংযোগ করতে চাই৷</translation>
 	</message>
 	<message>
 		<source>wallet-connect-proposal-description</source>
-		<translation>Ao conectar você permite que {{name}} recupere o endereço da sua conta e ative o Web3</translation>
+		<translation>সংযোগ করে আপনি  আপনার অ্যাকাউন্ট ঠিকানা পুনরুদ্ধার করতে এবং Web3 সক্ষম করার অনুমতি দেন</translation>
 	</message>
 	<message>
 		<source>wallet-connect-app-connected</source>
-		<translation>está conectado</translation>
+		<translation>সংযুক্ত</translation>
 	</message>
 	<message>
 		<source>wallet-connect-go-back</source>
-		<translation>Volte para o seu navegador ou dapp</translation>
+		<translation>আপনার ব্রাউজারে বা ড্যাপে ফিরে যান</translation>
 	</message>
 	<message>
 		<source>wallet-connect-2.0</source>
@@ -6859,75 +6843,75 @@ por gás</translation>
 	</message>
 	<message>
 		<source>wallet-connect</source>
-		<translation>Wallet Connect</translation>
+		<translation>ওয়ালেট সংযোগ</translation>
 	</message>
 	<message>
 		<source>reject</source>
-		<translation>Rejeitar</translation>
+		<translation>প্রত্যাখ্যান করুন</translation>
 	</message>
 	<message>
 		<source>manage-connections</source>
-		<translation>Gerenciar conexões de dentro do Application Connections</translation>
+		<translation>অ্যাপ্লিকেশন সংযোগগুলির মধ্যে থেকে সংযোগগুলি পরিচালনা করুন৷</translation>
 	</message>
 	<message>
 		<source>wallet-manage-app-connections</source>
-		<translation>Gerenciar conexões de aplicativos</translation>
+		<translation>অ্যাপ সংযোগ পরিচালনা করুন</translation>
 	</message>
 	<message>
 		<source>connection-request</source>
-		<translation>Solicitação de conexão</translation>
+		<translation>সংযোগের অনুরোধ</translation>
 	</message>
 	<message>
 		<source>disconnect</source>
-		<translation>Desconectar</translation>
+		<translation>সংযোগ বিচ্ছিন্ন করুন</translation>
 	</message>
 	<message>
 		<source>new-ui</source>
-		<translation>Nova UI</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>send-contact-request-message</source>
-		<translation>Para iniciar um chat, você precisa se tornar um contato</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>contact-request</source>
-		<translation>Requisição de contato</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>say-hi</source>
-		<translation>Diga oi</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>accepted</source>
-		<translation>Aceito</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>declined</source>
-		<translation>Recusado</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>contact-request-header</source>
-		<translation>👋 Solicitações de contato</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>contact-request-declined</source>
-		<translation>Recusado ⓧ</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>contact-request-accepted</source>
-		<translation>Aceito ✓</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>contact-request-pending</source>
-		<translation>Pendente...</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>removed-from-contacts</source>
-		<translation>Removido dos contatos</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>mutual-contact-requests</source>
-		<translation>Solicitações de contato mútuo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>negative</source>
@@ -9638,79 +9622,79 @@ packs will not need to be re-purchased.</source>
 	</message>
 	<message>
 		<source>Maximum number of collectibles to display reached</source>
-		<translation>Número máximo de colecionáveis a serem exibidos atingido</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>View</source>
-		<translation>Visualizar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Unnamed</source>
-		<translation>Sem nome</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>ID</source>
-		<translation>ID</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Description</source>
-		<translation>Descrição</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>US Dollars</source>
-		<translation>Dólares Americanos</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Euros</source>
-		<translation>Euros</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>United Arab Emirates dirham</source>
-		<translation>Dirham dos Emirados Árabes Unidos</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Afghan afghani</source>
-		<translation>Afegane Afegão</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Argentine peso</source>
-		<translation>Peso Argentino</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Australian dollar</source>
-		<translation>Dólar Australiano</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Barbadian dollar</source>
-		<translation>Dólar de Barbados</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Bangladeshi taka</source>
-		<translation>Taka de Bangladesh</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Bulgarian lev</source>
-		<translation>Lev Búlgaro</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Bahraini dinar</source>
-		<translation>Dinar do Bahrein</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Brunei dollar</source>
-		<translation>Dólar de Brunei</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Bolivian boliviano</source>
-		<translation>Boliviano da Bolívia</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Brazillian real</source>
-		<translation>Real Brasileiro</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Bhutanese ngultrum</source>
-		<translation>Ngultrum Butanês</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Canadian dollar</source>
@@ -9790,1109 +9774,1107 @@ packs will not need to be re-purchased.</source>
 	</message>
 	<message>
 		<source>Indian rupee</source>
-		<translation>Rupia Indiana</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Icelandic króna</source>
-		<translation>Coroa Islandesa</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Jamaican dollar</source>
-		<translation>Dólar Jamaicano</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Japanese yen</source>
-		<translation>Yen Japonês</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Kenyan shilling</source>
-		<translation>Xelim queniano</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>South Korean won</source>
-		<translation>Won Sul-Coreano</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Kuwaiti dinar</source>
-		<translation>Dinar do Kuwait</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Kazakhstani tenge</source>
-		<translation>Tenge do Cazaquistão</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Sri Lankan rupee</source>
-		<translation>Rupia do Sri Lanka</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Moroccan dirham</source>
-		<translation>Dirham Marroquino</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Moldovan leu</source>
-		<translation>Leu Moldavo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Mauritian rupee</source>
-		<translation>Rupia Mauriciana</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Malawian kwacha</source>
-		<translation>Kwacha do Malawi</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Mexican peso</source>
-		<translation>Peso Mexicano</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Malaysian ringgit</source>
-		<translation>Ringgit Malaio</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Mozambican metical</source>
-		<translation>Metical Moçambicano</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Namibian dollar</source>
-		<translation>Dólar Namibiano</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Nigerian naira</source>
-		<translation>Naira Nigeriana</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Norwegian krone</source>
-		<translation>Coroa Norueguesa</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Nepalese rupee</source>
-		<translation>Rupia Nepalesa</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>New Zealand dollar</source>
-		<translation>Dólar da Nova Zelândia</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Omani rial</source>
-		<translation>Rial de Omã</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Peruvian sol</source>
-		<translation>Sol Peruano</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Papua New Guinean kina</source>
-		<translation>Kina da Papua-Nova Guiné</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Philippine peso</source>
-		<translation>Peso Filipino</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Pakistani rupee</source>
-		<translation>Rupia Paquistanesa</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Polish złoty</source>
-		<translation>Złoty Polonês</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Paraguayan guaraní</source>
-		<translation>Guarani Paraguaio</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Qatari riyal</source>
-		<translation>Rial do Catar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Romanian leu</source>
-		<translation>Leu Romeno</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Serbian dinar</source>
-		<translation>Dinar Sérvio</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Russian ruble</source>
-		<translation>Rublo Russo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Saudi riyal</source>
-		<translation>Rial Saudita</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Swedish krona</source>
-		<translation>Coroa Sueca</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Singapore dollar</source>
-		<translation>Dólar de Cingapura</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Thai baht</source>
-		<translation>Baht Tailandês</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Trinidad and Tobago dollar</source>
-		<translation>Dólar de Trinidad e Tobago</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>New Taiwan dollar</source>
-		<translation>Novo Dólar Taiwanês</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Tanzanian shilling</source>
-		<translation>Xelim da Tanzânia</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Turkish lira</source>
-		<translation>Lira Turca</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Ukrainian hryvnia</source>
-		<translation>Grívnia Ucraniana</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Ugandan shilling</source>
-		<translation>Xelim Ugandês</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Uruguayan peso</source>
-		<translation>Peso Uruguaio</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Venezuelan bolívar</source>
-		<translation>Bolívar Venezuelano</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Vietnamese đồng</source>
-		<translation>Đồng Vietnamita</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>South African rand</source>
-		<translation>Rand Sul-africano</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>View Community</source>
-		<translation>Ver Comunidade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Browser</source>
-		<translation>Navegador</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Timeline</source>
-		<translation>Timeline</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Contact request accepted</source>
-		<translation>Solicitação de contato aceita</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>New contact request</source>
-		<translation>Nova solicitação de contato</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>You can now chat with %1</source>
-		<translation>Agora você pode conversar com %1</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>%1 requests to become contacts</source>
-		<translation>%1 solicita para se tornar um contato</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Where do you want to go?</source>
-		<translation>Onde você deseja ir?</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Status Desktop</source>
-		<translation>Status Desktop</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Open Status</source>
-		<translation>Abrir Status</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Quit</source>
-		<translation>Sair</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Create a password</source>
-		<translation>Criar uma senha</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>New password...</source>
-		<translation>Nova senha...</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Confirm password…</source>
-		<translation>Confirmar senha…</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>At least 6 characters. You will use this password to unlock status on this device &amp; sign transactions.</source>
-		<translation>Pelo menos 6 caracteres. Você usará essa senha para desbloquear o status neste dispositivo e assinar transações.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Create password</source>
-		<translation>Criar senha</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Error importing account</source>
-		<translation>Erro ao importar conta</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>An error occurred while importing your account: </source>
-		<translation>Ocorreu um erro ao importar sua conta: </translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Login failed</source>
-		<translation>Falha na autenticação</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Login failed. Please re-enter your password and try again.</source>
-		<translation>Falha na autenticação. Por favor, redigite sua senha e tente novamente.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Enter seed phrase</source>
-		<translation>Digite a seed phrase</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>This seed phrase doesn&apos;t match our supported dictionary. Check for misspelled words.</source>
-		<translation>Esta seed phrase não corresponde ao nosso dicionário. Verifique se há palavras incorretas.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Start with the first word</source>
-		<translation>Comece com a primeira palavra</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Enter 12, 15, 18, 21 or 24 words.
 Seperate words by a single space.</source>
-		<translation>Digite 12, 15, 18, 21 ou 24 palavras.
- Separe as palavras por um único espaço.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Invalid seed phrase</source>
-		<translation>Seed phrase inválida</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Choose a chat name</source>
-		<translation>Escolha um nome de bate-papo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Truly private communication</source>
-		<translation>Comunicação verdadeiramente privada</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Chat over a peer-to-peer, encrypted network
  where messages can&apos;t be censored or hacked</source>
-		<translation>Bate-papo em uma rede criptografada ponto a ponto onde as mensagens não podem ser censuradas ou hackeadas</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Secure crypto wallet</source>
-		<translation>Carteira crypto segura</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Send and receive digital assets anywhere in the
 world--no bank account required</source>
-		<translation>Envie e receba ativos digitais em qualquer lugar do mundo - não é necessária conta bancária</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Decentralized apps</source>
-		<translation>Aplicativos descentralizados</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Explore games, exchanges and social networks
 where you alone own your data</source>
-		<translation>Explore jogos, exchanges e redes sociais
- onde você é o único proprietário de seus dados</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Thanks for trying Status Desktop! Please note that this is an alpha release and we advise you that using this app should be done for testing purposes only and you assume the full responsibility for all risks concerning your data and funds. Status makes no claims of security or integrity of funds in these builds.</source>
-		<translation>Obrigado por experimentar o Status Desktop! Observe que esta é uma versão alfa e aconselhamos que o uso deste aplicativo seja feito apenas para fins de teste e você assume total responsabilidade por todos os riscos relacionados aos seus dados e fundos. A Status não reivindica segurança ou integridade de fundos nessas compilações.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>I understand</source>
-		<translation>Eu entendo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Status does not collect, share or sell any personal data. By continuing you agree with the privacy policy.</source>
-		<translation>AStatus não coleta, compartilha ou vende quaisquer dados pessoais. Ao continuar você concorda com a política de privacidade.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>I&apos;m new, generate keys</source>
-		<translation>Sou novo, gerar chaves</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Access existing key</source>
-		<translation>Acessar a chave existente</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Enter password</source>
-		<translation>Digite a senha</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Connecting...</source>
-		<translation>Conectando...</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Login failed: %1</source>
-		<translation>Falha no login: %1</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Generate new keys</source>
-		<translation>Gerar novas chaves</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Your keys</source>
-		<translation>Suas chaves</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Add another existing key</source>
-		<translation>Adicionar outra chave existente</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Your keys have been successfully recovered</source>
-		<translation>Suas chaves foram recuperadas com sucesso</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>You will have to create a new code or password to re-encrypt your keys</source>
-		<translation>Você terá que criar um novo código ou senha para criptografar novamente suas chaves</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Re-encrypt your keys</source>
-		<translation>Criptografe novamente suas chaves</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Cannot find asset &apos;%1&apos;. Ensure this asset has been added to the token list.</source>
-		<translation>Não é possível localizar o ativo &apos;%1&apos;. Certifique-se de que este ativo tenha sido adicionado à lista de tokens.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>ENS Username not found</source>
-		<translation>Nome de usuário ENS não encontrado</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>eg. 0x1234 or ENS</source>
-		<translation>por exemplo, 0x1234 ou ENS</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Paste</source>
-		<translation>Colar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>You need to request the recipient’s address first.
 Assets won’t be sent yet.</source>
-		<translation>Você precisa solicitar o endereço do destinatário primeiro. Os ativos ainda não serão enviados.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Invalid source</source>
-		<translation>Origem inválida</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Insufficient balance</source>
-		<translation>Saldo insuficiente</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Must be greater than 0</source>
-		<translation>Deve ser maior que 0</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Priority</source>
-		<translation>Prioridade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Use suggestions</source>
-		<translation>Usar sugestões</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Use custom</source>
-		<translation>Usar personalizado</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Low</source>
-		<translation>Baixo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>High</source>
-		<translation>Alto</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Gas amount limit</source>
-		<translation>Limite de taxa de gas</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Per-gas overall limit</source>
-		<translation>Limite geral por taxa de gas</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Maximum overall price for the transaction. If the block base fee exceeds this, it will be included in a following block with a lower base fee.</source>
-		<translation>Preço total máximo para a transação. Se a taxa básica do bloco exceder isso, ela será incluída em um bloco seguinte com uma taxa básica mais baixa.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Must be greater than or equal to 0</source>
-		<translation>Deve ser maior ou igual a 0</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>This needs to be a number</source>
-		<translation>Isso precisa ser um número</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Please enter an amount</source>
-		<translation>Por favor, insira uma quantia</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>The amount is 0. Proceed only if this is desired.</source>
-		<translation>A quantia é 0. Prossiga somente se desejar.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Balance: </source>
-		<translation>Balanço:</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Asset &amp; Amount</source>
-		<translation>Ativo &amp; Quantia</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Blocking will remove any messages you received from %1 and stop new messages from reaching you.</source>
-		<translation>O bloqueio removerá todas as mensagens recebidas de %1 e impedirá que novas mensagens cheguem até você.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Account color</source>
-		<translation>Cor da conta</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Confirm your action</source>
-		<translation>Confirmar sua ação</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Confirm</source>
-		<translation>Confirmar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Are you sure you want to this?</source>
-		<translation>Tem certeza que quer isso?</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Do not show this again</source>
-		<translation>Não mostrar isso novamente</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Please select a contact</source>
-		<translation>Por favor, selecione um contato</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Select a contact</source>
-		<translation>Selecione um contato</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Contact does not have an ENS address. Please send a transaction in chat.</source>
-		<translation>O contato não tem um endereço ENS. Por favor, envie uma transação no chat.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>No contact selected</source>
-		<translation>Nenhum contato selecionado</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Copied!</source>
-		<translation>Copiado!</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Slow</source>
-		<translation>Lento</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Optimal</source>
-		<translation>Otimizado</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Fast</source>
-		<translation>Rápido</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Reset</source>
-		<translation>Redefinir</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Advanced</source>
-		<translation>Avançado</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Custom Network Fee</source>
-		<translation>Taxa de Rede Personalizada</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Gwei</source>
-		<translation>Gwei</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Apply</source>
-		<translation>Aplicar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Not enough ETH for gas</source>
-		<translation>Não há ETH suficiente para a taxa de gas</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Copied</source>
-		<translation>Copiado</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Pasted</source>
-		<translation>Colado</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Copy</source>
-		<translation>Copiar para área de transferência</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Invalid ethereum address</source>
-		<translation>Endereço Ethereum inválido</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Address</source>
-		<translation>Endereço</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>My account</source>
-		<translation>Minha conta</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Contact</source>
-		<translation>Contato</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Search</source>
-		<translation>Pesquisar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>In:</source>
-		<translation>Em:</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Messages</source>
-		<translation>Mensagens</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Tokens will be sent directly to a contract address, which may result in a loss of funds. To transfer ERC-20 tokens, ensure the recipient address is the address of the destination wallet.</source>
-		<translation>Os tokens serão enviados diretamente para um endereço de contrato, o que pode resultar em perda de fundos. Para transferir tokens ERC-20, certifique-se de que o endereço do destinatário seja o endereço da carteira de destino.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>View on Etherscan</source>
-		<translation>Ver no Etherscan</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>&lt;a href=&apos;%1&apos; style=&apos;color:%2;text-decoration:none;&apos;&gt;%3&lt;/a&gt;</source>
-		<translation>&lt;a href=&apos;%1&apos; style=&apos;color:%2;text-decoration:none;&apos;&gt;%3&lt;/a&gt;</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Asset</source>
-		<translation>Ativo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Amount</source>
-		<translation>Quantia</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Data field</source>
-		<translation>Campo de dados</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Signing phrase is a 3 word combination that displayed when you entered the wallet on this device for the first time.</source>
-		<translation>A frase de assinatura é uma combinação de 3 palavras que é exibida quando você entra uma carteira neste dispositivo pela primeira vez.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Enter the password you use to unlock this device</source>
-		<translation>Digite a senha que você usa para desbloquear este dispositivo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Unblocking will allow new messages you received from %1 to reach you.</source>
-		<translation>O desbloqueio permitirá que novas mensagens recebidas de %1 cheguem até você.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Send transaction</source>
-		<translation>Enviar transação</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Request transaction</source>
-		<translation>Solicitar transação</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Public chat</source>
-		<translation>Bate-papo público</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Not a contact</source>
-		<translation>Não é um contato</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Image files (%1)</source>
-		<translation>Arquivos de imagem (%1)</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Your message is too long.</source>
-		<translation>Sua mensagem é muito longa.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Please make your message shorter. We have set the limit to 2000 characters to be courteous of others.</source>
-		<translation>Por favor, deixe sua mensagem mais curta. Definimos o limite de 2000 caracteres para ser cortês com os outros.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Type a message</source>
-		<translation>Digite uma mensagem</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Bold</source>
-		<translation>Negrito</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Italic</source>
-		<translation>Itálico</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Strikethrough</source>
-		<translation>Riscado</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Code</source>
-		<translation>Código</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>No recent emojis</source>
-		<translation>Nenhum emoji recente</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Buy for %1 SNT</source>
-		<translation>Comprar com %1 SNT</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Uninstall</source>
-		<translation>Desinstalar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Install</source>
-		<translation>Instalar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Free</source>
-		<translation>Grátis</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Pending...</source>
-		<translation>Pendente...</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Update</source>
-		<translation>Atualizar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Could not buy Stickerpack</source>
-		<translation>Não foi possível comprar o Pacote de figurinhas</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Stickerpack bought successfully</source>
-		<translation>Pacote de figurinhas comprado com sucesso</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>You don&apos;t have any stickers yet</source>
-		<translation>Você ainda não tem figurinhas</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Recently used stickers will appear here</source>
-		<translation>As figurinhas usadas recentemente aparecerão aqui</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Get Stickers</source>
-		<translation>Obter Figurinhas</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Ethereum explorer</source>
-		<translation>Explorador Ethereum</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Custom...</source>
-		<translation>Personalizado...</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Search engine</source>
-		<translation>Mecanismo de busca</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Dapp permissions</source>
-		<translation>Permissões do Dapp</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Revoke access</source>
-		<translation>Revogar acesso</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Revoke all access</source>
-		<translation>Revogar todo o acesso</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Show more</source>
-		<translation>Mostrar mais</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>%1 invited you to join the group</source>
-		<translation>%1 convidou você para participar do grupo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>All</source>
-		<translation>Todos</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Mentions</source>
-		<translation>Menções</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Replies</source>
-		<translation>Respostas</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Contact requests</source>
-		<translation>Solicitações de contato</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Mark all as Read</source>
-		<translation>Marcar todas como lido</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Show read notifications</source>
-		<translation>Mostrar notificações lidas</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Hide read notifications</source>
-		<translation>Ocultar notificações lidas</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Notification settings</source>
-		<translation>Configurações de notificação</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>You need to be mutual contacts with this person for them to receive your messages</source>
-		<translation>Você precisa ser um contato mútuo com essa pessoa para que ela receba suas mensagens</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Waiting for %1 to accept your request</source>
-		<translation>Aguardando pelo %1 para aceitar sua solicitação</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Just click this button to add them as contact. They will receive a notification. Once they accept the request, you&apos;ll be able to chat</source>
-		<translation>Basta clicar neste botão para adicioná-los como contatos. Eles receberão uma notificação. Depois que eles aceitarem a solicitação, você poderá conversar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Back up community key</source>
-		<translation>Fazer backup da chave da comunidade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Back up</source>
-		<translation>Fazer backup</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Member name</source>
-		<translation>Nome do membro</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Community members will appear here</source>
-		<translation>Os membros da comunidade aparecerão aqui</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>No contacts found</source>
-		<translation>Nenhum contato encontrado</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Your community is free to join, but new members are required to be approved by the community creator first</source>
-		<translation>Sua comunidade é livre para participar, mas os novos membros precisam ser aprovados pelo criador da comunidade primeiro</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Your community can only be joined by an invitation from existing community members</source>
-		<translation>Sua comunidade só pode ser acessada por um convite de membros existentes da comunidade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Your community is free for anyone to join</source>
-		<translation>Sua comunidade é gratuita para qualquer pessoa entrar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>You should keep it safe and only share it with people you trust to take ownership of your community</source>
-		<translation>Você deve mantê-lo seguro e compartilhá-lo apenas com pessoas em quem confia para se apropriar de sua comunidade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>You can also use this key to import your community on another device</source>
-		<translation>Você também pode usar esta chave para importar sua comunidade em outro dispositivo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Decline and block</source>
-		<translation>Recusar e bloquear</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Decline all contacts</source>
-		<translation>Recusar todos os contatos</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Are you sure you want to decline all these contact requests</source>
-		<translation>Tem certeza de que deseja recusar todas essas solicitações de contato</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Accept all contacts</source>
-		<translation>Aceitar todos os contatos</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Are you sure you want to accept all these contact requests</source>
-		<translation>Tem certeza que deseja aceitar todas essas solicitações de contato</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Decline all</source>
-		<translation>Recusar tudo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Accept all</source>
-		<translation>Aceitar tudo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Pin limit reached</source>
-		<translation>Limite de mensagens fixadas atingido</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Unpin a previous message first</source>
-		<translation>Desafixar uma mensagem anterior primeiro</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>%1 messages</source>
-		<translation>%1 mensagens</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>%1 message</source>
-		<translation>%1 mensagem</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Pinned messages will appear here.</source>
-		<translation>As mensagens fixadas aparecerão aqui.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>I accept</source>
-		<translation>Eu aceito</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Format not supported.</source>
-		<translation>Formato não suportado.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Upload %1 only</source>
-		<translation>Carregar apenas %1</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>You can only upload %1 images at a time</source>
-		<translation>Você só pode carregar %1 imagens de cada vez</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Max image size is %1 MB</source>
-		<translation>O tamanho máximo da imagem é %1 MB</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>TODO</source>
-		<translation>PARAFAZER</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>NOW</source>
-		<translation>AGORA</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>%1M</source>
-		<translation>%1M</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>%1H</source>
-		<translation>%1H</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>%1D</source>
-		<translation>%1D</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Sun</source>
-		<translation>Dom</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Mon</source>
-		<translation>Seg</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Tue</source>
-		<translation>Ter</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Wed</source>
-		<translation>Qua</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Thu</source>
-		<translation>Qui</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Fri</source>
-		<translation>Sex</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Sat</source>
-		<translation>Sab</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Jan</source>
-		<translation>Jan</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Feb</source>
-		<translation>Fev</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Mar</source>
-		<translation>Mar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Apr</source>
-		<translation>Abr</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Jun</source>
-		<translation>Jun</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Jul</source>
-		<translation>Jul</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Aug</source>
-		<translation>Ago</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Sep</source>
-		<translation>Set</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Oct</source>
-		<translation>Out</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Nov</source>
-		<translation>Nov</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Dec</source>
-		<translation>Dez</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Sunday</source>
-		<translation>Domingo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Monday</source>
-		<translation>Segunda-feira</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Tuesday</source>
-		<translation>Terça-feira</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Wednesday</source>
-		<translation>Quarta-feira</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Thursday</source>
-		<translation>Quinta-feira</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Friday</source>
-		<translation>Sexta-feira</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Saturday</source>
-		<translation>Sábado</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Start a 1-on-1 chat with %1</source>
-		<translation>Inicie um bate-papo individual com %1</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Join the %1 community</source>
-		<translation>Junte-se à comunidade %1</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Join the %1 group chat</source>
-		<translation>Junte-se ao bate-papo em grupo %1</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Join the %1 public channel</source>
-		<translation>Junte-se ao canal público %1</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>words</source>
-		<translation>palavras</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Mainnet with upstream RPC</source>
-		<translation>Mainnet com RPC upstream</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>POA Network</source>
-		<translation>Rede POA</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>xDai Chain</source>
-		<translation>xDai Chain</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Goerli with upstream RPC</source>
-		<translation>Goerli com RPC upstream</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Rinkeby with upstream RPC</source>
-		<translation>Rinkeby com RPC upstream</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Ropsten with upstream RPC</source>
-		<translation>Ropsten com RPC upstream</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>You need to repeat your password</source>
-		<translation>Você precisa repetir sua senha</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Passwords don&apos;t match</source>
-		<translation>As senhas não correspondem</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>You need to enter a %1</source>
-		<translation>Você precisa inserir um %1</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>The %1 cannot exceed %2 characters</source>
-		<translation>O %1 não pode exceder %2 caracteres</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Must be an hexadecimal color (eg: #4360DF)</source>
-		<translation>Deve ser uma cor hexadecimal (por exemplo: #4360DF)</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Use only lowercase letters (a to z), numbers &amp; dashes (-). Do not use chat keys.</source>
-		<translation>Use apenas letras minúsculas (a a z), números e traços (-). Não use teclas de bate-papo.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>community-image-delete</source>
-		<translation>Vazio</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>public</source>
-		<translation>Público</translation>
+		<translation>পাবলিক</translation>
 	</message>
 </context>
 <context>
 	<name>AboutView</name>
 	<message>
 		<source>Status Desktop</source>
-		<translation>Status Desktop</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Privacy Policy</source>
-		<translation>Política de Privacidade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Check for updates</source>
@@ -10943,37 +10925,37 @@ Assets won’t be sent yet.</source>
 	<name>AcceptRejectOptionsButtonsPanel</name>
 	<message>
 		<source>View Profile</source>
-		<translation>Ver Perfil</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Decline and block</source>
-		<translation>Recusar e bloquear</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>AccessExistingCommunityPopup</name>
 	<message>
 		<source>You need to enter a key</source>
-		<translation>Você precisa inserir uma chave</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Import</source>
-		<translation>Importar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Error importing the community</source>
-		<translation>Erro ao importar a comunidade</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>AccountView</name>
 	<message>
 		<source>Type</source>
-		<translation>Tipo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Storage</source>
-		<translation>Armazenar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Watch-Only Account</source>
@@ -11016,7 +10998,7 @@ Assets won’t be sent yet.</source>
 	<name>ActivityCenterMessageComponentView</name>
 	<message>
 		<source>Mark as Read</source>
-		<translation>Marcar como Lido</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Mark as Unread</source>
@@ -11027,7 +11009,7 @@ Assets won’t be sent yet.</source>
 	<name>AddAccountModal</name>
 	<message>
 		<source>Advanced</source>
-		<translation>Avançado</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Generate an account</source>
@@ -11082,15 +11064,15 @@ Assets won’t be sent yet.</source>
 	<name>AddEditSavedAddressPopup</name>
 	<message>
 		<source>Name</source>
-		<translation>Nome</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Address</source>
-		<translation>Endereço</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Save</source>
-		<translation>Salvar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Edit saved address</source>
@@ -11129,23 +11111,23 @@ Assets won’t be sent yet.</source>
 	<name>AddFavoriteModal</name>
 	<message>
 		<source>URL</source>
-		<translation>URL</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Paste URL</source>
-		<translation>Colar URL</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Paste</source>
-		<translation>Colar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Pasted</source>
-		<translation>Colado</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Name</source>
-		<translation>Nome</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Favorite added</source>
@@ -11192,18 +11174,18 @@ Assets won’t be sent yet.</source>
 	<name>AdvancedContainer</name>
 	<message>
 		<source>Online users</source>
-		<translation>Usuários online</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>AdvancedView</name>
 	<message>
 		<source>disable</source>
-		<translation>desativar</translation>
+		<translation>অক্ষম</translation>
 	</message>
 	<message>
 		<source>enable</source>
-		<translation>Ativar</translation>
+		<translation>সক্ষম করুন</translation>
 	</message>
 	<message>
 		<source>Fleet</source>
@@ -11326,7 +11308,7 @@ Assets won’t be sent yet.</source>
 	<name>AllowNotificationsView</name>
 	<message>
 		<source>Ok, got it</source>
-		<translation>Ok, entendi.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Allow notifications</source>
@@ -11342,7 +11324,7 @@ edit your notification preferences later in settings.</source>
 	<name>AppMain</name>
 	<message>
 		<source>Where do you want to go?</source>
-		<translation>Onde você quer ir?</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Profile Picture</source>
@@ -11401,27 +11383,27 @@ edit your notification preferences later in settings.</source>
 	<name>AppearanceView</name>
 	<message>
 		<source>XS</source>
-		<translation>XS</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>S</source>
-		<translation>S</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>M</source>
-		<translation>M</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>L</source>
-		<translation>L</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>XL</source>
-		<translation>XL</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>XXL</source>
-		<translation>XXL</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Preview</source>
@@ -11480,11 +11462,11 @@ edit your notification preferences later in settings.</source>
 	<name>BackupSeedModal</name>
 	<message>
 		<source>Back up your seed phrase</source>
-		<translation>Faça backup da frase-semente</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Continue</source>
-		<translation>Continuar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Not Now</source>
@@ -11507,11 +11489,11 @@ edit your notification preferences later in settings.</source>
 	<name>BackupSeedStepBase</name>
 	<message>
 		<source>Enter word</source>
-		<translation>Digite a palavra</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Wrong word</source>
-		<translation>Palavra errada</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Word #%1</source>
@@ -11522,7 +11504,7 @@ edit your notification preferences later in settings.</source>
 	<name>BeforeGetStartedModal</name>
 	<message>
 		<source>Privacy Policy</source>
-		<translation>Política de Privacidade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Before you get started</source>
@@ -11565,7 +11547,7 @@ edit your notification preferences later in settings.</source>
 	<name>BrowserLayout</name>
 	<message>
 		<source>Transaction pending...</source>
-		<translation>Transação pendente...</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Error sending the transaction</source>
@@ -11597,19 +11579,19 @@ Do you wish to override the security check and continue?</source>
 	<name>ChatContextMenuView</name>
 	<message>
 		<source>Leave group</source>
-		<translation>Sair do grupo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Save</source>
-		<translation>Salvar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Delete</source>
-		<translation>Excluir</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Are you sure you want to leave this chat?</source>
-		<translation>Tem certeza de que deseja sair deste chat?</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>View Members</source>
@@ -11676,7 +11658,7 @@ Do you wish to override the security check and continue?</source>
 	<name>ChatView</name>
 	<message>
 		<source>Members</source>
-		<translation>Membros</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Remove contact</source>
@@ -11691,14 +11673,14 @@ Do you wish to override the security check and continue?</source>
 	<name>CollectibleDetailsHeader</name>
 	<message>
 		<source>Send</source>
-		<translation>Enviar</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>CollectibleModal</name>
 	<message>
 		<source>description</source>
-		<translation>Descrição</translation>
+		<translation>বর্ণনা</translation>
 	</message>
 	<message>
 		<source>unnamed</source>
@@ -11717,25 +11699,25 @@ Do you wish to override the security check and continue?</source>
 	<name>CollectiblesStore</name>
 	<message>
 		<source>Collectibles</source>
-		<translation>Colecionáveis</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>CollectiblesView</name>
 	<message>
 		<source>Collectibles will appear here</source>
-		<translation>Colecionáveis aparecerão aqui</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>CommunitiesListPanel</name>
 	<message>
 		<source>Cancel</source>
-		<translation>Cancelar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Leave community</source>
-		<translation>Deixar comunidade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Leave %1</source>
@@ -11750,23 +11732,23 @@ Do you wish to override the security check and continue?</source>
 	<name>CommunitiesPopup</name>
 	<message>
 		<source>Communities</source>
-		<translation>Comunidades</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>1 member</source>
-		<translation>1 membro</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>%1 members</source>
-		<translation>%1 membros</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Create a community</source>
-		<translation>Crie uma comunidade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Search for communities or topics</source>
-		<translation>Pesquisar comunidades ou tópicos</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Access existing community</source>
@@ -11777,7 +11759,7 @@ Do you wish to override the security check and continue?</source>
 	<name>CommunitiesPortalLayout</name>
 	<message>
 		<source>Search</source>
-		<translation>Pesquisar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Find community</source>
@@ -11804,18 +11786,18 @@ Do you wish to override the security check and continue?</source>
 	<name>CommunityColorPicker</name>
 	<message>
 		<source>Community colour</source>
-		<translation>Cor da comunidade</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>CommunityColumnView</name>
 	<message>
 		<source>Create channel</source>
-		<translation>Criar canal</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Create category</source>
-		<translation>Criar categoria</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>1 Member</source>
@@ -11874,11 +11856,11 @@ Do you wish to override the security check and continue?</source>
 	<name>CommunityDescriptionInput</name>
 	<message>
 		<source>Description</source>
-		<translation>Descrição</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>What your community is about</source>
-		<translation>Sobre o que é sua comunidade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>community description</source>
@@ -11889,15 +11871,15 @@ Do you wish to override the security check and continue?</source>
 	<name>CommunityDetailPopup</name>
 	<message>
 		<source>Join ‘%1’</source>
-		<translation>Junte-se a &apos;%1&apos;</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Pending</source>
-		<translation>Pendente</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Unknown community</source>
-		<translation>Comunidade desconhecida</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Public community</source>
@@ -11940,53 +11922,53 @@ Do you wish to override the security check and continue?</source>
 	<name>CommunityEditSettingsPanel</name>
 	<message>
 		<source>A catchy name</source>
-		<translation>Um nome cativante</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>community name</source>
-		<translation>nome da comunidade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Description</source>
-		<translation>Descrição</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>What your community is about</source>
-		<translation>Sobre o que é sua comunidade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Pick a color</source>
-		<translation>Escolha uma cor</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>CommunityHeaderButton</name>
 	<message>
 		<source>1 member</source>
-		<translation>1 membro</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>%1 members</source>
-		<translation>%1 membros</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>CommunityMembersSettingsPanel</name>
 	<message>
 		<source>Members</source>
-		<translation>Membros</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Member name</source>
-		<translation>Nome do membro</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Ban</source>
-		<translation>Banir</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Kick</source>
-		<translation>Expulsar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Membership requests</source>
@@ -12009,11 +11991,11 @@ Do you wish to override the security check and continue?</source>
 	<name>CommunityNameInput</name>
 	<message>
 		<source>A catchy name</source>
-		<translation>Um nome cativante</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>community name</source>
-		<translation>nome da comunidade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Community name</source>
@@ -12024,11 +12006,11 @@ Do you wish to override the security check and continue?</source>
 	<name>CommunityProfilePopup</name>
 	<message>
 		<source>Members</source>
-		<translation>Membros</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Transfer ownership</source>
-		<translation>Transferir propriedade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Public community</source>
@@ -12059,11 +12041,11 @@ Do you wish to override the security check and continue?</source>
 	<name>CommunityProfilePopupInviteFriendsPanel</name>
 	<message>
 		<source>Copied!</source>
-		<translation>Copiado!</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Contacts</source>
-		<translation>Contatos</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Share community</source>
@@ -12074,14 +12056,14 @@ Do you wish to override the security check and continue?</source>
 	<name>CommunityProfilePopupMembersListPanel</name>
 	<message>
 		<source>Member name</source>
-		<translation>Nome do membro</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>CommunityProfilePopupOverviewPanel</name>
 	<message>
 		<source>Copied!</source>
-		<translation>Copiado!</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Share community</source>
@@ -12100,15 +12082,15 @@ Do you wish to override the security check and continue?</source>
 	<name>CommunitySettingsView</name>
 	<message>
 		<source>Members</source>
-		<translation>Membros</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Notifications</source>
-		<translation>Notificações</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Settings</source>
-		<translation>Configurações</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Overview</source>
@@ -12131,14 +12113,14 @@ Do you wish to override the security check and continue?</source>
 	<name>CommunityUserList</name>
 	<message>
 		<source>Members</source>
-		<translation>Membros</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>ConfirmPasswordView</name>
 	<message>
 		<source>Passwords don&apos;t match</source>
-		<translation>As senhas não correspondem</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Have you written down your password?</source>
@@ -12189,23 +12171,23 @@ Do you wish to override the security check and continue?</source>
 	<name>ConfirmationDialog</name>
 	<message>
 		<source>Confirm</source>
-		<translation>Confirmar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Reject</source>
-		<translation>Rejeitar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Cancel</source>
-		<translation>Cancelar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Confirm your action</source>
-		<translation>Confirmar sua ação</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Do not show this again</source>
-		<translation>Não mostrar isso novamente</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Are you sure you want to do this?</source>
@@ -12216,11 +12198,11 @@ Do you wish to override the security check and continue?</source>
 	<name>ContactPanel</name>
 	<message>
 		<source>View Profile</source>
-		<translation>Ver perfil</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Send message</source>
-		<translation>Enviar mensagem</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Respond to ID Request</source>
@@ -12239,7 +12221,7 @@ Do you wish to override the security check and continue?</source>
 	<name>ContactsColumnView</name>
 	<message>
 		<source>Start chat</source>
-		<translation>Iniciar bate-papo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Chat</source>
@@ -12270,7 +12252,7 @@ Do you wish to override the security check and continue?</source>
 	<name>ContactsView</name>
 	<message>
 		<source>Contacts</source>
-		<translation>Contatos</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Send contact request to chat key</source>
@@ -12317,27 +12299,27 @@ Do you wish to override the security check and continue?</source>
 	<name>Controls</name>
 	<message>
 		<source>XS</source>
-		<translation>XS</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>S</source>
-		<translation>S</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>M</source>
-		<translation>M</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>L</source>
-		<translation>L</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>XL</source>
-		<translation>XL</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>XXL</source>
-		<translation>XXL</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>50%</source>
@@ -12360,11 +12342,11 @@ Do you wish to override the security check and continue?</source>
 	<name>CreateCategoryPopup</name>
 	<message>
 		<source>Category title</source>
-		<translation>Título da categoria</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>category name</source>
-		<translation>nome da categoria</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Edit category</source>
@@ -12415,23 +12397,23 @@ Do you wish to override the security check and continue?</source>
 	<name>CreateChannelPopup</name>
 	<message>
 		<source>Channel name</source>
-		<translation>Nome do canal</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>channel name</source>
-		<translation>nome do canal</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Description</source>
-		<translation>Descrição</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Describe the channel</source>
-		<translation>Descreva o canal</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>channel description</source>
-		<translation>descrição do canal</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>New channel</source>
@@ -12470,7 +12452,7 @@ Do you wish to override the security check and continue?</source>
 	<name>CreateChatView</name>
 	<message>
 		<source>Contacts</source>
-		<translation>Contatos</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>To: </source>
@@ -12512,51 +12494,51 @@ chat with them once they have accepted your contact request.</source>
 	<name>CreateCommunityPopup</name>
 	<message>
 		<source>You need to enter a color</source>
-		<translation>Você precisa inserir uma cor</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>This field needs to be an hexadecimal color (eg: #4360DF)</source>
-		<translation>Este campo precisa ser uma cor hexadecimal (por exemplo: #4360DF)</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Community color</source>
-		<translation>Cor da comunidade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Pick a color</source>
-		<translation>Escolha uma cor</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Please choose a color</source>
-		<translation>Por favor, escolha uma cor</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Next</source>
-		<translation>Próximo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Error creating the community</source>
-		<translation>Erro ao criar a comunidade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Name your community</source>
-		<translation>Dê um nome à sua comunidade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>A catchy name</source>
-		<translation>Um nome cativante</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Give it a short description</source>
-		<translation>Faça uma breve descrição</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>What your community is about</source>
-		<translation>Sobre o que é sua comunidade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Community colour</source>
-		<translation>Cor da comunidade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Create New Community</source>
@@ -12571,18 +12553,18 @@ chat with them once they have accepted your contact request.</source>
 	<name>CreatePasswordView</name>
 	<message>
 		<source>Create password</source>
-		<translation>Criar senha</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>DemoApp</name>
 	<message>
 		<source>Invite People</source>
-		<translation>Convidar pessoas</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>View Community</source>
-		<translation>Ver Comunidade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Edit Community</source>
@@ -12597,7 +12579,7 @@ chat with them once they have accepted your contact request.</source>
 	<name>DerivationPathsPanel</name>
 	<message>
 		<source>Reset</source>
-		<translation>Redefinir</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Derivation Path</source>
@@ -12608,11 +12590,11 @@ chat with them once they have accepted your contact request.</source>
 	<name>DerivedAddressesPanel</name>
 	<message>
 		<source>Pending</source>
-		<translation>Pendente</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Account</source>
-		<translation>Conta</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>No activity</source>
@@ -12635,11 +12617,11 @@ chat with them once they have accepted your contact request.</source>
 	<name>DisplayNamePopup</name>
 	<message>
 		<source>Edit</source>
-		<translation>Editar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Ok</source>
-		<translation>Ok</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Display Name</source>
@@ -12654,15 +12636,15 @@ chat with them once they have accepted your contact request.</source>
 	<name>EnsDetailsView</name>
 	<message>
 		<source>Wallet address</source>
-		<translation>Endereço da carteira</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Key</source>
-		<translation>Chave</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Connect username with your pubkey</source>
-		<translation>Conecte o nome de usuário com sua chave pública</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Copied to clipboard!</source>
@@ -12685,7 +12667,7 @@ chat with them once they have accepted your contact request.</source>
 	<name>EnsSearchView</name>
 	<message>
 		<source>Connect username with your pubkey</source>
-		<translation>Conecte o nome de usuário com sua chave pública</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>At least 4 characters. Latin letters, numbers, and lowercase only.</source>
@@ -12716,7 +12698,7 @@ chat with them once they have accepted your contact request.</source>
 	<name>EnsView</name>
 	<message>
 		<source>Transaction pending...</source>
-		<translation>Transação pendente...</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>View on etherscan</source>
@@ -12743,7 +12725,7 @@ chat with them once they have accepted your contact request.</source>
 	<name>ExemptionNotificationsModal</name>
 	<message>
 		<source>Done</source>
-		<translation>Feito</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>%1 exemption</source>
@@ -12774,15 +12756,15 @@ chat with them once they have accepted your contact request.</source>
 	<name>GasSelector</name>
 	<message>
 		<source>Priority</source>
-		<translation>Prioridade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Low</source>
-		<translation>Baixo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>High</source>
-		<translation>Alto</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Must be greater than 0</source>
@@ -12861,7 +12843,7 @@ chat with them once they have accepted your contact request.</source>
 	<name>GroupInfoPopup</name>
 	<message>
 		<source>%1/%2 members</source>
-		<translation>%1 membros {1/%2 ?}</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Add members</source>
@@ -12908,18 +12890,18 @@ chat with them once they have accepted your contact request.</source>
 	<name>ImageCropperModal</name>
 	<message>
 		<source>Crop your image (optional)</source>
-		<translation>Cortar sua imagem (opcional)</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Finish</source>
-		<translation>Terminar</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>ImportPrivateKeyPanel</name>
 	<message>
 		<source>Pending</source>
-		<translation>Pendente</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>You need to enter a private key</source>
@@ -12958,7 +12940,7 @@ chat with them once they have accepted your contact request.</source>
 	<name>InsertCard</name>
 	<message>
 		<source>Cancel</source>
-		<translation>Cancelar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Please insert your Keycard to proceed or press the cancel button to cancel the operation</source>
@@ -12969,11 +12951,11 @@ chat with them once they have accepted your contact request.</source>
 	<name>InsertDetailsView</name>
 	<message>
 		<source>Next</source>
-		<translation>Próximo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Profile picture</source>
-		<translation>Foto do perfil</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Your profile</source>
@@ -13012,7 +12994,7 @@ chat with them once they have accepted your contact request.</source>
 	<name>InvitationBubbleView</name>
 	<message>
 		<source>Unsupported state</source>
-		<translation>Estado não suportado</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Membership requires an ENS username</source>
@@ -13059,11 +13041,11 @@ chat with them once they have accepted your contact request.</source>
 	<name>KeysMainView</name>
 	<message>
 		<source>Enter a seed phrase</source>
-		<translation>Inserir seed phrase</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Generate new keys</source>
-		<translation>Gerar novas chaves</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>intro-wizard-title1</source>
@@ -13103,7 +13085,7 @@ device, so only you can use them.</source>
 	<name>LanguageView</name>
 	<message>
 		<source>Language</source>
-		<translation>Idioma</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Set Display Currency</source>
@@ -13158,11 +13140,11 @@ device, so only you can use them.</source>
 	<name>Layout</name>
 	<message>
 		<source>Invite People</source>
-		<translation>Convidar pessoas</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>View Community</source>
-		<translation>Ver Comunidade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>To: </source>
@@ -13185,7 +13167,7 @@ device, so only you can use them.</source>
 	<name>LeftTabView</name>
 	<message>
 		<source>Settings</source>
-		<translation>Configurações</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Sign out</source>
@@ -13220,7 +13202,7 @@ device, so only you can use them.</source>
 	<name>LoginView</name>
 	<message>
 		<source>Ok</source>
-		<translation>Ok</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Welcome back</source>
@@ -13259,7 +13241,7 @@ device, so only you can use them.</source>
 	<name>MenuPanel</name>
 	<message>
 		<source>Settings</source>
-		<translation>Configurações</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Apps</source>
@@ -13274,7 +13256,7 @@ device, so only you can use them.</source>
 	<name>MessageContextMenuView</name>
 	<message>
 		<source>Jump to</source>
-		<translation>Pular para</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Copy image</source>
@@ -13337,7 +13319,7 @@ device, so only you can use them.</source>
 	<name>MessagingView</name>
 	<message>
 		<source>Contacts</source>
-		<translation>Contatos</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Allow new contact requests</source>
@@ -13408,15 +13390,15 @@ device, so only you can use them.</source>
 	<name>MyProfileView</name>
 	<message>
 		<source>ENS username</source>
-		<translation>nome de usuário ENS</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Chat key</source>
-		<translation>Chave de bate-papo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Share Profile URL</source>
-		<translation>Compartilhar URL do Perfil</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Change Password</source>
@@ -13435,7 +13417,7 @@ device, so only you can use them.</source>
 	<name>NicknamePopup</name>
 	<message>
 		<source>Nickname</source>
-		<translation>Nickname</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Nicknames help you identify others in Status. Only you can see the nicknames you’ve added</source>
@@ -13450,7 +13432,7 @@ device, so only you can use them.</source>
 	<name>NoImageUploadedPanel</name>
 	<message>
 		<source>Upload</source>
-		<translation>Upload</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Wide aspect ratio is optimal</source>
@@ -13461,15 +13443,15 @@ device, so only you can use them.</source>
 	<name>NotificationsView</name>
 	<message>
 		<source>Messages</source>
-		<translation>Mensagens</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>You have a new message</source>
-		<translation>Você tem uma nova mensagem</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Anonymous</source>
-		<translation>Anônimo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Community</source>
@@ -13620,11 +13602,11 @@ device, so only you can use them.</source>
 	<name>PasswordView</name>
 	<message>
 		<source>Create a password</source>
-		<translation>Criar uma senha</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Passwords don&apos;t match</source>
-		<translation>As senhas não correspondem</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Create a password to unlock Status on this device &amp; sign transactions.</source>
@@ -13703,7 +13685,7 @@ device, so only you can use them.</source>
 	<name>PermissionsListView</name>
 	<message>
 		<source>Disconnect</source>
-		<translation>Desconectar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Disconnect All</source>
@@ -13714,7 +13696,7 @@ device, so only you can use them.</source>
 	<name>PinnedMessagesPopup</name>
 	<message>
 		<source>Unpin</source>
-		<translation>Desafixar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Pin limit reached</source>
@@ -13745,7 +13727,7 @@ device, so only you can use them.</source>
 	<name>ProfileLayout</name>
 	<message>
 		<source>Contacts</source>
-		<translation>Contatos</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Testnet mode is enabled. All balances, transactions and dApp interactions will be on testnets.</source>
@@ -13764,47 +13746,47 @@ device, so only you can use them.</source>
 	<name>ProfilePopup</name>
 	<message>
 		<source>ENS username</source>
-		<translation>nome de usuário ENS</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Chat key</source>
-		<translation>Chave de bate-papo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Share Profile URL</source>
-		<translation>Compartilhar URL do Perfil</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Chat settings</source>
-		<translation>Configurações de bate-papo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Nickname</source>
-		<translation>Nickname</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>None</source>
-		<translation>Nenhum</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Remove contact</source>
-		<translation>Remover Contato</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Are you sure you want to remove this contact?</source>
-		<translation>Tem certeza de que deseja remover este contato?</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Unblock User</source>
-		<translation>Desbloquear Usuário</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Block User</source>
-		<translation>Bloquear Usuário</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Add to contacts</source>
-		<translation>Adicionar aos contatos</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>&apos;s Profile</source>
@@ -13895,35 +13877,35 @@ device, so only you can use them.</source>
 	<name>ProfileSectionStore</name>
 	<message>
 		<source>Profile</source>
-		<translation>Perfil</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>ENS usernames</source>
-		<translation>Nomes de usuário ENS</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Wallet</source>
-		<translation>Carteira</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Browser</source>
-		<translation>Navegador</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Communities</source>
-		<translation>Comunidades</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Appearance</source>
-		<translation>Aparência</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Back up seed phrase</source>
-		<translation>Fazer backup da seed phrase</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Advanced</source>
-		<translation>Avançado</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Messaging</source>
@@ -13954,7 +13936,7 @@ device, so only you can use them.</source>
 	<name>RateView</name>
 	<message>
 		<source>Upload</source>
-		<translation>Upload</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Bandwidth</source>
@@ -13973,7 +13955,7 @@ device, so only you can use them.</source>
 	<name>ReceiveModal</name>
 	<message>
 		<source>Copy</source>
-		<translation>Copiar para área de transferência</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Receive</source>
@@ -13996,7 +13978,7 @@ device, so only you can use them.</source>
 	<name>RootStore</name>
 	<message>
 		<source>You</source>
-		<translation>Você</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Start a 1-on-1 chat with %1</source>
@@ -14015,11 +13997,11 @@ device, so only you can use them.</source>
 	<name>SavedAddressesView</name>
 	<message>
 		<source>Cancel</source>
-		<translation>Cancelar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Delete</source>
-		<translation>Excluir</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Saved addresses</source>
@@ -14050,15 +14032,15 @@ device, so only you can use them.</source>
 	<name>SeedPhraseInputView</name>
 	<message>
 		<source>Enter seed phrase</source>
-		<translation>Inserir seed phrase</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Next</source>
-		<translation>Próximo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Import</source>
-		<translation>Importar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Keys for this account already exist</source>
@@ -14093,7 +14075,7 @@ device, so only you can use them.</source>
 	<name>SendContactRequestModal</name>
 	<message>
 		<source>Paste</source>
-		<translation>Colar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Send Contact Request to chat key</source>
@@ -14120,7 +14102,7 @@ device, so only you can use them.</source>
 	<name>SendModal</name>
 	<message>
 		<source>Transaction pending...</source>
-		<translation>Transação pendente...</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Error sending the transaction</source>
@@ -14167,7 +14149,7 @@ device, so only you can use them.</source>
 	<name>SendModalFooter</name>
 	<message>
 		<source>Unknown</source>
-		<translation>Desconhecido</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Estimated Time:</source>
@@ -14186,37 +14168,37 @@ device, so only you can use them.</source>
 	<name>SendModalHeader</name>
 	<message>
 		<source>To</source>
-		<translation>Para</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>SettingsPageLayout</name>
 	<message>
 		<source>Cancel</source>
-		<translation>Cancelar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Save changes</source>
-		<translation>Salvar alterações</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>SignTransactionModal</name>
 	<message>
 		<source>Send</source>
-		<translation>Enviar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Continue</source>
-		<translation>Continuar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Error estimating gas: %1</source>
-		<translation>Erro ao estimar a taxa de gas: %1</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Transaction pending...</source>
-		<translation>Transação pendente...</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Error sending the transaction</source>
@@ -14259,14 +14241,14 @@ device, so only you can use them.</source>
 	<name>StatusAppCommunityView</name>
 	<message>
 		<source>Members</source>
-		<translation>Membros</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>StatusChatInput</name>
 	<message>
 		<source>Send</source>
-		<translation>Enviar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Message</source>
@@ -14313,7 +14295,7 @@ device, so only you can use them.</source>
 	<name>StatusChatListAndCategories</name>
 	<message>
 		<source>More</source>
-		<translation>Mais</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Add channel inside category</source>
@@ -14324,7 +14306,7 @@ device, so only you can use them.</source>
 	<name>StatusChatListCategoryItem</name>
 	<message>
 		<source>More</source>
-		<translation>Mais</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Add channel inside category</source>
@@ -14335,29 +14317,29 @@ device, so only you can use them.</source>
 	<name>StatusChatListItem</name>
 	<message>
 		<source>Unmute</source>
-		<translation>Ativar som</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>StatusChatToolBar</name>
 	<message>
 		<source>Search</source>
-		<translation>Pesquisar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Members</source>
-		<translation>Membros</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>More</source>
-		<translation>Mais</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>StatusColorDialog</name>
 	<message>
 		<source>Preview</source>
-		<translation>Preview</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>This is not a valid color</source>
@@ -14376,7 +14358,7 @@ device, so only you can use them.</source>
 	<name>StatusExpandableSettingsItemPage</name>
 	<message>
 		<source>Back up seed phrase</source>
-		<translation>Fazer backup da seed phrase</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Not Implemented</source>
@@ -14387,14 +14369,14 @@ device, so only you can use them.</source>
 	<name>StatusListPicker</name>
 	<message>
 		<source>Search</source>
-		<translation>Procurar</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>StatusMacNotification</name>
 	<message>
 		<source>Open</source>
-		<translation>Abrir</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>My latest message
@@ -14406,18 +14388,18 @@ device, so only you can use them.</source>
 	<name>StatusStickerMarket</name>
 	<message>
 		<source>This feature is experimental and is meant for testing purposes by core contributors and the community. It&apos;s not meant for real use and makes no claims of security or integrity of funds or data. Use at your own risk.</source>
-		<translation>Esse recurso é experimental e destina-se a fins de teste pelos principais contribuidores e pela comunidade. Não se destina ao uso real e não faz reivindicações de segurança ou integridade de fundos ou dados. Use por sua conta e risco.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>I understand</source>
-		<translation>Eu compreendo</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>StatusTokenInlineSelector</name>
 	<message>
 		<source>or</source>
-		<translation>OU</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Hold</source>
@@ -14432,29 +14414,29 @@ device, so only you can use them.</source>
 	<name>StatusWalletColorSelect</name>
 	<message>
 		<source>Account color</source>
-		<translation>Cor da conta</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>TabNetworkAndFees</name>
 	<message>
 		<source>Advanced</source>
-		<translation>Avançado</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Custom</source>
-		<translation>Personalizado</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Slow</source>
-		<translation>Lento</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>TransactionSettingsConfirmationPopup</name>
 	<message>
 		<source>Are you sure?</source>
-		<translation>Você tem certeza?</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Your priority fee is below our suggested parameters.</source>
@@ -14505,19 +14487,19 @@ device, so only you can use them.</source>
 	<name>TransferOwnershipPopup</name>
 	<message>
 		<source>Transfer ownership</source>
-		<translation>Transferir propriedade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Community private key</source>
-		<translation>Chave privada da comunidade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Copy</source>
-		<translation>Copiar para a área de transferência</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Copied</source>
-		<translation>Copiado</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>You should keep it safe and only share it with people you trust to take ownership of your community</source>
@@ -14532,19 +14514,19 @@ device, so only you can use them.</source>
 	<name>UploadProfilePicModal</name>
 	<message>
 		<source>Profile picture</source>
-		<translation>Foto do perfil</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Remove</source>
-		<translation>Remover</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Upload</source>
-		<translation>Envio</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Done</source>
-		<translation>Feito</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Upload profile picture</source>
@@ -14563,29 +14545,29 @@ device, so only you can use them.</source>
 	<name>UserList</name>
 	<message>
 		<source>Members</source>
-		<translation>Membros</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>UsernameLabel</name>
 	<message>
 		<source>You</source>
-		<translation>Você</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>Utils</name>
 	<message>
 		<source>Password needs to be 6 characters or more</source>
-		<translation>A senha precisa ter 6 caracteres ou mais</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>You need to enter a %1</source>
-		<translation>Você precisa inserir um %1</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>now</source>
-		<translation>Agora</translation>
+		<translation>এখন</translation>
 	</message>
 	<message>
 		<source>Sun</source>
@@ -14844,7 +14826,7 @@ device, so only you can use them.</source>
 	<name>WalletView</name>
 	<message>
 		<source>Wallet</source>
-		<translation>Carteira</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Networks</source>

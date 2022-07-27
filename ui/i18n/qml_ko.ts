@@ -1,366 +1,365 @@
-<!DOCTYPE TS><TS version="2.1" language="pt_BR">
+<!DOCTYPE TS><TS version="2.1" language="ko">
 <context>
 	<name></name>
 	<message>
 		<source>about-app</source>
-		<translation>Sobre</translation>
+		<translation>앱 정보</translation>
 	</message>
 	<message>
 		<source>about-key-storage-content</source>
-		<translation>O Status nunca acessará sua chave privada. Não esqueça de salvar sua frase-semente. Se você perder seu telefone, essa é a única maneira de acessar suas chaves.</translation>
+		<translation>스테이터스는 절대로 사용자의 개인 키에 접근할 수 없습니다. 시드 구문을 안전하게 백업해주세요. 스마트폰을 잃어버려도 시드 구문을 통해 계정을 불러올 수 있습니다.</translation>
 	</message>
 	<message>
 		<source>about-key-storage-title</source>
-		<translation>Sobre o armazenamento de chaves</translation>
+		<translation>키 저장소 정보</translation>
 	</message>
 	<message>
 		<source>about-names-content</source>
-		<translation>Ninguém pode fingir ser você! Você é anônimo por padrão e nunca precisa revelar seu nome real. Você pode cadastrar um nome personalizado por uma pequena taxa.</translation>
+		<translation>그 누구도 사용자를 사칭할 수 없습니다. 사용자 계정은 기본적으로 익명이며, 사용자는 실제 이름을 밝힐 필요가 없습니다. 약간의 비용을 지불하면 원하는 이름을 등록할 수 있습니다.</translation>
 	</message>
 	<message>
 		<source>about-names-title</source>
-		<translation>Os nomes não podem ser alterados</translation>
+		<translation>이름은 변경할 수 없습니다</translation>
 	</message>
 	<message>
 		<source>access-key</source>
-		<translation>Chave de acesso</translation>
+		<translation>키 불러오기</translation>
 	</message>
 	<message>
 		<source>access-existing-keys</source>
-		<translation>Acessar chaves existentes</translation>
+		<translation>기존 키 액세스</translation>
 	</message>
 	<message>
 		<source>accept-and-share-address</source>
-		<translation>Aceitar e compartilhar endereço</translation>
+		<translation>주소 수락 및 공유</translation>
 	</message>
 	<message>
 		<source>account-added</source>
-		<translation>Conta adicionada</translation>
+		<translation>계정 추가됨</translation>
 	</message>
 	<message>
 		<source>account-color</source>
-		<translation>Cor da conta</translation>
+		<translation>계정 색상</translation>
 	</message>
 	<message>
 		<source>anyone</source>
-		<translation>Qualquer um</translation>
+		<translation>누구든지</translation>
 	</message>
 	<message>
 		<source>messages-from-contacts-only-subtitle</source>
-		<translation>Apenas as pessoas que você adicionou como contatos podem iniciar um novo bate-papo com você ou convidá-lo para um grupo</translation>
+		<translation>연락처에 추가한 친구만이 그룹으로 사용자를 초대하거나 새 채팅을 시작할 수 있습니다</translation>
 	</message>
 	<message>
 		<source>accept-new-chats-from</source>
-		<translation>Aceitar novos bate-papos de</translation>
+		<translation>다음의 새 채팅 수락</translation>
 	</message>
 	<message>
 		<source>account-name</source>
-		<translation>Nome da conta</translation>
+		<translation>계정 이름</translation>
 	</message>
 	<message>
 		<source>account-settings</source>
-		<translation>Configurações da conta</translation>
+		<translation>계정 설정</translation>
 	</message>
 	<message>
 		<source>accounts</source>
-		<translation>Contas</translation>
+		<translation>계정</translation>
 	</message>
 	<message>
 		<source>active-online</source>
-		<translation>Online</translation>
+		<translation>온라인</translation>
 	</message>
 	<message>
 		<source>active-unknown</source>
-		<translation>Desconhecido</translation>
+		<translation>알 수 없음</translation>
 	</message>
 	<message>
 		<source>add</source>
-		<translation>Adicionar</translation>
+		<translation>추가</translation>
 	</message>
 	<message>
 		<source>add-a-watch-account</source>
-		<translation>Adicione um endereço somente leitura</translation>
+		<translation>열람 전용 계정 추가</translation>
 	</message>
 	<message>
 		<source>add-account</source>
-		<translation>Adicione uma conta</translation>
+		<translation>계정 추가</translation>
 	</message>
 	<message>
 		<source>add-account-description</source>
-		<translation>Você pode importar qualquer tipo de conta Ethereum para adicioná-lo à sua carteira Status</translation>
+		<translation>모든 유형의 이더리움 계정을 스테이터스 지갑에 불러올 수 있습니다</translation>
 	</message>
 	<message>
 		<source>add-account-incorrect-password</source>
-		<translation>A senha parece estar incorreta. Digite a senha que você usa para desbloquear o aplicativo.</translation>
+		<translation>비밀번호가 올바르지 않습니다. 앱 잠금을 해제하는데 사용하는 비밀번호를 입력해주세요.</translation>
 	</message>
 	<message>
 		<source>add-an-account</source>
-		<translation>Adicione uma conta</translation>
+		<translation>계정 추가</translation>
 	</message>
 	<message>
 		<source>add-bootnode</source>
-		<translation>Adicionar nó de inicialização</translation>
+		<translation>부트노드 추가</translation>
 	</message>
 	<message>
 		<source>add-contact</source>
-		<translation>Adicionar contato</translation>
+		<translation>연락처 추가</translation>
 	</message>
 	<message>
 		<source>add-custom-token</source>
-		<translation>Adicionar token personalizado</translation>
+		<translation>커스텀 토큰 추가</translation>
 	</message>
 	<message>
 		<source>add-mailserver</source>
-		<translation>Adicionar nó do Status</translation>
+		<translation>스테이터스 노드 추가</translation>
 	</message>
 	<message>
 		<source>add-members</source>
-		<translation>Adicionar membros</translation>
+		<translation>멤버 추가</translation>
 	</message>
 	<message>
 		<source>add-network</source>
-		<translation>Adicionar rede</translation>
+		<translation>네트워크 추가</translation>
 	</message>
 	<message>
 		<source>add-node</source>
-		<translation>Adicionar nó</translation>
+		<translation>노드 추가</translation>
 	</message>
 	<message>
 		<source>add-to-contacts</source>
-		<translation>Adicionar aos contatos</translation>
+		<translation>연락처에 추가</translation>
 	</message>
 	<message>
 		<source>add-to-contacts-text</source>
-		<translation>Ao adicionar um usuário à sua lista de contatos, você compartilha o endereço da sua carteira</translation>
+		<translation>특정 사용자를 연락처에 추가하면, 사용자의 지갑 주소를 공유하게 됩니다</translation>
 	</message>
 	<message>
 		<source>address</source>
-		<translation>Endereço</translation>
+		<translation>주소</translation>
 	</message>
 	<message>
 		<source>address-received</source>
-		<translation>Endereço recebido</translation>
+		<translation>주소 받음</translation>
 	</message>
 	<message>
 		<source>address-requested</source>
-		<translation>Endereço solicitado</translation>
+		<translation>주소 요청됨</translation>
 	</message>
 	<message>
 		<source>address-request-accepted</source>
-		<translation>Solicitação de endereço aceita</translation>
+		<translation>주소 요청 수락됨</translation>
 	</message>
 	<message>
 		<source>advanced</source>
-		<translation>Avançado</translation>
+		<translation>고급 설정</translation>
 	</message>
 	<message>
 		<source>advanced-settings</source>
-		<translation>Configurações avançadas</translation>
+		<translation>고급 설정</translation>
 	</message>
 	<message>
 		<source>agree-by-continuing</source>
-		<translation>Ao continuar, você concorda 
- com nosso</translation>
+		<translation>계속하면 아래 약관에 동의하는 것으로 간주됩니다.
+ 스테이터스 </translation>
 	</message>
 	<message>
 		<source>all</source>
-		<translation>Todos</translation>
+		<translation>전체</translation>
 	</message>
 	<message>
 		<source>allow</source>
-		<translation>Permitir</translation>
+		<translation>허용</translation>
 	</message>
 	<message>
 		<source>allowing-authorizes-this-dapp</source>
-		<translation>Permitir que este DApp recupere o endereço da sua carteira e ative o Web3</translation>
+		<translation>웹3를 활용하기 위해, 디앱이 사용자의 지갑 주소를 검색하는 것을 허용합니다</translation>
 	</message>
 	<message>
 		<source>already-have-asset</source>
-		<translation>Você já tem este ativo</translation>
+		<translation>이미 해당 자산을 가지고 있습니다</translation>
 	</message>
 	<message>
 		<source>amount</source>
-		<translation>Quantia</translation>
+		<translation>수량</translation>
 	</message>
 	<message>
 		<source>are-you-sure-description</source>
-		<translation>Você não poderá ver toda a frase-semente de novo</translation>
+		<translation>지금부터 전체 시드 구문을 다시 확인할 수 없습니다</translation>
 	</message>
 	<message>
 		<source>are-you-sure?</source>
-		<translation>Você tem certeza?</translation>
+		<translation>정말 삭제하시겠어요?</translation>
 	</message>
 	<message>
 		<source>ask-in-status</source>
-		<translation>Faça uma pergunta ou relate um bug</translation>
+		<translation>질문 및 버그 신고</translation>
 	</message>
 	<message>
 		<source>at</source>
-		<translation>em</translation>
+		<translation>로</translation>
 	</message>
 	<message>
 		<source>authorize</source>
-		<translation>Autorizar</translation>
+		<translation>거래 승인</translation>
 	</message>
 	<message>
 		<source>available</source>
-		<translation>Disponível</translation>
+		<translation>이용 가능</translation>
 	</message>
 	<message numerus="yes">
 		<source>available-participants</source>
 		<translation>
-			<numerusform>Você pode selecionar mais um participante</numerusform>
-			<numerusform>Você pode selecionar mais {{count}} participantes</numerusform>
+			<numerusform>{{count}}명 더 선택할 수 있습니다</numerusform>
 		</translation>
 	</message>
 	<message>
 		<source>back</source>
-		<translation>Voltar</translation>
+		<translation>뒤로</translation>
 	</message>
 	<message>
 		<source>back-up-seed-phrase</source>
-		<translation>Fazer backup da frase-semente</translation>
+		<translation>시드 구문 백업</translation>
 	</message>
 	<message>
 		<source>back-up-your-seed-phrase</source>
-		<translation>Fazer backup da frase-semente</translation>
+		<translation>시드 구문 백업</translation>
 	</message>
 	<message>
 		<source>backup-recovery-phrase</source>
-		<translation>Cópia de segurança da frase-semente</translation>
+		<translation>시드 구문 백업</translation>
 	</message>
 	<message>
 		<source>balance</source>
-		<translation>Saldo</translation>
+		<translation>잔액</translation>
 	</message>
 	<message>
 		<source>begin-set-up</source>
-		<translation>Iniciar configuração</translation>
+		<translation>설정 시작</translation>
 	</message>
 	<message>
 		<source>biometric-auth-android-sensor-desc</source>
-		<translation>Toque no sensor</translation>
+		<translation>터치 센서</translation>
 	</message>
 	<message>
 		<source>biometric-auth-android-sensor-error-desc</source>
-		<translation>Falhou</translation>
+		<translation>실패</translation>
 	</message>
 	<message>
 		<source>biometric-auth-android-title</source>
-		<translation>Autenticação necessária</translation>
+		<translation>인증 필요</translation>
 	</message>
 	<message>
 		<source>biometric-auth-confirm-logout</source>
-		<translation>Faça login novamente</translation>
+		<translation>재 로그인</translation>
 	</message>
 	<message>
 		<source>biometric-auth-confirm-message</source>
-		<translation>É necessária autenticação biométrica para continuar. Se não for possível, desbloqueie suas chaves com sua senha ou código de acesso</translation>
+		<translation>계속하려면 생체 인증이 필요합니다. 문제가 있을 경우 계정 비밀번호 또는 패스코드를 사용하여 해제해주세요</translation>
 	</message>
 	<message>
 		<source>biometric-auth-confirm-title</source>
-		<translation>Você deve autenticar!</translation>
+		<translation>반드시 인증해주시기 바랍니다!</translation>
 	</message>
 	<message>
 		<source>biometric-auth-confirm-try-again</source>
-		<translation>Tente novamente</translation>
+		<translation>다시 시도</translation>
 	</message>
 	<message>
 		<source>biometric-auth-error</source>
-		<translation>Não foi possível executar a autenticação biométrica ({{code}})</translation>
+		<translation>생체 인식 인증 진행 불가 ( {{code}} )</translation>
 	</message>
 	<message>
 		<source>biometric-auth-login-error-title</source>
-		<translation>Erro de autenticação biométrica</translation>
+		<translation>생체 인식 인증 오류</translation>
 	</message>
 	<message>
 		<source>biometric-auth-login-ios-fallback-label</source>
-		<translation>Digite a senha</translation>
+		<translation>비밀번호 입력</translation>
 	</message>
 	<message>
 		<source>biometric-auth-reason-login</source>
-		<translation>Login no Status</translation>
+		<translation>스테이터스 로그인</translation>
 	</message>
 	<message>
 		<source>biometric-auth-reason-verify</source>
-		<translation>Verificar autenticação</translation>
+		<translation>인증 확인</translation>
 	</message>
 	<message>
 		<source>biometric-secure-with</source>
-		<translation>Proteger com {{bio-type-label}}</translation>
+		<translation>{{bio-type-label}}(으)로 보호</translation>
 	</message>
 	<message>
 		<source>biometric-enable-keycard</source>
-		<translation>Se você não quiser usar seu Keycard cada vez que acessar o aplicativo, ative {{bio-type-label}} para iniciar a sessão</translation>
+		<translation>매번 키카드를 사용하지 않으려면, {{bio-type-label}} 로그인을 사용하세요</translation>
 	</message>
 	<message>
 		<source>biometric-enable</source>
-		<translation>Se você não quiser inserir sua senha todas as vezes para acessar o aplicativo, ative o início de sessão por {{bio-type-label}}</translation>
+		<translation>비밀번호를 매번 입력하지 않으려면, {{bio-type-label}} 로그인을 사용하세요</translation>
 	</message>
 	<message>
 		<source>biometric-disable-bioauth</source>
-		<translation>desativar {{bio-type-label}}</translation>
+		<translation>{{bio-type-label}} 사용 안 함</translation>
 	</message>
 	<message>
 		<source>biometric-disable-password-title</source>
-		<translation>Desativar senha salva</translation>
+		<translation>비밀번호 저장 안함</translation>
 	</message>
 	<message>
 		<source>biometric-disable-password-description</source>
-		<translation>Se você desativar isso, você também irá </translation>
+		<translation>이 기능을 사용하지 않으면,</translation>
 	</message>
 	<message>
 		<source>biometric-enable-button</source>
-		<translation>Ativar {{bio-type-label}}</translation>
+		<translation>{{bio-type-label}} 사용</translation>
 	</message>
 	<message>
 		<source>biometric-fingerprint</source>
-		<translation>Impressão digital</translation>
+		<translation>지문</translation>
 	</message>
 	<message>
 		<source>biometric-faceid</source>
-		<translation>Face ID</translation>
+		<translation>페이스 ID</translation>
 	</message>
 	<message>
 		<source>biometric-touchid</source>
-		<translation>Touch ID</translation>
+		<translation>터치 ID</translation>
 	</message>
 	<message>
 		<source>blank-keycard-text</source>
-		<translation>Você pode continuar com o seu keycard depois de gerar as chaves e o nome</translation>
+		<translation>키와 이름을 생성하면 키카드로 계속 진행할 수 있습니다</translation>
 	</message>
 	<message>
 		<source>blank-keycard-title</source>
-		<translation>Parece que você utilizou
-um Keycard em branco.</translation>
+		<translation>비어있는 키카드를
+사용하셨습니다</translation>
 	</message>
 	<message>
 		<source>block</source>
-		<translation>Bloquear </translation>
+		<translation>차단</translation>
 	</message>
 	<message>
 		<source>unblock</source>
-		<translation>Desbloquear</translation>
+		<translation>차단 해제</translation>
 	</message>
 	<message>
 		<source>block-contact</source>
-		<translation>Bloquear esse usuário</translation>
+		<translation>사용자 차단</translation>
 	</message>
 	<message>
 		<source>block-contact-details</source>
-		<translation>O bloqueio excluirá as mensagens anteriores deste usuário e impedirá que novas cheguem até você</translation>
+		<translation>차단 기능을 사용하면 해당 사용자의 이전 메시지를 모두 삭제하고, 새 메시지가 귀하에게 전송되지 않습니다</translation>
 	</message>
 	<message>
 		<source>blocked-users</source>
-		<translation>Usuários bloqueados</translation>
+		<translation>차단된 사용자</translation>
 	</message>
 	<message>
 		<source>bootnode-address</source>
-		<translation>Endereço do nó de inicialização</translation>
+		<translation>부트노드 주소</translation>
 	</message>
 	<message>
 		<source>bootnode-details</source>
-		<translation>Detalhes do nó de inicialização</translation>
+		<translation>부트노드 상세정보</translation>
 	</message>
 	<message>
 		<source>bootnode-format</source>
@@ -368,200 +367,201 @@ um Keycard em branco.</translation>
 	</message>
 	<message>
 		<source>bootnodes</source>
-		<translation>Nós de inicialização</translation>
+		<translation>부트노드 (Bootnode)</translation>
 	</message>
 	<message>
 		<source>bootnodes-enabled</source>
-		<translation>Nós de inicialização ativados</translation>
+		<translation>부트노드 사용</translation>
 	</message>
 	<message>
 		<source>bootnodes-settings</source>
-		<translation>Configurações de nós de inicialização</translation>
+		<translation>부트노드 설정</translation>
 	</message>
 	<message>
 		<source>browsed-websites</source>
-		<translation>O histórico do navegador aparecerá aqui</translation>
+		<translation>브라우저 기록이 여기에 표시됩니다</translation>
 	</message>
 	<message>
 		<source>browser</source>
-		<translation>Navegador</translation>
+		<translation>브라우저</translation>
 	</message>
 	<message>
 		<source>browser-not-secure</source>
-		<translation>A conexão não é segura! Não assine transações nem envie dados pessoais neste site.</translation>
+		<translation>연결이 안전하지 않습니다! 이 사이트에서 트랜잭션에 서명하거나 개인정보를 보내지 마십시오.</translation>
 	</message>
 	<message>
 		<source>browser-secure</source>
-		<translation>A conexão é segura. Certifique-se de confiar neste site antes de assinar transações ou inserir dados pessoais.</translation>
+		<translation>연결이 안전합니다. 사이트를 정말 신뢰하는지 확인한 후 트랜잭션에 서명하거나 개인 정보를 입력하세요.</translation>
 	</message>
 	<message>
 		<source>browsers</source>
-		<translation>Navegadores</translation>
+		<translation>브라우저</translation>
 	</message>
 	<message>
 		<source>browsing-cancel</source>
-		<translation>Cancelar</translation>
+		<translation>취소</translation>
 	</message>
 	<message>
 		<source>browsing-open-in-android-web-browser</source>
-		<translation>Abrir no Android</translation>
+		<translation>웹 브라우저로 열기</translation>
 	</message>
 	<message>
 		<source>browsing-open-in-ios-web-browser</source>
-		<translation>Abrir no iOS</translation>
+		<translation>웹 브라우저로 열기</translation>
 	</message>
 	<message>
 		<source>browsing-open-in-status</source>
-		<translation>Abrir no Status</translation>
+		<translation>스테이터스로 열기</translation>
 	</message>
 	<message>
 		<source>browsing-site-blocked-description1</source>
-		<translation>Detectamos atividades maliciosas em potencial neste endereço. Para proteger você e sua carteira, estamos impedindo mais navegação. 
+		<translation>이 주소에서 잠재적인 악성 활동을 발견했습니다.사용자의 지갑을 보호하기 위해 추가적인 탐색을 금지했습니다. 
 
-Se você acha que isso é um erro, informe-nos no</translation>
+문제가 없다고 생각하시면, 저희에게 알려주시기 바랍니다</translation>
 	</message>
 	<message>
 		<source>browsing-site-blocked-description2</source>
-		<translation> conversa pública.</translation>
+		<translation> 오픈채팅.</translation>
 	</message>
 	<message>
 		<source>browsing-site-blocked-go-back</source>
-		<translation>Voltar</translation>
+		<translation>돌아가기</translation>
 	</message>
 	<message>
 		<source>browsing-site-blocked-title</source>
-		<translation>Este site está bloqueado</translation>
+		<translation>이 사이트는 차단되었습니다</translation>
 	</message>
 	<message>
 		<source>browsing-title</source>
-		<translation>Buscar</translation>
+		<translation>브라우저</translation>
 	</message>
 	<message>
 		<source>bug-report</source>
-		<translation>Relatar um bug</translation>
+		<translation>버그 신고</translation>
 	</message>
 	<message>
 		<source>bug-report-description</source>
-		<translation>Descrição</translation>
+		<translation>* 설명</translation>
 	</message>
 	<message>
 		<source>bug-report-description-placeholder</source>
-		<translation>Obrigatório, não pode ser vazio</translation>
+		<translation>필수, 비워둘 수 없음</translation>
 	</message>
 	<message>
 		<source>bug-report-steps</source>
-		<translation>Passos para reproduzir</translation>
+		<translation>재현 단계</translation>
 	</message>
 	<message>
 		<source>bug-report-steps-placeholder</source>
-		<translation>- abra a app
-- faça algo
-- e então faça outra coisa</translation>
+		<translation>- 앱 열기
+- 무언가 하기
+- 그리고 나서 다른...</translation>
 	</message>
 	<message>
 		<source>bug-report-submit-email</source>
-		<translation>Enviar por e-mail com arquivo de logs</translation>
+		<translation>로그 아카이브와 함께 이메일로 제출</translation>
 	</message>
 	<message>
 		<source>bug-report-submit-gh-issue</source>
-		<translation>Enviar um problema do GitHub sem logs</translation>
+		<translation>로그 없이 GitHub 이슈 제출</translation>
 	</message>
 	<message>
 		<source>bug-report-too-short-description</source>
-		<translation>Descrição muito curta</translation>
+		<translation>설명이 너무 짧습니다</translation>
 	</message>
 	<message>
 		<source>camera-access-error</source>
-		<translation>Para conceder a permissão de câmera necessária, vá para as configurações do sistema e verifique se Status &gt; Câmera está selecionado.</translation>
+		<translation>카메라 권한을 승인하려면 시스템 설정에서 스테이터스 &gt; 카메라가 선택되어 있는지 확인해 주세요.</translation>
 	</message>
 	<message>
 		<source>can-not-add-yourself</source>
-		<translation>É você. Para iniciar um bate-papo, escolha outra pessoa</translation>
+		<translation>이건 본인입니다. 다른 사용자를 선택해주세요</translation>
 	</message>
 	<message>
 		<source>cancel</source>
-		<translation>Cancelar</translation>
+		<translation>취소</translation>
 	</message>
 	<message>
 		<source>cancel-keycard-setup</source>
-		<translation>Cancelar a configuração do Keycard </translation>
+		<translation>키카드 설정 취소</translation>
 	</message>
 	<message>
 		<source>cannot-read-card</source>
-		<translation>Não é possível ler o cartão. Por favor, segure-o na parte de trás do seu telefone</translation>
+		<translation>카드를 읽을 수 없습니다. 
+휴대 전화 뒷면에 위치해주세요</translation>
 	</message>
 	<message>
 		<source>cannot-use-default-pin</source>
-		<translation>O código de acesso 000000 não é permitido. 
-Por favor, use outro número</translation>
+		<translation>패스코드 000000은 허용되지 않습니다. 
+다른 번호를 사용해주세요</translation>
 	</message>
 	<message>
 		<source>card-is-blank</source>
-		<translation>Este cartão está em branco</translation>
+		<translation>카드가 비어 있습니다</translation>
 	</message>
 	<message>
 		<source>card-reseted</source>
-		<translation>O cartão foi redefinido</translation>
+		<translation>카드가 재설정되었습니다</translation>
 	</message>
 	<message>
 		<source>card-unpaired</source>
-		<translation>O cartão foi desemparelhado do dispositivo atual</translation>
+		<translation>이 기기에서 카드 페어링이 해제되었습니다</translation>
 	</message>
 	<message>
 		<source>change-fleet</source>
-		<translation>Mude a frota para {{fleet}}</translation>
+		<translation>플릿을 {{fleet}}(으)로 변경</translation>
 	</message>
 	<message>
 		<source>change-log-level</source>
-		<translation>Confirmar e reiniciar o aplicativo para alterar o nível de log para {{log-level}}</translation>
+		<translation>확인 후 로그 수준을 {{log-level}}(으)로 재시작</translation>
 	</message>
 	<message>
 		<source>change-logging-enabled</source>
-		<translation>Tem certeza de que deseja {{enable}} o registro?</translation>
+		<translation>{{enable}} 로깅하시겠습니까?</translation>
 	</message>
 	<message>
 		<source>change-passcode</source>
-		<translation>Alterar código de acesso</translation>
+		<translation>패스코드 변경</translation>
 	</message>
 	<message>
 		<source>change-password</source>
-		<translation>Alterar senha</translation>
+		<translation>비밀번호 변경</translation>
 	</message>
 	<message>
 		<source>change-pin</source>
-		<translation>Alterar código de acesso de 6 dígitos</translation>
+		<translation>6자리 패스코드 변경</translation>
 	</message>
 	<message>
 		<source>change-puk</source>
-		<translation>Alterar PUK de 12 dígitos</translation>
+		<translation>12자리 PUK 변경</translation>
 	</message>
 	<message>
 		<source>change-pairing</source>
-		<translation>Alterar o código de emparelhamento</translation>
+		<translation>페어링 코드 변경</translation>
 	</message>
 	<message>
 		<source>change-pairing-title</source>
-		<translation>Criar um novo código de emparelhamento</translation>
+		<translation>새 페어링 코드 만들기</translation>
 	</message>
 	<message>
 		<source>change-pairing-description</source>
-		<translation>Alterar o código de emparelhamento não afeta os emparelhamentos atuais. No entanto, qualquer novo emparelhamento exigirá o novo código.</translation>
+		<translation>페어링 코드를 변경해도 현재 페어링에는 영향을 주지 않습니다. 그러나 새 페어링에는 새 코드가 필요합니다.</translation>
 	</message>
 	<message>
 		<source>changed-amount-warning</source>
-		<translation>O valor foi alterado de {{old}} para {{new}}</translation>
+		<translation>수량이 {{old}}에서 {{new}}(으)로 변경되었습니다</translation>
 	</message>
 	<message>
 		<source>changed-asset-warning</source>
-		<translation>O ativo foi alterado de {{old}} para {{new}}</translation>
+		<translation>자산이 {{old}}에서 {{new}}(으)로 변경되었습니다</translation>
 	</message>
 	<message>
 		<source>chaos-mode</source>
-		<translation>Modo caos</translation>
+		<translation>카오스 모드</translation>
 	</message>
 	<message>
 		<source>chaos-unicorn-day</source>
-		<translation>Dia do Caos do Unicórnio</translation>
+		<translation>카오스 유니콘 데이</translation>
 	</message>
 	<message>
 		<source>chaos-unicorn-day-details</source>
@@ -569,464 +569,462 @@ Por favor, use outro número</translation>
 	</message>
 	<message>
 		<source>chat</source>
-		<translation>Bate-papo</translation>
+		<translation>채팅</translation>
 	</message>
 	<message>
 		<source>chat-and-transact</source>
-		<translation>Converse e faça transações de forma privada com amigos</translation>
+		<translation>검열과 감시 없는 안전한 채팅과 거래를 시작해보세요</translation>
 	</message>
 	<message>
 		<source>chat-key</source>
-		<translation>Chave de bate-papo</translation>
+		<translation>채팅 키</translation>
 	</message>
 	<message>
 		<source>chat-name</source>
-		<translation>Nome do chat</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>chat-settings</source>
-		<translation>Configurações do chat</translation>
+		<translation>채팅 설정</translation>
 	</message>
 	<message>
 		<source>chats</source>
-		<translation>Chats</translation>
+		<translation>채팅</translation>
 	</message>
 	<message>
 		<source>check-your-recovery-phrase</source>
-		<translation>Confira sua frase-semente</translation>
+		<translation>시드 구문 확인</translation>
 	</message>
 	<message>
 		<source>choose-authentication-method</source>
-		<translation>Escolha um método de autenticação</translation>
+		<translation>계정 인증 방법을 선택하세요</translation>
 	</message>
 	<message>
 		<source>clear</source>
-		<translation>Apagar</translation>
+		<translation>지우기</translation>
 	</message>
 	<message>
 		<source>clear-all</source>
-		<translation>Apagar tudo</translation>
+		<translation>모두 지우기</translation>
 	</message>
 	<message>
 		<source>clear-history</source>
-		<translation>Apagar histórico</translation>
+		<translation>기록 삭제</translation>
 	</message>
 	<message>
 		<source>clear-history-action</source>
-		<translation>Apagar</translation>
+		<translation>지우기</translation>
 	</message>
 	<message>
 		<source>clear-history-confirmation</source>
-		<translation>Apagar o histórico?</translation>
+		<translation>기록을 삭제하시겠습니까?</translation>
 	</message>
 	<message>
 		<source>clear-history-confirmation-content</source>
-		<translation>Tem certeza de que deseja apagar este histórico de bate-papo?</translation>
+		<translation>채팅 기록을 지우시겠습니까?</translation>
 	</message>
 	<message>
 		<source>clear-history-title</source>
-		<translation>Apagar o histórico?</translation>
+		<translation>기록을 삭제하시겠습니까?</translation>
 	</message>
 	<message>
 		<source>close</source>
-		<translation>Fechar</translation>
+		<translation>닫기</translation>
 	</message>
 	<message>
 		<source>close-app-button</source>
-		<translation>Confirmar</translation>
+		<translation>확인</translation>
 	</message>
 	<message>
 		<source>close-app-content</source>
-		<translation>O aplicativo irá parar e fechar. Quando você reabri-lo, a rede selecionada será usada</translation>
+		<translation>앱이 종료됩니다. 앱을 다시 실행하면 설정한 네트워크가 사용됩니다</translation>
 	</message>
 	<message>
 		<source>close-app-title</source>
-		<translation>Atenção!</translation>
+		<translation>주의!</translation>
 	</message>
 	<message>
 		<source>command-button-send</source>
-		<translation>Enviar</translation>
+		<translation>보내기</translation>
 	</message>
 	<message>
 		<source>communities</source>
-		<translation>Comunidades</translation>
+		<translation>커뮤니티</translation>
 	</message>
 	<message numerus="yes">
 		<source>community-members</source>
 		<translation>
-			<numerusform>{{count}} membro</numerusform>
-			<numerusform>{{count}} membros</numerusform>
+			<numerusform>멤버</numerusform>
 		</translation>
 	</message>
 	<message>
 		<source>members-label</source>
-		<translation>Membros</translation>
+		<translation>멤버</translation>
 	</message>
 	<message>
 		<source>open-membership</source>
-		<translation>Participação aberta</translation>
+		<translation>멤버십 오픈</translation>
 	</message>
 	<message>
 		<source>member-kick</source>
-		<translation>Expulsar membro</translation>
+		<translation>멤버 내보내기</translation>
 	</message>
 	<message>
 		<source>member-ban</source>
-		<translation>Banir membro</translation>
+		<translation>멤버 내보내기</translation>
 	</message>
 	<message>
 		<source>membership-requests</source>
-		<translation>Pedidos de participação</translation>
+		<translation>멤버십 요청</translation>
 	</message>
 	<message>
 		<source>community-members-title</source>
-		<translation>Membros</translation>
+		<translation>멤버</translation>
 	</message>
 	<message>
 		<source>community-requests-to-join-title</source>
-		<translation>Pedidos de participação</translation>
+		<translation>멤버십 요청</translation>
 	</message>
 	<message>
 		<source>name-your-channel</source>
-		<translation>Dê um nome ao seu canal</translation>
+		<translation>채널 이름 지정</translation>
 	</message>
 	<message>
 		<source>name-your-channel-placeholder</source>
-		<translation>Nome do canal</translation>
+		<translation>채널명</translation>
 	</message>
 	<message>
 		<source>give-a-short-description</source>
-		<translation>Dê uma breve descrição</translation>
+		<translation>짧은 설명을 더하세요</translation>
 	</message>
 	<message>
 		<source>describe-channel</source>
-		<translation>Descreva o canal</translation>
+		<translation>채널 설명</translation>
 	</message>
 	<message>
 		<source>communities-alpha</source>
-		<translation>Comunidades (alfa)</translation>
+		<translation>커뮤니티 (알파)</translation>
 	</message>
 	<message>
 		<source>communities-verified</source>
-		<translation>✓ Comunidade do Status verificada</translation>
+		<translation>✓ 검증된 스테이터스 커뮤니티</translation>
 	</message>
 	<message>
 		<source>communities-enabled</source>
-		<translation>Comunidades habilitadas</translation>
+		<translation>커뮤니티 사용</translation>
 	</message>
 	<message>
 		<source>request-access</source>
-		<translation>Solicitar acesso</translation>
+		<translation>접근 권한 요청</translation>
 	</message>
 	<message>
 		<source>membership-request-pending</source>
-		<translation>Pedido de participação pendente</translation>
+		<translation>멤버십 요청 대기 중</translation>
 	</message>
 	<message>
 		<source>create-community</source>
-		<translation>Criar uma comunidade</translation>
+		<translation>커뮤니티 만들기</translation>
 	</message>
 	<message>
 		<source>create-category</source>
-		<translation>Criar categoria</translation>
+		<translation>카테고리 생성</translation>
 	</message>
 	<message>
 		<source>rearrange-categories</source>
-		<translation>Reorganizar Categorias</translation>
+		<translation>카테고리 재정렬</translation>
 	</message>
 	<message>
 		<source>edited</source>
-		<translation>Editado</translation>
+		<translation>수정 됨</translation>
 	</message>
 	<message>
 		<source>edit-community</source>
-		<translation>Editar comunidade</translation>
+		<translation>커뮤니티 편집</translation>
 	</message>
 	<message>
 		<source>editing-message</source>
-		<translation>Editando mensagem</translation>
+		<translation>메시지 편집</translation>
 	</message>
 	<message>
 		<source>community-edit-title</source>
-		<translation>Editar comunidade</translation>
+		<translation>커뮤니티 편집</translation>
 	</message>
 	<message>
 		<source>community-invite-title</source>
-		<translation>Convidar</translation>
+		<translation>초대</translation>
 	</message>
 	<message>
 		<source>community-share-title</source>
-		<translation>Compartilhar</translation>
+		<translation>공유</translation>
 	</message>
 	<message>
 		<source>invite</source>
-		<translation>Convidar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>create-channel</source>
-		<translation>Criar um canal</translation>
+		<translation>채널 만들기</translation>
 	</message>
 	<message>
 		<source>import-community</source>
-		<translation>Importar uma comunidade</translation>
+		<translation>커뮤니티 가져오기</translation>
 	</message>
 	<message>
 		<source>import-community-title</source>
-		<translation>Importar uma comunidade</translation>
+		<translation>커뮤니티 가져오기</translation>
 	</message>
 	<message>
 		<source>name-your-community</source>
-		<translation>Dê um nome para sua comunidade</translation>
+		<translation>커뮤니티 이름 지정</translation>
 	</message>
 	<message>
 		<source>name-your-community-placeholder</source>
-		<translation>Um nome atraente</translation>
+		<translation>기억하기 쉬운 이름</translation>
 	</message>
 	<message>
 		<source>give-a-short-description-community</source>
-		<translation>Dê uma breve descrição</translation>
+		<translation>짧은 설명을 더하세요</translation>
 	</message>
 	<message>
 		<source>new-community-title</source>
-		<translation>Nova comunidade</translation>
+		<translation>새 커뮤니티</translation>
 	</message>
 	<message>
 		<source>new-category</source>
-		<translation>Nova categoria</translation>
+		<translation>새 카테고리</translation>
 	</message>
 	<message>
 		<source>category-title</source>
-		<translation>Nome da categoria</translation>
+		<translation>카테고리 제목</translation>
 	</message>
 	<message>
 		<source>membership-title</source>
-		<translation>Requisitos de participação</translation>
+		<translation>멤버십 요건</translation>
 	</message>
 	<message>
 		<source>create-channel-title</source>
-		<translation>Novo canal</translation>
+		<translation>새 채널</translation>
 	</message>
 	<message>
 		<source>edit-channel-title</source>
-		<translation>Editar canal</translation>
+		<translation>채널 편집</translation>
 	</message>
 	<message>
 		<source>community-thumbnail-image</source>
-		<translation>Imagem em miniatura</translation>
+		<translation>미리보기 이미지</translation>
 	</message>
 	<message>
 		<source>community-emoji-thumbnail-title</source>
-		<translation>Thumbnail</translation>
+		<translation>썸네일</translation>
 	</message>
 	<message>
 		<source>community-thumbnail-upload</source>
-		<translation>Carregar</translation>
+		<translation>업로드</translation>
 	</message>
 	<message>
 		<source>community-image-take</source>
-		<translation>Tirar foto</translation>
+		<translation>사진 촬영</translation>
 	</message>
 	<message>
 		<source>community-image-pick</source>
-		<translation>Escolha uma imagem</translation>
+		<translation>이미지 선택</translation>
 	</message>
 	<message>
 		<source>community-image-remove</source>
-		<translation>Remover</translation>
+		<translation>제거</translation>
 	</message>
 	<message>
 		<source>community-color</source>
-		<translation>Cor da comunidade</translation>
+		<translation>커뮤니티 색상</translation>
 	</message>
 	<message>
 		<source>community-link</source>
-		<translation>Link da comunidade</translation>
+		<translation>커뮤니티 링크</translation>
 	</message>
 	<message>
 		<source>community-color-placeholder</source>
-		<translation>Escolha uma cor</translation>
+		<translation>색상 선택</translation>
 	</message>
 	<message>
 		<source>membership-button</source>
-		<translation>Requisitos de participação</translation>
+		<translation>멤버십 요건</translation>
 	</message>
 	<message>
 		<source>membership-none</source>
-		<translation>Nenhum</translation>
+		<translation>없음</translation>
 	</message>
 	<message>
 		<source>membership-none-placeholder</source>
-		<translation>Você pode exigir que novos membros atendam a certos critérios antes que eles possam participar. Isso pode ser alterado a qualquer momento</translation>
+		<translation>신규 회원이 가입하기 전에 특정 기준을 충족하도록 요구할 수 있습니다. 기준은 언제든지 변경할 수 있습니다.</translation>
 	</message>
 	<message>
 		<source>membership-approval</source>
-		<translation>Exigir aprovação</translation>
+		<translation>승인 필요</translation>
 	</message>
 	<message>
 		<source>membership-approval-description</source>
-		<translation>Sua comunidade é livre para participar, mas novos membros são obrigados a ser aprovados pelo criador da comunidade primeiro</translation>
+		<translation>커뮤니티는 무료로 가입할 수 있지만 신규 회원은 먼저 커뮤니티 생성인의 승인을 받아야 합니다.</translation>
 	</message>
 	<message>
 		<source>membership-invite</source>
-		<translation>Exigir convite de outro membro</translation>
+		<translation>다른 멤버의 초대 필요</translation>
 	</message>
 	<message>
 		<source>membership-invite-description</source>
-		<translation>Sua comunidade só pode ser acessada por convite de membros existentes da comunidade</translation>
+		<translation>사용자의 커뮤니티는 오직 기존 멤버의 초대를 통해서만 참여할 수 있습니다</translation>
 	</message>
 	<message>
 		<source>membership-ens</source>
-		<translation>Exigir nome de usuário ENS</translation>
+		<translation>ENS 사용자 이름 필요</translation>
 	</message>
 	<message>
 		<source>membership-ens-description</source>
-		<translation>Sua comunidade requer um nome de usuário ENS para poder participar</translation>
+		<translation>사용자의 커뮤니티에 가입하려면 ENS 사용자 이름이 필요합니다</translation>
 	</message>
 	<message>
 		<source>membership-free</source>
-		<translation>Nenhuma exigência</translation>
+		<translation>요구 사항 없음</translation>
 	</message>
 	<message>
 		<source>membership-free-description</source>
-		<translation>Sua comunidade é livre para que qualquer pessoa possa participar</translation>
+		<translation>사용자의 커뮤니티는 누구나 자유롭게 가입할 수 있습니다</translation>
 	</message>
 	<message>
 		<source>community-roles</source>
-		<translation>Funções</translation>
+		<translation>역할</translation>
 	</message>
 	<message>
 		<source>community-key</source>
-		<translation>Chave privada da comunidade</translation>
+		<translation>커뮤니티 개인키</translation>
 	</message>
 	<message>
 		<source>community-key-placeholder</source>
-		<translation>Digite a chave privada da sua comunidade</translation>
+		<translation>커뮤니티 개인키 입력</translation>
 	</message>
 	<message>
 		<source>leave-community</source>
-		<translation>Deixar a comunidade</translation>
+		<translation>커뮤니티 나가기</translation>
 	</message>
 	<message>
 		<source>enter-user-pk</source>
-		<translation>Insira a chave pública do usuário</translation>
+		<translation>사용자 공개키 입력</translation>
 	</message>
 	<message>
 		<source>import</source>
-		<translation>Importar</translation>
+		<translation>불러오기</translation>
 	</message>
 	<message>
 		<source>complete-hardwallet-setup</source>
-		<translation>Este cartão agora está vinculado. Você precisa dele para assinar transações e desbloquear suas chaves</translation>
+		<translation>카드가 연결되었습니다. 이 카드로 거래에 서명하거나 계정을 열람할 수 있습니다</translation>
 	</message>
 	<message>
 		<source>chat-notification-preferences</source>
-		<translation>Configurações de notificação</translation>
+		<translation>알림 설정</translation>
 	</message>
 	<message>
 		<source>completed</source>
-		<translation>Concluído</translation>
+		<translation>완료</translation>
 	</message>
 	<message>
 		<source>confirm</source>
-		<translation>Confirmar</translation>
+		<translation>비밀번호 확인</translation>
 	</message>
 	<message>
 		<source>confirmation-request</source>
-		<translation>Pedido de confirmação</translation>
+		<translation>확인 요청</translation>
 	</message>
 	<message>
 		<source>confirmations</source>
-		<translation>Confirmações</translation>
+		<translation>확인</translation>
 	</message>
 	<message>
 		<source>confirmations-helper-text</source>
-		<translation>Quando a transação tiver 12 confirmações, você poderá considerá-la liquidada.</translation>
+		<translation>12번 이상 확인된 트랜잭션은 확정된 것으로 간주됩니다.</translation>
 	</message>
 	<message>
 		<source>connect</source>
-		<translation>Conectar</translation>
+		<translation>접속</translation>
 	</message>
 	<message>
 		<source>connect-mailserver-content</source>
-		<translation>Conectar-se a {{name}} ?</translation>
+		<translation>{{name}}에 연결하시겠습니까?</translation>
 	</message>
 	<message>
 		<source>connected</source>
-		<translation>Conectado</translation>
+		<translation>연결됨</translation>
 	</message>
 	<message>
 		<source>connected-to</source>
-		<translation>Conectado a</translation>
+		<translation>다음으로 연결:</translation>
 	</message>
 	<message>
 		<source>connecting</source>
-		<translation>Conectando...</translation>
+		<translation>연결 중...</translation>
 	</message>
 	<message>
 		<source>connecting-requires-login</source>
-		<translation>Conectar-se a outra rede requer login</translation>
+		<translation>다른 네트워크에 연결하려면 로그인하세요</translation>
 	</message>
 	<message>
 		<source>connection-with-the-card-lost</source>
-		<translation>A conexão com o cartão 
- foi perdida</translation>
+		<translation>카드와 연결이
+ 끊어졌습니다</translation>
 	</message>
 	<message>
 		<source>connection-with-the-card-lost-setup-text</source>
-		<translation>Para retomar a configuração, segure o cartão na
- parte de trás do seu telefone e mantenha 
- o cartão em contato com o telefone</translation>
+		<translation>설치를 다시 시작하려면 
+스마트폰 뒷면에 카드를 대고 
+접촉을 유지해주시기 바랍니다</translation>
 	</message>
 	<message>
 		<source>connection-with-the-card-lost-text</source>
-		<translation>Para continuar, segure o cartão na parte de trás do seu telefone</translation>
+		<translation>계속하려면, 카드를 스마트폰의 뒷면에 대주세요</translation>
 	</message>
 	<message>
 		<source>contact-code</source>
-		<translation>Chave de bate-papo</translation>
+		<translation>채팅 키</translation>
 	</message>
 	<message numerus="yes">
 		<source>contact-s</source>
 		<translation>
-			<numerusform>contato</numerusform>
-			<numerusform>contatos</numerusform>
+			<numerusform>연락처</numerusform>
 		</translation>
 	</message>
 	<message>
 		<source>contacts</source>
-		<translation>Contatos</translation>
+		<translation>연락처</translation>
 	</message>
 	<message>
 		<source>continue</source>
-		<translation>Continuar</translation>
+		<translation>계속</translation>
 	</message>
 	<message>
 		<source>contract-address</source>
-		<translation>Endereço do contrato</translation>
+		<translation>컨트랙트 주소</translation>
 	</message>
 	<message>
 		<source>contract-interaction</source>
-		<translation>Interação contratual</translation>
+		<translation>컨트랙트 상호 작용</translation>
 	</message>
 	<message>
 		<source>copy-info</source>
-		<translation>Copiar informação</translation>
+		<translation>정보 복사</translation>
 	</message>
 	<message>
 		<source>copy-qr</source>
-		<translation>Copiar código</translation>
+		<translation>코드 복사</translation>
 	</message>
 	<message>
 		<source>copy-to-clipboard</source>
-		<translation>Copiar</translation>
+		<translation>클립보드에 복사</translation>
 	</message>
 	<message>
 		<source>copy-transaction-hash</source>
-		<translation>Copiar ID da transação</translation>
+		<translation>트랜잭션 ID 복사</translation>
 	</message>
 	<message>
 		<source>cost-fee</source>
-		<translation>Custo/Taxa</translation>
+		<translation>비용</translation>
 	</message>
 	<message>
 		<source>counter-9-plus</source>
@@ -1038,415 +1036,415 @@ Por favor, use outro número</translation>
 	</message>
 	<message>
 		<source>create</source>
-		<translation>Criar</translation>
+		<translation>만들기</translation>
 	</message>
 	<message>
 		<source>create-a-pin</source>
-		<translation>Crie um código de acesso de 6 dígitos</translation>
+		<translation>6자리 패스코드 만들기</translation>
 	</message>
 	<message>
 		<source>create-a-puk</source>
-		<translation>Crie um PUK de 12 dígitos</translation>
+		<translation>12자리 PUK 만들기</translation>
 	</message>
 	<message>
 		<source>create-group-chat</source>
-		<translation>Criar bate-papo do grupo</translation>
+		<translation>그룹 채팅 생성</translation>
 	</message>
 	<message>
 		<source>create-multiaccount</source>
-		<translation>Gerar chaves</translation>
+		<translation>키 생성</translation>
 	</message>
 	<message>
 		<source>create-new-key</source>
-		<translation>Obter novas chaves</translation>
+		<translation>새로운 키 획득</translation>
 	</message>
 	<message>
 		<source>create-pin</source>
-		<translation>Criar código de acesso de 6 dígitos</translation>
+		<translation>6자리 패스코드만들기</translation>
 	</message>
 	<message>
 		<source>create-pin-description</source>
-		<translation>Você precisará do seu cartão + este código de acesso de 6 dígitos para desbloquear o Status e confirmar transações</translation>
+		<translation>스테이터스를 해제하고 트랜잭션을 확인하려면 카드와 6자리 패스코드가 필요합니다</translation>
 	</message>
 	<message>
 		<source>created-group-chat-description</source>
-		<translation>Você criou o grupo {{group-name}}</translation>
+		<translation>{{group-name}} 그룹을 생성했습니다</translation>
 	</message>
 	<message>
 		<source>members-count</source>
-		<translation>{{count}} membros</translation>
+		<translation>{{count}} 명</translation>
 	</message>
 	<message>
 		<source>cryptokitty-name</source>
-		<translation>CryptoKitty #{{id}}</translation>
+		<translation>CryptoKitty # {{id}}</translation>
 	</message>
 	<message>
 		<source>currency</source>
-		<translation>Moeda</translation>
+		<translation>통화</translation>
 	</message>
 	<message>
 		<source>currency-display-name-aed</source>
-		<translation>Dirham dos Emiratos Árabes Unidos</translation>
+		<translation>아랍에미레이트 디르함</translation>
 	</message>
 	<message>
 		<source>currency-display-name-afn</source>
-		<translation>Afegane afegão</translation>
+		<translation>아프가니스탄 아프가니</translation>
 	</message>
 	<message>
 		<source>currency-display-name-ars</source>
-		<translation>Peso argentino</translation>
+		<translation>아르헨티나 페소</translation>
 	</message>
 	<message>
 		<source>currency-display-name-aud</source>
-		<translation>Dólar australiano</translation>
+		<translation>호주 달러</translation>
 	</message>
 	<message>
 		<source>currency-display-name-bbd</source>
-		<translation>Dólar de Barbados</translation>
+		<translation>바베이도스 달러</translation>
 	</message>
 	<message>
 		<source>currency-display-name-bdt</source>
-		<translation>Taka de Bangladesh</translation>
+		<translation>방글라데시 타카</translation>
 	</message>
 	<message>
 		<source>currency-display-name-bgn</source>
-		<translation>Lev búlgaro</translation>
+		<translation>불가리아 레프</translation>
 	</message>
 	<message>
 		<source>currency-display-name-bhd</source>
-		<translation>Dinar do Bahrein</translation>
+		<translation>바레인 디나르</translation>
 	</message>
 	<message>
 		<source>currency-display-name-bnd</source>
-		<translation>Dólar de Brunei</translation>
+		<translation>브루나이 달러</translation>
 	</message>
 	<message>
 		<source>currency-display-name-bob</source>
-		<translation>Boliviano</translation>
+		<translation>볼리비아 볼리비아노</translation>
 	</message>
 	<message>
 		<source>currency-display-name-brl</source>
-		<translation>Real do Brasil</translation>
+		<translation>브라질 헤알</translation>
 	</message>
 	<message>
 		<source>currency-display-name-btn</source>
-		<translation>Ngultrum do Butão</translation>
+		<translation>부탄 눌트럼</translation>
 	</message>
 	<message>
 		<source>currency-display-name-cad</source>
-		<translation>Dólar canadense</translation>
+		<translation>캐나다 달러</translation>
 	</message>
 	<message>
 		<source>currency-display-name-chf</source>
-		<translation>Franco suíço</translation>
+		<translation>스위스 프랑</translation>
 	</message>
 	<message>
 		<source>currency-display-name-clp</source>
-		<translation>Peso chileno</translation>
+		<translation>칠레 페소</translation>
 	</message>
 	<message>
 		<source>currency-display-name-cny</source>
-		<translation>Renminbi yaun chinês</translation>
+		<translation>중국 위안화</translation>
 	</message>
 	<message>
 		<source>currency-display-name-cop</source>
-		<translation>Peso colombiano</translation>
+		<translation>콜롬비아 페소</translation>
 	</message>
 	<message>
 		<source>currency-display-name-crc</source>
-		<translation>Cólon da Costa Rica</translation>
+		<translation>코스타리카 콜론</translation>
 	</message>
 	<message>
 		<source>currency-display-name-czk</source>
-		<translation>Coroa checa</translation>
+		<translation>체코 코루나</translation>
 	</message>
 	<message>
 		<source>currency-display-name-dkk</source>
-		<translation>Coroa dinamarquesa</translation>
+		<translation>덴마크 크로네</translation>
 	</message>
 	<message>
 		<source>currency-display-name-dop</source>
-		<translation>Peso da República Dominicana</translation>
+		<translation>도미니카 공화국 페소</translation>
 	</message>
 	<message>
 		<source>currency-display-name-egp</source>
-		<translation>Libra egipcia</translation>
+		<translation>이집트 파운드</translation>
 	</message>
 	<message>
 		<source>currency-display-name-etb</source>
-		<translation>Birr etíope</translation>
+		<translation>에티오피아 비르</translation>
 	</message>
 	<message>
 		<source>currency-display-name-eur</source>
-		<translation>Euro</translation>
+		<translation>유로</translation>
 	</message>
 	<message>
 		<source>currency-display-name-gbp</source>
-		<translation>Libra esterlina</translation>
+		<translation>영국 파운드</translation>
 	</message>
 	<message>
 		<source>currency-display-name-gel</source>
-		<translation>Lari georgiano</translation>
+		<translation>조지아 라리</translation>
 	</message>
 	<message>
 		<source>currency-display-name-ghs</source>
-		<translation>Cedi ganês</translation>
+		<translation>가나 세디</translation>
 	</message>
 	<message>
 		<source>currency-display-name-hkd</source>
-		<translation>Dólar de Hong Kong</translation>
+		<translation>홍콩 달러</translation>
 	</message>
 	<message>
 		<source>currency-display-name-hrk</source>
-		<translation>Kuna da Croácia</translation>
+		<translation>크로아티아 쿠나</translation>
 	</message>
 	<message>
 		<source>currency-display-name-huf</source>
-		<translation>Florim húngaro</translation>
+		<translation>헝가리 포린트</translation>
 	</message>
 	<message>
 		<source>currency-display-name-idr</source>
-		<translation>Rupia indonésia</translation>
+		<translation>인도네시아 루피아</translation>
 	</message>
 	<message>
 		<source>currency-display-name-ils</source>
-		<translation>Shekel de Israel</translation>
+		<translation>이스라엘 셰켈</translation>
 	</message>
 	<message>
 		<source>currency-display-name-inr</source>
-		<translation>Rupia indiana</translation>
+		<translation>인도 루피</translation>
 	</message>
 	<message>
 		<source>currency-display-name-isk</source>
-		<translation>Coroa islandesa</translation>
+		<translation>아이슬란드 크로나</translation>
 	</message>
 	<message>
 		<source>currency-display-name-jmd</source>
-		<translation>Dólar jamaicano</translation>
+		<translation>자메이카 달러</translation>
 	</message>
 	<message>
 		<source>currency-display-name-jpy</source>
-		<translation>Yen japonês</translation>
+		<translation>일본 엔</translation>
 	</message>
 	<message>
 		<source>currency-display-name-kes</source>
-		<translation>Xelim queniano</translation>
+		<translation>케냐 실링</translation>
 	</message>
 	<message>
 		<source>currency-display-name-krw</source>
-		<translation>Won sul-coreano</translation>
+		<translation>대한민국 원</translation>
 	</message>
 	<message>
 		<source>currency-display-name-kwd</source>
-		<translation>Dinar kuwaitianao</translation>
+		<translation>쿠웨이트 디나르</translation>
 	</message>
 	<message>
 		<source>currency-display-name-kzt</source>
-		<translation>Tenge do Cazaquistão</translation>
+		<translation>카자흐스탄 텡게</translation>
 	</message>
 	<message>
 		<source>currency-display-name-lkr</source>
-		<translation>Rupia do Sri Lanka</translation>
+		<translation>스리랑카 루피</translation>
 	</message>
 	<message>
 		<source>currency-display-name-mad</source>
-		<translation>Dirham marroquino</translation>
+		<translation>모로코 디람</translation>
 	</message>
 	<message>
 		<source>currency-display-name-mdl</source>
-		<translation>Leu moldávo</translation>
+		<translation>몰도바 레우</translation>
 	</message>
 	<message>
 		<source>currency-display-name-mur</source>
-		<translation>Rúpia mauriciana</translation>
+		<translation>모리셔스 루피</translation>
 	</message>
 	<message>
 		<source>currency-display-name-mwk</source>
-		<translation>Kwacha do Malawi</translation>
+		<translation>말라위 콰차</translation>
 	</message>
 	<message>
 		<source>currency-display-name-mxn</source>
-		<translation>Peso mexicano</translation>
+		<translation>멕시코 페소</translation>
 	</message>
 	<message>
 		<source>currency-display-name-myr</source>
-		<translation>Ringgit malaio</translation>
+		<translation>말레이시아 링깃</translation>
 	</message>
 	<message>
 		<source>currency-display-name-mzn</source>
-		<translation>Metical de Moçambique</translation>
+		<translation>모잠비크 메티칼</translation>
 	</message>
 	<message>
 		<source>currency-display-name-nad</source>
-		<translation>Dólar namibiano</translation>
+		<translation>나미비아 달러</translation>
 	</message>
 	<message>
 		<source>currency-display-name-ngn</source>
-		<translation>Naira da Nigéria</translation>
+		<translation>나이지리아 나이라</translation>
 	</message>
 	<message>
 		<source>currency-display-name-nok</source>
-		<translation>Coroa norueguesa</translation>
+		<translation>노르웨이 크로네</translation>
 	</message>
 	<message>
 		<source>currency-display-name-npr</source>
-		<translation>Rupia nepalesa</translation>
+		<translation>네팔 루피</translation>
 	</message>
 	<message>
 		<source>currency-display-name-nzd</source>
-		<translation>Dólar da Nova Zelândia</translation>
+		<translation>뉴질랜드 달러</translation>
 	</message>
 	<message>
 		<source>currency-display-name-omr</source>
-		<translation>Rial de Omã</translation>
+		<translation>오만 리알</translation>
 	</message>
 	<message>
 		<source>currency-display-name-pen</source>
-		<translation>Sol peruano</translation>
+		<translation>페루 솔</translation>
 	</message>
 	<message>
 		<source>currency-display-name-pgk</source>
-		<translation>Kina da Papua-Nova Guiné</translation>
+		<translation>파푸아 뉴기니 키나</translation>
 	</message>
 	<message>
 		<source>currency-display-name-php</source>
-		<translation>Peso das Filipinas</translation>
+		<translation>필리핀 페소</translation>
 	</message>
 	<message>
 		<source>currency-display-name-pkr</source>
-		<translation>Rupia paquistanesa</translation>
+		<translation>파키스탄 루피</translation>
 	</message>
 	<message>
 		<source>currency-display-name-pln</source>
-		<translation>Zloty polonês</translation>
+		<translation>폴란드 즈워티</translation>
 	</message>
 	<message>
 		<source>currency-display-name-pyg</source>
-		<translation>Guarani do Paraguai</translation>
+		<translation>파라과이 과라니</translation>
 	</message>
 	<message>
 		<source>currency-display-name-qar</source>
-		<translation>Rial do Qatar</translation>
+		<translation>카타르 리얄</translation>
 	</message>
 	<message>
 		<source>currency-display-name-ron</source>
-		<translation>Leu romeno</translation>
+		<translation>루마니아 레우</translation>
 	</message>
 	<message>
 		<source>currency-display-name-rsd</source>
-		<translation>Dinar sérvio</translation>
+		<translation>세르비아 디나르</translation>
 	</message>
 	<message>
 		<source>currency-display-name-rub</source>
-		<translation>Rublo russo</translation>
+		<translation>러시아 루블</translation>
 	</message>
 	<message>
 		<source>currency-display-name-sar</source>
-		<translation>Rial da Arábia Saudita</translation>
+		<translation>사우디 아라비아 리얄</translation>
 	</message>
 	<message>
 		<source>currency-display-name-sek</source>
-		<translation>Coroa da Suécia</translation>
+		<translation>스웨덴 크로나</translation>
 	</message>
 	<message>
 		<source>currency-display-name-sgd</source>
-		<translation>Dólar de Singapura</translation>
+		<translation>싱가포르 달러</translation>
 	</message>
 	<message>
 		<source>currency-display-name-thb</source>
-		<translation>Baht da Tailândia</translation>
+		<translation>태국 바트</translation>
 	</message>
 	<message>
 		<source>currency-display-name-try</source>
-		<translation>Lira turca</translation>
+		<translation>터키 리라</translation>
 	</message>
 	<message>
 		<source>currency-display-name-ttd</source>
-		<translation>Dólar de Trinidad e Tobago</translation>
+		<translation>트리니다드 토바고 달러</translation>
 	</message>
 	<message>
 		<source>currency-display-name-twd</source>
-		<translation>Novo dólar taiwanês</translation>
+		<translation>대만 달러</translation>
 	</message>
 	<message>
 		<source>currency-display-name-tzs</source>
-		<translation>Xelim tanzaniano</translation>
+		<translation>탄자니아 실링</translation>
 	</message>
 	<message>
 		<source>currency-display-name-uah</source>
-		<translation>Grívnia da Ucrânia</translation>
+		<translation>우크라이나 흐리브냐</translation>
 	</message>
 	<message>
 		<source>currency-display-name-ugx</source>
-		<translation>Xelim ugandês</translation>
+		<translation>우간다 실링</translation>
 	</message>
 	<message>
 		<source>currency-display-name-usd</source>
-		<translation>Dólar dos Estados Unidos</translation>
+		<translation>미국 달러</translation>
 	</message>
 	<message>
 		<source>currency-display-name-uyu</source>
-		<translation>Peso uruguaio</translation>
+		<translation>우루과이 페소</translation>
 	</message>
 	<message>
 		<source>currency-display-name-vef</source>
-		<translation>Bolívar venezuelano</translation>
+		<translation>베네수엘라 볼리바르</translation>
 	</message>
 	<message>
 		<source>currency-display-name-vnd</source>
-		<translation>Vietnam Dong</translation>
+		<translation>베트남 동</translation>
 	</message>
 	<message>
 		<source>currency-display-name-zar</source>
-		<translation>Rand sul-africano</translation>
+		<translation>남아프리카 공화국 랜드</translation>
 	</message>
 	<message>
 		<source>current-network</source>
-		<translation>Rede atual</translation>
+		<translation>현재 네트워크</translation>
 	</message>
 	<message>
 		<source>current-pin</source>
-		<translation>Digite o código de acesso de 6 dígitos</translation>
+		<translation>6자리 패스코드 입력</translation>
 	</message>
 	<message>
 		<source>current-pin-description</source>
-		<translation>Digite seu código de acesso de 6 dígitos para continuar</translation>
+		<translation>6자리 패스코드를 입력해 계속 진행하세요</translation>
 	</message>
 	<message>
 		<source>custom</source>
-		<translation>Personalizado</translation>
+		<translation>커스텀 토큰</translation>
 	</message>
 	<message>
 		<source>custom-networks</source>
-		<translation>Redes personalizadas</translation>
+		<translation>사용자 정의 네트워크</translation>
 	</message>
 	<message>
 		<source>dapp</source>
-		<translation>ÐApp</translation>
+		<translation>디앱</translation>
 	</message>
 	<message>
 		<source>dapp-would-like-to-connect-wallet</source>
-		<translation>gostaria de se conectar a</translation>
+		<translation>를 아래 지갑에 연결합니다</translation>
 	</message>
 	<message>
 		<source>dapps</source>
-		<translation>ÐApps</translation>
+		<translation>디앱</translation>
 	</message>
 	<message>
 		<source>dapps-permissions</source>
-		<translation>Permissões do DApp</translation>
+		<translation>디앱 권한</translation>
 	</message>
 	<message>
 		<source>data</source>
-		<translation>Dados</translation>
+		<translation>데이터</translation>
 	</message>
 	<message>
 		<source>datetime-ago</source>
-		<translation>atrás</translation>
+		<translation>전</translation>
 	</message>
 	<message>
 		<source>datetime-ago-format</source>
-		<translation>{{number}} {{time-intervals}} {{ago}}</translation>
+		<translation>{{number}}{{time-intervals}} {{ago}}</translation>
 	</message>
 	<message>
 		<source>datetime-ago-format-short</source>
@@ -1455,279 +1453,271 @@ Por favor, use outro número</translation>
 	<message numerus="yes">
 		<source>datetime-day</source>
 		<translation>
-			<numerusform>dia</numerusform>
-			<numerusform>dias</numerusform>
+			<numerusform>일</numerusform>
 		</translation>
 	</message>
 	<message numerus="yes">
 		<source>datetime-hour</source>
 		<translation>
-			<numerusform>hora</numerusform>
-			<numerusform>horas</numerusform>
+			<numerusform>시간</numerusform>
 		</translation>
 	</message>
 	<message numerus="yes">
 		<source>datetime-minute</source>
 		<translation>
-			<numerusform>minuto</numerusform>
-			<numerusform>minutos</numerusform>
+			<numerusform>분</numerusform>
 		</translation>
 	</message>
 	<message numerus="yes">
 		<source>datetime-second</source>
 		<translation>
-			<numerusform>segundo</numerusform>
-			<numerusform>segundos</numerusform>
+			<numerusform>초</numerusform>
 		</translation>
 	</message>
 	<message numerus="yes">
 		<source>datetime-day-short</source>
 		<translation>
-			<numerusform>D</numerusform>
-			<numerusform>D</numerusform>
+			<numerusform>일</numerusform>
 		</translation>
 	</message>
 	<message numerus="yes">
 		<source>datetime-hour-short</source>
 		<translation>
-			<numerusform>H</numerusform>
-			<numerusform>H</numerusform>
+			<numerusform>시간</numerusform>
 		</translation>
 	</message>
 	<message numerus="yes">
 		<source>datetime-minute-short</source>
 		<translation>
-			<numerusform>M</numerusform>
-			<numerusform>M</numerusform>
+			<numerusform>분</numerusform>
 		</translation>
 	</message>
 	<message numerus="yes">
 		<source>datetime-second-short</source>
 		<translation>
-			<numerusform>S</numerusform>
-			<numerusform>S</numerusform>
+			<numerusform>초</numerusform>
 		</translation>
 	</message>
 	<message>
 		<source>datetime-today</source>
-		<translation>hoje</translation>
+		<translation>오늘</translation>
 	</message>
 	<message>
 		<source>datetime-yesterday</source>
-		<translation>ontem</translation>
+		<translation>어제</translation>
 	</message>
 	<message>
 		<source>decimals</source>
-		<translation>Decimais</translation>
+		<translation>소수점 (Decimals)</translation>
 	</message>
 	<message>
 		<source>decline</source>
-		<translation>Recusar</translation>
+		<translation>거절</translation>
 	</message>
 	<message>
 		<source>decryption-failed-content</source>
-		<translation>Ocorreu um erro ao descriptografar seus dados. Você pode precisar apagar seus dados antigos e gerar uma nova conta. Toque em “Aplicar” para apagar ou “Cancelar” para tentar novamente</translation>
+		<translation>데이터를 복호화하는 중에 오류가 발생했습니다. 오래된 데이터를 삭제하고 새로운 계정을 생성해야 합니다. &quot;적용&quot;으로 기존 데이터를 지우거나 &quot;취소&quot;로 다시 시도해주세요</translation>
 	</message>
 	<message>
 		<source>default</source>
-		<translation>Padrão</translation>
+		<translation>기본 설정</translation>
 	</message>
 	<message>
 		<source>delete</source>
-		<translation>Excluir</translation>
+		<translation>삭제</translation>
 	</message>
 	<message>
 		<source>delete-and-leave-group</source>
-		<translation>Excluir e sair do grupo</translation>
+		<translation>그룹 삭제 및 탈퇴</translation>
 	</message>
 	<message>
 		<source>delete-bootnode</source>
-		<translation>Excluir nó de inicialização</translation>
+		<translation>부트노드 삭제</translation>
 	</message>
 	<message>
 		<source>delete-bootnode-are-you-sure</source>
-		<translation>Tem certeza de que deseja excluir este nó de inicialização?</translation>
+		<translation>이 부트노드를 삭제하시겠습니까?</translation>
 	</message>
 	<message>
 		<source>delete-bootnode-title</source>
-		<translation>Eliminar nó de inicialização</translation>
+		<translation>부트노드 삭제</translation>
 	</message>
 	<message>
 		<source>delete-chat</source>
-		<translation>Excluir conversa</translation>
+		<translation>채팅방 삭제</translation>
 	</message>
 	<message>
 		<source>delete-chat-confirmation</source>
-		<translation>Tem certeza de que deseja excluir este bate-papo?</translation>
+		<translation>이 채팅을 삭제하시겠습니까?</translation>
 	</message>
 	<message>
 		<source>delete-category-confirmation</source>
-		<translation>Tem certeza de que deseja excluir esta categoria?</translation>
+		<translation>이 카테고리를 삭제하시겠습니까?</translation>
 	</message>
 	<message>
 		<source>delete-confirmation</source>
-		<translation>Excluir?</translation>
+		<translation>삭제하시겠습니까?</translation>
 	</message>
 	<message>
 		<source>delete-mailserver</source>
-		<translation>Excluir nó do Status</translation>
+		<translation>스테이터스 노드 삭제</translation>
 	</message>
 	<message>
 		<source>delete-mailserver-are-you-sure</source>
-		<translation>Tem certeza de que deseja excluir este nó do Status?</translation>
+		<translation>이 스테이터스 노드를 삭제하시겠습니까?</translation>
 	</message>
 	<message>
 		<source>delete-mailserver-title</source>
-		<translation>Excluir nó do Status</translation>
+		<translation>스테이터스 노드 삭제</translation>
 	</message>
 	<message>
 		<source>delete-message</source>
-		<translation>Apagar mensagem</translation>
+		<translation>메시지 삭제</translation>
 	</message>
 	<message>
 		<source>delete-my-account</source>
-		<translation>Excluir minha conta</translation>
+		<translation>계정 삭제</translation>
 	</message>
 	<message>
 		<source>delete-network-confirmation</source>
-		<translation>Tem certeza de que deseja excluir esta rede?</translation>
+		<translation>이 네트워크를 삭제하시겠습니까?</translation>
 	</message>
 	<message>
 		<source>delete-network-error</source>
-		<translation>Conecte-se a uma rede diferente antes de excluir esta</translation>
+		<translation>이 네트워크를 삭제하기 전에 다른 네트워크에 연결하세요</translation>
 	</message>
 	<message>
 		<source>delete-network-title</source>
-		<translation>Excluir rede?</translation>
+		<translation>네트워크를 삭제하시겠습니까?</translation>
 	</message>
 	<message>
 		<source>delete-node</source>
-		<translation>Excluir nó</translation>
+		<translation>노드 삭제</translation>
 	</message>
 	<message>
 		<source>delete-node-are-you-sure</source>
-		<translation>Você tem certeza que deseja excluir esse nó?</translation>
+		<translation>이 노드를 삭제하시겠습니까?</translation>
 	</message>
 	<message>
 		<source>delete-node-title</source>
-		<translation>Excluir nó</translation>
+		<translation>노드 삭제</translation>
 	</message>
 	<message>
 		<source>delete-profile</source>
-		<translation>Excluir perfil</translation>
+		<translation>프로필 삭제</translation>
 	</message>
 	<message>
 		<source>delete-my-profile</source>
-		<translation>Excluir meu perfil</translation>
+		<translation>내 프로필 삭제</translation>
 	</message>
 	<message>
 		<source>delete-profile-warning</source>
-		<translation>Aviso: se você não tiver sua frase-semente escrita, você perderá o acesso aos seus fundos depois de excluir seu perfil</translation>
+		<translation>경고: 시드 구문을 별도로 백업하지 않은 경우, 프로필을 삭제하면 내 자산에 접근할 수 없게 됩니다</translation>
 	</message>
 	<message>
 		<source>profile-deleted-title</source>
-		<translation>Perfil excluído</translation>
+		<translation>프로필 삭제 완료</translation>
 	</message>
 	<message>
 		<source>profile-deleted-content</source>
-		<translation>O seu perfil foi excluído com sucesso</translation>
+		<translation>프로필이 성공적으로 삭제되었습니다</translation>
 	</message>
 	<message>
 		<source>profile-deleted-keycard</source>
-		<translation>Agora você pode restaurar outro par de chaves no seu Keycard</translation>
+		<translation>이제 키카드에서 다른 키 쌍을 복구하세요</translation>
 	</message>
 	<message>
 		<source>deny</source>
-		<translation>Negar</translation>
+		<translation>거절</translation>
 	</message>
 	<message>
 		<source>description</source>
-		<translation>Descrição</translation>
+		<translation>설명</translation>
 	</message>
 	<message>
 		<source>dev-mode</source>
-		<translation>Modo de desenvolvimento</translation>
+		<translation>개발 모드</translation>
 	</message>
 	<message>
 		<source>dev-mode-settings</source>
-		<translation>Configurações do modo de desenvolvimento</translation>
+		<translation>개발 모드 설정</translation>
 	</message>
 	<message>
 		<source>device-syncing</source>
-		<translation>Sincronização de dispositivos</translation>
+		<translation>기기 동기화</translation>
 	</message>
 	<message>
 		<source>devices</source>
-		<translation>Dispositivos</translation>
+		<translation>기기</translation>
 	</message>
 	<message>
 		<source>disable</source>
-		<translation>desativar</translation>
+		<translation>비활성화</translation>
 	</message>
 	<message>
 		<source>disabled</source>
-		<translation>Desativado</translation>
+		<translation>비활성화</translation>
 	</message>
 	<message>
 		<source>disconnected</source>
-		<translation>Bate-papo offline</translation>
+		<translation>연결 중...</translation>
 	</message>
 	<message>
 		<source>discover</source>
-		<translation>Descobrir</translation>
+		<translation>찾아보기</translation>
 	</message>
 	<message>
 		<source>dismiss</source>
-		<translation>Ignorar</translation>
+		<translation>무시</translation>
 	</message>
 	<message>
 		<source>done</source>
-		<translation>Concluído</translation>
+		<translation>완료</translation>
 	</message>
 	<message>
 		<source>edit</source>
-		<translation>Editar</translation>
+		<translation>편집</translation>
 	</message>
 	<message>
 		<source>edit-group</source>
-		<translation>Editar grupo</translation>
+		<translation>그룹 편집</translation>
 	</message>
 	<message>
 		<source>edit-profile</source>
-		<translation>Editar perfil</translation>
+		<translation>프로필 편집</translation>
 	</message>
 	<message>
 		<source>empty-chat-description</source>
-		<translation>Ainda não há mensagens 
- neste bate-papo</translation>
+		<translation>이 채팅에 아직
+메시지가 없습니다</translation>
 	</message>
 	<message>
 		<source>empty-chat-description-one-to-one</source>
-		<translation>Todas as mensagens que você envia aqui são criptografadas e só podem ser lidas por você e </translation>
+		<translation>채팅방의 모든 메시지는 암호화되며, 귀하와 상대방만 열람할 수 있습니다. 채팅 상대: </translation>
 	</message>
 	<message>
 		<source>empty-chat-description-public</source>
-		<translation>Está quieto aqui nas últimas {{quiet-hours}}. Inicie a conversa ou </translation>
+		<translation>이 채팅방은 지난 {{quiet-hours}} 동안 대화가 없었습니다. 대화를 시작하거나 </translation>
 	</message>
 	<message>
 		<source>cleared-chat-description-public</source>
-		<translation>Tem estado muito quieto por aqui. Inicie a conversa ou </translation>
+		<translation>최근 대화 내용이 없습니다. 대화를 시작하거나</translation>
 	</message>
 	<message>
 		<source>empty-chat-description-community</source>
-		<translation>Tem estado quieto aqui nas últimas {{quiet-hours}}.</translation>
+		<translation>지난 {{quiet-hours}} 동안 이곳은 활동이 없었습니다.</translation>
 	</message>
 	<message>
 		<source>empty-chat-description-public-share-this</source>
-		<translation>compartilhe este bate-papo.</translation>
+		<translation>이 채팅을 공유하세요.</translation>
 	</message>
 	<message>
 		<source>enable</source>
-		<translation>Ativar</translation>
+		<translation>사용</translation>
 	</message>
 	<message>
 		<source>encrypt-with-password</source>
-		<translation>Criptografar com senha</translation>
+		<translation>비밀번호로 암호화</translation>
 	</message>
 	<message>
 		<source>ens-10-SNT</source>
@@ -1735,438 +1725,438 @@ Por favor, use outro número</translation>
 	</message>
 	<message>
 		<source>ens-add-username</source>
-		<translation>Adicionar nome de usuário </translation>
+		<translation>사용자 이름 추가</translation>
 	</message>
 	<message>
 		<source>ens-agree-to</source>
-		<translation>Concordo com</translation>
+		<translation>다음에 동의합니다 </translation>
 	</message>
 	<message>
 		<source>ens-chat-settings</source>
-		<translation>Configurações de bate-papo</translation>
+		<translation>채팅 설정</translation>
 	</message>
 	<message>
 		<source>ens-custom-domain</source>
-		<translation>Domínio personalizado</translation>
+		<translation>커스텀 도메인</translation>
 	</message>
 	<message>
 		<source>ens-custom-username-hints</source>
-		<translation>Digite o nome de usuário inteiro, incluindo o domínio personalizado, como nomedeusuario.domínio.eth</translation>
+		<translation>username.domain.eth와 같은 커스텀 도메인 형식의 사용자 이름을 입력해주세요</translation>
 	</message>
 	<message>
 		<source>ens-custom-username-taken</source>
-		<translation>O nome de usuário não pertence a você :(</translation>
+		<translation>소유한 사용자 이름이 아닙니다 :(</translation>
 	</message>
 	<message>
 		<source>ens-deposit</source>
-		<translation>Depósito</translation>
+		<translation>입금</translation>
 	</message>
 	<message>
 		<source>ens-displayed-with</source>
-		<translation>Suas mensagens são exibidas para outras pessoas com</translation>
+		<translation>귀하의 메시지가 다른 사용자에게 다음과 같이 표시됩니다</translation>
 	</message>
 	<message>
 		<source>ens-get-name</source>
-		<translation>Obter um nome universal</translation>
+		<translation>범용 사용자 이름 등록</translation>
 	</message>
 	<message>
 		<source>ens-got-it</source>
-		<translation>Ok, entendi.</translation>
+		<translation>알겠습니다</translation>
 	</message>
 	<message>
 		<source>ens-locked</source>
-		<translation>Nome de usuário bloqueado. Você não poderá liberá-lo até {{date}}</translation>
+		<translation>사용자 이름이 등록되었습니다. {{date}}까지 이름을 해지할 수 없습니다</translation>
 	</message>
 	<message>
 		<source>ens-network-restriction</source>
-		<translation>Disponível apenas na Mainnet</translation>
+		<translation>Mainnet에서만 사용 가능</translation>
 	</message>
 	<message>
 		<source>ens-no-usernames</source>
-		<translation>Você não tem nenhum nome de usuário conectado</translation>
+		<translation>연결된 사용자 이름이 없습니다</translation>
 	</message>
 	<message>
 		<source>ens-powered-by</source>
-		<translation>Desenvolvido com Ethereum Name Services</translation>
+		<translation>Powered by Ethereum Name Services</translation>
 	</message>
 	<message>
 		<source>ens-primary-username</source>
-		<translation>Nome de usuário principal</translation>
+		<translation>주 사용자 이름</translation>
 	</message>
 	<message>
 		<source>ens-register</source>
-		<translation>Cadastro</translation>
+		<translation>등록하기</translation>
 	</message>
 	<message>
 		<source>ens-registration-in-progress</source>
-		<translation>Cadastro em andamento…</translation>
+		<translation>등록 중...</translation>
 	</message>
 	<message>
 		<source>ens-registration-failure</source>
-		<translation>Erro ao cadastrar</translation>
+		<translation>등록 실패</translation>
 	</message>
 	<message>
 		<source>ens-dismiss-message</source>
-		<translation>Clique aqui para fechar</translation>
+		<translation>닫으려면 여기를 클릭하세요</translation>
 	</message>
 	<message>
 		<source>ens-registration-failed</source>
-		<translation>Para cadastrar o nome de usuário, tente novamente.</translation>
+		<translation>사용자 이름을 등록하려면 다시 시도해주세요</translation>
 	</message>
 	<message>
 		<source>ens-registration-failed-title</source>
-		<translation>Falha na transação</translation>
+		<translation>트랜잭션 실패</translation>
 	</message>
 	<message>
 		<source>ens-release-username</source>
-		<translation>Liberar nome de usuário</translation>
+		<translation>사용자 이름 계약 해지</translation>
 	</message>
 	<message>
 		<source>ens-remove-hints</source>
-		<translation>A remoção desanexará o nome de usuário da sua chave.</translation>
+		<translation>제거하면 키와 사용자 이름이 분리됩니다.</translation>
 	</message>
 	<message>
 		<source>ens-remove-username</source>
-		<translation>Remover nome de usuário</translation>
+		<translation>사용자 이름 삭제</translation>
 	</message>
 	<message>
 		<source>ens-saved</source>
-		<translation> agora está conectado com sua chave de bate-papo e pode ser usado no Status.</translation>
+		<translation>은 채팅 키와 연결되어 스테이터스에서 사용 가능합니다.</translation>
 	</message>
 	<message>
 		<source>ens-saved-title</source>
-		<translation>Nome de usuário adicionado</translation>
+		<translation>사용자 이름 추가됨</translation>
 	</message>
 	<message>
 		<source>ens-show-username</source>
-		<translation>Mostrar meu nome de usuário ENS em bate-papos</translation>
+		<translation>채팅창에 내 ENS 이름 표시</translation>
 	</message>
 	<message>
 		<source>ens-terms-header</source>
-		<translation>Termos de cadastro de nome</translation>
+		<translation>이름 등록 약관</translation>
 	</message>
 	<message>
 		<source>ens-terms-point-1</source>
-		<translation>Os fundos são depositados por 1 ano. Seu SNT será bloqueado, mas não será gasto.</translation>
+		<translation>자산은 1년 동안 예치됩니다. 여러분의 SNT는 잠기게 되며, 별도로 지출되지 않습니다.</translation>
 	</message>
 	<message>
 		<source>ens-terms-point-10</source>
-		<translation>0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e (Registro ENS).</translation>
+		<translation>0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e (ENS 레지스트리).</translation>
 	</message>
 	<message>
 		<source>ens-terms-point-2</source>
-		<translation>Após 1 ano, você pode liberar o nome e receber seu depósito de volta ou não fazer nenhuma ação para manter o nome.</translation>
+		<translation>1년 후, 등록한 이름의 계약을 해지하고 예치금을 돌려받을 수 있습니다. 이름을 유지하고 싶을 경우에는 별도의 조치를 할 필요가 없습니다.</translation>
 	</message>
 	<message>
 		<source>ens-terms-point-3</source>
-		<translation>Se os termos do contrato mudarem — por exemplo, o Status fizer atualizações do contrato — o usuário tem o direito de liberar o nome de usuário, independentemente do tempo de espera.</translation>
+		<translation>스테이터스가 컨트랙트를 업그레이드 하는 등으로 이용 약관을 변경하는 경우, 사용자는 남은 기간에 상관 없이 사용자 이름을 해지할 수 있습니다.</translation>
 	</message>
 	<message>
 		<source>ens-terms-point-4</source>
-		<translation>O controlador do contrato não pode acessar seus fundos depositados. Eles só podem ser movidos de volta para o endereço que os enviou.</translation>
+		<translation>컨트랙트 관리자는 사용자의 예치금에 접근할 수 없습니다. 이는 등록된 주소로만 반환됩니다.</translation>
 	</message>
 	<message>
 		<source>ens-terms-point-5</source>
-		<translation>Seus endereços serão publicamente associados ao seu nome no ENS.</translation>
+		<translation>사용자의 주소는 ENS 이름과 공개적으로 연동됩니다.</translation>
 	</message>
 	<message>
 		<source>ens-terms-point-6</source>
-		<translation>Os nomes de usuários são criados como nós de subdomínio stateofus.eth e estão sujeitos aos termos do contrato inteligente do ENS.</translation>
+		<translation>사용자 이름은 stateofus.eth 의 서브 도메인 노드로 생성되며, ENS 스마트 컨트랙트 이용 약관을 따릅니다.</translation>
 	</message>
 	<message>
 		<source>ens-terms-point-7</source>
-		<translation>Você autoriza o contrato a transferir o SNT em seu nome. Isso só pode ocorrer quando você aprovar uma transação para autorizar a transferência.</translation>
+		<translation>사용자를 대신하여 SNT를 양도하는 계약을 승인합니다. 이는 트랜잭션에 전송 권한을 부여할 때부터 유효합니다.</translation>
 	</message>
 	<message>
 		<source>ens-terms-point-8</source>
-		<translation>Estes termos são garantidos pela lógica do contrato inteligente nos endereços:</translation>
+		<translation>이러한 조항은 다음 주소의 스마트 컨트랙트 로직으로 보장됩니다:</translation>
 	</message>
 	<message>
 		<source>ens-terms-point-9</source>
-		<translation>{{address}} (Status UsernameRegistrar)</translation>
+		<translation>{{address}} (Status UsernameRegistrar) </translation>
 	</message>
 	<message>
 		<source>ens-terms-registration</source>
-		<translation>Termos de cadastro do nome.</translation>
+		<translation>이름 등록 약관.</translation>
 	</message>
 	<message>
 		<source>ens-test-message</source>
-		<translation>Olá</translation>
+		<translation>안녕하세요</translation>
 	</message>
 	<message>
 		<source>ens-transaction-pending</source>
-		<translation>Transação pendente ...</translation>
+		<translation>트랜잭션 대기 중...</translation>
 	</message>
 	<message>
 		<source>ens-understand</source>
-		<translation>Entendo que o endereço da minha carteira estará publicamente conectado ao meu nome de usuário.</translation>
+		<translation>지갑 주소와 사용자 이름이 공개적으로 연결됨을 이해합니다.</translation>
 	</message>
 	<message>
 		<source>ens-username</source>
-		<translation>Nome de usuário ENS</translation>
+		<translation>ENS 사용자 이름</translation>
 	</message>
 	<message>
 		<source>ens-username-available</source>
-		<translation>✓ Nome de usuário disponível!</translation>
+		<translation>✓ 사용자 이름을 사용할 수 있습니다!</translation>
 	</message>
 	<message>
 		<source>ens-username-connected</source>
-		<translation>Esse nome de usuário é de sua propriedade e conectado à sua chave de bate-papo.</translation>
+		<translation>이 사용자 이름은 사용자가 소유하며, 채팅 키와 연결됩니다.</translation>
 	</message>
 	<message>
 		<source>ens-username-connection-confirmation</source>
-		<translation>{{username}} será conectado assim que a transação for concluída.</translation>
+		<translation>트랜잭션이 완료되면 {{username}}와 연결됩니다</translation>
 	</message>
 	<message>
 		<source>ens-username-hints</source>
-		<translation>Pelo menos 4 caracteres. Usando letras minúsculas e números.</translation>
+		<translation>최소 4자 이상이어야 하며, 알파벳 소문자 및 숫자만 가능합니다.</translation>
 	</message>
 	<message>
 		<source>ens-username-invalid</source>
-		<translation>Apenas letras e números.</translation>
+		<translation>문자와 숫자만 가능.</translation>
 	</message>
 	<message>
 		<source>ens-username-owned</source>
-		<translation>✓ O nome de usuário é seu.</translation>
+		<translation>✓ 이미 소유한 이름입니다. </translation>
 	</message>
 	<message>
 		<source>ens-username-registration-confirmation</source>
-		<translation>Ótimo! Você será o proprietário do {{username}} assim que a transação for concluída.</translation>
+		<translation>좋습니다! 트랜잭션이 완료되면 {{username}}(을)를 소유하게 됩니다</translation>
 	</message>
 	<message>
 		<source>ens-username-you-can-follow-progress</source>
-		<translation>Você pode acompanhar o progresso na seção Histórico de Transações da sua carteira.</translation>
+		<translation>지갑의 트랜잭션 기록 섹션에서 진행 상황을 확인할 수 있습니다.</translation>
 	</message>
 	<message>
 		<source>ens-usernames</source>
-		<translation>Nomes de usuário ENS</translation>
+		<translation>ENS 이름</translation>
 	</message>
 	<message>
 		<source>ens-usernames-details</source>
-		<translation>Cadastre um nome de usuário universal para ser facilmente reconhecido por outros usuários</translation>
+		<translation>다른 사용자가 쉽게 인지할 수 있도록 범용 사용자 이름을 등록하세요</translation>
 	</message>
 	<message>
 		<source>wallet-address</source>
-		<translation>Endereço da carteira</translation>
+		<translation>지갑 주소</translation>
 	</message>
 	<message>
 		<source>ens-want-custom-domain</source>
-		<translation>Eu possuo um nome em outro domínio</translation>
+		<translation>다른 도메인의 이름 가져오기</translation>
 	</message>
 	<message>
 		<source>ens-want-domain</source>
-		<translation>Eu quero um domínio stateofus.eth</translation>
+		<translation>stateofus.eth 도메인 획득하기</translation>
 	</message>
 	<message>
 		<source>ens-welcome-hints</source>
-		<translation>Os nomes do ENS transformam esses endereços compridos e malucos em nomes de usuário exclusivos.</translation>
+		<translation>ENS 이름은 굉장히 긴 주소를 직관적인 사용자 이름으로 변환합니다.</translation>
 	</message>
 	<message>
 		<source>ens-welcome-point-customize</source>
-		<translation>Um nome ENS pode substituir seu nome aleatório de três palavras no chat. Seja @seunome em vez de {{name}}.</translation>
+		<translation>ENS 이름은 채팅에서 보이는 무작위 영단어 3개짜리 이름을 대체하는 닉네임입니다. {{name}} 대신 @닉네임 을 사용하세요.</translation>
 	</message>
 	<message>
 		<source>ens-welcome-point-customize-title</source>
-		<translation>Personalize seu nome de chat</translation>
+		<translation>채팅 이름을 원하는 대로 만들어보세요</translation>
 	</message>
 	<message>
 		<source>ens-welcome-point-simplify</source>
-		<translation>Você pode receber fundos em um nome ENS fácil de compartilhar, em vez do seu endereço hexadecimal (0x ...).</translation>
+		<translation>(0x...)로 시작하는 16진수 해시값 대신, 읽고 쓰기 쉬운 ENS 이름으로 거래를 시작하세요.</translation>
 	</message>
 	<message>
 		<source>ens-welcome-point-simplify-title</source>
-		<translation>Simplifique seu endereço ETH</translation>
+		<translation>ETH 주소를 단순화하세요</translation>
 	</message>
 	<message>
 		<source>ens-welcome-point-receive</source>
-		<translation>Outras pessoas podem enviar fundos para você pelo chat em um único passo.</translation>
+		<translation>다른 사람들과 더욱 간편하게 거래하세요.</translation>
 	</message>
 	<message>
 		<source>ens-welcome-point-receive-title</source>
-		<translation>Receba transações no chat</translation>
+		<translation>채팅으로 트랜잭션을 진행하세요</translation>
 	</message>
 	<message>
 		<source>ens-welcome-point-register</source>
-		<translation>Cadastre-se uma vez para manter o nome para sempre. Após 1 ano, você pode liberar o nome e recuperar seu SNT.</translation>
+		<translation>한 번 이름을 등록하면, 해당 이름을 영원히 보유할 수 있습니다. 등록한 지 1년 후, 이름을 공개하고 SNT를 돌려받을 수 있습니다.</translation>
 	</message>
 	<message>
 		<source>ens-welcome-point-register-title</source>
-		<translation>10 SNT para se cadastrar</translation>
+		<translation>10 SNT만으로 등록할 수 있습니다</translation>
 	</message>
 	<message>
 		<source>ens-welcome-point-verify</source>
-		<translation>Você pode verificar e adicionar qualquer nome de usuário que você possui nos próximos passos.</translation>
+		<translation>다음 단계에서 소유한 사용자 이름을 인증하고 추가하세요.</translation>
 	</message>
 	<message>
 		<source>ens-welcome-point-verify-title</source>
-		<translation>Já possui um nome de usuário?</translation>
+		<translation>이미 사용자 이름이 있으신가요?</translation>
 	</message>
 	<message>
 		<source>ens-your-username</source>
-		<translation>Seu nome de usuário</translation>
+		<translation>사용자 이름</translation>
 	</message>
 	<message>
 		<source>ens-your-usernames</source>
-		<translation>Seus nomes de usuário</translation>
+		<translation>사용자 이름</translation>
 	</message>
 	<message>
 		<source>ens-your-your-name</source>
-		<translation>Seu nome ENS</translation>
+		<translation>ENS 이름</translation>
 	</message>
 	<message>
 		<source>ens-username-already-added</source>
-		<translation>O nome de usuário já está conectado à sua chave de bate-papo e pode ser usado dentro do Status.</translation>
+		<translation>사용자 이름은 사용자의 채팅 키와 연결되며, 스테이터스에서 사용 가능합니다.</translation>
 	</message>
 	<message>
 		<source>ens-username-connected-continue</source>
-		<translation>Continuar configurando &quot;Mostrar meu nome de usuário do ENS nos bate-papos&quot;.</translation>
+		<translation>&apos;채팅에서 ENS 사용자 이름 표시&apos;를 설정합니다.</translation>
 	</message>
 	<message>
 		<source>ens-username-connected-with-different-key</source>
-		<translation>Continuar exigirá uma transação para conectar o nome de usuário com sua chave de bate-papo atual.</translation>
+		<translation>사용자 이름과 현재 키를 연결하는 트랜잭션이 필요합니다.</translation>
 	</message>
 	<message>
 		<source>ens-username-owned-continue</source>
-		<translation>Continuar conectará esse nome de usuário com sua chave de bate-papo.</translation>
+		<translation>계속하면 이 사용자 이름이 채팅 키와 연결됩니다.</translation>
 	</message>
 	<message>
 		<source>ens-username-taken</source>
-		<translation>Nome de usuário já utilizado :(</translation>
+		<translation>이미 사용 중인 이름입니다 :(</translation>
 	</message>
 	<message>
 		<source>ens-name-not-found</source>
-		<translation>Não é possível resolver o nome ENS</translation>
+		<translation>ENS 이름을 확인할 수 없습니다</translation>
 	</message>
 	<message>
 		<source>ens-username-registration-invalid</source>
-		<translation>Aviso! O processo de registro terminou em estado inválido. NÃO USE o nome para transações de carteira e contate nosso suporte em support@status.im</translation>
+		<translation>경고! 등록 프로세스에 문제가 발생했습니다. 지갑 트랜잭션에 해당 ENS 이름을 사용하지 마시고, support@status으로 문의해주세요</translation>
 	</message>
 	<message>
 		<source>ens-username-invalid-name-warning</source>
-		<translation>O processo de registro de um dos seus nomes ens terminou em estado inválido. NÃO USE o nome para transações de carteira e contate nosso suporte em support@status.im</translation>
+		<translation>ENS 이름 중 하나의 등록 프로세스에 문제가 발생했습니다. 지갑 트랜잭션에 해당 ENS 이름을 사용하지 마시고, support@status.im으로 지원팀에 문의해주세요</translation>
 	</message>
 	<message>
 		<source>enter-12-words</source>
-		<translation>Digite as 12 palavras da sua frase-semente, separadas por um espaço</translation>
+		<translation>12단어의 시드 구문을 입력하되 띄어쓰기로 구분해주세요</translation>
 	</message>
 	<message>
 		<source>enter-a-private-key</source>
-		<translation>Digite uma chave privada</translation>
+		<translation>개인 키 입력</translation>
 	</message>
 	<message>
 		<source>enter-a-seed-phrase</source>
-		<translation>Digite uma frase-semente</translation>
+		<translation>시드 구문 입력</translation>
 	</message>
 	<message>
 		<source>enter-address</source>
-		<translation>Inserir endereço</translation>
+		<translation>주소 입력</translation>
 	</message>
 	<message>
 		<source>enter-contact-code</source>
-		<translation>ENS (vitalik94) ou chave de bate-papo (0x04 ...)</translation>
+		<translation>ENS (vitalik94) 또는 채팅 키 (0x04…)</translation>
 	</message>
 	<message>
 		<source>enter-pair-code</source>
-		<translation>Digite seu código de emparelhamento</translation>
+		<translation>페어링 코드 입력</translation>
 	</message>
 	<message>
 		<source>pair-code-placeholder</source>
-		<translation>Código de emparelhamento…</translation>
+		<translation>페어링 코드...</translation>
 	</message>
 	<message>
 		<source>enter-pair-code-description</source>
-		<translation>O código de emparelhamento pode ser definido a partir de um cliente Status já emparelhado</translation>
+		<translation>이미 페어링 된 스테이터스 클라이언트에서 페어링 코드를 설정할 수 있습니다</translation>
 	</message>
 	<message>
 		<source>enter-password</source>
-		<translation>Digite a senha</translation>
+		<translation>비밀번호 입력</translation>
 	</message>
 	<message>
 		<source>enter-password-migration-prompt</source>
-		<translation>Digite sua senha para mover contatos, bate-papos e configurações com suas chaves</translation>
+		<translation>암호를 입력하고 키와 함께 연락처, 채팅 및 설정을 이전합니다</translation>
 	</message>
 	<message>
 		<source>migration-successful</source>
-		<translation>Migração realizada com sucesso</translation>
+		<translation>마이그레이션 성공</translation>
 	</message>
 	<message>
 		<source>migration-successful-text</source>
-		<translation>Conta migrada com sucesso para o Keycard</translation>
+		<translation>계정이 키카드로 성공적으로 마이그레이션되었습니다</translation>
 	</message>
 	<message>
 		<source>skip</source>
-		<translation>Pular</translation>
+		<translation>건너 뛰기</translation>
 	</message>
 	<message>
 		<source>password-placeholder</source>
-		<translation>Senha…</translation>
+		<translation>비밀번호...</translation>
 	</message>
 	<message>
 		<source>confirm-password-placeholder</source>
-		<translation>Confirme sua senha…</translation>
+		<translation>비밀번호 확인...</translation>
 	</message>
 	<message>
 		<source>enter-pin</source>
-		<translation>Digite o código de acesso de 6 dígitos</translation>
+		<translation>6자리 패스코드 입력</translation>
 	</message>
 	<message>
 		<source>enter-puk-code</source>
-		<translation>Digite o código PUK</translation>
+		<translation>PUK 코드 입력</translation>
 	</message>
 	<message>
 		<source>enter-puk-code-description</source>
-		<translation>O código de acesso de 6 dígitos foi bloqueado. 
- Digite o código PUK para desbloquear o código de acesso.</translation>
+		<translation>6자리 패스코드가 차단되었습니다. 
+ PUK 코드를 입력해 차단을 해제하세요.</translation>
 	</message>
 	<message>
 		<source>enter-recipient-address-or-username</source>
-		<translation>Digite o endereço ou nome de usuário do destinatário</translation>
+		<translation>수신인의 지갑 주소 또는 사용자 이름을 입력하세요</translation>
 	</message>
 	<message>
 		<source>enter-seed-phrase</source>
-		<translation>Inserir frase-semente</translation>
+		<translation>시드 구문 입력</translation>
 	</message>
 	<message>
 		<source>enter-url</source>
-		<translation>Inserir URL</translation>
+		<translation>URL 입력</translation>
 	</message>
 	<message>
 		<source>enter-watch-account-address</source>
-		<translation>Escaneie um código QR 
-ou 
-digite o endereço para visualizar</translation>
+		<translation>QR 코드 스캔 
+또는 
+열람할 주소를 입력하세요</translation>
 	</message>
 	<message>
 		<source>enter-word</source>
-		<translation>Digite a palavra</translation>
+		<translation>단어 입력</translation>
 	</message>
 	<message>
 		<source>enter-your-code</source>
-		<translation>Digite sua senha de 6 dígitos</translation>
+		<translation>6자리 패스코드 입력</translation>
 	</message>
 	<message>
 		<source>enter-your-password</source>
-		<translation>Digite sua senha</translation>
+		<translation>비밀번호 입력</translation>
 	</message>
 	<message>
 		<source>error</source>
-		<translation>Erro</translation>
+		<translation>오류</translation>
 	</message>
 	<message>
 		<source>error-unable-to-get-balance</source>
-		<translation>Não foi possível obter o saldo</translation>
+		<translation>잔액을 가져올 수 없습니다</translation>
 	</message>
 	<message>
 		<source>error-unable-to-get-prices</source>
-		<translation>Erro de conversão de moeda. Atualize sua tela para tentar novamente.</translation>
+		<translation>통화 변환 오류가 발생했습니다. 다시 시도하려면 화면을 새로고침하세요.</translation>
 	</message>
 	<message>
 		<source>error-unable-to-get-token-balance</source>
-		<translation>Não foi possível obter o saldo de token</translation>
+		<translation>토큰 잔액을 가져올 수 없습니다</translation>
 	</message>
 	<message>
 		<source>errors</source>
-		<translation>Erros</translation>
+		<translation>오류</translation>
 	</message>
 	<message>
 		<source>eth</source>
@@ -2174,217 +2164,217 @@ digite o endereço para visualizar</translation>
 	</message>
 	<message>
 		<source>ethereum-node-started-incorrectly-description</source>
-		<translation>O nó Ethereum foi iniciado com a configuração incorreta. O aplicativo será interrompido para se recuperar dessa condição. ID de rede configurado = {{network-id}}, real = {{fetched-network-id}}</translation>
+		<translation>이더리움 노드가 잘못된 구성으로 시작되어, 어플리케이션이 중지되고 해당 상태에서 복구됩니다. 구성된 네트워크 ID = {{network-id}} , 실제 ID = {{fetched-network-id}}</translation>
 	</message>
 	<message>
 		<source>ethereum-node-started-incorrectly-title</source>
-		<translation>Nó Ethereum iniciado incorretamente</translation>
+		<translation>이더리움 노드가 잘못 시작되었습니다</translation>
 	</message>
 	<message>
 		<source>etherscan-lookup</source>
-		<translation>Procurar no Etherscan</translation>
+		<translation>Etherscan에서 보기</translation>
 	</message>
 	<message>
 		<source>export-account</source>
-		<translation>Exportar conta</translation>
+		<translation>계정 정보 내보내기</translation>
 	</message>
 	<message>
 		<source>export-key</source>
-		<translation>Exportar chave privada</translation>
+		<translation>개인키 내보내기</translation>
 	</message>
 	<message>
 		<source>community-private-key</source>
-		<translation>Chave privada da comunidade</translation>
+		<translation>커뮤니티 개인키</translation>
 	</message>
 	<message>
 		<source>failed</source>
-		<translation>Falhou</translation>
+		<translation>실패</translation>
 	</message>
 	<message>
 		<source>faq</source>
-		<translation>Perguntas frequentes</translation>
+		<translation>자주 묻는 질문</translation>
 	</message>
 	<message>
 		<source>fetch-messages</source>
-		<translation>↓ Buscar mensagens</translation>
+		<translation>↓ 메시지 가져오기</translation>
 	</message>
 	<message>
 		<source>fetch-timeline</source>
-		<translation>↓ Buscar</translation>
+		<translation>↓ 가져오기</translation>
 	</message>
 	<message>
 		<source>find</source>
-		<translation>Encontrar</translation>
+		<translation>찾기</translation>
 	</message>
 	<message>
 		<source>finish</source>
-		<translation>Terminar</translation>
+		<translation>완료</translation>
 	</message>
 	<message>
 		<source>finishing-card-setup</source>
-		<translation>Finalizando configurações do cartão</translation>
+		<translation>카드 설정 마무리</translation>
 	</message>
 	<message>
 		<source>fleet</source>
-		<translation>Frota</translation>
+		<translation>플릿(Fleet)</translation>
 	</message>
 	<message>
 		<source>fleet-settings</source>
-		<translation>Configurações de frota</translation>
+		<translation>플릿(Fleet) 설정</translation>
 	</message>
 	<message>
 		<source>follow-your-interests</source>
-		<translation>Entre em um bate-papo público e conheça novas pessoas</translation>
+		<translation>오픈채팅에서 새로운 사람들을 만나보세요</translation>
 	</message>
 	<message>
 		<source>follow</source>
-		<translation>Seguir</translation>
+		<translation>팔로우</translation>
 	</message>
 	<message>
 		<source>free</source>
-		<translation>↓ Grátis</translation>
+		<translation>↓ 무료</translation>
 	</message>
 	<message>
 		<source>from</source>
-		<translation>De</translation>
+		<translation>보내는 주소</translation>
 	</message>
 	<message>
 		<source>gas-limit</source>
-		<translation>Limite de gás</translation>
+		<translation>가스 한도</translation>
 	</message>
 	<message>
 		<source>gas-price</source>
-		<translation>Preço do gás</translation>
+		<translation>가스 가격</translation>
 	</message>
 	<message>
 		<source>gas-used</source>
-		<translation>Gás usado</translation>
+		<translation>사용된 가스</translation>
 	</message>
 	<message>
 		<source>generate-a-key</source>
-		<translation>Gerar chaves</translation>
+		<translation>키 생성</translation>
 	</message>
 	<message>
 		<source>generate-a-new-account</source>
-		<translation>Gerar uma conta</translation>
+		<translation>계정 생성</translation>
 	</message>
 	<message>
 		<source>generate-a-new-key</source>
-		<translation>Gere uma nova chave</translation>
+		<translation>새로운 키 생성</translation>
 	</message>
 	<message>
 		<source>generate-account</source>
-		<translation>Gerar chaves</translation>
+		<translation>키 생성</translation>
 	</message>
 	<message>
 		<source>generate-new-key</source>
-		<translation>Gerar chaves</translation>
+		<translation>키 생성</translation>
 	</message>
 	<message>
 		<source>your-keys</source>
-		<translation>Suas chaves</translation>
+		<translation>키 목록</translation>
 	</message>
 	<message>
 		<source>generating-codes-for-pairing</source>
-		<translation>&gt; Download do software do produto no cartão 
-&gt; Gerando códigos de desbloqueio e emparelhamento</translation>
+		<translation>&gt; 제품 소프트웨어를 카드에 다운로드
+ &gt; 잠금 해제 및 페어링 코드 생성</translation>
 	</message>
 	<message>
 		<source>generating-keys</source>
-		<translation>Gerando chaves...</translation>
+		<translation>키 생성 중...</translation>
 	</message>
 	<message>
 		<source>you-will-need-this-code</source>
-		<translation>Você precisará desse código para abrir o Status e assinar transações</translation>
+		<translation>이 코드는 스테이터스 및 트랜잭션 서명에 필요합니다</translation>
 	</message>
 	<message>
 		<source>generating-mnemonic</source>
-		<translation>Gerando frase-semente</translation>
+		<translation>시드 구문 생성</translation>
 	</message>
 	<message>
 		<source>get-started</source>
-		<translation>Começar</translation>
+		<translation>시작</translation>
 	</message>
 	<message>
 		<source>get-status-at</source>
-		<translation>Obter o Status em http://status.im</translation>
+		<translation>http://status.im 에서 스테이터스를 만나보세요</translation>
 	</message>
 	<message>
 		<source>get-stickers</source>
-		<translation>Obter Adesivos</translation>
+		<translation>이모티콘 가져오기</translation>
 	</message>
 	<message>
 		<source>go-to-settings</source>
-		<translation>Vá para as configurações...</translation>
+		<translation>설정으로 이동...</translation>
 	</message>
 	<message>
 		<source>got-it</source>
-		<translation>Entendido</translation>
+		<translation>확인했습니다</translation>
 	</message>
 	<message>
 		<source>group-chat</source>
-		<translation>Conversa em grupo</translation>
+		<translation>그룹 채팅</translation>
 	</message>
 	<message>
 		<source>group-chat-admin</source>
-		<translation>Administrador</translation>
+		<translation>관리자</translation>
 	</message>
 	<message>
 		<source>group-chat-admin-added</source>
-		<translation>**{{member}}** foi adicionado como administrador</translation>
+		<translation>** {{member}} ** 님이 관리자로 지정됨</translation>
 	</message>
 	<message>
 		<source>group-chat-created</source>
-		<translation>**{{member}}** criou o grupo **{{name}}**</translation>
+		<translation>** {{member}} ** 님이 ** {{name}} ** 그룹 생성</translation>
 	</message>
 	<message>
 		<source>group-chat-decline-invitation</source>
-		<translation>Recusar o convite</translation>
+		<translation>초대 거절</translation>
 	</message>
 	<message>
 		<source>group-chat-member-added</source>
-		<translation>**{{member}}** foi convidado</translation>
+		<translation>** {{member}} ** 님이 초대됨</translation>
 	</message>
 	<message>
 		<source>group-chat-member-joined</source>
-		<translation>**{{member}}** acessou o grupo</translation>
+		<translation>** {{member}} ** 님이 그룹에 참여</translation>
 	</message>
 	<message>
 		<source>group-chat-member-removed</source>
-		<translation>**{{member}}** saiu do grupo</translation>
+		<translation>** {{member}} ** 님이 그룹을 떠남</translation>
 	</message>
 	<message>
 		<source>group-chat-members-count</source>
-		<translation>{{selected}}/{{max}} membros</translation>
+		<translation>{{selected}}/{{max}} 멤버</translation>
 	</message>
 	<message>
 		<source>group-chat-name-changed</source>
-		<translation>**{{member}}** mudou o nome do grupo para **{{name}}**</translation>
+		<translation>** {{member}} ** 님이 그룹명을 ** {{name}} ** (으)로 변경</translation>
 	</message>
 	<message>
 		<source>group-chat-no-contacts</source>
-		<translation>Você ainda não possui nenhum contato.
-Convide seus amigos para começar a conversar.</translation>
+		<translation>아직 연락처가 없습니다. 
+친구들을 초대하고 채팅을 시작해보세요</translation>
 	</message>
 	<message>
 		<source>leave-chat</source>
-		<translation>Sair da conversa</translation>
+		<translation>채팅방 나가기</translation>
 	</message>
 	<message>
 		<source>leave-confirmation</source>
-		<translation>Sair de {{chat-name}}</translation>
+		<translation>{{chat-name}} 나가기</translation>
 	</message>
 	<message>
 		<source>leave-chat-confirmation</source>
-		<translation>O histórico do chat será removido do seu dispositivo. Depois de voltar você não será capaz de recuperar seu histórico.</translation>
+		<translation>채팅 기록이 기기에서 삭제됩니다. 다시 채팅 기록을 검색할 수 없습니다.</translation>
 	</message>
 	<message>
 		<source>group-chat-all-contacts-invited</source>
-		<translation>Todos os seus contatos já estão no grupo</translation>
+		<translation>이미 모든 연락처가 그룹에 있습니다.</translation>
 	</message>
 	<message>
 		<source>group-info</source>
-		<translation>Informações do grupo</translation>
+		<translation>그룹 정보</translation>
 	</message>
 	<message>
 		<source>gwei</source>
@@ -2392,92 +2382,91 @@ Convide seus amigos para começar a conversar.</translation>
 	</message>
 	<message>
 		<source>hash</source>
-		<translation>Hash</translation>
+		<translation>해시값</translation>
 	</message>
 	<message>
 		<source>help</source>
-		<translation>ajuda</translation>
+		<translation>도움말</translation>
 	</message>
 	<message>
 		<source>help-capitalized</source>
-		<translation>Ajuda</translation>
+		<translation>도움말</translation>
 	</message>
 	<message>
 		<source>help-center</source>
-		<translation>Centro de ajuda</translation>
+		<translation>도움말 센터</translation>
 	</message>
 	<message>
 		<source>hide-content-when-switching-apps</source>
-		<translation>Bloquear capturas de tela</translation>
+		<translation>화면 캡처 차단</translation>
 	</message>
 	<message>
 		<source>hide-content-when-switching-apps-ios</source>
-		<translation>Ocultar visualização</translation>
+		<translation>미리보기 숨기기</translation>
 	</message>
 	<message>
 		<source>history</source>
-		<translation>Histórico</translation>
+		<translation>기록</translation>
 	</message>
 	<message>
 		<source>history-nodes</source>
-		<translation>Nós de mensagem da Status</translation>
+		<translation>스테이터스 노드</translation>
 	</message>
 	<message>
 		<source>hold-card</source>
-		<translation>Segure o cartão na parte de trás 
- do seu telefone</translation>
+		<translation>카드를 휴대전화 뒷면에 위치해주세요</translation>
 	</message>
 	<message>
 		<source>home</source>
-		<translation>Início</translation>
+		<translation>홈</translation>
 	</message>
 	<message>
 		<source>hooks</source>
-		<translation>Hooks</translation>
+		<translation>후크 (Hooks)</translation>
 	</message>
 	<message>
 		<source>identifier</source>
-		<translation>Identificador</translation>
+		<translation>식별자</translation>
 	</message>
 	<message>
 		<source>image-remove-current</source>
-		<translation>Remover foto atual</translation>
+		<translation>현재 사진 삭제</translation>
 	</message>
 	<message>
 		<source>image-source-gallery</source>
-		<translation>Escolher na galeria</translation>
+		<translation>갤러리에서 선택하기</translation>
 	</message>
 	<message>
 		<source>image-source-make-photo</source>
-		<translation>Tirar foto</translation>
+		<translation>촬영</translation>
 	</message>
 	<message>
 		<source>image-source-title</source>
-		<translation>Editar imagem</translation>
+		<translation>사진 편집</translation>
 	</message>
 	<message>
 		<source>profile-pic-take</source>
-		<translation>Tirar foto</translation>
+		<translation>사진 촬영</translation>
 	</message>
 	<message>
 		<source>profile-pic-pick</source>
-		<translation>Escolher na galeria</translation>
+		<translation>갤러리에서 선택</translation>
 	</message>
 	<message>
 		<source>profile-pic-remove</source>
-		<translation>Remover foto</translation>
+		<translation>사진 삭제</translation>
 	</message>
 	<message>
 		<source>in-contacts</source>
-		<translation>Em contatos</translation>
+		<translation>연락처에 등록되어 있습니다</translation>
 	</message>
 	<message>
 		<source>incoming</source>
-		<translation>Recebidos</translation>
+		<translation>입금</translation>
 	</message>
 	<message>
 		<source>incoming-transaction</source>
-		<translation>Transação recebida</translation>
+		<translation>입금 트랜잭션</translation>
 	</message>
 	<message>
 		<source>incorrect-code::0</source>
@@ -2485,636 +2474,635 @@ Convide seus amigos para começar a conversar.</translation>
 	</message>
 	<message>
 		<source>incorrect-code::1</source>
-		<translation>Desculpe, o código estava incorreto. Por favor, digite novamente</translation>
+		<translation>잘못된 코드입니다. 다시 입력해 주세요</translation>
 	</message>
 	<message>
 		<source>initialization</source>
-		<translation>Inicialização</translation>
+		<translation>초기화</translation>
 	</message>
 	<message>
 		<source>install</source>
-		<translation>Instalar</translation>
+		<translation>↓ 설치</translation>
 	</message>
 	<message>
 		<source>intro-message1</source>
-		<translation>Bem-vindo ao Status
-Toque nesta mensagem para definir sua senha e começar!</translation>
+		<translation>스테이터스에 오신 것을 환영합니다!
+이 메시지를 탭하여 비밀번호를 설정하고 시작하세요.</translation>
 	</message>
 	<message>
 		<source>intro-privacy-policy-note1</source>
-		<translation>O Status não coleta ou lucra com seus dados pessoais. Ao continuar, você concorda com a </translation>
+		<translation>스테이터스는 절대로 개인 정보를 수집, 공유 및 판매하지 않습니다. 계속하면 다음에 동의하는 것으로 간주됩니다: </translation>
 	</message>
 	<message>
 		<source>intro-privacy-policy-note2</source>
-		<translation>política de privacidade</translation>
+		<translation>개인 정보 정책</translation>
 	</message>
 	<message>
 		<source>intro-text</source>
-		<translation>Status é a sua porta de entrada para a web descentralizada</translation>
+		<translation>스테이터스는 탈중앙 웹으로 향하는 첫걸음입니다</translation>
 	</message>
 	<message>
 		<source>intro-text1</source>
-		<translation>Converse em uma rede criptografada ponto a ponto, onde as mensagens não podem ser censuradas ou invadidas</translation>
+		<translation>검열과 해킹으로부터 자유로운 P2P 네트워크로 자유롭게 채팅하세요</translation>
 	</message>
 	<message>
 		<source>intro-text2</source>
-		<translation>Envie e receba ativos digitais em qualquer lugar do mundo - não é necessária uma conta bancária</translation>
+		<translation>전세계 어디서든 디지털 자산을 주고 받을 수 있습니다. 은행 계좌가 필요하지 않습니다</translation>
 	</message>
 	<message>
 		<source>intro-text3</source>
-		<translation>Explore jogos, trocas e redes sociais onde só você é o proprietário dos seus dados</translation>
+		<translation>여러분의 데이터를 안전하게 지키는 게임, 거래소, SNS를 체험해보세요</translation>
 	</message>
 	<message>
 		<source>intro-title1</source>
-		<translation>Comunicação verdadeiramente privada</translation>
+		<translation>검열 없는 안전한 커뮤니케이션</translation>
 	</message>
 	<message>
 		<source>intro-title2</source>
-		<translation>Carteira criptográfica segura</translation>
+		<translation>안전한 암호화폐 지갑</translation>
 	</message>
 	<message>
 		<source>intro-title3</source>
-		<translation>Aplicativos descentralizados</translation>
+		<translation>탈중앙 앱</translation>
 	</message>
 	<message>
 		<source>intro-wizard-text1</source>
-		<translation>Um conjunto de chaves controla sua conta. Suas chaves estão no seu telefone, então somente você pode usá-las</translation>
+		<translation>키는 사용자의 스마트폰에 저장됩니다. 저장된 키가 스테이터스 계정을 관리합니다.</translation>
 	</message>
 	<message>
 		<source>intro-wizard-text2</source>
-		<translation>Uma chave é para o bate-papo. Ela vem com um nome legível que não pode ser alterado.</translation>
+		<translation>키 하나는 채팅 이름으로 사용합니다. 읽을 수 있는 이름이며, 앞으로 변경할 수 없습니다.</translation>
 	</message>
 	<message>
 		<source>intro-wizard-text3</source>
-		<translation>Se você possui um Keycard, armazene suas chaves nele para maior segurança.</translation>
+		<translation>키카드를 보유하고 있다면, 더욱 안전한 보안을 위해 키카드에 키를 저장하세요.</translation>
 	</message>
 	<message>
 		<source>intro-wizard-text4</source>
-		<translation>Proteja e criptografe suas chaves</translation>
+		<translation>키 보안 및 암호화</translation>
 	</message>
 	<message>
 		<source>intro-wizard-text6</source>
-		<translation>O Status notificará você sobre novas mensagens. Você pode editar suas preferências de notificação mais tarde nas configurações</translation>
+		<translation>스테이터스는 새로운 메시지를 수신하면 사용자에게 알림을 전달합니다. 사용자는 추후에 설정에서 알림 옵션을 변경할 수 있습니다.</translation>
 	</message>
 	<message>
 		<source>intro-wizard-title-alt4</source>
-		<translation>Crie uma senha</translation>
+		<translation>비밀번호 만들기</translation>
 	</message>
 	<message>
 		<source>intro-wizard-title-alt5</source>
-		<translation>Confirme sua senha</translation>
+		<translation>비밀번호 확인</translation>
 	</message>
 	<message>
 		<source>intro-wizard-title1</source>
-		<translation>Obtenha suas chaves</translation>
+		<translation>키 생성하기</translation>
 	</message>
 	<message>
 		<source>intro-wizard-title2</source>
-		<translation>Escolha um nome de bate-papo</translation>
+		<translation>채팅 이름 선택</translation>
 	</message>
 	<message>
 		<source>intro-wizard-title3</source>
-		<translation>Escolha o armazenamento de chaves</translation>
+		<translation>키 저장소 선택</translation>
 	</message>
 	<message>
 		<source>intro-wizard-title4</source>
-		<translation>Crie uma senha de 6 dígitos</translation>
+		<translation>6자리 패스코드 만들기</translation>
 	</message>
 	<message>
 		<source>intro-wizard-title5</source>
-		<translation>Confirme a senha</translation>
+		<translation>패스코드 확인</translation>
 	</message>
 	<message>
 		<source>intro-wizard-title6</source>
-		<translation>Ativar notificações</translation>
+		<translation>알림 사용</translation>
 	</message>
 	<message>
 		<source>are-you-sure-to-cancel</source>
-		<translation>Você tem certeza que deseja cancelar?</translation>
+		<translation>취소하시겠습니까?</translation>
 	</message>
 	<message>
 		<source>you-will-start-from-scratch</source>
-		<translation>Você começará do zero com um novo conjunto de chaves</translation>
+		<translation>처음부터 새로운 키로 다시 시작합니다</translation>
 	</message>
 	<message>
 		<source>invalid-address-qr-code</source>
-		<translation>O código QR escaneado não contém um endereço válido</translation>
+		<translation>스캔한 QR 코드에 유효한 주소가 포함되어 있지 않습니다</translation>
 	</message>
 	<message>
 		<source>invalid-format</source>
-		<translation>Formato Inválido 
- Deve ser {{format}}</translation>
+		<translation>잘못된 형식
+{{format}} 이어야 합니다</translation>
 	</message>
 	<message>
 		<source>invalid-key-confirm</source>
-		<translation>Aplicar</translation>
+		<translation>적용</translation>
 	</message>
 	<message>
 		<source>invalid-key-content</source>
-		<translation>O banco de dados não pode ser criptografado porque um arquivo está corrompido. Seus fundos e a chave de bate-papo estão seguros. Outros dados, como suas conversas e contatos, não podem ser restaurados. O botão &quot;{{erase-multiaccounts-data-button-text}}&quot; removerá todos os outros dados e permitirá que você acesse seus fundos e envie mensagens</translation>
+		<translation>파일이 손상되어 데이터베이스를 암호화할 수 없습니다. 자산과 채팅 키는 안전하지만, 채팅과 연락처 같은 데이터는 복구될 수 없습니다. &quot;{{erase-multiaccounts-data-button-text}}&quot; 버튼으로 다른 모든 데이터를 삭제하고, 기존 자산 접근과 메시지 전송을 그대로 이용하세요</translation>
 	</message>
 	<message>
 		<source>invalid-number</source>
-		<translation>Número inválido</translation>
+		<translation>잘못된 숫자</translation>
 	</message>
 	<message>
 		<source>invalid-pairing-password</source>
-		<translation>Senha de emparelhamento inválida</translation>
+		<translation>잘못된 페어링 비밀번호</translation>
 	</message>
 	<message>
 		<source>invalid-range</source>
-		<translation>Formato inválido, deve estar entre {{min}} e {{max}}</translation>
+		<translation>잘못된 형식, {{min}} ~ {{max}} 사이 여야합니다</translation>
 	</message>
 	<message>
 		<source>invalid-username-or-key</source>
-		<translation>Nome de usuário ou chave de bate-papo inválida</translation>
+		<translation>잘못된 사용자 이름 또는 채팅 키</translation>
 	</message>
 	<message>
 		<source>join-me</source>
-		<translation>Junte-se a mim no Status: {{url}}</translation>
+		<translation>스테이터스에서 만나요: {{url}}</translation>
 	</message>
 	<message>
 		<source>join-a-community</source>
-		<translation>ou junte-se a uma comunidade</translation>
+		<translation>또는 커뮤니티에 참여</translation>
 	</message>
 	<message>
 		<source>http-gateway-error</source>
-		<translation>Opa, falha na solicitação!</translation>
+		<translation>죄송합니다. 요청이 실패했습니다!</translation>
 	</message>
 	<message>
 		<source>sign-request-failed</source>
-		<translation>Não foi possível assinar a mensagem</translation>
+		<translation>메시지에 서명할 수 없습니다</translation>
 	</message>
 	<message>
 		<source>invite-friends</source>
-		<translation>Convide amigos</translation>
+		<translation>친구 초대</translation>
 	</message>
 	<message>
 		<source>invite-people</source>
-		<translation>Convide pessoas</translation>
+		<translation>친구 초대</translation>
 	</message>
 	<message>
 		<source>invite-reward</source>
-		<translation>Ganhe criptomoedas para cada amigo que você convidar!</translation>
+		<translation>친구를 초대하고 암호화폐를 받아보세요!</translation>
 	</message>
 	<message>
 		<source>invite-select-account</source>
-		<translation>Selecione uma conta para receber o seu bônus de indicação</translation>
+		<translation>초대 보너스를 받을 계정 선택</translation>
 	</message>
 	<message>
 		<source>invited</source>
-		<translation>convidou</translation>
+		<translation>초대됨</translation>
 	</message>
 	<message>
 		<source>invite-button</source>
-		<translation>Convidar</translation>
+		<translation>초대</translation>
 	</message>
 	<message>
 		<source>invite-receive-account</source>
-		<translation>Conta para receber o seu bônus de indicação</translation>
+		<translation>초대 보너스를 받을 계정</translation>
 	</message>
 	<message>
 		<source>how-it-works</source>
-		<translation>Como funciona</translation>
+		<translation>어떻게 시작하나요?</translation>
 	</message>
 	<message>
 		<source>invite-warning</source>
-		<translation>Esta promoção é válida apenas para usuários de um dispositivo Android, que não sejam residentes dos EUA. O amigo precisa confirmar a indicação dentro de 7 dias</translation>
+		<translation>이 프로모션은 미국 거주자가 아니며 안드로이드 기기를 사용하는 유저에게만 유효합니다. 초대받은 친구는 7일 이내로 초대를 확인해야 합니다</translation>
 	</message>
 	<message>
 		<source>invite-instruction-first</source>
-		<translation>Você envia um link de convite exclusivo para seu amigo fazer o download e entrar no Status</translation>
+		<translation>친구가 스테이터스를 다운로드하고 사용할 수 있도록 특별 초대 링크를 보내세요</translation>
 	</message>
 	<message>
 		<source>invite-instruction-second</source>
-		<translation>Seu amigo baixa o Status e cria uma conta (no Android)</translation>
+		<translation>친구는 스테이터스를 다운로드하고 계정을 만듭니다 (안드로이드만 가능)</translation>
 	</message>
 	<message>
 		<source>invite-instruction-third</source>
-		<translation>É iniciada uma conversa com seu amigo, onde ele confirma sua indicação</translation>
+		<translation>초대가 확인되면 친구와의 채팅이 시작됩니다.</translation>
 	</message>
 	<message>
 		<source>invite-instruction-fourth</source>
-		<translation>Você recebe seu bônus de indicação e seu amigo recebe o Pacote inicial</translation>
+		<translation>사용자는 초대 보너스를, 친구는 스타터 팩을 받게 됩니다</translation>
 	</message>
 	<message>
 		<source>invite-instruction-fifth</source>
-		<translation>Você pode optar por resgatar seu bônus de indicação a qualquer momento.</translation>
+		<translation>초대 보너스는 언제든지 환급 가능합니다.</translation>
 	</message>
 	<message>
 		<source>invite-reward-you</source>
-		<translation>Você: </translation>
+		<translation>사용자: </translation>
 	</message>
 	<message>
 		<source>invite-reward-you-name</source>
-		<translation>Bônus de indicação</translation>
+		<translation>초대 보너스</translation>
 	</message>
 	<message>
 		<source>invite-reward-you-description</source>
-		<translation>Convide um amigo e receba {{reward}} como bônus pela indicação. Utilize para comprar adesivos, um nome ENS e testar alguns DApps.</translation>
+		<translation>친구를 초대하고 {{reward}} 초대 보너스를 받아보세요! 받은 보너스로 스테이터스에서 이모티콘을 구입하거나, ENS 이름 등록 및 디앱에 활용할 수 있습니다</translation>
 	</message>
 	<message>
 		<source>invite-reward-friend</source>
-		<translation>Amigo:</translation>
+		<translation>친구: </translation>
 	</message>
 	<message>
 		<source>invite-reward-friend-name</source>
-		<translation>Pacote Inicial</translation>
+		<translation>스타터 팩</translation>
 	</message>
 	<message>
 		<source>invite-reward-friend-description</source>
-		<translation>Seu amigo receberá um Pacote Inicial que consiste em {{reward}} para começar</translation>
+		<translation>친구는 {{reward}}로 구성된 스테이터스 스타터 팩을 받고, 스테이터스를 시작합니다</translation>
 	</message>
 	<message>
 		<source>invite-privacy-policy1</source>
-		<translation>Ao aceitar você concorda com o programa de indicação</translation>
+		<translation>수락을 누르면 초대 프로그램 약관에 동의하는 것으로 간주됩니다.</translation>
 	</message>
 	<message>
 		<source>invite-privacy-policy2</source>
-		<translation>Termos e Condições.</translation>
+		<translation>이용 약관.</translation>
 	</message>
 	<message>
 		<source>invite-privacy-policy-public</source>
-		<translation>Você instalou o Status por meio de um link de indicação. Ao entrar nesta conversa, você confirma seu referenciador e concorda com os</translation>
+		<translation>초대 링크를 통해 스테이터스를 설치했습니다. 이 채팅에 참여하면 추천인에게 보상을 제공하고 다음에 동의하는 것으로 간주됩니다</translation>
 	</message>
 	<message>
 		<source>invite-chat-name</source>
-		<translation>Indicação de amigo</translation>
+		<translation>친구 초대</translation>
 	</message>
 	<message>
 		<source>invite-chat-starter-pack</source>
-		<translation>Pacote Inicial</translation>
+		<translation>스타터 팩</translation>
 	</message>
 	<message>
 		<source>invite-chat-intro</source>
-		<translation>Você foi indicado por um amigo para participar do Status. Aqui estão algumas criptomoedas para você começar! Use-as para cadastrar um nome ENS ou comprar um pacote de adesivos</translation>
+		<translation>친구가 스테이터스로 초대했습니다. 여러분의 시작을 도울 암호화폐가 준비되어 있습니다! SNT를 통해 ENS 이름을 등록하거나 이모티콘을 구매해보세요</translation>
 	</message>
 	<message>
 		<source>invite-public-chat-home</source>
-		<translation>Convite de indicação</translation>
+		<translation>추천 초대</translation>
 	</message>
 	<message>
 		<source>invite-public-chat-intro</source>
-		<translation>Aqui estão algumas criptomoedas para você começar! Use-as para registrar um nome ENS ou comprar um pacote de adesivos</translation>
+		<translation>스테이터스 사용에 도움이 될 암호화폐입니다! ENS 이름을 등록하거나 이모티콘 패키지를 구입해보세요</translation>
 	</message>
 	<message>
 		<source>invite-chat-accept</source>
-		<translation>Aceitar</translation>
+		<translation>수락</translation>
 	</message>
 	<message>
 		<source>invite-chat-pending</source>
-		<translation>Pendente</translation>
+		<translation>대기 중</translation>
 	</message>
 	<message>
 		<source>invite-chat-accept-join</source>
-		<translation>Aceitar e participar</translation>
+		<translation>수락 및 참여</translation>
 	</message>
 	<message>
 		<source>invite-chat-rule</source>
-		<translation>Aceitar também recompensará o seu amigo com um bônus de criptomoeda pela indicação</translation>
+		<translation>수락하면 사용자의 친구는 암호화폐로 초대 보너스를 받게 됩니다</translation>
 	</message>
 	<message>
 		<source>redeem-now</source>
-		<translation>Resgatar agora</translation>
+		<translation>보너스 받기</translation>
 	</message>
 	<message>
 		<source>redeem-amount</source>
-		<translation>{{quantity}} bônus disponíveis</translation>
+		<translation>{{quantity}} 보너스 수령 가능</translation>
 	</message>
 	<message>
 		<source>redeem-success</source>
-		<translation>Resgate de bônus com sucesso!</translation>
+		<translation>성공적으로 보너스를 받았습니다!</translation>
 	</message>
 	<message>
 		<source>attribution-received</source>
-		<translation>{{attrib}} de {{max}} bônus recebidos</translation>
+		<translation>총 {{max}}개 중 {{attrib}}개 보너스 받음</translation>
 	</message>
 	<message>
 		<source>advertiser-starter-pack-title</source>
-		<translation>Pacote Inicial</translation>
+		<translation>스타터 팩</translation>
 	</message>
 	<message>
 		<source>advertiser-starter-pack-description</source>
-		<translation>Aqui estão algumas criptografias para você começar! Use-as para obter adesivos, um nome ENS e experimentar os dapps</translation>
+		<translation>스테이터스를 시작하는 데 도움이 될 암호화폐입니다! SNT를 활용하여 이모티콘을 구입하고, ENS 이름을 등록하거나 디앱을 사용해보세요</translation>
 	</message>
 	<message>
 		<source>advertiser-title</source>
-		<translation>Privacidade por padrão</translation>
+		<translation>개인 정보 보호</translation>
 	</message>
 	<message>
 		<source>advertiser-description</source>
-		<translation>Você descobriu o Status graças a um parceiro. Você se importa se o Status verificar seu endereço IP uma vez para que ele seja recompensado? Esta informação não será usada para mais nada e será removida completamente após 7 dias.</translation>
+		<translation>친구의 초대로 스테이터스에 입문하셨습니다. 스테이터스가 귀하의 IP를 한 번만 확인하여 보상을 진행해도 괜찮을까요? 이 정보는 다른 용도로 절대 사용되지 않으며, 7일 후에 완전히 삭제됩니다.</translation>
 	</message>
 	<message>
 		<source>advertiser-starter-pack-accept</source>
-		<translation>Aceitar</translation>
+		<translation>수락</translation>
 	</message>
 	<message>
 		<source>advertiser-starter-pack-decline</source>
-		<translation>Recusar</translation>
+		<translation>거절</translation>
 	</message>
 	<message>
 		<source>dapp-starter-pack-title</source>
-		<translation>Pacote Inicial</translation>
+		<translation>스타터 팩</translation>
 	</message>
 	<message>
 		<source>dapp-starter-pack-description</source>
-		<translation>Aqui estão algumas criptografias para você começar! Use-o para obter adesivos, um nome ENS e experimente os dapps</translation>
+		<translation>스테이터스를 시작하는 데 도움이 될 암호화폐입니다! SNT를 활용하여 이모티콘을 구입하고, ENS 이름을 등록하거나 디앱을 브라우징해보세요</translation>
 	</message>
 	<message>
 		<source>dapp-starter-pack-accept</source>
-		<translation>Aceitar e Abrir</translation>
+		<translation>동의하고 열기</translation>
 	</message>
 	<message>
 		<source>starter-pack-coming</source>
-		<translation>Pacote de iniciante vindo até você</translation>
+		<translation>곧 스타터 팩이 지급됩니다</translation>
 	</message>
 	<message>
 		<source>starter-pack-coming-description</source>
-		<translation>Pode levar de alguns minutos a horas</translation>
+		<translation>몇 분에서 몇 시간이 걸릴 수 있습니다</translation>
 	</message>
 	<message>
 		<source>starter-pack-received</source>
-		<translation>Pacote inicial recebido</translation>
+		<translation>스타터 팩을 받았습니다</translation>
 	</message>
 	<message>
 		<source>starter-pack-received-description</source>
-		<translation>Aqui estão algumas criptomoedas para você começar! Use-as para obter adesivos, um nome ENS e testar alguns dapps</translation>
+		<translation>스테이터스를 시작하는 데 도움이 될 암호화폐입니다! SNT를 활용하여 이모티콘을 구입하고, ENS 이름을 등록하거나 디앱을 사용해보세요</translation>
 	</message>
 	<message>
 		<source>join-group-chat</source>
-		<translation>Acessar grupo</translation>
+		<translation>그룹 참여</translation>
 	</message>
 	<message>
 		<source>join-group-chat-description</source>
-		<translation>{{username}} convidou você para ingressar no grupo {{group-name}}</translation>
+		<translation>{{username}} 님이 {{group-name}} 그룹에 초대</translation>
 	</message>
 	<message>
 		<source>joined-group-chat-description</source>
-		<translation>Você ingressou no {{group-name}} por convite de {{username}}</translation>
+		<translation>{{username}} 님의 초대로 {{group-name}} 에 입장했습니다</translation>
 	</message>
 	<message>
 		<source>key</source>
-		<translation>Chave</translation>
+		<translation>키</translation>
 	</message>
 	<message>
 		<source>keycard</source>
-		<translation>Keycard</translation>
+		<translation>키카드</translation>
 	</message>
 	<message>
 		<source>keycard-access-reset</source>
-		<translation>O acesso ao Keycard foi redefinido</translation>
+		<translation>키카드 접근 권한이 초기화되었습니다</translation>
 	</message>
 	<message>
 		<source>keycard-can-use-with-new-passcode</source>
-		<translation>Você pode usar este cartão com sua nova senha</translation>
+		<translation>새 패스코드로 이 카드를 사용할 수 있습니다.</translation>
 	</message>
 	<message>
 		<source>keycard-applet-install-instructions</source>
-		<translation>Para instalar o applet, siga as instruções em https://github.com/status-im/keycard-cli#keycard-applet-installation</translation>
+		<translation>애플릿을 설치하려면 https://github.com/status-im/keycard-cli#keycard-applet-installation 를 확인해주세요</translation>
 	</message>
 	<message>
 		<source>keycard-blocked</source>
-		<translation>O keycard foi bloqueado. 
-Você precisa redefinir o cartão para continuar usando.</translation>
+		<translation>키카드가 차단되었습니다. 
+계속 사용하려면 카드를 재설정해야 합니다.</translation>
 	</message>
 	<message>
 		<source>keycard-cancel-setup-text</source>
-		<translation>Isso cancelará a configuração do Keycard. É altamente recomendável concluir a configuração para usar o keycard. Deseja mesmo cancelar?</translation>
+		<translation>키카드 설치가 취소됩니다. 키카드를 사용하려면 설치를 완료해야 합니다. 설치를 취소하시겠습니까?</translation>
 	</message>
 	<message>
 		<source>keycard-cancel-setup-title</source>
-		<translation>Operação perigosa</translation>
+		<translation>위험한 작업</translation>
 	</message>
 	<message>
 		<source>keycard-desc</source>
-		<translation>Tem um Keycard? Armazene suas chaves nele. Você precisará delas para as transações</translation>
+		<translation>키카드를 보유하고 계신가요? 트랜잭션에 사용할 키를 키카드에 저장하세요</translation>
 	</message>
 	<message>
 		<source>keycard-dont-ask-card</source>
-		<translation>Não peça o cartão para entrar</translation>
+		<translation>로그인 시 카드 요청 안함</translation>
 	</message>
 	<message>
 		<source>keycard-reset-passcode</source>
-		<translation>Redefinir senha</translation>
+		<translation>패스코드 재설정</translation>
 	</message>
 	<message>
 		<source>keycard-factory-reset</source>
-		<translation>Retornar cartão para as configurações de fábrica</translation>
+		<translation>공장 설정으로 카드 초기화</translation>
 	</message>
 	<message>
 		<source>keycard-factory-reset-title</source>
-		<translation>Tem certeza de que deseja redefinir os padrões de fábrica?</translation>
+		<translation>공장 초기화를 진행하시겠습니까?</translation>
 	</message>
 	<message>
 		<source>keycard-factory-reset-text</source>
-		<translation>Fazer isso excluirá qualquer frase mnemônica armazenada no cartão. Certifique-se de ter um backup da frase mnemônica que está usando com este Keycard.</translation>
+		<translation>카드에 저장된 모든 니모닉 구문이 삭제됩니다. 이 키카드와 함께 사용했던 니모닉 구문의 백업이 있는지 확인해주세요.</translation>
 	</message>
 	<message>
 		<source>keycard-enter-new-passcode</source>
-		<translation>Digite a nova senha {{step}} / 2</translation>
+		<translation>새 패스코드 입력 {{step}} / 2</translation>
 	</message>
 	<message>
 		<source>keycard-has-multiaccount-on-it</source>
-		<translation>Este cartão está cheio. Cada cartão pode conter um par de chaves principal</translation>
+		<translation>카드가 이미 가득 찼습니다. 카드는 하나의 키 쌍을 보유할 수 있습니다.</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-finishing-header</source>
-		<translation>Finalizando</translation>
+		<translation>마무리 작업 진행 중</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-intro-header</source>
-		<translation>Armazene suas chaves no Keycard</translation>
+		<translation>키카드에 키를 저장하세요</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-intro-text</source>
-		<translation>Prepare-se, isso pode levar alguns minutos, mas é importante proteger sua conta</translation>
+		<translation>이 작업은 몇 분 정도 소요되며, 여러분의 계정을 안전하게 보호하기 위해 중요한 작업입니다.</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-pairing-header</source>
-		<translation>Emparelhando o cartão...</translation>
+		<translation>카드 페어링 중...</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-preparing-header</source>
-		<translation>Preparando o cartão...</translation>
+		<translation>카드 준비 중...</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-puk-code-header</source>
-		<translation>Anote os códigos e
- guarde de forma segura</translation>
+		<translation>메모하신 후 
+ 안전한 장소에 보관해주세요</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-recovery-phrase-description</source>
-		<translation>Você precisa dessa frase-semente para recuperar sua chave. Anote e mantenha sua frase-semente offline em segurança, separada deste dispositivo.</translation>
+		<translation>이 시드 구문 단어들을 통해 계정을 복구할 수 있습니다. 이 단어들을 오프라인상에 안전하게 보관하시길 바랍니다.</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-recovery-phrase-header</source>
-		<translation>Fazer backup da frase-semente</translation>
+		<translation>시드 구문을 백업하세요</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-recovery-phrase-text</source>
-		<translation>Somente para você ver. Esta é a frase-semente mágica usada para gerar sua chave.</translation>
+		<translation>이 시드 단어들은 사용자 키를 생성하는 데 사용됩니다. 이 단어들을 타인에게 공유하면 안됩니다.</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-start-header</source>
-		<translation>Segure o cartão na parte de trás 
- do seu telefone para começar</translation>
+		<translation>스마트폰 뒷면에 
+ 카드를 대주세요</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-pin-text</source>
-		<translation>Você precisará criar uma senha de 6 dígitos que será usada para proteger o acesso ao seu Keycard.</translation>
+		<translation>키카드에 대한 액세스를 보호하기 위한 6자리 패스코드를 생성해야 합니다.</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-mnemonic-text</source>
-		<translation>Você também precisará de um pedaço de papel e um lápis para escrever sua frase-semente.</translation>
+		<translation>또한 시드 구문을 적을 종이와 연필이 필요합니다.</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-start-step1</source>
-		<translation>Crie uma senha</translation>
+		<translation>패스코드 생성</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-start-step1-text</source>
-		<translation>Em torno de 1 minuto. Crie uma senha de 6 dígitos para criptografar suas chaves</translation>
+		<translation>키를 암호화하기 위한 6자리 패스코드 생성. 코드 생성에는 약 1분 정도 소요됩니다.</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-start-step2</source>
-		<translation>Anote o PUK e o código de emparelhamento</translation>
+		<translation>PUK 와 페어링 코드를 메모해주세요</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-start-step2-text</source>
-		<translation>Em torno de 1 minuto. Você vai precisar de um pedaço de papel e um lápis para isso</translation>
+		<translation>메모를 위해 필기도구가 필요할 수 있습니다. 메모에는 1분 정도 시간이 소요됩니다</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-start-step3</source>
-		<translation>Faça backup da frase-semente</translation>
+		<translation>시드 구문을 백업하세요</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-start-step3-text</source>
-		<translation>Em torno de 1 minuto. Também são necessários um pedaço de papel e um lápis</translation>
+		<translation>메모를 위한 필기도구를 준비해 주세요. 메모는 1분 정도 시간이 소요됩니다</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-start-text</source>
-		<translation>E mantenha o cartão em contato com o telefone
- durante a configuração. A configuração levará cerca de 4 minutos</translation>
+		<translation>설치하는 동안 카드를 스마트폰과 접촉된 상태로 유지해주세요. 설치 과정은 약 4분 정도 소요됩니다</translation>
 	</message>
 	<message>
 		<source>keycard-recovery-intro-button-text</source>
-		<translation>Iniciar a recuperação</translation>
+		<translation>복구 시작</translation>
 	</message>
 	<message>
 		<source>keycard-recovery-intro-header</source>
-		<translation>Recuperar chaves armazenadas no keycard</translation>
+		<translation>키카드에 저장된 키 복구하기</translation>
 	</message>
 	<message>
 		<source>keycard-recovery-intro-text</source>
-		<translation>Se você gerou chaves usando um keycard antes e agora quer usar estas chaves neste dispositivo</translation>
+		<translation>이전에 키카드로 키를 생성했고, 지금 이 기기에서 해당 키를 사용하려는 경우</translation>
 	</message>
 	<message>
 		<source>keycard-recovery-no-key-header</source>
-		<translation>Não há nada para 
- recuperar aqui.</translation>
+		<translation>복구할 대상이
+없습니다</translation>
 	</message>
 	<message>
 		<source>keycard-recovery-no-key-text</source>
-		<translation>Seu Keycard não tem nenhuma chave armazenada. Para usá-lo, gere uma nova chave e escolha seu Keycard para armazenar a chave</translation>
+		<translation>이 키카드에는 키가 저장되어 있지 않습니다. 새로운 키를 생성하고 키카드에 키를 저장해주세요</translation>
 	</message>
 	<message>
 		<source>keycard-recovery-phrase-confirm-header</source>
-		<translation>Confirmar frase-semente</translation>
+		<translation>시드 구문 확인</translation>
 	</message>
 	<message>
 		<source>keycard-recovery-phrase-confirmation-text</source>
-		<translation>Você não terá uma segunda chance! Se você perder o acesso, por exemplo ao perder seu keycard, só poderá acessar suas chaves com sua frase-semente. Somente você tem sua frase-semente. Anote e mantenha sua frase-semente em segurança.</translation>
+		<translation>두 번째 기회는 없습니다! 키카드를 분실하여 접근 권한을 손실하면, 시드 구문으로만 계정에 접근할 수 있습니다. 오로지 여러분만이 이 시드 구문을 관리할 수 있습니다. 반드시 안전하게 백업하시기 바랍니다.</translation>
 	</message>
 	<message>
 		<source>keycard-recovery-phrase-confirmation-title</source>
-		<translation>Anotou a frase-semente?</translation>
+		<translation>시드 구문을 모두 메모하셨나요?</translation>
 	</message>
 	<message>
 		<source>keycard-recovery-success-header</source>
-		<translation>Suas chaves foram 
- recuperadas com sucesso</translation>
+		<translation>키가 성공적으로
+ 복구되었습니다</translation>
 	</message>
 	<message>
 		<source>keycard-redeem-title</source>
-		<translation>Resgatar para</translation>
+		<translation>수령 위치</translation>
 	</message>
 	<message>
 		<source>keycard-redeem-tx</source>
-		<translation>Resgatar bens</translation>
+		<translation>자산 입금</translation>
 	</message>
 	<message>
 		<source>keycard-redeem-tx-desc</source>
-		<translation>Toque no cartão para assinar e receber bens</translation>
+		<translation>카드를 탭하여 서명하고, 자산을 수령하세요</translation>
 	</message>
 	<message>
 		<source>keycard-unauthorized-operation</source>
-		<translation>Você não está autorizado a realizar esta operação. 
- Por favor, utilize o cartão válido e tente novamente.</translation>
+		<translation>이 작업을 수행할 권한이 없습니다.
+ 올바른 카드를 탭해 다시 시도하세요.</translation>
 	</message>
 	<message>
 		<source>keycard-is-frozen-title</source>
-		<translation>O Keycard travou</translation>
+		<translation>키카드가 잠겼습니다</translation>
 	</message>
 	<message>
 		<source>keycard-is-frozen-details</source>
-		<translation>Para proteger os seus bens, o seu cartão travou. Redefina o acesso ao cartão para desbloquear e enviar transações. Você pode fazer isso com seu PUK ou seu mnemônico.</translation>
+		<translation>자산을 지키기 위해 카드가 동결되었습니다. 계정에 접근하기 위한 카드 접근 권한을 재설정하고, 트랜잭션을 진행하시기 바랍니다. PUK 또는 니모닉으로 진행할 수 있습니다.</translation>
 	</message>
 	<message>
 		<source>keycard-is-frozen-reset</source>
-		<translation>Reiniciar com o PUK</translation>
+		<translation>PUK 재설정</translation>
 	</message>
 	<message>
 		<source>keycard-is-frozen-factory-reset</source>
-		<translation>Redefinir com mnemônica</translation>
+		<translation>니모닉으로 재설정</translation>
 	</message>
 	<message>
 		<source>your-card-is-frozen</source>
-		<translation>Seu Keycard travou. Redefinir acesso ao cartão</translation>
+		<translation>키카드가 잠겼습니다. 카드 접근 권한을 초기화하세요</translation>
 	</message>
 	<message>
 		<source>keycard-is-blocked-title</source>
-		<translation>O Keycard está bloqueado</translation>
+		<translation>키카드가 차단되었습니다</translation>
 	</message>
 	<message>
 		<source>keycard-is-blocked-details</source>
-		<translation>Você não pode mais usar este cartão para acessar ou assinar esta conta. Houve muitas tentativas falhas de senha e PUK.</translation>
+		<translation>이제 이 카드를 사용해 서명하거나 계정에 접근할 수 없습니다. 패스코드 및 PUK 접근 시도 실패 횟수가 너무 많습니다.</translation>
 	</message>
 	<message>
 		<source>keycard-is-blocked-instructions</source>
-		<translation>Para acessar sua conta, você precisará redefinir seu cartão para os padrões de fábrica. Toque no botão abaixo para iniciar o procedimento. Você precisará da sua frase-semente.</translation>
+		<translation>계정에 액세스하려면 카드를 공장 초기화해야 합니다. 아래 버튼을 탭해 진행하세요. 니모닉이 필요합니다.</translation>
 	</message>
 	<message>
 		<source>language</source>
-		<translation>Idioma</translation>
+		<translation>언어</translation>
 	</message>
 	<message>
 		<source>learn-more</source>
-		<translation>Saiba mais</translation>
+		<translation>더 알아보기</translation>
 	</message>
 	<message>
 		<source>learn-more-about-keycard</source>
-		<translation>Saiba mais sobre o Keycard </translation>
+		<translation>키카드에 대해 자세히 알아보기</translation>
 	</message>
 	<message>
 		<source>leave</source>
-		<translation>Sair</translation>
+		<translation>나가기</translation>
 	</message>
 	<message>
 		<source>joined</source>
-		<translation>Entrou</translation>
+		<translation>참여</translation>
 	</message>
 	<message>
 		<source>leave-group</source>
-		<translation>Sair do grupo</translation>
+		<translation>그룹 나가기</translation>
 	</message>
 	<message>
 		<source>left</source>
-		<translation>saiu</translation>
+		<translation>나감</translation>
 	</message>
 	<message>
 		<source>lets-go</source>
-		<translation>Vamos lá</translation>
+		<translation>시작하기</translation>
 	</message>
 	<message>
 		<source>les-ulc</source>
@@ -3122,100 +3110,99 @@ Você precisa redefinir o cartão para continuar usando.</translation>
 	</message>
 	<message>
 		<source>linked-on</source>
-		<translation>Vinculado em {{date}}</translation>
+		<translation>{{date}} 에 연결</translation>
 	</message>
 	<message>
 		<source>load-messages-before</source>
-		<translation>antes de {{date}}</translation>
+		<translation>{{date}} 전</translation>
 	</message>
 	<message>
 		<source>load-more-messages</source>
-		<translation>↓ Buscar mais mensagens</translation>
+		<translation>↓ 메시지 더 가져오기</translation>
 	</message>
 	<message>
 		<source>load-more-timeline</source>
-		<translation>↓ Buscar mais</translation>
+		<translation>↓ 더 가져오기</translation>
 	</message>
 	<message>
 		<source>loading</source>
-		<translation>Carregando...</translation>
+		<translation>로딩 중...</translation>
 	</message>
 	<message>
 		<source>log-level</source>
-		<translation>Nível de registro</translation>
+		<translation>로그 수준</translation>
 	</message>
 	<message>
 		<source>log-level-settings</source>
-		<translation>Configurações de nível de registro</translation>
+		<translation>로그 수준 설정</translation>
 	</message>
 	<message>
 		<source>logging</source>
-		<translation>Registro</translation>
+		<translation>로깅</translation>
 	</message>
 	<message>
 		<source>logging-enabled</source>
-		<translation>Registro ativado?</translation>
+		<translation>로깅을 활성화하시겠습니까?</translation>
 	</message>
 	<message>
 		<source>login-pin-description</source>
-		<translation>Digite seu código de acesso de 6 dígitos para desbloquear suas chaves</translation>
+		<translation>6자리 패스코드를 입력해 키를 해제하세요</translation>
 	</message>
 	<message>
 		<source>logout</source>
-		<translation>Sair</translation>
+		<translation>로그아웃</translation>
 	</message>
 	<message>
 		<source>logout-app-content</source>
-		<translation>A conta será desconectada. Quando você a desbloquear novamente, a rede selecionada será usada</translation>
+		<translation>계정에서 로그아웃힙니다. 다시 로그인하면 선택한 네트워크를 사용합니다</translation>
 	</message>
 	<message>
 		<source>logout-are-you-sure</source>
-		<translation>Você tem certeza que quer 
- sair?</translation>
+		<translation>로그아웃하시겠습니까?</translation>
 	</message>
 	<message>
 		<source>logout-title</source>
-		<translation>Sair?</translation>
+		<translation>로그아웃하시겠습니까?</translation>
 	</message>
 	<message>
 		<source>logout-key-management</source>
-		<translation>Você precisa se desconectar para acessar o gerenciamento de chaves.</translation>
+		<translation>키 관리에 액세스하려면 로그아웃해야 합니다.</translation>
 	</message>
 	<message>
 		<source>looking-for-cards</source>
-		<translation>Procurando cartões…</translation>
+		<translation>카드 검색 중...</translation>
 	</message>
 	<message>
 		<source>lost-connection</source>
-		<translation>Conexão perdida</translation>
+		<translation>연결 끊김</translation>
 	</message>
 	<message>
 		<source>mailserver-address</source>
-		<translation>Endereço do nó do Status</translation>
+		<translation>스테이터스 노드 주소</translation>
 	</message>
 	<message>
 		<source>mailserver-automatic</source>
-		<translation>Seleção automática</translation>
+		<translation>자동 선택</translation>
 	</message>
 	<message>
 		<source>mailserver-automatic-switch-explanation</source>
-		<translation>Escolha o nó da Status mais rápido disponível</translation>
+		<translation>가장 빠른 스테이터스 노드 선택</translation>
 	</message>
 	<message>
 		<source>mailserver-connection-error</source>
-		<translation>Não foi possível conectar ao nó do Status</translation>
+		<translation>Status 노드에 연결할 수 없습니다</translation>
 	</message>
 	<message>
 		<source>mailserver-details</source>
-		<translation>Detalhes do nó do Status</translation>
+		<translation>스테이터스 노드 세부 정보</translation>
 	</message>
 	<message>
 		<source>mailserver-error-content</source>
-		<translation>O nó do Status selecionado não pôde ser localizado.</translation>
+		<translation>선택한 스테이터스 노드에 연결할 수 없습니다.</translation>
 	</message>
 	<message>
 		<source>mailserver-error-title</source>
-		<translation>Erro ao conectar o nó do Status</translation>
+		<translation>스테이터스 노드에 연결하던 중 오류가 발생했습니다</translation>
 	</message>
 	<message>
 		<source>mailserver-format</source>
@@ -3223,458 +3210,455 @@ Você precisa redefinir o cartão para continuar usando.</translation>
 	</message>
 	<message>
 		<source>mailserver-pick-another</source>
-		<translation>Escolha outro nó do Status</translation>
+		<translation>다른 Status 노드 선택</translation>
 	</message>
 	<message>
 		<source>mailserver-reconnect</source>
-		<translation>Não foi possível conectar ao nó do Status. Toque para reconectar</translation>
+		<translation>스테이터스 노드에 연결할 수 없습니다. 화면을 터치하여 다시 연결하세요</translation>
 	</message>
 	<message>
 		<source>mailserver-request-error-content</source>
-		<translation>O seguinte erro foi retornado pelo nó do Status: {{error}}</translation>
+		<translation>스테이터스 노드가 다음 오류를 반환했습니다: {{error}}</translation>
 	</message>
 	<message>
 		<source>mailserver-request-error-status</source>
-		<translation>Um erro ocorreu ao buscar o histórico, verifique os registros para obter detalhes</translation>
+		<translation>기록을 가져 오던 중 오류가 발생했습니다. 자세한 내용은 로그를 확인해주세요</translation>
 	</message>
 	<message>
 		<source>mailserver-request-error-title</source>
-		<translation>Erro de comunicação com o nó da Status</translation>
+		<translation>스테이터스 노드 요청 오류</translation>
 	</message>
 	<message>
 		<source>mailserver-request-retry</source>
-		<translation>Solicitar nova tentativa</translation>
+		<translation>다시 요청</translation>
 	</message>
 	<message>
 		<source>mailserver-retry</source>
-		<translation>Tente novamente</translation>
+		<translation>다시 시도</translation>
 	</message>
 	<message>
 		<source>main-currency</source>
-		<translation>Moeda principal</translation>
+		<translation>주요 통화</translation>
 	</message>
 	<message>
 		<source>main-networks</source>
-		<translation>Redes principais</translation>
+		<translation>메인 네트워크</translation>
 	</message>
 	<message>
 		<source>main-wallet</source>
-		<translation>Carteira principal</translation>
+		<translation>내 지갑</translation>
 	</message>
 	<message>
 		<source>mainnet-network</source>
-		<translation>Rede principal</translation>
+		<translation>메인 네트워크</translation>
 	</message>
 	<message>
 		<source>make-admin</source>
-		<translation>Tornar-se administrador</translation>
+		<translation>관리자로 지정</translation>
 	</message>
 	<message>
 		<source>manage-keys-and-storage</source>
-		<translation>Gerenciar chaves e armazenamento</translation>
+		<translation>키 및 저장소 관리</translation>
 	</message>
 	<message>
 		<source>mark-all-read</source>
-		<translation>Marcar todas como lidas</translation>
+		<translation>모두 읽음 처리</translation>
 	</message>
 	<message numerus="yes">
 		<source>members</source>
 		<translation>
-			<numerusform>1 membro</numerusform>
-			<numerusform>{{count}} membros</numerusform>
+			<numerusform>{{count}} 명</numerusform>
 		</translation>
 	</message>
 	<message numerus="yes">
 		<source>members-active</source>
 		<translation>
-			<numerusform>1 membro</numerusform>
-			<numerusform>{{count}} membros</numerusform>
+			<numerusform>{{count}} 명</numerusform>
 		</translation>
 	</message>
 	<message>
 		<source>members-active-none</source>
-		<translation>sem membros</translation>
+		<translation>멤버 없음</translation>
 	</message>
 	<message>
 		<source>members-title</source>
-		<translation>Membros</translation>
+		<translation>멤버</translation>
 	</message>
 	<message>
 		<source>message</source>
-		<translation>Mensagem</translation>
+		<translation>메시지</translation>
 	</message>
 	<message>
 		<source>message-not-sent</source>
-		<translation>Mensagem não enviada</translation>
+		<translation>메시지가 전송되지 않았습니다</translation>
 	</message>
 	<message>
 		<source>message-options-cancel</source>
-		<translation>Cancelar</translation>
+		<translation>취소</translation>
 	</message>
 	<message>
 		<source>message-reply</source>
-		<translation>Responder</translation>
+		<translation>답장</translation>
 	</message>
 	<message>
 		<source>replying-to</source>
-		<translation>Respondendo a {{author}}</translation>
+		<translation>에 회신{{author}}</translation>
 	</message>
 	<message>
 		<source>data-syncing</source>
-		<translation>Sincronização de dados</translation>
+		<translation>데이터 동기화</translation>
 	</message>
 	<message>
 		<source>messages</source>
-		<translation>Mensagens</translation>
+		<translation>메시지</translation>
 	</message>
 	<message>
 		<source>chat-is-a-contact</source>
-		<translation>Contato</translation>
+		<translation>연락처에 등록되어 있음</translation>
 	</message>
 	<message>
 		<source>chat-is-not-a-contact</source>
-		<translation>Não é um contato</translation>
+		<translation>연락처에 없음</translation>
 	</message>
 	<message>
 		<source>might-break</source>
-		<translation>Pode quebrar alguns ÐApps</translation>
+		<translation>일부 디앱에 오류를 일으킬 수 있습니다</translation>
 	</message>
 	<message>
 		<source>migrations-failed-content</source>
 		<translation>{{message}} 
- versão do esquema: inicial {{initial-version}} , atual {{current-version}} , última {{last-version}} 
+스키마 버전: 초기 {{initial-version}} , 현재 {{current-version}} , 마지막 {{last-version}} 
 
-Ocorreu um erro no banco de dados. Seus fundos e chave de bate-papo estão seguros. Outros dados, como bate-papos e contatos, não podem ser restaurados. O botão &quot;{{erase-multiaccounts-data-button-text}}&quot; irá remover todos os outros dados e permitir que você acesse seus fundos e envie mensagens.</translation>
+데이터베이스 오류가 발생했습니다. 자산과 채팅 키는 안전하지만 채팅과 연락처 같은 데이터는 복구될 수 없습니다. &quot;{{erase-multiaccounts-data-button-text}}&quot; 버튼으로 다른 모든 데이터를 삭제하고, 기존 자산 접근과 메시지 전송을 그대로 이용하세요.</translation>
 	</message>
 	<message>
 		<source>mobile-network-ask-me</source>
-		<translation>Pergunte-me quando estiver na rede móvel</translation>
+		<translation>데이터를 사용할 때 다시 묻기</translation>
 	</message>
 	<message>
 		<source>mobile-network-continue-syncing</source>
-		<translation>Continuar a sincronizar</translation>
+		<translation>동기화 계속</translation>
 	</message>
 	<message>
 		<source>mobile-network-continue-syncing-details</source>
-		<translation>Você pode alterar isso mais tarde nas configurações</translation>
+		<translation>나중에 설정을 변경할 수 있습니다.</translation>
 	</message>
 	<message>
 		<source>mobile-network-go-to-settings</source>
-		<translation>Ir para configurações</translation>
+		<translation>설정으로 이동</translation>
 	</message>
 	<message>
 		<source>mobile-network-settings</source>
-		<translation>Dados móveis</translation>
+		<translation>모바일 데이터</translation>
 	</message>
 	<message>
 		<source>mobile-network-sheet-configure</source>
-		<translation>Você pode configurar a sincronização com mais 
-detalhes em</translation>
+		<translation>여기에서 동기화를 더 상세히
+설정하세요:</translation>
 	</message>
 	<message>
 		<source>mobile-network-sheet-offline</source>
-		<translation>Sem Wi-Fi, sincronização de mensagens desativada.</translation>
+		<translation>Wi-Fi 없음, 메시지 동기화 비활성화.</translation>
 	</message>
 	<message>
 		<source>mobile-network-sheet-offline-details</source>
-		<translation>A sincronização usando a rede móvel está desativada</translation>
+		<translation>모바일 데이터를 활용한 동기화가 중지되어 있습니다</translation>
 	</message>
 	<message>
 		<source>mobile-network-sheet-remember-choice</source>
-		<translation>Lembrar a minha escolha</translation>
+		<translation>내 선택 기억하기</translation>
 	</message>
 	<message>
 		<source>mobile-network-sheet-settings</source>
-		<translation>configurações</translation>
+		<translation>설정</translation>
 	</message>
 	<message>
 		<source>mobile-network-start-syncing</source>
-		<translation>Iniciar sincronização</translation>
+		<translation>동기화 시작</translation>
 	</message>
 	<message>
 		<source>mobile-network-stop-syncing</source>
-		<translation>Parar de sincronizar</translation>
+		<translation>동기화 중지</translation>
 	</message>
 	<message>
 		<source>mobile-network-stop-syncing-details</source>
-		<translation>Está conectado ao Wi-Fi?</translation>
+		<translation>Wi-Fi에 연결될 때까지 동기화를 중지할까요?</translation>
 	</message>
 	<message>
 		<source>mobile-network-use-mobile</source>
-		<translation>Utilizar dados móveis</translation>
+		<translation>모바일 데이터 사용</translation>
 	</message>
 	<message>
 		<source>mobile-network-use-mobile-data</source>
-		<translation>O Status usa muitos dados ao sincronizar bate-papos e carteira.</translation>
+		<translation>스테이터스는 채팅 및 지갑 동기화 시, 많은 데이터를 소모합니다.</translation>
 	</message>
 	<message>
 		<source>mobile-network-use-wifi</source>
-		<translation>Somente Wi-Fi</translation>
+		<translation>Wi-Fi만 사용</translation>
 	</message>
 	<message>
 		<source>mobile-syncing-sheet-details</source>
-		<translation>O Status usa muitos dados ao sincronizar bate-papos e carteira.</translation>
+		<translation>스테이터스는 채팅 및 지갑 동기화 시, 많은 데이터를 소모합니다.</translation>
 	</message>
 	<message>
 		<source>mobile-syncing-sheet-title</source>
-		<translation>Sincronizar usando dados móveis?</translation>
+		<translation>모바일 데이터로 동기화하시겠습니까?</translation>
 	</message>
 	<message>
 		<source>more</source>
-		<translation>mais</translation>
+		<translation>더 보기</translation>
 	</message>
 	<message>
 		<source>multiaccount-exists-title</source>
-		<translation>Já existem chaves para esta conta</translation>
+		<translation>이 계정을 위한 키가 이미 존재합니다</translation>
 	</message>
 	<message>
 		<source>multiaccount-exists-content</source>
-		<translation>Já existem chaves para esta conta e não podem ser adicionadas novamente. Se você perdeu sua senha, código de acesso ou Keycard, desinstale o aplicativo, reinstale e acesse suas chaves inserindo sua frase-semente</translation>
+		<translation>이 계정을 위한 키가 이미 존재하여 다시 추가할 수 없습니다. 만약 비밀번호, 패스코드, 또는 키카드를 잊어버렸다면, 스테이터스 앱을 재설치하고 시드 구문을 입력해 키에 액세스해주시기 바랍니다</translation>
 	</message>
 	<message>
 		<source>multiaccounts-recover-enter-phrase-text</source>
-		<translation>Digite 12, 15, 18, 21 ou 24 palavras. 
-Separe as palavras por um único espaço.</translation>
+		<translation>12, 15, 18, 21 또는 24 단어로 구성된 시드 구문을 입력해주세요. 단어는 한 칸씩 띄어서 구분하세요.</translation>
 	</message>
 	<message>
 		<source>multiaccounts-recover-enter-phrase-title</source>
-		<translation>Digite sua frase-semente</translation>
+		<translation>내 시드 구문 입력</translation>
 	</message>
 	<message>
 		<source>name</source>
-		<translation>Nome</translation>
+		<translation>이름</translation>
 	</message>
 	<message>
 		<source>name-of-token</source>
-		<translation>O nome do seu token</translation>
+		<translation>토큰 이름</translation>
 	</message>
 	<message>
 		<source>need-help</source>
-		<translation>Precisa de ajuda?</translation>
+		<translation>도움이 필요하신가요?</translation>
 	</message>
 	<message>
 		<source>glossary</source>
-		<translation>Glossário</translation>
+		<translation>용어 사전</translation>
 	</message>
 	<message>
 		<source>account-title</source>
-		<translation>Conta</translation>
+		<translation>계정</translation>
 	</message>
 	<message>
 		<source>account-content</source>
-		<translation>Você pode comparar contas no Status com contas bancárias. Como uma conta bancária, uma conta normalmente possui um endereço e um saldo. Você usa essa conta para realizar transações no Ethereum. Você pode ter várias contas na sua carteira. Todas acessadas desbloqueando o Status.</translation>
+		<translation>스테이터스 계정을 은행 계좌처럼 생각하셔도 좋습니다. 스테이터스 계정은 은행 계좌처럼 주소와 잔액을 가지고 있습니다. 여러분은 이 계정으로 이더리움 상에서 트랜잭션(Transaction, 거래)를 수행할 수 있습니다. 또한 하나의 지갑에 다수의 계정을 둘 수 있는데, 하나의 스테이터스 계정에 접속해 연계된 지갑에 모두에 접근할 수 있습니다.</translation>
 	</message>
 	<message>
 		<source>chat-key-title</source>
-		<translation>Chave de bate-papo</translation>
+		<translation>채팅 키</translation>
 	</message>
 	<message>
 		<source>chat-key-content</source>
-		<translation>As mensagens no protocolo de bate-papo Status são enviadas e recebidas usando chaves de criptografia. A chave de bate-papo público é uma sequência de caracteres que você compartilha com outras pessoas para que elas possam enviar mensagens para você no Status.</translation>
+		<translation>스테이터스 채팅 프로토콜의 메시지는 암호화 키를 활용하여 메시지를 주고 받습니다. 공개 채팅 키는 다른 사람들과 메시지를 주고 받기 위해 공유되는 문자열을 의미합니다.</translation>
 	</message>
 	<message>
 		<source>chat-name-title</source>
-		<translation>Nome no chat</translation>
+		<translation>채팅 이름</translation>
 	</message>
 	<message>
 		<source>chat-name-content</source>
-		<translation>Três palavras aleatórias, derivadas algoritmicamente da sua chave de bate-papo e usadas como pseudônimo padrão no bate-papo. Os nomes de bate-papo são completamente únicos; nenhum outro usuário pode ter as mesmas três palavras.</translation>
+		<translation>무작위로 선택된 세 단어로, 채팅 키를 특수한 알고리즘에 대입하여 산출하며 채팅의 기본 닉네임으로 표시됩니다. 채팅 이름은 완전히 고유의 값으로, 다른 유저들과 채팅 이름이 중복될 수 없습니다.</translation>
 	</message>
 	<message>
 		<source>ens-name-title</source>
-		<translation>Nome ENS</translation>
+		<translation>ENS 이름</translation>
 	</message>
 	<message>
 		<source>ens-name-content</source>
-		<translation>Pseudônimo personalizado para sua chave de bate-papo que você pode cadastrar usando o Ethereum Name Service. Os nomes do ENS são nomes de usuário descentralizados.</translation>
+		<translation>이더리움 네임 서비스(Ethereum Name Service)로 채팅키와 연결되는 커스텀 닉네임. ENS 이름은 탈중앙화된 사용자 이름입니다.</translation>
 	</message>
 	<message>
 		<source>mailserver-title</source>
-		<translation>Nó de mensagem Status</translation>
+		<translation>스테이터스 노드</translation>
 	</message>
 	<message>
 		<source>mailserver-content</source>
-		<translation>Um nó na rede Status que encaminha e armazena mensagens por até 30 dias.</translation>
+		<translation>메시지를 전달하거나 최대 30일까지 메시지를 저장하는 스테이터스 네트워크 노드.</translation>
 	</message>
 	<message>
 		<source>peer-title</source>
-		<translation>Par</translation>
+		<translation>피어</translation>
 	</message>
 	<message>
 		<source>peer-content</source>
-		<translation>Um dispositivo conectado à rede de bate-papo Status. Cada usuário pode representar um ou mais pares, dependendo do número de dispositivos.</translation>
+		<translation>스테이터스 채팅 네트워크에 연결되는 디바이스. 각 유저는 연결된 기기 수에 따라 하나 또는 하나 이상의 피어로 나타나게 됩니다.</translation>
 	</message>
 	<message>
 		<source>seed-phrase-title</source>
-		<translation>Frase-semente</translation>
+		<translation>시드 구문</translation>
 	</message>
 	<message>
 		<source>seed-phrase-content</source>
-		<translation>Um conjunto de palavras fáceis de ler, selecionadas aleatoriamente na lista padrão BIP39 e usadas para recuperar ou acessar sua conta Ethereum em outras carteiras e dispositivos. Também chamada de &quot;frase mnemônica&quot;, &quot;frase de recuperação&quot; ou &quot;backup de carteira&quot; em todo o ecossistema de criptomoeda. A maioria dos aplicativos de criptomoeda usa esse mesmo padrão para gerar contas.</translation>
+		<translation>BIP39 표준 리스트에서 무작위로 선별된 읽기 쉬운 단어들로서, 다른 지갑 및 디바이스에서 여러분의 이더리움 지갑을 복구하거나 불러올때 사용합니다. 시드 구문은 크립토 생태계에서 &quot;니모닉 구문&quot;, &quot;복구 구문&quot;, 또는 &quot;지갑 백업&quot;라고도 칭합니다. 대부분의 크립토 앱들은 계정을 생성하기 위해 동일한 표준을 채택하고 있습니다.</translation>
 	</message>
 	<message>
 		<source>wallet-key-title</source>
-		<translation>Endereço da conta</translation>
+		<translation>계정 주소</translation>
 	</message>
 	<message>
 		<source>wallet-key-content</source>
-		<translation>Um endereço hexadecimal de 64 caracteres baseado no padrão Ethereum e começando com 0x. Para o público, o endereço da sua conta é compartilhado com outras pessoas quando você deseja receber fundos. Também chamado de &quot;endereço Ethereum&quot; ou &quot;endereço da carteira&quot;.</translation>
+		<translation>0x로 시작하는 64글자 16진수 주소로 이더리움 표준을 기반으로 합니다. 계정 주소를 다른 사람들에게 공유하여 암호화폐 자산을 받을 수 있습니다. 지갑 키는 &quot;이더리움 주소&quot; 또는 &quot;지갑 주소&quot;라고도 합니다.</translation>
 	</message>
 	<message>
 		<source>buy-crypto-title</source>
-		<translation>Parece que sua carteira está vazia</translation>
+		<translation>지갑이 비어 있습니다</translation>
 	</message>
 	<message>
 		<source>buy-crypto-description</source>
-		<translation>Encontre um dapp para comprar criptomoedas agora</translation>
+		<translation>암호화폐를 구입하기 위한 디앱을 찾아보세요</translation>
 	</message>
 	<message>
 		<source>buy-crypto</source>
-		<translation>Comprar criptomoedas</translation>
+		<translation>암호화폐 구매</translation>
 	</message>
 	<message>
 		<source>buy-crypto-choose-a-service</source>
-		<translation>Escolha um serviço que você gostaria de utilizar para comprar criptomoedas</translation>
+		<translation>암호화폐 구매를 위해 사용할 서비스를 선택하세요</translation>
 	</message>
 	<message>
 		<source>buy-crypto-leaving</source>
-		<translation>Você está saindo do Status e entrando em um site de terceiros para concluir sua compra</translation>
+		<translation>구매를 완료하기 위해 스테이터스를 떠나 써드 파티 웹 사이트에 접속합니다</translation>
 	</message>
 	<message>
 		<source>opening-buy-crypto</source>
-		<translation>Abrindo {{site}}...</translation>
+		<translation>{{site}} 여는 중...</translation>
 	</message>
 	<message>
 		<source>network</source>
-		<translation>Rede</translation>
+		<translation>네트워크</translation>
 	</message>
 	<message>
 		<source>network-chain</source>
-		<translation>Cadeia de rede</translation>
+		<translation>네트워크 체인</translation>
 	</message>
 	<message>
 		<source>network-details</source>
-		<translation>Detalhes da rede</translation>
+		<translation>네트워크 세부정보</translation>
 	</message>
 	<message>
 		<source>network-info</source>
-		<translation>Informações da rede</translation>
+		<translation>네트워크 정보</translation>
 	</message>
 	<message>
 		<source>network-fee</source>
-		<translation>Taxa de rede</translation>
+		<translation>네트워크 수수료</translation>
 	</message>
 	<message>
 		<source>network-id</source>
-		<translation>ID de rede</translation>
+		<translation>네트워크 ID</translation>
 	</message>
 	<message>
 		<source>network-invalid-network-id</source>
-		<translation>O ID da rede especificado não corresponde ao ID da rede pelo URL RPC</translation>
+		<translation>지정된 네트워크 ID가 RPC url의 네트워크 ID와 대응되지 않습니다</translation>
 	</message>
 	<message>
 		<source>network-invalid-status-code</source>
-		<translation>Código de status inválido: {{code}}</translation>
+		<translation>잘못된 상태 코드 : {{code}}</translation>
 	</message>
 	<message>
 		<source>network-invalid-url</source>
-		<translation>URL da rede é inválida</translation>
+		<translation>네트워크 URL이 잘못되었습니다</translation>
 	</message>
 	<message>
 		<source>network-settings</source>
-		<translation>Configurações de rede</translation>
+		<translation>네트워크 설정</translation>
 	</message>
 	<message>
 		<source>new</source>
-		<translation>Novo</translation>
+		<translation>신규</translation>
 	</message>
 	<message>
 		<source>new-chat</source>
-		<translation>Nova conversa</translation>
+		<translation>새 채팅</translation>
 	</message>
 	<message>
 		<source>new-contact</source>
-		<translation>Novo contato</translation>
+		<translation>새 연락처</translation>
 	</message>
 	<message>
 		<source>new-contract</source>
-		<translation>Novo Contrato</translation>
+		<translation>새 컨트랙트</translation>
 	</message>
 	<message>
 		<source>new-group</source>
-		<translation>Novo grupo</translation>
+		<translation>새 그룹</translation>
 	</message>
 	<message>
 		<source>new-group-chat</source>
-		<translation>Novo grupo de bate-papo</translation>
+		<translation>새 그룹 채팅</translation>
 	</message>
 	<message>
 		<source>new-network</source>
-		<translation>Nova rede</translation>
+		<translation>새 네트워크</translation>
 	</message>
 	<message>
 		<source>new-pin-description</source>
-		<translation>Digite o novo código de acesso de 6 dígitos</translation>
+		<translation>6자리 새 패스코드 입력</translation>
 	</message>
 	<message>
 		<source>new-puk-description</source>
-		<translation>Insira o novo PUK de 12 dígitos</translation>
+		<translation>새로운 12자리 PUK 입력</translation>
 	</message>
 	<message>
 		<source>new-public-group-chat</source>
-		<translation>Participar do bate-papo público</translation>
+		<translation>오픈채팅 참여</translation>
 	</message>
 	<message>
 		<source>next</source>
-		<translation>Próximo</translation>
+		<translation>다음</translation>
 	</message>
 	<message>
 		<source>no</source>
-		<translation>Não</translation>
+		<translation>아니오</translation>
 	</message>
 	<message>
 		<source>no-collectibles</source>
-		<translation>Não há colecionáveis disponíveis</translation>
+		<translation>수집품 없음</translation>
 	</message>
 	<message>
 		<source>no-contacts</source>
-		<translation>Você ainda não tem contatos</translation>
+		<translation>아직 연락처가 없습니다</translation>
 	</message>
 	<message>
 		<source>no-keycard-applet-on-card</source>
-		<translation>Não há applet Keycard no cartão</translation>
+		<translation>카드에 키카드 애플릿이 없습니다</translation>
 	</message>
 	<message>
 		<source>no-messages</source>
-		<translation>Nenhuma mensagem</translation>
+		<translation>메시지 없음</translation>
 	</message>
 	<message>
 		<source>no-pairing-slots-available</source>
-		<translation>Este cartão já está emparelhado com 5 dispositivos e não pode ser emparelhado com este. Use um dos dispositivos emparelhados, faça login com este cartão e libere uma porta de emparelhamento no cartão</translation>
+		<translation>이 카드는 이미 5개의 기기에 페어링 되어 있어 이 기기와는 페어링 할 수 없습니다. 페어링 된 기기 중 하나를 사용해 이 카드로 로그인하고 카드의 페어링 슬롯을 확보하세요</translation>
 	</message>
 	<message>
 		<source>no-result</source>
-		<translation>Nenhum resultado</translation>
+		<translation>결과 없음</translation>
 	</message>
 	<message>
 		<source>no-tokens-found</source>
-		<translation>Nenhum token encontrado</translation>
+		<translation>토큰 없음</translation>
 	</message>
 	<message>
 		<source>node-info</source>
-		<translation>Informação do nó</translation>
+		<translation>노드 정보</translation>
 	</message>
 	<message>
 		<source>node-address</source>
-		<translation>Endereço do nó</translation>
+		<translation>노드 주소</translation>
 	</message>
 	<message>
 		<source>node-details</source>
-		<translation>Detalhes do nó</translation>
+		<translation>노드 세부정보</translation>
 	</message>
 	<message>
 		<source>node-version</source>
-		<translation>Versão do nó</translation>
+		<translation>노드 버전</translation>
 	</message>
 	<message>
 		<source>nonce</source>
@@ -3682,656 +3666,646 @@ Separe as palavras por um único espaço.</translation>
 	</message>
 	<message>
 		<source>none</source>
-		<translation>Nenhum</translation>
+		<translation>해당 없음</translation>
 	</message>
 	<message>
 		<source>not-applicable</source>
-		<translation>Não aplicável a transações não assinadas</translation>
+		<translation>서명되지 않은 트랜잭션에 사용할 수 없음</translation>
 	</message>
 	<message>
 		<source>not-keycard-text</source>
-		<translation>O cartão que você usou não é um Keycard. Você precisa comprar um Keycard para usá-lo</translation>
+		<translation>사용한 카드는 키카드가 아닙니다. 이 기능은 키카드를 구입해야 사용할 수 있습니다.</translation>
 	</message>
 	<message>
 		<source>not-keycard-title</source>
-		<translation>Não é um Keycard</translation>
+		<translation>키카드 아님</translation>
 	</message>
 	<message>
 		<source>notifications</source>
-		<translation>Notificações</translation>
+		<translation>알림</translation>
 	</message>
 	<message>
 		<source>local-notifications</source>
-		<translation>Notificações locais</translation>
+		<translation>알림</translation>
 	</message>
 	<message>
 		<source>local-notifications-subtitle</source>
-		<translation>Ativar serviço em segundo plano</translation>
+		<translation>백그라운드 서비스 활성화</translation>
 	</message>
 	<message>
 		<source>remote-notifications</source>
-		<translation>Notificações remotas</translation>
+		<translation>원격 알림</translation>
 	</message>
 	<message>
 		<source>remote-notifications-subtitle</source>
-		<translation>Ativar notificações push do google</translation>
+		<translation>구글 푸시 알림 활성화</translation>
 	</message>
 	<message>
 		<source>show-notifications</source>
-		<translation>Mostrar notificações</translation>
+		<translation>알림 표시</translation>
 	</message>
 	<message>
 		<source>notification-settings</source>
-		<translation>Notificações</translation>
+		<translation>알림</translation>
 	</message>
 	<message>
 		<source>notifications-servers</source>
-		<translation>Servidores de notificação</translation>
+		<translation>알림 서버</translation>
 	</message>
 	<message>
 		<source>notifications-preferences</source>
-		<translation>Preferências de notificação</translation>
+		<translation>알림 설정</translation>
 	</message>
 	<message>
 		<source>notifications-switch</source>
-		<translation>Mostrar notificações</translation>
+		<translation>알림 표시</translation>
 	</message>
 	<message>
 		<source>notifications-non-contacts</source>
-		<translation>Notificações de não contatos</translation>
+		<translation>연락처 미등록자에게 오는 알림</translation>
 	</message>
 	<message>
 		<source>notifications-transactions</source>
-		<translation>Transações da carteira</translation>
+		<translation>지갑 트랜잭션</translation>
 	</message>
 	<message>
 		<source>send-push-notifications</source>
-		<translation>Enviar Notificações Push</translation>
+		<translation>푸시 알림 보내기</translation>
 	</message>
 	<message>
 		<source>send-push-notifications-description</source>
-		<translation>Quando desativado, a pessoa que recebe suas mensagens não será notificada de suas novas mensagens</translation>
+		<translation>비활성화되면, 메시지를 받는 사람에게 알림이 표시되지 않습니다</translation>
 	</message>
 	<message>
 		<source>push-notifications-server-enabled</source>
-		<translation>Servidor habilitado</translation>
+		<translation>서버 활성화</translation>
 	</message>
 	<message>
 		<source>push-notifications-servers</source>
-		<translation>Servidores de notificação push</translation>
+		<translation>푸시 알림 서버</translation>
 	</message>
 	<message>
 		<source>push-inbound-transaction</source>
-		<translation>Você recebeu {{value}} {{currency}}</translation>
+		<translation>{{value}} {{currency}}를 받았습니다</translation>
 	</message>
 	<message>
 		<source>push-outbound-transaction</source>
-		<translation>Você enviou {{value}} {{currency}}</translation>
+		<translation>{{value}} {{currency}}를 보냈습니다</translation>
 	</message>
 	<message>
 		<source>push-failed-transaction</source>
-		<translation>Falha na sua transação</translation>
+		<translation>트랜잭션이 실패했습니다</translation>
 	</message>
 	<message>
 		<source>push-inbound-transaction-body</source>
-		<translation>De {{from}} para {{to}}</translation>
+		<translation>{{from}} 에서 {{to}}</translation>
 	</message>
 	<message>
 		<source>push-outbound-transaction-body</source>
-		<translation>De {{from}} para {{to}}</translation>
+		<translation>{{from}} 에서 {{to}}</translation>
 	</message>
 	<message>
 		<source>push-failed-transaction-body</source>
-		<translation>{{value}} {{currency}} para {{to}}</translation>
+		<translation>{{value}} {{currency}} - {{to}}</translation>
 	</message>
 	<message>
 		<source>allow-mention-notifications</source>
-		<translation>Mostrar @ menções</translation>
+		<translation>@ 멘션 표시</translation>
 	</message>
 	<message>
 		<source>server</source>
-		<translation>Servidor</translation>
+		<translation>서버</translation>
 	</message>
 	<message>
 		<source>specify-server-public-key</source>
-		<translation>Digite a chave pública do servidor</translation>
+		<translation>서버 공개키 입력</translation>
 	</message>
 	<message>
 		<source>notify</source>
-		<translation>Notificar</translation>
+		<translation>알림</translation>
 	</message>
 	<message>
 		<source>off</source>
-		<translation>Desativado</translation>
+		<translation>끄기</translation>
 	</message>
 	<message>
 		<source>offline</source>
-		<translation>Offline</translation>
+		<translation>오프라인</translation>
 	</message>
 	<message>
 		<source>offline-messaging-use-history-nodes</source>
-		<translation>Usar nós de mensagem da Status</translation>
+		<translation>스테이터스 노드 사용</translation>
 	</message>
 	<message>
 		<source>offline-messaging-use-history-explanation</source>
-		<translation>Ative os nós da Status para buscar mensagens enviadas enquanto o aplicativo está fechado. Quando ativado, um nó de histórico obtém seu endereço IP. Quando desativado, você não receberá mensagens quando o aplicativo for fechado e não as verá quando abrir o app mais tarde.</translation>
+		<translation>앱이 종료된 동안 전송된 메시지를 확인하기 위해 스테이터스 노드를 활성화 합니다. 스테이터스 노드를 활성화하면, 스테이터스 노드는 여러분의 IP 주소를 사용하게 됩니다. 스테이터스 노드를 비활성화하면, 앱이 종료된 동안 수신된 메시지를 확인할 수 없습니다.</translation>
 	</message>
 	<message>
 		<source>ok</source>
-		<translation>OK</translation>
+		<translation>확인</translation>
 	</message>
 	<message>
 		<source>ok-continue</source>
-		<translation>Ok, continuar</translation>
+		<translation>네, 알겠습니다</translation>
 	</message>
 	<message>
 		<source>ok-got-it</source>
-		<translation>Ok, entendido</translation>
+		<translation>확인</translation>
 	</message>
 	<message>
 		<source>okay</source>
-		<translation>OK</translation>
+		<translation>예</translation>
 	</message>
 	<message>
 		<source>on</source>
-		<translation>Ativado</translation>
+		<translation>켜기</translation>
 	</message>
 	<message>
 		<source>open</source>
-		<translation>Abrir</translation>
+		<translation>열기</translation>
 	</message>
 	<message>
 		<source>open-home</source>
-		<translation>Abrir...</translation>
+		<translation>열기...</translation>
 	</message>
 	<message>
 		<source>open-dapp</source>
-		<translation>Abrir ÐApp</translation>
+		<translation>디앱 브라우저</translation>
 	</message>
 	<message>
 		<source>open-dapp-store</source>
-		<translation>Descubra ÐApps</translation>
+		<translation>디앱 찾아보기</translation>
 	</message>
 	<message>
 		<source>open-nfc-settings</source>
-		<translation>Abrir configurações do NFC</translation>
+		<translation>NFC 설정 열기</translation>
 	</message>
 	<message>
 		<source>open-on-block-explorer</source>
-		<translation>Abrir no explorador de blocos</translation>
+		<translation>블록 익스플로러에서 열기</translation>
 	</message>
 	<message>
 		<source>optional</source>
-		<translation>opcional</translation>
+		<translation>선택</translation>
 	</message>
 	<message>
 		<source>or</source>
-		<translation>OU</translation>
+		<translation>또는</translation>
 	</message>
 	<message>
 		<source>outgoing</source>
-		<translation>Enviados</translation>
+		<translation>송금</translation>
 	</message>
 	<message>
 		<source>outgoing-transaction</source>
-		<translation>Transação enviada</translation>
+		<translation>출금 트랜잭션</translation>
 	</message>
 	<message>
 		<source>pair</source>
-		<translation>Sincronizar dispositivos</translation>
+		<translation>기기 페어링</translation>
 	</message>
 	<message>
 		<source>pair-card</source>
-		<translation>Sincronizar para este dispositivo</translation>
+		<translation>페어 카드</translation>
 	</message>
 	<message>
 		<source>pair-code</source>
-		<translation>Código de par</translation>
+		<translation>페어 코드</translation>
 	</message>
 	<message>
 		<source>pair-code-explanation</source>
-		<translation>Emparelha o cartão com um dispositivo diferente (até 5) para desbloquear as chaves e assinar transações com o mesmo Keycard</translation>
+		<translation>이 카드를 다른 기기(최대 5개)와 연동하여 계정을 열람하고 트랜잭션에 서명할 수 있습니다</translation>
 	</message>
 	<message>
 		<source>pair-this-card</source>
-		<translation>Emparelhar este cartão</translation>
+		<translation>이 카드 페어링</translation>
 	</message>
 	<message>
 		<source>pair-this-device</source>
-		<translation>Anunciar dispositivo</translation>
+		<translation>기기 페어링</translation>
 	</message>
 	<message>
 		<source>pair-this-device-description</source>
-		<translation>Emparelhe seus dispositivos para sincronizar contatos e bate-papos entre eles</translation>
+		<translation>기기를 페어링하여 연락처와 채팅을 동기화합니다</translation>
 	</message>
 	<message>
 		<source>paired-devices</source>
-		<translation>Dispositivos sincronizados</translation>
+		<translation>페어링 된 기기</translation>
 	</message>
 	<message>
 		<source>pairing</source>
-		<translation>Emparelhamento</translation>
+		<translation>페어링</translation>
 	</message>
 	<message>
 		<source>pairing-card</source>
-		<translation>Cartão de emparelhamento</translation>
+		<translation>카드 페어링</translation>
 	</message>
 	<message>
 		<source>pairing-code-placeholder</source>
-		<translation>Código de emparelhamento...</translation>
+		<translation>페어링 코드...</translation>
 	</message>
 	<message>
 		<source>pairing-code_error1</source>
-		<translation>Os códigos de emparelhamento não correspondem.</translation>
+		<translation>페어링 코드가 일치하지 않습니다.</translation>
 	</message>
 	<message>
 		<source>confirm-pairing-code-placeholder</source>
-		<translation>Confirme o seu código de emparelhamento...</translation>
+		<translation>페어링 코드 확인...</translation>
 	</message>
 	<message>
 		<source>pairing-go-to-installation</source>
-		<translation>Ir para as configurações de sincronização</translation>
+		<translation>페어링 설정으로 이동</translation>
 	</message>
 	<message>
 		<source>pairing-maximum-number-reached-content</source>
-		<translation>Desative um dos seus dispositivos antes de ativar um novo.</translation>
+		<translation>새 기기를 활성화하려면 이전 기기 중 하나를 비활성화해주세요</translation>
 	</message>
 	<message>
 		<source>pairing-maximum-number-reached-title</source>
-		<translation>Atingido o número máximo de dispositivos</translation>
+		<translation>최대 기기 수에 도달했습니다</translation>
 	</message>
 	<message>
 		<source>pairing-new-installation-detected-content</source>
-		<translation>Um novo dispositivo foi detectado. 
-Para usar seus dispositivos corretamente, é importante emparelhá-los e ativá-los antes de usar. 
-Acesse a seção configurações dos dispositivos para parear seus dispositivos.</translation>
+		<translation>다른 기기가 감지되었습니다.
+기기를 올바르게 사용하려면, 새 기기를 사용하기 전에 페어링을 사용하도록 설정해야 합니다. 
+아래 설정의 기기 섹션으로 이동하여 기기를 페어링 해주세요.</translation>
 	</message>
 	<message>
 		<source>pairing-new-installation-detected-title</source>
-		<translation>Novo dispositivo detectado</translation>
+		<translation>새 기기 감지</translation>
 	</message>
 	<message>
 		<source>pairing-no-info</source>
-		<translation>Sem informações</translation>
+		<translation>정보 없음</translation>
 	</message>
 	<message>
 		<source>pairing-please-set-a-name</source>
-		<translation>Defina um nome para o seu dispositivo.</translation>
+		<translation>기기의 이름을 설정해주세요</translation>
 	</message>
 	<message>
 		<source>passphrase</source>
-		<translation>Frase-semente</translation>
+		<translation>패스 구문</translation>
 	</message>
 	<message>
 		<source>password</source>
-		<translation>Senha</translation>
+		<translation>비밀번호</translation>
 	</message>
 	<message>
 		<source>password-description</source>
-		<translation>Pelo menos 6 caracteres. Sua senha protege suas chaves. Você precisa dela para desbloquear o Status e fazer transações.</translation>
+		<translation>최소 6자리의 비밀번호를 생성해주세요. 비밀번호는 스테이터스 앱을 사용하고 거래를 진행하는 데 사용됩니다.</translation>
 	</message>
 	<message>
 		<source>password-placeholder2</source>
-		<translation>Confirme sua senha</translation>
+		<translation>비밀번호 확인</translation>
 	</message>
 	<message>
 		<source>password_error1</source>
-		<translation>As senhas não correspondem.</translation>
+		<translation>비밀번호가 일치하지 않습니다.</translation>
 	</message>
 	<message>
 		<source>paste</source>
-		<translation>Colar</translation>
+		<translation>붙여넣기</translation>
 	</message>
 	<message>
 		<source>paste-json</source>
-		<translation>Colar JSON</translation>
+		<translation>JSON 붙여넣기</translation>
 	</message>
 	<message>
 		<source>pay-to-chat</source>
-		<translation>Pagar para conversar</translation>
+		<translation>지불하고 채팅 시작</translation>
 	</message>
 	<message>
 		<source>peers</source>
-		<translation>Pares</translation>
+		<translation>피어</translation>
 	</message>
 	<message>
 		<source>pending</source>
-		<translation>Pendente</translation>
+		<translation>대기 중</translation>
 	</message>
 	<message>
 		<source>pending-confirmation</source>
-		<translation>Confirmação pendente...</translation>
+		<translation>확인 대기 중...</translation>
 	</message>
 	<message>
 		<source>permissions</source>
-		<translation>Permissões</translation>
+		<translation>권한</translation>
 	</message>
 	<message>
 		<source>phone-e164</source>
-		<translation>Internacional 1</translation>
+		<translation>국제전화 1</translation>
 	</message>
 	<message>
 		<source>photos-access-error</source>
-		<translation>Para conceder a permissão de fotos necessária, acesse as configurações do sistema e verifique se Status &gt; Fotos está selecionado.</translation>
+		<translation>사진 접근 권한을 승인하려면 시스템 설정에서 스테이터스 &gt; 사진이 선택되어 있는지 확인해 주세요.</translation>
 	</message>
 	<message>
 		<source>pin-changed</source>
-		<translation>O código de acesso de 6 dígitos foi alterado</translation>
+		<translation>6자리 패스코드가 변경되었습니다</translation>
 	</message>
 	<message>
 		<source>puk-changed</source>
-		<translation>PUK de 12 dígitos foi alterado</translation>
+		<translation>12자리 PUK가 변경되었습니다</translation>
 	</message>
 	<message>
 		<source>pairing-changed</source>
-		<translation>Código de emparelhamento foi alterado</translation>
+		<translation>페어링 코드가 변경되었습니다</translation>
 	</message>
 	<message>
 		<source>pin-code</source>
-		<translation>Código de acesso de 6 dígitos</translation>
+		<translation>6자리 패스코드</translation>
 	</message>
 	<message>
 		<source>pin-mismatch</source>
-		<translation>Código de acesso incorreto</translation>
+		<translation>잘못된 비밀번호</translation>
 	</message>
 	<message>
 		<source>pin-retries-left</source>
-		<translation>{{number}} tentativas restantes</translation>
+		<translation>남은 재시도 가능 횟수: {{number}}번</translation>
 	</message>
 	<message>
 		<source>pin-one-attempt-blocked-before</source>
-		<translation>Cuidado, você só tem</translation>
+		<translation>조심하세요. 마지막</translation>
 	</message>
 	<message>
 		<source>pin-one-attempt-frozen-before</source>
-		<translation>Cuidado, você só tem</translation>
+		<translation>조심하세요. 마지막</translation>
 	</message>
 	<message>
 		<source>pin-one-attempt</source>
-		<translation>uma tentativa</translation>
+		<translation> 한 번의 시도가 실패하면 </translation>
 	</message>
 	<message>
 		<source>pin-one-attempt-blocked-after</source>
-		<translation>antes que o seu Keycard seja bloqueado</translation>
+		<translation>키카드가 차단됩니다</translation>
 	</message>
 	<message>
 		<source>pin-one-attempt-frozen-after</source>
-		<translation>antes que o seu Keycard trave</translation>
+		<translation>키카드가 동결됩니다</translation>
 	</message>
 	<message>
 		<source>preview-privacy</source>
-		<translation>Visualizar modo de privacidade</translation>
+		<translation>미리보기 방지 모드</translation>
 	</message>
 	<message>
 		<source>privacy</source>
-		<translation>Privacidade</translation>
+		<translation>개인 정보</translation>
 	</message>
 	<message>
 		<source>privacy-photos</source>
-		<translation>Privacidade da Foto de Perfil</translation>
+		<translation>프로필 사진 개인 정보 보호</translation>
 	</message>
 	<message>
 		<source>privacy-and-security</source>
-		<translation>Privacidade e segurança</translation>
+		<translation>개인 정보 및 보안</translation>
 	</message>
 	<message>
 		<source>privacy-policy</source>
-		<translation>Política de privacidade</translation>
+		<translation>개인 정보 보호 정책</translation>
 	</message>
 	<message>
 		<source>privacy-show-to-warning</source>
-		<translation>As pessoas que já viram sua foto de perfil continuarão vendo</translation>
+		<translation>이미 프로필 사진을 본 사람들은 프로필을 계속 볼 수 있습니다</translation>
 	</message>
 	<message>
 		<source>processing</source>
-		<translation>Aguarde um momento</translation>
+		<translation>잠시만 기다려주세요</translation>
 	</message>
 	<message>
 		<source>product-information</source>
-		<translation>Informações do produto</translation>
+		<translation>제품 정보</translation>
 	</message>
 	<message>
 		<source>profile</source>
-		<translation>Perfil</translation>
+		<translation>프로필</translation>
 	</message>
 	<message>
 		<source>profile-details</source>
-		<translation>Detalhes do perfil</translation>
+		<translation>프로필 세부 사항</translation>
 	</message>
 	<message>
 		<source>public-chat</source>
-		<translation>Conversa pública</translation>
+		<translation>오픈채팅</translation>
 	</message>
 	<message>
 		<source>public-chats</source>
-		<translation>Conversas públicas</translation>
+		<translation>오픈채팅</translation>
 	</message>
 	<message>
 		<source>public-group-status</source>
-		<translation>Público</translation>
+		<translation>오픈채팅</translation>
 	</message>
 	<message>
 		<source>public-group-topic</source>
-		<translation>Assunto</translation>
+		<translation>주제</translation>
 	</message>
 	<message>
 		<source>join-new-public-chat</source>
-		<translation>Participar do chat público</translation>
+		<translation>오픈채팅 참여</translation>
 	</message>
 	<message>
 		<source>join-new-private-chat</source>
-		<translation>Iniciar uma nova conversa privada</translation>
+		<translation>1:1 채팅 시작</translation>
 	</message>
 	<message>
 		<source>search-no-chat-found</source>
-		<translation>Sem resultados. Você quer dizer</translation>
+		<translation>검색 결과가 없습니다. 이것을 찾으셨나요?</translation>
 	</message>
 	<message>
 		<source>public-key</source>
-		<translation>Chave pública</translation>
+		<translation>공개 키</translation>
 	</message>
 	<message>
 		<source>puk-and-pairing-codes-displayed</source>
-		<translation>Códigos PUK e de emparelhamento exibidos</translation>
+		<translation>PUK 및 코드 표시</translation>
 	</message>
 	<message>
 		<source>puk-code</source>
-		<translation>Código PUK</translation>
+		<translation>PUK 코드</translation>
 	</message>
 	<message>
 		<source>puk-code-explanation</source>
-		<translation>Se você esquecer seu código de acesso de 6 dígitos ou inseri-lo incorretamente três vezes, precisará desse código para desbloquear seu cartão.</translation>
+		<translation>6자리 패스코드를 잊어버리거나 코드를 3회 잘못 입력할 경우, 이 코드를 통해 카드 계정 잠금을 해제할 수 있습니다.</translation>
 	</message>
 	<message>
 		<source>puk-mismatch</source>
-		<translation>Código PUK errado</translation>
+		<translation>PUK 코드가 일치하지 않습니다</translation>
 	</message>
 	<message>
 		<source>quiet-days</source>
-		<translation>{{quiet-days}} dias</translation>
+		<translation>{{quiet-days}} 일</translation>
 	</message>
 	<message>
 		<source>quiet-hours</source>
-		<translation>{{quiet-hours}} horas</translation>
+		<translation>{{quiet-hours}} 시간</translation>
 	</message>
 	<message>
 		<source>re-encrypt-key</source>
-		<translation>Recriptografe suas chaves</translation>
+		<translation>키 재암호화</translation>
 	</message>
 	<message>
 		<source>receive</source>
-		<translation>Receber</translation>
+		<translation>받기</translation>
 	</message>
 	<message>
 		<source>receive-transaction</source>
-		<translation>Receber transação</translation>
+		<translation>트랜잭션 받기</translation>
 	</message>
 	<message>
 		<source>recent</source>
-		<translation>Recentes</translation>
+		<translation>최근</translation>
 	</message>
 	<message>
 		<source>recent-recipients</source>
-		<translation>Contatos</translation>
+		<translation>연락처</translation>
 	</message>
 	<message>
 		<source>recently-used-stickers</source>
-		<translation>Os adesivos usados recentemente aparecerão aqui</translation>
+		<translation>최근 사용한 이모티콘이 여기에 나타납니다</translation>
 	</message>
 	<message>
 		<source>recipient</source>
-		<translation>Destinatário</translation>
+		<translation>수신인</translation>
 	</message>
 	<message>
 		<source>recipient-code</source>
-		<translation>Digite o endereço do destinatário</translation>
+		<translation>수신인 주소 입력</translation>
 	</message>
 	<message>
 		<source>recipient-code-placeholder</source>
-		<translation>0x… ou nome.dominio.eth</translation>
+		<translation>0x... 또는 username.domain.eth</translation>
 	</message>
 	<message>
 		<source>recover</source>
-		<translation>Recuperar</translation>
+		<translation>복구</translation>
 	</message>
 	<message>
 		<source>recover-key</source>
-		<translation>Acessar chaves existentes</translation>
+		<translation>기존 키 액세스</translation>
 	</message>
 	<message>
 		<source>recover-keycard-multiaccount-not-supported</source>
-		<translation>Já existem chaves para esta conta e não podem ser adicionadas novamente. Se você perdeu sua senha, código de acesso ou Keycard, desinstale o aplicativo, reinstale e acesse suas chaves inserindo sua frase-semente</translation>
+		<translation>이 계정을 위한 키가 이미 존재하여 다시 추가할 수 없습니다. 만약 비밀번호, 패스코드, 또는 키카드를 잊어버렸다면, 스테이터스 앱을 재설치하고 시드 구문을 입력해 키에 액세스해주시기 바랍니다</translation>
 	</message>
 	<message>
 		<source>recover-with-keycard</source>
-		<translation>Recuperar com Keycard</translation>
+		<translation>키카드로 복구하기</translation>
 	</message>
 	<message>
 		<source>recovering-key</source>
-		<translation>Acessando chaves…</translation>
+		<translation>키 액세스 중...</translation>
 	</message>
 	<message>
 		<source>recovery-confirm-phrase</source>
-		<translation>Confirmar frase-semente</translation>
+		<translation>시드 구문 확인</translation>
 	</message>
 	<message>
 		<source>recovery-phrase</source>
-		<translation>Frase-semente</translation>
+		<translation>시드 구문</translation>
 	</message>
 	<message>
 		<source>recovery-success-text</source>
-		<translation>Você terá que definir um novo código ou senha para recriptografar suas chaves</translation>
+		<translation>새로운 코드 혹은 비밀번호를 생성해 키를 재암호화해야 합니다.</translation>
 	</message>
 	<message>
 		<source>recovery-typo-dialog-description</source>
-		<translation>Observe que sua frase-semente deve usar exatamente as mesmas palavras e ordem que você recebeu</translation>
+		<translation>시드 구문은 처음 받은 것과 정확히 동일한 철자와 순서로 사용해야 합니다</translation>
 	</message>
 	<message>
 		<source>recovery-typo-dialog-title</source>
-		<translation>A frase-semente está correta?</translation>
+		<translation>시드 구문이 정확한가요?</translation>
 	</message>
 	<message>
 		<source>remember-me</source>
-		<translation>Lembrar-me</translation>
+		<translation>기억하기</translation>
 	</message>
 	<message>
 		<source>remind-me-later</source>
-		<translation>Mostrar isso novamente</translation>
+		<translation>나중에 다시 확인</translation>
 	</message>
 	<message>
 		<source>remove</source>
-		<translation>Remover</translation>
+		<translation>삭제</translation>
 	</message>
 	<message>
 		<source>remove-from-chat</source>
-		<translation>Remover do chat</translation>
+		<translation>채팅에서 내보내기</translation>
 	</message>
 	<message>
 		<source>remove-from-contacts</source>
-		<translation>Remover dos contatos</translation>
+		<translation>연락처 삭제</translation>
 	</message>
 	<message>
 		<source>remove-from-contacts-text</source>
-		<translation>Ao remover um usuário da sua lista de contatos, você não esconde dele o endereço da sua carteira</translation>
+		<translation>연락처에서 특정 사용자를 삭제해도, 사용자의 지갑 주소는 숨길 수 없습니다</translation>
 	</message>
 	<message>
 		<source>remove-network</source>
-		<translation>Remover rede</translation>
+		<translation>네트워크 삭제</translation>
 	</message>
 	<message>
 		<source>remove-token</source>
-		<translation>Remover token</translation>
+		<translation>토큰 제거</translation>
 	</message>
 	<message>
 		<source>removed</source>
-		<translation>removeu</translation>
+		<translation>퇴장됨</translation>
 	</message>
 	<message>
 		<source>repeat-pin</source>
-		<translation>Repita os 6 novos dígitos do código de acesso</translation>
+		<translation>6자리 패스코드 다시 입력</translation>
 	</message>
 	<message>
 		<source>repeat-puk</source>
-		<translation>Repita o novo PUK de 12 dígitos</translation>
+		<translation>새로운 12자리 PUK 반복</translation>
 	</message>
 	<message>
 		<source>report-bug-email-template</source>
-		<translation>1. Descrição do problema 
- (Descreva o recurso que você deseja ou resuma brevemente o bug e o que você fez, o que esperava que acontecesse e o que realmente acontece. Seções abaixo) 
+		<translation>1. 문제 설명
+ {{description}}
+ 
 
+ 2. 재현 단계
+ {{steps}}
+ 
 
- 2. Passos para reproduzir 
- (Descreva como podemos replicar o bug passo a passo.) 
- - Abrir Status
- - ... 
- - Etapa 3, etc. 
-
-
- 3. Comportamento esperado 
- (Descreva o que você esperava que acontecesse.) 
-
-
- 4. Comportamento real 
- (Descreva o que realmente aconteceu.) 
-
-
- 5. Por favor, anexe capturas de tela que possam demonstrar o problema</translation>
+ 3. 문제를 시연할 수 있는 스크린샷을 첨부하세요.
+</translation>
 	</message>
 	<message>
 		<source>request-transaction</source>
-		<translation>Solicitar transação</translation>
+		<translation>트랜잭션 요청</translation>
 	</message>
 	<message>
 		<source>required-field</source>
-		<translation>Campo obrigatório</translation>
+		<translation>필수 입력란</translation>
 	</message>
 	<message>
 		<source>resend-message</source>
-		<translation>Reenviar</translation>
+		<translation>재전송</translation>
 	</message>
 	<message>
 		<source>reset-card</source>
-		<translation>Redefinir cartão</translation>
+		<translation>카드 재설정</translation>
 	</message>
 	<message>
 		<source>reset-card-description</source>
-		<translation>Esta operação redefinirá o cartão para o estado inicial. Ele apagará todos os dados do cartão, incluindo chaves privadas. A operação não é reversível.</translation>
+		<translation>이 작업은 카드를 초기 상태로 재설정합니다. 개인 키를 포함한 모든 카드 데이터가 지워집니다. 이 작업은 되돌릴 수 없습니다.</translation>
 	</message>
 	<message>
 		<source>retry</source>
-		<translation>Tentar de novo</translation>
+		<translation>다시 시도</translation>
 	</message>
 	<message>
 		<source>revoke-access</source>
-		<translation>Recuperar acesso</translation>
+		<translation>접근 권한 취소</translation>
 	</message>
 	<message>
 		<source>rinkeby-network</source>
-		<translation>Rede de teste Rinkeby</translation>
+		<translation>Rinkeby 테스트 네트워크</translation>
 	</message>
 	<message>
 		<source>ropsten-network</source>
-		<translation>Rede de teste de Ropsten</translation>
+		<translation>Ropsten 테스트 네트워크</translation>
 	</message>
 	<message>
 		<source>rpc-url</source>
@@ -4339,811 +4313,811 @@ Acesse a seção configurações dos dispositivos para parear seus dispositivos.
 	</message>
 	<message>
 		<source>save</source>
-		<translation>Salvar</translation>
+		<translation>저장</translation>
 	</message>
 	<message>
 		<source>save-password</source>
-		<translation>Salvar senha</translation>
+		<translation>비밀번호 저장</translation>
 	</message>
 	<message>
 		<source>save-password-unavailable</source>
-		<translation>Defina o código de acesso do dispositivo para salvar a senha</translation>
+		<translation>비밀번호를 저장하기 위해 기기 패스코드를 설정해주세요</translation>
 	</message>
 	<message>
 		<source>save-password-unavailable-android</source>
-		<translation>Salvar senha não está disponível: seu dispositivo pode estar &quot;rooteado&quot; ou não possui os recursos de segurança necessários.</translation>
+		<translation>비밀번호 저장을 사용할 수 없습니다. 사용자의 기기가 루팅되었거나, 필요한 보안 기능이 없을 수 있습니다.</translation>
 	</message>
 	<message>
 		<source>scan-qr</source>
-		<translation>Escanear código QR</translation>
+		<translation>QR코드 스캔</translation>
 	</message>
 	<message>
 		<source>scan-qr-code</source>
-		<translation>Escaneie um código QR com um endereço de carteira</translation>
+		<translation>지갑 주소 QR 코드 스캔</translation>
 	</message>
 	<message>
 		<source>search</source>
-		<translation>Procurar</translation>
+		<translation>검색</translation>
 	</message>
 	<message>
 		<source>secret-keys-confirmation-text</source>
-		<translation>Você vai precisar deles para continuar a usar o seu Keycard no caso de perder o seu celular.</translation>
+		<translation>이는 스마트폰을 잃어버릴 경우에도 키카드를 사용하기 위해 필요합니다.</translation>
 	</message>
 	<message>
 		<source>secret-keys-confirmation-title</source>
-		<translation>Já anotou os códigos?</translation>
+		<translation>코드를 적어두셨나요?</translation>
 	</message>
 	<message>
 		<source>security</source>
-		<translation>Segurança</translation>
+		<translation>보안</translation>
 	</message>
 	<message>
 		<source>see-details</source>
-		<translation>Ver detalhes</translation>
+		<translation>세부 정보 확인</translation>
 	</message>
 	<message>
 		<source>see-it-again</source>
-		<translation>VEJA NOVAMENTE</translation>
+		<translation>다시 보기</translation>
 	</message>
 	<message>
 		<source>select-account-first</source>
-		<translation>Selecione uma conta primeiro</translation>
+		<translation>먼저 계정을 선택하세요</translation>
 	</message>
 	<message>
 		<source>select-chat</source>
-		<translation>Selecionar bate-papo para iniciar o envio de mensagens</translation>
+		<translation>메시지를 주고받기 시작할 채팅을 선택해주세요</translation>
 	</message>
 	<message>
 		<source>selected</source>
-		<translation>Selecionado</translation>
+		<translation>인기 채팅방</translation>
 	</message>
 	<message>
 		<source>select</source>
-		<translation>Selecionar</translation>
+		<translation>선택</translation>
 	</message>
 	<message>
 		<source>select-account</source>
-		<translation>Selecionar conta</translation>
+		<translation>계정 선택</translation>
 	</message>
 	<message>
 		<source>send-logs</source>
-		<translation>Relatar um bug</translation>
+		<translation>버그 신고</translation>
 	</message>
 	<message>
 		<source>send-logs-to</source>
-		<translation>Relatar um bug para {{email}}</translation>
+		<translation>{{email}}에 버그 신고</translation>
 	</message>
 	<message>
 		<source>send-message</source>
-		<translation>Enviar mensagem</translation>
+		<translation>메시지 보내기</translation>
 	</message>
 	<message>
 		<source>send-request</source>
-		<translation>Enviar pedido</translation>
+		<translation>요청 전송</translation>
 	</message>
 	<message>
 		<source>send-request-amount</source>
-		<translation>Quantidade</translation>
+		<translation>수량</translation>
 	</message>
 	<message>
 		<source>send-request-amount-max-decimals</source>
-		<translation>O número máximo de decimais é {{asset-decimals}}</translation>
+		<translation>최대 소수점 자릿수는 {{asset-decimals}}입니다.</translation>
 	</message>
 	<message>
 		<source>send-request-unknown-token</source>
-		<translation>Token desconhecido - {{asset}}</translation>
+		<translation>알 수 없는 토큰 - {{asset}}</translation>
 	</message>
 	<message>
 		<source>send-sending-to</source>
-		<translation>para {{recipient-name}}</translation>
+		<translation>수신인: {{recipient-name}}</translation>
 	</message>
 	<message>
 		<source>send-transaction</source>
-		<translation>Enviar transação</translation>
+		<translation>트랜잭션 보내기</translation>
 	</message>
 	<message>
 		<source>sending</source>
-		<translation>Enviando</translation>
+		<translation>송금액:</translation>
 	</message>
 	<message>
 		<source>sent-at</source>
-		<translation>Enviado em</translation>
+		<translation>보낸 시각:</translation>
 	</message>
 	<message>
 		<source>set-a-topic</source>
-		<translation>Criar um tópico</translation>
+		<translation>채팅 주제 생성</translation>
 	</message>
 	<message>
 		<source>set-currency</source>
-		<translation>Definir moeda</translation>
+		<translation>통화 설정</translation>
 	</message>
 	<message>
 		<source>set-dapp-access-permissions</source>
-		<translation>Definir permissões de acesso do DApp</translation>
+		<translation>디앱 접근 권한 설정</translation>
 	</message>
 	<message>
 		<source>settings</source>
-		<translation>Configurações</translation>
+		<translation>설정</translation>
 	</message>
 	<message>
 		<source>share</source>
-		<translation>Compartilhar</translation>
+		<translation>공유</translation>
 	</message>
 	<message>
 		<source>shared</source>
-		<translation>Compartilhado</translation>
+		<translation>공유된</translation>
 	</message>
 	<message>
 		<source>share-address</source>
-		<translation>Compartilhar endereço</translation>
+		<translation>주소 공유</translation>
 	</message>
 	<message>
 		<source>share-chat</source>
-		<translation>Compartilhar bate-papo</translation>
+		<translation>채팅 공유</translation>
 	</message>
 	<message>
 		<source>share-contact-code</source>
-		<translation>Compartilhar minha chave de bate-papo</translation>
+		<translation>채팅 키 공유하기</translation>
 	</message>
 	<message>
 		<source>share-dapp-text</source>
-		<translation>Confira este DApp que estou usando no Status: {{link}}</translation>
+		<translation>스테이터스에서 사용하는 디앱 확인: {{link}}</translation>
 	</message>
 	<message>
 		<source>share-link</source>
-		<translation>Compartilhar link</translation>
+		<translation>링크 공유</translation>
 	</message>
 	<message>
 		<source>share-my-profile</source>
-		<translation>Compartilhar meu perfil</translation>
+		<translation>내 프로필 공유</translation>
 	</message>
 	<message>
 		<source>share-profile</source>
-		<translation>Compartilhar perfil</translation>
+		<translation>프로필 공유</translation>
 	</message>
 	<message>
 		<source>share-profile-link</source>
-		<translation>Compartilhar link do perfil</translation>
+		<translation>프로필 링크 공유</translation>
 	</message>
 	<message>
 		<source>share-public-chat-text</source>
-		<translation>Confira este bate-papo público no app Status: {{link}}</translation>
+		<translation>스테이터스 앱에서 오픈채팅에 참여하세요: {{link}}</translation>
 	</message>
 	<message>
 		<source>sharing-copied-to-clipboard</source>
-		<translation>Copiado</translation>
+		<translation>클립보드에 복사됨</translation>
 	</message>
 	<message>
 		<source>sharing-copy-to-clipboard</source>
-		<translation>Copiar</translation>
+		<translation>클립보드로 복사</translation>
 	</message>
 	<message>
 		<source>share-logs</source>
-		<translation>Compartilhar logs</translation>
+		<translation>로그 공유</translation>
 	</message>
 	<message>
 		<source>sharing-share</source>
-		<translation>Compartilhar</translation>
+		<translation>공유하기</translation>
 	</message>
 	<message>
 		<source>show-less</source>
-		<translation>Mostre menos</translation>
+		<translation>숨기기</translation>
 	</message>
 	<message>
 		<source>show-more</source>
-		<translation>Mostrar mais</translation>
+		<translation>더 보기</translation>
 	</message>
 	<message>
 		<source>show-qr</source>
-		<translation>Mostrar código QR</translation>
+		<translation>QR코드 표시</translation>
 	</message>
 	<message>
 		<source>show-transaction-data</source>
-		<translation>Mostrar dados da transação</translation>
+		<translation>트랜잭션 데이터 표시</translation>
 	</message>
 	<message>
 		<source>sign-and-send</source>
-		<translation>Assinar e enviar</translation>
+		<translation>서명 및 송금</translation>
 	</message>
 	<message>
 		<source>sign-in</source>
-		<translation>Entrar</translation>
+		<translation>로그인</translation>
 	</message>
 	<message>
 		<source>sign-message</source>
-		<translation>Assinar Mensagem</translation>
+		<translation>메시지 서명</translation>
 	</message>
 	<message>
 		<source>sign-out</source>
-		<translation>Sair da sessão</translation>
+		<translation>로그아웃</translation>
 	</message>
 	<message>
 		<source>sign-with</source>
-		<translation>Assinar com</translation>
+		<translation>다음으로 서명</translation>
 	</message>
 	<message>
 		<source>sign-with-password</source>
-		<translation>Assinar com senha</translation>
+		<translation>비밀번호로 서명</translation>
 	</message>
 	<message>
 		<source>sign-you-in</source>
-		<translation>Iniciando sessão...</translation>
+		<translation>로그인 하는 중...</translation>
 	</message>
 	<message>
 		<source>signing</source>
-		<translation>Assinatura</translation>
+		<translation>서명</translation>
 	</message>
 	<message>
 		<source>signing-a-message</source>
-		<translation>Assinando uma mensagem</translation>
+		<translation>메시지 서명</translation>
 	</message>
 	<message>
 		<source>signing-phrase</source>
-		<translation>Frase de assinatura</translation>
+		<translation>서명 구문</translation>
 	</message>
 	<message>
 		<source>something-went-wrong</source>
-		<translation>Algo deu errado</translation>
+		<translation>문제가 발생했습니다</translation>
 	</message>
 	<message>
 		<source>soon</source>
-		<translation>Em breve</translation>
+		<translation>곧</translation>
 	</message>
 	<message>
 		<source>specify-address</source>
-		<translation>Especificar endereço</translation>
+		<translation>주소 지정</translation>
 	</message>
 	<message>
 		<source>specify-name</source>
-		<translation>Especifique um nome</translation>
+		<translation>이름 지정</translation>
 	</message>
 	<message>
 		<source>specify-symbol</source>
-		<translation>Especifique um símbolo</translation>
+		<translation>기호 지정</translation>
 	</message>
 	<message>
 		<source>specify-network-id</source>
-		<translation>Especifique o ID da rede</translation>
+		<translation>네트워크 ID 지정</translation>
 	</message>
 	<message>
 		<source>specify-rpc-url</source>
-		<translation>Especifique um URL RPC</translation>
+		<translation>RPC URL 지정</translation>
 	</message>
 	<message>
 		<source>start-chat</source>
-		<translation>Iniciar bate-papo</translation>
+		<translation>채팅 시작</translation>
 	</message>
 	<message>
 		<source>start-conversation</source>
-		<translation>Iniciar conversa</translation>
+		<translation>대화 시작</translation>
 	</message>
 	<message>
 		<source>start-group-chat</source>
-		<translation>Iniciar conversa em grupo</translation>
+		<translation>그룹 채팅 시작</translation>
 	</message>
 	<message>
 		<source>start-new-chat</source>
-		<translation>Iniciar nova conversa</translation>
+		<translation>새 채팅 시작</translation>
 	</message>
 	<message>
 		<source>status</source>
-		<translation>Status</translation>
+		<translation>스테이터스</translation>
 	</message>
 	<message>
 		<source>status-confirmed</source>
-		<translation>Confirmado</translation>
+		<translation>확인됨</translation>
 	</message>
 	<message>
 		<source>status-hardwallet</source>
-		<translation>Hardwallet Status</translation>
+		<translation>스테이터스 하드월렛</translation>
 	</message>
 	<message>
 		<source>status-keycard</source>
-		<translation>Keycard Status</translation>
+		<translation>스테이터스 키카드</translation>
 	</message>
 	<message>
 		<source>status-pending</source>
-		<translation>Pendente</translation>
+		<translation>대기 중</translation>
 	</message>
 	<message>
 		<source>status-tx-not-found</source>
-		<translation>TX não encontrado</translation>
+		<translation>TX를 찾을 수 없습니다</translation>
 	</message>
 	<message>
 		<source>status-sent</source>
-		<translation>Enviado</translation>
+		<translation>전송됨</translation>
 	</message>
 	<message>
 		<source>status-not-sent-tap</source>
-		<translation>Não confirmado. Toque para opções</translation>
+		<translation>전송 실패. 옵션을 선택하세요</translation>
 	</message>
 	<message>
 		<source>status-not-sent-click</source>
-		<translation>Não confirmado. Clique para opções</translation>
+		<translation>전송되지 않았습니다. 옵션을 클릭하세요</translation>
 	</message>
 	<message>
 		<source>step-i-of-n</source>
-		<translation>Etapa {{step}} de {{number}}</translation>
+		<translation>{{number}}단계 중 {{step}}단계</translation>
 	</message>
 	<message>
 		<source>sticker-market</source>
-		<translation>Mercado de adesivos</translation>
+		<translation>이모티콘 마켓</translation>
 	</message>
 	<message>
 		<source>sticker</source>
-		<translation>Sticker</translation>
+		<translation>이모티콘</translation>
 	</message>
 	<message>
 		<source>submit</source>
-		<translation>Enviar</translation>
+		<translation>로그인</translation>
 	</message>
 	<message>
 		<source>submit-bug</source>
-		<translation>Relatar um bug</translation>
+		<translation>버그 제출</translation>
 	</message>
 	<message>
 		<source>success</source>
-		<translation>Sucesso</translation>
+		<translation>성공</translation>
 	</message>
 	<message>
 		<source>symbol</source>
-		<translation>Símbolo</translation>
+		<translation>기호 (Symbol)</translation>
 	</message>
 	<message>
 		<source>sync-all-devices</source>
-		<translation>Sincronizar todos dispositivos</translation>
+		<translation>모든 기기 동기화</translation>
 	</message>
 	<message>
 		<source>sync-in-progress</source>
-		<translation>Sincronizando...</translation>
+		<translation>동기화 중...</translation>
 	</message>
 	<message>
 		<source>sync-settings</source>
-		<translation>Configurações de sincronização</translation>
+		<translation>동기화 설정</translation>
 	</message>
 	<message>
 		<source>sync-synced</source>
-		<translation>Sincronizado</translation>
+		<translation>동기화 됨</translation>
 	</message>
 	<message>
 		<source>syncing-devices</source>
-		<translation>Sincronizando...</translation>
+		<translation>동기화 중...</translation>
 	</message>
 	<message>
 		<source>tag-was-lost</source>
-		<translation>A tag foi perdida</translation>
+		<translation>태그가 손실되었습니다</translation>
 	</message>
 	<message>
 		<source>tap-card-again</source>
-		<translation>Aproxime o cartão na parte de trás do seu telefone novamente</translation>
+		<translation>스마트폰 뒷면에 카드를 다시 터치해주세요</translation>
 	</message>
 	<message>
 		<source>test-networks</source>
-		<translation>Redes de teste</translation>
+		<translation>테스트 네트워크</translation>
 	</message>
 	<message>
 		<source>text-input-disabled</source>
-		<translation>Aguarde um momento…</translation>
+		<translation>잠시만 기다려주세요...</translation>
 	</message>
 	<message>
 		<source>this-device</source>
-		<translation>Este dispositivo</translation>
+		<translation>스마트폰에 저장</translation>
 	</message>
 	<message>
 		<source>this-device-desc</source>
-		<translation>Suas chaves serão criptografadas e armazenadas com segurança no seu dispositivo</translation>
+		<translation>키는 암호화되어 사용자의 기기에 안전하게 저장됩니다</translation>
 	</message>
 	<message>
 		<source>this-is-you-signing</source>
-		<translation>Esta é a sua frase de assinatura</translation>
+		<translation>사용자의 서명 구문입니다</translation>
 	</message>
 	<message>
 		<source>this-will-take-few-seconds</source>
-		<translation>Isso levará alguns segundos</translation>
+		<translation>이 작업은 몇 초가 소요됩니다</translation>
 	</message>
 	<message>
 		<source>three-words-description</source>
-		<translation>Você deve ver essas três palavras antes de assinar cada transação</translation>
+		<translation>트랜잭션 서명 전 이 3단어가 표시됩니다</translation>
 	</message>
 	<message>
 		<source>three-words-description-2</source>
-		<translation>Se você ver uma combinação diferente, cancele a transação e finalize a sessão</translation>
+		<translation>다른 단어가 표시되면, 트랜잭션을 취소하고 로그아웃하세요</translation>
 	</message>
 	<message>
 		<source>to</source>
-		<translation>Para</translation>
+		<translation>받는 주소</translation>
 	</message>
 	<message>
 		<source>to-block</source>
-		<translation>Bloquear </translation>
+		<translation>차단</translation>
 	</message>
 	<message>
 		<source>to-encrypt-enter-password</source>
-		<translation>Para criptografar a conta, digite sua senha</translation>
+		<translation>계정을 암호화하려면 비밀번호를 입력해주세요</translation>
 	</message>
 	<message>
 		<source>to-see-this-message</source>
-		<translation>Para ver esta mensagem,</translation>
+		<translation>이 메시지를 보려면,</translation>
 	</message>
 	<message>
 		<source>token-auto-validate-decimals-error</source>
-		<translation>Decimais incorretos para o token {{symbol}} no endereço {{address}} - definido como {{expected}} mas detectado como {{actual}}</translation>
+		<translation>{{symbol}} 토큰 주소 {{address}} 의 자릿수가 잘못 되었습니다. {{expected}} (으)로 세팅되었으나 {{actual}} 로 감지되었습니다.</translation>
 	</message>
 	<message>
 		<source>token-auto-validate-name-error</source>
-		<translation>Nome incorreto para o token {{symbol}} no endereço {{address}} - definido como {{expected}} mas detectado como {{actual}}</translation>
+		<translation>{{symbol}} 토큰 주소 {{address}} 의 이름이 잘못되었습니다. {{expected}} (으)로 세팅 되었으나 {{actual}} 로 감지되었습니다.</translation>
 	</message>
 	<message>
 		<source>token-auto-validate-symbol-error</source>
-		<translation>Símbolo incorreto para o token {{symbol}} no endereço {{address}} - definido como {{expected}} mas detectado como {{actual}}</translation>
+		<translation>{{symbol}} 토큰 주소 {{address}} 의 심볼이 잘못 되었습니다. {{expected}} (으)로 세팅되었으나 {{actual}} 로 감지되었습니다.</translation>
 	</message>
 	<message>
 		<source>token-details</source>
-		<translation>Detalhes do Token</translation>
+		<translation>토큰 세부 정보</translation>
 	</message>
 	<message>
 		<source>topic-name-error</source>
-		<translation>Use apenas letras minúsculas (a a z), números e traços (-). Não use teclas de bate-papo</translation>
+		<translation>소문자(a 에서 z), 숫자 및 하이픈(-)만 사용할 수 있습니다. 채팅 키는 사용할 수 없습니다.</translation>
 	</message>
 	<message>
 		<source>transaction</source>
-		<translation>Transação</translation>
+		<translation>트랜잭션</translation>
 	</message>
 	<message>
 		<source>transaction-data</source>
-		<translation>Dados da transação</translation>
+		<translation>트랜잭션 데이터</translation>
 	</message>
 	<message>
 		<source>transaction-declined</source>
-		<translation>Transação recusada</translation>
+		<translation>트랜잭션 거절됨</translation>
 	</message>
 	<message>
 		<source>transactions-management-enabled</source>
-		<translation>Gerenciamento de transações (alfa)</translation>
+		<translation>트랜잭션 관리 (알파)</translation>
 	</message>
 	<message>
 		<source>transaction-description</source>
-		<translation>Considere-o completo após 12 confirmações na rede.</translation>
+		<translation>네트워크에서 12번 이상 확인된 거래는 완료된 것으로 간주됩니다.</translation>
 	</message>
 	<message>
 		<source>transaction-details</source>
-		<translation>Detalhes da transação</translation>
+		<translation>트랜잭션 세부정보</translation>
 	</message>
 	<message>
 		<source>transaction-failed</source>
-		<translation>Falha na transação</translation>
+		<translation>트랜잭션 실패</translation>
 	</message>
 	<message>
 		<source>transaction-history</source>
-		<translation>Histórico de transações</translation>
+		<translation>트랜잭션 기록</translation>
 	</message>
 	<message>
 		<source>transaction-request</source>
-		<translation>Solicitação de transação</translation>
+		<translation>트랜잭션 요청</translation>
 	</message>
 	<message>
 		<source>transaction-sent</source>
-		<translation>Transação enviada</translation>
+		<translation>트랜잭션 전송됨</translation>
 	</message>
 	<message>
 		<source>transaction-signed</source>
-		<translation>A transação foi assinada com sucesso</translation>
+		<translation>트랜잭션이 성공적으로 서명되었습니다</translation>
 	</message>
 	<message>
 		<source>transactions</source>
-		<translation>Transações</translation>
+		<translation>트랜잭션</translation>
 	</message>
 	<message>
 		<source>transactions-filter-select-all</source>
-		<translation>Selecionar tudo</translation>
+		<translation>모두 선택</translation>
 	</message>
 	<message>
 		<source>transactions-filter-title</source>
-		<translation>Filtrar histórico</translation>
+		<translation>기록 필터</translation>
 	</message>
 	<message>
 		<source>type</source>
-		<translation>Tipo</translation>
+		<translation>종류</translation>
 	</message>
 	<message>
 		<source>transactions-history</source>
-		<translation>Histórico de transações</translation>
+		<translation>트랜잭션 기록</translation>
 	</message>
 	<message>
 		<source>transactions-history-empty</source>
-		<translation>Ainda não há transações no seu histórico</translation>
+		<translation>아직 트랜잭션 기록이 없습니다</translation>
 	</message>
 	<message>
 		<source>transactions-history-loading</source>
-		<translation>Carregando histórico de transações. Isso pode demorar um pouco.</translation>
+		<translation>트랜잭션 기록을 로드 중입니다. 시간이 걸릴 수 있습니다.</translation>
 	</message>
 	<message>
 		<source>transactions-sign</source>
-		<translation>Assinar</translation>
+		<translation>서명</translation>
 	</message>
 	<message>
 		<source>tribute-required-by-multiaccount</source>
-		<translation>{{multiaccount-name}} precisa de SNT para começar uma conversa.</translation>
+		<translation>{{multiaccount-name}}님과 채팅을 시작하려면 SNT가 필요합니다.</translation>
 	</message>
 	<message>
 		<source>tribute-state-paid</source>
-		<translation>Tributo pago</translation>
+		<translation>트리뷰트 지불</translation>
 	</message>
 	<message>
 		<source>tribute-state-pending</source>
-		<translation>Tributo pendente</translation>
+		<translation>트리뷰트 대기 중</translation>
 	</message>
 	<message>
 		<source>tribute-state-required</source>
-		<translation>Requer {{snt-amount}} tributos em SNT</translation>
+		<translation>{{snt-amount}} SNT 트리뷰트 필요</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk</source>
-		<translation>Tribute to Talk</translation>
+		<translation>트리뷰트 투 토크</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-add-friends</source>
-		<translation>Adicione amigos como um contato para permitir bate-papos sem pagamento de tributo.</translation>
+		<translation>연락처에 등록된 지인은 트리뷰트 계약금 지불 없이 귀하에게 메시지를 보낼 수 있습니다.</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-are-you-friends</source>
-		<translation>Vocês são amigos?</translation>
+		<translation>친구신가요?</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-ask-to-be-added</source>
-		<translation>Peça para ser adicionado como um contato</translation>
+		<translation>연락처 추가를 요청하세요</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-contact-received-your-tribute</source>
-		<translation> recebeu seu tributo. Agora vocês podem conversar com segurança.</translation>
+		<translation> 님이 귀하의 트리뷰트를 받았습니다. 귀하는 이제 연락처로 추가되어 자유롭게 채팅을 시작할 수 있습니다.</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-desc</source>
-		<translation>Monetize sua atenção exigindo pagamento de SNT para novas pessoas iniciem um bate-papo</translation>
+		<translation>새로운 사용자가 채팅을 신청하면 SNT를 요구해, 귀하의 시간에 금전적 가치를 부여하세요.</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-disabled</source>
-		<translation>Tribute to Talk desativado</translation>
+		<translation>트리뷰트 투 토크 비활성화</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-disabled-note</source>
-		<translation>A partir de agora, novas pessoas podem iniciar um bate-papo com você sem enviar o SNT.</translation>
+		<translation>지금부터 신규 사용자가 귀하에게 SNT를 보내지 않고도 채팅을 시작할 수 있습니다.</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-enabled</source>
-		<translation>Você tem o Tribute to Talk ativado.</translation>
+		<translation>트리뷰트 투 토크를 활성화하셨습니다.</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-finish-desc</source>
-		<translation>A partir de agora, você receberá apenas conversas de contatos e pessoas que pagaram </translation>
+		<translation>지금부터는 연락처에 등록된 사용자 및 트리뷰트를 지불한 사용자들로부터만 메시지를 받을 수 있습니다 </translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-learn-more-1</source>
-		<translation>Seu tempo e atenção são seus ativos mais valiosos. O Tribute to Talk permite definir uma quantidade de SNT necessária para novas pessoas iniciarem um bate-papo com você.</translation>
+		<translation>여러분의 시간은 가장 소중한 자산입니다. 트리뷰트 투 토크는 새로운 사용자가 귀하와 채팅을 시작하기 위해 필요한 SNT 계약금을 설정하여, 불필요한 메시지를 방지합니다.</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-learn-more-2</source>
-		<translation>Qualquer pessoa que não esteja na sua lista de contatos será solicitada a pagar e você pode responder assim que ela efetuar o pagamento.</translation>
+		<translation>연락처에 없는 사용자는 귀하와 채팅을 시작하기 위해 트리뷰트를 지불해야 하며, 지불이 완료되면 귀하가 이에 응할 수 있습니다.</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-learn-more-3</source>
-		<translation>Você sempre pode enviar o dinheiro de volta, mas para garantir que os amigos possam entrar em contato com você gratuitamente, adicione-os primeiro como contato.</translation>
+		<translation>받은 트리뷰트를 언제든지 되돌려 줄 수 있으나, 해당 사용자가 귀하에게 자유롭게 연락할 수 있도록 하려면 사용자를 연락처에 추가해주세요.</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-paywall-learn-more-1</source>
-		<translation>Nosso tempo e atenção são nossos ativos mais valiosos. O Tribute to Talk permite que você entre em contato com novas pessoas em troca de um pagamento SNT.</translation>
+		<translation>시간이야말로 가장 소중한 자산입니다. 트리뷰트 투 토크는 새로운 사용자가 귀하와 채팅을 시작하기 위해 필요한 SNT 계약금을 설정하여, 불필요한 메시지를 방지합니다.</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-paywall-learn-more-2</source>
-		<translation>Para iniciar um bate-papo com alguém que tenha um conjunto de tributos, basta pagar o SNT necessário e você será adicionado como um contato.</translation>
+		<translation>트리뷰트를 설정한 사용자와 채팅을 시작하려 할 경우, 필요한 만큼 SNT를 지불하면 상대방의 연락처에 추가될 수 있습니다.</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-paywall-learn-more-3</source>
-		<translation>Se você os conhece, pode compartilhar seu perfil fora do Status para ser adicionado gratuitamente.</translation>
+		<translation>만약 귀하가 이 사용자를 알고 있을 경우, 귀하의 프로필을 스테이터스 외부에 공유하면 무료로 추가하게 할 수 있습니다.</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-pending</source>
-		<translation>Tributo pendente de confirmação</translation>
+		<translation>트리뷰트 확인 대기중</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-pending-note</source>
-		<translation>A transação de tributo está pendente de confirmação na rede. Você pode verificar seu status no histórico de transações</translation>
+		<translation>트리뷰트 트랜잭션이 네트워크에서 확인 대기 중입니다. 트랜잭션 기록에서 상태를 확인하실 수 있습니다</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-removing-note</source>
-		<translation>A remoção do Tribute to Talk permitirá que novas pessoas iniciem um bate-papo sem enviar o SNT. Requer que uma transação seja feita.</translation>
+		<translation>트리뷰트 투 토크를 비활성화하면 새로운 사용자가 귀하에게 SNT 계약금 없이 메시지를 보낼 수 있습니다. 이 경우 트랜잭션 서명이 필요합니다.</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-set-snt-amount</source>
-		<translation>Defina a quantidade de SNT necessária para novas pessoas iniciarem um bate-papo</translation>
+		<translation>새로운 사용자가 귀하와 채팅을 시작할 때 필요한 SNT 계약금을 설정합니다</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-signing</source>
-		<translation>Aguardando para assinar a transação</translation>
+		<translation>트랜잭션 서명 대기 중</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-transaction-failed-note</source>
-		<translation>A transação falhou e as configurações do Tribute to Talk não foram alteradas</translation>
+		<translation>트랜잭션이 실패했습니다. 귀하의 트리뷰트 설정이 변경되지 않았습니다</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-tribute-received1</source>
-		<translation>Tributo recebido. Você e</translation>
+		<translation>트리뷰트를 받았습니다. 당신과</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-tribute-received2</source>
-		<translation>agora são contatos e podem conversar com segurança.</translation>
+		<translation>이제 상대방과 안전하게 채팅할 수 있습니다.</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-you-require-snt</source>
-		<translation>Você requer SNT para novas pessoas iniciarem um bate-papo.</translation>
+		<translation>귀하와 채팅을 시작하려는 새로운 사용자에게 SNT를 요구하세요.</translation>
 	</message>
 	<message>
 		<source>try-again</source>
-		<translation>Tente novamente</translation>
+		<translation>다시 시도</translation>
 	</message>
 	<message>
 		<source>try-keeping-the-card-still</source>
-		<translation>Tente manter o cartão parado</translation>
+		<translation>카드와 기기의 접촉을 유지하세요</translation>
 	</message>
 	<message>
 		<source>turn-nfc-on</source>
-		<translation>Ative a NFC para continuar</translation>
+		<translation>NFC를 켜 계속하기</translation>
 	</message>
 	<message>
 		<source>turn-nfc-description</source>
-		<translation>NFC está desativado no seu dispositivo. Você pode habilitá-lo nas configurações</translation>
+		<translation>해당 기기에 NFC 기능이 비활성화되어있습니다. NFC 기능을 활성화해주세요</translation>
 	</message>
 	<message>
 		<source>keycard-init-title</source>
-		<translation>Procurando cartões…</translation>
+		<translation>카드 검색 중...</translation>
 	</message>
 	<message>
 		<source>keycard-init-description</source>
-		<translation>Coloque o cartão na parte de trás do telefone para continuar</translation>
+		<translation>카드를 기기 뒷면에 대고 그 상태를 유지해주세요</translation>
 	</message>
 	<message>
 		<source>keycard-awaiting-title</source>
-		<translation>Ainda procurando…</translation>
+		<translation>탐색 중...</translation>
 	</message>
 	<message>
 		<source>keycard-awaiting-description</source>
-		<translation>Tente mover o cartão para encontrar o leitor NFC em seu dispositivo</translation>
+		<translation>카드를 기기 NFC 접촉면에 놓아주시기 바랍니다</translation>
 	</message>
 	<message>
 		<source>keycard-processing-title</source>
-		<translation>Processando…</translation>
+		<translation>처리 중</translation>
 	</message>
 	<message>
 		<source>keycard-processing-description</source>
-		<translation>Tente manter o cartão parado</translation>
+		<translation>카드와 기기의 접촉을 유지하세요</translation>
 	</message>
 	<message>
 		<source>keycard-connected-title</source>
-		<translation>Conectado</translation>
+		<translation>연결됨</translation>
 	</message>
 	<message>
 		<source>keycard-connected-description</source>
-		<translation>Tente manter o cartão parado</translation>
+		<translation>카드와 기기의 접촉을 유지하세요</translation>
 	</message>
 	<message>
 		<source>keycard-error-title</source>
-		<translation>Conexão perdida</translation>
+		<translation>연결이 끊어졌습니다</translation>
 	</message>
 	<message>
 		<source>keycard-error-description</source>
-		<translation>Conecte o cartão novamente para continuar</translation>
+		<translation>다음 단계를 진행하기 위하여 카드를 다시 연결해주시기 바랍니다</translation>
 	</message>
 	<message>
 		<source>keycard-success-title</source>
-		<translation>Sucesso</translation>
+		<translation>성공</translation>
 	</message>
 	<message>
 		<source>keycard-success-description</source>
-		<translation>Você pode remover o cartão agora</translation>
+		<translation>이제 카드를 제거해도 좋습니다</translation>
 	</message>
 	<message>
 		<source>keycard-recover</source>
-		<translation>cartão perdido ou travado?</translation>
+		<translation>분실 또는 동결된 카드인가요?</translation>
 	</message>
 	<message>
 		<source>keycard-recover-title</source>
-		<translation>Criar um novo cartão para esta conta?</translation>
+		<translation>이 계정에 대한 새 카드를 만드시겠어요?</translation>
 	</message>
 	<message>
 		<source>keycard-recover-text</source>
-		<translation>Se você tem sua frase mnemônica, poderá criar um novo Keycard associado a esta conta. Você pode usar um novo Keycard ou redefinir os padrões de fábrica em um cartão travado.</translation>
+		<translation>니모닉 구문이 있는 경우, 이 계정과 연결된 새 키카드를 만들 수 있습니다. 새 키카드를 사용하거나 동결된 키카드에서 공장 초기화를 진행할 수 있습니다.</translation>
 	</message>
 	<message>
 		<source>keycard-backup</source>
-		<translation>Crie um Keycard de backup</translation>
+		<translation>백업 키카드 만들기</translation>
 	</message>
 	<message>
 		<source>keycard-backup-success-title</source>
-		<translation>Backup bem-sucedido</translation>
+		<translation>백업 성공</translation>
 	</message>
 	<message>
 		<source>keycard-backup-success-body</source>
-		<translation>Cartão de backup criado com sucesso. Agora você pode usá-lo com sua conta, assim como o cartão principal.</translation>
+		<translation>백업 카드가 성공적으로 생성되었습니다. 이제 기본 카드처럼 계정에서 사용할 수 있습니다.</translation>
 	</message>
 	<message>
 		<source>type-a-message</source>
-		<translation>Mensagem</translation>
+		<translation>메시지</translation>
 	</message>
 	<message>
 		<source>ulc-enabled</source>
-		<translation>ULC ativado</translation>
+		<translation>ULC 사용</translation>
 	</message>
 	<message>
 		<source>backup-enabled</source>
-		<translation>Habilitado</translation>
+		<translation>활성화 됨</translation>
 	</message>
 	<message>
 		<source>backup-disabled</source>
-		<translation>Desativado</translation>
+		<translation>비활성화</translation>
 	</message>
 	<message>
 		<source>backup-settings</source>
-		<translation>Configurações de cópia de segurança</translation>
+		<translation>백업 설정</translation>
 	</message>
 	<message>
 		<source>backup-through-waku</source>
-		<translation>Realizar cópia de segurança através do Waku</translation>
+		<translation>와쿠를 통한 백업</translation>
 	</message>
 	<message>
 		<source>perform-backup</source>
-		<translation>Fazer cópia de segurança</translation>
+		<translation>백업 수행</translation>
 	</message>
 	<message>
 		<source>backing-up</source>
-		<translation>Realizando cópia de segurança...</translation>
+		<translation>백업 중...</translation>
 	</message>
 	<message>
 		<source>last-backup-performed</source>
-		<translation>Última cópia de segurança executada</translation>
+		<translation>마지막 백업 수행:</translation>
 	</message>
 	<message>
 		<source>unable-to-read-this-code</source>
-		<translation>Não foi possível ler este código</translation>
+		<translation>코드를 읽을 수 없습니다</translation>
 	</message>
 	<message>
 		<source>unblock-contact</source>
-		<translation>Desbloquear este usuário</translation>
+		<translation>사용자 차단 해제</translation>
 	</message>
 	<message>
 		<source>unknown-status-go-error</source>
-		<translation>Erro desconhecido de status-go</translation>
+		<translation>알 수 없는 status-go 오류</translation>
 	</message>
 	<message>
 		<source>unlock</source>
-		<translation>Desbloquear</translation>
+		<translation>잠금 해제</translation>
 	</message>
 	<message>
 		<source>unpair-card</source>
-		<translation>Desemparelhar cartão</translation>
+		<translation>카드 페어링 해제</translation>
 	</message>
 	<message>
 		<source>unpair-card-confirmation</source>
-		<translation>Esta operação desemparelhará o cartão do dispositivo atual. Requer autorização de código de acesso de 6 dígitos. Deseja continuar?</translation>
+		<translation>이 작업은 현재 기기와 페어링을 해제합니다. 인증을 위해 6자리 패스코드가 필요합니다. 계속하시겠습니까?</translation>
 	</message>
 	<message>
 		<source>unpaired-keycard-text</source>
-		<translation>O Keycard que você utilizou não está associado a este telefone</translation>
+		<translation>사용한 키카드가 이 스마트폰과 연동되어 있지 않습니다</translation>
 	</message>
 	<message>
 		<source>unpaired-keycard-title</source>
-		<translation>Parece que seu cartão não foi pareado.</translation>
+		<translation>카드가 페어링 되어 있지 않습니다</translation>
 	</message>
 	<message>
 		<source>unpair-keycard</source>
-		<translation>Desparear o Keycard deste telefone</translation>
+		<translation>스마트폰에서 키카드 페어링 해제</translation>
 	</message>
 	<message>
 		<source>unpair-keycard-warning</source>
-		<translation>Seu código de emparelhamento/PUK &amp; PIN permanecem inalterados</translation>
+		<translation>페어링 코드 / PUK 및 PIN은 변경되지 않습니다</translation>
 	</message>
 	<message>
 		<source>update</source>
-		<translation>Atualizar</translation>
+		<translation>업데이트</translation>
 	</message>
 	<message>
 		<source>url</source>
@@ -5155,455 +5129,456 @@ Acesse a seção configurações dos dispositivos para parear seus dispositivos.
 	</message>
 	<message>
 		<source>use-valid-contact-code</source>
-		<translation>Digite ou escaneie uma chave de bate-papo ou nome de usuário válidos</translation>
+		<translation>유효한 채팅 키 또는 사용자 이름을 입력하거나 스캔하세요</translation>
 	</message>
 	<message>
 		<source>validation-amount-invalid-number</source>
-		<translation>A quantidade não é um número válido</translation>
+		<translation>수량이 잘못되었습니다</translation>
 	</message>
 	<message>
 		<source>validation-amount-is-too-precise</source>
-		<translation>O valor é muito preciso. O número máximo de casas decimais é {{decimals}} .</translation>
+		<translation>액수가 너무 정확합니다. 최대 소수점 자리수는 {{decimals}}입니다.</translation>
 	</message>
 	<message>
 		<source>version</source>
-		<translation>Versão do aplicativo</translation>
+		<translation>앱 버전</translation>
 	</message>
 	<message>
 		<source>app-commit</source>
-		<translation>Commit do aplicativo</translation>
+		<translation>앱 커밋</translation>
 	</message>
 	<message>
 		<source>view</source>
-		<translation>Visualizar</translation>
+		<translation>보기</translation>
 	</message>
 	<message>
 		<source>view-cryptokitties</source>
-		<translation>Ver em CryptoKitties</translation>
+		<translation>CryptoKitties에서 보기</translation>
 	</message>
 	<message>
 		<source>view-cryptostrikers</source>
-		<translation>Ver no CryptoStrikers</translation>
+		<translation>CryptoStrikers에서 보기</translation>
 	</message>
 	<message>
 		<source>view-etheremon</source>
-		<translation>Ver no Etheremon</translation>
+		<translation>Etheremon에서보기</translation>
 	</message>
 	<message>
 		<source>view-gitcoin</source>
-		<translation>Ver no Gitcoin</translation>
+		<translation>Gitcoin에서 보기</translation>
 	</message>
 	<message>
 		<source>view-profile</source>
-		<translation>Ver perfil</translation>
+		<translation>프로필 보기</translation>
 	</message>
 	<message>
 		<source>view-details</source>
-		<translation>Ver Detalhes</translation>
+		<translation>세부 정보 보기</translation>
 	</message>
 	<message>
 		<source>view-signing</source>
-		<translation>Ver frase de assinatura</translation>
+		<translation>서명 구문 보기</translation>
 	</message>
 	<message>
 		<source>view-superrare</source>
-		<translation>Ver no SuperRare</translation>
+		<translation>SuperRare에서 보기</translation>
 	</message>
 	<message>
 		<source>waiting-for-wifi</source>
-		<translation>Sem Wi-Fi, sincronização de mensagens desativada.</translation>
+		<translation>Wi-Fi 없음, 메시지 동기화 비활성화.</translation>
 	</message>
 	<message>
 		<source>waiting-for-wifi-change</source>
-		<translation>Configurações</translation>
+		<translation>설정</translation>
 	</message>
 	<message>
 		<source>waiting-to-sign</source>
-		<translation>Aguardando para assinar a transação...</translation>
+		<translation>트랜잭션 서명 대기 중...</translation>
 	</message>
 	<message>
 		<source>wallet</source>
-		<translation>Carteira</translation>
+		<translation>지갑</translation>
 	</message>
 	<message>
 		<source>wallet-asset</source>
-		<translation>Ativo</translation>
+		<translation>자산</translation>
 	</message>
 	<message>
 		<source>wallet-assets</source>
-		<translation>Ativos</translation>
+		<translation>자산</translation>
 	</message>
 	<message>
 		<source>wallet-backup-recovery-title</source>
-		<translation>Faça backup da sua frase-semente</translation>
+		<translation>시드 구문 백업</translation>
 	</message>
 	<message>
 		<source>wallet-choose-recipient</source>
-		<translation>Escolher destinatário</translation>
+		<translation>수신인 선택</translation>
 	</message>
 	<message>
 		<source>wallet-collectibles</source>
-		<translation>Colecionáveis</translation>
+		<translation>수집품</translation>
 	</message>
 	<message>
 		<source>wallet-insufficient-funds</source>
-		<translation>Fundos insuficientes</translation>
+		<translation>자산 부족</translation>
 	</message>
 	<message>
 		<source>wallet-insufficient-gas</source>
-		<translation>Não há ETH suficiente para o gás</translation>
+		<translation>가스로 사용할 ETH가 부족합니다</translation>
 	</message>
 	<message>
 		<source>wallet-invalid-address</source>
-		<translation>Endereço inválido: 
+		<translation>잘못된 주소: 
  {{data}}</translation>
 	</message>
 	<message>
 		<source>wallet-invalid-address-checksum</source>
-		<translation>Erro no endereço:{{data}}</translation>
+		<translation>잘못된 주소: 
+ {{data}}</translation>
 	</message>
 	<message>
 		<source>wallet-invalid-chain-id</source>
-		<translation>A rede não corresponde: 
- {{data}} mas a cadeia atual é {{chain}}</translation>
+		<translation>네트워크가 일치하지 않습니다: 
+ {{data}}, 하지만 현재 체인은 {{chain}}입니다.</translation>
 	</message>
 	<message>
 		<source>wallet-manage-assets</source>
-		<translation>Gerenciar ativos</translation>
+		<translation>자산 관리</translation>
 	</message>
 	<message>
 		<source>wallet-manage-accounts</source>
-		<translation>Gerenciar contas</translation>
+		<translation>계정 관리</translation>
 	</message>
 	<message>
 		<source>wallet-request</source>
-		<translation>Solicitação</translation>
+		<translation>요청</translation>
 	</message>
 	<message>
 		<source>wallet-send</source>
-		<translation>Enviar</translation>
+		<translation>보내기</translation>
 	</message>
 	<message>
 		<source>wallet-send-min-units</source>
-		<translation>Mínimo 21000 unidades</translation>
+		<translation>최소 21000 유닛</translation>
 	</message>
 	<message>
 		<source>wallet-send-min-wei</source>
-		<translation>Min 1 wei</translation>
+		<translation>최소 1 wei</translation>
 	</message>
 	<message>
 		<source>wallet-settings</source>
-		<translation>Configurações da carteira</translation>
+		<translation>지갑 설정</translation>
 	</message>
 	<message>
 		<source>wallet-total-value</source>
-		<translation>Valor total</translation>
+		<translation>총 자산</translation>
 	</message>
 	<message>
 		<source>wallet-transaction-total-fee</source>
-		<translation>Taxa total</translation>
+		<translation>총 비용</translation>
 	</message>
 	<message>
 		<source>wants-to-access-profile</source>
-		<translation>quer acessar seu perfil</translation>
+		<translation>이 프로필 접근을 요청합니다</translation>
 	</message>
 	<message>
 		<source>warning</source>
-		<translation>Atenção</translation>
+		<translation>경고</translation>
 	</message>
 	<message>
 		<source>warning-message</source>
-		<translation>Desculpe, limitamos o envio de várias mensagens em rápida sucessão para evitar spam. Por favor, tente novamente daqui a pouco</translation>
+		<translation>죄송합니다. 스팸을 방지하기 위해 여러 메시지를 빠르게 연속적으로 보내는 것을 제한하고 있습니다. 잠시 후 다시 시도하세요.</translation>
 	</message>
 	<message>
 		<source>web-view-error</source>
-		<translation>Não foi possível carregar a página</translation>
+		<translation>페이지를 로드할 수 없습니다</translation>
 	</message>
 	<message>
 		<source>welcome-screen-text</source>
-		<translation>Configure sua carteira, convide seus amigos para bater papo e navegue pelos dapps mais usados!</translation>
+		<translation>지갑을 설정하고, 친구를 초대해 채팅하고 
+디앱을 브라우징하세요!</translation>
 	</message>
 	<message>
 		<source>welcome-to-status</source>
-		<translation>Bem-vindo ao Status!</translation>
+		<translation>환영합니다!</translation>
 	</message>
 	<message>
 		<source>welcome-to-status-description</source>
-		<translation>Configure sua carteira criptográfica, convide amigos para conversar e navegue por aplicativos descentralizados</translation>
+		<translation>암호화폐 지갑을 설정하고, 친구들을 초대해서 채팅하거나 디앱을 둘러보세요</translation>
 	</message>
 	<message>
 		<source>welcome-blank-message</source>
-		<translation>Suas conversas serão exibidas aqui. Para iniciar novos bate-papos, pressione o botão ⊕</translation>
+		<translation>사용자의 채팅 목록이 여기에 표시됩니다. ⊕ 버튼을 눌러 새로운 채팅을 시작해보세요</translation>
 	</message>
 	<message>
 		<source>welcome-community-blank-message</source>
-		<translation>Seus canais aparecerão aqui. Para criar um novo canal, clique no botão ⊕ e selecione &quot;Criar um canal&quot;</translation>
+		<translation>채널이 여기에 표시됩니다. 새 채널을 만들려면 ⊕ 버튼을 클릭하고 &quot;채널 만들기&quot;를 선택하세요.</translation>
 	</message>
 	<message>
 		<source>welcome-community-blank-message-edit-chats</source>
-		<translation>Seus canais aparecerão aqui. Para criar um novo canal, volte para a tela da comunidade, clique no botão ⊕ e selecione &quot;Criar um canal&quot;</translation>
+		<translation>채널이 여기에 표시됩니다. 새 채널을 만들려면 커뮤니티 화면으로 돌아가서 ⊕ 버튼을 클릭하고 &quot;채널 만들기&quot;를 선택하세요</translation>
 	</message>
 	<message>
 		<source>welcome-blank-community-message</source>
-		<translation>Suas comunidades aparecerão aqui.</translation>
+		<translation>사용자의 커뮤니티가 여기에 표시됩니다.</translation>
 	</message>
 	<message>
 		<source>fetch-community</source>
-		<translation>Buscar comunidade</translation>
+		<translation>커뮤니티 가져오기</translation>
 	</message>
 	<message>
 		<source>fetching-community</source>
-		<translation>Buscando comunidade…</translation>
+		<translation>커뮤니티 가져오는 중...</translation>
 	</message>
 	<message>
 		<source>seed-phrase-placeholder</source>
-		<translation>Frase-semente…</translation>
+		<translation>시드 구문...</translation>
 	</message>
 	<message>
 		<source>word-count</source>
-		<translation>Contagem de palavras</translation>
+		<translation>단어 수</translation>
 	</message>
 	<message>
 		<source>word-n</source>
-		<translation>Palavra #{{number}}</translation>
+		<translation>{{number}}번째 단어</translation>
 	</message>
 	<message>
 		<source>word-n-description</source>
-		<translation>Para verificar se você fez o backup da sua frase-semente corretamente, digite a palavra #{{number}} acima.</translation>
+		<translation>시드 구문을 정확히 백업했는지 확인하기 위해, {{number}}번째 단어를 입력해주세요.</translation>
 	</message>
 	<message numerus="yes">
 		<source>words-n</source>
 		<translation>
-			<numerusform>1 palavra</numerusform>
-			<numerusform>{{count}} palavras</numerusform>
+			<numerusform>단어</numerusform>
 		</translation>
 	</message>
 	<message>
 		<source>write-down-and-store-securely</source>
-		<translation>Anote os códigos e
- guarde-os de forma segura</translation>
+		<translation>코드를 메모해 두고
+안전하게 보관하세요</translation>
 	</message>
 	<message>
 		<source>wrong-address</source>
-		<translation>Endereço errado</translation>
+		<translation>잘못된 주소</translation>
 	</message>
 	<message>
 		<source>wrong-card</source>
-		<translation>Cartão errado</translation>
+		<translation>잘못된 카드</translation>
 	</message>
 	<message>
 		<source>wrong-card-text</source>
-		<translation>O cartão utilizado não corresponde às chaves que você selecionou</translation>
+		<translation>사용한 카드와 키가 호환되지 않습니다.</translation>
 	</message>
 	<message>
 		<source>wrong-contract</source>
-		<translation>Contrato errado</translation>
+		<translation>잘못된 컨트랙트</translation>
 	</message>
 	<message>
 		<source>contract-isnt-supported</source>
-		<translation>Contrato não suportado</translation>
+		<translation>컨트랙트가 지원되지 않습니다</translation>
 	</message>
 	<message>
 		<source>wrong-keycard-text</source>
-		<translation>O Keycard que você utilizou não está associado a este telefone</translation>
+		<translation>사용한 키카드가 이 스마트폰과 연동되어 있지 않습니다</translation>
 	</message>
 	<message>
 		<source>wrong-keycard-title</source>
-		<translation>Parece que você utilizou
- um Keycard errado.</translation>
+		<translation>잘못된 키카드를
+사용하셨습니다</translation>
 	</message>
 	<message>
 		<source>wrong-password</source>
-		<translation>Senha incorreta</translation>
+		<translation>잘못된 비밀번호</translation>
 	</message>
 	<message>
 		<source>wrong-word</source>
-		<translation>Palavra errada</translation>
+		<translation>잘못된 단어</translation>
 	</message>
 	<message>
 		<source>yes</source>
-		<translation>Sim</translation>
+		<translation>예</translation>
 	</message>
 	<message>
 		<source>You</source>
-		<translation>Você</translation>
+		<translation>귀하</translation>
 	</message>
 	<message>
 		<source>you</source>
-		<translation>você</translation>
+		<translation>사용자</translation>
 	</message>
 	<message>
 		<source>you-already-have-an-asset</source>
-		<translation>Você já tem um ativo {{value}}</translation>
+		<translation>이미 {{value}} 자산을 가지고 있습니다</translation>
 	</message>
 	<message>
 		<source>you-are-all-set</source>
-		<translation>Está tudo pronto!</translation>
+		<translation>설정이 완료되었습니다!</translation>
 	</message>
 	<message>
 		<source>you-are-all-set-description</source>
-		<translation>Se você perder seu telefone, agora você pode acessar seus fundos e a chave de bate-papo usando sua frase-semente</translation>
+		<translation>스마트폰을 분실한 경우, 시드 구문을 사용하여 계정과 자산에 액세스할 수 있습니다</translation>
 	</message>
 	<message>
 		<source>you-can-change-account</source>
-		<translation>Você pode mudar o nome da conta e a cor para o que desejar</translation>
+		<translation>계정 이름과 색상을 원하는대로 변경할 수 있습니다</translation>
 	</message>
 	<message>
 		<source>you-dont-have-stickers</source>
-		<translation>Você ainda não tem nenhum adesivo</translation>
+		<translation>아직 이모티콘이 없습니다</translation>
 	</message>
 	<message>
 		<source>you-dont-have-contacts-invite-friends</source>
-		<translation>Você ainda não tem contatos.
- Convide seus amigos para começar a conversar.</translation>
+		<translation>아직 연락처가 없습니다. 
+친구들을 초대하고 채팅을 시작하세요.</translation>
 	</message>
 	<message>
 		<source>your-contact-code</source>
-		<translation>A concessão de acesso autoriza este DApp a recuperar sua chave de bate-papo</translation>
+		<translation>디앱에 접근 권한을 부여하여 채팅 키를 검색합니다</translation>
 	</message>
 	<message>
 		<source>your-data-belongs-to-you</source>
-		<translation>Se você perder a sua frase-semente, você perde seus dados e fundos</translation>
+		<translation>시드 구문을 잃어버리면 데이터와 자산을 분실하게 됩니다</translation>
 	</message>
 	<message>
 		<source>your-data-belongs-to-you-description</source>
-		<translation>Se perder o acesso, por exemplo, ao perder seu telefone, você só pode acessar suas chaves com sua frase-semente. Só você tem a sua frase-semente. Anote e mantenha sua frase-semente em segurança</translation>
+		<translation>스마트폰을 분실하거나 접근 권한을 상실한 경우, 이 시드 구문을 통해 계정에 접근할 수 있습니다.  오로지 본인만이 이 시드 구문을 관리할 수 있습니다. 메모해두고 안전하게 관리하시기 바랍니다.</translation>
 	</message>
 	<message>
 		<source>your-recovery-phrase</source>
-		<translation>Sua frase-semente</translation>
+		<translation>내 시드 구문</translation>
 	</message>
 	<message>
 		<source>your-recovery-phrase-description</source>
-		<translation>Esta é sua frase-semente. Você a usa para provar que esta é sua carteira. Você só pode vê-la uma vez! Escreva no papel e mantenha em um lugar seguro. Você vai precisar dela se perder ou reinstalar sua carteira.</translation>
+		<translation>위 12단어가 사용자의 시드 구문입니다. 이 구문은 사용자의 지갑을 증명하기 위해 반드시 필요하며, 이번 한 번만 확인할 수 있습니다. 지갑을 분실하거나 재설치하는 경우 반드시 필요하므로, 종이에 적어두고 안전한 장소에 보관하세요.</translation>
 	</message>
 	<message>
 		<source>custom-seed-phrase</source>
-		<translation>Frase-semente inválida</translation>
+		<translation>잘못된 시드 구문</translation>
 	</message>
 	<message>
 		<source>custom-seed-phrase-text-1</source>
-		<translation>Esta frase-semente não é compatível com o nosso dicionário. Verifique se há palavras com erros ortográficos.</translation>
+		<translation>시드 구문 단어들이 스테이터스 딕셔너리와 일치하지 않습니다. 철자를 확인해주세요.</translation>
 	</message>
 	<message>
 		<source>to-enable-biometric</source>
-		<translation>Para ativar o {{bio-type-label}}, você deve salvar sua senha na tela de desbloqueio</translation>
+		<translation>{{bio-type-label}}를 활성화 하려면, 사용자의 잠금 해제 화면에 비밀번호를 저장해야 합니다</translation>
 	</message>
 	<message>
 		<source>ok-save-pass</source>
-		<translation>OK, salvar senha</translation>
+		<translation>예, 비밀번호를 저장합니다</translation>
 	</message>
 	<message>
 		<source>lock-app-with</source>
-		<translation>Bloquear aplicativo com</translation>
+		<translation>앱 잠금 수단:</translation>
 	</message>
 	<message>
 		<source>grant-face-id-permissions</source>
-		<translation>Para conceder a permissão de Face ID necessária, vá para as configurações do seu sistema e certifique-se de que Status &gt; Face ID está selecionado</translation>
+		<translation>Face ID 사용을 승인하려면, 시스템 설정에서 스테이터스의 Face ID를 활성화해주세요</translation>
 	</message>
 	<message>
 		<source>request-feature</source>
-		<translation>Solicitar um recurso</translation>
+		<translation>기능 요청</translation>
 	</message>
 	<message>
 		<source>select-account-dapp</source>
-		<translation>Selecione a conta que você deseja usar com Dapps</translation>
+		<translation>디앱에 사용할 계정을 선택해주세요</translation>
 	</message>
 	<message>
 		<source>apply</source>
-		<translation>Aplicar</translation>
+		<translation>적용</translation>
 	</message>
 	<message>
 		<source>on-status-tree</source>
-		<translation>Árvore Status ativada</translation>
+		<translation>스테이터스 트리 켜기</translation>
 	</message>
 	<message>
 		<source>off-status-tree</source>
-		<translation>Árvore Status desativada</translation>
+		<translation>스테이터스 트리 끄기</translation>
 	</message>
 	<message>
 		<source>derivation-path</source>
-		<translation>Caminho de derivação</translation>
+		<translation>파생 경로</translation>
 	</message>
 	<message>
 		<source>storage</source>
-		<translation>Armazenamento</translation>
+		<translation>저장소</translation>
 	</message>
 	<message>
 		<source>keycard-free-pairing-slots</source>
-		<translation>O Keycard tem {{n}} portas de emparelhamento livres</translation>
+		<translation>키카드에는 {{n}}개의 무료 페어링 슬롯이 있습니다</translation>
 	</message>
 	<message>
 		<source>public-chat-description</source>
-		<translation>Participe de bate-papos públicos sobre seus interesses! Qualquer um pode começar uma nova sala.</translation>
+		<translation>관심사에 따라 오픈채팅에 참여해보세요! 누구든지 새로운 채팅을 시작할 수 있습니다.</translation>
 	</message>
 	<message>
 		<source>delete-account</source>
-		<translation>Remover conta</translation>
+		<translation>계정 삭제</translation>
 	</message>
 	<message>
 		<source>delete-keys-keycard</source>
-		<translation>Excluir chaves do Keycard</translation>
+		<translation>키카드에서 키 삭제</translation>
 	</message>
 	<message>
 		<source>watch-only</source>
-		<translation>Somente exibição</translation>
+		<translation>열람 전용</translation>
 	</message>
 	<message>
 		<source>cant-report-bug</source>
-		<translation>Não é possível relatar um bug</translation>
+		<translation>버그를 신고할 수 없습니다</translation>
 	</message>
 	<message>
 		<source>mail-should-be-configured</source>
-		<translation>O cliente de e-mail deve ser configurado</translation>
+		<translation>메일 클라이언트를 구성해야 합니다</translation>
 	</message>
 	<message>
 		<source>check-on-block-explorer</source>
-		<translation>Verifique no explorador de blocos</translation>
+		<translation>블록 익스플로러에서 확인</translation>
 	</message>
 	<message>
 		<source>check-on-opensea</source>
-		<translation>Confira no opensea</translation>
+		<translation>Opensea에서 확인</translation>
 	</message>
 	<message>
 		<source>transactions-load-more</source>
-		<translation>Carregar mais</translation>
+		<translation>더 불러오기</translation>
 	</message>
 	<message>
 		<source>private-key</source>
-		<translation>Chave privada</translation>
+		<translation>개인 키</translation>
 	</message>
 	<message>
 		<source>generate-an-account</source>
-		<translation>Gerar uma conta</translation>
+		<translation>계정 생성</translation>
 	</message>
 	<message>
 		<source>add-watch-account</source>
-		<translation>Adicionar uma conta somente para exibição</translation>
+		<translation>열람 전용 계정 추가</translation>
 	</message>
 	<message>
 		<source>add-seed-account</source>
-		<translation>Adicionar conta com uma frase-semente</translation>
+		<translation>시드 구문으로 계정 추가</translation>
 	</message>
 	<message>
 		<source>account-exists-title</source>
-		<translation>A conta já existe</translation>
+		<translation>계정이 이미 존재합니다</translation>
 	</message>
 	<message>
 		<source>add-private-key-account</source>
-		<translation>Adicionar conta a partir de chave privada</translation>
+		<translation>개인 키로 계정 추가</translation>
 	</message>
 	<message>
 		<source>profile-not-found</source>
-		<translation>Perfil não encontrado</translation>
+		<translation>프로필을 찾을 수 없습니다</translation>
 	</message>
 	<message>
 		<source>waku-bloom-filter-mode</source>
-		<translation>Modo de filtro Waku bloom</translation>
+		<translation>와쿠 블룸 필터 모드</translation>
 	</message>
 	<message>
 		<source>wakuv2-settings</source>
-		<translation>Configurações Waku v2</translation>
+		<translation>와쿠 v2 설정</translation>
 	</message>
 	<message>
 		<source>wakuv2-node-format</source>
@@ -5611,370 +5586,369 @@ Acesse a seção configurações dos dispositivos para parear seus dispositivos.
 	</message>
 	<message>
 		<source>wakuv2-change-nodes</source>
-		<translation>Tem certeza de que deseja modificar os nós do Wakuv2?</translation>
+		<translation>Wakuv2 노드를 변경하시겠습니까?</translation>
 	</message>
 	<message>
 		<source>appearance</source>
-		<translation>Aparência</translation>
+		<translation>테마</translation>
 	</message>
 	<message>
 		<source>preference</source>
-		<translation>Preferência</translation>
+		<translation>설정</translation>
 	</message>
 	<message>
 		<source>light</source>
-		<translation>Claro</translation>
+		<translation>라이트</translation>
 	</message>
 	<message>
 		<source>dark</source>
-		<translation>Escuro</translation>
+		<translation>다크</translation>
 	</message>
 	<message>
 		<source>system</source>
-		<translation>Sistema</translation>
+		<translation>시스템</translation>
 	</message>
 	<message>
 		<source>give-permissions-camera</source>
-		<translation>Dar permissão
-para acessar a câmera</translation>
+		<translation>카메라 접근 
+권한 허용</translation>
 	</message>
 	<message>
 		<source>photos</source>
-		<translation>Fotos</translation>
+		<translation>사진</translation>
 	</message>
 	<message>
 		<source>image</source>
-		<translation>Imagem</translation>
+		<translation>이미지</translation>
 	</message>
 	<message>
 		<source>sign-anyway</source>
-		<translation>Assinar mesmo assim</translation>
+		<translation>서명 진행하기</translation>
 	</message>
 	<message>
 		<source>tx-fail-description1</source>
-		<translation>É provável que esta transação falhe. Assine por sua conta e risco usando uma taxa de rede personalizada.</translation>
+		<translation>이 트랜잭션은 실패할 수 있습니다. 사용자 지정 네트워크 수수료로 트랜잭션 실패 위험을 조절하세요.</translation>
 	</message>
 	<message>
 		<source>tx-fail-description2</source>
-		<translation>É provável que esta transação falhe. Defina uma taxa de rede personalizada para assinar por sua conta e risco.</translation>
+		<translation>이 트랜잭션은 실패할 수 있습니다. 직접 네트워크 수수료를 설정하여 실패 위험을 조절하세요.</translation>
 	</message>
 	<message>
 		<source>set-custom-fee</source>
-		<translation>Definir taxa personalizada</translation>
+		<translation>사용자 지정 수수료 설정</translation>
 	</message>
 	<message>
 		<source>not-enough-snt</source>
-		<translation>SNT insuficiente</translation>
+		<translation>SNT가 부족합니다</translation>
 	</message>
 	<message>
 		<source>add-new-contact</source>
-		<translation>Adicionar novo contato</translation>
+		<translation>새 연락처 추가</translation>
 	</message>
 	<message>
 		<source>you-dont-have-contacts</source>
-		<translation>Você ainda não possui contatos.</translation>
+		<translation>아직 연락처가 없습니다.</translation>
 	</message>
 	<message>
 		<source>set-max</source>
-		<translation>Definir máximo</translation>
+		<translation>최대값 설정</translation>
 	</message>
 	<message>
 		<source>continue-anyway</source>
-		<translation>Continuar mesmo assim</translation>
+		<translation>계속 진행</translation>
 	</message>
 	<message>
 		<source>private-notifications</source>
-		<translation>Notificações privadas</translation>
+		<translation>프라이빗 알림</translation>
 	</message>
 	<message>
 		<source>private-notifications-descr</source>
-		<translation>O Status notificará você sobre novas mensagens. Você pode editar suas preferências de notificação nas configurações.</translation>
+		<translation>스테이터스가 새로운 메시지를 수신하면 사용자에게 알림을 전달합니다. 사용자는 설정에서 옵션을 변경할 수 있습니다.</translation>
 	</message>
 	<message>
 		<source>maybe-later</source>
-		<translation>Talvez mais tarde</translation>
+		<translation>나중에</translation>
 	</message>
 	<message>
 		<source>join</source>
-		<translation>Participar</translation>
+		<translation>참여</translation>
 	</message>
 	<message>
 		<source>registered</source>
-		<translation>cadastrado</translation>
+		<translation>등록됨</translation>
 	</message>
 	<message>
 		<source>not-registered</source>
-		<translation>não cadastrado</translation>
+		<translation>등록되지 않음</translation>
 	</message>
 	<message>
 		<source>audio-recorder-error</source>
-		<translation>Erro no gravador</translation>
+		<translation>리코더 오류</translation>
 	</message>
 	<message>
 		<source>audio-recorder</source>
-		<translation>Gravador</translation>
+		<translation>리코더</translation>
 	</message>
 	<message>
 		<source>audio-recorder-max-ms-reached</source>
-		<translation>Tempo máximo de gravação atingido</translation>
+		<translation>최대 녹음 제한 시간에 도달했습니다</translation>
 	</message>
 	<message>
 		<source>audio-recorder-permissions-error</source>
-		<translation>Você precisa dar permissão para enviar mensagens de áudio</translation>
+		<translation>오디오 메시지를 보내려면 권한을 허용해야 합니다</translation>
 	</message>
 	<message>
 		<source>audio</source>
-		<translation>Áudio</translation>
+		<translation>오디오</translation>
 	</message>
 	<message>
 		<source>update-to-see-image</source>
-		<translation>Atualize para a versão mais recente para ver uma bela imagem aqui!</translation>
+		<translation>멋진 이미지를 확인하려면 최신 버전으로 업데이트 해주세요!</translation>
 	</message>
 	<message>
 		<source>update-to-listen-audio</source>
-		<translation>Atualize para a versão mais recente para ouvir uma mensagem de áudio aqui!</translation>
+		<translation>오디오 메시지를 들으려면 최신 버전으로 업데이트해주세요!</translation>
 	</message>
 	<message>
 		<source>update-to-see-sticker</source>
-		<translation>Atualize para a versão mais recente para ver um belo adesivo aqui!</translation>
+		<translation>멋진 이모티콘을 확인하려면 최신 버전으로 업데이트해주세요!</translation>
 	</message>
 	<message>
 		<source>webview-camera-permission-requests</source>
-		<translation>Solicitações de permissão de câmera do Webview</translation>
+		<translation>웹뷰 카메라 권한 요청</translation>
 	</message>
 	<message>
 		<source>webview-camera-permission-requests-subtitle</source>
-		<translation>Quando habilitado, sites e dapps podem pedir para usar sua câmera</translation>
+		<translation>활성화되면 웹사이트와 디앱에서 카메라 사용을 요청할 수 있습니다</translation>
 	</message>
 	<message>
 		<source>page-would-like-to-use-camera</source>
-		<translation>gostaria de usar sua câmera</translation>
+		<translation>에서 카메라 사용을 요청합니다</translation>
 	</message>
 	<message>
 		<source>page-camera-request-blocked</source>
-		<translation>Solicitações de câmera bloqueadas. Para habilitar as solicitações de câmera, vá em Configurações</translation>
+		<translation>카메라 요청이 차단되었습니다. 카메라 요청을 활성화하려면 설정으로 이동해주세요</translation>
 	</message>
 	<message>
 		<source>nickname</source>
-		<translation>Apelido</translation>
+		<translation>닉네임</translation>
 	</message>
 	<message>
 		<source>add-nickname</source>
-		<translation>Adicionar um apelido (opcional)</translation>
+		<translation>닉네임 추가 (선택)</translation>
 	</message>
 	<message>
 		<source>nickname-description</source>
-		<translation>Os apelidos ajudam você a identificar as pessoas no Status. 
- Só você pode ver os apelidos que adicionou</translation>
+		<translation>닉네임은 스테이터스에서 다른 사용자를 식별하는데 사용됩니다. 설정한 닉네임은 사용자만 볼 수 있습니다</translation>
 	</message>
 	<message>
 		<source>accept</source>
-		<translation>Aceitar</translation>
+		<translation>수락</translation>
 	</message>
 	<message>
 		<source>group-invite</source>
-		<translation>Convite para o grupo</translation>
+		<translation>그룹 초대</translation>
 	</message>
 	<message>
 		<source>group-invite-link</source>
-		<translation>Link de convite do grupo</translation>
+		<translation>그룹 초대 링크</translation>
 	</message>
 	<message>
 		<source>pending-invitations</source>
-		<translation>Pedidos de entrada pendentes</translation>
+		<translation>대기 중인 멤버십 요청</translation>
 	</message>
 	<message>
 		<source>empty-pending-invitations-descr</source>
-		<translation>Pessoas que desejam entrar no grupo 
- através de um link de convite aparecerão aqui</translation>
+		<translation>초대 링크를 통해 그룹에 가입하고 싶은 사용자들이
+여기에 표시됩니다</translation>
 	</message>
 	<message>
 		<source>introduce-yourself</source>
-		<translation>Apresente-se com uma breve mensagem</translation>
+		<translation>간단한 메시지로 자신을 소개해주세요</translation>
 	</message>
 	<message>
 		<source>request-pending</source>
-		<translation>Pedido pendente…</translation>
+		<translation>요청 대기 중…</translation>
 	</message>
 	<message>
 		<source>membership-declined</source>
-		<translation>O pedido de entrada no grupo foi recusado</translation>
+		<translation>멤버쉽 요청이 거절되었습니다</translation>
 	</message>
 	<message>
 		<source>remove-group</source>
-		<translation>Remover grupo</translation>
+		<translation>그룹 삭제</translation>
 	</message>
 	<message>
 		<source>request-membership</source>
-		<translation>Solicitar para entrar</translation>
+		<translation>멤버쉽 요청</translation>
 	</message>
 	<message>
 		<source>membership-description</source>
-		<translation>A entrada no grupo exige que você seja aceito pelo administrador do grupo</translation>
+		<translation>그룹 멤버십은 그룹 관리자의 승인이 필요합니다</translation>
 	</message>
 	<message>
 		<source>group-membership-request</source>
-		<translation>Pedido para entrar no grupo</translation>
+		<translation>그룹 멤버십 요청</translation>
 	</message>
 	<message>
 		<source>members-limit-reached</source>
-		<translation>Limite de membros atingido</translation>
+		<translation>멤버 한도에 도달했습니다</translation>
 	</message>
 	<message>
 		<source>favourite</source>
-		<translation>Favoritos</translation>
+		<translation>즐겨찾기</translation>
 	</message>
 	<message>
 		<source>favourites</source>
-		<translation>Favoritos</translation>
+		<translation>즐겨찾기</translation>
 	</message>
 	<message>
 		<source>new-favourite</source>
-		<translation>Novo favorito</translation>
+		<translation>새 즐겨찾기</translation>
 	</message>
 	<message>
 		<source>edit-favourite</source>
-		<translation>Editar favorito</translation>
+		<translation>즐겨찾기 편집</translation>
 	</message>
 	<message>
 		<source>remove-favourite</source>
-		<translation>Remover favorito</translation>
+		<translation>즐겨찾기 제거</translation>
 	</message>
 	<message>
 		<source>add-favourite</source>
-		<translation>Adicionar favorito</translation>
+		<translation>즐겨찾기 추가</translation>
 	</message>
 	<message>
 		<source>add-to-favourites</source>
-		<translation>Adicionar aos favoritos</translation>
+		<translation>즐겨찾기에 추가</translation>
 	</message>
 	<message>
 		<source>favourites-empty</source>
-		<translation>Os endereços adicionados aos favoritos aparecerão aqui</translation>
+		<translation>즐겨찾기에 추가된 주소는 여기에 표시됩니다.</translation>
 	</message>
 	<message>
 		<source>contacts-empty</source>
-		<translation>Contatos com nomes ENS aparecerão aqui</translation>
+		<translation>ENS 이름을 보유한 연락처는 여기에 표시됩니다</translation>
 	</message>
 	<message>
 		<source>my-accounts</source>
-		<translation>Minhas contas</translation>
+		<translation>내 계정</translation>
 	</message>
 	<message>
 		<source>my-accounts-empty</source>
-		<translation>Suas contas disponíveis aparecerão aqui</translation>
+		<translation>사용 가능한 계정이 여기에 표시됩니다</translation>
 	</message>
 	<message>
 		<source>recent-empty</source>
-		<translation>Os endereços usados recentemente aparecerão aqui</translation>
+		<translation>최근에 사용한 주소가 여기에 표시됩니다</translation>
 	</message>
 	<message>
 		<source>address-or-ens-name</source>
-		<translation>Endereço ou nome ENS</translation>
+		<translation>주소 또는 ENS 이름</translation>
 	</message>
 	<message>
 		<source>name-optional</source>
-		<translation>Nome (opcional)</translation>
+		<translation>이름 (선택)</translation>
 	</message>
 	<message>
 		<source>mute</source>
-		<translation>Silenciar</translation>
+		<translation>알림 끄기</translation>
 	</message>
 	<message>
 		<source>unmute</source>
-		<translation>Ativar som</translation>
+		<translation>메시지 및 알림 수신</translation>
 	</message>
 	<message>
 		<source>scan-tokens</source>
-		<translation>Escanear tokens</translation>
+		<translation>토큰 스캔</translation>
 	</message>
 	<message>
 		<source>my-status</source>
-		<translation>Meu status</translation>
+		<translation>내 상태</translation>
 	</message>
 	<message>
 		<source>contacts-descr</source>
-		<translation>Seus contatos aparecerão aqui. Você receberá atualizações de status de qualquer pessoa que adicionar como contato</translation>
+		<translation>연락처는 여기에 표시됩니다. 연락처에 추가한 모든 이들의 상태 업데이트를 받게 됩니다.</translation>
 	</message>
 	<message>
 		<source>status-updates-descr</source>
-		<translation>As atualizações de status aparecerão aqui. Adicione este perfil como um contato para receber atualizações em sua linha do tempo.</translation>
+		<translation>상태 업데이트가 여기에 표시됩니다. 타임라인 업데이트를 받으려면 프로필을 연락처로 추가하세요.</translation>
 	</message>
 	<message>
 		<source>whats-on-your-mind</source>
-		<translation>O que você está pensando...</translation>
+		<translation>무엇을 공유하고 싶으신가요?</translation>
 	</message>
 	<message>
 		<source>cant-open-public-chat</source>
-		<translation>Não é possível abrir este chat público</translation>
+		<translation>오픈채팅을 열 수 없습니다</translation>
 	</message>
 	<message>
 		<source>invalid-public-chat-topic</source>
-		<translation>Tópico de chat público inválido</translation>
+		<translation>잘못된 오픈채팅 주제</translation>
 	</message>
 	<message>
 		<source>now</source>
-		<translation>Agora</translation>
+		<translation>방금 막</translation>
 	</message>
 	<message>
 		<source>statuses-my-status-descr</source>
-		<translation>Compartilhe o que você está pensando. Qualquer pessoa que visitar seu perfil poderá ver seu status. As pessoas que adicionam você como contato receberão suas atualizações na linha do tempo delas</translation>
+		<translation>무슨 생각을 하고 계신가요? 여러분의 프로필에 방문하는 모든 사람들은 여러분의 상태 메시지를 확인할 수 있습니다. 여러분을 연락처에 등록한 사람은 여러분의 타임라인 업데이트를 확인할 수 있습니다</translation>
 	</message>
 	<message>
 		<source>statuses-descr</source>
-		<translation>Compartilhe o que você está pensando e fique atualizado com seus contatos</translation>
+		<translation>생각을 공유하고 연락처에 등록된 이들의 소식을 받아보세요</translation>
 	</message>
 	<message>
 		<source>new-status</source>
-		<translation>Novo status</translation>
+		<translation>새 상태</translation>
 	</message>
 	<message>
 		<source>chat-link-previews</source>
-		<translation>Visualizações de links de chat</translation>
+		<translation>채팅 링크 미리보기</translation>
 	</message>
 	<message>
 		<source>you-can-choose-preview-websites</source>
-		<translation>Você pode escolher quais dos seguintes sites podem visualizar o link de descrições e imagens nas conversas</translation>
+		<translation>다음 목록에서 채팅 내 링크의 설명 및 이미지 미리보기 기능을 선택적으로 활성화할 수 있습니다</translation>
 	</message>
 	<message>
 		<source>previewing-may-share-metadata</source>
-		<translation>Visualizar links desses sites pode compartilhar seus metadados com os proprietários</translation>
+		<translation>링크 미리보기를 사용하면 메타 데이터가 해당 웹사이트와 공유될 수 있습니다</translation>
 	</message>
 	<message>
 		<source>websites</source>
-		<translation>Sites</translation>
+		<translation>웹사이트</translation>
 	</message>
 	<message>
 		<source>enable-all</source>
-		<translation>Habilitar todos</translation>
+		<translation>모두 활성화</translation>
 	</message>
 	<message>
 		<source>disable-all</source>
-		<translation>Desativar todos</translation>
+		<translation>모두 비활성화</translation>
 	</message>
 	<message>
 		<source>warning-sending-to-contract-descr</source>
-		<translation>O endereço que você inseriu é um contrato inteligente. O envio de fundos para este endereço pode resultar em perda de fundos. Para interagir com um DApp, abra o DApp no navegador da Status.</translation>
+		<translation>입력하신 주소는 스마트 컨트랙트 주소로, 이 주소로 자산을 보내게 되면 사용자의 자산을 잃을 수 있습니다. 디앱과 소통하려면, 스테이터스 디앱 브라우저에서 디앱을 열어주세요.</translation>
 	</message>
 	<message>
 		<source>dont-ask</source>
-		<translation>Não me pergunte novamente</translation>
+		<translation>다시 묻지 않기</translation>
 	</message>
 	<message>
 		<source>enable-link-previews</source>
-		<translation>Ativar visualizações de link no chat?</translation>
+		<translation>링크 미리보기를 활성화할까요?</translation>
 	</message>
 	<message>
 		<source>once-enabled-share-metadata</source>
-		<translation>Uma vez habilitados, os links postados no chat podem compartilhar seus metadados com o site</translation>
+		<translation>미리보기를 활성화하면, 채팅방에 올라간 링크를 통해 메타 데이터가 웹사이트와 공유될 수 있습니다</translation>
 	</message>
 	<message>
 		<source>external-storage-denied</source>
-		<translation>Acesso ao armazenamento externo negado</translation>
+		<translation>외부 저장소에 대한 액세스가 거부되었습니다</translation>
 	</message>
 	<message>
 		<source>timeline</source>
-		<translation>Linha do tempo</translation>
+		<translation>타임라인</translation>
 	</message>
 	<message>
 		<source>main-account</source>
@@ -5982,199 +5956,199 @@ para acessar a câmera</translation>
 	</message>
 	<message>
 		<source>ethereum-address</source>
-		<translation>Endereço Ethereum</translation>
+		<translation>이더리움 주소</translation>
 	</message>
 	<message>
 		<source>default-assets</source>
-		<translation>ERC20 e ERC721 padrão</translation>
+		<translation>기본 ERC20 및 ERC721</translation>
 	</message>
 	<message>
 		<source>increase-gas</source>
-		<translation>Aumentar o gás</translation>
+		<translation>가스 증가</translation>
 	</message>
 	<message>
 		<source>cancelling</source>
-		<translation>Cancelando</translation>
+		<translation>취소</translation>
 	</message>
 	<message>
 		<source>refresh</source>
-		<translation>Atualizar</translation>
+		<translation>새로고침</translation>
 	</message>
 	<message>
 		<source>close-all</source>
-		<translation>Fechar tudo</translation>
+		<translation>모두 닫기</translation>
 	</message>
 	<message>
 		<source>tabs</source>
-		<translation>Abas</translation>
+		<translation>탭</translation>
 	</message>
 	<message>
 		<source>new-tab</source>
-		<translation>Nova aba</translation>
+		<translation>새 탭</translation>
 	</message>
 	<message>
 		<source>empty-tab</source>
-		<translation>Aba vazia</translation>
+		<translation>빈 탭</translation>
 	</message>
 	<message>
 		<source>open-in-new-tab</source>
-		<translation>Abrir em nova aba</translation>
+		<translation>새 탭에서 열기</translation>
 	</message>
 	<message>
 		<source>has-permissions</source>
-		<translation>tem permissão para acessar</translation>
+		<translation>에게 다음 지갑 접근 권한을 허용합니다</translation>
 	</message>
 	<message>
 		<source>connect-wallet</source>
-		<translation>Conectar carteira</translation>
+		<translation>지갑 연결</translation>
 	</message>
 	<message>
 		<source>open-chat</source>
-		<translation>Abrir chat</translation>
+		<translation>채팅 열기</translation>
 	</message>
 	<message>
 		<source>favourite-description</source>
-		<translation>Seus sites favoritos aparecerão aqui</translation>
+		<translation>즐겨 찾는 웹사이트가 여기에 표시됩니다</translation>
 	</message>
 	<message>
 		<source>transfers-fetching-failure</source>
-		<translation>O histórico de transferências não pôde ser atualizado. Verifique sua conexão e puxe para baixo para tentar novamente</translation>
+		<translation>전송 기록을 업데이트할 수 없습니다. 연결 상태를 확인하고 아래로 당겨 다시 시도하세요</translation>
 	</message>
 	<message>
 		<source>move-and-reset</source>
-		<translation>Mover e reiniciar</translation>
+		<translation>이동 및 초기화</translation>
 	</message>
 	<message>
 		<source>move-keystore-file-to-keycard</source>
-		<translation>Mover arquivo de armazenamento de chaves para o Keycard?</translation>
+		<translation>키스토어 파일을 키카드로 이동하시겠어요?</translation>
 	</message>
 	<message>
 		<source>database-reset-title</source>
-		<translation>Redefinição do banco de dados</translation>
+		<translation>데이터베이스 초기화</translation>
 	</message>
 	<message>
 		<source>database-reset-content</source>
-		<translation>Conversas, contatos e configurações foram excluídos. Você pode usar sua conta com seu Keycard</translation>
+		<translation>채팅, 연락처, 설정이 모두 삭제되었습니다. 키카드와 계정을 사용하실 수 있습니다</translation>
 	</message>
 	<message>
 		<source>database-reset-warning</source>
-		<translation>O banco de dados será redefinido. Conversas, contatos e configurações serão excluídos</translation>
+		<translation>데이터베이스가 초기화됩니다. 채팅, 연락처 및 설정이 삭제됩니다</translation>
 	</message>
 	<message>
 		<source>empty-keycard-required</source>
-		<translation>Requer um Keycard vazio</translation>
+		<translation>빈 키카드가 필요합니다</translation>
 	</message>
 	<message>
 		<source>current</source>
-		<translation>Atual</translation>
+		<translation>현재</translation>
 	</message>
 	<message>
 		<source>choose-storage</source>
-		<translation>Escolha o armazenamento</translation>
+		<translation>저장소 선택</translation>
 	</message>
 	<message>
 		<source>choose-new-location-for-keystore</source>
-		<translation>Escolha um novo local para salvar seu arquivo de armazenamento de chaves</translation>
+		<translation>키스토어 파일을 저장할 새 위치를 선택하세요</translation>
 	</message>
 	<message>
 		<source>get-a-keycard</source>
-		<translation>Obtenha um Keycard</translation>
+		<translation>키카드를 획득하세요</translation>
 	</message>
 	<message>
 		<source>keycard-upsell-subtitle</source>
-		<translation>Maior segurança e facilidade</translation>
+		<translation>향상된 보안과 편리성</translation>
 	</message>
 	<message>
 		<source>actions</source>
-		<translation>Ações</translation>
+		<translation>작업</translation>
 	</message>
 	<message>
 		<source>move-keystore-file</source>
-		<translation>Mover arquivo de armazenamento de chaves</translation>
+		<translation>키스토어 파일 이동</translation>
 	</message>
 	<message>
 		<source>select-new-location-for-keys</source>
-		<translation>Selecione um novo local para salvar sua(s) chave(s) privada(s)</translation>
+		<translation>개인 키를 저장할 새 위치를 선택하세요</translation>
 	</message>
 	<message>
 		<source>reset-database</source>
-		<translation>Reiniciar base de dados</translation>
+		<translation>데이터베이스 초기화</translation>
 	</message>
 	<message>
 		<source>reset-database-warning</source>
-		<translation>Excluir conversas, contatos e configurações. Obrigatório quando você perder sua senha</translation>
+		<translation>채팅, 연락처 및 설정을 삭제합니다. 비밀번호를 분실한 경우 필요합니다</translation>
 	</message>
 	<message>
 		<source>reset-database-warning-keycard</source>
-		<translation>Excluir conversas, contatos e configurações.</translation>
+		<translation>채팅, 연락처, 설정을 삭제합니다.</translation>
 	</message>
 	<message>
 		<source>key-managment</source>
-		<translation>Gerenciamento de chave</translation>
+		<translation>키 관리</translation>
 	</message>
 	<message>
 		<source>choose-actions</source>
-		<translation>Escolha ações</translation>
+		<translation>작업 선택</translation>
 	</message>
 	<message>
 		<source>master-account</source>
-		<translation>Conta mestre</translation>
+		<translation>마스터 계정</translation>
 	</message>
 	<message>
 		<source>back-up</source>
-		<translation>Cópia de segurança</translation>
+		<translation>백업</translation>
 	</message>
 	<message>
 		<source>key-on-device</source>
-		<translation>A chave privada está salva neste dispositivo</translation>
+		<translation>개인 키가 이 기기에 저장됩니다</translation>
 	</message>
 	<message>
 		<source>seed-key-uid-mismatch</source>
-		<translation>Semente não corresponde</translation>
+		<translation>시드가 일치하지 않습니다</translation>
 	</message>
 	<message>
 		<source>seed-key-uid-mismatch-desc-1</source>
-		<translation>A frase-semente que você inseriu não corresponde a {{multiaccount-name}}</translation>
+		<translation>입력한 시드 구문이 {{multiaccount-name}} 와 일치하지 않습니다</translation>
 	</message>
 	<message>
 		<source>seed-key-uid-mismatch-desc-2</source>
-		<translation>Para gerenciar as chaves para esta conta, verifique sua frase-semente e tente novamente.</translation>
+		<translation>본 계정의 키를 관리하려면, 시드 구문을 인증하고 다시 시도하세요.</translation>
 	</message>
 	<message>
 		<source>recover-with-seed-phrase</source>
-		<translation>Recupere com a frase-semente</translation>
+		<translation>시드 구문으로 복구</translation>
 	</message>
 	<message>
 		<source>transfer-ma-unknown-error-desc-1</source>
-		<translation>Parece que sua conta múltipla não foi excluída. O banco de dados pode ter sido redefinido</translation>
+		<translation>다중 계정이 삭제되지 않은 것 같습니다. 데이터베이스가 초기화되었을 수도 있습니다</translation>
 	</message>
 	<message>
 		<source>transfer-ma-unknown-error-desc-2</source>
-		<translation>Verifique sua lista de contas e tente novamente. Se a conta não estiver listada, vá para Acessar as chaves existentes para recuperar com a frase-semente</translation>
+		<translation>계정 목록을 확인하고 다시 시도해주세요. 계정이 뜨지 않으면 기존 키 액세스로 이동하여 시드 구문으로 복구해주세요</translation>
 	</message>
 	<message>
 		<source>everyone</source>
-		<translation>Todos</translation>
+		<translation>모두</translation>
 	</message>
 	<message>
 		<source>show-profile-pictures</source>
-		<translation>Mostrar fotos de perfil de</translation>
+		<translation>프로필 사진 보기</translation>
 	</message>
 	<message>
 		<source>show-profile-pictures-to</source>
-		<translation>Mostre sua foto de perfil para</translation>
+		<translation>프로필 사진 보여주기</translation>
 	</message>
 	<message>
 		<source>non-archival-node</source>
-		<translation>O endpoint RPC não oferece suporte a solicitações de arquivamento. Seu histórico de transferências locais pode estar incompleto.</translation>
+		<translation>RPC 엔드포인트는 보관 요청을 지원하지 않습니다. 로컬 전송 기록이 불완전할 수 있습니다.</translation>
 	</message>
 	<message>
 		<source>custom-node</source>
-		<translation>Você está usando um endpoint RPC personalizado. Seu histórico de transferências locais pode estar incompleto.</translation>
+		<translation>사용자 지정 RPC 엔드포인트를 사용하고 있습니다. 로컬 전송 기록이 불완전 할 수 있습니다.</translation>
 	</message>
 	<message>
 		<source>connection-status</source>
-		<translation>Status de conexão</translation>
+		<translation>연결 상태</translation>
 	</message>
 	<message>
 		<source>peer-to-peer</source>
@@ -6182,71 +6156,71 @@ para acessar a câmera</translation>
 	</message>
 	<message>
 		<source>not-connected-to-peers</source>
-		<translation>Não conectado a nenhum par</translation>
+		<translation>어떤 피어에도 연결되지 않았습니다</translation>
 	</message>
 	<message>
 		<source>unable-to-send-messages</source>
-		<translation>Incapaz de enviar e receber mensagens</translation>
+		<translation>메시지를 주고 받을 수 없습니다</translation>
 	</message>
 	<message>
 		<source>can-send-messages</source>
-		<translation>Você pode enviar e receber novas mensagens</translation>
+		<translation>새 메시지를 주고 받을 수 있습니다</translation>
 	</message>
 	<message>
 		<source>not-connected-nodes</source>
-		<translation>Não conectado a um nó do Status</translation>
+		<translation>스테이터스 노드에 연결되지 않았습니다</translation>
 	</message>
 	<message>
 		<source>unable-to-fetch</source>
-		<translation>Não foi possível obter o histórico de conversas</translation>
+		<translation>채팅 기록을 가져올 수 없습니다</translation>
 	</message>
 	<message>
 		<source>nodes-disabled</source>
-		<translation>Nós do Status desativados</translation>
+		<translation>스테이터스 노드 비활성화</translation>
 	</message>
 	<message>
 		<source>waiting-wi-fi</source>
-		<translation>Aguardando Wi-Fi...</translation>
+		<translation>와이파이 대기 중…</translation>
 	</message>
 	<message>
 		<source>you-can-fetch</source>
-		<translation>Você pode obter o histórico de conversas</translation>
+		<translation>채팅 기록을 가져올 수 있습니다</translation>
 	</message>
 	<message>
 		<source>youre-on-mobile-network</source>
-		<translation>Você está em uma rede móvel</translation>
+		<translation>모바일 네트워크를 사용 중입니다</translation>
 	</message>
 	<message>
 		<source>status-mobile-descr</source>
-		<translation>O Status usa muitos dados ao sincronizar conversas. Você pode optar por não sincronizar quando na rede móvel</translation>
+		<translation>모바일 데이터로 채팅을 동기화하면 데이터를 많이 소모하게 될 수 있습니다. 설정을 통해 모바일 데이터를 사용한 동기화를 비활성화 할 수 있습니다.</translation>
 	</message>
 	<message>
 		<source>restore-defaults</source>
-		<translation>Restaurar padrões</translation>
+		<translation>기본값 복원</translation>
 	</message>
 	<message>
 		<source>rpc-usage-info</source>
-		<translation>Estatísticas de uso de RPC</translation>
+		<translation>RPC 사용 통계</translation>
 	</message>
 	<message>
 		<source>rpc-usage-get-stats</source>
-		<translation>Atualizar</translation>
+		<translation>새로고침</translation>
 	</message>
 	<message>
 		<source>rpc-usage-reset</source>
-		<translation>Redefinir</translation>
+		<translation>초기화</translation>
 	</message>
 	<message>
 		<source>rpc-usage-filter</source>
-		<translation>Métodos de filtro</translation>
+		<translation>필터 방법</translation>
 	</message>
 	<message>
 		<source>rpc-usage-filter-methods</source>
-		<translation>Métodos de filtro</translation>
+		<translation>필터 방법</translation>
 	</message>
 	<message>
 		<source>rpc-usage-copy</source>
-		<translation>Copiar</translation>
+		<translation>클립보드에 복사</translation>
 	</message>
 	<message>
 		<source>rpc-usage-total</source>
@@ -6258,676 +6232,674 @@ para acessar a câmera</translation>
 	</message>
 	<message>
 		<source>community-message-preview</source>
-		<translation>Convite para participar do(a) {{community-name}}</translation>
+		<translation>{{community-name}} 가입 초대</translation>
 	</message>
 	<message>
 		<source>non-contacts</source>
-		<translation>Sem contatos</translation>
+		<translation>연락처 아님</translation>
 	</message>
 	<message>
 		<source>community</source>
-		<translation>Comunidade</translation>
+		<translation>커뮤니티</translation>
 	</message>
 	<message>
 		<source>verified-community</source>
-		<translation>✓ Comunidade verificada</translation>
+		<translation>✓ 검증된 커뮤니티</translation>
 	</message>
 	<message>
 		<source>community-info-not-found</source>
-		<translation>Informação da comunidade não encontrada</translation>
+		<translation>커뮤니티 정보를 찾을 수 없습니다</translation>
 	</message>
 	<message>
 		<source>community-info</source>
-		<translation>Informação da comunidade</translation>
+		<translation>커뮤니티 정보</translation>
 	</message>
 	<message>
 		<source>not-found</source>
-		<translation>Não encontrado</translation>
+		<translation>찾을 수 없습니다</translation>
 	</message>
 	<message>
 		<source>activity</source>
-		<translation>Atividade</translation>
+		<translation>활동</translation>
 	</message>
 	<message>
 		<source>reject-and-delete</source>
-		<translation>Rejeitar e apagar</translation>
+		<translation>거절 및 삭제</translation>
 	</message>
 	<message>
 		<source>accept-and-add</source>
-		<translation>Aceitar e adicionar</translation>
+		<translation>수락 및 추가</translation>
 	</message>
 	<message>
 		<source>one-day</source>
-		<translation>Um dia</translation>
+		<translation>1일</translation>
 	</message>
 	<message>
 		<source>three-days</source>
-		<translation>Três dias</translation>
+		<translation>3일</translation>
 	</message>
 	<message>
 		<source>one-week</source>
-		<translation>Uma semana</translation>
+		<translation>1주</translation>
 	</message>
 	<message>
 		<source>one-month</source>
-		<translation>Um mês</translation>
+		<translation>1달</translation>
 	</message>
 	<message>
 		<source>my-profile</source>
-		<translation>Meu perfil</translation>
+		<translation>내 프로필</translation>
 	</message>
 	<message>
 		<source>bip39-password-placeholder</source>
-		<translation>Senha BIP39</translation>
+		<translation>BIP39 비밀번호</translation>
 	</message>
 	<message>
 		<source>public-channel</source>
-		<translation>Canal público</translation>
+		<translation>공공 채널</translation>
 	</message>
 	<message>
 		<source>default-sync-period</source>
-		<translation>Histórico de sincronização para</translation>
+		<translation>동기화 기록:</translation>
 	</message>
 	<message>
 		<source>what-is-shared</source>
-		<translation>O que é compartilhado</translation>
+		<translation>공유 내용</translation>
 	</message>
 	<message>
 		<source>view-data</source>
-		<translation>Ver dados</translation>
+		<translation>데이터 보기</translation>
 	</message>
 	<message>
 		<source>data-collected</source>
-		<translation>Dados coletados</translation>
+		<translation>데이터 수집 완료</translation>
 	</message>
 	<message>
 		<source>data-collected-subtitle</source>
-		<translation>A tabela abaixo mostra os dados exatos que estão armazenados e serão enviados. Os dados são validados de acordo com as regras públicas para garantir que nenhum dado sensível seja enviado. Não confie, verifique.</translation>
+		<translation>아래 표에서 저장 및 전송될 정확한 데이터를 확인하세요. 데이터의 경우, 중요한 데이터가 전송되지 않도록 공공 규칙에 따라 검증됩니다. 글만 보고 믿지 말고 직접 확인하세요.</translation>
 	</message>
 	<message>
 		<source>view-rules</source>
-		<translation>Ver regras</translation>
+		<translation>규칙 보기</translation>
 	</message>
 	<message>
 		<source>expand-all</source>
-		<translation>Expandir todos</translation>
+		<translation>모두 확장</translation>
 	</message>
 	<message>
 		<source>about-sharing-data</source>
-		<translation>Sobre o compartilhamento de dados</translation>
+		<translation>데이터 공유 정보</translation>
 	</message>
 	<message>
 		<source>sharing-data-desc-1</source>
-		<translation>Os dados são validados de acordo com as regras públicas para garantir que nenhum dado sensível seja enviado. Não confie, verifique.</translation>
+		<translation>데이터의 경우, 중요한 데이터가 전송되지 않도록 공공 규칙에 따라 검증됩니다. 글만 보고 믿지 말고 직접 확인하세요.</translation>
 	</message>
 	<message>
 		<source>sharing-data-desc-2</source>
-		<translation>Os dados de uso são enviados criptografados de ponta a ponta pela rede ponto a ponto (P2P) do Status</translation>
+		<translation>사용 데이터는 스테이터스의 P2P 네트워크를 통해 종단간 암호화되어 전송됩니다</translation>
 	</message>
 	<message>
 		<source>sharing-data-desc-3</source>
-		<translation>Em vez de sua chave de bate-papo normal, uma chave de uso único é utilizada</translation>
+		<translation>일반 채팅 키 대신 일회용 키가 사용됩니다.</translation>
 	</message>
 	<message>
 		<source>sharing-data-desc-4</source>
-		<translation>Os dados de uso não podem ser associados ao seu endereço IP</translation>
+		<translation>사용 데이터는 IP 주소와 연동될 수 없습니다</translation>
 	</message>
 	<message>
 		<source>sharing-data-desc-5</source>
-		<translation>Os dados acumulados de todos os usuários estão disponíveis publicamente</translation>
+		<translation>모든 사용자의 누적 데이터는 공개적으로 사용될 수 있습니다</translation>
 	</message>
 	<message>
 		<source>view-public-dashboard</source>
-		<translation>Ver painel de controle público</translation>
+		<translation>공공 대시보드 보기</translation>
 	</message>
 	<message>
 		<source>sharing-data-desc-6</source>
-		<translation>Os dados são removidos do seu telefone após serem enviados</translation>
+		<translation>데이터가 전송된 후 휴대폰에서 제거됩니다</translation>
 	</message>
 	<message>
 		<source>allow-and-send</source>
-		<translation>Permitir e enviar</translation>
+		<translation>허용 및 보내기</translation>
 	</message>
 	<message>
 		<source>no-thanks</source>
-		<translation>Não, obrigado</translation>
+		<translation>괜찮습니다</translation>
 	</message>
 	<message>
 		<source>help-improve-status</source>
-		<translation>Ajude a melhorar o Status</translation>
+		<translation>스테이터스가 발전할 수 있게 도와주세요</translation>
 	</message>
 	<message>
 		<source>thank-you</source>
-		<translation>Obrigado</translation>
+		<translation>감사합니다</translation>
 	</message>
 	<message>
 		<source>current-password</source>
-		<translation>Senha atual</translation>
+		<translation>현재 비밀번호</translation>
 	</message>
 	<message>
 		<source>reset-password</source>
-		<translation>Redefinir senha</translation>
+		<translation>비밀번호 초기화</translation>
 	</message>
 	<message>
 		<source>password-reset-success</source>
-		<translation>Redefinição de senha</translation>
+		<translation>비밀번호 변경됨</translation>
 	</message>
 	<message>
 		<source>password-reset-success-message</source>
-		<translation>Você precisará entrar novamente</translation>
+		<translation>다시 로그인해야 합니다</translation>
 	</message>
 	<message>
 		<source>password-reset-in-progress</source>
-		<translation>Alterando senha...</translation>
+		<translation>비밀번호 변경 중...</translation>
 	</message>
 	<message>
 		<source>new-password</source>
-		<translation>Nova Senha</translation>
+		<translation>새 비밀번호</translation>
 	</message>
 	<message>
 		<source>confirm-new-password</source>
-		<translation>Confirmar nova senha</translation>
+		<translation>새 비밀번호 확인</translation>
 	</message>
 	<message>
 		<source>password-mismatch</source>
-		<translation>A nova senha e a confirmação não correspondem</translation>
+		<translation>비밀번호가 일치하지 않습니다</translation>
 	</message>
 	<message>
 		<source>terms-of-service</source>
-		<translation>Termos de uso</translation>
+		<translation>이용 약관</translation>
 	</message>
 	<message>
 		<source>accept-status-tos-prefix</source>
-		<translation>Eu aceito o Status</translation>
+		<translation>스테이터스에 동의합니다</translation>
 	</message>
 	<message>
 		<source>updates-to-tos</source>
-		<translation>Atualizações nos Termos de Serviço</translation>
+		<translation>서비스 약관 업데이트</translation>
 	</message>
 	<message>
 		<source>updates-to-tos-desc</source>
-		<translation>Antes de continuar, leia os Termos de Serviço e confirme se você assume total responsabilidade pelo modo como usa o aplicativo.</translation>
+		<translation>계속하기 전에 서비스 약관을 검토하고 앱 사용에 대한 책임이 사용자에게 있음을 확인해주세요</translation>
 	</message>
 	<message>
 		<source>what-changed</source>
-		<translation>O que mudou</translation>
+		<translation>변경된 사항</translation>
 	</message>
 	<message>
 		<source>wc-new-tos-based-on-principles-prefix</source>
-		<translation>Novos Termos de Serviço desenvolvidos com base em nossos</translation>
+		<translation>새로운 서비스 약관은 다음에 기반에 설계되었습니다</translation>
 	</message>
 	<message>
 		<source>principles</source>
-		<translation>Princípios</translation>
+		<translation>원칙</translation>
 	</message>
 	<message>
 		<source>wc-how-to-use-status-app</source>
-		<translation>Como usar o aplicativo Status, incluindo privacidade e segurança</translation>
+		<translation>개인 정보 보호 및 보안을 포함한 스테이터스 앱 사용 방법</translation>
 	</message>
 	<message>
 		<source>wc-brand-guide</source>
-		<translation>Orientação sobre o uso de marcas, como marcas registradas e logotipos</translation>
+		<translation>상표, 로고 등 브랜딩 사용 안내</translation>
 	</message>
 	<message>
 		<source>wc-disclaimer</source>
-		<translation>Exonerações de responsabilidade (incluindo fornecedores terceirizados), garantias e liberações legais</translation>
+		<translation>면책 조항 (타사 제공 업체 포함), 보증 및 법적 릴리스</translation>
 	</message>
 	<message>
 		<source>wc-dispute</source>
-		<translation>Disposições de resolução de disputas</translation>
+		<translation>분쟁 해결 조항</translation>
 	</message>
 	<message>
 		<source>status-is-open-source</source>
-		<translation>O status é de código aberto</translation>
+		<translation>스테이터스는 오픈 소스입니다</translation>
 	</message>
 	<message>
 		<source>build-yourself</source>
-		<translation>Para usar o aplicativo sem estes Termos de Serviço, você pode construir sua própria versão</translation>
+		<translation>서비스 약관없이 앱을 사용하려면, 독자적인 버전을 빌드하면 됩니다</translation>
 	</message>
 	<message>
 		<source>accept-and-continue</source>
-		<translation>Aceitar e continuar</translation>
+		<translation>동의하고 계속</translation>
 	</message>
 	<message>
 		<source>empty-activity-center</source>
-		<translation>Suas notificações de bate-papo
- aparecerão aqui</translation>
+		<translation>채팅 알림이
+여기에 나타납니다</translation>
 	</message>
 	<message>
 		<source>pinned-messages</source>
-		<translation>Mensagens fixadas</translation>
+		<translation>고정된 메시지</translation>
 	</message>
 	<message>
 		<source>pin</source>
-		<translation>Fixar</translation>
+		<translation>고정</translation>
 	</message>
 	<message>
 		<source>unpin</source>
-		<translation>Desafixar</translation>
+		<translation>고정 해제</translation>
 	</message>
 	<message>
 		<source>no-pinned-messages</source>
-		<translation>Nenhuma mensagem fixada</translation>
+		<translation>고정된 메시지 없음</translation>
 	</message>
 	<message numerus="yes">
 		<source>pinned-messages-count</source>
 		<translation>
-			<numerusform>1 mensagem fixada</numerusform>
-			<numerusform>{{count}} mensagens fixadas</numerusform>
+			<numerusform>고정된 메시지 {{count}} 개</numerusform>
 		</translation>
 	</message>
 	<message>
 		<source>pinned-messages-empty</source>
-		<translation>As mensagens fixadas aparecerão aqui. Para fixar uma mensagem, pressione e segure e toque em `Fixar`</translation>
+		<translation>고정된 메시지가 여기에 표시됩니다. 메시지를 고정하려면, 메시지를 길게 누르고 &apos;고정&apos;을 탭하세요.</translation>
 	</message>
 	<message>
 		<source>pinned-by</source>
-		<translation>Fixado por</translation>
+		<translation>고정한 사람</translation>
 	</message>
 	<message>
 		<source>pin-limit-reached</source>
-		<translation>Limite de mensagens fixadas atingido. Desafixe uma mensagem anterior primeiro.</translation>
+		<translation>핀 한도에 도달했습니다. 먼저 이전 메시지를 고정 해제해주세요</translation>
 	</message>
 	<message>
 		<source>max-fee</source>
-		<translation>Taxa máxima</translation>
+		<translation>최대 수수료</translation>
 	</message>
 	<message>
 		<source>max-priority-fee</source>
-		<translation>Taxa máxima de prioridade</translation>
+		<translation>최대 우선 수수료</translation>
 	</message>
 	<message>
 		<source>miners-higher-fee</source>
-		<translation>Os mineradores provavelmente incluirão sua transação mais cedo se você pagar uma taxa mais alta.</translation>
+		<translation>더 높은 수수료를 지불하면 채굴자들이 거래를 더 일찍 처리할 가능성이 높아집니다.</translation>
 	</message>
 	<message>
 		<source>gas-amount-limit</source>
-		<translation>Limite de quantidade de Gas</translation>
+		<translation>가스량 한도</translation>
 	</message>
 	<message>
 		<source>per-gas-tip-limit</source>
-		<translation>Limite de gorjeta
-por gás</translation>
+		<translation>가스당 팁 제한</translation>
 	</message>
 	<message>
 		<source>per-gas-price-limit</source>
-		<translation>Limite de preço por gás</translation>
+		<translation>가스당 가격 제한</translation>
 	</message>
 	<message>
 		<source>current-base-fee</source>
-		<translation>Taxa base atual</translation>
+		<translation>현재 기본 수수료</translation>
 	</message>
 	<message>
 		<source>fee-explanation</source>
-		<translation>Preço total máximo para a transação. Se a taxa base do bloco exceder esse valor, ela será incluída em um bloco seguinte com uma taxa base mais baixa.</translation>
+		<translation>트랜잭션의 최대 가격입니다. 블록 기본 수수료가 이를 초과하는 경우, 기본 요금이 낮은 다음 블록에 포함됩니다.</translation>
 	</message>
 	<message>
 		<source>slow</source>
-		<translation>Lento</translation>
+		<translation>느림</translation>
 	</message>
 	<message>
 		<source>optimal</source>
-		<translation>Ótimo</translation>
+		<translation>최적</translation>
 	</message>
 	<message>
 		<source>fast</source>
-		<translation>Rápido</translation>
+		<translation>빠름</translation>
 	</message>
 	<message>
 		<source>see-suggestions</source>
-		<translation>Veja sugestões</translation>
+		<translation>제안 보기</translation>
 	</message>
 	<message>
 		<source>maximum-fee</source>
-		<translation>Taxa máxima</translation>
+		<translation>최대 수수료</translation>
 	</message>
 	<message>
 		<source>low-tip</source>
-		<translation>a gorjeta é muito baixa</translation>
+		<translation>팁이 너무 낮습니다</translation>
 	</message>
 	<message>
 		<source>lower-than-average-tip</source>
-		<translation>gorjeta inferior à média</translation>
+		<translation>평균보다 낮은 팁</translation>
 	</message>
 	<message>
 		<source>below-base-fee</source>
-		<translation>taxa máxima abaixo da taxa base</translation>
+		<translation>기본 수수료 이하의 최대 수수료</translation>
 	</message>
 	<message>
 		<source>reduced-tip</source>
-		<translation>a gorjeta prioritária será reduzida</translation>
+		<translation>우선순위 팁이 줄어듭니다</translation>
 	</message>
 	<message>
 		<source>are-you-sure</source>
-		<translation>Você tem certeza?</translation>
+		<translation>확실히 확인하셨습니까?</translation>
 	</message>
 	<message>
 		<source>bad-fees-description</source>
-		<translation>Sua taxa de prioridade está abaixo de nossos parâmetros sugeridos.</translation>
+		<translation>우선 수수료가 제안된 매개변수보다 낮습니다.</translation>
 	</message>
 	<message>
 		<source>change-tip</source>
-		<translation>Mudar gorjeta</translation>
+		<translation>팁 변경</translation>
 	</message>
 	<message>
 		<source>current-minimum-tip</source>
-		<translation>Gorjeta mínima atual</translation>
+		<translation>현재 최소 팁</translation>
 	</message>
 	<message>
 		<source>current-average-tip</source>
-		<translation>Gorjeta média atual</translation>
+		<translation>현재 평균 팁</translation>
 	</message>
 	<message>
 		<source>your-tip-limit</source>
-		<translation>Seu limite de gorjeta</translation>
+		<translation>팁 한도</translation>
 	</message>
 	<message>
 		<source>your-price-limit</source>
-		<translation>Seu limite de preço</translation>
+		<translation>가격 한도</translation>
 	</message>
 	<message>
 		<source>suggested-min-tip</source>
-		<translation>Gorjeta mínima sugerida</translation>
+		<translation>최소 팁 추천</translation>
 	</message>
 	<message>
 		<source>suggested-price-limit</source>
-		<translation>Limite de preço sugerido</translation>
+		<translation>권장 가격 제한</translation>
 	</message>
 	<message>
 		<source>include</source>
-		<translation>Incluir</translation>
+		<translation>포함</translation>
 	</message>
 	<message>
 		<source>category</source>
-		<translation>Categoria</translation>
+		<translation>카테고리</translation>
 	</message>
 	<message>
 		<source>edit-chats</source>
-		<translation>Editar bate-papos</translation>
+		<translation>채팅방 편집</translation>
 	</message>
 	<message>
 		<source>edit-categories</source>
-		<translation>Editar categorias</translation>
+		<translation>카테고리 편집</translation>
 	</message>
 	<message>
 		<source>hide</source>
-		<translation>Esconder</translation>
+		<translation>숨기기</translation>
 	</message>
 	<message>
 		<source>account-is-used</source>
-		<translation>A conta está sendo usada com os Dapps no navegador.</translation>
+		<translation>계정은 브라우저에서 디앱과 함께 사용됩니다.</translation>
 	</message>
 	<message>
 		<source>normal</source>
-		<translation>Normal</translation>
+		<translation>일반</translation>
 	</message>
 	<message>
 		<source>never</source>
-		<translation>Nunca</translation>
+		<translation>절대</translation>
 	</message>
 	<message>
 		<source>fee-options</source>
-		<translation>Opções de taxas sugeridas</translation>
+		<translation>권장 수수료 옵션</translation>
 	</message>
 	<message>
 		<source>fee-cap</source>
-		<translation>Limite de taxa</translation>
+		<translation>수수료 한도</translation>
 	</message>
 	<message>
 		<source>tip-cap</source>
-		<translation>Limite de gorjeta</translation>
+		<translation>팁 한도</translation>
 	</message>
 	<message>
 		<source>collectibles-leak-metadata</source>
-		<translation>Você pode exibir seus NFTs aqui. Se você fizer isso, você compartilhará sua carteira e endereço IP</translation>
+		<translation>여기에 NFT를 표시할 수 있습니다. 이 경우 지갑과 IP 주소를 공유하게 됩니다</translation>
 	</message>
 	<message>
 		<source>display-collectibles</source>
-		<translation>Exibir colecionáveis</translation>
+		<translation>수집품 표시</translation>
 	</message>
 	<message>
 		<source>disable-later-in-settings</source>
-		<translation>Você pode desativar isso mais tarde nas Configurações</translation>
+		<translation>나중에 설정에서 비활성화할 수 있습니다</translation>
 	</message>
 	<message>
 		<source>use-as-profile-picture</source>
-		<translation>Usar como foto de perfil</translation>
+		<translation>프로필 사진으로 사용</translation>
 	</message>
 	<message>
 		<source>view-on-opensea</source>
-		<translation>Ver no OpenSea</translation>
+		<translation>OpenSea에서 보기</translation>
 	</message>
 	<message>
 		<source>profile-picture-updated</source>
-		<translation>Foto do perfil atualizada</translation>
+		<translation>프로필 사진 업데이트 됨</translation>
 	</message>
 	<message>
 		<source>status-automatic</source>
-		<translation>Automático</translation>
+		<translation>자동</translation>
 	</message>
 	<message>
 		<source>status-automatic-subtitle</source>
-		<translation>Definir status automaticamente</translation>
+		<translation>자동으로 상태 설정</translation>
 	</message>
 	<message>
 		<source>status-dnd</source>
-		<translation>Não perturbe</translation>
+		<translation>방해 금지</translation>
 	</message>
 	<message>
 		<source>status-dnd-subtitle</source>
-		<translation>Silencia todas as notificações</translation>
+		<translation>모든 알림 음소거</translation>
 	</message>
 	<message>
 		<source>status-always-online</source>
-		<translation>Sempre Online</translation>
+		<translation>항상 온라인</translation>
 	</message>
 	<message>
 		<source>status-inactive</source>
-		<translation>Inativo</translation>
+		<translation>비활성</translation>
 	</message>
 	<message>
 		<source>status-inactive-subtitle</source>
-		<translation>Oculta seu status online</translation>
+		<translation>온라인 상태 숨기기</translation>
 	</message>
 	<message>
 		<source>two-minutes</source>
-		<translation>dois minutos</translation>
+		<translation>2분</translation>
 	</message>
 	<message>
 		<source>swap</source>
-		<translation>Troca</translation>
+		<translation>스왑</translation>
 	</message>
 	<message>
 		<source>select-token-to-swap</source>
-		<translation>Selecione o token para trocar</translation>
+		<translation>스왑할 토큰 선택</translation>
 	</message>
 	<message>
 		<source>select-token-to-receive</source>
-		<translation>Selecione o token para receber</translation>
+		<translation>받을 토큰 선택</translation>
 	</message>
 	<message>
 		<source>minimum-received</source>
-		<translation>Mínimo recebido</translation>
+		<translation>최소 수신</translation>
 	</message>
 	<message>
 		<source>powered-by-paraswap</source>
-		<translation>Desenvolvido por Paraswap</translation>
+		<translation>Powered by Paraswap</translation>
 	</message>
 	<message>
 		<source>priority</source>
-		<translation>Prioridade</translation>
+		<translation>우선 순위</translation>
 	</message>
 	<message>
 		<source>switch-to-simple-interface</source>
-		<translation>Mudar para interface simples</translation>
+		<translation>간단한 인터페이스로 전환</translation>
 	</message>
 	<message>
 		<source>transaction-fee</source>
-		<translation>Taxa de transação</translation>
+		<translation>거래 수수료</translation>
 	</message>
 	<message>
 		<source>swap-details</source>
-		<translation>Trocar detalhes</translation>
+		<translation>스왑 세부정보</translation>
 	</message>
 	<message>
 		<source>slippage</source>
-		<translation>Derrapagem</translation>
+		<translation>슬리피지</translation>
 	</message>
 	<message>
 		<source>price-impact</source>
-		<translation>Impacto do preço</translation>
+		<translation>가격 영향</translation>
 	</message>
 	<message>
 		<source>total-gas</source>
-		<translation>Gas total</translation>
+		<translation>총 가스</translation>
 	</message>
 	<message>
 		<source>token</source>
-		<translation>Token</translation>
+		<translation>토큰</translation>
 	</message>
 	<message>
 		<source>approve-limit</source>
-		<translation>Aprovar limite</translation>
+		<translation>한도 승인</translation>
 	</message>
 	<message>
 		<source>approve-token</source>
-		<translation>Aprovar token</translation>
+		<translation>토큰 승인</translation>
 	</message>
 	<message>
 		<source>approve-token-contract-desc</source>
-		<translation>Aprovar um token com um contrato permite que ele gaste seu saldo de tokens. Se você julgar que um projeto não é confiável, não aprove o token com eles ou aprove apenas o valor que você usará com eles.</translation>
+		<translation>컨트랙트로 토큰을 승인하면 토큰 잔액을 사용할 수 있게 됩니다. 프로젝트를 신뢰할 수 없다고 생각하면 토큰을 승인하지 않거나, 사용할 금액만 승인해주세요.</translation>
 	</message>
 	<message>
 		<source>unlimited</source>
-		<translation>Ilimitado</translation>
+		<translation>무제한</translation>
 	</message>
 	<message>
 		<source>approve</source>
-		<translation>Aprovar</translation>
+		<translation>승인</translation>
 	</message>
 	<message>
 		<source>limit</source>
-		<translation>Limite</translation>
+		<translation>한계</translation>
 	</message>
 	<message>
 		<source>last-transaction</source>
-		<translation>Última transação</translation>
+		<translation>마지막 트랜잭션</translation>
 	</message>
 	<message>
 		<source>price-impact-desc</source>
-		<translation>Impacto de preço estimado para esta transação. Se a taxa base do bloco atual exceder isso, sua transação será incluída em um bloco seguinte com uma taxa base mais baixa.</translation>
+		<translation>이 트랜잭션에 대한 예상 가격 영향입니다. 현재 블록 기본 수수료가 이를 초과하는 경우 기본 수수료가 낮은 다음 블록에 거래가 포함됩니다.</translation>
 	</message>
 	<message>
 		<source>safe-estimate</source>
-		<translation>Estimativa segura</translation>
+		<translation>안전한 추정치</translation>
 	</message>
 	<message>
 		<source>current-average</source>
-		<translation>Média atual</translation>
+		<translation>현재 평균</translation>
 	</message>
 	<message>
 		<source>current-base</source>
-		<translation>Base atual</translation>
+		<translation>현재 베이스</translation>
 	</message>
 	<message>
 		<source>maximum-fee-desc</source>
-		<translation>Preço total máximo para a transação. Se a taxa base do bloco atual exceder isso, sua transação será incluída em um bloco seguinte com uma taxa base mais baixa.</translation>
+		<translation>트랜잭션 전반의 최대 가격입니다. 현재 블록 기본 수수료가 이를 초과하는 경우 기본 수수료가 낮은 다음 블록에 거래가 포함됩니다.</translation>
 	</message>
 	<message>
 		<source>insufficient-balance-to-cover-fee</source>
-		<translation>saldo insuficiente para cobrir a taxa de transação</translation>
+		<translation>거래 수수료를 위한 잔액이 충분하지 않습니다</translation>
 	</message>
 	<message>
 		<source>wallet-connect-proposal-title</source>
-		<translation>Gostaria de se conectar com sua carteira</translation>
+		<translation>지갑과 연결합니다</translation>
 	</message>
 	<message>
 		<source>wallet-connect-proposal-description</source>
-		<translation>Ao conectar você permite que {{name}} recupere o endereço da sua conta e ative o Web3</translation>
+		<translation>연결하면 {{name}} 이(가) 귀하의 계정 주소를 검색하고 Web3를 활성화할 수 있습니다</translation>
 	</message>
 	<message>
 		<source>wallet-connect-app-connected</source>
-		<translation>está conectado</translation>
+		<translation>연결됨</translation>
 	</message>
 	<message>
 		<source>wallet-connect-go-back</source>
-		<translation>Volte para o seu navegador ou dapp</translation>
+		<translation>브라우저 또는 디앱으로 돌아가기</translation>
 	</message>
 	<message>
 		<source>wallet-connect-2.0</source>
-		<translation>Wallet Connect 2.0</translation>
+		<translation>월렛 커넥트 2.0</translation>
 	</message>
 	<message>
 		<source>wallet-connect</source>
-		<translation>Wallet Connect</translation>
+		<translation>월렛 커넥트</translation>
 	</message>
 	<message>
 		<source>reject</source>
-		<translation>Rejeitar</translation>
+		<translation>거절</translation>
 	</message>
 	<message>
 		<source>manage-connections</source>
-		<translation>Gerenciar conexões de dentro do Application Connections</translation>
+		<translation>애플리케이션 연결에서 연결 관리</translation>
 	</message>
 	<message>
 		<source>wallet-manage-app-connections</source>
-		<translation>Gerenciar conexões de aplicativos</translation>
+		<translation>앱 연결 관리</translation>
 	</message>
 	<message>
 		<source>connection-request</source>
-		<translation>Solicitação de conexão</translation>
+		<translation>연결 요청</translation>
 	</message>
 	<message>
 		<source>disconnect</source>
-		<translation>Desconectar</translation>
+		<translation>연결 해제</translation>
 	</message>
 	<message>
 		<source>new-ui</source>
-		<translation>Nova UI</translation>
+		<translation>새 UI</translation>
 	</message>
 	<message>
 		<source>send-contact-request-message</source>
-		<translation>Para iniciar um chat, você precisa se tornar um contato</translation>
+		<translation>채팅을 시작하려면 연락처 등록이 되어야 합니다</translation>
 	</message>
 	<message>
 		<source>contact-request</source>
-		<translation>Requisição de contato</translation>
+		<translation>연락처 요청</translation>
 	</message>
 	<message>
 		<source>say-hi</source>
-		<translation>Diga oi</translation>
+		<translation>인사하기</translation>
 	</message>
 	<message>
 		<source>accepted</source>
-		<translation>Aceito</translation>
+		<translation>수락됨</translation>
 	</message>
 	<message>
 		<source>declined</source>
-		<translation>Recusado</translation>
+		<translation>거부됨</translation>
 	</message>
 	<message>
 		<source>contact-request-header</source>
-		<translation>👋 Solicitações de contato</translation>
+		<translation>👋 연락처 요청</translation>
 	</message>
 	<message>
 		<source>contact-request-declined</source>
-		<translation>Recusado ⓧ</translation>
+		<translation>거부됨 ⓧ</translation>
 	</message>
 	<message>
 		<source>contact-request-accepted</source>
-		<translation>Aceito ✓</translation>
+		<translation>수락됨 ✓</translation>
 	</message>
 	<message>
 		<source>contact-request-pending</source>
-		<translation>Pendente...</translation>
+		<translation>대기 중...</translation>
 	</message>
 	<message>
 		<source>removed-from-contacts</source>
-		<translation>Removido dos contatos</translation>
+		<translation>연락처에서 제거</translation>
 	</message>
 	<message>
 		<source>mutual-contact-requests</source>
-		<translation>Solicitações de contato mútuo</translation>
+		<translation>상호 연락처 등록 요청</translation>
 	</message>
 	<message>
 		<source>negative</source>
@@ -9638,79 +9610,79 @@ packs will not need to be re-purchased.</source>
 	</message>
 	<message>
 		<source>Maximum number of collectibles to display reached</source>
-		<translation>Número máximo de colecionáveis a serem exibidos atingido</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>View</source>
-		<translation>Visualizar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Unnamed</source>
-		<translation>Sem nome</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>ID</source>
-		<translation>ID</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Description</source>
-		<translation>Descrição</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>US Dollars</source>
-		<translation>Dólares Americanos</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Euros</source>
-		<translation>Euros</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>United Arab Emirates dirham</source>
-		<translation>Dirham dos Emirados Árabes Unidos</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Afghan afghani</source>
-		<translation>Afegane Afegão</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Argentine peso</source>
-		<translation>Peso Argentino</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Australian dollar</source>
-		<translation>Dólar Australiano</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Barbadian dollar</source>
-		<translation>Dólar de Barbados</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Bangladeshi taka</source>
-		<translation>Taka de Bangladesh</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Bulgarian lev</source>
-		<translation>Lev Búlgaro</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Bahraini dinar</source>
-		<translation>Dinar do Bahrein</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Brunei dollar</source>
-		<translation>Dólar de Brunei</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Bolivian boliviano</source>
-		<translation>Boliviano da Bolívia</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Brazillian real</source>
-		<translation>Real Brasileiro</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Bhutanese ngultrum</source>
-		<translation>Ngultrum Butanês</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Canadian dollar</source>
@@ -9790,1109 +9762,1107 @@ packs will not need to be re-purchased.</source>
 	</message>
 	<message>
 		<source>Indian rupee</source>
-		<translation>Rupia Indiana</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Icelandic króna</source>
-		<translation>Coroa Islandesa</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Jamaican dollar</source>
-		<translation>Dólar Jamaicano</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Japanese yen</source>
-		<translation>Yen Japonês</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Kenyan shilling</source>
-		<translation>Xelim queniano</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>South Korean won</source>
-		<translation>Won Sul-Coreano</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Kuwaiti dinar</source>
-		<translation>Dinar do Kuwait</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Kazakhstani tenge</source>
-		<translation>Tenge do Cazaquistão</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Sri Lankan rupee</source>
-		<translation>Rupia do Sri Lanka</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Moroccan dirham</source>
-		<translation>Dirham Marroquino</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Moldovan leu</source>
-		<translation>Leu Moldavo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Mauritian rupee</source>
-		<translation>Rupia Mauriciana</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Malawian kwacha</source>
-		<translation>Kwacha do Malawi</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Mexican peso</source>
-		<translation>Peso Mexicano</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Malaysian ringgit</source>
-		<translation>Ringgit Malaio</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Mozambican metical</source>
-		<translation>Metical Moçambicano</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Namibian dollar</source>
-		<translation>Dólar Namibiano</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Nigerian naira</source>
-		<translation>Naira Nigeriana</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Norwegian krone</source>
-		<translation>Coroa Norueguesa</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Nepalese rupee</source>
-		<translation>Rupia Nepalesa</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>New Zealand dollar</source>
-		<translation>Dólar da Nova Zelândia</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Omani rial</source>
-		<translation>Rial de Omã</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Peruvian sol</source>
-		<translation>Sol Peruano</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Papua New Guinean kina</source>
-		<translation>Kina da Papua-Nova Guiné</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Philippine peso</source>
-		<translation>Peso Filipino</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Pakistani rupee</source>
-		<translation>Rupia Paquistanesa</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Polish złoty</source>
-		<translation>Złoty Polonês</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Paraguayan guaraní</source>
-		<translation>Guarani Paraguaio</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Qatari riyal</source>
-		<translation>Rial do Catar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Romanian leu</source>
-		<translation>Leu Romeno</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Serbian dinar</source>
-		<translation>Dinar Sérvio</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Russian ruble</source>
-		<translation>Rublo Russo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Saudi riyal</source>
-		<translation>Rial Saudita</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Swedish krona</source>
-		<translation>Coroa Sueca</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Singapore dollar</source>
-		<translation>Dólar de Cingapura</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Thai baht</source>
-		<translation>Baht Tailandês</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Trinidad and Tobago dollar</source>
-		<translation>Dólar de Trinidad e Tobago</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>New Taiwan dollar</source>
-		<translation>Novo Dólar Taiwanês</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Tanzanian shilling</source>
-		<translation>Xelim da Tanzânia</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Turkish lira</source>
-		<translation>Lira Turca</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Ukrainian hryvnia</source>
-		<translation>Grívnia Ucraniana</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Ugandan shilling</source>
-		<translation>Xelim Ugandês</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Uruguayan peso</source>
-		<translation>Peso Uruguaio</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Venezuelan bolívar</source>
-		<translation>Bolívar Venezuelano</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Vietnamese đồng</source>
-		<translation>Đồng Vietnamita</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>South African rand</source>
-		<translation>Rand Sul-africano</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>View Community</source>
-		<translation>Ver Comunidade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Browser</source>
-		<translation>Navegador</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Timeline</source>
-		<translation>Timeline</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Contact request accepted</source>
-		<translation>Solicitação de contato aceita</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>New contact request</source>
-		<translation>Nova solicitação de contato</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>You can now chat with %1</source>
-		<translation>Agora você pode conversar com %1</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>%1 requests to become contacts</source>
-		<translation>%1 solicita para se tornar um contato</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Where do you want to go?</source>
-		<translation>Onde você deseja ir?</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Status Desktop</source>
-		<translation>Status Desktop</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Open Status</source>
-		<translation>Abrir Status</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Quit</source>
-		<translation>Sair</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Create a password</source>
-		<translation>Criar uma senha</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>New password...</source>
-		<translation>Nova senha...</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Confirm password…</source>
-		<translation>Confirmar senha…</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>At least 6 characters. You will use this password to unlock status on this device &amp; sign transactions.</source>
-		<translation>Pelo menos 6 caracteres. Você usará essa senha para desbloquear o status neste dispositivo e assinar transações.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Create password</source>
-		<translation>Criar senha</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Error importing account</source>
-		<translation>Erro ao importar conta</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>An error occurred while importing your account: </source>
-		<translation>Ocorreu um erro ao importar sua conta: </translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Login failed</source>
-		<translation>Falha na autenticação</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Login failed. Please re-enter your password and try again.</source>
-		<translation>Falha na autenticação. Por favor, redigite sua senha e tente novamente.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Enter seed phrase</source>
-		<translation>Digite a seed phrase</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>This seed phrase doesn&apos;t match our supported dictionary. Check for misspelled words.</source>
-		<translation>Esta seed phrase não corresponde ao nosso dicionário. Verifique se há palavras incorretas.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Start with the first word</source>
-		<translation>Comece com a primeira palavra</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Enter 12, 15, 18, 21 or 24 words.
 Seperate words by a single space.</source>
-		<translation>Digite 12, 15, 18, 21 ou 24 palavras.
- Separe as palavras por um único espaço.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Invalid seed phrase</source>
-		<translation>Seed phrase inválida</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Choose a chat name</source>
-		<translation>Escolha um nome de bate-papo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Truly private communication</source>
-		<translation>Comunicação verdadeiramente privada</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Chat over a peer-to-peer, encrypted network
  where messages can&apos;t be censored or hacked</source>
-		<translation>Bate-papo em uma rede criptografada ponto a ponto onde as mensagens não podem ser censuradas ou hackeadas</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Secure crypto wallet</source>
-		<translation>Carteira crypto segura</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Send and receive digital assets anywhere in the
 world--no bank account required</source>
-		<translation>Envie e receba ativos digitais em qualquer lugar do mundo - não é necessária conta bancária</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Decentralized apps</source>
-		<translation>Aplicativos descentralizados</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Explore games, exchanges and social networks
 where you alone own your data</source>
-		<translation>Explore jogos, exchanges e redes sociais
- onde você é o único proprietário de seus dados</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Thanks for trying Status Desktop! Please note that this is an alpha release and we advise you that using this app should be done for testing purposes only and you assume the full responsibility for all risks concerning your data and funds. Status makes no claims of security or integrity of funds in these builds.</source>
-		<translation>Obrigado por experimentar o Status Desktop! Observe que esta é uma versão alfa e aconselhamos que o uso deste aplicativo seja feito apenas para fins de teste e você assume total responsabilidade por todos os riscos relacionados aos seus dados e fundos. A Status não reivindica segurança ou integridade de fundos nessas compilações.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>I understand</source>
-		<translation>Eu entendo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Status does not collect, share or sell any personal data. By continuing you agree with the privacy policy.</source>
-		<translation>AStatus não coleta, compartilha ou vende quaisquer dados pessoais. Ao continuar você concorda com a política de privacidade.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>I&apos;m new, generate keys</source>
-		<translation>Sou novo, gerar chaves</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Access existing key</source>
-		<translation>Acessar a chave existente</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Enter password</source>
-		<translation>Digite a senha</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Connecting...</source>
-		<translation>Conectando...</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Login failed: %1</source>
-		<translation>Falha no login: %1</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Generate new keys</source>
-		<translation>Gerar novas chaves</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Your keys</source>
-		<translation>Suas chaves</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Add another existing key</source>
-		<translation>Adicionar outra chave existente</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Your keys have been successfully recovered</source>
-		<translation>Suas chaves foram recuperadas com sucesso</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>You will have to create a new code or password to re-encrypt your keys</source>
-		<translation>Você terá que criar um novo código ou senha para criptografar novamente suas chaves</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Re-encrypt your keys</source>
-		<translation>Criptografe novamente suas chaves</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Cannot find asset &apos;%1&apos;. Ensure this asset has been added to the token list.</source>
-		<translation>Não é possível localizar o ativo &apos;%1&apos;. Certifique-se de que este ativo tenha sido adicionado à lista de tokens.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>ENS Username not found</source>
-		<translation>Nome de usuário ENS não encontrado</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>eg. 0x1234 or ENS</source>
-		<translation>por exemplo, 0x1234 ou ENS</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Paste</source>
-		<translation>Colar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>You need to request the recipient’s address first.
 Assets won’t be sent yet.</source>
-		<translation>Você precisa solicitar o endereço do destinatário primeiro. Os ativos ainda não serão enviados.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Invalid source</source>
-		<translation>Origem inválida</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Insufficient balance</source>
-		<translation>Saldo insuficiente</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Must be greater than 0</source>
-		<translation>Deve ser maior que 0</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Priority</source>
-		<translation>Prioridade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Use suggestions</source>
-		<translation>Usar sugestões</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Use custom</source>
-		<translation>Usar personalizado</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Low</source>
-		<translation>Baixo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>High</source>
-		<translation>Alto</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Gas amount limit</source>
-		<translation>Limite de taxa de gas</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Per-gas overall limit</source>
-		<translation>Limite geral por taxa de gas</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Maximum overall price for the transaction. If the block base fee exceeds this, it will be included in a following block with a lower base fee.</source>
-		<translation>Preço total máximo para a transação. Se a taxa básica do bloco exceder isso, ela será incluída em um bloco seguinte com uma taxa básica mais baixa.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Must be greater than or equal to 0</source>
-		<translation>Deve ser maior ou igual a 0</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>This needs to be a number</source>
-		<translation>Isso precisa ser um número</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Please enter an amount</source>
-		<translation>Por favor, insira uma quantia</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>The amount is 0. Proceed only if this is desired.</source>
-		<translation>A quantia é 0. Prossiga somente se desejar.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Balance: </source>
-		<translation>Balanço:</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Asset &amp; Amount</source>
-		<translation>Ativo &amp; Quantia</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Blocking will remove any messages you received from %1 and stop new messages from reaching you.</source>
-		<translation>O bloqueio removerá todas as mensagens recebidas de %1 e impedirá que novas mensagens cheguem até você.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Account color</source>
-		<translation>Cor da conta</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Confirm your action</source>
-		<translation>Confirmar sua ação</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Confirm</source>
-		<translation>Confirmar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Are you sure you want to this?</source>
-		<translation>Tem certeza que quer isso?</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Do not show this again</source>
-		<translation>Não mostrar isso novamente</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Please select a contact</source>
-		<translation>Por favor, selecione um contato</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Select a contact</source>
-		<translation>Selecione um contato</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Contact does not have an ENS address. Please send a transaction in chat.</source>
-		<translation>O contato não tem um endereço ENS. Por favor, envie uma transação no chat.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>No contact selected</source>
-		<translation>Nenhum contato selecionado</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Copied!</source>
-		<translation>Copiado!</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Slow</source>
-		<translation>Lento</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Optimal</source>
-		<translation>Otimizado</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Fast</source>
-		<translation>Rápido</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Reset</source>
-		<translation>Redefinir</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Advanced</source>
-		<translation>Avançado</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Custom Network Fee</source>
-		<translation>Taxa de Rede Personalizada</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Gwei</source>
-		<translation>Gwei</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Apply</source>
-		<translation>Aplicar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Not enough ETH for gas</source>
-		<translation>Não há ETH suficiente para a taxa de gas</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Copied</source>
-		<translation>Copiado</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Pasted</source>
-		<translation>Colado</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Copy</source>
-		<translation>Copiar para área de transferência</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Invalid ethereum address</source>
-		<translation>Endereço Ethereum inválido</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Address</source>
-		<translation>Endereço</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>My account</source>
-		<translation>Minha conta</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Contact</source>
-		<translation>Contato</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Search</source>
-		<translation>Pesquisar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>In:</source>
-		<translation>Em:</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Messages</source>
-		<translation>Mensagens</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Tokens will be sent directly to a contract address, which may result in a loss of funds. To transfer ERC-20 tokens, ensure the recipient address is the address of the destination wallet.</source>
-		<translation>Os tokens serão enviados diretamente para um endereço de contrato, o que pode resultar em perda de fundos. Para transferir tokens ERC-20, certifique-se de que o endereço do destinatário seja o endereço da carteira de destino.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>View on Etherscan</source>
-		<translation>Ver no Etherscan</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>&lt;a href=&apos;%1&apos; style=&apos;color:%2;text-decoration:none;&apos;&gt;%3&lt;/a&gt;</source>
-		<translation>&lt;a href=&apos;%1&apos; style=&apos;color:%2;text-decoration:none;&apos;&gt;%3&lt;/a&gt;</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Asset</source>
-		<translation>Ativo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Amount</source>
-		<translation>Quantia</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Data field</source>
-		<translation>Campo de dados</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Signing phrase is a 3 word combination that displayed when you entered the wallet on this device for the first time.</source>
-		<translation>A frase de assinatura é uma combinação de 3 palavras que é exibida quando você entra uma carteira neste dispositivo pela primeira vez.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Enter the password you use to unlock this device</source>
-		<translation>Digite a senha que você usa para desbloquear este dispositivo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Unblocking will allow new messages you received from %1 to reach you.</source>
-		<translation>O desbloqueio permitirá que novas mensagens recebidas de %1 cheguem até você.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Send transaction</source>
-		<translation>Enviar transação</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Request transaction</source>
-		<translation>Solicitar transação</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Public chat</source>
-		<translation>Bate-papo público</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Not a contact</source>
-		<translation>Não é um contato</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Image files (%1)</source>
-		<translation>Arquivos de imagem (%1)</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Your message is too long.</source>
-		<translation>Sua mensagem é muito longa.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Please make your message shorter. We have set the limit to 2000 characters to be courteous of others.</source>
-		<translation>Por favor, deixe sua mensagem mais curta. Definimos o limite de 2000 caracteres para ser cortês com os outros.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Type a message</source>
-		<translation>Digite uma mensagem</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Bold</source>
-		<translation>Negrito</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Italic</source>
-		<translation>Itálico</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Strikethrough</source>
-		<translation>Riscado</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Code</source>
-		<translation>Código</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>No recent emojis</source>
-		<translation>Nenhum emoji recente</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Buy for %1 SNT</source>
-		<translation>Comprar com %1 SNT</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Uninstall</source>
-		<translation>Desinstalar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Install</source>
-		<translation>Instalar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Free</source>
-		<translation>Grátis</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Pending...</source>
-		<translation>Pendente...</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Update</source>
-		<translation>Atualizar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Could not buy Stickerpack</source>
-		<translation>Não foi possível comprar o Pacote de figurinhas</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Stickerpack bought successfully</source>
-		<translation>Pacote de figurinhas comprado com sucesso</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>You don&apos;t have any stickers yet</source>
-		<translation>Você ainda não tem figurinhas</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Recently used stickers will appear here</source>
-		<translation>As figurinhas usadas recentemente aparecerão aqui</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Get Stickers</source>
-		<translation>Obter Figurinhas</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Ethereum explorer</source>
-		<translation>Explorador Ethereum</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Custom...</source>
-		<translation>Personalizado...</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Search engine</source>
-		<translation>Mecanismo de busca</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Dapp permissions</source>
-		<translation>Permissões do Dapp</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Revoke access</source>
-		<translation>Revogar acesso</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Revoke all access</source>
-		<translation>Revogar todo o acesso</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Show more</source>
-		<translation>Mostrar mais</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>%1 invited you to join the group</source>
-		<translation>%1 convidou você para participar do grupo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>All</source>
-		<translation>Todos</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Mentions</source>
-		<translation>Menções</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Replies</source>
-		<translation>Respostas</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Contact requests</source>
-		<translation>Solicitações de contato</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Mark all as Read</source>
-		<translation>Marcar todas como lido</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Show read notifications</source>
-		<translation>Mostrar notificações lidas</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Hide read notifications</source>
-		<translation>Ocultar notificações lidas</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Notification settings</source>
-		<translation>Configurações de notificação</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>You need to be mutual contacts with this person for them to receive your messages</source>
-		<translation>Você precisa ser um contato mútuo com essa pessoa para que ela receba suas mensagens</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Waiting for %1 to accept your request</source>
-		<translation>Aguardando pelo %1 para aceitar sua solicitação</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Just click this button to add them as contact. They will receive a notification. Once they accept the request, you&apos;ll be able to chat</source>
-		<translation>Basta clicar neste botão para adicioná-los como contatos. Eles receberão uma notificação. Depois que eles aceitarem a solicitação, você poderá conversar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Back up community key</source>
-		<translation>Fazer backup da chave da comunidade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Back up</source>
-		<translation>Fazer backup</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Member name</source>
-		<translation>Nome do membro</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Community members will appear here</source>
-		<translation>Os membros da comunidade aparecerão aqui</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>No contacts found</source>
-		<translation>Nenhum contato encontrado</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Your community is free to join, but new members are required to be approved by the community creator first</source>
-		<translation>Sua comunidade é livre para participar, mas os novos membros precisam ser aprovados pelo criador da comunidade primeiro</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Your community can only be joined by an invitation from existing community members</source>
-		<translation>Sua comunidade só pode ser acessada por um convite de membros existentes da comunidade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Your community is free for anyone to join</source>
-		<translation>Sua comunidade é gratuita para qualquer pessoa entrar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>You should keep it safe and only share it with people you trust to take ownership of your community</source>
-		<translation>Você deve mantê-lo seguro e compartilhá-lo apenas com pessoas em quem confia para se apropriar de sua comunidade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>You can also use this key to import your community on another device</source>
-		<translation>Você também pode usar esta chave para importar sua comunidade em outro dispositivo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Decline and block</source>
-		<translation>Recusar e bloquear</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Decline all contacts</source>
-		<translation>Recusar todos os contatos</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Are you sure you want to decline all these contact requests</source>
-		<translation>Tem certeza de que deseja recusar todas essas solicitações de contato</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Accept all contacts</source>
-		<translation>Aceitar todos os contatos</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Are you sure you want to accept all these contact requests</source>
-		<translation>Tem certeza que deseja aceitar todas essas solicitações de contato</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Decline all</source>
-		<translation>Recusar tudo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Accept all</source>
-		<translation>Aceitar tudo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Pin limit reached</source>
-		<translation>Limite de mensagens fixadas atingido</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Unpin a previous message first</source>
-		<translation>Desafixar uma mensagem anterior primeiro</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>%1 messages</source>
-		<translation>%1 mensagens</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>%1 message</source>
-		<translation>%1 mensagem</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Pinned messages will appear here.</source>
-		<translation>As mensagens fixadas aparecerão aqui.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>I accept</source>
-		<translation>Eu aceito</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Format not supported.</source>
-		<translation>Formato não suportado.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Upload %1 only</source>
-		<translation>Carregar apenas %1</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>You can only upload %1 images at a time</source>
-		<translation>Você só pode carregar %1 imagens de cada vez</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Max image size is %1 MB</source>
-		<translation>O tamanho máximo da imagem é %1 MB</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>TODO</source>
-		<translation>PARAFAZER</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>NOW</source>
-		<translation>AGORA</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>%1M</source>
-		<translation>%1M</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>%1H</source>
-		<translation>%1H</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>%1D</source>
-		<translation>%1D</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Sun</source>
-		<translation>Dom</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Mon</source>
-		<translation>Seg</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Tue</source>
-		<translation>Ter</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Wed</source>
-		<translation>Qua</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Thu</source>
-		<translation>Qui</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Fri</source>
-		<translation>Sex</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Sat</source>
-		<translation>Sab</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Jan</source>
-		<translation>Jan</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Feb</source>
-		<translation>Fev</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Mar</source>
-		<translation>Mar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Apr</source>
-		<translation>Abr</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Jun</source>
-		<translation>Jun</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Jul</source>
-		<translation>Jul</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Aug</source>
-		<translation>Ago</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Sep</source>
-		<translation>Set</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Oct</source>
-		<translation>Out</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Nov</source>
-		<translation>Nov</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Dec</source>
-		<translation>Dez</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Sunday</source>
-		<translation>Domingo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Monday</source>
-		<translation>Segunda-feira</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Tuesday</source>
-		<translation>Terça-feira</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Wednesday</source>
-		<translation>Quarta-feira</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Thursday</source>
-		<translation>Quinta-feira</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Friday</source>
-		<translation>Sexta-feira</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Saturday</source>
-		<translation>Sábado</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Start a 1-on-1 chat with %1</source>
-		<translation>Inicie um bate-papo individual com %1</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Join the %1 community</source>
-		<translation>Junte-se à comunidade %1</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Join the %1 group chat</source>
-		<translation>Junte-se ao bate-papo em grupo %1</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Join the %1 public channel</source>
-		<translation>Junte-se ao canal público %1</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>words</source>
-		<translation>palavras</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Mainnet with upstream RPC</source>
-		<translation>Mainnet com RPC upstream</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>POA Network</source>
-		<translation>Rede POA</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>xDai Chain</source>
-		<translation>xDai Chain</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Goerli with upstream RPC</source>
-		<translation>Goerli com RPC upstream</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Rinkeby with upstream RPC</source>
-		<translation>Rinkeby com RPC upstream</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Ropsten with upstream RPC</source>
-		<translation>Ropsten com RPC upstream</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>You need to repeat your password</source>
-		<translation>Você precisa repetir sua senha</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Passwords don&apos;t match</source>
-		<translation>As senhas não correspondem</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>You need to enter a %1</source>
-		<translation>Você precisa inserir um %1</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>The %1 cannot exceed %2 characters</source>
-		<translation>O %1 não pode exceder %2 caracteres</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Must be an hexadecimal color (eg: #4360DF)</source>
-		<translation>Deve ser uma cor hexadecimal (por exemplo: #4360DF)</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Use only lowercase letters (a to z), numbers &amp; dashes (-). Do not use chat keys.</source>
-		<translation>Use apenas letras minúsculas (a a z), números e traços (-). Não use teclas de bate-papo.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>community-image-delete</source>
-		<translation>Vazio</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>public</source>
-		<translation>Público</translation>
+		<translation>오픈채팅</translation>
 	</message>
 </context>
 <context>
 	<name>AboutView</name>
 	<message>
 		<source>Status Desktop</source>
-		<translation>Status Desktop</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Privacy Policy</source>
-		<translation>Política de Privacidade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Check for updates</source>
@@ -10943,37 +10913,37 @@ Assets won’t be sent yet.</source>
 	<name>AcceptRejectOptionsButtonsPanel</name>
 	<message>
 		<source>View Profile</source>
-		<translation>Ver Perfil</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Decline and block</source>
-		<translation>Recusar e bloquear</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>AccessExistingCommunityPopup</name>
 	<message>
 		<source>You need to enter a key</source>
-		<translation>Você precisa inserir uma chave</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Import</source>
-		<translation>Importar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Error importing the community</source>
-		<translation>Erro ao importar a comunidade</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>AccountView</name>
 	<message>
 		<source>Type</source>
-		<translation>Tipo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Storage</source>
-		<translation>Armazenar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Watch-Only Account</source>
@@ -11016,7 +10986,7 @@ Assets won’t be sent yet.</source>
 	<name>ActivityCenterMessageComponentView</name>
 	<message>
 		<source>Mark as Read</source>
-		<translation>Marcar como Lido</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Mark as Unread</source>
@@ -11027,7 +10997,7 @@ Assets won’t be sent yet.</source>
 	<name>AddAccountModal</name>
 	<message>
 		<source>Advanced</source>
-		<translation>Avançado</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Generate an account</source>
@@ -11082,15 +11052,15 @@ Assets won’t be sent yet.</source>
 	<name>AddEditSavedAddressPopup</name>
 	<message>
 		<source>Name</source>
-		<translation>Nome</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Address</source>
-		<translation>Endereço</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Save</source>
-		<translation>Salvar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Edit saved address</source>
@@ -11129,23 +11099,23 @@ Assets won’t be sent yet.</source>
 	<name>AddFavoriteModal</name>
 	<message>
 		<source>URL</source>
-		<translation>URL</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Paste URL</source>
-		<translation>Colar URL</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Paste</source>
-		<translation>Colar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Pasted</source>
-		<translation>Colado</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Name</source>
-		<translation>Nome</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Favorite added</source>
@@ -11192,18 +11162,18 @@ Assets won’t be sent yet.</source>
 	<name>AdvancedContainer</name>
 	<message>
 		<source>Online users</source>
-		<translation>Usuários online</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>AdvancedView</name>
 	<message>
 		<source>disable</source>
-		<translation>desativar</translation>
+		<translation>비활성화</translation>
 	</message>
 	<message>
 		<source>enable</source>
-		<translation>Ativar</translation>
+		<translation>사용</translation>
 	</message>
 	<message>
 		<source>Fleet</source>
@@ -11326,7 +11296,7 @@ Assets won’t be sent yet.</source>
 	<name>AllowNotificationsView</name>
 	<message>
 		<source>Ok, got it</source>
-		<translation>Ok, entendi.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Allow notifications</source>
@@ -11342,7 +11312,7 @@ edit your notification preferences later in settings.</source>
 	<name>AppMain</name>
 	<message>
 		<source>Where do you want to go?</source>
-		<translation>Onde você quer ir?</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Profile Picture</source>
@@ -11401,27 +11371,27 @@ edit your notification preferences later in settings.</source>
 	<name>AppearanceView</name>
 	<message>
 		<source>XS</source>
-		<translation>XS</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>S</source>
-		<translation>S</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>M</source>
-		<translation>M</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>L</source>
-		<translation>L</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>XL</source>
-		<translation>XL</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>XXL</source>
-		<translation>XXL</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Preview</source>
@@ -11480,11 +11450,11 @@ edit your notification preferences later in settings.</source>
 	<name>BackupSeedModal</name>
 	<message>
 		<source>Back up your seed phrase</source>
-		<translation>Faça backup da frase-semente</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Continue</source>
-		<translation>Continuar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Not Now</source>
@@ -11507,11 +11477,11 @@ edit your notification preferences later in settings.</source>
 	<name>BackupSeedStepBase</name>
 	<message>
 		<source>Enter word</source>
-		<translation>Digite a palavra</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Wrong word</source>
-		<translation>Palavra errada</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Word #%1</source>
@@ -11522,7 +11492,7 @@ edit your notification preferences later in settings.</source>
 	<name>BeforeGetStartedModal</name>
 	<message>
 		<source>Privacy Policy</source>
-		<translation>Política de Privacidade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Before you get started</source>
@@ -11565,7 +11535,7 @@ edit your notification preferences later in settings.</source>
 	<name>BrowserLayout</name>
 	<message>
 		<source>Transaction pending...</source>
-		<translation>Transação pendente...</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Error sending the transaction</source>
@@ -11597,19 +11567,19 @@ Do you wish to override the security check and continue?</source>
 	<name>ChatContextMenuView</name>
 	<message>
 		<source>Leave group</source>
-		<translation>Sair do grupo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Save</source>
-		<translation>Salvar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Delete</source>
-		<translation>Excluir</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Are you sure you want to leave this chat?</source>
-		<translation>Tem certeza de que deseja sair deste chat?</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>View Members</source>
@@ -11676,7 +11646,7 @@ Do you wish to override the security check and continue?</source>
 	<name>ChatView</name>
 	<message>
 		<source>Members</source>
-		<translation>Membros</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Remove contact</source>
@@ -11691,14 +11661,14 @@ Do you wish to override the security check and continue?</source>
 	<name>CollectibleDetailsHeader</name>
 	<message>
 		<source>Send</source>
-		<translation>Enviar</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>CollectibleModal</name>
 	<message>
 		<source>description</source>
-		<translation>Descrição</translation>
+		<translation>설명</translation>
 	</message>
 	<message>
 		<source>unnamed</source>
@@ -11717,25 +11687,25 @@ Do you wish to override the security check and continue?</source>
 	<name>CollectiblesStore</name>
 	<message>
 		<source>Collectibles</source>
-		<translation>Colecionáveis</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>CollectiblesView</name>
 	<message>
 		<source>Collectibles will appear here</source>
-		<translation>Colecionáveis aparecerão aqui</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>CommunitiesListPanel</name>
 	<message>
 		<source>Cancel</source>
-		<translation>Cancelar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Leave community</source>
-		<translation>Deixar comunidade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Leave %1</source>
@@ -11750,23 +11720,23 @@ Do you wish to override the security check and continue?</source>
 	<name>CommunitiesPopup</name>
 	<message>
 		<source>Communities</source>
-		<translation>Comunidades</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>1 member</source>
-		<translation>1 membro</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>%1 members</source>
-		<translation>%1 membros</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Create a community</source>
-		<translation>Crie uma comunidade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Search for communities or topics</source>
-		<translation>Pesquisar comunidades ou tópicos</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Access existing community</source>
@@ -11777,7 +11747,7 @@ Do you wish to override the security check and continue?</source>
 	<name>CommunitiesPortalLayout</name>
 	<message>
 		<source>Search</source>
-		<translation>Pesquisar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Find community</source>
@@ -11804,18 +11774,18 @@ Do you wish to override the security check and continue?</source>
 	<name>CommunityColorPicker</name>
 	<message>
 		<source>Community colour</source>
-		<translation>Cor da comunidade</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>CommunityColumnView</name>
 	<message>
 		<source>Create channel</source>
-		<translation>Criar canal</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Create category</source>
-		<translation>Criar categoria</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>1 Member</source>
@@ -11874,11 +11844,11 @@ Do you wish to override the security check and continue?</source>
 	<name>CommunityDescriptionInput</name>
 	<message>
 		<source>Description</source>
-		<translation>Descrição</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>What your community is about</source>
-		<translation>Sobre o que é sua comunidade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>community description</source>
@@ -11889,15 +11859,15 @@ Do you wish to override the security check and continue?</source>
 	<name>CommunityDetailPopup</name>
 	<message>
 		<source>Join ‘%1’</source>
-		<translation>Junte-se a &apos;%1&apos;</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Pending</source>
-		<translation>Pendente</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Unknown community</source>
-		<translation>Comunidade desconhecida</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Public community</source>
@@ -11940,53 +11910,53 @@ Do you wish to override the security check and continue?</source>
 	<name>CommunityEditSettingsPanel</name>
 	<message>
 		<source>A catchy name</source>
-		<translation>Um nome cativante</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>community name</source>
-		<translation>nome da comunidade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Description</source>
-		<translation>Descrição</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>What your community is about</source>
-		<translation>Sobre o que é sua comunidade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Pick a color</source>
-		<translation>Escolha uma cor</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>CommunityHeaderButton</name>
 	<message>
 		<source>1 member</source>
-		<translation>1 membro</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>%1 members</source>
-		<translation>%1 membros</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>CommunityMembersSettingsPanel</name>
 	<message>
 		<source>Members</source>
-		<translation>Membros</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Member name</source>
-		<translation>Nome do membro</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Ban</source>
-		<translation>Banir</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Kick</source>
-		<translation>Expulsar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Membership requests</source>
@@ -12009,11 +11979,11 @@ Do you wish to override the security check and continue?</source>
 	<name>CommunityNameInput</name>
 	<message>
 		<source>A catchy name</source>
-		<translation>Um nome cativante</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>community name</source>
-		<translation>nome da comunidade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Community name</source>
@@ -12024,11 +11994,11 @@ Do you wish to override the security check and continue?</source>
 	<name>CommunityProfilePopup</name>
 	<message>
 		<source>Members</source>
-		<translation>Membros</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Transfer ownership</source>
-		<translation>Transferir propriedade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Public community</source>
@@ -12059,11 +12029,11 @@ Do you wish to override the security check and continue?</source>
 	<name>CommunityProfilePopupInviteFriendsPanel</name>
 	<message>
 		<source>Copied!</source>
-		<translation>Copiado!</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Contacts</source>
-		<translation>Contatos</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Share community</source>
@@ -12074,14 +12044,14 @@ Do you wish to override the security check and continue?</source>
 	<name>CommunityProfilePopupMembersListPanel</name>
 	<message>
 		<source>Member name</source>
-		<translation>Nome do membro</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>CommunityProfilePopupOverviewPanel</name>
 	<message>
 		<source>Copied!</source>
-		<translation>Copiado!</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Share community</source>
@@ -12100,15 +12070,15 @@ Do you wish to override the security check and continue?</source>
 	<name>CommunitySettingsView</name>
 	<message>
 		<source>Members</source>
-		<translation>Membros</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Notifications</source>
-		<translation>Notificações</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Settings</source>
-		<translation>Configurações</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Overview</source>
@@ -12131,14 +12101,14 @@ Do you wish to override the security check and continue?</source>
 	<name>CommunityUserList</name>
 	<message>
 		<source>Members</source>
-		<translation>Membros</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>ConfirmPasswordView</name>
 	<message>
 		<source>Passwords don&apos;t match</source>
-		<translation>As senhas não correspondem</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Have you written down your password?</source>
@@ -12189,23 +12159,23 @@ Do you wish to override the security check and continue?</source>
 	<name>ConfirmationDialog</name>
 	<message>
 		<source>Confirm</source>
-		<translation>Confirmar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Reject</source>
-		<translation>Rejeitar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Cancel</source>
-		<translation>Cancelar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Confirm your action</source>
-		<translation>Confirmar sua ação</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Do not show this again</source>
-		<translation>Não mostrar isso novamente</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Are you sure you want to do this?</source>
@@ -12216,11 +12186,11 @@ Do you wish to override the security check and continue?</source>
 	<name>ContactPanel</name>
 	<message>
 		<source>View Profile</source>
-		<translation>Ver perfil</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Send message</source>
-		<translation>Enviar mensagem</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Respond to ID Request</source>
@@ -12239,7 +12209,7 @@ Do you wish to override the security check and continue?</source>
 	<name>ContactsColumnView</name>
 	<message>
 		<source>Start chat</source>
-		<translation>Iniciar bate-papo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Chat</source>
@@ -12270,7 +12240,7 @@ Do you wish to override the security check and continue?</source>
 	<name>ContactsView</name>
 	<message>
 		<source>Contacts</source>
-		<translation>Contatos</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Send contact request to chat key</source>
@@ -12317,27 +12287,27 @@ Do you wish to override the security check and continue?</source>
 	<name>Controls</name>
 	<message>
 		<source>XS</source>
-		<translation>XS</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>S</source>
-		<translation>S</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>M</source>
-		<translation>M</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>L</source>
-		<translation>L</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>XL</source>
-		<translation>XL</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>XXL</source>
-		<translation>XXL</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>50%</source>
@@ -12360,11 +12330,11 @@ Do you wish to override the security check and continue?</source>
 	<name>CreateCategoryPopup</name>
 	<message>
 		<source>Category title</source>
-		<translation>Título da categoria</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>category name</source>
-		<translation>nome da categoria</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Edit category</source>
@@ -12415,23 +12385,23 @@ Do you wish to override the security check and continue?</source>
 	<name>CreateChannelPopup</name>
 	<message>
 		<source>Channel name</source>
-		<translation>Nome do canal</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>channel name</source>
-		<translation>nome do canal</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Description</source>
-		<translation>Descrição</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Describe the channel</source>
-		<translation>Descreva o canal</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>channel description</source>
-		<translation>descrição do canal</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>New channel</source>
@@ -12470,7 +12440,7 @@ Do you wish to override the security check and continue?</source>
 	<name>CreateChatView</name>
 	<message>
 		<source>Contacts</source>
-		<translation>Contatos</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>To: </source>
@@ -12512,51 +12482,51 @@ chat with them once they have accepted your contact request.</source>
 	<name>CreateCommunityPopup</name>
 	<message>
 		<source>You need to enter a color</source>
-		<translation>Você precisa inserir uma cor</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>This field needs to be an hexadecimal color (eg: #4360DF)</source>
-		<translation>Este campo precisa ser uma cor hexadecimal (por exemplo: #4360DF)</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Community color</source>
-		<translation>Cor da comunidade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Pick a color</source>
-		<translation>Escolha uma cor</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Please choose a color</source>
-		<translation>Por favor, escolha uma cor</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Next</source>
-		<translation>Próximo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Error creating the community</source>
-		<translation>Erro ao criar a comunidade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Name your community</source>
-		<translation>Dê um nome à sua comunidade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>A catchy name</source>
-		<translation>Um nome cativante</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Give it a short description</source>
-		<translation>Faça uma breve descrição</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>What your community is about</source>
-		<translation>Sobre o que é sua comunidade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Community colour</source>
-		<translation>Cor da comunidade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Create New Community</source>
@@ -12571,18 +12541,18 @@ chat with them once they have accepted your contact request.</source>
 	<name>CreatePasswordView</name>
 	<message>
 		<source>Create password</source>
-		<translation>Criar senha</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>DemoApp</name>
 	<message>
 		<source>Invite People</source>
-		<translation>Convidar pessoas</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>View Community</source>
-		<translation>Ver Comunidade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Edit Community</source>
@@ -12597,7 +12567,7 @@ chat with them once they have accepted your contact request.</source>
 	<name>DerivationPathsPanel</name>
 	<message>
 		<source>Reset</source>
-		<translation>Redefinir</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Derivation Path</source>
@@ -12608,11 +12578,11 @@ chat with them once they have accepted your contact request.</source>
 	<name>DerivedAddressesPanel</name>
 	<message>
 		<source>Pending</source>
-		<translation>Pendente</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Account</source>
-		<translation>Conta</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>No activity</source>
@@ -12635,11 +12605,11 @@ chat with them once they have accepted your contact request.</source>
 	<name>DisplayNamePopup</name>
 	<message>
 		<source>Edit</source>
-		<translation>Editar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Ok</source>
-		<translation>Ok</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Display Name</source>
@@ -12654,15 +12624,15 @@ chat with them once they have accepted your contact request.</source>
 	<name>EnsDetailsView</name>
 	<message>
 		<source>Wallet address</source>
-		<translation>Endereço da carteira</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Key</source>
-		<translation>Chave</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Connect username with your pubkey</source>
-		<translation>Conecte o nome de usuário com sua chave pública</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Copied to clipboard!</source>
@@ -12685,7 +12655,7 @@ chat with them once they have accepted your contact request.</source>
 	<name>EnsSearchView</name>
 	<message>
 		<source>Connect username with your pubkey</source>
-		<translation>Conecte o nome de usuário com sua chave pública</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>At least 4 characters. Latin letters, numbers, and lowercase only.</source>
@@ -12716,7 +12686,7 @@ chat with them once they have accepted your contact request.</source>
 	<name>EnsView</name>
 	<message>
 		<source>Transaction pending...</source>
-		<translation>Transação pendente...</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>View on etherscan</source>
@@ -12743,7 +12713,7 @@ chat with them once they have accepted your contact request.</source>
 	<name>ExemptionNotificationsModal</name>
 	<message>
 		<source>Done</source>
-		<translation>Feito</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>%1 exemption</source>
@@ -12774,15 +12744,15 @@ chat with them once they have accepted your contact request.</source>
 	<name>GasSelector</name>
 	<message>
 		<source>Priority</source>
-		<translation>Prioridade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Low</source>
-		<translation>Baixo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>High</source>
-		<translation>Alto</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Must be greater than 0</source>
@@ -12861,7 +12831,7 @@ chat with them once they have accepted your contact request.</source>
 	<name>GroupInfoPopup</name>
 	<message>
 		<source>%1/%2 members</source>
-		<translation>%1 membros {1/%2 ?}</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Add members</source>
@@ -12908,18 +12878,18 @@ chat with them once they have accepted your contact request.</source>
 	<name>ImageCropperModal</name>
 	<message>
 		<source>Crop your image (optional)</source>
-		<translation>Cortar sua imagem (opcional)</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Finish</source>
-		<translation>Terminar</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>ImportPrivateKeyPanel</name>
 	<message>
 		<source>Pending</source>
-		<translation>Pendente</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>You need to enter a private key</source>
@@ -12958,7 +12928,7 @@ chat with them once they have accepted your contact request.</source>
 	<name>InsertCard</name>
 	<message>
 		<source>Cancel</source>
-		<translation>Cancelar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Please insert your Keycard to proceed or press the cancel button to cancel the operation</source>
@@ -12969,11 +12939,11 @@ chat with them once they have accepted your contact request.</source>
 	<name>InsertDetailsView</name>
 	<message>
 		<source>Next</source>
-		<translation>Próximo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Profile picture</source>
-		<translation>Foto do perfil</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Your profile</source>
@@ -13012,7 +12982,7 @@ chat with them once they have accepted your contact request.</source>
 	<name>InvitationBubbleView</name>
 	<message>
 		<source>Unsupported state</source>
-		<translation>Estado não suportado</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Membership requires an ENS username</source>
@@ -13059,11 +13029,11 @@ chat with them once they have accepted your contact request.</source>
 	<name>KeysMainView</name>
 	<message>
 		<source>Enter a seed phrase</source>
-		<translation>Inserir seed phrase</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Generate new keys</source>
-		<translation>Gerar novas chaves</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>intro-wizard-title1</source>
@@ -13103,7 +13073,7 @@ device, so only you can use them.</source>
 	<name>LanguageView</name>
 	<message>
 		<source>Language</source>
-		<translation>Idioma</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Set Display Currency</source>
@@ -13158,11 +13128,11 @@ device, so only you can use them.</source>
 	<name>Layout</name>
 	<message>
 		<source>Invite People</source>
-		<translation>Convidar pessoas</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>View Community</source>
-		<translation>Ver Comunidade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>To: </source>
@@ -13185,7 +13155,7 @@ device, so only you can use them.</source>
 	<name>LeftTabView</name>
 	<message>
 		<source>Settings</source>
-		<translation>Configurações</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Sign out</source>
@@ -13220,7 +13190,7 @@ device, so only you can use them.</source>
 	<name>LoginView</name>
 	<message>
 		<source>Ok</source>
-		<translation>Ok</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Welcome back</source>
@@ -13259,7 +13229,7 @@ device, so only you can use them.</source>
 	<name>MenuPanel</name>
 	<message>
 		<source>Settings</source>
-		<translation>Configurações</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Apps</source>
@@ -13274,7 +13244,7 @@ device, so only you can use them.</source>
 	<name>MessageContextMenuView</name>
 	<message>
 		<source>Jump to</source>
-		<translation>Pular para</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Copy image</source>
@@ -13337,7 +13307,7 @@ device, so only you can use them.</source>
 	<name>MessagingView</name>
 	<message>
 		<source>Contacts</source>
-		<translation>Contatos</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Allow new contact requests</source>
@@ -13408,15 +13378,15 @@ device, so only you can use them.</source>
 	<name>MyProfileView</name>
 	<message>
 		<source>ENS username</source>
-		<translation>nome de usuário ENS</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Chat key</source>
-		<translation>Chave de bate-papo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Share Profile URL</source>
-		<translation>Compartilhar URL do Perfil</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Change Password</source>
@@ -13435,7 +13405,7 @@ device, so only you can use them.</source>
 	<name>NicknamePopup</name>
 	<message>
 		<source>Nickname</source>
-		<translation>Nickname</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Nicknames help you identify others in Status. Only you can see the nicknames you’ve added</source>
@@ -13450,7 +13420,7 @@ device, so only you can use them.</source>
 	<name>NoImageUploadedPanel</name>
 	<message>
 		<source>Upload</source>
-		<translation>Upload</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Wide aspect ratio is optimal</source>
@@ -13461,15 +13431,15 @@ device, so only you can use them.</source>
 	<name>NotificationsView</name>
 	<message>
 		<source>Messages</source>
-		<translation>Mensagens</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>You have a new message</source>
-		<translation>Você tem uma nova mensagem</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Anonymous</source>
-		<translation>Anônimo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Community</source>
@@ -13620,11 +13590,11 @@ device, so only you can use them.</source>
 	<name>PasswordView</name>
 	<message>
 		<source>Create a password</source>
-		<translation>Criar uma senha</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Passwords don&apos;t match</source>
-		<translation>As senhas não correspondem</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Create a password to unlock Status on this device &amp; sign transactions.</source>
@@ -13703,7 +13673,7 @@ device, so only you can use them.</source>
 	<name>PermissionsListView</name>
 	<message>
 		<source>Disconnect</source>
-		<translation>Desconectar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Disconnect All</source>
@@ -13714,7 +13684,7 @@ device, so only you can use them.</source>
 	<name>PinnedMessagesPopup</name>
 	<message>
 		<source>Unpin</source>
-		<translation>Desafixar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Pin limit reached</source>
@@ -13745,7 +13715,7 @@ device, so only you can use them.</source>
 	<name>ProfileLayout</name>
 	<message>
 		<source>Contacts</source>
-		<translation>Contatos</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Testnet mode is enabled. All balances, transactions and dApp interactions will be on testnets.</source>
@@ -13764,47 +13734,47 @@ device, so only you can use them.</source>
 	<name>ProfilePopup</name>
 	<message>
 		<source>ENS username</source>
-		<translation>nome de usuário ENS</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Chat key</source>
-		<translation>Chave de bate-papo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Share Profile URL</source>
-		<translation>Compartilhar URL do Perfil</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Chat settings</source>
-		<translation>Configurações de bate-papo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Nickname</source>
-		<translation>Nickname</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>None</source>
-		<translation>Nenhum</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Remove contact</source>
-		<translation>Remover Contato</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Are you sure you want to remove this contact?</source>
-		<translation>Tem certeza de que deseja remover este contato?</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Unblock User</source>
-		<translation>Desbloquear Usuário</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Block User</source>
-		<translation>Bloquear Usuário</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Add to contacts</source>
-		<translation>Adicionar aos contatos</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>&apos;s Profile</source>
@@ -13895,35 +13865,35 @@ device, so only you can use them.</source>
 	<name>ProfileSectionStore</name>
 	<message>
 		<source>Profile</source>
-		<translation>Perfil</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>ENS usernames</source>
-		<translation>Nomes de usuário ENS</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Wallet</source>
-		<translation>Carteira</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Browser</source>
-		<translation>Navegador</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Communities</source>
-		<translation>Comunidades</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Appearance</source>
-		<translation>Aparência</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Back up seed phrase</source>
-		<translation>Fazer backup da seed phrase</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Advanced</source>
-		<translation>Avançado</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Messaging</source>
@@ -13954,7 +13924,7 @@ device, so only you can use them.</source>
 	<name>RateView</name>
 	<message>
 		<source>Upload</source>
-		<translation>Upload</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Bandwidth</source>
@@ -13973,7 +13943,7 @@ device, so only you can use them.</source>
 	<name>ReceiveModal</name>
 	<message>
 		<source>Copy</source>
-		<translation>Copiar para área de transferência</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Receive</source>
@@ -13996,7 +13966,7 @@ device, so only you can use them.</source>
 	<name>RootStore</name>
 	<message>
 		<source>You</source>
-		<translation>Você</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Start a 1-on-1 chat with %1</source>
@@ -14015,11 +13985,11 @@ device, so only you can use them.</source>
 	<name>SavedAddressesView</name>
 	<message>
 		<source>Cancel</source>
-		<translation>Cancelar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Delete</source>
-		<translation>Excluir</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Saved addresses</source>
@@ -14050,15 +14020,15 @@ device, so only you can use them.</source>
 	<name>SeedPhraseInputView</name>
 	<message>
 		<source>Enter seed phrase</source>
-		<translation>Inserir seed phrase</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Next</source>
-		<translation>Próximo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Import</source>
-		<translation>Importar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Keys for this account already exist</source>
@@ -14093,7 +14063,7 @@ device, so only you can use them.</source>
 	<name>SendContactRequestModal</name>
 	<message>
 		<source>Paste</source>
-		<translation>Colar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Send Contact Request to chat key</source>
@@ -14120,7 +14090,7 @@ device, so only you can use them.</source>
 	<name>SendModal</name>
 	<message>
 		<source>Transaction pending...</source>
-		<translation>Transação pendente...</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Error sending the transaction</source>
@@ -14167,7 +14137,7 @@ device, so only you can use them.</source>
 	<name>SendModalFooter</name>
 	<message>
 		<source>Unknown</source>
-		<translation>Desconhecido</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Estimated Time:</source>
@@ -14186,37 +14156,37 @@ device, so only you can use them.</source>
 	<name>SendModalHeader</name>
 	<message>
 		<source>To</source>
-		<translation>Para</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>SettingsPageLayout</name>
 	<message>
 		<source>Cancel</source>
-		<translation>Cancelar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Save changes</source>
-		<translation>Salvar alterações</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>SignTransactionModal</name>
 	<message>
 		<source>Send</source>
-		<translation>Enviar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Continue</source>
-		<translation>Continuar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Error estimating gas: %1</source>
-		<translation>Erro ao estimar a taxa de gas: %1</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Transaction pending...</source>
-		<translation>Transação pendente...</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Error sending the transaction</source>
@@ -14259,14 +14229,14 @@ device, so only you can use them.</source>
 	<name>StatusAppCommunityView</name>
 	<message>
 		<source>Members</source>
-		<translation>Membros</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>StatusChatInput</name>
 	<message>
 		<source>Send</source>
-		<translation>Enviar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Message</source>
@@ -14313,7 +14283,7 @@ device, so only you can use them.</source>
 	<name>StatusChatListAndCategories</name>
 	<message>
 		<source>More</source>
-		<translation>Mais</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Add channel inside category</source>
@@ -14324,7 +14294,7 @@ device, so only you can use them.</source>
 	<name>StatusChatListCategoryItem</name>
 	<message>
 		<source>More</source>
-		<translation>Mais</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Add channel inside category</source>
@@ -14335,29 +14305,29 @@ device, so only you can use them.</source>
 	<name>StatusChatListItem</name>
 	<message>
 		<source>Unmute</source>
-		<translation>Ativar som</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>StatusChatToolBar</name>
 	<message>
 		<source>Search</source>
-		<translation>Pesquisar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Members</source>
-		<translation>Membros</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>More</source>
-		<translation>Mais</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>StatusColorDialog</name>
 	<message>
 		<source>Preview</source>
-		<translation>Preview</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>This is not a valid color</source>
@@ -14376,7 +14346,7 @@ device, so only you can use them.</source>
 	<name>StatusExpandableSettingsItemPage</name>
 	<message>
 		<source>Back up seed phrase</source>
-		<translation>Fazer backup da seed phrase</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Not Implemented</source>
@@ -14387,14 +14357,14 @@ device, so only you can use them.</source>
 	<name>StatusListPicker</name>
 	<message>
 		<source>Search</source>
-		<translation>Procurar</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>StatusMacNotification</name>
 	<message>
 		<source>Open</source>
-		<translation>Abrir</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>My latest message
@@ -14406,18 +14376,18 @@ device, so only you can use them.</source>
 	<name>StatusStickerMarket</name>
 	<message>
 		<source>This feature is experimental and is meant for testing purposes by core contributors and the community. It&apos;s not meant for real use and makes no claims of security or integrity of funds or data. Use at your own risk.</source>
-		<translation>Esse recurso é experimental e destina-se a fins de teste pelos principais contribuidores e pela comunidade. Não se destina ao uso real e não faz reivindicações de segurança ou integridade de fundos ou dados. Use por sua conta e risco.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>I understand</source>
-		<translation>Eu compreendo</translation>
+		<translation>다음을 이해합니다</translation>
 	</message>
 </context>
 <context>
 	<name>StatusTokenInlineSelector</name>
 	<message>
 		<source>or</source>
-		<translation>OU</translation>
+		<translation>또는</translation>
 	</message>
 	<message>
 		<source>Hold</source>
@@ -14432,29 +14402,29 @@ device, so only you can use them.</source>
 	<name>StatusWalletColorSelect</name>
 	<message>
 		<source>Account color</source>
-		<translation>Cor da conta</translation>
+		<translation>계정 컬러</translation>
 	</message>
 </context>
 <context>
 	<name>TabNetworkAndFees</name>
 	<message>
 		<source>Advanced</source>
-		<translation>Avançado</translation>
+		<translation>고급</translation>
 	</message>
 	<message>
 		<source>Custom</source>
-		<translation>Personalizado</translation>
+		<translation>커스텀</translation>
 	</message>
 	<message>
 		<source>Slow</source>
-		<translation>Lento</translation>
+		<translation>느림</translation>
 	</message>
 </context>
 <context>
 	<name>TransactionSettingsConfirmationPopup</name>
 	<message>
 		<source>Are you sure?</source>
-		<translation>Você tem certeza?</translation>
+		<translation>확실하신가요?</translation>
 	</message>
 	<message>
 		<source>Your priority fee is below our suggested parameters.</source>
@@ -14505,19 +14475,19 @@ device, so only you can use them.</source>
 	<name>TransferOwnershipPopup</name>
 	<message>
 		<source>Transfer ownership</source>
-		<translation>Transferir propriedade</translation>
+		<translation>소유권 이전</translation>
 	</message>
 	<message>
 		<source>Community private key</source>
-		<translation>Chave privada da comunidade</translation>
+		<translation>커뮤니티 개인키</translation>
 	</message>
 	<message>
 		<source>Copy</source>
-		<translation>Copiar para a área de transferência</translation>
+		<translation>클립보드에 복사</translation>
 	</message>
 	<message>
 		<source>Copied</source>
-		<translation>Copiado</translation>
+		<translation>복사됨</translation>
 	</message>
 	<message>
 		<source>You should keep it safe and only share it with people you trust to take ownership of your community</source>
@@ -14532,19 +14502,19 @@ device, so only you can use them.</source>
 	<name>UploadProfilePicModal</name>
 	<message>
 		<source>Profile picture</source>
-		<translation>Foto do perfil</translation>
+		<translation>프로필 사진</translation>
 	</message>
 	<message>
 		<source>Remove</source>
-		<translation>Remover</translation>
+		<translation>제거</translation>
 	</message>
 	<message>
 		<source>Upload</source>
-		<translation>Envio</translation>
+		<translation>업로드</translation>
 	</message>
 	<message>
 		<source>Done</source>
-		<translation>Feito</translation>
+		<translation>완료</translation>
 	</message>
 	<message>
 		<source>Upload profile picture</source>
@@ -14563,29 +14533,29 @@ device, so only you can use them.</source>
 	<name>UserList</name>
 	<message>
 		<source>Members</source>
-		<translation>Membros</translation>
+		<translation>멤버들</translation>
 	</message>
 </context>
 <context>
 	<name>UsernameLabel</name>
 	<message>
 		<source>You</source>
-		<translation>Você</translation>
+		<translation>사용자</translation>
 	</message>
 </context>
 <context>
 	<name>Utils</name>
 	<message>
 		<source>Password needs to be 6 characters or more</source>
-		<translation>A senha precisa ter 6 caracteres ou mais</translation>
+		<translation>비밀번호는 6자 이상이어야 합니다</translation>
 	</message>
 	<message>
 		<source>You need to enter a %1</source>
-		<translation>Você precisa inserir um %1</translation>
+		<translation>%1을 입력해야 합니다</translation>
 	</message>
 	<message>
 		<source>now</source>
-		<translation>Agora</translation>
+		<translation>방금 막</translation>
 	</message>
 	<message>
 		<source>Sun</source>
@@ -14844,7 +14814,7 @@ device, so only you can use them.</source>
 	<name>WalletView</name>
 	<message>
 		<source>Wallet</source>
-		<translation>Carteira</translation>
+		<translation>지갑</translation>
 	</message>
 	<message>
 		<source>Networks</source>
@@ -17491,7 +17461,6 @@ Assets won’t be sent yet.</source>
 	<message numerus="yes">
 		<source>%n network(s)</source>
 		<translation>
-			<numerusform></numerusform>
 			<numerusform></numerusform>
 		</translation>
 	</message>

@@ -1,166 +1,166 @@
-<!DOCTYPE TS><TS version="2.1" language="pt_BR">
+<!DOCTYPE TS><TS version="2.1" language="es_419">
 <context>
 	<name></name>
 	<message>
 		<source>about-app</source>
-		<translation>Sobre</translation>
+		<translation>Acerca de</translation>
 	</message>
 	<message>
 		<source>about-key-storage-content</source>
-		<translation>O Status nunca acessará sua chave privada. Não esqueça de salvar sua frase-semente. Se você perder seu telefone, essa é a única maneira de acessar suas chaves.</translation>
+		<translation>Status nunca accederá a tu clave privada. Asegúrate de respaldar tu frase semilla. Si pierdes tu teléfono es la única manera de acceder a tus claves.</translation>
 	</message>
 	<message>
 		<source>about-key-storage-title</source>
-		<translation>Sobre o armazenamento de chaves</translation>
+		<translation>Acerca del almacenamiento de claves</translation>
 	</message>
 	<message>
 		<source>about-names-content</source>
-		<translation>Ninguém pode fingir ser você! Você é anônimo por padrão e nunca precisa revelar seu nome real. Você pode cadastrar um nome personalizado por uma pequena taxa.</translation>
+		<translation>¡Nadie puede pretender ser tú! Eres anónimo por defecto y nunca tienes que revelar tu nombre real. Puedes registrar un nombre personalizado por una pequeña tarifa.</translation>
 	</message>
 	<message>
 		<source>about-names-title</source>
-		<translation>Os nomes não podem ser alterados</translation>
+		<translation>Los nombres no se pueden cambiar</translation>
 	</message>
 	<message>
 		<source>access-key</source>
-		<translation>Chave de acesso</translation>
+		<translation>Clave de acceso</translation>
 	</message>
 	<message>
 		<source>access-existing-keys</source>
-		<translation>Acessar chaves existentes</translation>
+		<translation>Ingresar claves existentes</translation>
 	</message>
 	<message>
 		<source>accept-and-share-address</source>
-		<translation>Aceitar e compartilhar endereço</translation>
+		<translation>Aceptar y compartir dirección</translation>
 	</message>
 	<message>
 		<source>account-added</source>
-		<translation>Conta adicionada</translation>
+		<translation>Cuenta agregada</translation>
 	</message>
 	<message>
 		<source>account-color</source>
-		<translation>Cor da conta</translation>
+		<translation>Color de la cuenta</translation>
 	</message>
 	<message>
 		<source>anyone</source>
-		<translation>Qualquer um</translation>
+		<translation>Cualquiera</translation>
 	</message>
 	<message>
 		<source>messages-from-contacts-only-subtitle</source>
-		<translation>Apenas as pessoas que você adicionou como contatos podem iniciar um novo bate-papo com você ou convidá-lo para um grupo</translation>
+		<translation>Solo las personas que agregaste como contactos pueden iniciar un nuevo chat o invitarte a un grupo</translation>
 	</message>
 	<message>
 		<source>accept-new-chats-from</source>
-		<translation>Aceitar novos bate-papos de</translation>
+		<translation>Aceptar nuevos mensajes de</translation>
 	</message>
 	<message>
 		<source>account-name</source>
-		<translation>Nome da conta</translation>
+		<translation>Nombre de la cuenta</translation>
 	</message>
 	<message>
 		<source>account-settings</source>
-		<translation>Configurações da conta</translation>
+		<translation>Ajustes de la cuenta</translation>
 	</message>
 	<message>
 		<source>accounts</source>
-		<translation>Contas</translation>
+		<translation>Cuentas</translation>
 	</message>
 	<message>
 		<source>active-online</source>
-		<translation>Online</translation>
+		<translation>En línea</translation>
 	</message>
 	<message>
 		<source>active-unknown</source>
-		<translation>Desconhecido</translation>
+		<translation>Desconocido</translation>
 	</message>
 	<message>
 		<source>add</source>
-		<translation>Adicionar</translation>
+		<translation>Agregar</translation>
 	</message>
 	<message>
 		<source>add-a-watch-account</source>
-		<translation>Adicione um endereço somente leitura</translation>
+		<translation>Agregar una dirección de solo observación</translation>
 	</message>
 	<message>
 		<source>add-account</source>
-		<translation>Adicione uma conta</translation>
+		<translation>Agregar una cuenta</translation>
 	</message>
 	<message>
 		<source>add-account-description</source>
-		<translation>Você pode importar qualquer tipo de conta Ethereum para adicioná-lo à sua carteira Status</translation>
+		<translation>Puedes importar cualquier tipo de cuenta de Ethereum para agregarla a tu billetera de Status</translation>
 	</message>
 	<message>
 		<source>add-account-incorrect-password</source>
-		<translation>A senha parece estar incorreta. Digite a senha que você usa para desbloquear o aplicativo.</translation>
+		<translation>La contraseña parece ser incorrecta. Ingresa la contraseña que usas para desbloquear la app.</translation>
 	</message>
 	<message>
 		<source>add-an-account</source>
-		<translation>Adicione uma conta</translation>
+		<translation>Agregar una cuenta</translation>
 	</message>
 	<message>
 		<source>add-bootnode</source>
-		<translation>Adicionar nó de inicialização</translation>
+		<translation>Agregar bootnode</translation>
 	</message>
 	<message>
 		<source>add-contact</source>
-		<translation>Adicionar contato</translation>
+		<translation>Agregar contacto</translation>
 	</message>
 	<message>
 		<source>add-custom-token</source>
-		<translation>Adicionar token personalizado</translation>
+		<translation>Agregar un token personalizado</translation>
 	</message>
 	<message>
 		<source>add-mailserver</source>
-		<translation>Adicionar nó do Status</translation>
+		<translation>Agregar nodo de Status</translation>
 	</message>
 	<message>
 		<source>add-members</source>
-		<translation>Adicionar membros</translation>
+		<translation>Agregar miembros</translation>
 	</message>
 	<message>
 		<source>add-network</source>
-		<translation>Adicionar rede</translation>
+		<translation>Agregar red</translation>
 	</message>
 	<message>
 		<source>add-node</source>
-		<translation>Adicionar nó</translation>
+		<translation>Agregar nodo</translation>
 	</message>
 	<message>
 		<source>add-to-contacts</source>
-		<translation>Adicionar aos contatos</translation>
+		<translation>Agregar a contactos</translation>
 	</message>
 	<message>
 		<source>add-to-contacts-text</source>
-		<translation>Ao adicionar um usuário à sua lista de contatos, você compartilha o endereço da sua carteira</translation>
+		<translation>Al agregar un usuario a tu lista de contactos, compartes la dirección de tu billetera</translation>
 	</message>
 	<message>
 		<source>address</source>
-		<translation>Endereço</translation>
+		<translation>Dirección</translation>
 	</message>
 	<message>
 		<source>address-received</source>
-		<translation>Endereço recebido</translation>
+		<translation>Dirección recibida</translation>
 	</message>
 	<message>
 		<source>address-requested</source>
-		<translation>Endereço solicitado</translation>
+		<translation>Dirección solicitada</translation>
 	</message>
 	<message>
 		<source>address-request-accepted</source>
-		<translation>Solicitação de endereço aceita</translation>
+		<translation>Solicitud de dirección aceptada</translation>
 	</message>
 	<message>
 		<source>advanced</source>
-		<translation>Avançado</translation>
+		<translation>Avanzado</translation>
 	</message>
 	<message>
 		<source>advanced-settings</source>
-		<translation>Configurações avançadas</translation>
+		<translation>Ajustes avanzados</translation>
 	</message>
 	<message>
 		<source>agree-by-continuing</source>
-		<translation>Ao continuar, você concorda 
- com nosso</translation>
+		<translation>Al continuar, aceptas 
+ nuestras</translation>
 	</message>
 	<message>
 		<source>all</source>
@@ -172,31 +172,31 @@
 	</message>
 	<message>
 		<source>allowing-authorizes-this-dapp</source>
-		<translation>Permitir que este DApp recupere o endereço da sua carteira e ative o Web3</translation>
+		<translation>Permitir autoriza a esta DApp a recuperar la dirección de tu billetera y habilitar Web3</translation>
 	</message>
 	<message>
 		<source>already-have-asset</source>
-		<translation>Você já tem este ativo</translation>
+		<translation>Ya tienes este activo</translation>
 	</message>
 	<message>
 		<source>amount</source>
-		<translation>Quantia</translation>
+		<translation>Cantidad</translation>
 	</message>
 	<message>
 		<source>are-you-sure-description</source>
-		<translation>Você não poderá ver toda a frase-semente de novo</translation>
+		<translation>No podrás volver a ver toda la frase semilla de nuevo</translation>
 	</message>
 	<message>
 		<source>are-you-sure?</source>
-		<translation>Você tem certeza?</translation>
+		<translation>¿Estás seguro/a?</translation>
 	</message>
 	<message>
 		<source>ask-in-status</source>
-		<translation>Faça uma pergunta ou relate um bug</translation>
+		<translation>Haz una pregunta o reporta un error</translation>
 	</message>
 	<message>
 		<source>at</source>
-		<translation>em</translation>
+		<translation>en</translation>
 	</message>
 	<message>
 		<source>authorize</source>
@@ -204,30 +204,30 @@
 	</message>
 	<message>
 		<source>available</source>
-		<translation>Disponível</translation>
+		<translation>Disponible</translation>
 	</message>
 	<message numerus="yes">
 		<source>available-participants</source>
 		<translation>
-			<numerusform>Você pode selecionar mais um participante</numerusform>
-			<numerusform>Você pode selecionar mais {{count}} participantes</numerusform>
+			<numerusform>Puedes seleccionar un participante más</numerusform>
+			<numerusform>Puedes seleccionar {{count}} participantes más</numerusform>
 		</translation>
 	</message>
 	<message>
 		<source>back</source>
-		<translation>Voltar</translation>
+		<translation>Atrás</translation>
 	</message>
 	<message>
 		<source>back-up-seed-phrase</source>
-		<translation>Fazer backup da frase-semente</translation>
+		<translation>Respalda la frase semilla</translation>
 	</message>
 	<message>
 		<source>back-up-your-seed-phrase</source>
-		<translation>Fazer backup da frase-semente</translation>
+		<translation>Respalda tu frase semilla</translation>
 	</message>
 	<message>
 		<source>backup-recovery-phrase</source>
-		<translation>Cópia de segurança da frase-semente</translation>
+		<translation>Copia de seguridad de frase semilla</translation>
 	</message>
 	<message>
 		<source>balance</source>
@@ -235,87 +235,87 @@
 	</message>
 	<message>
 		<source>begin-set-up</source>
-		<translation>Iniciar configuração</translation>
+		<translation>empezar la configuración</translation>
 	</message>
 	<message>
 		<source>biometric-auth-android-sensor-desc</source>
-		<translation>Toque no sensor</translation>
+		<translation>Sensor táctil</translation>
 	</message>
 	<message>
 		<source>biometric-auth-android-sensor-error-desc</source>
-		<translation>Falhou</translation>
+		<translation>Fallido</translation>
 	</message>
 	<message>
 		<source>biometric-auth-android-title</source>
-		<translation>Autenticação necessária</translation>
+		<translation>Autenticación requerida</translation>
 	</message>
 	<message>
 		<source>biometric-auth-confirm-logout</source>
-		<translation>Faça login novamente</translation>
+		<translation>Volver a iniciar sesión</translation>
 	</message>
 	<message>
 		<source>biometric-auth-confirm-message</source>
-		<translation>É necessária autenticação biométrica para continuar. Se não for possível, desbloqueie suas chaves com sua senha ou código de acesso</translation>
+		<translation>Para continuar, la autenticación biométrica es necesaria, si no es posible inicia sesión de nuevo usando la contraseña de las llaves.</translation>
 	</message>
 	<message>
 		<source>biometric-auth-confirm-title</source>
-		<translation>Você deve autenticar!</translation>
+		<translation>¡Debes autenticarte!</translation>
 	</message>
 	<message>
 		<source>biometric-auth-confirm-try-again</source>
-		<translation>Tente novamente</translation>
+		<translation>Inténtalo de nuevo</translation>
 	</message>
 	<message>
 		<source>biometric-auth-error</source>
-		<translation>Não foi possível executar a autenticação biométrica ({{code}})</translation>
+		<translation>No se puede realizar la autenticación biométrica ({{code}})</translation>
 	</message>
 	<message>
 		<source>biometric-auth-login-error-title</source>
-		<translation>Erro de autenticação biométrica</translation>
+		<translation>Error de autenticación biométrica</translation>
 	</message>
 	<message>
 		<source>biometric-auth-login-ios-fallback-label</source>
-		<translation>Digite a senha</translation>
+		<translation>Ingresa la contraseña</translation>
 	</message>
 	<message>
 		<source>biometric-auth-reason-login</source>
-		<translation>Login no Status</translation>
+		<translation>Iniciar sesión en Status</translation>
 	</message>
 	<message>
 		<source>biometric-auth-reason-verify</source>
-		<translation>Verificar autenticação</translation>
+		<translation>Verificar autenticación</translation>
 	</message>
 	<message>
 		<source>biometric-secure-with</source>
-		<translation>Proteger com {{bio-type-label}}</translation>
+		<translation>Asegurar con {{bio-type-label}}</translation>
 	</message>
 	<message>
 		<source>biometric-enable-keycard</source>
-		<translation>Se você não quiser usar seu Keycard cada vez que acessar o aplicativo, ative {{bio-type-label}} para iniciar a sessão</translation>
+		<translation>Si no deseas usar tu Keycard cada vez para acceder a la app, habilita el inicio de sesión {{bio-type-label}}</translation>
 	</message>
 	<message>
 		<source>biometric-enable</source>
-		<translation>Se você não quiser inserir sua senha todas as vezes para acessar o aplicativo, ative o início de sessão por {{bio-type-label}}</translation>
+		<translation>Si no deseas ingresar tu contraseña cada vez para acceder a la app, habilita el inicio de sesión {{bio-type-label}}</translation>
 	</message>
 	<message>
 		<source>biometric-disable-bioauth</source>
-		<translation>desativar {{bio-type-label}}</translation>
+		<translation>deshabilitar {{bio-type-label}}</translation>
 	</message>
 	<message>
 		<source>biometric-disable-password-title</source>
-		<translation>Desativar senha salva</translation>
+		<translation>Deshabilitar guardar contraseña</translation>
 	</message>
 	<message>
 		<source>biometric-disable-password-description</source>
-		<translation>Se você desativar isso, você também irá </translation>
+		<translation>Si deshabilitas esto, también</translation>
 	</message>
 	<message>
 		<source>biometric-enable-button</source>
-		<translation>Ativar {{bio-type-label}}</translation>
+		<translation>Habilitar {{bio-type-label}}</translation>
 	</message>
 	<message>
 		<source>biometric-fingerprint</source>
-		<translation>Impressão digital</translation>
+		<translation>Huella dactilar</translation>
 	</message>
 	<message>
 		<source>biometric-faceid</source>
@@ -327,16 +327,16 @@
 	</message>
 	<message>
 		<source>blank-keycard-text</source>
-		<translation>Você pode continuar com o seu keycard depois de gerar as chaves e o nome</translation>
+		<translation>Puedes continuar con tu keycard una vez que hayas generado tus claves y tu nombre</translation>
 	</message>
 	<message>
 		<source>blank-keycard-title</source>
-		<translation>Parece que você utilizou
-um Keycard em branco.</translation>
+		<translation>Parece que has hecho tapping 
+una keycard en blanco</translation>
 	</message>
 	<message>
 		<source>block</source>
-		<translation>Bloquear </translation>
+		<translation>Bloque</translation>
 	</message>
 	<message>
 		<source>unblock</source>
@@ -344,23 +344,23 @@ um Keycard em branco.</translation>
 	</message>
 	<message>
 		<source>block-contact</source>
-		<translation>Bloquear esse usuário</translation>
+		<translation>Bloquear este usuario</translation>
 	</message>
 	<message>
 		<source>block-contact-details</source>
-		<translation>O bloqueio excluirá as mensagens anteriores deste usuário e impedirá que novas cheguem até você</translation>
+		<translation>El bloqueo eliminará los mensajes anteriores de este usuario y evitará que otros nuevos lleguen a ti</translation>
 	</message>
 	<message>
 		<source>blocked-users</source>
-		<translation>Usuários bloqueados</translation>
+		<translation>Usuarios bloqueados</translation>
 	</message>
 	<message>
 		<source>bootnode-address</source>
-		<translation>Endereço do nó de inicialização</translation>
+		<translation>Dirección de bootnode</translation>
 	</message>
 	<message>
 		<source>bootnode-details</source>
-		<translation>Detalhes do nó de inicialização</translation>
+		<translation>Detalles de Bootnode</translation>
 	</message>
 	<message>
 		<source>bootnode-format</source>
@@ -368,19 +368,19 @@ um Keycard em branco.</translation>
 	</message>
 	<message>
 		<source>bootnodes</source>
-		<translation>Nós de inicialização</translation>
+		<translation>Bootnodes</translation>
 	</message>
 	<message>
 		<source>bootnodes-enabled</source>
-		<translation>Nós de inicialização ativados</translation>
+		<translation>Bootnodes habilitados</translation>
 	</message>
 	<message>
 		<source>bootnodes-settings</source>
-		<translation>Configurações de nós de inicialização</translation>
+		<translation>Ajustes de bootnode</translation>
 	</message>
 	<message>
 		<source>browsed-websites</source>
-		<translation>O histórico do navegador aparecerá aqui</translation>
+		<translation>El historial del navegador aparecerá aquí</translation>
 	</message>
 	<message>
 		<source>browser</source>
@@ -388,11 +388,11 @@ um Keycard em branco.</translation>
 	</message>
 	<message>
 		<source>browser-not-secure</source>
-		<translation>A conexão não é segura! Não assine transações nem envie dados pessoais neste site.</translation>
+		<translation>¡La conexión no es segura! No firmes transacciones o envíes datos personales en este sitio.</translation>
 	</message>
 	<message>
 		<source>browser-secure</source>
-		<translation>A conexão é segura. Certifique-se de confiar neste site antes de assinar transações ou inserir dados pessoais.</translation>
+		<translation>La conexión es segura. Asegúrate de que realmente confías en este sitio antes de firmar transacciones o ingresar datos personales.</translation>
 	</message>
 	<message>
 		<source>browsers</source>
@@ -404,79 +404,79 @@ um Keycard em branco.</translation>
 	</message>
 	<message>
 		<source>browsing-open-in-android-web-browser</source>
-		<translation>Abrir no Android</translation>
+		<translation>Abrir en Android</translation>
 	</message>
 	<message>
 		<source>browsing-open-in-ios-web-browser</source>
-		<translation>Abrir no iOS</translation>
+		<translation>Abrir en iOS</translation>
 	</message>
 	<message>
 		<source>browsing-open-in-status</source>
-		<translation>Abrir no Status</translation>
+		<translation>Abrir en Status</translation>
 	</message>
 	<message>
 		<source>browsing-site-blocked-description1</source>
-		<translation>Detectamos atividades maliciosas em potencial neste endereço. Para proteger você e sua carteira, estamos impedindo mais navegação. 
+		<translation>Hemos detectado posibles actividades maliciosas desde esta dirección. Para protegerte a ti y a tu billetera, prevenimos la navegación.
 
-Se você acha que isso é um erro, informe-nos no</translation>
+Si crees que esto es un error, haznoslo saber en la</translation>
 	</message>
 	<message>
 		<source>browsing-site-blocked-description2</source>
-		<translation> conversa pública.</translation>
+		<translation>chat público</translation>
 	</message>
 	<message>
 		<source>browsing-site-blocked-go-back</source>
-		<translation>Voltar</translation>
+		<translation>Regresar</translation>
 	</message>
 	<message>
 		<source>browsing-site-blocked-title</source>
-		<translation>Este site está bloqueado</translation>
+		<translation>Este sitio está bloqueado</translation>
 	</message>
 	<message>
 		<source>browsing-title</source>
-		<translation>Buscar</translation>
+		<translation>Navegar</translation>
 	</message>
 	<message>
 		<source>bug-report</source>
-		<translation>Relatar um bug</translation>
+		<translation>Reportar un error</translation>
 	</message>
 	<message>
 		<source>bug-report-description</source>
-		<translation>Descrição</translation>
+		<translation>*Descripción</translation>
 	</message>
 	<message>
 		<source>bug-report-description-placeholder</source>
-		<translation>Obrigatório, não pode ser vazio</translation>
+		<translation>Requerido, no puede estar vacío</translation>
 	</message>
 	<message>
 		<source>bug-report-steps</source>
-		<translation>Passos para reproduzir</translation>
+		<translation>Pasos para la reproducir</translation>
 	</message>
 	<message>
 		<source>bug-report-steps-placeholder</source>
-		<translation>- abra a app
-- faça algo
-- e então faça outra coisa</translation>
+		<translation>- abrir la app
+- hacer algo
+- y luego algo más...</translation>
 	</message>
 	<message>
 		<source>bug-report-submit-email</source>
-		<translation>Enviar por e-mail com arquivo de logs</translation>
+		<translation>Enviar por correo electrónico con el archivo de registros</translation>
 	</message>
 	<message>
 		<source>bug-report-submit-gh-issue</source>
-		<translation>Enviar um problema do GitHub sem logs</translation>
+		<translation>Enviar un problema de GitHub sin registros</translation>
 	</message>
 	<message>
 		<source>bug-report-too-short-description</source>
-		<translation>Descrição muito curta</translation>
+		<translation>La descripción es muy corta</translation>
 	</message>
 	<message>
 		<source>camera-access-error</source>
-		<translation>Para conceder a permissão de câmera necessária, vá para as configurações do sistema e verifique se Status &gt; Câmera está selecionado.</translation>
+		<translation>Para permitir el acceso a la cámara, por favor ve a ajustes de sistema y asegúrate que la opción Status &gt; Cámara está seleccionada.</translation>
 	</message>
 	<message>
 		<source>can-not-add-yourself</source>
-		<translation>É você. Para iniciar um bate-papo, escolha outra pessoa</translation>
+		<translation>Ese eres tú, para iniciar un chat elige a alguien más</translation>
 	</message>
 	<message>
 		<source>cancel</source>
@@ -484,76 +484,77 @@ Se você acha que isso é um erro, informe-nos no</translation>
 	</message>
 	<message>
 		<source>cancel-keycard-setup</source>
-		<translation>Cancelar a configuração do Keycard </translation>
+		<translation>Cancelar la configuración de Keycard</translation>
 	</message>
 	<message>
 		<source>cannot-read-card</source>
-		<translation>Não é possível ler o cartão. Por favor, segure-o na parte de trás do seu telefone</translation>
+		<translation>No puede leer la tarjeta.
+Por favor, mantenla en la parte posterior de tu teléfono</translation>
 	</message>
 	<message>
 		<source>cannot-use-default-pin</source>
-		<translation>O código de acesso 000000 não é permitido. 
-Por favor, use outro número</translation>
+		<translation>No está permitido el código de acceso 000000. 
+Por favor utiliza otro número</translation>
 	</message>
 	<message>
 		<source>card-is-blank</source>
-		<translation>Este cartão está em branco</translation>
+		<translation>Esta tarjeta esta en blanco</translation>
 	</message>
 	<message>
 		<source>card-reseted</source>
-		<translation>O cartão foi redefinido</translation>
+		<translation>La tarjeta ha sido reseteada</translation>
 	</message>
 	<message>
 		<source>card-unpaired</source>
-		<translation>O cartão foi desemparelhado do dispositivo atual</translation>
+		<translation>La tarjeta se ha desvinculado del dispositivo actual</translation>
 	</message>
 	<message>
 		<source>change-fleet</source>
-		<translation>Mude a frota para {{fleet}}</translation>
+		<translation>Cambiar fleet a {{fleet}}</translation>
 	</message>
 	<message>
 		<source>change-log-level</source>
-		<translation>Confirmar e reiniciar o aplicativo para alterar o nível de log para {{log-level}}</translation>
+		<translation>Confirme y reinicie la aplicación para cambiar el nivel de registro a {{log-level}}</translation>
 	</message>
 	<message>
 		<source>change-logging-enabled</source>
-		<translation>Tem certeza de que deseja {{enable}} o registro?</translation>
+		<translation>¿Está seguro/a de que deseas {{enable}} iniciar sesión?</translation>
 	</message>
 	<message>
 		<source>change-passcode</source>
-		<translation>Alterar código de acesso</translation>
+		<translation>Cambiar código de acceso</translation>
 	</message>
 	<message>
 		<source>change-password</source>
-		<translation>Alterar senha</translation>
+		<translation>Cambiar contraseña</translation>
 	</message>
 	<message>
 		<source>change-pin</source>
-		<translation>Alterar código de acesso de 6 dígitos</translation>
+		<translation>Cambiar el código de acceso de 6 dígitos</translation>
 	</message>
 	<message>
 		<source>change-puk</source>
-		<translation>Alterar PUK de 12 dígitos</translation>
+		<translation>Cambiar PUK de 12 dígitos</translation>
 	</message>
 	<message>
 		<source>change-pairing</source>
-		<translation>Alterar o código de emparelhamento</translation>
+		<translation>Cambiar el código de emparejamiento</translation>
 	</message>
 	<message>
 		<source>change-pairing-title</source>
-		<translation>Criar um novo código de emparelhamento</translation>
+		<translation>Crea un nuevo código de emparejamiento</translation>
 	</message>
 	<message>
 		<source>change-pairing-description</source>
-		<translation>Alterar o código de emparelhamento não afeta os emparelhamentos atuais. No entanto, qualquer novo emparelhamento exigirá o novo código.</translation>
+		<translation>Cambiar el código de emparejamiento no afecta a los emparejamientos actuales. Sin embargo, cualquier nuevo emparejamiento requerirá el nuevo código.</translation>
 	</message>
 	<message>
 		<source>changed-amount-warning</source>
-		<translation>O valor foi alterado de {{old}} para {{new}}</translation>
+		<translation>La cantidad se cambió de {{old}} a {{new}}</translation>
 	</message>
 	<message>
 		<source>changed-asset-warning</source>
-		<translation>O ativo foi alterado de {{old}} para {{new}}</translation>
+		<translation>El activo se cambió de {{old}} a {{new}}</translation>
 	</message>
 	<message>
 		<source>chaos-mode</source>
@@ -561,7 +562,7 @@ Por favor, use outro número</translation>
 	</message>
 	<message>
 		<source>chaos-unicorn-day</source>
-		<translation>Dia do Caos do Unicórnio</translation>
+		<translation>Día del Unicornio del Caos</translation>
 	</message>
 	<message>
 		<source>chaos-unicorn-day-details</source>
@@ -569,23 +570,23 @@ Por favor, use outro número</translation>
 	</message>
 	<message>
 		<source>chat</source>
-		<translation>Bate-papo</translation>
+		<translation>Chat</translation>
 	</message>
 	<message>
 		<source>chat-and-transact</source>
-		<translation>Converse e faça transações de forma privada com amigos</translation>
+		<translation>Chatea y realiza transacciones privadas con amigos</translation>
 	</message>
 	<message>
 		<source>chat-key</source>
-		<translation>Chave de bate-papo</translation>
+		<translation>Clave de chat</translation>
 	</message>
 	<message>
 		<source>chat-name</source>
-		<translation>Nome do chat</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>chat-settings</source>
-		<translation>Configurações do chat</translation>
+		<translation>Ajustes de chat</translation>
 	</message>
 	<message>
 		<source>chats</source>
@@ -593,43 +594,43 @@ Por favor, use outro número</translation>
 	</message>
 	<message>
 		<source>check-your-recovery-phrase</source>
-		<translation>Confira sua frase-semente</translation>
+		<translation>Comprueba tu frase semilla</translation>
 	</message>
 	<message>
 		<source>choose-authentication-method</source>
-		<translation>Escolha um método de autenticação</translation>
+		<translation>Elije un método de autenticación</translation>
 	</message>
 	<message>
 		<source>clear</source>
-		<translation>Apagar</translation>
+		<translation>Limpiar</translation>
 	</message>
 	<message>
 		<source>clear-all</source>
-		<translation>Apagar tudo</translation>
+		<translation>Borrar todo</translation>
 	</message>
 	<message>
 		<source>clear-history</source>
-		<translation>Apagar histórico</translation>
+		<translation>Borrar historial</translation>
 	</message>
 	<message>
 		<source>clear-history-action</source>
-		<translation>Apagar</translation>
+		<translation>Limpiar</translation>
 	</message>
 	<message>
 		<source>clear-history-confirmation</source>
-		<translation>Apagar o histórico?</translation>
+		<translation>¿Borrar historial?</translation>
 	</message>
 	<message>
 		<source>clear-history-confirmation-content</source>
-		<translation>Tem certeza de que deseja apagar este histórico de bate-papo?</translation>
+		<translation>¿Seguro que quieres limpiar este historial de chat?</translation>
 	</message>
 	<message>
 		<source>clear-history-title</source>
-		<translation>Apagar o histórico?</translation>
+		<translation>¿Borrar historial?</translation>
 	</message>
 	<message>
 		<source>close</source>
-		<translation>Fechar</translation>
+		<translation>Cerrar</translation>
 	</message>
 	<message>
 		<source>close-app-button</source>
@@ -637,11 +638,11 @@ Por favor, use outro número</translation>
 	</message>
 	<message>
 		<source>close-app-content</source>
-		<translation>O aplicativo irá parar e fechar. Quando você reabri-lo, a rede selecionada será usada</translation>
+		<translation>La aplicación se detendrá y cerrará. Cuando la vuelvas a abrir, se utilizará la red seleccionada</translation>
 	</message>
 	<message>
 		<source>close-app-title</source>
-		<translation>Atenção!</translation>
+		<translation>¡Advertencia!</translation>
 	</message>
 	<message>
 		<source>command-button-send</source>
@@ -654,53 +655,53 @@ Por favor, use outro número</translation>
 	<message numerus="yes">
 		<source>community-members</source>
 		<translation>
-			<numerusform>{{count}} membro</numerusform>
-			<numerusform>{{count}} membros</numerusform>
+			<numerusform>miembro</numerusform>
+			<numerusform>miembros</numerusform>
 		</translation>
 	</message>
 	<message>
 		<source>members-label</source>
-		<translation>Membros</translation>
+		<translation>Miembros</translation>
 	</message>
 	<message>
 		<source>open-membership</source>
-		<translation>Participação aberta</translation>
+		<translation>Abrir membresía</translation>
 	</message>
 	<message>
 		<source>member-kick</source>
-		<translation>Expulsar membro</translation>
+		<translation>Eliminar miembro</translation>
 	</message>
 	<message>
 		<source>member-ban</source>
-		<translation>Banir membro</translation>
+		<translation>Prohibir miembro</translation>
 	</message>
 	<message>
 		<source>membership-requests</source>
-		<translation>Pedidos de participação</translation>
+		<translation>Solicitudes de membresía</translation>
 	</message>
 	<message>
 		<source>community-members-title</source>
-		<translation>Membros</translation>
+		<translation>Miembros</translation>
 	</message>
 	<message>
 		<source>community-requests-to-join-title</source>
-		<translation>Pedidos de participação</translation>
+		<translation>Solicitudes de membresía</translation>
 	</message>
 	<message>
 		<source>name-your-channel</source>
-		<translation>Dê um nome ao seu canal</translation>
+		<translation>Asigna un nombre a tu canal</translation>
 	</message>
 	<message>
 		<source>name-your-channel-placeholder</source>
-		<translation>Nome do canal</translation>
+		<translation>Nombre del canal</translation>
 	</message>
 	<message>
 		<source>give-a-short-description</source>
-		<translation>Dê uma breve descrição</translation>
+		<translation>Dale una breve descripción</translation>
 	</message>
 	<message>
 		<source>describe-channel</source>
-		<translation>Descreva o canal</translation>
+		<translation>Describir el canal</translation>
 	</message>
 	<message>
 		<source>communities-alpha</source>
@@ -708,7 +709,7 @@ Por favor, use outro número</translation>
 	</message>
 	<message>
 		<source>communities-verified</source>
-		<translation>✓ Comunidade do Status verificada</translation>
+		<translation>Comunidad de Status verificada</translation>
 	</message>
 	<message>
 		<source>communities-enabled</source>
@@ -716,23 +717,23 @@ Por favor, use outro número</translation>
 	</message>
 	<message>
 		<source>request-access</source>
-		<translation>Solicitar acesso</translation>
+		<translation>Solicitar acceso</translation>
 	</message>
 	<message>
 		<source>membership-request-pending</source>
-		<translation>Pedido de participação pendente</translation>
+		<translation>Solicitud de membresía pendiente</translation>
 	</message>
 	<message>
 		<source>create-community</source>
-		<translation>Criar uma comunidade</translation>
+		<translation>Crea una comunidad</translation>
 	</message>
 	<message>
 		<source>create-category</source>
-		<translation>Criar categoria</translation>
+		<translation>Crear categoría</translation>
 	</message>
 	<message>
 		<source>rearrange-categories</source>
-		<translation>Reorganizar Categorias</translation>
+		<translation>Reorganizar Categorías</translation>
 	</message>
 	<message>
 		<source>edited</source>
@@ -740,71 +741,71 @@ Por favor, use outro número</translation>
 	</message>
 	<message>
 		<source>edit-community</source>
-		<translation>Editar comunidade</translation>
+		<translation>Editar comunidad</translation>
 	</message>
 	<message>
 		<source>editing-message</source>
-		<translation>Editando mensagem</translation>
+		<translation>Editando mensaje</translation>
 	</message>
 	<message>
 		<source>community-edit-title</source>
-		<translation>Editar comunidade</translation>
+		<translation>Editar comunidad</translation>
 	</message>
 	<message>
 		<source>community-invite-title</source>
-		<translation>Convidar</translation>
+		<translation>Invitá</translation>
 	</message>
 	<message>
 		<source>community-share-title</source>
-		<translation>Compartilhar</translation>
+		<translation>Compartir...</translation>
 	</message>
 	<message>
 		<source>invite</source>
-		<translation>Convidar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>create-channel</source>
-		<translation>Criar um canal</translation>
+		<translation>Crea un canal</translation>
 	</message>
 	<message>
 		<source>import-community</source>
-		<translation>Importar uma comunidade</translation>
+		<translation>Importar una comunidad</translation>
 	</message>
 	<message>
 		<source>import-community-title</source>
-		<translation>Importar uma comunidade</translation>
+		<translation>Importar una comunidad</translation>
 	</message>
 	<message>
 		<source>name-your-community</source>
-		<translation>Dê um nome para sua comunidade</translation>
+		<translation>Asigna un nombre a tu comunidad</translation>
 	</message>
 	<message>
 		<source>name-your-community-placeholder</source>
-		<translation>Um nome atraente</translation>
+		<translation>Elige un nombre memorable</translation>
 	</message>
 	<message>
 		<source>give-a-short-description-community</source>
-		<translation>Dê uma breve descrição</translation>
+		<translation>Dale una breve descripción</translation>
 	</message>
 	<message>
 		<source>new-community-title</source>
-		<translation>Nova comunidade</translation>
+		<translation>Nueva comunidad</translation>
 	</message>
 	<message>
 		<source>new-category</source>
-		<translation>Nova categoria</translation>
+		<translation>Nueva categoría</translation>
 	</message>
 	<message>
 		<source>category-title</source>
-		<translation>Nome da categoria</translation>
+		<translation>Título de la categoría</translation>
 	</message>
 	<message>
 		<source>membership-title</source>
-		<translation>Requisitos de participação</translation>
+		<translation>Requisito de membresía</translation>
 	</message>
 	<message>
 		<source>create-channel-title</source>
-		<translation>Novo canal</translation>
+		<translation>Nuevo canal</translation>
 	</message>
 	<message>
 		<source>edit-channel-title</source>
@@ -812,23 +813,23 @@ Por favor, use outro número</translation>
 	</message>
 	<message>
 		<source>community-thumbnail-image</source>
-		<translation>Imagem em miniatura</translation>
+		<translation>Imagen en miniatura</translation>
 	</message>
 	<message>
 		<source>community-emoji-thumbnail-title</source>
-		<translation>Thumbnail</translation>
+		<translation>Miniatura</translation>
 	</message>
 	<message>
 		<source>community-thumbnail-upload</source>
-		<translation>Carregar</translation>
+		<translation>Subir</translation>
 	</message>
 	<message>
 		<source>community-image-take</source>
-		<translation>Tirar foto</translation>
+		<translation>Toma una foto</translation>
 	</message>
 	<message>
 		<source>community-image-pick</source>
-		<translation>Escolha uma imagem</translation>
+		<translation>Elige una imagen</translation>
 	</message>
 	<message>
 		<source>community-image-remove</source>
@@ -836,79 +837,79 @@ Por favor, use outro número</translation>
 	</message>
 	<message>
 		<source>community-color</source>
-		<translation>Cor da comunidade</translation>
+		<translation>Color de la comunidad</translation>
 	</message>
 	<message>
 		<source>community-link</source>
-		<translation>Link da comunidade</translation>
+		<translation>Link de comunidad</translation>
 	</message>
 	<message>
 		<source>community-color-placeholder</source>
-		<translation>Escolha uma cor</translation>
+		<translation>Elige un color</translation>
 	</message>
 	<message>
 		<source>membership-button</source>
-		<translation>Requisitos de participação</translation>
+		<translation>Requisito de membresía</translation>
 	</message>
 	<message>
 		<source>membership-none</source>
-		<translation>Nenhum</translation>
+		<translation>Ninguno</translation>
 	</message>
 	<message>
 		<source>membership-none-placeholder</source>
-		<translation>Você pode exigir que novos membros atendam a certos critérios antes que eles possam participar. Isso pode ser alterado a qualquer momento</translation>
+		<translation>Puede exigir que los nuevos miembros cumplan con ciertos criterios antes de poder unirse. Esto se puede cambiar en cualquier momento.</translation>
 	</message>
 	<message>
 		<source>membership-approval</source>
-		<translation>Exigir aprovação</translation>
+		<translation>Requiere aprobación</translation>
 	</message>
 	<message>
 		<source>membership-approval-description</source>
-		<translation>Sua comunidade é livre para participar, mas novos membros são obrigados a ser aprovados pelo criador da comunidade primeiro</translation>
+		<translation>Puedes unirte de manera gratuita, pero los nuevos miembros necesitan ser aprobados primero por el creador de comunidad primero</translation>
 	</message>
 	<message>
 		<source>membership-invite</source>
-		<translation>Exigir convite de outro membro</translation>
+		<translation>Necesitas invitación de otro miembro</translation>
 	</message>
 	<message>
 		<source>membership-invite-description</source>
-		<translation>Sua comunidade só pode ser acessada por convite de membros existentes da comunidade</translation>
+		<translation>Únicamente puedes unirte a la comunidad mediante invitación de un miembro existente</translation>
 	</message>
 	<message>
 		<source>membership-ens</source>
-		<translation>Exigir nome de usuário ENS</translation>
+		<translation>Requiere un usuario ENS</translation>
 	</message>
 	<message>
 		<source>membership-ens-description</source>
-		<translation>Sua comunidade requer um nome de usuário ENS para poder participar</translation>
+		<translation>Tu comunidad requiere que tengas un usuario ENS para unirte</translation>
 	</message>
 	<message>
 		<source>membership-free</source>
-		<translation>Nenhuma exigência</translation>
+		<translation>Sin requisitos</translation>
 	</message>
 	<message>
 		<source>membership-free-description</source>
-		<translation>Sua comunidade é livre para que qualquer pessoa possa participar</translation>
+		<translation>Cualquier persona puede unirse a tu comunidad</translation>
 	</message>
 	<message>
 		<source>community-roles</source>
-		<translation>Funções</translation>
+		<translation>Rol</translation>
 	</message>
 	<message>
 		<source>community-key</source>
-		<translation>Chave privada da comunidade</translation>
+		<translation>Llave privada de la comunidad</translation>
 	</message>
 	<message>
 		<source>community-key-placeholder</source>
-		<translation>Digite a chave privada da sua comunidade</translation>
+		<translation>Escribe la llave privada de la comunidad</translation>
 	</message>
 	<message>
 		<source>leave-community</source>
-		<translation>Deixar a comunidade</translation>
+		<translation>Salir de la comunidad</translation>
 	</message>
 	<message>
 		<source>enter-user-pk</source>
-		<translation>Insira a chave pública do usuário</translation>
+		<translation>Ingrese la clave pública del usuario</translation>
 	</message>
 	<message>
 		<source>import</source>
@@ -916,15 +917,15 @@ Por favor, use outro número</translation>
 	</message>
 	<message>
 		<source>complete-hardwallet-setup</source>
-		<translation>Este cartão agora está vinculado. Você precisa dele para assinar transações e desbloquear suas chaves</translation>
+		<translation>Esta tarjeta ahora está vinculada. La necesitarás para firmar transacciones y desbloquear tus llaves</translation>
 	</message>
 	<message>
 		<source>chat-notification-preferences</source>
-		<translation>Configurações de notificação</translation>
+		<translation>Configuración de las notificaciones</translation>
 	</message>
 	<message>
 		<source>completed</source>
-		<translation>Concluído</translation>
+		<translation>Completado</translation>
 	</message>
 	<message>
 		<source>confirm</source>
@@ -932,15 +933,15 @@ Por favor, use outro número</translation>
 	</message>
 	<message>
 		<source>confirmation-request</source>
-		<translation>Pedido de confirmação</translation>
+		<translation>Solicitud de confirmación</translation>
 	</message>
 	<message>
 		<source>confirmations</source>
-		<translation>Confirmações</translation>
+		<translation>Confirmaciones</translation>
 	</message>
 	<message>
 		<source>confirmations-helper-text</source>
-		<translation>Quando a transação tiver 12 confirmações, você poderá considerá-la liquidada.</translation>
+		<translation>Cuando la transacción tenga 12 confirmaciones, puede considerarla resuelta.</translation>
 	</message>
 	<message>
 		<source>connect</source>
@@ -948,7 +949,7 @@ Por favor, use outro número</translation>
 	</message>
 	<message>
 		<source>connect-mailserver-content</source>
-		<translation>Conectar-se a {{name}} ?</translation>
+		<translation>¿Conectar con {{name}}?</translation>
 	</message>
 	<message>
 		<source>connected</source>
@@ -964,37 +965,37 @@ Por favor, use outro número</translation>
 	</message>
 	<message>
 		<source>connecting-requires-login</source>
-		<translation>Conectar-se a outra rede requer login</translation>
+		<translation>Para conectarse a otra red es necesario iniciar sesión</translation>
 	</message>
 	<message>
 		<source>connection-with-the-card-lost</source>
-		<translation>A conexão com o cartão 
- foi perdida</translation>
+		<translation>La conexión con la tarjeta
+se ha perdido</translation>
 	</message>
 	<message>
 		<source>connection-with-the-card-lost-setup-text</source>
-		<translation>Para retomar a configuração, segure o cartão na
- parte de trás do seu telefone e mantenha 
- o cartão em contato com o telefone</translation>
+		<translation>Para reanudar la configuración, manten la tarjeta en
+ la parte trasera de tu teléfono y mantener la
+ tarjeta en contacto con el teléfono</translation>
 	</message>
 	<message>
 		<source>connection-with-the-card-lost-text</source>
-		<translation>Para continuar, segure o cartão na parte de trás do seu telefone</translation>
+		<translation>Para proceder, manten la tarjeta en la parte posterior de tu teléfono</translation>
 	</message>
 	<message>
 		<source>contact-code</source>
-		<translation>Chave de bate-papo</translation>
+		<translation>Clave de chat</translation>
 	</message>
 	<message numerus="yes">
 		<source>contact-s</source>
 		<translation>
-			<numerusform>contato</numerusform>
-			<numerusform>contatos</numerusform>
+			<numerusform>contacto</numerusform>
+			<numerusform>contactos</numerusform>
 		</translation>
 	</message>
 	<message>
 		<source>contacts</source>
-		<translation>Contatos</translation>
+		<translation>Contactos</translation>
 	</message>
 	<message>
 		<source>continue</source>
@@ -1002,15 +1003,15 @@ Por favor, use outro número</translation>
 	</message>
 	<message>
 		<source>contract-address</source>
-		<translation>Endereço do contrato</translation>
+		<translation>Dirección del contrato</translation>
 	</message>
 	<message>
 		<source>contract-interaction</source>
-		<translation>Interação contratual</translation>
+		<translation>Interacción con el contrato</translation>
 	</message>
 	<message>
 		<source>copy-info</source>
-		<translation>Copiar informação</translation>
+		<translation>Copiar información</translation>
 	</message>
 	<message>
 		<source>copy-qr</source>
@@ -1022,11 +1023,11 @@ Por favor, use outro número</translation>
 	</message>
 	<message>
 		<source>copy-transaction-hash</source>
-		<translation>Copiar ID da transação</translation>
+		<translation>Copiar ID de transacción</translation>
 	</message>
 	<message>
 		<source>cost-fee</source>
-		<translation>Custo/Taxa</translation>
+		<translation>Costo/Tarifa</translation>
 	</message>
 	<message>
 		<source>counter-9-plus</source>
@@ -1038,43 +1039,43 @@ Por favor, use outro número</translation>
 	</message>
 	<message>
 		<source>create</source>
-		<translation>Criar</translation>
+		<translation>Crear</translation>
 	</message>
 	<message>
 		<source>create-a-pin</source>
-		<translation>Crie um código de acesso de 6 dígitos</translation>
+		<translation>Crear un código de acceso de 6 dígitos</translation>
 	</message>
 	<message>
 		<source>create-a-puk</source>
-		<translation>Crie um PUK de 12 dígitos</translation>
+		<translation>Crea un PUK de 12 dígitos</translation>
 	</message>
 	<message>
 		<source>create-group-chat</source>
-		<translation>Criar bate-papo do grupo</translation>
+		<translation>Crear chat grupal</translation>
 	</message>
 	<message>
 		<source>create-multiaccount</source>
-		<translation>Gerar chaves</translation>
+		<translation>Generar llaves</translation>
 	</message>
 	<message>
 		<source>create-new-key</source>
-		<translation>Obter novas chaves</translation>
+		<translation>Obtener nuevas claves</translation>
 	</message>
 	<message>
 		<source>create-pin</source>
-		<translation>Criar código de acesso de 6 dígitos</translation>
+		<translation>Crea un código de acceso de 6 dígitos</translation>
 	</message>
 	<message>
 		<source>create-pin-description</source>
-		<translation>Você precisará do seu cartão + este código de acesso de 6 dígitos para desbloquear o Status e confirmar transações</translation>
+		<translation>Necesitarás tu tarjeta + este código de 6 dígitos para desbloquear Status y confirmar las transacciones</translation>
 	</message>
 	<message>
 		<source>created-group-chat-description</source>
-		<translation>Você criou o grupo {{group-name}}</translation>
+		<translation>Creaste el grupo {{group-name}}</translation>
 	</message>
 	<message>
 		<source>members-count</source>
-		<translation>{{count}} membros</translation>
+		<translation>{{count}} miembros</translation>
 	</message>
 	<message>
 		<source>cryptokitty-name</source>
@@ -1082,15 +1083,15 @@ Por favor, use outro número</translation>
 	</message>
 	<message>
 		<source>currency</source>
-		<translation>Moeda</translation>
+		<translation>Moneda</translation>
 	</message>
 	<message>
 		<source>currency-display-name-aed</source>
-		<translation>Dirham dos Emiratos Árabes Unidos</translation>
+		<translation>Dirham de los Emiratos Árabes Unidos</translation>
 	</message>
 	<message>
 		<source>currency-display-name-afn</source>
-		<translation>Afegane afegão</translation>
+		<translation>Afgani afgano</translation>
 	</message>
 	<message>
 		<source>currency-display-name-ars</source>
@@ -1106,7 +1107,7 @@ Por favor, use outro número</translation>
 	</message>
 	<message>
 		<source>currency-display-name-bdt</source>
-		<translation>Taka de Bangladesh</translation>
+		<translation>Taka bangladeshí</translation>
 	</message>
 	<message>
 		<source>currency-display-name-bgn</source>
@@ -1114,31 +1115,31 @@ Por favor, use outro número</translation>
 	</message>
 	<message>
 		<source>currency-display-name-bhd</source>
-		<translation>Dinar do Bahrein</translation>
+		<translation>Dinar bahreiní</translation>
 	</message>
 	<message>
 		<source>currency-display-name-bnd</source>
-		<translation>Dólar de Brunei</translation>
+		<translation>Dólar de Brunéi</translation>
 	</message>
 	<message>
 		<source>currency-display-name-bob</source>
-		<translation>Boliviano</translation>
+		<translation>Bolivia Bolíviano</translation>
 	</message>
 	<message>
 		<source>currency-display-name-brl</source>
-		<translation>Real do Brasil</translation>
+		<translation>Real brasilero</translation>
 	</message>
 	<message>
 		<source>currency-display-name-btn</source>
-		<translation>Ngultrum do Butão</translation>
+		<translation>Ngultrum butanés</translation>
 	</message>
 	<message>
 		<source>currency-display-name-cad</source>
-		<translation>Dólar canadense</translation>
+		<translation>Dólar canadiense</translation>
 	</message>
 	<message>
 		<source>currency-display-name-chf</source>
-		<translation>Franco suíço</translation>
+		<translation>Franco suizo</translation>
 	</message>
 	<message>
 		<source>currency-display-name-clp</source>
@@ -1146,7 +1147,7 @@ Por favor, use outro número</translation>
 	</message>
 	<message>
 		<source>currency-display-name-cny</source>
-		<translation>Renminbi yaun chinês</translation>
+		<translation>Yuan chino</translation>
 	</message>
 	<message>
 		<source>currency-display-name-cop</source>
@@ -1154,19 +1155,19 @@ Por favor, use outro número</translation>
 	</message>
 	<message>
 		<source>currency-display-name-crc</source>
-		<translation>Cólon da Costa Rica</translation>
+		<translation>Colón costarricense</translation>
 	</message>
 	<message>
 		<source>currency-display-name-czk</source>
-		<translation>Coroa checa</translation>
+		<translation>Corona checa</translation>
 	</message>
 	<message>
 		<source>currency-display-name-dkk</source>
-		<translation>Coroa dinamarquesa</translation>
+		<translation>Corona danesa</translation>
 	</message>
 	<message>
 		<source>currency-display-name-dop</source>
-		<translation>Peso da República Dominicana</translation>
+		<translation>Peso de la República Dominicana</translation>
 	</message>
 	<message>
 		<source>currency-display-name-egp</source>
@@ -1190,7 +1191,7 @@ Por favor, use outro número</translation>
 	</message>
 	<message>
 		<source>currency-display-name-ghs</source>
-		<translation>Cedi ganês</translation>
+		<translation>Cedi ghanés</translation>
 	</message>
 	<message>
 		<source>currency-display-name-hkd</source>
@@ -1198,71 +1199,71 @@ Por favor, use outro número</translation>
 	</message>
 	<message>
 		<source>currency-display-name-hrk</source>
-		<translation>Kuna da Croácia</translation>
+		<translation>Croacia Kuna</translation>
 	</message>
 	<message>
 		<source>currency-display-name-huf</source>
-		<translation>Florim húngaro</translation>
+		<translation>Forinto húngaro</translation>
 	</message>
 	<message>
 		<source>currency-display-name-idr</source>
-		<translation>Rupia indonésia</translation>
+		<translation>Rupia Indonesia</translation>
 	</message>
 	<message>
 		<source>currency-display-name-ils</source>
-		<translation>Shekel de Israel</translation>
+		<translation>Nuevo séquel (Israel)</translation>
 	</message>
 	<message>
 		<source>currency-display-name-inr</source>
-		<translation>Rupia indiana</translation>
+		<translation>Rupia india</translation>
 	</message>
 	<message>
 		<source>currency-display-name-isk</source>
-		<translation>Coroa islandesa</translation>
+		<translation>Corona islandesa</translation>
 	</message>
 	<message>
 		<source>currency-display-name-jmd</source>
-		<translation>Dólar jamaicano</translation>
+		<translation>Dólar jamaiquino</translation>
 	</message>
 	<message>
 		<source>currency-display-name-jpy</source>
-		<translation>Yen japonês</translation>
+		<translation>Yen japonés</translation>
 	</message>
 	<message>
 		<source>currency-display-name-kes</source>
-		<translation>Xelim queniano</translation>
+		<translation>Chelín keniano</translation>
 	</message>
 	<message>
 		<source>currency-display-name-krw</source>
-		<translation>Won sul-coreano</translation>
+		<translation>Won surcoreano</translation>
 	</message>
 	<message>
 		<source>currency-display-name-kwd</source>
-		<translation>Dinar kuwaitianao</translation>
+		<translation>Dinar kuwaití</translation>
 	</message>
 	<message>
 		<source>currency-display-name-kzt</source>
-		<translation>Tenge do Cazaquistão</translation>
+		<translation>Tenge kazajo</translation>
 	</message>
 	<message>
 		<source>currency-display-name-lkr</source>
-		<translation>Rupia do Sri Lanka</translation>
+		<translation>Rupia de Sri Lanka</translation>
 	</message>
 	<message>
 		<source>currency-display-name-mad</source>
-		<translation>Dirham marroquino</translation>
+		<translation>Dirham marroquí</translation>
 	</message>
 	<message>
 		<source>currency-display-name-mdl</source>
-		<translation>Leu moldávo</translation>
+		<translation>Leu moldavo</translation>
 	</message>
 	<message>
 		<source>currency-display-name-mur</source>
-		<translation>Rúpia mauriciana</translation>
+		<translation>Rupia de Mauricio</translation>
 	</message>
 	<message>
 		<source>currency-display-name-mwk</source>
-		<translation>Kwacha do Malawi</translation>
+		<translation>Kwacha malauí</translation>
 	</message>
 	<message>
 		<source>currency-display-name-mxn</source>
@@ -1270,35 +1271,35 @@ Por favor, use outro número</translation>
 	</message>
 	<message>
 		<source>currency-display-name-myr</source>
-		<translation>Ringgit malaio</translation>
+		<translation>Ringgit malayo</translation>
 	</message>
 	<message>
 		<source>currency-display-name-mzn</source>
-		<translation>Metical de Moçambique</translation>
+		<translation>Metical mozambiqueño</translation>
 	</message>
 	<message>
 		<source>currency-display-name-nad</source>
-		<translation>Dólar namibiano</translation>
+		<translation>Dólar namibio</translation>
 	</message>
 	<message>
 		<source>currency-display-name-ngn</source>
-		<translation>Naira da Nigéria</translation>
+		<translation>Naira nigeriana</translation>
 	</message>
 	<message>
 		<source>currency-display-name-nok</source>
-		<translation>Coroa norueguesa</translation>
+		<translation>Corona noruega</translation>
 	</message>
 	<message>
 		<source>currency-display-name-npr</source>
-		<translation>Rupia nepalesa</translation>
+		<translation>Rupia nepalí</translation>
 	</message>
 	<message>
 		<source>currency-display-name-nzd</source>
-		<translation>Dólar da Nova Zelândia</translation>
+		<translation>Dólar neozelandés</translation>
 	</message>
 	<message>
 		<source>currency-display-name-omr</source>
-		<translation>Rial de Omã</translation>
+		<translation>Rial omaní</translation>
 	</message>
 	<message>
 		<source>currency-display-name-pen</source>
@@ -1306,55 +1307,55 @@ Por favor, use outro número</translation>
 	</message>
 	<message>
 		<source>currency-display-name-pgk</source>
-		<translation>Kina da Papua-Nova Guiné</translation>
+		<translation>Kina de Papúa Nueva Guinea</translation>
 	</message>
 	<message>
 		<source>currency-display-name-php</source>
-		<translation>Peso das Filipinas</translation>
+		<translation>Peso filipino</translation>
 	</message>
 	<message>
 		<source>currency-display-name-pkr</source>
-		<translation>Rupia paquistanesa</translation>
+		<translation>Rupia pakistaní</translation>
 	</message>
 	<message>
 		<source>currency-display-name-pln</source>
-		<translation>Zloty polonês</translation>
+		<translation>Zloty de Polonia</translation>
 	</message>
 	<message>
 		<source>currency-display-name-pyg</source>
-		<translation>Guarani do Paraguai</translation>
+		<translation>Guaraní paraguayo</translation>
 	</message>
 	<message>
 		<source>currency-display-name-qar</source>
-		<translation>Rial do Qatar</translation>
+		<translation>Riyal qatarí</translation>
 	</message>
 	<message>
 		<source>currency-display-name-ron</source>
-		<translation>Leu romeno</translation>
+		<translation>Leu de Rumanía</translation>
 	</message>
 	<message>
 		<source>currency-display-name-rsd</source>
-		<translation>Dinar sérvio</translation>
+		<translation>Dinar serbio</translation>
 	</message>
 	<message>
 		<source>currency-display-name-rub</source>
-		<translation>Rublo russo</translation>
+		<translation>Rublo ruso</translation>
 	</message>
 	<message>
 		<source>currency-display-name-sar</source>
-		<translation>Rial da Arábia Saudita</translation>
+		<translation>Arabia Saudita Riyal</translation>
 	</message>
 	<message>
 		<source>currency-display-name-sek</source>
-		<translation>Coroa da Suécia</translation>
+		<translation>Corona sueca</translation>
 	</message>
 	<message>
 		<source>currency-display-name-sgd</source>
-		<translation>Dólar de Singapura</translation>
+		<translation>Dólar de Singapur</translation>
 	</message>
 	<message>
 		<source>currency-display-name-thb</source>
-		<translation>Baht da Tailândia</translation>
+		<translation>Baht tailandés</translation>
 	</message>
 	<message>
 		<source>currency-display-name-try</source>
@@ -1362,55 +1363,55 @@ Por favor, use outro número</translation>
 	</message>
 	<message>
 		<source>currency-display-name-ttd</source>
-		<translation>Dólar de Trinidad e Tobago</translation>
+		<translation>Dólar de Trinidad y Tobago</translation>
 	</message>
 	<message>
 		<source>currency-display-name-twd</source>
-		<translation>Novo dólar taiwanês</translation>
+		<translation>Nuevo dólar taiwanés</translation>
 	</message>
 	<message>
 		<source>currency-display-name-tzs</source>
-		<translation>Xelim tanzaniano</translation>
+		<translation>Chelín tanzano</translation>
 	</message>
 	<message>
 		<source>currency-display-name-uah</source>
-		<translation>Grívnia da Ucrânia</translation>
+		<translation>Grivna (Ucrania)</translation>
 	</message>
 	<message>
 		<source>currency-display-name-ugx</source>
-		<translation>Xelim ugandês</translation>
+		<translation>Chelín ugandés</translation>
 	</message>
 	<message>
 		<source>currency-display-name-usd</source>
-		<translation>Dólar dos Estados Unidos</translation>
+		<translation>Dólar estadounidense</translation>
 	</message>
 	<message>
 		<source>currency-display-name-uyu</source>
-		<translation>Peso uruguaio</translation>
+		<translation>Peso uruguayo</translation>
 	</message>
 	<message>
 		<source>currency-display-name-vef</source>
-		<translation>Bolívar venezuelano</translation>
+		<translation>Bolívar venezolano</translation>
 	</message>
 	<message>
 		<source>currency-display-name-vnd</source>
-		<translation>Vietnam Dong</translation>
+		<translation>Dong vietnamita</translation>
 	</message>
 	<message>
 		<source>currency-display-name-zar</source>
-		<translation>Rand sul-africano</translation>
+		<translation>Rand sudafricano</translation>
 	</message>
 	<message>
 		<source>current-network</source>
-		<translation>Rede atual</translation>
+		<translation>Red actual</translation>
 	</message>
 	<message>
 		<source>current-pin</source>
-		<translation>Digite o código de acesso de 6 dígitos</translation>
+		<translation>Ingresa el código de acceso de 6 dígitos</translation>
 	</message>
 	<message>
 		<source>current-pin-description</source>
-		<translation>Digite seu código de acesso de 6 dígitos para continuar</translation>
+		<translation>Ingresa tu código de acceso de 6 dígitos para continuar</translation>
 	</message>
 	<message>
 		<source>custom</source>
@@ -1426,7 +1427,7 @@ Por favor, use outro número</translation>
 	</message>
 	<message>
 		<source>dapp-would-like-to-connect-wallet</source>
-		<translation>gostaria de se conectar a</translation>
+		<translation>quisiera conectarse a</translation>
 	</message>
 	<message>
 		<source>dapps</source>
@@ -1434,15 +1435,15 @@ Por favor, use outro número</translation>
 	</message>
 	<message>
 		<source>dapps-permissions</source>
-		<translation>Permissões do DApp</translation>
+		<translation>Permisos de DApp</translation>
 	</message>
 	<message>
 		<source>data</source>
-		<translation>Dados</translation>
+		<translation>Datos</translation>
 	</message>
 	<message>
 		<source>datetime-ago</source>
-		<translation>atrás</translation>
+		<translation>hace</translation>
 	</message>
 	<message>
 		<source>datetime-ago-format</source>
@@ -1455,8 +1456,8 @@ Por favor, use outro número</translation>
 	<message numerus="yes">
 		<source>datetime-day</source>
 		<translation>
-			<numerusform>dia</numerusform>
-			<numerusform>dias</numerusform>
+			<numerusform>día</numerusform>
+			<numerusform>días</numerusform>
 		</translation>
 	</message>
 	<message numerus="yes">
@@ -1510,131 +1511,131 @@ Por favor, use outro número</translation>
 	</message>
 	<message>
 		<source>datetime-today</source>
-		<translation>hoje</translation>
+		<translation>hoy</translation>
 	</message>
 	<message>
 		<source>datetime-yesterday</source>
-		<translation>ontem</translation>
+		<translation>ayer</translation>
 	</message>
 	<message>
 		<source>decimals</source>
-		<translation>Decimais</translation>
+		<translation>Decimales</translation>
 	</message>
 	<message>
 		<source>decline</source>
-		<translation>Recusar</translation>
+		<translation>Rechazar</translation>
 	</message>
 	<message>
 		<source>decryption-failed-content</source>
-		<translation>Ocorreu um erro ao descriptografar seus dados. Você pode precisar apagar seus dados antigos e gerar uma nova conta. Toque em “Aplicar” para apagar ou “Cancelar” para tentar novamente</translation>
+		<translation>Ocurrió un error desencriptando tus datos. Es posible que tengas que generar unas nuevas llaves y borrar tus datos antiguos pulsando &quot;Aplicar&quot;, o haz clic en &quot;Cancelar&quot; para volver a intentarlo</translation>
 	</message>
 	<message>
 		<source>default</source>
-		<translation>Padrão</translation>
+		<translation>Predeterminados</translation>
 	</message>
 	<message>
 		<source>delete</source>
-		<translation>Excluir</translation>
+		<translation>Eliminar</translation>
 	</message>
 	<message>
 		<source>delete-and-leave-group</source>
-		<translation>Excluir e sair do grupo</translation>
+		<translation>Eliminar y salir del grupo</translation>
 	</message>
 	<message>
 		<source>delete-bootnode</source>
-		<translation>Excluir nó de inicialização</translation>
+		<translation>Eliminar bootnode</translation>
 	</message>
 	<message>
 		<source>delete-bootnode-are-you-sure</source>
-		<translation>Tem certeza de que deseja excluir este nó de inicialização?</translation>
+		<translation>¿Seguro que quieres eliminar este bootnode?</translation>
 	</message>
 	<message>
 		<source>delete-bootnode-title</source>
-		<translation>Eliminar nó de inicialização</translation>
+		<translation>Eliminar bootnode</translation>
 	</message>
 	<message>
 		<source>delete-chat</source>
-		<translation>Excluir conversa</translation>
+		<translation>Eliminar chat</translation>
 	</message>
 	<message>
 		<source>delete-chat-confirmation</source>
-		<translation>Tem certeza de que deseja excluir este bate-papo?</translation>
+		<translation>¿Estás seguro de que quieres eliminar este chat?</translation>
 	</message>
 	<message>
 		<source>delete-category-confirmation</source>
-		<translation>Tem certeza de que deseja excluir esta categoria?</translation>
+		<translation>¿Estás seguro que deseas eliminar esta categoría?</translation>
 	</message>
 	<message>
 		<source>delete-confirmation</source>
-		<translation>Excluir?</translation>
+		<translation>¿Eliminar?</translation>
 	</message>
 	<message>
 		<source>delete-mailserver</source>
-		<translation>Excluir nó do Status</translation>
+		<translation>Eliminar nodo de Status</translation>
 	</message>
 	<message>
 		<source>delete-mailserver-are-you-sure</source>
-		<translation>Tem certeza de que deseja excluir este nó do Status?</translation>
+		<translation>¿Está seguro de que desea eliminar este nodo de Status?</translation>
 	</message>
 	<message>
 		<source>delete-mailserver-title</source>
-		<translation>Excluir nó do Status</translation>
+		<translation>Eliminar nodo de Status</translation>
 	</message>
 	<message>
 		<source>delete-message</source>
-		<translation>Apagar mensagem</translation>
+		<translation>Eliminar mensaje</translation>
 	</message>
 	<message>
 		<source>delete-my-account</source>
-		<translation>Excluir minha conta</translation>
+		<translation>Borrar mi cuenta</translation>
 	</message>
 	<message>
 		<source>delete-network-confirmation</source>
-		<translation>Tem certeza de que deseja excluir esta rede?</translation>
+		<translation>¿Seguro que quieres eliminar esta red?</translation>
 	</message>
 	<message>
 		<source>delete-network-error</source>
-		<translation>Conecte-se a uma rede diferente antes de excluir esta</translation>
+		<translation>Por favor, conéctate a una red diferente antes de eliminar esta</translation>
 	</message>
 	<message>
 		<source>delete-network-title</source>
-		<translation>Excluir rede?</translation>
+		<translation>¿Eliminar red?</translation>
 	</message>
 	<message>
 		<source>delete-node</source>
-		<translation>Excluir nó</translation>
+		<translation>Eliminar nodo</translation>
 	</message>
 	<message>
 		<source>delete-node-are-you-sure</source>
-		<translation>Você tem certeza que deseja excluir esse nó?</translation>
+		<translation>¿Estás seguro de que quieres eliminar este nodo?</translation>
 	</message>
 	<message>
 		<source>delete-node-title</source>
-		<translation>Excluir nó</translation>
+		<translation>Eliminar nodo</translation>
 	</message>
 	<message>
 		<source>delete-profile</source>
-		<translation>Excluir perfil</translation>
+		<translation>Eliminar perfil</translation>
 	</message>
 	<message>
 		<source>delete-my-profile</source>
-		<translation>Excluir meu perfil</translation>
+		<translation>Eliminar mi perfil</translation>
 	</message>
 	<message>
 		<source>delete-profile-warning</source>
-		<translation>Aviso: se você não tiver sua frase-semente escrita, você perderá o acesso aos seus fundos depois de excluir seu perfil</translation>
+		<translation>Advertencia: Si no tiene tu frase de semilla escrita, perderá el acceso a sus fondos después de eliminar su perfil</translation>
 	</message>
 	<message>
 		<source>profile-deleted-title</source>
-		<translation>Perfil excluído</translation>
+		<translation>Perfil eliminado</translation>
 	</message>
 	<message>
 		<source>profile-deleted-content</source>
-		<translation>O seu perfil foi excluído com sucesso</translation>
+		<translation>Su perfil fue eliminado con éxito</translation>
 	</message>
 	<message>
 		<source>profile-deleted-keycard</source>
-		<translation>Agora você pode restaurar outro par de chaves no seu Keycard</translation>
+		<translation>Ahora puedes restaurar otro par de claves en tu Keycard</translation>
 	</message>
 	<message>
 		<source>deny</source>
@@ -1642,19 +1643,19 @@ Por favor, use outro número</translation>
 	</message>
 	<message>
 		<source>description</source>
-		<translation>Descrição</translation>
+		<translation>Descripción</translation>
 	</message>
 	<message>
 		<source>dev-mode</source>
-		<translation>Modo de desenvolvimento</translation>
+		<translation>Modo de desarrollo</translation>
 	</message>
 	<message>
 		<source>dev-mode-settings</source>
-		<translation>Configurações do modo de desenvolvimento</translation>
+		<translation>Ajustes del modo de desarrollo</translation>
 	</message>
 	<message>
 		<source>device-syncing</source>
-		<translation>Sincronização de dispositivos</translation>
+		<translation>Sincronización de dispositivos</translation>
 	</message>
 	<message>
 		<source>devices</source>
@@ -1662,27 +1663,27 @@ Por favor, use outro número</translation>
 	</message>
 	<message>
 		<source>disable</source>
-		<translation>desativar</translation>
+		<translation>deshabilitar</translation>
 	</message>
 	<message>
 		<source>disabled</source>
-		<translation>Desativado</translation>
+		<translation>Deshabilitado</translation>
 	</message>
 	<message>
 		<source>disconnected</source>
-		<translation>Bate-papo offline</translation>
+		<translation>Chat sin conexión</translation>
 	</message>
 	<message>
 		<source>discover</source>
-		<translation>Descobrir</translation>
+		<translation>Descubrir</translation>
 	</message>
 	<message>
 		<source>dismiss</source>
-		<translation>Ignorar</translation>
+		<translation>Descartar</translation>
 	</message>
 	<message>
 		<source>done</source>
-		<translation>Concluído</translation>
+		<translation>Listo</translation>
 	</message>
 	<message>
 		<source>edit</source>
@@ -1698,36 +1699,36 @@ Por favor, use outro número</translation>
 	</message>
 	<message>
 		<source>empty-chat-description</source>
-		<translation>Ainda não há mensagens 
- neste bate-papo</translation>
+		<translation>No hay mensajes 
+en este chat todavía</translation>
 	</message>
 	<message>
 		<source>empty-chat-description-one-to-one</source>
-		<translation>Todas as mensagens que você envia aqui são criptografadas e só podem ser lidas por você e </translation>
+		<translation>Cualquier mensaje que envíes aquí está encriptado y solo puedes leerlo tú y</translation>
 	</message>
 	<message>
 		<source>empty-chat-description-public</source>
-		<translation>Está quieto aqui nas últimas {{quiet-hours}}. Inicie a conversa ou </translation>
+		<translation>Ha estado tranquilo aquí durante las últimas {{quiet-hours}}. Inicia la conversación o</translation>
 	</message>
 	<message>
 		<source>cleared-chat-description-public</source>
-		<translation>Tem estado muito quieto por aqui. Inicie a conversa ou </translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>empty-chat-description-community</source>
-		<translation>Tem estado quieto aqui nas últimas {{quiet-hours}}.</translation>
+		<translation>Ha estado tranquilo aquí durante {{quiet-hours}} .</translation>
 	</message>
 	<message>
 		<source>empty-chat-description-public-share-this</source>
-		<translation>compartilhe este bate-papo.</translation>
+		<translation>comparte este chat</translation>
 	</message>
 	<message>
 		<source>enable</source>
-		<translation>Ativar</translation>
+		<translation>Habilitar</translation>
 	</message>
 	<message>
 		<source>encrypt-with-password</source>
-		<translation>Criptografar com senha</translation>
+		<translation>Encriptar con contraseña</translation>
 	</message>
 	<message>
 		<source>ens-10-SNT</source>
@@ -1735,27 +1736,27 @@ Por favor, use outro número</translation>
 	</message>
 	<message>
 		<source>ens-add-username</source>
-		<translation>Adicionar nome de usuário </translation>
+		<translation>Agregar nombre de usuario</translation>
 	</message>
 	<message>
 		<source>ens-agree-to</source>
-		<translation>Concordo com</translation>
+		<translation>De acuerdo con</translation>
 	</message>
 	<message>
 		<source>ens-chat-settings</source>
-		<translation>Configurações de bate-papo</translation>
+		<translation>Ajustes de chat</translation>
 	</message>
 	<message>
 		<source>ens-custom-domain</source>
-		<translation>Domínio personalizado</translation>
+		<translation>Dominio personalizado</translation>
 	</message>
 	<message>
 		<source>ens-custom-username-hints</source>
-		<translation>Digite o nome de usuário inteiro, incluindo o domínio personalizado, como nomedeusuario.domínio.eth</translation>
+		<translation>Escribe el nombre de usuario completo, incluido el dominio personalizado como username.domain.eth</translation>
 	</message>
 	<message>
 		<source>ens-custom-username-taken</source>
-		<translation>O nome de usuário não pertence a você :(</translation>
+		<translation>El nombre de usuario no te pertenece :(</translation>
 	</message>
 	<message>
 		<source>ens-deposit</source>
@@ -1763,91 +1764,91 @@ Por favor, use outro número</translation>
 	</message>
 	<message>
 		<source>ens-displayed-with</source>
-		<translation>Suas mensagens são exibidas para outras pessoas com</translation>
+		<translation>Tus mensajes se muestran a otros con</translation>
 	</message>
 	<message>
 		<source>ens-get-name</source>
-		<translation>Obter um nome universal</translation>
+		<translation>Obtén un nombre de usuario universal</translation>
 	</message>
 	<message>
 		<source>ens-got-it</source>
-		<translation>Ok, entendi.</translation>
+		<translation>Ok, lo tengo.</translation>
 	</message>
 	<message>
 		<source>ens-locked</source>
-		<translation>Nome de usuário bloqueado. Você não poderá liberá-lo até {{date}}</translation>
+		<translation>Nombre de usuario bloqueado. No lo podrás liberar hasta el {{date}}</translation>
 	</message>
 	<message>
 		<source>ens-network-restriction</source>
-		<translation>Disponível apenas na Mainnet</translation>
+		<translation>Solo disponible en Mainnet</translation>
 	</message>
 	<message>
 		<source>ens-no-usernames</source>
-		<translation>Você não tem nenhum nome de usuário conectado</translation>
+		<translation>No tienes ningún nombre de usuario conectado</translation>
 	</message>
 	<message>
 		<source>ens-powered-by</source>
-		<translation>Desenvolvido com Ethereum Name Services</translation>
+		<translation>Propulsado por Ethereum Name Services</translation>
 	</message>
 	<message>
 		<source>ens-primary-username</source>
-		<translation>Nome de usuário principal</translation>
+		<translation>Nombre de usuario principal</translation>
 	</message>
 	<message>
 		<source>ens-register</source>
-		<translation>Cadastro</translation>
+		<translation>Registrar</translation>
 	</message>
 	<message>
 		<source>ens-registration-in-progress</source>
-		<translation>Cadastro em andamento…</translation>
+		<translation>Registro en curso...</translation>
 	</message>
 	<message>
 		<source>ens-registration-failure</source>
-		<translation>Erro ao cadastrar</translation>
+		<translation>Registro fallido</translation>
 	</message>
 	<message>
 		<source>ens-dismiss-message</source>
-		<translation>Clique aqui para fechar</translation>
+		<translation>Haga clic para descartar</translation>
 	</message>
 	<message>
 		<source>ens-registration-failed</source>
-		<translation>Para cadastrar o nome de usuário, tente novamente.</translation>
+		<translation>Para registrar el nombre de usuario, por favor, intenta de nuevo.</translation>
 	</message>
 	<message>
 		<source>ens-registration-failed-title</source>
-		<translation>Falha na transação</translation>
+		<translation>La transacción ha fallado</translation>
 	</message>
 	<message>
 		<source>ens-release-username</source>
-		<translation>Liberar nome de usuário</translation>
+		<translation>Liberar nombre de usuario</translation>
 	</message>
 	<message>
 		<source>ens-remove-hints</source>
-		<translation>A remoção desanexará o nome de usuário da sua chave.</translation>
+		<translation>La eliminación separará el nombre de usuario de tu clave.</translation>
 	</message>
 	<message>
 		<source>ens-remove-username</source>
-		<translation>Remover nome de usuário</translation>
+		<translation>Eliminar nombre de usuario</translation>
 	</message>
 	<message>
 		<source>ens-saved</source>
-		<translation> agora está conectado com sua chave de bate-papo e pode ser usado no Status.</translation>
+		<translation>ahora está conectado con tu clave de chat y se puede usar en Status.</translation>
 	</message>
 	<message>
 		<source>ens-saved-title</source>
-		<translation>Nome de usuário adicionado</translation>
+		<translation>Nombre de usuario agregado</translation>
 	</message>
 	<message>
 		<source>ens-show-username</source>
-		<translation>Mostrar meu nome de usuário ENS em bate-papos</translation>
+		<translation>Mostrar mi nombre de usuario ENS en los chats</translation>
 	</message>
 	<message>
 		<source>ens-terms-header</source>
-		<translation>Termos de cadastro de nome</translation>
+		<translation>Términos de registro de nombre</translation>
 	</message>
 	<message>
 		<source>ens-terms-point-1</source>
-		<translation>Os fundos são depositados por 1 ano. Seu SNT será bloqueado, mas não será gasto.</translation>
+		<translation>Los fondos se depositan por 1 año. Tu SNT se bloqueará, pero no se gastará.</translation>
 	</message>
 	<message>
 		<source>ens-terms-point-10</source>
@@ -1855,31 +1856,31 @@ Por favor, use outro número</translation>
 	</message>
 	<message>
 		<source>ens-terms-point-2</source>
-		<translation>Após 1 ano, você pode liberar o nome e receber seu depósito de volta ou não fazer nenhuma ação para manter o nome.</translation>
+		<translation>Después de 1 año, puedes liberar el nombre y recuperar tu depósito, o no tomar ninguna acción para mantener el nombre.</translation>
 	</message>
 	<message>
 		<source>ens-terms-point-3</source>
-		<translation>Se os termos do contrato mudarem — por exemplo, o Status fizer atualizações do contrato — o usuário tem o direito de liberar o nome de usuário, independentemente do tempo de espera.</translation>
+		<translation>Si los términos del contrato cambian – por ejemplo, Status realiza actualizaciones del contrato – el usuario tiene derecho a liberar el nombre de usuario independientemente del tiempo retenido.</translation>
 	</message>
 	<message>
 		<source>ens-terms-point-4</source>
-		<translation>O controlador do contrato não pode acessar seus fundos depositados. Eles só podem ser movidos de volta para o endereço que os enviou.</translation>
+		<translation>El controlador del contrato no puede acceder a tus fondos depositados. Sólo pueden ser devueltos a la dirección que los envió.</translation>
 	</message>
 	<message>
 		<source>ens-terms-point-5</source>
-		<translation>Seus endereços serão publicamente associados ao seu nome no ENS.</translation>
+		<translation>Tu(s) dirección(es) se asociará(n) públicamente con tu nombre ENS.</translation>
 	</message>
 	<message>
 		<source>ens-terms-point-6</source>
-		<translation>Os nomes de usuários são criados como nós de subdomínio stateofus.eth e estão sujeitos aos termos do contrato inteligente do ENS.</translation>
+		<translation>Los nombres de usuario se crean como nodos de subdominio de stateofus.eth y están sujetos a los términos del contrato inteligente de ENS.</translation>
 	</message>
 	<message>
 		<source>ens-terms-point-7</source>
-		<translation>Você autoriza o contrato a transferir o SNT em seu nome. Isso só pode ocorrer quando você aprovar uma transação para autorizar a transferência.</translation>
+		<translation>Autorizas el contrato para transferir SNT en tu nombre. Esto solo puede ocurrir cuando apruebas una transacción para autorizar la transferencia.</translation>
 	</message>
 	<message>
 		<source>ens-terms-point-8</source>
-		<translation>Estes termos são garantidos pela lógica do contrato inteligente nos endereços:</translation>
+		<translation>Estos términos están garantizados por la lógica del contrato inteligente en las direcciones:</translation>
 	</message>
 	<message>
 		<source>ens-terms-point-9</source>
@@ -1887,286 +1888,286 @@ Por favor, use outro número</translation>
 	</message>
 	<message>
 		<source>ens-terms-registration</source>
-		<translation>Termos de cadastro do nome.</translation>
+		<translation>Términos de registro de nombre.</translation>
 	</message>
 	<message>
 		<source>ens-test-message</source>
-		<translation>Olá</translation>
+		<translation>Hey</translation>
 	</message>
 	<message>
 		<source>ens-transaction-pending</source>
-		<translation>Transação pendente ...</translation>
+		<translation>Transacción pendiente...</translation>
 	</message>
 	<message>
 		<source>ens-understand</source>
-		<translation>Entendo que o endereço da minha carteira estará publicamente conectado ao meu nome de usuário.</translation>
+		<translation>Entiendo que la dirección de mi billetera estará conectada públicamente a mi nombre de usuario.</translation>
 	</message>
 	<message>
 		<source>ens-username</source>
-		<translation>Nome de usuário ENS</translation>
+		<translation>Nombre de usuario ENS</translation>
 	</message>
 	<message>
 		<source>ens-username-available</source>
-		<translation>✓ Nome de usuário disponível!</translation>
+		<translation>✓ ¡Nombre de usuario disponible!</translation>
 	</message>
 	<message>
 		<source>ens-username-connected</source>
-		<translation>Esse nome de usuário é de sua propriedade e conectado à sua chave de bate-papo.</translation>
+		<translation>Este nombre de usuario es de tu propiedad y está conectado con tu clave de chat.</translation>
 	</message>
 	<message>
 		<source>ens-username-connection-confirmation</source>
-		<translation>{{username}} será conectado assim que a transação for concluída.</translation>
+		<translation>{{username}} se conectará una vez que se complete la transacción.</translation>
 	</message>
 	<message>
 		<source>ens-username-hints</source>
-		<translation>Pelo menos 4 caracteres. Usando letras minúsculas e números.</translation>
+		<translation>Al menos 4 caracteres. Letras latinas, números y sólo minúsculas.</translation>
 	</message>
 	<message>
 		<source>ens-username-invalid</source>
-		<translation>Apenas letras e números.</translation>
+		<translation>Sólo letras y números.</translation>
 	</message>
 	<message>
 		<source>ens-username-owned</source>
-		<translation>✓ O nome de usuário é seu.</translation>
+		<translation>✓ El nombre de usuario es tuyo.</translation>
 	</message>
 	<message>
 		<source>ens-username-registration-confirmation</source>
-		<translation>Ótimo! Você será o proprietário do {{username}} assim que a transação for concluída.</translation>
+		<translation>¡Bien! Eres el propietario de {{username}} una vez completada la transacción.</translation>
 	</message>
 	<message>
 		<source>ens-username-you-can-follow-progress</source>
-		<translation>Você pode acompanhar o progresso na seção Histórico de Transações da sua carteira.</translation>
+		<translation>Puedes seguir el progreso en la sección de Historial de transacciones de tu billetera.</translation>
 	</message>
 	<message>
 		<source>ens-usernames</source>
-		<translation>Nomes de usuário ENS</translation>
+		<translation>Nombres de usuario ENS</translation>
 	</message>
 	<message>
 		<source>ens-usernames-details</source>
-		<translation>Cadastre um nome de usuário universal para ser facilmente reconhecido por outros usuários</translation>
+		<translation>Registra un nombre de usuario universal para ser reconocido fácilmente por otros usuarios</translation>
 	</message>
 	<message>
 		<source>wallet-address</source>
-		<translation>Endereço da carteira</translation>
+		<translation>Dirección de la billetera</translation>
 	</message>
 	<message>
 		<source>ens-want-custom-domain</source>
-		<translation>Eu possuo um nome em outro domínio</translation>
+		<translation>Tengo un nombre en otro dominio</translation>
 	</message>
 	<message>
 		<source>ens-want-domain</source>
-		<translation>Eu quero um domínio stateofus.eth</translation>
+		<translation>Quiero un dominio stateofus.eth</translation>
 	</message>
 	<message>
 		<source>ens-welcome-hints</source>
-		<translation>Os nomes do ENS transformam esses endereços compridos e malucos em nomes de usuário exclusivos.</translation>
+		<translation>Los nombres ENS transforman esas locas direcciones largas en nombres de usuario únicos.</translation>
 	</message>
 	<message>
 		<source>ens-welcome-point-customize</source>
-		<translation>Um nome ENS pode substituir seu nome aleatório de três palavras no chat. Seja @seunome em vez de {{name}}.</translation>
+		<translation>Un nombre ENS puede reemplazar tu nombre aleatorio de 3 palabras en el chat. Sea @yourname en lugar de {{name}}.</translation>
 	</message>
 	<message>
 		<source>ens-welcome-point-customize-title</source>
-		<translation>Personalize seu nome de chat</translation>
+		<translation>Personaliza tu nombre de chat</translation>
 	</message>
 	<message>
 		<source>ens-welcome-point-simplify</source>
-		<translation>Você pode receber fundos em um nome ENS fácil de compartilhar, em vez do seu endereço hexadecimal (0x ...).</translation>
+		<translation>Puedes recibir fondos a tu ENS fácil de compartir, en vez de tu hash hexadecimal (0x...)</translation>
 	</message>
 	<message>
 		<source>ens-welcome-point-simplify-title</source>
-		<translation>Simplifique seu endereço ETH</translation>
+		<translation>Simplifica tu dirección ETH</translation>
 	</message>
 	<message>
 		<source>ens-welcome-point-receive</source>
-		<translation>Outras pessoas podem enviar fundos para você pelo chat em um único passo.</translation>
+		<translation>Otros pueden enviarte fondos desde el chat en un simple paso.</translation>
 	</message>
 	<message>
 		<source>ens-welcome-point-receive-title</source>
-		<translation>Receba transações no chat</translation>
+		<translation>Recibe transacciones en el chat</translation>
 	</message>
 	<message>
 		<source>ens-welcome-point-register</source>
-		<translation>Cadastre-se uma vez para manter o nome para sempre. Após 1 ano, você pode liberar o nome e recuperar seu SNT.</translation>
+		<translation>Regístrate una vez para mantener el nombre para siempre. Después de 1 año, podrás liberar el nombre y recuperar tus SNT.</translation>
 	</message>
 	<message>
 		<source>ens-welcome-point-register-title</source>
-		<translation>10 SNT para se cadastrar</translation>
+		<translation>10 SNT a registrar</translation>
 	</message>
 	<message>
 		<source>ens-welcome-point-verify</source>
-		<translation>Você pode verificar e adicionar qualquer nome de usuário que você possui nos próximos passos.</translation>
+		<translation>Puedes verificar y agregar cualquier nombre de usuario que poseas en los siguientes pasos.</translation>
 	</message>
 	<message>
 		<source>ens-welcome-point-verify-title</source>
-		<translation>Já possui um nome de usuário?</translation>
+		<translation>¿Ya tienes un nombre de usuario?</translation>
 	</message>
 	<message>
 		<source>ens-your-username</source>
-		<translation>Seu nome de usuário</translation>
+		<translation>Tu nombre de usuario</translation>
 	</message>
 	<message>
 		<source>ens-your-usernames</source>
-		<translation>Seus nomes de usuário</translation>
+		<translation>Tus nombres de usuario</translation>
 	</message>
 	<message>
 		<source>ens-your-your-name</source>
-		<translation>Seu nome ENS</translation>
+		<translation>Tu nombre ENS</translation>
 	</message>
 	<message>
 		<source>ens-username-already-added</source>
-		<translation>O nome de usuário já está conectado à sua chave de bate-papo e pode ser usado dentro do Status.</translation>
+		<translation>El nombre de usuario ya está conectado con tu clave de chat y se puede usar dentro de Status.</translation>
 	</message>
 	<message>
 		<source>ens-username-connected-continue</source>
-		<translation>Continuar configurando &quot;Mostrar meu nome de usuário do ENS nos bate-papos&quot;.</translation>
+		<translation>Continuar configurando `Mostrar mi nombre de usuario ENS en los chats`.</translation>
 	</message>
 	<message>
 		<source>ens-username-connected-with-different-key</source>
-		<translation>Continuar exigirá uma transação para conectar o nome de usuário com sua chave de bate-papo atual.</translation>
+		<translation>Continuar requerirá una transacción para conectar el nombre de usuario con tu clave de chat actual.</translation>
 	</message>
 	<message>
 		<source>ens-username-owned-continue</source>
-		<translation>Continuar conectará esse nome de usuário com sua chave de bate-papo.</translation>
+		<translation>Continuar conectará este nombre de usuario con tu clave de chat.</translation>
 	</message>
 	<message>
 		<source>ens-username-taken</source>
-		<translation>Nome de usuário já utilizado :(</translation>
+		<translation>Nombre de usuario ya está tomado :(</translation>
 	</message>
 	<message>
 		<source>ens-name-not-found</source>
-		<translation>Não é possível resolver o nome ENS</translation>
+		<translation>No se puede resolver el nombre ENS</translation>
 	</message>
 	<message>
 		<source>ens-username-registration-invalid</source>
-		<translation>Aviso! O processo de registro terminou em estado inválido. NÃO USE o nome para transações de carteira e contate nosso suporte em support@status.im</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>ens-username-invalid-name-warning</source>
-		<translation>O processo de registro de um dos seus nomes ens terminou em estado inválido. NÃO USE o nome para transações de carteira e contate nosso suporte em support@status.im</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>enter-12-words</source>
-		<translation>Digite as 12 palavras da sua frase-semente, separadas por um espaço</translation>
+		<translation>Ingresa las 12 palabras de tu frase semilla, separadas por espacios</translation>
 	</message>
 	<message>
 		<source>enter-a-private-key</source>
-		<translation>Digite uma chave privada</translation>
+		<translation>Ingresa una clave privada</translation>
 	</message>
 	<message>
 		<source>enter-a-seed-phrase</source>
-		<translation>Digite uma frase-semente</translation>
+		<translation>Ingresa una frase semilla</translation>
 	</message>
 	<message>
 		<source>enter-address</source>
-		<translation>Inserir endereço</translation>
+		<translation>Ingresar dirección</translation>
 	</message>
 	<message>
 		<source>enter-contact-code</source>
-		<translation>ENS (vitalik94) ou chave de bate-papo (0x04 ...)</translation>
+		<translation>ENS (vitalik94) o clave de chat (0x04...)</translation>
 	</message>
 	<message>
 		<source>enter-pair-code</source>
-		<translation>Digite seu código de emparelhamento</translation>
+		<translation>Ingrese tu código de vinculación</translation>
 	</message>
 	<message>
 		<source>pair-code-placeholder</source>
-		<translation>Código de emparelhamento…</translation>
+		<translation>Código de emparejamiento...</translation>
 	</message>
 	<message>
 		<source>enter-pair-code-description</source>
-		<translation>O código de emparelhamento pode ser definido a partir de um cliente Status já emparelhado</translation>
+		<translation>Se te mostró el código de vinculación durante la configuración de Keycard</translation>
 	</message>
 	<message>
 		<source>enter-password</source>
-		<translation>Digite a senha</translation>
+		<translation>Ingresa la contraseña</translation>
 	</message>
 	<message>
 		<source>enter-password-migration-prompt</source>
-		<translation>Digite sua senha para mover contatos, bate-papos e configurações com suas chaves</translation>
+		<translation>Ingresa tu contraseña para mover contactos, chats y ajustes junto con sus claves</translation>
 	</message>
 	<message>
 		<source>migration-successful</source>
-		<translation>Migração realizada com sucesso</translation>
+		<translation>Migración exitosa</translation>
 	</message>
 	<message>
 		<source>migration-successful-text</source>
-		<translation>Conta migrada com sucesso para o Keycard</translation>
+		<translation>Cuenta migrada con éxito a la Keycard</translation>
 	</message>
 	<message>
 		<source>skip</source>
-		<translation>Pular</translation>
+		<translation>Omitir</translation>
 	</message>
 	<message>
 		<source>password-placeholder</source>
-		<translation>Senha…</translation>
+		<translation>Contraseña...</translation>
 	</message>
 	<message>
 		<source>confirm-password-placeholder</source>
-		<translation>Confirme sua senha…</translation>
+		<translation>Confirmá tu contraseña...</translation>
 	</message>
 	<message>
 		<source>enter-pin</source>
-		<translation>Digite o código de acesso de 6 dígitos</translation>
+		<translation>Ingresa el código de acceso de 6 dígitos</translation>
 	</message>
 	<message>
 		<source>enter-puk-code</source>
-		<translation>Digite o código PUK</translation>
+		<translation>Ingresa el código PUK</translation>
 	</message>
 	<message>
 		<source>enter-puk-code-description</source>
-		<translation>O código de acesso de 6 dígitos foi bloqueado. 
- Digite o código PUK para desbloquear o código de acesso.</translation>
+		<translation>El código de acceso de 6 dígitos ha sido bloqueado. 
+ Ingresa el código PUK para desbloquear el código de acceso.</translation>
 	</message>
 	<message>
 		<source>enter-recipient-address-or-username</source>
-		<translation>Digite o endereço ou nome de usuário do destinatário</translation>
+		<translation>Ingresá la dirección o nombre de usuario del destinatario</translation>
 	</message>
 	<message>
 		<source>enter-seed-phrase</source>
-		<translation>Inserir frase-semente</translation>
+		<translation>Ingresa la frase semilla</translation>
 	</message>
 	<message>
 		<source>enter-url</source>
-		<translation>Inserir URL</translation>
+		<translation>Ingresa una URL</translation>
 	</message>
 	<message>
 		<source>enter-watch-account-address</source>
-		<translation>Escaneie um código QR 
-ou 
-digite o endereço para visualizar</translation>
+		<translation>Escanea un código QR 
+ o 
+ ingrese la dirección para observar</translation>
 	</message>
 	<message>
 		<source>enter-word</source>
-		<translation>Digite a palavra</translation>
+		<translation>Ingresar palabra</translation>
 	</message>
 	<message>
 		<source>enter-your-code</source>
-		<translation>Digite sua senha de 6 dígitos</translation>
+		<translation>Ingresa tu código de acceso de 6 dígitos</translation>
 	</message>
 	<message>
 		<source>enter-your-password</source>
-		<translation>Digite sua senha</translation>
+		<translation>Ingresa tu contraseña</translation>
 	</message>
 	<message>
 		<source>error</source>
-		<translation>Erro</translation>
+		<translation>Error</translation>
 	</message>
 	<message>
 		<source>error-unable-to-get-balance</source>
-		<translation>Não foi possível obter o saldo</translation>
+		<translation>No se puede obtener el saldo</translation>
 	</message>
 	<message>
 		<source>error-unable-to-get-prices</source>
-		<translation>Erro de conversão de moeda. Atualize sua tela para tentar novamente.</translation>
+		<translation>Error de conversión de moneda. Refresca tu pantalla para intentarlo de nuevo.</translation>
 	</message>
 	<message>
 		<source>error-unable-to-get-token-balance</source>
-		<translation>Não foi possível obter o saldo de token</translation>
+		<translation>No se puede obtener el saldo del token</translation>
 	</message>
 	<message>
 		<source>errors</source>
-		<translation>Erros</translation>
+		<translation>Errores</translation>
 	</message>
 	<message>
 		<source>eth</source>
@@ -2174,43 +2175,43 @@ digite o endereço para visualizar</translation>
 	</message>
 	<message>
 		<source>ethereum-node-started-incorrectly-description</source>
-		<translation>O nó Ethereum foi iniciado com a configuração incorreta. O aplicativo será interrompido para se recuperar dessa condição. ID de rede configurado = {{network-id}}, real = {{fetched-network-id}}</translation>
+		<translation>El nodo Ethereum se inició con una configuración incorrecta, la aplicación se detendrá para recuperarse de esa condición. ID de red configurado = {{network-id}}, actual = {{fetched-network-id}}</translation>
 	</message>
 	<message>
 		<source>ethereum-node-started-incorrectly-title</source>
-		<translation>Nó Ethereum iniciado incorretamente</translation>
+		<translation>El nodo Ethereum se inició incorrectamente</translation>
 	</message>
 	<message>
 		<source>etherscan-lookup</source>
-		<translation>Procurar no Etherscan</translation>
+		<translation>Ver en Etherscan</translation>
 	</message>
 	<message>
 		<source>export-account</source>
-		<translation>Exportar conta</translation>
+		<translation>Exportar la cuenta</translation>
 	</message>
 	<message>
 		<source>export-key</source>
-		<translation>Exportar chave privada</translation>
+		<translation>Exportar llave privada</translation>
 	</message>
 	<message>
 		<source>community-private-key</source>
-		<translation>Chave privada da comunidade</translation>
+		<translation>Clave privada comunitaria</translation>
 	</message>
 	<message>
 		<source>failed</source>
-		<translation>Falhou</translation>
+		<translation>Fallido</translation>
 	</message>
 	<message>
 		<source>faq</source>
-		<translation>Perguntas frequentes</translation>
+		<translation>Preguntas frecuentes</translation>
 	</message>
 	<message>
 		<source>fetch-messages</source>
-		<translation>↓ Buscar mensagens</translation>
+		<translation>↓ Recuperar mensajes</translation>
 	</message>
 	<message>
 		<source>fetch-timeline</source>
-		<translation>↓ Buscar</translation>
+		<translation>↓ Obtener</translation>
 	</message>
 	<message>
 		<source>find</source>
@@ -2218,23 +2219,23 @@ digite o endereço para visualizar</translation>
 	</message>
 	<message>
 		<source>finish</source>
-		<translation>Terminar</translation>
+		<translation>Finalizar</translation>
 	</message>
 	<message>
 		<source>finishing-card-setup</source>
-		<translation>Finalizando configurações do cartão</translation>
+		<translation>Finalizando la configuración de la tarjeta</translation>
 	</message>
 	<message>
 		<source>fleet</source>
-		<translation>Frota</translation>
+		<translation>Fleet</translation>
 	</message>
 	<message>
 		<source>fleet-settings</source>
-		<translation>Configurações de frota</translation>
+		<translation>Ajustes de fleet</translation>
 	</message>
 	<message>
 		<source>follow-your-interests</source>
-		<translation>Entre em um bate-papo público e conheça novas pessoas</translation>
+		<translation>Entra en un chat público y conoce gente nueva</translation>
 	</message>
 	<message>
 		<source>follow</source>
@@ -2242,7 +2243,7 @@ digite o endereço para visualizar</translation>
 	</message>
 	<message>
 		<source>free</source>
-		<translation>↓ Grátis</translation>
+		<translation>↓ Gratis</translation>
 	</message>
 	<message>
 		<source>from</source>
@@ -2250,72 +2251,72 @@ digite o endereço para visualizar</translation>
 	</message>
 	<message>
 		<source>gas-limit</source>
-		<translation>Limite de gás</translation>
+		<translation>Límite de gas</translation>
 	</message>
 	<message>
 		<source>gas-price</source>
-		<translation>Preço do gás</translation>
+		<translation>Precio del gas</translation>
 	</message>
 	<message>
 		<source>gas-used</source>
-		<translation>Gás usado</translation>
+		<translation>Gas utilizado</translation>
 	</message>
 	<message>
 		<source>generate-a-key</source>
-		<translation>Gerar chaves</translation>
+		<translation>Generar claves</translation>
 	</message>
 	<message>
 		<source>generate-a-new-account</source>
-		<translation>Gerar uma conta</translation>
+		<translation>Genera una Cuenta</translation>
 	</message>
 	<message>
 		<source>generate-a-new-key</source>
-		<translation>Gere uma nova chave</translation>
+		<translation>Generar una nueva clave</translation>
 	</message>
 	<message>
 		<source>generate-account</source>
-		<translation>Gerar chaves</translation>
+		<translation>Generar claves</translation>
 	</message>
 	<message>
 		<source>generate-new-key</source>
-		<translation>Gerar chaves</translation>
+		<translation>Generar claves</translation>
 	</message>
 	<message>
 		<source>your-keys</source>
-		<translation>Suas chaves</translation>
+		<translation>Tus claves</translation>
 	</message>
 	<message>
 		<source>generating-codes-for-pairing</source>
-		<translation>&gt; Download do software do produto no cartão 
-&gt; Gerando códigos de desbloqueio e emparelhamento</translation>
+		<translation>&gt; Descargando el software del producto a la tarjeta 
+ &gt; Generando códigos de desbloqueo y vinculación</translation>
 	</message>
 	<message>
 		<source>generating-keys</source>
-		<translation>Gerando chaves...</translation>
+		<translation>Generando claves...</translation>
 	</message>
 	<message>
 		<source>you-will-need-this-code</source>
-		<translation>Você precisará desse código para abrir o Status e assinar transações</translation>
+		<translation>Necesitarás este código para abrir Status y firmar transacciones</translation>
 	</message>
 	<message>
 		<source>generating-mnemonic</source>
-		<translation>Gerando frase-semente</translation>
+		<translation>Generando frase semilla</translation>
 	</message>
 	<message>
 		<source>get-started</source>
-		<translation>Começar</translation>
+		<translation>Iniciar</translation>
 	</message>
 	<message>
 		<source>get-status-at</source>
-		<translation>Obter o Status em http://status.im</translation>
+		<translation>Obtén Status en http://status.im/es</translation>
 	</message>
 	<message>
 		<source>get-stickers</source>
-		<translation>Obter Adesivos</translation>
+		<translation>Obtén Stickers</translation>
 	</message>
 	<message>
 		<source>go-to-settings</source>
-		<translation>Vá para as configurações...</translation>
+		<translation>Ir a Configuración</translation>
 	</message>
 	<message>
 		<source>got-it</source>
@@ -2323,68 +2324,68 @@ digite o endereço para visualizar</translation>
 	</message>
 	<message>
 		<source>group-chat</source>
-		<translation>Conversa em grupo</translation>
+		<translation>Chat grupal</translation>
 	</message>
 	<message>
 		<source>group-chat-admin</source>
-		<translation>Administrador</translation>
+		<translation>Admin</translation>
 	</message>
 	<message>
 		<source>group-chat-admin-added</source>
-		<translation>**{{member}}** foi adicionado como administrador</translation>
+		<translation>**{{member}}** se ha convertido en admin</translation>
 	</message>
 	<message>
 		<source>group-chat-created</source>
-		<translation>**{{member}}** criou o grupo **{{name}}**</translation>
+		<translation>**{{member}}** creó el grupo **{{name}}**</translation>
 	</message>
 	<message>
 		<source>group-chat-decline-invitation</source>
-		<translation>Recusar o convite</translation>
+		<translation>Rechazar invitación</translation>
 	</message>
 	<message>
 		<source>group-chat-member-added</source>
-		<translation>**{{member}}** foi convidado</translation>
+		<translation>**{{member}}** ha sido invitado</translation>
 	</message>
 	<message>
 		<source>group-chat-member-joined</source>
-		<translation>**{{member}}** acessou o grupo</translation>
+		<translation>**{{member}}** se ha unido al grupo</translation>
 	</message>
 	<message>
 		<source>group-chat-member-removed</source>
-		<translation>**{{member}}** saiu do grupo</translation>
+		<translation>**{{member}}** abandonó el grupo</translation>
 	</message>
 	<message>
 		<source>group-chat-members-count</source>
-		<translation>{{selected}}/{{max}} membros</translation>
+		<translation>{{selected}}/{{max}} miembros</translation>
 	</message>
 	<message>
 		<source>group-chat-name-changed</source>
-		<translation>**{{member}}** mudou o nome do grupo para **{{name}}**</translation>
+		<translation>**{{member}}** cambió el nombre del grupo a **{{name}}**</translation>
 	</message>
 	<message>
 		<source>group-chat-no-contacts</source>
-		<translation>Você ainda não possui nenhum contato.
-Convide seus amigos para começar a conversar.</translation>
+		<translation>Aún no tienes contactos. 
+Invita a tus amigos a comenzar a chatear</translation>
 	</message>
 	<message>
 		<source>leave-chat</source>
-		<translation>Sair da conversa</translation>
+		<translation>Abandonar chat</translation>
 	</message>
 	<message>
 		<source>leave-confirmation</source>
-		<translation>Sair de {{chat-name}}</translation>
+		<translation>Salir {{chat-name}}</translation>
 	</message>
 	<message>
 		<source>leave-chat-confirmation</source>
-		<translation>O histórico do chat será removido do seu dispositivo. Depois de voltar você não será capaz de recuperar seu histórico.</translation>
+		<translation>El historial de la conversación se eliminará de tu dispositivo. Al reincorporarte no podrás recuperar tu historial.</translation>
 	</message>
 	<message>
 		<source>group-chat-all-contacts-invited</source>
-		<translation>Todos os seus contatos já estão no grupo</translation>
+		<translation>Todos tus contactos ya están en el grupo.</translation>
 	</message>
 	<message>
 		<source>group-info</source>
-		<translation>Informações do grupo</translation>
+		<translation>Información del grupo</translation>
 	</message>
 	<message>
 		<source>gwei</source>
@@ -2396,40 +2397,39 @@ Convide seus amigos para começar a conversar.</translation>
 	</message>
 	<message>
 		<source>help</source>
-		<translation>ajuda</translation>
+		<translation>ayuda</translation>
 	</message>
 	<message>
 		<source>help-capitalized</source>
-		<translation>Ajuda</translation>
+		<translation>Ayuda</translation>
 	</message>
 	<message>
 		<source>help-center</source>
-		<translation>Centro de ajuda</translation>
+		<translation>Centro de ayuda</translation>
 	</message>
 	<message>
 		<source>hide-content-when-switching-apps</source>
-		<translation>Bloquear capturas de tela</translation>
+		<translation>Bloquear capturas de pantalla</translation>
 	</message>
 	<message>
 		<source>hide-content-when-switching-apps-ios</source>
-		<translation>Ocultar visualização</translation>
+		<translation>Ocultar vista previa</translation>
 	</message>
 	<message>
 		<source>history</source>
-		<translation>Histórico</translation>
+		<translation>Historial</translation>
 	</message>
 	<message>
 		<source>history-nodes</source>
-		<translation>Nós de mensagem da Status</translation>
+		<translation>Nodos de Status</translation>
 	</message>
 	<message>
 		<source>hold-card</source>
-		<translation>Segure o cartão na parte de trás 
- do seu telefone</translation>
+		<translation>sostén la tarjeta en la parte posterior de tu teléfono</translation>
 	</message>
 	<message>
 		<source>home</source>
-		<translation>Início</translation>
+		<translation>Inicio</translation>
 	</message>
 	<message>
 		<source>hooks</source>
@@ -2441,43 +2441,43 @@ Convide seus amigos para começar a conversar.</translation>
 	</message>
 	<message>
 		<source>image-remove-current</source>
-		<translation>Remover foto atual</translation>
+		<translation>Eliminar la foto actual</translation>
 	</message>
 	<message>
 		<source>image-source-gallery</source>
-		<translation>Escolher na galeria</translation>
+		<translation>Seleccionar de la galería</translation>
 	</message>
 	<message>
 		<source>image-source-make-photo</source>
-		<translation>Tirar foto</translation>
+		<translation>Tomar foto</translation>
 	</message>
 	<message>
 		<source>image-source-title</source>
-		<translation>Editar imagem</translation>
+		<translation>Editar imagen</translation>
 	</message>
 	<message>
 		<source>profile-pic-take</source>
-		<translation>Tirar foto</translation>
+		<translation>Tomar foto</translation>
 	</message>
 	<message>
 		<source>profile-pic-pick</source>
-		<translation>Escolher na galeria</translation>
+		<translation>Seleccionar de la galería</translation>
 	</message>
 	<message>
 		<source>profile-pic-remove</source>
-		<translation>Remover foto</translation>
+		<translation>Quitar foto</translation>
 	</message>
 	<message>
 		<source>in-contacts</source>
-		<translation>Em contatos</translation>
+		<translation>En contactos</translation>
 	</message>
 	<message>
 		<source>incoming</source>
-		<translation>Recebidos</translation>
+		<translation>Entrante</translation>
 	</message>
 	<message>
 		<source>incoming-transaction</source>
-		<translation>Transação recebida</translation>
+		<translation>Transacción entrante</translation>
 	</message>
 	<message>
 		<source>incorrect-code::0</source>
@@ -2485,125 +2485,125 @@ Convide seus amigos para começar a conversar.</translation>
 	</message>
 	<message>
 		<source>incorrect-code::1</source>
-		<translation>Desculpe, o código estava incorreto. Por favor, digite novamente</translation>
+		<translation>Lo sentimos, el código es incorrecto, escríbelo de nuevo</translation>
 	</message>
 	<message>
 		<source>initialization</source>
-		<translation>Inicialização</translation>
+		<translation>Inicialización</translation>
 	</message>
 	<message>
 		<source>install</source>
-		<translation>Instalar</translation>
+		<translation>↓ Instalar</translation>
 	</message>
 	<message>
 		<source>intro-message1</source>
-		<translation>Bem-vindo ao Status
-Toque nesta mensagem para definir sua senha e começar!</translation>
+		<translation>¡Bienvenid@ a Status!
+Toca este mensaje para configurar tu contraseña y empezar.</translation>
 	</message>
 	<message>
 		<source>intro-privacy-policy-note1</source>
-		<translation>O Status não coleta ou lucra com seus dados pessoais. Ao continuar, você concorda com a </translation>
+		<translation>Status no recopila ni se beneficia de tus datos personales. Al continuar, tú estás de acuerdo con la </translation>
 	</message>
 	<message>
 		<source>intro-privacy-policy-note2</source>
-		<translation>política de privacidade</translation>
+		<translation>política de privacidad</translation>
 	</message>
 	<message>
 		<source>intro-text</source>
-		<translation>Status é a sua porta de entrada para a web descentralizada</translation>
+		<translation>Status es tu puerta de enlace a la web descentralizada</translation>
 	</message>
 	<message>
 		<source>intro-text1</source>
-		<translation>Converse em uma rede criptografada ponto a ponto, onde as mensagens não podem ser censuradas ou invadidas</translation>
+		<translation>Chatea a través de una red encriptada peer-to-peer donde los mensajes no pueden ser censurados o hackeados</translation>
 	</message>
 	<message>
 		<source>intro-text2</source>
-		<translation>Envie e receba ativos digitais em qualquer lugar do mundo - não é necessária uma conta bancária</translation>
+		<translation>Envía y recibe activos digitales en cualquier parte del mundo – no se requiere cuenta bancaria</translation>
 	</message>
 	<message>
 		<source>intro-text3</source>
-		<translation>Explore jogos, trocas e redes sociais onde só você é o proprietário dos seus dados</translation>
+		<translation>Explora juegos, exchanges y redes sociales en las que solo tú eres propietario de tus datos</translation>
 	</message>
 	<message>
 		<source>intro-title1</source>
-		<translation>Comunicação verdadeiramente privada</translation>
+		<translation>Comunicación verdaderamente privada</translation>
 	</message>
 	<message>
 		<source>intro-title2</source>
-		<translation>Carteira criptográfica segura</translation>
+		<translation>Cripto-billetera segura</translation>
 	</message>
 	<message>
 		<source>intro-title3</source>
-		<translation>Aplicativos descentralizados</translation>
+		<translation>Apps descentralizadas</translation>
 	</message>
 	<message>
 		<source>intro-wizard-text1</source>
-		<translation>Um conjunto de chaves controla sua conta. Suas chaves estão no seu telefone, então somente você pode usá-las</translation>
+		<translation>Un set de claves controla tu cuenta. Tus claves viven en tu teléfono, por lo que solo tú puede usarlas.</translation>
 	</message>
 	<message>
 		<source>intro-wizard-text2</source>
-		<translation>Uma chave é para o bate-papo. Ela vem com um nome legível que não pode ser alterado.</translation>
+		<translation>Una clave es para chatear. Viene con un nombre legible que no se puede cambiar.</translation>
 	</message>
 	<message>
 		<source>intro-wizard-text3</source>
-		<translation>Se você possui um Keycard, armazene suas chaves nele para maior segurança.</translation>
+		<translation>¿Tienes una Keycard? Guarda tus claves en ella; la necesitarás para las transacciones</translation>
 	</message>
 	<message>
 		<source>intro-wizard-text4</source>
-		<translation>Proteja e criptografe suas chaves</translation>
+		<translation>Asegura y encripta tus claves</translation>
 	</message>
 	<message>
 		<source>intro-wizard-text6</source>
-		<translation>O Status notificará você sobre novas mensagens. Você pode editar suas preferências de notificação mais tarde nas configurações</translation>
+		<translation>Status te notificará sobre los nuevos mensajes. Puedes editar tus preferencias de notificación más adelante en la configuración</translation>
 	</message>
 	<message>
 		<source>intro-wizard-title-alt4</source>
-		<translation>Crie uma senha</translation>
+		<translation>Crea una contraseña</translation>
 	</message>
 	<message>
 		<source>intro-wizard-title-alt5</source>
-		<translation>Confirme sua senha</translation>
+		<translation>Confirma tu contraseña</translation>
 	</message>
 	<message>
 		<source>intro-wizard-title1</source>
-		<translation>Obtenha suas chaves</translation>
+		<translation>Obtén tus claves</translation>
 	</message>
 	<message>
 		<source>intro-wizard-title2</source>
-		<translation>Escolha um nome de bate-papo</translation>
+		<translation>Elige un nombre de chat</translation>
 	</message>
 	<message>
 		<source>intro-wizard-title3</source>
-		<translation>Escolha o armazenamento de chaves</translation>
+		<translation>Elegir almacenamiento de claves</translation>
 	</message>
 	<message>
 		<source>intro-wizard-title4</source>
-		<translation>Crie uma senha de 6 dígitos</translation>
+		<translation>Crear un código de acceso de 6 dígitos</translation>
 	</message>
 	<message>
 		<source>intro-wizard-title5</source>
-		<translation>Confirme a senha</translation>
+		<translation>Confirma la clave de acceso</translation>
 	</message>
 	<message>
 		<source>intro-wizard-title6</source>
-		<translation>Ativar notificações</translation>
+		<translation>Habilitar las notificaciones</translation>
 	</message>
 	<message>
 		<source>are-you-sure-to-cancel</source>
-		<translation>Você tem certeza que deseja cancelar?</translation>
+		<translation>¿Estas seguro que quieres cancelar?</translation>
 	</message>
 	<message>
 		<source>you-will-start-from-scratch</source>
-		<translation>Você começará do zero com um novo conjunto de chaves</translation>
+		<translation>Comenzarás desde cero con un nuevo set de claves</translation>
 	</message>
 	<message>
 		<source>invalid-address-qr-code</source>
-		<translation>O código QR escaneado não contém um endereço válido</translation>
+		<translation>El código QR escaneado no contiene una dirección válida</translation>
 	</message>
 	<message>
 		<source>invalid-format</source>
-		<translation>Formato Inválido 
- Deve ser {{format}}</translation>
+		<translation>Formato inválido 
+ Debe ser {{format}}</translation>
 	</message>
 	<message>
 		<source>invalid-key-confirm</source>
@@ -2611,7 +2611,7 @@ Toque nesta mensagem para definir sua senha e começar!</translation>
 	</message>
 	<message>
 		<source>invalid-key-content</source>
-		<translation>O banco de dados não pode ser criptografado porque um arquivo está corrompido. Seus fundos e a chave de bate-papo estão seguros. Outros dados, como suas conversas e contatos, não podem ser restaurados. O botão &quot;{{erase-multiaccounts-data-button-text}}&quot; removerá todos os outros dados e permitirá que você acesse seus fundos e envie mensagens</translation>
+		<translation>La base de datos no se puede encriptar porque el archivo está dañado. Tus fondos y llaves de chat están a salvo. Otros datos, como chats y contactos, no se podrán restaurar. El botón &quot;{{erase-multiaccounts-data-button-text}}&quot;, eliminará otros datos y te permitirá acceder a tus fondos y enviar mensajes</translation>
 	</message>
 	<message>
 		<source>invalid-number</source>
@@ -2619,99 +2619,99 @@ Toque nesta mensagem para definir sua senha e começar!</translation>
 	</message>
 	<message>
 		<source>invalid-pairing-password</source>
-		<translation>Senha de emparelhamento inválida</translation>
+		<translation>Contraseña de vinculación inválida</translation>
 	</message>
 	<message>
 		<source>invalid-range</source>
-		<translation>Formato inválido, deve estar entre {{min}} e {{max}}</translation>
+		<translation>Formato inválido, debe estar entre {{min}} y {{max}}</translation>
 	</message>
 	<message>
 		<source>invalid-username-or-key</source>
-		<translation>Nome de usuário ou chave de bate-papo inválida</translation>
+		<translation>Nombre de usuario o clave de chat no válidos</translation>
 	</message>
 	<message>
 		<source>join-me</source>
-		<translation>Junte-se a mim no Status: {{url}}</translation>
+		<translation>Ey, unite a Status: {{url}}</translation>
 	</message>
 	<message>
 		<source>join-a-community</source>
-		<translation>ou junte-se a uma comunidade</translation>
+		<translation>o únete a una comunidad</translation>
 	</message>
 	<message>
 		<source>http-gateway-error</source>
-		<translation>Opa, falha na solicitação!</translation>
+		<translation>¡Oops, la solicitud falló!</translation>
 	</message>
 	<message>
 		<source>sign-request-failed</source>
-		<translation>Não foi possível assinar a mensagem</translation>
+		<translation>No se pudo firmar el mensaje</translation>
 	</message>
 	<message>
 		<source>invite-friends</source>
-		<translation>Convide amigos</translation>
+		<translation>Invitar a amigos</translation>
 	</message>
 	<message>
 		<source>invite-people</source>
-		<translation>Convide pessoas</translation>
+		<translation>Invitar a otros</translation>
 	</message>
 	<message>
 		<source>invite-reward</source>
-		<translation>Ganhe criptomoedas para cada amigo que você convidar!</translation>
+		<translation>¡Gana criptomonedas por cada amigo que invites!</translation>
 	</message>
 	<message>
 		<source>invite-select-account</source>
-		<translation>Selecione uma conta para receber o seu bônus de indicação</translation>
+		<translation>Seleccioná una cuenta para recibir tu bono de referencia</translation>
 	</message>
 	<message>
 		<source>invited</source>
-		<translation>convidou</translation>
+		<translation>invitado</translation>
 	</message>
 	<message>
 		<source>invite-button</source>
-		<translation>Convidar</translation>
+		<translation>Invitá</translation>
 	</message>
 	<message>
 		<source>invite-receive-account</source>
-		<translation>Conta para receber o seu bônus de indicação</translation>
+		<translation>Cuenta para recibir tu bono de referencia</translation>
 	</message>
 	<message>
 		<source>how-it-works</source>
-		<translation>Como funciona</translation>
+		<translation>Cómo funciona</translation>
 	</message>
 	<message>
 		<source>invite-warning</source>
-		<translation>Esta promoção é válida apenas para usuários de um dispositivo Android, que não sejam residentes dos EUA. O amigo precisa confirmar a indicação dentro de 7 dias</translation>
+		<translation>Esta promoción solo es válida para usuarios de un dispositivo Android que no sean residentes de EE. UU. Un amigo debe confirmar la referencia en un plazo de 7 días.</translation>
 	</message>
 	<message>
 		<source>invite-instruction-first</source>
-		<translation>Você envia um link de convite exclusivo para seu amigo fazer o download e entrar no Status</translation>
+		<translation>Envías un enlace de invitación único a tu amigo para descargar y unirse a Status</translation>
 	</message>
 	<message>
 		<source>invite-instruction-second</source>
-		<translation>Seu amigo baixa o Status e cria uma conta (no Android)</translation>
+		<translation>Tu amigo descarga Status y crea una cuenta (en Android)</translation>
 	</message>
 	<message>
 		<source>invite-instruction-third</source>
-		<translation>É iniciada uma conversa com seu amigo, onde ele confirma sua indicação</translation>
+		<translation>Se inicia un chat con tu amigo, donde confirman tu referencia</translation>
 	</message>
 	<message>
 		<source>invite-instruction-fourth</source>
-		<translation>Você recebe seu bônus de indicação e seu amigo recebe o Pacote inicial</translation>
+		<translation>Vos recibís tu bono de referencia y tu amigo el Paquete de Bienvenida</translation>
 	</message>
 	<message>
 		<source>invite-instruction-fifth</source>
-		<translation>Você pode optar por resgatar seu bônus de indicação a qualquer momento.</translation>
+		<translation>Puede elegir canjear su bono de referencia en cualquier momento.</translation>
 	</message>
 	<message>
 		<source>invite-reward-you</source>
-		<translation>Você: </translation>
+		<translation>Vos:</translation>
 	</message>
 	<message>
 		<source>invite-reward-you-name</source>
-		<translation>Bônus de indicação</translation>
+		<translation>Bono de referencia</translation>
 	</message>
 	<message>
 		<source>invite-reward-you-description</source>
-		<translation>Convide um amigo e receba {{reward}} como bônus pela indicação. Utilize para comprar adesivos, um nome ENS e testar alguns DApps.</translation>
+		<translation>Invitá a un amigo y recibí {{reward}} como bono de referencia. Usalo para obtener stickers, un nombre ENS y probar dapps</translation>
 	</message>
 	<message>
 		<source>invite-reward-friend</source>
@@ -2719,143 +2719,143 @@ Toque nesta mensagem para definir sua senha e começar!</translation>
 	</message>
 	<message>
 		<source>invite-reward-friend-name</source>
-		<translation>Pacote Inicial</translation>
+		<translation>Paquete de Bienvenida</translation>
 	</message>
 	<message>
 		<source>invite-reward-friend-description</source>
-		<translation>Seu amigo receberá um Pacote Inicial que consiste em {{reward}} para começar</translation>
+		<translation>Tu amigo recibirá un Paquete de Bienvenida que consta de {{reward}} para comenzar</translation>
 	</message>
 	<message>
 		<source>invite-privacy-policy1</source>
-		<translation>Ao aceitar você concorda com o programa de indicação</translation>
+		<translation>Al aceptar, estás de acuerdo con el programa de referidos</translation>
 	</message>
 	<message>
 		<source>invite-privacy-policy2</source>
-		<translation>Termos e Condições.</translation>
+		<translation>Términos y Condiciones.</translation>
 	</message>
 	<message>
 		<source>invite-privacy-policy-public</source>
-		<translation>Você instalou o Status por meio de um link de indicação. Ao entrar nesta conversa, você confirma seu referenciador e concorda com os</translation>
+		<translation>Instalaste Status a través de un enlace de referido. Al unirte a este chat, atribuyes su referencia y acepta las</translation>
 	</message>
 	<message>
 		<source>invite-chat-name</source>
-		<translation>Indicação de amigo</translation>
+		<translation>Referencia de amigos</translation>
 	</message>
 	<message>
 		<source>invite-chat-starter-pack</source>
-		<translation>Pacote Inicial</translation>
+		<translation>Paquete de Bienvenida</translation>
 	</message>
 	<message>
 		<source>invite-chat-intro</source>
-		<translation>Você foi indicado por um amigo para participar do Status. Aqui estão algumas criptomoedas para você começar! Use-as para cadastrar um nome ENS ou comprar um pacote de adesivos</translation>
+		<translation>Fuiste referido por un amigo para unirte a Status. Acá tenés algunas criptomonedas para empezar! Usalas para registrar un nombre ENS o comprar un paquete de stickers</translation>
 	</message>
 	<message>
 		<source>invite-public-chat-home</source>
-		<translation>Convite de indicação</translation>
+		<translation>Invitación de referencia</translation>
 	</message>
 	<message>
 		<source>invite-public-chat-intro</source>
-		<translation>Aqui estão algumas criptomoedas para você começar! Use-as para registrar um nome ENS ou comprar um pacote de adesivos</translation>
+		<translation>¡Aquí tienes algunas criptomonedas para que comiences! Úselas para registrar un nombre ENS o comprar un paquete de stickers</translation>
 	</message>
 	<message>
 		<source>invite-chat-accept</source>
-		<translation>Aceitar</translation>
+		<translation>Aceptar</translation>
 	</message>
 	<message>
 		<source>invite-chat-pending</source>
-		<translation>Pendente</translation>
+		<translation>Pendiente</translation>
 	</message>
 	<message>
 		<source>invite-chat-accept-join</source>
-		<translation>Aceitar e participar</translation>
+		<translation>Aceptar y Unirse</translation>
 	</message>
 	<message>
 		<source>invite-chat-rule</source>
-		<translation>Aceitar também recompensará o seu amigo com um bônus de criptomoeda pela indicação</translation>
+		<translation>Si aceptás también recompensarás a tu amigo con un bono de referencia criptográfica</translation>
 	</message>
 	<message>
 		<source>redeem-now</source>
-		<translation>Resgatar agora</translation>
+		<translation>Canjear ahora</translation>
 	</message>
 	<message>
 		<source>redeem-amount</source>
-		<translation>{{quantity}} bônus disponíveis</translation>
+		<translation>{{quantity}} bonos disponibles</translation>
 	</message>
 	<message>
 		<source>redeem-success</source>
-		<translation>Resgate de bônus com sucesso!</translation>
+		<translation>¡Canje del bono exitoso!</translation>
 	</message>
 	<message>
 		<source>attribution-received</source>
-		<translation>{{attrib}} de {{max}} bônus recebidos</translation>
+		<translation>{{attrib}} de {{max}} bonos recibidos</translation>
 	</message>
 	<message>
 		<source>advertiser-starter-pack-title</source>
-		<translation>Pacote Inicial</translation>
+		<translation>Paquete de Bienvenida</translation>
 	</message>
 	<message>
 		<source>advertiser-starter-pack-description</source>
-		<translation>Aqui estão algumas criptografias para você começar! Use-as para obter adesivos, um nome ENS e experimentar os dapps</translation>
+		<translation>¡Acá tenés algunas criptomonedas para comenzar! Usalas para obtener pegatinas, un nombre ENS y probar dapps</translation>
 	</message>
 	<message>
 		<source>advertiser-title</source>
-		<translation>Privacidade por padrão</translation>
+		<translation>Privacidad por defecto</translation>
 	</message>
 	<message>
 		<source>advertiser-description</source>
-		<translation>Você descobriu o Status graças a um parceiro. Você se importa se o Status verificar seu endereço IP uma vez para que ele seja recompensado? Esta informação não será usada para mais nada e será removida completamente após 7 dias.</translation>
+		<translation>Descubriste Status gracias a un socio nuestro. ¿Podemos chequear tu IP para poder recompensarlo? Esta información no será usada para nada más, y será removida completamente después de 7 días</translation>
 	</message>
 	<message>
 		<source>advertiser-starter-pack-accept</source>
-		<translation>Aceitar</translation>
+		<translation>Aceptar</translation>
 	</message>
 	<message>
 		<source>advertiser-starter-pack-decline</source>
-		<translation>Recusar</translation>
+		<translation>Rechazar</translation>
 	</message>
 	<message>
 		<source>dapp-starter-pack-title</source>
-		<translation>Pacote Inicial</translation>
+		<translation>Paquete de Bienvenida</translation>
 	</message>
 	<message>
 		<source>dapp-starter-pack-description</source>
-		<translation>Aqui estão algumas criptografias para você começar! Use-o para obter adesivos, um nome ENS e experimente os dapps</translation>
+		<translation>¡Acá tenés algunas criptomonedas para comenzar! Usalas para obtener pegatinas, un nombre ENS y probar dapps</translation>
 	</message>
 	<message>
 		<source>dapp-starter-pack-accept</source>
-		<translation>Aceitar e Abrir</translation>
+		<translation>Aceptar y Abrir</translation>
 	</message>
 	<message>
 		<source>starter-pack-coming</source>
-		<translation>Pacote de iniciante vindo até você</translation>
+		<translation>El Paquete de Inicio viene en camino</translation>
 	</message>
 	<message>
 		<source>starter-pack-coming-description</source>
-		<translation>Pode levar de alguns minutos a horas</translation>
+		<translation>Puede tomar de unos minutos a horas</translation>
 	</message>
 	<message>
 		<source>starter-pack-received</source>
-		<translation>Pacote inicial recebido</translation>
+		<translation>Paquete de Bienvenida</translation>
 	</message>
 	<message>
 		<source>starter-pack-received-description</source>
-		<translation>Aqui estão algumas criptomoedas para você começar! Use-as para obter adesivos, um nome ENS e testar alguns dapps</translation>
+		<translation>¡Acá tenés algunas criptomonedas para comenzar! Usalas para obtener pegatinas, un nombre ENS y probar dapps</translation>
 	</message>
 	<message>
 		<source>join-group-chat</source>
-		<translation>Acessar grupo</translation>
+		<translation>Unirse al grupo</translation>
 	</message>
 	<message>
 		<source>join-group-chat-description</source>
-		<translation>{{username}} convidou você para ingressar no grupo {{group-name}}</translation>
+		<translation>{{username}} te invitó a unirte al grupo {{group-name}}</translation>
 	</message>
 	<message>
 		<source>joined-group-chat-description</source>
-		<translation>Você ingressou no {{group-name}} por convite de {{username}}</translation>
+		<translation>Te has unido a {{group-name}} desde la invitación de {{username}}</translation>
 	</message>
 	<message>
 		<source>key</source>
-		<translation>Chave</translation>
+		<translation>Clave</translation>
 	</message>
 	<message>
 		<source>keycard</source>
@@ -2863,226 +2863,226 @@ Toque nesta mensagem para definir sua senha e começar!</translation>
 	</message>
 	<message>
 		<source>keycard-access-reset</source>
-		<translation>O acesso ao Keycard foi redefinido</translation>
+		<translation>Acceso a la Keycard está restablecido</translation>
 	</message>
 	<message>
 		<source>keycard-can-use-with-new-passcode</source>
-		<translation>Você pode usar este cartão com sua nova senha</translation>
+		<translation>Puedes usar esta tarjeta con tu nuevo código de accesto</translation>
 	</message>
 	<message>
 		<source>keycard-applet-install-instructions</source>
-		<translation>Para instalar o applet, siga as instruções em https://github.com/status-im/keycard-cli#keycard-applet-installation</translation>
+		<translation>Para instalar el applet, sigue las instrucciones en https://github.com/status-im/keycard-cli#keycard-applet-installation</translation>
 	</message>
 	<message>
 		<source>keycard-blocked</source>
-		<translation>O keycard foi bloqueado. 
-Você precisa redefinir o cartão para continuar usando.</translation>
+		<translation>Keycard ha sido bloqueada. 
+ Necesitas reiniciar la tarjeta para continuar usándola.</translation>
 	</message>
 	<message>
 		<source>keycard-cancel-setup-text</source>
-		<translation>Isso cancelará a configuração do Keycard. É altamente recomendável concluir a configuração para usar o keycard. Deseja mesmo cancelar?</translation>
+		<translation>Esto cancelará la configuración de keycard. Se muy recomendable finalizar la configuración para usar keycard. ¿De verdad quieres cancelar?</translation>
 	</message>
 	<message>
 		<source>keycard-cancel-setup-title</source>
-		<translation>Operação perigosa</translation>
+		<translation>Operación peligrosa</translation>
 	</message>
 	<message>
 		<source>keycard-desc</source>
-		<translation>Tem um Keycard? Armazene suas chaves nele. Você precisará delas para as transações</translation>
+		<translation>¿Tienes una Keycard? Guarda tus claves allí; la necesitarás para las transacciones</translation>
 	</message>
 	<message>
 		<source>keycard-dont-ask-card</source>
-		<translation>Não peça o cartão para entrar</translation>
+		<translation>No pedir tarjeta para iniciar sesión</translation>
 	</message>
 	<message>
 		<source>keycard-reset-passcode</source>
-		<translation>Redefinir senha</translation>
+		<translation>Restablece el código de acceso</translation>
 	</message>
 	<message>
 		<source>keycard-factory-reset</source>
-		<translation>Retornar cartão para as configurações de fábrica</translation>
+		<translation>Restablecer la tarjeta a la configuración de fábrica</translation>
 	</message>
 	<message>
 		<source>keycard-factory-reset-title</source>
-		<translation>Tem certeza de que deseja redefinir os padrões de fábrica?</translation>
+		<translation>¿Estás seguro que quieres restablecer a las condiciones de fábrica?</translation>
 	</message>
 	<message>
 		<source>keycard-factory-reset-text</source>
-		<translation>Fazer isso excluirá qualquer frase mnemônica armazenada no cartão. Certifique-se de ter um backup da frase mnemônica que está usando com este Keycard.</translation>
+		<translation>Hacer esto eliminará cualquier mnemónico almacenado en la tarjeta. Asegúrate de tener una copia de seguridad de la frase mnemónica que ha estado usando con esta Keycard.</translation>
 	</message>
 	<message>
 		<source>keycard-enter-new-passcode</source>
-		<translation>Digite a nova senha {{step}} / 2</translation>
+		<translation>Ingresa el nuevo código de acceso {{step}}/2</translation>
 	</message>
 	<message>
 		<source>keycard-has-multiaccount-on-it</source>
-		<translation>Este cartão está cheio. Cada cartão pode conter um par de chaves principal</translation>
+		<translation>Esta tarjeta está llena. Cada tarjeta puede mantener un par de llaves principales</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-finishing-header</source>
-		<translation>Finalizando</translation>
+		<translation>Terminando</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-intro-header</source>
-		<translation>Armazene suas chaves no Keycard</translation>
+		<translation>Guarda tus claves en Keycard</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-intro-text</source>
-		<translation>Prepare-se, isso pode levar alguns minutos, mas é importante proteger sua conta</translation>
+		<translation>Prepárate, esto puede tomar unos minutos, pero es importante para asegurar tu cuenta</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-pairing-header</source>
-		<translation>Emparelhando o cartão...</translation>
+		<translation>Vinculando la tarjeta...</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-preparing-header</source>
-		<translation>Preparando o cartão...</translation>
+		<translation>Preparando la tarjeta...</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-puk-code-header</source>
-		<translation>Anote os códigos e
- guarde de forma segura</translation>
+		<translation>Escribe los códigos
+ y guárdalos de forma segura</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-recovery-phrase-description</source>
-		<translation>Você precisa dessa frase-semente para recuperar sua chave. Anote e mantenha sua frase-semente offline em segurança, separada deste dispositivo.</translation>
+		<translation>Necesitas esta frase semilla para obtener de nuevo tu clave. Anótala. Manténla segura, fuera de línea y separada de este dispositivo.</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-recovery-phrase-header</source>
-		<translation>Fazer backup da frase-semente</translation>
+		<translation>Respalda tu frase semilla</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-recovery-phrase-text</source>
-		<translation>Somente para você ver. Esta é a frase-semente mágica usada para gerar sua chave.</translation>
+		<translation>Sólo para tus ojos. Esta es la semilla mágica usada para generar tu clave.</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-start-header</source>
-		<translation>Segure o cartão na parte de trás 
- do seu telefone para começar</translation>
+		<translation>Manten la tarjeta en la parte posterior
+ de tu teléfono para iniciar</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-pin-text</source>
-		<translation>Você precisará criar uma senha de 6 dígitos que será usada para proteger o acesso ao seu Keycard.</translation>
+		<translation>Deberás crear un código de acceso de 6 dígitos que se utilizará para proteger tu Keycard.</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-mnemonic-text</source>
-		<translation>Você também precisará de um pedaço de papel e um lápis para escrever sua frase-semente.</translation>
+		<translation>También necesitarás un papel y un lápiz para escribir tu frase semilla.</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-start-step1</source>
-		<translation>Crie uma senha</translation>
+		<translation>Crea un código de acceso</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-start-step1-text</source>
-		<translation>Em torno de 1 minuto. Crie uma senha de 6 dígitos para criptografar suas chaves</translation>
+		<translation>Alrededor de 1 minuto. Crea un código de acceso de 6 dígitos para encriptar tus claves</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-start-step2</source>
-		<translation>Anote o PUK e o código de emparelhamento</translation>
+		<translation>Escribe el código de vinculación y PUK</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-start-step2-text</source>
-		<translation>Em torno de 1 minuto. Você vai precisar de um pedaço de papel e um lápis para isso</translation>
+		<translation>Alrededor de 1 minuto. Vas a necesitar un papel y un lápiz para eso</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-start-step3</source>
-		<translation>Faça backup da frase-semente</translation>
+		<translation>Respaldar la frase semilla</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-start-step3-text</source>
-		<translation>Em torno de 1 minuto. Também são necessários um pedaço de papel e um lápis</translation>
+		<translation>Alrededor de 1 minuto. También son necesarios un pedazo de papel y un lápiz.</translation>
 	</message>
 	<message>
 		<source>keycard-onboarding-start-text</source>
-		<translation>E mantenha o cartão em contato com o telefone
- durante a configuração. A configuração levará cerca de 4 minutos</translation>
+		<translation>Y manten el contacto entre la tarjeta y el teléfono
+ durante la configuración. La configuración tomará alrededor de 4 minutos</translation>
 	</message>
 	<message>
 		<source>keycard-recovery-intro-button-text</source>
-		<translation>Iniciar a recuperação</translation>
+		<translation>Iniciar la recuperación</translation>
 	</message>
 	<message>
 		<source>keycard-recovery-intro-header</source>
-		<translation>Recuperar chaves armazenadas no keycard</translation>
+		<translation>Recuperar claves almacenadas en Keycard</translation>
 	</message>
 	<message>
 		<source>keycard-recovery-intro-text</source>
-		<translation>Se você gerou chaves usando um keycard antes e agora quer usar estas chaves neste dispositivo</translation>
+		<translation>Si antes generaste claves con keycard y ahora deseas utilizarlas en este dispositivo</translation>
 	</message>
 	<message>
 		<source>keycard-recovery-no-key-header</source>
-		<translation>Não há nada para 
- recuperar aqui.</translation>
+		<translation>No hay nada que 
+recuperar aquí</translation>
 	</message>
 	<message>
 		<source>keycard-recovery-no-key-text</source>
-		<translation>Seu Keycard não tem nenhuma chave armazenada. Para usá-lo, gere uma nova chave e escolha seu Keycard para armazenar a chave</translation>
+		<translation>Tu Keycard no tiene ninguna clave almacenada en ella. Para usarla, genera una nueva clave y elige tu Keycard para almacenar la clave</translation>
 	</message>
 	<message>
 		<source>keycard-recovery-phrase-confirm-header</source>
-		<translation>Confirmar frase-semente</translation>
+		<translation>Confirmar frase semilla</translation>
 	</message>
 	<message>
 		<source>keycard-recovery-phrase-confirmation-text</source>
-		<translation>Você não terá uma segunda chance! Se você perder o acesso, por exemplo ao perder seu keycard, só poderá acessar suas chaves com sua frase-semente. Somente você tem sua frase-semente. Anote e mantenha sua frase-semente em segurança.</translation>
+		<translation>¡No tendrás una segunda oportunidad! Si pierdes acceso, por ejemplo al extraviar tu Keycard, solo podrás acceder a tus llaves con tu frase semilla. Nadie a parte de ti tiene tu frase semilla. Anótala. Mantenla guardada.</translation>
 	</message>
 	<message>
 		<source>keycard-recovery-phrase-confirmation-title</source>
-		<translation>Anotou a frase-semente?</translation>
+		<translation>¿Escribiste la frase semilla?</translation>
 	</message>
 	<message>
 		<source>keycard-recovery-success-header</source>
-		<translation>Suas chaves foram 
- recuperadas com sucesso</translation>
+		<translation>Tus claves han sido 
+ recuperadas con éxito</translation>
 	</message>
 	<message>
 		<source>keycard-redeem-title</source>
-		<translation>Resgatar para</translation>
+		<translation>Canjear a</translation>
 	</message>
 	<message>
 		<source>keycard-redeem-tx</source>
-		<translation>Resgatar bens</translation>
+		<translation>Canjea activos</translation>
 	</message>
 	<message>
 		<source>keycard-redeem-tx-desc</source>
-		<translation>Toque no cartão para assinar e receber bens</translation>
+		<translation>Toque con la tarjeta para firmar y recibir activos</translation>
 	</message>
 	<message>
 		<source>keycard-unauthorized-operation</source>
-		<translation>Você não está autorizado a realizar esta operação. 
- Por favor, utilize o cartão válido e tente novamente.</translation>
+		<translation>No estás autorizado a realizar esta operación.
+ Por favor, toca la tarjeta válida e inténtalo de nuevo.</translation>
 	</message>
 	<message>
 		<source>keycard-is-frozen-title</source>
-		<translation>O Keycard travou</translation>
+		<translation>La Keycard está congelada</translation>
 	</message>
 	<message>
 		<source>keycard-is-frozen-details</source>
-		<translation>Para proteger os seus bens, o seu cartão travou. Redefina o acesso ao cartão para desbloquear e enviar transações. Você pode fazer isso com seu PUK ou seu mnemônico.</translation>
+		<translation>Para proteger tus activos, tu tarjeta está congelada. Restablece el acceso a la tarjeta para desbloquear llaves y enviar transacciones. Crea un nuevo código de acceso e ingrese su PUK para acceder a su(s) cuenta(s) en esta tarjeta</translation>
 	</message>
 	<message>
 		<source>keycard-is-frozen-reset</source>
-		<translation>Reiniciar com o PUK</translation>
+		<translation>Restablece el acceso a la tarjeta</translation>
 	</message>
 	<message>
 		<source>keycard-is-frozen-factory-reset</source>
-		<translation>Redefinir com mnemônica</translation>
+		<translation>Restablecer con mnemónico</translation>
 	</message>
 	<message>
 		<source>your-card-is-frozen</source>
-		<translation>Seu Keycard travou. Redefinir acesso ao cartão</translation>
+		<translation>Tu Keycard está congelada. Restablece el acceso a la tarjeta</translation>
 	</message>
 	<message>
 		<source>keycard-is-blocked-title</source>
-		<translation>O Keycard está bloqueado</translation>
+		<translation>La Keycard está bloqueada</translation>
 	</message>
 	<message>
 		<source>keycard-is-blocked-details</source>
-		<translation>Você não pode mais usar este cartão para acessar ou assinar esta conta. Houve muitas tentativas falhas de senha e PUK.</translation>
+		<translation>Ya no puedes usar esta tarjeta para acceder o firmar esta cuenta. Ha habido demasiados intentos fallidos de código de acceso y PUK.</translation>
 	</message>
 	<message>
 		<source>keycard-is-blocked-instructions</source>
-		<translation>Para acessar sua conta, você precisará redefinir seu cartão para os padrões de fábrica. Toque no botão abaixo para iniciar o procedimento. Você precisará da sua frase-semente.</translation>
+		<translation>Para acceder a tu cuenta, re-instala Status y usa una nueva Keycard, usa una billetera diferente o reinicia Keycard manualmente.</translation>
 	</message>
 	<message>
 		<source>language</source>
@@ -3090,31 +3090,31 @@ Você precisa redefinir o cartão para continuar usando.</translation>
 	</message>
 	<message>
 		<source>learn-more</source>
-		<translation>Saiba mais</translation>
+		<translation>Aprende más</translation>
 	</message>
 	<message>
 		<source>learn-more-about-keycard</source>
-		<translation>Saiba mais sobre o Keycard </translation>
+		<translation>Más información sobre Keycard</translation>
 	</message>
 	<message>
 		<source>leave</source>
-		<translation>Sair</translation>
+		<translation>Salir</translation>
 	</message>
 	<message>
 		<source>joined</source>
-		<translation>Entrou</translation>
+		<translation>Unido</translation>
 	</message>
 	<message>
 		<source>leave-group</source>
-		<translation>Sair do grupo</translation>
+		<translation>Salir del grupo</translation>
 	</message>
 	<message>
 		<source>left</source>
-		<translation>saiu</translation>
+		<translation>salió</translation>
 	</message>
 	<message>
 		<source>lets-go</source>
-		<translation>Vamos lá</translation>
+		<translation>Vamos</translation>
 	</message>
 	<message>
 		<source>les-ulc</source>
@@ -3122,31 +3122,31 @@ Você precisa redefinir o cartão para continuar usando.</translation>
 	</message>
 	<message>
 		<source>linked-on</source>
-		<translation>Vinculado em {{date}}</translation>
+		<translation>Vinculado en {{date}}</translation>
 	</message>
 	<message>
 		<source>load-messages-before</source>
-		<translation>antes de {{date}}</translation>
+		<translation>antes del {{date}}</translation>
 	</message>
 	<message>
 		<source>load-more-messages</source>
-		<translation>↓ Buscar mais mensagens</translation>
+		<translation>↓ Recuperar más mensajes</translation>
 	</message>
 	<message>
 		<source>load-more-timeline</source>
-		<translation>↓ Buscar mais</translation>
+		<translation>↓ Obtener más</translation>
 	</message>
 	<message>
 		<source>loading</source>
-		<translation>Carregando...</translation>
+		<translation>Cargando...</translation>
 	</message>
 	<message>
 		<source>log-level</source>
-		<translation>Nível de registro</translation>
+		<translation>Nivel de registro</translation>
 	</message>
 	<message>
 		<source>log-level-settings</source>
-		<translation>Configurações de nível de registro</translation>
+		<translation>Ajustes del nivel de registro</translation>
 	</message>
 	<message>
 		<source>logging</source>
@@ -3154,68 +3154,67 @@ Você precisa redefinir o cartão para continuar usando.</translation>
 	</message>
 	<message>
 		<source>logging-enabled</source>
-		<translation>Registro ativado?</translation>
+		<translation>¿Registro habilitado?</translation>
 	</message>
 	<message>
 		<source>login-pin-description</source>
-		<translation>Digite seu código de acesso de 6 dígitos para desbloquear suas chaves</translation>
+		<translation>Ingresa tu código de acceso de 6 dígitos para desbloquear tus llaves</translation>
 	</message>
 	<message>
 		<source>logout</source>
-		<translation>Sair</translation>
+		<translation>Cerrar sesión</translation>
 	</message>
 	<message>
 		<source>logout-app-content</source>
-		<translation>A conta será desconectada. Quando você a desbloquear novamente, a rede selecionada será usada</translation>
+		<translation>Se cerrará la sesión de la cuenta. Cuando lo desbloquees de nuevo, se utilizará la red seleccionada</translation>
 	</message>
 	<message>
 		<source>logout-are-you-sure</source>
-		<translation>Você tem certeza que quer 
- sair?</translation>
+		<translation>¿Seguro que quieres cerrar la sesión?</translation>
 	</message>
 	<message>
 		<source>logout-title</source>
-		<translation>Sair?</translation>
+		<translation>¿Cerrar sesión?</translation>
 	</message>
 	<message>
 		<source>logout-key-management</source>
-		<translation>Você precisa se desconectar para acessar o gerenciamento de chaves.</translation>
+		<translation>Es necesario cerrar la sesión para acceder a la gestión de claves.</translation>
 	</message>
 	<message>
 		<source>looking-for-cards</source>
-		<translation>Procurando cartões…</translation>
+		<translation>Buscando tarjetas...</translation>
 	</message>
 	<message>
 		<source>lost-connection</source>
-		<translation>Conexão perdida</translation>
+		<translation>Conexión perdida</translation>
 	</message>
 	<message>
 		<source>mailserver-address</source>
-		<translation>Endereço do nó do Status</translation>
+		<translation>Dirección del nodo de Status</translation>
 	</message>
 	<message>
 		<source>mailserver-automatic</source>
-		<translation>Seleção automática</translation>
+		<translation>Selección automática</translation>
 	</message>
 	<message>
 		<source>mailserver-automatic-switch-explanation</source>
-		<translation>Escolha o nó da Status mais rápido disponível</translation>
+		<translation>Elija el nodo de Status más rápido disponible</translation>
 	</message>
 	<message>
 		<source>mailserver-connection-error</source>
-		<translation>Não foi possível conectar ao nó do Status</translation>
+		<translation>No se pudo conectar al nodo de Status</translation>
 	</message>
 	<message>
 		<source>mailserver-details</source>
-		<translation>Detalhes do nó do Status</translation>
+		<translation>Detalles del nodo de Status</translation>
 	</message>
 	<message>
 		<source>mailserver-error-content</source>
-		<translation>O nó do Status selecionado não pôde ser localizado.</translation>
+		<translation>No se pudo acceder al nodo de Status que seleccionó.</translation>
 	</message>
 	<message>
 		<source>mailserver-error-title</source>
-		<translation>Erro ao conectar o nó do Status</translation>
+		<translation>Error al conectarse al nodo de Status</translation>
 	</message>
 	<message>
 		<source>mailserver-format</source>
@@ -3223,89 +3222,89 @@ Você precisa redefinir o cartão para continuar usando.</translation>
 	</message>
 	<message>
 		<source>mailserver-pick-another</source>
-		<translation>Escolha outro nó do Status</translation>
+		<translation>Elija otro nodo de Status</translation>
 	</message>
 	<message>
 		<source>mailserver-reconnect</source>
-		<translation>Não foi possível conectar ao nó do Status. Toque para reconectar</translation>
+		<translation>No se pudo conectar con el nodo de Status. Pulse para reconectar</translation>
 	</message>
 	<message>
 		<source>mailserver-request-error-content</source>
-		<translation>O seguinte erro foi retornado pelo nó do Status: {{error}}</translation>
+		<translation>El siguiente error fue devuelto por el nodo de Status: {{error}}</translation>
 	</message>
 	<message>
 		<source>mailserver-request-error-status</source>
-		<translation>Um erro ocorreu ao buscar o histórico, verifique os registros para obter detalhes</translation>
+		<translation>Se produjo un error al recuperar el historial, verifica los registros para obtener más detalles</translation>
 	</message>
 	<message>
 		<source>mailserver-request-error-title</source>
-		<translation>Erro de comunicação com o nó da Status</translation>
+		<translation>Error de solicitud del nodo de Status</translation>
 	</message>
 	<message>
 		<source>mailserver-request-retry</source>
-		<translation>Solicitar nova tentativa</translation>
+		<translation>Reintentar solicitud</translation>
 	</message>
 	<message>
 		<source>mailserver-retry</source>
-		<translation>Tente novamente</translation>
+		<translation>Reintentar</translation>
 	</message>
 	<message>
 		<source>main-currency</source>
-		<translation>Moeda principal</translation>
+		<translation>Moneda principal</translation>
 	</message>
 	<message>
 		<source>main-networks</source>
-		<translation>Redes principais</translation>
+		<translation>Redes principales</translation>
 	</message>
 	<message>
 		<source>main-wallet</source>
-		<translation>Carteira principal</translation>
+		<translation>Billetera Principal</translation>
 	</message>
 	<message>
 		<source>mainnet-network</source>
-		<translation>Rede principal</translation>
+		<translation>Red principal</translation>
 	</message>
 	<message>
 		<source>make-admin</source>
-		<translation>Tornar-se administrador</translation>
+		<translation>Hacer admin</translation>
 	</message>
 	<message>
 		<source>manage-keys-and-storage</source>
-		<translation>Gerenciar chaves e armazenamento</translation>
+		<translation>Administrar las claves y el almacenamiento</translation>
 	</message>
 	<message>
 		<source>mark-all-read</source>
-		<translation>Marcar todas como lidas</translation>
+		<translation>Marcar todo como leído</translation>
 	</message>
 	<message numerus="yes">
 		<source>members</source>
 		<translation>
-			<numerusform>1 membro</numerusform>
-			<numerusform>{{count}} membros</numerusform>
+			<numerusform>1 miembro</numerusform>
+			<numerusform>{{count}} miembros</numerusform>
 		</translation>
 	</message>
 	<message numerus="yes">
 		<source>members-active</source>
 		<translation>
-			<numerusform>1 membro</numerusform>
-			<numerusform>{{count}} membros</numerusform>
+			<numerusform>1 miembro</numerusform>
+			<numerusform>{{count}} miembros</numerusform>
 		</translation>
 	</message>
 	<message>
 		<source>members-active-none</source>
-		<translation>sem membros</translation>
+		<translation>no hay miembros</translation>
 	</message>
 	<message>
 		<source>members-title</source>
-		<translation>Membros</translation>
+		<translation>Miembros</translation>
 	</message>
 	<message>
 		<source>message</source>
-		<translation>Mensagem</translation>
+		<translation>Mensaje</translation>
 	</message>
 	<message>
 		<source>message-not-sent</source>
-		<translation>Mensagem não enviada</translation>
+		<translation>Mensaje no enviado</translation>
 	</message>
 	<message>
 		<source>message-options-cancel</source>
@@ -3317,364 +3316,364 @@ Você precisa redefinir o cartão para continuar usando.</translation>
 	</message>
 	<message>
 		<source>replying-to</source>
-		<translation>Respondendo a {{author}}</translation>
+		<translation>Respondiendo a {{author}}</translation>
 	</message>
 	<message>
 		<source>data-syncing</source>
-		<translation>Sincronização de dados</translation>
+		<translation>Sincronización de datos</translation>
 	</message>
 	<message>
 		<source>messages</source>
-		<translation>Mensagens</translation>
+		<translation>Mensajes</translation>
 	</message>
 	<message>
 		<source>chat-is-a-contact</source>
-		<translation>Contato</translation>
+		<translation>Contacto</translation>
 	</message>
 	<message>
 		<source>chat-is-not-a-contact</source>
-		<translation>Não é um contato</translation>
+		<translation>No es contacto</translation>
 	</message>
 	<message>
 		<source>might-break</source>
-		<translation>Pode quebrar alguns ÐApps</translation>
+		<translation>Puede que se rompan algunas ÐApps</translation>
 	</message>
 	<message>
 		<source>migrations-failed-content</source>
 		<translation>{{message}} 
- versão do esquema: inicial {{initial-version}} , atual {{current-version}} , última {{last-version}} 
+ versión del esquema: inicial {{initial-version}}, actual {{current-version}} , último {{last-version}} 
 
-Ocorreu um erro no banco de dados. Seus fundos e chave de bate-papo estão seguros. Outros dados, como bate-papos e contatos, não podem ser restaurados. O botão &quot;{{erase-multiaccounts-data-button-text}}&quot; irá remover todos os outros dados e permitir que você acesse seus fundos e envie mensagens.</translation>
+Ocurrió un problema de base de datos. Tus fondos y la llave de chat están a salvo. Otros datos, como chats y contactos, no se podrán recuperar. Presionar el botón {{erase-multiaccounts-data-button-text}}&quot; eliminará el resto de datos y te permitirá acceder a tus fondos y enviar mensajes.</translation>
 	</message>
 	<message>
 		<source>mobile-network-ask-me</source>
-		<translation>Pergunte-me quando estiver na rede móvel</translation>
+		<translation>Pregúntarme cuando esté en la red móvil</translation>
 	</message>
 	<message>
 		<source>mobile-network-continue-syncing</source>
-		<translation>Continuar a sincronizar</translation>
+		<translation>Continuar sincronizando</translation>
 	</message>
 	<message>
 		<source>mobile-network-continue-syncing-details</source>
-		<translation>Você pode alterar isso mais tarde nas configurações</translation>
+		<translation>Puedes cambiar esto más adelante en los ajustes</translation>
 	</message>
 	<message>
 		<source>mobile-network-go-to-settings</source>
-		<translation>Ir para configurações</translation>
+		<translation>Ir a ajustes</translation>
 	</message>
 	<message>
 		<source>mobile-network-settings</source>
-		<translation>Dados móveis</translation>
+		<translation>Datos móviles</translation>
 	</message>
 	<message>
 		<source>mobile-network-sheet-configure</source>
-		<translation>Você pode configurar a sincronização com mais 
-detalhes em</translation>
+		<translation>Puedes configurar la sincronización en más 
+detalle en</translation>
 	</message>
 	<message>
 		<source>mobile-network-sheet-offline</source>
-		<translation>Sem Wi-Fi, sincronização de mensagens desativada.</translation>
+		<translation>Sin Wi-Fi, la sincronización de mensajes está deshabilitada.</translation>
 	</message>
 	<message>
 		<source>mobile-network-sheet-offline-details</source>
-		<translation>A sincronização usando a rede móvel está desativada</translation>
+		<translation>La sincronización mediante la red móvil está desactivada</translation>
 	</message>
 	<message>
 		<source>mobile-network-sheet-remember-choice</source>
-		<translation>Lembrar a minha escolha</translation>
+		<translation>Recuerda mi elección</translation>
 	</message>
 	<message>
 		<source>mobile-network-sheet-settings</source>
-		<translation>configurações</translation>
+		<translation>ajustes</translation>
 	</message>
 	<message>
 		<source>mobile-network-start-syncing</source>
-		<translation>Iniciar sincronização</translation>
+		<translation>Iniciar la sincronización</translation>
 	</message>
 	<message>
 		<source>mobile-network-stop-syncing</source>
-		<translation>Parar de sincronizar</translation>
+		<translation>Detener la sincronización</translation>
 	</message>
 	<message>
 		<source>mobile-network-stop-syncing-details</source>
-		<translation>Está conectado ao Wi-Fi?</translation>
+		<translation>¿Hasta que se conecta a Wi-Fi?</translation>
 	</message>
 	<message>
 		<source>mobile-network-use-mobile</source>
-		<translation>Utilizar dados móveis</translation>
+		<translation>Usar datos móviles</translation>
 	</message>
 	<message>
 		<source>mobile-network-use-mobile-data</source>
-		<translation>O Status usa muitos dados ao sincronizar bate-papos e carteira.</translation>
+		<translation>Status utiliza muchos datos al sincronizar los chats y la billetera.</translation>
 	</message>
 	<message>
 		<source>mobile-network-use-wifi</source>
-		<translation>Somente Wi-Fi</translation>
+		<translation>Sólo Wi-Fi</translation>
 	</message>
 	<message>
 		<source>mobile-syncing-sheet-details</source>
-		<translation>O Status usa muitos dados ao sincronizar bate-papos e carteira.</translation>
+		<translation>Status utiliza muchos datos al sincronizar los chats y la billetera.</translation>
 	</message>
 	<message>
 		<source>mobile-syncing-sheet-title</source>
-		<translation>Sincronizar usando dados móveis?</translation>
+		<translation>¿Sincronizar usando los datos del móvil?</translation>
 	</message>
 	<message>
 		<source>more</source>
-		<translation>mais</translation>
+		<translation>más</translation>
 	</message>
 	<message>
 		<source>multiaccount-exists-title</source>
-		<translation>Já existem chaves para esta conta</translation>
+		<translation>Las llaves para esta cuenta ya existen</translation>
 	</message>
 	<message>
 		<source>multiaccount-exists-content</source>
-		<translation>Já existem chaves para esta conta e não podem ser adicionadas novamente. Se você perdeu sua senha, código de acesso ou Keycard, desinstale o aplicativo, reinstale e acesse suas chaves inserindo sua frase-semente</translation>
+		<translation>Las llaves para esta cuenta ya existen y no se pueden añadir de nuevo. Si perdiste tu contraseña, código de acceso o Keycard, desinstala la app, reinstálala y accede insertando tu frase semilla</translation>
 	</message>
 	<message>
 		<source>multiaccounts-recover-enter-phrase-text</source>
-		<translation>Digite 12, 15, 18, 21 ou 24 palavras. 
-Separe as palavras por um único espaço.</translation>
+		<translation>Ingresa 12, 15, 18, 21 o 24 palabras. 
+ Separa las palabras por un solo espacio.</translation>
 	</message>
 	<message>
 		<source>multiaccounts-recover-enter-phrase-title</source>
-		<translation>Digite sua frase-semente</translation>
+		<translation>Ingresa tu frase semilla</translation>
 	</message>
 	<message>
 		<source>name</source>
-		<translation>Nome</translation>
+		<translation>Nombre</translation>
 	</message>
 	<message>
 		<source>name-of-token</source>
-		<translation>O nome do seu token</translation>
+		<translation>El nombre de tu token</translation>
 	</message>
 	<message>
 		<source>need-help</source>
-		<translation>Precisa de ajuda?</translation>
+		<translation>¿Necesitas ayuda?</translation>
 	</message>
 	<message>
 		<source>glossary</source>
-		<translation>Glossário</translation>
+		<translation>Glosario</translation>
 	</message>
 	<message>
 		<source>account-title</source>
-		<translation>Conta</translation>
+		<translation>Cuenta</translation>
 	</message>
 	<message>
 		<source>account-content</source>
-		<translation>Você pode comparar contas no Status com contas bancárias. Como uma conta bancária, uma conta normalmente possui um endereço e um saldo. Você usa essa conta para realizar transações no Ethereum. Você pode ter várias contas na sua carteira. Todas acessadas desbloqueando o Status.</translation>
+		<translation>Puedes comparar las cuentas en Status con las cuentas bancarias. Al igual que una cuenta bancaria, una cuenta suele tener una dirección y un saldo; se utiliza esta cuenta para realizar transacciones con Ethereum. Puedes tener varias cuentas en tu billetera. Todas accedidas en Status.</translation>
 	</message>
 	<message>
 		<source>chat-key-title</source>
-		<translation>Chave de bate-papo</translation>
+		<translation>Clave de chat</translation>
 	</message>
 	<message>
 		<source>chat-key-content</source>
-		<translation>As mensagens no protocolo de bate-papo Status são enviadas e recebidas usando chaves de criptografia. A chave de bate-papo público é uma sequência de caracteres que você compartilha com outras pessoas para que elas possam enviar mensagens para você no Status.</translation>
+		<translation>Los mensajes en el protocolo de chat de Status se envían y reciben utilizando claves de encriptación. La clave pública de chat es una cadena de caracteres que compartes con otros para que puedan enviarte mensajes en Status.</translation>
 	</message>
 	<message>
 		<source>chat-name-title</source>
-		<translation>Nome no chat</translation>
+		<translation>Nombre del chat</translation>
 	</message>
 	<message>
 		<source>chat-name-content</source>
-		<translation>Três palavras aleatórias, derivadas algoritmicamente da sua chave de bate-papo e usadas como pseudônimo padrão no bate-papo. Os nomes de bate-papo são completamente únicos; nenhum outro usuário pode ter as mesmas três palavras.</translation>
+		<translation>Tres palabras aleatorias, derivadas algorítmicamente de tu clave de chat y utilizadas como tu alias predeterminado en el chat. Los nombres de los chats son completamente únicos; ningún otro usuario puede tener las mismas tres palabras.</translation>
 	</message>
 	<message>
 		<source>ens-name-title</source>
-		<translation>Nome ENS</translation>
+		<translation>Nombre ENS</translation>
 	</message>
 	<message>
 		<source>ens-name-content</source>
-		<translation>Pseudônimo personalizado para sua chave de bate-papo que você pode cadastrar usando o Ethereum Name Service. Os nomes do ENS são nomes de usuário descentralizados.</translation>
+		<translation>Alias personalizado para tu clave de chat que puedes registrar utilizando Ethereum Name Service. Los nombres ENS son nombres de usuario descentralizados.</translation>
 	</message>
 	<message>
 		<source>mailserver-title</source>
-		<translation>Nó de mensagem Status</translation>
+		<translation>Nodo de Status</translation>
 	</message>
 	<message>
 		<source>mailserver-content</source>
-		<translation>Um nó na rede Status que encaminha e armazena mensagens por até 30 dias.</translation>
+		<translation>Un nodo en la red de Status que enruta y almacena mensajes, hasta por 30 días.</translation>
 	</message>
 	<message>
 		<source>peer-title</source>
-		<translation>Par</translation>
+		<translation>Peer</translation>
 	</message>
 	<message>
 		<source>peer-content</source>
-		<translation>Um dispositivo conectado à rede de bate-papo Status. Cada usuário pode representar um ou mais pares, dependendo do número de dispositivos.</translation>
+		<translation>Un dispositivo conectado a la red de chat de Status. Cada usuario puede representar uno o más peers, dependiendo de su número de dispositivos.</translation>
 	</message>
 	<message>
 		<source>seed-phrase-title</source>
-		<translation>Frase-semente</translation>
+		<translation>Frase Semilla</translation>
 	</message>
 	<message>
 		<source>seed-phrase-content</source>
-		<translation>Um conjunto de palavras fáceis de ler, selecionadas aleatoriamente na lista padrão BIP39 e usadas para recuperar ou acessar sua conta Ethereum em outras carteiras e dispositivos. Também chamada de &quot;frase mnemônica&quot;, &quot;frase de recuperação&quot; ou &quot;backup de carteira&quot; em todo o ecossistema de criptomoeda. A maioria dos aplicativos de criptomoeda usa esse mesmo padrão para gerar contas.</translation>
+		<translation>Un set de palabras fáciles de leer, seleccionadas al azar de la lista estándar BIP39 y utilizadas para recuperar o acceder a tu cuenta de Ethereum en otras billeteras y dispositivos. También se conoce como &quot;frase mnemónica&quot;, &quot;frase de recuperación&quot; o &quot;copia de seguridad de billetera&quot; en todo el cripto ecosistema. La mayoría de las cripto apps usan este mismo estándar para generar cuentas.</translation>
 	</message>
 	<message>
 		<source>wallet-key-title</source>
-		<translation>Endereço da conta</translation>
+		<translation>Dirección de la cuenta</translation>
 	</message>
 	<message>
 		<source>wallet-key-content</source>
-		<translation>Um endereço hexadecimal de 64 caracteres baseado no padrão Ethereum e começando com 0x. Para o público, o endereço da sua conta é compartilhado com outras pessoas quando você deseja receber fundos. Também chamado de &quot;endereço Ethereum&quot; ou &quot;endereço da carteira&quot;.</translation>
+		<translation>Una dirección hexadecimal de 64 caracteres basada en el estándar Ethereum y que comienza con 0x. De cara al público, tu clave de billetera se comparte con otros cuando deseas recibir fondos. También se conoce como &quot;dirección de Ethereum&quot; o &quot;dirección de billetera&quot;.</translation>
 	</message>
 	<message>
 		<source>buy-crypto-title</source>
-		<translation>Parece que sua carteira está vazia</translation>
+		<translation>Parece que tu billetera está vacía</translation>
 	</message>
 	<message>
 		<source>buy-crypto-description</source>
-		<translation>Encontre um dapp para comprar criptomoedas agora</translation>
+		<translation>Encuentre una dapp para comprar cripto ahora</translation>
 	</message>
 	<message>
 		<source>buy-crypto</source>
-		<translation>Comprar criptomoedas</translation>
+		<translation>Comprar criptomonedas</translation>
 	</message>
 	<message>
 		<source>buy-crypto-choose-a-service</source>
-		<translation>Escolha um serviço que você gostaria de utilizar para comprar criptomoedas</translation>
+		<translation>Elige un servicio que quieras usar para comprar criptomonedas</translation>
 	</message>
 	<message>
 		<source>buy-crypto-leaving</source>
-		<translation>Você está saindo do Status e entrando em um site de terceiros para concluir sua compra</translation>
+		<translation>Estás saliendo de Status y entrando en un sitio web de terceros para completar tu compra</translation>
 	</message>
 	<message>
 		<source>opening-buy-crypto</source>
-		<translation>Abrindo {{site}}...</translation>
+		<translation>Abriendo {{site}} ...</translation>
 	</message>
 	<message>
 		<source>network</source>
-		<translation>Rede</translation>
+		<translation>Red</translation>
 	</message>
 	<message>
 		<source>network-chain</source>
-		<translation>Cadeia de rede</translation>
+		<translation>Cadena de la red</translation>
 	</message>
 	<message>
 		<source>network-details</source>
-		<translation>Detalhes da rede</translation>
+		<translation>Detalles de red</translation>
 	</message>
 	<message>
 		<source>network-info</source>
-		<translation>Informações da rede</translation>
+		<translation>Información de la red</translation>
 	</message>
 	<message>
 		<source>network-fee</source>
-		<translation>Taxa de rede</translation>
+		<translation>Tarifa de la red</translation>
 	</message>
 	<message>
 		<source>network-id</source>
-		<translation>ID de rede</translation>
+		<translation>Identidad de la red</translation>
 	</message>
 	<message>
 		<source>network-invalid-network-id</source>
-		<translation>O ID da rede especificado não corresponde ao ID da rede pelo URL RPC</translation>
+		<translation>El id de red especificado no corresponde al id de red por la url de RPC</translation>
 	</message>
 	<message>
 		<source>network-invalid-status-code</source>
-		<translation>Código de status inválido: {{code}}</translation>
+		<translation>Código de estado inválido: {{code}}</translation>
 	</message>
 	<message>
 		<source>network-invalid-url</source>
-		<translation>URL da rede é inválida</translation>
+		<translation>La URL de la red no es válida</translation>
 	</message>
 	<message>
 		<source>network-settings</source>
-		<translation>Configurações de rede</translation>
+		<translation>Ajustes de la red</translation>
 	</message>
 	<message>
 		<source>new</source>
-		<translation>Novo</translation>
+		<translation>Nuevo</translation>
 	</message>
 	<message>
 		<source>new-chat</source>
-		<translation>Nova conversa</translation>
+		<translation>Nuevo chat</translation>
 	</message>
 	<message>
 		<source>new-contact</source>
-		<translation>Novo contato</translation>
+		<translation>Nuevo contacto</translation>
 	</message>
 	<message>
 		<source>new-contract</source>
-		<translation>Novo Contrato</translation>
+		<translation>Nuevo contrato</translation>
 	</message>
 	<message>
 		<source>new-group</source>
-		<translation>Novo grupo</translation>
+		<translation>Nuevo grupo</translation>
 	</message>
 	<message>
 		<source>new-group-chat</source>
-		<translation>Novo grupo de bate-papo</translation>
+		<translation>Nuevo grupo de chat</translation>
 	</message>
 	<message>
 		<source>new-network</source>
-		<translation>Nova rede</translation>
+		<translation>Nueva red</translation>
 	</message>
 	<message>
 		<source>new-pin-description</source>
-		<translation>Digite o novo código de acesso de 6 dígitos</translation>
+		<translation>Ingresa el nuevo código de acceso de 6 dígitos</translation>
 	</message>
 	<message>
 		<source>new-puk-description</source>
-		<translation>Insira o novo PUK de 12 dígitos</translation>
+		<translation>Ingrese un nuevo PUK de 12 dígitos</translation>
 	</message>
 	<message>
 		<source>new-public-group-chat</source>
-		<translation>Participar do bate-papo público</translation>
+		<translation>Unirte a chat público</translation>
 	</message>
 	<message>
 		<source>next</source>
-		<translation>Próximo</translation>
+		<translation>Siguiente</translation>
 	</message>
 	<message>
 		<source>no</source>
-		<translation>Não</translation>
+		<translation>No</translation>
 	</message>
 	<message>
 		<source>no-collectibles</source>
-		<translation>Não há colecionáveis disponíveis</translation>
+		<translation>No hay coleccionables disponibles</translation>
 	</message>
 	<message>
 		<source>no-contacts</source>
-		<translation>Você ainda não tem contatos</translation>
+		<translation>Aún no hay contactos</translation>
 	</message>
 	<message>
 		<source>no-keycard-applet-on-card</source>
-		<translation>Não há applet Keycard no cartão</translation>
+		<translation>No hay applet de Keycard en la tarjeta</translation>
 	</message>
 	<message>
 		<source>no-messages</source>
-		<translation>Nenhuma mensagem</translation>
+		<translation>No hay mensajes</translation>
 	</message>
 	<message>
 		<source>no-pairing-slots-available</source>
-		<translation>Este cartão já está emparelhado com 5 dispositivos e não pode ser emparelhado com este. Use um dos dispositivos emparelhados, faça login com este cartão e libere uma porta de emparelhamento no cartão</translation>
+		<translation>Esta tarjeta ya está vinculada con 5 dispositivos y no puede ser vinculada con éste dispositivo. Por favor, utiliza uno de los dispositivos vinculados, inicia sesión con esta tarjeta y libera los espacios de vinculación en la tarjeta</translation>
 	</message>
 	<message>
 		<source>no-result</source>
-		<translation>Nenhum resultado</translation>
+		<translation>Sin resultados</translation>
 	</message>
 	<message>
 		<source>no-tokens-found</source>
-		<translation>Nenhum token encontrado</translation>
+		<translation>No se encontraron tokens</translation>
 	</message>
 	<message>
 		<source>node-info</source>
-		<translation>Informação do nó</translation>
+		<translation>Información del nodo</translation>
 	</message>
 	<message>
 		<source>node-address</source>
-		<translation>Endereço do nó</translation>
+		<translation>Dirección del nodo</translation>
 	</message>
 	<message>
 		<source>node-details</source>
-		<translation>Detalhes do nó</translation>
+		<translation>Detalles de nodo</translation>
 	</message>
 	<message>
 		<source>node-version</source>
-		<translation>Versão do nó</translation>
+		<translation>Versión de nodo</translation>
 	</message>
 	<message>
 		<source>nonce</source>
@@ -3682,75 +3681,75 @@ Separe as palavras por um único espaço.</translation>
 	</message>
 	<message>
 		<source>none</source>
-		<translation>Nenhum</translation>
+		<translation>Ninguno</translation>
 	</message>
 	<message>
 		<source>not-applicable</source>
-		<translation>Não aplicável a transações não assinadas</translation>
+		<translation>No aplicable para transacciones no firmadas</translation>
 	</message>
 	<message>
 		<source>not-keycard-text</source>
-		<translation>O cartão que você usou não é um Keycard. Você precisa comprar um Keycard para usá-lo</translation>
+		<translation>La tarjeta que usaste no es una Keycard. Necesitas comprar una Keycard para usarla</translation>
 	</message>
 	<message>
 		<source>not-keycard-title</source>
-		<translation>Não é um Keycard</translation>
+		<translation>No es una Keycard</translation>
 	</message>
 	<message>
 		<source>notifications</source>
-		<translation>Notificações</translation>
+		<translation>Notificaciones</translation>
 	</message>
 	<message>
 		<source>local-notifications</source>
-		<translation>Notificações locais</translation>
+		<translation>Notificaciones locales</translation>
 	</message>
 	<message>
 		<source>local-notifications-subtitle</source>
-		<translation>Ativar serviço em segundo plano</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>remote-notifications</source>
-		<translation>Notificações remotas</translation>
+		<translation>Notificaciones remotas</translation>
 	</message>
 	<message>
 		<source>remote-notifications-subtitle</source>
-		<translation>Ativar notificações push do google</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>show-notifications</source>
-		<translation>Mostrar notificações</translation>
+		<translation>Mostrar notificaciones</translation>
 	</message>
 	<message>
 		<source>notification-settings</source>
-		<translation>Notificações</translation>
+		<translation>Notificaciones</translation>
 	</message>
 	<message>
 		<source>notifications-servers</source>
-		<translation>Servidores de notificação</translation>
+		<translation>Servidores de notificaciones</translation>
 	</message>
 	<message>
 		<source>notifications-preferences</source>
-		<translation>Preferências de notificação</translation>
+		<translation>Preferencias de notificación</translation>
 	</message>
 	<message>
 		<source>notifications-switch</source>
-		<translation>Mostrar notificações</translation>
+		<translation>Mostrar notificaciones</translation>
 	</message>
 	<message>
 		<source>notifications-non-contacts</source>
-		<translation>Notificações de não contatos</translation>
+		<translation>Notificaciones de no contactos</translation>
 	</message>
 	<message>
 		<source>notifications-transactions</source>
-		<translation>Transações da carteira</translation>
+		<translation>Transacciones de billetera</translation>
 	</message>
 	<message>
 		<source>send-push-notifications</source>
-		<translation>Enviar Notificações Push</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>send-push-notifications-description</source>
-		<translation>Quando desativado, a pessoa que recebe suas mensagens não será notificada de suas novas mensagens</translation>
+		<translation>Cuando está deshabilitado, la persona que recibe sus mensajes no será notificada de su llegada.</translation>
 	</message>
 	<message>
 		<source>push-notifications-server-enabled</source>
@@ -3758,35 +3757,35 @@ Separe as palavras por um único espaço.</translation>
 	</message>
 	<message>
 		<source>push-notifications-servers</source>
-		<translation>Servidores de notificação push</translation>
+		<translation>Servidores de notificaciones push</translation>
 	</message>
 	<message>
 		<source>push-inbound-transaction</source>
-		<translation>Você recebeu {{value}} {{currency}}</translation>
+		<translation>Recibiste {{value}} {{currency}}</translation>
 	</message>
 	<message>
 		<source>push-outbound-transaction</source>
-		<translation>Você enviou {{value}} {{currency}}</translation>
+		<translation>Enviaste {{value}} {{currency}}</translation>
 	</message>
 	<message>
 		<source>push-failed-transaction</source>
-		<translation>Falha na sua transação</translation>
+		<translation>Su transacción falló</translation>
 	</message>
 	<message>
 		<source>push-inbound-transaction-body</source>
-		<translation>De {{from}} para {{to}}</translation>
+		<translation>De {{from}} a {{to}}</translation>
 	</message>
 	<message>
 		<source>push-outbound-transaction-body</source>
-		<translation>De {{from}} para {{to}}</translation>
+		<translation>De {{from}} a {{to}}</translation>
 	</message>
 	<message>
 		<source>push-failed-transaction-body</source>
-		<translation>{{value}} {{currency}} para {{to}}</translation>
+		<translation>{{value}} {{currency}} a {{to}}</translation>
 	</message>
 	<message>
 		<source>allow-mention-notifications</source>
-		<translation>Mostrar @ menções</translation>
+		<translation>Mostrar @ menciones</translation>
 	</message>
 	<message>
 		<source>server</source>
@@ -3794,7 +3793,7 @@ Separe as palavras por um único espaço.</translation>
 	</message>
 	<message>
 		<source>specify-server-public-key</source>
-		<translation>Digite a chave pública do servidor</translation>
+		<translation>Ingrese la clave pública del servidor</translation>
 	</message>
 	<message>
 		<source>notify</source>
@@ -3802,19 +3801,19 @@ Separe as palavras por um único espaço.</translation>
 	</message>
 	<message>
 		<source>off</source>
-		<translation>Desativado</translation>
+		<translation>Apagado</translation>
 	</message>
 	<message>
 		<source>offline</source>
-		<translation>Offline</translation>
+		<translation>Desconectado</translation>
 	</message>
 	<message>
 		<source>offline-messaging-use-history-nodes</source>
-		<translation>Usar nós de mensagem da Status</translation>
+		<translation>Usar nodos de Status</translation>
 	</message>
 	<message>
 		<source>offline-messaging-use-history-explanation</source>
-		<translation>Ative os nós da Status para buscar mensagens enviadas enquanto o aplicativo está fechado. Quando ativado, um nó de histórico obtém seu endereço IP. Quando desativado, você não receberá mensagens quando o aplicativo for fechado e não as verá quando abrir o app mais tarde.</translation>
+		<translation>Habilite los nodos del historial para recuperar los mensajes que se enviaron mientras la aplicación estaba cerrada. Cuando está habilitado, un nodo de historial obtiene su dirección IP. Cuando está deshabilitado, no recibirá mensajes cuando la aplicación esté cerrada y no los verá cuando abra la aplicación más tarde.</translation>
 	</message>
 	<message>
 		<source>ok</source>
@@ -3826,15 +3825,15 @@ Separe as palavras por um único espaço.</translation>
 	</message>
 	<message>
 		<source>ok-got-it</source>
-		<translation>Ok, entendido</translation>
+		<translation>Ok, lo tengo</translation>
 	</message>
 	<message>
 		<source>okay</source>
-		<translation>OK</translation>
+		<translation>Bien</translation>
 	</message>
 	<message>
 		<source>on</source>
-		<translation>Ativado</translation>
+		<translation>En</translation>
 	</message>
 	<message>
 		<source>open</source>
@@ -3850,15 +3849,15 @@ Separe as palavras por um único espaço.</translation>
 	</message>
 	<message>
 		<source>open-dapp-store</source>
-		<translation>Descubra ÐApps</translation>
+		<translation>Descubre ÐApps</translation>
 	</message>
 	<message>
 		<source>open-nfc-settings</source>
-		<translation>Abrir configurações do NFC</translation>
+		<translation>Abrir ajustes de NFC</translation>
 	</message>
 	<message>
 		<source>open-on-block-explorer</source>
-		<translation>Abrir no explorador de blocos</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>optional</source>
@@ -3866,129 +3865,129 @@ Separe as palavras por um único espaço.</translation>
 	</message>
 	<message>
 		<source>or</source>
-		<translation>OU</translation>
+		<translation>O</translation>
 	</message>
 	<message>
 		<source>outgoing</source>
-		<translation>Enviados</translation>
+		<translation>Saliente</translation>
 	</message>
 	<message>
 		<source>outgoing-transaction</source>
-		<translation>Transação enviada</translation>
+		<translation>Transacción saliente</translation>
 	</message>
 	<message>
 		<source>pair</source>
-		<translation>Sincronizar dispositivos</translation>
+		<translation>Vincular dispositivos</translation>
 	</message>
 	<message>
 		<source>pair-card</source>
-		<translation>Sincronizar para este dispositivo</translation>
+		<translation>Vincular a este dispositivo</translation>
 	</message>
 	<message>
 		<source>pair-code</source>
-		<translation>Código de par</translation>
+		<translation>Código par</translation>
 	</message>
 	<message>
 		<source>pair-code-explanation</source>
-		<translation>Emparelha o cartão com um dispositivo diferente (até 5) para desbloquear as chaves e assinar transações com o mesmo Keycard</translation>
+		<translation>Vincula la tarjeta a un dispositivo diferente para desbloquear llaves y firmar transacciones con la misma Keycard</translation>
 	</message>
 	<message>
 		<source>pair-this-card</source>
-		<translation>Emparelhar este cartão</translation>
+		<translation>Vincula esta tarjeta</translation>
 	</message>
 	<message>
 		<source>pair-this-device</source>
-		<translation>Anunciar dispositivo</translation>
+		<translation>Publicar el dispositivo</translation>
 	</message>
 	<message>
 		<source>pair-this-device-description</source>
-		<translation>Emparelhe seus dispositivos para sincronizar contatos e bate-papos entre eles</translation>
+		<translation>Vincula tus dispositivos para sincronizar los contactos y chats entre ellos</translation>
 	</message>
 	<message>
 		<source>paired-devices</source>
-		<translation>Dispositivos sincronizados</translation>
+		<translation>Dispositivos vinculados</translation>
 	</message>
 	<message>
 		<source>pairing</source>
-		<translation>Emparelhamento</translation>
+		<translation>Vinculando</translation>
 	</message>
 	<message>
 		<source>pairing-card</source>
-		<translation>Cartão de emparelhamento</translation>
+		<translation>Vinculando la tarjeta</translation>
 	</message>
 	<message>
 		<source>pairing-code-placeholder</source>
-		<translation>Código de emparelhamento...</translation>
+		<translation>Código de emparejamiento...</translation>
 	</message>
 	<message>
 		<source>pairing-code_error1</source>
-		<translation>Os códigos de emparelhamento não correspondem.</translation>
+		<translation>Los códigos de emparejamiento no coinciden.</translation>
 	</message>
 	<message>
 		<source>confirm-pairing-code-placeholder</source>
-		<translation>Confirme o seu código de emparelhamento...</translation>
+		<translation>Confirma tu código de emparejamiento ...</translation>
 	</message>
 	<message>
 		<source>pairing-go-to-installation</source>
-		<translation>Ir para as configurações de sincronização</translation>
+		<translation>Ir a los ajustes de vinculación</translation>
 	</message>
 	<message>
 		<source>pairing-maximum-number-reached-content</source>
-		<translation>Desative um dos seus dispositivos antes de ativar um novo.</translation>
+		<translation>Por favor, deshabilita uno de tus dispositivos antes de habilitar uno nuevo.</translation>
 	</message>
 	<message>
 		<source>pairing-maximum-number-reached-title</source>
-		<translation>Atingido o número máximo de dispositivos</translation>
+		<translation>Número máximo de dispositivos alcanzados</translation>
 	</message>
 	<message>
 		<source>pairing-new-installation-detected-content</source>
-		<translation>Um novo dispositivo foi detectado. 
-Para usar seus dispositivos corretamente, é importante emparelhá-los e ativá-los antes de usar. 
-Acesse a seção configurações dos dispositivos para parear seus dispositivos.</translation>
+		<translation>Se ha detectado un nuevo dispositivo. 
+Para usar tus dispositivos correctamente, es importante vincularlos y habilitarlos antes de usarlos. 
+Ve a la sección del dispositivo en los ajustes para vincular tus dispositivos.</translation>
 	</message>
 	<message>
 		<source>pairing-new-installation-detected-title</source>
-		<translation>Novo dispositivo detectado</translation>
+		<translation>Nuevo dispositivo detectado</translation>
 	</message>
 	<message>
 		<source>pairing-no-info</source>
-		<translation>Sem informações</translation>
+		<translation>Sin información</translation>
 	</message>
 	<message>
 		<source>pairing-please-set-a-name</source>
-		<translation>Defina um nome para o seu dispositivo.</translation>
+		<translation>Por favor configura un nombre para tu dispositivo.</translation>
 	</message>
 	<message>
 		<source>passphrase</source>
-		<translation>Frase-semente</translation>
+		<translation>Frase de contraseña</translation>
 	</message>
 	<message>
 		<source>password</source>
-		<translation>Senha</translation>
+		<translation>Contraseña</translation>
 	</message>
 	<message>
 		<source>password-description</source>
-		<translation>Pelo menos 6 caracteres. Sua senha protege suas chaves. Você precisa dela para desbloquear o Status e fazer transações.</translation>
+		<translation>Al menos 6 caracteres. Tu contraseña protege tus claves. La necesitas para desbloquear Status y realizar transacciones.</translation>
 	</message>
 	<message>
 		<source>password-placeholder2</source>
-		<translation>Confirme sua senha</translation>
+		<translation>Confirma tu contraseña</translation>
 	</message>
 	<message>
 		<source>password_error1</source>
-		<translation>As senhas não correspondem.</translation>
+		<translation>Las contraseñas no coinciden.</translation>
 	</message>
 	<message>
 		<source>paste</source>
-		<translation>Colar</translation>
+		<translation>Pegar</translation>
 	</message>
 	<message>
 		<source>paste-json</source>
-		<translation>Colar JSON</translation>
+		<translation>Pegar JSON</translation>
 	</message>
 	<message>
 		<source>pay-to-chat</source>
-		<translation>Pagar para conversar</translation>
+		<translation>Pagar para chatear</translation>
 	</message>
 	<message>
 		<source>peers</source>
@@ -3996,15 +3995,15 @@ Acesse a seção configurações dos dispositivos para parear seus dispositivos.
 	</message>
 	<message>
 		<source>pending</source>
-		<translation>Pendente</translation>
+		<translation>En espera</translation>
 	</message>
 	<message>
 		<source>pending-confirmation</source>
-		<translation>Confirmação pendente...</translation>
+		<translation>Confirmación pendiente...</translation>
 	</message>
 	<message>
 		<source>permissions</source>
-		<translation>Permissões</translation>
+		<translation>Permisos</translation>
 	</message>
 	<message>
 		<source>phone-e164</source>
@@ -4012,83 +4011,83 @@ Acesse a seção configurações dos dispositivos para parear seus dispositivos.
 	</message>
 	<message>
 		<source>photos-access-error</source>
-		<translation>Para conceder a permissão de fotos necessária, acesse as configurações do sistema e verifique se Status &gt; Fotos está selecionado.</translation>
+		<translation>Para permitir el acceso a fotos, porfavor, ve a ajustes de sistema y asegúrate que este seleccionada la opción Status &gt; Fotos</translation>
 	</message>
 	<message>
 		<source>pin-changed</source>
-		<translation>O código de acesso de 6 dígitos foi alterado</translation>
+		<translation>Se ha cambiado el código de acceso de 6 dígitos</translation>
 	</message>
 	<message>
 		<source>puk-changed</source>
-		<translation>PUK de 12 dígitos foi alterado</translation>
+		<translation>Se ha cambiado el PUK de 12 dígitos</translation>
 	</message>
 	<message>
 		<source>pairing-changed</source>
-		<translation>Código de emparelhamento foi alterado</translation>
+		<translation>Se ha cambiado el código de emparejamiento</translation>
 	</message>
 	<message>
 		<source>pin-code</source>
-		<translation>Código de acesso de 6 dígitos</translation>
+		<translation>Código de acceso de 6 dígitos</translation>
 	</message>
 	<message>
 		<source>pin-mismatch</source>
-		<translation>Código de acesso incorreto</translation>
+		<translation>Código de acceso incorrecto</translation>
 	</message>
 	<message>
 		<source>pin-retries-left</source>
-		<translation>{{number}} tentativas restantes</translation>
+		<translation>{{number}} intentos restantes</translation>
 	</message>
 	<message>
 		<source>pin-one-attempt-blocked-before</source>
-		<translation>Cuidado, você só tem</translation>
+		<translation>Ten cuidado, solo tienes</translation>
 	</message>
 	<message>
 		<source>pin-one-attempt-frozen-before</source>
-		<translation>Cuidado, você só tem</translation>
+		<translation>Ten cuidado, solo tienes</translation>
 	</message>
 	<message>
 		<source>pin-one-attempt</source>
-		<translation>uma tentativa</translation>
+		<translation>un intento</translation>
 	</message>
 	<message>
 		<source>pin-one-attempt-blocked-after</source>
-		<translation>antes que o seu Keycard seja bloqueado</translation>
+		<translation>antes de que tu Keycard se bloquee</translation>
 	</message>
 	<message>
 		<source>pin-one-attempt-frozen-after</source>
-		<translation>antes que o seu Keycard trave</translation>
+		<translation>antes de que tu Keycard se congele</translation>
 	</message>
 	<message>
 		<source>preview-privacy</source>
-		<translation>Visualizar modo de privacidade</translation>
+		<translation>Vista previa del modo de privacidad</translation>
 	</message>
 	<message>
 		<source>privacy</source>
-		<translation>Privacidade</translation>
+		<translation>Privacidad</translation>
 	</message>
 	<message>
 		<source>privacy-photos</source>
-		<translation>Privacidade da Foto de Perfil</translation>
+		<translation>Privacidad de la foto del perfil</translation>
 	</message>
 	<message>
 		<source>privacy-and-security</source>
-		<translation>Privacidade e segurança</translation>
+		<translation>Privacidad y seguridad</translation>
 	</message>
 	<message>
 		<source>privacy-policy</source>
-		<translation>Política de privacidade</translation>
+		<translation>Política de privacidad</translation>
 	</message>
 	<message>
 		<source>privacy-show-to-warning</source>
-		<translation>As pessoas que já viram sua foto de perfil continuarão vendo</translation>
+		<translation>Las personas que ya han visto tu foto de perfil seguirán haciéndolo</translation>
 	</message>
 	<message>
 		<source>processing</source>
-		<translation>Aguarde um momento</translation>
+		<translation>Un momento.</translation>
 	</message>
 	<message>
 		<source>product-information</source>
-		<translation>Informações do produto</translation>
+		<translation>Información del Producto</translation>
 	</message>
 	<message>
 		<source>profile</source>
@@ -4096,15 +4095,15 @@ Acesse a seção configurações dos dispositivos para parear seus dispositivos.
 	</message>
 	<message>
 		<source>profile-details</source>
-		<translation>Detalhes do perfil</translation>
+		<translation>Detalles del perfil</translation>
 	</message>
 	<message>
 		<source>public-chat</source>
-		<translation>Conversa pública</translation>
+		<translation>Chat público</translation>
 	</message>
 	<message>
 		<source>public-chats</source>
-		<translation>Conversas públicas</translation>
+		<translation>Chats públicos</translation>
 	</message>
 	<message>
 		<source>public-group-status</source>
@@ -4112,27 +4111,27 @@ Acesse a seção configurações dos dispositivos para parear seus dispositivos.
 	</message>
 	<message>
 		<source>public-group-topic</source>
-		<translation>Assunto</translation>
+		<translation>Tema</translation>
 	</message>
 	<message>
 		<source>join-new-public-chat</source>
-		<translation>Participar do chat público</translation>
+		<translation>Unirse a un chat público</translation>
 	</message>
 	<message>
 		<source>join-new-private-chat</source>
-		<translation>Iniciar uma nova conversa privada</translation>
+		<translation>Iniciar un nuevo chat privado</translation>
 	</message>
 	<message>
 		<source>search-no-chat-found</source>
-		<translation>Sem resultados. Você quer dizer</translation>
+		<translation>No hay resultados de búsqueda. ¿Querés decir</translation>
 	</message>
 	<message>
 		<source>public-key</source>
-		<translation>Chave pública</translation>
+		<translation>Clave pública</translation>
 	</message>
 	<message>
 		<source>puk-and-pairing-codes-displayed</source>
-		<translation>Códigos PUK e de emparelhamento exibidos</translation>
+		<translation>PUK y códigos de vinculación mostrados</translation>
 	</message>
 	<message>
 		<source>puk-code</source>
@@ -4140,15 +4139,15 @@ Acesse a seção configurações dos dispositivos para parear seus dispositivos.
 	</message>
 	<message>
 		<source>puk-code-explanation</source>
-		<translation>Se você esquecer seu código de acesso de 6 dígitos ou inseri-lo incorretamente três vezes, precisará desse código para desbloquear seu cartão.</translation>
+		<translation>Si olvidas tu código de acceso de 6 dígitos o lo ingresas incorrectamente 3 veces, necesitarás este código para desbloquear tu tarjeta.</translation>
 	</message>
 	<message>
 		<source>puk-mismatch</source>
-		<translation>Código PUK errado</translation>
+		<translation>El código PUK no coincide</translation>
 	</message>
 	<message>
 		<source>quiet-days</source>
-		<translation>{{quiet-days}} dias</translation>
+		<translation>{{quiet-days}} días</translation>
 	</message>
 	<message>
 		<source>quiet-hours</source>
@@ -4156,39 +4155,39 @@ Acesse a seção configurações dos dispositivos para parear seus dispositivos.
 	</message>
 	<message>
 		<source>re-encrypt-key</source>
-		<translation>Recriptografe suas chaves</translation>
+		<translation>Vuelve a encriptar tus claves</translation>
 	</message>
 	<message>
 		<source>receive</source>
-		<translation>Receber</translation>
+		<translation>Recibir</translation>
 	</message>
 	<message>
 		<source>receive-transaction</source>
-		<translation>Receber transação</translation>
+		<translation>Recibir transacción</translation>
 	</message>
 	<message>
 		<source>recent</source>
-		<translation>Recentes</translation>
+		<translation>Estados recientes</translation>
 	</message>
 	<message>
 		<source>recent-recipients</source>
-		<translation>Contatos</translation>
+		<translation>Contactos</translation>
 	</message>
 	<message>
 		<source>recently-used-stickers</source>
-		<translation>Os adesivos usados recentemente aparecerão aqui</translation>
+		<translation>Las stickers usadas recientemente aparecerán aquí</translation>
 	</message>
 	<message>
 		<source>recipient</source>
-		<translation>Destinatário</translation>
+		<translation>Receptor</translation>
 	</message>
 	<message>
 		<source>recipient-code</source>
-		<translation>Digite o endereço do destinatário</translation>
+		<translation>Ingresa la dirección del destinatario</translation>
 	</message>
 	<message>
 		<source>recipient-code-placeholder</source>
-		<translation>0x… ou nome.dominio.eth</translation>
+		<translation>0x... o username.domain.eth</translation>
 	</message>
 	<message>
 		<source>recover</source>
@@ -4196,47 +4195,47 @@ Acesse a seção configurações dos dispositivos para parear seus dispositivos.
 	</message>
 	<message>
 		<source>recover-key</source>
-		<translation>Acessar chaves existentes</translation>
+		<translation>Ingresar claves existentes</translation>
 	</message>
 	<message>
 		<source>recover-keycard-multiaccount-not-supported</source>
-		<translation>Já existem chaves para esta conta e não podem ser adicionadas novamente. Se você perdeu sua senha, código de acesso ou Keycard, desinstale o aplicativo, reinstale e acesse suas chaves inserindo sua frase-semente</translation>
+		<translation>Las llaves para esta cuenta ya existen y no se pueden añadir de nuevo. Si perdiste tu contraseña, código de acceso o Keycard, desinstala la app, reinstálala y accede insertando tu frase semilla</translation>
 	</message>
 	<message>
 		<source>recover-with-keycard</source>
-		<translation>Recuperar com Keycard</translation>
+		<translation>Recuperar con Keycard</translation>
 	</message>
 	<message>
 		<source>recovering-key</source>
-		<translation>Acessando chaves…</translation>
+		<translation>Ingresando las claves...</translation>
 	</message>
 	<message>
 		<source>recovery-confirm-phrase</source>
-		<translation>Confirmar frase-semente</translation>
+		<translation>Confirmar frase semilla</translation>
 	</message>
 	<message>
 		<source>recovery-phrase</source>
-		<translation>Frase-semente</translation>
+		<translation>Frase semilla</translation>
 	</message>
 	<message>
 		<source>recovery-success-text</source>
-		<translation>Você terá que definir um novo código ou senha para recriptografar suas chaves</translation>
+		<translation>Deberás crear un nuevo código o contraseña para volver a encriptar tus claves</translation>
 	</message>
 	<message>
 		<source>recovery-typo-dialog-description</source>
-		<translation>Observe que sua frase-semente deve usar exatamente as mesmas palavras e ordem que você recebeu</translation>
+		<translation>Recuerda, tu frase semilla debe ser exactamente las mismas palabras y el orden que recibiste</translation>
 	</message>
 	<message>
 		<source>recovery-typo-dialog-title</source>
-		<translation>A frase-semente está correta?</translation>
+		<translation>¿Es correcta la frase semilla?</translation>
 	</message>
 	<message>
 		<source>remember-me</source>
-		<translation>Lembrar-me</translation>
+		<translation>Recuérdame</translation>
 	</message>
 	<message>
 		<source>remind-me-later</source>
-		<translation>Mostrar isso novamente</translation>
+		<translation>Muéstrame esto de nuevo</translation>
 	</message>
 	<message>
 		<source>remove</source>
@@ -4244,66 +4243,56 @@ Acesse a seção configurações dos dispositivos para parear seus dispositivos.
 	</message>
 	<message>
 		<source>remove-from-chat</source>
-		<translation>Remover do chat</translation>
+		<translation>Eliminar del chat</translation>
 	</message>
 	<message>
 		<source>remove-from-contacts</source>
-		<translation>Remover dos contatos</translation>
+		<translation>Eliminar de contactos</translation>
 	</message>
 	<message>
 		<source>remove-from-contacts-text</source>
-		<translation>Ao remover um usuário da sua lista de contatos, você não esconde dele o endereço da sua carteira</translation>
+		<translation>Al eliminar a un usuario de tu lista de contactos, no oculta la dirección de tu billetera de ellos</translation>
 	</message>
 	<message>
 		<source>remove-network</source>
-		<translation>Remover rede</translation>
+		<translation>Eliminar red</translation>
 	</message>
 	<message>
 		<source>remove-token</source>
-		<translation>Remover token</translation>
+		<translation>Eliminar token</translation>
 	</message>
 	<message>
 		<source>removed</source>
-		<translation>removeu</translation>
+		<translation>eliminado</translation>
 	</message>
 	<message>
 		<source>repeat-pin</source>
-		<translation>Repita os 6 novos dígitos do código de acesso</translation>
+		<translation>Repite el nuevo código de acceso de 6 dígitos</translation>
 	</message>
 	<message>
 		<source>repeat-puk</source>
-		<translation>Repita o novo PUK de 12 dígitos</translation>
+		<translation>Repita el nuevo PUK de 12 dígitos</translation>
 	</message>
 	<message>
 		<source>report-bug-email-template</source>
-		<translation>1. Descrição do problema 
- (Descreva o recurso que você deseja ou resuma brevemente o bug e o que você fez, o que esperava que acontecesse e o que realmente acontece. Seções abaixo) 
+		<translation>1. Descripción del problema
+{{description}}
 
 
- 2. Passos para reproduzir 
- (Descreva como podemos replicar o bug passo a passo.) 
- - Abrir Status
- - ... 
- - Etapa 3, etc. 
+2. Pasos para reproducir
+{{steps}}
 
 
- 3. Comportamento esperado 
- (Descreva o que você esperava que acontecesse.) 
-
-
- 4. Comportamento real 
- (Descreva o que realmente aconteceu.) 
-
-
- 5. Por favor, anexe capturas de tela que possam demonstrar o problema</translation>
+3. Adjunta capturas de pantalla que demuestren el problema por favor
+</translation>
 	</message>
 	<message>
 		<source>request-transaction</source>
-		<translation>Solicitar transação</translation>
+		<translation>Solicitar transacción</translation>
 	</message>
 	<message>
 		<source>required-field</source>
-		<translation>Campo obrigatório</translation>
+		<translation>Campo requerido</translation>
 	</message>
 	<message>
 		<source>resend-message</source>
@@ -4311,27 +4300,27 @@ Acesse a seção configurações dos dispositivos para parear seus dispositivos.
 	</message>
 	<message>
 		<source>reset-card</source>
-		<translation>Redefinir cartão</translation>
+		<translation>Reiniciar la tarjeta</translation>
 	</message>
 	<message>
 		<source>reset-card-description</source>
-		<translation>Esta operação redefinirá o cartão para o estado inicial. Ele apagará todos os dados do cartão, incluindo chaves privadas. A operação não é reversível.</translation>
+		<translation>Esta operación restablecerá la tarjeta al estado inicial. Borrará todos los datos de la tarjeta, incluidas las claves privadas. La operación no es reversible.</translation>
 	</message>
 	<message>
 		<source>retry</source>
-		<translation>Tentar de novo</translation>
+		<translation>Reintentar</translation>
 	</message>
 	<message>
 		<source>revoke-access</source>
-		<translation>Recuperar acesso</translation>
+		<translation>Revocar el acceso</translation>
 	</message>
 	<message>
 		<source>rinkeby-network</source>
-		<translation>Rede de teste Rinkeby</translation>
+		<translation>Red de prueba Rinkeby</translation>
 	</message>
 	<message>
 		<source>ropsten-network</source>
-		<translation>Rede de teste de Ropsten</translation>
+		<translation>Red de prueba Ropsten</translation>
 	</message>
 	<message>
 		<source>rpc-url</source>
@@ -4339,99 +4328,99 @@ Acesse a seção configurações dos dispositivos para parear seus dispositivos.
 	</message>
 	<message>
 		<source>save</source>
-		<translation>Salvar</translation>
+		<translation>Guardar</translation>
 	</message>
 	<message>
 		<source>save-password</source>
-		<translation>Salvar senha</translation>
+		<translation>Guardar contraseña</translation>
 	</message>
 	<message>
 		<source>save-password-unavailable</source>
-		<translation>Defina o código de acesso do dispositivo para salvar a senha</translation>
+		<translation>Establece el código de acceso del dispositivo para guardar la contraseña</translation>
 	</message>
 	<message>
 		<source>save-password-unavailable-android</source>
-		<translation>Salvar senha não está disponível: seu dispositivo pode estar &quot;rooteado&quot; ou não possui os recursos de segurança necessários.</translation>
+		<translation>Guardar la contraseña no está disponible: tu dispositivo puede estar rooteado o carecer de las características de seguridad necesarias.</translation>
 	</message>
 	<message>
 		<source>scan-qr</source>
-		<translation>Escanear código QR</translation>
+		<translation>Escanear QR</translation>
 	</message>
 	<message>
 		<source>scan-qr-code</source>
-		<translation>Escaneie um código QR com um endereço de carteira</translation>
+		<translation>Escanea un código QR con una dirección de billetera</translation>
 	</message>
 	<message>
 		<source>search</source>
-		<translation>Procurar</translation>
+		<translation>Buscar</translation>
 	</message>
 	<message>
 		<source>secret-keys-confirmation-text</source>
-		<translation>Você vai precisar deles para continuar a usar o seu Keycard no caso de perder o seu celular.</translation>
+		<translation>Los necesitará para seguir usando su Keycard en caso de que alguna vez pierda su teléfono.</translation>
 	</message>
 	<message>
 		<source>secret-keys-confirmation-title</source>
-		<translation>Já anotou os códigos?</translation>
+		<translation>¿Escribiste los códigos?</translation>
 	</message>
 	<message>
 		<source>security</source>
-		<translation>Segurança</translation>
+		<translation>Seguridad</translation>
 	</message>
 	<message>
 		<source>see-details</source>
-		<translation>Ver detalhes</translation>
+		<translation>Ver detalles</translation>
 	</message>
 	<message>
 		<source>see-it-again</source>
-		<translation>VEJA NOVAMENTE</translation>
+		<translation>VERLO OTRA VEZ</translation>
 	</message>
 	<message>
 		<source>select-account-first</source>
-		<translation>Selecione uma conta primeiro</translation>
+		<translation>Selecciona una cuenta primero</translation>
 	</message>
 	<message>
 		<source>select-chat</source>
-		<translation>Selecionar bate-papo para iniciar o envio de mensagens</translation>
+		<translation>Selecciona el chat para comenzar a enviar mensajes</translation>
 	</message>
 	<message>
 		<source>selected</source>
-		<translation>Selecionado</translation>
+		<translation>Seleccionado</translation>
 	</message>
 	<message>
 		<source>select</source>
-		<translation>Selecionar</translation>
+		<translation>Seleccionar</translation>
 	</message>
 	<message>
 		<source>select-account</source>
-		<translation>Selecionar conta</translation>
+		<translation>Seleccionar cuenta</translation>
 	</message>
 	<message>
 		<source>send-logs</source>
-		<translation>Relatar um bug</translation>
+		<translation>Reportar un error</translation>
 	</message>
 	<message>
 		<source>send-logs-to</source>
-		<translation>Relatar um bug para {{email}}</translation>
+		<translation>Reportar un error a {{email}}</translation>
 	</message>
 	<message>
 		<source>send-message</source>
-		<translation>Enviar mensagem</translation>
+		<translation>Enviar mensaje</translation>
 	</message>
 	<message>
 		<source>send-request</source>
-		<translation>Enviar pedido</translation>
+		<translation>Enviar solicitud</translation>
 	</message>
 	<message>
 		<source>send-request-amount</source>
-		<translation>Quantidade</translation>
+		<translation>Cantidad</translation>
 	</message>
 	<message>
 		<source>send-request-amount-max-decimals</source>
-		<translation>O número máximo de decimais é {{asset-decimals}}</translation>
+		<translation>El número máximo de decimales es {{asset-decimals}}</translation>
 	</message>
 	<message>
 		<source>send-request-unknown-token</source>
-		<translation>Token desconhecido - {{asset}}</translation>
+		<translation>Token desconocido - {{asset}}</translation>
 	</message>
 	<message>
 		<source>send-sending-to</source>
@@ -4439,7 +4428,7 @@ Acesse a seção configurações dos dispositivos para parear seus dispositivos.
 	</message>
 	<message>
 		<source>send-transaction</source>
-		<translation>Enviar transação</translation>
+		<translation>Enviar transacción</translation>
 	</message>
 	<message>
 		<source>sending</source>
@@ -4447,67 +4436,67 @@ Acesse a seção configurações dos dispositivos para parear seus dispositivos.
 	</message>
 	<message>
 		<source>sent-at</source>
-		<translation>Enviado em</translation>
+		<translation>Enviado a</translation>
 	</message>
 	<message>
 		<source>set-a-topic</source>
-		<translation>Criar um tópico</translation>
+		<translation>Crear un tema</translation>
 	</message>
 	<message>
 		<source>set-currency</source>
-		<translation>Definir moeda</translation>
+		<translation>Establecer moneda</translation>
 	</message>
 	<message>
 		<source>set-dapp-access-permissions</source>
-		<translation>Definir permissões de acesso do DApp</translation>
+		<translation>Establecer permisos de acceso DApp</translation>
 	</message>
 	<message>
 		<source>settings</source>
-		<translation>Configurações</translation>
+		<translation>Ajustes</translation>
 	</message>
 	<message>
 		<source>share</source>
-		<translation>Compartilhar</translation>
+		<translation>Compartir</translation>
 	</message>
 	<message>
 		<source>shared</source>
-		<translation>Compartilhado</translation>
+		<translation>Compartido</translation>
 	</message>
 	<message>
 		<source>share-address</source>
-		<translation>Compartilhar endereço</translation>
+		<translation>Compartir dirección</translation>
 	</message>
 	<message>
 		<source>share-chat</source>
-		<translation>Compartilhar bate-papo</translation>
+		<translation>Compartir chat</translation>
 	</message>
 	<message>
 		<source>share-contact-code</source>
-		<translation>Compartilhar minha chave de bate-papo</translation>
+		<translation>Compartir mi clave de chat</translation>
 	</message>
 	<message>
 		<source>share-dapp-text</source>
-		<translation>Confira este DApp que estou usando no Status: {{link}}</translation>
+		<translation>Echa un vistazo a esta DApp que estoy usando en Status: {{link}}</translation>
 	</message>
 	<message>
 		<source>share-link</source>
-		<translation>Compartilhar link</translation>
+		<translation>Compartir enlace</translation>
 	</message>
 	<message>
 		<source>share-my-profile</source>
-		<translation>Compartilhar meu perfil</translation>
+		<translation>Compartir mi perfil</translation>
 	</message>
 	<message>
 		<source>share-profile</source>
-		<translation>Compartilhar perfil</translation>
+		<translation>Compartir perfil</translation>
 	</message>
 	<message>
 		<source>share-profile-link</source>
-		<translation>Compartilhar link do perfil</translation>
+		<translation>Compartir enlace del perfil</translation>
 	</message>
 	<message>
 		<source>share-public-chat-text</source>
-		<translation>Confira este bate-papo público no app Status: {{link}}</translation>
+		<translation>Echa un vistazo a este chat público en la app de Status: {{link}}</translation>
 	</message>
 	<message>
 		<source>sharing-copied-to-clipboard</source>
@@ -4519,19 +4508,19 @@ Acesse a seção configurações dos dispositivos para parear seus dispositivos.
 	</message>
 	<message>
 		<source>share-logs</source>
-		<translation>Compartilhar logs</translation>
+		<translation>Compartir registros</translation>
 	</message>
 	<message>
 		<source>sharing-share</source>
-		<translation>Compartilhar</translation>
+		<translation>Compartir</translation>
 	</message>
 	<message>
 		<source>show-less</source>
-		<translation>Mostre menos</translation>
+		<translation>Mostrar menos</translation>
 	</message>
 	<message>
 		<source>show-more</source>
-		<translation>Mostrar mais</translation>
+		<translation>Mostrar más</translation>
 	</message>
 	<message>
 		<source>show-qr</source>
@@ -4539,91 +4528,91 @@ Acesse a seção configurações dos dispositivos para parear seus dispositivos.
 	</message>
 	<message>
 		<source>show-transaction-data</source>
-		<translation>Mostrar dados da transação</translation>
+		<translation>Mostrar los datos de la transacción</translation>
 	</message>
 	<message>
 		<source>sign-and-send</source>
-		<translation>Assinar e enviar</translation>
+		<translation>Firmar y enviar</translation>
 	</message>
 	<message>
 		<source>sign-in</source>
-		<translation>Entrar</translation>
+		<translation>Regístrate</translation>
 	</message>
 	<message>
 		<source>sign-message</source>
-		<translation>Assinar Mensagem</translation>
+		<translation>Firmar mensaje</translation>
 	</message>
 	<message>
 		<source>sign-out</source>
-		<translation>Sair da sessão</translation>
+		<translation>Cerrar sesión</translation>
 	</message>
 	<message>
 		<source>sign-with</source>
-		<translation>Assinar com</translation>
+		<translation>Firma con</translation>
 	</message>
 	<message>
 		<source>sign-with-password</source>
-		<translation>Assinar com senha</translation>
+		<translation>Firmar con contraseña</translation>
 	</message>
 	<message>
 		<source>sign-you-in</source>
-		<translation>Iniciando sessão...</translation>
+		<translation>Iniciando sesión...</translation>
 	</message>
 	<message>
 		<source>signing</source>
-		<translation>Assinatura</translation>
+		<translation>Firma</translation>
 	</message>
 	<message>
 		<source>signing-a-message</source>
-		<translation>Assinando uma mensagem</translation>
+		<translation>Firmando un mensaje</translation>
 	</message>
 	<message>
 		<source>signing-phrase</source>
-		<translation>Frase de assinatura</translation>
+		<translation>Frase de firma</translation>
 	</message>
 	<message>
 		<source>something-went-wrong</source>
-		<translation>Algo deu errado</translation>
+		<translation>Algo salió mal</translation>
 	</message>
 	<message>
 		<source>soon</source>
-		<translation>Em breve</translation>
+		<translation>Pronto</translation>
 	</message>
 	<message>
 		<source>specify-address</source>
-		<translation>Especificar endereço</translation>
+		<translation>Especificar dirección</translation>
 	</message>
 	<message>
 		<source>specify-name</source>
-		<translation>Especifique um nome</translation>
+		<translation>Especifica un nombre</translation>
 	</message>
 	<message>
 		<source>specify-symbol</source>
-		<translation>Especifique um símbolo</translation>
+		<translation>Especifica un símbolo</translation>
 	</message>
 	<message>
 		<source>specify-network-id</source>
-		<translation>Especifique o ID da rede</translation>
+		<translation>Especifica ID de red</translation>
 	</message>
 	<message>
 		<source>specify-rpc-url</source>
-		<translation>Especifique um URL RPC</translation>
+		<translation>Especifica una URL RPC</translation>
 	</message>
 	<message>
 		<source>start-chat</source>
-		<translation>Iniciar bate-papo</translation>
+		<translation>Iniciar chat</translation>
 	</message>
 	<message>
 		<source>start-conversation</source>
-		<translation>Iniciar conversa</translation>
+		<translation>Empezar conversación</translation>
 	</message>
 	<message>
 		<source>start-group-chat</source>
-		<translation>Iniciar conversa em grupo</translation>
+		<translation>Iniciar chat grupal</translation>
 	</message>
 	<message>
 		<source>start-new-chat</source>
-		<translation>Iniciar nova conversa</translation>
+		<translation>Iniciar nuevo chat</translation>
 	</message>
 	<message>
 		<source>status</source>
@@ -4635,19 +4624,19 @@ Acesse a seção configurações dos dispositivos para parear seus dispositivos.
 	</message>
 	<message>
 		<source>status-hardwallet</source>
-		<translation>Hardwallet Status</translation>
+		<translation>Status hardwallet</translation>
 	</message>
 	<message>
 		<source>status-keycard</source>
-		<translation>Keycard Status</translation>
+		<translation>Status Keycard</translation>
 	</message>
 	<message>
 		<source>status-pending</source>
-		<translation>Pendente</translation>
+		<translation>Pendiente</translation>
 	</message>
 	<message>
 		<source>status-tx-not-found</source>
-		<translation>TX não encontrado</translation>
+		<translation>TX no encontrada</translation>
 	</message>
 	<message>
 		<source>status-sent</source>
@@ -4655,23 +4644,23 @@ Acesse a seção configurações dos dispositivos para parear seus dispositivos.
 	</message>
 	<message>
 		<source>status-not-sent-tap</source>
-		<translation>Não confirmado. Toque para opções</translation>
+		<translation>No está confirmado. Pulsa para ver las opciones</translation>
 	</message>
 	<message>
 		<source>status-not-sent-click</source>
-		<translation>Não confirmado. Clique para opções</translation>
+		<translation>No está confirmado. Haz clic para ver las opciones</translation>
 	</message>
 	<message>
 		<source>step-i-of-n</source>
-		<translation>Etapa {{step}} de {{number}}</translation>
+		<translation>Paso {{step}} de {{number}}</translation>
 	</message>
 	<message>
 		<source>sticker-market</source>
-		<translation>Mercado de adesivos</translation>
+		<translation>Sticker market</translation>
 	</message>
 	<message>
 		<source>sticker</source>
-		<translation>Sticker</translation>
+		<translation>Pegatina</translation>
 	</message>
 	<message>
 		<source>submit</source>
@@ -4679,11 +4668,11 @@ Acesse a seção configurações dos dispositivos para parear seus dispositivos.
 	</message>
 	<message>
 		<source>submit-bug</source>
-		<translation>Relatar um bug</translation>
+		<translation>Reportar un error</translation>
 	</message>
 	<message>
 		<source>success</source>
-		<translation>Sucesso</translation>
+		<translation>Éxito</translation>
 	</message>
 	<message>
 		<source>symbol</source>
@@ -4691,7 +4680,7 @@ Acesse a seção configurações dos dispositivos para parear seus dispositivos.
 	</message>
 	<message>
 		<source>sync-all-devices</source>
-		<translation>Sincronizar todos dispositivos</translation>
+		<translation>Sincronizar todos los dispositivos</translation>
 	</message>
 	<message>
 		<source>sync-in-progress</source>
@@ -4699,7 +4688,7 @@ Acesse a seção configurações dos dispositivos para parear seus dispositivos.
 	</message>
 	<message>
 		<source>sync-settings</source>
-		<translation>Configurações de sincronização</translation>
+		<translation>Ajustes de sincronización</translation>
 	</message>
 	<message>
 		<source>sync-synced</source>
@@ -4711,19 +4700,19 @@ Acesse a seção configurações dos dispositivos para parear seus dispositivos.
 	</message>
 	<message>
 		<source>tag-was-lost</source>
-		<translation>A tag foi perdida</translation>
+		<translation>La etiqueta se perdió</translation>
 	</message>
 	<message>
 		<source>tap-card-again</source>
-		<translation>Aproxime o cartão na parte de trás do seu telefone novamente</translation>
+		<translation>Vuelve a tocar la tarjeta con la parte trasera de tu teléfono.</translation>
 	</message>
 	<message>
 		<source>test-networks</source>
-		<translation>Redes de teste</translation>
+		<translation>Redes de prueba</translation>
 	</message>
 	<message>
 		<source>text-input-disabled</source>
-		<translation>Aguarde um momento…</translation>
+		<translation>Por favor espera un momento...</translation>
 	</message>
 	<message>
 		<source>this-device</source>
@@ -4731,23 +4720,23 @@ Acesse a seção configurações dos dispositivos para parear seus dispositivos.
 	</message>
 	<message>
 		<source>this-device-desc</source>
-		<translation>Suas chaves serão criptografadas e armazenadas com segurança no seu dispositivo</translation>
+		<translation>Tus claves serán encriptadas y almacenadas de forma segura en tu dispositivo</translation>
 	</message>
 	<message>
 		<source>this-is-you-signing</source>
-		<translation>Esta é a sua frase de assinatura</translation>
+		<translation>Esta es tu frase de firma</translation>
 	</message>
 	<message>
 		<source>this-will-take-few-seconds</source>
-		<translation>Isso levará alguns segundos</translation>
+		<translation>Esto tomará unos segundos</translation>
 	</message>
 	<message>
 		<source>three-words-description</source>
-		<translation>Você deve ver essas três palavras antes de assinar cada transação</translation>
+		<translation>Deberías ver estas tres palabras antes de firmar cada transacción</translation>
 	</message>
 	<message>
 		<source>three-words-description-2</source>
-		<translation>Se você ver uma combinação diferente, cancele a transação e finalize a sessão</translation>
+		<translation>Si ves una combinación diferente, cancela la transacción y cierra sesión</translation>
 	</message>
 	<message>
 		<source>to</source>
@@ -4755,91 +4744,91 @@ Acesse a seção configurações dos dispositivos para parear seus dispositivos.
 	</message>
 	<message>
 		<source>to-block</source>
-		<translation>Bloquear </translation>
+		<translation>Bloquear</translation>
 	</message>
 	<message>
 		<source>to-encrypt-enter-password</source>
-		<translation>Para criptografar a conta, digite sua senha</translation>
+		<translation>Para encriptar la cuenta, por favor, ingresa tu contraseña</translation>
 	</message>
 	<message>
 		<source>to-see-this-message</source>
-		<translation>Para ver esta mensagem,</translation>
+		<translation>Para ver este mensaje,</translation>
 	</message>
 	<message>
 		<source>token-auto-validate-decimals-error</source>
-		<translation>Decimais incorretos para o token {{symbol}} no endereço {{address}} - definido como {{expected}} mas detectado como {{actual}}</translation>
+		<translation>Decimales incorrectos para el token {{symbol}} en la dirección {{address}} - establecido en {{expected}} pero detectado como {{actual}}</translation>
 	</message>
 	<message>
 		<source>token-auto-validate-name-error</source>
-		<translation>Nome incorreto para o token {{symbol}} no endereço {{address}} - definido como {{expected}} mas detectado como {{actual}}</translation>
+		<translation>Nombre incorrecto para el token {{symbol}} en la dirección {{address}} - establecido en {{expected}} pero detectado como {{actual}}</translation>
 	</message>
 	<message>
 		<source>token-auto-validate-symbol-error</source>
-		<translation>Símbolo incorreto para o token {{symbol}} no endereço {{address}} - definido como {{expected}} mas detectado como {{actual}}</translation>
+		<translation>Símbolo incorrecto para el token {{symbol}} en la dirección {{address}} - configurado en {{expected}} pero detectado como {{actual}}</translation>
 	</message>
 	<message>
 		<source>token-details</source>
-		<translation>Detalhes do Token</translation>
+		<translation>Detalles del token</translation>
 	</message>
 	<message>
 		<source>topic-name-error</source>
-		<translation>Use apenas letras minúsculas (a a z), números e traços (-). Não use teclas de bate-papo</translation>
+		<translation>Utiliza solo letras minúsculas (a - z), números y guiones (-). No uses las claves de chat</translation>
 	</message>
 	<message>
 		<source>transaction</source>
-		<translation>Transação</translation>
+		<translation>Transacción</translation>
 	</message>
 	<message>
 		<source>transaction-data</source>
-		<translation>Dados da transação</translation>
+		<translation>Transaction data</translation>
 	</message>
 	<message>
 		<source>transaction-declined</source>
-		<translation>Transação recusada</translation>
+		<translation>Transacción rechazada</translation>
 	</message>
 	<message>
 		<source>transactions-management-enabled</source>
-		<translation>Gerenciamento de transações (alfa)</translation>
+		<translation>Gestión de transacciones (alfa)</translation>
 	</message>
 	<message>
 		<source>transaction-description</source>
-		<translation>Considere-o completo após 12 confirmações na rede.</translation>
+		<translation>Transacciones con 12 confirmaciones pueden considerarse irreversibles</translation>
 	</message>
 	<message>
 		<source>transaction-details</source>
-		<translation>Detalhes da transação</translation>
+		<translation>Detalles de la transacción</translation>
 	</message>
 	<message>
 		<source>transaction-failed</source>
-		<translation>Falha na transação</translation>
+		<translation>Transacción fallida</translation>
 	</message>
 	<message>
 		<source>transaction-history</source>
-		<translation>Histórico de transações</translation>
+		<translation>Historial de transacciones</translation>
 	</message>
 	<message>
 		<source>transaction-request</source>
-		<translation>Solicitação de transação</translation>
+		<translation>Solicitud de transacción</translation>
 	</message>
 	<message>
 		<source>transaction-sent</source>
-		<translation>Transação enviada</translation>
+		<translation>Transacción enviada</translation>
 	</message>
 	<message>
 		<source>transaction-signed</source>
-		<translation>A transação foi assinada com sucesso</translation>
+		<translation>La transacción se ha firmado con éxito</translation>
 	</message>
 	<message>
 		<source>transactions</source>
-		<translation>Transações</translation>
+		<translation>Transacciones</translation>
 	</message>
 	<message>
 		<source>transactions-filter-select-all</source>
-		<translation>Selecionar tudo</translation>
+		<translation>Seleccionar todo</translation>
 	</message>
 	<message>
 		<source>transactions-filter-title</source>
-		<translation>Filtrar histórico</translation>
+		<translation>Filtrar historial</translation>
 	</message>
 	<message>
 		<source>type</source>
@@ -4847,175 +4836,175 @@ Acesse a seção configurações dos dispositivos para parear seus dispositivos.
 	</message>
 	<message>
 		<source>transactions-history</source>
-		<translation>Histórico de transações</translation>
+		<translation>Historial de transacciones</translation>
 	</message>
 	<message>
 		<source>transactions-history-empty</source>
-		<translation>Ainda não há transações no seu histórico</translation>
+		<translation>Aún no hay transacciones en tu historial</translation>
 	</message>
 	<message>
 		<source>transactions-history-loading</source>
-		<translation>Carregando histórico de transações. Isso pode demorar um pouco.</translation>
+		<translation>Cargando historial de transacciones. Esto podrá tomar un tiempo.</translation>
 	</message>
 	<message>
 		<source>transactions-sign</source>
-		<translation>Assinar</translation>
+		<translation>Firmar</translation>
 	</message>
 	<message>
 		<source>tribute-required-by-multiaccount</source>
-		<translation>{{multiaccount-name}} precisa de SNT para começar uma conversa.</translation>
+		<translation>{{multiaccount-name}} requiere SNT para iniciar un chat.</translation>
 	</message>
 	<message>
 		<source>tribute-state-paid</source>
-		<translation>Tributo pago</translation>
+		<translation>Tributo pagado</translation>
 	</message>
 	<message>
 		<source>tribute-state-pending</source>
-		<translation>Tributo pendente</translation>
+		<translation>Tributo pendiente</translation>
 	</message>
 	<message>
 		<source>tribute-state-required</source>
-		<translation>Requer {{snt-amount}} tributos em SNT</translation>
+		<translation>Requiere tributo de {{snt-amount}} SNT</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk</source>
-		<translation>Tribute to Talk</translation>
+		<translation>Tribute to talk</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-add-friends</source>
-		<translation>Adicione amigos como um contato para permitir bate-papos sem pagamento de tributo.</translation>
+		<translation>Agregar amigos como un contacto para permitir chats sin pago de tributo.</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-are-you-friends</source>
-		<translation>Vocês são amigos?</translation>
+		<translation>¿Son amigos?</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-ask-to-be-added</source>
-		<translation>Peça para ser adicionado como um contato</translation>
+		<translation>Pide que te añadan como contacto</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-contact-received-your-tribute</source>
-		<translation> recebeu seu tributo. Agora vocês podem conversar com segurança.</translation>
+		<translation>recibió tu tributo. Ahora pueden conversar con seguridad entre ustedes.</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-desc</source>
-		<translation>Monetize sua atenção exigindo pagamento de SNT para novas pessoas iniciem um bate-papo</translation>
+		<translation>Monetiza tu atención requiriendo SNT para que la gente nueva inicie un chat</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-disabled</source>
-		<translation>Tribute to Talk desativado</translation>
+		<translation>Tribute to Talk deshabilitado</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-disabled-note</source>
-		<translation>A partir de agora, novas pessoas podem iniciar um bate-papo com você sem enviar o SNT.</translation>
+		<translation>A partir de ahora, las personas nuevas pueden iniciar un chat contigo sin enviar SNT.</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-enabled</source>
-		<translation>Você tem o Tribute to Talk ativado.</translation>
+		<translation>Tienes Tribute to Talk habilitado.</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-finish-desc</source>
-		<translation>A partir de agora, você receberá apenas conversas de contatos e pessoas que pagaram </translation>
+		<translation>A partir de ahora, sólo recibirás mensajes de los contactos, y de la gente que pagó</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-learn-more-1</source>
-		<translation>Seu tempo e atenção são seus ativos mais valiosos. O Tribute to Talk permite definir uma quantidade de SNT necessária para novas pessoas iniciarem um bate-papo com você.</translation>
+		<translation>Tu tiempo y atención son Tus activos más valiosos. Tribute to Talk te permite configurar la cantidad de SNT requerida para que nuevas personas inicien un chat contigo.</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-learn-more-2</source>
-		<translation>Qualquer pessoa que não esteja na sua lista de contatos será solicitada a pagar e você pode responder assim que ela efetuar o pagamento.</translation>
+		<translation>Cualquier persona que no esté en tu lista de contactos deberá pagar, y tu puedes responder una vez que lo hayan hecho.</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-learn-more-3</source>
-		<translation>Você sempre pode enviar o dinheiro de volta, mas para garantir que os amigos possam entrar em contato com você gratuitamente, adicione-os primeiro como contato.</translation>
+		<translation>Siempre puedes devolver el dinero, pero para asegurarte de que tus amigos puedan contactarte libremente, añádelos primero como contacto.</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-paywall-learn-more-1</source>
-		<translation>Nosso tempo e atenção são nossos ativos mais valiosos. O Tribute to Talk permite que você entre em contato com novas pessoas em troca de um pagamento SNT.</translation>
+		<translation>Nuestro tiempo y atención son nuestros activos más valiosos. Tribute to Talk te permite contactar a nuevas personas a cambio de un pago de SNT.</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-paywall-learn-more-2</source>
-		<translation>Para iniciar um bate-papo com alguém que tenha um conjunto de tributos, basta pagar o SNT necessário e você será adicionado como um contato.</translation>
+		<translation>Para iniciar un chat con alguien que tiene configurado tributos, simplemente paga el SNT requerido y serás agregado como un contacto.</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-paywall-learn-more-3</source>
-		<translation>Se você os conhece, pode compartilhar seu perfil fora do Status para ser adicionado gratuitamente.</translation>
+		<translation>Si los conoces, puedes compartir tu perfil fuera de Status para ser agregado de forma gratuita.</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-pending</source>
-		<translation>Tributo pendente de confirmação</translation>
+		<translation>Tributo pendiente de confirmación</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-pending-note</source>
-		<translation>A transação de tributo está pendente de confirmação na rede. Você pode verificar seu status no histórico de transações</translation>
+		<translation>La transacción de tributo está pendiente de confirmación en la red. Puedes verificar el status en el historial de transacciones</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-removing-note</source>
-		<translation>A remoção do Tribute to Talk permitirá que novas pessoas iniciem um bate-papo sem enviar o SNT. Requer que uma transação seja feita.</translation>
+		<translation>Eliminar Tribute to Talk permitirá que nuevas personas inicien un chat sin enviar SNT. Requiere que se realice una transacción.</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-set-snt-amount</source>
-		<translation>Defina a quantidade de SNT necessária para novas pessoas iniciarem um bate-papo</translation>
+		<translation>Establece la cantidad de SNT requerida para que nuevas personas inicien un chat</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-signing</source>
-		<translation>Aguardando para assinar a transação</translation>
+		<translation>Esperando para firmar la transacción</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-transaction-failed-note</source>
-		<translation>A transação falhou e as configurações do Tribute to Talk não foram alteradas</translation>
+		<translation>La transacción ha fallado y tu configuración de Tribute to Talk no ha cambiado</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-tribute-received1</source>
-		<translation>Tributo recebido. Você e</translation>
+		<translation>El tributo fue recibido. Tú y</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-tribute-received2</source>
-		<translation>agora são contatos e podem conversar com segurança.</translation>
+		<translation>ahora son contactos y pueden chatear de forma segura entre sí.</translation>
 	</message>
 	<message>
 		<source>tribute-to-talk-you-require-snt</source>
-		<translation>Você requer SNT para novas pessoas iniciarem um bate-papo.</translation>
+		<translation>Se necesita SNT para que las personas nuevas inicien un chat.</translation>
 	</message>
 	<message>
 		<source>try-again</source>
-		<translation>Tente novamente</translation>
+		<translation>Inténtalo de nuevo</translation>
 	</message>
 	<message>
 		<source>try-keeping-the-card-still</source>
-		<translation>Tente manter o cartão parado</translation>
+		<translation>Intenta mantener la tarjeta quieta</translation>
 	</message>
 	<message>
 		<source>turn-nfc-on</source>
-		<translation>Ative a NFC para continuar</translation>
+		<translation>activar nfc</translation>
 	</message>
 	<message>
 		<source>turn-nfc-description</source>
-		<translation>NFC está desativado no seu dispositivo. Você pode habilitá-lo nas configurações</translation>
+		<translation>NFC está deshabilitado en su dispositivo. Puedes habilitarlo en la configuración</translation>
 	</message>
 	<message>
 		<source>keycard-init-title</source>
-		<translation>Procurando cartões…</translation>
+		<translation>Buscando tarjetas...</translation>
 	</message>
 	<message>
 		<source>keycard-init-description</source>
-		<translation>Coloque o cartão na parte de trás do telefone para continuar</translation>
+		<translation>Coloque la tarjeta en la parte posterior de su teléfono para continuar</translation>
 	</message>
 	<message>
 		<source>keycard-awaiting-title</source>
-		<translation>Ainda procurando…</translation>
+		<translation>Todavía buscando...</translation>
 	</message>
 	<message>
 		<source>keycard-awaiting-description</source>
-		<translation>Tente mover o cartão para encontrar o leitor NFC em seu dispositivo</translation>
+		<translation>Intente mover la tarjeta para encontrar el lector NFC en su dispositivo</translation>
 	</message>
 	<message>
 		<source>keycard-processing-title</source>
-		<translation>Processando…</translation>
+		<translation>Procesando...</translation>
 	</message>
 	<message>
 		<source>keycard-processing-description</source>
-		<translation>Tente manter o cartão parado</translation>
+		<translation>Intenta mantener la tarjeta quieta</translation>
 	</message>
 	<message>
 		<source>keycard-connected-title</source>
@@ -5023,95 +5012,95 @@ Acesse a seção configurações dos dispositivos para parear seus dispositivos.
 	</message>
 	<message>
 		<source>keycard-connected-description</source>
-		<translation>Tente manter o cartão parado</translation>
+		<translation>Intenta mantener la tarjeta quieta</translation>
 	</message>
 	<message>
 		<source>keycard-error-title</source>
-		<translation>Conexão perdida</translation>
+		<translation>Conexión perdida</translation>
 	</message>
 	<message>
 		<source>keycard-error-description</source>
-		<translation>Conecte o cartão novamente para continuar</translation>
+		<translation>Vuelva a conectar la tarjeta para continuar.</translation>
 	</message>
 	<message>
 		<source>keycard-success-title</source>
-		<translation>Sucesso</translation>
+		<translation>Éxito</translation>
 	</message>
 	<message>
 		<source>keycard-success-description</source>
-		<translation>Você pode remover o cartão agora</translation>
+		<translation>Puedes quitar la tarjeta ahora</translation>
 	</message>
 	<message>
 		<source>keycard-recover</source>
-		<translation>cartão perdido ou travado?</translation>
+		<translation>tarjeta perdida o congelada?</translation>
 	</message>
 	<message>
 		<source>keycard-recover-title</source>
-		<translation>Criar um novo cartão para esta conta?</translation>
+		<translation>¿Crear una nueva tarjeta para esta cuenta?</translation>
 	</message>
 	<message>
 		<source>keycard-recover-text</source>
-		<translation>Se você tem sua frase mnemônica, poderá criar um novo Keycard associado a esta conta. Você pode usar um novo Keycard ou redefinir os padrões de fábrica em um cartão travado.</translation>
+		<translation>Si tienes tu frase mnemotécnica puedes crear una nueva Keycard asociada a esta cuenta. Puedes utilizar ya sea una nueva Keycard o realizar el restablecimiento de una congelada.</translation>
 	</message>
 	<message>
 		<source>keycard-backup</source>
-		<translation>Crie um Keycard de backup</translation>
+		<translation>Crear una copia de seguridad de tu Keycard</translation>
 	</message>
 	<message>
 		<source>keycard-backup-success-title</source>
-		<translation>Backup bem-sucedido</translation>
+		<translation>Copia de seguridad exitosa</translation>
 	</message>
 	<message>
 		<source>keycard-backup-success-body</source>
-		<translation>Cartão de backup criado com sucesso. Agora você pode usá-lo com sua conta, assim como o cartão principal.</translation>
+		<translation>Copia de respaldo creada con éxito. Ahora puedes utilizarla con tu cuenta al igual que la tarjeta principal.</translation>
 	</message>
 	<message>
 		<source>type-a-message</source>
-		<translation>Mensagem</translation>
+		<translation>Mensaje</translation>
 	</message>
 	<message>
 		<source>ulc-enabled</source>
-		<translation>ULC ativado</translation>
+		<translation>ULC habilitado</translation>
 	</message>
 	<message>
 		<source>backup-enabled</source>
-		<translation>Habilitado</translation>
+		<translation>Activado</translation>
 	</message>
 	<message>
 		<source>backup-disabled</source>
-		<translation>Desativado</translation>
+		<translation>Deshabilitado</translation>
 	</message>
 	<message>
 		<source>backup-settings</source>
-		<translation>Configurações de cópia de segurança</translation>
+		<translation>Ajustes de copia de seguridad</translation>
 	</message>
 	<message>
 		<source>backup-through-waku</source>
-		<translation>Realizar cópia de segurança através do Waku</translation>
+		<translation>Copia de seguridad a través de waku</translation>
 	</message>
 	<message>
 		<source>perform-backup</source>
-		<translation>Fazer cópia de segurança</translation>
+		<translation>Realizar copia de seguridad</translation>
 	</message>
 	<message>
 		<source>backing-up</source>
-		<translation>Realizando cópia de segurança...</translation>
+		<translation>Creando copia de seguridad ...</translation>
 	</message>
 	<message>
 		<source>last-backup-performed</source>
-		<translation>Última cópia de segurança executada</translation>
+		<translation>Última copia de seguridad realizada:</translation>
 	</message>
 	<message>
 		<source>unable-to-read-this-code</source>
-		<translation>Não foi possível ler este código</translation>
+		<translation>No se puede leer este código</translation>
 	</message>
 	<message>
 		<source>unblock-contact</source>
-		<translation>Desbloquear este usuário</translation>
+		<translation>Desbloquear este usuario</translation>
 	</message>
 	<message>
 		<source>unknown-status-go-error</source>
-		<translation>Erro desconhecido de status-go</translation>
+		<translation>Error de status-go desconocido</translation>
 	</message>
 	<message>
 		<source>unlock</source>
@@ -5119,31 +5108,31 @@ Acesse a seção configurações dos dispositivos para parear seus dispositivos.
 	</message>
 	<message>
 		<source>unpair-card</source>
-		<translation>Desemparelhar cartão</translation>
+		<translation>Desvincular tarjeta</translation>
 	</message>
 	<message>
 		<source>unpair-card-confirmation</source>
-		<translation>Esta operação desemparelhará o cartão do dispositivo atual. Requer autorização de código de acesso de 6 dígitos. Deseja continuar?</translation>
+		<translation>Esta operación desvinculará la tarjeta del dispositivo actual. Requiere autorización del código de acceso de 6 dígitos. ¿Quieres continuar?</translation>
 	</message>
 	<message>
 		<source>unpaired-keycard-text</source>
-		<translation>O Keycard que você utilizou não está associado a este telefone</translation>
+		<translation>La Keycard que tocaste no está asociada con este teléfono</translation>
 	</message>
 	<message>
 		<source>unpaired-keycard-title</source>
-		<translation>Parece que seu cartão não foi pareado.</translation>
+		<translation>Parece que tu tarjeta ha sido desvinculada</translation>
 	</message>
 	<message>
 		<source>unpair-keycard</source>
-		<translation>Desparear o Keycard deste telefone</translation>
+		<translation>Desemparejar la Keycard de este teléfono</translation>
 	</message>
 	<message>
 		<source>unpair-keycard-warning</source>
-		<translation>Seu código de emparelhamento/PUK &amp; PIN permanecem inalterados</translation>
+		<translation>El código de emparejamiento/PUK y el PIN no cambian</translation>
 	</message>
 	<message>
 		<source>update</source>
-		<translation>Atualizar</translation>
+		<translation>Actualizar</translation>
 	</message>
 	<message>
 		<source>url</source>
@@ -5151,47 +5140,47 @@ Acesse a seção configurações dos dispositivos para parear seus dispositivos.
 	</message>
 	<message>
 		<source>usd-currency</source>
-		<translation>USD</translation>
+		<translation>Dólar estadounidense</translation>
 	</message>
 	<message>
 		<source>use-valid-contact-code</source>
-		<translation>Digite ou escaneie uma chave de bate-papo ou nome de usuário válidos</translation>
+		<translation>Por favor, ingresa o escanea una clave de contacto o nombre de usuario válido</translation>
 	</message>
 	<message>
 		<source>validation-amount-invalid-number</source>
-		<translation>A quantidade não é um número válido</translation>
+		<translation>La cantidad no es un número válido</translation>
 	</message>
 	<message>
 		<source>validation-amount-is-too-precise</source>
-		<translation>O valor é muito preciso. O número máximo de casas decimais é {{decimals}} .</translation>
+		<translation>La cantidad es muy precisa. La cantidad máxima de decimales es {{decimals}}.</translation>
 	</message>
 	<message>
 		<source>version</source>
-		<translation>Versão do aplicativo</translation>
+		<translation>Versión de la app</translation>
 	</message>
 	<message>
 		<source>app-commit</source>
-		<translation>Commit do aplicativo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>view</source>
-		<translation>Visualizar</translation>
+		<translation>Ver</translation>
 	</message>
 	<message>
 		<source>view-cryptokitties</source>
-		<translation>Ver em CryptoKitties</translation>
+		<translation>Ver en CryptoKitties</translation>
 	</message>
 	<message>
 		<source>view-cryptostrikers</source>
-		<translation>Ver no CryptoStrikers</translation>
+		<translation>Ver en CryptoStrikers</translation>
 	</message>
 	<message>
 		<source>view-etheremon</source>
-		<translation>Ver no Etheremon</translation>
+		<translation>Ver en Etheremon</translation>
 	</message>
 	<message>
 		<source>view-gitcoin</source>
-		<translation>Ver no Gitcoin</translation>
+		<translation>Ver en Gitcoin</translation>
 	</message>
 	<message>
 		<source>view-profile</source>
@@ -5199,85 +5188,86 @@ Acesse a seção configurações dos dispositivos para parear seus dispositivos.
 	</message>
 	<message>
 		<source>view-details</source>
-		<translation>Ver Detalhes</translation>
+		<translation>Ver detalles</translation>
 	</message>
 	<message>
 		<source>view-signing</source>
-		<translation>Ver frase de assinatura</translation>
+		<translation>Ver la frase de firma</translation>
 	</message>
 	<message>
 		<source>view-superrare</source>
-		<translation>Ver no SuperRare</translation>
+		<translation>Ver en SuperRare</translation>
 	</message>
 	<message>
 		<source>waiting-for-wifi</source>
-		<translation>Sem Wi-Fi, sincronização de mensagens desativada.</translation>
+		<translation>Sin Wi-Fi, la sincronización de mensajes está deshabilitada.</translation>
 	</message>
 	<message>
 		<source>waiting-for-wifi-change</source>
-		<translation>Configurações</translation>
+		<translation>Ajustes</translation>
 	</message>
 	<message>
 		<source>waiting-to-sign</source>
-		<translation>Aguardando para assinar a transação...</translation>
+		<translation>Esperando para firmar la transacción...</translation>
 	</message>
 	<message>
 		<source>wallet</source>
-		<translation>Carteira</translation>
+		<translation>Billetera</translation>
 	</message>
 	<message>
 		<source>wallet-asset</source>
-		<translation>Ativo</translation>
+		<translation>Activo</translation>
 	</message>
 	<message>
 		<source>wallet-assets</source>
-		<translation>Ativos</translation>
+		<translation>Activos</translation>
 	</message>
 	<message>
 		<source>wallet-backup-recovery-title</source>
-		<translation>Faça backup da sua frase-semente</translation>
+		<translation>Respalda tu frase semilla</translation>
 	</message>
 	<message>
 		<source>wallet-choose-recipient</source>
-		<translation>Escolher destinatário</translation>
+		<translation>Elegir destinatario</translation>
 	</message>
 	<message>
 		<source>wallet-collectibles</source>
-		<translation>Colecionáveis</translation>
+		<translation>Coleccionables</translation>
 	</message>
 	<message>
 		<source>wallet-insufficient-funds</source>
-		<translation>Fundos insuficientes</translation>
+		<translation>Fondos insuficientes</translation>
 	</message>
 	<message>
 		<source>wallet-insufficient-gas</source>
-		<translation>Não há ETH suficiente para o gás</translation>
+		<translation>No hay suficiente ETH para el gas</translation>
 	</message>
 	<message>
 		<source>wallet-invalid-address</source>
-		<translation>Endereço inválido: 
+		<translation>Dirección inválida: 
  {{data}}</translation>
 	</message>
 	<message>
 		<source>wallet-invalid-address-checksum</source>
-		<translation>Erro no endereço:{{data}}</translation>
+		<translation>Error en la dirección: 
+ {{data}}</translation>
 	</message>
 	<message>
 		<source>wallet-invalid-chain-id</source>
-		<translation>A rede não corresponde: 
- {{data}} mas a cadeia atual é {{chain}}</translation>
+		<translation>La red no coincide: 
+ {{data}} pero la cadena actual es {{chain}}</translation>
 	</message>
 	<message>
 		<source>wallet-manage-assets</source>
-		<translation>Gerenciar ativos</translation>
+		<translation>Administrar activos</translation>
 	</message>
 	<message>
 		<source>wallet-manage-accounts</source>
-		<translation>Gerenciar contas</translation>
+		<translation>Gestionar cuentas</translation>
 	</message>
 	<message>
 		<source>wallet-request</source>
-		<translation>Solicitação</translation>
+		<translation>Solicitud</translation>
 	</message>
 	<message>
 		<source>wallet-send</source>
@@ -5293,7 +5283,7 @@ Acesse a seção configurações dos dispositivos para parear seus dispositivos.
 	</message>
 	<message>
 		<source>wallet-settings</source>
-		<translation>Configurações da carteira</translation>
+		<translation>Ajustes de billetera</translation>
 	</message>
 	<message>
 		<source>wallet-total-value</source>
@@ -5301,213 +5291,214 @@ Acesse a seção configurações dos dispositivos para parear seus dispositivos.
 	</message>
 	<message>
 		<source>wallet-transaction-total-fee</source>
-		<translation>Taxa total</translation>
+		<translation>Costo total</translation>
 	</message>
 	<message>
 		<source>wants-to-access-profile</source>
-		<translation>quer acessar seu perfil</translation>
+		<translation>quiere acceder a tu perfil</translation>
 	</message>
 	<message>
 		<source>warning</source>
-		<translation>Atenção</translation>
+		<translation>Advertencia</translation>
 	</message>
 	<message>
 		<source>warning-message</source>
-		<translation>Desculpe, limitamos o envio de várias mensagens em rápida sucessão para evitar spam. Por favor, tente novamente daqui a pouco</translation>
+		<translation>Lo sentimos, limitamos el envío de varios mensajes en rápida sucesión para evitar el spam. Por favor, inténtalo de nuevo en un momento.</translation>
 	</message>
 	<message>
 		<source>web-view-error</source>
-		<translation>Não foi possível carregar a página</translation>
+		<translation>No se puede cargar la página</translation>
 	</message>
 	<message>
 		<source>welcome-screen-text</source>
-		<translation>Configure sua carteira, convide seus amigos para bater papo e navegue pelos dapps mais usados!</translation>
+		<translation>¡Configura tu billetera, invita a amigos a chatear 
+ y busca dapps populares!</translation>
 	</message>
 	<message>
 		<source>welcome-to-status</source>
-		<translation>Bem-vindo ao Status!</translation>
+		<translation>¡Bienvenidx a Status!</translation>
 	</message>
 	<message>
 		<source>welcome-to-status-description</source>
-		<translation>Configure sua carteira criptográfica, convide amigos para conversar e navegue por aplicativos descentralizados</translation>
+		<translation>Configura tu cripto billetera, invita a tus amigos a chatear y navegar apps descentralizadas</translation>
 	</message>
 	<message>
 		<source>welcome-blank-message</source>
-		<translation>Suas conversas serão exibidas aqui. Para iniciar novos bate-papos, pressione o botão ⊕</translation>
+		<translation>Tus chats aparecerán aquí. Para iniciar nuevos chats, presiona el botón ⊕</translation>
 	</message>
 	<message>
 		<source>welcome-community-blank-message</source>
-		<translation>Seus canais aparecerão aqui. Para criar um novo canal, clique no botão ⊕ e selecione &quot;Criar um canal&quot;</translation>
+		<translation>Sus canales aparecerán aquí. Para crear un nuevo canal, haz clic en el botón ⊕ y selecciona &quot;Crear un canal&quot;</translation>
 	</message>
 	<message>
 		<source>welcome-community-blank-message-edit-chats</source>
-		<translation>Seus canais aparecerão aqui. Para criar um novo canal, volte para a tela da comunidade, clique no botão ⊕ e selecione &quot;Criar um canal&quot;</translation>
+		<translation>Tus canales aparecerán aquí. Para crear un nuevo canal, vuelve a la pantalla de la comunidad, haz clic en el botón ⊕ y selecciona &quot;Crear un canal&quot;</translation>
 	</message>
 	<message>
 		<source>welcome-blank-community-message</source>
-		<translation>Suas comunidades aparecerão aqui.</translation>
+		<translation>Tus comunidades aparecerán aquí.</translation>
 	</message>
 	<message>
 		<source>fetch-community</source>
-		<translation>Buscar comunidade</translation>
+		<translation>Buscar la comunidad</translation>
 	</message>
 	<message>
 		<source>fetching-community</source>
-		<translation>Buscando comunidade…</translation>
+		<translation>Buscando comunidad...</translation>
 	</message>
 	<message>
 		<source>seed-phrase-placeholder</source>
-		<translation>Frase-semente…</translation>
+		<translation>Frase semilla...</translation>
 	</message>
 	<message>
 		<source>word-count</source>
-		<translation>Contagem de palavras</translation>
+		<translation>Número de palabras</translation>
 	</message>
 	<message>
 		<source>word-n</source>
-		<translation>Palavra #{{number}}</translation>
+		<translation>Palabra #{{number}}</translation>
 	</message>
 	<message>
 		<source>word-n-description</source>
-		<translation>Para verificar se você fez o backup da sua frase-semente corretamente, digite a palavra #{{number}} acima.</translation>
+		<translation>Para comprobar si has realizado una copia de seguridad de la frase semilla correctamente, escribe arriba la palabra #{{number}}.</translation>
 	</message>
 	<message numerus="yes">
 		<source>words-n</source>
 		<translation>
-			<numerusform>1 palavra</numerusform>
-			<numerusform>{{count}} palavras</numerusform>
+			<numerusform>1 palabra</numerusform>
+			<numerusform>{{count}} palabras</numerusform>
 		</translation>
 	</message>
 	<message>
 		<source>write-down-and-store-securely</source>
-		<translation>Anote os códigos e
- guarde-os de forma segura</translation>
+		<translation>Escribe los códigos
+ y guárdalos de forma segura</translation>
 	</message>
 	<message>
 		<source>wrong-address</source>
-		<translation>Endereço errado</translation>
+		<translation>Dirección incorrecta</translation>
 	</message>
 	<message>
 		<source>wrong-card</source>
-		<translation>Cartão errado</translation>
+		<translation>Tarjeta equivocada</translation>
 	</message>
 	<message>
 		<source>wrong-card-text</source>
-		<translation>O cartão utilizado não corresponde às chaves que você selecionou</translation>
+		<translation>Haz tocado una tarjeta que no corresponde a las llaves seleccionadas</translation>
 	</message>
 	<message>
 		<source>wrong-contract</source>
-		<translation>Contrato errado</translation>
+		<translation>Contrato incorrecto</translation>
 	</message>
 	<message>
 		<source>contract-isnt-supported</source>
-		<translation>Contrato não suportado</translation>
+		<translation>El contrato no es compatible</translation>
 	</message>
 	<message>
 		<source>wrong-keycard-text</source>
-		<translation>O Keycard que você utilizou não está associado a este telefone</translation>
+		<translation>La Keycard que tocaste no está asociada con este teléfono</translation>
 	</message>
 	<message>
 		<source>wrong-keycard-title</source>
-		<translation>Parece que você utilizou
- um Keycard errado.</translation>
+		<translation>Parece que has hecho tapping 
+una keycard incorrecta</translation>
 	</message>
 	<message>
 		<source>wrong-password</source>
-		<translation>Senha incorreta</translation>
+		<translation>Contraseña incorrecta</translation>
 	</message>
 	<message>
 		<source>wrong-word</source>
-		<translation>Palavra errada</translation>
+		<translation>Palabra incorrecta</translation>
 	</message>
 	<message>
 		<source>yes</source>
-		<translation>Sim</translation>
+		<translation>Sí</translation>
 	</message>
 	<message>
 		<source>You</source>
-		<translation>Você</translation>
+		<translation>Tú</translation>
 	</message>
 	<message>
 		<source>you</source>
-		<translation>você</translation>
+		<translation>tú</translation>
 	</message>
 	<message>
 		<source>you-already-have-an-asset</source>
-		<translation>Você já tem um ativo {{value}}</translation>
+		<translation>Ya tienes un activo {{value}}</translation>
 	</message>
 	<message>
 		<source>you-are-all-set</source>
-		<translation>Está tudo pronto!</translation>
+		<translation>¡Estás listo!</translation>
 	</message>
 	<message>
 		<source>you-are-all-set-description</source>
-		<translation>Se você perder seu telefone, agora você pode acessar seus fundos e a chave de bate-papo usando sua frase-semente</translation>
+		<translation>Ahora, si pierdes tu teléfono, puedes acceder a tus fondos y llave de chat usando la frase semilla</translation>
 	</message>
 	<message>
 		<source>you-can-change-account</source>
-		<translation>Você pode mudar o nome da conta e a cor para o que desejar</translation>
+		<translation>Puedes cambiar el nombre y el color de la cuenta a lo que deseas</translation>
 	</message>
 	<message>
 		<source>you-dont-have-stickers</source>
-		<translation>Você ainda não tem nenhum adesivo</translation>
+		<translation>Todavía no tienes stickers</translation>
 	</message>
 	<message>
 		<source>you-dont-have-contacts-invite-friends</source>
-		<translation>Você ainda não tem contatos.
- Convide seus amigos para começar a conversar.</translation>
+		<translation>Aún no tienes contactos.
+Invita a tus amigos a empezar a chatear.</translation>
 	</message>
 	<message>
 		<source>your-contact-code</source>
-		<translation>A concessão de acesso autoriza este DApp a recuperar sua chave de bate-papo</translation>
+		<translation>Conceder acceso autoriza a esta DApp a obtener tu clave de chat</translation>
 	</message>
 	<message>
 		<source>your-data-belongs-to-you</source>
-		<translation>Se você perder a sua frase-semente, você perde seus dados e fundos</translation>
+		<translation>Si pierdes tu frase semilla, pierdes tus datos y fondos</translation>
 	</message>
 	<message>
 		<source>your-data-belongs-to-you-description</source>
-		<translation>Se perder o acesso, por exemplo, ao perder seu telefone, você só pode acessar suas chaves com sua frase-semente. Só você tem a sua frase-semente. Anote e mantenha sua frase-semente em segurança</translation>
+		<translation>Si pierdes acceso, por ejemplo al perder tu teléfono, solo puedes acceder a tus llaves con tu frase semilla. Nadie aparte de ti tiene tu frase semilla. Anótala. Mantenla segura.</translation>
 	</message>
 	<message>
 		<source>your-recovery-phrase</source>
-		<translation>Sua frase-semente</translation>
+		<translation>Tu frase semilla</translation>
 	</message>
 	<message>
 		<source>your-recovery-phrase-description</source>
-		<translation>Esta é sua frase-semente. Você a usa para provar que esta é sua carteira. Você só pode vê-la uma vez! Escreva no papel e mantenha em um lugar seguro. Você vai precisar dela se perder ou reinstalar sua carteira.</translation>
+		<translation>Esta es tu frase semilla. La usas para comprobar que esta es tu billetera. ¡Sólo la verás una vez! Escríbela en un papel y guárdala en un lugar seguro. La necesitarás si pierdes o reinstalas tu billetera.</translation>
 	</message>
 	<message>
 		<source>custom-seed-phrase</source>
-		<translation>Frase-semente inválida</translation>
+		<translation>Frase semilla inválida</translation>
 	</message>
 	<message>
 		<source>custom-seed-phrase-text-1</source>
-		<translation>Esta frase-semente não é compatível com o nosso dicionário. Verifique se há palavras com erros ortográficos.</translation>
+		<translation>Esta frase semilla no coincide con nuestro diccionario compatible. Revisa si hay palabras mal escritas.</translation>
 	</message>
 	<message>
 		<source>to-enable-biometric</source>
-		<translation>Para ativar o {{bio-type-label}}, você deve salvar sua senha na tela de desbloqueio</translation>
+		<translation>Para habilitar {{bio-type-label}}, debes guardar tu contraseña en la pantalla de desbloqueo</translation>
 	</message>
 	<message>
 		<source>ok-save-pass</source>
-		<translation>OK, salvar senha</translation>
+		<translation>OK, guardar contraseña</translation>
 	</message>
 	<message>
 		<source>lock-app-with</source>
-		<translation>Bloquear aplicativo com</translation>
+		<translation>Bloquear app con</translation>
 	</message>
 	<message>
 		<source>grant-face-id-permissions</source>
-		<translation>Para conceder a permissão de Face ID necessária, vá para as configurações do seu sistema e certifique-se de que Status &gt; Face ID está selecionado</translation>
+		<translation>Para conceder el permiso de Face ID requerido, ve a los ajustes de tu sistema y asegúrate de que esté seleccionado Status &gt; Face ID</translation>
 	</message>
 	<message>
 		<source>request-feature</source>
-		<translation>Solicitar um recurso</translation>
+		<translation>Solicitar una funcionalidad</translation>
 	</message>
 	<message>
 		<source>select-account-dapp</source>
-		<translation>Selecione a conta que você deseja usar com Dapps</translation>
+		<translation>Selecciona la cuenta que deseas usar con Dapps</translation>
 	</message>
 	<message>
 		<source>apply</source>
@@ -5515,87 +5506,87 @@ Acesse a seção configurações dos dispositivos para parear seus dispositivos.
 	</message>
 	<message>
 		<source>on-status-tree</source>
-		<translation>Árvore Status ativada</translation>
+		<translation>En el árbol de Status</translation>
 	</message>
 	<message>
 		<source>off-status-tree</source>
-		<translation>Árvore Status desativada</translation>
+		<translation>Derivado fuera de Status</translation>
 	</message>
 	<message>
 		<source>derivation-path</source>
-		<translation>Caminho de derivação</translation>
+		<translation>Ruta de derivación</translation>
 	</message>
 	<message>
 		<source>storage</source>
-		<translation>Armazenamento</translation>
+		<translation>Almacenamiento</translation>
 	</message>
 	<message>
 		<source>keycard-free-pairing-slots</source>
-		<translation>O Keycard tem {{n}} portas de emparelhamento livres</translation>
+		<translation>Keycard tiene {{n}} espacios de vinculación libres</translation>
 	</message>
 	<message>
 		<source>public-chat-description</source>
-		<translation>Participe de bate-papos públicos sobre seus interesses! Qualquer um pode começar uma nova sala.</translation>
+		<translation>¡Únete a chats públicos para tus intereses! Cualquiera puede comenzar uno nuevo.</translation>
 	</message>
 	<message>
 		<source>delete-account</source>
-		<translation>Remover conta</translation>
+		<translation>Borrar cuenta</translation>
 	</message>
 	<message>
 		<source>delete-keys-keycard</source>
-		<translation>Excluir chaves do Keycard</translation>
+		<translation>Eliminar llaves de Keycard</translation>
 	</message>
 	<message>
 		<source>watch-only</source>
-		<translation>Somente exibição</translation>
+		<translation>Sólo para ver</translation>
 	</message>
 	<message>
 		<source>cant-report-bug</source>
-		<translation>Não é possível relatar um bug</translation>
+		<translation>No puedo reportar un error</translation>
 	</message>
 	<message>
 		<source>mail-should-be-configured</source>
-		<translation>O cliente de e-mail deve ser configurado</translation>
+		<translation>El cliente de correo debe ser configurado</translation>
 	</message>
 	<message>
 		<source>check-on-block-explorer</source>
-		<translation>Verifique no explorador de blocos</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>check-on-opensea</source>
-		<translation>Confira no opensea</translation>
+		<translation>Comprobar en opensea</translation>
 	</message>
 	<message>
 		<source>transactions-load-more</source>
-		<translation>Carregar mais</translation>
+		<translation>Mostrar más</translation>
 	</message>
 	<message>
 		<source>private-key</source>
-		<translation>Chave privada</translation>
+		<translation>Llave privada</translation>
 	</message>
 	<message>
 		<source>generate-an-account</source>
-		<translation>Gerar uma conta</translation>
+		<translation>Genera una Cuenta</translation>
 	</message>
 	<message>
 		<source>add-watch-account</source>
-		<translation>Adicionar uma conta somente para exibição</translation>
+		<translation>Agrega una cuenta sólo para mirar</translation>
 	</message>
 	<message>
 		<source>add-seed-account</source>
-		<translation>Adicionar conta com uma frase-semente</translation>
+		<translation>Agrega una cuenta con una frase  semilla</translation>
 	</message>
 	<message>
 		<source>account-exists-title</source>
-		<translation>A conta já existe</translation>
+		<translation>Cuenta ya existe</translation>
 	</message>
 	<message>
 		<source>add-private-key-account</source>
-		<translation>Adicionar conta a partir de chave privada</translation>
+		<translation>Ingresa una cuenta de una llave privada</translation>
 	</message>
 	<message>
 		<source>profile-not-found</source>
-		<translation>Perfil não encontrado</translation>
+		<translation>Perfil no encontrado</translation>
 	</message>
 	<message>
 		<source>waku-bloom-filter-mode</source>
@@ -5603,31 +5594,31 @@ Acesse a seção configurações dos dispositivos para parear seus dispositivos.
 	</message>
 	<message>
 		<source>wakuv2-settings</source>
-		<translation>Configurações Waku v2</translation>
+		<translation>Ajustes de Waku v2</translation>
 	</message>
 	<message>
 		<source>wakuv2-node-format</source>
-		<translation>/ip4/{node-ip}/tcp/{port}/p2p/{id}</translation>
+		<translation>/ip4/{nodo-ip}/tcp/{puerto}/p2p/{id}</translation>
 	</message>
 	<message>
 		<source>wakuv2-change-nodes</source>
-		<translation>Tem certeza de que deseja modificar os nós do Wakuv2?</translation>
+		<translation>¿Estás seguro de que quieres cambiar los nodos de Wakuv2?</translation>
 	</message>
 	<message>
 		<source>appearance</source>
-		<translation>Aparência</translation>
+		<translation>Apariencia</translation>
 	</message>
 	<message>
 		<source>preference</source>
-		<translation>Preferência</translation>
+		<translation>Preferencia</translation>
 	</message>
 	<message>
 		<source>light</source>
-		<translation>Claro</translation>
+		<translation>Luz</translation>
 	</message>
 	<message>
 		<source>dark</source>
-		<translation>Escuro</translation>
+		<translation>Oscuro</translation>
 	</message>
 	<message>
 		<source>system</source>
@@ -5635,8 +5626,8 @@ Acesse a seção configurações dos dispositivos para parear seus dispositivos.
 	</message>
 	<message>
 		<source>give-permissions-camera</source>
-		<translation>Dar permissão
-para acessar a câmera</translation>
+		<translation>Da permiso
+para acceder a la cámara</translation>
 	</message>
 	<message>
 		<source>photos</source>
@@ -5644,185 +5635,185 @@ para acessar a câmera</translation>
 	</message>
 	<message>
 		<source>image</source>
-		<translation>Imagem</translation>
+		<translation>Imagen</translation>
 	</message>
 	<message>
 		<source>sign-anyway</source>
-		<translation>Assinar mesmo assim</translation>
+		<translation>Continuar de todas maneras</translation>
 	</message>
 	<message>
 		<source>tx-fail-description1</source>
-		<translation>É provável que esta transação falhe. Assine por sua conta e risco usando uma taxa de rede personalizada.</translation>
+		<translation>Es probable que esta transacción falle. Firme bajo su propio riesgo utilizando una tarifa de red personalizada.</translation>
 	</message>
 	<message>
 		<source>tx-fail-description2</source>
-		<translation>É provável que esta transação falhe. Defina uma taxa de rede personalizada para assinar por sua conta e risco.</translation>
+		<translation>Es probable que esta transacción falle. Establezca una tarifa de red personalizada para firmar bajo su propio riesgo.</translation>
 	</message>
 	<message>
 		<source>set-custom-fee</source>
-		<translation>Definir taxa personalizada</translation>
+		<translation>Establecer tarifa personalizada</translation>
 	</message>
 	<message>
 		<source>not-enough-snt</source>
-		<translation>SNT insuficiente</translation>
+		<translation>No hay suficiente SNT</translation>
 	</message>
 	<message>
 		<source>add-new-contact</source>
-		<translation>Adicionar novo contato</translation>
+		<translation>Agregar nuevo contacto</translation>
 	</message>
 	<message>
 		<source>you-dont-have-contacts</source>
-		<translation>Você ainda não possui contatos.</translation>
+		<translation>Todavía no tenés ningún contacto.</translation>
 	</message>
 	<message>
 		<source>set-max</source>
-		<translation>Definir máximo</translation>
+		<translation>Establecer máximo</translation>
 	</message>
 	<message>
 		<source>continue-anyway</source>
-		<translation>Continuar mesmo assim</translation>
+		<translation>Continuar de todas maneras</translation>
 	</message>
 	<message>
 		<source>private-notifications</source>
-		<translation>Notificações privadas</translation>
+		<translation>Notificaciones privadas</translation>
 	</message>
 	<message>
 		<source>private-notifications-descr</source>
-		<translation>O Status notificará você sobre novas mensagens. Você pode editar suas preferências de notificação nas configurações.</translation>
+		<translation>Status te notificará sobre los nuevos mensajes. Podés editar tus preferencias de notificación más adelante en la configuración.</translation>
 	</message>
 	<message>
 		<source>maybe-later</source>
-		<translation>Talvez mais tarde</translation>
+		<translation>Quizas mas tarde</translation>
 	</message>
 	<message>
 		<source>join</source>
-		<translation>Participar</translation>
+		<translation>Unite</translation>
 	</message>
 	<message>
 		<source>registered</source>
-		<translation>cadastrado</translation>
+		<translation>registrado</translation>
 	</message>
 	<message>
 		<source>not-registered</source>
-		<translation>não cadastrado</translation>
+		<translation>no registrado</translation>
 	</message>
 	<message>
 		<source>audio-recorder-error</source>
-		<translation>Erro no gravador</translation>
+		<translation>Error de la grabadora</translation>
 	</message>
 	<message>
 		<source>audio-recorder</source>
-		<translation>Gravador</translation>
+		<translation>Grabadora</translation>
 	</message>
 	<message>
 		<source>audio-recorder-max-ms-reached</source>
-		<translation>Tempo máximo de gravação atingido</translation>
+		<translation>Tiempo máximo de grabación alcanzado</translation>
 	</message>
 	<message>
 		<source>audio-recorder-permissions-error</source>
-		<translation>Você precisa dar permissão para enviar mensagens de áudio</translation>
+		<translation>Tenés que dar permiso para enviar mensajes de audio</translation>
 	</message>
 	<message>
 		<source>audio</source>
-		<translation>Áudio</translation>
+		<translation>Audio</translation>
 	</message>
 	<message>
 		<source>update-to-see-image</source>
-		<translation>Atualize para a versão mais recente para ver uma bela imagem aqui!</translation>
+		<translation>¡Actualizá a la última versión para ver una buena imagen acá!</translation>
 	</message>
 	<message>
 		<source>update-to-listen-audio</source>
-		<translation>Atualize para a versão mais recente para ouvir uma mensagem de áudio aqui!</translation>
+		<translation>¡Actualizá a la última versión para escuchar un mensaje de audio acá!</translation>
 	</message>
 	<message>
 		<source>update-to-see-sticker</source>
-		<translation>Atualize para a versão mais recente para ver um belo adesivo aqui!</translation>
+		<translation>¡Actualizá a la última versión para ver un lindo sticker acá!</translation>
 	</message>
 	<message>
 		<source>webview-camera-permission-requests</source>
-		<translation>Solicitações de permissão de câmera do Webview</translation>
+		<translation>Solicitudes de permisos de la cámara Webview</translation>
 	</message>
 	<message>
 		<source>webview-camera-permission-requests-subtitle</source>
-		<translation>Quando habilitado, sites e dapps podem pedir para usar sua câmera</translation>
+		<translation>Cuando está habilitado, los sitios web y las dapps pueden solicitar el uso de su cámara</translation>
 	</message>
 	<message>
 		<source>page-would-like-to-use-camera</source>
-		<translation>gostaria de usar sua câmera</translation>
+		<translation>quisiera usar su cámara</translation>
 	</message>
 	<message>
 		<source>page-camera-request-blocked</source>
-		<translation>Solicitações de câmera bloqueadas. Para habilitar as solicitações de câmera, vá em Configurações</translation>
+		<translation>solicitudes de cámara bloqueadas. Para habilitar las solicitudes de la cámara, vaya a Configuración</translation>
 	</message>
 	<message>
 		<source>nickname</source>
-		<translation>Apelido</translation>
+		<translation>Apodo</translation>
 	</message>
 	<message>
 		<source>add-nickname</source>
-		<translation>Adicionar um apelido (opcional)</translation>
+		<translation>Agregar un apodo (opcional)</translation>
 	</message>
 	<message>
 		<source>nickname-description</source>
-		<translation>Os apelidos ajudam você a identificar as pessoas no Status. 
- Só você pode ver os apelidos que adicionou</translation>
+		<translation>Los apodos te ayudan a identificar a otras personas en Status. 
+ Solo tú puedes ver los apodos que agregaste</translation>
 	</message>
 	<message>
 		<source>accept</source>
-		<translation>Aceitar</translation>
+		<translation>Aceptar</translation>
 	</message>
 	<message>
 		<source>group-invite</source>
-		<translation>Convite para o grupo</translation>
+		<translation>Invitación de grupo</translation>
 	</message>
 	<message>
 		<source>group-invite-link</source>
-		<translation>Link de convite do grupo</translation>
+		<translation>Enlace de invitación de grupo</translation>
 	</message>
 	<message>
 		<source>pending-invitations</source>
-		<translation>Pedidos de entrada pendentes</translation>
+		<translation>Solicitudes de membresía pendientes</translation>
 	</message>
 	<message>
 		<source>empty-pending-invitations-descr</source>
-		<translation>Pessoas que desejam entrar no grupo 
- através de um link de convite aparecerão aqui</translation>
+		<translation>Las personas que deseen unirse al grupo
+a través de un enlace de invitación aparecerá aquí</translation>
 	</message>
 	<message>
 		<source>introduce-yourself</source>
-		<translation>Apresente-se com uma breve mensagem</translation>
+		<translation>Preséntate con un breve mensaje</translation>
 	</message>
 	<message>
 		<source>request-pending</source>
-		<translation>Pedido pendente…</translation>
+		<translation>Pedido pendiente…</translation>
 	</message>
 	<message>
 		<source>membership-declined</source>
-		<translation>O pedido de entrada no grupo foi recusado</translation>
+		<translation>Se rechazó la solicitud de membresía</translation>
 	</message>
 	<message>
 		<source>remove-group</source>
-		<translation>Remover grupo</translation>
+		<translation>Eliminar grupo</translation>
 	</message>
 	<message>
 		<source>request-membership</source>
-		<translation>Solicitar para entrar</translation>
+		<translation>Solicitar membresía</translation>
 	</message>
 	<message>
 		<source>membership-description</source>
-		<translation>A entrada no grupo exige que você seja aceito pelo administrador do grupo</translation>
+		<translation>La membresía grupal requiere que seas aceptado por el administrador del grupo</translation>
 	</message>
 	<message>
 		<source>group-membership-request</source>
-		<translation>Pedido para entrar no grupo</translation>
+		<translation>Solicitud de membresía grupal</translation>
 	</message>
 	<message>
 		<source>members-limit-reached</source>
-		<translation>Limite de membros atingido</translation>
+		<translation>Límite de miembros alcanzado</translation>
 	</message>
 	<message>
 		<source>favourite</source>
-		<translation>Favoritos</translation>
+		<translation>Favorito</translation>
 	</message>
 	<message>
 		<source>favourites</source>
@@ -5830,7 +5821,7 @@ para acessar a câmera</translation>
 	</message>
 	<message>
 		<source>new-favourite</source>
-		<translation>Novo favorito</translation>
+		<translation>Nuevo favorito</translation>
 	</message>
 	<message>
 		<source>edit-favourite</source>
@@ -5838,43 +5829,43 @@ para acessar a câmera</translation>
 	</message>
 	<message>
 		<source>remove-favourite</source>
-		<translation>Remover favorito</translation>
+		<translation>Quitar favorito</translation>
 	</message>
 	<message>
 		<source>add-favourite</source>
-		<translation>Adicionar favorito</translation>
+		<translation>Agregar favorito</translation>
 	</message>
 	<message>
 		<source>add-to-favourites</source>
-		<translation>Adicionar aos favoritos</translation>
+		<translation>Agregar a favoritos</translation>
 	</message>
 	<message>
 		<source>favourites-empty</source>
-		<translation>Os endereços adicionados aos favoritos aparecerão aqui</translation>
+		<translation>Las direcciones agregadas a favoritos aparecerán aquí</translation>
 	</message>
 	<message>
 		<source>contacts-empty</source>
-		<translation>Contatos com nomes ENS aparecerão aqui</translation>
+		<translation>Contactos con nombres ENS aparecerán aquí</translation>
 	</message>
 	<message>
 		<source>my-accounts</source>
-		<translation>Minhas contas</translation>
+		<translation>Mis cuentas</translation>
 	</message>
 	<message>
 		<source>my-accounts-empty</source>
-		<translation>Suas contas disponíveis aparecerão aqui</translation>
+		<translation>Tus cuentas disponibles aparecerán aquí</translation>
 	</message>
 	<message>
 		<source>recent-empty</source>
-		<translation>Os endereços usados recentemente aparecerão aqui</translation>
+		<translation>Las direcciones utilizadas recientemente aparecerán aquí</translation>
 	</message>
 	<message>
 		<source>address-or-ens-name</source>
-		<translation>Endereço ou nome ENS</translation>
+		<translation>Dirección o nombre ENS</translation>
 	</message>
 	<message>
 		<source>name-optional</source>
-		<translation>Nome (opcional)</translation>
+		<translation>Nombre (opcional)</translation>
 	</message>
 	<message>
 		<source>mute</source>
@@ -5882,7 +5873,7 @@ para acessar a câmera</translation>
 	</message>
 	<message>
 		<source>unmute</source>
-		<translation>Ativar som</translation>
+		<translation>Activar sonido</translation>
 	</message>
 	<message>
 		<source>scan-tokens</source>
@@ -5890,59 +5881,59 @@ para acessar a câmera</translation>
 	</message>
 	<message>
 		<source>my-status</source>
-		<translation>Meu status</translation>
+		<translation>Mi estado</translation>
 	</message>
 	<message>
 		<source>contacts-descr</source>
-		<translation>Seus contatos aparecerão aqui. Você receberá atualizações de status de qualquer pessoa que adicionar como contato</translation>
+		<translation>Tus contactos aparecerán aquí. Recibirá actualizaciones de estado de cualquier persona que agregue como contacto</translation>
 	</message>
 	<message>
 		<source>status-updates-descr</source>
-		<translation>As atualizações de status aparecerão aqui. Adicione este perfil como um contato para receber atualizações em sua linha do tempo.</translation>
+		<translation>Las actualizaciones de estado aparecerán aquí. Agregue el perfil como un contacto para recibir actualizaciones en su línea de tiempo.</translation>
 	</message>
 	<message>
 		<source>whats-on-your-mind</source>
-		<translation>O que você está pensando...</translation>
+		<translation>Lo que tienes en mente...</translation>
 	</message>
 	<message>
 		<source>cant-open-public-chat</source>
-		<translation>Não é possível abrir este chat público</translation>
+		<translation>No se puede abrir el chat público</translation>
 	</message>
 	<message>
 		<source>invalid-public-chat-topic</source>
-		<translation>Tópico de chat público inválido</translation>
+		<translation>Tema de chat público no válido</translation>
 	</message>
 	<message>
 		<source>now</source>
-		<translation>Agora</translation>
+		<translation>Ahora</translation>
 	</message>
 	<message>
 		<source>statuses-my-status-descr</source>
-		<translation>Compartilhe o que você está pensando. Qualquer pessoa que visitar seu perfil poderá ver seu status. As pessoas que adicionam você como contato receberão suas atualizações na linha do tempo delas</translation>
+		<translation>Comparte lo que tienes en mente. Cualquiera que visite su perfil podrá ver su estado. Las personas que te agreguen como contacto recibirán tus actualizaciones en su línea de tiempo.</translation>
 	</message>
 	<message>
 		<source>statuses-descr</source>
-		<translation>Compartilhe o que você está pensando e fique atualizado com seus contatos</translation>
+		<translation>Comparte lo que tienes en mente y mantente al día con tus contactos</translation>
 	</message>
 	<message>
 		<source>new-status</source>
-		<translation>Novo status</translation>
+		<translation>Nuevo estado</translation>
 	</message>
 	<message>
 		<source>chat-link-previews</source>
-		<translation>Visualizações de links de chat</translation>
+		<translation>Vistas previas de enlaces de chat</translation>
 	</message>
 	<message>
 		<source>you-can-choose-preview-websites</source>
-		<translation>Você pode escolher quais dos seguintes sites podem visualizar o link de descrições e imagens nas conversas</translation>
+		<translation>Puede elegir cuál de los siguientes sitios web puede previsualizar el enlace de las descripciones e imágenes en los chats</translation>
 	</message>
 	<message>
 		<source>previewing-may-share-metadata</source>
-		<translation>Visualizar links desses sites pode compartilhar seus metadados com os proprietários</translation>
+		<translation>La vista previa de los enlaces de estos sitios web puede compartir sus metadatos con sus propietarios.</translation>
 	</message>
 	<message>
 		<source>websites</source>
-		<translation>Sites</translation>
+		<translation>Sitios web</translation>
 	</message>
 	<message>
 		<source>enable-all</source>
@@ -5950,31 +5941,31 @@ para acessar a câmera</translation>
 	</message>
 	<message>
 		<source>disable-all</source>
-		<translation>Desativar todos</translation>
+		<translation>Desactivar todo</translation>
 	</message>
 	<message>
 		<source>warning-sending-to-contract-descr</source>
-		<translation>O endereço que você inseriu é um contrato inteligente. O envio de fundos para este endereço pode resultar em perda de fundos. Para interagir com um DApp, abra o DApp no navegador da Status.</translation>
+		<translation>La dirección que ingresó es un contrato inteligente, enviar fondos a esta dirección puede resultar en la pérdida de fondos. Para interactuar con una DApp, abra la DApp en el navegador de Status.</translation>
 	</message>
 	<message>
 		<source>dont-ask</source>
-		<translation>Não me pergunte novamente</translation>
+		<translation>No me vuelvas a preguntar</translation>
 	</message>
 	<message>
 		<source>enable-link-previews</source>
-		<translation>Ativar visualizações de link no chat?</translation>
+		<translation>¿Habilitar vistas previas de enlaces en el chat?</translation>
 	</message>
 	<message>
 		<source>once-enabled-share-metadata</source>
-		<translation>Uma vez habilitados, os links postados no chat podem compartilhar seus metadados com o site</translation>
+		<translation>Una vez habilitados, los enlaces publicados en el chat pueden compartir sus metadatos con el sitio.</translation>
 	</message>
 	<message>
 		<source>external-storage-denied</source>
-		<translation>Acesso ao armazenamento externo negado</translation>
+		<translation>Se niega el acceso al almacenamiento externo</translation>
 	</message>
 	<message>
 		<source>timeline</source>
-		<translation>Linha do tempo</translation>
+		<translation>Línea de tiempo</translation>
 	</message>
 	<message>
 		<source>main-account</source>
@@ -5982,15 +5973,15 @@ para acessar a câmera</translation>
 	</message>
 	<message>
 		<source>ethereum-address</source>
-		<translation>Endereço Ethereum</translation>
+		<translation>Dirección de Ethereum</translation>
 	</message>
 	<message>
 		<source>default-assets</source>
-		<translation>ERC20 e ERC721 padrão</translation>
+		<translation>Por defecto ERC20 y ERC721</translation>
 	</message>
 	<message>
 		<source>increase-gas</source>
-		<translation>Aumentar o gás</translation>
+		<translation>Aumentar el gas</translation>
 	</message>
 	<message>
 		<source>cancelling</source>
@@ -5998,35 +5989,35 @@ para acessar a câmera</translation>
 	</message>
 	<message>
 		<source>refresh</source>
-		<translation>Atualizar</translation>
+		<translation>Actualizar</translation>
 	</message>
 	<message>
 		<source>close-all</source>
-		<translation>Fechar tudo</translation>
+		<translation>Cerrar todo</translation>
 	</message>
 	<message>
 		<source>tabs</source>
-		<translation>Abas</translation>
+		<translation>Pestañas</translation>
 	</message>
 	<message>
 		<source>new-tab</source>
-		<translation>Nova aba</translation>
+		<translation>Nueva pestaña</translation>
 	</message>
 	<message>
 		<source>empty-tab</source>
-		<translation>Aba vazia</translation>
+		<translation>Pestaña vacía</translation>
 	</message>
 	<message>
 		<source>open-in-new-tab</source>
-		<translation>Abrir em nova aba</translation>
+		<translation>Abrir en una pestaña nueva</translation>
 	</message>
 	<message>
 		<source>has-permissions</source>
-		<translation>tem permissão para acessar</translation>
+		<translation>tiene permiso para acceder</translation>
 	</message>
 	<message>
 		<source>connect-wallet</source>
-		<translation>Conectar carteira</translation>
+		<translation>Conectar billetera</translation>
 	</message>
 	<message>
 		<source>open-chat</source>
@@ -6034,123 +6025,123 @@ para acessar a câmera</translation>
 	</message>
 	<message>
 		<source>favourite-description</source>
-		<translation>Seus sites favoritos aparecerão aqui</translation>
+		<translation>Tus sitios web favoritos aparecerán aquí</translation>
 	</message>
 	<message>
 		<source>transfers-fetching-failure</source>
-		<translation>O histórico de transferências não pôde ser atualizado. Verifique sua conexão e puxe para baixo para tentar novamente</translation>
+		<translation>El historial de transferencias no pudo ser actualizado. Compruebe su conexión y refresque para intentarlo de nuevo</translation>
 	</message>
 	<message>
 		<source>move-and-reset</source>
-		<translation>Mover e reiniciar</translation>
+		<translation>Mover y restablecer</translation>
 	</message>
 	<message>
 		<source>move-keystore-file-to-keycard</source>
-		<translation>Mover arquivo de armazenamento de chaves para o Keycard?</translation>
+		<translation>¿Mover el archivo keystore a la keycard?</translation>
 	</message>
 	<message>
 		<source>database-reset-title</source>
-		<translation>Redefinição do banco de dados</translation>
+		<translation>Reiniciar la base de datos</translation>
 	</message>
 	<message>
 		<source>database-reset-content</source>
-		<translation>Conversas, contatos e configurações foram excluídos. Você pode usar sua conta com seu Keycard</translation>
+		<translation>Se han eliminado los chats, los contactos y la configuración. Ahora puedes usar tu cuenta con tu Keycard</translation>
 	</message>
 	<message>
 		<source>database-reset-warning</source>
-		<translation>O banco de dados será redefinido. Conversas, contatos e configurações serão excluídos</translation>
+		<translation>La base de datos se restablecerá. Se borrarán los chats, los contactos y la configuración.</translation>
 	</message>
 	<message>
 		<source>empty-keycard-required</source>
-		<translation>Requer um Keycard vazio</translation>
+		<translation>Requiere una Keycard vacía</translation>
 	</message>
 	<message>
 		<source>current</source>
-		<translation>Atual</translation>
+		<translation>Actual</translation>
 	</message>
 	<message>
 		<source>choose-storage</source>
-		<translation>Escolha o armazenamento</translation>
+		<translation>Elegir almacenamiento</translation>
 	</message>
 	<message>
 		<source>choose-new-location-for-keystore</source>
-		<translation>Escolha um novo local para salvar seu arquivo de armazenamento de chaves</translation>
+		<translation>Seleccione una nueva ubicación para guardar su archivo keystore</translation>
 	</message>
 	<message>
 		<source>get-a-keycard</source>
-		<translation>Obtenha um Keycard</translation>
+		<translation>Obtenga una Keycard</translation>
 	</message>
 	<message>
 		<source>keycard-upsell-subtitle</source>
-		<translation>Maior segurança e facilidade</translation>
+		<translation>Mayor seguridad y conveniencia</translation>
 	</message>
 	<message>
 		<source>actions</source>
-		<translation>Ações</translation>
+		<translation>Acciones</translation>
 	</message>
 	<message>
 		<source>move-keystore-file</source>
-		<translation>Mover arquivo de armazenamento de chaves</translation>
+		<translation>Mover el archivo keystore</translation>
 	</message>
 	<message>
 		<source>select-new-location-for-keys</source>
-		<translation>Selecione um novo local para salvar sua(s) chave(s) privada(s)</translation>
+		<translation>Seleccione una nueva ubicación para guardar sus claves privadas</translation>
 	</message>
 	<message>
 		<source>reset-database</source>
-		<translation>Reiniciar base de dados</translation>
+		<translation>Restablecer base de datos</translation>
 	</message>
 	<message>
 		<source>reset-database-warning</source>
-		<translation>Excluir conversas, contatos e configurações. Obrigatório quando você perder sua senha</translation>
+		<translation>Elimina chats, contactos y configuraciones. Se requiere cuando has perdido tu contraseña</translation>
 	</message>
 	<message>
 		<source>reset-database-warning-keycard</source>
-		<translation>Excluir conversas, contatos e configurações.</translation>
+		<translation>Borrar chats, contactos y ajustes.</translation>
 	</message>
 	<message>
 		<source>key-managment</source>
-		<translation>Gerenciamento de chave</translation>
+		<translation>Administración de claves</translation>
 	</message>
 	<message>
 		<source>choose-actions</source>
-		<translation>Escolha ações</translation>
+		<translation>Elige acciones</translation>
 	</message>
 	<message>
 		<source>master-account</source>
-		<translation>Conta mestre</translation>
+		<translation>Cuenta principal</translation>
 	</message>
 	<message>
 		<source>back-up</source>
-		<translation>Cópia de segurança</translation>
+		<translation>Respaldo</translation>
 	</message>
 	<message>
 		<source>key-on-device</source>
-		<translation>A chave privada está salva neste dispositivo</translation>
+		<translation>La clave privada está guardada en este dispositivo</translation>
 	</message>
 	<message>
 		<source>seed-key-uid-mismatch</source>
-		<translation>Semente não corresponde</translation>
+		<translation>La frase semilla no coincide</translation>
 	</message>
 	<message>
 		<source>seed-key-uid-mismatch-desc-1</source>
-		<translation>A frase-semente que você inseriu não corresponde a {{multiaccount-name}}</translation>
+		<translation>La frase semilla que ingresó no coincide con {{multiaccount-name}}</translation>
 	</message>
 	<message>
 		<source>seed-key-uid-mismatch-desc-2</source>
-		<translation>Para gerenciar as chaves para esta conta, verifique sua frase-semente e tente novamente.</translation>
+		<translation>Para administrar claves para esta cuenta verifique su frase semilla e inténtelo de nuevo</translation>
 	</message>
 	<message>
 		<source>recover-with-seed-phrase</source>
-		<translation>Recupere com a frase-semente</translation>
+		<translation>Recuperar con frase semilla</translation>
 	</message>
 	<message>
 		<source>transfer-ma-unknown-error-desc-1</source>
-		<translation>Parece que sua conta múltipla não foi excluída. O banco de dados pode ter sido redefinido</translation>
+		<translation>Parece que su multicuenta no se eliminó. Es posible que la base de datos se haya restablecido</translation>
 	</message>
 	<message>
 		<source>transfer-ma-unknown-error-desc-2</source>
-		<translation>Verifique sua lista de contas e tente novamente. Se a conta não estiver listada, vá para Acessar as chaves existentes para recuperar com a frase-semente</translation>
+		<translation>Por favor verifique su lista de cuentas e intente de nuevo. Si la cuenta no está listada vaya a Acceder llaves existentes para recuperar con frase semilla</translation>
 	</message>
 	<message>
 		<source>everyone</source>
@@ -6158,83 +6149,83 @@ para acessar a câmera</translation>
 	</message>
 	<message>
 		<source>show-profile-pictures</source>
-		<translation>Mostrar fotos de perfil de</translation>
+		<translation>Mostrar las fotos de perfil de</translation>
 	</message>
 	<message>
 		<source>show-profile-pictures-to</source>
-		<translation>Mostre sua foto de perfil para</translation>
+		<translation>Muestra tu foto de perfil a</translation>
 	</message>
 	<message>
 		<source>non-archival-node</source>
-		<translation>O endpoint RPC não oferece suporte a solicitações de arquivamento. Seu histórico de transferências locais pode estar incompleto.</translation>
+		<translation>El punto de conexión de RPC no admite solicitudes de archivado. Es posible que el historial de transferencias locales esté incompleto.</translation>
 	</message>
 	<message>
 		<source>custom-node</source>
-		<translation>Você está usando um endpoint RPC personalizado. Seu histórico de transferências locais pode estar incompleto.</translation>
+		<translation>Está utilizando un punto de conexión RPC personalizado. Es posible que el historial de transferencias locales esté incompleto.</translation>
 	</message>
 	<message>
 		<source>connection-status</source>
-		<translation>Status de conexão</translation>
+		<translation>Estado de conexión</translation>
 	</message>
 	<message>
 		<source>peer-to-peer</source>
-		<translation>P2P</translation>
+		<translation>Peer to peer</translation>
 	</message>
 	<message>
 		<source>not-connected-to-peers</source>
-		<translation>Não conectado a nenhum par</translation>
+		<translation>Sin conexión a ningún nodo</translation>
 	</message>
 	<message>
 		<source>unable-to-send-messages</source>
-		<translation>Incapaz de enviar e receber mensagens</translation>
+		<translation>No es posible enviar o recibir mensajes</translation>
 	</message>
 	<message>
 		<source>can-send-messages</source>
-		<translation>Você pode enviar e receber novas mensagens</translation>
+		<translation>Puedes enviar y recibir mensajes nuevos</translation>
 	</message>
 	<message>
 		<source>not-connected-nodes</source>
-		<translation>Não conectado a um nó do Status</translation>
+		<translation>Sin conexión a un nodo de Status</translation>
 	</message>
 	<message>
 		<source>unable-to-fetch</source>
-		<translation>Não foi possível obter o histórico de conversas</translation>
+		<translation>No es posible recuperar el historial de chat</translation>
 	</message>
 	<message>
 		<source>nodes-disabled</source>
-		<translation>Nós do Status desativados</translation>
+		<translation>Nodos de Status deshabilitados</translation>
 	</message>
 	<message>
 		<source>waiting-wi-fi</source>
-		<translation>Aguardando Wi-Fi...</translation>
+		<translation>Esperando Wi-Fi…</translation>
 	</message>
 	<message>
 		<source>you-can-fetch</source>
-		<translation>Você pode obter o histórico de conversas</translation>
+		<translation>Puedes recuperar el historial de chat</translation>
 	</message>
 	<message>
 		<source>youre-on-mobile-network</source>
-		<translation>Você está em uma rede móvel</translation>
+		<translation>Estás en una red móvil</translation>
 	</message>
 	<message>
 		<source>status-mobile-descr</source>
-		<translation>O Status usa muitos dados ao sincronizar conversas. Você pode optar por não sincronizar quando na rede móvel</translation>
+		<translation>Status tiende a usar una gran cantidad de datos al sincronizar chats. Puedes optar por no sincronizar cuando estás en la red móvil</translation>
 	</message>
 	<message>
 		<source>restore-defaults</source>
-		<translation>Restaurar padrões</translation>
+		<translation>Restaurar los valores predeterminados</translation>
 	</message>
 	<message>
 		<source>rpc-usage-info</source>
-		<translation>Estatísticas de uso de RPC</translation>
+		<translation>Estadísticas de uso de RPC</translation>
 	</message>
 	<message>
 		<source>rpc-usage-get-stats</source>
-		<translation>Atualizar</translation>
+		<translation>Actualizar</translation>
 	</message>
 	<message>
 		<source>rpc-usage-reset</source>
-		<translation>Redefinir</translation>
+		<translation>Restablecer</translation>
 	</message>
 	<message>
 		<source>rpc-usage-filter</source>
@@ -6258,67 +6249,67 @@ para acessar a câmera</translation>
 	</message>
 	<message>
 		<source>community-message-preview</source>
-		<translation>Convite para participar do(a) {{community-name}}</translation>
+		<translation>Invitación para unirse a {{community-name}}</translation>
 	</message>
 	<message>
 		<source>non-contacts</source>
-		<translation>Sem contatos</translation>
+		<translation>Ningún contacto</translation>
 	</message>
 	<message>
 		<source>community</source>
-		<translation>Comunidade</translation>
+		<translation>Comunidad</translation>
 	</message>
 	<message>
 		<source>verified-community</source>
-		<translation>✓ Comunidade verificada</translation>
+		<translation>✓ Comunidad verificada</translation>
 	</message>
 	<message>
 		<source>community-info-not-found</source>
-		<translation>Informação da comunidade não encontrada</translation>
+		<translation>No se encontró la información de la comunidad</translation>
 	</message>
 	<message>
 		<source>community-info</source>
-		<translation>Informação da comunidade</translation>
+		<translation>Información sobre la Comunidad</translation>
 	</message>
 	<message>
 		<source>not-found</source>
-		<translation>Não encontrado</translation>
+		<translation>No encontrado</translation>
 	</message>
 	<message>
 		<source>activity</source>
-		<translation>Atividade</translation>
+		<translation>Actividad</translation>
 	</message>
 	<message>
 		<source>reject-and-delete</source>
-		<translation>Rejeitar e apagar</translation>
+		<translation>Rechazar y eliminar</translation>
 	</message>
 	<message>
 		<source>accept-and-add</source>
-		<translation>Aceitar e adicionar</translation>
+		<translation>Aceptar y agregar</translation>
 	</message>
 	<message>
 		<source>one-day</source>
-		<translation>Um dia</translation>
+		<translation>Un día</translation>
 	</message>
 	<message>
 		<source>three-days</source>
-		<translation>Três dias</translation>
+		<translation>Tres días</translation>
 	</message>
 	<message>
 		<source>one-week</source>
-		<translation>Uma semana</translation>
+		<translation>Una semana</translation>
 	</message>
 	<message>
 		<source>one-month</source>
-		<translation>Um mês</translation>
+		<translation>Un mes</translation>
 	</message>
 	<message>
 		<source>my-profile</source>
-		<translation>Meu perfil</translation>
+		<translation>Mi perfil</translation>
 	</message>
 	<message>
 		<source>bip39-password-placeholder</source>
-		<translation>Senha BIP39</translation>
+		<translation>Contraseña BIP39</translation>
 	</message>
 	<message>
 		<source>public-channel</source>
@@ -6326,312 +6317,311 @@ para acessar a câmera</translation>
 	</message>
 	<message>
 		<source>default-sync-period</source>
-		<translation>Histórico de sincronização para</translation>
+		<translation>Sincronizar historial para</translation>
 	</message>
 	<message>
 		<source>what-is-shared</source>
-		<translation>O que é compartilhado</translation>
+		<translation>Qué es compartido</translation>
 	</message>
 	<message>
 		<source>view-data</source>
-		<translation>Ver dados</translation>
+		<translation>Ver datos</translation>
 	</message>
 	<message>
 		<source>data-collected</source>
-		<translation>Dados coletados</translation>
+		<translation>Datos recogidos</translation>
 	</message>
 	<message>
 		<source>data-collected-subtitle</source>
-		<translation>A tabela abaixo mostra os dados exatos que estão armazenados e serão enviados. Os dados são validados de acordo com as regras públicas para garantir que nenhum dado sensível seja enviado. Não confie, verifique.</translation>
+		<translation>La siguiente tabla muestra los datos exactos que se almacenan y se enviarán. Los datos se validan contra las normas públicas para garantizar que ningún dato sensible sea enviado. No confíes, verifica.</translation>
 	</message>
 	<message>
 		<source>view-rules</source>
-		<translation>Ver regras</translation>
+		<translation>Ver reglas</translation>
 	</message>
 	<message>
 		<source>expand-all</source>
-		<translation>Expandir todos</translation>
+		<translation>Ver todo</translation>
 	</message>
 	<message>
 		<source>about-sharing-data</source>
-		<translation>Sobre o compartilhamento de dados</translation>
+		<translation>Sobre compartir datos</translation>
 	</message>
 	<message>
 		<source>sharing-data-desc-1</source>
-		<translation>Os dados são validados de acordo com as regras públicas para garantir que nenhum dado sensível seja enviado. Não confie, verifique.</translation>
+		<translation>Los datos se validan con las reglas públicas para asegurar que no se envíen datos confidenciales. No confíes, verifica.</translation>
 	</message>
 	<message>
 		<source>sharing-data-desc-2</source>
-		<translation>Os dados de uso são enviados criptografados de ponta a ponta pela rede ponto a ponto (P2P) do Status</translation>
+		<translation>Los datos de uso se envían cifrados de extremo a extremo a través de la red peer-to-peer de Status</translation>
 	</message>
 	<message>
 		<source>sharing-data-desc-3</source>
-		<translation>Em vez de sua chave de bate-papo normal, uma chave de uso único é utilizada</translation>
+		<translation>En lugar de la clave de chat habitual, se utiliza una clave de uso único</translation>
 	</message>
 	<message>
 		<source>sharing-data-desc-4</source>
-		<translation>Os dados de uso não podem ser associados ao seu endereço IP</translation>
+		<translation>Los datos de uso no pueden asociarse con su dirección IP</translation>
 	</message>
 	<message>
 		<source>sharing-data-desc-5</source>
-		<translation>Os dados acumulados de todos os usuários estão disponíveis publicamente</translation>
+		<translation>Los datos acumulativos de todos los usuarios están disponibles públicamente</translation>
 	</message>
 	<message>
 		<source>view-public-dashboard</source>
-		<translation>Ver painel de controle público</translation>
+		<translation>Ver panel público</translation>
 	</message>
 	<message>
 		<source>sharing-data-desc-6</source>
-		<translation>Os dados são removidos do seu telefone após serem enviados</translation>
+		<translation>Los datos se eliminan de su teléfono después de que se envían</translation>
 	</message>
 	<message>
 		<source>allow-and-send</source>
-		<translation>Permitir e enviar</translation>
+		<translation>Permitir y enviar</translation>
 	</message>
 	<message>
 		<source>no-thanks</source>
-		<translation>Não, obrigado</translation>
+		<translation>No, gracias</translation>
 	</message>
 	<message>
 		<source>help-improve-status</source>
-		<translation>Ajude a melhorar o Status</translation>
+		<translation>Ayuda a mejorar Status</translation>
 	</message>
 	<message>
 		<source>thank-you</source>
-		<translation>Obrigado</translation>
+		<translation>Gracias</translation>
 	</message>
 	<message>
 		<source>current-password</source>
-		<translation>Senha atual</translation>
+		<translation>Contraseña actual</translation>
 	</message>
 	<message>
 		<source>reset-password</source>
-		<translation>Redefinir senha</translation>
+		<translation>Cambiar contraseña</translation>
 	</message>
 	<message>
 		<source>password-reset-success</source>
-		<translation>Redefinição de senha</translation>
+		<translation>Contraseña cambiada</translation>
 	</message>
 	<message>
 		<source>password-reset-success-message</source>
-		<translation>Você precisará entrar novamente</translation>
+		<translation>Tendrá que iniciar sesión de nuevo</translation>
 	</message>
 	<message>
 		<source>password-reset-in-progress</source>
-		<translation>Alterando senha...</translation>
+		<translation>Cambiando contraseña...</translation>
 	</message>
 	<message>
 		<source>new-password</source>
-		<translation>Nova Senha</translation>
+		<translation>Nueva contraseña</translation>
 	</message>
 	<message>
 		<source>confirm-new-password</source>
-		<translation>Confirmar nova senha</translation>
+		<translation>Confirmar nueva contraseña</translation>
 	</message>
 	<message>
 		<source>password-mismatch</source>
-		<translation>A nova senha e a confirmação não correspondem</translation>
+		<translation>Nueva contraseña y confirmación no coinciden</translation>
 	</message>
 	<message>
 		<source>terms-of-service</source>
-		<translation>Termos de uso</translation>
+		<translation>Términos de uso</translation>
 	</message>
 	<message>
 		<source>accept-status-tos-prefix</source>
-		<translation>Eu aceito o Status</translation>
+		<translation>Acepto Status</translation>
 	</message>
 	<message>
 		<source>updates-to-tos</source>
-		<translation>Atualizações nos Termos de Serviço</translation>
+		<translation>Actualizaciones de las Condiciones de Uso</translation>
 	</message>
 	<message>
 		<source>updates-to-tos-desc</source>
-		<translation>Antes de continuar, leia os Termos de Serviço e confirme se você assume total responsabilidade pelo modo como usa o aplicativo.</translation>
+		<translation>Antes de continuar, por favor, revise las Condiciones de Uso y confirme que asume toda la responsabilidad por el uso de la aplicación.</translation>
 	</message>
 	<message>
 		<source>what-changed</source>
-		<translation>O que mudou</translation>
+		<translation>Lo que cambió</translation>
 	</message>
 	<message>
 		<source>wc-new-tos-based-on-principles-prefix</source>
-		<translation>Novos Termos de Serviço desenvolvidos com base em nossos</translation>
+		<translation>Nuevas Condiciones de Uso diseñadas sobre la base de nuestro</translation>
 	</message>
 	<message>
 		<source>principles</source>
-		<translation>Princípios</translation>
+		<translation>Fundamentos</translation>
 	</message>
 	<message>
 		<source>wc-how-to-use-status-app</source>
-		<translation>Como usar o aplicativo Status, incluindo privacidade e segurança</translation>
+		<translation>Cómo utilizar la app Status, incluyendo privacidad y seguridad</translation>
 	</message>
 	<message>
 		<source>wc-brand-guide</source>
-		<translation>Orientação sobre o uso de marcas, como marcas registradas e logotipos</translation>
+		<translation>Orientación sobre el uso de identidad de marca como marcas registradas y logotipos</translation>
 	</message>
 	<message>
 		<source>wc-disclaimer</source>
-		<translation>Exonerações de responsabilidade (incluindo fornecedores terceirizados), garantias e liberações legais</translation>
+		<translation>Aclaraciones (incluyendo proveedores externos), garantías y liberaciones legales</translation>
 	</message>
 	<message>
 		<source>wc-dispute</source>
-		<translation>Disposições de resolução de disputas</translation>
+		<translation>Disposiciones sobre solución de controversias</translation>
 	</message>
 	<message>
 		<source>status-is-open-source</source>
-		<translation>O status é de código aberto</translation>
+		<translation>Status es código abierto</translation>
 	</message>
 	<message>
 		<source>build-yourself</source>
-		<translation>Para usar o aplicativo sem estes Termos de Serviço, você pode construir sua própria versão</translation>
+		<translation>Para utilizar la aplicación sin estas Condiciones de Uso, puede crear su propia versión</translation>
 	</message>
 	<message>
 		<source>accept-and-continue</source>
-		<translation>Aceitar e continuar</translation>
+		<translation>Aceptar y continuar</translation>
 	</message>
 	<message>
 		<source>empty-activity-center</source>
-		<translation>Suas notificações de bate-papo
- aparecerão aqui</translation>
+		<translation>Sus notificaciones de chat
+aparecerán acá</translation>
 	</message>
 	<message>
 		<source>pinned-messages</source>
-		<translation>Mensagens fixadas</translation>
+		<translation>Mensajes fijados</translation>
 	</message>
 	<message>
 		<source>pin</source>
-		<translation>Fixar</translation>
+		<translation>Fijar</translation>
 	</message>
 	<message>
 		<source>unpin</source>
-		<translation>Desafixar</translation>
+		<translation>Desanclar</translation>
 	</message>
 	<message>
 		<source>no-pinned-messages</source>
-		<translation>Nenhuma mensagem fixada</translation>
+		<translation>Sin mensajes fijados</translation>
 	</message>
 	<message numerus="yes">
 		<source>pinned-messages-count</source>
 		<translation>
-			<numerusform>1 mensagem fixada</numerusform>
-			<numerusform>{{count}} mensagens fixadas</numerusform>
+			<numerusform>1 mensaje fijado</numerusform>
+			<numerusform>{{count}} mensajes fijados</numerusform>
 		</translation>
 	</message>
 	<message>
 		<source>pinned-messages-empty</source>
-		<translation>As mensagens fixadas aparecerão aqui. Para fixar uma mensagem, pressione e segure e toque em `Fixar`</translation>
+		<translation>Los mensajes fijados aparecerán aquí. Para fijar un mensaje, mantenga pulsado y seleccione &apos;Pin&apos;</translation>
 	</message>
 	<message>
 		<source>pinned-by</source>
-		<translation>Fixado por</translation>
+		<translation>Fijado por</translation>
 	</message>
 	<message>
 		<source>pin-limit-reached</source>
-		<translation>Limite de mensagens fixadas atingido. Desafixe uma mensagem anterior primeiro.</translation>
+		<translation>Límite de pines alcanzado. Desancla primero un mensaje anterior.</translation>
 	</message>
 	<message>
 		<source>max-fee</source>
-		<translation>Taxa máxima</translation>
+		<translation>Tarifa máx.</translation>
 	</message>
 	<message>
 		<source>max-priority-fee</source>
-		<translation>Taxa máxima de prioridade</translation>
+		<translation>Tarifa máxima de prioridad</translation>
 	</message>
 	<message>
 		<source>miners-higher-fee</source>
-		<translation>Os mineradores provavelmente incluirão sua transação mais cedo se você pagar uma taxa mais alta.</translation>
+		<translation>Es probable que los mineros incluyan tu transacción antes si pagas una tarifa más alta.</translation>
 	</message>
 	<message>
 		<source>gas-amount-limit</source>
-		<translation>Limite de quantidade de Gas</translation>
+		<translation>Límite de cantidad de gas</translation>
 	</message>
 	<message>
 		<source>per-gas-tip-limit</source>
-		<translation>Limite de gorjeta
-por gás</translation>
+		<translation>Límite de propina por gas</translation>
 	</message>
 	<message>
 		<source>per-gas-price-limit</source>
-		<translation>Limite de preço por gás</translation>
+		<translation>Límite del precio por gas</translation>
 	</message>
 	<message>
 		<source>current-base-fee</source>
-		<translation>Taxa base atual</translation>
+		<translation>Tarifa básica actual</translation>
 	</message>
 	<message>
 		<source>fee-explanation</source>
-		<translation>Preço total máximo para a transação. Se a taxa base do bloco exceder esse valor, ela será incluída em um bloco seguinte com uma taxa base mais baixa.</translation>
+		<translation>Precio total máximo por la transacción. Si la tarifa base del bloque supera este, se incluirá en un bloque siguiente con una tarifa base más baja.</translation>
 	</message>
 	<message>
 		<source>slow</source>
-		<translation>Lento</translation>
+		<translation>Lenta</translation>
 	</message>
 	<message>
 		<source>optimal</source>
-		<translation>Ótimo</translation>
+		<translation>Óptima</translation>
 	</message>
 	<message>
 		<source>fast</source>
-		<translation>Rápido</translation>
+		<translation>Rápida</translation>
 	</message>
 	<message>
 		<source>see-suggestions</source>
-		<translation>Veja sugestões</translation>
+		<translation>Ver sugerencias</translation>
 	</message>
 	<message>
 		<source>maximum-fee</source>
-		<translation>Taxa máxima</translation>
+		<translation>Tarifa máxima</translation>
 	</message>
 	<message>
 		<source>low-tip</source>
-		<translation>a gorjeta é muito baixa</translation>
+		<translation>la propina es demasiado baja</translation>
 	</message>
 	<message>
 		<source>lower-than-average-tip</source>
-		<translation>gorjeta inferior à média</translation>
+		<translation>inferior a la propina promedio</translation>
 	</message>
 	<message>
 		<source>below-base-fee</source>
-		<translation>taxa máxima abaixo da taxa base</translation>
+		<translation>tarifa máxima por debajo de la tarifa base</translation>
 	</message>
 	<message>
 		<source>reduced-tip</source>
-		<translation>a gorjeta prioritária será reduzida</translation>
+		<translation>la propina de prioridad se reducirá</translation>
 	</message>
 	<message>
 		<source>are-you-sure</source>
-		<translation>Você tem certeza?</translation>
+		<translation>¿Estás seguro/a?</translation>
 	</message>
 	<message>
 		<source>bad-fees-description</source>
-		<translation>Sua taxa de prioridade está abaixo de nossos parâmetros sugeridos.</translation>
+		<translation>Tu tarifa de prioridad está por debajo de nuestros parámetros sugeridos.</translation>
 	</message>
 	<message>
 		<source>change-tip</source>
-		<translation>Mudar gorjeta</translation>
+		<translation>Cambiar propina</translation>
 	</message>
 	<message>
 		<source>current-minimum-tip</source>
-		<translation>Gorjeta mínima atual</translation>
+		<translation>Propina mínima actual</translation>
 	</message>
 	<message>
 		<source>current-average-tip</source>
-		<translation>Gorjeta média atual</translation>
+		<translation>Promedio de propina actual</translation>
 	</message>
 	<message>
 		<source>your-tip-limit</source>
-		<translation>Seu limite de gorjeta</translation>
+		<translation>Tu límite de propina</translation>
 	</message>
 	<message>
 		<source>your-price-limit</source>
-		<translation>Seu limite de preço</translation>
+		<translation>Tu límite de precio</translation>
 	</message>
 	<message>
 		<source>suggested-min-tip</source>
-		<translation>Gorjeta mínima sugerida</translation>
+		<translation>Propina mín. sugerida</translation>
 	</message>
 	<message>
 		<source>suggested-price-limit</source>
-		<translation>Limite de preço sugerido</translation>
+		<translation>Límite de precio sugerido</translation>
 	</message>
 	<message>
 		<source>include</source>
@@ -6639,23 +6629,23 @@ por gás</translation>
 	</message>
 	<message>
 		<source>category</source>
-		<translation>Categoria</translation>
+		<translation>Categoría</translation>
 	</message>
 	<message>
 		<source>edit-chats</source>
-		<translation>Editar bate-papos</translation>
+		<translation>Editar conversaciones</translation>
 	</message>
 	<message>
 		<source>edit-categories</source>
-		<translation>Editar categorias</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>hide</source>
-		<translation>Esconder</translation>
+		<translation>Ocultar</translation>
 	</message>
 	<message>
 		<source>account-is-used</source>
-		<translation>A conta está sendo usada com os Dapps no navegador.</translation>
+		<translation>La cuenta se está usando con Dapps en el navegador.</translation>
 	</message>
 	<message>
 		<source>normal</source>
@@ -6667,27 +6657,27 @@ por gás</translation>
 	</message>
 	<message>
 		<source>fee-options</source>
-		<translation>Opções de taxas sugeridas</translation>
+		<translation>Opciones de tarifas sugeridas</translation>
 	</message>
 	<message>
 		<source>fee-cap</source>
-		<translation>Limite de taxa</translation>
+		<translation>Tope de tarifa</translation>
 	</message>
 	<message>
 		<source>tip-cap</source>
-		<translation>Limite de gorjeta</translation>
+		<translation>Tope de propina</translation>
 	</message>
 	<message>
 		<source>collectibles-leak-metadata</source>
-		<translation>Você pode exibir seus NFTs aqui. Se você fizer isso, você compartilhará sua carteira e endereço IP</translation>
+		<translation>Puedes mostrar tus NFTs aquí. Si lo haces, compartirás tu billetera y tu dirección IP</translation>
 	</message>
 	<message>
 		<source>display-collectibles</source>
-		<translation>Exibir colecionáveis</translation>
+		<translation>Mostrar coleccionables</translation>
 	</message>
 	<message>
 		<source>disable-later-in-settings</source>
-		<translation>Você pode desativar isso mais tarde nas Configurações</translation>
+		<translation>Puedes desactivar esto luego en los Ajustes</translation>
 	</message>
 	<message>
 		<source>use-as-profile-picture</source>
@@ -6695,11 +6685,11 @@ por gás</translation>
 	</message>
 	<message>
 		<source>view-on-opensea</source>
-		<translation>Ver no OpenSea</translation>
+		<translation>Ver en OpenSea</translation>
 	</message>
 	<message>
 		<source>profile-picture-updated</source>
-		<translation>Foto do perfil atualizada</translation>
+		<translation>Foto de perfil actualizada</translation>
 	</message>
 	<message>
 		<source>status-automatic</source>
@@ -6707,95 +6697,96 @@ por gás</translation>
 	</message>
 	<message>
 		<source>status-automatic-subtitle</source>
-		<translation>Definir status automaticamente</translation>
+		<translation>Establecer estado automáticamente</translation>
 	</message>
 	<message>
 		<source>status-dnd</source>
-		<translation>Não perturbe</translation>
+		<translation>No interrumpir</translation>
 	</message>
 	<message>
 		<source>status-dnd-subtitle</source>
-		<translation>Silencia todas as notificações</translation>
+		<translation>Silencia todas las notificaciones</translation>
 	</message>
 	<message>
 		<source>status-always-online</source>
-		<translation>Sempre Online</translation>
+		<translation>Siempre en línea</translation>
 	</message>
 	<message>
 		<source>status-inactive</source>
-		<translation>Inativo</translation>
+		<translation>Inactivo</translation>
 	</message>
 	<message>
 		<source>status-inactive-subtitle</source>
-		<translation>Oculta seu status online</translation>
+		<translation>Oculta tu estado en línea</translation>
 	</message>
 	<message>
 		<source>two-minutes</source>
-		<translation>dois minutos</translation>
+		<translation>dos minutos</translation>
 	</message>
 	<message>
 		<source>swap</source>
-		<translation>Troca</translation>
+		<translation>Intercambiar</translation>
 	</message>
 	<message>
 		<source>select-token-to-swap</source>
-		<translation>Selecione o token para trocar</translation>
+		<translation>Selecciona el token a intercambiar</translation>
 	</message>
 	<message>
 		<source>select-token-to-receive</source>
-		<translation>Selecione o token para receber</translation>
+		<translation>Selecciona el token a recibir</translation>
 	</message>
 	<message>
 		<source>minimum-received</source>
-		<translation>Mínimo recebido</translation>
+		<translation>Mínimo recibido</translation>
 	</message>
 	<message>
 		<source>powered-by-paraswap</source>
-		<translation>Desenvolvido por Paraswap</translation>
+		<translation>Desarrollado por Paraswap</translation>
 	</message>
 	<message>
 		<source>priority</source>
-		<translation>Prioridade</translation>
+		<translation>Prioridad</translation>
 	</message>
 	<message>
 		<source>switch-to-simple-interface</source>
-		<translation>Mudar para interface simples</translation>
+		<translation>Cambiar a interfaz sencilla</translation>
 	</message>
 	<message>
 		<source>transaction-fee</source>
-		<translation>Taxa de transação</translation>
+		<translation>Tarifa de transacción</translation>
 	</message>
 	<message>
 		<source>swap-details</source>
-		<translation>Trocar detalhes</translation>
+		<translation>Detalles del intercambio</translation>
 	</message>
 	<message>
 		<source>slippage</source>
-		<translation>Derrapagem</translation>
+		<translation>Desviación</translation>
 	</message>
 	<message>
 		<source>price-impact</source>
-		<translation>Impacto do preço</translation>
+		<translation>Impacto del precio</translation>
 	</message>
 	<message>
 		<source>total-gas</source>
-		<translation>Gas total</translation>
+		<translation>Total del gas</translation>
 	</message>
 	<message>
 		<source>token</source>
-		<translation>Token</translation>
+		<translation>Ficha</translation>
 	</message>
 	<message>
 		<source>approve-limit</source>
-		<translation>Aprovar limite</translation>
+		<translation>Aprobar el límite</translation>
 	</message>
 	<message>
 		<source>approve-token</source>
-		<translation>Aprovar token</translation>
+		<translation>Aprobar el token</translation>
 	</message>
 	<message>
 		<source>approve-token-contract-desc</source>
-		<translation>Aprovar um token com um contrato permite que ele gaste seu saldo de tokens. Se você julgar que um projeto não é confiável, não aprove o token com eles ou aprove apenas o valor que você usará com eles.</translation>
+		<translation>Aprobar un token con un contrato te permite gastar tu saldo de tokens. Si sientes que un proyecto no es confiable, no apruebes el token con ellos, o aprueba sólo la cantidad que vas a utilizar con ellos.
+</translation>
 	</message>
 	<message>
 		<source>unlimited</source>
@@ -6803,131 +6794,131 @@ por gás</translation>
 	</message>
 	<message>
 		<source>approve</source>
-		<translation>Aprovar</translation>
+		<translation>Aprobar</translation>
 	</message>
 	<message>
 		<source>limit</source>
-		<translation>Limite</translation>
+		<translation>Límite</translation>
 	</message>
 	<message>
 		<source>last-transaction</source>
-		<translation>Última transação</translation>
+		<translation>Última transacción</translation>
 	</message>
 	<message>
 		<source>price-impact-desc</source>
-		<translation>Impacto de preço estimado para esta transação. Se a taxa base do bloco atual exceder isso, sua transação será incluída em um bloco seguinte com uma taxa base mais baixa.</translation>
+		<translation>Impacto del precio estimado para esta transacción. Si la tarifa base del bloque actual excede esto, tu transacción será incluida en un bloque siguiente con una tarifa base más baja.</translation>
 	</message>
 	<message>
 		<source>safe-estimate</source>
-		<translation>Estimativa segura</translation>
+		<translation>Seguridad estimada</translation>
 	</message>
 	<message>
 		<source>current-average</source>
-		<translation>Média atual</translation>
+		<translation>Promedio actual</translation>
 	</message>
 	<message>
 		<source>current-base</source>
-		<translation>Base atual</translation>
+		<translation>Base actual</translation>
 	</message>
 	<message>
 		<source>maximum-fee-desc</source>
-		<translation>Preço total máximo para a transação. Se a taxa base do bloco atual exceder isso, sua transação será incluída em um bloco seguinte com uma taxa base mais baixa.</translation>
+		<translation>Precio global máximo de la operación. Si la tarifa base del bloque actual excede este precio, su transacción será incluida en un bloque siguiente con una tarifa base más baja.</translation>
 	</message>
 	<message>
 		<source>insufficient-balance-to-cover-fee</source>
-		<translation>saldo insuficiente para cobrir a taxa de transação</translation>
+		<translation>Balance insuficiente para cubrir el gas de transacción</translation>
 	</message>
 	<message>
 		<source>wallet-connect-proposal-title</source>
-		<translation>Gostaria de se conectar com sua carteira</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>wallet-connect-proposal-description</source>
-		<translation>Ao conectar você permite que {{name}} recupere o endereço da sua conta e ative o Web3</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>wallet-connect-app-connected</source>
-		<translation>está conectado</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>wallet-connect-go-back</source>
-		<translation>Volte para o seu navegador ou dapp</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>wallet-connect-2.0</source>
-		<translation>Wallet Connect 2.0</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>wallet-connect</source>
-		<translation>Wallet Connect</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>reject</source>
-		<translation>Rejeitar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>manage-connections</source>
-		<translation>Gerenciar conexões de dentro do Application Connections</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>wallet-manage-app-connections</source>
-		<translation>Gerenciar conexões de aplicativos</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>connection-request</source>
-		<translation>Solicitação de conexão</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>disconnect</source>
-		<translation>Desconectar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>new-ui</source>
-		<translation>Nova UI</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>send-contact-request-message</source>
-		<translation>Para iniciar um chat, você precisa se tornar um contato</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>contact-request</source>
-		<translation>Requisição de contato</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>say-hi</source>
-		<translation>Diga oi</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>accepted</source>
-		<translation>Aceito</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>declined</source>
-		<translation>Recusado</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>contact-request-header</source>
-		<translation>👋 Solicitações de contato</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>contact-request-declined</source>
-		<translation>Recusado ⓧ</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>contact-request-accepted</source>
-		<translation>Aceito ✓</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>contact-request-pending</source>
-		<translation>Pendente...</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>removed-from-contacts</source>
-		<translation>Removido dos contatos</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>mutual-contact-requests</source>
-		<translation>Solicitações de contato mútuo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>negative</source>
@@ -9638,79 +9629,79 @@ packs will not need to be re-purchased.</source>
 	</message>
 	<message>
 		<source>Maximum number of collectibles to display reached</source>
-		<translation>Número máximo de colecionáveis a serem exibidos atingido</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>View</source>
-		<translation>Visualizar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Unnamed</source>
-		<translation>Sem nome</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>ID</source>
-		<translation>ID</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Description</source>
-		<translation>Descrição</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>US Dollars</source>
-		<translation>Dólares Americanos</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Euros</source>
-		<translation>Euros</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>United Arab Emirates dirham</source>
-		<translation>Dirham dos Emirados Árabes Unidos</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Afghan afghani</source>
-		<translation>Afegane Afegão</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Argentine peso</source>
-		<translation>Peso Argentino</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Australian dollar</source>
-		<translation>Dólar Australiano</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Barbadian dollar</source>
-		<translation>Dólar de Barbados</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Bangladeshi taka</source>
-		<translation>Taka de Bangladesh</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Bulgarian lev</source>
-		<translation>Lev Búlgaro</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Bahraini dinar</source>
-		<translation>Dinar do Bahrein</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Brunei dollar</source>
-		<translation>Dólar de Brunei</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Bolivian boliviano</source>
-		<translation>Boliviano da Bolívia</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Brazillian real</source>
-		<translation>Real Brasileiro</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Bhutanese ngultrum</source>
-		<translation>Ngultrum Butanês</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Canadian dollar</source>
@@ -9790,1094 +9781,1092 @@ packs will not need to be re-purchased.</source>
 	</message>
 	<message>
 		<source>Indian rupee</source>
-		<translation>Rupia Indiana</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Icelandic króna</source>
-		<translation>Coroa Islandesa</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Jamaican dollar</source>
-		<translation>Dólar Jamaicano</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Japanese yen</source>
-		<translation>Yen Japonês</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Kenyan shilling</source>
-		<translation>Xelim queniano</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>South Korean won</source>
-		<translation>Won Sul-Coreano</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Kuwaiti dinar</source>
-		<translation>Dinar do Kuwait</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Kazakhstani tenge</source>
-		<translation>Tenge do Cazaquistão</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Sri Lankan rupee</source>
-		<translation>Rupia do Sri Lanka</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Moroccan dirham</source>
-		<translation>Dirham Marroquino</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Moldovan leu</source>
-		<translation>Leu Moldavo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Mauritian rupee</source>
-		<translation>Rupia Mauriciana</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Malawian kwacha</source>
-		<translation>Kwacha do Malawi</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Mexican peso</source>
-		<translation>Peso Mexicano</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Malaysian ringgit</source>
-		<translation>Ringgit Malaio</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Mozambican metical</source>
-		<translation>Metical Moçambicano</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Namibian dollar</source>
-		<translation>Dólar Namibiano</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Nigerian naira</source>
-		<translation>Naira Nigeriana</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Norwegian krone</source>
-		<translation>Coroa Norueguesa</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Nepalese rupee</source>
-		<translation>Rupia Nepalesa</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>New Zealand dollar</source>
-		<translation>Dólar da Nova Zelândia</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Omani rial</source>
-		<translation>Rial de Omã</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Peruvian sol</source>
-		<translation>Sol Peruano</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Papua New Guinean kina</source>
-		<translation>Kina da Papua-Nova Guiné</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Philippine peso</source>
-		<translation>Peso Filipino</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Pakistani rupee</source>
-		<translation>Rupia Paquistanesa</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Polish złoty</source>
-		<translation>Złoty Polonês</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Paraguayan guaraní</source>
-		<translation>Guarani Paraguaio</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Qatari riyal</source>
-		<translation>Rial do Catar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Romanian leu</source>
-		<translation>Leu Romeno</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Serbian dinar</source>
-		<translation>Dinar Sérvio</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Russian ruble</source>
-		<translation>Rublo Russo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Saudi riyal</source>
-		<translation>Rial Saudita</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Swedish krona</source>
-		<translation>Coroa Sueca</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Singapore dollar</source>
-		<translation>Dólar de Cingapura</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Thai baht</source>
-		<translation>Baht Tailandês</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Trinidad and Tobago dollar</source>
-		<translation>Dólar de Trinidad e Tobago</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>New Taiwan dollar</source>
-		<translation>Novo Dólar Taiwanês</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Tanzanian shilling</source>
-		<translation>Xelim da Tanzânia</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Turkish lira</source>
-		<translation>Lira Turca</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Ukrainian hryvnia</source>
-		<translation>Grívnia Ucraniana</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Ugandan shilling</source>
-		<translation>Xelim Ugandês</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Uruguayan peso</source>
-		<translation>Peso Uruguaio</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Venezuelan bolívar</source>
-		<translation>Bolívar Venezuelano</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Vietnamese đồng</source>
-		<translation>Đồng Vietnamita</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>South African rand</source>
-		<translation>Rand Sul-africano</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>View Community</source>
-		<translation>Ver Comunidade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Browser</source>
-		<translation>Navegador</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Timeline</source>
-		<translation>Timeline</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Contact request accepted</source>
-		<translation>Solicitação de contato aceita</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>New contact request</source>
-		<translation>Nova solicitação de contato</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>You can now chat with %1</source>
-		<translation>Agora você pode conversar com %1</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>%1 requests to become contacts</source>
-		<translation>%1 solicita para se tornar um contato</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Where do you want to go?</source>
-		<translation>Onde você deseja ir?</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Status Desktop</source>
-		<translation>Status Desktop</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Open Status</source>
-		<translation>Abrir Status</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Quit</source>
-		<translation>Sair</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Create a password</source>
-		<translation>Criar uma senha</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>New password...</source>
-		<translation>Nova senha...</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Confirm password…</source>
-		<translation>Confirmar senha…</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>At least 6 characters. You will use this password to unlock status on this device &amp; sign transactions.</source>
-		<translation>Pelo menos 6 caracteres. Você usará essa senha para desbloquear o status neste dispositivo e assinar transações.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Create password</source>
-		<translation>Criar senha</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Error importing account</source>
-		<translation>Erro ao importar conta</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>An error occurred while importing your account: </source>
-		<translation>Ocorreu um erro ao importar sua conta: </translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Login failed</source>
-		<translation>Falha na autenticação</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Login failed. Please re-enter your password and try again.</source>
-		<translation>Falha na autenticação. Por favor, redigite sua senha e tente novamente.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Enter seed phrase</source>
-		<translation>Digite a seed phrase</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>This seed phrase doesn&apos;t match our supported dictionary. Check for misspelled words.</source>
-		<translation>Esta seed phrase não corresponde ao nosso dicionário. Verifique se há palavras incorretas.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Start with the first word</source>
-		<translation>Comece com a primeira palavra</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Enter 12, 15, 18, 21 or 24 words.
 Seperate words by a single space.</source>
-		<translation>Digite 12, 15, 18, 21 ou 24 palavras.
- Separe as palavras por um único espaço.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Invalid seed phrase</source>
-		<translation>Seed phrase inválida</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Choose a chat name</source>
-		<translation>Escolha um nome de bate-papo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Truly private communication</source>
-		<translation>Comunicação verdadeiramente privada</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Chat over a peer-to-peer, encrypted network
  where messages can&apos;t be censored or hacked</source>
-		<translation>Bate-papo em uma rede criptografada ponto a ponto onde as mensagens não podem ser censuradas ou hackeadas</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Secure crypto wallet</source>
-		<translation>Carteira crypto segura</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Send and receive digital assets anywhere in the
 world--no bank account required</source>
-		<translation>Envie e receba ativos digitais em qualquer lugar do mundo - não é necessária conta bancária</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Decentralized apps</source>
-		<translation>Aplicativos descentralizados</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Explore games, exchanges and social networks
 where you alone own your data</source>
-		<translation>Explore jogos, exchanges e redes sociais
- onde você é o único proprietário de seus dados</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Thanks for trying Status Desktop! Please note that this is an alpha release and we advise you that using this app should be done for testing purposes only and you assume the full responsibility for all risks concerning your data and funds. Status makes no claims of security or integrity of funds in these builds.</source>
-		<translation>Obrigado por experimentar o Status Desktop! Observe que esta é uma versão alfa e aconselhamos que o uso deste aplicativo seja feito apenas para fins de teste e você assume total responsabilidade por todos os riscos relacionados aos seus dados e fundos. A Status não reivindica segurança ou integridade de fundos nessas compilações.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>I understand</source>
-		<translation>Eu entendo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Status does not collect, share or sell any personal data. By continuing you agree with the privacy policy.</source>
-		<translation>AStatus não coleta, compartilha ou vende quaisquer dados pessoais. Ao continuar você concorda com a política de privacidade.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>I&apos;m new, generate keys</source>
-		<translation>Sou novo, gerar chaves</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Access existing key</source>
-		<translation>Acessar a chave existente</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Enter password</source>
-		<translation>Digite a senha</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Connecting...</source>
-		<translation>Conectando...</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Login failed: %1</source>
-		<translation>Falha no login: %1</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Generate new keys</source>
-		<translation>Gerar novas chaves</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Your keys</source>
-		<translation>Suas chaves</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Add another existing key</source>
-		<translation>Adicionar outra chave existente</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Your keys have been successfully recovered</source>
-		<translation>Suas chaves foram recuperadas com sucesso</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>You will have to create a new code or password to re-encrypt your keys</source>
-		<translation>Você terá que criar um novo código ou senha para criptografar novamente suas chaves</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Re-encrypt your keys</source>
-		<translation>Criptografe novamente suas chaves</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Cannot find asset &apos;%1&apos;. Ensure this asset has been added to the token list.</source>
-		<translation>Não é possível localizar o ativo &apos;%1&apos;. Certifique-se de que este ativo tenha sido adicionado à lista de tokens.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>ENS Username not found</source>
-		<translation>Nome de usuário ENS não encontrado</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>eg. 0x1234 or ENS</source>
-		<translation>por exemplo, 0x1234 ou ENS</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Paste</source>
-		<translation>Colar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>You need to request the recipient’s address first.
 Assets won’t be sent yet.</source>
-		<translation>Você precisa solicitar o endereço do destinatário primeiro. Os ativos ainda não serão enviados.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Invalid source</source>
-		<translation>Origem inválida</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Insufficient balance</source>
-		<translation>Saldo insuficiente</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Must be greater than 0</source>
-		<translation>Deve ser maior que 0</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Priority</source>
-		<translation>Prioridade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Use suggestions</source>
-		<translation>Usar sugestões</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Use custom</source>
-		<translation>Usar personalizado</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Low</source>
-		<translation>Baixo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>High</source>
-		<translation>Alto</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Gas amount limit</source>
-		<translation>Limite de taxa de gas</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Per-gas overall limit</source>
-		<translation>Limite geral por taxa de gas</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Maximum overall price for the transaction. If the block base fee exceeds this, it will be included in a following block with a lower base fee.</source>
-		<translation>Preço total máximo para a transação. Se a taxa básica do bloco exceder isso, ela será incluída em um bloco seguinte com uma taxa básica mais baixa.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Must be greater than or equal to 0</source>
-		<translation>Deve ser maior ou igual a 0</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>This needs to be a number</source>
-		<translation>Isso precisa ser um número</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Please enter an amount</source>
-		<translation>Por favor, insira uma quantia</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>The amount is 0. Proceed only if this is desired.</source>
-		<translation>A quantia é 0. Prossiga somente se desejar.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Balance: </source>
-		<translation>Balanço:</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Asset &amp; Amount</source>
-		<translation>Ativo &amp; Quantia</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Blocking will remove any messages you received from %1 and stop new messages from reaching you.</source>
-		<translation>O bloqueio removerá todas as mensagens recebidas de %1 e impedirá que novas mensagens cheguem até você.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Account color</source>
-		<translation>Cor da conta</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Confirm your action</source>
-		<translation>Confirmar sua ação</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Confirm</source>
-		<translation>Confirmar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Are you sure you want to this?</source>
-		<translation>Tem certeza que quer isso?</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Do not show this again</source>
-		<translation>Não mostrar isso novamente</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Please select a contact</source>
-		<translation>Por favor, selecione um contato</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Select a contact</source>
-		<translation>Selecione um contato</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Contact does not have an ENS address. Please send a transaction in chat.</source>
-		<translation>O contato não tem um endereço ENS. Por favor, envie uma transação no chat.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>No contact selected</source>
-		<translation>Nenhum contato selecionado</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Copied!</source>
-		<translation>Copiado!</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Slow</source>
-		<translation>Lento</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Optimal</source>
-		<translation>Otimizado</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Fast</source>
-		<translation>Rápido</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Reset</source>
-		<translation>Redefinir</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Advanced</source>
-		<translation>Avançado</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Custom Network Fee</source>
-		<translation>Taxa de Rede Personalizada</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Gwei</source>
-		<translation>Gwei</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Apply</source>
-		<translation>Aplicar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Not enough ETH for gas</source>
-		<translation>Não há ETH suficiente para a taxa de gas</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Copied</source>
-		<translation>Copiado</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Pasted</source>
-		<translation>Colado</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Copy</source>
-		<translation>Copiar para área de transferência</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Invalid ethereum address</source>
-		<translation>Endereço Ethereum inválido</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Address</source>
-		<translation>Endereço</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>My account</source>
-		<translation>Minha conta</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Contact</source>
-		<translation>Contato</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Search</source>
-		<translation>Pesquisar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>In:</source>
-		<translation>Em:</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Messages</source>
-		<translation>Mensagens</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Tokens will be sent directly to a contract address, which may result in a loss of funds. To transfer ERC-20 tokens, ensure the recipient address is the address of the destination wallet.</source>
-		<translation>Os tokens serão enviados diretamente para um endereço de contrato, o que pode resultar em perda de fundos. Para transferir tokens ERC-20, certifique-se de que o endereço do destinatário seja o endereço da carteira de destino.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>View on Etherscan</source>
-		<translation>Ver no Etherscan</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>&lt;a href=&apos;%1&apos; style=&apos;color:%2;text-decoration:none;&apos;&gt;%3&lt;/a&gt;</source>
-		<translation>&lt;a href=&apos;%1&apos; style=&apos;color:%2;text-decoration:none;&apos;&gt;%3&lt;/a&gt;</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Asset</source>
-		<translation>Ativo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Amount</source>
-		<translation>Quantia</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Data field</source>
-		<translation>Campo de dados</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Signing phrase is a 3 word combination that displayed when you entered the wallet on this device for the first time.</source>
-		<translation>A frase de assinatura é uma combinação de 3 palavras que é exibida quando você entra uma carteira neste dispositivo pela primeira vez.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Enter the password you use to unlock this device</source>
-		<translation>Digite a senha que você usa para desbloquear este dispositivo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Unblocking will allow new messages you received from %1 to reach you.</source>
-		<translation>O desbloqueio permitirá que novas mensagens recebidas de %1 cheguem até você.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Send transaction</source>
-		<translation>Enviar transação</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Request transaction</source>
-		<translation>Solicitar transação</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Public chat</source>
-		<translation>Bate-papo público</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Not a contact</source>
-		<translation>Não é um contato</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Image files (%1)</source>
-		<translation>Arquivos de imagem (%1)</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Your message is too long.</source>
-		<translation>Sua mensagem é muito longa.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Please make your message shorter. We have set the limit to 2000 characters to be courteous of others.</source>
-		<translation>Por favor, deixe sua mensagem mais curta. Definimos o limite de 2000 caracteres para ser cortês com os outros.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Type a message</source>
-		<translation>Digite uma mensagem</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Bold</source>
-		<translation>Negrito</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Italic</source>
-		<translation>Itálico</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Strikethrough</source>
-		<translation>Riscado</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Code</source>
-		<translation>Código</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>No recent emojis</source>
-		<translation>Nenhum emoji recente</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Buy for %1 SNT</source>
-		<translation>Comprar com %1 SNT</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Uninstall</source>
-		<translation>Desinstalar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Install</source>
-		<translation>Instalar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Free</source>
-		<translation>Grátis</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Pending...</source>
-		<translation>Pendente...</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Update</source>
-		<translation>Atualizar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Could not buy Stickerpack</source>
-		<translation>Não foi possível comprar o Pacote de figurinhas</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Stickerpack bought successfully</source>
-		<translation>Pacote de figurinhas comprado com sucesso</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>You don&apos;t have any stickers yet</source>
-		<translation>Você ainda não tem figurinhas</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Recently used stickers will appear here</source>
-		<translation>As figurinhas usadas recentemente aparecerão aqui</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Get Stickers</source>
-		<translation>Obter Figurinhas</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Ethereum explorer</source>
-		<translation>Explorador Ethereum</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Custom...</source>
-		<translation>Personalizado...</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Search engine</source>
-		<translation>Mecanismo de busca</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Dapp permissions</source>
-		<translation>Permissões do Dapp</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Revoke access</source>
-		<translation>Revogar acesso</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Revoke all access</source>
-		<translation>Revogar todo o acesso</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Show more</source>
-		<translation>Mostrar mais</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>%1 invited you to join the group</source>
-		<translation>%1 convidou você para participar do grupo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>All</source>
-		<translation>Todos</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Mentions</source>
-		<translation>Menções</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Replies</source>
-		<translation>Respostas</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Contact requests</source>
-		<translation>Solicitações de contato</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Mark all as Read</source>
-		<translation>Marcar todas como lido</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Show read notifications</source>
-		<translation>Mostrar notificações lidas</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Hide read notifications</source>
-		<translation>Ocultar notificações lidas</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Notification settings</source>
-		<translation>Configurações de notificação</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>You need to be mutual contacts with this person for them to receive your messages</source>
-		<translation>Você precisa ser um contato mútuo com essa pessoa para que ela receba suas mensagens</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Waiting for %1 to accept your request</source>
-		<translation>Aguardando pelo %1 para aceitar sua solicitação</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Just click this button to add them as contact. They will receive a notification. Once they accept the request, you&apos;ll be able to chat</source>
-		<translation>Basta clicar neste botão para adicioná-los como contatos. Eles receberão uma notificação. Depois que eles aceitarem a solicitação, você poderá conversar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Back up community key</source>
-		<translation>Fazer backup da chave da comunidade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Back up</source>
-		<translation>Fazer backup</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Member name</source>
-		<translation>Nome do membro</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Community members will appear here</source>
-		<translation>Os membros da comunidade aparecerão aqui</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>No contacts found</source>
-		<translation>Nenhum contato encontrado</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Your community is free to join, but new members are required to be approved by the community creator first</source>
-		<translation>Sua comunidade é livre para participar, mas os novos membros precisam ser aprovados pelo criador da comunidade primeiro</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Your community can only be joined by an invitation from existing community members</source>
-		<translation>Sua comunidade só pode ser acessada por um convite de membros existentes da comunidade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Your community is free for anyone to join</source>
-		<translation>Sua comunidade é gratuita para qualquer pessoa entrar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>You should keep it safe and only share it with people you trust to take ownership of your community</source>
-		<translation>Você deve mantê-lo seguro e compartilhá-lo apenas com pessoas em quem confia para se apropriar de sua comunidade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>You can also use this key to import your community on another device</source>
-		<translation>Você também pode usar esta chave para importar sua comunidade em outro dispositivo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Decline and block</source>
-		<translation>Recusar e bloquear</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Decline all contacts</source>
-		<translation>Recusar todos os contatos</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Are you sure you want to decline all these contact requests</source>
-		<translation>Tem certeza de que deseja recusar todas essas solicitações de contato</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Accept all contacts</source>
-		<translation>Aceitar todos os contatos</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Are you sure you want to accept all these contact requests</source>
-		<translation>Tem certeza que deseja aceitar todas essas solicitações de contato</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Decline all</source>
-		<translation>Recusar tudo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Accept all</source>
-		<translation>Aceitar tudo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Pin limit reached</source>
-		<translation>Limite de mensagens fixadas atingido</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Unpin a previous message first</source>
-		<translation>Desafixar uma mensagem anterior primeiro</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>%1 messages</source>
-		<translation>%1 mensagens</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>%1 message</source>
-		<translation>%1 mensagem</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Pinned messages will appear here.</source>
-		<translation>As mensagens fixadas aparecerão aqui.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>I accept</source>
-		<translation>Eu aceito</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Format not supported.</source>
-		<translation>Formato não suportado.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Upload %1 only</source>
-		<translation>Carregar apenas %1</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>You can only upload %1 images at a time</source>
-		<translation>Você só pode carregar %1 imagens de cada vez</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Max image size is %1 MB</source>
-		<translation>O tamanho máximo da imagem é %1 MB</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>TODO</source>
-		<translation>PARAFAZER</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>NOW</source>
-		<translation>AGORA</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>%1M</source>
-		<translation>%1M</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>%1H</source>
-		<translation>%1H</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>%1D</source>
-		<translation>%1D</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Sun</source>
-		<translation>Dom</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Mon</source>
-		<translation>Seg</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Tue</source>
-		<translation>Ter</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Wed</source>
-		<translation>Qua</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Thu</source>
-		<translation>Qui</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Fri</source>
-		<translation>Sex</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Sat</source>
-		<translation>Sab</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Jan</source>
-		<translation>Jan</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Feb</source>
-		<translation>Fev</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Mar</source>
-		<translation>Mar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Apr</source>
-		<translation>Abr</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Jun</source>
-		<translation>Jun</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Jul</source>
-		<translation>Jul</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Aug</source>
-		<translation>Ago</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Sep</source>
-		<translation>Set</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Oct</source>
-		<translation>Out</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Nov</source>
-		<translation>Nov</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Dec</source>
-		<translation>Dez</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Sunday</source>
-		<translation>Domingo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Monday</source>
-		<translation>Segunda-feira</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Tuesday</source>
-		<translation>Terça-feira</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Wednesday</source>
-		<translation>Quarta-feira</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Thursday</source>
-		<translation>Quinta-feira</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Friday</source>
-		<translation>Sexta-feira</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Saturday</source>
-		<translation>Sábado</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Start a 1-on-1 chat with %1</source>
-		<translation>Inicie um bate-papo individual com %1</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Join the %1 community</source>
-		<translation>Junte-se à comunidade %1</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Join the %1 group chat</source>
-		<translation>Junte-se ao bate-papo em grupo %1</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Join the %1 public channel</source>
-		<translation>Junte-se ao canal público %1</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>words</source>
-		<translation>palavras</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Mainnet with upstream RPC</source>
-		<translation>Mainnet com RPC upstream</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>POA Network</source>
-		<translation>Rede POA</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>xDai Chain</source>
-		<translation>xDai Chain</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Goerli with upstream RPC</source>
-		<translation>Goerli com RPC upstream</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Rinkeby with upstream RPC</source>
-		<translation>Rinkeby com RPC upstream</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Ropsten with upstream RPC</source>
-		<translation>Ropsten com RPC upstream</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>You need to repeat your password</source>
-		<translation>Você precisa repetir sua senha</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Passwords don&apos;t match</source>
-		<translation>As senhas não correspondem</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>You need to enter a %1</source>
-		<translation>Você precisa inserir um %1</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>The %1 cannot exceed %2 characters</source>
-		<translation>O %1 não pode exceder %2 caracteres</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Must be an hexadecimal color (eg: #4360DF)</source>
-		<translation>Deve ser uma cor hexadecimal (por exemplo: #4360DF)</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Use only lowercase letters (a to z), numbers &amp; dashes (-). Do not use chat keys.</source>
-		<translation>Use apenas letras minúsculas (a a z), números e traços (-). Não use teclas de bate-papo.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>community-image-delete</source>
-		<translation>Vazio</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>public</source>
@@ -10888,11 +10877,11 @@ Assets won’t be sent yet.</source>
 	<name>AboutView</name>
 	<message>
 		<source>Status Desktop</source>
-		<translation>Status Desktop</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Privacy Policy</source>
-		<translation>Política de Privacidade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Check for updates</source>
@@ -10943,37 +10932,37 @@ Assets won’t be sent yet.</source>
 	<name>AcceptRejectOptionsButtonsPanel</name>
 	<message>
 		<source>View Profile</source>
-		<translation>Ver Perfil</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Decline and block</source>
-		<translation>Recusar e bloquear</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>AccessExistingCommunityPopup</name>
 	<message>
 		<source>You need to enter a key</source>
-		<translation>Você precisa inserir uma chave</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Import</source>
-		<translation>Importar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Error importing the community</source>
-		<translation>Erro ao importar a comunidade</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>AccountView</name>
 	<message>
 		<source>Type</source>
-		<translation>Tipo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Storage</source>
-		<translation>Armazenar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Watch-Only Account</source>
@@ -11016,7 +11005,7 @@ Assets won’t be sent yet.</source>
 	<name>ActivityCenterMessageComponentView</name>
 	<message>
 		<source>Mark as Read</source>
-		<translation>Marcar como Lido</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Mark as Unread</source>
@@ -11027,7 +11016,7 @@ Assets won’t be sent yet.</source>
 	<name>AddAccountModal</name>
 	<message>
 		<source>Advanced</source>
-		<translation>Avançado</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Generate an account</source>
@@ -11082,15 +11071,15 @@ Assets won’t be sent yet.</source>
 	<name>AddEditSavedAddressPopup</name>
 	<message>
 		<source>Name</source>
-		<translation>Nome</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Address</source>
-		<translation>Endereço</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Save</source>
-		<translation>Salvar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Edit saved address</source>
@@ -11129,23 +11118,23 @@ Assets won’t be sent yet.</source>
 	<name>AddFavoriteModal</name>
 	<message>
 		<source>URL</source>
-		<translation>URL</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Paste URL</source>
-		<translation>Colar URL</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Paste</source>
-		<translation>Colar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Pasted</source>
-		<translation>Colado</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Name</source>
-		<translation>Nome</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Favorite added</source>
@@ -11192,18 +11181,18 @@ Assets won’t be sent yet.</source>
 	<name>AdvancedContainer</name>
 	<message>
 		<source>Online users</source>
-		<translation>Usuários online</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>AdvancedView</name>
 	<message>
 		<source>disable</source>
-		<translation>desativar</translation>
+		<translation>deshabilitar</translation>
 	</message>
 	<message>
 		<source>enable</source>
-		<translation>Ativar</translation>
+		<translation>Habilitar</translation>
 	</message>
 	<message>
 		<source>Fleet</source>
@@ -11326,7 +11315,7 @@ Assets won’t be sent yet.</source>
 	<name>AllowNotificationsView</name>
 	<message>
 		<source>Ok, got it</source>
-		<translation>Ok, entendi.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Allow notifications</source>
@@ -11342,7 +11331,7 @@ edit your notification preferences later in settings.</source>
 	<name>AppMain</name>
 	<message>
 		<source>Where do you want to go?</source>
-		<translation>Onde você quer ir?</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Profile Picture</source>
@@ -11401,27 +11390,27 @@ edit your notification preferences later in settings.</source>
 	<name>AppearanceView</name>
 	<message>
 		<source>XS</source>
-		<translation>XS</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>S</source>
-		<translation>S</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>M</source>
-		<translation>M</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>L</source>
-		<translation>L</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>XL</source>
-		<translation>XL</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>XXL</source>
-		<translation>XXL</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Preview</source>
@@ -11480,11 +11469,11 @@ edit your notification preferences later in settings.</source>
 	<name>BackupSeedModal</name>
 	<message>
 		<source>Back up your seed phrase</source>
-		<translation>Faça backup da frase-semente</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Continue</source>
-		<translation>Continuar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Not Now</source>
@@ -11507,11 +11496,11 @@ edit your notification preferences later in settings.</source>
 	<name>BackupSeedStepBase</name>
 	<message>
 		<source>Enter word</source>
-		<translation>Digite a palavra</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Wrong word</source>
-		<translation>Palavra errada</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Word #%1</source>
@@ -11522,7 +11511,7 @@ edit your notification preferences later in settings.</source>
 	<name>BeforeGetStartedModal</name>
 	<message>
 		<source>Privacy Policy</source>
-		<translation>Política de Privacidade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Before you get started</source>
@@ -11565,7 +11554,7 @@ edit your notification preferences later in settings.</source>
 	<name>BrowserLayout</name>
 	<message>
 		<source>Transaction pending...</source>
-		<translation>Transação pendente...</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Error sending the transaction</source>
@@ -11597,19 +11586,19 @@ Do you wish to override the security check and continue?</source>
 	<name>ChatContextMenuView</name>
 	<message>
 		<source>Leave group</source>
-		<translation>Sair do grupo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Save</source>
-		<translation>Salvar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Delete</source>
-		<translation>Excluir</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Are you sure you want to leave this chat?</source>
-		<translation>Tem certeza de que deseja sair deste chat?</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>View Members</source>
@@ -11676,7 +11665,7 @@ Do you wish to override the security check and continue?</source>
 	<name>ChatView</name>
 	<message>
 		<source>Members</source>
-		<translation>Membros</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Remove contact</source>
@@ -11691,14 +11680,14 @@ Do you wish to override the security check and continue?</source>
 	<name>CollectibleDetailsHeader</name>
 	<message>
 		<source>Send</source>
-		<translation>Enviar</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>CollectibleModal</name>
 	<message>
 		<source>description</source>
-		<translation>Descrição</translation>
+		<translation>Descripción</translation>
 	</message>
 	<message>
 		<source>unnamed</source>
@@ -11717,25 +11706,25 @@ Do you wish to override the security check and continue?</source>
 	<name>CollectiblesStore</name>
 	<message>
 		<source>Collectibles</source>
-		<translation>Colecionáveis</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>CollectiblesView</name>
 	<message>
 		<source>Collectibles will appear here</source>
-		<translation>Colecionáveis aparecerão aqui</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>CommunitiesListPanel</name>
 	<message>
 		<source>Cancel</source>
-		<translation>Cancelar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Leave community</source>
-		<translation>Deixar comunidade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Leave %1</source>
@@ -11750,23 +11739,23 @@ Do you wish to override the security check and continue?</source>
 	<name>CommunitiesPopup</name>
 	<message>
 		<source>Communities</source>
-		<translation>Comunidades</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>1 member</source>
-		<translation>1 membro</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>%1 members</source>
-		<translation>%1 membros</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Create a community</source>
-		<translation>Crie uma comunidade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Search for communities or topics</source>
-		<translation>Pesquisar comunidades ou tópicos</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Access existing community</source>
@@ -11777,7 +11766,7 @@ Do you wish to override the security check and continue?</source>
 	<name>CommunitiesPortalLayout</name>
 	<message>
 		<source>Search</source>
-		<translation>Pesquisar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Find community</source>
@@ -11804,18 +11793,18 @@ Do you wish to override the security check and continue?</source>
 	<name>CommunityColorPicker</name>
 	<message>
 		<source>Community colour</source>
-		<translation>Cor da comunidade</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>CommunityColumnView</name>
 	<message>
 		<source>Create channel</source>
-		<translation>Criar canal</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Create category</source>
-		<translation>Criar categoria</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>1 Member</source>
@@ -11874,11 +11863,11 @@ Do you wish to override the security check and continue?</source>
 	<name>CommunityDescriptionInput</name>
 	<message>
 		<source>Description</source>
-		<translation>Descrição</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>What your community is about</source>
-		<translation>Sobre o que é sua comunidade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>community description</source>
@@ -11889,15 +11878,15 @@ Do you wish to override the security check and continue?</source>
 	<name>CommunityDetailPopup</name>
 	<message>
 		<source>Join ‘%1’</source>
-		<translation>Junte-se a &apos;%1&apos;</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Pending</source>
-		<translation>Pendente</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Unknown community</source>
-		<translation>Comunidade desconhecida</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Public community</source>
@@ -11940,53 +11929,53 @@ Do you wish to override the security check and continue?</source>
 	<name>CommunityEditSettingsPanel</name>
 	<message>
 		<source>A catchy name</source>
-		<translation>Um nome cativante</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>community name</source>
-		<translation>nome da comunidade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Description</source>
-		<translation>Descrição</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>What your community is about</source>
-		<translation>Sobre o que é sua comunidade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Pick a color</source>
-		<translation>Escolha uma cor</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>CommunityHeaderButton</name>
 	<message>
 		<source>1 member</source>
-		<translation>1 membro</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>%1 members</source>
-		<translation>%1 membros</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>CommunityMembersSettingsPanel</name>
 	<message>
 		<source>Members</source>
-		<translation>Membros</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Member name</source>
-		<translation>Nome do membro</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Ban</source>
-		<translation>Banir</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Kick</source>
-		<translation>Expulsar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Membership requests</source>
@@ -12009,11 +11998,11 @@ Do you wish to override the security check and continue?</source>
 	<name>CommunityNameInput</name>
 	<message>
 		<source>A catchy name</source>
-		<translation>Um nome cativante</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>community name</source>
-		<translation>nome da comunidade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Community name</source>
@@ -12024,11 +12013,11 @@ Do you wish to override the security check and continue?</source>
 	<name>CommunityProfilePopup</name>
 	<message>
 		<source>Members</source>
-		<translation>Membros</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Transfer ownership</source>
-		<translation>Transferir propriedade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Public community</source>
@@ -12059,11 +12048,11 @@ Do you wish to override the security check and continue?</source>
 	<name>CommunityProfilePopupInviteFriendsPanel</name>
 	<message>
 		<source>Copied!</source>
-		<translation>Copiado!</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Contacts</source>
-		<translation>Contatos</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Share community</source>
@@ -12074,14 +12063,14 @@ Do you wish to override the security check and continue?</source>
 	<name>CommunityProfilePopupMembersListPanel</name>
 	<message>
 		<source>Member name</source>
-		<translation>Nome do membro</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>CommunityProfilePopupOverviewPanel</name>
 	<message>
 		<source>Copied!</source>
-		<translation>Copiado!</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Share community</source>
@@ -12100,15 +12089,15 @@ Do you wish to override the security check and continue?</source>
 	<name>CommunitySettingsView</name>
 	<message>
 		<source>Members</source>
-		<translation>Membros</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Notifications</source>
-		<translation>Notificações</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Settings</source>
-		<translation>Configurações</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Overview</source>
@@ -12131,14 +12120,14 @@ Do you wish to override the security check and continue?</source>
 	<name>CommunityUserList</name>
 	<message>
 		<source>Members</source>
-		<translation>Membros</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>ConfirmPasswordView</name>
 	<message>
 		<source>Passwords don&apos;t match</source>
-		<translation>As senhas não correspondem</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Have you written down your password?</source>
@@ -12189,23 +12178,23 @@ Do you wish to override the security check and continue?</source>
 	<name>ConfirmationDialog</name>
 	<message>
 		<source>Confirm</source>
-		<translation>Confirmar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Reject</source>
-		<translation>Rejeitar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Cancel</source>
-		<translation>Cancelar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Confirm your action</source>
-		<translation>Confirmar sua ação</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Do not show this again</source>
-		<translation>Não mostrar isso novamente</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Are you sure you want to do this?</source>
@@ -12216,11 +12205,11 @@ Do you wish to override the security check and continue?</source>
 	<name>ContactPanel</name>
 	<message>
 		<source>View Profile</source>
-		<translation>Ver perfil</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Send message</source>
-		<translation>Enviar mensagem</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Respond to ID Request</source>
@@ -12239,7 +12228,7 @@ Do you wish to override the security check and continue?</source>
 	<name>ContactsColumnView</name>
 	<message>
 		<source>Start chat</source>
-		<translation>Iniciar bate-papo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Chat</source>
@@ -12270,7 +12259,7 @@ Do you wish to override the security check and continue?</source>
 	<name>ContactsView</name>
 	<message>
 		<source>Contacts</source>
-		<translation>Contatos</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Send contact request to chat key</source>
@@ -12317,27 +12306,27 @@ Do you wish to override the security check and continue?</source>
 	<name>Controls</name>
 	<message>
 		<source>XS</source>
-		<translation>XS</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>S</source>
-		<translation>S</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>M</source>
-		<translation>M</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>L</source>
-		<translation>L</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>XL</source>
-		<translation>XL</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>XXL</source>
-		<translation>XXL</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>50%</source>
@@ -12360,11 +12349,11 @@ Do you wish to override the security check and continue?</source>
 	<name>CreateCategoryPopup</name>
 	<message>
 		<source>Category title</source>
-		<translation>Título da categoria</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>category name</source>
-		<translation>nome da categoria</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Edit category</source>
@@ -12415,23 +12404,23 @@ Do you wish to override the security check and continue?</source>
 	<name>CreateChannelPopup</name>
 	<message>
 		<source>Channel name</source>
-		<translation>Nome do canal</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>channel name</source>
-		<translation>nome do canal</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Description</source>
-		<translation>Descrição</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Describe the channel</source>
-		<translation>Descreva o canal</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>channel description</source>
-		<translation>descrição do canal</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>New channel</source>
@@ -12470,7 +12459,7 @@ Do you wish to override the security check and continue?</source>
 	<name>CreateChatView</name>
 	<message>
 		<source>Contacts</source>
-		<translation>Contatos</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>To: </source>
@@ -12512,51 +12501,51 @@ chat with them once they have accepted your contact request.</source>
 	<name>CreateCommunityPopup</name>
 	<message>
 		<source>You need to enter a color</source>
-		<translation>Você precisa inserir uma cor</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>This field needs to be an hexadecimal color (eg: #4360DF)</source>
-		<translation>Este campo precisa ser uma cor hexadecimal (por exemplo: #4360DF)</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Community color</source>
-		<translation>Cor da comunidade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Pick a color</source>
-		<translation>Escolha uma cor</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Please choose a color</source>
-		<translation>Por favor, escolha uma cor</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Next</source>
-		<translation>Próximo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Error creating the community</source>
-		<translation>Erro ao criar a comunidade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Name your community</source>
-		<translation>Dê um nome à sua comunidade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>A catchy name</source>
-		<translation>Um nome cativante</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Give it a short description</source>
-		<translation>Faça uma breve descrição</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>What your community is about</source>
-		<translation>Sobre o que é sua comunidade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Community colour</source>
-		<translation>Cor da comunidade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Create New Community</source>
@@ -12571,18 +12560,18 @@ chat with them once they have accepted your contact request.</source>
 	<name>CreatePasswordView</name>
 	<message>
 		<source>Create password</source>
-		<translation>Criar senha</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>DemoApp</name>
 	<message>
 		<source>Invite People</source>
-		<translation>Convidar pessoas</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>View Community</source>
-		<translation>Ver Comunidade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Edit Community</source>
@@ -12597,7 +12586,7 @@ chat with them once they have accepted your contact request.</source>
 	<name>DerivationPathsPanel</name>
 	<message>
 		<source>Reset</source>
-		<translation>Redefinir</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Derivation Path</source>
@@ -12608,11 +12597,11 @@ chat with them once they have accepted your contact request.</source>
 	<name>DerivedAddressesPanel</name>
 	<message>
 		<source>Pending</source>
-		<translation>Pendente</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Account</source>
-		<translation>Conta</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>No activity</source>
@@ -12635,11 +12624,11 @@ chat with them once they have accepted your contact request.</source>
 	<name>DisplayNamePopup</name>
 	<message>
 		<source>Edit</source>
-		<translation>Editar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Ok</source>
-		<translation>Ok</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Display Name</source>
@@ -12654,15 +12643,15 @@ chat with them once they have accepted your contact request.</source>
 	<name>EnsDetailsView</name>
 	<message>
 		<source>Wallet address</source>
-		<translation>Endereço da carteira</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Key</source>
-		<translation>Chave</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Connect username with your pubkey</source>
-		<translation>Conecte o nome de usuário com sua chave pública</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Copied to clipboard!</source>
@@ -12685,7 +12674,7 @@ chat with them once they have accepted your contact request.</source>
 	<name>EnsSearchView</name>
 	<message>
 		<source>Connect username with your pubkey</source>
-		<translation>Conecte o nome de usuário com sua chave pública</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>At least 4 characters. Latin letters, numbers, and lowercase only.</source>
@@ -12716,7 +12705,7 @@ chat with them once they have accepted your contact request.</source>
 	<name>EnsView</name>
 	<message>
 		<source>Transaction pending...</source>
-		<translation>Transação pendente...</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>View on etherscan</source>
@@ -12743,7 +12732,7 @@ chat with them once they have accepted your contact request.</source>
 	<name>ExemptionNotificationsModal</name>
 	<message>
 		<source>Done</source>
-		<translation>Feito</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>%1 exemption</source>
@@ -12774,15 +12763,15 @@ chat with them once they have accepted your contact request.</source>
 	<name>GasSelector</name>
 	<message>
 		<source>Priority</source>
-		<translation>Prioridade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Low</source>
-		<translation>Baixo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>High</source>
-		<translation>Alto</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Must be greater than 0</source>
@@ -12861,7 +12850,7 @@ chat with them once they have accepted your contact request.</source>
 	<name>GroupInfoPopup</name>
 	<message>
 		<source>%1/%2 members</source>
-		<translation>%1 membros {1/%2 ?}</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Add members</source>
@@ -12908,18 +12897,18 @@ chat with them once they have accepted your contact request.</source>
 	<name>ImageCropperModal</name>
 	<message>
 		<source>Crop your image (optional)</source>
-		<translation>Cortar sua imagem (opcional)</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Finish</source>
-		<translation>Terminar</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>ImportPrivateKeyPanel</name>
 	<message>
 		<source>Pending</source>
-		<translation>Pendente</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>You need to enter a private key</source>
@@ -12958,7 +12947,7 @@ chat with them once they have accepted your contact request.</source>
 	<name>InsertCard</name>
 	<message>
 		<source>Cancel</source>
-		<translation>Cancelar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Please insert your Keycard to proceed or press the cancel button to cancel the operation</source>
@@ -12969,11 +12958,11 @@ chat with them once they have accepted your contact request.</source>
 	<name>InsertDetailsView</name>
 	<message>
 		<source>Next</source>
-		<translation>Próximo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Profile picture</source>
-		<translation>Foto do perfil</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Your profile</source>
@@ -13012,7 +13001,7 @@ chat with them once they have accepted your contact request.</source>
 	<name>InvitationBubbleView</name>
 	<message>
 		<source>Unsupported state</source>
-		<translation>Estado não suportado</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Membership requires an ENS username</source>
@@ -13059,11 +13048,11 @@ chat with them once they have accepted your contact request.</source>
 	<name>KeysMainView</name>
 	<message>
 		<source>Enter a seed phrase</source>
-		<translation>Inserir seed phrase</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Generate new keys</source>
-		<translation>Gerar novas chaves</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>intro-wizard-title1</source>
@@ -13103,7 +13092,7 @@ device, so only you can use them.</source>
 	<name>LanguageView</name>
 	<message>
 		<source>Language</source>
-		<translation>Idioma</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Set Display Currency</source>
@@ -13158,11 +13147,11 @@ device, so only you can use them.</source>
 	<name>Layout</name>
 	<message>
 		<source>Invite People</source>
-		<translation>Convidar pessoas</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>View Community</source>
-		<translation>Ver Comunidade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>To: </source>
@@ -13185,7 +13174,7 @@ device, so only you can use them.</source>
 	<name>LeftTabView</name>
 	<message>
 		<source>Settings</source>
-		<translation>Configurações</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Sign out</source>
@@ -13220,7 +13209,7 @@ device, so only you can use them.</source>
 	<name>LoginView</name>
 	<message>
 		<source>Ok</source>
-		<translation>Ok</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Welcome back</source>
@@ -13259,7 +13248,7 @@ device, so only you can use them.</source>
 	<name>MenuPanel</name>
 	<message>
 		<source>Settings</source>
-		<translation>Configurações</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Apps</source>
@@ -13274,7 +13263,7 @@ device, so only you can use them.</source>
 	<name>MessageContextMenuView</name>
 	<message>
 		<source>Jump to</source>
-		<translation>Pular para</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Copy image</source>
@@ -13337,7 +13326,7 @@ device, so only you can use them.</source>
 	<name>MessagingView</name>
 	<message>
 		<source>Contacts</source>
-		<translation>Contatos</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Allow new contact requests</source>
@@ -13408,15 +13397,15 @@ device, so only you can use them.</source>
 	<name>MyProfileView</name>
 	<message>
 		<source>ENS username</source>
-		<translation>nome de usuário ENS</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Chat key</source>
-		<translation>Chave de bate-papo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Share Profile URL</source>
-		<translation>Compartilhar URL do Perfil</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Change Password</source>
@@ -13435,7 +13424,7 @@ device, so only you can use them.</source>
 	<name>NicknamePopup</name>
 	<message>
 		<source>Nickname</source>
-		<translation>Nickname</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Nicknames help you identify others in Status. Only you can see the nicknames you’ve added</source>
@@ -13450,7 +13439,7 @@ device, so only you can use them.</source>
 	<name>NoImageUploadedPanel</name>
 	<message>
 		<source>Upload</source>
-		<translation>Upload</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Wide aspect ratio is optimal</source>
@@ -13461,15 +13450,15 @@ device, so only you can use them.</source>
 	<name>NotificationsView</name>
 	<message>
 		<source>Messages</source>
-		<translation>Mensagens</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>You have a new message</source>
-		<translation>Você tem uma nova mensagem</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Anonymous</source>
-		<translation>Anônimo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Community</source>
@@ -13620,11 +13609,11 @@ device, so only you can use them.</source>
 	<name>PasswordView</name>
 	<message>
 		<source>Create a password</source>
-		<translation>Criar uma senha</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Passwords don&apos;t match</source>
-		<translation>As senhas não correspondem</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Create a password to unlock Status on this device &amp; sign transactions.</source>
@@ -13703,7 +13692,7 @@ device, so only you can use them.</source>
 	<name>PermissionsListView</name>
 	<message>
 		<source>Disconnect</source>
-		<translation>Desconectar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Disconnect All</source>
@@ -13714,7 +13703,7 @@ device, so only you can use them.</source>
 	<name>PinnedMessagesPopup</name>
 	<message>
 		<source>Unpin</source>
-		<translation>Desafixar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Pin limit reached</source>
@@ -13745,7 +13734,7 @@ device, so only you can use them.</source>
 	<name>ProfileLayout</name>
 	<message>
 		<source>Contacts</source>
-		<translation>Contatos</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Testnet mode is enabled. All balances, transactions and dApp interactions will be on testnets.</source>
@@ -13764,47 +13753,47 @@ device, so only you can use them.</source>
 	<name>ProfilePopup</name>
 	<message>
 		<source>ENS username</source>
-		<translation>nome de usuário ENS</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Chat key</source>
-		<translation>Chave de bate-papo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Share Profile URL</source>
-		<translation>Compartilhar URL do Perfil</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Chat settings</source>
-		<translation>Configurações de bate-papo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Nickname</source>
-		<translation>Nickname</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>None</source>
-		<translation>Nenhum</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Remove contact</source>
-		<translation>Remover Contato</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Are you sure you want to remove this contact?</source>
-		<translation>Tem certeza de que deseja remover este contato?</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Unblock User</source>
-		<translation>Desbloquear Usuário</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Block User</source>
-		<translation>Bloquear Usuário</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Add to contacts</source>
-		<translation>Adicionar aos contatos</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>&apos;s Profile</source>
@@ -13895,35 +13884,35 @@ device, so only you can use them.</source>
 	<name>ProfileSectionStore</name>
 	<message>
 		<source>Profile</source>
-		<translation>Perfil</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>ENS usernames</source>
-		<translation>Nomes de usuário ENS</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Wallet</source>
-		<translation>Carteira</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Browser</source>
-		<translation>Navegador</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Communities</source>
-		<translation>Comunidades</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Appearance</source>
-		<translation>Aparência</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Back up seed phrase</source>
-		<translation>Fazer backup da seed phrase</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Advanced</source>
-		<translation>Avançado</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Messaging</source>
@@ -13954,7 +13943,7 @@ device, so only you can use them.</source>
 	<name>RateView</name>
 	<message>
 		<source>Upload</source>
-		<translation>Upload</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Bandwidth</source>
@@ -13973,7 +13962,7 @@ device, so only you can use them.</source>
 	<name>ReceiveModal</name>
 	<message>
 		<source>Copy</source>
-		<translation>Copiar para área de transferência</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Receive</source>
@@ -13996,7 +13985,7 @@ device, so only you can use them.</source>
 	<name>RootStore</name>
 	<message>
 		<source>You</source>
-		<translation>Você</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Start a 1-on-1 chat with %1</source>
@@ -14015,11 +14004,11 @@ device, so only you can use them.</source>
 	<name>SavedAddressesView</name>
 	<message>
 		<source>Cancel</source>
-		<translation>Cancelar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Delete</source>
-		<translation>Excluir</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Saved addresses</source>
@@ -14050,15 +14039,15 @@ device, so only you can use them.</source>
 	<name>SeedPhraseInputView</name>
 	<message>
 		<source>Enter seed phrase</source>
-		<translation>Inserir seed phrase</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Next</source>
-		<translation>Próximo</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Import</source>
-		<translation>Importar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Keys for this account already exist</source>
@@ -14093,7 +14082,7 @@ device, so only you can use them.</source>
 	<name>SendContactRequestModal</name>
 	<message>
 		<source>Paste</source>
-		<translation>Colar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Send Contact Request to chat key</source>
@@ -14120,7 +14109,7 @@ device, so only you can use them.</source>
 	<name>SendModal</name>
 	<message>
 		<source>Transaction pending...</source>
-		<translation>Transação pendente...</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Error sending the transaction</source>
@@ -14167,7 +14156,7 @@ device, so only you can use them.</source>
 	<name>SendModalFooter</name>
 	<message>
 		<source>Unknown</source>
-		<translation>Desconhecido</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Estimated Time:</source>
@@ -14186,37 +14175,37 @@ device, so only you can use them.</source>
 	<name>SendModalHeader</name>
 	<message>
 		<source>To</source>
-		<translation>Para</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>SettingsPageLayout</name>
 	<message>
 		<source>Cancel</source>
-		<translation>Cancelar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Save changes</source>
-		<translation>Salvar alterações</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>SignTransactionModal</name>
 	<message>
 		<source>Send</source>
-		<translation>Enviar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Continue</source>
-		<translation>Continuar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Error estimating gas: %1</source>
-		<translation>Erro ao estimar a taxa de gas: %1</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Transaction pending...</source>
-		<translation>Transação pendente...</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Error sending the transaction</source>
@@ -14259,14 +14248,14 @@ device, so only you can use them.</source>
 	<name>StatusAppCommunityView</name>
 	<message>
 		<source>Members</source>
-		<translation>Membros</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>StatusChatInput</name>
 	<message>
 		<source>Send</source>
-		<translation>Enviar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Message</source>
@@ -14313,7 +14302,7 @@ device, so only you can use them.</source>
 	<name>StatusChatListAndCategories</name>
 	<message>
 		<source>More</source>
-		<translation>Mais</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Add channel inside category</source>
@@ -14324,7 +14313,7 @@ device, so only you can use them.</source>
 	<name>StatusChatListCategoryItem</name>
 	<message>
 		<source>More</source>
-		<translation>Mais</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Add channel inside category</source>
@@ -14335,29 +14324,29 @@ device, so only you can use them.</source>
 	<name>StatusChatListItem</name>
 	<message>
 		<source>Unmute</source>
-		<translation>Ativar som</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>StatusChatToolBar</name>
 	<message>
 		<source>Search</source>
-		<translation>Pesquisar</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Members</source>
-		<translation>Membros</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>More</source>
-		<translation>Mais</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>StatusColorDialog</name>
 	<message>
 		<source>Preview</source>
-		<translation>Preview</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>This is not a valid color</source>
@@ -14376,7 +14365,7 @@ device, so only you can use them.</source>
 	<name>StatusExpandableSettingsItemPage</name>
 	<message>
 		<source>Back up seed phrase</source>
-		<translation>Fazer backup da seed phrase</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Not Implemented</source>
@@ -14387,14 +14376,14 @@ device, so only you can use them.</source>
 	<name>StatusListPicker</name>
 	<message>
 		<source>Search</source>
-		<translation>Procurar</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>StatusMacNotification</name>
 	<message>
 		<source>Open</source>
-		<translation>Abrir</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>My latest message
@@ -14406,18 +14395,18 @@ device, so only you can use them.</source>
 	<name>StatusStickerMarket</name>
 	<message>
 		<source>This feature is experimental and is meant for testing purposes by core contributors and the community. It&apos;s not meant for real use and makes no claims of security or integrity of funds or data. Use at your own risk.</source>
-		<translation>Esse recurso é experimental e destina-se a fins de teste pelos principais contribuidores e pela comunidade. Não se destina ao uso real e não faz reivindicações de segurança ou integridade de fundos ou dados. Use por sua conta e risco.</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>I understand</source>
-		<translation>Eu compreendo</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>StatusTokenInlineSelector</name>
 	<message>
 		<source>or</source>
-		<translation>OU</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Hold</source>
@@ -14432,29 +14421,29 @@ device, so only you can use them.</source>
 	<name>StatusWalletColorSelect</name>
 	<message>
 		<source>Account color</source>
-		<translation>Cor da conta</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>TabNetworkAndFees</name>
 	<message>
 		<source>Advanced</source>
-		<translation>Avançado</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Custom</source>
-		<translation>Personalizado</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Slow</source>
-		<translation>Lento</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>TransactionSettingsConfirmationPopup</name>
 	<message>
 		<source>Are you sure?</source>
-		<translation>Você tem certeza?</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Your priority fee is below our suggested parameters.</source>
@@ -14505,19 +14494,19 @@ device, so only you can use them.</source>
 	<name>TransferOwnershipPopup</name>
 	<message>
 		<source>Transfer ownership</source>
-		<translation>Transferir propriedade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Community private key</source>
-		<translation>Chave privada da comunidade</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Copy</source>
-		<translation>Copiar para a área de transferência</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Copied</source>
-		<translation>Copiado</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>You should keep it safe and only share it with people you trust to take ownership of your community</source>
@@ -14532,19 +14521,19 @@ device, so only you can use them.</source>
 	<name>UploadProfilePicModal</name>
 	<message>
 		<source>Profile picture</source>
-		<translation>Foto do perfil</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Remove</source>
-		<translation>Remover</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Upload</source>
-		<translation>Envio</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Done</source>
-		<translation>Feito</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Upload profile picture</source>
@@ -14563,29 +14552,29 @@ device, so only you can use them.</source>
 	<name>UserList</name>
 	<message>
 		<source>Members</source>
-		<translation>Membros</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>UsernameLabel</name>
 	<message>
 		<source>You</source>
-		<translation>Você</translation>
+		<translation></translation>
 	</message>
 </context>
 <context>
 	<name>Utils</name>
 	<message>
 		<source>Password needs to be 6 characters or more</source>
-		<translation>A senha precisa ter 6 caracteres ou mais</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>You need to enter a %1</source>
-		<translation>Você precisa inserir um %1</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>now</source>
-		<translation>Agora</translation>
+		<translation>Ahora</translation>
 	</message>
 	<message>
 		<source>Sun</source>
@@ -14844,7 +14833,7 @@ device, so only you can use them.</source>
 	<name>WalletView</name>
 	<message>
 		<source>Wallet</source>
-		<translation>Carteira</translation>
+		<translation></translation>
 	</message>
 	<message>
 		<source>Networks</source>
