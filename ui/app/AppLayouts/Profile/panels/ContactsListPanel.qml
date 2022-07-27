@@ -98,9 +98,7 @@ Item {
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         interactive: false
-        ScrollBar.vertical: ScrollBar {
-            policy: contactListRoot.scrollbarOn ? ScrollBar.AlwaysOn : ScrollBar.AsNeeded
-        }
+        ScrollBar.vertical.policy: contactListRoot.scrollbarOn ? ScrollBar.AlwaysOn : ScrollBar.AsNeeded
         model: delegateModel
     }
 
@@ -109,7 +107,7 @@ Item {
 
         ContactPanel {
             id: panelDelegate
-            width: (parent.width-10)
+            width: ListView.view.width
             name: model.displayName
             publicKey: model.pubKey
             iconSource: model.icon

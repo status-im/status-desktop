@@ -20,7 +20,7 @@ import "../popups"
 
 SettingsContentBase {
     id: root
-    onWidthChanged: { contentItem.width = width; }
+    onWidthChanged: { contentItem.width = contentWidth; }
     onHeightChanged: { contentItem.height = height; }
     property ContactsStore contactsStore
 
