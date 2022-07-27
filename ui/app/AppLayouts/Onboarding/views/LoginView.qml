@@ -163,6 +163,7 @@ Item {
 
               anchors.fill: parent
               anchors.margins: -10
+              cursorShape: Qt.PointingHandCursor
               hoverEnabled: true
               onEntered: {
                   accountPopupOpened = accountsPopup.opened
