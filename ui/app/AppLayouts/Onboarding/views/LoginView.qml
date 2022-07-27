@@ -158,6 +158,23 @@ Item {
               color: Theme.palette.directColor1
           }
 
+          MouseArea {
+              property bool accountPopupOpened: false
+
+              anchors.fill: parent
+              anchors.margins: -10
+              hoverEnabled: true
+              onEntered: {
+                  accountPopupOpened = accountsPopup.opened
+              }
+              onPressed: {
+                  if (!accountPopupOpened) {
+                      changeAccountBtn.clicked(mouse)
+                  }
+                  accountPopupOpened = accountsPopup.opened
+              }
+          }
+
           StatusQControls.StatusFlatRoundButton {
               icon.name: "chevron-down"
               type: StatusQControls.StatusFlatRoundButton.Type.Tertiary
