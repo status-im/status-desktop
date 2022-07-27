@@ -68,21 +68,22 @@ Item {
         StyledText {
             id: txtDesc
             Layout.preferredWidth: root.state === Constants.startupState.userProfileCreate? 338 : 643
-            Layout.preferredHeight: 44
             Layout.alignment: Qt.AlignTop | Qt.AlignHCenter
-            Layout.topMargin: Style.current.padding
+            Layout.topMargin: Style.current.smallPadding
             color: Style.current.secondaryText
             text: qsTr("Longer and unusual names are better as they are less likely to be used by someone else.")
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
             font.pixelSize: 15
+            lineHeight: 1.2
+            font.letterSpacing: -0.2
         }
 
         Item {
-            implicitWidth: 80
-            implicitHeight: 80
+            Layout.preferredWidth: 80
+            Layout.preferredHeight: 80
             Layout.alignment: Qt.AlignTop | Qt.AlignHCenter
-            Layout.topMargin: 27
+            Layout.topMargin: Style.current.bigPadding
             StatusSmartIdenticon {
                 anchors.left: parent.left
                 id: userImage
@@ -119,7 +120,7 @@ Item {
 
         Item {
             id: nameInputItem
-            implicitWidth: 328
+            Layout.preferredWidth: 328
             Layout.preferredHeight: 69
             Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
             Layout.topMargin: 37
@@ -208,8 +209,9 @@ Item {
 
         StatusButton {
             id: nextBtn
-            Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
+            Layout.alignment: Qt.AlignHCenter
             enabled: !!nameInput.text && nameInput.valid
+            font.weight: Font.Medium
             text: qsTr("Next")
             onClicked: {
                 if (root.state === Constants.startupState.userProfileCreate) {
