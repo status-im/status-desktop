@@ -54,20 +54,18 @@ import "statusModal" as Spares
 // Deprecation annotations come with Qt6.2
 // @Deprecated { reason: "Use StatusDialog instead, see reasoning: https://github.com/status-im/StatusQ/issues/720" }
 QC.Popup {
-    id: statusModal
+    id: root
 
     /*!
        \qmlproperty advancedHeader
         This property represents the item loaded in header loader.
         Can be used to read values from the component assigned to the loader.
-        \endqml
     */
     property alias advancedHeader: advancedHeader.item
     /*!
        \qmlproperty advancedHeader
         This property represents the item loaded in footer loader.
         Can be used to read values from the component assigned to the loader.
-        \endqml
     */
     property alias advancedFooter: advancedFooter.item
     /*!
@@ -130,7 +128,6 @@ QC.Popup {
        \qmlproperty headerActionButton
         This property lets the user add a button to the header of the Modal.
         This does not apply to the advanced header!
-        \endqml
     */
     property alias headerActionButton: headerImpl.actionButton
 
@@ -138,63 +135,59 @@ QC.Popup {
        \qmlproperty header
         type: StatusModalHeaderSettings
         This property exposes the different properties of the standard header.
-        \endqml
     */
     property StatusModalHeaderSettings header: StatusModalHeaderSettings {}
     /*!
        \qmlproperty rightButtons
         This property helps user assign the right buttons on the footer.
         This doesn't not apply to the advanced footer!
-        \endqml
     */
     property alias rightButtons: footerImpl.rightButtons
     /*!
        \qmlproperty rightButtons
         This property helps user assign the left buttons on the footer.
         This doesn't not apply to the advanced footer!
-        \endqml
     */
     property alias leftButtons: footerImpl.leftButtons
     /*!
        \qmlproperty showHeader
         This property to decides whether the standard header is shown.
         default value is true
-        \endqml
     */
     property bool showHeader: true
     /*!
        \qmlproperty showHeader
         This property to decides whether the standard footer is shown.
         default value is true
-        \endqml
     */
     property bool showFooter: true
     /*!
        \qmlproperty showAdvancedHeader
         This property to decides whether the advanced header is shown.
         default value is false.
-        \endqml
     */
     property bool showAdvancedHeader: false
     /*!
        \qmlproperty showAdvancedFooter
         This property decides whether the advanced footer is shown.
         default value is false.
-        \endqml
     */
     property bool showAdvancedFooter: false
     /*!
        \qmlproperty hasCloseButton
         This property decides whether the standard header has a close button.s
-        \endqml
     */
     property alias hasCloseButton: headerImpl.hasCloseButton
     /*!
        \qmlproperty hasFloatingButtons
         This property decides whether the advanced header has floating buttons on top of the Modal
-        \endqml
     */
     property bool hasFloatingButtons: false
+    /*!
+       \qmlproperty color backgroundColor
+        This property decides the modal background color
+    */
+    property string backgroundColor: Theme.palette.statusModal.backgroundColor
 
     signal editButtonClicked()
     signal headerImageClicked()
@@ -219,7 +212,7 @@ QC.Popup {
     }
 
     background: Rectangle {
-        color: Theme.palette.statusModal.backgroundColor
+        color: root.backgroundColor
         radius: 8
 
         Spares.StatusModalHeader {
@@ -227,7 +220,7 @@ QC.Popup {
             anchors.top: parent.top
             width: visible ? parent.width : 0
 
-            visible: statusModal.showHeader
+            visible: root.showHeader
             title: header.title
             titleElide: header.titleElide
             subTitle: header.subTitle
@@ -238,9 +231,9 @@ QC.Popup {
             headerImageEditable: header.headerImageEditable
             editable: header.editable
 
-            onEditButtonClicked: statusModal.editButtonClicked()
-            onHeaderImageClicked: statusModal.headerImageClicked()
-            onClose: statusModal.close()
+            onEditButtonClicked: root.editButtonClicked()
+            onHeaderImageClicked: root.headerImageClicked()
+            onClose: root.close()
         }
 
         Loader {
@@ -248,21 +241,22 @@ QC.Popup {
             anchors.top: parent.top
             anchors.topMargin: hasFloatingButtons ? -18 - height : 0
             width: visible ? parent.width : 0
-            active: statusModal.showAdvancedHeader
+            active: root.showAdvancedHeader
         }
 
         Spares.StatusModalFooter {
             id: footerImpl
             anchors.bottom: parent.bottom
             width: visible ? parent.width : 0
-            showFooter: statusModal.showFooter
+            showFooter: root.showFooter
+            visible: root.showFooter
         }
 
         Loader {
             id: advancedFooter
             anchors.bottom: parent.bottom
             width: visible ? parent.width : 0
-            active: statusModal.showAdvancedFooter
+            active: root.showAdvancedFooter
         }
     }
 }

@@ -147,6 +147,8 @@ ThemePalette {
     miscColor11: getColor('yellow2')
     miscColor12: getColor('green6')
 
+    statusFloatingButtonHighlight: getColor('blue4', 0.3)
+
     userCustomizationColors: [
         "#AAC6FF",
         "#887AF9",

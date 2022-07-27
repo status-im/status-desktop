@@ -90,6 +90,8 @@ QtObject {
     property color miscColor11
     property color miscColor12
 
+    property color statusFloatingButtonHighlight
+
     property var userCustomizationColors: []
 
     property var identiconRingColors: []

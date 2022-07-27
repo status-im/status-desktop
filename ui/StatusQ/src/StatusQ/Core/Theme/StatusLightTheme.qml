@@ -145,6 +145,8 @@ ThemePalette {
     miscColor11: getColor('brown2')
     miscColor12: getColor('green5')
 
+    statusFloatingButtonHighlight: getColor('blueHijab')
+
     userCustomizationColors: [
         "#2946C4",
         "#887AF9",

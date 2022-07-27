@@ -107,7 +107,8 @@ Row {
             bottomPadding: 0
             defaultLeftPadding: 4
             defaultRightPadding: 4
-            normalColor: "transparent"
+            hoverColor: Theme.palette.statusFloatingButtonHighlight
+            normalColor: Theme.palette.baseColor3
             icon.name: "more"
             icon.background.color: "transparent"
             onClicked: popupMenu.popup(parent.x, y + height + 8)
