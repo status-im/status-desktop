@@ -120,6 +120,9 @@ QtObject:
   proc setActiveItem*(self: View, itemId: string, subItemId: string = "") {.slot.} =
     self.delegate.setActiveItemSubItem(itemId, subItemId)
 
+  proc activeItem*(self: View): ActiveItem =
+    result = self.activeItem
+
   # Since we cannot return QVariant from the proc which has arguments, so cannot have proc like this:
   # prepareChatContentModuleForChatId(self: View, chatId: string): QVariant {.slot.}
   # we're using combinaiton of

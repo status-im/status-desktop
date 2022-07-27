@@ -252,7 +252,9 @@ proc setActiveItemSubItem*(self: Controller, itemId: string, subItemId: string) 
   self.activeItemId = itemId
   self.activeSubItemId = subItemId
 
-  self.messageService.asyncLoadInitialMessagesForChat(self.getActiveChatId())
+  let chatId = self.getActiveChatId()
+  if chatId != "":
+    self.messageService.asyncLoadInitialMessagesForChat(chatId)
 
   # We need to take other actions here like notify status go that unviewed mentions count is updated and so...
 
