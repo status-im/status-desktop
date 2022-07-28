@@ -48,3 +48,8 @@ def step(context):
 def step(context, message):
     _statusChat.send_message(message)
     _statusChat.verify_last_message_sent(message)
+    
+@Then("the user can reply to the message at index |any| with \"|any|\"")
+def step(context, message_index, message):
+    _statusChat.reply_to_message_at_index(message_index, message)
+    _statusChat.verify_last_message_sent(message)
