@@ -113,37 +113,16 @@ SettingsContentBase {
                     }
                 }
 
-                inputList: SortFilterProxyModel {
-                    id: languageModel
-
-                    sourceModel: root.languageStore.languageModel
-
-                    function imageSourceForEmoji(emoji) {
-                        return StatusQUtils.Emoji.iconSource(emoji)
-                    }
-
-                    proxyRoles: [
-                        ExpressionRole {
-                            name: "key"
-                            expression: model.locale
-                        },
-                        ExpressionRole {
-                            name: "shortName"
-                            expression: model.native
-                        },
-                        ExpressionRole {
-                            name: "category"
-                            expression: ""
-                        },
-                        ExpressionRole {
-                            name: "selected"
-                            expression: model.locale == root.languageStore.currentLanguage
-                        },
-                        ExpressionRole {
-                            name: "imageSource"
-                            expression: languageModel.imageSourceForEmoji(model.flag)
-                        }
-                    ]
+                inputList: root.languageStore.languageModel
+                proxy {
+                    key: (model) => model.locale
+                    name: (model) => model.name
+                    shortName: (model) => model.native
+                    symbol: (model) => ""
+                    imageSource: (model) => StatusQUtils.Emoji.iconSource(model.flag)
+                    category: (model) => ""
+                    selected: (model) => model.locale === root.languageStore.currentLanguage
+                    setSelected: (model, val) => null // readonly
                 }
 
                 z: root.z + 1
