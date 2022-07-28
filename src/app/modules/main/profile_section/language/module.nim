@@ -36,7 +36,8 @@ proc populateLanguageModel(self: Module) =
         locale = locale,
         name = localeDescr.name,
         native = localeDescr.native,
-        flag = localeDescr.flag
+        flag = localeDescr.flag,
+        state = localeDescr.state
       ))
     else:
       warn "missing locale details", locale

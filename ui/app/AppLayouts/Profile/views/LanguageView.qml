@@ -104,6 +104,12 @@ SettingsContentBase {
 
                 property string newKey
 
+                function descriptionForState(state) {
+                    if (state == Constants.translationsState.alpha) return qsTr("Alpha languages")
+                    if (state == Constants.translationsState.beta) return qsTr("Beta languages")
+                    return ""
+                }
+
                 Timer {
                     id: languagePause
                     interval: 100
@@ -113,14 +119,36 @@ SettingsContentBase {
                     }
                 }
 
-                inputList: root.languageStore.languageModel
+                inputList: SortFilterProxyModel {
+                    sourceModel: root.languageStore.languageModel
+
+                    // !Don't use proxy roles cause they harm performance a lot!
+                    // "category" is the only role that can't be mocked by StatusListPicker::proxy
+                    // due to StatusListPicker internal implementation limitation (ListView's section.property)
+                    proxyRoles: [
+                        ExpressionRole {
+                            name: "category"
+                            expression: languagePicker.descriptionForState(model.state)
+                        }
+                    ]
+
+                    sorters: [
+                        RoleSorter {
+                            roleName: "state"
+                            sortOrder: Qt.DescendingOrder
+                        },
+                        StringSorter {
+                            roleName: "name"
+                        }
+                    ]
+                }
+
                 proxy {
                     key: (model) => model.locale
                     name: (model) => model.name
                     shortName: (model) => model.native
                     symbol: (model) => ""
                     imageSource: (model) => StatusQUtils.Emoji.iconSource(model.flag)
-                    category: (model) => ""
                     selected: (model) => model.locale === root.languageStore.currentLanguage
                     setSelected: (model, val) => null // readonly
                 }

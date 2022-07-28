@@ -248,6 +248,12 @@ QtObject {
         readonly property int moreThanFiveMins: 4
     }
 
+    readonly property QtObject translationsState: QtObject {
+        readonly property int alpha: 0
+        readonly property int beta: 1
+        readonly property int stable: 2
+    }
+
     readonly property int communityImported: 0
     readonly property int communityImportingInProgress: 1
     readonly property int communityImportingError: 2
