@@ -66,11 +66,14 @@ QtObject:
     self.delegate.enableAutomaticSelection(value)
 
   proc useMailserversChanged*(self: View) {.signal.}
+
   proc getUseMailservers*(self: View): bool {.slot.} =
     return self.delegate.getUseMailservers()
-  QtProperty[bool] useMailservers:
-    read = getUseMailservers
-    notify = useMailserversChanged
 
   proc setUseMailservers*(self: View, value: bool) {.slot.} =
     self.delegate.setUseMailservers(value)
+
+  QtProperty[bool] useMailservers:
+    read = getUseMailservers
+    notify = useMailserversChanged
+    write = setUseMailservers

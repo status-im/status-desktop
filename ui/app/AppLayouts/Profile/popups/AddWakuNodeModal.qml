@@ -19,6 +19,7 @@ StatusModal {
     header.title: qsTr("Waku nodes")
 
     property var messagingStore
+    property var advancedStore
 
     onClosed: {
         destroy()
@@ -29,36 +30,39 @@ StatusModal {
         enodeInput.text = "";
     }
     
-    contentItem: Item {
-        width: parent.width
+    contentItem: StatusScrollView {
         height: parent.height
+        width: parent.width
 
-        StatusInput {
-            id: nameInput
-            label: qsTr("Name")
-            placeholderText: qsTr("Specify a name")
-            validators: [StatusMinLengthValidator {
-                minLength: 1
-                errorMessage: qsTr("You need to enter a name")
-            }]
-            validationMode: StatusInput.ValidationMode.OnlyWhenDirty
-        }
+        Column {
+            id: nodesColumn
+            width: parent.width
+            StatusInput {
+                id: nameInput
+                label: qsTr("Name")
+                placeholderText: qsTr("Specify a name")
+                validators: [StatusMinLengthValidator {
+                    minLength: 1
+                    errorMessage: qsTr("You need to enter a name")
+                }]
+                validationMode: StatusInput.ValidationMode.Always
+            }
 
-        StatusInput {
-            id: enodeInput
-            label: qsTr("History node address")
-            placeholderText:  "enode://{enode-id}:{password}@{ip-address}:{port-number}"
-            validators: [StatusMinLengthValidator {
-                minLength: 1
-                errorMessage: qsTr("You need to enter the enode address")
-            },
-            StatusRegularExpressionValidator {
-                errorMessage: qsTr("The format must be: enode://{enode-id}:{password}@{ip-address}:{port}")
-                regularExpression: /enode:\/\/[a-z0-9]+:[a-z0-9]+@(\b25[0-5]|\b2[0-4][0-9]|\b[01]?[0-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}:[0-9]+/
-            }]
-            validationMode: StatusInput.ValidationMode.OnlyWhenDirty
-            anchors.top: nameInput.bottom
-            anchors.topMargin: Style.current.bigPadding
+            StatusInput {
+                id: enodeInput
+                label: popup.advancedStore.isWakuV2 ? qsTr("Storenode multiaddress") : qsTr("History node address")
+                placeholderText: popup.advancedStore.isWakuV2 ? "/ip4/0.0.0.0/tcp/123/..." : "enode://{enode-id}:{password}@{ip-address}:{port-number}"
+                validators: [
+                StatusMinLengthValidator {
+                    minLength: 1
+                    errorMessage: popup.advancedStore.isWakuV2 ? qsTr("You need to enter the storenode multiaddress") : qsTr("You need to enter the enode address")
+                },
+                StatusRegularExpressionValidator {
+                    errorMessage: popup.advancedStore.isWakuV2 ? qsTr('Multiaddress must start with a "/"') : qsTr("The format must be: enode://{enode-id}:{password}@{ip-address}:{port}")
+                    regularExpression: popup.advancedStore.isWakuV2 ? /\/.+/ : /enode:\/\/[a-z0-9]+:[a-z0-9]+@(\b25[0-5]|\b2[0-4][0-9]|\b[01]?[0-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}:[0-9]+/
+                }]
+                validationMode: StatusInput.ValidationMode.Always
+            }
         }
     }
 

@@ -24,6 +24,7 @@ SettingsContentBase {
     id: root
 
     property MessagingStore messagingStore
+    property AdvancedStore advancedStore
     property ContactsStore contactsStore
 
     ColumnLayout {
@@ -426,6 +427,7 @@ SettingsContentBase {
             id: wakuNodeModalComponent
             WakuNodesModal {
                 messagingStore: root.messagingStore
+                advancedStore: root.advancedStore
             }
         }
 
