@@ -73,6 +73,14 @@ def click_obj(obj):
     except LookupError:
         return False
 
+# It executes the right-click action into the given object:
+def right_click_obj(obj):
+    try:
+        squish.mouseClick(obj, squish.Qt.RightButton)
+        return True
+    except LookupError:
+        return False
+
 def get_obj(objName: str):
     obj = squish.findObject(getattr(names, objName))
     return obj
