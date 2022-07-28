@@ -7,6 +7,7 @@ import shared.controls 1.0
 
 import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Controls.Validators 0.1
 
 import shared.panels 1.0
 import shared.popups 1.0
@@ -15,19 +16,11 @@ import "../panels"
 
 // TODO: replace with StatusModal
 ModalPopup {
-    property string channelNameValidationError: ""
     signal joinPublicChat(string name)
     signal suggestedMessageClicked(string channel)
     function validate() {
-        if (channelName.text === "") {
-            channelNameValidationError = qsTr("You need to enter a channel name")
-        } else if (!Utils.isValidChannelName(channelName.text)) {
-            channelNameValidationError = qsTr("The channel name can only contain lowercase letters, numbers and dashes")
-        } else {
-            channelNameValidationError = ""
-        }
-
-        return channelNameValidationError === ""
+        channelName.validate(true)
+        return channelName.valid
     }
 
     function doJoin() {
@@ -43,7 +36,7 @@ ModalPopup {
 
     onOpened: {
         channelName.text = "";
-        channelName.forceActiveFocus(Qt.MouseFocusReason)
+        channelName.input.edit.forceActiveFocus(Qt.MouseFocusReason)
     }
 
     Row {
@@ -61,15 +54,25 @@ ModalPopup {
         }
     }
 
-    Input {
+    StatusInput {
         id: channelName
+        input.edit.objectName: "joinPublicChannelInput"
         anchors.top: description.bottom
         anchors.topMargin: Style.current.padding
         placeholderText: qsTr("chat-name")
         Keys.onEnterPressed: doJoin()
         Keys.onReturnPressed: doJoin()
-        icon: Style.svg("hash")
-        validationError: channelNameValidationError
+        input.icon.name: "channel"
+        validators: [StatusMinLengthValidator {
+            minLength: 1
+            errorMessage: qsTr("You need to enter a channel name")
+        },
+        StatusValidator {
+            name: "validChannelNameValidator"
+            validate: function (t) { return Utils.isValidChannelName(t) }
+            errorMessage: qsTr("The channel name can only contain lowercase letters, numbers and dashes")
+        }]
+        validationMode: StatusInput.ValidationMode.OnlyWhenDirty
     }
 
     StatusScrollView {

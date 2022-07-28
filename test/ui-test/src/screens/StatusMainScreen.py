@@ -26,7 +26,7 @@ class MainScreenComponents(Enum):
 
 class ChatNamePopUp(Enum):
     CHAT_NAME_TEXT = "chat_name_PlaceholderText"
-    INPUT_ROOM_TOPIC_TEXT = "inputValue_StyledTextField"
+    INPUT_ROOM_TOPIC_TEXT = "joinPublicChat_input"
     START_CHAT_BTN = "startChat_Btn"
 
 
