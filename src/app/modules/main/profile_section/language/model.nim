@@ -8,6 +8,7 @@ type
     Name
     Native
     Flag
+    State
 
 QtObject:
   type
@@ -39,6 +40,7 @@ QtObject:
       ModelRole.Name.int: "name",
       ModelRole.Native.int: "native",
       ModelRole.Flag.int: "flag",
+      ModelRole.State.int: "state",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -60,3 +62,5 @@ QtObject:
       result = newQVariant(item.native)
     of ModelRole.Flag:
       result = newQVariant(item.flag)
+    of ModelRole.State:
+      result = newQVariant(item.state.int)
