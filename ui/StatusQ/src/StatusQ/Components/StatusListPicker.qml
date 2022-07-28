@@ -74,6 +74,8 @@ Item {
     */
     property var inputList: ListModel { }
 
+    readonly property StatusListPickerProxies proxy: StatusListPickerProxies {}
+
     /*!
        \qmlproperty string StatusListPicker::searchText
        This property holds the search text the searcher input displays by default.
@@ -160,7 +162,7 @@ Item {
             // NOTE: ValueFilter would crash if source model does not contain given role
             // FIXME: use ValueFilter when its fixed
             filters: ExpressionFilter {
-                expression: model.selected
+                expression: root.proxy.selected(model)
             }
         }
 
@@ -179,7 +181,7 @@ Item {
                 var item = selectedItems.get(i)
                 if(res != "")
                     res += ", "
-                res += formatSymbolShortNameText(item.symbol, item.shortName)
+                res += formatSymbolShortNameText(root.proxy.symbol(item), root.proxy.shortName(item))
             }
             return res
         }
@@ -200,8 +202,8 @@ Item {
             Connections {
                 target: itemsSelectorHelper
                 function onSelectItem(key, checked) {
-                    if (model.key === key) model.selected = checked
-                    else if (!root.multiSelection && checked) model.selected = false
+                    if (root.proxy.key(model) === key) root.proxy.setSelected(model, checked)
+                    else if (!root.multiSelection && checked) root.proxy.setSelected(model, false)
                 }
             }
         }
@@ -261,8 +263,8 @@ Item {
                 filters: ExpressionFilter {
                     expression: {
                         root.searchText // ensure expression is reevaluated when searchText changes
-                        return model.name.toLowerCase().includes(root.searchText.toLowerCase()) ||
-                               model.shortName.toLowerCase().includes(root.searchText.toLowerCase())
+                        return root.proxy.name(model).toLowerCase().includes(root.searchText.toLowerCase()) ||
+                               root.proxy.shortName(model).toLowerCase().includes(root.searchText.toLowerCase())
                     }
                 }
             }
@@ -302,24 +304,24 @@ Item {
                 height: content.itemHeight
                 color: mouseArea.containsMouse ? Theme.palette.baseColor4 : "transparent"
                 image: StatusImageSettings {
-                    source: model.imageSource ? model.imageSource : ""
+                    source: root.proxy.imageSource(model) ? root.proxy.imageSource(model) : ""
                     width: 15
                     height: 15
                     isIdenticon: false
                 }
-                name: model.name
-                shortName: model.shortName
+                name: root.proxy.name(model)
+                shortName: root.proxy.shortName(model)
                 selectorType: root.multiSelection ? StatusItemPicker.SelectorType.CheckBox : StatusItemPicker.SelectorType.RadioButton
-                selected: model.selected
+                selected: root.proxy.selected(model)
                 radioGroup: radioBtnGroup
 
                 onCheckedChanged: {
-                    if (checked !== model.selected) {
-                        itemsSelectorHelper.selectItem(model.key, checked)
+                    if (checked !== root.proxy.selected(model)) {
+                        itemsSelectorHelper.selectItem(root.proxy.key(model), checked)
                     }
 
                     // Used to notify selected property changes in the specific item picker.
-                    itemPickerChanged(model.key, checked)
+                    itemPickerChanged(root.proxy.key(model), checked)
                 }
 
                 MouseArea {
@@ -361,7 +363,7 @@ Item {
             // Not visual element to control mutual-exclusion of radiobuttons that are not sharing the same parent (inside list view)
             ButtonGroup {
                 id: radioBtnGroup
-            }           
-        }// End of Content        
+            }
+        }// End of Content
     }// End of Rectangle picker
 }

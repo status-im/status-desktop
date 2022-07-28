@@ -174,5 +174,6 @@
         <file>StatusQ/Popups/StatusSpellcheckingMenuItems.qml</file>
         <file>StatusQ/Popups/StatusStackModal.qml</file>
         <file>StatusQ/qmldir</file>
+        <file>StatusQ/Components/StatusListPickerProxies.qml</file>
     </qresource>
 </RCC>
