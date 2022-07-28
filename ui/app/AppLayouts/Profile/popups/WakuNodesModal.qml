@@ -18,13 +18,14 @@ import shared.status 1.0
 import shared.controls 1.0
 
 StatusModal {
-    id: popup
+    id: root
 
     anchors.centerIn: parent
     height: 560
     header.title: qsTr("Waku nodes")
 
     property var messagingStore
+    property var advancedStore
     property string nameValidationError: ""
     property string enodeValidationError: ""
 
@@ -38,16 +39,10 @@ StatusModal {
 
         Column {
             id: nodesColumn
-            anchors.left: parent.left
-            anchors.leftMargin: Style.current.padding
-            anchors.right: parent.right
-            anchors.rightMargin: Style.current.padding
+            width: parent.width
 
             StatusListItem {
-                anchors.left: parent.left
-                anchors.leftMargin: -Style.current.padding
-                anchors.right: parent.right
-                anchors.rightMargin: -Style.current.padding
+                width: parent.width
                 title: qsTr("Use Waku nodes")
                 components: [
                     StatusSwitch {
@@ -61,17 +56,11 @@ StatusModal {
             }
 
             Separator {
-                anchors.left: parent.left
-                anchors.leftMargin: -Style.current.padding
-                anchors.right: parent.right
-                anchors.rightMargin: -Style.current.padding
+               width: parent.width
             }
 
             StatusListItem {
-                anchors.left: parent.left
-                anchors.leftMargin: -Style.current.padding
-                anchors.right: parent.right
-                anchors.rightMargin: -Style.current.padding
+                width: parent.width
                 title: qsTr("Select node automatically")
                 components: [
                     StatusSwitch {
@@ -127,7 +116,7 @@ StatusModal {
             StatusBaseText {
                 text: qsTr("Add a new node")
                 color: Theme.palette.primaryColor1
-
+                width: parent.width
                 MouseArea {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
@@ -141,6 +130,7 @@ StatusModal {
         id: wakuNodeModalComponent
         AddWakuNodeModal {
             messagingStore: root.messagingStore
+            advancedStore: root.advancedStore
         }
     }
 }

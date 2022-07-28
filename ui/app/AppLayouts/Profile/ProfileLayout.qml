@@ -129,6 +129,7 @@ StatusAppTwoPanelLayout {
                 implicitHeight: parent.height
 
                 messagingStore: profileView.store.messagingStore
+                advancedStore: profileView.store.advancedStore
                 sectionTitle: profileView.store.getNameForSubsection(Constants.settingsSubsection.messaging)
                 contactsStore: profileView.store.contactsStore
                 contentWidth: d.contentWidth
