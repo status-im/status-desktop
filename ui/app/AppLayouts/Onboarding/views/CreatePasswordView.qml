@@ -18,9 +18,8 @@ Item {
     Component.onCompleted: {
         view.newPswText = root.startupStore.getPassword()
         view.confirmationPswText = root.startupStore.getPassword()
+        d.forcePasswordInputFocus()
     }
-
-    function forceNewPswInputFocus() { view.forceNewPswInputFocus() }
 
     QtObject {
         id: d
@@ -31,6 +30,8 @@ Item {
             root.startupStore.setPassword(view.newPswText)
             root.startupStore.doPrimaryAction()
         }
+
+        function forcePasswordInputFocus() { view.forceNewPswInputFocus() }
     }
 
     Column {
