@@ -90,7 +90,7 @@ StatusModal {
             anchors.top: subHeaderLoader.bottom
             anchors.topMargin: subHeaderLoader.item && subHeaderLoader.item.visible ? root.subHeaderPadding : 0
             anchors.bottom: parent.bottom
-            width: parent.width
+            width: root.availableWidth
             visible: !replaceItem
             clip: true
         }
