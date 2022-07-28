@@ -43,7 +43,7 @@ o_Rectangle_2 = {"container": statusDesktop_mainWindow_overlay, "type": "Rectang
 mainWindow_statusIcon_StatusIcon = {"container": statusDesktop_mainWindow, "id": "statusIcon", "source": "qrc:/StatusQ/src/assets/img/icons/arrow-right.svg", "type": "StatusIcon", "unnamed": 1, "visible": True}
 join_public_chat_StatusMenuItemDelegate = {"checkable": False, "container": statusDesktop_mainWindow_overlay, "enabled": True, "text": "Join public chat", "type": "StatusMenuItemDelegate", "unnamed": 1, "visible": True}
 chat_name_PlaceholderText = {"container": statusDesktop_mainWindow_overlay, "text": "chat-name", "type": "PlaceholderText", "unnamed": 1, "visible": True}
-inputValue_StyledTextField = {"container": statusDesktop_mainWindow_overlay, "echoMode": 0, "id": "inputValue", "type": "StyledTextField", "unnamed": 1, "visible": True}
+joinPublicChat_input = {"container": statusDesktop_mainWindow_overlay, "objectName": "joinPublicChannelInput", "type": "TextEdit", "visible": True}
 reactionImage_SVGImage = {"container": statusDesktop_mainWindow_overlay, "id": "reactionImage", "source": "qrc:/imports/assets/icons/emojiReactions/heart.svg", "type": "SVGImage", "unnamed": 1, "visible": True}
 mainWindow_statusIcon_StatusIcon_2 = {"container": statusDesktop_mainWindow, "id": "statusIcon", "source": "qrc:/StatusQ/src/assets/img/icons/public-chat.svg", "type": "StatusIcon", "unnamed": 1, "visible": True}
 import_a_seed_phrase_StatusBaseText = {"container": statusDesktop_mainWindow, "text": "Import a seed phrase", "type": "StatusBaseText", "unnamed": 1, "visible": True}
@@ -224,7 +224,7 @@ createChatView_confirmBtn = {"container": statusDesktop_mainWindow, "objectName"
 # Chat view region:
 chatView_log = {"container": statusDesktop_mainWindow, "objectName": "chatLogView", "type": "StatusListView", "visible": True}
 chatView_StatusChatInfoButton = {"container": statusDesktop_mainWindow, "objectName": "chatInfoBtnInHeader", "type": "StatusChatInfoButton"}
-chatView_messageInput = {"container": mainWindow_scrollView_ScrollView, "objectName": "messageInputField", "type": "TextArea", "visible": True}
+chatView_messageInput = {"container": statusDesktop_mainWindow, "objectName": "messageInputField", "type": "TextArea", "visible": True}
 
 # Community chat region
 mainWindow_communityHeader_StatusChatInfoButton = {"container": statusDesktop_mainWindow, "objectName": "communityHeaderButton", "type": "StatusChatInfoButton", "visible": True}
