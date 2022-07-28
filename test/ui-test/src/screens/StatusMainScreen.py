@@ -23,6 +23,7 @@ class MainScreenComponents(Enum):
     WALLET_BUTTON = "wallet_navbar_wallet_icon_StatusIcon"
     START_CHAT_BTN = "mainWindow_startChat"
     CHAT_LIST = "chatList_Repeater"
+    MARK_AS_READ_BUTTON = "mark_as_Read_StatusMenuItemDelegate"
 
 class ChatNamePopUp(Enum):
     CHAT_NAME_TEXT = "chat_name_PlaceholderText"
@@ -54,7 +55,7 @@ class StatusMainScreen:
         [loaded, chat_button] = self._find_chat(chatName)
         if loaded:
             click_obj(chat_button)
-        verify(loaded, "Trying to get chat: " + chatName)     
+        verify(loaded, "Trying to get chat: " + chatName)
         
     def _find_chat(self, chatName: str):
         [loaded, chat_lists] = is_loaded(MainScreenComponents.CHAT_LIST.value)
@@ -65,3 +66,9 @@ class StatusMainScreen:
                     return True, chat        
         return False, None
 
+    def mark_as_read(self, chatName: str):
+        [loaded, chat_button] = self._find_chat(chatName)
+        if loaded:
+            right_click_obj(chat_button)
+        
+        click_obj_by_name(MainScreenComponents.MARK_AS_READ_BUTTON.value)

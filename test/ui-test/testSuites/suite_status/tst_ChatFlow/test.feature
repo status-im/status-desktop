@@ -22,6 +22,7 @@ Feature: Status Desktop Chat
 		 | I am from status   	 |
 		 | tell me how you do?   |
 
+
     Scenario: User can reply to their own message
          When user joins chat room test
          Then user is able to send chat message
@@ -29,7 +30,14 @@ Feature: Status Desktop Chat
          | Reply to this         |
          Then the user can reply to the message at index 0 with "This is a reply"
 
+
     # TODO This test has a chance to fail since it relies on the mailserver. Until we host a local mailserver for the tests, this test is at risk
     Scenario: User can reply to another user's message
          When user joins chat room test
          Then the user can reply to the message at index 0 with "This is a reply to another user"
+
+
+    Scenario: User joins a room and marks it as read
+		 When user joins chat room test
+		 Then the user can mark the channel test as read
+         # TODO find a way to validate that it worked

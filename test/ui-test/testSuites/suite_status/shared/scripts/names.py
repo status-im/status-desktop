@@ -213,6 +213,8 @@ accountsView_accountListPanel = {"container": statusDesktop_mainWindow, "type": 
 
 # Main Window - chat related:
 chatList_Repeater = {"container": statusDesktop_mainWindow, "objectName": "chatListItems", "type": "Repeater"}
+mark_as_Read_StatusMenuItemDelegate = {"container": statusDesktop_mainWindow_overlay, "objectName": "chatMarkAsReadMenuItem", "type": "StatusMenuItemDelegate", "visible": True}
+
 
 # Join chat popup:
 startChat_Btn = {"container": statusDesktop_mainWindow_overlay, "objectName": "startChatButton", "type": "StatusButton"}

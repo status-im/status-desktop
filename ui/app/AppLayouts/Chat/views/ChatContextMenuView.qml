@@ -117,6 +117,7 @@ StatusPopupMenu {
     }
 
     StatusMenuItem {
+        objectName: "chatMarkAsReadMenuItem"
         text: qsTr("Mark as Read")
         icon.name: "checkmark-circle"
         onTriggered: {
