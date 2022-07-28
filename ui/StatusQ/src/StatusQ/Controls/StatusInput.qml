@@ -348,7 +348,9 @@ Item {
     }
 
     implicitWidth: 448
-    implicitHeight: (internal.inputHeight + topRow.height + errorMessage.height + (2*inputLayout.spacing))
+    implicitHeight: ((internal.inputHeight + topRow.height + errorMessage.height) +
+                    ((topRow.height > 0) && (errorMessage.height > 0) ? 16 :
+                    (topRow.height > 0) || (errorMessage.height > 0) ? 8 : 0))
 
     Component.onCompleted: {
         validate()
@@ -357,7 +359,8 @@ Item {
     ColumnLayout {
         id: inputLayout
         anchors.fill: parent
-        spacing: ((topRow.height > 0) || (errorMessage.height > 0)) ? 8 : 0
+        spacing: 0
+
         RowLayout {
             id: topRow
             Layout.fillWidth: true
@@ -401,6 +404,8 @@ Item {
             id: statusBaseInput
             implicitWidth: parent.width
             implicitHeight: internal.inputHeight
+            Layout.alignment: Qt.AlignTop
+            Layout.topMargin: (topRow.height > 0) ? 8 : 0
             maximumLength: root.charLimit
             onTextChanged: root.validate()
             Keys.forwardTo: [root]
@@ -419,7 +424,8 @@ Item {
             height: visible ? contentHeight : 0
             font.pixelSize: 12
             color: Theme.palette.dangerColor1
-            Layout.alignment: Qt.AlignVCenter
+            Layout.alignment: Qt.AlignTop
+            Layout.topMargin: visible ? 8 : 0
             wrapMode: Text.WordWrap
         }
     }
