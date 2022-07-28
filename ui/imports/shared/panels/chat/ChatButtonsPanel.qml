@@ -99,6 +99,7 @@ Rectangle {
             active: !buttonsContainer.isInPinnedPopup
             sourceComponent: StatusFlatRoundButton {
                 id: replyBtn
+                objectName: "replyToMessageButton"
                 width: 32
                 height: 32
                 icon.name: "reply"

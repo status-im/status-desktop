@@ -21,6 +21,7 @@ class ChatComponents(Enum):
     CHAT_LOG = "chatView_log"    
     LAST_MESSAGE_TEXT = "chatView_lastChatText_Text"
     MEMBERS_LISTVIEW = "chatView_chatMembers_ListView"
+    REPLY_TO_MESSAGE_BUTTON = "chatView_replyToMessageButton"
 
 class ChatMessagesHistory(Enum):
     CHAT_CREATED_TEXT = 1
@@ -74,6 +75,12 @@ class StatusChatScreen:
     def verify_chat_created_message_is_displayed_in_history(self, createdTxt: str):
         chat_createChat_text_obj = get_obj(ChatComponents.CHAT_LOG.value).itemAtIndex(ChatMessagesHistory.CHAT_CREATED_TEXT.value)        
         verify_text_contains(str(chat_createChat_text_obj.message), createdTxt)
+        
+    def reply_to_message_at_index(self, index: int, message: str):
+        message_object_to_reply_to = get_obj(ChatComponents.CHAT_LOG.value).itemAtIndex(int(index))
+        hover_obj(message_object_to_reply_to)
+        click_obj_by_name(ChatComponents.REPLY_TO_MESSAGE_BUTTON.value)
+        self.send_message(message)
     
     # TODO: Find ADMIN
     def find_member_in_panel(self, member: str):
