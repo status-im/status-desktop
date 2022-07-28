@@ -159,20 +159,22 @@ Item {
           }
 
           MouseArea {
-              property bool accountPopupOpened: false
+              property bool accountPopupWasOpened: false
 
               anchors.fill: parent
               anchors.margins: -10
               cursorShape: Qt.PointingHandCursor
               hoverEnabled: true
               onEntered: {
-                  accountPopupOpened = accountsPopup.opened
+                  // cache opened state, because it is always false in onClicked
+                  // because of CloseOnPressOutsideParent policy of accountsPopup
+                  accountPopupWasOpened = accountsPopup.opened
               }
-              onPressed: {
-                  if (!accountPopupOpened) {
+              onClicked: {
+                  if (!accountPopupWasOpened) {
                       changeAccountBtn.clicked(mouse)
                   }
-                  accountPopupOpened = accountsPopup.opened
+                  accountPopupWasOpened = accountsPopup.opened
               }
           }
 
