@@ -249,9 +249,8 @@ Item {
         \qmlmethod
         This function validates the text input's text.
     */
-    function validate() {
-
-        if (!statusBaseInput.dirty && validationMode === StatusInput.ValidationMode.OnlyWhenDirty) {
+    function validate(force) {
+        if (!force && !statusBaseInput.dirty && validationMode === StatusInput.ValidationMode.OnlyWhenDirty) {
             return
         }
         statusBaseInput.valid = true
