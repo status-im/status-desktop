@@ -24,9 +24,8 @@ Item {
 
     Component.onCompleted: {
         root.password = root.startupStore.getPassword()
+        d.forcePasswordInputFocus()
     }
-
-    function forcePswInputFocus() { confPswInput.forceActiveFocus(Qt.MouseFocusReason)}
 
     QtObject {
         id: d
@@ -46,6 +45,8 @@ Item {
 
             root.startupStore.doPrimaryAction()
         }
+
+        function forcePasswordInputFocus() { confPswInput.forceActiveFocus(Qt.MouseFocusReason) }
     }
 
     Column {
