@@ -25,7 +25,7 @@ Rectangle {
 
     ColumnLayout {
         id: layout
-        spacing: -1
+        spacing: 0
         anchors.centerIn: parent
         StatusBaseText {
             id: primaryText

@@ -65,6 +65,7 @@ Item {
                         type: StatusExpandableItem.Type.Secondary
                         expandableComponent:  CollectibleCollectionView {
                             slug: model.slug
+                            collectionImageUrl: model.imageUrl
                             anchors.left: parent.left
                             anchors.right: parent.right
                             onCollectibleClicked: {

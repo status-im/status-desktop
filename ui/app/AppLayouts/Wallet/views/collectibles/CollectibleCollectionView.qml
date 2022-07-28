@@ -98,8 +98,20 @@ Item {
                     border.width: 1
                     showLoadingIndicator: true
                     color: model.backgroundColor
+                    Rectangle {
+                        anchors.centerIn: parent
+                        width: image.width
+                        height: image.height
+                        radius: image.radius
+                        border.width: 1
+                        border.color: Theme.palette.primaryColor1
+                        color: Theme.palette.indirectColor3
+                        visible: mouse.containsMouse
+                    }
                     MouseArea {
+                        id: mouse
                         anchors.fill: parent
+                        hoverEnabled: true
                         onClicked: {
                             RootStore.collectiblesStore.collectibleImageUrl = collectionImageUrl;
                             RootStore.collectiblesStore.name =  model.name;
