@@ -27,7 +27,9 @@ proc initTrait*(
 type
   Item* = object
     id: int
-    name, imageUrl, backgroundColor: string
+    name: string
+    imageUrl: string
+    backgroundColor: string
     description: string
     permalink: string
     properties: seq[Trait]
@@ -49,6 +51,7 @@ proc initItem*(
   result.name = name
   result.imageUrl = imageUrl
   result.backgroundColor = if (backgroundColor == ""): "transparent" else: ("#" & backgroundColor)
+  result.description = description
   result.permalink = permalink
   result.properties = properties
   result.rankings = rankings

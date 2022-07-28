@@ -33,7 +33,7 @@ proc `$`*(self: CollectionDto): string =
   return fmt"CollectionDto(name:{self.name}, slug:{self.slug}, owned asset count:{self.ownedAssetCount})"
 
 proc `$`*(self: CollectibleDto): string =
-  return fmt"CollectibleDto(id:{self.id}, name:{self.name}, address:{self.address}, imageUrl: {self.imageUrl}, imageThumbnailUrl: {self.imageThumbnailUrl}, backgroundColor: {self.backgroundColor})"
+  return fmt"CollectibleDto(id:{self.id}, name:{self.name}, description:{self.description}, permalink:{self.permalink}, address:{self.address}, imageUrl: {self.imageUrl}, imageThumbnailUrl: {self.imageThumbnailUrl}, backgroundColor: {self.backgroundColor})"
 
 proc getCollectionTraits*(jsonCollection: JsonNode): Table[string, CollectionTrait] =
     var traitList: Table[string, CollectionTrait] = initTable[string, CollectionTrait]()
