@@ -142,6 +142,8 @@ StatusScrollView {
         CommunityIntroMessageInput {
             id: introMessageTextInput
             Layout.fillWidth: true
+            minimumHeight: 108
+            maximumHeight: 108
         }
 
         CommunityOutroMessageInput {
