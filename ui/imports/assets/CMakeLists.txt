@@ -15,6 +15,7 @@ qt6_standard_project_setup()
 qt6_add_qml_module(${PROJECT_NAME}
     URI Status.UiAssets
     VERSION 1.0
+    STATIC
     # TODO: temporary until we make qt_target_qml_sources work
     RESOURCES
         gif/status_splash_dark.gif
