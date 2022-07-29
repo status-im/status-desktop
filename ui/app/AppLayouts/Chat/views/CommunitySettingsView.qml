@@ -228,7 +228,7 @@ StatusAppTwoPanelLayout {
             }
 
             onSendInvites: {
-                const error = root.communitySectionModule.inviteUsersToCommunity(JSON.stringify(pubKeys))
+                const error = root.chatCommunitySectionModule.inviteUsersToCommunity(JSON.stringify(pubKeys))
                 processInviteResult(error)
             }
         }
