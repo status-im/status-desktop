@@ -16,6 +16,7 @@ qt6_standard_project_setup()
 qt6_add_qml_module(${PROJECT_NAME}
     URI Status.StaticConfig
     VERSION 1.0
+    STATIC
     RESOURCES
         default-networks.json
         fleets.json
