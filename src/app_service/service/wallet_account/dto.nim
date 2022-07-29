@@ -79,7 +79,7 @@ proc toWalletAccountDto*(jsonObj: JsonNode): WalletAccountDto =
   discard jsonObj.getProp("derived-from", result.derivedfrom)
 
 proc getCurrencyBalance*(self: WalletAccountDto): float64 =
-  return self.tokens.map(t => t.totalBalance.currencyBalance).foldl(a + b, 0.0)
+  return self.tokens.map(t => t.enabledNetworkBalance.currencyBalance).foldl(a + b, 0.0)
 
 proc toBalanceDto*(jsonObj: JsonNode): BalanceDto =
   result = BalanceDto()
