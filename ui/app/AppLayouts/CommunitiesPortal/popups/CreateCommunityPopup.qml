@@ -128,8 +128,7 @@ StatusStackModal {
         },
         ColumnLayout {
             id: introOutroMessageView
-            spacing: 12
-
+            spacing: 11
             CommunityIntroMessageInput {
                 id: introMessageInput
                 input.edit.objectName: "createCommunityIntroMessageInput"
@@ -137,7 +136,8 @@ StatusStackModal {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
 
-                maximumHeight: 0
+                minimumHeight: height
+                maximumHeight: (height - Style.current.xlPadding)
             }
 
             CommunityOutroMessageInput {

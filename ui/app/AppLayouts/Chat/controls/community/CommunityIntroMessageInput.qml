@@ -15,11 +15,9 @@ StatusInput {
     label: qsTr("Community introduction and rules")
     charLimit: 1400
 
-    input.multiline: true
-    minimumHeight: 400
-    maximumHeight: 400
+    multiline: true
 
-    input.placeholder.text: qsTr("What new members will read before joining (eg. community rules, welcome message, etc.). Members will need to tick a check box agreeing to these rules before they are allowed to join your community.")
+    placeholderText: qsTr("What new members will read before joining (eg. community rules, welcome message, etc.). Members will need to tick a check box agreeing to these rules before they are allowed to join your community.")
     input.placeholder.wrapMode: Text.WordWrap
 
     input.verticalAlignment: TextEdit.AlignTop

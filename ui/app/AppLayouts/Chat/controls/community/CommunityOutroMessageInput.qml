@@ -15,7 +15,7 @@ StatusInput {
     label: qsTr("Leaving community message")
     charLimit: 80
 
-    input.placeholder.text: qsTr("The message a member will see when they leave your community")
+    placeholderText: qsTr("The message a member will see when they leave your community")
     input.placeholder.wrapMode: Text.WordWrap
 
     validators: [
