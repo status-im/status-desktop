@@ -69,6 +69,7 @@ Rectangle {
     readonly property alias unblockContactConfirmationDialog: unblockContactConfirmationDialog
     readonly property alias blockContactConfirmationDialog: blockContactConfirmationDialog
     readonly property alias removeContactConfirmationDialog: removeContactConfirmationDialog
+    readonly property alias nicknamePopup: nicknamePopup
     readonly property alias wizardAnimation: wizardAnimation
     readonly property alias challengeTxt: challengeTxt
     readonly property alias stepsListModel: stepsListModel

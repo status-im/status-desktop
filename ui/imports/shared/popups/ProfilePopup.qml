@@ -113,7 +113,7 @@ StatusModal {
         popup.open();
 
         if (state == "openNickname") {
-            nicknamePopup.open();
+            profileView.nicknamePopup.open();
         } else if (state == "contactRequest") {
             sendContactRequestModal.open()
         } else if (state == "blockUser") {
@@ -409,7 +409,7 @@ StatusModal {
             visible: showIdentityVerified || showIdentityVerifiedUntrustworthy
             text: qsTr("Rename")
             onClicked: {
-                nicknamePopup.open()
+                profileView.nicknamePopup.open()
             }
         },
 
