@@ -56,7 +56,7 @@ Item {
         anchors.leftMargin: Style.current.smallPadding
         font.pixelSize: 15
         color: Style.current.secondaryText
-        text: qsTr("%L1 %2").arg(enabledNetworkBalance).arg(symbol)
+        text: qsTr("%1 %2").arg(enabledNetworkBalance.toString()).arg(symbol)
     }
 
     StyledText {
