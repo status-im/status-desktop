@@ -56,6 +56,7 @@ class StatusCommunityScreen:
         type(CreateOrEditCommunityChannelPopup.COMMUNITY_CHANNEL_DESCRIPTION_INPUT.value, communityChannelDescription)
         click_obj_by_name(CreateOrEditCommunityChannelPopup.COMMUNITY_CHANNEL_BUTTON.value)
         
+    # TODO check if this function is needed, it seems to do the same as verify_chat_title in StatusChatScreen 
     def verify_channel_name(self, communityChannelName: str):
         verify_text_matching(CommunityScreenComponents.CHAT_IDENTIFIER_CHANNEL_NAME.value, communityChannelName)
         

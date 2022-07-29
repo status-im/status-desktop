@@ -56,6 +56,7 @@ Item {
 
     StatusButton {
         id: btnOk
+        objectName: "allowNotificationsOnboardingOkButton"
         anchors.top: txtDesc.bottom
         anchors.topMargin: d.okButtonTopMargin
         anchors.horizontalCenter: parent.horizontalCenter

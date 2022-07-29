@@ -89,6 +89,7 @@ ModalPopup {
         height: btnRemindLater.height
 
         StatusFlatButton {
+            objectName: "signPhraseModalOkButton"
             anchors.right: btnRemindLater.left
             anchors.rightMargin: Style.current.padding
             text: qsTr("Ok, got it")

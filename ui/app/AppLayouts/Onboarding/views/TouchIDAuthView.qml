@@ -83,6 +83,7 @@ Item {
             }
             StatusBaseText {
                 id: keycardLink
+                objectName: "touchIdIPreferToUseMyPasswordText"
                 Layout.alignment: Qt.AlignHCenter
                 color: Theme.palette.primaryColor1
                 text: qsTr("I prefer to use my password")

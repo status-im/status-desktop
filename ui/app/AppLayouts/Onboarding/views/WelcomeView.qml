@@ -71,6 +71,7 @@ Item {
 
         StatusButton {
             id: btnNewUser
+            objectName: "welcomeViewIAmNewToStatusButton"
             anchors.top: txtDesc1.bottom
             anchors.topMargin: Style.current.xlPadding
             anchors.horizontalCenter: parent.horizontalCenter

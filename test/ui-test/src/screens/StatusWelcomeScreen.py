@@ -23,11 +23,10 @@ class AgreementPopUp(Enum):
 
 class SignUpComponents(Enum):
     NEW_TO_STATUS: str = "mainWindow_I_am_new_to_Status_StatusBaseText"
-    GENERATE_NEW_KEYS: str = "mainWindow_Generate_new_keys_StatusBaseText"
-    USERNAME_INPUT: str = "mainWindow_edit_TextEdit"
-    NEXT_BUTTON: str = "mainWindow_Next_StatusBaseText"
+    GENERATE_NEW_KEYS: str = "keysMainView_PrimaryAction_Button"
+    USERNAME_INPUT: str = "onboarding_DiplayName_Input"
+    DETAILS_NEXT_BUTTON: str = "onboarding_DetailsView_NextButton"
     WELCOME_TO_STATUS: str = "mainWindow_Welcome_to_Status_StyledText"
-    NEXT_STATUS_BUTTON: str = "mainWindow_nextBtn_StatusButton"
     NEW_PASSWORD_BUTTON: str = "mainWindow_New_password_PlaceholderText"
     NEW_PSW_INPUT: str = "onboarding_newPsw_Input"
     CONFIRM_PSW_INPUT: str = "onboarding_confirmPsw_Input"
@@ -39,12 +38,12 @@ class SignUpComponents(Enum):
     
 class SeedPhraseComponents(Enum):
     IMPORT_A_SEED_TEXT: str = "import_a_seed_phrase_StatusBaseText"
-    IMPORT_A_SEED_BUTTON: str = "mainWindow_button_StatusButton"
+    IMPORT_A_SEED_BUTTON: str = "keysMainView_PrimaryAction_Button"
     TWELVE_WORDS_BUTTON: str = "switchTabBar_12_words_StatusBaseText"
     EIGHTEEN_WORDS_BUTTON: str = "switchTabBar_18_words_StatusBaseText"
     TWENTY_FOUR_BUTTON: str = "switchTabBar_24_words_StatusBaseText"
     SEEDS_WORDS_TEXTFIELD: str = "mainWindow_placeholder_StatusBaseText"
-    SUBMIT_BUTTON: str = "mainWindow_submitButton_StatusButton"
+    SUBMIT_BUTTON: str = "seedPhraseView_Submit_Button"
 
 class StatusWelcomeScreen:
 
@@ -84,8 +83,9 @@ class StatusWelcomeScreen:
 
     def input_username(self, username: str):
         type(SignUpComponents.USERNAME_INPUT.value, username)
-        click_obj_by_name(SignUpComponents.NEXT_BUTTON.value)
-        click_obj_by_name(SignUpComponents.NEXT_STATUS_BUTTON.value)
+        click_obj_by_name(SignUpComponents.DETAILS_NEXT_BUTTON.value)
+        # There is another page with the same Next button
+        click_obj_by_name(SignUpComponents.DETAILS_NEXT_BUTTON.value)
 
     def input_password(self, password: str):
         type(SignUpComponents.NEW_PSW_INPUT.value, password)

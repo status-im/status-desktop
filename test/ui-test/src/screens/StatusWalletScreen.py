@@ -6,7 +6,7 @@ from drivers.SquishDriverVerification import *
 
 
 class SigningPhrasePopUp(Enum):
-    OK_GOT_IT_BUTTON: str = "mainWindow_Ok_got_it_StatusBaseText"
+    OK_GOT_IT_BUTTON: str = "signPhrase_Ok_Button"
 
 
 class MainWalletScreen(Enum):

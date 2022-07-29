@@ -74,6 +74,7 @@ Item {
             spacing: Style.current.bigPadding
             StatusButton {
                 id: button
+                objectName: "keysMainViewPrimaryActionButton"
                 enabled: (opacity > 0.1)
                 Layout.alignment: Qt.AlignHCenter
                 onClicked: {
