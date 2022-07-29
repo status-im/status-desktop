@@ -1,0 +1,16 @@
+
+from sections.global_names import *
+
+# Main:
+navBarListView_Communities_Portal_navbar_StatusNavBarTabButton = {"checkable": True, "container": mainWindow_navBarListView_ListView, "objectName": "Communities Portal-navbar", "type": "StatusNavBarTabButton", "visible": True}
+communities_Portal_navbar_communities_icon_StatusIcon = {"container": navBarListView_Communities_Portal_navbar_StatusNavBarTabButton, "objectName": "communities-icon", "type": "StatusIcon", "visible": True}
+mainWindow_communitiesPortalLayoutContainer_CommunitiesPortalLayout = {"container": statusDesktop_mainWindow, "objectName": "communitiesPortalLayout", "type": "CommunitiesPortalLayout"}
+communitiesPortalLayoutContainer_createCommunityButton_StatusButton = {"container": mainWindow_communitiesPortalLayoutContainer_CommunitiesPortalLayout, "objectName": "createCommunityButton", "type": "StatusButton", "visible": True}
+
+# Create community popup:
+createCommunityNameInput_TextEdit = {"container": statusDesktop_mainWindow_overlay, "objectName": "createCommunityNameInput", "type": "TextEdit", "visible": True}
+createCommunityDescriptionInput_TextEdit = {"container": statusDesktop_mainWindow_overlay, "objectName": "createCommunityDescriptionInput", "type": "TextEdit", "visible": True}
+createCommunityIntroMessageInput_TextEdit = {"container": statusDesktop_mainWindow_overlay, "objectName": "createCommunityIntroMessageInput", "type": "TextEdit", "visible": True}
+createCommunityOutroMessageInput_TextEdit = {"container": statusDesktop_mainWindow_overlay, "objectName": "createCommunityOutroMessageInput", "type": "TextEdit", "visible": True}
+createCommunityNextBtn_StatusButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "createCommunityNextBtn", "type": "StatusButton", "visible": True}
+createCommunityFinalBtn_StatusButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "createCommunityFinalBtn", "type": "StatusButton", "visible": True}

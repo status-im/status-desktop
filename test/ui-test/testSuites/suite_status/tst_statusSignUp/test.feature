@@ -22,13 +22,12 @@ Feature: Status Desktop Sign Up
 
   Scenario Outline: User cannot sign up with wrong username format
     Given A first time user lands on the status desktop and generates new key
-    When user inputs the following <username> with ui-component mainWindow_edit_TextEdit
-    Then the following ui-component mainWindow_Next_StatusBaseText is not enabled
+    When user inputs the following <username> with ui-component onboarding_DiplayName_Input
+    Then the following ui-component onboarding_DetailsView_NextButton is not enabled
 
     Examples:
       | username |
       | Athl     |
-      | Nervo    |
       | Gra      |
       | tester3@ |
 
@@ -129,7 +128,7 @@ Feature: Status Desktop Sign Up
       | pear    | 8          |
       | reduce  | 10         |
       | scan    | 12         |
-    And user clicks on the following ui-component mainWindow_submitButton_StatusButton
+    And user clicks on the following ui-component seedPhraseView_Submit_Button
     When user signs up with username tester123 and password TesTEr16843/!@00
     Then the user lands on the signed in app
     When the user opens app settings screen
@@ -161,7 +160,7 @@ Feature: Status Desktop Sign Up
       | body     | 15         |
       | device   | 18         |
 
-    And user clicks on the following ui-component mainWindow_submitButton_StatusButton
+    And user clicks on the following ui-component seedPhraseView_Submit_Button
     When user signs up with username tester124 and password TesTEr16843/!@00
     Then the user lands on the signed in app
     When the user opens app settings screen
@@ -199,7 +198,7 @@ Feature: Status Desktop Sign Up
       | exhibit  | 20         |
       | actress  | 24         |
 
-    And user clicks on the following ui-component mainWindow_submitButton_StatusButton
+    And user clicks on the following ui-component mainWindow_submitseedPhraseView_Submit_ButtonButton_StatusButton
     When user signs up with username tester124 and password TesTEr16843/!@00
     Then the user lands on the signed in app
     When the user opens app settings screen
@@ -236,4 +235,4 @@ Feature: Status Desktop Sign Up
       | exhibit  | 20         |
       | house    | 24         |
 
-    Then the following ui-component mainWindow_submitButton_StatusButton is not enabled
+    Then the following ui-component seedPhraseView_Submit_Button is not enabled

@@ -13,13 +13,13 @@ def verify_screen(objName: str, timeout: int=_MAX_WAIT_OBJ_TIMEOUT):
 
 def verify_object_enabled(objName: str, timeout: int=_MIN_WAIT_OBJ_TIMEOUT, condition: bool=True):
     result = is_loaded_visible_and_enabled(objName, timeout)
-    test.verify(result, condition)
+    test.verify(result[0] == condition, "verify_object_enabled")
 
 def verify_text_matching(objName: str, text: str):
     test.verify(is_text_matching(objName, text), True)
     
 def verify_equal(result: object, expected: object):
-    test.verify(result == expected, True)
+    test.verify(result == expected, "verify equal")
 
 def verify(result: bool, msg: str):
     test.verify(result, msg)

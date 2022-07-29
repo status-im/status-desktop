@@ -45,7 +45,7 @@ Item {
         }
         StatusButton {
             id: submitBtn
-            objectName: "createPswBtn"
+            objectName: "onboardingCreatePasswordButton"
             z: d.zFront
             anchors.horizontalCenter: parent.horizontalCenter
             text: qsTr("Create password")

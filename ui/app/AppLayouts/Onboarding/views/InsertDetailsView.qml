@@ -126,6 +126,7 @@ Item {
             Layout.topMargin: 37
             StatusInput {
                 id: nameInput
+                input.edit.objectName: "onboardingDisplayNameInput"
                 width: parent.width
                 placeholderText: qsTr("Display name")
                 input.rightComponent: RoundedIcon {
@@ -210,6 +211,7 @@ Item {
 
         StatusButton {
             id: nextBtn
+            objectName: "onboardingDetailsViewNextButton"
             Layout.alignment: Qt.AlignHCenter
             enabled: !!nameInput.text && nameInput.valid
             font.weight: Font.Medium

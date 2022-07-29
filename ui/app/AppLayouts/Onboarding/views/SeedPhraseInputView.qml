@@ -269,6 +269,7 @@ Item {
 
         StatusButton {
             id: submitButton
+            objectName: "seedPhraseViewSubmitButton"
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: invalidSeedTxt.bottom
             anchors.topMargin: 24
