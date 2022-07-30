@@ -203,6 +203,11 @@ StatusWindow {
                         onClicked: mainPageView.page(title);
                     }
                     StatusNavigationListItem {
+                        title: "StatusComboBox"
+                        selected: viewLoader.source.toString().includes(title)
+                        onClicked: mainPageView.page(title);
+                    }
+                    StatusNavigationListItem {
                         title: "StatusAccountSelector"
                         selected: viewLoader.source.toString().includes(title)
                         onClicked: mainPageView.page(title);

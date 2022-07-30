@@ -8,26 +8,31 @@ import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
 
 import Sandbox 0.1
+
 Column {
-    spacing: 8
+    spacing: 20
+
+    ListModel {
+        id: commmonModel
+        ListElement {
+            name: "Pascal"
+        }
+        ListElement {
+            name: "Khushboo"
+        }
+        ListElement {
+            name: "Alexandra"
+        }
+        ListElement {
+            name: "Eric"
+        }
+    }
 
     StatusSelect {
         id: select
         label: "Some label"
-        model: ListModel {
-            ListElement {
-                name: "Pascal"
-            }
-            ListElement {
-                name: "Khushboo"
-            }
-            ListElement {
-                name: "Alexandra"
-            }
-            ListElement {
-                name: "Eric"
-            }
-        }
+        model: commmonModel
+
         selectMenu.delegate: StatusMenuItemDelegate {
             statusPopupMenu: select
             action: StatusMenuItem {
@@ -38,6 +43,7 @@ Column {
                 }
             }
         }
+
         selectedItemComponent: Item {
             id: selectedItem
             anchors.fill: parent

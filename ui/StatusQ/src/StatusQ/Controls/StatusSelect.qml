@@ -8,11 +8,14 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Popups 0.1
 
 Item {
+    id: root
+
     enum MenuAlignment {
         Left,
         Right,
         Center
     }
+
     property string label: ""
     readonly property bool hasLabel: label !== ""
     property color bgColor: Theme.palette.baseColor2
@@ -28,10 +31,12 @@ Item {
     property string validationError: ""
     property alias validationErrorAlignment: validationErrorText.horizontalAlignment
     property int validationErrorTopMargin: 11
+
     implicitWidth: 448
 
-    id: root
-    height: inputRectangle.height + (hasLabel ? inputLabel.height + labelMargin : 0) + (!!validationError ? (validationErrorText.height + validationErrorTopMargin) : 0)
+    implicitHeight: inputRectangle.height +
+                    (hasLabel ? inputLabel.height + labelMargin : 0) +
+                    (!!validationError ? (validationErrorText.height + validationErrorTopMargin) : 0)
 
     StatusBaseText {
         id: inputLabel
@@ -94,6 +99,10 @@ Item {
             color: Theme.palette.dropShadow
         }
     }
+
+//    ListView {
+//        id: selectMenu
+//    }
 
     StatusPopupMenu {
         id: selectMenu

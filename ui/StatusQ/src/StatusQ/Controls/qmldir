@@ -48,3 +48,5 @@ StatusActivityCenterButton 0.1 StatusActivityCenterButton.qml
 StatusDropdown 0.1 StatusDropdown.qml
 StatusIconTextButton 0.1 StatusIconTextButton.qml
 StatusScrollBar 0.1 StatusScrollBar.qml
+StatusComboBox 0.1 StatusComboBox.qml
+StatusItemDelegate 0.1 StatusItemDelegate.qml
