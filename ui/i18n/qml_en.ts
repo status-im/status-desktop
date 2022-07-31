@@ -687,15 +687,6 @@ Assets won&#8217;t be sent yet.</translation>
     </message>
 </context>
 <context>
-    <name>AddressSourceSelector</name>
-    <message>
-        <location filename="../imports/shared/controls/AddressSourceSelector.qml" line="29" />
-        <location filename="../imports/shared/controls/AddressSourceSelector.qml" line="29" />
-        <source>Invalid source</source>
-        <translation>Invalid source</translation>
-    </message>
-</context>
-<context>
     <name>AdvancedAddAccountView</name>
     <message>
         <location filename="../app/AppLayouts/Wallet/views/AdvancedAddAccountView.qml" line="129" />

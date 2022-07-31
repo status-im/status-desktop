@@ -18,10 +18,9 @@ Item {
     id: root
     property var contactsStore
     property var selectedContact
-    height: select.height
     property int dropdownWidth: width
     property string validationError: qsTr("Please select a contact")
-    property alias validationErrorAlignment: select.validationErrorAlignment
+//    property alias validationErrorAlignment: comboBox.validationErrorAlignment
     property bool isValid: false
     property alias isPending: ensResolver.isPending
 
@@ -36,6 +35,8 @@ Item {
             ensResolver.resolveEns(selectedContact.alias)
         }
     }
+
+    implicitHeight: comboBox.implicitHeight
 
     Component.onCompleted: {
         if (root.readOnly) {
@@ -53,14 +54,14 @@ Item {
         let isValidAddress = Utils.isValidAddress(selectedContact.address)
         let isDefaultValue = selectedContact.alias === selectAContact
         let isValid = (selectedContact.ensVerified && isValidAddress) || isPending || isValidAddress
-        select.validationError = ""
+        comboBox.validationError = ""
         if (!isValid && !isDefaultValue &&
             (
                 !selectedContact.ensVerified ||
                 (selectedContact.ensVerified && isResolvedAddress)
             )
         ) {
-            select.validationError = !selectedContact.ensVerified ? noEnsAddressMessage : validationError
+            comboBox.validationError = !selectedContact.ensVerified ? noEnsAddressMessage : validationError
         }
         root.isValid = isValid
         return isValid
@@ -83,20 +84,22 @@ Item {
         customHeight: 56
     }
 
-    StatusSelect {
-        id: select
+    StatusComboBox {
+        id: comboBox
         label: ""
         model: root.contactsStore.myContactsModel
         width: parent.width
         visible: !root.readOnly
-        menuAlignment: StatusSelect.MenuAlignment.Left
-        selectedItemComponent: Item {
-            anchors.fill: parent
+
+        control.popup.width: dropdownWidth
+        control.padding: 14
+
+        enabled: control.count > 0
+
+        contentItem: RowLayout {
+            spacing: 4
+
             StatusSmartIdenticon {
-                id: iconImg
-                anchors.left: parent.left
-                anchors.leftMargin: 14
-                anchors.verticalCenter: parent.verticalCenter
                 image.width: (!!selectedContact && !!selectedContact.displayIcon) ? 32 : 0
                 image.height: 32
                 image.source: (!!selectedContact && !!selectedContact.displayIcon) ? selectedContact.displayIcon : ""
@@ -104,37 +107,77 @@ Item {
             }
             StatusBaseText {
                 id: selectedTextField
+                visible: comboBox.control.count > 0
                 text: !!selectedContact ? selectedContact.alias : ""
-                anchors.left: iconImg.right
-                anchors.leftMargin: 4
-                anchors.verticalCenter: parent.verticalCenter
                 font.pixelSize: 15
                 height: 22
                 verticalAlignment: Text.AlignVCenter
                 color: Theme.palette.directColor1
             }
-        }
-        zeroItemsView: Item {
-            height: 186
             StatusBaseText {
-                anchors.fill: parent
+                visible: comboBox.control.count == 0
                 text: qsTr("You don’t have any contacts yet")
-                verticalAlignment: Text.AlignVCenter
-                horizontalAlignment: Text.AlignHCenter
                 font.pixelSize: 13
-                height: 18
                 color: Theme.palette.baseColor1
             }
         }
 
-        selectMenu.delegate: menuItem
-        selectMenu.width: dropdownWidth
+        delegate: StatusItemDelegate {
+            id: itemContainer
+            property var currentContact: Utils.getContactDetailsAsJson(pubKey)
+
+            highlighted: index === comboBox.control.highlightedIndex
+            width: parent.width
+
+            onClicked: {
+                root.selectedContact = itemContainer.currentContact
+            }
+
+            contentItem: RowLayout {
+                spacing: 12
+
+                StatusSmartIdenticon {
+                    image.source: currentContact.displayIcon
+                }
+                ColumnLayout {
+                    Layout.fillWidth: true
+
+                    StatusBaseText {
+                        Layout.fillWidth: true
+                        text: currentContact.alias
+                        font.pixelSize: 15
+                        color: Theme.palette.directColor1
+                    }
+
+                    RowLayout {
+                        Layout.fillWidth: true
+
+                        StatusBaseText {
+                            Layout.fillWidth: true
+                            text: currentContact.name + " • "
+                            visible: currentContact.ensVerified
+                            color: Theme.palette.baseColor1
+                            font.pixelSize: 12
+                        }
+                        StatusBaseText {
+                            Layout.fillWidth: true
+                            Layout.maximumWidth: 85
+                            text: currentContact.publicKey
+                            elide: Text.ElideMiddle
+                            color: Theme.palette.baseColor1
+                            font.pixelSize: 12
+                        }
+                    }
+                }
+            }
+        }
+
     }
 
     EnsResolver {
         id: ensResolver
-        anchors.top: select.bottom
-        anchors.right: select.right
+        anchors.top: comboBox.bottom
+        anchors.right: comboBox.right
         anchors.topMargin: Style.current.halfPadding
         debounceDelay: 0
         onResolved: {
@@ -146,69 +189,6 @@ Item {
         onIsPendingChanged: {
             if (isPending) {
                 root.selectedContact.address = ""
-            }
-        }
-    }
-
-    Component {
-        id: menuItem
-        MenuItem {
-            id: itemContainer
-            property bool isFirstItem: index === 0
-            property bool isLastItem: index === root.contactsStore.myContactsModel.count - 1
-
-            property var currentContact: Utils.getContactDetailsAsJson(pubKey)
-
-            width: parent.width
-            height: visible ? 72 : 0
-            StatusSmartIdenticon {
-                id: iconImg
-                anchors.left: parent.left
-                anchors.leftMargin: Style.current.padding
-                anchors.verticalCenter: parent.verticalCenter
-                image.source: currentContact.displayIcon
-            }
-            Column {
-                anchors.left: iconImg.right
-                anchors.leftMargin: 12
-                anchors.verticalCenter: parent.verticalCenter
-
-                StatusBaseText {
-                    text: currentContact.alias
-                    font.pixelSize: 15
-                    color: Theme.palette.directColor1
-                    height: 22
-                }
-
-                Row {
-                    StatusBaseText {
-                      text: currentContact.name + " • "
-                      visible: currentContact.ensVerified
-                      color: Theme.palette.baseColor1
-                      font.pixelSize: 12
-                      height: 16
-                    }
-                    StatusBaseText {
-                        text: currentContact.publicKey
-                        width: 85
-                        elide: Text.ElideMiddle
-                        color: Theme.palette.baseColor1
-                        font.pixelSize: 12
-                        height: 16
-                    }
-                }
-            }
-            background: Rectangle {
-                color: itemContainer.highlighted ? Theme.palette.statusSelect.menuItemHoverBackgroundColor : Theme.palette.statusSelect.menuItemBackgroundColor
-            }
-            MouseArea {
-                cursorShape: Qt.PointingHandCursor
-                anchors.fill: itemContainer
-                onClicked: {
-                    root.selectedContact = itemContainer.currentContact
-                    resolveEns()
-                    select.selectMenu.close()
-                }
             }
         }
     }

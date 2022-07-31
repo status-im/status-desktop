@@ -17,7 +17,7 @@ Item {
 
     property var accounts
     property int inputWidth: 272
-    property int sourceSelectWidth: 136
+    property int sourceSelectWidth: 150
     property alias label: txtLabel.text
     property alias labelFont: txtLabel.font
     property alias input: inpAddress.input
@@ -31,10 +31,10 @@ Item {
     property bool isSelectorVisible: true
     property bool addContactEnabled: true
     property bool isPending: {
-        if (!selAddressSource.selectedSource) {
+        if (!selAddressSource.currentValue) {
             return false
         }
-        switch (selAddressSource.selectedSource.value) {
+        switch (selAddressSource.currentValue.value) {
             case RecipientSelector.Type.Address:
                 return inpAddress.isPending
             case RecipientSelector.Type.Contact:
@@ -42,12 +42,15 @@ Item {
             case RecipientSelector.Type.Account:
                 return false // AccountSelector is never pending
         }
+        return false;
     }
+
     readonly property var sources: [
         { text: qsTr("Address"), value: RecipientSelector.Type.Address, visible: true },
         { text: qsTr("My account"), value: RecipientSelector.Type.Account, visible: true },
         { text: qsTr("Contact"), value: RecipientSelector.Type.Contact, visible: true }
     ]
+
     property var selectedType: RecipientSelector.Type.Address
 
     enum Type {
@@ -58,10 +61,10 @@ Item {
 
     function validate() {
         let isValid = true
-        if (!selAddressSource.selectedSource) {
+        if (!selAddressSource.currentValue) {
             return root.isValid
         }
-        switch (selAddressSource.selectedSource.value) {
+        switch (selAddressSource.currentValue.value) {
             case RecipientSelector.Type.Address:
                 isValid = inpAddress.isValid
                 break
@@ -76,13 +79,9 @@ Item {
         return isValid
     }
 
-    function getSourceByType(type) {
-        return root.sources.find(source => source.value === type)
-    }
-
-    onSelectedTypeChanged: {
+    function updateAddressComboBox() {
         if (selectedType !== undefined) {
-            selAddressSource.selectedSource = getSourceByType(selectedType)
+            selAddressSource.control.currentIndex = selAddressSource.control.indexOfValue(selectedType)
         }
         if (!selectedRecipient) {
             return
@@ -112,6 +111,14 @@ Item {
                 inpAddress.visible = selContact.visible = false
                 break
         }
+    }
+
+    onSelectedTypeChanged: {
+        updateAddressComboBox();
+    }
+
+    Component.onCompleted: {
+        updateAddressComboBox();
     }
 
     implicitHeight: inpAddress.height + txtLabel.height
@@ -162,7 +169,7 @@ Item {
             parentWidth: parent.width
             addContactEnabled: root.addContactEnabled
             onSelectedAddressChanged: {
-                if (!selAddressSource.selectedSource || (selAddressSource.selectedSource && selAddressSource.selectedSource.value !== RecipientSelector.Type.Address)) {
+                if (!selAddressSource.currentValue || (selAddressSource.currentValue && selAddressSource.currentValue.value !== RecipientSelector.Type.Address)) {
                     return
                 }
 
@@ -182,7 +189,7 @@ Item {
             Layout.alignment: Qt.AlignTop
             Layout.fillWidth: true
             onSelectedContactChanged: {
-                if (!selectedContact || !selAddressSource.selectedSource || !selectedContact.address || (selAddressSource.selectedSource && selAddressSource.selectedSource.value !== RecipientSelector.Type.Contact)) {
+                if (!selectedContact || !selAddressSource.currentValue || !selectedContact.address || (selAddressSource.currentValue && selAddressSource.currentValue.value !== RecipientSelector.Type.Contact)) {
                     return
                 }
                 const { address, name, alias, pubKey, icon, isContact, ensVerified } = selectedContact
@@ -202,7 +209,7 @@ Item {
             Layout.alignment: Qt.AlignTop
             Layout.fillWidth: true
             onSelectedAccountChanged: {
-                if (!selectedAccount || !selAddressSource.selectedSource || (selAddressSource.selectedSource && selAddressSource.selectedSource.value !== RecipientSelector.Type.Account)) {
+                if (!selectedAccount || !selAddressSource.currentValue || (selAddressSource.currentValue && selAddressSource.currentValue.value !== RecipientSelector.Type.Account)) {
                     return
                 }
                 const { address, name, color, assets, fiatBalance } = selectedAccount
@@ -210,20 +217,23 @@ Item {
             }
             onIsValidChanged: root.validate()
         }
-        AddressSourceSelector {
+        StatusComboBox {
             id: selAddressSource
             visible: isSelectorVisible && !root.readOnly
-            sources: root.sources.filter(source => source.visible)
+            model: root.sources.filter(source => source.visible)
             width: sourceSelectWidth
             Layout.preferredWidth: root.sourceSelectWidth
             Layout.alignment: Qt.AlignTop
 
-            onSelectedSourceChanged: {
-                if (root.readOnly || !selectedSource) {
+            control.textRole: "text"
+            control.valueRole: "value"
+
+            onCurrentValueChanged: {
+                if (root.readOnly || !currentValue) {
                     return
                 }
                 let address, name
-                switch (selectedSource.value) {
+                switch (currentValue) {
                     case RecipientSelector.Type.Address:
                         inpAddress.visible = true
                         selContact.visible = selAccount.visible = false
