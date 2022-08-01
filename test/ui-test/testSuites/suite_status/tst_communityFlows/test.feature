@@ -65,3 +65,11 @@ Feature: Status Desktop community
             | new_community_name       | new_community_description  | new_community_color |
             | myCommunityNamedChanged  | Cool new description 123   | #ff0000             |
 
+    Scenario: Admin deletes a community channel
+        When the user creates a community named myCommunity, with description My community description, intro Community Intro and outro Community Outro
+        Then the user lands on the community named myCommunity
+        When the admin creates a community channel named test-channel, with description My description with the method bottom_menu
+        Then the user lands on the community channel named test-channel
+        And the channel count is 2
+        When the admin deletes current channel
+        Then the channel count is 1
