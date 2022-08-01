@@ -10,6 +10,7 @@ import models/login_account_item as login_acc_item
 type
   AppState* {.pure.} = enum
     StartupState = 0
+    AppLoadingState
     MainAppState
 
 QtObject:

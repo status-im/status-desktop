@@ -242,6 +242,7 @@ proc importMnemonic*(self: Controller): bool =
     return false
 
 proc setupAccount(self: Controller, accountId: string, storeToKeychain: bool, keycardUsage: bool) =
+  self.delegate.moveToLoadingAppState()
   let error = self.accountsService.setupAccount(accountId, self.tmpPassword, self.tmpDisplayName, keycardUsage)
   if error != "":
     self.delegate.setupAccountError(error)
@@ -276,6 +277,7 @@ proc setupKeycardAccount*(self: Controller, storeToKeychain: bool) =
     # if `tmpSeedPhrase` is not empty means user has recovered keycard via seed phrase
     self.storeKeycardAccountAndLogin(storeToKeychain)
   else:
+    self.delegate.moveToLoadingAppState()
     self.accountsService.setupAccountKeycard(self.tmpKeycardEvent)
     if storeToKeychain:
       singletonInstance.localAccountSettings.setStoreToKeychainValue(LS_VALUE_STORE)
@@ -316,12 +318,14 @@ proc tryToObtainDataFromKeychain*(self: Controller) =
   self.keychainService.tryToObtainData(selectedAccount.name)
 
 proc login*(self: Controller) =
+  self.delegate.moveToLoadingAppState()
   let selectedAccount = self.getSelectedLoginAccount()
   let error = self.accountsService.login(selectedAccount, self.tmpPassword)
   if(error.len > 0):
     self.delegate.emitAccountLoginError(error)
 
 proc loginAccountKeycard*(self: Controller) =
+  self.delegate.moveToLoadingAppState()
   let error = self.accountsService.loginAccountKeycard(self.tmpKeycardEvent)
   if(error.len > 0):
     self.delegate.emitAccountLoginError(error)

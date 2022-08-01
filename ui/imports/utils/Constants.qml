@@ -8,7 +8,8 @@ QtObject {
 
     readonly property QtObject appState: QtObject {
         readonly property int startup: 0
-        readonly property int main: 1
+        readonly property int appLoading: 1
+        readonly property int main: 2
     }
 
     readonly property QtObject startupFlow: QtObject {
