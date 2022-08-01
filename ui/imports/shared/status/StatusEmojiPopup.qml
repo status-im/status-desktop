@@ -88,7 +88,7 @@ Popup {
         var categoryNames = {"recent": 0}
         var newCategories = [[]]
 
-        EmojiJSON.emoji_json.forEach(function (emoji) {
+        StatusQUtils.Emoji.emojiJSON.emoji_json.forEach(function (emoji) {
             if (!categoryNames[emoji.category] && categoryNames[emoji.category] !== 0) {
                 categoryNames[emoji.category] = newCategories.length
                 newCategories.push([])
