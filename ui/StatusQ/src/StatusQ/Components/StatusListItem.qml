@@ -284,6 +284,7 @@ Rectangle {
 
             StatusBaseText {
                 id: statusListItemSubTitle
+                objectName: "statusListItemSubTitle"
                 anchors.top: statusListItemTitle.bottom
                 width: parent.width
                 text: statusListItem.subTitle
