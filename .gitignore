@@ -37,6 +37,9 @@ nim_status_client.log
 
 # Squish test ================================================================
 
+**/fixtures/*/ethereum
+**/fixtures/*/ipfs
+
 test/ui-test/testSuites/suite_status/config.xml
 test/ui-test/testSuites/suite_status/envvars
 
