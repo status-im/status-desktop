@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-library 'status-jenkins-lib@v1.8.0'
+library 'status-jenkins-lib@linux-use-nix'
 
 /* Options section can't access functions in objects. */
 def isPRBuild = utils.isPRBuild()
@@ -72,21 +72,21 @@ pipeline {
 
   stages {
     stage('Deps') {
-      steps {
-        sh 'make update'
-        sh 'make deps'
-      }
+      steps { script {
+        nix.shell('make update', pure: false)
+        nix.shell('make deps', pure: false)
+      } }
     }
 
     stage('status-go') {
-      steps {
-        sh 'make status-go'
-      }
+      steps { script {
+        nix.shell('make status-go', pure: false)
+      } }
     }
 
     stage('Package') {
       steps { script {
-        linux.bundle('tgz-linux')
+        linux.bundle('tgz-linux', 1)
       } }
     }
 
