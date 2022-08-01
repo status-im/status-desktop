@@ -111,8 +111,11 @@ StatusDialog {
         anchors.topMargin: -height - 18
         model: popup.store.accounts
         selectedAccount: popup.selectedAccount
-        onUpdatedSelectedAccount: {
-            popup.selectedAccount = account
+        changeSelectedAccount: function(newIndex) {
+            if (newIndex > popup.store.accounts) {
+                return
+            }
+            popup.store.switchAccount(newIndex)
         }
     }
 

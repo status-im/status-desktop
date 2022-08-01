@@ -19,6 +19,7 @@ StatusFloatingButtonsSelector {
     id: floatingHeader
 
     property var selectedAccount
+    property var changeSelectedAccount: function(){}
 
     repeater.objectName: "accountsListFloatingHeader"
     
@@ -50,7 +51,7 @@ StatusFloatingButtonsSelector {
             hoverColor: Theme.palette.statusFloatingButtonHighlight
             highlighted: index === floatingHeader.currentIndex
             onClicked: {
-                updatedSelectedAccount(model)
+                changeSelectedAccount(index)
                 floatingHeader.currentIndex = index
             }
             Component.onCompleted: {
@@ -73,8 +74,8 @@ StatusFloatingButtonsSelector {
                         floatingHeader.currentIndex = index
                     }
                     else {
+                        changeSelectedAccount(0)
                         floatingHeader.currentIndex = 0
-                        updatedSelectedAccount(d.firstModelData)
                     }
                 }
             }
@@ -91,7 +92,7 @@ StatusFloatingButtonsSelector {
         icon.isLetterIdenticon: !!model.emoji
         icon.background.color: Theme.palette.indirectColor1
         onClicked: {
-            updatedSelectedAccount(model)
+            changeSelectedAccount(index)
             floatingHeader.itemSelected(index)
         }
         visible: !floatingHeader.visibleIndices.includes(index) && walletType !== Constants.watchWalletType
