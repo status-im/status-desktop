@@ -1,5 +1,7 @@
 import QtQuick 2.13
 
+import utils 1.0
+
 import "../Profile/stores"
 
 QtObject {
@@ -169,5 +171,12 @@ QtObject {
 
     function setActiveCommunity(communityId) {
         mainModule.setActiveSectionById(communityId);
+    }
+
+    function switchAccount(newIndex) {
+        if(Constants.isCppApp)
+            walletSectionAccounts.switchAccount(newIndex)
+        else
+            walletSection.switchAccount(newIndex)
     }
 }
