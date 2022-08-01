@@ -12,6 +12,9 @@ method delete*(self: AccessInterface) {.base.} =
 method load*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method moveToLoadingAppState*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method moveToAppState*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
