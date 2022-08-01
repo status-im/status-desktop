@@ -174,7 +174,6 @@ ifeq ($(detected_OS),Darwin)
   endif
 endif
 
-
 RELEASE ?= false
 ifeq ($(RELEASE),false)
  # We need `-d:debug` to get Nim's default stack traces
@@ -221,7 +220,6 @@ $(STATUSGO): | deps
 	echo -e $(BUILD_MSG) "status-go"
 	+ cd vendor/status-go && \
 	  $(MAKE) statusgo-shared-library $(HANDLE_OUTPUT)
-
 
 STATUSKEYCARDGO := vendor/status-keycard-go/build/libkeycard/libkeycard.$(LIBSTATUS_EXT)
 STATUSKEYCARDGO_LIBDIR := $(shell pwd)/$(shell dirname "$(STATUSKEYCARDGO)")
