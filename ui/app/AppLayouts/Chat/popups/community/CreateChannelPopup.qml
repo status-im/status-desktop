@@ -1,6 +1,8 @@
-import QtQuick 2.12
-import QtQuick.Controls 2.3
+import QtQuick 2.14
+import QtQuick.Controls 2.14
 import QtQuick.Dialogs 1.3
+import QtQml.Models 2.14
+
 import utils 1.0
 import shared.panels 1.0
 
@@ -11,9 +13,12 @@ import StatusQ.Controls 0.1
 import StatusQ.Controls.Validators 0.1
 import StatusQ.Components 0.1
 import StatusQ.Popups 0.1
+import StatusQ.Popups.Dialog 0.1
 
-StatusModal {
-    id: popup
+StatusDialog {
+    id: root
+    width: 480
+    height: 509
 
     property bool isEdit: false
     property string chatId: ""
@@ -30,65 +35,59 @@ StatusModal {
     readonly property int maxChannelNameLength: 24
     readonly property int maxChannelDescLength: 140
 
-    signal createCommunityChannel(string chName, string chDescription, string chEmoji,
-        string chColor, string chCategoryId)
-    signal editCommunityChannel(string chName, string chDescription, string chEmoji, string chColor,
-        string chCategoryId)
+    signal createCommunityChannel(string chName, string chDescription, string chEmoji, string chColor, string chCategoryId)
+    signal editCommunityChannel(string chName, string chDescription, string chEmoji, string chColor, string chCategoryId)
 
-    header.title: qsTr("New channel")
+    title: qsTr("New channel")
 
     onOpened: {
-        contentItem.channelName.input.text = ""
-        contentItem.channelName.input.icon.emoji = ""
-        contentItem.channelName.input.edit.forceActiveFocus(Qt.MouseFocusReason)
+        nameInput.text = ""
+        nameInput.input.icon.emoji = ""
+        nameInput.input.edit.forceActiveFocus(Qt.MouseFocusReason)
         if (isEdit) {
-            header.title = qsTr("Edit #%1").arg(popup.channelName);
-            contentItem.channelName.input.text = popup.channelName
-            contentItem.channelDescription.input.text = popup.channelDescription
-            if (popup.channelEmoji) {
-                contentItem.channelName.input.icon.emoji = popup.channelEmoji
+            root.title = qsTr("Edit #%1").arg(root.channelName);
+            nameInput.text = root.channelName
+            descriptionTextArea.text = root.channelDescription
+            if (root.channelEmoji) {
+                nameInput.input.icon.emoji = root.channelEmoji
             }
-            scrollView.channelColorDialog.color = popup.channelColor
+            colorDialog.color = root.channelColor
         } else {
-            contentItem.channelName.input.icon.isLetterIdenticon = true;
+            nameInput.input.icon.isLetterIdenticon = true;
         }
     }
 
     onClosed: destroy()
 
     Connections {
-        enabled: popup.opened && popup.emojiPopupOpened
+        enabled: root.opened && root.emojiPopupOpened
         target: emojiPopup
 
         onEmojiSelected: function (emojiText, atCursor) {
-            contentItem.channelName.input.icon.isLetterIdenticon = false;
-            scrollView.channelName.input.icon.emoji = emojiText
+            nameInput.input.icon.isLetterIdenticon = false;
+            nameInput.input.icon.emoji = emojiText
         }
         onClosed: {
-            popup.emojiPopupOpened = false
+            root.emojiPopupOpened = false
         }
     }
 
     function isFormValid() {
-        return (scrollView.channelName.valid &&
-                scrollView.channelDescription.valid) &&
-                Utils.validateAndReturnError(scrollView.channelColorDialog.color.toString().toUpperCase(),
-                                        communityColorValidator) === ""
+        return (nameInput.valid &&
+                descriptionTextArea.valid) &&
+                Utils.validateAndReturnError(colorDialog.color.toString().toUpperCase(),
+                                             communityColorValidator) === ""
     }
 
-    contentItem: StatusScrollView {
+    StatusScrollView {
 
         id: scrollView
 
         property ScrollBar vScrollBar: ScrollBar.vertical
 
-        property alias channelName: nameInput
-        property alias channelDescription: descriptionTextArea
-        property alias channelColorDialog: colorDialog
-
+        width: root.width
         height: Math.min(content.height, 432)
-        width: popup.width
-
+        leftPadding: 0
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
         function scrollBackUp() {
@@ -97,40 +96,36 @@ StatusModal {
 
         Column {
             id: content
-            width: popup.width
-            topPadding: 16
+            width: parent.width
 
             StatusInput {
                 id: nameInput
                 input.edit.objectName: "createOrEditCommunityChannelNameInput"
-
-                anchors.left: parent.left
-                anchors.leftMargin: 16
-
                 label: qsTr("Channel name")
-                charLimit: popup.maxChannelNameLength
-                placeholderText: qsTr("Name the channel")
+                charLimit: root.maxChannelNameLength
+                placeholderText: qsTr("# Name the channel")
+
                 input.onTextChanged: {
                     input.text = Utils.convertSpacesToDashesAndUpperToLowerCase(input.text);
                     input.cursorPosition = input.text.length
-                    if (popup.channelEmoji === "") {
+                    if (root.channelEmoji === "") {
                         input.letterIconName = text;
                     }
                 }
                 input.icon.color: colorDialog.color.toString()
-                input.leftPadding: 16
+                rightPadding: 6
                 input.rightComponent: StatusRoundButton {
-                    implicitWidth: 20
-                    implicitHeight: 20
-                    icon.width: implicitWidth
-                    icon.height: implicitHeight
+                    implicitWidth: 32
+                    implicitHeight: 32
+                    icon.width: 20
+                    icon.height: 20
                     icon.name: "smiley"
                     onClicked: {
-                        popup.emojiPopupOpened = true;
-                        popup.emojiPopup.open();
-                        popup.emojiPopup.emojiSize = StatusQUtils.Emoji.size.verySmall;
-                        popup.emojiPopup.x = popup.width - 2*Style.current.xlPadding;
-                        popup.emojiPopup.y = popup.y + nameInput.height + 2*Style.current.xlPadding;
+                        root.emojiPopupOpened = true;
+                        root.emojiPopup.open();
+                        root.emojiPopup.emojiSize = StatusQUtils.Emoji.size.verySmall;
+                        root.emojiPopup.x = root.x + (root.width - root.emojiPopup.width - Style.current.padding);
+                        root.emojiPopup.y = root.y + root.header.height + root.topPadding + nameInput.height + Style.current.smallPadding;
                     }
                 }
                 validationMode: StatusInput.ValidationMode.Always
@@ -152,8 +147,6 @@ StatusModal {
                 text: qsTr("Channel colour")
                 font.pixelSize: 15
                 color: Theme.palette.directColor1
-                anchors.left: parent.left
-                anchors.leftMargin: 16
             }
 
             Item {
@@ -165,7 +158,7 @@ StatusModal {
             Item {
                 anchors.horizontalCenter: parent.horizontalCenter
                 height: colorSelectorButton.height + 16
-                width: parent.width - 32
+                width: parent.width
 
                 StatusPickerButton {
                     id: colorSelectorButton
@@ -173,12 +166,12 @@ StatusModal {
                     property string validationError: ""
 
                     bgColor: colorDialog.colorSelected ?
-                        colorDialog.color : Theme.palette.baseColor2
+                                 colorDialog.color : Theme.palette.baseColor2
                     // TODO adjust text color depending on the background color to make it readable
                     // contentColor: colorDialog.colorSelected ? Theme.palette.indirectColor1 : Theme.palette.baseColor1
                     text: colorDialog.colorSelected ?
-                        colorDialog.color.toString().toUpperCase() :
-                        qsTr("Pick a color")
+                              colorDialog.color.toString().toUpperCase() :
+                              qsTr("Pick a color")
 
                     onClicked: colorDialog.open();
                     onTextChanged: {
@@ -191,9 +184,9 @@ StatusModal {
                 StatusColorDialog {
                     id: colorDialog
                     anchors.centerIn: parent
-                    property bool colorSelected: popup.isEdit && popup.channelColor
-                    color: popup.isEdit && popup.channelColor ? popup.channelColor :
-                        Theme.palette.primaryColor1
+                    property bool colorSelected: root.isEdit && root.channelColor
+                    color: root.isEdit && root.channelColor ? root.channelColor :
+                                                                Theme.palette.primaryColor1
                     onAccepted: colorSelected = true
                 }
 
@@ -210,10 +203,7 @@ StatusModal {
             StatusInput {
                 id: descriptionTextArea
                 input.edit.objectName: "createOrEditCommunityChannelDescriptionInput"
-
-                anchors.left: parent.left
-                anchors.leftMargin: 16
-
+                input.verticalAlignment: TextEdit.AlignTop
                 label: qsTr("Description")
                 charLimit: 140
 
@@ -223,9 +213,9 @@ StatusModal {
                 maximumHeight: 88
                 validationMode: StatusInput.ValidationMode.Always
                 validators: [StatusMinLengthValidator {
-                    minLength: 1
-                    errorMessage:  Utils.getErrorMessage(descriptionTextArea.errors, qsTr("channel description"))
-                }]
+                        minLength: 1
+                        errorMessage:  Utils.getErrorMessage(descriptionTextArea.errors, qsTr("channel description"))
+                    }]
             }
 
             /* TODO: use the code below to enable private channels and message limit */
@@ -285,47 +275,49 @@ StatusModal {
         }
     }
 
-    rightButtons: [
-        StatusButton {
-            objectName: "createOrEditCommunityChannelBtn"
-            enabled: isFormValid()
-            text: isEdit ?
-                  qsTr("Save") :
-                  qsTr("Create")
-            onClicked: {
-                if (!isFormValid()) {
-                    scrollView.scrollBackUp()
-                    return
-                }
-                let error = "";
-                let emoji =  StatusQUtils.Emoji.deparseFromParse(popup.contentItem.channelName.input.icon.emoji)
+    footer: StatusDialogFooter {
+        rightButtons: ObjectModel {
+            StatusButton {
+                objectName: "createOrEditCommunityChannelBtn"
+                enabled: isFormValid()
+                text: isEdit ?
+                          qsTr("Save") :
+                          qsTr("Create")
+                onClicked: {
+                    if (!isFormValid()) {
+                        scrollView.scrollBackUp()
+                        return
+                    }
+                    let error = "";
+                    let emoji =  StatusQUtils.Emoji.deparseFromParse(nameInput.input.icon.emoji)
 
-                if (!isEdit) {
-                    //popup.contentItem.communityColor.color.toString().toUpperCase()
-                    popup.createCommunityChannel(Utils.filterXSS(popup.contentItem.channelName.input.text),
-                                                 Utils.filterXSS(popup.contentItem.channelDescription.input.text),
-                                                 emoji,
-                                                 popup.contentItem.channelColorDialog.color.toString().toUpperCase(),
-                                                 popup.categoryId)
-                } else {
-                    popup.editCommunityChannel(Utils.filterXSS(popup.contentItem.channelName.input.text),
-                                                 Utils.filterXSS(popup.contentItem.channelDescription.input.text),
-                                                 emoji,
-                                                 popup.contentItem.channelColorDialog.color.toString().toUpperCase(),
-                                                 popup.categoryId)
-                }
+                    if (!isEdit) {
+                        //scrollView.communityColor.color.toString().toUpperCase()
+                        root.createCommunityChannel(Utils.filterXSS(nameInput.input.text),
+                                                     Utils.filterXSS(descriptionTextArea.text),
+                                                     emoji,
+                                                     colorDialog.color.toString().toUpperCase(),
+                                                     root.categoryId)
+                    } else {
+                        root.editCommunityChannel(Utils.filterXSS(nameInput.input.text),
+                                                   Utils.filterXSS(descriptionTextArea.text),
+                                                   emoji,
+                                                   colorDialog.color.toString().toUpperCase(),
+                                                   root.categoryId)
+                    }
 
-                if (error) {
-                    const errorJson = JSON.parse(error)
-                    creatingError.text = errorJson.error
-                    return creatingError.open()
-                }
+                    if (error) {
+                        const errorJson = JSON.parse(error)
+                        creatingError.text = errorJson.error
+                        return creatingError.open()
+                    }
 
-                // TODO Open the community once we have designs for it
-                popup.close()
+                    // TODO Open the community once we have designs for it
+                    root.close()
+                }
             }
         }
-    ]
+    }
 
     MessageDialog {
         id: creatingError
