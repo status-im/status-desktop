@@ -113,6 +113,10 @@ Item {
         onHoverChanged: {
             hovered && setHovered(messageId, hovered)
         }
+        onSetMessageActive: {
+            root.setMessageActive(messageId, active)
+        }
+
         anchors.right: parent.right
         anchors.rightMargin: 20
         anchors.top: messageContainer.top
@@ -160,15 +164,11 @@ Item {
         }
     }
 
-    Loader {
-        active: typeof root.messageContextMenu !== "undefined"
-        sourceComponent: Component {
-            Connections {
-                enabled: isMessageActive
-                target: root.messageContextMenu
-                onClosed: root.setMessageActive(messageId, false)
-            }
-        }
+    Connections {
+        enabled: isHovered || isMessageActive
+        target: typeof root.messageContextMenu !== "undefined" ? root.messageContextMenu : null
+        onOpened: root.setMessageActive(messageId, true)
+        onClosed: root.setMessageActive(messageId, false)
     }
 
     DateGroup {
