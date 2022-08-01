@@ -89,6 +89,9 @@ method load*[T](self: Module[T]) =
     self.view.setCurrentStartupState(newLoginState(FlowType.AppLogin, nil))
   self.delegate.startupDidLoad()
 
+method moveToLoadingAppState*[T](self: Module[T]) =
+  self.view.setAppState(AppState.AppLoadingState)
+
 method moveToAppState*[T](self: Module[T]) =
   self.view.setAppState(AppState.MainAppState)
 

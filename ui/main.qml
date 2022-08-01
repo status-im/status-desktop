@@ -130,12 +130,13 @@ StatusWindow {
         }
 
         function onAppStateChanged(state) {
-            if(state === Constants.appState.main) {
+            if(state === Constants.appState.appLoading) {
+                loader.sourceComponent = appLoadingAnimation
+            }
+            else if(state === Constants.appState.main) {
                 // We set main module to the Global singleton once user is logged in and we move to the main app.
                 Global.mainModuleInst = mainModule
                 loader.sourceComponent = app
-                startupOnboarding.unload()
-                startupOnboarding.visible = false
 
                 if(localAccountSensitiveSettings.recentEmojis === "") {
                     localAccountSensitiveSettings.recentEmojis = [];
@@ -150,6 +151,9 @@ StatusWindow {
                     localAccountSensitiveSettings.hiddenCommunityBackUpBanners = [];
                 }
             }
+
+            startupOnboarding.unload()
+            startupOnboarding.visible = false
         }
     }
 
@@ -263,7 +267,6 @@ StatusWindow {
         opacity: active ? 1.0 : 0.0
         visible: (opacity > 0.0001)
         Behavior on opacity { NumberAnimation { duration: 120 }}
-        active: !splashScreen.visible
     }
 
     Component {
@@ -273,10 +276,15 @@ StatusWindow {
         }
     }
 
+    Component {
+        id: appLoadingAnimation
+        SplashScreen {
+        }
+    }
+
     OnboardingLayout {
         id: startupOnboarding
         anchors.fill: parent
-        visible: !splashScreen.visible
     }
 
     NotificationWindow {
@@ -311,10 +319,6 @@ StatusWindow {
         onMaximized: {
             applicationWindow.toggleFullScreen()
         }
-    }
-
-    SplashScreen {
-        id: splashScreen
     }
 }
 

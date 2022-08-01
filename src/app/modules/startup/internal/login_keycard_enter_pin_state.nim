@@ -26,7 +26,7 @@ method resolveKeycardNextState*(self: LoginKeycardEnterPinState, keycardFlowType
       keycardEvent.error.len == 0:
         controller.setKeycardEvent(keycardEvent)
         controller.loginAccountKeycard()
-        return
+        return nil
     if keycardFlowType == ResponseTypeValueEnterPIN and 
       keycardEvent.error.len > 0 and
       keycardEvent.error == RequestParamPIN:
