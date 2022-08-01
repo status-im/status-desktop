@@ -50,7 +50,7 @@ def verify_text_does_not_contain(text: str, substring: str):
     
 def verify_text(text1: str, text2: str):
     test.compare(text1, text2, "Text 1: " + text1 + "\nText 2: " + text2)
-    
+
 def process_terminated(pid):
     try:
         remotesys = RemoteSystem()
@@ -83,5 +83,8 @@ def verify_the_app_is_closed(pid: int):
             closed = True
     except:
         closed = False
-    
+
     verify(closed, "app closed")
+
+def verify_equals(val1, val2):
+    test.compare(val1, val2, "1st value [" + str(val1) + ("] equal to " if val1 == val2 else "] NOT equal to ") + "2nd value [" + str(val2) + "]")

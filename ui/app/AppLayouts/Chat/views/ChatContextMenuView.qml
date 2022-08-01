@@ -213,7 +213,7 @@ StatusPopupMenu {
         text: qsTr("Download")
         enabled: localAccountSensitiveSettings.downloadChannelMessagesEnabled
         icon.name: "download"
-        onTriggered: downdloadDialog.open()
+        onTriggered: downloadDialog.open()
     }
 
     StatusMenuSeparator {
@@ -221,6 +221,7 @@ StatusPopupMenu {
     }
 
     StatusMenuItem {
+        objectName: "deleteOrLeaveMenuItem"
         id: deleteOrLeaveMenuItem
         text: {
             if (root.isCommunityChat) {
@@ -250,7 +251,7 @@ StatusPopupMenu {
     }
 
     FileDialog {
-        id: downdloadDialog
+        id: downloadDialog
         acceptLabel: qsTr("Save")
         fileMode: FileDialog.SaveFile
         title: qsTr("Download messages")
@@ -258,13 +259,14 @@ StatusPopupMenu {
         defaultSuffix: "json"
 
         onAccepted: {
-            root.downloadMessages(downdloadDialog.currentFile)
+            root.downloadMessages(downloadDialog.currentFile)
         }
     }
 
     Component {
         id: deleteChatConfirmationDialogComponent
         ConfirmationDialog {
+            confirmButtonObjectName: "deleteChatConfirmationDialogDeleteButton"
             btnType: "warn"
             header.title: root.isCommunityChat ? qsTr("Delete #%1").arg(root.chatName) :
                                             root.chatType === Constants.chatType.oneToOne ?
