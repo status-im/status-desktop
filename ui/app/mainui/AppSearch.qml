@@ -79,7 +79,6 @@ Item {
         }
         onOpened: {
             searchPopup.resetSearchSelection();
-            searchPopup.forceActiveFocus()
             appSearch.store.prepareLocationMenuModel()
 
             const jsonObj = appSearch.store.getSearchLocationObject()
