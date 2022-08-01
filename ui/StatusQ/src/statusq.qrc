@@ -112,6 +112,7 @@
         <file>StatusQ/Controls/StatusToolTip.qml</file>
         <file>StatusQ/Controls/StatusWalletColorButton.qml</file>
         <file>StatusQ/Controls/StatusWalletColorSelect.qml</file>
+        <file>StatusQ/Controls/StatusTextArea.qml</file>
         <file>StatusQ/Core/Backpressure/Backpressure.qml</file>
         <file>StatusQ/Core/Backpressure/LICENSE</file>
         <file>StatusQ/Core/Backpressure/qmldir</file>

@@ -5,7 +5,7 @@ import QtQuick.Controls 2.13
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 
-Item {
+FocusScope {
     id: statusAppTwoPanelLayout
 
     implicitWidth: 822

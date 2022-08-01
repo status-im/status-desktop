@@ -198,6 +198,11 @@ StatusWindow {
                         onClicked: mainPageView.page(title);
                     }
                     StatusNavigationListItem {
+                        title: "StatusTextArea"
+                        selected: viewLoader.source.toString().includes(title)
+                        onClicked: mainPageView.page(title);
+                    }
+                    StatusNavigationListItem {
                         title: "StatusSelect"
                         selected: viewLoader.source.toString().includes(title)
                         onClicked: mainPageView.page(title);
