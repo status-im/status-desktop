@@ -169,6 +169,11 @@ QtObject:
         error "error: new message with an unknown chat type received", chatId=chats[i].id
         continue
 
+      # Ignore 1-1 chats for which we are not contact
+      if (chats[i].chatType == ChatType.OneToOne and not self.contactService.getContactById(chats[i].id).isContact):
+        continue
+
+
       var chatMessages: seq[MessageDto]
       for msg in messages:
         if (msg.localChatId == chats[i].id):
