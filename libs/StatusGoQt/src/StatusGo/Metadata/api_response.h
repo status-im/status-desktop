@@ -32,7 +32,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ApiErrorResponse, error)
  * \note update NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE when changing structure's content
  */
 struct JsonError {
-    int code{};
+    int code{0};
     std::string message;
 };
 
