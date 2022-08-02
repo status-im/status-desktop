@@ -5,6 +5,7 @@ import message_item, message_reaction_item, message_transaction_parameters_item
 type
   ModelRole {.pure.} = enum
     Id = UserRole + 1
+    PrevMsgTimestamp
     PrevMsgIndex
     NextMsgIndex
     CommunityId
@@ -80,6 +81,7 @@ QtObject:
   method roleNames(self: Model): Table[int, string] =
     {
       ModelRole.Id.int:"id",
+      ModelRole.PrevMsgTimestamp.int: "prevMsgTimestamp",
       ModelRole.PrevMsgIndex.int:"prevMsgIndex",
       ModelRole.NextMsgIndex.int:"nextMsgIndex",
       ModelRole.CommunityId.int:"communityId",
@@ -126,6 +128,12 @@ QtObject:
     case enumRole:
     of ModelRole.Id:
       result = newQVariant(item.id)
+    of PrevMsgTimestamp:
+      if (index.row + 1 < self.items.len):
+        let prevItem = self.items[index.row + 1]
+        result = newQVariant(prevItem.timestamp)
+      else:
+        result = newQVariant(0)
     of ModelRole.PrevMsgIndex:
       result = newQVariant(index.row + 1)
     of ModelRole.NextMsgIndex:
@@ -255,6 +263,9 @@ QtObject:
     self.beginInsertRows(parentModelIndex, first, last)
     self.items.add(itemsToAppend)
     self.endInsertRows()
+
+    if first > 0:
+      self.updateItemAtIndex(first - 1)
     self.countChanged()
 
   proc appendItem*(self: Model, item: Item) =
@@ -264,9 +275,14 @@ QtObject:
     let parentModelIndex = newQModelIndex()
     defer: parentModelIndex.delete
 
-    self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
+    let position = self.items.len
+
+    self.beginInsertRows(parentModelIndex, position, position)
     self.items.add(item)
     self.endInsertRows()
+
+    if position > 0:
+      self.updateItemAtIndex(position - 1)
     self.countChanged()
 
   proc prependItem*(self: Model, item: Item) =
@@ -279,6 +295,9 @@ QtObject:
     self.beginInsertRows(parentModelIndex, 0, 0)
     self.items.insert(item, 0)
     self.endInsertRows()
+
+    if self.items.len > 1:
+      self.updateItemAtIndex(1)
     self.countChanged()
 
   proc insertItemBasedOnTimestamp*(self: Model, item: Item) =
@@ -296,6 +315,8 @@ QtObject:
 
     if position > 0:
       self.updateItemAtIndex(position - 1)
+    if position + 1 < self.items.len:
+      self.updateItemAtIndex(position + 1)
     self.countChanged()
 
   proc removeItem*(self: Model, messageId: string) =
@@ -309,9 +330,15 @@ QtObject:
     self.beginRemoveRows(parentModelIndex, ind, ind)
     self.items.delete(ind)
     self.endRemoveRows()
-    
-    if self.items.len > 0 and ind > 0 and ind < self.items.len:
-        self.updateItemAtIndex(ind - 1)
+
+   # if self.items.len > 0 and ind > 0 and ind < self.items.len:
+   #     self.updateItemAtIndex(ind - 1)
+
+    if ind > 0 and ind < self.items.len:
+      self.updateItemAtIndex(ind - 1)
+    if ind + 1 < self.items.len:
+      self.updateItemAtIndex(ind + 1)
+
     self.countChanged()
 
   proc getItemWithMessageId*(self: Model, messageId: string): Item =
