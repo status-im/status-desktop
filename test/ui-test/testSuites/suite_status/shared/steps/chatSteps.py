@@ -1,4 +1,5 @@
 
+from drivers.SquishDriver import *
 from screens.StatusMainScreen import StatusMainScreen
 from screens.StatusChatScreen import StatusChatScreen
 from screens.StatusCreateChatScreen import StatusCreateChatScreen
@@ -57,3 +58,16 @@ def step(context, message_index, message):
 @Then("the user can mark the channel |any| as read")
 def step(context, channel):
     _statusMain.mark_as_read(channel)
+
+@Then("the user can delete the message at index |any|")
+def step(context, message_index):
+    _statusChat.delete_message_at_index(message_index)
+
+@Then("the user cannot delete the last message")
+def step(context):
+    _statusChat.cannot_delete_last_message()
+    
+@Then("the last message is not \"|any|\"")
+def step(context, message):
+    _statusChat.verify_last_message_sent_is_not(message)
+    

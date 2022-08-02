@@ -30,5 +30,11 @@ def verify_text_contains(text: str, substring: str):
         found = True
     verify(found, "Given substring: " + substring + " and complete text: " + text)
     
+def verify_text_does_not_contain(text: str, substring: str):
+    found = False
+    if substring in text:
+        found = True
+    verify(not found, "Given substring: " + substring + " and complete text: " + text)
+    
 def verify_text(text1: str, text2: str):
     test.compare(text1, text2, "Text 1: " + text1 + "\nText 2: " + text2)
