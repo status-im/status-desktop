@@ -329,9 +329,7 @@ Item {
 
                     StatusMenuItem {
                         text: qsTr("Leave Community")
-                        icon.name: "arrow-right"
-                        icon.width: 14
-                        iconRotation: 180
+                        icon.name: "arrow-left"
                         type: StatusMenuItem.Type.Danger
                         onTriggered: communityContextMenu.chatCommunitySectionModule.leaveCommunity()
                     }

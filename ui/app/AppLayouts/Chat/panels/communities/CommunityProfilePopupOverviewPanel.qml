@@ -74,10 +74,7 @@ Column {
     StatusListItem {
         anchors.horizontalCenter: parent.horizontalCenter
         title: qsTr("Leave community")
-        icon.name: "arrow-right"
-        icon.height: 16
-        icon.width: 20
-        icon.rotation: 180
+        icon.name: "arrow-left"
         type: StatusListItem.Type.Danger
         sensor.onClicked: root.leaveButtonClicked()
     }

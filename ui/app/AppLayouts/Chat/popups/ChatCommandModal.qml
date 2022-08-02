@@ -143,12 +143,8 @@ StatusModal {
     }
 
     leftButtons: [
-        StatusRoundButton {
+        StatusBackButton {
             visible: !stack.isFirstGroup
-            icon.name: "arrow-right"
-            icon.width: 20
-            icon.height: 16
-            rotation: 180
             onClicked: {
                 stack.back()
             }

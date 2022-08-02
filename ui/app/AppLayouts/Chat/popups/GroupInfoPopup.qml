@@ -252,12 +252,8 @@ StatusModal {
     }
 
     leftButtons: [
-        StatusRoundButton {
+        StatusBackButton {
             visible: popup.addMembers
-            icon.name: "arrow-right"
-            icon.width: 20
-            icon.height: 16
-            icon.rotation: 180
             onClicked: {
                 popup.addMembers = false;
                 popup.resetSelectedMembers();

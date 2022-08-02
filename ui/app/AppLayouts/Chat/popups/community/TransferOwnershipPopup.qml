@@ -74,11 +74,7 @@ StatusModal {
     }
 
     leftButtons: [
-        StatusRoundButton {
-            icon.name: "arrow-right"
-            icon.height: 16
-            icon.width: 20
-            rotation: 180
+        StatusBackButton {
             onClicked: {
                 root.close()
             }
