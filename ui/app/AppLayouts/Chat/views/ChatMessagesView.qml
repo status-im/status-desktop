@@ -293,6 +293,7 @@ Item {
             // recent time is added at index 0.
             prevMessageIndex: model.prevMsgIndex
             prevMessageAsJsonObj: messageStore.getMessageByIndexAsJson(model.prevMsgIndex)
+            prevMsgTimestamp: model.prevMsgTimestamp
             nextMessageIndex: model.nextMsgIndex
             nextMessageAsJsonObj: messageStore.getMessageByIndexAsJson(model.nextMsgIndex)
             onOpenStickerPackPopup: {

@@ -335,6 +335,10 @@ Loader {
             senderTrustStatus: root.senderTrustStatus
             chatLogView: root.chatLogView
 
+            prevMessageIndex: root.prevMessageIndex
+            prevMsgTimestamp: root.prevMsgTimestamp
+            messageTimestamp: root.messageTimestamp
+
             communityId: root.communityId
             stickersLoaded: root.stickersLoaded
             sticker: root.sticker

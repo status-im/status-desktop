@@ -51,6 +51,10 @@ Item {
 
     property string message: ""
 
+    property int prevMessageIndex
+    property string prevMsgTimestamp
+    property string messageTimestamp
+
     property var transactionParams
 
     signal openStickerPackPopup(string stickerPackId)
@@ -173,9 +177,9 @@ Item {
 
     DateGroup {
         id: dateGroupLbl
-        previousMessageIndex: prevMessageIndex
-        previousMessageTimestamp: prevMsgTimestamp
-        messageTimestamp: timestamp
+        previousMessageIndex: root.prevMessageIndex
+        previousMessageTimestamp: root.prevMsgTimestamp
+        messageTimestamp: root.messageTimestamp
         isActivityCenterMessage: activityCenterMessage
     }
 
@@ -403,7 +407,7 @@ Item {
             anchors.left: trustStatus.right
             anchors.leftMargin: 4
             color: Style.current.secondaryText
-            timestamp: messageTimestamp
+            timestamp: root.messageTimestamp
         }
 
         Loader {
