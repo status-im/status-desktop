@@ -26,8 +26,7 @@ StatusModal {
     }
 
     onOpened: {
-        nameInput.text = "";
-        enodeInput.text = "";
+        addrInput.text = "";
     }
     
     contentItem: StatusScrollView {
@@ -37,29 +36,19 @@ StatusModal {
         Column {
             id: nodesColumn
             width: parent.width
-            StatusInput {
-                id: nameInput
-                label: qsTr("Name")
-                placeholderText: qsTr("Specify a name")
-                validators: [StatusMinLengthValidator {
-                    minLength: 1
-                    errorMessage: qsTr("You need to enter a name")
-                }]
-                validationMode: StatusInput.ValidationMode.Always
-            }
 
             StatusInput {
-                id: enodeInput
-                label: popup.advancedStore.isWakuV2 ? qsTr("Storenode multiaddress") : qsTr("History node address")
-                placeholderText: popup.advancedStore.isWakuV2 ? "/ip4/0.0.0.0/tcp/123/..." : "enode://{enode-id}:{password}@{ip-address}:{port-number}"
+                id: addrInput
+                label: qsTr("Node multiaddress or DNS Discovery address")
+                placeholderText: "/ipv4/0.0.0.0/tcp/123/..."
                 validators: [
                 StatusMinLengthValidator {
                     minLength: 1
-                    errorMessage: popup.advancedStore.isWakuV2 ? qsTr("You need to enter the storenode multiaddress") : qsTr("You need to enter the enode address")
+                    errorMessage: qsTr("You need to enter a value")
                 },
                 StatusRegularExpressionValidator {
-                    errorMessage: popup.advancedStore.isWakuV2 ? qsTr('Multiaddress must start with a "/"') : qsTr("The format must be: enode://{enode-id}:{password}@{ip-address}:{port}")
-                    regularExpression: popup.advancedStore.isWakuV2 ? /\/.+/ : /enode:\/\/[a-z0-9]+:[a-z0-9]+@(\b25[0-5]|\b2[0-4][0-9]|\b[01]?[0-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}:[0-9]+/
+                    errorMessage: qsTr("Value should start with '/' or 'enr:'")
+                    regularExpression: /(\/|enr:).+/
                 }]
                 validationMode: StatusInput.ValidationMode.Always
             }
@@ -69,10 +58,9 @@ StatusModal {
     rightButtons: [
        StatusButton {
             text: qsTr("Save")
-            enabled: nameInput.valid && enodeInput.valid
-            // enabled: nameInput.text !== "" && enodeInput.text !== ""
+            enabled: addrInput.valid
             onClicked: {
-                root.messagingStore.saveNewMailserver(nameInput.text, enodeInput.text)
+                root.messagingStore.saveNewWakuNode(addrInput.text)
                 popup.close()
             }
         }

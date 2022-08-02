@@ -100,6 +100,9 @@ type
     EnableDiscV5*: bool
     UDPPort*: int
     AutoUpdate*: bool
+    EnableStore*: bool
+    StoreCapacity*: int
+    StoreSeconds*: int
 
   ShhextConfig* = object
     PFSEnabled*: bool
@@ -322,6 +325,9 @@ proc toWaku2Config*(jsonObj: JsonNode): Waku2Config =
   discard jsonObj.getProp("EnableDiscV5", result.EnableDiscV5)
   discard jsonObj.getProp("UDPPort", result.UDPPort)
   discard jsonObj.getProp("AutoUpdate", result.AutoUpdate)
+  discard jsonObj.getProp("EnableStore", result.EnableStore)
+  discard jsonObj.getProp("StoreCapacity", result.StoreCapacity)
+  discard jsonObj.getProp("StoreSeconds", result.StoreSeconds)
 
 proc toWakuConfig*(jsonObj: JsonNode): WakuConfig =
   discard jsonObj.getProp("Enabled", result.Enabled)

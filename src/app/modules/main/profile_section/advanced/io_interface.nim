@@ -21,6 +21,9 @@ method onFleetSet*(self: AccessInterface) {.base.} =
 method onBloomLevelSet*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method onWakuV2StoreToggled*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method onWakuV2LightClientSet*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
@@ -91,4 +94,10 @@ method toggleNodeManagementSection*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method enableDeveloperFeatures*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method isWakuV2StoreEnabled*(self: AccessInterface): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method toggleWakuV2Store*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")

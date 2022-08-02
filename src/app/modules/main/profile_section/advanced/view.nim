@@ -119,3 +119,16 @@ QtObject:
 
   proc toggleCommunitiesPortalSection*(self: View) {.slot.} =
     self.delegate.toggleCommunitiesPortalSection()
+
+  proc isWakuV2StoreEnabledChanged*(self: View) {.signal.}
+  proc getIsWakuV2StoreEnabled*(self: View): bool {.slot.} =
+    return self.delegate.isWakuV2StoreEnabled()
+  QtProperty[bool] isWakuV2StoreEnabled:
+    read = getIsWakuV2StoreEnabled
+    notify = isWakuV2StoreEnabledChanged
+
+  proc emitWakuV2StoreEnabledSignal*(self: View) =
+    self.isWakuV2StoreEnabledChanged()
+
+  proc toggleWakuV2Store*(self: View) {.slot.} =
+    self.delegate.toggleWakuV2Store()
