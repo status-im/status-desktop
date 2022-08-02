@@ -120,6 +120,7 @@ Item {
                  "3", "7", "11", "15", "19", "23", "4", "8", "12", "16", "20", "24"]
             ]
             height: 312
+            clip: false
             anchors.left: parent.left
             anchors.leftMargin: 12
             anchors.top: switchTabBar.bottom
