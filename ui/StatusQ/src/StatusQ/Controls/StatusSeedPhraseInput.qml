@@ -115,6 +115,7 @@ Item {
         id: seedWordInput
         implicitWidth: parent.width
         input.leftComponent: StatusBaseText {
+            rightPadding: 6
             text: root.leftComponentText
             color: seedWordInput.input.edit.activeFocus ?
                    Theme.palette.primaryColor1 : Theme.palette.baseColor1
