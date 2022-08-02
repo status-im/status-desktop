@@ -33,6 +33,7 @@ type
     configuration: NodeConfigDto
     fleetConfiguration: FleetConfiguration
     settingsService: settings_service.Service
+    wakuNodes: seq[string]
     events: EventEmitter
 
 # Forward declarations
@@ -48,6 +49,7 @@ proc newService*(fleetConfiguration: FleetConfiguration, settingsService: settin
   result.fleetConfiguration = fleetConfiguration
   result.settingsService = settingsService
   result.events = events
+  result.wakuNodes = @[]
 
 proc adaptNodeSettingsForTheAppNeed(self: Service) =
   self.configuration.DataDir = "./ethereum"
@@ -67,6 +69,10 @@ proc init*(self: Service) =
   try:
     let response = status_node_config.getNodeConfig()
     self.configuration = response.result.toNodeConfigDto()
+
+    let wakuNodes = self.configuration.ClusterConfig.WakuNodes
+    for nodeAddress in wakuNodes:
+      self.wakuNodes.add(nodeAddress)
 
     self.adaptNodeSettingsForTheAppNeed()
   except Exception as e:
@@ -202,6 +208,15 @@ proc getFleet*(self: Service): Fleet =
 proc getFleetAsString*(self: Service): string =
   result = $self.getFleet()
 
+proc getAllWakuNodes*(self: Service): seq[string] =
+  return self.wakuNodes
+
+proc saveNewWakuNode*(self: Service, nodeAddress: string) =
+  var newConfiguration = self.configuration
+  newConfiguration.ClusterConfig.WakuNodes.add(nodeAddress)
+  self.configuration = newConfiguration
+  discard self.saveConfiguration(newConfiguration)
+
 proc setFleet*(self: Service, fleet: string): bool =
   if(not self.settingsService.saveFleet(fleet)):
     error "error saving fleet ", procName="setFleet"
@@ -270,3 +285,13 @@ proc isV2LightMode*(self: Service): bool =
 
 proc isFullNode*(self: Service): bool =
    return self.configuration.WakuConfig.FullNode
+
+method isWakuV2StoreEnabled*(self: Service): bool =
+  return self.configuration.WakuV2Config.EnableStore
+
+proc setWakuV2StoreEnabled*(self: Service, enabled: bool, storeCapacity: int = 0, storeSeconds: int = 0): bool =
+  var newConfiguration = self.configuration
+  newConfiguration.WakuV2Config.EnableStore = enabled
+  newConfiguration.WakuV2Config.StoreCapacity = storeCapacity
+  newConfiguration.WakuV2Config.StoreSeconds = storeSeconds
+  return self.saveConfiguration(newConfiguration)

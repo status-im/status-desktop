@@ -13,6 +13,8 @@ QtObject {
     property bool isTelemetryEnabled: advancedModule? advancedModule.isTelemetryEnabled : false
     property bool isAutoMessageEnabled: advancedModule? advancedModule.isAutoMessageEnabled : false
     property bool isDebugEnabled: advancedModule? advancedModule.isDebugEnabled : false
+    property bool isCommunityHistoryArchiveSupportEnabled: advancedModule? advancedModule.isCommunityHistoryArchiveSupportEnabled : false
+    property bool isWakuV2StoreEnabled: advancedModule ? advancedModule.isWakuV2StoreEnabled : false
 
     property var customNetworksModel: advancedModule? advancedModule.customNetworksModel : []
 
@@ -32,6 +34,7 @@ QtObject {
         readonly property string communitiesPortal: "communitiesPortal"
         readonly property string communityPermissions: "communityPermissions"
         readonly property string discordImportTool: "discordImportTool"
+        readonly property string wakuV2StoreEnabled: "wakuV2StoreEnabled"
     }
 
     function logDir() {
@@ -112,6 +115,10 @@ QtObject {
         }
         else if (feature === experimentalFeatures.communitiesPortal) {
             advancedModule.toggleCommunitiesPortalSection()
+        }
+        else if (feature === experimentalFeatures.wakuV2StoreEnabled) {
+            // toggle history archive support
+            advancedModule.toggleWakuV2Store()
         }
         else if (feature === experimentalFeatures.activityCenter) {
             localAccountSensitiveSettings.isActivityCenterEnabled = !localAccountSensitiveSettings.isActivityCenterEnabled

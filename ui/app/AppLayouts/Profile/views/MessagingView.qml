@@ -337,7 +337,7 @@ SettingsContentBase {
 
         StatusListItem {
             Layout.fillWidth: true
-            title: qsTr("Waku nodes")
+            title: qsTr("History nodes")
             label: root.messagingStore.getMailserverNameForNodeAddress(root.messagingStore.activeMailserver)
             components: [
                 StatusIcon {
@@ -346,11 +346,33 @@ SettingsContentBase {
                     color: Theme.palette.baseColor1
                 }
             ]
-            onClicked: Global.openPopup(wakuNodeModalComponent)
+            onClicked: Global.openPopup(wakuStoreModalComponent)
         }
 
         Component {
-            id: wakuNodeModalComponent
+            id: wakuStoreModalComponent
+            WakuStoreModal {
+                messagingStore: root.messagingStore
+                advancedStore: root.advancedStore
+            }
+        }
+
+        StatusListItem {
+            Layout.fillWidth: true
+            title: qsTr("Waku Nodes")
+            visible: root.advancedStore.isWakuV2
+            components: [
+                StatusIcon {
+                    icon: "chevron-down"
+                    rotation: 270
+                    color: Theme.palette.baseColor1
+                }
+            ]
+            onClicked: Global.openPopup(wakuNodesModalComponent)
+        }
+
+        Component {
+            id: wakuNodesModalComponent
             WakuNodesModal {
                 messagingStore: root.messagingStore
                 advancedStore: root.advancedStore
