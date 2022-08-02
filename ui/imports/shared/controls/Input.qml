@@ -110,14 +110,6 @@ Item {
             Keys.onPressed: {
                 inputBox.keyPressed(event);
             }
-
-            MouseArea {
-                anchors.fill: parent
-                acceptedButtons: Qt.RightButton | Qt.LeftButton
-                onClicked: {
-                    inputValue.forceActiveFocus(Qt.MouseFocusReason)
-                }
-            }
         }
 
         SVGImage {
