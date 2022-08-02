@@ -169,6 +169,7 @@ Rectangle {
             active: buttonsContainer.deleteButtonActive && !buttonsContainer.isInPinnedPopup
             sourceComponent: StatusFlatRoundButton {
                 id: deleteButton
+                objectName: "chatDeleteMessageButton"
                 width: 32
                 height: 32
                 type: StatusFlatRoundButton.Type.Tertiary
@@ -190,6 +191,7 @@ Rectangle {
             id: deleteMessageConfirmationDialogComponent
 
             ConfirmationDialog {
+                confirmButtonObjectName: "chatButtonsPanelConfirmDeleteMessageButton"
                 header.title: qsTr("Confirm deleting this message")
                 confirmationText: qsTr("Are you sure you want to delete this message? Be aware that other clients are not guaranteed to delete the message as well.")
                 height: 260

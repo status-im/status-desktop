@@ -13,6 +13,7 @@ from enum import Enum
 from drivers.SquishDriver import *
 from drivers.SquishDriverVerification import *
 from drivers.SDKeyboardCommands import *
+from common.Common import *
 
 
 class ChatComponents(Enum):
@@ -22,6 +23,8 @@ class ChatComponents(Enum):
     LAST_MESSAGE_TEXT = "chatView_lastChatText_Text"
     MEMBERS_LISTVIEW = "chatView_chatMembers_ListView"
     REPLY_TO_MESSAGE_BUTTON = "chatView_replyToMessageButton"
+    DELETE_MESSAGE_BUTTON = "chatView_DeleteMessageButton"
+    CONFIRM_DELETE_MESSAGE_BUTTON = "chatButtonsPanelConfirmDeleteMessageButton_StatusButton"
 
 class ChatMessagesHistory(Enum):
     CHAT_CREATED_TEXT = 1
@@ -43,6 +46,13 @@ class StatusChatScreen:
         [loaded, last_message_obj] = is_loaded_visible_and_enabled(ChatComponents.LAST_MESSAGE_TEXT.value)
         verify(loaded, "Checking last message sent: " + message)
         verify_text_contains(str(last_message_obj.text), str(message))
+
+    def verify_last_message_sent_is_not(self, message: str):
+        [loaded, last_message_obj] = is_loaded_visible_and_enabled(ChatComponents.LAST_MESSAGE_TEXT.value)
+        if not loaded:
+            test.passes("Success: No message was found")
+            return
+        verify_text_does_not_contain(str(last_message_obj.text), str(message))
         
     def verify_chat_title(self, title: str):
         info_btn = get_obj(ChatComponents.TOOLBAR_INFO_BUTTON.value)
@@ -91,5 +101,19 @@ class StatusChatScreen:
                 user = membersList.itemAtIndex(index)
                 if(user.userName == member):
                     found = True
-                    break        
+                    break
         return found
+
+    def delete_message_at_index(self, index: int):
+        message_object_to_delete = get_obj(ChatComponents.CHAT_LOG.value).itemAtIndex(int(index))
+        hover_obj(message_object_to_delete)
+        click_obj_by_name(ChatComponents.DELETE_MESSAGE_BUTTON.value)
+        click_obj_by_name(ChatComponents.CONFIRM_DELETE_MESSAGE_BUTTON.value)
+
+    def cannot_delete_last_message(self):
+        [loaded, last_message_obj] = is_loaded_visible_and_enabled(ChatComponents.LAST_MESSAGE_TEXT.value)
+        if not loaded:
+            test.fail("No message found")
+            return 
+        hover_obj(last_message_obj)
+        object_not_enabled(ChatComponents.DELETE_MESSAGE_BUTTON.value)
