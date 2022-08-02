@@ -42,8 +42,8 @@ RUN sudo sed -i 's#\(mozilla/DST_Root_CA_X3.crt\)#!\1#' /etc/ca-certificates.con
  && sudo dpkg-reconfigure -fnoninteractive ca-certificates
 
 # Installing Golang
-RUN GOLANG_SHA256="d2c095c95f63c2a3ef961000e0ecb9d81d5c68b6ece176e2a8a2db82dc02931c" \
- && GOLANG_TARBALL="go1.16.9.linux-amd64.tar.gz" \
+RUN GOLANG_SHA256="9e5de37f9c49942c601b191ac5fba404b868bfc21d446d6960acc12283d6e5f2" \
+ && GOLANG_TARBALL="go1.18.5.linux-amd64.tar.gz" \
  && wget -q "https://dl.google.com/go/${GOLANG_TARBALL}" \
  && echo "${GOLANG_SHA256} ${GOLANG_TARBALL}" | sha256sum -c \
  && sudo tar -C /usr/local -xzf "${GOLANG_TARBALL}" \
