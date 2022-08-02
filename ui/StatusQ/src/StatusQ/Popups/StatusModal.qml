@@ -33,8 +33,7 @@ import "statusModal" as Spares
 
             leftButtons: [
                 StatusRoundButton {
-                    icon.name: "arrow-right"
-                    rotation: 180
+                    icon.name: "arrow-left"
                 }
             ]
             rightButtons: [

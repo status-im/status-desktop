@@ -119,10 +119,7 @@ Column {
         header.subTitle: "Subtitle"
         header.image.source: "qrc:/demoapp/data/profile-image-1.jpeg"
         leftButtons: [
-            StatusRoundButton {
-                icon.name: "arrow-right"
-                rotation: 180
-            }
+            StatusBackButton { }
         ]
         rightButtons: [
             StatusButton {
@@ -152,10 +149,7 @@ Column {
         }
 
         leftButtons: [
-            StatusRoundButton {
-                icon.name: "arrow-right"
-                rotation: 180
-            }
+            StatusBackButton { }
         ]
         rightButtons: [
             StatusButton {
@@ -183,10 +177,7 @@ Column {
         ]
 
         leftButtons: [
-            StatusRoundButton {
-                icon.name: "arrow-right"
-                rotation: 180
-            }
+            StatusBackButton { }
         ]
 
         contentItem: StatusBaseText {

@@ -50,3 +50,4 @@ StatusScrollBar 0.1 StatusScrollBar.qml
 StatusComboBox 0.1 StatusComboBox.qml
 StatusItemDelegate 0.1 StatusItemDelegate.qml
 StatusTextArea 0.1 StatusTextArea.qml
+StatusBackButton 0.1 StatusBackButton.qml

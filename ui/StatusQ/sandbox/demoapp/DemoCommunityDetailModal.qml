@@ -103,8 +103,7 @@ StatusModal {
             anchors.horizontalCenter: parent.horizontalCenter
             statusListItemTitle.font.pixelSize: 17
             title: "Leave community"
-            icon.name: "arrow-right"
-            icon.rotation: 180
+            icon.name: "arrow-left"
             type: StatusListItem.Type.Secondary
         }
     }
