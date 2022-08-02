@@ -652,13 +652,14 @@ Item {
                     property bool opened: false
 
                     rootStore: chatLayoutContainer.rootStore
+                    activityCenter: chatLayoutContainer.chatView.activityCenter
                     emojiPopup: statusEmojiPopup
                     anchors.top: parent.top
                     anchors.topMargin: 8
                     anchors.rightMargin: 8
                     anchors.bottom: parent.bottom
                     anchors.right: parent.right
-                    width: chatLayoutContainer.chatView.width - chatLayoutContainer.chatView.leftPanel.width - anchors.rightMargin - anchors.leftMargin
+                    width: parent.width - chatLayoutContainer.chatView.leftPanel.width - anchors.rightMargin - anchors.leftMargin
                     visible: createChatView.opened
 
                     Connections {

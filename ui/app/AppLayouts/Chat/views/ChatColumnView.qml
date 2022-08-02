@@ -58,6 +58,8 @@ Item {
     property bool contactRequestReceived: root.contactDetails.requestReceived
     property Component pinnedMessagesListPopupComponent
 
+    property alias activityCenter: activityCenter
+
     signal openAppSearch()
     signal openStickerPackPopup(string stickerPackId)
 
