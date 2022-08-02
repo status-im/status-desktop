@@ -270,3 +270,13 @@ proc isV2LightMode*(self: Service): bool =
 
 proc isFullNode*(self: Service): bool =
    return self.configuration.WakuConfig.FullNode
+
+method isWakuV2StoreEnabled*(self: Service): bool =
+  return self.configuration.WakuV2Config.EnableStore
+
+proc setWakuV2StoreEnabled*(self: Service, enabled: bool, storeCapacity: int = 0, storeSeconds: int = 0): bool =
+  var newConfiguration = self.configuration
+  newConfiguration.WakuV2Config.EnableStore = enabled
+  newConfiguration.WakuV2Config.StoreCapacity = storeCapacity
+  newConfiguration.WakuV2Config.StoreSeconds = storeSeconds
+  return self.saveConfiguration(newConfiguration)

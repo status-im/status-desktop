@@ -149,6 +149,8 @@ QtObject {
 
     property var walletSectionTransactionsInst: walletSectionTransactions
 
+    property bool isWakuV2StoreEnabled: advancedModule ? advancedModule.isWakuV2StoreEnabled: false
+
     property string communityTags: communitiesModule.tags
 
     property var stickersModuleInst: stickersModule
