@@ -84,7 +84,7 @@ private:
     int m_derivedAddressIndex{0};
     DerivedWalletAddressPtr m_selectedDerivedAddress;
     GoAccounts::DerivationPath m_derivationPath;
-    bool m_customDerivationPath{};
+    bool m_customDerivationPath{false};
 
     static constexpr int m_derivedAddressesPageSize{15};
     static constexpr int m_maxDerivedAddresses{5 * m_derivedAddressesPageSize};

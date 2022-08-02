@@ -47,8 +47,8 @@ private:
 
     using AssetModel = Helpers::QObjectVectorModel<WalletAsset>;
     std::shared_ptr<AssetModel> m_assets;
-    float m_totalValue{};
-    bool m_assetsReady{};
+    float m_totalValue{0};
+    bool m_assetsReady{false};
 };
 
 } // namespace Status::Wallet

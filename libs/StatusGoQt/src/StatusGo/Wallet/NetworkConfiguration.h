@@ -24,10 +24,10 @@ struct NetworkConfiguration
     std::optional<QUrl> iconUrl;
     std::optional<QString> nativeCurrencyName;
     std::optional<QString> nativeCurrencySymbol;
-    unsigned int nativeCurrencyDecimals{};
-    bool isTest{};
-    unsigned int layer{};
-    bool enabled{};
+    unsigned int nativeCurrencyDecimals{0};
+    bool isTest{false};
+    unsigned int layer{0};
+    bool enabled{false};
     QColor chainColor;
     QString shortName;
 };
