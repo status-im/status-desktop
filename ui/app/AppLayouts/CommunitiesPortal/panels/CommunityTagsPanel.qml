@@ -8,6 +8,7 @@ import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
 
+import shared.controls 1.0
 import utils 1.0
 
 StatusScrollView {
@@ -62,6 +63,7 @@ StatusScrollView {
     onSelectedTagsChanged: updateSelectedTags()
 
     padding: 0
+    contentWidth: column.width
 
     QtObject {
         id: d
@@ -73,27 +75,34 @@ StatusScrollView {
     ColumnLayout {
         id: column
         width: root.availableWidth
-        spacing: 20
+        spacing: Style.current.padding
 
         StatusInput {
             id: tagsFilter
             leftPadding: 0
             rightPadding: 0
             label: qsTr("Select tags that will fit your Community")
+            labelPadding: Style.current.bigPadding
+            font.pixelSize: 15
             input.icon.name: "search"
             placeholderText: qsTr("Search tags")
             Layout.fillWidth: true
         }
 
-        StatusCommunityTags {
-            filterString: tagsFilter.text
-            model: d.tagsModel
-            enabled: d.cntSelectedTags < maxSelectedTags
-            onClicked: {
-                d.cntSelectedTags++;
-                item.selected = true;
+        ColumnLayout {
+            Layout.topMargin: Style.current.padding
+            Layout.bottomMargin: Style.current.padding
+
+            StatusCommunityTags {
+                filterString: tagsFilter.text
+                model: d.tagsModel
+                enabled: d.cntSelectedTags < maxSelectedTags
+                onClicked: {
+                    d.cntSelectedTags++;
+                    item.selected = true;
+                }
+                Layout.fillWidth: true
             }
-            Layout.fillWidth: true
         }
 
         StatusModalDivider {
@@ -108,7 +117,7 @@ StatusScrollView {
             }
 
             StatusBaseText {
-                text: d.cntSelectedTags + "/" + maxSelectedTags
+                text: qsTr("%1 / %2").arg(d.cntSelectedTags).arg(maxSelectedTags)
                 color: Theme.palette.baseColor1
                 font.pixelSize: 13
             }
