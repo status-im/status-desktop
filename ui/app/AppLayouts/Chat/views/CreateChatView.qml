@@ -18,6 +18,7 @@ Page {
 
     property ListModel contactsModel: ListModel { }
     property var rootStore
+    property var activityCenter: null
     property var emojiPopup: null
 
     Keys.onEscapePressed: Global.closeCreateChatView()
@@ -78,9 +79,10 @@ Page {
     // TODO: Could it be replaced to `GroupChatPanel`?
     header: RowLayout {
         id: headerRow
+        width: parent.width
+        height: tagSelector.height
         anchors.top: parent.top
         anchors.topMargin: Style.current.halfPadding
-        height: tagSelector.height
         clip: true
         spacing: Style.current.padding
         StatusTagSelector {
@@ -124,13 +126,15 @@ Page {
         }
 
         Item {
-            implicitHeight: 32
-            implicitWidth: 32
+            Layout.preferredWidth: 32
+            Layout.preferredHeight: 32
             Layout.alignment: Qt.AlignTop
-
+            Layout.topMargin: 5
             StatusActivityCenterButton {
                 id: notificationButton
-                anchors.right: parent.right
+                width: parent.width
+                height: parent.height
+                tooltip.offset: width/2
                 unreadNotificationsCount: activityCenter.unreadNotificationsCount
                 onClicked: activityCenter.open()
             }
