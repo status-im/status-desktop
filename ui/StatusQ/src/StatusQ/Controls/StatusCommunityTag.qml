@@ -33,6 +33,8 @@ Rectangle {
         anchors.centerIn: parent
 
         StatusEmoji {
+            width: 18
+            height: 18
             emojiId: root.emoji != "" ? Emoji.iconHex(root.emoji) : ""
             anchors.verticalCenter: parent.verticalCenter
         }
@@ -44,7 +46,9 @@ Rectangle {
 
         StatusBaseText {
             anchors.verticalCenter: parent.verticalCenter
-            font.pixelSize: 13
+            font.pixelSize: 15
+            font.weight: Font.DemiBold
+            font.capitalization: Font.AllLowercase
             color: root.enabled ? Theme.palette.primaryColor1 : Theme.palette.baseColor1
             text: root.name
         }
