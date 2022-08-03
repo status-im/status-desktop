@@ -43,6 +43,14 @@ Row {
     id: floatingButtons
 
     /*!
+       \qmlproperty repeater
+        This property represents the repeater of selectable items shown to the user.
+        Can be used to assign objectName to the repeater
+        \endqml
+    */
+    readonly property alias repeater: itemSelectionRepeater
+
+    /*!
        \qmlproperty delegate
         This property represents the delegate of selectable items shown to the user.
         Can be used to assign delegate to the buttons selector
