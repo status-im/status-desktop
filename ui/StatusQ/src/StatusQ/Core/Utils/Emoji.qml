@@ -19,7 +19,7 @@ QtObject {
         "svg": "svg"
     }
     property string base: Qt.resolvedUrl("../../../assets/twemoji/")
-
+    property var emojiJSON: EmojiJSON
     function parse(text, renderSize = size.small, renderFormat = format.svg) {
         const renderSizes = renderSize.split("x");
         if (!renderSize.includes("x") || renderSizes.length !== 2) {

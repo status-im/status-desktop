@@ -1,5 +1,4 @@
 module StatusQ.Core.Utils
 
-EmojiJSON 1.0 emojiList.js
 singleton Utils 0.1 Utils.qml
 singleton Emoji 0.1 Emoji.qml
