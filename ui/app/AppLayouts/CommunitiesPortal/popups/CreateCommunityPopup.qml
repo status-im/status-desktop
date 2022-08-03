@@ -1,7 +1,6 @@
 import QtQuick 2.14
 import QtQuick.Controls 2.4
 import QtQuick.Layouts 1.14
-import QtGraphicalEffects 1.14
 import QtQuick.Dialogs 1.3
 
 import utils 1.0
@@ -31,7 +30,7 @@ StatusStackModal {
     nextButton: StatusButton {
         objectName: "createCommunityNextBtn"
         text: qsTr("Next")
-        enabled:  nameInput.valid && descriptionTextInput.valid
+        enabled: nameInput.valid && descriptionTextInput.valid
         onClicked: currentIndex++
     }
 
@@ -42,6 +41,8 @@ StatusStackModal {
         onClicked: d.createCommunity()
     }
 
+    onAboutToShow: nameInput.input.edit.forceActiveFocus()
+
     stackItems: [
         StatusScrollView {
             id: generalView
@@ -49,20 +50,20 @@ StatusStackModal {
             ColumnLayout {
                 id: generalViewLayout
                 width: generalView.availableWidth
-                spacing: 12
+                spacing: 16
 
                 CommunityNameInput {
                     id: nameInput
                     input.edit.objectName: "createCommunityNameInput"
                     Layout.fillWidth: true
-                    Component.onCompleted: nameInput.input.forceActiveFocus(
-                                                Qt.MouseFocusReason)
+                    input.tabNavItem: descriptionTextInput.input.edit
                 }
 
                 CommunityDescriptionInput {
                     id: descriptionTextInput
                     input.edit.objectName: "createCommunityDescriptionInput"
                     Layout.fillWidth: true
+                    input.tabNavItem: nameInput.input.edit
                 }
 
                 CommunityLogoPicker {

@@ -19,7 +19,7 @@ ColumnLayout {
     spacing: 8
 
     StatusBaseText {
-        text: qsTr("Community colour")
+        text: qsTr("Community color")
         font.pixelSize: 15
         color: Theme.palette.directColor1
     }

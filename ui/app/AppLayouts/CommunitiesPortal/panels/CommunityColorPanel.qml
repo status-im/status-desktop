@@ -12,10 +12,10 @@ import StatusQ.Popups 0.1
 StatusScrollView {
     id: root
 
-    property string title: qsTr("Community Colour")
+    property string title: qsTr("Community Color")
 
     property var rightButtons: StatusButton {
-        text: qsTr("Select Community Colour")
+        text: qsTr("Select Community Color")
         onClicked: root.accepted()
     }
 
@@ -45,8 +45,8 @@ StatusScrollView {
         StatusColorSpace {
             id: colorSpace
 
-            property real hueFactor: Math.max(rootColor.g + rootColor.b * 0.4,
-                                                rootColor.g + rootColor.r * 0.6)
+            readonly property real hueFactor: Math.max(rootColor.g + rootColor.b * 0.4,
+                                                       rootColor.g + rootColor.r * 0.6)
 
             minSaturate: Math.max(0.4, hueFactor * 0.55)
             maxSaturate: 1.0
@@ -67,7 +67,7 @@ StatusScrollView {
             validators: [
                 StatusRegularExpressionValidator {
                     regularExpression: /^#(?:[0-9a-fA-F]{3}){1,2}$/
-                    errorMessage: qsTr("This is not a valid colour")
+                    errorMessage: qsTr("This is not a valid color")
                 }
             ]
             validationMode: StatusInput.ValidationMode.Always
@@ -84,7 +84,7 @@ StatusScrollView {
         }
 
         StatusBaseText {
-            text: qsTr("White text should be legable on top of this colour")
+            text: qsTr("White text should be legible on top of this color")
             font.pixelSize: 15
         }
 
@@ -105,7 +105,7 @@ StatusScrollView {
         }
 
         StatusBaseText {
-            text: qsTr("Standard colours")
+            text: qsTr("Standard colors")
             font.pixelSize: 15
         }
 

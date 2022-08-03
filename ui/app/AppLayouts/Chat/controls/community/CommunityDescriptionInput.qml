@@ -12,13 +12,16 @@ StatusInput {
 
     leftPadding: 0
     rightPadding: 0
-    label: qsTr("Description")
+    label: qsTr("Give it a short description")
     charLimit: 140
 
     placeholderText: qsTr("What your community is about")
     input.multiline: true
     minimumHeight: 88
     maximumHeight: 88
+
+    input.verticalAlignment: Qt.AlignTop
+    input.placeholder.verticalAlignment: Qt.AlignTop
 
     validators: [
         StatusMinLengthValidator {

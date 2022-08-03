@@ -45,7 +45,7 @@ ColumnLayout {
 
     StatusPickerButton {
         bgColor: root.selectedTags == "" ? Theme.palette.baseColor2 : "transparent"
-        text: root.selectedTags == "" ? "Choose tags describing the community" : ""
+        text: root.selectedTags == "" ? qsTr("Choose tags describing the community") : ""
         onClicked: root.pick()
         Layout.fillWidth: true
 
