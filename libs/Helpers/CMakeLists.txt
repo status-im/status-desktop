@@ -35,17 +35,17 @@ endif()
 
 set(BUILD_GENERATED_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/generated)
 
-configure_file("${CMAKE_CURRENT_SOURCE_DIR}/template/BuildConfiguration.h.in"
+configure_file("template/BuildConfiguration.h.in"
                "${BUILD_GENERATED_DIRECTORY}/Helpers/BuildConfiguration.h"
                @ONLY)
 
 target_include_directories(Helpers
     PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/src
+        src
         ${BUILD_GENERATED_DIRECTORY}
 
     PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/Helpers
+        src/Helpers
         ${BUILD_GENERATED_DIRECTORY}/Helpers
 )
 
@@ -66,12 +66,14 @@ install(
 
 target_sources(Helpers
     PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/Helpers/conversions.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/Helpers/conversions.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/Helpers/helpers.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/Helpers/logs.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/Helpers/logs.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/Helpers/NamedType.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/Helpers/QObjectVectorModel.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/Helpers/Singleton.h
+        src/Helpers/conversions.h
+        src/Helpers/conversions.cpp
+        src/Helpers/helpers.h
+        src/Helpers/logs.h
+        src/Helpers/logs.cpp
+        src/Helpers/NamedType.h
+        src/Helpers/QObjectVectorModel.h
+        src/Helpers/Singleton.h
+        src/Helpers/Macros.h
+        src/Helpers/JsonMacros.h
 )

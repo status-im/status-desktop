@@ -45,16 +45,30 @@ Item {
                 //type:         // TODO: appController.bannerController.type
                 visible: false  // TODO: appController.bannerController.visible
             }
-            Loader {
+
+            StackLayout {
+                id: container
                 Layout.fillWidth: true
                 Layout.fillHeight: true
 
-                sourceComponent: navBar.currentSection
+                currentIndex: navBar.currentIndex
+
+                Repeater{
+                    model: appSections.sections
+
+                    delegate: Loader {
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+
+                        sourceComponent: modelData.content
+                    }
+                }
             }
         }
     }
 
     StatusApplicationSections {
         id: appSections
+        appController: root.appController
     }
 }

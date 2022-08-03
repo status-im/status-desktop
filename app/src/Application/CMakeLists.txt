@@ -6,8 +6,12 @@ target_include_directories(${PROJECT_NAME}
 
 target_sources(${PROJECT_NAME}
     PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/ApplicationController.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/ApplicationController.cpp
+        ApplicationController.h
+        ApplicationController.cpp
+        DataProvider.h
+        DataProvider.cpp
+        DbSettingsObj.h
+        DbSettingsObj.cpp
 
-        ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt
+        CMakeLists.txt
 )

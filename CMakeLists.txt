@@ -31,6 +31,7 @@ add_subdirectory(vendor)
 
 add_subdirectory(libs/ApplicationCore)
 add_subdirectory(libs/Assets)
+add_subdirectory(libs/ChatSection)
 add_subdirectory(libs/Helpers)
 add_subdirectory(libs/Onboarding)
 add_subdirectory(libs/Wallet)

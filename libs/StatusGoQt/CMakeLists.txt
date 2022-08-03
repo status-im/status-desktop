@@ -37,13 +37,13 @@ add_library(Status::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
 target_include_directories(${PROJECT_NAME}
     PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusGo
+        src/StatusGo
     # TODO: Workaround to QML_ELEMENT Qt6
     INTERFACE
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusGo
+        src/StatusGo
 
     PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/src
+        src
 )
 
 add_subdirectory(tests)
@@ -69,35 +69,45 @@ install(
 
 target_sources(${PROJECT_NAME}
     PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusGo/General.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusGo/General.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusGo/Types.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusGo/Utils.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusGo/Utils.cpp
+        src/StatusGo/General.h
+        src/StatusGo/General.cpp
+        src/StatusGo/Types.h
+        src/StatusGo/Utils.h
+        src/StatusGo/Utils.cpp
 
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusGo/Accounts/Accounts.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusGo/Accounts/Accounts.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusGo/Accounts/accounts_types.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusGo/Accounts/AccountsAPI.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusGo/Accounts/AccountsAPI.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusGo/Accounts/ChatOrWalletAccount.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusGo/Accounts/ChatOrWalletAccount.cpp
+        src/StatusGo/Accounts/Accounts.h
+        src/StatusGo/Accounts/Accounts.cpp
+        src/StatusGo/Accounts/accounts_types.h
+        src/StatusGo/Accounts/AccountsAPI.h
+        src/StatusGo/Accounts/AccountsAPI.cpp
+        src/StatusGo/Accounts/ChatOrWalletAccount.h
+        src/StatusGo/Accounts/ChatOrWalletAccount.cpp
 
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusGo/Messenger/Service.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusGo/Messenger/Service.cpp
+        src/StatusGo/Chat/ChatAPI.h
+        src/StatusGo/Chat/ChatAPI.cpp
+        src/StatusGo/Chat/ChatDto.h
+        src/StatusGo/Chat/ChatDto.cpp
 
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusGo/Metadata/api_response.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusGo/Metadata/api_response.cpp
+        src/StatusGo/Messenger/Service.h
+        src/StatusGo/Messenger/Service.cpp
 
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusGo/SignalsManager.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusGo/SignalsManager.cpp
+        src/StatusGo/Metadata/api_response.h
+        src/StatusGo/Metadata/api_response.cpp
 
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusGo/Wallet/BigInt.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusGo/Wallet/BigInt.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusGo/Wallet/DerivedAddress.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusGo/Wallet/NetworkConfiguration.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusGo/Wallet/Token.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusGo/Wallet/wallet_types.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusGo/Wallet/WalletApi.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/StatusGo/Wallet/WalletApi.cpp
+        src/StatusGo/SignalsManager.h
+        src/StatusGo/SignalsManager.cpp
+
+        src/StatusGo/Settings/SettingsAPI.h
+        src/StatusGo/Settings/SettingsAPI.cpp
+        src/StatusGo/Settings/SettingsDto.h
+        src/StatusGo/Settings/SettingsDto.cpp
+
+        src/StatusGo/Wallet/BigInt.h
+        src/StatusGo/Wallet/BigInt.cpp
+        src/StatusGo/Wallet/DerivedAddress.h
+        src/StatusGo/Wallet/NetworkConfiguration.h
+        src/StatusGo/Wallet/Token.h
+        src/StatusGo/Wallet/wallet_types.h
+        src/StatusGo/Wallet/WalletApi.h
+        src/StatusGo/Wallet/WalletApi.cpp
 )
