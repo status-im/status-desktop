@@ -106,6 +106,7 @@ Column {
         objectName: "generatedAccounts"
         model: walletStore.generatedAccounts
         delegate: WalletAccountDelegate {
+            objectName: "walletSettingsAccountDelegate"
             account: model
             onGoToAccountView: {
                 root.goToAccountView(model.address)

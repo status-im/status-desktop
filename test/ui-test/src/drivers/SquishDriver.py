@@ -122,6 +122,16 @@ def is_text_matching(objName: str, text: str):
         return False
 
 
+def is_text_matching_insensitive(objName: str, text: str):
+    try:
+        obj = squish.waitForObject(getattr(names, objName))
+        test.compare(obj.text.toLower(), text.lower(), "Found the following text " + text.lower())
+        return True
+    except LookupError:
+        print(objName + " is not found, please check app for correct object and update object mapper")
+        return False
+
+
 # It types the specified text into the given object (as if the user had used the keyboard):
 def type(objName: str, text: str):
     try:

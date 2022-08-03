@@ -8,10 +8,12 @@
 # * \brief   Sign Up and Login for new users to the app.
 # *****************************************************************************/
 
+from array import array
 from enum import Enum
 import sys
 from drivers.SquishDriver import *
 from drivers.SquishDriverVerification import *
+from common.SeedUtils import *
 
 
 class AgreementPopUp(Enum):
@@ -38,11 +40,12 @@ class SignUpComponents(Enum):
     
 class SeedPhraseComponents(Enum):
     IMPORT_A_SEED_TEXT: str = "import_a_seed_phrase_StatusBaseText"
+    INVALID_SEED_TEXT: str = "onboarding_InvalidSeed_Text"
     IMPORT_A_SEED_BUTTON: str = "keysMainView_PrimaryAction_Button"
-    TWELVE_WORDS_BUTTON: str = "switchTabBar_12_words_StatusBaseText"
-    EIGHTEEN_WORDS_BUTTON: str = "switchTabBar_18_words_StatusBaseText"
-    TWENTY_FOUR_BUTTON: str = "switchTabBar_24_words_StatusBaseText"
-    SEEDS_WORDS_TEXTFIELD: str = "mainWindow_placeholder_StatusBaseText"
+    TWELVE_WORDS_BUTTON: str = "switchTabBar_12_words_Button"
+    EIGHTEEN_WORDS_BUTTON: str = "switchTabBar_18_words_Button"
+    TWENTY_FOUR_BUTTON: str = "switchTabBar_24_words_Button"
+    SEEDS_WORDS_TEXTFIELD_template: str = "onboarding_SeedPhrase_Input_TextField_"
     SUBMIT_BUTTON: str = "seedPhraseView_Submit_Button"
 
 class StatusWelcomeScreen:
@@ -59,17 +62,19 @@ class StatusWelcomeScreen:
         click_obj_by_name(SeedPhraseComponents.IMPORT_A_SEED_TEXT.value)
         click_obj_by_name(SeedPhraseComponents.IMPORT_A_SEED_BUTTON.value)
 
-    def input_seed_phrase(self, seed: str, words: str, occurrence: str):
-        if words =='18':
-            click_obj_by_name(SeedPhraseComponents.EIGHTEEN_WORDS_BUTTON.value)
+    def input_seed_phrase(self, seed_phrase: str):
+        words = seed_phrase.split()
         
-        if words == '24':
-            click_obj_by_name(SeedPhraseComponents.TWENTY_FOUR_BUTTON.value)
-            
-        if words == '12':
+        if len(words) == 12:
             click_obj_by_name(SeedPhraseComponents.TWELVE_WORDS_BUTTON.value)
+        elif len(words) == 18:
+            click_obj_by_name(SeedPhraseComponents.EIGHTEEN_WORDS_BUTTON.value)
+        elif len(words) == 24:
+            click_obj_by_name(SeedPhraseComponents.TWENTY_FOUR_BUTTON.value)
+        else:
+            test.fail("Wrong amount of seed words", len(words))
 
-        type(SeedPhraseComponents.SEEDS_WORDS_TEXTFIELD.value, seed)
+        input_seed_phrase(SeedPhraseComponents.SEEDS_WORDS_TEXTFIELD_template.value, words)
 
     def input_username_and_password_and_finalize_sign_up(self, username: str, password: str):
         self.input_username(username)
@@ -105,4 +110,7 @@ class StatusWelcomeScreen:
         click_obj_by_name(AgreementPopUp.GET_STARTED_BUTTON.value)
         verify_text_matching(SignUpComponents.WELCOME_TO_STATUS.value, "Welcome to Status")
         click_obj_by_name(SignUpComponents.NEW_TO_STATUS.value)
+        
+    def seed_phrase_visible(self):
+        is_loaded_visible_and_enabled(SeedPhraseComponents.INVALID_SEED_TEXT.value)
         

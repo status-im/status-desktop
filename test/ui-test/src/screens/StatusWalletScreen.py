@@ -3,6 +3,7 @@ import time
 import sys
 from drivers.SquishDriver import *
 from drivers.SquishDriverVerification import *
+from common.SeedUtils import *
 
 
 class SigningPhrasePopUp(Enum):
@@ -49,18 +50,7 @@ class AddAccountPopup(Enum):
     ADDRESS_INPUT: str = "mainWallet_Add_Account_Popup_Watch_Only_Address"
     PRIVATE_KEY_INPUT: str = "mainWallet_Add_Account_Popup_Private_Key"
     ADD_ACCOUNT_BUTTON: str = "mainWallet_Add_Account_Popup_Footer_Add_Account"
-    SEED_PHRASE_INPUT_0: str = "mainWindow_Add_Account_Popup_Seed_Phrase_0"
-    SEED_PHRASE_INPUT_1: str = "mainWindow_Add_Account_Popup_Seed_Phrase_1"
-    SEED_PHRASE_INPUT_2: str = "mainWindow_Add_Account_Popup_Seed_Phrase_2"
-    SEED_PHRASE_INPUT_3: str = "mainWindow_Add_Account_Popup_Seed_Phrase_3"
-    SEED_PHRASE_INPUT_4: str = "mainWindow_Add_Account_Popup_Seed_Phrase_4"
-    SEED_PHRASE_INPUT_5: str = "mainWindow_Add_Account_Popup_Seed_Phrase_5"
-    SEED_PHRASE_INPUT_6: str = "mainWindow_Add_Account_Popup_Seed_Phrase_6"
-    SEED_PHRASE_INPUT_7: str = "mainWindow_Add_Account_Popup_Seed_Phrase_7"
-    SEED_PHRASE_INPUT_8: str = "mainWindow_Add_Account_Popup_Seed_Phrase_8"
-    SEED_PHRASE_INPUT_9: str = "mainWindow_Add_Account_Popup_Seed_Phrase_9"
-    SEED_PHRASE_INPUT_10: str = "mainWindow_Add_Account_Popup_Seed_Phrase_10"
-    SEED_PHRASE_INPUT_11: str = "mainWindow_Add_Account_Popup_Seed_Phrase_11"
+    SEED_PHRASE_INPUT_TEMPLATE: str = "mainWindow_Add_Account_Popup_Seed_Phrase_"
 
 
 class StatusWalletScreen:
@@ -108,27 +98,16 @@ class StatusWalletScreen:
         
         words = mnemonic.split()
         scroll_obj_by_name(AddAccountPopup.SCROLL_BAR.value)
-        time.sleep(2)
+        time.sleep(1)
 
         scroll_obj_by_name(AddAccountPopup.SCROLL_BAR.value)
-        time.sleep(2)
+        time.sleep(1)
 
         scroll_obj_by_name(AddAccountPopup.SCROLL_BAR.value)
-        time.sleep(2)
+        time.sleep(1)
 
-        type(AddAccountPopup.SEED_PHRASE_INPUT_0.value, words[0])
-        type(AddAccountPopup.SEED_PHRASE_INPUT_1.value, words[1])
-        type(AddAccountPopup.SEED_PHRASE_INPUT_2.value, words[2])
-        type(AddAccountPopup.SEED_PHRASE_INPUT_3.value, words[3])
-        type(AddAccountPopup.SEED_PHRASE_INPUT_4.value, words[4])
-        type(AddAccountPopup.SEED_PHRASE_INPUT_5.value, words[5])
-        type(AddAccountPopup.SEED_PHRASE_INPUT_6.value, words[6])
-        type(AddAccountPopup.SEED_PHRASE_INPUT_7.value, words[7])
-        type(AddAccountPopup.SEED_PHRASE_INPUT_8.value, words[8])
-        type(AddAccountPopup.SEED_PHRASE_INPUT_9.value, words[9])
-        type(AddAccountPopup.SEED_PHRASE_INPUT_10.value, words[10])
-        type(AddAccountPopup.SEED_PHRASE_INPUT_11.value, words[11])
-        time.sleep(2)
+        input_seed_phrase(AddAccountPopup.SEED_PHRASE_INPUT_TEMPLATE.value, words)
+        time.sleep(1)
         
         click_obj_by_name(AddAccountPopup.ADD_ACCOUNT_BUTTON.value)
         

@@ -89,6 +89,7 @@ Item {
 
         StatusSwitchTabBar {
             id: switchTabBar
+            objectName: "onboardingSeedPhraseSwitchBar"
             anchors.top: headlineText.bottom
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.topMargin: 24
@@ -97,7 +98,7 @@ Item {
                  StatusSwitchTabButton {
                     text: qsTr("%1 words").arg(modelData)
                     id: seedPhraseWords
-                    objectName: qsTr("%1SeedButton").arg(modelData)
+                    objectName: `${modelData}SeedButton`
                 }
             }
             onCurrentIndexChanged: {
@@ -111,6 +112,7 @@ Item {
 
         StatusGridView {
             id: grid
+            objectName: "seedPhraseGridView"
             width: parent.width
             property var wordIndex: [
                 ["1", "3", "5", "7", "9", "11", "2", "4", "6", "8", "10", "12"]
@@ -174,6 +176,7 @@ Item {
 
             delegate: StatusSeedPhraseInput {
                 id: seedWordInput
+                textEdit.input.edit.objectName: `statusSeedPhraseInputField${seedWordInput.leftComponentText}`
                 width: (grid.cellWidth - 8)
                 height: (grid.cellHeight - 8)
                 Behavior on width { NumberAnimation { duration: 180 } }
@@ -259,6 +262,7 @@ Item {
 
         StatusBaseText {
             id: invalidSeedTxt
+            objectName: "onboardingInvalidSeedText"
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: grid.bottom
             anchors.topMargin: 24

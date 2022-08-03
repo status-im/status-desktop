@@ -13,11 +13,12 @@ settings_Wallet_MainView_GeneratedAccounts = {"container": statusDesktop_mainWin
 settings_Wallet_AccountView_DeleteAccount = {"container": statusDesktop_mainWindow, "type": "StatusButton", "objectName": "deleteAccountButton"}
 settings_Wallet_AccountView_DeleteAccount_Confirm = {"container": statusDesktop_mainWindow, "type": "StatusButton", "objectName": "confirmDeleteAccountButton"}
 mainWindow_ScrollView_2 = {"container": statusDesktop_mainWindow, "occurrence": 2, "type": "StatusScrollView", "unnamed": 1, "visible": True}
-twelve_seed_phrase_address = {"container": mainWindow_ScrollView_2, "text": "0x8285cb9bf17b23d64a489a8dad29163dd227d0fd", "type": "StatusBaseText", "unnamed": 1, "visible": True}
-eighteen_seed_phrase_address = {"container": mainWindow_ScrollView_2, "text": "0xba1d0d6ef35df8751df5faf55ebd885ad0e877b0", "type": "StatusBaseText", "unnamed": 1, "visible": True}
-twenty_four_seed_phrase_address = {"container": mainWindow_ScrollView_2, "text": "0x28cf6770664821a51984daf5b9fb1b52e6538e4b", "type": "StatusBaseText", "unnamed": 1, "visible": True}
 settings_Wallet_MainView_Networks = {"container": statusDesktop_mainWindow, "objectName": "networksItem", "type": "StatusListItem"}
 settings_Wallet_NetworksView_TestNet_Toggle = {"container": statusDesktop_mainWindow, "objectName": "testnetModeSwitch", "type": "StatusSwitch"}
+
+generatedAccounts_ListView = {"container": statusDesktop_mainWindow, "objectName": "generatedAccounts", "type": "ListView"}
+generatedAccounts_walletSettingsAccountDelegate_WalletAccountDelegate = {"container": generatedAccounts_ListView, "index": 0, "objectName": "walletSettingsAccountDelegate", "type": "WalletAccountDelegate"}
+walletSettingsAccountDelegate_WalletAddress_Text = {"container": generatedAccounts_walletSettingsAccountDelegate_WalletAccountDelegate, "objectName": "statusListItemSubTitle", "type": "StatusBaseText"}
 
 # Advanced Settings:
 walletSettingsLineButton = {"container": statusDesktop_mainWindow, "objectName": "WalletSettingsLineButton", "type": "StatusSettingsLineButton", "visible": True}
