@@ -4,6 +4,7 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 
+/// Forces size, hard to reuse it
 StatusBaseText {
     id: root 
 
@@ -18,7 +19,6 @@ StatusBaseText {
     color: Theme.palette.baseColor1
 
     Component.onCompleted: {
-        maxWidth = width
         expanded = actualWidth <= maxWidth
     }
 
@@ -29,9 +29,9 @@ StatusBaseText {
 
         onClicked: {
             if (root.expanded) {
-                width = root.width = root.maxWidth
+                root.width = root.maxWidth
             } else {
-                width = root.width = root.actualWidth
+                root.width = root.actualWidth
             }
             root.expanded = !root.expanded
         }

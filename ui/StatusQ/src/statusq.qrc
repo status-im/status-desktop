@@ -15,6 +15,7 @@
         <file>StatusQ/Components/private/statusMessage/StatusTimeStampLabel.qml</file>
         <file>StatusQ/Components/qmldir</file>
         <file>StatusQ/Components/StatusAddress.qml</file>
+        <file>StatusQ/Components/StatusAddressPanel.qml</file>
         <file>StatusQ/Components/StatusBadge.qml</file>
         <file>StatusQ/Components/StatusCard.qml</file>
         <file>StatusQ/Components/StatusChatInfoToolBar.qml</file>

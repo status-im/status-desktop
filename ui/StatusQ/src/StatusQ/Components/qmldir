@@ -1,6 +1,7 @@
 module StatusQ.Components
 
 StatusAddress 0.1 StatusAddress.qml
+StatusAddressPanel 0.1 StatusAddressPanel.qml
 StatusBadge 0.1 StatusBadge.qml
 StatusChatInfoToolBar 0.1 StatusChatInfoToolBar.qml
 StatusChatList 0.1 StatusChatList.qml
