@@ -20,7 +20,6 @@ Item {
     property var selectedContact
     property int dropdownWidth: width
     property string validationError: qsTr("Please select a contact")
-//    property alias validationErrorAlignment: comboBox.validationErrorAlignment
     property bool isValid: false
     property alias isPending: ensResolver.isPending
 
@@ -100,6 +99,7 @@ Item {
             spacing: 4
 
             StatusSmartIdenticon {
+                Layout.alignment: Qt.AlignVCenter
                 image.width: (!!selectedContact && !!selectedContact.displayIcon) ? 32 : 0
                 image.height: 32
                 image.source: (!!selectedContact && !!selectedContact.displayIcon) ? selectedContact.displayIcon : ""
@@ -107,6 +107,7 @@ Item {
             }
             StatusBaseText {
                 id: selectedTextField
+                Layout.alignment: Qt.AlignVCenter
                 visible: comboBox.control.count > 0
                 text: !!selectedContact ? selectedContact.alias : ""
                 font.pixelSize: 15
@@ -115,6 +116,7 @@ Item {
                 color: Theme.palette.directColor1
             }
             StatusBaseText {
+                Layout.alignment: Qt.AlignVCenter
                 visible: comboBox.control.count == 0
                 text: qsTr("You don’t have any contacts yet")
                 font.pixelSize: 13
@@ -124,7 +126,8 @@ Item {
 
         delegate: StatusItemDelegate {
             id: itemContainer
-            property var currentContact: Utils.getContactDetailsAsJson(pubKey)
+
+            readonly property var currentContact: Utils.getContactDetailsAsJson(pubKey)
 
             highlighted: index === comboBox.control.highlightedIndex
             width: parent.width
@@ -154,6 +157,7 @@ Item {
 
                         StatusBaseText {
                             Layout.fillWidth: true
+                            Layout.alignment: Qt.AlignVCenter
                             text: currentContact.name + " • "
                             visible: currentContact.ensVerified
                             color: Theme.palette.baseColor1
@@ -161,6 +165,7 @@ Item {
                         }
                         StatusBaseText {
                             Layout.fillWidth: true
+                            Layout.alignment: Qt.AlignVCenter
                             Layout.maximumWidth: 85
                             text: currentContact.publicKey
                             elide: Text.ElideMiddle
