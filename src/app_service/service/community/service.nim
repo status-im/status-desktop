@@ -295,13 +295,13 @@ QtObject:
     if(community.chats.len > prev_community.chats.len):
       for chat in community.chats:
         if findIndexById(chat.id, prev_community.chats) == -1:
-          let chatFullId = community.id & chat.id
-          var createdChat = findChatById(chatFullId, updatedChats)
-          createdChat.updateMissingFields(chat)
-          self.chatService.updateOrAddChat(createdChat) # we have to update chats stored in the chat service.
-
-          let data = CommunityChatArgs(chat: createdChat)
+          self.chatService.updateOrAddChat(chat) # we have to update chats stored in the chat service.
+          let data = CommunityChatArgs(chat: chat)
           self.events.emit(SIGNAL_COMMUNITY_CHANNEL_CREATED, data)
+
+          # if the chat was created by the current user then it's already in the model and should be reordered if necessary
+          self.events.emit(SIGNAL_COMMUNITY_CHANNEL_REORDERED, CommunityChatOrderArgs(communityId: community.id,
+            chatId: chat.id, categoryId: chat.categoryId, position: chat.position))
 
     # channel was removed
     elif(community.chats.len < prev_community.chats.len):
@@ -798,20 +798,20 @@ QtObject:
 
       if response.result.isNil or response.result.kind == JNull:
         error "response is invalid", procName="reorderCommunityChat"
+        return
 
-      if response.result != nil and response.result.kind != JNull:
-        let updatedCommunity = response.result["communities"][0].toCommunityDto()
-        for chat in updatedCommunity.chats:
-          let prev_chat_idx = findIndexById(chat.id, self.joinedCommunities[communityId].chats)
-          if prev_chat_idx > -1:
-            let fullChatId = communityId & chat.id
-            let prev_chat = self.joinedCommunities[communityId].chats[prev_chat_idx]
-            if(chat.position != prev_chat.position and chat.categoryId == categoryId):
-              var chatDetails = self.chatService.getChatById(fullChatId) # we are free to do this cause channel must be created before we add it to a category
-              self.joinedCommunities[communityId].chats[prev_chat_idx].position = chat.position
-              chatDetails.updateMissingFields(self.joinedCommunities[communityId].chats[prev_chat_idx])
-              self.chatService.updateOrAddChat(chatDetails) # we have to update chats stored in the chat service.
-              self.events.emit(SIGNAL_COMMUNITY_CHANNEL_REORDERED, CommunityChatOrderArgs(communityId: updatedCommunity.id, chatId: fullChatId, categoryId: chat.categoryId, position: chat.position))
+      let updatedCommunity = response.result["communities"][0].toCommunityDto()
+
+      for chat in updatedCommunity.chats:
+        let prev_chat_idx = findIndexById(chat.id, self.joinedCommunities[communityId].chats)
+        if prev_chat_idx > -1:
+          let prev_chat = self.joinedCommunities[communityId].chats[prev_chat_idx]
+          if(chat.position != prev_chat.position and chat.categoryId == categoryId):
+            var chatDetails = self.chatService.getChatById(chat.id) # we are free to do this cause channel must be created before we add it to a category
+            self.joinedCommunities[communityId].chats[prev_chat_idx].position = chat.position
+            chatDetails.updateMissingFields(self.joinedCommunities[communityId].chats[prev_chat_idx])
+            self.chatService.updateOrAddChat(chatDetails) # we have to update chats stored in the chat service.
+            self.events.emit(SIGNAL_COMMUNITY_CHANNEL_REORDERED, CommunityChatOrderArgs(communityId: updatedCommunity.id, chatId: chat.id, categoryId: chat.categoryId, position: chat.position))
 
     except Exception as e:
       error "Error reordering community channel", msg = e.msg, communityId, chatId, position, procName="reorderCommunityChat"
