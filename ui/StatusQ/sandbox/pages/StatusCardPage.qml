@@ -19,9 +19,24 @@ Item {
         spacing: 20
 
         RowLayout {
-            StatusSelect {
-                id: select
-                label: "Select Card State"
+            Layout.fillWidth: true
+
+            StatusCard {
+                id: card
+                Layout.alignment: Qt.AlignVCenter
+                primaryText: "Mainnet"
+                secondaryText: state === "unavailable" ? "No Gas" : "75"
+                tertiaryText: state === "unpreferred"  ? "UNPREFERRED" : "BALANCE: " + 250
+                cardIconName: "status"
+                advancedInputText: "75"
+                disabledText: "Disabled"
+            }
+
+            StatusComboBox {
+                Layout.alignment: Qt.AlignVCenter
+                Layout.maximumWidth: 200
+                label: "Card State"
+                onCurrentValueChanged: card.state = currentValue
                 model: ListModel {
                     ListElement {
                         name: "default"
@@ -36,45 +51,16 @@ Item {
                         name: "unpreferred"
                     }
                 }
-                selectMenu.delegate: StatusMenuItemDelegate {
-                    statusPopupMenu: select
-                    action: StatusMenuItem {
-                        text: name
-                        onTriggered: {
-                            selectedItem.text = name
-                            card.state = name
-                        }
-                    }
-                }
-                selectedItemComponent: Item {
-                    id: selectedItem
-                    anchors.fill: parent
-                    property string text: "default"
-
-                    StatusBaseText {
-                        text: selectedItem.text
-                        anchors.centerIn: parent
-                        color: Theme.palette.directColor1
-                    }
-                }
             }
 
             StatusCheckBox {
+                Layout.alignment: Qt.AlignVCenter
                 text: "advancedMode"
+                font.family: Theme.palette.monoFont.name
                 onClicked: {
                     card.advancedMode = checked
                 }
             }
-        }
-
-        StatusCard {
-            id: card
-            primaryText: "Mainnet"
-            secondaryText: state === "unavailable" ? "No Gas" : "75"
-            tertiaryText: state === "unpreferred"  ? "UNPREFERRED" : "BALANCE: " + 250
-            cardIconName: "status"
-            advancedInputText: "75"
-            disabledText: "Disabled"
         }
 
         Rectangle {

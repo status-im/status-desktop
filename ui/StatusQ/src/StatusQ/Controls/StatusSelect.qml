@@ -102,10 +102,6 @@ Item {
         }
     }
 
-//    ListView {
-//        id: selectMenu
-//    }
-
     StatusPopupMenu {
         id: selectMenu
         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent

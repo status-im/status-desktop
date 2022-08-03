@@ -28,6 +28,13 @@ Column {
         }
     }
 
+    StatusBaseText {
+        font.pixelSize: 16
+        color: Theme.palette.dangerColor1
+        text: "This component should no longer be used.<br />Please, use `StatusComboBox` instead."
+        textFormat: Text.MarkdownText
+    }
+
     StatusSelect {
         id: select
         label: "Some label"

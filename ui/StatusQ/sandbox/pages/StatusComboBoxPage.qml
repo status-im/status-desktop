@@ -39,10 +39,10 @@ Column {
         label: "ComboBox with custom delegate"
         model: commmonModel
         delegate: StatusItemDelegate {
-            width: comboBox1.comboBox.width
-            highlighted: comboBox1.comboBox.highlightedIndex === index
+            width: comboBox1.control.width
+            highlighted: comboBox1.control.highlightedIndex === index
             text: modelData
-            font: comboBox1.comboBox.font
+            font: comboBox1.control.font
             icon {
                 name: "filled-account"
                 color: Theme.palette.primaryColor1

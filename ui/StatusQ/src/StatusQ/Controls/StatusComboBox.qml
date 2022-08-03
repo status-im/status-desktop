@@ -1,4 +1,5 @@
 import QtQuick 2.14
+import QtQuick.Window 2.14
 import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.14
 import QtGraphicalEffects 1.13
@@ -12,10 +13,13 @@ import QtQuick.Templates 2.14 as T
 Item {
     id: root
 
-    property alias comboBox: comboBox
+    property alias control: comboBox
     property alias model: comboBox.model
     property alias delegate: comboBox.delegate
     property alias contentItem: comboBox.contentItem
+
+    property alias currentIndex: comboBox.currentIndex
+    property alias currentValue: comboBox.currentValue
 
     property alias label: labelItem.text
     property alias validationError: validationErrorItem.text
@@ -46,7 +50,8 @@ Item {
             property color bgColorHover: bgColor
 
             Layout.fillWidth: true
-            Layout.topMargin: 7
+            Layout.fillHeight: true
+            Layout.topMargin: labelItem.visible ? 7 : 0
 
             enabled: root.enabled
 
@@ -91,23 +96,14 @@ Item {
             popup: Popup {
                 closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
                 y: comboBox.height + 8
+
                 width: comboBox.width
-                implicitHeight: contentItem.implicitHeight + topPadding + bottomPadding
+                height: Math.min(contentItem.implicitHeight + topPadding + bottomPadding,
+                                 comboBox.Window.height - topMargin - bottomMargin)
+                margins: 8
+
                 padding: 1
                 verticalPadding: 8
-
-                contentItem: ListView { // TODO: Replace with StatusListView
-                    id: listView
-                    clip: true
-                    implicitHeight: contentHeight
-                    model: comboBox.popup.visible ? comboBox.delegateModel : null
-                    currentIndex: comboBox.highlightedIndex
-
-                    boundsBehavior: Flickable.StopAtBounds
-                    synchronousDrag: true
-
-                    ScrollIndicator.vertical: ScrollIndicator { }
-                }
 
                 background: Rectangle {
                     id: backgroundItem
@@ -124,13 +120,26 @@ Item {
                         color: Theme.palette.dropShadow
                     }
                 }
+
+                contentItem: StatusListView {
+                    id: listView
+
+                    implicitWidth: contentWidth
+                    implicitHeight: contentHeight
+
+                    model: comboBox.popup.visible ? comboBox.delegateModel : null
+                    currentIndex: comboBox.highlightedIndex
+                }
             }
 
             delegate: StatusItemDelegate {
                 width: comboBox.width
                 highlighted: comboBox.highlightedIndex === index
                 font: comboBox.font
-                text: modelData
+                text: control.textRole ? (Array.isArray(control.model)
+                                          ? modelData[control.textRole]
+                                          : model[control.textRole])
+                                       : modelData
             }
         }
 

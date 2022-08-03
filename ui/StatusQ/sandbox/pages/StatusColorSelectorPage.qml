@@ -8,7 +8,7 @@ import StatusQ.Controls 0.1
 
 import Sandbox 0.1
 
-Column {
+Row {
     spacing: 8
 
     StatusColorSelector {

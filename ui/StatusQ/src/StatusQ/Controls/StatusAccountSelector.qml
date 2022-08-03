@@ -8,17 +8,17 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1
 import StatusQ.Controls 0.1
 
+import SortFilterProxyModel 0.2
+
 Item {
     id: root
+
     property string label: "Choose account"
     property bool showAccountDetails: !!selectedAccount
     property var accounts
     property var selectedAccount
     property string currency: "usd"
-    property alias selectField: select
-    implicitWidth: 448
-    height: select.height +
-            (selectedAccountDetails.visible ? selectedAccountDetails.height + selectedAccountDetails.anchors.topMargin : 0)
+
     // set to asset symbol to display asset's balance top right
     // NOTE: if this asset is not selected as a wallet token in the UI, then
     // nothing will be displayed
@@ -27,9 +27,9 @@ Item {
     property double minRequiredAssetBalance: 0
     property int dropdownWidth: width
     property int chainId: 0
-    property alias dropdownAlignment: select.menuAlignment
     property bool isValid: true
     property bool readOnly: false
+
 
     property var assetBalanceTextFn: function (foundValue) {
         return "Balance: " + (parseFloat(foundValue) === 0.0 ? "0" : Utils.stripTrailingZeros(foundValue))
@@ -51,18 +51,23 @@ Item {
         return root.isValid
     }
 
+    implicitWidth: 448
+    implicitHeight: comboBox.height +
+                    (selectedAccountDetails.visible ? selectedAccountDetails.height + selectedAccountDetails.anchors.topMargin
+                                                    : 0)
+
     onSelectedAccountChanged: {
         if (!selectedAccount) {
             return
         }
         if (selectedAccount.color) {
-            selectedIconImg.color = Utils.getThemeAccountColor(selectedAccount.color, Theme.palette.userCustomizationColors) || Theme.palette.userCustomizationColors[0]
+            d.selectedIconColor = Utils.getThemeAccountColor(selectedAccount.color, Theme.palette.userCustomizationColors) || Theme.palette.userCustomizationColors[0]
         }
         if (selectedAccount.name) {
-            selectedTextField.text = selectedAccount.name
+            d.selectedText = selectedAccount.name
         }
         if (selectedAccount.address) {
-            textSelectedAddress.text = selectedAccount.address  + " •"
+            textSelectedAddress.text = selectedAccount.address
         }
         if (selectedAccount.currencyBalance) {
             textSelectedAddressFiatBalance.text = selectedAccount.currencyBalance + " " + currency.toUpperCase()
@@ -87,14 +92,20 @@ Item {
         txtAssetSymbol.text = " " + assetFound.symbol
     }
 
+    QtObject {
+        id: d
+        property color selectedIconColor: "transparent"
+        property string selectedText: ""
+    }
+
     StatusBaseText {
         id: txtAssetBalance
         visible: root.assetFound !== undefined
-        anchors.bottom: select.top
+        anchors.bottom: comboBox.top
         anchors.bottomMargin: -18
         anchors.right: txtAssetSymbol.left
-        anchors.left: select.left
-        anchors.leftMargin: select.width / 2.5
+        anchors.left: comboBox.left
+        anchors.leftMargin: comboBox.width / 2.5
 
         color: !root.isValid ? Theme.palette.dangerColor1 : Theme.palette.baseColor1
         elide: Text.ElideRight
@@ -116,6 +127,7 @@ Item {
             onExited: assetTooltip.visible = false
         }
     }
+
     StatusBaseText {
         id: txtAssetSymbol
         visible: txtAssetBalance.visible
@@ -126,152 +138,149 @@ Item {
         font.pixelSize: 13
         height: txtAssetBalance.height
     }
-    StatusSelect {
-        id: select
+
+    StatusComboBox {
+        id: comboBox
+
         label: root.label
-        model: root.accounts
         width: parent.width
-        menuAlignment: StatusSelect.MenuAlignment.Left
-        selectMenu.delegate: menuItem
-        selectMenu.width: dropdownWidth
-        selectedItemComponent: Item {
-            anchors.fill: parent
+
+        model: SortFilterProxyModel {
+            sourceModel: root.accounts
+            filters: [
+                ValueFilter {
+                    roleName: "walletType"
+                    value: root.watchWalletType
+                    inverted: true
+                }
+            ]
+        }
+        contentItem: RowLayout {
+            spacing: 8
 
             StatusIcon {
-                id: selectedIconImg
-                anchors.left: parent.left
-                anchors.leftMargin: 16
-                anchors.verticalCenter: parent.verticalCenter
-                width: 20
-                height: 20
+                Layout.alignment: Qt.AlignVCenter
+                Layout.preferredWidth: 20
+                Layout.preferredHeight: 20
                 icon: "filled-account"
+                color: d.selectedIconColor
             }
 
             StatusBaseText {
-                id: selectedTextField
                 elide: Text.ElideRight
-                anchors.left: selectedIconImg.right
-                anchors.leftMargin: 8
-                anchors.right: parent.right
-                anchors.rightMargin: select.selectedItemRightMargin
-                anchors.verticalCenter: parent.verticalCenter
+                Layout.fillWidth: true
+                Layout.fillHeight: true
                 font.pixelSize: 15
                 verticalAlignment: Text.AlignVCenter
-                height: 22
                 color: Theme.palette.directColor1
+                text: d.selectedText
+            }
+        }
+
+        delegate: StatusItemDelegate {
+            highlighted: index === comboBox.control.highlightedIndex
+            width: comboBox.width
+            padding: 16
+
+            onClicked: {
+                // WARNING: Settings comboBox value from delegate is wrong.
+                //          ComboBox must have a single role as "value"
+                //          This should be refactored later. Probably roleValue should be 'address'.
+                //          All other needed values should be retrived from model by the user of component.
+                root.selectedAccount = { address, name, color: model.color, assets, currencyBalance };
+            }
+
+            Component.onCompleted: {
+                // WARNING: Same here, this is wrong, check comment above.
+                if (!root.selectedAccount && index === 0) {
+                    root.selectedAccount = { address, name, color: model.color, assets, currencyBalance }
+                }
+            }
+
+            contentItem: RowLayout {
+                spacing: 0
+
+                StatusIcon {
+                    id: iconImg
+                    Layout.preferredWidth: 20
+                    Layout.preferredHeight: 20
+                    icon: "filled-account"
+                    color: Utils.getThemeAccountColor(model.color, Theme.palette.userCustomizationColors) ||
+                           Theme.palette.userCustomizationColors[0]
+                }
+
+                ColumnLayout {
+                    id: column
+                    Layout.fillWidth: true
+                    Layout.leftMargin: 14
+                    Layout.rightMargin: 8
+                    spacing: 0
+
+                    StatusBaseText {
+                        id: accountName
+                        Layout.fillWidth: true
+                        text: model.name
+                        elide: Text.ElideRight
+                        font.pixelSize: 15
+                        color: Theme.palette.directColor1
+                    }
+
+                    StatusBaseText {
+                        id: accountAddress
+                        Layout.fillWidth: true
+                        Layout.maximumWidth: 80
+                        text: address
+                        elide: Text.ElideMiddle
+                        color: Theme.palette.baseColor1
+                        font.pixelSize: 12
+                    }
+                }
+                StatusBaseText {
+                    id: txtFiatBalance
+                    Layout.rightMargin: 4
+                    font.pixelSize: 15
+                    text: currencyBalance
+                    color: Theme.palette.directColor1
+                }
+                StatusBaseText {
+                    id: fiatCurrencySymbol
+                    font.pixelSize: 15
+                    color: Theme.palette.baseColor1
+                    text: root.currency.toUpperCase()
+                }
             }
         }
     }
 
-    Row {
+    RowLayout {
         id: selectedAccountDetails
         visible: root.showAccountDetails
-        anchors.top: select.bottom
+        anchors.top: comboBox.bottom
         anchors.topMargin: 8
         anchors.left: parent.left
         anchors.leftMargin: 2
+        anchors.right: parent.right
+        anchors.rightMargin: 4
+
+        spacing: 2
 
         StatusBaseText {
             id: textSelectedAddress
+            Layout.maximumWidth: 80
             font.pixelSize: 12
             elide: Text.ElideMiddle
-            width: 90
             color: Theme.palette.baseColor1
         }
         StatusBaseText {
-            id: textSelectedAddressFiatBalance
             font.pixelSize: 12
             color: Theme.palette.baseColor1
+            text: "•"
         }
-    }
-
-    Component {
-        id: menuItem
-        MenuItem {
-            id: itemContainer
-            visible: walletType !== root.watchWalletType
-            property bool isFirstItem: index === 0
-            property bool isLastItem: index === accounts.rowCount() - 1
-
-            Component.onCompleted: {
-                if (!root.selectedAccount && isFirstItem) {
-                    root.selectedAccount = { address, name, color: model.color, assets, currencyBalance }
-                }
-            }
-
-            height: walletType === root.watchWalletType ? 0 : (accountName.height + 14 + accountAddress.height + 14)
-
-            StatusIcon {
-                id: iconImg
-                anchors.left: parent.left
-                anchors.leftMargin: 16
-                anchors.verticalCenter: parent.verticalCenter
-                width: 20
-                height: 20
-                icon: "filled-account"
-                color: Utils.getThemeAccountColor(model.color, Theme.palette.userCustomizationColors) || Theme.palette.userCustomizationColors[0]
-            }
-
-            Column {
-                id: column
-                anchors.left: iconImg.right
-                anchors.leftMargin: 14
-                anchors.right: txtFiatBalance.left
-                anchors.rightMargin: 8
-                anchors.verticalCenter: parent.verticalCenter
-
-                StatusBaseText {
-                    id: accountName
-                    text: model.name
-                    elide: Text.ElideRight
-                    font.pixelSize: 15
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    height: 22
-                    color: Theme.palette.directColor1
-                }
-
-                StatusBaseText {
-                    id: accountAddress
-                    text: address
-                    elide: Text.ElideMiddle
-                    width: 80
-                    color: Theme.palette.baseColor1
-                    font.pixelSize: 12
-                    height: 16
-                }
-            }
-            StatusBaseText {
-                id: txtFiatBalance
-                anchors.right: fiatCurrencySymbol.left
-                anchors.rightMargin: 4
-                anchors.verticalCenter: parent.verticalCenter
-                font.pixelSize: 15
-                height: 22
-                text: currencyBalance
-                color: Theme.palette.directColor1
-            }
-            StatusBaseText {
-                id: fiatCurrencySymbol
-                anchors.right: parent.right
-                anchors.rightMargin: 16
-                anchors.verticalCenter: parent.verticalCenter
-                font.pixelSize: 15
-                height: 22
-                color: Theme.palette.baseColor1
-                text: root.currency.toUpperCase()
-            }
-            background: Rectangle {
-                color: itemContainer.highlighted ? Theme.palette.statusSelect.menuItemHoverBackgroundColor : Theme.palette.statusSelect.menuItemBackgroundColor
-            }
-            MouseArea {
-                cursorShape: Qt.PointingHandCursor
-                anchors.fill: itemContainer
-                onClicked: {
-                    root.selectedAccount = { address, name, color: model.color, assets, currencyBalance }
-                    select.selectMenu.close()
-                }
-            }
+        StatusBaseText {
+            id: textSelectedAddressFiatBalance
+            Layout.fillWidth: true
+            font.pixelSize: 12
+            color: Theme.palette.baseColor1
         }
     }
 }
