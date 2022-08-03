@@ -67,6 +67,7 @@ target_link_libraries(${PROJECT_NAME}
         # TODO: Use Status:: namespace
         Status::ApplicationCore
         Status::Helpers
+        Status::ChatSection
         Status::Onboarding
         Status::Wallet
         Status::Assets

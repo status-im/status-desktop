@@ -1,4 +1,6 @@
-import QtQuick.Layouts
+import QtQuick
 
-GridLayout {
+Item {
+    height: 16
+    width: 1
 }

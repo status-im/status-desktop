@@ -9,7 +9,7 @@ namespace fs = std::filesystem;
 namespace Status::ApplicationCore {
 
 namespace {
-    /// `status-go` data location
+    constexpr auto statusFolder = "Status";
     constexpr auto dataSubfolder = "data";
 }
 
@@ -40,7 +40,7 @@ void UserConfiguration::setUserDataFolder(const QString &newUserDataFolder)
 
 void UserConfiguration::generateReleaseConfiguration()
 {
-    m_userDataFolder = toPath(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation))/dataSubfolder;
+    m_userDataFolder = toPath(QStandardPaths::writableLocation(QStandardPaths::RuntimeLocation))/statusFolder/dataSubfolder;
     emit userDataFolderChanged();
 }
 

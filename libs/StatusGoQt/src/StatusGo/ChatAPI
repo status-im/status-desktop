@@ -1,0 +1,4 @@
+#pragma once
+
+#include "Chat/ChatAPI.h"
+#include "Chat/ChatDto.h"

@@ -15,7 +15,7 @@ Item {
     implicitWidth: 78
     implicitHeight: mainLayout.implicitHeight
 
-    readonly property Component currentSection: listView.currentItem.content
+    property alias currentIndex: listView.currentIndex
 
     required property var sections
 
