@@ -83,11 +83,8 @@ ModalPopup {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
-
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
         ScrollBar.vertical.policy: ScrollBar.AlwaysOn
-        Layout.fillHeight: true
-        Layout.fillWidth: true
         contentHeight: {
             var totalHeight = 0
             for (let i = 0; i < sectionRepeater.count; i++) {
@@ -98,7 +95,7 @@ ModalPopup {
 
         SuggestedChannelsPanel {
             id: sectionRepeater
-            width: parent.width
+            width: sview.width
             onSuggestedMessageClicked: {
                 popup.suggestedMessageClicked(channel);
             }

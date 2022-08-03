@@ -26,11 +26,9 @@ Repeater {
             font.pixelSize: 16
         }
         Flow {
+            width: parent.width
             anchors.top: sectionTitle.bottom
             anchors.topMargin: Style.current.smallPadding
-            Layout.fillHeight: true
-            Layout.fillWidth: true
-            width: parent.width
             spacing: 10
             Repeater {
                 model: modelData.channels
