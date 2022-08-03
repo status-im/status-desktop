@@ -79,6 +79,7 @@ Loader {
     Component {
         id: letterIdenticon
         StatusLetterIdenticon {
+            objectName: "statusSmartIdenticonLetter"
             width: statusSmartIdenticon.icon.width
             height: statusSmartIdenticon.icon.height
             color: statusSmartIdenticon.icon.color
