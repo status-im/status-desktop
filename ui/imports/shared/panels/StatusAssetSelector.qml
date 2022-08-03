@@ -51,21 +51,34 @@ Item {
 
         control.padding: 4
         control.popup.width: 342
+        control.popup.height: 416
         control.popup.x: width - control.popup.width
 
         model: root.assets
 
         control.background: Rectangle {
-            color: comboBox.control.hovered ? Theme.palette.directColor8 : "transparent"
-            radius: 6
+            color: "transparent"
+            border.width: 1
+            border.color: comboBox.control.hovered ? Theme.palette.primaryColor2 : Theme.palette.directColor8
+            radius: 16
         }
 
         contentItem: RowLayout {
-            spacing: 4
-
+            spacing: 8
+            StatusBaseText {
+                Layout.maximumWidth: 50
+                Layout.leftMargin: 8
+                Layout.alignment: Qt.AlignVCenter
+                font.pixelSize: 15
+                elide: Text.ElideRight
+                verticalAlignment: Text.AlignVCenter
+                color: Theme.palette.directColor1
+                font.weight: Font.Medium
+                text: d.text
+            }
             StatusRoundedImage {
-                Layout.preferredWidth: 24
-                Layout.preferredHeight: 24
+                Layout.preferredWidth: 40
+                Layout.preferredHeight: 40
                 Layout.alignment: Qt.AlignVCenter
                 image.source: d.iconSource
                 image.onStatusChanged: {
@@ -74,16 +87,9 @@ Item {
                     }
                 }
             }
-            StatusBaseText {
-                font.pixelSize: 15
-                Layout.maximumWidth: 50
-                Layout.alignment: Qt.AlignVCenter
-                elide: Text.ElideRight
-                verticalAlignment: Text.AlignVCenter
-                color: Theme.palette.directColor1
-                text: d.text
-            }
         }
+
+        control.indicator: null
 
         delegate: StatusItemDelegate {
             width: comboBox.control.popup.width
@@ -141,6 +147,7 @@ Item {
                         Layout.fillWidth: true
                         StatusBaseText {
                             Layout.fillWidth: true
+                            elide: Text.ElideRight
                             text: name
                             color: Theme.palette.baseColor1
                             font.pixelSize: 15
