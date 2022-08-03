@@ -20,6 +20,7 @@ StatusScrollView {
     property CommunitiesStore communitiesStore: CommunitiesStore {}
     property var importCommunitiesPopup: importCommunitiesPopupComponent
     property var createCommunitiesPopup: createCommunitiesPopupComponent
+    property int contentPrefferedWidth: 100
 
     QtObject {
         id: d
@@ -38,7 +39,7 @@ StatusScrollView {
     }
 
     contentHeight: column.height + d.layoutVMargin
-    contentWidth: column.width + d.layoutHMargin
+    contentWidth: root.contentPrefferedWidth - d.layoutHMargin
 
     ColumnLayout {
         id: column
@@ -87,7 +88,7 @@ StatusScrollView {
             StatusButton {
                 id: importBtn
                 Layout.fillHeight: true
-                text: qsTr("Import Community")
+                text: qsTr("Import using key")
                 onClicked: Global.openPopup(importCommunitiesPopupComponent)
             }
 

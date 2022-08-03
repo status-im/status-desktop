@@ -547,6 +547,7 @@ Item {
                         Layout.fillWidth: true
                         Layout.alignment: Qt.AlignLeft | Qt.AlignTop
                         Layout.fillHeight: true
+                        contentPrefferedWidth: appView.width
                     }
 
                     WalletLayout {
