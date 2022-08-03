@@ -163,7 +163,7 @@ QtObject:
 
   # Since we cannot return QVariant from the proc which has arguments, so cannot have proc like this:
   # prepareCommunitySectionModuleForCommunityId(self: View, communityId: string): QVariant {.slot.}
-  # we're using combinaiton of
+  # we're using combination of
   # prepareCommunitySectionModuleForCommunityId/getCommunitySectionModule procs
   proc prepareCommunitySectionModuleForCommunityId*(self: View, communityId: string) {.slot.} =
     self.tmpCommunityId = communityId

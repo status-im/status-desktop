@@ -52,11 +52,6 @@ QtObject:
       [{i}]:({$self.items[i]})
       """
 
-  proc sortChats(x, y: Item): int =
-    if x.position < y.position: -1
-    elif x.position == y.position: 0
-    else: 1
-
   proc countChanged(self: Model) {.signal.}
 
   proc getCount*(self: Model): int {.slot.} =
@@ -180,16 +175,6 @@ QtObject:
     self.beginRemoveRows(parentModelIndex, idx, idx)
     self.items.delete(idx)
     self.endRemoveRows()
-
-    self.countChanged()
-
-  proc prependItem*(self: Model, item: Item) =
-    let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
-
-    self.beginInsertRows(parentModelIndex, 0, 0)
-    self.items = item & self.items
-    self.endInsertRows()
 
     self.countChanged()
 
@@ -334,11 +319,13 @@ QtObject:
     if(index == -1):
       return
 
+    if(self.items[index].BaseItem.position == position):
+      return
+
     self.items[index].BaseItem.position = position
 
-    self.beginResetModel()
-    self.items.sort(sortChats)
-    self.endResetModel()
+    let modelIndex = self.createIndex(index, 0, nil)
+    self.dataChanged(modelIndex, modelIndex, @[ModelRole.Position.int])
 
   proc clearItems*(self: Model) =
     self.beginResetModel()
