@@ -74,9 +74,14 @@ Item {
                         onClicked: Global.openPopup(renameAccountModalComponent)
                     }
                 }
-                StatusAddress {
-                    text: walletStore.currentAccount.address
-                    font.pixelSize: 15
+                StatusAddressPanel {
+                    address: walletStore.currentAccount.address
+
+                    font.weight: Font.Normal
+
+                    showFrame: false
+
+                    onDoCopy: (address) => globalUtils.copyToClipboard(address)
                 }
             }
         }

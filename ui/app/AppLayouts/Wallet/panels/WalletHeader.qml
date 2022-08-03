@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.13
 
 import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
 
 import utils 1.0
@@ -56,40 +57,13 @@ Item {
             store: root.walletStore
         }
 
-        // account address button
-        Button {
-            horizontalPadding: Style.current.halfPadding
-            verticalPadding: 5
-            Layout.preferredWidth: 150
-            background: Rectangle {
-                implicitWidth: 150
-                implicitHeight: 32
-                color: "transparent"
-                border.width: 1
-                border.color: Theme.palette.baseColor2
-                radius: 36
-            }
+        StatusAddressPanel {
+            address: currentAccount.mixedcaseAddress
 
-            contentItem: RowLayout {
-                spacing: 4
-                StatusIcon {
-                    Layout.alignment: Qt.AlignVCenter
-                    Layout.preferredWidth: 22
-                    Layout.preferredHeight: 22
-                    icon: "address"
-                    color: Theme.palette.baseColor2
-                }
-                StatusBaseText {
-                    Layout.alignment: Qt.AlignVCenter
-                    Layout.fillWidth: true
-                    text: currentAccount.mixedcaseAddress
-                    color: Theme.palette.directColor5
-                    elide: Text.ElideMiddle
-                    font.pixelSize: Style.current.primaryTextFontSize
-                    font.weight: Font.Medium
-                }
-            }
-            onClicked: store.copyToClipboard(currentAccount.mixedcaseAddress)
+            autHideCopyIcon: true
+            expanded: false
+
+            onDoCopy: (address) => root.store.copyToClipboard(address)
         }
     }
 }
