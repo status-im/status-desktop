@@ -61,7 +61,7 @@ StatusModal {
     }
 
     function forceActiveFocus() {
-        contentItem.searchInput.edit.forceActiveFocus()
+        contentItem.searchInput.input.edit.forceActiveFocus()
     }
 
     onOpened: {
