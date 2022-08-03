@@ -31,11 +31,19 @@ def step(context, account_name, password, mnemonic):
 def step(context, account_name, amount, token, chain_name, password):
     _walletScreen.send_transaction(account_name, amount, token, chain_name, password)
     
+@When("the user adds a saved address name |any| and address |any|")
+def step(context, name, address):
+    _walletScreen.add_saved_address(name, address)
+
 @Then("the new account |any| is added")
 def step(context, account_name):
     _walletScreen.verify_account_name_is_present(account_name)
 
 @Then("the transaction is in progress")
 def step(context):
-    _walletScreen.verify_transaction()    
+    _walletScreen.verify_transaction()
+    
+@Then("the name |any| is in the list of saved addresses")
+def step(context, name: str):
+    _walletScreen.verify_saved_address_exists(name) 
     

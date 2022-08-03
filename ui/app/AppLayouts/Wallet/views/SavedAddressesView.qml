@@ -45,6 +45,7 @@ Item {
             color: Theme.palette.directColor1
         }
         StatusButton {
+            objectName: "addNewAddressBtn"
             id: btnAdd
             anchors.right: parent.right
             anchors.top: parent.top
@@ -69,6 +70,7 @@ Item {
         StatusListItem {
             id: savedAddress
             title: name
+            objectName: name
             subTitle: name + " \u2022 " + Utils.getElidedCompressedPk(address)
             implicitWidth: parent.width
             color: "transparent"
@@ -227,6 +229,7 @@ Item {
 
     StatusListView {
         id: listView
+        objectName: "savedAddresses"
         anchors.top: errorMessage.bottom
         anchors.topMargin: Style.current.padding
         anchors.bottom: parent.bottom
