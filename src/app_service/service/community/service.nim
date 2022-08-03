@@ -1162,3 +1162,10 @@ QtObject:
       if (communityRequest.communityId == communityId):
         return true
     return false
+
+  proc requestExtractDiscordChannelsAndCategories*(self: Service, filesToImport: seq[string]) =
+    try:
+      discard status_go.requestExtractDiscordChannelsAndCategories(filesToImport)
+    except Exception as e:
+      error "Error extracting discord channels and categories", msg = e.msg
+

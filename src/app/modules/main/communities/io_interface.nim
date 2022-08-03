@@ -1,3 +1,4 @@
+import tables
 import ../../../../app_service/service/community/service as community_service
 import ../../shared_models/section_item
 
@@ -107,3 +108,10 @@ method viewDidLoad*(self: AccessInterface) {.base.} =
 
 method communityMuted*(self: AccessInterface, communityId: string, muted: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method requestExtractDiscordChannelsAndCategories*(self: AccessInterface, filesToImport: seq[string]) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method discordCategoriesAndChannelsExtracted*(self: AccessInterface, categories: seq[DiscordCategoryDto], channels: seq[DiscordChannelDto], oldestMessageTimestamp: int, errors: Table[string, DiscordImportError]) {.base.} =
+  raise newException(ValueError, "No implementation available")
+

@@ -282,3 +282,7 @@ proc shareCommunityToUsers*(communityId: string, pubKeys: seq[string]): RpcRespo
 
 proc getCommunitiesSettings*(): RpcResponse[JsonNode] {.raises: [Exception].} =
   return callPrivateRPC("getCommunitiesSettings".prefix, %*[])
+
+proc requestExtractDiscordChannelsAndCategories*(filesToImport: seq[string]): RpcResponse[JsonNode] {.raises: [Exception].} =
+  return callPrivateRPC("requestExtractDiscordChannelsAndCategories".prefix, %*[filesToImport])
+

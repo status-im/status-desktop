@@ -62,6 +62,10 @@ proc init*(self: Controller) =
     let args = CommunityMutedArgs(e)
     self.delegate.communityMuted(args.communityId, args.muted)
 
+  self.events.on(SIGNAL_DISCORD_CATEGORIES_AND_CHANNELS_EXTRACTED) do(e:Args):
+    let args = DiscordCategoriesAndChannelsArgs(e)
+    self.delegate.discordCategoriesAndChannelsExtracted(args.categories, args.channels, args.oldestMessageTimestamp, args.errors)
+
 proc getCommunityTags*(self: Controller): string =
   result = self.communityService.getCommunityTags()
 
@@ -154,3 +158,6 @@ proc isCommunityRequestPending*(self: Controller, communityId: string): bool =
 
 proc getStatusForContactWithId*(self: Controller, publicKey: string): StatusUpdateDto =
   return self.contactsService.getStatusForContactWithId(publicKey)
+
+proc requestExtractDiscordChannelsAndCategories*(self: Controller, filesToImport: seq[string]) =
+  self.communityService.requestExtractDiscordChannelsAndCategories(filesToImport)

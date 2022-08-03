@@ -220,6 +220,7 @@ StatusScrollView {
             anchors.centerIn: parent
             store: root.communitiesStore
             onClosed: {
+                root.communitiesStore.clearDiscordCategoriesAndChannels()
                 destroy()
             }
         }
