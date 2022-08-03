@@ -32,8 +32,12 @@ def step(context, username):
 def step(context): 
     StatusMainScreen()
     
-@When("The user inputs |any| seed phrases")
-def step(context, seedPhraseAmount):
-    table = context.table
-    for row in table[1:]:
-        _welcomeScreen.input_seed_phrase(row[0], seedPhraseAmount, row[1])
+    
+@When("The user inputs the seed phrase |any|")
+def step(context, seed_phrase):
+    _welcomeScreen.input_seed_phrase(seed_phrase)
+
+    
+@Then("the invalid seed text is visible")
+def step(context):
+    _welcomeScreen.seed_phrase_visible()

@@ -22,6 +22,7 @@ Item {
     property alias text: inputValue.text
     property alias maxLength: inputValue.maximumLength
     property string validationError: ""
+    property alias validationErrorObjectName: validationErrorText.objectName
     property alias validationErrorAlignment: validationErrorText.horizontalAlignment
     property int validationErrorTopMargin: 1
     property color validationErrorColor: Style.current.danger

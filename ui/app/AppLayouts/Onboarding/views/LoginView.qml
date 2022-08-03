@@ -226,6 +226,7 @@ Item {
 
             StatusFlatRoundButton {
                 id: changeAccountBtn
+                objectName: "loginChangeAccountButton"
                 icon.name: "chevron-down"
                 type: StatusFlatRoundButton.Type.Tertiary
                 width: 24
@@ -291,6 +292,8 @@ Item {
 
             Input {
                 id: txtPassword
+                textField.objectName: "loginPasswordInput"
+                validationErrorObjectName: "loginPassworkInputValidationErrorText"
                 width: 318
                 height: 70
                 enabled: !d.loading

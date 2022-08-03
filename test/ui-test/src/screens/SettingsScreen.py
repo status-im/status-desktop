@@ -25,9 +25,7 @@ class AdvancedOptionScreen(Enum):
     
 
 class WalletSettingsScreen(Enum):
-    TWELVE_SEED_PHRASE: str = "twelve_seed_phrase_address"
-    EIGHTEEN_SEED_PHRASE: str = "eighteen_seed_phrase_address"
-    TWENTY_FOUR_SEED_PHRASE: str = "twenty_four_seed_phrase_address"
+    ACCOUNT_DELEGATE_WALLET_ADDRESS: str = "walletSettingsAccountDelegate_WalletAddress_Text"
     GENERATED_ACCOUNTS: str = "settings_Wallet_MainView_GeneratedAccounts"
     DELETE_ACCOUNT: str = "settings_Wallet_AccountView_DeleteAccount"
     DELETE_ACCOUNT_CONFIRM: str = "settings_Wallet_AccountView_DeleteAccount_Confirm"
@@ -75,16 +73,9 @@ class SettingsScreen:
         index = self._find_account_index(account_name)
         verify_equal(index, -1)
         
-    def verify_address(self, phrase: str, address: str):
-        if phrase =='18':
-            verify_text_matching(WalletSettingsScreen.EIGHTEEN_SEED_PHRASE.value, address)
+    def verify_address(self, address: str):
+        verify_text_matching_insensitive(WalletSettingsScreen.ACCOUNT_DELEGATE_WALLET_ADDRESS.value, address)
         
-        if phrase == '24':
-            verify_text_matching(WalletSettingsScreen.TWENTY_FOUR_SEED_PHRASE.value, address)
-            
-        if phrase == '12':
-            verify_text_matching(WalletSettingsScreen.TWELVE_SEED_PHRASE.value, address)
-              
     def toggle_test_networks(self):
         click_obj_by_name(WalletSettingsScreen.NETWORKS_ITEM.value)
         click_obj_by_name(WalletSettingsScreen.TESTNET_TOGGLE.value)

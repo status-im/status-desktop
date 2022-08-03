@@ -27,9 +27,9 @@ def step(context: any, account_name: str):
 def step(context: any):
     _settingsScreen.toggle_test_networks()
     
-@Then("the |any| seed phrase address is |any| displayed in the wallet")
-def step(context: any, phrase :str, address: str):
-    _settingsScreen.verify_address(phrase, address)
+@Then("the address |any| is displayed in the wallet")
+def step(context: any, address: str):
+    _settingsScreen.verify_address(address)
 
 
 @Then("the account |any| is not in the list of accounts")
