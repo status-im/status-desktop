@@ -12,10 +12,11 @@ import StatusQ.Popups 0.1
 StatusScrollView {
     id: root
 
-    property string title: qsTr("Community Color")
+    property string title: qsTr("Community Colour")
 
     property var rightButtons: StatusButton {
-        text: qsTr("Select Community Color")
+        objectName: "communityColorPanelSelectColorButton"
+        text: qsTr("Select Community Colour")
         onClicked: root.accepted()
     }
 
@@ -58,6 +59,7 @@ StatusScrollView {
 
         StatusInput {
             id: hexInput
+            input.edit.objectName: "communityColorPanelHexInput"
 
             property color newColor: text
             // TODO: editingFinished() signal instead of this crutch

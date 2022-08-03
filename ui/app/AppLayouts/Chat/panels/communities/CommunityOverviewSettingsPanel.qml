@@ -53,6 +53,7 @@ StackLayout {
                 spacing: 16
 
                 StatusSmartIdenticon {
+                    objectName: "communityOverviewSettingsPanelIdenticon"
                     name: root.name
 
                     icon {
@@ -75,6 +76,7 @@ StackLayout {
 
                     StatusBaseText {
                         id: nameText
+                        objectName: "communityOverviewSettingsCommunityName"
                         Layout.fillWidth: true
                         font.pixelSize: 24
                         color: Theme.palette.directColor1
@@ -84,6 +86,7 @@ StackLayout {
 
                     StatusBaseText {
                         id: descriptionText
+                        objectName: "communityOverviewSettingsCommunityDescription"
                         Layout.fillWidth: true
                         font.pixelSize: 15
                         color: Theme.palette.directColor1
@@ -93,6 +96,7 @@ StackLayout {
                 }
 
                 StatusButton {
+                    objectName: "communityOverviewSettingsEditCommunityButton"
                     visible: root.editable
                     text: qsTr("Edit Community")
                     onClicked: root.currentIndex = 1

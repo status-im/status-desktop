@@ -29,10 +29,19 @@ def step(context, community_name):
 def step(context, community_channel_name, community_channel_description, method):
     _statusCommunityScreen.create_community_channel(community_channel_name, community_channel_description, method)
     
-@When("the admin edits a community channel named |any| to the name |any|")
-def step(context, community_channel_name, new_community_channel_name):
-    _statusCommunityScreen.edit_community_channel(community_channel_name, new_community_channel_name)
+@When("the admin edits the current community channel to the name |any|")
+def step(context, new_community_channel_name):
+    _statusCommunityScreen.edit_community_channel(new_community_channel_name)
     
 @Then("the user lands on the community channel named |any|")
 def step(context, community_channel_name): 
     _statusCommunityScreen.verify_channel_name(community_channel_name)
+
+@When("the admin edits the current community to the name |any| and description |any| and color |any|")
+def step(context, new_community_name, new_community_description, new_community_color):
+    _statusCommunityScreen.edit_community(new_community_name, new_community_description, new_community_color)
+
+@When("the admin goes back to the community")
+def step(context):
+    _statusCommunityScreen.go_back_to_community()
+    

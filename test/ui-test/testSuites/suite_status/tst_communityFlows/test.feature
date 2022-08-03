@@ -47,10 +47,21 @@ Feature: Status Desktop community
         Then the user lands on the community named myCommunity
         When the admin creates a community channel named test-channel, with description My description with the method bottom_menu
         Then the user lands on the community channel named test-channel
-        When the admin edits a community channel named <community_channel_name> to the name <new_community_channel_name>
+        When the admin edits the current community channel to the name <new_community_channel_name>
         Then the user lands on the community channel named <new_community_channel_name>
 
         Examples:
         	| community_channel_name    | community_channel_description   | new_community_channel_name  |
             | test-channel    | Community channel description tested 1    | new-test-channel            |
+
+    Scenario Outline: Admin edits a community
+        When the user creates a community named myCommunity, with description My community description, intro Community Intro and outro Community Outro
+        Then the user lands on the community named myCommunity
+        When the admin edits the current community to the name <new_community_name> and description <new_community_description> and color <new_community_color>
+        When the admin goes back to the community
+        Then the user lands on the community named <new_community_name>
+
+        Examples:
+            | new_community_name       | new_community_description  | new_community_color |
+            | myCommunityNamedChanged  | Cool new description 123   | #ff0000             |
 
