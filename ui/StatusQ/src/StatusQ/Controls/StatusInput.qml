@@ -132,14 +132,14 @@ Item {
     property alias bottomPadding: statusBaseInput.bottomPadding
     /*!
         \qmlproperty real StatusInput::minimumHeight
-        This property sets the minimum height.
+        This property sets the minimum height. Default value is 44px.
     */
-    property real minimumHeight: 0
+    property real minimumHeight: 44
     /*!
         \qmlproperty alias StatusInput::maximumHeight
-        This property sets the maximum height.
+        This property sets the maximum height. Default value is 44px.
     */
-    property real maximumHeight: 0
+    property real maximumHeight: 44
     /*!
         \qmlproperty list StatusBaseInput::validators
         This property sets the list of validators to be considered.
