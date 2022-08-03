@@ -73,6 +73,12 @@ type
     communityId*: string
     categoryId*: string
 
+  DiscordCategoriesAndChannelsArgs* = ref object of Args
+    categories*: seq[DiscordCategoryDto]
+    channels*: seq[DiscordChannelDto]
+    oldestMessageTimestamp*: int
+    errors*: Table[string, DiscordImportError]
+
 # Signals which may be emitted by this service:
 const SIGNAL_COMMUNITY_JOINED* = "communityJoined"
 const SIGNAL_COMMUNITY_MY_REQUEST_ADDED* = "communityMyRequestAdded"
@@ -99,6 +105,8 @@ const SIGNAL_CURATED_COMMUNITY_FOUND* = "curatedCommunityFound"
 const SIGNAL_COMMUNITY_MUTED* = "communityMuted"
 const SIGNAL_CATEGORY_MUTED* = "categoryMuted"
 const SIGNAL_CATEGORY_UNMUTED* = "categoryUnmuted"
+const SIGNAL_DISCORD_CATEGORIES_AND_CHANNELS_EXTRACTED* = "discordCategoriesAndChannelsExtracted"
+const SIGNAL_DISCORD_COMMUNITY_IMPORT_FINISHED* = "discordCommunityImportFinished"
 
 QtObject:
   type
@@ -178,6 +186,16 @@ QtObject:
           self.events.emit(SIGNAL_COMMUNITY_EDITED, CommunityArgs(community: community))
 
           self.events.emit(SIGNAL_NEW_REQUEST_TO_JOIN_COMMUNITY, CommunityRequestArgs(communityRequest: membershipRequest))
+
+    self.events.on(SignalType.DiscordCategoriesAndChannelsExtracted.event) do(e: Args):
+      var receivedData = DiscordCategoriesAndChannelsExtractedSignal(e)
+      self.events.emit(SIGNAL_DISCORD_CATEGORIES_AND_CHANNELS_EXTRACTED,
+        DiscordCategoriesAndChannelsArgs(categories: receivedData.categories, channels: receivedData.channels, oldestMessageTimestamp: receivedData.oldestMessageTimestamp, errors: receivedData.errors))
+
+    self.events.on(SignalType.DiscordCommunityImportFinished.event) do(e: Args):
+      var receivedData = DiscordCommunityImportFinishedSignal(e)
+      self.events.emit(SIGNAL_DISCORD_COMMUNITY_IMPORT_FINISHED, CommunityIdArgs(communityId: receivedData.communityId))
+
 
   proc updateMissingFields(chatDto: var ChatDto, chat: ChatDto) =
     # This proc sets fields of `chatDto` which are available only for community channels.
