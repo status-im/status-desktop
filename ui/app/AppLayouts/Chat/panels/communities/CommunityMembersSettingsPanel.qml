@@ -60,12 +60,13 @@ SettingsPageLayout {
 //                btnText: qsTr("Rejected Requests")
 //            }
 
-            StatusTabButton {
-                id: bannedBtn
-                width: implicitWidth
-                enabled: bannedMembersModel.count > 0
-                text: qsTr("Banned")
-            }
+//  TODO restore when StackLayout issue is fixed
+//            StatusTabButton {
+//                id: bannedBtn
+//                width: implicitWidth
+//                enabled: bannedMembersModel.count > 0
+//                text: qsTr("Banned")
+//            }
         }
 
         StackLayout {
@@ -104,25 +105,26 @@ SettingsPageLayout {
                 }
             }
 
-            CommunityMembersTabPanel {
-                model: root.bannedMembersModel
-                placeholderText: {
-                    if (root.bannedMembersModel.count === 0) {
-                        return qsTr("No banned members to search")
-                    } else {
-                        return qsTr("Search %1's %2 banned member%3").arg(root.communityName)
-                                                              .arg(root.bannedMembersModel.count)
-                                                              .arg(root.bannedMembersModel.count > 1 ? "s" : "")
-                    }
-                }
-                panelType: CommunityMembersTabPanel.TabType.BannedMembers
+//  TODO restore when StackLayout issue is fixed
+//            CommunityMembersTabPanel {
+//                model: root.bannedMembersModel
+//                placeholderText: {
+//                    if (root.bannedMembersModel.count === 0) {
+//                        return qsTr("No banned members to search")
+//                    } else {
+//                        return qsTr("Search %1's %2 banned member%3").arg(root.communityName)
+//                                                              .arg(root.bannedMembersModel.count)
+//                                                              .arg(root.bannedMembersModel.count > 1 ? "s" : "")
+//                    }
+//                }
+//                panelType: CommunityMembersTabPanel.TabType.BannedMembers
 
-                Layout.fillWidth: true
-                Layout.fillHeight: true
+//                Layout.fillWidth: true
+//                Layout.fillHeight: true
 
-                onUserProfileClicked: root.userProfileClicked(id)
-                onUnbanUserClicked: root.unbanUserClicked(id)
-            }
+//                onUserProfileClicked: root.userProfileClicked(id)
+//                onUnbanUserClicked: root.unbanUserClicked(id)
+//            }
         }
     }
 
