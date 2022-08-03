@@ -7,6 +7,7 @@ wallet_navbar_wallet_icon_StatusIcon = {"container": navBarListView_Wallet_navba
 mainWallet_Account_Name = {"container": statusDesktop_mainWindow, "objectName": "accountName", "type": "StatusBaseText", "visible": True}
 mainWallet_Add_Account = {"container": statusDesktop_mainWindow, "text": "Add account", "type": "StatusBaseText", "unnamed": 1, "visible": True}
 signPhrase_Ok_Button = {"container": statusDesktop_mainWindow, "type": "StatusFlatButton", "objectName": "signPhraseModalOkButton", "visible": True}
+mainWallet_Saved_Addresses_Button = {"container": statusDesktop_mainWindow, "objectName": "savedAddressesBtn", "type": "StatusButton"}
 
 # Send popup:
 mainWallet_Footer_Send_Button = {"container": statusDesktop_mainWindow, "objectName": "walletFooterSendButton", "type": "StatusFlatButton"}
@@ -45,3 +46,12 @@ mainWindow_Add_Account_Popup_Seed_Phrase_11 = {"container": mainWallet_Add_Accou
 
 mainWallet_Add_Account_Popup_Footer = {"container": statusDesktop_mainWindow, "type": "StatusModalFooter", "unnamed": 1, "visible": True}
 mainWallet_Add_Account_Popup_Footer_Add_Account = {"container": mainWallet_Add_Account_Popup_Footer, "text": "Add account", "type": "StatusBaseText", "unnamed": 1, "visible": True}
+
+# saved address view
+mainWallet_Saved_Addreses_Add_Buttton = {"container": statusDesktop_mainWindow, "objectName": "addNewAddressBtn", "type": "StatusButton"}
+mainWallet_Saved_Addreses_List = {"container": statusDesktop_mainWindow, "objectName": "savedAddresses", "type": "StatusListView"}
+
+# saved address add popup
+mainWallet_Saved_Addreses_Popup_Name_Input = {"container": statusDesktop_mainWindow, "objectName": "savedAddressNameInput", "type": "TextEdit"}
+mainWallet_Saved_Addreses_Popup_Address_Input = {"container": statusDesktop_mainWindow, "objectName": "savedAddressAddressInput", "type": "StyledTextField"}
+mainWallet_Saved_Addreses_Popup_Address_Add_Button = {"container": statusDesktop_mainWindow, "objectName": "addSavedAddress", "type": "StatusButton"}

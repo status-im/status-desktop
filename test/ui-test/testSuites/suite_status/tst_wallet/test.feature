@@ -53,3 +53,11 @@ Feature: Status Desktop Wallet
     	Examples:
       	  | account_name |
       	  | one		     |
+
+ 	Scenario Outline: User adds a saved address
+        When the user adds a saved address name <name> and address <address>
+        Then the name <name> is in the list of saved addresses
+
+    	Examples:
+      	  | name | address 								      |
+      	  | one  | 0x8397bc3c5a60a1883174f722403d63a8833312b7 |

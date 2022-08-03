@@ -58,6 +58,7 @@ StatusDialog {
         StatusInput {
             id: nameInput
             implicitWidth: parent.width
+            input.edit.objectName: "savedAddressNameInput"
             minimumHeight: 56
             maximumHeight: 56
             placeholderText: qsTr("Enter a name")
@@ -84,6 +85,7 @@ StatusDialog {
             accounts: RootStore.accounts
             contactsStore: root.contactsStore
             label: qsTr("Address")
+            input.textField.objectName: "savedAddressAddressInput"
             input.placeholderText: qsTr("Enter ENS Name or Ethereum Address")
             labelFont.pixelSize: 15
             labelFont.weight: Font.Normal
@@ -105,6 +107,7 @@ StatusDialog {
                 text: root.edit ? qsTr("Save") : qsTr("Add address")
                 enabled: _internal.valid && _internal.dirty
                 onClicked: root.save(name, address)
+                objectName: "addSavedAddress"
             }
         }
     }
