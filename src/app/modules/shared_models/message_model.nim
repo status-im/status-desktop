@@ -331,9 +331,6 @@ QtObject:
     self.items.delete(ind)
     self.endRemoveRows()
 
-   # if self.items.len > 0 and ind > 0 and ind < self.items.len:
-   #     self.updateItemAtIndex(ind - 1)
-
     if ind > 0 and ind < self.items.len:
       self.updateItemAtIndex(ind - 1)
     if ind + 1 < self.items.len:
