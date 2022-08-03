@@ -84,7 +84,7 @@ StatusScrollView {
         }
 
         StatusBaseText {
-            text: qsTr("White text should be legible on top of this color")
+            text: qsTr("Preview")
             font.pixelSize: 15
         }
 
@@ -98,7 +98,7 @@ StatusScrollView {
                 id: preview
                 x: 16
                 y: 16
-                text: root.color.toString()
+                text: qsTr("White text should be legible on top of this color")
                 color: Theme.palette.white
                 font.pixelSize: 15
             }
