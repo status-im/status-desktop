@@ -13,6 +13,16 @@ class MainWalletScreen(Enum):
     ADD_ACCOUNT_BUTTON: str = "mainWallet_Add_Account"
     ACCOUNT_NAME: str = "mainWallet_Account_Name"
     SEND_BUTTON_FOOTER: str = "mainWallet_Footer_Send_Button"
+    SAVED_ADDRESSES_BUTTON: str = "mainWallet_Saved_Addresses_Button"
+
+class SavedAddressesScreen(Enum):
+    ADD_BUTTON: str = "mainWallet_Saved_Addreses_Add_Buttton"
+    SAVED_ADDRESSES_LIST: str = "mainWallet_Saved_Addreses_List"
+    
+class AddSavedAddressPopup(Enum):
+    NAME_INPUT: str = "mainWallet_Saved_Addreses_Popup_Name_Input"
+    ADDRESS_INPUT: str = "mainWallet_Saved_Addreses_Popup_Address_Input"
+    ADD_BUTTON: str = "mainWallet_Saved_Addreses_Popup_Address_Add_Button"
 
 class SendPopup(Enum):
     SCROLL_BAR: str = "mainWallet_Send_Popup_Main"
@@ -169,6 +179,21 @@ class StatusWalletScreen:
             if(repeater.itemAt(index).objectName == object_name):
                 click_obj(repeater.itemAt(index))
                 break
-        
+    
+    def add_saved_address(self, name: str, address: str):
+        click_obj_by_name(MainWalletScreen.SAVED_ADDRESSES_BUTTON.value)
+        click_obj_by_name(SavedAddressesScreen.ADD_BUTTON.value)
+        type(AddSavedAddressPopup.NAME_INPUT.value, name)
+        type(AddSavedAddressPopup.ADDRESS_INPUT.value, address)
+        click_obj_by_name(AddSavedAddressPopup.ADD_BUTTON.value)
+    
+    def verify_saved_address_exists(self, name: str):
+        list = get_obj(SavedAddressesScreen.SAVED_ADDRESSES_LIST.value)
+        for index in range(list.count):
+            if list.itemAtIndex(index).objectName == name:
+                return  
+    
+        assert False, "no saved address found"
+
     def verify_transaction(self):
         print("TODO: fix notification and ensure there is one")

@@ -127,6 +127,7 @@ Rectangle {
         }
 
         StatusButton {
+            objectName: "savedAddressesBtn"
             size: StatusBaseButton.Size.Small
             topPadding: Style.current.halfPadding
             bottomPadding: Style.current.halfPadding
