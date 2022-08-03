@@ -6,6 +6,7 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
+import StatusQ.Popups 0.1
 
 import utils 1.0
 import shared.popups 1.0
@@ -87,7 +88,7 @@ StatusScrollView {
             StatusButton {
                 id: importBtn
                 Layout.fillHeight: true
-                text: qsTr("Import Community")
+                text: qsTr("Import using key")
                 onClicked: Global.openPopup(importCommunitiesPopupComponent)
             }
 
@@ -96,7 +97,7 @@ StatusScrollView {
                 objectName: "createCommunityButton"
                 Layout.fillHeight: true
                 text: qsTr("Create New Community")
-                onClicked: Global.openPopup(createCommunitiesPopupComponent)
+                onClicked: Global.openPopup(chooseCommunityCreationTypePopupComponent)
             }
         }
 
@@ -221,6 +222,56 @@ StatusScrollView {
             onClosed: {
                 destroy()
             }
+        }
+    }
+
+    Component {
+        id: chooseCommunityCreationTypePopupComponent
+        StatusModal {
+          id: chooseCommunityCreationTypePopup
+          anchors.centerIn: parent
+          showHeader: false
+          onClosed: {
+              destroy()
+          }
+
+          Item {
+              id: content
+              anchors.fill: parent
+              implicitHeight: chooseCommunityCreationTypeContent.implicitHeight
+              ColumnLayout {
+                  id: chooseCommunityCreationTypeContent
+                  anchors.horizontalCenter: parent.horizontalCenter
+
+                  spacing: 24
+
+                  Item {
+                      width: parent.width
+                      height: 20
+                  }
+
+                  StatusButton {
+                      text: qsTr("Create new Status Community")
+                      Layout.alignment: Qt.AlignHCenter
+                      onClicked: {
+                          chooseCommunityCreationTypePopup.close()
+                          Global.openPopup(createCommunitiesPopupComponent)
+                      }
+                  }
+
+                  StatusButton {
+                      text: qsTr("Import a community from Discord")
+                      Layout.alignment: Qt.AlignHCenter
+                      onClicked: {
+                          chooseCommunityCreationTypePopup.close()
+                          Global.openPopup(createCommunitiesPopupComponent, {
+                            stackTitle: qsTr("Import a community from Discord into Status"),
+                            finishButtonLabel: qsTr("Finalise Discord import")
+                          })
+                      }
+                  }
+              }
+          }
         }
     }
 }

@@ -23,6 +23,7 @@ StatusStackModal {
     id: root
 
     property var store
+    property string finishButtonLabel: qsTr("Create Community")
 
     stackTitle: qsTr("Create New Community")
     width: 640
