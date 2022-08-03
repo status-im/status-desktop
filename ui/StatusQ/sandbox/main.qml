@@ -218,11 +218,6 @@ StatusWindow {
                         onClicked: mainPageView.page(title);
                     }
                     StatusNavigationListItem {
-                        title: "StatusAssetSelector"
-                        selected: viewLoader.source.toString().includes(title)
-                        onClicked: mainPageView.page(title);
-                    }
-                    StatusNavigationListItem {
                         title: "StatusColorSelector"
                         selected: viewLoader.source.toString().includes(title)
                         onClicked: mainPageView.page(title);
