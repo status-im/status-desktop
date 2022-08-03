@@ -117,6 +117,7 @@ Rectangle {
 
         StatusButton {
             id: saveChangesButton
+            objectName: "settingsDirtyToastMessageSaveButton"
             enabled: root.active && root.saveChangesButtonEnabled
             text: qsTr("Save changes")
             onClicked: root.saveChangesClicked()

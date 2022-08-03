@@ -104,6 +104,7 @@ StatusAppTwoPanelLayout {
         }
 
         StatusBaseText {
+            objectName: "communitySettingsBackToCommunityButton"
             Layout.alignment: Qt.AlignHCenter
             text: "<- " + qsTr("Back to community")
             color: Theme.palette.baseColor1

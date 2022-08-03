@@ -23,6 +23,7 @@ import "../../../CommunitiesPortal/panels"
 
 StatusScrollView {
     id: root
+    objectName: "communityEditPanelScrollView"
 
     property alias name: nameInput.text
     property alias description: descriptionTextInput.text
@@ -56,27 +57,32 @@ StatusScrollView {
 
         CommunityNameInput {
             id: nameInput
+            input.edit.objectName: "editCommunityNameInput"
             Layout.fillWidth: true
             Component.onCompleted: nameInput.input.forceActiveFocus(Qt.MouseFocusReason)
         }
 
         CommunityDescriptionInput {
             id: descriptionTextInput
+            input.edit.objectName: "editCommunityDescriptionInput"
             Layout.fillWidth: true
         }
 
         CommunityLogoPicker {
             id: logoPicker
+            objectName: "editCommunityLogoPicker"
             Layout.fillWidth: true
         }
 
         CommunityBannerPicker {
             id: bannerPicker
+            objectName: "editCommunityBannerPicker"
             Layout.fillWidth: true
         }
 
         CommunityColorPicker {
             id: colorPicker
+            objectName: "editCommunityColorPicker"
             onPick: Global.openPopup(pickColorComponent)
             Layout.fillWidth: true
 
@@ -100,6 +106,7 @@ StatusScrollView {
 
         CommunityTagsPicker {
             id: tagsPicker
+            objectName: "editCommunityTagsPicker"
             onPick: Global.openPopup(pickTagsComponent)
             Layout.fillWidth: true
 
@@ -141,6 +148,7 @@ StatusScrollView {
 
         CommunityIntroMessageInput {
             id: introMessageTextInput
+            input.edit.objectName: "editCommunityIntroInput"
             Layout.fillWidth: true
             minimumHeight: 108
             maximumHeight: 108
@@ -148,6 +156,7 @@ StatusScrollView {
 
         CommunityOutroMessageInput {
             id: outroMessageTextInput
+            input.edit.objectName: "editCommunityOutroInput"
             Layout.fillWidth: true
         }
 
