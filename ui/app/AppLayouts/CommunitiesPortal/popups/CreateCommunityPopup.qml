@@ -31,15 +31,27 @@ StatusStackModal {
     nextButton: StatusButton {
         objectName: "createCommunityNextBtn"
         text: qsTr("Next")
-        enabled: nameInput.valid && descriptionTextInput.valid
-        onClicked: currentIndex++
+        enabled:  typeof(currentItem.canGoNext) == "undefined" || currentItem.canGoNext
+        onClicked: {
+            let nextAction = currentItem.nextAction
+            if (typeof(nextAction) == "function") {
+                return nextAction()
+            }
+            root.currentIndex++
+        }
     }
 
     finishButton: StatusButton {
         objectName: "createCommunityFinalBtn"
-        text: qsTr("Create Community")
-        enabled: introMessageInput.valid && outroMessageInput.valid
-        onClicked: d.createCommunity()
+        text: finishButtonLabel
+        enabled:  typeof(currentItem.canGoNext) == "undefined" || currentItem.canGoNext
+        onClicked: {
+            let nextAction = currentItem.nextAction
+            if (typeof (nextAction) == "function") {
+                return nextAction()
+            }
+            root.close()
+        }
     }
 
     onAboutToShow: nameInput.input.edit.forceActiveFocus()
@@ -47,6 +59,8 @@ StatusStackModal {
     stackItems: [
         StatusScrollView {
             id: generalView
+
+            readonly property bool canGoNext: nameInput.valid && descriptionTextInput.valid
 
             ColumnLayout {
                 id: generalViewLayout
@@ -131,6 +145,8 @@ StatusStackModal {
         ColumnLayout {
             id: introOutroMessageView
             spacing: 11
+            readonly property bool canGoNext: introMessageInput.valid && outroMessageInput.valid
+
             CommunityIntroMessageInput {
                 id: introMessageInput
                 input.edit.objectName: "createCommunityIntroMessageInput"
