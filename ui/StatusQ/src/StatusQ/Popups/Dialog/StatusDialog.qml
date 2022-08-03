@@ -22,10 +22,7 @@ Dialog {
         color: Theme.palette.backdropColor
     }
 
-    background: Rectangle {
-        color: Theme.palette.statusModal.backgroundColor
-        radius: 8
-    }
+    background: StatusDialogBackground {}
 
     header: StatusDialogHeader {
         visible: root.title
