@@ -12,7 +12,7 @@ StatusInput {
 
     leftPadding: 0
     rightPadding: 0
-    label: qsTr("Community name")
+    label: qsTr("Name your community")
     charLimit: 30
     placeholderText: qsTr("A catchy name")
     validators: [

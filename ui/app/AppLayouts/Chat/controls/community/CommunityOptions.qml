@@ -19,21 +19,21 @@ ColumnLayout {
 
     QtObject {
         id: d
-        readonly property real optionHeight: 64
+        readonly property int optionHeight: 64
     }
 
     RowLayout {
         id: archiveSupport
 
         Layout.fillWidth: true
+        Layout.preferredHeight: d.optionHeight
 
         StatusBaseText {
-            text: qsTr("Community history service")
-        }
-
-        Item {
             Layout.fillWidth: true
-            implicitHeight: d.optionHeight
+            text: qsTr("Community history service")
+            TapHandler {
+                onTapped: archiveSupportToggle.toggle()
+            }
         }
 
         StatusCheckBox {
@@ -43,14 +43,14 @@ ColumnLayout {
 
     RowLayout {
         Layout.fillWidth: true
+        Layout.preferredHeight: d.optionHeight
 
         StatusBaseText {
-            text: qsTr("Request to join required")
-        }
-
-        Item {
             Layout.fillWidth: true
-            implicitHeight: d.optionHeight
+            text: qsTr("Request to join required")
+            TapHandler {
+                onTapped: requestToJoinToggle.toggle()
+            }
         }
 
         StatusCheckBox {
@@ -60,14 +60,14 @@ ColumnLayout {
 
     RowLayout {
         Layout.fillWidth: true
+        Layout.preferredHeight: d.optionHeight
 
         StatusBaseText {
-            text: qsTr("Any member can pin a message")
-        }
-
-        Item {
             Layout.fillWidth: true
-            implicitHeight: d.optionHeight
+            text: qsTr("Any member can pin a message")
+            TapHandler {
+                onTapped: pinMessagesToggle.toggle()
+            }
         }
 
         StatusCheckBox {
