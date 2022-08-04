@@ -120,6 +120,7 @@ QtObject {
 
     property color successColor1
     property color successColor2
+    property color successColor3
 
     property color mentionColor1
     property color mentionColor2

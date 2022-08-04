@@ -20,6 +20,7 @@ ThemePalette {
 
     successColor1: getColor('green')
     successColor2: getColor('green', 0.1)
+    successColor3: getColor('green', 0.2)
 
     mentionColor1: getColor('turquoise')
     mentionColor2: getColor('turquoise2', 0.3)
