@@ -24,9 +24,14 @@ Item {
     signal banUserClicked(string id, string name)
     signal unbanUserClicked(string id)
 
+    signal acceptRequestToJoin(string id)
+    signal declineRequestToJoin(string id)
+
     enum TabType {
         AllMembers,
-        BannedMembers
+        BannedMembers,
+        PendingRequests,
+        DeclinedRequests
     }
 
     property int panelType: CommunityMembersTabPanel.TabType.AllMembers
@@ -62,16 +67,18 @@ Item {
                 id: memberItem
 
                 readonly property bool itsMe: model.pubKey.toLowerCase() === userProfile.pubKey.toLowerCase()
-                readonly property bool showButton: !memberItem.itsMe && !model.isAdmin
-                                                    && memberItem.sensor.containsMouse
+                readonly property bool isHovered: memberItem.sensor.containsMouse
+                readonly property bool canBeBanned: !memberItem.itsMe && !model.isAdmin
 
                 statusListItemComponentsSlot.spacing: 16
-                rightPadding: 80
+                statusListItemTitleArea.anchors.rightMargin: 0
+                statusListItemSubTitle.elide: Text.ElideRight
+                rightPadding: 75
                 leftPadding: 12
 
                 components: [
                     StatusButton {
-                        visible: (root.panelType === CommunityMembersTabPanel.TabType.AllMembers) && showButton
+                        visible: (root.panelType === CommunityMembersTabPanel.TabType.AllMembers) && isHovered && canBeBanned
                         text: qsTr("Kick")
                         type: StatusBaseButton.Type.Danger
                         size: StatusBaseButton.Size.Small
@@ -79,7 +86,7 @@ Item {
                     },
 
                     StatusButton {
-                        visible: (root.panelType === CommunityMembersTabPanel.TabType.AllMembers) && showButton
+                        visible: (root.panelType === CommunityMembersTabPanel.TabType.AllMembers) && isHovered && canBeBanned
                         text: qsTr("Ban")
                         type: StatusBaseButton.Type.Danger
                         size: StatusBaseButton.Size.Small
@@ -87,12 +94,40 @@ Item {
                     },
 
                     StatusButton {
-                        visible: (root.panelType === CommunityMembersTabPanel.TabType.BannedMembers) && showButton
+                        visible: (root.panelType === CommunityMembersTabPanel.TabType.BannedMembers) && isHovered && canBeBanned
                         text: qsTr("Unban")
                         type: StatusBaseButton.Type.Normal
-                        size: StatusBaseButton.Size.Small
+                        size: StatusBaseButton.Size.Large
                         onClicked: root.unbanUserClicked(model.pubKey)
                         width: 95
+                        height: 44
+                    },
+
+                    StatusButton {
+                        visible: (root.panelType === CommunityMembersTabPanel.TabType.PendingRequests ||
+                                  root.panelType === CommunityMembersTabPanel.TabType.DeclinedRequests) && isHovered
+                        text: qsTr("Accept")
+                        type: StatusBaseButton.Type.Normal
+                        size: StatusBaseButton.Size.Large
+                        icon.name: "checkmark-circle"
+                        icon.color: Theme.palette.successColor1
+                        normalColor: Theme.palette.successColor2
+                        hoverColor: Theme.palette.successColor3
+                        textColor: Theme.palette.successColor1
+                        onClicked: root.acceptRequestToJoin(model.requestToJoinId)
+                        width: 124
+                        height: 44
+                    },
+
+                    StatusButton {
+                        visible: (root.panelType === CommunityMembersTabPanel.TabType.PendingRequests) && isHovered
+                        text: qsTr("Reject")
+                        type: StatusBaseButton.Type.Danger
+                        icon.name: "close-circle"
+                        icon.color: Style.current.danger
+                        onClicked: root.declineRequestToJoin(model.requestToJoinId)
+                        width: 118
+                        height: 44
                     }
                 ]
 

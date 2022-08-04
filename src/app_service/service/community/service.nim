@@ -122,6 +122,7 @@ QtObject:
   proc handleCommunityUpdates(self: Service, communities: seq[CommunityDto], updatedChats: seq[ChatDto])
   proc handleCommunitiesSettingsUpdates(self: Service, communitiesSettings: seq[CommunitySettingsDto])
   proc pendingRequestsToJoinForCommunity*(self: Service, communityId: string): seq[CommunityMembershipRequestDto]
+  proc declinedRequestsToJoinForCommunity*(self: Service, communityId: string): seq[CommunityMembershipRequestDto]
 
   proc delete*(self: Service) =
     discard
@@ -210,6 +211,7 @@ QtObject:
     # Community data we get from the signals and responses don't contgain the pending requests
     # therefore, we must keep the old one
     community.pendingRequestsToJoin = self.joinedCommunities[community.id].pendingRequestsToJoin
+    community.declinedRequestsToJoin = self.joinedCommunities[community.id].declinedRequestsToJoin
 
     # Update the joinded community list with the new data
     self.joinedCommunities[community.id] = community
@@ -343,6 +345,7 @@ QtObject:
       self.joinedCommunities[community.id] = community
       if (community.admin):
         self.joinedCommunities[community.id].pendingRequestsToJoin = self.pendingRequestsToJoinForCommunity(community.id)
+        self.joinedCommunities[community.id].declinedRequestsToJoin = self.declinedRequestsToJoinForCommunity(community.id)
 
     let allCommunities = self.loadAllCommunities()
     for community in allCommunities:
@@ -578,6 +581,17 @@ QtObject:
           result.add(jsonCommunityReqest.toCommunityMembershipRequestDto())
     except Exception as e:
       error "Error fetching community requests", msg = e.msg
+
+  proc declinedRequestsToJoinForCommunity*(self: Service, communityId: string): seq[CommunityMembershipRequestDto] =
+    try:
+      let response = status_go.declinedRequestsToJoinForCommunity(communityId)
+
+      result = @[]
+      if response.result.kind != JNull:
+        for jsonCommunityReqest in response.result:
+          result.add(jsonCommunityReqest.toCommunityMembershipRequestDto())
+    except Exception as e:
+      error "Error fetching community declined requests", msg = e.msg
 
   proc leaveCommunity*(self: Service, communityId: string) =
     try:
@@ -1026,7 +1040,7 @@ QtObject:
     except Exception as e:
       error "Error exporting community", msg = e.msg
 
-  proc getPendingRequestIndex*(self: Service, communityId: string, requestId: string): int =
+  proc getPendingRequestIndex(self: Service, communityId: string, requestId: string): int =
     let community = self.joinedCommunities[communityId]
     var i = 0
     for pendingRequest in community.pendingRequestsToJoin:
@@ -1035,15 +1049,43 @@ QtObject:
       i.inc()
     return -1
 
-  proc removeMembershipRequestFromCommunityAndGetMemberPubkey*(self: Service, communityId: string, requestId: string): string =
-    let index = self.getPendingRequestIndex(communityId, requestId)
+  proc getDeclinedRequestIndex(self: Service, communityId: string, requestId: string): int =
+    let community = self.joinedCommunities[communityId]
+    var i = 0
+    for declinedRequest in community.declinedRequestsToJoin:
+      if (declinedRequest.id == requestId):
+        return i
+      i.inc()
+    return -1
 
-    if (index == -1):
+  proc removeMembershipRequestFromCommunityAndGetMemberPubkey*(self: Service, communityId: string, requestId: string): string =
+    let indexPending = self.getPendingRequestIndex(communityId, requestId)
+    let indexDeclined = self.getDeclinedRequestIndex(communityId, requestId)
+
+    if (indexPending == -1 and indexDeclined == -1):
       raise newException(RpcException, fmt"Community request not found: {requestId}")
 
     var community = self.joinedCommunities[communityId]
-    result = community.pendingRequestsToJoin[index].publicKey
-    community.pendingRequestsToJoin.delete(index)
+
+    if (indexPending != -1):
+      result = community.pendingRequestsToJoin[indexPending].publicKey
+      community.pendingRequestsToJoin.delete(indexPending)
+    elif (indexDeclined != -1):
+      result = community.declinedRequestsToJoin[indexDeclined].publicKey
+      community.declinedRequestsToJoin.delete(indexDeclined)
+
+    self.joinedCommunities[communityId] = community
+
+  proc moveRequestToDeclined*(self: Service, communityId: string, requestId: string) =
+    let indexPending = self.getPendingRequestIndex(communityId, requestId)
+    if (indexPending == -1):
+      raise newException(RpcException, fmt"Community request not found: {requestId}")
+
+    var community = self.joinedCommunities[communityId]
+    if (indexPending != -1):
+      let itemToMove = community.pendingRequestsToJoin[indexPending]
+      community.declinedRequestsToJoin.add(itemToMove)
+      community.pendingRequestsToJoin.delete(indexPending)
 
     self.joinedCommunities[communityId] = community
 
@@ -1065,7 +1107,7 @@ QtObject:
     try:
       discard status_go.declineRequestToJoinCommunity(requestId)
 
-      discard self.removeMembershipRequestFromCommunityAndGetMemberPubkey(communityId, requestId)
+      self.moveRequestToDeclined(communityId, requestId)
 
       self.events.emit(SIGNAL_COMMUNITY_EDITED, CommunityArgs(community: self.joinedCommunities[communityId]))
     except Exception as e:
