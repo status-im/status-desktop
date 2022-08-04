@@ -73,6 +73,19 @@ method viewDidLoad*(self: Module) =
 
   self.delegate.communitiesModuleDidLoad()
 
+proc createMemberItem(self: Module, memberId, requestId: string): MemberItem =
+  let contactDetails = self.controller.getContactDetails(memberId)
+  result = initMemberItem(
+    pubKey = memberId,
+    displayName = contactDetails.displayName,
+    ensName = contactDetails.details.name,
+    localNickname = contactDetails.details.localNickname,
+    alias = contactDetails.details.alias,
+    icon = contactDetails.icon,
+    onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(memberId).statusType),
+    isContact = contactDetails.details.isContact,
+    requestToJoinId = requestId)
+
 method getCommunityItem(self: Module, c: CommunityDto): SectionItem =
   return initItem(
       c.id,
@@ -100,31 +113,14 @@ method getCommunityItem(self: Module, c: CommunityDto): SectionItem =
       c.permissions.ensOnly,
       c.muted, 
       c.members.map(proc(member: Member): MemberItem =
-        let contactDetails = self.controller.getContactDetails(member.id)
-        result = initMemberItem(
-          pubKey = member.id,
-          displayName = contactDetails.displayName,
-          ensName = contactDetails.details.name,
-          localNickname = contactDetails.details.localNickname,
-          alias = contactDetails.details.alias,
-          icon = contactDetails.icon,
-          onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(member.id).statusType),
-          isContact = contactDetails.details.isContact,
-          )),
+        result = self.createMemberItem(member.id, "")),
       historyArchiveSupportEnabled = c.settings.historyArchiveSupportEnabled,
       bannedMembers = c.bannedMembersIds.map(proc(bannedMemberId: string): MemberItem =
-        let contactDetails = self.controller.getContactDetails(bannedMemberId)
-        result = initMemberItem(
-          pubKey = bannedMemberId,
-          displayName = contactDetails.displayName,
-          ensName = contactDetails.details.name,
-          localNickname = contactDetails.details.localNickname,
-          alias = contactDetails.details.alias,
-          icon = contactDetails.icon,
-          onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(bannedMemberId).statusType),
-          isContact = contactDetails.details.added, # FIXME
-        )
-      ),
+        result = self.createMemberItem(bannedMemberId, "")),
+      pendingMemberRequests = c.pendingRequestsToJoin.map(proc(requestDto: CommunityMembershipRequestDto): MemberItem =
+        result = self.createMemberItem(requestDto.publicKey, requestDto.id)),
+      declinedMemberRequests = c.declinedRequestsToJoin.map(proc(requestDto: CommunityMembershipRequestDto): MemberItem =
+        result = self.createMemberItem(requestDto.publicKey, requestDto.id)),
     )
 
 method getCuratedCommunityItem(self: Module, c: CuratedCommunity): CuratedCommunityItem =

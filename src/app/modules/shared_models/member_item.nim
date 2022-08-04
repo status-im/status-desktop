@@ -7,6 +7,7 @@ type
   MemberItem* = ref object of UserItem
     isAdmin: bool
     joined: bool
+    requestToJoinId: string
 
 # FIXME: remove defaults
 proc initMemberItem*(
@@ -28,10 +29,12 @@ proc initMemberItem*(
   outgoingVerificationStatus: VerificationRequestStatus = VerificationRequestStatus.None,
   isAdmin: bool = false,
   joined: bool = false,
+  requestToJoinId: string = "",
 ): MemberItem =
   result = MemberItem()
   result.isAdmin = isAdmin
   result.joined = joined
+  result.requestToJoinId = requestToJoinId
   result.UserItem.setup(
     pubKey = pubKey,
     displayName = displayName,
@@ -70,7 +73,8 @@ proc `$`*(self: MemberItem): string =
     incomingVerificationStatus: {$self.incomingVerificationStatus.int},
     outgoingVerificationStatus: {$self.outgoingVerificationStatus.int},
     isAdmin: {self.isAdmin},
-    joined: {self.joined}
+    joined: {self.joined},
+    requestToJoinId: {self.requestToJoinId}
     ]"""
 
 proc isAdmin*(self: MemberItem): bool {.inline.} =
@@ -84,3 +88,9 @@ proc joined*(self: MemberItem): bool {.inline.} =
 
 proc `joined=`*(self: MemberItem, value: bool) {.inline.} =
   self.joined = value
+
+proc requestToJoinId*(self: MemberItem): string {.inline.} =
+  self.requestToJoinId
+
+proc `requestToJoinId=`*(self: MemberItem, value: string) {.inline.} =
+  self.requestToJoinId = value

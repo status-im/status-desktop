@@ -185,17 +185,17 @@ StatusAppTwoPanelLayout {
             CommunityMembersSettingsPanel {
                 membersModel: root.community.members
                 bannedMembersModel: root.community.bannedMembers
+                pendingMemberRequestsModel: root.community.pendingMemberRequests
+                declinedMemberRequestsModel: root.community.declinedMemberRequests
                 editable: root.community.amISectionAdmin
-                pendingRequests: root.community.pendingRequestsToJoin ? root.community.pendingRequestsToJoin.count : 0
                 communityName: root.community.name
 
                 onUserProfileClicked: Global.openProfilePopup(id)
                 onKickUserClicked: root.rootStore.removeUserFromCommunity(id)
                 onBanUserClicked: root.rootStore.banUserFromCommunity(id)
                 onUnbanUserClicked: root.rootStore.unbanUserFromCommunity(id)
-                onMembershipRequestsClicked: Global.openPopup(root.membershipRequestPopup, {
-                    communitySectionModule: root.chatCommunitySectionModule
-                })
+                onAcceptRequestToJoin: root.rootStore.acceptRequestToJoinCommunity(id)
+                onDeclineRequestToJoin: root.rootStore.declineRequestToJoinCommunity(id)
             }
 
             CommunityPermissionsSettingsPanel {}

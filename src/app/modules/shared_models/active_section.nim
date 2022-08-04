@@ -19,11 +19,15 @@ QtObject:
   proc membersChanged*(self: ActiveSection) {.signal.}
   proc bannedMembersChanged*(self: ActiveSection) {.signal.}
   proc pendingRequestsToJoinChanged*(self: ActiveSection) {.signal.}
+  proc pendingMemberRequestsChanged*(self: ActiveSection) {.signal.}
+  proc declinedMemberRequestsChanged*(self: ActiveSection) {.signal.}
 
   proc setActiveSectionData*(self: ActiveSection, item: SectionItem) =
     self.item = item
     self.membersChanged()
     self.bannedMembersChanged()
+    self.pendingMemberRequestsChanged()
+    self.declinedMemberRequestsChanged()
     self.pendingRequestsToJoinChanged()
 
   proc getId*(self: ActiveSection): string {.slot.} =
@@ -184,6 +188,27 @@ QtObject:
   QtProperty[QVariant] bannedMembers:
     read = bannedMembers
     notify = bannedMembersChanged
+
+  proc pendingMemberRequests(self: ActiveSection): QVariant {.slot.} =
+    if (self.item.id == ""):
+      # FIXME (Jo) I don't know why but the Item is sometimes empty and doing anything here crashes the app
+      return newQVariant("")
+    return newQVariant(self.item.pendingMemberRequests)
+
+  QtProperty[QVariant] pendingMemberRequests:
+    read = pendingMemberRequests
+    notify = pendingMemberRequestsChanged
+
+
+  proc declinedMemberRequests(self: ActiveSection): QVariant {.slot.} =
+    if (self.item.id == ""):
+      # FIXME (Jo) I don't know why but the Item is sometimes empty and doing anything here crashes the app
+      return newQVariant("")
+    return newQVariant(self.item.declinedMemberRequests)
+
+  QtProperty[QVariant] declinedMemberRequests:
+    read = declinedMemberRequests
+    notify = declinedMemberRequestsChanged
 
   proc hasMember(self: ActiveSection, pubkey: string): bool {.slot.} =
     return self.item.hasMember(pubkey)

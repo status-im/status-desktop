@@ -43,6 +43,8 @@ type
     historyArchiveSupportEnabled: bool
     pinMessageAllMembersEnabled: bool
     bannedMembersModel: member_model.Model
+    pendingMemberRequestsModel: member_model.Model
+    declinedMemberRequestsModel: member_model.Model
 
 proc initItem*(
     id: string,
@@ -74,6 +76,8 @@ proc initItem*(
     historyArchiveSupportEnabled = false,
     pinMessageAllMembersEnabled = false,
     bannedMembers: seq[MemberItem] = @[],
+    pendingMemberRequests: seq[MemberItem] = @[],
+    declinedMemberRequests: seq[MemberItem] = @[],
     ): SectionItem =
   result.id = id
   result.sectionType = sectionType
@@ -107,6 +111,10 @@ proc initItem*(
   result.pinMessageAllMembersEnabled = pinMessageAllMembersEnabled
   result.bannedMembersModel = newModel()
   result.bannedMembersModel.setItems(bannedMembers)
+  result.pendingMemberRequestsModel = newModel()
+  result.pendingMemberRequestsModel.setItems(pendingMemberRequests)
+  result.declinedMemberRequestsModel = newModel()
+  result.declinedMemberRequestsModel.setItems(declinedMemberRequests)
 
 proc isEmpty*(self: SectionItem): bool =
   return self.id.len == 0
@@ -141,6 +149,8 @@ proc `$`*(self: SectionItem): string =
     historyArchiveSupportEnabled:{self.historyArchiveSupportEnabled},
     pinMessageAllMembersEnabled:{self.pinMessageAllMembersEnabled},
     bannedMembers:{self.bannedMembersModel},
+    pendingMemberRequests:{self.pendingMemberRequestsModel},
+    declinedMemberRequests:{self.declinedMemberRequestsModel},
     ]"""
 
 proc id*(self: SectionItem): string {.inline.} =
@@ -255,6 +265,12 @@ proc updateMember*(
 
 proc bannedMembers*(self: SectionItem): member_model.Model {.inline.} =
   self.bannedMembersModel
+
+proc pendingMemberRequests*(self: SectionItem): member_model.Model {.inline.} =
+  self.pendingMemberRequestsModel
+
+proc declinedMemberRequests*(self: SectionItem): member_model.Model {.inline.} =
+  self.declinedMemberRequestsModel
 
 proc pendingRequestsToJoin*(self: SectionItem): PendingRequestModel {.inline.} =
   self.pendingRequestsToJoinModel

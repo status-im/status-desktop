@@ -25,6 +25,7 @@ type
     OutgoingVerificationStatus
     IsAdmin
     Joined
+    RequestToJoinId
 
 QtObject:
   type
@@ -86,6 +87,7 @@ QtObject:
       ModelRole.OutgoingVerificationStatus.int: "outgoingVerificationStatus",
       ModelRole.IsAdmin.int: "isAdmin",
       ModelRole.Joined.int: "joined",
+      ModelRole.RequestToJoinId.int: "requestToJoinId",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -135,6 +137,8 @@ QtObject:
       result = newQVariant(item.isAdmin)
     of ModelRole.Joined:
       result = newQVariant(item.joined)
+    of ModelRole.RequestToJoinId:
+      result = newQVariant(item.requestToJoinId)
 
   proc addItem*(self: Model, item: MemberItem) =
     # we need to maintain online contact on top, that means

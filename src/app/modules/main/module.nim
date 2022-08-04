@@ -259,11 +259,38 @@ proc createChannelGroupItem[T](self: Module[T], c: ChannelGroupDto): SectionItem
         alias = contactDetails.details.alias,
         icon = contactDetails.icon,
         onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(bannedMemberId).statusType),
-        isContact = contactDetails.details.added # FIXME
+        isContact = contactDetails.details.isContact
       )
-    )
+    ),
+    if (isCommunity): communityDetails.pendingRequestsToJoin.map(proc(requestDto: CommunityMembershipRequestDto): MemberItem =
+      let contactDetails = self.controller.getContactDetails(requestDto.publicKey)
+      result = initMemberItem(
+        pubKey = requestDto.publicKey,
+        displayName = contactDetails.displayName,
+        ensName = contactDetails.details.name,
+        localNickname = contactDetails.details.localNickname,
+        alias = contactDetails.details.alias,
+        icon = contactDetails.icon,
+        onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(requestDto.publicKey).statusType),
+        isContact = contactDetails.details.isContact,
+        requestToJoinId = requestDto.id
+      )
+    ) else: @[],
+    if (isCommunity): communityDetails.declinedRequestsToJoin.map(proc(requestDto: CommunityMembershipRequestDto): MemberItem =
+      let contactDetails = self.controller.getContactDetails(requestDto.publicKey)
+      result = initMemberItem(
+        pubKey = requestDto.publicKey,
+        displayName = contactDetails.displayName,
+        ensName = contactDetails.details.name,
+        localNickname = contactDetails.details.localNickname,
+        alias = contactDetails.details.alias,
+        icon = contactDetails.icon,
+        onlineStatus = toOnlineStatus(self.controller.getStatusForContactWithId(requestDto.publicKey).statusType),
+        isContact = contactDetails.details.isContact,
+        requestToJoinId = requestDto.id
+      )
+    ) else: @[]
   )
-
 
 
 method load*[T](

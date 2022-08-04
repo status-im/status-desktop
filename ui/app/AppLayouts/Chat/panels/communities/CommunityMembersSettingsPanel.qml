@@ -18,16 +18,19 @@ SettingsPageLayout {
 
     property var membersModel
     property var bannedMembersModel
+    property var pendingMemberRequestsModel
+    property var declinedMemberRequestsModel
     property string communityName
 
     property bool editable: true
-    property int pendingRequests
 
     signal membershipRequestsClicked()
     signal userProfileClicked(string id)
     signal kickUserClicked(string id)
     signal banUserClicked(string id)
     signal unbanUserClicked(string id)
+    signal acceptRequestToJoin(string id)
+    signal declineRequestToJoin(string id)
 
     title: qsTr("Members")
 
@@ -45,21 +48,19 @@ SettingsPageLayout {
                 text: qsTr("All Members")
             }
 
-// TODO will be added in next phase
-//            StatusTabButton {
-//                id: pendingRequestsBtn
-//                width: implicitWidth
-//                text: qsTr("Pending Requests")
-//                enabled: false
-//            }
-// Temporary commented until we provide appropriate flags on the `status-go` side to cover all sections.
-//            StatusTabButton {
-//                id: rejectedRequestsBtn
-//                width: implicitWidth
-//                enabled: root.contactsStore.receivedButRejectedContactRequestsModel.count > 0 ||
-//                         root.contactsStore.sentButRejectedContactRequestsModel.count > 0
-//                btnText: qsTr("Rejected Requests")
-//            }
+            StatusTabButton {
+                id: pendingRequestsBtn
+                width: implicitWidth
+                text: qsTr("Pending Requests")
+                enabled: pendingMemberRequestsModel.count > 0
+            }
+
+            StatusTabButton {
+                id: declinedRequestsBtn
+                width: implicitWidth
+                text: qsTr("Rejected")
+                enabled: declinedMemberRequestsModel.count > 0
+            }
 
             StatusTabButton {
                 id: bannedBtn
@@ -103,6 +104,45 @@ SettingsPageLayout {
                     banModal.userIdToBan = id
                     banModal.open()
                 }
+            }
+
+            CommunityMembersTabPanel {
+                model: root.pendingMemberRequestsModel
+                placeholderText: {
+                    if (root.pendingMemberRequestsModel.count === 0) {
+                        return qsTr("No pending requests to search")
+                    } else {
+                        return qsTr("Search %1's %2 pending request%3").arg(root.communityName)
+                                                              .arg(root.pendingMemberRequestsModel.count)
+                                                              .arg(root.pendingMemberRequestsModel.count > 1 ? "s" : "")
+                    }
+                }
+                panelType: CommunityMembersTabPanel.TabType.PendingRequests
+
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+
+                onAcceptRequestToJoin: root.acceptRequestToJoin(id)
+                onDeclineRequestToJoin: root.declineRequestToJoin(id)
+            }
+
+            CommunityMembersTabPanel {
+                model: root.declinedMemberRequestsModel
+                placeholderText: {
+                    if (root.declinedMemberRequestsModel.count === 0) {
+                        return qsTr("No rejected members to search")
+                    } else {
+                        return qsTr("Search %1's %2 rejected member%3").arg(root.communityName)
+                                                              .arg(root.declinedMemberRequestsModel.count)
+                                                              .arg(root.declinedMemberRequestsModel.count > 1 ? "s" : "")
+                    }
+                }
+                panelType: CommunityMembersTabPanel.TabType.DeclinedRequests
+
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+
+                onAcceptRequestToJoin: root.acceptRequestToJoin(id)
             }
 
             CommunityMembersTabPanel {
