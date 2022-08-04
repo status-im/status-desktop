@@ -1,4 +1,6 @@
 import QtQuick 2.14
+import QtQuick.Controls 2.14
+import QtQml.Models 2.14
 import QtQuick.Layouts 1.14
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -6,10 +8,8 @@ import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 import StatusQ.Core.Utils 0.1
 
-GridLayout {
-    columns: 1
-    columnSpacing: 5
-    rowSpacing: 5
+ColumnLayout {
+    spacing: 5
 
     StatusNavigationListItem {
         title: "Menu Item"
@@ -53,6 +53,57 @@ GridLayout {
     StatusChatListCategoryItem {
         title: "Chat list category (no buttons)"
         opened: true
+    }
+
+    StatusChatListCategoryItem {
+        title: "Chat cat. interactive"
+        opened: true
+        propagateTitleClicks: false
+        showActionButtons: true
+        onAddButtonClicked: testEventsList.eventTriggered("Add button clicked")
+        onMenuButtonClicked: testEventsList.eventTriggered("Menu button clicked")
+        onToggleButtonClicked: opened = !opened
+        onTitleClicked: {
+            testEventsList.eventTriggered("Title clicked")
+        }
+        onClicked: {
+            testEventsList.eventTriggered("Item clicked")
+            mouse.accepted = true
+        }
+    }
+
+    ListView {
+        id: testEventsList
+
+        Layout.fillWidth: true
+        Layout.preferredHeight: 20 * count
+
+        clip: true
+
+        function eventTriggered(message) {
+            let obj = eventDelegateComponent.createObject()
+            obj.text = message
+            model.insert(0, obj)
+        }
+
+        Component {
+            id: eventDelegateComponent
+
+            ItemDelegate {
+                implicitHeight: 20
+
+                property int index: ObjectModel.index
+
+                Timer {
+                    interval: 5000; running: true
+                    onTriggered: testObjeModel.remove(index)
+                }
+            }
+        }
+
+        model: ObjectModel {
+            id: testObjeModel
+        }
     }
 
     StatusChatListItem {
