@@ -94,6 +94,11 @@ Item {
         \qmlproperty string StatusInput::label
         This property sets the label text.
     */
+    property int labelPadding: 8
+    /*!
+        \qmlproperty string StatusInput::label
+        This property sets the label text.
+    */
     property string label: ""
     /*!
         \qmlproperty string StatusInput::secondaryLabel
@@ -347,9 +352,7 @@ Item {
     }
 
     implicitWidth: 448
-    implicitHeight: ((internal.inputHeight + topRow.height + errorMessage.height) +
-                    ((topRow.height > 0) && (errorMessage.height > 0) ? 16 :
-                    (topRow.height > 0) || (errorMessage.height > 0) ? 8 : 0))
+    implicitHeight: inputLayout.implicitHeight
 
     Component.onCompleted: {
         validate()
@@ -363,7 +366,8 @@ Item {
         RowLayout {
             id: topRow
             Layout.fillWidth: true
-            Layout.preferredHeight: (!!root.label || !!root.secondaryLabel || root.charLimit > 0) ? 22 :0
+            Layout.preferredHeight: (!!root.label || !!root.secondaryLabel || root.charLimit > 0) ? 22 : 0
+
             StatusBaseText {
                 id: label
                 visible: !!text
@@ -404,7 +408,7 @@ Item {
             implicitWidth: parent.width
             implicitHeight: internal.inputHeight
             Layout.alignment: Qt.AlignTop
-            Layout.topMargin: (topRow.height > 0) ? 8 : 0
+            Layout.topMargin: (topRow.height > 0) ? labelPadding : 0
             maximumLength: root.charLimit
             onTextChanged: root.validate()
             Keys.forwardTo: [root]
@@ -419,13 +423,22 @@ Item {
 
         StatusBaseText {
             id: errorMessage
-            visible: !!text && !statusBaseInput.valid
-            height: visible ? contentHeight : 0
+            visible: {
+                if (!text)
+                    return false;
+
+                if ((root.validationMode == StatusInput.ValidationMode.OnlyWhenDirty && statusBaseInput.dirty) ||
+                    root.validationMode == StatusInput.ValidationMode.Always)
+                    return !statusBaseInput.valid;
+
+                return false;
+            }
             font.pixelSize: 12
             color: Theme.palette.dangerColor1
-            Layout.alignment: Qt.AlignTop
-            Layout.topMargin: visible ? 8 : 0
             wrapMode: Text.WordWrap
+            horizontalAlignment: Text.AlignRight
+            Layout.topMargin: 8
+            Layout.fillWidth: true
         }
     }
 }
