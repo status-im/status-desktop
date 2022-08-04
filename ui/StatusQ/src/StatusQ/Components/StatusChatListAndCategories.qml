@@ -32,7 +32,7 @@ Item {
     property bool draggableCategories: false
     // Keeps track of expanded category state. Should only be modified
     // internally at runtime.
-    property var openedCategoryState: new Object({})
+    property var openedCategoryState: ({})
 
     property Component categoryPopupMenu
     property Component chatListPopupMenu

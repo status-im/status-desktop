@@ -91,7 +91,7 @@ StatusAppThreePanelLayout {
                 anchors.horizontalCenter: parent.horizontalCenter
                 title: "Contact requests"
                 requestsCount: 3
-                sensor.onClicked: demoContactRequestsModal.open()
+                onClicked: demoContactRequestsModal.open()
             }
 
             StatusChatList {

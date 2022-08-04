@@ -37,20 +37,20 @@ Column {
         title: statusChatListCategory.name
         opened: statusChatListCategory.opened
         sensor.pressAndHoldInterval: 150
-
+        propagateTitleClicks: true // title click is handled as a normal click (fallthru)
         showMenuButton: showActionButtons && !!statusChatListCategory.popupMenu
         highlighted: statusChatListCategory.dragged
-        sensor.onClicked: {
+        onClicked: {
             if (sensor.enabled) {
                 if (mouse.button === Qt.RightButton && showActionButtons && !!statusChatListCategory.popupMenu) {
                     highlighted = true;
                     popupMenuSlot.item.popup(mouse.x + 4, mouse.y + 6);
-                    return
+                } else if (mouse.button === Qt.LeftButton) {
+                    statusChatListCategory.opened = !statusChatListCategory.opened
                 }
             }
         }
-        onTitleClicked: statusChatListCategory.opened = !opened
-        onToggleButtonClicked: statusChatListCategory.opened = !opened
+        onToggleButtonClicked: statusChatListCategory.opened = !statusChatListCategory.opened
         onMenuButtonClicked: {
             highlighted = true
             menuButton.highlighted = true

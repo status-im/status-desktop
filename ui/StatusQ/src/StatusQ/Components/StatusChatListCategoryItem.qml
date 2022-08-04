@@ -60,15 +60,7 @@ StatusListItem {
             icon.name: "chevron-down"
             icon.width: 18
             icon.rotation: statusChatListCategoryItem.opened ? 0 : 270
-            onPressed: {
-                sensor.enabled = false;
-            }
-            onClicked: {
-                statusChatListCategoryItem.toggleButtonClicked(mouse);
-            }
-            onReleased: {
-                sensor.enabled = true;
-            }
+            onClicked: statusChatListCategoryItem.toggleButtonClicked(mouse)
         }
     ]
 }

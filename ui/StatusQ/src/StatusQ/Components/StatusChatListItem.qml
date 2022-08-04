@@ -112,17 +112,14 @@ Rectangle {
 
             icon: {
                 switch (root.type) {
-                case StatusChatListItem.Type.PublicCat:
-                    return Theme.palette.name == "light" ? "tiny/public-chat" : "tiny/public-chat-white"
-                    break;
+                case StatusChatListItem.Type.PublicChat:
+                    return Theme.palette.name === "light" ? "tiny/public-chat" : "tiny/public-chat-white"
                 case StatusChatListItem.Type.GroupChat:
-                    return Theme.palette.name == "light" ? "tiny/group" : "tiny/group-white"
-                    break;
+                    return Theme.palette.name === "light" ? "tiny/group" : "tiny/group-white"
                 case StatusChatListItem.Type.CommunityChat:
-                    return Theme.palette.name == "light" ? "tiny/channel" : "tiny/channel-white"
-                    break;
+                    return Theme.palette.name === "light" ? "tiny/channel" : "tiny/channel-white"
                 default:
-                    return Theme.palette.name == "light" ? "tiny/public-chat" : "tiny/public-chat-white"
+                    return Theme.palette.name === "light" ? "tiny/public-chat" : "tiny/public-chat-white"
                 }
             }
         }

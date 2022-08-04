@@ -119,7 +119,7 @@ Column {
                     highlightWhenCreated: !!model.highlight
                     selected: (model.active && root.highlightItem)
 
-                    icon.emoji: model.emoji
+                    icon.emoji: !!model.emoji ? model.emoji : ""
                     icon.color: !!model.color ? model.color : Theme.palette.userCustomizationColors[model.colorId]
                     image.isIdenticon: false
                     image.source: model.icon

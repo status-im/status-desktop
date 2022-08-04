@@ -23,7 +23,6 @@ Rectangle {
     property string titleTextIcon: ""
     property real leftPadding: 16
     property real rightPadding: 16
-    property bool enabled: true
     property bool highlighted: false
     property bool propagateTitleClicks: true
     property int type: StatusListItem.Type.Primary
@@ -122,18 +121,20 @@ Rectangle {
     }
 
     MouseArea {
-        id: sensor
-
-        enabled: statusListItem.enabled
         anchors.fill: parent
-        cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
         acceptedButtons: Qt.LeftButton | Qt.RightButton
-        hoverEnabled: true
-        preventStealing: true
-
         onClicked: {
             statusListItem.clicked(statusListItem.itemId, mouse)
         }
+    }
+
+    MouseArea {
+        id: sensor
+
+        anchors.fill: parent
+        cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
+        acceptedButtons: Qt.NoButton
+        hoverEnabled: true
 
         StatusSmartIdenticon {
             id: iconOrImage
@@ -359,7 +360,7 @@ Rectangle {
             id: statusListItemLabel
             anchors.verticalCenter: bottomModel.length === 0 ? parent.verticalCenter : undefined
             anchors.top: bottomModel.length === 0 ? undefined:  parent.top
-            anchors.topMargin: bottomModel.length === 0 ? undefined : 16
+            anchors.topMargin: bottomModel.length === 0 ? 0 : 16
             anchors.right: statusListItemComponentsSlot.left
             anchors.rightMargin: statusListItemComponentsSlot.width > 0 ? 10 : 0
 

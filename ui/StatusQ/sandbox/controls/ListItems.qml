@@ -56,19 +56,21 @@ ColumnLayout {
     }
 
     StatusChatListCategoryItem {
-        title: "Chat cat. interactive"
-        opened: true
-        propagateTitleClicks: false
+        id: categoryItemInteractive
+        title: "Chat category interactive"
         showActionButtons: true
         onAddButtonClicked: testEventsList.eventTriggered("Add button clicked")
         onMenuButtonClicked: testEventsList.eventTriggered("Menu button clicked")
-        onToggleButtonClicked: opened = !opened
+        onToggleButtonClicked: {
+            opened = !opened
+            testEventsList.eventTriggered("Toggle button clicked")
+        }
         onTitleClicked: {
             testEventsList.eventTriggered("Title clicked")
         }
         onClicked: {
-            testEventsList.eventTriggered("Item clicked")
-            mouse.accepted = true
+            opened = !opened
+            testEventsList.eventTriggered("Item clicked", itemId)
         }
     }
 
@@ -76,7 +78,7 @@ ColumnLayout {
         id: testEventsList
 
         Layout.fillWidth: true
-        Layout.preferredHeight: 20 * count
+        Layout.preferredHeight: categoryItemInteractive.opened ? 20 * count : 0
 
         clip: true
 
@@ -96,13 +98,13 @@ ColumnLayout {
 
                 Timer {
                     interval: 5000; running: true
-                    onTriggered: testObjeModel.remove(index)
+                    onTriggered: testObjectModel.remove(index)
                 }
             }
         }
 
         model: ObjectModel {
-            id: testObjeModel
+            id: testObjectModel
         }
     }
 
