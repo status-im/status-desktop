@@ -3,6 +3,7 @@ import QtQuick.Controls 2.13
 import QtGraphicalEffects 1.13
 
 import StatusQ.Core 0.1
+import StatusQ.Components 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1 as StatusQControls
 
@@ -16,11 +17,10 @@ Rectangle {
 
     property alias text: bannerText.text
     property alias buttonText: bannerButton.text
-    property alias icon: bannerIcon.source
-
+    property alias icon: bannerIcon.icon
 
     implicitWidth: 272
-    implicitHeight: 182
+    implicitHeight: 168
     border.color: Style.current.border
     radius: 16
     color: Style.current.transparent
@@ -47,19 +47,17 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
     }
 
-    SVGImage {
+    StatusRoundIcon {
         id: bannerIcon
         anchors.top: parent.top
-        anchors.topMargin: -6
+        anchors.topMargin: -8
         anchors.horizontalCenter: parent.horizontalCenter
-        width: 66
-        height: 50
     }
 
     StatusBaseText {
         id: bannerText
         anchors.top: parent.top
-        anchors.topMargin: 60
+        anchors.topMargin: 48
         horizontalAlignment: Text.AlignHCenter
         font.pixelSize: 15
         color: Theme.palette.directColor1
@@ -74,7 +72,8 @@ Rectangle {
         id: bannerButton
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 22
+        anchors.bottomMargin: 16
+        font.weight: Font.Medium
         onClicked: root.buttonClicked()
     }
 }

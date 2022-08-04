@@ -7,12 +7,14 @@ import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 import StatusQ.Popups 0.1
+import StatusQ.Popups.Dialog 0.1
 
 import utils 1.0
 import shared.popups 1.0
 
 import "stores"
 import "popups"
+import "../../AppLayouts/Chat/panels/communities" // TODO correct import? or move somewhere else?
 
 StatusScrollView {
     id: root
@@ -228,51 +230,38 @@ StatusScrollView {
 
     Component {
         id: chooseCommunityCreationTypePopupComponent
-        StatusModal {
-          id: chooseCommunityCreationTypePopup
-          anchors.centerIn: parent
-          showHeader: false
-          onClosed: {
-              destroy()
-          }
+        StatusDialog {
+            id: chooseCommunityCreationTypePopup
+            title: qsTr("Create new community")
+            horizontalPadding: 40
+            verticalPadding: 60
+            footer: null
+            onClosed: destroy()
 
-          Item {
-              id: content
-              anchors.fill: parent
-              implicitHeight: chooseCommunityCreationTypeContent.implicitHeight
-              ColumnLayout {
-                  id: chooseCommunityCreationTypeContent
-                  anchors.horizontalCenter: parent.horizontalCenter
-
-                  spacing: 24
-
-                  Item {
-                      width: parent.width
-                      height: 20
-                  }
-
-                  StatusButton {
-                      text: qsTr("Create new Status Community")
-                      Layout.alignment: Qt.AlignHCenter
-                      onClicked: {
-                          chooseCommunityCreationTypePopup.close()
-                          Global.openPopup(createCommunitiesPopupComponent)
-                      }
-                  }
-
-                  StatusButton {
-                      text: qsTr("Import a community from Discord")
-                      Layout.alignment: Qt.AlignHCenter
-                      onClicked: {
-                          chooseCommunityCreationTypePopup.close()
-                          Global.openPopup(createCommunitiesPopupComponent, {
-                            stackTitle: qsTr("Import a community from Discord into Status"),
-                            finishButtonLabel: qsTr("Finalise Discord import")
-                          })
-                      }
-                  }
-              }
-          }
+            contentItem: RowLayout {
+                spacing: 20
+                CommunityBanner {
+                    text: qsTr("Create a new Status community")
+                    buttonText: qsTr("Create new")
+                    icon.name: "favourite"
+                    onButtonClicked: {
+                        chooseCommunityCreationTypePopup.close()
+                        Global.openPopup(createCommunitiesPopupComponent)
+                    }
+                }
+                CommunityBanner {
+                    text: qsTr("Import existing Discord community into Status")
+                    buttonText: qsTr("Import existing")
+                    icon.name: "download"
+                    onButtonClicked: {
+                        chooseCommunityCreationTypePopup.close()
+                        Global.openPopup(createCommunitiesPopupComponent, {
+                                             stackTitle: qsTr("Import existing Discord community into Status"),
+                                             finishButtonLabel: qsTr("Finalize Discord import")
+                                         })
+                    }
+                }
+            }
         }
     }
 }

@@ -133,7 +133,7 @@ StackLayout {
                 CommunityBanner {
                     text: qsTr("Welcome to your community!")
                     buttonText: qsTr("Invite new people")
-                    icon: Style.svg("chatEmptyHeader")
+                    icon.name: "invite-users"
                     onButtonClicked: root.inviteNewPeopleClicked()
                 }
                 Item {
@@ -142,7 +142,7 @@ StackLayout {
                 CommunityBanner {
                     text: qsTr("Try an airdrop to reward your community for engagement!")
                     buttonText: qsTr("Airdrop Tokens")
-                    icon: Style.svg("communities/airdrop")
+                    icon.name: "airdrop"
                     onButtonClicked: root.airdropTokensClicked()
                 }
 
@@ -153,7 +153,7 @@ StackLayout {
                 CommunityBanner {
                     text: qsTr("Back up community key")
                     buttonText: qsTr("Back up")
-                    icon: Style.svg("communities/backup-community")
+                    icon.name: "objects"
                     onButtonClicked: root.backUpClicked()
                 }
             }
