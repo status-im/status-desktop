@@ -277,7 +277,11 @@ QtObject:
         chainId = self.networkService.getNetworkForEns().chainId
         txData = ens_utils.buildTransaction(parseAddress(address), 0.u256)
 
-      let resp = status_ens.releaseEstimate(chainId, %txData, ensUsername)
+      var userNameNoDomain = ensUsername
+      if ensUsername.endsWith(ens_utils.STATUS_DOMAIN):
+        userNameNoDomain = ensUsername.replace(ens_utils.STATUS_DOMAIN, "")
+
+      let resp = status_ens.releaseEstimate(chainId, %txData, userNameNoDomain)
       result = resp.result.getInt
     except Exception as e:
       error "error occurred", procName="releaseEnsEstimate", msg = e.msg
@@ -305,7 +309,11 @@ QtObject:
         txData = ens_utils.buildTransaction(parseAddress(address), 0.u256, gas, gasPrice,
           eip1559Enabled, maxPriorityFeePerGas, maxFeePerGas)
 
-      let resp = status_ens.release(chainId, %txData, password, ensUsername)
+      var userNameNoDomain = ensUsername
+      if ensUsername.endsWith(ens_utils.STATUS_DOMAIN):
+        userNameNoDomain = ensUsername.replace(ens_utils.STATUS_DOMAIN, "")
+
+      let resp = status_ens.release(chainId, %txData, password, userNameNoDomain)
       let hash = resp.result.getStr
 
       let ensUsernamesAddress = self.getEnsRegisteredAddress()
