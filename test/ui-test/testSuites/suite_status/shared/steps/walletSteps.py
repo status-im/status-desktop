@@ -35,6 +35,14 @@ def step(context, account_name, amount, token, chain_name, password):
 def step(context, name, address):
     _walletScreen.add_saved_address(name, address)
 
+@When("the user edits a saved address with name |any| to |any|")
+def step(context, name, new_name):
+    _walletScreen.edit_saved_address(name, new_name)
+
+@When("the user deletes the saved address with name |any|")
+def step(context, name):
+    _walletScreen.delete_saved_address(name)
+
 @Then("the new account |any| is added")
 def step(context, account_name):
     _walletScreen.verify_account_name_is_present(account_name)
@@ -47,3 +55,6 @@ def step(context):
 def step(context, name: str):
     _walletScreen.verify_saved_address_exists(name) 
     
+@Then("the name |any| is not in the list of saved addresses")
+def step(context, name: str):
+    _walletScreen.verify_saved_address_dont_exists(name)     

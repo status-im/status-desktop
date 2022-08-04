@@ -131,6 +131,7 @@ Item {
         }
         StatusMenuItem {
             text: qsTr("Edit")
+            objectName: "editSavedAddress"
             iconSettings.name: "pencil-outline"
             onTriggered: {
                 Global.openPopup(addEditSavedAddress,
@@ -146,6 +147,7 @@ Item {
             text: qsTr("Delete")
             type: StatusMenuItem.Type.Danger
             iconSettings.name: "delete"
+            objectName: "deleteSavedAddress"
             onTriggered: {
                 deleteAddressConfirm.name = editDeleteMenu.contactName;
                 deleteAddressConfirm.address = editDeleteMenu.contactAddress;
@@ -200,6 +202,7 @@ Item {
             },
             StatusButton {
                 type: StatusBaseButton.Type.Danger
+                objectName: "confirmDeleteSavedAddress"
                 text: qsTr("Delete")
                 onClicked: {
                     _internal.loading = true
