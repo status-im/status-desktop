@@ -18,6 +18,9 @@ class MainWalletScreen(Enum):
 class SavedAddressesScreen(Enum):
     ADD_BUTTON: str = "mainWallet_Saved_Addreses_Add_Buttton"
     SAVED_ADDRESSES_LIST: str = "mainWallet_Saved_Addreses_List"
+    EDIT: str = "mainWallet_Saved_Addreses_More_Edit"
+    DELETE: str = "mainWallet_Saved_Addreses_More_Delete"
+    CONFIRM_DELETE: str = "mainWallet_Saved_Addreses_More_Confirm_Delete"
     
 class AddSavedAddressPopup(Enum):
     NAME_INPUT: str = "mainWallet_Saved_Addreses_Popup_Name_Input"
@@ -186,7 +189,38 @@ class StatusWalletScreen:
         type(AddSavedAddressPopup.NAME_INPUT.value, name)
         type(AddSavedAddressPopup.ADDRESS_INPUT.value, address)
         click_obj_by_name(AddSavedAddressPopup.ADD_BUTTON.value)
+        
+    def edit_saved_address(self, name: str, new_name: str):
+        list = get_obj(SavedAddressesScreen.SAVED_ADDRESSES_LIST.value)
+        found = -1
+        for index in range(list.count):
+            if list.itemAtIndex(index).objectName == name:
+                found = index
+        
+        assert found != -1, "saved address not found"
+        
+        # More icon is at index 2 
+        click_obj(list.itemAtIndex(found).components.at(2))
+        
+        click_obj_by_name(SavedAddressesScreen.EDIT.value)
+        type(AddSavedAddressPopup.NAME_INPUT.value, new_name)
+        click_obj_by_name(AddSavedAddressPopup.ADD_BUTTON.value)
     
+    def delete_saved_address(self, name: str):
+        list = get_obj(SavedAddressesScreen.SAVED_ADDRESSES_LIST.value)
+        found = -1
+        for index in range(list.count):
+            if list.itemAtIndex(index).objectName == name:
+                found = index
+        
+        assert found != -1, "saved address not found"
+        
+        # More icon is at index 2 
+        click_obj(list.itemAtIndex(found).components.at(2))
+        
+        click_obj_by_name(SavedAddressesScreen.DELETE.value)
+        click_obj_by_name(SavedAddressesScreen.CONFIRM_DELETE.value)
+        
     def verify_saved_address_exists(self, name: str):
         list = get_obj(SavedAddressesScreen.SAVED_ADDRESSES_LIST.value)
         for index in range(list.count):
@@ -194,6 +228,12 @@ class StatusWalletScreen:
                 return  
     
         assert False, "no saved address found"
+        
+    def verify_saved_address_dont_exists(self, name: str):
+        list = get_obj(SavedAddressesScreen.SAVED_ADDRESSES_LIST.value)
+        for index in range(list.count):
+            if list.itemAtIndex(index).objectName == name:
+                assert False, "saved address found"  
 
     def verify_transaction(self):
         print("TODO: fix notification and ensure there is one")
