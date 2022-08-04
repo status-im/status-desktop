@@ -9,7 +9,7 @@ import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 
 Column {
-    id: statusChatList
+    id: root
 
     spacing: 4
     width: 288
@@ -33,13 +33,33 @@ Column {
         }
     }
 
+    onDraggableItemsChanged: delegateModel.items.setGroups(0, delegateModel.items.count, "unsorted")
+
+    QtObject {
+        id: d
+
+        property int destinationPosition: -1
+    }
+
     DelegateModel {
         id: delegateModel
-        model: statusChatList.model
+        model: root.model
+
+        items.includeByDefault: !root.draggableItems
+
+        groups: DelegateModelGroup {
+            id: unsortedItems
+
+            name: "unsorted"
+            includeByDefault: root.draggableItems
+            onChanged: Utils.delegateModelSort(unsortedItems, delegateModel.items,
+                                               (a, b) => a.position < b.position)
+        }
+
         delegate: Item {
             id: draggable
             objectName: model.name
-            width: statusChatList.width
+            width: root.width
             height: statusChatListItem.height
             property alias chatListItem: statusChatListItem
 
@@ -50,7 +70,7 @@ Column {
                 cursorShape: active ? Qt.ClosedHandCursor : Qt.PointingHandCursor
                 hoverEnabled: true
                 pressAndHoldInterval: 150
-                enabled: statusChatList.draggableItems
+                enabled: root.draggableItems
 
                 property bool active: false
                 property real startY: 0
@@ -66,8 +86,8 @@ Column {
                 }
                 onPressAndHold: active = true
                 onReleased: {
-                    if (active) {
-                        statusChatList.chatItemReordered(statusChatListItem.chatId, statusChatListItem.originalOrder, statusChatListItem.originalOrder)
+                    if (active && d.destinationPosition !== -1 && statusChatListItem.originalOrder !== d.destinationPosition) {
+                        root.chatItemReordered(statusChatListItem.chatId, statusChatListItem.originalOrder, d.destinationPosition)
                     }
                     active = false
                 }
@@ -81,6 +101,7 @@ Column {
                         active = true
                     }
                 }
+                onActiveChanged: d.destinationPosition = -1
 
                 StatusChatListItem {
                     id: statusChatListItem
@@ -96,7 +117,7 @@ Column {
                     hasUnreadMessages: model.hasUnreadMessages
                     notificationsCount: model.notificationsCount
                     highlightWhenCreated: !!model.highlight
-                    selected: (model.active && statusChatList.highlightItem)
+                    selected: (model.active && root.highlightItem)
 
                     icon.emoji: model.emoji
                     icon.color: !!model.color ? model.color : Theme.palette.userCustomizationColors[model.colorId]
@@ -105,10 +126,26 @@ Column {
                     ringSettings.ringSpecModel: model.colorHash
 
                     sensor.cursorShape: dragSensor.cursorShape
+
+                    Connections {
+                        target: statusChatListItem
+                        enabled: root.draggableItems
+
+                        function onOriginalOrderChanged() {
+                            Qt.callLater(() => {
+                                if (!delegateModel)
+                                    return
+
+                                delegateModel.items.setGroups(0, delegateModel.items.count, "unsorted")
+                            })
+                        }
+
+                    }
+
                     onClicked: {
                         highlightWhenCreated = false
 
-                        if (mouse.button === Qt.RightButton && !!statusChatList.popupMenu) {
+                        if (mouse.button === Qt.RightButton && !!root.popupMenu) {
                             statusChatListItem.highlighted = true
 
                             let originalOpenHandler = popupMenuSlot.item.openHandler
@@ -136,10 +173,10 @@ Column {
                             return
                         }
                         if (!statusChatListItem.selected) {
-                            statusChatList.chatItemSelected(model.parentItemId, model.itemId)
+                            root.chatItemSelected(model.parentItemId, model.itemId)
                         }
                     }
-                    onUnmute: statusChatList.chatItemUnmuted(model.itemId)
+                    onUnmute: root.chatItemUnmuted(model.itemId)
                 }
             }
 
@@ -150,7 +187,6 @@ Column {
                 keys: ["chat-item-category-" + statusChatListItem.categoryId]
 
                 onEntered: reorderDelay.start()
-                onDropped: statusChatList.chatItemReordered(statusChatListItem.chatId, drag.source.originalOrder, statusChatListItem.DelegateModel.itemsIndex)
 
                 Timer {
                     id: reorderDelay
@@ -158,7 +194,7 @@ Column {
                     repeat: false
                     onTriggered: {
                         if (dropArea.containsDrag) {
-                            dropArea.drag.source.chatListItem.originalOrder = statusChatListItem.originalOrder
+                            d.destinationPosition = delegateModel.model.get(draggable.DelegateModel.itemsIndex).position
                             delegateModel.items.move(dropArea.drag.source.DelegateModel.itemsIndex, draggable.DelegateModel.itemsIndex)
                         }
                     }
@@ -208,6 +244,6 @@ Column {
 
     Loader {
         id: popupMenuSlot
-        active: !!statusChatList.popupMenu
+        active: !!root.popupMenu
     }
 }

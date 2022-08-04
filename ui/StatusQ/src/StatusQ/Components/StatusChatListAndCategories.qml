@@ -10,7 +10,7 @@ import StatusQ.Core 0.1
 import SortFilterProxyModel 0.2
 
 Item {
-    id: statusChatListAndCategories
+    id: root
 
     implicitHeight: chatListsAndCategories.height
     implicitWidth: chatListsAndCategories.width
@@ -53,11 +53,11 @@ Item {
     MouseArea {
         id: sensor
         anchors.top: parent.top
-        width: statusChatListAndCategories.width
-        height: statusChatListAndCategories.height
+        width: root.width
+        height: root.height
         acceptedButtons: Qt.LeftButton | Qt.RightButton
         onClicked: {
-            if (mouse.button === Qt.RightButton && showPopupMenu && !!statusChatListAndCategories.popupMenu) {
+            if (mouse.button === Qt.RightButton && showPopupMenu && !!root.popupMenu) {
                 popupMenuSlot.item.popup(mouse.x + 4, mouse.y + 6)
                 return
             }
@@ -73,29 +73,42 @@ Item {
             StatusChatList {
                 id: statusChatList
                 visible: statusChatList.model.count > 0
-                onChatItemSelected: statusChatListAndCategories.chatItemSelected(categoryId, id)
-                onChatItemUnmuted: statusChatListAndCategories.chatItemUnmuted(id)
-                onChatItemReordered: statusChatListAndCategories.chatItemReordered(categoryId, id, from, to)
-                draggableItems: statusChatListAndCategories.draggableItems
+                onChatItemSelected: root.chatItemSelected(categoryId, id)
+                onChatItemUnmuted: root.chatItemUnmuted(id)
+                onChatItemReordered: root.chatItemReordered(categoryId, id, from, to)
+                draggableItems: root.draggableItems
 
                 model: SortFilterProxyModel {
-                    sourceModel: statusChatListAndCategories.model
+                    sourceModel: root.model
 
                     filters: ValueFilter { roleName: "isCategory"; value: false }
                     sorters: RoleSorter { roleName: "position" }
                 }
 
-                popupMenu: statusChatListAndCategories.chatListPopupMenu
+                popupMenu: root.chatListPopupMenu
             }
 
             DelegateModel {
                 id: delegateModel
 
+                property int destinationPosition: -1
+
                 model: SortFilterProxyModel {
-                    sourceModel: statusChatListAndCategories.model
+                    sourceModel: root.model
 
                     filters: ValueFilter { roleName: "isCategory"; value: true }
                     sorters: RoleSorter { roleName: "position" }
+                }
+
+                items.includeByDefault: false
+
+                groups: DelegateModelGroup {
+                    id: unsortedItems
+
+                    name: "unsorted"
+                    includeByDefault: true
+                    onChanged: Utils.delegateModelSort(unsortedItems, delegateModel.items,
+                                                       (a, b) => a.position < b.position)
                 }
 
                 delegate: Item {
@@ -117,13 +130,13 @@ Item {
                         dragSensor.drag.threshold: 0.1
                         dragSensor.drag.filterChildren: true
                         dragSensor.onPressAndHold: {
-                            if (statusChatListAndCategories.draggableCategories) {
+                            if (root.draggableCategories) {
                                 dragActive = true
                             }
                         }
                         dragSensor.onReleased: {
-                            if (dragActive) {
-                                statusChatListAndCategories.chatListCategoryReordered(statusChatListCategory.categoryId, statusChatListCategory.originalOrder, statusChatListCategory.originalOrder)
+                            if (dragActive && delegateModel.destinationPosition !== -1 && statusChatListCategory.originalOrder !== delegateModel.destinationPosition) {
+                                root.chatListCategoryReordered(statusChatListCategory.categoryId, statusChatListCategory.originalOrder, delegateModel.destinationPosition)
                             }
                             dragActive = false
                         }
@@ -133,42 +146,44 @@ Item {
                             startX = dragSensor.mouseX
                         }
                         dragSensor.onMouseYChanged: {
-                            if (statusChatListAndCategories.draggableCategories && (Math.abs(startY - dragSensor.mouseY) > 1) && dragSensor.pressed) {
+                            if (root.draggableCategories && (Math.abs(startY - dragSensor.mouseY) > 1) && dragSensor.pressed) {
                                 dragActive = true
                             }
                         }
                         dragSensor.onMouseXChanged: {
-                            if (statusChatListAndCategories.draggableCategories && (Math.abs(startX - dragSensor.mouseX) > 1) && dragSensor.pressed) {
+                            if (root.draggableCategories && (Math.abs(startX - dragSensor.mouseX) > 1) && dragSensor.pressed) {
                                 dragActive = true
                             }
                         }
+                        onDragActiveChanged: delegateModel.destinationPosition = -1
 
-                        addButton.tooltip: statusChatListAndCategories.categoryAddButtonToolTip
-                        menuButton.tooltip: statusChatListAndCategories.categoryMenuButtonToolTip
+                        addButton.tooltip: root.categoryAddButtonToolTip
+                        menuButton.tooltip: root.categoryMenuButtonToolTip
 
                         originalOrder: model.position
                         categoryId: model.itemId
                         name: model.name
-                        showActionButtons: statusChatListAndCategories.showCategoryActionButtons
-                        addButton.onClicked: statusChatListAndCategories.categoryAddButtonClicked(model.itemId)
+
+                        showActionButtons: root.showCategoryActionButtons
+                        addButton.onClicked: root.categoryAddButtonClicked(model.itemId)
 
                         chatList.model: SortFilterProxyModel {
                             sourceModel: model.subItems
                             sorters: RoleSorter { roleName: "position" }
                         }
 
-                        chatList.onChatItemSelected: statusChatListAndCategories.chatItemSelected(categoryId, id)
-                        chatList.onChatItemUnmuted: statusChatListAndCategories.chatItemUnmuted(id)
-                        chatList.onChatItemReordered: statusChatListAndCategories.chatItemReordered(model.itemId, id, from, to)
-                        chatList.draggableItems: statusChatListAndCategories.draggableItems
+                        chatList.onChatItemSelected: root.chatItemSelected(categoryId, id)
+                        chatList.onChatItemUnmuted: root.chatItemUnmuted(id)
+                        chatList.onChatItemReordered: root.chatItemReordered(model.itemId, id, from, to)
+                        chatList.draggableItems: root.draggableItems
 
-                        popupMenu: statusChatListAndCategories.categoryPopupMenu
-                        chatListPopupMenu: statusChatListAndCategories.chatListPopupMenu
+                        popupMenu: root.categoryPopupMenu
+                        chatListPopupMenu: root.chatListPopupMenu
 
                         // Used to set the initial value of "opened" when the
                         // model is bound/changed.
                         opened: {
-                            let openedState = statusChatListAndCategories.openedCategoryState[model.itemId]
+                            let openedState = root.openedCategoryState[model.itemId]
                             return openedState !== undefined ? openedState : true // defaults to open
                         }
 
@@ -177,7 +192,18 @@ Item {
                         // as the state would be lost each time the model is
                         // changed.
                         onOpenedChanged: {
-                            statusChatListAndCategories.openedCategoryState[model.itemId] = statusChatListCategory.opened
+                            root.openedCategoryState[model.itemId] = statusChatListCategory.opened
+                        }
+
+                        Connections {
+                            function onOriginalOrderChanged() {
+                                Qt.callLater(() => {
+                                    if (!delegateModel)
+                                        return
+
+                                    delegateModel.items.setGroups(0, delegateModel.items.count, "unsorted")
+                                })
+                            }
                         }
                     }
 
@@ -188,7 +214,6 @@ Item {
                         keys: ["chat-category"]
 
                         onEntered: reorderDelay.start()
-                        onDropped: statusChatListAndCategories.chatListCategoryReordered(statusChatListCategory.categoryId, drag.source.originalOrder, statusChatListCategory.DelegateModel.itemsIndex)
 
                         Timer {
                             id: reorderDelay
@@ -196,7 +221,7 @@ Item {
                             repeat: false
                             onTriggered: {
                                 if (dropArea.containsDrag) {
-                                    dropArea.drag.source.chatListCategory.originalOrder = statusChatListCategory.originalOrder
+                                    delegateModel.destinationPosition = delegateModel.model.get(draggable.DelegateModel.itemsIndex).position
                                     delegateModel.items.move(dropArea.drag.source.DelegateModel.itemsIndex, draggable.DelegateModel.itemsIndex)
                                 }
                             }
@@ -242,6 +267,6 @@ Item {
 
     Loader {
         id: popupMenuSlot
-        active: !!statusChatListAndCategories.popupMenu
+        active: !!root.popupMenu
     }
 }

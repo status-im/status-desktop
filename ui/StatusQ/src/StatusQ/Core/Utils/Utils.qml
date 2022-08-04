@@ -150,6 +150,29 @@ QtObject {
             context.stroke();
         }
     }
+
+    function delegateModelSort(srcGroup, dstGroup, lessThan) {
+        const insertPosition = (lessThan, item) => {
+            let lower = 0
+            let upper = dstGroup.count
+            while (lower < upper) {
+                const middle = Math.floor(lower + (upper - lower) / 2)
+                const result = lessThan(item.model, dstGroup.get(middle).model);
+                if (result)
+                    upper = middle
+                else
+                    lower = middle + 1
+            }
+            return lower
+        }
+
+        while (srcGroup.count > 0) {
+            const item = srcGroup.get(0)
+            const index = insertPosition(lessThan, item)
+            item.groups = dstGroup.name
+            dstGroup.move(item.itemsIndex, index)
+        }
+    }
 }
 
 
