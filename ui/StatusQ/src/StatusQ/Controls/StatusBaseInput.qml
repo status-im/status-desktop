@@ -327,6 +327,7 @@ Item {
                     id: flick
                     Layout.fillWidth: true
                     Layout.fillHeight: true
+                    Layout.leftMargin: !!leftComponentLoader.item ? 8 : 0
                     Layout.topMargin: root.topPadding
                     Layout.bottomMargin: root.bottomPadding
                     contentWidth: edit.paintedWidth
