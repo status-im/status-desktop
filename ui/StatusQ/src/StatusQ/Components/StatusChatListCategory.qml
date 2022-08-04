@@ -35,7 +35,6 @@ Column {
     StatusChatListCategoryItem {
         id: statusChatListCategoryItem
         title: statusChatListCategory.name
-        visible: model.isCategory
         opened: statusChatListCategory.opened
         sensor.pressAndHoldInterval: 150
 
@@ -66,9 +65,6 @@ Column {
         anchors.horizontalCenter: parent.horizontalCenter
         visible: statusChatListCategory.opened
         categoryId: statusChatListCategory.categoryId
-        filterFn: function (model) {
-            return !!model.parentItemId && model.parentItemId === statusChatList.categoryId
-        }
 
         popupMenu: statusChatListCategory.chatListPopupMenu
     }

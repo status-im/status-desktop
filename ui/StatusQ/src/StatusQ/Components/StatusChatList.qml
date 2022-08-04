@@ -23,8 +23,6 @@ Column {
 
     property Component popupMenu
 
-    property var filterFn
-
     signal chatItemSelected(string categoryId, string id)
     signal chatItemUnmuted(string id)
     signal chatItemReordered(string id, int from, int to)
@@ -44,13 +42,6 @@ Column {
             width: statusChatList.width
             height: statusChatListItem.height
             property alias chatListItem: statusChatListItem
-
-            visible: {
-                if (!!statusChatList.filterFn) {
-                    return statusChatList.filterFn(model)
-                }
-                return true
-            }
 
             MouseArea {
                 id: dragSensor

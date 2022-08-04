@@ -7,6 +7,8 @@ import StatusQ.Components 0.1
 import StatusQ.Popups 0.1
 import StatusQ.Core 0.1
 
+import SortFilterProxyModel 0.2
+
 Item {
     id: statusChatListAndCategories
 
@@ -75,16 +77,27 @@ Item {
                 onChatItemUnmuted: statusChatListAndCategories.chatItemUnmuted(id)
                 onChatItemReordered: statusChatListAndCategories.chatItemReordered(categoryId, id, from, to)
                 draggableItems: statusChatListAndCategories.draggableItems
-                model: statusChatListAndCategories.model
-                filterFn: function (model) {
-                    return !model.isCategory
+
+                model: SortFilterProxyModel {
+                    sourceModel: statusChatListAndCategories.model
+
+                    filters: ValueFilter { roleName: "isCategory"; value: false }
+                    sorters: RoleSorter { roleName: "position" }
                 }
+
                 popupMenu: statusChatListAndCategories.chatListPopupMenu
             }
 
             DelegateModel {
                 id: delegateModel
-                model: statusChatListAndCategories.model
+
+                model: SortFilterProxyModel {
+                    sourceModel: statusChatListAndCategories.model
+
+                    filters: ValueFilter { roleName: "isCategory"; value: true }
+                    sorters: RoleSorter { roleName: "position" }
+                }
+
                 delegate: Item {
                     id: draggable
                     width: statusChatListCategory.width
@@ -139,7 +152,11 @@ Item {
                         showActionButtons: statusChatListAndCategories.showCategoryActionButtons
                         addButton.onClicked: statusChatListAndCategories.categoryAddButtonClicked(model.itemId)
 
-                        chatList.model: model.subItems
+                        chatList.model: SortFilterProxyModel {
+                            sourceModel: model.subItems
+                            sorters: RoleSorter { roleName: "position" }
+                        }
+
                         chatList.onChatItemSelected: statusChatListAndCategories.chatItemSelected(categoryId, id)
                         chatList.onChatItemUnmuted: statusChatListAndCategories.chatItemUnmuted(id)
                         chatList.onChatItemReordered: statusChatListAndCategories.chatItemReordered(model.itemId, id, from, to)
