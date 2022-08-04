@@ -3,15 +3,20 @@
 #include <QQmlContext>
 #include <QWindow>
 #include <QDebug>
+#include <QDirIterator>
 
 #include "statuswindow.h"
 #include "spellchecker.h"
 
 SandboxApp::SandboxApp(int &argc, char **argv)
-    : QGuiApplication(argc, argv),
-      m_handler(new Handler(this))
+    : QGuiApplication(argc, argv)
 {
-    connect(m_handler, &Handler::restartQml, this, &SandboxApp::restartEngine, Qt::QueuedConnection);
+#ifdef QT_DEBUG
+    connect(&m_watcher, &QFileSystemWatcher::directoryChanged, [this](const QString&) {
+        restartEngine();
+    });
+
+#endif
 }
 
 void SandboxApp::startEngine()
@@ -21,12 +26,17 @@ void SandboxApp::startEngine()
 
 #ifdef QT_DEBUG
     const QUrl url = QUrl::fromLocalFile(SRC_DIR + QStringLiteral("/main.qml"));
+    m_watcher.addPath(applicationDirPath() + "/../");
+    QDirIterator it(applicationDirPath() + "/../", QDir::Dirs | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
+    while (it.hasNext()) {
+        if (!it.filePath().isEmpty()) {
+            m_watcher.addPath(it.filePath());
+        }
+        it.next();
+    }
 #else
     const QUrl url(QStringLiteral("qrc:/main.qml"));
 #endif
-
-    m_engine.rootContext()->setContextProperty("app", m_handler);
-
 
 #ifdef QT_DEBUG
     m_engine.addImportPath(SRC_DIR + QStringLiteral("/../src"));
@@ -44,7 +54,7 @@ void SandboxApp::startEngine()
 
 void SandboxApp::restartEngine()
 {
-    const QUrl url(applicationDirPath() + "/../main.qml");
+    const QUrl url = QUrl::fromLocalFile(SRC_DIR + QStringLiteral("/main.qml"));
     QWindow *rootWindow = qobject_cast<QWindow*>(m_engine.rootObjects().at(0));
     if (rootWindow) {
         rootWindow->close();

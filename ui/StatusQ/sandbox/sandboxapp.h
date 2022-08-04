@@ -4,6 +4,10 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 
+#ifdef QT_DEBUG
+#include <QFileSystemWatcher>
+#endif
+
 #include "handler.h"
 
 class SandboxApp : public QGuiApplication
@@ -19,6 +23,10 @@ public slots:
 private:
     QQmlApplicationEngine m_engine;
     Handler *m_handler;
+
+#ifdef QT_DEBUG
+    QFileSystemWatcher m_watcher;
+#endif
 };
 
 #endif // SANDBOXAPP_H
