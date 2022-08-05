@@ -417,6 +417,7 @@ Item {
                             anchors.fill: parent
                             verticalAlignment: parent.verticalAlignment
                             font.pixelSize: 15
+                            wrapMode: root.multiline ? Text.WordWrap : Text.NoWrap
                             elide: StatusBaseText.ElideRight
                             font.family: Theme.palette.baseFont.name
                             color: root.enabled ? Theme.palette.baseColor1 : Theme.palette.directColor6
