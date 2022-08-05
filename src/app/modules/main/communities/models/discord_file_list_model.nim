@@ -38,18 +38,6 @@ QtObject:
     read = getSelectedFilesValid
     notify = selectedFilesValidChanged
 
-  proc hasSelectedItemsChanged*(self: DiscordFileListModel) {.signal.}
-
-  proc getHasSelectedItems*(self: DiscordFileListModel): bool {.slot.} =
-    for i in 0 ..< self.items.len:
-      if self.items[i].getSelected():
-        return true
-    return false
-
-  QtProperty[bool] hasSelectedItems:
-    read = getHasSelectedItems
-    notify = hasSelectedItemsChanged
-
   proc getSelectedFilePaths*(self: DiscordFileListModel): seq[string] =
     var filePaths: seq[string] = @[]
     for i in 0 ..< self.items.len:
@@ -67,11 +55,13 @@ QtObject:
 
   proc selectedCountChanged(self: DiscordFileListModel) {.signal.}
   proc getSelectedCount(self: DiscordFileListModel): int {.slot.} =
-    self.items.len
+    for i in 0 ..< self.items.len:
+      if self.items[i].getSelected():
+        result = result + 1
 
   QtProperty[int] selectedCount:
     read = getSelectedCount
-    notify = selectedCountCchanged
+    notify = selectedCountChanged
 
   method rowCount(self: DiscordFileListModel, index: QModelIndex = nil): int =
     return self.items.len
@@ -81,7 +71,8 @@ QtObject:
     self.items = items
     self.endResetModel()
     self.countChanged()
-    self.hasSelectedItemsChanged()
+    self.selectedCountChanged()
+    self.selectedFilesValidChanged()
 
   method roleNames(self: DiscordFileListModel): Table[int, string] =
     {
@@ -93,6 +84,11 @@ QtObject:
     }.toTable
 
   method setData(self: DiscordFileListModel, index: QModelIndex, value: QVariant, role: int): bool =
+    if not index.isValid:
+      return false
+    let row = index.row
+    if row < 0 or row >= self.items.len:
+      return false
     case role.ModelRole:
       of ModelRole.FilePath:
         self.items[index.row].filePath = value.stringVal()
@@ -106,10 +102,12 @@ QtObject:
       of ModelRole.Selected:
         self.items[index.row].selected = value.boolVal()
         self.dataChanged(index, index, @[ModelRole.Selected.int])
-        self.hasSelectedItemsChanged()
+        self.selectedCountChanged()
       of ModelRole.Validated:
         self.items[index.row].validated = value.boolVal()
         self.dataChanged(index, index, @[ModelRole.Validated.int])
+        self.selectedFilesValidChanged()
+    return true
 
   method data(self: DiscordFileListModel, index: QModelIndex, role: int): QVariant =
     if not index.isValid:
@@ -149,6 +147,7 @@ QtObject:
       let index = self.createIndex(i, 0, nil)
       self.items[i].validated = true
       self.dataChanged(index, index, @[ModelRole.Validated.int])
+    self.selectedFilesValidChanged()
 
   proc updateErrorState*(self: DiscordFileListModel, filePath: string, errorMessage: string, errorCode: int) =
     let idx = self.findIndexByFilePath(filePath)
@@ -164,12 +163,13 @@ QtObject:
         ModelRole.Selected.int,
         ModelRole.Validated.int
       ])
-      self.hasSelectedItemsChanged()
+      self.selectedCountChanged()
 
   proc clearItems*(self: DiscordFileListModel) =
     self.beginResetModel()
     self.items = @[]
     self.endResetModel()
     self.countChanged()
-    self.hasSelectedItemsChanged()
+    self.selectedCountChanged()
+    self.selectedFilesValidChanged()
 

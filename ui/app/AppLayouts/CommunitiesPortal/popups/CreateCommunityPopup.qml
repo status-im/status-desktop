@@ -30,8 +30,9 @@ StatusStackModal {
 
     nextButton: StatusButton {
         objectName: "createCommunityNextBtn"
-        text: qsTr("Next")
-        enabled:  typeof(currentItem.canGoNext) == "undefined" || currentItem.canGoNext
+        font.weight: Font.Medium
+        text: typeof currentItem.nextButtonText !== "undefined" ? currentItem.nextButtonText : qsTr("Next")
+        enabled: typeof(currentItem.canGoNext) == "undefined" || currentItem.canGoNext
         onClicked: {
             let nextAction = currentItem.nextAction
             if (typeof(nextAction) == "function") {
@@ -43,8 +44,9 @@ StatusStackModal {
 
     finishButton: StatusButton {
         objectName: "createCommunityFinalBtn"
+        font.weight: Font.Medium
         text: finishButtonLabel
-        enabled:  typeof(currentItem.canGoNext) == "undefined" || currentItem.canGoNext
+        enabled: typeof(currentItem.canGoNext) == "undefined" || currentItem.canGoNext
         onClicked: {
             let nextAction = currentItem.nextAction
             if (typeof (nextAction) == "function") {
@@ -53,6 +55,17 @@ StatusStackModal {
             root.close()
         }
     }
+
+    readonly property var clearFilesButton: StatusButton {
+        font.weight: Font.Medium
+        text: qsTr("Clear all")
+        type: StatusBaseButton.Type.Danger
+        visible: root.currentItem.objectName === "discordFileListView" // no better way to address the current item in the stack :/
+        enabled: !fileListView.fileListModelEmpty
+        onClicked: root.store.clearFileList()
+    }
+
+    rightButtons: [clearFilesButton, nextButton, finishButton]
 
     onAboutToShow: nameInput.input.edit.forceActiveFocus()
 
@@ -142,6 +155,7 @@ StatusStackModal {
                 }
             }
         },
+
         ColumnLayout {
             id: introOutroMessageView
             spacing: 11
@@ -167,92 +181,81 @@ StatusStackModal {
         },
 
         ColumnLayout {
-            spacing: 16
-            readonly property bool canGoNext: root.store.discordFileList.hasSelectedItems
-            property var nextAction: function () {
-                if (!root.store.discordFileList.selectedFilesValid) {
+            id: fileListView
+            objectName: "discordFileListView" // !!! DON'T CHANGE, clearFilesButton depends on this
+            spacing: 24
+            readonly property var fileListModel: root.store.discordFileList
+            readonly property bool fileListModelEmpty: !fileListModel.count
+
+            readonly property bool canGoNext: fileListModel.selectedCount
+                                              || (fileListModel.selectedCount && fileListModel.selectedFilesValid)
+            readonly property string nextButtonText:  // TODO plural
+                fileListModel.selectedCount && fileListModel.selectedFilesValid ? qsTr("Proceed with (%1/%2) files").arg(fileListModel.selectedCount).arg(fileListModel.count) :
+                fileListModel.selectedCount ? qsTr("Validate (%1/%2) files").arg(fileListModel.selectedCount).arg(fileListModel.count)
+                : qsTr("Import files")
+            readonly property var nextAction: function () {
+                if (!fileListView.fileListModel.selectedFilesValid) {
                   return root.store.requestExtractChannelsAndCategories()
                 }
                 root.currentIndex++
             }
 
-            StatusBaseText {
-                text: qsTr("Files to import (%1)").arg(root.store.discordFileList.count)
-                font.pixelSize: 15
-                font.weight: Font.Medium
-                color: Theme.palette.directColor1
-                visible: root.store.discordFileList.count > 0
+            RowLayout {
+                Layout.fillWidth: true
+                StatusBaseText {
+                    font.pixelSize: 15
+                    text: fileListView.fileListModelEmpty ? qsTr("Select Discord JSON files to import") :
+                                                            qsTr("Uncheck any files you would like to exclude from the import")
+                }
+                StatusBaseText {
+                    visible: fileListView.fileListModelEmpty
+                    font.pixelSize: 12
+                    color: Theme.palette.baseColor1
+                    text: qsTr("(JSON file format only)")
+                }
+                Item { Layout.fillWidth: true }
+                StatusButton {
+                    text: qsTr("Browse files")
+                    normalColor: Theme.palette.primaryColor1
+                    hoverColor: Qt.lighter(normalColor) // FIXME not in spec?
+                    textColor: Theme.palette.white
+                    onClicked: fileDialog.open()
+                }
             }
 
-            Item {
+            Rectangle {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                Layout.alignment: Qt.AlignHCenter
-                visible: root.store.discordFileList.count > 0
+                color: Theme.palette.baseColor4
 
-                Flickable {
-                    clip: true
+                // TODO intro banner
+
+                StatusListView {
                     anchors.fill: parent
-                    contentHeight: selectFilesView.height
-                    implicitHeight: selectFilesView.implicitHeight
-                    interactive: contentHeight > height
-                    flickableDirection: Flickable.VerticalFlick
-
-                    ColumnLayout {
-                        id: selectFilesView
-                        spacing: 12
-                        width: parent.width
-
-                        Repeater {
-                            id: filesList
-
-                            model: root.store.discordFileList
-
-                            ColumnLayout {
-                                width: parent.width
-                                spacing: 8
-                                StatusCheckBox {
-                                    Layout.fillWidth: true
-                                    text: model.filePath
-                                    checked: model.selected
-                                    enabled: model.errorMessage == ""
-                                    onToggled: {
-                                        model.selected = checked
-                                    }
-                                }
-                                StatusBaseText {
-                                    Layout.fillWidth: true
-                                    visible: model.errorMessage != ""
-                                    text: model.errorMessage
-                                }
-                            }
+                    anchors.margins: 16
+                    model: fileListView.fileListModel
+                    delegate: ColumnLayout {
+                        width: ListView.view.width
+                        StatusCheckBox {
+                            id: fileCheckBox
+                            Layout.fillWidth: true
+                            text: model.filePath
+                            font.pixelSize: 13
+                            checked: model.selected
+                            enabled: model.errorMessage === "" // TODO distinguish between error/warning
+                            onToggled: model.selected = checked
+                        }
+                        StatusBaseText {
+                            Layout.fillWidth: true
+                            Layout.leftMargin: fileCheckBox.leftPadding + fileCheckBox.spacing + fileCheckBox.indicator.width
+                            text: model.errorMessage
+                            visible: text
+                            font.pixelSize: 13
+                            font.weight: Font.Medium
+                            color: Theme.palette.dangerColor1
+                            verticalAlignment: Qt.AlignTop
                         }
                     }
-                }
-            }
-
-            StatusBaseText {
-                Layout.fillWidth: true
-                text: qsTr("Please select channel message history files from Discord to import into your new Status Community.")
-                wrapMode: Text.WordWrap
-                visible: root.store.discordFileList.count == 0
-            }
-
-            RowLayout {
-                Layout.alignment: Qt.AlignHCenter
-                spacing: 16
-
-                StatusButton {
-                    text: qsTr("Select files")
-                    onClicked: fileDialog.open()
-                    visible: root.store.discordFileList.count == 0
-                }
-
-                StatusFlatButton {
-                    text: qsTr("Clear all")
-                    type: StatusBaseButton.Type.Danger
-                    visible: root.store.discordFileList.count > 0
-                    onClicked: root.store.clearFileList()
                 }
             }
 
@@ -261,7 +264,6 @@ StatusStackModal {
 
                 title: qsTr("Choose files to import")
                 selectMultiple: true
-                folder: shortcuts.pictures
                 nameFilters: [qsTr("JSON files (%1)").arg("*.json")]
                 onAccepted: {
                     if (fileDialog.fileUrls.length > 0) {
@@ -274,31 +276,30 @@ StatusStackModal {
         },
 
         ColumnLayout {
+            id: categoriesAndChannelsView
 
-          id: categoriesAndChannelsView
-
-          readonly property bool canGoNext: root.store.discordChannelsModel.hasSelectedItems
-          property var nextAction: function () {
-            // TODO: request discord import
-          }
+            readonly property bool canGoNext: root.store.discordChannelsModel.hasSelectedItems
+            readonly property var nextAction: function () {
+                // TODO: request discord import
+            }
 
           Item {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            visible: root.store.discordChannelsModel.count == 0
-            Loader {
-              anchors.centerIn: parent
-              active: parent.visible
-              sourceComponent: StatusLoadingIndicator {
-                width: 50
-                height: 50
+              Layout.fillWidth: true
+              Layout.fillHeight: true
+              visible: !root.store.discordChannelsModel.count
+              Loader {
+                  anchors.centerIn: parent
+                  active: parent.visible
+                  sourceComponent: StatusLoadingIndicator {
+                      width: 50
+                      height: 50
+                  }
               }
-            }
           }
 
           ColumnLayout {
               spacing: 12
-              visible: root.store.discordChannelsModel.count > 0
+              visible: root.store.discordChannelsModel.count
 
               StatusBaseText {
                   Layout.fillWidth: true
@@ -350,13 +351,11 @@ StatusStackModal {
                                   Layout.fillWidth: true
 
                                   StatusCheckBox {
-                                      property string categoryId: model.id
+                                      readonly property string categoryId: model.id
                                       id: categoryCheckbox
                                       checked: model.selected
                                       text: model.name
-                                      onToggled: {
-                                          model.selected = checked
-                                      }
+                                      onToggled: model.selected = checked
                                   }
 
                                   ColumnLayout {
