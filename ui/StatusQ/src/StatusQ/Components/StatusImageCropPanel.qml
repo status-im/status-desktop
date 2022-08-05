@@ -242,13 +242,14 @@ Item {
             StatusIcon {
                 icon: "remove-circle"
 
+                Layout.alignment: Qt.AlignVCenter
                 Layout.preferredWidth: 20
                 Layout.preferredHeight: 20
             }
             StatusSlider {
                 Layout.fillWidth: true
                 Layout.topMargin: 20
-                Layout.bottomMargin: 25
+                Layout.bottomMargin: 20
                 Layout.alignment: Qt.AlignVCenter
 
                 enabled: root.interactive
@@ -262,6 +263,7 @@ Item {
             StatusIcon {
                 icon: "add-circle"
 
+                Layout.alignment: Qt.AlignVCenter
                 Layout.preferredWidth: 20
                 Layout.preferredHeight: 20
             }

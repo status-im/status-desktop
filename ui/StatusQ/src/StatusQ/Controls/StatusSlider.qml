@@ -31,7 +31,8 @@ Slider {
         id: bgRect
 
         x: root.leftPadding
-        y: root.topPadding
+        anchors.verticalCenter: root.verticalCenter
+
         implicitWidth: 100
         implicitHeight: bgHeight
         width: root.availableWidth
