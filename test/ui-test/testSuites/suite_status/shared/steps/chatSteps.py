@@ -1,4 +1,5 @@
 
+from random import randint
 from drivers.SquishDriver import *
 from screens.StatusMainScreen import StatusMainScreen
 from screens.StatusChatScreen import StatusChatScreen
@@ -28,6 +29,14 @@ def step(context):
     for row in table[1:]:
         _statusChat.send_message(row[0])
         _statusChat.verify_last_message_sent(row[0])
+
+@Then("user is able to send  a random chat message")
+def step(context):
+    random_int = randint(0, 10000)
+    message = "random message " + str(random_int)
+    _statusChat.send_message(message)
+    _statusChat.verify_last_message_sent(message)
+    context.userData["randomMessage"] = message
 
 @Then("the group chat is created")
 def step(context):
@@ -62,6 +71,7 @@ def step(context, channel):
 @Then("the user can delete the message at index |any|")
 def step(context, message_index):
     _statusChat.delete_message_at_index(message_index)
+    time.sleep(1)
 
 @Then("the user cannot delete the last message")
 def step(context):
@@ -70,4 +80,8 @@ def step(context):
 @Then("the last message is not \"|any|\"")
 def step(context, message):
     _statusChat.verify_last_message_sent_is_not(message)
+    
+@Then("the last message is not the random message")
+def step(context):
+    _statusChat.verify_last_message_sent_is_not(context.userData["randomMessage"])
     

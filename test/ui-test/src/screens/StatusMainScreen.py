@@ -70,6 +70,8 @@ class StatusMainScreen:
         [loaded, chat_button] = self._find_chat(chatName)
         if loaded:
             right_click_obj(chat_button)
+        else:
+            test.fail("Chat is not loaded")
         
         click_obj_by_name(MainScreenComponents.MARK_AS_READ_BUTTON.value)
 
