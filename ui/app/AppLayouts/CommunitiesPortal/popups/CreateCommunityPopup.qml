@@ -228,9 +228,37 @@ StatusStackModal {
                 Layout.fillHeight: true
                 color: Theme.palette.baseColor4
 
-                // TODO intro banner
+                ColumnLayout {
+                    visible: fileListView.fileListModelEmpty
+                    anchors.top: parent.top
+                    anchors.topMargin: 60
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    spacing: 8
+
+                    StatusRoundIcon {
+                        Layout.alignment: Qt.AlignHCenter
+                        icon.name: "info"
+                    }
+                    StatusBaseText {
+                        Layout.topMargin: 8
+                        Layout.alignment: Qt.AlignHCenter
+                        horizontalAlignment: Qt.AlignHCenter
+                        linkColor: Theme.palette.primaryColor1
+                        text: qsTr("Export your Discord JSON data using %1")
+                          .arg("<a href='https://github.com/Tyrrrz/DiscordChatExporter'>DiscordChatExporter</a>")
+                        onLinkActivated: Global.openLink(link)
+                    }
+                    StatusBaseText {
+                        Layout.alignment: Qt.AlignHCenter
+                        horizontalAlignment: Qt.AlignHCenter
+                        linkColor: Theme.palette.primaryColor1
+                        text: qsTr("Refer to this <a href='https://github.com/Tyrrrz/DiscordChatExporter/wiki'>wiki</a> if you have any queries")
+                        onLinkActivated: Global.openLink(link)
+                    }
+                }
 
                 StatusListView {
+                    visible: !fileListView.fileListModelEmpty
                     anchors.fill: parent
                     anchors.margins: 16
                     model: fileListView.fileListModel
