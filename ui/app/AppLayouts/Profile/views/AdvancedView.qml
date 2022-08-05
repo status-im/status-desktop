@@ -101,7 +101,7 @@ SettingsContentBase {
                 anchors.leftMargin: 0
                 anchors.rightMargin: 0
                 text: qsTr("Wallet")
-                objectName: qsTr("WalletSettingsLineButton")
+                objectName: "WalletSettingsLineButton"
                 isSwitch: true
                 switchChecked: localAccountSensitiveSettings.isWalletEnabled
                 onClicked: {
@@ -168,7 +168,7 @@ SettingsContentBase {
                 anchors.leftMargin: 0
                 anchors.rightMargin: 0
                 text: qsTr("Discord Import Tool")
-                objectName: qsTr("DiscordImportToolSettingsLineButton")
+                objectName: "DiscordImportToolSettingsLineButton"
                 isSwitch: true
                 switchChecked: localAccountSensitiveSettings.isDiscordImportToolEnabled
                 onClicked: {
