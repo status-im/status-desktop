@@ -16,6 +16,10 @@ Popup {
     modal: false
     width: 360
     height: 432
+
+    horizontalPadding: 5
+    verticalPadding: 5
+
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
     property var layer1Networks
     property var layer2Networks
@@ -43,13 +47,14 @@ Popup {
         contentHeight: content.height
         width: popup.width
         height: popup.height
+        padding: 0
 
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
         Column {
             id: content
             width: scrollView.availableWidth
-            spacing: Style.current.padding
+            spacing: 4
 
             Repeater {
                 id: chainRepeater1
@@ -62,6 +67,11 @@ Popup {
                 font.pixelSize: Style.current.primaryTextFontSize
                 color: Theme.palette.baseColor1
                 text: qsTr("Layer 2")
+                height: 40
+                leftPadding: 16
+                topPadding: 10
+                verticalAlignment: Text.AlignVCenter
+
                 visible: chainRepeater2.count > 0
             }
 
@@ -84,8 +94,11 @@ Popup {
     Component {
         id: chainItem
         StatusListItem {
+            implicitHeight: 48
             implicitWidth: scrollView.width
             title: model.chainName
+            image.height: 24
+            image.width: 24
             image.source: Style.svg(model.iconUrl)
             onClicked:  {
                 checkBox.checked = !checkBox.checked
