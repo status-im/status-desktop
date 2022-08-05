@@ -250,11 +250,14 @@ StatusStackModal {
                         text: qsTr("Export your Discord JSON data using %1")
                           .arg("<a href='https://github.com/Tyrrrz/DiscordChatExporter'>DiscordChatExporter</a>")
                         onLinkActivated: Global.openLink(link)
+                        // TODO put this into StatusBaseText
+                        HoverHandler {
+                            id: handler1
+                        }
                         MouseArea {
                             anchors.fill: parent
-                            hoverEnabled: true
                             acceptedButtons: Qt.NoButton
-                            cursorShape: !!parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
+                            cursorShape: handler1.hovered && parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
                         }
                     }
                     StatusBaseText {
@@ -263,12 +266,14 @@ StatusStackModal {
                         linkColor: hoveredLink ? Qt.lighter(Theme.palette.primaryColor1) : Theme.palette.primaryColor1
                         text: qsTr("Refer to this <a href='https://github.com/Tyrrrz/DiscordChatExporter/wiki'>wiki</a> if you have any queries")
                         onLinkActivated: Global.openLink(link)
+                        // TODO put this into StatusBaseText
+                        HoverHandler {
+                            id: handler2
+                        }
                         MouseArea {
                             anchors.fill: parent
-                            preventStealing: true
-                            hoverEnabled: true
                             acceptedButtons: Qt.NoButton
-                            cursorShape: !!parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
+                            cursorShape: handler2.hovered && parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
                         }
                     }
                 }
@@ -289,11 +294,11 @@ StatusStackModal {
                             enabled: model.errorMessage === "" // TODO distinguish between error/warning
                             onToggled: model.selected = checked
                         }
-                        StatusBaseText { // TODO add icon
+                        StatusBaseText {
                             Layout.fillWidth: true
                             Layout.leftMargin: fileCheckBox.leftPadding + fileCheckBox.spacing + fileCheckBox.indicator.width
-                            text: model.errorMessage
-                            visible: text
+                            text: "%1 %2".arg("⚠").arg(model.errorMessage)
+                            visible: model.errorMessage
                             font.pixelSize: 13
                             font.weight: Font.Medium
                             color: Theme.palette.dangerColor1
