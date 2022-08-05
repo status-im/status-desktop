@@ -189,6 +189,7 @@ StatusPopupMenu {
         CreateChannelPopup {
             anchors.centerIn: parent
             isEdit: true
+            isDeleteable: root.isCommunityChat
             emojiPopup: root.emojiPopup
             onCreateCommunityChannel: {
                 root.createCommunityChannel(root.chatId, chName, chDescription, chEmoji, chColor);
@@ -196,6 +197,10 @@ StatusPopupMenu {
             onEditCommunityChannel: {
                 root.editCommunityChannel(root.chatId, chName, chDescription, chEmoji, chColor,
                     chCategoryId);
+            }
+            onDeleteCommunityChannel: {
+                Global.openPopup(deleteChatConfirmationDialogComponent)
+                close()
             }
             onClosed: {
                 destroy()

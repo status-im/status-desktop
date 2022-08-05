@@ -21,6 +21,7 @@ StatusDialog {
     height: 509
 
     property bool isEdit: false
+    property bool isDeleteable: false
     property string chatId: ""
     property string categoryId: ""
     property string channelName: ""
@@ -37,6 +38,7 @@ StatusDialog {
 
     signal createCommunityChannel(string chName, string chDescription, string chEmoji, string chColor, string chCategoryId)
     signal editCommunityChannel(string chName, string chDescription, string chEmoji, string chColor, string chCategoryId)
+    signal deleteCommunityChannel()
 
     title: qsTr("New channel")
 
@@ -278,11 +280,20 @@ StatusDialog {
     footer: StatusDialogFooter {
         rightButtons: ObjectModel {
             StatusButton {
+                objectName: "deleteCommunityChannelBtn"
+                visible: isEdit && isDeleteable
+                text: qsTr("Delete channel")
+                type: StatusBaseButton.Type.Danger
+                onClicked: {
+                    root.deleteCommunityChannel()
+                }
+            }
+            StatusButton {
                 objectName: "createOrEditCommunityChannelBtn"
                 enabled: isFormValid()
                 text: isEdit ?
-                          qsTr("Save") :
-                          qsTr("Create")
+                          qsTr("Save changes") :
+                          qsTr("Create channel")
                 onClicked: {
                     if (!isFormValid()) {
                         scrollView.scrollBackUp()
