@@ -320,7 +320,7 @@ QtObject:
           # Handle position changes
           if(chat.id == prev_chat.id and chat.position != prev_chat.position):
             self.events.emit(SIGNAL_COMMUNITY_CHANNEL_REORDERED, CommunityChatOrderArgs(communityId: community.id,
-            chatId: community.id&chat.id, categoryId: chat.categoryId, position: chat.position))
+            chatId: chat.id, categoryId: chat.categoryId, position: chat.position))
 
           # Handle name/description changes
           if(chat.id == prev_chat.id and (chat.name != prev_chat.name or chat.description != prev_chat.description)):
