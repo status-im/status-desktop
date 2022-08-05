@@ -12,8 +12,6 @@ import StatusQ.Core.Theme 0.1
 import utils 1.0
 import shared.status 1.0
 
-import "../popups"
-
 Page {
     id: root
     Behavior on anchors.bottomMargin { NumberAnimation { duration: 30 }}
@@ -138,7 +136,7 @@ Page {
                 height: parent.height
                 tooltip.offset: width/2
                 unreadNotificationsCount: activityCenter.unreadNotificationsCount
-                onClicked: Global.openActivityCenterPopup()
+                onClicked: activityCenter.open()
             }
         }
     }
