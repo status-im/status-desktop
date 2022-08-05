@@ -89,12 +89,6 @@ Item {
             popup.openPopup(publicKey, state);
             Global.profilePopupOpened = true;
         }
-
-        onOpenActivityCenterPopupRequested: {
-            Global.openPopup(activityCenterPopupComponent)
-            Global.activityCenterPopupOpened = true
-        }
-
         onOpenChangeProfilePicPopup: {
             var popup = changeProfilePicComponent.createObject(appMain);
             popup.chooseImageToCrop();
@@ -764,20 +758,6 @@ Item {
             ConfirmationDialog {
                 onClosed: {
                     destroy()
-                }
-            }
-        }
-
-        Component {
-            id: activityCenterPopupComponent
-            ActivityCenterPopup {
-                id: activityCenter
-                height: appView.height - 56 * 2 // TODO get screen size // Taken from old code top bar height was fixed there to 56
-                y: 56
-                store: chatLayoutContainer.rootStore
-                chatSectionModule: chatLayoutContainer.rootStore.chatCommunitySectionModule
-                onClosed: {
-                    Global.activityCenterPopupOpened = false
                 }
             }
         }

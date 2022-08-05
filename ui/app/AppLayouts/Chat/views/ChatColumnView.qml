@@ -155,6 +155,12 @@ Item {
         }
     }
 
+    MessageContextMenuView {
+        id: contextmenu
+        store: root.rootStore
+        reactionModel: root.rootStore.emojiReactionsModel
+    }
+
     EmptyChatPanel {
         anchors.fill: parent
         visible: root.activeChatId === "" || root.chatsCount == 0
@@ -227,14 +233,14 @@ Item {
                             stickersLoaded: root.stickersLoaded
                             isBlocked: model.blocked
                             isActiveChannel: categoryChatLoader.isActiveChannel
-                            activityCenterVisible: Global.activityCenterPopupOpened
-                            activityCenterNotificationsCount: root.rootStore.activityCenterList.unreadCount
+                            activityCenterVisible: activityCenter.visible
+                            activityCenterNotificationsCount: activityCenter.unreadNotificationsCount
                             pinnedMessagesPopupComponent: root.pinnedMessagesListPopupComponent
                             onOpenStickerPackPopup: {
                                 root.openStickerPackPopup(stickerPackId)
                             }
                             onNotificationButtonClicked: {
-                                Global.openActivityCenterPopup()
+                                activityCenter.open();
                             }
                             onOpenAppSearch: {
                                 root.openAppSearch();
@@ -291,7 +297,7 @@ Item {
                             root.openStickerPackPopup(stickerPackId)
                         }
                         onNotificationButtonClicked: {
-                            Global.openActivityCenterPopup()
+                            activityCenter.open();
                         }
                         onOpenAppSearch: {
                             root.openAppSearch();
@@ -406,6 +412,15 @@ Item {
                 }
             }
         }
+    }
+
+    ActivityCenterPopup {
+        id: activityCenter
+        height: root.height - 56 * 2 // TODO get screen size // Taken from old code top bar height was fixed there to 56
+        y: 56
+        store: root.rootStore
+        chatSectionModule: root.parentModule
+        messageContextMenu: contextmenu
     }
 
         // Not Refactored Yet
