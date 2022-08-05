@@ -134,7 +134,6 @@ method addChatMember*(self: Module,  member: ChatMember) =
   var status = OnlineStatus.Online
   var displayName = contactDetails.displayName
   if (isMe):
-    displayName = displayName & " (You)"
     let currentUserStatus = intToEnum(singletonInstance.userProfile.getCurrentUserStatus(), StatusType.Unknown)
     status = toOnlineStatus(currentUserStatus)
   else:
