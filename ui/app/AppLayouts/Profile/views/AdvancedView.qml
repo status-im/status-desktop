@@ -9,6 +9,8 @@ import shared.panels 1.0
 import shared.popups 1.0
 import shared.status 1.0
 
+import StatusQ.Core 0.1
+
 import "../stores"
 import "../controls"
 import "../popups"
@@ -51,8 +53,7 @@ SettingsContentBase {
                 }
             }
 
-            // TODO: replace with StatusQ component
-            StyledText {
+            StatusBaseText {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.leftMargin: Style.current.padding
@@ -159,6 +160,23 @@ SettingsContentBase {
                         confirmationPopup.open()
                     } else {
                         root.advancedStore.toggleExperimentalFeature(root.advancedStore.experimentalFeatures.nodeManagement)
+                    }
+                }
+            }
+
+            StatusSettingsLineButton {
+                anchors.leftMargin: 0
+                anchors.rightMargin: 0
+                text: qsTr("Discord Import Tool")
+                objectName: qsTr("DiscordImportToolSettingsLineButton")
+                isSwitch: true
+                switchChecked: localAccountSensitiveSettings.isDiscordImportToolEnabled
+                onClicked: {
+                    if (!localAccountSensitiveSettings.isDiscordImportToolEnabled) {
+                        confirmationPopup.experimentalFeature = root.advancedStore.experimentalFeatures.discordImportTool
+                        confirmationPopup.open()
+                    } else {
+                        root.advancedStore.toggleExperimentalFeature(root.advancedStore.experimentalFeatures.discordImportTool)
                     }
                 }
             }

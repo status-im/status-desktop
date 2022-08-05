@@ -99,7 +99,13 @@ StatusScrollView {
                 objectName: "createCommunityButton"
                 Layout.fillHeight: true
                 text: qsTr("Create New Community")
-                onClicked: Global.openPopup(chooseCommunityCreationTypePopupComponent)
+                onClicked: {
+                    if (localAccountSensitiveSettings.isDiscordImportToolEnabled) {
+                      Global.openPopup(chooseCommunityCreationTypePopupComponent)
+                    } else {
+                      Global.openPopup(createCommunitiesPopupComponent)
+                    }
+                }
             }
         }
 

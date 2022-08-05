@@ -91,6 +91,8 @@ const LSS_KEY_IS_24H_TIME_FORMAT* = "is_24h_time_format"
 const DEFAULT_IS_24H_TIME_FORMAT = false
 const LSS_KEY_USER_DECLINED_BACKUP_BANNER* = "userDeclinedBackupBanner"
 const DEFAULT_USER_DECLINED_BACKUP_BANNER = false
+const LSS_KEY_IS_DISCORD_IMPORT_TOOL_ENABLED* = "isDiscordImportToolEnabled"
+const DEFAULT_IS_DISCORD_IMPORT_TOOL_ENABLED = false
 
 
 logScope:
@@ -215,6 +217,17 @@ QtObject:
     write = setNodeManagementEnabled
     notify = nodeManagementEnabledChanged
 
+  proc isDiscordImportToolEnabledChanged*(self: LocalAccountSensitiveSettings) {.signal.}
+  proc getIsDiscordImportToolEnabled*(self: LocalAccountSensitiveSettings): bool {.slot.} =
+    getSettingsProp[bool](self, LSS_KEY_IS_DISCORD_IMPORT_TOOL_ENABLED, newQVariant(DEFAULT_IS_DISCORD_IMPORT_TOOL_ENABLED))
+  proc setIsDiscordImportToolEnabled*(self: LocalAccountSensitiveSettings, value: bool) {.slot.} =
+    setSettingsProp(self, LSS_KEY_IS_DISCORD_IMPORT_TOOL_ENABLED, newQVariant(value)):
+      self.isDiscordImportToolEnabledChanged()
+
+  QtProperty[bool] isDiscordImportToolEnabled:
+    read = getIsDiscordImportToolEnabled
+    write = setIsDiscordImportToolEnabled
+    notify = isDiscordImportToolEnabledChanged
 
   proc isBrowserEnabledChanged*(self: LocalAccountSensitiveSettings) {.signal.}
   proc getIsBrowserEnabled*(self: LocalAccountSensitiveSettings): bool {.slot.} =
