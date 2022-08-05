@@ -201,7 +201,7 @@ proc buildChatSectionUI(
       description="", ChatType.Unknown.int, amIChatAdmin=false, hasNotificationPerCategory,
       notificationsCountPerCategory, muted=false, blocked=false, active=false,
       cat.position, cat.id)
-    categoryItem.prependSubItems(categoryChannels)
+    categoryItem.appendSubItems(categoryChannels)
     self.view.chatsModel().appendItem(categoryItem)
 
   self.setActiveItemSubItem(selectedItemId, selectedSubItemId)
@@ -478,7 +478,7 @@ method onCommunityCategoryCreated*(self: Module, cat: Category, chats: seq[ChatD
     self.view.chatsModel().removeItemById(chatDto.id)
     categoryChannels.add(channelItem)
 
-  categoryItem.prependSubItems(categoryChannels)
+  categoryItem.appendSubItems(categoryChannels)
   self.view.chatsModel().appendItem(categoryItem)
 
 method onCommunityCategoryDeleted*(self: Module, cat: Category) =
@@ -534,7 +534,7 @@ method onCommunityCategoryEdited*(self: Module, cat: Category, chats: seq[ChatDt
         chatDto.color, chatDto.emoji, chatDto.description, chatDto.chatType.int,
         amIChatAdmin=true, hasNotification, notificationsCount, chatDto.muted, blocked=false,
         active=false, chatDto.position)
-      categoryItem.prependSubItem(channelItem)
+      categoryItem.appendSubItem(channelItem)
     else:
       let channelItem = initItem(chatDto.id, chatDto.name, chatDto.icon,
         chatDto.color, chatDto.emoji, chatDto.description, chatDto.chatType.int, amIChatAdmin,

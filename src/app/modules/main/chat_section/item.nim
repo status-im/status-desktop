@@ -73,13 +73,5 @@ proc appendSubItem*(self: Item, item: SubItem) =
   self.subItems.appendItem(item)
   self.BaseItem.muted = self.subItems.isAllMuted()
 
-proc prependSubItems*(self: Item, items: seq[SubItem]) =
-  self.subItems.prependItems(items)
-  self.BaseItem.muted = self.subItems.isAllMuted()
-
-proc prependSubItem*(self: Item, item: SubItem) =
-  self.subItems.prependItem(item)
-  self.BaseItem.muted = self.subItems.isAllMuted()
-
 proc setActiveSubItem*(self: Item, subItemId: string) =
   self.subItems.setActiveItem(subItemId)

@@ -326,9 +326,15 @@ QtObject:
       result.hasNotifications = result.hasNotifications or self.items[i].BaseItem.hasUnreadMessages
       result.notificationsCount = result.notificationsCount + self.items[i].BaseItem.notificationsCount
 
+  proc reorderSubModel(self: Model, chatId: string, position: int) =
+    for it in self.items:
+      if(it.subItems.getCount() > 0):
+        it.subItems.reorder(chatId, position)
+
   proc reorder*(self: Model, chatOrCategoryId: string, position: int) =
     let index = self.getItemIdxById(chatOrCategoryId)
     if(index == -1):
+      self.reorderSubModel(chatOrCategoryId, position)
       return
 
     if(self.items[index].BaseItem.position == position):

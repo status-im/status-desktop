@@ -143,28 +143,6 @@ QtObject:
 
     self.countChanged()
 
-  proc prependItems*(self: SubModel, items: seq[SubItem]) =
-    let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
-
-    let first = 0
-    let last = items.len - 1
-    self.beginInsertRows(parentModelIndex, first, last)
-    self.items = items & self.items
-    self.endInsertRows()
-
-    self.countChanged()
-
-  proc prependItem*(self: SubModel, item: SubItem) =
-    let parentModelIndex = newQModelIndex()
-    defer: parentModelIndex.delete
-
-    self.beginInsertRows(parentModelIndex, 0, 0)
-    self.items = item & self.items
-    self.endInsertRows()
-
-    self.countChanged()
-
   proc getItemById*(self: SubModel, id: string): SubItem =
     for it in self.items:
       if(it.id == id):
@@ -246,6 +224,16 @@ QtObject:
     self.items.delete(idx)
     self.endRemoveRows()
     self.countChanged()
+
+  proc reorder*(self: SubModel, id: string, position: int) =
+    let index = self.getItemIdxById(id)
+    if index == -1:
+      return
+
+    self.items[index].BaseItem.position = position
+
+    let modelIndex = self.createIndex(index, 0, nil)
+    self.dataChanged(modelIndex, modelIndex, @[ModelRole.Position.int])
 
   proc updateNotificationsForItemById*(self: SubModel, id: string, hasUnreadMessages: bool,
     notificationsCount: int): bool =
