@@ -25,7 +25,7 @@ StatusAppThreePanelLayout {
 
     property var contactsStore
     property bool hasAddedContacts: root.contactsStore.myContactsModel.count > 0
-    property alias activityCenter: chatColumn.activityCenter
+    property var activityCenter
 
     property RootStore rootStore
 
@@ -73,6 +73,7 @@ StatusAppThreePanelLayout {
         pinnedMessagesListPopupComponent: root.pinnedMessagesListPopupComponent
         stickersLoaded: root.stickersLoaded
         emojiPopup: root.emojiPopup
+        activityCenter: root.activityCenter
         onOpenStickerPackPopup: {
             Global.openPopup(statusStickerPackClickPopup, {packId: stickerPackId} )
         }

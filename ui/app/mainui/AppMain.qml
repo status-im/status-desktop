@@ -91,7 +91,8 @@ Item {
         }
 
         onOpenActivityCenterPopupRequested: {
-            Global.openPopup(activityCenterPopupComponent)
+            // Global.openPopup(activityCenterPopupComponent)
+            activityCenterComp.open()
             Global.activityCenterPopupOpened = true
         }
 
@@ -522,6 +523,7 @@ Item {
                         chatView.emojiPopup: statusEmojiPopup
 
                         contactsStore: appMain.rootStore.contactStore
+                        activityCenter: activityCenterComp
                         rootStore.emojiReactionsModel: appMain.rootStore.emojiReactionsModel
                         rootStore.openCreateChat: createChatView.opened
 
@@ -628,6 +630,7 @@ Item {
                                     chatView.emojiPopup: statusEmojiPopup
 
                                     contactsStore: appMain.rootStore.contactStore
+                                    activityCenter: activityCenterComp
                                     rootStore.emojiReactionsModel: appMain.rootStore.emojiReactionsModel
                                     rootStore.openCreateChat: createChatView.opened
 
@@ -657,7 +660,7 @@ Item {
                     property bool opened: false
 
                     rootStore: chatLayoutContainer.rootStore
-                    activityCenter: chatLayoutContainer.chatView.activityCenter
+                    activityCenter: activityCenterComp
                     emojiPopup: statusEmojiPopup
                     anchors.top: parent.top
                     anchors.topMargin: 8
@@ -768,17 +771,14 @@ Item {
             }
         }
 
-        Component {
-            id: activityCenterPopupComponent
-            ActivityCenterPopup {
-                id: activityCenter
-                height: appView.height - 56 * 2 // TODO get screen size // Taken from old code top bar height was fixed there to 56
-                y: 56
-                store: chatLayoutContainer.rootStore
-                chatSectionModule: chatLayoutContainer.rootStore.chatCommunitySectionModule
-                onClosed: {
-                    Global.activityCenterPopupOpened = false
-                }
+        ActivityCenterPopup {
+            id: activityCenterComp
+            height: appView.height - 56 * 2 // TODO get screen size // Taken from old code top bar height was fixed there to 56
+            y: 56
+            store: chatLayoutContainer.rootStore
+            chatSectionModule: chatLayoutContainer.rootStore.chatCommunitySectionModule
+            onClosed: {
+                Global.activityCenterPopupOpened = false
             }
         }
 

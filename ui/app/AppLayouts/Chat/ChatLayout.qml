@@ -12,6 +12,7 @@ StackLayout {
     id: root
 
     property var contactsStore
+    property var activityCenter
     property RootStore rootStore: RootStore {
         contactsStore: root.contactsStore
     }
@@ -39,6 +40,7 @@ StackLayout {
         contactsStore: root.contactsStore
         rootStore: root.rootStore
         membershipRequestPopup: membershipRequestPopupComponent
+        activityCenter: root.activityCenter
 
         onCommunityInfoButtonClicked: root.currentIndex = 1
         onCommunityManageButtonClicked: root.currentIndex = 1
