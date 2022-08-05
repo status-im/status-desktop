@@ -142,6 +142,7 @@ Item {
                 anchors.top: parent.top
                 anchors.right: cropEditor.left
                 anchors.bottom: parent.bottom
+                anchors.bottomMargin: -1
                 color: wallColor
                 opacity: wallTransparency
                 z: cropEditor.z + 1
@@ -160,8 +161,9 @@ Item {
             StatusImageCrop {
                 id: cropEditor
                 anchors.centerIn: parent
-                width: aspectRatio < cropSpaceItem.width/cropSpaceItem.height ? cropSpaceItem.height * aspectRatio : cropSpaceItem.width - root.margins * 2
-                height: aspectRatio < cropSpaceItem.width/cropSpaceItem.height ? cropSpaceItem.height - root.margins * 2 : cropSpaceItem.width / aspectRatio
+                readonly property bool cropARSmall: aspectRatio < cropSpaceItem.width/cropSpaceItem.height
+                width: cropARSmall ? cropSpaceItem.height * aspectRatio : cropSpaceItem.width - root.margins * 2
+                height: cropARSmall ? cropSpaceItem.height - root.margins * 2 : cropSpaceItem.width / aspectRatio
             }
 
             Rectangle {
@@ -170,6 +172,7 @@ Item {
                 anchors.top: parent.top
                 anchors.right: parent.right
                 anchors.bottom: parent.bottom
+                anchors.bottomMargin: -1
                 color: wallColor
                 opacity: wallTransparency
                 z: cropEditor.z + 1
@@ -181,6 +184,7 @@ Item {
                 anchors.top: cropEditor.bottom
                 anchors.right: rightOverlay.left
                 anchors.bottom: parent.bottom
+                anchors.bottomMargin: -1
                 color: wallColor
                 opacity: wallTransparency
                 z: cropEditor.z + 1
@@ -190,6 +194,7 @@ Item {
             Canvas {
                 visible: root.enableCheckers
                 anchors.fill: parent
+                anchors.bottomMargin: -1
                 onPaint: {
                     var ctx = getContext("2d")
                     for(let xI = 0; xI < Math.ceil(width/10); xI++) {

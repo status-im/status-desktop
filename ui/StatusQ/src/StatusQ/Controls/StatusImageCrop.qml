@@ -303,8 +303,6 @@ Item {
 
         anchors.fill: parent
 
-        layer.enabled: true
-
         property bool widthFit: (root.width / root.aspectRatio) <= root.height
         // Window width
         property real wW: widthFit ? root.width : root.height * root.aspectRatio
@@ -312,22 +310,31 @@ Item {
         property real wH: widthFit ? root.width / root.aspectRatio : root.height
 
         onPaint: {
+            const wSize = Qt.size(wW, wH)
+            const contentSize = canvasSize
+            const clearSize = Qt.size(Math.ceil(canvasSize.width), Math.ceil(canvasSize.height))
+            const r = root.radius
+
             var ctx = getContext("2d")
+
             ctx.save()
-            // TODO: observed drawing artefacts at the edge. Draw one pixel more for now until root cause is found
-            ctx.clearRect(0, 0, width + 1, height + 1)
+
+            ctx.clearRect(0, 0, clearSize.width, clearSize.height)
+
             // Fill all with wallColor in order to clip the window from it
             ctx.fillStyle = Qt.rgba(root.wallColor.r, root.wallColor.g, root.wallColor.b, root.wallTransparency)
-            ctx.fillRect(0, 0, width + 1, height + 1)
+            ctx.fillRect(0, 0, clearSize.width, clearSize.height)
+
             // Cut opaque new pixels from background
             ctx.globalCompositeOperation = "source-out"
+
             // Draw the window
             ctx.beginPath()
-            const cW = Qt.rect((width - wW)/2, (height - wH)/2, wW, wH)
+            const cW = Qt.rect((contentSize.width - wSize.width)/2, (contentSize.height - wSize.height)/2, wSize.width, wSize.height)
             if(root.windowStyle === StatusImageCrop.WindowStyle.Rounded)
                 ctx.ellipse(cW.x, cW.y, cW.width, cW.height)
             else if(root.windowStyle === StatusImageCrop.WindowStyle.Rectangular)
-                ctx.roundedRect(cW.x, cW.y, cW.width, cW.height, root.radius, root.radius)
+                ctx.roundedRect(cW.x, cW.y, cW.width, cW.height, r, r)
             ctx.fill()
             ctx.restore()
         }
