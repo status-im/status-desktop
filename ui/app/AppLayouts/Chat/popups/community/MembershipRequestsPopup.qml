@@ -51,7 +51,8 @@ StatusModal {
 
             StatusListView {
                 id: membershipRequestList
-                anchors.fill: parent
+                width: parent.width
+                height: parent.height
                 model: popup.communityData.pendingRequestsToJoin
 
                 delegate: StatusListItem {
