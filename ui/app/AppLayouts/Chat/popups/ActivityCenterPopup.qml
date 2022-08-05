@@ -45,7 +45,9 @@ Popup {
     parent: Overlay.overlay
 
     dim: true
-    Overlay.modeless: MouseArea {}
+    Overlay.modeless: MouseArea {
+        onClicked: activityCenter.close()
+    }
 
     width: 560
     background: Rectangle {
