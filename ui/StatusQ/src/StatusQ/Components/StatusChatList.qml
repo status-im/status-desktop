@@ -166,7 +166,7 @@ Column {
                                 }
                             }
 
-                            let p = statusChatListItem.mapToItem(statusChatList, mouse.x, mouse.y)
+                            let p = statusChatListItem.mapToItem(root, mouse.x, mouse.y)
 
                             popupMenuSlot.item.popup(p.x + 4, p.y + 6)
                             popupMenuSlot.item.openHandler = originalOpenHandler
