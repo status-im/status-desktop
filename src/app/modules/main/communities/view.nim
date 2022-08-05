@@ -30,6 +30,7 @@ QtObject:
       discordChannelsModel: DiscordChannelsModel
       discordChannelsModelVariant: QVariant
       discordOldestMessageTimestamp: QVariant
+      discordDataExtractionInProgress: bool
 
   proc delete*(self: View) =
     self.model.delete
@@ -62,6 +63,7 @@ QtObject:
     result.discordChannelsModel = newDiscordChannelsModel()
     result.discordChannelsModelVariant = newQVariant(result.discordChannelsModel)
     result.discordOldestMessageTimestamp = newQVariant(0)
+    result.discordDataExtractionInProgress = false 
     result.observedItem = newActiveSection()
 
   proc load*(self: View) =
@@ -156,6 +158,19 @@ QtObject:
       return
     self.observedItem.setActiveSectionData(item)
     self.observedItemChanged()
+
+  proc discordDataExtractionInProgressChanged*(self: View) {.signal.}
+
+  proc getDiscordDataExtractionInProgress(self: View): bool {.slot.} =
+    return self.discordDataExtractionInProgress
+
+  proc setDiscordDataExtractionInProgress*(self: View, inProgress: bool) {.slot.} =
+    self.discordDataExtractionInProgress = inProgress
+    self.discordDataExtractionInProgressChanged()
+
+  QtProperty[bool] discordDataExtractionInProgress:
+    read = getDiscordDataExtractionInProgress
+    notify = discordDataExtractionInProgressChanged
 
   proc joinCommunity*(self: View, communityId: string, ensName: string) {.slot.} =
     # Users always have to request to join a community but might 

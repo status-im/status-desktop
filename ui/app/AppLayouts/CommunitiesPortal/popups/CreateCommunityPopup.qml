@@ -33,6 +33,7 @@ StatusStackModal {
         font.weight: Font.Medium
         text: typeof currentItem.nextButtonText !== "undefined" ? currentItem.nextButtonText : qsTr("Next")
         enabled: typeof(currentItem.canGoNext) == "undefined" || currentItem.canGoNext
+        loading: root.store.discordDataExtractionInProgress
         onClicked: {
             let nextAction = currentItem.nextAction
             if (typeof(nextAction) == "function") {

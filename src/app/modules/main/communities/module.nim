@@ -248,6 +248,8 @@ method discordCategoriesAndChannelsExtracted*(self: Module, categories: seq[Disc
     self.view.discordCategoriesModel().addItem(self.getDiscordCategoryItem(discordCategory))
   for discordChannel in channels:
     self.view.discordChannelsModel().addItem(self.getDiscordChannelItem(discordChannel))
+
+  self.view.setDiscordDataExtractionInProgress(false)
   self.view.discordChannelsModel().hasSelectedItemsChanged()
 
 method requestToJoinCommunity*(self: Module, communityId: string, ensName: string) =
@@ -280,4 +282,5 @@ method onImportCommunityErrorOccured*(self: Module, error: string) =
   self.view.emitImportingCommunityStateChangedSignal(ImportCommunityState.ImportingError.int, error)
 
 method requestExtractDiscordChannelsAndCategories*(self: Module, filesToImport: seq[string]) =
+  self.view.setDiscordDataExtractionInProgress(true)
   self.controller.requestExtractDiscordChannelsAndCategories(filesToImport)
