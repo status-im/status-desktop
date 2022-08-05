@@ -9,6 +9,7 @@ import "./"
 
 Rectangle {
     id: root
+    objectName: "moduleWarningBanner"
     height: visible ? 32 : 0
     implicitHeight: height
     color: Style.current.red
