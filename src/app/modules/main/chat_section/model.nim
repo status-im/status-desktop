@@ -1,4 +1,4 @@
-import NimQml, Tables, strutils, strformat, json, algorithm
+import NimQml, Tables, strutils, strformat, json
 from ../../../../app_service/service/chat/dto/chat import ChatType
 from ../../../../app_service/service/contacts/dto/contacts import TrustStatus
 import item, sub_item, base_item, sub_model

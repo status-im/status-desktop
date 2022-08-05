@@ -1,3 +1,4 @@
+import NimQml
 import ../../../app_service/service/accounts/service as accounts_service
 import models/login_account_item as login_acc_item
 from ../../../app_service/service/keycard/service import KeycardEvent, KeyDetails
@@ -10,6 +11,12 @@ method delete*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method load*(self: AccessInterface) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method getKeycardSharedModule*(self: AccessInterface): QVariant {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method onSharedKeycarModuleFlowTerminated*(self: AccessInterface, lastStepInTheCurrentFlow: bool) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method moveToLoadingAppState*(self: AccessInterface) {.base.} =
@@ -106,6 +113,9 @@ method getSeedPhrase*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method setKeycardData*(self: AccessInterface, value: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method runFactoryResetPopup*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 # This way (using concepts) is used only for the modules managed by AppController

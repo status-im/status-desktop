@@ -14,6 +14,8 @@ import ../../../app_service/service/general/service as general_service
 import ../../../app_service/service/profile/service as profile_service
 import ../../../app_service/service/keycard/service as keycard_service
 
+import ../shared_modules/keycard_popup/module as keycard_shared_module
+
 export io_interface
 
 logScope:
@@ -25,6 +27,9 @@ type
     view: View
     viewVariant: QVariant
     controller: Controller
+    events: EventEmitter
+    keycardService: keycard_service.Service
+    keycardSharedModule: keycard_shared_module.AccessInterface
 
 proc newModule*[T](delegate: T,
   events: EventEmitter,
@@ -36,6 +41,8 @@ proc newModule*[T](delegate: T,
   Module[T] =
   result = Module[T]()
   result.delegate = delegate
+  result.events = events
+  result.keycardService = keycardService
   result.view = view.newView(result)
   result.viewVariant = newQVariant(result.view)
   result.controller = controller.newController(result, events, generalService, accountsService, keychainService,
@@ -45,6 +52,8 @@ method delete*[T](self: Module[T]) =
   self.view.delete
   self.viewVariant.delete
   self.controller.delete
+  if not self.keycardSharedModule.isNil:
+    self.keycardSharedModule.delete
 
 proc extractImages(self: Module, account: AccountDto, thumbnailImage: var string,
   largeImage: var string) =
@@ -89,6 +98,15 @@ method load*[T](self: Module[T]) =
     self.view.setCurrentStartupState(newLoginState(FlowType.AppLogin, nil))
   self.delegate.startupDidLoad()
 
+method getKeycardSharedModule*[T](self: Module[T]): QVariant =
+  return self.keycardSharedModule.getModuleAsVariant()
+
+proc createSharedKeycardModule[T](self: Module[T]) =
+  self.keycardSharedModule = keycard_shared_module.newModule[Module[T]](self, self.events, self.keycardService)
+
+proc isSharedKeycardModuleFlowRunning[T](self: Module[T]): bool =
+  return not self.keycardSharedModule.isNil
+
 method moveToLoadingAppState*[T](self: Module[T]) =
   self.view.setAppState(AppState.AppLoadingState)
 
@@ -102,6 +120,7 @@ method emitLogOut*[T](self: Module[T]) =
   self.view.emitLogOut()
 
 method onBackActionClicked*[T](self: Module[T]) =
+  self.onSharedKeycarModuleFlowTerminated(lastStepInTheCurrentFlow = true)
   let currStateObj = self.view.currentStartupStateObj()
   if currStateObj.isNil:
     error "cannot resolve current state"
@@ -235,6 +254,9 @@ method onNodeLogin*[T](self: Module[T], error: string) =
     error "login error", methodName="onNodeLogin", errDesription =error
 
 method onKeycardResponse*[T](self: Module[T], keycardFlowType: string, keycardEvent: KeycardEvent) =
+  if self.isSharedKeycardModuleFlowRunning():
+    debug "shared flow is currently active"
+    return
   let currStateObj = self.view.currentStartupStateObj()
   if currStateObj.isNil:
     error "cannot resolve current state"
@@ -266,3 +288,16 @@ method getSeedPhrase*[T](self: Module[T]): string =
 
 method setKeycardData*[T](self: Module[T], value: string) =
   self.view.setKeycardData(value)
+
+method runFactoryResetPopup*[T](self: Module[T]) =
+  self.createSharedKeycardModule()
+  self.view.emitRunKeycardSharedModuleFlow()
+
+method onSharedKeycarModuleFlowTerminated*[T](self: Module[T], lastStepInTheCurrentFlow: bool) =
+  if self.isSharedKeycardModuleFlowRunning():
+    self.view.emitDestroyKeycardSharedModuleFlow()
+    self.keycardSharedModule.delete
+    self.keycardSharedModule = nil
+    if lastStepInTheCurrentFlow:
+      self.controller.cleanTmpData()
+      self.view.setCurrentStartupState(newWelcomeState(FlowType.General, nil))

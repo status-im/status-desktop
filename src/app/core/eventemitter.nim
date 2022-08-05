@@ -23,14 +23,25 @@ proc on(this: EventEmitter, name: string, handlerId: UUID, handler: Handler): vo
   this.events[name] = [(handlerId, handler)].toTable
 
 proc on*(this: EventEmitter, name: string, handler: Handler): void =
-  var uuid: UUID
-  this.on(name, uuid, handler)
+  var handlerId = genUUID()
+  this.on(name, handlerId, handler)
 
 proc once*(this:EventEmitter, name:string, handler:Handler): void =
   var handlerId = genUUID()
   this.on(name, handlerId) do(a: Args):
     handler(a)
     this.events[name].del handlerId
+
+proc onWithUUID*(this: EventEmitter, name: string, handler: Handler): UUID =
+  var handlerId = genUUID()
+  this.on(name, handlerId, handler)
+  return handlerId
+
+proc disconnect*(this: EventEmitter, handlerId: UUID) =
+  for k, v in this.events:
+    if v.hasKey(handlerId):
+      this.events[k].del handlerId
+      return
 
 proc emit*(this:EventEmitter, name:string, args:Args): void  =
   if this.events.hasKey(name):

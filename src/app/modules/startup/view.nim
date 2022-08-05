@@ -70,6 +70,11 @@ QtObject:
   QtProperty[QVariant] currentStartupState:
     read = getCurrentStartupState
 
+  proc getKeycardSharedModule(self: View): QVariant {.slot.} =
+    return self.delegate.getKeycardSharedModule()
+  QtProperty[QVariant] keycardSharedModule:
+    read = getKeycardSharedModule
+
   proc onBackActionClicked*(self: View) {.slot.} =
     self.delegate.onBackActionClicked()
 
@@ -233,3 +238,11 @@ QtObject:
   QtProperty[string] keycardData:
     read = getKeycardData
     notify = keycardDataChanged
+
+  proc runKeycardSharedModuleFlow*(self: View) {.signal.}
+  proc emitRunKeycardSharedModuleFlow*(self: View) =
+    self.runKeycardSharedModuleFlow()
+
+  proc destroyKeycardSharedModuleFlow*(self: View) {.signal.}
+  proc emitDestroyKeycardSharedModuleFlow*(self: View) =
+    self.destroyKeycardSharedModuleFlow()

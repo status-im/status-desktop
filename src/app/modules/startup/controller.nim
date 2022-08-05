@@ -11,6 +11,8 @@ import ../../../app_service/service/keychain/service as keychain_service
 import ../../../app_service/service/profile/service as profile_service
 import ../../../app_service/service/keycard/service as keycard_service
 
+import ../shared_modules/keycard_popup/io_interface as keycard_shared_module
+
 logScope:
   topics = "startup-controller"
 
@@ -99,6 +101,10 @@ proc init*(self: Controller) =
   self.events.on(SignalKeycardResponse) do(e: Args):
     let args = KeycardArgs(e)
     self.delegate.onKeycardResponse(args.flowType, args.flowEvent)
+
+  self.events.on(SignalSharedKeycarModuleFlowTerminated) do(e: Args):
+    let args = SharedKeycarModuleFlowTerminatedArgs(e)
+    self.delegate.onSharedKeycarModuleFlowTerminated(args.lastStepInTheCurrentFlow)
 
 proc shouldStartWithOnboardingScreen*(self: Controller): bool =
   return self.accountsService.openedAccounts().len == 0
@@ -361,8 +367,8 @@ proc resumeCurrentFlow*(self: Controller) =
 proc resumeCurrentFlowLater*(self: Controller) =
   self.keycardService.resumeCurrentFlowLater()
 
-proc factoryReset*(self: Controller) =
-  self.keycardService.factoryReset()
+proc runFactoryResetPopup*(self: Controller) =
+  self.delegate.runFactoryResetPopup()
 
 proc storePinToKeycard*(self: Controller, pin: string, puk: string) =
   self.keycardService.storePin(pin, puk)

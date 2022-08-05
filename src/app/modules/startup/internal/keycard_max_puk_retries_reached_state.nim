@@ -10,14 +10,10 @@ proc delete*(self: KeycardMaxPukRetriesReachedState) =
 
 method executePrimaryCommand*(self: KeycardMaxPukRetriesReachedState, controller: Controller) =
   if self.flowType == FlowType.FirstRunOldUserKeycardImport:
-    controller.runLoadAccountFlow(true)
-  elif self.flowType == FlowType.AppLogin:
-    controller.runLoadAccountFlow(true)
+    controller.runFactoryResetPopup()
 
 method executeSecondaryCommand*(self: KeycardMaxPukRetriesReachedState, controller: Controller) =
   if self.flowType == FlowType.FirstRunOldUserKeycardImport:
-    controller.resumeCurrentFlow()
-  elif self.flowType == FlowType.AppLogin:
     controller.resumeCurrentFlow()
 
 method resolveKeycardNextState*(self: KeycardMaxPukRetriesReachedState, keycardFlowType: string, keycardEvent: KeycardEvent, 
@@ -30,11 +26,3 @@ method resolveKeycardNextState*(self: KeycardMaxPukRetriesReachedState, keycardF
         return createState(StateType.KeycardPluginReader, FlowType.FirstRunNewUserImportSeedPhraseIntoKeycard, self.getBackState)
     if keycardFlowType == ResponseTypeValueInsertCard:
       return createState(StateType.KeycardInsertKeycard, FlowType.FirstRunNewUserImportSeedPhraseIntoKeycard, self.getBackState)
-  if self.flowType == FlowType.AppLogin:
-    if keycardFlowType == ResponseTypeValueKeycardFlowResult and 
-      keycardEvent.error.len > 0 and
-      keycardEvent.error == ErrorConnection:
-        controller.resumeCurrentFlowLater()
-        return createState(StateType.KeycardPluginReader, self.flowType, self.getBackState)
-    if keycardFlowType == ResponseTypeValueInsertCard:
-      return createState(StateType.KeycardInsertKeycard, self.flowType, self.getBackState)

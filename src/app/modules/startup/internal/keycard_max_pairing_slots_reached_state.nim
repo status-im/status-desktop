@@ -10,7 +10,7 @@ proc delete*(self: KeycardMaxPairingSlotsReachedState) =
 
 method executePrimaryCommand*(self: KeycardMaxPairingSlotsReachedState, controller: Controller) =
   if self.flowType == FlowType.FirstRunOldUserKeycardImport:
-    controller.runLoadAccountFlow(true)
+    controller.runFactoryResetPopup()
 
 method executeSecondaryCommand*(self: KeycardMaxPairingSlotsReachedState, controller: Controller) =
   if self.flowType == FlowType.FirstRunOldUserKeycardImport:
