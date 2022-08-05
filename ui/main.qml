@@ -130,8 +130,14 @@ StatusWindow {
         }
 
         function onAppStateChanged(state) {
-            if(state === Constants.appState.appLoading) {
+            if(state === Constants.appState.startup) {
+                // we're here only in case of error when we're returning from the app loading state
+                loader.sourceComponent = undefined
+                startupOnboarding.visible = true
+            }
+            else if(state === Constants.appState.appLoading) {
                 loader.sourceComponent = appLoadingAnimation
+                startupOnboarding.visible = false
             }
             else if(state === Constants.appState.main) {
                 // We set main module to the Global singleton once user is logged in and we move to the main app.
@@ -150,10 +156,9 @@ StatusWindow {
                 if (localAccountSensitiveSettings.hiddenCommunityBackUpBanners === "") {
                     localAccountSensitiveSettings.hiddenCommunityBackUpBanners = [];
                 }
+                startupOnboarding.unload()
+                startupOnboarding.visible = false
             }
-
-            startupOnboarding.unload()
-            startupOnboarding.visible = false
         }
     }
 

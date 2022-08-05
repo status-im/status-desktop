@@ -68,7 +68,7 @@ proc newController*(delegate: io_interface.AccessInterface,
   result.tmpRecoverUsingSeedPhraseWhileLogin = false
 
 # Forward declaration
-proc cleanTmpData(self: Controller)
+proc cleanTmpData*(self: Controller)
 
 proc delete*(self: Controller) =
   discard
@@ -77,7 +77,6 @@ proc init*(self: Controller) =
   self.events.on(SignalType.NodeLogin.event) do(e:Args):
     let signal = NodeSignal(e)
     self.delegate.onNodeLogin(signal.event.error)
-    self.cleanTmpData()
 
   self.events.on(SignalType.NodeStopped.event) do(e:Args):
     self.events.emit("nodeStopped", Args())
@@ -191,7 +190,7 @@ proc setRecoverUsingSeedPhraseWhileLogin*(self: Controller, value: bool) =
 proc getRecoverUsingSeedPhraseWhileLogin*(self: Controller): bool =
   return self.tmpRecoverUsingSeedPhraseWhileLogin
 
-proc cleanTmpData(self: Controller) =
+proc cleanTmpData*(self: Controller) =
   self.tmpSelectedLoginAccountKeyUid = ""
   self.tmpProfileImageDetails = ProfileImageDetails()
   self.tmpKeychainErrorOccurred = true
