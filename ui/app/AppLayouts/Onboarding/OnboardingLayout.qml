@@ -3,6 +3,7 @@ import QtQuick.Controls 2.14
 import QtQuick.Dialogs 1.3
 
 import utils 1.0
+import shared.popups.keycard 1.0
 
 import "controls"
 import "views"
@@ -141,6 +142,12 @@ case of Keycard try recovering using PUK or reinstall the app and try login with
             }
             msgDialog.open()
         }
+        onRunKeycardSharedModuleFlow: {
+            keycardPopup.active = true
+        }
+        onDestroyKeycardSharedModuleFlow: {
+            keycardPopup.active = false
+        }
     }
 
     MessageDialog {
@@ -256,6 +263,19 @@ case of Keycard try recovering using PUK or reinstall the app and try login with
         id: keycardStateViewComponent
         KeycardStateView {
             startupStore: root.startupStore
+        }
+    }
+
+    Loader {
+        id: keycardPopup
+        active: false
+        sourceComponent: KeycardPopup {
+            sharedKeycardModule: root.startupStore.startupModuleInst.keycardSharedModule
+        }
+
+        onLoaded: {
+            keycardPopup.item.open()
+            keycardPopup.item.sharedKeycardModule.runFactoryResetFlow()
         }
     }
 }

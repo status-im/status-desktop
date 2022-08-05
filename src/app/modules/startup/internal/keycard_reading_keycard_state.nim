@@ -20,7 +20,8 @@ method resolveKeycardNextState*(self: KeycardReadingKeycardState, keycardFlowTyp
         return createState(StateType.KeycardNotEmpty, self.flowType, self.getBackState)
     if keycardFlowType == ResponseTypeValueSwapCard and 
       keycardEvent.error.len > 0 and
-      keycardEvent.error == ErrorHasKeys:
+      (keycardEvent.error == ErrorHasKeys or 
+      keycardEvent.error == RequestParamPUKRetries):
         return createState(StateType.KeycardNotEmpty, self.flowType, self.getBackState)
   
   if self.flowType == FlowType.FirstRunNewUserImportSeedPhraseIntoKeycard:
@@ -33,7 +34,8 @@ method resolveKeycardNextState*(self: KeycardReadingKeycardState, keycardFlowTyp
         return createState(StateType.KeycardNotEmpty, self.flowType, self.getBackState)
     if keycardFlowType == ResponseTypeValueSwapCard and 
       keycardEvent.error.len > 0 and
-      keycardEvent.error == ErrorHasKeys:
+      (keycardEvent.error == ErrorHasKeys or 
+      keycardEvent.error == RequestParamPUKRetries):
         return createState(StateType.KeycardNotEmpty, self.flowType, self.getBackState)
   
   if self.flowType == FlowType.FirstRunOldUserKeycardImport:

@@ -11,7 +11,7 @@ proc delete*(self: KeycardNotEmptyState) =
 method executePrimaryCommand*(self: KeycardNotEmptyState, controller: Controller) =
   if self.flowType == FlowType.FirstRunNewUserNewKeycardKeys or
     self.flowType == FlowType.FirstRunNewUserImportSeedPhraseIntoKeycard:
-    controller.runLoadAccountFlow(true)
+      controller.runFactoryResetPopup()
 
 method executeSecondaryCommand*(self: KeycardNotEmptyState, controller: Controller) =
   if self.flowType == FlowType.FirstRunNewUserNewKeycardKeys:

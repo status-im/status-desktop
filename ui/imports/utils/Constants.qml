@@ -67,6 +67,24 @@ QtObject {
         readonly property string loginKeycardEmpty: "LoginKeycardEmpty"
     }
 
+    readonly property QtObject keycardSharedFlow: QtObject {
+        readonly property string general: "General"
+        readonly property string factoryReset: "FactoryReset"
+    }
+
+    readonly property QtObject keycardSharedState: QtObject {
+        readonly property string noState: "NoState"
+        readonly property string pluginReader: "PluginReader"
+        readonly property string readingKeycard: "ReadingKeycard"
+        readonly property string insertKeycard: "InsertKeycard"
+        readonly property string enterPin: "EnterPin"
+        readonly property string factoryResetConfirmation: "FactoryResetConfirmation"
+        readonly property string factoryResetSuccess: "FactoryResetSuccess"
+        readonly property string keycardEmpty: "KeycardEmpty"
+        readonly property string notKeycard: "NotKeycard"
+        readonly property string recognizedKeycard: "RecognizedKeycard"
+    }
+
     readonly property QtObject keychain: QtObject {
         readonly property QtObject errorType: QtObject {
             readonly property string authentication: "authentication"
@@ -317,6 +335,13 @@ QtObject {
             readonly property int buttonFontSize: 15
             readonly property int pukCellWidth: 50
             readonly property int pukCellHeight: 60
+            readonly property int sharedFlowImageWidth: 240
+            readonly property int sharedFlowImageHeight: 240
+        }
+
+        readonly property QtObject shared: QtObject {
+            readonly property int imageWidth: 240
+            readonly property int imageHeight: 240
         }
     }
 

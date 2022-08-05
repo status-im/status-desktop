@@ -20,6 +20,8 @@ type FlowType {.pure.} = enum
   UnpairThis
   UnpairOthers
   DeleteAccountAndUnpair
+  StoreMetadata
+  GetMetadata
 
 const PINLengthForStatusApp* = 6
 const PUKLengthForStatusApp* = 12
@@ -56,7 +58,6 @@ QtObject:
   #################################################
   # Forward declaration section
   proc runTimer(self: Service)
-  proc factoryReset*(self: Service)
 
   #################################################
 
@@ -182,6 +183,20 @@ QtObject:
     self.currentFlow = FlowType.RecoverAccount
     self.startFlow(payload)    
 
+  proc startGetAppInfoFlow*(self: Service, factoryReset: bool) =
+    var payload = %* { }
+    if factoryReset:
+      payload[RequestParamFactoryReset] = %* factoryReset
+    self.currentFlow = FlowType.GetAppInfo
+    self.startFlow(payload)
+
+  proc startGetMetadataFlow*(self: Service) =
+    let payload = %* { 
+      RequestParamResolveAddr: true
+    }
+    self.currentFlow = FlowType.GetMetadata
+    self.startFlow(payload)
+
   proc storePin*(self: Service, pin: string, puk: string) =
     if pin.len == 0:
       info "empty pin provided"
@@ -232,9 +247,3 @@ QtObject:
 
   proc resumeCurrentFlowLater*(self: Service) =
     self.runTimer()
-
-  proc factoryReset*(self: Service) =
-    var payload = %* { 
-      RequestParamFactoryReset: true
-    }
-    self.resumeFlow(payload)

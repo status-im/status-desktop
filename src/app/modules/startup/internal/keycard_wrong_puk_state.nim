@@ -46,7 +46,7 @@ method resolveKeycardNextState*(self: KeycardWrongPukState, keycardFlowType: str
         controller.setPukValid(false)
         if keycardEvent.pukRetries > 0:
           return nil
-        return createState(StateType.KeycardMaxPukRetriesReached, self.flowType, self.getBackState)
+        return createState(StateType.LoginKeycardMaxPukRetriesReached, self.flowType, self.getBackState)
     if keycardFlowType == ResponseTypeValueSwapCard and 
       keycardEvent.error.len > 0 and
       keycardEvent.error == RequestParamPUKRetries:

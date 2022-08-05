@@ -4,8 +4,16 @@ type
     publicKey*: string
     privateKey*: string 
 
+  ApplicationInfo* = object
+    initialized*: bool
+    instanceUID*: string
+    version*: int
+    availableSlots*: int
+    keyUID*: string
+
   KeycardEvent* = object
     error*: string
+    applicationInfo*: ApplicationInfo
     seedPhraseIndexes*: seq[int]
     freePairingSlots*: int
     keyUid*: string
@@ -24,6 +32,13 @@ proc toKeyDetails(jsonObj: JsonNode): KeyDetails =
   if jsonObj.getProp(RequestParamPublicKey, result.publicKey):
     result.publicKey = "0x" & result.publicKey
 
+proc toApplicationInfo(jsonObj: JsonNode): ApplicationInfo =
+  discard jsonObj.getProp(ResponseInitialized, result.initialized)
+  discard jsonObj.getProp(ResponseInstanceUID, result.instanceUID)
+  discard jsonObj.getProp(ResponseVersion, result.version)
+  discard jsonObj.getProp(ResponseAvailableSlots, result.availableSlots)
+  discard jsonObj.getProp(ResponseKeyUID, result.keyUID)
+
 proc toKeycardEvent(jsonObj: JsonNode): KeycardEvent =
   discard jsonObj.getProp(ErrorKey, result.error)
   discard jsonObj.getProp(RequestParamFreeSlots, result.freePairingSlots)
@@ -33,6 +48,9 @@ proc toKeycardEvent(jsonObj: JsonNode): KeycardEvent =
     result.keyUid = "0x" & result.keyUid
 
   var obj: JsonNode
+  if(jsonObj.getProp(RequestParamAppInfo, obj)):
+    result.applicationInfo = toApplicationInfo(obj)
+
   if(jsonObj.getProp(RequestParamEIP1581Key, obj)):
     result.eip1581Key = toKeyDetails(obj)
 

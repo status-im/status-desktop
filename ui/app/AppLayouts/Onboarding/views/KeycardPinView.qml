@@ -190,7 +190,7 @@ Item {
             }
             PropertyChanges {
                 target: message
-                text: qsTr("%n attempt(s) remaining", "", d.remainingAttempts)
+                text: qsTr("%n attempt(s) remaining", "", root.remainingAttempts)
                 color: root.remainingAttempts === 1?
                            Theme.palette.dangerColor1 :
                            Theme.palette.baseColor1

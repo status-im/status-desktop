@@ -9,4 +9,6 @@ proc delete*(self: LoginKeycardMaxPukRetriesReachedState) =
   self.State.delete
 
 method getNextPrimaryState*(self: LoginKeycardMaxPukRetriesReachedState, controller: Controller): State =
-  return createState(StateType.UserProfileEnterSeedPhrase, self.flowType, nil)
+  if self.flowType == FlowType.AppLogin:
+    controller.setRecoverUsingSeedPhraseWhileLogin(true)
+    return createState(StateType.UserProfileEnterSeedPhrase, self.flowType, nil)
