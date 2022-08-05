@@ -62,7 +62,7 @@ StatusStackModal {
         text: qsTr("Clear all")
         type: StatusBaseButton.Type.Danger
         visible: root.currentItem.objectName === "discordFileListView" // no better way to address the current item in the stack :/
-        enabled: !fileListView.fileListModelEmpty
+        enabled: !fileListView.fileListModelEmpty && !root.store.discordDataExtractionInProgress
         onClicked: root.store.clearFileList()
     }
 
@@ -221,6 +221,7 @@ StatusStackModal {
                     hoverColor: Qt.lighter(normalColor) // FIXME not in spec?
                     textColor: Theme.palette.white
                     onClicked: fileDialog.open()
+                    enabled: !root.store.discordDataExtractionInProgress
                 }
             }
 
