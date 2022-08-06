@@ -1,4 +1,4 @@
-
+\
 from screens.StatusMainScreen import StatusMainScreen
 from screens.StatusCommunityPortalScreen import StatusCommunityPortalScreen
 from screens.StatusCommunityScreen import StatusCommunityScreen
@@ -24,7 +24,7 @@ def step(context, community_name, community_description, community_intro, commun
 def step(context, community_name):
     StatusCommunityScreen()
     _statusCommunityScreen.verify_community_name(community_name)
-    
+
 @When("the admin creates a community channel named |any|, with description |any| with the method |any|")
 def step(context, community_channel_name, community_channel_description, method):
     _statusCommunityScreen.create_community_channel(community_channel_name, community_channel_description, method)
@@ -32,7 +32,7 @@ def step(context, community_channel_name, community_channel_description, method)
 @When("the admin edits the current community channel to the name |any|")
 def step(context, new_community_channel_name):
     _statusCommunityScreen.edit_community_channel(new_community_channel_name)
-    
+
 @Then("the user lands on the community channel named |any|")
 def step(context, community_channel_name): 
     _statusCommunityScreen.verify_channel_name(community_channel_name)
@@ -45,3 +45,10 @@ def step(context, new_community_name, new_community_description, new_community_c
 def step(context):
     _statusCommunityScreen.go_back_to_community()
     
+@When("the admin creates a community category named |any| with channel |any|")
+def step(context, community_category_name, community_channel_name):
+    _statusCommunityScreen.create_community_category_with_channel(community_category_name, community_channel_name)
+
+@Then("the user lands on the community category named |any| with channel |any|")
+def step(context, community_category_name, community_channel_name):
+    _statusCommunityScreen.verify_category_and_channel_name(community_category_name, community_channel_name)

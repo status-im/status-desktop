@@ -151,3 +151,14 @@ def wait_for_object_and_type(objName: str, text: str):
         return True
     except LookupError:
         return False
+
+
+def find_child_recursive(obj, objectName: str):
+    children = object.children(obj)
+    for child in children:
+        if (child.objectName == objectName):
+            return True, child
+        [found, item] = find_child_recursive(child, objectName)
+        if found:
+            return True, item
+    return False, None

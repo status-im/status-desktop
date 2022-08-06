@@ -65,3 +65,14 @@ Feature: Status Desktop community
             | new_community_name       | new_community_description  | new_community_color |
             | myCommunityNamedChanged  | Cool new description 123   | #ff0000             |
 
+    Scenario Outline: Admin creates a community category
+        When the user creates a community named myCommunity, with description My community description, intro Community Intro and outro Community Outro
+        Then the user lands on the community named myCommunity
+        When the admin creates a community channel named <community_channel_name>, with description My description with the method bottom_menu
+        When the admin creates a community category named <community_category_name> with channel <community_channel_name>
+        Then the user lands on the community category named <community_category_name> with channel <community_channel_name>
+
+        Examples:
+            | community_channel_name | community_category_name |
+            | test-channel           | test-category           |
+

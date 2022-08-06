@@ -57,6 +57,7 @@ StatusModal {
             anchors.left: parent.left
             anchors.leftMargin: 16
 
+            input.edit.objectName: "createOrEditCommunityCategoryNameInput"
             label: qsTr("Category title")
             charLimit: maxCategoryNameLength
             placeholderText: qsTr("Name the category")
@@ -108,6 +109,7 @@ StatusModal {
 
                 StatusListView {
                     id: communityChannelList
+                    objectName: "createOrEditCommunityCategoryChannelList"
 
                     anchors.top: channelsLabel.bottom
                     height: childrenRect.height
@@ -116,6 +118,7 @@ StatusModal {
                     interactive: false
 
                     delegate: StatusListItem {
+                        objectName: model.name
                         anchors.horizontalCenter: parent.horizontalCenter
                         visible: model.type != Constants.chatType.unknown
                         height: visible ? implicitHeight : 0
@@ -204,6 +207,7 @@ StatusModal {
 
     rightButtons: [
         StatusButton {
+            objectName: "createOrEditCommunityCategoryBtn"
             enabled: isFormValid()
             text: isEdit ?
                 qsTr("Save") :
