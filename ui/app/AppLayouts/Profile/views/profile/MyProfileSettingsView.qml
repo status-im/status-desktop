@@ -58,6 +58,8 @@ ColumnLayout {
         Layout.leftMargin: Style.current.padding
         Layout.rightMargin: Style.current.padding
 
+        store: root.profileStore
+
         displayName: profileStore.name
         pubkey: profileStore.pubkey
         icon: profileStore.profileLargeImage
