@@ -56,6 +56,7 @@ Column {
         height: 64
         width: parent.width
         onClicked: goToDappPermissionsView()
+        label: qsTr("%n DApp(s) connected", "", root.walletStore.dappList.count)
         components: [
             StatusIcon {
                 icon: "chevron-down"
