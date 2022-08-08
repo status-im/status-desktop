@@ -26,6 +26,7 @@ Item {
         border.width: 1
         border.color: Theme.palette.directColor7
         color: "transparent"
+        objectName: "networkSelectorButton"
         leftPadding: 12
         rightPadding: 12
         statusListItemTitle.font.pixelSize: 13

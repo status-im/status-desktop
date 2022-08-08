@@ -8,6 +8,7 @@ import shared.panels 1.0
 
 Item {
     id: assetDelegate
+    objectName: symbol
 
     QtObject {
         id: _internal
@@ -23,7 +24,7 @@ Item {
     anchors.left: parent.left
     visible: _internal.alwaysVisible.includes(symbol) || (networkVisible && enabledNetworkBalance > 0)
     height: visible ? 40 + 2 * Style.current.padding : 0
-
+    
     Image {
         id: assetInfoImage
         width: 36

@@ -42,6 +42,7 @@ pipeline {
     STATUS_CLIENT_TARBALL = "pkg/${utils.pkgFilename(ext: 'tar.gz')}"
     /* Include library in order to compile the project */
     LD_LIBRARY_PATH = "$QTDIR/lib:$WORKSPACE/vendor/status-go/build/bin:$WORKSPACE/vendor/status-keycard-go/build/libkeycard/"
+    INFURA_TOKEN = "cd313fedd0dd4699b194d72b5184be06"
   }
 
   stages {

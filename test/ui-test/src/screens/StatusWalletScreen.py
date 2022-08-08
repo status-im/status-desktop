@@ -15,6 +15,13 @@ class MainWalletScreen(Enum):
     ACCOUNT_NAME: str = "mainWallet_Account_Name"
     SEND_BUTTON_FOOTER: str = "mainWallet_Footer_Send_Button"
     SAVED_ADDRESSES_BUTTON: str = "mainWallet_Saved_Addresses_Button"
+    NETWORK_SELECTOR_BUTTON: str = "mainWallet_Network_Selector_Button"
+
+class AssetView(Enum):
+    LIST: str = "mainWallet_Assets_View_List"
+    
+class NetworkSelectorPopup(Enum):
+    LAYER_1_REPEATER: str = "mainWallet_Network_Popup_Chain_Repeater_1"
 
 class SavedAddressesScreen(Enum):
     ADD_BUTTON: str = "mainWallet_Saved_Addreses_Add_Buttton"
@@ -177,7 +184,8 @@ class StatusWalletScreen:
         
         assert found != -1, "saved address not found"
         
-        # More icon is at index 2 
+        # More icon is at index 2
+        time.sleep(1)
         click_obj(list.itemAtIndex(found).components.at(2))
         
         click_obj_by_name(SavedAddressesScreen.EDIT.value)
@@ -193,11 +201,36 @@ class StatusWalletScreen:
         
         assert found != -1, "saved address not found"
         
-        # More icon is at index 2 
+        # More icon is at index 2
+        time.sleep(1)
         click_obj(list.itemAtIndex(found).components.at(2))
         
         click_obj_by_name(SavedAddressesScreen.DELETE.value)
         click_obj_by_name(SavedAddressesScreen.CONFIRM_DELETE.value)
+    
+    def toggle_network(self, network_name: str):
+        click_obj_by_name(MainWalletScreen.NETWORK_SELECTOR_BUTTON.value)
+
+        list = get_obj(NetworkSelectorPopup.LAYER_1_REPEATER.value)
+        for index in range(list.count):
+            if list.itemAt(index).objectName == network_name:
+                click_obj(list.itemAt(index))
+                click_obj_by_name(MainWalletScreen.ACCOUNT_NAME.value)
+                time.sleep(2)
+                return
+        
+        assert False, "network name not found"
+
+        
+    def verify_positive_balance(self, symbol: str):
+        list = get_obj(AssetView.LIST.value)
+        for index in range(list.count):
+            if list.itemAtIndex(index).objectName == symbol:
+                balance = list.itemAtIndex(index).children.at(2).text
+                assert balance != f"0 {symbol}", "balance is not positive"
+                return
+            
+        assert False, "symbol not found"
         
     def verify_saved_address_exists(self, name: str):
         list = get_obj(SavedAddressesScreen.SAVED_ADDRESSES_LIST.value)

@@ -58,6 +58,7 @@ Popup {
 
             Repeater {
                 id: chainRepeater1
+                objectName: "chainRepeaterLayer1"
                 model: popup.layer1Networks
 
                 delegate: chainItem
@@ -99,6 +100,7 @@ Popup {
             title: model.chainName
             image.height: 24
             image.width: 24
+            objectName: model.chainName
             image.source: Style.svg(model.iconUrl)
             onClicked:  {
                 checkBox.checked = !checkBox.checked
