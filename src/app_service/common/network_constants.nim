@@ -30,7 +30,7 @@ let DEFAULT_TORRENT_CONFIG_TORRENTDIR* = joinPath(main_constants.defaultDataDir(
 let NETWORKS* = %* [
   {
     "chainId": 1,
-    "chainName": "Mainnet",
+    "chainName": "Ethereum Mainnet",
     "rpcUrl": "https://mainnet.infura.io/v3/" & INFURA_TOKEN_RESOLVED,
     "blockExplorerUrl": "https://etherscan.io/",
     "iconUrl": "network/Network=Ethereum",

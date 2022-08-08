@@ -12,6 +12,16 @@ type
     EnabledNetworkBalance
     NetworkVisible
     Balances
+    Description
+    AssetWebsiteUrl
+    BuiltOn
+    SmartContractAddress
+    MarketCap
+    HighDay
+    LowDay
+    ChangePctHour
+    ChangePctDay
+    ChangePct24hour
 
 QtObject:
   type
@@ -55,6 +65,16 @@ QtObject:
       ModelRole.EnabledNetworkBalance.int:"enabledNetworkBalance",
       ModelRole.NetworkVisible.int:"networkVisible",
       ModelRole.Balances.int:"balances",
+      ModelRole.Description.int:"description",
+      ModelRole.AssetWebsiteUrl.int:"assetWebsiteUrl",
+      ModelRole.BuiltOn.int:"builtOn",
+      ModelRole.SmartContractAddress.int:"smartContractAddress",
+      ModelRole.MarketCap.int:"marketCap",
+      ModelRole.HighDay.int:"highDay",
+      ModelRole.LowDay.int:"lowDay",
+      ModelRole.ChangePctHour.int:"changePctHour",
+      ModelRole.ChangePctDay.int:"changePctDay",
+      ModelRole.ChangePct24hour.int:"changePct24hour",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -84,6 +104,27 @@ QtObject:
       result = newQVariant(item.getNetworkVisible())
     of ModelRole.Balances:
       result = newQVariant(item.getBalances())
+    of ModelRole.Description:
+      result = newQVariant(item.getDescription())
+    of ModelRole.AssetWebsiteUrl:
+      result = newQVariant(item.getAssetWebsiteUrl())
+    of ModelRole.BuiltOn:
+      result = newQVariant(item.getBuiltOn())
+    of ModelRole.SmartContractAddress:
+      result = newQVariant(item.getSmartContractAddress())
+    of ModelRole.MarketCap:
+      result = newQVariant(item.getMarketCap())
+    of ModelRole.HighDay:
+      result = newQVariant(item.getHighDay())
+    of ModelRole.LowDay:
+      result = newQVariant(item.getLowDay())
+    of ModelRole.ChangePctHour:
+      result = newQVariant(item.getChangePctHour())
+    of ModelRole.ChangePctDay:
+      result = newQVariant(item.getChangePctDay())
+    of ModelRole.ChangePct24hour:
+      result = newQVariant(item.getChangePct24hour())
+
 
   proc rowData(self: Model, index: int, column: string): string {.slot.} =
     if (index >= self.items.len):
@@ -97,6 +138,17 @@ QtObject:
       of "enabledNetworkCurrencyBalance": result = $item.getEnabledNetworkCurrencyBalance()
       of "enabledNetworkBalance": result = $item.getEnabledNetworkBalance()
       of "networkVisible": result = $item.getNetworkVisible()
+      of "description": result = $item.getDescription()
+      of "assetWebsiteUrl": result = $item.getAssetWebsiteUrl()
+      of "builtOn": result = $item.getBuiltOn()
+      of "smartContractAddress": result = $item.getSmartContractAddress()
+      of "marketCap": result = $item.getMarketCap()
+      of "highDay": result = $item.getHighDay()
+      of "lowDay": result = $item.getLowDay()
+      of "changePctHour": result = $item.getChangePctHour()
+      of "changePctDay": result = $item.getChangePctDay()
+      of "changePct24hour": result = $item.getChangePct24hour()
+
 
   proc setItems*(self: Model, items: seq[Item]) =
     self.beginResetModel()

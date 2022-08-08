@@ -50,6 +50,16 @@ proc setAssets(self: Module, tokens: seq[WalletTokenDto]) =
       t.enabledNetworkBalance.currencybalance,
       t.visible,
       toSeq(t.balancesPerChain.values),
+      t.description,
+      t.assetWebsiteUrl,
+      t.builtOn,
+      t.smartContractAddress,
+      t.marketCap,
+      t.highDay,
+      t.lowDay,
+      t.changePctHour,
+      t.changePctDay,
+      t.changePct24hour,
     )
     items.add(item)
     

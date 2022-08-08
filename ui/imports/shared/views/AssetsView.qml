@@ -1,32 +1,66 @@
 import QtQuick 2.13
-import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.14
 
 import StatusQ.Core 0.1
+import StatusQ.Controls 0.1
+import StatusQ.Components 0.1
+
+import SortFilterProxyModel 0.2
 
 import utils 1.0
 
-import shared 1.0
 import "../stores"
-import "../controls"
 
 Item {
+    id: root
+
     property var account
+    property bool assetDetailsLaunched: false
+
+    signal assetClicked(var token)
+
+    QtObject {
+        id: d
+        readonly property var alwaysVisible : ["ETH", "SNT", "DAI", "STT"]
+        property int selectedAssetIndex: -1
+    }
 
     height: assetListView.height
 
     StatusListView {
         id: assetListView
-        anchors.fill: parent
-        model: account.assets
         objectName: "assetViewStatusListView"
-        delegate: AssetDelegate {
-            locale: RootStore.locale
-            currency: RootStore.currentCurrency
-            currencySymbol: RootStore.currencyStore.currentCurrencySymbol
+        anchors.fill: parent
+        model: SortFilterProxyModel {
+            sourceModel: account.assets
+            filters: [
+                ExpressionFilter {
+                    expression: d.alwaysVisible.includes(symbol) || (networkVisible && enabledNetworkBalance > 0)
+                }
+            ]
         }
-        Layout.fillWidth: true
-        Layout.fillHeight: true
+        delegate: StatusListItem {
+            width: parent.width
+            title: name
+            subTitle: qsTr("%1 %2").arg(Utils.toLocaleString(enabledNetworkBalance, RootStore.locale, {"currency": true})).arg(symbol)
+            image.source: symbol ? Style.png("tokens/" + symbol) : ""
+            components: [
+                StatusBaseText {
+                    font.pixelSize: 15
+                    font.strikeout: false
+                    text: enabledNetworkCurrencyBalance.toLocaleCurrencyString(Qt.locale(), RootStore.currencyStore.currentCurrencySymbol)
+                }
+            ]
+            onClicked: {
+                d.selectedAssetIndex = index
+                assetClicked(model)
+            }
+            Component.onCompleted: {
+                // on Model reset if the detail view is shown, update the data in background.
+                if(root.assetDetailsLaunched && index === d.selectedAssetIndex)
+                    assetClicked(model)
+            }
+        }
 
         ScrollBar.vertical: ScrollBar { policy: ScrollBar.AsNeeded }
     }

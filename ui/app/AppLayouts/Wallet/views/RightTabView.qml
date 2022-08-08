@@ -67,6 +67,11 @@ Item {
 
                     AssetsView {
                         account: RootStore.currentAccount
+                        assetDetailsLaunched: stack.currentIndex === 2
+                        onAssetClicked: {
+                            assetDetailView.token = token
+                            stack.currentIndex = 2
+                        }
                     }
                     CollectiblesView {
                         onCollectibleClicked: {
@@ -79,7 +84,14 @@ Item {
                 }
             }
             CollectibleDetailView {
-                anchors.fill: parent
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                onGoBack: stack.currentIndex = 0
+            }
+            AssetsDetailView {
+                id: assetDetailView
+                Layout.fillWidth: true
+                Layout.fillHeight: true
                 onGoBack: stack.currentIndex = 0
             }
         }

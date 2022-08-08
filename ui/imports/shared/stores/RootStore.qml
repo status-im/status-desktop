@@ -40,6 +40,23 @@ QtObject {
 
     property var walletTokensModule: walletSectionAllTokens
     property var tokens: walletSectionAllTokens.all
+    property var accounts: walletSectionAccounts.model
+
+    function getNetworkColor(chainId) {
+        return networksModule.all.getChainColor(chainId)
+    }
+
+    function getNetworkIcon(chainId) {
+        return networksModule.all.getIconUrl(chainId)
+    }
+
+    function getNetworkIconUrl(symbol) {
+        return networksModule.all.getNetworkIconUrl(symbol)
+    }
+
+    function getNetworkName(symbol) {
+        return networksModule.all.getNetworkName(symbol)
+    }
 
     readonly property var formationChars: (["*", "`", "~"])
     function getSelectedTextWithFormationChars(messageInputField) {
