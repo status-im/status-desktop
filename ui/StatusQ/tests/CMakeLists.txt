@@ -2,7 +2,13 @@ cmake_minimum_required(VERSION 3.5)
 
 project(TestStatusQ LANGUAGES CXX)
 
+# The current StatusQ builds with Qt 5.14 which doesn't support the apple silicon.
+#  Therefore force the intel architecture for MacOS platforms.
+set(CMAKE_OSX_ARCHITECTURES "x86_64")
+
 enable_testing()
+
+set(CMAKE_AUTOMOC ON)
 
 # TODO: Workaround until we make StatusQ a CMake library
 list(APPEND QML_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/../src/")
