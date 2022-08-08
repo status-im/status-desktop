@@ -13,21 +13,23 @@ Item {
     property alias model: repeater.model
     property alias contentWidth: flow.width
 
+    readonly property int itemsWidth: {
+        let result = 0;
+        for (let i = 0; i < repeater.count; ++i) {
+            result +=  flow.spacing + repeater.itemAt(i).width;
+        }
+        return result;
+    }
+
     signal clicked(var item)
 
-    implicitWidth: flow.implicitWidth
-    implicitHeight: flow.implicitHeight
+    implicitWidth: itemsWidth
+    implicitHeight: flow.height
 
     Flow {
         id: flow
         anchors.centerIn: parent
-        width: {
-            let itemsWidth = 0;
-            for (let i = 0; i < repeater.count; ++i) {
-                itemsWidth += spacing + repeater.itemAt(i).width;
-            }
-            return Math.min(parent.width, itemsWidth);
-        }
+        width: Math.min(parent.width, root.itemsWidth);
         spacing: 10
 
         Repeater {
@@ -38,7 +40,7 @@ Item {
                 name: model.name
                 visible: (root.showOnlySelected ? model.selected : !model.selected) &&
                          (filterString == 0 || name.toUpperCase().indexOf(filterString.toUpperCase()) !== -1)
-                width: visible ? implicitWidth : -10
+                width: visible ? implicitWidth : -flow.spacing
                 height: visible ? implicitHeight : 0
                 removable: root.showOnlySelected && root.active
                 onClicked: root.clicked(model)
