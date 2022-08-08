@@ -17,6 +17,24 @@ Column {
 
         horizontalItemAlignment: Grid.AlignHCenter
 
+        // Primary
+        StatusButton {
+            text: "Button"
+            type: StatusBaseButton.Type.Primary
+        }
+
+        StatusButton {
+            text: "Button"
+            enabled: false
+            type: StatusBaseButton.Type.Primary
+        }
+
+        StatusButton {
+            text: "Button"
+            loading: true
+            type: StatusBaseButton.Type.Primary
+        }
+
         // Large
         StatusButton {
             text: "Button"

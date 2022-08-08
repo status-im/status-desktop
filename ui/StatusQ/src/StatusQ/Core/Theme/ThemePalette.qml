@@ -100,6 +100,10 @@ QtObject {
     property color dropShadow: getColor('black', 0.12)
     property color backdropColor: getColor('black', 0.4)
 
+    function hoverColor(normalColor) {
+        return theme.name === "light" ? Qt.darker(normalColor, 1.1) : Qt.lighter(normalColor, 1.1)
+    }
+
     property color baseColor1
     property color baseColor2
     property color baseColor3

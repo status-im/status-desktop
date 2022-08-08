@@ -15,7 +15,8 @@ Rectangle {
 
     enum Type {
         Normal,
-        Danger
+        Danger,
+        Primary
     }
 
     property StatusIconSettings icon: StatusIconSettings {
@@ -145,7 +146,7 @@ Rectangle {
 
                 color: d.textColor
             } // Text
-        } // Ro
+        } // Row
 
 
         onPressed: {
@@ -172,5 +173,4 @@ Rectangle {
             }
         }
     } // Sensor
-
 }
