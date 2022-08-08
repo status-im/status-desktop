@@ -25,7 +25,7 @@ StatusDialog {
     signal save(string name, string address)
 
     QtObject {
-        id: _internal
+        id: d
         property int validationMode: root.edit ?
                                          StatusInput.ValidationMode.Always
                                        : StatusInput.ValidationMode.OnlyWhenDirty
@@ -74,7 +74,7 @@ StatusDialog {
                 }
             ]
             charLimit: 40
-            validationMode: _internal.validationMode
+            validationMode: d.validationMode
         }
 
         // To-Do use StatusInput within the below component
@@ -105,7 +105,7 @@ StatusDialog {
         rightButtons:  ObjectModel {
             StatusButton {
                 text: root.edit ? qsTr("Save") : qsTr("Add address")
-                enabled: _internal.valid && _internal.dirty
+                enabled: d.valid && d.dirty
                 onClicked: root.save(name, address)
                 objectName: "addSavedAddress"
             }

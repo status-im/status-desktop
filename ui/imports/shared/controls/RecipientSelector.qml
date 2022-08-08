@@ -31,10 +31,7 @@ Item {
     property bool isSelectorVisible: true
     property bool addContactEnabled: true
     property bool isPending: {
-        if (!selAddressSource.currentValue) {
-            return false
-        }
-        switch (selAddressSource.currentValue.value) {
+        switch (selAddressSource.currentValue) {
             case RecipientSelector.Type.Address:
                 return inpAddress.isPending
             case RecipientSelector.Type.Contact:
@@ -60,23 +57,18 @@ Item {
     }
 
     function validate() {
-        let isValid = true
-        if (!selAddressSource.currentValue) {
-            return root.isValid
-        }
-        switch (selAddressSource.currentValue.value) {
+        switch (selAddressSource.currentValue) {
             case RecipientSelector.Type.Address:
-                isValid = inpAddress.isValid
+                root.isValid = inpAddress.isValid
                 break
             case RecipientSelector.Type.Contact:
-                isValid = selContact.isValid
+                root.isValid = selContact.isValid
                 break
             case RecipientSelector.Type.Account:
-                isValid = selAccount.isValid
+                root.isValid = selAccount.isValid
                 break
         }
-        root.isValid = isValid
-        return isValid
+        return root.isValid
     }
 
     function updateAddressComboBox() {
@@ -169,10 +161,8 @@ Item {
             parentWidth: parent.width
             addContactEnabled: root.addContactEnabled
             onSelectedAddressChanged: {
-                if (!selAddressSource.currentValue || (selAddressSource.currentValue && selAddressSource.currentValue.value !== RecipientSelector.Type.Address)) {
+                if (selAddressSource.currentValue !== RecipientSelector.Type.Address)
                     return
-                }
-
                 root.selectedRecipient = { address: selectedAddress, type: RecipientSelector.Type.Address }
             }
             onIsValidChanged: root.validate()
@@ -189,9 +179,8 @@ Item {
             Layout.alignment: Qt.AlignTop
             Layout.fillWidth: true
             onSelectedContactChanged: {
-                if (!selectedContact || !selAddressSource.currentValue || !selectedContact.address || (selAddressSource.currentValue && selAddressSource.currentValue.value !== RecipientSelector.Type.Contact)) {
-                    return
-                }
+                if (!selectedContact || !selectedContact.address || selAddressSource.currentValue !== RecipientSelector.Type.Contact)
+                    return;
                 const { address, name, alias, pubKey, icon, isContact, ensVerified } = selectedContact
                 root.selectedRecipient = { address, name, alias, pubKey, icon, isContact, ensVerified, type: RecipientSelector.Type.Contact }
             }
@@ -209,14 +198,14 @@ Item {
             Layout.alignment: Qt.AlignTop
             Layout.fillWidth: true
             onSelectedAccountChanged: {
-                if (!selectedAccount || !selAddressSource.currentValue || (selAddressSource.currentValue && selAddressSource.currentValue.value !== RecipientSelector.Type.Account)) {
-                    return
-                }
+                if (!selectedAccount || selAddressSource.currentValue !== RecipientSelector.Type.Account)
+                    return;
                 const { address, name, color, assets, fiatBalance } = selectedAccount
                 root.selectedRecipient = { address, name, color, assets, fiatBalance, type: RecipientSelector.Type.Account }
             }
             onIsValidChanged: root.validate()
         }
+
         StatusComboBox {
             id: selAddressSource
             visible: isSelectorVisible && !root.readOnly
@@ -229,7 +218,7 @@ Item {
             control.valueRole: "value"
 
             onCurrentValueChanged: {
-                if (root.readOnly || !currentValue) {
+                if (root.readOnly) {
                     return
                 }
                 let address, name
