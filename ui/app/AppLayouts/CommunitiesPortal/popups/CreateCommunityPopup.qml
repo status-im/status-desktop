@@ -68,7 +68,10 @@ StatusStackModal {
 
     rightButtons: [clearFilesButton, nextButton, finishButton]
 
-    onAboutToShow: nameInput.input.edit.forceActiveFocus()
+    onAboutToShow: {
+        nameInput.input.edit.forceActiveFocus()
+        root.store.clearFileList()
+    }
 
     stackItems: [
         StatusScrollView {
