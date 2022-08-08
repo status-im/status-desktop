@@ -29,7 +29,7 @@ QtObject:
       discordCategoriesModelVariant: QVariant
       discordChannelsModel: DiscordChannelsModel
       discordChannelsModelVariant: QVariant
-      discordOldestMessageTimestamp: QVariant
+      discordOldestMessageTimestamp: int
       discordDataExtractionInProgress: bool
 
   proc delete*(self: View) =
@@ -44,7 +44,6 @@ QtObject:
     self.discordCategoriesModelVariant.delete
     self.discordChannelsModel.delete
     self.discordChannelsModelVariant.delete
-    self.discordOldestMessageTimestamp.delete
     self.QObject.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =
@@ -62,7 +61,7 @@ QtObject:
     result.discordCategoriesModelVariant = newQVariant(result.discordCategoriesModel)
     result.discordChannelsModel = newDiscordChannelsModel()
     result.discordChannelsModelVariant = newQVariant(result.discordChannelsModel)
-    result.discordOldestMessageTimestamp = newQVariant(0)
+    result.discordOldestMessageTimestamp = 0
     result.discordDataExtractionInProgress = false 
     result.observedItem = newActiveSection()
 
@@ -77,13 +76,13 @@ QtObject:
     self.communityTags = newQVariant(communityTags)
 
   proc setDiscordOldestMessageTimestamp*(self: View, timestamp: int) {.slot.} =
-    self.discordOldestMessageTimestamp = newQVariant(timestamp)
+    self.discordOldestMessageTimestamp = timestamp
     self.discordOldestMessageTimestampChanged()
 
-  proc getDiscordOldestMessageTimestamp*(self: View): QVariant {.slot.} =
+  proc getDiscordOldestMessageTimestamp*(self: View): int {.slot.} =
     return self.discordOldestMessageTimestamp
 
-  QtProperty[QVariant] discordOldestMessageTimestamp:
+  QtProperty[int] discordOldestMessageTimestamp:
     read = getDiscordOldestMessageTimestamp
     notify = discordOldestMessageTimestampChanged
 
