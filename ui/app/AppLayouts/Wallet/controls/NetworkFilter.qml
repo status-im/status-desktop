@@ -1,5 +1,4 @@
 import QtQuick 2.13
-import QtQuick.Controls 2.14
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
@@ -7,6 +6,7 @@ import StatusQ.Components 0.1
 
 import shared 1.0
 import shared.panels 1.0
+import shared.controls 1.0
 import utils 1.0
 
 import "../popups"
@@ -60,35 +60,10 @@ Item {
         Repeater {
             id: chainRepeater
             model: store.enabledNetworks
-            delegate: Control {
-                horizontalPadding: Style.current.halfPadding
-                verticalPadding: 5
-                background: Rectangle {
-                    implicitWidth: 66
-                    implicitHeight: 32
-                    color: "transparent"
-                    border.width: 1
-                    border.color: Theme.palette.baseColor2
-                    radius: 36
-                }
-
-                contentItem: Row {
-                    spacing: 4
-                    // FIXME this could be StatusIcon but it can't load images from an arbitrary URL
-                    Image {
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 22
-                        height: 22
-                        source: Style.svg("tiny/" + model.iconUrl)
-                    }
-                    StatusBaseText {
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: model.shortName
-                        color: model.chainColor
-                        font.pixelSize: Style.current.primaryTextFontSize
-                        font.weight: Font.Medium
-                    }
-                }
+            delegate: InformationTag {
+                tagPrimaryLabel.text: model.shortName
+                tagPrimaryLabel.color: model.chainColor
+                image.source: Style.svg("tiny/" + model.iconUrl)
             }
         }
     }

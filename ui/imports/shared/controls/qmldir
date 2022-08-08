@@ -26,3 +26,5 @@ TransactionFormGroup 1.0 TransactionFormGroup.qml
 EmojiHash 1.0 EmojiHash.qml
 InformationTile 1.0 InformationTile.qml
 SocialLinkPreview 1.0 SocialLinkPreview.qml
+AssetsDetailsHeader 1.0 AssetsDetailsHeader.qml
+InformationTag 1.0 InformationTag.qml

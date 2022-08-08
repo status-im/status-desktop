@@ -203,3 +203,10 @@ rpc(addDappPermissions, "permissions"):
 rpc(deleteDappPermissionsByNameAndAddress, "permissions"):
   dapp: string
   address: string
+
+rpc(fetchMarketValues, "wallet"):
+  symbols: seq[string]
+  currency: string
+
+rpc(fetchTokenDetails, "wallet"):
+  symbols: seq[string]

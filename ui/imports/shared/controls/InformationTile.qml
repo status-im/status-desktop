@@ -12,6 +12,8 @@ Rectangle {
 
     property alias primaryText: primaryText.text
     property alias secondaryText: secondaryText.text
+    property alias primaryLabel: primaryText
+    property alias secondaryLabel: secondaryText
     property alias tagsModel: tags.model
     property alias tagsDelegate: tags.delegate
     property int maxWidth: 0

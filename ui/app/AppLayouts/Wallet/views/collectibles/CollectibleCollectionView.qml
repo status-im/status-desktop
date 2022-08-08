@@ -7,6 +7,7 @@ import StatusQ.Core.Theme 0.1
 import shared.panels 1.0
 
 import "../../stores"
+import utils 1.0
 
 Item {
     id: root

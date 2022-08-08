@@ -114,3 +114,27 @@ QtObject:
     self.items = items
     self.endResetModel()
     self.countChanged()
+
+  proc getChainColor*(self: Model, chainId: int): string {.slot.} =
+    for item in self.items:
+      if(item.getChainId() == chainId):
+        return item.getChainColor()
+    return ""
+
+  proc getIconUrl*(self: Model, chainId: int): string {.slot.} =
+    for item in self.items:
+      if(item.getChainId() == chainId):
+        return item.getIconURL()
+    return ""
+
+  proc getNetworkIconUrl*(self: Model, shortName: string): string {.slot.} =
+    for item in self.items:
+      if(item.getShortName() == toLowerAscii(shortName)):
+        return item.getIconURL()
+    return ""
+
+  proc getNetworkName*(self: Model, shortName: string): string {.slot.} =
+    for item in self.items:
+      if(item.getShortName() == toLowerAscii(shortName)):
+        return item.getChainName()
+    return ""

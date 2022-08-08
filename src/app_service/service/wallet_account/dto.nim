@@ -20,6 +20,16 @@ type
     enabledNetworkBalance*: BalanceDto
     balancesPerChain*: Table[int, BalanceDto]
     visible*: bool
+    description*: string
+    assetWebsiteUrl*: string
+    builtOn*: string
+    smartContractAddress*: string
+    marketCap*: string
+    highDay*: string
+    lowDay*: string
+    changePctHour*: string
+    changePctDay*: string
+    changePct24hour*: string
 
 type
   WalletAccountDto* = ref object of RootObj
@@ -97,6 +107,16 @@ proc toWalletTokenDto*(jsonObj: JsonNode): WalletTokenDto =
   discard jsonObj.getProp("color", result.color)
   discard jsonObj.getProp("isCustom", result.isCustom)
   discard jsonObj.getProp("visible", result.visible)
+  discard jsonObj.getProp("description", result.description)
+  discard jsonObj.getProp("assetWebsiteUrl", result.assetWebsiteUrl)
+  discard jsonObj.getProp("builtOn", result.builtOn)
+  discard jsonObj.getProp("smartContractAddress", result.smartContractAddress)
+  discard jsonObj.getProp("marketCap", result.marketCap)
+  discard jsonObj.getProp("highDay", result.highDay)
+  discard jsonObj.getProp("lowDay", result.lowDay)
+  discard jsonObj.getProp("changePctHour", result.changePctHour)
+  discard jsonObj.getProp("changePctDay", result.changePctDay)
+  discard jsonObj.getProp("changePct24hour", result.changePct24hour)
 
   var totalBalanceObj: JsonNode
   if(jsonObj.getProp("totalBalance", totalBalanceObj)):
@@ -126,5 +146,15 @@ proc walletTokenDtoToJson*(dto: WalletTokenDto): JsonNode =
     "totalBalance": %* dto.totalBalance,
     "enabledNetworkBalance": %* dto.enabledNetworkBalance,
     "balancesPerChain": balancesPerChainJsonObj,
-    "visible": dto.visible
+    "visible": dto.visible,
+    "description": dto.description,
+    "assetWebsiteUrl": dto.assetWebsiteUrl,
+    "builtOn": dto.builtOn,
+    "smartContractAddress": dto.smartContractAddress,
+    "marketCap": dto.marketCap,
+    "highDay": dto.highDay,
+    "lowDay": dto.lowDay,
+    "changePctHour": dto.changePctHour,
+    "changePctDay": dto.changePctDay,
+    "changePct24hour": dto.changePct24hour
   }
