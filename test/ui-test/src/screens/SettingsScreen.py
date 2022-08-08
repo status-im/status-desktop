@@ -25,7 +25,6 @@ class AdvancedOptionScreen(Enum):
     
 
 class WalletSettingsScreen(Enum):
-    ACCOUNT_DELEGATE_WALLET_ADDRESS: str = "walletSettingsAccountDelegate_WalletAddress_Text"
     GENERATED_ACCOUNTS: str = "settings_Wallet_MainView_GeneratedAccounts"
     DELETE_ACCOUNT: str = "settings_Wallet_AccountView_DeleteAccount"
     DELETE_ACCOUNT_CONFIRM: str = "settings_Wallet_AccountView_DeleteAccount_Confirm"
@@ -74,7 +73,8 @@ class SettingsScreen:
         verify_equal(index, -1)
         
     def verify_address(self, address: str):
-        verify_text_matching_insensitive(WalletSettingsScreen.ACCOUNT_DELEGATE_WALLET_ADDRESS.value, address)
+        accounts = get_obj(WalletSettingsScreen.GENERATED_ACCOUNTS.value)
+        verify_text_matching_insensitive(accounts.itemAtIndex(0).statusListItemSubTitle, address)
         
     def toggle_test_networks(self):
         click_obj_by_name(WalletSettingsScreen.NETWORKS_ITEM.value)

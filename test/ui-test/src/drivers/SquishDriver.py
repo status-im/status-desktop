@@ -122,9 +122,8 @@ def is_text_matching(objName: str, text: str):
         return False
 
 
-def is_text_matching_insensitive(objName: str, text: str):
+def is_text_matching_insensitive(obj, text: str):
     try:
-        obj = squish.waitForObject(getattr(names, objName))
         test.compare(obj.text.toLower(), text.lower(), "Found the following text " + text.lower())
         return True
     except LookupError:

@@ -55,7 +55,7 @@ Feature: Status Desktop Wallet
       	  | one		     |
 
  	Scenario Outline: User adds a saved address
-        When the user adds a saved address name <name> and address <address>
+        When the user adds a saved address named <name> and address <address>
         Then the name <name> is in the list of saved addresses
 
     	Examples:
@@ -63,7 +63,7 @@ Feature: Status Desktop Wallet
       	  | one  | 0x8397bc3c5a60a1883174f722403d63a8833312b7 |
 
     Scenario Outline: User can edit a saved address
-        When the user adds a saved address name <name> and address <address>
+        When the user adds a saved address named <name> and address <address>
         And the user edits a saved address with name <name> to <new_name>
         Then the name <new_name><name> is in the list of saved addresses
 
@@ -72,7 +72,7 @@ Feature: Status Desktop Wallet
       	  | bar  | 0x8397bc3c5a60a1883174f722403d63a8833312b7 | foo      |
 
     Scenario Outline: User can delete a saved address
-        When the user adds a saved address name <name> and address <address>
+        When the user adds a saved address named <name> and address <address>
         And the user deletes the saved address with name <name>
         Then the name <name> is not in the list of saved addresses
 
