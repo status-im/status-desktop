@@ -43,6 +43,14 @@ def step(context, name, new_name):
 def step(context, name):
     _walletScreen.delete_saved_address(name)
 
+@When("the user toggles the network |any|")    
+def step(context, network_name):
+    _walletScreen.toggle_network(network_name)
+    
+@Then("the user has a positive balance of |any|")
+def step(context, symbol):
+    _walletScreen.verify_positive_balance(symbol)
+
 @Then("the new account |any| is added")
 def step(context, account_name):
     _walletScreen.verify_account_name_is_present(account_name)

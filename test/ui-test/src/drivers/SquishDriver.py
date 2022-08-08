@@ -85,6 +85,8 @@ def get_obj(objName: str):
     obj = squish.findObject(getattr(names, objName))
     return obj
 
+def get_and_click_obj(obj_name: str):
+    click_obj(get_obj(obj_name))
 
 # It executes the left-click action into object with given object name:
 def click_obj_by_name(objName: str):

@@ -19,6 +19,7 @@ Item {
         id: assetListView
         anchors.fill: parent
         model: account.assets
+        objectName: "assetViewStatusListView"
         delegate: AssetDelegate {
             locale: RootStore.locale
             currency: RootStore.currentCurrency

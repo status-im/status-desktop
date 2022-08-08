@@ -36,7 +36,10 @@ class SettingsScreen:
 
     def __init__(self):
         verify_screen(SidebarComponents.ADVANCED_OPTION.value)
-
+    
+    def open_wallet_settings(self):
+        click_obj_by_name(SidebarComponents.WALLET_ITEM.value)
+        
     def activate_open_wallet_settings(self):
         if not (is_Visible(SidebarComponents.WALLET_ITEM.value)) :
             click_obj_by_name(SidebarComponents.ADVANCED_OPTION.value)
@@ -44,7 +47,7 @@ class SettingsScreen:
             click_obj_by_name(AdvancedOptionScreen.I_UNDERSTAND_POP_UP.value)
             verify_object_enabled(SidebarComponents.WALLET_ITEM.value)
            
-        click_obj_by_name(SidebarComponents.WALLET_ITEM.value)
+        self.open_wallet_settings()
 
     def activate_open_wallet_section(self):
         if not (is_Visible(SidebarComponents.WALLET_ITEM.value)):
@@ -78,7 +81,7 @@ class SettingsScreen:
         
     def toggle_test_networks(self):
         click_obj_by_name(WalletSettingsScreen.NETWORKS_ITEM.value)
-        click_obj_by_name(WalletSettingsScreen.TESTNET_TOGGLE.value)
+        get_and_click_obj(WalletSettingsScreen.TESTNET_TOGGLE.value)
     
     def _find_account_index(self, account_name: str) -> int:
         accounts = get_obj(WalletSettingsScreen.GENERATED_ACCOUNTS.value)

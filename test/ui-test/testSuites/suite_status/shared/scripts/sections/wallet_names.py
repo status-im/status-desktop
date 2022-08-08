@@ -8,6 +8,13 @@ mainWallet_Account_Name = {"container": statusDesktop_mainWindow, "objectName": 
 mainWallet_Add_Account = {"container": statusDesktop_mainWindow, "text": "Add account", "type": "StatusBaseText", "unnamed": 1, "visible": True}
 signPhrase_Ok_Button = {"container": statusDesktop_mainWindow, "type": "StatusFlatButton", "objectName": "signPhraseModalOkButton", "visible": True}
 mainWallet_Saved_Addresses_Button = {"container": statusDesktop_mainWindow, "objectName": "savedAddressesBtn", "type": "StatusButton"}
+mainWallet_Network_Selector_Button = {"container": statusDesktop_mainWindow, "objectName": "networkSelectorButton", "type": "StatusListItem"}
+
+# Assets view:
+mainWallet_Assets_View_List = {"container": statusDesktop_mainWindow, "objectName": "assetViewStatusListView", "type": "StatusListView"}
+
+# Network selector popup
+mainWallet_Network_Popup_Chain_Repeater_1 = {"container": statusDesktop_mainWindow, "objectName": "chainRepeaterLayer1", "type": "Repeater"}
 
 # Send popup:
 mainWallet_Footer_Send_Button = {"container": statusDesktop_mainWindow, "objectName": "walletFooterSendButton", "type": "StatusFlatButton"}
