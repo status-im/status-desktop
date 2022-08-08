@@ -30,6 +30,7 @@
         <file>StatusQ/Components/StatusCommunityTags.qml</file>
         <file>StatusQ/Components/StatusContactRequestsIndicatorListItem.qml</file>
         <file>StatusQ/Components/StatusContactVerificationIcons.qml</file>
+        <file>StatusQ/Components/StatusDatePicker.qml</file>
         <file>StatusQ/Components/StatusDescriptionListItem.qml</file>
         <file>StatusQ/Components/StatusEmoji.qml</file>
         <file>StatusQ/Components/StatusExpandableItem.qml</file>

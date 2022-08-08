@@ -98,7 +98,7 @@ Item {
                 y: comboBox.height + 8
 
                 width: comboBox.width
-                height: Math.min(contentItem.implicitHeight + topPadding + bottomPadding,
+                height: Math.min(implicitContentHeight + topPadding + bottomPadding,
                                  comboBox.Window.height - topMargin - bottomMargin)
                 margins: 8
 
@@ -155,5 +155,4 @@ Item {
             wrapMode: Text.WordWrap
         }
     }
-
 }

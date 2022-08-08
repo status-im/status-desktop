@@ -57,5 +57,8 @@ ColumnLayout {
             }
         }
     }
-}
 
+    StatusDatePicker {
+        label: "Select date"
+    }
+}
