@@ -17,8 +17,6 @@ settings_Wallet_MainView_Networks = {"container": statusDesktop_mainWindow, "obj
 settings_Wallet_NetworksView_TestNet_Toggle = {"container": statusDesktop_mainWindow, "objectName": "testnetModeSwitch", "type": "StatusSwitch"}
 
 generatedAccounts_ListView = {"container": statusDesktop_mainWindow, "objectName": "generatedAccounts", "type": "ListView"}
-generatedAccounts_walletSettingsAccountDelegate_WalletAccountDelegate = {"container": generatedAccounts_ListView, "index": 0, "objectName": "walletSettingsAccountDelegate", "type": "WalletAccountDelegate"}
-walletSettingsAccountDelegate_WalletAddress_Text = {"container": generatedAccounts_walletSettingsAccountDelegate_WalletAccountDelegate, "objectName": "statusListItemSubTitle", "type": "StatusBaseText"}
 
 # Advanced Settings:
 walletSettingsLineButton = {"container": statusDesktop_mainWindow, "objectName": "WalletSettingsLineButton", "type": "StatusSettingsLineButton", "visible": True}
