@@ -10,6 +10,7 @@ import StatusQ.Components 0.1
 import utils 1.0
 import shared.popups 1.0
 
+import "controls"
 import "stores"
 import "popups"
 
@@ -24,8 +25,6 @@ StatusScrollView {
 
     QtObject {
         id: d
-
-        property ListModel tagsModel: root.communitiesStore.tagsModel
 
         property string searchText: ""
         property int layoutVMargin: 70
@@ -101,36 +100,10 @@ StatusScrollView {
             }
         }
 
-        // Tags definition - Now hidden - Out of scope
-        // TODO: Replace by `StatusListItemTagRow`
-        Row {
-            visible: false//d.tagsModel.count > 0 --> out of scope
+        CommunityTagsRow {
+            tags: root.communitiesStore.communityTags
             Layout.leftMargin: d.layoutHMargin
-            Layout.rightMargin: d.layoutHMargin
-            width: 1234 // by design
-            spacing: Style.current.halfPadding
-
-            Repeater {
-                model: d.tagsModel
-                delegate: StatusListItemTag {
-                    border.color: Theme.palette.baseColor2
-                    color: "transparent"
-                    height: 32
-                    radius: 36
-                    closeButtonVisible: false
-                    icon.emoji: model.emoji
-                    icon.height: 32
-                    icon.width: icon.height
-                    icon.color: "transparent"
-                    icon.isLetterIdenticon: true
-                    title: model.name
-                    titleText.font.pixelSize: 15
-                    titleText.color: Theme.palette.primaryColor1
-                }
-            }
-
-            // TODO: Add next button
-            // ...
+            Layout.fillWidth: true
         }
 
         StatusBaseText {
