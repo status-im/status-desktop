@@ -32,11 +32,12 @@ SettingsPageLayout {
     title: qsTr("Members")
 
     content: ColumnLayout {
-        spacing: 8
+        spacing: 19
 
         StatusTabBar {
             id: membersTabBar
             Layout.fillWidth: true
+            Layout.topMargin: 5
 
             StatusTabButton {
                 id: allMembersBtn
