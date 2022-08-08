@@ -6,30 +6,93 @@ QtObject {
 
     property string name
 
-    property FontLoader baseFont
-    property FontLoader baseFontThin
-    property FontLoader baseFontExtraLight
-    property FontLoader baseFontLight
-    property FontLoader baseFontMedium
-    property FontLoader baseFontBold
-    property FontLoader baseFontExtraBold
-    property FontLoader baseFontBlack
+    property var baseFont: FontLoader {
+        source: "../../../assets/fonts/Inter/Inter-Regular.otf"
+    }
 
-    property FontLoader monoFont
-    property FontLoader monoFontThin
-    property FontLoader monoFontExtraLight
-    property FontLoader monoFontLight
-    property FontLoader monoFontMedium
-    property FontLoader monoFontBold
-    property FontLoader monoFontExtraBold
-    property FontLoader monoFontBlack
+    property var baseFontThin: FontLoader {
+        source: "../../../assets/fonts/Inter/Inter-Thin.otf"
+    }
 
-    property FontLoader codeFont
-    property FontLoader codeFontThin
-    property FontLoader codeFontExtraLight
-    property FontLoader codeFontLight
-    property FontLoader codeFontMedium
-    property FontLoader codeFontBold
+    property var baseFontExtraLight: FontLoader {
+        source: "../../../assets/fonts/Inter/Inter-ExtraLight.otf"
+    }
+
+    property var baseFontLight: FontLoader {
+        source: "../../../assets/fonts/Inter/Inter-Light.otf"
+    }
+
+    property var baseFontMedium: FontLoader {
+        source: "../../../assets/fonts/Inter/Inter-Medium.otf"
+    }
+
+    property var baseFontBold: FontLoader {
+        source: "../../../assets/fonts/Inter/Inter-Bold.otf"
+    }
+
+    property var baseFontExtraBold: FontLoader {
+        source: "../../../assets/fonts/Inter/Inter-ExtraBold.otf"
+    }
+
+    property var baseFontBlack: FontLoader {
+        source: "../../../assets/fonts/Inter/Inter-Black.otf"
+    }
+
+    property var monoFont: FontLoader {
+        source: "../../../assets/fonts/InterStatus/InterStatus-Regular.otf"
+    }
+
+    property var monoFontThin: FontLoader {
+        source: "../../../assets/fonts/InterStatus/InterStatus-Thin.otf"
+    }
+
+    property var monoFontExtraLight: FontLoader {
+        source: "../../../assets/fonts/InterStatus/InterStatus-ExtraLight.otf"
+    }
+
+    property var monoFontLight: FontLoader {
+        source: "../../../assets/fonts/InterStatus/InterStatus-Light.otf"
+    }
+
+    property var monoFontMedium: FontLoader {
+        source: "../../../assets/fonts/InterStatus/InterStatus-Medium.otf"
+    }
+
+    property var monoFontBold: FontLoader {
+        source: "../../../assets/fonts/InterStatus/InterStatus-Bold.otf"
+    }
+
+    property var monoFontExtraBold: FontLoader {
+        source: "../../../assets/fonts/InterStatus/InterStatus-ExtraBold.otf"
+    }
+
+    property var monoFontBlack: FontLoader {
+        source: "../../../assets/fonts/InterStatus/InterStatus-Black.otf"
+    }
+
+    property var codeFont: FontLoader {
+        source: "../../../assets/fonts/RobotoMono/RobotoMono-Regular.ttf"
+    }
+
+    property var codeFontThin: FontLoader {
+        source: "../../../assets/fonts/RobotoMono/RobotoMono-Thin.ttf"
+    }
+
+    property var codeFontExtraLight: FontLoader {
+        source: "../../../assets/fonts/RobotoMono/RobotoMono-ExtraLight.ttf"
+    }
+
+    property var codeFontLight: FontLoader {
+        source: "../../../assets/fonts/RobotoMono/RobotoMono-Light.ttf"
+    }
+
+    property var codeFontMedium: FontLoader {
+        source: "../../../assets/fonts/RobotoMono/RobotoMono-Medium.ttf"
+    }
+
+    property var codeFontBold: FontLoader {
+        source: "../../../assets/fonts/RobotoMono/RobotoMono-Bold.ttf"
+    }
 
     property color black: getColor('black')
     property color white: getColor('white')

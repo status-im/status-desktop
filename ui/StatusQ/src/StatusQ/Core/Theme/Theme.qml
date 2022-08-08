@@ -10,5 +10,3 @@ QtObject {
         palette = theme
     }
 }
-
-
