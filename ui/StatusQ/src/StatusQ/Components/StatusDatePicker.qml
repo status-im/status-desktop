@@ -38,7 +38,7 @@ StatusComboBox {
        This property holds the currently selected date.
        \sa QtQml.Date
     */
-    readonly property alias selectedDate: d.selectedDate
+    property alias selectedDate: d.selectedDate
 
     QtObject {
         id: d
@@ -64,7 +64,10 @@ StatusComboBox {
             RowLayout {
                 Layout.fillWidth: true
                 Layout.columnSpan: 2
+                spacing: 0
                 StatusFlatButton {
+                    leftPadding: 8
+                    rightPadding: 8
                     text: "<<"
                     onClicked: grid.year = grid.year - 1
                     StatusToolTip {
@@ -73,6 +76,8 @@ StatusComboBox {
                     }
                 }
                 StatusFlatButton {
+                    leftPadding: 8
+                    rightPadding: 8
                     text: "<"
                     onClicked: {
                         // switch to previous month (and optionally prev year in January)
@@ -102,6 +107,8 @@ StatusComboBox {
                     }
                 }
                 StatusFlatButton {
+                    leftPadding: 8
+                    rightPadding: 8
                     text: ">"
                     onClicked: {
                         // switch to next month (and optionally next year in December)
@@ -116,6 +123,8 @@ StatusComboBox {
                     }
                 }
                 StatusFlatButton {
+                    leftPadding: 8
+                    rightPadding: 8
                     text: ">>"
                     onClicked: grid.year = grid.year + 1
                     StatusToolTip {
