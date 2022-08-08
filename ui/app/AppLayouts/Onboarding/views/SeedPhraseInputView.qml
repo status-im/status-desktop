@@ -24,7 +24,7 @@ Item {
 
     signal seedValidated()
 
-    readonly property var tabs: ([12, 18, 24])
+    readonly property var tabs: [12, 18, 24]
 
     Timer {
         id: timer
@@ -33,7 +33,7 @@ Item {
     function pasteWords () {
         const clipboardText = globalUtils.getFromClipboard()
         // Split words separated by commas and or blank spaces (spaces, enters, tabs)
-        let words = clipboardText.split(/[, \s]+/)
+        const words = clipboardText.split(/[, \s]+/)
 
         let index = root.tabs.indexOf(words.length)
         if (index === -1) {
@@ -48,7 +48,7 @@ Item {
         }
 
         root.mnemonicInput = []
-        timer.setTimeout(function() {
+        timer.setTimeout(() => {
             // Populate mnemonicInput
             for (let i = 0; i <  words.length; i++) {
                 grid.addWord(i + 1, words[i], true)
@@ -63,11 +63,11 @@ Item {
                     // With the re-design of the grid, this should be fixed
                     continue
                 }
-                let pos = parseInt(item.leftComponentText)
+                const pos = item.mnemonicIndex
                 item.setWord(words[pos - 1])
             }
             submitButton.checkMnemonicLength()
-        }, timeout);
+        }, timeout)
         return true
     }
 
@@ -114,7 +114,7 @@ Item {
             id: grid
             objectName: "seedPhraseGridView"
             width: parent.width
-            property var wordIndex: [
+            readonly property var wordIndex: [
                 ["1", "3", "5", "7", "9", "11", "2", "4", "6", "8", "10", "12"]
                ,["1", "4", "7", "10", "13", "16", "2", "5", "8",
                  "11", "14", "17", "3", "6", "9", "12", "15", "18"]
@@ -135,39 +135,40 @@ Item {
             cacheBuffer: 9999
             model: switchTabBar.currentItem.text.substring(0,2)
 
-            function addWord(pos, word, ignoreGoingNext) {
-                root.mnemonicInput.push({pos: parseInt(pos), seed: word.replace(/\s/g, '')});
-                for (var j = 0; j < mnemonicInput.length; j++) {
+            function addWord(pos, word, ignoreGoingNext = false) {
+                mnemonicInput.push({pos: pos, seed: word.replace(/\s/g, '')})
+
+                for (let j = 0; j < mnemonicInput.length; j++) {
                     if (mnemonicInput[j].pos === pos && mnemonicInput[j].seed !== word) {
-                        mnemonicInput[j].seed = word;
-                        break;
+                        mnemonicInput[j].seed = word
+                        break
                     }
                 }
                 //remove duplicates
-                var valueArr = mnemonicInput.map(function(item){ return item.pos });
-                var isDuplicate = valueArr.some(function(item, idx){
+                const valueArr = mnemonicInput.map(item => item.pos)
+                const isDuplicate = valueArr.some((item, idx) => {
                     if (valueArr.indexOf(item) !== idx) {
-                        root.mnemonicInput.splice(idx, 1);
+                        root.mnemonicInput.splice(idx, 1)
                     }
                     return valueArr.indexOf(item) !== idx
-                });
+                })
                 if (!ignoreGoingNext) {
-                    for (var i = !grid.atXBeginning ? 12 : 0; i < grid.count; i++) {
-                        if (parseInt(grid.itemAtIndex(i).leftComponentText) !== (parseInt(pos)+1)) {
+                    for (let i = 0; i < grid.count; i++) {
+                        if (grid.itemAtIndex(i).mnemonicIndex !== (pos + 1)) {
                             continue
                         }
 
-                        grid.currentIndex = grid.itemAtIndex(i).itemIndex;
-                        grid.itemAtIndex(i).textEdit.input.edit.forceActiveFocus();
+                        grid.currentIndex = grid.itemAtIndex(i).itemIndex
+                        grid.itemAtIndex(i).textEdit.input.edit.forceActiveFocus()
 
                         if (grid.currentIndex !== 12) {
                             continue
                         }
 
-                        grid.positionViewAtEnd();
+                        grid.positionViewAtEnd()
 
                         if (grid.count === 20) {
-                            grid.contentX = 1500;
+                            grid.contentX = 1500
                         }
                     }
                 }
@@ -181,46 +182,50 @@ Item {
                 height: (grid.cellHeight - 8)
                 Behavior on width { NumberAnimation { duration: 180 } }
                 textEdit.text: {
-                    let pos = parseInt(seedWordInput.leftComponentText)
-                    for (var i in root.mnemonicInput) {
-                        let p = root.mnemonicInput[i]
+                    const pos = seedWordInput.mnemonicIndex
+                    for (let i in root.mnemonicInput) {
+                        const p = root.mnemonicInput[i]
                         if (p.pos === pos) {
                             return p.seed
                         }
                     }
                     return ""
                 }
-                leftComponentText: grid.wordIndex[(grid.count/6)-2][index]
-                inputList: BIP39_en { }
+
+                readonly property int mnemonicIndex: grid.wordIndex[(grid.count / 6) - 2][index]
+
+                leftComponentText: mnemonicIndex
+                inputList: BIP39_en {}
+
                 property int itemIndex: index
                 z: (grid.currentIndex === index) ? 150000000 : 0
                 onTextChanged: {
-                    invalidSeedTxt.visible = false;
+                    invalidSeedTxt.visible = false
                 }
                 onDoneInsertingWord: {
-                    grid.addWord(leftComponentText, word)
+                    grid.addWord(mnemonicIndex, word)
                 }
                 onEditClicked: {
-                    grid.currentIndex = index;
-                    grid.itemAtIndex(index).textEdit.input.edit.forceActiveFocus();
+                    grid.currentIndex = index
+                    grid.itemAtIndex(index).textEdit.input.edit.forceActiveFocus()
                 }
                 onKeyPressed: {
-                    grid.currentIndex = index;
+                    grid.currentIndex = index
 
                     if (event.key === Qt.Key_Backtab) {
-                        for (var i = 0; i < grid.count; i++) {
-                            if (parseInt(grid.itemAtIndex(i).leftComponentText) === ((parseInt(leftComponentText)-1) >= 0 ? (parseInt(leftComponentText)-1) : 0)) {
-                                grid.itemAtIndex(i).textEdit.input.edit.forceActiveFocus(Qt.BacktabFocusReason);
-                                textEdit.input.tabNavItem = grid.itemAtIndex(i).textEdit.input.edit;
+                        for (let i = 0; i < grid.count; i++) {
+                            if (grid.itemAtIndex(i).mnemonicIndex === ((mnemonicIndex - 1) >= 0 ? (mnemonicIndex - 1) : 0)) {
+                                grid.itemAtIndex(i).textEdit.input.edit.forceActiveFocus(Qt.BacktabFocusReason)
+                                textEdit.input.tabNavItem = grid.itemAtIndex(i).textEdit.input.edit
                                 event.accepted = true
                                 break
                             }
                         }
                     } else if (event.key === Qt.Key_Tab) {
-                        for (var i = 0; i < grid.count; i++) {
-                            if (parseInt(grid.itemAtIndex(i).leftComponentText) === ((parseInt(leftComponentText)+1) <= grid.count ? (parseInt(leftComponentText)+1) : grid.count)) {
-                                grid.itemAtIndex(i).textEdit.input.edit.forceActiveFocus(Qt.TabFocusReason);
-                                textEdit.input.tabNavItem = grid.itemAtIndex(i).textEdit.input.edit;
+                        for (let i = 0; i < grid.count; i++) {
+                            if (grid.itemAtIndex(i).mnemonicIndex === ((mnemonicIndex + 1) <= grid.count ? (mnemonicIndex + 1) : grid.count)) {
+                                grid.itemAtIndex(i).textEdit.input.edit.forceActiveFocus(Qt.TabFocusReason)
+                                textEdit.input.tabNavItem = grid.itemAtIndex(i).textEdit.input.edit
                                 event.accepted = true
                                 break
                             }
@@ -244,17 +249,17 @@ Item {
                     }
 
                     if (event.key === Qt.Key_Delete || event.key === Qt.Key_Backspace) {
-                        var wordIndex = mnemonicInput.findIndex(x => x.pos === parseInt(leftComponentText));
+                        const wordIndex = mnemonicInput.findIndex(x => x.pos === mnemonicIndex)
                         if (wordIndex > -1) {
-                            mnemonicInput.splice(wordIndex , 1);
+                            mnemonicInput.splice(wordIndex, 1)
                             submitButton.checkMnemonicLength()
                         }
                     }
                 }
                 Component.onCompleted: {
-                    let item = grid.itemAtIndex(0)
+                    const item = grid.itemAtIndex(0)
                     if (item) {
-                        item.textEdit.input.edit.forceActiveFocus();
+                        item.textEdit.input.edit.forceActiveFocus()
                     }
                 }
             }
@@ -298,19 +303,18 @@ Item {
                 return ""
             }
             onClicked: {
-                let mnemonicString = "";
-                var sortTable = mnemonicInput.sort(function (a, b) {
-                    return a.pos - b.pos;
-                });
-                for (var i = 0; i < mnemonicInput.length; i++) {
-                    mnemonicString += sortTable[i].seed + ((i === (grid.count-1)) ? "" : " ");
+                let mnemonicString = ""
+                const sortTable = mnemonicInput.sort((a, b) => a.pos - b.pos)
+                for (let i = 0; i < mnemonicInput.length; i++) {
+                    mnemonicString += sortTable[i].seed + ((i === (grid.count-1)) ? "" : " ")
                 }
+
                 if (Utils.isMnemonic(mnemonicString) && root.startupStore.validMnemonic(mnemonicString)) {
-                    root.mnemonicInput = [];
+                    root.mnemonicInput = []
                     root.startupStore.doPrimaryAction()
                 } else {
-                    invalidSeedTxt.visible = true;
-                    enabled = false;
+                    invalidSeedTxt.visible = true
+                    enabled = false
                 }
             }
         }
