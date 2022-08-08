@@ -69,9 +69,15 @@ Column {
             textEdit.input.anchors.leftMargin: 16
             textEdit.input.anchors.rightMargin: 16
             textEdit.input.anchors.topMargin: 11
-            textEdit.label: "Input with drop down selection list"
+            textEdit.label: "Input with drop down selection list" + (insertedWord ? ` (${insertedWord})` : "")
             leftComponentText: "1"
             inputList: ListModel {
+                ListElement {
+                    seedWord: "add"
+                }
+                ListElement {
+                    seedWord: "address"
+                }
                 ListElement {
                     seedWord: "panda"
                 }
@@ -79,9 +85,18 @@ Column {
                     seedWord: "posible"
                 }
                 ListElement {
+                    seedWord: "win"
+                }
+                ListElement {
+                    seedWord: "wine"
+                }
+                ListElement {
                     seedWord: "wing"
                 }
             }
+
+            property string insertedWord: ""
+            onDoneInsertingWord: insertedWord = word
         }
     }
 

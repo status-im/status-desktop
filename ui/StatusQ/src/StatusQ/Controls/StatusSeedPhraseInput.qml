@@ -99,7 +99,6 @@ Item {
     signal editClicked()
 
     function setWord(word) {
-        seedWordInput.ignoreTextChange = true
         seedWordInput.input.edit.text = word
     }
 
@@ -110,9 +109,8 @@ Item {
     }
 
     StatusInput {
-        property bool ignoreTextChange: false
-
         id: seedWordInput
+
         implicitWidth: parent.width
         input.leftComponent: StatusBaseText {
             rightPadding: 6
@@ -123,10 +121,6 @@ Item {
         }
         input.acceptReturn: true
         onTextChanged: {
-            if (ignoreTextChange) {
-                ignoreTextChange = false
-                return
-            }
             filteredList.clear();
             let textToCheck = text.trim()
             if (textToCheck !== "") {
