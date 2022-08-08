@@ -13,7 +13,7 @@ function check_version {
 function install_build_dependencies {
   echo "Install build dependencies"
   apt update
-  apt install -yq git build-essential python3.8 python3-pip pkg-config mesa-common-dev \
+  apt install -yq git build-essential pkg-config mesa-common-dev \
      libglu1-mesa-dev wget libpcsclite-dev libpcre3-dev libssl-dev libpulse-mainloop-glib0 \
      libxkbcommon-x11-dev extra-cmake-modules cmake
 }
@@ -31,11 +31,13 @@ function install_release_dependencies {
 
 function install_runtime_dependencies {
   echo "Install runtime dependencies"
-  apt install -yq libxcomposite-dev
+  # xvfb is needed in order run squish test into a headless server 
+  apt install -yq libxcomposite-dev xvfb libxft-dev
 }
 
 function install_qt {
   echo "Install QT"
+  apt install -y python3-pip
   pip install -U pip
   pip install aqtinstall
   aqt install-qt linux desktop 5.14.2 gcc_64 -m qtwebengine qtlottie -O /opt/qt
