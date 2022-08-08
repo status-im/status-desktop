@@ -40,6 +40,7 @@ QtObject:
     self.items = items
     self.endResetModel()
     self.countChanged()
+    self.hasSelectedItemsChanged()
 
   proc getCount(self: DiscordChannelsModel): int {.slot.} =
     self.items.len
@@ -82,26 +83,32 @@ QtObject:
         result = newQVariant(item.getSelected())
 
   method setData(self: DiscordChannelsModel, index: QModelIndex, value: QVariant, role: int): bool =
+    if not index.isValid:
+      return false
+    let row = index.row
+    if row < 0 or row >= self.items.len:
+      return false
     case role.ModelRole:
       of ModelRole.Id:
-        self.items[index.row].id = value.stringVal()
+        self.items[row].id = value.stringVal()
         self.dataChanged(index, index, @[ModelRole.Id.int])
       of ModelRole.CategoryId:
-        self.items[index.row].categoryId = value.stringVal()
+        self.items[row].categoryId = value.stringVal()
         self.dataChanged(index, index, @[ModelRole.CategoryId.int])
       of ModelRole.Name:
-        self.items[index.row].name = value.stringVal()
+        self.items[row].name = value.stringVal()
         self.dataChanged(index, index, @[ModelRole.Name.int])
       of ModelRole.Description:
-        self.items[index.row].description = value.stringVal()
+        self.items[row].description = value.stringVal()
         self.dataChanged(index, index, @[ModelRole.Description.int])
       of ModelRole.FilePath:
-        self.items[index.row].filePath = value.stringVal()
+        self.items[row].filePath = value.stringVal()
         self.dataChanged(index, index, @[ModelRole.FilePath.int])
       of ModelRole.Selected:
-        self.items[index.row].selected = value.boolVal()
+        self.items[row].selected = value.boolVal()
         self.dataChanged(index, index, @[ModelRole.Selected.int])
         self.hasSelectedItemsChanged()
+    return true
 
   proc findIndexById(self: DiscordChannelsModel, id: string): int =
     for i in 0 ..< self.items.len:
@@ -146,7 +153,7 @@ QtObject:
         let index = self.createIndex(i, 0, nil)
         self.items[i].selected = false
         self.dataChanged(index, index, @[ModelRole.Selected.int])
-        self.hasSelectedItemsChanged()
+    self.hasSelectedItemsChanged()
 
   proc selectItemsByCategoryId*(self: DiscordChannelsModel, id: string) =
     for i in 0 ..< self.items.len:
@@ -154,7 +161,7 @@ QtObject:
         let index = self.createIndex(i, 0, nil)
         self.items[i].selected = true
         self.dataChanged(index, index, @[ModelRole.Selected.int])
-        self.hasSelectedItemsChanged()
+    self.hasSelectedItemsChanged()
 
   proc getSelectedItems*(self: DiscordChannelsModel): seq[DiscordChannelItem] =
     for i in 0 ..< self.items.len:

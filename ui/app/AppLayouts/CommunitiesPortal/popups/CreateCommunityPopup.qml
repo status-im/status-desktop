@@ -165,6 +165,7 @@ StatusStackModal {
             CommunityIntroMessageInput {
                 id: introMessageInput
                 input.edit.objectName: "createCommunityIntroMessageInput"
+                input.tabNavItem: outroMessageInput.input.edit
 
                 Layout.fillWidth: true
                 Layout.fillHeight: true
@@ -176,6 +177,7 @@ StatusStackModal {
             CommunityOutroMessageInput {
                 id: outroMessageInput
                 input.edit.objectName: "createCommunityOutroMessageInput"
+                input.tabNavItem: introMessageInput.input.edit
 
                 Layout.fillWidth: true
             }
@@ -196,7 +198,7 @@ StatusStackModal {
                 : qsTr("Import files")
             readonly property var nextAction: function () {
                 if (!fileListView.fileListModel.selectedFilesValid) {
-                  return root.store.requestExtractChannelsAndCategories()
+                    return root.store.requestExtractChannelsAndCategories()
                 }
                 root.currentIndex++
             }
@@ -250,7 +252,6 @@ StatusStackModal {
                         text: qsTr("Export your Discord JSON data using %1")
                           .arg("<a href='https://github.com/Tyrrrz/DiscordChatExporter'>DiscordChatExporter</a>")
                         onLinkActivated: Global.openLink(link)
-                        // TODO put this into StatusBaseText
                         HoverHandler {
                             id: handler1
                         }
@@ -266,7 +267,6 @@ StatusStackModal {
                         linkColor: hoveredLink ? Qt.lighter(Theme.palette.primaryColor1) : Theme.palette.primaryColor1
                         text: qsTr("Refer to this <a href='https://github.com/Tyrrrz/DiscordChatExporter/wiki'>wiki</a> if you have any queries")
                         onLinkActivated: Global.openLink(link)
-                        // TODO put this into StatusBaseText
                         HoverHandler {
                             id: handler2
                         }
@@ -326,115 +326,98 @@ StatusStackModal {
 
         ColumnLayout {
             id: categoriesAndChannelsView
+            spacing: 24
 
             readonly property bool canGoNext: root.store.discordChannelsModel.hasSelectedItems
             readonly property var nextAction: function () {
                 // TODO: request discord import
             }
 
-          Item {
-              Layout.fillWidth: true
-              Layout.fillHeight: true
-              visible: !root.store.discordChannelsModel.count
-              Loader {
-                  anchors.centerIn: parent
-                  active: parent.visible
-                  sourceComponent: StatusLoadingIndicator {
-                      width: 50
-                      height: 50
-                  }
-              }
-          }
+            Item {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                visible: !root.store.discordChannelsModel.count
+                Loader {
+                    anchors.centerIn: parent
+                    active: parent.visible
+                    sourceComponent: StatusLoadingIndicator {
+                        width: 50
+                        height: 50
+                    }
+                }
+            }
 
-          ColumnLayout {
-              spacing: 12
-              visible: root.store.discordChannelsModel.count
+            ColumnLayout {
+                spacing: 12
+                visible: root.store.discordChannelsModel.count
 
-              StatusBaseText {
-                  Layout.fillWidth: true
-                  text: qsTr("Please select the categories and channels to import into your new Status Community.")
-                  wrapMode: Text.WordWrap
-              }
+                StatusBaseText {
+                    Layout.fillWidth: true
+                    text: qsTr("Please select the categories and channels you would like to import")
+                    wrapMode: Text.WordWrap
+                }
 
-              StatusCheckBox {
-                  id: importAllHistoryCheckbox
-                  text: qsTr("Import all history")
-                  checked: true
-              }
+                RowLayout {
+                    spacing: 20
+                    Layout.fillWidth: true
+                    StatusRadioButton {
+                        text: qsTr("Import all history")
+                        checked: true
+                    }
+                    StatusRadioButton {
+                        id: startDateRadio
+                        text: qsTr("Start date")
+                    }
+                    StatusDatePicker {
+                        id: datePicker
+                        Layout.fillWidth: true
+                        selectedDate: new Date(root.store.discordOldestMessageTimestamp * 1000)
+                        enabled: startDateRadio.checked
+                    }
+                }
 
-              StatusInput {
-                  label: qsTr("Import history from")
-                  input.text: new Date(root.store.discordOldestMessageTimestamp * 1000).toString()
-                  input.enabled: !importAllHistoryCheckbox.checked
-              }
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    color: Theme.palette.baseColor4
 
-              StatusBaseText {
-                  text: qsTr("Selected categories and channels")
-                  font.pixelSize: 15
-                  font.weight: Font.Medium
-                  color: Theme.palette.baseColor1
-              }
+                    StatusListView {
+                        anchors.fill: parent
+                        anchors.margins: 16
+                        model: root.store.discordCategoriesModel
+                        delegate: ColumnLayout {
+                            width: ListView.view.width
+                            spacing: 8
 
-              Item {
-                  Layout.fillWidth: true
-                  Layout.fillHeight: true
-                  Layout.alignment: Qt.AlignHCenter
+                            StatusCheckBox {
+                                readonly property string categoryId: model.id
+                                id: categoryCheckbox
+                                checked: model.selected
+                                text: model.name
+                                onToggled: checked ? root.store.selectDiscordCategory(model.id) : root.store.unselectDiscordCategory(model.id)
+                            }
 
-                  Flickable {
-                      clip: true
-                      anchors.fill: parent
-                      contentHeight: selectCategoriesView.height
-                      implicitHeight: selectCategoriesView.implicitHeight
-                      interactive: contentHeight > height
-                      flickableDirection: Flickable.VerticalFlick
-
-                      ColumnLayout {
-                          id: selectCategoriesView
-                          spacing: 12
-                          width: parent.width
-
-                          Repeater {
-                              model: root.store.discordCategoriesModel
-                              delegate: ColumnLayout {
-                                  spacing: 8
-                                  Layout.fillWidth: true
-
-                                  StatusCheckBox {
-                                      readonly property string categoryId: model.id
-                                      id: categoryCheckbox
-                                      checked: model.selected
-                                      text: model.name
-                                      onToggled: model.selected = checked
-                                  }
-
-                                  ColumnLayout {
-                                      id: channels
-                                      spacing: 8
-                                      Layout.leftMargin: 24
-                                      Repeater {
-                                          model: root.store.discordChannelsModel
-                                          delegate: StatusCheckBox {
-                                              Layout.fillWidth: true
-                                              text: model.name
-                                              checked: model.selected
-                                              visible: model.categoryId === categoryCheckbox.categoryId
-                                              onClicked: {
-                                                  if (checked) {
-                                                      root.store.selectDiscordChannel(model.id)
-                                                  } else {
-                                                      root.store.unselectDiscordChannel(model.id)
-                                                  }
-                                              }
-                                          }
-                                      }
-                                  }
-                              }
-                          }
-                      }
-                  }
-              }
-          }
-      }
+                            ColumnLayout {
+                                spacing: 8
+                                Layout.fillWidth: true
+                                Layout.leftMargin: 24
+                                Repeater {
+                                    Layout.fillWidth: true
+                                    model: root.store.discordChannelsModel
+                                    delegate: StatusCheckBox {
+                                        width: parent.width
+                                        text: model.name
+                                        checked: model.selected
+                                        visible: model.categoryId === categoryCheckbox.categoryId
+                                        onToggled: checked ? root.store.selectDiscordChannel(model.id) : root.store.unselectDiscordChannel(model.id)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     ]
 
     QtObject {

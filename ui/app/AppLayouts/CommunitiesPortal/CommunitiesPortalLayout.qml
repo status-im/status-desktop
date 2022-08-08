@@ -263,7 +263,7 @@ StatusScrollView {
                         chooseCommunityCreationTypePopup.close()
                         Global.openPopup(createCommunitiesPopupComponent, {
                                              stackTitle: qsTr("Import existing Discord community into Status"),
-                                             finishButtonLabel: qsTr("Finalize Discord import")
+                                             finishButtonLabel: qsTr("Start Discord import")
                                          })
                     }
                 }

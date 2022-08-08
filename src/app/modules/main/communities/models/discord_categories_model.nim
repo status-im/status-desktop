@@ -86,15 +86,11 @@ QtObject:
     if idx > -1:
       let index = self.createIndex(idx, 0, nil)
       self.items[idx].selected = false
-      self.dataChanged(index, index, @[ModelRole.Id.int,
-                                       ModelRole.Name.int,
-                                       ModelRole.Selected.int])
+      self.dataChanged(index, index, @[ModelRole.Selected.int])
 
   proc selectItem*(self: DiscordCategoriesModel, id: string) =
     let idx = self.findIndexById(id)
     if idx > -1:
       let index = self.createIndex(idx, 0, nil)
       self.items[idx].selected = true
-      self.dataChanged(index, index, @[ModelRole.Id.int,
-                                       ModelRole.Name.int,
-                                       ModelRole.Selected.int])
+      self.dataChanged(index, index, @[ModelRole.Selected.int])
