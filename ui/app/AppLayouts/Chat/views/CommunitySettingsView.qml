@@ -121,6 +121,8 @@ StatusAppTwoPanelLayout {
 
     rightPanel: Loader {
         anchors.fill: parent
+        anchors.leftMargin: 28
+        anchors.topMargin: 23
         anchors.margins: 16
 
         active: root.community
