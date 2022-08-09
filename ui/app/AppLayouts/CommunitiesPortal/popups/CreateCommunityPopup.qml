@@ -102,16 +102,48 @@ StatusStackModal {
 
             RowLayout {
                 Layout.fillWidth: true
+                spacing: 12
                 StatusBaseText {
                     font.pixelSize: 15
                     text: fileListView.fileListModelEmpty ? qsTr("Select Discord JSON files to import") :
-                                                            qsTr("Uncheck any files you would like to exclude from the import")
+                                                            root.store.discordImportErrorsCount ? qsTr("Some of your community files cannot be used") :
+                                                                                                  qsTr("Uncheck any files you would like to exclude from the import")
                 }
                 StatusBaseText {
                     visible: fileListView.fileListModelEmpty
                     font.pixelSize: 12
                     color: Theme.palette.baseColor1
                     text: qsTr("(JSON file format only)")
+                }
+                Rectangle { // TODO cleanup and make this a StatusQ component
+                    implicitHeight: 26
+                    implicitWidth: childrenRect.width + 2*4
+                    radius: 100
+                    visible: root.store.discordImportErrorsCount
+                    color: Theme.palette.getColor('red', 0.03)
+                    border.width: 1
+                    border.color: Theme.palette.getColor('red', 0.3)
+
+                    RowLayout {
+                        spacing: 4
+                        anchors.centerIn: parent
+                        anchors.leftMargin: 4
+                        anchors.rightMargin: 4
+                        StatusIcon {
+                            Layout.preferredWidth: 20
+                            Layout.preferredHeight: 20
+                            Layout.alignment: Qt.AlignVCenter
+                            icon: "warning"
+                            color: Theme.palette.dangerColor1
+                        }
+                        StatusBaseText {
+                            Layout.alignment: Qt.AlignVCenter
+                            verticalAlignment: Qt.AlignVCenter
+                            text: qsTr("%n error(s)", "", root.store.discordImportErrorsCount)
+                            color: Theme.palette.dangerColor1
+                            font.pixelSize: 12
+                        }
+                    }
                 }
                 Item { Layout.fillWidth: true }
                 StatusButton {
@@ -174,6 +206,7 @@ StatusStackModal {
 
                 StatusListView {
                     visible: !fileListView.fileListModelEmpty
+                    enabled: !root.store.discordDataExtractionInProgress
                     anchors.fill: parent
                     anchors.margins: 16
                     model: fileListView.fileListModel
