@@ -2,6 +2,7 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 
+import StatusQ.Layout 0.1
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 
@@ -13,14 +14,14 @@ import shared.controls 1.0
 import "stores"
 import "views"
 
-Item {
+StatusSectionLayout {
     id: root
-    Layout.fillHeight: true
-    Layout.fillWidth: true
 
     property RootStore store: RootStore {}
 
-    ColumnLayout {
+    notificationCount: root.store.unreadNotificationsCount
+    onNotificationButtonClicked: Global.openActivityCenterPopup()
+    centerPanel: ColumnLayout {
         id: rpcColumn
         spacing: 0
         anchors.fill: parent

@@ -13,7 +13,7 @@ import "views"
 import "stores"
 
 Item {
-    id: walletView
+    id: root
 
     property bool hideSignPhraseModal: false
     property var store
@@ -45,25 +45,27 @@ Item {
             anchors.top: parent ? parent.top: undefined
             anchors.left: parent ? parent.left: undefined
             anchors.right: parent ? parent.right: undefined
-            contactsStore: walletView.contactsStore
-            sendModal: walletView.sendModal
+            contactsStore: root.contactsStore
+            sendModal: root.sendModal
         }
     }
 
     Component {
         id: walletContainer
         RightTabView {
-            store: walletView.store
-            sendModal: walletView.sendModal
+            store: root.store
+            sendModal: root.sendModal
         }
     }
 
 
-    StatusAppTwoPanelLayout {
+    StatusSectionLayout {
         anchors.top: seedPhraseWarning.bottom
-        height: walletView.height - seedPhraseWarning.height
-        width: walletView.width
+        height: root.height - seedPhraseWarning.height
+        width: root.width
 
+        notificationCount: RootStore.unreadNotificationsCount
+        onNotificationButtonClicked: Global.openActivityCenterPopup()
         Component.onCompleted: {
             // Read in RootStore
 //            if(RootStore.firstTimeLogin){
@@ -96,13 +98,12 @@ Item {
                 else
                     rightPanelStackView.replace(walletContainer)
             }
-            emojiPopup: walletView.emojiPopup
+            emojiPopup: root.emojiPopup
         }
 
-        rightPanel: StackView {
+        centerPanel: StackView {
             id: rightPanelStackView
             anchors.fill: parent
-            anchors.topMargin: 49
             anchors.leftMargin: 49
             anchors.rightMargin: 49
             initialItem: walletContainer

@@ -7,6 +7,8 @@ import shared.stores 1.0 as SharedStore
 
 QtObject {
     id: root
+
+    property int unreadNotificationsCount: activityCenterList.unreadCount
     property var currentAccount: Constants.isCppApp ? walletSectionAccounts.currentAccount: walletSectionCurrent
     property var accounts: walletSectionAccounts.model
     property var generatedAccounts: walletSectionAccounts.generated

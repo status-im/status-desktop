@@ -24,7 +24,6 @@ import "../../Wallet"
 
 Item {
     id: root
-    anchors.fill: parent
 
     // Important: we have parent module in this context only cause qml components
     // don't follow struct we have on the backend.
@@ -214,8 +213,6 @@ Item {
 
                         sourceComponent: ChatContentView {
                             visible: !root.rootStore.openCreateChat && isActiveChannel
-                            width: parent.width
-                            height: parent.height
                             clip: true
                             rootStore: root.rootStore
                             contactsStore: root.contactsStore
@@ -227,14 +224,9 @@ Item {
                             stickersLoaded: root.stickersLoaded
                             isBlocked: model.blocked
                             isActiveChannel: categoryChatLoader.isActiveChannel
-                            activityCenterVisible: Global.activityCenterPopupOpened
-                            activityCenterNotificationsCount: root.rootStore.unreadNotificationsCount
                             pinnedMessagesPopupComponent: root.pinnedMessagesListPopupComponent
                             onOpenStickerPackPopup: {
                                 root.openStickerPackPopup(stickerPackId)
-                            }
-                            onNotificationButtonClicked: {
-                                Global.openActivityCenterPopup()
                             }
                             onOpenAppSearch: {
                                 root.openAppSearch();
@@ -271,8 +263,6 @@ Item {
 
                     sourceComponent: ChatContentView {
                         visible: !root.rootStore.openCreateChat && isActiveChannel
-                        width: parent.width
-                        height: parent.height
                         clip: true
                         rootStore: root.rootStore
                         contactsStore: root.contactsStore
@@ -284,14 +274,9 @@ Item {
                         stickersLoaded: root.stickersLoaded
                         isBlocked: model.blocked
                         isActiveChannel: chatLoader.isActiveChannel
-                        activityCenterVisible: Global.activityCenterPopupOpened
-                        activityCenterNotificationsCount: root.rootStore.unreadNotificationsCount
                         pinnedMessagesPopupComponent: root.pinnedMessagesListPopupComponent
                         onOpenStickerPackPopup: {
                             root.openStickerPackPopup(stickerPackId)
-                        }
-                        onNotificationButtonClicked: {
-                            Global.openActivityCenterPopup()
                         }
                         onOpenAppSearch: {
                             root.openAppSearch();
