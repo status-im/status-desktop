@@ -1,7 +1,7 @@
 library 'status-jenkins-lib@v1.3.4'
 
 pipeline {
-  agent { label 'linux-01' }
+  agent { label 'linux' }
 
   parameters {
     booleanParam(
@@ -67,7 +67,11 @@ pipeline {
         wrap([$class: 'Xvfb']) {
           script {
             def res = squish([
-              extraOptions: '''--config
+              extraOptions: '''
+                --retry
+                2
+                
+                --config
                 addAUT
                 nim_status_client
                 ${WORKSPACE}/bin
@@ -90,4 +94,3 @@ pipeline {
     always { cleanWs() }
   }
 }
-
