@@ -23,9 +23,10 @@ StatusStackModal {
     id: root
 
     property var store
-    property string finishButtonLabel: qsTr("Create Community")
+    property bool isDiscordImport // creating new or importing from discord?
 
-    stackTitle: qsTr("Create New Community")
+    stackTitle: isDiscordImport ? qsTr("Import existing Discord community into Status") :
+                                  qsTr("Create New Community")
     width: 640
 
     nextButton: StatusButton {
@@ -46,7 +47,7 @@ StatusStackModal {
     finishButton: StatusButton {
         objectName: "createCommunityFinalBtn"
         font.weight: Font.Medium
-        text: finishButtonLabel
+        text: root.isDiscordImport ? qsTr("Start Discord import") : qsTr("Create Community")
         enabled: typeof(currentItem.canGoNext) == "undefined" || currentItem.canGoNext
         onClicked: {
             let nextAction = currentItem.nextAction
@@ -70,122 +71,15 @@ StatusStackModal {
 
     onAboutToShow: {
         nameInput.input.edit.forceActiveFocus()
-        root.store.clearFileList()
+        if (root.isDiscordImport) {
+            root.store.clearFileList()
+            for (let i = 0; i < discordPages.length; i++) {
+                stackItems.push(discordPages[i])
+            }
+        }
     }
 
-    stackItems: [
-        StatusScrollView {
-            id: generalView
-
-            readonly property bool canGoNext: nameInput.valid && descriptionTextInput.valid
-
-            ColumnLayout {
-                id: generalViewLayout
-                width: generalView.availableWidth
-                spacing: 16
-
-                CommunityNameInput {
-                    id: nameInput
-                    input.edit.objectName: "createCommunityNameInput"
-                    Layout.fillWidth: true
-                    input.tabNavItem: descriptionTextInput.input.edit
-                }
-
-                CommunityDescriptionInput {
-                    id: descriptionTextInput
-                    input.edit.objectName: "createCommunityDescriptionInput"
-                    Layout.fillWidth: true
-                    input.tabNavItem: nameInput.input.edit
-                }
-
-                CommunityLogoPicker {
-                    id: logoPicker
-                    Layout.fillWidth: true
-                }
-
-                CommunityColorPicker {
-                    id: colorPicker
-                    onPick: root.replace(colorPanel)
-                    Layout.fillWidth: true
-
-                    Component {
-                        id: colorPanel
-
-                        CommunityColorPanel {
-                            Component.onCompleted: color = colorPicker.color
-                            onAccepted: {
-                                colorPicker.color = color;
-                                root.replace(null);
-                            }
-                        }
-                    }
-                }
-
-                CommunityTagsPicker {
-                    id: communityTagsPicker
-                    tags: root.store.communityTags
-                    onPick: root.replace(tagsPanel)
-                    Layout.fillWidth: true
-
-                    Component {
-                        id: tagsPanel
-
-                        CommunityTagsPanel {
-                            Component.onCompleted: {
-                                tags = communityTagsPicker.tags;
-                                selectedTags = communityTagsPicker.selectedTags;
-                            }
-                            onAccepted: {
-                                communityTagsPicker.selectedTags = selectedTags;
-                                root.replace(null);
-                            }
-                        }
-                    }
-                }
-
-                StatusModalDivider {
-                    Layout.fillWidth: true
-                }
-
-                CommunityOptions {
-                    id: options
-
-                    archiveSupportOptionVisible: root.store.isCommunityHistoryArchiveSupportEnabled
-                    archiveSupportEnabled: archiveSupportOptionVisible
-                }
-
-                Item {
-                    Layout.fillHeight: true
-                }
-            }
-        },
-
-        ColumnLayout {
-            id: introOutroMessageView
-            spacing: 11
-            readonly property bool canGoNext: introMessageInput.valid && outroMessageInput.valid
-
-            CommunityIntroMessageInput {
-                id: introMessageInput
-                input.edit.objectName: "createCommunityIntroMessageInput"
-                input.tabNavItem: outroMessageInput.input.edit
-
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-
-                minimumHeight: height
-                maximumHeight: (height - Style.current.xlPadding)
-            }
-
-            CommunityOutroMessageInput {
-                id: outroMessageInput
-                input.edit.objectName: "createCommunityOutroMessageInput"
-                input.tabNavItem: introMessageInput.input.edit
-
-                Layout.fillWidth: true
-            }
-        },
-
+    readonly property list<Item> discordPages: [
         ColumnLayout {
             id: fileListView
             objectName: "discordFileListView" // !!! DON'T CHANGE, clearFilesButton depends on this
@@ -418,6 +312,120 @@ StatusStackModal {
                         }
                     }
                 }
+            }
+        }
+    ]
+
+    stackItems: [
+        StatusScrollView {
+            id: generalView
+
+            readonly property bool canGoNext: nameInput.valid && descriptionTextInput.valid
+
+            ColumnLayout {
+                id: generalViewLayout
+                width: generalView.availableWidth
+                spacing: 16
+
+                CommunityNameInput {
+                    id: nameInput
+                    input.edit.objectName: "createCommunityNameInput"
+                    Layout.fillWidth: true
+                    input.tabNavItem: descriptionTextInput.input.edit
+                }
+
+                CommunityDescriptionInput {
+                    id: descriptionTextInput
+                    input.edit.objectName: "createCommunityDescriptionInput"
+                    Layout.fillWidth: true
+                    input.tabNavItem: nameInput.input.edit
+                }
+
+                CommunityLogoPicker {
+                    id: logoPicker
+                    Layout.fillWidth: true
+                }
+
+                CommunityColorPicker {
+                    id: colorPicker
+                    onPick: root.replace(colorPanel)
+                    Layout.fillWidth: true
+
+                    Component {
+                        id: colorPanel
+
+                        CommunityColorPanel {
+                            Component.onCompleted: color = colorPicker.color
+                            onAccepted: {
+                                colorPicker.color = color;
+                                root.replace(null);
+                            }
+                        }
+                    }
+                }
+
+                CommunityTagsPicker {
+                    id: communityTagsPicker
+                    tags: root.store.communityTags
+                    onPick: root.replace(tagsPanel)
+                    Layout.fillWidth: true
+
+                    Component {
+                        id: tagsPanel
+
+                        CommunityTagsPanel {
+                            Component.onCompleted: {
+                                tags = communityTagsPicker.tags;
+                                selectedTags = communityTagsPicker.selectedTags;
+                            }
+                            onAccepted: {
+                                communityTagsPicker.selectedTags = selectedTags;
+                                root.replace(null);
+                            }
+                        }
+                    }
+                }
+
+                StatusModalDivider {
+                    Layout.fillWidth: true
+                }
+
+                CommunityOptions {
+                    id: options
+
+                    archiveSupportOptionVisible: root.store.isCommunityHistoryArchiveSupportEnabled
+                    archiveSupportEnabled: archiveSupportOptionVisible
+                }
+
+                Item {
+                    Layout.fillHeight: true
+                }
+            }
+        },
+
+        ColumnLayout {
+            id: introOutroMessageView
+            spacing: 11
+            readonly property bool canGoNext: introMessageInput.valid && outroMessageInput.valid
+
+            CommunityIntroMessageInput {
+                id: introMessageInput
+                input.edit.objectName: "createCommunityIntroMessageInput"
+                input.tabNavItem: outroMessageInput.input.edit
+
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+
+                minimumHeight: height
+                maximumHeight: (height - Style.current.xlPadding)
+            }
+
+            CommunityOutroMessageInput {
+                id: outroMessageInput
+                input.edit.objectName: "createCommunityOutroMessageInput"
+                input.tabNavItem: introMessageInput.input.edit
+
+                Layout.fillWidth: true
             }
         }
     ]

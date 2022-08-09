@@ -261,10 +261,7 @@ StatusScrollView {
                     icon.name: "download"
                     onButtonClicked: {
                         chooseCommunityCreationTypePopup.close()
-                        Global.openPopup(createCommunitiesPopupComponent, {
-                                             stackTitle: qsTr("Import existing Discord community into Status"),
-                                             finishButtonLabel: qsTr("Start Discord import")
-                                         })
+                        Global.openPopup(createCommunitiesPopupComponent, {isDiscordImport: true})
                     }
                 }
             }
