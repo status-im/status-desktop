@@ -1,7 +1,7 @@
 library 'status-jenkins-lib@v1.3.4'
 
 pipeline {
-  agent { label 'linux' }
+  agent { label 'linux-01' }
 
   parameters {
     booleanParam(
@@ -62,6 +62,7 @@ pipeline {
       steps { sh 'make' }
     }
 
+
     stage('Tests') {
       steps {
         wrap([$class: 'Xvfb']) {
@@ -73,8 +74,7 @@ pipeline {
                 ${WORKSPACE}/bin
               ''',
               squishPackageName: 'squish-6.7.2-qt514x-linux64',
-              testSuite: '${WORKSPACE}/test/ui-test/testSuites/*',
-              abortOnFail: true,
+              testSuite: '${WORKSPACE}/test/ui-test/testSuites/*'
             ])
             if ( res != "SUCCESS" ) {
               throw new Exception("squish test didn't end with success")
