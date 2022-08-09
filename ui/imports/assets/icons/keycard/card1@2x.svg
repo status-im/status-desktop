@@ -1,6 +1,4 @@
 <svg width="180" height="180" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect width="180" height="180" fill="#E5E5E5"/>
-<rect x="-526" y="-222" width="1232" height="770" rx="5" fill="white"/>
 <circle cx="90" cy="90" r="36" fill="#4360DF" fill-opacity="0.1"/>
 <g filter="url(#filter0_d_1023_298171)">
 <path d="M50 71.8889C50 66.9797 53.9797 63 58.8889 63H121.111C126.02 63 130 66.9797 130 71.8889V107.444C130 112.354 126.02 116.333 121.111 116.333H58.8889C53.9797 116.333 50 112.354 50 107.444V71.8889Z" fill="#2D2D2D"/>
