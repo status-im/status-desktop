@@ -1,5 +1,5 @@
 import QtQuick 2.14
-import QtQuick.Controls 2.4
+import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.14
 import QtQuick.Dialogs 1.3
 
@@ -222,10 +222,7 @@ StatusStackModal {
                 Item { Layout.fillWidth: true }
                 StatusButton {
                     text: qsTr("Browse files")
-                    font.weight: Font.Medium
-                    normalColor: Theme.palette.primaryColor1
-                    hoverColor: Style.current == Style.lightTheme ? Qt.darker(normalColor, 1.1) : Qt.lighter(normalColor, 1.1) // TODO transfer to StatusButton
-                    textColor: Theme.palette.white
+                    type: StatusBaseButton.Type.Primary
                     onClicked: fileDialog.open()
                     enabled: !root.store.discordDataExtractionInProgress
                 }
@@ -304,6 +301,7 @@ StatusStackModal {
                             visible: model.errorMessage
                             font.pixelSize: 13
                             font.weight: Font.Medium
+                            elide: Text.ElideMiddle
                             color: Theme.palette.dangerColor1
                             verticalAlignment: Qt.AlignTop
                         }
@@ -397,7 +395,7 @@ StatusStackModal {
                                 id: categoryCheckbox
                                 checked: model.selected
                                 text: model.name
-                                onToggled: checked ? root.store.selectDiscordCategory(model.id) : root.store.unselectDiscordCategory(model.id)
+                                onToggled: checked ? root.store.selectDiscordCategory(categoryId) : root.store.unselectDiscordCategory(categoryId)
                             }
 
                             ColumnLayout {
