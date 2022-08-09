@@ -393,7 +393,7 @@ Item {
         VerificationLabel {
             id: trustStatus
             anchors.left: chatName.right
-            anchors.leftMargin: 4
+            anchors.leftMargin: visible ? 4 : 0
             anchors.bottom: chatName.bottom
             anchors.bottomMargin: 4
             visible: !root.amISender && chatName.visible

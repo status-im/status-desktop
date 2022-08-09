@@ -7,8 +7,8 @@ import utils 1.0
 
 SVGImage {
     id: root
-    width: 10
-    height: 10
+    width: visible ?  10 : 0
+    height: visible ?  10 : 0
 
     property int trustStatus: Constants.trustStatus.unknown
 
