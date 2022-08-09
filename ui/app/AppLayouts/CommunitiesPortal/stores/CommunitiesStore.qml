@@ -11,7 +11,7 @@ QtObject {
     property var discordChannelsModel: root.communitiesModuleInst.discordChannels
     property int discordOldestMessageTimestamp: root.communitiesModuleInst.discordOldestMessageTimestamp
     property bool discordDataExtractionInProgress: root.communitiesModuleInst.discordDataExtractionInProgress
-    property bool discordImportErrorsCount: root.communitiesModuleInst.discordImportErrorsCount
+    property int discordImportErrorsCount: root.communitiesModuleInst.discordImportErrorsCount
     property var locale: localAppSettings.language
     property var advancedModule: profileSectionModule.advancedModule
     property bool isCommunityHistoryArchiveSupportEnabled: advancedModule? advancedModule.isCommunityHistoryArchiveSupportEnabled : false
