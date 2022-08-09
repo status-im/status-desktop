@@ -58,6 +58,8 @@ MenuItem {
             image: root.image
             colorId: root.colorId
             colorHash: root.colorHash
+            imageHeight: Constants.onboarding.userImageHeight
+            imageWidth: Constants.onboarding.userImageWidth
         }
     }
 

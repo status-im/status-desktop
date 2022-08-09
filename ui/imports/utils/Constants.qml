@@ -126,6 +126,12 @@ QtObject {
         readonly property int inactive: 4
     }
 
+    readonly property QtObject onboarding: QtObject {
+        readonly property int userImageWidth: 40
+        readonly property int userImageHeight: 40
+        readonly property int titleFontSize: 17
+    }
+
     readonly property QtObject onlineStatus: QtObject{
         readonly property int inactive: 0
         readonly property int online: 1
