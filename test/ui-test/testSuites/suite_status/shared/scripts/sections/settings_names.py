@@ -32,6 +32,16 @@ settings_navbar_settings_icon_StatusIcon = {"container": navBarListView_Settings
 mainWindow_ScrollView = {"container": statusDesktop_mainWindow, "type": "StatusScrollView", "unnamed": 1, "visible": True}
 mainWindow_ScrollView_2 = {"container": statusDesktop_mainWindow, "occurrence": 2, "type": "StatusScrollView", "unnamed": 1, "visible": True}
 settingsSave_StatusButton = {"container": statusDesktop_mainWindow, "objectName": "settingsDirtyToastMessageSaveButton", "type": "StatusButton", "visible": True}
+settings_Sidebar_ENS_Item = {"container": mainWindow_ScrollView, "objectName": "ENS usernames-MainMenu", "type": "StatusNavigationListItem"}
+
+# ENS view;
+settings_ENS_Start_Button = {"container": statusDesktop_mainWindow, "objectName": "ensStartButton", "type": "StatusButton"}
+settings_ENS_Search_Input = {"container": statusDesktop_mainWindow, "objectName": "ensUsernameInput", "type": "StyledTextField"}
+settings_ENS_Search_Next_Button = {"container": statusDesktop_mainWindow, "objectName": "ensNextButton", "type": "StatusRoundButton"}
+settings_ENS_Terms_Agree = {"container": statusDesktop_mainWindow, "objectName": "ensAgreeTerms", "type": "StatusCheckBox"}
+settings_ENS_Terms_Open_Transaction = {"container": statusDesktop_mainWindow, "objectName": "ensStartTransaction", "type": "StatusButton"}
+settings_ENS_Terms_Transaction_Next_Button = {"container": statusDesktop_mainWindow, "objectName": "sendNextButton", "type": "StatusButton"}
+settings_ENS_Terms_Transaction_Password_Input = {"container": statusDesktop_mainWindow, "objectName": "transactionSignerPasswordInput", "type": "StyledTextField"}
 
 # Side bar items:
 wallet_StatusNavigationListItem = {"container": mainWindow_ScrollView, "objectName": SettingsSubsection.WALLET.value, "type": "StatusNavigationListItem", "visible": True}
@@ -62,6 +72,7 @@ customUrl_popup_TextEdit = {"container": customUrl_popup_StatusInput, "type": "T
 settings_Wallet_MainView_GeneratedAccounts = {"container": statusDesktop_mainWindow, "objectName":'generatedAccounts', "type": 'ListView'}
 settings_Wallet_AccountView_DeleteAccount = {"container": statusDesktop_mainWindow, "type": "StatusButton", "objectName": "deleteAccountButton"}
 settings_Wallet_AccountView_DeleteAccount_Confirm = {"container": statusDesktop_mainWindow, "type": "StatusButton", "objectName": "confirmDeleteAccountButton"}
+mainWindow_ScrollView_2 = {"container": statusDesktop_mainWindow, "occurrence": 2, "type": "StatusScrollView", "unnamed": 1, "visible": True}
 settings_Wallet_MainView_Networks = {"container": statusDesktop_mainWindow, "objectName": "networksItem", "type": "StatusListItem"}
 settings_Wallet_NetworksView_TestNet_Toggle = {"container": statusDesktop_mainWindow, "objectName": "testnetModeSwitch", "type": "StatusSwitch"}
 settings_Wallet_AccountView_EditAccountButton = {"container": statusDesktop_mainWindow, "type": "StatusFlatRoundButton", "objectName": "walletAccountViewEditAccountButton"}

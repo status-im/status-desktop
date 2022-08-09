@@ -45,6 +45,8 @@ class SendPopup(Enum):
     NETWORKS_LIST: str = "mainWallet_Send_Popup_Networks_List"
     SEND_BUTTON: str = "mainWallet_Send_Popup_Send_Button"
     PASSWORD_INPUT: str = "mainWallet_Send_Popup_Password_Input"
+    ASSET_SELECTOR: str = "mainWallet_Send_Popup_Asset_Selector"
+    ASSET_LIST: str = "mainWallet_Send_Popup_Asset_List"
     
 class AddAccountPopup(Enum):
     SCROLL_BAR: str = "mainWallet_Add_Account_Popup_Main"
@@ -145,9 +147,14 @@ class StatusWalletScreen:
         self._click_repeater(SendPopup.HEADER_ACCOUNTS_LIST.value, account_name)
         time.sleep(1)
         type(SendPopup.AMOUNT_INPUT.value, amount)
-        
+
         if token != "ETH":
-            print("TODO: switch token")
+            click_obj_by_name(SendPopup.ASSET_SELECTOR.value)
+            asset_list = get_obj(SendPopup.ASSET_LIST.value)
+            for index in range(asset_list.count):
+                if(asset_list.itemAtIndex(index).objectName == token):
+                    click_obj(asset_list.itemAtIndex(index))
+                    break
         
         click_obj_by_name(SendPopup.MY_ACCOUNTS_TAB.value)
         
@@ -237,7 +244,7 @@ class StatusWalletScreen:
         for index in range(list.count):
             if list.itemAtIndex(index).objectName == symbol:
                 balance = list.itemAtIndex(index).children.at(2).text
-                assert balance != f"0 {symbol}", "balance is not positive"
+                assert balance != f"0 {symbol}", f"balance is not positive, balance: {balance}"
                 return
             
         assert False, "symbol not found"

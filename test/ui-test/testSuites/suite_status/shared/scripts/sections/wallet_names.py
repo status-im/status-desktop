@@ -15,7 +15,7 @@ mainWallet_Right_Side_Tab_Bar = {"container": statusDesktop_mainWindow, "objectN
 mainWallet_Assets_View_List = {"container": statusDesktop_mainWindow, "objectName": "assetViewStatusListView", "type": "StatusListView"}
 
 # Network selector popup
-mainWallet_Network_Popup_Chain_Repeater_1 = {"container": statusDesktop_mainWindow, "objectName": "chainRepeaterLayer1", "type": "Repeater"}
+mainWallet_Network_Popup_Chain_Repeater_1 = {"container": statusDesktop_mainWindow, "objectName": "networkSelectPopupChainRepeaterLayer1", "type": "Repeater"}
 
 # Send popup:
 mainWallet_Footer_Send_Button = {"container": statusDesktop_mainWindow, "objectName": "walletFooterSendButton", "type": "StatusFlatButton"}
@@ -27,6 +27,8 @@ mainWallet_Send_Popup_Header_Accounts = {"container": statusDesktop_mainWindow, 
 mainWallet_Send_Popup_Networks_List = {"container": statusDesktop_mainWindow, "objectName": "networksList", "type": "Repeater"}
 mainWallet_Send_Popup_Send_Button = {"container": statusDesktop_mainWindow, "objectName": "sendModalFooterSendButton", "type": "StatusFlatButton"}
 mainWallet_Send_Popup_Password_Input = {"container": statusDesktop_mainWindow, "objectName": "transactionSignerPasswordInput", "type": "StyledTextField"}
+mainWallet_Send_Popup_Asset_Selector = {"container": statusDesktop_mainWindow, "objectName": "assetSelectorButton", "type": "StatusComboBox"}
+mainWallet_Send_Popup_Asset_List = {"container": statusDesktop_mainWindow, "objectName": "assetSelectorList", "type": "StatusListView"}
 
 # Add account popup:
 mainWallet_Add_Account_Popup_Main = {"container": statusDesktop_mainWindow, "objectName": "AddAccountModalContent", "type": "StatusScrollView", "visible": True}

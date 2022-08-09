@@ -121,6 +121,7 @@ ModalPopup {
                 contactsStore: root.contactsStore
                 selectedRecipient: { "address": contractAddress, "type": RecipientSelector.Type.Address }
                 readOnly: true
+                isValid: true
                 onSelectedRecipientChanged: if (isValid) { gasSelector.estimateGas() }
             }
 
@@ -156,6 +157,9 @@ ModalPopup {
                 selectedAsset: root.asset
                 selectedAmount: parseFloat(root.assetPrice)
                 selectedGasEthValue: gasSelector.selectedGasEthValue
+                selectedNetwork: {
+                    return {chainId: root.chainId}
+                }
             }
         }
         TransactionFormGroup {
@@ -224,6 +228,7 @@ ModalPopup {
             id: btnNext
             anchors.right: parent.right
             text: qsTr("Next")
+            objectName: "sendNextButton"
             enabled: stack.currentGroup.isValid && !stack.currentGroup.isPending
             loading: stack.currentGroup.isPending
             onClicked: {

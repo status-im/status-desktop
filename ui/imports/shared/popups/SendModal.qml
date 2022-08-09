@@ -50,7 +50,7 @@ StatusDialog {
             gasSelector.selectedTipLimit,
             gasSelector.selectedOverallLimit,
             transactionSigner.enteredPassword,
-            networkSelector.selectedNetwork.chainId || Global.currentChainId,
+            networkSelector.selectedNetwork.chainId,
             stack.uuid,
             gasSelector.suggestedFees.eip1559Enabled,
         )
@@ -411,7 +411,7 @@ StatusDialog {
                                                                         recipientSelector.selectedRecipient.address,
                                                                         assetSelector.selectedAsset.symbol,
                                                                         amountToSendInput.text,
-                                                                        chainID || Global.currentChainId,
+                                                                        chainID,
                                                                         ""))
 
                                         if (!gasEstimate.success) {

@@ -137,6 +137,7 @@ Item {
 
         Input {
             id: ensUsername
+            textField.objectName: "ensUsernameInput"
             placeholderText: !isStatus ? "vitalik94.domain.eth" : "vitalik94"
             anchors.left: parent.left
             anchors.top: circleAt.bottom
@@ -181,6 +182,7 @@ Item {
             anchors.topMargin: Style.current.bigPadding
             anchors.right: parent.right
             type: StatusQControls.StatusRoundButton.Type.Secondary
+            objectName: "ensNextButton"
             icon.name: "arrow-right"
             icon.width: 18
             icon.height: 14

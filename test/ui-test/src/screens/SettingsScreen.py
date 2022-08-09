@@ -10,6 +10,9 @@
 
 
 from enum import Enum
+import random
+import time
+import string
 from drivers.SquishDriver import *
 from drivers.SquishDriverVerification import *
 from .StatusMainScreen import MainScreenComponents
@@ -25,10 +28,20 @@ class SidebarComponents(Enum):
     SIGN_OUT_AND_QUIT_OPTION: str = "sign_out_Quit_StatusNavigationListItem"
     COMMUNITIES_OPTION: str = "communities_StatusNavigationListItem"
     PROFILE_OPTION: str = "profile_StatusNavigationListItem"
+    ENS_ITEM: str = "settings_Sidebar_ENS_Item"
 
 class AdvancedOptionScreen(Enum):
     ACTIVATE_OR_DEACTIVATE_WALLET: str = "walletSettingsLineButton"
     I_UNDERSTAND_POP_UP: str = "i_understand_StatusBaseText"
+
+class ENSScreen(Enum):
+    START_BUTTON :str = "settings_ENS_Start_Button"
+    ENS_SEARCH_INPUT: str = "settings_ENS_Search_Input"
+    NEXT_BUTTON: str = "settings_ENS_Search_Next_Button"
+    AGREE_TERMS: str = "settings_ENS_Terms_Agree"
+    OPEN_TRANSACTION: str = "settings_ENS_Terms_Open_Transaction"
+    TRANSACTION_NEXT_BUTTON: str = "settings_ENS_Terms_Transaction_Next_Button"
+    PASSWORD_INPUT: str = "settings_ENS_Terms_Transaction_Password_Input"
 
 class WalletSettingsScreen(Enum):
     GENERATED_ACCOUNTS: str = "settings_Wallet_MainView_GeneratedAccounts"
@@ -114,6 +127,26 @@ class SettingsScreen:
         
     def open_language_and_currency_settings(self):
         click_obj_by_name(SidebarComponents.LANGUAGE_CURRENCY_OPTION.value)
+
+    def register_random_ens_name(self, password: str):
+        click_obj_by_name(SidebarComponents.ENS_ITEM.value)
+        get_and_click_obj(ENSScreen.START_BUTTON.value)
+        
+        name = ""
+        for _ in range(4):
+            name += string.ascii_lowercase[random.randrange(26)]
+            
+        type(ENSScreen.ENS_SEARCH_INPUT.value, name)
+        time.sleep(1)
+        
+        click_obj_by_name(ENSScreen.NEXT_BUTTON.value)
+        click_obj_by_name(ENSScreen.AGREE_TERMS.value)
+        click_obj_by_name(ENSScreen.OPEN_TRANSACTION.value)
+        click_obj_by_name(ENSScreen.TRANSACTION_NEXT_BUTTON.value)
+        click_obj_by_name(ENSScreen.TRANSACTION_NEXT_BUTTON.value)
+        
+        type(ENSScreen.PASSWORD_INPUT.value, password)
+        click_obj_by_name(ENSScreen.TRANSACTION_NEXT_BUTTON.value)
     
     def _find_account_index(self, account_name: str) -> int:
         accounts = get_obj(WalletSettingsScreen.GENERATED_ACCOUNTS.value)

@@ -293,6 +293,7 @@ Item {
 
             StatusCheckBox {
                 id: termsAndConditionsCheckbox
+                objectName: "ensAgreeTerms"
                 anchors.top: keyLbl.bottom
                 anchors.topMargin: Style.current.padding
                 anchors.left: parent.left
@@ -367,6 +368,7 @@ Item {
 
     StatusButton {
         id: startBtn
+        objectName: "ensStartTransaction"
         anchors.bottom: parent.bottom
         anchors.bottomMargin: Style.current.padding
         anchors.right: parent.right
