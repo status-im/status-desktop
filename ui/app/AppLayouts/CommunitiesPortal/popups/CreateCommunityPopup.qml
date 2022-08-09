@@ -318,7 +318,8 @@ StatusStackModal {
                 onAccepted: {
                     if (fileDialog.fileUrls.length > 0) {
                         let files = []
-                        files.push(...fileDialog.fileUrls)
+                        for (let i = 0; i < fileDialog.fileUrls.length; i++)
+                            files.push(decodeURI(fileDialog.fileUrls[i].toString()))
                         root.store.setFileListItems(files)
                     }
                 }
