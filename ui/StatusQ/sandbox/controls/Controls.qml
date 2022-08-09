@@ -119,6 +119,9 @@ GridLayout {
     }
 
     StatusCheckBox {}
+    StatusCheckBox { checkState: Qt.Checked}
+    StatusCheckBox { text: "Check me on left side"}
+    StatusCheckBox { text: "Check me on right side"; leftSide: false}
 
     StatusChatInfoButton {
         title: "Iuri Matias"

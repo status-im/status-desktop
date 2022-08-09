@@ -8,16 +8,20 @@ import StatusQ.Components 0.1
 
 
 CheckBox {
-    id: statusCheckBox
+    id: root
+
+    property bool leftSide: true
 
     indicator: Rectangle {
+        anchors.left: root.leftSide? parent.left : undefined
+        anchors.right: !root.leftSide? parent.right : undefined
         implicitWidth: 18
         implicitHeight: 18
-        x: statusCheckBox.leftPadding
+        x: !root.leftSide? root.rightPadding : root.leftPadding
         y: parent.height / 2 - height / 2
         radius: 2
-        color: (statusCheckBox.down || statusCheckBox.checked) ? Theme.palette.primaryColor1
-                                                               : Theme.palette.directColor8
+        color: (root.down || root.checked) ? Theme.palette.primaryColor1
+                                           : Theme.palette.directColor8
 
         StatusIcon {
             icon: "checkbox"
@@ -26,19 +30,21 @@ CheckBox {
             anchors.centerIn: parent
             anchors.horizontalCenterOffset: 1
             color: Theme.palette.white
-            visible: statusCheckBox.down || statusCheckBox.checked
+            visible: root.down || root.checked
         }
     }
 
     contentItem: StatusBaseText {
-        text: statusCheckBox.text
-        font.pixelSize: statusCheckBox.font.pixelSize
+        text: root.text
+        font.pixelSize: root.font.pixelSize
         opacity: enabled ? 1.0 : 0.3
         verticalAlignment: Text.AlignVCenter
         wrapMode: Text.WordWrap
         width: parent.width
         color: Theme.palette.directColor1
-        leftPadding: !!statusCheckBox.text ? statusCheckBox.indicator.width + statusCheckBox.spacing
-                                           : statusCheckBox.indicator.width
+        leftPadding: root.leftSide? (!!root.text ? root.indicator.width + root.spacing
+                                 : root.indicator.width) : 0
+        rightPadding: !root.leftSide? (!!root.text ? root.indicator.width + root.spacing
+                                 : root.indicator.width) : 0
     }
 }
