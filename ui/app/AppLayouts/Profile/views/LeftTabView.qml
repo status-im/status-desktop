@@ -22,7 +22,8 @@ Item {
         text: qsTr("Settings")
         anchors.top: parent.top
         anchors.topMargin: Style.current.padding
-        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.left: parent.left
+        anchors.leftMargin: Style.current.bigPadding
     }
 
     StatusScrollView {
@@ -31,9 +32,9 @@ Item {
         anchors.right: parent.right
         anchors.rightMargin: Style.current.smallPadding
         anchors.left: parent.left
-        anchors.leftMargin: Style.current.smallPadding
+        anchors.leftMargin: 0
         anchors.top: title.bottom
-        anchors.topMargin: Style.current.padding
+        anchors.topMargin: Style.current.halfPadding
         anchors.bottom: parent.bottom
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
