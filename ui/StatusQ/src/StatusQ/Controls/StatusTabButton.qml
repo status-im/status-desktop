@@ -34,7 +34,7 @@ TabButton {
 
     contentItem: Item {
         implicitWidth: contentItemGrid.implicitWidth
-        implicitHeight: contentItemGrid.implicitHeight + 11
+        implicitHeight: contentItemGrid.implicitHeight + 15
 
         RowLayout {
             id: contentItemGrid
