@@ -56,8 +56,8 @@ Item {
 
             anchors {
                  fill: parent
-                 leftMargin: Style.current.padding * 2
-                 rightMargin: Style.current.padding * 2
+                 leftMargin: Style.current.bigPadding + Style.current.halfPadding / 2
+                 rightMargin: Style.current.bigPadding + Style.current.halfPadding / 2
                  topMargin: Style.current.bigPadding
                  bottomMargin: Style.current.bigPadding
             }

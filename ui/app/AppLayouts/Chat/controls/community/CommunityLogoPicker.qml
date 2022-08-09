@@ -48,7 +48,7 @@ Item {
 
             imageFileDialogTitle: qsTr("Choose an image as logo")
             title: qsTr("Community logo")
-            acceptButtonText: qsTr("Make this my community logo")
+            acceptButtonText: qsTr("Make this my Community logo")
 
             dataImage: root.imageData
 
