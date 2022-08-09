@@ -17,6 +17,7 @@ type DiscordCategoriesAndChannelsExtractedSignal* = ref object of Signal
   channels*: seq[DiscordChannelDto]
   oldestMessageTimestamp*: int
   errors*: Table[string, DiscordImportError]
+  errorsCount*: int
 
 type DiscordCommunityImportFinishedSignal* = ref object of Signal
   communityId*: string
@@ -37,6 +38,7 @@ proc fromEvent*(T: type DiscordCategoriesAndChannelsExtractedSignal, event: Json
     result.oldestMessageTimestamp = event["event"]{"oldestMessageTimestamp"}.getInt()
 
   result.errors = initTable[string, DiscordImportError]()
+  result.errorsCount = 0
 
   if event["event"]["errors"].kind == JObject:
     for key in event["event"]["errors"].keys:
@@ -45,9 +47,9 @@ proc fromEvent*(T: type DiscordCategoriesAndChannelsExtractedSignal, event: Json
       err.code = responseErr["code"].getInt()
       err.message = responseErr["message"].getStr()
       result.errors[key] = err
+      result.errorsCount = result.errorsCount+1
 
 proc fromEvent*(T: type DiscordCommunityImportFinishedSignal, event: JsonNode): DiscordCommunityImportFinishedSignal =
-  echo "FROM EVENT", event["event"]{"communityId"}.getStr()
   result = DiscordCommunityImportFinishedSignal()
   result.signalType = SignalType.DiscordCommunityImportFinished
   result.communityId = event["event"]{"communityId"}.getStr()

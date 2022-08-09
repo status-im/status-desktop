@@ -112,6 +112,6 @@ method communityMuted*(self: AccessInterface, communityId: string, muted: bool) 
 method requestExtractDiscordChannelsAndCategories*(self: AccessInterface, filesToImport: seq[string]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method discordCategoriesAndChannelsExtracted*(self: AccessInterface, categories: seq[DiscordCategoryDto], channels: seq[DiscordChannelDto], oldestMessageTimestamp: int, errors: Table[string, DiscordImportError]) {.base.} =
+method discordCategoriesAndChannelsExtracted*(self: AccessInterface, categories: seq[DiscordCategoryDto], channels: seq[DiscordChannelDto], oldestMessageTimestamp: int, errors: Table[string, DiscordImportError], errorsCount: int) {.base.} =
   raise newException(ValueError, "No implementation available")
 

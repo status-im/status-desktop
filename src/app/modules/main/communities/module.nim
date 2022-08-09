@@ -233,7 +233,7 @@ method reorderCommunityCategories*(self: Module, communityId: string, categoryId
 method communityMuted*(self: Module, communityId: string, muted: bool) =
   self.view.model().setMuted(communityId, muted)
 
-method discordCategoriesAndChannelsExtracted*(self: Module, categories: seq[DiscordCategoryDto], channels: seq[DiscordChannelDto], oldestMessageTimestamp: int, errors: Table[string, DiscordImportError]) =
+method discordCategoriesAndChannelsExtracted*(self: Module, categories: seq[DiscordCategoryDto], channels: seq[DiscordChannelDto], oldestMessageTimestamp: int, errors: Table[string, DiscordImportError], errorsCount: int) =
 
   for filePath in errors.keys:
     self.view.discordFileListModel().updateErrorState(filePath, errors[filePath].message, errors[filePath].code)
@@ -250,6 +250,7 @@ method discordCategoriesAndChannelsExtracted*(self: Module, categories: seq[Disc
     self.view.discordChannelsModel().addItem(self.getDiscordChannelItem(discordChannel))
 
   self.view.setDiscordDataExtractionInProgress(false)
+  self.view.setDiscordImportErrorsCount(errorsCount)
   self.view.discordChannelsModel().hasSelectedItemsChanged()
 
 method requestToJoinCommunity*(self: Module, communityId: string, ensName: string) =

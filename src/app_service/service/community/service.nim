@@ -78,6 +78,7 @@ type
     channels*: seq[DiscordChannelDto]
     oldestMessageTimestamp*: int
     errors*: Table[string, DiscordImportError]
+    errorsCount*: int
 
 # Signals which may be emitted by this service:
 const SIGNAL_COMMUNITY_JOINED* = "communityJoined"
@@ -190,7 +191,7 @@ QtObject:
     self.events.on(SignalType.DiscordCategoriesAndChannelsExtracted.event) do(e: Args):
       var receivedData = DiscordCategoriesAndChannelsExtractedSignal(e)
       self.events.emit(SIGNAL_DISCORD_CATEGORIES_AND_CHANNELS_EXTRACTED,
-        DiscordCategoriesAndChannelsArgs(categories: receivedData.categories, channels: receivedData.channels, oldestMessageTimestamp: receivedData.oldestMessageTimestamp, errors: receivedData.errors))
+        DiscordCategoriesAndChannelsArgs(categories: receivedData.categories, channels: receivedData.channels, oldestMessageTimestamp: receivedData.oldestMessageTimestamp, errors: receivedData.errors, errorsCount: receivedData.errorsCount))
 
     self.events.on(SignalType.DiscordCommunityImportFinished.event) do(e: Args):
       var receivedData = DiscordCommunityImportFinishedSignal(e)

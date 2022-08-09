@@ -30,6 +30,7 @@ QtObject:
       discordChannelsModel: DiscordChannelsModel
       discordChannelsModelVariant: QVariant
       discordOldestMessageTimestamp: int
+      discordImportErrorsCount: int
       discordDataExtractionInProgress: bool
 
   proc delete*(self: View) =
@@ -63,6 +64,7 @@ QtObject:
     result.discordChannelsModelVariant = newQVariant(result.discordChannelsModel)
     result.discordOldestMessageTimestamp = 0
     result.discordDataExtractionInProgress = false 
+    result.discordImportErrorsCount = 0
     result.observedItem = newActiveSection()
 
   proc load*(self: View) =
@@ -71,6 +73,7 @@ QtObject:
   proc communityAdded*(self: View, communityId: string) {.signal.}
   proc communityChanged*(self: View, communityId: string) {.signal.}
   proc discordOldestMessageTimestampChanged*(self: View) {.signal.}
+  proc discordImportErrorsCountChanged*(self: View) {.signal.}
 
   proc setCommunityTags*(self: View, communityTags: string) =
     self.communityTags = newQVariant(communityTags)
@@ -85,6 +88,17 @@ QtObject:
   QtProperty[int] discordOldestMessageTimestamp:
     read = getDiscordOldestMessageTimestamp
     notify = discordOldestMessageTimestampChanged
+
+  proc setDiscordImportErrorsCount*(self: View, count: int) {.slot.} =
+    self.discordImportErrorsCount = count
+    self.discordImportErrorsCountChanged()
+
+  proc getDiscordImportErrorsCount*(self: View): int {.slot.} =
+    return self.discordImportErrorsCount
+
+  QtProperty[int] discordImportErrorsCount:
+    read = getDiscordImportErrorsCount
+    notify = discordImportErrorsCountChanged
 
   proc addItem*(self: View, item: SectionItem) =
     self.model.addItem(item)

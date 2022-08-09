@@ -64,7 +64,7 @@ proc init*(self: Controller) =
 
   self.events.on(SIGNAL_DISCORD_CATEGORIES_AND_CHANNELS_EXTRACTED) do(e:Args):
     let args = DiscordCategoriesAndChannelsArgs(e)
-    self.delegate.discordCategoriesAndChannelsExtracted(args.categories, args.channels, args.oldestMessageTimestamp, args.errors)
+    self.delegate.discordCategoriesAndChannelsExtracted(args.categories, args.channels, args.oldestMessageTimestamp, args.errors, args.errorsCount)
 
 proc getCommunityTags*(self: Controller): string =
   result = self.communityService.getCommunityTags()
