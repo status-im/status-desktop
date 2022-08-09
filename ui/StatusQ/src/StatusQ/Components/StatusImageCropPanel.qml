@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.14
 
 import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Core.Theme 0.1
 
 /*!
     \qmltype StatusImageCropPanel
@@ -127,6 +128,7 @@ Item {
         id: mainLayout
 
         anchors.fill: parent
+        spacing: 1
 
         Item {
             id: cropSpaceItem
@@ -243,18 +245,20 @@ Item {
 
         RowLayout {
             visible: root.interactive
+            spacing: 10
 
             StatusIcon {
                 icon: "remove-circle"
+                color: Theme.palette.baseColor1
 
                 Layout.alignment: Qt.AlignVCenter
-                Layout.preferredWidth: 20
-                Layout.preferredHeight: 20
+                Layout.preferredWidth: 24
+                Layout.preferredHeight: 24
             }
             StatusSlider {
                 Layout.fillWidth: true
-                Layout.topMargin: 20
-                Layout.bottomMargin: 20
+                Layout.topMargin: 10
+                Layout.bottomMargin: 10
                 Layout.alignment: Qt.AlignVCenter
 
                 enabled: root.interactive
@@ -267,10 +271,11 @@ Item {
             }
             StatusIcon {
                 icon: "add-circle"
+                color: Theme.palette.baseColor1
 
                 Layout.alignment: Qt.AlignVCenter
-                Layout.preferredWidth: 20
-                Layout.preferredHeight: 20
+                Layout.preferredWidth: 24
+                Layout.preferredHeight: 24
             }
         }
     }

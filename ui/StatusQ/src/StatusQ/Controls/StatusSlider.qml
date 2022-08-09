@@ -25,7 +25,7 @@ Slider {
     implicitHeight: Math.max(handle.implicitHeight,
                              background.implicitHeight + decorationContainer.height)
 
-    leftPadding: 0
+    horizontalPadding: 0
 
     background: Rectangle {
         id: bgRect
@@ -55,7 +55,7 @@ Slider {
     } // background
 
     handle: Rectangle {
-        x: root.leftPadding + root.visualPosition * (root.availableWidth - width / 2)
+        x: root.leftPadding + root.visualPosition * (root.availableWidth - width)
         anchors.verticalCenter: bgRect.verticalCenter
         color: root.handleColor
         implicitWidth: root.handleSize
