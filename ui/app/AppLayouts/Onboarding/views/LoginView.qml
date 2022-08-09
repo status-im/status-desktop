@@ -175,7 +175,7 @@ Item {
             id: title
             Layout.alignment: Qt.AlignHCenter
             font.weight: Font.Bold
-            font.pixelSize: Constants.keycard.general.fontSize1
+            font.pixelSize: Constants.onboarding.titleFontSize
             color: Theme.palette.directColor1
         }
 
@@ -184,6 +184,7 @@ Item {
             height: userImage.height
             width: 318
             Layout.alignment: Qt.AlignHCenter
+            Layout.topMargin: Style.current.xlPadding
 
             UserImage {
                 id: userImage
@@ -192,6 +193,8 @@ Item {
                 colorId: root.startupStore.selectedLoginAccount.colorId
                 colorHash: root.startupStore.selectedLoginAccount.colorHash
                 anchors.left: parent.left
+                imageHeight: Constants.onboarding.userImageHeight
+                imageWidth: Constants.onboarding.userImageWidth
             }
 
             StatusBaseText {
@@ -228,6 +231,7 @@ Item {
                 id: changeAccountBtn
                 objectName: "loginChangeAccountButton"
                 icon.name: "chevron-down"
+                icon.rotation: accountsPopup.opened ? 180 : 0
                 type: StatusFlatRoundButton.Type.Tertiary
                 width: 24
                 height: 24
@@ -238,7 +242,10 @@ Item {
                     if (accountsPopup.opened) {
                         accountsPopup.close()
                     } else {
-                        accountsPopup.popup(userInfo, 0, userInfo.height+4)
+                        accountsPopup.popup(
+                                    userInfo,
+                                    (userInfo.width - accountsPopup.width) / 2,
+                                    userInfo.height + Style.current.halfPadding)
                     }
                 }
             }
@@ -246,7 +253,7 @@ Item {
             StatusPopupMenu {
                 id: accountsPopup
                 closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
-                width: parent.width
+                width: parent.width + Style.current.bigPadding
                 dim: false
                 Repeater {
                     id: accounts
