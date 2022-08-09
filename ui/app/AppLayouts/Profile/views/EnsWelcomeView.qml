@@ -279,6 +279,7 @@ Item {
 
     StatusButton {
         id: startBtn
+        objectName: "ensStartButton"
         anchors.bottom: parent.bottom
         anchors.bottomMargin: Style.current.padding
         anchors.horizontalCenter: parent.horizontalCenter

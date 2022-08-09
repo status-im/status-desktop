@@ -139,6 +139,9 @@ ModalPopup {
                 selectedAsset: root.asset
                 selectedAmount: 0
                 selectedGasEthValue: gasSelector.selectedGasEthValue
+                selectedNetwork: {
+                    return {chainId: root.chainId}
+                }
             }
         }
         TransactionFormGroup {

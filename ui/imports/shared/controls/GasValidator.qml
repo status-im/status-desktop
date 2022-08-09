@@ -40,7 +40,7 @@ Column {
         if (selectedAsset && selectedAsset.symbol && selectedAsset.symbol.toUpperCase() === "ETH") {
             gasTotal += selectedAmount
         }
-        const chainId = (selectedNetwork && selectedNetwork.chainId) || Global.currentChainId
+        const chainId = selectedNetwork && selectedNetwork.chainId
 
         const currAcctGasAsset = Utils.findAssetByChainAndSymbol(chainId, selectedAccount.assets, "ETH")
         if (currAcctGasAsset && currAcctGasAsset.totalBalance > gasTotal) {

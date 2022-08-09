@@ -41,6 +41,10 @@ def step(context: any):
 def step(context: any, account_name: str,  account_color: str):
     _settingsScreen.edit_account(account_name, account_color)
 
+@When("the user registers a random ens name with password |any|")
+def step(context, password):
+    _statusMain.open_settings()
+    _settingsScreen.register_random_ens_name(password)
     
 @When("the user clicks on Language & Currency")
 def step(context):

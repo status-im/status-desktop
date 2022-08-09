@@ -9,6 +9,7 @@
 # *****************************************************************************/
 
 
+import time
 from enum import Enum
 from drivers.SquishDriver import *
 from drivers.SquishDriverVerification import *
@@ -55,6 +56,7 @@ class StatusMainScreen:
     
     def open_settings(self):
         click_obj_by_name(MainScreenComponents.SETTINGS_BUTTON.value)
+        time.sleep(0.5)
         
     def open_start_chat_view(self):
         click_obj_by_name(MainScreenComponents.START_CHAT_BTN.value)

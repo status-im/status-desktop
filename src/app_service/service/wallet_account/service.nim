@@ -1,4 +1,4 @@
-import NimQml, Tables, json, sequtils, sugar, chronicles, strformat, stint, httpclient, net, strutils, os, times
+import NimQml, Tables, json, sequtils, sugar, chronicles, strformat, stint, httpclient, net, strutils, os, times, algorithm
 import web3/[ethtypes, conversions]
 
 import ../settings/service as settings_service
@@ -37,6 +37,15 @@ const SIGNAL_WALLET_ACCOUNT_TOKENS_REBUILT* = "walletAccount/tokensRebuilt"
 
 var
   balanceCache {.threadvar.}: Table[string, float64]
+
+proc priorityTokenCmp(a, b: WalletTokenDto): int =
+  for symbol in @["ETH", "SNT", "DAI", "STT"]:
+    if a.symbol == symbol:
+      return -1
+    if b.symbol == symbol:
+      return 1
+  
+  cmp(a.name, b.name)
 
 proc hex2Balance*(input: string, decimals: int): string =
   var value = fromHex(Stuint[256], input)
@@ -399,6 +408,8 @@ QtObject:
       var tokens: seq[WalletTokenDto]
       if(responseObj.getProp(wAddress, tokensArr)):
         tokens = map(tokensArr.getElems(), proc(x: JsonNode): WalletTokenDto = x.toWalletTokenDto())
+        
+      tokens.sort(priorityTokenCmp)
       self.walletAccounts[wAddress].tokens = tokens
       data.accountsTokens[wAddress] = tokens
 

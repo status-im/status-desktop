@@ -45,7 +45,7 @@ Item {
 
     StatusComboBox {
         id: comboBox
-
+        objectName: "assetSelectorButton"
         width: parent.width
         height: parent.height
 
@@ -53,6 +53,8 @@ Item {
         control.popup.width: 342
         control.popup.height: 416
         control.popup.x: width - control.popup.width
+        
+        popupContentItemObjectName: "assetSelectorList"
 
         model: root.assets
 
@@ -95,7 +97,7 @@ Item {
             width: comboBox.control.popup.width
             highlighted: index === comboBox.control.highlightedIndex
             padding: 16
-
+            objectName: symbol
             onClicked: {
                 // TODO: move this out of StatusQ, this involves dependency on BE code
                 // WARNING: Wrong ComboBox value processing. Check `StatusAccountSelector` for more info.

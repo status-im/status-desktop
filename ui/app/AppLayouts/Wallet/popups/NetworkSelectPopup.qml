@@ -58,7 +58,7 @@ Popup {
 
             Repeater {
                 id: chainRepeater1
-                objectName: "chainRepeaterLayer1"
+                objectName: "networkSelectPopupChainRepeaterLayer1"
                 model: popup.layer1Networks
 
                 delegate: chainItem

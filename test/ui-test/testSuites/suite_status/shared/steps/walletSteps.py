@@ -46,7 +46,7 @@ def step(context, name):
 @When("the user toggles the network |any|")    
 def step(context, network_name):
     _walletScreen.toggle_network(network_name)
-    
+
 @Then("the user has a positive balance of |any|")
 def step(context, symbol):
     _walletScreen.verify_positive_balance(symbol)
