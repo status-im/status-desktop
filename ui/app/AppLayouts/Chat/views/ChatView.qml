@@ -11,6 +11,7 @@ import shared.views.chat 1.0
 
 import StatusQ.Layout 0.1
 import StatusQ.Popups 0.1
+import StatusQ.Controls 0.1
 
 import "."
 import "../panels"
@@ -20,7 +21,7 @@ import "../helpers"
 import "../controls"
 import "../stores"
 
-StatusAppThreePanelLayout {
+StatusSectionLayout {
     id: root
 
     property var contactsStore
@@ -57,6 +58,18 @@ StatusAppThreePanelLayout {
         }
     }
 
+    notificationButton.tooltip.offset: localAccountSensitiveSettings.expandUsersList && headerContent.membersButton.visible ? 0 : 14
+    notificationButton.highlighted: activityCenter.visible
+    onNotificationButtonClicked: Global.openActivityCenterPopup()
+    notificationCount: root.rootStore.unreadNotificationsCount
+
+    headerContent: ChatHeaderContentView {
+        id: headerContent
+        visible: !!root.rootStore.currentChatContentModule()
+        rootStore: root.rootStore
+        onSearchButtonClicked: root.openAppSearch()
+    }
+
     leftPanel: Loader {
         id: contactColumnLoader
         sourceComponent: root.rootStore.chatCommunitySectionModule.isCommunity()?
@@ -66,6 +79,7 @@ StatusAppThreePanelLayout {
 
     centerPanel: ChatColumnView {
         id: chatColumn
+        anchors.fill: parent
         parentModule: root.rootStore.chatCommunitySectionModule
         rootStore: root.rootStore
         contactsStore: root.contactsStore
@@ -82,8 +96,8 @@ StatusAppThreePanelLayout {
 
     showRightPanel: {
         if (root.rootStore.openCreateChat ||
-                !localAccountSensitiveSettings.showOnlineUsers ||
-                !localAccountSensitiveSettings.expandUsersList) {
+           !localAccountSensitiveSettings.showOnlineUsers ||
+           !localAccountSensitiveSettings.expandUsersList) {
             return false
         }
 
@@ -98,9 +112,7 @@ StatusAppThreePanelLayout {
         return chatContentModule.chatDetails.isUsersListAvailable
     }
 
-    rightPanel: userListComponent
-
-    Component {
+    rightPanel: Component {
         id: userListComponent
         UserListPanel {
             rootStore: root.rootStore
@@ -202,5 +214,18 @@ StatusAppThreePanelLayout {
 
     Component.onCompleted: {
         rootStore.groupInfoPopupComponent = groupInfoPopupComponent;
+    }
+
+    ActivityCenterPopup {
+        id: activityCenter
+        y: 56
+        height: (root.height - 56) * 2 // TODO get screen size // Taken from old code top bar height was fixed there to 56
+        store: root.rootStore
+        chatSectionModule: root.rootStore.currentChatContentModule()
+        messageContextMenu: MessageContextMenuView {
+            id: contextmenu
+            store: root.rootStore
+            reactionModel: root.rootStore.emojiReactionsModel
+        }
     }
 }

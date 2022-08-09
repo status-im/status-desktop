@@ -10,8 +10,8 @@ import "../stores"
 
 Rectangle {
     id: root
-    visible: !RootStore.mnemonicBackedUp
     height: visible ? 32 : 0
+    visible: !RootStore.mnemonicBackedUp
     color: Style.current.red
 
     Row {
@@ -61,8 +61,7 @@ Rectangle {
 
     SVGImage {
         id: closeImg
-        anchors.top: parent.top
-        anchors.topMargin: 6
+        anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right
         anchors.rightMargin: 18
         source: Style.svg("close-white")

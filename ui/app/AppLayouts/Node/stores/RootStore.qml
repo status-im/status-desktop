@@ -5,6 +5,7 @@ import utils 1.0
 QtObject {
     id: root
 
+    property int unreadNotificationsCount: activityCenterList.unreadCount
     property var nodeModelInst: nodeModel
 //    property var profileModelInst: profileModel
 

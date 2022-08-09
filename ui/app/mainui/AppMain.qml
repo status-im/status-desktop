@@ -227,13 +227,12 @@ Item {
         height: 440
     }
 
-    StatusAppLayout {
+    StatusMainLayout {
         id: appLayout
 
         anchors.fill: parent
 
-        appNavBar: StatusAppNavBar {
-            height: parent.height
+        leftPanel: StatusAppNavBar {
             communityTypeRole: "sectionType"
             communityTypeValue: Constants.appSection.community
             sectionModel: mainModule.sectionsModel
@@ -396,9 +395,8 @@ Item {
             }
         }
 
-        appView: ColumnLayout {
-            anchors.fill: parent
-
+        rightPanel: ColumnLayout {
+            spacing: 0
             ModuleWarning {
                 id: versionWarning
                 width: parent.width
@@ -452,7 +450,6 @@ Item {
 
                 StackLayout {
                     id: appView
-
                     anchors.fill: parent
 
                     currentIndex: {
@@ -520,7 +517,6 @@ Item {
                     ChatLayout {
                         id: chatLayoutContainer
                         Layout.fillWidth: true
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
                         Layout.fillHeight: true
 
                         chatView.pinnedMessagesListPopupComponent: pinnedMessagesPopupComponent
@@ -554,7 +550,6 @@ Item {
                     CommunitiesPortalLayout {
                         id: communitiesPortalLayoutContainer
                         Layout.fillWidth: true
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
                         Layout.fillHeight: true
                         contentPrefferedWidth: appView.width
                     }
@@ -562,7 +557,6 @@ Item {
                     WalletLayout {
                         id: walletLayoutContainer
                         Layout.fillWidth: true
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
                         Layout.fillHeight: true
                         store: appMain.rootStore
                         contactsStore: appMain.rootStore.profileSectionStore.contactsStore
@@ -583,7 +577,6 @@ Item {
                         sourceComponent: browserLayoutComponent
                         active: false
                         Layout.fillWidth: true
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
                         Layout.fillHeight: true
                         // Loaders do not have access to the context, so props need to be set
                         // Adding a "_" to avoid a binding loop
@@ -599,7 +592,6 @@ Item {
                     ProfileLayout {
                         id: profileLayoutContainer
                         Layout.fillWidth: true
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
                         Layout.fillHeight: true
 
                         store: appMain.rootStore.profileSectionStore
@@ -611,7 +603,6 @@ Item {
                     NodeLayout {
                         id: nodeLayoutContainer
                         Layout.fillWidth: true
-                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
                         Layout.fillHeight: true
                     }
 

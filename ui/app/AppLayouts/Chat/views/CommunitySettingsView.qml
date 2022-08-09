@@ -20,14 +20,16 @@ import "../panels/communities"
 import "../popups/community"
 import "../layouts"
 
-StatusAppTwoPanelLayout {
+StatusSectionLayout {
     id: root
 
+    notificationCount: root.rootStore.unreadNotificationsCount
+    onNotificationButtonClicked: Global.openActivityCenterPopup()
     // TODO: get this model from backend?
     property var settingsMenuModel: root.rootStore.communityPermissionsEnabled ? [{name: qsTr("Overview"), icon: "help"},
                                                                                  {name: qsTr("Members"), icon: "group-chat"},
                                                                                  {name: qsTr("Permissions"), icon: "objects"}] :
-                                                                                 [{name: qsTr("Overview"), icon: "help"},
+                                                                                   [{name: qsTr("Overview"), icon: "help"},
                                                                                  {name: qsTr("Members"), icon: "group-chat"}]
     // TODO: Next community settings options:
     //                        {name: qsTr("Tokens"), icon: "token"},
@@ -122,9 +124,14 @@ StatusAppTwoPanelLayout {
         }
     }
 
-    rightPanel: Loader {
+    centerPanel: Loader {
         anchors.fill: parent
-        anchors.margins: 32
+        //anchors.margins: 32
+        anchors {
+            leftMargin: 28
+            rightMargin: 16
+            bottomMargin: 16
+        }
         active: root.community
         sourceComponent: StackLayout {
             currentIndex: d.currentIndex

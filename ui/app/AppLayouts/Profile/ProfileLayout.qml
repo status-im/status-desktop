@@ -13,14 +13,16 @@ import "views"
 import StatusQ.Layout 0.1
 import StatusQ.Controls 0.1
 
-StatusAppTwoPanelLayout {
-    id: profileView
+StatusSectionLayout {
+    id: root
 
     property ProfileSectionStore store
     property var globalStore
     property var systemPalette
     property var emojiPopup
 
+    notificationCount: root.store.unreadNotificationsCount
+    onNotificationButtonClicked: Global.openActivityCenterPopup()
     Component.onCompleted: {
         Global.privacyModuleInst = store.privacyStore.privacyModule
     }
@@ -38,7 +40,7 @@ StatusAppTwoPanelLayout {
 
     leftPanel: LeftTabView {
         id: leftTab
-        store: profileView.store
+        store: root.store
         anchors.fill: parent
         anchors.topMargin: d.topMargin
         onMenuItemClicked: {
@@ -49,16 +51,42 @@ StatusAppTwoPanelLayout {
         }
     }
 
-    rightPanel: Item {
+    centerPanel: Item {
         anchors.fill: parent
+        ModuleWarning {
+            id: secureYourSeedPhrase
+            width: parent.width
+            visible: {
+              if (profileContainer.currentIndex !== Constants.settingsSubsection.profile) {
+                return false
+              }
+              if (root.store.profileStore.userDeclinedBackupBanner) {
+                return false
+              }
+              return !root.store.profileStore.privacyStore.mnemonicBackedUp
+            }
+            color: Style.current.red
+            btnWidth: 100
+            text: qsTr("Secure your seed phrase")
+            btnText: qsTr("Back up now")
+
+            onClick: function(){
+                Global.openBackUpSeedPopup();
+            }
+
+            onClosed: {
+                root.store.profileStore.userDeclinedBackupBanner = true
+            }
+        }
 
         StatusBanner {
             id: banner
             anchors.top: parent.top
             anchors.left: parent.left
             anchors.right: parent.right
+            height: visible ? childrenRect.height : 0
             visible: profileContainer.currentIndex === Constants.settingsSubsection.wallet &&
-                     profileView.store.walletStore.areTestNetworksEnabled
+                     root.store.walletStore.areTestNetworksEnabled
             type: StatusBanner.Type.Danger
             statusText: qsTr("Testnet mode is enabled. All balances, transactions and dApp interactions will be on testnets.")
         }
@@ -72,7 +100,6 @@ StatusAppTwoPanelLayout {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
-            anchors.topMargin: d.topMargin
             anchors.bottomMargin: d.bottomMargin
             anchors.leftMargin: d.leftMargin
             anchors.rightMargin: d.rightMargin
@@ -89,20 +116,20 @@ StatusAppTwoPanelLayout {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
 
-                walletStore: profileView.store.walletStore
-                profileStore: profileView.store.profileStore
-                privacyStore: profileView.store.privacyStore
-                sectionTitle: profileView.store.getNameForSubsection(Constants.settingsSubsection.profile)
+                walletStore: root.store.walletStore
+                profileStore: root.store.profileStore
+                privacyStore: root.store.privacyStore
+                sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.profile)
                 contentWidth: d.contentWidth
             }
 
             ContactsView {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
-                contactsStore: profileView.store.contactsStore
+                contactsStore: root.store.contactsStore
                 sectionTitle: qsTr("Contacts")
                 contentWidth: d.contentWidth
-                backButtonName: profileView.store.getNameForSubsection(Constants.settingsSubsection.messaging)
+                backButtonName: root.store.getNameForSubsection(Constants.settingsSubsection.messaging)
 
                 onBackButtonClicked: {
                     Global.changeAppSectionBySectionType(Constants.appSection.profile, Constants.settingsSubsection.messaging)
@@ -117,9 +144,9 @@ StatusAppTwoPanelLayout {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
 
-                ensUsernamesStore: profileView.store.ensUsernamesStore
-                contactsStore: profileView.store.contactsStore
-                stickersStore: profileView.store.stickersStore
+                ensUsernamesStore: root.store.ensUsernamesStore
+                contactsStore: root.store.contactsStore
+                stickersStore: root.store.stickersStore
 
                 profileContentWidth: d.contentWidth
             }
@@ -127,11 +154,10 @@ StatusAppTwoPanelLayout {
             MessagingView {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
-
-                messagingStore: profileView.store.messagingStore
-                advancedStore: profileView.store.advancedStore
-                sectionTitle: profileView.store.getNameForSubsection(Constants.settingsSubsection.messaging)
-                contactsStore: profileView.store.contactsStore
+                advancedStore: root.store.advancedStore
+                messagingStore: root.store.messagingStore
+                sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.messaging)
+                contactsStore: root.store.contactsStore
                 contentWidth: d.contentWidth
             }
 
@@ -139,9 +165,9 @@ StatusAppTwoPanelLayout {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
 
-                walletStore: profileView.store.walletStore
-                emojiPopup: profileView.emojiPopup
-                sectionTitle: profileView.store.getNameForSubsection(Constants.settingsSubsection.wallet)
+                walletStore: root.store.walletStore
+                emojiPopup: root.emojiPopup
+                sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.wallet)
                 contentWidth: d.contentWidth
             }
 
@@ -149,19 +175,19 @@ StatusAppTwoPanelLayout {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
 
-                appearanceStore: profileView.store.appearanceStore
-                sectionTitle: profileView.store.getNameForSubsection(Constants.settingsSubsection.appearance)
+                appearanceStore: root.store.appearanceStore
+                sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.appearance)
                 contentWidth: d.contentWidth
-                systemPalette: profileView.systemPalette
+                systemPalette: root.systemPalette
             }
 
             LanguageView {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
 
-                languageStore: profileView.store.languageStore
-                currencyStore: profileView.store.walletStore.currencyStore
-                sectionTitle: profileView.store.getNameForSubsection(Constants.settingsSubsection.language)
+                languageStore: root.store.languageStore
+                currencyStore: root.store.walletStore.currencyStore
+                sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.language)
                 contentWidth: d.contentWidth
             }
 
@@ -169,9 +195,9 @@ StatusAppTwoPanelLayout {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
 
-                notificationsStore: profileView.store.notificationsStore
-                devicesStore: profileView.store.devicesStore
-                sectionTitle: profileView.store.getNameForSubsection(Constants.settingsSubsection.notifications)
+                notificationsStore: root.store.notificationsStore
+                devicesStore: root.store.devicesStore
+                sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.notifications)
                 contentWidth: d.contentWidth
             }
 
@@ -179,8 +205,8 @@ StatusAppTwoPanelLayout {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
 
-                devicesStore: profileView.store.devicesStore
-                sectionTitle: profileView.store.getNameForSubsection(Constants.settingsSubsection.devicesSettings)
+                devicesStore: root.store.devicesStore
+                sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.devicesSettings)
                 contentWidth: d.contentWidth
             }
 
@@ -188,8 +214,8 @@ StatusAppTwoPanelLayout {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
 
-                store: profileView.store
-                sectionTitle: profileView.store.getNameForSubsection(Constants.settingsSubsection.browserSettings)
+                store: root.store
+                sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.browserSettings)
                 contentWidth: d.contentWidth
             }
 
@@ -197,8 +223,8 @@ StatusAppTwoPanelLayout {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
 
-                advancedStore: profileView.store.advancedStore
-                sectionTitle: profileView.store.getNameForSubsection(Constants.settingsSubsection.advanced)
+                advancedStore: root.store.advancedStore
+                sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.advanced)
                 contentWidth: d.contentWidth
             }
 
@@ -206,9 +232,9 @@ StatusAppTwoPanelLayout {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
 
-                store: profileView.store
-                globalStore: profileView.globalStore
-                sectionTitle: profileView.store.getNameForSubsection(Constants.settingsSubsection.about)
+                store: root.store
+                globalStore: root.globalStore
+                sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.about)
                 contentWidth: d.contentWidth
             }
 
@@ -216,10 +242,10 @@ StatusAppTwoPanelLayout {
                 implicitWidth: parent.width
                 implicitHeight: parent.height
 
-                profileSectionStore: profileView.store
-                rootStore: profileView.globalStore
-                contactStore: profileView.store.contactsStore
-                sectionTitle: profileView.store.getNameForSubsection(Constants.settingsSubsection.communitiesSettings)
+                profileSectionStore: root.store
+                rootStore: root.globalStore
+                contactStore: root.store.contactsStore
+                sectionTitle: root.store.getNameForSubsection(Constants.settingsSubsection.communitiesSettings)
                 contentWidth: d.contentWidth
             }
 
@@ -233,30 +259,5 @@ StatusAppTwoPanelLayout {
             }
         }
     } // Item
-    ModuleWarning {
-        id: secureYourSeedPhrase
-        width: parent.width
-        visible: {
-          if (profileContainer.currentIndex !== Constants.settingsSubsection.profile) {
-            return false
-          }
-          if (profileView.store.profileStore.userDeclinedBackupBanner) {
-            return false
-          }
-          return !profileView.store.profileStore.privacyStore.mnemonicBackedUp
-        }
-        color: Style.current.red
-        btnWidth: 100
-        text: qsTr("Secure your seed phrase")
-        btnText: qsTr("Back up now")
 
-        onClick: function(){
-            Global.openBackUpSeedPopup();
-        }
-
-        onClosed: {
-            profileView.store.profileStore.userDeclinedBackupBanner = true
-        }
-
-    }
 } // StatusAppTwoPanelLayout
