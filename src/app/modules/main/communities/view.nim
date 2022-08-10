@@ -150,7 +150,7 @@ QtObject:
 
   QtProperty[int] discordImportProgressStopped:
     read = getDiscordImportProgressStopped
-    notify = discordImportImportProgressStoppedChanged
+    notify = discordImportProgressStoppedChanged
 
   proc addItem*(self: View, item: SectionItem) =
     self.model.addItem(item)
