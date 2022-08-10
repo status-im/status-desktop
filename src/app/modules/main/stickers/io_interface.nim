@@ -49,9 +49,6 @@ method installStickerPack*(self: AccessInterface, packId: string) {.base.} =
 method uninstallStickerPack*(self: AccessInterface, packId: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method decodeContentHash*(self: AccessInterface, hash: string): string {.base.} =
-  raise newException(ValueError, "No implementation available")
-
 method wei2Eth*(self: AccessInterface, price: Stuint[256]): string {.base.} =
   raise newException(ValueError, "No implementation available")
 

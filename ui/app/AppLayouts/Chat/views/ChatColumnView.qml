@@ -118,11 +118,13 @@ Item {
             Global.openPopup(cmpReceiveTransaction);
         }
         else if (root.rootStore.createChatStickerHashId !== "" &&
-                 root.rootStore.createChatStickerPackId !== "") {
+                 root.rootStore.createChatStickerPackId !== "" &&
+                 root.rootStore.createChatStickerUrl !== "") {
             root.rootStore.sendSticker(chatId,
                                        root.rootStore.createChatStickerHashId,
                                        "",
-                                       root.rootStore.createChatStickerPackId);
+                                       root.rootStore.createChatStickerPackId,
+                                       root.rootStore.createChatStickerUrl);
         }
         else if (root.rootStore.createChatInitMessage !== "" ||
                  root.rootStore.createChatFileUrls.length > 0) {

@@ -123,8 +123,8 @@ QtObject:
     self.stickerPacksLoaded()
     self.installedStickerPacksUpdated()
 
-  proc send*(self: View, channelId: string, hash: string, replyTo: string, pack: string) {.slot.} =
-    let sticker = initItem(hash, pack, eth_utils.decodeContentHash(hash))
+  proc send*(self: View, channelId: string, hash: string, replyTo: string, pack: string, url: string) {.slot.} =
+    let sticker = initItem(hash, pack, url)
     self.addRecentStickerToList(sticker)
     self.delegate.sendSticker(channelId, replyTo, sticker)
 

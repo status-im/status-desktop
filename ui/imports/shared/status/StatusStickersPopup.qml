@@ -17,7 +17,7 @@ Popup {
     property var store
     property var recentStickers: StickerData {}
     property var stickerPackList: StickerPackData {}
-    signal stickerSelected(string hashId, string packId)
+    signal stickerSelected(string hashId, string packId, string url)
     property int installedPacksCount: stickersModule.numInstalledStickerPacks
     property bool stickerPacksLoaded: false
     width: 360
@@ -172,7 +172,7 @@ Popup {
                 model: recentStickers
                 packId: stickerPackListView.selectedPackId
                 onStickerClicked: {
-                    root.stickerSelected(hash, packId)
+                    root.stickerSelected(hash, packId, url)
                     root.close()
                 }
             }

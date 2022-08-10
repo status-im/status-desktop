@@ -88,7 +88,7 @@ proc createMessageItemFromDto(self: Module, message: MessageDto, chatDetails: Ch
     message.timestamp,
     ContentType(message.contentType),
     message.messageType,
-    self.controller.decodeContentHash(message.sticker.hash),
+    message.sticker.url,
     message.sticker.pack,
     message.links,
     newTransactionParametersItem("","","","","","",-1,""),

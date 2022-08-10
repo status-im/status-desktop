@@ -73,9 +73,6 @@ method uninstallStickerPack*(self: Module, packId: string) =
 method removeRecentStickers*(self: Module, packId: string) =
   self.controller.removeRecentStickers(packId)
 
-method decodeContentHash*(self: Module, hash: string): string =
-  self.controller.decodeContentHash(hash)
-
 method wei2Eth*(self: Module, price: Stuint[256]): string =
   self.controller.wei2Eth(price)
 

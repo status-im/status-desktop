@@ -27,7 +27,7 @@ Rectangle {
 
     signal sendTransactionCommandButtonClicked()
     signal receiveTransactionCommandButtonClicked()
-    signal stickerSelected(string hashId, string packId)
+    signal stickerSelected(string hashId, string packId, string url)
     signal sendMessage(var event)
     signal unblockChat()
 
@@ -815,7 +815,7 @@ Rectangle {
         recentStickers: control.recentStickers
         stickerPackList: control.stickerPackList
         onStickerSelected: {
-            control.stickerSelected(hashId, packId)
+            control.stickerSelected(hashId, packId, url)
             control.hideExtendedArea();
             messageInputField.forceActiveFocus();
         }

@@ -516,7 +516,8 @@ ColumnLayout {
                     root.rootStore.sendSticker(chatContentModule.getMyChatId(),
                                                           hashId,
                                                           chatInput.isReply ? chatInput.replyMessageId : "",
-                                                          packId)
+                                                          packId,
+                                                          url)
                 }
 
 

@@ -102,9 +102,6 @@ proc dismissActivityCenterNotifications*(self: Controller, notificationIds: seq[
 proc getRenderedText*(self: Controller, parsedTextArray: seq[ParsedText]): string =
   return self.messageService.getRenderedText(parsedTextArray)
 
-proc decodeContentHash*(self: Controller, hash: string): string =
-  return eth_utils.decodeContentHash(hash)
-
 proc switchTo*(self: Controller, sectionId, chatId, messageId: string) =
   let data = ActiveSectionChatArgs(sectionId: sectionId, chatId: chatId, messageId: messageId)
   self.events.emit(SIGNAL_MAKE_SECTION_CHAT_ACTIVE, data)

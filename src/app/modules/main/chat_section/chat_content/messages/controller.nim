@@ -227,9 +227,6 @@ proc getMessageDetails*(self: Controller, messageId: string):
 proc deleteMessage*(self: Controller, messageId: string) =
   self.messageService.deleteMessage(messageId)
 
-proc decodeContentHash*(self: Controller, hash: string): string =
-  return eth_utils.decodeContentHash(hash)
-
 proc editMessage*(self: Controller, messageId: string, updatedMsg: string) =
   self.messageService.editMessage(messageId, updatedMsg)
 

@@ -167,6 +167,7 @@ Page {
             onStickerSelected: {
                 root.rootStore.createChatStickerHashId = hashId;
                 root.rootStore.createChatStickerPackId = packId;
+                root.rootStore.createChatStickerUrl = url;
                 root.createChat();
             }
 

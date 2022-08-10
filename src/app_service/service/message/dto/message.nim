@@ -30,6 +30,7 @@ type QuotedMessage* = object
 
 type Sticker* = object
   hash*: string
+  url*: string
   pack*: int
 
 type GapParameters* = object
@@ -100,6 +101,7 @@ proc toSticker*(jsonObj: JsonNode): Sticker =
   result = Sticker()
   discard jsonObj.getProp("hash", result.hash)
   discard jsonObj.getProp("pack", result.pack)
+  discard jsonObj.getProp("url", result.url)
 
 proc toGapParameters*(jsonObj: JsonNode): GapParameters =
   result = GapParameters()

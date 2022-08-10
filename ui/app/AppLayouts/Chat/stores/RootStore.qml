@@ -17,6 +17,7 @@ QtObject {
     property bool createChatStartReceiveTransactionProcess: false
     property string createChatStickerHashId: ""
     property string createChatStickerPackId: ""
+    property string createChatStickerUrl: ""
 
     property var groupInfoPopupComponent
     property var membershipRequestPopup
@@ -175,8 +176,8 @@ QtObject {
         }
     }
 
-    function sendSticker(channelId, hash, replyTo, pack) {
-        stickersModuleInst.send(channelId, hash, replyTo, pack)
+    function sendSticker(channelId, hash, replyTo, pack, url) {
+        stickersModuleInst.send(channelId, hash, replyTo, pack, url)
     }
 
     function copyToClipboard(text) {

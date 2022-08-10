@@ -19,7 +19,7 @@ StatusGridView {
     cellHeight: 88
     model: stickerList
     focus: true
-    signal stickerClicked(string hash, int packId)
+    signal stickerClicked(string hash, int packId, string url)
     delegate: Item {
         width: root.cellWidth
         height: root.cellHeight
@@ -32,7 +32,7 @@ StatusGridView {
                 height: 80
                 source: url
                 onClicked: {
-                    root.stickerClicked(hash, packId)
+                    root.stickerClicked(hash, packId, url)
                 }
             }
         }

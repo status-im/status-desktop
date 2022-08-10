@@ -235,9 +235,6 @@ proc getCurrentFleet*(self: Controller): string =
 proc getRenderedText*(self: Controller, parsedTextArray: seq[ParsedText]): string =
   return self.messageService.getRenderedText(parsedTextArray)
 
-proc decodeContentHash*(self: Controller, hash: string): string =
-  return eth_utils.decodeContentHash(hash)
-
 proc getTransactionDetails*(self: Controller, message: MessageDto): (string,string) =
   return self.messageService.getTransactionDetails(message)
 

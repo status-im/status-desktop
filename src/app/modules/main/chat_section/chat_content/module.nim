@@ -180,7 +180,7 @@ proc buildPinnedMessageItem(self: Module, messageId: string, actionInitiatedBy: 
     m.timestamp,
     m.contentType.ContentType,
     m.messageType,
-    self.controller.decodeContentHash(m.sticker.hash),
+    m.sticker.url,
     m.sticker.pack,
     m.links,
     newTransactionParametersItem(m.transactionParameters.id,

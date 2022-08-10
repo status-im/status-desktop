@@ -124,9 +124,6 @@ proc sendSticker*(
     preferredUsername: string) =
   self.stickerService.sendSticker(channelId, replyTo, sticker, preferredUsername)
 
-proc decodeContentHash*(self: Controller, hash: string): string =
-  eth_utils.decodeContentHash(hash)
-
 proc wei2Eth*(self: Controller, price: Stuint[256]): string =
   eth_utils.wei2Eth(price)
 
