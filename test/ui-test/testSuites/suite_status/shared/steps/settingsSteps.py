@@ -40,3 +40,11 @@ def step(context: any, address: str):
 def step(context: any, account_name):
     _settingsScreen.verify_no_account(account_name) 
  
+@When("the user clicks on Sign out and Quit")
+def step(context: any):
+    ctx = currentApplicationContext()
+    _settingsScreen.sign_out_and_quit_the_app(ctx.pid)
+    
+@Then("the app is closed")
+def step(context: any):
+    _settingsScreen.verify_the_app_is_closed()

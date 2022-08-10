@@ -21,3 +21,7 @@ generatedAccounts_ListView = {"container": statusDesktop_mainWindow, "objectName
 # Advanced Settings:
 walletSettingsLineButton = {"container": statusDesktop_mainWindow, "objectName": "WalletSettingsLineButton", "type": "StatusSettingsLineButton", "visible": True}
 i_understand_StatusBaseText = {"container": statusDesktop_mainWindow_overlay, "text": "I understand", "type": "StatusBaseText", "unnamed": 1, "visible": True}
+
+# Extra Settings:
+sign_out_Quit_ExtraMenu_StatusNavigationListItem = {"container": mainWindow_ScrollView, "objectName": "Sign out & Quit-ExtraMenu", "type": "StatusNavigationListItem", "visible": True}
+signOutConfirmation_StatusButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "signOutConfirmation", "type": "StatusButton", "visible": True}

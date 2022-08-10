@@ -100,6 +100,7 @@ Column {
     Repeater {
         id: extraMenuItems
         delegate: StatusNavigationListItem {
+            objectName:  model.text + "-ExtraMenu"
             itemId: model.subsection
             title: model.text
             icon.name: model.icon
