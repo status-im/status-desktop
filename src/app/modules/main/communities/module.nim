@@ -237,6 +237,18 @@ method createCommunity*(self: Module, name: string,
   self.controller.createCommunity(name, description, introMessage, outroMessage, access, color, tags,
                                   imagePath, aX, aY, bX, bY, historyArchiveSupportEnabled, pinMessageAllMembersEnabled)
 
+method importDiscordCommunity*(self: Module, name: string,
+                        description, introMessage: string, outroMessage: string,
+                        access: int, color: string, tags: string,
+                        imagePath: string,
+                        aX: int, aY: int, bX: int, bY: int,
+                        historyArchiveSupportEnabled: bool,
+                        pinMessageAllMembersEnabled: bool,
+                        filesToImport: seq[string],
+                        fromTimestamp: int) =
+  self.controller.importDiscordCommunity(name, description, introMessage, outroMessage, access, color, tags,
+                                  imagePath, aX, aY, bX, bY, historyArchiveSupportEnabled, pinMessageAllMembersEnabled, filesToImport, fromTimestamp)
+
 method deleteCommunityCategory*(self: Module, communityId: string, categoryId: string) =
   self.controller.deleteCommunityCategory(communityId, categoryId)
 

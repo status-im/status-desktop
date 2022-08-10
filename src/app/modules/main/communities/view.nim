@@ -260,6 +260,23 @@ QtObject:
     self.delegate.createCommunity(name, description, introMessage, outroMessage, access, color, tags,
                                   imagePath, aX, aY, bX, bY, historyArchiveSupportEnabled, pinMessageAllMembersEnabled)
 
+  proc importDiscordCommunity*(self: View, name: string,
+                        description: string, introMessage: string, outroMessage: string,
+                        access: int, color: string, tags: string,
+                        imagePath: string,
+                        aX: int, aY: int, bX: int, bY: int,
+                        historyArchiveSupportEnabled: bool,
+                        pinMessageAllMembersEnabled: bool,
+                        fromTimestamp: int) {.slot.} =
+    let selectedItems = self.discordChannelsModel.getSelectedItems()
+    var filesToImport: seq[string] = @[]
+
+    for i in 0 ..< selectedItems.len:
+      filesToImport.add(selectedItems[i].getFilePath())
+
+    self.delegate.importDiscordCommunity(name, description, introMessage, outroMessage, access, color, tags,
+                                  imagePath, aX, aY, bX, bY, historyArchiveSupportEnabled, pinMessageAllMembersEnabled, filesToImport, fromTimestamp)
+
   proc deleteCommunityCategory*(self: View, communityId: string, categoryId: string): string {.slot.} =
     self.delegate.deleteCommunityCategory(communityId, categoryId)
 

@@ -117,6 +117,42 @@ proc editCommunity*(
     "pinMessageAllMembersEnabled": pinMessageAllMembersEnabled
   }])
 
+proc importDiscordCommunity*(
+    name: string,
+    description: string,
+    introMessage: string,
+    outroMessage: string,
+    access: int,
+    color: string,
+    tags: string,
+    imageUrl: string,
+    aX: int, aY: int, bX: int, bY: int,
+    historyArchiveSupportEnabled: bool,
+    pinMessageAllMembersEnabled: bool,
+    filesToImport: seq[string],
+    fromTimestamp: int
+    ): RpcResponse[JsonNode] {.raises: [Exception].} =
+  result = callPrivateRPC("requestImportDiscordCommunity".prefix, %*[{
+      # TODO this will need to be renamed membership (small m)
+      "Membership": access,
+      "name": name,
+      "description": description,
+      "introMessage": introMessage,
+      "outroMessage": outroMessage,
+      "ensOnly": false, # TODO ensOnly is no longer supported. Remove this when we remove it in status-go
+      "color": color,
+      "tags": parseJson(tags),
+      "image": imageUrl,
+      "imageAx": aX,
+      "imageAy": aY,
+      "imageBx": bX,
+      "imageBy": bY,
+      "historyArchiveSupportEnabled": historyArchiveSupportEnabled,
+      "pinMessageAllMembersEnabled": pinMessageAllMembersEnabled,
+      "from": fromTimestamp,
+      "filesToImport": filesToImport
+    }])
+
 proc createCommunityChannel*(
     communityId: string,
     name: string,

@@ -641,6 +641,59 @@ QtObject:
     except Exception as e:
       error "Error leaving community", msg = e.msg, communityId
 
+  proc importDiscordCommunity*(
+      self: Service,
+      name: string,
+      description: string,
+      introMessage: string,
+      outroMessage: string,
+      access: int,
+      color: string,
+      tags: string,
+      imageUrl: string,
+      aX: int, aY: int, bX: int, bY: int,
+      historyArchiveSupportEnabled: bool,
+      pinMessageAllMembersEnabled: bool,
+      filesToImport: seq[string],
+      fromTimestamp: int) =
+    try:
+      var image = singletonInstance.utils.formatImagePath(imageUrl)
+      var tagsString = tags
+      if len(tagsString) == 0:
+        tagsString = "[]"
+
+      let response = status_go.importDiscordCommunity(
+        name,
+        description,
+        introMessage,
+        outroMessage,
+        access,
+        color,
+        tagsString,
+        image,
+        aX, aY, bX, bY,
+        historyArchiveSupportEnabled,
+        pinMessageAllMembersEnabled,
+        filesToImport,
+        fromTimestamp)
+
+      if response.error != nil:
+        let error = Json.decode($response.error, RpcError)
+        raise newException(RpcException, "Error creating community: " & error.message)
+
+      # if response.result != nil and response.result.kind != JNull:
+      #   var community = response.result["communities"][0].toCommunityDto()
+      #   let communitySettings = response.result["communitiesSettings"][0].toCommunitySettingsDto()
+
+      #   community.settings = communitySettings
+        # add this to the joinedCommunities list and communitiesSettings
+        #self.joinedCommunities[community.id] = community
+
+        #self.events.emit(SIGNAL_COMMUNITY_CREATED, CommunityArgs(community: community))
+
+    except Exception as e:
+      error "Error creating community", msg = e.msg
+
   proc createCommunity*(
       self: Service,
       name: string,

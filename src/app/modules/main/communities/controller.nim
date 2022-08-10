@@ -111,6 +111,36 @@ proc createCommunity*(
     historyArchiveSupportEnabled,
     pinMessageAllMembersEnabled)
 
+proc importDiscordCommunity*(
+    self: Controller,
+    name: string,
+    description: string,
+    introMessage: string,
+    outroMessage: string,
+    access: int,
+    color: string,
+    tags: string,
+    imageUrl: string,
+    aX: int, aY: int, bX: int, bY: int,
+    historyArchiveSupportEnabled: bool,
+    pinMessageAllMembersEnabled: bool,
+    filesToImport: seq[string],
+    fromTimestamp: int) =
+  self.communityService.importDiscordCommunity(
+    name,
+    description,
+    introMessage,
+    outroMessage,
+    access,
+    color,
+    tags,
+    imageUrl,
+    aX, aY, bX, bY,
+    historyArchiveSupportEnabled,
+    pinMessageAllMembersEnabled,
+    filesToImport,
+    fromTimestamp)
+
 proc reorderCommunityChat*(
     self: Controller,
     communityId: string,

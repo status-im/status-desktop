@@ -259,6 +259,7 @@ StatusStackModal {
 
             readonly property bool canGoNext: root.store.discordChannelsModel.hasSelectedItems
             readonly property var nextAction: function () {
+                d.importDiscordCommunity()
                 root.currentIndex++
             }
 
@@ -519,32 +520,45 @@ StatusStackModal {
     QtObject {
         id: d
 
+        function _getCommunityConfig() {
+            return {
+                name: Utils.filterXSS(nameInput.input.text),
+                description: Utils.filterXSS(descriptionTextInput.input.text),
+                introMessage: Utils.filterXSS(introMessageInput.input.text),
+                outroMessage: Utils.filterXSS(outroMessageInput.input.text),
+                color: colorPicker.color.toString().toUpperCase(),
+                tags: communityTagsPicker.selectedTags,
+                image: {
+                    src: logoPicker.source,
+                    AX: logoPicker.cropRect.x,
+                    AY: logoPicker.cropRect.y,
+                    BX: logoPicker.cropRect.x + logoPicker.cropRect.width,
+                    BY: logoPicker.cropRect.y + logoPicker.cropRect.height,
+                },
+                options: {
+                    historyArchiveSupportEnabled: options.archiveSupportEnabled,
+                    checkedMembership: options.requestToJoinEnabled ? Constants.communityChatOnRequestAccess : Constants.communityChatPublicAccess,
+                    pinMessagesAllowedForMembers: options.pinMessagesEnabled
+                }
+            }
+        }
+
         function createCommunity() {
-            const error = store.createCommunity({
-                    name: Utils.filterXSS(nameInput.input.text),
-                    description: Utils.filterXSS(descriptionTextInput.input.text),
-                    introMessage: Utils.filterXSS(introMessageInput.input.text),
-                    outroMessage: Utils.filterXSS(outroMessageInput.input.text),
-                    color: colorPicker.color.toString().toUpperCase(),
-                    tags: communityTagsPicker.selectedTags,
-                    image: {
-                        src: logoPicker.source,
-                        AX: logoPicker.cropRect.x,
-                        AY: logoPicker.cropRect.y,
-                        BX: logoPicker.cropRect.x + logoPicker.cropRect.width,
-                        BY: logoPicker.cropRect.y + logoPicker.cropRect.height,
-                    },
-                    options: {
-                        historyArchiveSupportEnabled: options.archiveSupportEnabled,
-                        checkedMembership: options.requestToJoinEnabled ? Constants.communityChatOnRequestAccess : Constants.communityChatPublicAccess,
-                        pinMessagesAllowedForMembers: options.pinMessagesEnabled
-                    }
-            })
+            const error = root.store.createCommunity(_getCommunityConfig())
             if (error) {
                 errorDialog.text = error.error
                 errorDialog.open()
             }
             root.close()
+        }
+
+        function importDiscordCommunity() {
+            const error = root.store.importDiscordCommunity(_getCommunityConfig(), root.store.discordOldestMessageTimestamp)
+            if (error) {
+                errorDialog.text = error.error
+                errorDialog.open()
+            }
+            //root.close()
         }
     }
 
@@ -555,4 +569,5 @@ StatusStackModal {
         icon: StandardIcon.Critical
         standardButtons: StandardButton.Ok
     }
+
 }
