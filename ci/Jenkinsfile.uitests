@@ -64,7 +64,11 @@ pipeline {
 
     stage('Tests') {
       steps {
-        wrap([$class: 'Xvfb']) {
+        wrap([
+          $class: 'Xvfb',
+          autoDisplayName: true,
+          parallelBuild: true,
+        ]) {
           script {
             def res = squish([
               extraOptions: '''
