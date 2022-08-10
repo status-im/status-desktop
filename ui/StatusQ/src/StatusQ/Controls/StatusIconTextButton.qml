@@ -64,6 +64,7 @@ AbstractButton {
              width: root.icon.width
              height: root.icon.height
              rotation: root.iconRotation
+             visible: status == Image.Ready
          }
          StatusBaseText {
              Layout.alignment: Qt.AlignVCenter
