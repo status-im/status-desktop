@@ -30,6 +30,15 @@ def step(context: any, account_name: str):
 @When("the user toggles test networks")
 def step(context: any):
     _settingsScreen.toggle_test_networks()
+
+@When("the user selects the default account")
+def step(context: any):
+    _settingsScreen.select_default_account()
+
+@When("the user edits default account to |any| name and |any| color")
+def step(context: any, account_name: str,  account_color: str):
+    _settingsScreen.edit_account(account_name, account_color)
+
     
 @Then("the address |any| is displayed in the wallet")
 def step(context: any, address: str):
@@ -39,6 +48,10 @@ def step(context: any, address: str):
 @Then("the account |any| is not in the list of accounts")
 def step(context: any, account_name):
     _settingsScreen.verify_no_account(account_name) 
+
+@Then("the new account with name |any| and color |any| is updated")
+def step(context, new_name: str, new_color: str):
+    _settingsScreen.verify_editedAccount(new_name, new_color)
  
 @When("the user clicks on Sign out and Quit")
 def step(context: any):

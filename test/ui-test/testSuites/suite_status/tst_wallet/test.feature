@@ -89,3 +89,14 @@ Feature: Status Desktop Wallet
 #        And the user toggles the network Ropsten
 #        Then the user has a positive balance of ETH
 #        And the user has a positive balance of STT
+
+    Scenario Outline: User can edit the default wallet account
+        When the user opens app settings screen
+        And the user opens the wallet settings
+        And the user selects the default account
+        And the user edits default account to <new_name> name and <new_color> color
+        Then the new account with name <new_name>Status account and color <new_color> is updated
+
+      	Examples:
+          | new_name | new_color |
+          | Default  | #FFCA0F   |

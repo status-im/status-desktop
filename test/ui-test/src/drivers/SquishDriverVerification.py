@@ -33,6 +33,9 @@ def verify_equal(result: object, expected: object):
 def verify(result: bool, msg: str):
     test.verify(result, msg)
     
+def verify_values_equal(found: str, wanted: str, msg : str):
+    test.verify(found == wanted, msg + " Found: " + found + " - Wanted: " + wanted)
+    
 def verify_text_contains(text: str, substring: str):
     found = False
     if substring in text:

@@ -48,6 +48,8 @@ StatusModal {
 
         StatusInput {
             id: accountNameInput
+            anchors.horizontalCenter: parent.horizontalCenter
+            input.edit.objectName: "renameAccountNameInput"
             input.isIconSelectable: true
             placeholderText: qsTr("Enter an account name...")
             input.text: currentAccount.name
@@ -102,6 +104,7 @@ StatusModal {
     rightButtons: [
         StatusButton {
             id: saveBtn
+            objectName: "renameAccountModalSaveBtn"
             text: qsTr("Change Name")
 
             enabled: accountNameInput.text !== "" && accountNameInput.valid

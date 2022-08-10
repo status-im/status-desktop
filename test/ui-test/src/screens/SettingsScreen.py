@@ -31,7 +31,13 @@ class WalletSettingsScreen(Enum):
     DELETE_ACCOUNT_CONFIRM: str = "settings_Wallet_AccountView_DeleteAccount_Confirm"
     NETWORKS_ITEM: str = "settings_Wallet_MainView_Networks"
     TESTNET_TOGGLE: str = "settings_Wallet_NetworksView_TestNet_Toggle"
-    
+    EDIT_ACCOUNT_BUTTON: str = "settings_Wallet_AccountView_EditAccountButton"
+    EDIT_ACCOUNT_NAME_INPUT: str = "settings_Wallet_AccountView_EditAccountNameInput"
+    EDIT_ACCOUNT_COLOR_REPEATER: str = "settings_Wallet_AccountView_EditAccountColorRepeater"
+    EDIT_ACCOUNT_SAVE_BUTTON: str = "settings_Wallet_AccountView_EditAccountSaveButton"
+    ACCOUNT_VIEW_ACCOUNT_NAME: str = "settings_Wallet_AccountView_AccountName"
+    ACCOUNT_VIEW_ICON_SETTINGS: str = "settings_Wallet_AccountView_IconSettings"    
+
     
 class ConfirmationDialog(Enum):
     SIGN_OUT_CONFIRMATION: str = "signOutConfirmation_StatusButton"
@@ -103,3 +109,25 @@ class SettingsScreen:
         
     def verify_the_app_is_closed(self):
         verify_the_app_is_closed(SettingsScreen.__pid)
+
+    def select_default_account(self):
+        accounts = get_obj(WalletSettingsScreen.GENERATED_ACCOUNTS.value)
+        click_obj(accounts.itemAtIndex(0))
+        click_obj_by_name(WalletSettingsScreen.EDIT_ACCOUNT_BUTTON.value)
+
+    def edit_account(self, account_name: str, account_color: str):
+        type(WalletSettingsScreen.EDIT_ACCOUNT_NAME_INPUT.value, account_name)
+        colorList = get_obj(WalletSettingsScreen.EDIT_ACCOUNT_COLOR_REPEATER.value)
+        for index in range(colorList.count):
+            color = colorList.itemAt(index)
+            if(color.radioButtonColor == account_color):
+                click_obj(colorList.itemAt(index))
+
+        click_obj_by_name(WalletSettingsScreen.EDIT_ACCOUNT_SAVE_BUTTON.value)
+
+
+    def verify_editedAccount(self, new_name: str, new_color: str):
+        accountName = get_obj(WalletSettingsScreen.ACCOUNT_VIEW_ACCOUNT_NAME.value)
+        iconSettings = get_obj(WalletSettingsScreen.ACCOUNT_VIEW_ICON_SETTINGS.value)
+        verify_values_equal(str(accountName.text), str(new_name), "Edited account name not updated")
+        verify_values_equal(str(iconSettings.icon.color.name), str(new_color.lower()), "Edited account color not updated")
