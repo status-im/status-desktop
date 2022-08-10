@@ -87,6 +87,7 @@ Item {
             spacing: 24
 
             Repeater {
+                objectName: "collectiblesRepeater"
                 model: RootStore.getCollectionCollectiblesList(root.slug)
                 StatusRoundedImage {
                     id: image

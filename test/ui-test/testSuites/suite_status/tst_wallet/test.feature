@@ -100,3 +100,11 @@ Feature: Status Desktop Wallet
       	Examples:
           | new_name | new_color |
           | Default  | #FFCA0F   |
+
+Scenario Outline: Can see collectibles for an account
+       When the user adds watch only account with <account_name> and <address>
+       Then the collectibles are listed for the <account_name>
+
+       Examples:
+          | account_name | address                                      |
+          | YugaLabs          | 0xA858DDc0445d8131daC4d1DE01f834ffcbA52Ef1   |

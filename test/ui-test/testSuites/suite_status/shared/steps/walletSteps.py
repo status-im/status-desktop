@@ -66,3 +66,7 @@ def step(context, name: str):
 @Then("the name |any| is not in the list of saved addresses")
 def step(context, name: str):
     _walletScreen.verify_saved_address_doesnt_exist(name)     
+    
+@Then("the collectibles are listed for the |any|")
+def step(context, account_name: str):
+    _walletScreen.verify_collectibles_exist(account_name)    

@@ -55,6 +55,7 @@ Item {
                 width: root.width
 
                 Repeater {
+                    objectName: "collectionsRepeater"
                     id: collectionsRepeater
                     model: RootStore.collectionList
                     delegate: StatusExpandableItem {

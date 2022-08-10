@@ -9,6 +9,7 @@ mainWallet_Add_Account = {"container": statusDesktop_mainWindow, "text": "Add ac
 signPhrase_Ok_Button = {"container": statusDesktop_mainWindow, "type": "StatusFlatButton", "objectName": "signPhraseModalOkButton", "visible": True}
 mainWallet_Saved_Addresses_Button = {"container": statusDesktop_mainWindow, "objectName": "savedAddressesBtn", "type": "StatusButton"}
 mainWallet_Network_Selector_Button = {"container": statusDesktop_mainWindow, "objectName": "networkSelectorButton", "type": "StatusListItem"}
+mainWallet_Right_Side_Tab_Bar = {"container": statusDesktop_mainWindow, "objectName": "rightSideWalletTabBar", "type": "StatusTabBar"}
 
 # Assets view:
 mainWallet_Assets_View_List = {"container": statusDesktop_mainWindow, "objectName": "assetViewStatusListView", "type": "StatusListView"}
@@ -65,3 +66,7 @@ mainWallet_Saved_Addreses_More_Confirm_Delete = {"container": statusDesktop_main
 mainWallet_Saved_Addreses_Popup_Name_Input = {"container": statusDesktop_mainWindow, "objectName": "savedAddressNameInput", "type": "TextEdit"}
 mainWallet_Saved_Addreses_Popup_Address_Input = {"container": statusDesktop_mainWindow, "objectName": "savedAddressAddressInput", "type": "StyledTextField"}
 mainWallet_Saved_Addreses_Popup_Address_Add_Button = {"container": statusDesktop_mainWindow, "objectName": "addSavedAddress", "type": "StatusButton"}
+
+# Collectibles view
+mainWallet_Collections_Repeater = {"container": statusDesktop_mainWindow, "objectName": "collectionsRepeater", "type": "Repeater"}
+mainWallet_Collectibles_Repeater = {"container": statusDesktop_mainWindow, "objectName": "collectiblesRepeater", "type": "Repeater"}
