@@ -537,6 +537,7 @@ Item {
             anchors.rightMargin: root.chatHorizontalPadding
             anchors.topMargin: (!chatName.visible || !chatReply.active  || !pinnedRectangleLoader.active) ? 4 : 0
             visible: !editModeOn
+
             ChatTextView {
                 id: chatText
                 readonly property int leftPadding: chatImage.anchors.leftMargin + chatImage.width + chatHorizontalPadding
@@ -547,11 +548,7 @@ Item {
                 anchors.topMargin: isEmoji ? 2 : 0
                 anchors.left: parent.left
                 anchors.right: parent.right
-                // using a padding instead of a margin let's us select text more easily
-                anchors.leftMargin: -leftPadding
-                textField.leftPadding: leftPadding
                 textField.rightPadding: Style.current.bigPadding
-
                 onLinkActivated: {
                     if (activityCenterMessage) {
                         root.clickMessage(false, isSticker, false, null, false, false, false, false, "")
