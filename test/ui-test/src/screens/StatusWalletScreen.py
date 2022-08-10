@@ -52,7 +52,6 @@ class AddAccountPopup(Enum):
     ADD_ACCOUNT_BUTTON: str = "mainWallet_Add_Account_Popup_Footer_Add_Account"
     SEED_PHRASE_INPUT_TEMPLATE: str = "mainWindow_Add_Account_Popup_Seed_Phrase_"
 
-
 class StatusWalletScreen:
     
     def accept_signing_phrase(self):
@@ -90,7 +89,7 @@ class StatusWalletScreen:
         
         type(AddAccountPopup.PASSWORD_INPUT.value, password)
         type(AddAccountPopup.ACCOUNT_NAME_INPUT.value, account_name)
-
+        
         click_obj_by_name(AddAccountPopup.ADVANCE_SECTION.value)
         click_obj_by_name(AddAccountPopup.TYPE_SELECTOR.value)
         time.sleep(1)
