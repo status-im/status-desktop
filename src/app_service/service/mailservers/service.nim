@@ -1,4 +1,4 @@
-import NimQml, Tables, json, sequtils, strutils, system, uuids, chronicles
+import NimQml, Tables, json, sequtils, strutils, system, uuids, chronicles, os
 
 import ./dto/mailserver as mailserver_dto
 import ../../../app/core/signals/types
@@ -8,6 +8,10 @@ import ../../../app/core/tasks/[qt, threadpool]
 import ../settings/service as settings_service
 import ../node_configuration/service as node_configuration_service
 import ../../../backend/mailservers as status_mailservers
+
+# allow runtime override via environment variable; core contributors can set a
+# mailserver address in this way for local development or test
+let MAILSERVER_ADDRESS = $getEnv("MAILSERVER")
 
 logScope:
   topics = "mailservers-service"
@@ -80,6 +84,10 @@ QtObject:
     self.initMailservers()
     self.fetchMailservers()
 
+    if MAILSERVER_ADDRESS != "":
+      let fleet = self.settingsService.getFleet()
+      discard self.settingsService.pinMailserver(MAILSERVER_ADDRESS, fleet)
+
   proc requestMoreMessages*(self: Service, chatId: string) =
     let arg = RequestMoreMessagesTaskArg(
       tptr: cast[ByteAddress](requestMoreMessagesTask),
@@ -101,6 +109,7 @@ QtObject:
     self.events.on(SignalType.MailserverChanged.event) do(e: Args):
       let receivedData = MailserverChangedSignal(e)
       let address = receivedData.address
+
       info "active mailserver changed", node=address
       let data = ActiveMailserverChangedArgs(nodeAddress: address)
       self.events.emit(SIGNAL_ACTIVE_MAILSERVER_CHANGED, data)
