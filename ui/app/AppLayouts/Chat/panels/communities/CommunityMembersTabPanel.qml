@@ -33,11 +33,12 @@ Item {
 
     ColumnLayout {
         anchors.fill: parent
-        spacing: 25
+        spacing: 30
 
         StatusInput {
             id: memberSearch
             Layout.preferredWidth: 350
+            Layout.leftMargin: 12
             maximumHeight: 36
             topPadding: 0
             bottomPadding: 0
@@ -55,6 +56,7 @@ Item {
 
             model: root.model
             clip: true
+            spacing: 15
 
             delegate: StatusMemberListItem {
                 id: memberItem
@@ -65,6 +67,7 @@ Item {
 
                 statusListItemComponentsSlot.spacing: 16
                 rightPadding: 80
+                leftPadding: 12
 
                 components: [
                     StatusButton {
@@ -105,10 +108,10 @@ Item {
                 icon.color: Theme.palette.userCustomizationColors[Utils.colorIdForPubkey(model.pubKey)] // FIXME: use model.colorId
                 image.source: model.icon
                 image.isIdenticon: false
-                image.width: 36
-                image.height: 36
-                icon.height: 36
-                icon.width: 36
+                image.width: 40
+                image.height: 40
+                icon.height: 40
+                icon.width: 40
                 ringSettings.ringSpecModel: Utils.getColorHashAsJson(model.pubKey)
                 statusListItemIcon.badge.visible: (root.panelType === CommunityMembersTabPanel.TabType.AllMembers)
 

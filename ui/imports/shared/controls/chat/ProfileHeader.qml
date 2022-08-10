@@ -7,7 +7,6 @@ import shared.controls 1.0
 
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
-import StatusQ.Popups 0.1
 import StatusQ.Core.Utils 0.1 as StatusQUtils
 
 Item {
@@ -95,12 +94,7 @@ Item {
                 icon.width: d.getSize(8, 12, 20)
                 icon.height: d.getSize(8, 12, 20)
 
-                onClicked: {
-                    if (!!root.store.profileLargeImage)
-                        imageEditMenu.popup(this, mouse.x, mouse.y);
-                    else
-                        Global.openChangeProfilePicPopup();
-                }
+                onClicked: Global.openChangeProfilePicPopup()
             }
         }
 
@@ -214,24 +208,6 @@ Item {
             visible: root.emojiHashVisible
             compact: root.compact
             publicKey: root.pubkey
-        }
-    }
-
-    StatusPopupMenu {
-        id: imageEditMenu
-
-        StatusMenuItem {
-            text: qsTr("Upload a file")
-            icon.name: "download"
-            iconRotation: 180
-            onTriggered: Global.openChangeProfilePicPopup()
-        }
-
-        StatusMenuItem {
-            text: qsTr("Remove image")
-            type: StatusMenuItem.Danger
-            icon.name: "delete"
-            onTriggered: root.store.removeImage()
         }
     }
 }

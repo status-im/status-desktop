@@ -94,7 +94,8 @@ Item {
 
     NetworkSelectPopup {
         id: selectPopup
-        x: (parent.width - width)
+        x: (parent.width - width + 5)
+        y: (selectRectangle.height + 5)
         layer1Networks: store.layer1Networks
         layer2Networks: store.layer2Networks
         testNetworks: store.testNetworks

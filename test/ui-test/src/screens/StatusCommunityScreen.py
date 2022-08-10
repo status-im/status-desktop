@@ -14,6 +14,9 @@ import time
 from drivers.SquishDriver import *
 from drivers.SquishDriverVerification import *
 
+class MainUi(Enum):
+    MODULE_WARNING_BANNER = "moduleWarning_Banner"
+
 class CommunityCreateMethods(Enum):
     BOTTOM_MENU = "bottom_menu"
     RIGHT_CLICK_MENU = "right_click_menu"
@@ -61,6 +64,10 @@ class StatusCommunityScreen:
         verify_text_matching(CommunityScreenComponents.CHAT_IDENTIFIER_CHANNEL_NAME.value, communityChannelName)
         
     def edit_community_channel(self, communityChannelName: str, newCommunityChannelName: str):
+        [bannerLoaded, _] = is_loaded_visible_and_enabled(MainUi.MODULE_WARNING_BANNER.value)
+        if (bannerLoaded):
+            time.sleep(5) # Wait for the banner to disappear otherwise the click might land badly
+
         click_obj_by_name(CommunityScreenComponents.CHAT_MORE_OPTIONS_BUTTON.value)
         click_obj_by_name(CommunityScreenComponents.EDIT_CHANNEL_MENU_ITEM.value)
 

@@ -32,9 +32,9 @@ Feature: Status Desktop Chat
 
 
     # TODO This test has a chance to fail since it relies on the mailserver. Until we host a local mailserver for the tests, this test is at risk
-    Scenario: User can reply to another user's message
-         When user joins chat room test
-         Then the user can reply to the message at index 0 with "This is a reply to another user"
+#    Scenario: User can reply to another user's message
+#         When user joins chat room test
+#         Then the user can reply to the message at index 0 with "This is a reply to another user"
 
 
     Scenario: User joins a room and marks it as read
@@ -45,14 +45,12 @@ Feature: Status Desktop Chat
 
     Scenario: User can delete their own message
          When user joins chat room automation-test
-         Then user is able to send chat message
-         | message               |
-         | Delete this message   |
+         Then user is able to send  a random chat message
          Then the user can delete the message at index 0
-         Then the last message is not "Delete this message"
+         Then the last message is not the random message
 
 
     # TODO This test has a chance to fail since it relies on the mailserver. Until we host a local mailserver for the tests, this test is at risk
-    Scenario: User cannot delete another user's message
-         When user joins chat room test
-         Then the user cannot delete the last message
+ #   Scenario: User cannot delete another user's message
+ #        When user joins chat room test
+ #        Then the user cannot delete the last message

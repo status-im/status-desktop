@@ -65,7 +65,7 @@ Item {
         }
 
         StatusBaseText {
-            Layout.leftMargin: 32
+            Layout.leftMargin: 36
 
             text: root.title
             color: Theme.palette.directColor1
