@@ -1,17 +1,21 @@
 import io_interface
 
 import ../../../../../app_service/service/profile/service as profile_service
+import ../../../../../app_service/service/settings/service as settings_service
+import ../../../../../app_service/common/social_links
 
 type
   Controller* = ref object of RootObj
     delegate: io_interface.AccessInterface
     profileService: profile_service.Service
+    settingsService: settings_service.Service
 
 proc newController*(delegate: io_interface.AccessInterface,
-  profileService: profile_service.Service): Controller =
+  profileService: profile_service.Service, settingsService: settings_service.Service): Controller =
   result = Controller()
   result.delegate = delegate
   result.profileService = profileService
+  result.settingsService = settingsService
 
 proc delete*(self: Controller) =
   discard
@@ -27,3 +31,15 @@ proc deleteIdentityImage*(self: Controller, address: string) =
 
 proc setDisplayName*(self: Controller, displayName: string) =
   self.profileService.setDisplayName(displayName)
+
+proc getSocialLinks*(self: Controller): SocialLinks =
+  self.settingsService.getSocialLinks()
+
+proc setSocialLinks*(self: Controller, links: SocialLinks): bool =
+  self.settingsService.setSocialLinks(links)
+
+proc getBio*(self: Controller): string =
+  self.settingsService.getBio()
+
+proc setBio*(self: Controller, bio: string): bool =
+  self.settingsService.setBio(bio)

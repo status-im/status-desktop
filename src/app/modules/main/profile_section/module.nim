@@ -83,7 +83,7 @@ proc newModule*(delegate: delegate_interface.AccessInterface,
   result.controller = controller.newController(result)
   result.moduleLoaded = false
 
-  result.profileModule = profile_module.newModule(result, profileService)
+  result.profileModule = profile_module.newModule(result, profileService, settingsService)
   result.contactsModule = contacts_module.newModule(result, events, contactsService, chatService)
   result.languageModule = language_module.newModule(result, events, languageService)
   result.privacyModule = privacy_module.newModule(result, events, settingsService, privacyService, generalService)

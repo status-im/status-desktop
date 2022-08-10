@@ -22,7 +22,16 @@ method storeIdentityImage*(self: AccessInterface, imageUrl: string, aX: int, aY:
 method deleteIdentityImage*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method getBio*(self: AccessInterface): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method setBio*(self: AccessInterface, bio: string): bool {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method setDisplayName*(self: AccessInterface, displayName: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
+method saveSocialLinks*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 
 # View Delegate Interface
