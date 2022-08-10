@@ -4,7 +4,6 @@
 
 #include <type_traits>
 #include <utility>
-#include <compare>
 
 using json = nlohmann::json;
 
@@ -33,18 +32,12 @@ public:
         return m_value;
     }
 
-#if defined __cpp_impl_three_way_comparison && defined __cpp_lib_three_way_comparison
-    friend auto operator<=>(const NamedType<T, Parameter>& l, const NamedType<T, Parameter>& r) noexcept {
-        return l.m_value <=> r.m_value;
-    };
-#else
     bool operator<(const NamedType<T, Parameter> &other) const { return m_value < other.m_value; };
     bool operator>(const NamedType<T, Parameter> &other) const { return m_value > other.m_value; };
     bool operator<=(const NamedType<T, Parameter> &other) const { return m_value <= other.m_value; };
     bool operator>=(const NamedType<T, Parameter> &other) const { return m_value >= other.m_value; };
     bool operator==(const NamedType<T, Parameter> &other) const { return m_value == other.m_value; };
     bool operator!=(const NamedType<T, Parameter> &other) const { return m_value != other.m_value; };
-#endif
 
     T &operator=(NamedType<T, Parameter> const& rhs) {
         return m_value = rhs.m_value;

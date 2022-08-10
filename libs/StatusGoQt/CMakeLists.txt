@@ -64,8 +64,26 @@ add_custom_command(
 
 install(
     IMPORTED_RUNTIME_ARTIFACTS
-        statusgo_shared
+    statusgo_shared
 )
+
+if(CMAKE_SYSTEM_NAME MATCHES "Linux")
+    add_custom_command(
+        TARGET
+            ${PROJECT_NAME}
+        POST_BUILD
+            # Workaround, status-go CMakeLists.txt should set the correct TARGET_SONAME_FILE
+            COMMAND ${CMAKE_COMMAND} -E copy
+                $<TARGET_SONAME_FILE:statusgo_shared>/libstatus.so.0
+                ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+            COMMENT "Copying status-go libstatus.so.0 lib beside project executable"
+    )
+    install(
+        FILES
+            $<TARGET_SONAME_FILE:statusgo_shared>/libstatus.so.0
+        TYPE LIB
+    )
+endif()
 
 target_sources(${PROJECT_NAME}
     PRIVATE

@@ -11,6 +11,7 @@ ChatSectionController::ChatSectionController()
 void ChatSectionController::init(const QString& sectionId)
 {
     auto chatSectionData = m_dataProvider->getSectionData(sectionId);
+    assert(chatSectionData.chats.size() > 0);
     std::vector<ChatItemPtr> model;
     for (auto c : chatSectionData.chats) {
         model.push_back(std::make_shared<ChatItem>(std::move(c)));

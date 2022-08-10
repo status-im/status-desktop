@@ -10,7 +10,7 @@ namespace StatusGo::Wallet {
 
 std::string toHexData(const BigInt &num, bool uppercase)
 {
-    return num.str(0, std::ios_base::showbase | std::ios_base::hex | (uppercase ? std::ios_base::uppercase : 0));
+    return num.str(0, std::ios_base::showbase | std::ios_base::hex | (uppercase ? std::ios_base::uppercase : std::ios_base::fmtflags(0)));
 }
 
 

@@ -2,9 +2,26 @@ FROM stateoftheartio/qt6:6.3-gcc-aqt
 
 RUN export DEBIAN_FRONTEND=noninteractive \
  && sudo apt update -yq \
- && sudo apt install -yq libgl-dev libvulkan-dev libxcb*-dev libxkbcommon-x11-dev python3-pip gcc-10 golang-go
+ && sudo apt install -yq libgl-dev libvulkan-dev libxcb*-dev libxkbcommon-x11-dev python3-pip gcc-10 golang-go wget
 
 RUN sudo pip install conan
+
+# Installing Golang
+RUN GOLANG_SHA256="9e5de37f9c49942c601b191ac5fba404b868bfc21d446d6960acc12283d6e5f2" \
+ && GOLANG_TARBALL="go1.18.5.linux-amd64.tar.gz" \
+ && wget -q "https://dl.google.com/go/${GOLANG_TARBALL}" \
+ && echo "${GOLANG_SHA256} ${GOLANG_TARBALL}" | sha256sum -c \
+ && sudo tar -C /usr/local -xzf "${GOLANG_TARBALL}" \
+ && rm "${GOLANG_TARBALL}" \
+ && sudo ln -s /usr/local/go/bin/go /usr/local/bin
+
+RUN sudo apt install -yq g++-10
+
+# Jenkins user needs a specific UID/GID to work
+RUN sudo groupadd -g 1001 jenkins \
+ && sudo useradd --create-home -u 1001 -g 1001 jenkins
+USER jenkins
+ENV HOME="/home/jenkins"
 
 # TODO finish installing dependencies then enable building the appimage in CI
 # RUN cd /tmp && git clone --single-branch --recursive https://github.com/AppImage/AppImageKit && cd AppImageKit/ && cmake -B ./build -S .

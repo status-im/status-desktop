@@ -39,20 +39,6 @@ Platform specific conan profile
 
 Update `CMake` to the [Latest Release](https://cmake.org/download/) or use the Qt's "$QTBASE/Tools/CMake/..."
 
-### Build with conan
-
-```bash
-# linux
-CMAKE_PREFIX_PATH="$HOME/Qt/6.3.2/gcc_64" conan build . -if=build/conan -bf=build
-
-# MacOS: CMAKE_PREFIX_PATH="$HOME/Qt/6.3.2/macos" conan build . -if=build/conan -bf=build
-
-# Windows: CMAKE_PREFIX_PATH="$HOME/Qt/6.3.2/mingw_64" conan build . -if=build/conan -bf=build
-
-ctest -VV -C Release
-./status-desktop
-```
-
 ### Build with cmake
 
 ```bash
@@ -70,4 +56,15 @@ cmake --build build
 
 ```bash
 ctest --test-dir ./build
+```
+
+### Build with QtCreator
+
+If go is installed with brew use the following configuration otherwise adapt the configuration.
+Go to QtCreator's preferences navigate to Environment -> System -> Environment -> Change and paste
+
+```ini
+GOBIN=${GOPATH}/bin
+GOPATH=${HOME}/go
+PATH=${PATH}:${GOBIN}:/opt/homebrew/bin:/opt/homebrew/sbin
 ```

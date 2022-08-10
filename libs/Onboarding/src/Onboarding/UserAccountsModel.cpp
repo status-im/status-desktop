@@ -38,6 +38,7 @@ QVariant UserAccountsModel::data(const QModelIndex& index, int role) const
     switch(static_cast<ModelRole>(role)) {
         case Name: return QVariant::fromValue(m_accounts[index.row()].get()->name());
         case Account: return QVariant::fromValue<QObject*>(m_accounts[index.row()].get());
+        default: return QVariant();
     }
 }
 
