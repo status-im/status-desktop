@@ -25,7 +25,7 @@ StatusStackModal {
     property var store
     property bool isDiscordImport // creating new or importing from discord?
 
-    stackTitle: isDiscordImport ? qsTr("Import existing Discord community into Status") :
+    stackTitle: isDiscordImport ? qsTr("Import a community from Discord into Status") :
                                   qsTr("Create New Community")
     width: 640
 
