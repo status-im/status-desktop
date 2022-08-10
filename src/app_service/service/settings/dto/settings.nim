@@ -44,6 +44,7 @@ const KEY_GIF_FAVORITES* = "gifs/favorite-gifs"
 const KEY_GIF_RECENTS* = "gifs/recent-gifs"
 const KEY_GIF_API_KEY* = "gifs/api-key"
 const KEY_DISPLAY_NAME* = "display-name"
+const KEY_BIO* = "bio"
 const KEY_TEST_NETWORKS_ENABLED* = "test-networks-enabled?"
 
 # Notifications Settings Values
@@ -93,6 +94,7 @@ type
     eip1581Address*: string
     installationId*: string
     displayName*: string
+    bio*: string
     preferredName*: string
     ensUsernames*: seq[string]
     keyUid*: string
@@ -161,6 +163,7 @@ proc toSettingsDto*(jsonObj: JsonNode): SettingsDto =
   discard jsonObj.getProp(KEY_INSTALLATION_ID, result.installationId)
   discard jsonObj.getProp(KEY_PREFERRED_NAME, result.preferredName)
   discard jsonObj.getProp(KEY_DISPLAY_NAME, result.displayName)
+  discard jsonObj.getProp(KEY_BIO, result.bio)
   discard jsonObj.getProp(KEY_KEY_UID, result.keyUid)
   discard jsonObj.getProp(KEY_LATEST_DERIVED_PATH, result.latestDerivedPath)
   discard jsonObj.getProp(KEY_LINK_PREVIEW_REQUEST_ENABLED, result.linkPreviewRequestEnabled)

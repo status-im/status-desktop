@@ -1,6 +1,7 @@
 {.used.}
 
 import json, strformat, strutils
+import ../../../common/social_links
 
 include ../../../common/json_utils
 include ../../../common/utils
@@ -41,6 +42,8 @@ type ContactsDto* = object
   lastUpdated*: int64
   lastUpdatedLocally*: int64
   localNickname*: string
+  bio*: string
+  socialLinks*: SocialLinks
   image*: Images
   added*: bool
   blocked*: bool
@@ -121,6 +124,7 @@ proc toContactsDto*(jsonObj: JsonNode): ContactsDto =
   discard jsonObj.getProp("lastUpdated", result.lastUpdated)
   discard jsonObj.getProp("lastUpdatedLocally", result.lastUpdatedLocally)
   discard jsonObj.getProp("localNickname", result.localNickname)
+  discard jsonObj.getProp("bio", result.bio)
   
   result.trustStatus = TrustStatus.Unknown
   var trustStatusInt: int
@@ -134,6 +138,10 @@ proc toContactsDto*(jsonObj: JsonNode): ContactsDto =
   var imageObj: JsonNode
   if(jsonObj.getProp("images", imageObj)):
     result.image = toImages(imageObj)
+
+  var socialLinksObj: JsonNode
+  if(jsonObj.getProp("socialLinks", socialLinksObj)):
+    result.socialLinks = toSocialLinks(socialLinksObj)
 
   discard jsonObj.getProp("added", result.added)
   discard jsonObj.getProp("blocked", result.blocked)
