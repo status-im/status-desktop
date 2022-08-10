@@ -16,6 +16,7 @@ class MainWalletScreen(Enum):
     SEND_BUTTON_FOOTER: str = "mainWallet_Footer_Send_Button"
     SAVED_ADDRESSES_BUTTON: str = "mainWallet_Saved_Addresses_Button"
     NETWORK_SELECTOR_BUTTON: str = "mainWallet_Network_Selector_Button"
+    RIGHT_SIDE_TABBAR: str = "mainWallet_Right_Side_Tab_Bar"
 
 class AssetView(Enum):
     LIST: str = "mainWallet_Assets_View_List"
@@ -58,6 +59,15 @@ class AddAccountPopup(Enum):
     PRIVATE_KEY_INPUT: str = "mainWallet_Add_Account_Popup_Private_Key"
     ADD_ACCOUNT_BUTTON: str = "mainWallet_Add_Account_Popup_Footer_Add_Account"
     SEED_PHRASE_INPUT_TEMPLATE: str = "mainWindow_Add_Account_Popup_Seed_Phrase_"
+    
+class CollectiblesView(Enum):
+    COLLECTIONS_REPEATER: str =  "mainWallet_Collections_Repeater"  
+    COLLECTIBLES_REPEATER: str =  "mainWallet_Collectibles_Repeater"  
+    
+class WalletTabBar(Enum):
+    ASSET_TAB =  0
+    COLLECTION_TAB =  1
+    ACTIVITY_TAB = 2    
 
 class StatusWalletScreen:
     
@@ -248,3 +258,12 @@ class StatusWalletScreen:
 
     def verify_transaction(self):
         print("TODO: fix notification and ensure there is one")
+        
+    def verify_collectibles_exist(self, account_name: str):
+        tabbar = get_obj(MainWalletScreen.RIGHT_SIDE_TABBAR.value)
+        click_obj(tabbar.itemAt(WalletTabBar.COLLECTION_TAB.value))
+        collectionsRepeater = get_obj(CollectiblesView.COLLECTIONS_REPEATER.value)
+        if(collectionsRepeater.count > 0):
+            collectionsRepeater.itemAt(0).expanded = True
+        collectiblesRepeater = get_obj(CollectiblesView.COLLECTIBLES_REPEATER.value)
+        verify(collectiblesRepeater.count > 0, "Collectibles not retrieved for the account")

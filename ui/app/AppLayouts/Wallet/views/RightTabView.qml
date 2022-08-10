@@ -39,6 +39,7 @@ Item {
                 }
                 StatusTabBar {
                     id: walletTabBar
+                    objectName: "rightSideWalletTabBar"
                     horizontalPadding: Style.current.padding
                     Layout.fillWidth: true
                     Layout.topMargin: Style.current.padding
