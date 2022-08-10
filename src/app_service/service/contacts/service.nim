@@ -299,7 +299,9 @@ QtObject:
           thumbnail: singletonInstance.userProfile.getThumbnailImage(),
           large: singletonInstance.userProfile.getLargeImage()
         ),
-        trustStatus: TrustStatus.Trusted
+        trustStatus: TrustStatus.Trusted,
+        bio: self.settingsService.getBio(),
+        socialLinks: self.settingsService.getSocialLinks()
       )
 
     ## Returns contact details based on passed id (public key)

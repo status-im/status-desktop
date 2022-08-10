@@ -88,10 +88,19 @@ proc getExemptionGlobalMentions*(id: string): RpcResponse[JsonNode] {.raises: [E
 proc getExemptionOtherMessages*(id: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   return core.callPrivateRPC("settings_notificationsGetExOtherMessages", %* [id])
 
-proc setExemptions*(id: string, muteAllMessages: bool, personalMentions: string, globalMentions: string, 
+proc setExemptions*(id: string, muteAllMessages: bool, personalMentions: string, globalMentions: string,
   otherMessages: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   let payload = %* [id, muteAllMessages, personalMentions, globalMentions, otherMessages]
   return core.callPrivateRPC("settings_notificationsSetExemptions", payload)
 
 proc deleteExemptions*(id: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   return core.callPrivateRPC("settings_deleteExemptions", %* [id])
+
+proc setBio*(value: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  return core.callPrivateRPC("settings_setBio", %* [value])
+
+proc setSocialLinks*(value: JsonNode): RpcResponse[JsonNode] {.raises: [Exception].} =
+  return core.callPrivateRPC("settings_setSocialLinks", %* [value])
+
+proc getSocialLinks*(): RpcResponse[JsonNode] {.raises: [Exception].} =
+  return core.callPrivateRPC("settings_getSocialLinks")

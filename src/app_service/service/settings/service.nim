@@ -2,6 +2,7 @@ import NimQml, chronicles, json, strutils, sequtils, tables, sugar
 
 import ../../common/[network_constants]
 import ../../common/types as common_types
+import ../../common/social_links
 import ../../../app/core/eventemitter
 import ../../../app/core/fleets/fleet_configuration
 import ../../../app/core/signals/types
@@ -826,3 +827,42 @@ QtObject:
     except Exception as e:
       let errDesription = e.msg
       error "reading exemptions setting error: ", id = id, errDesription
+
+  proc getBio*(self: Service): string =
+    self.settings.bio
+
+  proc setBio*(self: Service, bio: string): bool =
+    result = false
+    try:
+      let response = status_settings.setBio(bio)
+
+      if(not response.error.isNil):
+        error "error setting bio", errDescription = response.error.message
+
+      self.settings.bio = bio
+      result = true
+    except Exception as e:
+      error "error setting bio", errDesription = e.msg
+
+  proc getSocialLinks*(self: Service): SocialLinks =
+    try:
+      let response = status_settings.getSocialLinks()
+
+      if(not response.error.isNil):
+        error "error getting social links", errDescription = response.error.message
+
+      result = toSocialLinks(response.result)
+    except Exception as e:
+      error "error getting social links", errDesription = e.msg
+
+  proc setSocialLinks*(self: Service, links: SocialLinks): bool =
+    result = false
+    try:
+      let response = status_settings.setSocialLinks(%*links)
+
+      if(not response.error.isNil):
+        error "error setting social links", errDescription = response.error.message
+
+      result = true
+    except Exception as e:
+      error "error setting social links", errDesription = e.msg
