@@ -17,6 +17,7 @@ from .StatusMainScreen import MainScreenComponents
 class SidebarComponents(Enum):
     ADVANCED_OPTION: str = "advanced_StatusBaseText"
     WALLET_ITEM: str = "wallet_AppMenu_StatusNavigationListItem"
+    SIGN_OUT_AND_QUIT: str = "sign_out_Quit_ExtraMenu_StatusNavigationListItem"
 
 
 class AdvancedOptionScreen(Enum):
@@ -30,10 +31,15 @@ class WalletSettingsScreen(Enum):
     DELETE_ACCOUNT_CONFIRM: str = "settings_Wallet_AccountView_DeleteAccount_Confirm"
     NETWORKS_ITEM: str = "settings_Wallet_MainView_Networks"
     TESTNET_TOGGLE: str = "settings_Wallet_NetworksView_TestNet_Toggle"
+    
+    
+class ConfirmationDialog(Enum):
+    SIGN_OUT_CONFIRMATION: str = "signOutConfirmation_StatusButton"
 
 
 class SettingsScreen:
-
+    __pid = 0
+    
     def __init__(self):
         verify_screen(SidebarComponents.ADVANCED_OPTION.value)
     
@@ -89,3 +95,11 @@ class SettingsScreen:
             if(accounts.itemAtIndex(index).objectName == account_name):
                 return index
         return -1
+    
+    def sign_out_and_quit_the_app(self, pid: int):
+        SettingsScreen.__pid = pid
+        click_obj_by_name(SidebarComponents.SIGN_OUT_AND_QUIT.value)
+        click_obj_by_name(ConfirmationDialog.SIGN_OUT_CONFIRMATION.value)
+        
+    def verify_the_app_is_closed(self):
+        verify_the_app_is_closed(SettingsScreen.__pid)
