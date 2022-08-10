@@ -68,6 +68,7 @@ pipeline {
           $class: 'Xvfb',
           autoDisplayName: true,
           parallelBuild: true,
+          screen: '2560x1440x24',
         ]) {
           script {
             def res = squish([
