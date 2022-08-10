@@ -53,7 +53,7 @@ class SettingsScreen:
         click_obj_by_name(SidebarComponents.WALLET_ITEM.value)
         
     def activate_open_wallet_settings(self):
-        if not (is_Visible(SidebarComponents.WALLET_ITEM.value)) :
+        if not (is_found(SidebarComponents.WALLET_ITEM.value)) :
             click_obj_by_name(SidebarComponents.ADVANCED_OPTION.value)
             click_obj_by_name(AdvancedOptionScreen.ACTIVATE_OR_DEACTIVATE_WALLET.value)
             click_obj_by_name(AdvancedOptionScreen.I_UNDERSTAND_POP_UP.value)
@@ -62,7 +62,7 @@ class SettingsScreen:
         self.open_wallet_settings()
 
     def activate_open_wallet_section(self):
-        if not (is_Visible(SidebarComponents.WALLET_ITEM.value)):
+        if not (is_found(SidebarComponents.WALLET_ITEM.value)):
             click_obj_by_name(SidebarComponents.ADVANCED_OPTION.value)
             click_obj_by_name(AdvancedOptionScreen.ACTIVATE_OR_DEACTIVATE_WALLET.value)
             click_obj_by_name(AdvancedOptionScreen.I_UNDERSTAND_POP_UP.value)

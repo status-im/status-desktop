@@ -88,3 +88,9 @@ def verify_the_app_is_closed(pid: int):
 
 def verify_equals(val1, val2):
     test.compare(val1, val2, "1st value [" + str(val1) + ("] equal to " if val1 == val2 else "] NOT equal to ") + "2nd value [" + str(val2) + "]")
+
+def verify_failure(errorMsg: str):
+    test.fail(errorMsg)
+    
+def log(text: str):
+    test.log(text)

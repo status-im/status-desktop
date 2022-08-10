@@ -689,6 +689,7 @@ Rectangle {
 
     SuggestionBoxPanel {
         id: suggestionsBox
+        objectName: "suggestionsBox"
         model: control.usersStore ? control.usersStore.usersModel : []
         x : messageInput.x
         y: -height - Style.current.smallPadding

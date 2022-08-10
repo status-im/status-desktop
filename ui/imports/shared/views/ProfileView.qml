@@ -82,6 +82,7 @@ Rectangle {
     signal contactRemoved(publicKey: string)
     signal nicknameEdited(publicKey: string)
 
+    objectName: "profileView"
     implicitWidth: modalContent.implicitWidth
     implicitHeight: modalContent.implicitHeight
 

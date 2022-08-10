@@ -42,9 +42,7 @@ nim_status_client.log
 
 test/ui-test/testSuites/suite_status/config.xml
 test/ui-test/testSuites/suite_status/envvars
-test/ui-test/testSuites/suite_status/shared/scripts/__pycache__/*
-test/ui-test/testSuites/suite_status/shared/scripts/sections/__pycache__/*
-
+test/ui-test/**/__pycache__/*
 
 # CPP app =====================================================================
 
