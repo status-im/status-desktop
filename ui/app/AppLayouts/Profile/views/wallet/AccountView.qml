@@ -37,6 +37,7 @@ Item {
             spacing: Style.current.smallPadding
             StatusSmartIdenticon {
                 id: accountImage
+                objectName: "walletAccountViewAccountImage"
                 anchors.verticalCenter: parent.verticalCenter
                 icon: StatusIconSettings {
                     width: isLetterIdenticon ? 40 : 20
@@ -58,6 +59,7 @@ Item {
                 Row {
                     spacing: Style.current.halfPadding
                     StatusBaseText {
+                        objectName: "walletAccountViewAccountName"
                         id: accountName
                         text: walletStore.currentAccount.name
                         font.weight: Font.Bold
@@ -65,6 +67,7 @@ Item {
                         color: Theme.palette.directColor1
                     }
                     StatusFlatRoundButton {
+                        objectName: "walletAccountViewEditAccountButton"
                         width: 28
                         height: 28
                         anchors.verticalCenter: accountName.verticalCenter
