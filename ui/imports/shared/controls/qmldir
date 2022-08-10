@@ -25,3 +25,4 @@ TransactionDelegate 1.0 TransactionDelegate.qml
 TransactionFormGroup 1.0 TransactionFormGroup.qml
 EmojiHash 1.0 EmojiHash.qml
 InformationTile 1.0 InformationTile.qml
+SocialLinkPreview 1.0 SocialLinkPreview.qml

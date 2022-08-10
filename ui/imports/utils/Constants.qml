@@ -345,6 +345,16 @@ QtObject {
         }
     }
 
+    readonly property QtObject socialLinkType: QtObject {
+        readonly property int custom: 0
+        readonly property int twitter: 1
+        readonly property int personalSite: 2
+        readonly property int github: 3
+        readonly property int youtube: 4
+        readonly property int discord: 5
+        readonly property int telegram: 6
+    }
+
     readonly property int communityImported: 0
     readonly property int communityImportingInProgress: 1
     readonly property int communityImportingError: 2
