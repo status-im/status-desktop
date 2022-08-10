@@ -135,6 +135,8 @@ Item {
 
             Layout.fillWidth: true
             Layout.fillHeight: true
+            Layout.leftMargin: 10
+            Layout.rightMargin: 10
 
             clip: true
 
