@@ -31,6 +31,8 @@ StatusModal {
     property string userNickname: ""
     property string userEnsName: ""
     property string userIcon: ""
+    property string userBio: ""
+    property string userSocialLinks: ""
     property int userTrustStatus: Constants.trustStatus.unknown
     property int outgoingVerificationStatus: Constants.verificationStatus.unverified
     property int incomingVerificationStatus: Constants.verificationStatus.unverified
@@ -73,12 +75,15 @@ StatusModal {
     function openPopup(publicKey, state = "") {
         // All this should be improved more, but for now we leave it like this.
         const contactDetails = Utils.getContactDetailsAsJson(publicKey);
+
         userPublicKey = publicKey;
         userDisplayName = contactDetails.displayName;
         userName = contactDetails.alias;
         userNickname = contactDetails.localNickname;
         userEnsName = contactDetails.name;
         userIcon = contactDetails.largeImage;
+        userBio = contactDetails.bio;
+        userSocialLinks = contactDetails.socialLinks;
         userIsEnsVerified = contactDetails.ensVerified;
         userIsBlocked = contactDetails.isBlocked;
         isAddedContact = contactDetails.isAdded;
@@ -193,12 +198,15 @@ StatusModal {
         profileStore: popup.profileStore
         contactsStore: popup.contactsStore
 
+
         userPublicKey: popup.userPublicKey
         userDisplayName: popup.userDisplayName
         userName: popup.userName
         userNickname: popup.userNickname
         userEnsName: popup.userEnsName
         userIcon: popup.userIcon
+        userBio: popup.userBio
+        userSocialLinks: popup.userSocialLinks
         userIsEnsVerified: popup.userIsEnsVerified
         userIsBlocked: popup.userIsBlocked
         isAddedContact: popup.isAddedContact

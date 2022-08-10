@@ -17,6 +17,8 @@ import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Popups 0.1
 
+import "../panels"
+
 Rectangle {
     id: root
 
@@ -25,12 +27,15 @@ Rectangle {
     property var profileStore
     property var contactsStore
 
+
     property string userPublicKey: profileStore.pubkey
     property string userDisplayName: profileStore.displayName
     property string userName: profileStore.username
     property string userNickname: profileStore.details.localNickname
     property string userEnsName: profileStore.ensName
     property string userIcon: profileStore.profileLargeImage
+    property string userBio: profileStore.bio
+    property string userSocialLinks: profileStore.socialLinksJson
     property string text: ""
 
     property bool userIsEnsVerified: profileStore.details.ensVerified
@@ -188,6 +193,15 @@ Rectangle {
             visible: root.userIsBlocked
             type: StatusBanner.Type.Danger
             statusText: qsTr("Blocked")
+        }
+
+        ProfileBioSocialsPanel {
+            Layout.fillWidth: true
+            Layout.leftMargin: 16
+            Layout.rightMargin: 16
+
+            bio: root.userBio
+            userSocialLinksJson: root.userSocialLinks
         }
 
         StatusDescriptionListItem {
