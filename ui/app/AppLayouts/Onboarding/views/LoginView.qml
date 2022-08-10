@@ -431,8 +431,8 @@ Item {
             PropertyChanges {
                 target: image
                 source: Style.png("status-logo")
-                Layout.preferredHeight: 140
-                Layout.preferredWidth: 140
+                Layout.preferredHeight: 128
+                Layout.preferredWidth: 128
             }
             PropertyChanges {
                 target: title
