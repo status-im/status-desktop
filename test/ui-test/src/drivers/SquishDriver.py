@@ -8,6 +8,7 @@
 # * \brief   It contains generic Status view components definitions and Squish driver API.
 # *****************************************************************************/
 from enum import Enum
+import sys
 
 # IMPORTANT: It is necessary to import manually the Squish drivers module by module. 
 # More info in: https://kb.froglogic.com/display/KB/Article+-+Using+Squish+functions+in+your+own+Python+modules+or+packages
@@ -44,13 +45,23 @@ def is_loaded(objName: str):
     except LookupError:
         return False, obj
 
-def is_Visible(objName: str):
+# It tries to find if the object with given objectName is currently displayed (visible and enabled):
+# It returns True in case it is found. Otherwise, false.
+def is_found(objName: str):
     try:
         squish.findObject(getattr(names, objName))
         return True
     except LookupError:
         return False
-
+    
+# It waits for the object with given objectName to appear in the UI (visible and enabled):
+# It returns True in case it appears without exceeding a specific timeout. Otherwise, false.
+def is_displayed(objName: str):
+    try:
+        squish.waitForObject(getattr(names, objName))
+        return True
+    except LookupError:
+        return False
 
 # It checks if the given object is visible and enabled.
 def is_visible_and_enabled(obj):
@@ -151,3 +162,49 @@ def wait_for_object_and_type(objName: str, text: str):
         return True
     except LookupError:
         return False
+    
+# Clicking link in label / textedit
+def click_link(objName: str, link: str):
+    point = _find_link(getattr(names, objName), link)
+    if point[0] != -1 and point[1] != -1:
+        squish.mouseClick(getattr(names, objName), point[0], point[1], 0, squish.Qt.LeftButton)
+        
+# Global properties for getting link / hovered handler management:          
+_expected_link = None 
+_link_found = False
+
+def _handle_link_hovered(obj, link):
+    global _link_found
+    if link == _expected_link:
+        _link_found = True
+
+# It registers to hovered handler and moves mouse around a specific object. 
+# Return: If handler is executed, link has been found and the position of the link is returned. Otherwise, it returns position [-1, -1] 
+def _find_link(objName: str, link: str):
+    global _expected_link
+    global _link_found
+    _expected_link = link
+    _link_found = False
+    obj = squish.waitForObject(objName)
+    
+    # Inject desired function into main module:
+    sys.modules['__main__']._handle_link_hovered = _handle_link_hovered
+    squish.installSignalHandler(obj, "linkHovered(QString)", "_handle_link_hovered")  
+    
+    # Start moving the cursor:  
+    squish.mouseMove(obj, int(obj.x), int(obj.y))  
+    end_x = obj.x + obj.width
+    end_y = obj.y + obj.height
+    y = int(obj.y)
+    while y < end_y:
+        x = int(obj.x)
+        while x < end_x:
+            squish.mouseMove(obj, x, y)
+            if _link_found:
+                squish.uninstallSignalHandler(obj, "linkHovered(QString)", "_handle_link_hovered")
+                return [x - obj.x, y - obj.y]
+            x += 10
+        y += 10
+        
+    squish.uninstallSignalHandler(obj, "linkHovered(QString)", "_handle_link_hovered")
+    return [-1, -1]

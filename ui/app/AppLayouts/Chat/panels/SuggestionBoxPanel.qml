@@ -119,6 +119,7 @@ Rectangle {
 
     StatusListView {
         id: listView
+        objectName: "suggestionBoxList"
         model: mentionsListDelegate
         keyNavigationEnabled: true
         anchors.fill: parent
@@ -194,6 +195,7 @@ Rectangle {
 
             delegate: Rectangle {
                 id: itemDelegate
+                objectName: model.name
                 color: ListView.isCurrentItem ? Style.current.backgroundHover : Style.current.transparent
                 border.width: 0
                 width: parent.width

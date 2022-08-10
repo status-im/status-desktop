@@ -4,7 +4,8 @@
 # https://cucumber.io/docs/gherkin/reference/
 Feature: Status Desktop Chat
 
-    As a user I want to join a room and chat.
+	# TODO The complete feature / all scenarios have a chance to fail since they rely on the mailserver (at least, to verify a chat is loaded, something in the history needs to be displayed).
+    As a user I want to join a room and chat and do basic interactions.
 
     The following scenarios cover basic chat flows.
 
@@ -13,7 +14,7 @@ Feature: Status Desktop Chat
     	 When user signs up with username tester123 and password TesTEr16843/!@00
     	 Then the user lands on the signed in app
 
-    Scenario: User joins a room and chats
+    Scenario: User joins a public room and chats
 		 When user joins chat room test
 		 Then user is able to send chat message
 		 | message  			 |
@@ -54,3 +55,19 @@ Feature: Status Desktop Chat
  #   Scenario: User cannot delete another user's message
  #        When user joins chat room test
  #        Then the user cannot delete the last message
+
+#	Scenario Outline: The user can do a mention
+#		When user joins chat room test
+#		And the user inputs a mention to <displayName> with message <message>
+#		Then the <displayName> mention with message <message> have been sent
+#	Examples:
+#		| displayName | message          |
+#		| tester123   |  testing mention |
+
+#	Scenario Outline: The user can not do a mention to not existing users
+#		When user joins chat room test
+#		Then the user cannot input a mention to a not existing user <displayName>
+#	Examples:
+#		| displayName        |
+#		| notExistingAccount |
+#		| asdfgNoNo          |

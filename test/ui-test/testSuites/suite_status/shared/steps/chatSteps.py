@@ -13,6 +13,7 @@ _statusCreateChatView = StatusCreateChatScreen()
 @When("user joins chat room |any|")
 def step(context, room):
     _statusMain.join_chat_room(room)
+    _statusChat.chat_loaded()
     
 @When("the user creates a group chat adding users")
 def step(context):
@@ -22,6 +23,10 @@ def step(context):
 @When("the user clicks on |any| chat")
 def step(context, chatName):
     _statusMain.open_chat(chatName)
+    
+@When("the user inputs a mention to |any| with message |any|")
+def step(context,displayName,message):
+    _statusChat.send_message_with_mention(displayName, message)    
 
 @Then("user is able to send chat message")
 def step(context):
@@ -85,3 +90,10 @@ def step(context, message):
 def step(context):
     _statusChat.verify_last_message_sent_is_not(context.userData["randomMessage"])
     
+@Then("the user cannot input a mention to a not existing user |any|")
+def step(context, displayName):
+    _statusChat.cannot_do_mention(displayName)
+    
+@Then("the |any| mention with message |any| have been sent")
+def step(context,displayName,message):
+    _statusChat.verify_last_message_sent_contains_mention(displayName, message)

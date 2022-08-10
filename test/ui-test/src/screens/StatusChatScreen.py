@@ -8,6 +8,7 @@
 # * \brief   Chat Screen.
 # *****************************************************************************/
 
+import re
 
 from enum import Enum
 from drivers.SquishDriver import *
@@ -15,6 +16,8 @@ from drivers.SquishDriverVerification import *
 from drivers.SDKeyboardCommands import *
 from common.Common import *
 
+_MENTION_SYMBOL = "@"
+_LINK_HREF_REGEX = '<a href="(.+?)">'
 
 class ChatComponents(Enum):
     MESSAGE_INPUT = "chatView_messageInput"       
@@ -25,6 +28,10 @@ class ChatComponents(Enum):
     REPLY_TO_MESSAGE_BUTTON = "chatView_replyToMessageButton"
     DELETE_MESSAGE_BUTTON = "chatView_DeleteMessageButton"
     CONFIRM_DELETE_MESSAGE_BUTTON = "chatButtonsPanelConfirmDeleteMessageButton_StatusButton"
+    SUGGESTIONS_BOX = "chatView_SuggestionBoxPanel"
+    SUGGESTIONS_LIST = "chatView_suggestion_ListView"
+    MENTION_PROFILE_VIEW = "chatView_userMentioned_ProfileView"
+
 
 class ChatMessagesHistory(Enum):
     CHAT_CREATED_TEXT = 1
@@ -35,6 +42,9 @@ class StatusChatScreen:
     def __init__(self):
         verify_screen(ChatComponents.MESSAGE_INPUT.value)
         verify_screen(ChatComponents.TOOLBAR_INFO_BUTTON.value)
+    
+    def chat_loaded(self):
+        verify(is_displayed(ChatComponents.LAST_MESSAGE_TEXT.value), "Checking chat is loaded by looking if last message is displayed.")
 
     # Screen actions region:
     def send_message(self, message: str):
@@ -53,6 +63,30 @@ class StatusChatScreen:
             test.passes("Success: No message was found")
             return
         verify_text_does_not_contain(str(last_message_obj.text), str(message))
+    
+    # This method expects to have just one mention / link in the last chat message 
+    def verify_last_message_sent_contains_mention(self, displayName: str, message: str):
+        [loaded, last_message_obj] = is_loaded_visible_and_enabled(ChatComponents.LAST_MESSAGE_TEXT.value)
+        
+        if loaded:
+            # Verifying mention
+            verify_text_contains(str(last_message_obj.text), displayName)
+            
+            # Verifying message
+            verify_text_contains(str(last_message_obj.text), message)
+            
+            # Get link value from chat text:
+            try:
+                href_info = re.search(_LINK_HREF_REGEX, str(last_message_obj.text)).group(1)
+            except AttributeError:
+                # <a href=, "> not found in the original string
+                verify_failure("Mention link not found in last chat message.")
+            
+            click_link(ChatComponents.LAST_MESSAGE_TEXT.value, href_info)
+            verify(is_found(ChatComponents.MENTION_PROFILE_VIEW.value), "Checking user mentioned profile popup is open.")            
+            
+        else:
+            verify_failure("No messages found in chat.")  
         
     def verify_chat_title(self, title: str):
         info_btn = get_obj(ChatComponents.TOOLBAR_INFO_BUTTON.value)
@@ -113,7 +147,36 @@ class StatusChatScreen:
     def cannot_delete_last_message(self):
         [loaded, last_message_obj] = is_loaded_visible_and_enabled(ChatComponents.LAST_MESSAGE_TEXT.value)
         if not loaded:
-            test.fail("No message found")
+            verify_failure("No message found")
             return 
         hover_obj(last_message_obj)
         object_not_enabled(ChatComponents.DELETE_MESSAGE_BUTTON.value)
+        
+        
+    def send_message_with_mention(self, displayName: str, message: str):
+        self.do_mention(displayName)
+        self.send_message(message)
+    
+    def cannot_do_mention(self, displayName: str):    
+        self.chat_loaded()
+        type(ChatComponents.MESSAGE_INPUT.value, _MENTION_SYMBOL + displayName)
+        displayed = is_displayed(ChatComponents.SUGGESTIONS_BOX.value)
+        verify(displayed == False , "Checking suggestion box is not displayed when trying to mention a non existing user.")
+        
+    def do_mention(self, displayName: str):
+        self.chat_loaded()
+        type(ChatComponents.MESSAGE_INPUT.value, _MENTION_SYMBOL + displayName)
+        displayed = is_displayed(ChatComponents.SUGGESTIONS_BOX.value)
+        verify(displayed, "Checking suggestion box displayed when trying to do a mention")       
+        [loaded, suggestions_list] = is_loaded_visible_and_enabled(ChatComponents.SUGGESTIONS_LIST.value)
+        verify(suggestions_list.count > 0, "Checking if suggestion list is greater than 0")
+        found = False
+        if loaded:            
+            for index in range(suggestions_list.count):
+                user_mention = suggestions_list.itemAtIndex(index)
+                if user_mention.objectName == displayName:
+                    found = True
+                    click_obj(user_mention)
+                    break
+        verify(found, "Checking if the following display name is in the mention's list: " + displayName)
+              
