@@ -203,10 +203,8 @@ Popup {
 
             StatusQControls.StatusFlatRoundButton {
                 id: btnAddStickerPack
-                implicitHeight: 24
+                implicitHeight: 40
                 implicitWidth: 24
-                anchors.bottom: parent.bottom
-                anchors.bottomMargin: Style.current.padding / 2
                 icon.name: "add"
                 type: StatusQControls.StatusFlatRoundButton.Type.Tertiary
                 color: "transparent"
@@ -231,8 +229,7 @@ Popup {
 
             StatusScrollView {
                 id: installedStickersSV
-                anchors.bottom: parent.bottom
-                height: 32
+                height: 40
 
                 RowLayout {
                     id: stickersRowLayout
@@ -272,6 +269,9 @@ Popup {
                             radius: width / 2
                             color: Style.current.backgroundHover
                         }
+                    }
+                    Item {
+                        Layout.fillWidth: true
                     }
                 }
             }
