@@ -24,7 +24,17 @@ Item {
 
     z: 51
 
-    implicitHeight: visible ? (showMoreLoader.active ? childrenRect.height - 10 : chatText.height) : 0
+    implicitHeight: {
+        if (!visible)
+           return 0;
+        if (!chatText.visible && showMoreLoader.active)
+            return childrenRect.height - 10;
+        if (root.veryLongChatText && !root.readMore)
+            return Math.min(chatText.contentHeight, 200);
+        if (chatText.getText(0, chatText.text.length) !== "")
+            return chatText.contentHeight;
+        return 0;
+    }
 
     // This function is to avoid the binding loop warning
     function setWidths() {
@@ -44,14 +54,12 @@ Item {
     StyledTextEdit {
         id: chatText
         objectName: "chatText"
-        visible: !showMoreLoader.active || root.readMore
         textFormat: Text.RichText
         wrapMode: Text.Wrap
         font.pixelSize: Style.current.primaryTextFontSize
         readOnly: true
         selectByMouse: true
         color: Style.current.textColor
-        height: root.veryLongChatText && !root.readMore ? Math.min(implicitHeight, 200) : implicitHeight
         clip: height < implicitHeight
         onLinkActivated: {
             root.linkActivated(link)
