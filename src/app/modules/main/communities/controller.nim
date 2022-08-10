@@ -66,6 +66,10 @@ proc init*(self: Controller) =
     let args = DiscordCategoriesAndChannelsArgs(e)
     self.delegate.discordCategoriesAndChannelsExtracted(args.categories, args.channels, args.oldestMessageTimestamp, args.errors, args.errorsCount)
 
+  self.events.on(SIGNAL_DISCORD_COMMUNITY_IMPORT_PROGRESS) do(e:Args):
+    let args = DiscordImportProgressArgs(e)
+    self.delegate.discordImportProgressUpdated(args.communityId, args.tasks, args.progress, args.errorsCount, args.warningsCount, args.stopped)
+
 proc getCommunityTags*(self: Controller): string =
   result = self.communityService.getCommunityTags()
 

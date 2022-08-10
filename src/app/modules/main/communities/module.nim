@@ -1,4 +1,4 @@
-import NimQml, json, sequtils, sugar, tables
+import NimQml, json, sequtils, sugar, tables, strutils
 
 import ./io_interface
 import ../io_interface as delegate_interface
@@ -10,6 +10,9 @@ import ./models/discord_categories_model
 import ./models/discord_channel_item
 import ./models/discord_channels_model
 import ./models/discord_file_list_model
+import ./models/discord_import_task_item
+import ./models/discord_import_tasks_model
+import ./models/discord_import_error_item
 import ../../shared_models/section_item
 import ../../shared_models/[member_item, member_model, section_model]
 import ../../../global/global_singleton
@@ -158,6 +161,17 @@ method getDiscordChannelItem(self: Module, c: DiscordChannelDto): DiscordChannel
       c.filePath,
       true)
 
+method getDiscordImportTaskItem(self: Module, `type`: int, t: DiscordImportTaskProgress): DiscordImportTaskItem =
+
+  var errorItems: seq[DiscordImportErrorItem] = @[]
+  for error in t.errors:
+    errorItems.add(initDiscordImportErrorItem(error.code, error.message))
+
+  return initDiscordImportTaskItem(
+      type,
+      t.progress,
+      errorItems)
+
 method setCommunityTags*(self: Module, communityTags: string) =
   self.view.setCommunityTags(communityTags)
 
@@ -252,6 +266,18 @@ method discordCategoriesAndChannelsExtracted*(self: Module, categories: seq[Disc
   self.view.setDiscordDataExtractionInProgress(false)
   self.view.setDiscordImportErrorsCount(errorsCount)
   self.view.discordChannelsModel().hasSelectedItemsChanged()
+
+method discordImportProgressUpdated*(self: Module, communityId: string, tasks: Table[string, DiscordImportTaskProgress], progress: float, errorsCount: int, warningsCount: int, stopped: bool) =
+
+  var taskItems: seq[DiscordImportTaskItem] = @[]
+  for task in tasks.keys:
+    let taskProgress = tasks[task]
+    taskItems.add(self.getDiscordImportTaskItem(parseInt(task), taskProgress))
+  self.view.discordImportTasksModel().setItems(taskItems)
+  self.view.setDiscordImportErrorsCount(errorsCount)
+  self.view.setDiscordImportWarningsCount(warningsCount)
+  self.view.setDiscordImportProgress(progress)
+  self.view.setDiscordImportProgressStopped(stopped)
 
 method requestToJoinCommunity*(self: Module, communityId: string, ensName: string) =
   self.controller.requestToJoinCommunity(communityId, ensName)

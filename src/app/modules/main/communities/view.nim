@@ -12,6 +12,7 @@ import ./models/discord_categories_model
 import ./models/discord_category_item
 import ./models/discord_channels_model
 import ./models/discord_channel_item
+import ./models/discord_import_tasks_model
 
 QtObject:
   type
@@ -31,6 +32,11 @@ QtObject:
       discordChannelsModelVariant: QVariant
       discordOldestMessageTimestamp: int
       discordImportErrorsCount: int
+      discordImportWarningsCount: int
+      discordImportProgress: float
+      discordImportProgressStopped: bool
+      discordImportTasksModel: DiscordImportTasksModel
+      discordImportTasksModelVariant: QVariant
       discordDataExtractionInProgress: bool
 
   proc delete*(self: View) =
@@ -45,6 +51,8 @@ QtObject:
     self.discordCategoriesModelVariant.delete
     self.discordChannelsModel.delete
     self.discordChannelsModelVariant.delete
+    self.discordImportTasksModel.delete
+    self.discordImportTasksModelVariant.delete
     self.QObject.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =
@@ -64,7 +72,12 @@ QtObject:
     result.discordChannelsModelVariant = newQVariant(result.discordChannelsModel)
     result.discordOldestMessageTimestamp = 0
     result.discordDataExtractionInProgress = false 
+    result.discordImportWarningsCount = 0
     result.discordImportErrorsCount = 0
+    result.discordImportProgress = 0
+    result.discordImportProgressStopped = false
+    result.discordImportTasksModel = newDiscordDiscordImportTasksModel()
+    result.discordImportTasksModelVariant = newQVariant(result.discordImportTasksModel)
     result.observedItem = newActiveSection()
 
   proc load*(self: View) =
@@ -89,6 +102,19 @@ QtObject:
     read = getDiscordOldestMessageTimestamp
     notify = discordOldestMessageTimestampChanged
 
+  proc discordImportWarningsCountChanged*(self: View) {.signal.}
+
+  proc setDiscordImportWarningsCount*(self: View, count: int) {.slot.} =
+    self.discordImportWarningsCount = count
+    self.discordImportWarningsCountChanged()
+
+  proc getDiscordImportWarningsCount*(self: View): int {.slot.} =
+    return self.discordImportWarningsCount
+
+  QtProperty[int] discordImportWarningsCount:
+    read = getDiscordImportWarningsCount
+    notify = discordImportWarningsCountChanged
+
   proc setDiscordImportErrorsCount*(self: View, count: int) {.slot.} =
     self.discordImportErrorsCount = count
     self.discordImportErrorsCountChanged()
@@ -99,6 +125,32 @@ QtObject:
   QtProperty[int] discordImportErrorsCount:
     read = getDiscordImportErrorsCount
     notify = discordImportErrorsCountChanged
+
+  proc discordImportProgressChanged*(self: View) {.signal.}
+
+  proc setDiscordImportProgress*(self: View, value: float) {.slot.} =
+    self.discordImportProgress = value
+    self.discordImportProgressChanged()
+
+  proc getDiscordImportProgress*(self: View): float {.slot.} =
+    return self.discordImportProgress
+
+  QtProperty[float] discordImportProgress:
+    read = getDiscordImportProgress
+    notify = discordImportProgressChanged
+
+  proc discordImportProgressStoppedChanged*(self: View) {.signal.}
+
+  proc setDiscordImportProgressStopped*(self: View, stopped: bool) {.slot.} =
+    self.discordImportProgressStopped = stopped
+    self.discordImportProgressStoppedChanged()
+
+  proc getDiscordImportProgressStopped*(self: View): bool {.slot.} =
+    return self.discordImportProgressStopped
+
+  QtProperty[int] discordImportProgressStopped:
+    read = getDiscordImportProgressStopped
+    notify = discordImportImportProgressStoppedChanged
 
   proc addItem*(self: View, item: SectionItem) =
     self.model.addItem(item)
@@ -155,6 +207,14 @@ QtObject:
   QtProperty[QVariant] discordChannels:
     read = getDiscordChannelsModel
 
+  proc discordImportTasksModel*(self: View): DiscordImportTasksModel =
+    result = self.discordImportTasksModel
+
+  proc getDiscordImportTasksModel(self: View): QVariant {.slot.} =
+    return self.discordImportTasksModelVariant
+
+  QtProperty[QVariant] discordImportTasks:
+    read = getDiscordImportTasksModel
 
   proc observedItemChanged*(self:View) {.signal.}
 

@@ -1,6 +1,6 @@
 {.used.}
 
-import json, sequtils, sugar
+import json, sequtils, sugar, tables
 
 import ../../../../backend/communities
 include ../../../common/json_utils
@@ -85,6 +85,10 @@ type DiscordImportError* = object
   code*: int
   message*: string
 
+type DiscordImportTaskProgress* = object
+  progress*: float
+  errors*: seq[DiscordImportError]
+
 proc toCommunityAdminSettingsDto*(jsonObj: JsonNode): CommunityAdminSettingsDto =
   result = CommunityAdminSettingsDto()
   discard jsonObj.getProp("pinMessageAllMembersEnabled", result.pinMessageAllMembersEnabled)
@@ -101,6 +105,21 @@ proc toDiscordChannelDto*(jsonObj: JsonNode): DiscordChannelDto =
   discard jsonObj.getProp("name", result.name)
   discard jsonObj.getProp("topic", result.description)
   discard jsonObj.getProp("filePath", result.filePath)
+
+proc toDiscordImportError*(jsonObj: JsonNode): DiscordImportError =
+  result = DiscordImportError()
+  discard jsonObj.getProp("code", result.code)
+  discard jsonObj.getProp("message", result.message)
+
+proc toDiscordImportTaskProgress*(jsonObj: JsonNode): DiscordImportTaskProgress =
+  result = DiscordImportTaskProgress()
+  result.progress = jsonObj{"progress"}.getFloat()
+
+  var importErrorsObj: JsonNode
+  if(jsonObj.getProp("errors", importErrorsObj) and importErrorsObj.kind == JArray):
+    for error in importErrorsObj:
+      let importError = error.toDiscordImportError()
+      result.errors.add(importError)
 
 proc toCommunityDto*(jsonObj: JsonNode): CommunityDto =
   result = CommunityDto()

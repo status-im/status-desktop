@@ -259,7 +259,7 @@ StatusStackModal {
 
             readonly property bool canGoNext: root.store.discordChannelsModel.hasSelectedItems
             readonly property var nextAction: function () {
-                // TODO: request discord import
+                root.currentIndex++
             }
 
             Item {
@@ -346,6 +346,59 @@ StatusStackModal {
                     }
                 }
             }
+        },
+
+        ColumnLayout {
+          spacing: 24
+
+          StatusBaseText {
+            Layout.fillWidth: true
+            text: "PROGRESS: " + (root.store.discordImportProgress*100) + "%"
+          }
+          StatusBaseText {
+            Layout.fillWidth: true
+            text: "STOPPED: " + root.store.discordImportProgressStopped
+          }
+
+          StatusBaseText {
+            Layout.fillWidth: true
+            text: "ERRORS: " + root.store.discordImportErrorsCount
+          }
+
+          StatusBaseText {
+            Layout.fillWidth: true
+            text: "WARNINGS: " + root.store.discordImportWarningsCount
+          }
+
+          Repeater {
+            model: root.store.discordImportTasks
+            delegate: Rectangle {
+              Layout.fillWidth: true
+              height: progressText.height
+
+              StatusBaseText {
+                id: progressText
+                text: model.type + " " + (model.progress*100) + "%"
+              }
+
+              ColumnLayout {
+                spacing: 12
+                Layout.fillWidth: true
+
+                Repeater {
+                  model: model.errors
+                  delegate: Rectangle {
+                    Layout.fillWidth: true
+                    height: 100
+                    color: "yellow"
+                    StatusBaseText {
+                      text: model.message
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
     ]
 

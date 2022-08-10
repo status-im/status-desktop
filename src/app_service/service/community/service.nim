@@ -80,6 +80,14 @@ type
     errors*: Table[string, DiscordImportError]
     errorsCount*: int
 
+  DiscordImportProgressArgs* = ref object of Args
+    communityId*: string
+    tasks*: Table[string, DiscordImportTaskProgress]
+    progress*: float
+    errorsCount*: int
+    warningsCount*: int
+    stopped*: bool
+
 # Signals which may be emitted by this service:
 const SIGNAL_COMMUNITY_JOINED* = "communityJoined"
 const SIGNAL_COMMUNITY_MY_REQUEST_ADDED* = "communityMyRequestAdded"
@@ -108,6 +116,7 @@ const SIGNAL_CATEGORY_MUTED* = "categoryMuted"
 const SIGNAL_CATEGORY_UNMUTED* = "categoryUnmuted"
 const SIGNAL_DISCORD_CATEGORIES_AND_CHANNELS_EXTRACTED* = "discordCategoriesAndChannelsExtracted"
 const SIGNAL_DISCORD_COMMUNITY_IMPORT_FINISHED* = "discordCommunityImportFinished"
+const SIGNAL_DISCORD_COMMUNITY_IMPORT_PROGRESS* = "discordCommunityImportProgress"
 
 QtObject:
   type
@@ -197,6 +206,16 @@ QtObject:
       var receivedData = DiscordCommunityImportFinishedSignal(e)
       self.events.emit(SIGNAL_DISCORD_COMMUNITY_IMPORT_FINISHED, CommunityIdArgs(communityId: receivedData.communityId))
 
+    self.events.on(SignalType.DiscordCommunityImportProgress.event) do(e: Args):
+      var receivedData = DiscordCommunityImportProgressSignal(e)
+      self.events.emit(SIGNAL_DISCORD_COMMUNITY_IMPORT_PROGRESS, DiscordImportProgressArgs(
+        communityId: receivedData.communityId,
+        tasks: receivedData.tasks,
+        progress: receivedData.progress,
+        errorsCount: receivedData.errorsCount,
+        warningsCount: receivedData.warningsCount,
+        stopped: receivedData.stopped
+      ))
 
   proc updateMissingFields(chatDto: var ChatDto, chat: ChatDto) =
     # This proc sets fields of `chatDto` which are available only for community channels.

@@ -19,6 +19,14 @@ type DiscordCategoriesAndChannelsExtractedSignal* = ref object of Signal
   errors*: Table[string, DiscordImportError]
   errorsCount*: int
 
+type DiscordCommunityImportProgressSignal* = ref object of Signal
+  communityId*: string
+  tasks*: Table[string, DiscordImportTaskProgress]
+  progress*: float
+  errorsCount*: int
+  warningsCount*: int
+  stopped*: bool
+
 type DiscordCommunityImportFinishedSignal* = ref object of Signal
   communityId*: string
 
@@ -48,6 +56,24 @@ proc fromEvent*(T: type DiscordCategoriesAndChannelsExtractedSignal, event: Json
       err.message = responseErr["message"].getStr()
       result.errors[key] = err
       result.errorsCount = result.errorsCount+1
+
+proc fromEvent*(T: type DiscordCommunityImportProgressSignal, event: JsonNode): DiscordCommunityImportProgressSignal =
+  result = DiscordCommunityImportProgressSignal()
+  result.signalType = SignalType.DiscordCommunityImportProgress
+  result.tasks = initTable[string, DiscordImportTaskProgress]()
+
+  if event["event"]["importProgress"].kind == JObject:
+    let importProgressObj = event["event"]["importProgress"]
+
+    result.communityId = importProgressObj{"communityId"}.getStr()
+    result.progress = importProgressObj{"progress"}.getFloat()
+    result.errorsCount = importProgressObj{"errorsCount"}.getInt()
+    result.warningsCount = importProgressObj{"warningsCount"}.getInt()
+    result.stopped = importProgressObj{"stopped"}.getBool()
+
+    if importProgressObj["tasks"].kind == JObject:
+      for task in importProgressObj["tasks"].keys:
+        result.tasks[task] = importProgressObj["tasks"][task].toDiscordImportTaskProgress()
 
 proc fromEvent*(T: type DiscordCommunityImportFinishedSignal, event: JsonNode): DiscordCommunityImportFinishedSignal =
   result = DiscordCommunityImportFinishedSignal()

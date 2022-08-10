@@ -95,6 +95,7 @@ QtObject:
       of SignalType.UpdateAvailable: UpdateAvailableSignal.fromEvent(jsonSignal)
       of SignalType.DiscordCategoriesAndChannelsExtracted: DiscordCategoriesAndChannelsExtractedSignal.fromEvent(jsonSignal)
       of SignalType.DiscordCommunityImportFinished: DiscordCommunityImportFinishedSignal.fromEvent(jsonSignal)
+      of SignalType.DiscordCommunityImportProgress: DiscordCommunityImportProgressSignal.fromEvent(jsonSignal)
       else: Signal()
 
     result.signalType = signalType
