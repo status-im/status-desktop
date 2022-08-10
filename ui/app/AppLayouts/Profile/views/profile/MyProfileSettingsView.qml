@@ -11,12 +11,15 @@ import shared.controls.chat 1.0
 import "../../popups"
 import "../../stores"
 import "../../controls"
+import "../../panels"
 import "../../../Onboarding/shared" as OnboardingComponents
 
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
+
+import SortFilterProxyModel 0.2
 
 ColumnLayout {
     id: root
@@ -25,18 +28,25 @@ ColumnLayout {
     property ProfileStore profileStore
     property WalletStore walletStore
 
-    readonly property bool dirty: displayNameInput.text != profileStore.displayName
-                               || biometricsSwitch.checked != biometricsSwitch.currentStoredValue
+    readonly property bool dirty: descriptionPanel.displayName.text !== profileStore.displayName ||
+                                  descriptionPanel.bio.text !== profileStore.bio ||
+                                  profileStore.socialLinksDirty ||
+                                  biometricsSwitch.checked != biometricsSwitch.currentStoredValue
 
-    readonly property bool valid: !!displayNameInput.text && displayNameInput.valid
+    readonly property bool valid: !!descriptionPanel.displayName.text && descriptionPanel.displayName.valid
 
     function reset() {
-        displayNameInput.text = Qt.binding(() => { return profileStore.displayName })
+        descriptionPanel.displayName.text = Qt.binding(() => { return profileStore.displayName })
+        descriptionPanel.bio.text = Qt.binding(() => { return profileStore.bio })
+        profileStore.resetSocialLinks()
+        descriptionPanel.reevaluateSocialLinkInputs()
         biometricsSwitch.checked = Qt.binding(() => { return biometricsSwitch.currentStoredValue })
     }
 
     function save() {
-        profileStore.setDisplayName(displayNameInput.text)
+        profileStore.setDisplayName(descriptionPanel.displayName.text)
+        profileStore.setBio(descriptionPanel.bio.text)
+        profileStore.saveSocialLinks()
 
         if (biometricsSwitch.checked)
             Global.openPopup(storePasswordModal)
@@ -62,21 +72,53 @@ ColumnLayout {
         pubkey: profileStore.pubkey
         icon: profileStore.profileLargeImage
         imageSize: ProfileHeader.ImageSize.Big
-        
+
         displayNameVisible: false
         pubkeyVisible: false
         emojiHashVisible: false
         editImageButtonVisible: true
     }
 
-    StatusInput {
-        id: displayNameInput
+    SortFilterProxyModel {
+        id: staticSocialLinksSubsetModel
+
+        function filterPredicate(linkType) {
+            return linkType === Constants.socialLinkType.twitter ||
+                   linkType === Constants.socialLinkType.personalSite
+        }
+
+        sourceModel: profileStore.temporarySocialLinksModel
+        filters: ExpressionFilter {
+            expression: staticSocialLinksSubsetModel.filterPredicate(model.linkType)
+        }
+        sorters: RoleSorter {
+            roleName: "linkType"
+        }
+    }
+
+    ProfileDescriptionPanel {
+        id: descriptionPanel
+
         Layout.fillWidth: true
-        label: qsTr("Display name")
-        placeholderText: qsTr("Display Name")
-        charLimit: 24
-        input.text: root.profileStore.displayName
-        validators: Constants.validators.displayName
+
+        function reevaluateSocialLinkInputs()  {
+            socialLinksModel = null
+            socialLinksModel = staticSocialLinksSubsetModel
+        }
+
+        displayName.text: profileStore.displayName
+        bio.text: profileStore.bio
+        socialLinksModel: staticSocialLinksSubsetModel
+
+        onSocialLinkChanged: profileStore.updateLink(uuid, text, url)
+        onAddSocialLinksClicked: socialLinksModal.open()
+    }
+
+    SocialLinksModal {
+        id: socialLinksModal
+        profileStore: root.profileStore
+
+        onClosed: descriptionPanel.reevaluateSocialLinkInputs()
     }
 
     StatusListItem {

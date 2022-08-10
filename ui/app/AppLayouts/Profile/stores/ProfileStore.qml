@@ -16,6 +16,12 @@ QtObject {
     property bool userDeclinedBackupBanner: localAccountSensitiveSettings.userDeclinedBackupBanner
     property var privacyStore: profileSectionModule.privacyModule
 
+    readonly property string bio: profileModule.bio
+    readonly property string socialLinksJson: profileModule.socialLinksJson
+    readonly property var socialLinksModel: profileModule.socialLinksModel
+    readonly property var temporarySocialLinksModel: profileModule.temporarySocialLinksModel // for editing purposes
+    readonly property bool socialLinksDirty: profileModule.socialLinksDirty
+
     onUserDeclinedBackupBannerChanged: {
         if (userDeclinedBackupBanner !== localAccountSensitiveSettings.userDeclinedBackupBanner) {
             localAccountSensitiveSettings.userDeclinedBackupBanner = userDeclinedBackupBanner
@@ -42,5 +48,29 @@ QtObject {
 
     function setDisplayName(displayName) {
         root.profileModule.setDisplayName(displayName)
+    }
+
+    function createCustomLink(text, url) {
+        root.profileModule.createCustomLink(text, url)
+    }
+
+    function removeCustomLink(uuid) {
+        root.profileModule.removeCustomLink(uuid)
+    }
+
+    function updateLink(uuid, text, url) {
+        root.profileModule.updateLink(uuid, text, url)
+    }
+
+    function resetSocialLinks() {
+        root.profileModule.resetSocialLinks()
+    }
+
+    function saveSocialLinks() {
+        root.profileModule.saveSocialLinks()
+    }
+
+    function setBio(bio) {
+        root.profileModule.setBio(bio)
     }
 }
