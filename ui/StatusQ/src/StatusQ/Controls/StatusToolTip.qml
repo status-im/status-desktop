@@ -18,7 +18,7 @@ ToolTip {
     property int offset: 0
     property alias arrow: arrow
 
-    implicitWidth: Math.min(maxWidth, textContent.implicitWidth + 16)
+    implicitWidth: Math.min(maxWidth, contentItem.implicitWidth + 16)
     leftPadding: 8
     rightPadding: 8
     topPadding: 8
@@ -65,7 +65,6 @@ ToolTip {
         }
     }
     contentItem: StatusBaseText {
-        id: textContent
         text: statusToolTip.text
         color: Theme.palette.white
         wrapMode: Text.WordWrap
