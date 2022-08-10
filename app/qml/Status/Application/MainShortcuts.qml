@@ -7,7 +7,7 @@ Item {
     property alias enableHideWindow: hideWindowShortcut.enabled
 
     Shortcut {
-        sequence: StandardKey.FullScreen
+        sequences: [StandardKey.FullScreen]
         onActivated: {
             if (visibility === Window.FullScreen)
                 window.showNormal()

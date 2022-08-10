@@ -45,9 +45,16 @@ pipeline {
       steps {
         sh "conan install ${env.WORKSPACE}/ --profile=${env.WORKSPACE}/vendor/conan-configs/linux.ini -s build_type=Release --build=missing -if=${env.WORKSPACE}/build/conan  -of=${env.WORKSPACE}/build"
         // TODO: This fails compiling status-go with Jenkins user but not when run with docker's user. Fix go installation to work for all users or build docker with jenkin's
-        sh "conan build ${env.WORKSPACE} --build-folder=${env.WORKSPACE}/build/conan"
+        sh "CC=gcc-10 CXX=g++-10 qt-cmake ${env.WORKSPACE}/ -G Ninja -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=${env.WORKSPACE}/build/conan/conan_toolchain.cmake"
+        sh "cmake --build ${env.WORKSPACE}/build"
       }
     }
+
+    // stage('Run Tests') {
+    //   steps {
+    //     sh "CTEST_OUTPUT_ON_FAILURE=1 QT_QPA_PLATFORM=offscreen ctest --test-dir ${env.WORKSPACE}/build"
+    //   }
+    // }
 
     stage('Package') {
       steps {
