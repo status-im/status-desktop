@@ -53,6 +53,7 @@ import ../../../app_service/service/ens/service as ens_service
 import ../../../app_service/service/network/service as network_service
 import ../../../app_service/service/general/service as general_service
 from ../../../app_service/common/types import StatusType
+import ../../../app_service/common/social_links
 
 import ../../core/notifications/details
 import ../../core/eventemitter
@@ -721,7 +722,9 @@ method getContactDetailsAsJson*[T](self: Module[T], publicKey: string): string =
     # TODO rename verificationStatus to outgoingVerificationStatus
     "verificationStatus": contact.verificationStatus.int,
     "incomingVerificationStatus": request.status.int,
-    "hasAddedUs": contact.hasAddedUs
+    "hasAddedUs": contact.hasAddedUs,
+    "socialLinks": $contact.socialLinks.toJsonNode(),
+    "bio": contact.bio
   }
   return $jsonObj
 
