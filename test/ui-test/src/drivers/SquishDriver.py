@@ -9,6 +9,7 @@
 # *****************************************************************************/
 from enum import Enum
 import sys
+import time
 
 # IMPORTANT: It is necessary to import manually the Squish drivers module by module. 
 # More info in: https://kb.froglogic.com/display/KB/Article+-+Using+Squish+functions+in+your+own+Python+modules+or+packages
@@ -181,7 +182,7 @@ def type(objName: str, text: str):
 def wait_for_object_and_type(objName: str, text: str):
     try:
         obj = squish.waitForObject(getattr(names, objName))
-        squish.type(obj, text)
+        squish.type(obj, text)        
         return True
     except LookupError:
         return False
@@ -244,3 +245,32 @@ def _find_link(objName: str, link: str):
 
 def expectTrue(assertionValue: bool, message: str):
     return test.verify(assertionValue, message)
+
+# Wait for the object to appear and, assuming it is already focused
+# it types the specified text into the given object (as if the user had used the keyboard):
+def wait_for_object_focused_and_type(obj_name: str, text: str):
+    try:
+        squish.waitForObject(getattr(names, obj_name))
+        squish.nativeType(text)
+        squish.snooze(1)      
+        return True
+    except LookupError:
+        return False     
+        
+# NOTE: It is a specific method for ListView components.
+# It positions the mouse in the middle of the list_obj and scrolls until reaching the item at specific index is visible.
+# Return True if it has been possible to scroll until item index, False if timeout or index not found.     
+def scroll_list_view_at_index(list_obj, index: int, timeout: int=_MAX_WAIT_OBJ_TIMEOUT):
+    start_time = time.time() * 1000
+    current_time = start_time
+    end_scroll = False
+    if not squish.isNull(list_obj):
+        while not end_scroll and current_time - start_time <= timeout:
+            item_obj = list_obj.itemAtIndex(index)              
+            if not squish.isNull(item_obj) and item_obj.visible:
+                end_scroll = True
+                return True
+            squish.mouseWheel(list_obj, int(list_obj.x + list_obj.width/2), int(list_obj.y + list_obj.height/2), 0, -1, squish.Qt.ControlModifier)
+            squish.snooze(1) 
+            current_time = time.time() * 1000
+    return False

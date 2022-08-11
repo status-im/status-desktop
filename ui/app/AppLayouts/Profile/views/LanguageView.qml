@@ -23,6 +23,7 @@ SettingsContentBase {
     property LanguageStore languageStore
     property var currencyStore
 
+    objectName: "languageView"
     onVisibleChanged: { if(!visible) root.setViewIdleState()}
     onBaseAreaClicked: { root.setViewIdleState() }
 
@@ -33,6 +34,11 @@ SettingsContentBase {
     function setViewIdleState() {
         currencyPicker.close()
         languagePicker.close()
+    }
+
+    function changeLanguage(key) {
+        languagePicker.newKey = key
+        languagePause.start()
     }
 
     ColumnLayout {
@@ -118,7 +124,7 @@ SettingsContentBase {
                         root.languageStore.changeLanguage(languagePicker.newKey)
                     }
                 }
-
+                objectName: "languagePicker"
                 inputList: SortFilterProxyModel {
                     sourceModel: root.languageStore.languageModel
 
@@ -164,13 +170,13 @@ SettingsContentBase {
                     if(selected && root.languageStore.currentLanguage !== key) {
                         // TEMPORARY: It should be removed as it is only used in Linux OS but it must be investigated how to change language in execution time, as well, in Linux (will be addressed in another task)
                         if (Qt.platform.os === Constants.linux) {
+                            root.changeLanguage(key)
                             linuxConfirmationDialog.active = true
                             linuxConfirmationDialog.item.newLocale = key
                             linuxConfirmationDialog.item.open()
                         }
                         else {
-                            languagePicker.newKey = key
-                            languagePause.start()
+                            root.changeLanguage(key)
                         }
                     }
                 }
@@ -260,7 +266,6 @@ SettingsContentBase {
                 confirmationText: qsTr("Display language has been changed. You must restart the application for changes to take effect.")
                 confirmButtonLabel: qsTr("Close the app now")
                 onConfirmButtonClicked: {
-                    root.languageStore.changeLanguage(newLocale)
                     loader.active = false
                     Qt.quit()
                 }

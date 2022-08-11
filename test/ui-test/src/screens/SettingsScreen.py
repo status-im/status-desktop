@@ -19,17 +19,16 @@ class SettingsScreenComponents(Enum):
     SAVE_BUTTON: str = "settingsSave_StatusButton"
 
 class SidebarComponents(Enum):
-    ADVANCED_OPTION: str = "advanced_StatusBaseText"
-    WALLET_ITEM: str = "wallet_AppMenu_StatusNavigationListItem"
-    SIGN_OUT_AND_QUIT: str = "sign_out_Quit_ExtraMenu_StatusNavigationListItem"
-    COMMUNITIES_ITEM: str = "communities_AppMenu_StatusNavigationListItem"
-    PROFILE_ITEM: str = "profile_MainMenu_StatusNavigationListItem"
-
+    ADVANCED_OPTION: str = "advanced_StatusNavigationListItem"
+    WALLET_OPTION: str = "wallet_StatusNavigationListItem"
+    LANGUAGE_CURRENCY_OPTION: str = "language_StatusNavigationListItem"
+    SIGN_OUT_AND_QUIT_OPTION: str = "sign_out_Quit_StatusNavigationListItem"
+    COMMUNITIES_OPTION: str = "communities_StatusNavigationListItem"
+    PROFILE_OPTION: str = "profile_StatusNavigationListItem"
 
 class AdvancedOptionScreen(Enum):
     ACTIVATE_OR_DEACTIVATE_WALLET: str = "walletSettingsLineButton"
     I_UNDERSTAND_POP_UP: str = "i_understand_StatusBaseText"
-
 
 class WalletSettingsScreen(Enum):
     GENERATED_ACCOUNTS: str = "settings_Wallet_MainView_GeneratedAccounts"
@@ -63,9 +62,6 @@ class CommunitiesSettingsScreen(Enum):
     LEAVE_COMMUNITY_BUTTONS: str = "settings_Communities_MainView_LeaveCommunityButtons"
     LEAVE_COMMUNITY_POPUP_LEAVE_BUTTON: str = "settings_Communities_MainView_LeavePopup_LeaveCommunityButton"
 
-
-
-
 class SettingsScreen:
     __pid = 0
     
@@ -73,28 +69,25 @@ class SettingsScreen:
         verify_screen(SidebarComponents.ADVANCED_OPTION.value)
     
     def open_wallet_settings(self):
-        click_obj_by_name(SidebarComponents.WALLET_ITEM.value)
-        
-    def activate_open_wallet_settings(self):
-        if not (is_found(SidebarComponents.WALLET_ITEM.value)) :
+        click_obj_by_name(SidebarComponents.WALLET_OPTION.value)
+
+    def activate_wallet_option(self):
+        if not (is_found(SidebarComponents.WALLET_OPTION.value)):
             click_obj_by_name(SidebarComponents.ADVANCED_OPTION.value)
             click_obj_by_name(AdvancedOptionScreen.ACTIVATE_OR_DEACTIVATE_WALLET.value)
             click_obj_by_name(AdvancedOptionScreen.I_UNDERSTAND_POP_UP.value)
-            verify_object_enabled(SidebarComponents.WALLET_ITEM.value)
-           
+            verify_object_enabled(SidebarComponents.WALLET_OPTION.value)
+
+    def activate_open_wallet_settings(self):
+        self.activate_wallet_option()
         self.open_wallet_settings()
 
     def activate_open_wallet_section(self):
-        if not (is_found(SidebarComponents.WALLET_ITEM.value)):
-            click_obj_by_name(SidebarComponents.ADVANCED_OPTION.value)
-            click_obj_by_name(AdvancedOptionScreen.ACTIVATE_OR_DEACTIVATE_WALLET.value)
-            click_obj_by_name(AdvancedOptionScreen.I_UNDERSTAND_POP_UP.value)
-            verify_object_enabled(SidebarComponents.WALLET_ITEM.value)
-           
+        self.activate_wallet_option()           
         click_obj_by_name(MainScreenComponents.WALLET_BUTTON.value)
     
     def delete_account(self, account_name: str):
-        click_obj_by_name(SidebarComponents.WALLET_ITEM.value)
+        self.open_wallet_settings()
         
         index = self._find_account_index(account_name)
             
@@ -117,6 +110,10 @@ class SettingsScreen:
     def toggle_test_networks(self):
         click_obj_by_name(WalletSettingsScreen.NETWORKS_ITEM.value)
         get_and_click_obj(WalletSettingsScreen.TESTNET_TOGGLE.value)
+        click_obj_by_name(WalletSettingsScreen.TESTNET_TOGGLE.value)
+        
+    def open_language_and_currency_settings(self):
+        click_obj_by_name(SidebarComponents.LANGUAGE_CURRENCY_OPTION.value)
     
     def _find_account_index(self, account_name: str) -> int:
         accounts = get_obj(WalletSettingsScreen.GENERATED_ACCOUNTS.value)
@@ -127,7 +124,7 @@ class SettingsScreen:
     
     def sign_out_and_quit_the_app(self, pid: int):
         SettingsScreen.__pid = pid
-        click_obj_by_name(SidebarComponents.SIGN_OUT_AND_QUIT.value)
+        click_obj_by_name(SidebarComponents.SIGN_OUT_AND_QUIT_OPTION.value)
         click_obj_by_name(ConfirmationDialog.SIGN_OUT_CONFIRMATION.value)
         
     def verify_the_app_is_closed(self):
@@ -148,7 +145,6 @@ class SettingsScreen:
 
         click_obj_by_name(WalletSettingsScreen.EDIT_ACCOUNT_SAVE_BUTTON.value)
 
-
     def verify_editedAccount(self, new_name: str, new_color: str):
         accountName = get_obj(WalletSettingsScreen.ACCOUNT_VIEW_ACCOUNT_NAME.value)
         iconSettings = get_obj(WalletSettingsScreen.ACCOUNT_VIEW_ICON_SETTINGS.value)
@@ -156,7 +152,7 @@ class SettingsScreen:
         verify_values_equal(str(iconSettings.icon.color.name), str(new_color.lower()), "Edited account color not updated")
 
     def open_communities_section(self):
-        click_obj_by_name(SidebarComponents.COMMUNITIES_ITEM.value)
+        click_obj_by_name(SidebarComponents.COMMUNITIES_OPTION.value)
 
     def leave_community(self):
         StatusMainScreen.wait_for_banner_to_disappear()
@@ -165,8 +161,8 @@ class SettingsScreen:
         click_obj_by_name(CommunitiesSettingsScreen.LEAVE_COMMUNITY_POPUP_LEAVE_BUTTON.value)
 
     def open_profile_settings(self):
-        verify_object_enabled(SidebarComponents.PROFILE_ITEM.value)
-        click_obj_by_name(SidebarComponents.PROFILE_ITEM.value)
+        verify_object_enabled(SidebarComponents.PROFILE_OPTION.value)
+        click_obj_by_name(SidebarComponents.PROFILE_OPTION.value)
 
     def verify_display_name(self, display_name: str):
         verify_text_matching(ProfileSettingsScreen.DISPLAY_NAME.value, display_name)
@@ -215,4 +211,3 @@ class SettingsScreen:
         verify_text_matching(ProfileSettingsScreen.CUSTOM_LINK_IN_DIALOG.value, custom_link_name)
         verify_text_matching(ProfileSettingsScreen.CUSTOM_URL_IN_DIALOG.value, custom_link)
         click_obj_by_name(ProfileSettingsScreen.CLOSE_SOCIAL_LINKS_DIALOG.value)
-

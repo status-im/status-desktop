@@ -25,7 +25,7 @@ Column {
     Repeater {
         id: mainMenuItems
         delegate: StatusNavigationListItem {
-            objectName:  model.text + "-MainMenu"
+            objectName: itemId + "-MainMenuItem"
             itemId: model.subsection
             title: model.text
             icon.name: model.icon
@@ -58,7 +58,7 @@ Column {
         id: appsMenuItems
         delegate: StatusNavigationListItem {
             id: appsMenuDelegate
-            objectName:  model.text + "-AppMenu"
+            objectName: itemId + "-AppMenuItem"
             itemId: model.subsection
             title: model.text
             icon.name: model.icon
@@ -86,7 +86,7 @@ Column {
         id: settingsMenuItems
         delegate: StatusNavigationListItem {
             id: settingsMenuDelegate
-            objectName:  model.text + "-SettingsMenu"
+            objectName:  itemId + "-SettingsMenuItem"
             itemId: model.subsection
             title: model.text
             icon.name: model.icon
@@ -101,7 +101,7 @@ Column {
     Repeater {
         id: extraMenuItems
         delegate: StatusNavigationListItem {
-            objectName:  model.text + "-ExtraMenu"
+            objectName:  itemId + "-ExtraMenuItem"
             itemId: model.subsection
             title: model.text
             icon.name: model.icon
@@ -111,4 +111,3 @@ Column {
         }
     }
 }
-

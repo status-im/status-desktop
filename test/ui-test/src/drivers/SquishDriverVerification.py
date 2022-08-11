@@ -27,8 +27,8 @@ def verify_text_matching(objName: str, text: str):
 def verify_text_matching_insensitive(obj, text: str):
     test.verify(is_text_matching_insensitive(obj, text), "text does not match")
     
-def verify_equal(result: object, expected: object, msg: str = "objects are not equal"):
-    test.verify(result == expected, msg)
+def verify_equal(result: object, expected: object):
+    test.verify(result == expected, "Checking if objects are equal")
 
 def verify(result: bool, msg: str):
     test.verify(result, msg)

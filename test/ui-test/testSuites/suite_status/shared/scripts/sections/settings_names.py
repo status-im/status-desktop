@@ -1,16 +1,45 @@
-
 from sections.global_names import *
+from enum import Enum
+
+# Side bar section items object name helpers:
+_MAIN_MENU_ITEM_OBJ_NAME = "-MainMenuItem"
+_APP_MENU_ITEM_OBJ_NAME = "-AppMenuItem"
+_SETTINGS_MENU_ITEM_OBJ_NAME = "-SettingsMenuItem"
+_EXTRA_MENU_ITEM_OBJ_NAME = "-ExtraMenuItem"
+
+# This is the exact enum definition done in app `Constants.qml` to determine each subsection itemId of each navigation list item
+# These values are used to determine the dynamic `objectName` of the subsection item instead of using "design" properties like `text`.
+class SettingsSubsection(Enum):
+    PROFILE: str = "0" + _MAIN_MENU_ITEM_OBJ_NAME
+    CONTACTS: str = "1" + _MAIN_MENU_ITEM_OBJ_NAME
+    ENS_USERNAMES: str = "2" + _MAIN_MENU_ITEM_OBJ_NAME
+    MESSAGING: str = "3" + _APP_MENU_ITEM_OBJ_NAME
+    WALLET: str = "4" + _APP_MENU_ITEM_OBJ_NAME
+    APPEARANCE: str = "5" + _SETTINGS_MENU_ITEM_OBJ_NAME
+    LANGUAGE: str = "6" + _SETTINGS_MENU_ITEM_OBJ_NAME
+    NOTIFICATIONS: str = "7" + _SETTINGS_MENU_ITEM_OBJ_NAME
+    DEVICE_SETTINGS: str = "8" + _SETTINGS_MENU_ITEM_OBJ_NAME
+    BROWSER: str = "9" + _APP_MENU_ITEM_OBJ_NAME
+    ADVANCED: str = "10" + _SETTINGS_MENU_ITEM_OBJ_NAME
+    ABOUT: str = "11" + _EXTRA_MENU_ITEM_OBJ_NAME
+    COMMUNITY: str = "12" + _APP_MENU_ITEM_OBJ_NAME
+    SIGNOUT: str = "13" + _EXTRA_MENU_ITEM_OBJ_NAME
+    BACKUP_SEED: str = "14" + _MAIN_MENU_ITEM_OBJ_NAME
 
 # Main:
 navBarListView_Settings_navbar_StatusNavBarTabButton = {"checkable": True, "container": mainWindow_navBarListView_ListView, "objectName": "Settings-navbar", "type": "StatusNavBarTabButton", "visible": True}
 settings_navbar_settings_icon_StatusIcon = {"container": navBarListView_Settings_navbar_StatusNavBarTabButton, "objectName": "settings-icon", "type": "StatusIcon", "visible": True}
-advanced_StatusBaseText = {"container": statusDesktop_mainWindow, "text": "Advanced", "type": "StatusBaseText", "unnamed": 1, "visible": True}
 mainWindow_ScrollView = {"container": statusDesktop_mainWindow, "type": "StatusScrollView", "unnamed": 1, "visible": True}
 mainWindow_ScrollView_2 = {"container": statusDesktop_mainWindow, "occurrence": 2, "type": "StatusScrollView", "unnamed": 1, "visible": True}
-wallet_AppMenu_StatusNavigationListItem = {"container": mainWindow_ScrollView, "objectName": "Wallet-AppMenu", "type": "StatusNavigationListItem", "visible": True}
-communities_AppMenu_StatusNavigationListItem = {"container": mainWindow_ScrollView, "objectName": "Communities-AppMenu", "type": "StatusNavigationListItem", "visible": True}
-profile_MainMenu_StatusNavigationListItem = {"container": mainWindow_ScrollView, "objectName": "Profile-MainMenu", "type": "StatusNavigationListItem", "visible": True}
 settingsSave_StatusButton = {"container": statusDesktop_mainWindow, "objectName": "settingsDirtyToastMessageSaveButton", "type": "StatusButton", "visible": True}
+
+# Side bar items:
+wallet_StatusNavigationListItem = {"container": mainWindow_ScrollView, "objectName": SettingsSubsection.WALLET.value, "type": "StatusNavigationListItem", "visible": True}
+language_StatusNavigationListItem = {"container": mainWindow_ScrollView, "objectName": SettingsSubsection.LANGUAGE.value, "type": "StatusNavigationListItem", "visible": True}
+advanced_StatusNavigationListItem = {"container": mainWindow_ScrollView, "objectName": SettingsSubsection.ADVANCED.value, "type": "StatusNavigationListItem", "visible": True}
+sign_out_Quit_StatusNavigationListItem = {"container": mainWindow_ScrollView, "objectName": SettingsSubsection.SIGNOUT.value, "type": "StatusNavigationListItem", "visible": True}
+communities_StatusNavigationListItem = {"container": mainWindow_ScrollView, "objectName": SettingsSubsection.COMMUNITY.value, "type": "StatusNavigationListItem", "visible": True}
+profile_StatusNavigationListItem = {"container": mainWindow_ScrollView, "objectName": SettingsSubsection.PROFILE.value, "type": "StatusNavigationListItem", "visible": True}
 
 # Profile Settings:
 displayName_StatusInput = {"container": mainWindow_ScrollView_2, "objectName": "displayNameInput", "type": "StatusInput", "visible": True}
@@ -53,5 +82,11 @@ walletSettingsLineButton = {"container": statusDesktop_mainWindow, "objectName":
 i_understand_StatusBaseText = {"container": statusDesktop_mainWindow_overlay, "text": "I understand", "type": "StatusBaseText", "unnamed": 1, "visible": True}
 
 # Extra Settings:
-sign_out_Quit_ExtraMenu_StatusNavigationListItem = {"container": mainWindow_ScrollView, "objectName": "Sign out & Quit-ExtraMenu", "type": "StatusNavigationListItem", "visible": True}
 signOutConfirmation_StatusButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "signOutConfirmation", "type": "StatusButton", "visible": True}
+
+# Language Settings:
+settings_LanguageView = {"container": statusDesktop_mainWindow, "objectName": "languageView", "type": "LanguageView"}
+languageView_language_StatusListPicker = {"container": statusDesktop_mainWindow, "objectName": "languagePicker", "type": "StatusListPicker"}
+languageView_language_StatusPickerButton = {"container": languageView_language_StatusListPicker,  "type": "StatusPickerButton", "unnamed": 1}
+languageView_language_ListView = {"container": languageView_language_StatusListPicker,  "type": "ListView", "unnamed": 1}
+languageView_language_StatusInput = {"container": languageView_language_ListView,  "type": "StatusInput", "unnamed": 1}
