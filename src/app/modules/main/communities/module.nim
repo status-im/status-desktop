@@ -287,7 +287,10 @@ method discordImportProgressUpdated*(self: Module, communityId: string, tasks: s
   self.view.discordImportTasksModel().setItems(taskItems)
   self.view.setDiscordImportErrorsCount(errorsCount)
   self.view.setDiscordImportWarningsCount(warningsCount)
-  self.view.setDiscordImportProgress(progress)
+  # For some reason, exposing the global `progress` as QtProperty[float]`
+  # doesn't translate well into QML.
+  # That's why we pass it as integer instead.
+  self.view.setDiscordImportProgress((progress*100).int)
   self.view.setDiscordImportProgressStopped(stopped)
 
 method requestToJoinCommunity*(self: Module, communityId: string, ensName: string) =

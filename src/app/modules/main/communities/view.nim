@@ -33,7 +33,7 @@ QtObject:
       discordOldestMessageTimestamp: int
       discordImportErrorsCount: int
       discordImportWarningsCount: int
-      discordImportProgress: float
+      discordImportProgress: int
       discordImportProgressStopped: bool
       discordImportTasksModel: DiscordImportTasksModel
       discordImportTasksModelVariant: QVariant
@@ -128,14 +128,14 @@ QtObject:
 
   proc discordImportProgressChanged*(self: View) {.signal.}
 
-  proc setDiscordImportProgress*(self: View, value: float) {.slot.} =
+  proc setDiscordImportProgress*(self: View, value: int) {.slot.} =
     self.discordImportProgress = value
     self.discordImportProgressChanged()
 
-  proc getDiscordImportProgress*(self: View): float {.slot.} =
+  proc getDiscordImportProgress*(self: View): int {.slot.} =
     return self.discordImportProgress
 
-  QtProperty[float] discordImportProgress:
+  QtProperty[int] discordImportProgress:
     read = getDiscordImportProgress
     notify = discordImportProgressChanged
 

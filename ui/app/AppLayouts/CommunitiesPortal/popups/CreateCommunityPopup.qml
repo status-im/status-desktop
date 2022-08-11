@@ -359,7 +359,7 @@ StatusStackModal {
 
           StatusBaseText {
             Layout.fillWidth: true
-            text: "PROGRESS: " + (root.store.discordImportProgress*100) + "%"
+            text: "PROGRESS: " + root.store.discordImportProgress + "%"
           }
           StatusBaseText {
             Layout.fillWidth: true
@@ -387,22 +387,22 @@ StatusStackModal {
                 text: model.type + " " + (model.progress*100) + "%"
               }
 
-              ColumnLayout {
-                spacing: 12
-                Layout.fillWidth: true
+              // ColumnLayout {
+              //   spacing: 12
+              //   Layout.fillWidth: true
 
-                Repeater {
-                  model: model.errors
-                  delegate: Rectangle {
-                    Layout.fillWidth: true
-                    height: 100
-                    color: "yellow"
-                    StatusBaseText {
-                      text: model.message
-                    }
-                  }
-                }
-              }
+              //   Repeater {
+              //     model: model.errors
+              //     delegate: Rectangle {
+              //       Layout.fillWidth: true
+              //       height: 100
+              //       color: "yellow"
+              //       StatusBaseText {
+              //         text: model.message
+              //       }
+              //     }
+              //   }
+              // }
             }
           }
         }
