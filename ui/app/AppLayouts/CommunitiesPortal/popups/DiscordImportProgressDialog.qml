@@ -98,6 +98,10 @@ StatusDialog {
             text: qsTr("Importing channels")
         },
         "import.convertMessages": {
+            icon: "swap",
+            text: qsTr("Converting messages")
+        },
+        "import.importMessages": {
             icon: "receive",
             text: qsTr("Importing messages")
         }
