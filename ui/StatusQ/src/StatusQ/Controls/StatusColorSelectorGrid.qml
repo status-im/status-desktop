@@ -47,6 +47,7 @@ Column {
         rowSpacing: 16
         columnSpacing: 32
         Repeater {
+            objectName: "statusColorRepeater"
             model: root.model
             delegate: StatusColorRadioButton {
                 implicitWidth: root.diameter
