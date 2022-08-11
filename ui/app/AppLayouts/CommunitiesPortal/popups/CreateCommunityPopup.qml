@@ -54,7 +54,8 @@ StatusStackModal {
             if (typeof (nextAction) == "function") {
                 return nextAction()
             }
-            root.close()
+            if (!root.isDiscordImport)
+                root.close()
         }
     }
 
@@ -79,8 +80,10 @@ StatusStackModal {
     }
 
     onClosed: {
-        root.store.clearFileList()
-        root.store.clearDiscordCategoriesAndChannels()
+        if (root.isDiscordImport) {
+            root.store.clearFileList()
+            root.store.clearDiscordCategoriesAndChannels()
+        }
         destroy()
     }
 
@@ -241,7 +244,19 @@ StatusStackModal {
             readonly property bool canGoNext: root.store.discordChannelsModel.hasSelectedItems
             readonly property var nextAction: function () {
                 d.importDiscordCommunity()
-                root.currentIndex++
+                // replace ourselves with the progress dialog, no way back
+                root.leftButtons = undefined
+                root.backgroundColor = Theme.palette.baseColor4
+                root.replace(progressComponent)
+            }
+
+            Component {
+                id: progressComponent
+                DiscordImportProgressContents {
+                    width: root.availableWidth
+                    store: root.store
+                    onClose: root.close()
+                }
             }
 
             Item {
@@ -328,59 +343,6 @@ StatusStackModal {
                     }
                 }
             }
-        },
-
-        ColumnLayout {
-          spacing: 24
-
-          StatusBaseText {
-            Layout.fillWidth: true
-            text: "PROGRESS: " + root.store.discordImportProgress + "%"
-          }
-          StatusBaseText {
-            Layout.fillWidth: true
-            text: "STOPPED: " + root.store.discordImportProgressStopped
-          }
-
-          StatusBaseText {
-            Layout.fillWidth: true
-            text: "ERRORS: " + root.store.discordImportErrorsCount
-          }
-
-          StatusBaseText {
-            Layout.fillWidth: true
-            text: "WARNINGS: " + root.store.discordImportWarningsCount
-          }
-
-          Repeater {
-            model: root.store.discordImportTasks
-            delegate: Rectangle {
-              Layout.fillWidth: true
-              height: progressText.height
-
-              StatusBaseText {
-                id: progressText
-                text: model.type + " " + (model.progress*100) + "%"
-              }
-
-              // ColumnLayout {
-              //   spacing: 12
-              //   Layout.fillWidth: true
-
-              //   Repeater {
-              //     model: model.errors
-              //     delegate: Rectangle {
-              //       Layout.fillWidth: true
-              //       height: 100
-              //       color: "yellow"
-              //       StatusBaseText {
-              //         text: model.message
-              //       }
-              //     }
-              //   }
-              // }
-            }
-          }
         }
     ]
 
@@ -539,7 +501,6 @@ StatusStackModal {
                 errorDialog.text = error.error
                 errorDialog.open()
             }
-            //root.close()
         }
     }
 
