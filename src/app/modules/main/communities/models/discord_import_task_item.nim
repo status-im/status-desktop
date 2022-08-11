@@ -3,7 +3,7 @@ import discord_import_errors_model, discord_import_error_item
 import ../../../../../app_service/service/community/dto/community
 type
   DiscordImportTaskItem* = object
-    `type`*: int
+    `type`*: string
     progress*: float
     errors*: DiscordImportErrorsModel
 
@@ -14,7 +14,7 @@ proc `$`*(self: DiscordImportTaskItem): string =
     ]"""
 
 proc initDiscordImportTaskItem*(
-  `type`: int,
+  `type`: string,
   progress: float,
   errors: seq[DiscordImportErrorItem]
 ): DiscordImportTaskItem =
@@ -23,7 +23,7 @@ proc initDiscordImportTaskItem*(
   result.errors = newDiscordDiscordImportErrorsModel()
   result.errors.setItems(errors)
 
-proc getType*(self: DiscordImportTaskItem): int =
+proc getType*(self: DiscordImportTaskItem): string =
   return self.type
 
 proc getProgress*(self: DiscordImportTaskItem): float =

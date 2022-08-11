@@ -86,6 +86,7 @@ type DiscordImportError* = object
   message*: string
 
 type DiscordImportTaskProgress* = object
+  `type`*: string
   progress*: float
   errors*: seq[DiscordImportError]
 
@@ -113,6 +114,7 @@ proc toDiscordImportError*(jsonObj: JsonNode): DiscordImportError =
 
 proc toDiscordImportTaskProgress*(jsonObj: JsonNode): DiscordImportTaskProgress =
   result = DiscordImportTaskProgress()
+  result.`type` = jsonObj{"type"}.getStr()
   result.progress = jsonObj{"progress"}.getFloat()
 
   var importErrorsObj: JsonNode

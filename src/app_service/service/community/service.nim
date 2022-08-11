@@ -82,7 +82,7 @@ type
 
   DiscordImportProgressArgs* = ref object of Args
     communityId*: string
-    tasks*: Table[string, DiscordImportTaskProgress]
+    tasks*: seq[DiscordImportTaskProgress]
     progress*: float
     errorsCount*: int
     warningsCount*: int

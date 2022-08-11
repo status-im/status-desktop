@@ -161,14 +161,14 @@ method getDiscordChannelItem(self: Module, c: DiscordChannelDto): DiscordChannel
       c.filePath,
       true)
 
-method getDiscordImportTaskItem(self: Module, `type`: int, t: DiscordImportTaskProgress): DiscordImportTaskItem =
+method getDiscordImportTaskItem(self: Module, t: DiscordImportTaskProgress): DiscordImportTaskItem =
 
   var errorItems: seq[DiscordImportErrorItem] = @[]
   for error in t.errors:
     errorItems.add(initDiscordImportErrorItem(error.code, error.message))
 
   return initDiscordImportTaskItem(
-      type,
+      t.`type`,
       t.progress,
       errorItems)
 
@@ -279,12 +279,11 @@ method discordCategoriesAndChannelsExtracted*(self: Module, categories: seq[Disc
   self.view.setDiscordImportErrorsCount(errorsCount)
   self.view.discordChannelsModel().hasSelectedItemsChanged()
 
-method discordImportProgressUpdated*(self: Module, communityId: string, tasks: Table[string, DiscordImportTaskProgress], progress: float, errorsCount: int, warningsCount: int, stopped: bool) =
+method discordImportProgressUpdated*(self: Module, communityId: string, tasks: seq[DiscordImportTaskProgress], progress: float, errorsCount: int, warningsCount: int, stopped: bool) =
 
   var taskItems: seq[DiscordImportTaskItem] = @[]
-  for task in tasks.keys:
-    let taskProgress = tasks[task]
-    taskItems.add(self.getDiscordImportTaskItem(parseInt(task), taskProgress))
+  for task in tasks:
+    taskItems.add(self.getDiscordImportTaskItem(task))
   self.view.discordImportTasksModel().setItems(taskItems)
   self.view.setDiscordImportErrorsCount(errorsCount)
   self.view.setDiscordImportWarningsCount(warningsCount)
