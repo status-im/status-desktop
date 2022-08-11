@@ -155,6 +155,7 @@ Popup {
                 }
 
                 StatusQControls.StatusButton {
+                    objectName: "stickersPopupGetStickersButton"
                     visible: lblNoStickersYet.visible
                     text: qsTr("Get Stickers")
                     anchors.top: noStickersContainer.bottom
@@ -169,6 +170,7 @@ Popup {
             }
             StatusStickerList {
                 id: stickerGrid
+                objectName: "statusStickerPopupStickerGrid"
                 model: recentStickers
                 packId: stickerPackListView.selectedPackId
                 onStickerClicked: {

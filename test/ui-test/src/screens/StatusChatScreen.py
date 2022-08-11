@@ -12,6 +12,7 @@ import re
 
 import copy
 from enum import Enum
+import time
 from drivers.SquishDriver import *
 from drivers.SquishDriverVerification import *
 from drivers.SDKeyboardCommands import *
@@ -61,6 +62,15 @@ class ChatComponents(Enum):
     GIF_POPUP_BUTTON = "chatView_gifPopupButton"
     ENABLE_GIF_BUTTON = "gifPopup_enableGifButton"
     GIF_MOUSEAREA = "gifPopup_gifMouseArea"
+    CHAT_INPUT_STICKER_BUTTON = "chat_Input_Stickers_Button"
+    
+class ChatStickerPopup(Enum):
+    STICKERS_POPUP_GET_STICKERS_BUTTON = "chat_StickersPopup_GetStickers_Button"
+    STICKERS_POPUP_MARKET_GRID_VIEW = "chat_StickersPopup_StickerMarket_GridView"
+    STICKERS_POPUP_MARKET_GRID_VIEW_DELEGATE_ITEM_1 = "chat_StickersPopup_StickerMarket_DelegateItem_1"
+    STICKERS_POPUP_MARKET_INSTALL_BUTTON = "chat_StickersPopup_StickerMarket_Install_Button"
+    MODAL_CLOSE_BUTTON = "modal_Close_Button"
+    STICKER_LIST_GRID = "chat_StickersPopup_StickerList_Grid"
 
 class ChatMessagesHistory(Enum):
     CHAT_CREATED_TEXT = 1
@@ -245,6 +255,47 @@ class StatusChatScreen:
                     break
         verify(found, "Checking if the following display name is in the mention's list: " + displayName)
               
+        
+    def install_sticker_pack(self, pack_index: str):
+        click_obj_by_name(ChatComponents.CHAT_INPUT_STICKER_BUTTON.value)
+        click_obj_by_name(ChatStickerPopup.STICKERS_POPUP_GET_STICKERS_BUTTON.value)
+        
+        # Wait for grid view to be loaded
+        loaded, grid_view = is_loaded_visible_and_enabled(ChatStickerPopup.STICKERS_POPUP_MARKET_GRID_VIEW.value)
+        if (not loaded):
+            verify_failure("Sticker market grid view is not loaded")
+          
+        # Wait for the items in the GridView to be loaded
+        verify(is_displayed(ChatStickerPopup.STICKERS_POPUP_MARKET_GRID_VIEW_DELEGATE_ITEM_1.value), "Sticker item 0 is not displayed")
+
+        scroll_list_view_at_index(grid_view, int(pack_index))
+
+        sticker_pack = grid_view.itemAtIndex(int(pack_index))
+        click_obj(sticker_pack)
+        
+        # Install and close
+        click_obj_by_name(ChatStickerPopup.STICKERS_POPUP_MARKET_INSTALL_BUTTON.value)
+        click_obj_by_name(ChatStickerPopup.MODAL_CLOSE_BUTTON.value)
+        
+        verify(sticker_pack.installed == True, "The sticker pack at position " + str(pack_index) + " was not installed")
+        
+        #Close sticker popup
+        click_obj_by_name(ChatComponents.CHAT_INPUT_STICKER_BUTTON.value)
+        
+    def send_sticker(self, sticker_index: int):
+        click_obj_by_name(ChatComponents.CHAT_INPUT_STICKER_BUTTON.value)
+        
+        loaded, sticker_list_grid = is_loaded_visible_and_enabled(ChatStickerPopup.STICKER_LIST_GRID.value)
+        
+        if (not loaded):
+            verify_failure("Sticker list grid view is not loaded")
+
+        sticker = sticker_list_grid.itemAtIndex(int(sticker_index))
+        click_obj(sticker)
+        
+        last_message_obj = get_obj(ChatComponents.CHAT_LOG.value).itemAtIndex(0)
+        verify_values_equal(str(last_message_obj.messageContentType), str(MessageContentType.STICKER.value), "The last message is not a sticker")
+
 
     def send_emoji(self, emoji_short_name: str, message: str):
         if (message != ""):
