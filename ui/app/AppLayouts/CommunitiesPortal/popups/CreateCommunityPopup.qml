@@ -120,35 +120,11 @@ StatusStackModal {
                     color: Theme.palette.baseColor1
                     text: qsTr("(JSON file format only)")
                 }
-                Rectangle { // TODO cleanup and make this a StatusQ component
-                    implicitHeight: 26
-                    implicitWidth: childrenRect.width + 2*4
-                    radius: 100
-                    visible: root.store.discordImportErrorsCount
-                    color: Theme.palette.getColor('red', 0.03)
-                    border.width: 1
-                    border.color: Theme.palette.getColor('red', 0.3)
-
-                    RowLayout {
-                        spacing: 4
-                        anchors.centerIn: parent
-                        anchors.leftMargin: 4
-                        anchors.rightMargin: 4
-                        StatusIcon {
-                            Layout.preferredWidth: 20
-                            Layout.preferredHeight: 20
-                            Layout.alignment: Qt.AlignVCenter
-                            icon: "warning"
-                            color: Theme.palette.dangerColor1
-                        }
-                        StatusBaseText {
-                            Layout.alignment: Qt.AlignVCenter
-                            verticalAlignment: Qt.AlignVCenter
-                            text: qsTr("%n error(s)", "", root.store.discordImportErrorsCount)
-                            color: Theme.palette.dangerColor1
-                            font.pixelSize: 12
-                        }
-                    }
+                IssuePill {
+                    type: root.store.discordImportErrorsCount ? IssuePill.Type.Error : IssuePill.Type.Warning
+                    count: root.store.discordImportErrorsCount ? root.store.discordImportErrorsCount :
+                                                                 root.store.discordImportWarningsCount ? root.store.discordImportWarningsCount : 0
+                    visible: count
                 }
                 Item { Layout.fillWidth: true }
                 StatusButton {
@@ -574,5 +550,4 @@ StatusStackModal {
         icon: StandardIcon.Critical
         standardButtons: StandardButton.Ok
     }
-
 }

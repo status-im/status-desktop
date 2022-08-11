@@ -11,6 +11,8 @@ import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 import StatusQ.Popups.Dialog 0.1
 
+import "../controls"
+
 StatusDialog {
     id: root
 
@@ -204,10 +206,11 @@ StatusDialog {
                     text: qsTr("Importing ‘%1’ from Discord...").arg(root.store.discordImportCommunityId)
                 }
                 Item { Layout.fillWidth: true }
-                StatusBaseText { // TODO use the error/warning pill component
-                    visible: !!text
-                    text: root.store.discordImportErrorsCount ? qsTr("%n critical issue(s)", "", root.store.discordImportErrorsCount) :
-                                                                root.store.discordImportWarningsCount ? qsTr("%n issue(s)", "", root.store.discordImportWarningsCount) : ""
+                IssuePill {
+                    type: root.store.discordImportErrorsCount ? IssuePill.Type.Error : IssuePill.Type.Warning
+                    count: root.store.discordImportErrorsCount ? root.store.discordImportErrorsCount :
+                                                                 root.store.discordImportWarningsCount ? root.store.discordImportWarningsCount : 0
+                    visible: count
                 }
             }
 
