@@ -32,8 +32,8 @@ Item {
     StatusQ.StatusRoundIcon {
         id: addButton
         anchors.horizontalCenter: parent.horizontalCenter
-        icon.name: "add"
-        icon.color: Theme.palette.baseColor1
+        asset.name: "add"
+        asset.color: Theme.palette.baseColor1
         color: Theme.palette.baseColor2
         visible: !webUrl.toString()
     }

@@ -107,24 +107,24 @@ StatusModal {
             let errMessage = ""
 
             switch(advancedSelection.expandableItem.addAccountType) {
-                case SelectGeneratedAccount.AddAccountType.GenerateNew:
-                    errMessage = RootStore.generateNewAccount(passwordInput.text, accountNameInput.text, colorSelectionGrid.selectedColor,
-                                                              accountNameInput.input.icon.emoji, advancedSelection.expandableItem.completePath,
-                                                              advancedSelection.expandableItem.derivedFromAddress)
-                    break
-                case SelectGeneratedAccount.AddAccountType.ImportSeedPhrase:
-                    errMessage = RootStore.addAccountsFromSeed(advancedSelection.expandableItem.mnemonicText, passwordInput.text,
-                                                               accountNameInput.text, colorSelectionGrid.selectedColor, accountNameInput.input.icon.emoji,
-                                                               advancedSelection.expandableItem.completePath)
-                    break
-                case SelectGeneratedAccount.AddAccountType.ImportPrivateKey:
-                    errMessage = RootStore.addAccountsFromPrivateKey(advancedSelection.expandableItem.privateKey, passwordInput.text,
-                                                                     accountNameInput.text, colorSelectionGrid.selectedColor, accountNameInput.input.icon.emoji)
-                    break
-                case SelectGeneratedAccount.AddAccountType.WatchOnly:
-                    errMessage = RootStore.addWatchOnlyAccount(advancedSelection.expandableItem.watchAddress, accountNameInput.text,
-                                                               colorSelectionGrid.selectedColor, accountNameInput.input.icon.emoji)
-                    break
+            case SelectGeneratedAccount.AddAccountType.GenerateNew:
+                errMessage = RootStore.generateNewAccount(passwordInput.text, accountNameInput.text, colorSelectionGrid.selectedColor,
+                                                          accountNameInput.input.icon.emoji, advancedSelection.expandableItem.completePath,
+                                                          advancedSelection.expandableItem.derivedFromAddress)
+                break
+            case SelectGeneratedAccount.AddAccountType.ImportSeedPhrase:
+                errMessage = RootStore.addAccountsFromSeed(advancedSelection.expandableItem.mnemonicText, passwordInput.text,
+                                                           accountNameInput.text, colorSelectionGrid.selectedColor, accountNameInput.input.icon.emoji,
+                                                           advancedSelection.expandableItem.completePath)
+                break
+            case SelectGeneratedAccount.AddAccountType.ImportPrivateKey:
+                errMessage = RootStore.addAccountsFromPrivateKey(advancedSelection.expandableItem.privateKey, passwordInput.text,
+                                                                 accountNameInput.text, colorSelectionGrid.selectedColor, accountNameInput.input.icon.emoji)
+                break
+            case SelectGeneratedAccount.AddAccountType.WatchOnly:
+                errMessage = RootStore.addWatchOnlyAccount(advancedSelection.expandableItem.watchAddress, accountNameInput.text,
+                                                           colorSelectionGrid.selectedColor, accountNameInput.input.icon.emoji)
+                break
             }
 
             nextButton.loading = false
@@ -139,7 +139,7 @@ StatusModal {
     }
 
     onOpened: {
-        accountNameInput.input.icon.emoji = StatusQUtils.Emoji.getRandomEmoji(StatusQUtils.Emoji.size.verySmall)
+        accountNameInput.input.asset.emoji = StatusQUtils.Emoji.getRandomEmoji(StatusQUtils.Emoji.size.verySmall)
         colorSelectionGrid.selectedColorIndex = Math.floor(Math.random() * colorSelectionGrid.model.length)
         passwordInput.forceActiveFocus(Qt.MouseFocusReason)
     }
@@ -203,7 +203,7 @@ StatusModal {
                 placeholderText: qsTr("Enter an account name...")
                 label: qsTr("Account name")
                 input.isIconSelectable: true
-                input.icon.color: colorSelectionGrid.selectedColor ? colorSelectionGrid.selectedColor : Theme.palette.directColor1
+                input.asset.color: colorSelectionGrid.selectedColor ? colorSelectionGrid.selectedColor : Theme.palette.directColor1
                 input.leftPadding: Style.current.padding
                 onIconClicked: {
                     root.emojiPopup.open()

@@ -21,7 +21,7 @@ StatusInput {
         if (linkType === Constants.socialLinkType.telegram) return qsTr("Telegram Handle")
         return ""
     }
-    input.icon {
+    input.asset {
         name: {
             if (linkType === Constants.socialLinkType.twitter) return "twitter"
             if (linkType === Constants.socialLinkType.personalSite) return "language"

@@ -154,12 +154,12 @@ Item {
                     height: visible ? 64 : 0
                     title: !!model.name ? model.name : ""
                     subTitle: Utils.toLocaleString(model.currencyBalance.toFixed(2), store.locale, {"model.currency": true}) + " " + store.currentCurrency.toUpperCase()
-                    icon.emoji: !!model.emoji ? model.emoji: ""
-                    icon.color: model.color
-                    icon.name: !model.emoji ? "filled-account": ""
-                    icon.letterSize: 14
-                    icon.isLetterIdenticon: !!model.emoji ? true : false
-                    icon.background.color: Theme.palette.indirectColor1
+                    asset.emoji: !!model.emoji ? model.emoji: ""
+                    asset.color: model.color
+                    asset.name: !model.emoji ? "filled-account": ""
+                    asset.letterSize: 14
+                    asset.isLetterIdenticon: !!model.emoji ? true : false
+                    asset.bgColor: Theme.palette.indirectColor1
                     radius: 0
                     color: sensor.containsMouse || highlighted ? Theme.palette.baseColor3 : "transparent"
                     onClicked: contactSelected(model.address, RecipientSelector.Type.Account )

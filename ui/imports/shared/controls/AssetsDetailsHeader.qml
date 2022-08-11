@@ -16,7 +16,7 @@ Control {
     property alias secondaryText: cryptoBalance.text
     property alias tertiaryText: fiatBalance.text
     property var balances
-    property StatusImageSettings image: StatusImageSettings {
+    property StatusAssetSettings asset: StatusAssetSettings {
         width: 40
         height: 40
     }
@@ -32,7 +32,7 @@ Control {
             StatusSmartIdenticon {
                 id: identiconLoader
                 anchors.verticalCenter: parent.verticalCenter
-                image: root.image
+                asset: root.asset
             }
             StatusBaseText {
                 id: tokenName

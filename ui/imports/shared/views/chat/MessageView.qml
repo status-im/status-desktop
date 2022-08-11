@@ -551,12 +551,11 @@ Loader {
                 sender.profileImage {
                     width: 40
                     height: 40
+                    name: root.senderIcon || ""
                     pubkey: root.senderId
-                    source: root.senderIcon || ""
                     colorId: Utils.colorIdForPubkey(root.senderId)
                     colorHash: Utils.getColorHashAsJson(root.senderId)
                 }
-
             }
 
             replyDetails: StatusMessageDetails {
@@ -583,8 +582,8 @@ Loader {
                 sender.profileImage {
                     width: 20
                     height: 20
+                    name:  delegate.replyMessage ? delegate.replyMessage.senderIcon : ""
                     pubkey: delegate.replySenderId
-                    source:  delegate.replyMessage ? delegate.replyMessage.senderIcon: ""
                     colorId: Utils.colorIdForPubkey(delegate.replySenderId)
                     colorHash: Utils.getColorHashAsJson(delegate.replySenderId)
                 }

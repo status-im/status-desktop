@@ -66,15 +66,15 @@ StatusModal {
         }
     }
     header.editable: !addMembers && popup.isAdmin
-    header.icon.isLetterIdenticon: {
+    header.asset.isLetterIdenticon: {
         if (popup.chatDetails && popup.chatDetails.icon !== "") {
             return false
         }
         return true
     }
-    header.icon.name: popup.chatDetails ? popup.chatDetails.name : ""
-    header.icon.background.color: popup.chatDetails ? popup.chatDetails.color : "transparent"
-    header.image.source: popup.chatDetails ? popup.chatDetails.icon : ""
+    header.asset.name: popup.chatDetails ? popup.chatDetails.name || popup.chatDetails.icon : ""
+    header.asset.isImage: (popup.chatDetails.icon !== "")
+    header.asset.bgColor: popup.chatDetails ? popup.chatDetails.color : "transparent"
 
     onEditButtonClicked: {
         renameGroupPopup.open()
@@ -115,9 +115,9 @@ StatusModal {
             maximumHeight: 36
             placeholderText: qsTr("Search")
             input.placeholderFont.pixelSize: 15
-            input.icon.name: "search"
-            input.icon.width: 17
-            input.icon.height: 17
+            input.asset.name: "search"
+            input.asset.width: 17
+            input.asset.height: 17
             topPadding: 0
             bottomPadding: 0
         }
@@ -213,16 +213,14 @@ StatusModal {
                 statusListItemTitle.font.pixelSize: 17
                 statusListItemTitleAside.font.pixelSize: 17
                 label: model.isAdmin ? qsTr("Admin"): ""
-                image.source: model.icon
+                asset.name: model.icon
+                asset.isImage: !!model.icon
                 ringSettings.ringSpecModel: Utils.getColorHashAsJson(model.pubKey)
-                icon: StatusIconSettings {
-                    color: Utils.colorForPubkey(model.pubKey)
-                    charactersLen: 2
-                    isLetterIdenticon: model.icon === ""
-                    height: isLetterIdenticon ? 40 : 20
-                    width: isLetterIdenticon ? 40 : 20
-                }
-
+                asset.color: Utils.colorForPubkey(model.pubKey)
+                asset.charactersLen: 2
+                asset.isLetterIdenticon: model.icon === ""
+                asset.height: asset.isLetterIdenticon ? 40 : 20
+                asset.width: asset.isLetterIdenticon ? 40 : 20
                 components: [
                     StatusFlatRoundButton {
                         id: moreActionsBtn

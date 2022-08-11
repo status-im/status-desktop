@@ -356,8 +356,8 @@ Item {
                 height: 32
                 identicon.width: width
                 identicon.height: height
-                identicon.icon.charactersLen: 2
-                identicon.icon.color: Utils.colorForPubkey(appMain.rootStore.userProfileInst.pubKey)
+                identicon.asset.charactersLen: 2
+                identicon.asset.color: Utils.colorForPubkey(appMain.rootStore.userProfileInst.pubKey)
                 identicon.ringSettings.ringSpecModel: Utils.getColorHashAsJson(appMain.rootStore.userProfileInst.pubKey)
 
                 badge.visible: true
@@ -949,14 +949,11 @@ Item {
                     name: modelData ? modelData.name : ""
                     active: true
                 }
-                icon {
-                    width: image.width
-                    height: image.height
-                    color: modelData ? modelData.color : ""
-                }
-                image {
-                    source: modelData ? modelData.icon : ""
-                }
+                asset.width: image.width
+                asset.height: image.height
+                asset.color: modelData ? modelData.color : ""
+                asset.name: modelData ? modelData.icon : ""
+                asset.isImage: asset.name.includes("data")
             }
 
             onAboutToShow: rootStore.rebuildChatSearchModel()

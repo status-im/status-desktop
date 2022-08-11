@@ -15,9 +15,10 @@ ColumnLayout {
 
     property alias primaryText: collectibleName.text
     property alias secondaryText: collectibleId.text
-    property StatusImageSettings image: StatusImageSettings {
+    property StatusAssetSettings asset: StatusAssetSettings {
         width: 40
         height: 40
+        isImage: true
     }
 
     StatusFlatButton {
@@ -37,7 +38,7 @@ ColumnLayout {
         StatusSmartIdenticon {
             id: identiconLoader
             Layout.alignment: Qt.AlignVCenter
-            image: root.image
+            asset: root.asset
         }
         StatusBaseText {
             id: collectibleName

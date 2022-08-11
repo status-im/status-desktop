@@ -56,20 +56,12 @@ StackLayout {
                 StatusSmartIdenticon {
                     objectName: "communityOverviewSettingsPanelIdenticon"
                     name: root.name
-
-                    icon {
-                        width: 80
-                        height: 80
-                        isLetterIdenticon: !root.logoImageData
-                        color: root.color
-                        letterSize: width / 2.4
-                    }
-
-                    image {
-                        width: 80
-                        height: 80
-                        source: root.logoImageData
-                    }
+                    asset.width: 80
+                    asset.height: 80
+                    asset.color: root.color
+                    asset.letterSize: width / 2.4
+                    asset.name: root.logoImageData
+                    asset.isImage: true
                 }
 
                 ColumnLayout {

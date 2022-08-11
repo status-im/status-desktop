@@ -45,9 +45,10 @@ StatusPopupMenu {
         id: alwaysOnlineAction
         objectName: "userStatusMenuAlwaysOnlineAction"
         text: qsTr("Always online")
-        image.source: Style.svg("statuses/online")
-        image.width: 12
-        image.height: 12
+        icon.name: Style.svg("statuses/online")
+        assetSettings.isImage: true
+        icon.width: 12
+        icon.height: 12
         fontSettings.bold: root.store.userProfileInst.currentUserStatus === Constants.currentUserStatus.alwaysOnline
         onTriggered: {
             store.setCurrentUserStatus(Constants.currentUserStatus.alwaysOnline)
@@ -59,9 +60,10 @@ StatusPopupMenu {
         id: inactiveAction
         objectName: "userStatusMenuInactiveAction"
         text: qsTr("Inactive")
-        image.source: Style.svg("statuses/inactive")
-        image.width: 12
-        image.height: 12
+        icon.name: Style.svg("statuses/inactive")
+        assetSettings.isImage: true
+        icon.width: 12
+        icon.height: 12
         fontSettings.bold: root.store.userProfileInst.currentUserStatus === Constants.currentUserStatus.inactive
         onTriggered: {
             store.setCurrentUserStatus(Constants.currentUserStatus.inactive)
@@ -73,7 +75,8 @@ StatusPopupMenu {
         id: automaticAction
         objectName: "userStatusMenuAutomaticAction"
         text: qsTr("Set status automatically")
-        image.source: Style.svg("statuses/automatic")
+        icon.name: Style.svg("statuses/automatic")
+        assetSettings.isImage: true
         fontSettings.bold: root.store.userProfileInst.currentUserStatus === Constants.currentUserStatus.automatic
         onTriggered: {
             store.setCurrentUserStatus(Constants.currentUserStatus.automatic)

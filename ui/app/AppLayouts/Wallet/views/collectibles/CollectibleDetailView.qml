@@ -22,7 +22,8 @@ Item {
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        image.source: RootStore.collectiblesStore.collectibleImageUrl
+        asset.name: RootStore.collectiblesStore.collectibleImageUrl
+        asset.isImage: true
         primaryText: RootStore.collectiblesStore.name
         secondaryText: RootStore.collectiblesStore.collectibleId
         onGoBack: root.goBack()

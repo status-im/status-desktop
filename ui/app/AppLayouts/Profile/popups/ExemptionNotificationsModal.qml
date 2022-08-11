@@ -28,18 +28,18 @@ StatusModal {
         globalMentions: Constants.settingsSection.notifications.sendAlertsValue,
         otherMessages: Constants.settingsSection.notifications.turnOffValue
     })
-
     header.title: qsTr("%1 exemption").arg(root.item.name)
-    header.image.source: root.item.image
-    header.icon: StatusIconSettings {
+    header.asset: StatusAssetSettings {
         // Once we introduce StatusSmartIdenticon in popup header, we should use the folowing
 //        color: root.item.type === Constants.settingsSection.exemptions.oneToOneChat?
 //                   Theme.palette.userCustomizationColors[Utils.colorIdForPubkey(root.item.itemId)] :
 //                   root.item.color
         // until then the following is used
-        background.color: root.item.type === Constants.settingsSection.exemptions.oneToOneChat?
-                              Utils.colorForPubkey(root.item.itemId) :
-                              root.item.color
+        bgColor: root.item.type === Constants.settingsSection.exemptions.oneToOneChat?
+                 Utils.colorForPubkey(root.item.itemId) :
+                 root.item.color
+        name: root.item.image
+        isImage: !!root.item.image
         charactersLen: root.item.type === Constants.settingsSection.exemptions.oneToOneChat? 2 : 1
         isLetterIdenticon: root.item.image === ""
         height: isLetterIdenticon ? 40 : 20

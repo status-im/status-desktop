@@ -95,13 +95,14 @@ Popup {
     Component {
         id: chainItem
         StatusListItem {
+            objectName: model.chainName
             implicitHeight: 48
             implicitWidth: scrollView.width
             title: model.chainName
-            image.height: 24
-            image.width: 24
-            objectName: model.chainName
-            image.source: Style.svg(model.iconUrl)
+            asset.height: 24
+            asset.width: 24
+            asset.isImage: true
+            asset.name: Style.svg(model.iconUrl)
             onClicked:  {
                 checkBox.checked = !checkBox.checked
             }

@@ -28,7 +28,7 @@ Column {
             objectName: itemId + "-MainMenuItem"
             itemId: model.subsection
             title: model.text
-            icon.name: model.icon
+            asset.name: model.icon
             selected: Global.settingsSubsection === model.subsection
             onClicked: root.menuItemClicked(model)
             badge.value: {
@@ -61,7 +61,7 @@ Column {
             objectName: itemId + "-AppMenuItem"
             itemId: model.subsection
             title: model.text
-            icon.name: model.icon
+            asset.name: model.icon
             selected: Global.settingsSubsection === model.subsection
             onClicked: root.menuItemClicked(model)
             visible: {
@@ -89,7 +89,7 @@ Column {
             objectName:  itemId + "-SettingsMenuItem"
             itemId: model.subsection
             title: model.text
-            icon.name: model.icon
+            asset.name: model.icon
             selected: Global.settingsSubsection === model.subsection
             onClicked: root.menuItemClicked(model)
             visible: model.subsection !== Constants.settingsSubsection.browserSettings || root.browserMenuItemEnabled
@@ -104,7 +104,7 @@ Column {
             objectName:  itemId + "-ExtraMenuItem"
             itemId: model.subsection
             title: model.text
-            icon.name: model.icon
+            asset.name: model.icon
             selected: Global.settingsSubsection === model.subsection
             visible: model.subsection !== Constants.settingsSubsection.browserSettings || root.browserMenuItemEnabled
             onClicked: root.menuItemClicked(model)

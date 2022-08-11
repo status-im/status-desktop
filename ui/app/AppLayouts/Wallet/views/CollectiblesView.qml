@@ -62,7 +62,8 @@ Item {
                         anchors.left: parent.left
                         anchors.right: parent.right
                         primaryText: model.name
-                        image.source: model.imageUrl
+                        asset.name: model.imageUrl
+                        asset.isImage: true
                         type: StatusExpandableItem.Type.Secondary
                         expandableComponent:  CollectibleCollectionView {
                             slug: model.slug

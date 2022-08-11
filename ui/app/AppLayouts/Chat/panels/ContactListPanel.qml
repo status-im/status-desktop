@@ -35,14 +35,12 @@ StatusListView {
 
         title: !model.displayName.endsWith(".eth") && !!model.localNickname ?
                     model.localNickname : Utils.removeStatusEns(model.displayName)
-        image.source: model.icon
-        icon: StatusIconSettings {
-            color: Utils.colorForPubkey(model.pubKey)
-            charactersLen: 2
-            isLetterIdenticon: model.icon === ""
-            height: isLetterIdenticon ? 40 : 20
-            width: isLetterIdenticon ? 40 : 20
-        }
+        asset.height: asset.isImage ? 40 : 20
+        asset.width: asset.isImage ? 40 : 20
+        asset.name: model.icon
+        asset.isImage: model.icon !== ""
+        asset.color: Utils.colorForPubkey(model.pubKey)
+        asset.charactersLen: 2
         ringSettings.ringSpecModel: Utils.getColorHashAsJson(model.pubKey)
 
         height: visible ? implicitHeight : 0

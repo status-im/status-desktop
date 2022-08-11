@@ -73,7 +73,7 @@ StatusSelect {
     model: _internal.generatedAccountsModel
     selectedItemComponent: StatusListItem {
         id: selectedItem
-        icon.background.color: "transparent"
+        asset.bgColor: "transparent"
         border.width: 1
         border.color: Theme.palette.baseColor2
         tagsDelegate: StatusListItemTag {
@@ -81,9 +81,9 @@ StatusSelect {
             height: Style.current.bigPadding
             radius: 6
             closeButtonVisible: false
-            icon.emoji: model.emoji
-            icon.emojiSize: Emoji.size.verySmall
-            icon.isLetterIdenticon: true
+            asset.emoji: model.emoji
+            asset.emojiSize: Emoji.size.verySmall
+            asset.isLetterIdenticon: true
             title: model.name
             titleText.font.pixelSize: 12
             titleText.color: Theme.palette.indirectColor1
@@ -92,19 +92,19 @@ StatusSelect {
     selectMenu.delegate: StatusListItem {
         id: defaultListItem
         title: model.name
-        icon.name: model.iconName
+        asset.name: model.iconName
         tagsModel : model.generatedModel
         enabled: !model.isHeader
-        icon.background.color: "transparent"
-        icon.color: model.generatedModel ? Theme.palette.primaryColor1 : Theme.palette.directColor5
+        asset.bgColor: "transparent"
+        asset.color: model.generatedModel ? Theme.palette.primaryColor1 : Theme.palette.directColor5
         tagsDelegate: StatusListItemTag {
             color: model.color
             height: 24
             radius: 6
             closeButtonVisible: false
-            icon.emoji: model.emoji
-            icon.emojiSize: Emoji.size.verySmall
-            icon.isLetterIdenticon: true
+            asset.emoji: model.emoji
+            asset.emojiSize: Emoji.size.verySmall
+            asset.isLetterIdenticon: true
             title: model.name
             titleText.font.pixelSize: 12
             titleText.color: Theme.palette.indirectColor1
@@ -115,7 +115,7 @@ StatusSelect {
                                              (model.name === _internal.addWatchOnlyAccountString) ? SelectGeneratedAccount.AddAccountType.WatchOnly :
                                              SelectGeneratedAccount.AddAccountType.GenerateNew
             selectedItem.title = model.name
-            selectedItem.icon.name = model.iconName
+            selectedItem.asset.name = model.iconName
             selectedItem.tagsModel = model.generatedModel
             selectedItem.enabled =  !model.isHeader
 
@@ -125,7 +125,7 @@ StatusSelect {
         Component.onCompleted: {
             if(index === 0) {
                 selectedItem.title = model.name
-                selectedItem.icon.name = model.iconName
+                selectedItem.asset.name = model.iconName
                 selectedItem.tagsModel = model.generatedModel
                 selectedItem.enabled =  !model.isHeader
                 selectAccountType.derivedFromAddress = model.derivedfrom

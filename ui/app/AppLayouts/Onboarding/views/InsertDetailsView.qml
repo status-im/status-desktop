@@ -36,7 +36,7 @@ Item {
         }
         nameInput.text = root.startupStore.getDisplayName();
         nameInput.input.edit.forceActiveFocus();
-        userImage.image.source = root.startupStore.getCroppedProfileImage();
+        userImage.asset.name = root.startupStore.getCroppedProfileImage();
     }
 
     Loader {
@@ -89,18 +89,13 @@ Item {
                 anchors.left: parent.left
                 id: userImage
                 objectName: "welcomeScreenUserProfileImage"
-                image {
-                    width: 86
-                    height: 86
-                    isIdenticon: false
-                }
-                icon {
-                    width: 86
-                    height: 86
-                    letterSize: 32
-                    color: Utils.colorForPubkey(root.pubKey)
-                    charactersLen: 2
-                }
+                asset.width: 86
+                asset.height: 86
+                asset.letterSize: 32
+                asset.color: Utils.colorForPubkey(root.pubKey)
+                asset.charactersLen: 2
+                asset.isImage: !!asset.name
+                asset.imgIsIdenticon: false
                 ringSettings {
                     ringSpecModel: Utils.getColorHashAsJson(root.pubKey)
                 }
@@ -199,9 +194,9 @@ Item {
                     right: parent.right
                     rightMargin: 25
                 }
-                icon.width: 44
-                icon.height: 44
-                icon.color: "transparent"
+                asset.width: 44
+                asset.height: 44
+                asset.color: "transparent"
                 ringSettings { ringSpecModel: Utils.getColorHashAsJson(root.pubKey) }
             }
         }
@@ -238,7 +233,7 @@ Item {
                                                                  cropRect.y.toFixed(),
                                                                  (cropRect.x + cropRect.width).toFixed(),
                                                                  (cropRect.y + cropRect.height).toFixed());
-                userImage.image.source = croppedImg;
+                userImage.asset.name = croppedImg;
             }
         }
     }

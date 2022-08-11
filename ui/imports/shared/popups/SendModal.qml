@@ -378,7 +378,7 @@ StatusDialog {
                                 id: feesIcon
                                 Layout.alignment: Qt.AlignTop
                                 radius: 8
-                                icon.name: "fees"
+                                asset.name: "fees"
                             }
                             ColumnLayout {
                                 Layout.alignment: Qt.AlignTop | Qt.AlignHCenter

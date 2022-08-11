@@ -29,7 +29,8 @@ Column {
                 id: listItem
                 title: webView.title !== ""? webView.title : model.name
                 subTitle: model.name
-                image.source: webView.icon != ""? webView.icon : Style.svg("compassActive")
+                asset.name: webView.icon != ""? webView.icon : Style.svg("compassActive")
+                asset.isImage: true
                 width: parent.width
                 highlighted: true
                 sensor.enabled: false
@@ -49,12 +50,12 @@ Column {
 
                     title: model.name
 
-                    icon.emoji: !!model.emoji ? model.emoji: ""
-                    icon.color: model.color
-                    icon.name: !model.emoji ? "filled-account": ""
-                    icon.letterSize: 14
-                    icon.isLetterIdenticon: !!model.emoji
-                    icon.background.color: Theme.palette.indirectColor1
+                    asset.emoji: !!model.emoji ? model.emoji: ""
+                    asset.color: model.color
+                    asset.name: !model.emoji ? "filled-account": ""
+                    asset.letterSize: 14
+                    asset.isLetterIdenticon: !!model.emoji
+                    asset.bgColor: Theme.palette.indirectColor1
                     onClicked: {
                         const dappName = walletStore.dappList.rowData(outerIndex, 'name')
                         walletStore.disconnectAddress(dappName, model.address)

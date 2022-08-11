@@ -268,16 +268,16 @@ RowLayout {
                     return ""
                 }
             }
-            image.source: chatContentModule? chatContentModule.chatDetails.icon : ""
+            asset.name: chatContentModule? chatContentModule.chatDetails.icon : ""
             ringSettings.ringSpecModel: chatContentModule && chatContentModule.chatDetails.type === Constants.chatType.oneToOne ?
                                             Utils.getColorHashAsJson(chatContentModule.chatDetails.id) : ""
-            icon.color: chatContentModule?
+            asset.color: chatContentModule?
                             chatContentModule.chatDetails.type === Constants.chatType.oneToOne ?
                                 Utils.colorForPubkey(chatContentModule.chatDetails.id)
                               : chatContentModule.chatDetails.color
             : ""
-            icon.emoji: chatContentModule? chatContentModule.chatDetails.emoji : ""
-            icon.emojiSize: "24x24"
+            asset.emoji: chatContentModule? chatContentModule.chatDetails.emoji : ""
+            asset.emojiSize: "24x24"
             type: chatContentModule? chatContentModule.chatDetails.type : Constants.chatType.unknown
             pinnedMessagesCount: chatContentModule? chatContentModule.pinnedMessagesModel.count : 0
             muted: chatContentModule? chatContentModule.chatDetails.muted : false

@@ -122,8 +122,8 @@ StatusModal {
                     anchors.horizontalCenter: parent.horizontalCenter
                     title: "#" + model.name
                     subTitle: model.description
-                    icon.isLetterIdenticon: true
-                    icon.background.color: root.communityColor
+                    asset.isLetterIdenticon: true
+                    asset.bgColor: root.communityColor
                 }
             }
         }

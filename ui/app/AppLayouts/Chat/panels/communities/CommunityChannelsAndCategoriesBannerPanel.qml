@@ -43,7 +43,7 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         width: 40
         height: 40
-        icon.name: "channel"
+        asset.name: "channel"
     }
 
     StatusFlatRoundButton {

@@ -107,7 +107,7 @@ ColumnLayout {
             property string address:  RootStore.derivedAddressesList.count > 0 ?  RootStore.getDerivedAddressData(0) : "---"
             property bool hasActivity: RootStore.derivedAddressesList.count > 0 ?  RootStore.getDerivedAddressHasActivityData(0) : false
             Layout.alignment: Qt.AlignHCenter
-            icon.background.color: "transparent"
+            asset.bgColor: "transparent"
             border.width: 1
             border.color: Theme.palette.baseColor2
             type: d.accountAreadyAddedError ? StatusListItem.Type.Danger : StatusListItem.Type.Primary

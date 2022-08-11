@@ -53,13 +53,12 @@ Item {
             isContact: model.isContact
             status: model.onlineStatus
             userName: model.displayName
-            image.source: model.icon
-            image.width: 40
-            image.height: 40
+            asset.name: model.icon
+            asset.isImage: true
+            asset.width: 40
+            asset.height: 40
             color: "transparent"
-            icon.color: Utils.colorForPubkey(model.pubKey)
-            icon.height: 40
-            icon.width: 40
+            asset.color: Utils.colorForPubkey(model.pubKey)
             ringSettings.ringSpecModel: Utils.getColorHashAsJson(model.pubKey)
             statusListItemIcon.badge.border.color: Theme.palette.baseColor4
             statusListItemIcon.badge.implicitHeight: 14 // 10 px + 2 px * 2 borders

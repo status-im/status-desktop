@@ -26,17 +26,14 @@ Column {
         objectName: "channelIdentifierSmartIdenticon"
         anchors.horizontalCenter: parent.horizontalCenter
         name: root.chatName
-        icon {
+        asset {
             width: 120
             height: 120
             color: root.chatType === Constants.chatType.oneToOne ? Utils.colorForPubkey(root.chatId) : root.chatColor
             emoji: root.chatEmoji
+            name: root.chatIcon
+            isImage: true
             charactersLen: root.chatType === Constants.chatType.oneToOne ? 2 : 1
-        }
-        image {
-            width: 120
-            height: 120
-            source: root.chatIcon
         }
         ringSettings.ringSpecModel: root.chatType === Constants.chatType.oneToOne ? Utils.getColorHashAsJson(root.chatId) : undefined
     }

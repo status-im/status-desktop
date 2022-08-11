@@ -60,16 +60,17 @@ StatusModal {
                     property var contactDetails: Utils.getContactDetailsAsJson(model.pubKey)
 
                     property string displayName: contactDetails.displayName || popup.store.generateAlias(model.pubKey)
-                    image.source: contactDetails.thumbnailImage
+                    asset.name: contactDetails.thumbnailImage
+                    asset.isImage: true
                     title: displayName
 
                     components: [
                         StatusRoundIcon {
-                            icon.name: "thumbs-up"
-                            icon.color: Theme.palette.white
-                            icon.background.width: 28
-                            icon.background.height: 28
-                            icon.background.color: Theme.palette.successColor1
+                            asset.name: "thumbs-up"
+                            asset.color: Theme.palette.white
+                            asset.bgWidth: 28
+                            asset.bgHeight: 28
+                            asset.bgColor: Theme.palette.successColor1
                             MouseArea {
                                 id: thumbsUpSensor
                                 hoverEnabled: true
@@ -79,11 +80,11 @@ StatusModal {
                             }
                         },
                         StatusRoundIcon {
-                            icon.name: "thumbs-down"
-                            icon.color: Theme.palette.white
-                            icon.background.width: 28
-                            icon.background.height: 28
-                            icon.background.color: Theme.palette.dangerColor1
+                            asset.name: "thumbs-down"
+                            asset.color: Theme.palette.white
+                            asset.bgWidth: 28
+                            asset.bgHeight: 28
+                            asset.bgColor: Theme.palette.dangerColor1
                             MouseArea {
                                 id: thumbsDownSensor
                                 hoverEnabled: true

@@ -109,10 +109,11 @@ StatusDropdown {
                 spacing: 10
                 bgColor: Theme.palette.primaryColor3
                 contentColor: Theme.palette.primaryColor1
-                image.source: Style.svg("add")
+                asset.name: Style.svg("add")
+                asset.isImage: true
                 text: qsTr("And...")
-                image.height: 12
-                image.width: 12
+                asset.height: 12
+                asset.width: 12
                 font.pixelSize: 13
                 onClicked: {
                     root.operator = SQ.Utils.Operators.And
@@ -128,9 +129,10 @@ StatusDropdown {
                 spacing: 10
                 bgColor: Theme.palette.primaryColor3
                 contentColor: Theme.palette.primaryColor1
-                image.source: Style.svg("condition-Or")
-                image.height: 12
-                image.width: 12
+                asset.name: Style.svg("condition-Or")
+                asset.isImage: true
+                asset.height: 12
+                asset.width: 12
                 text: qsTr("Or...")
                 font.pixelSize: 13
                 onClicked: {
@@ -217,7 +219,7 @@ StatusDropdown {
                 contentColor: Theme.palette.directColor1
                 text: d.isTokensLayout ? root.tokenName : root.collectibleName
                 font.pixelSize: 13
-                image.source: d.isTokensLayout ? root.tokenImage : root.collectibleImage
+                asset.name: d.isTokensLayout ? root.tokenImage : root.collectibleImage
                 onClicked: loader.sourceComponent = extendedView
             }
 

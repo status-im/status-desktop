@@ -84,18 +84,19 @@ Item {
             isVerified: model.isVerified
             isUntrustworthy: model.isUntrustworthy
             isAdmin: model.isAdmin
-            image.source: {
+            asset.name: {
                 if ((!model.isContact &&
                     Global.privacyModuleInst.profilePicturesVisibility !==
                     Constants.profilePicturesVisibility.everyone)) {
                     return "";
                 }
+                //TODO check if icon is rendered correctly
                 return model.icon;
             }
-            image.isIdenticon: false
-
+            asset.isImage: (asset.name !== "")
+            asset.isLetterIdenticon: (asset.name === "")
+            asset.color: Utils.colorForPubkey(model.pubKey) // FIXME: use model.colorId
             status: model.onlineStatus
-            icon.color: Utils.colorForPubkey(model.pubKey) // FIXME: use model.colorId
             ringSettings.ringSpecModel: Utils.getColorHashAsJson(model.pubKey) // FIXME: use model.colorHash
             onClicked: {
                 if (mouse.button === Qt.RightButton) {

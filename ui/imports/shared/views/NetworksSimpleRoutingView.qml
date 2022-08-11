@@ -26,7 +26,7 @@ RowLayout {
     StatusRoundIcon {
         Layout.alignment: Qt.AlignTop
         radius: 8
-        icon.name: "flash"
+        asset.name: "flash"
     }
     ColumnLayout {
         Layout.alignment: Qt.AlignTop
@@ -79,9 +79,10 @@ RowLayout {
                         implicitWidth: 126
                         title: modelData.chainName
                         subTitle: ""
-                        image.width: 32
-                        image.height: 32
-                        image.source: Style.png("networks/" + modelData.chainName.toLowerCase())
+                        asset.width: 32
+                        asset.height: 32
+                        asset.name: Style.png("networks/" + modelData.chainName.toLowerCase())
+                        asset.isImage: true
                         color: "transparent"
                         border.color: Style.current.primary
                         border.width: networksSimpleRoutingView.selectedNetwork !== undefined ? networksSimpleRoutingView.selectedNetwork.chainId === modelData.chainId ? 1 : 0 : 0

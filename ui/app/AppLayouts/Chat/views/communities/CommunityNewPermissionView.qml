@@ -100,7 +100,7 @@ Flickable {
             Layout.rightMargin: Layout.leftMargin
             spacing: 16
             StatusRoundIcon {
-                icon.name: "hide"
+                asset.name: "hide"
             }
             ColumnLayout {
                 Layout.fillWidth: true

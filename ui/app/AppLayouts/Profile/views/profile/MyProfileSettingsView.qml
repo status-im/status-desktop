@@ -129,7 +129,7 @@ ColumnLayout {
         leftPadding: 0
         rightPadding: 0
         title: qsTr("Biometric login and transaction authentication")
-        icon.name: "touch-id"
+        asset.name: "touch-id"
         components: [ StatusSwitch {
             id: biometricsSwitch
             horizontalPadding: 0
