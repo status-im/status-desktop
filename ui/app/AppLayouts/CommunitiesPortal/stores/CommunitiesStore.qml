@@ -15,6 +15,7 @@ QtObject {
     property int discordImportWarningsCount: root.communitiesModuleInst.discordImportWarningsCount
     property real discordImportProgress: root.communitiesModuleInst.discordImportProgress
     property bool discordImportProgressStopped: root.communitiesModuleInst.discordImportProgressStopped
+    property string discordImportCommunityId
     property var discordImportTasks: root.communitiesModuleInst.discordImportTasks
     property string locale: localAppSettings.language
     property var advancedModule: profileSectionModule.advancedModule
@@ -130,6 +131,7 @@ QtObject {
                                     pinMessagesAllowedForMembers: false
                                 }
                              }, from = 0) {
+        root.discordImportCommunityId = args.name;
         return communitiesModuleInst.importDiscordCommunity(
                     args.name, args.description, args.introMessage, args.outroMessage, args.options.checkedMembership,
                     args.color, args.tags,

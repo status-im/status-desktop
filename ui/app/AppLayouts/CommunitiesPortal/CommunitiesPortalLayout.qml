@@ -224,9 +224,6 @@ StatusScrollView {
         ImportCommunityPopup {
             anchors.centerIn: parent
             store: root.communitiesStore
-            onClosed: {
-                destroy()
-            }
         }
     }
 

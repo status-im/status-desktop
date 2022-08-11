@@ -68,7 +68,7 @@ StatusDialog {
                 text: qsTr("Visit your new Status community")
                 onClicked: {
                     root.close()
-                    // TODO redirect user to the newly imported community page
+                    root.store.setActiveCommunity(communityId)
                 }
             }
         }
@@ -78,41 +78,39 @@ StatusDialog {
         color: Theme.palette.baseColor4
     }
 
-    ListModel {
-        id: mockModel
+    readonly property var helperInfo: {
+        "import.dataExtraction": {
+            icon: "filter",
+            text: qsTr("Extracting data")
+        },
+        "import.communityCreation": {
+            icon: "network",
+            text: qsTr("Setting up your community")
+        },
+        "import.categoriesCreation": {
+            icon: "channel-category",
+            text: qsTr("Importing categories")
+        },
+        "import.channelsCreation": {
+            icon: "channel",
+            text: qsTr("Importing channels")
+        },
+        "import.convertMessages": {
+            icon: "receive",
+            text: qsTr("Importing messages")
+        }
+    }
 
-        function getSubtaskDescription(progress) {
-            if (progress >= 1.0)
-                return qsTr("✓ Complete")
-            if (progress > 0 && root.store.discordImportProgressStopped)
-                return qsTr("Import stopped...")
-            if (root.store.discordImportProgressStopped)
-                return ""
-            if (progress <= 0.0)
-                return qsTr("Pending...")
-            return qsTr("Working...")
-        }
-
-        ListElement {
-            icon: "network"
-            primary: qsTr("Setting up your community")
-            progress: 1.0
-        }
-        ListElement {
-            icon: "channel"
-            primary: qsTr("Importing categories & channels")
-            progress: 0.52
-        }
-        ListElement {
-            icon: "image"
-            primary: qsTr("Downloading assets")
-            progress: 0.0
-        }
-        ListElement {
-            icon: "receive"
-            primary: qsTr("Importing messages")
-            progress: 0.0
-        }
+    function getSubtaskDescription(progress) {
+        if (progress >= 1.0)
+            return qsTr("✓ Complete")
+        if (progress > 0 && root.store.discordImportProgressStopped)
+            return qsTr("Import stopped...")
+        if (root.store.discordImportProgressStopped)
+            return ""
+        if (progress <= 0.0)
+            return qsTr("Pending...")
+        return qsTr("Working...")
     }
 
     Component {
@@ -130,7 +128,7 @@ StatusDialog {
                     Layout.alignment: Qt.AlignVCenter
                     Layout.preferredWidth: 40
                     Layout.preferredHeight: 40
-                    icon.name: model.icon
+                    icon.name: helperInfo[model.type].icon
                 }
                 ColumnLayout {
                     spacing: 4
@@ -139,7 +137,7 @@ StatusDialog {
                     Layout.alignment: Qt.AlignVCenter
                     StatusBaseText {
                         font.pixelSize: 15
-                        text: model.primary
+                        text: helperInfo[model.type].text
                     }
                     StatusBaseText {
                         font.pixelSize: 12
@@ -150,7 +148,7 @@ StatusDialog {
                                 return Theme.palette.dangerColor1
                             return Theme.palette.baseColor1
                         }
-                        text: mockModel.getSubtaskDescription(model.progress)
+                        text: getSubtaskDescription(model.progress)
                     }
                 }
                 Item { Layout.fillWidth: true }
@@ -172,6 +170,7 @@ StatusDialog {
                     value: model.progress
                 }
             }
+            // TODO display subtask warnings/errors in a Repeater here
             StatusDialogDivider {
                 Layout.fillWidth: true
                 Layout.leftMargin: -24 // compensate for Control.horizontalPadding -> full width
@@ -202,13 +201,13 @@ StatusDialog {
                 StatusBaseText {
                     Layout.fillWidth: true
                     font.pixelSize: 15
-                    text: qsTr("Importing ‘%1’ from Discord...").arg("CryptoKitties") // TODO community name
+                    text: qsTr("Importing ‘%1’ from Discord...").arg(root.store.discordImportCommunityId)
                 }
                 Item { Layout.fillWidth: true }
                 StatusBaseText { // TODO use the error/warning pill component
                     visible: !!text
-                    text: root.store.discordImportErrorsCount ? qsTr("%n error(s)", "", root.store.discordImportErrorsCount) :
-                                                                root.store.discordImportWarningsCount ? qsTr("%n warning(s)", "", root.store.discordImportWarningsCount) : ""
+                    text: root.store.discordImportErrorsCount ? qsTr("%n critical issue(s)", "", root.store.discordImportErrorsCount) :
+                                                                root.store.discordImportWarningsCount ? qsTr("%n issue(s)", "", root.store.discordImportWarningsCount) : ""
                 }
             }
 
@@ -226,7 +225,7 @@ StatusDialog {
                     spacing: 40
 
                     Repeater {
-                        model: mockModel
+                        model: root.store.discordImportTasks
                         delegate: subtaskComponent
                     }
                 }
