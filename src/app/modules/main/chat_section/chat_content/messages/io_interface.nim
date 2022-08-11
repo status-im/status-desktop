@@ -86,6 +86,9 @@ method getChatType*(self: AccessInterface): int {.base.} =
 method getChatColor*(self: AccessInterface): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method getChatIcon*(self: AccessInterface): string {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method amIChatAdmin*(self: AccessInterface): bool {.base.} =
   raise newException(ValueError, "No implementation available")
 

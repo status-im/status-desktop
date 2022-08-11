@@ -207,7 +207,6 @@ proc toChatDto*(jsonObj: JsonNode): ChatDto =
   discard jsonObj.getProp("unviewedMentionsCount", result.unviewedMentionsCount)
   discard jsonObj.getProp("canPost", result.canPost)
   discard jsonObj.getProp("alias", result.alias)
-  discard jsonObj.getProp("identicon", result.icon)
   discard jsonObj.getProp("muted", result.muted)
   discard jsonObj.getProp("categoryId", result.categoryId)
   if (result.categoryId == ""):
@@ -230,6 +229,13 @@ proc toChatDto*(jsonObj: JsonNode): ChatDto =
   if (jsonObj.getProp("chatType", chatTypeInt) and
     (chatTypeInt >= ord(low(ChatType)) or chatTypeInt <= ord(high(ChatType)))):
       result.chatType = ChatType(chatTypeInt)
+
+  var chatImage: string
+  discard jsonObj.getProp("image", chatImage)
+  if (result.chatType == ChatType.PrivateGroupChat and len(chatImage) > 0):
+    result.icon = chatImage
+  else:
+    discard jsonObj.getProp("identicon", result.icon)
 
   var membersObj: JsonNode
   if(jsonObj.getProp("members", membersObj)):

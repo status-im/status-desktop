@@ -146,6 +146,8 @@ proc buildChatSectionUI(
       blocked = contactDetails.details.isBlocked()
       colorHash = self.controller.getColorHash(chatDto.id)
       colorId = self.controller.getColorId(chatDto.id)
+    elif(chatDto.chatType == ChatType.PrivateGroupChat):
+      chatImage = chatDto.icon
 
     # for group chats only member.admin should be checked,
     # because channelGroup.admin is alway true
@@ -726,8 +728,8 @@ method removeMembersFromGroupChat*(self: Module, communityID: string, chatId: st
 method renameGroupChat*(self: Module, chatId: string, newName: string) =
   self.controller.renameGroupChat(chatId, newName)
 
-method updateGroupChatDetails*(self: Module, chatId: string, newGroupName: string, newGroupColor: string, newGroupImage: string) =
-  self.controller.updateGroupChatDetails(chatId, newGroupName, newGroupColor, newGroupImage)
+method updateGroupChatDetails*(self: Module, chatId: string, newGroupName: string, newGroupColor: string, newGroupImageJson: string) =
+  self.controller.updateGroupChatDetails(chatId, newGroupName, newGroupColor, newGroupImageJson)
 
 method makeAdmin*(self: Module, communityID: string, chatId: string, pubKey: string) =
   self.controller.makeAdmin(communityID, chatId, pubKey)

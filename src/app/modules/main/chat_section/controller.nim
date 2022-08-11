@@ -345,9 +345,9 @@ proc renameGroupChat*(self: Controller, chatId: string, newName: string) =
   let communityId = if self.isCommunitySection: self.sectionId else: ""
   self.chatService.renameGroupChat(communityId, chatId, newName)
 
-proc updateGroupChatDetails*(self: Controller, chatId: string, newGroupName: string, newGroupColor: string, newGroupImage: string) =
+proc updateGroupChatDetails*(self: Controller, chatId: string, newGroupName: string, newGroupColor: string, newGroupImageJson: string) =
   let communityId = if self.isCommunitySection: self.sectionId else: ""
-  self.chatService.updateGroupChatDetails(communityId, chatId, newGroupName, newGroupColor, newGroupImage)
+  self.chatService.updateGroupChatDetails(communityId, chatId, newGroupName, newGroupColor, newGroupImageJson)
 
 proc makeAdmin*(self: Controller, communityID: string, chatId: string, pubKey: string) =
   self.chatService.makeAdmin(communityID, chatId, pubKey)

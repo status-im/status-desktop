@@ -68,6 +68,9 @@ QtObject:
   proc getChatColor*(self: View): string {.slot.} =
     return self.delegate.getChatColor()
 
+  proc getChatIcon*(self: View): string {.slot.} =
+    return self.delegate.getChatIcon()
+
   proc amIChatAdmin*(self: View): bool {.slot.} =
     return self.delegate.amIChatAdmin()
 

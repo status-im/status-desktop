@@ -66,11 +66,19 @@ StatusModal {
         }
     }
     header.editable: !addMembers && popup.isAdmin
-    header.icon.isLetterIdenticon: true
+    header.icon.isLetterIdenticon: {
+        if (popup.chatDetails && popup.chatDetails.icon !== "") {
+            return false
+        }
+        return true
+    }
     header.icon.name: popup.chatDetails ? popup.chatDetails.name : ""
     header.icon.background.color: popup.chatDetails ? popup.chatDetails.color : "transparent"
+    header.image.source: popup.chatDetails ? popup.chatDetails.icon : ""
 
-    onEditButtonClicked: renameGroupPopup.open()
+    onEditButtonClicked: {
+        renameGroupPopup.open()
+    }
 
     onClosed: {
         chatSectionModule.clearMyContacts()
@@ -284,6 +292,7 @@ StatusModal {
         id: renameGroupPopup
         activeGroupName: popup.chatDetails ? popup.chatDetails.name : ""
         activeGroupColor: popup.chatDetails ? popup.chatDetails.color: ""
+        activeGroupImageData: popup.chatDetails ? popup.chatDetails.icon: ""
         onUpdateGroupChatDetails: {
             popup.chatSectionModule.updateGroupChatDetails(popup.chatSectionModule.activeItem.id, groupName, groupColor, groupImage)
             popup.header.title = groupName

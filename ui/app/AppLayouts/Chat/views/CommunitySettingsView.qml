@@ -156,8 +156,8 @@ StatusAppTwoPanelLayout {
                         item.options.requestToJoinEnabled ? Constants.communityChatOnRequestAccess : Constants.communityChatPublicAccess,
                         item.color.toString().toUpperCase(),
                         item.selectedTags,
-                        JSON.stringify({imagePath: String(item.logoImagePath).replace("file://", ""), cropRect: item.logoCropRect}),
-                        JSON.stringify({imagePath: String(item.bannerPath).replace("file://", ""), cropRect: item.bannerCropRect}),
+                        Utils.getImageAndCropInfoJson(item.logoImagePath, item.logoCropRect),
+                        Utils.getImageAndCropInfoJson(item.bannerPath, item.bannerCropRect),
                         item.options.archiveSupportEnabled,
                         item.options.pinMessagesEnabled
                     )

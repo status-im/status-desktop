@@ -298,7 +298,13 @@ Loader {
             chatColor: root.messageStore.getChatColor()
             chatEmoji: root.channelEmoji
             amIChatAdmin: root.messageStore.amIChatAdmin()
-            chatIcon: root.senderIconToShow
+            chatIcon: {
+                if ((root.messageStore.getChatType() === Constants.chatType.privateGroupChat) &&
+                     root.messageStore.getChatIcon() !== "") {
+                    return root.messageStore.getChatIcon()
+                }
+                return root.senderIconToShow
+            }
         }
     }
 

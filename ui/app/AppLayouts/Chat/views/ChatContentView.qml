@@ -209,6 +209,7 @@ ColumnLayout {
                 chatDescription = chatContentModule.chatDetails.description
                 chatEmoji = chatContentModule.chatDetails.emoji
                 chatColor = chatContentModule.chatDetails.color
+                chatIcon = chatContentModule.chatDetails.icon
                 chatType = chatContentModule.chatDetails.type
                 chatMuted = chatContentModule.chatDetails.muted
                 channelPosition = chatContentModule.chatDetails.position
