@@ -39,7 +39,7 @@ Item {
                 id: accountImage
                 objectName: "walletAccountViewAccountImage"
                 anchors.verticalCenter: parent.verticalCenter
-                icon: StatusIconSettings {
+                asset: StatusAssetSettings {
                     width: isLetterIdenticon ? 40 : 20
                     height: isLetterIdenticon ? 40 : 20
                     color: walletStore.currentAccount.color
@@ -47,11 +47,9 @@ Item {
                     name: !walletStore.currentAccount.emoji ? "filled-account": ""
                     letterSize: 14
                     isLetterIdenticon: !!walletStore.currentAccount.emoji
-                    background: StatusIconBackgroundSettings {
-                        width: 40
-                        height: 40
-                        color: Theme.palette.primaryColor3
-                    }
+                    bgWidth: 40
+                    bgHeight: 40
+                    bgColor: Theme.palette.primaryColor3
                 }
             }
             Column {
@@ -134,9 +132,9 @@ Item {
                     height: 24
                     radius: 6
                     closeButtonVisible: false
-                    icon.emoji: model.emoji
-                    icon.emojiSize: Emoji.size.verySmall
-                    icon.isLetterIdenticon: true
+                    asset.emoji: model.emoji
+                    asset.emojiSize: Emoji.size.verySmall
+                    asset.isLetterIdenticon: true
                     title: model.name
                     titleText.font.pixelSize: 12
                     titleText.color: Theme.palette.indirectColor1

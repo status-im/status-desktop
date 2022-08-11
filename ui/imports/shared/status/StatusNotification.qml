@@ -41,16 +41,10 @@ Rectangle {
             anchors.left: parent.left
             anchors.leftMargin: Style.current.smallPadding
             anchors.verticalCenter: parent.verticalCenter
-            image: StatusImageSettings {
-                width: 40
-                height: 40
-            }
-            icon: StatusIconSettings {
-                width: 40
-                height: 40
-                letterSize: 15
-                color: Theme.palette.miscColor5
-            }
+            asset.width: 40
+            asset.height: 40
+            asset.letterSize: 15
+            asset.color: Theme.palette.miscColor5
             name: root.name
         }
     }

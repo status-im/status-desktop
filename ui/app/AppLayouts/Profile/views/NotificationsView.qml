@@ -119,16 +119,17 @@ SettingsContentBase {
                     }
 
                     // Maybe we need to redo `StatusListItem` to display identicon ring, but that's not in Figma design for now.
-                    image.source: model.image
                     ringSettings.ringSpecModel: model.type === Constants.settingsSection.exemptions.oneToOneChat ? Utils.getColorHashAsJson(model.itemId) : undefined
-                    icon: StatusIconSettings {
+                    asset: StatusAssetSettings {
+                        name: model.image
+                        isImage: !!model.image && model.image !== ""
                         color: model.type === Constants.settingsSection.exemptions.oneToOneChat?
                                    Utils.colorForPubkey(model.itemId) :
                                    model.color
                         charactersLen: model.type === Constants.settingsSection.exemptions.oneToOneChat? 2 : 1
-                        isLetterIdenticon: model.image === ""
-                        height: isLetterIdenticon ? 40 : 20
-                        width: isLetterIdenticon ? 40 : 20
+                        isLetterIdenticon: !model.image || model.image === ""
+                        height: isImage ? 40 : 20
+                        width: isImage ? 40 : 20
                     }
 
                     components: [

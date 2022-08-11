@@ -62,7 +62,7 @@ ModalPopup {
         placeholderText: qsTr("chat-name")
         Keys.onEnterPressed: doJoin()
         Keys.onReturnPressed: doJoin()
-        input.icon.name: "channel"
+        input.asset.name: "channel"
         validators: [StatusMinLengthValidator {
             minLength: 1
             errorMessage: qsTr("You need to enter a channel name")

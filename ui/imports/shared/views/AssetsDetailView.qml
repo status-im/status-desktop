@@ -40,7 +40,8 @@ Item {
         anchors.left: parent.left
         anchors.right: parent.right
         width: parent.width
-        image.source: token && token.symbol ? Style.png("tokens/%1".arg(token.symbol)) : ""
+        asset.name: token && token.symbol ? Style.png("tokens/%1".arg(token.symbol)) : ""
+        asset.isImage: true
         primaryText: token ? token.name : ""
         secondaryText: token ? qsTr("%1 %2").arg(Utils.toLocaleString(token.totalBalance, RootStore.locale, {"currency": true})).arg(token.symbol) : ""
         tertiaryText: token ? "%1 %2".arg(Utils.toLocaleString(token.totalCurrencyBalance.toFixed(2), RootStore.locale, {"currency": true})).arg(RootStore.currencyStore.currentCurrency.toUpperCase()) : ""

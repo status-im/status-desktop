@@ -30,9 +30,10 @@ StatusListView {
         subTitle: model.description
         tertiaryTitle: qsTr(model.members.count === 1 ?"%1 member"
                                                       :"%1 members").arg(model.members.count)
-        image.source: model.image
-        icon.isLetterIdenticon: !model.image
-        icon.background.color: model.color || Theme.palette.primaryColor1
+        asset.name: model.image
+        asset.isImage: asset.name.includes("data")
+        asset.isLetterIdenticon: !model.image
+        asset.bgColor: model.color || Theme.palette.primaryColor1
         visible: model.joined
         height: visible ? implicitHeight: 0
 

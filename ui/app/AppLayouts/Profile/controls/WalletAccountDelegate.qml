@@ -14,12 +14,12 @@ StatusListItem {
     title: account.name
     subTitle: account.address
     objectName: account.name
-    icon.color: account.color
-    icon.emoji: account.emoji
-    icon.name: !account.emoji ? "filled-account": ""
-    icon.letterSize: 14
-    icon.isLetterIdenticon: !!account.emoji
-    icon.background.color: Theme.palette.primaryColor3
+    asset.color: account.color
+    asset.emoji: account.emoji
+    asset.name: !account.emoji ? "filled-account": ""
+    asset.letterSize: 14
+    asset.isLetterIdenticon: !!account.emoji
+    asset.bgColor: Theme.palette.primaryColor3
     width: parent.width
     
     components: !showShevronIcon ? [] : [ shevronIcon ]

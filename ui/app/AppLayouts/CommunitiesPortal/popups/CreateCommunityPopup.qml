@@ -152,7 +152,7 @@ StatusStackModal {
 
                     StatusRoundIcon {
                         Layout.alignment: Qt.AlignHCenter
-                        icon.name: "info"
+                        asset.name: "info"
                     }
                     StatusBaseText {
                         Layout.topMargin: 8

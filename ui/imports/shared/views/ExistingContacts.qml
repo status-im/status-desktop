@@ -53,13 +53,12 @@ Item {
             height: visible ? implicitHeight : 0
             color: sensor.containsMouse ? Style.current.backgroundHover : Style.current.transparent
             userName: model.displayName
-            image.source: model.icon
-            image.isIdenticon: false
-            image.width: 40
-            image.height: 40
-            icon.color: Utils.colorForPubkey(model.pubKey)
-            icon.height: 40
-            icon.width: 40
+            asset.name: model.icon
+            asset.isImage: true
+            asset.imgIsIdenticon: false
+            asset.width: 40
+            asset.height: 40
+            asset.color: Utils.colorForPubkey(model.pubKey)
             ringSettings.ringSpecModel: Utils.getColorHashAsJson(model.pubKey)
             statusListItemIcon.badge.border.color: Theme.palette.baseColor4
             statusListItemIcon.badge.implicitHeight: 14 // 10 px + 2 px * 2 borders

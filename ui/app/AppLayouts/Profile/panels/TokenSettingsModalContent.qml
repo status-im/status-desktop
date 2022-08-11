@@ -28,8 +28,9 @@ Item {
             id: assetSymbol
             title: symbol
             subTitle: name || ""
-            image.source: Style.png("tokens/" + (hasIcon ? symbol : "DEFAULT-TOKEN@3x"))
-            image.height: 36
+            asset.name: Style.png("tokens/" + (hasIcon ? symbol : "DEFAULT-TOKEN@3x"))
+            asset.isImage: true
+            asset.height: 36
             components: [StatusCheckBox {
                 id: assetCheck
                 checked: model.isVisible

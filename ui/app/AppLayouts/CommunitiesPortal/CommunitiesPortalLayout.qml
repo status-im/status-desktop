@@ -57,7 +57,6 @@ StatusSectionLayout {
                 id: column
                 width: parent.availableWidth
                 height: childrenRect.height
-
                 spacing: 18
 
                 StatusBaseText {
@@ -80,7 +79,7 @@ StatusSectionLayout {
                         Layout.alignment: Qt.AlignVCenter
                         enabled: false // Out of scope
                         placeholderText: qsTr("Search")
-                        input.icon.name: "search"
+                        input.asset.name: "search"
                         leftPadding: 0
                         rightPadding: 0
                         topPadding: 0

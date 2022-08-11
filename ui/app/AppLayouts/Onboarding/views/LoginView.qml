@@ -307,7 +307,7 @@ Item {
 
                     AccountMenuItemPanel {
                         label: qsTr("Add existing Status user")
-                        iconSettings.name: "wallet"
+                        image: "wallet"
                         onClicked: {
                             accountsPopup.close()
                             root.startupStore.doTertiaryAction()

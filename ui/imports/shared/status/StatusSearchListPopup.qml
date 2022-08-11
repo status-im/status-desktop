@@ -55,7 +55,7 @@ Popup {
             leftPadding: 0
             rightPadding: 0
             placeholderText: root.searchBoxPlaceholder
-            input.icon: StatusIconSettings {
+            input.asset: StatusAssetSettings {
                 width: 24
                 height: 24
                 name: "search"

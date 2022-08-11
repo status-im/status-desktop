@@ -16,7 +16,7 @@ StatusModal {
     StatusDescriptionListItem {
         subTitle: root.getStatusText
         tooltip.text: qsTr("Copy to clipboard")
-        icon.name: "copy"
+        asset.name: "copy"
         iconButton.onClicked: {
             root.rootStore.copyToClipboard(Constants.statusLinkPrefix)
             tooltip.visible = !tooltip.visible

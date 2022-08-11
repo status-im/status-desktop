@@ -92,12 +92,12 @@ Rectangle {
                 highlighted: RootStore.currentAccount.name === model.name
                 title: model.name
                 subTitle: Utils.toLocaleString(model.currencyBalance.toFixed(2), RootStore.locale, {"model.currency": true}) + " " + RootStore.currentCurrency.toUpperCase()
-                icon.emoji: !!model.emoji ? model.emoji: ""
-                icon.color: model.color
-                icon.name: !model.emoji ? "filled-account": ""
-                icon.letterSize: 14
-                icon.isLetterIdenticon: !!model.emoji ? true : false
-                icon.background.color: Theme.palette.primaryColor3
+                asset.emoji: !!model.emoji ? model.emoji: ""
+                asset.color: model.color
+                asset.name: !model.emoji ? "filled-account": ""
+                asset.letterSize: 14
+                asset.isLetterIdenticon: !!model.emoji ? true : false
+                asset.bgColor: Theme.palette.primaryColor3
                 statusListItemTitle.font.weight: Font.Medium
                 color: sensor.containsMouse || highlighted ? Theme.palette.baseColor3 : "transparent"
                 onClicked: {

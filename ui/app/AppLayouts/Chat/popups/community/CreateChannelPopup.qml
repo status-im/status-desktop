@@ -44,18 +44,18 @@ StatusDialog {
 
     onOpened: {
         nameInput.text = ""
-        nameInput.input.icon.emoji = ""
+        nameInput.input.asset.emoji = ""
         nameInput.input.edit.forceActiveFocus(Qt.MouseFocusReason)
         if (isEdit) {
             root.title = qsTr("Edit #%1").arg(root.channelName);
             nameInput.text = root.channelName
             descriptionTextArea.text = root.channelDescription
             if (root.channelEmoji) {
-                nameInput.input.icon.emoji = root.channelEmoji
+                nameInput.input.asset.emoji = root.channelEmoji
             }
             colorDialog.color = root.channelColor
         } else {
-            nameInput.input.icon.isLetterIdenticon = true;
+            nameInput.input.asset.isLetterIdenticon = true;
         }
     }
 
@@ -66,8 +66,8 @@ StatusDialog {
         target: emojiPopup
 
         onEmojiSelected: function (emojiText, atCursor) {
-            nameInput.input.icon.isLetterIdenticon = false;
-            nameInput.input.icon.emoji = emojiText
+            nameInput.input.asset.isLetterIdenticon = false;
+            nameInput.input.asset.emoji = emojiText
         }
         onClosed: {
             root.emojiPopupOpened = false
@@ -114,7 +114,7 @@ StatusDialog {
                         input.letterIconName = text;
                     }
                 }
-                input.icon.color: colorDialog.color.toString()
+                input.asset.color: colorDialog.color.toString()
                 rightPadding: 6
                 input.rightComponent: StatusRoundButton {
                     objectName: "StatusChannelPopup_emojiButton"
@@ -299,7 +299,7 @@ StatusDialog {
                         return
                     }
                     let error = "";
-                    let emoji =  StatusQUtils.Emoji.deparseFromParse(nameInput.input.icon.emoji)
+                    let emoji =  StatusQUtils.Emoji.deparseFromParse(nameInput.input.asset.emoji)
 
                     if (!isEdit) {
                         //scrollView.communityColor.color.toString().toUpperCase()

@@ -84,7 +84,7 @@ StatusScrollView {
             label: qsTr("Select tags that will fit your Community")
             labelPadding: Style.current.bigPadding
             font.pixelSize: 15
-            input.icon.name: "search"
+            input.asset.name: "search"
             placeholderText: qsTr("Search tags")
             Layout.fillWidth: true
         }

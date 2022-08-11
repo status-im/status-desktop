@@ -49,7 +49,7 @@ Item {
             bottomPadding: 0
             rightPadding: 0
             placeholderText: root.placeholderText
-            input.icon.name: "search"
+            input.asset.name: "search"
             enabled: model.count > 0
         }
 
@@ -140,13 +140,12 @@ Item {
                 nickName: model.localNickname
                 userName: model.displayName
                 status: model.onlineStatus
-                icon.color: Utils.colorForPubkey(model.pubKey) // FIXME: use model.colorId
-                image.source: model.icon
-                image.isIdenticon: false
-                image.width: 40
-                image.height: 40
-                icon.height: 40
-                icon.width: 40
+                asset.color: Utils.colorForPubkey(model.pubKey) // FIXME: use model.colorId
+                asset.name: model.icon
+                asset.isImage: true
+                asset.imgIsIdenticon: false
+                asset.width: 40
+                asset.height: 40
                 ringSettings.ringSpecModel: Utils.getColorHashAsJson(model.pubKey)
                 statusListItemIcon.badge.visible: (root.panelType === CommunityMembersTabPanel.TabType.AllMembers)
 

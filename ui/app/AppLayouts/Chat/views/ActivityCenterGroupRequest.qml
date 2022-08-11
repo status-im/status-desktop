@@ -61,7 +61,7 @@ Item {
             anchors.leftMargin: Style.current.padding
             anchors.verticalCenter: parent.verticalCenter
             name: model.name
-            icon.color: Theme.palette.miscColor5
+            asset.color: Theme.palette.miscColor5
         }
 
         Item {

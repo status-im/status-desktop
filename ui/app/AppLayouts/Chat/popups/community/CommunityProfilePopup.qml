@@ -26,9 +26,10 @@ StatusModal {
 
     header.title: contentItem.currentItem.headerTitle
     header.subTitle: contentItem.currentItem.headerSubtitle || ""
-    header.image.source: contentItem.currentItem.headerImageSource || ""
-    header.icon.isLetterIdenticon: contentItem.currentItem.headerTitle === root.community.name && !contentItem.currentItem.headerImageSource
-    header.icon.background.color: root.community.color
+    header.asset.name: contentItem.currentItem.headerImageSource || ""
+    header.asset.isImage: !!contentItem.currentItem.headerImageSource
+    header.asset.isLetterIdenticon: contentItem.currentItem.headerTitle === root.community.name && !contentItem.currentItem.headerImageSource
+    header.asset.bgColor: root.community.color
 
     contentItem: StackView {
         id: stack

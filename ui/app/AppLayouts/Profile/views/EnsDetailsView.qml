@@ -80,7 +80,7 @@ Item {
         visible: false
         anchors.top: sectionTitle.bottom
         anchors.topMargin: 24
-        icon.name: "copy"
+        asset.name: "copy"
         tooltip.text: qsTr("Copied to clipboard!")
         iconButton.onClicked: {
             root.ensUsernamesStore.copyToClipboard(subTitle)
@@ -93,7 +93,7 @@ Item {
         visible: false
         anchors.top: walletAddressLbl.bottom
         anchors.topMargin: 24
-        icon.name: "copy"
+        asset.name: "copy"
         tooltip.text: qsTr("Copied to clipboard!")
         iconButton.onClicked: {
             root.ensUsernamesStore.copyToClipboard(subTitle)

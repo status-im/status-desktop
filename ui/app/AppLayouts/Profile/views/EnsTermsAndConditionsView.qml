@@ -265,7 +265,7 @@ Item {
                 title: qsTr("Wallet address")
                 subTitle: root.ensUsernamesStore.getWalletDefaultAddress()
                 tooltip.text: qsTr("Copied to clipboard!")
-                icon.name: "copy"
+                asset.name: "copy"
                 iconButton.onClicked: {
                     root.ensUsernamesStore.copyToClipboard(subTitle)
                     tooltip.visible = !tooltip.visible
@@ -282,7 +282,7 @@ Item {
                     return pubKey.substring(0, 20) + "..." + pubKey.substring(pubKey.length - 20);
                 }
                 tooltip.text: qsTr("Copied to clipboard!")
-                icon.name: "copy"
+                asset.name: "copy"
                 iconButton.onClicked: {
                     root.ensUsernamesStore.copyToClipboard(root.ensUsernamesStore.pubkey)
                     tooltip.visible = !tooltip.visible

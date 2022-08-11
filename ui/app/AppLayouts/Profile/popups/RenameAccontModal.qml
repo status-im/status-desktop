@@ -35,7 +35,7 @@ StatusModal {
         enabled: popup.opened
         target: emojiPopup
         onEmojiSelected: function (emojiText, atCursor) {
-            popup.contentItem.accountNameInput.input.icon.emoji = emojiText
+            popup.contentItem.accountNameInput.input.asset.emoji = emojiText
         }
     }
 
@@ -53,9 +53,9 @@ StatusModal {
             input.isIconSelectable: true
             placeholderText: qsTr("Enter an account name...")
             input.text: currentAccount.name
-            input.icon.emoji: currentAccount.emoji
-            input.icon.color: currentAccount.color
-            input.icon.name: !currentAccount.emoji ? "filled-account": ""
+            input.asset.emoji: currentAccount.emoji
+            input.asset.color: currentAccount.color
+            input.asset.name: !currentAccount.emoji ? "filled-account": ""
             onIconClicked: {
                 popup.emojiPopup.open()
                 popup.emojiPopup.x = popup.x + accountNameInput.x + Style.current.padding
@@ -89,7 +89,7 @@ StatusModal {
             }
             onSelectedColorChanged: {
                 if(selectedColor !== currentAccount.color) {
-                    accountNameInput.input.icon.color = selectedColor
+                    accountNameInput.input.asset.color = selectedColor
                 }
 
             }
@@ -121,7 +121,7 @@ StatusModal {
                      return
                  }
 
-                const error = walletStore.updateCurrentAccount(currentAccount.address, accountNameInput.text, accountColorInput.selectedColor, accountNameInput.input.icon.emoji);
+                const error = walletStore.updateCurrentAccount(currentAccount.address, accountNameInput.text, accountColorInput.selectedColor, accountNameInput.input.asset.emoji);
 
                 if (error) {
                     Global.playErrorSound();

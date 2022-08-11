@@ -215,7 +215,7 @@ Rectangle {
             subTitleComponent.font.family: Theme.palette.monoFont.name
             tooltip.text: qsTr("Copied to clipboard")
             tooltip.timeout: 1000
-            icon.name: "copy"
+            asset.name: "copy"
             iconButton.onClicked: {
                 globalUtils.copyToClipboard(subTitle)
                 tooltip.open();
@@ -241,7 +241,7 @@ Rectangle {
             }
             tooltip.text: qsTr("Copied to clipboard")
             tooltip.timeout: 1000
-            icon.name: "copy"
+            asset.name: "copy"
             iconButton.onClicked: {
                 let user = ""
                 if (isCurrentUser) {
@@ -307,10 +307,10 @@ Rectangle {
         StatusRoundIcon {
             id: checkboxIcon
             visible: confirmLbl.visible
-            icon.name: "checkbox"
-            icon.width: 16
-            icon.height: 16
-            icon.color: Theme.palette.white
+            asset.name: "checkbox"
+            asset.width: 16
+            asset.height: 16
+            asset.color: Theme.palette.white
             Layout.alignment: Qt.AlignHCenter
             color: Theme.palette.primaryColor1
             width: 32
@@ -324,7 +324,7 @@ Rectangle {
             subTitle: root.userIsEnsVerified ? root.userEnsName : root.userName
             tooltip.text: qsTr("Copied to clipboard")
             tooltip.timeout: 1000
-            icon.name: "copy"
+            asset.name: "copy"
             iconButton.onClicked: {
                 globalUtils.copyToClipboard(subTitle)
                 tooltip.open();
@@ -334,10 +334,10 @@ Rectangle {
         StatusRoundIcon {
             id: dangerIcon
             visible: confirmUntrustworthyLbl.visible
-            icon.name: "tiny/subtract"
-            icon.width: 5
-            icon.height: 21
-            icon.color: Theme.palette.white
+            asset.name: "tiny/subtract"
+            asset.width: 5
+            asset.height: 21
+            asset.color: Theme.palette.white
             Layout.alignment: Qt.AlignHCenter
             color: Theme.palette.dangerColor1
             width: 32

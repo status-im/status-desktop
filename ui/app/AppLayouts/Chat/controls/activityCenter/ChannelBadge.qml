@@ -34,16 +34,11 @@ Item {
         anchors.left: channelIcon.right
         anchors.leftMargin: 4
         anchors.verticalCenter: parent.verticalCenter
-        image: StatusImageSettings {
-            width: 16
-            height: 16
-            source: profileImage
-        }
-        icon: StatusIconSettings {
-            width: 16
-            height: 16
-            letterSize: 11
-        }
+        asset.name: profileImage
+        asset.isImage: profileImage !== ""
+        asset.width: 16
+        asset.height: 16
+        asset.letterSize: 11
         name: channelBadge.name
     }
 

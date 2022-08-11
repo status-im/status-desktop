@@ -58,8 +58,9 @@ Item {
         subTitle: communityData.members.count <= 1 ?
                                      qsTr("1 Member") :
                                      qsTr("%1 Members").arg(communityData.members.count)
-        image.source: communityData.image
-        icon.color: communityData.color
+        asset.name: communityData.image
+        asset.color: communityData.color
+        asset.isImage: true
         onClicked: root.infoButtonClicked()
         anchors.top: parent.top
         anchors.topMargin: 5

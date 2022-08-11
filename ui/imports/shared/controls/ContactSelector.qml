@@ -100,9 +100,10 @@ Item {
 
             StatusSmartIdenticon {
                 Layout.alignment: Qt.AlignVCenter
-                image.width: (!!selectedContact && !!selectedContact.displayIcon) ? 32 : 0
-                image.height: 32
-                image.source: (!!selectedContact && !!selectedContact.displayIcon) ? selectedContact.displayIcon : ""
+                asset.width: (!!selectedContact && !!selectedContact.displayIcon) ? 32 : 0
+                asset.height: 32
+                asset.isImage: true
+                asset.name: (!!selectedContact && !!selectedContact.displayIcon) ? selectedContact.displayIcon : ""
                 active: !!selectedContact && !!selectedContact.displayIcon
             }
             StatusBaseText {
@@ -140,7 +141,8 @@ Item {
                 spacing: 12
 
                 StatusSmartIdenticon {
-                    image.source: currentContact.displayIcon
+                    asset.isImage: true
+                    asset.name: currentContact.displayIcon
                 }
                 ColumnLayout {
                     Layout.fillWidth: true

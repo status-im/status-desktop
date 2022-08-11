@@ -26,16 +26,13 @@ Loader {
 
     sourceComponent: StatusSmartIdenticon {
         name: root.name
-        image {
-            width: root.imageWidth
-            height: root.imageHeight
-            source: root.image
-        }
-        icon {
+        asset {
             width: root.imageWidth
             height: root.imageHeight
             color: Theme.palette.userCustomizationColors[root.colorId]
+            name: root.image
             charactersLen: 2
+            isImage: true
         }
         ringSettings {
             ringSpecModel: root.showRing ? root.colorHash : undefined

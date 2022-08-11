@@ -37,7 +37,7 @@ ColumnLayout {
     StatusInput {
         id: filterInput
         placeholderText: qsTr("Search contacts")
-        input.icon.name: "search"
+        input.asset.name: "search"
         input.clearable: true
         Layout.fillWidth: true
         Layout.leftMargin: Style.current.padding
@@ -83,7 +83,7 @@ ColumnLayout {
         title: qsTr("Share community")
         subTitle: `${Constants.communityLinkPrefix}${root.community && root.community.id.substring(0, 4)}...${root.community && root.community.id.substring(root.community.id.length -2)}`
         tooltip.text: qsTr("Copied!")
-        icon.name: "copy"
+        asset.name: "copy"
         iconButton.onClicked: {
             let link = `${Constants.communityLinkPrefix}${root.community.id}`
             root.rootStore.copyToClipboard(link)

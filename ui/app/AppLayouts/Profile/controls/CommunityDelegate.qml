@@ -7,15 +7,9 @@ StatusListItem {
 
     title: community.name
     subTitle: community.amISectionAdmin ? qsTr("Admin") : qsTr("Member")
-    
-    image {
-        source: community.image
-    }
-
-    icon {
-        name: community.name
-        letterSize: 14
-        isLetterIdenticon: !community.image
-        color: community.color
-    }
+    asset.name: !!community.image ? community.image : community.name
+    asset.isImage: asset.name.includes("data")
+    asset.letterSize: 14
+    asset.isLetterIdenticon: !community.image
+    asset.color: community.color
 }

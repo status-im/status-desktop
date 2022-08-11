@@ -85,12 +85,12 @@ StatusModal {
             implicitWidth: 272
             title: name
             subTitle: currencyBalance
-            icon.emoji: !!emoji ? emoji: ""
-            icon.color: model.color
-            icon.name: !emoji ? "filled-account": ""
-            icon.letterSize: 14
-            icon.isLetterIdenticon: !!model.emoji
-            icon.background.color: Theme.palette.indirectColor1
+            asset.emoji: !!emoji ? emoji: ""
+            asset.color: model.color
+            asset.name: !emoji ? "filled-account": ""
+            asset.letterSize: 14
+            asset.isLetterIdenticon: !!model.emoji
+            asset.bgColor: Theme.palette.indirectColor1
             onClicked: {
                 popup.selectedAccount =  model
                 floatingHeader.itemSelected(index)

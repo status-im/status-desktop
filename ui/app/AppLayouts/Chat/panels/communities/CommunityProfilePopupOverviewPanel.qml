@@ -48,7 +48,7 @@ Column {
         title: qsTr("Share community")
         subTitle: `${Constants.communityLinkPrefix}${root.community.id.substring(0, 4)}...${root.community.id.substring(root.community.id.length -2)}`
         tooltip.text: qsTr("Copied!")
-        icon.name: "copy"
+        asset.name: "copy"
         iconButton.onClicked: {
             let link = `${Constants.communityLinkPrefix}${root.community.id}`
             root.copyToClipboard(link);
@@ -66,7 +66,7 @@ Column {
         anchors.horizontalCenter: parent.horizontalCenter
         visible: root.community.amISectionAdmin
         title: qsTr("Transfer ownership")
-        icon.name: "exchange"
+        asset.name: "exchange"
         type: StatusListItem.Type.Secondary
         onClicked: root.transferOwnershipButtonClicked()
     }
@@ -74,7 +74,7 @@ Column {
     StatusListItem {
         anchors.horizontalCenter: parent.horizontalCenter
         title: qsTr("Leave community")
-        icon.name: "arrow-left"
+        asset.name: "arrow-left"
         type: StatusListItem.Type.Danger
         onClicked: root.leaveButtonClicked()
     }

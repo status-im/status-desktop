@@ -82,7 +82,7 @@ StatusSectionLayout {
             delegate: StatusNavigationListItem {
                 width: listView.width
                 title: modelData.name
-                icon.name: modelData.icon
+                asset.name: modelData.icon
                 selected: d.currentIndex === index
                 onClicked: d.currentIndex = index
             }

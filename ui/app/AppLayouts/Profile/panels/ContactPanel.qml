@@ -52,21 +52,14 @@ StatusListItem {
 
     subTitle: Utils.getElidedCompressedPk(root.publicKey)
 
-    image {
-        width: 40
-        height: 40
-        source: root.iconSource
-    }
-
-    icon {
-        width: 40
-        height: 40
-        color: Utils.colorForPubkey(root.publicKey)
-        letterSize: Math.max(4, root.image.width / 2.4)
-        charactersLen: 2
-        isLetterIdenticon: !root.image.source.toString()
-    }
-
+    asset.width: 40
+    asset.height: 40
+    asset.color: Utils.colorForPubkey(root.publicKey)
+    asset.letterSize: Math.max(4, root.asset.width / 2.4)
+    asset.charactersLen: 2
+    asset.name: root.iconSource
+    asset.isImage: asset.name.includes("data")
+    asset.isLetterIdenticon: root.iconSource.toString() === ""
     ringSettings {
         ringSpecModel: Utils.getColorHashAsJson(root.publicKey)
         ringPxSize: Math.max(icon.width / 24.0)

@@ -112,7 +112,7 @@ Item {
             Layout.preferredHeight: 36
             maximumHeight: 36
             placeholderText: qsTr("Search")
-            input.icon.name: "search"
+            input.asset.name: "search"
             leftPadding: 10
             topPadding: 4
             bottomPadding: 4

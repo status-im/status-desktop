@@ -54,7 +54,8 @@ StatusModal {
                         width: parent.width
                         title: name
                         subTitle: description
-                        image.source: logoUrl
+                        asset.name: logoUrl
+                        asset.isImage: true
                         label: fees
                         statusListItemSubTitle.maximumLineCount: 1
                         components: [

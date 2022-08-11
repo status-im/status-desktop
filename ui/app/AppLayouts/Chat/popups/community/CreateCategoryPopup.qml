@@ -125,13 +125,14 @@ StatusModal {
                         visible: model.type != Constants.chatType.unknown
                         height: visible ? implicitHeight : 0
                         title: "#" + model.name
-                        icon.emoji: model.emoji
-                        icon.color: model.color
-                        image.isIdenticon: false
-                        image.source: model.icon
+                        asset.emoji: model.emoji
+                        asset.color: model.color
+                        asset.imgIsIdenticon: false
+                        asset.name: model.icon
+                        asset.isImage: !!model.icon
                         ringSettings.ringSpecModel: model.colorHash
-                        icon.isLetterIdenticon: true
-                        icon.background.color: model.color
+                        asset.isLetterIdenticon: true
+                        asset.bgColor: model.color
                         onClicked: channelItemCheckbox.checked = !channelItemCheckbox.checked
 
                         components: [
@@ -167,7 +168,7 @@ StatusModal {
             visible: isEdit
 
             title: qsTr("Delete category")
-            icon.name: "delete"
+            asset.name: "delete"
             type: StatusListItem.Type.Danger
             onClicked: {
                 Global.openPopup(deleteCategoryConfirmationDialogComponent, {

@@ -38,7 +38,7 @@ ColumnLayout {
         StatusRoundIcon {
             Layout.alignment: Qt.AlignTop
             radius: 8
-            icon.name: "flash"
+            asset.name: "flash"
         }
         ColumnLayout {
             Layout.alignment: Qt.AlignTop

@@ -311,7 +311,8 @@ SettingsContentBase {
                 title: qsTr("Image unfurling")
                 subTitle: qsTr("All images (links that contain an image extension) will be downloaded and displayed")
                 // TODO find a better icon for this
-                image.source: Style.svg('globe')
+                asset.name: Style.svg('globe')
+                asset.isImage: true
                 Component.onCompleted: {
                     if (localAccountSensitiveSettings.displayChatImages) {
                         showMessageLinksSwitch.checked = true
@@ -344,7 +345,7 @@ SettingsContentBase {
                         implicitHeight: 64
                         title: model.title
                         subTitle: model.address
-                        image.source:  {
+                        asset.name:  {
                             let filename;
                             switch (model.title.toLowerCase()) {
                             case "youtube":
@@ -369,6 +370,7 @@ SettingsContentBase {
                             }
                             return Style.svg(`linkPreviewThumbnails/${filename}`)
                         }
+                        asset.isImage: true
                         components: [
                             StatusSwitch {
                                 id: siteSwitch

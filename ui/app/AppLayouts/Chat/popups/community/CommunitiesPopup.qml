@@ -63,7 +63,7 @@ StatusModal {
                 id: searchBox
                 anchors.horizontalCenter: parent.horizontalCenter
                 placeholderText: qsTr("Search for communities or topics")
-                input.icon.name: "search"
+                input.asset.name: "search"
             }
 
             StatusModalDivider { topPadding: 8 }
@@ -124,9 +124,10 @@ StatusModal {
                         tertiaryTitle: qsTr("%1 members").arg(model.members.count)
                         statusListItemTitle.font.weight: Font.Bold
                         statusListItemTitle.font.pixelSize: 17
-                        image.source: model.image
-                        icon.isLetterIdenticon: !model.image
-                        icon.background.color: model.color || Theme.palette.primaryColor1
+                        asset.name: model.image
+                        asset.isImage: !!model.image
+                        asset.isLetterIdenticon: !model.image
+                        asset.bgColor: model.color || Theme.palette.primaryColor1
 
                         onClicked: {
                             if (model.joined && model.isMember) {

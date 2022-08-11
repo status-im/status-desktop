@@ -17,7 +17,7 @@ Rectangle {
 
     property alias text: bannerText.text
     property alias buttonText: bannerButton.text
-    property alias icon: bannerIcon.icon
+    property alias icon: bannerIcon.asset
 
     implicitWidth: 272
     implicitHeight: 168

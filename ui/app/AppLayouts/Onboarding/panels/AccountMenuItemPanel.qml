@@ -16,9 +16,9 @@ Item {
     property string label: ""
     property string colorId: ""
     property var colorHash
-    property url image: ""
+    property string image: ""
     property bool keycardCreatedAccount: false
-    property StatusIconSettings iconSettings: StatusIconSettings {
+    property StatusAssetSettings asset: StatusAssetSettings {
       name: "add"
     }
     signal clicked()
@@ -52,7 +52,7 @@ Item {
     Component {
         id: addIcon
         StatusRoundIcon {
-            icon.name: root.iconSettings.name
+            asset.name: root.image
         }
     }
 
