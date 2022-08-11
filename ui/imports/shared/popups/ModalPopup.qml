@@ -80,7 +80,7 @@ Popup {
 
         Rectangle {
             id: closeButton
-            objectName: "closeButtonRectangle"
+            objectName: "modalCloseButtonRectangle"
             property bool hovered: false
             visible: displayCloseButton
             height: 32

@@ -32,6 +32,7 @@ Item {
 
     StatusGridView {
         id: availableStickerPacks
+        objectName: "stickerMarketStatusGridView"
         width: parent.width
         height: 380
         anchors.left: parent.left
@@ -86,6 +87,9 @@ Item {
             }
 
             delegate: Item {
+                objectName: "stickerMarketDelegateItem" + index
+                readonly property string packId: model.packId // This property is necessary for the tests
+                readonly property bool installed: model.installed // This property is necessary for the tests
                 width: availableStickerPacks.cellWidth
                 height: availableStickerPacks.cellHeight
                 RoundedImage {
@@ -125,6 +129,7 @@ Item {
                     }
 
                     footer: StatusStickerButton {
+                        objectName: "statusStickerMarketInstallButton"
                         height: 44
                         anchors.right: parent.right
                         style: StatusStickerButton.StyleType.LargeNoIcon

@@ -1234,6 +1234,7 @@ Rectangle {
 
                             StatusQ.StatusFlatRoundButton {
                                 id: stickersBtn
+                                objectName: "statusChatInputStickersButton"
                                 implicitHeight: 32
                                 implicitWidth: 32
                                 width: visible ? 32 : 0

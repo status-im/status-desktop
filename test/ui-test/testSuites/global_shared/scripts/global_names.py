@@ -15,7 +15,7 @@ settings_navbar_settings_icon_StatusIcon = {"container": mainWindow_navBarListVi
 userContextMenu_ViewMyProfile_Action = {"container": statusDesktop_mainWindow_overlay, "objectName": "userStatusViewMyProfileAction", "type": "StatusMenuItemDelegate", "visible": True}
 
 # popups
-close_popup_StatusFlatRoundButton = {"container": statusDesktop_mainWindow_overlay, "id": "closeButton", "type": "StatusFlatRoundButton", "unnamed": 1, "visible": True}
+modal_Close_Button = {"container": statusDesktop_mainWindow_overlay, "objectName": "modalCloseButtonRectangle", "type": "Rectangle", "visible": True}
 
 # Main Window - chat related:
 mainWindow_public_chat_icon_StatusIcon = {"container": statusDesktop_mainWindow, "objectName": "public-chat-icon", "source": "qrc:/StatusQ/src/assets/img/icons/public-chat.svg", "type": "StatusIcon", "visible": True}

@@ -71,7 +71,7 @@ class ProfileSettingsScreen(Enum):
     TWITTER_SOCIAL_LINK: str = "twitter_StaticSocialLinkInput"
     PERSONAL_SITE_SOCIAL_LINK: str = "personalSite_StaticSocialLinkInput"
     OPEN_SOCIAL_LINKS_DIALOG: str = "addMoreSocialLinks_StatusIconTextButton"
-    CLOSE_SOCIAL_LINKS_DIALOG: str = "close_popup_StatusFlatRoundButton"
+    CLOSE_SOCIAL_LINKS_DIALOG: str = "modal_Close_Button"
     TWITTER_SOCIAL_LINK_IN_DIALOG: str = "twitter_popup_TextEdit"
     PERSONAL_SITE_LINK_IN_DIALOG: str = "personalSite_popup_TextEdit"
     CUSTOM_LINK_IN_DIALOG: str = "customLink_popup_TextEdit"

@@ -137,3 +137,9 @@ Feature: Status Desktop Chat
          When user joins chat room automation-test
          Then the user is able to send chat message "Hello :)"
          Then the message Hello 🙂 is displayed in the last message
+
+
+    Scenario: User can send a sticker after installing a free pack
+         When user joins chat room automation-test
+         Then the user can install the sticker pack at position 4
+         Then the user can send the sticker at position 2 in the list

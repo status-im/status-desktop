@@ -150,6 +150,16 @@ def step(context, emoji):
 def step(context, message):
     _statusChat.verify_last_message_sent(message)
 
+    
+@Then("the user can install the sticker pack at position |any|")
+def step(context, pack_index):
+    _statusChat.install_sticker_pack(pack_index)
+
+# Using position of sticker because stickers don't have ids, only hashes and it feels weird to type hashes in Gherkin
+@Then("the user can send the sticker at position |any| in the list")
+def step(context, sticker_index):
+    _statusChat.send_sticker(sticker_index)
+    
 @Then("the user cannot input a mention to a not existing user |any|")
 def step(context, displayName):
     _statusChat.cannot_do_mention(displayName)

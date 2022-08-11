@@ -69,6 +69,12 @@ def process_terminated(pid):
     except:
         return True
     return False
+    
+def verify_failure(errorMsg: str):
+    test.fail(errorMsg)
+    
+def verify_values_equal(found: str, wanted: str, msg : str):
+    test.verify(found == wanted, msg + " Found: " + found + " - Wanted: " + wanted)
 
 def verify_the_app_is_closed(pid: int):
     closed = False
