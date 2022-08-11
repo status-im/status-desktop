@@ -174,8 +174,24 @@ void dos_qguiapplication_initialize_opengl()
 
 void dos_qguiapplication_create()
 {
+    // The parameters argc and argv and the strings pointed to by the argv array shall be modifiable by the program,
+    // and retain their last-stored values between program startup and program termination.
+    // In other words: argv strings can't be string literals!
+    const auto toCharPtr = [](const QString& str) {
+        auto bytes = str.toLocal8Bit();
+        char *data = new char[bytes.size() + 1]; 
+        strcpy(data, bytes.data());
+        return data; // we don't care about memory leak here
+    };
+
+#ifdef QML_DEBUG_PORT
+    static int argc = 2;
+    static char *argv[] = {toCharPtr(QStringLiteral("Status")), toCharPtr(QString("-qmljsdebugger=port:%1,block").arg(QML_DEBUG_PORT))};
+#else
     static int argc = 1;
-    static char *argv[] = {(char*)"Status"};
+    static char *argv[] = {toCharPtr(QStringLiteral("Status"))};
+#endif
+
     new QGuiApplication(argc, argv);
     register_meta_types();
 }
