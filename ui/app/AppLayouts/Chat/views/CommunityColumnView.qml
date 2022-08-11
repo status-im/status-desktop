@@ -313,7 +313,7 @@ Item {
                     chatId = obj.itemId
                     chatName = obj.name
                     chatDescription = obj.description
-
+                    chatIcon = obj.icon
                     chatEmoji = obj.emoji
                     chatColor = obj.color
                     chatType = obj.type

@@ -43,9 +43,7 @@ StatusDialog {
                 colorSelectionGrid.selectedColorIndex = i
         }
 
-        // TODO next phase
-        // imageEditor.dataImage: root.activeGroupImageData
-
+        imageEditor.dataImage = activeGroupImageData
     }
 
     ColumnLayout {
@@ -142,9 +140,12 @@ StatusDialog {
                 id: saveBtn
                 text: qsTr("Save changes")
                 enabled: groupName.text.trim().length > 0 &&
-                         ((groupName.text != root.activeGroupName) || (root.activeGroupColor != colorSelectionGrid.selectedColor))
+                         ((groupName.text != root.activeGroupName) ||
+                          (root.activeGroupColor != colorSelectionGrid.selectedColor) ||
+                          (String(imageEditor.source).length > 0))
                 onClicked : {
-                    updateGroupChatDetails(groupName.text, colorSelectionGrid.selectedColor, ""/*imageEditor.dataImage*/)
+                    updateGroupChatDetails(groupName.text, colorSelectionGrid.selectedColor,
+                                           Utils.getImageAndCropInfoJson(imageEditor.source, imageEditor.cropRect))
                 }
             }
         }

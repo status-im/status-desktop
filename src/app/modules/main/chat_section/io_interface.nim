@@ -115,7 +115,7 @@ method onCommunityChannelDeletedOrChatLeft*(self: AccessInterface, chatId: strin
 method onChatRenamed*(self: AccessInterface, chatId: string, newName: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onGroupChatDetailsUpdated*(self: AccessInterface, chatId: string, newName: string, newColor: string, newImage: string) {.base.} =
+method onGroupChatDetailsUpdated*(self: AccessInterface, chatId: string, newName: string, newColor: string, newImageJson: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onCommunityChannelEdited*(self: AccessInterface, chat: ChatDto) {.base.} =

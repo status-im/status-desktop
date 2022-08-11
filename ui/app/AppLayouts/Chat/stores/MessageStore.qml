@@ -93,6 +93,13 @@ QtObject {
         return messageModule.getChatColor()
     }
 
+    function getChatIcon () {
+        if(!messageModule)
+            return ""
+
+        return messageModule.getChatIcon()
+    }
+
     function amIChatAdmin () {
         if(!messageModule)
             return false

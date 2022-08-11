@@ -697,6 +697,11 @@ QtObject {
         return msg.includes("account already exists")
     }
 
+    // See also: backend/interpret/cropped_image.nim
+    function getImageAndCropInfoJson(imgPath, cropRect) {
+        return JSON.stringify({imagePath: String(imgPath).replace("file://", ""), cropRect: cropRect})
+    }
+
     // Leave this function at the bottom of the file as QT Creator messes up the code color after this
     function isPunct(c) {
         return /(!|\@|#|\$|%|\^|&|\*|\(|\)|_|\+|\||-|=|\\|{|}|[|]|"|;|'|<|>|\?|,|\.|\/)/.test(c)

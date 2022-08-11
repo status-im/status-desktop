@@ -92,7 +92,8 @@ StatusPopupMenu {
         onTriggered: {
             Global.openPopup(renameGroupPopupComponent, {
                 activeGroupName: root.chatName,
-                activeGroupColor: root.chatColor
+                activeGroupColor: root.chatColor,
+                activeGroupImageData: root.chatIcon
             });
         }
     }

@@ -1,6 +1,7 @@
 import json, sequtils, sugar, strutils
 import core, utils
 import response_type
+import interpret/cropped_image
 
 export response_type
 
@@ -134,6 +135,7 @@ proc getLinkPreviewData*(link: string): RpcResponse[JsonNode] {.raises: [Excepti
 proc getMembers*(communityId, chatId: string): RpcResponse[JsonNode] {.raises: [Exception].} =
   result = callPrivateRPC("chat_getMembers", %* [communityId, chatId])
 
-proc editChat*(communityID: string, chatID: string, name: string, color: string, image: string): RpcResponse[JsonNode] {.raises: [Exception].} =
-  let payload = %* [communityID, chatID, name, color, image]
+proc editChat*(communityID: string, chatID: string, name: string, color: string, imageJson: string): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let croppedImage = newCroppedImage(imageJson)
+  let payload = %* [communityID, chatID, name, color, croppedImage]
   return core.callPrivateRPC("chat_editChat", payload)

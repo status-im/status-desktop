@@ -509,21 +509,23 @@ QtObject:
     except Exception as e:
       error "error while renaming group chat: ", msg = e.msg
 
-  proc updateGroupChatDetails*(self: Service, communityID: string, chatID: string, name: string, color: string, image: string) =
+  proc updateGroupChatDetails*(self: Service, communityID: string, chatID: string, name: string, color: string, imageJson: string) =
     try:
-      let response = status_chat.editChat(communityID, chatID, name, color, image)
+      let response = status_chat.editChat(communityID, chatID, name, color, imageJson)
       if (not response.error.isNil):
         let msg = response.error.message & " chatId=" & chatId
         error "error while editing group chat details", msg
         return
 
+      let resultedChat = response.result.toChatDto()
+
       var chat = self.chats[chatID]
       chat.name = name
       chat.color = color
-      # TODO set image
+      chat.icon = resultedChat.icon
       self.updateOrAddChat(chat)
 
-      self.events.emit(SIGNAL_GROUP_CHAT_DETAILS_UPDATED, ChatUpdateDetailsArgs(id: chatID, newName: name, newColor: color, newImage: image))
+      self.events.emit(SIGNAL_GROUP_CHAT_DETAILS_UPDATED, ChatUpdateDetailsArgs(id: chatID, newName: name, newColor: color, newImage: resultedChat.icon))
     except Exception as e:
       error "error while updating group chat: ", msg = e.msg
 

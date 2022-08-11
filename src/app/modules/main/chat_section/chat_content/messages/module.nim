@@ -379,6 +379,10 @@ method getChatColor*(self: Module): string =
   let chatDto = self.controller.getChatDetails()
   return chatDto.color
 
+method getChatIcon*(self: Module): string =
+  let chatDto = self.controller.getChatDetails()
+  return chatDto.icon
+
 method amIChatAdmin*(self: Module): bool =
   if(not self.controller.belongsToCommunity()):
     let chatDto = self.controller.getChatDetails()
