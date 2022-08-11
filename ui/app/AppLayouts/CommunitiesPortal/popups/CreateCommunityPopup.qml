@@ -72,11 +72,16 @@ StatusStackModal {
     onAboutToShow: {
         nameInput.input.edit.forceActiveFocus()
         if (root.isDiscordImport) {
-            root.store.clearFileList()
             for (let i = 0; i < discordPages.length; i++) {
                 stackItems.push(discordPages[i])
             }
         }
+    }
+
+    onClosed: {
+        root.store.clearFileList()
+        root.store.clearDiscordCategoriesAndChannels()
+        destroy()
     }
 
     readonly property list<Item> discordPages: [

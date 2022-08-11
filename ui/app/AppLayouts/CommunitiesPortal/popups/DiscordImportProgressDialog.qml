@@ -37,6 +37,7 @@ StatusDialog {
                 }
             }
             StatusButton {
+                visible: root.store.discordImportProgress < 1.0
                 type: StatusButton.Danger
                 font.weight: Font.Medium
                 text: qsTr("Cancel import")
@@ -46,7 +47,7 @@ StatusDialog {
                 }
             }
             StatusButton {
-                visible: false
+                visible: root.store.discordImportProgressStopped
                 type: StatusButton.Danger
                 font.weight: Font.Medium
                 text: qsTr("Restart import")
@@ -56,12 +57,13 @@ StatusDialog {
                 }
             }
             StatusButton {
+                visible: root.store.discordImportProgress < 1.0
                 font.weight: Font.Medium
                 text: qsTr("Hide window")
                 onClicked: root.close()
             }
             StatusButton {
-                visible: false
+                visible: root.store.discordImportProgress >= 1.0 && !root.store.discordImportProgressStopped
                 font.weight: Font.Medium
                 text: qsTr("Visit your new Status community")
                 onClicked: {
@@ -78,28 +80,37 @@ StatusDialog {
 
     ListModel {
         id: mockModel
+
+        function getSubtaskDescription(progress) {
+            if (progress >= 1.0)
+                return qsTr("✓ Complete")
+            if (progress > 0 && root.store.discordImportProgressStopped)
+                return qsTr("Import stopped...")
+            if (root.store.discordImportProgressStopped)
+                return ""
+            if (progress <= 0.0)
+                return qsTr("Pending...")
+            return qsTr("Working...")
+        }
+
         ListElement {
             icon: "network"
             primary: qsTr("Setting up your community")
-            secondary: qsTr("Pending...")
-            progress: 0.0
+            progress: 1.0
         }
         ListElement {
             icon: "channel"
             primary: qsTr("Importing categories & channels")
-            secondary: qsTr("Creating status-network channel...")
             progress: 0.52
         }
         ListElement {
             icon: "image"
             primary: qsTr("Downloading assets")
-            secondary: qsTr("Pending...")
             progress: 0.0
         }
         ListElement {
             icon: "receive"
             primary: qsTr("Importing messages")
-            secondary: qsTr("Pending...")
             progress: 0.0
         }
     }
@@ -132,8 +143,14 @@ StatusDialog {
                     }
                     StatusBaseText {
                         font.pixelSize: 12
-                        color: Theme.palette.baseColor1
-                        text: model.secondary
+                        color: {
+                            if (model.progress >= 1)
+                                return Theme.palette.successColor1
+                            if (model.progress > 0 && root.store.discordImportProgressStopped)
+                                return Theme.palette.dangerColor1
+                            return Theme.palette.baseColor1
+                        }
+                        text: mockModel.getSubtaskDescription(model.progress)
                     }
                 }
                 Item { Layout.fillWidth: true }
@@ -141,14 +158,15 @@ StatusDialog {
                     Layout.alignment: Qt.AlignVCenter
                     font.pixelSize: 13
                     font.weight: Font.Medium
-                    visible: model.progress
+                    visible: subtaskProgressBar.visible
                     text: qsTr("%1%").arg(Math.round(model.progress*100))
                 }
                 StatusProgressBar {
+                    id: subtaskProgressBar
                     Layout.alignment: Qt.AlignVCenter
                     Layout.preferredWidth: 130
                     Layout.preferredHeight: 10
-                    visible: value > 0
+                    visible: value > 0 && value <= 1 && !root.store.discordImportProgressStopped
                     fillColor: Theme.palette.primaryColor1
                     backgroundColor: Theme.palette.directColor8
                     value: model.progress
@@ -187,8 +205,10 @@ StatusDialog {
                     text: qsTr("Importing ‘%1’ from Discord...").arg("CryptoKitties") // TODO community name
                 }
                 Item { Layout.fillWidth: true }
-                StatusBaseText {
-                    text: "2 errors" // TODO real errors/warnings
+                StatusBaseText { // TODO use the error/warning pill component
+                    visible: !!text
+                    text: root.store.discordImportErrorsCount ? qsTr("%n error(s)", "", root.store.discordImportErrorsCount) :
+                                                                root.store.discordImportWarningsCount ? qsTr("%n warning(s)", "", root.store.discordImportWarningsCount) : ""
                 }
             }
 

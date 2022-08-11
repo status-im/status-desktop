@@ -16,7 +16,7 @@ QtObject {
     property real discordImportProgress: root.communitiesModuleInst.discordImportProgress
     property bool discordImportProgressStopped: root.communitiesModuleInst.discordImportProgressStopped
     property var discordImportTasks: root.communitiesModuleInst.discordImportTasks
-    property var locale: localAppSettings.language
+    property string locale: localAppSettings.language
     property var advancedModule: profileSectionModule.advancedModule
     property bool isCommunityHistoryArchiveSupportEnabled: advancedModule? advancedModule.isCommunityHistoryArchiveSupportEnabled : false
 
@@ -108,7 +108,7 @@ QtObject {
 
     function unselectDiscordChannel(id) {
         root.communitiesModuleInst.unselectDiscordChannel(id)
-      }
+    }
 
     function importDiscordCommunity(args = {
                                 name: "",
@@ -136,5 +136,4 @@ QtObject {
                     args.image.src, args.image.AX, args.image.AY, args.image.BX, args.image.BY,
                     args.options.historyArchiveSupportEnabled, args.options.pinMessagesAllowedForMembers, from);
     }
-
 }
