@@ -126,6 +126,17 @@ deps: | deps-common bottles
 
 update: | update-common
 
+QML_DEBUG ?= false
+QML_DEBUG_PORT ?= 49152
+
+ifneq ($(QML_DEBUG), false)
+ DOTHERSIDE_CMAKE_PARAMS := -DCMAKE_BUILD_TYPE=Debug -DQML_DEBUG_PORT=$(QML_DEBUG_PORT)
+ DOTHERSIDE_BUILD_CMD := cmake --build . --config Debug $(HANDLE_OUTPUT)
+else
+ DOTHERSIDE_CMAKE_PARAMS := -DCMAKE_BUILD_TYPE=Release
+ DOTHERSIDE_BUILD_CMD := cmake --build . --config Release $(HANDLE_OUTPUT)
+endif
+
 # Qt5 dirs (we can't indent with tabs here)
 ifneq ($(detected_OS),Windows)
  QT5_PCFILEDIR := $(shell pkg-config --variable=pcfiledir Qt5Core 2>/dev/null)
@@ -153,17 +164,19 @@ ifneq ($(detected_OS),Windows)
   endif
  endif
  DOTHERSIDE := vendor/DOtherSide/build/lib/libDOtherSideStatic.a
- DOTHERSIDE_CMAKE_PARAMS := -DENABLE_DYNAMIC_LIBS=OFF -DENABLE_STATIC_LIBS=ON
+ DOTHERSIDE_CMAKE_PARAMS += -DENABLE_DYNAMIC_LIBS=OFF -DENABLE_STATIC_LIBS=ON
  # order matters here, due to "-Wl,-as-needed"
  NIM_PARAMS += --passL:"$(DOTHERSIDE)" --passL:"$(shell PKG_CONFIG_PATH="$(QT5_PCFILEDIR)" pkg-config --libs Qt5Core Qt5Qml Qt5Gui Qt5Quick Qt5QuickControls2 Qt5Widgets Qt5Svg Qt5Multimedia)"
 else
- DOTHERSIDE := vendor/DOtherSide/build/lib/Release/DOtherSide.dll
- DOTHERSIDE_CMAKE_PARAMS := -T"v141" -A x64 -DENABLE_DYNAMIC_LIBS=ON -DENABLE_STATIC_LIBS=OFF
+ ifneq ($(QML_DEBUG), false)
+  DOTHERSIDE := vendor/DOtherSide/build/lib/Debug/DOtherSide.dll
+ else
+  DOTHERSIDE := vendor/DOtherSide/build/lib/Release/DOtherSide.dll
+ endif
+ DOTHERSIDE_CMAKE_PARAMS += -T"v141" -A x64 -DENABLE_DYNAMIC_LIBS=ON -DENABLE_STATIC_LIBS=OFF
  NIM_PARAMS += -L:$(DOTHERSIDE)
  NIM_EXTRA_PARAMS := --passL:"-lsetupapi -lhid"
 endif
-DOTHERSIDE_BUILD_CMD := cmake --build . --config Release $(HANDLE_OUTPUT)
-
 
 
 ifeq ($(detected_OS),Darwin)
@@ -205,7 +218,6 @@ $(DOTHERSIDE): | deps
 		cd build && \
 		rm -f CMakeCache.txt && \
 		cmake $(DOTHERSIDE_CMAKE_PARAMS)\
-			-DCMAKE_BUILD_TYPE=Release \
 			-DENABLE_DOCS=OFF \
 			-DENABLE_TESTS=OFF \
 			.. $(HANDLE_OUTPUT) && \
@@ -329,7 +341,7 @@ else
 endif
 
 $(NIM_STATUS_CLIENT): NIM_PARAMS += $(RESOURCES_LAYOUT)
-$(NIM_STATUS_CLIENT): $(NIM_SOURCES) | $(DOTHERSIDE) $(STATUSGO) $(STATUSKEYCARDGO) $(QRCODEGEN) $(FLEETS) rcc $(QM_BINARIES) deps
+$(NIM_STATUS_CLIENT): $(NIM_SOURCES) $(DOTHERSIDE) | $(STATUSGO) $(STATUSKEYCARDGO) $(QRCODEGEN) $(FLEETS) rcc $(QM_BINARIES) deps
 	echo -e $(BUILD_MSG) "$@" && \
 		$(ENV_SCRIPT) nim c $(NIM_PARAMS) --passL:"-L$(STATUSGO_LIBDIR)" --passL:"-lstatus" --passL:"-L$(STATUSKEYCARDGO_LIBDIR)" --passL:"-lkeycard" $(NIM_EXTRA_PARAMS) --passL:"$(QRCODEGEN)" --passL:"-lm" src/nim_status_client.nim && \
 		[[ $$? = 0 ]] && \
