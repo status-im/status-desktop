@@ -1,9 +1,11 @@
 
 from screens.StatusMainScreen import StatusMainScreen
 from screens.SettingsScreen import SettingsScreen
+from screens.StatusLanguageScreen import StatusLanguageScreen
 
 _statusMain = StatusMainScreen()
 _settingsScreen = SettingsScreen()
+_languageScreen = StatusLanguageScreen()
 
 
 @When("the user opens app settings screen")
@@ -40,10 +42,27 @@ def step(context: any, account_name: str,  account_color: str):
     _settingsScreen.edit_account(account_name, account_color)
 
     
+@When("the user clicks on Language & Currency")
+def step(context):
+    _settingsScreen.open_language_and_currency_settings() 
+    _languageScreen.is_screen_loaded()
+    
+@When("the user opens the language selector")
+def step(context):
+    _languageScreen.open_language_combobox()
+    
+@When("the user selects the language |any|")
+def step(context, native):
+    _languageScreen.select_language(native)
+    snooze(5) # TODO: Wait until language has changed
+    
+@When("the user searches the language |any|")
+def step(context, native):
+    _languageScreen.search_language(native)
+    
 @Then("the address |any| is displayed in the wallet")
 def step(context: any, address: str):
     _settingsScreen.verify_address(address)
-
 
 @Then("the account |any| is not in the list of accounts")
 def step(context: any, account_name):
@@ -105,3 +124,9 @@ def step(context):
 @Then("the user's social links should be: \"|any|\", personal site: \"|any|\", \"|any|\": \"|any|\"")
 def step(context, twitter, personal_site, custom_link_name, custom_link):
     _settingsScreen.verify_social_links(twitter, personal_site, custom_link_name, custom_link)
+
+@Then("the application displays |any| as the selected language")
+def step(context, native):
+    _languageScreen.verify_current_language(native)
+    # TODO: Verify some texts have been changed in the application (not done now bc translations are inconsistent 
+    # and not all expected languages have the same texts translated
