@@ -71,6 +71,7 @@ Item {
             spacing: 4
 
             StatusChatList {
+                objectName: "statusChatListAndCategoriesChatList"
                 id: statusChatList
                 visible: statusChatList.model.count > 0
                 onChatItemSelected: root.chatItemSelected(categoryId, id)
@@ -259,6 +260,7 @@ Item {
             }
 
             Repeater {
+                objectName: "statusChatListCategories"
                 id: statusChatListCategories
                 objectName: "communityChatListCategories"
                 visible: !!model && model.count > 0
