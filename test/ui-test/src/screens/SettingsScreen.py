@@ -13,17 +13,19 @@ from enum import Enum
 from drivers.SquishDriver import *
 from drivers.SquishDriverVerification import *
 from .StatusMainScreen import MainScreenComponents
+from .StatusMainScreen import StatusMainScreen
 
 class SidebarComponents(Enum):
     ADVANCED_OPTION: str = "advanced_StatusBaseText"
     WALLET_ITEM: str = "wallet_AppMenu_StatusNavigationListItem"
     SIGN_OUT_AND_QUIT: str = "sign_out_Quit_ExtraMenu_StatusNavigationListItem"
+    COMMUNITIES_ITEM: str = "communities_AppMenu_StatusNavigationListItem"
 
 
 class AdvancedOptionScreen(Enum):
     ACTIVATE_OR_DEACTIVATE_WALLET: str = "walletSettingsLineButton"
     I_UNDERSTAND_POP_UP: str = "i_understand_StatusBaseText"
-    
+
 
 class WalletSettingsScreen(Enum):
     GENERATED_ACCOUNTS: str = "settings_Wallet_MainView_GeneratedAccounts"
@@ -41,6 +43,12 @@ class WalletSettingsScreen(Enum):
     
 class ConfirmationDialog(Enum):
     SIGN_OUT_CONFIRMATION: str = "signOutConfirmation_StatusButton"
+
+class CommunitiesSettingsScreen(Enum):
+    LEAVE_COMMUNITY_BUTTONS: str = "settings_Communities_MainView_LeaveCommunityButtons"
+    LEAVE_COMMUNITY_POPUP_LEAVE_BUTTON: str = "settings_Communities_MainView_LeavePopup_LeaveCommunityButton"
+
+
 
 
 class SettingsScreen:
@@ -131,3 +139,12 @@ class SettingsScreen:
         iconSettings = get_obj(WalletSettingsScreen.ACCOUNT_VIEW_ICON_SETTINGS.value)
         verify_values_equal(str(accountName.text), str(new_name), "Edited account name not updated")
         verify_values_equal(str(iconSettings.icon.color.name), str(new_color.lower()), "Edited account color not updated")
+
+    def open_communities_section(self):
+        click_obj_by_name(SidebarComponents.COMMUNITIES_ITEM.value)
+
+    def leave_community(self):
+        StatusMainScreen.wait_for_banner_to_disappear()
+        # In our case we have only one visible community and only one button
+        click_obj_by_name(CommunitiesSettingsScreen.LEAVE_COMMUNITY_BUTTONS.value)
+        click_obj_by_name(CommunitiesSettingsScreen.LEAVE_COMMUNITY_POPUP_LEAVE_BUTTON.value)

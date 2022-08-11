@@ -7,6 +7,7 @@ settings_navbar_settings_icon_StatusIcon = {"container": navBarListView_Settings
 advanced_StatusBaseText = {"container": statusDesktop_mainWindow, "text": "Advanced", "type": "StatusBaseText", "unnamed": 1, "visible": True}
 mainWindow_ScrollView = {"container": statusDesktop_mainWindow, "type": "StatusScrollView", "unnamed": 1, "visible": True}
 wallet_AppMenu_StatusNavigationListItem = {"container": mainWindow_ScrollView, "objectName": "Wallet-AppMenu", "type": "StatusNavigationListItem", "visible": True}
+communities_AppMenu_StatusNavigationListItem = {"container": mainWindow_ScrollView, "objectName": "Communities-AppMenu", "type": "StatusNavigationListItem", "visible": True}
 
 # Wallet Settings:
 settings_Wallet_MainView_GeneratedAccounts = {"container": statusDesktop_mainWindow, "objectName":'generatedAccounts', "type": 'ListView'}
@@ -23,6 +24,10 @@ settings_Wallet_AccountView_AccountName = {"container": statusDesktop_mainWindow
 settings_Wallet_AccountView_IconSettings = {"container": statusDesktop_mainWindow, "type": "StatusSmartIdenticon", "objectName": "walletAccountViewAccountImage" , "visible": True}
 
 generatedAccounts_ListView = {"container": statusDesktop_mainWindow, "objectName": "generatedAccounts", "type": "ListView"}
+
+# Communities Settings:
+settings_Communities_MainView_LeaveCommunityButtons = {"container": statusDesktop_mainWindow, "objectName":"CommunitiesListPanel_leaveCommunityPopupButton", "type": "StatusBaseButton", "visible": True}
+settings_Communities_MainView_LeavePopup_LeaveCommunityButton = {"container": statusDesktop_mainWindow, "objectName":"CommunitiesListPanel_leaveCommunityButtonInPopup", "type": "StatusBaseButton", "visible": True}
 
 # Advanced Settings:
 walletSettingsLineButton = {"container": statusDesktop_mainWindow, "objectName": "WalletSettingsLineButton", "type": "StatusSettingsLineButton", "visible": True}

@@ -73,3 +73,11 @@ Feature: Status Desktop community
         And the channel count is 2
         When the admin deletes current channel
         Then the channel count is 1
+
+    Scenario: User leaves community
+        When the user creates a community named testCommunity, with description My community description, intro Community Intro and outro Community Outro
+        Then the user lands on the community named testCommunity
+        When the user opens app settings screen
+        And the user opens the communities settings
+        And the user leaves the community
+        Then the count of communities in navbar is 0
