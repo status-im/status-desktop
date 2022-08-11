@@ -44,6 +44,7 @@ StatusListView {
 
         components: [
             StatusFlatButton {
+                objectName: "CommunitiesListPanel_leaveCommunityPopupButton"
                 size: StatusBaseButton.Size.Small
                 type: StatusBaseButton.Type.Danger
                 border.color: "transparent"
@@ -104,6 +105,7 @@ StatusListView {
                 onClicked: leavePopup.close()
             },
             StatusButton {
+                objectName: "CommunitiesListPanel_leaveCommunityButtonInPopup"
                 type: StatusBaseButton.Type.Danger
                 text: qsTr("Leave community")
                 onClicked: {

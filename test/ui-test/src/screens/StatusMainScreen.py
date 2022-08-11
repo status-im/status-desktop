@@ -12,7 +12,7 @@
 from enum import Enum
 from drivers.SquishDriver import *
 from drivers.SquishDriverVerification import *
-
+import time
 
 class MainScreenComponents(Enum):
     STATUS_ICON = "mainWindow_statusIcon_StatusIcon_2"
@@ -24,6 +24,8 @@ class MainScreenComponents(Enum):
     START_CHAT_BTN = "mainWindow_startChat"
     CHAT_LIST = "chatList_Repeater"
     MARK_AS_READ_BUTTON = "mark_as_Read_StatusMenuItemDelegate"
+    COMMUNITY_NAVBAR_BUTTONS = "navBarListView_All_Community_Buttons"
+    MODULE_WARNING_BANNER = "moduleWarning_Banner"
 
 class ChatNamePopUp(Enum):
     CHAT_NAME_TEXT = "chat_name_PlaceholderText"
@@ -35,6 +37,12 @@ class StatusMainScreen:
 
     def __init__(self):
         verify_screen(MainScreenComponents.PUBLIC_CHAT_ICON.value)
+
+    # Wait for the banner to disappear otherwise the click might land badly
+    def wait_for_banner_to_disappear():
+        [bannerLoaded, _] = is_loaded_visible_and_enabled(MainScreenComponents.MODULE_WARNING_BANNER.value)
+        if (bannerLoaded):
+            time.sleep(5)
 
     def join_chat_room(self, room: str):
         click_obj_by_name(MainScreenComponents.PUBLIC_CHAT_ICON.value)
@@ -77,3 +85,7 @@ class StatusMainScreen:
 
     def open_wallet(self):
         click_obj_by_name(MainScreenComponents.WALLET_BUTTON.value)
+
+    def verify_communities_count(self, expected_count: int):
+        objects = get_objects(MainScreenComponents.COMMUNITY_NAVBAR_BUTTONS.value)
+        verify_equals(len(objects), int(expected_count))

@@ -286,6 +286,7 @@ Item {
             }
 
             communityNavBarButton: StatusNavBarTabButton {
+                objectName: "CommunityNavBarButton"
                 anchors.horizontalCenter: parent.horizontalCenter
                 name: model.icon.length > 0? "" : model.name
                 icon.name: model.icon

@@ -52,7 +52,7 @@ def step(context: any, account_name):
 @Then("the new account with name |any| and color |any| is updated")
 def step(context, new_name: str, new_color: str):
     _settingsScreen.verify_editedAccount(new_name, new_color)
- 
+
 @When("the user clicks on Sign out and Quit")
 def step(context: any):
     ctx = currentApplicationContext()
@@ -61,3 +61,11 @@ def step(context: any):
 @Then("the app is closed")
 def step(context: any):
     _settingsScreen.verify_the_app_is_closed()
+
+@When("the user opens the communities settings")
+def step(context: any):
+    _settingsScreen.open_communities_section()
+
+@When("the user leaves the community")
+def step(context: any):
+    _settingsScreen.leave_community()

@@ -52,3 +52,7 @@ def step(context):
 @Then("the channel count is |any|")
 def step(context, community_channel_count: int):
     _statusCommunityScreen.check_channel_count(community_channel_count)
+
+@Then("the count of communities in navbar is |any|")
+def step(context: any, expected_count: int):
+    _statusMainScreen.verify_communities_count(expected_count)

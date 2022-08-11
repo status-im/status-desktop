@@ -14,9 +14,7 @@ import time
 from drivers.SquishDriver import *
 from drivers.SquishDriverVerification import *
 from drivers.SDKeyboardCommands import *
-
-class MainUi(Enum):
-    MODULE_WARNING_BANNER = "moduleWarning_Banner"
+from .StatusMainScreen import StatusMainScreen
 
 class CommunityCreateMethods(Enum):
     BOTTOM_MENU = "bottom_menu"
@@ -85,7 +83,7 @@ class StatusCommunityScreen:
         verify_text_matching(CommunityScreenComponents.CHAT_IDENTIFIER_CHANNEL_NAME.value, community_channel_name)
 
     def edit_community_channel(self, new_community_channel_name: str):
-        wait_for_banner_to_disappear()
+        StatusMainScreen.wait_for_banner_to_disappear()
 
         click_obj_by_name(CommunityScreenComponents.CHAT_MORE_OPTIONS_BUTTON.value)
         click_obj_by_name(CommunityScreenComponents.EDIT_CHANNEL_MENU_ITEM.value)
@@ -130,7 +128,7 @@ class StatusCommunityScreen:
         click_obj_by_name(CommunitySettingsComponents.BACK_TO_COMMUNITY_BUTTON.value)
 
     def delete_current_community_channel(self):
-        wait_for_banner_to_disappear()
+        StatusMainScreen.wait_for_banner_to_disappear()
 
         click_obj_by_name(CommunityScreenComponents.CHAT_MORE_OPTIONS_BUTTON.value)
         click_obj_by_name(CommunityScreenComponents.DELETE_CHANNEL_MENU_ITEM.value)
@@ -140,9 +138,3 @@ class StatusCommunityScreen:
         chatListObj = get_obj(CommunityScreenComponents.NOT_CATEGORIZED_CHAT_LIST.value)
         # Squish doesn't follow the type hints when parsing gherkin values
         verify_equals(chatListObj.statusChatListItems.count, int(count_to_check))
-
-# Wait for the banner to disappear otherwise the click might land badly
-def wait_for_banner_to_disappear():
-    [bannerLoaded, _] = is_loaded_visible_and_enabled(MainUi.MODULE_WARNING_BANNER.value)
-    if (bannerLoaded):
-        time.sleep(5)

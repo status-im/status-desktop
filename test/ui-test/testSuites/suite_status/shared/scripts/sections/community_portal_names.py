@@ -6,6 +6,7 @@ navBarListView_Communities_Portal_navbar_StatusNavBarTabButton = {"checkable": T
 communities_Portal_navbar_communities_icon_StatusIcon = {"container": navBarListView_Communities_Portal_navbar_StatusNavBarTabButton, "objectName": "communities-icon", "type": "StatusIcon", "visible": True}
 mainWindow_communitiesPortalLayoutContainer_CommunitiesPortalLayout = {"container": statusDesktop_mainWindow, "objectName": "communitiesPortalLayout", "type": "CommunitiesPortalLayout"}
 communitiesPortalLayoutContainer_createCommunityButton_StatusButton = {"container": mainWindow_communitiesPortalLayoutContainer_CommunitiesPortalLayout, "objectName": "createCommunityButton", "type": "StatusButton", "visible": True}
+navBarListView_All_Community_Buttons = {"checkable": True, "container": mainWindow_navBarListView_ListView, "objectName": "CommunityNavBarButton", "type": "StatusNavBarTabButton"}
 
 # Create community popup:
 createCommunityNameInput_TextEdit = {"container": statusDesktop_mainWindow_overlay, "objectName": "createCommunityNameInput", "type": "TextEdit", "visible": True}
