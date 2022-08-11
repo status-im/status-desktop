@@ -39,7 +39,7 @@ StatusDialog {
                 }
             }
             StatusButton {
-                visible: root.store.discordImportProgress < 1.0
+                visible: root.store.discordImportProgress < 100
                 type: StatusButton.Danger
                 font.weight: Font.Medium
                 text: qsTr("Cancel import")
@@ -59,13 +59,13 @@ StatusDialog {
                 }
             }
             StatusButton {
-                visible: root.store.discordImportProgress < 1.0
+                visible: root.store.discordImportProgress < 100
                 font.weight: Font.Medium
                 text: qsTr("Hide window")
                 onClicked: root.close()
             }
             StatusButton {
-                visible: root.store.discordImportProgress >= 1.0 && !root.store.discordImportProgressStopped
+                visible: root.store.discordImportProgress >= 100 && !root.store.discordImportProgressStopped
                 font.weight: Font.Medium
                 text: qsTr("Visit your new Status community")
                 onClicked: {
