@@ -69,3 +69,39 @@ def step(context: any):
 @When("the user leaves the community")
 def step(context: any):
     _settingsScreen.leave_community()
+
+@When("the user opens the profile settings")
+def step(context: any):
+    _settingsScreen.open_profile_settings()
+
+@When("the user sets display name to \"|any|\"")
+def step(context, display_name):
+    _settingsScreen.set_display_name(display_name)
+
+@Then("the user's display name should be \"|any|\"")
+def step(context, display_name):
+    _settingsScreen.verify_display_name(display_name)
+
+@When("the user sets bio to \"|any|\"")
+def step(context, bio):
+    _settingsScreen.set_bio(bio)
+
+@Then("the user's bio should be empty")
+def step(context):
+    _settingsScreen.verify_bio("")
+
+@Then("the user's bio should be \"|any|\"")
+def step(context, bio):
+    _settingsScreen.verify_bio(bio)
+
+@When("the user sets display links to twitter: \"|any|\", personal site: \"|any|\", \"|any|\": \"|any|\"")
+def step(context, twitter, personal_site, custom_link_name, custom_link):
+    _settingsScreen.set_social_links(twitter, personal_site, custom_link_name, custom_link)
+
+@Then("the user's social links should be empty")
+def step(context):
+    _settingsScreen.verify_social_links("", "", "", "")
+
+@Then("the user's social links should be: \"|any|\", personal site: \"|any|\", \"|any|\": \"|any|\"")
+def step(context, twitter, personal_site, custom_link_name, custom_link):
+    _settingsScreen.verify_social_links(twitter, personal_site, custom_link_name, custom_link)

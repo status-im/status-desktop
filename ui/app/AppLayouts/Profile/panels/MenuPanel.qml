@@ -25,6 +25,7 @@ Column {
     Repeater {
         id: mainMenuItems
         delegate: StatusNavigationListItem {
+            objectName:  model.text + "-MainMenu"
             itemId: model.subsection
             title: model.text
             icon.name: model.icon

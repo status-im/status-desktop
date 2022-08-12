@@ -31,6 +31,7 @@ Item {
 
         StatusInput {
             id: displayNameInput
+            objectName: "displayNameInput"
 
             Layout.fillWidth: true
 
@@ -43,6 +44,7 @@ Item {
 
         StatusInput {
             id: bioInput
+            objectName: "bioInput"
 
             Layout.fillWidth: true
             Layout.topMargin: 5 // by design
@@ -59,6 +61,8 @@ Item {
         Repeater {
             model: root.socialLinksModel
             delegate: StaticSocialLinkInput {
+                objectName: model.text + "-socialLinkInput"
+
                 Layout.fillWidth: true
                 linkType: model.linkType
                 text: model.url
@@ -68,6 +72,7 @@ Item {
         }
 
         StatusIconTextButton {
+            objectName: "addMoreSocialLinksButton"
             Layout.topMargin: -8 // by design
             text: qsTr("Add more social links")
             onClicked: root.addSocialLinksClicked()
