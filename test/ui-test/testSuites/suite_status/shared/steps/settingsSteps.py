@@ -142,3 +142,27 @@ def step(context):
 @Then("the backup seed phrase indicator is not displayed")
 def step(context):
     _settingsScreen.verify_seed_phrase_indicator_not_visible()
+
+@When("the users switches his state to offline")
+def step(context: any):
+    _statusMain.set_user_state_offline()
+        
+@When("the users switches his state to online")
+def step(context: any):
+    _statusMain.set_user_state_online()
+            
+@When("the users switches his state to automatic")
+def step(context: any):
+    _statusMain.set_user_state_to_automatic()
+    
+@Then("the user appears offline")
+def step(context: any):
+    _statusMain.user_is_offline()
+        
+@Then("the user appears online")
+def step(context: any):
+    _statusMain.user_is_online()
+         
+@Then("the user status is automatic")
+def step(context: any):
+    _statusMain.user_is_set_to_automatic()   

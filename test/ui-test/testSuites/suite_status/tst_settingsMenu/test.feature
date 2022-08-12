@@ -17,3 +17,28 @@ Feature: Status Desktop Settings Menu
         When the user activates wallet and opens the wallet settings
         And the user backs up the wallet seed phrase
         Then the backup seed phrase indicator is not displayed
+
+    Scenario: The user can switch his state to offline
+    	When the users switches his state to offline
+    	Then the user appears offline
+    	When the user restarts the app
+    	And the user tester123 logs in with password TesTEr16843/!@00
+    	Then the user appears offline
+
+    Scenario: The user can switch his state to online
+        When the users switches his state to offline
+    	And the user restarts the app
+    	And the user tester123 logs in with password TesTEr16843/!@00
+    	Then the user appears offline
+    	When the users switches his state to online
+    	Then the user appears online
+    	When the user restarts the app
+    	And the user tester123 logs in with password TesTEr16843/!@00
+    	Then the user appears online
+
+Scenario: The user can switch his state to automatic
+    	When the users switches his state to automatic
+    	Then the user status is automatic
+    	When the user restarts the app
+    	And the user tester123 logs in with password TesTEr16843/!@00
+    	Then the user status is automatic
