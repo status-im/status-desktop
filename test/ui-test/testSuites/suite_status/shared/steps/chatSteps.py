@@ -13,7 +13,7 @@ _statusCreateChatView = StatusCreateChatScreen()
 @When("user joins chat room |any|")
 def step(context, room):
     _statusMain.join_chat_room(room)
-    _statusChat.chat_loaded()
+    _statusChat.verify_chat_title(room)
     
 @When("the user creates a group chat adding users")
 def step(context):

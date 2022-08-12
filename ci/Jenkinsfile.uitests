@@ -76,6 +76,9 @@ pipeline {
               extraOptions: '''
                 --retry
                 2
+
+                --tags
+                ~mayfail
                 
                 --config
                 addAUT
