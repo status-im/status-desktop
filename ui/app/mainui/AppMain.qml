@@ -134,12 +134,15 @@ Item {
     StatusImageModal {
         id: imagePopup
         onClicked: {
-            if (button === Qt.LeftButton) {
+            if (mouse.button === Qt.LeftButton) {
                 imagePopup.close()
-            } else if(button === Qt.RightButton) {
+            } else if(mouse.button === Qt.RightButton) {
                 contextMenu.imageSource = imagePopup.imageSource
                 contextMenu.hideEmojiPicker = true
-                contextMenu.isRightClickOnImage = true;
+                contextMenu.isRightClickOnImage = true
+                contextMenu.parent = imagePopup.contentItem
+                contextMenu.setXPosition = function() { return mouse.x + Style.current.smallPadding }
+                contextMenu.setYPosition = function() { return mouse.y - Style.current.smallPadding }
                 contextMenu.show()
             }
         }

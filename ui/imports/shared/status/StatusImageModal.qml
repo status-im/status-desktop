@@ -10,7 +10,7 @@ import shared 1.0
 Popup {
     id: root
 
-    signal clicked(var button)
+    signal clicked(var mouse)
     property string imageSource: messageImage.source
     property var contextMenu
 
@@ -61,7 +61,7 @@ Popup {
             anchors.fill: parent
             acceptedButtons: Qt.LeftButton | Qt.RightButton
             onClicked: {
-                root.clicked(mouse.button)
+                root.clicked(mouse)
             }
         }
     }

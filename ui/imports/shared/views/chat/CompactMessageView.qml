@@ -578,8 +578,14 @@ Item {
                             else if (mouse.button === Qt.RightButton) {
                                 // Set parent, X & Y positions for the messageContextMenu
                                 root.messageContextMenu.parent = root
-                                root.messageContextMenu.setXPosition = function() { return (mouse.x)}
-                                root.messageContextMenu.setYPosition = function() { return (mouse.y)}
+
+                                const mappedPos = root.mapFromItem(
+                                                    this,
+                                                    mouse.x + Style.current.smallPadding,
+                                                    mouse.y - Style.current.smallPadding)
+
+                                root.messageContextMenu.setXPosition = function() { return mappedPos.x }
+                                root.messageContextMenu.setYPosition = function() { return mappedPos.y }
                                 root.clickMessage(false, false, true, image, false, true, false, true, imageSource)
                             }
                         }
