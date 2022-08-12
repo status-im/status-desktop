@@ -14,6 +14,12 @@ method executePrimaryCommand*(self: InsertKeycardState, controller: Controller) 
 
 method resolveKeycardNextState*(self: InsertKeycardState, keycardFlowType: string, keycardEvent: KeycardEvent, 
   controller: Controller): State =
+  if keycardFlowType == ResponseTypeValueInsertCard and 
+    keycardEvent.error.len > 0 and
+    keycardEvent.error == ErrorConnection:
+      controller.setKeycardData(ResponseTypeValueInsertCard)
+      return nil
   if keycardFlowType == ResponseTypeValueCardInserted:
+    controller.setKeycardData("")
     return createState(StateType.ReadingKeycard, self.flowType, nil)
   return nil

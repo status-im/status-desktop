@@ -40,6 +40,9 @@ method delete*[T](self: Module[T]) =
 method getModuleAsVariant*[T](self: Module[T]): QVariant =
   return self.viewVariant
 
+method setKeycardData*[T](self: Module[T], value: string) =
+  self.view.setKeycardData(value)
+
 method onBackActionClicked*[T](self: Module[T]) =
   let currStateObj = self.view.currentStateObj()
   if currStateObj.isNil:

@@ -17,6 +17,9 @@ method delete*(self: AccessInterface) {.base.} =
 method getModuleAsVariant*(self: AccessInterface): QVariant {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method setKeycardData*(self: AccessInterface, value: string) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method onBackActionClicked*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
     

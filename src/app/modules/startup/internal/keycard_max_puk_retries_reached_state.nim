@@ -14,7 +14,12 @@ method executePrimaryCommand*(self: KeycardMaxPukRetriesReachedState, controller
 
 method executeSecondaryCommand*(self: KeycardMaxPukRetriesReachedState, controller: Controller) =
   if self.flowType == FlowType.FirstRunOldUserKeycardImport:
-    controller.resumeCurrentFlow()
+    controller.runRecoverAccountFlow()
+
+method getNextSecondaryState*(self: KeycardMaxPukRetriesReachedState, controller: Controller): State =
+  if self.flowType == FlowType.FirstRunOldUserKeycardImport:
+    return createState(StateType.KeycardPluginReader, self.flowType, nil)
+  return nil
 
 method resolveKeycardNextState*(self: KeycardMaxPukRetriesReachedState, keycardFlowType: string, keycardEvent: KeycardEvent, 
   controller: Controller): State =

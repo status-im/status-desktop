@@ -544,8 +544,10 @@ Item {
             }
             PropertyChanges {
                 target: message
-                text: ""
-                visible: false
+                visible: root.startupStore.startupModuleInst.keycardData !== ""
+                text: qsTr("Check the card, it might be wrongly inserted")
+                font.pixelSize: Constants.keycard.general.fontSize3
+                color: Theme.palette.baseColor1
             }
             PropertyChanges {
                 target: button

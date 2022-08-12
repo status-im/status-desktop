@@ -59,6 +59,13 @@ Item {
             id: title
             Layout.alignment: Qt.AlignHCenter
             font.weight: Font.Bold
+            wrapMode: Text.WordWrap
+        }
+
+        StatusBaseText {
+            id: info
+            Layout.alignment: Qt.AlignHCenter
+            wrapMode: Text.WordWrap
         }
     }
 
@@ -68,9 +75,13 @@ Item {
             when: root.startupStore.currentStartupState.stateType === Constants.startupState.keycardPluginReader
             PropertyChanges {
                 target: title
-                text: qsTrId("Plug in Keycard reader...")
+                text: qsTr("Plug in Keycard reader...")
                 font.pixelSize: Constants.keycard.general.fontSize1
                 color: Theme.palette.directColor1
+            }
+            PropertyChanges {
+                target: info
+                visible: false
             }
         },
         State {
@@ -78,9 +89,16 @@ Item {
             when: root.startupStore.currentStartupState.stateType === Constants.startupState.keycardInsertKeycard
             PropertyChanges {
                 target: title
-                text: qsTrId("Insert your Keycard...")
+                text: qsTr("Insert your Keycard...")
                 font.pixelSize: Constants.keycard.general.fontSize1
                 color: Theme.palette.directColor1
+            }
+            PropertyChanges {
+                target: info
+                visible: root.startupStore.startupModuleInst.keycardData !== ""
+                text: qsTr("Check the card, it might be wrongly inserted")
+                font.pixelSize: Constants.keycard.general.fontSize3
+                color: Theme.palette.baseColor1
             }
         },
         State {
@@ -91,6 +109,10 @@ Item {
                 text: qsTr("Reading Keycard...")
                 font.pixelSize: Constants.keycard.general.fontSize2
                 color: Theme.palette.baseColor1
+            }
+            PropertyChanges {
+                target: info
+                visible: false
             }
         }
     ]
