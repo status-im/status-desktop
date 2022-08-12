@@ -15,6 +15,7 @@ import SortFilterProxyModel 0.2
 
 StatusDialog {
     id: root
+    objectName: "socialLinksModal"
 
     property ProfileStore profileStore
 
@@ -76,6 +77,8 @@ StatusDialog {
             Repeater {
                 id: staticLinksRepeater
                 delegate: StaticSocialLinkInput {
+                    objectName: model.text + "-socialLinkInput"
+
                     Layout.fillWidth: true
                     linkType: model.linkType
                     text: model.url
@@ -100,6 +103,8 @@ StatusDialog {
                 Repeater {
                     id: customLinksRepeater
                     delegate: CustomSocialLinkInput {
+                        objectName: "customSocialLinkInput"
+
                         Layout.fillWidth: true
 
                         hyperlink: model.text

@@ -31,6 +31,7 @@ Item {
 
             StatusInput {
                 id: hyperlinkInput
+                objectName: "hyperlinkInput"
 
                 Layout.fillWidth: true
                 label: qsTr("Hyperlink Text")
@@ -40,6 +41,7 @@ Item {
 
             StatusInput {
                 id: urlInput
+                objectName: "urlInput"
 
                 Layout.fillWidth: true
                 label: qsTr("URL")

@@ -44,7 +44,7 @@ class CommunitySettingsComponents(Enum):
     EDIT_COMMUNITY_NAME_INPUT = "communitySettings_EditCommunity_Name_Input"
     EDIT_COMMUNITY_DESCRIPTION_INPUT = "communitySettings_EditCommunity_Description_Input"
     EDIT_COMMUNITY_COLOR_PICKER_BUTTON = "communitySettings_EditCommunity_ColorPicker_Button"
-    SAVE_BUTTON = "communitySettings_Save_Button"
+    SAVE_BUTTON = "settingsSave_StatusButton"
     BACK_TO_COMMUNITY_BUTTON = "communitySettings_BackToCommunity_Button"
     COMMUNITY_NAME_TEXT = "communitySettings_CommunityName_Text"
     COMMUNITY_DESCRIPTION_TEXT = "communitySettings_CommunityDescription_Text"

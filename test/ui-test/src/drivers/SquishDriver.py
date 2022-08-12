@@ -182,6 +182,16 @@ def wait_for_object_and_type(objName: str, text: str):
     except LookupError:
         return False
 
+# It sets the specified text into the given object (first erase, then type)
+def setText(objName: str, text: str):
+    try:
+        obj = squish.waitForObject(getattr(names, objName))
+        squish.type(obj, "<Ctrl+a>")
+        squish.type(obj, text)
+        return True
+    except LookupError:
+        return False
+
 # Clicking link in label / textedit
 def click_link(objName: str, link: str):
     point = _find_link(getattr(names, objName), link)
