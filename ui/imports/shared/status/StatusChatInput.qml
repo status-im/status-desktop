@@ -1210,6 +1210,7 @@ Rectangle {
 
             StatusQ.StatusFlatRoundButton {
                 id: emojiBtn
+                objectName: "statusChatInputEmojiButton"
                 enabled: !control.emojiPopupOpened
                 implicitHeight: 32
                 implicitWidth: 32
