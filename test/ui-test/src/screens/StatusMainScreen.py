@@ -28,6 +28,9 @@ class MainScreenComponents(Enum):
     COMMUNITY_NAVBAR_BUTTONS = "navBarListView_All_Community_Buttons"
     MODULE_WARNING_BANNER = "moduleWarning_Banner"
     PROFILE_NAVBAR_BUTTON = "mainWindow_ProfileNavBarButton"
+    USERSTATUSMENU_ALWAYS_ACTIVE_ACTION = "userContextmenu_AlwaysActiveButton"
+    USERSTATUSMENU_INACTIVE_ACTION = "userContextmenu_InActiveButton"
+    USERSTATUSMENU_AUTOMATIC_ACTION = "userContextmenu_AutomaticButton"
 
 class ChatNamePopUp(Enum):
     CHAT_NAME_TEXT = "chat_name_PlaceholderText"
@@ -96,3 +99,23 @@ class StatusMainScreen:
     def user_is_online(self):
         profileButton = squish.waitForObject(getattr(names, MainScreenComponents.PROFILE_NAVBAR_BUTTON.value))
         verify_equal(profileButton.badge.color.name, "#4ebc60", "The user is not online by default")
+
+    def user_is_offline(self):
+        profileButton = squish.waitForObject(getattr(names, MainScreenComponents.PROFILE_NAVBAR_BUTTON.value))
+        verify_equal(profileButton.badge.color.name, "#7f8990", "The user is not offline")
+        
+    def user_is_set_to_automatic(self):
+        profileButton = squish.waitForObject(getattr(names, MainScreenComponents.PROFILE_NAVBAR_BUTTON.value))
+        verify_equal(profileButton.badge.color.name, "#4ebc60", "The user is not online by default")
+        
+    def set_user_state_offline(self):
+        click_obj_by_name(MainScreenComponents.PROFILE_NAVBAR_BUTTON.value)
+        click_obj_by_name(MainScreenComponents.USERSTATUSMENU_INACTIVE_ACTION.value)
+        
+    def set_user_state_online(self):
+        click_obj_by_name(MainScreenComponents.PROFILE_NAVBAR_BUTTON.value)
+        click_obj_by_name(MainScreenComponents.USERSTATUSMENU_ALWAYS_ACTIVE_ACTION.value)
+        
+    def set_user_state_to_automatic(self):
+        click_obj_by_name(MainScreenComponents.PROFILE_NAVBAR_BUTTON.value)
+        click_obj_by_name(MainScreenComponents.USERSTATUSMENU_AUTOMATIC_ACTION.value)

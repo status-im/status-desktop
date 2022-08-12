@@ -42,6 +42,7 @@ StatusPopupMenu {
 
     StatusMenuItem {
         id: alwaysOnlineAction
+        objectName: "userStatusMenuAlwaysOnlineAction"
         text: qsTr("Always online")
         image.source: Style.svg("statuses/online")
         image.width: 12
@@ -55,6 +56,7 @@ StatusPopupMenu {
 
     StatusMenuItem {
         id: inactiveAction
+        objectName: "userStatusMenuInactiveAction"
         text: qsTr("Inactive")
         image.source: Style.svg("statuses/inactive")
         image.width: 12
@@ -68,6 +70,7 @@ StatusPopupMenu {
 
     StatusMenuItem {
         id: automaticAction
+        objectName: "userStatusMenuAutomaticAction"
         text: qsTr("Set status automatically")
         image.source: Style.svg("statuses/automatic")
         fontSettings.bold: root.store.userProfileInst.currentUserStatus === Constants.currentUserStatus.automatic
