@@ -13,6 +13,10 @@ import ../../../backend/mailservers as status_mailservers
 # mailserver address in this way for local development or test
 let MAILSERVER_ADDRESS = $getEnv("MAILSERVER")
 
+# allow runtime override via environment variable. core contributors can set a
+# specific peer to set for testing messaging and mailserver functionality with squish.
+let TEST_PEER_ENR = getEnv("TEST_PEER_ENR").string
+
 logScope:
   topics = "mailservers-service"
 
@@ -82,6 +86,7 @@ QtObject:
   proc doConnect(self: Service)
   proc initMailservers(self: Service)
   proc fetchMailservers(self: Service)
+  proc saveMailserver*(self: Service, name: string, nodeAddress: string): string
 
   proc delete*(self: Service) =
     self.QObject.delete
@@ -103,8 +108,20 @@ QtObject:
     self.initMailservers()
     self.fetchMailservers()
 
+    let fleet = self.settingsService.getFleet()
+    if TEST_PEER_ENR != "":
+      var found = false
+      for mailserver in self.mailservers:
+        if mailserver.nodeAddress == TEST_PEER_ENR:
+          found = true
+          break
+      if not found:
+        let mailserverName = "Test Mailserver"
+        self.mailservers.add((name: mailserverName, nodeAddress: TEST_PEER_ENR))
+        let mailserverID = self.saveMailserver(mailserverName, TEST_PEER_ENR)
+        discard self.settingsService.pinMailserver(mailserverId, fleet)
+
     if MAILSERVER_ADDRESS != "":
-      let fleet = self.settingsService.getFleet()
       discard self.settingsService.pinMailserver(MAILSERVER_ADDRESS, fleet)
 
   proc mailserverSynced*(self: Service, syncInfo: string) {.slot.} =
@@ -194,7 +211,7 @@ QtObject:
   proc getAllMailservers*(self: Service): seq[tuple[name: string, nodeAddress: string]] =
     return self.mailservers
 
-  proc saveMailserver*(self: Service, name: string, nodeAddress: string) =
+  proc saveMailserver*(self: Service, name: string, nodeAddress: string): string =
     try:
       let fleet = self.settingsService.getFleetAsString()
       let id = $genUUID()
@@ -204,10 +221,12 @@ QtObject:
       # once we have more info from `status-go` we may emit a signal from here and
       # update view or display an error accordingly
 
+      return id
+
     except Exception as e:
       let errDesription = e.msg
       error "error: ", errDesription
-      return
+      return ""
 
   proc enableAutomaticSelection*(self: Service, value: bool) =
     if value:

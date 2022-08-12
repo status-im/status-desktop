@@ -24,6 +24,10 @@ const ACCOUNT_ALREADY_EXISTS_ERROR =  "account already exists"
 const output_csv {.booldefine.} = false
 const KDF_ITERATIONS* {.intdefine.} = 256_000
 
+# allow runtime override via environment variable. core contributors can set a
+# specific peer to set for testing messaging and mailserver functionality with squish.
+let TEST_PEER_ENR = getEnv("TEST_PEER_ENR").string
+
 include utils
 
 
@@ -286,6 +290,14 @@ proc getDefaultNodeConfig*(self: Service, installationId: string): JsonNode =
   result["ClusterConfig"]["FilterNodes"] =  %* self.fleetConfiguration.getNodes(fleet, FleetNodes.Waku)
   result["ClusterConfig"]["LightpushNodes"] =  %* self.fleetConfiguration.getNodes(fleet, FleetNodes.Waku)
 
+  if TEST_PEER_ENR != "":
+    result["ClusterConfig"]["BootNodes"] = %* @[TEST_PEER_ENR]
+    result["ClusterConfig"]["TrustedMailServers"] = %* @[TEST_PEER_ENR]
+    result["ClusterConfig"]["StaticNodes"] = %* @[TEST_PEER_ENR]
+    result["ClusterConfig"]["RendezvousNodes"] = %* (@[])
+    result["ClusterConfig"]["DiscV5BootstrapNodes"] = %* (@[])
+    result["Rendezvous"] = newJBool(false)
+
   result["KeyStoreDir"] = newJString(self.keyStoreDir.replace(main_constants.STATUSGODIR, ""))
 
 proc setLocalAccountSettingsFile(self: Service) =
@@ -530,6 +542,16 @@ proc login*(self: Service, account: AccountDto, password: string): string =
         "Port": wV2Port,
         "UDPPort": wV2Port,
       })
+
+    if TEST_PEER_ENR != "":
+      nodeCfg["Rendezvous"] = newJBool(false)
+      nodeCfg["ClusterConfig"] = %* {
+        "BootNodes": @[TEST_PEER_ENR],
+        "TrustedMailServers": @[TEST_PEER_ENR],
+        "StaticNodes": @[TEST_PEER_ENR],
+        "RendezvousNodes": @[],
+        "DiscV5BootstrapNodes": @[]
+      }
 
     let response = status_account.login(account.name, account.keyUid, account.kdfIterations, hashedPassword, thumbnailImage,
       largeImage, $nodeCfg)
