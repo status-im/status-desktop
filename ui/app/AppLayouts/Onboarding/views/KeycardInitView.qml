@@ -68,7 +68,7 @@ Item {
             when: root.startupStore.currentStartupState.stateType === Constants.startupState.keycardPluginReader
             PropertyChanges {
                 target: title
-                text: qsTrId("Plug in Keycard reader...")
+                text: qsTr("Plug in Keycard reader...")
                 font.pixelSize: Constants.keycard.general.fontSize1
                 color: Theme.palette.directColor1
             }
@@ -78,7 +78,7 @@ Item {
             when: root.startupStore.currentStartupState.stateType === Constants.startupState.keycardInsertKeycard
             PropertyChanges {
                 target: title
-                text: qsTrId("Insert your Keycard...")
+                text: qsTr("Insert your Keycard...")
                 font.pixelSize: Constants.keycard.general.fontSize1
                 color: Theme.palette.directColor1
             }
