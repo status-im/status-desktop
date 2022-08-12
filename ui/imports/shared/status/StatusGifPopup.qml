@@ -260,6 +260,7 @@ Popup {
 
         StatusButton {
             id: removeBtn
+            objectName: "enableGifsButton"
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
             text: qsTr("Enable")

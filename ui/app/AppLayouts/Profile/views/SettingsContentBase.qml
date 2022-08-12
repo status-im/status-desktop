@@ -101,6 +101,7 @@ Item {
 
     StatusScrollView {
         id: scrollView
+        objectName: "settingsContentBaseScrollView"
         anchors.top: titleRow.visible ? titleRow.bottom : topHeader.bottom
         anchors.bottom: parent.bottom
         anchors.left: parent.left

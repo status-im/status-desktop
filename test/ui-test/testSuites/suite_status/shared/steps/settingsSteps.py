@@ -16,6 +16,14 @@ def step(context: any):
 def step(context: any):
     _settingsScreen.open_wallet_settings()
     
+@When("the user opens the messaging settings")
+def step(context: any):
+    _settingsScreen.open_messaging_settings()
+    
+@When("the user activates link preview")
+def step(context: any):
+    _settingsScreen.activate_link_preview()
+    
 @When("the user activates wallet and opens the wallet settings")
 def step(context: any):
     _settingsScreen.activate_open_wallet_settings()

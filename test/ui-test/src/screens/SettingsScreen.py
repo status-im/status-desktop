@@ -29,6 +29,8 @@ class SidebarComponents(Enum):
     COMMUNITIES_OPTION: str = "communities_StatusNavigationListItem"
     PROFILE_OPTION: str = "profile_StatusNavigationListItem"
     ENS_ITEM: str = "settings_Sidebar_ENS_Item"
+    MESSAGING_ITEM: str = "messaging_StatusNavigationListItem"
+
 
 class AdvancedOptionScreen(Enum):
     ACTIVATE_OR_DEACTIVATE_WALLET: str = "walletSettingsLineButton"
@@ -42,6 +44,12 @@ class ENSScreen(Enum):
     OPEN_TRANSACTION: str = "settings_ENS_Terms_Open_Transaction"
     TRANSACTION_NEXT_BUTTON: str = "settings_ENS_Terms_Transaction_Next_Button"
     PASSWORD_INPUT: str = "settings_ENS_Terms_Transaction_Password_Input"
+   
+class MessagingOptionScreen(Enum):
+    ACTIVATE_OR_DEACTIVATE_LINK_PREVIEW: str = "displayMessageLinkPreviewItem"
+    ACTIVATE_OR_DECTIVATE_IMAGE_UNFURLING: str = "imageUnfurlingItem"
+    SCROLLVIEW: str = "settingsContentBase_ScrollView"
+ 
 
 class WalletSettingsScreen(Enum):
     GENERATED_ACCOUNTS: str = "settings_Wallet_MainView_GeneratedAccounts"
@@ -134,6 +142,18 @@ class SettingsScreen:
     def verify_address(self, address: str):
         accounts = get_obj(WalletSettingsScreen.GENERATED_ACCOUNTS.value)
         verify_text_matching_insensitive(accounts.itemAtIndex(0).statusListItemSubTitle, address)
+
+    def open_messaging_settings(self):
+        click_obj_by_name(SidebarComponents.MESSAGING_ITEM.value)
+    
+    def activate_link_preview(self):
+        click_obj_by_name(SidebarComponents.MESSAGING_ITEM.value)
+        scroll_obj_by_name(MessagingOptionScreen.SCROLLVIEW.value)
+        scroll_obj_by_name(MessagingOptionScreen.SCROLLVIEW.value)        
+        scroll_obj_by_name(MessagingOptionScreen.SCROLLVIEW.value)
+        click_obj_by_name(MessagingOptionScreen.ACTIVATE_OR_DEACTIVATE_LINK_PREVIEW.value)
+        scroll_obj_by_name(MessagingOptionScreen.SCROLLVIEW.value)
+        click_obj_by_name(MessagingOptionScreen.ACTIVATE_OR_DECTIVATE_IMAGE_UNFURLING.value)
         
     def toggle_test_networks(self):
         click_obj_by_name(WalletSettingsScreen.NETWORKS_ITEM.value)

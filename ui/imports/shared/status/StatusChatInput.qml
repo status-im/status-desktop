@@ -1220,6 +1220,7 @@ Rectangle {
 
                             StatusQ.StatusFlatRoundButton {
                                 id: gifBtn
+                                objectName: "gifPopupButton"
                                 implicitHeight: 32
                                 implicitWidth: 32
                                 visible: !isEdit && RootStore.isGifWidgetEnabled

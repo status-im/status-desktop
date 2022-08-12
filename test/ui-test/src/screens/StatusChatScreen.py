@@ -58,9 +58,14 @@ class ChatComponents(Enum):
     EDIT_MESSAGE_INPUT = "chatView_editMessageInputComponent"
     EDIT_MESSAGE_TEXTAREA = "chatView_editMessageInputTextArea"
 
+    GIF_POPUP_BUTTON = "chatView_gifPopupButton"
+    ENABLE_GIF_BUTTON = "gifPopup_enableGifButton"
+    GIF_MOUSEAREA = "gifPopup_gifMouseArea"
+
 class ChatMessagesHistory(Enum):
     CHAT_CREATED_TEXT = 1
     HAS_ADDED_TEXT = 0
+
 
 class StatusChatScreen:
 
@@ -85,6 +90,13 @@ class StatusChatScreen:
         [loaded, _] = is_loaded_visible_and_enabled(ChatComponents.LAST_MESSAGE_TEXT.value)
         verify_fasle(loaded, "Success: No message was found")
           
+    def send_gif(self):
+        click_obj_by_name(ChatComponents.GIF_POPUP_BUTTON.value)
+        click_obj_by_name(ChatComponents.ENABLE_GIF_BUTTON.value)
+        click_obj_by_name(ChatComponents.GIF_MOUSEAREA.value)       
+        press_enter(ChatComponents.MESSAGE_INPUT.value)
+        
+    # Verifications region:        
     def verify_last_message_sent(self, message: str):
         [loaded, last_message_obj] = is_loaded_visible_and_enabled(ChatComponents.LAST_MESSAGE_TEXT.value)
         verify(loaded, "Checking last message sent: " + message)
@@ -127,7 +139,7 @@ class StatusChatScreen:
         
     def verify_members_added(self, members):
         self.verify_total_members_is_displayed_in_toolbar(members)
-        self.verify_added_members_message_is_displayed_in_history( members)
+        self.verify_added_members_message_is_displayed_in_history(members)
         self.verify_members_are_in_list_panel(members)                  
 
     def verify_members_are_in_list_panel(self, members):
@@ -135,7 +147,7 @@ class StatusChatScreen:
             verify(self.find_member_in_panel(row[0]), "Looking for member: " + row[0])
             
     def verify_total_members_is_displayed_in_toolbar(self, members):
-        total_members = len(members) + 1 # + Admin
+        total_members = len(members) + 1  # + Admin
         info_btn_subtitle = str(get_obj(ChatComponents.TOOLBAR_INFO_BUTTON.value).subTitle)
         subtitle_substrings = info_btn_subtitle.split(' ')
         verify(int(subtitle_substrings[0]) == total_members, "Expected members are " + str(total_members) + "and they are displayed " + subtitle_substrings[0])
