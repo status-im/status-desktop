@@ -150,7 +150,8 @@ StatusPopupMenu {
         y = setYPosition()
     }
 
-    width: Math.max(emojiContainer.visible ? emojiContainer.width : 0, 230)
+    width: Math.max(emojiContainer.visible ? emojiContainer.width : 0,
+                    (root.isRightClickOnImage && !root.pinnedPopup) ? 176 : 230)
 
     onAboutToShow: {
         if (root.isProfile && root.selectedUserPublicKey !== "") {
@@ -208,7 +209,7 @@ StatusPopupMenu {
 
     Item {
         visible: root.isProfile
-        height: root.topPadding
+        height: visible ? root.topPadding : 0
     }
 
     Separator {
