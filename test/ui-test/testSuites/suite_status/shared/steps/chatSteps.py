@@ -81,6 +81,11 @@ def step(context, message):
 def step(context, message_index, message):
     _statusChat.reply_to_message_at_index(message_index, message)
     _statusChat.verify_last_message_sent(message)
+    
+@When("the user edits the message at index |any| and changes it to \"|any|\"" )
+def step(context, message_index, message):
+    _statusChat.edit_message_at_index(message_index, message)
+    _statusChat.verify_last_message_sent(message)
 
 @Then("the user can mark the channel |any| as read")
 def step(context, channel):

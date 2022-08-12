@@ -586,6 +586,7 @@ Loader {
 
             statusChatInput: StatusChatInput {
                 id: editTextInput
+                objectName: "editMessageInput"
 
                 readonly property string messageText: editTextInput.textInput.text
 
@@ -684,6 +685,7 @@ Loader {
                     active: !root.isInPinnedPopup && root.isText && !root.editModeOn && root.amISender
                     visible: active
                     sourceComponent: StatusFlatRoundButton {
+                        objectName: "editMessageButton"
                         width: d.chatButtonSize
                         height: d.chatButtonSize
                         icon.name: "edit_pencil"
