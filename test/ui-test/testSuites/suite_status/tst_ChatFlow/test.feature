@@ -32,10 +32,10 @@ Feature: Status Desktop Chat
          Then the user can reply to the message at index 0 with "This is a reply"
 
 
-    # TODO This test has a chance to fail since it relies on the mailserver. Until we host a local mailserver for the tests, this test is at risk
-#    Scenario: User can reply to another user's message
-#         When user joins chat room test
-#         Then the user can reply to the message at index 0 with "This is a reply to another user"
+    @mayfail
+    Scenario: User can reply to another user's message
+         When user joins chat room test
+         Then the user can reply to the message at index 0 with "This is a reply to another user"
 
 
     Scenario: User joins a room and marks it as read
@@ -51,23 +51,27 @@ Feature: Status Desktop Chat
          Then the last message is not the random message
 
 
-    # TODO This test has a chance to fail since it relies on the mailserver. Until we host a local mailserver for the tests, this test is at risk
- #   Scenario: User cannot delete another user's message
- #        When user joins chat room test
- #        Then the user cannot delete the last message
+    @mayfail
+    Scenario: User cannot delete another user's message
+         When user joins chat room test
+         Then the user cannot delete the last message
 
-#	Scenario Outline: The user can do a mention
-#		When user joins chat room test
-#		And the user inputs a mention to <displayName> with message <message>
-#		Then the <displayName> mention with message <message> have been sent
-#	Examples:
-#		| displayName | message          |
-#		| tester123   |  testing mention |
 
-#	Scenario Outline: The user can not do a mention to not existing users
-#		When user joins chat room test
-#		Then the user cannot input a mention to a not existing user <displayName>
-#	Examples:
-#		| displayName        |
-#		| notExistingAccount |
-#		| asdfgNoNo          |
+    @mayfail
+	Scenario Outline: The user can do a mention
+		When user joins chat room test
+		And the user inputs a mention to <displayName> with message <message>
+		Then the <displayName> mention with message <message> have been sent
+	Examples:
+		| displayName | message          |
+		| tester123   |  testing mention |
+
+
+    @mayfail
+	Scenario Outline: The user can not do a mention to not existing users
+		When user joins chat room test
+		Then the user cannot input a mention to a not existing user <displayName>
+	Examples:
+		| displayName        |
+		| notExistingAccount |
+		| asdfgNoNo          |
