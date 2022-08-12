@@ -21,9 +21,14 @@ emojiPopup_Emoji_Button_Placeholder = {"container": statusDesktop_mainWindow, "o
 chatInput_Emoji_Button = {"container": statusDesktop_mainWindow, "objectName": "statusChatInputEmojiButton", "type": "StatusFlatRoundButton", "visible": True}
 chatView_ChatToolbarMoreOptionsButton = {"container": statusDesktop_mainWindow, "objectName": "chatToolbarMoreOptionsButton", "type": "StatusFlatRoundButton"}
 chatInput_Root = {"container": statusDesktop_mainWindow, "objectName": "statusChatInput", "type": "Rectangle", "visible": True}
+chatView_gifPopupButton = {"container": statusDesktop_mainWindow, "objectName": "gifPopupButton", "type": "StatusFlatRoundButton", "visible": True}
 
 # More options menu
 clearHistoryMenuItem = {"container": statusDesktop_mainWindow_overlay, "objectName": "clearHistoryMenuItem", "type": "StatusMenuItemDelegate", "visible": True}
+
+# Gif popup:
+gifPopup_enableGifButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "enableGifsButton", "type": "StatusButton"}
+gifPopup_gifMouseArea = {"container": statusDesktop_mainWindow_overlay, "objectName": "gifMouseArea_1", "type": "MouseArea"}
 
 # Join chat popup:
 startChat_Btn = {"container": statusDesktop_mainWindow_overlay, "objectName": "startChatButton", "type": "StatusButton"}

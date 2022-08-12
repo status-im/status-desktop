@@ -68,6 +68,14 @@ Feature: Status Desktop Chat
         | tell me how you do? |
         When the user clears chat history
         Then the chat is cleared
+        
+    Scenario: User can send a gif
+         When the user opens app settings screen
+         And the user opens the messaging settings
+         And the user activates link preview
+         And the user opens the chat section
+         And user joins chat room automation-test
+         Then The user is able to send a gif message
 
 
     @mayfail

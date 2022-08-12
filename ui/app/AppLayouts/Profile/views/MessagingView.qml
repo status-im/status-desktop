@@ -228,6 +228,7 @@ SettingsContentBase {
         // MESSAGE LINK PREVIEWS
         StatusListItem {
             Layout.fillWidth: true
+            objectName: "displayMessageLinkPreviewsItem"
             title: qsTr("Display Message Link Previews")
             implicitHeight: 64
             components: [
@@ -304,6 +305,7 @@ SettingsContentBase {
 
             // Manually add switch for the image unfurling
             StatusListItem {
+                objectName: "imageUnfurlingItem"
                 width: parent.width
                 implicitHeight: 64
                 title: qsTr("Image unfurling")

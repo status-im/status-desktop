@@ -106,6 +106,7 @@ Column {
 
             MouseArea {
                 id: mouseArea
+                objectName: "gifMouseArea_" + index
                 cursorShape: Qt.PointingHandCursor
                 anchors.fill: parent
                 hoverEnabled: true

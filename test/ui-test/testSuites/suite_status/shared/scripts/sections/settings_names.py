@@ -47,6 +47,8 @@ advanced_StatusNavigationListItem = {"container": mainWindow_ScrollView, "object
 sign_out_Quit_StatusNavigationListItem = {"container": mainWindow_ScrollView, "objectName": SettingsSubsection.SIGNOUT.value, "type": "StatusNavigationListItem", "visible": True}
 communities_StatusNavigationListItem = {"container": mainWindow_ScrollView, "objectName": SettingsSubsection.COMMUNITY.value, "type": "StatusNavigationListItem", "visible": True}
 profile_StatusNavigationListItem = {"container": mainWindow_ScrollView, "objectName": SettingsSubsection.PROFILE.value, "type": "StatusNavigationListItem", "visible": True}
+messaging_StatusNavigationListItem = {"container": mainWindow_ScrollView, "objectName": SettingsSubsection.MESSAGING.value, "type": "StatusNavigationListItem", "visible": True}
+
 
 # Profile Settings:
 displayName_StatusInput = {"container": mainWindow_ScrollView_2, "objectName": "displayNameInput", "type": "StatusInput", "visible": True}
@@ -81,6 +83,11 @@ settings_Wallet_AccountView_IconSettings = {"container": statusDesktop_mainWindo
 settings_Wallet_MainView_BackupSeedPhrase = {"container": mainWindow_ScrollView, "objectName": SettingsSubsection.BACKUP_SEED.value, "type": "StatusNavigationListItem", "visible": True}
 
 generatedAccounts_ListView = {"container": statusDesktop_mainWindow, "objectName": "generatedAccounts", "type": "ListView"}
+
+# Messaging Settings:
+settingsContentBase_ScrollView = {"container": statusDesktop_mainWindow, "objectName": "settingsContentBaseScrollView", "type": "StatusScrollView", "visible": True}
+displayMessageLinkPreviewItem = {"container": statusDesktop_mainWindow, "objectName": "displayMessageLinkPreviewsItem", "type": "StatusListItem"}
+imageUnfurlingItem = {"container": statusDesktop_mainWindow, "objectName": "imageUnfurlingItem", "type": "StatusListItem"}
 
 # Communities Settings:
 settings_Communities_MainView_LeaveCommunityButtons = {"container": statusDesktop_mainWindow, "objectName":"CommunitiesListPanel_leaveCommunityPopupButton", "type": "StatusBaseButton", "visible": True}

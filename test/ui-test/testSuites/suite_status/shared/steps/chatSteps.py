@@ -43,6 +43,11 @@ def step(context):
     for row in table[1:]:
         _statusChat.send_message(row[0])
         _statusChat.verify_last_message_sent(row[0])
+        
+@Then("The user is able to send a gif message")
+def step(context):
+    _statusChat.send_gif()
+    _statusChat.verify_last_message_sent("tenor.gif")
 
 @Then("the user is able to send a random chat message")
 def step(context):
