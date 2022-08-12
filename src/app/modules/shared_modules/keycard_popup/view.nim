@@ -8,6 +8,7 @@ QtObject:
       delegate: io_interface.AccessInterface
       currentState: StateWrapper
       currentStateVariant: QVariant
+      keycardData: string # used to temporary store the data coming from keycard, depends on current state different data may be stored
 
   proc delete*(self: View) =
     self.currentStateVariant.delete
@@ -34,6 +35,18 @@ QtObject:
     return self.currentStateVariant
   QtProperty[QVariant] currentState:
     read = getCurrentState
+
+  proc keycardDataChanged*(self: View) {.signal.}
+  proc setKeycardData*(self: View, value: string) =
+    if self.keycardData == value:
+      return
+    self.keycardData = value
+    self.keycardDataChanged()
+  proc getKeycardData*(self: View): string {.slot.} =
+    return self.keycardData
+  QtProperty[string] keycardData:
+    read = getKeycardData
+    notify = keycardDataChanged
 
   proc onBackActionClicked*(self: View) {.slot.} =
     self.delegate.onBackActionClicked()

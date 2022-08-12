@@ -59,6 +59,13 @@ Item {
             id: title
             Layout.alignment: Qt.AlignHCenter
             font.weight: Font.Bold
+            wrapMode: Text.WordWrap
+        }
+
+        StatusBaseText {
+            id: info
+            Layout.alignment: Qt.AlignHCenter
+            wrapMode: Text.WordWrap
         }
     }
 
@@ -72,6 +79,10 @@ Item {
                 font.pixelSize: Constants.keycard.general.fontSize1
                 color: Theme.palette.directColor1
             }
+            PropertyChanges {
+                target: info
+                visible: false
+            }
         },
         State {
             name: Constants.startupState.keycardInsertKeycard
@@ -82,6 +93,13 @@ Item {
                 font.pixelSize: Constants.keycard.general.fontSize1
                 color: Theme.palette.directColor1
             }
+            PropertyChanges {
+                target: info
+                visible: root.startupStore.startupModuleInst.keycardData !== ""
+                text: qsTr("Check the card, it might be wrongly inserted")
+                font.pixelSize: Constants.keycard.general.fontSize3
+                color: Theme.palette.baseColor1
+            }
         },
         State {
             name: Constants.startupState.keycardReadingKeycard
@@ -91,6 +109,10 @@ Item {
                 text: qsTr("Reading Keycard...")
                 font.pixelSize: Constants.keycard.general.fontSize2
                 color: Theme.palette.baseColor1
+            }
+            PropertyChanges {
+                target: info
+                visible: false
             }
         }
     ]

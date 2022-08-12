@@ -41,6 +41,9 @@ proc disconnect*(self: Controller) =
   for id in self.connectionIds:
     self.events.disconnect(id)
 
+proc setKeycardData*(self: Controller, value: string) =
+  self.delegate.setKeycardData(value)
+
 proc containsMetadata*(self: Controller): bool =
   return self.tmpKeycardContainsMetadata
 

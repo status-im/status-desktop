@@ -16,6 +16,12 @@ method getNextTertiaryState*(self: LoginKeycardInsertKeycardState, controller: C
 
 method resolveKeycardNextState*(self: LoginKeycardInsertKeycardState, keycardFlowType: string, keycardEvent: KeycardEvent, 
   controller: Controller): State =
+  if keycardFlowType == ResponseTypeValueInsertCard and 
+    keycardEvent.error.len > 0 and
+    keycardEvent.error == ErrorConnection:
+      controller.setKeycardData(ResponseTypeValueInsertCard)
+      return nil
   if keycardFlowType == ResponseTypeValueCardInserted:
+    controller.setKeycardData("")
     return createState(StateType.LoginKeycardReadingKeycard, self.flowType, nil)
   return nil

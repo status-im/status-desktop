@@ -14,8 +14,15 @@ method executePrimaryCommand*(self: KeycardNotEmptyState, controller: Controller
       controller.runFactoryResetPopup()
 
 method executeSecondaryCommand*(self: KeycardNotEmptyState, controller: Controller) =
-  if self.flowType == FlowType.FirstRunNewUserNewKeycardKeys:
-    controller.resumeCurrentFlow()
+  if self.flowType == FlowType.FirstRunNewUserNewKeycardKeys or
+    self.flowType == FlowType.FirstRunNewUserImportSeedPhraseIntoKeycard:
+      controller.runLoadAccountFlow()
+
+method getNextSecondaryState*(self: KeycardNotEmptyState, controller: Controller): State =
+  if self.flowType == FlowType.FirstRunNewUserNewKeycardKeys or
+    self.flowType == FlowType.FirstRunNewUserImportSeedPhraseIntoKeycard:
+      return createState(StateType.KeycardPluginReader, self.flowType, nil)
+  return nil
 
 method resolveKeycardNextState*(self: KeycardNotEmptyState, keycardFlowType: string, keycardEvent: KeycardEvent, 
   controller: Controller): State =
