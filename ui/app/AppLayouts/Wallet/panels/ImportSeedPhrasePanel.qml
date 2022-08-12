@@ -118,7 +118,6 @@ StatusGridView {
                 } catch (e) {
                     // Getting items outside of the current view might not work
                 }
-                grid.addWord(i, words[i], true)
             }
         }, timeout);
         
