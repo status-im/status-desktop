@@ -31,6 +31,14 @@ Feature: Status Desktop Chat
          | Reply to this         |
          Then the user can reply to the message at index 0 with "This is a reply"
 
+    Scenario: User can edit a message
+         When user joins chat room test
+         Then user is able to send chat message
+         | message               |
+         | Edit me                 |
+         When the user edits the message at  index 0 and changes it to "Edited by me"
+         Then the message (edited) is displayed in the last message
+
 
     @mayfail
     Scenario: User can reply to another user's message

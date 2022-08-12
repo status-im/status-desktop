@@ -44,6 +44,7 @@ class ChatComponents(Enum):
     LAST_MESSAGE_TEXT = "chatView_lastChatText_Text"
     MEMBERS_LISTVIEW = "chatView_chatMembers_ListView"
     REPLY_TO_MESSAGE_BUTTON = "chatView_replyToMessageButton"
+    EDIT_MESSAGE_BUTTON = "chatView_editMessageButton"
     DELETE_MESSAGE_BUTTON = "chatView_DeleteMessageButton"
     CONFIRM_DELETE_MESSAGE_BUTTON = "chatButtonsPanelConfirmDeleteMessageButton_StatusButton"
     SUGGESTIONS_BOX = "chatView_SuggestionBoxPanel"
@@ -54,6 +55,8 @@ class ChatComponents(Enum):
     CHAT_LIST = "chatList_Repeater"
     MORE_OPTIONS_BUTTON = "chatView_ChatToolbarMoreOptionsButton"
     CLEAR_HISTORY_MENUITEM = "clearHistoryMenuItem"
+    EDIT_MESSAGE_INPUT = "chatView_editMessageInputComponent"
+    EDIT_MESSAGE_TEXTAREA = "chatView_editMessageInputTextArea"
 
 class ChatMessagesHistory(Enum):
     CHAT_CREATED_TEXT = 1
@@ -155,6 +158,14 @@ class StatusChatScreen:
         hover_obj(message_object_to_reply_to)
         click_obj_by_name(ChatComponents.REPLY_TO_MESSAGE_BUTTON.value)
         self.send_message(message)
+    
+    def edit_message_at_index(self, index: int, message: str):
+        message_object_to_edit = get_obj(ChatComponents.CHAT_LOG.value).itemAtIndex(int(index))
+        hover_obj(message_object_to_edit)
+        click_obj_by_name(ChatComponents.EDIT_MESSAGE_BUTTON.value)
+        wait_for_object_and_type(ChatComponents.EDIT_MESSAGE_TEXTAREA.value, "<Ctrl+a>")
+        type(ChatComponents.EDIT_MESSAGE_TEXTAREA.value, message)
+        press_enter(ChatComponents.EDIT_MESSAGE_TEXTAREA.value)
     
     # TODO: Find ADMIN
     def find_member_in_panel(self, member: str):
