@@ -116,6 +116,10 @@ def click_obj_by_name(objName: str):
     obj = squish.waitForObject(getattr(names, objName))
     squish.mouseClick(obj, squish.Qt.LeftButton)
 
+def click_obj_by_attr(attr: str):
+    obj = squish.waitForObject(attr)
+    squish.mouseClick(obj, squish.Qt.LeftButton)
+
 def click_obj_by_wildcards_name(objName: str, wildcardString: str):
     wildcardRealName = copy.deepcopy(getattr(names, objName))
     wildcardRealName["objectName"] = Wildcard(wildcardString)

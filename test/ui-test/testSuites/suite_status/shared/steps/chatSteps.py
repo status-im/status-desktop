@@ -1,4 +1,5 @@
 
+
 from random import randint
 from drivers.SquishDriver import *
 from screens.StatusMainScreen import StatusMainScreen
@@ -89,7 +90,23 @@ def step(context, message):
 @Then("the last message is not the random message")
 def step(context):
     _statusChat.verify_last_message_sent_is_not(context.userData["randomMessage"])
-    
+
+@When("user sends the emoji |any| as a message")
+def step(context, emoji_short_name):
+    _statusChat.send_emoji(emoji_short_name, "")
+
+@When("user sends the emoji |any| with message |any|")
+def step(context, emoji_short_name, message):
+    _statusChat.send_emoji(emoji_short_name, message)
+
+@Then("the emoji |any| is displayed in the last message")
+def step(context, emoji):
+    _statusChat.verify_last_message_sent(emoji)
+
+@Then("the message |any| is displayed in the last message")
+def step(context, message):
+    _statusChat.verify_last_message_sent(message)
+
 @Then("the user cannot input a mention to a not existing user |any|")
 def step(context, displayName):
     _statusChat.cannot_do_mention(displayName)

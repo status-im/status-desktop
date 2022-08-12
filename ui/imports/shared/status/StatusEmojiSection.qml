@@ -89,7 +89,6 @@ Item {
                 anchors.leftMargin: emojiSection.imageMargin
 
                 StatusEmoji {
-                    // TODO: this will conflict with Jo's PR, fix it on rebase
                     objectName: "statusEmoji_" + modelData.shortname.replace(/:/g, "")
 
                     width: emojiSection.imageWidth

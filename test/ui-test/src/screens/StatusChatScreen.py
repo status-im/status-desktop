@@ -10,6 +10,7 @@
 
 import re
 
+import copy
 from enum import Enum
 from drivers.SquishDriver import *
 from drivers.SquishDriverVerification import *
@@ -31,6 +32,8 @@ class ChatComponents(Enum):
     SUGGESTIONS_BOX = "chatView_SuggestionBoxPanel"
     SUGGESTIONS_LIST = "chatView_suggestion_ListView"
     MENTION_PROFILE_VIEW = "chatView_userMentioned_ProfileView"
+    CHAT_INPUT_EMOJI_BUTTON = "chatInput_Emoji_Button"
+    EMOJI_POPUP_EMOJI_PLACEHOLDER = "emojiPopup_Emoji_Button_Placeholder"
 
 
 class ChatMessagesHistory(Enum):
@@ -180,3 +183,15 @@ class StatusChatScreen:
                     break
         verify(found, "Checking if the following display name is in the mention's list: " + displayName)
               
+
+    def send_emoji(self, emoji_short_name: str, message: str):
+        if (message != ""):
+            type(ChatComponents.MESSAGE_INPUT.value, message)
+        
+        click_obj_by_name(ChatComponents.CHAT_INPUT_EMOJI_BUTTON.value)
+        emojiAttr = copy.deepcopy(getattr(names, ChatComponents.EMOJI_POPUP_EMOJI_PLACEHOLDER.value))
+        emojiAttr["objectName"] = emojiAttr["objectName"].replace("%NAME%", emoji_short_name)
+        click_obj_by_attr(emojiAttr)
+        
+        press_enter(ChatComponents.MESSAGE_INPUT.value)
+        

@@ -75,3 +75,11 @@ Feature: Status Desktop Chat
 		| displayName        |
 		| notExistingAccount |
 		| asdfgNoNo          |
+
+    Scenario: User can send an emoji in a message
+         When user joins chat room automation-test
+         When user sends the emoji heart_eyes as a message
+         Then the emoji 😍 is displayed in the last message
+         When user sends the emoji sunglasses with message wow I'm so cool
+         Then the emoji 😎 is displayed in the last message
+         And the message wow I'm so cool is displayed in the last message
