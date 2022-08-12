@@ -348,6 +348,7 @@ Item {
 
             navBarProfileButton: StatusNavBarTabButton {
                 id: profileButton
+                objectName: "statusProfileNavBarTabButton"
                 property bool opened: false
 
                 name: appMain.rootStore.userProfileInst.name

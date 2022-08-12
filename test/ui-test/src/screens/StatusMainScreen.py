@@ -27,6 +27,7 @@ class MainScreenComponents(Enum):
     MARK_AS_READ_BUTTON = "mark_as_Read_StatusMenuItemDelegate"
     COMMUNITY_NAVBAR_BUTTONS = "navBarListView_All_Community_Buttons"
     MODULE_WARNING_BANNER = "moduleWarning_Banner"
+    PROFILE_NAVBAR_BUTTON = "mainWindow_ProfileNavBarButton"
 
 class ChatNamePopUp(Enum):
     CHAT_NAME_TEXT = "chat_name_PlaceholderText"
@@ -91,3 +92,7 @@ class StatusMainScreen:
     def verify_communities_count(self, expected_count: int):
         objects = get_objects(MainScreenComponents.COMMUNITY_NAVBAR_BUTTONS.value)
         verify_equals(len(objects), int(expected_count))
+
+    def user_is_online(self):
+        profileButton = squish.waitForObject(getattr(names, MainScreenComponents.PROFILE_NAVBAR_BUTTON.value))
+        verify_equal(profileButton.badge.color.name, "#4ebc60", "The user is not online by default")

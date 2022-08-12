@@ -8,6 +8,7 @@ moduleWarning_Banner = {"container": statusDesktop_mainWindow, "objectName": "mo
 statusDesktop_mainWindow_AppMain_EmojiPopup_SearchTextInput = {"container": statusDesktop_mainWindow_overlay, "objectName": "StatusEmojiPopup_searchBox", "type": "TextEdit", "visible": True}
 mainWindow_ScrollView = {"container": statusDesktop_mainWindow, "type": "StatusScrollView", "unnamed": 1, "visible": True}
 mainWindow_ScrollView_2 = {"container": statusDesktop_mainWindow, "occurrence": 2, "type": "StatusScrollView", "unnamed": 1, "visible": True}
+mainWindow_ProfileNavBarButton = {"container": statusDesktop_mainWindow, "objectName": "statusProfileNavBarTabButton", "type": "StatusNavBarTabButton", "visible": True}
 
 # popups
 close_popup_StatusFlatRoundButton = {"container": statusDesktop_mainWindow_overlay, "id": "closeButton", "type": "StatusFlatRoundButton", "unnamed": 1, "visible": True}

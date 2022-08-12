@@ -233,7 +233,13 @@ proc prepareAccountSettingsJsonObject(self: Service, account: GeneratedAccountDt
     "wallet/visible-tokens": {},
     "waku-enabled": true,
     "appearance": 0,
-    "installation-id": installationId
+    "installation-id": installationId,
+    "current-user-status": %* {
+        "publicKey": account.derivedAccounts.whisper.publicKey,
+        "statusType": 1,
+        "clock": 0,
+        "text": ""
+      }
   }
 
 proc getAccountSettings(self: Service, accountId: string,
@@ -384,7 +390,13 @@ proc setupAccountKeycard*(self: Service, keycardData: KeycardEvent) =
       "wallet/visible-tokens": {},
       "waku-enabled": true,
       "appearance": 0,
-      "installation-id": installationId
+      "installation-id": installationId,
+      "current-user-status": {
+        "publicKey": keycardData.whisperKey.publicKey,
+        "statusType": 1,
+        "clock": 0,
+        "text": ""
+      }
     }
 
     self.addKeycardDetails(settingsJson, accountDataJson)

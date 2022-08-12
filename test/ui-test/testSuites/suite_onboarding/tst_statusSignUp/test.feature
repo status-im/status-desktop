@@ -131,3 +131,7 @@ Feature: Status Desktop Sign Up
     Then the following ui-component seedPhraseView_Submit_Button is not enabled
     And the invalid seed text is visible
 
+  Scenario: After Signing up the Profile state should be online
+    Given A first time user lands on the status desktop and generates new key
+    When user signs up with username tester123 and password TesTEr16843/!@00
+    Then the user is online

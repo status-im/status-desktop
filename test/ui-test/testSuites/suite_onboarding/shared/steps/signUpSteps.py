@@ -2,6 +2,8 @@ from screens.StatusWelcomeScreen import StatusWelcomeScreen
 from screens.StatusMainScreen import StatusMainScreen
 
 _welcomeScreen = StatusWelcomeScreen()
+_mainScreen = StatusMainScreen()
+
 
 
 @Given("A first time user lands on the status desktop and generates new key")
@@ -30,7 +32,7 @@ def step(context, username):
 
 @Then("the user lands on the signed in app")
 def step(context): 
-    StatusMainScreen()
+    _mainScreen
     
     
 @When("The user inputs the seed phrase |any|")
@@ -41,3 +43,7 @@ def step(context, seed_phrase):
 @Then("the invalid seed text is visible")
 def step(context):
     _welcomeScreen.seed_phrase_visible()
+    
+@Then("the user is online")
+def step(context):
+    _mainScreen.user_is_online()
