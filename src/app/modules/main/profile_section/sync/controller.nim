@@ -46,7 +46,7 @@ proc pinMailserver*(self: Controller, nodeAddress: string) =
   discard self.settingsService.pinMailserver(nodeAddress, fleet)
 
 proc saveNewMailserver*(self: Controller, name: string, nodeAddress: string) =
-  self.mailserversService.saveMailserver(name, nodeAddress)
+  discard self.mailserversService.saveMailserver(name, nodeAddress)
 
 proc enableAutomaticSelection*(self: Controller, value: bool) =
   self.mailserversService.enableAutomaticSelection(value)

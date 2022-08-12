@@ -22,7 +22,7 @@ pipeline {
   options {
     timestamps()
     /* Prevent Jenkins jobs from running forever */
-    timeout(time: 60, unit: 'MINUTES')
+    timeout(time: 120, unit: 'MINUTES')
     /* manage how many builds we keep */
     buildDiscarder(logRotator(
       numToKeepStr: '10',
@@ -84,23 +84,30 @@ pipeline {
           def goerli_rpc_port = 855 + env.EXECUTOR_NUMBER
           def mnemonic = "pelican chief sudden oval media rare swamp elephant lawsuit wheat knife initial"
           def goerli_db_path = "$WORKSPACE/test/ui-test/fixtures/ganache-dbs/goerli"
+          def rpc_port = 864 + env.EXECUTOR_NUMBER
+          def geth_port = 3131 + env.EXECUTOR_NUMBER
           docker.image('trufflesuite/ganache:v7.4.1').withRun(
             "-p 127.0.0.1:${goerli_rpc_port}:8545 -v ${goerli_db_path}:/goerli-db",
             "-e 10 -m='${mnemonic}' --chain.chainId 5 --database.dbPath /goerli-db"
           ) { c ->
             sh "docker logs ${c.id}"
-            withEnv(["GOERLI_NETWORK_RPC_URL=http://0.0.0.0:${goerli_rpc_port}"]){
-              wrap([
-                $class: 'Xvfb',
-                autoDisplayName: true,
-                parallelBuild: true,
-                screen: '2560x1440x24',
-              ]) {
-                script {
-                  def res = squish([
-                    extraOptions: '''
-                      --retry
-                      2
+            docker.image('statusteam/status-go:v0.84.0').withRun(
+              "-p 127.0.0.1:${rpc_port}:8545 -p 127.0.0.1:${geth_port}:30303/tcp -p 127.0.0.1:${geth_port}:30303/udp -v ${env.WORKSPACE}/ci/mailserver/config.json:/config.json",
+              "-log=INFO -log-without-color -c=/config.json -dir=/tmp"
+            ) { c2 ->
+              env.PEER_ENR = sh(script:"RPC_PORT=${rpc_port} MAILSERVER_PORT=${geth_port} ${env.WORKSPACE}/ci/mailserver/get_enode.sh", returnStdout:true).trim()
+              withEnv(["TEST_PEER_ENR=${env.PEER_ENR}", "GOERLI_NETWORK_RPC_URL=http://0.0.0.0:${goerli_rpc_port}"]){
+                wrap([
+                  $class: 'Xvfb',
+                  autoDisplayName: true,
+                  parallelBuild: true,
+                  screen: '2560x1440x24',
+                ]) {
+                  script {
+                    def res = squish([
+                      extraOptions: '''
+                        --retry
+                        2
 
                       --tags
                       ~mayfail
@@ -115,11 +122,12 @@ pipeline {
                     ''',
                     squishPackageName: 'squish-6.7.2-qt514x-linux64',
                     testSuite: '${WORKSPACE}/test/ui-test/testSuites/*',
-                  ])
-                  if ( res == "SUCCESS" || res == "UNSTABLE" ) {
-                    return 
+                    ])
+                    if ( res == "SUCCESS" || res == "UNSTABLE" ) {
+                      return 
+                    }
+                    throw new Exception("squish test didn't end with success")
                   }
-                  throw new Exception("squish test didn't end with success")
                 }
               }
             }
