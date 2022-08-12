@@ -22,134 +22,142 @@ import "../panels"
 StatusModal {
     id: root
 
-    property int marginBetweenInputs: Style.dp(38)
-    property string passwordValidationError: ""
-    property bool loading: false
+    readonly property int marginBetweenInputs: Style.dp(38)
+    readonly property alias passwordValidationError: d.passwordValidationError
+
     property var emojiPopup: null
 
+    header.title: qsTr("Generate an account")
     closePolicy: Popup.CloseOnEscape
 
     signal afterAddAccount()
 
-    header.title: qsTr("Generate an account")
+    MessageDialog {
+        id: accountError
+        title: qsTr("Adding the account failed")
+        icon: StandardIcon.Critical
+        standardButtons: StandardButton.Ok
+    }
+
+    Timer {
+        id: waitTimer
+
+        interval: 1000
+        running: false
+        onTriggered: d.getDerivedAddressList()
+    }
+
+    Connections {
+        target: emojiPopup
+        enabled: root.opened
+
+        function onEmojiSelected (emojiText, atCursor) {
+            accountNameInput.input.icon.emoji = emojiText
+        }
+    }
+
+    Connections {
+        target: RootStore
+        enabled: root.opened
+
+        function onDerivedAddressesListChanged() {
+            d.isPasswordCorrect = RootStore.derivedAddressesError.length === 0
+        }
+
+        function onDerivedAddressesErrorChanged() {
+            if(Utils.isInvalidPasswordMessage(RootStore.derivedAddressesError))
+                d.passwordValidationError = qsTr("Wrong password")
+        }
+    }
 
     QtObject {
         id: d
 
-        property int numOfItems: 100
-        property int pageNumber: 1
+        readonly property int numOfItems: 100
+        readonly property int pageNumber: 1
+
+        property string passwordValidationError: ""
+        property bool isPasswordCorrect: false
+
         function getDerivedAddressList() {
-            if(advancedSelection.expandableItem) {
-                var errMessage = ""
-                if(advancedSelection.expandableItem.addAccountType === SelectGeneratedAccount.AddAccountType.ImportSeedPhrase &&
-                        !!advancedSelection.expandableItem.path &&
-                        !!advancedSelection.expandableItem.mnemonicText) {
-                    RootStore.getDerivedAddressListForMnemonic(advancedSelection.expandableItem.mnemonicText, advancedSelection.expandableItem.path, numOfItems, pageNumber)
-                }
-                else if(!!advancedSelection.expandableItem.path && !!advancedSelection.expandableItem.derivedFromAddress && (passwordInput.text.length >= 6)) {
-                    RootStore.getDerivedAddressList(passwordInput.text, advancedSelection.expandableItem.derivedFromAddress, advancedSelection.expandableItem.path, numOfItems, pageNumber)
-                }
+            if(advancedSelection.expandableItem.addAccountType === SelectGeneratedAccount.AddAccountType.ImportSeedPhrase
+                    && !!advancedSelection.expandableItem.path
+                    && !!advancedSelection.expandableItem.mnemonicText) {
+                RootStore.getDerivedAddressListForMnemonic(advancedSelection.expandableItem.mnemonicText,
+                                                           advancedSelection.expandableItem.path, numOfItems, pageNumber)
+            } else if(!!advancedSelection.expandableItem.path && !!advancedSelection.expandableItem.derivedFromAddress
+                      && (passwordInput.text.length > 0)) {
+                RootStore.getDerivedAddressList(passwordInput.text, advancedSelection.expandableItem.derivedFromAddress,
+                                                advancedSelection.expandableItem.path, numOfItems, pageNumber)
             }
-        }
-
-        property string derivedPathError: RootStore.derivedAddressesError
-
-        onDerivedPathErrorChanged: {
-            if(Utils.isInvalidPasswordMessage(derivedPathError))
-                root.passwordValidationError = qsTr("Wrong password")
         }
 
         function showPasswordError(errMessage) {
             if (errMessage) {
                 if (Utils.isInvalidPasswordMessage(errMessage)) {
-                    root.passwordValidationError = qsTr("Wrong password")
+                    d.passwordValidationError = qsTr("Wrong password")
+                    scroll.contentY = -scroll.padding
                 } else {
-                    accountError.text = errMessage;
-                    accountError.open();
+                    accountError.text = errMessage
+                    accountError.open()
                 }
-            }
-        }
-
-        property var waitTimer: Timer {
-            interval: 1000
-            running: false
-            onTriggered: {
-                d.getDerivedAddressList()
             }
         }
 
         function generateNewAccount() {
-            // TODO the loaidng doesn't work because the function freezes th view. Might need to use threads
+            // TODO the loading doesn't work because the function freezes the view. Might need to use threads
             nextButton.loading = true
-            if (!validate() || !advancedSelection.validate()) {
-                Global.playErrorSound();
+            if (!advancedSelection.validate()) {
+                Global.playErrorSound()
                 return nextButton.loading = false
             }
 
-            let emoji =  StatusQUtils.Emoji.deparseFromParse(accountNameInput.input.icon.emoji)
+            let errMessage = ""
 
-            var errMessage = ""
-            if(advancedSelection.expandableItem) {
-                switch(advancedSelection.expandableItem.addAccountType) {
+            switch(advancedSelection.expandableItem.addAccountType) {
                 case SelectGeneratedAccount.AddAccountType.GenerateNew:
-                    errMessage = RootStore.generateNewAccount(passwordInput.text, accountNameInput.text, colorSelectionGrid.selectedColor, accountNameInput.input.icon.emoji, advancedSelection.expandableItem.completePath, advancedSelection.expandableItem.derivedFromAddress)
+                    errMessage = RootStore.generateNewAccount(passwordInput.text, accountNameInput.text, colorSelectionGrid.selectedColor,
+                                                              accountNameInput.input.icon.emoji, advancedSelection.expandableItem.completePath,
+                                                              advancedSelection.expandableItem.derivedFromAddress)
                     break
                 case SelectGeneratedAccount.AddAccountType.ImportSeedPhrase:
-                    errMessage = RootStore.addAccountsFromSeed(advancedSelection.expandableItem.mnemonicText, passwordInput.text, accountNameInput.text, colorSelectionGrid.selectedColor, accountNameInput.input.icon.emoji, advancedSelection.expandableItem.completePath)
+                    errMessage = RootStore.addAccountsFromSeed(advancedSelection.expandableItem.mnemonicText, passwordInput.text,
+                                                               accountNameInput.text, colorSelectionGrid.selectedColor, accountNameInput.input.icon.emoji,
+                                                               advancedSelection.expandableItem.completePath)
                     break
                 case SelectGeneratedAccount.AddAccountType.ImportPrivateKey:
-                    errMessage = RootStore.addAccountsFromPrivateKey(advancedSelection.expandableItem.privateKey, passwordInput.text, accountNameInput.text, colorSelectionGrid.selectedColor, accountNameInput.input.icon.emoji)
+                    errMessage = RootStore.addAccountsFromPrivateKey(advancedSelection.expandableItem.privateKey, passwordInput.text,
+                                                                     accountNameInput.text, colorSelectionGrid.selectedColor, accountNameInput.input.icon.emoji)
                     break
                 case SelectGeneratedAccount.AddAccountType.WatchOnly:
-                    errMessage = RootStore.addWatchOnlyAccount(advancedSelection.expandableItem.watchAddress, accountNameInput.text, colorSelectionGrid.selectedColor, accountNameInput.input.icon.emoji)
+                    errMessage = RootStore.addWatchOnlyAccount(advancedSelection.expandableItem.watchAddress, accountNameInput.text,
+                                                               colorSelectionGrid.selectedColor, accountNameInput.input.icon.emoji)
                     break
-                }
-            } else {
-                errMessage = RootStore.generateNewAccount(passwordInput.text, accountNameInput.text, colorSelectionGrid.selectedColor, accountNameInput.input.icon.emoji, advancedSelection.expandableItem.completePath, advancedSelection.expandableItem.derivedFromAddress)
             }
 
             nextButton.loading = false
-            d.showPasswordError(errMessage)
 
-            root.afterAddAccount();
-            root.close();
+            if (errMessage) {
+                d.showPasswordError(errMessage)
+            } else {
+                root.afterAddAccount()
+                root.close()
+            }
         }
-    }
-
-    function validate() {
-        if (advancedSelection.expandableItem.addAccountType === SelectGeneratedAccount.AddAccountType.WatchOnly) {
-            return accountNameInput.valid
-        }
-
-        if (passwordInput.text === "") {
-            passwordValidationError = qsTr("You need to enter a password")
-        } else if (passwordInput.text.length < 6) {
-            passwordValidationError = qsTr("Password needs to be 6 characters or more")
-        } else {
-            passwordValidationError = ""
-        }
-
-        return passwordValidationError === "" && accountNameInput.valid
     }
 
     onOpened: {
-        passwordValidationError = "";
-        passwordInput.text = "";
-        accountNameInput.text = "";
-        accountNameInput.reset()
         accountNameInput.input.icon.emoji = StatusQUtils.Emoji.getRandomEmoji(StatusQUtils.Emoji.size.verySmall)
         colorSelectionGrid.selectedColorIndex = Math.floor(Math.random() * colorSelectionGrid.model.length)
-        advancedSelection.expanded = false
-        advancedSelection.reset()
         passwordInput.forceActiveFocus(Qt.MouseFocusReason)
     }
 
-    Connections {
-        enabled: root.opened
-        target: emojiPopup
-        onEmojiSelected: function (emojiText, atCursor) {
-            accountNameInput.input.icon.emoji = emojiText
-        }
+    onClosed: {
+        d.passwordValidationError = ""
+        passwordInput.text = ""
+        accountNameInput.reset()
+        advancedSelection.expanded = false
+        advancedSelection.reset()
     }
 
     contentItem: StatusScrollView {
@@ -180,13 +188,14 @@ StatusModal {
                     placeholderText: qsTr("Enter your password...")
                     label: qsTr("Password")
                     textField.echoMode: TextInput.Password
-                    validationError: root.passwordValidationError
+                    validationError: d.passwordValidationError
                     textField.objectName: "accountModalPassword"
                     inputLabel.font.pixelSize: 15
                     inputLabel.font.weight: Font.Normal
                     onTextChanged: {
-                        root.passwordValidationError = ""
-                        d.waitTimer.restart()
+                        d.isPasswordCorrect = false
+                        d.passwordValidationError = ""
+                        waitTimer.restart()
                     }
                     onKeyPressed: {
                         if(event.key === Qt.Key_Tab) {
@@ -238,15 +247,11 @@ StatusModal {
                 property bool isValid: true
 
                 function validate() {
-                    if(expandableItem) {
-                        return expandableItem.validate()
-                    }
+                    return !!expandableItem && expandableItem.validate()
                 }
 
                 function reset() {
-                    if(expandableItem) {
-                        return expandableItem.reset()
-                    }
+                    return !!expandableItem && expandableItem.reset()
                 }
 
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -257,7 +262,6 @@ StatusModal {
                 expandable: true
                 expandableComponent: AdvancedAddAccountView {
                     width: parent.width
-                    Component.onCompleted: advancedSelection.isValid = Qt.binding(function(){return isValid})
                     onCalculateDerivedPath: d.getDerivedAddressList()
                     onEnterPressed: {
                         if (nextButton.enabled) {
@@ -265,6 +269,7 @@ StatusModal {
                             return
                         }
                     }
+                    Component.onCompleted: advancedSelection.isValid = Qt.binding(() => isValid)
                 }
             }
         }
@@ -273,28 +278,19 @@ StatusModal {
     rightButtons: [
         StatusButton {
             id: nextButton
-            text: loading ?
-                      qsTr("Loading...") :
-                      qsTr("Add account")
+
+            text: loading ? qsTr("Loading...") : qsTr("Add account")
 
             enabled: {
                 if (loading) {
                     return false
                 }
 
-                return (advancedSelection.expandableItem.addAccountType === SelectGeneratedAccount.AddAccountType.WatchOnly || passwordInput.text !== "") &&
-                    accountNameInput.text !== "" &&
-                    advancedSelection.isValid
+                return (advancedSelection.expandableItem.addAccountType === SelectGeneratedAccount.AddAccountType.WatchOnly || d.isPasswordCorrect)
+                        && accountNameInput.text !== "" && advancedSelection.isValid
             }
 
             highlighted: focus
-
-            MessageDialog {
-                id: accountError
-                title: "Adding the account failed"
-                icon: StandardIcon.Critical
-                standardButtons: StandardButton.Ok
-            }
 
             Keys.onReturnPressed: d.generateNewAccount()
             onClicked : d.generateNewAccount()
