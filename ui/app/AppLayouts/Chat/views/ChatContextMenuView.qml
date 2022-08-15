@@ -161,6 +161,7 @@ StatusPopupMenu {
 //    }
 
     StatusMenuItem {
+        objectName: "clearHistoryMenuItem"
         text: qsTr("Clear history")
         icon.name: "close-circle"
         onTriggered: {

@@ -31,7 +31,11 @@ def step(context, chatName):
     
 @When("the user inputs a mention to |any| with message |any|")
 def step(context,displayName,message):
-    _statusChat.send_message_with_mention(displayName, message)    
+    _statusChat.send_message_with_mention(displayName, message)
+    
+@When("the user clears chat history")
+def step(context):
+    _statusChat.clear_history()    
 
 @Then("user is able to send chat message")
 def step(context):
@@ -47,6 +51,10 @@ def step(context):
     _statusChat.send_message(message)
     _statusChat.verify_last_message_sent(message)
     context.userData["randomMessage"] = message
+    
+@Then("the chat is cleared")
+def step(context):
+    _statusChat.verify_last_message_is_not_loaded()
 
 @Then("the group chat is created")
 def step(context):

@@ -50,6 +50,17 @@ Feature: Status Desktop Chat
          Then the user can delete the message at index 0
          Then the last message is not the random message
 
+    Scenario: User can clear chat history
+        When user joins chat room test
+        Then user is able to send chat message
+        | message             |
+        | Hello               |
+        | How are you         |
+        | I am from status    |
+        | tell me how you do? |
+        When the user clears chat history
+        Then the chat is cleared
+
 
     @mayfail
     Scenario: User cannot delete another user's message
