@@ -157,7 +157,7 @@ method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
   for channelGroup in channelGroups:
     let isCommunity = channelGroup.channelGroupType == ChannelGroupType.Community
     if(self.controller.searchLocation().len == 0 and
-        channelGroup.name.toLower.startsWith(searchTerm)):
+        channelGroup.name.toLower.contains(searchTerm)):
       let item = result_item.initItem(
         channelGroup.id,
         content="",
@@ -180,7 +180,7 @@ method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
       items.add(item)
 
     # Add channels
-    if(self.controller.searchSubLocation().len == 0 and self.controller.searchLocation().len == 0 or
+    if((self.controller.searchSubLocation().len == 0 and self.controller.searchLocation().len == 0) or
         self.controller.searchLocation() == channelGroup.id):
       for chatDto in channelGroup.chats:
         var chatName = chatDto.name
@@ -197,7 +197,7 @@ method onSearchMessagesDone*(self: Module, messages: seq[MessageDto]) =
         if(chatName.startsWith("@")):
           rawChatName = chatName[1 ..^ 1]
 
-        if(rawChatName.toLower.startsWith(searchTerm)):
+        if(rawChatName.toLower.contains(searchTerm)):
           let item = result_item.initItem(
             chatDto.id,
             content="",

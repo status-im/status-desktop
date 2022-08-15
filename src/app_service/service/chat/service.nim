@@ -3,6 +3,7 @@ import NimQml, Tables, json, sequtils, strformat, chronicles, os, std/algorithm,
 import ./dto/chat as chat_dto
 import ../message/dto/message as message_dto
 import ../activity_center/dto/notification as notification_dto
+import ../community/dto/community as community_dto
 import ../contacts/service as contact_service
 import ../../../backend/chat as status_chat
 import ../../../backend/group_chat as status_group_chat
@@ -115,6 +116,7 @@ QtObject:
 
   # Forward declarations
   proc updateOrAddChat*(self: Service, chat: ChatDto)
+  proc updateOrAddChannelGroup*(self: Service, channelGroup: ChannelGroupDto)
 
   proc doConnect(self: Service) =
     self.events.on(SignalType.Message.event) do(e: Args):
@@ -132,6 +134,11 @@ QtObject:
       if (receivedData.clearedHistories.len > 0):
         for clearedHistoryDto in receivedData.clearedHistories:
           self.events.emit(SIGNAL_CHAT_HISTORY_CLEARED, ChatArgs(chatId: clearedHistoryDto.chatId))
+
+      # Handling community updates
+      if (receivedData.communities.len > 0):
+        for community in receivedData.communities:
+          self.updateOrAddChannelGroup(community.toChannelGroupDto())
   
   proc sortPersonnalChatAsFirst[T, D](x, y: (T, D)): int =
     if (x[1].channelGroupType == Personal): return -1
@@ -195,6 +202,11 @@ QtObject:
       self.channelGroups[channelGroupId].chats.add(chat)
     else:
       self.channelGroups[channelGroupId].chats[index] = chat
+
+  proc updateOrAddChannelGroup*(self: Service, channelGroup: ChannelGroupDto) =
+    self.channelGroups[channelGroup.id] = channelGroup
+    for chat in channelGroup.chats:
+      self.updateOrAddChat(chat)
 
   proc parseChatResponse*(self: Service, response: RpcResponse[JsonNode]): (seq[ChatDto], seq[MessageDto]) =
     var chats: seq[ChatDto] = @[]
