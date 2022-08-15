@@ -221,6 +221,7 @@ Popup {
             height: searchBox.height + emojiHeader.headerMargin
 
             SearchBox {
+                input.edit.objectName: "StatusEmojiPopup_searchBox"
                 id: searchBox
                 anchors.right: skinToneEmoji.left
                 anchors.rightMargin: emojiHeader.headerMargin

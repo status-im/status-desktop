@@ -17,6 +17,10 @@ import object
 import names
 import test
 
+from objectmaphelper import Wildcard
+
+import copy
+
 # The default maximum timeout to find ui object
 _MAX_WAIT_OBJ_TIMEOUT = 5000
 
@@ -96,6 +100,10 @@ def get_obj(objName: str):
     obj = squish.findObject(getattr(names, objName))
     return obj
 
+def wait_and_get_obj(objName: str):
+    obj = squish.waitForObject(getattr(names, objName))
+    return obj
+
 def get_and_click_obj(obj_name: str):
     click_obj(get_obj(obj_name))
 
@@ -106,6 +114,13 @@ def get_objects(objName: str):
 # It executes the left-click action into object with given object name:
 def click_obj_by_name(objName: str):
     obj = squish.waitForObject(getattr(names, objName))
+    squish.mouseClick(obj, squish.Qt.LeftButton)
+
+def click_obj_by_wildcards_name(objName: str, wildcardString: str):
+    wildcardRealName = copy.deepcopy(getattr(names, objName))
+    wildcardRealName["objectName"] = Wildcard(wildcardString)
+
+    obj = squish.waitForObject(wildcardRealName)
     squish.mouseClick(obj, squish.Qt.LeftButton)
 
 # It executes the right-click action into object with given object name:
@@ -166,7 +181,7 @@ def wait_for_object_and_type(objName: str, text: str):
         return True
     except LookupError:
         return False
-    
+
 # Clicking link in label / textedit
 def click_link(objName: str, link: str):
     point = _find_link(getattr(names, objName), link)
@@ -212,3 +227,6 @@ def _find_link(objName: str, link: str):
         
     squish.uninstallSignalHandler(obj, "linkHovered(QString)", "_handle_link_hovered")
     return [-1, -1]
+
+def expectTrue(assertionValue: bool, message: str):
+    return test.verify(assertionValue, message)

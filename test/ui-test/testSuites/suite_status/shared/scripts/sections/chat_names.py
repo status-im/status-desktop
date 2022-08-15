@@ -21,6 +21,8 @@ mark_as_Read_StatusMenuItemDelegate = {"container": statusDesktop_mainWindow_ove
 chatView_SuggestionBoxPanel ={"container": statusDesktop_mainWindow, "objectName": "suggestionsBox", "type": "SuggestionBoxPanel"}
 chatView_suggestion_ListView ={"container": chatView_SuggestionBoxPanel, "objectName": "suggestionBoxList", "type": "StatusListView"}
 chatView_userMentioned_ProfileView ={"container": statusDesktop_mainWindow_overlay, "objectName": "profileView", "type": "ProfileView"}
+# This will conflict with Jo's PR. Resolve it  on rebase.
+emojiPopup_Emoji_Button_Placeholder = {"container": statusDesktop_mainWindow, "objectName": "statusEmoji_%NAME%", "type": "StatusEmoji", "visible": True}
 
 # Join chat popup:
 startChat_Btn = {"container": statusDesktop_mainWindow_overlay, "objectName": "startChatButton", "type": "StatusButton"}

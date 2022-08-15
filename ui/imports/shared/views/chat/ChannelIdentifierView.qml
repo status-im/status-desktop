@@ -23,6 +23,7 @@ Column {
     property string chatIcon: ""
 
     StatusSmartIdenticon {
+        objectName: "channelIdentifierSmartIdenticon"
         anchors.horizontalCenter: parent.horizontalCenter
         name: root.chatName
         icon {
