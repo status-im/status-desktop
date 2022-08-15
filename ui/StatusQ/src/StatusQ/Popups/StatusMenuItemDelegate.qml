@@ -9,7 +9,7 @@ import StatusQ.Popups 0.1
 MenuItem {
     id: statusPopupMenuItem
     implicitWidth: parent ? parent.width : 0
-    implicitHeight: action.enabled ? 38 : 0
+    implicitHeight: action.enabled ? 34 : 0
     objectName: action.objectName
 
     property int subMenuIndex
