@@ -107,14 +107,6 @@ StatusScrollView {
                     }
                 }
             }
-
-            // TODO temp until we have the progress banner
-            StatusButton {
-                Layout.fillHeight: true
-                text: "Show Discord Import Progress"
-                visible: localAccountSensitiveSettings.isDiscordImportToolEnabled
-                onClicked: Global.openPopup(discordImportProgressDialog)
-            }
         }
 
         // Tags definition - Now hidden - Out of scope

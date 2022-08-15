@@ -22,9 +22,19 @@ StatusScrollView {
     implicitWidth: childrenRect.width
     padding: 0
 
+    enum ImportStatus {
+        Unknown,
+        InProgress,
+        Stopped,
+        StoppedWithErrors,
+        CompletedWithWarnings,
+        CompletedSuccessfully
+    }
+
     readonly property list<StatusBaseButton> rightButtons: [
         StatusButton {
-            visible: false
+            visible: d.status === DiscordImportProgressContents.ImportStatus.CompletedWithWarnings ||
+                     d.status === DiscordImportProgressContents.ImportStatus.StoppedWithErrors
             type: StatusButton.Danger
             font.weight: Font.Medium
             text: qsTr("Delete community & restart import")
@@ -34,7 +44,7 @@ StatusScrollView {
             }
         },
         StatusButton {
-            visible: root.store.discordImportProgress < 100
+            visible: d.status === DiscordImportProgressContents.ImportStatus.InProgress
             type: StatusButton.Danger
             font.weight: Font.Medium
             text: qsTr("Cancel import")
@@ -44,7 +54,7 @@ StatusScrollView {
             }
         },
         StatusButton {
-            visible: root.store.discordImportProgressStopped
+            visible: d.status === DiscordImportProgressContents.ImportStatus.Stopped // TODO find out exactly when to display this button
             type: StatusButton.Danger
             font.weight: Font.Medium
             text: qsTr("Restart import")
@@ -54,13 +64,14 @@ StatusScrollView {
             }
         },
         StatusButton {
-            visible: root.store.discordImportProgress < 100
+            visible: d.status === DiscordImportProgressContents.ImportStatus.InProgress
             font.weight: Font.Medium
             text: qsTr("Hide window")
             onClicked: root.close()
         },
         StatusButton {
-            visible: root.store.discordImportProgress >= 100 && !root.store.discordImportProgressStopped
+            visible: d.status === DiscordImportProgressContents.ImportStatus.CompletedSuccessfully ||
+                     d.status === DiscordImportProgressContents.ImportStatus.CompletedWithWarnings
             font.weight: Font.Medium
             text: qsTr("Visit your new Status community")
             onClicked: {
@@ -100,13 +111,34 @@ StatusScrollView {
             }
         }
 
+        readonly property int importProgress: root.store.discordImportProgress // FIXME for now it is 0..100
+        readonly property bool importStopped: root.store.discordImportProgressStopped
+        readonly property bool hasErrors: root.store.discordImportErrorsCount
+        readonly property bool hasWarnings: root.store.discordImportWarningsCount
+
+        readonly property int status: {
+            if (importStopped) {
+                if (hasErrors)
+                    return DiscordImportProgressContents.ImportStatus.StoppedWithErrors
+                return DiscordImportProgressContents.ImportStatus.Stopped
+            }
+            if (importProgress >= 100) {
+                if (hasWarnings)
+                    return DiscordImportProgressContents.ImportStatus.CompletedWithWarnings
+                return DiscordImportProgressContents.ImportStatus.CompletedSuccessfully
+            }
+            if (importProgress > 0 && importProgress < 100)
+                return DiscordImportProgressContents.ImportStatus.InProgress
+            return DiscordImportProgressContents.ImportStatus.Unknown
+        }
+
         function getSubtaskDescription(progress) {
+            if (progress > 0 && (importStopped || hasErrors))
+                return qsTr("Import stopped...")
+            if (importStopped)
+                return ""
             if (progress >= 1.0)
                 return qsTr("✓ Complete")
-            if (progress > 0 && root.store.discordImportProgressStopped)
-                return qsTr("Import stopped...")
-            if (root.store.discordImportProgressStopped)
-                return ""
             if (progress <= 0.0)
                 return qsTr("Pending...")
             return qsTr("Working...")
@@ -120,11 +152,13 @@ StatusScrollView {
             width: parent.width
 
             RowLayout {
+                id: subtaskRow
                 spacing: 12
                 Layout.fillWidth: true
                 Layout.preferredHeight: 42
 
                 StatusRoundIcon {
+                    id: subtaskIcon
                     Layout.alignment: Qt.AlignVCenter
                     Layout.preferredWidth: 40
                     Layout.preferredHeight: 40
@@ -142,10 +176,10 @@ StatusScrollView {
                     StatusBaseText {
                         font.pixelSize: 12
                         color: {
+                            if (model.progress > 0 && d.hasErrors)
+                                return Theme.palette.dangerColor1
                             if (model.progress >= 1)
                                 return Theme.palette.successColor1
-                            if (model.progress > 0 && root.store.discordImportProgressStopped)
-                                return Theme.palette.dangerColor1
                             return Theme.palette.baseColor1
                         }
                         text: d.getSubtaskDescription(model.progress)
@@ -164,13 +198,32 @@ StatusScrollView {
                     Layout.alignment: Qt.AlignVCenter
                     Layout.preferredWidth: 130
                     Layout.preferredHeight: 10
-                    visible: value > 0 && value <= 1 && !root.store.discordImportProgressStopped
+                    visible: value > 0 && value <= 1 && d.status !== DiscordImportProgressContents.ImportStatus.StoppedWithErrors
                     fillColor: Theme.palette.primaryColor1
                     backgroundColor: Theme.palette.directColor8
                     value: model.progress
                 }
             }
-            // TODO display subtask warnings/errors in a Repeater here
+            ColumnLayout {
+                Layout.fillWidth: true
+                Layout.leftMargin: subtaskIcon.width + subtaskRow.spacing
+                spacing: 12
+                readonly property var errors: model.errors
+                Repeater {
+                    Layout.fillWidth: true
+                    id: subtaskErrors
+                    model: parent.errors
+                    delegate: IssuePill {
+                        horizontalPadding: 12
+                        verticalPadding: 8
+                        width: parent.width
+                        height: !!text ? implicitHeight : 0
+                        visible: text
+                        type: model.code === 2 ? IssuePill.Type.Error : IssuePill.Type.Warning
+                        text: model.message
+                    }
+                }
+            }
             StatusDialogDivider {
                 Layout.fillWidth: true
                 Layout.leftMargin: -24 // compensate for Control.horizontalPadding -> full width
@@ -197,13 +250,28 @@ StatusScrollView {
             StatusBaseText {
                 Layout.fillWidth: true
                 font.pixelSize: 15
-                text: qsTr("Importing ‘%1’ from Discord...").arg(root.store.discordImportCommunityId)
+                text: {
+                    switch (d.status) {
+                    case DiscordImportProgressContents.ImportStatus.InProgress:
+                        return qsTr("Importing ‘%1’ from Discord...").arg(root.store.discordImportCommunityId)
+                    case DiscordImportProgressContents.ImportStatus.Stopped:
+                        return qsTr("Importing ‘%1’ from Discord stopped...").arg(root.store.discordImportCommunityId)
+                    case DiscordImportProgressContents.ImportStatus.StoppedWithErrors:
+                        return qsTr("Importing ‘%1’ stopped due to a critical issue...").arg(root.store.discordImportCommunityId)
+                    case DiscordImportProgressContents.ImportStatus.CompletedWithWarnings:
+                        return qsTr("‘%1’ was imported with %n issue(s).", "", root.store.discordImportWarningsCount).arg(root.store.discordImportCommunityId)
+                    case DiscordImportProgressContents.ImportStatus.CompletedSuccessfully:
+                        return qsTr("‘%1’ was successfully imported from Discord.").arg(root.store.discordImportCommunityId)
+                    default:
+                        return qsTr("Your Discord community import is in-progress...")
+                    }
+                }
             }
             Item { Layout.fillWidth: true }
             IssuePill {
-                type: root.store.discordImportErrorsCount ? IssuePill.Type.Error : IssuePill.Type.Warning
-                count: root.store.discordImportErrorsCount ? root.store.discordImportErrorsCount :
-                                                             root.store.discordImportWarningsCount ? root.store.discordImportWarningsCount : 0
+                type: d.hasErrors ? IssuePill.Type.Error : IssuePill.Type.Warning
+                count: d.hasErrors ? root.store.discordImportErrorsCount :
+                                     d.hasWarnings ? root.store.discordImportWarningsCount : 0
                 visible: count
             }
         }
@@ -234,7 +302,9 @@ StatusScrollView {
             horizontalAlignment: Qt.AlignHCenter
             wrapMode: Text.WordWrap
             font.pixelSize: 13
-            text: qsTr("This process can take a while. Feel free to hide this window and use Status normally in the meantime. We’ll notify you when the Community is ready for you.")
+            text: d.status === DiscordImportProgressContents.ImportStatus.InProgress ?
+                      qsTr("This process can take a while. Feel free to hide this window and use Status normally in the meantime. We’ll notify you when the Community is ready for you.") :
+                      qsTr("If there were any issues with your import you can upload new JSON files via the community page at any time.")
         }
     }
 }
