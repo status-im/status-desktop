@@ -194,6 +194,7 @@ ColumnLayout {
         onNotificationButtonClicked: root.notificationButtonClicked()
 
         popupMenu: ChatContextMenuView {
+            objectName: "moreOptionsContextMenu"
             emojiPopup: root.emojiPopup
             openHandler: function () {
                 if(!chatContentModule) {

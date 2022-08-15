@@ -36,6 +36,8 @@ class ChatComponents(Enum):
     CHAT_INPUT_EMOJI_BUTTON = "chatInput_Emoji_Button"
     EMOJI_POPUP_EMOJI_PLACEHOLDER = "emojiPopup_Emoji_Button_Placeholder"
     CHAT_LIST = "chatList_Repeater"
+    MORE_OPTIONS_BUTTON = "chatView_ChatToolbarMoreOptionsButton"
+    CLEAR_HISTORY_MENUITEM = "clearHistoryMenuItem"
 
 class ChatMessagesHistory(Enum):
     CHAT_CREATED_TEXT = 1
@@ -55,7 +57,15 @@ class StatusChatScreen:
         type(ChatComponents.MESSAGE_INPUT.value, message)
         press_enter(ChatComponents.MESSAGE_INPUT.value)
         
-    # Verifications region:        
+    def clear_history(self):
+        click_obj_by_name(ChatComponents.MORE_OPTIONS_BUTTON.value)
+        click_obj_by_name(ChatComponents.CLEAR_HISTORY_MENUITEM.value)
+            
+    # Verifications region:      
+    def verify_last_message_is_not_loaded(self):
+        [loaded, _] = is_loaded_visible_and_enabled(ChatComponents.LAST_MESSAGE_TEXT.value)
+        verify_fasle(loaded, "Success: No message was found")
+          
     def verify_last_message_sent(self, message: str):
         [loaded, last_message_obj] = is_loaded_visible_and_enabled(ChatComponents.LAST_MESSAGE_TEXT.value)
         verify(loaded, "Checking last message sent: " + message)
