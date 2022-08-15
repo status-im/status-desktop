@@ -81,6 +81,11 @@ type DiscordChannelDto* = object
   description*: string
   filePath*: string
 
+type DiscordImportErrorCode* {.pure.}= enum
+  Unknown = 0,
+  Warning = 1,
+  Error = 2
+
 type DiscordImportError* = object
   code*: int
   message*: string

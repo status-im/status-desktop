@@ -3,7 +3,8 @@ import discord_import_error_item
 
 type
   ModelRole {.pure.} = enum
-    Code = UserRole + 1
+    TaskId = UserRole + 1
+    Code
     Message
 
 QtObject:
@@ -23,6 +24,7 @@ QtObject:
 
   method roleNames(self: DiscordImportErrorsModel): Table[int, string] =
     {
+      ModelRole.TaskId.int:"taskId",
       ModelRole.Code.int:"code",
       ModelRole.Message.int:"message",
     }.toTable
@@ -35,6 +37,8 @@ QtObject:
     let item = self.items[index.row]
     let enumRole = role.ModelRole
     case enumRole:
+      of ModelRole.TaskId:
+        result = newQVariant(item.getTaskId())
       of ModelRole.Code:
         result = newQVariant(item.getCode())
       of ModelRole.Message:

@@ -13,6 +13,8 @@ QtObject {
     property bool discordDataExtractionInProgress: root.communitiesModuleInst.discordDataExtractionInProgress
     property int discordImportErrorsCount: root.communitiesModuleInst.discordImportErrorsCount
     property int discordImportWarningsCount: root.communitiesModuleInst.discordImportWarningsCount
+    property var discordImportWarnings: root.communitiesModuleInst.discordImportWarnings
+    property var discordImportErrors: root.communitiesModuleInst.discordImportErrors
     property int discordImportProgress: root.communitiesModuleInst.discordImportProgress
     property bool discordImportProgressStopped: root.communitiesModuleInst.discordImportProgressStopped
     property string discordImportCommunityId

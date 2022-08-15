@@ -13,6 +13,7 @@ import ./models/discord_category_item
 import ./models/discord_channels_model
 import ./models/discord_channel_item
 import ./models/discord_import_tasks_model
+import ./models/discord_import_errors_model
 
 QtObject:
   type
@@ -33,6 +34,10 @@ QtObject:
       discordOldestMessageTimestamp: int
       discordImportErrorsCount: int
       discordImportWarningsCount: int
+      discordImportErrorsModel: DiscordImportErrorsModel
+      discordImportErrorsModelVariant: QVariant
+      discordImportWarningsModel: DiscordImportErrorsModel
+      discordImportWarningsModelVariant: QVariant
       discordImportProgress: int
       discordImportProgressStopped: bool
       discordImportTasksModel: DiscordImportTasksModel
@@ -53,6 +58,10 @@ QtObject:
     self.discordChannelsModelVariant.delete
     self.discordImportTasksModel.delete
     self.discordImportTasksModelVariant.delete
+    self.discordImportErrorsModel.delete
+    self.discordImportErrorsModelVariant.delete
+    self.discordImportWarningsModel.delete
+    self.discordImportWarningsModelVariant.delete
     self.QObject.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =
@@ -76,6 +85,10 @@ QtObject:
     result.discordImportErrorsCount = 0
     result.discordImportProgress = 0
     result.discordImportProgressStopped = false
+    result.discordImportErrorsModel = newDiscordDiscordImportErrorsModel()
+    result.discordImportErrorsModelVariant = newQVariant(result.discordImportErrorsModel)
+    result.discordImportWarningsModel = newDiscordDiscordImportErrorsModel()
+    result.discordImportWarningsModelVariant = newQVariant(result.discordImportWarningsModel)
     result.discordImportTasksModel = newDiscordDiscordImportTasksModel()
     result.discordImportTasksModelVariant = newQVariant(result.discordImportTasksModel)
     result.observedItem = newActiveSection()
@@ -206,6 +219,24 @@ QtObject:
 
   QtProperty[QVariant] discordChannels:
     read = getDiscordChannelsModel
+
+  proc discordImportErrorsModel*(self: View): DiscordImportErrorsModel =
+    result = self.discordImportErrorsModel
+
+  proc getDiscordImportErrorsModel*(self: View): QVariant {.slot.} =
+    return self.discordImportErrorsModelVariant
+
+  QtProperty[QVariant] discordImportErrors:
+    read = getDiscordImportErrorsModel
+
+  proc discordImportWarningsModel*(self: View): DiscordImportErrorsModel =
+    result = self.discordImportWarningsModel
+
+  proc getDiscordImportWarningsModel*(self: View): QVariant {.slot.} =
+    return self.discordImportWarningsModelVariant
+
+  QtProperty[QVariant] discordImportWarnings:
+    read = getDiscordImportWarningsModel
 
   proc discordImportTasksModel*(self: View): DiscordImportTasksModel =
     result = self.discordImportTasksModel
