@@ -85,29 +85,21 @@ StatusScrollView {
         id: d
 
         readonly property var helperInfo: {
-            "import.dataExtraction": {
-                icon: "filter",
-                text: qsTr("Extracting data")
-            },
             "import.communityCreation": {
                 icon: "network",
                 text: qsTr("Setting up your community")
-            },
-            "import.categoriesCreation": {
-                icon: "channel-category",
-                text: qsTr("Importing categories")
             },
             "import.channelsCreation": {
                 icon: "channel",
                 text: qsTr("Importing channels")
             },
-            "import.convertMessages": {
-                icon: "swap",
-                text: qsTr("Converting messages")
-            },
             "import.importMessages": {
                 icon: "receive",
                 text: qsTr("Importing messages")
+            },
+            "import.downloadAssets": {
+                icon: "receive",
+                text: qsTr("Downloading assets")
             }
         }
 
