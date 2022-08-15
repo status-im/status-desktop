@@ -18,6 +18,7 @@ import time
 class MainScreenComponents(Enum):
     STATUS_ICON = "mainWindow_statusIcon_StatusIcon_2"
     PUBLIC_CHAT_ICON = "mainWindow_public_chat_icon_StatusIcon"
+    CHAT_NAVBAR_ICON = "navBarListView_Chat_navbar_StatusNavBarTabButton"
     COMMUNITY_PORTAL_BUTTON = "navBarListView_Communities_Portal_navbar_StatusNavBarTabButton"
     JOIN_PUBLIC_CHAT = "join_public_chat_StatusMenuItemDelegate"
     SETTINGS_BUTTON = "settings_navbar_settings_icon_StatusIcon"
@@ -44,16 +45,20 @@ class StatusMainScreen:
         verify_screen(MainScreenComponents.PUBLIC_CHAT_ICON.value)
 
     # Wait for the banner to disappear otherwise the click might land badly
+    @staticmethod
     def wait_for_banner_to_disappear():
         [bannerLoaded, _] = is_loaded_visible_and_enabled(MainScreenComponents.MODULE_WARNING_BANNER.value)
         if (bannerLoaded):
-            time.sleep(5)
+            StatusMainScreen.wait_for_banner_to_disappear()
 
     def join_chat_room(self, room: str):
         click_obj_by_name(MainScreenComponents.PUBLIC_CHAT_ICON.value)
         #click_obj_by_name(MainScreenComponents.JOIN_PUBLIC_CHAT.value)
         type(ChatNamePopUp.INPUT_ROOM_TOPIC_TEXT.value, room)
         click_obj_by_name(ChatNamePopUp.START_CHAT_BTN.value)
+        
+    def open_chat_section(self):
+        click_obj_by_name(MainScreenComponents.CHAT_NAVBAR_ICON.value)
         
     def open_community_portal(self):
         click_obj_by_name(MainScreenComponents.COMMUNITY_PORTAL_BUTTON.value)

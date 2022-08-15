@@ -11,6 +11,10 @@ _statusMain = StatusMainScreen()
 _statusChat = StatusChatScreen()
 _statusCreateChatView = StatusCreateChatScreen()
 
+@When("the user opens the chat section")
+def step(context):
+    _statusMain.open_chat_section()
+
 @When("user joins chat room |any|")
 def step(context, room):
     _statusMain.join_chat_room(room)
@@ -52,7 +56,7 @@ def step(context):
 def step(context, createdTxt):
     _statusChat.verify_chat_created_message_is_displayed_in_history(createdTxt)
     
-@Then("the group chat title is |any|")
+@Then("the chat title is |any|")
 def step(context, title):
     _statusChat.verify_chat_title(title)
     

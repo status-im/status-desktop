@@ -8,7 +8,7 @@ _statusCommunitityPortal = StatusCommunityPortalScreen()
 _statusMainScreen = StatusMainScreen()
 
 
-@Then("the user opens the community portal section")
+@When("the user opens the community portal section")
 def step(context: any):
     _statusMainScreen.open_community_portal()
 
@@ -32,9 +32,9 @@ def step(context, community_channel_name, community_channel_description, method)
 @When("the admin edits the current community channel to the name |any|")
 def step(context, new_community_channel_name):
     _statusCommunityScreen.edit_community_channel(new_community_channel_name)
-
-@Then("the user lands on the community channel named |any|")
-def step(context, community_channel_name):
+    
+@Then("the user lands on the channel named |any|")
+def step(context, community_channel_name): 
     _statusCommunityScreen.verify_channel_name(community_channel_name)
 
 @When("the admin creates a community category named |any|, with channels |any| and with the method |any|")
