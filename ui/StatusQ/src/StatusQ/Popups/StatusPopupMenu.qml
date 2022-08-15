@@ -13,6 +13,7 @@ Menu {
     closePolicy: Popup.CloseOnPressOutside | Popup.CloseOnEscape
     topPadding: 8
     bottomPadding: 8
+    bottomMargin: 16
 
     property int menuItemCount: 0
     property var subMenuItemIcons: []
@@ -38,6 +39,13 @@ Menu {
 
     delegate: StatusMenuItemDelegate {
         statusPopupMenu: root
+    }
+
+    contentItem: StatusListView {
+        currentIndex: root.currentIndex
+        implicitHeight: contentHeight
+        interactive: contentHeight > availableHeight
+        model: root.contentModel
     }
 
     background: Item {
