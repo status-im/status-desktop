@@ -242,6 +242,13 @@ Item {
                     if (accountsPopup.opened) {
                         accountsPopup.close()
                     } else {
+                        accountsPopup.topMargin =
+                                Qt.binding(function(){
+                                    return userInfo.mapToItem(
+                                                root,
+                                                root.height,
+                                                userInfo.height + Style.current.halfPadding).y
+                                    })
                         accountsPopup.popup(
                                     userInfo,
                                     (userInfo.width - accountsPopup.width) / 2,
