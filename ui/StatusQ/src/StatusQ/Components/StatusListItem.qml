@@ -30,7 +30,7 @@ Rectangle {
     property list<Item> components
     property var bottomModel: []
     property Component bottomDelegate
-    property var tagsModel: []
+    property alias tagsModel: tagsRepeater.model
     property Component tagsDelegate
     property bool loading: false
     property bool loadingFailed: false
@@ -317,16 +317,24 @@ Rectangle {
                 implicitHeight: visible ? 22 : 0
             }
 
-            Row {
-                id: statusListItemTagsSlotInline
+            ScrollView {
+                visible: tagsRepeater.count > 0
                 anchors.top: statusListItemTertiaryTitle.bottom
+                anchors.topMargin: visible? 8 : 0
                 width: parent.width
-                spacing: 10
+                height: visible? contentHeight + 12 : contentHeight
                 clip: true
 
-                Repeater {
-                    model: tagsModel
-                    delegate: tagsDelegate
+                ScrollBar.vertical.policy: ScrollBar.AlwaysOff
+
+                Row {
+                    id: statusListItemTagsSlotInline
+                    spacing: 10
+
+                    Repeater {
+                        id: tagsRepeater
+                        delegate: tagsDelegate
+                    }
                 }
             }
         }

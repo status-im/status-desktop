@@ -342,16 +342,37 @@ CExPynn1gWf9bx498P7/nzPcxEzGExhBdJGYihtAYQlO+tUZvqrPbqeudo5iJGEJjCE15a3VtodH3q2I
     StatusListItem {
         title: "List Item with Inline Tags"
         icon.isLetterIdenticon: true
-        tagsModel : 2
+        tagsModel: ListModel{
+            ListElement {
+                name: "helloworld.eth"
+                emoji: "😁"
+            }
+            ListElement {
+                name: "account1"
+                emoji: "😁"
+            }
+            ListElement {
+                name: "account2"
+                emoji: "😁"
+            }
+            ListElement {
+                name: "account3"
+                emoji: "😁"
+            }
+            ListElement {
+                name: "account4"
+                emoji: "😁"
+            }
+        }
         tagsDelegate: StatusListItemTag {
             color: "blue"
             height: 24
             radius: 6
             closeButtonVisible: false
-            icon.emoji: "😁"
+            icon.emoji: model.emoji
             icon.emojiSize: Emoji.size.verySmall
             icon.isLetterIdenticon: true
-            title: "helloworld.eth"
+            title: model.name
             titleText.font.pixelSize: 12
             titleText.color: Theme.palette.indirectColor1
         }
