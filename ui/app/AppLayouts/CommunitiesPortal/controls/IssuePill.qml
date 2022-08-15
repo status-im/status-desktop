@@ -15,6 +15,9 @@ Control {
     property int type: IssuePill.Type.Warning
 
     property int count
+    property string text: root.type === IssuePill.Type.Warning ? qsTr("%n warning(s)", "", root.count)
+                                                               : qsTr("%n error(s)", "", root.count)
+    property alias bgCornerRadius: background.radius
 
     horizontalPadding: 8
     verticalPadding: 4
@@ -26,6 +29,7 @@ Control {
     }
 
     background: Rectangle {
+        id: background
         radius: 100
         color: Theme.palette.alphaColor(d.baseColor, 0.03)
         border.width: 1
@@ -44,8 +48,7 @@ Control {
         StatusBaseText {
             Layout.alignment: Qt.AlignVCenter
             verticalAlignment: Qt.AlignVCenter
-            text: root.type === IssuePill.Type.Warning ? qsTr("%n warning(s)", "", root.count)
-                                                       : qsTr("%n error(s)", "", root.count)
+            text: root.text
             color: d.baseColor
             font.pixelSize: 12
         }
