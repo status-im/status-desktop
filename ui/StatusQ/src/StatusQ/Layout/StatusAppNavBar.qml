@@ -157,6 +157,7 @@ Rectangle {
 
     ListView {
         id: navBarListView
+        objectName: "statusMainNavBarListView"
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: parent.top

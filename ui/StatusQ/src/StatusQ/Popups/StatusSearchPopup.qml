@@ -92,6 +92,7 @@ StatusModal {
 
                 StatusInput {
                     id: inputText
+                    input.edit.objectName: "searchPopupSearchInput"
                     anchors.left: statusIcon.right
                     anchors.right: parent.right
                     anchors.verticalCenter: parent.verticalCenter
@@ -239,6 +240,7 @@ StatusModal {
 
                 StatusFlatRoundButton {
                     id: closeButton
+                    objectName: "searchModalResetSearchButton"
                     width: 32
                     height: 32
                     anchors.left: searchOptionsMenuButton.right
@@ -263,6 +265,7 @@ StatusModal {
                 clip: true
                 ListView {
                     id: view
+                    objectName: "searchResultListView"
                     anchors.fill: parent
                     anchors {
                         leftMargin: 0
