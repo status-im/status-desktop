@@ -113,6 +113,7 @@ Item {
 
                 delegate: Item {
                     id: draggable
+                    objectName: model.name
                     width: statusChatListCategory.width
                     height: statusChatListCategory.height
                     property alias chatListCategory: statusChatListCategory
@@ -259,6 +260,7 @@ Item {
 
             Repeater {
                 id: statusChatListCategories
+                objectName: "communityChatListCategories"
                 visible: !!model && model.count > 0
                 model: delegateModel
             }
