@@ -98,7 +98,7 @@ StatusScrollView {
                 text: qsTr("Importing messages")
             },
             "import.downloadAssets": {
-                icon: "receive",
+                icon: "image",
                 text: qsTr("Downloading assets")
             }
         }
@@ -197,19 +197,19 @@ StatusScrollView {
                 }
             }
             ColumnLayout {
+                id: errorsColumn
                 Layout.fillWidth: true
                 Layout.leftMargin: subtaskIcon.width + subtaskRow.spacing
                 spacing: 12
-                readonly property var errors: model.errors
+                property var errorsModel: model.errors
+
                 Repeater {
-                    Layout.fillWidth: true
-                    id: subtaskErrors
-                    model: parent.errors
+                    model: errorsColumn.errorsModel
                     delegate: IssuePill {
+                        Layout.fillWidth: true
                         horizontalPadding: 12
                         verticalPadding: 8
-                        width: parent.width
-                        height: !!text ? implicitHeight : 0
+                        bgCornerRadius: 8
                         visible: text
                         type: model.code === 2 ? IssuePill.Type.Error : IssuePill.Type.Warning
                         text: model.message
