@@ -343,6 +343,15 @@ void dos_qqmlapplicationengine_setNetworkAccessManagerFactory(::DosQQmlApplicati
 void dos_qqmlapplicationengine_load(::DosQQmlApplicationEngine *vptr, const char *filename)
 {
     auto engine = static_cast<QQmlApplicationEngine *>(vptr);
+    QObject::connect(
+        engine, &QQmlApplicationEngine::objectCreated, qGuiApp,
+        [](QObject *obj, const QUrl &objUrl) {
+          if (!obj) {
+            qWarning() << "Error while loading QML:" << objUrl;
+            QCoreApplication::exit(EXIT_FAILURE);
+          }
+        },
+        Qt::QueuedConnection);
     engine->load(QUrl::fromLocalFile(QGuiApplication::applicationDirPath() + QDir::separator() + QString(filename)));
 }
 
@@ -350,6 +359,15 @@ void dos_qqmlapplicationengine_load_url(::DosQQmlApplicationEngine *vptr, ::DosQ
 {
     auto engine = static_cast<QQmlApplicationEngine *>(vptr);
     auto qurl = static_cast<QUrl *>(url);
+    QObject::connect(
+        engine, &QQmlApplicationEngine::objectCreated, qGuiApp,
+        [](QObject *obj, const QUrl &objUrl) {
+          if (!obj) {
+            qWarning() << "Error while loading QML:" << objUrl;
+            QCoreApplication::exit(EXIT_FAILURE);
+          }
+        },
+        Qt::QueuedConnection);
     engine->load(*qurl);
 }
 
