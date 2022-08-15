@@ -320,6 +320,12 @@ DEFAULT_TENOR_API_KEY := DU7DWZ27STB2
 TENOR_API_KEY ?= $(DEFAULT_TENOR_API_KEY)
 NIM_PARAMS += -d:TENOR_API_KEY:"$(TENOR_API_KEY)"
 
+# used to override the default number of kdf iterations for sqlcipher
+KDF_ITERATIONS ?= 0
+ifeq ($(shell test $(KDF_ITERATIONS) -gt 0; echo $$?),0)
+  NIM_PARAMS += -d:KDF_ITERATIONS:"$(KDF_ITERATIONS)"
+endif
+
 NIM_PARAMS += -d:chronicles_sinks=textlines[stdout],textlines[nocolors,dynamic],textlines[file,nocolors] -d:chronicles_runtime_filtering=on -d:chronicles_default_output_device=dynamic
 
 RESOURCES_LAYOUT := -d:development
