@@ -245,7 +245,7 @@ StatusStackModal {
             readonly property var nextAction: function () {
                 d.importDiscordCommunity()
                 // replace ourselves with the progress dialog, no way back
-                root.leftButtons = undefined
+                root.leftButtons[0].visible = false
                 root.backgroundColor = Theme.palette.baseColor4
                 root.replace(progressComponent)
             }
