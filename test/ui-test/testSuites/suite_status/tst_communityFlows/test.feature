@@ -81,3 +81,15 @@ Feature: Status Desktop community
         And the user opens the communities settings
         And the user leaves the community
         Then the count of communities in navbar is 0
+
+    Scenario Outline: User changes the emoji of a channel
+        When the user creates a community named myCommunity, with description My community description, intro Community Intro and outro Community Outro
+        Then the user lands on the community named myCommunity
+        When the admin creates a community channel named test-channel, with description My description with the method bottom_menu
+        Then the user lands on the community channel named test-channel
+        When the user changes emoji of the current community channel with emoji by description <new_emoji_description>
+        Then the community channel has emoji <new_emoji>
+
+        Examples:
+            | new_emoji_description | new_emoji |
+            | thumbs up             | 👍        |

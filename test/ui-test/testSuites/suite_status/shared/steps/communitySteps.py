@@ -56,3 +56,11 @@ def step(context, community_channel_count: int):
 @Then("the count of communities in navbar is |any|")
 def step(context: any, expected_count: int):
     _statusMainScreen.verify_communities_count(expected_count)
+
+@When("the user changes emoji of the current community channel with emoji by description |any|")
+def step(context, emoji_description: str):
+    _statusCommunityScreen.search_and_change_community_channel_emoji(emoji_description)
+
+@Then("the community channel has emoji |any|")
+def step(context, emoji: str):
+    _statusCommunityScreen.check_community_channel_emoji(emoji)

@@ -11,6 +11,8 @@
 
 from enum import Enum
 import time
+from unittest import TestSuite
+
 from drivers.SquishDriver import *
 from drivers.SquishDriverVerification import *
 from drivers.SDKeyboardCommands import *
@@ -27,6 +29,7 @@ class CommunityScreenComponents(Enum):
     COMMUNITY_CREATE_CHANNEL__MENU_ITEM = "create_channel_StatusMenuItemDelegate"
     COMMUNITY_CREATE_CATEGORY__MENU_ITEM = "create_category_StatusMenuItemDelegate"
     CHAT_IDENTIFIER_CHANNEL_NAME = "msgDelegate_channelIdentifierNameText_StyledText"
+    CHAT_IDENTIFIER_CHANNEL_ICON = "mainWindow_chatInfoBtnInHeader_StatusChatInfoButton"
     CHAT_MORE_OPTIONS_BUTTON = "chat_moreOptions_menuButton"
     EDIT_CHANNEL_MENU_ITEM = "edit_Channel_StatusMenuItemDelegate"
     COMMUNITY_COLUMN_VIEW = "mainWindow_communityColumnView_CommunityColumnView"
@@ -54,12 +57,21 @@ class CommunityColorPanelComponents(Enum):
 class CreateOrEditCommunityChannelPopup(Enum):
     COMMUNITY_CHANNEL_NAME_INPUT: str = "createOrEditCommunityChannelNameInput_TextEdit"
     COMMUNITY_CHANNEL_DESCRIPTION_INPUT: str = "createOrEditCommunityChannelDescriptionInput_TextEdit"
-    COMMUNITY_CHANNEL_BUTTON: str = "createOrEditCommunityChannelBtn_StatusButton"
+    COMMUNITY_CHANNEL_SAVE_OR_CREATE_BUTTON: str = "createOrEditCommunityChannelBtn_StatusButton"
+    EMOJI_BUTTON: str = "createOrEditCommunityChannel_EmojiButton"
+    EMOJI_SEARCH_TEXT_INPUT: str = "statusDesktop_mainWindow_AppMain_EmojiPopup_SearchTextInput"
+    EMOJI_POPUP_EMOJI_PLACEHOLDER = "emojiPopup_Emoji_Button_Placeholder"
 
 class StatusCommunityScreen:
 
     def __init__(self):
-        verify_screen(CommunityScreenComponents.COMMUNITY_HEADER_BUTTON.value) 
+        verify_screen(CommunityScreenComponents.COMMUNITY_HEADER_BUTTON.value)
+
+    def open_edit_channel_popup(self):
+        StatusMainScreen.wait_for_banner_to_disappear()
+
+        click_obj_by_name(CommunityScreenComponents.CHAT_MORE_OPTIONS_BUTTON.value)
+        click_obj_by_name(CommunityScreenComponents.EDIT_CHANNEL_MENU_ITEM.value)
 
     def verify_community_name(self, communityName: str):
         verify_text_matching(CommunityScreenComponents.COMMUNITY_HEADER_NAME_TEXT.value, communityName)
@@ -76,22 +88,20 @@ class StatusCommunityScreen:
 
         wait_for_object_and_type(CreateOrEditCommunityChannelPopup.COMMUNITY_CHANNEL_NAME_INPUT.value, communityChannelName)
         type(CreateOrEditCommunityChannelPopup.COMMUNITY_CHANNEL_DESCRIPTION_INPUT.value, communityChannelDescription)
-        click_obj_by_name(CreateOrEditCommunityChannelPopup.COMMUNITY_CHANNEL_BUTTON.value)
 
-    # TODO check if this function is needed, it seems to do the same as verify_chat_title in StatusChatScreen
+        click_obj_by_name(CreateOrEditCommunityChannelPopup.COMMUNITY_CHANNEL_SAVE_OR_CREATE_BUTTON.value)
+
+    # TODO check if this function is needed, it seems to do the same as verify_chat_title in StatusChatScreen 
     def verify_channel_name(self, community_channel_name: str):
         verify_text_matching(CommunityScreenComponents.CHAT_IDENTIFIER_CHANNEL_NAME.value, community_channel_name)
 
     def edit_community_channel(self, new_community_channel_name: str):
-        StatusMainScreen.wait_for_banner_to_disappear()
-
-        click_obj_by_name(CommunityScreenComponents.CHAT_MORE_OPTIONS_BUTTON.value)
-        click_obj_by_name(CommunityScreenComponents.EDIT_CHANNEL_MENU_ITEM.value)
+        self.open_edit_channel_popup()
 
         # Select all text in the input before typing
         wait_for_object_and_type(CreateOrEditCommunityChannelPopup.COMMUNITY_CHANNEL_NAME_INPUT.value, "<Ctrl+a>")
         type(CreateOrEditCommunityChannelPopup.COMMUNITY_CHANNEL_NAME_INPUT.value, new_community_channel_name)
-        click_obj_by_name(CreateOrEditCommunityChannelPopup.COMMUNITY_CHANNEL_BUTTON.value)
+        click_obj_by_name(CreateOrEditCommunityChannelPopup.COMMUNITY_CHANNEL_SAVE_OR_CREATE_BUTTON.value)
         time.sleep(0.5)
 
     def edit_community(self, new_community_name: str, new_community_description: str, new_community_color: str):
@@ -122,7 +132,7 @@ class StatusCommunityScreen:
         verify_text_matching(CommunitySettingsComponents.COMMUNITY_NAME_TEXT.value, new_community_name)
         verify_text_matching(CommunitySettingsComponents.COMMUNITY_DESCRIPTION_TEXT.value, new_community_description)
         obj = get_obj(CommunitySettingsComponents.COMMUNITY_LETTER_IDENTICON.value)
-        test.verify(obj.color.name == new_community_color, "Community color was not changed correctly")
+        expectTrue(obj.color.name == new_community_color, "Community color was not changed correctly")
 
     def go_back_to_community(self):
         click_obj_by_name(CommunitySettingsComponents.BACK_TO_COMMUNITY_BUTTON.value)
@@ -138,3 +148,19 @@ class StatusCommunityScreen:
         chatListObj = get_obj(CommunityScreenComponents.NOT_CATEGORIZED_CHAT_LIST.value)
         # Squish doesn't follow the type hints when parsing gherkin values
         verify_equals(chatListObj.statusChatListItems.count, int(count_to_check))
+
+    def search_and_change_community_channel_emoji(self, emoji_description: str):
+        self.open_edit_channel_popup()
+
+        click_obj_by_name(CreateOrEditCommunityChannelPopup.EMOJI_BUTTON.value)
+
+        # Search emoji
+        wait_for_object_and_type(CreateOrEditCommunityChannelPopup.EMOJI_SEARCH_TEXT_INPUT.value, emoji_description)
+        # Click on the first found emoji button
+        click_obj_by_wildcards_name(CreateOrEditCommunityChannelPopup.EMOJI_POPUP_EMOJI_PLACEHOLDER.value, "statusEmoji_*")
+        # save changes
+        click_obj_by_name(CreateOrEditCommunityChannelPopup.COMMUNITY_CHANNEL_SAVE_OR_CREATE_BUTTON.value)
+
+    def check_community_channel_emoji(self, emojiStr: str):
+        obj = wait_and_get_obj(CommunityScreenComponents.CHAT_IDENTIFIER_CHANNEL_ICON.value)
+        expectTrue(str(obj.icon.emoji).find(emojiStr) >= 0, "Same emoji check")

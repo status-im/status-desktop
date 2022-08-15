@@ -117,6 +117,7 @@ StatusDialog {
                 input.icon.color: colorDialog.color.toString()
                 rightPadding: 6
                 input.rightComponent: StatusRoundButton {
+                    objectName: "StatusChannelPopup_emojiButton"
                     implicitWidth: 32
                     implicitHeight: 32
                     icon.width: 20
