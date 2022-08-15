@@ -16,7 +16,7 @@ Feature: Status Desktop Group Chat
        	 | Nervous  |
 		Then the group chat is created
 		 And the group chat history contains "created the group" message
-		 And the group chat title is Athletic&Nervous
+		 And the chat title is Athletic&Nervous
 		 And the group chat contains the following members
        	 | Athletic |
        	 | Nervous  |
