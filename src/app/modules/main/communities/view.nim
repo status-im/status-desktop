@@ -353,10 +353,12 @@ QtObject:
       fileItems.add(fileItem)
     self.discordFileListModel.setItems(fileItems)
     self.setDiscordImportErrorsCount(0)
+    self.setDiscordImportWarningsCount(0)
 
   proc clearFileList*(self: View) {.slot.} =
     self.discordFileListModel.clearItems()
     self.setDiscordImportErrorsCount(0)
+    self.setDiscordImportWarningsCount(0)
 
   proc requestExtractDiscordChannelsAndCategories*(self: View) {.slot.} =
     let filePaths = self.discordFileListModel.getSelectedFilePaths()
