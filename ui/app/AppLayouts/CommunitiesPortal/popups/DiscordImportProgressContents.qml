@@ -177,10 +177,10 @@ StatusScrollView {
                     StatusBaseText {
                         font.pixelSize: 12
                         color: {
-                            if (model.progress > 0 && d.hasErrors)
-                                return Theme.palette.dangerColor1
                             if (model.progress >= 1)
                                 return Theme.palette.successColor1
+                            if (model.progress > 0 && d.hasErrors)
+                                return Theme.palette.dangerColor1
                             return Theme.palette.baseColor1
                         }
                         text: d.getSubtaskDescription(model.progress)
