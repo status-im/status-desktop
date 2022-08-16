@@ -28,6 +28,9 @@ class CommunityScreenComponents(Enum):
     COMMUNITY_CREATE_CHANNEL_OR_CAT_BUTTON = "mainWindow_createChannelOrCategoryBtn_StatusBaseText"
     COMMUNITY_CREATE_CHANNEL_MENU_ITEM = "create_channel_StatusMenuItemDelegate"
     COMMUNITY_CREATE_CATEGORY_MENU_ITEM = "create_category_StatusMenuItemDelegate"
+    COMMUNITY_EDIT_CATEGORY_MENU_ITEM = "edit_сategory_StatusMenuItemDelegate"
+    COMMUNITY_DELETE_CATEGORY_MENU_ITEM = "delete_сategory_StatusMenuItemDelegate"
+    COMMUNITY_CONFIRM_DELETE_CATEGORY_BUTTON = "confirmDeleteCategoryButton_StatusButton"
     CHAT_IDENTIFIER_CHANNEL_NAME = "msgDelegate_channelIdentifierNameText_StyledText"
     CHAT_IDENTIFIER_CHANNEL_ICON = "mainWindow_chatInfoBtnInHeader_StatusChatInfoButton"
     CHAT_MORE_OPTIONS_BUTTON = "chat_moreOptions_menuButton"
@@ -133,7 +136,7 @@ class StatusCommunityScreen:
         elif (method == CommunityCreateMethods.RIGHT_CLICK_MENU.value):
             right_click_obj_by_name(CommunityScreenComponents.COMMUNITY_COLUMN_VIEW.value)
         else:
-            test.fail("Unknown method to create a category: ", method)
+            verify_failure("Unknown method to create a category: ", method)
 
         click_obj_by_name(CommunityScreenComponents.COMMUNITY_CREATE_CATEGORY_MENU_ITEM.value)
 
@@ -143,14 +146,26 @@ class StatusCommunityScreen:
         if loaded:
             click_obj(listItem)
         else:
-            test.fail("Can't find channel " + community_channel_name)
+            verify_failure("Can't find channel " + community_channel_name)
 
         click_obj_by_name(CreateOrEditCommunityCategoryPopup.COMMUNITY_CATEGORY_BUTTON.value)
+        
+    def delete_community_category(self, community_category_name):
+        [loaded, category] = self._find_category_in_chat(community_category_name)
+        verify(loaded, "Can't find category " + community_category_name)
+
+        # For some reason it clicks on a first channel in category instead of category
+        squish.mouseClick(category.parent, squish.Qt.RightButton)
+        click_obj_by_name(CommunityScreenComponents.COMMUNITY_DELETE_CATEGORY_MENU_ITEM.value)
+        click_obj_by_name(CommunityScreenComponents.COMMUNITY_CONFIRM_DELETE_CATEGORY_BUTTON.value)
 
     def verify_category_name(self, community_category_name):
         [result, _] = self._find_category_in_chat(community_category_name)
-        if not result:
-            test.fail("Can't find category " + community_category_name)
+        verify(result, "Can't find category " + community_category_name)
+
+    def verify_category_name_missing(self, community_category_name):
+        [result, _] = self._find_category_in_chat(community_category_name)
+        verify_false(result, "Category " + community_category_name + " still exist")
 
     def edit_community(self, new_community_name: str, new_community_description: str, new_community_color: str):
         click_obj_by_name(CommunityScreenComponents.COMMUNITY_HEADER_BUTTON.value)

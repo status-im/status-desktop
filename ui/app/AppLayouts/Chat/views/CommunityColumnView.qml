@@ -259,6 +259,7 @@ Item {
                 }
 
                 StatusMenuItem {
+                    objectName: "editCategoryMenuItem"
                     enabled: communityData.amISectionAdmin
                     text: qsTr("Edit Category")
                     icon.name: "edit"
@@ -277,6 +278,7 @@ Item {
                 }
 
                 StatusMenuItem {
+                    objectName: "deleteCategoryMenuItem"
                     enabled: communityData.amISectionAdmin
                     text: qsTr("Delete Category")
                     icon.name: "delete"
@@ -551,6 +553,7 @@ Item {
         id: deleteCategoryConfirmationDialogComponent
         ConfirmationDialog {
             property string categoryId
+            confirmButtonObjectName: "confirmDeleteCategoryButton"
             btnType: "warn"
             showCancelButton: true
             onClosed: {

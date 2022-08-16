@@ -69,13 +69,24 @@ Feature: Status Desktop community
         When the user creates a community named myCommunity, with description My community description, intro Community Intro and outro Community Outro
         Then the user lands on the community named myCommunity
         When the admin creates a community channel named <community_channel_name>, with description Some description with the method <method>
-        When the admin creates a community category named <community_category_name>, with channel <community_channel_name> and with the method <method>
+        And the admin creates a community category named <community_category_name>, with channel <community_channel_name> and with the method <method>
         Then the category named <community_category_name> is created
 
         Examples:
             | community_channel_name    | community_category_name     | method           |
             | test-channel-1            | test-category-1             | bottom_menu      |
             | test-channel-2            | test-category-2             | right_click_menu |
+
+
+    Scenario: Admin deletes a community category
+        When the user creates a community named myCommunity, with description My community description, intro Community Intro and outro Community Outro
+        Then the user lands on the community named myCommunity
+        When the admin creates a community channel named test-channel, with description My description with the method bottom_menu
+        And the admin creates a community category named test-category, with channel test-channel and with the method bottom_menu
+        Then the category named test-category is created
+        When the admin deletes category named test-category
+        Then the category named test-category is missing
+
 
     Scenario Outline: Admin edits a community
         When the user creates a community named myCommunity, with description My community description, intro Community Intro and outro Community Outro
@@ -88,6 +99,7 @@ Feature: Status Desktop community
             | new_community_name       | new_community_description  | new_community_color |
             | myCommunityNamedChanged  | Cool new description 123   | #ff0000             |
 
+
     Scenario: User leaves community
         When the user creates a community named testCommunity, with description My community description, intro Community Intro and outro Community Outro
         Then the user lands on the community named testCommunity
@@ -95,6 +107,7 @@ Feature: Status Desktop community
         And the user opens the communities settings
         And the user leaves the community
         Then the count of communities in navbar is 0
+
 
     Scenario Outline: User changes the emoji of a channel
         When the user creates a community named myCommunity, with description My community description, intro Community Intro and outro Community Outro
