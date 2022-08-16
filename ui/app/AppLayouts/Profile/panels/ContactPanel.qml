@@ -19,7 +19,6 @@ import shared.controls.chat.menuItems 1.0
 StatusListItem {
     id: container
     width: parent.width
-    visible: container.isContact && (container.searchStr == "" || container.name.includes(container.searchStr))
     height: visible ? implicitHeight : 0
     title: container.name
 
@@ -34,8 +33,6 @@ StatusListItem {
     property bool isVerified: false
     property bool isUntrustworthy: false
     property int verificationRequestStatus: 0
-
-    property string searchStr: ""
 
     property bool showSendMessageButton: false
     property bool showRejectContactRequestButton: false
