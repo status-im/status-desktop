@@ -131,12 +131,12 @@ StatusScrollView {
         }
 
         function getSubtaskDescription(progress) {
+            if (progress >= 1.0)
+                return qsTr("✓ Complete")
             if (progress > 0 && (importStopped || hasErrors))
                 return qsTr("Import stopped...")
             if (importStopped)
                 return ""
-            if (progress >= 1.0)
-                return qsTr("✓ Complete")
             if (progress <= 0.0)
                 return qsTr("Pending...")
             return qsTr("Working...")
