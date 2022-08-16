@@ -30,5 +30,4 @@ StatusInput {
                                                 qsTr("community description"))
         }
     ]
-    validationMode: StatusInput.ValidationMode.Always
 }

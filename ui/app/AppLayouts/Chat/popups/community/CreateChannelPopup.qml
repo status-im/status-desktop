@@ -131,7 +131,6 @@ StatusDialog {
                         root.emojiPopup.y = root.y + root.header.height + root.topPadding + nameInput.height + Style.current.smallPadding;
                     }
                 }
-                validationMode: StatusInput.ValidationMode.Always
                 validators: [
                     StatusMinLengthValidator {
                         minLength: 1
@@ -214,7 +213,6 @@ StatusDialog {
                 input.multiline: true
                 minimumHeight: 88
                 maximumHeight: 88
-                validationMode: StatusInput.ValidationMode.Always
                 validators: [StatusMinLengthValidator {
                         minLength: 1
                         errorMessage:  Utils.getErrorMessage(descriptionTextArea.errors, qsTr("channel description"))

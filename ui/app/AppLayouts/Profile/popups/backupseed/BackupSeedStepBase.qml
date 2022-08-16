@@ -39,13 +39,12 @@ StatusScrollView {
             id: inputText
             visible: (wordRandomNumber > -1)
             implicitWidth: 448
-            validationMode: StatusInput.ValidationMode.Always
             label: qsTr("Word #%1").arg(wordRandomNumber + 1)
             placeholderText: qsTr("Enter word")
             validators: [
                 StatusValidator {
                     validate: function (t) { return (root.wordAtRandomNumber === inputText.text); }
-                    errorMessage: (inputText.text.length) > 0 ? qsTr("Wrong word") : ""
+                    errorMessage: qsTr("Wrong word")
                 }
             ]
             Layout.fillWidth: true

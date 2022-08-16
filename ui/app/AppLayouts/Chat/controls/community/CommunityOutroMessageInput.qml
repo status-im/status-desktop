@@ -25,5 +25,4 @@ StatusInput {
                                                 qsTr("community intro message"))
         }
     ]
-    validationMode: StatusInput.ValidationMode.Always
 }
