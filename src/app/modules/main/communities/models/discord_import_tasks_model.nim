@@ -6,6 +6,7 @@ type
     Type = UserRole + 1
     Progress
     Errors
+    Stopped
 
 QtObject:
   type DiscordImportTasksModel* = ref object of QAbstractListModel
@@ -27,6 +28,7 @@ QtObject:
       ModelRole.Type.int:"type",
       ModelRole.Progress.int:"progress",
       ModelRole.Errors.int:"errors",
+      ModelRole.Stopped.int:"stopped",
     }.toTable
 
   method data(self: DiscordImportTasksModel, index: QModelIndex, role: int): QVariant =
@@ -43,6 +45,8 @@ QtObject:
         result = newQVariant(item.getProgress())
       of ModelRole.Errors:
         result = newQVariant(item.getErrors())
+      of ModelRole.Stopped:
+        result = newQVariant(item.getStopped())
 
   method rowCount(self: DiscordImportTasksModel, index: QModelIndex = nil): int =
     return self.items.len

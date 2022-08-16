@@ -94,6 +94,7 @@ type DiscordImportTaskProgress* = object
   `type`*: string
   progress*: float
   errors*: seq[DiscordImportError]
+  stopped*: bool
 
 proc toCommunityAdminSettingsDto*(jsonObj: JsonNode): CommunityAdminSettingsDto =
   result = CommunityAdminSettingsDto()
@@ -121,6 +122,7 @@ proc toDiscordImportTaskProgress*(jsonObj: JsonNode): DiscordImportTaskProgress 
   result = DiscordImportTaskProgress()
   result.`type` = jsonObj{"type"}.getStr()
   result.progress = jsonObj{"progress"}.getFloat()
+  result.stopped = jsonObj{"stopped"}.getBool()
 
   var importErrorsObj: JsonNode
   if(jsonObj.getProp("errors", importErrorsObj) and importErrorsObj.kind == JArray):

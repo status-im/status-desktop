@@ -171,7 +171,8 @@ method getDiscordImportTaskItem(self: Module, t: DiscordImportTaskProgress): Dis
   return initDiscordImportTaskItem(
       t.`type`,
       t.progress,
-      errorItems)
+      errorItems,
+      t.stopped)
 
 method setCommunityTags*(self: Module, communityTags: string) =
   self.view.setCommunityTags(communityTags)
