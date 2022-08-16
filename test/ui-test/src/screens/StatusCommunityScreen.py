@@ -26,8 +26,8 @@ class CommunityScreenComponents(Enum):
     COMMUNITY_HEADER_BUTTON = "mainWindow_communityHeader_StatusChatInfoButton"
     COMMUNITY_HEADER_NAME_TEXT= "community_ChatInfo_Name_Text"
     COMMUNITY_CREATE_CHANNEL_OR_CAT_BUTTON = "mainWindow_createChannelOrCategoryBtn_StatusBaseText"
-    COMMUNITY_CREATE_CHANNEL__MENU_ITEM = "create_channel_StatusMenuItemDelegate"
-    COMMUNITY_CREATE_CATEGORY__MENU_ITEM = "create_category_StatusMenuItemDelegate"
+    COMMUNITY_CREATE_CHANNEL_MENU_ITEM = "create_channel_StatusMenuItemDelegate"
+    COMMUNITY_CREATE_CATEGORY_MENU_ITEM = "create_category_StatusMenuItemDelegate"
     CHAT_IDENTIFIER_CHANNEL_NAME = "msgDelegate_channelIdentifierNameText_StyledText"
     CHAT_IDENTIFIER_CHANNEL_ICON = "mainWindow_chatInfoBtnInHeader_StatusChatInfoButton"
     CHAT_MORE_OPTIONS_BUTTON = "chat_moreOptions_menuButton"
@@ -36,7 +36,7 @@ class CommunityScreenComponents(Enum):
     DELETE_CHANNEL_MENU_ITEM = "delete_Channel_StatusMenuItemDelegate"
     DELETE_CHANNEL_CONFIRMATION_DIALOG_DELETE_BUTTON = "delete_Channel_ConfirmationDialog_DeleteButton"
     NOT_CATEGORIZED_CHAT_LIST = "mainWindow_communityColumnView_statusChatList"
-
+    COMMUNITY_CHAT_LIST_CATEGORIES = "communityChatListCategories_Repeater"
 
 class CommunitySettingsComponents(Enum):
     EDIT_COMMUNITY_SCROLL_VIEW = "communitySettings_EditCommunity_ScrollView"
@@ -62,10 +62,33 @@ class CreateOrEditCommunityChannelPopup(Enum):
     EMOJI_SEARCH_TEXT_INPUT: str = "statusDesktop_mainWindow_AppMain_EmojiPopup_SearchTextInput"
     EMOJI_POPUP_EMOJI_PLACEHOLDER = "emojiPopup_Emoji_Button_Placeholder"
 
+class CreateOrEditCommunityCategoryPopup(Enum):
+    COMMUNITY_CATEGORY_NAME_INPUT: str = "createOrEditCommunityCategoryNameInput_TextEdit"
+    COMMUNITY_CATEGORY_LIST: str = "createOrEditCommunityCategoryChannelList_ListView"
+    COMMUNITY_CATEGORY_BUTTON: str = "createOrEditCommunityCategoryBtn_StatusButton"
+
 class StatusCommunityScreen:
 
     def __init__(self):
         verify_screen(CommunityScreenComponents.COMMUNITY_HEADER_BUTTON.value)
+
+    def _find_channel_in_category_popup(self, community_channel_name: str):
+        listView = get_obj(CreateOrEditCommunityCategoryPopup.COMMUNITY_CATEGORY_LIST.value)
+
+        for index in range(listView.count):
+            listItem = listView.itemAtIndex(index)
+            if (listItem.objectName.toLower() == community_channel_name.lower()):
+                return True, listItem
+        return False, None
+
+    def _find_category_in_chat(self, community_category_name: str):
+        chatListCategories = get_obj(CommunityScreenComponents.COMMUNITY_CHAT_LIST_CATEGORIES.value)
+
+        for index in range(chatListCategories.count):
+            item = chatListCategories.itemAt(index)
+            if (item.objectName == community_category_name):
+                return True, item
+        return False, None
 
     def open_edit_channel_popup(self):
         StatusMainScreen.wait_for_banner_to_disappear()
@@ -84,7 +107,7 @@ class StatusCommunityScreen:
         else:
             print("Unknown method to create a channel: ", method)
 
-        click_obj_by_name(CommunityScreenComponents.COMMUNITY_CREATE_CHANNEL__MENU_ITEM.value)
+        click_obj_by_name(CommunityScreenComponents.COMMUNITY_CREATE_CHANNEL_MENU_ITEM.value)
 
         wait_for_object_and_type(CreateOrEditCommunityChannelPopup.COMMUNITY_CHANNEL_NAME_INPUT.value, communityChannelName)
         type(CreateOrEditCommunityChannelPopup.COMMUNITY_CHANNEL_DESCRIPTION_INPUT.value, communityChannelDescription)
@@ -103,6 +126,31 @@ class StatusCommunityScreen:
         type(CreateOrEditCommunityChannelPopup.COMMUNITY_CHANNEL_NAME_INPUT.value, new_community_channel_name)
         click_obj_by_name(CreateOrEditCommunityChannelPopup.COMMUNITY_CHANNEL_SAVE_OR_CREATE_BUTTON.value)
         time.sleep(0.5)
+
+    def create_community_category(self, community_category_name, community_channel_name, method):
+        if (method == CommunityCreateMethods.BOTTOM_MENU.value):
+            click_obj_by_name(CommunityScreenComponents.COMMUNITY_CREATE_CHANNEL_OR_CAT_BUTTON.value)
+        elif (method == CommunityCreateMethods.RIGHT_CLICK_MENU.value):
+            right_click_obj_by_name(CommunityScreenComponents.COMMUNITY_COLUMN_VIEW.value)
+        else:
+            test.fail("Unknown method to create a category: ", method)
+
+        click_obj_by_name(CommunityScreenComponents.COMMUNITY_CREATE_CATEGORY_MENU_ITEM.value)
+
+        wait_for_object_and_type(CreateOrEditCommunityCategoryPopup.COMMUNITY_CATEGORY_NAME_INPUT.value, community_category_name)
+
+        [loaded, listItem] = self._find_channel_in_category_popup(community_channel_name)
+        if loaded:
+            click_obj(listItem)
+        else:
+            test.fail("Can't find channel " + community_channel_name)
+
+        click_obj_by_name(CreateOrEditCommunityCategoryPopup.COMMUNITY_CATEGORY_BUTTON.value)
+
+    def verify_category_name(self, community_category_name):
+        [result, _] = self._find_category_in_chat(community_category_name)
+        if not result:
+            test.fail("Can't find category " + community_category_name)
 
     def edit_community(self, new_community_name: str, new_community_description: str, new_community_color: str):
         click_obj_by_name(CommunityScreenComponents.COMMUNITY_HEADER_BUTTON.value)

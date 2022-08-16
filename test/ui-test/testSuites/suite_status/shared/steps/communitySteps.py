@@ -37,6 +37,14 @@ def step(context, new_community_channel_name):
 def step(context, community_channel_name):
     _statusCommunityScreen.verify_channel_name(community_channel_name)
 
+@When("the admin creates a community category named |any|, with channel |any| and with the method |any|")
+def step(context, community_category_name, community_channel_name, method):
+    _statusCommunityScreen.create_community_category(community_category_name, community_channel_name, method)
+
+@Then("the category named |any| is created")
+def step(context, community_category_name): 
+    _statusCommunityScreen.verify_category_name(community_category_name)
+
 @When("the admin edits the current community to the name |any| and description |any| and color |any|")
 def step(context, new_community_name, new_community_description, new_community_color):
     _statusCommunityScreen.edit_community(new_community_name, new_community_description, new_community_color)
