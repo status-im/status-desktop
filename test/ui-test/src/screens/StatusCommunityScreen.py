@@ -238,7 +238,7 @@ class StatusCommunityScreen:
         verify_text_matching(CommunitySettingsComponents.COMMUNITY_NAME_TEXT.value, new_community_name)
         verify_text_matching(CommunitySettingsComponents.COMMUNITY_DESCRIPTION_TEXT.value, new_community_description)
         obj = get_obj(CommunitySettingsComponents.COMMUNITY_LETTER_IDENTICON.value)
-        expectTrue(obj.color.name == new_community_color, "Community color was not changed correctly")
+        expect_true(obj.color.name == new_community_color, "Community color was not changed correctly")
 
     def go_back_to_community(self):
         click_obj_by_name(CommunitySettingsComponents.BACK_TO_COMMUNITY_BUTTON.value)
@@ -263,10 +263,10 @@ class StatusCommunityScreen:
         # Search emoji
         wait_for_object_and_type(CreateOrEditCommunityChannelPopup.EMOJI_SEARCH_TEXT_INPUT.value, emoji_description)
         # Click on the first found emoji button
-        click_obj_by_wildcards_name(CreateOrEditCommunityChannelPopup.EMOJI_POPUP_EMOJI_PLACEHOLDER.value, "statusEmoji_*")
+        click_obj(wait_by_wildcards(CreateOrEditCommunityChannelPopup.EMOJI_POPUP_EMOJI_PLACEHOLDER.value, "%NAME%", "*"))
         # save changes
         click_obj_by_name(CreateOrEditCommunityChannelPopup.COMMUNITY_CHANNEL_SAVE_OR_CREATE_BUTTON.value)
 
     def check_community_channel_emoji(self, emojiStr: str):
         obj = wait_and_get_obj(CommunityScreenComponents.CHAT_IDENTIFIER_CHANNEL_ICON.value)
-        expectTrue(str(obj.icon.emoji).find(emojiStr) >= 0, "Same emoji check")
+        expect_true(str(obj.icon.emoji).find(emojiStr) >= 0, "Same emoji check")

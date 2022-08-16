@@ -81,6 +81,7 @@ settings_Wallet_AccountView_EditAccountSaveButton = {"container": statusDesktop_
 settings_Wallet_AccountView_EditAccountColorRepeater = {"container": statusDesktop_mainWindow, "type": "Repeater", "objectName": "statusColorRepeater", "visible": True}
 settings_Wallet_AccountView_AccountName = {"container": statusDesktop_mainWindow, "type": "StatusBaseText", "objectName": "walletAccountViewAccountName"}
 settings_Wallet_AccountView_IconSettings = {"container": statusDesktop_mainWindow, "type": "StatusSmartIdenticon", "objectName": "walletAccountViewAccountImage" , "visible": True}
+settings_Wallet_MainView_BackupSeedPhrase = {"container": mainWindow_ScrollView, "objectName": SettingsSubsection.BACKUP_SEED.value, "type": "StatusNavigationListItem", "visible": True}
 
 generatedAccounts_ListView = {"container": statusDesktop_mainWindow, "objectName": "generatedAccounts", "type": "ListView"}
 
@@ -101,3 +102,17 @@ languageView_language_StatusListPicker = {"container": statusDesktop_mainWindow,
 languageView_language_StatusPickerButton = {"container": languageView_language_StatusListPicker,  "type": "StatusPickerButton", "unnamed": 1}
 languageView_language_ListView = {"container": languageView_language_StatusListPicker,  "type": "ListView", "unnamed": 1}
 languageView_language_StatusInput = {"container": languageView_language_ListView,  "type": "StatusInput", "unnamed": 1}
+
+# Backup seed phrase:
+backup_seed_phrase_popup_Acknowledgements_havePen_checkbox = {"container": statusDesktop_mainWindow_overlay, "objectName": "Acknowledgements_havePen", "type": "StatusCheckBox", "checkable": True, "visible": True}
+backup_seed_phrase_popup_Acknowledgements_writeDown_checkbox = {"container": statusDesktop_mainWindow_overlay, "objectName": "Acknowledgements_writeDown", "type": "StatusCheckBox", "checkable": True, "visible": True}
+backup_seed_phrase_popup_Acknowledgements_storeIt_checkbox = {"container": statusDesktop_mainWindow_overlay, "objectName": "Acknowledgements_storeIt", "type": "StatusCheckBox", "checkable": True, "visible": True}
+backup_seed_phrase_popup_nextButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "BackupSeedModal_nextButton", "type": "StatusButton", "visible": True, "enabled": True}
+backup_seed_phrase_popup_ConfirmSeedPhrasePanel_RevealSeedPhraseButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "ConfirmSeedPhrasePanel_RevealSeedPhraseButton", "type": "StatusButton", "visible": True}
+backup_seed_phrase_popup_ConfirmSeedPhrasePanel_StatusSeedPhraseInput_placeholder = {"container": statusDesktop_mainWindow_overlay, "objectName": "ConfirmSeedPhrasePanel_StatusSeedPhraseInput_%WORD_NO%", "type": "StatusSeedPhraseInput", "visible": True}
+backup_seed_phrase_popup_BackupSeedStepBase_confirmFirstWord = {"container": statusDesktop_mainWindow_overlay, "objectName": "BackupSeedModal_BackupSeedStepBase_confirmFirstWord", "type": "BackupSeedStepBase", "visible": True}
+backup_seed_phrase_popup_BackupSeedStepBase_confirmFirstWord_inputText = {"container": backup_seed_phrase_popup_BackupSeedStepBase_confirmFirstWord, "objectName": "BackupSeedStepBase_inputText", "type": "TextEdit", "visible": True}
+backup_seed_phrase_popup_BackupSeedStepBase_confirmSecondWord = {"container": statusDesktop_mainWindow_overlay, "objectName": "BackupSeedModal_BackupSeedStepBase_confirmSecondWord", "type": "BackupSeedStepBase", "visible": True}
+backup_seed_phrase_popup_BackupSeedStepBase_confirmSecondWord_inputText = {"container": backup_seed_phrase_popup_BackupSeedStepBase_confirmSecondWord, "objectName": "BackupSeedStepBase_inputText", "type": "TextEdit", "visible": True}
+backup_seed_phrase_popup_ConfirmStoringSeedPhrasePanel_storeCheck = {"container": statusDesktop_mainWindow_overlay, "objectName": "ConfirmStoringSeedPhrasePanel_storeCheck", "type": "StatusCheckBox", "checkable": True, "visible": True}
+backup_seed_phrase_popup_BackupSeedModal_completeAndDeleteSeedPhraseButton = {"container": statusDesktop_mainWindow_overlay, "objectName": "BackupSeedModal_completeAndDeleteSeedPhraseButton", "type": "StatusButton", "visible": True}

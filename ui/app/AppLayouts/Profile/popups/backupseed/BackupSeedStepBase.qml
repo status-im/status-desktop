@@ -37,6 +37,7 @@ StatusScrollView {
 
         StatusInput {
             id: inputText
+            input.edit.objectName: "BackupSeedStepBase_inputText"
             visible: (wordRandomNumber > -1)
             implicitWidth: 448
             label: qsTr("Word #%1").arg(wordRandomNumber + 1)

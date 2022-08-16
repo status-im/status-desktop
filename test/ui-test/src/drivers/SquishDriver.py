@@ -128,6 +128,16 @@ def click_obj_by_wildcards_name(objName: str, wildcardString: str):
     obj = squish.waitForObject(wildcardRealName)
     squish.mouseClick(obj, squish.Qt.LeftButton)
 
+# Replaces all occurrences of objectNamePlaceholder with newValue in the objectName from the realName
+# Then use the new objectName as a wildcard search pattern, waiting for the object with the new Real Name
+# and return it if found. Raise an exception if not found.
+def wait_by_wildcards(realNameVarName: str, objectNamePlaceholder: str, newValue: str, timeoutMSec: int = _MAX_WAIT_OBJ_TIMEOUT):
+    wildcardRealName = copy.deepcopy(getattr(names, realNameVarName))
+    newObjectName = wildcardRealName["objectName"].replace(objectNamePlaceholder, newValue)
+    wildcardRealName["objectName"] = Wildcard(newObjectName)
+
+    return squish.waitForObject(wildcardRealName, timeoutMSec)
+
 # It executes the right-click action into object with given object name:
 def right_click_obj_by_name(objName: str):
     obj = squish.waitForObject(getattr(names, objName))
@@ -243,7 +253,7 @@ def _find_link(objName: str, link: str):
     squish.uninstallSignalHandler(obj, "linkHovered(QString)", "_handle_link_hovered")
     return [-1, -1]
 
-def expectTrue(assertionValue: bool, message: str):
+def expect_true(assertionValue: bool, message: str):
     return test.verify(assertionValue, message)
 
 # Wait for the object to appear and, assuming it is already focused
@@ -274,3 +284,11 @@ def scroll_list_view_at_index(list_obj, index: int, timeout: int=_MAX_WAIT_OBJ_T
             squish.snooze(1) 
             current_time = time.time() * 1000
     return False
+
+# Fail if the object is found and pass if not found
+def verify_not_found(realNameVarName: str, message: str, timeoutMSec: int = 500):
+    try:
+        squish.waitForObject(getattr(names, realNameVarName), timeoutMSec)
+        test.fail(message, f'Unexpected: the object "{realNameVarName}" was found.')
+    except LookupError as err:
+        test.passes(message, f'Expected: the object "{realNameVarName}" was not found. Exception: {str(err)}.')

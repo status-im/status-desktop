@@ -80,6 +80,7 @@ ColumnLayout {
 
                 StatusCheckBox {
                     id: havePen
+                    objectName: "Acknowledgements_havePen"
                     spacing: Style.current.padding
                     text: qsTr("I have a pen and paper")
                     font.pixelSize: Style.current.primaryTextFontSize
@@ -88,6 +89,7 @@ ColumnLayout {
 
                 StatusCheckBox {
                     id: writeDown
+                    objectName: "Acknowledgements_writeDown"
                     spacing: Style.current.padding
                     text: qsTr("I am ready to write down my seed phrase")
                     font.pixelSize: Style.current.primaryTextFontSize
@@ -96,6 +98,7 @@ ColumnLayout {
 
                 StatusCheckBox {
                     id: storeIt
+                    objectName: "Acknowledgements_storeIt"
                     spacing: Style.current.padding
                     text: qsTr("I know where I’ll store it")
                     font.pixelSize: Style.current.primaryTextFontSize

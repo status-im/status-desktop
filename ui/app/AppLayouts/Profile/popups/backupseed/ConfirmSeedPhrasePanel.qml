@@ -37,6 +37,7 @@ BackupSeedStepBase {
             readonly property int spacing: 4
             delegate: StatusSeedPhraseInput {
                 id: seedWordInput
+                objectName: "ConfirmSeedPhrasePanel_StatusSeedPhraseInput_" + grid.wordIndex[index]
                 width: (grid.cellWidth - grid.spacing)
                 height: (grid.cellHeight - grid.spacing)
                 textEdit.input.edit.enabled: false
@@ -61,6 +62,7 @@ BackupSeedStepBase {
         }
 
         StatusButton {
+            objectName: "ConfirmSeedPhrasePanel_RevealSeedPhraseButton"
             anchors.centerIn: parent
             visible: hideSeed
             icon.name: "view"
