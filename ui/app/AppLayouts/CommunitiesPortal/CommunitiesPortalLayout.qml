@@ -23,6 +23,7 @@ StatusScrollView {
     property CommunitiesStore communitiesStore: CommunitiesStore {}
     property var importCommunitiesPopup: importCommunitiesPopupComponent
     property var createCommunitiesPopup: createCommunitiesPopupComponent
+    property var discordImportProgressPopup: discordImportProgressDialog
 
     QtObject {
         id: d
@@ -90,7 +91,7 @@ StatusScrollView {
             StatusButton {
                 id: importBtn
                 Layout.fillHeight: true
-                text: qsTr("Import using key")
+                text: qsTr("Import Using Key")
                 onClicked: Global.openPopup(importCommunitiesPopupComponent)
             }
 

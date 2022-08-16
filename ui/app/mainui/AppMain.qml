@@ -432,6 +432,49 @@ Item {
                 }
             }
 
+            ModuleWarning {
+                Layout.fillWidth: true
+                readonly property int progress: communitiesPortalLayoutContainer.communitiesStore.discordImportProgress
+                readonly property bool inProgress: progress > 0 && progress < 100
+                readonly property bool finished: progress >= 100
+                readonly property bool stopped: communitiesPortalLayoutContainer.communitiesStore.discordImportProgressStopped
+                readonly property int errors: communitiesPortalLayoutContainer.communitiesStore.discordImportErrorsCount
+                readonly property int warnings: communitiesPortalLayoutContainer.communitiesStore.discordImportWarningsCount
+                readonly property string communityId: communitiesPortalLayoutContainer.communitiesStore.discordImportCommunityId
+
+                visible: inProgress || finished || stopped
+                color: errors ? Theme.palette.dangerColor1 : Theme.palette.successColor1
+                text: {
+                    if (finished || stopped) {
+                        if (errors)
+                            return qsTr("The import of ‘%1’ from Discord to Status was stopped: <a href='#'>Critical issues found</a>").arg(communityId)
+
+                        let result = qsTr("‘%1’ was successfully imported from Discord to Status").arg(communityId) + " <a href='#'>"
+                        if (warnings)
+                            result += qsTr("Details (%1)").arg(qsTr("%n issue(s)", "", warnings))
+                        else
+                            result += qsTr("Details")
+                        result += "</a>"
+                        return result
+                    }
+                    if (inProgress) {
+                        let result = qsTr("Importing ‘%1’ from Discord to Status").arg(communityId) + " <a href='#'>"
+                        if (warnings)
+                            result += qsTr("Check progress (%1)").arg(qsTr("%n issue(s)", "", warnings))
+                        else
+                            result += qsTr("Check progress")
+                        result += "</a>"
+                        return result
+                    }
+                }
+                onLinkActivated: Global.openPopup(communitiesPortalLayoutContainer.discordImportProgressPopup)
+                progressValue: progress
+                closeBtnVisible: finished || stopped
+                btnText: finished && !errors ? qsTr("Visit your Community") : ""
+                onClick: function() {
+                    communitiesPortalLayoutContainer.communitiesStore.setActiveCommunity(communityId)
+                }
+            }
 
             Item {
                 Layout.fillWidth: true
