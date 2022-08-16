@@ -63,7 +63,6 @@ StatusModal {
                 minLength: d.minMsgLength
                 errorMessage: Utils.getErrorMessage(messageInput.errors, qsTr("who are you"))
             }
-            validationMode: StatusInput.ValidationMode.Always
             Layout.fillWidth: true
         }
     }

@@ -22,5 +22,4 @@ StatusInput {
                                                 qsTr("community name"))
         }
     ]
-    validationMode: StatusInput.ValidationMode.Always
 }
