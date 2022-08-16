@@ -235,8 +235,6 @@ StatusAppTwoPanelLayout {
           }
           return !profileView.store.profileStore.privacyStore.mnemonicBackedUp
         }
-        color: Style.current.red
-        btnWidth: 100
         text: qsTr("Secure your seed phrase")
         btnText: qsTr("Back up now")
 

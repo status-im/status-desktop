@@ -392,11 +392,9 @@ Item {
 
             ModuleWarning {
                 id: versionWarning
-                width: parent.width
-                height: 32
+                Layout.fillWidth: true
                 visible: appMain.rootStore.newVersionAvailable
-                color: Style.current.green
-                btnWidth: 100
+                color: Theme.palette.successColor1
                 text: qsTr("A new version of Status (%1) is available").arg(appMain.rootStore.latestVersion)
                 btnText: qsTr("Download")
                 onClick: function(){
@@ -413,11 +411,9 @@ Item {
 
             ModuleWarning {
                 id: versionUpToDate
-                width: parent.width
-                height: 32
+                Layout.fillWidth: true
                 visible: false
-                color: Style.current.green
-                btnWidth: 100
+                color: Theme.palette.successColor1
                 text: qsTr("Your version is up to date")
                 btnText: qsTr("Close")
 
