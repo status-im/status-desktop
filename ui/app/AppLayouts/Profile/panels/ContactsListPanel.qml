@@ -13,6 +13,8 @@ import shared.panels 1.0
 import "../../Chat/popups"
 import "."
 
+import SortFilterProxyModel 0.2
+
 Item {
     id: contactListRoot
 
@@ -24,7 +26,6 @@ Item {
 
     property string title: ""
     property string searchString: ""
-    readonly property string lowerCaseSearchString: searchString.toLowerCase()
     readonly property int count: contactsList.count
 
     signal openContactContextMenu(string publicKey, string name, string icon)
@@ -36,59 +37,15 @@ Item {
     signal rejectionRemoved(string publicKey)
     signal textClicked(string publicKey)
 
-    visible: contactsList.count > 0
-
     StyledText {
         id: title
         anchors.left: parent.left
         anchors.leftMargin: Style.current.padding
-        visible: contactListRoot.title !== ""
+        visible: contactsList.count > 0 && contactListRoot.title !== ""
         text: contactListRoot.title
         font.weight: Font.Medium
         font.pixelSize: 15
         color: Style.current.secondaryText
-    }
-
-    DelegateModel {
-        id: delegateModel
-
-        function update() {
-            var visible = [];
-            for (var i = 0; i < items.count; ++i) {
-                var item = items.get(i);
-                if (panelUsage === Constants.contactsPanelUsage.verifiedMutualContacts) {
-                    if(item.model.isVerified)
-                        visible.push(item);
-                }
-                else if(panelUsage === Constants.contactsPanelUsage.mutualContacts) {
-                    if(!item.model.isVerified)
-                        visible.push(item);
-                }
-                else {
-                    visible.push(item);
-                }
-            }
-
-            for (i = 0; i < visible.length; ++i) {
-                item = visible[i];
-                item.inVisible = true;
-                if (item.visibleIndex !== i) {
-                    visibleItems.move(item.visibleIndex, i, 1);
-                }
-            }
-        }
-
-        model: contactListRoot.contactsModel
-
-        groups: [DelegateModelGroup {
-                id: visibleItems
-                name: "visible"
-                includeByDefault: false
-            }]
-
-        filterOnGroup: "visible"
-        items.onChanged: update()
-        delegate: contactPanelComponent
     }
 
     StatusListView {
@@ -99,13 +56,40 @@ Item {
         anchors.bottom: parent.bottom
         interactive: false
         ScrollBar.vertical.policy: contactListRoot.scrollbarOn ? ScrollBar.AlwaysOn : ScrollBar.AsNeeded
-        model: delegateModel
-    }
+        model: SortFilterProxyModel {
+            id: filteredModel
 
-    Component {
-        id: contactPanelComponent
+            sourceModel: contactListRoot.contactsModel
 
-        ContactPanel {
+            function panelUsagePredicate(isVerified) {
+                if (panelUsage === Constants.contactsPanelUsage.verifiedMutualContacts) return isVerified
+                if (panelUsage === Constants.contactsPanelUsage.mutualContacts) return !isVerified
+                return true
+            }
+
+            function searchPredicate(name, pubkey) {
+                if (contactListRoot.searchString === "") return true
+
+                let lowerCaseSearchString = contactListRoot.searchString.toLowerCase()
+                let compressedPubkey = Utils.getCompressedPk(pubkey)
+
+                return name.toLowerCase().includes(lowerCaseSearchString) ||
+                       pubkey.toLowerCase().includes(lowerCaseSearchString) ||
+                       compressedPubkey.toLowerCase().includes(lowerCaseSearchString)
+            }
+
+            filters: [
+                ExpressionFilter { expression: filteredModel.panelUsagePredicate(model.isVerified) },
+                ExpressionFilter {
+                    expression: {
+                        contactListRoot.searchString // ensure expression is reevaluated when searchString changes
+                        filteredModel.searchPredicate(model.displayName, model.pubKey)
+                    }
+                }
+            ]
+        }
+
+        delegate: ContactPanel {
             id: panelDelegate
             width: ListView.view.width
             contactsStore: contactListRoot.contactsStore
@@ -117,8 +101,6 @@ Item {
             isVerified: model.isVerified
             isUntrustworthy: model.isUntrustworthy
             verificationRequestStatus: model.incomingVerificationStatus
-
-            searchStr: contactListRoot.searchString
 
             showSendMessageButton: isContact && !isBlocked
             onOpenContactContextMenu: function (publicKey, name, icon) {
@@ -166,13 +148,6 @@ Item {
             onRejectionRemoved: contactListRoot.rejectionRemoved(publicKey)
             onTextClicked: contactListRoot.textClicked(publicKey)
             onShowVerificationRequest: contactListRoot.showVerificationRequest(publicKey)
-
-            readonly property string compressedPkLowerCase: Utils.getCompressedPk(publicKey).toLowerCase()
-
-            visible: searchString === "" ||
-                     name.toLowerCase().includes(lowerCaseSearchString) ||
-                     publicKey.toLowerCase().includes(lowerCaseSearchString) ||
-                     compressedPkLowerCase.includes(lowerCaseSearchString)
         }
     }
 }
