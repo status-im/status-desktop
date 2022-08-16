@@ -66,7 +66,7 @@ Loader {
             Shape {
                 id: replyCorner
                 anchors.left: parent.left
-                anchors.leftMargin: 20 - 1
+                anchors.leftMargin: 24 - 1
                 anchors.top: parent.top
                 anchors.topMargin: Style.current.smallPadding
                 width: 20

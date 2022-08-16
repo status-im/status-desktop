@@ -10,6 +10,7 @@ import shared.views.chat 1.0
 import shared.controls.chat 1.0
 
 import StatusQ.Controls 0.1 as StatusQControls
+import StatusQ.Core 0.1 as StatusQCore
 import StatusQ.Core.Utils 0.1 as StatusQUtils
 import StatusQ.Components 0.1
 
@@ -230,7 +231,6 @@ Item {
                 + (!chatName.visible && chatImageContent.active ? 6 : 0)
                 + (emojiReactionLoader.active ? emojiReactionLoader.height: 0)
                 + (retry.visible && !chatTime.visible ? Style.current.smallPadding : 0)
-                + (pinnedRectangleLoader.active ? Style.current.smallPadding : 0)
                 + (editModeOn ? 25 : 0)
                 + (!chatName.visible ? 6 : 0)
         width: parent.width
@@ -259,40 +259,67 @@ Item {
         Loader {
             id: pinnedRectangleLoader
             active: !editModeOn && pinnedMessage
-            anchors.left: chatName.left
-            anchors.top: parent.top
-            anchors.topMargin: active ? Style.current.halfPadding : 0
 
-            sourceComponent: Component {
+            anchors.left: messageContent.left
+            anchors.top: chatImage.top
+            anchors.topMargin: active ? -2 : 0
+
+            sourceComponent: Item {
+                height: 24
+                width: childrenRect.width + Style.current.smallPadding
+
                 Rectangle {
-                    id: pinnedRectangle
-                    height: 24
-                    width: childrenRect.width + Style.current.smallPadding
-                    color: Style.current.pinnedRectangleBackground
+                    anchors.fill: parent
+
+                    color: Qt.rgba(Style.current.pinnedRectangleBackground.r,
+                                   Style.current.pinnedRectangleBackground.g,
+                                   Style.current.pinnedRectangleBackground.b, 1)
+                    opacity: Style.current.pinnedRectangleBackground.a
+                    layer.enabled: true
+
                     radius: 12
 
-                    SVGImage {
-                        id: pinImage
-                        source: Style.svg("pin")
-                        anchors.left: parent.left
-                        anchors.leftMargin: 3
-                        width: 16
-                        height: 16
-                        anchors.verticalCenter: parent.verticalCenter
+                    Rectangle {
 
-                        ColorOverlay {
-                            anchors.fill: parent
-                            source: parent
-                            color: Style.current.pinnedMessageBorder
-                        }
-                    }
+                        width: parent.width / 2
+                        height: parent.height / 2
+                        color: parent.color
+                        radius: 4
 
-                    StyledText {
-                        text: qsTr("Pinned by %1").arg(Utils.getContactDetailsAsJson(messagePinnedBy).displayName)
-                        anchors.left: pinImage.right
-                        anchors.verticalCenter: parent.verticalCenter
-                        font.pixelSize: 13
+                        anchors.bottom: parent.bottom
                     }
+                }
+
+                SVGImage {
+                    id: pinImage
+                    source: Style.svg("pin")
+                    anchors.left: parent.left
+                    anchors.leftMargin: 3
+                    width: 16
+                    height: 16
+                    anchors.verticalCenter: parent.verticalCenter
+
+                    ColorOverlay {
+                        anchors.fill: parent
+                        source: parent
+                        color: Style.current.pinnedMessageBorder
+                    }
+                }
+
+                StatusQCore.StatusBaseText {
+                    id: pinnedByText
+                    text: qsTr("Pinned by ")
+                    anchors.left: pinImage.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    font.pixelSize: 13
+                }
+
+                StatusQCore.StatusBaseText {
+                    text: Utils.getContactDetailsAsJson(messagePinnedBy).displayName
+                    anchors.left: pinnedByText.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    font.pixelSize: 13
+                    font.weight: Font.DemiBold
                 }
             }
         }
@@ -310,7 +337,8 @@ Item {
 
         ChatReplyPanel {
             id: chatReply
-            anchors.top: pinnedRectangleLoader.active ? pinnedRectangleLoader.bottom : parent.top
+
+            anchors.top: parent.top
             anchors.topMargin: active ? 4 : 0
             anchors.left: chatImage.left
             anchors.right: parent.right
@@ -361,11 +389,13 @@ Item {
 
             active: isMessage && headerRepeatCondition
 
+            imageWidth: 44
+            imageHeight: 44
+
             anchors.left: parent.left
             anchors.leftMargin: Style.current.padding
-            anchors.top: chatReply.active ? chatReply.bottom :
-                                            pinnedRectangleLoader.active ? pinnedRectangleLoader.bottom : parent.top
-            anchors.topMargin: chatReply.active || pinnedRectangleLoader.active ? 4 : Style.current.smallPadding
+            anchors.top: chatReply.active ? chatReply.bottom : parent.top
+            anchors.topMargin: chatReply.active || Style.current.smallPadding
 
             image: root.senderIcon
             pubkey: senderId
@@ -379,7 +409,9 @@ Item {
             id: chatName
             visible: !editModeOn && isMessage && headerRepeatCondition
             anchors.leftMargin: chatHorizontalPadding
-            anchors.top: chatImage.top
+
+            anchors.top: pinnedRectangleLoader.active ? pinnedRectangleLoader.bottom : chatImage.top
+
             anchors.left: chatImage.right
             messageContextMenu: root.messageContextMenu
             displayName: senderDisplayName
@@ -404,7 +436,7 @@ Item {
             id: chatTime
             visible: !editModeOn && headerRepeatCondition
             anchors.verticalCenter: chatName.verticalCenter
-            anchors.left: trustStatus.right
+            anchors.left: trustStatus.visible ? trustStatus.right : chatName.right
             anchors.leftMargin: 4
             color: Style.current.secondaryText
             timestamp: root.messageTimestamp
@@ -418,7 +450,7 @@ Item {
             anchors.leftMargin: chatHorizontalPadding
             anchors.right: parent.right
             anchors.rightMargin: chatHorizontalPadding
-            height: (item !== null && typeof(item)!== 'undefined')? item.height: 0
+            height: !!item ? item.height: 0
             sourceComponent: Item {
                 id: editText
                 height: childrenRect.height
@@ -528,6 +560,7 @@ Item {
         Item {
             id: messageContent
             height: childrenRect.height + (isEmoji ? 2 : 0)
+
             anchors.top: chatName.visible ? chatName.bottom :
                                             chatReply.active ? chatReply.bottom :
                                                 pinnedRectangleLoader.active ? pinnedRectangleLoader.bottom : parent.top
@@ -535,8 +568,9 @@ Item {
             anchors.leftMargin: chatImage.imageWidth + Style.current.padding + root.chatHorizontalPadding
             anchors.right: parent.right
             anchors.rightMargin: root.chatHorizontalPadding
-            anchors.topMargin: (!chatName.visible || !chatReply.active  || !pinnedRectangleLoader.active) ? 4 : 0
+            anchors.topMargin: !chatName.visible ? 4 : 0
             visible: !editModeOn
+
             ChatTextView {
                 id: chatText
                 readonly property int leftPadding: chatImage.anchors.leftMargin + chatImage.width + chatHorizontalPadding
