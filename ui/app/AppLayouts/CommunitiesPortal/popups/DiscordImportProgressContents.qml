@@ -130,10 +130,10 @@ StatusScrollView {
             return DiscordImportProgressContents.ImportStatus.Unknown
         }
 
-        function getSubtaskDescription(progress) {
+        function getSubtaskDescription(progress, stopped) {
             if (progress >= 1.0)
                 return qsTr("✓ Complete")
-            if (progress > 0 && (importStopped || hasErrors))
+            if (progress > 0 && stopped)
                 return qsTr("Import stopped...")
             if (importStopped)
                 return ""
@@ -183,7 +183,7 @@ StatusScrollView {
                                 return Theme.palette.dangerColor1
                             return Theme.palette.baseColor1
                         }
-                        text: d.getSubtaskDescription(model.progress)
+                        text: d.getSubtaskDescription(model.progress, model.stopped)
                     }
                 }
                 Item { Layout.fillWidth: true }
