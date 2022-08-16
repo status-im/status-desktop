@@ -260,7 +260,6 @@ Item {
             }
 
             Repeater {
-                objectName: "statusChatListCategories"
                 id: statusChatListCategories
                 objectName: "communityChatListCategories"
                 visible: !!model && model.count > 0
