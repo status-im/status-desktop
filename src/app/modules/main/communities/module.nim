@@ -283,21 +283,14 @@ method discordCategoriesAndChannelsExtracted*(self: Module, categories: seq[Disc
 method discordImportProgressUpdated*(self: Module, communityId: string, tasks: seq[DiscordImportTaskProgress], progress: float, errorsCount: int, warningsCount: int, stopped: bool) =
 
   var taskItems: seq[DiscordImportTaskItem] = @[]
-  var taskErrors: seq[DiscordImportErrorItem] = @[]
-  var taskWarnings: seq[DiscordImportErrorItem] = @[]
 
   for task in tasks:
     for error in task.errors:
       let errorItem = initDiscordImportErrorItem(task.`type`, error.code, error.message)
-      if error.code == DiscordImportErrorCode.Warning.int:
-        taskWarnings.add(errorItem)
-      if error.code == DiscordImportErrorCode.Error.int:
-        taskErrors.add(errorItem)
+      self.view.discordImportErrorsModel().addItem(errorItem)
     taskItems.add(self.getDiscordImportTaskItem(task))
 
   self.view.discordImportTasksModel().setItems(taskItems)
-  self.view.discordImportWarningsModel().setItems(taskWarnings)
-  self.view.discordImportErrorsModel().setItems(taskErrors)
   self.view.setDiscordImportErrorsCount(errorsCount)
   self.view.setDiscordImportWarningsCount(warningsCount)
   # For some reason, exposing the global `progress` as QtProperty[float]`

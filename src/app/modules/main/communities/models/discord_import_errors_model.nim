@@ -51,3 +51,10 @@ QtObject:
     self.beginResetModel()
     self.items = items
     self.endResetModel()
+
+  proc addItem*(self: DiscordImportErrorsModel, item: DiscordImportErrorItem) =
+    let parentModelIndex = newQModelIndex()
+    defer: parentModelIndex.delete
+    self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
+    self.items.add(item)
+    self.endInsertRows()

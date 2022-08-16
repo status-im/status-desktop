@@ -36,8 +36,6 @@ QtObject:
       discordImportWarningsCount: int
       discordImportErrorsModel: DiscordImportErrorsModel
       discordImportErrorsModelVariant: QVariant
-      discordImportWarningsModel: DiscordImportErrorsModel
-      discordImportWarningsModelVariant: QVariant
       discordImportProgress: int
       discordImportProgressStopped: bool
       discordImportTasksModel: DiscordImportTasksModel
@@ -60,8 +58,6 @@ QtObject:
     self.discordImportTasksModelVariant.delete
     self.discordImportErrorsModel.delete
     self.discordImportErrorsModelVariant.delete
-    self.discordImportWarningsModel.delete
-    self.discordImportWarningsModelVariant.delete
     self.QObject.delete
 
   proc newView*(delegate: io_interface.AccessInterface): View =
@@ -87,8 +83,6 @@ QtObject:
     result.discordImportProgressStopped = false
     result.discordImportErrorsModel = newDiscordDiscordImportErrorsModel()
     result.discordImportErrorsModelVariant = newQVariant(result.discordImportErrorsModel)
-    result.discordImportWarningsModel = newDiscordDiscordImportErrorsModel()
-    result.discordImportWarningsModelVariant = newQVariant(result.discordImportWarningsModel)
     result.discordImportTasksModel = newDiscordDiscordImportTasksModel()
     result.discordImportTasksModelVariant = newQVariant(result.discordImportTasksModel)
     result.observedItem = newActiveSection()
@@ -105,6 +99,7 @@ QtObject:
     self.communityTags = newQVariant(communityTags)
 
   proc setDiscordOldestMessageTimestamp*(self: View, timestamp: int) {.slot.} =
+    if (self.discordOldestMessageTimestamp == timestamp): return
     self.discordOldestMessageTimestamp = timestamp
     self.discordOldestMessageTimestampChanged()
 
@@ -118,6 +113,7 @@ QtObject:
   proc discordImportWarningsCountChanged*(self: View) {.signal.}
 
   proc setDiscordImportWarningsCount*(self: View, count: int) {.slot.} =
+    if (self.discordImportWarningsCount == count): return
     self.discordImportWarningsCount = count
     self.discordImportWarningsCountChanged()
 
@@ -129,6 +125,7 @@ QtObject:
     notify = discordImportWarningsCountChanged
 
   proc setDiscordImportErrorsCount*(self: View, count: int) {.slot.} =
+    if (self.discordImportErrorsCount == count): return
     self.discordImportErrorsCount = count
     self.discordImportErrorsCountChanged()
 
@@ -142,6 +139,7 @@ QtObject:
   proc discordImportProgressChanged*(self: View) {.signal.}
 
   proc setDiscordImportProgress*(self: View, value: int) {.slot.} =
+    if (self.discordImportProgress == value): return
     self.discordImportProgress = value
     self.discordImportProgressChanged()
 
@@ -155,6 +153,7 @@ QtObject:
   proc discordImportProgressStoppedChanged*(self: View) {.signal.}
 
   proc setDiscordImportProgressStopped*(self: View, stopped: bool) {.slot.} =
+    if (self.discordImportProgressStopped == stopped): return
     self.discordImportProgressStopped = stopped
     self.discordImportProgressStoppedChanged()
 
@@ -229,15 +228,6 @@ QtObject:
   QtProperty[QVariant] discordImportErrors:
     read = getDiscordImportErrorsModel
 
-  proc discordImportWarningsModel*(self: View): DiscordImportErrorsModel =
-    result = self.discordImportWarningsModel
-
-  proc getDiscordImportWarningsModel*(self: View): QVariant {.slot.} =
-    return self.discordImportWarningsModelVariant
-
-  QtProperty[QVariant] discordImportWarnings:
-    read = getDiscordImportWarningsModel
-
   proc discordImportTasksModel*(self: View): DiscordImportTasksModel =
     result = self.discordImportTasksModel
 
@@ -269,6 +259,7 @@ QtObject:
     return self.discordDataExtractionInProgress
 
   proc setDiscordDataExtractionInProgress*(self: View, inProgress: bool) {.slot.} =
+    if (self.discordDataExtractionInProgress == inProgress): return
     self.discordDataExtractionInProgress = inProgress
     self.discordDataExtractionInProgressChanged()
 
@@ -393,4 +384,3 @@ QtObject:
   proc clearDiscordCategoriesAndChannels*(self: View) {.slot.} =
     self.discordCategoriesModel.clearItems()
     self.discordChannelsModel.clearItems()
-
