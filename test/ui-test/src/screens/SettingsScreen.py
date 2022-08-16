@@ -54,7 +54,8 @@ class WalletSettingsScreen(Enum):
     EDIT_ACCOUNT_COLOR_REPEATER: str = "settings_Wallet_AccountView_EditAccountColorRepeater"
     EDIT_ACCOUNT_SAVE_BUTTON: str = "settings_Wallet_AccountView_EditAccountSaveButton"
     ACCOUNT_VIEW_ACCOUNT_NAME: str = "settings_Wallet_AccountView_AccountName"
-    ACCOUNT_VIEW_ICON_SETTINGS: str = "settings_Wallet_AccountView_IconSettings"    
+    ACCOUNT_VIEW_ICON_SETTINGS: str = "settings_Wallet_AccountView_IconSettings"
+    BACKUP_SEED_PHRASE_BUTTON: str = "settings_Wallet_MainView_BackupSeedPhrase"
 
 class ProfileSettingsScreen(Enum):
     DISPLAY_NAME: str = "displayName_TextEdit"
@@ -74,6 +75,20 @@ class ConfirmationDialog(Enum):
 class CommunitiesSettingsScreen(Enum):
     LEAVE_COMMUNITY_BUTTONS: str = "settings_Communities_MainView_LeaveCommunityButtons"
     LEAVE_COMMUNITY_POPUP_LEAVE_BUTTON: str = "settings_Communities_MainView_LeavePopup_LeaveCommunityButton"
+
+class BackupSeedPhrasePopup(Enum):
+    HAVE_PEN_CHECKBOX: str = "backup_seed_phrase_popup_Acknowledgements_havePen_checkbox"
+    WRITE_DOWN_CHECKBOX: str = "backup_seed_phrase_popup_Acknowledgements_writeDown_checkbox"
+    STORE_IT_CHECKBOX: str = "backup_seed_phrase_popup_Acknowledgements_storeIt_checkbox"
+    NEXT_BUTTON: str = "backup_seed_phrase_popup_nextButton"
+    REVEAL_SEED_PHRASE_BUTTON: str = "backup_seed_phrase_popup_ConfirmSeedPhrasePanel_RevealSeedPhraseButton"
+    SEED_PHRASE_WORD_PLACEHOLDER: str = "backup_seed_phrase_popup_ConfirmSeedPhrasePanel_StatusSeedPhraseInput_placeholder"
+    CONFIRM_FIRST_WORD_PAGE: str = "backup_seed_phrase_popup_BackupSeedStepBase_confirmFirstWord"
+    CONFIRM_FIRST_WORD_INPUT: str = "backup_seed_phrase_popup_BackupSeedStepBase_confirmFirstWord_inputText"
+    CONFIRM_SECOND_WORD_PAGE: str = "backup_seed_phrase_popup_BackupSeedStepBase_confirmSecondWord"
+    CONFIRM_SECOND_WORD_INPUT: str = "backup_seed_phrase_popup_BackupSeedStepBase_confirmSecondWord_inputText"
+    CONFIRM_YOU_STORED_CHECKBOX: str = "backup_seed_phrase_popup_ConfirmStoringSeedPhrasePanel_storeCheck"
+    CONFIRM_YOU_STORED_BUTTON: str = "backup_seed_phrase_popup_BackupSeedModal_completeAndDeleteSeedPhraseButton"
 
 class SettingsScreen:
     __pid = 0
@@ -244,3 +259,44 @@ class SettingsScreen:
         verify_text_matching(ProfileSettingsScreen.CUSTOM_LINK_IN_DIALOG.value, custom_link_name)
         verify_text_matching(ProfileSettingsScreen.CUSTOM_URL_IN_DIALOG.value, custom_link)
         click_obj_by_name(ProfileSettingsScreen.CLOSE_SOCIAL_LINKS_DIALOG.value)
+
+    def check_backup_seed_phrase_workflow(self):
+        self.open_wallet_settings()
+        click_obj_by_name(WalletSettingsScreen.BACKUP_SEED_PHRASE_BUTTON.value)
+
+        # Check all checkboxes and click next button
+        obj = wait_and_get_obj(BackupSeedPhrasePopup.HAVE_PEN_CHECKBOX.value)
+        obj.checked = True
+        obj = wait_and_get_obj(BackupSeedPhrasePopup.WRITE_DOWN_CHECKBOX.value)
+        obj.checked = True
+        obj = wait_and_get_obj(BackupSeedPhrasePopup.STORE_IT_CHECKBOX.value)
+        obj.checked = True
+        click_obj_by_name(BackupSeedPhrasePopup.NEXT_BUTTON.value)
+
+        # Show seed phrase
+        click_obj_by_name(BackupSeedPhrasePopup.REVEAL_SEED_PHRASE_BUTTON.value)
+
+        # Collect word phrases for the next random confirmation steps
+        seed_phrase = [wait_by_wildcards(BackupSeedPhrasePopup.SEED_PHRASE_WORD_PLACEHOLDER.value, "%WORD_NO%", str(i + 1)).textEdit.input.edit.text for i in range(12)]
+        click_obj_by_name(BackupSeedPhrasePopup.NEXT_BUTTON.value)
+
+        # Confirm first random word of the seed phrase
+        firstSeedBaseObj = wait_and_get_obj(BackupSeedPhrasePopup.CONFIRM_FIRST_WORD_PAGE.value)
+        firstSeedWord = str(seed_phrase[firstSeedBaseObj.wordRandomNumber])
+        wait_for_object_and_type(BackupSeedPhrasePopup.CONFIRM_FIRST_WORD_INPUT.value, firstSeedWord)
+        click_obj_by_name(BackupSeedPhrasePopup.NEXT_BUTTON.value)
+
+        # Confirm second random word of the seed phrase
+        secondSeedBaseObj = wait_and_get_obj(BackupSeedPhrasePopup.CONFIRM_SECOND_WORD_PAGE.value)
+        secondSeedWord = str(seed_phrase[secondSeedBaseObj.wordRandomNumber])
+        wait_for_object_and_type(BackupSeedPhrasePopup.CONFIRM_SECOND_WORD_INPUT.value, secondSeedWord)
+
+        click_obj_by_name(BackupSeedPhrasePopup.NEXT_BUTTON.value)
+
+        # Acknowledge and confirm that you won't have access to the seed phrase anymore
+        obj = wait_and_get_obj(BackupSeedPhrasePopup.CONFIRM_YOU_STORED_CHECKBOX.value)
+        obj.checked = True
+        click_obj_by_name(BackupSeedPhrasePopup.CONFIRM_YOU_STORED_BUTTON.value)
+
+    def verify_seed_phrase_indicator_not_visible(self):
+        verify_not_found(WalletSettingsScreen.BACKUP_SEED_PHRASE_BUTTON.value, "Check that backup seed phrase settings button is visible")

@@ -56,6 +56,7 @@ StatusStackModal {
     rightButtons: [ d.skipButton, nextButton, finishButton ]
 
     nextButton: StatusButton {
+        objectName: "BackupSeedModal_nextButton"
         enabled: {
             switch (root.currentIndex) {
             case 0:
@@ -87,6 +88,7 @@ StatusStackModal {
 
     finishButton: StatusButton {
         text: qsTr("Complete & Delete My Seed Phrase")
+        objectName: "BackupSeedModal_completeAndDeleteSeedPhraseButton"
         enabled: d.seedStored
         onClicked: {
             root.privacyStore.removeMnemonic();
@@ -112,12 +114,14 @@ StatusStackModal {
         },
         BackupSeedStepBase {
             id: confirmFirstWord
+            objectName: "BackupSeedModal_BackupSeedStepBase_confirmFirstWord"
             titleText: qsTr("Confirm word #%1 of your seed phrase").arg(d.firstRandomNo + 1)
             wordRandomNumber: d.firstRandomNo
             wordAtRandomNumber: root.privacyStore.getMnemonicWordAtIndex(d.firstRandomNo)
         },
         BackupSeedStepBase {
             id: confirmSecondWord
+            objectName: "BackupSeedModal_BackupSeedStepBase_confirmSecondWord"
             titleText: qsTr("Confirm word #%1 of your seed phrase").arg(d.secondRandomNo + 1)
             wordRandomNumber: d.secondRandomNo
             wordAtRandomNumber: root.privacyStore.getMnemonicWordAtIndex(d.secondRandomNo)

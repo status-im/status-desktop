@@ -53,6 +53,7 @@ BackupSeedStepBase {
 
         StatusCheckBox {
             id: storeCheck
+            objectName: "ConfirmStoringSeedPhrasePanel_storeCheck"
             spacing: Style.current.padding
             font.pixelSize: Style.current.primaryTextFontSize
             text: qsTr("I acknowledge that Status will not be able to show me my seed phrase again.")

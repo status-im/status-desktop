@@ -12,3 +12,8 @@ Feature: Status Desktop Settings Menu
     Scenario: The user quits the app
         When the user clicks on Sign out and Quit
         Then the app is closed
+
+    Scenario: User can backup seed phrase
+        When the user activates wallet and opens the wallet settings
+        And the user backs up the wallet seed phrase
+        Then the backup seed phrase indicator is not displayed

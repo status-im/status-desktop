@@ -134,3 +134,11 @@ def step(context, native):
     _languageScreen.verify_current_language(native)
     # TODO: Verify some texts have been changed in the application (not done now bc translations are inconsistent 
     # and not all expected languages have the same texts translated
+
+@When("the user backs up the wallet seed phrase")
+def step(context):
+    _settingsScreen.check_backup_seed_phrase_workflow()
+
+@Then("the backup seed phrase indicator is not displayed")
+def step(context):
+    _settingsScreen.verify_seed_phrase_indicator_not_visible()
