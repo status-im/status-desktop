@@ -39,6 +39,8 @@ Item {
             placeholderText: qsTr("Display Name")
             charLimit: 24
             validators: Constants.validators.displayName
+
+            input.tabNavItem: bioInput.input.edit
         }
 
 
@@ -56,9 +58,13 @@ Item {
             minimumHeight: 108
             maximumHeight: 108
             input.verticalAlignment: TextEdit.AlignTop
+
+            input.tabNavItem: socialLinksRepeater.count ? socialLinksRepeater.itemAt(0).input.edit : null
         }
 
         Repeater {
+            id: socialLinksRepeater
+
             model: root.socialLinksModel
             delegate: StaticSocialLinkInput {
                 objectName: model.text + "-socialLinkInput"
@@ -68,10 +74,19 @@ Item {
                 text: model.url
 
                 onTextChanged: root.socialLinkChanged(model.uuid, model.text, text)
+
+                input.tabNavItem: {
+                    if (index < socialLinksRepeater.count - 1) {
+                        return socialLinksRepeater.itemAt(index + 1).input.edit
+                    }
+                    return addMoreSocialLinksButton
+                }
             }
         }
 
         StatusIconTextButton {
+            id: addMoreSocialLinksButton
+
             objectName: "addMoreSocialLinksButton"
             Layout.topMargin: -8 // by design
             text: qsTr("Add more social links")

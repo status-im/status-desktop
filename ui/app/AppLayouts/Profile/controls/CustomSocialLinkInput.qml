@@ -16,6 +16,9 @@ Item {
     property alias url: urlInput.text
     readonly property alias removeButton: removeButton
 
+    readonly property var focusItem: hyperlinkInput.input.edit
+    property var nextFocusItem: null
+
     implicitHeight: layout.implicitHeight
     implicitWidth: layout.implicitWidth
 
@@ -37,6 +40,8 @@ Item {
                 label: qsTr("Hyperlink Text")
                 placeholderText: qsTr("Example: My Myspace Profile")
                 charLimit: 24
+
+                input.tabNavItem: urlInput.input.edit
             }
 
             StatusInput {
@@ -46,6 +51,8 @@ Item {
                 Layout.fillWidth: true
                 label: qsTr("URL")
                 placeholderText: qsTr("Link URL")
+
+                input.tabNavItem: root.nextFocusItem
             }
         }
 
@@ -69,6 +76,7 @@ Item {
                 }
 
                 SocialLinkPreview {
+                    Layout.preferredHeight: 32
                     text: !!hyperlinkInput.text ? hyperlinkInput.text : qsTr("My Myspace Profile")
                     url: !!urlInput.text ? urlInput.text : urlInput.placeholderText
                     linkType: Constants.socialLinkType.custom

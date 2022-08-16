@@ -46,9 +46,11 @@ Rectangle {
         }
 
         StatusBaseText {
+            Layout.maximumWidth: 150
             text: root.linkType === Constants.socialLinkType.custom ? root.text : root.url
             color: Theme.palette.directColor4
             font.weight: Font.Medium
+            elide: Text.ElideMiddle
         }
     }
 
@@ -58,11 +60,12 @@ Rectangle {
         contentItem: RowLayout {
             StatusBaseText {
                 Layout.fillHeight: true
+                Layout.maximumWidth: 300
                 Layout.bottomMargin: 8
 
                 text: toolTip.text
                 color: Theme.palette.white
-                wrapMode: Text.WordWrap
+                elide: Text.ElideMiddle
                 font.pixelSize: 13
                 font.weight: Font.Medium
                 horizontalAlignment: Text.AlignHCenter
