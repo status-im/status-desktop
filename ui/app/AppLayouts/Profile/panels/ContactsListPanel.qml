@@ -16,7 +16,7 @@ import "."
 import SortFilterProxyModel 0.2
 
 Item {
-    id: contactListRoot
+    id: root
 
     property var contactsStore
     property var contactsModel
@@ -41,8 +41,8 @@ Item {
         id: title
         anchors.left: parent.left
         anchors.leftMargin: Style.current.padding
-        visible: contactsList.count > 0 && contactListRoot.title !== ""
-        text: contactListRoot.title
+        visible: contactsList.count > 0 && root.title !== ""
+        text: root.title
         font.weight: Font.Medium
         font.pixelSize: 15
         color: Style.current.secondaryText
@@ -55,11 +55,11 @@ Item {
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         interactive: false
-        ScrollBar.vertical.policy: contactListRoot.scrollbarOn ? ScrollBar.AlwaysOn : ScrollBar.AsNeeded
+        ScrollBar.vertical.policy: root.scrollbarOn ? ScrollBar.AlwaysOn : ScrollBar.AsNeeded
         model: SortFilterProxyModel {
             id: filteredModel
 
-            sourceModel: contactListRoot.contactsModel
+            sourceModel: root.contactsModel
 
             function panelUsagePredicate(isVerified) {
                 if (panelUsage === Constants.contactsPanelUsage.verifiedMutualContacts) return isVerified
@@ -68,9 +68,9 @@ Item {
             }
 
             function searchPredicate(name, pubkey) {
-                if (contactListRoot.searchString === "") return true
+                if (root.searchString === "") return true
 
-                let lowerCaseSearchString = contactListRoot.searchString.toLowerCase()
+                let lowerCaseSearchString = root.searchString.toLowerCase()
                 let compressedPubkey = Utils.getCompressedPk(pubkey)
 
                 return name.toLowerCase().includes(lowerCaseSearchString) ||
@@ -82,7 +82,7 @@ Item {
                 ExpressionFilter { expression: filteredModel.panelUsagePredicate(model.isVerified) },
                 ExpressionFilter {
                     expression: {
-                        contactListRoot.searchString // ensure expression is reevaluated when searchString changes
+                        root.searchString // ensure expression is reevaluated when searchString changes
                         filteredModel.searchPredicate(model.displayName, model.pubKey)
                     }
                 }
@@ -92,7 +92,7 @@ Item {
         delegate: ContactPanel {
             id: panelDelegate
             width: ListView.view.width
-            contactsStore: contactListRoot.contactsStore
+            contactsStore: root.contactsStore
             name: model.displayName
             publicKey: model.pubKey
             iconSource: model.icon
@@ -104,34 +104,34 @@ Item {
 
             showSendMessageButton: isContact && !isBlocked
             onOpenContactContextMenu: function (publicKey, name, icon) {
-                contactListRoot.openContactContextMenu(publicKey, name, icon)
+                root.openContactContextMenu(publicKey, name, icon)
             }
             showRejectContactRequestButton: {
-                if (contactListRoot.panelUsage === Constants.contactsPanelUsage.receivedContactRequest && !model.verificationRequestStatus) {
+                if (root.panelUsage === Constants.contactsPanelUsage.receivedContactRequest && !model.verificationRequestStatus) {
                     return true
                 }
 
                 return false
             }
             showAcceptContactRequestButton: {
-                if (contactListRoot.panelUsage === Constants.contactsPanelUsage.receivedContactRequest && !model.verificationRequestStatus) {
+                if (root.panelUsage === Constants.contactsPanelUsage.receivedContactRequest && !model.verificationRequestStatus) {
                     return true
                 }
 
                 return false
             }
             showRemoveRejectionButton: {
-                if (contactListRoot.panelUsage === Constants.contactsPanelUsage.rejectedReceivedContactRequest) {
+                if (root.panelUsage === Constants.contactsPanelUsage.rejectedReceivedContactRequest) {
                     return true
                 }
 
                 return false
             }
             contactText: {
-                if (contactListRoot.panelUsage === Constants.contactsPanelUsage.sentContactRequest) {
+                if (root.panelUsage === Constants.contactsPanelUsage.sentContactRequest) {
                     return qsTr("Contact Request Sent")
                 }
-                else if (contactListRoot.panelUsage === Constants.contactsPanelUsage.rejectedSentContactRequest) {
+                else if (root.panelUsage === Constants.contactsPanelUsage.rejectedSentContactRequest) {
                     return qsTr("Contact Request Rejected")
                 }
 
@@ -141,13 +141,13 @@ Item {
                 return false
             }
 
-            onClicked: contactListRoot.contactClicked(model.pubKey)
-            onSendMessageActionTriggered: contactListRoot.sendMessageActionTriggered(publicKey)
-            onContactRequestAccepted: contactListRoot.contactRequestAccepted(publicKey)
-            onContactRequestRejected: contactListRoot.contactRequestRejected(publicKey)
-            onRejectionRemoved: contactListRoot.rejectionRemoved(publicKey)
-            onTextClicked: contactListRoot.textClicked(publicKey)
-            onShowVerificationRequest: contactListRoot.showVerificationRequest(publicKey)
+            onClicked: root.contactClicked(model.pubKey)
+            onSendMessageActionTriggered: root.sendMessageActionTriggered(publicKey)
+            onContactRequestAccepted: root.contactRequestAccepted(publicKey)
+            onContactRequestRejected: root.contactRequestRejected(publicKey)
+            onRejectionRemoved: root.rejectionRemoved(publicKey)
+            onTextClicked: root.textClicked(publicKey)
+            onShowVerificationRequest: root.showVerificationRequest(publicKey)
         }
     }
 }
