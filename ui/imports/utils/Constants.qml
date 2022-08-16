@@ -132,8 +132,9 @@ QtObject {
         property int advanced: 10
         property int about: 11
         property int communitiesSettings: 12
-        property int signout: 13
-        property int backUpSeed: 14
+        property int keycard: 13
+        property int signout: 14
+        property int backUpSeed: 15
     }
 
     readonly property QtObject currentUserStatus: QtObject{
@@ -273,6 +274,7 @@ QtObject {
         readonly property int radius: 8
         readonly property int mainHeaderFontSize: 28
         readonly property int subHeaderFontSize: 15
+        readonly property int importantInfoFontSize: 18
         readonly property int infoFontSize: 15
         readonly property int infoLineHeight: 22
         readonly property int infoSpacing: 5

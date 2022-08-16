@@ -222,6 +222,15 @@ StatusAppTwoPanelLayout {
                 sectionTitle: profileView.store.getNameForSubsection(Constants.settingsSubsection.communitiesSettings)
                 contentWidth: d.contentWidth
             }
+
+            KeycardView {
+                implicitWidth: parent.width
+                implicitHeight: parent.height
+
+                keycardStore: profileView.store.keycardStore
+                sectionTitle: profileView.store.getNameForSubsection(Constants.settingsSubsection.keycard)
+                contentWidth: d.contentWidth
+            }
         }
     } // Item
     ModuleWarning {

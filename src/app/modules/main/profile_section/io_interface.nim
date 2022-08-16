@@ -85,3 +85,6 @@ method getCommunitiesModule*(self: AccessInterface): QVariant {.base.} =
 
 method communitiesModuleDidLoad*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
+
+method getKeycardModule*(self: AccessInterface): QVariant {.base.} =
+  raise newException(ValueError, "No implementation available")

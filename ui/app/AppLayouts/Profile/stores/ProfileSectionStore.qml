@@ -55,6 +55,10 @@ QtObject {
     property WalletStore walletStore: WalletStore {
     }
 
+    property KeycardStore keycardStore: KeycardStore {
+        keycardModule: profileSectionModuleInst.keycardModule
+    }
+
     property var stickersModuleInst: stickersModule
     property var stickersStore: StickersStore {
         stickersModule: stickersModuleInst
@@ -75,6 +79,9 @@ QtObject {
             append({subsection: Constants.settingsSubsection.profile,
                        text: qsTr("Profile"),
                        icon: "profile"})
+            append({subsection: Constants.settingsSubsection.keycard,
+                       text: qsTr("Keycard"),
+                       icon: "keycard"})
             append({subsection: Constants.settingsSubsection.ensUsernames,
                        text: qsTr("ENS usernames"),
                        icon: "username"})
