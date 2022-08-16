@@ -1214,12 +1214,17 @@ Rectangle {
                 enabled: !control.emojiPopupOpened
                 implicitHeight: 32
                 implicitWidth: 32
-                anchors.left: parent.left
+                anchors.right: stickersBtn.left
+                anchors.rightMargin: 2
                 anchors.bottom: parent.bottom
                 visible: !imageBtn2.visible
                 icon.name: "emojis"
                 type: StatusQ.StatusFlatRoundButton.Type.Tertiary
                 color: "transparent"
+
+                icon.color: (hovered || highlighted) ? Theme.palette.primaryColor1
+                                                     : Theme.palette.baseColor1
+
                 onClicked: {
                     control.emojiPopupOpened = true
                     togglePopup(emojiPopup, emojiBtn)
@@ -1232,13 +1237,17 @@ Rectangle {
                 id: gifBtn
                 implicitHeight: 32
                 implicitWidth: 32
-                anchors.right: emojiBtn.left
-                anchors.rightMargin: 2
+                anchors.left: stickersBtn.right
+                anchors.leftMargin: 2
                 anchors.bottom: parent.bottom
                 visible: !isEdit && RootStore.isGifWidgetEnabled
                 icon.name: "gif"
                 type: StatusQ.StatusFlatRoundButton.Type.Tertiary
                 color: "transparent"
+
+                icon.color: (hovered || highlighted) ? Theme.palette.primaryColor1
+                                                     : Theme.palette.baseColor1
+
                 onClicked: togglePopup(gifPopup, gifBtn)
             }
 
@@ -1247,13 +1256,15 @@ Rectangle {
                 implicitHeight: 32
                 implicitWidth: 32
                 width: visible ? 32 : 0
-                anchors.left: emojiBtn.right
-                anchors.leftMargin: 2
+                anchors.left: parent.left
                 anchors.bottom: parent.bottom
                 icon.name: "stickers"
                 type: StatusQ.StatusFlatRoundButton.Type.Tertiary
                 visible: !isEdit && emojiBtn.visible
                 color: "transparent"
+                icon.color: (hovered || highlighted) ? Theme.palette.primaryColor1
+                                                     : Theme.palette.baseColor1
+
                 onClicked: togglePopup(stickersPopup, stickersBtn)
             }
         }
