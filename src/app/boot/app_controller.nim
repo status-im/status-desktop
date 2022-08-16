@@ -227,7 +227,8 @@ proc newAppController*(statusFoundation: StatusFoundation): AppController =
     result.gifService,
     result.ensService,
     result.networkService,
-    result.generalService
+    result.generalService,
+    result.keycardService
   )
 
   # Do connections

@@ -20,7 +20,7 @@ import ../../../../app_service/service/network/service as network_service
 import ../../../../app_service/service/wallet_account/service as wallet_account_service
 import ../../../../app_service/service/general/service as general_service
 import ../../../../app_service/service/community/service as community_service
-
+import ../../../../app_service/service/keycard/service as keycard_service
 
 import ./profile/module as profile_module
 import ./contacts/module as contacts_module
@@ -33,6 +33,7 @@ import ./sync/module as sync_module
 import ./notifications/module as notifications_module
 import ./ens_usernames/module as ens_usernames_module
 import ./communities/module as communities_module
+import ./keycard/module as keycard_module
 
 export io_interface
 
@@ -55,6 +56,7 @@ type
     notificationsModule: notifications_module.AccessInterface
     ensUsernamesModule: ens_usernames_module.AccessInterface
     communitiesModule: communities_module.AccessInterface
+    keycardModule: keycard_module.AccessInterface
 
 proc newModule*(delegate: delegate_interface.AccessInterface,
   events: EventEmitter,
@@ -75,6 +77,7 @@ proc newModule*(delegate: delegate_interface.AccessInterface,
   generalService: general_service.Service,
   communityService: community_service.Service,
   networkService: network_service.Service,
+  keycardService: keycard_service.Service
 ): Module =
   result = Module()
   result.delegate = delegate
@@ -96,6 +99,7 @@ proc newModule*(delegate: delegate_interface.AccessInterface,
     result, events, settingsService, ensService, walletAccountService, networkService
   )
   result.communitiesModule = communities_module.newModule(result, communityService)
+  result.keycardModule = keycard_module.newModule(result, events, keycardService, walletAccountService)
 
   singletonInstance.engine.setRootContextProperty("profileSectionModule", result.viewVariant)
 
@@ -109,6 +113,7 @@ method delete*(self: Module) =
   self.devicesModule.delete
   self.syncModule.delete
   self.communitiesModule.delete
+  self.keycardModule.delete
 
   self.view.delete
   self.viewVariant.delete
@@ -127,6 +132,7 @@ method load*(self: Module) =
   self.notificationsModule.load()
   self.ensUsernamesModule.load()
   self.communitiesModule.load()
+  self.keycardModule.load()
 
 method isLoaded*(self: Module): bool =
   return self.moduleLoaded
@@ -163,6 +169,9 @@ proc checkIfModuleDidLoad(self: Module) =
     return
 
   if(not self.communitiesModule.isLoaded()):
+    return
+
+  if(not self.keycardModule.isLoaded()):
     return
 
   self.moduleLoaded = true
@@ -233,3 +242,6 @@ method getCommunitiesModule*(self: Module): QVariant =
 
 method communitiesModuleDidLoad*(self: Module) =
   self.checkIfModuleDidLoad()
+
+method getKeycardModule*(self: Module): QVariant =
+  self.keycardModule.getModuleAsVariant()

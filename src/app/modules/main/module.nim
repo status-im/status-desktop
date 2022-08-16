@@ -52,6 +52,7 @@ import ../../../app_service/service/gif/service as gif_service
 import ../../../app_service/service/ens/service as ens_service
 import ../../../app_service/service/network/service as network_service
 import ../../../app_service/service/general/service as general_service
+import ../../../app_service/service/keycard/service as keycard_service
 from ../../../app_service/common/types import StatusType
 import ../../../app_service/common/social_links
 
@@ -120,7 +121,8 @@ proc newModule*[T](
   gifService: gif_service.Service,
   ensService: ens_service.Service,
   networkService: network_service.Service,
-  generalService: general_service.Service
+  generalService: general_service.Service,
+  keycardService: keycard_service.Service
 ): Module[T] =
   result = Module[T]()
   result.delegate = delegate
@@ -158,7 +160,7 @@ proc newModule*[T](
     result, events, accountsService, settingsService, stickersService,
     profileService, contactsService, aboutService, languageService, privacyService, nodeConfigurationService,
     devicesService, mailserversService, chatService, ensService, walletAccountService, generalService, communityService,
-    networkService,
+    networkService, keycardService
   )
   result.stickersModule = stickers_module.newModule(result, events, stickersService, settingsService, walletAccountService, networkService)
   result.activityCenterModule = activity_center_module.newModule(result, events, activityCenterService, contactsService,
