@@ -17,10 +17,11 @@ import shared.controls.chat 1.0
 import shared.controls.chat.menuItems 1.0
 
 StatusListItem {
-    id: container
+    id: root
+
     width: parent.width
     height: visible ? implicitHeight : 0
-    title: container.name
+    title: root.name
 
     property var contactsStore
 
@@ -49,25 +50,25 @@ StatusListItem {
     signal rejectionRemoved(string publicKey)
     signal textClicked(string publicKey)
 
-    subTitle: Utils.getElidedCompressedPk(container.publicKey)
+    subTitle: Utils.getElidedCompressedPk(root.publicKey)
 
     image {
         width: 40
         height: 40
-        source: container.iconSource
+        source: root.iconSource
     }
 
     icon {
         width: 40
         height: 40
-        color: Utils.colorForPubkey(container.publicKey)
+        color: Utils.colorForPubkey(root.publicKey)
         letterSize: Math.max(4, root.image.width / 2.4)
         charactersLen: 2
-        isLetterIdenticon: !container.image.source.toString()
+        isLetterIdenticon: !root.image.source.toString()
     }
 
     ringSettings {
-        ringSpecModel: Utils.getColorHashAsJson(container.publicKey)
+        ringSpecModel: Utils.getColorHashAsJson(root.publicKey)
         ringPxSize: Math.max(icon.width / 24.0)
     }
 
@@ -81,7 +82,7 @@ StatusListItem {
                 qsTr("Respond to ID Request") :
                 qsTr("See ID Request")
             size: StatusBaseButton.Size.Small
-            onClicked: container.showVerificationRequest(container.publicKey)
+            onClicked: root.showVerificationRequest(root.publicKey)
         },
         StatusFlatRoundButton {
             visible: showSendMessageButton
@@ -89,7 +90,7 @@ StatusListItem {
             height: visible ? 32 : 0
             icon.name: "chat"
             icon.color: Theme.palette.directColor1
-            onClicked: container.sendMessageActionTriggered(container.publicKey)
+            onClicked: root.sendMessageActionTriggered(root.publicKey)
         },
         StatusFlatRoundButton {
             visible: showRejectContactRequestButton
@@ -97,7 +98,7 @@ StatusListItem {
             height: visible ? 32 : 0
             icon.name: "close-circle"
             icon.color: Style.current.danger
-            onClicked: container.contactRequestRejected(container.publicKey)
+            onClicked: root.contactRequestRejected(root.publicKey)
         },
         StatusFlatRoundButton {
             visible: showAcceptContactRequestButton
@@ -105,7 +106,7 @@ StatusListItem {
             height: visible ? 32 : 0
             icon.name: "checkmark-circle"
             icon.color: Style.current.success
-            onClicked: container.contactRequestAccepted(container.publicKey)
+            onClicked: root.contactRequestAccepted(root.publicKey)
         },
         StatusFlatRoundButton {
             visible: showRemoveRejectionButton
@@ -113,20 +114,20 @@ StatusListItem {
             height: visible ? 32 : 0
             icon.name: "cancel"
             icon.color: Style.current.danger
-            onClicked: container.rejectionRemoved(container.publicKey)
+            onClicked: root.rejectionRemoved(root.publicKey)
         },
         StatusBaseText {
-            text: container.contactText
+            text: root.contactText
             anchors.verticalCenter: parent.verticalCenter
-            color: container.contactTextClickable? Theme.palette.directColor1 : Theme.palette.baseColor1
+            color: root.contactTextClickable? Theme.palette.directColor1 : Theme.palette.baseColor1
 
             MouseArea {
                 anchors.fill: parent
-                enabled: container.contactTextClickable
+                enabled: root.contactTextClickable
                 cursorShape: sensor.enabled && containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
                 hoverEnabled: true
                 onClicked: {
-                    container.textClicked(container.publicKey)
+                    root.textClicked(root.publicKey)
                 }
             }
         },
@@ -137,7 +138,7 @@ StatusListItem {
             icon.name: "more"
             icon.color: Theme.palette.directColor1
             onClicked: {
-                container.openContactContextMenu(container.publicKey, container.name, container.icon)
+                root.openContactContextMenu(root.publicKey, root.name, root.icon)
             }
         }
     ]
