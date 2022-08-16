@@ -10,6 +10,8 @@ import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 import StatusQ.Popups.Dialog 0.1
 
+import SortFilterProxyModel 0.2
+
 import "../controls"
 
 StatusScrollView {
@@ -102,7 +104,7 @@ StatusScrollView {
                 text: qsTr("Downloading assets")
             },
             "import.initializeCommunity": {
-                icon: "image",
+                icon: "communities",
                 text: qsTr("Initializing community")
             }
         }
@@ -144,8 +146,11 @@ StatusScrollView {
     Component {
         id: subtaskComponent
         ColumnLayout {
+            id: subtaskDelegate
             spacing: 40
             width: parent.width
+
+            readonly property string type: model.type
 
             RowLayout {
                 id: subtaskRow
@@ -201,21 +206,23 @@ StatusScrollView {
                 }
             }
             ColumnLayout {
-                id: errorsColumn
                 Layout.fillWidth: true
                 Layout.leftMargin: subtaskIcon.width + subtaskRow.spacing
                 spacing: 12
-                property var errorsModel: model.errors
 
                 Repeater {
-                    model: errorsColumn.errorsModel
+                    model: SortFilterProxyModel {
+                        sourceModel: root.store.discordImportErrors
+                        filters: ValueFilter { roleName: "taskId"; value: subtaskDelegate.type }
+                        sorters: RoleSorter { roleName: "code"; sortOrder: Qt.DescendingOrder } // errors first
+                    }
                     delegate: IssuePill {
                         Layout.fillWidth: true
                         horizontalPadding: 12
                         verticalPadding: 8
                         bgCornerRadius: 8
                         visible: text
-                        type: model.code === 2 ? IssuePill.Type.Error : IssuePill.Type.Warning
+                        type: model.code === Constants.DiscordImportErrorCode.Error ? IssuePill.Type.Error : IssuePill.Type.Warning
                         text: model.message
                     }
                 }

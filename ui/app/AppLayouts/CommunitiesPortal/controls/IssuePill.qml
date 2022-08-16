@@ -52,6 +52,9 @@ Control {
             text: root.text
             color: d.baseColor
             font.pixelSize: 12
+            wrapMode: Text.WordWrap
+            maximumLineCount: 3
+            elide: Text.ElideRight
         }
     }
 }
