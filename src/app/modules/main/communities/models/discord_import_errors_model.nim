@@ -29,6 +29,9 @@ QtObject:
       ModelRole.Message.int:"message",
     }.toTable
 
+  method rowCount(self: DiscordImportErrorsModel, index: QModelIndex = nil): int =
+    return self.items.len
+
   method data(self: DiscordImportErrorsModel, index: QModelIndex, role: int): QVariant =
     if not index.isValid:
       return
