@@ -100,6 +100,10 @@ StatusScrollView {
             "import.downloadAssets": {
                 icon: "image",
                 text: qsTr("Downloading assets")
+            },
+            "import.initializeCommunity": {
+                icon: "image",
+                text: qsTr("Initializing community")
             }
         }
 
