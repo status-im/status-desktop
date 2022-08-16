@@ -83,7 +83,18 @@ StatusDialog {
                     linkType: model.linkType
                     text: model.url
 
+                    input.tabNavItem: {
+                        if (index < staticLinksRepeater.count - 1) {
+                            return staticLinksRepeater.itemAt(index + 1).input.edit
+                        }
+                        return customLinksRepeater.count ? customLinksRepeater.itemAt(0).focusItem : null
+                    }
+
                     onTextChanged: root.profileStore.updateLink(model.uuid, model.text, text)
+
+                    Component.onCompleted: if (index === 0) {
+                                               input.edit.forceActiveFocus()
+                                           }
                 }
             }
 
@@ -113,6 +124,13 @@ StatusDialog {
                         removeButton.visible: index > 0
                         removeButton.onClicked: root.profileStore.removeCustomLink(model.uuid)
 
+                        nextFocusItem: {
+                            if (index < customLinksRepeater.count - 1) {
+                                return customLinksRepeater.itemAt(index + 1).focusItem
+                            }
+                            return addAnotherCustomLinkButton
+                        }
+
                         onHyperlinkChanged: root.profileStore.updateLink(model.uuid, hyperlink, url)
                         onUrlChanged: root.profileStore.updateLink(model.uuid, hyperlink, url)
 
@@ -128,6 +146,7 @@ StatusDialog {
             }
 
             StatusIconTextButton {
+                id: addAnotherCustomLinkButton
                 text: qsTr("Add another custom link")
                 onClicked: {
                     root.profileStore.createCustomLink("", "")

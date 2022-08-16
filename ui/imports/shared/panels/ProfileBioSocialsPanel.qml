@@ -79,10 +79,6 @@ Item {
         sorters: [
             ExpressionSorter {
                 expression: sortedSocialLinksModel.customsLastPredicate(modelLeft.linkType, modelRight.linkType)
-            },
-            StringSorter {
-                roleName: "text"
-                caseSensitivity: Qt.CaseInsensitive
             }
         ]
     }
@@ -96,8 +92,9 @@ Item {
 
         StatusBaseText {
             Layout.fillWidth: true
+            visible: text !== ""
             text: root.bio
-            wrapMode: Text.WordWrap
+            wrapMode: Text.Wrap
         }
 
         Flow {
@@ -114,6 +111,7 @@ Item {
 
                 model: sortedSocialLinksModel
                 delegate: SocialLinkPreview {
+                    height: 32
                     text: model.text
                     url: model.url
                     linkType: model.linkType

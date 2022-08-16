@@ -10,6 +10,8 @@ StatusInput {
 
     property int linkType
 
+    leftPadding: 18 // by design
+
     placeholderText: {
         if (linkType === Constants.socialLinkType.twitter) return qsTr("Twitter Handle")
         if (linkType === Constants.socialLinkType.personalSite) return qsTr("Personal Site")
