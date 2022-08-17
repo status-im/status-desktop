@@ -35,7 +35,15 @@ def step(context,displayName,message):
     
 @When("the user clears chat history")
 def step(context):
-    _statusChat.clear_history()    
+    _statusChat.clear_history()
+    
+@When("the user types \"|any|\"") 
+def step(context, message): 
+    _statusChat.type_message_in_chat_input(message)
+
+@When("the user pressed enter")
+def step(context):
+    _statusChat.press_enter_in_chat_input()
 
 @Then("user is able to send chat message")
 def step(context):
@@ -48,6 +56,10 @@ def step(context):
 def step(context):
     _statusChat.send_gif()
     _statusChat.verify_last_message_sent("tenor.gif")
+    
+@Then("the user selects emoji in the suggestion list")
+def step(contenxt):
+    _statusChat.select_the_emoji_in_suggestion_list()
 
 @Then("the user is able to send a random chat message")
 def step(context):
