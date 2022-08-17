@@ -1,7 +1,7 @@
 library 'status-jenkins-lib@v1.3.4'
 
 pipeline {
-  agent { label 'linux-01' }
+  agent { label 'linux' }
 
   parameters {
     booleanParam(
@@ -27,6 +27,14 @@ pipeline {
       daysToKeepStr: '30',
       artifactNumToKeepStr: '3',
     ))
+    /* Throttle number of concurrent builds. */
+    throttleJobProperty(
+      throttleEnabled: true,
+      throttleOption: 'category',
+      categories: ['status-desktop-e2e-tests'],
+      maxConcurrentPerNode: 1,
+      maxConcurrentTotal: 1
+    )
   }
 
   environment {
