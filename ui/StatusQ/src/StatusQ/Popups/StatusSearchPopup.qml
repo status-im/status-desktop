@@ -326,6 +326,7 @@ StatusModal {
                     }
                 }
                 StatusLoadingIndicator {
+                    objectName: "searchPopupLoadingIndicator"
                     anchors.centerIn: parent
                     visible: root.loading
                     color: Theme.palette.primaryColor1
