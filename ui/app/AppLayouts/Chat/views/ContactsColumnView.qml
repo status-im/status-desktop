@@ -12,6 +12,8 @@ import utils 1.0
 import shared 1.0
 import shared.popups 1.0
 
+import SortFilterProxyModel 0.2
+
 import "../panels"
 import "../popups"
 import "../popups/community"
@@ -146,7 +148,14 @@ Item {
             StatusChatList {
                 id: channelList
                 width: scroll.availableWidth
-                model: root.chatSectionModule.model
+                model: SortFilterProxyModel {
+                    sourceModel: root.chatSectionModule.model
+                    sorters: RoleSorter {
+                        roleName: "lastMessageTimestamp"
+                        sortOrder: Qt.DescendingOrder
+                    }
+                }
+
                 highlightItem: !root.store.openCreateChat
                 onChatItemSelected: {
                     Global.closeCreateChatView()
