@@ -71,6 +71,11 @@ StatusStackModal {
                     Layout.fillWidth: true
                 }
 
+                CommunityBannerPicker {
+                    id: bannerPicker
+                    Layout.fillWidth: true
+                }
+
                 CommunityColorPicker {
                     id: colorPicker
                     onPick: root.replace(colorPanel)
@@ -172,7 +177,8 @@ StatusStackModal {
                         historyArchiveSupportEnabled: options.archiveSupportEnabled,
                         checkedMembership: options.requestToJoinEnabled ? Constants.communityChatOnRequestAccess : Constants.communityChatPublicAccess,
                         pinMessagesAllowedForMembers: options.pinMessagesEnabled
-                    }
+                    },
+                    bannerJsonStr: JSON.stringify({imagePath: String(bannerPicker.source).replace("file://", ""), cropRect: bannerPicker.cropRect})
             })
             if (error) {
                 errorDialog.text = error.error

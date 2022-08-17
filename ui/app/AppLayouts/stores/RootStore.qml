@@ -104,10 +104,12 @@ QtObject {
     }
 
     function createCommunity(communityName, communityDescription, checkedMembership, communityColor, communityTags,
-                             communityImage, imageCropperModalaX, imageCropperModalaY, imageCropperModalbX, imageCropperModalbY) {
+                             communityImage, imageCropperModalaX, imageCropperModalaY, imageCropperModalbX, imageCropperModalbY,
+                             historyArchiveSupportEnabled, pinMessagesAllowedForMembers, bannerJsonStr) {
         communitiesModuleInst.createCommunity(communityName, communityDescription, checkedMembership, communityColor,
                                               communityTags, communityImage, imageCropperModalaX, imageCropperModalaY,
-                                              imageCropperModalbX, imageCropperModalbY);
+                                              imageCropperModalbX, imageCropperModalbY,
+                                              historyArchiveSupportEnabled, pinMessagesAllowedForMembers, bannerJsonStr);
     }
 
     function copyToClipboard(text) {

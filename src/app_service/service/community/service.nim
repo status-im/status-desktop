@@ -615,7 +615,8 @@ QtObject:
       imageUrl: string,
       aX: int, aY: int, bX: int, bY: int,
       historyArchiveSupportEnabled: bool,
-      pinMessageAllMembersEnabled: bool) =
+      pinMessageAllMembersEnabled: bool,
+      bannerJsonStr: string) =
     try:
       var image = singletonInstance.utils.formatImagePath(imageUrl)
       var tagsString = tags
@@ -633,7 +634,8 @@ QtObject:
         image,
         aX, aY, bX, bY,
         historyArchiveSupportEnabled,
-        pinMessageAllMembersEnabled)
+        pinMessageAllMembersEnabled,
+        bannerJsonStr)
 
       if response.error != nil:
         let error = Json.decode($response.error, RpcError)

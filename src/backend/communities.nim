@@ -57,8 +57,10 @@ proc createCommunity*(
     imageUrl: string,
     aX: int, aY: int, bX: int, bY: int,
     historyArchiveSupportEnabled: bool,
-    pinMessageAllMembersEnabled: bool
+    pinMessageAllMembersEnabled: bool,
+    bannerJsonStr: string
     ): RpcResponse[JsonNode] {.raises: [Exception].} =
+  let bannerImage = newCroppedImage(bannerJsonStr)
   result = callPrivateRPC("createCommunity".prefix, %*[{
       # TODO this will need to be renamed membership (small m)
       "Membership": access,
@@ -75,7 +77,8 @@ proc createCommunity*(
       "imageBx": bX,
       "imageBy": bY,
       "historyArchiveSupportEnabled": historyArchiveSupportEnabled,
-      "pinMessageAllMembersEnabled": pinMessageAllMembersEnabled
+      "pinMessageAllMembersEnabled": pinMessageAllMembersEnabled,
+      "banner": bannerImage
     }])
 
 proc editCommunity*(

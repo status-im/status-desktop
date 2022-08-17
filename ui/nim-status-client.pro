@@ -23,6 +23,7 @@ TRANSLATIONS += \
 
 OTHER_FILES += $$files("$$PWD/*.qml", true)
 OTHER_FILES += $$files("$$PWD/*.js", true)
+OTHER_FILES += $$files("$$PWD/../src/*.nim", true)
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH = $$PWD/imports \
