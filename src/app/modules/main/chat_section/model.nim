@@ -15,6 +15,7 @@ type
     ColorHash
     Description
     Type
+    LastMessageTimestamp
     HasUnreadMessages
     NotificationsCount
     Muted
@@ -79,6 +80,7 @@ QtObject:
       ModelRole.ColorHash.int:"colorHash",
       ModelRole.Description.int:"description",
       ModelRole.Type.int:"type",
+      ModelRole.LastMessageTimestamp.int:"lastMessageTimestamp",
       ModelRole.HasUnreadMessages.int:"hasUnreadMessages",
       ModelRole.NotificationsCount.int:"notificationsCount",
       ModelRole.Muted.int:"muted",
@@ -123,6 +125,8 @@ QtObject:
       result = newQVariant(item.description)
     of ModelRole.Type:
       result = newQVariant(item.`type`)
+    of ModelRole.LastMessageTimestamp:
+      result = newQVariant(item.lastMessageTimestamp)
     of ModelRole.HasUnreadMessages:
       result = newQVariant(item.hasUnreadMessages)
     of ModelRole.NotificationsCount:
@@ -236,7 +240,7 @@ QtObject:
       if self.items[i].subItems.muteUnmuteItemById(id, mute):
         self.items[i].BaseItem.muted = self.items[i].subItems.isAllMuted()
         return
-  
+
   proc muteUnmuteItemsOrSubItemsByCategoryId*(self: Model, categoryId: string, mute: bool) =
     for i in 0 ..< self.items.len:
       if(self.items[i].categoryId == categoryId):
@@ -312,6 +316,14 @@ QtObject:
         return
 
       if self.items[i].subItems.updateNotificationsForItemById(id, hasUnreadMessages, notificationsCount):
+        return
+
+  proc updateLastMessageTimestampForItemById*(self: Model, id: string, lastMessageTimestamp: int) =
+    for i in 0 ..< self.items.len:
+      if(self.items[i].id == id):
+        let index = self.createIndex(i, 0, nil)
+        self.items[i].BaseItem.lastMessageTimestamp = lastMessageTimestamp
+        self.dataChanged(index, index, @[ModelRole.LastMessageTimestamp.int])
         return
 
   proc getAllNotifications*(self: Model): tuple[hasNotifications: bool, notificationsCount: int] =

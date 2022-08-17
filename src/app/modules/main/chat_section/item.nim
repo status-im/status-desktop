@@ -7,10 +7,10 @@ type
     subItems: SubModel
 
 proc initItem*(id, name, icon: string, color, emoji, description: string,
-    `type`: int, amIChatAdmin: bool, hasUnreadMessages: bool, notificationsCount: int, muted,
+    `type`: int, amIChatAdmin: bool, lastMessageTimestamp: int, hasUnreadMessages: bool, notificationsCount: int, muted,
     blocked, active: bool, position: int, categoryId: string, colorId: int = 0, colorHash: seq[ColorHashSegment] = @[], highlight: bool = false): Item =
   result = Item()
-  result.setup(id, name, icon, color, emoji, description, `type`, amIChatAdmin, hasUnreadMessages,
+  result.setup(id, name, icon, color, emoji, description, `type`, amIChatAdmin, lastMessageTimestamp, hasUnreadMessages,
   notificationsCount, muted, blocked, active, position, categoryId, colorId, colorHash, highlight)
   result.subItems = newSubModel()
 
@@ -31,6 +31,7 @@ proc `$`*(self: Item): string =
     emoji: {self.emoji},
     description: {self.description},
     type: {self.`type`},
+    lastMessageTimestamp: {self.lastMessageTimestamp},
     hasUnreadMessages: {self.hasUnreadMessages},
     notificationsCount: {self.notificationsCount},
     muted: {self.muted},
@@ -54,6 +55,7 @@ proc toJsonNode*(self: Item): JsonNode =
     "emoji": self.emoji,
     "description": self.description,
     "type": self.`type`,
+    "lastMessageTimestamp": self.lastMessageTimestamp,
     "hasUnreadMessages": self.hasUnreadMessages,
     "notificationsCount": self.notificationsCount,
     "muted": self.muted,

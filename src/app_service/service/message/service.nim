@@ -60,6 +60,7 @@ type
     sectionId*: string
     chatId*: string
     chatType*: ChatType
+    lastMessageTimestamp*: int
     unviewedMessagesCount*: int
     unviewedMentionsCount*: int
     messages*: seq[MessageDto]
@@ -186,6 +187,7 @@ QtObject:
         sectionId: chats[i].communityId,
         chatId: chats[i].id,
         chatType: chats[i].chatType,
+        lastMessageTimestamp: chats[i].timestamp.int,
         unviewedMessagesCount: chats[i].unviewedMessagesCount,
         unviewedMentionsCount: chats[i].unviewedMentionsCount,
         messages: chatMessages

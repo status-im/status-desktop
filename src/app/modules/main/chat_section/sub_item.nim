@@ -8,10 +8,10 @@ type
     parentId: string
 
 proc initSubItem*(id, parentId, name, icon: string, color, emoji, description: string,
-  `type`: int, amIChatAdmin: bool, hasUnreadMessages: bool, notificationsCount: int, muted, blocked,
+  `type`: int, amIChatAdmin: bool, lastMessageTimestamp: int, hasUnreadMessages: bool, notificationsCount: int, muted, blocked,
   active: bool, position: int): SubItem =
   result = SubItem()
-  result.setup(id, name, icon, color, emoji, description, `type`, amIChatAdmin,
+  result.setup(id, name, icon, color, emoji, description, `type`, amIChatAdmin, lastMessageTimestamp, 
     hasUnreadMessages, notificationsCount, muted, blocked, active, position)
   result.parentId = parentId
 
@@ -32,6 +32,7 @@ proc `$`*(self: SubItem): string =
     emoji: {self.emoji},
     description: {self.description},
     type: {self.`type`},
+    lastMessageTimestamp: {self.lastMessageTimestamp},
     hasUnreadMessages: {self.hasUnreadMessages},
     notificationsCount: {self.notificationsCount},
     muted: {self.muted},
@@ -50,6 +51,7 @@ proc toJsonNode*(self: SubItem): JsonNode =
     "emoji": self.emoji,
     "description": self.description,
     "type": self.`type`,
+    "lastMessageTimestamp": self.lastMessageTimestamp,
     "hasUnreadMessages": self.hasUnreadMessages,
     "notificationsCount": self.notificationsCount,
     "muted": self.muted,

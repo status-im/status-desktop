@@ -15,6 +15,7 @@ type
     emoji: string
     colorHash: color_hash_model.Model
     description: string
+    lastMessageTimestamp: int
     hasUnreadMessages: bool
     notificationsCount: int
     muted: bool
@@ -26,7 +27,7 @@ type
     trustStatus: TrustStatus
 
 proc setup*(self: BaseItem, id, name, icon: string, color, emoji, description: string,
-    `type`: int, amIChatAdmin: bool, hasUnreadMessages: bool, notificationsCount: int, muted,
+    `type`: int, amIChatAdmin: bool, lastMessageTimestamp: int, hasUnreadMessages: bool, notificationsCount: int, muted,
     blocked, active: bool, position: int, categoryId: string = "", colorId: int = 0,
     colorHash: seq[ColorHashSegment] = @[], highlight: bool = false,
     trustStatus: TrustStatus = TrustStatus.Unknown) =
@@ -41,6 +42,7 @@ proc setup*(self: BaseItem, id, name, icon: string, color, emoji, description: s
   self.colorHash.setItems(map(colorHash, x => color_hash_item.initItem(x.len, x.colorIdx)))
   self.description = description
   self.`type` = `type`
+  self.lastMessageTimestamp = lastMessageTimestamp
   self.hasUnreadMessages = hasUnreadMessages
   self.notificationsCount = notificationsCount
   self.muted = muted
@@ -52,11 +54,11 @@ proc setup*(self: BaseItem, id, name, icon: string, color, emoji, description: s
   self.trustStatus = trustStatus
 
 proc initBaseItem*(id, name, icon: string, color, emoji, description: string, `type`: int,
-    amIChatAdmin: bool, hasUnreadMessages: bool, notificationsCount: int, muted, blocked, active: bool,
+    amIChatAdmin: bool, lastMessageTimestamp: int, hasUnreadMessages: bool, notificationsCount: int, muted, blocked, active: bool,
     position: int, categoryId: string = "", colorId: int = 0, colorHash: seq[ColorHashSegment] = @[],
     highlight: bool = false, trustStatus: TrustStatus = TrustStatus.Unknown): BaseItem =
   result = BaseItem()
-  result.setup(id, name, icon, color, emoji, description, `type`, amIChatAdmin,
+  result.setup(id, name, icon, color, emoji, description, `type`, amIChatAdmin, lastMessageTimestamp,
     hasUnreadMessages, notificationsCount, muted, blocked, active, position, categoryId, colorId,
     colorHash, highlight, trustStatus)
 
@@ -113,6 +115,12 @@ method hasUnreadMessages*(self: BaseItem): bool {.inline base.} =
 
 method `hasUnreadMessages=`*(self: var BaseItem, value: bool) {.inline base.} =
   self.hasUnreadMessages = value
+
+method lastMessageTimestamp*(self: BaseItem): int {.inline base.} =
+  self.lastMessageTimestamp
+
+method `lastMessageTimestamp=`*(self: var BaseItem, value: int) {.inline base.} =
+  self.lastMessageTimestamp = value
 
 method notificationsCount*(self: BaseItem): int {.inline base.} =
   self.notificationsCount

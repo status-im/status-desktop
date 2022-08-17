@@ -65,8 +65,8 @@ proc init*(self: Controller) =
     let args = MessagesArgs(e)
     if (self.sectionId != args.sectionId or args.messages.len == 0):
       return
-    self.delegate.onNewMessagesReceived(args.sectionId, args.chatId, args.chatType, args.unviewedMessagesCount, 
-    args.unviewedMentionsCount, args.messages[0])
+    self.delegate.onNewMessagesReceived(args.sectionId, args.chatId, args.chatType, args.lastMessageTimestamp,
+    args.unviewedMessagesCount, args.unviewedMentionsCount, args.messages[0])
 
   self.events.on(message_service.SIGNAL_MENTIONED_IN_EDITED_MESSAGE) do(e: Args):
     let args = MessageEditedArgs(e)
