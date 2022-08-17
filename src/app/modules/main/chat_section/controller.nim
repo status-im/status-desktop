@@ -61,6 +61,10 @@ proc getActiveChatId*(self: Controller): string =
 
 
 proc init*(self: Controller) =
+  self.events.on(SIGNAL_SENDING_SUCCESS) do(e:Args):
+    let args = MessageSendingSuccess(e)
+    self.delegate.updateLastMessageTimestamp(args.chat.id, args.chat.timestamp.int)
+
   self.events.on(SIGNAL_NEW_MESSAGE_RECEIVED) do(e: Args):
     let args = MessagesArgs(e)
     if (self.sectionId != args.sectionId or args.messages.len == 0):

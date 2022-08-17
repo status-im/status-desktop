@@ -363,7 +363,7 @@ proc updateBadgeNotifications(self: Module, chatId: string, hasUnreadMessages: b
   # update parent module
   self.updateParentBadgeNotifications()
 
-proc updateLastMessageTimestamp(self: Module, chatId: string, lastMessageTimestamp: int) =
+method updateLastMessageTimestamp*(self: Module, chatId: string, lastMessageTimestamp: int) =
   self.view.chatsModel().updateLastMessageTimestampForItemById(chatId, lastMessageTimestamp)
 
 method onActiveSectionChange*(self: Module, sectionId: string) =
