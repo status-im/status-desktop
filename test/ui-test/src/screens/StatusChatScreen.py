@@ -65,6 +65,9 @@ class ChatComponents(Enum):
 class ChatMessagesHistory(Enum):
     CHAT_CREATED_TEXT = 1
     HAS_ADDED_TEXT = 0
+    
+class Emoji(Enum):
+    EMOJI_SUGGESTIONS_FIRST_ELEMENT = "emojiSuggestions_first_inputListRectangle"
 
 
 class StatusChatScreen:
@@ -77,9 +80,15 @@ class StatusChatScreen:
         verify(is_displayed(ChatComponents.LAST_MESSAGE_TEXT.value), "Checking chat is loaded by looking if last message is displayed.")
 
     # Screen actions region:
-    def send_message(self, message: str):
+    def type_message_in_chat_input(self, message: str):
         type(ChatComponents.MESSAGE_INPUT.value, message)
+
+    def press_enter_in_chat_input(self):
         press_enter(ChatComponents.MESSAGE_INPUT.value)
+
+    def send_message(self, message: str):
+        self.type_message_in_chat_input(message)
+        self.press_enter_in_chat_input()
         
     def clear_history(self):
         click_obj_by_name(ChatComponents.MORE_OPTIONS_BUTTON.value)
@@ -96,6 +105,9 @@ class StatusChatScreen:
         click_obj_by_name(ChatComponents.GIF_MOUSEAREA.value)       
         press_enter(ChatComponents.MESSAGE_INPUT.value)
         
+    def select_the_emoji_in_suggestion_list(self):
+        click_obj_by_name(Emoji.EMOJI_SUGGESTIONS_FIRST_ELEMENT.value)   
+
     # Verifications region:        
     def verify_last_message_sent(self, message: str):
         [loaded, last_message_obj] = is_loaded_visible_and_enabled(ChatComponents.LAST_MESSAGE_TEXT.value)
@@ -212,13 +224,13 @@ class StatusChatScreen:
     
     def cannot_do_mention(self, displayName: str):    
         self.chat_loaded()
-        type(ChatComponents.MESSAGE_INPUT.value, _MENTION_SYMBOL + displayName)
+        self.type_message_in_chat_input(_MENTION_SYMBOL + displayName)
         displayed = is_displayed(ChatComponents.SUGGESTIONS_BOX.value)
         verify(displayed == False , "Checking suggestion box is not displayed when trying to mention a non existing user.")
         
     def do_mention(self, displayName: str):
         self.chat_loaded()
-        type(ChatComponents.MESSAGE_INPUT.value, _MENTION_SYMBOL + displayName)
+        self.type_message_in_chat_input(_MENTION_SYMBOL + displayName)
         displayed = is_displayed(ChatComponents.SUGGESTIONS_BOX.value)
         verify(displayed, "Checking suggestion box displayed when trying to do a mention")       
         [loaded, suggestions_list] = is_loaded_visible_and_enabled(ChatComponents.SUGGESTIONS_LIST.value)
@@ -236,14 +248,13 @@ class StatusChatScreen:
 
     def send_emoji(self, emoji_short_name: str, message: str):
         if (message != ""):
-            type(ChatComponents.MESSAGE_INPUT.value, message)
+            self.type_message_in_chat_input(message)
         
         click_obj_by_name(ChatComponents.CHAT_INPUT_EMOJI_BUTTON.value)
         emojiAttr = copy.deepcopy(getattr(names, ChatComponents.EMOJI_POPUP_EMOJI_PLACEHOLDER.value))
         emojiAttr["objectName"] = emojiAttr["objectName"].replace("%NAME%", emoji_short_name)
-        click_obj_by_attr(emojiAttr)
-        
-        press_enter(ChatComponents.MESSAGE_INPUT.value)
+        click_obj_by_attr(emojiAttr)       
+        self.press_enter_in_chat_input()
 
     def verify_chat_order(self, index: int, chatName: str):
         chat_lists = get_obj(ChatComponents.CHAT_LIST.value)
@@ -264,3 +275,4 @@ class StatusChatScreen:
                 click_obj(chat)
                 return
         verify(False, "Chat switched")
+        

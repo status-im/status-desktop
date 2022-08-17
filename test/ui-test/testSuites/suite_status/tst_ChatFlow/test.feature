@@ -76,6 +76,13 @@ Feature: Status Desktop Chat
          And the user opens the chat section
          And user joins chat room automation-test
          Then The user is able to send a gif message
+         
+    Scenario: The user is able to use emoji suggestions
+         When user joins chat room automation-test
+         When the user types "hello :thumbs"
+	    Then the user selects emoji in the suggestion list
+         When the user pressed enter
+         Then then the message 👍 is displayed in the last message
 
 
     @mayfail
