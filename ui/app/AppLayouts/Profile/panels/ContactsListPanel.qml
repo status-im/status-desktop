@@ -68,10 +68,8 @@ Item {
             }
 
             function searchPredicate(name, pubkey) {
-                if (root.searchString === "") return true
-
-                let lowerCaseSearchString = root.searchString.toLowerCase()
-                let compressedPubkey = Utils.getCompressedPk(pubkey)
+                const lowerCaseSearchString = root.searchString.toLowerCase()
+                const compressedPubkey = Utils.getCompressedPk(pubkey)
 
                 return name.toLowerCase().includes(lowerCaseSearchString) ||
                        pubkey.toLowerCase().includes(lowerCaseSearchString) ||
@@ -81,9 +79,10 @@ Item {
             filters: [
                 ExpressionFilter { expression: filteredModel.panelUsagePredicate(model.isVerified) },
                 ExpressionFilter {
+                    enabled: root.searchString !== ""
                     expression: {
                         root.searchString // ensure expression is reevaluated when searchString changes
-                        filteredModel.searchPredicate(model.displayName, model.pubKey)
+                        return filteredModel.searchPredicate(model.displayName, model.pubKey)
                     }
                 }
             ]
