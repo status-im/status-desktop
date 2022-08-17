@@ -199,9 +199,10 @@ method createCommunity*(self: Module, name: string,
                         imagePath: string,
                         aX: int, aY: int, bX: int, bY: int,
                         historyArchiveSupportEnabled: bool,
-                        pinMessageAllMembersEnabled: bool) =
+                        pinMessageAllMembersEnabled: bool,
+                        bannerJsonStr: string) =
   self.controller.createCommunity(name, description, introMessage, outroMessage, access, color, tags,
-                                  imagePath, aX, aY, bX, bY, historyArchiveSupportEnabled, pinMessageAllMembersEnabled)
+                                  imagePath, aX, aY, bX, bY, historyArchiveSupportEnabled, pinMessageAllMembersEnabled, bannerJsonStr)
 
 method deleteCommunityCategory*(self: Module, communityId: string, categoryId: string) =
   self.controller.deleteCommunityCategory(communityId, categoryId)
