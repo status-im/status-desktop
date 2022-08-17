@@ -310,3 +310,6 @@ method onMeMentionedInEditedMessage*(self: AccessInterface, chatId: string, edit
 
 method downloadMessages*(self: AccessInterface, chatId: string, filePath: string) =
   raise newException(ValueError, "No implementation available")
+
+method updateLastMessageTimestamp*(self: AccessInterface, chatId: string, lastMessageTimestamp: int) =
+  raise newException(ValueError, "No implementation available")
