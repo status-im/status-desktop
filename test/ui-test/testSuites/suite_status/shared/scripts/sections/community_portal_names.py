@@ -3,7 +3,6 @@ from sections.global_names import *
 
 # Main:
 navBarListView_Communities_Portal_navbar_StatusNavBarTabButton = {"checkable": True, "container": mainWindow_navBarListView_ListView, "objectName": "Communities Portal-navbar", "type": "StatusNavBarTabButton", "visible": True}
-communities_Portal_navbar_communities_icon_StatusIcon = {"container": navBarListView_Communities_Portal_navbar_StatusNavBarTabButton, "objectName": "communities-icon", "type": "StatusIcon", "visible": True}
 mainWindow_communitiesPortalLayoutContainer_CommunitiesPortalLayout = {"container": statusDesktop_mainWindow, "objectName": "communitiesPortalLayout", "type": "CommunitiesPortalLayout"}
 communitiesPortalLayoutContainer_createCommunityButton_StatusButton = {"container": mainWindow_communitiesPortalLayoutContainer_CommunitiesPortalLayout, "objectName": "createCommunityButton", "type": "StatusButton", "visible": True}
 navBarListView_All_Community_Buttons = {"checkable": True, "container": mainWindow_navBarListView_ListView, "objectName": "CommunityNavBarButton", "type": "StatusNavBarTabButton"}
