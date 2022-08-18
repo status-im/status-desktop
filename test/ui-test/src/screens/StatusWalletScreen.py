@@ -40,6 +40,7 @@ class SendPopup(Enum):
     SCROLL_BAR: str = "mainWallet_Send_Popup_Main"
     HEADER_ACCOUNTS_LIST: str = "mainWallet_Send_Popup_Header_Accounts"
     AMOUNT_INPUT: str = "mainWallet_Send_Popup_Amount_Input"
+    GAS_PRICE_INPUT: str = "mainWallet_Send_Popup_GasPrice_Input"
     MY_ACCOUNTS_TAB: str = "mainWallet_Send_Popup_My_Accounts_Tab"
     MY_ACCOUNTS_LIST: str = "mainWallet_Send_Popup_My_Accounts_List"
     NETWORKS_LIST: str = "mainWallet_Send_Popup_Networks_List"
@@ -175,6 +176,9 @@ class StatusWalletScreen:
         time.sleep(2)
 
         self._click_repeater(SendPopup.NETWORKS_LIST.value, chain_name)
+        
+        # With the simulator, the gas price estimation doesn't work
+        type(SendPopup.GAS_PRICE_INPUT.value, "20")
         
         click_obj_by_name(SendPopup.SEND_BUTTON.value)
         

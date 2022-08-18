@@ -360,6 +360,7 @@ Item {
 
         Input {
             id: inputGasPrice
+            textField.objectName: "gasPriceSelectorInput"
             label: qsTr("Per-gas overall limit")
             inputLabel.color: Style.current.secondaryText
             anchors.top: parent.top
