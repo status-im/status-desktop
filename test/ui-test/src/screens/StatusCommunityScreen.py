@@ -93,6 +93,17 @@ class StatusCommunityScreen:
                 return True, item
         return False, None
 
+    def _toggle_channels_in_category_popop(self, community_channel_names: str):
+        # Wait for the channel list
+        time.sleep(0.5)
+
+        for channel_name in community_channel_names.split(", "):
+            [loaded, channel] = self._find_channel_in_category_popup(channel_name)
+            if loaded:
+                click_obj(channel)
+            else:
+                verify_failure("Can't find channel " + channel_name)
+
     def open_edit_channel_popup(self):
         StatusMainScreen.wait_for_banner_to_disappear()
 
@@ -130,7 +141,7 @@ class StatusCommunityScreen:
         click_obj_by_name(CreateOrEditCommunityChannelPopup.COMMUNITY_CHANNEL_SAVE_OR_CREATE_BUTTON.value)
         time.sleep(0.5)
 
-    def create_community_category(self, community_category_name, community_channel_name, method):
+    def create_community_category(self, community_category_name, community_channel_names, method):
         if (method == CommunityCreateMethods.BOTTOM_MENU.value):
             click_obj_by_name(CommunityScreenComponents.COMMUNITY_CREATE_CHANNEL_OR_CAT_BUTTON.value)
         elif (method == CommunityCreateMethods.RIGHT_CLICK_MENU.value):
@@ -141,15 +152,23 @@ class StatusCommunityScreen:
         click_obj_by_name(CommunityScreenComponents.COMMUNITY_CREATE_CATEGORY_MENU_ITEM.value)
 
         wait_for_object_and_type(CreateOrEditCommunityCategoryPopup.COMMUNITY_CATEGORY_NAME_INPUT.value, community_category_name)
-
-        [loaded, listItem] = self._find_channel_in_category_popup(community_channel_name)
-        if loaded:
-            click_obj(listItem)
-        else:
-            verify_failure("Can't find channel " + community_channel_name)
-
+        self._toggle_channels_in_category_popop(community_channel_names)
         click_obj_by_name(CreateOrEditCommunityCategoryPopup.COMMUNITY_CATEGORY_BUTTON.value)
-        
+
+    def edit_community_category(self, community_category_name, new_community_category_name, community_channel_names):
+        [loaded, category] = self._find_category_in_chat(community_category_name)
+        verify(loaded, "Can't find category " + community_category_name)
+
+        # For some reason it clicks on a first channel in category instead of category
+        squish.mouseClick(category.parent, squish.Qt.RightButton)
+        click_obj_by_name(CommunityScreenComponents.COMMUNITY_EDIT_CATEGORY_MENU_ITEM.value)
+
+        # Select all text in the input before typing
+        wait_for_object_and_type(CreateOrEditCommunityCategoryPopup.COMMUNITY_CATEGORY_NAME_INPUT.value, "<Ctrl+a>")
+        type(CreateOrEditCommunityCategoryPopup.COMMUNITY_CATEGORY_NAME_INPUT.value, new_community_category_name)
+        self._toggle_channels_in_category_popop(community_channel_names)
+        click_obj_by_name(CreateOrEditCommunityCategoryPopup.COMMUNITY_CATEGORY_BUTTON.value)
+
     def delete_community_category(self, community_category_name):
         [loaded, category] = self._find_category_in_chat(community_category_name)
         verify(loaded, "Can't find category " + community_category_name)
