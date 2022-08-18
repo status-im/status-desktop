@@ -167,6 +167,15 @@ class StatusWalletScreen:
                 click_obj(accounts.itemAtIndex(index))
                 break
         
+        scroll_obj_by_name(SendPopup.SCROLL_BAR.value)
+        time.sleep(2)
+        scroll_obj_by_name(SendPopup.SCROLL_BAR.value)
+        time.sleep(2)
+        scroll_obj_by_name(SendPopup.SCROLL_BAR.value)
+        time.sleep(2)
+
+        self._click_repeater(SendPopup.NETWORKS_LIST.value, chain_name)
+        
         click_obj_by_name(SendPopup.SEND_BUTTON.value)
         
         type(SendPopup.PASSWORD_INPUT.value, password)
