@@ -58,6 +58,8 @@ Popup {
 
             Repeater {
                 id: chainRepeater1
+                width: parent.width
+                height: parent.height
                 objectName: "networkSelectPopupChainRepeaterLayer1"
                 model: popup.layer1Networks
 

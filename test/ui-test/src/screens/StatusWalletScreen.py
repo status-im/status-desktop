@@ -1,22 +1,28 @@
 from enum import Enum
 import time
+import os
 import sys
 from drivers.SquishDriver import *
 from drivers.SquishDriverVerification import *
 from common.SeedUtils import *
 from .StatusMainScreen import StatusMainScreen
 
+class Tokens(Enum):
+    ETH: str = "ETH"
+    
 class SigningPhrasePopUp(Enum):
     OK_GOT_IT_BUTTON: str = "signPhrase_Ok_Button"
-
 
 class MainWalletScreen(Enum):
     ADD_ACCOUNT_BUTTON: str = "mainWallet_Add_Account"
     ACCOUNT_NAME: str = "mainWallet_Account_Name"
+    ACCOUNT_ADDRESS_PANEL: str = "mainWallet_Address_Panel"
     SEND_BUTTON_FOOTER: str = "mainWallet_Footer_Send_Button"
     SAVED_ADDRESSES_BUTTON: str = "mainWallet_Saved_Addresses_Button"
     NETWORK_SELECTOR_BUTTON: str = "mainWallet_Network_Selector_Button"
     RIGHT_SIDE_TABBAR: str = "mainWallet_Right_Side_Tab_Bar"
+    MAILSERVER_DIALOG: str = "mailserver_dialog"
+    MAILSERVER_RETRY: str = "mailserver_retry"
 
 class AssetView(Enum):
     LIST: str = "mainWallet_Assets_View_List"
@@ -42,6 +48,7 @@ class SendPopup(Enum):
     SCROLL_BAR: str = "mainWallet_Send_Popup_Main"
     HEADER_ACCOUNTS_LIST: str = "mainWallet_Send_Popup_Header_Accounts"
     AMOUNT_INPUT: str = "mainWallet_Send_Popup_Amount_Input"
+    GAS_PRICE_INPUT: str = "mainWallet_Send_Popup_GasPrice_Input"
     MY_ACCOUNTS_TAB: str = "mainWallet_Send_Popup_My_Accounts_Tab"
     MY_ACCOUNTS_LIST: str = "mainWallet_Send_Popup_My_Accounts_List"
     NETWORKS_LIST: str = "mainWallet_Send_Popup_Networks_List"
@@ -49,6 +56,7 @@ class SendPopup(Enum):
     PASSWORD_INPUT: str = "mainWallet_Send_Popup_Password_Input"
     ASSET_SELECTOR: str = "mainWallet_Send_Popup_Asset_Selector"
     ASSET_LIST: str = "mainWallet_Send_Popup_Asset_List"
+    HIGH_GAS_BUTTON: str = "mainWallet_Send_Popup_GasSelector_HighGas_Button"
     
 class AddAccountPopup(Enum):
     SCROLL_BAR: str = "mainWallet_Add_Account_Popup_Main"
@@ -129,7 +137,12 @@ class StatusWalletScreen:
         input_seed_phrase(AddAccountPopup.SEED_PHRASE_INPUT_TEMPLATE.value, words)
         time.sleep(1)
         
+        visible, _ = is_loaded_visible_and_enabled(MainWalletScreen.MAILSERVER_DIALOG.value, 500)
+        if (visible):
+            click_obj_by_name(MainWalletScreen.MAILSERVER_RETRY.value)
+        
         click_obj_by_name(AddAccountPopup.ADD_ACCOUNT_BUTTON.value)
+        time.sleep(5)
         
     def generate_new_account(self, account_name: str, password: str):
         click_obj_by_name(MainWalletScreen.ADD_ACCOUNT_BUTTON.value)
@@ -144,17 +157,21 @@ class StatusWalletScreen:
         verify_text_matching(MainWalletScreen.ACCOUNT_NAME.value, account_name)
         
     def send_transaction(self, account_name, amount, token, chain_name, password):
+        # TODO wait for balance to update
+        # Maybe needs a fix on the app itself.  Make the Send modal be responsive to when the balance updates
+        time.sleep(2)
         click_obj_by_name(MainWalletScreen.SEND_BUTTON_FOOTER.value)
         
         self._click_repeater(SendPopup.HEADER_ACCOUNTS_LIST.value, account_name)
         time.sleep(1)
         type(SendPopup.AMOUNT_INPUT.value, amount)
 
-        if token != "ETH":
+        if token != Tokens.ETH.value:
             click_obj_by_name(SendPopup.ASSET_SELECTOR.value)
             asset_list = get_obj(SendPopup.ASSET_LIST.value)
             for index in range(asset_list.count):
-                if(asset_list.itemAtIndex(index).objectName == token):
+                tokenObj = asset_list.itemAtIndex(index)
+                if(not squish.isNull(tokenObj) and tokenObj.objectName == "AssetSelector_ItemDelegate_" + token):
                     click_obj(asset_list.itemAtIndex(index))
                     break
         
@@ -165,16 +182,15 @@ class StatusWalletScreen:
             if(accounts.itemAtIndex(index).objectName == account_name):
                 click_obj(accounts.itemAtIndex(index))
                 break
-
-        scroll_obj_by_name(SendPopup.SCROLL_BAR.value)
-        time.sleep(2)
-        scroll_obj_by_name(SendPopup.SCROLL_BAR.value)
-        time.sleep(2)
-        scroll_obj_by_name(SendPopup.SCROLL_BAR.value)
-        time.sleep(2)
         
+        scroll_obj_by_name(SendPopup.SCROLL_BAR.value)
+        time.sleep(1)
+
         self._click_repeater(SendPopup.NETWORKS_LIST.value, chain_name)
         
+        # With the simulator, the gas price estimation doesn't work
+        type(SendPopup.GAS_PRICE_INPUT.value, "20")
+       
         click_obj_by_name(SendPopup.SEND_BUTTON.value)
         
         type(SendPopup.PASSWORD_INPUT.value, password)
@@ -244,12 +260,15 @@ class StatusWalletScreen:
         wait_for_prop_value(item, "titleTextIcon", ("star-icon" if favourite else ""))
 
     def toggle_network(self, network_name: str):
+        time.sleep(2)
         click_obj_by_name(MainWalletScreen.NETWORK_SELECTOR_BUTTON.value)
+        time.sleep(2)
 
-        list = get_obj(NetworkSelectorPopup.LAYER_1_REPEATER.value)
+        list = wait_and_get_obj(NetworkSelectorPopup.LAYER_1_REPEATER.value)
         for index in range(list.count):
-            if list.itemAt(index).objectName == network_name:
-                click_obj(list.itemAt(index))
+            item = list.itemAt(index)
+            if item.objectName == network_name:
+                click_obj(item)
                 click_obj_by_name(MainWalletScreen.ACCOUNT_NAME.value)
                 time.sleep(2)
                 return
@@ -259,13 +278,24 @@ class StatusWalletScreen:
         
     def verify_positive_balance(self, symbol: str):
         list = get_obj(AssetView.LIST.value)
-        for index in range(list.count):
-            tokenListItem = list.itemAtIndex(index)
-            if tokenListItem.objectName == "AssetView_TokenListItem_" + symbol:
-                assert tokenListItem.balance != f"0 {symbol}", f"balance is not positive, balance: {balance}"
-                return
-            
-        assert False, "symbol not found"
+        reset = 0
+        while (reset < 3):
+            found = False
+            for index in range(list.count):
+                tokenListItem = list.itemAtIndex(index)
+                if tokenListItem.objectName == "AssetView_TokenListItem_" + symbol:
+                    found = True
+                    if (tokenListItem.balance == "0" and reset < 3):
+                        break
+                    
+                    return
+                
+            if not found:
+                verify_failure("Symbol " + symbol + " not found in the asset list")
+            reset += 1
+            time.sleep(5)
+        
+        verify_failure("Balance was not positive")
         
     def verify_saved_address_exists(self, name: str):
         list = wait_and_get_obj(SavedAddressesScreen.SAVED_ADDRESSES_LIST.value)

@@ -95,10 +95,13 @@ QtObject:
         return token
 
   proc findTokenBySymbol*(self: Service, network: NetworkDto, symbol: string): TokenDto =
-    for token in self.tokens[network]:
-      if token.symbol == symbol:
-        return token
-
+    try:
+      for token in self.tokens[network]:
+        if token.symbol == symbol:
+          return token
+    except Exception as e:
+      error "Error finding token by symbol", msg = e.msg
+    
   proc findTokenByAddress*(self: Service, network: NetworkDto, address: Address): TokenDto =
     for token in self.tokens[network]:
       if token.address == address:

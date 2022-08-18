@@ -91,15 +91,15 @@ Feature: Status Desktop Wallet
           | name      | address                                    |
           | favourite | 0x8397bc3c5a60a1883174f722403d63a8833312b7 |
 
-    @mayfail
-    Scenario: User can toggle network and see balances
+    @onlythis
+    Scenario:  User can toggle network and see balances
         When the user opens app settings screen
         And the user opens the wallet settings
         And the user toggles test networks
-		    And the user opens wallet screen
-		    And the user adds watch only account with one and 0x5fFa75CE51c3a7ebE23BdE37b5E3A0143DfBceE0
-        And the user toggles the network Ropsten
-        Then the user has a positive balance of ETH
+        And the user opens wallet screen
+        And the user imports a seed phrase with one and TesTEr16843/!@00 and pelican chief sudden oval media rare swamp elephant lawsuit wheat knife initial
+        Then the new account one is added
+        And the user has a positive balance of ETH
         And the user has a positive balance of STT
 
     Scenario Outline: User can edit the default wallet account

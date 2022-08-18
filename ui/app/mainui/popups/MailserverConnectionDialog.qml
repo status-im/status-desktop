@@ -11,6 +11,7 @@ import utils 1.0
 
 StatusDialog {
     id: root
+    objectName: "mailserverConnectionDialog"
 
     title: qsTr("Can not connect to mailserver")
 
@@ -29,6 +30,7 @@ StatusDialog {
                 }
             }
             StatusButton {
+                objectName: "mailserverConnectionDialog_retryButton"
                 text: qsTr("Retry")
                 onClicked: {
                     // Retrying already happens automatically, so doing nothing

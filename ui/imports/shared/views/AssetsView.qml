@@ -42,7 +42,7 @@ Item {
         }
 
         delegate: StatusListItem {
-            readonly property int balance: enabledNetworkBalance // Needed for the tests
+            readonly property string balance: enabledNetworkBalance // Needed for the tests
             objectName: "AssetView_TokenListItem_" + symbol
             width: parent.width
             title: name

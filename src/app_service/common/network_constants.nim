@@ -12,6 +12,24 @@ let INFURA_TOKEN_RESOLVED =
   else:
     INFURA_TOKEN
 
+const GOERLI_NETWORK_RPC_URL = $getEnv("GOERLI_NETWORK_RPC_URL")
+let OVERRIDE_TOKENS = 
+  if GOERLI_NETWORK_RPC_URL != "":
+    @[
+      {
+        "symbol": "STT",
+        "address": "0x8571Ddc46b10d31EF963aF49b6C7799Ea7eff818"
+      }
+    ]
+  else:
+    @[]
+
+let GOERLI_RPC_URL_RESOLVED =
+  if GOERLI_NETWORK_RPC_URL != "":
+    GOERLI_NETWORK_RPC_URL
+  else:
+    "https://goerli.infura.io/v3/" & INFURA_TOKEN_RESOLVED
+
 const OPENSEA_API_KEY {.strdefine.} = ""
 # allow runtime override via environment variable; core contributors can set a
 # an opensea API key in this way for local development
@@ -76,7 +94,7 @@ let NETWORKS* = %* [
   {
     "chainId": 5,
     "chainName": "Goerli",
-    "rpcUrl": "https://goerli.infura.io/v3/" & INFURA_TOKEN_RESOLVED,
+    "rpcUrl": GOERLI_RPC_URL_RESOLVED,
     "blockExplorerUrl": "https://goerli.etherscan.io/",
     "iconUrl": "network/Network=Testnet",
     "chainColor": "#939BA1",
@@ -87,6 +105,7 @@ let NETWORKS* = %* [
     "isTest": true,
     "layer": 1,
     "enabled": true,
+    "overrideTokens": OVERRIDE_TOKENS.toJson
   },
   {
     "chainId": 10,
