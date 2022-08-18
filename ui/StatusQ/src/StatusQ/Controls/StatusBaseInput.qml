@@ -182,9 +182,9 @@ Item {
 
     /*!
         \qmlproperty bool StatusBaseInput::valid
-        This property sets the valid state. Default value is true.
+        This property sets the valid state. Default value is false.
     */
-    property bool valid: true
+    property bool valid: false
     /*!
         \qmlproperty bool StatusBaseInput::pristine
         This property sets the pristine. Default value is true.

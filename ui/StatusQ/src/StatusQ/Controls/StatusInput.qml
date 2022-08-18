@@ -48,6 +48,7 @@ Item {
         This property holds a reference to the TextEdit's valid property.
     */
     property alias valid: statusBaseInput.valid
+
     /*!
         \qmlproperty alias StatusInput::pending
         This property holds a reference to the TextEdit's pending property.
@@ -243,7 +244,7 @@ Item {
         This function resets the text input validation and text.
     */
     function reset() {
-        statusBaseInput.valid = true
+        statusBaseInput.valid = false
         statusBaseInput.pristine = true
         statusBaseInput.text = ""
         root.errorMessage = ""
@@ -276,8 +277,12 @@ Item {
                             valid: result
                         }
                     }
-                    result.errorMessage = validator.errorMessage
                     errors[validator.name] = result
+
+                    // the only way to trigger bindings for var property
+                    errors = errors
+                    result.errorMessage = validator.errorMessage
+
                     statusBaseInput.valid = statusBaseInput.valid && false
                 }
             }
