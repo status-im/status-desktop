@@ -6,6 +6,7 @@ import utils 1.0
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 import StatusQ.Core 0.1
+import StatusQ.Core.Utils 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Popups 0.1
 import shared.controls 1.0
@@ -26,9 +27,9 @@ Item {
         id: _internal
         property bool loading: false
         property string error: ""
-        function saveAddress(name, address) {
+        function saveAddress(name, address, favourite) {
             loading = true
-            error = RootStore.createOrUpdateSavedAddress(name, address)
+            error = RootStore.createOrUpdateSavedAddress(name, address, favourite)
             loading = false
         }
         function deleteSavedAddress(address) {
@@ -106,11 +107,12 @@ Item {
         delegate: SavedAddressesDelegate {
             name: model.name
             address: model.address
+            favourite: model.favourite
             store: RootStore
             contactsStore: root.contactsStore
             onOpenSendModal: root.sendModal.open(address);
-            saveAddress: function(name, address) {
-                _internal.saveAddress(name, address)
+            saveAddress: function(name, address, favourite) {
+                _internal.saveAddress(name, address, favourite)
             }
             deleteSavedAddress: function(address) {
                 _internal.deleteSavedAddress(address)
@@ -126,7 +128,7 @@ Item {
             onClosed: destroy()
             contactsStore: root.contactsStore
             onSave: {
-                 _internal.saveAddress(name, address)
+                 _internal.saveAddress(name, address, favourite)
                 close()
             }
         }

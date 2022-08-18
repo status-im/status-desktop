@@ -20,6 +20,7 @@ StatusDialog {
     property bool edit: false
     property string address
     property alias name: nameInput.text
+    property bool favourite: false
     property var contactsStore
 
     signal save(string name, string address)

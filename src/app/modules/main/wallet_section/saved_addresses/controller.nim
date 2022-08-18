@@ -29,8 +29,8 @@ proc init*(self: Controller) =
 proc getSavedAddresses*(self: Controller): seq[saved_address_service.SavedAddressDto] =
   return self.savedAddressService.getSavedAddresses()
 
-proc createOrUpdateSavedAddress*(self: Controller, name, address: string): string =
-  return self.savedAddressService.createOrUpdateSavedAddress(name, address)
+proc createOrUpdateSavedAddress*(self: Controller, name: string, address: string, favourite: bool): string =
+  return self.savedAddressService.createOrUpdateSavedAddress(name, address, favourite)
 
 proc deleteSavedAddress*(self: Controller, address: string): string =
   return self.savedAddressService.deleteSavedAddress(address)

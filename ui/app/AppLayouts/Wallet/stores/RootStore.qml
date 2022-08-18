@@ -167,8 +167,8 @@ QtObject {
 //            walletModelV2Inst.collectiblesView.collections.getCollectionTraitMaxValue(collectionIndex, traitType).toString();
     }
 
-    function createOrUpdateSavedAddress(name, address) {
-        return walletSectionSavedAddresses.createOrUpdateSavedAddress(name, address)
+    function createOrUpdateSavedAddress(name, address, favourite) {
+        return walletSectionSavedAddresses.createOrUpdateSavedAddress(name, address, favourite)
     }
 
     function deleteSavedAddress(address) {

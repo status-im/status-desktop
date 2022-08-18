@@ -100,8 +100,8 @@ Item {
                 store: RootStore
                 contactsStore: root.contactsStore
                 onOpenSendModal: root.sendModal.open(address);
-                saveAddress: function(name, address) {
-                    RootStore.createOrUpdateSavedAddress(name, address)
+                saveAddress: function(name, address, favourite) {
+                    RootStore.createOrUpdateSavedAddress(name, address, favourite)
                 }
                 deleteSavedAddress: function(address) {
                     RootStore.deleteSavedAddress(address)
