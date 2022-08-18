@@ -40,7 +40,7 @@ proc fetchNetworks*(self: Service, useCached: bool = true): seq[NetworkDto] =
     if not response.error.isNil:
       raise newException(Exception, "Error getting networks: " & response.error.message)
     result = if response.result.isNil or response.result.kind == JNull: @[]
-              else: Json.decode($response.result, seq[NetworkDto])
+              else: Json.decode($response.result, seq[NetworkDto], allowUnknownFields = true)
     self.dirty.store(false)
     self.networks = result
     self.networksInited = true

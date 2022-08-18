@@ -4,11 +4,15 @@ from scripts.global_names import *
 navBarListView_Wallet_navbar_StatusNavBarTabButton = {"checkable": True, "container": mainWindow_navBarListView_ListView, "objectName": "Wallet-navbar", "type": "StatusNavBarTabButton", "visible": True}
 wallet_navbar_wallet_icon_StatusIcon = {"container": navBarListView_Wallet_navbar_StatusNavBarTabButton, "objectName": "wallet-icon", "type": "StatusIcon", "visible": True}
 mainWallet_Account_Name = {"container": statusDesktop_mainWindow, "objectName": "accountName", "type": "StatusBaseText", "visible": True}
+mainWallet_Address_Panel = {"container": statusDesktop_mainWindow, "objectName": "addressPanel", "type": "StatusAddressPanel", "visible": True}
 mainWallet_Add_Account = {"container": statusDesktop_mainWindow, "text": "Add account", "type": "StatusBaseText", "unnamed": 1, "visible": True}
 signPhrase_Ok_Button = {"container": statusDesktop_mainWindow, "type": "StatusFlatButton", "objectName": "signPhraseModalOkButton", "visible": True}
 mainWallet_Saved_Addresses_Button = {"container": statusDesktop_mainWindow, "objectName": "savedAddressesBtn", "type": "StatusButton"}
 mainWallet_Network_Selector_Button = {"container": statusDesktop_mainWindow, "objectName": "networkSelectorButton", "type": "StatusListItem"}
 mainWallet_Right_Side_Tab_Bar = {"container": statusDesktop_mainWindow, "objectName": "rightSideWalletTabBar", "type": "StatusTabBar"}
+
+mailserver_dialog = {"container": statusDesktop_mainWindow_overlay, "objectName": "mailserverConnectionDialog", "type": "StatusDialog"}
+mailserver_retry = {"container": mailserver_dialog, "objectName": "mailserverConnectionDialog_retryButton", "type": "StatusButton"}
 
 # Assets view:
 mainWallet_Assets_View_List = {"container": statusDesktop_mainWindow, "objectName": "assetViewStatusListView", "type": "StatusListView"}
@@ -28,6 +32,10 @@ mainWallet_Send_Popup_Send_Button = {"container": statusDesktop_mainWindow, "obj
 mainWallet_Send_Popup_Password_Input = {"container": statusDesktop_mainWindow, "objectName": "transactionSignerPasswordInput", "type": "StyledTextField"}
 mainWallet_Send_Popup_Asset_Selector = {"container": statusDesktop_mainWindow, "objectName": "assetSelectorButton", "type": "StatusComboBox"}
 mainWallet_Send_Popup_Asset_List = {"container": statusDesktop_mainWindow, "objectName": "assetSelectorList", "type": "StatusListView"}
+mainWallet_Send_Popup_GasPrice_Input = {"container": statusDesktop_mainWindow, "objectName": "gasPriceSelectorInput", "type": "StyledTextField"}
+mainWallet_Send_Popup_GasSelector_LowGas_Button = {"container": statusDesktop_mainWindow, "objectName": "GasSelector_lowGasButton", "type": "GasSelectorButton"}
+mainWallet_Send_Popup_GasSelector_OptimalGas_Button = {"container": statusDesktop_mainWindow, "objectName": "GasSelector_optimalGasButton", "type": "GasSelectorButton"}
+mainWallet_Send_Popup_GasSelector_HighGas_Button = {"container": statusDesktop_mainWindow, "objectName": "GasSelector_highGasButton", "type": "GasSelectorButton"}
 
 # Add account popup:
 mainWallet_Add_Account_Popup_Main = {"container": statusDesktop_mainWindow, "objectName": "AddAccountModalContent", "type": "StatusScrollView", "visible": True}

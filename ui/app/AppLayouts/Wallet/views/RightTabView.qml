@@ -1,6 +1,7 @@
 import QtQuick 2.13
 import QtQuick.Layouts 1.13
 
+import StatusQ.Core 0.1
 import StatusQ.Controls 0.1
 
 import utils 1.0

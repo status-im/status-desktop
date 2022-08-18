@@ -120,7 +120,7 @@ Item {
             width: comboBox.control.popup.width
             highlighted: index === comboBox.control.highlightedIndex
             padding: 16
-            objectName: symbol
+            objectName: "AssetSelector_ItemDelegate_" + symbol
             onClicked: {
                 // TODO: move this out of StatusQ, this involves dependency on BE code
                 // WARNING: Wrong ComboBox value processing. Check `StatusAccountSelector` for more info.

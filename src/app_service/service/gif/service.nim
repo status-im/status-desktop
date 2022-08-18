@@ -1,4 +1,3 @@
-import httpclient
 import json
 import strformat
 import os
@@ -27,7 +26,6 @@ let TENOR_API_KEY_RESOLVED =
 type
   Service* = ref object of RootObj
     settingsService: settings_service.Service
-    client: HttpClient
     favorites: seq[GifDto]
     recents: seq[GifDto]
 
@@ -37,7 +35,6 @@ proc delete*(self: Service) =
 proc newService*(settingsService: settings_service.Service): Service =
   result = Service()
   result.settingsService = settingsService
-  result.client = newHttpClient()
   result.favorites = @[]
   result.recents = @[]
 

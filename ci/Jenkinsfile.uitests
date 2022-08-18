@@ -15,8 +15,7 @@ pipeline {
       choices: ['0', '1', '2']
     )
   }
-
-
+  
   options {
     timestamps()
     /* Prevent Jenkins jobs from running forever */
@@ -69,42 +68,56 @@ pipeline {
 
     stage('build') {
       steps { sh 'make' }
+
     }
 
     stage('Tests') {
       steps {
-        wrap([
-          $class: 'Xvfb',
-          autoDisplayName: true,
-          parallelBuild: true,
-          screen: '2560x1440x24',
-        ]) {
-          script {
-            def res = squish([
-              extraOptions: '''
-                --retry
-                2
+       script {
+          def goerli_rpc_port = 8577
+          def mnemonic = "pelican chief sudden oval media rare swamp elephant lawsuit wheat knife initial"
+          def goerli_db_path = "$WORKSPACE/test/ui-test/fixtures/ganache-dbs/goerli"
+          docker.image('trufflesuite/ganache:v7.4.1').withRun(
+            "-p 127.0.0.1:8577:8545 -v ${goerli_db_path}:/goerli-db",
+            "-e 10 -m='${mnemonic}' --chain.chainId 5 --database.dbPath /goerli-db"
+          ) { c ->
+            sh "docker logs ${c.id}"
+            withEnv(["GOERLI_NETWORK_RPC_URL=http://0.0.0.0:${goerli_rpc_port}"]){
+              wrap([
+                $class: 'Xvfb',
+                autoDisplayName: true,
+                parallelBuild: true,
+                screen: '2560x1440x24',
+              ]) {
+                script {
+                  def res = squish([
+                    extraOptions: '''
+                      --retry
+                      2
 
-                --tags
-                ~mayfail
-                
-                --config
-                addAUT
-                nim_status_client
-                ${WORKSPACE}/bin
-              ''',
-              squishPackageName: 'squish-6.7.2-qt514x-linux64',
-              testSuite: '${WORKSPACE}/test/ui-test/testSuites/*',
-            ])
-            if ( res != "SUCCESS" ) {
-              throw new Exception("squish test didn't end with success")
+                      --tags
+                      ~mayfail
+                      
+                      --config
+                      addAUT
+                      nim_status_client
+                      ${WORKSPACE}/bin
+                    ''',
+                    squishPackageName: 'squish-6.7.2-qt514x-linux64',
+                    testSuite: '${WORKSPACE}/test/ui-test/testSuites/*',
+                  ])
+                  if ( res != "SUCCESS" ) {
+                    throw new Exception("squish test didn't end with success")
+                  }
+                }
+              }
             }
           }
         }
       }
     }
   }
-  
+
   post {
     success { script { github.notifyPR(true) } }
     failure { script { github.notifyPR(false) } }
