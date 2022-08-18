@@ -47,6 +47,7 @@ Control {
         }
         StatusBaseText {
             Layout.fillWidth: true
+            Layout.fillHeight: true
             Layout.alignment: Qt.AlignVCenter
             verticalAlignment: Qt.AlignVCenter
             text: root.text
