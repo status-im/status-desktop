@@ -1,0 +1,185 @@
+import NimQml, Tables
+import discord_channel_item
+
+type
+  ModelRole {.pure.} = enum
+    Id = UserRole + 1
+    CategoryId
+    Name
+    Description
+    FilePath
+    Selected
+
+QtObject:
+  type DiscordChannelsModel* = ref object of QAbstractListModel
+    items*: seq[DiscordChannelItem]
+
+  proc setup(self: DiscordChannelsModel) =
+    self.QAbstractListModel.setup
+
+  proc delete(self: DiscordChannelsModel) =
+    self.items = @[]
+    self.QAbstractListModel.delete
+
+  proc newDiscordChannelsModel*(): DiscordChannelsModel =
+    new(result, delete)
+    result.setup
+
+  proc countChanged(self: DiscordChannelsModel) {.signal.}
+  proc hasSelectedItemsChanged*(self: DiscordChannelsModel) {.signal.}
+
+  proc clearItems*(self: DiscordChannelsModel) =
+    self.beginResetModel()
+    self.items = @[]
+    self.endResetModel()
+    self.countChanged()
+    self.hasSelectedItemsChanged()
+
+  proc setItems*(self: DiscordChannelsModel, items: seq[DiscordChannelItem]) =
+    self.beginResetModel()
+    self.items = items
+    self.endResetModel()
+    self.countChanged()
+    self.hasSelectedItemsChanged()
+
+  proc getCount(self: DiscordChannelsModel): int {.slot.} =
+    self.items.len
+  QtProperty[int] count:
+    read = getCount
+    notify = countChanged
+
+  method rowCount(self: DiscordChannelsModel, index: QModelIndex = nil): int =
+    return self.items.len
+
+  method roleNames(self: DiscordChannelsModel): Table[int, string] =
+    {
+      ModelRole.Id.int:"id",
+      ModelRole.CategoryId.int:"categoryId",
+      ModelRole.Name.int:"name",
+      ModelRole.Description.int:"description",
+      ModelRole.FilePath.int:"filePath",
+      ModelRole.Selected.int:"selected",
+    }.toTable
+
+  method data(self: DiscordChannelsModel, index: QModelIndex, role: int): QVariant =
+    if not index.isValid:
+      return
+    if index.row < 0 or index.row >= self.items.len:
+      return
+    let item = self.items[index.row]
+    let enumRole = role.ModelRole
+    case enumRole:
+      of ModelRole.Id:
+        result = newQVariant(item.getId())
+      of ModelRole.CategoryId:
+        result = newQVariant(item.getCategoryId())
+      of ModelRole.Name:
+        result = newQVariant(item.getName())
+      of ModelRole.Description:
+        result = newQVariant(item.getDescription())
+      of ModelRole.FilePath:
+        result = newQVariant(item.getFilePath())
+      of ModelRole.Selected:
+        result = newQVariant(item.getSelected())
+
+  method setData(self: DiscordChannelsModel, index: QModelIndex, value: QVariant, role: int): bool =
+    if not index.isValid:
+      return false
+    let row = index.row
+    if row < 0 or row >= self.items.len:
+      return false
+    case role.ModelRole:
+      of ModelRole.Id:
+        self.items[row].id = value.stringVal()
+        self.dataChanged(index, index, @[ModelRole.Id.int])
+      of ModelRole.CategoryId:
+        self.items[row].categoryId = value.stringVal()
+        self.dataChanged(index, index, @[ModelRole.CategoryId.int])
+      of ModelRole.Name:
+        self.items[row].name = value.stringVal()
+        self.dataChanged(index, index, @[ModelRole.Name.int])
+      of ModelRole.Description:
+        self.items[row].description = value.stringVal()
+        self.dataChanged(index, index, @[ModelRole.Description.int])
+      of ModelRole.FilePath:
+        self.items[row].filePath = value.stringVal()
+        self.dataChanged(index, index, @[ModelRole.FilePath.int])
+      of ModelRole.Selected:
+        self.items[row].selected = value.boolVal()
+        self.dataChanged(index, index, @[ModelRole.Selected.int])
+        self.hasSelectedItemsChanged()
+    return true
+
+  proc findIndexById(self: DiscordChannelsModel, id: string): int =
+    for i in 0 ..< self.items.len:
+      if(self.items[i].getId() == id):
+        return i
+    return -1
+
+  proc getItem*(self: DiscordChannelsModel, id: string): DiscordChannelItem =
+    for i in 0 ..< self.items.len:
+      if(self.items[i].getId() == id):
+        return self.items[i]
+
+  proc allChannelsByCategoryUnselected*(self: DiscordChannelsModel, id: string): bool =
+    var allUnselected = true
+    for i in 0 ..< self.items.len:
+      if self.items[i].getCategoryId() == id and self.items[i].getSelected():
+        allUnselected = false
+        break
+    return allUnselected
+
+  proc getHasSelectedItems*(self: DiscordChannelsModel): bool {.slot.} =
+    for i in 0 ..< self.items.len:
+      if self.items[i].getSelected():
+        return true
+    return false
+
+  QtProperty[bool] hasSelectedItems:
+    read = getHasSelectedItems
+    notify = hasSelectedItemsChanged
+
+  proc addItem*(self: DiscordChannelsModel, item: DiscordChannelItem) =
+    let parentModelIndex = newQModelIndex()
+    defer: parentModelIndex.delete
+    self.beginInsertRows(parentModelIndex, self.items.len, self.items.len)
+    self.items.add(item)
+    self.endInsertRows()
+    self.countChanged()
+
+  proc unselectItemsByCategoryId*(self: DiscordChannelsModel, id: string) =
+    for i in 0 ..< self.items.len:
+      if(self.items[i].getCategoryId() == id):
+        let index = self.createIndex(i, 0, nil)
+        self.items[i].selected = false
+        self.dataChanged(index, index, @[ModelRole.Selected.int])
+    self.hasSelectedItemsChanged()
+
+  proc selectItemsByCategoryId*(self: DiscordChannelsModel, id: string) =
+    for i in 0 ..< self.items.len:
+      if(self.items[i].getCategoryId() == id):
+        let index = self.createIndex(i, 0, nil)
+        self.items[i].selected = true
+        self.dataChanged(index, index, @[ModelRole.Selected.int])
+    self.hasSelectedItemsChanged()
+
+  proc getSelectedItems*(self: DiscordChannelsModel): seq[DiscordChannelItem] =
+    for i in 0 ..< self.items.len:
+      if self.items[i].getSelected():
+        result.add(self.items[i])
+
+  proc unselectItem*(self: DiscordChannelsModel, id: string) =
+    let idx = self.findIndexById(id)
+    if idx > -1:
+      let index = self.createIndex(idx, 0, nil)
+      self.items[idx].selected = false
+      self.dataChanged(index, index, @[ModelRole.Selected.int])
+      self.hasSelectedItemsChanged()
+
+  proc selectItem*(self: DiscordChannelsModel, id: string) =
+    let idx = self.findIndexById(id)
+    if idx > -1:
+      let index = self.createIndex(idx, 0, nil)
+      self.items[idx].selected = true
+      self.dataChanged(index, index, @[ModelRole.Selected.int])
+      self.hasSelectedItemsChanged()

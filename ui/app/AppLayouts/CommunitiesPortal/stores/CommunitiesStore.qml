@@ -6,7 +6,14 @@ QtObject {
 
     property var communitiesModuleInst: communitiesModule
     property var curatedCommunitiesModel: root.communitiesModuleInst.curatedCommunities
-    property var locale: localAppSettings.language
+    property var discordFileList: root.communitiesModuleInst.discordFileList
+    property var discordCategoriesModel: root.communitiesModuleInst.discordCategories
+    property var discordChannelsModel: root.communitiesModuleInst.discordChannels
+    property int discordOldestMessageTimestamp: root.communitiesModuleInst.discordOldestMessageTimestamp
+    property bool discordDataExtractionInProgress: root.communitiesModuleInst.discordDataExtractionInProgress
+    property int discordImportErrorsCount: root.communitiesModuleInst.discordImportErrorsCount
+    property int discordImportWarningsCount: root.communitiesModuleInst.discordImportWarningsCount
+    property string locale: localAppSettings.language
     property var advancedModule: profileSectionModule.advancedModule
     property bool isCommunityHistoryArchiveSupportEnabled: advancedModule? advancedModule.isCommunityHistoryArchiveSupportEnabled : false
 
@@ -67,5 +74,29 @@ QtObject {
 
     function setActiveCommunity(communityId) {
         mainModule.setActiveSectionById(communityId);
+    }
+
+    function setFileListItems(filePaths) {
+        root.communitiesModuleInst.setFileListItems(filePaths)
+    }
+
+    function clearFileList() {
+        root.communitiesModuleInst.clearFileList()
+    }
+
+    function requestExtractChannelsAndCategories() {
+        root.communitiesModuleInst.requestExtractDiscordChannelsAndCategories()
+    }
+
+    function clearDiscordCategoriesAndChannels() {
+        root.communitiesModuleInst.clearDiscordCategoriesAndChannels()
+    }
+
+    function toggleDiscordCategory(id, selected) {
+        root.communitiesModuleInst.toggleDiscordCategory(id, selected)
+    }
+
+    function toggleDiscordChannel(id, selected) {
+        root.communitiesModuleInst.toggleDiscordChannel(id, selected)
     }
 }

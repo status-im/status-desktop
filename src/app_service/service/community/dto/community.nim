@@ -1,6 +1,6 @@
 {.used.}
 
-import json, sequtils, sugar
+import json, sequtils, sugar, tables
 
 import ../../../../backend/communities
 include ../../../common/json_utils
@@ -76,9 +76,47 @@ type CuratedCommunity* = object
     communityId*: string
     community*: CommunityDto
 
+type DiscordCategoryDto* = object
+  id*: string
+  name*: string
+
+type DiscordChannelDto* = object
+  id*: string
+  categoryId*: string
+  name*: string
+  description*: string
+  filePath*: string
+
+type DiscordImportErrorCode* {.pure.}= enum
+  Unknown = 0,
+  Warning = 1,
+  Error = 2
+
+type DiscordImportError* = object
+  code*: int
+  message*: string
+
 proc toCommunityAdminSettingsDto*(jsonObj: JsonNode): CommunityAdminSettingsDto =
   result = CommunityAdminSettingsDto()
   discard jsonObj.getProp("pinMessageAllMembersEnabled", result.pinMessageAllMembersEnabled)
+
+proc toDiscordCategoryDto*(jsonObj: JsonNode): DiscordCategoryDto =
+  result = DiscordCategoryDto()
+  discard jsonObj.getProp("id", result.id)
+  discard jsonObj.getProp("name", result.name)
+
+proc toDiscordChannelDto*(jsonObj: JsonNode): DiscordChannelDto =
+  result = DiscordChannelDto()
+  discard jsonObj.getProp("id", result.id)
+  discard jsonObj.getProp("categoryId", result.categoryId)
+  discard jsonObj.getProp("name", result.name)
+  discard jsonObj.getProp("topic", result.description)
+  discard jsonObj.getProp("filePath", result.filePath)
+
+proc toDiscordImportError*(jsonObj: JsonNode): DiscordImportError =
+  result = DiscordImportError()
+  discard jsonObj.getProp("code", result.code)
+  discard jsonObj.getProp("message", result.message)
 
 proc toCommunityDto*(jsonObj: JsonNode): CommunityDto =
   result = CommunityDto()
@@ -210,3 +248,23 @@ proc toChannelGroupDto*(communityDto: CommunityDto): ChannelGroupDto =
 proc parseCommunitiesSettings*(response: RpcResponse[JsonNode]): seq[CommunitySettingsDto] =
   result = map(response.result.getElems(),
     proc(x: JsonNode): CommunitySettingsDto = x.toCommunitySettingsDto())
+
+proc parseDiscordCategories*(response: RpcResponse[JsonNode]): seq[DiscordCategoryDto] =
+  if (response.result["discordCategories"].kind == JArray):
+    for category in response.result["discordCategories"].items():
+      result.add(category.toDiscordCategoryDto())
+
+proc parseDiscordCategories*(response: JsonNode): seq[DiscordCategoryDto] =
+  if (response["discordCategories"].kind == JArray):
+    for category in response["discordCategories"].items():
+      result.add(category.toDiscordCategoryDto())
+
+proc parseDiscordChannels*(response: RpcResponse[JsonNode]): seq[DiscordChannelDto] =
+  if (response.result["discordChannels"].kind == JArray):
+    for channel in response.result["discordChannels"].items():
+      result.add(channel.toDiscordChannelDto())
+
+proc parseDiscordChannels*(response: JsonNode): seq[DiscordChannelDto] =
+  if (response["discordChannels"].kind == JArray):
+    for channel in response["discordChannels"].items():
+      result.add(channel.toDiscordChannelDto())
