@@ -12,6 +12,7 @@ import utils 1.0
 
 Item {
     id: root
+    objectName: "imageCropWorkflow"
 
     property alias aspectRatio: imageCropper.aspectRatio
     property alias windowStyle: imageCropper.windowStyle
@@ -26,6 +27,11 @@ Item {
         fileDialog.open()
     }
 
+    function cropImage(imageUrl) {
+        imageCropper.source = imageUrl
+        imageCropperModal.open()
+    }
+
     FileDialog {
         id: fileDialog
 
@@ -34,8 +40,7 @@ Item {
         nameFilters: [qsTr("Supported image formats (%1)").arg("*.jpg *.jpeg *.jfif *.webp *.png *.heif")]
         onAccepted: {
             if (fileDialog.fileUrls.length > 0) {
-                imageCropper.source = fileDialog.fileUrls[0]
-                imageCropperModal.open()
+                cropImage(fileDialog.fileUrls[0])
             }
         }
     } // FileDialog
@@ -51,15 +56,16 @@ Item {
 
         StatusImageCropPanel {
             id: imageCropper
+            objectName: "profileImageCropper"
 
             implicitHeight: root.roundedImage ? 350 : 370
 
             anchors {
-                 fill: parent
-                 leftMargin: Style.current.bigPadding + Style.current.halfPadding / 2
-                 rightMargin: Style.current.bigPadding + Style.current.halfPadding / 2
-                 topMargin: Style.current.bigPadding
-                 bottomMargin: Style.current.bigPadding
+                fill: parent
+                leftMargin: Style.current.bigPadding + Style.current.halfPadding / 2
+                rightMargin: Style.current.bigPadding + Style.current.halfPadding / 2
+                topMargin: Style.current.bigPadding
+                bottomMargin: Style.current.bigPadding
             }
 
             margins: root.roundedImage ? 10 : 20
@@ -69,6 +75,7 @@ Item {
 
         rightButtons: [
             StatusButton {
+                objectName: "imageCropperAcceptButton"
                 text: root.acceptButtonText
 
                 enabled: imageCropper.sourceSize.width > 0 && imageCropper.sourceSize.height > 0

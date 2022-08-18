@@ -241,10 +241,10 @@ method onNodeLogin*[T](self: Module[T], error: string) =
     quit() # quit the app
 
   if error.len == 0:
-    self.controller.cleanTmpData()
     self.delegate.userLoggedIn()
     if currStateObj.flowType() != FlowType.AppLogin:
       self.controller.storeIdentityImage()
+    self.controller.cleanTmpData()
   else:
     self.view.setAppState(AppState.StartupState)
     if currStateObj.flowType() == FlowType.AppLogin:

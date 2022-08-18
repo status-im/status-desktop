@@ -29,6 +29,7 @@ StatusPopupMenu {
     }
 
     StatusMenuItem {
+        objectName: "userStatusViewMyProfileAction"
         text: qsTr("View My Profile")
         icon.name: "profile"
         onTriggered: {

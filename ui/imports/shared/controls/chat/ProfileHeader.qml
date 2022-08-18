@@ -72,6 +72,7 @@ Item {
 
             UserImage {
                 id: userImage
+                objectName: "myProfileModalUserImage"
                 name: root.displayName
                 pubkey: root.pubkey
                 image: root.icon

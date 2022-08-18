@@ -88,6 +88,7 @@ Item {
             StatusSmartIdenticon {
                 anchors.left: parent.left
                 id: userImage
+                objectName: "welcomeScreenUserProfileImage"
                 image {
                     width: 86
                     height: 86

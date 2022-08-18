@@ -17,6 +17,9 @@ onboarding_DiplayName_Input = {"container": statusDesktop_mainWindow, "objectNam
 onboarding_DetailsView_NextButton = {"container": statusDesktop_mainWindow, "objectName": "onboardingDetailsViewNextButton", "type": "StatusButton"}
 mainWindow_I_prefer_to_use_my_password_StatusBaseText = {"container": statusDesktop_mainWindow, "objectName": "touchIdIPreferToUseMyPasswordText", "type": "StatusBaseText"}
 mainWindow_Ok_got_it_StatusBaseText = {"container": statusDesktop_mainWindow, "type": "StatusButton", "objectName": "allowNotificationsOnboardingOkButton", "visible": True}
+mainWindow_WelcomeScreen_User_Profile_Image = {"container": statusDesktop_mainWindow, "type": "StatusSmartIdenticon", "objectName": "welcomeScreenUserProfileImage"}
+mainWindow_WelcomeScreen_Image_Crop_Workflow_Item= {"container": statusDesktop_mainWindow, "type": "Item", "objectName": "imageCropWorkflow"}
+mainWindow_WelcomeScreen_Image_Cropper_Accept_Button= {"container": statusDesktop_mainWindow, "type": "StatusButton", "objectName": "imageCropperAcceptButton"}
 
 # Seed phrase form:
 import_a_seed_phrase_StatusBaseText = {"container": statusDesktop_mainWindow, "text": "Import a seed phrase", "type": "StatusBaseText", "unnamed": 1, "visible": True}

@@ -6,7 +6,6 @@ CommunityIntroDialog 1.0 CommunityIntroDialog.qml
 ContactVerificationRequestPopup 1.0 ContactVerificationRequestPopup.qml
 DownloadModal 1.0 DownloadModal.qml
 DownloadPage 1.0 DownloadPage.qml
-ImageCropperModal 1.0 ImageCropperModal.qml
 InviteFriendsPopup 1.0 InviteFriendsPopup.qml
 NicknamePopup 1.0 NicknamePopup.qml
 ModalPopup 1.0 ModalPopup.qml

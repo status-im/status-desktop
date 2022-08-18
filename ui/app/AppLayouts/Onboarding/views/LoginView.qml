@@ -188,6 +188,7 @@ Item {
 
             UserImage {
                 id: userImage
+                objectName: "loginViewUserImage"
                 image: root.startupStore.selectedLoginAccount.thumbnailImage
                 name: root.startupStore.selectedLoginAccount.username
                 colorId: root.startupStore.selectedLoginAccount.colorId

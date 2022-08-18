@@ -17,6 +17,8 @@ def hook(context):
     context.userData = {}
     context.userData["aut_name"] = _status_desktop_app_name
     context.userData["status_data_folder_path"] = _status_data_folder_path
+    context.userData["fixtures_root"] = os.path.join(os.path.dirname(__file__), "../../../fixtures/")
+    context.userData["search_images"] = os.path.join(os.path.dirname(__file__), "../shared/searchImages/")
 
 @OnScenarioEnd
 def hook(context):

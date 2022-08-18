@@ -135,3 +135,14 @@ Feature: Status Desktop Sign Up
     Given A first time user lands on the status desktop and generates new key
     When user signs up with username tester123 and password TesTEr16843/!@00
     Then the user is online
+
+  Scenario: User signs up with a profile image
+
+    Given A first time user lands on the status desktop and generates new key
+    When the user signs up with profileImage doggo.jpeg, username tester123 and password TesTEr16843/!@00
+    Then my profile modal has the updated profile image
+    And the profile setting has the updated profile image
+    When the user restarts the app
+    And a screenshot of the profileImage is taken
+    And the user logs in with password TesTEr16843/!@00
+    Then the profile navigation bar has the updated profile image
