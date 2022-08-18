@@ -55,7 +55,7 @@ StatusStackModal {
                 return nextAction()
             }
             if (!root.isDiscordImport)
-                root.close()
+                d.createCommunity()
         }
     }
 
