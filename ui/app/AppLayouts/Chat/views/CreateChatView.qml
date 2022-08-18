@@ -178,10 +178,8 @@ Page {
         }
 
         StatusBaseText {
-            anchors.left: parent.left
-            anchors.leftMargin: 252
-            anchors.right: parent.right
-            anchors.rightMargin: 252
+            width: Math.min(553, parent.width - 2 * Style.current.padding)
+            anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
             anchors.verticalCenterOffset: -(headerRow.height/2)
             horizontalAlignment: Text.AlignHCenter
