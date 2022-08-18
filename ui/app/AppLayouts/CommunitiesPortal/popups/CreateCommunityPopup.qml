@@ -496,7 +496,7 @@ StatusStackModal {
         }
 
         function importDiscordCommunity() {
-            const error = root.store.importDiscordCommunity(_getCommunityConfig(), root.store.discordOldestMessageTimestamp)
+            const error = root.store.importDiscordCommunity(_getCommunityConfig(), datePicker.selectedDate.valueOf()/1000)
             if (error) {
                 errorDialog.text = error.error
                 errorDialog.open()
