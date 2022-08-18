@@ -34,6 +34,7 @@ QtObject {
         readonly property string communityHistoryArchiveSupport: "communityHistoryArchiveSupport"
         readonly property string communitiesPortal: "communitiesPortal"
         readonly property string communityPermissions: "communityPermissions"
+        readonly property string discordImportTool: "discordImportTool"
     }
 
     function logDir() {
@@ -133,6 +134,9 @@ QtObject {
         }
         else if (feature === experimentalFeatures.communityPermissions) {
             localAccountSensitiveSettings.isCommunityPermissionsEnabled = !localAccountSensitiveSettings.isCommunityPermissionsEnabled
+        }
+        else if (feature === experimentalFeatures.discordImportTool) {
+            localAccountSensitiveSettings.isDiscordImportToolEnabled = !localAccountSensitiveSettings.isDiscordImportToolEnabled
         }
     }
 }
