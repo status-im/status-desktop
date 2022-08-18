@@ -449,3 +449,6 @@ QtObject:
         if token.balancesPerChain.hasKey(network.chainId):
           let balance = token.balancesPerChain[network.chainId]
           result += balance.currencyBalance
+
+  proc findTokenSymbolByAddress*(self: Service, address: string): string =
+    return self.tokenService.findTokenSymbolByAddressInAllNetworks(address)

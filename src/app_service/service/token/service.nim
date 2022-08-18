@@ -104,6 +104,24 @@ QtObject:
       if token.address == address:
         return token
 
+  proc findTokenSymbolByAddressInAllNetworks*(self: Service, address: string): string =
+    if address.isEmptyOrWhitespace:
+      return ""
+
+    var hexAddressValue: Address
+    try:
+      hexAddressValue = fromHex(Address, address)
+    except Exception as e:
+      let errDesription = e.msg
+      error "error: ", errDesription
+      return ""
+
+    for _, tokens in self.tokens:
+      for token in tokens:
+        if token.address == hexAddressValue:
+          return token.symbol
+    return ""
+
   proc addCustomToken*(self: Service, chainId: int, address: string, name: string, symbol: string, decimals: int): string =
     # TODO(alaile): use chainId rather than first enabled network
     let networkWIP = self.networkService.getNetworks()[0]

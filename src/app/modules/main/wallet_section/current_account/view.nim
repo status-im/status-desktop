@@ -222,3 +222,5 @@ QtObject:
     self.relatedAccounts = relatedAccounts
     self.relatedAccountsChanged()
 
+  proc findTokenSymbolByAddress*(self: View, address: string): string {.slot.} =
+    return self.delegate.findTokenSymbolByAddress(address)

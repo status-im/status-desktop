@@ -201,6 +201,12 @@ StatusDialog {
                         tokenAssetSourceFn: function (symbol) {
                             return symbol ? Style.png("tokens/" + symbol) : defaultToken
                         }
+                        searchTokenSymbolByAddress: function (address) {
+                            if(popup.selectedAccount) {
+                                return popup.selectedAccount.findTokenSymbolByAddress(address)
+                            }
+                            return ""
+                        }
                         onSelectedAssetChanged: {
                             if (!assetSelector.selectedAsset) {
                                 return
@@ -302,11 +308,11 @@ StatusDialog {
                         onSelectedRecipientChanged: gasSelector.estimateGas()
                         Layout.fillWidth: true
                         Layout.leftMargin: Style.current.bigPadding
-                        Layout.rightMargin: Style.current.bigPadding
+                        implicitHeight: 71
 
                         StatusButton {
                             anchors.right: parent.right
-                            anchors.rightMargin: 16
+                            anchors.rightMargin: Style.current.xlPadding
                             anchors.bottom: parent.bottom
                             anchors.bottomMargin: 8
 
