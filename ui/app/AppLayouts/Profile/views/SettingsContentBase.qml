@@ -14,6 +14,7 @@ Item {
 
     property string sectionTitle
     property int contentWidth
+    readonly property int contentHeight: (root.height - d.topHeaderHeight - d.titleRowHeight)
 
     property string backButtonName: ""
 

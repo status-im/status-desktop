@@ -17,12 +17,12 @@ import SortFilterProxyModel 0.2
 
 Item {
     id: root
+    implicitHeight: (title.height + contactsList.height)
 
     property var contactsStore
     property var contactsModel
+
     property int panelUsage: Constants.contactsPanelUsage.unknownPosition
-    property bool scrollbarOn: false
-    readonly property int contactsListHeight: ((contactsList.count * contactsList.itemAtIndex(0).implicitHeight)+title.height)
 
     property string title: ""
     property string searchString: ""
@@ -39,6 +39,7 @@ Item {
 
     StyledText {
         id: title
+        height: visible ? contentHeight : 0
         anchors.left: parent.left
         anchors.leftMargin: Style.current.padding
         visible: contactsList.count > 0 && root.title !== ""
@@ -53,9 +54,10 @@ Item {
         anchors.top: title.bottom
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.bottom: parent.bottom
+        onCountChanged: {
+            height = (count*64);
+        }
         interactive: false
-        ScrollBar.vertical.policy: root.scrollbarOn ? ScrollBar.AlwaysOn : ScrollBar.AsNeeded
         model: SortFilterProxyModel {
             id: filteredModel
 
