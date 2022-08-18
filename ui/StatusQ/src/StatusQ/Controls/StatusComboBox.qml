@@ -24,6 +24,8 @@ Item {
     property alias label: labelItem.text
     property alias validationError: validationErrorItem.text
 
+    property string popupContentItemObjectName: ""
+
     implicitWidth: layout.implicitWidth
     implicitHeight: layout.implicitHeight
 
@@ -123,7 +125,7 @@ Item {
 
                 contentItem: StatusListView {
                     id: listView
-
+                    objectName: root.popupContentItemObjectName
                     implicitWidth: contentWidth
                     implicitHeight: contentHeight
 
