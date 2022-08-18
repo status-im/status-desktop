@@ -2,11 +2,16 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Layouts 1.13
 
+import SortFilterProxyModel 0.2
+
 import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Core.Utils 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
+import StatusQ.Core.Backpressure 1.0
+
+import shared.controls 1.0
 
 Item {
     id: root
@@ -16,6 +21,9 @@ Item {
     property string defaultToken: ""
     property string userSelectedToken: ""
     property var tokenAssetSourceFn: function (symbol) {
+        return ""
+    }
+    property var searchTokenSymbolByAddress: function (address) {
         return ""
     }
 
@@ -41,6 +49,11 @@ Item {
         id: d
         property string iconSource: ""
         property string text: ""
+        property string searchString
+
+        readonly property var updateSearchText: Backpressure.debounce(root, 1000, function(inputText) {
+            d.searchString = inputText
+        })
     }
 
     StatusComboBox {
@@ -56,7 +69,17 @@ Item {
         
         popupContentItemObjectName: "assetSelectorList"
 
-        model: root.assets
+        model : SortFilterProxyModel {
+            sourceModel: root.assets
+            filters: [
+                ExpressionFilter {
+                    expression: {
+                        var tokenSymbolByAddress = searchTokenSymbolByAddress(d.searchString)
+                        return symbol.startsWith(d.searchString.toUpperCase()) || name.toUpperCase().startsWith(d.searchString.toUpperCase()) || (tokenSymbolByAddress!=="" && symbol.startsWith(tokenSymbolByAddress))
+                    }
+                }
+            ]
+        }
 
         control.background: Rectangle {
             color: "transparent"
@@ -163,6 +186,40 @@ Item {
                         }
                     }
                 }
+            }
+        }
+
+        Component.onCompleted: {
+            control.currentIndex = -1
+            control.popup.contentItem.header = searchBox
+        }
+
+        control.popup.onOpened: {
+            control.currentIndex = -1
+        }
+    }
+
+    Component {
+        id: searchBox
+        StatusInput {
+            width: parent.width
+            input.showBackground: false
+            placeholderText: qsTr("Search for token or enter token address")
+            onTextChanged: Qt.callLater(d.updateSearchText, text)
+            input.clearable: true
+            leftPadding: 0
+            rightPadding: 0
+            input.rightComponent: StatusIcon {
+                width: 24
+                height: 24
+                color: Theme.palette.baseColor1
+                icon: "search"
+            }
+            Rectangle {
+                anchors.bottom: parent.bottom
+                height: 1
+                width: parent.width
+                color: Theme.palette.baseColor2
             }
         }
     }

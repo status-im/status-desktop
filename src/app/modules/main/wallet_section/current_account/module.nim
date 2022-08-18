@@ -114,3 +114,7 @@ proc onTokensRebuilt(self: Module, accountsTokens: OrderedTable[string, seq[Wall
   if not accountsTokens.contains(walletAccount.address):
     return
   self.setAssetsAndBalance(accountsTokens[walletAccount.address])
+
+method findTokenSymbolByAddress*(self: Module, address: string): string =
+  return self.controller.findTokenSymbolByAddress(address)
+

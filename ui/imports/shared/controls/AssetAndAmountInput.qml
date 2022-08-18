@@ -172,6 +172,12 @@ Item {
          tokenAssetSourceFn: function (symbol) {
              return symbol ? Style.png("tokens/" + symbol) : defaultToken
          }
+         searchTokenSymbolByAddress: function (address) {
+             if(popup.selectedAccount) {
+                 return popup.selectedAccount.findTokenSymbolByAddress(address)
+             }
+             return ""
+         }
          onSelectedAssetChanged: {
              if (!selectAsset.selectedAsset) {
                  return
