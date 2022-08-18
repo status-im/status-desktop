@@ -76,6 +76,13 @@ Item {
                                 : comboBox.hovered
                                   ? Theme.palette.primaryColor2
                                   : "transparent"
+
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    acceptedButtons: Qt.NoButton
+                    enabled: root.enabled
+                }
             }
 
             contentItem: StatusBaseText {

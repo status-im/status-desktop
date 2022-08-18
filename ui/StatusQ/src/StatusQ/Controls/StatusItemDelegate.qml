@@ -15,11 +15,10 @@ ItemDelegate {
     icon.width: 16
     icon.height: 16
 
-    contentItem: RowLayout {
+    contentItem:  RowLayout {
         spacing: root.spacing
 
         StatusIcon {
-            id: iconItem
             Layout.alignment: Qt.AlignVCenter
             visible: !!icon
             icon: root.icon.name
@@ -43,7 +42,14 @@ ItemDelegate {
 
     background: Rectangle {
         color: root.highlighted
-                 ? Theme.palette.statusPopupMenu.hoverBackgroundColor
-                 : "transparent"
+               ? Theme.palette.statusPopupMenu.hoverBackgroundColor
+               : "transparent"
+
+        MouseArea {
+            anchors.fill: parent
+            cursorShape: Qt.PointingHandCursor
+            acceptedButtons: Qt.NoButton
+            enabled: root.enabled
+        }
     }
 }
