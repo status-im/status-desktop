@@ -44,7 +44,7 @@ let NETWORKS* = %* [
   {
     "chainId": 1,
     "chainName": "Ethereum Mainnet",
-    "rpcUrl": RPC_URL_RESOLVED,
+    "rpcUrl": "https://mainnet.infura.io/v3/" & INFURA_TOKEN_RESOLVED,
     "blockExplorerUrl": "https://etherscan.io/",
     "iconUrl": "network/Network=Ethereum",
     "chainColor": "#627EEA",
@@ -59,7 +59,7 @@ let NETWORKS* = %* [
   {
     "chainId": 3,
     "chainName": "Ropsten",
-    "rpcUrl": "https://ropsten.infura.io/v3/" & INFURA_TOKEN_RESOLVED,
+    "rpcUrl": RPC_URL_RESOLVED,
     "blockExplorerUrl": "https://ropsten.etherscan.io/",
     "iconUrl": "network/Network=Testnet",
     "chainColor": "#939BA1",

@@ -14,14 +14,14 @@ Feature: Status Desktop Transaction
 		When the user accepts the signing phrase
 		When the user imports a seed phrase with one and TesTEr16843/!@00 and swim relax risk shy chimney please usual search industry board music segment
 
-#    Scenario Outline: User sends a transaction
-# 		When the user sends a transaction to himself from account Status account of <amount> <token> on <chain_name> with password TesTEr16843/!@00
-#		Then the transaction is in progress
+    Scenario Outline: User sends a transaction
+ 		When the user sends a transaction to himself from account Status account of <amount> <token> on <chain_name> with password TesTEr16843/!@00
+		Then the transaction is in progress
 
-#    	Examples:
-#      	  | amount   | token | chain_name |
-#      	  | 0.000001 | ETH   | Ropsten    |
-#      	  | 0 		 | ETH   | Ropsten    |
+    	Examples:
+      	  | amount   | token | chain_name |
+      	  | 0.000001 | ETH   | Ropsten    |
+      	  | 0 		 | ETH   | Ropsten    |
 #      	  | 1 		 | STT   | Goerli     |
 #      	  | 0 		 | STT   | Goerli     |
 

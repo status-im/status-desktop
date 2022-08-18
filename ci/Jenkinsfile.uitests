@@ -18,6 +18,7 @@ pipeline {
 
 // docker run -p 8545:8545 --name ganache-cli --rm -d trufflesuite/ganache-cli:latest --database.dbPath ~/dev/test-ganache  -e 10 - -m "swim relax risk shy chimney please usual search industry board music segment"
 // ganache --database.dbPath="/home/jonathan/dev/test-ganache" -e 10 -m "swim relax risk shy chimney please usual search industry board music segment" -f "https://mainnet.infura.io/v3/3d880888a170473d92f0d95e82c8b342" --chain.chainId 1
+// ganache --database.dbPath="/home/jonathan/dev/test-ganache" -e 10 -m "swim relax risk shy chimney please usual search industry board music segment" --chain.chainId 3
 
 
   options {
