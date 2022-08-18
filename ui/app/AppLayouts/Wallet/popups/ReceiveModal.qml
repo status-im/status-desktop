@@ -26,7 +26,7 @@ StatusModal {
 
     onSelectedAccountChanged: {
         if (selectedAccount.address) {
-            txtWalletAddress.text = selectedAccount.address
+            txtWalletAddress.text = selectedAccount.mixedcaseAddress
         }
     }
 
