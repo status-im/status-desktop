@@ -201,6 +201,9 @@ StatusScrollView {
         CreateCommunityPopup {
             anchors.centerIn: parent
             store: root.communitiesStore
+            onClosed: {
+                destroy()
+            }
         }
     }
 

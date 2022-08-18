@@ -357,6 +357,12 @@ QtObject {
         readonly property int telegram: 6
     }
 
+    enum DiscordImportErrorCode {
+        Unknown = 0,
+        Warning = 1,
+        Error = 2
+    }
+
     readonly property int communityImported: 0
     readonly property int communityImportingInProgress: 1
     readonly property int communityImportingError: 2

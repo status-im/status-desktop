@@ -1,10 +1,15 @@
-import NimQml, json, sequtils, sugar
+import NimQml, json, sequtils, sugar, tables, strutils
 
 import ./io_interface
 import ../io_interface as delegate_interface
 import ./view, ./controller
 import ./models/curated_community_item
 import ./models/curated_community_model
+import ./models/discord_category_item
+import ./models/discord_categories_model
+import ./models/discord_channel_item
+import ./models/discord_channels_model
+import ./models/discord_file_list_model
 import ../../shared_models/section_item
 import ../../shared_models/[member_item, member_model, section_model]
 import ../../../global/global_singleton
@@ -134,6 +139,21 @@ method getCuratedCommunityItem(self: Module, c: CuratedCommunity): CuratedCommun
       c.community.tags,
       len(c.community.members))
 
+method getDiscordCategoryItem(self: Module, c: DiscordCategoryDto): DiscordCategoryItem =
+  return initDiscordCategoryItem(
+      c.id,
+      c.name,
+      true)
+
+method getDiscordChannelItem(self: Module, c: DiscordChannelDto): DiscordChannelItem =
+  return initDiscordChannelItem(
+      c.id,
+      c.categoryId,
+      c.name,
+      c.description,
+      c.filePath,
+      true)
+
 method setCommunityTags*(self: Module, communityTags: string) =
   self.view.setCommunityTags(communityTags)
 
@@ -210,6 +230,26 @@ method reorderCommunityCategories*(self: Module, communityId: string, categoryId
 method communityMuted*(self: Module, communityId: string, muted: bool) =
   self.view.model().setMuted(communityId, muted)
 
+method discordCategoriesAndChannelsExtracted*(self: Module, categories: seq[DiscordCategoryDto], channels: seq[DiscordChannelDto], oldestMessageTimestamp: int, errors: Table[string, DiscordImportError], errorsCount: int) =
+
+  for filePath in errors.keys:
+    self.view.discordFileListModel().updateErrorState(filePath, errors[filePath].message, errors[filePath].code)
+
+  self.view.discordFileListModel().setAllValidated()
+
+  self.view.discordCategoriesModel().clearItems()
+  self.view.discordChannelsModel().clearItems()
+  self.view.setDiscordOldestMessageTimestamp(oldestMessageTimestamp)
+
+  for discordCategory in categories:
+    self.view.discordCategoriesModel().addItem(self.getDiscordCategoryItem(discordCategory))
+  for discordChannel in channels:
+    self.view.discordChannelsModel().addItem(self.getDiscordChannelItem(discordChannel))
+
+  self.view.setDiscordDataExtractionInProgress(false)
+  self.view.setDiscordImportErrorsCount(errorsCount)
+  self.view.discordChannelsModel().hasSelectedItemsChanged()
+
 method requestToJoinCommunity*(self: Module, communityId: string, ensName: string) =
   self.controller.requestToJoinCommunity(communityId, ensName)
 
@@ -238,3 +278,7 @@ method importCommunity*(self: Module, communityKey: string) =
 
 method onImportCommunityErrorOccured*(self: Module, error: string) =
   self.view.emitImportingCommunityStateChangedSignal(ImportCommunityState.ImportingError.int, error)
+
+method requestExtractDiscordChannelsAndCategories*(self: Module, filesToImport: seq[string]) =
+  self.view.setDiscordDataExtractionInProgress(true)
+  self.controller.requestExtractDiscordChannelsAndCategories(filesToImport)
