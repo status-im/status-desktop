@@ -118,3 +118,14 @@ def step(context, displayName):
 @Then("the |any| mention with message |any| have been sent")
 def step(context,displayName,message):
     _statusChat.verify_last_message_sent_contains_mention(displayName, message)
+
+@Then("user chats are sorted accordingly")
+def step(context):
+    table = context.table
+    for i, row in enumerate(table):
+        chatName = row[0]
+        _statusChat.verify_chat_order(i, chatName)
+
+@When("user switches to |any| chat")
+def step(context, chatName):
+    _statusChat.switch_to_chat(chatName)

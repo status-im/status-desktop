@@ -83,3 +83,18 @@ Feature: Status Desktop Chat
          When user sends the emoji sunglasses with message wow I'm so cool
          Then the emoji 😎 is displayed in the last message
          And the message wow I'm so cool is displayed in the last message
+
+     Scenario: User sees chats sorted by most recent activity
+          When user joins chat room first-chat
+          And user joins chat room second-chat
+          And user joins chat room third-chat
+          Then user chats are sorted accordingly
+          | third-chat  |
+          | second-chat |
+          | first-chat  |
+          When user switches to second-chat chat
+          Then user is able to send  a random chat message 
+          And user chats are sorted accordingly
+          | second-chat |
+          | third-chat  |
+          | first-chat  |

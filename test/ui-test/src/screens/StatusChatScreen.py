@@ -16,14 +16,15 @@ from drivers.SquishDriver import *
 from drivers.SquishDriverVerification import *
 from drivers.SDKeyboardCommands import *
 from common.Common import *
+from utils.ObjectAccess import *
 
 _MENTION_SYMBOL = "@"
 _LINK_HREF_REGEX = '<a href="(.+?)">'
 
 class ChatComponents(Enum):
-    MESSAGE_INPUT = "chatView_messageInput"       
+    MESSAGE_INPUT = "chatView_messageInput"
     TOOLBAR_INFO_BUTTON = "chatView_StatusChatInfoButton"
-    CHAT_LOG = "chatView_log"    
+    CHAT_LOG = "chatView_log"
     LAST_MESSAGE_TEXT = "chatView_lastChatText_Text"
     MEMBERS_LISTVIEW = "chatView_chatMembers_ListView"
     REPLY_TO_MESSAGE_BUTTON = "chatView_replyToMessageButton"
@@ -34,7 +35,7 @@ class ChatComponents(Enum):
     MENTION_PROFILE_VIEW = "chatView_userMentioned_ProfileView"
     CHAT_INPUT_EMOJI_BUTTON = "chatInput_Emoji_Button"
     EMOJI_POPUP_EMOJI_PLACEHOLDER = "emojiPopup_Emoji_Button_Placeholder"
-
+    CHAT_LIST = "chatList_Repeater"
 
 class ChatMessagesHistory(Enum):
     CHAT_CREATED_TEXT = 1
@@ -194,4 +195,23 @@ class StatusChatScreen:
         click_obj_by_attr(emojiAttr)
         
         press_enter(ChatComponents.MESSAGE_INPUT.value)
-        
+
+    def verify_chat_order(self, index: int, chatName: str):
+        chat_lists = get_obj(ChatComponents.CHAT_LIST.value)
+        chat = chat_lists.itemAt(index)
+        verify(not is_null(chat), "Chat ({}) at index {} exists".format(chatName, index))
+        chat_list_items = getChildrenWithObjectName(chat, "chatItem")
+        verify(len(chat_list_items) > 0, "StatusChatListItem exists")
+        verify(str(chat_list_items[0].name) == chatName, "Chat in order")
+
+    def switch_to_chat(self, chatName: str):
+        chat_lists = get_obj(ChatComponents.CHAT_LIST.value)
+        verify(chat_lists.count > 0, "At least one chat exists")
+        for i in range(chat_lists.count):
+            chat = chat_lists.itemAt(i)
+            chat_list_items = getChildrenWithObjectName(chat, "chatItem")
+            verify(len(chat_list_items) > 0, "StatusChatListItem exists")
+            if str(chat_list_items[0].name) == chatName:
+                click_obj(chat)
+                return
+        verify(False, "Chat switched")
