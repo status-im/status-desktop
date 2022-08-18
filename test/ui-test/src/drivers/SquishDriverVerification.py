@@ -100,3 +100,6 @@ def log(text: str):
     
 def verify_screenshot(vp: str):
     test.vp(vp)
+
+def imagePresent(imageName: str, tolerant: bool = True, threshold: int = 99.5, minScale: int = 50, maxScale: int =  200, multiscale: bool = True):
+    test.imagePresent(imageName, {"tolerant": tolerant, "threshold": threshold, "minScale": minScale, "maxScale": maxScale, "multiscale": multiscale})

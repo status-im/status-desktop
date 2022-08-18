@@ -28,6 +28,7 @@ _MAX_WAIT_OBJ_TIMEOUT = 5000
 # The default minimum timeout to find ui object
 _MIN_WAIT_OBJ_TIMEOUT = 500
 
+_SEARCH_IMAGES_PATH = "../shared/searchImages/"
 
 # Waits for the given object is loaded, visible and enabled.
 # It returns a tuple: True in case it is found. Otherwise, false. And the object itself.
@@ -297,3 +298,7 @@ def verify_not_found(realNameVarName: str, message: str, timeoutMSec: int = 500)
         test.fail(message, f'Unexpected: the object "{realNameVarName}" was found.')
     except LookupError as err:
         test.passes(message, f'Expected: the object "{realNameVarName}" was not found. Exception: {str(err)}.')
+        
+def grabScreenshot_and_save(obj, imageName:str, delay:int = 0):  
+    img = object.grabScreenshot(obj, {"delay": delay})  
+    img.save(_SEARCH_IMAGES_PATH + imageName + ".png")

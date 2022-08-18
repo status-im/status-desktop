@@ -16,12 +16,11 @@ from drivers.SquishDriverVerification import *
 import time
 
 class MainScreenComponents(Enum):
-    STATUS_ICON = "mainWindow_statusIcon_StatusIcon_2"
     PUBLIC_CHAT_ICON = "mainWindow_public_chat_icon_StatusIcon"
     CHAT_NAVBAR_ICON = "navBarListView_Chat_navbar_StatusNavBarTabButton"
     COMMUNITY_PORTAL_BUTTON = "navBarListView_Communities_Portal_navbar_StatusNavBarTabButton"
     JOIN_PUBLIC_CHAT = "join_public_chat_StatusMenuItemDelegate"
-    SETTINGS_BUTTON = "settings_navbar_settings_icon_StatusIcon"
+    SETTINGS_BUTTON = "navBarListView_Settings_navbar_StatusNavBarTabButton"
     WALLET_BUTTON = "wallet_navbar_wallet_icon_StatusIcon"
     START_CHAT_BTN = "mainWindow_startChat"
     CHAT_LIST = "chatList_Repeater"

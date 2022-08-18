@@ -8,7 +8,6 @@ FormGroup 1.0 FormGroup.qml
 GasSelector 1.0 GasSelector.qml
 GasSelectorButton 1.0 GasSelectorButton.qml
 GasValidator 1.0 GasValidator.qml
-ImageCropper 1.0 ImageCropper.qml
 Input 1.0 Input.qml
 RadioButtonSelector 1.0 RadioButtonSelector.qml
 RecipientSelector 1.0 RecipientSelector.qml

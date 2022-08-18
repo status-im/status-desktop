@@ -28,7 +28,6 @@ class SettingsSubsection(Enum):
 
 # Main:
 navBarListView_Settings_navbar_StatusNavBarTabButton = {"checkable": True, "container": mainWindow_navBarListView_ListView, "objectName": "Settings-navbar", "type": "StatusNavBarTabButton", "visible": True}
-settings_navbar_settings_icon_StatusIcon = {"container": navBarListView_Settings_navbar_StatusNavBarTabButton, "objectName": "settings-icon", "type": "StatusIcon", "visible": True}
 settingsSave_StatusButton = {"container": statusDesktop_mainWindow, "objectName": "settingsDirtyToastMessageSaveButton", "type": "StatusButton", "visible": True}
 settings_Sidebar_ENS_Item = {"container": mainWindow_ScrollView, "objectName": "ENS usernames-MainMenu", "type": "StatusNavigationListItem"}
 
@@ -100,6 +99,9 @@ languageView_language_StatusListPicker = {"container": statusDesktop_mainWindow,
 languageView_language_StatusPickerButton = {"container": languageView_language_StatusListPicker,  "type": "StatusPickerButton", "unnamed": 1}
 languageView_language_ListView = {"container": languageView_language_StatusListPicker,  "type": "ListView", "unnamed": 1}
 languageView_language_StatusInput = {"container": languageView_language_ListView,  "type": "StatusInput", "unnamed": 1}
+
+# My Profile Modal
+myProfileModal_UserImage = {"container": statusDesktop_mainWindow_overlay, "objectName": "myProfileModalUserImage", "type": "UserImage", "visible": True}
 
 # Backup seed phrase:
 backup_seed_phrase_popup_Acknowledgements_havePen_checkbox = {"container": statusDesktop_mainWindow_overlay, "objectName": "Acknowledgements_havePen", "type": "StatusCheckBox", "checkable": True, "visible": True}

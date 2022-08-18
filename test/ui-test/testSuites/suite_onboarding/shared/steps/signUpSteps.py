@@ -44,6 +44,33 @@ def step(context, seed_phrase):
 def step(context):
     _welcomeScreen.seed_phrase_visible()
     
+@When("the user logs in with password |any|")
+def step(context, password: str):
+    _welcomeScreen.enter_password(password)
+
 @Then("the user is online")
 def step(context):
     _mainScreen.user_is_online()
+
+@When("the user signs up with profileImage |any|, username |any| and password |any|")
+def step(context, profileImageUrl, username, password):
+    _welcomeScreen.input_username_profileImage_password_and_finalize_sign_up("file:///"+context.userData["fixtures_root"]+"images/"+profileImageUrl, username, password)
+ 
+@Then("my profile modal has the updated profile image")
+def step(context):
+    _welcomeScreen.profile_modal_image_is_updated()
+    
+@Then("the profile setting has the updated profile image")
+def step(context):
+    _welcomeScreen.profile_settings_image_is_updated()
+
+@When("a screenshot of the profileImage is taken")
+def step(context):
+    _welcomeScreen.grab_screenshot()
+ 
+@Then("the profile navigation bar has the updated profile image")
+def step(context):
+    _welcomeScreen.profile_image_is_updated()
+    delete_created_searchImage(context.userData["search_images"] +"profiletestimage.png")
+    delete_created_searchImage(context.userData["search_images"]+"loginUserName.png")
+

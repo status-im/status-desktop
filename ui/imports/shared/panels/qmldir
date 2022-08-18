@@ -1,7 +1,6 @@
 Address 1.0 Address.qml
 AddressRequiredValidator 1.0 AddressRequiredValidator.qml
 BalanceValidator 1.0 BalanceValidator.qml
-CropCornerRectangle 1.0 CropCornerRectangle.qml
 GlossaryEntry 1.0 GlossaryEntry.qml
 GlossaryLetter 1.0 GlossaryLetter.qml
 ImageLoader 1.0 ImageLoader.qml

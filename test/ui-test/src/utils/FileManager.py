@@ -1,8 +1,10 @@
+from remotesystem import RemoteSystem
+from drivers.SquishDriverVerification import *
+
 import os
 import os.path as path
 import shutil
 import distutils.dir_util
-
 
 def erase_directory(dir: str):
     directory = path.abspath(path.join(__file__, dir))
@@ -27,3 +29,14 @@ def copy_directory(src: str, dst: str):
             distutils.dir_util.copy_tree(src, dst)
         except OSError:
             os.remove(dst)
+            
+def delete_created_searchImage(fileName: str):
+    try:
+        remoteOS = RemoteSystem()
+        verify(remoteOS.deleteFile(fileName), "screenshot file was not deleted" + fileName)
+        verify(not remoteOS.exists(fileName), "screenshot file was not deleted" + fileName)
+    except Exception as e:
+        verify_failure("RemoteSystem error" + str(e))
+    
+    
+

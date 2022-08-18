@@ -14,6 +14,7 @@ import sys
 from drivers.SquishDriver import *
 from drivers.SquishDriverVerification import *
 from common.SeedUtils import *
+from screens.StatusMainScreen import MainScreenComponents
 
 
 class AgreementPopUp(Enum):
@@ -36,7 +37,9 @@ class SignUpComponents(Enum):
     CONFIRM_PSW_AGAIN_INPUT: str = "onboarding_confirmPswAgain_Input"
     FINALIZE_PSW_BUTTON: str = "onboarding_finalise_password_button"
     PASSWORD_PREFERENCE: str = "mainWindow_I_prefer_to_use_my_password_StatusBaseText"
-
+    PROFILE_IMAGE_CROP_WORKFLOW_ITEM: str = "mainWindow_WelcomeScreen_Image_Crop_Workflow_Item"
+    PROFILE_IMAGE_CROPPER_ACCEPT_BUTTON: str = "mainWindow_WelcomeScreen_Image_Cropper_Accept_Button"
+    WELCOME_SCREEN_USER_PROFILE_IMAGE: str = "mainWindow_WelcomeScreen_User_Profile_Image"
     
 class SeedPhraseComponents(Enum):
     IMPORT_A_SEED_TEXT: str = "import_a_seed_phrase_StatusBaseText"
@@ -57,6 +60,20 @@ class PasswordStrengthPossibilities(Enum):
     NUMBERS_SYMBOLS_LOWER_SOSO = "numbers_symbols_lower_so-so"
     NUMBERS_SYMBOLS_LOWER_UPPER_GOOD = "numbers_symbols_lower_upper_good"
     NUMBERS_SYMBOLS_LOWER_UPPER_GREAT = "numbers_symbols_lower_upper_great"
+
+class MainScreen(Enum):
+    SETTINGS_BUTTON = "settings_navbar_settings_icon_StatusIcon"
+    
+class UserContextStatusMenu(Enum):
+    USER_CONTEXT_MENU_VIEW_MY_PROFILE_BUTTON: str = "userContextMenu_ViewMyProfile_Action"
+    
+class MyProfileModal(Enum):
+    MY_PROFILE_MODAL_USER_IMAGE: str = "myProfileModal_UserImage"
+    
+class LoginView(Enum):
+    LOGIN_VIEW_USER_IMAGE: str = "loginView_userImage"
+    PASSWORD_INPUT = "loginView_passwordInput"
+    SUBMIT_BTN = "loginView_submitBtn"
 
 class StatusWelcomeScreen:
 
@@ -99,6 +116,7 @@ class StatusWelcomeScreen:
     def input_username(self, username: str):
         type(SignUpComponents.USERNAME_INPUT.value, username)
         click_obj_by_name(SignUpComponents.DETAILS_NEXT_BUTTON.value)
+                
         # There is another page with the same Next button
         click_obj_by_name(SignUpComponents.DETAILS_NEXT_BUTTON.value)
 
@@ -152,4 +170,60 @@ class StatusWelcomeScreen:
                 verify_screenshot("VP-PWStrength-numbers_symbols_lower_upper_great")
             
         # TODO: Get screenshots in Linux
+
+    def input_profile_image(self, profileImageUrl: str):
+        workflow = get_obj(SignUpComponents.PROFILE_IMAGE_CROP_WORKFLOW_ITEM.value)
+        workflow.cropImage(profileImageUrl)        
+        click_obj_by_name(SignUpComponents.PROFILE_IMAGE_CROPPER_ACCEPT_BUTTON.value)
+        
+    def input_username_and_grab_profile_image_sreenshot(self, username: str):
+        type(SignUpComponents.USERNAME_INPUT.value, username)
+        click_obj_by_name(SignUpComponents.DETAILS_NEXT_BUTTON.value)
+        
+        # take a screenshot of the profile image to compare it later with the main screen
+        profileIcon = wait_and_get_obj(SignUpComponents.WELCOME_SCREEN_USER_PROFILE_IMAGE.value)
+        grabScreenshot_and_save(profileIcon, "profiletestimage", 200)
+        
+        # There is another page with the same Next button
+        click_obj_by_name(SignUpComponents.DETAILS_NEXT_BUTTON.value)
+
+    def input_username_profileImage_password_and_finalize_sign_up(self, profileImageUrl: str, username: str, password: str):
+        self.input_profile_image(profileImageUrl)
+
+        self.input_username_and_grab_profile_image_sreenshot(username)        
+
+        self.input_password(password)
+
+        self.input_confirmation_password(password)
+
+        if sys.platform == "darwin":
+            click_obj_by_name(SignUpComponents.PASSWORD_PREFERENCE.value)
+            
+    def profile_modal_image_is_updated(self):
+        click_obj_by_name(MainScreenComponents.PROFILE_NAVBAR_BUTTON.value)
+        click_obj_by_name(UserContextStatusMenu.USER_CONTEXT_MENU_VIEW_MY_PROFILE_BUTTON.value)
+        imagePresent("profiletestimage", True, 97, 95, 100, True)
+        
+    def profile_settings_image_is_updated(self):
+         # first time clicking on settings button closes the my profile modal
+        click_obj_by_name(MainScreen.SETTINGS_BUTTON.value)
+        click_obj_by_name(MainScreen.SETTINGS_BUTTON.value)
+        imagePresent("profiletestimage", True, 97, 100, 183, True)
+            
+    def grab_screenshot(self):
+        # take a screenshot of the profile image to compare it later with the main screen
+        loginUserName = wait_and_get_obj(LoginView.LOGIN_VIEW_USER_IMAGE.value)
+        grabScreenshot_and_save(loginUserName, "loginUserName", 200)
+        
+    def profile_image_is_updated(self):
+        profileNavBarButton = wait_and_get_obj(MainScreenComponents.PROFILE_NAVBAR_BUTTON.value)
+        imagePresent("loginUserName", True, 98, 85, 100, True)
+
+        click_obj(profileNavBarButton)
+        imagePresent("loginUserName", True, 99, 95, 100, True)
+        
+    def enter_password(self, password):
+        click_obj_by_name(LoginView.PASSWORD_INPUT.value)
+        type(LoginView.PASSWORD_INPUT.value, password)
+        click_obj_by_name(LoginView.SUBMIT_BTN.value)        
         
