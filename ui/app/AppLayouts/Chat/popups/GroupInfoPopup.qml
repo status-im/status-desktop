@@ -110,6 +110,8 @@ StatusModal {
             input.icon.name: "search"
             input.icon.width: 17
             input.icon.height: 17
+            topPadding: 0
+            bottomPadding: 0
         }
 
         NoFriendsRectangle {
