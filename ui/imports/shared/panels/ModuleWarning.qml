@@ -38,6 +38,14 @@ Rectangle {
             color: Theme.palette.white
             linkColor: color
             onLinkActivated: root.linkActivated(link)
+            HoverHandler {
+                id: handler1
+            }
+            MouseArea {
+                anchors.fill: parent
+                acceptedButtons: Qt.NoButton
+                cursorShape: handler1.hovered && parent.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
+            }
         }
 
         Button {
@@ -62,8 +70,9 @@ Rectangle {
             MouseArea {
                 cursorShape: Qt.PointingHandCursor
                 anchors.fill: parent
-                onClicked: root.onClick()
+                acceptedButtons: Qt.NoButton
             }
+            onClicked: root.onClick()
         }
     }
 

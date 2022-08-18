@@ -449,7 +449,7 @@ Item {
                         if (errors)
                             return qsTr("The import of ‘%1’ from Discord to Status was stopped: <a href='#'>Critical issues found</a>").arg(communityId)
 
-                        let result = qsTr("‘%1’ was successfully imported from Discord to Status").arg(communityId) + " <a href='#'>"
+                        let result = qsTr("‘%1’ was successfully imported from Discord to Status").arg(communityId) + "  <a href='#'>"
                         if (warnings)
                             result += qsTr("Details (%1)").arg(qsTr("%n issue(s)", "", warnings))
                         else
@@ -458,7 +458,7 @@ Item {
                         return result
                     }
                     if (inProgress) {
-                        let result = qsTr("Importing ‘%1’ from Discord to Status").arg(communityId) + " <a href='#'>"
+                        let result = qsTr("Importing ‘%1’ from Discord to Status").arg(communityId) + "  <a href='#'>"
                         if (warnings)
                             result += qsTr("Check progress (%1)").arg(qsTr("%n issue(s)", "", warnings))
                         else
