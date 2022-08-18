@@ -6,6 +6,8 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
+import StatusQ.Popups 0.1
+import StatusQ.Popups.Dialog 0.1
 
 import utils 1.0
 import shared.popups 1.0
@@ -97,7 +99,13 @@ StatusScrollView {
                 objectName: "createCommunityButton"
                 Layout.fillHeight: true
                 text: qsTr("Create New Community")
-                onClicked: Global.openPopup(createCommunitiesPopupComponent)
+                onClicked: {
+                    if (localAccountSensitiveSettings.isDiscordImportToolEnabled) {
+                      Global.openPopup(chooseCommunityCreationTypePopupComponent)
+                    } else {
+                      Global.openPopup(createCommunitiesPopupComponent)
+                    }
+                }
             }
         }
 
@@ -193,8 +201,39 @@ StatusScrollView {
         CreateCommunityPopup {
             anchors.centerIn: parent
             store: root.communitiesStore
-            onClosed: {
-                destroy()
+        }
+    }
+
+    Component {
+        id: chooseCommunityCreationTypePopupComponent
+        StatusDialog {
+            id: chooseCommunityCreationTypePopup
+            title: qsTr("Create new community")
+            horizontalPadding: 40
+            verticalPadding: 60
+            footer: null
+            onClosed: destroy()
+
+            contentItem: RowLayout {
+                spacing: 20
+                CommunityBanner {
+                    text: qsTr("Create a new Status community")
+                    buttonText: qsTr("Create new")
+                    icon.name: "favourite"
+                    onButtonClicked: {
+                        chooseCommunityCreationTypePopup.close()
+                        Global.openPopup(createCommunitiesPopupComponent)
+                    }
+                }
+                CommunityBanner {
+                    text: qsTr("Import existing Discord community into Status")
+                    buttonText: qsTr("Import existing")
+                    icon.name: "download"
+                    onButtonClicked: {
+                        chooseCommunityCreationTypePopup.close()
+                        Global.openPopup(createCommunitiesPopupComponent, {isDiscordImport: true})
+                    }
+                }
             }
         }
     }

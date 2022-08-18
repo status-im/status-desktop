@@ -1,5 +1,5 @@
 import QtQuick 2.14
-import QtQuick.Controls 2.4
+import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.14
 import QtQuick.Dialogs 1.3
 
@@ -24,8 +24,10 @@ StatusStackModal {
     id: root
 
     property var store
+    property bool isDiscordImport // creating new or importing from discord?
 
-    stackTitle: qsTr("Create New Community")
+    stackTitle: isDiscordImport ? qsTr("Import a community from Discord into Status") :
+                                  qsTr("Create New Community")
     width: 640
 
     nextButton: StatusButton {
