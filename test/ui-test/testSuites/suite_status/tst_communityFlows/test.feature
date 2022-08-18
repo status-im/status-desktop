@@ -69,7 +69,7 @@ Feature: Status Desktop community
         When the user creates a community named myCommunity, with description My community description, intro Community Intro and outro Community Outro
         Then the user lands on the community named myCommunity
         When the admin creates a community channel named <community_channel_name>, with description Some description with the method <method>
-        And the admin creates a community category named <community_category_name>, with channel <community_channel_name> and with the method <method>
+        And the admin creates a community category named <community_category_name>, with channels <community_channel_name> and with the method <method>
         Then the category named <community_category_name> is created
 
         Examples:
@@ -78,11 +78,21 @@ Feature: Status Desktop community
             | test-channel-2            | test-category-2             | right_click_menu |
 
 
-    Scenario: Admin deletes a community category
+    Scenario: Admin edits a community category
         When the user creates a community named myCommunity, with description My community description, intro Community Intro and outro Community Outro
         Then the user lands on the community named myCommunity
         When the admin creates a community channel named test-channel, with description My description with the method bottom_menu
-        And the admin creates a community category named test-category, with channel test-channel and with the method bottom_menu
+        And the admin creates a community category named test-category, with channels test-channel and with the method bottom_menu
+        Then the category named test-category is created
+        When the admin edits category named test-category to the name new-test-category and channels general, test-channel
+        Then the category named test-category is missing
+        And the category named new-test-category is created
+
+
+    Scenario: Admin deletes a community category
+        When the user creates a community named myCommunity, with description My community description, intro Community Intro and outro Community Outro
+        Then the user lands on the community named myCommunity
+        When the admin creates a community category named test-category, with channels general and with the method bottom_menu
         Then the category named test-category is created
         When the admin deletes category named test-category
         Then the category named test-category is missing
