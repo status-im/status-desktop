@@ -32,16 +32,31 @@ StatusStackModal {
 
     nextButton: StatusButton {
         objectName: "createCommunityNextBtn"
-        text: qsTr("Next")
-        enabled: nameInput.valid && descriptionTextInput.valid
-        onClicked: currentIndex++
+        font.weight: Font.Medium
+        text: typeof currentItem.nextButtonText !== "undefined" ? currentItem.nextButtonText : qsTr("Next")
+        enabled: typeof(currentItem.canGoNext) == "undefined" || currentItem.canGoNext
+        onClicked: {
+            let nextAction = currentItem.nextAction
+            if (typeof(nextAction) == "function") {
+                return nextAction()
+            }
+            root.currentIndex++
+        }
     }
 
     finishButton: StatusButton {
         objectName: "createCommunityFinalBtn"
-        text: qsTr("Create Community")
-        enabled: introMessageInput.valid && outroMessageInput.valid
-        onClicked: d.createCommunity()
+        font.weight: Font.Medium
+        text: root.isDiscordImport ? qsTr("Start Discord import") : qsTr("Create Community")
+        enabled: typeof(currentItem.canGoNext) == "undefined" || currentItem.canGoNext
+        onClicked: {
+            let nextAction = currentItem.nextAction
+            if (typeof (nextAction) == "function") {
+                return nextAction()
+            }
+            if (!root.isDiscordImport)
+                d.createCommunity()
+        }
     }
 
     onAboutToShow: nameInput.input.edit.forceActiveFocus()
@@ -49,6 +64,8 @@ StatusStackModal {
     stackItems: [
         StatusScrollView {
             id: generalView
+
+            readonly property bool canGoNext: nameInput.valid && descriptionTextInput.valid
 
             ColumnLayout {
                 id: generalViewLayout
@@ -135,12 +152,16 @@ StatusStackModal {
                 }
             }
         },
+
         ColumnLayout {
             id: introOutroMessageView
             spacing: 11
+            readonly property bool canGoNext: introMessageInput.valid && outroMessageInput.valid
+
             CommunityIntroMessageInput {
                 id: introMessageInput
                 input.edit.objectName: "createCommunityIntroMessageInput"
+                input.tabNavItem: outroMessageInput.input.edit
 
                 Layout.fillWidth: true
                 Layout.fillHeight: true
@@ -152,6 +173,7 @@ StatusStackModal {
             CommunityOutroMessageInput {
                 id: outroMessageInput
                 input.edit.objectName: "createCommunityOutroMessageInput"
+                input.tabNavItem: introMessageInput.input.edit
 
                 Layout.fillWidth: true
             }
