@@ -10,9 +10,9 @@ Feature: Status Desktop Transaction
 		Then the user lands on the signed in app
 		When the user opens app settings screen
 		When the user activates wallet and opens the wallet settings
-		When the user toggles test networks
 		When the user opens wallet screen
 		When the user accepts the signing phrase
+		When the user imports a seed phrase with one and TesTEr16843/!@00 and swim relax risk shy chimney please usual search industry board music segment
 
 #    Scenario Outline: User sends a transaction
 # 		When the user sends a transaction to himself from account Status account of <amount> <token> on <chain_name> with password TesTEr16843/!@00

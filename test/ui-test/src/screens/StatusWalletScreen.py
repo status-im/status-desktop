@@ -142,6 +142,9 @@ class StatusWalletScreen:
         verify_text_matching(MainWalletScreen.ACCOUNT_NAME.value, account_name)
         
     def send_transaction(self, account_name, amount, token, chain_name, password):
+        # TODO wait for balance to update
+        # Maybe needs a fix on the app itself.  Make the Send modal be responsive to when the balance updates
+        time.sleep(2)
         click_obj_by_name(MainWalletScreen.SEND_BUTTON_FOOTER.value)
         
         self._click_repeater(SendPopup.HEADER_ACCOUNTS_LIST.value, account_name)
@@ -163,15 +166,6 @@ class StatusWalletScreen:
             if(accounts.itemAtIndex(index).objectName == account_name):
                 click_obj(accounts.itemAtIndex(index))
                 break
-
-        scroll_obj_by_name(SendPopup.SCROLL_BAR.value)
-        time.sleep(2)
-        scroll_obj_by_name(SendPopup.SCROLL_BAR.value)
-        time.sleep(2)
-        scroll_obj_by_name(SendPopup.SCROLL_BAR.value)
-        time.sleep(2)
-        
-        self._click_repeater(SendPopup.NETWORKS_LIST.value, chain_name)
         
         click_obj_by_name(SendPopup.SEND_BUTTON.value)
         
@@ -240,6 +234,8 @@ class StatusWalletScreen:
 
         
     def verify_positive_balance(self, symbol: str):
+        # TODO find a way to wait for the balance to update
+        time.sleep(2)
         list = get_obj(AssetView.LIST.value)
         for index in range(list.count):
             tokenListItem = list.itemAtIndex(index)

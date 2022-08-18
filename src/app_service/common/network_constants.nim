@@ -8,10 +8,23 @@ const INFURA_TOKEN {.strdefine.} = ""
 let INFURA_TOKEN_ENV = $getEnv("INFURA_TOKEN")
 let INFURA_TOKEN_RESOLVED =
   if INFURA_TOKEN_ENV != "":
+    echo "INFURA_TOKEN_ENV ", INFURA_TOKEN_ENV
     INFURA_TOKEN_ENV
   else:
+    echo "INFURA_TOKEN_ENV NOT DEFINED"
     INFURA_TOKEN
 
+const NETWORK_RPC_URL = $getEnv("NETWORK_RPC_URL")
+let RPC_URL_RESOLVED =
+  if NETWORK_RPC_URL != "":
+    echo "RPC URL IS DEFINED ", NETWORK_RPC_URL
+    NETWORK_RPC_URL
+  else:
+    echo "RPC URL IS NOT DEFINED"
+    "http://localhost:8545"
+    # "https://mainnet.infura.io/v3/" & INFURA_TOKEN_RESOLVED
+
+echo "USING THIS URL ", RPC_URL_RESOLVED
 const OPENSEA_API_KEY {.strdefine.} = ""
 # allow runtime override via environment variable; core contributors can set a
 # an opensea API key in this way for local development
@@ -31,7 +44,7 @@ let NETWORKS* = %* [
   {
     "chainId": 1,
     "chainName": "Ethereum Mainnet",
-    "rpcUrl": "https://mainnet.infura.io/v3/" & INFURA_TOKEN_RESOLVED,
+    "rpcUrl": RPC_URL_RESOLVED,
     "blockExplorerUrl": "https://etherscan.io/",
     "iconUrl": "network/Network=Ethereum",
     "chainColor": "#627EEA",

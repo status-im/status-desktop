@@ -320,6 +320,7 @@ proc setupAccount*(self: Service, accountId, password, displayName: string, keyc
     let subaccountDataJson = self.getSubaccountDataForAccountId(accountId, displayName)
     var settingsJson = self.getAccountSettings(accountId, installationId, displayName)
     let nodeConfigJson = self.getDefaultNodeConfig(installationId)
+    echo "NODE CONFIG-- ", nodeConfigJson
 
     if(accountDataJson.isNil or subaccountDataJson.isNil or settingsJson.isNil or
       nodeConfigJson.isNil):
