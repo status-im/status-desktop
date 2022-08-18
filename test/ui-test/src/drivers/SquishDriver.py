@@ -72,6 +72,8 @@ def is_displayed(objName: str):
 def is_visible_and_enabled(obj):
     return obj.visible and obj.enabled
 
+def is_null(obj):
+    return squish.isNull(obj)
 
 # Given a specific object, get a specific child.
 def get_child(obj, child_index=None):
