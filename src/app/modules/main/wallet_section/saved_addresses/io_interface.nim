@@ -17,7 +17,7 @@ method viewDidLoad*(self: AccessInterface) {.base.} =
 method loadSavedAddresses*(self: AccessInterface) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method createOrUpdateSavedAddress*(self: AccessInterface, name, address: string): string {.base.} =
+method createOrUpdateSavedAddress*(self: AccessInterface, name: string, address: string, favourite: bool): string {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method deleteSavedAddress*(self: AccessInterface, address: string): string {.base.} =

@@ -36,6 +36,7 @@ method loadSavedAddresses*(self: Module) =
     savedAddresses.map(s => initItem(
       s.name,
       s.address,
+      s.favourite
     ))
   )
 
@@ -53,8 +54,8 @@ method viewDidLoad*(self: Module) =
   self.moduleLoaded = true
   self.delegate.savedAddressesModuleDidLoad()
 
-method createOrUpdateSavedAddress*(self: Module, name: string, address: string): string =
-  return self.controller.createOrUpdateSavedAddress(name, address)
+method createOrUpdateSavedAddress*(self: Module, name: string, address: string, favourite: bool): string =
+  return self.controller.createOrUpdateSavedAddress(name, address, favourite)
 
 method deleteSavedAddress*(self: Module, address: string): string =
   return self.controller.deleteSavedAddress(address)

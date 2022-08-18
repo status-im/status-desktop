@@ -6,6 +6,7 @@ import utils 1.0
 import StatusQ.Controls 0.1
 import StatusQ.Components 0.1
 import StatusQ.Core 0.1
+import StatusQ.Core.Utils 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Popups 0.1
 import shared.controls 1.0
@@ -20,8 +21,11 @@ StatusListItem {
     property var contactsStore
     property string name
     property string address
-    property var saveAddress: function (name, address) {}
+    property bool favourite: false
+    property var saveAddress: function (name, address, favourite) {}
     property var deleteSavedAddress: function (address) {}
+    // TODO: fetch this from status-go
+    readonly property string ensName: ""
 
     signal openSendModal()
 
@@ -29,11 +33,11 @@ StatusListItem {
 
     title: name
     objectName: name
-    subTitle: name + " \u2022 " + Utils.getElidedCompressedPk(address)
+    subTitle: (ensName.length > 0 ? ensName + " \u2022 " : "")
+                + Utils.elideText(address, 6, 4)
     color: "transparent"
     border.color: Theme.palette.baseColor5
-    //TODO uncomment when #6456 is fixed
-    //titleTextIcon: RootStore.favouriteAddress ? "star-icon" : ""
+    titleTextIcon: root.favourite ? "star-icon" : ""
     statusListItemComponentsSlot.spacing: 0
     property bool showButtons: sensor.containsMouse
 
@@ -51,22 +55,21 @@ StatusListItem {
             store: root.store
             textToCopy: root.address
         },
-        //TODO uncomment when #6456 is fixed
-        //                StatusRoundButton {
-        //                    icon.color: root.showButtons ? Theme.palette.directColor1 : Theme.palette.baseColor1
-        //                    type: StatusRoundButton.Type.Tertiary
-        //                    icon.name: root.favouriteAddress ? "favourite" : "unfavourite"
-        //                    onClicked: {
-        //                        RootStore.setFavourite();
-        //                    }
-        //                },
+        StatusRoundButton {
+            icon.color: root.showButtons ? Theme.palette.directColor1 : Theme.palette.baseColor1
+            type: StatusRoundButton.Type.Tertiary
+            icon.name: root.favourite ? "unfavourite" : "favourite"
+            onClicked: {
+                root.saveAddress(root.name, root.address, !root.favourite)
+            }
+        },
         StatusRoundButton {
             visible: !!root.name
             icon.color: root.showButtons ? Theme.palette.directColor1 : Theme.palette.baseColor1
             type: StatusRoundButton.Type.Tertiary
             icon.name: "more"
             onClicked: {
-                editDeleteMenu.openMenu(root.name, root.address);
+                editDeleteMenu.openMenu(root.name, root.address, root.favourite);
             }
         },
         StatusRoundButton {
@@ -88,14 +91,17 @@ StatusListItem {
         id: editDeleteMenu
         property string contactName
         property string contactAddress
-        function openMenu(name, address) {
+        property bool storeFavourite
+        function openMenu(name, address, favourite) {
             contactName = name;
             contactAddress = address;
+            storeFavourite = favourite;
             popup();
         }
         onClosed: {
             contactName = "";
             contactAddress = "";
+            storeFavourite = false;
         }
         StatusMenuItem {
             text: qsTr("Edit")
@@ -106,7 +112,8 @@ StatusListItem {
                                  {
                                      edit: true,
                                      address: editDeleteMenu.contactAddress,
-                                     name: editDeleteMenu.contactName
+                                     name: editDeleteMenu.contactName,
+                                     favourite: editDeleteMenu.storeFavourite
                                  })
             }
         }
@@ -119,6 +126,7 @@ StatusListItem {
             onTriggered: {
                 deleteAddressConfirm.name = editDeleteMenu.contactName;
                 deleteAddressConfirm.address = editDeleteMenu.contactAddress;
+                deleteAddressConfirm.favourite = editDeleteMenu.storeFavourite;
                 deleteAddressConfirm.open()
             }
         }
@@ -132,7 +140,7 @@ StatusListItem {
             onClosed: destroy()
             contactsStore: root.contactsStore
             onSave: {
-                root.saveAddress(name, address)
+                root.saveAddress(name, address, favourite)
                 close()
             }
         }
@@ -142,6 +150,7 @@ StatusListItem {
         id: deleteAddressConfirm
         property string address
         property string name
+        property bool favourite
         anchors.centerIn: parent
         header.title: qsTr("Are you sure?")
         header.subTitle: name

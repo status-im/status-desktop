@@ -28,6 +28,7 @@ type
   SavedAddress* = ref object of RootObj
     name* {.serializedFieldName("name").}: string
     address* {.serializedFieldName("address").}: string
+    favourite* {.serializedFieldName("favourite").}: bool
 
   Network* = ref object of RootObj
     chainId* {.serializedFieldName("chainId").}: int

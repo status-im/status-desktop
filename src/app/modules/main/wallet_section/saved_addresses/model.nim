@@ -6,6 +6,7 @@ type
   ModelRole {.pure.} = enum
     Name = UserRole + 1,
     Address
+    Favourite
 
 QtObject:
   type
@@ -43,6 +44,7 @@ QtObject:
     {
       ModelRole.Name.int:"name",
       ModelRole.Address.int:"address",
+      ModelRole.Favourite.int:"favourite",
     }.toTable
 
   method data(self: Model, index: QModelIndex, role: int): QVariant =
@@ -60,6 +62,8 @@ QtObject:
       result = newQVariant(item.getName())
     of ModelRole.Address:
       result = newQVariant(item.getAddress())
+    of ModelRole.Favourite:
+      result = newQVariant(item.getFavourite())
 
   proc rowData(self: Model, index: int, column: string): string {.slot.} =
     if (index >= self.items.len):
@@ -68,6 +72,7 @@ QtObject:
     case column:
       of "name": result = $item.getName()
       of "address": result = $item.getAddress()
+      of "favourite": result = $item.getFavourite()
 
   proc setItems*(self: Model, items: seq[Item]) =
     self.beginResetModel()
