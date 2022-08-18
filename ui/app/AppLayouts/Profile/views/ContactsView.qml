@@ -21,10 +21,7 @@ import "../popups"
 
 SettingsContentBase {
     id: root
-    onWidthChanged: { contentItem.width = contentWidth; }
-    onHeightChanged: { contentItem.height = height; }
     property ContactsStore contactsStore
-
     property alias searchStr: searchBox.text
     property bool isPending: false
 
@@ -39,7 +36,6 @@ SettingsContentBase {
         }
     ]
 
-
     function openContextMenu(publicKey, name, icon) {
         contactContextMenu.selectedUserPublicKey = publicKey
         contactContextMenu.selectedUserDisplayName = name
@@ -49,6 +45,9 @@ SettingsContentBase {
 
     Item {
         id: contentItem
+        width: root.contentWidth
+        height: (searchBox.height + contactsTabBar.height
+                + stackLayout.height + (2 * Style.current.bigPadding))
 
         MessageContextMenuView {
             id: contactContextMenu
@@ -114,20 +113,24 @@ SettingsContentBase {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.top: contactsTabBar.bottom
-            anchors.topMargin: Style.current.smallPadding
-            anchors.bottom: parent.bottom
             currentIndex: contactsTabBar.currentIndex
             // CONTACTS
-            Column {
+            ColumnLayout {
+                Layout.fillWidth: true
+                Layout.minimumHeight: 0
+                Layout.maximumHeight: (verifiedContacts.height + mutualContacts.height + noFriendsItem.height)
+                visible: (stackLayout.currentIndex === 0)
+                onVisibleChanged: {
+                    if (visible) {
+                        stackLayout.height = height+contactsTabBar.anchors.topMargin;
+                    }
+                }
                 spacing: Style.current.padding
                 ContactsListPanel {
                     id: verifiedContacts
-                    width: parent.width
-                    height: ((contactsListHeight < (stackLayout.height/2)) ? contactsListHeight :
-                            (stackLayout.height-mutualContacts.contactsListHeight))
-                    scrollbarOn: mutualContacts.contactsListHeight > (stackLayout.height/2) ?
-                                 (contactsListHeight > (stackLayout.height/2)) : (contactsListHeight > parent.height)
+                    Layout.fillWidth: true
                     title: qsTr("Identity Verified Contacts")
+                    visible: !noFriendsItem.visible
                     contactsModel: root.contactsStore.myContactsModel
                     searchString: searchBox.text
                     onOpenContactContextMenu: function (publicKey, name, icon) {
@@ -142,10 +145,8 @@ SettingsContentBase {
 
                 ContactsListPanel {
                     id: mutualContacts
-                    width: parent.width
-                    height: (contactsListHeight+50)
-                    scrollbarOn: verifiedContacts.contactsListHeight > (stackLayout.height/2) ?
-                                 (contactsListHeight > (stackLayout.height/2)) : (contactsListHeight > parent.height)
+                    Layout.fillWidth: true
+                    visible: !noFriendsItem.visible
                     title: qsTr("Contacts")
                     contactsModel: root.contactsStore.myContactsModel
                     searchString: searchBox.text
@@ -159,27 +160,34 @@ SettingsContentBase {
                         root.contactsStore.joinPrivateChat(publicKey)
                     }
                 }
+
                 Item {
-                    width: parent.width
-                    height: parent.height
+                    id: noFriendsItem
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: visible ?  (root.contentHeight - (2*searchBox.height) - contactsTabBar.height - contactsTabBar.anchors.topMargin) : 0
+                    visible: root.contactsStore.myContactsModel.count === 0
                     NoFriendsRectangle {
                         anchors.centerIn: parent
-                        visible: root.contactsStore.myContactsModel.count === 0
                         text: qsTr("You don’t have any contacts yet")
                     }
                 }
             }
 
             // PENDING REQUESTS
-            Column {
+            ColumnLayout {
+                Layout.fillWidth: true
+                Layout.minimumHeight: 0
+                Layout.maximumHeight: (receivedRequests.height + sentRequests.height)
+                spacing: Style.current.padding
+                visible: (stackLayout.currentIndex === 1)
+                onVisibleChanged: {
+                    if (visible) {
+                        stackLayout.height = height+contactsTabBar.anchors.topMargin;
+                    }
+                }
                 ContactsListPanel {
                     id: receivedRequests
-                    width: parent.width
-                    height: ((contactsListHeight < (stackLayout.height/2)) ? contactsListHeight :
-                            (stackLayout.height-sentRequests.contactsListHeight))
-                    scrollbarOn: (sentRequests.contactsListHeight > (stackLayout.height/2)) ?
-                                 (contactsListHeight > (stackLayout.height/2)) :
-                                 (contactsListHeight > (stackLayout.height - sentRequests.contactsListHeight))
+                    Layout.fillWidth: true
                     title: qsTr("Received")
                     searchString: searchBox.text
                     contactsStore: root.contactsStore
@@ -201,14 +209,14 @@ SettingsContentBase {
                         try {
                             let request = root.contactsStore.getVerificationDetailsFromAsJson(publicKey)
                             Global.openPopup(contactVerificationRequestPopupComponent, {
-                                senderPublicKey: request.from,
-                                senderDisplayName: request.displayName,
-                                senderIcon: request.icon,
-                                challengeText: request.challenge,
-                                responseText: request.response,
-                                messageTimestamp: request.requestedAt,
-                                responseTimestamp: request.repliedAt
-                            })
+                                                 senderPublicKey: request.from,
+                                                 senderDisplayName: request.displayName,
+                                                 senderIcon: request.icon,
+                                                 challengeText: request.challenge,
+                                                 responseText: request.response,
+                                                 messageTimestamp: request.requestedAt,
+                                                 responseTimestamp: request.repliedAt
+                                             })
                         } catch (e) {
                             console.error("Error getting or parsing verification data", e)
                         }
@@ -217,11 +225,7 @@ SettingsContentBase {
 
                 ContactsListPanel {
                     id: sentRequests
-                    width: parent.width
-                    height: (contactsListHeight+50)
-                    scrollbarOn: (receivedRequests.contactsListHeight > (stackLayout.height/2)) ?
-                                 (contactsListHeight > (stackLayout.height/2)) :
-                                 (contactsListHeight > (stackLayout.height - receivedRequests.contactsListHeight))
+                    Layout.fillWidth: true
                     title: qsTr("Sent")
                     searchString: searchBox.text
                     contactsStore: root.contactsStore
@@ -283,8 +287,7 @@ SettingsContentBase {
 
             // BLOCKED
             ContactsListPanel {
-                width: parent.width
-                height: (contactsListHeight+50)
+                Layout.fillWidth: true
                 searchString: searchBox.text
                 contactsStore: root.contactsStore
                 onOpenContactContextMenu: function (publicKey, name, icon) {
@@ -292,6 +295,12 @@ SettingsContentBase {
                 }
                 contactsModel: root.contactsStore.blockedContactsModel
                 panelUsage: Constants.contactsPanelUsage.blockedContacts
+                visible: (stackLayout.currentIndex === 2)
+                onVisibleChanged: {
+                    if (visible) {
+                        stackLayout.height = height;
+                    }
+                }
             }
         }
 
@@ -323,18 +332,18 @@ SettingsContentBase {
                     root.contactsStore.removeContact(removeContactConfirmationDialog.value);
                 }
                 removeContactConfirmationDialog.close()
+            }
         }
-    }
 
-    Component {
-        id: contactVerificationRequestPopupComponent
-        ContactVerificationRequestPopup {
-            onResponseSent: {
-                root.contactsStore.acceptVerificationRequest(senderPublicKey, response)
-            }
-            onVerificationRefused: {
-                root.contactsStore.declineVerificationRequest(senderPublicKey)
-            }
+        Component {
+            id: contactVerificationRequestPopupComponent
+            ContactVerificationRequestPopup {
+                onResponseSent: {
+                    root.contactsStore.acceptVerificationRequest(senderPublicKey, response)
+                }
+                onVerificationRefused: {
+                    root.contactsStore.declineVerificationRequest(senderPublicKey)
+                }
             }
         }
 
