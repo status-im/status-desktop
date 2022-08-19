@@ -132,3 +132,8 @@ Feature: Status Desktop Chat
           | second-chat |
           | third-chat  |
           | first-chat  |
+          
+     Scenario: User can type message with emoji autoreplace
+         When user joins chat room automation-test
+         Then the user is able to send chat message "Hello :)"
+         Then the message Hello 🙂 is displayed in the last message
