@@ -84,3 +84,28 @@ def step(context, emoji_description: str):
 @Then("the community channel has emoji |any|")
 def step(context, emoji: str):
     _statusCommunityScreen.check_community_channel_emoji(emoji)
+
+    
+@When("the user sends a test image in the current channel")
+def step(context): 
+    _statusCommunityScreen.send_test_image(context.userData["fixtures_root"], False, "")
+    
+@When("the user sends a test image in the current channel with message |any|")
+def step(context, message): 
+    _statusCommunityScreen.send_test_image(context.userData["fixtures_root"], False, message)
+    
+@When("the user sends multiple test images in the current channel with message |any|")
+def step(context, message): 
+    _statusCommunityScreen.send_test_image(context.userData["fixtures_root"], True, message)
+
+@Then("the test image is displayed in the last message")
+def step(context):
+    _statusCommunityScreen.verify_sent_test_image(False, False)
+
+@Then("the test image is displayed just before the last message")
+def step(context):
+    _statusCommunityScreen.verify_sent_test_image(False, True)
+
+@Then("the test images are displayed just before the last message")
+def step(context):
+    _statusCommunityScreen.verify_sent_test_image(True, True)

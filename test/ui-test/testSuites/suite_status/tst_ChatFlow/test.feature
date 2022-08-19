@@ -46,7 +46,7 @@ Feature: Status Desktop Chat
 
     Scenario: User can delete their own message
          When user joins chat room automation-test
-         Then user is able to send  a random chat message
+         Then the user is able to send a random chat message
          Then the user can delete the message at index 0
          Then the last message is not the random message
 
@@ -104,7 +104,7 @@ Feature: Status Desktop Chat
           | second-chat |
           | first-chat  |
           When user switches to second-chat chat
-          Then user is able to send  a random chat message 
+          Then the user is able to send  a random chat message 
           And user chats are sorted accordingly
           | second-chat |
           | third-chat  |

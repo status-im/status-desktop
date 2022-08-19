@@ -672,6 +672,15 @@ Rectangle {
                                 }
     }
 
+     // This is used by Squish tests to not have to access the file dialog
+    function selectImageString(filePath) {
+        let validImages = validateImages([filePath])
+        if (validImages.length > 0) {
+            control.showImageArea(validImages)
+        }
+        messageInputField.forceActiveFocus();
+    }
+
     FileDialog {
         id: imageDialog
         title: qsTr("Please choose an image")

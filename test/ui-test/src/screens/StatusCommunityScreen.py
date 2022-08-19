@@ -17,6 +17,8 @@ from drivers.SquishDriver import *
 from drivers.SquishDriverVerification import *
 from drivers.SDKeyboardCommands import *
 from .StatusMainScreen import StatusMainScreen
+from utils.FileManager import *
+from screens.StatusChatScreen import MessageContentType
 
 class CommunityCreateMethods(Enum):
     BOTTOM_MENU = "bottom_menu"
@@ -40,6 +42,8 @@ class CommunityScreenComponents(Enum):
     DELETE_CHANNEL_CONFIRMATION_DIALOG_DELETE_BUTTON = "delete_Channel_ConfirmationDialog_DeleteButton"
     NOT_CATEGORIZED_CHAT_LIST = "mainWindow_communityColumnView_statusChatList"
     COMMUNITY_CHAT_LIST_CATEGORIES = "communityChatListCategories_Repeater"
+    CHAT_INPUT_ROOT = "chatInput_Root"
+    CHAT_LOG = "chatView_log"
 
 class CommunitySettingsComponents(Enum):
     EDIT_COMMUNITY_SCROLL_VIEW = "communitySettings_EditCommunity_ScrollView"
@@ -269,4 +273,34 @@ class StatusCommunityScreen:
 
     def check_community_channel_emoji(self, emojiStr: str):
         obj = wait_and_get_obj(CommunityScreenComponents.CHAT_IDENTIFIER_CHANNEL_ICON.value)
-        expect_true(str(obj.icon.emoji).find(emojiStr) >= 0, "Same emoji check")
+        expectTrue(str(obj.icon.emoji).find(emojiStr) >= 0, "Same emoji check")
+
+    def _verify_image_sent(self, message_index: int):
+        image_obj = get_obj(CommunityScreenComponents.CHAT_LOG.value).itemAtIndex(message_index)
+        verify_values_equal(str(image_obj.messageContentType), str(MessageContentType.IMAGE.value), "The last message is not an image.")
+
+    def send_test_image(self, fixtures_root: str, multiple_images: bool, message: str):
+        chat_input = wait_and_get_obj(CommunityScreenComponents.CHAT_INPUT_ROOT.value)
+        
+        chat_input.selectImageString(fixtures_root + "images/ui-test-image0.jpg")
+        
+        if (multiple_images):
+            #self._select_test_image(fixtures_root, 1)
+            chat_input.selectImageString(fixtures_root + "images/ui-test-image1.jpg")
+        
+        if (message != ""):
+            # Type the message in the input (focus should be on the chat input)
+            native_type(message)
+                
+        # Send the image (and message if present)
+        native_type("<Return>")
+    
+    def verify_sent_test_image(self, multiple_images: bool, has_message: bool):
+        image_index = 1 if has_message else 0
+        self._verify_image_sent(image_index)
+        
+        if (multiple_images):
+            # Verify second image
+            image_index = 2 if has_message else 1
+            self._verify_image_sent(image_index)
+
