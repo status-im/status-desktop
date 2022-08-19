@@ -4,6 +4,7 @@ import QtQuick.Controls 2.3
 import StatusQ.Core 0.1
 import StatusQ.Components 0.1
 import StatusQ.Controls 0.1
+import StatusQ.Core.Theme 0.1
 
 import utils 1.0
 
@@ -34,7 +35,14 @@ StatusListView {
 
         title: !model.displayName.endsWith(".eth") && !!model.localNickname ?
                     model.localNickname : Utils.removeStatusEns(model.displayName)
-        image.source: Global.getProfileImage(model.pubKey)
+        image.source: model.icon
+        icon: StatusIconSettings {
+            color: Utils.colorForPubkey(model.pubKey)
+            charactersLen: 2
+            isLetterIdenticon: model.icon === ""
+            height: isLetterIdenticon ? 40 : 20
+            width: isLetterIdenticon ? 40 : 20
+        }
         ringSettings.ringSpecModel: Utils.getColorHashAsJson(model.pubKey)
 
         height: visible ? implicitHeight : 0

@@ -208,7 +208,7 @@ StatusModal {
                 image.source: model.icon
                 ringSettings.ringSpecModel: Utils.getColorHashAsJson(model.pubKey)
                 icon: StatusIconSettings {
-                    color: Theme.palette.userCustomizationColors[Utils.colorIdForPubkey(model.pubKey)]
+                    color: Utils.colorForPubkey(model.pubKey)
                     charactersLen: 2
                     isLetterIdenticon: model.icon === ""
                     height: isLetterIdenticon ? 40 : 20

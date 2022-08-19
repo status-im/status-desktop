@@ -577,7 +577,14 @@ QtObject {
     }
 
     function colorForPubkey(publicKey) {
-        return Theme.palette.userCustomizationColors[colorIdForPubkey(publicKey)]
+        const pubKeyColorId = colorIdForPubkey(publicKey)
+
+        if (pubKeyColorId < 0 || pubKeyColorId >=  Theme.palette.userCustomizationColors.length) {
+            console.warn("Utils.colorForPubkey : colorId for publicKey is out of bounds")
+            return StatusColors.colors['blue']
+        }
+
+        return Theme.palette.userCustomizationColors[pubKeyColorId]
     }
 
     function getCompressedPk(publicKey) {
