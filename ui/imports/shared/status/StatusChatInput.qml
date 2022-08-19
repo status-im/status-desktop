@@ -430,13 +430,14 @@ Rectangle {
     property string copiedTextPlain: ""
     property string copiedTextFormatted: ""
 
-    StatusListView {
+    Instantiator {
         id: dummyContactList
         model: control.usersStore ? control.usersStore.usersModel : []
-        delegate: Item {
-            property string contactName: model.name || ""
+        delegate: QtObject {
+            property string contactName: model.displayName
         }
     }
+
 
     function onRelease(event) {
         if (event.key === Qt.Key_Backspace && textFormatMenu.opened) {
@@ -447,25 +448,27 @@ Rectangle {
 
         if (paste) {
             if (copiedTextPlain.includes("@")) {
-                copiedTextFormatted = copiedTextFormatted.replace(/underline/g, "none").replace(/span style="/g, "span style=\" text-decoration:none;");
-                for (var j = 0; j < dummyContactList.count; j++) {
-                    var name = dummyContactList.itemAtIndex(j).contactName;
+                copiedTextFormatted = copiedTextFormatted.replace(/underline/g, "none").replace(/span style="/g, "span style=\" text-decoration:none;")
+                for (let j = 0; j < dummyContactList.count; j++) {
+                    const name = dummyContactList.objectAt(j).contactName
+
                     if (copiedTextPlain.indexOf(name) > -1) {
-                        var subStr = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-                        var regex = new RegExp(subStr, 'gi'), result, indices = [];
+                        const subStr = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+                        const regex = new RegExp(subStr, 'gi')
+                        let result = null
                         while ((result = regex.exec(copiedTextPlain))) {
-                            mentionsPos.push({"name": name, "leftIndex": (result.index + copyTextStart - 1), "rightIndex": (result.index + copyTextStart + name.length)});
+                            mentionsPos.push({"name": name, "leftIndex": (result.index + copyTextStart - 1), "rightIndex": (result.index + copyTextStart + name.length)})
                         }
                     }
                 }
             }
-            messageInputField.remove(copyTextStart, (copyTextStart + copiedTextPlain.length));
-            insertInTextInput(copyTextStart, copiedTextFormatted);
-            paste = false;
+            messageInputField.remove(copyTextStart, (copyTextStart + copiedTextPlain.length))
+            insertInTextInput(copyTextStart, copiedTextFormatted)
+            paste = false
         }
 
         if (event.key !== Qt.Key_Escape) {
-            emojiEvent = emojiHandler(event);
+            emojiEvent = emojiHandler(event)
             if (!emojiEvent) {
                 emojiSuggestions.close()
             }
