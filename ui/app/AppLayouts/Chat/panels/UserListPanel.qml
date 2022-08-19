@@ -95,7 +95,7 @@ Item {
             image.isIdenticon: false
 
             status: model.onlineStatus
-            icon.color: Theme.palette.userCustomizationColors[Utils.colorIdForPubkey(model.pubKey)] // FIXME: use model.colorId
+            icon.color: Utils.colorForPubkey(model.pubKey) // FIXME: use model.colorId
             ringSettings.ringSpecModel: Utils.getColorHashAsJson(model.pubKey) // FIXME: use model.colorHash
             onClicked: {
                 if (mouse.button === Qt.RightButton) {

@@ -140,7 +140,7 @@ Item {
                 nickName: model.localNickname
                 userName: model.displayName
                 status: model.onlineStatus
-                icon.color: Theme.palette.userCustomizationColors[Utils.colorIdForPubkey(model.pubKey)] // FIXME: use model.colorId
+                icon.color: Utils.colorForPubkey(model.pubKey) // FIXME: use model.colorId
                 image.source: model.icon
                 image.isIdenticon: false
                 image.width: 40

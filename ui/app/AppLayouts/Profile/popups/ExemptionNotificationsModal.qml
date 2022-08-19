@@ -38,7 +38,7 @@ StatusModal {
 //                   root.item.color
         // until then the following is used
         background.color: root.item.type === Constants.settingsSection.exemptions.oneToOneChat?
-                              Theme.palette.userCustomizationColors[Utils.colorIdForPubkey(root.item.itemId)] :
+                              Utils.colorForPubkey(root.item.itemId) :
                               root.item.color
         charactersLen: root.item.type === Constants.settingsSection.exemptions.oneToOneChat? 2 : 1
         isLetterIdenticon: root.item.image === ""

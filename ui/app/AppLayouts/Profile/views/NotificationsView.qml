@@ -123,7 +123,7 @@ SettingsContentBase {
                     ringSettings.ringSpecModel: model.type === Constants.settingsSection.exemptions.oneToOneChat ? Utils.getColorHashAsJson(model.itemId) : undefined
                     icon: StatusIconSettings {
                         color: model.type === Constants.settingsSection.exemptions.oneToOneChat?
-                                   Theme.palette.userCustomizationColors[Utils.colorIdForPubkey(model.itemId)] :
+                                   Utils.colorForPubkey(model.itemId) :
                                    model.color
                         charactersLen: model.type === Constants.settingsSection.exemptions.oneToOneChat? 2 : 1
                         isLetterIdenticon: model.image === ""
