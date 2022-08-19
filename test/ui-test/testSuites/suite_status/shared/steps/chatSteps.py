@@ -44,7 +44,7 @@ def step(context):
         _statusChat.send_message(row[0])
         _statusChat.verify_last_message_sent(row[0])
 
-@Then("user is able to send  a random chat message")
+@Then("the user is able to send a random chat message")
 def step(context):
     random_int = randint(0, 10000)
     message = "random message " + str(random_int)

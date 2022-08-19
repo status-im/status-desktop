@@ -20,6 +20,20 @@ def hook(context):
     context.userData["fixtures_root"] = os.path.join(os.path.dirname(__file__), "../../../fixtures/")
     context.userData["search_images"] = os.path.join(os.path.dirname(__file__), "../shared/searchImages/")
 
+    base_path = os.path.join(os.path.dirname(__file__))
+    split_path = base_path.split("/")
+
+    # Remove the last three parts of the path to go back to the fixtures
+    del split_path[len(split_path) - 1]
+    del split_path[len(split_path) - 1]
+    del split_path[len(split_path) - 1]
+
+    joined_path = ""
+    for path_part in split_path:
+        joined_path += path_part + "/"
+
+    context.userData["fixtures_root"] = os.path.join(joined_path, "fixtures/")
+
 @OnScenarioEnd
 def hook(context):
     currentApplicationContext().detach()

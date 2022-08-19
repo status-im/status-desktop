@@ -21,6 +21,22 @@ from utils.ObjectAccess import *
 _MENTION_SYMBOL = "@"
 _LINK_HREF_REGEX = '<a href="(.+?)">'
 
+class MessageContentType(Enum):
+    FETCH_MORE_MESSAGES_BUTTON = -2
+    CHAT_IDENTIFIER = -1    
+    UNKNOWN = 0
+    MESSAGE = 1
+    STICKER = 2
+    STATUS = 3
+    EMOJI = 4
+    TRANSACTION = 5
+    SYSTEM_MESSAGE_PRIVATE_GROUP= 6
+    IMAGE = 7
+    AUDIO = 8
+    COMMUNITY_INVITE = 9
+    GAP = 10
+    EDIT = 11
+
 class ChatComponents(Enum):
     MESSAGE_INPUT = "chatView_messageInput"
     TOOLBAR_INFO_BUTTON = "chatView_StatusChatInfoButton"
