@@ -60,6 +60,10 @@ def step(context):
 @Then("the user selects emoji in the suggestion list")
 def step(contenxt):
     _statusChat.select_the_emoji_in_suggestion_list()
+    
+@Then("the user is able to send chat message \"|any|\"")
+def step(context, message):
+     _statusChat.send_message(message)
 
 @Then("the user is able to send a random chat message")
 def step(context):
@@ -135,7 +139,7 @@ def step(context, emoji_short_name, message):
 
 @Then("the emoji |any| is displayed in the last message")
 def step(context, emoji):
-    _statusChat.verify_last_message_sent(emoji)
+     _statusChat.verify_last_message_sent(emoji)
 
 @Then("the message |any| is displayed in the last message")
 def step(context, message):
