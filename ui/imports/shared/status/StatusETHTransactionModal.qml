@@ -112,6 +112,7 @@ ModalPopup {
                 visible: false
                 accounts: root.ensUsernamesStore.walletAccounts
                 contactsStore: root.contactsStore
+                isValid: true
                 selectedRecipient: { "address": root.ensUsernamesStore.getEnsRegisteredAddress(), "type": RecipientSelector.Type.Address }
                 readOnly: true
                 onSelectedRecipientChanged: if (isValid) { gasSelector.estimateGas() }
@@ -122,9 +123,10 @@ ModalPopup {
                 anchors.top: selectFromAccount.bottom
                 anchors.topMargin: Style.current.padding
                 getGasEthValue: root.ensUsernamesStore.getGasEthValue
+                getEstimatedTime: root.ensUsernamesStore.getEstimatedTime
                 getFiatValue: root.ensUsernamesStore.getFiatValue
                 defaultCurrency: root.ensUsernamesStore.getCurrentCurrency()
-                
+
                 property var estimateGas: Backpressure.debounce(gasSelector, 600, function() {
                     let estimatedGas = root.estimateGasFunction(selectFromAccount.selectedAccount);
                     gasSelector.selectedGasLimit = estimatedGas
