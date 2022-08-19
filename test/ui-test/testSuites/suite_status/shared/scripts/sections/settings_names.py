@@ -1,4 +1,4 @@
-from sections.global_names import *
+from scripts.global_names import *
 from enum import Enum
 
 # Side bar section items object name helpers:
@@ -29,8 +29,6 @@ class SettingsSubsection(Enum):
 # Main:
 navBarListView_Settings_navbar_StatusNavBarTabButton = {"checkable": True, "container": mainWindow_navBarListView_ListView, "objectName": "Settings-navbar", "type": "StatusNavBarTabButton", "visible": True}
 settings_navbar_settings_icon_StatusIcon = {"container": navBarListView_Settings_navbar_StatusNavBarTabButton, "objectName": "settings-icon", "type": "StatusIcon", "visible": True}
-mainWindow_ScrollView = {"container": statusDesktop_mainWindow, "type": "StatusScrollView", "unnamed": 1, "visible": True}
-mainWindow_ScrollView_2 = {"container": statusDesktop_mainWindow, "occurrence": 2, "type": "StatusScrollView", "unnamed": 1, "visible": True}
 settingsSave_StatusButton = {"container": statusDesktop_mainWindow, "objectName": "settingsDirtyToastMessageSaveButton", "type": "StatusButton", "visible": True}
 settings_Sidebar_ENS_Item = {"container": mainWindow_ScrollView, "objectName": "ENS usernames-MainMenu", "type": "StatusNavigationListItem"}
 
@@ -43,7 +41,7 @@ settings_ENS_Terms_Open_Transaction = {"container": statusDesktop_mainWindow, "o
 settings_ENS_Terms_Transaction_Next_Button = {"container": statusDesktop_mainWindow, "objectName": "sendNextButton", "type": "StatusButton"}
 settings_ENS_Terms_Transaction_Password_Input = {"container": statusDesktop_mainWindow, "objectName": "transactionSignerPasswordInput", "type": "StyledTextField"}
 
-# Side bar items:
+# Side bar items (Secondary navigation):
 wallet_StatusNavigationListItem = {"container": mainWindow_ScrollView, "objectName": SettingsSubsection.WALLET.value, "type": "StatusNavigationListItem", "visible": True}
 language_StatusNavigationListItem = {"container": mainWindow_ScrollView, "objectName": SettingsSubsection.LANGUAGE.value, "type": "StatusNavigationListItem", "visible": True}
 advanced_StatusNavigationListItem = {"container": mainWindow_ScrollView, "objectName": SettingsSubsection.ADVANCED.value, "type": "StatusNavigationListItem", "visible": True}

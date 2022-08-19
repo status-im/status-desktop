@@ -43,4 +43,3 @@ def step(context, obj):
 @Then("the following ui-component |any| is not enabled")
 def step(context, obj):
     object_not_enabled(obj)
-    

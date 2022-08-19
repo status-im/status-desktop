@@ -1,5 +1,4 @@
-
-from sections.global_names import *
+from scripts.global_names import *
 
 # Main:
 mainWindow_Welcome_to_Status_StyledText = {"container": statusDesktop_mainWindow, "text": "Welcome to Status", "type": "StyledText", "unnamed": 1, "visible": True}
