@@ -1,5 +1,4 @@
-
-from sections.global_names import *
+from scripts.global_names import *
 
 # Main:
 loginView_passwordInput = {"container": statusDesktop_mainWindow, "objectName": "loginPasswordInput", "type": "StyledTextField"}

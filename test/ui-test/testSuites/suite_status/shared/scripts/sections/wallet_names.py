@@ -1,5 +1,4 @@
-
-from sections.global_names import *
+from scripts.global_names import *
 
 # Main:
 navBarListView_Wallet_navbar_StatusNavBarTabButton = {"checkable": True, "container": mainWindow_navBarListView_ListView, "objectName": "Wallet-navbar", "type": "StatusNavBarTabButton", "visible": True}

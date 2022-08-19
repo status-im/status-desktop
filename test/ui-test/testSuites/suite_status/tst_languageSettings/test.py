@@ -1,7 +1,7 @@
 source(findFile('scripts', 'python/bdd.py'))
 
-setupHooks('../shared/scripts/bdd_hooks.py')
-collectStepDefinitions('./steps', '../shared/steps', '../shared/settingsSteps')
+setupHooks('../../global_shared/scripts/bdd_hooks.py')
+collectStepDefinitions('./steps', '../shared/steps/', '../../global_shared/steps/', '../../suite_onboarding/shared/steps/')
 
 def main():
     testSettings.throwOnFailure = True

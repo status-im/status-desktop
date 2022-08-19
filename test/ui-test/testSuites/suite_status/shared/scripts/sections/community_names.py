@@ -1,5 +1,4 @@
-
-from sections.global_names import *
+from scripts.global_names import *
 
 # Main:
 mainWindow_communityColumnView_CommunityColumnView = {"container": statusDesktop_mainWindow, "objectName": "communityColumnView", "type": "CommunityColumnView"}

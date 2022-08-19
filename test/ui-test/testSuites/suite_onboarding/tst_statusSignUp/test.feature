@@ -117,16 +117,11 @@ Feature: Status Desktop Sign Up
     And user clicks on the following ui-component seedPhraseView_Submit_Button
     When user signs up with username tester123 and password TesTEr16843/!@00
     Then the user lands on the signed in app
-    When the user opens app settings screen
-    And  the user activates wallet and opens the wallet settings
-    Then the address <address> is displayed in the wallet
-
-        Examples:
-          | seed | address |
-          | truth gold urban vital rose market legal release border gospel leave fame | 0x8672E2f1a7b28cda8bcaBb53B52c686ccB7735c3 |
-          | lemon card easy goose keen divide cabbage daughter glide glad sense dice promote present august obey stay cheese | 0xdd06a08d469dd61Cb2E5ECE30f5D16019eBe0fc9 |
-          | provide between target maze travel enroll edge churn random sight grass lion diet sugar cable fiction reflect reason gaze camp tone maximum task unlock | 0xCb59031d11D233112CB57DFd667fE1FF6Cd7b6Da |
-
+    Examples:
+    	| seed | address |
+    	| truth gold urban vital rose market legal release border gospel leave fame | 0x8672E2f1a7b28cda8bcaBb53B52c686ccB7735c3 |
+		| lemon card easy goose keen divide cabbage daughter glide glad sense dice promote present august obey stay cheese | 0xdd06a08d469dd61Cb2E5ECE30f5D16019eBe0fc9 |
+		| provide between target maze travel enroll edge churn random sight grass lion diet sugar cable fiction reflect reason gaze camp tone maximum task unlock | 0xCb59031d11D233112CB57DFd667fE1FF6Cd7b6Da |
 
   Scenario: User signs up with wrong imported seed phrase
 
