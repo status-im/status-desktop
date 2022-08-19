@@ -70,7 +70,7 @@ Feature: Status Desktop community
         Then the user lands on the community named myCommunity
         When the admin creates a community channel named <community_channel_name>, with description Some description with the method <method>
         And the admin creates a community category named <community_category_name>, with channels <community_channel_name> and with the method <method>
-        Then the category named <community_category_name> is created
+        Then the category named <community_category_name> has channels <community_channel_name>
 
         Examples:
             | community_channel_name    | community_category_name     | method           |
@@ -83,17 +83,18 @@ Feature: Status Desktop community
         Then the user lands on the community named myCommunity
         When the admin creates a community channel named test-channel, with description My description with the method bottom_menu
         And the admin creates a community category named test-category, with channels test-channel and with the method bottom_menu
-        Then the category named test-category is created
-        When the admin edits category named test-category to the name new-test-category and channels general, test-channel
-        Then the category named test-category is missing
-        And the category named new-test-category is created
+        Then the category named test-category has channels test-channel
+        When the admin edits category named test-category to the name new-test-category and channels test-channel, general
+        Then the category named new-test-category has channels general
+        And the category named test-category is missing
 
 
     Scenario: Admin deletes a community category
         When the user creates a community named myCommunity, with description My community description, intro Community Intro and outro Community Outro
         Then the user lands on the community named myCommunity
-        When the admin creates a community category named test-category, with channels general and with the method bottom_menu
-        Then the category named test-category is created
+        When the admin creates a community channel named test-channel, with description My description with the method bottom_menu
+        And the admin creates a community category named test-category, with channels test-channel and with the method bottom_menu
+        Then the category named test-category has channels test-channel
         When the admin deletes category named test-category
         Then the category named test-category is missing
 

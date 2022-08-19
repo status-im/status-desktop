@@ -49,13 +49,13 @@ def step(context, community_category_name, new_community_category_name, communit
 def step(context, community_category_name):
     _statusCommunityScreen.delete_community_category(community_category_name)
 
-@Then("the category named |any| is created")
-def step(context, community_category_name): 
-    _statusCommunityScreen.verify_category_name(community_category_name)
-
 @Then("the category named |any| is missing")
 def step(context, community_category_name): 
     _statusCommunityScreen.verify_category_name_missing(community_category_name)
+
+@Then("the category named |any| has channels |any|")
+def step(context, community_category_name, community_channel_names):
+    _statusCommunityScreen.verify_category_contains_channels(community_category_name, community_channel_names)
 
 @When("the admin edits the current community to the name |any| and description |any| and color |any|")
 def step(context, new_community_name, new_community_description, new_community_color):

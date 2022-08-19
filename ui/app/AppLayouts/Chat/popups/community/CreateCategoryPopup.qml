@@ -119,6 +119,7 @@ StatusModal {
                     interactive: false
 
                     delegate: StatusListItem {
+                        readonly property bool checked: channelItemCheckbox.checked
                         objectName: model.name
                         anchors.horizontalCenter: parent.horizontalCenter
                         visible: model.type != Constants.chatType.unknown
