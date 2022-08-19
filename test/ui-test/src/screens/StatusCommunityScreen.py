@@ -94,9 +94,6 @@ class StatusCommunityScreen:
         return False, None
 
     def _toggle_channels_in_category_popop(self, community_channel_names: str):
-        # Wait for the channel list
-        time.sleep(0.5)
-
         for channel_name in community_channel_names.split(", "):
             [loaded, channel] = self._find_channel_in_category_popup(channel_name)
             if loaded:
@@ -104,11 +101,27 @@ class StatusCommunityScreen:
             else:
                 verify_failure("Can't find channel " + channel_name)
 
-    def open_edit_channel_popup(self):
+    def _get_checked_channel_names_in_category_popup(self):
+        listView = get_obj(CreateOrEditCommunityCategoryPopup.COMMUNITY_CATEGORY_LIST.value)
+        result = []
+
+        for index in range(listView.count):
+            listItem = listView.itemAtIndex(index)
+            if (listItem.checked):
+                result.append(listItem.objectName.toLower())
+        return result
+
+    def _open_edit_channel_popup(self):
         StatusMainScreen.wait_for_banner_to_disappear()
 
         click_obj_by_name(CommunityScreenComponents.CHAT_MORE_OPTIONS_BUTTON.value)
         click_obj_by_name(CommunityScreenComponents.EDIT_CHANNEL_MENU_ITEM.value)
+
+    def _open_category_edit_popup(self, category):
+        # For some reason it clicks on a first channel in category instead of category
+        click_obj(category.parent)
+        right_click_obj(category.parent)
+        click_obj_by_name(CommunityScreenComponents.COMMUNITY_EDIT_CATEGORY_MENU_ITEM.value)
 
     def verify_community_name(self, communityName: str):
         verify_text_matching(CommunityScreenComponents.COMMUNITY_HEADER_NAME_TEXT.value, communityName)
@@ -133,7 +146,7 @@ class StatusCommunityScreen:
         verify_text_matching(CommunityScreenComponents.CHAT_IDENTIFIER_CHANNEL_NAME.value, community_channel_name)
 
     def edit_community_channel(self, new_community_channel_name: str):
-        self.open_edit_channel_popup()
+        self._open_edit_channel_popup()
 
         # Select all text in the input before typing
         wait_for_object_and_type(CreateOrEditCommunityChannelPopup.COMMUNITY_CHANNEL_NAME_INPUT.value, "<Ctrl+a>")
@@ -157,11 +170,9 @@ class StatusCommunityScreen:
 
     def edit_community_category(self, community_category_name, new_community_category_name, community_channel_names):
         [loaded, category] = self._find_category_in_chat(community_category_name)
-        verify(loaded, "Can't find category " + community_category_name)
+        verify(loaded, "Finding category: " + community_category_name)
 
-        # For some reason it clicks on a first channel in category instead of category
-        squish.mouseClick(category.parent, squish.Qt.RightButton)
-        click_obj_by_name(CommunityScreenComponents.COMMUNITY_EDIT_CATEGORY_MENU_ITEM.value)
+        self._open_category_edit_popup(category)
 
         # Select all text in the input before typing
         wait_for_object_and_type(CreateOrEditCommunityCategoryPopup.COMMUNITY_CATEGORY_NAME_INPUT.value, "<Ctrl+a>")
@@ -171,20 +182,33 @@ class StatusCommunityScreen:
 
     def delete_community_category(self, community_category_name):
         [loaded, category] = self._find_category_in_chat(community_category_name)
-        verify(loaded, "Can't find category " + community_category_name)
+        verify(loaded, "Finding category: " + community_category_name)
 
         # For some reason it clicks on a first channel in category instead of category
-        squish.mouseClick(category.parent, squish.Qt.RightButton)
+        click_obj(category.parent)
+        right_click_obj(category.parent)
         click_obj_by_name(CommunityScreenComponents.COMMUNITY_DELETE_CATEGORY_MENU_ITEM.value)
         click_obj_by_name(CommunityScreenComponents.COMMUNITY_CONFIRM_DELETE_CATEGORY_BUTTON.value)
-
-    def verify_category_name(self, community_category_name):
-        [result, _] = self._find_category_in_chat(community_category_name)
-        verify(result, "Can't find category " + community_category_name)
 
     def verify_category_name_missing(self, community_category_name):
         [result, _] = self._find_category_in_chat(community_category_name)
         verify_false(result, "Category " + community_category_name + " still exist")
+
+    def verify_category_contains_channels(self, community_category_name, community_channel_names):
+        [loaded, category] = self._find_category_in_chat(community_category_name)
+        verify(loaded, "Finding category: " + community_category_name)
+
+        self._open_category_edit_popup(category)
+
+        checked_channel_names = self._get_checked_channel_names_in_category_popup()
+        split = community_channel_names.split(", ")
+        for channel_name in split:
+            if channel_name in checked_channel_names:
+                split.remove(channel_name)
+            else:
+                verify_failure("Channel " + channel_name + " should be checked in category " + community_category_name)
+        comma = ", "
+        verify(len(split) == 0, "Channel(s) " + comma.join(split) + " should not be checked in category " + community_category_name)
 
     def edit_community(self, new_community_name: str, new_community_description: str, new_community_color: str):
         click_obj_by_name(CommunityScreenComponents.COMMUNITY_HEADER_BUTTON.value)
@@ -232,7 +256,7 @@ class StatusCommunityScreen:
         verify_equals(chatListObj.statusChatListItems.count, int(count_to_check))
 
     def search_and_change_community_channel_emoji(self, emoji_description: str):
-        self.open_edit_channel_popup()
+        self._open_edit_channel_popup()
 
         click_obj_by_name(CreateOrEditCommunityChannelPopup.EMOJI_BUTTON.value)
 

@@ -203,7 +203,7 @@ def click_link(objName: str, link: str):
     if point[0] != -1 and point[1] != -1:
         squish.mouseClick(getattr(names, objName), point[0], point[1], 0, squish.Qt.LeftButton)
         
-# Global properties for getting link / hovered handler management:          
+# Global properties for getting link / hovered handler management:
 _expected_link = None 
 _link_found = False
 
@@ -220,13 +220,13 @@ def _find_link(objName: str, link: str):
     _expected_link = link
     _link_found = False
     obj = squish.waitForObject(objName)
-    
+
     # Inject desired function into main module:
     sys.modules['__main__']._handle_link_hovered = _handle_link_hovered
     squish.installSignalHandler(obj, "linkHovered(QString)", "_handle_link_hovered")  
-    
-    # Start moving the cursor:  
-    squish.mouseMove(obj, int(obj.x), int(obj.y))  
+
+    # Start moving the cursor:
+    squish.mouseMove(obj, int(obj.x), int(obj.y))
     end_x = obj.x + obj.width
     end_y = obj.y + obj.height
     y = int(obj.y)
@@ -252,11 +252,11 @@ def wait_for_object_focused_and_type(obj_name: str, text: str):
     try:
         squish.waitForObject(getattr(names, obj_name))
         squish.nativeType(text)
-        squish.snooze(1)      
+        squish.snooze(1)
         return True
     except LookupError:
-        return False     
-        
+        return False
+
 # NOTE: It is a specific method for ListView components.
 # It positions the mouse in the middle of the list_obj and scrolls until reaching the item at specific index is visible.
 # Return True if it has been possible to scroll until item index, False if timeout or index not found.     
