@@ -152,5 +152,12 @@ ThemePalette {
         property color menuItemBackgroundColor: white
         property color menuItemHoverBackgroundColor: baseColor2
     }
+
+    property QtObject statusMessage: QtObject {
+        property color emojiReactionBackground: "#e2e6e9"
+        property color emojiReactionBackgroundHovered: "#d7dadd"
+        property color emojiReactionActiveBackground: getColor('blue6')
+        property color emojiReactionActiveBackgroundHovered: "#cbd5f1"
+    }
 }
 

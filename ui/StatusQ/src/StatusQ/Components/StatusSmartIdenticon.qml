@@ -28,6 +28,10 @@ Loader {
         distinctiveColors: Theme.palette.identiconRingColors
     }
 
+    readonly property size effectiveSize: !!statusSmartIdenticon.image.source.toString()
+                                          ? Qt.size(statusSmartIdenticon.image.width, statusSmartIdenticon.image.width)
+                                          : Qt.size(statusSmartIdenticon.icon.width, statusSmartIdenticon.icon.height)
+
     sourceComponent: statusSmartIdenticon.icon.isLetterIdenticon ? letterIdenticon :
                      !!statusSmartIdenticon.image.source.toString() ? roundedImage :
                      !!statusSmartIdenticon.icon.name.toString() ? roundedIcon : letterIdenticon

@@ -7,18 +7,19 @@ import StatusQ.Core 0.1
 import StatusQ.Core.Theme 0.1
 import StatusQ.Components 0.1
 
-Loader {
-    id: chatReply
+Item {
+    id: root
 
     property StatusMessageDetails replyDetails
     property string audioMessageInfoText: ""
 
-    signal replyProfileClicked()
+    signal replyProfileClicked(var sender, var mouse)
 
-    active: visible
+    implicitHeight: layout.implicitHeight
+    implicitWidth: layout.implicitWidth
 
-    sourceComponent: RowLayout {
-        id: replyLayout
+    RowLayout {
+        id: layout
         spacing: 8
         Shape {
             id: replyCorner
@@ -56,13 +57,16 @@ Loader {
                 StatusSmartIdenticon {
                     id: profileImage
                     Layout.alignment: Qt.AlignTop
-                    image: replyDetails.profileImage
-                    name: replyDetails.displayName
+                    name: replyDetails.sender.userName
+                    image: replyDetails.sender.profileImage.imageSettings
+                    icon: replyDetails.sender.profileImage.iconSettings
+                    ringSettings: replyDetails.sender.profileImage.ringSettings
+
                     MouseArea {
                         cursorShape: Qt.PointingHandCursor
                         acceptedButtons: Qt.LeftButton | Qt.RightButton
                         anchors.fill: parent
-                        onClicked: replyProfileClicked()
+                        onClicked: replyProfileClicked(this, mouse)
                     }
                 }
                 TextEdit {
@@ -74,7 +78,7 @@ Loader {
                     font.weight: Font.Medium
                     selectByMouse: true
                     readOnly: true
-                    text: replyDetails.displayName
+                    text: replyDetails.amISender ? qsTr("You") : replyDetails.sender.displayName
                 }
             }
             StatusTextMessage {
@@ -85,13 +89,14 @@ Loader {
                 textField.height: 18
                 clip: true
                 visible: !!replyDetails.messageText
+                allowShowMore: false
             }
             StatusImageMessage {
                 Layout.fillWidth: true
                 Layout.preferredHeight: imageAlias.paintedHeight
                 imageWidth: 56
                 source: replyDetails.contentType === StatusMessage.ContentType.Image ? replyDetails.messageContent : ""
-                visible: replyDetails.contentType === StatusMessage.ContentType.Image
+//                visible: replyDetails.contentType === StatusMessage.ContentType.Image
                 shapeType: StatusImageMessage.ShapeType.ROUNDED
             }
             Item {
@@ -116,7 +121,7 @@ Loader {
                     height: 22
                     isPreview: true
                     audioSource: replyDetails.messageContent
-                    audioMessageInfoText: chatReply.audioMessageInfoText
+                    audioMessageInfoText: root.audioMessageInfoText
                 }
             }
         }

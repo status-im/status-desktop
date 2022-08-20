@@ -6,24 +6,33 @@ import StatusQ.Controls 0.1
 import StatusQ.Core.Theme 0.1
 
 Item {
-    id: textMessage
+    id: root
 
-    property int contentType: 0
     property alias textField: chatText
+    property bool allowShowMore: true
 
-    signal linkActivated(url link)
+    signal linkActivated(string link)
 
-    implicitHeight: showMoreLoader.active ? childrenRect.height : chatText.height
+    implicitWidth: chatText.implicitWidth
+    implicitHeight: chatText.effectiveHeight + d.showMoreHeight
 
     QtObject {
-        id: _internal
+        id: d
         property bool readMore: false
-        property bool veryLongChatText: chatText.length > 1000
+        readonly property bool veryLongChatText: chatText.length > 1000
+        readonly property int showMoreHeight: showMoreLoader.visible ? showMoreLoader.height : 0
     }
 
     TextEdit {
         id: chatText
-        visible: !showMoreLoader.active || _internal.readMore
+
+        readonly property int effectiveHeight: d.veryLongChatText && !d.readMore ? Math.min(chatText.implicitHeight, 200)
+                                                                                 : chatText.implicitHeight
+
+        width: parent.width
+        height: effectiveHeight + d.showMoreHeight / 2
+        visible: !opMask.active
+        clip: true
         selectedTextColor: Theme.palette.directColor1
         selectionColor: Theme.palette.primaryColor3
         color: Theme.palette.directColor1
@@ -33,12 +42,12 @@ Item {
         wrapMode: Text.Wrap
         readOnly: true
         selectByMouse: true
-        height: _internal.veryLongChatText && !_internal.readMore ? Math.min(implicitHeight, 200) : implicitHeight
-        width: parent.width
-        clip: height < implicitHeight
-        onLinkActivated: textMessage.linkActivated(link)
+        onLinkActivated: {
+            root.linkActivated(link);
+        }
         onLinkHovered: {
-            cursorShape: Qt.PointingHandCursor
+            // Strange thing. Without this empty stub the cursorShape
+            // is not changed to pointingHandCursor.
         }
     }
 
@@ -60,7 +69,7 @@ Item {
 
     Loader {
         id: opMask
-        active: showMoreLoader.active && !_internal.readMore
+        active: showMoreLoader.active && !d.readMore
         anchors.fill: chatText
         sourceComponent: OpacityMask {
             source: chatText
@@ -70,17 +79,17 @@ Item {
 
     Loader {
         id: showMoreLoader
-        active: _internal.veryLongChatText
-        anchors.top: chatText.bottom
-        anchors.topMargin: -10
+        active: root.allowShowMore && d.veryLongChatText
+        visible: active
+        anchors.verticalCenter: chatText.bottom
         anchors.horizontalCenter: parent.horizontalCenter
         sourceComponent: StatusRoundButton {
             implicitWidth: 24
             implicitHeight: 24
             type: StatusRoundButton.Type.Secondary
-            icon.name: _internal.readMore ? "chevron-up":  "chevron-down"
+            icon.name: d.readMore ? "chevron-up":  "chevron-down"
             onClicked: {
-                _internal.readMore = !_internal.readMore
+                d.readMore = !d.readMore
             }
         }
     }

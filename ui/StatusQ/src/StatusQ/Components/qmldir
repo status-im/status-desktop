@@ -13,6 +13,7 @@ StatusChatToolBar 0.1 StatusChatToolBar.qml
 StatusContactRequestsIndicatorListItem 0.1 StatusContactRequestsIndicatorListItem.qml
 StatusEmoji 0.1 StatusEmoji.qml
 StatusContactVerificationIcons 0.1 StatusContactVerificationIcons.qml
+StatusDateGroupLabel 0.1 StatusDateGroupLabel.qml
 StatusDescriptionListItem 0.1 StatusDescriptionListItem.qml
 StatusLetterIdenticon 0.1 StatusLetterIdenticon.qml
 StatusListItem 0.1 StatusListItem.qml
@@ -31,6 +32,7 @@ StatusExpandableItem 0.1 StatusExpandableItem.qml
 StatusSmartIdenticon 0.1 StatusSmartIdenticon.qml
 StatusMessage 0.1 StatusMessage.qml
 StatusMessageDetails 0.1 StatusMessageDetails.qml
+StatusMessageSenderDetails 0.1 StatusMessageSenderDetails.qml
 StatusTagSelector 0.1 StatusTagSelector.qml
 StatusToastMessage 0.1 StatusToastMessage.qml
 StatusWizardStepper 0.1 StatusWizardStepper.qml

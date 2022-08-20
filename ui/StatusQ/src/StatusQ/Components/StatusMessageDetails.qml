@@ -6,24 +6,13 @@ QtObject {
     id: msgDetails
 
     property bool amISender: false
-    property string displayName: ""
-    property string secondaryName: ""
-    property string chatID: ""
-    property StatusImageSettings profileImage: StatusImageSettings {
-        width: 40
-        height: 40
-    }
+
+    property StatusMessageSenderDetails sender: StatusMessageSenderDetails { }
+
     property bool isEdited: false
-    property string messageText: ""
     property int contentType: 0
+    property string messageText: ""
     property string messageContent: ""
-    property bool isContact: false
-    property var trustIndicator: StatusContactVerificationIcons.TrustedType.None
-    property bool hasMention: false
-    property bool isPinned: false
-    property string pinnedBy: ""
-    property bool hasExpired: false
-    property string timestamp: ""    
 }
 
 

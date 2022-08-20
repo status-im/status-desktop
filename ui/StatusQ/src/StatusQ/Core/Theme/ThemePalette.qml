@@ -243,7 +243,8 @@ QtObject {
     }
 
     function getColor(name, alpha) {
-        return !!alpha ? alphaColor(StatusColors.colors[name], alpha) : StatusColors.colors[name]
+        return !!alpha ? alphaColor(StatusColors.colors[name], alpha)
+                       : StatusColors.colors[name]
     }
 }
 

@@ -25,10 +25,10 @@ Item {
     property string loadingImageText: ""
     property string errorLoadingImageText: ""
 
-    signal clicked(var image, var mouse)
+    signal clicked(var image, var mouse, var imageSource)
 
-    width: loadingImage.visible ? loadingImage.width : imageMessage.width
-    height: loadingImage.visible ? loadingImage.height : imageMessage.paintedHeight
+    implicitWidth: loadingImage.visible ? loadingImage.width : imageMessage.width
+    implicitHeight: loadingImage.visible ? loadingImage.height : imageMessage.paintedHeight
 
     QtObject {
         id: _internal
@@ -87,7 +87,7 @@ Item {
                     _internal.pausePlaying = ! _internal.pausePlaying
                     return
                 }
-                imageContainer.clicked(imageMessage, mouse)
+                imageContainer.clicked(imageMessage, mouse, imageMessage.source)
             }
         }
     }
