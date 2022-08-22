@@ -25,6 +25,7 @@ Item {
 
     TextEdit {
         id: chatText
+        objectName: "StatusTextMessage_chatText"
 
         readonly property int effectiveHeight: d.veryLongChatText && !d.readMore ? Math.min(chatText.implicitHeight, 200)
                                                                                  : chatText.implicitHeight
