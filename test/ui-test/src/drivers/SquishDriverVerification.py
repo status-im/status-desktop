@@ -97,3 +97,6 @@ def verify_failure(errorMsg: str):
 
 def log(text: str):
     test.log(text)
+    
+def verify_screenshot(vp: str):
+    test.vp(vp)

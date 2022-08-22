@@ -47,6 +47,16 @@ class SeedPhraseComponents(Enum):
     TWENTY_FOUR_BUTTON: str = "switchTabBar_24_words_Button"
     SEEDS_WORDS_TEXTFIELD_template: str = "onboarding_SeedPhrase_Input_TextField_"
     SUBMIT_BUTTON: str = "seedPhraseView_Submit_Button"
+    
+class PasswordStrengthPossibilities(Enum):
+    LOWER_VERY_WEAK = "lower_very_weak"
+    UPPER_VERY_WEAK = "upper_very_weak"
+    NUMBERS_VERY_WEAK = "numbers_very_weak"
+    SYMBOLS_VERY_WEAK = "symbols_very_weak"
+    NUMBERS_SYMBOLS_WEAK ="numbers_symbols_weak"
+    NUMBERS_SYMBOLS_LOWER_SOSO = "numbers_symbols_lower_so-so"
+    NUMBERS_SYMBOLS_LOWER_UPPER_GOOD = "numbers_symbols_lower_upper_good"
+    NUMBERS_SYMBOLS_LOWER_UPPER_GREAT = "numbers_symbols_lower_upper_great"
 
 class StatusWelcomeScreen:
 
@@ -113,4 +123,33 @@ class StatusWelcomeScreen:
         
     def seed_phrase_visible(self):
         is_loaded_visible_and_enabled(SeedPhraseComponents.INVALID_SEED_TEXT.value)
+        
+    # The following validation is based in screenshots comparison and is OS dependent:
+    def validate_password_strength(self, strength: str):
+        if sys.platform == "darwin":
+            if strength == PasswordStrengthPossibilities.LOWER_VERY_WEAK.value:
+                verify_screenshot("VP-PWStrength-lower_very_weak")
+
+            elif strength == PasswordStrengthPossibilities.UPPER_VERY_WEAK.value:
+                verify_screenshot("VP-PWStrength-upper_very_weak")
+
+            elif strength == PasswordStrengthPossibilities.NUMBERS_VERY_WEAK.value:
+                verify_screenshot("VP-PWStrength-numbers_very_weak")
+
+            elif strength == PasswordStrengthPossibilities.SYMBOLS_VERY_WEAK.value:
+                verify_screenshot("VP-PWStrength-symbols_very_weak")
+
+            elif strength == PasswordStrengthPossibilities.NUMBERS_SYMBOLS_WEAK.value:
+                verify_screenshot("VP-PWStrength-numbers_symbols_weak")
+
+            elif strength == PasswordStrengthPossibilities.NUMBERS_SYMBOLS_LOWER_SOSO.value:
+                verify_screenshot("VP-PWStrength-numbers_symbols_lower_so-so")
+
+            elif strength == PasswordStrengthPossibilities.NUMBERS_SYMBOLS_LOWER_UPPER_GOOD.value:
+                verify_screenshot("VP-PWStrength-numbers_symbols_lower_upper_good")
+
+            elif strength == PasswordStrengthPossibilities.NUMBERS_SYMBOLS_LOWER_UPPER_GREAT.value:
+                verify_screenshot("VP-PWStrength-numbers_symbols_lower_upper_great")
+            
+        # TODO: Get screenshots in Linux
         

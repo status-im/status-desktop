@@ -289,6 +289,7 @@ StatusWindow {
 
     OnboardingLayout {
         id: startupOnboarding
+        objectName: "startupOnboardingLayout"
         anchors.fill: parent
     }
 
