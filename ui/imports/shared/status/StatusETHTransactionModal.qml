@@ -107,16 +107,6 @@ ModalPopup {
                 minRequiredAssetBalance: 0
                 onSelectedAccountChanged: if (isValid) { gasSelector.estimateGas() }
             }
-            RecipientSelector {
-                id: selectRecipient
-                visible: false
-                accounts: root.ensUsernamesStore.walletAccounts
-                contactsStore: root.contactsStore
-                isValid: true
-                selectedRecipient: { "address": root.ensUsernamesStore.getEnsRegisteredAddress(), "type": RecipientSelector.Type.Address }
-                readOnly: true
-                onSelectedRecipientChanged: if (isValid) { gasSelector.estimateGas() }
-            }
             GasSelector {
                 id: gasSelector
                 visible: true
@@ -160,7 +150,7 @@ ModalPopup {
                     "symbol": "ETH",
                     "fiatValue": gasSelector.selectedGasFiatValue
                 }
-                toAccount: selectRecipient.selectedRecipient
+                toAccount: { "address": root.ensUsernamesStore.getEnsRegisteredAddress(), "type": RecipientSelector.Type.Address }
                 asset: root.asset
                 currency: root.ensUsernamesStore.getCurrentCurrency()
                 amount: {
