@@ -98,16 +98,15 @@ Page {
         anchors.fill: parent
 
         StatusBaseText {
-            anchors.left: parent.left
-            anchors.leftMargin: 252
-            anchors.right: parent.right
-            anchors.rightMargin: 252
+            width: Math.min(553, parent.width - 32)
+            anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
             anchors.verticalCenterOffset: -(headerRow.height/2)
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
             visible: contactsModel.count === 0
             wrapMode: Text.WordWrap
+            font.pixelSize: 15
             color: Theme.palette.baseColor1
             text: qsTr("You can only send direct messages to your Contacts.\n
 Send a contact request to the person you would like to chat with, you will be able to chat with them once they have accepted your contact request.")
