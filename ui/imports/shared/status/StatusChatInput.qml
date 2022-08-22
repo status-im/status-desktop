@@ -38,9 +38,8 @@ Rectangle {
     property bool emojiPopupOpened: false
     property bool closeGifPopupAfterSelection: true
 
-    property bool emojiEvent: false;
-    property bool paste: false;
-    property bool isColonPressed: false;
+    property bool emojiEvent: false
+    property bool isColonPressed: false
     property bool isReply: false
     property string replyMessageId: replyArea.messageId
 
@@ -93,6 +92,19 @@ Rectangle {
     anchors.right: parent.right
 
     color: Style.current.transparent
+
+    QtObject {
+        id: d
+
+        //mentions helper properties
+        property string copiedTextPlain: ""
+        property string copiedTextFormatted: ""
+        property int copyTextStart: 0
+
+        // set to true when pasted text comes from this component (was copied within this component)
+        property bool internalPaste: false
+    }
+
 
     function calculateExtraHeightFactor() {
         const factor = (messageInputField.length / 500) + 1;
@@ -160,7 +172,7 @@ Rectangle {
             // It reset to 0 for some reason, go back to the end
             messageInputField.cursorPosition = messageInputField.length
         }
-        mentionsPos.push({"name": aliasName,"leftIndex": lastAtPosition, "rightIndex": (lastAtPosition+aliasName.length+1)});
+        mentionsPos.push({name: aliasName, leftIndex: lastAtPosition, rightIndex: (lastAtPosition+aliasName.length + 1)});
     }
 
     function isUploadFilePressed(event) {
@@ -236,18 +248,26 @@ Rectangle {
 
         if ((event.key === Qt.Key_C) && (event.modifiers & Qt.ControlModifier)) {
             if (messageInputField.selectedText !== "") {
-                copiedTextPlain = messageInputField.getText(messageInputField.selectionStart, messageInputField.selectionEnd);
-                copiedTextFormatted = messageInputField.getFormattedText(messageInputField.selectionStart, messageInputField.selectionEnd);
+                d.copiedTextPlain = messageInputField.getText(
+                            messageInputField.selectionStart, messageInputField.selectionEnd)
+                d.copiedTextFormatted = messageInputField.getFormattedText(
+                            messageInputField.selectionStart, messageInputField.selectionEnd)
             }
         }
 
         if ((event.key === Qt.Key_V) && (event.modifiers & Qt.ControlModifier)) {
-            if (copiedTextPlain === QClipboardProxy.text) {
-                copyTextStart = messageInputField.cursorPosition;
-                paste = true;
+            messageInputField.remove(messageInputField.selectionStart, messageInputField.selectionEnd)
+
+            // cursor position must be stored in a helper property because setting readonly to true causes change
+            // of the cursor position to the end of the input
+            d.copyTextStart = messageInputField.cursorPosition
+            messageInputField.readOnly = true
+
+            if (d.copiedTextPlain === QClipboardProxy.text) {
+                d.internalPaste = true
             } else {
-                copiedTextPlain = "";
-                copiedTextFormatted = "";
+                d.copiedTextPlain = ""
+                d.copiedTextFormatted = ""
             }
         }
 
@@ -399,11 +419,6 @@ Rectangle {
         }
     }
 
-    //mentions helper properties
-    property int copyTextStart: 0
-    property string copiedTextPlain: ""
-    property string copiedTextFormatted: ""
-
     Instantiator {
         id: dummyContactList
         model: control.usersStore ? control.usersStore.usersModel : []
@@ -420,25 +435,37 @@ Rectangle {
         // the text doesn't get registered to the textarea fast enough
         // we can only get it in the `released` event
 
-        if (paste) {
-            if (copiedTextPlain.includes("@")) {
-                copiedTextFormatted = copiedTextFormatted.replace(/underline/g, "none").replace(/span style="/g, "span style=\" text-decoration:none;")
+        messageInputField.readOnly = false
+
+        if (d.internalPaste) {
+            if (d.copiedTextPlain.includes("@")) {
+                d.copiedTextFormatted = d.copiedTextFormatted.replace(/underline/g, "none").replace(/span style="/g, "span style=\" text-decoration:none;")
                 for (let j = 0; j < dummyContactList.count; j++) {
                     const name = dummyContactList.objectAt(j).contactName
 
-                    if (copiedTextPlain.indexOf(name) > -1) {
+                    if (d.copiedTextPlain.indexOf(name) > -1) {
                         const subStr = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
                         const regex = new RegExp(subStr, 'gi')
                         let result = null
-                        while ((result = regex.exec(copiedTextPlain))) {
-                            mentionsPos.push({"name": name, "leftIndex": (result.index + copyTextStart - 1), "rightIndex": (result.index + copyTextStart + name.length)})
+                        while ((result = regex.exec(d.copiedTextPlain))) {
+                            const mention = {
+                                name: name,
+                                leftIndex: (result.index + d.copyTextStart - 1),
+                                rightIndex: (result.index + d.copyTextStart + name.length)
+                            }
+                            mentionsPos.push(mention)
                         }
                     }
                 }
             }
-            messageInputField.remove(copyTextStart, (copyTextStart + copiedTextPlain.length))
-            insertInTextInput(copyTextStart, copiedTextFormatted)
-            paste = false
+
+            const prevLength = messageInputField.length
+            insertInTextInput(d.copyTextStart, d.copiedTextFormatted)
+            messageInputField.cursorPosition = d.copyTextStart + messageInputField.length - prevLength
+            d.internalPaste = false
+        } else if ((event.key === Qt.Key_V) && (event.modifiers & Qt.ControlModifier)) {
+            insertInTextInput(d.copyTextStart, QClipboardProxy.text)
+            messageInputField.cursorPosition = d.copyTextStart + QClipboardProxy.text.length
         }
 
         if (event.key !== Qt.Key_Escape) {
@@ -523,7 +550,7 @@ Rectangle {
             if (index2 >= 0 && message.cursor > 0) {
                 const emojiPart = message.data.substr(index2, message.cursor);
                 if (emojiPart.length > 2) {
-                    const emojis = EmojiJSON.emoji_json.filter(function (emoji) {
+                    const emojis = StatusQUtils.Emoji.emojiJSON.emoji_json.filter(function (emoji) {
                         return emoji.name.includes(emojiPart) ||
                                 emoji.shortname.includes(emojiPart) ||
                                 emoji.aliases.some(a => a.includes(emojiPart))
@@ -947,7 +974,8 @@ Rectangle {
             ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
             TextArea {
-                id: messageInputField                
+                id: messageInputField
+
                 objectName: "messageInputField"
                 property var lastClick: 0
                 property int cursorWhenPressed: 0
@@ -1018,7 +1046,7 @@ Rectangle {
                         var symbols = ":='xX><0O;*dB8-D#%\\";
                         if ((length > 1) && (symbols.indexOf(getText((cursorPosition - 2), (cursorPosition - 1))) !== -1)
                                 && (!getText((cursorPosition - 7), cursorPosition).includes("http"))) {
-                            const emojis = EmojiJSON.emoji_json.filter(function (emoji) {
+                            const emojis = StatusQUtils.Emoji.emojiJSON.emoji_json.filter(function (emoji) {
                                 if (emoji.aliases_ascii.includes(getText((cursorPosition - 2), cursorPosition)) ||
                                         emoji.aliases_ascii.includes(getText((cursorPosition - 3), cursorPosition))) {
                                     var has2Chars = emoji.aliases_ascii.includes(getText((cursorPosition - 2), cursorPosition));
