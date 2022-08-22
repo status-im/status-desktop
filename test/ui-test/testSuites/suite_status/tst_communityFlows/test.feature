@@ -131,3 +131,4 @@ Feature: Status Desktop community
         Examples:
             | new_emoji_description | new_emoji |
             | thumbs up             | 👍        |
+

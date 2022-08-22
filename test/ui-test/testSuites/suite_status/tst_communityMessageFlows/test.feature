@@ -36,3 +36,21 @@ Feature: Status Desktop community messages
         When the user sends multiple test images in the current channel with message Mesage with an image again
         Then the test images are displayed just before the last message
         And the message Mesage with an image again is displayed in the last message
+
+
+    Scenario: User pins and unpins messages
+        # This one wont work until #6554 is fixed
+        # And the amount of pinned messages is 0
+        When the user sends the chat message Message 1
+        And the user pins the message at index 0
+        Then the amount of pinned messages is 1
+        Then user is able to send chat message
+         | message               |
+         | Hello                 |
+         | How are you           |
+         | I am from status      |
+         | tell me how you do?   |
+        When the user pins the message at index 0
+        Then the amount of pinned messages is 2
+        When the user unpins the message at index 0
+        Then the amount of pinned messages is 1

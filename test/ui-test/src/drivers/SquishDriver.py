@@ -261,6 +261,16 @@ def _find_link(objName: str, link: str):
     squish.uninstallSignalHandler(obj, "linkHovered(QString)", "_handle_link_hovered")
     return [-1, -1]
 
+
+def move_mouse_over_object(obj):
+    # Start moving the cursor:
+    end_x = obj.x + (obj.width / 2)
+    y = round(int(obj.height) / 2)
+    x = 0
+    while x < end_x:
+        squish.mouseMove(obj, x, y)
+        x += 10
+
 def expect_true(assertionValue: bool, message: str):
     return test.verify(assertionValue, message)
 

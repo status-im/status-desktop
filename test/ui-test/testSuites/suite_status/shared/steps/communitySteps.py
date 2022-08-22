@@ -109,3 +109,16 @@ def step(context):
 @Then("the test images are displayed just before the last message")
 def step(context):
     _statusCommunityScreen.verify_sent_test_image(True, True)
+
+@When("the user pins the message at index |any|")
+def step(context, message_index):
+    _statusCommunityScreen.toggle_pin_message_at_index(message_index)
+
+@When("the user unpins the message at index |any|")
+def step(context, message_index):
+    _statusCommunityScreen.toggle_pin_message_at_index(message_index)
+
+@Then("the amount of pinned messages is |any|")
+def step(context, amount):
+    _statusCommunityScreen.check_pin_count(amount)
+
