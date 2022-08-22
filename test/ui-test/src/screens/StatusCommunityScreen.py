@@ -25,6 +25,7 @@ class CommunityCreateMethods(Enum):
     RIGHT_CLICK_MENU = "right_click_menu"
 
 class CommunityScreenComponents(Enum):
+    CHAT_LOG = "chatView_log"  
     COMMUNITY_HEADER_BUTTON = "mainWindow_communityHeader_StatusChatInfoButton"
     COMMUNITY_HEADER_NAME_TEXT= "community_ChatInfo_Name_Text"
     COMMUNITY_CREATE_CHANNEL_OR_CAT_BUTTON = "mainWindow_createChannelOrCategoryBtn_StatusBaseText"
@@ -43,7 +44,8 @@ class CommunityScreenComponents(Enum):
     NOT_CATEGORIZED_CHAT_LIST = "mainWindow_communityColumnView_statusChatList"
     COMMUNITY_CHAT_LIST_CATEGORIES = "communityChatListCategories_Repeater"
     CHAT_INPUT_ROOT = "chatInput_Root"
-    CHAT_LOG = "chatView_log"
+    TOGGLE_PIN_MESSAGE_BUTTON = "chatView_TogglePinMessageButton"
+    PIN_TEXT = "chatInfoButton_Pin_Text"
 
 class CommunitySettingsComponents(Enum):
     EDIT_COMMUNITY_SCROLL_VIEW = "communitySettings_EditCommunity_ScrollView"
@@ -77,6 +79,7 @@ class CreateOrEditCommunityCategoryPopup(Enum):
 class StatusCommunityScreen:
 
     def __init__(self):
+        self._retry_number = 0
         verify_screen(CommunityScreenComponents.COMMUNITY_HEADER_BUTTON.value)
 
     def _find_channel_in_category_popup(self, community_channel_name: str):
@@ -273,7 +276,7 @@ class StatusCommunityScreen:
 
     def check_community_channel_emoji(self, emojiStr: str):
         obj = wait_and_get_obj(CommunityScreenComponents.CHAT_IDENTIFIER_CHANNEL_ICON.value)
-        expectTrue(str(obj.icon.emoji).find(emojiStr) >= 0, "Same emoji check")
+        expect_true(str(obj.icon.emoji).find(emojiStr) >= 0, "Same emoji check")
 
     def _verify_image_sent(self, message_index: int):
         image_obj = get_obj(CommunityScreenComponents.CHAT_LOG.value).itemAtIndex(message_index)
@@ -304,3 +307,27 @@ class StatusCommunityScreen:
             image_index = 2 if has_message else 1
             self._verify_image_sent(image_index)
 
+
+    def _do_wait_for_pin_button(self, message_index: int):
+        if (self._retry_number > 3):
+            verify_failure("Cannot find the pin button after hovering the message")
+        
+        message_object_to_pin = wait_and_get_obj(CommunityScreenComponents.CHAT_LOG.value).itemAtIndex(int(message_index))
+        move_mouse_over_object(message_object_to_pin)
+        pin_visible, _ = is_loaded_visible_and_enabled(CommunityScreenComponents.TOGGLE_PIN_MESSAGE_BUTTON.value, 100)
+        if not pin_visible:
+            self._retry_number += 1
+            self._do_wait_for_pin_button(message_index)
+             
+    def _wait_for_pin_button(self, message_index: int):
+        self._retry_number = 0
+        self._do_wait_for_pin_button(message_index)
+        
+    def toggle_pin_message_at_index(self, message_index: int):
+        self._wait_for_pin_button(message_index)
+        
+        click_obj_by_name(CommunityScreenComponents.TOGGLE_PIN_MESSAGE_BUTTON.value)
+
+    def check_pin_count(self, wanted_pin_count: int):
+        pin_text_obj = wait_and_get_obj(CommunityScreenComponents.PIN_TEXT.value)
+        verify_equals(pin_text_obj.text, wanted_pin_count)

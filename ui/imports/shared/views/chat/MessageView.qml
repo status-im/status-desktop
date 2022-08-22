@@ -711,6 +711,7 @@ Loader {
 
                     }
                     sourceComponent: StatusFlatRoundButton {
+                        objectName: "MessageView_toggleMessagePin"
                         width: d.chatButtonSize
                         height: d.chatButtonSize
                         icon.name: root.pinnedMessage ? "unpin" : "pin"
