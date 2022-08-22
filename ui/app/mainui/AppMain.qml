@@ -976,15 +976,16 @@ Item {
 
     StatusListView {
         id: toastArea
-        anchors.top: parent.top
-        anchors.topMargin: 60
         anchors.right: parent.right
         anchors.rightMargin: 8
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 60
+        width: 343
+        height: Math.min(parent.height - 120, toastArea.contentHeight)
         spacing: 8
         verticalLayoutDirection: ListView.BottomToTop
         model: appMain.rootStore.mainModuleInst.ephemeralNotificationModel
+
         delegate: StatusToastMessage {
             primaryText: model.title
             secondaryText: model.subTitle
@@ -1000,6 +1001,7 @@ Item {
             onLinkActivated: {
                 Qt.openUrlExternally(link);
             }
+
             onClose: {
                 appMain.rootStore.mainModuleInst.removeEphemeralNotification(model.id)
             }
