@@ -58,7 +58,12 @@ proc handleCommunityOnlyConnections(self: Controller) =
       if (community.id != self.sectionId):
         continue
       let membersPubKeys = community.members.map(x => x.id)
-      self.delegate.onChatMembersAdded(membersPubKeys)
+      self.delegate.onChatMembersAddedOrRemoved(membersPubKeys)
+
+  self.events.on(SIGNAL_COMMUNITY_MEMBER_REMOVED) do(e: Args):
+    let args = CommunityMemberArgs(e)
+    if (args.communityId == self.sectionId):
+        self.delegate.onChatMemberRemoved(args.pubKey)
 
 proc init*(self: Controller) =
   # Events that are needed for all chats because of mentions
@@ -143,11 +148,6 @@ proc init*(self: Controller) =
     # Events only for community channel
     if (self.belongsToCommunity):
       self.handleCommunityOnlyConnections()
-
-      self.events.on(SIGNAL_COMMUNITY_MEMBER_REMOVED) do(e: Args):
-        let args = CommunityMemberArgs(e)
-        if (args.communityId == self.sectionId):
-          self.delegate.onChatMemberRemoved(args.pubKey)
 
 proc getChat*(self: Controller): ChatDto =
   return self.chatService.getChatById(self.chatId)

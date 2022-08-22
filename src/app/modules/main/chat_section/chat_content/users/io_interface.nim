@@ -37,13 +37,16 @@ method loggedInUserImageChanged*(self: AccessInterface) {.base.} =
 method addChatMember*(self: AccessInterface, member: ChatMember) {.base.} =
   raise newException(ValueError, "No implementation available")
 
+method onChatMembersAddedOrRemoved*(self: AccessInterface, ids: seq[string]) {.base.} =
+  raise newException(ValueError, "No implementation available")
+
 method onChatMembersAdded*(self: AccessInterface, ids: seq[string]) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onChatUpdated*(self: AccessInterface, chat: ChatDto) {.base.} =
+method onChatMemberRemoved*(self: AccessInterface, ids: string) {.base.} =
   raise newException(ValueError, "No implementation available")
 
-method onChatMemberRemoved*(self: AccessInterface, ids: string) {.base.} =
+method onChatUpdated*(self: AccessInterface, chat: ChatDto) {.base.} =
   raise newException(ValueError, "No implementation available")
 
 method onChatMemberUpdated*(self: AccessInterface, id: string, admin: bool, joined: bool) {.base.} =
