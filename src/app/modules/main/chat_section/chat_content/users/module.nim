@@ -1,4 +1,4 @@
-import NimQml, strutils
+import NimQml, strutils, sequtils, sugar
 import io_interface
 import ../io_interface as delegate_interface
 import view, controller
@@ -175,6 +175,16 @@ method onChatUpdated*(self: Module,  chat: ChatDto) =
 
 method onChatMemberRemoved*(self: Module, id: string) =
   self.view.model().removeItemById(id)
+
+method onChatMembersAddedOrRemoved*(self: Module,  ids: seq[string]) =
+  let modelIDs = self.view.model().getItemIds()
+  let membersAdded = filter(ids, id => not modelIDs.contains(id))
+  let membersRemoved = filter(modelIDs, id => not ids.contains(id))
+
+  self.onChatMembersAdded(membersAdded)
+  for id in membersRemoved:
+    self.onChatMemberRemoved(id)
+    
 
 method onChatMemberUpdated*(self: Module, publicKey: string, admin: bool, joined: bool) =
   let contactDetails = self.controller.getContactDetails(publicKey)
