@@ -10,7 +10,7 @@ import StatusQ.Popups 0.1
 import shared.controls.chat 1.0
 import utils 1.0
 
-MenuItem {
+Item {
     id: root
 
     property string label: ""
@@ -25,12 +25,17 @@ MenuItem {
 
     width: parent.width
     height: 64
-    background: Rectangle {
-        color: root.hovered ? Theme.palette.statusSelect.menuItemHoverBackgroundColor : Theme.palette.statusSelect.menuItemBackgroundColor
+    Rectangle {
+        anchors.fill: root
+        color: sensor.containsMouse ? Theme.palette.statusSelect.menuItemHoverBackgroundColor : Theme.palette.statusSelect.menuItemBackgroundColor
     }
+
     MouseArea {
+        id: sensor
         cursorShape: Qt.PointingHandCursor
         anchors.fill: root
+        hoverEnabled: true
+
         onClicked: {
             root.clicked()
         }

@@ -11,6 +11,8 @@ import StatusQ.Controls 0.1
 import StatusQ.Controls.Validators 0.1
 import StatusQ.Popups 0.1
 
+import SortFilterProxyModel 0.2
+
 import shared.panels 1.0
 import shared.popups 1.0
 import shared.status 1.0
@@ -263,37 +265,53 @@ Item {
                 closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
                 width: parent.width + Style.current.bigPadding
                 dim: false
-                Repeater {
-                    id: accounts
-                    model: root.startupStore.startupModuleInst.loginAccountsModel
-                    delegate: AccountMenuItemPanel {
-                        label: model.username
-                        image: model.thumbnailImage
-                        colorId: model.colorId
-                        colorHash: model.colorHash
-                        keycardCreatedAccount: model.keycardCreatedAccount
-                        onClicked: {
-                            root.startupStore.setSelectedLoginAccountByIndex(index)
-                            d.resetLogin()
-                            accountsPopup.close()
+
+                SortFilterProxyModel {
+                    id: proxyModel
+                    sourceModel: root.startupStore.startupModuleInst.loginAccountsModel
+                    filters: ValueFilter {
+                        roleName: "keyUid"
+                        value: root.startupStore.selectedLoginAccount.keyUid
+                        inverted: true
+                    }
+                }
+
+                Column {
+                    width: parent.width
+
+                    Repeater {
+                        model: proxyModel
+
+                        delegate: AccountMenuItemPanel {
+                            label: model.username
+                            image: model.thumbnailImage
+                            colorId: model.colorId
+                            colorHash: model.colorHash
+                            keycardCreatedAccount: model.keycardCreatedAccount
+                            onClicked: {
+                                d.resetLogin()
+                                accountsPopup.close()
+                                const realIndex = proxyModel.mapToSource(index)
+                                root.startupStore.setSelectedLoginAccountByIndex(realIndex)
+                            }
                         }
                     }
-                }
 
-                AccountMenuItemPanel {
-                    label: qsTr("Add new user")
-                    onClicked: {
-                        accountsPopup.close()
-                        root.startupStore.doSecondaryAction()
+                    AccountMenuItemPanel {
+                        label: qsTr("Add new user")
+                        onClicked: {
+                            accountsPopup.close()
+                            root.startupStore.doSecondaryAction()
+                        }
                     }
-                }
 
-                AccountMenuItemPanel {
-                    label: qsTr("Add existing Status user")
-                    iconSettings.name: "wallet"
-                    onClicked: {
-                        accountsPopup.close()
-                        root.startupStore.doTertiaryAction()
+                    AccountMenuItemPanel {
+                        label: qsTr("Add existing Status user")
+                        iconSettings.name: "wallet"
+                        onClicked: {
+                            accountsPopup.close()
+                            root.startupStore.doTertiaryAction()
+                        }
                     }
                 }
             }
