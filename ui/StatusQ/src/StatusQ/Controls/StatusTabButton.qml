@@ -25,16 +25,20 @@ import StatusQ.Components 0.1
 TabButton {
     id: root
 
-    property alias badge: statusBadge
+    readonly property alias badge: statusBadge
 
     leftPadding: 12
     rightPadding: 12
 
     background: Item { }
 
-    contentItem: Item {
+    contentItem: MouseArea {
         implicitWidth: contentItemGrid.implicitWidth
         implicitHeight: contentItemGrid.implicitHeight + 15
+
+        cursorShape: Qt.PointingHandCursor
+        acceptedButtons: Qt.NoButton
+        enabled: root.enabled
 
         RowLayout {
             id: contentItemGrid
