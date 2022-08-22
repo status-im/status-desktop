@@ -134,7 +134,7 @@ Item {
             title: qsTr("Contact requests")
             requestsCount: nbRequests
 
-            sensor.onClicked: Global.openPopup(contactRequestsPopup)
+            onClicked: Global.openPopup(contactRequestsPopup)
         }
 
         // chat list

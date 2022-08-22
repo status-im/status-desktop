@@ -216,7 +216,7 @@ SettingsContentBase {
             Layout.fillWidth: true
             title: qsTr("Contacts, Requests, and Blocked Users")
             requestsCount: root.contactsStore.receivedContactRequestsModel.count
-            sensor.onClicked: Global.changeAppSectionBySectionType(Constants.appSection.profile,
+            onClicked: Global.changeAppSectionBySectionType(Constants.appSection.profile,
                                                                    Constants.settingsSubsection.contacts)
         }
 
