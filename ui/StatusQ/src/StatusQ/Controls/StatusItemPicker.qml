@@ -51,6 +51,12 @@ Rectangle {
     property string name
 
     /*!
+       \qmlproperty int StatusItemPicker::namePixelSize
+       This property holds pixel size of the name to be displayed.
+    */
+    property int namePixelSize: 15
+
+    /*!
        \qmlproperty string StatusItemPicker::shortName
        This property holds the secondary text or short name to be displayed.
     */
@@ -82,6 +88,15 @@ Rectangle {
     property ButtonGroup radioGroup
 
     /*!
+       \qmlproperty int StatusItemPicker::radioButtonSize
+       This property holds size type of the radio button.
+       Possible values are:
+       - Small
+       - Large (default size)
+    */
+    property int radioButtonSize: StatusRadioButton.Size.Large
+
+    /*!
         \qmlsignal StatusItemPicker::checkedChanged(bool checked)
         This signal is emitted when the item is selected by pressing the radiobutton or the checkbox.
     */
@@ -95,7 +110,7 @@ Rectangle {
     QtObject {
         id: d
 
-        property int minShortNameWidth: 50
+        readonly property int minShortNameWidth: root.shortName ? 50 : 0
 
         function availableTextWidth() {
              return root.width - imageItem.width - row.spacing - shortNameItem.anchors.rightMargin - selector.width - selector.anchors.rightMargin - 24/*Margin between both texts*/
@@ -112,10 +127,10 @@ Rectangle {
         StatusIcon {
             id: imageItem
             anchors.verticalCenter: parent.verticalCenter
-            source: root.image.source ? root.image.source : ""
-            width: root.image.width
-            height: root.image.height
-            visible: root.image.source !== undefined
+            source: root.image && root.image.source ? root.image.source : ""
+            width: root.image ? root.image.width : 0
+            height: root.image ? root.image.height : 0
+            visible: root.image && root.image.source !== undefined
         }
 
         StatusBaseText {
@@ -126,7 +141,7 @@ Rectangle {
                    dummyNameItem.width
             text: root.name
             color: Theme.palette.directColor1
-            font.pixelSize: 15
+            font.pixelSize: root.namePixelSize
             clip: true
             elide: Text.ElideRight
         }
@@ -167,6 +182,7 @@ Rectangle {
     Component {
         id: radioBtn
         StatusRadioButton {
+            size: root.radioButtonSize
             ButtonGroup.group: root.radioGroup
             checked: root.selected
             onCheckedChanged: {
