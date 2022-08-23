@@ -216,6 +216,7 @@ Rectangle {
             }
 
             StatusBaseText {
+                objectName: "StatusChatInfo_pinText"
                 anchors.left: pinIcon.right
                 anchors.leftMargin: -6
                 anchors.verticalCenter: pinIcon.verticalCenter
