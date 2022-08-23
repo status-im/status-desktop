@@ -10,15 +10,25 @@ import utils 1.0
 import shared.panels 1.0
 
 import "../../../Chat/controls/community"
+import "../../stores"
 
 Flickable {
     id: root
 
+    property var store: CommunitiesStore {}
+
+
     signal createPermission()
+
+    // TODO: Call this when permissions are stored in backend to start a new permissions flow
+    function clearPermissions() {
+        d.permissions.clear()
+    }
 
     QtObject {
         id: d
         property bool isPrivate: false
+        property ListModel permissions: ListModel{}
     }
 
     contentWidth: mainLayout.width
@@ -45,9 +55,11 @@ Flickable {
             orOperatorText: qsTr("or")
             popupItem: HoldingsDropdown {
                 id: dropdown
+                store: root.store
                 withOperatorSelector: tokensSelector.itemsModel.count > 0
-                onAddToken: {
-                    tokensSelector.addItem(tokenText, tokenImage, operator)
+                onAddItem: {
+                    tokensSelector.addItem(itemText, itemImage, operator)
+                    d.permissions.append([{itemKey: itemKey}, {operator: operator}])
                     dropdown.close()
                 }
             }
@@ -117,11 +129,14 @@ Flickable {
         StatusButton {
             Layout.topMargin: 24
             text: qsTr("Create permission")
-            enabled: false
+            enabled: d.permissions.count > 0
             Layout.preferredHeight: 44
             Layout.alignment: Qt.AlignHCenter
             Layout.fillWidth: true
-            onClicked: root.createPermission()
+            onClicked: {
+                root.store.createPermissions(d.permissions)
+                root.clearPermissions()
+            }
         }
     }
 }
