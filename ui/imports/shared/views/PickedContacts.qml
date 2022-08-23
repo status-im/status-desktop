@@ -3,6 +3,8 @@ import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.14
 
 import StatusQ.Core 0.1
+import StatusQ.Components 0.1
+import StatusQ.Core.Theme 0.1
 
 import utils 1.0
 import shared.status 1.0
@@ -36,6 +38,7 @@ Item {
         anchors.fill: parent
         rightMargin: 0
         cellWidth: parent.width / 2
+        cellHeight: 2 * Style.current.xlPadding + Style.current.halfPadding
 
         model: SortFilterProxyModel {
             sourceModel: root.contactsStore.myContactsModel
@@ -43,14 +46,24 @@ Item {
                 ExpressionFilter { expression: root.pubKeys.indexOf(model.pubKey) > -1 }
             ]
         }
-        delegate: Contact {
+
+        delegate: StatusMemberListItem {
             width: contactGridView.cellWidth
-            showCheckbox: false
-            pubKey: model.pubKey
+            pubKey: Utils.getCompressedPk(model.pubKey)
             isContact: model.isContact
-            isUser: false
-            name: model.displayName
-            image: model.icon
+            status: model.onlineStatus
+            userName: model.displayName
+            image.source: model.icon
+            image.width: 40
+            image.height: 40
+            color: "transparent"
+            icon.color: Utils.colorForPubkey(model.pubKey)
+            icon.height: 40
+            icon.width: 40
+            ringSettings.ringSpecModel: Utils.getColorHashAsJson(model.pubKey)
+            statusListItemIcon.badge.border.color: Theme.palette.baseColor4
+            statusListItemIcon.badge.implicitHeight: 14 // 10 px + 2 px * 2 borders
+            statusListItemIcon.badge.implicitWidth: 14 // 10 px + 2 px * 2 borders
         }
     }
 }

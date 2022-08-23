@@ -3,6 +3,9 @@ import QtQuick.Controls 2.14
 import QtQuick.Layouts 1.14
 
 import StatusQ.Core 0.1
+import StatusQ.Controls 0.1
+import StatusQ.Components 0.1
+import StatusQ.Core.Theme 0.1
 
 import utils 1.0
 import shared.status 1.0
@@ -38,20 +41,32 @@ Item {
         id: contactListView
         anchors.fill: parent
         rightMargin: 0
-        spacing: 0
+        leftMargin: 0
+        spacing: Style.current.padding
 
         model: root.contactsStore.myContactsModel
-        delegate: Contact {
+        delegate: StatusMemberListItem {
             width: contactListView.availableWidth
-            showCheckbox: root.showCheckbox
-            isChecked: root.pubKeys.indexOf(model.pubKey) > -1
-            pubKey: model.pubKey
+            pubKey: Utils.getCompressedPk(model.pubKey)
             isContact: model.isContact
-            isUser: false
-            name: model.displayName
-            image: model.icon
-            isVisible: {
-                if (isChecked)
+            status: model.onlineStatus
+            height: visible ? implicitHeight : 0
+            color: sensor.containsMouse ? Style.current.backgroundHover : Style.current.transparent
+            userName: model.displayName
+            image.source: model.icon
+            image.isIdenticon: false
+            image.width: 40
+            image.height: 40
+            icon.color: Utils.colorForPubkey(model.pubKey)
+            icon.height: 40
+            icon.width: 40
+            ringSettings.ringSpecModel: Utils.getColorHashAsJson(model.pubKey)
+            statusListItemIcon.badge.border.color: Theme.palette.baseColor4
+            statusListItemIcon.badge.implicitHeight: 14 // 10 px + 2 px * 2 borders
+            statusListItemIcon.badge.implicitWidth: 14 // 10 px + 2 px * 2 borders
+
+            visible: {
+                if (contactCheckbox.checked)
                     return true;
 
                 return model.isContact && !model.isBlocked && (root.filterText === "" ||
@@ -63,8 +78,19 @@ Item {
                     (!root.hideCommunityMembers ||
                     !root.community.hasMember(model.pubKey));
             }
-            onContactClicked: function () {
+
+            onClicked: {
                 root.contactClicked(model);
+            }
+
+            StatusCheckBox  {
+                id: contactCheckbox
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.right: parent.right
+                checked: root.pubKeys.indexOf(model.pubKey) > -1
+                onClicked: {
+                    root.contactClicked(model);
+                }
             }
         }
     }

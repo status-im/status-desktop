@@ -45,6 +45,8 @@ StatusStackModal {
     stackTitle: qsTr("Invite Contacts to %1").arg(community.name)
     width: 640
     height: 700
+    leftPadding: 0
+    rightPadding: 0
 
     nextButton: StatusButton {
         text: qsTr("Next")
@@ -68,8 +70,8 @@ StatusStackModal {
         visible: root.validationError !== "" || root.successMessage !== ""
         font.pixelSize: 13
         color: !!root.validationError ? Style.current.danger : Style.current.success
-        Layout.alignment: Qt.AlignHCenter
-        Layout.preferredHeight: visible ? contentHeight : 0
+        horizontalAlignment: Text.AlignHCenter
+        height: visible ? contentHeight : 0
     }
 
     stackItems: [
